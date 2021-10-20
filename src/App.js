@@ -5,9 +5,14 @@ import styled from "styled-components";
 
 const LoginContainer = styled.div`
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   width: 100%;
   max-width: 800px;
+
+  & > div > * {
+    /* TODO */
+    display: block;
+  }
 `
 
 function App() {
@@ -17,9 +22,10 @@ function App() {
           {/* TODO form validation */}
           <input type="email"></input>
           <input type="password"></input>
+          <input type="submit" value="Sign up"></input>
         </div>
 
-        <div id="loginSeparator">
+        <div id="loginSeparator" style={{ width: '30px' }}>
           <span>or</span>
         </div>
 
