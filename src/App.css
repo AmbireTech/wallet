@@ -1,5 +1,18 @@
 body {
   background-color: #282c34;
+  color: white;
 }
 
+button, input {
+  color: white;
+  font-size: 1em;
+  padding: 1em;
+  border-radius: 0px;
+  background-color: #282c34;
+  border: 1px solid #55ffff;
+  margin: 1em;
+}
 
+button:active, input[type=submit]:active {
+  transform: scale(0.95);
+}
