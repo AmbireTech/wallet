@@ -3,24 +3,31 @@ import './App.css'
 import { useState, useRef } from 'react'
 
 function App() {
-  return LoginOrSignup({ onAccRequest: req => console.log(req) })
+  return LoginOrSignup({ onAccRequest: req => {
+    console.log(req)
+  } })
 }
 
 function LoginOrSignup({ onAccRequest }) {
-  // @TODO should we init the state somehow?
-  // @NOTE: input.setCustomValidity
   // @NOTE: preventDefault prevents validation
   const passConfirmInput = useRef(null)
   const [state, setState] = useState({ email: '', passphrase: '', passphraseConfirm: '' })
   const onSubmit = e => {
     e.preventDefault()
-    onAccRequest({ action: 'SIGNUP', accType: 'QUICK', email: state.email, passphrase: state.passphrase })
+    onAccRequest({
+      action: 'SIGNUP',
+      accType: 'QUICK',
+      email: state.email,
+      passphrase: state.passphrase
+    })
   }
   const onUpdate = updates => {
     const newState = { ...state, ...updates }
     setState(newState)
     // @TODO translation string
-    passConfirmInput.current.setCustomValidity(newState.passphrase !== newState.passphraseConfirm ? 'Passphrase must match' : '')
+    passConfirmInput.current.setCustomValidity(
+      newState.passphrase !== newState.passphraseConfirm ? 'Passphrase must match' : ''
+    )
   }
   return (
     <div className="loginOrSignup">
