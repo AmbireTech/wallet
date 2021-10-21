@@ -1,22 +1,34 @@
 import './App.css'
-import { useState } from 'react'
+// @TODO LoginOrSignup in a separate file
+import { useState, useRef } from 'react'
 
 function App() {
-  return LoginContainer()
+  return LoginOrSignup({ onAccRequest: req => console.log(req) })
 }
 
-function LoginContainer() {
+function LoginOrSignup({ onAccRequest }) {
   // @TODO should we init the state somehow?
   // @NOTE: input.setCustomValidity
   // @NOTE: preventDefault prevents validation
+  const passConfirmInput = useRef(null)
   const [state, setState] = useState({ email: '', passphrase: '', passphraseConfirm: '' })
+  const onSubmit = e => {
+    e.preventDefault()
+    onAccRequest({ action: 'SIGNUP', accType: 'QUICK', email: state.email, passphrase: state.passphrase })
+  }
+  const onUpdate = updates => {
+    const newState = { ...state, ...updates }
+    setState(newState)
+    // @TODO translation string
+    passConfirmInput.current.setCustomValidity(newState.passphrase !== newState.passphraseConfirm ? 'Passphrase must match' : '')
+  }
   return (
     <div className="loginOrSignup">
         <div id="loginEmailPass">
-          <form onSubmit={e => { console.log(state); e.preventDefault(); e.target.checkValidity(); e.target.reportValidity(); }}>
-            <input type="email" placeholder="Email" value={state.email} onChange={e => setState({ ...state, email: e.target.value })}></input>
-            <input type="password" placeholder="Passphrase" value={state.passphrase} onChange={e => setState({ ...state, passphrase: e.target.value })}></input>
-            <input type="password" placeholder="Confirm passphrase" value={state.passphraseConfirm} onChange={e => setState({ ...state, passphraseConfirm: e.target.value })}></input>
+          <form onSubmit={onSubmit}>
+            <input type="email" required placeholder="Email" value={state.email} onChange={e => onUpdate({ email: e.target.value })}></input>
+            <input type="password" required placeholder="Passphrase" value={state.passphrase} onChange={e => onUpdate({ passphrase: e.target.value })}></input>
+            <input ref={passConfirmInput} required type="password" placeholder="Confirm passphrase" value={state.passphraseConfirm} onChange={e => onUpdate({ passphraseConfirm: e.target.value })}></input>
             <input type="submit" value="Sign up"></input>
           </form>
         </div>
