@@ -29,7 +29,7 @@ button:active, input[type=submit]:active {
 
 }
 
-.loginOrSignup > div > * {
+.loginOrSignup form > *, .loginOrSignup button {
   /* TODO */
   display: block;
 }
