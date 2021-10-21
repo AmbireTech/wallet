@@ -13,6 +13,23 @@ button, input {
   margin: 1em;
 }
 
+button, input[type=submit] {
+  cursor: pointer;
+}
+
 button:active, input[type=submit]:active {
   transform: scale(0.95);
+}
+
+.loginOrSignup {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  max-width: 800px;
+
+}
+
+.loginOrSignup > div > * {
+  /* TODO */
+  display: block;
 }
