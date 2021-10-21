@@ -1,23 +1,12 @@
 import './App.css';
 
-// @TODO styled components?
-import styled from "styled-components";
-
-const LoginContainer = styled.div`
-  display: flex;
-  flex-direction: row;
-  width: 100%;
-  max-width: 800px;
-
-  & > div > * {
-    /* TODO */
-    display: block;
-  }
-`
-
 function App() {
+  return LoginContainer()
+}
+
+function LoginContainer() {
   return (
-    <LoginContainer className="login">
+    <div className="loginOrSignup">
         <div id="loginEmailPass">
           {/* TODO form validation */}
           <input type="email"></input>
@@ -34,7 +23,7 @@ function App() {
           <button>Trezor</button>
           <button>Metamask or Browser</button>
         </div>
-    </LoginContainer>
+    </div>
   );
 }
 
