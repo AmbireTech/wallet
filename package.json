@@ -9,7 +9,11 @@
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-scripts": "4.0.3",
-    "web-vitals": "^1.1.2"
+    "web-vitals": "^1.1.2",
+    "adex-protocol-eth": "git+https://git@github.com/AdExNetwork/adex-protocol-eth.git",
+    "ethereumjs-util": "^6.1.0",
+    "ethers": "^5.4.7",
+    "node-fetch": "^2.3.0"
   },
   "scripts": {
     "start": "react-scripts start",
