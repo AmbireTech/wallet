@@ -54,8 +54,8 @@ function LoginOrSignup({ onAccRequest }) {
         <div id="loginEmailPass">
           <form onSubmit={onSubmit}>
             <input type="email" required placeholder="Email" value={state.email} onChange={e => onUpdate({ email: e.target.value })}></input>
-            <input type="password" required placeholder="Passphrase" value={state.passphrase} onChange={e => onUpdate({ passphrase: e.target.value })}></input>
-            <input ref={passConfirmInput} required type="password" placeholder="Confirm passphrase" value={state.passphraseConfirm} onChange={e => onUpdate({ passphraseConfirm: e.target.value })}></input>
+            <input type="password" required minlength="8" placeholder="Passphrase" value={state.passphrase} onChange={e => onUpdate({ passphrase: e.target.value })}></input>
+            <input ref={passConfirmInput} required minlength="8" type="password" placeholder="Confirm passphrase" value={state.passphraseConfirm} onChange={e => onUpdate({ passphraseConfirm: e.target.value })}></input>
             <input type="submit" value="Sign up"></input>
           </form>
         </div>
