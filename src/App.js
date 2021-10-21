@@ -2,11 +2,31 @@ import './App.css'
 // @TODO LoginOrSignup in a separate file
 import { useState, useRef } from 'react'
 
+// @TODO another file
+// @TODO err-catching fetch helper
+const fetch = require('node-fetch')
+const { generateAddress2 } = require('ethereumjs-util')
+const { getProxyDeployBytecode } = require('adex-protocol-eth/js/IdentityProxyDeploy')
+const { hexZeroPad } = require('ethers').utils
+
 function App() {
-  return LoginOrSignup({ onAccRequest: req => {
+  return LoginOrSignup({ onAccRequest: async req => {
     console.log(req)
+    // @TODO url
+    const { whitelistedFactories, whitelistedBaseIdentities } = await fetch('http://localhost:1934/relayer/cfg').then(r => r.json())
+    const salt = hexZeroPad('0x01', 32)
+    const privileges = [['0x942f9CE5D9a33a82F88D233AEb3292E680230348', true]]
+    const identityFactoryAddr = whitelistedFactories[whitelistedFactories.length - 1]
+    const baseIdentityAddr = whitelistedBaseIdentities[whitelistedBaseIdentities.length - 1]
+    const bytecode = getProxyDeployBytecode(baseIdentityAddr, privileges, { privSlot: 0 })
+    const identityAddr = '0x' + generateAddress2(identityFactoryAddr, salt, bytecode).toString('hex')
+
+    console.log('identityAddr:', identityAddr)
+
   } })
 }
+// @TODO
+
 
 function LoginOrSignup({ onAccRequest }) {
   // @NOTE: preventDefault prevents validation
