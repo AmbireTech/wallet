@@ -113,9 +113,10 @@ function LoginOrSignup({ onAccRequest }) {
         </div>
 
         <div id="loginOthers">
-          <button>Ledger</button>
-          <button>Trezor</button>
-          <button>Metamask or Browser</button>
+          <button><img src="https://cdn-images-1.medium.com/max/1200/1*Sek00YxqMdOJp5FsjveZiQ.png" width="25px"/>Trezor</button>
+
+          <button><img src="https://www.ledger.com/wp-content/uploads/2020/02/puce_blue.png" width="25px"/>Ledger</button>
+          <button><img src="https://cdn.iconscout.com/icon/free/png-256/metamask-2728406-2261817.png" width="25px"/>Metamask / Browser</button>
         </div>
     </div>
   );
