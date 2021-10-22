@@ -54,3 +54,16 @@ button:active, input[type=submit]:active {
 .loginOrSignup {
   margin: 2em auto;
 }
+
+#loginOthers button {
+  width: 100%;
+  text-align: left;
+  border: 0px;
+  color: black;
+  background-color: white;
+  line-height: 25px;
+}
+#loginOthers button img {
+  margin-right: 10px;
+}
+
