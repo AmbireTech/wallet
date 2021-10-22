@@ -48,7 +48,7 @@ const onAccRequest = async req => {
 
   // @TODO manage storage outside of this function, figure out what to return
   let n = Date.now()
-  const encrypted = await firstKeyWallet.encrypt(req.passphrase)
+  const encrypted = await firstKeyWallet.encrypt(req.passphrase, { scrypt: { N: 131072/4 } })
   console.log(encrypted, Date.now() - n)
 
   n = Date.now()
@@ -57,7 +57,7 @@ const onAccRequest = async req => {
 
   console.log('identityAddr:', identityAddr, quickAccount)
 }
-//onAccRequest({ passphrase: 'testtest', email: 'ivo@strem.io' })
+onAccRequest({ passphrase: 'testtest', email: 'ivo@strem.io' })
 
 function App() {
   const loginComponent = LoginOrSignup({ onAccRequest })
