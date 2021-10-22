@@ -12,6 +12,10 @@ const { getProxyDeployBytecode } = require('adex-protocol-eth/js/IdentityProxyDe
 const { Wallet } = require('ethers')
 const { hexZeroPad, AbiCoder, keccak256, id } = require('ethers').utils
 
+// NOTE: This is a compromise, but we can afford it cause QuickAccs require a secondary key
+// Consider more
+const SCRYPT_ITERATIONS = 131072/8
+
 const onAccRequest = async req => {
   console.log(req)
 
@@ -38,7 +42,7 @@ const onAccRequest = async req => {
   const quickAccount = [600, firstKeyWallet.address, secondKeyAddress]
   const abiCoder = new AbiCoder()
   const accHash = keccak256(abiCoder.encode(['tuple(uint, address, address)'], [quickAccount]))
-  // @TODO quickACcManager addr
+  // @TODO quickAccManager addr
   const quickAccManager = '0x'
   const privileges = [[quickAccManager, accHash]]
   const identityFactoryAddr = whitelistedFactories[whitelistedFactories.length - 1]
@@ -47,13 +51,15 @@ const onAccRequest = async req => {
   const identityAddr = '0x' + generateAddress2(identityFactoryAddr, salt, bytecode).toString('hex')
 
   // @TODO manage storage outside of this function, figure out what to return
-  let n = Date.now()
-  const encrypted = await firstKeyWallet.encrypt(req.passphrase, { scrypt: { N: 131072/4 } })
-  console.log(encrypted, Date.now() - n)
+  //let n = Date.now()
+  localStorage['account_'+req.email] = await firstKeyWallet.encrypt(req.passphrase, { scrypt: { N: SCRYPT_ITERATIONS } })
+  //console.log(encrypted, Date.now() - n)
 
+  /*
   n = Date.now()
   console.log(await Wallet.fromEncryptedJson(encrypted, req.passphrase))
   console.log(Date.now()-n)
+  */
 
   console.log('identityAddr:', identityAddr, quickAccount)
 }
