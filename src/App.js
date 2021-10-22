@@ -10,12 +10,14 @@ const { getProxyDeployBytecode } = require('adex-protocol-eth/js/IdentityProxyDe
 const { hexZeroPad } = require('ethers').utils
 
 function App() {
-  return LoginOrSignup({ onAccRequest: async req => {
+  const loginComponent = LoginOrSignup({ onAccRequest: async req => {
     console.log(req)
     // @TODO url
     const { whitelistedFactories, whitelistedBaseIdentities } = await fetch('http://localhost:1934/relayer/cfg').then(r => r.json())
     const salt = hexZeroPad('0x01', 32)
-    const privileges = [['0x942f9CE5D9a33a82F88D233AEb3292E680230348', true]]
+    const accHash = '' // @TODO
+    const quickAccManager = '0x'
+    const privileges = [[quickAccManager, accHash]]
     const identityFactoryAddr = whitelistedFactories[whitelistedFactories.length - 1]
     const baseIdentityAddr = whitelistedBaseIdentities[whitelistedBaseIdentities.length - 1]
     const bytecode = getProxyDeployBytecode(baseIdentityAddr, privileges, { privSlot: 0 })
@@ -24,8 +26,12 @@ function App() {
     console.log('identityAddr:', identityAddr)
 
   } })
+  return (<div>
+    <img src="https://www.ambire.com/ambire-logo-2.png"/>
+    {loginComponent}
+  </div>)
 }
-// @TODO
+// @TODO remove this bit
 
 
 function LoginOrSignup({ onAccRequest }) {
@@ -54,8 +60,8 @@ function LoginOrSignup({ onAccRequest }) {
         <div id="loginEmailPass">
           <form onSubmit={onSubmit}>
             <input type="email" required placeholder="Email" value={state.email} onChange={e => onUpdate({ email: e.target.value })}></input>
-            <input type="password" required minlength="8" placeholder="Passphrase" value={state.passphrase} onChange={e => onUpdate({ passphrase: e.target.value })}></input>
-            <input ref={passConfirmInput} required minlength="8" type="password" placeholder="Confirm passphrase" value={state.passphraseConfirm} onChange={e => onUpdate({ passphraseConfirm: e.target.value })}></input>
+            <input type="password" required minLength="8" placeholder="Passphrase" value={state.passphrase} onChange={e => onUpdate({ passphrase: e.target.value })}></input>
+            <input ref={passConfirmInput} required minLength="8" type="password" placeholder="Confirm passphrase" value={state.passphraseConfirm} onChange={e => onUpdate({ passphraseConfirm: e.target.value })}></input>
             <input type="submit" value="Sign up"></input>
           </form>
         </div>
