@@ -168,10 +168,9 @@ function LoginOrSignup({ action = 'LOGIN', onAccRequest }) {
         </div>
 
         <div id="loginOthers">
-          { /* TODO icon styling */ }
-          <button><img src="https://cdn-images-1.medium.com/max/1200/1*Sek00YxqMdOJp5FsjveZiQ.png" width="25px"/>Trezor</button>
-          <button><img src="https://www.ledger.com/wp-content/uploads/2020/02/puce_blue.png" width="25px"/>Ledger</button>
-          <button><img src="https://cdn.iconscout.com/icon/free/png-256/metamask-2728406-2261817.png" width="25px"/>Metamask / Browser</button>
+          <button><div class="icon" style={{ backgroundImage: 'url(./resources/trezor.png)' }}/>Trezor</button>
+          <button><div class="icon" style={{ backgroundImage: 'url(./resources/ledger.png)' }}/>Ledger</button>
+          <button><div class="icon" style={{ backgroundImage: 'url(./resources/metamask.png)' }}/>Metamask / Browser</button>
         </div>
     </div>
   );
