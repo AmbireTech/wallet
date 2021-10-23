@@ -19,6 +19,15 @@ const { getProxyDeployBytecode } = require('adex-protocol-eth/js/IdentityProxyDe
 const { Wallet } = require('ethers')
 const { hexZeroPad, AbiCoder, keccak256, id } = require('ethers').utils
 
+async function fetchPost (url, body) {
+	const r = await fetch(url, {
+		headers: { 'content-type': 'application/json' },
+		method: 'POST',
+		body: JSON.stringify(body)
+	})
+	return r.json()
+}
+
 // NOTE: This is a compromise, but we can afford it cause QuickAccs require a secondary key
 // Consider more
 const SCRYPT_ITERATIONS = 131072/8
@@ -39,36 +48,32 @@ const onAccRequest = async req => {
   const secondKeySecret = Wallet.createRandom({
     extraEntropy: id(req.email+':'+Date.now())
   }).mnemonic.phrase.split(' ').slice(0, 6).join(' ') + ' ' + req.email
-  const secondKeyAddress = await fetch('http://localhost:1934/second-key', {
-    method: 'POST',
-    headers: {'content-type': 'application/json'},
-    body: JSON.stringify({ secondKeySecret })
-  }).then(r => r.json()).then(r => r.address)
+  const secondKeyAddress = await fetchPost('http://localhost:1934/second-key', { secondKeySecret })
+    .then(r => r.address)
 
   // @TODO: timelock value for the quickAccount
   const quickAccount = [600, firstKeyWallet.address, secondKeyAddress]
   const abiCoder = new AbiCoder()
   const accHash = keccak256(abiCoder.encode(['tuple(uint, address, address)'], [quickAccount]))
-  // @TODO quickAccManager addr
-  const quickAccManager = '0x'
+  // @TODO not hardcoded
+  const quickAccManager = '0x697d866d20a8E8886a0D0511e82846AC108Bc5B6'
   const privileges = [[quickAccManager, accHash]]
   const identityFactoryAddr = whitelistedFactories[whitelistedFactories.length - 1]
   const baseIdentityAddr = whitelistedBaseIdentities[whitelistedBaseIdentities.length - 1]
   const bytecode = getProxyDeployBytecode(baseIdentityAddr, privileges, { privSlot: 0 })
   const identityAddr = '0x' + generateAddress2(identityFactoryAddr, salt, bytecode).toString('hex')
 
-  // @TODO manage storage outside of this function, figure out what to return
-  //let n = Date.now()
-  localStorage['account_'+req.email] = await firstKeyWallet.encrypt(req.passphrase, { scrypt: { N: SCRYPT_ITERATIONS } })
-  //console.log(encrypted, Date.now() - n)
+  const primaryKeyBackup = JSON.stringify(
+    await firstKeyWallet.encrypt(req.passphrase, { scrypt: { N: SCRYPT_ITERATIONS } })
+  )
 
-  /*
-  n = Date.now()
-  console.log(await Wallet.fromEncryptedJson(encrypted, req.passphrase))
-  console.log(Date.now()-n)
-  */
+  const createResp = await fetchPost(`http://localhost:1934/identity/${identityAddr}`, {
+    primaryKeyBackup,
+    email: req.email,
+    salt, identityFactoryAddr, baseIdentityAddr, privileges
+  })
 
-  console.log('identityAddr:', identityAddr, quickAccount)
+  console.log('identityAddr:', identityAddr, quickAccount, createResp)
 }
 //onAccRequest({ passphrase: 'testtest', email: 'ivo@strem.io' })
 
@@ -76,21 +81,31 @@ function App() {
   // @TODO default page
   return (
     <Router>
-        <nav>
+      <nav>
           <ul>
             <li>
               <Link to="/email-login">Login</Link>
             </li>
             <li>
-              <Link to="/create-account">Signup</Link>
+              <Link to="/add-account">Signup</Link>
             </li>
           </ul>
-        </nav>
-      <Switch>
+      </nav>
 
-        <Route path="/create-account">
-          <section>
+      <Switch>
+        <Route path="/add-account">
+          <section id="addAccount">
             <LoginOrSignup onAccRequest={onAccRequest} action="SIGNUP"></LoginOrSignup>
+
+            <div id="loginSeparator" style={{ width: '30px' }}>
+              <span>or</span>
+            </div>
+
+            <div id="loginOthers">
+              <button><div className="icon" style={{ backgroundImage: 'url(./resources/trezor.png)' }}/>Trezor</button>
+              <button><div className="icon" style={{ backgroundImage: 'url(./resources/ledger.png)' }}/>Ledger</button>
+              <button><div className="icon" style={{ backgroundImage: 'url(./resources/metamask.png)' }}/>Metamask / Browser</button>
+            </div>
           </section>
         </Route>
 
@@ -112,7 +127,7 @@ function App() {
 
         <Route path="/">
           { /* TODO: redirect depending on whether we have an acc */ }
-          <Redirect to="/create-account" />
+          <Redirect to="/add-account" />
         </Route>
 
       </Switch>
@@ -149,29 +164,17 @@ function LoginOrSignup({ action = 'LOGIN', onAccRequest }) {
   }
   const isSignup = state.action === 'SIGNUP'
   return (
-    <div className="loginOrSignup">
-        <div id="loginEmailPass">
-          <form onSubmit={onSubmit}>
-            <input type="email" required placeholder="Email" value={state.email} onChange={e => onUpdate({ email: e.target.value })}></input>
-            <input type="password" required minLength="8" placeholder="Passphrase" value={state.passphrase} onChange={e => onUpdate({ passphrase: e.target.value })}></input>
-            {
-              isSignup ?
-                (<input ref={passConfirmInput} required minLength="8" type="password" placeholder="Confirm passphrase" value={state.passphraseConfirm} onChange={e => onUpdate({ passphraseConfirm: e.target.value })}></input>)
-                : (<></>)
-            }
-            <input type="submit" value={isSignup ? "Sign up" : "Login"}></input>
-          </form>
-        </div>
-
-        <div id="loginSeparator" style={{ width: '30px' }}>
-          <span>or</span>
-        </div>
-
-        <div id="loginOthers">
-          <button><div class="icon" style={{ backgroundImage: 'url(./resources/trezor.png)' }}/>Trezor</button>
-          <button><div class="icon" style={{ backgroundImage: 'url(./resources/ledger.png)' }}/>Ledger</button>
-          <button><div class="icon" style={{ backgroundImage: 'url(./resources/metamask.png)' }}/>Metamask / Browser</button>
-        </div>
+    <div id="loginEmailPass">
+      <form onSubmit={onSubmit}>
+        <input type="email" required placeholder="Email" value={state.email} onChange={e => onUpdate({ email: e.target.value })}></input>
+        <input type="password" required minLength="8" placeholder="Passphrase" value={state.passphrase} onChange={e => onUpdate({ passphrase: e.target.value })}></input>
+        {
+          isSignup ?
+            (<input ref={passConfirmInput} required minLength="8" type="password" placeholder="Confirm passphrase" value={state.passphraseConfirm} onChange={e => onUpdate({ passphraseConfirm: e.target.value })}></input>)
+            : (<></>)
+        }
+        <input type="submit" value={isSignup ? "Sign up" : "Login"}></input>
+      </form>
     </div>
   );
 }
