@@ -7,7 +7,8 @@ import {
   HashRouter as Router,
   Switch,
   Route,
-  Link
+  Link,
+  Redirect
 } from "react-router-dom";
 
 // @TODO another file
@@ -78,27 +79,42 @@ function App() {
         <nav>
           <ul>
             <li>
-              <Link to="/">Login</Link>
+              <Link to="/email-login">Login</Link>
             </li>
             <li>
-              <Link to="/signup">Signup</Link>
+              <Link to="/create-account">Signup</Link>
             </li>
           </ul>
         </nav>
       <Switch>
 
-        <Route path="/signup">
+        <Route path="/create-account">
           <section>
             <LoginOrSignup onAccRequest={onAccRequest} action="SIGNUP"></LoginOrSignup>
           </section>
         </Route>
 
-        <Route path="/">
+        <Route path="/email-login">
           <section>
             <img src="https://www.ambire.com/ambire-logo-2.png"/>
             <LoginOrSignup onAccRequest={onAccRequest}></LoginOrSignup>
           </section>
         </Route>
+
+        <Route path="/dashboard"></Route>
+        <Route path="/security"></Route>
+        <Route path="/transactions"></Route>
+        <Route path="/swap"></Route>
+        <Route path="/earn"></Route>
+        {/* TODO: connected dapps */}
+        {/* TODO: tx identifier in the URL */}
+        <Route path="/approve-tx"></Route>
+
+        <Route path="/">
+          { /* TODO: redirect depending on whether we have an acc */ }
+          <Redirect to="/create-account" />
+        </Route>
+
       </Switch>
     </Router>
     )
