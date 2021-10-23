@@ -78,7 +78,7 @@ function App() {
         <nav>
           <ul>
             <li>
-              <Link to="/login">Login</Link>
+              <Link to="/">Login</Link>
             </li>
             <li>
               <Link to="/signup">Signup</Link>
@@ -86,15 +86,17 @@ function App() {
           </ul>
         </nav>
       <Switch>
-        <Route path="/login">
-          <section>
-            <img src="https://www.ambire.com/ambire-logo-2.png"/>
-            <LoginOrSignup onAccRequest={onAccRequest}></LoginOrSignup>
-          </section>
-        </Route>
+
         <Route path="/signup">
           <section>
             <LoginOrSignup onAccRequest={onAccRequest} action="SIGNUP"></LoginOrSignup>
+          </section>
+        </Route>
+
+        <Route path="/">
+          <section>
+            <img src="https://www.ambire.com/ambire-logo-2.png"/>
+            <LoginOrSignup onAccRequest={onAccRequest}></LoginOrSignup>
           </section>
         </Route>
       </Switch>
@@ -137,7 +139,7 @@ function LoginOrSignup({ action = 'LOGIN', onAccRequest }) {
             <input type="email" required placeholder="Email" value={state.email} onChange={e => onUpdate({ email: e.target.value })}></input>
             <input type="password" required minLength="8" placeholder="Passphrase" value={state.passphrase} onChange={e => onUpdate({ passphrase: e.target.value })}></input>
             {
-              isSignup ? 
+              isSignup ?
                 (<input ref={passConfirmInput} required minLength="8" type="password" placeholder="Confirm passphrase" value={state.passphraseConfirm} onChange={e => onUpdate({ passphraseConfirm: e.target.value })}></input>)
                 : (<></>)
             }
