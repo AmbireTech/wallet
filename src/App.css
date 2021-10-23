@@ -32,15 +32,14 @@ button:active, input[type=submit]:active {
   transform: scale(0.95);
 }
 
-.loginOrSignup {
+#addAccount {
   display: flex;
   flex-direction: row;
   width: 100%;
   max-width: 800px;
-
 }
 
-.loginOrSignup form > *, .loginOrSignup button {
+#loginEmailPass form > *, #loginEmailPass button, #addAccount form > *, #addAccount button {
   /* TODO */
   display: block;
 }
@@ -51,7 +50,8 @@ button:active, input[type=submit]:active {
   width: 100%;
   background-color: rgba(40, 44, 52, 0.6);
 }
-.loginOrSignup {
+
+#addAccount {
   margin: 2em auto;
 }
 
@@ -72,7 +72,7 @@ button:active, input[type=submit]:active {
   float: left;
 }
 
-.loginOrSignup input[type=submit] {
+#addAccount input[type=submit] {
   width: 100%;
   background-color: rgb(255, 209, 0);
   opacity: 0.8;
@@ -81,7 +81,7 @@ button:active, input[type=submit]:active {
   font-weight: bold;
   text-transform: uppercase;
 }
-.loginOrSignup input[type=submit]:hover {
+#addAccount input[type=submit]:hover {
   opacity: 1.0;
 }
 
