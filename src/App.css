@@ -63,8 +63,13 @@ button:active, input[type=submit]:active {
   background-color: white;
   line-height: 25px;
 }
-#loginOthers button img {
+#loginOthers .icon {
   margin-right: 10px;
+  width: 25px;
+  height: 25px;
+  background-repeat: no-repeat;
+  background-size: contain;
+  float: left;
 }
 
 .loginOrSignup input[type=submit] {
@@ -79,3 +84,4 @@ button:active, input[type=submit]:active {
 .loginOrSignup input[type=submit]:hover {
   opacity: 1.0;
 }
+
