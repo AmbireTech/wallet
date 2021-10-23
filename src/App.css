@@ -67,3 +67,15 @@ button:active, input[type=submit]:active {
   margin-right: 10px;
 }
 
+.loginOrSignup input[type=submit] {
+  width: 100%;
+  background-color: rgb(255, 209, 0);
+  opacity: 0.8;
+  border: 0px;
+  color: black;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+.loginOrSignup input[type=submit]:hover {
+  opacity: 1.0;
+}
