@@ -96,7 +96,7 @@ function App() {
         <Route path="/add-account">
           <section id="addAccount">
             <div id="loginEmailPass">
-              <h3>Create an account:</h3>
+              <h3>Create a new account</h3>
               <LoginOrSignup onAccRequest={onAccRequest} action="SIGNUP"></LoginOrSignup>
             </div>
 
@@ -107,7 +107,7 @@ function App() {
             </div>
 
             <div id="loginOthers">
-              <h3>Add an existing account:</h3>
+              <h3>Add an existing account</h3>
               <Link to="/email-login">
                 <button><div className="icon" style={{ backgroundImage: 'url(./resources/envelope.png)' }}/>Email</button>
               </Link>
@@ -174,16 +174,28 @@ function LoginOrSignup({ action = 'LOGIN', onAccRequest }) {
     // @TODO translation string
     if (passConfirmInput.current) passConfirmInput.current.setCustomValidity(invalid ? 'Passphrase must match' : '')
   }
+  const minPwdLen = 8
   const isSignup = state.action === 'SIGNUP'
+  const additionalInputs = isSignup ?
+    (<>
+      <input
+        ref={passConfirmInput}
+        required
+        minLength={minPwdLen}
+        type="password"
+        placeholder="Confirm passphrase"
+        value={state.passphraseConfirm}
+        onChange={e => onUpdate({ passphraseConfirm: e.target.value })}></input>
+      <label className="checkbox-container">
+          <input type="checkbox" required/><div class="checkbox-mark"></div>
+          <div class="checkbox-label">I agree to to the Terms of Use and Privacy policy.</div>
+      </label>
+    </>) : (<></>)
   return (
     <form onSubmit={onSubmit}>
       <input type="email" required placeholder="Email" value={state.email} onChange={e => onUpdate({ email: e.target.value })}></input>
-      <input type="password" required minLength="8" placeholder="Passphrase" value={state.passphrase} onChange={e => onUpdate({ passphrase: e.target.value })}></input>
-      {
-        isSignup ?
-          (<input ref={passConfirmInput} required minLength="8" type="password" placeholder="Confirm passphrase" value={state.passphraseConfirm} onChange={e => onUpdate({ passphraseConfirm: e.target.value })}></input>)
-          : (<></>)
-      }
+      <input type="password" required minLength={minPwdLen} placeholder="Passphrase" value={state.passphrase} onChange={e => onUpdate({ passphrase: e.target.value })}></input>
+      {additionalInputs}
       <input type="submit" value={isSignup ? "Sign up" : "Login"}></input>
     </form>
   );
