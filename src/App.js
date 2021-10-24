@@ -70,7 +70,7 @@ const onAccRequest = async req => {
   )
 
   const createResp = await fetchPost(`http://localhost:1934/identity/${identityAddr}`, {
-    primaryKeyBackup,
+    primaryKeyBackup, secondKeySecret,
     email: req.email,
     salt, identityFactoryAddr, baseIdentityAddr, privileges
   })
