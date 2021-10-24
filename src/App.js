@@ -9,7 +9,9 @@ import {
   Route,
   Link,
   Redirect
-} from "react-router-dom";
+} from "react-router-dom"
+
+import Checkbox from "./components/Checkbox/Checkbox"
 
 // @TODO another file
 // @TODO err-catching fetch helper
@@ -186,10 +188,7 @@ function LoginOrSignup({ action = 'LOGIN', onAccRequest }) {
         placeholder="Confirm passphrase"
         value={state.passphraseConfirm}
         onChange={e => onUpdate({ passphraseConfirm: e.target.value })}></input>
-      <label className="checkbox-container">
-          <input type="checkbox" required/><div class="checkbox-mark"></div>
-          <div class="checkbox-label">I agree to to the Terms of Use and Privacy policy.</div>
-      </label>
+      <Checkbox label="I agree to to the Terms of Use and Privacy policy." required={true}></Checkbox>
     </>) : (<></>)
   return (
     <form onSubmit={onSubmit}>
