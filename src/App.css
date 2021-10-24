@@ -54,7 +54,7 @@ button:hover {
   width: 100%;
   max-width: 800px;
   /* TODO some sort of vertical alignment */
-  margin: 7em auto 0em;
+  margin: 9em auto 0em;
 }
 
 #loginEmailPass form > *, #loginEmailPass button, #addAccount form > *, #addAccount button {
