@@ -101,11 +101,13 @@ function App() {
             </div>
 
             <div id="loginSeparator">
+              <div className="verticalLine"></div>
               <span>or</span>
+              <div className="verticalLine"></div>
             </div>
 
             <div id="loginOthers">
-              <h3>Login with:</h3>
+              <h3>Add an existing account:</h3>
               <Link to="/email-login">
                 <button><div className="icon" style={{ backgroundImage: 'url(./resources/user.png)' }}/>Email</button>
               </Link>

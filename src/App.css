@@ -36,6 +36,10 @@ button:active, input[type=submit]:active {
   transform: scale(0.95);
 }
 
+input:focus {
+  outline: 0px;
+}
+
 button {
   opacity: 0.8;
 }
@@ -83,7 +87,7 @@ button:hover {
   float: left;
 }
 
-#addAccount input[type=submit] {
+#loginEmailPass input[type=submit] {
   width: 100%;
   background-color: rgb(255, 209, 0);
   opacity: 0.8;
@@ -97,9 +101,20 @@ button:hover {
 }
 
 #loginSeparator {
-  flex: 0.5;
+  flex: 0.6;
   text-align: center;
+  font-size: 3em;
+  text-transform: uppercase;
+  font-weight: 300;
+  height: 400px;
 }
+#loginSeparator .verticalLine {
+  width: 2px;
+  background-color: #c3d4f6;
+  height: 45%;
+  margin: 10px auto;
+}
+
 #loginEmailPass { flex: 1 }
 #loginOthers { flex: 0.8; }
 
@@ -107,8 +122,19 @@ button:hover {
   margin: 1.5em 0px;
 }
 
-#addAccount input {
+#addAccount h3  {
+  font-size: 1.5em;
+  font-weight: 300;
+}
+
+#loginEmailPass input {
   margin: 2em 0px;
   border-bottom: 2px solid #b3c4e6;
   width: 100%;
+  color: white;
+  font-size: 1.1em;
+}
+
+#loginEmailPass input:not([type=submit]):focus {
+  border-bottom: 3px solid #c3d4f6;
 }
