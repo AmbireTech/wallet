@@ -6,10 +6,6 @@ html {
 body {
   height: 100%;
   min-width: 700px;
-  background: url('./resources/hero-darkened.svg');
-  background-size: auto 800px;
-  background-position: top center;
-  background-repeat: no-repeat;
   color: white;
   font-family: 'Open Sans';
 }
@@ -46,6 +42,28 @@ button:hover {
   opacity: 1;
 }
 
+#root {
+  height: 100%;
+}
+
+.loginSignupWrapper {
+  background: url('./resources/hero-darkened.svg');
+  background-size: auto 800px;
+  background-position: top center;
+  background-repeat: no-repeat;
+  min-height: 100%;
+  overflow: hidden;
+}
+
+#addAccount {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  max-width: 800px;
+  /* TODO some sort of vertical alignment */
+  margin: 0em auto 0em;
+}
+
 #logo {
   background-image: url('./resources/logo.png');
   width: 35%;
@@ -56,15 +74,6 @@ button:hover {
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
-}
-
-#addAccount {
-  display: flex;
-  flex-direction: row;
-  width: 100%;
-  max-width: 800px;
-  /* TODO some sort of vertical alignment */
-  margin: 0em auto 0em;
 }
 
 #loginEmailPass form > *, #loginEmailPass button, #addAccount form > *, #addAccount button {
