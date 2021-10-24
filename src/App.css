@@ -118,8 +118,8 @@ button:hover {
   margin: 10px auto;
 }
 
-#loginEmailPass { flex: 1 }
-#loginOthers { flex: 0.8; }
+#loginEmailPass { flex: 0.9 }
+#loginOthers { flex: 0.9; }
 
 #loginOthers button {
   margin: 1.5em 0px;
