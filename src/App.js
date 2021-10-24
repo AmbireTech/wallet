@@ -77,7 +77,6 @@ const onAccRequest = async req => {
 //onAccRequest({ passphrase: 'testtest', email: 'ivo@strem.io' })
 
 function App() {
-  // @TODO default page
   return (
     <Router>
       {/*<nav>
