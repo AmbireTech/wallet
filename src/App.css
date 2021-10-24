@@ -89,12 +89,15 @@ button:hover {
 
 #loginEmailPass input[type=submit] {
   width: 100%;
-  background-color: rgb(255, 209, 0);
+  /*background-color: rgb(255, 209, 0);*/
+  background-color: rgb(128, 255, 219);
   opacity: 0.8;
   border: 0px;
+  font-size: 1.5em;
   color: black;
-  font-weight: bold;
+  font-weight: 600;
   text-transform: uppercase;
+  padding: 0.6em;
 }
 #addAccount input[type=submit]:hover {
   opacity: 1.0;
@@ -103,7 +106,7 @@ button:hover {
 #loginSeparator {
   flex: 0.6;
   text-align: center;
-  font-size: 3em;
+  font-size: 2.5em;
   text-transform: uppercase;
   font-weight: 300;
   height: 400px;
