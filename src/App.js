@@ -109,7 +109,7 @@ function App() {
             <div id="loginOthers">
               <h3>Add an existing account:</h3>
               <Link to="/email-login">
-                <button><div className="icon" style={{ backgroundImage: 'url(./resources/user.png)' }}/>Email</button>
+                <button><div className="icon" style={{ backgroundImage: 'url(./resources/envelope.png)' }}/>Email</button>
               </Link>
               <button><div className="icon" style={{ backgroundImage: 'url(./resources/trezor.png)' }}/>Trezor</button>
               <button><div className="icon" style={{ backgroundImage: 'url(./resources/ledger.png)' }}/>Ledger</button>
