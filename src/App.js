@@ -1,5 +1,4 @@
 import './App.css'
-// @TODO LoginOrSignup in a separate file
 import { useState, useRef } from 'react'
 
 
@@ -83,7 +82,7 @@ function App() {
   // @TODO default page
   return (
     <Router>
-      <nav>
+      {/*<nav>
           <ul>
             <li>
               <Link to="/email-login">Login</Link>
@@ -92,7 +91,7 @@ function App() {
               <Link to="/add-account">Signup</Link>
             </li>
           </ul>
-      </nav>
+      </nav>*/}
 
       <Switch>
         <Route path="/add-account">
