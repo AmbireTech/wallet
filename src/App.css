@@ -51,7 +51,8 @@ button:hover {
   background-image: url('./resources/logo.png');
   width: 35%;
   max-width: 400px;
-  margin: 3em auto 2em;
+  padding: 3em 0px 2em;
+  margin: 0px auto;
   height: 200px;
   background-size: contain;
   background-repeat: no-repeat;
@@ -73,8 +74,8 @@ button:hover {
 
 /* TEMP */
 #root {
-  overflow: hidden;
-  height: 100%;
+  box-sizing: border-box;
+  min-height: 100%;
   width: 100%;
   background-color: rgba(40, 44, 52, 0.7);
 }
