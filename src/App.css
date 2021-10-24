@@ -12,6 +12,7 @@ body {
   background-position: top center;
   background-repeat: no-repeat;
   color: white;
+  font-family: 'Open Sans';
 }
 
 a {
@@ -24,6 +25,7 @@ button, input {
   background: none; /* #282c34; */
   padding: 1em;
   box-sizing: border-box;
+  font-family: 'Open Sans';
 }
 
 button, input[type=submit] {
