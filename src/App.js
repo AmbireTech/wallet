@@ -92,10 +92,10 @@ function App() {
 
       <Switch>
         <Route path="/add-account">
-          <div class="loginSignupWrapper">
+          <div className="loginSignupWrapper">
             <div id="logo"/>
             <section id="addAccount">
-              <div id="loginEmailPass">
+              <div id="loginEmail">
                 <h3>Create a new account</h3>
                 <LoginOrSignup onAccRequest={onAccRequest} action="SIGNUP"></LoginOrSignup>
               </div>
@@ -120,9 +120,13 @@ function App() {
         </Route>
 
         <Route path="/email-login">
-          <section class="loginSignupWrapper">
-            <div id="loginEmailPass">
+          <section className="loginSignupWrapper" id="emailLoginSection">
+            <div id="logo"/>
+            <div id="loginEmail">
               <LoginOrSignup onAccRequest={onAccRequest}></LoginOrSignup>
+
+              <a href="#">I forgot my passphrase</a>
+              <a href="#">Import JSON</a>
             </div>
           </section>
         </Route>

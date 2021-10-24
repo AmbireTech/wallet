@@ -12,6 +12,10 @@ body {
 
 a {
   text-decoration: none;
+  color: #ccc;
+}
+a:hover {
+  color: white;
 }
 
 button, input {
@@ -76,7 +80,7 @@ button:hover {
   background-position: center;
 }
 
-#loginEmailPass form > *, #loginEmailPass button, #addAccount form > *, #addAccount button {
+#loginEmail form > *, #loginEmail button, #addAccount form > *, #addAccount button {
   /* TODO */
   display: block;
 }
@@ -99,7 +103,7 @@ button:hover {
   float: left;
 }
 
-#loginEmailPass input[type=submit] {
+#loginEmail input[type=submit] {
   width: 100%;
   /*background-color: rgb(255, 209, 0);*/
   background-color: rgb(128, 255, 219);
@@ -130,7 +134,7 @@ button:hover {
   margin: 10px auto;
 }
 
-#loginEmailPass { flex: 0.9 }
+#loginEmail { flex: 0.9 }
 #loginOthers { flex: 0.9; }
 
 #loginOthers button {
@@ -145,7 +149,7 @@ button:hover {
   font-weight: 300;
 }
 
-#loginEmailPass input {
+#loginEmail input {
   margin: 2em 0px;
   border-bottom: 2px solid #b3c4e6;
   width: 100%;
@@ -153,6 +157,20 @@ button:hover {
   font-size: 1.1em;
 }
 
-#loginEmailPass input:not([type=submit]):focus {
-  border-bottom: 3px solid #c3d4f6;
+#loginEmail input:not([type=submit]):focus {
+  border-bottom: 3px solid #dae6fd;
+}
+
+#emailLoginSection #loginEmail {
+  max-width: 400px;
+  margin: 0px auto;
+}
+
+#emailLoginSection a {
+  display: block;
+  margin: 1.3em auto;
+  text-transform: uppercase;
+  font-weight: 600;
+  font-size: 1.2em;
+  text-align: center;
 }
