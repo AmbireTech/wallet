@@ -2,12 +2,16 @@ import React from 'react';
 import './Checkbox.css'
 
 function Checkbox(props) {
-    return props.label ? (<label className="checkbox-container">
+    const inputElem =  (
         <input type="checkbox" checked={props.checked} required={props.required} onChange={props.onChange}/>
+    )
+
+    return props.label ? (<label className="checkbox-container">
+        {inputElem}
         <div className="checkbox-mark"></div>
         <div className="checkbox-label">{props.label}</div>
     </label>) : (<>
-        <input type="checkbox" required={props.required}/>
+        {inputElem}
         <div className="checkbox-mark"></div>
     </>)
 }
