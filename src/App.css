@@ -14,14 +14,16 @@ body {
   color: white;
 }
 
+a {
+  text-decoration: none;
+}
+
 button, input {
-  color: white;
   font-size: 1em;
+  border: 0px;
+  background: none; /* #282c34; */
   padding: 1em;
-  border-radius: 0px;
-  background-color: #282c34;
-  border: 1px solid #55ffff;
-  margin: 1em;
+  box-sizing: border-box;
 }
 
 button, input[type=submit] {
@@ -32,11 +34,21 @@ button:active, input[type=submit]:active {
   transform: scale(0.95);
 }
 
+button {
+  opacity: 0.8;
+}
+button:hover {
+  opacity: 1;
+}
+
+
 #addAccount {
   display: flex;
   flex-direction: row;
   width: 100%;
   max-width: 800px;
+  /* TODO some sort of vertical alignment */
+  margin: 10em auto 0em;
 }
 
 #loginEmailPass form > *, #loginEmailPass button, #addAccount form > *, #addAccount button {
@@ -48,15 +60,12 @@ button:active, input[type=submit]:active {
 #root {
   height: 100%;
   width: 100%;
-  background-color: rgba(40, 44, 52, 0.6);
-}
-
-#addAccount {
-  margin: 2em auto;
+  background-color: rgba(40, 44, 52, 0.7);
 }
 
 #loginOthers button {
   width: 100%;
+  box-sizing: border-box;
   text-align: left;
   border: 0px;
   color: black;
@@ -85,3 +94,19 @@ button:active, input[type=submit]:active {
   opacity: 1.0;
 }
 
+#loginSeparator {
+  flex: 0.5;
+  text-align: center;
+}
+#loginEmailPass { flex: 1 }
+#loginOthers { flex: 0.8; }
+
+#loginOthers button {
+  margin: 1.5em 0px;
+}
+
+#addAccount input {
+  margin: 2em 0px;
+  border-bottom: 2px solid #b3c4e6;
+  width: 100%;
+}

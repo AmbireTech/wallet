@@ -95,13 +95,20 @@ function App() {
       <Switch>
         <Route path="/add-account">
           <section id="addAccount">
-            <LoginOrSignup onAccRequest={onAccRequest} action="SIGNUP"></LoginOrSignup>
+            <div id="loginEmailPass">
+              <h3>Create an account:</h3>
+              <LoginOrSignup onAccRequest={onAccRequest} action="SIGNUP"></LoginOrSignup>
+            </div>
 
-            <div id="loginSeparator" style={{ width: '30px' }}>
+            <div id="loginSeparator">
               <span>or</span>
             </div>
 
             <div id="loginOthers">
+              <h3>Login with:</h3>
+              <Link to="/email-login">
+                <button><div className="icon" style={{ backgroundImage: 'url(./resources/user.png)' }}/>Email</button>
+              </Link>
               <button><div className="icon" style={{ backgroundImage: 'url(./resources/trezor.png)' }}/>Trezor</button>
               <button><div className="icon" style={{ backgroundImage: 'url(./resources/ledger.png)' }}/>Ledger</button>
               <button><div className="icon" style={{ backgroundImage: 'url(./resources/metamask.png)' }}/>Metamask / Browser</button>
@@ -111,12 +118,16 @@ function App() {
 
         <Route path="/email-login">
           <section>
-            <img src="https://www.ambire.com/ambire-logo-2.png"/>
-            <LoginOrSignup onAccRequest={onAccRequest}></LoginOrSignup>
+            <div id="loginEmailPass">
+              <LoginOrSignup onAccRequest={onAccRequest}></LoginOrSignup>
+            </div>
           </section>
         </Route>
 
-        <Route path="/dashboard"></Route>
+        <Route path="/dashboard">
+          <img src="https://www.ambire.com/ambire-logo-2.png" alt="ambire logo"/>
+
+        </Route>
         <Route path="/security"></Route>
         <Route path="/transactions"></Route>
         <Route path="/swap"></Route>
@@ -138,7 +149,6 @@ function App() {
 
 
 function LoginOrSignup({ action = 'LOGIN', onAccRequest }) {
-  // @NOTE: preventDefault prevents validation
   const passConfirmInput = useRef(null)
   const [state, setState] = useState({
     email: '', passphrase: '', passphraseConfirm: '', action
@@ -164,18 +174,16 @@ function LoginOrSignup({ action = 'LOGIN', onAccRequest }) {
   }
   const isSignup = state.action === 'SIGNUP'
   return (
-    <div id="loginEmailPass">
-      <form onSubmit={onSubmit}>
-        <input type="email" required placeholder="Email" value={state.email} onChange={e => onUpdate({ email: e.target.value })}></input>
-        <input type="password" required minLength="8" placeholder="Passphrase" value={state.passphrase} onChange={e => onUpdate({ passphrase: e.target.value })}></input>
-        {
-          isSignup ?
-            (<input ref={passConfirmInput} required minLength="8" type="password" placeholder="Confirm passphrase" value={state.passphraseConfirm} onChange={e => onUpdate({ passphraseConfirm: e.target.value })}></input>)
-            : (<></>)
-        }
-        <input type="submit" value={isSignup ? "Sign up" : "Login"}></input>
-      </form>
-    </div>
+    <form onSubmit={onSubmit}>
+      <input type="email" required placeholder="Email" value={state.email} onChange={e => onUpdate({ email: e.target.value })}></input>
+      <input type="password" required minLength="8" placeholder="Passphrase" value={state.passphrase} onChange={e => onUpdate({ passphrase: e.target.value })}></input>
+      {
+        isSignup ?
+          (<input ref={passConfirmInput} required minLength="8" type="password" placeholder="Confirm passphrase" value={state.passphraseConfirm} onChange={e => onUpdate({ passphraseConfirm: e.target.value })}></input>)
+          : (<></>)
+      }
+      <input type="submit" value={isSignup ? "Sign up" : "Login"}></input>
+    </form>
   );
 }
 
