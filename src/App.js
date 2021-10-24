@@ -95,6 +95,7 @@ function App() {
 
       <Switch>
         <Route path="/add-account">
+          <div id="logo"/>
           <section id="addAccount">
             <div id="loginEmailPass">
               <h3>Create a new account</h3>

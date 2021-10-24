@@ -47,13 +47,23 @@ button:hover {
   opacity: 1;
 }
 
+#logo {
+  background-image: url('./resources/logo.png');
+  width: 35%;
+  max-width: 350px;
+  margin: 3em auto 2em;
+  height: 250px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
 #addAccount {
   display: flex;
   flex-direction: row;
   width: 100%;
   max-width: 800px;
   /* TODO some sort of vertical alignment */
-  margin: 9em auto 0em;
+  margin: 0em auto 0em;
 }
 
 #loginEmailPass form > *, #loginEmailPass button, #addAccount form > *, #addAccount button {
@@ -63,6 +73,7 @@ button:hover {
 
 /* TEMP */
 #root {
+  overflow: hidden;
   height: 100%;
   width: 100%;
   background-color: rgba(40, 44, 52, 0.7);
