@@ -92,33 +92,35 @@ function App() {
 
       <Switch>
         <Route path="/add-account">
-          <div id="logo"/>
-          <section id="addAccount">
-            <div id="loginEmailPass">
-              <h3>Create a new account</h3>
-              <LoginOrSignup onAccRequest={onAccRequest} action="SIGNUP"></LoginOrSignup>
-            </div>
+          <div class="loginSignupWrapper">
+            <div id="logo"/>
+            <section id="addAccount">
+              <div id="loginEmailPass">
+                <h3>Create a new account</h3>
+                <LoginOrSignup onAccRequest={onAccRequest} action="SIGNUP"></LoginOrSignup>
+              </div>
 
-            <div id="loginSeparator">
-              <div className="verticalLine"></div>
-              <span>or</span>
-              <div className="verticalLine"></div>
-            </div>
+              <div id="loginSeparator">
+                <div className="verticalLine"></div>
+                <span>or</span>
+                <div className="verticalLine"></div>
+              </div>
 
-            <div id="loginOthers">
-              <h3>Add an existing account</h3>
-              <Link to="/email-login">
-                <button><div className="icon" style={{ backgroundImage: 'url(./resources/envelope.png)' }}/>Email</button>
-              </Link>
-              <button><div className="icon" style={{ backgroundImage: 'url(./resources/trezor.png)' }}/>Trezor</button>
-              <button><div className="icon" style={{ backgroundImage: 'url(./resources/ledger.png)' }}/>Ledger</button>
-              <button><div className="icon" style={{ backgroundImage: 'url(./resources/metamask.png)' }}/>Metamask / Browser</button>
-            </div>
-          </section>
+              <div id="loginOthers">
+                <h3>Add an existing account</h3>
+                <Link to="/email-login">
+                  <button><div className="icon" style={{ backgroundImage: 'url(./resources/envelope.png)' }}/>Email</button>
+                </Link>
+                <button><div className="icon" style={{ backgroundImage: 'url(./resources/trezor.png)' }}/>Trezor</button>
+                <button><div className="icon" style={{ backgroundImage: 'url(./resources/ledger.png)' }}/>Ledger</button>
+                <button><div className="icon" style={{ backgroundImage: 'url(./resources/metamask.png)' }}/>Metamask / Browser</button>
+              </div>
+            </section>
+          </div>
         </Route>
 
         <Route path="/email-login">
-          <section>
+          <section class="loginSignupWrapper">
             <div id="loginEmailPass">
               <LoginOrSignup onAccRequest={onAccRequest}></LoginOrSignup>
             </div>
@@ -126,7 +128,7 @@ function App() {
         </Route>
 
         <Route path="/dashboard">
-          <img src="https://www.ambire.com/ambire-logo-2.png" alt="ambire logo"/>
+          <div id="logo"/>
 
         </Route>
         <Route path="/security"></Route>
