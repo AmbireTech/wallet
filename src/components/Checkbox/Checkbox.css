@@ -1,10 +1,9 @@
 .checkbox-container {
   position: relative;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
+  display: block;
   cursor: pointer;
-  user-select: none;	
+  margin: 1em 0px;
+  user-select: none;
 }
 
 .checkbox-container input {
@@ -14,11 +13,10 @@
 
 .checkbox-mark {
   display: block;
-  float: left;
   position: relative;
+  float: left;
   height: 25px;
   width: 25px;
-  flex-shrink: 0;
   border: 3px solid #7B7597;
   background-color: transparent;
   margin-right: 1rem;

@@ -177,6 +177,9 @@ function LoginOrSignup({ action = 'LOGIN', onAccRequest }) {
   }
   const minPwdLen = 8
   const isSignup = state.action === 'SIGNUP'
+  const additionalOnSignup = state.backupOptout ? (
+    <Checkbox label="I understand that losing this backup means I will have to trigger account recovery." required={true}></Checkbox>
+  ) : (<></>)
   const additionalInputs = isSignup ?
     (<>
       <input
@@ -188,6 +191,8 @@ function LoginOrSignup({ action = 'LOGIN', onAccRequest }) {
         value={state.passphraseConfirm}
         onChange={e => onUpdate({ passphraseConfirm: e.target.value })}></input>
       <Checkbox label="I agree to to the Terms of Use and Privacy policy." required={true}></Checkbox>
+      <Checkbox label="Backup on Ambire Cloud." checked={!state.backupOptout} onChange={e => onUpdate({ backupOptout: !e.target.checked })}></Checkbox>
+      {additionalOnSignup}
     </>) : (<></>)
   return (
     <form onSubmit={onSubmit}>
