@@ -5,7 +5,7 @@ html {
 }
 body {
   height: 100%;
-  min-width: 100%;
+  min-width: 700px;
   background-color: rgba(40, 44, 52, 0.8);
   background: url('https://www.ambire.com/hero.svg');
   background-size: auto 800px;
