@@ -6,9 +6,11 @@ import {
   Route,
   Link,
   Redirect
-} from "react-router-dom"
+} from 'react-router-dom'
 
-import LoginOrSignup from "./components/LoginOrSignup/LoginOrSignup"
+import { useState } from 'react'
+
+import LoginOrSignup from './components/LoginOrSignup/LoginOrSignup'
 
 // @TODO another file
 // @TODO err-catching fetch helper
@@ -76,7 +78,17 @@ const onAccRequest = async req => {
 }
 //onAccRequest({ passphrase: 'testtest', email: 'ivo@strem.io' })
 
+// @TODO catch parse failures and handle them
+const initialAccounts = JSON.parse(localStorage.accounts || '[]')
 function App() {
+  const [accounts, setAccounts] = useState(initialAccounts)
+  const addAccount = acc => {
+    const existing = accounts.find(x => x._id === acc._id)
+    // @TODO show toast
+    if (existing) return
+    setAccounts([ ...accounts, acc ])
+    localStorage.accounts = JSON.stringify(accounts)
+  }
   return (
     <Router>
       {/*<nav>
