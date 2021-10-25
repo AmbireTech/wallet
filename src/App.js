@@ -133,12 +133,12 @@ function App() {
         <Route path="/email-login">
           <section className="loginSignupWrapper" id="emailLoginSection">
             <div id="logo"/>
-            <div id="loginEmail">
+            {false ? (<div id="loginEmail" class="emailConf"><h3>Email confirmation required</h3><p>This is the first log-in from this browser, email confirmation is required.<br/><br/>We sent an email to EMAIL, please check your inbox and click "Confirm".</p></div>) : (<div id="loginEmail">
               <LoginOrSignup onAccRequest={onAccRequest}></LoginOrSignup>
 
               <a href="#">I forgot my passphrase</a>
               <a href="#">Import JSON</a>
-            </div>
+            </div>)}
           </section>
         </Route>
 

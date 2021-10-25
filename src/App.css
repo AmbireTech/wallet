@@ -174,3 +174,10 @@ button:hover {
   font-size: 1.2em;
   text-align: center;
 }
+
+.emailConf {
+  background-color: rgba(0,0,0,0.3);
+  padding: 1.5em;
+}
+
+.emailConf h3 {text-align: center;}
