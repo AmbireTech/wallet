@@ -1,5 +1,6 @@
 import './App.css'
 
+import { useState } from 'react'
 import {
   HashRouter as Router,
   Switch,
@@ -7,9 +8,7 @@ import {
   Link,
   Redirect
 } from 'react-router-dom'
-
-import { useState } from 'react'
-
+import { MdDashboard } from 'react-icons/md'
 import LoginOrSignup from './components/LoginOrSignup/LoginOrSignup'
 
 // @TODO another file
@@ -145,7 +144,7 @@ function App() {
 
         <Route path="/dashboard">
           <div id="logo"/>
-
+          <div><MdDashboard/></div>
         </Route>
         <Route path="/security"></Route>
         <Route path="/transactions"></Route>
