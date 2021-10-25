@@ -182,11 +182,37 @@ function LoginByEmail({ onAddAccount }) {
   const [requiresEmailConfFor, setRequiresConfFor] = useState('')
   const [err, setErr] = useState('')
 
+  const onTryDecrypt = async (identityInfo, passphrase) => {
+    console.log(identityInfo, passphrase)
+    if (!identityInfo.meta.primaryKeyBackup) {
+      setErr('No account key backup: you either disabled email login or you have to import it from JSON')
+      return
+    }
+    // @TODO progress bar here
+    try {
+      console.log(await Wallet.fromEncryptedJson(JSON.parse(identityInfo.meta.primaryKeyBackup), passphrase))
+      const { salt, identityFactoryAddr, baseIdentityAddr } = identityInfo
+      onAddAccount({
+        email: identityInfo.meta.email,
+        primaryKeyBackup: identityInfo.meta.primaryKeyBackup,
+        salt, identityFactoryAddr, baseIdentityAddr
+      })
+    } catch (e) {
+      if (e.message.includes('invalid password')) setErr('Invalid passphrase')
+      else {
+        setErr(`Ethers error: ${e.message}`)
+        console.error(e)
+      }
+    }
+
+  }
+
   const onLogin = async ({ email, passphrase }) => {
     setErr('')
     setRequiresConfFor('')
-    // optimistically, try by-email first
-    const resp = await fetch(`http://localhost:1934/identity/by-email/${encodeURIComponent(email)}/info`)
+    // try by-email first: if this returns data we can just move on to decrypting
+    // does not matter which network we request
+    const resp = await fetch(`http://localhost:1934/identity/by-email/${encodeURIComponent(email)}/ethereum?skipPrivilegesUpdate=true`, { credentials: 'include' })
     let body
     try {
       body = await resp.json()
@@ -194,22 +220,34 @@ function LoginByEmail({ onAddAccount }) {
       setErr(`Unexpected error: ${resp.status}`)
       return
     }
+  
+    if (resp.status === 401 && body.errType === 'UNAUTHORIZED') {
+      const requestAuthResp = await fetch(`http://localhost:1934/identity/by-email/${encodeURIComponent(email)}/request-confirm-login`, { method: 'POST' })
+      if (requestAuthResp.status !== 200) {
+        setErr(`Email confirmation needed but unable to request: ${requestAuthResp.status}`)
+        return
+      }
+      setRequiresConfFor(email)
+      return
+    }
+
     if (resp.status === 404 && body.errType === 'DOES_NOT_EXIST') {
       setErr('Account does not exist')
       return
     }
-    if (resp.status !== 200) {
-      setErr(body.message || `Unknown no-message error: ${resp.status}`)
-    } 
-    console.log(body)
 
+    if (resp.status === 200) {
+      onTryDecrypt(body, passphrase)
+    } else {
+      setErr(body.message ? `Relayer error: ${body.message}` : `Unknown no-message error: ${resp.status}`)
+    }
   }
 
   const inner = requiresEmailConfFor ?
     (<div id="loginEmail" className="emailConf">
       <h3><MdEmail size={25} color="white"/>Email confirmation required</h3>
       <p>This is the first log-in from this browser, email confirmation is required.<br/><br/>
-      We sent an email to ${requiresEmailConfFor}, please check your inbox and click "Confirm".
+      We sent an email to {requiresEmailConfFor}, please check your inbox and click "Confirm".
       </p>
     </div>)
     : (<div id="loginEmail">
