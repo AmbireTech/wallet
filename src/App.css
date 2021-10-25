@@ -182,3 +182,48 @@ button:hover {
 
 .emailConf h3 {text-align: center;}
 .emailConf h3 svg { margin-right: 10px; position: relative; top: 5px;}
+
+
+#sidebar {
+  width: 280px;
+  position: fixed;
+  left: 0px;
+  bottom: 0px;
+  top: 0px;
+  box-sizing: border-box;
+  padding: 20px;
+}
+#sidebar .logo {
+  background-image: url('./resources/logo.png');
+  width: 100%;
+  margin-bottom: 3em;
+  height: 70px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center left;
+}
+#sidebar .balance label {
+  text-transform: uppercase;
+  line-height: 1.75;
+  font-weight: 600;
+}
+#sidebar .highlight {
+  color: rgb(128, 255, 219);
+}
+#sidebar .dollarSign {
+  margin-right: 5px;
+}
+#sidebar .balanceDollarAmount {
+  font-size: 2em;
+}
+
+#dashboard .item {
+  margin-top: 30px; 
+  line-height: 30px;
+
+}
+#dashboard .item svg {
+  margin-right: 30px;
+  float: left;
+  color: #AA6AFF;
+}
