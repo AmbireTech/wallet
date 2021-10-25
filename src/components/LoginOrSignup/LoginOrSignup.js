@@ -1,7 +1,5 @@
 import { useState, useRef } from 'react'
 import Checkbox from "../Checkbox/Checkbox"
-import { MdEmail, MdLock } from 'react-icons/md'
-import ReactDOMServer from 'react-dom/server'
 
 function LoginOrSignup({ action = 'LOGIN', onAccRequest }) {
     const passConfirmInput = useRef(null)
@@ -29,22 +27,15 @@ function LoginOrSignup({ action = 'LOGIN', onAccRequest }) {
           passConfirmInput.current.setCustomValidity(invalid ? 'Passphrase must match' : '')
       }
     }
-
     const minPwdLen = 8
     const isSignup = state.action === 'SIGNUP'
     const additionalOnSignup = state.backupOptout ? (
       <Checkbox label="I understand that losing this backup means I will have to trigger account recovery." required={true}></Checkbox>
     ) : (<></>)
-
-    const getIconStyle = frag => ({
-        backgroundImage: 'url(data:image/svg+xml;utf8,'+encodeURIComponent(ReactDOMServer.renderToString(frag))+')'
-    })
-
     const additionalInputs = isSignup ?
       (<>
         <input
           ref={passConfirmInput}
-          style={getIconStyle((<MdLock color="#ccc"/>))}
           required
           minLength={minPwdLen}
           type="password"
@@ -55,10 +46,11 @@ function LoginOrSignup({ action = 'LOGIN', onAccRequest }) {
         <Checkbox label="Backup on Ambire Cloud." checked={!state.backupOptout} onChange={e => onUpdate({ backupOptout: !e.target.checked })}></Checkbox>
         {additionalOnSignup}
       </>) : (<></>)
+
     return (
       <form onSubmit={onSubmit}>
-        <input type="email" style={getIconStyle((<MdEmail color="#ccc"/>))} required placeholder="Email" value={state.email} onChange={e => onUpdate({ email: e.target.value })}></input>
-        <input type="password" style={getIconStyle((<MdLock color="#ccc"/>))} required minLength={minPwdLen} placeholder="Passphrase" value={state.passphrase} onChange={e => onUpdate({ passphrase: e.target.value })}></input>
+        <input type="email" required placeholder="Email" value={state.email} onChange={e => onUpdate({ email: e.target.value })}></input>
+        <input type="password" required minLength={minPwdLen} placeholder="Passphrase" value={state.passphrase} onChange={e => onUpdate({ passphrase: e.target.value })}></input>
         {additionalInputs}
         <input type="submit" value={isSignup ? "Sign up" : "Login"}></input>
       </form>
