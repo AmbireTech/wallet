@@ -184,6 +184,7 @@ button:hover {
 .emailConf h3 svg { margin-right: 10px; position: relative; top: 5px;}
 
 
+/* TODO: can we have a variable left padding here */
 #sidebar {
   width: 280px;
   position: fixed;
@@ -191,16 +192,19 @@ button:hover {
   bottom: 0px;
   top: 0px;
   box-sizing: border-box;
-  padding: 20px;
 }
 #sidebar .logo {
   background-image: url('./resources/logo.png');
   width: 100%;
-  margin-bottom: 3em;
+  margin: 1em 0em 3em 0.5em;
   height: 70px;
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center left;
+}
+#sidebar .balance {
+  margin-bottom: 3em;
+  padding-left: 1em;
 }
 #sidebar .balance label {
   text-transform: uppercase;
@@ -218,12 +222,24 @@ button:hover {
 }
 
 #dashboard .item {
-  margin-top: 30px; 
+  padding: 15px 0px;
   line-height: 30px;
-
+  cursor: pointer;
+  color: #bbb;
+}
+#dashboard .item:hover {
+  background-color: rgba(0,0,0,0.3);
+  color: #fff;
+}
+#dashboard .item:hover svg {
+  color: #fff;
 }
 #dashboard .item svg {
   margin-right: 30px;
+  margin-left: 15px;
+  color: #bbb;
   float: left;
+}
+#dashboard .item.selected svg {
   color: #AA6AFF;
 }
