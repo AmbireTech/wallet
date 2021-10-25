@@ -181,3 +181,4 @@ button:hover {
 }
 
 .emailConf h3 {text-align: center;}
+.emailConf h3 svg { margin-right: 10px; position: relative; top: 5px;}

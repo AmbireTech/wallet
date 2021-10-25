@@ -8,7 +8,7 @@ import {
   Link,
   Redirect
 } from 'react-router-dom'
-import { MdDashboard } from 'react-icons/md'
+import { MdDashboard, MdEmail } from 'react-icons/md'
 import LoginOrSignup from './components/LoginOrSignup/LoginOrSignup'
 
 // @TODO another file
@@ -133,7 +133,7 @@ function App() {
         <Route path="/email-login">
           <section className="loginSignupWrapper" id="emailLoginSection">
             <div id="logo"/>
-            {false ? (<div id="loginEmail" class="emailConf"><h3>Email confirmation required</h3><p>This is the first log-in from this browser, email confirmation is required.<br/><br/>We sent an email to EMAIL, please check your inbox and click "Confirm".</p></div>) : (<div id="loginEmail">
+            {false ? (<div id="loginEmail" class="emailConf"><h3><MdEmail size={25} color="white"/>Email confirmation required</h3><p>This is the first log-in from this browser, email confirmation is required.<br/><br/>We sent an email to EMAIL, please check your inbox and click "Confirm".</p></div>) : (<div id="loginEmail">
               <LoginOrSignup onAccRequest={onAccRequest}></LoginOrSignup>
 
               <a href="#">I forgot my passphrase</a>
