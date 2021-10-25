@@ -185,6 +185,8 @@ function App() {
     )
 }
 
+// NOTE: the same polling that we do here with the setEffect should be used for txns
+// that require email confirmation
 function LoginByEmail({ onAddAccount }) {
   const [requiresEmailConfFor, setRequiresConfFor] = useState(null)
   const [err, setErr] = useState('')
@@ -214,19 +216,14 @@ function LoginByEmail({ onAddAccount }) {
         console.error(e)
       }
     }
-
   }
 
   const attemptLogin = async ({ email, passphrase }, ignoreEmailConfirmationRequired) => {
     // try by-email first: if this returns data we can just move on to decrypting
     // does not matter which network we request
-    const resp = await fetch(`http://localhost:1934/identity/by-email/${encodeURIComponent(email)}/ethereum?skipPrivilegesUpdate=true`, { credentials: 'include' })
-    let body
-    try {
-      body = await resp.json()
-    } catch(e) {
-      console.error(e)
-      setErr(`Unexpected error: ${resp.status}, ${e && e.message}`)
+    const { resp, body, errMsg } = await fetchCaught(`http://localhost:1934/identity/by-email/${encodeURIComponent(email)}/ethereum?skipPrivilegesUpdate=true`, { credentials: 'include' })
+    if (errMsg) {
+      setErr(errMsg)
       return
     }
   
@@ -271,7 +268,7 @@ function LoginByEmail({ onAddAccount }) {
       const timer = setTimeout(() => attemptLogin(requiresEmailConfFor, true), EMAIL_VERIFICATION_RECHECK)
       return () => clearTimeout(timer)
     }
-  }, [requiresEmailConfFor])
+  }, [requiresEmailConfFor, attemptLogin])
 
   const inner = requiresEmailConfFor ?
     (<div id="loginEmail" className="emailConf">
@@ -296,6 +293,24 @@ function LoginByEmail({ onAddAccount }) {
     {inner}
   </section>
   )
+}
+
+async function fetchCaught (url, params) {
+  let resp
+  try {
+    resp = await fetch(url, params)
+  } catch (e) {
+    console.error(e)
+    return { errMsg: `Unexpected error: ${e && e.message}` }
+  }
+  let body
+  try {
+    body = await resp.json()
+  } catch(e) {
+    console.error(e)
+    return { errMsg: `Unexpected error: ${resp.status}, ${e && e.message}`, resp }
+  }
+  return { body, resp, errMsg: '' }
 }
 
 export default App;
