@@ -1,6 +1,7 @@
 import './App.css'
 
 import { useState } from 'react'
+import { useEffect } from 'react'
 import {
   HashRouter as Router,
   Switch,
@@ -185,8 +186,10 @@ function App() {
 }
 
 function LoginByEmail({ onAddAccount }) {
-  const [requiresEmailConfFor, setRequiresConfFor] = useState('')
+  const [requiresEmailConfFor, setRequiresConfFor] = useState(null)
   const [err, setErr] = useState('')
+
+  const EMAIL_VERIFICATION_RECHECK = 3000
 
   const onTryDecrypt = async (identityInfo, passphrase) => {
     if (!identityInfo.meta.primaryKeyBackup) {
@@ -195,7 +198,8 @@ function LoginByEmail({ onAddAccount }) {
     }
     // @TODO progress bar here
     try {
-      console.log(await Wallet.fromEncryptedJson(JSON.parse(identityInfo.meta.primaryKeyBackup), passphrase))
+      const wallet = await Wallet.fromEncryptedJson(JSON.parse(identityInfo.meta.primaryKeyBackup), passphrase)
+      // console.log(wallet)
       const { _id, salt, identityFactoryAddr, baseIdentityAddr } = identityInfo
       onAddAccount({
         _id,
@@ -213,9 +217,7 @@ function LoginByEmail({ onAddAccount }) {
 
   }
 
-  const onLogin = async ({ email, passphrase }) => {
-    setErr('')
-    setRequiresConfFor('')
+  const attemptLogin = async ({ email, passphrase }, ignoreEmailConfirmationRequired) => {
     // try by-email first: if this returns data we can just move on to decrypting
     // does not matter which network we request
     const resp = await fetch(`http://localhost:1934/identity/by-email/${encodeURIComponent(email)}/ethereum?skipPrivilegesUpdate=true`, { credentials: 'include' })
@@ -229,14 +231,21 @@ function LoginByEmail({ onAddAccount }) {
     }
   
     if (resp.status === 401 && body.errType === 'UNAUTHORIZED') {
+      if (ignoreEmailConfirmationRequired) {
+        // we still have to call this to make sure the state is consistent and to force a re-render (to trigger the effect again)
+        setRequiresConfFor({ email, passphrase })
+        return
+      }
       const requestAuthResp = await fetch(`http://localhost:1934/identity/by-email/${encodeURIComponent(email)}/request-confirm-login`, { method: 'POST' })
       if (requestAuthResp.status !== 200) {
         setErr(`Email confirmation needed but unable to request: ${requestAuthResp.status}`)
         return
       }
-      setRequiresConfFor(email)
+      setRequiresConfFor({ email, passphrase })
       return
     }
+    // If we make it beyond this point, it means no email confirmation will be required
+    setRequiresConfFor(null)
 
     if (resp.status === 404 && body.errType === 'DOES_NOT_EXIST') {
       setErr('Account does not exist')
@@ -250,15 +259,30 @@ function LoginByEmail({ onAddAccount }) {
     }
   }
 
+  const onLoginUserAction = async ({ email, passphrase }) => {
+    setErr('')
+    setRequiresConfFor('')
+    attemptLogin({ email, passphrase })
+  }
+
+  // try logging in once after EMAIL_VERIFICATION_RECHECK
+  useEffect(() => {
+    if (requiresEmailConfFor) {
+      const timer = setTimeout(() => attemptLogin(requiresEmailConfFor, true), EMAIL_VERIFICATION_RECHECK)
+      return () => clearTimeout(timer)
+    }
+  }, [requiresEmailConfFor])
+
   const inner = requiresEmailConfFor ?
     (<div id="loginEmail" className="emailConf">
       <h3><MdEmail size={25} color="white"/>Email confirmation required</h3>
       <p>This is the first log-in from this browser, email confirmation is required.<br/><br/>
-      We sent an email to {requiresEmailConfFor}, please check your inbox and click "Confirm".
+      We sent an email to {requiresEmailConfFor.email}, please check your inbox and click "Confirm".
       </p>
+      {err ? (<p className="error">{err}</p>) : (<></>)}
     </div>)
     : (<div id="loginEmail">
-      <LoginOrSignup onAccRequest={onLogin}></LoginOrSignup>
+      <LoginOrSignup onAccRequest={onLoginUserAction}></LoginOrSignup>
 
       {err ? (<p className="error">{err}</p>) : (<></>)}
 
@@ -266,7 +290,7 @@ function LoginByEmail({ onAddAccount }) {
       <a href="#">Import JSON</a>
     </div>)
     
-    return (
+  return (
     <section className="loginSignupWrapper" id="emailLoginSection">
     <div id="logo"/>
     {inner}
