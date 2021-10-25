@@ -1,7 +1,6 @@
 import { useState, useRef } from 'react'
 import Checkbox from "../Checkbox/Checkbox"
 
-
 function LoginOrSignup({ action = 'LOGIN', onAccRequest }) {
     const passConfirmInput = useRef(null)
     const [state, setState] = useState({
