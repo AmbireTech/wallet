@@ -95,12 +95,13 @@ function App() {
   const [accounts, setAccounts] = useState(initialAccounts)
   const addAccount = acc => {
     console.log('addAccount', acc)
-    const existing = accounts.find(x => x._id === acc._id)
+    const existingIdx = accounts.findIndex(x => x._id === acc._id)
     // @TODO show toast
-    if (existing) return
-    const newAccs = [ ...accounts, acc ]
-    setAccounts(newAccs)
-    localStorage.accounts = JSON.stringify(newAccs)
+    // the use case for updating the entry is that we have some props (such as which EOA controls it) which migth change
+    if (existingIdx === -1) accounts.push(acc)
+    else accounts[existingIdx] = acc
+    setAccounts(accounts)
+    localStorage.accounts = JSON.stringify(accounts)
   }
   return (
     <Router>
