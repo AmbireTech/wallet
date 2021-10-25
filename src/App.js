@@ -143,8 +143,18 @@ function App() {
         </Route>
 
         <Route path="/dashboard">
-          <div id="logo"/>
-          <div><MdDashboard/></div>
+          <section id="dashboard">
+            <div id="sidebar">
+              <div className="logo"/>
+
+              <div className="balance">
+                <label>Balance</label>
+                <div className="balanceDollarAmount"><span className="dollarSign highlight">$</span>999<span className="highlight">.00</span></div>
+              </div>
+
+              <div className="item"><MdDashboard size={30}/>Dashboard</div>
+            </div>
+          </section>
         </Route>
         <Route path="/security"></Route>
         <Route path="/transactions"></Route>
