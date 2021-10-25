@@ -68,13 +68,17 @@ const onAccRequest = async req => {
     await firstKeyWallet.encrypt(req.passphrase, { scrypt: { N: SCRYPT_ITERATIONS } })
   )
 
-  const createResp = await fetchPost(`http://localhost:1934/identity/${identityAddr}`, {
-    primaryKeyBackup, secondKeySecret,
+  const acc = {
     email: req.email,
-    salt, identityFactoryAddr, baseIdentityAddr, privileges
-  })
+    primaryKeyBackup, secondKeySecret,
+    salt, identityFactoryAddr, baseIdentityAddr,
+  }
+  // @TODO catch errors here - wrong status codes, etc.
+  const createResp = await fetchPost(`http://localhost:1934/identity/${identityAddr}`, { ...acc, privileges })
 
   console.log('identityAddr:', identityAddr, quickAccount, createResp)
+
+  return { acc, _id: identityAddr }
 }
 //onAccRequest({ passphrase: 'testtest', email: 'ivo@strem.io' })
 
@@ -83,6 +87,7 @@ const initialAccounts = JSON.parse(localStorage.accounts || '[]')
 function App() {
   const [accounts, setAccounts] = useState(initialAccounts)
   const addAccount = acc => {
+    console.log('addAccount', acc)
     const existing = accounts.find(x => x._id === acc._id)
     // @TODO show toast
     if (existing) return
@@ -132,15 +137,7 @@ function App() {
         </Route>
 
         <Route path="/email-login">
-          <section className="loginSignupWrapper" id="emailLoginSection">
-            <div id="logo"/>
-            {false ? (<div id="loginEmail" class="emailConf"><h3><MdEmail size={25} color="white"/>Email confirmation required</h3><p>This is the first log-in from this browser, email confirmation is required.<br/><br/>We sent an email to ivo@ambire.com, please check your inbox and click "Confirm".</p></div>) : (<div id="loginEmail">
-              <LoginOrSignup onAccRequest={onAccRequest}></LoginOrSignup>
-
-              <a href="#">I forgot my passphrase</a>
-              <a href="#">Import JSON</a>
-            </div>)}
-          </section>
+          <LoginByEmail onAddAccount={addAccount}></LoginByEmail>
         </Route>
 
         <Route path="/dashboard">
@@ -180,5 +177,57 @@ function App() {
     )
 }
 // @TODO remove this bit
+
+function LoginByEmail({ onAddAccount }) {
+  const [requiresEmailConfFor, setRequiresConfFor] = useState('')
+  const [err, setErr] = useState('')
+
+  const onLogin = async ({ email, passphrase }) => {
+    setErr('')
+    setRequiresConfFor('')
+    // optimistically, try by-email first
+    const resp = await fetch(`http://localhost:1934/identity/by-email/${encodeURIComponent(email)}/info`)
+    let body
+    try {
+      body = await resp.json()
+    } catch(e) {
+      setErr(`Unexpected error: ${resp.status}`)
+      return
+    }
+    if (resp.status === 404 && body.errType === 'DOES_NOT_EXIST') {
+      setErr('Account does not exist')
+      return
+    }
+    if (resp.status !== 200) {
+      setErr(body.message || `Unknown no-message error: ${resp.status}`)
+    } 
+    console.log(body)
+
+  }
+
+  const inner = requiresEmailConfFor ?
+    (<div id="loginEmail" className="emailConf">
+      <h3><MdEmail size={25} color="white"/>Email confirmation required</h3>
+      <p>This is the first log-in from this browser, email confirmation is required.<br/><br/>
+      We sent an email to ${requiresEmailConfFor}, please check your inbox and click "Confirm".
+      </p>
+    </div>)
+    : (<div id="loginEmail">
+      <LoginOrSignup onAccRequest={onLogin}></LoginOrSignup>
+
+      {err ? (<p className="error">{err}</p>) : (<></>)}
+
+      <a href="#">I forgot my passphrase</a>
+      <a href="#">Import JSON</a>
+    </div>)
+    
+    return (
+    <section className="loginSignupWrapper" id="emailLoginSection">
+    <div id="logo"/>
+    {inner}
+  </section>
+  )
+
+}
 
 export default App;
