@@ -68,17 +68,23 @@ const onAccRequest = async req => {
     await firstKeyWallet.encrypt(req.passphrase, { scrypt: { N: SCRYPT_ITERATIONS } })
   )
 
-  const acc = {
+  // @TODO catch errors here - wrong status codes, etc.
+  const createResp = await fetchPost(`http://localhost:1934/identity/${identityAddr}`, {
     email: req.email,
     primaryKeyBackup, secondKeySecret,
     salt, identityFactoryAddr, baseIdentityAddr,
-  }
-  // @TODO catch errors here - wrong status codes, etc.
-  const createResp = await fetchPost(`http://localhost:1934/identity/${identityAddr}`, { ...acc, privileges })
+    privileges
+  })
 
+  // @TODO remove this
   console.log('identityAddr:', identityAddr, quickAccount, createResp)
 
-  return { acc, _id: identityAddr }
+  return {
+    _id: identityAddr,
+    email: req.email,
+    primaryKeyBackup,
+    salt, identityFactoryAddr, baseIdentityAddr,
+  }
 }
 //onAccRequest({ passphrase: 'testtest', email: 'ivo@strem.io' })
 
@@ -91,8 +97,9 @@ function App() {
     const existing = accounts.find(x => x._id === acc._id)
     // @TODO show toast
     if (existing) return
-    setAccounts([ ...accounts, acc ])
-    localStorage.accounts = JSON.stringify(accounts)
+    const newAccs = [ ...accounts, acc ]
+    setAccounts(newAccs)
+    localStorage.accounts = JSON.stringify(newAccs)
   }
   return (
     <Router>
@@ -191,8 +198,9 @@ function LoginByEmail({ onAddAccount }) {
     // @TODO progress bar here
     try {
       console.log(await Wallet.fromEncryptedJson(JSON.parse(identityInfo.meta.primaryKeyBackup), passphrase))
-      const { salt, identityFactoryAddr, baseIdentityAddr } = identityInfo
+      const { _id, salt, identityFactoryAddr, baseIdentityAddr } = identityInfo
       onAddAccount({
+        _id,
         email: identityInfo.meta.email,
         primaryKeyBackup: identityInfo.meta.primaryKeyBackup,
         salt, identityFactoryAddr, baseIdentityAddr
