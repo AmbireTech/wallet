@@ -8,7 +8,8 @@ import {
   Link,
   Redirect
 } from 'react-router-dom'
-import { MdDashboard, MdEmail } from 'react-icons/md'
+import { MdDashboard, MdLock, MdCompareArrows, MdEmail } from 'react-icons/md'
+import { BsPiggyBank } from 'react-icons/bs'
 import LoginOrSignup from './components/LoginOrSignup/LoginOrSignup'
 
 // @TODO another file
@@ -133,7 +134,7 @@ function App() {
         <Route path="/email-login">
           <section className="loginSignupWrapper" id="emailLoginSection">
             <div id="logo"/>
-            {false ? (<div id="loginEmail" class="emailConf"><h3><MdEmail size={25} color="white"/>Email confirmation required</h3><p>This is the first log-in from this browser, email confirmation is required.<br/><br/>We sent an email to EMAIL, please check your inbox and click "Confirm".</p></div>) : (<div id="loginEmail">
+            {false ? (<div id="loginEmail" class="emailConf"><h3><MdEmail size={25} color="white"/>Email confirmation required</h3><p>This is the first log-in from this browser, email confirmation is required.<br/><br/>We sent an email to ivo@ambire.com, please check your inbox and click "Confirm".</p></div>) : (<div id="loginEmail">
               <LoginOrSignup onAccRequest={onAccRequest}></LoginOrSignup>
 
               <a href="#">I forgot my passphrase</a>
@@ -152,7 +153,12 @@ function App() {
                 <div className="balanceDollarAmount"><span className="dollarSign highlight">$</span>999<span className="highlight">.00</span></div>
               </div>
 
-              <div className="item"><MdDashboard size={30}/>Dashboard</div>
+             {/* TODO proper navi, programmatic selected class */}
+              <div className="item selected"><MdDashboard size={30}/>Dashboard</div>
+              <div className="item"><MdLock size={30}/>Security</div>
+              <div className="item"><MdCompareArrows size={30}/>Transactions</div>
+              <div className="item"><BsPiggyBank size={30}/>Earn</div>
+
             </div>
           </section>
         </Route>
