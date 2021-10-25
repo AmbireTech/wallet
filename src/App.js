@@ -183,14 +183,12 @@ function App() {
     </Router>
     )
 }
-// @TODO remove this bit
 
 function LoginByEmail({ onAddAccount }) {
   const [requiresEmailConfFor, setRequiresConfFor] = useState('')
   const [err, setErr] = useState('')
 
   const onTryDecrypt = async (identityInfo, passphrase) => {
-    console.log(identityInfo, passphrase)
     if (!identityInfo.meta.primaryKeyBackup) {
       setErr('No account key backup: you either disabled email login or you have to import it from JSON')
       return
@@ -225,7 +223,8 @@ function LoginByEmail({ onAddAccount }) {
     try {
       body = await resp.json()
     } catch(e) {
-      setErr(`Unexpected error: ${resp.status}`)
+      console.error(e)
+      setErr(`Unexpected error: ${resp.status}, ${e && e.message}`)
       return
     }
   
@@ -273,7 +272,6 @@ function LoginByEmail({ onAddAccount }) {
     {inner}
   </section>
   )
-
 }
 
 export default App;
