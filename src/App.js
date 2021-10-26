@@ -244,7 +244,7 @@ function LoginByEmail({ onAddAccount }) {
   const attemptLogin = async ({ email, passphrase }, ignoreEmailConfirmationRequired) => {
     // try by-email first: if this returns data we can just move on to decrypting
     // does not matter which network we request
-    const { resp, body, errMsg } = await fetchCaught(`http://localhost:1934/identity/by-email/${encodeURIComponent(email)}/ethereum?skipPrivilegesUpdate=true`, { credentials: 'include' })
+    const { resp, body, errMsg } = await fetchCaught(`http://localhost:1934/identity/by-email/${encodeURIComponent(email)}`, { credentials: 'include' })
     if (errMsg) {
       setErr(errMsg)
       return
