@@ -8,6 +8,7 @@
     "@testing-library/user-event": "^12.8.3",
     "@walletconnect/client": "^1.6.5",
     "@walletconnect/utils": "^1.6.5",
+    "@web3modal/trezor-provider": "^1.0.0",
     "adex-protocol-eth": "git+https://git@github.com/AdExNetwork/adex-protocol-eth.git",
     "ethereumjs-util": "^6.1.0",
     "ethers": "^5.4.7",
