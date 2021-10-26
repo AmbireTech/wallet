@@ -13,6 +13,9 @@ import { MdDashboard, MdLock, MdCompareArrows, MdEmail } from 'react-icons/md'
 import { BsPiggyBank } from 'react-icons/bs'
 import LoginOrSignup from './components/LoginOrSignup/LoginOrSignup'
 
+// @TODO consts/cfg
+const relayerURL = 'http://localhost:1934/identity'
+
 // @TODO another file
 // @TODO err-catching fetch helper
 const fetch = require('node-fetch')
@@ -70,7 +73,7 @@ const onAccRequest = async req => {
   )
 
   // @TODO catch errors here - wrong status codes, etc.
-  const createResp = await fetchPost(`http://localhost:1934/identity/${identityAddr}`, {
+  const createResp = await fetchPost(`${relayerURL}/${identityAddr}`, {
     email: req.email,
     primaryKeyBackup, secondKeySecret,
     salt, identityFactoryAddr, baseIdentityAddr,
@@ -98,7 +101,7 @@ async function connectWeb3AndGetAccounts () {
   const ethereum = window.ethereum
   const accounts = await ethereum.request({ method: 'eth_requestAccounts' })
   const allOwnedIdentities = await Promise.all(accounts.map(
-    acc => fetch(`http://localhost:1934/identity/any/by-owner/${acc}`).then(r => r.json())
+    acc => fetch(`${relayerURL}/any/by-owner/${acc}`).then(r => r.json())
   ))
   console.log(allOwnedIdentities)
   // @TODO should we do this for ALL 
@@ -241,7 +244,7 @@ function LoginByEmail({ onAddAccount }) {
   const attemptLogin = async ({ email, passphrase }, ignoreEmailConfirmationRequired) => {
     // try by-email first: if this returns data we can just move on to decrypting
     // does not matter which network we request
-    const { resp, body, errMsg } = await fetchCaught(`http://localhost:1934/identity/by-email/${encodeURIComponent(email)}`, { credentials: 'include' })
+    const { resp, body, errMsg } = await fetchCaught(`${relayerURL}/by-email/${encodeURIComponent(email)}`, { credentials: 'include' })
     if (errMsg) {
       setErr(errMsg)
       return
@@ -253,7 +256,7 @@ function LoginByEmail({ onAddAccount }) {
         setRequiresConfFor({ email, passphrase })
         return
       }
-      const requestAuthResp = await fetch(`http://localhost:1934/identity/by-email/${encodeURIComponent(email)}/request-confirm-login`, { method: 'POST' })
+      const requestAuthResp = await fetch(`${relayerURL}/by-email/${encodeURIComponent(email)}/request-confirm-login`, { method: 'POST' })
       if (requestAuthResp.status !== 200) {
         setErr(`Email confirmation needed but unable to request: ${requestAuthResp.status}`)
         return
