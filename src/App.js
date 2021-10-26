@@ -14,30 +14,14 @@ import { BsPiggyBank } from 'react-icons/bs'
 import LoginOrSignup from './components/LoginOrSignup/LoginOrSignup'
 
 // @TODO TEMP
-import Web3 from "web3"
-import Web3Modal from "web3modal"
-import TrezorProvider from "@web3modal/trezor-provider"
-const providerOptions = {
-  "trezor": {
-    display: {
-      logo: "data:image/gif;base64,INSERT_BASE64_STRING",
-      name: "Example Provider",
-      description: "Connect to your example provider account"
-    },
-    package: TrezorProvider,
-    options: {},
-    connector: async (ProviderPackage, options) => {
-        const provider = new ProviderPackage(options)
-
-        await provider.enable()
-
-        return provider
-    }
-  }
-}
+import Web3 from "web3";
+import Web3Modal from "web3modal";
 const connectTrezor = async () => {
 
   console.log('conencting')
+  const providerOptions = {
+    /* See Provider Options Section */
+  };
 
   const web3Modal = new Web3Modal({
     network: "mainnet", // optional
@@ -45,7 +29,7 @@ const connectTrezor = async () => {
     providerOptions // required
   });
 
-  const provider = await web3Modal.connect();
+  const provider = await web3Modal.connectTo("trezor");
   const web = new Web3(provider);
 
 }
