@@ -12,7 +12,8 @@ function LoginOrSignup({ action = 'LOGIN', onAccRequest }) {
         action: state.action,
         accType: 'QUICK',
         email: state.email,
-        passphrase: state.passphrase
+        passphrase: state.passphrase,
+        backupOptout: state.backupOptout,
       })
     }
     const onUpdate = updates => {
