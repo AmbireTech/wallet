@@ -75,7 +75,8 @@ const onAccRequest = async req => {
   // @TODO catch errors here - wrong status codes, etc.
   const createResp = await fetchPost(`${relayerURL}/identity/${identityAddr}`, {
     email: req.email,
-    primaryKeyBackup, secondKeySecret,
+    primaryKeyBackup: req.backupOptout ? null : primaryKeyBackup,
+    secondKeySecret,
     salt, identityFactoryAddr, baseIdentityAddr,
     privileges
   })
