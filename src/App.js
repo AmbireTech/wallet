@@ -88,11 +88,29 @@ const onAccRequest = async req => {
   }
 }
 //onAccRequest({ passphrase: 'testtest', email: 'ivo@strem.io' })
+  // @TODO move this
+async function connectWeb3AndGetAccounts () {
+  // @TODO: pending state; should bein the LoginORSignup (AddAccount) component
+  if (typeof window.ethereum === 'undefined') {
+    // @TODO catch this
+    throw new Error('MetaMask not available')
+  }
+  const ethereum = window.ethereum
+  const accounts = await ethereum.request({ method: 'eth_requestAccounts' })
+  const allOwnedIdentities = await Promise.all(accounts.map(
+    acc => fetch(`http://localhost:1934/identity/any/by-owner/${acc}`).then(r => r.json())
+  ))
+  console.log(allOwnedIdentities)
+  // @TODO should we do this for ALL 
+
+  return []
+}
 
 // @TODO catch parse failures and handle them
 const initialAccounts = JSON.parse(localStorage.accounts || '[]')
 function App() {
   const [accounts, setAccounts] = useState(initialAccounts)
+
   const addAccount = acc => {
     console.log('addAccount', acc)
     const existingIdx = accounts.findIndex(x => x._id === acc._id)
@@ -103,6 +121,7 @@ function App() {
     setAccounts(accounts)
     localStorage.accounts = JSON.stringify(accounts)
   }
+  
   return (
     <Router>
       {/*<nav>
@@ -139,7 +158,7 @@ function App() {
                 </Link>
                 <button><div className="icon" style={{ backgroundImage: 'url(./resources/trezor.png)' }}/>Trezor</button>
                 <button><div className="icon" style={{ backgroundImage: 'url(./resources/ledger.png)' }}/>Ledger</button>
-                <button><div className="icon" style={{ backgroundImage: 'url(./resources/metamask.png)' }}/>Metamask / Browser</button>
+                <button onClick={() => connectWeb3AndGetAccounts().then(accounts => accounts.forEach(addAccount))}><div className="icon" style={{ backgroundImage: 'url(./resources/metamask.png)' }}/>Metamask / Browser</button>
               </div>
             </section>
           </div>
