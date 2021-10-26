@@ -13,28 +13,6 @@ import { MdDashboard, MdLock, MdCompareArrows, MdEmail } from 'react-icons/md'
 import { BsPiggyBank } from 'react-icons/bs'
 import LoginOrSignup from './components/LoginOrSignup/LoginOrSignup'
 
-// @TODO TEMP
-import Web3 from "web3";
-import Web3Modal from "web3modal";
-const connectTrezor = async () => {
-
-  console.log('conencting')
-  const providerOptions = {
-    /* See Provider Options Section */
-  };
-
-  const web3Modal = new Web3Modal({
-    network: "mainnet", // optional
-    cacheProvider: true, // optional
-    providerOptions // required
-  });
-
-  const provider = await web3Modal.connectTo("trezor");
-  const web = new Web3(provider);
-
-}
-// TEMP
-
 // @TODO another file
 // @TODO err-catching fetch helper
 const fetch = require('node-fetch')
@@ -159,7 +137,7 @@ function App() {
                 <Link to="/email-login">
                   <button><div className="icon" style={{ backgroundImage: 'url(./resources/envelope.png)' }}/>Email</button>
                 </Link>
-                <button onClick={connectTrezor} ><div className="icon" style={{ backgroundImage: 'url(./resources/trezor.png)' }}/>Trezor</button>
+                <button><div className="icon" style={{ backgroundImage: 'url(./resources/trezor.png)' }}/>Trezor</button>
                 <button><div className="icon" style={{ backgroundImage: 'url(./resources/ledger.png)' }}/>Ledger</button>
                 <button><div className="icon" style={{ backgroundImage: 'url(./resources/metamask.png)' }}/>Metamask / Browser</button>
               </div>
