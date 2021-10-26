@@ -14,7 +14,7 @@ import { BsPiggyBank } from 'react-icons/bs'
 import LoginOrSignup from './components/LoginOrSignup/LoginOrSignup'
 
 // @TODO consts/cfg
-const relayerURL = 'http://localhost:1934/identity'
+const relayerURL = 'http://localhost:1934'
 
 // @TODO another file
 // @TODO err-catching fetch helper
@@ -42,7 +42,7 @@ const onAccRequest = async req => {
 
   // @TODO url
   // @TODO we can do these fetches in parallel
-  const { whitelistedFactories, whitelistedBaseIdentities } = await fetch('http://localhost:1934/relayer/cfg').then(r => r.json())
+  const { whitelistedFactories, whitelistedBaseIdentities } = await fetch(`${relayerURL}/relayer/cfg`).then(r => r.json())
 
   // @TODO proper salt
   const salt = hexZeroPad('0x01', 32)
@@ -53,7 +53,7 @@ const onAccRequest = async req => {
   const secondKeySecret = Wallet.createRandom({
     extraEntropy: id(req.email+':'+Date.now())
   }).mnemonic.phrase.split(' ').slice(0, 6).join(' ') + ' ' + req.email
-  const secondKeyAddress = await fetchPost('http://localhost:1934/second-key', { secondKeySecret })
+  const secondKeyAddress = await fetchPost(`${relayerURL}/second-key`, { secondKeySecret })
     .then(r => r.address)
 
   // @TODO: timelock value for the quickAccount
@@ -73,7 +73,7 @@ const onAccRequest = async req => {
   )
 
   // @TODO catch errors here - wrong status codes, etc.
-  const createResp = await fetchPost(`${relayerURL}/${identityAddr}`, {
+  const createResp = await fetchPost(`${relayerURL}/identity/${identityAddr}`, {
     email: req.email,
     primaryKeyBackup, secondKeySecret,
     salt, identityFactoryAddr, baseIdentityAddr,
@@ -88,6 +88,7 @@ const onAccRequest = async req => {
     email: req.email,
     primaryKeyBackup,
     salt, identityFactoryAddr, baseIdentityAddr,
+    // @TODO signer
   }
 }
 //onAccRequest({ passphrase: 'testtest', email: 'ivo@strem.io' })
@@ -99,14 +100,34 @@ async function connectWeb3AndGetAccounts () {
     throw new Error('MetaMask not available')
   }
   const ethereum = window.ethereum
-  const accounts = await ethereum.request({ method: 'eth_requestAccounts' })
-  const allOwnedIdentities = await Promise.all(accounts.map(
-    acc => fetch(`${relayerURL}/any/by-owner/${acc}`).then(r => r.json())
+  const web3Accs = await ethereum.request({ method: 'eth_requestAccounts' })
+  const allOwnedIdentities = await Promise.all(web3Accs.map(
+    async acc => {
+      const resp = await fetch(`${relayerURL}/identity/any/by-owner/${acc}?includeFormerlyOwned=true`)
+      return await resp.json()
+    }
   ))
-  console.log(allOwnedIdentities)
-  // @TODO should we do this for ALL 
 
-  return []
+  let allUniqueOwned = {}
+  // preserve the last truthy priv value
+  allOwnedIdentities.forEach(x => 
+    Object.entries(x).forEach(
+      ([id, priv]) => allUniqueOwned[id] = priv ||  allUniqueOwned[id]
+    )
+  )
+
+  const accountsToAdd = await Promise.all(Object.keys(allUniqueOwned).map(async addr => {
+    // @TODO: fundamentally, do we even need these values?
+    const { salt, identityFactoryAddr, baseIdentityAddr } = await fetch(`${relayerURL}/identity/${addr}`)
+      .then(r => r.json())
+    return {
+      _id: addr,
+      salt, identityFactoryAddr, baseIdentityAddr,
+      // @TODO signer for the ones that we CURRENTLY control
+    }
+  }))
+
+  return accountsToAdd
 }
 
 // @TODO catch parse failures and handle them
@@ -145,7 +166,7 @@ function App() {
             <section id="addAccount">
               <div id="loginEmail">
                 <h3>Create a new account</h3>
-                <LoginOrSignup onAccRequest={onAccRequest} action="SIGNUP"></LoginOrSignup>
+                <LoginOrSignup onAccRequest={req => onAccRequest(req).then(addAccount)} action="SIGNUP"></LoginOrSignup>
               </div>
 
               <div id="loginSeparator">
@@ -244,7 +265,7 @@ function LoginByEmail({ onAddAccount }) {
   const attemptLogin = async ({ email, passphrase }, ignoreEmailConfirmationRequired) => {
     // try by-email first: if this returns data we can just move on to decrypting
     // does not matter which network we request
-    const { resp, body, errMsg } = await fetchCaught(`${relayerURL}/by-email/${encodeURIComponent(email)}`, { credentials: 'include' })
+    const { resp, body, errMsg } = await fetchCaught(`${relayerURL}/identity/by-email/${encodeURIComponent(email)}`, { credentials: 'include' })
     if (errMsg) {
       setErr(errMsg)
       return
@@ -256,7 +277,7 @@ function LoginByEmail({ onAddAccount }) {
         setRequiresConfFor({ email, passphrase })
         return
       }
-      const requestAuthResp = await fetch(`${relayerURL}/by-email/${encodeURIComponent(email)}/request-confirm-login`, { method: 'POST' })
+      const requestAuthResp = await fetch(`${relayerURL}/identity/by-email/${encodeURIComponent(email)}/request-confirm-login`, { method: 'POST' })
       if (requestAuthResp.status !== 200) {
         setErr(`Email confirmation needed but unable to request: ${requestAuthResp.status}`)
         return
