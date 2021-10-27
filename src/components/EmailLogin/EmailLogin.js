@@ -90,7 +90,7 @@ export default function EmailLogin({ relayerURL, onAddAccount }) {
         const timer = setTimeout(() => attemptLogin(requiresEmailConfFor, true), EMAIL_VERIFICATION_RECHECK)
         return () => clearTimeout(timer)
       }
-    }, [requiresEmailConfFor, attemptLogin])
+    })
   
     const inner = requiresEmailConfFor ?
       (<div id="loginEmail" className="emailConf">
