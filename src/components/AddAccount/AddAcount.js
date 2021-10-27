@@ -5,7 +5,7 @@ import { TrezorSubprovider } from '@0x/subproviders/lib/src/subproviders/trezor'
 import { LedgerSubprovider } from '@0x/subproviders/lib/src/subproviders/ledger' // https://github.com/0xProject/0x-monorepo/issues/1400
 import { ledgerEthereumBrowserClientFactoryAsync } from '@0x/subproviders/lib/src' // https://github.com/0xProject/0x-monorepo/issues/1400
 
-import { fetch, fetchCaught, fetchPost } from '../../lib/fetch'
+import { fetch, fetchPost } from '../../lib/fetch'
 
 TrezorConnect.manifest({
   email: 'contactus@ambire.com',
