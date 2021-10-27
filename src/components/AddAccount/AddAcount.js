@@ -5,6 +5,7 @@ import TrezorConnect from 'trezor-connect'
 import { TrezorSubprovider } from '@0x/subproviders/lib/src/subproviders/trezor' // https://github.com/0xProject/0x-monorepo/issues/1400
 import { LedgerSubprovider } from '@0x/subproviders/lib/src/subproviders/ledger' // https://github.com/0xProject/0x-monorepo/issues/1400
 import { ledgerEthereumBrowserClientFactoryAsync } from '@0x/subproviders/lib/src' // https://github.com/0xProject/0x-monorepo/issues/1400
+import { hexZeroPad, AbiCoder, keccak256, id, getAddress } from 'ethers/lib/utils'
 
 import { fetch, fetchPost } from '../../lib/fetch'
 
@@ -18,7 +19,6 @@ TrezorConnect.manifest({
 const { generateAddress2 } = require('ethereumjs-util')
 const { getProxyDeployBytecode } = require('adex-protocol-eth/js/IdentityProxyDeploy')
 const { Wallet } = require('ethers')
-const { hexZeroPad, AbiCoder, keccak256, id } = require('ethers').utils
 
 // NOTE: This is a compromise, but we can afford it cause QuickAccs require a secondary key
 // Consider more
@@ -33,8 +33,6 @@ export default function AddAccount ({ relayerURL, onAddAccount }) {
     }
 
     const onAccRequest = async (req) => {
-        // @TODO proper salt
-        const salt = hexZeroPad('0x01', 32)
         const firstKeyWallet = Wallet.createRandom()
 
         // @TODO fix this hack, use another source of randomness
@@ -58,6 +56,8 @@ export default function AddAccount ({ relayerURL, onAddAccount }) {
         // @TODO not hardcoded
         const quickAccManager = '0x697d866d20a8E8886a0D0511e82846AC108Bc5B6'
         const privileges = [[quickAccManager, accHash]]
+        // @TODO proper salt
+        const salt = hexZeroPad('0x01', 32)
         const identityFactoryAddr = whitelistedFactories[whitelistedFactories.length - 1]
         const baseIdentityAddr = whitelistedBaseIdentities[whitelistedBaseIdentities.length - 1]
         const bytecode = getProxyDeployBytecode(baseIdentityAddr, privileges, { privSlot: 0 })
@@ -74,7 +74,6 @@ export default function AddAccount ({ relayerURL, onAddAccount }) {
             secondKeySecret,
             salt, identityFactoryAddr, baseIdentityAddr,
             privileges,
-            selecterd: true
         })
 
         // @TODO check for success
@@ -86,6 +85,36 @@ export default function AddAccount ({ relayerURL, onAddAccount }) {
             email: req.email,
             primaryKeyBackup,
             salt, identityFactoryAddr, baseIdentityAddr,
+            selected: true,
+            // @TODO signer
+        }
+    }
+
+    // @TODO refactor into create with privileges perhaps?
+    // only if we can have the whitelisted* stuff in advance; we can hardcode them
+    async function createFromEOA (addr) {
+        const { whitelistedFactories, whitelistedBaseIdentities } = await fetch(`${relayerURL}/relayer/cfg`)
+            .then(r => r.json())
+        const privileges = [[getAddress(addr), hexZeroPad('0x01', 32)]]
+        const identityFactoryAddr = whitelistedFactories[whitelistedFactories.length - 1]
+        const baseIdentityAddr = whitelistedBaseIdentities[whitelistedBaseIdentities.length - 1]
+        // @TODO proper salt
+        const salt = hexZeroPad('0x01', 32)
+        const bytecode = getProxyDeployBytecode(baseIdentityAddr, privileges, { privSlot: 0 })
+        const identityAddr = '0x' + generateAddress2(identityFactoryAddr, salt, bytecode).toString('hex')
+
+        // @TODO catch errors here - wrong status codes, etc.
+        const createResp = await fetchPost(`${relayerURL}/identity/${identityAddr}`, {
+            salt, identityFactoryAddr, baseIdentityAddr,
+            privileges
+        })
+
+        console.log(createResp)
+
+        return {
+            _id: identityAddr,
+            salt, identityFactoryAddr, baseIdentityAddr,
+            selected: true
             // @TODO signer
         }
     }
@@ -98,7 +127,10 @@ export default function AddAccount ({ relayerURL, onAddAccount }) {
         }
         const ethereum = window.ethereum
         const web3Accs = await ethereum.request({ method: 'eth_requestAccounts' })
-        return getOwnedByEOAs(web3Accs)
+        if (!web3Accs.length) throw new Error('No accounts connected')
+        const owned = await getOwnedByEOAs(web3Accs)
+        if (!owned.length) return [await createFromEOA(web3Accs[0])]
+        else return owned
     }
 
     async function getOwnedByEOAs(eoas) {
@@ -151,12 +183,16 @@ export default function AddAccount ({ relayerURL, onAddAccount }) {
         setChooseSigners(await provider.getAccountsAsync(50))
     }
 
+    async function onEOASelected (addr) {
+        const owned = await getOwnedByEOAs([addr])
+        if (!owned.length) return [await createFromEOA(addr)]
+        else return owned
+    }
+
     if (signersToChoose) {
         return (
             <ul id="signersToChoose">
-                {signersToChoose.map(addr => (<li key={addr} onClick={() => {
-                    setChooseSigners(null)
-                    }}>{addr}</li>))}
+                {signersToChoose.map(addr => (<li key={addr} onClick={() => onEOASelected(addr).then(addMultipleAccounts)}>{addr}</li>))}
             </ul>
         )
     }
