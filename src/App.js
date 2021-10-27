@@ -73,8 +73,9 @@ function App() {
             </div>
 
             <div>
-              <select id="accountSelector">
-                {accounts.map(acc => (<option key={acc._id} selected={acc.selected}>{acc._id}</option>))}
+              {/* TODO managed state on this select box, account selection */}
+              <select id="accountSelector" defaultValue={(accounts.find(x => x.selected) || {})._id}>
+                {accounts.map(acc => (<option key={acc._id}>{acc._id}</option>))}
               </select>
             </div>
           </section>
