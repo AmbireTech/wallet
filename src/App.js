@@ -28,7 +28,10 @@ function App() {
     // the use case for updating the entry is that we have some props (such as which EOA controls it) which migth change
     if (existingIdx === -1) accounts.push(acc)
     else accounts[existingIdx] = acc
-    setAccounts(accounts)
+
+    // need to make a copy, otherwise no rerender
+    setAccounts([ ...accounts ])
+
     localStorage.accounts = JSON.stringify(accounts)
 
     if (Object.keys(accounts).length) {
