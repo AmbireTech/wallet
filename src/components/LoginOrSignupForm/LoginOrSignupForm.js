@@ -1,7 +1,7 @@
 import { useState, useRef } from 'react'
 import Checkbox from "../Checkbox/Checkbox"
 
-function LoginOrSignup({ action = 'LOGIN', onAccRequest }) {
+export default function LoginOrSignupForm({ action = 'LOGIN', onAccRequest }) {
     const passConfirmInput = useRef(null)
     const [state, setState] = useState({
       email: '', passphrase: '', passphraseConfirm: '', action
@@ -56,6 +56,4 @@ function LoginOrSignup({ action = 'LOGIN', onAccRequest }) {
         <input type="submit" value={isSignup ? "Sign up" : "Login"}></input>
       </form>
     )
-  }
-
-  export { LoginOrSignup as default }
+}
