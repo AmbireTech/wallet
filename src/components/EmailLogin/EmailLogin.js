@@ -33,7 +33,7 @@ export default function EmailLogin({ relayerURL, onAddAccount }) {
       } catch (e) {
         if (e.message.includes('invalid password')) setErr('Invalid passphrase')
         else {
-          setErr(`Ethers error: ${e.message}`)
+          setErr(`Unexpected login error: ${e.message}`)
           console.error(e)
         }
       }
