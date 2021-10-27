@@ -14,6 +14,8 @@ import { BsPiggyBank } from 'react-icons/bs'
 import LoginOrSignup from './components/LoginOrSignup/LoginOrSignup'
 import TrezorConnect from 'trezor-connect'
 import { TrezorSubprovider } from '@0x/subproviders/lib/src/subproviders/trezor' // https://github.com/0xProject/0x-monorepo/issues/1400
+import { LedgerSubprovider } from '@0x/subproviders/lib/src/subproviders/ledger' // https://github.com/0xProject/0x-monorepo/issues/1400
+import { ledgerEthereumBrowserClientFactoryAsync } from '@0x/subproviders/lib/src' // https://github.com/0xProject/0x-monorepo/issues/1400
 
 TrezorConnect.manifest({
   email: 'contactus@ambire.com',
@@ -156,6 +158,15 @@ async function connectTrezorAndGetAccounts () {
   return getOwnedByEOAs(await provider.getAccountsAsync(5))
 }
 
+async function connectLedgerAndGetAccounts () {
+  const provider = new LedgerSubprovider({
+    networkId: 0, // @TODO: is this needed?
+    ledgerEthereumClientFactoryAsync: ledgerEthereumBrowserClientFactoryAsync,
+    //baseDerivationPath: this.baseDerivationPath
+  })
+  return getOwnedByEOAs(await provider.getAccountsAsync(5))
+}
+
 // @TODO catch parse failures and handle them
 const initialAccounts = JSON.parse(localStorage.accounts || '[]')
 function App() {
@@ -210,7 +221,7 @@ function App() {
                   <button><div className="icon" style={{ backgroundImage: 'url(./resources/envelope.png)' }}/>Email</button>
                 </Link>
                 <button onClick={() => connectTrezorAndGetAccounts().then(addMultipleAccounts)}><div className="icon" style={{ backgroundImage: 'url(./resources/trezor.png)' }}/>Trezor</button>
-                <button><div className="icon" style={{ backgroundImage: 'url(./resources/ledger.png)' }}/>Ledger</button>
+                <button onClick={() => connectLedgerAndGetAccounts().then(addMultipleAccounts)}><div className="icon" style={{ backgroundImage: 'url(./resources/ledger.png)' }}/>Ledger</button>
                 <button onClick={() => connectWeb3AndGetAccounts().then(addMultipleAccounts)}><div className="icon" style={{ backgroundImage: 'url(./resources/metamask.png)' }}/>Metamask / Browser</button>
               </div>
             </section>
