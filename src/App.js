@@ -12,16 +12,6 @@ import {
 import { MdDashboard, MdLock, MdCompareArrows, MdEmail } from 'react-icons/md'
 import { BsPiggyBank } from 'react-icons/bs'
 import LoginOrSignup from './components/LoginOrSignup/LoginOrSignup'
-import { TrezorConnector } from '@web3-react/trezor-connector'
-import { useWeb3React } from "@web3-react/core"
-
-export const trezor = new TrezorConnector({
-  chainId: 1,
-  url: 'https://mainnet.infura.io/v3/3d22938fd7dd41b7af4197752f83e8a1',
-  pollingInterval: 3000,
-  manifestEmail: 'dummy@abc.xyz',
-  manifestAppUrl: 'https://staking.adex.network'
-})
 
 // @TODO consts/cfg
 const relayerURL = 'http://localhost:1934'
@@ -33,7 +23,6 @@ const { generateAddress2 } = require('ethereumjs-util')
 const { getProxyDeployBytecode } = require('adex-protocol-eth/js/IdentityProxyDeploy')
 const { Wallet } = require('ethers')
 const { hexZeroPad, AbiCoder, keccak256, id } = require('ethers').utils
-
 
 async function fetchPost (url, body) {
 	const r = await fetch(url, {
@@ -104,13 +93,7 @@ const onAccRequest = async req => {
   }
 }
 //onAccRequest({ passphrase: 'testtest', email: 'ivo@strem.io' })
-
-
-async function connectTrezor (activate) {
-  console.log(await activate(trezor))
-}
-
-// @TODO move this
+  // @TODO move this
 async function connectWeb3AndGetAccounts () {
   // @TODO: pending state; should bein the LoginORSignup (AddAccount) component
   if (typeof window.ethereum === 'undefined') {
@@ -164,8 +147,6 @@ function App() {
     localStorage.accounts = JSON.stringify(accounts)
   }
   
-  const { activate, account } = useWeb3React()
-  console.log(account)
   return (
     <Router>
       {/*<nav>
@@ -200,12 +181,11 @@ function App() {
                 <Link to="/email-login">
                   <button><div className="icon" style={{ backgroundImage: 'url(./resources/envelope.png)' }}/>Email</button>
                 </Link>
-                <button onClick={() => connectTrezor(activate)}><div className="icon" style={{ backgroundImage: 'url(./resources/trezor.png)' }}/>Trezor</button>
+                <button><div className="icon" style={{ backgroundImage: 'url(./resources/trezor.png)' }}/>Trezor</button>
                 <button><div className="icon" style={{ backgroundImage: 'url(./resources/ledger.png)' }}/>Ledger</button>
                 <button onClick={() => connectWeb3AndGetAccounts().then(accounts => accounts.forEach(addAccount))}><div className="icon" style={{ backgroundImage: 'url(./resources/metamask.png)' }}/>Metamask / Browser</button>
               </div>
             </section>
-
           </div>
         </Route>
 
@@ -265,8 +245,6 @@ function LoginByEmail({ onAddAccount }) {
     }
     // @TODO progress bar here
     try {
-      // @TODO also save `lastSigner` .... or `signer`... or however we'll structure the signer stuff
-      // we need to have it in the account, at least for quick accounts
       const wallet = await Wallet.fromEncryptedJson(JSON.parse(identityInfo.meta.primaryKeyBackup), passphrase)
       // console.log(wallet)
       const { _id, salt, identityFactoryAddr, baseIdentityAddr } = identityInfo
