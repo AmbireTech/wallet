@@ -256,3 +256,15 @@ button:hover {
 #dashboard .item.selected svg {
   color: #AA6AFF;
 }
+
+
+#accountSelector {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  border: 0px;
+  outline: 0px;
+  color: white;
+  padding: 15px;
+  background-color: rgba(0,0,0,0.3);
+}
