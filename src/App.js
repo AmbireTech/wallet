@@ -1,17 +1,15 @@
 import './App.css'
 
 import { useState } from 'react'
-import { useEffect } from 'react'
 import {
   HashRouter as Router,
   Switch,
   Route,
-  Link,
-  Redirect
+  Redirect,
+  useHistory
 } from 'react-router-dom'
 import { MdDashboard, MdLock, MdCompareArrows } from 'react-icons/md'
 import { BsPiggyBank } from 'react-icons/bs'
-import LoginOrSignup from './components/LoginOrSignupForm/LoginOrSignupForm'
 import EmailLogin from './components/EmailLogin/EmailLogin'
 import AddAccount from './components/AddAccount/AddAcount'
 
@@ -23,9 +21,10 @@ const initialAccounts = JSON.parse(localStorage.accounts || '[]')
 
 function App() {
   const [accounts, setAccounts] = useState(initialAccounts)
+  const history = useHistory()
 
-  const addAccount = acc => {
-    console.log('addAccount', acc)
+  const onAddAccount = acc => {
+    console.log('onAddAccount', acc)
     const existingIdx = accounts.findIndex(x => x._id === acc._id)
     // @TODO show toast
     // the use case for updating the entry is that we have some props (such as which EOA controls it) which migth change
@@ -33,6 +32,10 @@ function App() {
     else accounts[existingIdx] = acc
     setAccounts(accounts)
     localStorage.accounts = JSON.stringify(accounts)
+
+    if (Object.keys(accounts).length) {
+      history.replace({ pathname: "/dashboard" })
+    }
   }
 
   return (
@@ -43,11 +46,11 @@ function App() {
 
       <Switch>
         <Route path="/add-account">
-          <AddAccount onAddAccount={addAccount}></AddAccount>
+          <AddAccount relayerURL={relayerURL} onAddAccount={onAddAccount}></AddAccount>
         </Route>
 
         <Route path="/email-login">
-          <EmailLogin relayerURL={relayerURL} onAddAccount={addAccount}></EmailLogin>
+          <EmailLogin relayerURL={relayerURL} onAddAccount={onAddAccount}></EmailLogin>
         </Route>
 
         <Route path="/dashboard">
