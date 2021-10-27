@@ -12,6 +12,13 @@ import {
 import { MdDashboard, MdLock, MdCompareArrows, MdEmail } from 'react-icons/md'
 import { BsPiggyBank } from 'react-icons/bs'
 import LoginOrSignup from './components/LoginOrSignup/LoginOrSignup'
+import TrezorConnect from 'trezor-connect'
+import { TrezorSubprovider } from '@0x/subproviders/lib/src/subproviders/trezor' // https://github.com/0xProject/0x-monorepo/issues/1400
+
+TrezorConnect.manifest({
+  email: 'contactus@ambire.com',
+  appUrl: 'https://www.ambire.com'
+})
 
 // @TODO consts/cfg
 const relayerURL = 'http://localhost:1934'
@@ -93,7 +100,9 @@ const onAccRequest = async req => {
   }
 }
 //onAccRequest({ passphrase: 'testtest', email: 'ivo@strem.io' })
-  // @TODO move this
+
+
+// @TODO move this
 async function connectWeb3AndGetAccounts () {
   // @TODO: pending state; should bein the LoginORSignup (AddAccount) component
   if (typeof window.ethereum === 'undefined') {
@@ -102,7 +111,11 @@ async function connectWeb3AndGetAccounts () {
   }
   const ethereum = window.ethereum
   const web3Accs = await ethereum.request({ method: 'eth_requestAccounts' })
-  const allOwnedIdentities = await Promise.all(web3Accs.map(
+  return getOwnedByEOAs(web3Accs)
+}
+
+async function getOwnedByEOAs(eoas) {
+  const allOwnedIdentities = await Promise.all(eoas.map(
     async acc => {
       const resp = await fetch(`${relayerURL}/identity/any/by-owner/${acc}?includeFormerlyOwned=true`)
       return await resp.json()
@@ -117,18 +130,30 @@ async function connectWeb3AndGetAccounts () {
     )
   )
 
-  const accountsToAdd = await Promise.all(Object.keys(allUniqueOwned).map(async addr => {
-    // @TODO: fundamentally, do we even need these values?
-    const { salt, identityFactoryAddr, baseIdentityAddr } = await fetch(`${relayerURL}/identity/${addr}`)
-      .then(r => r.json())
-    return {
-      _id: addr,
-      salt, identityFactoryAddr, baseIdentityAddr,
-      // @TODO signer for the ones that we CURRENTLY control
-    }
-  }))
+  return await Promise.all(Object.keys(allUniqueOwned).map(getAccountByAddr))
+}
 
-  return accountsToAdd
+async function getAccountByAddr (addr) {
+  // @TODO: fundamentally, do we even need these values?
+  const { salt, identityFactoryAddr, baseIdentityAddr } = await fetch(`${relayerURL}/identity/${addr}`)
+    .then(r => r.json())
+  return {
+    _id: addr,
+    salt, identityFactoryAddr, baseIdentityAddr,
+    // @TODO signer for the ones that we CURRENTLY control
+  }
+}
+
+
+async function connectTrezorAndGetAccounts () {
+  /*
+  const engine = new Web3ProviderEngine({ pollingInterval: this.pollingInterval })
+  engine.addProvider(new TrezorSubprovider({ trezorConnectClientApi: TrezorConnect, ...this.config }))
+  engine.addProvider(new CacheSubprovider())
+  engine.addProvider(new RPCSubprovider(this.url, this.requestTimeoutMs))
+  */
+  const provider = new TrezorSubprovider({ trezorConnectClientApi: TrezorConnect })
+  return getOwnedByEOAs(await provider.getAccountsAsync(5))
 }
 
 // @TODO catch parse failures and handle them
@@ -145,6 +170,9 @@ function App() {
     else accounts[existingIdx] = acc
     setAccounts(accounts)
     localStorage.accounts = JSON.stringify(accounts)
+  }
+  const addMultipleAccounts = accs => {
+    accs.forEach(addAccount)
   }
   
   return (
@@ -181,9 +209,9 @@ function App() {
                 <Link to="/email-login">
                   <button><div className="icon" style={{ backgroundImage: 'url(./resources/envelope.png)' }}/>Email</button>
                 </Link>
-                <button><div className="icon" style={{ backgroundImage: 'url(./resources/trezor.png)' }}/>Trezor</button>
+                <button onClick={() => connectTrezorAndGetAccounts().then(addMultipleAccounts)}><div className="icon" style={{ backgroundImage: 'url(./resources/trezor.png)' }}/>Trezor</button>
                 <button><div className="icon" style={{ backgroundImage: 'url(./resources/ledger.png)' }}/>Ledger</button>
-                <button onClick={() => connectWeb3AndGetAccounts().then(accounts => accounts.forEach(addAccount))}><div className="icon" style={{ backgroundImage: 'url(./resources/metamask.png)' }}/>Metamask / Browser</button>
+                <button onClick={() => connectWeb3AndGetAccounts().then(addMultipleAccounts)}><div className="icon" style={{ backgroundImage: 'url(./resources/metamask.png)' }}/>Metamask / Browser</button>
               </div>
             </section>
           </div>
