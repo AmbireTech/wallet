@@ -67,7 +67,8 @@ const onAccRequest = async (req) => {
     primaryKeyBackup: req.backupOptout ? null : primaryKeyBackup,
     secondKeySecret,
     salt, identityFactoryAddr, baseIdentityAddr,
-    privileges
+    privileges,
+    selecterd: true
   })
 
   // @TODO check for success
@@ -145,15 +146,18 @@ async function connectLedgerAndGetAccounts () {
   return getOwnedByEOAs(await provider.getAccountsAsync(5))
 }
 
-export default function AddAccount ({ addAccount }) {
-    const addMultipleAccounts = accs => accs.forEach(addAccount)
-      
+export default function AddAccount ({ onAddAccount }) {
+    const addMultipleAccounts = accs => {
+        if (accs[0]) accs[0].selected = true
+        accs.forEach(onAddAccount)
+    }
+
     return (<div className="loginSignupWrapper">
         <div id="logo"/>
         <section id="addAccount">
           <div id="loginEmail">
             <h3>Create a new account</h3>
-            <LoginOrSignup onAccRequest={req => onAccRequest(req).then(addAccount)} action="SIGNUP"></LoginOrSignup>
+            <LoginOrSignup onAccRequest={req => onAccRequest(req).then(onAddAccount)} action="SIGNUP"></LoginOrSignup>
           </div>
     
           <div id="loginSeparator">
