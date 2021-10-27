@@ -73,8 +73,13 @@ function App() {
             </div>
 
             <div>
-              {/* TODO managed state on this select box, account selection */}
-              <select id="accountSelector" defaultValue={(accounts.find(x => x.selected) || {})._id}>
+              {/* TODO more elegant way to manage selected? */}
+              <select id="accountSelector" onChange={ ev => {
+                accounts.forEach(acc => acc.selected = false)
+                accounts.find(x => x._id === ev.target.value).selected = true
+                localStorage.accounts = JSON.stringify(accounts)
+                setAccounts([ ...accounts ])
+              } } defaultValue={(accounts.find(x => x.selected) || {})._id}>
                 {accounts.map(acc => (<option key={acc._id}>{acc._id}</option>))}
               </select>
             </div>
