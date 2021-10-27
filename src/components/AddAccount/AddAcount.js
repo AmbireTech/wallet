@@ -153,7 +153,7 @@ export default function AddAccount ({ relayerURL, onAddAccount }) {
 
     if (signersToChoose) {
         return (
-            <ul>
+            <ul id="signersToChoose">
                 {signersToChoose.map(addr => (<li key={addr} onClick={() => {
                     setChooseSigners(null)
                     }}>{addr}</li>))}
