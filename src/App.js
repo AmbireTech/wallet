@@ -5,8 +5,7 @@ import {
   HashRouter as Router,
   Switch,
   Route,
-  Redirect,
-  useHistory
+  Redirect
 } from 'react-router-dom'
 import { MdDashboard, MdLock, MdCompareArrows } from 'react-icons/md'
 import { BsPiggyBank } from 'react-icons/bs'
@@ -21,7 +20,6 @@ const initialAccounts = JSON.parse(localStorage.accounts || '[]')
 
 function App() {
   const [accounts, setAccounts] = useState(initialAccounts)
-  const history = useHistory()
 
   const onAddAccount = acc => {
     console.log('onAddAccount', acc)
@@ -34,7 +32,7 @@ function App() {
     localStorage.accounts = JSON.stringify(accounts)
 
     if (Object.keys(accounts).length) {
-      history.replace({ pathname: "/dashboard" })
+      window.location.href = '/#/dashboard'
     }
   }
 
@@ -69,6 +67,12 @@ function App() {
               <div className="item"><MdCompareArrows size={30}/>Transactions</div>
               <div className="item"><BsPiggyBank size={30}/>Earn</div>
 
+            </div>
+
+            <div>
+              <select id="accountSelector">
+                {accounts.map(acc => (<option key={acc._id} selected={acc.selected}>{acc._id}</option>))}
+              </select>
             </div>
           </section>
         </Route>
