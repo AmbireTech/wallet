@@ -45,7 +45,10 @@ input:focus {
 button {
   opacity: 0.8;
 }
-button:hover {
+button[disabled] {
+  opacity: 0.5;
+}
+button:not([disabled]):hover {
   opacity: 1;
 }
 
