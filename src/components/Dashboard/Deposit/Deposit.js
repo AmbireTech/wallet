@@ -1,8 +1,11 @@
 import './Deposit.css'
 
-import { MdWarning, MdAccountBalance, MdAccountBalanceWallet } from 'react-icons/md'
+import { MdAccountBalance, MdAccountBalanceWallet } from 'react-icons/md'
 import TextInput from '../../common/TextInput/TextInput'
 import Providers from './Providers/Providers'
+
+import ETHEREUM_LOGO from '../../../resources/ethereum-logo.png'
+import POLYGON_LOGO from '../../../resources/polygon-logo.svg'
 
 export default function Deposit({ address }) {
     return (
@@ -21,9 +24,12 @@ export default function Deposit({ address }) {
                     Send tokens or collectables to this address:
                     <TextInput value={address} copy/>
                 </div>
-                <div id="address-warning">
-                    <span className="warning"><MdWarning size={17}/></span> Please make sure to <b>select Ethereum as transfer network</b> if sending tokens from Binance.
-                    <span className="danger"> Otherwise the funds will not be credited to your account.</span>
+                <div id="networks">
+                    Following networks supported:
+                    <div class="logos">
+                        <img src={ETHEREUM_LOGO} alt="Ethereum"/>
+                        <img src={POLYGON_LOGO} alt="Polygon"/>
+                    </div>
                 </div>
             </div>
             <div className="panel">
