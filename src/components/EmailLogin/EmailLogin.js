@@ -11,6 +11,7 @@ import LoginOrSignup from '../LoginOrSignupForm/LoginOrSignupForm'
 export default function EmailLogin({ relayerURL, onAddAccount }) {
     const [requiresEmailConfFor, setRequiresConfFor] = useState(null)
     const [err, setErr] = useState('')
+    const [inProgress, setInProgress] = useState(false)
   
     const EMAIL_VERIFICATION_RECHECK = 3000
   
@@ -84,7 +85,13 @@ export default function EmailLogin({ relayerURL, onAddAccount }) {
     const onLoginUserAction = async ({ email, passphrase }) => {
       setErr('')
       setRequiresConfFor('')
-      attemptLogin({ email, passphrase })
+      setInProgress(true)
+      try {
+        await attemptLogin({ email, passphrase })
+      } catch (e) {
+          setErr(`Unexpected error: ${e.message || e}`)
+      }
+      setInProgress(false)
     }
   
     // try logging in once after EMAIL_VERIFICATION_RECHECK
@@ -115,7 +122,7 @@ export default function EmailLogin({ relayerURL, onAddAccount }) {
         {err ? (<p className="error">{err}</p>) : (<></>)}
       </div>)
       : (<div id="loginEmail">
-        <LoginOrSignup onAccRequest={onLoginUserAction}></LoginOrSignup>
+        <LoginOrSignup onAccRequest={onLoginUserAction} inProgress={inProgress}></LoginOrSignup>
   
         {err ? (<p className="error">{err}</p>) : (<></>)}
   
