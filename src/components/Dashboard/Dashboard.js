@@ -1,3 +1,5 @@
+import './Dashboard.css'
+
 import { MdDashboard, MdLock, MdCompareArrows } from 'react-icons/md'
 import { BsPiggyBank } from 'react-icons/bs'
 
