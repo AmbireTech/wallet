@@ -1,11 +1,3 @@
-.warning {
-    color: #f6b03f;
-}
-
-.danger {
-    color: #f63f3f;
-}
-
 #deposit {
     display: flex;
     justify-content: space-between;
@@ -48,6 +40,20 @@
     color: #8c8d91;
 }
 
-#deposit .panel #address-warning {
+#deposit .panel #networks {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 1em;
     font-size: 1.2em;
+}
+
+#deposit .panel #networks .logos {
+    display: flex;
+    justify-content: center;
+    gap: 2.5em;
+}
+
+#deposit .panel #networks .logos img {
+    width: 10em;
 }
