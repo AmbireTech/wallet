@@ -1,0 +1,38 @@
+#providers {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75em;
+}
+
+#providers .provider {
+    display: flex;
+    justify-content: space-between;
+    gap: 1em;
+    padding: 1em;
+    background-color: rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+}
+
+#providers .provider:hover {
+    background-color: rgba(0, 0, 0, 0.2);
+}
+
+#providers .provider .logo {
+    flex: 0 0 auto;
+    width: 10em;
+}
+
+#providers .provider .logo img {
+    width: 100%;
+}
+
+#providers .provider .details {
+    flex: 0 1 auto;
+    text-align: right;
+}
+
+#providers .provider .details .fees,
+#providers .provider .details .limits,
+#providers .provider .details .currencies {
+    opacity: 0.5;
+}
