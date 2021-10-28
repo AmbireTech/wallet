@@ -27,6 +27,9 @@ button, input {
   font-family: 'Open Sans';
 }
 
+button {
+  background-color: white;
+}
 button, input[type=submit] {
   cursor: pointer;
 }
@@ -44,6 +47,11 @@ button {
 }
 button:hover {
   opacity: 1;
+}
+
+.error {
+  color: red;
+  text-align: center;
 }
 
 #root {
@@ -187,15 +195,13 @@ button:hover {
   font-size: 1.2em;
 }
 
-.error {
-  color: red;
-  text-align: center;
+
+#loginEmail .error, #loginEmail .error {
   font-size: 1.5em;
   font-weight: 600;
   position: relative;
   top: -15px;
 }
-
 
 /* TODO: can we have a variable left padding here */
 #sidebar {
