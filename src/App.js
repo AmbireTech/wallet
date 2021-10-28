@@ -23,7 +23,7 @@ function App() {
 
   const onAddAccount = acc => {
     console.log('onAddAccount', acc)
-    const existingIdx = accounts.findIndex(x => x._id === acc._id)
+    const existingIdx = accounts.findIndex(x => x._id.toLowerCase() === acc._id.toLowerCase())
     // @TODO show toast
     // the use case for updating the entry is that we have some props (such as which EOA controls it) which migth change
     if (existingIdx === -1) accounts.push(acc)
