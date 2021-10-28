@@ -91,7 +91,18 @@ export default function EmailLogin({ relayerURL, onAddAccount }) {
         return () => clearTimeout(timer)
       }
     })
-  
+
+    // @TODO import from JSON; maybe without a URL, as we'll just pop a file selector and then import the JSON
+    const importJSONHref = '/#/json-import'
+
+    if (!relayerURL) {
+        return (<section className="loginSignupWrapper" id="emailLoginSection">
+            <div id="logo"/>
+            <h3 class="error">Email login not supported without the relayer.</h3>
+            <a href={importJSONHref}><button>Import JSON</button></a>
+        </section>)
+    }
+
     const inner = requiresEmailConfFor ?
       (<div id="loginEmail" className="emailConf">
         <h3><MdEmail size={25} color="white"/>Email confirmation required</h3>
@@ -106,7 +117,7 @@ export default function EmailLogin({ relayerURL, onAddAccount }) {
         {err ? (<p className="error">{err}</p>) : (<></>)}
   
         <a href="#">I forgot my passphrase</a>
-        <a href="#">Import JSON</a>
+        <a href={importJSONHref}>Import JSON</a>
       </div>)
       
     return (
