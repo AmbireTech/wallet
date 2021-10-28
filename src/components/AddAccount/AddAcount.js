@@ -34,13 +34,24 @@ const SCRYPT_ITERATIONS = 131072/8
 export default function AddAccount ({ relayerURL, onAddAccount }) {
     const [signersToChoose, setChooseSigners] = useState(null)
     const [err, setErr] = useState('')
+    const [addAccErr, setAddAccErr] = useState('')
     const [inProgress, setInProgress] = useState(false)
 
-    const wrapProgress = async (fn) => {
+    const wrapProgress = async fn => {
         setInProgress(true)
         // @TODO catch errors here?
         await fn()
         setInProgress(false)
+    }
+
+    const wrapErr = async fn => {
+        setAddAccErr('')
+        try {
+            await fn()
+        } catch(e) {
+            console.error(e)
+            setAddAccErr(`Unexpected error: ${e.message || e}`)
+        }
     }
 
     const createQuickAcc = async (req) => {
@@ -87,6 +98,7 @@ export default function AddAccount ({ relayerURL, onAddAccount }) {
             return
         }
         if (!createResp.success) {
+            console.log(createResp)
             setErr(`Unexpected sign up error: ${createResp.message || 'unknown'}`)
             return
         }
@@ -211,7 +223,7 @@ export default function AddAccount ({ relayerURL, onAddAccount }) {
         return (<div className="loginSignupWrapper">
             <h3>Choose a signer</h3>
             <ul id="signersToChoose">
-                {signersToChoose.map(addr => (<li key={addr} onClick={() => onEOASelected(addr)}>{addr}</li>))}
+                {signersToChoose.map(addr => (<li key={addr} onClick={() => wrapErr(() => onEOASelected(addr))}>{addr}</li>))}
             </ul>
         </div>)
     }
@@ -219,9 +231,9 @@ export default function AddAccount ({ relayerURL, onAddAccount }) {
     // Adding accounts from existing signers
     // @TODO: progress indicators for those
     const addFromSignerButtons = (<>
-        <button onClick={() => connectTrezorAndGetAccounts()}><div className="icon" style={{ backgroundImage: 'url(./resources/trezor.png)' }}/>Trezor</button>
-        <button onClick={() => connectLedgerAndGetAccounts()}><div className="icon" style={{ backgroundImage: 'url(./resources/ledger.png)' }}/>Ledger</button>
-        <button onClick={() => connectWeb3AndGetAccounts()}><div className="icon" style={{ backgroundImage: 'url(./resources/metamask.png)' }}/>Metamask / Browser</button>
+        <button onClick={() => wrapErr(connectTrezorAndGetAccounts)}><div className="icon" style={{ backgroundImage: 'url(./resources/trezor.png)' }}/>Trezor</button>
+        <button onClick={() => wrapErr(connectLedgerAndGetAccounts)}><div className="icon" style={{ backgroundImage: 'url(./resources/ledger.png)' }}/>Ledger</button>
+        <button onClick={() => wrapErr(connectWeb3AndGetAccounts)}><div className="icon" style={{ backgroundImage: 'url(./resources/metamask.png)' }}/>Metamask / Browser</button>
     </>)
 
     if (!relayerURL) {
@@ -262,6 +274,7 @@ export default function AddAccount ({ relayerURL, onAddAccount }) {
               <button><div className="icon" style={{ backgroundImage: 'url(./resources/envelope.png)' }}/>Email</button>
             </Link>
             {addFromSignerButtons}
+            {addAccErr ? (<p className="error">{addAccErr}</p>) : (<></>)}
           </div>
         </section>
       </div>
