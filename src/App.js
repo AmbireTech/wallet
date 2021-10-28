@@ -24,6 +24,9 @@ function App() {
   const onAddAccount = acc => {
     console.log('onAddAccount', acc)
     const existingIdx = accounts.findIndex(x => x._id.toLowerCase() === acc._id.toLowerCase())
+
+    if (acc.selected) accounts.forEach(x => x.selected = false)
+
     // @TODO show toast
     // the use case for updating the entry is that we have some props (such as which EOA controls it) which migth change
     if (existingIdx === -1) accounts.push(acc)
@@ -83,8 +86,8 @@ function App() {
                 {accounts.map(acc => (<option key={acc._id}>{acc._id}</option>))}
               </select>
 
-              <select id="networkSelector">
-                <option selected>Ethereum</option>
+              <select id="networkSelector" defaultValue="Ethereum">
+                <option>Ethereum</option>
                 <option>Polygon</option>
               </select>
             </div>
