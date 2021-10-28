@@ -76,7 +76,7 @@ export default function EmailLogin({ relayerURL, onAddAccount }) {
       }
   
       if (resp.status === 200) {
-        onTryDecrypt(body, passphrase)
+        await onTryDecrypt(body, passphrase)
       } else {
         setErr(body.message ? `Relayer error: ${body.message}` : `Unknown no-message error: ${resp.status}`)
       }
