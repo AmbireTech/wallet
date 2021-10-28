@@ -45,7 +45,7 @@ export default function AddAccount ({ relayerURL, onAddAccount }) {
             extraEntropy: id(req.email+':'+Date.now())
         }).mnemonic.phrase.split(' ').slice(0, 6).join(' ') + ' ' + req.email
 
-        const secondKeyAddress = fetchPost(`${relayerURL}/second-key`, { secondKeySecret })
+        const secondKeyAddress = await fetchPost(`${relayerURL}/second-key`, { secondKeySecret })
             .then(r => r.address)
 
         // @TODO: timelock value for the quickAccount
