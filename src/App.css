@@ -202,7 +202,7 @@ input:disabled, button:disabled {
 }
 
 
-#loginEmail .error, #loginEmail .error {
+#loginEmail .error {
   font-size: 1.5em;
   font-weight: 600;
   position: relative;

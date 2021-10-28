@@ -12,6 +12,7 @@ import { fetch, fetchPost } from '../../lib/fetch'
 // @TODO update those pre-launch
 const BASE_IDENTITY = '0xA2E9e41ee85AE792A8213736c7f9398a933F8184'
 const FACTORY = '0x447f228E6af15C2Df147235eCB9ABE53BD1f46Ad'
+const SALT = hexZeroPad('0x01', 32)
 
 TrezorConnect.manifest({
   email: 'contactus@ambire.com',
@@ -40,8 +41,9 @@ export default function AddAccount ({ relayerURL, onAddAccount }) {
     }
 
     const createQuickAcc = async (req) => {
-        const firstKeyWallet = Wallet.createRandom()
+        setErr('')
 
+        const firstKeyWallet = Wallet.createRandom()
         // @TODO fix this hack, use another source of randomness
         // 6 words is 2048**6
         const secondKeySecret = Wallet.createRandom({
@@ -58,8 +60,7 @@ export default function AddAccount ({ relayerURL, onAddAccount }) {
         // @TODO not hardcoded
         const quickAccManager = '0x697d866d20a8E8886a0D0511e82846AC108Bc5B6'
         const privileges = [[quickAccManager, accHash]]
-        // @TODO proper salt
-        const salt = hexZeroPad('0x01', 32)
+        const salt = SALT
         const baseIdentityAddr = BASE_IDENTITY
         const identityFactoryAddr = FACTORY
         const bytecode = getProxyDeployBytecode(baseIdentityAddr, privileges, { privSlot: 0 })
@@ -77,10 +78,14 @@ export default function AddAccount ({ relayerURL, onAddAccount }) {
             salt, identityFactoryAddr, baseIdentityAddr,
             privileges,
         })
-        // @TODO check for success
-
-        // @TODO remove this
-        console.log('identityAddr:', identityAddr, quickAccount, createResp)
+        if (createResp.message === 'EMAIL_ALREADY_USED') {
+            setErr('Email already used')
+            return
+        }
+        if (!createResp.success) {
+            setErr(`Unexpected sign up error: ${createResp.message || 'unknown'}`)
+            return
+        }
 
         await onAddAccount({
             _id: identityAddr,
@@ -106,8 +111,7 @@ export default function AddAccount ({ relayerURL, onAddAccount }) {
         const privileges = [[getAddress(addr), hexZeroPad('0x01', 32)]]
         const baseIdentityAddr = BASE_IDENTITY
         const identityFactoryAddr = FACTORY
-        // @TODO proper salt
-        const salt = hexZeroPad('0x01', 32)
+        const salt = SALT
         const bytecode = getProxyDeployBytecode(baseIdentityAddr, privileges, { privSlot: 0 })
         const identityAddr = '0x' + generateAddress2(identityFactoryAddr, salt, bytecode).toString('hex')
 
@@ -117,7 +121,10 @@ export default function AddAccount ({ relayerURL, onAddAccount }) {
                 salt, identityFactoryAddr, baseIdentityAddr,
                 privileges
             })
-            console.log(createResp)
+            if (!createResp.success) {
+                setErr(`Unexpected sign up error: ${createResp.message || 'unknown'}`)
+                return
+            }
         }
 
         return {
@@ -239,7 +246,12 @@ export default function AddAccount ({ relayerURL, onAddAccount }) {
         <section id="addAccount">
           <div id="loginEmail">
             <h3>Create a new account</h3>
-            <LoginOrSignup inProgress={inProgress} onAccRequest={req => wrapProgress(() => createQuickAcc(req))} action="SIGNUP"></LoginOrSignup>
+            <LoginOrSignup
+                inProgress={inProgress}
+                onAccRequest={req => wrapProgress(() => createQuickAcc(req))}
+                action="SIGNUP"
+            ></LoginOrSignup>
+            {err ? (<p className="error">{err}</p>) : (<></>)}
           </div>
     
           <div id="loginSeparator">
