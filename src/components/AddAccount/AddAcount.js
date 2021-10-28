@@ -46,6 +46,9 @@ export default function AddAccount ({ relayerURL, onAddAccount }) {
     const createQuickAcc = async (req) => {
         setErr('')
 
+        // async hack to let React run a tick so it can re-render before the blocking Wallet.createRandom()
+        await new Promise(resolve => setTimeout(resolve, 0))
+
         const firstKeyWallet = Wallet.createRandom()
         // @TODO fix this hack, use another source of randomness
         // 6 words is 2048**6
