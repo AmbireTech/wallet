@@ -1,0 +1,53 @@
+.warning {
+    color: #f6b03f;
+}
+
+.danger {
+    color: #f63f3f;
+}
+
+#deposit {
+    display: flex;
+    justify-content: space-between;
+    gap: 1.5em;
+    padding: 0 1.5em;
+}
+
+#deposit .panel {
+    display: flex;
+    flex-direction: column;
+    gap: 2em;
+    width: 100%;
+    text-align: center;
+    padding: 0 2em;
+    padding-top: 2em;
+    padding-bottom: 3em;
+    background-color: rgba(0, 0, 0, 0.2);
+}
+
+#deposit .panel .heading .title {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    font-size: 2.5em;
+    font-weight: bold;
+    color: rgb(128, 255, 219);
+    text-transform: uppercase;
+}
+
+#deposit .panel .heading .subtitle {
+    font-size: 1.5em;
+    text-transform: uppercase;
+    /* color: #111013; */
+}
+
+#deposit .panel .description {
+    /* text-align: left; */
+    font-size: 1.4em;
+    color: #8c8d91;
+}
+
+#deposit .panel #address-warning {
+    font-size: 1.2em;
+}

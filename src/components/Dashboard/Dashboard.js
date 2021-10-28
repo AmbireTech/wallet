@@ -2,6 +2,7 @@ import './Dashboard.css'
 
 import { MdDashboard, MdLock, MdCompareArrows } from 'react-icons/md'
 import { BsPiggyBank } from 'react-icons/bs'
+import Deposit from './Deposit/Deposit'
 
 export default function Dashboard({ accounts, onAddAccount }) {
     return (
@@ -27,6 +28,14 @@ export default function Dashboard({ accounts, onAddAccount }) {
               <select id="accountSelector" onChange={onAddAccount} defaultValue={(accounts.find(x => x.selected) || {})._id}>
                 {accounts.map(acc => (<option key={acc._id}>{acc._id}</option>))}
               </select>
+            </div>
+
+            <div id="topbar">
+
+            </div>
+
+            <div id="content">
+                <Deposit address="0x7bf26452A91857Fb1334414D8F0Ea1F900Cf44dd"></Deposit>
             </div>
         </section>
     )
