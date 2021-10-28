@@ -43,7 +43,9 @@ export default function EmailLogin({ relayerURL, onAddAccount }) {
     const attemptLogin = async ({ email, passphrase }, ignoreEmailConfirmationRequired) => {
       // try by-email first: if this returns data we can just move on to decrypting
       // does not matter which network we request
-      const { resp, body, errMsg } = await fetchCaught(`${relayerURL}/identity/by-email/${encodeURIComponent(email)}`, { credentials: 'include' })
+      const { resp, body, errMsg } = await fetchCaught(`${relayerURL}/identity/by-email/${encodeURIComponent(email)}`, { headers: {
+          authorization: localStorage.loginSessionKey ? `Bearer ${localStorage.loginSessionKey}` : null
+      } })
       if (errMsg) {
         setErr(errMsg)
         return
@@ -60,6 +62,7 @@ export default function EmailLogin({ relayerURL, onAddAccount }) {
           setErr(`Email confirmation needed but unable to request: ${requestAuthResp.status}`)
           return
         }
+        localStorage.loginSessionKey = (await requestAuthResp.json()).sessionKey
         setRequiresConfFor({ email, passphrase })
         return
       }
