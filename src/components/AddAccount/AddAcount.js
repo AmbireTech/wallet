@@ -65,7 +65,7 @@ export default function AddAccount ({ relayerURL, onAddAccount }) {
         const privileges = [[quickAccManager, accHash]]
         const { salt, baseIdentityAddr, identityFactoryAddr } = ACCOUNT_PRESETS
         const bytecode = getProxyDeployBytecode(baseIdentityAddr, privileges, { privSlot: 0 })
-        const identityAddr = '0x' + generateAddress2(identityFactoryAddr, salt, bytecode).toString('hex')
+        const identityAddr = getAddress('0x' + generateAddress2(identityFactoryAddr, salt, bytecode).toString('hex'))
 
         const primaryKeyBackup = JSON.stringify(
             await firstKeyWallet.encrypt(req.passphrase, { scrypt: { N: SCRYPT_ITERATIONS } })
@@ -108,7 +108,7 @@ export default function AddAccount ({ relayerURL, onAddAccount }) {
         const privileges = [[getAddress(addr), hexZeroPad('0x01', 32)]]
         const { salt, baseIdentityAddr, identityFactoryAddr } = ACCOUNT_PRESETS
         const bytecode = getProxyDeployBytecode(baseIdentityAddr, privileges, { privSlot: 0 })
-        const identityAddr = '0x' + generateAddress2(identityFactoryAddr, salt, bytecode).toString('hex')
+        const identityAddr = getAddress('0x' + generateAddress2(identityFactoryAddr, salt, bytecode).toString('hex'))
 
         if (relayerURL) {
             // @TODO catch errors here - wrong status codes, etc.
