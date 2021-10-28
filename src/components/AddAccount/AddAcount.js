@@ -30,13 +30,16 @@ const SCRYPT_ITERATIONS = 131072/8
 
 export default function AddAccount ({ relayerURL, onAddAccount }) {
     const [signersToChoose, setChooseSigners] = useState(null)
+    const [err, setErr] = useState('')
+    const [inProgress, setInProgress] = useState(false)
 
-    const addMultipleAccounts = accs => {
-        if (accs[0]) accs[0].selected = true
-        accs.forEach(onAddAccount)
+    const wrapProgress = async (fn) => {
+        setInProgress(true)
+        await fn()
+        setInProgress(false)
     }
 
-    const onAccRequest = async (req) => {
+    const createQuickAcc = async (req) => {
         const firstKeyWallet = Wallet.createRandom()
 
         // @TODO fix this hack, use another source of randomness
@@ -79,14 +82,22 @@ export default function AddAccount ({ relayerURL, onAddAccount }) {
         // @TODO remove this
         console.log('identityAddr:', identityAddr, quickAccount, createResp)
 
-        return {
+        await onAddAccount({
             _id: identityAddr,
             email: req.email,
             primaryKeyBackup,
             salt, identityFactoryAddr, baseIdentityAddr,
             selected: true,
             // @TODO signer
-        }
+        })
+    }
+
+
+    // EOA implementations
+    // Add or create accounts from Trezor/Ledger/Metamask/etc.
+    const addMultipleAccounts = accs => {
+        if (accs[0]) accs[0].selected = true
+        accs.forEach(onAddAccount)
     }
 
     // @TODO refactor into create with privileges perhaps?
@@ -228,7 +239,7 @@ export default function AddAccount ({ relayerURL, onAddAccount }) {
         <section id="addAccount">
           <div id="loginEmail">
             <h3>Create a new account</h3>
-            <LoginOrSignup onAccRequest={req => onAccRequest(req).then(onAddAccount)} action="SIGNUP"></LoginOrSignup>
+            <LoginOrSignup inProgress={inProgress} onAccRequest={req => wrapProgress(() => createQuickAcc(req))} action="SIGNUP"></LoginOrSignup>
           </div>
     
           <div id="loginSeparator">
