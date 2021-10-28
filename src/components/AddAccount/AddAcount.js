@@ -9,6 +9,10 @@ import { hexZeroPad, AbiCoder, keccak256, id, getAddress } from 'ethers/lib/util
 
 import { fetch, fetchPost } from '../../lib/fetch'
 
+// @TODO update those pre-launch
+const BASE_IDENTITY = '0xA2E9e41ee85AE792A8213736c7f9398a933F8184'
+const FACTORY = '0x447f228E6af15C2Df147235eCB9ABE53BD1f46Ad'
+
 TrezorConnect.manifest({
   email: 'contactus@ambire.com',
   appUrl: 'https://www.ambire.com'
@@ -41,13 +45,8 @@ export default function AddAccount ({ relayerURL, onAddAccount }) {
             extraEntropy: id(req.email+':'+Date.now())
         }).mnemonic.phrase.split(' ').slice(0, 6).join(' ') + ' ' + req.email
 
-        const [
-            secondKeyAddress,
-            { whitelistedFactories, whitelistedBaseIdentities }
-        ] = await Promise.all([
-            fetchPost(`${relayerURL}/second-key`, { secondKeySecret }).then(r => r.address),
-            fetch(`${relayerURL}/relayer/cfg`).then(r => r.json())
-        ])
+        const secondKeyAddress = fetchPost(`${relayerURL}/second-key`, { secondKeySecret })
+            .then(r => r.address)
 
         // @TODO: timelock value for the quickAccount
         const quickAccount = [600, firstKeyWallet.address, secondKeyAddress]
@@ -58,8 +57,8 @@ export default function AddAccount ({ relayerURL, onAddAccount }) {
         const privileges = [[quickAccManager, accHash]]
         // @TODO proper salt
         const salt = hexZeroPad('0x01', 32)
-        const identityFactoryAddr = whitelistedFactories[whitelistedFactories.length - 1]
-        const baseIdentityAddr = whitelistedBaseIdentities[whitelistedBaseIdentities.length - 1]
+        const baseIdentityAddr = BASE_IDENTITY
+        const identityFactoryAddr = FACTORY
         const bytecode = getProxyDeployBytecode(baseIdentityAddr, privileges, { privSlot: 0 })
         const identityAddr = '0x' + generateAddress2(identityFactoryAddr, salt, bytecode).toString('hex')
 
@@ -75,8 +74,8 @@ export default function AddAccount ({ relayerURL, onAddAccount }) {
             salt, identityFactoryAddr, baseIdentityAddr,
             privileges,
         })
-
         // @TODO check for success
+
         // @TODO remove this
         console.log('identityAddr:', identityAddr, quickAccount, createResp)
 
@@ -93,23 +92,22 @@ export default function AddAccount ({ relayerURL, onAddAccount }) {
     // @TODO refactor into create with privileges perhaps?
     // only if we can have the whitelisted* stuff in advance; we can hardcode them
     async function createFromEOA (addr) {
-        const { whitelistedFactories, whitelistedBaseIdentities } = await fetch(`${relayerURL}/relayer/cfg`)
-            .then(r => r.json())
         const privileges = [[getAddress(addr), hexZeroPad('0x01', 32)]]
-        const identityFactoryAddr = whitelistedFactories[whitelistedFactories.length - 1]
-        const baseIdentityAddr = whitelistedBaseIdentities[whitelistedBaseIdentities.length - 1]
+        const baseIdentityAddr = BASE_IDENTITY
+        const identityFactoryAddr = FACTORY
         // @TODO proper salt
         const salt = hexZeroPad('0x01', 32)
         const bytecode = getProxyDeployBytecode(baseIdentityAddr, privileges, { privSlot: 0 })
         const identityAddr = '0x' + generateAddress2(identityFactoryAddr, salt, bytecode).toString('hex')
 
-        // @TODO catch errors here - wrong status codes, etc.
-        const createResp = await fetchPost(`${relayerURL}/identity/${identityAddr}`, {
-            salt, identityFactoryAddr, baseIdentityAddr,
-            privileges
-        })
-
-        console.log(createResp)
+        if (relayerURL) {
+            // @TODO catch errors here - wrong status codes, etc.
+            const createResp = await fetchPost(`${relayerURL}/identity/${identityAddr}`, {
+                salt, identityFactoryAddr, baseIdentityAddr,
+                privileges
+            })
+            console.log(createResp)
+        }
 
         return {
             _id: identityAddr,
@@ -184,6 +182,11 @@ export default function AddAccount ({ relayerURL, onAddAccount }) {
     }
 
     async function onEOASelected (addr) {
+        // when there is no relayer, we can only add the 'default' account created from that EOA
+        // @TODO in the future, it would be nice to do getLogs from the provider here to find out which other addrs we control
+        //   ... maybe we can isolate the code for that in lib/relayerless or something like that to not clutter this code
+        if (!relayerURL) return [await createFromEOA(addr)]
+        // otherwise check which accs we already own and add them
         const owned = await getOwnedByEOAs([addr])
         if (!owned.length) return [await createFromEOA(addr)]
         else return owned
