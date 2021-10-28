@@ -10,9 +10,11 @@ import { hexZeroPad, AbiCoder, keccak256, id, getAddress } from 'ethers/lib/util
 import { fetch, fetchPost } from '../../lib/fetch'
 
 // @TODO update those pre-launch
-const BASE_IDENTITY = '0xA2E9e41ee85AE792A8213736c7f9398a933F8184'
-const FACTORY = '0x447f228E6af15C2Df147235eCB9ABE53BD1f46Ad'
-const SALT = hexZeroPad('0x01', 32)
+const ACCOUNT_PRESETS = {
+    salt: hexZeroPad('0x01', 32),
+    baseIdentityAddr: '0xA2E9e41ee85AE792A8213736c7f9398a933F8184',
+    identityFactoryAddr: '0x447f228E6af15C2Df147235eCB9ABE53BD1f46Ad'
+}
 
 TrezorConnect.manifest({
   email: 'contactus@ambire.com',
@@ -60,9 +62,7 @@ export default function AddAccount ({ relayerURL, onAddAccount }) {
         // @TODO not hardcoded
         const quickAccManager = '0x697d866d20a8E8886a0D0511e82846AC108Bc5B6'
         const privileges = [[quickAccManager, accHash]]
-        const salt = SALT
-        const baseIdentityAddr = BASE_IDENTITY
-        const identityFactoryAddr = FACTORY
+        const { salt, baseIdentityAddr, identityFactoryAddr } = ACCOUNT_PRESETS
         const bytecode = getProxyDeployBytecode(baseIdentityAddr, privileges, { privSlot: 0 })
         const identityAddr = '0x' + generateAddress2(identityFactoryAddr, salt, bytecode).toString('hex')
 
@@ -109,9 +109,7 @@ export default function AddAccount ({ relayerURL, onAddAccount }) {
     // only if we can have the whitelisted* stuff in advance; we can hardcode them
     async function createFromEOA (addr) {
         const privileges = [[getAddress(addr), hexZeroPad('0x01', 32)]]
-        const baseIdentityAddr = BASE_IDENTITY
-        const identityFactoryAddr = FACTORY
-        const salt = SALT
+        const { salt, baseIdentityAddr, identityFactoryAddr } = ACCOUNT_PRESETS
         const bytecode = getProxyDeployBytecode(baseIdentityAddr, privileges, { privSlot: 0 })
         const identityAddr = '0x' + generateAddress2(identityFactoryAddr, salt, bytecode).toString('hex')
 
