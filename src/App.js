@@ -82,6 +82,11 @@ function App() {
               } } defaultValue={(accounts.find(x => x.selected) || {})._id}>
                 {accounts.map(acc => (<option key={acc._id}>{acc._id}</option>))}
               </select>
+
+              <select id="networkSelector">
+                <option selected>Ethereum</option>
+                <option>Polygon</option>
+              </select>
             </div>
           </section>
         </Route>

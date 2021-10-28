@@ -270,15 +270,23 @@ input:disabled, button:disabled {
 }
 
 
-#accountSelector {
-  position: fixed;
-  top: 30px;
-  right: 40px;
+select {
   border: 0px;
   outline: 0px;
   color: white;
   padding: 15px;
   background-color: rgba(0,0,0,0.3);
+}
+#accountSelector {
+  position: fixed;
+  top: 30px;
+  right: 205px;
+}
+#networkSelector {
+  position: fixed;
+  top: 30px;
+  right: 40px;
+  width: 150px;
 }
 
 #signersToChoose {
