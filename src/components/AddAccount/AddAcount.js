@@ -38,6 +38,7 @@ export default function AddAccount ({ relayerURL, onAddAccount }) {
 
     const wrapProgress = async (fn) => {
         setInProgress(true)
+        // @TODO catch errors here?
         await fn()
         setInProgress(false)
     }
@@ -100,10 +101,6 @@ export default function AddAccount ({ relayerURL, onAddAccount }) {
 
     // EOA implementations
     // Add or create accounts from Trezor/Ledger/Metamask/etc.
-    const addMultipleAccounts = accs => {
-        if (accs[0]) accs[0].selected = true
-        accs.forEach(onAddAccount)
-    }
 
     // @TODO refactor into create with privileges perhaps?
     // only if we can have the whitelisted* stuff in advance; we can hardcode them
@@ -119,10 +116,7 @@ export default function AddAccount ({ relayerURL, onAddAccount }) {
                 salt, identityFactoryAddr, baseIdentityAddr,
                 privileges
             })
-            if (!createResp.success) {
-                setErr(`Unexpected sign up error: ${createResp.message || 'unknown'}`)
-                return
-            }
+            if (!createResp.success && !(createResp.message && createResp.message.includes('already exists'))) throw createResp
         }
 
         return {
@@ -143,8 +137,8 @@ export default function AddAccount ({ relayerURL, onAddAccount }) {
         const web3Accs = await ethereum.request({ method: 'eth_requestAccounts' })
         if (!web3Accs.length) throw new Error('No accounts connected')
         const owned = await getOwnedByEOAs(web3Accs)
-        if (!owned.length) return [await createFromEOA(web3Accs[0])]
-        else return owned
+        if (!owned.length) onAddAccount(await createFromEOA(web3Accs[0]))
+        else owned.forEach(onAddAccount)
     }
 
     async function getOwnedByEOAs(eoas) {
@@ -201,11 +195,11 @@ export default function AddAccount ({ relayerURL, onAddAccount }) {
         // when there is no relayer, we can only add the 'default' account created from that EOA
         // @TODO in the future, it would be nice to do getLogs from the provider here to find out which other addrs we control
         //   ... maybe we can isolate the code for that in lib/relayerless or something like that to not clutter this code
-        if (!relayerURL) return [await createFromEOA(addr)]
+        if (!relayerURL) return onAddAccount(await createFromEOA(addr))
         // otherwise check which accs we already own and add them
         const owned = await getOwnedByEOAs([addr])
-        if (!owned.length) return [await createFromEOA(addr)]
-        else return owned
+        if (!owned.length) return onAddAccount(await createFromEOA(addr))
+        else owned.forEach(onAddAccount)
     }
 
     // The UI for choosing a signer to create/add an account with, for example
@@ -214,16 +208,17 @@ export default function AddAccount ({ relayerURL, onAddAccount }) {
         return (<div className="loginSignupWrapper">
             <h3>Choose a signer</h3>
             <ul id="signersToChoose">
-                {signersToChoose.map(addr => (<li key={addr} onClick={() => onEOASelected(addr).then(addMultipleAccounts)}>{addr}</li>))}
+                {signersToChoose.map(addr => (<li key={addr} onClick={() => onEOASelected(addr)}>{addr}</li>))}
             </ul>
         </div>)
     }
 
     // Adding accounts from existing signers
+    // @TODO: progress indicators for those
     const addFromSignerButtons = (<>
         <button onClick={() => connectTrezorAndGetAccounts()}><div className="icon" style={{ backgroundImage: 'url(./resources/trezor.png)' }}/>Trezor</button>
         <button onClick={() => connectLedgerAndGetAccounts()}><div className="icon" style={{ backgroundImage: 'url(./resources/ledger.png)' }}/>Ledger</button>
-        <button onClick={() => connectWeb3AndGetAccounts().then(addMultipleAccounts)}><div className="icon" style={{ backgroundImage: 'url(./resources/metamask.png)' }}/>Metamask / Browser</button>
+        <button onClick={() => connectWeb3AndGetAccounts()}><div className="icon" style={{ backgroundImage: 'url(./resources/metamask.png)' }}/>Metamask / Browser</button>
     </>)
 
     if (!relayerURL) {
