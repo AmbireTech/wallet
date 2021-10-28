@@ -189,12 +189,35 @@ export default function AddAccount ({ relayerURL, onAddAccount }) {
         else return owned
     }
 
+    // The UI for choosing a signer to create/add an account with, for example
+    // when connecting a hardware wallet, it has many addrs you can choose from
     if (signersToChoose) {
-        return (
+        return (<div className="loginSignupWrapper">
+            <h3>Choose a signer</h3>
             <ul id="signersToChoose">
                 {signersToChoose.map(addr => (<li key={addr} onClick={() => onEOASelected(addr).then(addMultipleAccounts)}>{addr}</li>))}
             </ul>
-        )
+        </div>)
+    }
+
+    // Adding accounts from existing signers
+    const addFromSignerButtons = (<>
+        <button onClick={() => connectTrezorAndGetAccounts()}><div className="icon" style={{ backgroundImage: 'url(./resources/trezor.png)' }}/>Trezor</button>
+        <button onClick={() => connectLedgerAndGetAccounts()}><div className="icon" style={{ backgroundImage: 'url(./resources/ledger.png)' }}/>Ledger</button>
+        <button onClick={() => connectWeb3AndGetAccounts().then(addMultipleAccounts)}><div className="icon" style={{ backgroundImage: 'url(./resources/metamask.png)' }}/>Metamask / Browser</button>
+    </>)
+
+    if (!relayerURL) {
+        return (<div className="loginSignupWrapper">
+            <div id="logo"/>
+            <section id="addAccount">
+            <div id="loginOthers">
+                <h3>Add an account</h3>
+                {addFromSignerButtons}
+                <h3>NOTE: You can enable email/passphrase login by connecting to a relayer.</h3>
+            </div>
+            </section>
+        </div>)
     }
 
     return (<div className="loginSignupWrapper">
@@ -212,13 +235,11 @@ export default function AddAccount ({ relayerURL, onAddAccount }) {
           </div>
     
           <div id="loginOthers">
-            <h3>Add an existing account</h3>
+            <h3>Add an account</h3>
             <Link to="/email-login">
               <button><div className="icon" style={{ backgroundImage: 'url(./resources/envelope.png)' }}/>Email</button>
             </Link>
-            <button onClick={() => connectTrezorAndGetAccounts()}><div className="icon" style={{ backgroundImage: 'url(./resources/trezor.png)' }}/>Trezor</button>
-            <button onClick={() => connectLedgerAndGetAccounts()}><div className="icon" style={{ backgroundImage: 'url(./resources/ledger.png)' }}/>Ledger</button>
-            <button onClick={() => connectWeb3AndGetAccounts().then(addMultipleAccounts)}><div className="icon" style={{ backgroundImage: 'url(./resources/metamask.png)' }}/>Metamask / Browser</button>
+            {addFromSignerButtons}
           </div>
         </section>
       </div>
