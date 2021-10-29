@@ -59,21 +59,21 @@ const useWalletConnect = ({ selectedAcc, chainId }) => {
 
           switch (payload.method) {
             case 'eth_sendTransaction': {
-              // @TODO
+              // @TODO WC
               break;
             }
             case 'gs_multi_send': {
-              // @TODO
+              // @TODO WC
               break;
             }
 
             case 'personal_sign': {
-              // @TODO
+              // @TODO WC
               break;
             }
 
             case 'eth_sign': {
-              // @TODO
+              // @TODO WC
               break;
             }
             default: {
@@ -97,7 +97,7 @@ const useWalletConnect = ({ selectedAcc, chainId }) => {
       })
     }
 
-  // @TODO: no?
+  // @TODO: WC: no?
   /*
   useEffect(() => {
     if (!connector) {
@@ -120,7 +120,6 @@ if (!initialSelectedAcc || !initialAccounts.find(x => x._id === initialSelectedA
   initialSelectedAcc = initialAccounts[0] ? initialAccounts[0]._id : ''
 }
 function useAccounts () {
-  // @TODO separate hook: useAccounts
   const [accounts, setAccounts] = useState(initialAccounts)
   const [selectedAcc, setSelectedAcc] = useState(initialSelectedAcc)
 
@@ -152,13 +151,13 @@ function useAccounts () {
 
 function App() {
   const { accounts, selectedAcc, onSelectAcc, onAddAccount } = useAccounts()
-  // NOTE: @TODO: this is making us render App twice even if we do not use it
+  // @TODO: WC: this is making us render App twice even if we do not use it
   const { wcClientData, wcConnect, wcDisconnect } = useWalletConnect({ selectedAcc, chainId: 0 })
 
   const query = new URLSearchParams(window.location.href.split('?').slice(1).join('?'))
   const wcUri = query.get('uri')
   useEffect(() => {
-    // @TODO this is async
+    // @TODO: WC: this is async
     if (wcUri) wcConnect(wcUri)
     //wcDisconnect()
     console.log('connecting', wcUri)
@@ -198,7 +197,6 @@ function App() {
             </div>
 
             <div>
-              {/* TODO more elegant way to manage selected? */}
               <select id="accountSelector" onChange={ ev => onSelectAcc(ev.target.value) } defaultValue={selectedAcc}>
                 {accounts.map(acc => (<option key={acc._id}>{acc._id}</option>))}
               </select>
@@ -219,7 +217,6 @@ function App() {
         <Route path="/approve-tx"></Route>
 
         <Route path="/">
-          { /* TODO: redirect depending on whether we have an acc */ }
           <Redirect to="/add-account" />
         </Route>
 
