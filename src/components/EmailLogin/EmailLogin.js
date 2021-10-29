@@ -29,9 +29,8 @@ export default function EmailLogin({ relayerURL, onAddAccount }) {
           _id,
           email: identityInfo.meta.email,
           primaryKeyBackup: identityInfo.meta.primaryKeyBackup,
-          salt, identityFactoryAddr, baseIdentityAddr,
-          selected: true
-        })
+          salt, identityFactoryAddr, baseIdentityAddr
+        }, { select: true })
       } catch (e) {
         if (e.message.includes('invalid password')) setErr('Invalid passphrase')
         else {
