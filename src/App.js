@@ -13,9 +13,7 @@ import EmailLogin from './components/EmailLogin/EmailLogin'
 import AddAccount from './components/AddAccount/AddAcount'
 import { useEffect, useCallback } from 'react'
 
-/*
 import WalletConnect from '@walletconnect/client';
-import { IClientMeta } from '@walletconnect/types';
 
 const useWalletConnect = ({ selectedAcc, chainId }) => {
   const LOCAL_STORAGE_URI_KEY = 'ambireAppWcUri'
@@ -96,7 +94,7 @@ const useWalletConnect = ({ selectedAcc, chainId }) => {
         wcDisconnect()
       })
     },
-    [sdk, wcDisconnect],
+    [wcDisconnect],
   );
 
   useEffect(() => {
@@ -108,8 +106,6 @@ const useWalletConnect = ({ selectedAcc, chainId }) => {
 
   return { wcClientData, wcConnect, wcDisconnect }
 }
-*/
-
 
 // @TODO consts/cfg
 const relayerURL = 'http://localhost:1934'
@@ -124,7 +120,7 @@ function useAccounts () {
   // @TODO separate hook: useAccounts
   const [accounts, setAccounts] = useState(initialAccounts)
   const [selectedAcc, setSelectedAcc] = useState(initialSelectedAcc)
-  //const { wcClientData, wcConnect, wcDisconnect } = useWalletConnect(selectedAcc, 0)
+  const { wcClientData, wcConnect, wcDisconnect } = useWalletConnect(selectedAcc, 0)
 
   const onSelectAcc = selected => {
     localStorage.selectedAcc = selected
