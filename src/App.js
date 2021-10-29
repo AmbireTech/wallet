@@ -22,7 +22,7 @@ if (!initialSelectedAcc || !initialAccounts.find(x => x._id === initialSelectedA
   initialSelectedAcc = initialAccounts[0] ? initialAccounts[0]._id : ''
 }
 
-function App() {
+function useAccounts () {
   // @TODO separate hook: useAccounts
   const [accounts, setAccounts] = useState(initialAccounts)
   const [selectedAcc, setSelectedAcc] = useState(initialSelectedAcc)
@@ -50,6 +50,11 @@ function App() {
       window.location.href = '/#/dashboard'
     }
   }
+  return { accounts, selectedAcc, onSelectAcc, onAddAccount }
+}
+
+function App() {
+  const { accounts, selectedAcc, onSelectAcc, onAddAccount } = useAccounts()
 
   return (
     <Router>
