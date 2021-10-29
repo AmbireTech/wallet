@@ -11,6 +11,105 @@ import { MdDashboard, MdLock, MdCompareArrows } from 'react-icons/md'
 import { BsPiggyBank } from 'react-icons/bs'
 import EmailLogin from './components/EmailLogin/EmailLogin'
 import AddAccount from './components/AddAccount/AddAcount'
+import { useEffect, useCallback } from 'react'
+
+/*
+import WalletConnect from '@walletconnect/client';
+import { IClientMeta } from '@walletconnect/types';
+
+const useWalletConnect = ({ selectedAcc, chainId }) => {
+  const LOCAL_STORAGE_URI_KEY = 'ambireAppWcUri'
+
+  //const { safe, sdk } = useSafeAppsSDK();
+  const [wcClientData, setWcClientData] = useState(null)
+  const [connector, setConnector] = useState()
+
+  const wcDisconnect = useCallback(async () => {
+    if (connector) connector.killSession();
+    localStorage.removeItem(LOCAL_STORAGE_URI_KEY)
+    setConnector(undefined)
+    setWcClientData(null)
+  }, [connector])
+
+  const wcConnect = useCallback(
+    async (uri) => {
+      const wcConnector = new WalletConnect({ uri })
+      setConnector(wcConnector)
+      setWcClientData(wcConnector.peerMeta)
+      localStorage.setItem(LOCAL_STORAGE_URI_KEY, uri)
+
+      wcConnector.on('session_request', (error, payload) => {
+        console.log('wc session', payload)
+
+        wcConnector.approveSession({
+          accounts: [selectedAcc],
+          chainId: chainId,
+        });
+
+        setWcClientData(payload.params[0].peerMeta);
+      });
+
+      wcConnector.on('call_request', async (error, payload) => {
+        if (error) {
+          throw error;
+        }
+
+        try {
+          let result = '0x';
+
+          switch (payload.method) {
+            case 'eth_sendTransaction': {
+              // @TODO
+              break;
+            }
+            case 'gs_multi_send': {
+              // @TODO
+              break;
+            }
+
+            case 'personal_sign': {
+              // @TODO
+              break;
+            }
+
+            case 'eth_sign': {
+              // @TODO
+              break;
+            }
+            default: {
+              wcConnector.rejectRequest({ id: payload.id, error: { message: 'METHOD_NOT_SUPPORTED' }});
+              break;
+            }
+          }
+
+          wcConnector.approveRequest({
+            id: payload.id,
+            result,
+          })
+        } catch (err) {
+          wcConnector.rejectRequest({ id: payload.id, error: { message: err.message }})
+        }
+      })
+
+      wcConnector.on('disconnect', (error, payload) => {
+        if (error) throw error
+        wcDisconnect()
+      })
+    },
+    [sdk, wcDisconnect],
+  );
+
+  useEffect(() => {
+    if (!connector) {
+      const uri = localStorage.getItem(LOCAL_STORAGE_URI_KEY)
+      if (uri) wcConnect(uri)
+    }
+  }, [connector, wcConnect])
+
+  return { wcClientData, wcConnect, wcDisconnect }
+}
+*/
+
 
 // @TODO consts/cfg
 const relayerURL = 'http://localhost:1934'
@@ -21,11 +120,11 @@ let initialSelectedAcc = localStorage.selectedAcc
 if (!initialSelectedAcc || !initialAccounts.find(x => x._id === initialSelectedAcc)) {
   initialSelectedAcc = initialAccounts[0] ? initialAccounts[0]._id : ''
 }
-
 function useAccounts () {
   // @TODO separate hook: useAccounts
   const [accounts, setAccounts] = useState(initialAccounts)
   const [selectedAcc, setSelectedAcc] = useState(initialSelectedAcc)
+  //const { wcClientData, wcConnect, wcDisconnect } = useWalletConnect(selectedAcc, 0)
 
   const onSelectAcc = selected => {
     localStorage.selectedAcc = selected
