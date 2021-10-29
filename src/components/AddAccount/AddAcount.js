@@ -220,7 +220,7 @@ export default function AddAccount ({ relayerURL, onAddAccount }) {
     // The UI for choosing a signer to create/add an account with, for example
     // when connecting a hardware wallet, it has many addrs you can choose from
     if (signersToChoose) {
-        return (<div className="loginSignupWrapper">
+        return (<div className="loginSignupWrapper chooseSigners">
             <h3>Choose a signer</h3>
             <ul id="signersToChoose">
                 {signersToChoose.map(addr => (<li key={addr} onClick={() => wrapErr(() => onEOASelected(addr))}>{addr}</li>))}
