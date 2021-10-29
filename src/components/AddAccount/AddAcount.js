@@ -108,9 +108,8 @@ export default function AddAccount ({ relayerURL, onAddAccount }) {
             email: req.email,
             primaryKeyBackup,
             salt, identityFactoryAddr, baseIdentityAddr,
-            selected: true,
             // @TODO signer
-        })
+        }, { select: true })
     }
 
 
@@ -136,8 +135,7 @@ export default function AddAccount ({ relayerURL, onAddAccount }) {
 
         return {
             _id: identityAddr,
-            salt, identityFactoryAddr, baseIdentityAddr,
-            selected: true
+            salt, identityFactoryAddr, baseIdentityAddr
             // @TODO signer
         }
     }
@@ -152,8 +150,8 @@ export default function AddAccount ({ relayerURL, onAddAccount }) {
         const web3Accs = await ethereum.request({ method: 'eth_requestAccounts' })
         if (!web3Accs.length) throw new Error('No accounts connected')
         const owned = await getOwnedByEOAs(web3Accs)
-        if (!owned.length) onAddAccount(await createFromEOA(web3Accs[0]))
-        else owned.forEach(onAddAccount)
+        if (!owned.length) onAddAccount(await createFromEOA(web3Accs[0]), { select: true })
+        else owned.forEach((acc, i) => onAddAccount(acc, { select: i === 0 }))
     }
 
     async function getOwnedByEOAs(eoas) {
@@ -210,11 +208,11 @@ export default function AddAccount ({ relayerURL, onAddAccount }) {
         // when there is no relayer, we can only add the 'default' account created from that EOA
         // @TODO in the future, it would be nice to do getLogs from the provider here to find out which other addrs we control
         //   ... maybe we can isolate the code for that in lib/relayerless or something like that to not clutter this code
-        if (!relayerURL) return onAddAccount(await createFromEOA(addr))
+        if (!relayerURL) return onAddAccount(await createFromEOA(addr), { select: true })
         // otherwise check which accs we already own and add them
         const owned = await getOwnedByEOAs([addr])
-        if (!owned.length) return onAddAccount(await createFromEOA(addr))
-        else owned.forEach(onAddAccount)
+        if (!owned.length) return onAddAccount(await createFromEOA(addr), { select: true })
+        else owned.forEach((acc, i) => onAddAccount(acc, { select: i === 0 }))
     }
 
     // The UI for choosing a signer to create/add an account with, for example
