@@ -13,7 +13,7 @@ export default function Deposit({ address }) {
             <div className="panel">
                 <div className="heading">
                      <div className="title">
-                        <MdAccountBalanceWallet size={40}/>
+                        <MdAccountBalanceWallet size={35}/>
                         Deposit Tokens
                     </div>
                     <div className="subtitle">
@@ -35,7 +35,7 @@ export default function Deposit({ address }) {
             <div className="panel">
                 <div className="heading">
                     <div className="title">
-                        <MdAccountBalance size={40}/>
+                        <MdAccountBalance size={35}/>
                         Fiat Currency
                     </div>
                     <div className="subtitle">
