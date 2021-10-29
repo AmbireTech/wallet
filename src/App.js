@@ -22,14 +22,14 @@ const useWalletConnect = ({ selectedAcc, chainId }) => {
   const [wcClientData, setWcClientData] = useState(null)
   const [connector, setConnector] = useState()
 
-  const wcDisconnect = useCallback(async () => {
+  const wcDisconnect = async () => {
     if (connector) connector.killSession();
     localStorage.removeItem(LOCAL_STORAGE_URI_KEY)
     setConnector(undefined)
     setWcClientData(null)
-  }, [connector])
+  }
 
-  const wcConnect = useCallback(
+  const wcConnect =
     async (uri) => {
       const wcConnector = new WalletConnect({ uri })
       setConnector(wcConnector)
@@ -37,17 +37,19 @@ const useWalletConnect = ({ selectedAcc, chainId }) => {
       localStorage.setItem(LOCAL_STORAGE_URI_KEY, uri)
 
       wcConnector.on('session_request', (error, payload) => {
-        console.log('wc session', payload)
+        console.log('wc session request; here we get the client data', payload)
 
+        console.log(selectedAcc)
         wcConnector.approveSession({
           accounts: [selectedAcc],
           chainId: chainId,
         });
 
         setWcClientData(payload.params[0].peerMeta);
-      });
+      })
 
       wcConnector.on('call_request', async (error, payload) => {
+        console.log(error, payload)
         if (error) {
           throw error;
         }
@@ -93,16 +95,17 @@ const useWalletConnect = ({ selectedAcc, chainId }) => {
         if (error) throw error
         wcDisconnect()
       })
-    },
-    [wcDisconnect],
-  );
+    }
 
+  // @TODO: no?
+  /*
   useEffect(() => {
     if (!connector) {
       const uri = localStorage.getItem(LOCAL_STORAGE_URI_KEY)
       if (uri) wcConnect(uri)
     }
   }, [connector, wcConnect])
+  */
 
   return { wcClientData, wcConnect, wcDisconnect }
 }
@@ -120,7 +123,6 @@ function useAccounts () {
   // @TODO separate hook: useAccounts
   const [accounts, setAccounts] = useState(initialAccounts)
   const [selectedAcc, setSelectedAcc] = useState(initialSelectedAcc)
-  const { wcClientData, wcConnect, wcDisconnect } = useWalletConnect(selectedAcc, 0)
 
   const onSelectAcc = selected => {
     localStorage.selectedAcc = selected
@@ -150,6 +152,17 @@ function useAccounts () {
 
 function App() {
   const { accounts, selectedAcc, onSelectAcc, onAddAccount } = useAccounts()
+  // NOTE: @TODO: this is making us render App twice even if we do not use it
+  const { wcClientData, wcConnect, wcDisconnect } = useWalletConnect({ selectedAcc, chainId: 0 })
+
+  const query = new URLSearchParams(window.location.href.split('?').slice(1).join('?'))
+  const wcUri = query.get('uri')
+  useEffect(() => {
+    // @TODO this is async
+    if (wcUri) wcConnect(wcUri)
+    //wcDisconnect()
+    console.log('connecting', wcUri)
+  }, [wcUri])
 
   return (
     <Router>
