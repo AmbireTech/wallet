@@ -17,15 +17,23 @@ const relayerURL = 'http://localhost:1934'
 
 // @TODO catch parse failures and handle them
 const initialAccounts = JSON.parse(localStorage.accounts || '[]')
+let initialSelectedAcc = localStorage.selectedAcc
+if (!initialSelectedAcc || !initialAccounts.find(x => x._id === initialSelectedAcc)) {
+  initialSelectedAcc = initialAccounts[0] ? initialAccounts[0]._id : ''
+}
 
 function App() {
+  // @TODO separate hook: useAccounts
   const [accounts, setAccounts] = useState(initialAccounts)
+  const [selectedAcc, setSelectedAcc] = useState(initialSelectedAcc)
 
-  const onAddAccount = acc => {
+  const onSelectAcc = selected => {
+    localStorage.selectedAcc = selected
+    setSelectedAcc(selected)
+  }
+  const onAddAccount = (acc, opts) => {
     console.log('onAddAccount', acc)
     const existingIdx = accounts.findIndex(x => x._id.toLowerCase() === acc._id.toLowerCase())
-
-    if (acc.selected) accounts.forEach(x => x.selected = false)
 
     // @TODO show toast
     // the use case for updating the entry is that we have some props (such as which EOA controls it) which migth change
@@ -37,6 +45,7 @@ function App() {
 
     localStorage.accounts = JSON.stringify(accounts)
 
+    if (opts.select) onSelectAcc(acc._id)
     if (Object.keys(accounts).length) {
       window.location.href = '/#/dashboard'
     }
@@ -77,12 +86,7 @@ function App() {
 
             <div>
               {/* TODO more elegant way to manage selected? */}
-              <select id="accountSelector" onChange={ ev => {
-                accounts.forEach(acc => acc.selected = false)
-                accounts.find(x => x._id === ev.target.value).selected = true
-                localStorage.accounts = JSON.stringify(accounts)
-                setAccounts([ ...accounts ])
-              } } defaultValue={(accounts.find(x => x.selected) || {})._id}>
+              <select id="accountSelector" onChange={ ev => onSelectAcc(ev.target.value) } defaultValue={selectedAcc}>
                 {accounts.map(acc => (<option key={acc._id}>{acc._id}</option>))}
               </select>
 
