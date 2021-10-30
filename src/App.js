@@ -90,6 +90,7 @@ const useWalletConnect = ({ selectedAcc, chainId }) => {
               setUserAction({
                 bundle,
                 fn: async () => {
+                  // @TODO we have to cache `providerTrezor` otherwise it will always ask us whether we wanna expose the pub key
                   const providerTrezor = new TrezorSubprovider({ trezorConnectClientApi: TrezorConnect })
                   // NOTE: we can also use the Web3Provider for metamask
                   const walletShim = {
