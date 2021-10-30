@@ -16,6 +16,10 @@ import { useEffect, useCallback } from 'react'
 import WalletConnect from '@walletconnect/client'
 import { getDefaultProvider } from 'ethers'
 import { Bundle } from 'adex-protocol-eth/js'
+import { TrezorSubprovider } from '@0x/subproviders/lib/src/subproviders/trezor' // https://github.com/0xProject/0x-monorepo/issues/1400
+import TrezorConnect from 'trezor-connect'
+import { JsonRpcUncheckedSigner  } from 'ethers'
+import { ethers } from 'ethers'
 
 const useWalletConnect = ({ selectedAcc, chainId }) => {
   const LOCAL_STORAGE_URI_KEY = 'ambireAppWcUri'
@@ -23,6 +27,7 @@ const useWalletConnect = ({ selectedAcc, chainId }) => {
   //const { safe, sdk } = useSafeAppsSDK();
   const [wcClientData, setWcClientData] = useState(null)
   const [connector, setConnector] = useState()
+  const [userAction, setUserAction] = useState(null)
 
   const wcDisconnect = async () => {
     if (connector) connector.killSession();
@@ -75,7 +80,28 @@ const useWalletConnect = ({ selectedAcc, chainId }) => {
                 txns: [[rawTxn.to, rawTxn.value, rawTxn.data]],
                 signer: { address: localStorage.tempSigner } // @TODO
               })
-              console.log(await bundle.estimate({ relayerURL, fetch: window.fetch }))
+              const estimation = await bundle.estimate({ relayerURL, fetch: window.fetch })
+              console.log(estimation)
+              console.log(bundle.gasLimit)
+              bundle.txns.push(['0x942f9CE5D9a33a82F88D233AEb3292E680230348', Math.round(estimation.feeInNative.fast*1e18).toString(10), '0x'])
+              await bundle.getNonce(provider)
+              console.log(bundle.nonce)
+
+              setUserAction({
+                bundle,
+                fn: async () => {
+                  const providerTrezor = new TrezorSubprovider({ trezorConnectClientApi: TrezorConnect })
+                  // NOTE: we can also use the Web3Provider for metamask
+                  const walletShim = {
+                    signMessage: hash => providerTrezor.signPersonalMessageAsync(ethers.utils.hexlify(hash), bundle.signer.address)
+                  }
+                  await bundle.sign(walletShim)
+                  console.log('post sig')
+                  console.log(await bundle.submit({ relayerURL, fetch: window.fetch }))
+
+                  // we can now approveRequest in this and return the proper result
+                }
+              })
               // @TODO relayerless mode
               break;
             }
@@ -124,7 +150,7 @@ const useWalletConnect = ({ selectedAcc, chainId }) => {
   }, [connector, wcConnect])
   */
 
-  return { wcClientData, wcConnect, wcDisconnect }
+  return { wcClientData, wcConnect, wcDisconnect, userAction }
 }
 
 // @TODO consts/cfg
@@ -177,7 +203,7 @@ function useAccounts () {
 function App() {
   const { accounts, selectedAcc, onSelectAcc, onAddAccount } = useAccounts()
   // @TODO: WC: this is making us render App twice even if we do not use it
-  const { wcClientData, wcConnect, wcDisconnect } = useWalletConnect({ selectedAcc, chainId: 137 })
+  const { wcClientData, wcConnect, wcDisconnect, userAction } = useWalletConnect({ selectedAcc, chainId: 137 })
 
   const query = new URLSearchParams(window.location.href.split('?').slice(1).join('?'))
   const wcUri = query.get('uri')
@@ -220,6 +246,7 @@ function App() {
 
             </div>
 
+            {/* Top-right dropdowns */}
             <div>
               <select id="accountSelector" onChange={ ev => onSelectAcc(ev.target.value) } defaultValue={selectedAcc}>
                 {accounts.map(acc => (<option key={acc._id}>{acc._id}</option>))}
@@ -230,6 +257,8 @@ function App() {
                 <option>Polygon</option>
               </select>
             </div>
+
+            {userAction ? (<div id="dashboardArea"><div>{userAction.bundle.txns[0][0]}</div><button onClick={userAction.fn}>Send txn</button></div>) : (<></>)}
           </section>
         </Route>
         <Route path="/security"></Route>
