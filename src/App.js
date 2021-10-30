@@ -113,15 +113,18 @@ const useWalletConnect = ({ selectedAcc, chainId }) => {
 // @TODO consts/cfg
 const relayerURL = 'http://localhost:1934'
 
-// @TODO catch parse failures and handle them
-const initialAccounts = JSON.parse(localStorage.accounts || '[]')
-let initialSelectedAcc = localStorage.selectedAcc
-if (!initialSelectedAcc || !initialAccounts.find(x => x._id === initialSelectedAcc)) {
-  initialSelectedAcc = initialAccounts[0] ? initialAccounts[0]._id : ''
-}
 function useAccounts () {
-  const [accounts, setAccounts] = useState(initialAccounts)
-  const [selectedAcc, setSelectedAcc] = useState(initialSelectedAcc)
+  const [accounts, setAccounts] = useState(() => {
+    // @TODO catch parse failures and handle them
+    return JSON.parse(localStorage.accounts || '[]')
+  })
+  const [selectedAcc, setSelectedAcc] = useState(() => {
+    const initialSelectedAcc = localStorage.selectedAcc
+    if (!initialSelectedAcc || !accounts.find(x => x._id === initialSelectedAcc)) {
+      return accounts[0] ? accounts[0]._id : ''
+    }
+    return initialSelectedAcc
+  })
 
   const onSelectAcc = selected => {
     localStorage.selectedAcc = selected
