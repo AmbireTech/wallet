@@ -313,3 +313,11 @@ select {
   font-size: 1.5em;
   font-weight: 300;
 }
+
+#dashboardArea {
+  position: absolute;
+  top: 150px;
+  left: 350px;
+  right: 50px;
+  bottom: 30px;
+}
