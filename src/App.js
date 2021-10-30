@@ -13,7 +13,9 @@ import EmailLogin from './components/EmailLogin/EmailLogin'
 import AddAccount from './components/AddAccount/AddAcount'
 import { useEffect, useCallback } from 'react'
 
-import WalletConnect from '@walletconnect/client';
+import WalletConnect from '@walletconnect/client'
+import { getDefaultProvider } from 'ethers'
+import { Bundle } from 'adex-protocol-eth/js'
 
 const useWalletConnect = ({ selectedAcc, chainId }) => {
   const LOCAL_STORAGE_URI_KEY = 'ambireAppWcUri'
@@ -60,7 +62,21 @@ const useWalletConnect = ({ selectedAcc, chainId }) => {
 
           switch (payload.method) {
             case 'eth_sendTransaction': {
-              // @TODO WC
+              // @TODO network specific
+              const provider = getDefaultProvider('https://polygon-rpc.com/rpc')
+              const rawTxn = payload.params[0]
+              // @TODO: add a subtransaction that's supposed to `simulate` the fee payment so that
+              // we factor in the gas for that
+              const bundle = new Bundle({
+                network: 'polygon', // @TODO
+                identity: selectedAcc,
+                // @TODO: take the gasLimit from the rawTxn
+                // @TODO "|| '0x'" where applicable
+                txns: [[rawTxn.to, rawTxn.value, rawTxn.data]],
+                signer: { address: localStorage.tempSigner } // @TODO
+              })
+              console.log(await bundle.estimate({ relayerURL, fetch: window.fetch }))
+              // @TODO relayerless mode
               break;
             }
             case 'gs_multi_send': {

@@ -8,6 +8,7 @@ import { ledgerEthereumBrowserClientFactoryAsync } from '@0x/subproviders/lib/sr
 import { hexZeroPad, AbiCoder, keccak256, id, getAddress } from 'ethers/lib/utils'
 
 import { fetch, fetchPost } from '../../lib/fetch'
+import { Bundle } from 'adex-protocol-eth'
 
 // @TODO update those pre-launch
 const ACCOUNT_PRESETS = {
@@ -166,21 +167,24 @@ export default function AddAccount ({ relayerURL, onAddAccount }) {
         // preserve the last truthy priv value
         allOwnedIdentities.forEach(x => 
             Object.entries(x).forEach(
-                ([id, priv]) => allUniqueOwned[id] = priv ||  allUniqueOwned[id]
+                ([id, priv]) => allUniqueOwned[id] = priv || allUniqueOwned[id]
             )
         )
 
-        return await Promise.all(Object.keys(allUniqueOwned).map(getAccountByAddr))
+        return await Promise.all(Object.keys(allUniqueOwned).map(async addr => {
+            return { ...(await getAccountByAddr(addr)) /* TODO signer */ }
+        }))
     }
 
     async function getAccountByAddr (addr) {
-        // @TODO: fundamentally, do we even need these values?
+        // In principle, we need these values to be able to operate in relayerless mode,
+        // so we just store them in all cases
+        // Plus, in the future this call may be used to retrieve other things
         const { salt, identityFactoryAddr, baseIdentityAddr } = await fetch(`${relayerURL}/identity/${addr}`)
             .then(r => r.json())
         return {
             _id: addr,
-            salt, identityFactoryAddr, baseIdentityAddr,
-            // @TODO signer for the ones that we CURRENTLY control
+            salt, identityFactoryAddr, baseIdentityAddr
         }
     }
 
