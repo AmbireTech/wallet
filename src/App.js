@@ -31,6 +31,7 @@ const useWalletConnect = ({ selectedAcc, chainId }) => {
 
   const wcConnect =
     async (uri) => {
+      console.log('starting conn', uri)
       const wcConnector = new WalletConnect({ uri })
       setConnector(wcConnector)
       setWcClientData(wcConnector.peerMeta)
@@ -116,7 +117,12 @@ const relayerURL = 'http://localhost:1934'
 function useAccounts () {
   const [accounts, setAccounts] = useState(() => {
     // @TODO catch parse failures and handle them
-    return JSON.parse(localStorage.accounts || '[]')
+    try {
+      return JSON.parse(localStorage.accounts || '[]')
+    } catch (e) {
+      console.error('accounts parsing failure', e)
+      return []
+    }
   })
   const [selectedAcc, setSelectedAcc] = useState(() => {
     const initialSelectedAcc = localStorage.selectedAcc
@@ -155,7 +161,7 @@ function useAccounts () {
 function App() {
   const { accounts, selectedAcc, onSelectAcc, onAddAccount } = useAccounts()
   // @TODO: WC: this is making us render App twice even if we do not use it
-  const { wcClientData, wcConnect, wcDisconnect } = useWalletConnect({ selectedAcc, chainId: 0 })
+  const { wcClientData, wcConnect, wcDisconnect } = useWalletConnect({ selectedAcc, chainId: 137 })
 
   const query = new URLSearchParams(window.location.href.split('?').slice(1).join('?'))
   const wcUri = query.get('uri')
@@ -163,8 +169,7 @@ function App() {
     // @TODO: WC: this is async
     if (wcUri) wcConnect(wcUri)
     //wcDisconnect()
-    console.log('connecting', wcUri)
-  }, [wcUri])
+  }, [/* we only wanna handle this at startup */])
 
   return (
     <Router>
