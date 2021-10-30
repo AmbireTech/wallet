@@ -8,7 +8,6 @@ import { ledgerEthereumBrowserClientFactoryAsync } from '@0x/subproviders/lib/sr
 import { hexZeroPad, AbiCoder, keccak256, id, getAddress } from 'ethers/lib/utils'
 
 import { fetch, fetchPost } from '../../lib/fetch'
-import { Bundle } from 'adex-protocol-eth'
 
 // @TODO update those pre-launch
 const ACCOUNT_PRESETS = {
