@@ -106,7 +106,7 @@ export default function EmailLogin({ relayerURL, onAddAccount }) {
     })
 
     // @TODO import from JSON; maybe without a URL, as we'll just pop a file selector and then import the JSON
-    const importJSONHref = '/#/json-import'
+    const importJSONHref = `/#/json-import`
 
     if (!relayerURL) {
         return (<section className="loginSignupWrapper" id="emailLoginSection">
@@ -129,7 +129,7 @@ export default function EmailLogin({ relayerURL, onAddAccount }) {
   
         {err ? (<p className="error">{err}</p>) : (<></>)}
   
-        <a href="#">I forgot my passphrase</a>
+        <a href="/#/">I forgot my passphrase</a>
         <a href={importJSONHref}>Import JSON</a>
       </div>)
       
