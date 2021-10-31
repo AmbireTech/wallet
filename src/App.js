@@ -1,6 +1,6 @@
 import './App.css'
 
-import { useState } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import {
   HashRouter as Router,
   Switch,
@@ -11,15 +11,13 @@ import { MdDashboard, MdLock, MdCompareArrows } from 'react-icons/md'
 import { BsPiggyBank } from 'react-icons/bs'
 import EmailLogin from './components/EmailLogin/EmailLogin'
 import AddAccount from './components/AddAccount/AddAcount'
-import { useEffect, useCallback } from 'react'
-
+import useAccounts from './hooks/accounts'
 import WalletConnectCore from '@walletconnect/core'
 import * as cryptoLib from "@walletconnect/iso-crypto"
 import { getDefaultProvider } from 'ethers'
 import { Bundle } from 'adex-protocol-eth/js'
 import { TrezorSubprovider } from '@0x/subproviders/lib/src/subproviders/trezor' // https://github.com/0xProject/0x-monorepo/issues/1400
 import TrezorConnect from 'trezor-connect'
-import { JsonRpcUncheckedSigner  } from 'ethers'
 import { ethers } from 'ethers'
 
 const useWalletConnect = ({ selectedAcc, chainId, idx = 0 }) => {
@@ -168,50 +166,6 @@ const useWalletConnect = ({ selectedAcc, chainId, idx = 0 }) => {
 // @TODO consts/cfg
 const relayerURL = 'http://localhost:1934'
 
-function useAccounts () {
-  const [accounts, setAccounts] = useState(() => {
-    // @TODO catch parse failures and handle them
-    try {
-      return JSON.parse(localStorage.accounts || '[]')
-    } catch (e) {
-      console.error('accounts parsing failure', e)
-      return []
-    }
-  })
-  const [selectedAcc, setSelectedAcc] = useState(() => {
-    const initialSelectedAcc = localStorage.selectedAcc
-    if (!initialSelectedAcc || !accounts.find(x => x._id === initialSelectedAcc)) {
-      return accounts[0] ? accounts[0]._id : ''
-    }
-    return initialSelectedAcc
-  })
-
-  const onSelectAcc = selected => {
-    localStorage.selectedAcc = selected
-    setSelectedAcc(selected)
-  }
-  const onAddAccount = (acc, opts) => {
-    console.log('onAddAccount', acc)
-    const existingIdx = accounts.findIndex(x => x._id.toLowerCase() === acc._id.toLowerCase())
-
-    // @TODO show toast
-    // the use case for updating the entry is that we have some props (such as which EOA controls it) which migth change
-    if (existingIdx === -1) accounts.push(acc)
-    else accounts[existingIdx] = acc
-
-    // need to make a copy, otherwise no rerender
-    setAccounts([ ...accounts ])
-
-    localStorage.accounts = JSON.stringify(accounts)
-
-    if (opts.select) onSelectAcc(acc._id)
-    if (Object.keys(accounts).length) {
-      window.location.href = '/#/dashboard'
-    }
-  }
-  return { accounts, selectedAcc, onSelectAcc, onAddAccount }
-}
-
 function App() {
   const { accounts, selectedAcc, onSelectAcc, onAddAccount } = useAccounts()
   // @TODO: WC: this is making us render App twice even if we do not use it
@@ -273,8 +227,8 @@ function App() {
             </div>
 
             <div id="dashboardArea">
-              {wcClientData ?(<button onClick={() => wcDisconnect()}>Disconnect {wcClientData.name}</button>) : (<></>)}
-              {wc2.wcClientData ?(<button onClick={() => wc2.wcDisconnect()}>Disconnect {wc2.wcClientData.name}</button>) : (<></>)}
+              {wcClientData ?(<div style={{ marginBottom: 20 }}><button onClick={() => wcDisconnect()}>Disconnect {wcClientData.name}</button></div>) : (<></>)}
+              {wc2.wcClientData ?(<div><button onClick={() => wc2.wcDisconnect()}>Disconnect {wc2.wcClientData.name}</button></div>) : (<></>)}
               {userAction ? (<><div>{userAction.bundle.txns[0][0]}</div><button onClick={userAction.fn}>Send txn</button></>) : (<></>)}
             </div>
 
