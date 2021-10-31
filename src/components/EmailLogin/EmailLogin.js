@@ -20,7 +20,8 @@ export default function EmailLogin({ relayerURL, onAddAccount }) {
         setErr('No account key backup: you either disabled email login or you have to import it from JSON')
         return
       }
-      // @TODO progress bar here
+      // NOTE: fromEncryptedJson can give us the exact progress,
+      // but for now we're handling this simply by showing progress in a different way (button shows 'Logging in...')
       try {
         const wallet = await Wallet.fromEncryptedJson(JSON.parse(identityInfo.meta.primaryKeyBackup), passphrase)
         // console.log(wallet)
@@ -29,7 +30,10 @@ export default function EmailLogin({ relayerURL, onAddAccount }) {
           _id,
           email: identityInfo.meta.email,
           primaryKeyBackup: identityInfo.meta.primaryKeyBackup,
-          salt, identityFactoryAddr, baseIdentityAddr
+          salt, identityFactoryAddr, baseIdentityAddr,
+          // @TODO: this is inaccurate, we need the QuickAccount, not the EOA directly; signer: { quickAccManager...  }
+          // currently this is here just to silence the warning
+          signer: { address: wallet.address }
         }, { select: true })
       } catch (e) {
         if (e.message.includes('invalid password')) setErr('Invalid passphrase')
