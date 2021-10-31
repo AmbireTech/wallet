@@ -16,13 +16,13 @@ const noopSessionStorage = { setSession: noop, getSession: noop, removeSession: 
 
 const STORAGE_KEY = 'wc1_connections'
 
-export default function  useWalletConnect ({ selectedAcc, chainId }) {
+export default function useWalletConnect ({ selectedAcc, chainId }) {
   const [userAction, setUserAction] = useState(null)
+  const [connectors, setConnectors] = useState({})
 
   // Store connections
   const [connections, setConnections] = useState([])
   const addConnection = useCallback(conn => {
-      const newConns = [...connections, conn]
       // Using the previous state from setConnections itself cause otherwise we have closure/capturing
       // clusterfuck
       setConnections(connections => {
@@ -30,7 +30,23 @@ export default function  useWalletConnect ({ selectedAcc, chainId }) {
         localStorage[STORAGE_KEY] = JSON.stringify(newConns)
         return newConns
       })
-  }, [connections])
+  }, [])
+  const disconnect = useCallback(uri => {
+      console.log('disconnect',uri)
+    setConnections(connections => {
+      const newConns = connections.filter(x => x.uri !== uri)
+      localStorage[STORAGE_KEY] = JSON.stringify(newConns)
+      console.log(newConns)
+      return newConns
+    })
+    setConnectors(connectors => {
+        // not supposed to have side effects here but... 
+        if (connectors[uri]) connectors[uri].killSession()
+        else console.log('WARNING: no connector for this uri', uri)
+
+        return ({ ...connectors, [uri]: null })
+    })
+}, [])
 
   // Restore connections
   useEffect(() => {
@@ -43,11 +59,6 @@ export default function  useWalletConnect ({ selectedAcc, chainId }) {
       }
   }, [])
 
-  const wcDisconnect = useCallback(async () => {
-    //if (connector) connector.killSession()
-    // @TODO: remove from sessions
-}, [])
-
   const wcConnect = useCallback(
     async (connectorOpts) => {
       const wcConnector = new WalletConnectCore({
@@ -55,6 +66,7 @@ export default function  useWalletConnect ({ selectedAcc, chainId }) {
           cryptoLib,
           sessionStorage: noopSessionStorage
       })
+      setConnectors(prev => ({ ...prev, [connectorOpts.uri]: wcConnector }))
 
       wcConnector.on('session_request', (error, payload) => {
         // NOTE: we can detect anomalies here: if `session` was passed in connectorOpts, session_request must not happen!
@@ -154,11 +166,10 @@ export default function  useWalletConnect ({ selectedAcc, chainId }) {
       })
 
       wcConnector.on('disconnect', (error, payload) => {
-        console.log('disconnect request', payload)
         if (error) throw error
-        wcDisconnect()
+        disconnect(connectorOpts.uri)
       })
-    }, [selectedAcc, chainId, setUserAction, addConnection, connections])
+    }, [selectedAcc, chainId, setUserAction, addConnection, disconnect])
 
-  return { connections, wcConnect, wcDisconnect, userAction }
+  return { connections, wcConnect, disconnect, userAction }
 }

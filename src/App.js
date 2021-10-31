@@ -20,15 +20,14 @@ const relayerURL = 'http://localhost:1934'
 function App() {
   const { accounts, selectedAcc, onSelectAcc, onAddAccount } = useAccounts()
   // @TODO: WC: this is making us render App twice even if we do not use it
-  const { connections, wcConnect, wcDisconnect, userAction } = useWalletConnect({ selectedAcc, chainId: 137 })
+  const { connections, wcConnect, disconnect, userAction } = useWalletConnect({ selectedAcc, chainId: 137 })
 
   const query = new URLSearchParams(window.location.href.split('?').slice(1).join('?'))
   const wcUri = query.get('uri')
   useEffect(() => {
     if (wcUri) wcConnect({ uri: wcUri })
-    //wcDisconnect()
       // @TODO only on init; perhaps put this in the hook itself
-  }, [connections, wcConnect])
+  }, [])
 
   return (
     <Router>
@@ -76,9 +75,9 @@ function App() {
             </div>
 
             <div id="dashboardArea">
-              {connections.map(({ session }) =>
+              {connections.map(({ session, uri }) =>
                 (<div key={session.peerId} style={{ marginBottom: 20 }}>
-                  <button onClick={() => wcDisconnect(session)}>Disconnect {session.peerMeta.name}</button>
+                  <button onClick={() => disconnect(uri)}>Disconnect {session.peerMeta.name}</button>
                 </div>)
               )}
               {userAction ? (<><div>{userAction.bundle.txns[0][0]}</div><button onClick={userAction.fn}>Send txn</button></>) : (<></>)}
