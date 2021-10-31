@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 
 import WalletConnectCore from '@walletconnect/core'
 import * as cryptoLib from "@walletconnect/iso-crypto"
@@ -11,43 +11,63 @@ import { ethers, getDefaultProvider } from 'ethers'
 // @TODO temporary, this won't be used, we need it in SignTransaction
 const relayerURL = 'http://localhost:1934'
 
-export default function  useWalletConnect ({ selectedAcc, chainId, idx = 0 }) {
-  const LOCAL_STORAGE_URI_KEY = 'ambireAppWcUri'
+const noop = () => null
+const noopSessionStorage = { setSession: noop, getSession: noop, removeSession: noop }
 
-  //const { safe, sdk } = useSafeAppsSDK();
-  const [wcClientData, setWcClientData] = useState(null)
-  const [connector, setConnector] = useState()
+const STORAGE_KEY = 'wc1_connections'
+
+export default function  useWalletConnect ({ selectedAcc, chainId }) {
   const [userAction, setUserAction] = useState(null)
 
-  const wcDisconnect = useCallback(async () => {
-    if (connector) connector.killSession()
-    localStorage.removeItem(LOCAL_STORAGE_URI_KEY)
-    setConnector(undefined)
-    setWcClientData(null)
+  // Store connections
+  const [connections, setConnections] = useState([])
+  const addConnection = useCallback(conn => {
+      const newConns = [...connections, conn]
+      // Using the previous state from setConnections itself cause otherwise we have closure/capturing
+      // clusterfuck
+      setConnections(connections => {
+        const newConns = [...connections, conn]
+        localStorage[STORAGE_KEY] = JSON.stringify(newConns)
+        return newConns
+      })
+  }, [connections])
+
+  // Restore connections
+  useEffect(() => {
+      try {
+          const conns = JSON.parse(localStorage[STORAGE_KEY] || '[]')
+          conns.forEach(conn => wcConnect(conn)) // conn is {uri, session}
+          setConnections(conns)
+      } catch(e) {
+          console.error('Unable to load initial connections', e)
+      }
   }, [])
 
+  const wcDisconnect = useCallback(async () => {
+    //if (connector) connector.killSession()
+    // @TODO: remove from sessions
+}, [])
+
   const wcConnect = useCallback(
-    async (uri) => {
-      console.log('starting conn', uri)
-      // @TODO no-op, manage session storage ourselves
-      const wcConnector = new WalletConnectCore({ connectorOpts: { uri }, cryptoLib, sessionStorage: {
-        setSession: x => localStorage['wc_'+idx] = JSON.stringify(x),
-        getSession: () => localStorage['wc_'+idx] ? JSON.parse(localStorage['wc_'+idx]) : null,
-        removeSession: () => delete localStorage['wc_'+idx]
-      } })
-      setConnector(wcConnector)
-      setWcClientData(wcConnector.peerMeta)
-      localStorage.setItem(LOCAL_STORAGE_URI_KEY, uri)
+    async (connectorOpts) => {
+      const wcConnector = new WalletConnectCore({
+          connectorOpts,
+          cryptoLib,
+          sessionStorage: noopSessionStorage
+      })
 
       wcConnector.on('session_request', (error, payload) => {
+        // NOTE: we can detect anomalies here: if `session` was passed in connectorOpts, session_request must not happen!
         console.log('wc session request; here we get the client data', payload)
 
         wcConnector.approveSession({
           accounts: [selectedAcc],
           chainId: chainId,
-        });
+        })
 
-        setWcClientData(payload.params[0].peerMeta)
+        // It's safe to store it here right after approveSession because 1) approveSession itself normally stores the session itself
+        // 2) connector.session is a getter that re-reads private properties of the connector; those properties are updated immediately at approveSession
+        addConnection({ session: wcConnector.session, uri: connectorOpts.uri })
       })
 
       wcConnector.on('call_request', async (error, payload) => {
@@ -138,7 +158,7 @@ export default function  useWalletConnect ({ selectedAcc, chainId, idx = 0 }) {
         if (error) throw error
         wcDisconnect()
       })
-    }, [selectedAcc, chainId, idx])
+    }, [selectedAcc, chainId, setUserAction, addConnection, connections])
 
-  return { wcClientData, wcConnect, wcDisconnect, userAction }
+  return { connections, wcConnect, wcDisconnect, userAction }
 }
