@@ -62,6 +62,7 @@ export default function useWalletConnect ({ selectedAcc, chainId }) {
 
   const wcConnect = useCallback(
     async (connectorOpts) => {
+      if (connectors[connectorOpts.uri]) return
       const wcConnector = new WalletConnectCore({
           connectorOpts,
           cryptoLib,
