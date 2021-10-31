@@ -29,6 +29,7 @@ function App() {
     // @TODO only on init; perhaps put this in the hook itself
 
     // @TODO on focus and on user action
+    const clipboardError = e => console.log('non-fatal clipboard err', e)
     navigator.permissions.query({ name: 'clipboard-read' }).then((result) => {
       // If permission to read the clipboard is granted or if the user will
       // be prompted to allow it, we proceed.
@@ -36,10 +37,10 @@ function App() {
       if (result.state === 'granted' || result.state === 'prompt') {
         navigator.clipboard.readText().then(clipboard => {
           if (clipboard.startsWith('wc:')) wcConnect({ uri: clipboard })
-        })
+        }).catch(clipboardError)
       }
       // @TODO show the err to the user if they triggered the action
-    }).catch(() => null)
+    }).catch(clipboardError)
   }, [])
   
   // hax
