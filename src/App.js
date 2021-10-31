@@ -1,6 +1,6 @@
 import './App.css'
 
-import { useState, useCallback, useEffect } from 'react'
+import { useEffect } from 'react'
 import {
   HashRouter as Router,
   Switch,
@@ -22,12 +22,26 @@ function App() {
   // @TODO: WC: this is making us render App twice even if we do not use it
   const { connections, wcConnect, disconnect, userAction } = useWalletConnect({ selectedAcc, chainId: 137 })
 
-  const query = new URLSearchParams(window.location.href.split('?').slice(1).join('?'))
-  const wcUri = query.get('uri')
   useEffect(() => {
+    const query = new URLSearchParams(window.location.href.split('?').slice(1).join('?'))
+    const wcUri = query.get('uri')
     if (wcUri) wcConnect({ uri: wcUri })
-      // @TODO only on init; perhaps put this in the hook itself
+    // @TODO only on init; perhaps put this in the hook itself
+
+    // @TODO on focus and on user action
+    navigator.permissions.query({ name: 'clipboard-read' }).then((result) => {
+      // If permission to read the clipboard is granted or if the user will
+      // be prompted to allow it, we proceed.
+
+      if (result.state === 'granted' || result.state === 'prompt') {
+        navigator.clipboard.readText().then(clipboard => {
+          if (clipboard.startsWith('wc:')) wcConnect({ uri: clipboard })
+        })
+      }
+      // @TODO show the err to the user if they triggered the action
+    }).catch(() => null)
   }, [])
+  
   // hax
   window.wcConnect = uri => wcConnect({ uri })
 
