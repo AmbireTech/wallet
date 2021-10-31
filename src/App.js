@@ -210,12 +210,14 @@ function App() {
   const { accounts, selectedAcc, onSelectAcc, onAddAccount } = useAccounts()
   // @TODO: WC: this is making us render App twice even if we do not use it
   const { wcClientData, wcConnect, wcDisconnect, userAction } = useWalletConnect({ selectedAcc, chainId: 137 })
+  const wc2 = useWalletConnect({ selectedAcc, chainId: 137 })
 
   const query = new URLSearchParams(window.location.href.split('?').slice(1).join('?'))
   const wcUri = query.get('uri')
   useEffect(() => {
     // @TODO: WC: this is async
     if (wcUri) wcConnect(wcUri)
+    if (query.get('uri2')) wc2.wcConnect(query.get('uri2'))
     //wcDisconnect()
   }, [/* we only wanna handle this at startup */])
 
@@ -265,7 +267,8 @@ function App() {
             </div>
 
             <div id="dashboardArea">
-              {wcClientData ?(<button onClick={() => wcDisconnect()}>Disconnect ${wcClientData.name}</button>) : (<></>)}
+              {wcClientData ?(<button onClick={() => wcDisconnect()}>Disconnect {wcClientData.name}</button>) : (<></>)}
+              {wc2.wcClientData ?(<button onClick={() => wc2.wcDisconnect()}>Disconnect {wc2.wcClientData.name}</button>) : (<></>)}
               {userAction ? (<><div>{userAction.bundle.txns[0][0]}</div><button onClick={userAction.fn}>Send txn</button></>) : (<></>)}
             </div>
 
