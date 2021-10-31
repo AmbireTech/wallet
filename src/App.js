@@ -13,7 +13,8 @@ import EmailLogin from './components/EmailLogin/EmailLogin'
 import AddAccount from './components/AddAccount/AddAcount'
 import { useEffect, useCallback } from 'react'
 
-import WalletConnect from '@walletconnect/client'
+import WalletConnectCore from '@walletconnect/core'
+import * as cryptoLib from "@walletconnect/iso-crypto"
 import { getDefaultProvider } from 'ethers'
 import { Bundle } from 'adex-protocol-eth/js'
 import { TrezorSubprovider } from '@0x/subproviders/lib/src/subproviders/trezor' // https://github.com/0xProject/0x-monorepo/issues/1400
@@ -21,7 +22,7 @@ import TrezorConnect from 'trezor-connect'
 import { JsonRpcUncheckedSigner  } from 'ethers'
 import { ethers } from 'ethers'
 
-const useWalletConnect = ({ selectedAcc, chainId }) => {
+const useWalletConnect = ({ selectedAcc, chainId, idx = 0 }) => {
   const LOCAL_STORAGE_URI_KEY = 'ambireAppWcUri'
 
   //const { safe, sdk } = useSafeAppsSDK();
@@ -39,7 +40,12 @@ const useWalletConnect = ({ selectedAcc, chainId }) => {
   const wcConnect =
     async (uri) => {
       console.log('starting conn', uri)
-      const wcConnector = new WalletConnect({ uri })
+      const wcConnector = new WalletConnectCore({ connectorOpts: { uri }, cryptoLib, sessionStorage: {
+        setSession: x => localStorage['wc_'+idx] = JSON.stringify(x),
+        getSession: () => localStorage['wc_'+idx] ? JSON.parse(localStorage['wc_'+idx]) : null,
+        removeSession: () => delete localStorage['wc_'+idx]
+      } })
+      console.log(wcConnector._sessionStorage)
       setConnector(wcConnector)
       setWcClientData(wcConnector.peerMeta)
       localStorage.setItem(LOCAL_STORAGE_URI_KEY, uri)
@@ -210,7 +216,7 @@ function App() {
   const { accounts, selectedAcc, onSelectAcc, onAddAccount } = useAccounts()
   // @TODO: WC: this is making us render App twice even if we do not use it
   const { wcClientData, wcConnect, wcDisconnect, userAction } = useWalletConnect({ selectedAcc, chainId: 137 })
-  const wc2 = useWalletConnect({ selectedAcc, chainId: 137 })
+  const wc2 = useWalletConnect({ selectedAcc, chainId: 137, idx: 1 })
 
   const query = new URLSearchParams(window.location.href.split('?').slice(1).join('?'))
   const wcUri = query.get('uri')
