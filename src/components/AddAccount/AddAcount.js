@@ -39,8 +39,12 @@ export default function AddAccount ({ relayerURL, onAddAccount }) {
 
     const wrapProgress = async fn => {
         setInProgress(true)
-        // @TODO catch errors here?
-        await fn()
+        try {
+            await fn()
+        } catch(e) {
+            console.error(e)
+            setAddAccErr(`Unexpected error: ${e.message || e}`)
+        }
         setInProgress(false)
     }
 
