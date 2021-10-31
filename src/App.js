@@ -28,6 +28,8 @@ function App() {
     if (wcUri) wcConnect({ uri: wcUri })
       // @TODO only on init; perhaps put this in the hook itself
   }, [])
+  // hax
+  window.wcConnect = uri => wcConnect({ uri })
 
   return (
     <Router>
