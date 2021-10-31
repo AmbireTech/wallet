@@ -71,7 +71,9 @@ const useWalletConnect = ({ selectedAcc, chainId }) => {
               const provider = getDefaultProvider('https://polygon-rpc.com/rpc')
               const rawTxn = payload.params[0]
               // @TODO: add a subtransaction that's supposed to `simulate` the fee payment so that
-              // we factor in the gas for that
+              // we factor in the gas for that; it's ok even if that txn ends up being
+              // more expensive (eg because user chose to pay in native token), cause we stay on the safe (higher) side
+              // or just add a fixed premium on gasLimit
               const bundle = new Bundle({
                 network: 'polygon', // @TODO
                 identity: selectedAcc,
@@ -92,7 +94,8 @@ const useWalletConnect = ({ selectedAcc, chainId }) => {
                 fn: async () => {
                   // @TODO we have to cache `providerTrezor` otherwise it will always ask us whether we wanna expose the pub key
                   const providerTrezor = new TrezorSubprovider({ trezorConnectClientApi: TrezorConnect })
-                  // NOTE: we can also use the Web3Provider for metamask
+                  // NOTE: for metamask, use `const provider = new ethers.providers.Web3Provider(window.ethereum)`
+                  // as for Trezor/ledger, alternatively we can shim using https://www.npmjs.com/package/web3-provider-engine and then wrap in Web3Provider
                   const walletShim = {
                     signMessage: hash => providerTrezor.signPersonalMessageAsync(ethers.utils.hexlify(hash), bundle.signer.address)
                   }
@@ -118,6 +121,7 @@ const useWalletConnect = ({ selectedAcc, chainId }) => {
 
             case 'eth_sign': {
               // @TODO WC
+              // this can be handled the same way as personal_sign; reference: https://github.com/gnosis/safe-react-apps/blob/main/apps/wallet-connect/src/hooks/useWalletConnect.tsx
               break;
             }
             default: {
@@ -136,6 +140,7 @@ const useWalletConnect = ({ selectedAcc, chainId }) => {
       })
 
       wcConnector.on('disconnect', (error, payload) => {
+        console.log('disconnect request', payload)
         if (error) throw error
         wcDisconnect()
       })
@@ -259,7 +264,11 @@ function App() {
               </select>
             </div>
 
-            {userAction ? (<div id="dashboardArea"><div>{userAction.bundle.txns[0][0]}</div><button onClick={userAction.fn}>Send txn</button></div>) : (<></>)}
+            <div id="dashboardArea">
+              {wcClientData ?(<button onClick={() => wcDisconnect()}>Disconnect ${wcClientData.name}</button>) : (<></>)}
+              {userAction ? (<><div>{userAction.bundle.txns[0][0]}</div><button onClick={userAction.fn}>Send txn</button></>) : (<></>)}
+            </div>
+
           </section>
         </Route>
         <Route path="/security"></Route>
