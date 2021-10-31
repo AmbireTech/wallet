@@ -28,14 +28,14 @@ const useWalletConnect = ({ selectedAcc, chainId, idx = 0 }) => {
   const [connector, setConnector] = useState()
   const [userAction, setUserAction] = useState(null)
 
-  const wcDisconnect = async () => {
+  const wcDisconnect = useCallback(async () => {
     if (connector) connector.killSession();
     localStorage.removeItem(LOCAL_STORAGE_URI_KEY)
     setConnector(undefined)
     setWcClientData(null)
-  }
+  }, [])
 
-  const wcConnect =
+  const wcConnect = useCallback(
     async (uri) => {
       console.log('starting conn', uri)
       const wcConnector = new WalletConnectCore({ connectorOpts: { uri }, cryptoLib, sessionStorage: {
@@ -43,7 +43,6 @@ const useWalletConnect = ({ selectedAcc, chainId, idx = 0 }) => {
         getSession: () => localStorage['wc_'+idx] ? JSON.parse(localStorage['wc_'+idx]) : null,
         removeSession: () => delete localStorage['wc_'+idx]
       } })
-      console.log(wcConnector._sessionStorage)
       setConnector(wcConnector)
       setWcClientData(wcConnector.peerMeta)
       localStorage.setItem(LOCAL_STORAGE_URI_KEY, uri)
@@ -148,7 +147,7 @@ const useWalletConnect = ({ selectedAcc, chainId, idx = 0 }) => {
         if (error) throw error
         wcDisconnect()
       })
-    }
+    }, [selectedAcc, chainId, idx])
 
   // @TODO: WC: no?
   /*
