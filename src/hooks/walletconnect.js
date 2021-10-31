@@ -32,7 +32,8 @@ export default function useWalletConnect ({ selectedAcc, chainId }) {
       })
   }, [])
   const disconnect = useCallback(uri => {
-      console.log('disconnect',uri)
+    console.log('disconnect',uri)
+    // @TODO: NOTE: `wcConnector.on('disconnect'` will still fire and we will need to repeat stuff...
     setConnections(connections => {
       const newConns = connections.filter(x => x.uri !== uri)
       localStorage[STORAGE_KEY] = JSON.stringify(newConns)
@@ -167,6 +168,7 @@ export default function useWalletConnect ({ selectedAcc, chainId }) {
 
       wcConnector.on('disconnect', (error, payload) => {
         if (error) throw error
+        console.log('on disconnect')
         disconnect(connectorOpts.uri)
       })
     }, [selectedAcc, chainId, setUserAction, addConnection, disconnect])
