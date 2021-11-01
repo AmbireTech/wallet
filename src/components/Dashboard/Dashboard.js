@@ -3,8 +3,13 @@ import './Dashboard.css'
 import { MdDashboard, MdLock, MdCompareArrows } from 'react-icons/md'
 import { BsPiggyBank } from 'react-icons/bs'
 import Deposit from './Deposit/Deposit'
+import useAccounts from '../../hooks/accounts'
+import useWalletConnect from '../../hooks/walletconnect'
 
-export default function Dashboard({ accounts, onAddAccount }) {
+export default function Dashboard() {
+  const { accounts, selectedAcc, onSelectAcc } = useAccounts()
+  const { connections, disconnect, userAction } = useWalletConnect({ selectedAcc, chainId: 137 })
+
     return (
         <section id="dashboard">
             <div id="sidebar">
@@ -23,19 +28,27 @@ export default function Dashboard({ accounts, onAddAccount }) {
 
             </div>
 
+            {/* Top-right dropdowns */}
             <div>
-              {/* TODO more elegant way to manage selected? */}
-              <select id="accountSelector" onChange={onAddAccount} defaultValue={(accounts.find(x => x.selected) || {})._id}>
+              <select id="accountSelector" onChange={ ev => onSelectAcc(ev.target.value) } defaultValue={selectedAcc}>
                 {accounts.map(acc => (<option key={acc._id}>{acc._id}</option>))}
+              </select>
+
+              <select id="networkSelector" defaultValue="Ethereum">
+                <option>Ethereum</option>
+                <option>Polygon</option>
               </select>
             </div>
 
-            <div id="topbar">
+            <div id="dashboardArea">
+              {connections.map(({ session, uri }) =>
+                (<div key={session.peerId} style={{ marginBottom: 20 }}>
+                  <button onClick={() => disconnect(uri)}>Disconnect {session.peerMeta.name}</button>
+                </div>)
+              )}
+              {userAction ? (<><div>{userAction.bundle.txns[0][0]}</div><button onClick={userAction.fn}>Send txn</button></>) : (<></>)}
 
-            </div>
-
-            <div id="content">
-                <Deposit address="0x7bf26452A91857Fb1334414D8F0Ea1F900Cf44dd"></Deposit>
+              <Deposit address="0x7bf26452A91857Fb1334414D8F0Ea1F900Cf44dd"></Deposit>
             </div>
         </section>
     )
