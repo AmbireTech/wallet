@@ -96,7 +96,7 @@ export default function useWalletConnect ({ account, chainId, onCallRequest }) {
         })
 
         return connector
-    }, [state.connectors])
+    }, [state.connectors, account, chainId])
 
     const disconnect = useCallback(uri => {
         if (state.connectors[uri]) state.connectors[uri].killSession()
@@ -142,9 +142,9 @@ function runInitEffects(wcConnect) {
     window.wcConnect = uri => wcConnect({ uri })
 
     // @TODO on focus and on user action
+    const clipboardError = e => console.log('non-fatal clipboard err', e)
     var isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1
     if (!isFirefox) {
-        const clipboardError = e => console.log('non-fatal clipboard err', e)
         navigator.permissions.query({ name: 'clipboard-read' }).then((result) => {
             // If permission to read the clipboard is granted or if the user will
             // be prompted to allow it, we proceed.
