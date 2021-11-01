@@ -9,6 +9,13 @@ import { hexZeroPad, AbiCoder, keccak256, id, getAddress } from 'ethers/lib/util
 
 import { fetch, fetchPost } from '../../lib/fetch'
 
+// @TODO update those pre-launch
+const ACCOUNT_PRESETS = {
+    salt: hexZeroPad('0x01', 32),
+    baseIdentityAddr: '0xA2E9e41ee85AE792A8213736c7f9398a933F8184',
+    identityFactoryAddr: '0x447f228E6af15C2Df147235eCB9ABE53BD1f46Ad'
+}
+
 TrezorConnect.manifest({
   email: 'contactus@ambire.com',
   appUrl: 'https://www.ambire.com'
@@ -26,28 +33,46 @@ const SCRYPT_ITERATIONS = 131072/8
 
 export default function AddAccount ({ relayerURL, onAddAccount }) {
     const [signersToChoose, setChooseSigners] = useState(null)
+    const [err, setErr] = useState('')
+    const [addAccErr, setAddAccErr] = useState('')
+    const [inProgress, setInProgress] = useState(false)
 
-    const addMultipleAccounts = accs => {
-        if (accs[0]) accs[0].selected = true
-        accs.forEach(onAddAccount)
+    const wrapProgress = async fn => {
+        setInProgress(true)
+        try {
+            await fn()
+        } catch(e) {
+            console.error(e)
+            setAddAccErr(`Unexpected error: ${e.message || e}`)
+        }
+        setInProgress(false)
     }
 
-    const onAccRequest = async (req) => {
-        const firstKeyWallet = Wallet.createRandom()
+    const wrapErr = async fn => {
+        setAddAccErr('')
+        try {
+            await fn()
+        } catch(e) {
+            console.error(e)
+            setAddAccErr(`Unexpected error: ${e.message || e}`)
+        }
+    }
 
+    const createQuickAcc = async (req) => {
+        setErr('')
+
+        // async hack to let React run a tick so it can re-render before the blocking Wallet.createRandom()
+        await new Promise(resolve => setTimeout(resolve, 0))
+
+        const firstKeyWallet = Wallet.createRandom()
         // @TODO fix this hack, use another source of randomness
         // 6 words is 2048**6
         const secondKeySecret = Wallet.createRandom({
             extraEntropy: id(req.email+':'+Date.now())
         }).mnemonic.phrase.split(' ').slice(0, 6).join(' ') + ' ' + req.email
 
-        const [
-            secondKeyAddress,
-            { whitelistedFactories, whitelistedBaseIdentities }
-        ] = await Promise.all([
-            fetchPost(`${relayerURL}/second-key`, { secondKeySecret }).then(r => r.address),
-            fetch(`${relayerURL}/relayer/cfg`).then(r => r.json())
-        ])
+        const secondKeyAddress = await fetchPost(`${relayerURL}/second-key`, { secondKeySecret })
+            .then(r => r.address)
 
         // @TODO: timelock value for the quickAccount
         const quickAccount = [600, firstKeyWallet.address, secondKeyAddress]
@@ -56,12 +81,9 @@ export default function AddAccount ({ relayerURL, onAddAccount }) {
         // @TODO not hardcoded
         const quickAccManager = '0x697d866d20a8E8886a0D0511e82846AC108Bc5B6'
         const privileges = [[quickAccManager, accHash]]
-        // @TODO proper salt
-        const salt = hexZeroPad('0x01', 32)
-        const identityFactoryAddr = whitelistedFactories[whitelistedFactories.length - 1]
-        const baseIdentityAddr = whitelistedBaseIdentities[whitelistedBaseIdentities.length - 1]
+        const { salt, baseIdentityAddr, identityFactoryAddr } = ACCOUNT_PRESETS
         const bytecode = getProxyDeployBytecode(baseIdentityAddr, privileges, { privSlot: 0 })
-        const identityAddr = '0x' + generateAddress2(identityFactoryAddr, salt, bytecode).toString('hex')
+        const identityAddr = getAddress('0x' + generateAddress2(identityFactoryAddr, salt, bytecode).toString('hex'))
 
         const primaryKeyBackup = JSON.stringify(
             await firstKeyWallet.encrypt(req.passphrase, { scrypt: { N: SCRYPT_ITERATIONS } })
@@ -75,46 +97,49 @@ export default function AddAccount ({ relayerURL, onAddAccount }) {
             salt, identityFactoryAddr, baseIdentityAddr,
             privileges,
         })
+        if (createResp.message === 'EMAIL_ALREADY_USED') {
+            setErr('Email already used')
+            return
+        }
+        if (!createResp.success) {
+            console.log(createResp)
+            setErr(`Unexpected sign up error: ${createResp.message || 'unknown'}`)
+            return
+        }
 
-        // @TODO check for success
-        // @TODO remove this
-        console.log('identityAddr:', identityAddr, quickAccount, createResp)
-
-        return {
+        await onAddAccount({
             _id: identityAddr,
             email: req.email,
             primaryKeyBackup,
             salt, identityFactoryAddr, baseIdentityAddr,
-            selected: true,
             // @TODO signer
-        }
+        }, { select: true })
     }
+
+
+    // EOA implementations
+    // Add or create accounts from Trezor/Ledger/Metamask/etc.
 
     // @TODO refactor into create with privileges perhaps?
     // only if we can have the whitelisted* stuff in advance; we can hardcode them
     async function createFromEOA (addr) {
-        const { whitelistedFactories, whitelistedBaseIdentities } = await fetch(`${relayerURL}/relayer/cfg`)
-            .then(r => r.json())
         const privileges = [[getAddress(addr), hexZeroPad('0x01', 32)]]
-        const identityFactoryAddr = whitelistedFactories[whitelistedFactories.length - 1]
-        const baseIdentityAddr = whitelistedBaseIdentities[whitelistedBaseIdentities.length - 1]
-        // @TODO proper salt
-        const salt = hexZeroPad('0x01', 32)
+        const { salt, baseIdentityAddr, identityFactoryAddr } = ACCOUNT_PRESETS
         const bytecode = getProxyDeployBytecode(baseIdentityAddr, privileges, { privSlot: 0 })
-        const identityAddr = '0x' + generateAddress2(identityFactoryAddr, salt, bytecode).toString('hex')
+        const identityAddr = getAddress('0x' + generateAddress2(identityFactoryAddr, salt, bytecode).toString('hex'))
 
-        // @TODO catch errors here - wrong status codes, etc.
-        const createResp = await fetchPost(`${relayerURL}/identity/${identityAddr}`, {
-            salt, identityFactoryAddr, baseIdentityAddr,
-            privileges
-        })
-
-        console.log(createResp)
+        if (relayerURL) {
+            // @TODO catch errors here - wrong status codes, etc.
+            const createResp = await fetchPost(`${relayerURL}/identity/${identityAddr}`, {
+                salt, identityFactoryAddr, baseIdentityAddr,
+                privileges
+            })
+            if (!createResp.success && !(createResp.message && createResp.message.includes('already exists'))) throw createResp
+        }
 
         return {
             _id: identityAddr,
-            salt, identityFactoryAddr, baseIdentityAddr,
-            selected: true
+            salt, identityFactoryAddr, baseIdentityAddr
             // @TODO signer
         }
     }
@@ -129,8 +154,8 @@ export default function AddAccount ({ relayerURL, onAddAccount }) {
         const web3Accs = await ethereum.request({ method: 'eth_requestAccounts' })
         if (!web3Accs.length) throw new Error('No accounts connected')
         const owned = await getOwnedByEOAs(web3Accs)
-        if (!owned.length) return [await createFromEOA(web3Accs[0])]
-        else return owned
+        if (!owned.length) onAddAccount(await createFromEOA(web3Accs[0]), { select: true })
+        else owned.forEach((acc, i) => onAddAccount(acc, { select: i === 0 }))
     }
 
     async function getOwnedByEOAs(eoas) {
@@ -145,21 +170,24 @@ export default function AddAccount ({ relayerURL, onAddAccount }) {
         // preserve the last truthy priv value
         allOwnedIdentities.forEach(x => 
             Object.entries(x).forEach(
-                ([id, priv]) => allUniqueOwned[id] = priv ||  allUniqueOwned[id]
+                ([id, priv]) => allUniqueOwned[id] = priv || allUniqueOwned[id]
             )
         )
 
-        return await Promise.all(Object.keys(allUniqueOwned).map(getAccountByAddr))
+        return await Promise.all(Object.keys(allUniqueOwned).map(async addr => {
+            return { ...(await getAccountByAddr(addr)) /* TODO signer */ }
+        }))
     }
 
     async function getAccountByAddr (addr) {
-        // @TODO: fundamentally, do we even need these values?
+        // In principle, we need these values to be able to operate in relayerless mode,
+        // so we just store them in all cases
+        // Plus, in the future this call may be used to retrieve other things
         const { salt, identityFactoryAddr, baseIdentityAddr } = await fetch(`${relayerURL}/identity/${addr}`)
             .then(r => r.json())
         return {
             _id: addr,
-            salt, identityFactoryAddr, baseIdentityAddr,
-            // @TODO signer for the ones that we CURRENTLY control
+            salt, identityFactoryAddr, baseIdentityAddr
         }
     }
 
@@ -184,17 +212,46 @@ export default function AddAccount ({ relayerURL, onAddAccount }) {
     }
 
     async function onEOASelected (addr) {
+        // when there is no relayer, we can only add the 'default' account created from that EOA
+        // @TODO in the future, it would be nice to do getLogs from the provider here to find out which other addrs we control
+        //   ... maybe we can isolate the code for that in lib/relayerless or something like that to not clutter this code
+        if (!relayerURL) return onAddAccount(await createFromEOA(addr), { select: true })
+        // otherwise check which accs we already own and add them
         const owned = await getOwnedByEOAs([addr])
-        if (!owned.length) return [await createFromEOA(addr)]
-        else return owned
+        if (!owned.length) return onAddAccount(await createFromEOA(addr), { select: true })
+        else owned.forEach((acc, i) => onAddAccount(acc, { select: i === 0 }))
     }
 
+    // The UI for choosing a signer to create/add an account with, for example
+    // when connecting a hardware wallet, it has many addrs you can choose from
     if (signersToChoose) {
-        return (
+        return (<div className="loginSignupWrapper chooseSigners">
+            <h3>Choose a signer</h3>
             <ul id="signersToChoose">
-                {signersToChoose.map(addr => (<li key={addr} onClick={() => onEOASelected(addr).then(addMultipleAccounts)}>{addr}</li>))}
+                {signersToChoose.map(addr => (<li key={addr} onClick={() => wrapErr(() => onEOASelected(addr))}>{addr}</li>))}
             </ul>
-        )
+        </div>)
+    }
+
+    // Adding accounts from existing signers
+    // @TODO: progress indicators for those
+    const addFromSignerButtons = (<>
+        <button onClick={() => wrapErr(connectTrezorAndGetAccounts)}><div className="icon" style={{ backgroundImage: 'url(./resources/trezor.png)' }}/>Trezor</button>
+        <button onClick={() => wrapErr(connectLedgerAndGetAccounts)}><div className="icon" style={{ backgroundImage: 'url(./resources/ledger.png)' }}/>Ledger</button>
+        <button onClick={() => wrapErr(connectWeb3AndGetAccounts)}><div className="icon" style={{ backgroundImage: 'url(./resources/metamask.png)' }}/>Metamask / Browser</button>
+    </>)
+
+    if (!relayerURL) {
+        return (<div className="loginSignupWrapper">
+            <div id="logo"/>
+            <section id="addAccount">
+            <div id="loginOthers">
+                <h3>Add an account</h3>
+                {addFromSignerButtons}
+                <h3>NOTE: You can enable email/passphrase login by connecting to a relayer.</h3>
+            </div>
+            </section>
+        </div>)
     }
 
     return (<div className="loginSignupWrapper">
@@ -202,7 +259,12 @@ export default function AddAccount ({ relayerURL, onAddAccount }) {
         <section id="addAccount">
           <div id="loginEmail">
             <h3>Create a new account</h3>
-            <LoginOrSignup onAccRequest={req => onAccRequest(req).then(onAddAccount)} action="SIGNUP"></LoginOrSignup>
+            <LoginOrSignup
+                inProgress={inProgress}
+                onAccRequest={req => wrapProgress(() => createQuickAcc(req))}
+                action="SIGNUP"
+            ></LoginOrSignup>
+            {err ? (<p className="error">{err}</p>) : (<></>)}
           </div>
     
           <div id="loginSeparator">
@@ -212,13 +274,12 @@ export default function AddAccount ({ relayerURL, onAddAccount }) {
           </div>
     
           <div id="loginOthers">
-            <h3>Add an existing account</h3>
+            <h3>Add an account</h3>
             <Link to="/email-login">
               <button><div className="icon" style={{ backgroundImage: 'url(./resources/envelope.png)' }}/>Email</button>
             </Link>
-            <button onClick={() => connectTrezorAndGetAccounts()}><div className="icon" style={{ backgroundImage: 'url(./resources/trezor.png)' }}/>Trezor</button>
-            <button onClick={() => connectLedgerAndGetAccounts()}><div className="icon" style={{ backgroundImage: 'url(./resources/ledger.png)' }}/>Ledger</button>
-            <button onClick={() => connectWeb3AndGetAccounts().then(addMultipleAccounts)}><div className="icon" style={{ backgroundImage: 'url(./resources/metamask.png)' }}/>Metamask / Browser</button>
+            {addFromSignerButtons}
+            {addAccErr ? (<p className="error">{addAccErr}</p>) : (<></>)}
           </div>
         </section>
       </div>
