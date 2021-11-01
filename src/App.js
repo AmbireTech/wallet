@@ -9,7 +9,7 @@ import {
 } from 'react-router-dom'
 import EmailLogin from './components/EmailLogin/EmailLogin'
 import AddAccount from './components/AddAccount/AddAcount'
-import Dashboard from './components/Dashboard/Dashboard'
+import Platform from './components/Platform/Platform'
 import useAccounts from './hooks/accounts'
 import useWalletConnect from './hooks/walletconnect'
 
@@ -60,13 +60,8 @@ function App() {
           <EmailLogin relayerURL={relayerURL} onAddAccount={onAddAccount}></EmailLogin>
         </Route>
 
-        <Route path="/dashboard">
-          <Dashboard></Dashboard>
-        </Route>
-        <Route path="/security"></Route>
-        <Route path="/transactions"></Route>
-        <Route path="/swap"></Route>
-        <Route path="/earn"></Route>
+        <Route path="/platform" component={Platform}></Route>
+
         {/* TODO: connected dapps */}
         {/* TODO: tx identifier in the URL */}
         <Route path="/approve-tx"></Route>

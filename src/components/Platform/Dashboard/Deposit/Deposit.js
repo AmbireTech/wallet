@@ -1,11 +1,11 @@
 import './Deposit.css'
 
 import { MdAccountBalance, MdAccountBalanceWallet } from 'react-icons/md'
-import TextInput from '../../common/TextInput/TextInput'
+import TextInput from '../../../common/TextInput/TextInput'
 import Providers from './Providers/Providers'
 
-import ETHEREUM_LOGO from '../../../resources/ethereum-logo.png'
-import POLYGON_LOGO from '../../../resources/polygon-logo.svg'
+import ETHEREUM_LOGO from '../../../../resources/ethereum-logo.png'
+import POLYGON_LOGO from '../../../../resources/polygon-logo.svg'
 
 export default function Deposit({ address }) {
     return (

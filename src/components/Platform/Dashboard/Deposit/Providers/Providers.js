@@ -2,13 +2,13 @@ import './Providers.css'
 
 import { RampInstantSDK } from '@ramp-network/ramp-instant-sdk'
 import transakSDK from '@transak/transak-sdk'
-import { popupCenter } from '../../../../helpers/popupHelper'
+import { popupCenter } from '../../../../../helpers/popupHelper'
 import url from 'url'
 
-import RAMP_LOGO from '../../../../resources/ramp.svg';
-import PAYTRIE_LOGO from '../../../../resources/paytrie.svg';
-import TRANSAK_LOGO from '../../../../resources/transak.svg';
-import { RAMP_HOST_API_KEY, TRANSAK_API_KEY, TRANSAK_ENV } from '../../../../config'
+import RAMP_LOGO from '../../../../../resources/ramp.svg';
+import PAYTRIE_LOGO from '../../../../../resources/paytrie.svg';
+import TRANSAK_LOGO from '../../../../../resources/transak.svg';
+import { RAMP_HOST_API_KEY, TRANSAK_API_KEY, TRANSAK_ENV } from '../../../../../config'
 
 const PAYTRIE_PARTNER_URL = 'https://partner.paytrie.com/?app=876454'
 
