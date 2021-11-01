@@ -7,7 +7,7 @@ import Providers from './Providers/Providers'
 import ETHEREUM_LOGO from '../../../../resources/ethereum-logo.png'
 import POLYGON_LOGO from '../../../../resources/polygon-logo.svg'
 
-export default function Deposit({ address }) {
+export default function Deposit({ depositAddress }) {
     return (
         <section id="deposit">
             <div className="panel">
@@ -22,7 +22,7 @@ export default function Deposit({ address }) {
                 </div>
                 <div className="description">
                     Send tokens or collectables to this address:
-                    <TextInput value={address} copy/>
+                    <TextInput value={depositAddress} copy/>
                 </div>
                 <div id="networks">
                     Following networks supported:

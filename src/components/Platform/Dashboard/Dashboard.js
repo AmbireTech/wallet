@@ -18,7 +18,7 @@ export default function Dashboard() {
               )}
               {userAction ? (<><div>{userAction.bundle.txns[0][0]}</div><button onClick={userAction.fn}>Send txn</button></>) : (<></>)}
 
-              <Deposit address="0x7bf26452A91857Fb1334414D8F0Ea1F900Cf44dd"></Deposit>
+              <Deposit depositAddress={selectedAcc}></Deposit>
             </div>
         </section>
     )
