@@ -122,7 +122,7 @@ export default function useWalletConnect ({ account, chainId, onCallRequest }) {
         localStorage[STORAGE_KEY] = JSON.stringify(state.connections)
 
         if (Object.keys(newConnectors).length) dispatch({ type: 'addConnectors', newConnectors })
-    }, [state, account, chainId])
+    }, [state, connect, account, chainId])
 
     // Initialization effects
     useEffect(() => runInitEffects(connect), [])

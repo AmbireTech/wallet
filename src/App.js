@@ -32,6 +32,18 @@ function App() {
   const onCallRequest = async (payload, wcConnector) => {
     // @TODO handle more
     if (payload.method !== 'eth_sendTransaction') return
+
+    console.log('call onCallRequest')
+
+    if (window.Notification && Notification.permission !== "denied") {
+      Notification.requestPermission(function(status) {  // status is "granted", if accepted by user
+        var n = new Notification('Ambire Wallet: sign transaction', { 
+          body: `Transaction to ${payload.params[0].to}`,
+          //icon: '/path/to/icon.png' // optional
+        })
+      })
+    }
+
     const provider = getDefaultProvider(network.rpc)
     const rawTxn = payload.params[0]
     // @TODO: add a subtransaction that's supposed to `simulate` the fee payment so that
@@ -74,7 +86,7 @@ function App() {
       }
     })
   }
-  const { connections, connect, disconnect } = useWalletConnect({
+  const { connections, disconnect } = useWalletConnect({
     account: selectedAcc,
     chainId: network.chainId,
     onCallRequest
