@@ -12,8 +12,8 @@ export default function useAccounts () {
     })
     const [selectedAcc, setSelectedAcc] = useState(() => {
       const initialSelectedAcc = localStorage.selectedAcc
-      if (!initialSelectedAcc || !accounts.find(x => x._id === initialSelectedAcc)) {
-        return accounts[0] ? accounts[0]._id : ''
+      if (!initialSelectedAcc || !accounts.find(x => x.id === initialSelectedAcc)) {
+        return accounts[0] ? accounts[0].id : ''
       }
       return initialSelectedAcc
     })
@@ -24,7 +24,7 @@ export default function useAccounts () {
     }
     const onAddAccount = useCallback((acc, opts) => {
       console.log('onAddAccount', acc)
-      const existingIdx = accounts.findIndex(x => x._id.toLowerCase() === acc._id.toLowerCase())
+      const existingIdx = accounts.findIndex(x => x.id.toLowerCase() === acc.id.toLowerCase())
   
       // @TODO show toast; perhaps by returning a value that shows whether the acc is already added
       // or have the showToast fn passed in when constructing the hook
@@ -37,7 +37,7 @@ export default function useAccounts () {
   
       localStorage.accounts = JSON.stringify(accounts)
   
-      if (opts.select) onSelectAcc(acc._id)
+      if (opts.select) onSelectAcc(acc.id)
       if (Object.keys(accounts).length) {
         window.location.href = '/#/dashboard'
       }

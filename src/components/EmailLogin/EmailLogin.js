@@ -27,7 +27,7 @@ export default function EmailLogin({ relayerURL, onAddAccount }) {
         // console.log(wallet)
         const { _id, salt, identityFactoryAddr, baseIdentityAddr } = identityInfo
         onAddAccount({
-          _id,
+          id: _id,
           email: identityInfo.meta.email,
           primaryKeyBackup: identityInfo.meta.primaryKeyBackup,
           salt, identityFactoryAddr, baseIdentityAddr,

@@ -108,7 +108,7 @@ export default function AddAccount ({ relayerURL, onAddAccount }) {
         }
 
         await onAddAccount({
-            _id: identityAddr,
+            id: identityAddr,
             email: req.email,
             primaryKeyBackup,
             salt, identityFactoryAddr, baseIdentityAddr,
@@ -138,7 +138,7 @@ export default function AddAccount ({ relayerURL, onAddAccount }) {
         }
 
         return {
-            _id: identityAddr,
+            id: identityAddr,
             salt, identityFactoryAddr, baseIdentityAddr
             // @TODO signer
         }
@@ -186,7 +186,7 @@ export default function AddAccount ({ relayerURL, onAddAccount }) {
         const { salt, identityFactoryAddr, baseIdentityAddr } = await fetch(`${relayerURL}/identity/${addr}`)
             .then(r => r.json())
         return {
-            _id: addr,
+            id: addr,
             salt, identityFactoryAddr, baseIdentityAddr
         }
     }

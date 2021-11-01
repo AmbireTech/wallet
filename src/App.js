@@ -58,6 +58,7 @@ function App() {
       txns: [[rawTxn.to, rawTxn.value, rawTxn.data]],
       signer: { address: localStorage.tempSigner } // @TODO
     })
+
     const estimation = await bundle.estimate({ relayerURL, fetch: window.fetch })
     console.log(estimation)
     // pay a fee to the relayer
@@ -128,7 +129,7 @@ function App() {
             {/* Top-right dropdowns */}
             <div>
               <select id="accountSelector" onChange={ ev => onSelectAcc(ev.target.value) } defaultValue={selectedAcc}>
-                {accounts.map(acc => (<option key={acc._id}>{acc._id}</option>))}
+                {accounts.map(acc => (<option key={acc.id}>{acc.id}</option>))}
               </select>
 
               <select id="networkSelector" onChange = { ev => setNetwork(ev.target.value) } defaultValue={network.name}>
