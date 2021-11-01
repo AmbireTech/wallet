@@ -14,7 +14,6 @@ import AddAccount from './components/AddAccount/AddAcount'
 import useAccounts from './hooks/accounts'
 import useNetwork from './hooks/network'
 import useWalletConnect from './hooks/walletconnect'
-import networks from './consts/networks'
 
 // @TODO consts/cfg
 const relayerURL = 'http://localhost:1934'
@@ -23,7 +22,7 @@ function App() {
   const { accounts, selectedAcc, onSelectAcc, onAddAccount } = useAccounts()
   const { network, setNetwork, allNetworks } = useNetwork()
   // @TODO: WC: this is making us render App twice even if we do not use it
-  const { connections, wcConnect, disconnect, userAction } = useWalletConnect({ selectedAcc, chainId: 137 })
+  const { connections, wcConnect, disconnect, userAction } = useWalletConnect({ selectedAcc, chainId: network.chainId })
 
   useEffect(() => {
     const query = new URLSearchParams(window.location.href.split('?').slice(1).join('?'))
@@ -89,7 +88,7 @@ function App() {
               </select>
 
               <select id="networkSelector" onChange = { ev => setNetwork(ev.target.value) } defaultValue={network.name}>
-                {Object.values(networks).map(network => (<option>{network.name}</option>))}
+                {Object.values(allNetworks).map(network => (<option key={network.name}>{network.name}</option>))}
               </select>
             </div>
 
