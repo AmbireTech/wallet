@@ -8,6 +8,33 @@
     box-sizing: border-box;
 }
 
+#sidebar .item {
+    padding: 15px 0px;
+    line-height: 30px;
+    cursor: pointer;
+    color: #bbb;
+}
+
+#sidebar .item:hover {
+    background-color: rgba(0, 0, 0, 0.3);
+    color: #fff;
+}
+
+#sidebar .item:hover svg {
+    color: #fff;
+}
+
+#sidebar .item svg {
+    margin-right: 30px;
+    margin-left: 15px;
+    color: #bbb;
+    float: left;
+}
+
+#sidebar .item.selected svg {
+    color: #AA6AFF;
+}
+
 #sidebar .logo {
     background-image: url('../../resources/logo.png');
     width: 100%;
@@ -39,45 +66,6 @@
 
 #sidebar .balanceDollarAmount {
     font-size: 2em;
-}
-
-#dashboard .item {
-    padding: 15px 0px;
-    line-height: 30px;
-    cursor: pointer;
-    color: #bbb;
-}
-
-#dashboard .item:hover {
-    background-color: rgba(0, 0, 0, 0.3);
-    color: #fff;
-}
-
-#dashboard .item:hover svg {
-    color: #fff;
-}
-
-#dashboard .item svg {
-    margin-right: 30px;
-    margin-left: 15px;
-    color: #bbb;
-    float: left;
-}
-
-#dashboard .item.selected svg {
-    color: #AA6AFF;
-}
-
-#dashboard #topbar {
-    height: 100px;
-}
-
-#dashboardArea {
-    position: absolute;
-    top: 150px;
-    left: 350px;
-    right: 50px;
-    bottom: 30px;
 }
 
 #accountSelector {
