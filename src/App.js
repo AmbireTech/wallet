@@ -79,7 +79,6 @@ function App() {
     chainId: network.chainId,
     onCallRequest
   })
-  console.log('render', userAction)
 
   return (
     <Router>

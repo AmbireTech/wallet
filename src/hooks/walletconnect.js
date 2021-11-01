@@ -18,6 +18,11 @@ export default function useWalletConnect ({ account, chainId, onCallRequest }) {
         }
         if (action.type === 'connectedNewSession') {
             const connector = action.connector
+            // @TODO this is not ideal, but otherwise we won't have the updated account/chainId
+            connector.approveSession({
+                accounts: [account],
+                chainId: chainId,
+            })
             // It's safe to read .session right after approveSession because 1) approveSession itself normally stores the session itself
             // 2) connector.session is a getter that re-reads private properties of the connector; those properties are updated immediately at approveSession
             return {
@@ -60,11 +65,6 @@ export default function useWalletConnect ({ account, chainId, onCallRequest }) {
         })
 
         connector.on('session_request', (error, payload) => {
-            // @TODO how to obtain newest chainId/account here?
-            connector.approveSession({
-                accounts: [account],
-                chainId: chainId,
-            })
             dispatch({ type: 'connectedNewSession', uri: connectorOpts.uri, connector })
         })
 
@@ -143,16 +143,19 @@ function runInitEffects(wcConnect) {
     window.wcConnect = uri => wcConnect({ uri })
 
     // @TODO on focus and on user action
-    const clipboardError = e => console.log('non-fatal clipboard err', e)
-    navigator.permissions.query({ name: 'clipboard-read' }).then((result) => {
-        // If permission to read the clipboard is granted or if the user will
-        // be prompted to allow it, we proceed.
-
-        if (result.state === 'granted' || result.state === 'prompt') {
-            navigator.clipboard.readText().then(clipboard => {
-                if (clipboard.startsWith('wc:')) wcConnect({ uri: clipboard })
-            }).catch(clipboardError)
-        }
-        // @TODO show the err to the user if they triggered the action
-    }).catch(clipboardError)
+    var isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1
+    if (!isFirefox) {
+        const clipboardError = e => console.log('non-fatal clipboard err', e)
+        navigator.permissions.query({ name: 'clipboard-read' }).then((result) => {
+            // If permission to read the clipboard is granted or if the user will
+            // be prompted to allow it, we proceed.
+    
+            if (result.state === 'granted' || result.state === 'prompt') {
+                navigator.clipboard.readText().then(clipboard => {
+                    if (clipboard.startsWith('wc:')) wcConnect({ uri: clipboard })
+                }).catch(clipboardError)
+            }
+            // @TODO show the err to the user if they triggered the action
+        }).catch(clipboardError)
+    }
 }
