@@ -1,6 +1,6 @@
 import './App.css'
 
-import { useEffect } from 'react'
+import { useState } from 'react'
 import {
   HashRouter as Router,
   Switch,
@@ -15,38 +15,71 @@ import useAccounts from './hooks/accounts'
 import useNetwork from './hooks/network'
 import useWalletConnect from './hooks/walletconnect'
 
+// @TODO get rid of these, should be in the SignTransaction component
+import { Bundle } from 'adex-protocol-eth/js'
+import { TrezorSubprovider } from '@0x/subproviders/lib/src/subproviders/trezor' // https://github.com/0xProject/0x-monorepo/issues/1400
+import TrezorConnect from 'trezor-connect'
+import { ethers, getDefaultProvider } from 'ethers'
+
 // @TODO consts/cfg
 const relayerURL = 'http://localhost:1934'
 
 function App() {
   const { accounts, selectedAcc, onSelectAcc, onAddAccount } = useAccounts()
   const { network, setNetwork, allNetworks } = useNetwork()
-  // @TODO: WC: this is making us render App twice even if we do not use it
-  const { connections, wcConnect, disconnect, userAction } = useWalletConnect({ selectedAcc, chainId: network.chainId })
+  // Note: this one is temporary until we figure out how to manage a queue of those
+  const [userAction, setUserAction] = useState(null)
+  const onCallRequest = async (payload, wcConnector) => {
+    // @TODO handle more
+    if (payload.method !== 'eth_sendTransaction') return
+    const provider = getDefaultProvider(network.rpc)
+    const rawTxn = payload.params[0]
+    // @TODO: add a subtransaction that's supposed to `simulate` the fee payment so that
+    // we factor in the gas for that; it's ok even if that txn ends up being
+    // more expensive (eg because user chose to pay in native token), cause we stay on the safe (higher) side
+    // or just add a fixed premium on gasLimit
+    const bundle = new Bundle({
+      network: network.id,
+      identity: selectedAcc,
+      // @TODO: take the gasLimit from the rawTxn
+      // @TODO "|| '0x'" where applicable
+      txns: [[rawTxn.to, rawTxn.value, rawTxn.data]],
+      signer: { address: localStorage.tempSigner } // @TODO
+    })
+    const estimation = await bundle.estimate({ relayerURL, fetch: window.fetch })
+    console.log(estimation)
+    // pay a fee to the relayer
+    bundle.txns.push(['0x942f9CE5D9a33a82F88D233AEb3292E680230348', Math.round(estimation.feeInNative.fast*1e18).toString(10), '0x'])
+    await bundle.getNonce(provider)
+    console.log(bundle.nonce)
 
-  useEffect(() => {
-    const query = new URLSearchParams(window.location.href.split('?').slice(1).join('?'))
-    const wcUri = query.get('uri')
-    if (wcUri) wcConnect({ uri: wcUri })
-    // @TODO only on init; perhaps put this in the hook itself
-
-    // @TODO on focus and on user action
-    const clipboardError = e => console.log('non-fatal clipboard err', e)
-    navigator.permissions.query({ name: 'clipboard-read' }).then((result) => {
-      // If permission to read the clipboard is granted or if the user will
-      // be prompted to allow it, we proceed.
-
-      if (result.state === 'granted' || result.state === 'prompt') {
-        navigator.clipboard.readText().then(clipboard => {
-          if (clipboard.startsWith('wc:')) wcConnect({ uri: clipboard })
-        }).catch(clipboardError)
+    setUserAction({
+      bundle,
+      fn: async () => {
+        // @TODO we have to cache `providerTrezor` otherwise it will always ask us whether we wanna expose the pub key
+        const providerTrezor = new TrezorSubprovider({ trezorConnectClientApi: TrezorConnect })
+        // NOTE: for metamask, use `const provider = new ethers.providers.Web3Provider(window.ethereum)`
+        // as for Trezor/ledger, alternatively we can shim using https://www.npmjs.com/package/web3-provider-engine and then wrap in Web3Provider
+        const walletShim = {
+          signMessage: hash => providerTrezor.signPersonalMessageAsync(ethers.utils.hexlify(hash), bundle.signer.address)
+        }
+        await bundle.sign(walletShim)
+        const bundleResult = await bundle.submit({ relayerURL, fetch: window.fetch })
+        console.log(bundleResult)
+        wcConnector.approveRequest({
+          id: payload.id,
+          result: bundleResult.txId,
+        })
+        // we can now approveRequest in this and return the proper result
       }
-      // @TODO show the err to the user if they triggered the action
-    }).catch(clipboardError)
-  }, [])
-  
-  // hax
-  window.wcConnect = uri => wcConnect({ uri })
+    })
+  }
+  const { connections, connect, disconnect } = useWalletConnect({
+    account: selectedAcc,
+    chainId: network.chainId,
+    onCallRequest
+  })
+  console.log('render', userAction)
 
   return (
     <Router>
@@ -88,7 +121,7 @@ function App() {
               </select>
 
               <select id="networkSelector" onChange = { ev => setNetwork(ev.target.value) } defaultValue={network.name}>
-                {Object.values(allNetworks).map(network => (<option key={network.name}>{network.name}</option>))}
+                {allNetworks.map(network => (<option key={network.id}>{network.name}</option>))}
               </select>
             </div>
 
