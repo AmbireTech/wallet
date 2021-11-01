@@ -26,7 +26,7 @@ export default function Deposit({ address }) {
                 </div>
                 <div id="networks">
                     Following networks supported:
-                    <div class="logos">
+                    <div className="logos">
                         <img src={ETHEREUM_LOGO} alt="Ethereum"/>
                         <img src={POLYGON_LOGO} alt="Polygon"/>
                     </div>
