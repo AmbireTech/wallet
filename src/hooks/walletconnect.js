@@ -18,11 +18,7 @@ export default function useWalletConnect ({ account, chainId, onCallRequest }) {
         }
         if (action.type === 'connectedNewSession') {
             const connector = action.connector
-            // @TODO this is not ideal, but otherwise we won't have the updated account/chainId
-            connector.approveSession({
-                accounts: [account],
-                chainId: chainId,
-            })
+
             // It's safe to read .session right after approveSession because 1) approveSession itself normally stores the session itself
             // 2) connector.session is a getter that re-reads private properties of the connector; those properties are updated immediately at approveSession
             return {
@@ -65,6 +61,11 @@ export default function useWalletConnect ({ account, chainId, onCallRequest }) {
         })
 
         connector.on('session_request', (error, payload) => {
+            // @TODO: we need a way to know the latest account, chainId here
+            connector.approveSession({
+                accounts: [account],
+                chainId: chainId,
+            })
             dispatch({ type: 'connectedNewSession', uri: connectorOpts.uri, connector })
         })
 
@@ -109,14 +110,12 @@ export default function useWalletConnect ({ account, chainId, onCallRequest }) {
         state.connections.forEach(({ uri, session }) => {
             if (!state.connectors[uri]) newConnectors[uri] = connect({ uri, session })
             else {
-                /*
                 // @TODO figure out how to handle the update and persist
                 const connector = state.connectors[uri]
                 const session = connector.session
                 if (session.accounts[0] !== account || session.chainId !== chainId) {
                     connector.updateSession({ accounts: [account], chainId })
                 }
-                */
             }
         })
         
