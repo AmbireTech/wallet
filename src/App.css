@@ -43,11 +43,14 @@ button, input {
   font-family: 'Open Sans';
 }
 
+button {
+  background-color: white;
+}
 button, input[type=submit] {
   cursor: pointer;
 }
 
-button:active, input[type=submit]:active {
+button:active, input[type=submit]:not(:disabled):active {
   transform: scale(0.95);
 }
 
@@ -58,8 +61,19 @@ input:focus {
 button {
   opacity: 0.8;
 }
-button:hover {
+
+button:not(:disabled):hover {
   opacity: 1;
+}
+
+input:disabled, button:disabled {
+  opacity: 0.5 !important;
+  cursor: default;
+}
+
+.error {
+  color: red;
+  text-align: center;
 }
 
 #root {
@@ -203,13 +217,23 @@ button:hover {
   font-size: 1.2em;
 }
 
-.error {
-  color: red;
-  text-align: center;
+
+#loginEmail .error, #loginOthers .error {
   font-size: 1.5em;
   font-weight: 600;
   position: relative;
+}
+
+#loginEmail .error {
   top: -15px;
+}
+
+select {
+  border: 0px;
+  outline: 0px;
+  color: white;
+  padding: 15px;
+  background-color: rgba(0,0,0,0.3);
 }
 
 #signersToChoose {
@@ -226,4 +250,10 @@ button:hover {
 #signersToChoose li:hover {
   background-color: rgba(0,0,0,0.3);
   color: #fff;
+}
+
+.chooseSigners h3 {
+  text-align: center;
+  font-size: 1.5em;
+  font-weight: 300;
 }

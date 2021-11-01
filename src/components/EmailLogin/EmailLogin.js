@@ -11,6 +11,7 @@ import LoginOrSignup from '../LoginOrSignupForm/LoginOrSignupForm'
 export default function EmailLogin({ relayerURL, onAddAccount }) {
     const [requiresEmailConfFor, setRequiresConfFor] = useState(null)
     const [err, setErr] = useState('')
+    const [inProgress, setInProgress] = useState(false)
   
     const EMAIL_VERIFICATION_RECHECK = 3000
   
@@ -19,7 +20,8 @@ export default function EmailLogin({ relayerURL, onAddAccount }) {
         setErr('No account key backup: you either disabled email login or you have to import it from JSON')
         return
       }
-      // @TODO progress bar here
+      // NOTE: fromEncryptedJson can give us the exact progress,
+      // but for now we're handling this simply by showing progress in a different way (button shows 'Logging in...')
       try {
         const wallet = await Wallet.fromEncryptedJson(JSON.parse(identityInfo.meta.primaryKeyBackup), passphrase)
         // console.log(wallet)
@@ -29,8 +31,10 @@ export default function EmailLogin({ relayerURL, onAddAccount }) {
           email: identityInfo.meta.email,
           primaryKeyBackup: identityInfo.meta.primaryKeyBackup,
           salt, identityFactoryAddr, baseIdentityAddr,
-          selected: true
-        })
+          // @TODO: this is inaccurate, we need the QuickAccount, not the EOA directly; signer: { quickAccManager...  }
+          // currently this is here just to silence the warning
+          signer: { address: wallet.address }
+        }, { select: true })
       } catch (e) {
         if (e.message.includes('invalid password')) setErr('Invalid passphrase')
         else {
@@ -43,7 +47,9 @@ export default function EmailLogin({ relayerURL, onAddAccount }) {
     const attemptLogin = async ({ email, passphrase }, ignoreEmailConfirmationRequired) => {
       // try by-email first: if this returns data we can just move on to decrypting
       // does not matter which network we request
-      const { resp, body, errMsg } = await fetchCaught(`${relayerURL}/identity/by-email/${encodeURIComponent(email)}`, { credentials: 'include' })
+      const { resp, body, errMsg } = await fetchCaught(`${relayerURL}/identity/by-email/${encodeURIComponent(email)}`, { headers: {
+          authorization: localStorage.loginSessionKey ? `Bearer ${localStorage.loginSessionKey}` : null
+      } })
       if (errMsg) {
         setErr(errMsg)
         return
@@ -60,6 +66,7 @@ export default function EmailLogin({ relayerURL, onAddAccount }) {
           setErr(`Email confirmation needed but unable to request: ${requestAuthResp.status}`)
           return
         }
+        localStorage.loginSessionKey = (await requestAuthResp.json()).sessionKey
         setRequiresConfFor({ email, passphrase })
         return
       }
@@ -72,7 +79,7 @@ export default function EmailLogin({ relayerURL, onAddAccount }) {
       }
   
       if (resp.status === 200) {
-        onTryDecrypt(body, passphrase)
+        await onTryDecrypt(body, passphrase)
       } else {
         setErr(body.message ? `Relayer error: ${body.message}` : `Unknown no-message error: ${resp.status}`)
       }
@@ -81,7 +88,13 @@ export default function EmailLogin({ relayerURL, onAddAccount }) {
     const onLoginUserAction = async ({ email, passphrase }) => {
       setErr('')
       setRequiresConfFor('')
-      attemptLogin({ email, passphrase })
+      setInProgress(true)
+      try {
+        await attemptLogin({ email, passphrase })
+      } catch (e) {
+          setErr(`Unexpected error: ${e.message || e}`)
+      }
+      setInProgress(false)
     }
   
     // try logging in once after EMAIL_VERIFICATION_RECHECK
@@ -91,7 +104,18 @@ export default function EmailLogin({ relayerURL, onAddAccount }) {
         return () => clearTimeout(timer)
       }
     })
-  
+
+    // @TODO import from JSON; maybe without a URL, as we'll just pop a file selector and then import the JSON
+    const importJSONHref = `/#/json-import`
+
+    if (!relayerURL) {
+        return (<section className="loginSignupWrapper" id="emailLoginSection">
+            <div id="logo"/>
+            <h3 class="error">Email login not supported without the relayer.</h3>
+            <a href={importJSONHref}><button>Import JSON</button></a>
+        </section>)
+    }
+
     const inner = requiresEmailConfFor ?
       (<div id="loginEmail" className="emailConf">
         <h3><MdEmail size={25} color="white"/>Email confirmation required</h3>
@@ -101,12 +125,12 @@ export default function EmailLogin({ relayerURL, onAddAccount }) {
         {err ? (<p className="error">{err}</p>) : (<></>)}
       </div>)
       : (<div id="loginEmail">
-        <LoginOrSignup onAccRequest={onLoginUserAction}></LoginOrSignup>
+        <LoginOrSignup onAccRequest={onLoginUserAction} inProgress={inProgress}></LoginOrSignup>
   
         {err ? (<p className="error">{err}</p>) : (<></>)}
   
-        <a href="#">I forgot my passphrase</a>
-        <a href="#">Import JSON</a>
+        <a href="/#/">I forgot my passphrase</a>
+        <a href={importJSONHref}>Import JSON</a>
       </div>)
       
     return (

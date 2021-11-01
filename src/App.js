@@ -1,6 +1,6 @@
 import './App.css'
 
-import { useState } from 'react'
+import { useEffect } from 'react'
 import {
   HashRouter as Router,
   Switch,
@@ -10,40 +10,40 @@ import {
 import EmailLogin from './components/EmailLogin/EmailLogin'
 import AddAccount from './components/AddAccount/AddAcount'
 import Dashboard from './components/Dashboard/Dashboard'
+import useAccounts from './hooks/accounts'
+import useWalletConnect from './hooks/walletconnect'
 
 // @TODO consts/cfg
 const relayerURL = 'http://localhost:1934'
 
-// @TODO catch parse failures and handle them
-const initialAccounts = JSON.parse(localStorage.accounts || '[]')
-
 function App() {
-  const [accounts, setAccounts] = useState(initialAccounts)
+  const { selectedAcc, onAddAccount } = useAccounts()
+  // @TODO: WC: this is making us render App twice even if we do not use it
+  const { wcConnect } = useWalletConnect({ selectedAcc, chainId: 137 })
 
-  const onAddAccount = acc => {
-    console.log('onAddAccount', acc)
-    const existingIdx = accounts.findIndex(x => x._id === acc._id)
-    // @TODO show toast
-    // the use case for updating the entry is that we have some props (such as which EOA controls it) which migth change
-    if (existingIdx === -1) accounts.push(acc)
-    else accounts[existingIdx] = acc
+  useEffect(() => {
+    const query = new URLSearchParams(window.location.href.split('?').slice(1).join('?'))
+    const wcUri = query.get('uri')
+    if (wcUri) wcConnect({ uri: wcUri })
+    // @TODO only on init; perhaps put this in the hook itself
 
-    // need to make a copy, otherwise no rerender
-    setAccounts([ ...accounts ])
+    // @TODO on focus and on user action
+    const clipboardError = e => console.log('non-fatal clipboard err', e)
+    navigator.permissions.query({ name: 'clipboard-read' }).then((result) => {
+      // If permission to read the clipboard is granted or if the user will
+      // be prompted to allow it, we proceed.
 
-    localStorage.accounts = JSON.stringify(accounts)
-
-    if (Object.keys(accounts).length) {
-      window.location.href = '/#/dashboard'
-    }
-  }
-
-  const onAccountSelected = ev => {
-    accounts.forEach(acc => acc.selected = false)
-    accounts.find(x => x._id === ev.target.value).selected = true
-    localStorage.accounts = JSON.stringify(accounts)
-    setAccounts([ ...accounts ])
-  }
+      if (result.state === 'granted' || result.state === 'prompt') {
+        navigator.clipboard.readText().then(clipboard => {
+          if (clipboard.startsWith('wc:')) wcConnect({ uri: clipboard })
+        }).catch(clipboardError)
+      }
+      // @TODO show the err to the user if they triggered the action
+    }).catch(clipboardError)
+  }, [])
+  
+  // hax
+  window.wcConnect = uri => wcConnect({ uri })
 
   return (
     <Router>
@@ -61,7 +61,7 @@ function App() {
         </Route>
 
         <Route path="/dashboard">
-          <Dashboard accounts={accounts} onAccountSelected={onAccountSelected}></Dashboard>
+          <Dashboard></Dashboard>
         </Route>
         <Route path="/security"></Route>
         <Route path="/transactions"></Route>
@@ -72,7 +72,6 @@ function App() {
         <Route path="/approve-tx"></Route>
 
         <Route path="/">
-          { /* TODO: redirect depending on whether we have an acc */ }
           <Redirect to="/add-account" />
         </Route>
 

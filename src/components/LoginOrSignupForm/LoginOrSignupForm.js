@@ -1,7 +1,7 @@
 import { useState, useRef } from 'react'
 import Checkbox from "../Checkbox/Checkbox"
 
-export default function LoginOrSignupForm({ action = 'LOGIN', onAccRequest }) {
+export default function LoginOrSignupForm({ action = 'LOGIN', onAccRequest, inProgress }) {
     const passConfirmInput = useRef(null)
     const [state, setState] = useState({
       email: '', passphrase: '', passphraseConfirm: '', action
@@ -53,7 +53,9 @@ export default function LoginOrSignupForm({ action = 'LOGIN', onAccRequest }) {
         <input type="email" required placeholder="Email" value={state.email} onChange={e => onUpdate({ email: e.target.value })}></input>
         <input type="password" required minLength={minPwdLen} placeholder="Passphrase" value={state.passphrase} onChange={e => onUpdate({ passphrase: e.target.value })}></input>
         {additionalInputs}
-        <input type="submit" value={isSignup ? "Sign up" : "Login"}></input>
+        <input type="submit" disabled={inProgress} value={isSignup ?
+          (inProgress ? "Signing up..." : "Sign up")
+          : (inProgress ? "Logging in..." : "Log in")}></input>
       </form>
     )
 }
