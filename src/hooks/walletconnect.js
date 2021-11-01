@@ -32,13 +32,6 @@ export default function useWalletConnect ({ account, chainId, onCallRequest }) {
                 connectors: { ...state.connectors, [action.uri]: undefined }
             }
         }
-        if (action.type === 'callRequest') {
-            // @TODO: pending requests or something
-            // we can store them in case we need them later (pending)
-            onCallRequest(action.payload, action.connector)
-                .catch(e => console.error(e))
-            return { ...state }
-        }
         return { ...state }
     }, null, () => {
         try {
@@ -77,8 +70,11 @@ export default function useWalletConnect ({ account, chainId, onCallRequest }) {
                 return
             }
             // Is there a more elegant way of getting the latest onCallRequest than routing back to the reducer?
-            dispatch({ type: 'callRequest', payload, connector })
-            /*
+            // @TODO: pending requests or something
+            // we can store them in case we need them later (pending)
+            // @TODO: we need a way to know the latest account, chainId here; or just replace it with the thing on the prev comment
+            onCallRequest(payload, connector)
+                .catch(e => console.error(e))            /*
             try {
                 await onCallRequest(payload, connector)
             } catch (err) {
