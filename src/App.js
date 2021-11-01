@@ -16,6 +16,7 @@ import useNetwork from './hooks/network'
 import useWalletConnect from './hooks/walletconnect'
 
 // @TODO get rid of these, should be in the SignTransaction component
+import fetch from 'node-fetch'
 import { Bundle } from 'adex-protocol-eth/js'
 import { TrezorSubprovider } from '@0x/subproviders/lib/src/subproviders/trezor' // https://github.com/0xProject/0x-monorepo/issues/1400
 import TrezorConnect from 'trezor-connect'
@@ -59,7 +60,7 @@ function App() {
       signer: { address: localStorage.tempSigner } // @TODO
     })
 
-    const estimation = await bundle.estimate({ relayerURL, fetch: window.fetch })
+    const estimation = await bundle.estimate({ relayerURL, fetch })
     console.log(estimation)
     // pay a fee to the relayer
     bundle.txns.push(['0x942f9CE5D9a33a82F88D233AEb3292E680230348', Math.round(estimation.feeInNative.fast*1e18).toString(10), '0x'])
@@ -77,7 +78,7 @@ function App() {
           signMessage: hash => providerTrezor.signPersonalMessageAsync(ethers.utils.hexlify(hash), bundle.signer.address)
         }
         await bundle.sign(walletShim)
-        const bundleResult = await bundle.submit({ relayerURL, fetch: window.fetch })
+        const bundleResult = await bundle.submit({ relayerURL, fetch })
         console.log(bundleResult)
         wcConnector.approveRequest({
           id: payload.id,
