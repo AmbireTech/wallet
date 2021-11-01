@@ -1,178 +1,158 @@
-import { useState, useCallback, useEffect } from 'react'
+import { useCallback, useEffect, useReducer } from 'react'
 
 import WalletConnectCore from '@walletconnect/core'
-import * as cryptoLib from "@walletconnect/iso-crypto"
-// @TODO get rid of these, should be in the SignTransaction component
-import { Bundle } from 'adex-protocol-eth/js'
-import { TrezorSubprovider } from '@0x/subproviders/lib/src/subproviders/trezor' // https://github.com/0xProject/0x-monorepo/issues/1400
-import TrezorConnect from 'trezor-connect'
-import { ethers, getDefaultProvider } from 'ethers'
-
-// @TODO temporary, this won't be used, we need it in SignTransaction
-const relayerURL = 'http://localhost:1934'
+import * as cryptoLib from '@walletconnect/iso-crypto'
 
 const noop = () => null
 const noopSessionStorage = { setSession: noop, getSession: noop, removeSession: noop }
 
 const STORAGE_KEY = 'wc1_connections'
+const SUPPORTED_METHODS = ['eth_sendTransaction', 'gs_multi_send', 'personal_sign', 'eth_sign']
 
-export default function useWalletConnect ({ selectedAcc, chainId }) {
-  const [userAction, setUserAction] = useState(null)
-  const [connectors, setConnectors] = useState({})
+const getDefaultState = () => ({ connectors: {}, connections: [] })
 
-  // Store connections
-  const [connections, setConnections] = useState([])
-  const addConnection = useCallback(conn => {
-      // Using the previous state from setConnections itself cause otherwise we have closure/capturing
-      // clusterfuck
-      setConnections(connections => {
-        const newConns = [...connections, conn]
-        localStorage[STORAGE_KEY] = JSON.stringify(newConns)
-        return newConns
-      })
-  }, [])
-  const disconnect = useCallback(uri => {
-    console.log('disconnect',uri)
-    // @TODO: NOTE: `wcConnector.on('disconnect'` will still fire and we will need to repeat stuff...
-    setConnections(connections => {
-      const newConns = connections.filter(x => x.uri !== uri)
-      localStorage[STORAGE_KEY] = JSON.stringify(newConns)
-      console.log(newConns)
-      return newConns
+export default function useWalletConnect ({ account, chainId, onCallRequest }) {
+    const [state, dispatch] = useReducer((state, action) => {
+        if (action.type === 'addConnectors') {
+            return { ...state, connectors: { ...state.connectors, ...action.newConnectors } }   
+        }
+        if (action.type === 'connectedNewSession') {
+            const connector = action.connector
+            // It's safe to read .session right after approveSession because 1) approveSession itself normally stores the session itself
+            // 2) connector.session is a getter that re-reads private properties of the connector; those properties are updated immediately at approveSession
+            return {
+                connections: [...state.connections, { uri: action.uri, session: connector.session }],
+                connectors: { ...state.connectors, [action.uri]: connector }
+            }
+        }
+        if (action.type === 'disconnected') {
+            return {
+                connections: state.connections.filter(x => x.uri !== action.uri),
+                connectors: { ...state.connectors, [action.uri]: undefined }
+            }
+        }
+        if (action.type === 'callRequest') {
+            // @TODO: pending requests or something
+            // we can store them in case we need them later (pending)
+            onCallRequest(action.payload, action.connector)
+                .catch(e => console.error(e))
+            return { ...state }
+        }
+        return { ...state }
+    }, null, () => {
+        try {
+            return {
+                connections: JSON.parse(localStorage[STORAGE_KEY]),
+                connectors: {}
+            }
+        } catch(e) {
+            console.error(e)
+            return getDefaultState()
+        }
     })
-    setConnectors(connectors => {
-        // not supposed to have side effects here but... 
-        if (connectors[uri]) connectors[uri].killSession()
-        else console.log('WARNING: no connector for this uri', uri)
 
-        return ({ ...connectors, [uri]: null })
-    })
-}, [])
-
-  // Restore connections
-  useEffect(() => {
-      try {
-          const conns = JSON.parse(localStorage[STORAGE_KEY] || '[]')
-          conns.forEach(conn => wcConnect(conn)) // conn is {uri, session}
-          setConnections(conns)
-      } catch(e) {
-          console.error('Unable to load initial connections', e)
-      }
-  }, [])
-
-  const wcConnect = useCallback(
-    async (connectorOpts) => {
-      if (connectors[connectorOpts.uri]) return
-      const wcConnector = new WalletConnectCore({
-          connectorOpts,
-          cryptoLib,
-          sessionStorage: noopSessionStorage
-      })
-      setConnectors(prev => ({ ...prev, [connectorOpts.uri]: wcConnector }))
-
-      wcConnector.on('session_request', (error, payload) => {
-        // NOTE: we can detect anomalies here: if `session` was passed in connectorOpts, session_request must not happen!
-        console.log('wc session request; here we get the client data', payload)
-
-        wcConnector.approveSession({
-          accounts: [selectedAcc],
-          chainId: chainId,
+    const connect = useCallback(connectorOpts => {
+        if (state.connectors[connectorOpts.uri]) return state.connectors[connectorOpts.uri]
+        const connector = new WalletConnectCore({
+            connectorOpts,
+            cryptoLib,
+            sessionStorage: noopSessionStorage
         })
 
-        // It's safe to store it here right after approveSession because 1) approveSession itself normally stores the session itself
-        // 2) connector.session is a getter that re-reads private properties of the connector; those properties are updated immediately at approveSession
-        addConnection({ session: wcConnector.session, uri: connectorOpts.uri })
-      })
+        connector.on('session_request', (error, payload) => {
+            // @TODO how to obtain newest chainId/account here?
+            connector.approveSession({
+                accounts: [account],
+                chainId: chainId,
+            })
+            dispatch({ type: 'connectedNewSession', uri: connectorOpts.uri, connector })
+        })
 
-      wcConnector.on('call_request', async (error, payload) => {
-        console.log(error, payload)
-        if (error) {
-          throw error;
-        }
+        connector.on('call_request', async (error, payload) => {
+            // @TODO how to handle this err?
+            if (error) throw error
+            if (!SUPPORTED_METHODS.includes(payload.method)) {
+                connector.rejectRequest({ id: payload.id, error: { message: 'METHOD_NOT_SUPPORTED' }})
+                return
+            }
+            // Is there a more elegant way of getting the latest onCallRequest than routing back to the reducer?
+            dispatch({ type: 'callRequest', payload, connector })
+            /*
+            try {
+                await onCallRequest(payload, connector)
+            } catch (err) {
+                // @TODO: shouldn't we make this an internal error too?
+                console.error(err)
+                connector.rejectRequest({ id: payload.id, error: { message: err.message }})
+            }
+            */
+        })
 
-        try {
-          let result = '0x';
+        connector.on('disconnect', (error, payload) => {
+            // @TODO how to handle this err?
+            if (error) throw error
+            dispatch({ type: 'disconnected', uri: connectorOpts.uri })
+        })
 
-          switch (payload.method) {
-            case 'eth_sendTransaction': {
-              // @TODO network specific
-              const provider = getDefaultProvider('https://polygon-rpc.com/rpc')
-              const rawTxn = payload.params[0]
-              // @TODO: add a subtransaction that's supposed to `simulate` the fee payment so that
-              // we factor in the gas for that; it's ok even if that txn ends up being
-              // more expensive (eg because user chose to pay in native token), cause we stay on the safe (higher) side
-              // or just add a fixed premium on gasLimit
-              const bundle = new Bundle({
-                network: 'polygon', // @TODO
-                identity: selectedAcc,
-                // @TODO: take the gasLimit from the rawTxn
-                // @TODO "|| '0x'" where applicable
-                txns: [[rawTxn.to, rawTxn.value, rawTxn.data]],
-                signer: { address: localStorage.tempSigner } // @TODO
-              })
-              const estimation = await bundle.estimate({ relayerURL, fetch: window.fetch })
-              console.log(estimation)
-              console.log(bundle.gasLimit)
-              bundle.txns.push(['0x942f9CE5D9a33a82F88D233AEb3292E680230348', Math.round(estimation.feeInNative.fast*1e18).toString(10), '0x'])
-              await bundle.getNonce(provider)
-              console.log(bundle.nonce)
+        return connector
+    }, [state.connectors])
 
-              setUserAction({
-                bundle,
-                fn: async () => {
-                  // @TODO we have to cache `providerTrezor` otherwise it will always ask us whether we wanna expose the pub key
-                  const providerTrezor = new TrezorSubprovider({ trezorConnectClientApi: TrezorConnect })
-                  // NOTE: for metamask, use `const provider = new ethers.providers.Web3Provider(window.ethereum)`
-                  // as for Trezor/ledger, alternatively we can shim using https://www.npmjs.com/package/web3-provider-engine and then wrap in Web3Provider
-                  const walletShim = {
-                    signMessage: hash => providerTrezor.signPersonalMessageAsync(ethers.utils.hexlify(hash), bundle.signer.address)
-                  }
-                  await bundle.sign(walletShim)
-                  console.log('post sig')
-                  console.log(await bundle.submit({ relayerURL, fetch: window.fetch }))
+    const disconnect = useCallback(uri => {
+        if (state.connectors[uri]) state.connectors[uri].killSession()
+        dispatch({ type: 'disconnected', uri })
+    }, [state])
 
-                  // we can now approveRequest in this and return the proper result
+    // Side effects that will run on every state change/rerender
+    useEffect(() => {
+        // restore connectors
+        let newConnectors = {}
+        state.connections.forEach(({ uri, session }) => {
+            if (!state.connectors[uri]) newConnectors[uri] = connect({ uri, session })
+            else {
+                /*
+                // @TODO figure out how to handle the update and persist
+                const connector = state.connectors[uri]
+                const session = connector.session
+                if (session.accounts[0] !== account || session.chainId !== chainId) {
+                    connector.updateSession({ accounts: [account], chainId })
                 }
-              })
-              // @TODO relayerless mode
-              break;
+                */
             }
-            case 'gs_multi_send': {
-              // @TODO WC
-              break;
-            }
+        })
+        
+        localStorage[STORAGE_KEY] = JSON.stringify(state.connections)
 
-            case 'personal_sign': {
-              // @TODO WC
-              break;
-            }
+        if (Object.keys(newConnectors).length) dispatch({ type: 'addConnectors', newConnectors })
+    }, [state, account, chainId])
 
-            case 'eth_sign': {
-              // @TODO WC
-              // this can be handled the same way as personal_sign; reference: https://github.com/gnosis/safe-react-apps/blob/main/apps/wallet-connect/src/hooks/useWalletConnect.tsx
-              break;
-            }
-            default: {
-              wcConnector.rejectRequest({ id: payload.id, error: { message: 'METHOD_NOT_SUPPORTED' }});
-              break;
-            }
-          }
+    // Initialization effects
+    useEffect(() => runInitEffects(connect), [])
 
-          wcConnector.approveRequest({
-            id: payload.id,
-            result,
-          })
-        } catch (err) {
-          wcConnector.rejectRequest({ id: payload.id, error: { message: err.message }})
+    return { connections: state.connections, connect, disconnect }
+}
+
+// Initialization side effects
+// Connect to the URL, read from clipboard, etc.
+function runInitEffects(wcConnect) {
+    const query = new URLSearchParams(window.location.href.split('?').slice(1).join('?'))
+    const wcUri = query.get('uri')
+    if (wcUri) wcConnect({ uri: wcUri })
+    // @TODO only on init; perhaps put this in the hook itself
+
+    // hax
+    window.wcConnect = uri => wcConnect({ uri })
+
+    // @TODO on focus and on user action
+    const clipboardError = e => console.log('non-fatal clipboard err', e)
+    navigator.permissions.query({ name: 'clipboard-read' }).then((result) => {
+        // If permission to read the clipboard is granted or if the user will
+        // be prompted to allow it, we proceed.
+
+        if (result.state === 'granted' || result.state === 'prompt') {
+            navigator.clipboard.readText().then(clipboard => {
+                if (clipboard.startsWith('wc:')) wcConnect({ uri: clipboard })
+            }).catch(clipboardError)
         }
-      })
-
-      wcConnector.on('disconnect', (error, payload) => {
-        if (error) throw error
-        console.log('on disconnect')
-        disconnect(connectorOpts.uri)
-      })
-    }, [selectedAcc, chainId, setUserAction, addConnection, disconnect])
-
-  return { connections, wcConnect, disconnect, userAction }
+        // @TODO show the err to the user if they triggered the action
+    }).catch(clipboardError)
 }
