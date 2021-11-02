@@ -1,0 +1,28 @@
+#sendTransaction {
+    display: flex;
+    justify-content: center;
+    gap: 2em;
+}
+
+#sendTransaction .panel {
+    padding: 2em;
+    box-sizing: border-box;
+    background-color: rgba(0, 0, 0, 0.2);
+}
+
+#sendTransaction .panel .heading {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+}
+
+#sendTransaction .panel .heading .title {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    font-size: 1.5em;
+    font-weight: bold;
+    color: rgb(128, 255, 219);
+    text-transform: uppercase;
+}
