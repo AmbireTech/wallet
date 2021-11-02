@@ -1,4 +1,4 @@
-import './Platform.css'
+import './Wallet.css'
 
 import { Switch, Route, Redirect } from 'react-router-dom'
 import { MdDashboard, MdLock, MdCompareArrows, } from 'react-icons/md'
