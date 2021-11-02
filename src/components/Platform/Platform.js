@@ -1,8 +1,10 @@
 import './Platform.css'
 
 import { Switch, Route, Redirect } from 'react-router-dom'
-import { MdDashboard, MdLock, MdCompareArrows } from 'react-icons/md'
+import { MdDashboard, MdLock, MdCompareArrows, } from 'react-icons/md'
+import { GiReceiveMoney } from 'react-icons/gi'
 import { BsPiggyBank } from 'react-icons/bs'
+import { BiTransfer } from 'react-icons/bi'
 import Dashboard from './Dashboard/Dashboard'
 
 export default function Platform({ match, allNetworks, accounts, selectedAcc, onSelectAcc, network, setNetwork }) {
@@ -18,6 +20,8 @@ export default function Platform({ match, allNetworks, accounts, selectedAcc, on
 
                 {/* TODO proper navi, programmatic selected class */}
                 <div className="item selected"><MdDashboard size={30}/>Dashboard</div>
+                <div className="item"><GiReceiveMoney size={30}/>Deposit</div>
+                <div className="item"><BiTransfer size={30}/>Transfer</div>
                 <div className="item"><MdLock size={30}/>Security</div>
                 <div className="item"><MdCompareArrows size={30}/>Transactions</div>
                 <div className="item"><BsPiggyBank size={30}/>Earn</div>
