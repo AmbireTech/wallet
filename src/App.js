@@ -58,11 +58,16 @@ function App() {
       // @TODO: take the gasLimit from the rawTxn
       // @TODO "|| '0x'" where applicable
       txns: [[rawTxn.to, rawTxn.value, rawTxn.data]],
-      signer: { address: localStorage.tempSigner } // @TODO
+      signer: accounts.find(x => x.id === selectedAcc).signer
     })
 
     const estimation = await bundle.estimate({ relayerURL, fetch })
     console.log(estimation)
+    if (!estimation.success) {
+      // @TODO err handling here
+      console.error('estimation error', estimation)
+      return
+    }
     // pay a fee to the relayer
     bundle.txns.push(['0x942f9CE5D9a33a82F88D233AEb3292E680230348', Math.round(estimation.feeInNative.fast*1e18).toString(10), '0x'])
     await bundle.getNonce(provider)
