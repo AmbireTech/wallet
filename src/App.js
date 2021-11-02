@@ -81,6 +81,7 @@ function App() {
         await bundle.sign(walletShim)
         const bundleResult = await bundle.submit({ relayerURL, fetch })
         console.log(bundleResult)
+        console.log(providerTrezor._initialDerivedKeyInfo)
         wcConnector.approveRequest({
           id: payload.id,
           result: bundleResult.txId,
@@ -96,17 +97,7 @@ function App() {
   })
 
 
-  return (<>
-
-    <div id="dashboardArea">
-      {connections.map(({ session, uri }) =>
-        (<div key={session.peerId} style={{ position: 'relative', top: -30 }}>
-          <button onClick={() => disconnect(uri)}>Disconnect {session.peerMeta.name}</button>
-        </div>)
-      )}
-      {userAction ? (<><div>{userAction.bundle.txns[0][0]}</div><button onClick={userAction.fn}>Send txn</button></>) : (<></>)}
-    </div>
-
+  return (
     <Router>
       {/*<nav>
               <Link to="/email-login">Login</Link>
@@ -130,7 +121,16 @@ function App() {
         <Route path="/earn"></Route>
         {/* TODO: connected dapps */}
         {/* TODO: tx identifier in the URL */}
-        <Route path="/approve-tx"></Route>
+        <Route path="/send-transaction">
+          <div id="dashboardArea">
+            {connections.map(({ session, uri }) =>
+              (<div key={session.peerId} style={{ position: 'relative', top: -30 }}>
+                <button onClick={() => disconnect(uri)}>Disconnect {session.peerMeta.name}</button>
+              </div>)
+            )}
+            {userAction ? (<><div>{userAction.bundle.txns[0][0]}</div><button onClick={userAction.fn}>Send txn</button></>) : (<></>)}
+          </div>
+        </Route>
 
         <Route path="/">
           <Redirect to="/add-account" />
@@ -138,7 +138,7 @@ function App() {
 
       </Switch>
     </Router>
-    </>)
+  )
 }
 
 export default App;
