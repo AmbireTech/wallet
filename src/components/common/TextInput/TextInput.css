@@ -4,6 +4,12 @@
 
 .text-input.copy input {
     padding-right: 2.5em;
+    font-family: monospace;
+    font-size: 1.5em;
+}
+
+.text-input.copy input:disabled {
+    opacity: 1 !important;
 }
 
 .text-input.copy input,
@@ -15,8 +21,9 @@
     border-bottom: 2px solid #b3c4e6;
     width: 100%;
     color: white;
-    font-size: 1em;
+    font-size: 1.2em;
     padding: 0.5em;
+    text-overflow: ellipsis;
 }
 
 .text-input .icon {
