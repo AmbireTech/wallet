@@ -38,7 +38,9 @@ function App() {
 
     if (window.Notification && Notification.permission !== "denied") {
       Notification.requestPermission(function(status) {  // status is "granted", if accepted by user
-        var n = new Notification('Ambire Wallet: sign transaction', { 
+        // @TODO parse transaction and actually show what we're signing
+        if (status !== 'granted') return
+         /*var n = */new Notification('Ambire Wallet: sign transaction', { 
           body: `Transaction to ${payload.params[0].to}`,
           //icon: '/path/to/icon.png' // optional
         })
