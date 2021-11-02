@@ -2,6 +2,7 @@
 // GiObservatory is also interesting
 import { GiTakeMyMoney, GiSpectacles } from 'react-icons/gi'
 import verifiedContracts from '../../consts/verifiedContracts'
+import networks from '../../consts/networks'
 import './SendTransaction.css'
 
 export default function SendTransaction ({ userAction }) {
@@ -13,11 +14,15 @@ export default function SendTransaction ({ userAction }) {
             </>)
         : (<></>)
     const getSummary = txn => {
+        if (!userAction) return 'internal err: no user action'
+
         const [to, value, data] = txn
         let callSummary, sendSummary
         // @TODO proper asset symbol
-        if (parseInt(value) > 0) sendSummary = `send ${(parseInt(value)/1e18).toFixed(4)} ETH`
-        if (data !== '0x' && userAction) {
+        const network = networks.find(x => x.id === userAction.bundle.network)
+
+        if (parseInt(value) > 0) sendSummary = `send ${(parseInt(value)/1e18).toFixed(4)} ${network.nativeAssetSymbol}`
+        if (data !== '0x') {
             const contractKey = userAction.bundle.network + ':' + to
             if (verifiedContracts[contractKey]) {
                 callSummary = `verified call`

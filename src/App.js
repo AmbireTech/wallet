@@ -33,6 +33,8 @@ function App() {
   const onCallRequest = async (payload, wcConnector) => {
     // @TODO handle more
     if (payload.method !== 'eth_sendTransaction') return
+    // @TODO show error for this
+    if (wcConnector.chainId !== network.chainId) return
 
     const txnFrom = payload.params[0].from
     const account = accounts.find(x => x.id.toLowerCase() === txnFrom.toLowerCase())
@@ -62,7 +64,6 @@ function App() {
     // more expensive (eg because user chose to pay in native token), cause we stay on the safe (higher) side
     // or just add a fixed premium on gasLimit
     const bundle = new Bundle({
-      // @TODO network from payload?
       network: network.id,
       identity: account.id,
       // @TODO: take the gasLimit from the rawTxn
