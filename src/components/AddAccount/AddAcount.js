@@ -172,7 +172,7 @@ export default function AddAccount ({ relayerURL, onAddAccount }) {
         return {
             id: idAddr,
             salt, identityFactoryAddr, baseIdentityAddr,
-            signer: { addr: signerAddr }
+            signer: { address: signerAddr }
         }
     }
 
