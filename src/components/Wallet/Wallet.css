@@ -70,11 +70,19 @@
 
 #topbar {
     z-index: 99;
+    height: 80px;
     position: fixed;
-    top: 30px;
+    top: 0;
     right: 40px;
     display: flex;
     gap: 1em;
+    padding-top: 30px;
+    background-color: rgb(40, 43, 51);
+    box-shadow: 0 5px 20px 5px rgb(40 43 51);
+}
+
+#topbar select {
+    height: 50px;
 }
 
 #networkSelector {
