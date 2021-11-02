@@ -1,7 +1,8 @@
 .dropdown {
     position: relative;
     height: 50px;
-    padding: 0 15px;
+    padding-left: 20px;
+    padding-right: 15px;
     background-color: rgba(0, 0, 0, 0.3);
     user-select: none;
 }
@@ -29,21 +30,29 @@
     border-radius: 100%;
 }
 
+.dropdown .content .handle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 15px;
+}
+
 .dropdown .list {
-    width: 280px;
+    width: 310px;
     position: absolute;
     top: 50px;
-    left: 0;
+    right: 0;
     background-color: rgba(0, 0, 0, 0.3);
+    box-shadow: 0px 5px 10px 0 rgba(0, 0, 0, 0.25);
     overflow: hidden;
 }
 
 .dropdown .list .item {
-    height: 55px;
+    height: 65px;
     display: flex;
     align-items: center;
     gap: 0.75rem;
-    padding: 0 10px;
+    padding: 0 15px;
 }
 
 .dropdown .list .item .separator {
