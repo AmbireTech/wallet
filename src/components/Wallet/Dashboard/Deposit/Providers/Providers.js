@@ -12,27 +12,27 @@ import { RAMP_HOST_API_KEY, TRANSAK_API_KEY, TRANSAK_ENV } from '../../../../../
 
 const PAYTRIE_PARTNER_URL = 'https://partner.paytrie.com/?app=876454'
 
-export default function Providers() {
-    const openRampNetwork = ({ accountId, symbol }) => {
+export default function Providers({ walletAddress }) {
+    const openRampNetwork = ({ walletAddress }) => {
         const widget = new RampInstantSDK({
             hostAppName: 'Ambire',
             hostLogoUrl: 'https://www.ambire.com/ambire-logo.png',
             variant: 'auto',
-            swapAsset: symbol,
-            userAddress: accountId,
+            swapAsset: 'USDC',
+            userAddress: walletAddress,
             hostApiKey: RAMP_HOST_API_KEY,
         })
         widget.show()
     };
 
-    const openPayTrie = ({ accountId, email, symbol, ...rest }) => {
+    const openPayTrie = ({ walletAddress, email, ...rest }) => {
         const URL = url.parse(PAYTRIE_PARTNER_URL, true)
         URL.search = null
         URL.query = {
             ...URL.query,
-            addr: accountId,
+            addr: walletAddress,
             email,
-            rightSideLabel: symbol,
+            rightSideLabel: 'USDC',
             ...rest,
         }
         popupCenter({
@@ -43,14 +43,14 @@ export default function Providers() {
         })
     };
 
-    const openTransak = ({ accountId, symbol }) => {
+    const openTransak = ({ walletAddress }) => {
         const transak = new transakSDK({
             apiKey: TRANSAK_API_KEY,
             environment: TRANSAK_ENV,
-            cryptoCurrencyList: symbol,
-            defaultCryptoCurrency: symbol,
+            cryptoCurrencyList: 'USDC',
+            defaultCryptoCurrency: 'USDC',
             disableWalletAddressForm: true,
-            walletAddress: accountId,
+            walletAddress: walletAddress,
             themeColor: '282b33',
             email: '',
             redirectURL: '',
@@ -79,7 +79,7 @@ export default function Providers() {
             fees: '0.49%-2.9%',
             limits: '10,000EUR/m',
             currencies: 'USD, EUR, GBP',
-            onClick: openRampNetwork
+            onClick: () => openRampNetwork({walletAddress})
         },
         {
             logo: PAYTRIE_LOGO,
@@ -88,7 +88,7 @@ export default function Providers() {
             fees: '1% (min. $2 CAD)',
             limits: '$2,000CAD/day',
             currencies: 'CAD',
-            onClick: openPayTrie
+            onClick: () => openPayTrie({walletAddress})
         },
         {
             logo: TRANSAK_LOGO,
@@ -97,7 +97,7 @@ export default function Providers() {
             fees: 'from 0.5%',
             limits: 'up to 15,000 EUR/day',
             currencies: 'GBP, EUR, USD and many more',
-            onClick: openTransak
+            onClick: () => openTransak({walletAddress})
         }
     ];
 
