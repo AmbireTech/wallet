@@ -24,7 +24,7 @@ export default function useAccounts () {
     }
     const onAddAccount = useCallback((acc, opts) => {
       console.log('onAddAccount', acc)
-      const existingIdx = accounts.findIndex(x => x.id.toLowerCase() === acc.id.toLowerCase())
+      const existingIdx = accounts.findIndex(x => x._id.toLowerCase() === acc.id.toLowerCase())
   
       // @TODO show toast; perhaps by returning a value that shows whether the acc is already added
       // or have the showToast fn passed in when constructing the hook
