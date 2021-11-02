@@ -68,15 +68,36 @@
     font-size: 2em;
 }
 
-#accountSelector {
-    position: fixed;
-    top: 30px;
-    right: 205px;
-}
-
-#networkSelector {
+#topbar {
     position: fixed;
     top: 30px;
     right: 40px;
+    display: flex;
+    gap: 1em;
+}
+
+#networkSelector {
     width: 150px;
+}
+
+.dapps-item .icon {
+    flex: 0 0 auto;
+    height: 40px;
+    width: 40px;
+    border-radius: 100%;
+    overflow: hidden;
+}
+
+.dapps-item .icon img {
+    width: 100%;
+}
+
+.dapps-item .name {
+    flex: 0 0 auto;
+}
+
+.dapps-item button {
+    flex: 0 1 auto;
+    height: 30px;
+    padding: 0 10px;
 }

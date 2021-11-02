@@ -99,11 +99,6 @@ function App() {
   return (<>
 
     <div id="dashboardArea">
-      {connections.map(({ session, uri }) =>
-        (<div key={session.peerId} style={{ position: 'relative', top: -30 }}>
-          <button onClick={() => disconnect(uri)}>Disconnect {session.peerMeta.name}</button>
-        </div>)
-      )}
       {userAction ? (<><div>{userAction.bundle.txns[0][0]}</div><button onClick={userAction.fn}>Send txn</button></>) : (<></>)}
     </div>
 
@@ -121,7 +116,7 @@ function App() {
           <EmailLogin relayerURL={relayerURL} onAddAccount={onAddAccount}></EmailLogin>
         </Route>
 
-        <Route path="/wallet" component={props => Wallet({ ...props,  accounts, selectedAcc, onSelectAcc, allNetworks, network, setNetwork })}>
+        <Route path="/wallet" component={props => Wallet({ ...props,  accounts, selectedAcc, onSelectAcc, allNetworks, network, setNetwork, connections, disconnect})}>
         </Route>
 
         <Route path="/security"></Route>
