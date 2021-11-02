@@ -3,12 +3,9 @@ import './Platform.css'
 import { Switch, Route, Redirect } from 'react-router-dom'
 import { MdDashboard, MdLock, MdCompareArrows } from 'react-icons/md'
 import { BsPiggyBank } from 'react-icons/bs'
-import useAccounts from '../../hooks/accounts'
 import Dashboard from './Dashboard/Dashboard'
 
-export default function Platform({ match }) {
-    const { accounts, selectedAcc, onSelectAcc } = useAccounts()
-
+export default function Platform({ match, allNetworks, accounts, selectedAcc, onSelectAcc, network, setNetwork }) {
     return (
         <div id="platform">
             <div id="sidebar">
@@ -30,12 +27,11 @@ export default function Platform({ match }) {
             {/* Top-right dropdowns */}
             <div>
                 <select id="accountSelector" onChange={ ev => onSelectAcc(ev.target.value) } defaultValue={selectedAcc}>
-                    {accounts.map(acc => (<option key={acc._id}>{acc._id}</option>))}
+                    {accounts.map(acc => (<option key={acc.id}>{acc.id}</option>))}
                 </select>
 
-                <select id="networkSelector" defaultValue="Ethereum">
-                    <option>Ethereum</option>
-                    <option>Polygon</option>
+                <select id="networkSelector" onChange = { ev => setNetwork(ev.target.value) } defaultValue={network.name}>
+                    {allNetworks.map(network => (<option key={network.id}>{network.name}</option>))}
                 </select>
             </div>
 
