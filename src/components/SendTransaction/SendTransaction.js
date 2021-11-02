@@ -1,5 +1,6 @@
 //import { GrInspect } from 'react-icons/gr'
-import { GiTakeMyMoney, GiMagnifyingGlass } from 'react-icons/gi'
+// GiObservatory is also interesting
+import { GiTakeMyMoney, GiSpectacles } from 'react-icons/gi'
 import './SendTransaction.css'
 
 export default function SendTransaction ({ userAction }) {
@@ -14,7 +15,7 @@ export default function SendTransaction ({ userAction }) {
         <div className="panel">
             <div className="heading">
                     <div className="title">
-                        <GiMagnifyingGlass size={35}/>
+                        <GiSpectacles size={35}/>
                         Transaction summary
                     </div>
             </div>
