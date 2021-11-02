@@ -128,7 +128,7 @@ export default function AddAccount ({ relayerURL, onAddAccount }) {
         return {
             id: identityAddr,
             salt, identityFactoryAddr, baseIdentityAddr,
-            signer: { address: addr }
+            signer: { address: getAddress(addr) }
         }
     }
 
@@ -154,7 +154,7 @@ export default function AddAccount ({ relayerURL, onAddAccount }) {
                 const resp = await fetch(`${relayerURL}/identity/any/by-owner/${signerAddr}?includeFormerlyOwned=true`)
                 const privEntries = Object.entries(await resp.json())
                 // discard the privileges value, we do not need it as we wanna add all accounts EVER owned by this eoa
-                privEntries.forEach(([id, _]) => allUniqueOwned[id] = signerAddr)
+                privEntries.forEach(([id, _]) => allUniqueOwned[id] = getAddress(signerAddr))
             }
         ))
 
