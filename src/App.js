@@ -33,7 +33,13 @@ function App() {
     // @TODO handle more
     if (payload.method !== 'eth_sendTransaction') return
 
-    console.log('call onCallRequest')
+    const from = payload.params[0].from
+    const account = accounts.find(x => x.id === from)
+    // @TODO check if this account is currently in accounts, send a toast if not
+    if (account) {
+      return
+    }
+    console.log('call onCallRequest, from: ', from)
 
     window.location.href = '/#/send-transaction'
     if (window.Notification && Notification.permission !== 'denied') {
@@ -56,11 +62,11 @@ function App() {
     // or just add a fixed premium on gasLimit
     const bundle = new Bundle({
       network: network.id,
-      identity: selectedAcc,
+      identity: from,
       // @TODO: take the gasLimit from the rawTxn
       // @TODO "|| '0x'" where applicable
       txns: [[rawTxn.to, rawTxn.value, rawTxn.data]],
-      signer: accounts.find(x => x.id === selectedAcc).signer
+      signer: account.signer
     })
 
     const estimation = await bundle.estimate({ relayerURL, fetch })
