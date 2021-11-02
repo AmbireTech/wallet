@@ -7,7 +7,7 @@ import Providers from './Providers/Providers'
 import ETHEREUM_LOGO from '../../../../resources/ethereum-logo.png'
 import POLYGON_LOGO from '../../../../resources/polygon-logo.svg'
 
-export default function Deposit({ depositAddress }) {
+export default function Deposit({ selectedAcc, selectedNetwork }) {
     return (
         <section id="deposit">
             <div className="panel">
@@ -22,7 +22,7 @@ export default function Deposit({ depositAddress }) {
                 </div>
                 <div className="description">
                     Send tokens or collectables (NFTs) to this address:
-                    <TextInput value={depositAddress} copy/>
+                    <TextInput className="depositAddress" value={selectedAcc} copy/>
                 </div>
                 <div id="networks">
                     Following networks supported:
@@ -45,7 +45,7 @@ export default function Deposit({ depositAddress }) {
                 <div className="description">
                     Deposit with credit card to your account directly using one of our partners
                 </div>
-                <Providers/>
+                <Providers walletAddress={selectedAcc} selectedNetwork={selectedNetwork}/>
             </div>
         </section>
     )

@@ -40,7 +40,7 @@ export default function useAccounts () {
   
       if (opts.select) onSelectAcc(acc.id)
       if (Object.keys(accounts).length) {
-        window.location.href = '/#/platform'
+        window.location.href = '/#/wallet'
       }
     }, [accounts])
     return { accounts, selectedAcc, onSelectAcc, onAddAccount }
