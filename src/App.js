@@ -100,7 +100,7 @@ function App() {
 
     <div id="dashboardArea">
       {connections.map(({ session, uri }) =>
-        (<div key={session.peerId} style={{ marginBottom: 20 }}>
+        (<div key={session.peerId} style={{ position: 'relative', top: -30 }}>
           <button onClick={() => disconnect(uri)}>Disconnect {session.peerMeta.name}</button>
         </div>)
       )}
