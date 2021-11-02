@@ -40,7 +40,7 @@ function App() {
     if (!account) {
       return
     }
-    console.log('call onCallRequest, with account: ', account)
+    console.log('call onCallRequest, with account: ', account, payload)
 
     window.location.href = '/#/send-transaction'
     if (window.Notification && Notification.permission !== 'denied') {
@@ -62,6 +62,7 @@ function App() {
     // more expensive (eg because user chose to pay in native token), cause we stay on the safe (higher) side
     // or just add a fixed premium on gasLimit
     const bundle = new Bundle({
+      // @TODO network from payload?
       network: network.id,
       identity: account.id,
       // @TODO: take the gasLimit from the rawTxn
