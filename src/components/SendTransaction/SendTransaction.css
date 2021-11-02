@@ -27,3 +27,36 @@
     color: rgb(128, 255, 219);
     text-transform: uppercase;
 }
+
+
+#sendTransaction .fees {
+    overflow: hidden;
+    margin: 1em 0px;
+    min-width: 360px;
+}
+
+#sendTransaction .feeSquare {
+    box-sizing: border-box;
+    background-color: #ccc;
+    color: black;
+    text-align: center;
+    min-height: 80px;
+    width: 80px;
+    float: left;
+    margin-right: 10px;
+    padding: 10px;
+    box-sizing: border-box;
+    border: 5px solid transparent;
+    overflow: hidden;
+    cursor: pointer;
+    user-select: none;
+}
+#sendTransaction .feeSquare.selected {
+    border: 5px solid rgb(128, 255, 219);
+}
+#sendTransaction .feeSquare .speed {
+    text-transform: uppercase;
+    font-size: 0.8em;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
