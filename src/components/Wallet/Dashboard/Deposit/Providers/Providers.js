@@ -69,6 +69,14 @@ export default function Providers({ walletAddress, selectedNetwork }) {
                     </div>
                 )
             }
+            {
+                selectedNetwork !== 'ethereum' ? 
+                    <div id="network-warning">
+                        Some deposit methods are unavailable on <b>{selectedNetwork}</b>. Switch to Ethereum for the widest support.
+                    </div>
+                    :
+                    null
+            }
         </div>
     )
 }
