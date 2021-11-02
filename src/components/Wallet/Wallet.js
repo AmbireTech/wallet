@@ -1,6 +1,7 @@
 import './Wallet.css'
 
-import { Switch, Route, Redirect } from 'react-router-dom'
+import { useCallback } from 'react'
+import { Switch, Route, Redirect, useLocation } from 'react-router-dom'
 import { MdDashboard, MdLock, MdCompareArrows, } from 'react-icons/md'
 import { GiReceiveMoney } from 'react-icons/gi'
 import { BsPiggyBank } from 'react-icons/bs'
@@ -8,6 +9,13 @@ import { BiTransfer } from 'react-icons/bi'
 import Dashboard from './Dashboard/Dashboard'
 
 export default function Platform({ match, allNetworks, accounts, selectedAcc, onSelectAcc, network, setNetwork }) {
+    const location = useLocation();
+
+    const currentNestedRoute = useCallback(() => {
+        const [,, nested] = location.pathname.split('/');
+        return nested;
+    }, [location.pathname]);
+    
     return (
         <div id="platform">
             <div id="sidebar">
@@ -19,12 +27,12 @@ export default function Platform({ match, allNetworks, accounts, selectedAcc, on
                 </div>
 
                 {/* TODO proper navi, programmatic selected class */}
-                <div className="item selected"><MdDashboard size={30}/>Dashboard</div>
-                <div className="item"><GiReceiveMoney size={30}/>Deposit</div>
-                <div className="item"><BiTransfer size={30}/>Transfer</div>
-                <div className="item"><MdLock size={30}/>Security</div>
-                <div className="item"><MdCompareArrows size={30}/>Transactions</div>
-                <div className="item"><BsPiggyBank size={30}/>Earn</div>
+                <div className={`item ${currentNestedRoute() === 'dashboard' ? 'selected' : ''}`}><MdDashboard size={30}/>Dashboard</div>
+                <div className={`item ${currentNestedRoute() === 'desposit' ? 'selected' : ''}`}><GiReceiveMoney size={30}/>Deposit</div>
+                <div className={`item ${currentNestedRoute() === 'transfer' ? 'selected' : ''}`}><BiTransfer size={30}/>Transfer</div>
+                <div className={`item ${currentNestedRoute() === 'security' ? 'selected' : ''}`}><MdLock size={30}/>Security</div>
+                <div className={`item ${currentNestedRoute() === 'swap' ? 'selected' : ''}`}><MdCompareArrows size={30}/>Transactions</div>
+                <div className={`item ${currentNestedRoute() === 'earn' ? 'selected' : ''}`}><BsPiggyBank size={30}/>Earn</div>
 
             </div>
 
