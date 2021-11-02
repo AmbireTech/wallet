@@ -1,3 +1,19 @@
+@font-face {
+  font-family: 'Open Sans';
+  src: url('./fonts/OpenSans-Regular.ttf');
+}
+@font-face {
+  font-family: 'Open Sans';
+  font-weight: 600;
+  src: url('./fonts/OpenSans-Regular.ttf');
+}
+
+@font-face {
+  font-family: 'Open Sans';
+  font-weight: bold;
+  src: url('./fonts/OpenSans-Bold.ttf');
+}
+
 html {
   background-color: #282b33;
   min-width: 100%;
@@ -212,84 +228,12 @@ input:disabled, button:disabled {
   top: -15px;
 }
 
-/* TODO: can we have a variable left padding here */
-#sidebar {
-  width: 280px;
-  position: fixed;
-  left: 0px;
-  bottom: 0px;
-  top: 0px;
-  box-sizing: border-box;
-}
-#sidebar .logo {
-  background-image: url('./resources/logo.png');
-  width: 100%;
-  margin: 1em 0em 3em 0.5em;
-  height: 70px;
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: center left;
-}
-#sidebar .balance {
-  margin-bottom: 3em;
-  padding-left: 1em;
-}
-#sidebar .balance label {
-  text-transform: uppercase;
-  line-height: 1.75;
-  font-weight: 600;
-}
-#sidebar .highlight {
-  color: rgb(128, 255, 219);
-}
-#sidebar .dollarSign {
-  margin-right: 5px;
-}
-#sidebar .balanceDollarAmount {
-  font-size: 2em;
-}
-
-#dashboard .item {
-  padding: 15px 0px;
-  line-height: 30px;
-  cursor: pointer;
-  color: #bbb;
-}
-#dashboard .item:hover {
-  background-color: rgba(0,0,0,0.3);
-  color: #fff;
-}
-#dashboard .item:hover svg {
-  color: #fff;
-}
-#dashboard .item svg {
-  margin-right: 30px;
-  margin-left: 15px;
-  color: #bbb;
-  float: left;
-}
-#dashboard .item.selected svg {
-  color: #AA6AFF;
-}
-
-
 select {
   border: 0px;
   outline: 0px;
   color: white;
   padding: 15px;
   background-color: rgba(0,0,0,0.3);
-}
-#accountSelector {
-  position: fixed;
-  top: 30px;
-  right: 205px;
-}
-#networkSelector {
-  position: fixed;
-  top: 30px;
-  right: 40px;
-  width: 150px;
 }
 
 #signersToChoose {
@@ -312,12 +256,4 @@ select {
   text-align: center;
   font-size: 1.5em;
   font-weight: 300;
-}
-
-#dashboardArea {
-  position: absolute;
-  top: 150px;
-  left: 350px;
-  right: 50px;
-  bottom: 30px;
 }

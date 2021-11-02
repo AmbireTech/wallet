@@ -1,0 +1,46 @@
+#providers {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75em;
+}
+
+#providers .provider {
+    display: flex;
+    justify-content: space-between;
+    gap: 1em;
+    padding: 1.5em;
+    background-color: rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    transition: all 0.1s ease-in;
+}
+
+#providers .provider:hover {
+    background-color: rgba(0, 0, 0, 0.2);
+}
+
+#providers .provider:hover .logo {
+    filter: grayscale(0);
+}
+
+#providers .provider .logo {
+    flex: 0 0 auto;
+    width: 8em;
+    filter: grayscale(1);
+    transition: all 0.1s ease-in;
+}
+
+#providers .provider .logo img {
+    width: 100%;
+}
+
+#providers .provider .details {
+    flex: 0 1 auto;
+    font-size: 0.9em;
+    text-align: right;
+}
+
+#providers .provider .details .fees,
+#providers .provider .details .limits,
+#providers .provider .details .currencies {
+    opacity: 0.5;
+}
