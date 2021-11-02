@@ -13,6 +13,7 @@ const getDefaultState = () => ({ connectors: {}, connections: [] })
 
 export default function useWalletConnect ({ account, chainId, onCallRequest }) {
     const [state, dispatch] = useReducer((state, action) => {
+        if (action.type === 'updateConnections') return { ...state, connections: action.connections }
         if (action.type === 'addConnectors') {
             return { ...state, connectors: { ...state.connectors, ...action.newConnectors } }   
         }
@@ -54,7 +55,8 @@ export default function useWalletConnect ({ account, chainId, onCallRequest }) {
         })
 
         connector.on('session_request', (error, payload) => {
-            // @TODO: we need a way to know the latest account, chainId here
+            // While technically we may have an outdated account/chainId here, we do not care
+            // because the useEffect that updates sessions will catch it on the next re-render and update accordingly
             connector.approveSession({
                 accounts: [account],
                 chainId: chainId,
@@ -101,22 +103,27 @@ export default function useWalletConnect ({ account, chainId, onCallRequest }) {
 
     // Side effects that will run on every state change/rerender
     useEffect(() => {
-        // restore connectors
+        // restore connectors and update the ones that are stale
         let newConnectors = {}
+        let updateConnections = false
         state.connections.forEach(({ uri, session }) => {
             if (!state.connectors[uri]) newConnectors[uri] = connect({ uri, session })
             else {
-                // @TODO figure out how to handle the update and persist
                 const connector = state.connectors[uri]
                 const session = connector.session
                 if (session.accounts[0] !== account || session.chainId !== chainId) {
                     connector.updateSession({ accounts: [account], chainId })
+                    updateConnections = true
                 }
             }
         })
         
         localStorage[STORAGE_KEY] = JSON.stringify(state.connections)
 
+        if (updateConnections) dispatch({
+            type: 'updateConnections',
+            connections: state.connections.map(({ uri }) => ({ uri, session: state.connectors[uri].session }))
+        })
         if (Object.keys(newConnectors).length) dispatch({ type: 'addConnectors', newConnectors })
     }, [state, connect, account, chainId])
 
