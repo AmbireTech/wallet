@@ -7,10 +7,9 @@ import {
   Route,
   Redirect
 } from 'react-router-dom'
-import { MdDashboard, MdLock, MdCompareArrows } from 'react-icons/md'
-import { BsPiggyBank } from 'react-icons/bs'
 import EmailLogin from './components/EmailLogin/EmailLogin'
 import AddAccount from './components/AddAccount/AddAcount'
+import Platform from './components/Platform/Platform'
 import useAccounts from './hooks/accounts'
 import useNetwork from './hooks/network'
 import useWalletConnect from './hooks/walletconnect'
@@ -96,7 +95,18 @@ function App() {
     onCallRequest
   })
 
-  return (
+
+  return (<>
+
+    <div id="dashboardArea">
+      {connections.map(({ session, uri }) =>
+        (<div key={session.peerId} style={{ marginBottom: 20 }}>
+          <button onClick={() => disconnect(uri)}>Disconnect {session.peerMeta.name}</button>
+        </div>)
+      )}
+      {userAction ? (<><div>{userAction.bundle.txns[0][0]}</div><button onClick={userAction.fn}>Send txn</button></>) : (<></>)}
+    </div>
+
     <Router>
       {/*<nav>
               <Link to="/email-login">Login</Link>
@@ -111,46 +121,9 @@ function App() {
           <EmailLogin relayerURL={relayerURL} onAddAccount={onAddAccount}></EmailLogin>
         </Route>
 
-        <Route path="/dashboard">
-          <section id="dashboard">
-            <div id="sidebar">
-              <div className="logo"/>
-
-              <div className="balance">
-                <label>Balance</label>
-                <div className="balanceDollarAmount"><span className="dollarSign highlight">$</span>999<span className="highlight">.00</span></div>
-              </div>
-
-             {/* TODO proper navi, programmatic selected class */}
-              <div className="item selected"><MdDashboard size={30}/>Dashboard</div>
-              <div className="item"><MdLock size={30}/>Security</div>
-              <div className="item"><MdCompareArrows size={30}/>Transactions</div>
-              <div className="item"><BsPiggyBank size={30}/>Earn</div>
-
-            </div>
-
-            {/* Top-right dropdowns */}
-            <div>
-              <select id="accountSelector" onChange={ ev => onSelectAcc(ev.target.value) } defaultValue={selectedAcc}>
-                {accounts.map(acc => (<option key={acc.id}>{acc.id}</option>))}
-              </select>
-
-              <select id="networkSelector" onChange = { ev => setNetwork(ev.target.value) } defaultValue={network.name}>
-                {allNetworks.map(network => (<option key={network.id}>{network.name}</option>))}
-              </select>
-            </div>
-
-            <div id="dashboardArea">
-              {connections.map(({ session, uri }) =>
-                (<div key={session.peerId} style={{ marginBottom: 20 }}>
-                  <button onClick={() => disconnect(uri)}>Disconnect {session.peerMeta.name}</button>
-                </div>)
-              )}
-              {userAction ? (<><div>{userAction.bundle.txns[0][0]}</div><button onClick={userAction.fn}>Send txn</button></>) : (<></>)}
-            </div>
-
-          </section>
+        <Route path="/platform" component={props => Platform({ ...props,  accounts, selectedAcc, onSelectAcc, allNetworks, network, setNetwork })}>
         </Route>
+
         <Route path="/security"></Route>
         <Route path="/transactions"></Route>
         <Route path="/swap"></Route>
@@ -165,7 +138,7 @@ function App() {
 
       </Switch>
     </Router>
-    )
+    </>)
 }
 
 export default App;
