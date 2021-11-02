@@ -21,7 +21,7 @@ export default function Deposit({ depositAddress }) {
                     </div>
                 </div>
                 <div className="description">
-                    Send tokens or collectables to this address:
+                    Send tokens or collectables (NFTs) to this address:
                     <TextInput value={depositAddress} copy/>
                 </div>
                 <div id="networks">
