@@ -2,11 +2,11 @@ import './Dashboard.css'
 
 import Deposit from './Deposit/Deposit'
 
-export default function Dashboard({ selectedAcc }) {
+export default function Dashboard({ selectedAcc, selectedNetwork }) {
     return (
         <section id="dashboard">
             <div id="dashboardArea">
-              <Deposit depositAddress={selectedAcc}></Deposit>
+              <Deposit depositAddress={selectedAcc} selectedNetwork={selectedNetwork}></Deposit>
             </div>
         </section>
     )
