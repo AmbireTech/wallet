@@ -8,9 +8,9 @@ import { BiTransfer } from 'react-icons/bi'
 import Dashboard from './Dashboard/Dashboard'
 import DropDown from '../common/DropDown/DropDown'
 
-export default function Platform({ match, allNetworks, accounts, selectedAcc, onSelectAcc, network, setNetwork, connections, disconnect }) {    
+export default function Wallet({ match, allNetworks, accounts, selectedAcc, onSelectAcc, network, setNetwork, connections, disconnect }) {    
     return (
-        <div id="platform">
+        <div id="wallet">
             <div id="sidebar">
                 <div className="logo"/>
 
