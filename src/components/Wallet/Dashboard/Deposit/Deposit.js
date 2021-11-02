@@ -7,7 +7,7 @@ import Providers from './Providers/Providers'
 import ETHEREUM_LOGO from '../../../../resources/ethereum-logo.png'
 import POLYGON_LOGO from '../../../../resources/polygon-logo.svg'
 
-export default function Deposit({ depositAddress }) {
+export default function Deposit({ depositAddress, selectedNetwork }) {
     return (
         <section id="deposit">
             <div className="panel">
@@ -45,6 +45,14 @@ export default function Deposit({ depositAddress }) {
                 <div className="description">
                     Deposit with credit card to your account directly using one of our partners
                 </div>
+                {
+                    selectedNetwork !== 'Ethereum' ? 
+                        <div id="network-warning">
+                            Some deposit methods are unavailable on {selectedNetwork}. Switch to Ethereum for the widest support.
+                        </div>
+                        :
+                        null
+                }
                 <Providers/>
             </div>
         </section>
