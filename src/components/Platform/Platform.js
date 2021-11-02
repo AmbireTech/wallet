@@ -37,7 +37,7 @@ export default function Platform({ match, allNetworks, accounts, selectedAcc, on
 
             <Switch>
                 <Route path={match.url + "/dashboard"}>
-                    <Dashboard/>
+                    <Dashboard selectedAcc={selectedAcc}/>
                 </Route>
                 <Route path={match.url + "/security"}></Route>
                 <Route path={match.url + "/transactions"}></Route>
