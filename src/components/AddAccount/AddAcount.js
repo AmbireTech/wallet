@@ -147,34 +147,32 @@ export default function AddAccount ({ relayerURL, onAddAccount }) {
     }
 
     async function getOwnedByEOAs(eoas) {
-        const allOwnedIdentities = await Promise.all(eoas.map(
-            async acc => {
-                const resp = await fetch(`${relayerURL}/identity/any/by-owner/${acc}?includeFormerlyOwned=true`)
-                return await resp.json()
+        let allUniqueOwned = {}
+
+        await Promise.all(eoas.map(
+            async signerAddr => {
+                const resp = await fetch(`${relayerURL}/identity/any/by-owner/${signerAddr}?includeFormerlyOwned=true`)
+                const privEntries = Object.entries(await resp.json())
+                // discard the privileges value, we do not need it as we wanna add all accounts EVER owned by this eoa
+                privEntries.forEach(([id, _]) => allUniqueOwned[id] = signerAddr)
             }
         ))
 
-        let allUniqueOwned = {}
-        // preserve the last truthy priv value
-        allOwnedIdentities.forEach(x => 
-            Object.entries(x).forEach(
-                ([id, priv]) => allUniqueOwned[id] = priv || allUniqueOwned[id]
-            )
+        return await Promise.all(
+            Object.entries(allUniqueOwned).map(([id, signer]) => getAccountByAddr(id, signer))
         )
-
-        return await Promise.all(Object.keys(allUniqueOwned).map(getAccountByAddr))
     }
 
-    async function getAccountByAddr (addr) {
+    async function getAccountByAddr (idAddr, signerAddr) {
         // In principle, we need these values to be able to operate in relayerless mode,
         // so we just store them in all cases
         // Plus, in the future this call may be used to retrieve other things
-        const { salt, identityFactoryAddr, baseIdentityAddr } = await fetch(`${relayerURL}/identity/${addr}`)
+        const { salt, identityFactoryAddr, baseIdentityAddr } = await fetch(`${relayerURL}/identity/${idAddr}`)
             .then(r => r.json())
         return {
-            id: addr,
+            id: idAddr,
             salt, identityFactoryAddr, baseIdentityAddr,
-            signer: { addr }
+            signer: { addr: signerAddr }
         }
     }
 
