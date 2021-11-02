@@ -4,6 +4,12 @@
     gap: 0.75em;
 }
 
+#providers #network-warning {
+    font-size: 15px;
+    font-style: italic;
+    opacity: 0.8;
+}
+
 #providers .provider {
     display: flex;
     justify-content: space-between;

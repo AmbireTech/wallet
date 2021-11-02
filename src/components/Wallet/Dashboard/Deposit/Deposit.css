@@ -69,12 +69,6 @@
     width: 9em;
 }
 
-#deposit .panel #network-warning {
-    font-size: 15px;
-    font-style: italic;
-    opacity: 0.5;
-}
-
 @media screen and (max-width: 1400px) {
    #deposit {
        flex-direction: column;
