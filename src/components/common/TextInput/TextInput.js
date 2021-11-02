@@ -13,7 +13,7 @@ export default function TextInput({ value, disabled, copy }) {
             {
                 copy ?
                     <div className="icon">
-                        <MdContentCopy file={15}/>
+                        <MdContentCopy size={20}/>
                     </div>
                     :
                     null
