@@ -1,7 +1,7 @@
 import './DropDown.css'
 
 import { useEffect, useRef, useState } from 'react';
-import { BsChevronDown } from 'react-icons/bs'
+import { BsChevronUp, BsChevronDown } from 'react-icons/bs'
 
 export default function DropDown(props) {
     const ref = useRef();
@@ -41,7 +41,14 @@ export default function DropDown(props) {
                         :
                         null
                 }
-                <BsChevronDown size={20}></BsChevronDown>
+                <div className="handle">
+                    {
+                        isDropDownOpen ? 
+                            <BsChevronUp size={20}></BsChevronUp>
+                            :
+                            <BsChevronDown size={20}></BsChevronDown>
+                    }
+                </div>
             </div>
             {
                 isDropDownOpen ? 

@@ -54,10 +54,6 @@ export default function Wallet({ match, allNetworks, accounts, selectedAcc, onSe
 
             {/* Top-right dropdowns */}
             <div id="topbar">
-                <select id="accountSelector" onChange={ ev => onSelectAcc(ev.target.value) } defaultValue={selectedAcc}>
-                    {accounts.map(acc => (<option key={acc.id}>{acc.id}</option>))}
-                </select>
-
                 <DropDown title="dApps" badge={connections.length}>
                     {connections.map(({ session, uri }) => (
                         <div className="item dapps-item" key={session.peerId}>
@@ -72,6 +68,10 @@ export default function Wallet({ match, allNetworks, accounts, selectedAcc, onSe
                         </div>)
                     )}
                 </DropDown>
+                
+                <select id="accountSelector" onChange={ ev => onSelectAcc(ev.target.value) } defaultValue={selectedAcc}>
+                    {accounts.map(acc => (<option key={acc.id}>{acc.id}</option>))}
+                </select>
 
                 <select id="networkSelector" onChange = { ev => setNetwork(ev.target.value) } defaultValue={network.name}>
                     {allNetworks.map(network => (<option key={network.id}>{network.name}</option>))}
