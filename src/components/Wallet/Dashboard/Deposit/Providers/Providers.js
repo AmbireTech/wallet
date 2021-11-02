@@ -12,7 +12,7 @@ import { RAMP_HOST_API_KEY, TRANSAK_API_KEY, TRANSAK_ENV } from '../../../../../
 
 const PAYTRIE_PARTNER_URL = 'https://partner.paytrie.com/?app=876454'
 
-export default function Providers({ walletAddress }) {
+export default function Providers({ walletAddress, selectedNetwork }) {
     const openRampNetwork = ({ walletAddress }) => {
         const widget = new RampInstantSDK({
             hostAppName: 'Ambire',
@@ -79,6 +79,7 @@ export default function Providers({ walletAddress }) {
             fees: '0.49%-2.9%',
             limits: '10,000EUR/m',
             currencies: 'USD, EUR, GBP',
+            networks: ['ethereum', 'polygon', 'avalanche', 'arbitrum'],
             onClick: () => openRampNetwork({walletAddress})
         },
         {
@@ -88,6 +89,7 @@ export default function Providers({ walletAddress }) {
             fees: '1% (min. $2 CAD)',
             limits: '$2,000CAD/day',
             currencies: 'CAD',
+            networks: ['ethereum'],
             onClick: () => openPayTrie({walletAddress})
         },
         {
@@ -97,15 +99,20 @@ export default function Providers({ walletAddress }) {
             fees: 'from 0.5%',
             limits: 'up to 15,000 EUR/day',
             currencies: 'GBP, EUR, USD and many more',
+            networks: ['ethereum'],
             onClick: () => openTransak({walletAddress})
         }
     ];
 
+    const shouldBeDisabled = (networks) => {
+        return networks.includes(selectedNetwork) ? null : 'disabled'; 
+    };
+
     return (
         <div id="providers">
             {
-                providers.map(({ logo, name, type, fees, limits, currencies, onClick }) =>
-                    <div className="provider" key={name} onClick={onClick}>
+                providers.map(({ logo, name, type, fees, limits, currencies, networks, onClick }) =>
+                    <div className={`provider ${shouldBeDisabled(networks)}`} key={name} onClick={onClick}>
                         <div className="logo">
                             <img src={logo} alt={name}></img>
                         </div>

@@ -14,7 +14,13 @@
     transition: all 0.1s ease-in;
 }
 
-#providers .provider:hover {
+#providers .provider.disabled {
+    opacity: 0.3;
+    pointer-events: none;
+    cursor: default;
+}
+
+#providers .provider:not(.disabled):hover {
     background-color: rgba(0, 0, 0, 0.2);
 }
 
