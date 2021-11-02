@@ -18,15 +18,9 @@
     background-color: rgba(0, 0, 0, 0.2);
 }
 
-#providers .provider:hover .logo {
-    filter: grayscale(0);
-}
-
 #providers .provider .logo {
     flex: 0 0 auto;
     width: 8em;
-    filter: grayscale(1);
-    transition: all 0.1s ease-in;
 }
 
 #providers .provider .logo img {
