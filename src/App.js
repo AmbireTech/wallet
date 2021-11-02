@@ -10,6 +10,7 @@ import {
 import EmailLogin from './components/EmailLogin/EmailLogin'
 import AddAccount from './components/AddAccount/AddAcount'
 import Wallet from './components/Wallet/Wallet'
+import ToastProvider from './components/ToastProvider/ToastProvider'
 import useAccounts from './hooks/accounts'
 import useNetwork from './hooks/network'
 import useWalletConnect from './hooks/walletconnect'
@@ -97,42 +98,43 @@ function App() {
 
 
   return (<>
-
     <div id="dashboardArea">
       {userAction ? (<><div>{userAction.bundle.txns[0][0]}</div><button onClick={userAction.fn}>Send txn</button></>) : (<></>)}
     </div>
 
-    <Router>
-      {/*<nav>
-              <Link to="/email-login">Login</Link>
-      </nav>*/}
+    <ToastProvider>
+      <Router>
+        {/*<nav>
+                <Link to="/email-login">Login</Link>
+        </nav>*/}
 
-      <Switch>
-        <Route path="/add-account">
-          <AddAccount relayerURL={relayerURL} onAddAccount={onAddAccount}></AddAccount>
-        </Route>
+        <Switch>
+          <Route path="/add-account">
+            <AddAccount relayerURL={relayerURL} onAddAccount={onAddAccount}></AddAccount>
+          </Route>
 
-        <Route path="/email-login">
-          <EmailLogin relayerURL={relayerURL} onAddAccount={onAddAccount}></EmailLogin>
-        </Route>
+          <Route path="/email-login">
+            <EmailLogin relayerURL={relayerURL} onAddAccount={onAddAccount}></EmailLogin>
+          </Route>
 
-        <Route path="/wallet" component={props => Wallet({ ...props,  accounts, selectedAcc, onSelectAcc, allNetworks, network, setNetwork, connections, connect, disconnect})}>
-        </Route>
+          <Route path="/wallet" component={props => Wallet({ ...props,  accounts, selectedAcc, onSelectAcc, allNetworks, network, setNetwork, connections, connect, disconnect})}>
+          </Route>
 
-        <Route path="/security"></Route>
-        <Route path="/transactions"></Route>
-        <Route path="/swap"></Route>
-        <Route path="/earn"></Route>
-        {/* TODO: connected dapps */}
-        {/* TODO: tx identifier in the URL */}
-        <Route path="/approve-tx"></Route>
+          <Route path="/security"></Route>
+          <Route path="/transactions"></Route>
+          <Route path="/swap"></Route>
+          <Route path="/earn"></Route>
+          {/* TODO: connected dapps */}
+          {/* TODO: tx identifier in the URL */}
+          <Route path="/approve-tx"></Route>
 
-        <Route path="/">
-          <Redirect to="/add-account" />
-        </Route>
+          <Route path="/">
+            <Redirect to="/add-account" />
+          </Route>
 
-      </Switch>
-    </Router>
+        </Switch>
+      </Router>
+    </ToastProvider>
     </>)
 }
 
