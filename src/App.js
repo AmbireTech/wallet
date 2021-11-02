@@ -86,6 +86,7 @@ function App() {
 
     setUserAction({
       bundle,
+      estimation,
       fn: async () => {
         // @TODO we have to cache `providerTrezor` otherwise it will always ask us whether we wanna expose the pub key
         const providerTrezor = new TrezorSubprovider({ trezorConnectClientApi: TrezorConnect })
