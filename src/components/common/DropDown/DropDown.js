@@ -33,9 +33,14 @@ export default function DropDown(props) {
         <div className="dropdown" ref={ref}>
             <div className="content" onClick={() => setDropDownOpen(!isDropDownOpen)}>
                 <div className="title">{props.title}</div>
-                <div className="badge">
-                    { props.badge > 9 ? '9+' : props.badge }
-                </div>
+                {
+                    props.badge ? 
+                        <div className="badge">
+                            { props.badge > 9 ? '9+' : props.badge }
+                        </div>
+                        :
+                        null
+                }
                 <BsChevronDown size={20}></BsChevronDown>
             </div>
             {
