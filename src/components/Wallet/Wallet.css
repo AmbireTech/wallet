@@ -31,7 +31,7 @@
     float: left;
 }
 
-#sidebar .item.selected svg {
+#sidebar a.selected .item svg {
     color: #AA6AFF;
 }
 
