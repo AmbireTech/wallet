@@ -22,7 +22,7 @@ export default function Deposit({ depositAddress }) {
                 </div>
                 <div className="description">
                     Send tokens or collectables (NFTs) to this address:
-                    <TextInput value={depositAddress} copy/>
+                    <TextInput className="depositAddress" value={depositAddress} copy/>
                 </div>
                 <div id="networks">
                     Following networks supported:
