@@ -35,7 +35,7 @@ function App() {
 
     console.log('call onCallRequest')
 
-    if (window.Notification && Notification.permission !== "denied") {
+    if (window.Notification && Notification.permission !== 'denied') {
       Notification.requestPermission(function(status) {  // status is "granted", if accepted by user
         // @TODO parse transaction and actually show what we're signing
         if (status !== 'granted') return
