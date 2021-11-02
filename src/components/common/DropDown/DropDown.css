@@ -26,7 +26,8 @@
     justify-content: center;
     font-size: 12px;
     font-weight: bold;
-    background-color: rgb(218, 81, 81);
+    color: black;
+    background-color: rgb(128 255 219);
     border-radius: 100%;
 }
 

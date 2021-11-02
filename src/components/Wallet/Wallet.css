@@ -86,6 +86,7 @@
     width: 40px;
     border-radius: 100%;
     overflow: hidden;
+    background-color: rgba(0, 0, 0, 0.2);
 }
 
 .dapps-item .icon img {
