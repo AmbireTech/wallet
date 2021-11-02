@@ -9,7 +9,7 @@ import {
 } from 'react-router-dom'
 import EmailLogin from './components/EmailLogin/EmailLogin'
 import AddAccount from './components/AddAccount/AddAcount'
-import Platform from './components/Platform/Platform'
+import Wallet from './components/Wallet/Wallet'
 import useAccounts from './hooks/accounts'
 import useNetwork from './hooks/network'
 import useWalletConnect from './hooks/walletconnect'
@@ -103,12 +103,11 @@ function App() {
       }
     })
   }
-  const { connections, disconnect } = useWalletConnect({
+  const { connections, connect, disconnect } = useWalletConnect({
     account: selectedAcc,
     chainId: network.chainId,
     onCallRequest
   })
-
 
   return (
     <Router>
@@ -125,7 +124,7 @@ function App() {
           <EmailLogin relayerURL={relayerURL} onAddAccount={onAddAccount}></EmailLogin>
         </Route>
 
-        <Route path="/platform" component={props => Platform({ ...props,  accounts, selectedAcc, onSelectAcc, allNetworks, network, setNetwork })}>
+        <Route path="/wallet" component={props => Wallet({ ...props,  accounts, selectedAcc, onSelectAcc, allNetworks, network, setNetwork, connections, connect, disconnect})}>
         </Route>
 
         <Route path="/security"></Route>
