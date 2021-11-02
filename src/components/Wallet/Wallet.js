@@ -6,8 +6,9 @@ import { GiReceiveMoney } from 'react-icons/gi'
 import { BsPiggyBank } from 'react-icons/bs'
 import { BiTransfer } from 'react-icons/bi'
 import Dashboard from './Dashboard/Dashboard'
+import DropDown from '../common/DropDown/DropDown'
 
-export default function Platform({ match, allNetworks, accounts, selectedAcc, onSelectAcc, network, setNetwork }) {    
+export default function Platform({ match, allNetworks, accounts, selectedAcc, onSelectAcc, network, setNetwork, connections, disconnect }) {    
     return (
         <div id="platform">
             <div id="sidebar">
@@ -52,10 +53,25 @@ export default function Platform({ match, allNetworks, accounts, selectedAcc, on
             </div>
 
             {/* Top-right dropdowns */}
-            <div>
+            <div id="topbar">
                 <select id="accountSelector" onChange={ ev => onSelectAcc(ev.target.value) } defaultValue={selectedAcc}>
                     {accounts.map(acc => (<option key={acc.id}>{acc.id}</option>))}
                 </select>
+
+                <DropDown title="dApps" badge={connections.length}>
+                    {connections.map(({ session, uri }) => (
+                        <div className="item dapps-item" key={session.peerId}>
+                            <div className="icon">
+                                <img src={session.peerMeta.icons[0]} alt={session.peerMeta.name}></img>
+                            </div>
+                            <div className="name">
+                                { session.peerMeta.name }
+                            </div>
+                            <div className="separator"></div>
+                            <button onClick={() => disconnect(uri)}>Disconnect</button>
+                        </div>)
+                    )}
+                </DropDown>
 
                 <select id="networkSelector" onChange = { ev => setNetwork(ev.target.value) } defaultValue={network.name}>
                     {allNetworks.map(network => (<option key={network.id}>{network.name}</option>))}
