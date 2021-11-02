@@ -1,10 +1,14 @@
 import './TextInput.css'
 
-import { MdContentCopy } from 'react-icons/md'
+import { MdContentCopy } from 'react-icons/md';
+import { useToasts } from '../../../helpers/toasts';
 
 export default function TextInput({ value, disabled, copy }) {
+    const { addToast } = useToasts();
+
     const onClick = () => {
-        navigator.clipboard.writeText(value)
+        navigator.clipboard.writeText(value);
+        addToast("Copied !");
     };
 
     return (
