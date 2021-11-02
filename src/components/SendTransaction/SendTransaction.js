@@ -10,7 +10,6 @@ export default function SendTransaction ({ userAction }) {
     console.log(userAction)
     const actionable = userAction 
         ? (<>
-                <div>{userAction.bundle.txns[0][0]}</div>
                 <button onClick={userAction.fn}>Send txn</button>
             </>)
         : (<></>)
@@ -58,6 +57,18 @@ export default function SendTransaction ({ userAction }) {
                         <GiTakeMyMoney size={35}/>
                         Fee
                     </div>
+                    {
+                        userAction ? (
+                            <div className="fees">
+                                <div className="feeSquare"><div className="speed">Slow</div>${userAction.estimation.feeInUSD.slow}</div>
+                                <div className="feeSquare"><div className="speed">Medium</div>${userAction.estimation.feeInUSD.medium}</div>
+                                <div className="feeSquare selected"><div className="speed">Fast</div>${userAction.estimation.feeInUSD.fast}</div>
+                                <div className="feeSquare"><div className="speed">Ape</div>${userAction.estimation.feeInUSD.ape}</div>
+
+                            </div>
+                        )
+                        : (<></>)
+                    }
                     {actionable}
             </div>
         </div>
