@@ -6,15 +6,8 @@ import { TrezorSubprovider } from '@0x/subproviders/lib/src/subproviders/trezor'
 import { LedgerSubprovider } from '@0x/subproviders/lib/src/subproviders/ledger' // https://github.com/0xProject/0x-monorepo/issues/1400
 import { ledgerEthereumBrowserClientFactoryAsync } from '@0x/subproviders/lib/src' // https://github.com/0xProject/0x-monorepo/issues/1400
 import { hexZeroPad, AbiCoder, keccak256, id, getAddress } from 'ethers/lib/utils'
-
 import { fetch, fetchPost } from '../../lib/fetch'
-
-// @TODO update those pre-launch
-const ACCOUNT_PRESETS = {
-    salt: hexZeroPad('0x01', 32),
-    baseIdentityAddr: '0xA2E9e41ee85AE792A8213736c7f9398a933F8184',
-    identityFactoryAddr: '0x447f228E6af15C2Df147235eCB9ABE53BD1f46Ad'
-}
+import accountPresets from '../../consts/accountPresets'
 
 TrezorConnect.manifest({
   email: 'contactus@ambire.com',
@@ -74,28 +67,25 @@ export default function AddAccount ({ relayerURL, onAddAccount }) {
         const secondKeyAddress = await fetchPost(`${relayerURL}/second-key`, { secondKeySecret })
             .then(r => r.address)
 
-        // @TODO: timelock value for the quickAccount
-        const quickAccount = [600, firstKeyWallet.address, secondKeyAddress]
+        const { salt, baseIdentityAddr, identityFactoryAddr, quickAccManager, quickAccTimelock } = accountPresets
+        const quickAccountTuple = [quickAccTimelock, firstKeyWallet.address, secondKeyAddress]
+        const signer = { quickAccManager, timelock: quickAccountTuple[0], one: quickAccountTuple[1], two: quickAccountTuple[2] }
         const abiCoder = new AbiCoder()
-        const accHash = keccak256(abiCoder.encode(['tuple(uint, address, address)'], [quickAccount]))
-        // @TODO not hardcoded
-        const quickAccManager = '0x697d866d20a8E8886a0D0511e82846AC108Bc5B6'
+        const accHash = keccak256(abiCoder.encode(['tuple(uint, address, address)'], [quickAccountTuple]))
         const privileges = [[quickAccManager, accHash]]
-        const { salt, baseIdentityAddr, identityFactoryAddr } = ACCOUNT_PRESETS
         const bytecode = getProxyDeployBytecode(baseIdentityAddr, privileges, { privSlot: 0 })
         const identityAddr = getAddress('0x' + generateAddress2(identityFactoryAddr, salt, bytecode).toString('hex'))
-
         const primaryKeyBackup = JSON.stringify(
             await firstKeyWallet.encrypt(req.passphrase, { scrypt: { N: SCRYPT_ITERATIONS } })
         )
 
-        // @TODO catch errors here - wrong status codes, etc.
         const createResp = await fetchPost(`${relayerURL}/identity/${identityAddr}`, {
             email: req.email,
             primaryKeyBackup: req.backupOptout ? null : primaryKeyBackup,
             secondKeySecret,
             salt, identityFactoryAddr, baseIdentityAddr,
             privileges,
+            quickAccSigner: signer
         })
         if (createResp.message === 'EMAIL_ALREADY_USED') {
             setErr('An account with this email already exists')
@@ -112,10 +102,9 @@ export default function AddAccount ({ relayerURL, onAddAccount }) {
             email: req.email,
             primaryKeyBackup,
             salt, identityFactoryAddr, baseIdentityAddr,
-            // @TODO signer
+            signer
         }, { select: true })
     }
-
 
     // EOA implementations
     // Add or create accounts from Trezor/Ledger/Metamask/etc.
@@ -124,12 +113,11 @@ export default function AddAccount ({ relayerURL, onAddAccount }) {
     // only if we can have the whitelisted* stuff in advance; we can hardcode them
     async function createFromEOA (addr) {
         const privileges = [[getAddress(addr), hexZeroPad('0x01', 32)]]
-        const { salt, baseIdentityAddr, identityFactoryAddr } = ACCOUNT_PRESETS
+        const { salt, baseIdentityAddr, identityFactoryAddr } = accountPresets
         const bytecode = getProxyDeployBytecode(baseIdentityAddr, privileges, { privSlot: 0 })
         const identityAddr = getAddress('0x' + generateAddress2(identityFactoryAddr, salt, bytecode).toString('hex'))
 
         if (relayerURL) {
-            // @TODO catch errors here - wrong status codes, etc.
             const createResp = await fetchPost(`${relayerURL}/identity/${identityAddr}`, {
                 salt, identityFactoryAddr, baseIdentityAddr,
                 privileges
@@ -139,8 +127,8 @@ export default function AddAccount ({ relayerURL, onAddAccount }) {
 
         return {
             id: identityAddr,
-            salt, identityFactoryAddr, baseIdentityAddr
-            // @TODO signer
+            salt, identityFactoryAddr, baseIdentityAddr,
+            signer: { address: addr }
         }
     }
 
@@ -174,9 +162,7 @@ export default function AddAccount ({ relayerURL, onAddAccount }) {
             )
         )
 
-        return await Promise.all(Object.keys(allUniqueOwned).map(async addr => {
-            return { ...(await getAccountByAddr(addr)) /* TODO signer */ }
-        }))
+        return await Promise.all(Object.keys(allUniqueOwned).map(getAccountByAddr))
     }
 
     async function getAccountByAddr (addr) {
@@ -187,7 +173,8 @@ export default function AddAccount ({ relayerURL, onAddAccount }) {
             .then(r => r.json())
         return {
             id: addr,
-            salt, identityFactoryAddr, baseIdentityAddr
+            salt, identityFactoryAddr, baseIdentityAddr,
+            signer: { addr }
         }
     }
 
@@ -199,6 +186,7 @@ export default function AddAccount ({ relayerURL, onAddAccount }) {
         engine.addProvider(new RPCSubprovider(this.url, this.requestTimeoutMs))
         */
         const provider = new TrezorSubprovider({ trezorConnectClientApi: TrezorConnect })
+        console.log(provider._initialDerivedKeyInfo)
         setChooseSigners(await provider.getAccountsAsync(50))
     }
 
