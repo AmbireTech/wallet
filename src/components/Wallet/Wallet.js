@@ -80,7 +80,7 @@ export default function Wallet({ match, allNetworks, accounts, selectedAcc, onSe
 
             <Switch>
                 <Route path={match.url + "/dashboard"}>
-                    <Dashboard selectedAcc={selectedAcc} selectedNetwork={network.name}/>
+                    <Dashboard selectedAcc={selectedAcc} selectedNetwork={network.id}/>
                 </Route>
                 <Route path={match.url + "/security"}></Route>
                 <Route path={match.url + "/transactions"}></Route>

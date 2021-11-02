@@ -46,14 +46,14 @@ export default function Deposit({ selectedAcc, selectedNetwork }) {
                     Deposit with credit card to your account directly using one of our partners
                 </div>
                 {
-                    selectedNetwork !== 'Ethereum' ? 
+                    selectedNetwork !== 'ethereum' ? 
                         <div id="network-warning">
                             Some deposit methods are unavailable on {selectedNetwork}. Switch to Ethereum for the widest support.
                         </div>
                         :
                         null
                 }
-                <Providers walletAddress={selectedAcc}/>
+                <Providers walletAddress={selectedAcc} selectedNetwork={selectedNetwork}/>
             </div>
         </section>
     )
