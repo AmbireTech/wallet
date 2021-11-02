@@ -23,7 +23,8 @@ export default function useAccounts () {
       setSelectedAcc(selected)
     }
     const onAddAccount = useCallback((acc, opts) => {
-      console.log('onAddAccount', acc)
+      if (!(acc.id && acc.signer)) throw new Error('account: internal err: missing ID or signer')
+
       const existingIdx = accounts.findIndex(x => x.id.toLowerCase() === acc.id.toLowerCase())
   
       // @TODO show toast; perhaps by returning a value that shows whether the acc is already added
