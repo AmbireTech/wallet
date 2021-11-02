@@ -69,6 +69,7 @@
 }
 
 #topbar {
+    z-index: 99;
     position: fixed;
     top: 30px;
     right: 40px;
@@ -114,4 +115,38 @@
 .dapps-item button:hover {
     background-color: #da5151;
     border-color: transparent;
+}
+
+#connect-dapp {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 20px;
+    padding-bottom: 10px;
+}
+
+#connect-dapp button {
+    height: 45px;
+    width: 100%;
+    padding: 0;
+    font-weight: bold;
+    text-transform: uppercase;
+    color: black;
+    background-color: rgb(128, 255, 219);
+    opacity: 1;
+    transition: all 0.1s ease-in-out;
+}
+
+#connect-dapp .heading {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+#connect-dapp .heading button:hover {
+    opacity: 0.9;
+}
+
+#connect-dapp label {
+    font-size: 13px;
 }

@@ -89,7 +89,7 @@ function App() {
       }
     })
   }
-  const { connections, disconnect } = useWalletConnect({
+  const { connections, connect, disconnect } = useWalletConnect({
     account: selectedAcc,
     chainId: network.chainId,
     onCallRequest
@@ -116,7 +116,7 @@ function App() {
           <EmailLogin relayerURL={relayerURL} onAddAccount={onAddAccount}></EmailLogin>
         </Route>
 
-        <Route path="/wallet" component={props => Wallet({ ...props,  accounts, selectedAcc, onSelectAcc, allNetworks, network, setNetwork, connections, disconnect})}>
+        <Route path="/wallet" component={props => Wallet({ ...props,  accounts, selectedAcc, onSelectAcc, allNetworks, network, setNetwork, connections, connect, disconnect})}>
         </Route>
 
         <Route path="/security"></Route>
