@@ -1,5 +1,6 @@
 //import { GrInspect } from 'react-icons/gr'
 // GiObservatory is also interesting
+import { Interface } from 'ethers/lib/utils'
 import { GiTakeMyMoney, GiSpectacles } from 'react-icons/gi'
 import verifiedContracts from '../../consts/verifiedContracts'
 import networks from '../../consts/networks'
@@ -21,11 +22,15 @@ export default function SendTransaction ({ userAction }) {
         // @TODO proper asset symbol
         const network = networks.find(x => x.id === userAction.bundle.network)
 
-        if (parseInt(value) > 0) sendSummary = `send ${(parseInt(value)/1e18).toFixed(4)} ${network.nativeAssetSymbol}`
+        const contractKey = userAction.bundle.network + ':' + to
+        const contractInfo = verifiedContracts[contractKey]
+
+        if (parseInt(value) > 0) sendSummary = `send ${(parseInt(value)/1e18).toFixed(4)} ${network.nativeAssetSymbol} to ${contractInfo ? contractInfo.name : to}`
         if (data !== '0x') {
-            const contractKey = userAction.bundle.network + ':' + to
-            if (verifiedContracts[contractKey]) {
-                callSummary = `verified call`
+            if (contractInfo) {
+                const iface = new Interface(contractInfo.abi)
+                const parsed = iface.parseTransaction({ data, value })
+                callSummary = `Interaction with ${contractInfo.name}: ${parsed.name}`
             } else callSummary = `unknown call to ${to}`
         }
         return [callSummary, sendSummary].filter(x => x).join(', ')
@@ -38,8 +43,11 @@ export default function SendTransaction ({ userAction }) {
                         Transaction summary
                     </div>
                     <ul>
-                        {userAction ? userAction.bundle.txns.map(txn => (
-                            <li key={txn}>{getSummary(txn)}</li>
+                        {userAction ? userAction.bundle.txns.map((txn, i) => (
+                            <li key={txn}>
+                                {i === userAction.bundle.txns.length - 1 ? 'Fee: ' : ''}
+                                {getSummary(txn)}
+                            </li>
                         )) : (<></>)}
                     </ul>
             </div>
