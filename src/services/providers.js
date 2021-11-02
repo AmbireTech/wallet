@@ -3,9 +3,7 @@ import transakSDK from '@transak/transak-sdk'
 import { popupCenter } from '../helpers/popupHelper'
 import url from 'url'
 
-import { RAMP_HOST_API_KEY, TRANSAK_API_KEY, TRANSAK_ENV } from '../config'
-
-const PAYTRIE_PARTNER_URL = 'https://partner.paytrie.com/?app=876454'
+import { RAMP_HOST_API_KEY, PAYTRIE_PARTNER_URL, TRANSAK_API_KEY, TRANSAK_ENV } from '../config'
 
 export const openRampNetwork = ({ walletAddress }) => {
     const widget = new RampInstantSDK({
