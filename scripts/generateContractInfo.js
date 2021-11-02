@@ -9,9 +9,9 @@ const etherscans = {
 
 // @TODO dedupe ABIs and reference them by hash or something
 const contracts = [
-	{ name: 'SUSHI', network: 'polygon', contract: '0x1b02da8cb0d097eb8d57a175b88c7d8b47997506' },
-	{ name: 'SUSHI', network: 'ethereum', contract: '0xd9e1cE17f2641f24aE83637ab66a2cca9C378B9F' },
-	//{ name: 'SUSHI', network: 'polygon', contract: '0x1b02da8cb0d097eb8d57a175b88c7d8b47997506' },
+	{ name: 'SushiSwap', network: 'polygon', contract: '0x1b02da8cb0d097eb8d57a175b88c7d8b47997506' },
+	{ name: 'SushiSwap', network: 'ethereum', contract: '0xd9e1cE17f2641f24aE83637ab66a2cca9C378B9F' },
+	//{ name: 'SushiSwap', network: 'polygon', contract: '0x1b02da8cb0d097eb8d57a175b88c7d8b47997506' },
 ]
 
 async function generate () {
