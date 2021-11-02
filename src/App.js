@@ -10,6 +10,7 @@ import {
 import EmailLogin from './components/EmailLogin/EmailLogin'
 import AddAccount from './components/AddAccount/AddAcount'
 import Wallet from './components/Wallet/Wallet'
+import SendTransaction from './components/SendTransaction/SendTransaction'
 import useAccounts from './hooks/accounts'
 import useNetwork from './hooks/network'
 import useWalletConnect from './hooks/walletconnect'
@@ -134,14 +135,7 @@ function App() {
         {/* TODO: connected dapps */}
         {/* TODO: tx identifier in the URL */}
         <Route path="/send-transaction">
-          <div id="dashboardArea">
-            {connections.map(({ session, uri }) =>
-              (<div key={session.peerId} style={{ position: 'relative', top: -30 }}>
-                <button onClick={() => disconnect(uri)}>Disconnect {session.peerMeta.name}</button>
-              </div>)
-            )}
-            {userAction ? (<><div>{userAction.bundle.txns[0][0]}</div><button onClick={userAction.fn}>Send txn</button></>) : (<></>)}
-          </div>
+          <SendTransaction userAction={userAction}></SendTransaction>
         </Route>
 
         <Route path="/">
