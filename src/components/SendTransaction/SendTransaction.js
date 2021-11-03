@@ -2,6 +2,7 @@
 // GiObservatory is also interesting
 import { Interface } from 'ethers/lib/utils'
 import { GiTakeMyMoney, GiSpectacles } from 'react-icons/gi'
+import { FaSignature } from 'react-icons/fa'
 import verifiedContracts from '../../consts/verifiedContracts'
 import networks from '../../consts/networks'
 import ERC20ABI from 'adex-protocol-eth/abi/ERC20'
@@ -11,7 +12,6 @@ const ERC20 = new Interface(ERC20ABI)
 const TRANSFER_SIGHASH = ERC20.getSighash(ERC20.getFunction('transfer').format())
 
 export default function SendTransaction ({ userAction }) {
-    console.log(userAction)
     const actionable = userAction 
         ? (<>
                 <button onClick={userAction.fn}>Send txn</button>
@@ -61,25 +61,40 @@ export default function SendTransaction ({ userAction }) {
                     </ul>
             </div>
         </div>
-        <div className="panel">
-            <div className="heading">
-                    <div className="title">
-                        <GiTakeMyMoney size={35}/>
-                        Fee
-                    </div>
-                    {
-                        userAction ? (
-                            <div className="fees">
-                                <div className="feeSquare"><div className="speed">Slow</div>${userAction.estimation.feeInUSD.slow}</div>
-                                <div className="feeSquare"><div className="speed">Medium</div>${userAction.estimation.feeInUSD.medium}</div>
-                                <div className="feeSquare selected"><div className="speed">Fast</div>${userAction.estimation.feeInUSD.fast}</div>
-                                <div className="feeSquare"><div className="speed">Ape</div>${userAction.estimation.feeInUSD.ape}</div>
+        <div className="secondaryPanel">
+            <div className="panel">
+                <div className="heading">
+                        <div className="title">
+                            <GiTakeMyMoney size={35}/>
+                            Fee
+                        </div>
+                        {
+                            userAction ? (
+                                <div className="fees">
+                                    <div className="feeSquare"><div className="speed">Slow</div>${userAction.estimation.feeInUSD.slow}</div>
+                                    <div className="feeSquare"><div className="speed">Medium</div>${userAction.estimation.feeInUSD.medium}</div>
+                                    <div className="feeSquare selected"><div className="speed">Fast</div>${userAction.estimation.feeInUSD.fast}</div>
+                                    <div className="feeSquare"><div className="speed">Ape</div>${userAction.estimation.feeInUSD.ape}</div>
 
-                            </div>
-                        )
-                        : (<></>)
-                    }
-                    {actionable}
+                                </div>
+                            )
+                            : (<></>)
+                        }
+                        <span style={{ marginTop: '1em' }}>Fee currency</span>
+                        <select defaultValue="USDT">
+                            <option>USDT</option>
+                            <option>USDC</option>
+                        </select>
+                </div>
+            </div>
+            <div className="panel">
+                <div className="heading">
+                    <div className="title">
+                        <FaSignature size={35}/>
+                        Sign
+                    </div>
+                </div>
+                {actionable}
             </div>
         </div>
     </div>)
