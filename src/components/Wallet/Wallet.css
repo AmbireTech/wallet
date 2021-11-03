@@ -166,3 +166,11 @@
 #connect-dapp label {
     font-size: 13px;
 }
+
+#wallet-container {
+    position: absolute;
+    top: 150px;
+    left: 350px;
+    right: 50px;
+    bottom: 30px;
+}
