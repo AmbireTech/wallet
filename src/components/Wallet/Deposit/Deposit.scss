@@ -1,0 +1,80 @@
+#deposit {
+    display: flex;
+    justify-content: center;
+    gap: 2em;
+
+    .panel {
+        display: flex;
+        flex-direction: column;
+        gap: 2em;
+        width: 36em;
+        text-align: center;
+        padding: 0 2.5em;
+        padding-top: 2.5em;
+        padding-bottom: 3em;
+        box-sizing: border-box;
+        background-color: rgba(0, 0, 0, 0.2);
+        overflow: hidden;
+
+        .heading {
+            display: flex;
+            flex-direction: column;
+            gap: 0.2rem;
+
+            .title {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 0.5rem;
+                font-size: 1.5em;
+                font-weight: bold;
+                color: rgb(128, 255, 219);
+                text-transform: uppercase;
+            }
+
+            .subtitle {
+                font-size: 1.3em;
+                text-transform: uppercase;
+                color: #AA6AFF;
+            }
+        }
+
+        .description {
+            display: flex;
+            flex-direction: column;
+            gap: 0.2em;
+            text-align: left;
+            font-size: 1em;
+            color: white;
+        }
+
+        #networks {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 0.5em;
+            font-size: 1em;
+            color: #8c8d91;
+
+            .logos {
+                display: flex;
+                justify-content: center;
+                gap: 2em;
+
+                img {
+                    width: 9em;
+                }
+            }
+        }
+    }
+}
+
+@media screen and (max-width: 1400px) {
+   #deposit {
+       flex-direction: column;
+
+        .panel {
+            width: 100%;
+        }
+   }
+}
