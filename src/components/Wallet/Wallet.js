@@ -7,6 +7,7 @@ import { GiReceiveMoney } from 'react-icons/gi'
 import { BsPiggyBank } from 'react-icons/bs'
 import { BiTransfer } from 'react-icons/bi'
 import Dashboard from './Dashboard/Dashboard'
+import Deposit from './Deposit/Deposit'
 import DropDown from '../common/DropDown/DropDown'
 import { useEffect, useState } from 'react'
 
@@ -118,19 +119,24 @@ export default function Wallet({ match, allNetworks, accounts, selectedAcc, onSe
                 </select>
             </div>
 
-            <Switch>
-                <Route path={match.url + "/dashboard"}>
-                    <Dashboard selectedAcc={selectedAcc} selectedNetwork={network.id}/>
-                </Route>
-                <Route path={match.url + "/security"}></Route>
-                <Route path={match.url + "/transactions"}></Route>
-                <Route path={match.url + "/swap"}></Route>
-                <Route path={match.url + "/earn"}></Route>
+            <div id="wallet-container">
+                <Switch>
+                    <Route path={match.url + "/dashboard"}>
+                        <Dashboard/>
+                    </Route>
+                    <Route path={match.url + "/deposit"}>
+                        <Deposit selectedAcc={selectedAcc} selectedNetwork={network.id}/>
+                    </Route>
+                    <Route path={match.url + "/security"}></Route>
+                    <Route path={match.url + "/transactions"}></Route>
+                    <Route path={match.url + "/swap"}></Route>
+                    <Route path={match.url + "/earn"}></Route>
 
-                <Route path={match.url + "/"}>
-                    <Redirect to={match.url + "/dashboard"}/>
-                </Route>
-            </Switch>
+                    <Route path={match.url + "/"}>
+                        <Redirect to={match.url + "/dashboard"}/>
+                    </Route>
+                </Switch>
+            </div>
         </div>
     )
 }
