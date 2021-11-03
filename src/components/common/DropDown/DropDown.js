@@ -6,6 +6,7 @@ import { CSSTransition } from 'react-transition-group';
 
 export default function DropDown(props) {
     const ref = useRef();
+    const transitionRef = useRef();
     const [isDropDownOpen, setDropDownOpen] = useState(false);
 
     function useOnClickOutside(ref, handler) {
@@ -51,8 +52,8 @@ export default function DropDown(props) {
                     }
                 </div>
             </div>
-            <CSSTransition unmountOnExit in={isDropDownOpen} timeout={200} classNames="fade">
-                <div className="list">
+            <CSSTransition unmountOnExit in={isDropDownOpen} timeout={200} classNames="fade" nodeRef={transitionRef}>
+                <div className="list" ref={transitionRef}>
                     {props.children}
                 </div>
             </CSSTransition>
