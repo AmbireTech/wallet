@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { GiToken } from 'react-icons/gi'
 import './Dashboard.css'
 
 export default function Dashboard({ balances }) {
@@ -12,20 +13,25 @@ export default function Dashboard({ balances }) {
         <section id="dashboard">
             <div id="table" className="panel">
             {
-                positiveBalances.map(({ appId, products }) => 
-                    products.map(({ label, assets }) => (
-                        <div className="category" key={appId}>
+                positiveBalances.map(({ products }) => 
+                    products.map(({ label, assets }, i) => (
+                        <div className="category" key={`category-${i}`}>
                             <div className="title">{ label }</div>
                             <div className="list">
                                 {
                                     assets.map(({ tokens }) => 
-                                        tokens.map(({ label, symbol, img, balance, balanceUSD }) => (
-                                            <div className="token">
+                                        tokens.map(({ label, collectionName, symbol, img, collectionImg, balance, balanceUSD }, i) => (
+                                            <div className="token" key={`token-${i}`}>
                                                 <div className="icon">
-                                                    <img src={img}/>
+                                                    {
+                                                        img || collectionImg ? 
+                                                            <img src={img || collectionImg} alt="Token Icon"/>
+                                                            :
+                                                            <GiToken size={20}/>
+                                                    }
                                                 </div>
                                                 <div className="name">
-                                                    { label }
+                                                    { label || collectionName || symbol }
                                                 </div>
                                                 <div className="separator"></div>
                                                 <div className="balance">
