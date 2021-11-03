@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { supportedBalances, getBalances } from '../services/zapper';
 
-const ZAPPER_API_KEY = '5d1237c2-3840-4733-8e92-c5a58fe81b88';
+import { ZAPPER_API_KEY } from '../config';
 
 export default function useBalances({ currentNetwork, account }) {
     const [balances, setBalance] = useState([]);
