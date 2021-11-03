@@ -1,10 +1,10 @@
 import './Providers.css'
 
-import RAMP_LOGO from '../../../../../resources/ramp.svg';
-import PAYTRIE_LOGO from '../../../../../resources/paytrie.svg';
-import TRANSAK_LOGO from '../../../../../resources/transak.svg';
+import RAMP_LOGO from '../../../../resources/ramp.svg';
+import PAYTRIE_LOGO from '../../../../resources/paytrie.svg';
+import TRANSAK_LOGO from '../../../../resources/transak.svg';
 
-import { openRampNetwork, openPayTrie, openTransak } from '../../../../../services/providers'
+import { openRampNetwork, openPayTrie, openTransak } from '../../../../services/providers'
 
 export default function Providers({ walletAddress, selectedNetwork }) {
     const providers = [
