@@ -2,7 +2,7 @@ import { useLayoutEffect, useState } from 'react'
 import { GiToken } from 'react-icons/gi'
 import './Dashboard.scss'
 
-export default function Dashboard({ balances, totalTruncUSD, totalDecUSD }) {
+export default function Dashboard({ balances, totalUSD }) {
     const [positiveBalances, setPositivesBalances] = useState([]);
 
     useLayoutEffect(() => {
@@ -15,8 +15,8 @@ export default function Dashboard({ balances, totalTruncUSD, totalDecUSD }) {
                 <div className="title">Balance</div>
                 <div className="content">
                     <div id="total">
-                        <span className="green-highlight">$</span> { totalTruncUSD }
-                        <span className="green-highlight">.{ totalDecUSD }</span>
+                        <span className="green-highlight">$</span> { totalUSD.truncated }
+                        <span className="green-highlight">.{ totalUSD.decimal }</span>
                     </div>
                 </div>
             </div>
