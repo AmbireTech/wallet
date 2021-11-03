@@ -5,8 +5,7 @@ import { ZAPPER_API_KEY } from '../config';
 
 export default function useBalances({ currentNetwork, account }) {
     const [balances, setBalance] = useState([]);
-    const [totalTruncUSD, setTotalTruncUSD] = useState();
-    const [totalDecUSD, setTotalDecimalUSD] = useState();
+    const [totalUSD, setTotalUSD] = useState({});
 
     const updateBalances = (currentNetwork, address) => {
         setBalance([]);
@@ -37,13 +36,14 @@ export default function useBalances({ currentNetwork, account }) {
 
         const [truncated, decimal] = total.split('.');
 
-        setTotalTruncUSD(truncated);
-        setTotalDecimalUSD(decimal);
+        setTotalUSD({
+            truncated,
+            decimal
+        });
     }, [balances]);
 
     return {
         balances,
-        totalTruncUSD,
-        totalDecUSD
+        totalUSD
     }
 }

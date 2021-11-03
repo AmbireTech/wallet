@@ -11,7 +11,7 @@ import Deposit from './Deposit/Deposit'
 import DropDown from '../common/DropDown/DropDown'
 import { useEffect, useState } from 'react'
 
-export default function Wallet({ match, allNetworks, accounts, selectedAcc, onSelectAcc, network, setNetwork, connections, connect, disconnect, balances, totalTruncUSD, totalDecUSD }) {
+export default function Wallet({ match, allNetworks, accounts, selectedAcc, onSelectAcc, network, setNetwork, connections, connect, disconnect, balances, totalUSD }) {
     const [isClipboardGranted, setClipboardGranted] = useState(false);
 
     const checkPermissions = async () => {
@@ -45,7 +45,7 @@ export default function Wallet({ match, allNetworks, accounts, selectedAcc, onSe
 
                 <div className="balance">
                     <label>Balance</label>
-                    <div className="balanceDollarAmount"><span className="dollarSign highlight">$</span>{ totalTruncUSD }<span className="highlight">.{ totalDecUSD }</span></div>
+                    <div className="balanceDollarAmount"><span className="dollarSign highlight">$</span>{ totalUSD.truncated }<span className="highlight">.{ totalUSD.decimal }</span></div>
                 </div>
 
                 {/* TODO proper navi, programmatic selected class */}
@@ -122,7 +122,7 @@ export default function Wallet({ match, allNetworks, accounts, selectedAcc, onSe
             <div id="wallet-container">
                 <Switch>
                     <Route path={match.url + "/dashboard"}>
-                        <Dashboard balances={balances} totalTruncUSD={totalTruncUSD} totalDecUSD={totalDecUSD}/>
+                        <Dashboard balances={balances} totalUSD={{...totalUSD}}/>
                     </Route>
                     <Route path={match.url + "/deposit"}>
                         <Deposit selectedAcc={selectedAcc} selectedNetwork={network.id}/>
