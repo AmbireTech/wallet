@@ -1,10 +1,11 @@
 import './ToastProvider.css';
 
 import React, { useState } from "react";
+import { TransitionGroup, CSSTransition } from 'react-transition-group';
 
 const ToastContext = React.createContext(null);
 
-const ToastProvider = (props) => {
+const ToastProvider = ({ children }) => {
     const [toasts, setToasts] = useState([]);
     const [count, setCount] = useState(0);
 
@@ -31,16 +32,22 @@ const ToastProvider = (props) => {
                 removeToast
             }}
         >
-            <div id="toast-container">
-                {
-                    toasts.map(toast => (
-                        <div className="toast" key={toast.id}>
-                            { toast.content }
-                        </div>
-                    ))
-                }
-            </div>
-            { props.children }
+            
+                <div id="toast-container">
+                    <TransitionGroup>
+                    {
+                        toasts.map(toast => (
+                            <CSSTransition timeout={200} classNames="slide-fade" key={toast.id}>
+                                <div className="toast">
+                                    { toast.content }
+                                </div>
+                            </CSSTransition>
+                        ))
+                    }
+                    </TransitionGroup>
+                </div>
+            
+            { children }
         </ToastContext.Provider>
     );
 };
