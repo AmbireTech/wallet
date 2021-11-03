@@ -2,6 +2,7 @@ import './DropDown.css'
 
 import { useEffect, useRef, useState } from 'react';
 import { BsChevronUp, BsChevronDown } from 'react-icons/bs'
+import { CSSTransition } from 'react-transition-group';
 
 export default function DropDown(props) {
     const ref = useRef();
@@ -50,14 +51,11 @@ export default function DropDown(props) {
                     }
                 </div>
             </div>
-            {
-                isDropDownOpen ? 
-                    <div className="list">
-                        {props.children}
-                    </div>
-                    :
-                    null
-            }
+            <CSSTransition unmountOnExit in={isDropDownOpen} timeout={200} classNames="fade">
+                <div className="list">
+                    {props.children}
+                </div>
+            </CSSTransition>
         </div>
     )
 }
