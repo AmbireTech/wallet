@@ -4,7 +4,11 @@ import { Interface } from 'ethers/lib/utils'
 import { GiTakeMyMoney, GiSpectacles } from 'react-icons/gi'
 import verifiedContracts from '../../consts/verifiedContracts'
 import networks from '../../consts/networks'
+import ERC20ABI from 'adex-protocol-eth/abi/ERC20'
 import './SendTransaction.css'
+
+const ERC20 = new Interface(ERC20ABI)
+const TRANSFER_SIGHASH = ERC20.getSighash(ERC20.getFunction('transfer').format())
 
 export default function SendTransaction ({ userAction }) {
     console.log(userAction)
@@ -13,6 +17,8 @@ export default function SendTransaction ({ userAction }) {
                 <button onClick={userAction.fn}>Send txn</button>
             </>)
         : (<></>)
+
+    // @TODO custom parsing for univ2 contracts, exact output, etc.
     const getSummary = txn => {
         if (!userAction) return 'internal err: no user action'
 
@@ -26,7 +32,11 @@ export default function SendTransaction ({ userAction }) {
 
         if (parseInt(value) > 0) sendSummary = `send ${(parseInt(value)/1e18).toFixed(4)} ${network.nativeAssetSymbol} to ${contractInfo ? contractInfo.name : to}`
         if (data !== '0x') {
-            if (contractInfo) {
+            if (data.startsWith(TRANSFER_SIGHASH)) {
+                const [to, amount] = ERC20.decodeFunctionData('transfer', data)
+                // @TODO decimals
+                callSummary `send ${(amount/1e18).toFixed(4)} to ${to}`
+            } else if (contractInfo) {
                 const iface = new Interface(contractInfo.abi)
                 const parsed = iface.parseTransaction({ data, value })
                 callSummary = `Interaction with ${contractInfo.name}: ${parsed.name}`
