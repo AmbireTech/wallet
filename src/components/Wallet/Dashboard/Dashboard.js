@@ -2,7 +2,7 @@ import { useLayoutEffect, useState } from 'react'
 import { GiToken } from 'react-icons/gi'
 import './Dashboard.scss'
 
-export default function Dashboard({ balances }) {
+export default function Dashboard({ balances, totalTruncUSD, totalDecUSD }) {
     const [positiveBalances, setPositivesBalances] = useState([]);
 
     useLayoutEffect(() => {
@@ -11,6 +11,11 @@ export default function Dashboard({ balances }) {
 
     return (
         <section id="dashboard">
+            <div id="total" className="panel">
+                <span className="green-highlight">$</span>
+                { totalTruncUSD }
+                <span className="green-highlight">.{ totalDecUSD }</span>
+            </div>
             <div id="table" className="panel">
             {
                 positiveBalances.map(({ products }) => 

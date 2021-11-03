@@ -4,6 +4,10 @@
     gap: 20px;
     padding-bottom: 30px;
 
+    .green-highlight {
+        color:rgb(128, 255, 219);
+    }
+
     .panel {
         display: flex;
         flex-direction: column;
@@ -98,5 +102,13 @@
                 }
             }
         }
+    }
+
+    #total {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 0;
+        font-size: 2em;
     }
 }
