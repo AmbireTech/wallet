@@ -73,8 +73,10 @@
     height: 80px;
     position: fixed;
     top: 0;
+    left: 280px;
     right: 40px;
     display: flex;
+    justify-content: flex-end;
     gap: 1em;
     padding-top: 30px;
     background-color: rgb(40, 43, 51);
