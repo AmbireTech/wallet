@@ -89,6 +89,10 @@
     width: 150px;
 }
 
+.dapps-item {
+    width: 360px;
+}
+
 .dapps-item .icon {
     flex: 0 0 auto;
     height: 40px;
@@ -104,6 +108,10 @@
 
 .dapps-item .name {
     flex: 0 0 auto;
+    width: 190px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
 
 .dapps-item button {
