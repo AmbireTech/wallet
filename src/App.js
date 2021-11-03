@@ -10,6 +10,8 @@ import {
 import EmailLogin from './components/EmailLogin/EmailLogin'
 import AddAccount from './components/AddAccount/AddAcount'
 import Wallet from './components/Wallet/Wallet'
+import ToastProvider from './components/ToastProvider/ToastProvider'
+import SendTransaction from './components/SendTransaction/SendTransaction'
 import useAccounts from './hooks/accounts'
 import useNetwork from './hooks/network'
 import useWalletConnect from './hooks/walletconnect'
@@ -20,6 +22,7 @@ import { Bundle } from 'adex-protocol-eth/js'
 import { TrezorSubprovider } from '@0x/subproviders/lib/src/subproviders/trezor' // https://github.com/0xProject/0x-monorepo/issues/1400
 import TrezorConnect from 'trezor-connect'
 import { ethers, getDefaultProvider } from 'ethers'
+import useBalances from './hooks/balances'
 
 // @TODO consts/cfg
 const relayerURL = 'http://localhost:1934'
@@ -32,15 +35,25 @@ function App() {
   const onCallRequest = async (payload, wcConnector) => {
     // @TODO handle more
     if (payload.method !== 'eth_sendTransaction') return
+    // @TODO show error for this
+    if (wcConnector.chainId !== network.chainId) return
 
-    console.log('call onCallRequest')
+    const txnFrom = payload.params[0].from
+    const account = accounts.find(x => x.id.toLowerCase() === txnFrom.toLowerCase())
+    // @TODO check if this account is currently in accounts, send a toast if not
+    if (!account) {
+      return
+    }
+    console.log('call onCallRequest, with account: ', account, payload)
 
-    if (window.Notification && Notification.permission !== "denied") {
+    window.location.href = '/#/send-transaction'
+    if (window.Notification && Notification.permission !== 'denied') {
       Notification.requestPermission(function(status) {  // status is "granted", if accepted by user
         // @TODO parse transaction and actually show what we're signing
         if (status !== 'granted') return
          /*var n = */new Notification('Ambire Wallet: sign transaction', { 
           body: `Transaction to ${payload.params[0].to}`,
+          requireInteraction: true
           //icon: '/path/to/icon.png' // optional
         })
       })
@@ -54,15 +67,20 @@ function App() {
     // or just add a fixed premium on gasLimit
     const bundle = new Bundle({
       network: network.id,
-      identity: selectedAcc,
+      identity: account.id,
       // @TODO: take the gasLimit from the rawTxn
       // @TODO "|| '0x'" where applicable
       txns: [[rawTxn.to, rawTxn.value, rawTxn.data]],
-      signer: { address: localStorage.tempSigner } // @TODO
+      signer: account.signer
     })
 
     const estimation = await bundle.estimate({ relayerURL, fetch })
     console.log(estimation)
+    if (!estimation.success) {
+      // @TODO err handling here
+      console.error('estimation error', estimation)
+      return
+    }
     // pay a fee to the relayer
     bundle.txns.push(['0x942f9CE5D9a33a82F88D233AEb3292E680230348', Math.round(estimation.feeInNative.fast*1e18).toString(10), '0x'])
     await bundle.getNonce(provider)
@@ -70,6 +88,7 @@ function App() {
 
     setUserAction({
       bundle,
+      estimation,
       fn: async () => {
         // @TODO we have to cache `providerTrezor` otherwise it will always ask us whether we wanna expose the pub key
         const providerTrezor = new TrezorSubprovider({ trezorConnectClientApi: TrezorConnect })
@@ -81,6 +100,7 @@ function App() {
         await bundle.sign(walletShim)
         const bundleResult = await bundle.submit({ relayerURL, fetch })
         console.log(bundleResult)
+        console.log(providerTrezor._initialDerivedKeyInfo)
         wcConnector.approveRequest({
           id: payload.id,
           result: bundleResult.txId,
@@ -94,46 +114,49 @@ function App() {
     chainId: network.chainId,
     onCallRequest
   })
+  
+  const { balances } = useBalances({
+    currentNetwork: network.id,
+    account: selectedAcc
+  })
 
+  return (
+    <ToastProvider>
+      <Router>
+        {/*<nav>
+                <Link to="/email-login">Login</Link>
+        </nav>*/}
 
-  return (<>
+        <Switch>
+          <Route path="/add-account">
+            <AddAccount relayerURL={relayerURL} onAddAccount={onAddAccount}></AddAccount>
+          </Route>
 
-    <div id="dashboardArea">
-      {userAction ? (<><div>{userAction.bundle.txns[0][0]}</div><button onClick={userAction.fn}>Send txn</button></>) : (<></>)}
-    </div>
+          <Route path="/email-login">
+            <EmailLogin relayerURL={relayerURL} onAddAccount={onAddAccount}></EmailLogin>
+          </Route>
 
-    <Router>
-      {/*<nav>
-              <Link to="/email-login">Login</Link>
-      </nav>*/}
+          <Route path="/wallet" component={props => Wallet({ ...props,  accounts, selectedAcc, onSelectAcc, allNetworks, network, setNetwork, connections, connect, disconnect, balances})}>
+          </Route>
 
-      <Switch>
-        <Route path="/add-account">
-          <AddAccount relayerURL={relayerURL} onAddAccount={onAddAccount}></AddAccount>
-        </Route>
+          <Route path="/security"></Route>
+          <Route path="/transactions"></Route>
+          <Route path="/swap"></Route>
+          <Route path="/earn"></Route>
+          {/* TODO: connected dapps */}
+          {/* TODO: tx identifier in the URL */}
+          <Route path="/send-transaction">
+            <SendTransaction userAction={userAction}></SendTransaction>
+          </Route>
 
-        <Route path="/email-login">
-          <EmailLogin relayerURL={relayerURL} onAddAccount={onAddAccount}></EmailLogin>
-        </Route>
+          <Route path="/">
+            <Redirect to="/add-account" />
+          </Route>
 
-        <Route path="/wallet" component={props => Wallet({ ...props,  accounts, selectedAcc, onSelectAcc, allNetworks, network, setNetwork, connections, connect, disconnect})}>
-        </Route>
-
-        <Route path="/security"></Route>
-        <Route path="/transactions"></Route>
-        <Route path="/swap"></Route>
-        <Route path="/earn"></Route>
-        {/* TODO: connected dapps */}
-        {/* TODO: tx identifier in the URL */}
-        <Route path="/approve-tx"></Route>
-
-        <Route path="/">
-          <Redirect to="/add-account" />
-        </Route>
-
-      </Switch>
-    </Router>
-    </>)
+        </Switch>
+      </Router>
+    </ToastProvider>
+  )
 }
 
 export default App;

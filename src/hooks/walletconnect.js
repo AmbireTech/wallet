@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useReducer } from 'react'
+import { useCallback, useEffect, useReducer, useRef } from 'react'
 
 import WalletConnectCore from '@walletconnect/core'
 import * as cryptoLib from '@walletconnect/iso-crypto'
@@ -12,6 +12,10 @@ const SUPPORTED_METHODS = ['eth_sendTransaction', 'gs_multi_send', 'personal_sig
 const getDefaultState = () => ({ connectors: {}, connections: [] })
 
 export default function useWalletConnect ({ account, chainId, onCallRequest }) {
+    // This is needed cause of the WalletConnect event handlers
+    const stateRef = useRef()
+    stateRef.current = { onCallRequest, account, chainId }
+
     const [state, dispatch] = useReducer((state, action) => {
         if (action.type === 'updateConnections') return { ...state, connections: action.connections }
         if (action.type === 'addConnectors') {
@@ -55,11 +59,9 @@ export default function useWalletConnect ({ account, chainId, onCallRequest }) {
         })
 
         connector.on('session_request', (error, payload) => {
-            // While technically we may have an outdated account/chainId here, we do not care
-            // because the useEffect that updates sessions will catch it on the next re-render and update accordingly
             connector.approveSession({
-                accounts: [account],
-                chainId: chainId,
+                accounts: [stateRef.current.account],
+                chainId: stateRef.current.chainId,
             })
             dispatch({ type: 'connectedNewSession', uri: connectorOpts.uri, connector })
         })
@@ -71,20 +73,7 @@ export default function useWalletConnect ({ account, chainId, onCallRequest }) {
                 connector.rejectRequest({ id: payload.id, error: { message: 'METHOD_NOT_SUPPORTED' }})
                 return
             }
-            // Is there a more elegant way of getting the latest onCallRequest than routing back to the reducer?
-            // @TODO: pending requests or something
-            // we can store them in case we need them later (pending)
-            // @TODO: we need a way to know the latest account, chainId here; or just replace it with the thing on the prev comment
-            onCallRequest(payload, connector)
-                .catch(e => console.error(e))            /*
-            try {
-                await onCallRequest(payload, connector)
-            } catch (err) {
-                // @TODO: shouldn't we make this an internal error too?
-                console.error(err)
-                connector.rejectRequest({ id: payload.id, error: { message: err.message }})
-            }
-            */
+            stateRef.current.onCallRequest(payload, connector)
         })
 
         connector.on('disconnect', (error, payload) => {
@@ -94,7 +83,7 @@ export default function useWalletConnect ({ account, chainId, onCallRequest }) {
         })
 
         return connector
-    }, [state.connectors, account, chainId])
+    }, [state.connectors])
 
     const disconnect = useCallback(uri => {
         if (state.connectors[uri]) state.connectors[uri].killSession()
@@ -139,7 +128,6 @@ function runInitEffects(wcConnect) {
     const query = new URLSearchParams(window.location.href.split('?').slice(1).join('?'))
     const wcUri = query.get('uri')
     if (wcUri) wcConnect({ uri: wcUri })
-    // @TODO only on init; perhaps put this in the hook itself
 
     // hax
     window.wcConnect = uri => wcConnect({ uri })
