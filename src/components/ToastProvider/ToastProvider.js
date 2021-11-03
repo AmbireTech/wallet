@@ -1,6 +1,6 @@
 import './ToastProvider.css';
 
-import React, { useRef, useState } from "react";
+import React, { createRef, useState } from "react";
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
 
 const ToastContext = React.createContext(null);
@@ -8,18 +8,18 @@ const ToastContext = React.createContext(null);
 const ToastProvider = ({ children }) => {
     const [toasts, setToasts] = useState([]);
     const [count, setCount] = useState(0);
-    const transitionRef = useRef();
 
     const addToast = (content, timeout = 3000) => {
         setToasts(toasts => [
             ...toasts,
             {
                 id: count,
-                content
+                content,
+                ref: createRef()
             }
         ]);
-        setCount(count => count + 1);
         setTimeout(() => removeToast(count), timeout);
+        setCount(count => count + 1);
     };
 
     const removeToast = id => {
@@ -38,8 +38,8 @@ const ToastProvider = ({ children }) => {
                     <TransitionGroup>
                     {
                         toasts.map(toast => (
-                            <CSSTransition timeout={200} classNames="slide-fade" key={toast.id} nodeRef={transitionRef}>
-                                <div className="toast" ref={transitionRef}>
+                            <CSSTransition timeout={200} classNames="slide-fade" key={toast.id} nodeRef={toast.ref}>
+                                <div className="toast" ref={toast.ref}>
                                     { toast.content }
                                 </div>
                             </CSSTransition>
