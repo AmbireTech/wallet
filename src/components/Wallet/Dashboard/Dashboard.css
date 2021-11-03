@@ -1,4 +1,11 @@
-#table {
+#dashboard {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding-bottom: 30px;
+}
+
+.panel {
     display: flex;
     flex-direction: column;
     gap: 25px;
@@ -13,9 +20,10 @@
 }
 
 #table .category .title {
-    padding: 10px;
+    padding: 15px 20px;
     font-size: 20px;
     font-weight: bold;
+    background-color: rgba(255, 255, 255, 0.1);
 }
 
 #table .category .list {
@@ -26,14 +34,18 @@
 #table .category .list .token {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
     padding: 15px 20px;
     font-size: 15px;
     color: white;
 }
 
 #table .category .list .token:nth-child(odd) {
-    background-color: rgba(255, 255, 255, 0.05);
+    background-color: rgba(255, 255, 255, 0.04);
+}
+
+#table .category .list .token:nth-child(even) {
+    background-color: rgba(255, 255, 255, 0.02);
 }
 
 #table .category .list .token .separator {
@@ -41,8 +53,11 @@
 }
 
 #table .category .list .token .icon {
+    flex: 0 0 auto;
     height: 40px;
     width: 40px;
+    border-radius: 100%;
+    background-color: rgba(255, 255, 255, 0.1);
     overflow: hidden;
 }
 
@@ -63,6 +78,7 @@
 
 #table .category .list .token .balance .currency {
     font-size: 18px;
+    font-weight: 500;
 }
 
 #table .category .list .token .balance .currency .symbol {
@@ -72,6 +88,8 @@
 
 #table .category .list .token .balance .dollar {
     font-size: 14px;
+    font-weight: 500;
+    color: #bbb;
 }
 
 #table .category .list .token .balance .dollar .symbol {
