@@ -11,7 +11,7 @@ import Deposit from './Deposit/Deposit'
 import DropDown from '../common/DropDown/DropDown'
 import { useEffect, useState } from 'react'
 
-export default function Wallet({ match, allNetworks, accounts, selectedAcc, onSelectAcc, network, setNetwork, connections, connect, disconnect }) {
+export default function Wallet({ match, allNetworks, accounts, selectedAcc, onSelectAcc, network, setNetwork, connections, connect, disconnect, balances }) {
     const [isClipboardGranted, setClipboardGranted] = useState(false);
 
     const checkPermissions = async () => {
@@ -122,7 +122,7 @@ export default function Wallet({ match, allNetworks, accounts, selectedAcc, onSe
             <div id="wallet-container">
                 <Switch>
                     <Route path={match.url + "/dashboard"}>
-                        <Dashboard/>
+                        <Dashboard balances={balances}/>
                     </Route>
                     <Route path={match.url + "/deposit"}>
                         <Deposit selectedAcc={selectedAcc} selectedNetwork={network.id}/>
