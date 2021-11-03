@@ -13,9 +13,29 @@
         flex-direction: column;
         gap: 25px;
         padding: 30px;
+        padding-top: 25px;
         border-radius: 40px;
         background-color: rgba(0, 0, 0, 0.3);
 
+        .title {
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+
+        .content {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+    }
+
+    #balance {
+        #total {
+            font-size: 2em;
+        }
+    }
+
+    #table {
         .category {
             border-radius: 20px;
             overflow: hidden;
@@ -69,7 +89,7 @@
                     }
 
                     .name {
-                        font-size: 20px;
+                        font-size: 17px;
                         font-weight: bold;
                     }
 
@@ -102,13 +122,5 @@
                 }
             }
         }
-    }
-
-    #total {
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        gap: 0;
-        font-size: 2em;
     }
 }
