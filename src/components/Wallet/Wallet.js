@@ -1,4 +1,4 @@
-import './Wallet.css'
+import './Wallet.scss'
 
 import { Switch, Route, Redirect, NavLink } from 'react-router-dom'
 import { MdDashboard, MdLock, MdCompareArrows, } from 'react-icons/md'
@@ -7,10 +7,11 @@ import { GiReceiveMoney } from 'react-icons/gi'
 import { BsPiggyBank } from 'react-icons/bs'
 import { BiTransfer } from 'react-icons/bi'
 import Dashboard from './Dashboard/Dashboard'
+import Deposit from './Deposit/Deposit'
 import DropDown from '../common/DropDown/DropDown'
 import { useEffect, useState } from 'react'
 
-export default function Wallet({ match, allNetworks, accounts, selectedAcc, onSelectAcc, network, setNetwork, connections, connect, disconnect }) {
+export default function Wallet({ match, allNetworks, accounts, selectedAcc, onSelectAcc, network, setNetwork, connections, connect, disconnect, balances, totalTruncUSD, totalDecUSD }) {
     const [isClipboardGranted, setClipboardGranted] = useState(false);
 
     const checkPermissions = async () => {
@@ -44,7 +45,7 @@ export default function Wallet({ match, allNetworks, accounts, selectedAcc, onSe
 
                 <div className="balance">
                     <label>Balance</label>
-                    <div className="balanceDollarAmount"><span className="dollarSign highlight">$</span>999<span className="highlight">.00</span></div>
+                    <div className="balanceDollarAmount"><span className="dollarSign highlight">$</span>{ totalTruncUSD }<span className="highlight">.{ totalDecUSD }</span></div>
                 </div>
 
                 {/* TODO proper navi, programmatic selected class */}
@@ -118,19 +119,24 @@ export default function Wallet({ match, allNetworks, accounts, selectedAcc, onSe
                 </select>
             </div>
 
-            <Switch>
-                <Route path={match.url + "/dashboard"}>
-                    <Dashboard selectedAcc={selectedAcc} selectedNetwork={network.id}/>
-                </Route>
-                <Route path={match.url + "/security"}></Route>
-                <Route path={match.url + "/transactions"}></Route>
-                <Route path={match.url + "/swap"}></Route>
-                <Route path={match.url + "/earn"}></Route>
+            <div id="wallet-container">
+                <Switch>
+                    <Route path={match.url + "/dashboard"}>
+                        <Dashboard balances={balances} totalTruncUSD={totalTruncUSD} totalDecUSD={totalDecUSD}/>
+                    </Route>
+                    <Route path={match.url + "/deposit"}>
+                        <Deposit selectedAcc={selectedAcc} selectedNetwork={network.id}/>
+                    </Route>
+                    <Route path={match.url + "/security"}></Route>
+                    <Route path={match.url + "/transactions"}></Route>
+                    <Route path={match.url + "/swap"}></Route>
+                    <Route path={match.url + "/earn"}></Route>
 
-                <Route path={match.url + "/"}>
-                    <Redirect to={match.url + "/dashboard"}/>
-                </Route>
-            </Switch>
+                    <Route path={match.url + "/"}>
+                        <Redirect to={match.url + "/dashboard"}/>
+                    </Route>
+                </Switch>
+            </div>
         </div>
     )
 }
