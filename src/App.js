@@ -10,6 +10,7 @@ import {
 import EmailLogin from './components/EmailLogin/EmailLogin'
 import AddAccount from './components/AddAccount/AddAcount'
 import Wallet from './components/Wallet/Wallet'
+import ToastProvider from './components/ToastProvider/ToastProvider'
 import SendTransaction from './components/SendTransaction/SendTransaction'
 import useAccounts from './hooks/accounts'
 import useNetwork from './hooks/network'
@@ -21,6 +22,7 @@ import { Bundle } from 'adex-protocol-eth/js'
 import { TrezorSubprovider } from '@0x/subproviders/lib/src/subproviders/trezor' // https://github.com/0xProject/0x-monorepo/issues/1400
 import TrezorConnect from 'trezor-connect'
 import { ethers, getDefaultProvider } from 'ethers'
+import useBalances from './hooks/balances'
 
 // @TODO consts/cfg
 const relayerURL = 'http://localhost:1934'
@@ -112,41 +114,48 @@ function App() {
     chainId: network.chainId,
     onCallRequest
   })
+  
+  const { balances, totalTruncUSD, totalDecUSD } = useBalances({
+    currentNetwork: network.id,
+    account: selectedAcc
+  })
 
   return (
-    <Router>
-      {/*<nav>
-              <Link to="/email-login">Login</Link>
-      </nav>*/}
+    <ToastProvider>
+      <Router>
+        {/*<nav>
+                <Link to="/email-login">Login</Link>
+        </nav>*/}
 
-      <Switch>
-        <Route path="/add-account">
-          <AddAccount relayerURL={relayerURL} onAddAccount={onAddAccount}></AddAccount>
-        </Route>
+        <Switch>
+          <Route path="/add-account">
+            <AddAccount relayerURL={relayerURL} onAddAccount={onAddAccount}></AddAccount>
+          </Route>
 
-        <Route path="/email-login">
-          <EmailLogin relayerURL={relayerURL} onAddAccount={onAddAccount}></EmailLogin>
-        </Route>
+          <Route path="/email-login">
+            <EmailLogin relayerURL={relayerURL} onAddAccount={onAddAccount}></EmailLogin>
+          </Route>
 
-        <Route path="/wallet" component={props => Wallet({ ...props,  accounts, selectedAcc, onSelectAcc, allNetworks, network, setNetwork, connections, connect, disconnect})}>
-        </Route>
+          <Route path="/wallet" component={props => Wallet({ ...props,  accounts, selectedAcc, onSelectAcc, allNetworks, network, setNetwork, connections, connect, disconnect, balances, totalTruncUSD, totalDecUSD})}>
+          </Route>
 
-        <Route path="/security"></Route>
-        <Route path="/transactions"></Route>
-        <Route path="/swap"></Route>
-        <Route path="/earn"></Route>
-        {/* TODO: connected dapps */}
-        {/* TODO: tx identifier in the URL */}
-        <Route path="/send-transaction">
-          <SendTransaction userAction={userAction}></SendTransaction>
-        </Route>
+          <Route path="/security"></Route>
+          <Route path="/transactions"></Route>
+          <Route path="/swap"></Route>
+          <Route path="/earn"></Route>
+          {/* TODO: connected dapps */}
+          {/* TODO: tx identifier in the URL */}
+          <Route path="/send-transaction">
+            <SendTransaction userAction={userAction}></SendTransaction>
+          </Route>
 
-        <Route path="/">
-          <Redirect to="/add-account" />
-        </Route>
+          <Route path="/">
+            <Redirect to="/add-account" />
+          </Route>
 
-      </Switch>
-    </Router>
+        </Switch>
+      </Router>
+    </ToastProvider>
   )
 }
 
