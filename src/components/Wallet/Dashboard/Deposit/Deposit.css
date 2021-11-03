@@ -1,7 +1,7 @@
 #deposit {
     display: flex;
     justify-content: center;
-    gap: 3em;
+    gap: 2em;
 }
 
 #deposit .panel {
