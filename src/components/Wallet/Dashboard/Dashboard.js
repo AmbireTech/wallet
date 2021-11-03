@@ -5,7 +5,7 @@ export default function Dashboard({ balances }) {
     const [positiveBalances, setPositivesBalances] = useState([]);
 
     useEffect(() => {
-        setPositivesBalances(balances.filter(({ products }) => products.length));
+        setPositivesBalances(balances.filter(({ products }) => products && products.length));
     }, [balances]);
 
     return (
