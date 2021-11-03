@@ -1,4 +1,4 @@
-import './ToastProvider.css';
+import './ToastProvider.scss';
 
 import React, { createRef, useState } from "react";
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
