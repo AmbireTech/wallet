@@ -2,10 +2,17 @@
   font-family: 'Open Sans';
   src: url('./fonts/OpenSans-Regular.ttf');
 }
+
 @font-face {
   font-family: 'Open Sans';
   font-weight: 600;
   src: url('./fonts/OpenSans-Regular.ttf');
+}
+
+@font-face {
+  font-family: 'Open Sans';
+  font-weight: 500;
+  src: url('./fonts/OpenSans-Medium.ttf');
 }
 
 @font-face {
@@ -256,4 +263,60 @@ select {
   text-align: center;
   font-size: 1.5em;
   font-weight: 300;
+}
+
+.slide-fade-enter {
+  opacity: 0;
+  transform: translateY(50px);
+}
+
+.slide-fade-enter.slide-fade-enter-active {
+  opacity: 1;
+  transform: translateY(0px);
+  transition: opacity 0.2s ease-in-out, transform 0.1s ease-in-out;
+}
+
+.slide-fade-enter-done {
+  opacity: 1;
+  transform: translateY(0px);
+}
+
+.slide-fade-exit {
+  opacity: 1;
+  transform: translateY(0px);
+}
+
+.slide-fade-exit.slide-fade-exit-active {
+  opacity: 0;
+  transition: opacity 0.2s ease-in-out, transform 0.1s ease-in-out;
+}
+
+.slide-fade-exit-done {
+  opacity: 0;
+}
+
+.fade-enter {
+  opacity: 0;
+}
+
+.fade-enter.fade-enter-active {
+  opacity: 1;
+  transition: opacity 0.2s ease-in-out;
+}
+
+.fade-enter-done {
+  opacity: 1;
+}
+
+.fade-exit {
+  opacity: 1;
+}
+
+.fade-exit.fade-exit-active {
+  opacity: 0;
+  transition: opacity 0.2s ease-in-out;
+}
+
+.fade-exit-done {
+  opacity: 0;
 }
