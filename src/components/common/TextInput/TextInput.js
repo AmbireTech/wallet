@@ -6,9 +6,9 @@ import { useToasts } from '../../../helpers/toasts';
 export default function TextInput({ value, disabled, copy }) {
     const { addToast } = useToasts();
 
-    const onClick = () => {
-        navigator.clipboard.writeText(value);
-        addToast("Copied !");
+    const onClick = async () => {
+        await navigator.clipboard.writeText(value);
+        addToast("Copied to clipboard!");
     };
 
     return (
