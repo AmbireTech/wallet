@@ -10,7 +10,7 @@ export default function Dashboard({ balances }) {
 
     return (
         <section id="dashboard">
-            <div id="table">
+            <div id="table" className="panel">
             {
                 positiveBalances.map(({ appId, products }) => 
                     products.map(({ label, assets }) => (
