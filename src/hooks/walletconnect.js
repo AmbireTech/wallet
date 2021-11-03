@@ -83,7 +83,7 @@ export default function useWalletConnect ({ account, chainId, onCallRequest }) {
         })
 
         return connector
-    }, [state.connectors, account, chainId])
+    }, [state.connectors])
 
     const disconnect = useCallback(uri => {
         if (state.connectors[uri]) state.connectors[uri].killSession()

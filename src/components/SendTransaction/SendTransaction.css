@@ -1,0 +1,62 @@
+#sendTransaction {
+    display: flex;
+    justify-content: center;
+    gap: 2em;
+    margin: 2em;
+}
+
+#sendTransaction .panel {
+    padding: 2em;
+    box-sizing: border-box;
+    background-color: rgba(0, 0, 0, 0.2);
+}
+
+#sendTransaction .panel .heading {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+}
+
+#sendTransaction .panel .heading .title {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    font-size: 1.5em;
+    font-weight: bold;
+    color: rgb(128, 255, 219);
+    text-transform: uppercase;
+}
+
+
+#sendTransaction .fees {
+    overflow: hidden;
+    margin: 1em 0px;
+    min-width: 360px;
+}
+
+#sendTransaction .feeSquare {
+    box-sizing: border-box;
+    background-color: #ccc;
+    color: black;
+    text-align: center;
+    min-height: 80px;
+    width: 80px;
+    float: left;
+    margin-right: 10px;
+    padding: 10px;
+    box-sizing: border-box;
+    border: 5px solid transparent;
+    overflow: hidden;
+    cursor: pointer;
+    user-select: none;
+}
+#sendTransaction .feeSquare.selected {
+    border: 5px solid rgb(128, 255, 219);
+}
+#sendTransaction .feeSquare .speed {
+    text-transform: uppercase;
+    font-size: 0.8em;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
