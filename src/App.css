@@ -287,3 +287,29 @@ select {
 .slide-fade-exit-done {
   opacity: 0;
 }
+
+.fade-enter {
+  opacity: 0;
+}
+
+.fade-enter.fade-enter-active {
+  opacity: 1;
+  transition: opacity 0.2s ease-in-out;
+}
+
+.fade-enter-done {
+  opacity: 1;
+}
+
+.fade-exit {
+  opacity: 1;
+}
+
+.fade-exit.fade-exit-active {
+  opacity: 0;
+  transition: opacity 0.2s ease-in-out;
+}
+
+.fade-exit-done {
+  opacity: 0;
+}
