@@ -24,16 +24,18 @@ export default function EmailLogin({ relayerURL, onAddAccount }) {
       // but for now we're handling this simply by showing progress in a different way (button shows 'Logging in...')
       try {
         const wallet = await Wallet.fromEncryptedJson(JSON.parse(identityInfo.meta.primaryKeyBackup), passphrase)
-        // console.log(wallet)
         const { _id, salt, identityFactoryAddr, baseIdentityAddr } = identityInfo
+        const { quickAccSigner } = identityInfo.meta
+        if (wallet.address !== quickAccSigner.one) {
+            setErr('Decrypted wallet address does not match quick account')
+            return
+        }
         onAddAccount({
           id: _id,
           email: identityInfo.meta.email,
           primaryKeyBackup: identityInfo.meta.primaryKeyBackup,
           salt, identityFactoryAddr, baseIdentityAddr,
-          // @TODO: this is inaccurate, we need the QuickAccount, not the EOA directly; signer: { quickAccManager...  }
-          // currently this is here just to silence the warning
-          signer: { address: wallet.address }
+          signer: quickAccSigner
         }, { select: true })
       } catch (e) {
         if (e.message.includes('invalid password')) setErr('Invalid passphrase')

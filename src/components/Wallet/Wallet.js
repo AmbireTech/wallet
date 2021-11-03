@@ -14,16 +14,24 @@ export default function Wallet({ match, allNetworks, accounts, selectedAcc, onSe
     const [isClipboardGranted, setClipboardGranted] = useState(false);
 
     const checkPermissions = async () => {
-        const response = await navigator.permissions.query({ name: 'clipboard-read', allowWithoutGesture: false });
-        const status = response.state === 'granted' || response.state === 'prompt' ? true : false;
-        setClipboardGranted(status);
-        return status;
+        let status = false
+        try {
+            const response = await navigator.permissions.query({ name: 'clipboard-read', allowWithoutGesture: false })
+            status = response.state === 'granted' || response.state === 'prompt' ? true : false
+        } catch (e) {
+            console.error(e)
+        }
+        setClipboardGranted(status)
+        return status
     };
 
     const readClipboard = async () => {
         if (await checkPermissions()) {
-            const content = await navigator.clipboard.readText();
-            connect({ uri: content });
+            const content = await navigator.clipboard.readText()
+            connect({ uri: content })
+        } else {
+            const uri = prompt('Enter WalletConnect URI')
+            connect({ uri })
         }
     };
 
