@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { GiToken } from 'react-icons/gi'
-import './Dashboard.css'
+import './Dashboard.scss'
 
 export default function Dashboard({ balances }) {
     const [positiveBalances, setPositivesBalances] = useState([]);
