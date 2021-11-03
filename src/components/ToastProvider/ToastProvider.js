@@ -6,9 +6,9 @@ const ToastContext = React.createContext(null);
 
 const ToastProvider = (props) => {
     const [toasts, setToasts] = useState([]);
-    const [count, setCounter] = useState(0);
+    const [count, setCount] = useState(0);
 
-    const addToast = content => {
+    const addToast = (content, timeout = 3000) => {
         setToasts(toasts => [
             ...toasts,
             {
@@ -16,7 +16,8 @@ const ToastProvider = (props) => {
                 content
             }
         ]);
-        setCounter(count + 1);
+        setCount(count => count + 1);
+        setTimeout(() => removeToast(count), timeout);
     };
 
     const removeToast = id => {
