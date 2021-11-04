@@ -3,7 +3,7 @@ import { supportedBalances, getBalances } from '../services/zapper';
 
 import { ZAPPER_API_KEY } from '../config';
 
-export default function useBalances({ currentNetwork, account }) {
+export default function usePortfolio({ currentNetwork, account }) {
     const [isLoading, setLoading] = useState(true);
     const [balances, setBalance] = useState([]);
     const [totalUSD, setTotalUSD] = useState({
