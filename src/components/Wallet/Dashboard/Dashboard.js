@@ -2,23 +2,47 @@ import './Dashboard.scss'
 
 import { useLayoutEffect, useState } from 'react'
 import { GiToken } from 'react-icons/gi'
+
 import Loading from '../../common/Loading/Loading'
+import Chart from '../../Chart/Chart'
 
 export default function Dashboard({ balances, totalUSD }) {
     const [positiveBalances, setPositivesBalances] = useState([]);
+    const [chartData, setChartData] = useState([]);
 
     useLayoutEffect(() => {
+        const chartData = balances
+            .filter(({ meta }) => meta && meta.length)
+            .map(({ appId, meta }) => ({
+                label: appId,
+                value: meta.find(({ label }) => label === 'Total').value
+            }))
+            .map(({ label, value }) => ({
+                label,
+                value: Number(((value / totalUSD.truncated) * 100).toFixed(2))
+            }))
+            .filter(({ value }) => value > 0);
+
+        setChartData(chartData);
         setPositivesBalances(balances.filter(({ products }) => products && products.length));
     }, [balances]);
 
     return (
         <section id="dashboard">
-            <div id="balance" className="panel">
-                <div className="title">Balance</div>
-                <div className="content">
-                    <div id="total">
-                        <span className="green-highlight">$</span> { totalUSD.truncated }
-                        <span className="green-highlight">.{ totalUSD.decimal }</span>
+            <div id="overview">
+                <div id="balance" className="panel">
+                    <div className="title">Balance</div>
+                    <div className="content">
+                        <div id="total">
+                            <span className="green-highlight">$</span> { totalUSD.truncated }
+                            <span className="green-highlight">.{ totalUSD.decimal }</span>
+                        </div>
+                    </div>
+                </div>
+                <div id="chart" className="panel">
+                    <div className="title">Chart</div>
+                    <div className="content">
+                       <Chart data={chartData} size={200}/>
                     </div>
                 </div>
             </div>
