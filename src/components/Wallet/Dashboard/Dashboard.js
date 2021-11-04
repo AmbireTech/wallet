@@ -19,7 +19,7 @@ export default function Dashboard({ balances, totalUSD }) {
             }))
             .map(({ label, value }) => ({
                 label,
-                value: Number(((value / totalUSD.truncated) * 100).toFixed(2))
+                value: Number(((value / totalUSD.full) * 100).toFixed(2))
             }))
             .filter(({ value }) => value > 0);
 
@@ -34,8 +34,8 @@ export default function Dashboard({ balances, totalUSD }) {
                     <div className="title">Balance</div>
                     <div className="content">
                         <div id="total">
-                            <span className="green-highlight">$</span> { totalUSD.truncated }
-                            <span className="green-highlight">.{ totalUSD.decimal }</span>
+                            <span className="green-highlight">$</span> { totalUSD.formated }
+                            <span className="green-highlight">.{ totalUSD.decimals }</span>
                         </div>
                     </div>
                 </div>

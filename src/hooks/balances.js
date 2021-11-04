@@ -34,11 +34,13 @@ export default function useBalances({ currentNetwork, account }) {
             .reduce((acc, curr) => acc + curr, 0)
             .toFixed(2);
 
-        const [truncated, decimal] = total.split('.');
+        const [truncated, decimals] = total.split('.');
+        const formated = Number(truncated).toLocaleString('en-US');
 
         setTotalUSD({
-            truncated,
-            decimal
+            full: total,
+            formated,
+            decimals
         });
     }, [balances]);
 
