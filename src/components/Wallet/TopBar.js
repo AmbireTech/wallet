@@ -1,11 +1,11 @@
-import "./TopBar.css";
+import "./TopBar.scss";
 
 import React, { useState, useEffect } from "react";
 import { FiHelpCircle } from "react-icons/fi";
 import DropDown from "../common/DropDown/DropDown";
 
 const TopBar = ({
-    match,
+  match,
   connections,
   connect,
   disconnect,
@@ -19,12 +19,19 @@ const TopBar = ({
   const [isClipboardGranted, setClipboardGranted] = useState(false);
 
   const checkPermissions = async () => {
-    const response = await navigator.permissions.query({
-      name: "clipboard-read",
-      allowWithoutGesture: false,
-    });
-    const status = response.state === 'granted' || response.state === 'prompt' ? true : false;
-    
+    let status = false;
+    try {
+      const response = await navigator.permissions.query({
+        name: "clipboard-read",
+        allowWithoutGesture: false,
+      });
+      status =
+        response.state === "granted" || response.state === "prompt"
+          ? true
+          : false;
+    } catch (e) {
+      console.error(e);
+    }
     setClipboardGranted(status);
     return status;
   };
@@ -33,6 +40,9 @@ const TopBar = ({
     if (await checkPermissions()) {
       const content = await navigator.clipboard.readText();
       connect({ uri: content });
+    } else {
+      const uri = prompt("Enter WalletConnect URI");
+      connect({ uri });
     }
   };
 

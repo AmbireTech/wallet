@@ -1,0 +1,70 @@
+$sidebar-width: 280px;
+
+#sidebar {
+    width: $sidebar-width;
+    position: fixed;
+    left: 0px;
+    bottom: 0px;
+    top: 0px;
+    box-sizing: border-box;
+
+    .logo {
+        background-image: url('../../resources/logo.png');
+        width: 100%;
+        margin: 1em 0em 3em 0.5em;
+        height: 70px;
+        background-size: contain;
+        background-repeat: no-repeat;
+        background-position: center left;
+    }
+
+    .balance {
+        margin-bottom: 3em;
+        padding-left: 1em;
+
+        label {
+            text-transform: uppercase;
+            line-height: 1.75;
+            font-weight: 600;
+        }
+    }
+
+    .item {
+        padding: 15px 0px;
+        line-height: 30px;
+        cursor: pointer;
+        color: #bbb;
+
+        &:hover {
+            background-color: rgba(0, 0, 0, 0.3);
+            color: #fff;
+
+            svg {
+                color: #fff;
+            }
+        }
+
+        svg {
+            margin-right: 30px;
+            margin-left: 15px;
+            color: #bbb;
+            float: left;
+        }
+    }
+
+    a.selected .item svg {
+        color: #AA6AFF;
+    }
+
+    .highlight {
+        color: rgb(128, 255, 219);
+    }
+
+    .dollarSign {
+        margin-right: 5px;
+    }
+
+    .balanceDollarAmount {
+        font-size: 2em;
+    }
+}
