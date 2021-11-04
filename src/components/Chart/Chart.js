@@ -41,7 +41,7 @@ const Chart = ({ data, size }) => {
     };
 
     return (
-        <div class="chart" style={{height: size}}>
+        <div className="chart" style={{height: size}}>
             <DonutChart
                 className="donut"
                 height={size}
@@ -59,7 +59,7 @@ const Chart = ({ data, size }) => {
             <div className="legend">
                 {
                     data.map((item, i) => (
-                        <div className={`item ${hoveredItem === item.label ? 'active' : ''}`}>
+                        <div className={`item ${hoveredItem === item.label ? 'active' : ''}`} key={item.label}>
                             <div className="color" style={{backgroundColor: getItemColor(i)}}/>
                             <label>{ item.label }</label>
                             <div className="separator"></div>
