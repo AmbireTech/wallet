@@ -7,6 +7,12 @@ import ERC20ABI from 'adex-protocol-eth/abi/ERC20'
 const ERC20 = new Interface(ERC20ABI)
 const TRANSFER_SIGHASH = ERC20.getSighash(ERC20.getFunction('transfer').format())
 
+export function getBundleShortSummary(bundle) {
+    return bundle.txns
+        .map(txn => getTransactionSummary(txn, bundle))
+        .join(',')
+        .slice(0, 50) + '...'
+}
 // @TODO custom parsing for univ2 contracts, exact output, etc.
 export function getTransactionSummary(txn, bundle) {
     const [to, value, data] = txn
