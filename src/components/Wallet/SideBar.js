@@ -15,7 +15,7 @@ const SideBar = ({match, totalUSD}) => {
 
                 <div className="balance">
                     <label>Balance</label>
-                    <div className="balanceDollarAmount"><span className="dollarSign highlight">$</span>{ totalUSD.truncated }<span className="highlight">.{ totalUSD.decimal }</span></div>
+                    <div className="balanceDollarAmount"><span className="dollarSign highlight">$</span>{ totalUSD.formated }<span className="highlight">.{ totalUSD.decimals }</span></div>
                 </div>
 
                 {/* TODO proper navi, programmatic selected class */}
