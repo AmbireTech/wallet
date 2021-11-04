@@ -10,6 +10,24 @@
 * Deck: https://docsend.com/view/qijz3atn4j43f3za
 * FAQs: https://help.adex.network/hc/en-us/categories/4404980091538-Ambire-Wallet
 
+## Running
+
+**NOTE:** make sure that you use the `wallet-v2` branch of the relayer
+
+First, clone and run the relayer
+```
+git clone https://github.com/AmbireTech/relayer.git -b wallet-v2
+cd relayer
+npm i
+NODE_ENV=development npm start
+```
+
+Then run the Ambire Wallet:
+```
+npm i
+npm start
+```
+
 ## Available Scripts
 
 In the project directory, you can run:
