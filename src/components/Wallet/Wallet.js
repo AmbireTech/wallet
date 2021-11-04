@@ -5,16 +5,22 @@ import Dashboard from "./Dashboard/Dashboard";
 import TopBar from "./TopBar";
 import SideBar from "./SideBar";
 import Deposit from "./Deposit/Deposit"
+import useBalances from '../../hooks/balances'
 
 export default function Wallet(props) {
+  const { balances, totalUSD, isLoading } = useBalances({
+    currentNetwork: props.network.id,
+    account: props.selectedAcc
+  })
+
   return (
     <div id="wallet">
       <TopBar {...props} />
-      <SideBar match={props.match} totalUSD={props.totalUSD} isLoading={props.isLoading}/>
+      <SideBar match={props.match} totalUSD={totalUSD} isLoading={isLoading}/>
       <div id="wallet-container">
         <Switch>
           <Route path={props.match.url + "/dashboard"}>
-            <Dashboard balances={props.balances} totalUSD={props.totalUSD} isLoading={props.isLoading} />
+            <Dashboard balances={balances} totalUSD={totalUSD} isLoading={isLoading} />
           </Route>
           <Route path={props.match.url + "/deposit"}>
             <Deposit selectedAcc={props.selectedAcc} selectedNetwork={props.network.id} />
