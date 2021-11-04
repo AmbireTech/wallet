@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react'
-import Checkbox from "../Checkbox/Checkbox"
+import { Checkbox } from "../common"
 
 export default function LoginOrSignupForm({ action = 'LOGIN', onAccRequest, inProgress }) {
     const passConfirmInput = useRef(null)

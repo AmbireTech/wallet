@@ -3,8 +3,7 @@ import './Dashboard.scss'
 import { useLayoutEffect, useState } from 'react'
 import { GiToken } from 'react-icons/gi'
 
-import Loading from '../../common/Loading/Loading'
-import Chart from '../../Chart/Chart'
+import { Chart, Loading } from '../../common'
 
 export default function Dashboard({ balances, totalUSD }) {
     const [positiveBalances, setPositivesBalances] = useState([]);
