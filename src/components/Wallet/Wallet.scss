@@ -172,8 +172,9 @@ $sidebar-width: 280px;
 
 #wallet-container {
     position: absolute;
-    top: 150px;
-    left: 320px;
-    right: 50px;
-    bottom: 30px;
+    top: 100px;
+    left: $sidebar-width;
+    right: 0;
+    bottom: 0;
+    padding: 50px;
 }
