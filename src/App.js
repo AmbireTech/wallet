@@ -33,7 +33,10 @@ function App() {
   const [userAction, setUserAction] = useState(null)
   const onCallRequest = async (payload, wcConnector) => {
     // @TODO handle more
-    if (payload.method !== 'eth_sendTransaction') return
+    if (payload.method !== 'eth_sendTransaction') {
+      console.log('unsupported method', payload)
+      return
+    }
     // @TODO show error for this
     if (wcConnector.chainId !== network.chainId) return
 
