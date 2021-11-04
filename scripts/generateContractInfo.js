@@ -28,9 +28,14 @@ async function generate () {
 		output[network+':'+contract] = { name, abi: JSON.parse(abiResp.result) }
 	}))
 
-	const tokens = (await Promise.all(tokenlists.map(async url => await fetch(url).then(r => r.json())))).reduce((acc, list) => {
-		// @TODO conflict checking
-		list.tokens.forEach(t => acc[t.address] = [t.symbol, t.decimals])
+	const tokenLists = await Promise.all(tokenlists.map(
+		async url => await fetch(url).then(r => r.json())
+	))
+	const tokens = tokenLists.reduce((acc, list) => {
+		list.tokens.forEach(t => {
+			if (acc[t.address] && acc[t.address].decimals !== acc[t.address].decimals) throw new Error('unexpected token conflict: same addr token, different decimals')
+			acc[t.address] = [t.symbol, t.decimals]
+		})
 		return acc
 	}, {})
 
