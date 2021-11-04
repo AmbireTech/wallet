@@ -1,3 +1,5 @@
+import './EmailLogin.scss'
+
 import { useState, useEffect } from 'react'
 import { MdEmail } from 'react-icons/md'
 import { Wallet } from 'ethers'
