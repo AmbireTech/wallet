@@ -22,6 +22,7 @@ import { Bundle } from 'adex-protocol-eth/js'
 import { TrezorSubprovider } from '@0x/subproviders/lib/src/subproviders/trezor' // https://github.com/0xProject/0x-monorepo/issues/1400
 import TrezorConnect from 'trezor-connect'
 import { ethers, getDefaultProvider } from 'ethers'
+import { getBundleShortSummary } from './lib/humanReadableTransactions'
 
 // @TODO consts/cfg
 const relayerURL = 'http://localhost:1934'
@@ -48,20 +49,6 @@ function App() {
     }
     console.log('call onCallRequest, with account: ', account, payload)
 
-    window.location.href = '/#/send-transaction'
-    if (window.Notification && Notification.permission !== 'denied') {
-      Notification.requestPermission(function(status) {  // status is "granted", if accepted by user
-        // @TODO parse transaction and actually show what we're signing
-        if (status !== 'granted') return
-         /*var n = */new Notification('Ambire Wallet: sign transaction', { 
-          body: `Transaction to ${payload.params[0].to}`,
-          requireInteraction: true
-          //icon: '/path/to/icon.png' // optional
-        })
-      })
-    }
-
-    const provider = getDefaultProvider(network.rpc)
     const rawTxn = payload.params[0]
     // @TODO: add a subtransaction that's supposed to `simulate` the fee payment so that
     // we factor in the gas for that; it's ok even if that txn ends up being
@@ -75,7 +62,20 @@ function App() {
       txns: [[rawTxn.to, rawTxn.value, rawTxn.data]],
       signer: account.signer
     })
-
+    window.location.href = '/#/send-transaction'
+    if (window.Notification && Notification.permission !== 'denied') {
+      Notification.requestPermission(function(status) {  // status is "granted", if accepted by user
+        // @TODO parse transaction and actually show what we're signing
+        if (status !== 'granted') return
+         /*var n = */new Notification('Ambire Wallet: new transaction request', { 
+          body: `${getBundleShortSummary(bundle)}`,
+          requireInteraction: true
+          //icon: '/path/to/icon.png' // optional
+        })
+      })
+    }
+  
+    const provider = getDefaultProvider(network.rpc)
     const estimation = await bundle.estimate({ relayerURL, fetch })
     console.log(estimation)
     if (!estimation.success) {
