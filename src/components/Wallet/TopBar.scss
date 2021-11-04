@@ -1,4 +1,4 @@
-$sidebar-width: 280px;
+@import '../../variables.scss';
 
 #topbar {
     z-index: 99;
@@ -17,7 +17,7 @@ $sidebar-width: 280px;
         display: flex;
         justify-content: flex-end;
         align-items: center;
-        width: calc(100% - 280px);
+        width: calc(100% - #{$sidebar-width});
         /* max-width: 1500px; */
         gap: 1em;
         flex-wrap: wrap;
@@ -70,7 +70,7 @@ $sidebar-width: 280px;
       transition: all 0.1s ease-in-out;
 
       &:hover {
-          background-color: #da5151;
+          background-color: $danger-color;
           border-color: transparent;
       }
   }
@@ -95,7 +95,7 @@ $sidebar-width: 280px;
           font-weight: bold;
           text-transform: uppercase;
           color: black;
-          background-color: rgb(128, 255, 219);
+          background-color: $primary-accent-color;
           opacity: 1;
           transition: all 0.1s ease-in-out;
 
