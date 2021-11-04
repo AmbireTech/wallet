@@ -10,11 +10,11 @@ export default function Wallet(props) {
   return (
     <div id="wallet">
       <TopBar {...props} />
-      <SideBar match={props.match} totalUSD={props.totalUSD}/>
+      <SideBar match={props.match} totalUSD={props.totalUSD} isLoading={props.isLoading}/>
       <div id="wallet-container">
         <Switch>
           <Route path={props.match.url + "/dashboard"}>
-            <Dashboard balances={props.balances} totalUSD={props.totalUSD} />
+            <Dashboard balances={props.balances} totalUSD={props.totalUSD} isLoading={props.isLoading} />
           </Route>
           <Route path={props.match.url + "/deposit"}>
             <Deposit selectedAcc={props.selectedAcc} selectedNetwork={props.network.id} />

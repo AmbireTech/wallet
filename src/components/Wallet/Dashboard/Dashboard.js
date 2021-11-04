@@ -5,7 +5,7 @@ import { GiToken } from 'react-icons/gi'
 
 import { Chart, Loading } from '../../common'
 
-export default function Dashboard({ balances, totalUSD }) {
+export default function Dashboard({ balances, totalUSD, isLoading }) {
     const [positiveBalances, setPositivesBalances] = useState([]);
     const [chartData, setChartData] = useState([]);
 
@@ -33,7 +33,7 @@ export default function Dashboard({ balances, totalUSD }) {
                     <div className="title">Balance</div>
                     <div className="content">
                         {
-                            !totalUSD.full ? 
+                            isLoading ? 
                                 <Loading/>
                                 :
                                 <div id="total">
@@ -47,7 +47,7 @@ export default function Dashboard({ balances, totalUSD }) {
                     <div className="title">Chart</div>
                     <div className="content">
                         {
-                            !chartData.length ? 
+                            isLoading ? 
                                 <Loading/>
                                 :
                                 <Chart data={chartData} size={200}/>
@@ -59,7 +59,7 @@ export default function Dashboard({ balances, totalUSD }) {
                 <div className="title">Assets</div>
                 <div className="content">
                     {
-                        !positiveBalances.length ?
+                        isLoading ?
                             <Loading/>
                             :
                             positiveBalances.map(({ products }) => 
