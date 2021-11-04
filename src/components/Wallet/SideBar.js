@@ -1,4 +1,4 @@
-import "./SideBar.css"
+import "./SideBar.scss"
 
 import { NavLink } from 'react-router-dom'
 import { MdDashboard, MdLock, MdCompareArrows, } from 'react-icons/md'
@@ -6,7 +6,7 @@ import { GiReceiveMoney } from 'react-icons/gi'
 import { BsPiggyBank } from 'react-icons/bs'
 import { BiTransfer } from 'react-icons/bi'
 
-const SideBar = ({match}) => {
+const SideBar = ({match, totalUSD}) => {
     return (
         <div id="sidebar">
                 <NavLink to={match.url + "/dashboard"}>
@@ -15,7 +15,7 @@ const SideBar = ({match}) => {
 
                 <div className="balance">
                     <label>Balance</label>
-                    <div className="balanceDollarAmount"><span className="dollarSign highlight">$</span>999<span className="highlight">.00</span></div>
+                    <div className="balanceDollarAmount"><span className="dollarSign highlight">$</span>{ totalUSD.truncated }<span className="highlight">.{ totalUSD.decimal }</span></div>
                 </div>
 
                 {/* TODO proper navi, programmatic selected class */}
