@@ -1,4 +1,4 @@
-import { Interface } from 'ethers/lib/utils'
+import { Interface, getAddress } from 'ethers/lib/utils'
 
 import { verifiedContracts, tokens } from '../consts/verifiedContracts'
 import networks from '../consts/networks'
@@ -14,15 +14,20 @@ export function getTransactionSummary(txn, bundle) {
     // @TODO proper asset symbol
     const network = networks.find(x => x.id === bundle.network)
 
-    const contractKey = bundle.network + ':' + to
+    const contractKey = bundle.network + ':' + getAddress(to)
     const contractInfo = verifiedContracts[contractKey]
 
     if (parseInt(value) > 0) sendSummary = `send ${(parseInt(value)/1e18).toFixed(4)} ${network.nativeAssetSymbol} to ${contractInfo ? contractInfo.name : to}`
     if (data !== '0x') {
         if (data.startsWith(TRANSFER_SIGHASH)) {
             const [to, amount] = ERC20.decodeFunctionData('transfer', data)
-            // @TODO decimals, symbol
-            callSummary `send ${(amount/1e18).toFixed(4)} to ${to}`
+            const token = tokens[getAddress(to)]
+            if (token) {
+                callSummary = `send ${(amount/Math.pow(10, token[1])).toFixed(4)} ${token[0]} to ${to}`
+            } else {
+                // @TODO: maybe we can call the contract and get detailed data
+                callSummary = `send ${amount/1e18} unknown token to ${to}`
+            }
         } else if (contractInfo) {
             const iface = new Interface(contractInfo.abi)
             const parsed = iface.parseTransaction({ data, value })
