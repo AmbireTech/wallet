@@ -22,7 +22,6 @@ import { Bundle } from 'adex-protocol-eth/js'
 import { TrezorSubprovider } from '@0x/subproviders/lib/src/subproviders/trezor' // https://github.com/0xProject/0x-monorepo/issues/1400
 import TrezorConnect from 'trezor-connect'
 import { ethers, getDefaultProvider } from 'ethers'
-import useBalances from './hooks/balances'
 
 // @TODO consts/cfg
 const relayerURL = 'http://localhost:1934'
@@ -114,11 +113,6 @@ function App() {
     chainId: network.chainId,
     onCallRequest
   })
-  
-  const { balances, totalUSD, isLoading } = useBalances({
-    currentNetwork: network.id,
-    account: selectedAcc
-  })
 
   return (
     <ToastProvider>
@@ -136,7 +130,7 @@ function App() {
             <EmailLogin relayerURL={relayerURL} onAddAccount={onAddAccount}></EmailLogin>
           </Route>
 
-          <Route path="/wallet" component={props => Wallet({ ...props,  accounts, selectedAcc, onSelectAcc, allNetworks, network, setNetwork, connections, connect, disconnect, balances, totalUSD, isLoading })}>
+          <Route path="/wallet" component={props => Wallet({ ...props,  accounts, selectedAcc, onSelectAcc, allNetworks, network, setNetwork, connections, connect, disconnect })}>
           </Route>
 
           <Route path="/security"></Route>
