@@ -14,7 +14,8 @@ const TRANSFER_SIGHASH = ERC20.getSighash(ERC20.getFunction('transfer').format()
 export default function SendTransaction ({ userAction }) {
     const actionable = userAction 
         ? (<>
-                <button onClick={userAction.fn}>Send txn</button>
+                <button className='rejectTxn'>Reject</button>
+                <button onClick={userAction.fn}>Sign and send</button>
             </>)
         : (<></>)
 
