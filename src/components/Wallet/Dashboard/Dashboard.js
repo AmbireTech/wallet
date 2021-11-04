@@ -25,7 +25,7 @@ export default function Dashboard({ balances, totalUSD }) {
 
         setChartData(chartData);
         setPositivesBalances(balances.filter(({ products }) => products && products.length));
-    }, [balances]);
+    }, [balances, totalUSD.full]);
 
     return (
         <section id="dashboard">
