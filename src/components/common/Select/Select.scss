@@ -1,0 +1,54 @@
+@import '../../../variables.scss';
+
+.select {
+    position: relative;
+    height: 50px;
+    background-color: rgba(0, 0, 0, 0.3);
+    user-select: none;
+    font-weight: bold;
+
+    .value {
+        height: 100%;
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        padding: 0 20px;
+        font-weight: bold;
+    }
+
+    .list {
+        min-height: 50px;
+        background-color: rgb(28, 30, 36);
+        box-shadow: 0px 5px 10px 0 rgba(0, 0, 0, 0.25);
+        overflow: hidden;
+
+        .option {
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 0 20px;
+            font-weight: 500;
+            opacity: 0.8;
+
+            &:hover {
+                background-color: rgba(0, 0, 0, 0.2);
+            }
+
+            &.active {
+                font-weight: bold;
+                opacity: 1;
+
+                &::after {
+                    content: "";
+                    position: absolute;
+                    right: 15px;
+                    height: 8px;
+                    width: 8px;
+                    background-color: $primary-accent-color;
+                    border-radius: 100%;
+                }
+            }
+        }
+    }
+}
