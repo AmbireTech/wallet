@@ -6,6 +6,7 @@ import { ZAPPER_API_KEY } from '../config';
 export default function usePortfolio({ currentNetwork, account }) {
     const [isLoading, setLoading] = useState(true);
     const [balances, setBalance] = useState([]);
+    const [tokens, setTokens] = useState([]);
     const [totalUSD, setTotalUSD] = useState({
         full: 0,
         formated: null,
@@ -38,13 +39,18 @@ export default function usePortfolio({ currentNetwork, account }) {
         const [truncated, decimals] = total.toString().split('.');
         const formated = Number(truncated).toLocaleString('en-US');
 
+        const tokens = balances
+            .find(({ appId }) => appId === 'tokens')
+            .products.map(({ assets }) => assets.map(({ tokens }) => tokens))
+            .flat(2);
+
+        setBalance(balances);
         setTotalUSD({
             full: total,
             formated,
             decimals: decimals ? decimals : '00'
         });
-
-        setBalance(balances);
+        setTokens(tokens);
         setLoading(false);
     }
 
@@ -55,6 +61,7 @@ export default function usePortfolio({ currentNetwork, account }) {
     return {
         balances,
         totalUSD,
+        tokens,
         isLoading
     }
 }
