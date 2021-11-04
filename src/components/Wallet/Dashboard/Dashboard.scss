@@ -1,7 +1,7 @@
 #dashboard {
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 30px;
     padding-bottom: 30px;
 
     .green-highlight {
@@ -29,9 +29,19 @@
         }
     }
 
-    #balance {
-        #total {
-            font-size: 2em;
+    #overview {
+        display: flex;
+        justify-content: space-between;
+        gap: 30px;
+
+        .panel {
+            width: 100%;
+        }
+
+        #balance {
+            #total {
+                font-size: 2em;
+            }
         }
     }
 
