@@ -17,7 +17,6 @@
     }
 
     .legend {
-        height: 100%;
         width: 100%;
         display: flex;
         flex-direction: column;
@@ -35,17 +34,23 @@
             }
 
             .separator {
-                flex-grow: 1;
+                flex: 1 0 auto;
             }
 
             .color {
+                flex: 0 0 auto;
                 height: 15px;
                 width: 15px;
                 border-radius: 1px;
             }
 
             label {
+                flex: 0 0 auto;
                 font-size: 20px;
+            }
+
+            .percent {
+                flex: 0 0 auto;
             }
         }
     }
