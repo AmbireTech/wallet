@@ -1,0 +1,34 @@
+#emailLoginSection {
+    a {
+        display: block;
+        margin: 1.3em auto;
+        text-transform: uppercase;
+        font-weight: 600;
+        font-size: 1.2em;
+        text-align: center;
+    }
+
+    #loginEmail {
+        max-width: 400px;
+        margin: 0px auto;
+    }
+}
+
+.emailConf {
+    background-color: rgba(0, 0, 0, 0.3);
+    padding: 1.5em;
+}
+
+.emailConf h3 {
+    text-align: center;
+}
+
+.emailConf h3 svg {
+    margin-right: 10px;
+    position: relative;
+    top: 5px;
+}
+
+.emailConf p {
+    font-size: 1.2em;
+}
