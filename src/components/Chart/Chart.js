@@ -41,7 +41,7 @@ const Chart = ({ data, size }) => {
     };
 
     return (
-        <div className="chart" style={{height: size}}>
+        <div className="chart">
             <DonutChart
                 className="donut"
                 height={size}
@@ -56,7 +56,7 @@ const Chart = ({ data, size }) => {
                 legend={false}
                 onClick={(item, toggled) => onClick(item, toggled)}
             />
-            <div className="legend">
+            <div className="legend" style={{height: size}}>
                 {
                     data.map((item, i) => (
                         <div className={`item ${hoveredItem === item.label ? 'active' : ''}`} key={item.label}>
