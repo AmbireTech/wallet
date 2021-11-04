@@ -1,11 +1,16 @@
 const request = async url => {
-    const response = await fetch(url, {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    });
-    return response.json();
+    try {
+        const response = await fetch(url, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        return response.json();
+    } catch(e){
+        console.error(e);
+        return null;
+    }
 };
 
 export const supportedBalances = (apiKey) => {
