@@ -2,7 +2,7 @@ import "./TopBar.scss";
 
 import React, { useState, useEffect } from "react";
 import { FiHelpCircle } from "react-icons/fi";
-import DropDown from "../common/DropDown/DropDown";
+import { DropDown, Select } from "../common";
 
 const TopBar = ({
   match,
@@ -81,25 +81,8 @@ const TopBar = ({
           ))}
         </DropDown>
 
-        <select
-          id="accountSelector"
-          onChange={(ev) => onSelectAcc(ev.target.value)}
-          defaultValue={selectedAcc}
-        >
-          {accounts.map((acc) => (
-            <option key={acc.id}>{acc.id}</option>
-          ))}
-        </select>
-
-        <select
-          id="networkSelector"
-          onChange={(ev) => setNetwork(ev.target.value)}
-          defaultValue={network.name}
-        >
-          {allNetworks.map((network) => (
-            <option key={network.id}>{network.name}</option>
-          ))}
-        </select>
+        <Select defaultValue={selectedAcc} items={accounts} itemKey="id" onChange={value => onSelectAcc(value)}/>
+        <Select defaultValue={network.id} items={allNetworks} itemKey="id" itemLabel="name" onChange={value => setNetwork(value)}/>
       </div>
     </div>
   );
