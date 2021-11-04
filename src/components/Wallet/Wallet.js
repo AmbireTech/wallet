@@ -1,4 +1,4 @@
-import "./Wallet.css"
+import "./Wallet.scss"
 
 import { Switch, Route, Redirect } from "react-router-dom";
 import Dashboard from "./Dashboard/Dashboard";
@@ -10,11 +10,11 @@ export default function Wallet(props) {
   return (
     <div id="wallet">
       <TopBar {...props} />
-      <SideBar match={props.match} />
+      <SideBar match={props.match} totalUSD={props.totalUSD}/>
       <div id="wallet-container">
         <Switch>
           <Route path={props.match.url + "/dashboard"}>
-            <Dashboard balances={props.balances} />
+            <Dashboard balances={props.balances} totalUSD={props.totalUSD} />
           </Route>
           <Route path={props.match.url + "/deposit"}>
             <Deposit selectedAcc={props.selectedAcc} selectedNetwork={props.network.id} />
