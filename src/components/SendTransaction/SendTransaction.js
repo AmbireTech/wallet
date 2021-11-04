@@ -45,56 +45,59 @@ export default function SendTransaction ({ userAction }) {
         return [callSummary, sendSummary].filter(x => x).join(', ')
     }
     return (<div id="sendTransaction">
-        <div className="panel">
-            <div className="heading">
-                    <div className="title">
-                        <GiSpectacles size={35}/>
-                        Transaction summary
-                    </div>
-                    <ul>
-                        {userAction ? userAction.bundle.txns.map((txn, i) => (
-                            <li key={txn}>
-                                {i === userAction.bundle.txns.length - 1 ? 'Fee: ' : ''}
-                                {getSummary(txn)}
-                            </li>
-                        )) : (<></>)}
-                    </ul>
-            </div>
-        </div>
-        <div className="secondaryPanel">
+        <h2>Pending transaction</h2>
+        <div class="panelHolder">
             <div className="panel">
                 <div className="heading">
                         <div className="title">
-                            <GiTakeMyMoney size={35}/>
-                            Fee
+                            <GiSpectacles size={35}/>
+                            Transaction summary
                         </div>
-                        {
-                            userAction ? (
-                                <div className="fees">
-                                    <div className="feeSquare"><div className="speed">Slow</div>${userAction.estimation.feeInUSD.slow}</div>
-                                    <div className="feeSquare"><div className="speed">Medium</div>${userAction.estimation.feeInUSD.medium}</div>
-                                    <div className="feeSquare selected"><div className="speed">Fast</div>${userAction.estimation.feeInUSD.fast}</div>
-                                    <div className="feeSquare"><div className="speed">Ape</div>${userAction.estimation.feeInUSD.ape}</div>
-
-                                </div>
-                            )
-                            : (<></>)
-                        }
-                        <span style={{ marginTop: '1em' }}>Fee currency</span>
-                        <select defaultValue="USDT">
-                            <option>USDT</option>
-                            <option>USDC</option>
-                        </select>
+                        <ul>
+                            {userAction ? userAction.bundle.txns.map((txn, i) => (
+                                <li key={txn}>
+                                    {i === userAction.bundle.txns.length - 1 ? 'Fee: ' : ''}
+                                    {getSummary(txn)}
+                                </li>
+                            )) : (<></>)}
+                        </ul>
                 </div>
             </div>
-            <div className="panel">
-                <div className="heading">
-                    <div className="title">
-                        <FaSignature size={35}/>
-                        Sign
+            <div className="secondaryPanel">
+                <div className="panel">
+                    <div className="heading">
+                            <div className="title">
+                                <GiTakeMyMoney size={35}/>
+                                Fee
+                            </div>
+                            {
+                                userAction ? (
+                                    <div className="fees">
+                                        <div className="feeSquare"><div className="speed">Slow</div>${userAction.estimation.feeInUSD.slow}</div>
+                                        <div className="feeSquare"><div className="speed">Medium</div>${userAction.estimation.feeInUSD.medium}</div>
+                                        <div className="feeSquare selected"><div className="speed">Fast</div>${userAction.estimation.feeInUSD.fast}</div>
+                                        <div className="feeSquare"><div className="speed">Ape</div>${userAction.estimation.feeInUSD.ape}</div>
+
+                                    </div>
+                                )
+                                : (<></>)
+                            }
+                            <span style={{ marginTop: '1em' }}>Fee currency</span>
+                            <select defaultValue="USDT">
+                                <option>USDT</option>
+                                <option>USDC</option>
+                            </select>
                     </div>
                 </div>
-                {actionable}
+                <div className="panel">
+                    <div className="heading">
+                        <div className="title">
+                            <FaSignature size={35}/>
+                            Sign
+                        </div>
+                    </div>
+                    {actionable}
+                </div>
             </div>
         </div>
     </div>)
