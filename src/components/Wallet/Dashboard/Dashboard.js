@@ -10,21 +10,21 @@ export default function Dashboard({ portfolio }) {
     const [chartData, setChartData] = useState([]);
 
     useLayoutEffect(() => {
-        const chartData = portfolio.balances
-            .filter(({ meta }) => meta && meta.length)
-            .map(({ appId, meta }) => ({
-                label: appId,
-                value: meta.find(({ label }) => label === 'Total').value
+        const total = portfolio.tokens.map(({ balanceUSD }) => balanceUSD).reduce((acc, curr) => acc + curr, 0);
+        const chartData = portfolio.tokens
+            .map(({ label, balanceUSD }) => ({
+                label,
+                value: balanceUSD
             }))
             .map(({ label, value }) => ({
                 label,
-                value: Number(((value / portfolio.totalUSD.full) * 100).toFixed(2))
+                value: Number(((value / total) * 100).toFixed(2))
             }))
             .filter(({ value }) => value > 0);
 
         setChartData(chartData);
         setPositivesBalances(portfolio.balances.filter(({ products }) => products && products.length));
-    }, [portfolio.balances, portfolio.totalUSD]);
+    }, [portfolio.balances, portfolio.totalUSD, portfolio.tokens]);
 
     return (
         <section id="dashboard">
