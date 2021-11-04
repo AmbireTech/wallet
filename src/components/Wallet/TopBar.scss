@@ -2,7 +2,7 @@ $sidebar-width: 280px;
 
 #topbar {
     z-index: 99;
-    height: 80px;
+    height: 110px;
     position: fixed;
     top: 0;
     left: $sidebar-width;
@@ -10,7 +10,6 @@ $sidebar-width: 280px;
     display: flex;
     justify-content: flex-end;
     gap: 1em;
-    padding-top: 30px;
     background-color: rgb(40, 43, 51);
     box-shadow: 0 5px 20px 5px rgb(40, 43, 51);
 
