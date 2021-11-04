@@ -1,4 +1,4 @@
-import './Deposit.css'
+import './Deposit.scss'
 
 import { MdAccountBalance, MdAccountBalanceWallet } from 'react-icons/md'
 import TextInput from '../../common/TextInput/TextInput'

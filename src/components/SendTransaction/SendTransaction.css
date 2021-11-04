@@ -9,6 +9,7 @@
     padding: 2em;
     box-sizing: border-box;
     background-color: rgba(0, 0, 0, 0.2);
+    margin-bottom: 2em;
 }
 
 #sendTransaction .panel .heading {
@@ -59,4 +60,12 @@
     font-size: 0.8em;
     font-weight: bold;
     margin-bottom: 5px;
+}
+
+#sendTransaction button {
+    background-color: rgb(128, 255, 219);
+    width: 100%;
+    text-transform: uppercase;
+    font-weight: 800;
+    margin-top: 1em;
 }

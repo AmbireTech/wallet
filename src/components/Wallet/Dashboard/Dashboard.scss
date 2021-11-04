@@ -1,0 +1,126 @@
+#dashboard {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding-bottom: 30px;
+
+    .green-highlight {
+        color:rgb(128, 255, 219);
+    }
+
+    .panel {
+        display: flex;
+        flex-direction: column;
+        gap: 25px;
+        padding: 30px;
+        padding-top: 25px;
+        border-radius: 40px;
+        background-color: rgba(0, 0, 0, 0.3);
+
+        .title {
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+
+        .content {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+    }
+
+    #balance {
+        #total {
+            font-size: 2em;
+        }
+    }
+
+    #table {
+        .category {
+            border-radius: 20px;
+            overflow: hidden;
+
+            .title {
+                padding: 15px 20px;
+                font-size: 20px;
+                font-weight: bold;
+                background-color: rgba(255, 255, 255, 0.1);
+            }
+
+            .list {
+                display: flex;
+                flex-direction: column;
+
+                .token {
+                    display: flex;
+                    align-items: center;
+                    gap: 12px;
+                    padding: 15px 20px;
+                    font-size: 15px;
+                    color: white;
+
+                    &:nth-child(odd) {
+                        background-color: rgba(255, 255, 255, 0.04);
+                    }
+
+                    &:nth-child(even) {
+                        background-color: rgba(255, 255, 255, 0.02);
+                    }
+
+                    .separator {
+                        flex-grow: 1;
+                    }
+
+                    .icon {
+                        flex: 0 0 auto;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        height: 40px;
+                        width: 40px;
+                        border-radius: 100%;
+                        color: rgba(255, 255, 255, 0.5);
+                        background-color: rgba(255, 255, 255, 0.1);
+                        overflow: hidden;
+
+                        img {
+                            height: 100%;
+                        }
+                    }
+
+                    .name {
+                        font-size: 17px;
+                        font-weight: bold;
+                    }
+
+                    .balance {
+                        display: flex;
+                        flex-direction: column;
+                        text-align: right;
+                    }
+
+                    .currency {
+                        font-size: 18px;
+                        font-weight: 500;
+
+                        .symbol {
+                            font-weight: bold;
+                            color: rgb(128, 255, 219);
+                        }
+                    }
+
+                    .dollar {
+                        font-size: 14px;
+                        font-weight: 500;
+                        color: #bbb;
+
+                        .symbol {
+                            font-weight: bold;
+                            color: #AA6AFF;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
