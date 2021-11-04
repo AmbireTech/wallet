@@ -1,9 +1,11 @@
 import './Select.scss';
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { BsChevronUp, BsChevronDown } from 'react-icons/bs'
+import useOnClickOutside from '../../../helpers/onClickOutside';
 
 const Select = ({ children, native, defaultValue, items, itemKey, itemLabel, onChange }) => {
+    const ref = useRef();
     const [isOpen, setOpen] = useState();
     const [selectedItem, setSelectedItem] = useState();
 
@@ -16,9 +18,11 @@ const Select = ({ children, native, defaultValue, items, itemKey, itemLabel, onC
         setSelectedItem(items.find(item => item[itemKey] === defaultValue));
     }, [defaultValue]);
 
+    useOnClickOutside(ref, () => setOpen(false));
+
     return (
         !native ? 
-            <div className="select" onClick={() => setOpen(!isOpen)}>
+            <div className="select" onClick={() => setOpen(!isOpen)} ref={ref}>
                 <div className="value">
                     { selectedItem ? selectedItem[itemLabel || itemKey] : null }
                     {

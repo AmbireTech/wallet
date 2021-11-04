@@ -1,33 +1,14 @@
 import './DropDown.css'
 
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { BsChevronUp, BsChevronDown } from 'react-icons/bs'
 import { CSSTransition } from 'react-transition-group';
+import useOnClickOutside from '../../../helpers/onClickOutside';
 
 export default function DropDown(props) {
     const ref = useRef();
     const transitionRef = useRef();
     const [isDropDownOpen, setDropDownOpen] = useState(false);
-
-    function useOnClickOutside(ref, handler) {
-        useEffect(
-            () => {
-                const listener = (event) => {
-                    if (!ref.current || ref.current.contains(event.target)) {
-                        return;
-                    }
-                    handler(event);
-                };
-                document.addEventListener("mousedown", listener);
-                document.addEventListener("touchstart", listener);
-                    return () => {
-                        document.removeEventListener("mousedown", listener);
-                        document.removeEventListener("touchstart", listener);
-                    };
-            },
-            [ref, handler]
-        );
-    }
 
     useOnClickOutside(ref, () => setDropDownOpen(false));
 
