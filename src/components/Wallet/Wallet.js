@@ -5,10 +5,10 @@ import Dashboard from "./Dashboard/Dashboard";
 import TopBar from "./TopBar";
 import SideBar from "./SideBar";
 import Deposit from "./Deposit/Deposit"
-import useBalances from '../../hooks/balances'
+import { usePortfolio } from '../../hooks'
 
 export default function Wallet(props) {
-  const { balances, totalUSD, isLoading } = useBalances({
+  const { balances, totalUSD, isLoading } = usePortfolio({
     currentNetwork: props.network.id,
     account: props.selectedAcc
   })
