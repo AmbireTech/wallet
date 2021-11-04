@@ -87,24 +87,6 @@ input:disabled, button:disabled {
   height: 100%;
 }
 
-.loginSignupWrapper {
-  background: url('./resources/hero-darkened.svg');
-  background-size: auto 800px;
-  background-position: top center;
-  background-repeat: no-repeat;
-  min-height: 100%;
-  overflow: hidden;
-}
-
-#addAccount {
-  display: flex;
-  flex-direction: row;
-  width: 100%;
-  max-width: 800px;
-  /* TODO some sort of vertical alignment */
-  margin: 0em auto 0em;
-}
-
 #logo {
   background-image: url('./resources/logo.png');
   width: 35%;
@@ -122,24 +104,6 @@ input:disabled, button:disabled {
   display: block;
 }
 
-#loginOthers button {
-  width: 100%;
-  box-sizing: border-box;
-  text-align: left;
-  border: 0px;
-  color: black;
-  background-color: white;
-  line-height: 25px;
-}
-#loginOthers .icon {
-  margin-right: 10px;
-  width: 25px;
-  height: 25px;
-  background-repeat: no-repeat;
-  background-size: contain;
-  float: left;
-}
-
 #loginEmail input[type=submit] {
   width: 100%;
   /*background-color: rgb(255, 209, 0);*/
@@ -152,39 +116,8 @@ input:disabled, button:disabled {
   text-transform: uppercase;
   padding: 0.6em;
 }
-#addAccount input[type=submit]:hover {
-  opacity: 1.0;
-}
-
-#loginSeparator {
-  flex: 0.6;
-  text-align: center;
-  font-size: 2.5em;
-  text-transform: uppercase;
-  font-weight: 300;
-  height: 500px;
-}
-#loginSeparator .verticalLine {
-  width: 2px;
-  background-color: #c3d4f6;
-  height: 45%;
-  margin: 10px auto;
-}
 
 #loginEmail { flex: 0.9 }
-#loginOthers { flex: 0.9; }
-
-#loginOthers button {
-  margin: 1.5em 0px;
-}
-
-#addAccount h3  {
-  margin-top: 0px;
-  margin-bottom: 2em;
-  text-align: center;
-  font-size: 1.5em;
-  font-weight: 300;
-}
 
 #loginEmail input {
   margin: 2em 0px;
@@ -197,33 +130,6 @@ input:disabled, button:disabled {
 #loginEmail input:not([type=submit]):focus {
   border-bottom: 3px solid #dae6fd;
 }
-
-#emailLoginSection #loginEmail {
-  max-width: 400px;
-  margin: 0px auto;
-}
-
-#emailLoginSection a {
-  display: block;
-  margin: 1.3em auto;
-  text-transform: uppercase;
-  font-weight: 600;
-  font-size: 1.2em;
-  text-align: center;
-}
-
-.emailConf {
-  background-color: rgba(0,0,0,0.3);
-  padding: 1.5em;
-}
-
-.emailConf h3 {text-align: center;}
-.emailConf h3 svg { margin-right: 10px; position: relative; top: 5px;}
-
-.emailConf p {
-  font-size: 1.2em;
-}
-
 
 #loginEmail .error, #loginOthers .error {
   font-size: 1.5em;
@@ -241,28 +147,6 @@ select {
   color: white;
   padding: 15px;
   background-color: rgba(0,0,0,0.3);
-}
-
-#signersToChoose {
-  margin: 0px auto;
-  display: block;
-  line-height: 2em;
-  font-size: 1.5em;
-  color: #ccc;
-  list-style: none;
-  font-family: monospace;
-  width: 500px;
-  cursor: pointer;
-}
-#signersToChoose li:hover {
-  background-color: rgba(0,0,0,0.3);
-  color: #fff;
-}
-
-.chooseSigners h3 {
-  text-align: center;
-  font-size: 1.5em;
-  font-weight: 300;
 }
 
 .slide-fade-enter {
