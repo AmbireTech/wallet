@@ -13,6 +13,10 @@ const contracts = [
 	{ name: 'SushiSwap', network: 'ethereum', contract: '0xd9e1cE17f2641f24aE83637ab66a2cca9C378B9F' },
 	//{ name: 'SushiSwap', network: 'polygon', contract: '0x1b02da8cb0d097eb8d57a175b88c7d8b47997506' },
 ]
+const tokenlists = [
+	'https://github.com/trustwallet/assets/raw/master/blockchains/ethereum/tokenlist.json',
+	'https://github.com/trustwallet/assets/raw/master/blockchains/polygon/tokenlist.json'
+]
 
 async function generate () {
 	let output = {}
@@ -24,7 +28,16 @@ async function generate () {
 		output[network+':'+contract] = { name, abi: JSON.parse(abiResp.result) }
 	}))
 
-	console.log(JSON.stringify(output))
+	const tokens = (await Promise.all(tokenlists.map(async url => await fetch(url).then(r => r.json())))).reduce((acc, list) => {
+		// @TODO conflict checking
+		list.tokens.forEach(t => acc[t.address] = [t.symbol, t.decimals])
+		return acc
+	}, {})
+
+	console.log(JSON.stringify({
+		verifiedContracts: output,
+		tokens
+	}))
 }
 
 generate()
