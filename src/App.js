@@ -115,7 +115,7 @@ function App() {
     onCallRequest
   })
   
-  const { balances, totalUSD } = useBalances({
+  const { balances, totalUSD, isLoading } = useBalances({
     currentNetwork: network.id,
     account: selectedAcc
   })
@@ -136,7 +136,7 @@ function App() {
             <EmailLogin relayerURL={relayerURL} onAddAccount={onAddAccount}></EmailLogin>
           </Route>
 
-          <Route path="/wallet" component={props => Wallet({ ...props,  accounts, selectedAcc, onSelectAcc, allNetworks, network, setNetwork, connections, connect, disconnect, balances, totalUSD })}>
+          <Route path="/wallet" component={props => Wallet({ ...props,  accounts, selectedAcc, onSelectAcc, allNetworks, network, setNetwork, connections, connect, disconnect, balances, totalUSD, isLoading })}>
           </Route>
 
           <Route path="/security"></Route>
