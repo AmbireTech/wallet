@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 const fetch = require('node-fetch')
-const fs = require('fs')
+const { getAddress } = require('ethers').utils
 
 const etherscans = {
 	ethereum: { host: 'api.etherscan.io', key: 'KJJ4NZ9EQHIFCQY5IJ775PT128YE15AV5S' },
@@ -25,7 +25,7 @@ async function generate () {
 		const abiResp = await fetch(`https://${host}/api?module=contract&action=getabi&address=${contract}&apikey=${key}`)
 			.then(r => r.json())
 		if (abiResp.status !== '1') throw abiResp
-		output[network+':'+contract] = { name, abi: JSON.parse(abiResp.result) }
+		output[network+':'+getAddress(contract)] = { name, abi: JSON.parse(abiResp.result) }
 	}))
 
 	const tokenLists = await Promise.all(tokenlists.map(
