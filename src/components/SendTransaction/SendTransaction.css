@@ -1,4 +1,9 @@
-#sendTransaction {
+#sendTransaction h2 {
+    margin-top: 2em;
+    text-align: center;
+}
+
+#sendTransaction .panelHolder {
     display: flex;
     justify-content: center;
     gap: 2em;
