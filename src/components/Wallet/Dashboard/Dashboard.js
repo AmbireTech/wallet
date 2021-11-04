@@ -32,10 +32,15 @@ export default function Dashboard({ balances, totalUSD }) {
                 <div id="balance" className="panel">
                     <div className="title">Balance</div>
                     <div className="content">
-                        <div id="total">
-                            <span className="green-highlight">$</span> { totalUSD.formated }
-                            <span className="green-highlight">.{ totalUSD.decimals }</span>
-                        </div>
+                        {
+                            !totalUSD.full ? 
+                                <Loading/>
+                                :
+                                <div id="total">
+                                    <span className="green-highlight">$</span> { totalUSD.formated }
+                                    <span className="green-highlight">.{ totalUSD.decimals }</span>
+                                </div>
+                        }
                     </div>
                 </div>
                 <div id="chart" className="panel">

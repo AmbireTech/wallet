@@ -5,6 +5,7 @@ import { MdDashboard, MdLock, MdCompareArrows, } from 'react-icons/md'
 import { GiReceiveMoney } from 'react-icons/gi'
 import { BsPiggyBank } from 'react-icons/bs'
 import { BiTransfer } from 'react-icons/bi'
+import { Loading } from "../common"
 
 const SideBar = ({match, totalUSD}) => {
     return (
@@ -15,7 +16,14 @@ const SideBar = ({match, totalUSD}) => {
 
                 <div className="balance">
                     <label>Balance</label>
-                    <div className="balanceDollarAmount"><span className="dollarSign highlight">$</span>{ totalUSD.formated }<span className="highlight">.{ totalUSD.decimals }</span></div>
+                    {
+                        !totalUSD.full ?
+                            <Loading/>
+                            :
+                            <div className="balanceDollarAmount">
+                                <span className="dollarSign highlight">$</span>{ totalUSD.formated }<span className="highlight">.{ totalUSD.decimals }</span>
+                            </div>
+                    }
                 </div>
 
                 {/* TODO proper navi, programmatic selected class */}
