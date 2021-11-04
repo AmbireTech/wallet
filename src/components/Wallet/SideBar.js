@@ -7,7 +7,7 @@ import { BsPiggyBank } from 'react-icons/bs'
 import { BiTransfer } from 'react-icons/bi'
 import { Loading } from "../common"
 
-const SideBar = ({match, totalUSD, isLoading}) => {
+const SideBar = ({match, portfolio}) => {
     return (
         <div id="sidebar">
                 <NavLink to={match.url + "/dashboard"}>
@@ -17,11 +17,11 @@ const SideBar = ({match, totalUSD, isLoading}) => {
                 <div className="balance">
                     <label>Balance</label>
                     {
-                        isLoading ?
+                        portfolio.isLoading ?
                             <Loading/>
                             :
                             <div className="balanceDollarAmount">
-                                <span className="dollarSign highlight">$</span>{ totalUSD.formated }<span className="highlight">.{ totalUSD.decimals }</span>
+                                <span className="dollarSign highlight">$</span>{ portfolio.totalUSD.formated }<span className="highlight">.{ portfolio.totalUSD.decimals }</span>
                             </div>
                     }
                 </div>

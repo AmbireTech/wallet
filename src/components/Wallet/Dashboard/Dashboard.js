@@ -5,12 +5,12 @@ import { GiToken } from 'react-icons/gi'
 
 import { Chart, Loading } from '../../common'
 
-export default function Dashboard({ balances, totalUSD, isLoading }) {
+export default function Dashboard({ portfolio }) {
     const [positiveBalances, setPositivesBalances] = useState([]);
     const [chartData, setChartData] = useState([]);
 
     useLayoutEffect(() => {
-        const chartData = balances
+        const chartData = portfolio.balances
             .filter(({ meta }) => meta && meta.length)
             .map(({ appId, meta }) => ({
                 label: appId,
@@ -18,13 +18,13 @@ export default function Dashboard({ balances, totalUSD, isLoading }) {
             }))
             .map(({ label, value }) => ({
                 label,
-                value: Number(((value / totalUSD.full) * 100).toFixed(2))
+                value: Number(((value / portfolio.totalUSD.full) * 100).toFixed(2))
             }))
             .filter(({ value }) => value > 0);
 
         setChartData(chartData);
-        setPositivesBalances(balances.filter(({ products }) => products && products.length));
-    }, [balances, totalUSD.full]);
+        setPositivesBalances(portfolio.balances.filter(({ products }) => products && products.length));
+    }, [portfolio.balances, portfolio.totalUSD]);
 
     return (
         <section id="dashboard">
@@ -33,12 +33,12 @@ export default function Dashboard({ balances, totalUSD, isLoading }) {
                     <div className="title">Balance</div>
                     <div className="content">
                         {
-                            isLoading ? 
+                            portfolio.isLoading ? 
                                 <Loading/>
                                 :
                                 <div id="total">
-                                    <span className="green-highlight">$</span> { totalUSD.formated }
-                                    <span className="green-highlight">.{ totalUSD.decimals }</span>
+                                    <span className="green-highlight">$</span> { portfolio.totalUSD.formated }
+                                    <span className="green-highlight">.{ portfolio.totalUSD.decimals }</span>
                                 </div>
                         }
                     </div>
@@ -47,7 +47,7 @@ export default function Dashboard({ balances, totalUSD, isLoading }) {
                     <div className="title">Chart</div>
                     <div className="content">
                         {
-                            isLoading ? 
+                            portfolio.isLoading ? 
                                 <Loading/>
                                 :
                                 <Chart data={chartData} size={200}/>
@@ -59,7 +59,7 @@ export default function Dashboard({ balances, totalUSD, isLoading }) {
                 <div className="title">Assets</div>
                 <div className="content">
                     {
-                        isLoading ?
+                        portfolio.isLoading ?
                             <Loading/>
                             :
                             positiveBalances.map(({ products }) => 
