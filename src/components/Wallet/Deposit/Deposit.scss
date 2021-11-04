@@ -1,3 +1,5 @@
+@import '../../../variables.scss';
+
 #deposit {
     display: flex;
     justify-content: center;
@@ -28,14 +30,14 @@
                 gap: 0.5rem;
                 font-size: 1.5em;
                 font-weight: bold;
-                color: rgb(128, 255, 219);
+                color: $primary-accent-color;
                 text-transform: uppercase;
             }
 
             .subtitle {
                 font-size: 1.3em;
                 text-transform: uppercase;
-                color: #AA6AFF;
+                color: $secondary-accent-color;
             }
         }
 
