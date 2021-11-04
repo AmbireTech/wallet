@@ -47,7 +47,7 @@ export default function SendTransaction ({ userAction }) {
     }
     return (<div id="sendTransaction">
         <h2>Pending transaction</h2>
-        <div class="panelHolder">
+        <div className="panelHolder">
             <div className="panel">
                 <div className="heading">
                         <div className="title">
