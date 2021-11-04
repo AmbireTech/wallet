@@ -16,7 +16,7 @@ $sidebar-width: 280px;
 
     .container {
         display: flex;
-        justify-content: end;
+        justify-content: flex-end;
         align-items: center;
         width: calc(100% - 280px);
         /* max-width: 1500px; */
