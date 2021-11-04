@@ -42,7 +42,12 @@ export default function Dashboard({ balances, totalUSD }) {
                 <div id="chart" className="panel">
                     <div className="title">Chart</div>
                     <div className="content">
-                       <Chart data={chartData} size={200}/>
+                        {
+                            !chartData.length ? 
+                                <Loading/>
+                                :
+                                <Chart data={chartData} size={200}/>
+                        }
                     </div>
                 </div>
             </div>
