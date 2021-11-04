@@ -137,8 +137,6 @@ function App() {
           <Route path="/transactions"></Route>
           <Route path="/swap"></Route>
           <Route path="/earn"></Route>
-          {/* TODO: connected dapps */}
-          {/* TODO: tx identifier in the URL */}
           <Route path="/send-transaction">
             <SendTransaction userAction={userAction}></SendTransaction>
           </Route>
