@@ -1,6 +1,6 @@
 import { Interface } from 'ethers/lib/utils'
 
-import verifiedContracts from '../consts/verifiedContracts'
+import { verifiedContracts, tokens } from '../consts/verifiedContracts'
 import networks from '../consts/networks'
 import ERC20ABI from 'adex-protocol-eth/abi/ERC20'
 
@@ -21,7 +21,7 @@ export function getTransactionSummary(txn, bundle) {
     if (data !== '0x') {
         if (data.startsWith(TRANSFER_SIGHASH)) {
             const [to, amount] = ERC20.decodeFunctionData('transfer', data)
-            // @TODO decimals
+            // @TODO decimals, symbol
             callSummary `send ${(amount/1e18).toFixed(4)} to ${to}`
         } else if (contractInfo) {
             const iface = new Interface(contractInfo.abi)
