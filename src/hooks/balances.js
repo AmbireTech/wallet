@@ -5,6 +5,7 @@ import { ZAPPER_API_KEY } from '../config';
 
 export default function useBalances({ currentNetwork, account }) {
     const [balances, setBalance] = useState([]);
+    const [totalUSD, setTotalUSD] = useState({});
 
     const updateBalances = async (currentNetwork, address) => {
         const supBalances = await supportedBalances(ZAPPER_API_KEY)
@@ -26,7 +27,23 @@ export default function useBalances({ currentNetwork, account }) {
         updateBalances(currentNetwork, account);
     }, [currentNetwork, account]);
 
+    useEffect(() => {
+        const total = balances
+            .filter(({ meta }) => meta && meta.length)
+            .map(({ meta }) => meta.find(({ label }) => label === 'Total').value)
+            .reduce((acc, curr) => acc + curr, 0)
+            .toFixed(2);
+
+        const [truncated, decimal] = total.split('.');
+
+        setTotalUSD({
+            truncated,
+            decimal
+        });
+    }, [balances]);
+
     return {
-        balances
+        balances,
+        totalUSD
     }
 }

@@ -1,3 +1,5 @@
+import './AddAccount.scss'
+
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import LoginOrSignup from '../LoginOrSignupForm/LoginOrSignupForm'
