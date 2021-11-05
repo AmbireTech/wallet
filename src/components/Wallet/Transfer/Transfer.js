@@ -2,7 +2,7 @@ import './Transfer.scss'
 
 import { AiOutlineArrowDown } from 'react-icons/ai'
 import { BsBoxArrowInDown, BsBoxArrowUp } from 'react-icons/bs'
-import { TextInput, Segments, Button, Select, Loading } from '../../common'
+import { TextInput, NumberInput, Segments, Button, Select, Loading } from '../../common'
 import { useCallback, useState } from 'react'
 
 const Transfer = ({ portfolio }) => {
@@ -43,7 +43,7 @@ const Transfer = ({ portfolio }) => {
                         :
                         <div className="form">
                             <Select defaultValue={asset} items={assetsItems} onChange={value => setAsset(value)}/>
-                            <TextInput placeholder="Amount" value={amount} onInput={value => setAmount(value)} button="MAX" onButtonClick={() => setMaxAmount()}/>
+                            <NumberInput value={amount} min="0" onInput={value => setAmount(value)} button="MAX" onButtonClick={() => setMaxAmount()}/>
                             <TextInput placeholder="Recipient" info="Please double-check the recipient address, blockchain transactions are not reversible."/>
                             <div className="separator"/>
                             <Button>Send</Button>
