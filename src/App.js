@@ -1,6 +1,6 @@
 import './App.scss'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
   HashRouter as Router,
   Switch,
@@ -39,7 +39,7 @@ function App() {
       return
     }
     // @TODO show error for this
-    if (wcConnector.chainId !== network.chainId) return
+    //if (request.chainId !== network.chainId) return
 
     const txnFrom = payload.params[0].from
     const account = accounts.find(x => x.id.toLowerCase() === txnFrom.toLowerCase())
@@ -111,11 +111,15 @@ function App() {
       }
     })
   }
-  const { connections, connect, disconnect } = useWalletConnect({
+  const { connections, connect, disconnect, requests } = useWalletConnect({
     account: selectedAcc,
-    chainId: network.chainId,
-    onCallRequest
+    chainId: network.chainId
   })
+  // temp hack
+  useEffect(() => {
+    console.log(requests)
+    if (requests.length) onCallRequest(requests[0])
+  }, [requests])
 
   return (
     <ToastProvider>
