@@ -3,10 +3,6 @@
 .text-input {
     position: relative;
 
-    input, .icon {
-        cursor: pointer;
-    }
-
     input {
         width: 100%;
         color: white;
@@ -29,6 +25,10 @@
     }
 
     &.copy {
+        input, .icon {
+            cursor: pointer;
+        }
+
         input {
             padding-right: 2.5em;
             font-family: monospace;
