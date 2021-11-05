@@ -31,7 +31,7 @@ export default function usePortfolio({ currentNetwork, account }) {
 
         const total = balances
             .filter(({ meta }) => meta && meta.length)
-            .map(({ meta }) => meta.find(({ label }) => label === 'Total').value)
+            .map(({ meta }) => meta.find(({ label }) => label === 'Total').value + meta.find(({ label }) => label === 'Debt').value)
             .reduce((acc, curr) => acc + curr, 0)
             .toFixed(2)
 
