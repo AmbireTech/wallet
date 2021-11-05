@@ -25,12 +25,11 @@ export default function usePortfolio({ currentNetwork, account }) {
         const { apps } = supBalances.find(({ network }) => network === currentNetwork);
         
         const balances = await Promise.all(apps.map(async ({appId}) => {
-            let balance = await getBalances(ZAPPER_API_KEY, currentNetwork, appId, address);
-            
-            return {
+            const balance = await getBalances(ZAPPER_API_KEY, currentNetwork, appId, address);
+            return balance ? {
                 appId,
                 ...Object.values(balance)[0]
-            }
+            } : {}
         }));
 
         const total = balances
