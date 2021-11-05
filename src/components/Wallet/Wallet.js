@@ -5,6 +5,7 @@ import Dashboard from "./Dashboard/Dashboard";
 import TopBar from "./TopBar";
 import SideBar from "./SideBar";
 import Deposit from "./Deposit/Deposit"
+import Trading from "./Trading/Trading"
 import { usePortfolio } from '../../hooks'
 
 export default function Wallet(props) {
@@ -16,7 +17,7 @@ export default function Wallet(props) {
   return (
     <div id="wallet">
       <TopBar {...props} />
-      <SideBar match={props.match} portfolio={portfolio}/>
+      <SideBar match={props.match} portfolio={portfolio} />
       <div id="wallet-container">
         <Switch>
           <Route path={props.match.url + "/dashboard"}>
@@ -25,7 +26,9 @@ export default function Wallet(props) {
           <Route path={props.match.url + "/deposit"}>
             <Deposit selectedAcc={props.selectedAcc} selectedNetwork={props.network.id} />
           </Route>
-          <Route path={props.match.url + "/trade"}>          </Route>
+          <Route path={props.match.url + "/trading"}>
+            <Trading />
+          </Route>
           <Route path={props.match.url + "/transfer"}></Route>
           <Route path={props.match.url + "/security"}></Route>
           <Route path={props.match.url + "/transactions"}></Route>
