@@ -20,6 +20,10 @@ const TopBar = ({
 
   const checkPermissions = async () => {
     let status = false;
+    var isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1
+    if (isFirefox) {
+      return
+    }
     try {
       const response = await navigator.permissions.query({
         name: "clipboard-read",
