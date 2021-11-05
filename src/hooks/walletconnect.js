@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useReducer, useRef } from 'react'
+import { useToasts } from '../helpers/toasts'
 
 import WalletConnectCore from '@walletconnect/core'
 import * as cryptoLib from '@walletconnect/iso-crypto'
@@ -14,6 +15,8 @@ const getDefaultState = () => ({ connections: [], requests: [] })
 let connectors = {}
 
 export default function useWalletConnect ({ account, chainId, onCallRequest }) {
+    const { addToast } = useToasts()
+
     // This is needed cause of the WalletConnect event handlers
     const stateRef = useRef()
     stateRef.current = { account, chainId }
@@ -70,6 +73,8 @@ export default function useWalletConnect ({ account, chainId, onCallRequest }) {
             // It's safe to read .session right after approveSession because 1) approveSession itself normally stores the session itself
             // 2) connector.session is a getter that re-reads private properties of the connector; those properties are updated immediately at approveSession
             dispatch({ type: 'connectedNewSession', uri: connectorOpts.uri, session: connector.session })
+
+            addToast('Successfully connected to '+connector.session.peerMeta.name)
         })
 
         connector.on('call_request', async (error, payload) => {
@@ -88,6 +93,8 @@ export default function useWalletConnect ({ account, chainId, onCallRequest }) {
             if (error) throw error
             connectors[connectorOpts.uri] = null
             dispatch({ type: 'disconnected', uri: connectorOpts.uri })
+
+            addToast(`${connector.session.peerMeta.name} disconnected: ${payload.params[0].message}`)
         })
 
         return connector
