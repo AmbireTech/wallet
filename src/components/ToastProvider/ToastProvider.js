@@ -12,7 +12,7 @@ const ToastProvider = ({ children }) => {
 
     const addToast = (content, options) => {
         const { timeout, error } = {
-            timeout: 3000,
+            timeout: 8000,
             error: false,
             ...options
         }
