@@ -21,7 +21,7 @@ const relayerURL = 'http://localhost:1934'
 function AppInner () {
   const { accounts, selectedAcc, onSelectAcc, onAddAccount } = useAccounts()
   const { network, setNetwork, allNetworks } = useNetwork()
-  const { connections, connect, disconnect, requests } = useWalletConnect({
+  const { connections, connect, disconnect, requests, resolveMany } = useWalletConnect({
     account: selectedAcc,
     chainId: network.chainId
   })
@@ -36,16 +36,18 @@ function AppInner () {
         <EmailLogin relayerURL={relayerURL} onAddAccount={onAddAccount}></EmailLogin>
       </Route>
 
-      <Route path="/wallet" component={props => Wallet({ ...props,  accounts, selectedAcc, onSelectAcc, allNetworks, network, setNetwork, connections, connect, disconnect })}>
+      <Route path="/wallet" component={props => Wallet({ ...props, accounts, selectedAcc, onSelectAcc, allNetworks, network, setNetwork, connections, connect, disconnect })}>
       </Route>
 
       <Route path="/security"></Route>
       <Route path="/transactions"></Route>
       <Route path="/swap"></Route>
       <Route path="/earn"></Route>
-      <Route path="/send-transaction">
-        <SendTransaction accounts={accounts} selectedAcc={selectedAcc} network={network} requests={requests} relayerURL={relayerURL}>
-        </SendTransaction>
+
+      <Route
+        path="/send-transaction"
+        component={props => SendTransaction({ ...props, accounts, selectedAcc, network, requests, resolveMany, relayerURL })}
+      >
       </Route>
 
       <Route path="/">
