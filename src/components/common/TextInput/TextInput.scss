@@ -1,0 +1,69 @@
+@import '../../../variables.scss';
+
+.text-input {
+    position: relative;
+
+    input {
+        width: 100%;
+        color: white;
+        font-size: 1.2em;
+        padding: 1em;
+        text-overflow: ellipsis;
+        background-color: $input-background-color;
+    }
+
+    .icon {
+        position: absolute;
+        top: 0;
+        right: 0;
+        height: 100%;
+        width: 3.5em;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+    }
+
+    .info {
+        font-size: 15px;
+        margin-top: 0.8rem;
+        padding: 0 0.4rem;
+        opacity: 0.5;
+    }
+
+    .button {
+        position: absolute;
+        top: 0;
+        right: 0;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0 1.5rem;
+        cursor: pointer;
+        font-size: 15px;
+        font-weight: bold;
+        transition: all 0.1s ease-in-out;
+        background-color: rgba(0, 0, 0, 0.1);
+
+        &:hover {
+            background-color: rgba(0, 0, 0, 0.3);
+        }
+    }
+
+    &.copy {
+        input, .icon {
+            cursor: pointer;
+        }
+
+        input {
+            padding-right: 2.5em;
+            font-family: monospace;
+            font-size: 1.5em;
+
+            &:disabled {
+                opacity: 1 !important;
+            }
+        }
+    }
+}

@@ -3,7 +3,7 @@
 .select {
     position: relative;
     height: 50px;
-    background-color: rgba(0, 0, 0, 0.3);
+    background-color: $input-background-color;
     user-select: none;
     font-weight: bold;
 
@@ -18,8 +18,8 @@
 
     .list {
         min-height: 50px;
-        background-color: rgb(28, 30, 36);
-        box-shadow: 0px 5px 10px 0 rgba(0, 0, 0, 0.25);
+        background-color: $input-background-color;
+        box-shadow: $box-shadow;
         overflow: hidden;
 
         .option {
