@@ -1,4 +1,4 @@
-import './DropDown.css'
+import './DropDown.scss'
 
 import { useRef, useState } from 'react';
 import { BsChevronUp, BsChevronDown } from 'react-icons/bs'
