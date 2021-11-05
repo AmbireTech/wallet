@@ -13,7 +13,7 @@ import { TrezorSubprovider } from '@0x/subproviders/lib/src/subproviders/trezor'
 import TrezorConnect from 'trezor-connect'
 import { ethers, getDefaultProvider } from 'ethers'
 
-export default function SendTransaction ({ accounts, network, selectedAcc, requests, relayerURL }) {
+export default function SendTransaction ({ accounts, network, selectedAcc, requests, resolveMany, relayerURL }) {
   // Note: this one is temporary until we figure out how to manage a queue of those
   const [userAction, setUserAction] = useState(null)
   const [estimation, setEstimation] = useState(null)
@@ -106,14 +106,19 @@ export default function SendTransaction ({ accounts, network, selectedAcc, reque
     if (requests.length) onCallRequest(requests[0])
   }, [requests])
 
+   const rejectButton= (
+        <button className='rejectTxn' onClick={() => resolveMany(requests.map(x => x.id))}>Reject</button>
+   )
    const actionable =
         (estimation && !estimation.success)
-        ? (<h2 className='error'> The current transaction cannot be broadcasted because it will fail: {estimation.message}</h2>)
-        : (userAction ? (<>
-            <button className='rejectTxn'>Reject</button>
+        ? (<>
+            <h2 className='error'> The current transaction cannot be broadcasted because it will fail: {estimation.message}</h2>
+            {rejectButton}
+            </>)
+        : (userAction ? (<div>
+            {rejectButton}
             <button onClick={userAction.fn}>Sign and send</button>
-        </>) : (<></>))
-    
+        </div>) : (<></>))
 
     return (<div id="sendTransaction">
         <h2>Pending transaction</h2>

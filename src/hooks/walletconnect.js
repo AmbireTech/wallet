@@ -111,6 +111,7 @@ export default function useWalletConnect ({ account, chainId, onCallRequest }) {
     const resolveMany = (ids, resolution) => {
         // @TODO get the connectors, reply to them
         // then dispatch to remove the requests
+        dispatch({ type: 'requestsResolved', ids })
     }
 
     // Side effects that will run on every state change/rerender
@@ -140,7 +141,12 @@ export default function useWalletConnect ({ account, chainId, onCallRequest }) {
     // Initialization effects
     useEffect(() => runInitEffects(connect), [])
 
-    return { connections: state.connections, requests: state.requests, connect, disconnect }
+    return {
+        connections: state.connections,
+        requests: state.requests,
+        resolveMany,
+        connect, disconnect
+    }
 }
 
 // Initialization side effects
