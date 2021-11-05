@@ -21,7 +21,7 @@ const Select = ({ children, native, defaultValue, items, onChange }) => {
     };
 
     useEffect(() => {
-        if (items.length) setSelectedItem(items.find(item => item.value === defaultValue) || items[0])
+        if (items.length) selectItem(items.find(item => item.value === defaultValue) || items[0])
     }, [defaultValue, items]);
 
     useOnClickOutside(ref, () => setOpen(false));
