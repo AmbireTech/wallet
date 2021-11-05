@@ -1,7 +1,11 @@
 import { useCallback, useEffect, useState } from 'react';
-import { supportedBalances, getBalances } from '../services/zapper';
 
 import { ZAPPER_API_KEY } from '../config';
+import { fetchGet } from '../lib/fetch';
+import { ZAPPER_API_ENDPOINT } from '../config'
+
+const supportedBalances = (apiKey) => fetchGet(`${ZAPPER_API_ENDPOINT}/protocols/balances/supported?api_key=${apiKey}`)
+const getBalances = (apiKey, network, protocol, address) => fetchGet(`${ZAPPER_API_ENDPOINT}/protocols/${protocol}/balances?addresses[]=${address}&network=${network}&api_key=${apiKey}&newBalances=true`)
 
 export default function usePortfolio({ currentNetwork, account }) {
     const [isLoading, setLoading] = useState(true);
