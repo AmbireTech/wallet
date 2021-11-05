@@ -1,6 +1,6 @@
 import './Select.scss';
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { BsChevronUp, BsChevronDown } from 'react-icons/bs'
 import { CSSTransition } from 'react-transition-group';
 import useOnClickOutside from '../../../helpers/onClickOutside';
@@ -15,14 +15,14 @@ const Select = ({ children, native, defaultValue, items, onChange }) => {
         icon: null
     });
 
-    const selectItem = item => {
+    const selectItem = useCallback(item => {
         setSelectedItem(item);
         onChange(item.value);
-    };
+    }, [onChange])
 
     useEffect(() => {
         if (items.length) selectItem(items.find(item => item.value === defaultValue) || items[0])
-    }, [defaultValue, items]);
+    }, [defaultValue, items, selectItem]);
 
     useOnClickOutside(ref, () => setOpen(false));
 
