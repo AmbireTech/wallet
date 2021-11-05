@@ -1,0 +1,13 @@
+@import '../../../variables.scss';
+
+button {
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: bold;
+    color: black;
+    background-color: $primary-accent-color;
+    text-transform: uppercase;
+}
