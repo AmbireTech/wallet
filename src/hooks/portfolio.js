@@ -28,13 +28,11 @@ export default function usePortfolio({ currentNetwork, account }) {
             }
         }));
 
-        const total = Number(
-            balances
-                .filter(({ meta }) => meta && meta.length)
-                .map(({ meta }) => meta.find(({ label }) => label === 'Total').value)
-                .reduce((acc, curr) => acc + curr, 0)
-                .toFixed(2)
-        );
+        const total = balances
+            .filter(({ meta }) => meta && meta.length)
+            .map(({ meta }) => meta.find(({ label }) => label === 'Total').value)
+            .reduce((acc, curr) => acc + curr, 0)
+            .toFixed(2)
 
         const [truncated, decimals] = total.toString().split('.');
         const formated = Number(truncated).toLocaleString('en-US');
