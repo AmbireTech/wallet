@@ -44,7 +44,7 @@ export default function Dashboard({ portfolio }) {
                     </div>
                 </div>
                 <div id="chart" className="panel">
-                    <div className="title">Chart</div>
+                    <div className="title">Balance by token</div>
                     <div className="content">
                         {
                             portfolio.isLoading ? 
@@ -100,6 +100,10 @@ export default function Dashboard({ portfolio }) {
                                 )
                             ))
                     }
+                </div>
+
+                <div className="powered">
+                    Powered by Zapper
                 </div>
             </div>
         </section>
