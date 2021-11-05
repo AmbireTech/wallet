@@ -3,7 +3,7 @@ import './TextInput.scss'
 import { MdContentCopy } from 'react-icons/md';
 import { useToasts } from '../../../hooks/toasts';
 
-export default function TextInput({ value, placeholder, info, button, disabled, copy, onButtonClick, onInput }) {
+export default function TextInput({ value, placeholder, info, disabled, copy, onInput }) {
     const { addToast } = useToasts();
 
     const onClick = async () => {
@@ -30,14 +30,7 @@ export default function TextInput({ value, placeholder, info, button, disabled, 
                     :
                     null
             }
-            {
-                button ?
-                    <div className="button" onClick={onButtonClick}>
-                        { button }
-                    </div>
-                    :
-                    null
-            }
+            
         </div>
     )
 }

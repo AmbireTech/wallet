@@ -6,6 +6,7 @@ import Loading from './Loading/Loading';
 import Segments from './Segments/Segments';
 import Select from './Select/Select';
 import TextInput from './TextInput/TextInput';
+import NumberInput from './NumberInput/NumberInput';
 
 export {
     Button,
@@ -15,5 +16,6 @@ export {
     Loading,
     Segments,
     Select,
-    TextInput
+    TextInput,
+    NumberInput
 };
