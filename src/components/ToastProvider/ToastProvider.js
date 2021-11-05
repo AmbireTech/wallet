@@ -9,7 +9,7 @@ const ToastProvider = ({ children }) => {
     const [toasts, setToasts] = useState([]);
     const [count, setCount] = useState(0);
 
-    const addToast = (content, timeout = 3000) => {
+    const addToast = (content, timeout = 6000) => {
         setToasts(toasts => [
             ...toasts,
             {
