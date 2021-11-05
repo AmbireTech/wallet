@@ -21,7 +21,7 @@ const Select = ({ children, native, defaultValue, items, onChange }) => {
     };
 
     useEffect(() => {
-        setSelectedItem(items.find(item => item.value === defaultValue));
+        if (items.length) setSelectedItem(items.find(item => item.value === defaultValue) || items[0])
     }, [defaultValue, items]);
 
     useOnClickOutside(ref, () => setOpen(false));
@@ -29,25 +29,31 @@ const Select = ({ children, native, defaultValue, items, onChange }) => {
     return (
         !native ? 
             <div className="select" onClick={() => setOpen(!isOpen)} ref={ref}>
-                <div className="value">
-                    {
-                        selectedItem.icon ? 
-                            <div className="icon">
-                                <img src={selectedItem.icon} alt="Icon" />
+                {
+                    selectedItem ? 
+                        <div className="value">
+                            {
+                                selectedItem.icon ? 
+                                    <div className="icon">
+                                        <img src={selectedItem.icon} alt="Icon" />
+                                    </div>
+                                    :
+                                    null
+                            }
+                            { selectedItem.label || selectedItem.value }
+                            <div className="separator"></div>
+                            <div className="handle">
+                                {
+                                    isOpen ? 
+                                        <BsChevronUp size={20}></BsChevronUp>
+                                        :
+                                        <BsChevronDown size={20}></BsChevronDown>
+                                }
                             </div>
-                            :
-                            null
-                    }
-                    { selectedItem.label || selectedItem.value }
-                    <div className="handle">
-                        {
-                            isOpen ? 
-                                <BsChevronUp size={20}></BsChevronUp>
-                                :
-                                <BsChevronDown size={20}></BsChevronDown>
-                        }
-                    </div>
-                </div>
+                        </div>
+                        :
+                        null
+                }
                 {
                     <CSSTransition unmountOnExit in={isOpen} timeout={200} classNames="fade" nodeRef={transitionRef}>
                         <div className="list" ref={transitionRef}>
