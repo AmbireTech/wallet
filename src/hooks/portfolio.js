@@ -1,10 +1,11 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { supportedBalances, getBalances } from '../services/zapper';
 
 import { ZAPPER_API_KEY } from '../config';
 
 export default function usePortfolio({ currentNetwork, account }) {
     const [isLoading, setLoading] = useState(true);
+    const [isRefreshing, setRefreshing] = useState(false);
     const [balances, setBalance] = useState([]);
     const [tokens, setTokens] = useState([]);
     const [totalUSD, setTotalUSD] = useState({
@@ -13,8 +14,8 @@ export default function usePortfolio({ currentNetwork, account }) {
         decimals: null
     });
 
-    const updateBalances = async (currentNetwork, address) => {
-        setLoading(true);
+    const updatePortfolio = async (currentNetwork, address, refresh) => {
+        refresh ? setRefreshing(true) : setLoading(true)
 
         const supBalances = await supportedBalances(ZAPPER_API_KEY)
         const { apps } = supBalances.find(({ network }) => network === currentNetwork);
@@ -49,12 +50,32 @@ export default function usePortfolio({ currentNetwork, account }) {
             decimals: decimals ? decimals : '00'
         });
         setTokens(tokens);
-        setLoading(false);
+
+        refresh ? setRefreshing(false) : setLoading(false)
     }
 
+    const refreshIfFocused = useCallback(() => {
+        if (document.hasFocus() && !isLoading && !isRefreshing) {
+            updatePortfolio(currentNetwork, account, true)
+        }
+    }, [isLoading, isRefreshing, currentNetwork, account])
+
+    // Update portfolio when currentNetwork or account are updated
     useEffect(() => {
-        updateBalances(currentNetwork, account);
+        updatePortfolio(currentNetwork, account);
     }, [currentNetwork, account]);
+
+    // Refresh periodically
+    useEffect(() => {
+        const refreshInterval = setInterval(refreshIfFocused, 60000)
+        return () => clearInterval(refreshInterval)
+    }, [currentNetwork, account, refreshIfFocused])
+
+    // Refresh when window is focused
+    useEffect(() => {
+        window.addEventListener('focus', refreshIfFocused)
+        return () => window.removeEventListener('focus', refreshIfFocused)
+    }, [refreshIfFocused])
 
     return {
         balances,
