@@ -25,6 +25,7 @@ export default function Wallet(props) {
           <Route path={props.match.url + "/deposit"}>
             <Deposit selectedAcc={props.selectedAcc} selectedNetwork={props.network.id} />
           </Route>
+          <Route path={props.match.url + "/trade"}>          </Route>
           <Route path={props.match.url + "/transfer"}></Route>
           <Route path={props.match.url + "/security"}></Route>
           <Route path={props.match.url + "/transactions"}></Route>
