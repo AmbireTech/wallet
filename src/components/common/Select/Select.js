@@ -2,10 +2,12 @@ import './Select.scss';
 
 import { useEffect, useRef, useState } from "react";
 import { BsChevronUp, BsChevronDown } from 'react-icons/bs'
+import { CSSTransition } from 'react-transition-group';
 import useOnClickOutside from '../../../helpers/onClickOutside';
 
 const Select = ({ children, native, defaultValue, items, onChange }) => {
     const ref = useRef();
+    const transitionRef = useRef();
     const [isOpen, setOpen] = useState();
     const [selectedItem, setSelectedItem] = useState({
         label: null,
@@ -47,8 +49,8 @@ const Select = ({ children, native, defaultValue, items, onChange }) => {
                     </div>
                 </div>
                 {
-                    isOpen ? 
-                        <div className="list">
+                    <CSSTransition unmountOnExit in={isOpen} timeout={200} classNames="fade" nodeRef={transitionRef}>
+                        <div className="list" ref={transitionRef}>
                             {
                                 items.map(item => (
                                     <div className={`option ${item.value === selectedItem.value ? 'active' : ''}`} key={item.value} onClick={() => selectItem(item)}>
@@ -65,8 +67,7 @@ const Select = ({ children, native, defaultValue, items, onChange }) => {
                                 ))
                             }
                         </div>
-                        :
-                        null
+                    </CSSTransition>
                 }
             </div>
             :
