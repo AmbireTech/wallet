@@ -22,11 +22,13 @@ const Transfer = () => {
                <div className="title">
                    Send
                </div>
-               <form action="">
+               <div className="form">
                     <TextInput placeholder="Asset"/>
-                    <TextInput placeholder="Amount"/>
-                    <TextInput placeholder="Recipient"/>
-                </form>
+                    <TextInput placeholder="Amount" button="MAX"/>
+                    <TextInput placeholder="Recipient" info="Please double-check the recipient address, blockchain transactions are not reversible."/>
+                    <div className="separator"/>
+                    <Button>Send</Button>
+                </div>
            </div>
            <div className="panel">
                <div className="overlay">
@@ -35,7 +37,7 @@ const Transfer = () => {
                <div className="title">
                    Cross-chain
                </div>
-               <form action="">
+               <div className="form">
                     <Segments defaultValue={segments[0].value} segments={segments}/>
                     <TextInput placeholder="From"/>
                     <div className="separator">
@@ -43,7 +45,7 @@ const Transfer = () => {
                     </div>
                     <TextInput placeholder="To"/>
                     <Button>Transfer</Button>
-                </form>
+                </div>
            </div>
         </div>
     )
