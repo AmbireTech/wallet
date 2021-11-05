@@ -30,7 +30,7 @@ const TopBar = ({
           ? true
           : false;
     } catch (e) {
-      console.error(e);
+      console.log('non-fatal clipboard error', e);
     }
     setClipboardGranted(status);
     return status;
