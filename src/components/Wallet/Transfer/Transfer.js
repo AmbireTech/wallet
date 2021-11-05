@@ -3,16 +3,22 @@ import './Transfer.scss'
 import { AiOutlineArrowDown } from 'react-icons/ai'
 import { BsBoxArrowInDown, BsBoxArrowUp } from 'react-icons/bs'
 import { TextInput, Segments, Button, Select } from '../../common'
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 
 const Transfer = ({ portfolio }) => {
     const [asset, setAsset] = useState()
+    const [amount, setAmount] = useState(0)
 
     const assetsItems = portfolio.tokens.map(({ label, symbol, img }) => ({
         label,
         value: symbol,
         icon: img
     }))
+
+    const setMaxAmount = () => {
+        const { balanceRaw, decimals } = portfolio.tokens.find(({ symbol }) => symbol === asset)
+        setAmount(Number(balanceRaw.slice(0, balanceRaw.length - decimals) + '.' + balanceRaw.slice(balanceRaw.length - decimals)))
+    }
 
     const segments = [
         {
@@ -33,7 +39,7 @@ const Transfer = ({ portfolio }) => {
                </div>
                <div className="form">
                     <Select defaultValue={asset} items={assetsItems} onChange={value => setAsset(value)}/>
-                    <TextInput placeholder="Amount" button="MAX"/>
+                    <TextInput placeholder="Amount" value={amount} onInput={value => setAmount(value)} button="MAX" onButtonClick={() => setMaxAmount()}/>
                     <TextInput placeholder="Recipient" info="Please double-check the recipient address, blockchain transactions are not reversible."/>
                     <div className="separator"/>
                     <Button>Send</Button>
