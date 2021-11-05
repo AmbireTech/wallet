@@ -17,8 +17,6 @@
         display: flex;
         justify-content: flex-end;
         align-items: center;
-        width: calc(100% - #{$sidebar-width});
-        /* max-width: 1500px; */
         gap: 1em;
         flex-wrap: wrap;
       }
