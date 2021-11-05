@@ -1,6 +1,5 @@
 import './App.scss'
 
-import { useEffect, useState } from 'react'
 import {
   HashRouter as Router,
   Switch,
@@ -16,7 +15,7 @@ import useAccounts from './hooks/accounts'
 import useNetwork from './hooks/network'
 import useWalletConnect from './hooks/walletconnect'
 
-// @TODO consts/cfg
+// @TODO consts/cfg, dev vs prod
 const relayerURL = 'http://localhost:1934'
 
 function App() {
@@ -30,10 +29,6 @@ function App() {
   return (
     <ToastProvider>
       <Router>
-        {/*<nav>
-                <Link to="/email-login">Login</Link>
-        </nav>*/}
-
         <Switch>
           <Route path="/add-account">
             <AddAccount relayerURL={relayerURL} onAddAccount={onAddAccount}></AddAccount>
