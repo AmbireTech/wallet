@@ -99,7 +99,7 @@ export default function useWalletConnect ({ account, chainId, onCallRequest }) {
             connectors[uri] = null
         }
         dispatch({ type: 'disconnected', uri })
-    }, [state])
+    }, [])
 
     const resolveMany = (ids, resolution) => {
         // @TODO get the connectors, reply to them
@@ -109,7 +109,6 @@ export default function useWalletConnect ({ account, chainId, onCallRequest }) {
     // Side effects that will run on every state change/rerender
     useEffect(() => {
         // restore connectors and update the ones that are stale
-        let newConnectors = {}
         let updateConnections = false
         state.connections.forEach(({ uri, session }) => {
             if (!connectors[uri]) connectors[uri] = connect({ uri, session })
