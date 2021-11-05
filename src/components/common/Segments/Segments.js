@@ -8,8 +8,9 @@ const Segments = ({ defaultValue, segments }) => {
         <div className="segments">
             {
                 segments.map(segment => (
-                    <div className={`segment ${segment === value ? 'active' : ''}`} key={segment} onClick={() => setValue(segment)}>
-                        { segment }
+                    <div className={`segment ${segment.value === value ? 'active' : ''}`} key={segment.value} onClick={() => setValue(segment.value)}>
+                        <div className="icon">{ segment.icon }</div>
+                        { segment.value }
                     </div>
                 ))
             }

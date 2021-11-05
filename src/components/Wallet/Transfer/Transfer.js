@@ -1,12 +1,19 @@
 import './Transfer.scss'
 
 import { AiOutlineArrowDown } from 'react-icons/ai'
+import { BsBoxArrowInDown, BsBoxArrowUp } from 'react-icons/bs'
 import { TextInput, Segments, Button } from '../../common'
 
 const Transfer = () => {
     const segments = [
-        'Deposit',
-        'Withdraw'
+        {
+            value: 'Deposit',
+            icon: <BsBoxArrowInDown/>
+        },
+        {
+            value: 'Withdraw',
+            icon: <BsBoxArrowUp/>
+        }
     ]
 
     return (
@@ -29,7 +36,7 @@ const Transfer = () => {
                    Cross-chain
                </div>
                <form action="">
-                    <Segments defaultValue={segments[0]} segments={segments}/>
+                    <Segments defaultValue={segments[0].value} segments={segments}/>
                     <TextInput placeholder="From"/>
                     <div className="separator">
                         <AiOutlineArrowDown/>
