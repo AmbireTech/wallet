@@ -24,6 +24,33 @@
         color: white;
     }
 
+    .info {
+        font-size: 15px;
+        margin-top: 0.8rem;
+        padding: 0 0.4rem;
+        opacity: 0.5;
+    }
+
+    .button {
+        position: absolute;
+        top: 0;
+        right: 0;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0 1.5rem;
+        cursor: pointer;
+        font-size: 15px;
+        font-weight: bold;
+        transition: all 0.1s ease-in-out;
+        background-color: rgba(0, 0, 0, 0.1);
+
+        &:hover {
+            background-color: rgba(0, 0, 0, 0.3);
+        }
+    }
+
     &.copy {
         input, .icon {
             cursor: pointer;
