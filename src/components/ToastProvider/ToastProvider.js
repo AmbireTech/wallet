@@ -5,21 +5,30 @@ import { TransitionGroup, CSSTransition } from 'react-transition-group';
 
 const ToastContext = React.createContext(null);
 
+let id = 0
+
 const ToastProvider = ({ children }) => {
     const [toasts, setToasts] = useState([]);
-    const [count, setCount] = useState(0);
 
-    const addToast = (content, timeout = 3000) => {
+    const addToast = (content, options) => {
+        const { timeout, error } = {
+            timeout: 3000,
+            error: false,
+            ...options
+        }
+
+        const toast = {
+            id: id++,
+            content,
+            error,
+            ref: createRef()
+        }
+        
         setToasts(toasts => [
             ...toasts,
-            {
-                id: count,
-                content,
-                ref: createRef()
-            }
+            toast
         ]);
-        setTimeout(() => removeToast(count), timeout);
-        setCount(count => count + 1);
+        setTimeout(() => removeToast(toast.id), timeout);
     };
 
     const removeToast = id => {
@@ -39,7 +48,7 @@ const ToastProvider = ({ children }) => {
                     {
                         toasts.map(toast => (
                             <CSSTransition timeout={200} classNames="slide-fade" key={toast.id} nodeRef={toast.ref}>
-                                <div className="toast" ref={toast.ref}>
+                                <div className={`toast ${toast.error ? 'error' : ''}`} ref={toast.ref}>
                                     { toast.content }
                                 </div>
                             </CSSTransition>
