@@ -6,14 +6,37 @@
     background-color: $input-background-color;
     user-select: none;
     font-weight: bold;
+    cursor: pointer;
+
+    .icon {
+        height: 22px;
+        width: 22px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 100%;
+        background-color: rgba(255, 255, 255, 0.1);
+        overflow: hidden;
+
+        img {
+            height: 100%;
+        }
+    }
 
     .value {
         height: 100%;
         display: flex;
         align-items: center;
-        gap: 20px;
+        gap: 12px;
         padding: 0 20px;
         font-weight: bold;
+
+        .handle {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-left: 10px;
+        }
     }
 
     .list {
@@ -27,7 +50,9 @@
             display: flex;
             align-items: center;
             justify-content: flex-start;
+            gap: 12px;
             padding: 0 20px;
+            padding-right: 40px;
             font-weight: 500;
             opacity: 0.8;
 

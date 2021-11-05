@@ -46,6 +46,13 @@ const TopBar = ({
     }
   };
 
+  const accountsItems = accounts.map(({ id }) => ({ value: id }))
+  const networksItems = allNetworks.map(({ id, name, icon }) => ({
+    label: name,
+    value: id,
+    icon
+  }))
+
   useEffect(() => checkPermissions(), []);
 
   return (
@@ -81,8 +88,8 @@ const TopBar = ({
           ))}
         </DropDown>
 
-        <Select defaultValue={selectedAcc} items={accounts} itemKey="id" onChange={value => onSelectAcc(value)}/>
-        <Select defaultValue={network.id} items={allNetworks} itemKey="id" itemLabel="name" onChange={value => setNetwork(value)}/>
+        <Select defaultValue={selectedAcc} items={accountsItems} onChange={value => onSelectAcc(value)}/>
+        <Select defaultValue={network.id} items={networksItems} onChange={value => setNetwork(value)}/>
       </div>
     </div>
   );
