@@ -18,7 +18,7 @@ import useWalletConnect from './hooks/walletconnect'
 // @TODO consts/cfg, dev vs prod
 const relayerURL = 'http://localhost:1934'
 
-function App() {
+function AppInner () {
   const { accounts, selectedAcc, onSelectAcc, onAddAccount } = useAccounts()
   const { network, setNetwork, allNetworks } = useNetwork()
   const { connections, connect, disconnect, requests } = useWalletConnect({
@@ -26,38 +26,43 @@ function App() {
     chainId: network.chainId
   })
 
+  return (<>
+    <Switch>
+      <Route path="/add-account">
+        <AddAccount relayerURL={relayerURL} onAddAccount={onAddAccount}></AddAccount>
+      </Route>
+
+      <Route path="/email-login">
+        <EmailLogin relayerURL={relayerURL} onAddAccount={onAddAccount}></EmailLogin>
+      </Route>
+
+      <Route path="/wallet" component={props => Wallet({ ...props,  accounts, selectedAcc, onSelectAcc, allNetworks, network, setNetwork, connections, connect, disconnect })}>
+      </Route>
+
+      <Route path="/security"></Route>
+      <Route path="/transactions"></Route>
+      <Route path="/swap"></Route>
+      <Route path="/earn"></Route>
+      <Route path="/send-transaction">
+        <SendTransaction accounts={accounts} selectedAcc={selectedAcc} network={network} requests={requests} relayerURL={relayerURL}>
+        </SendTransaction>
+      </Route>
+
+      <Route path="/">
+        <Redirect to="/add-account" />
+      </Route>
+
+    </Switch>
+  </>)
+}
+
+// handles all the providers so that we can use provider hooks inside of AppInner
+export default function App() {
   return (
     <ToastProvider>
       <Router>
-        <Switch>
-          <Route path="/add-account">
-            <AddAccount relayerURL={relayerURL} onAddAccount={onAddAccount}></AddAccount>
-          </Route>
-
-          <Route path="/email-login">
-            <EmailLogin relayerURL={relayerURL} onAddAccount={onAddAccount}></EmailLogin>
-          </Route>
-
-          <Route path="/wallet" component={props => Wallet({ ...props,  accounts, selectedAcc, onSelectAcc, allNetworks, network, setNetwork, connections, connect, disconnect })}>
-          </Route>
-
-          <Route path="/security"></Route>
-          <Route path="/transactions"></Route>
-          <Route path="/swap"></Route>
-          <Route path="/earn"></Route>
-          <Route path="/send-transaction">
-            <SendTransaction accounts={accounts} selectedAcc={selectedAcc} network={network} requests={requests} relayerURL={relayerURL}>
-            </SendTransaction>
-          </Route>
-
-          <Route path="/">
-            <Redirect to="/add-account" />
-          </Route>
-
-        </Switch>
+        <AppInner/>
       </Router>
     </ToastProvider>
   )
 }
-
-export default App;
