@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react'
-import { useToasts } from '../helpers/toasts'
+import { useToasts } from '../hooks/toasts'
 
 export default function useAccounts () {
     const { addToast } = useToasts()

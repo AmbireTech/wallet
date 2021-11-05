@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useReducer, useRef } from 'react'
-import { useToasts } from '../helpers/toasts'
+import { useToasts } from '../hooks/toasts'
 
 import WalletConnectCore from '@walletconnect/core'
 import * as cryptoLib from '@walletconnect/iso-crypto'
