@@ -9,12 +9,12 @@ const noopSessionStorage = { setSession: noop, getSession: noop, removeSession: 
 const STORAGE_KEY = 'wc1_connections'
 const SUPPORTED_METHODS = ['eth_sendTransaction', 'gs_multi_send', 'personal_sign', 'eth_sign']
 
-const getDefaultState = () => ({ connectors: {}, connections: [] })
+const getDefaultState = () => ({ connectors: {}, connections: [], requests: [] })
 
 export default function useWalletConnect ({ account, chainId, onCallRequest }) {
     // This is needed cause of the WalletConnect event handlers
     const stateRef = useRef()
-    stateRef.current = { onCallRequest, account, chainId }
+    stateRef.current = { account, chainId }
 
     const [state, dispatch] = useReducer((state, action) => {
         if (action.type === 'updateConnections') return { ...state, connections: action.connections }
@@ -27,14 +27,25 @@ export default function useWalletConnect ({ account, chainId, onCallRequest }) {
             // It's safe to read .session right after approveSession because 1) approveSession itself normally stores the session itself
             // 2) connector.session is a getter that re-reads private properties of the connector; those properties are updated immediately at approveSession
             return {
+                ...state,
                 connections: [...state.connections, { uri: action.uri, session: connector.session }],
-                connectors: { ...state.connectors, [action.uri]: connector }
+                connectors: { ...state.connectors, [action.uri]: connector },
             }
         }
         if (action.type === 'disconnected') {
             return {
+                ...state,
                 connections: state.connections.filter(x => x.uri !== action.uri),
                 connectors: { ...state.connectors, [action.uri]: undefined }
+            }
+        }
+        if (action.type === 'requestAdded') {
+            return { ...state, requests: [...state.requests, action.request] }
+        }
+        if (action.type === 'requestsResolved') {
+            return {
+                ...state,
+                requests: state.requests.filter(x => !action.ids.includes(x.id))
             }
         }
         return { ...state }
@@ -42,7 +53,7 @@ export default function useWalletConnect ({ account, chainId, onCallRequest }) {
         try {
             return {
                 connections: JSON.parse(localStorage[STORAGE_KEY]),
-                connectors: {}
+                ...getDefaultState()
             }
         } catch(e) {
             console.error(e)
@@ -73,7 +84,8 @@ export default function useWalletConnect ({ account, chainId, onCallRequest }) {
                 connector.rejectRequest({ id: payload.id, error: { message: 'METHOD_NOT_SUPPORTED' }})
                 return
             }
-            stateRef.current.onCallRequest(payload, connector)
+            // @TODO add more data to this, like connector URI and chainId
+            dispatch({ type: 'requestAdded', request: payload })
         })
 
         connector.on('disconnect', (error, payload) => {
@@ -114,12 +126,12 @@ export default function useWalletConnect ({ account, chainId, onCallRequest }) {
             connections: state.connections.map(({ uri }) => ({ uri, session: state.connectors[uri].session }))
         })
         if (Object.keys(newConnectors).length) dispatch({ type: 'addConnectors', newConnectors })
-    }, [state, connect, account, chainId])
+    }, [state, account, chainId])
 
     // Initialization effects
     useEffect(() => runInitEffects(connect), [])
 
-    return { connections: state.connections, connect, disconnect }
+    return { connections: state.connections, requests: state.requests, connect, disconnect }
 }
 
 // Initialization side effects
