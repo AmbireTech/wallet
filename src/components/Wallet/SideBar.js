@@ -42,9 +42,9 @@ const SideBar = ({match, portfolio}) => {
                         <BiTransfer size={30}/>Transfer
                     </div>
                 </NavLink>
-                <NavLink to={match.url + "/security"} activeClassName="selected">
+                <NavLink to={match.url + "/earn"} activeClassName="selected">
                     <div className="item">
-                        <MdLock size={30}/>Security
+                        <BsPiggyBank size={30}/>Earn
                     </div>
                 </NavLink>
                 <NavLink to={match.url + "/swap"} activeClassName="selected">
@@ -52,9 +52,9 @@ const SideBar = ({match, portfolio}) => {
                         <MdCompareArrows size={30}/>Transactions
                     </div>
                 </NavLink>
-                <NavLink to={match.url + "/earn"} activeClassName="selected">
+                <NavLink to={match.url + "/security"} activeClassName="selected">
                     <div className="item">
-                        <BsPiggyBank size={30}/>Earn
+                        <MdLock size={30}/>Security
                     </div>
                 </NavLink>
             </div>
