@@ -1,7 +1,7 @@
 import './TextInput.css'
 
 import { MdContentCopy } from 'react-icons/md';
-import { useToasts } from '../../../helpers/toasts';
+import { useToasts } from '../../../hooks/toasts';
 
 export default function TextInput({ value, disabled, copy }) {
     const { addToast } = useToasts();
