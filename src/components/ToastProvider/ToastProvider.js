@@ -48,7 +48,7 @@ const ToastProvider = ({ children }) => {
                     {
                         toasts.map(toast => (
                             <CSSTransition timeout={200} classNames="slide-fade" key={toast.id} nodeRef={toast.ref}>
-                                <div className={`toast ${toast.error ? 'error' : ''}`} ref={toast.ref}>
+                                <div className={`toast ${toast.error ? 'error' : ''}`} ref={toast.ref} onClick={() => removeToast(toast.id)}>
                                     { toast.content }
                                 </div>
                             </CSSTransition>

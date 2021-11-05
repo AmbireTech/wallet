@@ -2,21 +2,27 @@ import './Select.scss';
 
 import { useEffect, useRef, useState } from "react";
 import { BsChevronUp, BsChevronDown } from 'react-icons/bs'
+import { CSSTransition } from 'react-transition-group';
 import useOnClickOutside from '../../../helpers/onClickOutside';
 
-const Select = ({ children, native, defaultValue, items, itemKey, itemLabel, onChange }) => {
+const Select = ({ children, native, defaultValue, items, onChange }) => {
     const ref = useRef();
+    const transitionRef = useRef();
     const [isOpen, setOpen] = useState();
-    const [selectedItem, setSelectedItem] = useState();
+    const [selectedItem, setSelectedItem] = useState({
+        label: null,
+        value: null,
+        icon: null
+    });
 
     const selectItem = item => {
         setSelectedItem(item);
-        onChange(item[itemKey]);
+        onChange(item.value);
     };
 
     useEffect(() => {
-        setSelectedItem(items.find(item => item[itemKey] === defaultValue));
-    }, [defaultValue, items, itemKey]);
+        setSelectedItem(items.find(item => item.value === defaultValue));
+    }, [defaultValue, items]);
 
     useOnClickOutside(ref, () => setOpen(false));
 
@@ -24,35 +30,52 @@ const Select = ({ children, native, defaultValue, items, itemKey, itemLabel, onC
         !native ? 
             <div className="select" onClick={() => setOpen(!isOpen)} ref={ref}>
                 <div className="value">
-                    { selectedItem ? selectedItem[itemLabel || itemKey] : null }
                     {
-                        isOpen ? 
-                            <BsChevronUp size={20}></BsChevronUp>
+                        selectedItem.icon ? 
+                            <div className="icon">
+                                <img src={selectedItem.icon} alt="Icon" />
+                            </div>
                             :
-                            <BsChevronDown size={20}></BsChevronDown>
+                            null
                     }
+                    { selectedItem.label || selectedItem.value }
+                    <div className="handle">
+                        {
+                            isOpen ? 
+                                <BsChevronUp size={20}></BsChevronUp>
+                                :
+                                <BsChevronDown size={20}></BsChevronDown>
+                        }
+                    </div>
                 </div>
                 {
-                    isOpen ? 
-                        <div className="list">
+                    <CSSTransition unmountOnExit in={isOpen} timeout={200} classNames="fade" nodeRef={transitionRef}>
+                        <div className="list" ref={transitionRef}>
                             {
                                 items.map(item => (
-                                    <div className={`option ${item[itemKey] === selectedItem[itemKey] ? 'active' : ''}`} key={item[itemKey]} onClick={() => selectItem(item)}>
-                                        { item[itemLabel || itemKey] }
+                                    <div className={`option ${item.value === selectedItem.value ? 'active' : ''}`} key={item.value} onClick={() => selectItem(item)}>
+                                        {
+                                            item.icon ? 
+                                                <div className="icon">
+                                                    <img src={item.icon} alt="Icon" />
+                                                </div>
+                                                :
+                                                null
+                                        }
+                                        { item.label || item.value }
                                     </div>
                                 ))
                             }
                         </div>
-                        :
-                        null
+                    </CSSTransition>
                 }
             </div>
             :
             <select className="select" onChange={ev => onChange(ev.target.value)} defaultValue={defaultValue}>
                 {
                     items.map(item => (
-                        <option key={item[itemKey]} value={item[itemKey]}>
-                            { item[itemLabel || itemKey] }
+                        <option key={item.value} value={item.value}>
+                            { item.label || item.value }
                         </option>
                     ))
                 }
