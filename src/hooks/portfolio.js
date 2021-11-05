@@ -43,7 +43,7 @@ export default function usePortfolio({ currentNetwork, account }) {
 
         const tokens = balances
             .find(({ appId }) => appId === 'tokens')
-            .products.map(({ assets }) => assets.map(({ tokens }) => tokens))
+            ?.products.map(({ assets }) => assets.map(({ tokens }) => tokens))
             .flat(2);
 
         setBalance(balances);
