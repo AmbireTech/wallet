@@ -12,7 +12,7 @@ export default function TextInput({ value, disabled, copy }) {
     };
 
     return (
-        <div className={`text-input ${copy ? 'copy' : ''}`} onClick={onClick}>
+        <div className={`text-input ${copy ? 'copy' : ''}`} onClick={copy ? onClick : null}>
             <input value={value} type="text" disabled={copy || disabled}/>
             {
                 copy ?
