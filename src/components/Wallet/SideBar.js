@@ -3,6 +3,7 @@ import "./SideBar.scss"
 import { NavLink } from 'react-router-dom'
 import { MdDashboard, MdLock, MdCompareArrows, } from 'react-icons/md'
 import { GiReceiveMoney } from 'react-icons/gi'
+import { BsCurrencyExchange } from 'react-icons/bs'
 import { BsPiggyBank } from 'react-icons/bs'
 import { BiTransfer } from 'react-icons/bi'
 import { Loading } from "../common"
@@ -30,6 +31,11 @@ const SideBar = ({match, portfolio}) => {
                 <NavLink to={match.url + "/dashboard"} activeClassName="selected">
                     <div className="item">
                         <MdDashboard size={30}/>Dashboard
+                    </div>
+                </NavLink>
+                <NavLink to={match.url + "/trade"} activeClassName="selected">
+                    <div className="item">
+                        <BsCurrencyExchange size={30}/>Trade
                     </div>
                 </NavLink>
                 <NavLink to={match.url + "/deposit"} activeClassName="selected">
