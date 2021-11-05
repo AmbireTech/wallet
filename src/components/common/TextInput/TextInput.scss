@@ -1,0 +1,42 @@
+@import '../../../variables.scss';
+
+.text-input {
+    position: relative;
+
+    input, .icon {
+        cursor: pointer;
+    }
+
+    input {
+        width: 100%;
+        color: white;
+        font-size: 1.2em;
+        padding: 1em;
+        text-overflow: ellipsis;
+        background-color: $input-background-color;
+    }
+
+    .icon {
+        position: absolute;
+        top: 0;
+        right: 0;
+        height: 100%;
+        width: 3.5em;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+    }
+
+    &.copy {
+        input {
+            padding-right: 2.5em;
+            font-family: monospace;
+            font-size: 1.5em;
+
+            &:disabled {
+                opacity: 1 !important;
+            }
+        }
+    }
+}
