@@ -12,6 +12,7 @@ export default function usePortfolio({ currentNetwork, account }) {
     const [isRefreshing, setRefreshing] = useState(false);
     const [balances, setBalance] = useState([]);
     const [tokens, setTokens] = useState([]);
+    const [assets, setAssets] = useState([]);
     const [totalUSD, setTotalUSD] = useState({
         full: 0,
         formated: null,
@@ -43,8 +44,18 @@ export default function usePortfolio({ currentNetwork, account }) {
 
         const tokens = balances
             .find(({ appId }) => appId === 'tokens')
-            .products.map(({ assets }) => assets.map(({ tokens }) => tokens))
+            ?.products.map(({ assets }) => assets.map(({ tokens }) => tokens))
             .flat(2);
+
+        const assets = balances
+            .filter(({ products }) => products && products.length)
+            .map(({ products }) => products.map(({ label, assets }) => ({ label, assets })))
+            .flat(1)
+            .sort((a, b) => {
+                if (a.label < b.label) return -1
+                if (a.label > b.label) return 1
+                return 0
+            })
 
         setBalance(balances);
         setTotalUSD({
@@ -53,6 +64,7 @@ export default function usePortfolio({ currentNetwork, account }) {
             decimals: decimals ? decimals : '00'
         });
         setTokens(tokens);
+        setAssets(assets);
 
         refresh ? setRefreshing(false) : setLoading(false)
     }
@@ -84,6 +96,7 @@ export default function usePortfolio({ currentNetwork, account }) {
         balances,
         totalUSD,
         tokens,
+        assets,
         isLoading
     }
 }
