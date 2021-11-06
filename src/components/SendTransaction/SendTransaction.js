@@ -20,6 +20,19 @@ export default function SendTransaction ({ accounts, network, selectedAcc, reque
   const [estimation, setEstimation] = useState(null)
   const history = useHistory()
 
+  const notifyUser = bundle => {
+    if (window.Notification && Notification.permission !== 'denied') {
+      Notification.requestPermission(status => {  // status is "granted", if accepted by user
+        if (status !== 'granted') return
+         /*var n = */new Notification('Ambire Wallet: new transaction request', {
+          body: `${getBundleShortSummary(bundle)}`,
+          requireInteraction: true
+          //icon: '/path/to/icon.png' // optional
+        })
+      })
+    }
+  }
+
   const onCallRequest = async request => {
     // @TODO handle more
     if (request.type !== 'eth_sendTransaction') {
@@ -52,6 +65,7 @@ export default function SendTransaction ({ accounts, network, selectedAcc, reque
       txns: [[rawTxn.to, rawTxn.value, rawTxn.data]],
       signer: account.signer
     })
+    notifyUser(bundle)
   
     const provider = getDefaultProvider(network.rpc)
     const estimation = await bundle.estimate({ relayerURL, fetch })
