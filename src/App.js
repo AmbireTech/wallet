@@ -35,9 +35,31 @@ function AppInner () {
 
   // Navigate to the send transaction dialog if we have a new txn
   const history = useHistory()
+  const eligibleRequests = requests
+    .filter(({ type, chainId, account }) =>
+      type === 'eth_sendTransaction'
+      && chainId === network.chainId
+      && account === selectedAcc
+    )
+  const notifyUser = () => {
+    if (window.Notification && Notification.permission !== 'denied') {
+      Notification.requestPermission(function(status) {  // status is "granted", if accepted by user
+        if (status !== 'granted') return
+         /*var n = */new Notification('Ambire Wallet: new transaction request', {
+          body: 'pending transaction request',
+          //body: `${getBundleShortSummary(bundle)}`,
+          requireInteraction: true
+          //icon: '/path/to/icon.png' // optional
+        })
+      })
+    }
+  }
   useEffect(() => {
-    if (requests.length) history.push('/send-transaction')
-  }, [requests.length, history])
+    if (eligibleRequests.length) {
+      history.push('/send-transaction')
+      notifyUser(eligibleRequests[eligibleRequests.length - 1])
+    }
+  }, [eligibleRequests.length, history])
 
   return (<>
     <Switch>
@@ -50,7 +72,7 @@ function AppInner () {
       </Route>
 
       <Route path="/send-transaction">
-        <SendTransaction accounts={accounts} selectedAcc={selectedAcc} network={network} requests={requests} resolveMany={resolveMany} relayerURL={relayerURL}>
+        <SendTransaction accounts={accounts} selectedAcc={selectedAcc} network={network} requests={eligibleRequests} resolveMany={resolveMany} relayerURL={relayerURL}>
         </SendTransaction>
       </Route>
 

@@ -15,7 +15,7 @@ import { ethers, getDefaultProvider } from 'ethers'
 import { useHistory } from 'react-router'
 
 export default function SendTransaction ({ accounts, network, selectedAcc, requests, resolveMany, relayerURL }) {
-  // Note: this one is temporary until we figure out how to manage a queue of those
+  // @TODO: this one is temporary until we figure out how to manage a queue of those
   const [userAction, setUserAction] = useState(null)
   const [estimation, setEstimation] = useState(null)
   const history = useHistory()
@@ -52,17 +52,6 @@ export default function SendTransaction ({ accounts, network, selectedAcc, reque
       txns: [[rawTxn.to, rawTxn.value, rawTxn.data]],
       signer: account.signer
     })
-    if (window.Notification && Notification.permission !== 'denied') {
-      Notification.requestPermission(function(status) {  // status is "granted", if accepted by user
-        // @TODO parse transaction and actually show what we're signing
-        if (status !== 'granted') return
-         /*var n = */new Notification('Ambire Wallet: new transaction request', { 
-          body: `${getBundleShortSummary(bundle)}`,
-          requireInteraction: true
-          //icon: '/path/to/icon.png' // optional
-        })
-      })
-    }
   
     const provider = getDefaultProvider(network.rpc)
     const estimation = await bundle.estimate({ relayerURL, fetch })
@@ -99,9 +88,11 @@ export default function SendTransaction ({ accounts, network, selectedAcc, reque
 
   // temp hack
   useEffect(() => {
-    setEstimation(null)
-    if (requests.length) onCallRequest(requests[0])
-  }, [requests])
+    if (estimation) setEstimation(null)
+    if (requests.length) {
+      onCallRequest(requests[0])
+    }
+  }, [requests.length])
 
    const rejectButton= (
         <button className='rejectTxn' onClick={() => {
