@@ -44,6 +44,6 @@ export default function useAccounts () {
       if (Object.keys(accounts).length) {
         window.location.href = '/#/wallet'
       }
-    }, [accounts])
+    }, [accounts, addToast])
     return { accounts, selectedAcc, onSelectAcc, onAddAccount }
   }
