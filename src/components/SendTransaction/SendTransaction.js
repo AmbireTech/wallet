@@ -12,14 +12,15 @@ import { Bundle } from 'adex-protocol-eth/js'
 import { TrezorSubprovider } from '@0x/subproviders/lib/src/subproviders/trezor' // https://github.com/0xProject/0x-monorepo/issues/1400
 import TrezorConnect from 'trezor-connect'
 import { ethers, getDefaultProvider } from 'ethers'
+import { useHistory } from 'react-router'
 
 export default function SendTransaction ({ accounts, network, selectedAcc, requests, resolveMany, relayerURL }) {
   // Note: this one is temporary until we figure out how to manage a queue of those
   const [userAction, setUserAction] = useState(null)
   const [estimation, setEstimation] = useState(null)
+  const history = useHistory()
 
   const onCallRequest = async (payload, wcConnector) => {
-    setEstimation(null)
     // @TODO handle more
     if (payload.method !== 'eth_sendTransaction') {
       console.log('unsupported method', payload)
@@ -50,7 +51,6 @@ export default function SendTransaction ({ accounts, network, selectedAcc, reque
       txns: [[rawTxn.to, rawTxn.value, rawTxn.data]],
       signer: account.signer
     })
-    window.location.href = '/#/send-transaction'
     if (window.Notification && Notification.permission !== 'denied') {
       Notification.requestPermission(function(status) {  // status is "granted", if accepted by user
         // @TODO parse transaction and actually show what we're signing
@@ -74,7 +74,6 @@ export default function SendTransaction ({ accounts, network, selectedAcc, reque
     // pay a fee to the relayer
     bundle.txns.push(['0x942f9CE5D9a33a82F88D233AEb3292E680230348', Math.round(estimation.feeInNative.fast*1e18).toString(10), '0x'])
     await bundle.getNonce(provider)
-    console.log(bundle.nonce)
 
     setUserAction({
       bundle,
@@ -102,12 +101,15 @@ export default function SendTransaction ({ accounts, network, selectedAcc, reque
 
   // temp hack
   useEffect(() => {
-    console.log(requests)
+    setEstimation(null)
     if (requests.length) onCallRequest(requests[0])
   }, [requests])
 
    const rejectButton= (
-        <button className='rejectTxn' onClick={() => resolveMany(requests.map(x => x.id))}>Reject</button>
+        <button className='rejectTxn' onClick={() => {
+            resolveMany(requests.map(x => x.id))
+            history.goBack()
+        }}>Reject</button>
    )
    const actionable =
         (estimation && !estimation.success)
@@ -153,7 +155,6 @@ export default function SendTransaction ({ accounts, network, selectedAcc, reque
                                         <div className="feeSquare"><div className="speed">Medium</div>${estimation.feeInUSD.medium}</div>
                                         <div className="feeSquare selected"><div className="speed">Fast</div>${estimation.feeInUSD.fast}</div>
                                         <div className="feeSquare"><div className="speed">Ape</div>${estimation.feeInUSD.ape}</div>
-
                                     </div>
                                 )
                                 : (<></>)
