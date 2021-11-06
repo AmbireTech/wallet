@@ -20,6 +20,8 @@ export default function usePortfolio({ currentNetwork, account }) {
     });
 
     const updatePortfolio = async (currentNetwork, address, refresh) => {
+        if (!address) return
+
         refresh ? setRefreshing(true) : setLoading(true)
 
         const supBalances = await supportedBalances(ZAPPER_API_KEY)

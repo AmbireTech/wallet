@@ -16,6 +16,7 @@ import SendTransaction from './components/SendTransaction/SendTransaction'
 import useAccounts from './hooks/accounts'
 import useNetwork from './hooks/network'
 import useWalletConnect from './hooks/walletconnect'
+import { usePortfolio } from './hooks'
 
 // @TODO consts/cfg, dev vs prod
 const relayerURL = 'http://localhost:1934'
@@ -26,6 +27,10 @@ function AppInner () {
   const { connections, connect, disconnect, requests, resolveMany } = useWalletConnect({
     account: selectedAcc,
     chainId: network.chainId
+  })
+  const portfolio = usePortfolio({
+    currentNetwork: network.id,
+    account: selectedAcc
   })
 
   // Navigate to the send transaction dialog if we have a new txn
@@ -50,7 +55,7 @@ function AppInner () {
       </Route>
 
       <Route path="/wallet">
-        <Wallet match={{ url: "/wallet" }} accounts={accounts} selectedAcc={selectedAcc} onSelectAcc={onSelectAcc} allNetworks={allNetworks} network={network} setNetwork={setNetwork} connections={connections} connect={connect} disconnect={disconnect}></Wallet>
+        <Wallet match={{ url: "/wallet" }} accounts={accounts} selectedAcc={selectedAcc} portfolio={portfolio} onSelectAcc={onSelectAcc} allNetworks={allNetworks} network={network} setNetwork={setNetwork} connections={connections} connect={connect} disconnect={disconnect}></Wallet>
       </Route>
 
       <Route path="/">
