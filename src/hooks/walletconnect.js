@@ -37,6 +37,7 @@ export default function useWalletConnect ({ account, chainId, onCallRequest }) {
             }
         }
         if (action.type === 'requestAdded') {
+            if (state.requests.find(({ id }) => id === action.request.id)) return { ...state }
             return { ...state, requests: [...state.requests, action.request] }
         }
         if (action.type === 'requestsResolved') {
