@@ -37,11 +37,12 @@
     }
 
     &.copy {
-        input, .icon {
+        .icon {
             cursor: pointer;
         }
 
         input {
+            cursor: text;
             padding-right: 2.5em;
             font-family: monospace;
             font-size: 1.5em;
