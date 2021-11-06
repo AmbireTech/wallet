@@ -171,7 +171,7 @@ export default function useWalletConnect ({ account, chainId, onCallRequest }) {
                 }
             }
         })
-        
+
         localStorage[STORAGE_KEY] = JSON.stringify(state)
 
         if (updateConnections) dispatch({
@@ -208,7 +208,7 @@ function runInitEffects(wcConnect) {
         navigator.permissions.query({ name: 'clipboard-read' }).then((result) => {
             // If permission to read the clipboard is granted or if the user will
             // be prompted to allow it, we proceed.
-    
+
             if (result.state === 'granted' || result.state === 'prompt') {
                 navigator.clipboard.readText().then(clipboard => {
                     if (clipboard.startsWith('wc:')) wcConnect({ uri: clipboard })
