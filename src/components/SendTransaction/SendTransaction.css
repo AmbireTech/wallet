@@ -34,11 +34,16 @@
     text-transform: uppercase;
 }
 
+#sendTransaction .secondaryPanel {
+    min-width: 500px;
+}
 
 #sendTransaction .fees {
     overflow: hidden;
     margin: 1em 0px;
     min-width: 360px;
+    display: flex;
+    justify-content: center;
 }
 
 #sendTransaction .feeSquare {
