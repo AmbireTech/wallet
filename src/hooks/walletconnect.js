@@ -47,10 +47,12 @@ export default function useWalletConnect ({ account, chainId, onCallRequest }) {
         }
         return { ...state }
     }, null, () => {
+        const json = localStorage[STORAGE_KEY]
+        if (!json) return getDefaultState()
         try {
             return {
                 ...getDefaultState(),
-                ...JSON.parse(localStorage[STORAGE_KEY])
+                ...JSON.parse(json)
             }
         } catch(e) {
             console.error(e)
