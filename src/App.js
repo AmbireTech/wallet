@@ -31,7 +31,6 @@ function AppInner () {
   // Navigate to the send transaction dialog if we have a new txn
   const history = useHistory()
   useEffect(() => {
-    console.log(requests.length)
     if (requests.length) history.push('/send-transaction')
   }, [requests.length, history])
 
@@ -45,19 +44,13 @@ function AppInner () {
         <EmailLogin relayerURL={relayerURL} onAddAccount={onAddAccount}></EmailLogin>
       </Route>
 
-      <Route path="/wallet">
-        <Wallet match={{ url: "/wallet" }} accounts={accounts} selectedAcc={selectedAcc} onSelectAcc={onSelectAcc} allNetworks={allNetworks} network={network} setNetwork={setNetwork} connections={connections} connect={connect} disconnect={disconnect}></Wallet>
-      </Route>
-
-      <Route path="/security"></Route>
-      <Route path="/transactions"></Route>
-      <Route path="/swap"></Route>
-      <Route path="/earn"></Route>
-
       <Route path="/send-transaction">
         <SendTransaction accounts={accounts} selectedAcc={selectedAcc} network={network} requests={requests} resolveMany={resolveMany} relayerURL={relayerURL}>
         </SendTransaction>
+      </Route>
 
+      <Route path="/wallet">
+        <Wallet match={{ url: "/wallet" }} accounts={accounts} selectedAcc={selectedAcc} onSelectAcc={onSelectAcc} allNetworks={allNetworks} network={network} setNetwork={setNetwork} connections={connections} connect={connect} disconnect={disconnect}></Wallet>
       </Route>
 
       <Route path="/">
