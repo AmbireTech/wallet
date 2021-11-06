@@ -83,6 +83,7 @@ export default function SendTransaction ({ accounts, network, selectedAcc, reque
   const bundle = frozenBundle || makeBundle(account, network.id, eligibleRequests)
 
   const approveTxnImpl = async () => {
+    if (!estimation) return
     // pay a fee to the relayer
     bundle.txns.push(['0x942f9CE5D9a33a82F88D233AEb3292E680230348', Math.round(estimation.feeInNative.fast*1e18).toString(10), '0x'])
     const provider = getDefaultProvider(network.rpc)
@@ -127,7 +128,7 @@ export default function SendTransaction ({ accounts, network, selectedAcc, reque
           </>)
       : (<div>
           {rejectButton}
-          <button onClick={approveTxn}>Sign and send</button>
+          <button disabled={!estimation} onClick={approveTxn}>Sign and send</button>
       </div>)
 
   return (<div id="sendTransaction">

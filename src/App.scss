@@ -80,7 +80,7 @@ button, input[type=submit] {
   cursor: pointer;
 }
 
-button:active, input[type=submit]:not(:disabled):active {
+button:active, input[type=submit]:not([disabled]):active {
   transform: scale(0.95);
 }
 
@@ -92,7 +92,7 @@ button {
   opacity: 0.8;
 }
 
-button:not(:disabled):hover {
+button:not([disabled]):hover {
   opacity: 1;
 }
 
