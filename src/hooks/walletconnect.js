@@ -59,16 +59,21 @@ export default function useWalletConnect ({ account, chainId, onCallRequest }) {
     })
 
     const connect = useCallback(connectorOpts => {
-        console.log(connectorOpts)
         if (connectors[connectorOpts.uri]) {
             addToast('dApp already connected')
             return connectors[connectorOpts.uri]
         }
-        const connector = new WalletConnectCore({
-            connectorOpts,
-            cryptoLib,
-            sessionStorage: noopSessionStorage
-        })
+        let connector
+        try {
+            connector = new WalletConnectCore({
+                connectorOpts,
+                cryptoLib,
+                sessionStorage: noopSessionStorage
+            })
+        } catch(e) {
+            addToast(`Unable to connect to ${connectorOpts.uri}: ${e.message}`)
+            return null
+        }
 
         let sessionStart
         let sessionTimeout
@@ -120,6 +125,8 @@ export default function useWalletConnect ({ account, chainId, onCallRequest }) {
     }, [addToast])
 
     const disconnect = useCallback(uri => {
+        // connector might not be there, either cause we disconnected before,
+        // or cause we failed to connect in the first place
         if (connectors[uri]) {
             connectors[uri].killSession()
             connectors[uri] = null
