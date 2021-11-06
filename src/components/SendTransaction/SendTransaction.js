@@ -139,6 +139,9 @@ export default function SendTransaction ({ accounts, network, selectedAcc, reque
                                 </li>
                             )) : (<></>)}
                         </ul>
+                        <span>
+                            <b>NOTE:</b> Transaction batching is enabled, you're signing 3 transactions at once. You can add more transactions to this batch by interacting with a connected dApp right now.
+                        </span>
                 </div>
             </div>
             <div className="secondaryPanel">
@@ -148,6 +151,11 @@ export default function SendTransaction ({ accounts, network, selectedAcc, reque
                                 <GiTakeMyMoney size={35}/>
                                 Fee
                             </div>
+                            <span style={{ marginTop: '1em' }}>Fee currency</span>
+                            <select defaultValue="USDT">
+                                <option>USDT</option>
+                                <option>USDC</option>
+                            </select>
                             {
                                 (estimation && estimation.feeInUSD) ? (
                                     <div className="fees">
@@ -159,11 +167,7 @@ export default function SendTransaction ({ accounts, network, selectedAcc, reque
                                 )
                                 : (<></>)
                             }
-                            <span style={{ marginTop: '1em' }}>Fee currency</span>
-                            <select defaultValue="USDT">
-                                <option>USDT</option>
-                                <option>USDC</option>
-                            </select>
+
                     </div>
                 </div>
                 <div className="panel">
