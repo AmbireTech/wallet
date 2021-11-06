@@ -23,6 +23,9 @@
 
     .panel {
         position: relative;
+        display: flex;
+        flex-direction: column;
+        gap: 1.5em;
         flex: 0 1 50%;
         padding: 30px;
         padding-bottom: 40px;
@@ -31,11 +34,11 @@
         .title {
             font-size: 1.5em;
             font-weight: bold;
-            margin-bottom: 1.5rem;
         }
     }
 
     .form {
+        height: 100%;
         display: flex;
         flex-direction: column;
         gap: 20px;
