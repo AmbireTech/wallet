@@ -36,7 +36,8 @@ function AppInner () {
         <EmailLogin relayerURL={relayerURL} onAddAccount={onAddAccount}></EmailLogin>
       </Route>
 
-      <Route path="/wallet" component={props => Wallet({ ...props, accounts, selectedAcc, onSelectAcc, allNetworks, network, setNetwork, connections, connect, disconnect })}>
+      <Route path="/wallet">
+        <Wallet match={{ url: "/wallet" }} accounts={accounts} selectedAcc={selectedAcc} onSelectAcc={onSelectAcc} allNetworks={allNetworks} network={network} setNetwork={setNetwork} connections={connections} connect={connect} disconnect={disconnect}></Wallet>
       </Route>
 
       <Route path="/security"></Route>
@@ -44,10 +45,10 @@ function AppInner () {
       <Route path="/swap"></Route>
       <Route path="/earn"></Route>
 
-      <Route
-        path="/send-transaction"
-        component={props => SendTransaction({ ...props, accounts, selectedAcc, network, requests, resolveMany, relayerURL })}
-      >
+      <Route path="/send-transaction">
+        <SendTransaction accounts={accounts} selectedAcc={selectedAcc} network={network} requests={requests} resolveMany={resolveMany} relayerURL={relayerURL}>
+        </SendTransaction>
+
       </Route>
 
       <Route path="/">
