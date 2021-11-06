@@ -43,7 +43,7 @@ const Transfer = ({ portfolio }) => {
                         :
                         assetsItems.length ? 
                             <div className="form">
-                                <Select defaultValue={asset} items={assetsItems} onChange={value => setAsset(value)}/>
+                                <Select searchable defaultValue={asset} items={assetsItems} onChange={value => setAsset(value)}/>
                                 <NumberInput value={amount} min="0" onInput={value => setAmount(value)} button="MAX" onButtonClick={() => setMaxAmount()}/>
                                 <TextInput placeholder="Recipient" info="Please double-check the recipient address, blockchain transactions are not reversible."/>
                                 <div className="separator"/>
