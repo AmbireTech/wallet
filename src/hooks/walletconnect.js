@@ -104,6 +104,13 @@ export default function useWalletConnect ({ account, chainId, onCallRequest }) {
                 connector.rejectRequest({ id: payload.id, error: { message: 'METHOD_NOT_SUPPORTED' }})
                 return
             }
+            if (
+                payload.method === 'eth_sendTransaction' && payload.params[0] && payload.params[0].from
+                && payload.params[0].from.toLowerCase() !== connector.session.accounts[0].toLowerCase()
+            ) {
+                addToast(`dApp sent a request for the wrong account: ${payload.params[0].from}`)
+                return
+            }
             dispatch({ type: 'requestAdded', request: {
                 id: payload.id,
                 type: payload.method,
