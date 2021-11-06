@@ -96,7 +96,7 @@ export default function useWalletConnect ({ account, chainId, onCallRequest }) {
             addToast('Successfully connected to '+connector.session.peerMeta.name)
         })
 
-        connector.on('call_request', async (error, payload) => {
+        connector.on('call_request', (error, payload) => {
             if (error) console.error('WalletConnect error', error)
             if (!SUPPORTED_METHODS.includes(payload.method)) {
                 connector.rejectRequest({ id: payload.id, error: { message: 'METHOD_NOT_SUPPORTED' }})
@@ -116,6 +116,8 @@ export default function useWalletConnect ({ account, chainId, onCallRequest }) {
             dispatch({ type: 'disconnected', uri: connectorOpts.uri })
             connectors[connectorOpts.uri] = null
 
+            // NOTE: this event might be invoked 2 times when the dApp itself disconnects
+            // currently we don't dedupe that
             if (sessionStart && (Date.now() - sessionStart) < SESSION_TIMEOUT) {
                 addToast('dApp disconnected immediately - perhaps it does not support the current network?')
             } else {
