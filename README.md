@@ -1,4 +1,4 @@
-## Ambire WAllet
+## Ambire Wallet
 
 
 ### All documentation
