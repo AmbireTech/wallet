@@ -109,8 +109,12 @@ export default function useWalletConnect ({ account, chainId, onCallRequest }) {
         connector.on('disconnect', (error, payload) => {
             if (error) console.error('WalletConnect error', error)
 
-            connectors[connectorOpts.uri] = null
+            // NOTE the dispatch() will cause double rerender when we trigger a disconnect,
+            // cause we will call it once on disconnect() and once when the event arrives
+            // we can prevent this by checking if (!connectors[...]) but we'd rather stay safe and ensure
+            // the connection is removed
             dispatch({ type: 'disconnected', uri: connectorOpts.uri })
+            connectors[connectorOpts.uri] = null
 
             if (sessionStart && (Date.now() - sessionStart) < SESSION_TIMEOUT) {
                 addToast('dApp disconnected immediately - perhaps it does not support the current network?')
