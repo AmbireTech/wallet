@@ -31,6 +31,10 @@
         padding: 0 20px;
         font-weight: bold;
 
+        .separator {
+            flex-grow: 1;
+        }
+
         .handle {
             display: flex;
             align-items: center;
@@ -40,10 +44,15 @@
     }
 
     .list {
+        z-index: 97;
+        position: absolute;
         min-height: 50px;
+        max-height: 250px;
+        width: 100%;
         background-color: $input-background-color;
         box-shadow: $box-shadow;
         overflow: hidden;
+        overflow-y: auto;
 
         .option {
             height: 50px;

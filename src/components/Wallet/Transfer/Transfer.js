@@ -2,9 +2,24 @@ import './Transfer.scss'
 
 import { AiOutlineArrowDown } from 'react-icons/ai'
 import { BsBoxArrowInDown, BsBoxArrowUp } from 'react-icons/bs'
-import { TextInput, Segments, Button } from '../../common'
+import { TextInput, NumberInput, Segments, Button, Select, Loading } from '../../common'
+import { useCallback, useState } from 'react'
 
-const Transfer = () => {
+const Transfer = ({ portfolio }) => {
+    const [asset, setAsset] = useState()
+    const [amount, setAmount] = useState(0)
+
+    const assetsItems = portfolio.tokens.map(({ label, symbol, img }) => ({
+        label,
+        value: symbol,
+        icon: img
+    }))
+
+    const setMaxAmount = useCallback(() => {
+        const { balanceRaw, decimals } = portfolio.tokens.find(({ symbol }) => symbol === asset)
+        setAmount(Number(balanceRaw.slice(0, balanceRaw.length - decimals) + '.' + balanceRaw.slice(balanceRaw.length - decimals)))
+    }, [portfolio.tokens, asset])
+
     const segments = [
         {
             value: 'Deposit',
@@ -22,13 +37,21 @@ const Transfer = () => {
                <div className="title">
                    Send
                </div>
-               <div className="form">
-                    <TextInput placeholder="Asset"/>
-                    <TextInput placeholder="Amount" button="MAX"/>
-                    <TextInput placeholder="Recipient" info="Please double-check the recipient address, blockchain transactions are not reversible."/>
-                    <div className="separator"/>
-                    <Button>Send</Button>
-                </div>
+               {
+                    portfolio.isLoading ?
+                        <Loading/>
+                        :
+                        assetsItems.length ? 
+                            <div className="form">
+                                <Select defaultValue={asset} items={assetsItems} onChange={value => setAsset(value)}/>
+                                <NumberInput value={amount} min="0" onInput={value => setAmount(value)} button="MAX" onButtonClick={() => setMaxAmount()}/>
+                                <TextInput placeholder="Recipient" info="Please double-check the recipient address, blockchain transactions are not reversible."/>
+                                <div className="separator"/>
+                                <Button>Send</Button>
+                            </div>
+                            :
+                            null
+               }
            </div>
            <div className="panel">
                <div className="overlay">
