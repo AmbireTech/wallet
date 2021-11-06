@@ -104,8 +104,14 @@ export default function useWalletConnect ({ account, chainId, onCallRequest }) {
                 connector.rejectRequest({ id: payload.id, error: { message: 'METHOD_NOT_SUPPORTED' }})
                 return
             }
-            // @TODO add more data to this, like connector URI and chainId
-            dispatch({ type: 'requestAdded', request: payload })
+            dispatch({ type: 'requestAdded', request: {
+                id: payload.id,
+                type: payload.method,
+                wcUri: connectorOpts.uri,
+                txn: payload.params[0],
+                chainId: connector.session.chainId,
+                account: connector.session.accounts[0]
+            } })
         })
 
         connector.on('disconnect', (error, payload) => {
@@ -143,8 +149,14 @@ export default function useWalletConnect ({ account, chainId, onCallRequest }) {
     }, [])
 
     const resolveMany = (ids, resolution) => {
-        // @TODO get the connectors, reply to them
-        // then dispatch to remove the requests
+        state.requests.forEach(({ id, wcUri }) => {
+            if (ids.includes(id)) {
+                const connector = connectors[wcUri]
+                if (!connector) return
+                if (resolution.success) connector.approveRequest({ id, result: resolution.result })
+                else connector.rejectRequest({ id, error: { message: resolution.message } })
+            }
+        })
         dispatch({ type: 'requestsResolved', ids })
     }
 
