@@ -1,6 +1,6 @@
 import './Select.scss';
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { BsChevronUp, BsChevronDown } from 'react-icons/bs'
 import { CSSTransition } from 'react-transition-group';
 import useOnClickOutside from '../../../helpers/onClickOutside';
@@ -15,39 +15,45 @@ const Select = ({ children, native, defaultValue, items, onChange }) => {
         icon: null
     });
 
-    const selectItem = item => {
+    const selectItem = useCallback(item => {
         setSelectedItem(item);
         onChange(item.value);
-    };
+    }, [onChange])
 
     useEffect(() => {
-        setSelectedItem(items.find(item => item.value === defaultValue));
-    }, [defaultValue, items]);
+        if (items.length) selectItem(items.find(item => item.value === defaultValue) || items[0])
+    }, [defaultValue, items, selectItem]);
 
     useOnClickOutside(ref, () => setOpen(false));
 
     return (
         !native ? 
             <div className="select" onClick={() => setOpen(!isOpen)} ref={ref}>
-                <div className="value">
-                    {
-                        selectedItem.icon ? 
-                            <div className="icon">
-                                <img src={selectedItem.icon} alt="Icon" />
+                {
+                    selectedItem ? 
+                        <div className="value">
+                            {
+                                selectedItem.icon ? 
+                                    <div className="icon">
+                                        <img src={selectedItem.icon} alt="Icon" />
+                                    </div>
+                                    :
+                                    null
+                            }
+                            { selectedItem.label || selectedItem.value }
+                            <div className="separator"></div>
+                            <div className="handle">
+                                {
+                                    isOpen ? 
+                                        <BsChevronUp size={20}></BsChevronUp>
+                                        :
+                                        <BsChevronDown size={20}></BsChevronDown>
+                                }
                             </div>
-                            :
-                            null
-                    }
-                    { selectedItem.label || selectedItem.value }
-                    <div className="handle">
-                        {
-                            isOpen ? 
-                                <BsChevronUp size={20}></BsChevronUp>
-                                :
-                                <BsChevronDown size={20}></BsChevronDown>
-                        }
-                    </div>
-                </div>
+                        </div>
+                        :
+                        null
+                }
                 {
                     <CSSTransition unmountOnExit in={isOpen} timeout={200} classNames="fade" nodeRef={transitionRef}>
                         <div className="list" ref={transitionRef}>
