@@ -20,25 +20,26 @@ export default function SendTransaction ({ accounts, network, selectedAcc, reque
   const [estimation, setEstimation] = useState(null)
   const history = useHistory()
 
-  const onCallRequest = async (payload, wcConnector) => {
+  const onCallRequest = async request => {
     // @TODO handle more
-    if (payload.method !== 'eth_sendTransaction') {
-      console.log('unsupported method', payload)
+    if (request.type !== 'eth_sendTransaction') {
+      console.log('unsupported method', request)
       return
     }
     // @TODO filter requests
     // @TODO show error for this
     //if (request.chainId !== network.chainId) return
 
-    const txnFrom = payload.params[0].from
+    const rawTxn = request.txn
+    const txnFrom = rawTxn.from
+    console.log(txnFrom, request.account, 'those should be the same')
     const account = accounts.find(x => x.id.toLowerCase() === txnFrom.toLowerCase())
     // @TODO check if this account is currently in accounts, send a toast if not
     if (!account) {
       return
     }
-    console.log('call onCallRequest, with account: ', account, payload)
+    console.log('call onCallRequest, with account: ', account, request)
 
-    const rawTxn = payload.params[0]
     // @TODO: add a subtransaction that's supposed to `simulate` the fee payment so that
     // we factor in the gas for that; it's ok even if that txn ends up being
     // more expensive (eg because user chose to pay in native token), cause we stay on the safe (higher) side
@@ -90,10 +91,7 @@ export default function SendTransaction ({ accounts, network, selectedAcc, reque
         const bundleResult = await bundle.submit({ relayerURL, fetch })
         console.log(bundleResult)
         console.log(providerTrezor._initialDerivedKeyInfo)
-        wcConnector.approveRequest({
-          id: payload.id,
-          result: bundleResult.txId,
-        })
+        resolveMany([request.id], { success: true, result: bundleResult.txId })
         // we can now approveRequest in this and return the proper result
       }
     })
@@ -107,7 +105,7 @@ export default function SendTransaction ({ accounts, network, selectedAcc, reque
 
    const rejectButton= (
         <button className='rejectTxn' onClick={() => {
-            resolveMany(requests.map(x => x.id))
+            resolveMany(requests.map(x => x.id), { message: 'rejected' })
             history.goBack()
         }}>Reject</button>
    )
