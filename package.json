@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "@0x/subproviders": "^5.0.4",
+    "@gnosis.pm/safe-apps-sdk": "^6.0.0",
     "@ramp-network/ramp-instant-sdk": "^2.5.0",
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/react": "^11.2.7",
