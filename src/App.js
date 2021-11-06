@@ -81,7 +81,7 @@ function AppInner () {
       </Route>
 
       <Route path="/">
-        <Redirect to="/add-account" />
+        <Redirect to={selectedAcc ? "/wallet/dashboard" : "/add-account" }/>
       </Route>
 
     </Switch>
