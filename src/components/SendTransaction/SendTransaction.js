@@ -127,9 +127,8 @@ export default function SendTransaction ({ accounts, network, selectedAcc, reque
                             Transaction summary
                         </div>
                         <ul>
-                            {bundle.txns.map((txn, i) => (
+                            {bundle.txns.map(txn => (
                                 <li key={txn}>
-                                    {i === bundle.txns.length - 1 ? 'Fee: ' : ''}
                                     {getTransactionSummary(txn, bundle)}
                                 </li>
                             ))}
