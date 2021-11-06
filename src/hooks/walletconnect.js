@@ -9,6 +9,7 @@ const noopSessionStorage = { setSession: noop, getSession: noop, removeSession: 
 
 const STORAGE_KEY = 'wc1_state'
 const SUPPORTED_METHODS = ['eth_sendTransaction', 'gs_multi_send', 'personal_sign', 'eth_sign']
+const SESSION_TIMEOUT = 4000
 
 const getDefaultState = () => ({ connections: [], requests: [] })
 
@@ -58,14 +59,27 @@ export default function useWalletConnect ({ account, chainId, onCallRequest }) {
     })
 
     const connect = useCallback(connectorOpts => {
-        if (connectors[connectorOpts.uri]) return connectors[connectorOpts.uri]
+        console.log(connectorOpts)
+        if (connectors[connectorOpts.uri]) {
+            addToast('dApp already connected')
+            return connectors[connectorOpts.uri]
+        }
         const connector = new WalletConnectCore({
             connectorOpts,
             cryptoLib,
             sessionStorage: noopSessionStorage
         })
 
+        let sessionStart
+        let sessionTimeout
+        if (!connector.session.peerMeta) sessionTimeout = setTimeout(() => {
+            if (!connector.session.peerMeta) addToast('Not able to get session from dApp - perhaps the link has expired?')
+        }, SESSION_TIMEOUT)
+
         connector.on('session_request', (error, payload) => {
+            sessionStart = Date.now()
+            clearTimeout(sessionTimeout)
+
             connector.approveSession({
                 accounts: [stateRef.current.account],
                 chainId: stateRef.current.chainId,
@@ -78,8 +92,7 @@ export default function useWalletConnect ({ account, chainId, onCallRequest }) {
         })
 
         connector.on('call_request', async (error, payload) => {
-            // @TODO how to handle this err?
-            if (error) throw error
+            if (error) console.error('WalletConnect error', error)
             if (!SUPPORTED_METHODS.includes(payload.method)) {
                 connector.rejectRequest({ id: payload.id, error: { message: 'METHOD_NOT_SUPPORTED' }})
                 return
@@ -89,16 +102,22 @@ export default function useWalletConnect ({ account, chainId, onCallRequest }) {
         })
 
         connector.on('disconnect', (error, payload) => {
-            // @TODO how to handle this err?
-            if (error) throw error
+            if (error) console.error('WalletConnect error', error)
+
             connectors[connectorOpts.uri] = null
             dispatch({ type: 'disconnected', uri: connectorOpts.uri })
 
-            addToast(`${connector.session.peerMeta.name} disconnected: ${payload.params[0].message}`)
+            if (sessionStart && (Date.now() - sessionStart) < SESSION_TIMEOUT) {
+                addToast('dApp disconnected immediately - perhaps it does not support the current network?')
+            } else {
+                addToast(`${connector.session.peerMeta.name} disconnected: ${payload.params[0].message}`)
+            }
         })
 
+        connector.on('error', err => console.error('WalletConnect error', err))
+
         return connector
-    }, [])
+    }, [addToast])
 
     const disconnect = useCallback(uri => {
         if (connectors[uri]) {
@@ -114,13 +133,21 @@ export default function useWalletConnect ({ account, chainId, onCallRequest }) {
         dispatch({ type: 'requestsResolved', ids })
     }
 
+    // Side effects on init
+    useEffect(() => {
+        state.connections.forEach(({ uri, session }) => {
+            if (!connectors[uri]) connectors[uri] = connect({ uri, session })
+        })
+    // we specifically want to run this only once despite depending on state
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [connect])
+
     // Side effects that will run on every state change/rerender
     useEffect(() => {
         // restore connectors and update the ones that are stale
         let updateConnections = false
         state.connections.forEach(({ uri, session }) => {
-            if (!connectors[uri]) connectors[uri] = connect({ uri, session })
-            else {
+            if (connectors[uri]) {
                 const connector = connectors[uri]
                 const session = connector.session
                 if (session.accounts[0] !== account || session.chainId !== chainId) {
@@ -136,10 +163,10 @@ export default function useWalletConnect ({ account, chainId, onCallRequest }) {
             type: 'updateConnections',
             connections: state.connections.map(({ uri }) => ({ uri, session: connectors[uri].session }))
         })
-    }, [state, account, chainId])
+    }, [state, account, chainId, connect])
 
     // Initialization effects
-    useEffect(() => runInitEffects(connect), [])
+    useEffect(() => runInitEffects(connect), [connect])
 
     return {
         connections: state.connections,
