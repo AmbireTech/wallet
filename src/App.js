@@ -4,8 +4,10 @@ import {
   HashRouter as Router,
   Switch,
   Route,
-  Redirect
+  Redirect,
+  useHistory
 } from 'react-router-dom'
+import { useEffect } from 'react'
 import EmailLogin from './components/EmailLogin/EmailLogin'
 import AddAccount from './components/AddAccount/AddAcount'
 import Wallet from './components/Wallet/Wallet'
@@ -25,6 +27,13 @@ function AppInner () {
     account: selectedAcc,
     chainId: network.chainId
   })
+
+  // Navigate to the send transaction dialog if we have a new txn
+  const history = useHistory()
+  useEffect(() => {
+    console.log(requests.length)
+    if (requests.length) history.push('/send-transaction')
+  }, [requests.length, history])
 
   return (<>
     <Switch>
