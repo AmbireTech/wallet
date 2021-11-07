@@ -1,7 +1,7 @@
 //import { GrInspect } from 'react-icons/gr'
 // GiObservatory is also interesting
 import { GiTakeMyMoney, GiSpectacles } from 'react-icons/gi'
-import { FaSignature } from 'react-icons/fa'
+import { FaSignature, FaTimes } from 'react-icons/fa'
 import { getTransactionSummary, getBundleShortSummary } from '../../lib/humanReadableTransactions'
 import './SendTransaction.css'
 import { Loading } from '../common'
@@ -90,7 +90,7 @@ export default function SendTransaction ({ accounts, network, selectedAcc, reque
     if (!estimation) return
     // pay a fee to the relayer
     // @TODO clone the bundle here to avoid weird state mutations
-    bundle.txns.push(['0x942f9CE5D9a33a82F88D233AEb3292E680230348', Math.round(estimation.feeInNative.fast*1e18).toString(10), '0x'])
+    bundle.txns.push(['0x942f9CE5D9a33a82F88D233AEb3292E680230348', '0x'+Math.round(estimation.feeInNative.fast*1e18).toString(16), '0x'])
 
     const provider = getDefaultProvider(network.rpc)
     await bundle.getNonce(provider)
@@ -163,6 +163,7 @@ export default function SendTransaction ({ accounts, network, selectedAcc, reque
                               <li key={txn} className={isFirstFailing ? 'firstFailing' : ''}>
                                   {getTransactionSummary(txn, bundle)}
                                   {isFirstFailing ? (<div><b>This is the first failing transaction.</b></div>) : (<></>)}
+                                  <a onClick={() => resolveMany([eligibleRequests[i].id], { message: 'rejected' })}><FaTimes></FaTimes></a>
                               </li>
                           )})}
                       </ul>
