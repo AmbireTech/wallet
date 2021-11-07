@@ -24,7 +24,7 @@ export default function useAccounts () {
       localStorage.selectedAcc = selected
       setSelectedAcc(selected)
     }
-    const onAddAccount = useCallback((acc, opts) => {
+    const onAddAccount = useCallback((acc, opts = {}) => {
       if (!(acc.id && acc.signer)) throw new Error('account: internal err: missing ID or signer')
 
       const existingIdx = accounts
