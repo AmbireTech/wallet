@@ -39,6 +39,11 @@
     max-width: 800px;
 }
 
+#sendTransaction .feePanel {
+    justify-content: center;
+    display: flex;
+}
+
 #sendTransaction .fees {
     overflow: hidden;
     margin: 1em 0px;
