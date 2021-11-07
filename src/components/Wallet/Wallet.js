@@ -32,9 +32,9 @@ export default function Wallet(props) {
 
 		  <Route path={props.match.url + "/plugins/gnosis"}>
 			  <PluginGnosisSafeApps
-				  accounts={[]}
+				  gnosisConnect={props.gnosisConnect}
 				  selectedAcc={props.selectedAcc}
-				  selectedNetwork={props.network.id}
+				  network={props.network}
 			  />
 		  </Route>
 
