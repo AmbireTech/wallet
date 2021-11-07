@@ -88,6 +88,7 @@ export default function SendTransaction ({ accounts, network, selectedAcc, reque
   const approveTxnImpl = async () => {
     if (!estimation) return
     // pay a fee to the relayer
+    // @TODO clone the bundle here to avoid weird state mutations
     bundle.txns.push(['0x942f9CE5D9a33a82F88D233AEb3292E680230348', Math.round(estimation.feeInNative.fast*1e18).toString(10), '0x'])
 
     const provider = getDefaultProvider(network.rpc)
@@ -98,19 +99,31 @@ export default function SendTransaction ({ accounts, network, selectedAcc, reque
     const wallet = getWallet({ signer: bundle.signer, signerExtra: account.signerExtra })
     await bundle.sign(wallet)
     const bundleResult = await bundle.submit({ relayerURL, fetch })
-    console.log(bundle, bundleResult)
     resolveMany(bundle.requestIds, { success: bundleResult.success, result: bundleResult.txId, message: bundleResult.message })
     // @TODO show a success toast with a URL to a block scanner
+    return bundleResult
   }
   const approveTxn = () => {
     if (signingInProgress) return
     setSigningInProgress(true)
+
+    const explorerUrl = network.explorerUrl
     approveTxnImpl()
+      .then(bundleResult => {
+        if (bundleResult.success) addToast((
+          <span>Transaction signed and sent successfully!
+            &nbsp;<a href={explorerUrl+'/tx/'+bundleResult.txId} target="_blank">View on block explorer.</a>
+          </span>))
+        else addToast(`Transaction error: ${bundleResult.message}`, { error: true })
+
+        history.goBack()
+      })
       .catch(e => {
         console.error(e)
-        addToast(`Signing error: ${e.message || e}`)
+        addToast(`Signing error: ${e.message || e}`, { error: true })
       })
       .then(() => setSigningInProgress(false))
+
   }
 
   const rejectButton = (
