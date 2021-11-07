@@ -23,7 +23,11 @@ export function getTransactionSummary(txn, bundle) {
     const contractKey = bundle.network + ':' + getAddress(to)
     const contractInfo = verifiedContracts[contractKey]
 
-    if (parseInt(value) > 0) sendSummary = `send ${(parseInt(value)/1e18).toFixed(4)} ${network.nativeAssetSymbol} to ${contractInfo ? contractInfo.name : to}`
+    if (parseInt(value) > 0)
+    	sendSummary = `send ${(parseInt(value)/1e18).toFixed(4)} ${network.nativeAssetSymbol} to ${contractInfo ? contractInfo.name : to}`
+	else if (parseInt(value) == 0 && data === '0x' && txn.to?.toLowerCase() == txn.from?.toLowerCase())
+		sendSummary = `Self cancel transaction`
+
     if (data !== '0x') {
         if (data.startsWith(TRANSFER_SIGHASH)) {
             const [to, amount] = ERC20.decodeFunctionData('transfer', data)

@@ -16,6 +16,7 @@ import SendTransaction from './components/SendTransaction/SendTransaction'
 import useAccounts from './hooks/accounts'
 import useNetwork from './hooks/network'
 import useWalletConnect from './hooks/walletconnect'
+import useGnosisSafe from './hooks/useGnosisSafe'
 import { usePortfolio } from './hooks'
 
 // @TODO consts/cfg, dev vs prod
@@ -24,10 +25,22 @@ const relayerURL = 'http://localhost:1934'
 function AppInner () {
   const { accounts, selectedAcc, onSelectAcc, onAddAccount } = useAccounts()
   const { network, setNetwork, allNetworks } = useNetwork()
-  const { connections, connect, disconnect, requests, resolveMany } = useWalletConnect({
+  const { connections, connect, disconnect, requests: WCRequests, resolveMany: WCResolveMany } = useWalletConnect({
     account: selectedAcc,
     chainId: network.chainId
   })
+
+  const { requests: gnosisRequests, resolveMany: gnosisResolveMany, connect: gnosisConnect } = useGnosisSafe({
+	  selectedAccount: selectedAcc,
+	  network: network
+	},[selectedAcc, network]);
+
+  const requests = WCRequests.concat(gnosisRequests);
+  const resolveMany = (ids, resolution) => {
+  	WCResolveMany(ids, resolution);
+    gnosisResolveMany(ids, resolution);
+  }
+
   const portfolio = usePortfolio({
     currentNetwork: network.id,
     account: selectedAcc
@@ -55,7 +68,21 @@ function AppInner () {
       </Route>
 
       <Route path="/wallet">
-        <Wallet match={{ url: "/wallet" }} accounts={accounts} selectedAcc={selectedAcc} portfolio={portfolio} onSelectAcc={onSelectAcc} allNetworks={allNetworks} network={network} setNetwork={setNetwork} connections={connections} connect={connect} disconnect={disconnect}></Wallet>
+        <Wallet
+			match={{ url: "/wallet" }}
+			accounts={accounts}
+			selectedAcc={selectedAcc}
+			portfolio={portfolio}
+			onSelectAcc={onSelectAcc}
+			allNetworks={allNetworks}
+			network={network}
+			setNetwork={setNetwork}
+			connections={connections}
+			connect={connect}
+			disconnect={disconnect}
+			gnosisConnect={gnosisConnect}
+		>
+		</Wallet>
       </Route>
 
       <Route path="/">
