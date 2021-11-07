@@ -111,6 +111,7 @@ export default function SendTransaction ({ accounts, network, selectedAcc, reque
     //console.log(JSON.stringify(providerTrezor._initialDerivedKeyInfo), providerTrezor._initialDerivedKeyInfo)
     resolveMany(bundle.requestIds, { success: bundleResult.success, result: bundleResult.txId, message: bundleResult.message })
     // we can now approveRequest in this and return the proper result
+    // @TODO show a success toast with a URL to a block scanner
   }
   const approveTxn = () => {
     approveTxnImpl()
