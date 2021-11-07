@@ -14,6 +14,7 @@ import TrezorConnect from 'trezor-connect'
 import { ethers, getDefaultProvider } from 'ethers'
 import { useHistory } from 'react-router'
 import { useToasts } from '../../hooks/toasts'
+import HDNode from 'hdkey'
 
 function notifyUser (bundle) {
   if (window.Notification && Notification.permission !== 'denied') {
@@ -97,6 +98,11 @@ export default function SendTransaction ({ accounts, network, selectedAcc, reque
     // as for Trezor/ledger, alternatively we can shim using https://www.npmjs.com/package/web3-provider-engine and then wrap in Web3Provider
     const walletShim = {
       signMessage: hash => providerTrezor.signPersonalMessageAsync(ethers.utils.hexlify(hash), bundle.signer.address)
+    }
+    providerTrezor._initialDerivedKeyInfo = {
+      "hdKey": HDNode.fromExtendedKey(localStorage.xpub),
+      "derivationPath":"m/44'/60'/0'/0",
+      "baseDerivationPath":"44'/60'/0'/0"
     }
     await bundle.sign(walletShim)
     const bundleResult = await bundle.submit({ relayerURL, fetch })
