@@ -4,6 +4,7 @@ import { AiOutlineArrowDown } from 'react-icons/ai'
 import { BsBoxArrowInDown, BsBoxArrowUp } from 'react-icons/bs'
 import { TextInput, NumberInput, Segments, Button, Select, Loading } from '../../common'
 import { useCallback, useState } from 'react'
+import SendPlaceholder from './SendPlaceholder/SendPlaceholder'
 
 const Transfer = ({ portfolio }) => {
     const [asset, setAsset] = useState()
@@ -50,7 +51,7 @@ const Transfer = ({ portfolio }) => {
                                 <Button>Send</Button>
                             </div>
                             :
-                            null
+                            <SendPlaceholder/>
                }
            </div>
            <div className="panel">
