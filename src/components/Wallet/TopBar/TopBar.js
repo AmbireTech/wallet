@@ -2,7 +2,8 @@ import "./TopBar.scss";
 
 import React, { useState, useEffect } from "react";
 import { FiHelpCircle } from "react-icons/fi";
-import { DropDown, Select } from "../../common";
+import { AiOutlinePlus } from "react-icons/ai";
+import { DropDown, Select, Button } from "../../common";
 
 const TopBar = ({
   match,
@@ -95,7 +96,11 @@ const TopBar = ({
           ))}
         </DropDown>
 
-        <Select defaultValue={selectedAcc} items={accountsItems} onChange={value => onSelectAcc(value)}/>
+        <Select defaultValue={selectedAcc} items={accountsItems} onChange={value => onSelectAcc(value)}>
+          <div id="add-account">
+            <Button icon={<AiOutlinePlus/>} small>Add Account</Button>
+          </div>
+        </Select>
         <Select defaultValue={network.id} items={networksItems} onChange={value => setNetwork(value)}/>
       </div>
     </div>
