@@ -46,7 +46,6 @@ function makeBundle(account, networkId, requests) {
 }
 
 export default function SendTransaction ({ accounts, network, selectedAcc, requests, resolveMany, relayerURL }) {
-  const [frozenBundle, setFrozenBundle] = useState(null)
   const [estimation, setEstimation] = useState(null)
   const [signingInProgress, setSigningInProgress] = useState(false)
   const history = useHistory()
@@ -71,10 +70,7 @@ export default function SendTransaction ({ accounts, network, selectedAcc, reque
       ? bundle.estimate({ relayerURL, fetch })
       : bundle.estimateNoRelayer({ provider: getDefaultProvider(network.rpc) })
     estimatePromise
-      .then(estimation => {
-        if (!estimation.success) throw estimation
-        else setEstimation(estimation)
-      })
+      .then(setEstimation)
       .catch(e => {
         addToast(`Estimation error: ${e.message || e}`, { error: true })
         console.log('estimation error', e)
@@ -87,7 +83,7 @@ export default function SendTransaction ({ accounts, network, selectedAcc, reque
   if (!account) throw new Error('internal: account does not exist')
 
   // @TODO Add a fixed premium on gasLimit depending on how we pay the fee, to account for the costs of paying the fee itself
-  const bundle = frozenBundle || makeBundle(account, network.id, eligibleRequests)
+  const bundle = makeBundle(account, network.id, eligibleRequests)
   // @TODO if we have a frozen bundle, ensure it is for the selected account
 
   const approveTxnImpl = async () => {
@@ -117,9 +113,9 @@ export default function SendTransaction ({ accounts, network, selectedAcc, reque
       .then(bundleResult => {
         if (bundleResult.success) addToast((
           <span>Transaction signed and sent successfully!
-            &nbsp;<a href={explorerUrl+'/tx/'+bundleResult.txId} target="_blank">View on block explorer.</a>
+            &nbsp;<a href={explorerUrl+'/tx/'+bundleResult.txId} target='_blank'>View on block explorer.</a>
           </span>))
-        else addToast(`Transaction error: ${bundleResult.message}`, { error: true })
+        else addToast(`Transaction error: ${bundleResult.message || 'unspecified error'}`, { error: true })
 
         history.goBack()
       })
@@ -161,11 +157,14 @@ export default function SendTransaction ({ accounts, network, selectedAcc, reque
                           Transaction summary
                       </div>
                       <ul>
-                          {bundle.txns.map(txn => (
-                              <li key={txn}>
+                          {bundle.txns.map((txn, i) => {
+                            const isFirstFailing = estimation && !estimation.success && estimation.firstFailing === i
+                            return (
+                              <li key={txn} className={isFirstFailing ? 'firstFailing' : ''}>
                                   {getTransactionSummary(txn, bundle)}
+                                  {isFirstFailing ? (<div><b>This is the first failing transaction.</b></div>) : (<></>)}
                               </li>
-                          ))}
+                          )})}
                       </ul>
                       <span>
                           <b>NOTE:</b> Transaction batching is enabled, you're signing {eligibleRequests.length} transactions at once. You can add more transactions to this batch by interacting with a connected dApp right now.
@@ -198,7 +197,7 @@ export default function SendTransaction ({ accounts, network, selectedAcc, reque
 
 function FeeSelector ({ estimation, feeMultiplier = 1, network, chosenSpeed = 'fast' }) {
   if (!estimation) return (<Loading/>)
-  if (!estimation.feeInNative) return
+  if (!estimation.feeInNative || !estimation.success) return (<></>)
   const { nativeAssetSymbol } = network
   const feeCurrencySelect = estimation.feeInUSD ? (
     <select defaultValue="USDT">
