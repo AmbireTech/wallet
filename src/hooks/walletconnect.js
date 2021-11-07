@@ -78,6 +78,11 @@ export default function useWalletConnect ({ account, chainId, onCallRequest }) {
             return null
         }
 
+        const onError = err => {
+            addToast(`WalletConnect error: ${(connector.session && connector.session.peerMeta && connector.session.peerMeta.name)} ${err.message || err}`)
+            console.error('WalletConnect error', err)
+        }
+
         let sessionStart
         let sessionTimeout
         if (!connector.session.peerMeta) sessionTimeout = setTimeout(() => {
@@ -85,6 +90,11 @@ export default function useWalletConnect ({ account, chainId, onCallRequest }) {
         }, SESSION_TIMEOUT)
 
         connector.on('session_request', (error, payload) => {
+            if (error) {
+                onError(error)
+                return
+            }
+
             sessionStart = Date.now()
             clearTimeout(sessionTimeout)
 
@@ -100,7 +110,10 @@ export default function useWalletConnect ({ account, chainId, onCallRequest }) {
         })
 
         connector.on('call_request', (error, payload) => {
-            if (error) console.error('WalletConnect error', error)
+            if (error) {
+                onError(error)
+                return
+            }
             if (!SUPPORTED_METHODS.includes(payload.method)) {
                 connector.rejectRequest({ id: payload.id, error: { message: 'METHOD_NOT_SUPPORTED' }})
                 return
@@ -123,7 +136,10 @@ export default function useWalletConnect ({ account, chainId, onCallRequest }) {
         })
 
         connector.on('disconnect', (error, payload) => {
-            if (error) console.error('WalletConnect error', error)
+            if (error) {
+                onError(error)
+                return
+            }
 
             // NOTE the dispatch() will cause double rerender when we trigger a disconnect,
             // cause we will call it once on disconnect() and once when the event arrives
@@ -141,7 +157,7 @@ export default function useWalletConnect ({ account, chainId, onCallRequest }) {
             }
         })
 
-        connector.on('error', err => console.error('WalletConnect error', err))
+        connector.on('error', onError)
 
         return connector
     }, [addToast])
