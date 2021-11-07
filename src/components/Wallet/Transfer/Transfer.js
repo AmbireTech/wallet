@@ -18,7 +18,7 @@ const Transfer = ({ portfolio }) => {
 
     const setMaxAmount = useCallback(() => {
         const { balanceRaw, decimals } = portfolio.tokens.find(({ symbol }) => symbol === asset)
-        setAmount(Number(balanceRaw.slice(0, balanceRaw.length - decimals) + '.' + balanceRaw.slice(balanceRaw.length - decimals)))
+        setAmount(Number(balanceRaw / `1e${decimals}`))
     }, [portfolio.tokens, asset])
 
     const segments = [
