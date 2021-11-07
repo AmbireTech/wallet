@@ -3,7 +3,7 @@ import './Transfer.scss'
 import { AiOutlineArrowDown } from 'react-icons/ai'
 import { BsBoxArrowInDown, BsBoxArrowUp } from 'react-icons/bs'
 import { TextInput, NumberInput, Segments, Button, Select, Loading } from '../../common'
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import SendPlaceholder from './SendPlaceholder/SendPlaceholder'
 
 const Transfer = ({ portfolio }) => {
@@ -20,6 +20,10 @@ const Transfer = ({ portfolio }) => {
         const { balanceRaw, decimals } = portfolio.tokens.find(({ symbol }) => symbol === asset)
         setAmount(Number(balanceRaw / `1e${decimals}`))
     }, [portfolio.tokens, asset])
+
+    useEffect(() => {
+        setAmount(0)
+    }, [asset])
 
     const segments = [
         {
