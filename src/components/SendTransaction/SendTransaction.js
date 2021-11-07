@@ -4,6 +4,7 @@ import { GiTakeMyMoney, GiSpectacles } from 'react-icons/gi'
 import { FaSignature } from 'react-icons/fa'
 import { getTransactionSummary, getBundleShortSummary } from '../../lib/humanReadableTransactions'
 import './SendTransaction.css'
+import { Loading } from '../common'
 import { useEffect, useState } from 'react'
 
 // @TODO get rid of these, should be in the SignTransaction component
@@ -107,7 +108,7 @@ export default function SendTransaction ({ accounts, network, selectedAcc, reque
     await bundle.sign(walletShim)
     const bundleResult = await bundle.submit({ relayerURL, fetch })
     console.log(bundle, bundleResult)
-    console.log(JSON.stringify(providerTrezor._initialDerivedKeyInfo), providerTrezor._initialDerivedKeyInfo)
+    //console.log(JSON.stringify(providerTrezor._initialDerivedKeyInfo), providerTrezor._initialDerivedKeyInfo)
     resolveMany(bundle.requestIds, { success: bundleResult.success, result: bundleResult.txId, message: bundleResult.message })
     // we can now approveRequest in this and return the proper result
   }
@@ -159,27 +160,27 @@ export default function SendTransaction ({ accounts, network, selectedAcc, reque
               </div>
           </div>
           <div className="secondaryPanel">
-              <div className="panel">
+              <div className="panel feePanel">
                   <div className="heading">
                           <div className="title">
                               <GiTakeMyMoney size={35}/>
                               Fee
                           </div>
-                          <span style={{ marginTop: '1em' }}>Fee currency</span>
-                          <select defaultValue="USDT">
-                              <option>USDT</option>
-                              <option>USDC</option>
-                          </select>
                           {
-                              (estimation && estimation.feeInUSD) ? (
+                              (estimation && estimation.feeInUSD) ? (<>
+                                <span style={{ marginTop: '1em' }}>Fee currency</span>
+                                <select defaultValue="USDT">
+                                    <option>USDT</option>
+                                    <option>USDC</option>
+                                </select>
                                   <div className="fees">
                                       <div className="feeSquare"><div className="speed">Slow</div>${estimation.feeInUSD.slow}</div>
                                       <div className="feeSquare"><div className="speed">Medium</div>${estimation.feeInUSD.medium}</div>
                                       <div className="feeSquare selected"><div className="speed">Fast</div>${estimation.feeInUSD.fast}</div>
                                       <div className="feeSquare"><div className="speed">Ape</div>${estimation.feeInUSD.ape}</div>
                                   </div>
-                              )
-                              : (<></>)
+                              </>)
+                              : (<Loading/>)
                           }
 
                   </div>
