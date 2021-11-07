@@ -2,7 +2,7 @@ import "./TopBar.scss";
 
 import React, { useState, useEffect } from "react";
 import { FiHelpCircle } from "react-icons/fi";
-import { DropDown, Select } from "../common";
+import { DropDown, Select } from "../../common";
 
 const TopBar = ({
   match,
