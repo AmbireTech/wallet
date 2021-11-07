@@ -4,6 +4,7 @@ import { GiTakeMyMoney, GiSpectacles } from 'react-icons/gi'
 import { FaSignature } from 'react-icons/fa'
 import { getTransactionSummary, getBundleShortSummary } from '../../lib/humanReadableTransactions'
 import './SendTransaction.css'
+import { Loading } from '../common'
 import { useEffect, useState } from 'react'
 
 // @TODO get rid of these, should be in the SignTransaction component
@@ -14,6 +15,7 @@ import TrezorConnect from 'trezor-connect'
 import { ethers, getDefaultProvider } from 'ethers'
 import { useHistory } from 'react-router'
 import { useToasts } from '../../hooks/toasts'
+import HDNode from 'hdkey'
 
 function notifyUser (bundle) {
   if (window.Notification && Notification.permission !== 'denied') {
@@ -64,10 +66,14 @@ export default function SendTransaction ({ accounts, network, selectedAcc, reque
     notifyUser(bundle)
 
     // get latest estimation
-    bundle.estimate({ relayerURL, fetch })
+    const estimatePromise = relayerURL
+      ? bundle.estimate({ relayerURL, fetch })
+      : bundle.estimateNoRelayer({ provider: getDefaultProvider(network.rpc) })
+    estimatePromise
       .then(setEstimation)
-      // @TODO catch
-  }, [eligibleRequests.length])
+      // @TODO toast on error
+      .catch(e => console.log('estimation error', e))
+    }, [eligibleRequests.length])
 
   if (!selectedAcc) return (<h3 className='error'>No selected account</h3>)
 
@@ -98,12 +104,18 @@ export default function SendTransaction ({ accounts, network, selectedAcc, reque
     const walletShim = {
       signMessage: hash => providerTrezor.signPersonalMessageAsync(ethers.utils.hexlify(hash), bundle.signer.address)
     }
+    providerTrezor._initialDerivedKeyInfo = {
+      "hdKey": HDNode.fromExtendedKey(localStorage.xpub),
+      "derivationPath":"m/44'/60'/0'/0",
+      "baseDerivationPath":"44'/60'/0'/0"
+    }
     await bundle.sign(walletShim)
     const bundleResult = await bundle.submit({ relayerURL, fetch })
     console.log(bundle, bundleResult)
-    console.log(JSON.stringify(providerTrezor._initialDerivedKeyInfo), providerTrezor._initialDerivedKeyInfo)
+    //console.log(JSON.stringify(providerTrezor._initialDerivedKeyInfo), providerTrezor._initialDerivedKeyInfo)
     resolveMany(bundle.requestIds, { success: bundleResult.success, result: bundleResult.txId, message: bundleResult.message })
     // we can now approveRequest in this and return the proper result
+    // @TODO show a success toast with a URL to a block scanner
   }
   const approveTxn = () => {
     approveTxnImpl()
@@ -153,29 +165,13 @@ export default function SendTransaction ({ accounts, network, selectedAcc, reque
               </div>
           </div>
           <div className="secondaryPanel">
-              <div className="panel">
+              <div className="panel feePanel">
                   <div className="heading">
                           <div className="title">
                               <GiTakeMyMoney size={35}/>
                               Fee
                           </div>
-                          <span style={{ marginTop: '1em' }}>Fee currency</span>
-                          <select defaultValue="USDT">
-                              <option>USDT</option>
-                              <option>USDC</option>
-                          </select>
-                          {
-                              (estimation && estimation.feeInUSD) ? (
-                                  <div className="fees">
-                                      <div className="feeSquare"><div className="speed">Slow</div>${estimation.feeInUSD.slow}</div>
-                                      <div className="feeSquare"><div className="speed">Medium</div>${estimation.feeInUSD.medium}</div>
-                                      <div className="feeSquare selected"><div className="speed">Fast</div>${estimation.feeInUSD.fast}</div>
-                                      <div className="feeSquare"><div className="speed">Ape</div>${estimation.feeInUSD.ape}</div>
-                                  </div>
-                              )
-                              : (<></>)
-                          }
-
+                          <FeeSelector estimation={estimation} network={network}></FeeSelector>
                   </div>
               </div>
               <div className="panel">
@@ -190,4 +186,36 @@ export default function SendTransaction ({ accounts, network, selectedAcc, reque
           </div>
       </div>
   </div>)
+}
+
+function FeeSelector ({ estimation, network, chosenSpeed = 'fast' }) {
+  if (!estimation) return (<Loading/>)
+  const { nativeAssetSymbol } = network
+  const feeCurrencySelect = estimation.feeInUSD ? (
+    <select defaultValue="USDT">
+      <option>USDT</option>
+      <option>USDC</option>
+    </select>
+  ) : (<select disabled defaultValue={nativeAssetSymbol}>
+    <option>{nativeAssetSymbol}</option>
+  </select>)
+
+  const feeAmountSelectors = ['slow', 'medium', 'fast', 'ape'].map(speed => (
+    <div className={chosenSpeed === speed ? 'feeSquare selected' : 'feeSquare'}>
+      <div className='speed'>{speed}</div>
+      {estimation.feeInUSD
+        ? '$'+estimation.feeInUSD[speed]
+        : estimation.feeInNative[speed]+' '+nativeAssetSymbol
+      }
+    </div>
+  ))
+
+  return (<>
+    <span style={{ marginTop: '1em' }}>Fee currency</span>
+    {feeCurrencySelect}
+    <div className='feeAmountSelectors'>
+      {feeAmountSelectors}
+    </div>
+    {!estimation.feeInUSD ? (<span><b>WARNING:</b> Paying fees in tokens other than {nativeAssetSymbol} is unavailable because you are not connected to a relayer.</span>) : (<></>)}
+  </>)
 }
