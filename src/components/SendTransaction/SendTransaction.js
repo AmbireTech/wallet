@@ -48,6 +48,7 @@ function makeBundle(account, networkId, requests) {
 export default function SendTransaction ({ accounts, network, selectedAcc, requests, resolveMany, relayerURL }) {
   const [frozenBundle, setFrozenBundle] = useState(null)
   const [estimation, setEstimation] = useState(null)
+  const [signingInProgress, setSigningInProgress] = useState(false)
   const history = useHistory()
   const { addToast } = useToasts()
 
@@ -102,11 +103,14 @@ export default function SendTransaction ({ accounts, network, selectedAcc, reque
     // @TODO show a success toast with a URL to a block scanner
   }
   const approveTxn = () => {
+    if (signingInProgress) return
+    setSigningInProgress(true)
     approveTxnImpl()
       .catch(e => {
         console.error(e)
         addToast(`Signing error: ${e.message || e}`)
       })
+      .then(() => setSigningInProgress(false))
   }
 
   const rejectButton = (
@@ -124,7 +128,9 @@ export default function SendTransaction ({ accounts, network, selectedAcc, reque
           </>)
       : (<div>
           {rejectButton}
-          <button disabled={!estimation} onClick={approveTxn}>Sign and send</button>
+          <button className='approveTxn' disabled={!estimation || signingInProgress} onClick={approveTxn}>
+            {signingInProgress ? (<><Loading/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Signing...</>) : (<>Sign and send</>)}
+          </button>
       </div>)
 
   return (<div id="sendTransaction">
