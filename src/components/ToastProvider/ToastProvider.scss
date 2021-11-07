@@ -27,6 +27,15 @@
         &.error {
             color: white;
             background-color: $danger-color;
+            a {
+                color: #ccc;
+                text-decoration: underline;
+            }
+        }
+
+        a {
+            color: #222;
+            text-decoration: underline;
         }
     }
 }
