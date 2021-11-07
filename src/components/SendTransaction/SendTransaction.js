@@ -17,6 +17,8 @@ import { useHistory } from 'react-router'
 import { useToasts } from '../../hooks/toasts'
 import HDNode from 'hdkey'
 
+const SPEEDS = ['slow', 'medium', 'fast', 'ape']
+
 function notifyUser (bundle) {
   if (window.Notification && Notification.permission !== 'denied') {
     Notification.requestPermission(status => {  // status is "granted", if accepted by user
@@ -171,7 +173,7 @@ export default function SendTransaction ({ accounts, network, selectedAcc, reque
                               <GiTakeMyMoney size={35}/>
                               Fee
                           </div>
-                          <FeeSelector estimation={estimation} network={network}></FeeSelector>
+                          <FeeSelector feeMultiplier={estimation ? (estimation.gasLimit+30000)/estimation.gasLimit : 1} estimation={estimation} network={network}></FeeSelector>
                   </div>
               </div>
               <div className="panel">
@@ -188,7 +190,7 @@ export default function SendTransaction ({ accounts, network, selectedAcc, reque
   </div>)
 }
 
-function FeeSelector ({ estimation, network, chosenSpeed = 'fast' }) {
+function FeeSelector ({ estimation, feeMultiplier = 1, network, chosenSpeed = 'fast' }) {
   if (!estimation) return (<Loading/>)
   const { nativeAssetSymbol } = network
   const feeCurrencySelect = estimation.feeInUSD ? (
@@ -200,12 +202,12 @@ function FeeSelector ({ estimation, network, chosenSpeed = 'fast' }) {
     <option>{nativeAssetSymbol}</option>
   </select>)
 
-  const feeAmountSelectors = ['slow', 'medium', 'fast', 'ape'].map(speed => (
+  const feeAmountSelectors = SPEEDS.map(speed => (
     <div className={chosenSpeed === speed ? 'feeSquare selected' : 'feeSquare'}>
       <div className='speed'>{speed}</div>
       {estimation.feeInUSD
-        ? '$'+estimation.feeInUSD[speed]
-        : estimation.feeInNative[speed]+' '+nativeAssetSymbol
+        ? '$'+(estimation.feeInUSD[speed] * feeMultiplier)
+        : (estimation.feeInNative[speed] * feeMultiplier)+' '+nativeAssetSymbol
       }
     </div>
   ))
