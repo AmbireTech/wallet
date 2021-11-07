@@ -71,7 +71,10 @@ export default function SendTransaction ({ accounts, network, selectedAcc, reque
       ? bundle.estimate({ relayerURL, fetch })
       : bundle.estimateNoRelayer({ provider: getDefaultProvider(network.rpc) })
     estimatePromise
-      .then(setEstimation)
+      .then(estimation => {
+        if (!estimation.success) throw estimation
+        else setEstimation(estimation)
+      })
       .catch(e => {
         addToast(`Estimation error: ${e.message || e}`, { error: true })
         console.log('estimation error', e)
@@ -195,6 +198,7 @@ export default function SendTransaction ({ accounts, network, selectedAcc, reque
 
 function FeeSelector ({ estimation, feeMultiplier = 1, network, chosenSpeed = 'fast' }) {
   if (!estimation) return (<Loading/>)
+  if (!estimation.feeInNative) return
   const { nativeAssetSymbol } = network
   const feeCurrencySelect = estimation.feeInUSD ? (
     <select defaultValue="USDT">
