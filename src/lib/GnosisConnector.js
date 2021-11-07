@@ -34,8 +34,6 @@ function GnosisConnector(_iframeRef, _app){
 			? MessageFormatter.makeErrorResponse(requestId, data, sdkVersion)
 			: MessageFormatter.makeResponse(requestId, data, sdkVersion)
 
-		console.log(this.debugId + " Sending to child ");
-		console.log(msg);
 		if(this.iframeRef){
 			this.iframeRef.current?.contentWindow?.postMessage(msg, '*')
 		}else{
