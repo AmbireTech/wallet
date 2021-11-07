@@ -33,7 +33,7 @@ const Select = ({ children, native, searchable, defaultValue, items, onChange })
             hiddenTextInput.current.focus()
             setSearch('')
         }
-    }, [isOpen])
+    }, [isOpen, searchable])
 
     useOnClickOutside(ref, () => setOpen(false));
 
