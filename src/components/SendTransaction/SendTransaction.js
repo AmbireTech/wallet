@@ -72,8 +72,10 @@ export default function SendTransaction ({ accounts, network, selectedAcc, reque
       : bundle.estimateNoRelayer({ provider: getDefaultProvider(network.rpc) })
     estimatePromise
       .then(setEstimation)
-      // @TODO toast on error
-      .catch(e => console.log('estimation error', e))
+      .catch(e => {
+        addToast(`Estimation error: ${e.message || e}`, { error: true })
+        console.log('estimation error', e)
+      })
     }, [eligibleRequests.length])
 
   if (!selectedAcc) return (<h3 className='error'>No selected account</h3>)
