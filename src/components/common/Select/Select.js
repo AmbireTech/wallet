@@ -90,6 +90,7 @@ const Select = ({ children, native, searchable, defaultValue, items, onChange })
                                     </div>
                                 ))
                             }
+                            { children }
                         </div>
                     </CSSTransition>
                 }
