@@ -50,7 +50,10 @@ const TopBar = ({
     }
   };
 
-  const accountsItems = accounts.map(({ id }) => ({ value: id }))
+  const accountsItems = accounts.map(({ id }) => ({
+    value: id,
+    iconColor: `#${id.slice(id.length - 6, id.length)}`
+  }))
   const networksItems = allNetworks.map(({ id, name, icon }) => ({
     label: name,
     value: id,
