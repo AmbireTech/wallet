@@ -14,7 +14,8 @@ const Select = ({ children, native, searchable, defaultValue, items, onChange })
     const [selectedItem, setSelectedItem] = useState({
         label: null,
         value: null,
-        icon: null
+        icon: null,
+        iconColor: null
     });
 
     const filteredItems = search.length ? items.filter(({ label }) => label.toLowerCase().includes(search.toLowerCase())) : items
@@ -49,14 +50,14 @@ const Select = ({ children, native, searchable, defaultValue, items, onChange })
                 {
                     selectedItem ? 
                         <div className="value">
-                            {
-                                selectedItem.icon ? 
-                                    <div className="icon">
+                            <div className="icon" style={{'backgroundColor': selectedItem.iconColor}}>
+                                {
+                                    selectedItem.icon ? 
                                         <img src={selectedItem.icon} alt="Icon" />
-                                    </div>
-                                    :
-                                    null
-                            }
+                                        :
+                                        null
+                                }
+                            </div>
                             { selectedItem.label || selectedItem.value }
                             <div className="separator"></div>
                             <div className="handle">
@@ -77,14 +78,14 @@ const Select = ({ children, native, searchable, defaultValue, items, onChange })
                             {
                                 filteredItems.map(item => (
                                     <div className={`option ${item.value === selectedItem.value ? 'active' : ''}`} key={item.value} onClick={() => selectItem(item)}>
-                                        {
-                                            item.icon ? 
-                                                <div className="icon">
+                                        <div className="icon" style={{'backgroundColor': item.iconColor}}>
+                                            {
+                                                item.icon ? 
                                                     <img src={item.icon} alt="Icon" />
-                                                </div>
-                                                :
-                                                null
-                                        }
+                                                    :
+                                                    null
+                                            }
+                                        </div>
                                         { item.label || item.value }
                                     </div>
                                 ))
