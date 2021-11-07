@@ -188,7 +188,7 @@ export default function SendTransaction ({ accounts, network, selectedAcc, reque
   </div>)
 }
 
-function FeeSelector ({ estimation, network }) {
+function FeeSelector ({ estimation, network, chosenSpeed = 'fast' }) {
   if (!estimation) return (<Loading/>)
   const { nativeAssetSymbol } = network
   const feeCurrencySelect = estimation.feeInUSD ? (
@@ -200,15 +200,13 @@ function FeeSelector ({ estimation, network }) {
     <option>{nativeAssetSymbol}</option>
   </select>)
 
-  const feeAmountSelectors = ['slow', 'medium', 'fast', 'ape'].map(speed => estimation.feeInUSD ? (
-    <div className='feeSquare'>
+  const feeAmountSelectors = ['slow', 'medium', 'fast', 'ape'].map(speed => (
+    <div className={chosenSpeed === speed ? 'feeSquare selected' : 'feeSquare'}>
       <div className='speed'>{speed}</div>
-      ${estimation.feeInUSD[speed]}
-    </div>
-  ) : (
-    <div className='feeSquare'>
-      <div className='speed'>{speed}</div>
-      {estimation.feeInNative[speed]} {nativeAssetSymbol}
+      {estimation.feeInUSD
+        ? '$'+estimation.feeInUSD[speed]
+        : estimation.feeInNative[speed]+' '+nativeAssetSymbol
+      }
     </div>
   ))
 
