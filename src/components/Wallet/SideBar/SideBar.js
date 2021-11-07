@@ -5,7 +5,7 @@ import { MdDashboard, MdLock, MdCompareArrows, } from 'react-icons/md'
 import { GiReceiveMoney } from 'react-icons/gi'
 import { BsPiggyBank } from 'react-icons/bs'
 import { BiTransfer } from 'react-icons/bi'
-import { Loading } from "../common"
+import { Loading } from "../../common"
 
 const SideBar = ({match, portfolio}) => {
     return (
