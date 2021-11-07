@@ -101,10 +101,14 @@ export default function Dashboard({ portfolio }) {
                                 ))
                     }
                 </div>
-
-                <div className="powered">
-                    Powered by Zapper
-                </div>
+                {
+                    portfolio.isLoading || !portfolio.assets.length ?
+                        null
+                        :
+                        <div className="powered">
+                            Powered by Zapper
+                        </div>
+                }
             </div>
         </section>
     )
