@@ -65,6 +65,23 @@ Instead, it will copy all the configuration files and the transitive dependencie
 
 You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
 
+### Internal data formats
+
+#### Signing request
+
+This is used by the WalletConnect and Gnosis Safe Apps hooks for the queue of signing requests: those could be transactions, personal messages, etc.
+
+```
+{
+	id, // numeric unique ID of the request
+	type, // type of the signing request, currently set to the RPC method (eg eth_sendTransaction)
+	txn, // only set when it's eth_sendTransaction, contains to/data/value/gas
+	chainId, // chainId the request is for
+	account, // account address the request is for
+}
+```
+
+
 ### Deployment
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)

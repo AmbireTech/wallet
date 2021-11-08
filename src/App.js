@@ -9,7 +9,7 @@ import {
 } from 'react-router-dom'
 import { useEffect } from 'react'
 import EmailLogin from './components/EmailLogin/EmailLogin'
-import AddAccount from './components/AddAccount/AddAcount'
+import AddAccount from './components/AddAccount/AddAccount'
 import Wallet from './components/Wallet/Wallet'
 import ToastProvider from './components/ToastProvider/ToastProvider'
 import SendTransaction from './components/SendTransaction/SendTransaction'
@@ -48,9 +48,15 @@ function AppInner () {
 
   // Navigate to the send transaction dialog if we have a new txn
   const history = useHistory()
+  const eligibleRequests = requests
+    .filter(({ type, chainId, account }) =>
+      type === 'eth_sendTransaction'
+      && chainId === network.chainId
+      && account === selectedAcc
+    )
   useEffect(() => {
-    if (requests.length) history.push('/send-transaction')
-  }, [requests.length, history])
+    if (eligibleRequests.length) history.push('/send-transaction')
+  }, [eligibleRequests.length, history])
 
   return (<>
     <Switch>
@@ -63,7 +69,7 @@ function AppInner () {
       </Route>
 
       <Route path="/send-transaction">
-        <SendTransaction accounts={accounts} selectedAcc={selectedAcc} network={network} requests={requests} resolveMany={resolveMany} relayerURL={relayerURL}>
+        <SendTransaction accounts={accounts} selectedAcc={selectedAcc} network={network} requests={eligibleRequests} resolveMany={resolveMany} relayerURL={relayerURL}>
         </SendTransaction>
       </Route>
 
@@ -86,7 +92,7 @@ function AppInner () {
       </Route>
 
       <Route path="/">
-        <Redirect to="/add-account" />
+        <Redirect to={selectedAcc ? "/wallet/dashboard" : "/add-account" }/>
       </Route>
 
     </Switch>
