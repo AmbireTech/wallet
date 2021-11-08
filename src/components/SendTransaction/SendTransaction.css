@@ -44,7 +44,7 @@
     display: flex;
 }
 
-#sendTransaction .fees {
+#sendTransaction .feeAmountSelector {
     overflow: hidden;
     margin: 1em 0px;
     min-width: 360px;
@@ -85,10 +85,18 @@
     text-transform: uppercase;
     font-weight: 800;
     display: inline-block;
-    height: auto;
+    min-height: 75px;
     font-size: 1em;
+    vertical-align: middle;
+    position: relative;
 }
 
 #sendTransaction button.rejectTxn {
     background-color: rgb(255, 132, 128);
+}
+
+#sendTransaction button.approveTxn .loading {
+    position: absolute;
+    top: 20px;
+    left: 8px;
 }

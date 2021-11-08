@@ -74,19 +74,19 @@ export default function useWalletConnect ({ account, chainId, onCallRequest }) {
                 sessionStorage: noopSessionStorage
             })
         } catch(e) {
-            addToast(`Unable to connect to ${connectorOpts.uri}: ${e.message}`)
+            addToast(`Unable to connect to ${connectorOpts.uri}: ${e.message}`, { error: true })
             return null
         }
 
         const onError = err => {
-            addToast(`WalletConnect error: ${(connector.session && connector.session.peerMeta && connector.session.peerMeta.name)} ${err.message || err}`)
+            addToast(`WalletConnect error: ${(connector.session && connector.session.peerMeta && connector.session.peerMeta.name)} ${err.message || err}`, { error: true })
             console.error('WalletConnect error', err)
         }
 
         let sessionStart
         let sessionTimeout
         if (!connector.session.peerMeta) sessionTimeout = setTimeout(() => {
-            if (!connector.session.peerMeta) addToast('Not able to get session from dApp - perhaps the link has expired?')
+            if (!connector.session.peerMeta) addToast('Not able to get session from dApp - perhaps the link has expired?', { error: true })
         }, SESSION_TIMEOUT)
 
         connector.on('session_request', (error, payload) => {
@@ -122,7 +122,7 @@ export default function useWalletConnect ({ account, chainId, onCallRequest }) {
                 payload.method === 'eth_sendTransaction' && payload.params[0] && payload.params[0].from
                 && payload.params[0].from.toLowerCase() !== connector.session.accounts[0].toLowerCase()
             ) {
-                addToast(`dApp sent a request for the wrong account: ${payload.params[0].from}`)
+                addToast(`dApp sent a request for the wrong account: ${payload.params[0].from}`, { error: true })
                 return
             }
             dispatch({ type: 'requestAdded', request: {
@@ -151,7 +151,7 @@ export default function useWalletConnect ({ account, chainId, onCallRequest }) {
             // NOTE: this event might be invoked 2 times when the dApp itself disconnects
             // currently we don't dedupe that
             if (sessionStart && (Date.now() - sessionStart) < SESSION_TIMEOUT) {
-                addToast('dApp disconnected immediately - perhaps it does not support the current network?')
+                addToast('dApp disconnected immediately - perhaps it does not support the current network?', { error: true })
             } else {
                 addToast(`${connector.session.peerMeta.name} disconnected: ${payload.params[0].message}`)
             }
