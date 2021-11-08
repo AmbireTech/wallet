@@ -21,8 +21,8 @@ const ERC20 = new Interface(require('adex-protocol-eth/abi/ERC20'))
 
 const SPEEDS = ['slow', 'medium', 'fast', 'ape']
 const DEFAULT_SPEED = 'fast'
-const ADDED_GAS_TOKEN = 40000
-const ADDED_GAS_NATIVE = 15000
+const ADDED_GAS_TOKEN = 30000
+const ADDED_GAS_NATIVE = 10000
 
 function notifyUser (bundle) {
   if (window.Notification && Notification.permission !== 'denied') {
