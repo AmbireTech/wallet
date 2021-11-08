@@ -44,7 +44,7 @@ export default function Dashboard({ portfolio }) {
 
         setChartTokensData(tokensData);
         setChartAssetsData(assetsData)
-    }, [portfolio.totalUSD, portfolio.tokens]);
+    }, [portfolio.totalUSD, portfolio.tokens, portfolio.assets]);
 
     return (
         <section id="dashboard">
@@ -66,7 +66,7 @@ export default function Dashboard({ portfolio }) {
                 <div id="chart" className="panel">
                     <div className="title">
                         Balance by token
-                        <Segments small segments={chartSegments} onChange={setChartType}/>
+                        <Segments small defaultValue={chartSegments[0].value} segments={chartSegments} onChange={setChartType}/>
                     </div>
                     <div className="content">
                         {
