@@ -24,7 +24,20 @@ const Security = (props) => {
     accounts: props.accounts,
   });
 
-  console.log("priv", privileges);
+  const privList = Object.keys(privileges).map((key) => {
+    return (
+      <li key={key}>
+        <div>{key}</div>
+        <Select
+          defaultValue={privileges[key]}
+          items={OPTIONS_PRIVILEGES}
+          itemLabel="label"
+          itemKey="value"
+          onChange={(value) => onSelectPriv(value)}
+        />
+      </li>
+    );
+  });
 
   const onSelectPriv = (val) => {
     console.log("Priv value", val);
@@ -35,21 +48,7 @@ const Security = (props) => {
       <div className="panel">
         <div className="title">Set Privileges</div>
         {isLoading && <Loading />}
-        {!isLoading &&
-          Object.keys(privileges).map((key) => {
-            return (
-              <div className="content">
-                <div>{key}</div>
-                <Select
-                  defaultValue={privileges[key]}
-                  items={OPTIONS_PRIVILEGES}
-                  itemLabel="label"
-                  itemKey="value"
-                  onChange={(value) => onSelectPriv(value)}
-                />
-              </div>
-            );
-          })}
+        <ul className="content">{!isLoading && privList}</ul>
       </div>
     </section>
   );
