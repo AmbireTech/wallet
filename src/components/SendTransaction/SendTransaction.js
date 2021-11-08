@@ -11,13 +11,16 @@ import { useEffect, useState } from 'react'
 import fetch from 'node-fetch'
 import { Bundle } from 'adex-protocol-eth/js'
 import { getDefaultProvider } from 'ethers'
-import { Interface } from 'ethers/lib/utils'
+import { Interface, hexlify } from 'ethers/lib/utils'
 import { useHistory } from 'react-router'
 import { useToasts } from '../../hooks/toasts'
 import { getWallet } from '../../lib/getWallet'
 import accountPresets from '../../consts/accountPresets'
 
 const ERC20 = new Interface(require('adex-protocol-eth/abi/ERC20'))
+const FactoryInterface = new Interface(require('adex-protocol-eth/abi/IdentityFactory5.2'))
+const IdentityInterface = new Interface(require('adex-protocol-eth/abi/Identity5.2'))
+const QuickAccManagerInterface = new Interface(require('adex-protocol-eth/abi/QuickAccManager'))
 
 const SPEEDS = ['slow', 'medium', 'fast', 'ape']
 const DEFAULT_SPEED = 'fast'
@@ -127,21 +130,47 @@ export default function SendTransaction ({ accounts, network, selectedAcc, reque
     })
 
     const provider = getDefaultProvider(network.rpc)
-    await finalBundle.getNonce(provider)
-
-    finalBundle.gasLimit = estimation.gasLimit + addedGas
-
+    const signer = finalBundle.signer
     const wallet = getWallet({
-      signer: finalBundle.signer,
-      signerExtra: account.signerExtra
+      signer,
+      signerExtra: account.signerExtra,
+      chainId: network.chainId
     })
-    // @TODO relayerless mode
+    if (relayerURL) {
+      finalBundle.gasLimit = estimation.gasLimit + addedGas
 
-    await finalBundle.sign(wallet)
-    const bundleResult = await finalBundle.submit({ relayerURL, fetch })
-    resolveMany(requestIds, { success: bundleResult.success, result: bundleResult.txId, message: bundleResult.message })
+      await finalBundle.getNonce(provider)
+      await finalBundle.sign(wallet)
+      const bundleResult = await finalBundle.submit({ relayerURL, fetch })
+      resolveMany(requestIds, { success: bundleResult.success, result: bundleResult.txId, message: bundleResult.message })  
+      return bundleResult
+    } else {
+      // @TODO: quickAccManager
+      // @TODO move to a helper fn, sendRelayerless
+      if (signer.quickAccManager) throw new Error('quickAccManager not supported in relayerless mode yet')
+      
+      // currently disabled quickAccManager cause 1) we don't have a means of getting the second sig 2) we still have to sign txes so it's inconvenient
+      // if (signer.quickAccManager) await finalBundle.sign(wallet)
+      //const [to, data] = signer.quickAccManager ? [signer.quickAccManager, QuickAccManagerInterface.encodeFunctionData('send', [finalBundle.identity, [signer.timelock, signer.one, signer.two], [false, finalBundle.signature, '0x']])] : 
 
-    return bundleResult
+      const [to, data] = [
+        finalBundle.identity,
+        IdentityInterface.encodeFunctionData('executeBySender', [finalBundle.txns])
+      ]
+      // Currently routing everything through factory.deployAndCall, can be optimized by calling QuickAccManager/Identity directly
+      const txn = {
+        to: account.identityFactoryAddr,
+        data: FactoryInterface.encodeFunctionData('deployAndCall', [account.bytecode, account.salt, to, data]),
+        gas: hexlify(estimation.gasLimit),
+        gasPrice: hexlify(estimation.gasPrice),
+        nonce: hexlify(await provider.getTransactionCount(signer.address))
+      }
+      const signed = await wallet.sign(txn)
+      const txId = await provider.sendTransaction(signed)
+      const result = { success: true, txId }
+      resolveMany(requestIds, { success: true, result: txId })  
+      return result
+    }
   }
 
   const approveTxn = () => {
