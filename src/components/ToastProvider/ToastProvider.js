@@ -2,6 +2,7 @@ import './ToastProvider.scss';
 
 import React, { createRef, useState } from "react";
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
+import { useCallback } from 'react';
 
 const ToastContext = React.createContext(null);
 
@@ -10,7 +11,7 @@ let id = 0
 const ToastProvider = ({ children }) => {
     const [toasts, setToasts] = useState([]);
 
-    const addToast = (content, options) => {
+    const addToast = useCallback((content, options) => {
         const { timeout, error } = {
             timeout: 8000,
             error: false,
@@ -29,7 +30,7 @@ const ToastProvider = ({ children }) => {
             toast
         ]);
         setTimeout(() => removeToast(toast.id), timeout);
-    };
+    }, [setToasts]);
 
     const removeToast = id => {
         setToasts(toasts => toasts.filter(t => t.id !== id));
