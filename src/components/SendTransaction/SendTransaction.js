@@ -126,7 +126,7 @@ export default function SendTransaction ({ accounts, network, selectedAcc, reque
     ])]
     const finalBundle = new Bundle({
       ...bundle,
-      txns: [...bundle.txns, feeTxn]
+      txns: relayerURL ? [...bundle.txns, feeTxn] : [...bundle.txns]
     })
 
     const provider = getDefaultProvider(network.rpc)
@@ -145,7 +145,7 @@ export default function SendTransaction ({ accounts, network, selectedAcc, reque
       resolveMany(requestIds, { success: bundleResult.success, result: bundleResult.txId, message: bundleResult.message })
       return bundleResult
     } else {
-      const result = await sendRelayerless({ finalBundle, wallet, estimation, provider, nativeAssetSymbol })
+      const result = await sendNoRelayer({ finalBundle, wallet, estimation, provider, nativeAssetSymbol })
       resolveMany(requestIds, { success: true, result: result.txId })
       return result
     }
@@ -319,10 +319,8 @@ function getFeePaymentConsequences (token, estimation) {
  }
 }
 
-async function sendRelayerless ({ finalBundle, wallet, estimation, provider, nativeAssetSymbol, requestIds, resolveMany }) {
+async function sendNoRelayer ({ finalBundle, wallet, estimation, provider, nativeAssetSymbol }) {
   const { signer } = finalBundle
-  // @TODO move to a helper fn, sendRelayerless
-
   // @TODO: in case we need deploying, run using deployAndCall pipeline with signed msgs
   // @TODO: quickAccManager
   if (signer.quickAccManager) throw new Error('quickAccManager not supported in relayerless mode yet')
@@ -334,14 +332,14 @@ async function sendRelayerless ({ finalBundle, wallet, estimation, provider, nat
     finalBundle.identity,
     IdentityInterface.encodeFunctionData('executeBySender', [finalBundle.txns])
   ]
-  const gasLimit = estimation.gasLimit + 30000
+  const gasLimit = estimation.gasLimit + 20000
   const txn = {
     from: signer.address,
     to, data,
     //to: account.identityFactoryAddr,
     //data: FactoryInterface.encodeFunctionData('deployAndCall', [account.bytecode, account.salt, to, data]),
     gas: hexlify(gasLimit),
-    gasPrice: hexlify(Math.floor(estimation.feeInNative[estimation.selectedFee.speed] / gasLimit * 1e18)),
+    gasPrice: hexlify(Math.floor(estimation.feeInNative[estimation.selectedFee.speed] / estimation.gasLimit * 1e18)),
     nonce: hexlify(await provider.getTransactionCount(signer.address))
   }
   const signed = await wallet.sign(txn)
