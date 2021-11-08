@@ -170,7 +170,7 @@ export default function SendTransaction ({ accounts, network, selectedAcc, reque
       }
       const signed = await wallet.sign(txn)
       try {
-        const txId = await provider.sendTransaction(signed)
+        const { hash: txId } = await provider.sendTransaction(signed)
         const result = { success: true, txId }
         resolveMany(requestIds, { success: true, result: txId })
         return result
