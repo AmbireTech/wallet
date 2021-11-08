@@ -23,8 +23,7 @@ function getWalletNew ({ chainId, signer, signerExtra }, opts) {
             networkId: chainId
         })
         providerTrezor._initialDerivedKeyInfo = getInitialDerivedKeyInfo(signerExtra)
-        // NOTE: for metamask, use `const provider = new ethers.providers.Web3Provider(window.ethereum)`
-        // as for Trezor/ledger, alternatively we can shim using https://www.npmjs.com/package/web3-provider-engine and then wrap in Web3Provider
+        // for Trezor/ledger, alternatively we can shim using https://www.npmjs.com/package/web3-provider-engine and then wrap in Web3Provider
         return {
             signMessage: hash => providerTrezor.signPersonalMessageAsync(ethers.utils.hexlify(hash), signer.address),
             sign: params => providerTrezor.signTransactionAsync({ ...params, from: signer.address })
@@ -40,8 +39,10 @@ function getWalletNew ({ chainId, signer, signerExtra }, opts) {
             sign: params => provider.signTransactionAsync({ ...params, from: signer.address })
         }
     } else if (signer.address) {
-        // @TODO: MM
-        new Error('unsupported')
+        if (!window.ethereum) throw new Error('No web3 support detected in your browser: if you created this account through MetaMask, please install it.')
+        // NOTE: for metamask, use `const provider = new ethers.providers.Web3Provider(window.ethereum)`
+        const provider = new ethers.providers.Web3Provider(window.ethereum)
+        return provider.getSigner(signer.address)
     } else if (signer.one) {
         // @TODO quickAccounts
     } else {
