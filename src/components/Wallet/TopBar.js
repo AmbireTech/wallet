@@ -46,9 +46,16 @@ const TopBar = ({
       connect({ uri: content });
     } else {
       const uri = prompt("Enter WalletConnect URI");
-      connect({ uri });
+      if (uri) connect({ uri });
     }
   };
+
+  const accountsItems = accounts.map(({ id }) => ({ value: id }))
+  const networksItems = allNetworks.map(({ id, name, icon }) => ({
+    label: name,
+    value: id,
+    icon
+  }))
 
   useEffect(() => checkPermissions(), []);
 
@@ -85,8 +92,8 @@ const TopBar = ({
           ))}
         </DropDown>
 
-        <Select defaultValue={selectedAcc} items={accounts} itemKey="id" onChange={value => onSelectAcc(value)}/>
-        <Select defaultValue={network.id} items={allNetworks} itemKey="id" itemLabel="name" onChange={value => setNetwork(value)}/>
+        <Select defaultValue={selectedAcc} items={accountsItems} onChange={value => onSelectAcc(value)}/>
+        <Select defaultValue={network.id} items={networksItems} onChange={value => setNetwork(value)}/>
       </div>
     </div>
   );

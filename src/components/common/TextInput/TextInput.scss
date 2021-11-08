@@ -1,0 +1,55 @@
+@import '../../../variables.scss';
+
+.text-input {
+    position: relative;
+
+    input {
+        width: 100%;
+        color: white;
+        font-size: 1.2em;
+        padding: 1em;
+        text-overflow: ellipsis;
+        background-color: $input-background-color;
+        transition: all 0.1s ease-in-out;
+
+        &:focus {
+            box-shadow: 0 2px 0 0 $tertiary-accent-color;
+        }
+    }
+
+    .icon {
+        position: absolute;
+        top: 0;
+        right: 0;
+        height: 100%;
+        width: 3.5em;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+    }
+
+    .info {
+        font-size: 15px;
+        margin-top: 0.8rem;
+        padding: 0 0.4rem;
+        opacity: 0.5;
+    }
+
+    &.copy {
+        .icon {
+            cursor: pointer;
+        }
+
+        input {
+            cursor: text;
+            padding-right: 2.5em;
+            font-family: monospace;
+            font-size: 1.5em;
+
+            &:disabled {
+                opacity: 1 !important;
+            }
+        }
+    }
+}
