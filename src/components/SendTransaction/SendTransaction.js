@@ -19,8 +19,7 @@ import accountPresets from '../../consts/accountPresets'
 
 const ERC20 = new Interface(require('adex-protocol-eth/abi/ERC20'))
 const IdentityInterface = new Interface(require('adex-protocol-eth/abi/Identity5.2'))
-// const FactoryInterface = new Interface(require('adex-protocol-eth/abi/IdentityFactory5.2'))
-// const QuickAccManagerInterface = new Interface(require('adex-protocol-eth/abi/QuickAccManager'))
+const FactoryInterface = new Interface(require('adex-protocol-eth/abi/IdentityFactory5.2'))
 
 const SPEEDS = ['slow', 'medium', 'fast', 'ape']
 const DEFAULT_SPEED = 'fast'
@@ -145,7 +144,7 @@ export default function SendTransaction ({ accounts, network, selectedAcc, reque
       resolveMany(requestIds, { success: bundleResult.success, result: bundleResult.txId, message: bundleResult.message })
       return bundleResult
     } else {
-      const result = await sendNoRelayer({ finalBundle, wallet, estimation, provider, nativeAssetSymbol })
+      const result = await sendNoRelayer({ finalBundle, account, wallet, estimation, provider, nativeAssetSymbol })
       resolveMany(requestIds, { success: true, result: result.txId })
       return result
     }
@@ -233,7 +232,12 @@ export default function SendTransaction ({ accounts, network, selectedAcc, reque
                               <GiTakeMyMoney size={35}/>
                               Fee
                           </div>
-                          <FeeSelector signer={bundle.signer} estimation={estimation} setEstimation={setEstimation} network={network}></FeeSelector>
+                          <FeeSelector
+                            signer={bundle.signer}
+                            estimation={estimation}
+                            setEstimation={setEstimation}
+                            network={network}
+                          ></FeeSelector>
                   </div>
               </div>
               <div className="panel">
@@ -253,6 +257,12 @@ export default function SendTransaction ({ accounts, network, selectedAcc, reque
 function FeeSelector ({ signer, estimation, network, setEstimation }) {
   if (!estimation) return (<Loading/>)
   if (!estimation.feeInNative) return (<></>)
+  if (estimation && !estimation.feeInUSD && estimation.gasLimit < 40000) {
+    return (<div>
+      <b>WARNING:</b> Fee estimation unavailable when you're doing your first account transaction and you are not connected to a relayer. You will pay the fee from <b>{signer.address}</b>, make sure you have {network.nativeAssetSymbol} there.
+    </div>)
+  }
+
   const { nativeAssetSymbol } = network
   const tokens = estimation.remainingFeeTokenBalances || ({ symbol: nativeAssetSymbol, decimals: 18 })
   const onFeeCurrencyChange = e => {
@@ -319,20 +329,34 @@ function getFeePaymentConsequences (token, estimation) {
  }
 }
 
-async function sendNoRelayer ({ finalBundle, wallet, estimation, provider, nativeAssetSymbol }) {
+async function sendNoRelayer ({ finalBundle, account, wallet, estimation, provider, nativeAssetSymbol }) {
   const { signer } = finalBundle
   // @TODO: in case we need deploying, run using deployAndCall pipeline with signed msgs
   // @TODO: quickAccManager
   if (signer.quickAccManager) throw new Error('quickAccManager not supported in relayerless mode yet')
-
   // currently disabled quickAccManager cause 1) we don't have a means of getting the second sig 2) we still have to sign txes so it's inconvenient
   // if (signer.quickAccManager) await finalBundle.sign(wallet)
   //const [to, data] = signer.quickAccManager ? [signer.quickAccManager, QuickAccManagerInterface.encodeFunctionData('send', [finalBundle.identity, [signer.timelock, signer.one, signer.two], [false, finalBundle.signature, '0x']])] :
-  const [to, data] = [
-    finalBundle.identity,
-    IdentityInterface.encodeFunctionData('executeBySender', [finalBundle.txns])
-  ]
-  const gasLimit = estimation.gasLimit + 20000
+
+  // NOTE: just adding values to gasLimit is bad because 1) they're hardcoded estimates
+  // and 2) the fee displayed in the UI does not reflect that
+  const isDeployed = await provider.getCode(finalBundle.identity).then(code => code !== '0x')
+  let gasLimit
+  let to, data
+  if (isDeployed) {
+    gasLimit = estimation.gasLimit + 20000
+    to = finalBundle.identity
+    data = IdentityInterface.encodeFunctionData('executeBySender', [finalBundle.txns])
+  } else {
+    await finalBundle.getNonce(provider)
+    // just some hardcoded value to make the signing pass
+    finalBundle.gasLimit = 400000
+    await finalBundle.sign(wallet)
+    to = account.identityFactoryAddr
+    data = FactoryInterface.encodeFunctionData('deployAndExecute', [account.bytecode, account.salt, finalBundle.txns, finalBundle.signature])
+    gasLimit = (await provider.estimateGas({ to, data, from: signer.address })).toNumber() + 20000
+  }
+
   const txn = {
     from: signer.address,
     to, data,
