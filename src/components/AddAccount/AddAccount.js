@@ -103,7 +103,7 @@ export default function AddAccount ({ relayerURL, onAddAccount }) {
             id: identityAddr,
             email: req.email,
             primaryKeyBackup,
-            salt, identityFactoryAddr, baseIdentityAddr,
+            salt, identityFactoryAddr, baseIdentityAddr, bytecode,
             signer
         }, { select: true })
     }
@@ -129,7 +129,7 @@ export default function AddAccount ({ relayerURL, onAddAccount }) {
 
         return {
             id: identityAddr,
-            salt, identityFactoryAddr, baseIdentityAddr,
+            salt, identityFactoryAddr, baseIdentityAddr, bytecode,
             signer: { address: getAddress(addr) }
         }
     }
@@ -169,11 +169,11 @@ export default function AddAccount ({ relayerURL, onAddAccount }) {
         // In principle, we need these values to be able to operate in relayerless mode,
         // so we just store them in all cases
         // Plus, in the future this call may be used to retrieve other things
-        const { salt, identityFactoryAddr, baseIdentityAddr } = await fetch(`${relayerURL}/identity/${idAddr}`)
+        const { salt, identityFactoryAddr, baseIdentityAddr, bytecode } = await fetch(`${relayerURL}/identity/${idAddr}`)
             .then(r => r.json())
         return {
             id: idAddr,
-            salt, identityFactoryAddr, baseIdentityAddr,
+            salt, identityFactoryAddr, baseIdentityAddr, bytecode,
             signer: { address: signerAddr }
         }
     }
