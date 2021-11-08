@@ -66,11 +66,11 @@ export default function AddAccount ({ relayerURL, onAddAccount }) {
             extraEntropy: id(req.email+':'+Date.now())
         }).mnemonic.phrase.split(' ').slice(0, 6).join(' ') + ' ' + req.email
 
-        const secondKeyAddress = await fetchPost(`${relayerURL}/second-key`, { secondKeySecret })
-            .then(r => r.address)
+        const secondKeyResp = await fetchPost(`${relayerURL}/second-key`, { secondKeySecret })
+        if (!secondKeyResp.address) throw new Error(`second-key returned no address, error: ${secondKeyResp.message || secondKeyResp}`)
 
         const { salt, baseIdentityAddr, identityFactoryAddr, quickAccManager, quickAccTimelock } = accountPresets
-        const quickAccountTuple = [quickAccTimelock, firstKeyWallet.address, secondKeyAddress]
+        const quickAccountTuple = [quickAccTimelock, firstKeyWallet.address, secondKeyResp.address]
         const signer = { quickAccManager, timelock: quickAccountTuple[0], one: quickAccountTuple[1], two: quickAccountTuple[2] }
         const abiCoder = new AbiCoder()
         const accHash = keccak256(abiCoder.encode(['tuple(uint, address, address)'], [quickAccountTuple]))
