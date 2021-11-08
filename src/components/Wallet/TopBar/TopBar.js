@@ -1,6 +1,7 @@
 import "./TopBar.scss";
 
 import React, { useState, useEffect } from "react";
+import { NavLink } from "react-router-dom";
 import { FiHelpCircle } from "react-icons/fi";
 import { AiOutlinePlus } from "react-icons/ai";
 import { DropDown, Select, Button } from "../../common";
@@ -98,7 +99,9 @@ const TopBar = ({
 
         <Select defaultValue={selectedAcc} items={accountsItems} onChange={value => onSelectAcc(value)}>
           <div id="add-account">
-            <Button icon={<AiOutlinePlus/>} small>Add Account</Button>
+            <NavLink to="/add-account">
+              <Button icon={<AiOutlinePlus/>} small>Add Account</Button>
+            </NavLink>
           </div>
         </Select>
         <Select defaultValue={network.id} items={networksItems} onChange={value => setNetwork(value)}/>
