@@ -21,6 +21,8 @@ const ERC20 = new Interface(require('adex-protocol-eth/abi/ERC20'))
 
 const SPEEDS = ['slow', 'medium', 'fast', 'ape']
 const DEFAULT_SPEED = 'fast'
+const ADDED_GAS_TOKEN = 40000
+const ADDED_GAS_NATIVE = 15000
 
 function notifyUser (bundle) {
   if (window.Notification && Notification.permission !== 'denied') {
@@ -79,7 +81,6 @@ export default function SendTransaction ({ accounts, network, selectedAcc, reque
       .then(estimation => {
         estimation.selectedFee = {
           speed: DEFAULT_SPEED,
-          multiplier: 1,
           token: { symbol: nativeAssetSymbol }
         }
         if (estimation.remainingFeeTokenBalances) {
@@ -108,14 +109,15 @@ export default function SendTransaction ({ accounts, network, selectedAcc, reque
 
     const requestIds = bundle.requestIds
     const { token: feeToken, speed } = estimation.selectedFee
+    const { addedGas, multiplier } = getFeePaymentConsequences(feeToken, estimation)
     const toHexAmount = amnt => '0x'+Math.round(amnt).toString(16)
-    const nativeAmount = estimation.feeInNative[speed]*1e18
     const feeTxn = feeToken.symbol === nativeAssetSymbol 
-      ? [accountPresets.feeCollector, toHexAmount(nativeAmount), '0x']
+      ? [accountPresets.feeCollector, toHexAmount(estimation.feeInNative[speed]*multiplier*1e18), '0x']
       : [feeToken.address, '0x0', ERC20.encodeFunctionData('transfer', [
         accountPresets.feeCollector,
         toHexAmount(
           (feeToken.isStable ? estimation.feeInUSD[speed] : estimation.feeInNative[speed])
+          * multiplier
           * Math.pow(10, feeToken.decimals)
         )
     ])]
@@ -127,7 +129,7 @@ export default function SendTransaction ({ accounts, network, selectedAcc, reque
     const provider = getDefaultProvider(network.rpc)
     await finalBundle.getNonce(provider)
 
-    finalBundle.gasLimit = estimation.gasLimit
+    finalBundle.gasLimit = estimation.gasLimit + addedGas
 
     const wallet = getWallet({
       signer: finalBundle.signer,
@@ -264,7 +266,8 @@ function FeeSelector ({ estimation, network, setEstimation }) {
     </select>
   </>) : (<></>)
 
-  const stableSelected = estimation.selectedFee.token.isStable
+  const { isStable } = estimation.selectedFee.token
+  const { multiplier } = getFeePaymentConsequences(estimation.selectedFee.token, estimation)
   const feeAmountSelectors = SPEEDS.map(speed => (
     <div 
       key={speed}
@@ -272,9 +275,9 @@ function FeeSelector ({ estimation, network, setEstimation }) {
       onClick={() => setEstimation({ ...estimation, selectedFee: { ...estimation.selectedFee, speed } })}
     >
       <div className='speed'>{speed}</div>
-      {stableSelected
-        ? '$'+(estimation.feeInUSD[speed] * estimation.selectedFee.multiplier)
-        : (estimation.feeInNative[speed] * estimation.selectedFee.multiplier)+' '+nativeAssetSymbol
+      {isStable
+        ? '$'+(estimation.feeInUSD[speed] * multiplier)
+        : (estimation.feeInNative[speed] * multiplier)+' '+nativeAssetSymbol
       }
     </div>
   ))
@@ -293,4 +296,18 @@ function isTokenEligible (token, estimation) {
   const speed = estimation.selectedFee.speed || DEFAULT_SPEED
   const min = token.isStable ? estimation.feeInUSD[speed] : estimation.feeInNative[speed]
   return parseInt(token.balance) / Math.pow(10, token.decimals) > min
+}
+
+// can't think of a less funny name for that
+function getFeePaymentConsequences (token, estimation) {
+  // Relayerless mode
+  if (!estimation.feeInUSD) return { multiplier: 1, addedGas: 0 }
+  // Relayer mode
+  const addedGas = !token.address || token.address === '0x0000000000000000000000000000000000000000'
+    ? ADDED_GAS_NATIVE
+    : ADDED_GAS_TOKEN
+ return {
+   multiplier: (estimation.gasLimit + addedGas) / estimation.gasLimit,
+   addedGas
+ }
 }
