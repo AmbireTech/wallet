@@ -147,6 +147,7 @@ export default function SendTransaction ({ accounts, network, selectedAcc, reque
     } else {
       // @TODO move to a helper fn, sendRelayerless
 
+      // @TODO: in case we need deploying, run using deployAndCall pipeline with signed msgs
       // @TODO: quickAccManager
       if (signer.quickAccManager) throw new Error('quickAccManager not supported in relayerless mode yet')
 
@@ -158,14 +159,14 @@ export default function SendTransaction ({ accounts, network, selectedAcc, reque
         finalBundle.identity,
         IdentityInterface.encodeFunctionData('executeBySender', [finalBundle.txns])
       ]
-      // Currently routing everything through factory.deployAndCall, can be optimized by calling QuickAccManager/Identity directly
+      const gasLimit = estimation.gasLimit + 30000
       const txn = {
         from: signer.address,
-        to: account.identityFactoryAddr,
-        data: FactoryInterface.encodeFunctionData('deployAndCall', [account.bytecode, account.salt, to, data]),
-        // add 70k for deployAndCall overhead; this is not reflected in the UI
-        gas: hexlify(estimation.gasLimit + 70000),
-        gasPrice: hexlify(estimation.gasPrice),
+        to, data,
+        //to: account.identityFactoryAddr,
+        //data: FactoryInterface.encodeFunctionData('deployAndCall', [account.bytecode, account.salt, to, data]),
+        gas: hexlify(gasLimit),
+        gasPrice: hexlify(Math.floor(estimation.feeInNative[estimation.selectedFee.speed] / gasLimit * 1e18)),
         nonce: hexlify(await provider.getTransactionCount(signer.address))
       }
       const signed = await wallet.sign(txn)
