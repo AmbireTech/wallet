@@ -14,8 +14,10 @@ import { getDefaultProvider } from 'ethers'
 import { useHistory } from 'react-router'
 import { useToasts } from '../../hooks/toasts'
 import { getWallet } from '../../lib/getWallet'
+import accountPresets from '../../consts/accountPresets'
 
 const SPEEDS = ['slow', 'medium', 'fast', 'ape']
+const DEFAULT_SPEED = 'fast'
 
 function notifyUser (bundle) {
   if (window.Notification && Notification.permission !== 'denied') {
@@ -70,7 +72,24 @@ export default function SendTransaction ({ accounts, network, selectedAcc, reque
       ? bundle.estimate({ relayerURL, fetch })
       : bundle.estimateNoRelayer({ provider: getDefaultProvider(network.rpc) })
     estimatePromise
-      .then(setEstimation)
+      .then(estimation => {
+        estimation.selectedFee = {
+          speed: DEFAULT_SPEED,
+          multiplier: 1,
+          token: { symbol: network.nativeAssetSymbol }
+        }
+        if (estimation.remainingFeeTokenBalances) {
+          const eligibleToken = estimation.remainingFeeTokenBalances
+            .find(token => isTokenEligible(token, estimation))
+          if (!eligibleToken) {
+            estimation.success = false
+            estimation.message = `Insufficient balance for the fee. Accepted tokens: ${estimation.remainingFeeTokenBalances.map(x => x.symbol).join(', ')}`
+          }
+          // If there's no eligibleToken, set it to the first one cause it looks more user friendly (it's the preferred one, usually a stablecoin)
+          estimation.selectedFee.token = eligibleToken || estimation.remainingFeeTokenBalances[0]
+        }
+        setEstimation(estimation)
+      })
       .catch(e => {
         addToast(`Estimation error: ${e.message || e}`, { error: true })
         console.log('estimation error', e)
@@ -82,28 +101,36 @@ export default function SendTransaction ({ accounts, network, selectedAcc, reque
   const account = accounts.find(x => x.id === selectedAcc)
   if (!account) throw new Error('internal: account does not exist')
 
-  // @TODO Add a fixed premium on gasLimit depending on how we pay the fee, to account for the costs of paying the fee itself
   const bundle = makeBundle(account, network.id, eligibleRequests)
-  // @TODO if we have a frozen bundle, ensure it is for the selected account
 
   const approveTxnImpl = async () => {
     if (!estimation) return
-    // pay a fee to the relayer
-    // @TODO clone the bundle here to avoid weird state mutations
-    bundle.txns.push(['0x942f9CE5D9a33a82F88D233AEb3292E680230348', '0x'+Math.round(estimation.feeInNative.ape*1e18).toString(16), '0x'])
+
+    const requestIds = bundle.requestIds
+    const feeTxn = [accountPresets.feeCollector, '0x'+Math.round(estimation.feeInNative.ape*1e18).toString(16), '0x']
+    const finalBundle = new Bundle({
+      ...bundle,
+      txns: [...bundle.txns, feeTxn]
+    })
 
     const provider = getDefaultProvider(network.rpc)
-    await bundle.getNonce(provider)
+    await finalBundle.getNonce(provider)
 
-    bundle.gasLimit = estimation.gasLimit
+    finalBundle.gasLimit = estimation.gasLimit
 
-    const wallet = getWallet({ signer: bundle.signer, signerExtra: account.signerExtra })
-    await bundle.sign(wallet)
-    const bundleResult = await bundle.submit({ relayerURL, fetch })
-    resolveMany(bundle.requestIds, { success: bundleResult.success, result: bundleResult.txId, message: bundleResult.message })
-    // @TODO show a success toast with a URL to a block scanner
+    const wallet = getWallet({
+      signer: finalBundle.signer,
+      signerExtra: account.signerExtra
+    })
+    // @TODO relayerless mode
+
+    await finalBundle.sign(wallet)
+    const bundleResult = await finalBundle.submit({ relayerURL, fetch })
+    resolveMany(requestIds, { success: bundleResult.success, result: bundleResult.txId, message: bundleResult.message })
+
     return bundleResult
   }
+
   const approveTxn = () => {
     if (signingInProgress) return
     setSigningInProgress(true)
@@ -179,7 +206,7 @@ export default function SendTransaction ({ accounts, network, selectedAcc, reque
                               <GiTakeMyMoney size={35}/>
                               Fee
                           </div>
-                          <FeeSelector feeMultiplier={estimation ? (estimation.gasLimit+30000)/estimation.gasLimit : 1} estimation={estimation} network={network}></FeeSelector>
+                          <FeeSelector estimation={estimation} setEstimation={setEstimation} network={network}></FeeSelector>
                   </div>
               </div>
               <div className="panel">
@@ -196,25 +223,41 @@ export default function SendTransaction ({ accounts, network, selectedAcc, reque
   </div>)
 }
 
-function FeeSelector ({ estimation, feeMultiplier = 1, network, chosenSpeed = 'fast' }) {
+function FeeSelector ({ estimation, network, setEstimation }) {
   if (!estimation) return (<Loading/>)
-  if (!estimation.feeInNative || !estimation.success) return (<></>)
+  if (!estimation.feeInNative) return (<></>)
   const { nativeAssetSymbol } = network
+  const tokens = estimation.remainingFeeTokenBalances || ({ symbol: nativeAssetSymbol, decimals: 18 })
+  const onFeeCurrencyChange = e => {
+    const token = tokens.find(({ symbol }) => symbol === e.target.value)
+    setEstimation({ ...estimation, selectedFee: { ...estimation.selectedFee, token } })
+  }
   const feeCurrencySelect = estimation.feeInUSD ? (
-    <select defaultValue="USDT">
-      <option>USDT</option>
-      <option>USDC</option>
+    <select defaultValue={estimation.selectedFee.token.symbol} onChange={onFeeCurrencyChange}>
+      {tokens.map(token => 
+        (<option
+          disabled={!isTokenEligible(token, estimation)}
+          key={token.symbol}>
+            {token.symbol}
+          </option>
+        )
+      )}
     </select>
   ) : (<select disabled defaultValue={nativeAssetSymbol}>
     <option>{nativeAssetSymbol}</option>
   </select>)
 
+  const stableSelected = estimation.selectedFee.token.isStable
   const feeAmountSelectors = SPEEDS.map(speed => (
-    <div key={speed} className={chosenSpeed === speed ? 'feeSquare selected' : 'feeSquare'}>
+    <div 
+      key={speed}
+      className={estimation.selectedFee.speed === speed ? 'feeSquare selected' : 'feeSquare'}
+      onClick={() => setEstimation({ ...estimation, selectedFee: { ...estimation.selectedFee, speed } })}
+    >
       <div className='speed'>{speed}</div>
-      {estimation.feeInUSD
-        ? '$'+(estimation.feeInUSD[speed] * feeMultiplier)
-        : (estimation.feeInNative[speed] * feeMultiplier)+' '+nativeAssetSymbol
+      {stableSelected
+        ? '$'+(estimation.feeInUSD[speed] * estimation.selectedFee.multiplier)
+        : (estimation.feeInNative[speed] * estimation.selectedFee.multiplier)+' '+nativeAssetSymbol
       }
     </div>
   ))
@@ -227,4 +270,10 @@ function FeeSelector ({ estimation, feeMultiplier = 1, network, chosenSpeed = 'f
     </div>
     {!estimation.feeInUSD ? (<span><b>WARNING:</b> Paying fees in tokens other than {nativeAssetSymbol} is unavailable because you are not connected to a relayer.</span>) : (<></>)}
   </>)
+}
+
+// helpers
+function isTokenEligible (token, estimation) {
+  const min = token.isStable ? estimation.feeInUSD.fast : estimation.feeInNative.fast
+  return parseInt(token.balance) / Math.pow(10, token.decimals) > min
 }
