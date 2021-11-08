@@ -11,10 +11,13 @@ import { useEffect, useState } from 'react'
 import fetch from 'node-fetch'
 import { Bundle } from 'adex-protocol-eth/js'
 import { getDefaultProvider } from 'ethers'
+import { Interface } from 'ethers/lib/utils'
 import { useHistory } from 'react-router'
 import { useToasts } from '../../hooks/toasts'
 import { getWallet } from '../../lib/getWallet'
 import accountPresets from '../../consts/accountPresets'
+
+const ERC20 = new Interface(require('adex-protocol-eth/abi/ERC20'))
 
 const SPEEDS = ['slow', 'medium', 'fast', 'ape']
 const DEFAULT_SPEED = 'fast'
@@ -53,6 +56,7 @@ export default function SendTransaction ({ accounts, network, selectedAcc, reque
   const history = useHistory()
   const { addToast } = useToasts()
 
+  const { nativeAssetSymbol } = network
   // Also filtered in App.js, but better safe than sorry here
   const eligibleRequests = requests
     .filter(({ type, chainId, account, txn }) =>
@@ -76,7 +80,7 @@ export default function SendTransaction ({ accounts, network, selectedAcc, reque
         estimation.selectedFee = {
           speed: DEFAULT_SPEED,
           multiplier: 1,
-          token: { symbol: network.nativeAssetSymbol }
+          token: { symbol: nativeAssetSymbol }
         }
         if (estimation.remainingFeeTokenBalances) {
           const eligibleToken = estimation.remainingFeeTokenBalances
@@ -103,7 +107,18 @@ export default function SendTransaction ({ accounts, network, selectedAcc, reque
     if (!estimation) return
 
     const requestIds = bundle.requestIds
-    const feeTxn = [accountPresets.feeCollector, '0x'+Math.round(estimation.feeInNative.ape*1e18).toString(16), '0x']
+    const { token: feeToken, speed } = estimation.selectedFee
+    const toHexAmount = amnt => '0x'+Math.round(amnt).toString(16)
+    const nativeAmount = estimation.feeInNative[speed]*1e18
+    const feeTxn = feeToken.symbol === nativeAssetSymbol 
+      ? [accountPresets.feeCollector, toHexAmount(nativeAmount), '0x']
+      : [feeToken.address, '0x0', ERC20.encodeFunctionData('transfer', [
+        accountPresets.feeCollector,
+        toHexAmount(
+          (feeToken.isStable ? estimation.feeInUSD[speed] : estimation.feeInNative[speed])
+          * Math.pow(10, feeToken.decimals)
+        )
+    ])]
     const finalBundle = new Bundle({
       ...bundle,
       txns: [...bundle.txns, feeTxn]
@@ -235,7 +250,8 @@ function FeeSelector ({ estimation, network, setEstimation }) {
     const token = tokens.find(({ symbol }) => symbol === e.target.value)
     setEstimation({ ...estimation, selectedFee: { ...estimation.selectedFee, token } })
   }
-  const feeCurrencySelect = estimation.feeInUSD ? (
+  const feeCurrencySelect = estimation.feeInUSD ? (<>
+    <span style={{ marginTop: '1em' }}>Fee currency</span>
     <select defaultValue={estimation.selectedFee.token.symbol} onChange={onFeeCurrencyChange}>
       {tokens.map(token => 
         (<option
@@ -246,9 +262,7 @@ function FeeSelector ({ estimation, network, setEstimation }) {
         )
       )}
     </select>
-  ) : (<select disabled defaultValue={nativeAssetSymbol}>
-    <option>{nativeAssetSymbol}</option>
-  </select>)
+  </>) : (<></>)
 
   const stableSelected = estimation.selectedFee.token.isStable
   const feeAmountSelectors = SPEEDS.map(speed => (
@@ -266,7 +280,6 @@ function FeeSelector ({ estimation, network, setEstimation }) {
   ))
 
   return (<>
-    <span style={{ marginTop: '1em' }}>Fee currency</span>
     {feeCurrencySelect}
     <div className='feeAmountSelectors'>
       {feeAmountSelectors}
