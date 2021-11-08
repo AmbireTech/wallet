@@ -167,7 +167,9 @@ export default function SendTransaction ({ accounts, network, selectedAcc, reque
       })
       .catch(e => {
         console.error(e)
-        addToast(`Signing error: ${e.message || e}`, { error: true })
+        if (e && e.message.includes('must provide an Ethereum address')) {
+          addToast(`Signing error: not connected with the correct address. Make sure you're connected with ${bundle.signer.address}.`, { error: true })
+        } else addToast(`Signing error: ${e.message || e}`, { error: true })
       })
       .then(() => setSigningInProgress(false))
 
@@ -360,15 +362,21 @@ async function sendNoRelayer ({ finalBundle, account, wallet, estimation, provid
   const txn = {
     from: signer.address,
     to, data,
-    //to: account.identityFactoryAddr,
-    //data: FactoryInterface.encodeFunctionData('deployAndCall', [account.bytecode, account.salt, to, data]),
     gas: hexlify(gasLimit),
     gasPrice: hexlify(Math.floor(estimation.feeInNative[estimation.selectedFee.speed] / estimation.gasLimit * 1e18)),
     nonce: hexlify(await provider.getTransactionCount(signer.address))
   }
-  const signed = await wallet.sign(txn)
   try {
-    const { hash: txId } = await provider.sendTransaction(signed)
+    let txId
+    if (!wallet.sendTransaction) {
+      // HW wallets which only sign
+      const signed = await wallet.signTransaction(txn)
+      txId = (await provider.sendTransaction(signed)).hash
+    } else {
+      // web3 injectors which can't sign, but can sign+send
+      // they also don't like the gas arg
+      txId = (await wallet.sendTransaction({ from: txn.from, to: txn.to, data: txn.data, gasPrice: txn.gasPrice, nonce: txn.nonce })).hash
+    }
     return { success: true, txId }
   } catch(e) {
     if (e.code === 'INSUFFICIENT_FUNDS') throw new Error(`Insufficient gas fees: you need to have ${nativeAssetSymbol} on ${signer.address}`)
