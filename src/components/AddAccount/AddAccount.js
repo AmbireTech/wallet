@@ -189,7 +189,7 @@ export default function AddAccount ({ relayerURL, onAddAccount }) {
         const addresses = await provider.getAccountsAsync(50)
         setChooseSigners({ addresses, signerExtra: {
             type: 'trezor',
-            info: provider._initialDerivedKeyInfo
+            info: JSON.parse(JSON.stringify(provider._initialDerivedKeyInfo))
         } })
     }
 
@@ -201,7 +201,7 @@ export default function AddAccount ({ relayerURL, onAddAccount }) {
         })
         const [addresses, signerExtra] = await Promise.all([
             provider.getAccountsAsync(50),
-            provider._initialDerivedKeyInfoAsync().then(info => ({ type: 'ledger', info }))
+            provider._initialDerivedKeyInfoAsync().then(info => ({ type: 'ledger', info: JSON.parse(JSON.stringify(info)) }))
         ])
         setChooseSigners({ addresses, signerExtra })
     }
