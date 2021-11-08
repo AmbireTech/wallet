@@ -46,7 +46,7 @@ const TopBar = ({
       connect({ uri: content });
     } else {
       const uri = prompt("Enter WalletConnect URI");
-      connect({ uri });
+      if (uri) connect({ uri });
     }
   };
 

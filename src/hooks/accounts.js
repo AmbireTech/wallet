@@ -4,9 +4,10 @@ import { useToasts } from '../hooks/toasts'
 export default function useAccounts () {
     const { addToast } = useToasts()
     const [accounts, setAccounts] = useState(() => {
-      // @TODO catch parse failures and handle them
       try {
-        return JSON.parse(localStorage.accounts || '[]')
+        const accs = JSON.parse(localStorage.accounts || '[]')
+        if (!Array.isArray(accs)) throw new Error('accounts: incorrect format')
+        return accs
       } catch (e) {
         console.error('accounts parsing failure', e)
         return []
@@ -24,7 +25,7 @@ export default function useAccounts () {
       localStorage.selectedAcc = selected
       setSelectedAcc(selected)
     }
-    const onAddAccount = useCallback((acc, opts) => {
+    const onAddAccount = useCallback((acc, opts = {}) => {
       if (!(acc.id && acc.signer)) throw new Error('account: internal err: missing ID or signer')
 
       const existingIdx = accounts
