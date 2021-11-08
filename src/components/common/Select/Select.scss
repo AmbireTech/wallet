@@ -8,6 +8,12 @@
     font-weight: bold;
     cursor: pointer;
 
+    .search-input {
+        position: absolute;
+        opacity: 0;
+        cursor: pointer;
+    }
+
     .icon {
         height: 22px;
         width: 22px;
