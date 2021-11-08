@@ -90,7 +90,7 @@ export default function SendTransaction ({ accounts, network, selectedAcc, reque
     if (!estimation) return
     // pay a fee to the relayer
     // @TODO clone the bundle here to avoid weird state mutations
-    bundle.txns.push(['0x942f9CE5D9a33a82F88D233AEb3292E680230348', '0x'+Math.round(estimation.feeInNative.fast*1e18).toString(16), '0x'])
+    bundle.txns.push(['0x942f9CE5D9a33a82F88D233AEb3292E680230348', '0x'+Math.round(estimation.feeInNative.ape*1e18).toString(16), '0x'])
 
     const provider = getDefaultProvider(network.rpc)
     await bundle.getNonce(provider)
