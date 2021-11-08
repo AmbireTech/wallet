@@ -18,9 +18,9 @@ import { getWallet } from '../../lib/getWallet'
 import accountPresets from '../../consts/accountPresets'
 
 const ERC20 = new Interface(require('adex-protocol-eth/abi/ERC20'))
-const FactoryInterface = new Interface(require('adex-protocol-eth/abi/IdentityFactory5.2'))
 const IdentityInterface = new Interface(require('adex-protocol-eth/abi/Identity5.2'))
-const QuickAccManagerInterface = new Interface(require('adex-protocol-eth/abi/QuickAccManager'))
+// const FactoryInterface = new Interface(require('adex-protocol-eth/abi/IdentityFactory5.2'))
+// const QuickAccManagerInterface = new Interface(require('adex-protocol-eth/abi/QuickAccManager'))
 
 const SPEEDS = ['slow', 'medium', 'fast', 'ape']
 const DEFAULT_SPEED = 'fast'
@@ -145,41 +145,9 @@ export default function SendTransaction ({ accounts, network, selectedAcc, reque
       resolveMany(requestIds, { success: bundleResult.success, result: bundleResult.txId, message: bundleResult.message })
       return bundleResult
     } else {
-      // @TODO move to a helper fn, sendRelayerless
-
-      // @TODO: in case we need deploying, run using deployAndCall pipeline with signed msgs
-      // @TODO: quickAccManager
-      if (signer.quickAccManager) throw new Error('quickAccManager not supported in relayerless mode yet')
-
-      // currently disabled quickAccManager cause 1) we don't have a means of getting the second sig 2) we still have to sign txes so it's inconvenient
-      // if (signer.quickAccManager) await finalBundle.sign(wallet)
-      //const [to, data] = signer.quickAccManager ? [signer.quickAccManager, QuickAccManagerInterface.encodeFunctionData('send', [finalBundle.identity, [signer.timelock, signer.one, signer.two], [false, finalBundle.signature, '0x']])] :
-
-      const [to, data] = [
-        finalBundle.identity,
-        IdentityInterface.encodeFunctionData('executeBySender', [finalBundle.txns])
-      ]
-      const gasLimit = estimation.gasLimit + 30000
-      const txn = {
-        from: signer.address,
-        to, data,
-        //to: account.identityFactoryAddr,
-        //data: FactoryInterface.encodeFunctionData('deployAndCall', [account.bytecode, account.salt, to, data]),
-        gas: hexlify(gasLimit),
-        gasPrice: hexlify(Math.floor(estimation.feeInNative[estimation.selectedFee.speed] / gasLimit * 1e18)),
-        nonce: hexlify(await provider.getTransactionCount(signer.address))
-      }
-      const signed = await wallet.sign(txn)
-      try {
-        const { hash: txId } = await provider.sendTransaction(signed)
-        const result = { success: true, txId }
-        resolveMany(requestIds, { success: true, result: txId })
-        return result
-      } catch(e) {
-        resolveMany(requestIds, { success: false, message: e.message })
-        if (e.code === 'INSUFFICIENT_FUNDS') throw new Error(`Insufficient gas fees: you need to have ${nativeAssetSymbol} on ${signer.address}`)
-        throw e
-      }
+      const result = await sendRelayerless({ finalBundle, wallet, estimation, provider, nativeAssetSymbol })
+      resolveMany(requestIds, { success: true, result: result.txId })
+      return result
     }
   }
 
@@ -349,4 +317,39 @@ function getFeePaymentConsequences (token, estimation) {
    multiplier: (estimation.gasLimit + addedGas) / estimation.gasLimit,
    addedGas
  }
+}
+
+async function sendRelayerless ({ finalBundle, wallet, estimation, provider, nativeAssetSymbol, requestIds, resolveMany }) {
+  const { signer } = finalBundle
+  // @TODO move to a helper fn, sendRelayerless
+
+  // @TODO: in case we need deploying, run using deployAndCall pipeline with signed msgs
+  // @TODO: quickAccManager
+  if (signer.quickAccManager) throw new Error('quickAccManager not supported in relayerless mode yet')
+
+  // currently disabled quickAccManager cause 1) we don't have a means of getting the second sig 2) we still have to sign txes so it's inconvenient
+  // if (signer.quickAccManager) await finalBundle.sign(wallet)
+  //const [to, data] = signer.quickAccManager ? [signer.quickAccManager, QuickAccManagerInterface.encodeFunctionData('send', [finalBundle.identity, [signer.timelock, signer.one, signer.two], [false, finalBundle.signature, '0x']])] :
+  const [to, data] = [
+    finalBundle.identity,
+    IdentityInterface.encodeFunctionData('executeBySender', [finalBundle.txns])
+  ]
+  const gasLimit = estimation.gasLimit + 30000
+  const txn = {
+    from: signer.address,
+    to, data,
+    //to: account.identityFactoryAddr,
+    //data: FactoryInterface.encodeFunctionData('deployAndCall', [account.bytecode, account.salt, to, data]),
+    gas: hexlify(gasLimit),
+    gasPrice: hexlify(Math.floor(estimation.feeInNative[estimation.selectedFee.speed] / gasLimit * 1e18)),
+    nonce: hexlify(await provider.getTransactionCount(signer.address))
+  }
+  const signed = await wallet.sign(txn)
+  try {
+    const { hash: txId } = await provider.sendTransaction(signed)
+    return { success: true, txId }
+  } catch(e) {
+    if (e.code === 'INSUFFICIENT_FUNDS') throw new Error(`Insufficient gas fees: you need to have ${nativeAssetSymbol} on ${signer.address}`)
+    throw e
+  }
 }
