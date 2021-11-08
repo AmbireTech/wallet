@@ -26,7 +26,7 @@ function getWalletNew ({ chainId, signer, signerExtra }, opts) {
         // for Trezor/ledger, alternatively we can shim using https://www.npmjs.com/package/web3-provider-engine and then wrap in Web3Provider
         return {
             signMessage: hash => providerTrezor.signPersonalMessageAsync(ethers.utils.hexlify(hash), signer.address),
-            sign: params => providerTrezor.signTransactionAsync({ ...params, from: signer.address })
+            signTransaction: params => providerTrezor.signTransactionAsync({ ...params, from: signer.address })
         }
     } else if (signerExtra && signerExtra.type === 'ledger') {
         const provider = new LedgerSubprovider({
@@ -36,7 +36,7 @@ function getWalletNew ({ chainId, signer, signerExtra }, opts) {
         })
         return {
             signMessage: hash => provider.signPersonalMessageAsync(ethers.utils.hexlify(hash), signer.address),
-            sign: params => provider.signTransactionAsync({ ...params, from: signer.address })
+            signTransaction: params => provider.signTransactionAsync({ ...params, from: signer.address })
         }
     } else if (signer.address) {
         if (!window.ethereum) throw new Error('No web3 support detected in your browser: if you created this account through MetaMask, please install it.')
