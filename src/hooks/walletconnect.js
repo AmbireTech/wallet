@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useReducer, useRef } from 'react'
-import { useToasts } from '../helpers/toasts'
+import { useToasts } from '../hooks/toasts'
 
 import WalletConnectCore from '@walletconnect/core'
 import * as cryptoLib from '@walletconnect/iso-crypto'
@@ -9,6 +9,7 @@ const noopSessionStorage = { setSession: noop, getSession: noop, removeSession: 
 
 const STORAGE_KEY = 'wc1_state'
 const SUPPORTED_METHODS = ['eth_sendTransaction', 'gs_multi_send', 'personal_sign', 'eth_sign']
+const SESSION_TIMEOUT = 6000
 
 const getDefaultState = () => ({ connections: [], requests: [] })
 
@@ -36,6 +37,7 @@ export default function useWalletConnect ({ account, chainId, onCallRequest }) {
             }
         }
         if (action.type === 'requestAdded') {
+            if (state.requests.find(({ id }) => id === action.request.id)) return { ...state }
             return { ...state, requests: [...state.requests, action.request] }
         }
         if (action.type === 'requestsResolved') {
@@ -46,10 +48,12 @@ export default function useWalletConnect ({ account, chainId, onCallRequest }) {
         }
         return { ...state }
     }, null, () => {
+        const json = localStorage[STORAGE_KEY]
+        if (!json) return getDefaultState()
         try {
             return {
                 ...getDefaultState(),
-                ...JSON.parse(localStorage[STORAGE_KEY])
+                ...JSON.parse(json)
             }
         } catch(e) {
             console.error(e)
@@ -58,14 +62,42 @@ export default function useWalletConnect ({ account, chainId, onCallRequest }) {
     })
 
     const connect = useCallback(connectorOpts => {
-        if (connectors[connectorOpts.uri]) return connectors[connectorOpts.uri]
-        const connector = new WalletConnectCore({
-            connectorOpts,
-            cryptoLib,
-            sessionStorage: noopSessionStorage
-        })
+        if (connectors[connectorOpts.uri]) {
+            addToast('dApp already connected')
+            return connectors[connectorOpts.uri]
+        }
+        let connector
+        try {
+            connector = new WalletConnectCore({
+                connectorOpts,
+                cryptoLib,
+                sessionStorage: noopSessionStorage
+            })
+        } catch(e) {
+            addToast(`Unable to connect to ${connectorOpts.uri}: ${e.message}`, { error: true })
+            return null
+        }
+
+        const onError = err => {
+            addToast(`WalletConnect error: ${(connector.session && connector.session.peerMeta && connector.session.peerMeta.name)} ${err.message || err}`, { error: true })
+            console.error('WalletConnect error', err)
+        }
+
+        let sessionStart
+        let sessionTimeout
+        if (!connector.session.peerMeta) sessionTimeout = setTimeout(() => {
+            if (!connector.session.peerMeta) addToast('Not able to get session from dApp - perhaps the link has expired?', { error: true })
+        }, SESSION_TIMEOUT)
 
         connector.on('session_request', (error, payload) => {
+            if (error) {
+                onError(error)
+                return
+            }
+
+            sessionStart = Date.now()
+            clearTimeout(sessionTimeout)
+
             connector.approveSession({
                 accounts: [stateRef.current.account],
                 chainId: stateRef.current.chainId,
@@ -77,30 +109,62 @@ export default function useWalletConnect ({ account, chainId, onCallRequest }) {
             addToast('Successfully connected to '+connector.session.peerMeta.name)
         })
 
-        connector.on('call_request', async (error, payload) => {
-            // @TODO how to handle this err?
-            if (error) throw error
+        connector.on('call_request', (error, payload) => {
+            if (error) {
+                onError(error)
+                return
+            }
             if (!SUPPORTED_METHODS.includes(payload.method)) {
                 connector.rejectRequest({ id: payload.id, error: { message: 'METHOD_NOT_SUPPORTED' }})
                 return
             }
-            // @TODO add more data to this, like connector URI and chainId
-            dispatch({ type: 'requestAdded', request: payload })
+            if (
+                payload.method === 'eth_sendTransaction' && payload.params[0] && payload.params[0].from
+                && payload.params[0].from.toLowerCase() !== connector.session.accounts[0].toLowerCase()
+            ) {
+                addToast(`dApp sent a request for the wrong account: ${payload.params[0].from}`, { error: true })
+                return
+            }
+            dispatch({ type: 'requestAdded', request: {
+                id: payload.id,
+                type: payload.method,
+                wcUri: connectorOpts.uri,
+                txn: payload.params[0],
+                chainId: connector.session.chainId,
+                account: connector.session.accounts[0]
+            } })
         })
 
         connector.on('disconnect', (error, payload) => {
-            // @TODO how to handle this err?
-            if (error) throw error
-            connectors[connectorOpts.uri] = null
-            dispatch({ type: 'disconnected', uri: connectorOpts.uri })
+            if (error) {
+                onError(error)
+                return
+            }
 
-            addToast(`${connector.session.peerMeta.name} disconnected: ${payload.params[0].message}`)
+            // NOTE the dispatch() will cause double rerender when we trigger a disconnect,
+            // cause we will call it once on disconnect() and once when the event arrives
+            // we can prevent this by checking if (!connectors[...]) but we'd rather stay safe and ensure
+            // the connection is removed
+            dispatch({ type: 'disconnected', uri: connectorOpts.uri })
+            connectors[connectorOpts.uri] = null
+
+            // NOTE: this event might be invoked 2 times when the dApp itself disconnects
+            // currently we don't dedupe that
+            if (sessionStart && (Date.now() - sessionStart) < SESSION_TIMEOUT) {
+                addToast('dApp disconnected immediately - perhaps it does not support the current network?', { error: true })
+            } else {
+                addToast(`${connector.session.peerMeta.name} disconnected: ${payload.params[0].message}`)
+            }
         })
 
+        connector.on('error', onError)
+
         return connector
-    }, [])
+    }, [addToast])
 
     const disconnect = useCallback(uri => {
+        // connector might not be there, either cause we disconnected before,
+        // or cause we failed to connect in the first place
         if (connectors[uri]) {
             connectors[uri].killSession()
             connectors[uri] = null
@@ -109,17 +173,32 @@ export default function useWalletConnect ({ account, chainId, onCallRequest }) {
     }, [])
 
     const resolveMany = (ids, resolution) => {
-        // @TODO get the connectors, reply to them
-        // then dispatch to remove the requests
+        state.requests.forEach(({ id, wcUri }) => {
+            if (ids.includes(id)) {
+                const connector = connectors[wcUri]
+                if (!connector) return
+                if (resolution.success) connector.approveRequest({ id, result: resolution.result })
+                else connector.rejectRequest({ id, error: { message: resolution.message } })
+            }
+        })
+        dispatch({ type: 'requestsResolved', ids })
     }
+
+    // Side effects on init
+    useEffect(() => {
+        state.connections.forEach(({ uri, session }) => {
+            if (!connectors[uri]) connectors[uri] = connect({ uri, session })
+        })
+    // we specifically want to run this only once despite depending on state
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [connect])
 
     // Side effects that will run on every state change/rerender
     useEffect(() => {
         // restore connectors and update the ones that are stale
         let updateConnections = false
         state.connections.forEach(({ uri, session }) => {
-            if (!connectors[uri]) connectors[uri] = connect({ uri, session })
-            else {
+            if (connectors[uri]) {
                 const connector = connectors[uri]
                 const session = connector.session
                 if (session.accounts[0] !== account || session.chainId !== chainId) {
@@ -135,12 +214,17 @@ export default function useWalletConnect ({ account, chainId, onCallRequest }) {
             type: 'updateConnections',
             connections: state.connections.map(({ uri }) => ({ uri, session: connectors[uri].session }))
         })
-    }, [state, account, chainId])
+    }, [state, account, chainId, connect])
 
     // Initialization effects
-    useEffect(() => runInitEffects(connect), [])
+    useEffect(() => runInitEffects(connect), [connect])
 
-    return { connections: state.connections, requests: state.requests, connect, disconnect }
+    return {
+        connections: state.connections,
+        requests: state.requests,
+        resolveMany,
+        connect, disconnect
+    }
 }
 
 // Initialization side effects

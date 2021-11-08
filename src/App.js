@@ -4,16 +4,19 @@ import {
   HashRouter as Router,
   Switch,
   Route,
-  Redirect
+  Redirect,
+  useHistory
 } from 'react-router-dom'
+import { useEffect } from 'react'
 import EmailLogin from './components/EmailLogin/EmailLogin'
-import AddAccount from './components/AddAccount/AddAcount'
+import AddAccount from './components/AddAccount/AddAccount'
 import Wallet from './components/Wallet/Wallet'
 import ToastProvider from './components/ToastProvider/ToastProvider'
 import SendTransaction from './components/SendTransaction/SendTransaction'
 import useAccounts from './hooks/accounts'
 import useNetwork from './hooks/network'
 import useWalletConnect from './hooks/walletconnect'
+import { usePortfolio } from './hooks'
 
 // @TODO consts/cfg, dev vs prod
 const relayerURL = 'http://localhost:1934'
@@ -21,10 +24,26 @@ const relayerURL = 'http://localhost:1934'
 function AppInner () {
   const { accounts, selectedAcc, onSelectAcc, onAddAccount } = useAccounts()
   const { network, setNetwork, allNetworks } = useNetwork()
-  const { connections, connect, disconnect, requests } = useWalletConnect({
+  const { connections, connect, disconnect, requests, resolveMany } = useWalletConnect({
     account: selectedAcc,
     chainId: network.chainId
   })
+  const portfolio = usePortfolio({
+    currentNetwork: network.id,
+    account: selectedAcc
+  })
+
+  // Navigate to the send transaction dialog if we have a new txn
+  const history = useHistory()
+  const eligibleRequests = requests
+    .filter(({ type, chainId, account }) =>
+      type === 'eth_sendTransaction'
+      && chainId === network.chainId
+      && account === selectedAcc
+    )
+  useEffect(() => {
+    if (eligibleRequests.length) history.push('/send-transaction')
+  }, [eligibleRequests.length, history])
 
   return (<>
     <Switch>
@@ -36,20 +55,17 @@ function AppInner () {
         <EmailLogin relayerURL={relayerURL} onAddAccount={onAddAccount}></EmailLogin>
       </Route>
 
-      <Route path="/wallet" component={props => Wallet({ ...props,  accounts, selectedAcc, onSelectAcc, allNetworks, network, setNetwork, connections, connect, disconnect })}>
-      </Route>
-
-      <Route path="/security"></Route>
-      <Route path="/transactions"></Route>
-      <Route path="/swap"></Route>
-      <Route path="/earn"></Route>
       <Route path="/send-transaction">
-        <SendTransaction accounts={accounts} selectedAcc={selectedAcc} network={network} requests={requests} relayerURL={relayerURL}>
+        <SendTransaction accounts={accounts} selectedAcc={selectedAcc} network={network} requests={eligibleRequests} resolveMany={resolveMany} relayerURL={relayerURL}>
         </SendTransaction>
       </Route>
 
+      <Route path="/wallet">
+        <Wallet match={{ url: "/wallet" }} accounts={accounts} selectedAcc={selectedAcc} portfolio={portfolio} onSelectAcc={onSelectAcc} allNetworks={allNetworks} network={network} setNetwork={setNetwork} connections={connections} connect={connect} disconnect={disconnect}></Wallet>
+      </Route>
+
       <Route path="/">
-        <Redirect to="/add-account" />
+        <Redirect to={selectedAcc ? "/wallet/dashboard" : "/add-account" }/>
       </Route>
 
     </Switch>
