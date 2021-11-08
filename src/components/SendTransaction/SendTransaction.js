@@ -142,16 +142,16 @@ export default function SendTransaction ({ accounts, network, selectedAcc, reque
       await finalBundle.getNonce(provider)
       await finalBundle.sign(wallet)
       const bundleResult = await finalBundle.submit({ relayerURL, fetch })
-      resolveMany(requestIds, { success: bundleResult.success, result: bundleResult.txId, message: bundleResult.message })  
+      resolveMany(requestIds, { success: bundleResult.success, result: bundleResult.txId, message: bundleResult.message })
       return bundleResult
     } else {
       // @TODO: quickAccManager
       // @TODO move to a helper fn, sendRelayerless
       if (signer.quickAccManager) throw new Error('quickAccManager not supported in relayerless mode yet')
-      
+
       // currently disabled quickAccManager cause 1) we don't have a means of getting the second sig 2) we still have to sign txes so it's inconvenient
       // if (signer.quickAccManager) await finalBundle.sign(wallet)
-      //const [to, data] = signer.quickAccManager ? [signer.quickAccManager, QuickAccManagerInterface.encodeFunctionData('send', [finalBundle.identity, [signer.timelock, signer.one, signer.two], [false, finalBundle.signature, '0x']])] : 
+      //const [to, data] = signer.quickAccManager ? [signer.quickAccManager, QuickAccManagerInterface.encodeFunctionData('send', [finalBundle.identity, [signer.timelock, signer.one, signer.two], [false, finalBundle.signature, '0x']])] :
 
       const [to, data] = [
         finalBundle.identity,
@@ -159,17 +159,24 @@ export default function SendTransaction ({ accounts, network, selectedAcc, reque
       ]
       // Currently routing everything through factory.deployAndCall, can be optimized by calling QuickAccManager/Identity directly
       const txn = {
+        from: signer.address,
         to: account.identityFactoryAddr,
         data: FactoryInterface.encodeFunctionData('deployAndCall', [account.bytecode, account.salt, to, data]),
-        gas: hexlify(estimation.gasLimit),
+        // add 70k for deployAndCall overhead; this is not reflected in the UI
+        gas: hexlify(estimation.gasLimit + 70000),
         gasPrice: hexlify(estimation.gasPrice),
         nonce: hexlify(await provider.getTransactionCount(signer.address))
       }
       const signed = await wallet.sign(txn)
-      const txId = await provider.sendTransaction(signed)
-      const result = { success: true, txId }
-      resolveMany(requestIds, { success: true, result: txId })  
-      return result
+      try {
+        const txId = await provider.sendTransaction(signed)
+        const result = { success: true, txId }
+        resolveMany(requestIds, { success: true, result: txId })  
+        return result
+      } catch(e) {
+        if (e.code === 'INSUFFICIENT_FUNDS') throw new Error(`Insufficient gas fees: you need to have ${nativeAssetSymbol} on ${signer.address}`)
+        throw e
+      }
     }
   }
 
@@ -255,7 +262,7 @@ export default function SendTransaction ({ accounts, network, selectedAcc, reque
                               <GiTakeMyMoney size={35}/>
                               Fee
                           </div>
-                          <FeeSelector estimation={estimation} setEstimation={setEstimation} network={network}></FeeSelector>
+                          <FeeSelector signer={bundle.signer} estimation={estimation} setEstimation={setEstimation} network={network}></FeeSelector>
                   </div>
               </div>
               <div className="panel">
@@ -272,7 +279,7 @@ export default function SendTransaction ({ accounts, network, selectedAcc, reque
   </div>)
 }
 
-function FeeSelector ({ estimation, network, setEstimation }) {
+function FeeSelector ({ signer, estimation, network, setEstimation }) {
   if (!estimation) return (<Loading/>)
   if (!estimation.feeInNative) return (<></>)
   const { nativeAssetSymbol } = network
@@ -316,7 +323,7 @@ function FeeSelector ({ estimation, network, setEstimation }) {
     <div className='feeAmountSelectors'>
       {feeAmountSelectors}
     </div>
-    {!estimation.feeInUSD ? (<span><b>WARNING:</b> Paying fees in tokens other than {nativeAssetSymbol} is unavailable because you are not connected to a relayer.</span>) : (<></>)}
+    {!estimation.feeInUSD ? (<span><b>WARNING:</b> Paying fees in tokens other than {nativeAssetSymbol} is unavailable because you are not connected to a relayer. You will pay the fee from <b>{signer.address}</b>.</span>) : (<></>)}
   </>)
 }
 
