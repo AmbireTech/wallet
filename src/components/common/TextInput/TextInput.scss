@@ -1,37 +1,46 @@
 @import '../../../variables.scss';
 
+$input-height: 60px;
+
 .text-input {
     position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 
-    input {
-        width: 100%;
-        color: white;
-        font-size: 1.2em;
-        padding: 1em;
-        text-overflow: ellipsis;
-        background-color: $input-background-color;
-        transition: all 0.1s ease-in-out;
+    .text-input-container {
+        position: relative;
 
-        &:focus {
-            box-shadow: 0 2px 0 0 $tertiary-accent-color;
+        input {
+            height: $input-height;
+            width: 100%;
+            color: white;
+            font-size: 1.2em;
+            padding: 1em;
+            text-overflow: ellipsis;
+            background-color: $input-background-color;
+            transition: all 0.1s ease-in-out;
+
+            &:focus {
+                box-shadow: 0 2px 0 0 $tertiary-accent-color;
+            }
         }
-    }
 
-    .icon {
-        position: absolute;
-        top: 0;
-        right: 0;
-        height: 100%;
-        width: 3.5em;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: white;
+        .icon {
+            position: absolute;
+            top: 0;
+            right: 0;
+            height: 100%;
+            width: 3.5em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
     }
 
     .info {
         font-size: 15px;
-        margin-top: 0.8rem;
         padding: 0 0.4rem;
         opacity: 0.5;
     }
