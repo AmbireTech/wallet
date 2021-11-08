@@ -1,17 +1,17 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import './Segments.scss'
 
 const Segments = ({ small, defaultValue, segments, onChange }) => {
     const [value, setValue] = useState(defaultValue);
 
-    const setSegment = value => {
+    const setSegment = useCallback(value => {
         setValue(value)
         onChange(value)
-    }
+    }, [onChange])
 
     useEffect(() => {
         setSegment(defaultValue)
-    }, [defaultValue])
+    }, [defaultValue, setSegment])
 
     return (
         <div className={`segments ${small ? 'small': ''}`}>
