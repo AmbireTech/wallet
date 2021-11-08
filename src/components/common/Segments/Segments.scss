@@ -39,4 +39,14 @@
             opacity: 0.8;
         }
     }
+
+    &.small {
+        padding: 0;
+
+        .segment {
+            height: 40px;
+            padding: 0 20px;
+            font-size: 14px;
+        }
+    }
 }
