@@ -81,10 +81,6 @@ export default function SendTransaction ({ accounts, network, selectedAcc, reque
         if (estimation.remainingFeeTokenBalances) {
           const eligibleToken = estimation.remainingFeeTokenBalances
             .find(token => isTokenEligible(token, estimation))
-          if (!eligibleToken) {
-            estimation.success = false
-            estimation.message = `Insufficient balance for the fee. Accepted tokens: ${estimation.remainingFeeTokenBalances.map(x => x.symbol).join(', ')}`
-          }
           // If there's no eligibleToken, set it to the first one cause it looks more user friendly (it's the preferred one, usually a stablecoin)
           estimation.selectedFee.token = eligibleToken || estimation.remainingFeeTokenBalances[0]
         }
@@ -161,10 +157,17 @@ export default function SendTransaction ({ accounts, network, selectedAcc, reque
       }}>Reject</button>
   )
 
+  const insufficientFee = estimation && estimation.feeInUSD && !isTokenEligible(estimation.selectedFee.token, estimation)
+  const willFail = (estimation && !estimation.success) || insufficientFee
   const actionable =
-      (estimation && !estimation.success)
+      willFail
       ? (<>
-          <h2 className='error'> The current transaction cannot be broadcasted because it will fail: {estimation.message}</h2>
+          <h2 className='error'>
+            {insufficientFee ?
+              `Insufficient balance for the fee. Accepted tokens: ${estimation.remainingFeeTokenBalances.map(x => x.symbol).join(', ')}`
+              : `The current transaction cannot be broadcasted because it will fail: ${estimation.message}`
+            }
+          </h2>
           {rejectButton}
           </>)
       : (<div>
@@ -274,6 +277,7 @@ function FeeSelector ({ estimation, network, setEstimation }) {
 
 // helpers
 function isTokenEligible (token, estimation) {
-  const min = token.isStable ? estimation.feeInUSD.fast : estimation.feeInNative.fast
+  const speed = estimation.selectedFee.speed || DEFAULT_SPEED
+  const min = token.isStable ? estimation.feeInUSD[speed] : estimation.feeInNative[speed]
   return parseInt(token.balance) / Math.pow(10, token.decimals) > min
 }
