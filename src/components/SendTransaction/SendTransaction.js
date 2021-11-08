@@ -145,8 +145,9 @@ export default function SendTransaction ({ accounts, network, selectedAcc, reque
       resolveMany(requestIds, { success: bundleResult.success, result: bundleResult.txId, message: bundleResult.message })
       return bundleResult
     } else {
-      // @TODO: quickAccManager
       // @TODO move to a helper fn, sendRelayerless
+
+      // @TODO: quickAccManager
       if (signer.quickAccManager) throw new Error('quickAccManager not supported in relayerless mode yet')
 
       // currently disabled quickAccManager cause 1) we don't have a means of getting the second sig 2) we still have to sign txes so it's inconvenient
@@ -171,9 +172,10 @@ export default function SendTransaction ({ accounts, network, selectedAcc, reque
       try {
         const txId = await provider.sendTransaction(signed)
         const result = { success: true, txId }
-        resolveMany(requestIds, { success: true, result: txId })  
+        resolveMany(requestIds, { success: true, result: txId })
         return result
       } catch(e) {
+        resolveMany(requestIds, { success: false, message: e.message })
         if (e.code === 'INSUFFICIENT_FUNDS') throw new Error(`Insufficient gas fees: you need to have ${nativeAssetSymbol} on ${signer.address}`)
         throw e
       }
