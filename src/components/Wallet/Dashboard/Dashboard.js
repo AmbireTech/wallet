@@ -3,26 +3,47 @@ import './Dashboard.scss'
 import { useLayoutEffect, useState } from 'react'
 import { GiToken } from 'react-icons/gi'
 
-import { Chart, Loading } from '../../common'
+import { Chart, Loading, Segments } from '../../common'
 import AssetsPlaceholder from './AssetsPlaceholder/AssetsPlaceholder'
 
 export default function Dashboard({ portfolio }) {
-    const [chartData, setChartData] = useState([]);
+    const [chartTokensData, setChartTokensData] = useState([]);
+    const [chartAssetsData, setChartAssetsData] = useState([]);
+    const [chartType, setChartType] = useState([]);
+
+    const chartSegments = [
+        {
+            value: 'By Token'
+        },
+        {
+            value: 'By Asset'
+        }
+    ]
 
     useLayoutEffect(() => {
-        const total = portfolio.tokens.map(({ balanceUSD }) => balanceUSD).reduce((acc, curr) => acc + curr, 0);
-        const chartData = portfolio.tokens
+        const totalTokens = portfolio.tokens.map(({ balanceUSD }) => balanceUSD).reduce((acc, curr) => acc + curr, 0);
+        const tokensData = portfolio.tokens
             .map(({ label, balanceUSD }) => ({
                 label,
-                value: balanceUSD
-            }))
-            .map(({ label, value }) => ({
-                label,
-                value: Number(((value / total) * 100).toFixed(2))
+                value: Number(((balanceUSD / totalTokens) * 100).toFixed(2))
             }))
             .filter(({ value }) => value > 0);
 
-        setChartData(chartData);
+        const totalAssets = portfolio.assets.map(({ assets }) => 
+            assets
+                .map(({ balanceUSD }) => balanceUSD)
+                .reduce((acc, curr) => acc + curr, 0))
+            .reduce((acc, curr) => acc + curr, 0)
+
+        const assetsData = portfolio.assets
+            .map(({ label, assets }) => ({
+                label,
+                value: Number(((assets.map(({ balanceUSD }) => balanceUSD).reduce((acc, curr) => acc + curr, 0) / totalAssets) * 100).toFixed(2))
+            }))
+            .filter(({ value }) => value > 0)
+
+        setChartTokensData(tokensData);
+        setChartAssetsData(assetsData)
     }, [portfolio.totalUSD, portfolio.tokens]);
 
     return (
@@ -43,13 +64,19 @@ export default function Dashboard({ portfolio }) {
                     </div>
                 </div>
                 <div id="chart" className="panel">
-                    <div className="title">Balance by token</div>
+                    <div className="title">
+                        Balance by token
+                        <Segments small segments={chartSegments} onChange={setChartType}/>
+                    </div>
                     <div className="content">
                         {
-                            portfolio.isLoading ? 
-                                <Loading/>
-                                :
-                                <Chart data={chartData} size={200}/>
+                             portfolio.isLoading ? 
+                                    <Loading/>
+                                    :
+                                    chartType === chartSegments[0].value ?
+                                        <Chart data={chartTokensData} size={200}/>
+                                        :
+                                        <Chart data={chartAssetsData} size={200}/>
                         }
                     </div>
                 </div>
