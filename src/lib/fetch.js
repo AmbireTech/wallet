@@ -9,6 +9,21 @@ export async function fetchPost (url, body) {
 	return r.json()
 }
 
+export const fetchGet = async url => {
+  try {
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+    return response.json()
+  } catch(e){
+    console.error(e)
+    return null;
+  }
+}
+
 export async function fetchCaught (url, params) {
     let resp
     try {

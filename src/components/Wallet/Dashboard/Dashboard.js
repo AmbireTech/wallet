@@ -6,7 +6,6 @@ import { GiToken } from 'react-icons/gi'
 import { Chart, Loading } from '../../common'
 
 export default function Dashboard({ portfolio }) {
-    const [positiveBalances, setPositivesBalances] = useState([]);
     const [chartData, setChartData] = useState([]);
 
     useLayoutEffect(() => {
@@ -23,8 +22,7 @@ export default function Dashboard({ portfolio }) {
             .filter(({ value }) => value > 0);
 
         setChartData(chartData);
-        setPositivesBalances(portfolio.balances.filter(({ products }) => products && products.length));
-    }, [portfolio.balances, portfolio.totalUSD, portfolio.tokens]);
+    }, [portfolio.totalUSD, portfolio.tokens]);
 
     return (
         <section id="dashboard">
@@ -44,7 +42,7 @@ export default function Dashboard({ portfolio }) {
                     </div>
                 </div>
                 <div id="chart" className="panel">
-                    <div className="title">Chart</div>
+                    <div className="title">Balance by token</div>
                     <div className="content">
                         {
                             portfolio.isLoading ? 
@@ -62,44 +60,46 @@ export default function Dashboard({ portfolio }) {
                         portfolio.isLoading ?
                             <Loading/>
                             :
-                            positiveBalances.map(({ products }) => 
-                                products.map(({ label, assets }, i) => (
-                                    <div className="category" key={`category-${i}`}>
-                                        <div className="title">{ label }</div>
-                                        <div className="list">
-                                            {
-                                                assets.map(({ tokens }) => 
-                                                    tokens.map(({ label, collectionName, symbol, img, collectionImg, balance, balanceUSD }, i) => (
-                                                        <div className="token" key={`token-${i}`}>
-                                                            <div className="icon">
-                                                                {
-                                                                    img || collectionImg ? 
-                                                                        <img src={img || collectionImg} alt="Token Icon"/>
-                                                                        :
-                                                                        <GiToken size={20}/>
-                                                                }
+                            portfolio.assets.map(({ label, assets }, i) => (
+                                <div className="category" key={`category-${i}`}>
+                                    <div className="title">{ label }</div>
+                                    <div className="list">
+                                        {
+                                            assets.map(({ tokens }) => 
+                                                tokens.map(({ label, collectionName, symbol, img, collectionImg, balance, balanceUSD }, i) => (
+                                                    <div className="token" key={`token-${i}`}>
+                                                        <div className="icon">
+                                                            {
+                                                                img || collectionImg ? 
+                                                                    <img src={img || collectionImg} alt="Token Icon"/>
+                                                                    :
+                                                                    <GiToken size={20}/>
+                                                            }
+                                                        </div>
+                                                        <div className="name">
+                                                            { label || collectionName || symbol }
+                                                        </div>
+                                                        <div className="separator"></div>
+                                                        <div className="balance">
+                                                            <div className="currency">
+                                                                { balance } <span className="symbol">{ symbol }</span>
                                                             </div>
-                                                            <div className="name">
-                                                                { label || collectionName || symbol }
-                                                            </div>
-                                                            <div className="separator"></div>
-                                                            <div className="balance">
-                                                                <div className="currency">
-                                                                    { balance } <span className="symbol">{ symbol }</span>
-                                                                </div>
-                                                                <div className="dollar">
-                                                                    <span className="symbol">$</span> { balanceUSD }
-                                                                </div>
+                                                            <div className="dollar">
+                                                                <span className="symbol">$</span> { balanceUSD }
                                                             </div>
                                                         </div>
-                                                    ))
-                                                )
-                                            }
-                                        </div>
+                                                    </div>
+                                                ))
+                                            )
+                                        }
                                     </div>
-                                )
+                                </div>
                             ))
                     }
+                </div>
+
+                <div className="powered">
+                    Powered by Zapper
                 </div>
             </div>
         </section>
