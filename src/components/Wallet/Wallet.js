@@ -6,8 +6,10 @@ import TopBar from "./TopBar";
 import SideBar from "./SideBar";
 import Deposit from "./Deposit/Deposit"
 import { usePortfolio } from '../../hooks'
+import Security from "./Security/Security";
 
 export default function Wallet(props) {
+  console.log("props", props)
   const portfolio = usePortfolio({
     currentNetwork: props.network.id,
     account: props.selectedAcc
@@ -26,7 +28,9 @@ export default function Wallet(props) {
             <Deposit selectedAcc={props.selectedAcc} selectedNetwork={props.network.id} />
           </Route>
           <Route path={props.match.url + "/transfer"}></Route>
-          <Route path={props.match.url + "/security"}></Route>
+          <Route path={props.match.url + "/security"}>
+            <Security selectedAcc={props.selectedAcc} selectedNetwork={props.network.id} accounts={props.accounts}/>
+          </Route>
           <Route path={props.match.url + "/transactions"}></Route>
           <Route path={props.match.url + "/swap"}></Route>
           <Route path={props.match.url + "/earn"}></Route>
