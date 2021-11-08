@@ -1,41 +1,45 @@
-@import '../../../variables.scss';  
+@import "../../../variables.scss";
 
 #security {
+  display: flex;
+  // justify-content: center;
+  flex-direction: column;
+
+  .panel {
+    flex: 0 1 100%;
     display: flex;
-    // justify-content: center;
     flex-direction: column;
+    gap: 2em;
+    text-align: center;
+    padding: 0 2.5em;
+    padding-top: 2.5em;
+    padding-bottom: 3em;
+    box-sizing: border-box;
+    //  overflow: hidden;
+    background-color: $panel-background-color;
 
-    .panel {
-        flex: 0 1 100%;
-        display: flex;
-        flex-direction: column;
-        gap: 2em;
-        text-align: center;
-        padding: 0 2.5em;
-        padding-top: 2.5em;
-        padding-bottom: 3em;
-        box-sizing: border-box;
-        // overflow: hidden;
-        background-color: $panel-background-color;
-
-        .title {
-            font-size: 1.5em;
-            font-weight: bold;
-            text-align: start;
-        }
-
-        .content {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 25px;
-        }
+    .title {
+      font-size: 1.5em;
+      font-weight: bold;
+      text-align: start;
     }
-  
+
+    .content {
+      list-style-type: none;
+      padding-left: 0 !important;
+
+      li {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 25px;
+      }
+    }
+  }
 }
 
 @media screen and (max-width: 1200px) {
-    #overview {
-        flex-direction: column;
-    }
+  #overview {
+    flex-direction: column;
+  }
 }

@@ -24,7 +24,6 @@ export default function usePrivileges({ identity, network, accounts }) {
       );
       const filtered = filteredPrivBySelectedAccount.reduce((obj, key) => ({ ...obj, [key]: mapVal(requestPrivResp.body.privileges[key]) }), {});
       
-      console.log("tesrt", requestPrivResp.body);
       setPrivileges(filtered)
     } else {
       console.log(requestPrivResp.errMsg);
