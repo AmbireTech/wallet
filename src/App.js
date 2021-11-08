@@ -9,7 +9,7 @@ import {
 } from 'react-router-dom'
 import { useEffect } from 'react'
 import EmailLogin from './components/EmailLogin/EmailLogin'
-import AddAccount from './components/AddAccount/AddAcount'
+import AddAccount from './components/AddAccount/AddAccount'
 import Wallet from './components/Wallet/Wallet'
 import ToastProvider from './components/ToastProvider/ToastProvider'
 import SendTransaction from './components/SendTransaction/SendTransaction'
