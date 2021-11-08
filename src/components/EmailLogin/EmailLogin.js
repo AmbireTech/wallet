@@ -26,7 +26,7 @@ export default function EmailLogin({ relayerURL, onAddAccount }) {
       // but for now we're handling this simply by showing progress in a different way (button shows 'Logging in...')
       try {
         const wallet = await Wallet.fromEncryptedJson(JSON.parse(identityInfo.meta.primaryKeyBackup), passphrase)
-        const { _id, salt, identityFactoryAddr, baseIdentityAddr } = identityInfo
+        const { _id, salt, identityFactoryAddr, baseIdentityAddr, bytecode } = identityInfo
         const { quickAccSigner } = identityInfo.meta
         if (wallet.address !== quickAccSigner.one) {
             setErr('Decrypted wallet address does not match quick account')
@@ -36,7 +36,7 @@ export default function EmailLogin({ relayerURL, onAddAccount }) {
           id: _id,
           email: identityInfo.meta.email,
           primaryKeyBackup: identityInfo.meta.primaryKeyBackup,
-          salt, identityFactoryAddr, baseIdentityAddr,
+          salt, identityFactoryAddr, baseIdentityAddr, bytecode,
           signer: quickAccSigner
         }, { select: true })
       } catch (e) {
