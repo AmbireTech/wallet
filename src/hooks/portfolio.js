@@ -3,8 +3,8 @@ import { useCallback, useEffect, useState } from 'react';
 import { ZAPPER_API_KEY } from '../config';
 import { fetchGet } from '../lib/fetch';
 import { ZAPPER_API_ENDPOINT } from '../config'
+import suportedProtocols from '../consts/supportedProtocols';
 
-const supportedBalances = (apiKey) => fetchGet(`${ZAPPER_API_ENDPOINT}/protocols/balances/supported?api_key=${apiKey}`)
 const getBalances = (apiKey, network, protocol, address) => fetchGet(`${ZAPPER_API_ENDPOINT}/protocols/${protocol}/balances?addresses[]=${address}&network=${network}&api_key=${apiKey}&newBalances=true`)
 
 export default function usePortfolio({ currentNetwork, account }) {
@@ -24,18 +24,12 @@ export default function usePortfolio({ currentNetwork, account }) {
 
         refresh ? setRefreshing(true) : setLoading(true)
 
-        const supBalances = await supportedBalances(ZAPPER_API_KEY)
-        const { apps } = supBalances.find(({ network }) => network === currentNetwork);
-        
-        const balances = await Promise.all(apps.map(async ({appId}) => {
-            const balance = await getBalances(ZAPPER_API_KEY, currentNetwork, appId, address);
-            return balance ? {
-                appId,
-                ...Object.values(balance)[0]
-            } : {}
-        }));
+        const balancesByNetworks = Object.fromEntries(await Promise.all(suportedProtocols.map(async ({ network, protocols }) => [network, await Promise.all(protocols.map(async protocol => ({
+            protocol,
+            ...Object.values(await getBalances(ZAPPER_API_KEY, network, protocol, account))[0]
+        })))])))
 
-        const total = balances
+        const total = balancesByNetworks[currentNetwork]
             .filter(({ meta }) => meta && meta.length)
             .map(({ meta }) => meta.find(({ label }) => label === 'Total').value + meta.find(({ label }) => label === 'Debt').value)
             .reduce((acc, curr) => acc + curr, 0)
@@ -44,12 +38,12 @@ export default function usePortfolio({ currentNetwork, account }) {
         const [truncated, decimals] = total.toString().split('.');
         const formated = Number(truncated).toLocaleString('en-US');
 
-        const tokens = balances
-            .find(({ appId }) => appId === 'tokens')
+        const tokens = balancesByNetworks[currentNetwork]
+            .find(({ protocol }) => protocol === 'tokens')
             ?.products.map(({ assets }) => assets.map(({ tokens }) => tokens))
             .flat(2);
 
-        const assets = balances
+        const assets = balancesByNetworks[currentNetwork]
             .filter(({ products }) => products && products.length)
             .map(({ products }) => products.map(({ label, assets }) => ({ label, assets })))
             .flat(1)
@@ -59,7 +53,7 @@ export default function usePortfolio({ currentNetwork, account }) {
                 return 0
             })
 
-        setBalance(balances);
+        setBalance(balancesByNetworks);
         setTotalUSD({
             full: total,
             formated,
