@@ -11,7 +11,6 @@ import fetch from 'node-fetch'
 import { Bundle } from 'adex-protocol-eth/js'
 import { getDefaultProvider } from 'ethers'
 import { Interface } from 'ethers/lib/utils'
-import { useHistory } from 'react-router'
 import { useToasts } from '../../hooks/toasts'
 import { getWallet } from '../../lib/getWallet'
 import accountPresets from '../../consts/accountPresets'
@@ -40,7 +39,7 @@ function makeBundle(account, networkId, requests) {
   return bundle
 }
 
-export default function SendTransaction({ accounts, network, selectedAcc, requests, resolveMany, relayerURL }) {
+export default function SendTransaction({ accounts, network, selectedAcc, requests, resolveMany, relayerURL, onDismiss }) {
   const account = accounts.find(x => x.id === selectedAcc)
 
   // Also filtered in App.js, but better safe than sorry here
@@ -60,13 +59,12 @@ export default function SendTransaction({ accounts, network, selectedAcc, reques
 
   if (!account) return (<h3 className='error'>No selected account</h3>)
 
-  return SendTransactionWithBundle({ bundle, network, account, resolveMany, relayerURL })
+  return SendTransactionWithBundle({ bundle, network, account, resolveMany, relayerURL, onDismiss })
 }
 
-function SendTransactionWithBundle ({ bundle, network, account, resolveMany, relayerURL }) {
+function SendTransactionWithBundle ({ bundle, network, account, resolveMany, relayerURL, onDismiss }) {
   const [estimation, setEstimation] = useState(null)
   const [signingInProgress, setSigningInProgress] = useState(false)
-  const history = useHistory()
   const { addToast } = useToasts()
 
   const { nativeAssetSymbol } = network
@@ -166,8 +164,7 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
             &nbsp;<a href={explorerUrl+'/tx/'+bundleResult.txId} target='_blank' rel='noreferrer'>View on block explorer.</a>
           </span>))
         else addToast(`Transaction error: ${bundleResult.message || 'unspecified error'}`, { error: true })
-
-        history.goBack()
+        onDismiss()
       })
       .catch(e => {
         console.error(e)
@@ -181,10 +178,10 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
 
   const rejectTxn = () => {
     resolveMany(bundle.requestIds, { message: 'rejected' })
-    history.goBack()
   }
 
   return (<div id="sendTransaction">
+      <div className="dismiss" onClick={onDismiss}><FaTimes size={35}/></div>
       <h2>Pending transactions: {bundle.txns.length}</h2>
       <div className="panelHolder">
           <div className="panel">
@@ -200,7 +197,7 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
                               <li key={txn} className={isFirstFailing ? 'firstFailing' : ''}>
                                   {getTransactionSummary(txn, bundle.network)}
                                   {isFirstFailing ? (<div><b>This is the first failing transaction.</b></div>) : (<></>)}
-                                  <button onClick={() => resolveMany([bundle.requestIds[i]], { message: 'rejected' })}><FaTimes></FaTimes></button>
+                                  <button onClick={() => resolveMany([bundle.requestIds[i]], { message: 'rejected' })}><FaTimes/></button>
                               </li>
                           )})}
                       </ul>
