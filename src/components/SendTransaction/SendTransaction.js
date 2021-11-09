@@ -2,6 +2,8 @@
 // GiObservatory is also interesting
 import { GiTakeMyMoney, GiSpectacles } from 'react-icons/gi'
 import { FaSignature, FaTimes, FaChevronLeft } from 'react-icons/fa'
+import { AiOutlineWarning } from 'react-icons/ai'
+import { FiHelpCircle } from 'react-icons/fi'
 import { getTransactionSummary } from '../../lib/humanReadableTransactions'
 import './SendTransaction.css'
 import { Loading } from '../common'
@@ -207,20 +209,20 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
                           <GiSpectacles size={35}/>
                           Transaction summary
                       </div>
-                      <ul>
+                      <div className='listOfTransactions'>
                           {bundle.txns.map((txn, i) => {
                             const isFirstFailing = estimation && !estimation.success && estimation.firstFailing === i
                             return (
-                              <li key={bundle.requestIds[i]} className={isFirstFailing ? 'firstFailing' : ''}>
-                                  {getTransactionSummary(txn, bundle.network)}
+                              <div key={bundle.requestIds[i]} className={isFirstFailing ? 'txnSummary firstFailing' : 'txnSummary'}>
+                                  <div>{getTransactionSummary(txn, bundle.network)}</div>
                                   {isFirstFailing ? (<div><b>This is the first failing transaction.</b></div>) : (<></>)}
                                   <button onClick={() => resolveMany([bundle.requestIds[i]], { message: 'rejected' })}><FaTimes/></button>
-                              </li>
+                              </div>
                           )})}
-                      </ul>
-                      <span>
+                      </div>
+                      <div className='batchingNote'>
                           <b>NOTE:</b> Transaction batching is enabled, you're signing {bundle.txns.length} transactions at once. You can add more transactions to this batch by interacting with a connected dApp right now.
-                      </span>
+                      </div>
               </div>
           </div>
           <div className='secondaryPanel'>
@@ -267,27 +269,36 @@ function Actions({ estimation, feeSpeed, approveTxn, rejectTxn, signingInProgres
     && !isTokenEligible(estimation.selectedFeeToken, feeSpeed, estimation)
   const willFail = (estimation && !estimation.success) || insufficientFee
   if (willFail) {
-    return (<>
-      <h2 className='error'>
-        {insufficientFee ?
-          `Insufficient balance for the fee. Accepted tokens: ${estimation.remainingFeeTokenBalances.map(x => x.symbol).join(', ')}`
-          : `The current transaction batch cannot be broadcasted because it will fail: ${estimation.message}`
-        }
-      </h2>
+    return (<div className='buttons'>
       {rejectButton}
-    </>)
+    </div>)
   }
 
   return (<div className='buttons'>
       {rejectButton}
       <button className='approveTxn' disabled={!estimation || signingInProgress} onClick={approveTxn}>
-        {signingInProgress ? (<><Loading/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Signing...</>) : (<>Sign and send</>)}
+        {signingInProgress ?
+          (<><Loading/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Signing...</>)
+          : (<>Sign and send</>)
+        }
       </button>
   </div>)
 }
 
 function FeeSelector ({ signer, estimation, network, setEstimation, feeSpeed, setFeeSpeed }) {
   if (!estimation) return (<Loading/>)
+
+  const insufficientFee = estimation && estimation.feeInUSD
+    && !isTokenEligible(estimation.selectedFeeToken, feeSpeed, estimation)
+  const willFail = (estimation && !estimation.success) || insufficientFee
+  if (willFail) return insufficientFee ?
+      (<h3 class='error'>Insufficient balance for the fee. Accepted tokens: {estimation.remainingFeeTokenBalances.map(x => x.symbol).join(', ')}</h3>)
+      : (<div className='failingTxn'>
+        <AiOutlineWarning></AiOutlineWarning>
+        <h3 class='error'>The current transaction batch cannot be sent because it will fail: {mapTxnErrMsg(estimation.message)}</h3>
+        <FiHelpCircle title={getErrHint(estimation.message)}></FiHelpCircle>
+    </div>)
+
   if (!estimation.feeInNative) return (<></>)
   if (estimation && !estimation.feeInUSD && estimation.gasLimit < 40000) {
     return (<div>
@@ -366,4 +377,17 @@ function getFeePaymentConsequences (token, estimation) {
    multiplier: (estimation.gasLimit + addedGas) / estimation.gasLimit,
    addedGas
  }
+}
+
+function mapTxnErrMsg(msg) {
+  if (!msg) return
+  if (msg.includes('Router: EXPIRED')) return 'Swap expired'
+  if (msg.includes('Router: INSUFFICIENT_OUTPUT_AMOUNT')) return 'Swap will suffer slippage higher than your requirements'
+  return msg
+}
+function getErrHint(msg) {
+  if (!msg) return
+  if (msg.includes('Router: EXPIRED')) return 'Try performing the swap again'
+  if (msg.includes('Router: INSUFFICIENT_OUTPUT_AMOUNT')) return 'Try performing the swap again or increase your slippage requirements'
+  return 'Sending this transaction batch will result in an error.'
 }
