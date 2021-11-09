@@ -20,7 +20,7 @@ export default function Dashboard({ portfolio, allNetworks, setNetwork }) {
         }
     ]
 
-    const networkDetails = useCallback((network) => allNetworks.find(({ id }) => id === network))
+    const networkDetails = useCallback((network) => allNetworks.find(({ id }) => id === network), [allNetworks])
 
     useLayoutEffect(() => {
         const tokensData = portfolio.balance.tokens
@@ -47,7 +47,7 @@ export default function Dashboard({ portfolio, allNetworks, setNetwork }) {
         setChartAssetsData(assetsData)
     }, [portfolio.balance, portfolio.assets]);
 
-    useEffect(() => portfolio.requestOtherProtocolsRefresh(), [])
+    useEffect(() => portfolio.requestOtherProtocolsRefresh(), [portfolio])
 
     return (
         <section id="dashboard">
