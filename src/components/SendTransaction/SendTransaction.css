@@ -187,6 +187,11 @@
     color: #fff;
 }
 
+#sendTransaction .txnSummary .firstFailingLabel {
+    font-weight: bold;
+    color: red;
+}
+
 #sendTransaction .advanced {
     word-wrap: break-word;
     max-width: 600px;
