@@ -212,7 +212,9 @@ export default function useWalletConnect ({ account, chainId, onCallRequest }) {
 
         if (updateConnections) dispatch({
             type: 'updateConnections',
-            connections: state.connections.map(({ uri }) => ({ uri, session: connectors[uri].session }))
+            connections: state.connections
+                .filter(({ uri }) => connectors[uri])
+                .map(({ uri }) => ({ uri, session: connectors[uri].session }))
         })
     }, [state, account, chainId, connect])
 
