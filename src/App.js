@@ -4,10 +4,9 @@ import {
   HashRouter as Router,
   Switch,
   Route,
-  Redirect,
-  useHistory
+  Redirect
 } from 'react-router-dom'
-import { useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import EmailLogin from './components/EmailLogin/EmailLogin'
 import AddAccount from './components/AddAccount/AddAccount'
 import Wallet from './components/Wallet/Wallet'
@@ -38,18 +37,25 @@ function AppInner () {
   useNotifications(requests)
 
   // Navigate to the send transaction dialog if we have a new txn
-  const history = useHistory()
   const eligibleRequests = requests
     .filter(({ type, chainId, account }) =>
       type === 'eth_sendTransaction'
       && chainId === network.chainId
       && account === selectedAcc
     )
-  useEffect(() => {
-    if (eligibleRequests.length) history.push('/send-transaction')
-  }, [eligibleRequests.length, history])
+  const [sendTxnsShowing, setSendTxnsShowing] = useState(() => !!eligibleRequests.length)
+  useEffect(
+    () => setSendTxnsShowing(!!eligibleRequests.length),
+    [eligibleRequests.length]
+  )
+  const onDismiss = () => setSendTxnsShowing(false)
 
   return (<>
+    {sendTxnsShowing ? (
+      <SendTransaction accounts={accounts} selectedAcc={selectedAcc} network={network} requests={eligibleRequests} resolveMany={resolveMany} relayerURL={relayerURL} onDismiss={onDismiss}>
+      </SendTransaction>
+      ) : (<></>)
+    }
     <Switch>
       <Route path="/add-account">
         <AddAccount relayerURL={relayerURL} onAddAccount={onAddAccount}></AddAccount>
@@ -57,11 +63,6 @@ function AppInner () {
 
       <Route path="/email-login">
         <EmailLogin relayerURL={relayerURL} onAddAccount={onAddAccount}></EmailLogin>
-      </Route>
-
-      <Route path="/send-transaction">
-        <SendTransaction accounts={accounts} selectedAcc={selectedAcc} network={network} requests={eligibleRequests} resolveMany={resolveMany} relayerURL={relayerURL}>
-        </SendTransaction>
       </Route>
 
       <Route path="/wallet">
