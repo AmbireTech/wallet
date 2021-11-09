@@ -1,12 +1,12 @@
 import './Dashboard.scss'
 
-import { useEffect, useLayoutEffect, useState } from 'react'
+import { useCallback, useEffect, useLayoutEffect, useState } from 'react'
 import { GiToken } from 'react-icons/gi'
 
 import { Chart, Loading, Segments } from '../../common'
 import AssetsPlaceholder from './AssetsPlaceholder/AssetsPlaceholder'
 
-export default function Dashboard({ portfolio, setNetwork }) {
+export default function Dashboard({ portfolio, allNetworks, setNetwork }) {
     const [chartTokensData, setChartTokensData] = useState([]);
     const [chartAssetsData, setChartAssetsData] = useState([]);
     const [chartType, setChartType] = useState([]);
@@ -19,6 +19,8 @@ export default function Dashboard({ portfolio, setNetwork }) {
             value: 'By Asset'
         }
     ]
+
+    const networkDetails = useCallback((network) => allNetworks.find(({ id }) => id === network))
 
     useLayoutEffect(() => {
         const tokensData = portfolio.balance.tokens
@@ -64,7 +66,8 @@ export default function Dashboard({ portfolio, setNetwork }) {
                                         {
                                             Object.entries(portfolio.otherBalances).map(([network, { total }]) => (
                                                 <div className="balance" key={network} onClick={() => setNetwork(network)}>
-                                                    $ { total.truncated }.{total.decimals} on { network }
+                                                    <span className="purple-highlight">$</span> { total.truncated }
+                                                    <span className="purple-highlight">.{total.decimals}</span> on { networkDetails(network).name }
                                                 </div>
                                             ))
                                         }

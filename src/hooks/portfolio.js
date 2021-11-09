@@ -51,7 +51,7 @@ export default function usePortfolio({ currentNetwork, account }) {
             return [network, {
                 total: {
                     full: balanceUSD,
-                    truncated,
+                    truncated: Number(truncated).toLocaleString('en-US'),
                     decimals
                 },
                 tokens: products.map(({ assets }) => assets.map(({ tokens }) => tokens)).flat(2)
