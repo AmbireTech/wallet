@@ -5,15 +5,20 @@ import { BsChevronUp, BsChevronDown } from 'react-icons/bs'
 import { CSSTransition } from 'react-transition-group';
 import useOnClickOutside from '../../../helpers/onClickOutside';
 
-const Select = ({ children, native, defaultValue, items, onChange }) => {
+const Select = ({ children, native, searchable, defaultValue, items, onChange }) => {
     const ref = useRef();
+    const hiddenTextInput = useRef();
     const transitionRef = useRef();
     const [isOpen, setOpen] = useState();
+    const [search, setSearch] = useState('');
     const [selectedItem, setSelectedItem] = useState({
         label: null,
         value: null,
-        icon: null
+        icon: null,
+        iconColor: null
     });
+
+    const filteredItems = search.length ? items.filter(({ label }) => label.toLowerCase().includes(search.toLowerCase())) : items
 
     const selectItem = useCallback(item => {
         setSelectedItem(item);
@@ -24,22 +29,35 @@ const Select = ({ children, native, defaultValue, items, onChange }) => {
         if (items.length) selectItem(items.find(item => item.value === defaultValue) || items[0])
     }, [defaultValue, items, selectItem]);
 
+    useEffect(() => {
+        if (isOpen && searchable) {
+            hiddenTextInput.current.focus()
+            setSearch('')
+        }
+    }, [isOpen, searchable])
+
     useOnClickOutside(ref, () => setOpen(false));
 
     return (
         !native ? 
             <div className="select" onClick={() => setOpen(!isOpen)} ref={ref}>
                 {
+                    searchable ? 
+                        <input type="text" className="search-input" value={search} ref={hiddenTextInput} onInput={({ target }) => setSearch(target.value)}/>
+                        :
+                        null
+                }
+                {
                     selectedItem ? 
                         <div className="value">
-                            {
-                                selectedItem.icon ? 
-                                    <div className="icon">
+                            <div className="icon" style={{'backgroundColor': selectedItem.iconColor}}>
+                                {
+                                    selectedItem.icon ? 
                                         <img src={selectedItem.icon} alt="Icon" />
-                                    </div>
-                                    :
-                                    null
-                            }
+                                        :
+                                        null
+                                }
+                            </div>
                             { selectedItem.label || selectedItem.value }
                             <div className="separator"></div>
                             <div className="handle">
@@ -58,20 +76,21 @@ const Select = ({ children, native, defaultValue, items, onChange }) => {
                     <CSSTransition unmountOnExit in={isOpen} timeout={200} classNames="fade" nodeRef={transitionRef}>
                         <div className="list" ref={transitionRef}>
                             {
-                                items.map(item => (
+                                filteredItems.map(item => (
                                     <div className={`option ${item.value === selectedItem.value ? 'active' : ''}`} key={item.value} onClick={() => selectItem(item)}>
-                                        {
-                                            item.icon ? 
-                                                <div className="icon">
+                                        <div className="icon" style={{'backgroundColor': item.iconColor}}>
+                                            {
+                                                item.icon ? 
                                                     <img src={item.icon} alt="Icon" />
-                                                </div>
-                                                :
-                                                null
-                                        }
+                                                    :
+                                                    null
+                                            }
+                                        </div>
                                         { item.label || item.value }
                                     </div>
                                 ))
                             }
+                            { children }
                         </div>
                     </CSSTransition>
                 }

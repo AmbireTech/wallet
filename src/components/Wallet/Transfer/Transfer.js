@@ -3,11 +3,14 @@ import './Transfer.scss'
 import { AiOutlineArrowDown } from 'react-icons/ai'
 import { BsBoxArrowInDown, BsBoxArrowUp } from 'react-icons/bs'
 import { TextInput, NumberInput, Segments, Button, Select, Loading } from '../../common'
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
+import SendPlaceholder from './SendPlaceholder/SendPlaceholder'
 
 const Transfer = ({ portfolio }) => {
     const [asset, setAsset] = useState()
     const [amount, setAmount] = useState(0)
+    const [address, setAddress] = useState()
+    const [disabled, setDisabled] = useState(true)
 
     const assetsItems = portfolio.tokens.map(({ label, symbol, img }) => ({
         label,
@@ -17,8 +20,15 @@ const Transfer = ({ portfolio }) => {
 
     const setMaxAmount = useCallback(() => {
         const { balanceRaw, decimals } = portfolio.tokens.find(({ symbol }) => symbol === asset)
-        setAmount(Number(balanceRaw.slice(0, balanceRaw.length - decimals) + '.' + balanceRaw.slice(balanceRaw.length - decimals)))
+        setAmount(Number(balanceRaw / `1e${decimals}`))
     }, [portfolio.tokens, asset])
+
+    useEffect(() => setAmount(0), [asset])
+
+    useEffect(() => {
+        const isAddressValid = /^0x[a-fA-F0-9]{40}$/.test(address)
+        setDisabled(!isAddressValid || !(amount > 0))
+    }, [address, amount])
 
     const segments = [
         {
@@ -43,14 +53,19 @@ const Transfer = ({ portfolio }) => {
                         :
                         assetsItems.length ? 
                             <div className="form">
-                                <Select defaultValue={asset} items={assetsItems} onChange={value => setAsset(value)}/>
+                                <Select searchable defaultValue={asset} items={assetsItems} onChange={value => setAsset(value)}/>
                                 <NumberInput value={amount} min="0" onInput={value => setAmount(value)} button="MAX" onButtonClick={() => setMaxAmount()}/>
-                                <TextInput placeholder="Recipient" info="Please double-check the recipient address, blockchain transactions are not reversible."/>
+                                <TextInput
+                                    placeholder="Recipient"
+                                    info="Please double-check the recipient address, blockchain transactions are not reversible."
+                                    defaultValue={address}
+                                    onInput={setAddress}
+                                />
                                 <div className="separator"/>
-                                <Button>Send</Button>
+                                <Button disabled={disabled}>Send</Button>
                             </div>
                             :
-                            null
+                            <SendPlaceholder/>
                }
            </div>
            <div className="panel">

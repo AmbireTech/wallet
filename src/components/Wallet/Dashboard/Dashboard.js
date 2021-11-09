@@ -4,6 +4,7 @@ import { useLayoutEffect, useState } from 'react'
 import { GiToken } from 'react-icons/gi'
 
 import { Chart, Loading } from '../../common'
+import AssetsPlaceholder from './AssetsPlaceholder/AssetsPlaceholder'
 
 export default function Dashboard({ portfolio }) {
     const [chartData, setChartData] = useState([]);
@@ -60,47 +61,54 @@ export default function Dashboard({ portfolio }) {
                         portfolio.isLoading ?
                             <Loading/>
                             :
-                            portfolio.assets.map(({ label, assets }, i) => (
-                                <div className="category" key={`category-${i}`}>
-                                    <div className="title">{ label }</div>
-                                    <div className="list">
-                                        {
-                                            assets.map(({ tokens }) => 
-                                                tokens.map(({ label, collectionName, symbol, img, collectionImg, balance, balanceUSD }, i) => (
-                                                    <div className="token" key={`token-${i}`}>
-                                                        <div className="icon">
-                                                            {
-                                                                img || collectionImg ? 
-                                                                    <img src={img || collectionImg} alt="Token Icon"/>
-                                                                    :
-                                                                    <GiToken size={20}/>
-                                                            }
-                                                        </div>
-                                                        <div className="name">
-                                                            { label || collectionName || symbol }
-                                                        </div>
-                                                        <div className="separator"></div>
-                                                        <div className="balance">
-                                                            <div className="currency">
-                                                                { balance } <span className="symbol">{ symbol }</span>
+                            !portfolio.assets.length ?
+                                <AssetsPlaceholder/>
+                                :
+                                portfolio.assets.map(({ label, assets }, i) => (
+                                    <div className="category" key={`category-${i}`}>
+                                        <div className="title">{ label }</div>
+                                        <div className="list">
+                                            {
+                                                assets.map(({ tokens }) => 
+                                                    tokens.map(({ label, collectionName, symbol, img, collectionImg, balance, balanceUSD }, i) => (
+                                                        <div className="token" key={`token-${i}`}>
+                                                            <div className="icon">
+                                                                {
+                                                                    img || collectionImg ? 
+                                                                        <img src={img || collectionImg} alt="Token Icon"/>
+                                                                        :
+                                                                        <GiToken size={20}/>
+                                                                }
                                                             </div>
-                                                            <div className="dollar">
-                                                                <span className="symbol">$</span> { balanceUSD }
+                                                            <div className="name">
+                                                                { label || collectionName || symbol }
+                                                            </div>
+                                                            <div className="separator"></div>
+                                                            <div className="balance">
+                                                                <div className="currency">
+                                                                    { balance } <span className="symbol">{ symbol }</span>
+                                                                </div>
+                                                                <div className="dollar">
+                                                                    <span className="symbol">$</span> { balanceUSD }
+                                                                </div>
                                                             </div>
                                                         </div>
-                                                    </div>
-                                                ))
-                                            )
-                                        }
+                                                    ))
+                                                )
+                                            }
+                                        </div>
                                     </div>
-                                </div>
-                            ))
+                                ))
                     }
                 </div>
-
-                <div className="powered">
-                    Powered by Zapper
-                </div>
+                {
+                    portfolio.isLoading || !portfolio.assets.length ?
+                        null
+                        :
+                        <div className="powered">
+                            Powered by Zapper
+                        </div>
+                }
             </div>
         </section>
     )
