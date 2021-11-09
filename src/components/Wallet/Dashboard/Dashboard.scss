@@ -40,6 +40,7 @@
                         opacity: 0.6;
                         cursor: pointer;
                         transition: opacity 0.1s ease-in-out;
+                        user-select: none;
 
                         &:hover {
                             opacity: 0.8;
