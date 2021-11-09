@@ -2,8 +2,6 @@
 // GiObservatory is also interesting
 import { GiTakeMyMoney, GiSpectacles } from 'react-icons/gi'
 import { FaSignature, FaTimes, FaChevronLeft } from 'react-icons/fa'
-import { AiOutlineWarning } from 'react-icons/ai'
-import { FiHelpCircle } from 'react-icons/fi'
 import { getTransactionSummary } from '../../lib/humanReadableTransactions'
 import './SendTransaction.css'
 import { Loading } from '../common'
@@ -16,14 +14,13 @@ import { Interface } from 'ethers/lib/utils'
 import { useToasts } from '../../hooks/toasts'
 import { getWallet } from '../../lib/getWallet'
 import accountPresets from '../../consts/accountPresets'
+import { FeeSelector } from './FeeSelector'
 import { sendNoRelayer } from './noRelayer'
+import { isTokenEligible, getFeePaymentConsequences } from './helpers'
 
 const ERC20 = new Interface(require('adex-protocol-eth/abi/ERC20'))
 
-const SPEEDS = ['slow', 'medium', 'fast', 'ape']
 const DEFAULT_SPEED = 'fast'
-const ADDED_GAS_TOKEN = 20000
-const ADDED_GAS_NATIVE = 10000
 const REESTIMATE_INTERVAL = 15000
 
 function toBundleTxn({ to, value, data }) {
@@ -283,111 +280,4 @@ function Actions({ estimation, feeSpeed, approveTxn, rejectTxn, signingInProgres
         }
       </button>
   </div>)
-}
-
-function FeeSelector ({ signer, estimation, network, setEstimation, feeSpeed, setFeeSpeed }) {
-  if (!estimation) return (<Loading/>)
-
-  const insufficientFee = estimation && estimation.feeInUSD
-    && !isTokenEligible(estimation.selectedFeeToken, feeSpeed, estimation)
-  const willFail = (estimation && !estimation.success) || insufficientFee
-  if (willFail) return insufficientFee ?
-      (<h3 class='error'>Insufficient balance for the fee. Accepted tokens: {estimation.remainingFeeTokenBalances.map(x => x.symbol).join(', ')}</h3>)
-      : (<div className='failingTxn'>
-        <AiOutlineWarning></AiOutlineWarning>
-        <h3 class='error'>The current transaction batch cannot be sent because it will fail: {mapTxnErrMsg(estimation.message)}</h3>
-        <FiHelpCircle title={getErrHint(estimation.message)}></FiHelpCircle>
-    </div>)
-
-  if (!estimation.feeInNative) return (<></>)
-  if (estimation && !estimation.feeInUSD && estimation.gasLimit < 40000) {
-    return (<div>
-      <b>WARNING:</b> Fee estimation unavailable when you're doing your first account transaction and you are not connected to a relayer. You will pay the fee from <b>{signer.address}</b>, make sure you have {network.nativeAssetSymbol} there.
-    </div>)
-  }
-
-  const { nativeAssetSymbol } = network
-  const tokens = estimation.remainingFeeTokenBalances || ({ symbol: nativeAssetSymbol, decimals: 18 })
-  const onFeeCurrencyChange = e => {
-    const token = tokens.find(({ symbol }) => symbol === e.target.value)
-    setEstimation({ ...estimation, selectedFeeToken: token })
-  }
-  const feeCurrencySelect = estimation.feeInUSD ? (<>
-    <span style={{ marginTop: '1em' }}>Fee currency</span>
-    <select defaultValue={estimation.selectedFeeToken.symbol} onChange={onFeeCurrencyChange}>
-      {tokens.map(token => 
-        (<option
-          disabled={!isTokenEligible(token, feeSpeed, estimation)}
-          key={token.symbol}>
-            {token.symbol}
-          </option>
-        )
-      )}
-    </select>
-  </>) : (<></>)
-
-  const { isStable } = estimation.selectedFeeToken
-  const { multiplier } = getFeePaymentConsequences(estimation.selectedFeeToken, estimation)
-  const feeAmountSelectors = SPEEDS.map(speed => (
-    <div 
-      key={speed}
-      className={feeSpeed === speed ? 'feeSquare selected' : 'feeSquare'}
-      onClick={() => setFeeSpeed(speed)}
-    >
-      <div className='speed'>{speed}</div>
-      <div className='feeEstimation'>
-        {isStable
-          ? '$'+(estimation.feeInUSD[speed] * multiplier)
-          : (
-            nativeAssetSymbol === 'ETH' ?
-              'Ξ '+(estimation.feeInNative[speed] * multiplier)
-              : (estimation.feeInNative[speed] * multiplier)+' '+nativeAssetSymbol
-          )
-        }
-      </div>
-    </div>
-  ))
-
-  return (<>
-    {feeCurrencySelect}
-    <div className='feeAmountSelectors'>
-      {feeAmountSelectors}
-    </div>
-    {!estimation.feeInUSD ?
-      (<span><b>WARNING:</b> Paying fees in tokens other than {nativeAssetSymbol} is unavailable because you are not connected to a relayer. You will pay the fee from <b>{signer.address}</b>.</span>)
-      : (<></>)}
-  </>)
-}
-
-// helpers
-function isTokenEligible (token, speed, estimation) {
-  const min = token.isStable ? estimation.feeInUSD[speed] : estimation.feeInNative[speed]
-  return parseInt(token.balance) / Math.pow(10, token.decimals) > min
-}
-
-// can't think of a less funny name for that
-function getFeePaymentConsequences (token, estimation) {
-  // Relayerless mode
-  if (!estimation.feeInUSD) return { multiplier: 1, addedGas: 0 }
-  // Relayer mode
-  const addedGas = !token.address || token.address === '0x0000000000000000000000000000000000000000'
-    ? ADDED_GAS_NATIVE
-    : ADDED_GAS_TOKEN
- return {
-   multiplier: (estimation.gasLimit + addedGas) / estimation.gasLimit,
-   addedGas
- }
-}
-
-function mapTxnErrMsg(msg) {
-  if (!msg) return
-  if (msg.includes('Router: EXPIRED')) return 'Swap expired'
-  if (msg.includes('Router: INSUFFICIENT_OUTPUT_AMOUNT')) return 'Swap will suffer slippage higher than your requirements'
-  return msg
-}
-function getErrHint(msg) {
-  if (!msg) return
-  if (msg.includes('Router: EXPIRED')) return 'Try performing the swap again'
-  if (msg.includes('Router: INSUFFICIENT_OUTPUT_AMOUNT')) return 'Try performing the swap again or increase your slippage requirements'
-  return 'Sending this transaction batch will result in an error.'
 }
