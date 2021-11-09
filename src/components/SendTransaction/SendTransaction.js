@@ -158,32 +158,10 @@ export default function SendTransaction ({ accounts, network, selectedAcc, reque
 
   }
 
-  const rejectButton = (
-      <button className='rejectTxn' onClick={() => {
-          resolveMany(requests.map(x => x.id), { message: 'rejected' })
-          history.goBack()
-      }}>Reject</button>
-  )
-
-  const insufficientFee = estimation && estimation.feeInUSD && !isTokenEligible(estimation.selectedFee.token, estimation)
-  const willFail = (estimation && !estimation.success) || insufficientFee
-  const actionable =
-      willFail
-      ? (<>
-          <h2 className='error'>
-            {insufficientFee ?
-              `Insufficient balance for the fee. Accepted tokens: ${estimation.remainingFeeTokenBalances.map(x => x.symbol).join(', ')}`
-              : `The current transaction cannot be broadcasted because it will fail: ${estimation.message}`
-            }
-          </h2>
-          {rejectButton}
-          </>)
-      : (<div>
-          {rejectButton}
-          <button className='approveTxn' disabled={!estimation || signingInProgress} onClick={approveTxn}>
-            {signingInProgress ? (<><Loading/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Signing...</>) : (<>Sign and send</>)}
-          </button>
-      </div>)
+  const rejectTxn = () => {
+    resolveMany(requests.map(x => x.id), { message: 'rejected' })
+    history.goBack()
+  }
 
   return (<div id="sendTransaction">
       <h2>Pending transaction</h2>
@@ -232,10 +210,36 @@ export default function SendTransaction ({ accounts, network, selectedAcc, reque
                           Sign
                       </div>
                   </div>
-                  {actionable}
+                  <Actions requests={requests} estimation={estimation} approveTxn={approveTxn} rejectTxn={rejectTxn} signingInProgress={signingInProgress}></Actions>
               </div>
           </div>
       </div>
+  </div>)
+}
+
+function Actions({ estimation, approveTxn, rejectTxn, signingInProgress }) {
+  const rejectButton = (
+    <button className='rejectTxn' onClick={rejectTxn}>Reject</button>
+  )
+  const insufficientFee = estimation && estimation.feeInUSD && !isTokenEligible(estimation.selectedFee.token, estimation)
+  const willFail = (estimation && !estimation.success) || insufficientFee
+  if (willFail) {
+    return (<>
+      <h2 className='error'>
+        {insufficientFee ?
+          `Insufficient balance for the fee. Accepted tokens: ${estimation.remainingFeeTokenBalances.map(x => x.symbol).join(', ')}`
+          : `The current transaction cannot be broadcasted because it will fail: ${estimation.message}`
+        }
+      </h2>
+      {rejectButton}
+    </>)
+  }
+
+  return (<div>
+      {rejectButton}
+      <button className='approveTxn' disabled={!estimation || signingInProgress} onClick={approveTxn}>
+        {signingInProgress ? (<><Loading/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Signing...</>) : (<>Sign and send</>)}
+      </button>
   </div>)
 }
 
