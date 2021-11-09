@@ -72,8 +72,8 @@
 }
 
 #sendTransaction .secondaryPanel {
-    min-width: 450px;
-    max-width: 600px;
+    min-width: 500px;
+    max-width: 550px;
 }
 
 #sendTransaction .feePanel {
@@ -152,6 +152,7 @@
 
 #sendTransaction .listOfTransactions {
     min-height: 300px;
+    min-width: 350px;
 }
 #sendTransaction .txnSummary {
     background-color: rgba(0, 0, 0, 0.2);
