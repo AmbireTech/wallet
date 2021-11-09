@@ -44,7 +44,7 @@
     display: flex;
 }
 
-#sendTransaction .feeAmountSelector {
+#sendTransaction .feeAmountSelectors {
     overflow: hidden;
     margin: 1em 0px;
     min-width: 360px;

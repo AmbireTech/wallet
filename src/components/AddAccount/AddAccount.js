@@ -66,11 +66,11 @@ export default function AddAccount ({ relayerURL, onAddAccount }) {
             extraEntropy: id(req.email+':'+Date.now())
         }).mnemonic.phrase.split(' ').slice(0, 6).join(' ') + ' ' + req.email
 
-        const secondKeyAddress = await fetchPost(`${relayerURL}/second-key`, { secondKeySecret })
-            .then(r => r.address)
+        const secondKeyResp = await fetchPost(`${relayerURL}/second-key`, { secondKeySecret })
+        if (!secondKeyResp.address) throw new Error(`second-key returned no address, error: ${secondKeyResp.message || secondKeyResp}`)
 
         const { salt, baseIdentityAddr, identityFactoryAddr, quickAccManager, quickAccTimelock } = accountPresets
-        const quickAccountTuple = [quickAccTimelock, firstKeyWallet.address, secondKeyAddress]
+        const quickAccountTuple = [quickAccTimelock, firstKeyWallet.address, secondKeyResp.address]
         const signer = { quickAccManager, timelock: quickAccountTuple[0], one: quickAccountTuple[1], two: quickAccountTuple[2] }
         const abiCoder = new AbiCoder()
         const accHash = keccak256(abiCoder.encode(['tuple(uint, address, address)'], [quickAccountTuple]))
@@ -103,7 +103,7 @@ export default function AddAccount ({ relayerURL, onAddAccount }) {
             id: identityAddr,
             email: req.email,
             primaryKeyBackup,
-            salt, identityFactoryAddr, baseIdentityAddr,
+            salt, identityFactoryAddr, baseIdentityAddr, bytecode,
             signer
         }, { select: true })
     }
@@ -129,7 +129,7 @@ export default function AddAccount ({ relayerURL, onAddAccount }) {
 
         return {
             id: identityAddr,
-            salt, identityFactoryAddr, baseIdentityAddr,
+            salt, identityFactoryAddr, baseIdentityAddr, bytecode,
             signer: { address: getAddress(addr) }
         }
     }
@@ -169,11 +169,11 @@ export default function AddAccount ({ relayerURL, onAddAccount }) {
         // In principle, we need these values to be able to operate in relayerless mode,
         // so we just store them in all cases
         // Plus, in the future this call may be used to retrieve other things
-        const { salt, identityFactoryAddr, baseIdentityAddr } = await fetch(`${relayerURL}/identity/${idAddr}`)
+        const { salt, identityFactoryAddr, baseIdentityAddr, bytecode } = await fetch(`${relayerURL}/identity/${idAddr}`)
             .then(r => r.json())
         return {
             id: idAddr,
-            salt, identityFactoryAddr, baseIdentityAddr,
+            salt, identityFactoryAddr, baseIdentityAddr, bytecode,
             signer: { address: signerAddr }
         }
     }
@@ -189,7 +189,7 @@ export default function AddAccount ({ relayerURL, onAddAccount }) {
         const addresses = await provider.getAccountsAsync(50)
         setChooseSigners({ addresses, signerExtra: {
             type: 'trezor',
-            info: provider._initialDerivedKeyInfo
+            info: JSON.parse(JSON.stringify(provider._initialDerivedKeyInfo))
         } })
     }
 
@@ -201,7 +201,7 @@ export default function AddAccount ({ relayerURL, onAddAccount }) {
         })
         const [addresses, signerExtra] = await Promise.all([
             provider.getAccountsAsync(50),
-            provider._initialDerivedKeyInfoAsync().then(info => ({ type: 'ledger', info }))
+            provider._initialDerivedKeyInfoAsync().then(info => ({ type: 'ledger', info: JSON.parse(JSON.stringify(info)) }))
         ])
         setChooseSigners({ addresses, signerExtra })
     }
