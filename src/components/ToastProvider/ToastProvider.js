@@ -47,7 +47,7 @@ const ToastProvider = ({ children }) => {
         >
             
                 <div id="toast-container">
-                    <TransitionGroup>
+                    <TransitionGroup className="transition-group">
                     {
                         toasts.map(toast => (
                             <CSSTransition timeout={200} classNames="slide-fade" key={toast.id} nodeRef={toast.ref}>
