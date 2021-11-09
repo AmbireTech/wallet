@@ -43,7 +43,7 @@ export default function Dashboard({ portfolio, setNetwork }) {
 
         setChartTokensData(tokensData);
         setChartAssetsData(assetsData)
-    }, [portfolio.balance]);
+    }, [portfolio.balance, portfolio.assets]);
 
     return (
         <section id="dashboard">
