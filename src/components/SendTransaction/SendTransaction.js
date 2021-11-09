@@ -116,10 +116,12 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
 
   const { nativeAssetSymbol } = network
 
-  const approveTxnImpl = async () => {
-    if (!estimation) return
+  const getFinalBundle = () => {
+    if (!relayerURL) return new Bundle({
+      ...bundle,
+      gasLimit: estimation.gasLimit
+    })
 
-    const requestIds = bundle.requestIds
     const feeToken = estimation.selectedFeeToken
     const { addedGas, multiplier } = getFeePaymentConsequences(feeToken, estimation)
     const toHexAmount = amnt => '0x'+Math.round(amnt).toString(16)
@@ -133,11 +135,18 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
           * Math.pow(10, feeToken.decimals)
         )
     ])]
-    const finalBundle = new Bundle({
+    return new Bundle({
       ...bundle,
-      txns: relayerURL ? [...bundle.txns, feeTxn] : [...bundle.txns]
+      txns: [...bundle.txns, feeTxn],
+      gasLimit: estimation.gasLimit + addedGas
     })
+  }
 
+  const approveTxnImpl = async () => {
+    if (!estimation) return
+
+    const requestIds = bundle.requestIds
+    const finalBundle = getFinalBundle()
     const provider = getDefaultProvider(network.rpc)
     const signer = finalBundle.signer
     const wallet = getWallet({
@@ -146,8 +155,6 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
       chainId: network.chainId
     })
     if (relayerURL) {
-      finalBundle.gasLimit = estimation.gasLimit + addedGas
-
       await finalBundle.getNonce(provider)
       await finalBundle.sign(wallet)
       const bundleResult = await finalBundle.submit({ relayerURL, fetch })
@@ -259,8 +266,6 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
 }
 
 function Actions({ estimation, feeSpeed, approveTxn, rejectTxn, signingInProgress }) {
-  //const [quickAccSignInProgress, setQuickAccSignInProgress] = useState(false)
-
   const rejectButton = (
     <button className='rejectTxn' onClick={rejectTxn}>Reject</button>
   )
