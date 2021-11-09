@@ -61,7 +61,7 @@
 
 #sendTransaction .secondaryPanel {
     min-width: 450px;
-    max-width: 800px;
+    max-width: 600px;
 }
 
 #sendTransaction .feePanel {

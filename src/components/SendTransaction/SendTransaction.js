@@ -194,7 +194,7 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
                           {bundle.txns.map((txn, i) => {
                             const isFirstFailing = estimation && !estimation.success && estimation.firstFailing === i
                             return (
-                              <li key={txn} className={isFirstFailing ? 'firstFailing' : ''}>
+                              <li key={bundle.requestIds[i]} className={isFirstFailing ? 'firstFailing' : ''}>
                                   {getTransactionSummary(txn, bundle.network)}
                                   {isFirstFailing ? (<div><b>This is the first failing transaction.</b></div>) : (<></>)}
                                   <button onClick={() => resolveMany([bundle.requestIds[i]], { message: 'rejected' })}><FaTimes/></button>
@@ -246,7 +246,7 @@ function Actions({ estimation, approveTxn, rejectTxn, signingInProgress }) {
       <h2 className='error'>
         {insufficientFee ?
           `Insufficient balance for the fee. Accepted tokens: ${estimation.remainingFeeTokenBalances.map(x => x.symbol).join(', ')}`
-          : `The current transaction cannot be broadcasted because it will fail: ${estimation.message}`
+          : `The current transaction batch cannot be broadcasted because it will fail: ${estimation.message}`
         }
       </h2>
       {rejectButton}
