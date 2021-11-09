@@ -24,7 +24,10 @@ export default function useNotifications (requests) {
             icon: 'public/logo192.png',
         })
         //notification.onclose = 
-        notification.onclick = () => window.focus()
+        notification.onclick = () => {
+            window.focus()
+            notification.close()
+        }
         currentNotifs.push({ id: request.id, notification })
     })
 
