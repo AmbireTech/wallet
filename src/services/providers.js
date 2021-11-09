@@ -18,16 +18,17 @@ export const openRampNetwork = ({ walletAddress, selectedNetwork }) => {
     widget.show()
 };
 
-export const openPayTrie = ({ walletAddress, email, ...rest }) => {
+export const openPayTrie = ({ walletAddress, selectedNetwork }) => {
+    const rightSideLabel = selectedNetwork === 'polygon' ? 'USDC-P' : 'USDC'
+
     const URL = url.parse(PAYTRIE_PARTNER_URL, true)
     URL.search = null
     URL.query = {
         ...URL.query,
         addr: walletAddress,
-        email,
-        rightSideLabel: 'USDC',
-        ...rest,
+        rightSideLabel
     }
+
     popupCenter({
         url: url.format(URL),
         title: 'Paytrie Deposit',
