@@ -1,4 +1,4 @@
-## Ambire WAllet
+## Ambire Wallet
 
 
 ### All documentation
@@ -64,6 +64,32 @@ If you aren’t satisfied with the build tool and configuration choices, you can
 Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
 
 You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+
+### Internal data formats
+
+#### Signing request
+
+This is used by the WalletConnect and Gnosis Safe Apps hooks for the queue of signing requests: those could be transactions, personal messages, etc.
+
+```
+{
+	id, // numeric unique ID of the request
+	type, // type of the signing request, currently set to the RPC method (eg eth_sendTransaction)
+	txn, // only set when it's eth_sendTransaction, contains to/data/value/gas
+	chainId, // chainId the request is for
+	account, // account address the request is for
+}
+```
+
+`resolveMany` response:
+```
+{
+	success, // boolean
+	message, // string, optional, if success is false
+	result, // string or object, optional, if success is true, depending on the request; normally a string, eg eth_sendTransaction would be answered with a hex hash (0x...)
+}
+```
+
 
 ### Deployment
 

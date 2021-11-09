@@ -1,58 +1,106 @@
 import './Select.scss';
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { BsChevronUp, BsChevronDown } from 'react-icons/bs'
+import { CSSTransition } from 'react-transition-group';
 import useOnClickOutside from '../../../helpers/onClickOutside';
 
-const Select = ({ children, native, defaultValue, items, itemKey, itemLabel, onChange }) => {
+const Select = ({ children, native, searchable, defaultValue, items, onChange }) => {
     const ref = useRef();
+    const hiddenTextInput = useRef();
+    const transitionRef = useRef();
     const [isOpen, setOpen] = useState();
-    const [selectedItem, setSelectedItem] = useState();
+    const [search, setSearch] = useState('');
+    const [selectedItem, setSelectedItem] = useState({
+        label: null,
+        value: null,
+        icon: null,
+        iconColor: null
+    });
 
-    const selectItem = item => {
+    const filteredItems = search.length ? items.filter(({ label }) => label.toLowerCase().includes(search.toLowerCase())) : items
+
+    const selectItem = useCallback(item => {
         setSelectedItem(item);
-        onChange(item[itemKey]);
-    };
+        onChange(item.value);
+    }, [onChange])
 
     useEffect(() => {
-        setSelectedItem(items.find(item => item[itemKey] === defaultValue));
-    }, [defaultValue]);
+        if (items.length) selectItem(items.find(item => item.value === defaultValue) || items[0])
+    }, [defaultValue, items, selectItem]);
+
+    useEffect(() => {
+        if (isOpen && searchable) {
+            hiddenTextInput.current.focus()
+            setSearch('')
+        }
+    }, [isOpen, searchable])
 
     useOnClickOutside(ref, () => setOpen(false));
 
     return (
         !native ? 
             <div className="select" onClick={() => setOpen(!isOpen)} ref={ref}>
-                <div className="value">
-                    { selectedItem ? selectedItem[itemLabel || itemKey] : null }
-                    {
-                        isOpen ? 
-                            <BsChevronUp size={20}></BsChevronUp>
-                            :
-                            <BsChevronDown size={20}></BsChevronDown>
-                    }
-                </div>
                 {
-                    isOpen ? 
-                        <div className="list">
-                            {
-                                items.map(item => (
-                                    <div className={`option ${item[itemKey] === selectedItem[itemKey] ? 'active' : ''}`} key={item[itemKey]} onClick={() => selectItem(item)}>
-                                        { item[itemLabel || itemKey] }
-                                    </div>
-                                ))
-                            }
+                    searchable ? 
+                        <input type="text" className="search-input" value={search} ref={hiddenTextInput} onInput={({ target }) => setSearch(target.value)}/>
+                        :
+                        null
+                }
+                {
+                    selectedItem ? 
+                        <div className="value">
+                            <div className="icon" style={{'backgroundColor': selectedItem.iconColor}}>
+                                {
+                                    selectedItem.icon ? 
+                                        <img src={selectedItem.icon} alt="Icon" />
+                                        :
+                                        null
+                                }
+                            </div>
+                            { selectedItem.label || selectedItem.value }
+                            <div className="separator"></div>
+                            <div className="handle">
+                                {
+                                    isOpen ? 
+                                        <BsChevronUp size={20}></BsChevronUp>
+                                        :
+                                        <BsChevronDown size={20}></BsChevronDown>
+                                }
+                            </div>
                         </div>
                         :
                         null
+                }
+                {
+                    <CSSTransition unmountOnExit in={isOpen} timeout={200} classNames="fade" nodeRef={transitionRef}>
+                        <div className="list" ref={transitionRef}>
+                            {
+                                filteredItems.map(item => (
+                                    <div className={`option ${item.value === selectedItem.value ? 'active' : ''}`} key={item.value} onClick={() => selectItem(item)}>
+                                        <div className="icon" style={{'backgroundColor': item.iconColor}}>
+                                            {
+                                                item.icon ? 
+                                                    <img src={item.icon} alt="Icon" />
+                                                    :
+                                                    null
+                                            }
+                                        </div>
+                                        { item.label || item.value }
+                                    </div>
+                                ))
+                            }
+                            { children }
+                        </div>
+                    </CSSTransition>
                 }
             </div>
             :
             <select className="select" onChange={ev => onChange(ev.target.value)} defaultValue={defaultValue}>
                 {
                     items.map(item => (
-                        <option key={item[itemKey]} value={item[itemKey]}>
-                            { item[itemLabel || itemKey] }
+                        <option key={item.value} value={item.value}>
+                            { item.label || item.value }
                         </option>
                     ))
                 }

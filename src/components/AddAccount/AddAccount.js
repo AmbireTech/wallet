@@ -66,11 +66,11 @@ export default function AddAccount ({ relayerURL, onAddAccount }) {
             extraEntropy: id(req.email+':'+Date.now())
         }).mnemonic.phrase.split(' ').slice(0, 6).join(' ') + ' ' + req.email
 
-        const secondKeyAddress = await fetchPost(`${relayerURL}/second-key`, { secondKeySecret })
-            .then(r => r.address)
+        const secondKeyResp = await fetchPost(`${relayerURL}/second-key`, { secondKeySecret })
+        if (!secondKeyResp.address) throw new Error(`second-key returned no address, error: ${secondKeyResp.message || secondKeyResp}`)
 
         const { salt, baseIdentityAddr, identityFactoryAddr, quickAccManager, quickAccTimelock } = accountPresets
-        const quickAccountTuple = [quickAccTimelock, firstKeyWallet.address, secondKeyAddress]
+        const quickAccountTuple = [quickAccTimelock, firstKeyWallet.address, secondKeyResp.address]
         const signer = { quickAccManager, timelock: quickAccountTuple[0], one: quickAccountTuple[1], two: quickAccountTuple[2] }
         const abiCoder = new AbiCoder()
         const accHash = keccak256(abiCoder.encode(['tuple(uint, address, address)'], [quickAccountTuple]))
@@ -103,7 +103,7 @@ export default function AddAccount ({ relayerURL, onAddAccount }) {
             id: identityAddr,
             email: req.email,
             primaryKeyBackup,
-            salt, identityFactoryAddr, baseIdentityAddr,
+            salt, identityFactoryAddr, baseIdentityAddr, bytecode,
             signer
         }, { select: true })
     }
@@ -129,7 +129,7 @@ export default function AddAccount ({ relayerURL, onAddAccount }) {
 
         return {
             id: identityAddr,
-            salt, identityFactoryAddr, baseIdentityAddr,
+            salt, identityFactoryAddr, baseIdentityAddr, bytecode,
             signer: { address: getAddress(addr) }
         }
     }
@@ -169,11 +169,11 @@ export default function AddAccount ({ relayerURL, onAddAccount }) {
         // In principle, we need these values to be able to operate in relayerless mode,
         // so we just store them in all cases
         // Plus, in the future this call may be used to retrieve other things
-        const { salt, identityFactoryAddr, baseIdentityAddr } = await fetch(`${relayerURL}/identity/${idAddr}`)
+        const { salt, identityFactoryAddr, baseIdentityAddr, bytecode } = await fetch(`${relayerURL}/identity/${idAddr}`)
             .then(r => r.json())
         return {
             id: idAddr,
-            salt, identityFactoryAddr, baseIdentityAddr,
+            salt, identityFactoryAddr, baseIdentityAddr, bytecode,
             signer: { address: signerAddr }
         }
     }
@@ -186,8 +186,11 @@ export default function AddAccount ({ relayerURL, onAddAccount }) {
         engine.addProvider(new RPCSubprovider(this.url, this.requestTimeoutMs))
         */
         const provider = new TrezorSubprovider({ trezorConnectClientApi: TrezorConnect })
-        setChooseSigners(await provider.getAccountsAsync(50))
-        console.log(provider._initialDerivedKeyInfo)
+        const addresses = await provider.getAccountsAsync(50)
+        setChooseSigners({ addresses, signerExtra: {
+            type: 'trezor',
+            info: JSON.parse(JSON.stringify(provider._initialDerivedKeyInfo))
+        } })
     }
 
     async function connectLedgerAndGetAccounts () {
@@ -196,18 +199,23 @@ export default function AddAccount ({ relayerURL, onAddAccount }) {
             ledgerEthereumClientFactoryAsync: ledgerEthereumBrowserClientFactoryAsync,
             //baseDerivationPath: this.baseDerivationPath
         })
-        setChooseSigners(await provider.getAccountsAsync(50))
+        const [addresses, signerExtra] = await Promise.all([
+            provider.getAccountsAsync(50),
+            provider._initialDerivedKeyInfoAsync().then(info => ({ type: 'ledger', info: JSON.parse(JSON.stringify(info)) }))
+        ])
+        setChooseSigners({ addresses, signerExtra })
     }
 
-    async function onEOASelected (addr) {
+    async function onEOASelected (addr, signerExtra) {
+        const addAccount = (acc, opts) => onAddAccount({ ...acc, signerExtra }, opts)
         // when there is no relayer, we can only add the 'default' account created from that EOA
         // @TODO in the future, it would be nice to do getLogs from the provider here to find out which other addrs we control
         //   ... maybe we can isolate the code for that in lib/relayerless or something like that to not clutter this code
-        if (!relayerURL) return onAddAccount(await createFromEOA(addr), { select: true })
+        if (!relayerURL) return addAccount(await createFromEOA(addr), { select: true })
         // otherwise check which accs we already own and add them
         const owned = await getOwnedByEOAs([addr])
-        if (!owned.length) return onAddAccount(await createFromEOA(addr), { select: true })
-        else owned.forEach((acc, i) => onAddAccount(acc, { select: i === 0 }))
+        if (!owned.length) return addAccount(await createFromEOA(addr), { select: true })
+        else owned.forEach((acc, i) => addAccount(acc , { select: i === 0 }))
     }
 
     // The UI for choosing a signer to create/add an account with, for example
@@ -216,7 +224,9 @@ export default function AddAccount ({ relayerURL, onAddAccount }) {
         return (<div className="loginSignupWrapper chooseSigners">
             <h3>Choose a signer</h3>
             <ul id="signersToChoose">
-                {signersToChoose.map(addr => (<li key={addr} onClick={() => wrapErr(() => onEOASelected(addr))}>{addr}</li>))}
+                {signersToChoose.addresses.map(addr =>
+                    (<li key={addr} onClick={() => wrapErr(() => onEOASelected(addr, signersToChoose.signerExtra))}>{addr}</li>)
+                )}
             </ul>
         </div>)
     }

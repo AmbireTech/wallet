@@ -1,10 +1,13 @@
 import { useState, useCallback } from 'react'
+import { useToasts } from '../hooks/toasts'
 
 export default function useAccounts () {
+    const { addToast } = useToasts()
     const [accounts, setAccounts] = useState(() => {
-      // @TODO catch parse failures and handle them
       try {
-        return JSON.parse(localStorage.accounts || '[]')
+        const accs = JSON.parse(localStorage.accounts || '[]')
+        if (!Array.isArray(accs)) throw new Error('accounts: incorrect format')
+        return accs
       } catch (e) {
         console.error('accounts parsing failure', e)
         return []
@@ -22,14 +25,14 @@ export default function useAccounts () {
       localStorage.selectedAcc = selected
       setSelectedAcc(selected)
     }
-    const onAddAccount = useCallback((acc, opts) => {
+    const onAddAccount = useCallback((acc, opts = {}) => {
       if (!(acc.id && acc.signer)) throw new Error('account: internal err: missing ID or signer')
 
-      const existingIdx = accounts.findIndex(x => x.id.toLowerCase() === acc.id.toLowerCase())
+      const existingIdx = accounts
+        .findIndex(x => x.id.toLowerCase() === acc.id.toLowerCase())
   
-      // @TODO show toast; perhaps by returning a value that shows whether the acc is already added
-      // or have the showToast fn passed in when constructing the hook
-      // the use case for updating the entry is that we have some props (such as which EOA controls it) which migth change
+      if (existingIdx !== -1) addToast('Account already added')
+
       if (existingIdx === -1) accounts.push(acc)
       else accounts[existingIdx] = acc
   
@@ -42,6 +45,6 @@ export default function useAccounts () {
       if (Object.keys(accounts).length) {
         window.location.href = '/#/wallet'
       }
-    }, [accounts])
+    }, [accounts, addToast])
     return { accounts, selectedAcc, onSelectAcc, onAddAccount }
   }
