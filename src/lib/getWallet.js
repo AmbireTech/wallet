@@ -11,7 +11,7 @@ let wallets = {}
 // passphrase: string
 // noCache: boolean
 export function getWallet ({ signer, signerExtra, chainId }, opts = {}) {
-    const id = signer.address || signer.one
+    const id = `${signer.address || signer.one}${chainId}`
     if (wallets[id]) return wallets[id]
     return wallets[id] = getWalletNew({ signer, signerExtra, chainId }, opts)
 }
