@@ -48,7 +48,7 @@ function AppInner () {
     () => setSendTxnsShowing(!!eligibleRequests.length),
     [eligibleRequests.length]
   )
-  const onDismiss = () => sendTxnsShowing(false)
+  const onDismiss = () => setSendTxnsShowing(false)
 
   return (<>
     {sendTxnsShowing ? (

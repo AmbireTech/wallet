@@ -1,7 +1,7 @@
 //import { GrInspect } from 'react-icons/gr'
 // GiObservatory is also interesting
 import { GiTakeMyMoney, GiSpectacles } from 'react-icons/gi'
-import { FaSignature, FaTimes } from 'react-icons/fa'
+import { FaSignature, FaTimes, FaChevronLeft } from 'react-icons/fa'
 import { getTransactionSummary } from '../../lib/humanReadableTransactions'
 import './SendTransaction.css'
 import { Loading } from '../common'
@@ -15,6 +15,7 @@ import { useToasts } from '../../hooks/toasts'
 import { getWallet } from '../../lib/getWallet'
 import accountPresets from '../../consts/accountPresets'
 import { sendNoRelayer } from './noRelayer'
+import { resolve } from 'url'
 
 const ERC20 = new Interface(require('adex-protocol-eth/abi/ERC20'))
 
@@ -60,7 +61,14 @@ export default function SendTransaction({ accounts, network, selectedAcc, reques
   if (!account || !eligibleRequests.length) return (<div id="sendTransaction">
       <h3 className="error">No account or no requests: should never happen.</h3>
   </div>)
-  return SendTransactionWithBundle({ bundle, network, account, resolveMany, relayerURL, onDismiss })
+  return (<SendTransactionWithBundle
+      bundle={bundle}
+      network={network}
+      account={account}
+      resolveMany={resolveMany}
+      relayerURL={relayerURL}
+      onDismiss={onDismiss}
+  />)
 }
 
 function SendTransactionWithBundle ({ bundle, network, account, resolveMany, relayerURL, onDismiss }) {
@@ -68,9 +76,6 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
   const [signingInProgress, setSigningInProgress] = useState(false)
   const [feeSpeed, setFeeSpeed] = useState(DEFAULT_SPEED)
   const { addToast } = useToasts()
-
-  const { nativeAssetSymbol } = network
-
   useEffect(() => {
     if (!bundle.txns.length) return
     setEstimation(null)
@@ -111,19 +116,22 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
     }
   }, [bundle, setEstimation, feeSpeed, addToast, network, relayerURL])
 
+
+  const { nativeAssetSymbol } = network
+
   const approveTxnImpl = async () => {
     if (!estimation) return
 
     const requestIds = bundle.requestIds
-    const { token: feeToken, speed } = estimation.selectedFee
+    const feeToken = estimation.selectedFeeToken
     const { addedGas, multiplier } = getFeePaymentConsequences(feeToken, estimation)
     const toHexAmount = amnt => '0x'+Math.round(amnt).toString(16)
     const feeTxn = feeToken.symbol === nativeAssetSymbol 
-      ? [accountPresets.feeCollector, toHexAmount(estimation.feeInNative[speed]*multiplier*1e18), '0x']
+      ? [accountPresets.feeCollector, toHexAmount(estimation.feeInNative[feeSpeed]*multiplier*1e18), '0x']
       : [feeToken.address, '0x0', ERC20.encodeFunctionData('transfer', [
         accountPresets.feeCollector,
         toHexAmount(
-          (feeToken.isStable ? estimation.feeInUSD[speed] : estimation.feeInNative[speed])
+          (feeToken.isStable ? estimation.feeInUSD[feeSpeed] : estimation.feeInNative[feeSpeed])
           * multiplier
           * Math.pow(10, feeToken.decimals)
         )
@@ -149,7 +157,7 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
       resolveMany(requestIds, { success: bundleResult.success, result: bundleResult.txId, message: bundleResult.message })
       return bundleResult
     } else {
-      const result = await sendNoRelayer({ finalBundle, account, wallet, estimation, provider, nativeAssetSymbol })
+      const result = await sendNoRelayer({ finalBundle, account, wallet, estimation, feeSpeed, provider, nativeAssetSymbol })
       resolveMany(requestIds, { success: true, result: result.txId })
       return result
     }
@@ -162,6 +170,9 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
     const explorerUrl = network.explorerUrl
     approveTxnImpl()
       .then(bundleResult => {
+        // be careful not to call this after onDimiss, cause it might cause state to be changed post-unmount
+        setSigningInProgress(false)
+
         if (bundleResult.success) addToast((
           <span>Transaction signed and sent successfully!
             &nbsp;<a href={explorerUrl+'/tx/'+bundleResult.txId} target='_blank' rel='noreferrer'>View on block explorer.</a>
@@ -170,13 +181,12 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
         onDismiss()
       })
       .catch(e => {
+        setSigningInProgress(false)
         console.error(e)
         if (e && e.message.includes('must provide an Ethereum address')) {
           addToast(`Signing error: not connected with the correct address. Make sure you're connected with ${bundle.signer.address}.`, { error: true })
         } else addToast(`Signing error: ${e.message || e}`, { error: true })
       })
-      .then(() => setSigningInProgress(false))
-
   }
 
   const rejectTxn = () => {
@@ -184,7 +194,9 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
   }
 
   return (<div id="sendTransaction">
-      <div className="dismiss" onClick={onDismiss}><FaTimes size={35}/></div>
+      <div className="dismiss" onClick={onDismiss}>
+        <FaChevronLeft size={35}/><span>back</span>
+      </div>
       <h2>Pending transactions: {bundle.txns.length}</h2>
       <div className="panelHolder">
           <div className="panel">
