@@ -161,7 +161,7 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
       resolveMany(requestIds, { success: bundleResult.success, result: bundleResult.txId, message: bundleResult.message })
       return bundleResult
     } else {
-      const result = await sendNoRelayer({ finalBundle, account, wallet, estimation, feeSpeed, provider, nativeAssetSymbol })
+      const result = await sendNoRelayer({ finalBundle, account, network, wallet, estimation, feeSpeed, provider, nativeAssetSymbol })
       resolveMany(requestIds, { success: true, result: result.txId })
       return result
     }
