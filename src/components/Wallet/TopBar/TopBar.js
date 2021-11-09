@@ -31,10 +31,7 @@ const TopBar = ({
         name: "clipboard-read",
         allowWithoutGesture: false,
       });
-      status =
-        response.state === "granted" || response.state === "prompt"
-          ? true
-          : false;
+      status = response.state === 'granted'
     } catch (e) {
       console.log('non-fatal clipboard error', e);
     }
