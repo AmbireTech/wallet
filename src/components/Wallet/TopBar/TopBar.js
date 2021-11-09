@@ -42,11 +42,10 @@ const TopBar = ({
     return status;
   };
 
-  const walletConnectUriRegex = /wc:[a-zA-Z0-9-]{1,36}@[0-9]\?bridge=.*&key=[a-z0-9]{1,64}/;
   const readClipboard = async () => {
     if (await checkPermissions()) {
       const content = await navigator.clipboard.readText();
-      if (walletConnectUriRegex.test(content)) connect({ uri: content });
+      if (content.startsWith('wc:')) connect({ uri: content });
     } else {
       const uri = prompt("Enter WalletConnect URI");
       if (uri) connect({ uri });
