@@ -35,8 +35,8 @@ export default function Providers({ walletAddress, selectedNetwork }) {
             fees: 'from 0.5%',
             limits: 'up to 15,000 EUR/day',
             currencies: 'GBP, EUR, USD and many more',
-            networks: ['ethereum'],
-            onClick: () => openTransak({walletAddress})
+            networks: ['ethereum', 'polygon', 'avalanche', 'arbitrum'],
+            onClick: () => openTransak({walletAddress, selectedNetwork})
         }
     ];
 
