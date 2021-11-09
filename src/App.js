@@ -49,7 +49,7 @@ function AppInner () {
     [eligibleRequests.length]
   )
   const onDismiss = () => sendTxnsShowing(false)
-  
+
   return (<>
     {sendTxnsShowing ? (
       <SendTransaction accounts={accounts} selectedAcc={selectedAcc} network={network} requests={eligibleRequests} resolveMany={resolveMany} relayerURL={relayerURL} onDismiss={onDismiss}>
