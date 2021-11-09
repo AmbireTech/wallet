@@ -15,7 +15,6 @@ import { useToasts } from '../../hooks/toasts'
 import { getWallet } from '../../lib/getWallet'
 import accountPresets from '../../consts/accountPresets'
 import { sendNoRelayer } from './noRelayer'
-import { resolve } from 'url'
 
 const ERC20 = new Interface(require('adex-protocol-eth/abi/ERC20'))
 
@@ -185,7 +184,10 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
         console.error(e)
         if (e && e.message.includes('must provide an Ethereum address')) {
           addToast(`Signing error: not connected with the correct address. Make sure you're connected with ${bundle.signer.address}.`, { error: true })
-        } else addToast(`Signing error: ${e.message || e}`, { error: true })
+        } else {
+          console.log(e.message)
+          addToast(`Signing error: ${e.message || e}`, { error: true })
+        }
       })
   }
 
