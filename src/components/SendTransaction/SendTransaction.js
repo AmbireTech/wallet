@@ -71,9 +71,10 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
   const { nativeAssetSymbol } = network
 
   useEffect(() => {    // eslint-disable-next-line react-hooks/exhaustive-deps
-
     setEstimation(null)
     if (!bundle.txns.length) return
+
+    let unmounted = false
 
     // get latest estimation
     const estimatePromise = relayerURL
@@ -81,6 +82,7 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
       : bundle.estimateNoRelayer({ provider: getDefaultProvider(network.rpc) })
     estimatePromise
       .then(estimation => {
+        if (unmounted) return
         estimation.selectedFee = {
           speed: DEFAULT_SPEED,
           token: { symbol: network.nativeAssetSymbol }
@@ -94,9 +96,11 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
         setEstimation(estimation)
       })
       .catch(e => {
-        addToast(`Estimation error: ${e.message || e}`, { error: true })
         console.log('estimation error', e)
+        addToast(`Estimation error: ${e.message || e}`, { error: true })
       })
+
+      return () => unmounted = true
     }, [bundle, setEstimation, addToast, network, relayerURL])
 
   const approveTxnImpl = async () => {
