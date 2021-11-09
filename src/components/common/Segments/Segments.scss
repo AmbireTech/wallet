@@ -1,6 +1,11 @@
 @import '../../../variables.scss';
 
+$segment-height: 50px;
+$segment-small-height: 40px;
+
 .segments {
+    flex: 0 0 auto;
+    height: $segment-height;
     display: flex;
     padding: 15px;
     background-color: $input-background-color;
@@ -9,7 +14,7 @@
         position: relative;
         flex: 1 0 auto;
         box-sizing: border-box;
-        height: 50px;
+        height: $segment-height;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -41,10 +46,11 @@
     }
 
     &.small {
+        height: $segment-small-height;
         padding: 0;
 
         .segment {
-            height: 40px;
+            height: $segment-small-height;
             padding: 0 20px;
             font-size: 14px;
         }
