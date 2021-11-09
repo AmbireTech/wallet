@@ -2,7 +2,7 @@ import { Interface, hexlify } from 'ethers/lib/utils'
 const IdentityInterface = new Interface(require('adex-protocol-eth/abi/Identity5.2'))
 const FactoryInterface = new Interface(require('adex-protocol-eth/abi/IdentityFactory5.2'))
 
-export async function sendNoRelayer ({ finalBundle, account, wallet, estimation, provider, nativeAssetSymbol }) {
+export async function sendNoRelayer ({ finalBundle, account, wallet, estimation, feeSpeed, provider, nativeAssetSymbol }) {
     const { signer } = finalBundle
     // @TODO: in case we need deploying, run using deployAndCall pipeline with signed msgs
     // @TODO: quickAccManager
@@ -34,7 +34,7 @@ export async function sendNoRelayer ({ finalBundle, account, wallet, estimation,
       from: signer.address,
       to, data,
       gas: hexlify(gasLimit),
-      gasPrice: hexlify(Math.floor(estimation.feeInNative[estimation.selectedFee.speed] / estimation.gasLimit * 1e18)),
+      gasPrice: hexlify(Math.floor(estimation.feeInNative[feeSpeed] / estimation.gasLimit * 1e18)),
       nonce: hexlify(await provider.getTransactionCount(signer.address))
     }
     try {
