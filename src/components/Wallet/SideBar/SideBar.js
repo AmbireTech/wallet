@@ -6,7 +6,7 @@ import { GiReceiveMoney } from 'react-icons/gi'
 import { BsCurrencyExchange } from 'react-icons/bs'
 import { BsPiggyBank } from 'react-icons/bs'
 import { BiTransfer } from 'react-icons/bi'
-import { Loading } from "../common"
+import { Loading } from "../../common"
 
 const SideBar = ({match, portfolio}) => {
     return (

@@ -37,7 +37,7 @@ const Chart = ({ data, size }) => {
 
     const getItemColor = index => {
         const colorCount = colors.length - 1;
-        return index > colorCount ? colors[index - (colors.length * Math.trunc(index / colorCount))] : colors[index];
+        return index > colorCount ? colors[index - (colors.length * Math.trunc(index / colors.length))] : colors[index];
     };
 
     return (

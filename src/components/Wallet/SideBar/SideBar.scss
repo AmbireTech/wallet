@@ -1,4 +1,4 @@
-@import '../../variables.scss';
+@import '../../../variables.scss';
 
 #sidebar {
     width: $sidebar-width;
@@ -9,7 +9,7 @@
     box-sizing: border-box;
 
     .logo {
-        background-image: url('../../resources/logo.png');
+        background-image: url('../../../resources/logo.png');
         width: 100%;
         margin: 1em 0em 3em 0.5em;
         height: 70px;

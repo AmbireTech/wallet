@@ -1,0 +1,20 @@
+@import '../../../variables.scss';
+
+button.buttonComponent {
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 0 20px;
+    font-size: 20px;
+    font-weight: bold;
+    color: black;
+    background-color: $primary-accent-color;
+    text-transform: uppercase;
+
+    &.small {
+        height: 50px;
+        font-size: 17px;
+    }
+}
