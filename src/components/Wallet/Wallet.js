@@ -2,8 +2,8 @@ import "./Wallet.scss"
 
 import { Switch, Route, Redirect } from "react-router-dom";
 import Dashboard from "./Dashboard/Dashboard";
-import TopBar from "./TopBar";
-import SideBar from "./SideBar";
+import TopBar from "./TopBar/TopBar";
+import SideBar from "./SideBar/SideBar";
 import Deposit from "./Deposit/Deposit"
 import Transfer from "./Transfer/Transfer"
 import PluginGnosisSafeApps from "../Plugins/GnosisSafeApps/GnosisSafeApps"

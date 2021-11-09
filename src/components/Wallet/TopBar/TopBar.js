@@ -2,7 +2,8 @@ import "./TopBar.scss";
 
 import React, { useState, useEffect } from "react";
 import { FiHelpCircle } from "react-icons/fi";
-import { DropDown, Select } from "../common";
+import { AiOutlinePlus } from "react-icons/ai";
+import { DropDown, Select, Button } from "../../common";
 
 const TopBar = ({
   match,
@@ -29,10 +30,7 @@ const TopBar = ({
         name: "clipboard-read",
         allowWithoutGesture: false,
       });
-      status =
-        response.state === "granted" || response.state === "prompt"
-          ? true
-          : false;
+      status = response.state === 'granted'
     } catch (e) {
       console.log('non-fatal clipboard error', e);
     }
@@ -50,7 +48,10 @@ const TopBar = ({
     }
   };
 
-  const accountsItems = accounts.map(({ id }) => ({ value: id }))
+  const accountsItems = accounts.map(({ id }) => ({
+    value: id,
+    iconColor: `#${id.slice(id.length - 6, id.length)}`
+  }))
   const networksItems = allNetworks.map(({ id, name, icon }) => ({
     label: name,
     value: id,
@@ -81,7 +82,7 @@ const TopBar = ({
             <div className="item dapps-item" key={session.peerId}>
               <div className="icon">
                 <img
-                  src={session.peerMeta.icons[0]}
+                  src={session.peerMeta.icons.filter(x => !x.endsWith('favicon.ico'))[0]}
                   alt={session.peerMeta.name}
                 ></img>
               </div>
@@ -92,7 +93,11 @@ const TopBar = ({
           ))}
         </DropDown>
 
-        <Select defaultValue={selectedAcc} items={accountsItems} onChange={value => onSelectAcc(value)}/>
+        <Select defaultValue={selectedAcc} items={accountsItems} onChange={value => onSelectAcc(value)}>
+          <div id="add-account">
+            <Button icon={<AiOutlinePlus/>} small>Add Account</Button>
+          </div>
+        </Select>
         <Select defaultValue={network.id} items={networksItems} onChange={value => setNetwork(value)}/>
       </div>
     </div>
