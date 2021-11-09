@@ -45,6 +45,7 @@
 
     #table {
         .category {
+            position: relative;
             overflow: hidden;
 
             .title {
@@ -128,6 +129,13 @@
                     }
                 }
             }
+        }
+
+        .powered {
+            text-align: right;
+            font-size: 12px;
+            padding: 0 10px;
+            opacity: 0.5;
         }
     }
 }

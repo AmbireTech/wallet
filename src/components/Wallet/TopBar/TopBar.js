@@ -2,7 +2,8 @@ import "./TopBar.scss";
 
 import React, { useState, useEffect } from "react";
 import { FiHelpCircle } from "react-icons/fi";
-import { DropDown, Select } from "../common";
+import { AiOutlinePlus } from "react-icons/ai";
+import { DropDown, Select, Button } from "../../common";
 
 const TopBar = ({
   match,
@@ -20,6 +21,10 @@ const TopBar = ({
 
   const checkPermissions = async () => {
     let status = false;
+    var isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1
+    if (isFirefox) {
+      return
+    }
     try {
       const response = await navigator.permissions.query({
         name: "clipboard-read",
@@ -42,9 +47,19 @@ const TopBar = ({
       connect({ uri: content });
     } else {
       const uri = prompt("Enter WalletConnect URI");
-      connect({ uri });
+      if (uri) connect({ uri });
     }
   };
+
+  const accountsItems = accounts.map(({ id }) => ({
+    value: id,
+    iconColor: `#${id.slice(id.length - 6, id.length)}`
+  }))
+  const networksItems = allNetworks.map(({ id, name, icon }) => ({
+    label: name,
+    value: id,
+    icon
+  }))
 
   useEffect(() => checkPermissions(), []);
 
@@ -70,7 +85,7 @@ const TopBar = ({
             <div className="item dapps-item" key={session.peerId}>
               <div className="icon">
                 <img
-                  src={session.peerMeta.icons[0]}
+                  src={session.peerMeta.icons.filter(x => !x.endsWith('favicon.ico'))[0]}
                   alt={session.peerMeta.name}
                 ></img>
               </div>
@@ -81,8 +96,12 @@ const TopBar = ({
           ))}
         </DropDown>
 
-        <Select defaultValue={selectedAcc} items={accounts} itemKey="id" onChange={value => onSelectAcc(value)}/>
-        <Select defaultValue={network.id} items={allNetworks} itemKey="id" itemLabel="name" onChange={value => setNetwork(value)}/>
+        <Select defaultValue={selectedAcc} items={accountsItems} onChange={value => onSelectAcc(value)}>
+          <div id="add-account">
+            <Button icon={<AiOutlinePlus/>} small>Add Account</Button>
+          </div>
+        </Select>
+        <Select defaultValue={network.id} items={networksItems} onChange={value => setNetwork(value)}/>
       </div>
     </div>
   );
