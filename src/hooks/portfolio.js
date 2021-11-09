@@ -36,10 +36,13 @@ export default function usePortfolio({ currentNetwork, account }) {
     }
 
     const fetchBalances = async (account) => {
-        tokensByNetworks = Object.fromEntries(await Promise.all(Object.values(suportedProtocols).map(async ({ network }) => [
-            network,
-            Object.values(await getBalances(ZAPPER_API_KEY, network, 'tokens', account))[0]
-        ])))
+        tokensByNetworks = Object.fromEntries((await Promise.all(Object.values(suportedProtocols).map(async ({ network }) => {
+            const balance = await getBalances(ZAPPER_API_KEY, network, 'tokens', account)
+            return [
+                network,
+                balance ? Object.values(balance)[0] : null
+            ]
+        }))).filter(([, values]) => values))
 
         balanceByNetworks = Object.fromEntries(Object.entries(tokensByNetworks).map(([network, { meta, products }]) => {
             const balanceUSD = meta.find(({ label }) => label === 'Total').value + meta.find(({ label }) => label === 'Debt').value
@@ -61,6 +64,7 @@ export default function usePortfolio({ currentNetwork, account }) {
             network,
             await Promise.all(protocols.map(async protocol => {
                 const balance = await getBalances(ZAPPER_API_KEY, network, protocol, account)
+                if (!balance) return []
                 const { products } = Object.values(balance)[0]
                 return products
             }
