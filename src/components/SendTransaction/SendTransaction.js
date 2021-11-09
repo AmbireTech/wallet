@@ -23,6 +23,7 @@ const SPEEDS = ['slow', 'medium', 'fast', 'ape']
 const DEFAULT_SPEED = 'fast'
 const ADDED_GAS_TOKEN = 20000
 const ADDED_GAS_NATIVE = 10000
+const REESTIMATE_INTERVAL = 15000
 
 function toBundleTxn({ to, value, data }) {
   return [to, value || '0x0', data || '0x']
@@ -77,10 +78,10 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
     let unmounted = false
 
     // get latest estimation
-    const estimatePromise = relayerURL
+    const reestimate = () => (relayerURL
       ? bundle.estimate({ relayerURL, fetch })
       : bundle.estimateNoRelayer({ provider: getDefaultProvider(network.rpc) })
-    estimatePromise
+    )
       .then(estimation => {
         if (unmounted) return
         estimation.selectedFee = {
@@ -100,8 +101,14 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
         addToast(`Estimation error: ${e.message || e}`, { error: true })
       })
 
-      return () => unmounted = true
-    }, [bundle, setEstimation, addToast, network, relayerURL])
+    reestimate()
+    const intvl = setInterval(reestimate, REESTIMATE_INTERVAL)
+
+    return () => {
+      unmounted = true
+      clearInterval(intvl)
+    }
+  }, [bundle, setEstimation, addToast, network, relayerURL])
 
   const approveTxnImpl = async () => {
     if (!estimation) return
