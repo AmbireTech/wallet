@@ -10,6 +10,10 @@
         color: $primary-accent-color;
     }
 
+    .purple-highlight {
+        color: $secondary-accent-color;
+    }
+
     .panel {
         flex: 0 1 50%;
     }
@@ -20,14 +24,26 @@
         gap: 30px;
 
         #balance {
+            gap: 10px;
+
             #total {
                 font-size: 2em;
 
                 #other-balances {
+                    display: flex;
+                    flex-direction: column;
+                    margin-top: 5px;
+
                     .balance {
+                        font-weight: 500;
                         font-size: 17px;
-                        opacity: 0.5;
+                        opacity: 0.6;
                         cursor: pointer;
+                        transition: opacity 0.1s ease-in-out;
+
+                        &:hover {
+                            opacity: 0.8;
+                        }
                     }
                 }
             }
