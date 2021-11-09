@@ -54,7 +54,7 @@ export default function Dashboard({ portfolio, setNetwork }) {
                     <div className="title">Balance</div>
                     <div className="content">
                         {
-                            portfolio.isLoading ? 
+                            portfolio.isBalanceLoading ? 
                                 <Loading/>
                                 :
                                 <div id="total">
@@ -80,13 +80,16 @@ export default function Dashboard({ portfolio, setNetwork }) {
                     </div>
                     <div className="content">
                         {
-                             portfolio.isLoading ? 
+                            chartType === chartSegments[0].value ?
+                                portfolio.isBalanceLoading ?
                                     <Loading/>
                                     :
-                                    chartType === chartSegments[0].value ?
-                                        <Chart data={chartTokensData} size={200}/>
-                                        :
-                                        <Chart data={chartAssetsData} size={200}/>
+                                    <Chart data={chartTokensData} size={200}/>
+                                :
+                                portfolio.areAssetsLoading ?
+                                    <Loading/>
+                                    :
+                                    <Chart data={chartAssetsData} size={200}/>
                         }
                     </div>
                 </div>
@@ -95,7 +98,7 @@ export default function Dashboard({ portfolio, setNetwork }) {
                 <div className="title">Assets</div>
                 <div className="content">
                     {
-                        portfolio.isLoading ?
+                        portfolio.areAssetsLoading ?
                             <Loading/>
                             :
                             !portfolio.assets.length ?
@@ -139,7 +142,7 @@ export default function Dashboard({ portfolio, setNetwork }) {
                     }
                 </div>
                 {
-                    portfolio.isLoading || !portfolio.assets.length ?
+                    portfolio.areAssetsLoading || !portfolio.assets.length ?
                         null
                         :
                         <div className="powered">
