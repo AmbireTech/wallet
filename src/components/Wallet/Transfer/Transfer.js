@@ -20,7 +20,7 @@ const Transfer = ({ portfolio }) => {
     const setMaxAmount = useCallback(() => {
         const { balanceRaw, decimals } = portfolio.balance.tokens.find(({ symbol }) => symbol === asset)
         setAmount(Number(balanceRaw / `1e${decimals}`))
-    }, [portfolio.tokens, asset])
+    }, [portfolio.balance.tokens, asset])
 
     const crossChainAssets = [
         {
