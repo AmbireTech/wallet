@@ -5,7 +5,7 @@ import { FaSignature, FaTimes } from 'react-icons/fa'
 import { getTransactionSummary } from '../../lib/humanReadableTransactions'
 import './SendTransaction.css'
 import { Loading } from '../common'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 
 import fetch from 'node-fetch'
 import { Bundle } from 'adex-protocol-eth/js'
@@ -39,24 +39,41 @@ function makeBundle(account, networkId, requests) {
   return bundle
 }
 
-export default function SendTransaction ({ accounts, network, selectedAcc, requests, resolveMany, relayerURL }) {
+export default function SendTransaction({ accounts, network, selectedAcc, requests, resolveMany, relayerURL }) {
+  const account = accounts.find(x => x.id === selectedAcc)
+
+  // Also filtered in App.js, but better safe than sorry here
+  const eligibleRequests = useMemo(() => requests
+    .filter(({ type, chainId, account, txn }) =>
+      type === 'eth_sendTransaction'
+      && chainId === network.chainId
+      && account === selectedAcc
+      && txn && (!txn.from || txn.from.toLowerCase() === selectedAcc.toLowerCase())
+    // we only need to update on change of IDs
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    ), [requests.map(x => x.id).join(','), network.chainId, selectedAcc])
+  const bundle = useMemo(
+    () => makeBundle(account, network.id, eligibleRequests),
+    [network.id, account, eligibleRequests]
+  )
+
+  if (!account) return (<h3 className='error'>No selected account</h3>)
+
+  return SendTransactionWithBundle({ bundle, network, account, resolveMany, relayerURL })
+}
+
+function SendTransactionWithBundle ({ bundle, network, account, resolveMany, relayerURL }) {
   const [estimation, setEstimation] = useState(null)
   const [signingInProgress, setSigningInProgress] = useState(false)
   const history = useHistory()
   const { addToast } = useToasts()
 
   const { nativeAssetSymbol } = network
-  // Also filtered in App.js, but better safe than sorry here
-  const eligibleRequests = requests
-    .filter(({ type, chainId, account, txn }) =>
-      type === 'eth_sendTransaction'
-      && chainId === network.chainId
-      && account === selectedAcc
-      && txn && (!txn.from || txn.from.toLowerCase() === selectedAcc.toLowerCase())
-    )
-  useEffect(() => {
+
+  useEffect(() => {    // eslint-disable-next-line react-hooks/exhaustive-deps
+
     setEstimation(null)
-    if (!eligibleRequests.length) return
+    if (!bundle.txns.length) return
 
     // get latest estimation
     const estimatePromise = relayerURL
@@ -66,7 +83,7 @@ export default function SendTransaction ({ accounts, network, selectedAcc, reque
       .then(estimation => {
         estimation.selectedFee = {
           speed: DEFAULT_SPEED,
-          token: { symbol: nativeAssetSymbol }
+          token: { symbol: network.nativeAssetSymbol }
         }
         if (estimation.remainingFeeTokenBalances) {
           const eligibleToken = estimation.remainingFeeTokenBalances
@@ -80,14 +97,7 @@ export default function SendTransaction ({ accounts, network, selectedAcc, reque
         addToast(`Estimation error: ${e.message || e}`, { error: true })
         console.log('estimation error', e)
       })
-    }, [eligibleRequests.length, setEstimation, addToast, nativeAssetSymbol, network.rpc, relayerURL])
-
-  if (!selectedAcc) return (<h3 className='error'>No selected account</h3>)
-
-  const account = accounts.find(x => x.id === selectedAcc)
-  if (!account) throw new Error('internal: account does not exist')
-
-  const bundle = makeBundle(account, network.id, eligibleRequests)
+    }, [bundle, setEstimation, addToast, network, relayerURL])
 
   const approveTxnImpl = async () => {
     if (!estimation) return
@@ -159,7 +169,7 @@ export default function SendTransaction ({ accounts, network, selectedAcc, reque
   }
 
   const rejectTxn = () => {
-    resolveMany(requests.map(x => x.id), { message: 'rejected' })
+    resolveMany(bundle.requestIds, { message: 'rejected' })
     history.goBack()
   }
 
@@ -179,12 +189,12 @@ export default function SendTransaction ({ accounts, network, selectedAcc, reque
                               <li key={txn} className={isFirstFailing ? 'firstFailing' : ''}>
                                   {getTransactionSummary(txn, bundle.network)}
                                   {isFirstFailing ? (<div><b>This is the first failing transaction.</b></div>) : (<></>)}
-                                  <a onClick={() => resolveMany([eligibleRequests[i].id], { message: 'rejected' })}><FaTimes></FaTimes></a>
+                                  <button onClick={() => resolveMany([bundle.requestIds[i]], { message: 'rejected' })}><FaTimes></FaTimes></button>
                               </li>
                           )})}
                       </ul>
                       <span>
-                          <b>NOTE:</b> Transaction batching is enabled, you're signing {eligibleRequests.length} transactions at once. You can add more transactions to this batch by interacting with a connected dApp right now.
+                          <b>NOTE:</b> Transaction batching is enabled, you're signing {bundle.txns.length} transactions at once. You can add more transactions to this batch by interacting with a connected dApp right now.
                       </span>
               </div>
           </div>
@@ -203,14 +213,14 @@ export default function SendTransaction ({ accounts, network, selectedAcc, reque
                           ></FeeSelector>
                   </div>
               </div>
-              <div className="panel">
+              <div className="panel actions">
                   <div className="heading">
                       <div className="title">
                           <FaSignature size={35}/>
                           Sign
                       </div>
                   </div>
-                  <Actions requests={requests} estimation={estimation} approveTxn={approveTxn} rejectTxn={rejectTxn} signingInProgress={signingInProgress}></Actions>
+                  <Actions estimation={estimation} approveTxn={approveTxn} rejectTxn={rejectTxn} signingInProgress={signingInProgress}></Actions>
               </div>
           </div>
       </div>
