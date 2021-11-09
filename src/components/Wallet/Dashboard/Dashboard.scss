@@ -41,6 +41,14 @@
         #balance {
             #total {
                 font-size: 2em;
+
+                #other-balances {
+                    .balance {
+                        font-size: 17px;
+                        opacity: 0.5;
+                        cursor: pointer;
+                    }
+                }
             }
         }
     }

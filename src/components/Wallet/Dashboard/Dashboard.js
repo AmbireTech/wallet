@@ -6,7 +6,7 @@ import { GiToken } from 'react-icons/gi'
 import { Chart, Loading, Segments } from '../../common'
 import AssetsPlaceholder from './AssetsPlaceholder/AssetsPlaceholder'
 
-export default function Dashboard({ portfolio }) {
+export default function Dashboard({ portfolio, setNetwork }) {
     const [chartTokensData, setChartTokensData] = useState([]);
     const [chartAssetsData, setChartAssetsData] = useState([]);
     const [chartType, setChartType] = useState([]);
@@ -58,6 +58,15 @@ export default function Dashboard({ portfolio }) {
                                 <div id="total">
                                     <span className="green-highlight">$</span> { portfolio.balance.total.truncated }
                                     <span className="green-highlight">.{ portfolio.balance.total.decimals }</span>
+                                    <div id="other-balances">
+                                        {
+                                            Object.entries(portfolio.otherBalances).map(([network, { total }]) => (
+                                                <div className="balance" onClick={() => setNetwork(network)}>
+                                                    $ { total.truncated }.{total.decimals} on { network }
+                                                </div>
+                                            ))
+                                        }
+                                    </div>
                                 </div>
                         }
                     </div>
