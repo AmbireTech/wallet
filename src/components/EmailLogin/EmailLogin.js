@@ -75,9 +75,9 @@ export default function EmailLogin({ relayerURL, onAddAccount }) {
         return
       }
       // If we make it beyond this point, it means no email confirmation will be required
-      setRequiresConfFor(null)
-  
+      // however, we're putting `setRequiresConfFor(null)` after onTryDecrypt in order to wait for the decryption period
       if (resp.status === 404 && body.errType === 'DOES_NOT_EXIST') {
+        setRequiresConfFor(null)
         setErr('Account does not exist')
         return
       }
@@ -87,11 +87,12 @@ export default function EmailLogin({ relayerURL, onAddAccount }) {
       } else {
         setErr(body.message ? `Relayer error: ${body.message}` : `Unknown no-message error: ${resp.status}`)
       }
+      setRequiresConfFor(null)
     }
   
     const onLoginUserAction = async ({ email, passphrase }) => {
       setErr('')
-      setRequiresConfFor('')
+      setRequiresConfFor(null)
       setInProgress(true)
       try {
         await attemptLogin({ email, passphrase })
@@ -104,7 +105,11 @@ export default function EmailLogin({ relayerURL, onAddAccount }) {
     // try logging in once after EMAIL_VERIFICATION_RECHECK
     useEffect(() => {
       if (requiresEmailConfFor) {
-        const timer = setTimeout(() => attemptLogin(requiresEmailConfFor, true), EMAIL_VERIFICATION_RECHECK)
+        const timer = setTimeout(async () => {
+            setInProgress(true)
+            await attemptLogin(requiresEmailConfFor, true)
+            setInProgress(false)
+        }, EMAIL_VERIFICATION_RECHECK)
         return () => clearTimeout(timer)
       }
     })
