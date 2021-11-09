@@ -42,15 +42,21 @@ const TopBar = ({
     return status;
   };
 
+  const walletConnectUriRegex = /wc:[a-zA-Z0-9-]{1,36}@[0-9]\?bridge=.*&key=[a-z0-9]{1,64}/;
   const readClipboard = async () => {
     if (await checkPermissions()) {
       const content = await navigator.clipboard.readText();
-      connect({ uri: content });
+      if (walletConnectUriRegex.test(content)) connect({ uri: content });
     } else {
       const uri = prompt("Enter WalletConnect URI");
       if (uri) connect({ uri });
     }
   };
+
+  useEffect(() => {
+    window.addEventListener('focus', readClipboard)
+    return () => window.removeEventListener('focus', readClipboard)
+  }, [])
 
   const accountsItems = accounts.map(({ id }) => ({
     value: id,
