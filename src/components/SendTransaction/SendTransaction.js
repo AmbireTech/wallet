@@ -6,11 +6,10 @@ import { getContractName, getTransactionSummary } from '../../lib/humanReadableT
 import './SendTransaction.css'
 import { Loading } from '../common'
 import { useEffect, useState, useMemo } from 'react'
-
 import fetch from 'node-fetch'
 import { Bundle } from 'adex-protocol-eth/js'
 import { getDefaultProvider } from 'ethers'
-import { Interface } from 'ethers/lib/utils'
+import { Interface, formatUnits } from 'ethers/lib/utils'
 import { useToasts } from '../../hooks/toasts'
 import { getWallet } from '../../lib/getWallet'
 import accountPresets from '../../consts/accountPresets'
@@ -291,12 +290,12 @@ function TxnPreview ({ txn, omDismiss, bundle, network, isFirstFailing }) {
   return (
     <div className={isFirstFailing ? 'txnSummary firstFailing' : 'txnSummary'}>
         <div>{getTransactionSummary(txn, bundle.network)}</div>
-        {isFirstFailing ? (<div><b>This is the first failing transaction.</b></div>) : (<></>)}
+        {isFirstFailing ? (<div className='firstFailingLabel'>This is the first failing transaction.</div>) : (<></>)}
 
         {
           isExpanded ? (<div className='advanced'>
             <div><b>Interacting with (<i>to</i>):</b> {txn[0]}{contractName ? ` (${contractName})` : ''}</div>
-            <div><b>{network.nativeAssetSymbol} to be sent (<i>value</i>):</b> {txn[1]}</div>
+            <div><b>{network.nativeAssetSymbol} to be sent (<i>value</i>):</b> {formatUnits(txn[1], 18)}</div>
             <div><b>Data:</b> {txn[2]}</div>
           </div>) : (<></>)
         }
