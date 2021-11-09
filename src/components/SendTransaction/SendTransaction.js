@@ -68,7 +68,7 @@ export default function SendTransaction ({ accounts, network, selectedAcc, reque
       && txn && (!txn.from || txn.from.toLowerCase() === selectedAcc.toLowerCase())
     )
   useEffect(() => {
-    if (estimation) setEstimation(null)
+    setEstimation(null)
     if (!eligibleRequests.length) return
     // Notify the user with the latest bundle
     notifyUser(bundle)
@@ -95,7 +95,7 @@ export default function SendTransaction ({ accounts, network, selectedAcc, reque
         addToast(`Estimation error: ${e.message || e}`, { error: true })
         console.log('estimation error', e)
       })
-    }, [eligibleRequests.length])
+    }, [eligibleRequests.length, setEstimation, addToast, nativeAssetSymbol, network.rpc, relayerURL])
 
   if (!selectedAcc) return (<h3 className='error'>No selected account</h3>)
 
@@ -157,7 +157,7 @@ export default function SendTransaction ({ accounts, network, selectedAcc, reque
       .then(bundleResult => {
         if (bundleResult.success) addToast((
           <span>Transaction signed and sent successfully!
-            &nbsp;<a href={explorerUrl+'/tx/'+bundleResult.txId} target='_blank'>View on block explorer.</a>
+            &nbsp;<a href={explorerUrl+'/tx/'+bundleResult.txId} target='_blank' rel='noreferrer'>View on block explorer.</a>
           </span>))
         else addToast(`Transaction error: ${bundleResult.message || 'unspecified error'}`, { error: true })
 
