@@ -2,7 +2,7 @@
 // GiObservatory is also interesting
 import { GiTakeMyMoney, GiSpectacles } from 'react-icons/gi'
 import { FaSignature, FaTimes } from 'react-icons/fa'
-import { getTransactionSummary, getBundleShortSummary } from '../../lib/humanReadableTransactions'
+import { getTransactionSummary } from '../../lib/humanReadableTransactions'
 import './SendTransaction.css'
 import { Loading } from '../common'
 import { useEffect, useState } from 'react'
@@ -23,19 +23,6 @@ const SPEEDS = ['slow', 'medium', 'fast', 'ape']
 const DEFAULT_SPEED = 'fast'
 const ADDED_GAS_TOKEN = 20000
 const ADDED_GAS_NATIVE = 10000
-
-function notifyUser (bundle) {
-  if (window.Notification && Notification.permission !== 'denied') {
-    Notification.requestPermission(status => {  // status is "granted", if accepted by user
-      if (status !== 'granted') return
-       /*var n = */new Notification('Ambire Wallet: new transaction request', {
-        body: `${getBundleShortSummary(bundle)}`,
-        requireInteraction: true
-        //icon: '/path/to/icon.png' // optional
-      })
-    })
-  }
-}
 
 function toBundleTxn({ to, value, data }) {
   return [to, value || '0x0', data || '0x']
@@ -70,8 +57,6 @@ export default function SendTransaction ({ accounts, network, selectedAcc, reque
   useEffect(() => {
     setEstimation(null)
     if (!eligibleRequests.length) return
-    // Notify the user with the latest bundle
-    notifyUser(bundle)
 
     // get latest estimation
     const estimatePromise = relayerURL
@@ -214,7 +199,7 @@ export default function SendTransaction ({ accounts, network, selectedAcc, reque
                             const isFirstFailing = estimation && !estimation.success && estimation.firstFailing === i
                             return (
                               <li key={txn} className={isFirstFailing ? 'firstFailing' : ''}>
-                                  {getTransactionSummary(txn, bundle)}
+                                  {getTransactionSummary(txn, bundle.network)}
                                   {isFirstFailing ? (<div><b>This is the first failing transaction.</b></div>) : (<></>)}
                                   <a onClick={() => resolveMany([eligibleRequests[i].id], { message: 'rejected' })}><FaTimes></FaTimes></a>
                               </li>
