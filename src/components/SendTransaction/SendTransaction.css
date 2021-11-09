@@ -1,6 +1,43 @@
+#sendTransaction {
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    right: 0px;
+    bottom: 0px;
+    z-index: 999;
+    background-color: #282b33;
+    /*
+    background-color: rgba(40, 43, 51, 0.95);
+    backdrop-filter: blur(8px);
+    */
+}
+
+#sendTransaction .dismiss {
+    position: absolute;
+    top: 30px;
+    left: 30px;
+    cursor: pointer;
+    color: #ccc;
+    text-transform: uppercase;
+    line-height: 35px;
+    height: 35px;
+    font-size: 20px;
+}
+#sendTransaction .dismiss:hover {
+    color: white;
+}
+
+#sendTransaction .dismiss span {
+    float: right;
+    margin-left: 15px;
+}
+
 #sendTransaction h2 {
-    margin-top: 2em;
+    margin-top: 30px;
     text-align: center;
+    text-transform: uppercase;
+    color: #ccc;
+    margin-bottom: 30px;
 }
 
 #sendTransaction .panelHolder {
@@ -36,7 +73,7 @@
 
 #sendTransaction .secondaryPanel {
     min-width: 450px;
-    max-width: 800px;
+    max-width: 650px;
 }
 
 #sendTransaction .feePanel {
@@ -58,7 +95,7 @@
     color: black;
     text-align: center;
     min-height: 80px;
-    width: 80px;
+    width: 90px;
     float: left;
     margin-right: 10px;
     padding: 10px;
@@ -77,6 +114,13 @@
     font-weight: bold;
     margin-bottom: 5px;
 }
+#sendTransaction .feeEstimation {
+    width: 80px;
+    margin: auto;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
 
 #sendTransaction .actions button {
     background-color: rgb(128, 255, 219);
@@ -89,6 +133,11 @@
     font-size: 1em;
     vertical-align: middle;
     position: relative;
+}
+
+#sendTransaction .buttons {
+    justify-content: center;
+    display: flex;
 }
 
 #sendTransaction button.rejectTxn {
