@@ -56,11 +56,14 @@ export default function usePortfolio({ currentNetwork, account }) {
         if (document.hasFocus() && !isLoading) updateBalances(account)
     }, [isLoading, account])
 
-    useEffect(async () => {
-        setLoading(true)
-        await updateBalances(account)
-        await updateProtocols(account)
-        setLoading(false)
+    useEffect(() => {
+        async function updateAll() {
+            setLoading(true)
+            await updateBalances(account)
+            await updateProtocols(account)
+            setLoading(false)
+        }
+        updateAll()
     }, [account])
 
     useEffect(() => {
@@ -78,7 +81,7 @@ export default function usePortfolio({ currentNetwork, account }) {
     useEffect(() => {
         const refreshInterval = setInterval(refreshIfFocused, 30000)
         return () => clearInterval(refreshInterval)
-    }, [])
+    }, [refreshIfFocused])
 
     // Refresh when window is focused
     useEffect(() => {
