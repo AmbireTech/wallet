@@ -2,10 +2,10 @@
 // GiObservatory is also interesting
 import { GiTakeMyMoney, GiSpectacles } from 'react-icons/gi'
 import { FaSignature, FaTimes } from 'react-icons/fa'
-import { getTransactionSummary, getBundleShortSummary } from '../../lib/humanReadableTransactions'
+import { getTransactionSummary } from '../../lib/humanReadableTransactions'
 import './SendTransaction.css'
 import { Loading } from '../common'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 
 import fetch from 'node-fetch'
 import { Bundle } from 'adex-protocol-eth/js'
@@ -23,19 +23,7 @@ const SPEEDS = ['slow', 'medium', 'fast', 'ape']
 const DEFAULT_SPEED = 'fast'
 const ADDED_GAS_TOKEN = 20000
 const ADDED_GAS_NATIVE = 10000
-
-function notifyUser (bundle) {
-  if (window.Notification && Notification.permission !== 'denied') {
-    Notification.requestPermission(status => {  // status is "granted", if accepted by user
-      if (status !== 'granted') return
-       /*var n = */new Notification('Ambire Wallet: new transaction request', {
-        body: `${getBundleShortSummary(bundle)}`,
-        requireInteraction: true
-        //icon: '/path/to/icon.png' // optional
-      })
-    })
-  }
-}
+const REESTIMATE_INTERVAL = 15000
 
 function toBundleTxn({ to, value, data }) {
   return [to, value || '0x0', data || '0x']
@@ -52,36 +40,53 @@ function makeBundle(account, networkId, requests) {
   return bundle
 }
 
-export default function SendTransaction ({ accounts, network, selectedAcc, requests, resolveMany, relayerURL }) {
+export default function SendTransaction({ accounts, network, selectedAcc, requests, resolveMany, relayerURL }) {
+  const account = accounts.find(x => x.id === selectedAcc)
+
+  // Also filtered in App.js, but better safe than sorry here
+  const eligibleRequests = useMemo(() => requests
+    .filter(({ type, chainId, account, txn }) =>
+      type === 'eth_sendTransaction'
+      && chainId === network.chainId
+      && account === selectedAcc
+      && txn && (!txn.from || txn.from.toLowerCase() === selectedAcc.toLowerCase())
+    // we only need to update on change of IDs
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    ), [requests.map(x => x.id).join(','), network.chainId, selectedAcc])
+  const bundle = useMemo(
+    () => makeBundle(account, network.id, eligibleRequests),
+    [network.id, account, eligibleRequests]
+  )
+
+  if (!account) return (<h3 className='error'>No selected account</h3>)
+
+  return SendTransactionWithBundle({ bundle, network, account, resolveMany, relayerURL })
+}
+
+function SendTransactionWithBundle ({ bundle, network, account, resolveMany, relayerURL }) {
   const [estimation, setEstimation] = useState(null)
   const [signingInProgress, setSigningInProgress] = useState(false)
   const history = useHistory()
   const { addToast } = useToasts()
 
   const { nativeAssetSymbol } = network
-  // Also filtered in App.js, but better safe than sorry here
-  const eligibleRequests = requests
-    .filter(({ type, chainId, account, txn }) =>
-      type === 'eth_sendTransaction'
-      && chainId === network.chainId
-      && account === selectedAcc
-      && txn && (!txn.from || txn.from.toLowerCase() === selectedAcc.toLowerCase())
-    )
-  useEffect(() => {
+
+  useEffect(() => {    // eslint-disable-next-line react-hooks/exhaustive-deps
     setEstimation(null)
-    if (!eligibleRequests.length) return
-    // Notify the user with the latest bundle
-    notifyUser(bundle)
+    if (!bundle.txns.length) return
+
+    let unmounted = false
 
     // get latest estimation
-    const estimatePromise = relayerURL
+    const reestimate = () => (relayerURL
       ? bundle.estimate({ relayerURL, fetch })
       : bundle.estimateNoRelayer({ provider: getDefaultProvider(network.rpc) })
-    estimatePromise
+    )
       .then(estimation => {
+        if (unmounted) return
         estimation.selectedFee = {
           speed: DEFAULT_SPEED,
-          token: { symbol: nativeAssetSymbol }
+          token: { symbol: network.nativeAssetSymbol }
         }
         if (estimation.remainingFeeTokenBalances) {
           const eligibleToken = estimation.remainingFeeTokenBalances
@@ -92,17 +97,18 @@ export default function SendTransaction ({ accounts, network, selectedAcc, reque
         setEstimation(estimation)
       })
       .catch(e => {
-        addToast(`Estimation error: ${e.message || e}`, { error: true })
         console.log('estimation error', e)
+        addToast(`Estimation error: ${e.message || e}`, { error: true })
       })
-    }, [eligibleRequests.length, setEstimation, addToast, nativeAssetSymbol, network.rpc, relayerURL])
 
-  if (!selectedAcc) return (<h3 className='error'>No selected account</h3>)
+    reestimate()
+    const intvl = setInterval(reestimate, REESTIMATE_INTERVAL)
 
-  const account = accounts.find(x => x.id === selectedAcc)
-  if (!account) throw new Error('internal: account does not exist')
-
-  const bundle = makeBundle(account, network.id, eligibleRequests)
+    return () => {
+      unmounted = true
+      clearInterval(intvl)
+    }
+  }, [bundle, setEstimation, addToast, network, relayerURL])
 
   const approveTxnImpl = async () => {
     if (!estimation) return
@@ -173,32 +179,10 @@ export default function SendTransaction ({ accounts, network, selectedAcc, reque
 
   }
 
-  const rejectButton = (
-      <button className='rejectTxn' onClick={() => {
-          resolveMany(requests.map(x => x.id), { message: 'rejected' })
-          history.goBack()
-      }}>Reject</button>
-  )
-
-  const insufficientFee = estimation && estimation.feeInUSD && !isTokenEligible(estimation.selectedFee.token, estimation)
-  const willFail = (estimation && !estimation.success) || insufficientFee
-  const actionable =
-      willFail
-      ? (<>
-          <h2 className='error'>
-            {insufficientFee ?
-              `Insufficient balance for the fee. Accepted tokens: ${estimation.remainingFeeTokenBalances.map(x => x.symbol).join(', ')}`
-              : `The current transaction cannot be broadcasted because it will fail: ${estimation.message}`
-            }
-          </h2>
-          {rejectButton}
-          </>)
-      : (<div>
-          {rejectButton}
-          <button className='approveTxn' disabled={!estimation || signingInProgress} onClick={approveTxn}>
-            {signingInProgress ? (<><Loading/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Signing...</>) : (<>Sign and send</>)}
-          </button>
-      </div>)
+  const rejectTxn = () => {
+    resolveMany(bundle.requestIds, { message: 'rejected' })
+    history.goBack()
+  }
 
   return (<div id="sendTransaction">
       <h2>Pending transaction</h2>
@@ -214,14 +198,14 @@ export default function SendTransaction ({ accounts, network, selectedAcc, reque
                             const isFirstFailing = estimation && !estimation.success && estimation.firstFailing === i
                             return (
                               <li key={txn} className={isFirstFailing ? 'firstFailing' : ''}>
-                                  {getTransactionSummary(txn, bundle)}
+                                  {getTransactionSummary(txn, bundle.network)}
                                   {isFirstFailing ? (<div><b>This is the first failing transaction.</b></div>) : (<></>)}
-                                  <a onClick={() => resolveMany([eligibleRequests[i].id], { message: 'rejected' })}><FaTimes></FaTimes></a>
+                                  <button onClick={() => resolveMany([bundle.requestIds[i]], { message: 'rejected' })}><FaTimes></FaTimes></button>
                               </li>
                           )})}
                       </ul>
                       <span>
-                          <b>NOTE:</b> Transaction batching is enabled, you're signing {eligibleRequests.length} transactions at once. You can add more transactions to this batch by interacting with a connected dApp right now.
+                          <b>NOTE:</b> Transaction batching is enabled, you're signing {bundle.txns.length} transactions at once. You can add more transactions to this batch by interacting with a connected dApp right now.
                       </span>
               </div>
           </div>
@@ -240,17 +224,43 @@ export default function SendTransaction ({ accounts, network, selectedAcc, reque
                           ></FeeSelector>
                   </div>
               </div>
-              <div className="panel">
+              <div className="panel actions">
                   <div className="heading">
                       <div className="title">
                           <FaSignature size={35}/>
                           Sign
                       </div>
                   </div>
-                  {actionable}
+                  <Actions estimation={estimation} approveTxn={approveTxn} rejectTxn={rejectTxn} signingInProgress={signingInProgress}></Actions>
               </div>
           </div>
       </div>
+  </div>)
+}
+
+function Actions({ estimation, approveTxn, rejectTxn, signingInProgress }) {
+  const rejectButton = (
+    <button className='rejectTxn' onClick={rejectTxn}>Reject</button>
+  )
+  const insufficientFee = estimation && estimation.feeInUSD && !isTokenEligible(estimation.selectedFee.token, estimation)
+  const willFail = (estimation && !estimation.success) || insufficientFee
+  if (willFail) {
+    return (<>
+      <h2 className='error'>
+        {insufficientFee ?
+          `Insufficient balance for the fee. Accepted tokens: ${estimation.remainingFeeTokenBalances.map(x => x.symbol).join(', ')}`
+          : `The current transaction cannot be broadcasted because it will fail: ${estimation.message}`
+        }
+      </h2>
+      {rejectButton}
+    </>)
+  }
+
+  return (<div>
+      {rejectButton}
+      <button className='approveTxn' disabled={!estimation || signingInProgress} onClick={approveTxn}>
+        {signingInProgress ? (<><Loading/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Signing...</>) : (<>Sign and send</>)}
+      </button>
   </div>)
 }
 
