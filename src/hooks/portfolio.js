@@ -21,7 +21,7 @@ export default function usePortfolio({ currentNetwork, account }) {
     const [otherBalances, setOtherBalances] = useState([]);
     const [assets, setAssets] = useState([]);
 
-    const updateStates = useCallback(() => {
+    const updateStates = (currentNetwork) => {
         if (balanceByNetworks[currentNetwork]) {
             setBalance(balanceByNetworks[currentNetwork])
             setOtherBalances(Object.fromEntries(Object.entries(balanceByNetworks).filter(([network]) => network !== currentNetwork)))
@@ -32,7 +32,7 @@ export default function usePortfolio({ currentNetwork, account }) {
                 ...tokensByNetworks[currentNetwork].products,
                 ...otherProtocolsByNetworks[currentNetwork]
             ])
-    }, [currentNetwork])
+    }
 
     const fetchBalances = async (account, load = false) => {
         if (load) setLoading(true)
@@ -56,7 +56,6 @@ export default function usePortfolio({ currentNetwork, account }) {
             }]
         }))
 
-        updateStates()
         setLoading(false)
     }
 
@@ -69,20 +68,18 @@ export default function usePortfolio({ currentNetwork, account }) {
                 return products
             }
         ))]))).map(([network, protocols]) => [network, protocols.flat(2)]))
-
-        updateStates()
     }
 
     const refreshBalanceIfFocused = useCallback(() => {
         if (document.hasFocus() && !isLoading) fetchBalances(account)
     }, [isLoading, account])
 
-    const requestOtherProtocolsRefresh = useCallback(() => {
+    const requestOtherProtocolsRefresh = async () => {
         if ((Date.now() - lastOtherProcolsRefresh) > 30000) {
-            fetchOtherProtocols(account)
+            await fetchOtherProtocols(account)
             lastOtherProcolsRefresh = Date.now()
         }
-    }, [account])
+    }
 
     // Fetch balances and protocols on account change
     useEffect(() => {
@@ -91,7 +88,7 @@ export default function usePortfolio({ currentNetwork, account }) {
     }, [account])
 
     // Update states on network change
-    useEffect(() => updateStates(), [currentNetwork])
+    useEffect(() => updateStates(currentNetwork), [isLoading, currentNetwork])
 
     // Refresh balance periodically
     useEffect(() => {
