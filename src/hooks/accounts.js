@@ -1,8 +1,11 @@
 import { useState, useCallback } from 'react'
 import { useToasts } from '../hooks/toasts'
+import { useHistory } from 'react-router-dom'
 
 export default function useAccounts () {
     const { addToast } = useToasts()
+    const history = useHistory()
+
     const [accounts, setAccounts] = useState(() => {
       try {
         const accs = JSON.parse(localStorage.accounts || '[]')
@@ -43,7 +46,7 @@ export default function useAccounts () {
   
       if (opts.select) onSelectAcc(acc.id)
       if (Object.keys(accounts).length) {
-        window.location.href = '/#/wallet'
+        history.push('/wallet/dashboard')
       }
     }, [accounts, addToast])
     return { accounts, selectedAcc, onSelectAcc, onAddAccount }

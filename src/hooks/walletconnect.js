@@ -68,7 +68,7 @@ export default function useWalletConnect ({ account, chainId, onCallRequest }) {
         }
         let connector
         try {
-            connector = new WalletConnectCore({
+            connector = connectors[connectorOpts.uri] = new WalletConnectCore({
                 connectorOpts,
                 cryptoLib,
                 sessionStorage: noopSessionStorage
@@ -86,7 +86,7 @@ export default function useWalletConnect ({ account, chainId, onCallRequest }) {
         let sessionStart
         let sessionTimeout
         if (!connector.session.peerMeta) sessionTimeout = setTimeout(() => {
-            if (!connector.session.peerMeta) addToast('Not able to get session from dApp - perhaps the link has expired?', { error: true })
+            if (!connector.session.peerMeta) addToast('Unable to get session from dApp - perhaps the link has expired?', { error: true })
         }, SESSION_TIMEOUT)
 
         connector.on('session_request', (error, payload) => {
@@ -141,6 +141,7 @@ export default function useWalletConnect ({ account, chainId, onCallRequest }) {
                 return
             }
 
+            clearTimeout(sessionTimeout)
             // NOTE the dispatch() will cause double rerender when we trigger a disconnect,
             // cause we will call it once on disconnect() and once when the event arrives
             // we can prevent this by checking if (!connectors[...]) but we'd rather stay safe and ensure
@@ -187,7 +188,7 @@ export default function useWalletConnect ({ account, chainId, onCallRequest }) {
     // Side effects on init
     useEffect(() => {
         state.connections.forEach(({ uri, session }) => {
-            if (!connectors[uri]) connectors[uri] = connect({ uri, session })
+            if (!connectors[uri]) connect({ uri, session })
         })
     // we specifically want to run this only once despite depending on state
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -207,12 +208,14 @@ export default function useWalletConnect ({ account, chainId, onCallRequest }) {
                 }
             }
         })
-
+        
         localStorage[STORAGE_KEY] = JSON.stringify(state)
 
         if (updateConnections) dispatch({
             type: 'updateConnections',
-            connections: state.connections.map(({ uri }) => ({ uri, session: connectors[uri].session }))
+            connections: state.connections
+                .filter(({ uri }) => connectors[uri])
+                .map(({ uri }) => ({ uri, session: connectors[uri].session }))
         })
     }, [state, account, chainId, connect])
 
@@ -239,18 +242,18 @@ function runInitEffects(wcConnect) {
 
     // @TODO on focus and on user action
     const clipboardError = e => console.log('non-fatal clipboard err', e)
-    var isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1
-    if (!isFirefox) {
-        navigator.permissions.query({ name: 'clipboard-read' }).then((result) => {
-            // If permission to read the clipboard is granted or if the user will
-            // be prompted to allow it, we proceed.
-
+    const isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1
+    const tryReadClipboard = () => {
+        if (isFirefox) return
+        navigator.permissions.query({ name: 'clipboard-read' }).then(result => {
             if (result.state === 'granted' || result.state === 'prompt') {
                 navigator.clipboard.readText().then(clipboard => {
-                    if (clipboard.startsWith('wc:')) wcConnect({ uri: clipboard })
+                    if (clipboard.startsWith('wc:') && !connectors[clipboard]) wcConnect({ uri: clipboard })
                 }).catch(clipboardError)
             }
-            // @TODO show the err to the user if they triggered the action
         }).catch(clipboardError)
     }
+    tryReadClipboard()
+    window.addEventListener('focus', tryReadClipboard)
+    return () => window.removeEventListener('focus', tryReadClipboard)
 }

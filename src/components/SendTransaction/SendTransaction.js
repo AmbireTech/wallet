@@ -7,7 +7,6 @@ import './SendTransaction.css'
 import { Loading } from '../common'
 import { useEffect, useState } from 'react'
 
-// @TODO get rid of these, should be in the SignTransaction component
 import fetch from 'node-fetch'
 import { Bundle } from 'adex-protocol-eth/js'
 import { getDefaultProvider } from 'ethers'
@@ -16,13 +15,14 @@ import { useHistory } from 'react-router'
 import { useToasts } from '../../hooks/toasts'
 import { getWallet } from '../../lib/getWallet'
 import accountPresets from '../../consts/accountPresets'
+import { sendNoRelayer } from './noRelayer'
 
 const ERC20 = new Interface(require('adex-protocol-eth/abi/ERC20'))
 
 const SPEEDS = ['slow', 'medium', 'fast', 'ape']
 const DEFAULT_SPEED = 'fast'
-const ADDED_GAS_TOKEN = 40000
-const ADDED_GAS_NATIVE = 15000
+const ADDED_GAS_TOKEN = 20000
+const ADDED_GAS_NATIVE = 10000
 
 function notifyUser (bundle) {
   if (window.Notification && Notification.permission !== 'denied') {
@@ -68,7 +68,7 @@ export default function SendTransaction ({ accounts, network, selectedAcc, reque
       && txn && (!txn.from || txn.from.toLowerCase() === selectedAcc.toLowerCase())
     )
   useEffect(() => {
-    if (estimation) setEstimation(null)
+    setEstimation(null)
     if (!eligibleRequests.length) return
     // Notify the user with the latest bundle
     notifyUser(bundle)
@@ -95,7 +95,7 @@ export default function SendTransaction ({ accounts, network, selectedAcc, reque
         addToast(`Estimation error: ${e.message || e}`, { error: true })
         console.log('estimation error', e)
       })
-    }, [eligibleRequests.length])
+    }, [eligibleRequests.length, setEstimation, addToast, nativeAssetSymbol, network.rpc, relayerURL])
 
   if (!selectedAcc) return (<h3 className='error'>No selected account</h3>)
 
@@ -123,25 +123,29 @@ export default function SendTransaction ({ accounts, network, selectedAcc, reque
     ])]
     const finalBundle = new Bundle({
       ...bundle,
-      txns: [...bundle.txns, feeTxn]
+      txns: relayerURL ? [...bundle.txns, feeTxn] : [...bundle.txns]
     })
 
     const provider = getDefaultProvider(network.rpc)
-    await finalBundle.getNonce(provider)
-
-    finalBundle.gasLimit = estimation.gasLimit + addedGas
-
+    const signer = finalBundle.signer
     const wallet = getWallet({
-      signer: finalBundle.signer,
-      signerExtra: account.signerExtra
+      signer,
+      signerExtra: account.signerExtra,
+      chainId: network.chainId
     })
-    // @TODO relayerless mode
+    if (relayerURL) {
+      finalBundle.gasLimit = estimation.gasLimit + addedGas
 
-    await finalBundle.sign(wallet)
-    const bundleResult = await finalBundle.submit({ relayerURL, fetch })
-    resolveMany(requestIds, { success: bundleResult.success, result: bundleResult.txId, message: bundleResult.message })
-
-    return bundleResult
+      await finalBundle.getNonce(provider)
+      await finalBundle.sign(wallet)
+      const bundleResult = await finalBundle.submit({ relayerURL, fetch })
+      resolveMany(requestIds, { success: bundleResult.success, result: bundleResult.txId, message: bundleResult.message })
+      return bundleResult
+    } else {
+      const result = await sendNoRelayer({ finalBundle, account, wallet, estimation, provider, nativeAssetSymbol })
+      resolveMany(requestIds, { success: true, result: result.txId })
+      return result
+    }
   }
 
   const approveTxn = () => {
@@ -153,7 +157,7 @@ export default function SendTransaction ({ accounts, network, selectedAcc, reque
       .then(bundleResult => {
         if (bundleResult.success) addToast((
           <span>Transaction signed and sent successfully!
-            &nbsp;<a href={explorerUrl+'/tx/'+bundleResult.txId} target='_blank'>View on block explorer.</a>
+            &nbsp;<a href={explorerUrl+'/tx/'+bundleResult.txId} target='_blank' rel='noreferrer'>View on block explorer.</a>
           </span>))
         else addToast(`Transaction error: ${bundleResult.message || 'unspecified error'}`, { error: true })
 
@@ -161,7 +165,9 @@ export default function SendTransaction ({ accounts, network, selectedAcc, reque
       })
       .catch(e => {
         console.error(e)
-        addToast(`Signing error: ${e.message || e}`, { error: true })
+        if (e && e.message.includes('must provide an Ethereum address')) {
+          addToast(`Signing error: not connected with the correct address. Make sure you're connected with ${bundle.signer.address}.`, { error: true })
+        } else addToast(`Signing error: ${e.message || e}`, { error: true })
       })
       .then(() => setSigningInProgress(false))
 
@@ -226,7 +232,12 @@ export default function SendTransaction ({ accounts, network, selectedAcc, reque
                               <GiTakeMyMoney size={35}/>
                               Fee
                           </div>
-                          <FeeSelector estimation={estimation} setEstimation={setEstimation} network={network}></FeeSelector>
+                          <FeeSelector
+                            signer={bundle.signer}
+                            estimation={estimation}
+                            setEstimation={setEstimation}
+                            network={network}
+                          ></FeeSelector>
                   </div>
               </div>
               <div className="panel">
@@ -243,9 +254,15 @@ export default function SendTransaction ({ accounts, network, selectedAcc, reque
   </div>)
 }
 
-function FeeSelector ({ estimation, network, setEstimation }) {
+function FeeSelector ({ signer, estimation, network, setEstimation }) {
   if (!estimation) return (<Loading/>)
   if (!estimation.feeInNative) return (<></>)
+  if (estimation && !estimation.feeInUSD && estimation.gasLimit < 40000) {
+    return (<div>
+      <b>WARNING:</b> Fee estimation unavailable when you're doing your first account transaction and you are not connected to a relayer. You will pay the fee from <b>{signer.address}</b>, make sure you have {network.nativeAssetSymbol} there.
+    </div>)
+  }
+
   const { nativeAssetSymbol } = network
   const tokens = estimation.remainingFeeTokenBalances || ({ symbol: nativeAssetSymbol, decimals: 18 })
   const onFeeCurrencyChange = e => {
@@ -287,7 +304,9 @@ function FeeSelector ({ estimation, network, setEstimation }) {
     <div className='feeAmountSelectors'>
       {feeAmountSelectors}
     </div>
-    {!estimation.feeInUSD ? (<span><b>WARNING:</b> Paying fees in tokens other than {nativeAssetSymbol} is unavailable because you are not connected to a relayer.</span>) : (<></>)}
+    {!estimation.feeInUSD ?
+      (<span><b>WARNING:</b> Paying fees in tokens other than {nativeAssetSymbol} is unavailable because you are not connected to a relayer. You will pay the fee from <b>{signer.address}</b>.</span>)
+      : (<></>)}
   </>)
 }
 
