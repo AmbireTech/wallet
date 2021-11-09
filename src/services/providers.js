@@ -36,14 +36,22 @@ export const openPayTrie = ({ walletAddress, email, ...rest }) => {
     })
 };
 
-export const openTransak = ({ walletAddress }) => {
+export const openTransak = ({ walletAddress, selectedNetwork }) => {
+    let networks = selectedNetwork === 'avalanche' ? 'avaxcchain' : selectedNetwork
+    let defaultCurency = {
+        'ethereum': 'USDC',
+        'polygon': 'USDC',
+        'arbitrum': 'ETH',
+        'avaxcchain': 'AVAX'
+    }
+
     const transak = new transakSDK({
         apiKey: TRANSAK_API_KEY,
         environment: TRANSAK_ENV,
-        cryptoCurrencyList: 'USDC',
-        defaultCryptoCurrency: 'USDC',
+        networks,
+        defaultCryptoCurrency: defaultCurency[networks],
         disableWalletAddressForm: true,
-        walletAddress: walletAddress,
+        walletAddress,
         themeColor: '282b33',
         email: '',
         redirectURL: '',
