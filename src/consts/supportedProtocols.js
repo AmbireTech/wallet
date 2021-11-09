@@ -3,11 +3,11 @@
 const suportedProtocols = [
     {
         network: 'ethereum',
-        protocols: ['1inch', 'aave-v2', 'alchemix', 'badger', 'balancer-v2', 'compound', 'cream', 'curve', 'sushiswap', 'uniswap-v2', 'uniswap-v3', 'tokens']
+        protocols: ['1inch', 'aave-v2', 'alchemix', 'badger', 'balancer-v2', 'compound', 'cream', 'curve', 'sushiswap', 'uniswap-v2', 'uniswap-v3']
     },
     {
         network: 'polygon',
-        protocols: ['1inch', 'aave-v2', 'quickswap', 'sushiswap', 'tokens']
+        protocols: ['aave-v2', 'quickswap', 'sushiswap']
     }
 ]
 

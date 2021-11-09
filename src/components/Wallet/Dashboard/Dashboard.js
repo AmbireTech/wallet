@@ -21,11 +21,10 @@ export default function Dashboard({ portfolio }) {
     ]
 
     useLayoutEffect(() => {
-        const totalTokens = portfolio.tokens.map(({ balanceUSD }) => balanceUSD).reduce((acc, curr) => acc + curr, 0);
-        const tokensData = portfolio.tokens
+        const tokensData = portfolio.balance.tokens
             .map(({ label, balanceUSD }) => ({
                 label,
-                value: Number(((balanceUSD / totalTokens) * 100).toFixed(2))
+                value: Number(((balanceUSD / portfolio.balance.total.full) * 100).toFixed(2))
             }))
             .filter(({ value }) => value > 0);
 
@@ -44,7 +43,7 @@ export default function Dashboard({ portfolio }) {
 
         setChartTokensData(tokensData);
         setChartAssetsData(assetsData)
-    }, [portfolio.totalUSD, portfolio.tokens, portfolio.assets]);
+    }, [portfolio.balance]);
 
     return (
         <section id="dashboard">
@@ -57,8 +56,8 @@ export default function Dashboard({ portfolio }) {
                                 <Loading/>
                                 :
                                 <div id="total">
-                                    <span className="green-highlight">$</span> { portfolio.totalUSD.formated }
-                                    <span className="green-highlight">.{ portfolio.totalUSD.decimals }</span>
+                                    <span className="green-highlight">$</span> { portfolio.balance.total.truncated }
+                                    <span className="green-highlight">.{ portfolio.balance.total.decimals }</span>
                                 </div>
                         }
                     </div>
