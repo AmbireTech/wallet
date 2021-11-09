@@ -16,6 +16,7 @@ import SendTransaction from './components/SendTransaction/SendTransaction'
 import useAccounts from './hooks/accounts'
 import useNetwork from './hooks/network'
 import useWalletConnect from './hooks/walletconnect'
+import useNotifications from './hooks/notifications'
 import { usePortfolio } from './hooks'
 
 // @TODO consts/cfg, dev vs prod
@@ -32,6 +33,9 @@ function AppInner () {
     currentNetwork: network.id,
     account: selectedAcc
   })
+
+  // Show notifications for all requests
+  useNotifications(requests)
 
   // Navigate to the send transaction dialog if we have a new txn
   const history = useHistory()

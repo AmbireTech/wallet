@@ -78,7 +78,7 @@
     margin-bottom: 5px;
 }
 
-#sendTransaction button {
+#sendTransaction .actions button {
     background-color: rgb(128, 255, 219);
     width: 45%;
     margin: 2em 2.5% 0em;
