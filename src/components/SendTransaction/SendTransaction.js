@@ -278,7 +278,7 @@ function Actions({ estimation, feeSpeed, approveTxn, rejectTxn, signingInProgres
     </>)
   }
 
-  return (<div>
+  return (<div className='buttons'>
       {rejectButton}
       <button className='approveTxn' disabled={!estimation || signingInProgress} onClick={approveTxn}>
         {signingInProgress ? (<><Loading/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Signing...</>) : (<>Sign and send</>)}

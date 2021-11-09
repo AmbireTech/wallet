@@ -33,8 +33,11 @@
 }
 
 #sendTransaction h2 {
-    margin-top: 2em;
+    margin-top: 30px;
     text-align: center;
+    text-transform: uppercase;
+    color: #ccc;
+    margin-bottom: 30px;
 }
 
 #sendTransaction .panelHolder {
@@ -70,7 +73,7 @@
 
 #sendTransaction .secondaryPanel {
     min-width: 450px;
-    max-width: 600px;
+    max-width: 650px;
 }
 
 #sendTransaction .feePanel {
@@ -130,6 +133,11 @@
     font-size: 1em;
     vertical-align: middle;
     position: relative;
+}
+
+#sendTransaction .buttons {
+    justify-content: center;
+    display: flex;
 }
 
 #sendTransaction button.rejectTxn {
