@@ -1,3 +1,28 @@
+#sendTransaction {
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    right: 0px;
+    bottom: 0px;
+    z-index: 999;
+    background-color: #282b33;
+    /*
+    background-color: rgba(40, 43, 51, 0.95);
+    backdrop-filter: blur(8px);
+    */
+}
+
+#sendTransaction .dismiss {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    cursor: pointer;
+    color: #ccc;
+}
+#sendTransaction .dismiss:hover {
+    color: white;
+}
+
 #sendTransaction h2 {
     margin-top: 2em;
     text-align: center;
