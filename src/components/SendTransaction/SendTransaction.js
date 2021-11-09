@@ -1,8 +1,8 @@
 //import { GrInspect } from 'react-icons/gr'
 // GiObservatory is also interesting
 import { GiTakeMyMoney, GiSpectacles } from 'react-icons/gi'
-import { FaSignature, FaTimes, FaChevronLeft } from 'react-icons/fa'
-import { getTransactionSummary } from '../../lib/humanReadableTransactions'
+import { FaSignature, FaTimes, FaChevronLeft, FaChevronDown, FaChevronUp } from 'react-icons/fa'
+import { getContractName, getTransactionSummary } from '../../lib/humanReadableTransactions'
 import './SendTransaction.css'
 import { Loading } from '../common'
 import { useEffect, useState, useMemo } from 'react'
@@ -209,13 +209,14 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
                       <div className='listOfTransactions'>
                           {bundle.txns.map((txn, i) => {
                             const isFirstFailing = estimation && !estimation.success && estimation.firstFailing === i
-                            return (
-                              <div key={bundle.requestIds[i]} className={isFirstFailing ? 'txnSummary firstFailing' : 'txnSummary'}>
-                                  <div>{getTransactionSummary(txn, bundle.network)}</div>
-                                  {isFirstFailing ? (<div><b>This is the first failing transaction.</b></div>) : (<></>)}
-                                  <button onClick={() => resolveMany([bundle.requestIds[i]], { message: 'rejected' })}><FaTimes/></button>
-                              </div>
-                          )})}
+                            return (<TxnPreview
+                              key={bundle.requestIds[i]}
+                              network={network}
+                              onDismiss={() => resolveMany([bundle.requestIds[i]], { message: 'rejected' })}
+                              txn={txn} bundle={bundle}
+                              isFirstFailing={isFirstFailing}/>
+                            )
+                          })}
                       </div>
                       <div className='batchingNote'>
                           <b>DEGEN TIP:</b> You can sign multiple transactions at once. Add more transactions to this batch by interacting with a connected dApp right now.
@@ -259,6 +260,8 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
 }
 
 function Actions({ estimation, feeSpeed, approveTxn, rejectTxn, signingInProgress }) {
+  //const [quickAccSignInProgress, setQuickAccSignInProgress] = useState(false)
+
   const rejectButton = (
     <button className='rejectTxn' onClick={rejectTxn}>Reject</button>
   )
@@ -280,4 +283,28 @@ function Actions({ estimation, feeSpeed, approveTxn, rejectTxn, signingInProgres
         }
       </button>
   </div>)
+}
+
+function TxnPreview ({ txn, omDismiss, bundle, network, isFirstFailing }) {
+  const [isExpanded, setExpanded] = useState(false)
+  const contractName = getContractName(txn, network.id)
+  return (
+    <div className={isFirstFailing ? 'txnSummary firstFailing' : 'txnSummary'}>
+        <div>{getTransactionSummary(txn, bundle.network)}</div>
+        {isFirstFailing ? (<div><b>This is the first failing transaction.</b></div>) : (<></>)}
+
+        {
+          isExpanded ? (<div className='advanced'>
+            <div><b>Interacting with (<i>to</i>):</b> {txn[0]}{contractName ? ` (${contractName})` : ''}</div>
+            <div><b>{network.nativeAssetSymbol} to be sent (<i>value</i>):</b> {txn[1]}</div>
+            <div><b>Data:</b> {txn[2]}</div>
+          </div>) : (<></>)
+        }
+
+        <span className='expandTxn' onClick={() => setExpanded(e => !e)}>
+          {isExpanded ? (<FaChevronUp/>) : (<FaChevronDown/>)}
+        </span>
+        <span className='dismissTxn' onClick={omDismiss}><FaTimes/></span>
+    </div>
+  )
 }

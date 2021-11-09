@@ -35,3 +35,11 @@ export function getTransactionSummary(txn, networkId) {
     }
     return [callSummary, sendSummary].filter(x => x).join(', ')
 }
+
+export function getContractName(txn, networkId) {
+    const [to] = txn
+    const network = networks.find(x => x.id === networkId || x.chainId === networkId)
+    const contractKey = network.id + ':' + getAddress(to)
+    const contractInfo = verifiedContracts[contractKey]
+    return contractInfo ? contractInfo.name : null
+}

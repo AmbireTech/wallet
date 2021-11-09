@@ -52,6 +52,7 @@
     box-sizing: border-box;
     background-color: rgba(0, 0, 0, 0.2);
     margin-bottom: 2em;
+    max-width: 650px;
 }
 
 #sendTransaction .panel .heading {
@@ -160,19 +161,41 @@
     margin: 10px auto;
     min-height: 50px;
     position: relative;
+    user-select: none;
 }
 
 #sendTransaction .txnSummary > div {
     width: calc(100% - 70px);
 }
 
-#sendTransaction .txnSummary button {
-    position: absolute;
+#sendTransaction .txnSummary .dismissTxn > svg {
     right: 20px;
-    top: 0px;
+}
+#sendTransaction .txnSummary .expandTxn > svg {
+    right: 70px;
+}
+#sendTransaction .txnSummary svg {
+    position: absolute;
+    top: 30px;
     bottom: 0px;
-    height: 50px;
-    margin: auto;
+    width: 25px;
+    height: 30px;
+    color: #ccc;
+    cursor: pointer;
+}
+#sendTransaction .txnSummary svg:hover {
+    color: #fff;
+}
+
+#sendTransaction .advanced {
+    word-wrap: break-word;
+    max-width: 600px;
+    font-family: monospace;
+    margin-top: 30px;
+}
+#sendTransaction .advanced div {
+    margin-bottom: 20px;
+    user-select: text;
 }
 
 #sendTransaction .failingTxn {
