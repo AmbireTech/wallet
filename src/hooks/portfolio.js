@@ -9,7 +9,8 @@ const getBalances = (apiKey, network, protocol, address) => fetchGet(`${ZAPPER_A
 
 let tokensByNetworks = {}
 let balanceByNetworks = {}
-let protocolsByNetworks = {}
+let otherProtocolsByNetworks = {}
+let lastOtherProcolsRefresh = null
 
 export default function usePortfolio({ currentNetwork, account }) {
     const [isLoading, setLoading] = useState(true);
@@ -20,7 +21,22 @@ export default function usePortfolio({ currentNetwork, account }) {
     const [otherBalances, setOtherBalances] = useState([]);
     const [assets, setAssets] = useState([]);
 
-    const updateBalances = async (account) => {
+    const updateStates = useCallback(() => {
+        if (balanceByNetworks[currentNetwork]) {
+            setBalance(balanceByNetworks[currentNetwork])
+            setOtherBalances(Object.fromEntries(Object.entries(balanceByNetworks).filter(([network]) => network !== currentNetwork)))
+        }
+
+        if (tokensByNetworks[currentNetwork] && otherProtocolsByNetworks[currentNetwork])
+            setAssets([
+                ...tokensByNetworks[currentNetwork].products,
+                ...otherProtocolsByNetworks[currentNetwork]
+            ])
+    }, [currentNetwork])
+
+    const fetchBalances = async (account, load = false) => {
+        if (load) setLoading(true)
+
         tokensByNetworks = Object.fromEntries(await Promise.all(Object.values(suportedProtocols).map(async ({ network }) => [
             network,
             Object.values(await getBalances(ZAPPER_API_KEY, network, 'tokens', account))[0]
@@ -39,10 +55,13 @@ export default function usePortfolio({ currentNetwork, account }) {
                 tokens: products.map(({ assets }) => assets.map(({ tokens }) => tokens)).flat(2)
             }]
         }))
+
+        updateStates()
+        setLoading(false)
     }
 
-    const updateProtocols = async (account) => {
-        protocolsByNetworks = Object.fromEntries((await Promise.all(suportedProtocols.map(async ({ network, protocols }) => [
+    const fetchOtherProtocols = async (account) => {
+        otherProtocolsByNetworks = Object.fromEntries((await Promise.all(suportedProtocols.map(async ({ network, protocols }) => [
             network,
             await Promise.all(protocols.map(async protocol => {
                 const balance = await getBalances(ZAPPER_API_KEY, network, protocol, account)
@@ -50,49 +69,47 @@ export default function usePortfolio({ currentNetwork, account }) {
                 return products
             }
         ))]))).map(([network, protocols]) => [network, protocols.flat(2)]))
+
+        updateStates()
     }
 
-    const refreshIfFocused = useCallback(() => {
-        if (document.hasFocus() && !isLoading) updateBalances(account)
+    const refreshBalanceIfFocused = useCallback(() => {
+        if (document.hasFocus() && !isLoading) fetchBalances(account)
     }, [isLoading, account])
 
-    useEffect(() => {
-        async function updateAll() {
-            setLoading(true)
-            await updateBalances(account)
-            await updateProtocols(account)
-            setLoading(false)
+    const requestOtherProtocolsRefresh = useCallback(() => {
+        if ((Date.now() - lastOtherProcolsRefresh) > 30000) {
+            fetchOtherProtocols(account)
+            lastOtherProcolsRefresh = Date.now()
         }
-        updateAll()
     }, [account])
 
+    // Fetch balances and protocols on account change
     useEffect(() => {
-        if (!isLoading) {
-            setBalance(balanceByNetworks[currentNetwork])
-            setOtherBalances(Object.fromEntries(Object.entries(balanceByNetworks).filter(([network]) => network !== currentNetwork)))
-            setAssets([
-                ...tokensByNetworks[currentNetwork].products,
-                ...protocolsByNetworks[currentNetwork]
-            ])
-        }
-    }, [isLoading, currentNetwork])
+        fetchBalances(account, true)
+        fetchOtherProtocols(account)
+    }, [account])
 
-    // Refresh periodically
+    // Update states on network change
+    useEffect(() => updateStates(), [currentNetwork])
+
+    // Refresh balance periodically
     useEffect(() => {
-        const refreshInterval = setInterval(refreshIfFocused, 30000)
+        const refreshInterval = setInterval(refreshBalanceIfFocused, 30000)
         return () => clearInterval(refreshInterval)
-    }, [refreshIfFocused])
+    }, [refreshBalanceIfFocused])
 
-    // Refresh when window is focused
+    // Refresh balance when window is focused
     useEffect(() => {
-        window.addEventListener('focus', refreshIfFocused)
-        return () => window.removeEventListener('focus', refreshIfFocused)
-    }, [refreshIfFocused])
+        window.addEventListener('focus', refreshBalanceIfFocused)
+        return () => window.removeEventListener('focus', refreshBalanceIfFocused)
+    }, [refreshBalanceIfFocused])
 
     return {
         isLoading,
         balance,
         otherBalances,
-        assets
+        assets,
+        requestOtherProtocolsRefresh
     }
 }
