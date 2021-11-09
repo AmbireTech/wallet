@@ -3,19 +3,12 @@ import "./Security.scss";
 import usePrivileges from "../../../hooks/privileges";
 import { Loading } from "../../common";
 import { Select } from "../../common";
+import { Interface } from "ethers/lib/utils";
+import privilegesOptions from "../../../consts/privilegesOptions";
 
-const OPTIONS_PRIVILEGES = [
-  {
-    id: "1",
-    label: "YES",
-    value: true,
-  },
-  {
-    id: "2",
-    label: "NO",
-    value: false,
-  },
-];
+const IDENTITY_INTERFACE = new Interface(
+  require("adex-protocol-eth/abi/Identity5.2")
+);
 
 const Security = (props) => {
   const { privileges, updatedBlock, isLoading } = usePrivileges({
@@ -25,29 +18,39 @@ const Security = (props) => {
   });
 
   const privList = Object.keys(privileges).map((key) => {
+    const onSelectPriv = (val) => {
+      if (val === privileges[key]) return
+      
+      const txn = {
+        to: props.selectedAcc,
+        data: IDENTITY_INTERFACE.encodeFunctionData("setAddrPrivilege", [
+          key,
+          val,
+        ]),
+      };
+      console.log('txn', txn)
+    };
+
     return (
       <li key={key}>
         <div>{key}</div>
         <Select
           defaultValue={privileges[key]}
-          items={OPTIONS_PRIVILEGES}
+          items={privilegesOptions}
           itemLabel="label"
           itemKey="value"
-          onChange={(value) => onSelectPriv(value)}
+          onChange={onSelectPriv}
         />
       </li>
     );
   });
-
-  const onSelectPriv = (val) => {
-    console.log("Priv value", val);
-  };
 
   return (
     <section id="security">
       <div className="panel">
         <div className="title">Set Privileges</div>
         {isLoading && <Loading />}
+        {/* Set a msg if no privileges */}
         <ul className="content">{!isLoading && privList}</ul>
       </div>
     </section>
