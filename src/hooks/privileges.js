@@ -5,13 +5,6 @@ export default function usePrivileges({ identity, network, accounts }) {
   const [isLoading, setLoading] = useState(true);
   const [privileges, setPrivileges] = useState({});
 
-  // TODO: Remove mapVal
-  const mapVal = val => {
-		if (val === '0x0000000000000000000000000000000000000000000000000000000000000000') return false
-		if (val === '0x0000000000000000000000000000000000000000000000000000000000000001') return true
-		return val
-	}
-
   const updatePrivileges = async (identity, network) => {
     setLoading(true);
     let requestPrivResp = await getPrivileges(identity, network, {});
@@ -22,7 +15,7 @@ export default function usePrivileges({ identity, network, accounts }) {
       const filteredPrivBySelectedAccount = Object.keys(requestPrivResp.body.privileges).filter(
         (x) => x === signerAddress
       );
-      const filtered = filteredPrivBySelectedAccount.reduce((obj, key) => ({ ...obj, [key]: mapVal(requestPrivResp.body.privileges[key]) }), {});
+      const filtered = filteredPrivBySelectedAccount.reduce((obj, key) => ({ ...obj, [key]: requestPrivResp.body.privileges[key] }), {});
       
       setPrivileges(filtered)
     } else {
@@ -34,7 +27,7 @@ export default function usePrivileges({ identity, network, accounts }) {
 
   useEffect(() => {
     updatePrivileges(identity, network);
-  }, [identity, network]);
+  }, [identity, network, accounts]);
 
   return {
     privileges,

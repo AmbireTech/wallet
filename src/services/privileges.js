@@ -1,4 +1,4 @@
-import { fetch, fetchCaught } from "../lib/fetch";
+import { fetchCaught } from "../lib/fetch";
 
 // @TODO consts/cfg
 const relayerURL = "http://localhost:1934";
