@@ -149,3 +149,44 @@
     top: 20px;
     left: 8px;
 }
+
+#sendTransaction .listOfTransactions {
+    min-height: 300px;
+}
+#sendTransaction .txnSummary {
+    background-color: rgba(0, 0, 0, 0.2);
+    padding: 20px;
+    margin: 10px auto;
+    min-height: 50px;
+    position: relative;
+}
+
+#sendTransaction .txnSummary > div {
+    width: calc(100% - 70px);
+}
+
+#sendTransaction .txnSummary button {
+    position: absolute;
+    right: 20px;
+    top: 0px;
+    bottom: 0px;
+    height: 50px;
+    margin: auto;
+}
+
+#sendTransaction .failingTxn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#sendTransaction .failingTxn svg {
+    width: 50px;
+    height: 50px;
+}
+
+#sendTransaction .failingTxn svg:first-child {
+    color: red;
+    width: 90px;
+    height: 90px;
+}
