@@ -103,7 +103,7 @@ const TopBar = ({
           ))}
         </DropDown>
 
-        <Select defaultValue={selectedAcc} items={accountsItems} onChange={value => onSelectAcc(value)}>
+        <Select monospace defaultValue={selectedAcc} items={accountsItems} onChange={value => onSelectAcc(value)}>
           <div id="add-account">
             <NavLink to="/add-account">
               <Button icon={<AiOutlinePlus/>} small>Add Account</Button>
