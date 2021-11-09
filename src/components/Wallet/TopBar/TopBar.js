@@ -1,6 +1,6 @@
 import "./TopBar.scss";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { NavLink } from "react-router-dom";
 import { FiHelpCircle } from "react-icons/fi";
 import { AiOutlinePlus } from "react-icons/ai";
@@ -42,7 +42,7 @@ const TopBar = ({
     return status;
   };
 
-  const readClipboard = async () => {
+  const readClipboard = useCallback(async () => {
     if (await checkPermissions()) {
       const content = await navigator.clipboard.readText();
       if (content.startsWith('wc:')) connect({ uri: content });
@@ -50,12 +50,12 @@ const TopBar = ({
       const uri = prompt("Enter WalletConnect URI");
       if (uri) connect({ uri });
     }
-  };
+  }, [connect]);
 
   useEffect(() => {
     window.addEventListener('focus', readClipboard)
     return () => window.removeEventListener('focus', readClipboard)
-  }, [])
+  }, [readClipboard])
 
   const accountsItems = accounts.map(({ id }) => ({
     value: id,
