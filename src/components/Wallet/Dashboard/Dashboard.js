@@ -1,6 +1,6 @@
 import './Dashboard.scss'
 
-import { useLayoutEffect, useState } from 'react'
+import { useEffect, useLayoutEffect, useState } from 'react'
 import { GiToken } from 'react-icons/gi'
 
 import { Chart, Loading, Segments } from '../../common'
@@ -44,6 +44,8 @@ export default function Dashboard({ portfolio, setNetwork }) {
         setChartTokensData(tokensData);
         setChartAssetsData(assetsData)
     }, [portfolio.balance, portfolio.assets]);
+
+    useEffect(() => portfolio.requestOtherProtocolsRefresh(), [])
 
     return (
         <section id="dashboard">
