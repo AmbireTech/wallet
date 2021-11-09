@@ -85,7 +85,7 @@ const TopBar = ({
             <div className="item dapps-item" key={session.peerId}>
               <div className="icon">
                 <img
-                  src={session.peerMeta.icons[0]}
+                  src={session.peerMeta.icons.filter(x => !x.endsWith('favicon.ico'))[0]}
                   alt={session.peerMeta.name}
                 ></img>
               </div>
