@@ -1,4 +1,4 @@
-import './Providers.css'
+import './Providers.scss'
 
 import RAMP_LOGO from '../../../../resources/ramp.svg';
 import PAYTRIE_LOGO from '../../../../resources/paytrie.svg';
