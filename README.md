@@ -81,6 +81,15 @@ This is used by the WalletConnect and Gnosis Safe Apps hooks for the queue of si
 }
 ```
 
+`resolveMany` response:
+```
+{
+	success, // boolean
+	message, // string, optional, if success is false
+	result, // string or object, optional, if success is true, depending on the request; normally a string, eg eth_sendTransaction would be answered with a hex hash (0x...)
+}
+```
+
 
 ### Deployment
 
