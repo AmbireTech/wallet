@@ -185,7 +185,7 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
   }
 
   return (<div id="sendTransaction">
-      <h2>Pending transaction</h2>
+      <h2>Pending transactions: {bundle.txns.length}</h2>
       <div className="panelHolder">
           <div className="panel">
               <div className="heading">
