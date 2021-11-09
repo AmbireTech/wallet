@@ -78,7 +78,7 @@ export default function Dashboard({ portfolio, allNetworks, setNetwork }) {
                 </div>
                 <div id="chart" className="panel">
                     <div className="title">
-                        Balance by token
+                        Balance by
                         <Segments small defaultValue={chartSegments[0].value} segments={chartSegments} onChange={setChartType}/>
                     </div>
                     <div className="content">
