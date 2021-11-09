@@ -16,9 +16,12 @@
         justify-content: center;
         font-size: 30px;
         font-weight: bold;
-        color: rgba(255, 255, 255, 0.5);
-        backdrop-filter: blur(7px);
+        color: rgba(255, 255, 255, 0.6);
         background-color: rgba(0, 0, 0, 0.1);
+    }
+
+    .blurred {
+        filter: blur(7px);
     }
 
     .panel {
