@@ -86,7 +86,7 @@ export default function useWalletConnect ({ account, chainId, onCallRequest }) {
         let sessionStart
         let sessionTimeout
         if (!connector.session.peerMeta) sessionTimeout = setTimeout(() => {
-            if (!connector.session.peerMeta) addToast('Not able to get session from dApp - perhaps the link has expired?', { error: true })
+            if (!connector.session.peerMeta) addToast('Unable to get session from dApp - perhaps the link has expired?', { error: true })
         }, SESSION_TIMEOUT)
 
         connector.on('session_request', (error, payload) => {
@@ -241,18 +241,18 @@ function runInitEffects(wcConnect) {
 
     // @TODO on focus and on user action
     const clipboardError = e => console.log('non-fatal clipboard err', e)
-    var isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1
-    if (!isFirefox) {
-        navigator.permissions.query({ name: 'clipboard-read' }).then((result) => {
-            // If permission to read the clipboard is granted or if the user will
-            // be prompted to allow it, we proceed.
-    
+    const isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1
+    const tryReadClipboard = () => {
+        if (isFirefox) return
+        navigator.permissions.query({ name: 'clipboard-read' }).then(result => {
             if (result.state === 'granted' || result.state === 'prompt') {
                 navigator.clipboard.readText().then(clipboard => {
                     if (clipboard.startsWith('wc:')) wcConnect({ uri: clipboard })
                 }).catch(clipboardError)
             }
-            // @TODO show the err to the user if they triggered the action
         }).catch(clipboardError)
     }
+    tryReadClipboard()
+    window.addEventListener('focus', tryReadClipboard)
+    return () => window.removeEventListener('focus', tryReadClipboard)
 }
