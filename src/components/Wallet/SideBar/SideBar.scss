@@ -10,6 +10,10 @@
     overflow: hidden;
     transition: width 0.1s ease-in-out;
 
+    .logo, .icon {
+        transition: opacity 0.1s ease-in-out;
+    }
+
     .logo {
         background-image: url('../../../resources/logo.png');
         width: 100%;
@@ -18,7 +22,18 @@
         background-size: contain;
         background-repeat: no-repeat;
         background-position: center left;
-        transition: height 0.1s ease-in-out;
+    }
+
+    .icon {
+        position: absolute;
+        top: 10px;
+        height: 90px;
+        width: $sidebar-mobile-width;
+        background-image: url('../../../resources/icon.png');
+        background-size: contain;
+        background-repeat: no-repeat;
+        background-position: center center;
+        opacity: 0;
     }
 
     .balance {
@@ -40,6 +55,7 @@
         line-height: 30px;
         cursor: pointer;
         color: #bbb;
+        transition: all 0.1s ease-in-out;
 
         svg {
             color: #bbb;
@@ -81,7 +97,11 @@
         width: $sidebar-mobile-width;
 
         .logo {
-            height: 30px;
+            opacity: 0;
+        }
+
+        .icon {
+            opacity: 1;
         }
 
         .balance {

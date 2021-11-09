@@ -12,6 +12,7 @@ const SideBar = ({match, portfolio}) => {
         <div id="sidebar">
                 <NavLink to={match.url + "/dashboard"}>
                     <div className="logo" />
+                    <div className="icon" />
                 </NavLink>
 
                 <div className="balance">
