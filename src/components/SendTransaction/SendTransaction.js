@@ -57,20 +57,25 @@ export default function SendTransaction({ accounts, network, selectedAcc, reques
     [network.id, account, eligibleRequests]
   )
 
-  if (!account) return (<h3 className='error'>No selected account</h3>)
-
+  if (!account || !eligibleRequests.length) return (<div id="sendTransaction">
+      <h3 className="error">No account or no requests: should never happen.</h3>
+  </div>)
   return SendTransactionWithBundle({ bundle, network, account, resolveMany, relayerURL, onDismiss })
 }
 
 function SendTransactionWithBundle ({ bundle, network, account, resolveMany, relayerURL, onDismiss }) {
   const [estimation, setEstimation] = useState(null)
   const [signingInProgress, setSigningInProgress] = useState(false)
+  const [feeSpeed, setFeeSpeed] = useState(DEFAULT_SPEED)
   const { addToast } = useToasts()
 
   const { nativeAssetSymbol } = network
 
-  useEffect(() => {    // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => {
+    if (!bundle.txns.length) return
     setEstimation(null)
+  }, [bundle, setEstimation])
+  useEffect(() => {    // eslint-disable-next-line react-hooks/exhaustive-deps
     if (!bundle.txns.length) return
 
     let unmounted = false
@@ -82,19 +87,17 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
     )
       .then(estimation => {
         if (unmounted) return
-        estimation.selectedFee = {
-          speed: DEFAULT_SPEED,
-          token: { symbol: network.nativeAssetSymbol }
-        }
+        estimation.selectedFeeToken = { symbol: network.nativeAssetSymbol }
         if (estimation.remainingFeeTokenBalances) {
           const eligibleToken = estimation.remainingFeeTokenBalances
-            .find(token => isTokenEligible(token, estimation))
+            .find(token => isTokenEligible(token, feeSpeed, estimation))
           // If there's no eligibleToken, set it to the first one cause it looks more user friendly (it's the preferred one, usually a stablecoin)
-          estimation.selectedFee.token = eligibleToken || estimation.remainingFeeTokenBalances[0]
+          estimation.selectedFeeToken = eligibleToken || estimation.remainingFeeTokenBalances[0]
         }
         setEstimation(estimation)
       })
       .catch(e => {
+        if (unmounted) return
         console.log('estimation error', e)
         addToast(`Estimation error: ${e.message || e}`, { error: true })
       })
@@ -106,7 +109,7 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
       unmounted = true
       clearInterval(intvl)
     }
-  }, [bundle, setEstimation, addToast, network, relayerURL])
+  }, [bundle, setEstimation, feeSpeed, addToast, network, relayerURL])
 
   const approveTxnImpl = async () => {
     if (!estimation) return
@@ -218,6 +221,8 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
                             estimation={estimation}
                             setEstimation={setEstimation}
                             network={network}
+                            feeSpeed={feeSpeed}
+                            setFeeSpeed={setFeeSpeed}
                           ></FeeSelector>
                   </div>
               </div>
@@ -228,18 +233,24 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
                           Sign
                       </div>
                   </div>
-                  <Actions estimation={estimation} approveTxn={approveTxn} rejectTxn={rejectTxn} signingInProgress={signingInProgress}></Actions>
+                  <Actions
+                    estimation={estimation}
+                    approveTxn={approveTxn} rejectTxn={rejectTxn}
+                    signingInProgress={signingInProgress}
+                    feeSpeed={feeSpeed}
+                  />
               </div>
           </div>
       </div>
   </div>)
 }
 
-function Actions({ estimation, approveTxn, rejectTxn, signingInProgress }) {
+function Actions({ estimation, feeSpeed, approveTxn, rejectTxn, signingInProgress }) {
   const rejectButton = (
     <button className='rejectTxn' onClick={rejectTxn}>Reject</button>
   )
-  const insufficientFee = estimation && estimation.feeInUSD && !isTokenEligible(estimation.selectedFee.token, estimation)
+  const insufficientFee = estimation && estimation.feeInUSD
+    && !isTokenEligible(estimation.selectedFeeToken, feeSpeed, estimation)
   const willFail = (estimation && !estimation.success) || insufficientFee
   if (willFail) {
     return (<>
@@ -261,7 +272,7 @@ function Actions({ estimation, approveTxn, rejectTxn, signingInProgress }) {
   </div>)
 }
 
-function FeeSelector ({ signer, estimation, network, setEstimation }) {
+function FeeSelector ({ signer, estimation, network, setEstimation, feeSpeed, setFeeSpeed }) {
   if (!estimation) return (<Loading/>)
   if (!estimation.feeInNative) return (<></>)
   if (estimation && !estimation.feeInUSD && estimation.gasLimit < 40000) {
@@ -274,14 +285,14 @@ function FeeSelector ({ signer, estimation, network, setEstimation }) {
   const tokens = estimation.remainingFeeTokenBalances || ({ symbol: nativeAssetSymbol, decimals: 18 })
   const onFeeCurrencyChange = e => {
     const token = tokens.find(({ symbol }) => symbol === e.target.value)
-    setEstimation({ ...estimation, selectedFee: { ...estimation.selectedFee, token } })
+    setEstimation({ ...estimation, selectedFeeToken: token })
   }
   const feeCurrencySelect = estimation.feeInUSD ? (<>
     <span style={{ marginTop: '1em' }}>Fee currency</span>
-    <select defaultValue={estimation.selectedFee.token.symbol} onChange={onFeeCurrencyChange}>
+    <select defaultValue={estimation.selectedFeeToken.symbol} onChange={onFeeCurrencyChange}>
       {tokens.map(token => 
         (<option
-          disabled={!isTokenEligible(token, estimation)}
+          disabled={!isTokenEligible(token, feeSpeed, estimation)}
           key={token.symbol}>
             {token.symbol}
           </option>
@@ -290,13 +301,13 @@ function FeeSelector ({ signer, estimation, network, setEstimation }) {
     </select>
   </>) : (<></>)
 
-  const { isStable } = estimation.selectedFee.token
-  const { multiplier } = getFeePaymentConsequences(estimation.selectedFee.token, estimation)
+  const { isStable } = estimation.selectedFeeToken
+  const { multiplier } = getFeePaymentConsequences(estimation.selectedFeeToken, estimation)
   const feeAmountSelectors = SPEEDS.map(speed => (
     <div 
       key={speed}
-      className={estimation.selectedFee.speed === speed ? 'feeSquare selected' : 'feeSquare'}
-      onClick={() => setEstimation({ ...estimation, selectedFee: { ...estimation.selectedFee, speed } })}
+      className={feeSpeed === speed ? 'feeSquare selected' : 'feeSquare'}
+      onClick={() => setFeeSpeed(speed)}
     >
       <div className='speed'>{speed}</div>
       {isStable
@@ -318,8 +329,7 @@ function FeeSelector ({ signer, estimation, network, setEstimation }) {
 }
 
 // helpers
-function isTokenEligible (token, estimation) {
-  const speed = estimation.selectedFee.speed || DEFAULT_SPEED
+function isTokenEligible (token, speed, estimation) {
   const min = token.isStable ? estimation.feeInUSD[speed] : estimation.feeInNative[speed]
   return parseInt(token.balance) / Math.pow(10, token.decimals) > min
 }
