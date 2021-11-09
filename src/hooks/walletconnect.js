@@ -68,7 +68,7 @@ export default function useWalletConnect ({ account, chainId, onCallRequest }) {
         }
         let connector
         try {
-            connector = new WalletConnectCore({
+            connector = connectors[connectorOpts.uri] = new WalletConnectCore({
                 connectorOpts,
                 cryptoLib,
                 sessionStorage: noopSessionStorage
@@ -141,6 +141,7 @@ export default function useWalletConnect ({ account, chainId, onCallRequest }) {
                 return
             }
 
+            clearTimeout(sessionTimeout)
             // NOTE the dispatch() will cause double rerender when we trigger a disconnect,
             // cause we will call it once on disconnect() and once when the event arrives
             // we can prevent this by checking if (!connectors[...]) but we'd rather stay safe and ensure
@@ -187,7 +188,7 @@ export default function useWalletConnect ({ account, chainId, onCallRequest }) {
     // Side effects on init
     useEffect(() => {
         state.connections.forEach(({ uri, session }) => {
-            if (!connectors[uri]) connectors[uri] = connect({ uri, session })
+            if (!connectors[uri]) connect({ uri, session })
         })
     // we specifically want to run this only once despite depending on state
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -247,7 +248,7 @@ function runInitEffects(wcConnect) {
         navigator.permissions.query({ name: 'clipboard-read' }).then(result => {
             if (result.state === 'granted' || result.state === 'prompt') {
                 navigator.clipboard.readText().then(clipboard => {
-                    if (clipboard.startsWith('wc:')) wcConnect({ uri: clipboard })
+                    if (clipboard.startsWith('wc:') && !connectors[clipboard]) wcConnect({ uri: clipboard })
                 }).catch(clipboardError)
             }
         }).catch(clipboardError)
