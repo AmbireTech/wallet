@@ -116,3 +116,9 @@
         width: 100%;
     }
 }
+
+@media screen and (max-width: 1400px) {
+    #topbar {
+        left: $sidebar-mobile-width;
+    }
+}
