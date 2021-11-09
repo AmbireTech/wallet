@@ -221,7 +221,7 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
                           )})}
                       </div>
                       <div className='batchingNote'>
-                          <b>NOTE:</b> Transaction batching is enabled, you're signing {bundle.txns.length} transactions at once. You can add more transactions to this batch by interacting with a connected dApp right now.
+                          <b>DEGEN TIP:</b> You can sign multiple transactions at once. Add more transactions to this batch by interacting with a connected dApp right now.
                       </div>
               </div>
           </div>
