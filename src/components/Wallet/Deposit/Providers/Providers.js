@@ -16,7 +16,7 @@ export default function Providers({ walletAddress, selectedNetwork }) {
             limits: '10,000EUR/m',
             currencies: 'USD, EUR, GBP',
             networks: ['ethereum', 'polygon', 'avalanche', 'arbitrum'],
-            onClick: () => openRampNetwork({walletAddress})
+            onClick: () => openRampNetwork({walletAddress, selectedNetwork})
         },
         {
             logo: PAYTRIE_LOGO,
