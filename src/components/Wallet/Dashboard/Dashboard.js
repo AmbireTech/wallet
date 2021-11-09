@@ -61,7 +61,7 @@ export default function Dashboard({ portfolio, setNetwork }) {
                                     <div id="other-balances">
                                         {
                                             Object.entries(portfolio.otherBalances).map(([network, { total }]) => (
-                                                <div className="balance" onClick={() => setNetwork(network)}>
+                                                <div className="balance" key={network} onClick={() => setNetwork(network)}>
                                                     $ { total.truncated }.{total.decimals} on { network }
                                                 </div>
                                             ))
