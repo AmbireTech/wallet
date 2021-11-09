@@ -195,15 +195,15 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
     resolveMany(bundle.requestIds, { message: 'rejected' })
   }
 
-  return (<div id="sendTransaction">
-      <div className="dismiss" onClick={onDismiss}>
+  return (<div id='sendTransaction'>
+      <div className='dismiss' onClick={onDismiss}>
         <FaChevronLeft size={35}/><span>back</span>
       </div>
       <h2>Pending transactions: {bundle.txns.length}</h2>
-      <div className="panelHolder">
-          <div className="panel">
-              <div className="heading">
-                      <div className="title">
+      <div className='panelHolder'>
+          <div className='panel'>
+              <div className='heading'>
+                      <div className='title'>
                           <GiSpectacles size={35}/>
                           Transaction summary
                       </div>
@@ -223,10 +223,10 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
                       </span>
               </div>
           </div>
-          <div className="secondaryPanel">
-              <div className="panel feePanel">
-                  <div className="heading">
-                          <div className="title">
+          <div className='secondaryPanel'>
+              <div className='panel feePanel'>
+                  <div className='heading'>
+                          <div className='title'>
                               <GiTakeMyMoney size={35}/>
                               Fee
                           </div>
@@ -240,9 +240,9 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
                           ></FeeSelector>
                   </div>
               </div>
-              <div className="panel actions">
-                  <div className="heading">
-                      <div className="title">
+              <div className='panel actions'>
+                  <div className='heading'>
+                      <div className='title'>
                           <FaSignature size={35}/>
                           Sign
                       </div>
@@ -324,10 +324,16 @@ function FeeSelector ({ signer, estimation, network, setEstimation, feeSpeed, se
       onClick={() => setFeeSpeed(speed)}
     >
       <div className='speed'>{speed}</div>
-      {isStable
-        ? '$'+(estimation.feeInUSD[speed] * multiplier)
-        : (estimation.feeInNative[speed] * multiplier)+' '+nativeAssetSymbol
-      }
+      <div className='feeEstimation'>
+        {isStable
+          ? '$'+(estimation.feeInUSD[speed] * multiplier)
+          : (
+            nativeAssetSymbol === 'ETH' ?
+              'Ξ '+(estimation.feeInNative[speed] * multiplier)
+              : (estimation.feeInNative[speed] * multiplier)+' '+nativeAssetSymbol
+          )
+        }
+      </div>
     </div>
   ))
 

@@ -92,7 +92,7 @@
     color: black;
     text-align: center;
     min-height: 80px;
-    width: 80px;
+    width: 90px;
     float: left;
     margin-right: 10px;
     padding: 10px;
@@ -110,6 +110,13 @@
     font-size: 0.8em;
     font-weight: bold;
     margin-bottom: 5px;
+}
+#sendTransaction .feeEstimation {
+    width: 80px;
+    margin: auto;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 #sendTransaction .actions button {
