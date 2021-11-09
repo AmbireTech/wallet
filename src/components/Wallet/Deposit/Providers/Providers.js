@@ -25,8 +25,8 @@ export default function Providers({ walletAddress, selectedNetwork }) {
             fees: '1% (min. $2 CAD)',
             limits: '$2,000CAD/day',
             currencies: 'CAD',
-            networks: ['ethereum'],
-            onClick: () => openPayTrie({walletAddress})
+            networks: ['ethereum', 'polygon'],
+            onClick: () => openPayTrie({walletAddress, selectedNetwork})
         },
         {
             logo: TRANSAK_LOGO,
