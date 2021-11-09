@@ -14,13 +14,22 @@
 
 #sendTransaction .dismiss {
     position: absolute;
-    top: 20px;
-    right: 20px;
+    top: 30px;
+    left: 30px;
     cursor: pointer;
     color: #ccc;
+    text-transform: uppercase;
+    line-height: 35px;
+    height: 35px;
+    font-size: 20px;
 }
 #sendTransaction .dismiss:hover {
     color: white;
+}
+
+#sendTransaction .dismiss span {
+    float: right;
+    margin-left: 15px;
 }
 
 #sendTransaction h2 {
