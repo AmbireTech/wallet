@@ -17,7 +17,7 @@ const SideBar = ({match, portfolio}) => {
                 <div className="balance">
                     <label>Balance</label>
                     {
-                        portfolio.isLoading ?
+                        portfolio.isBalanceLoading ?
                             <Loading/>
                             :
                             <div className="balanceDollarAmount">
