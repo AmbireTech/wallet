@@ -157,8 +157,8 @@ export default function SendTransaction ({ accounts, network, selectedAcc, reque
       .then(bundleResult => {
         if (bundleResult.success) addToast((
           <span>Transaction signed and sent successfully!
-            &nbsp;<a href={explorerUrl+'/tx/'+bundleResult.txId} target='_blank' rel='noreferrer'>View on block explorer.</a>
-          </span>))
+            &nbsp;View on block explorer.
+          </span>), { url: explorerUrl+'/tx/'+bundleResult.txId })
         else addToast(`Transaction error: ${bundleResult.message || 'unspecified error'}`, { error: true })
 
         history.goBack()
