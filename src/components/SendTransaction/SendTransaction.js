@@ -7,19 +7,17 @@ import './SendTransaction.css'
 import { Loading } from '../common'
 import { useEffect, useState } from 'react'
 
-// @TODO get rid of these, should be in the SignTransaction component
 import fetch from 'node-fetch'
 import { Bundle } from 'adex-protocol-eth/js'
 import { getDefaultProvider } from 'ethers'
-import { Interface, hexlify } from 'ethers/lib/utils'
+import { Interface } from 'ethers/lib/utils'
 import { useHistory } from 'react-router'
 import { useToasts } from '../../hooks/toasts'
 import { getWallet } from '../../lib/getWallet'
 import accountPresets from '../../consts/accountPresets'
+import { sendNoRelayer } from './noRelayer'
 
 const ERC20 = new Interface(require('adex-protocol-eth/abi/ERC20'))
-const IdentityInterface = new Interface(require('adex-protocol-eth/abi/Identity5.2'))
-const FactoryInterface = new Interface(require('adex-protocol-eth/abi/IdentityFactory5.2'))
 
 const SPEEDS = ['slow', 'medium', 'fast', 'ape']
 const DEFAULT_SPEED = 'fast'
@@ -306,7 +304,9 @@ function FeeSelector ({ signer, estimation, network, setEstimation }) {
     <div className='feeAmountSelectors'>
       {feeAmountSelectors}
     </div>
-    {!estimation.feeInUSD ? (<span><b>WARNING:</b> Paying fees in tokens other than {nativeAssetSymbol} is unavailable because you are not connected to a relayer. You will pay the fee from <b>{signer.address}</b>.</span>) : (<></>)}
+    {!estimation.feeInUSD ?
+      (<span><b>WARNING:</b> Paying fees in tokens other than {nativeAssetSymbol} is unavailable because you are not connected to a relayer. You will pay the fee from <b>{signer.address}</b>.</span>)
+      : (<></>)}
   </>)
 }
 
@@ -329,57 +329,4 @@ function getFeePaymentConsequences (token, estimation) {
    multiplier: (estimation.gasLimit + addedGas) / estimation.gasLimit,
    addedGas
  }
-}
-
-async function sendNoRelayer ({ finalBundle, account, wallet, estimation, provider, nativeAssetSymbol }) {
-  const { signer } = finalBundle
-  // @TODO: in case we need deploying, run using deployAndCall pipeline with signed msgs
-  // @TODO: quickAccManager
-  if (signer.quickAccManager) throw new Error('quickAccManager not supported in relayerless mode yet')
-  // currently disabled quickAccManager cause 1) we don't have a means of getting the second sig 2) we still have to sign txes so it's inconvenient
-  // if (signer.quickAccManager) await finalBundle.sign(wallet)
-  //const [to, data] = signer.quickAccManager ? [signer.quickAccManager, QuickAccManagerInterface.encodeFunctionData('send', [finalBundle.identity, [signer.timelock, signer.one, signer.two], [false, finalBundle.signature, '0x']])] :
-
-  // NOTE: just adding values to gasLimit is bad because 1) they're hardcoded estimates
-  // and 2) the fee displayed in the UI does not reflect that
-  const isDeployed = await provider.getCode(finalBundle.identity).then(code => code !== '0x')
-  let gasLimit
-  let to, data
-  if (isDeployed) {
-    gasLimit = estimation.gasLimit + 20000
-    to = finalBundle.identity
-    data = IdentityInterface.encodeFunctionData('executeBySender', [finalBundle.txns])
-  } else {
-    await finalBundle.getNonce(provider)
-    // just some hardcoded value to make the signing pass
-    finalBundle.gasLimit = 400000
-    await finalBundle.sign(wallet)
-    to = account.identityFactoryAddr
-    data = FactoryInterface.encodeFunctionData('deployAndExecute', [account.bytecode, account.salt, finalBundle.txns, finalBundle.signature])
-    gasLimit = (await provider.estimateGas({ to, data, from: signer.address })).toNumber() + 20000
-  }
-
-  const txn = {
-    from: signer.address,
-    to, data,
-    gas: hexlify(gasLimit),
-    gasPrice: hexlify(Math.floor(estimation.feeInNative[estimation.selectedFee.speed] / estimation.gasLimit * 1e18)),
-    nonce: hexlify(await provider.getTransactionCount(signer.address))
-  }
-  try {
-    let txId
-    if (!wallet.sendTransaction) {
-      // HW wallets which only sign
-      const signed = await wallet.signTransaction(txn)
-      txId = (await provider.sendTransaction(signed)).hash
-    } else {
-      // web3 injectors which can't sign, but can sign+send
-      // they also don't like the gas arg
-      txId = (await wallet.sendTransaction({ from: txn.from, to: txn.to, data: txn.data, gasPrice: txn.gasPrice, nonce: txn.nonce })).hash
-    }
-    return { success: true, txId }
-  } catch(e) {
-    if (e.code === 'INSUFFICIENT_FUNDS') throw new Error(`Insufficient gas fees: you need to have ${nativeAssetSymbol} on ${signer.address}`)
-    throw e
-  }
 }
