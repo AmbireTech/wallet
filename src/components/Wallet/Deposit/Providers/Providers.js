@@ -15,7 +15,7 @@ export default function Providers({ walletAddress, selectedNetwork }) {
             fees: '0.49%-2.9%',
             limits: '10,000EUR/m',
             currencies: 'USD, EUR, GBP',
-            networks: ['ethereum', 'polygon', 'avalanche', 'arbitrum'],
+            networks: ['ethereum', 'polygon', 'avalanche'],
             onClick: () => openRampNetwork({walletAddress, selectedNetwork})
         },
         {

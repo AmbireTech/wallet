@@ -6,12 +6,17 @@ import url from 'url'
 import { RAMP_HOST_API_KEY, PAYTRIE_PARTNER_URL, TRANSAK_API_KEY, TRANSAK_ENV } from '../config'
 
 export const openRampNetwork = ({ walletAddress, selectedNetwork }) => {
-    const assetsList = selectedNetwork === 'polygon' ? 'MATIC_ERC20_*,MATIC_*' : 'ERC20_*,ETH_*'
+    const assetsList = {
+        ethereum: 'ERC20_*,ETH_*',
+        polygon: 'MATIC_ERC20_*,MATIC_*',
+        avalanche: 'AVAX_*',
+    }
+
     const widget = new RampInstantSDK({
         hostAppName: 'Ambire',
         hostLogoUrl: 'https://www.ambire.com/ambire-logo.png',
         variant: 'auto',
-        swapAsset: assetsList,
+        swapAsset: assetsList[selectedNetwork],
         userAddress: walletAddress,
         hostApiKey: RAMP_HOST_API_KEY,
     })
