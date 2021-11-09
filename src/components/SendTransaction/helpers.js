@@ -24,6 +24,7 @@ export function mapTxnErrMsg(msg) {
   if (!msg) return
   if (msg.includes('Router: EXPIRED')) return 'Swap expired'
   if (msg.includes('Router: INSUFFICIENT_OUTPUT_AMOUNT')) return 'Swap will suffer slippage higher than your requirements'
+  if (msg.includes('INSUFFICIENT_PRIVILEGE')) return 'Your signer address is no longer authorized.'
   return msg
 }
 
@@ -31,5 +32,6 @@ export function getErrHint(msg) {
   if (!msg) return
   if (msg.includes('Router: EXPIRED')) return 'Try performing the swap again'
   if (msg.includes('Router: INSUFFICIENT_OUTPUT_AMOUNT')) return 'Try performing the swap again or increase your slippage requirements'
+  if (msg.includes('INSUFFICIENT_PRIVILEGE')) return 'If you set a new signer for this account, try re-adding the account.'
   return 'Sending this transaction batch will result in an error.'
 }
