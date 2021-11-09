@@ -76,7 +76,7 @@ const Transfer = ({ portfolio }) => {
                <div className="title">
                    Cross-chain
                </div>
-               <div className="form">
+               <div className="form blurred">
                     <label>From</label>
                     <Select searchable defaultValue={asset} items={assetsItems} onChange={value => setAsset(value)}/>
                     <NumberInput value={amount} min="0" onInput={value => setAmount(value)} button="MAX" onButtonClick={() => setMaxAmount()}/>
