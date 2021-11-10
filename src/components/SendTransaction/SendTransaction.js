@@ -178,7 +178,7 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
     const { signature, success, message, confCodeRequired } = await fetchPost(
       `${relayerURL}/second-key/${bundle.identity}/${network.id}/sign`, {
         signer, txns: finalBundle.txns, nonce: finalBundle.nonce, gasLimit: finalBundle.gasLimit,
-        code: quickAccCredentials.code
+        code: quickAccCredentials && quickAccCredentials.code
       }
     )
     if (!success) throw new Error(`Secondary key error: ${message}`)
