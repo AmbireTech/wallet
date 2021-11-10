@@ -5,7 +5,7 @@ import { FaSignature, FaTimes, FaChevronLeft, FaChevronDown, FaChevronUp } from 
 import { getContractName, getTransactionSummary } from '../../lib/humanReadableTransactions'
 import './SendTransaction.css'
 import { Loading } from '../common'
-import { useEffect, useState, useMemo } from 'react'
+import { useEffect, useRef, useState, useMemo } from 'react'
 import fetch from 'node-fetch'
 import { Bundle } from 'adex-protocol-eth/js'
 import { getDefaultProvider, Wallet } from 'ethers'
@@ -217,8 +217,8 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
 
       if (bundleResult.success) addToast((
         <span>Transaction signed and sent successfully!
-          &nbsp;<a href={blockExplorerUrl+'/tx/'+bundleResult.txId} target='_blank' rel='noreferrer'>View on block explorer.</a>
-        </span>))
+          &nbsp;Click to view on block explorer.
+        </span>), { url: blockExplorerUrl+'/tx/'+bundleResult.txId })
       else addToast(`Transaction error: ${bundleResult.message || 'unspecified error'}`, { error: true })
       onDismiss()
     })
@@ -305,6 +305,7 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
 
 function Actions({ estimation, feeSpeed, approveTxn, rejectTxn, signingStatus }) {
   const [quickAccCredentials, setQuickAccCredentials] = useState({ code: '', passphrase: '' })
+  const form = useRef(null)
 
   const rejectButton = (
     <button className='rejectTxn' onClick={rejectTxn}>Reject</button>
@@ -325,15 +326,21 @@ function Actions({ estimation, feeSpeed, approveTxn, rejectTxn, signingStatus })
   if (signingStatus && signingStatus.quickAcc) {
     // @TODO use submit to take advantage of html5 form validation
     return (<>
-      <input type='text' autoComplete='off' required minLength={6} maxLength={6} placeholder='Confirmation code' value={quickAccCredentials.code} onChange={e => setQuickAccCredentials({ ...quickAccCredentials, code: e.target.value })}></input>
       <input type='password' required minLength={8} placeholder='Passphrase' value={quickAccCredentials.passphrase} onChange={e => setQuickAccCredentials({ ...quickAccCredentials, passphrase: e.target.value })}></input>
-      {rejectButton}
-      <button className='approveTxn'
-        disabled={!(estimation && quickAccCredentials.code.length === 6 && quickAccCredentials.passphrase)}
-        onClick={() => approveTxn({ quickAccCredentials })}
-      >
-        {signButtonLabel}
-      </button>
+      <form ref={form} className='quickAccSigningForm' onSubmit={e => e.preventDefault()}>
+        {/* Changing the autoComplete prop to a random string seems to disable it more often */}
+        <input type='text' pattern='[0-9]+' title='Confirmation code should be 6 digits' autoComplete='nope' required minLength={6} maxLength={6} placeholder='Confirmation code' value={quickAccCredentials.code} onChange={e => setQuickAccCredentials({ ...quickAccCredentials, code: e.target.value })}></input>
+        {rejectButton}
+        <button className='approveTxn'
+          disabled={!(estimation && quickAccCredentials.code.length === 6 && quickAccCredentials.passphrase)}
+          onClick={() => {
+            if (!form.current.checkValidity()) return
+            approveTxn({ quickAccCredentials })
+          }}
+        >
+          {signButtonLabel}
+        </button>
+      </form>
     </>)
   }
 
