@@ -16,6 +16,7 @@ import accountPresets from '../../consts/accountPresets'
 import { FeeSelector } from './FeeSelector'
 import { sendNoRelayer } from './noRelayer'
 import { isTokenEligible, getFeePaymentConsequences } from './helpers'
+import { fetchPost } from '../../lib/fetch'
 
 const ERC20 = new Interface(require('adex-protocol-eth/abi/ERC20'))
 
@@ -55,8 +56,8 @@ export default function SendTransaction({ accounts, network, selectedAcc, reques
     [network.id, account, eligibleRequests]
   )
 
-  if (!account || !eligibleRequests.length) return (<div id="sendTransaction">
-      <h3 className="error">No account or no requests: should never happen.</h3>
+  if (!account || !eligibleRequests.length) return (<div id='sendTransaction'>
+      <h3 className='error'>No account or no requests: should never happen.</h3>
   </div>)
   return (<SendTransactionWithBundle
       bundle={bundle}
@@ -70,7 +71,7 @@ export default function SendTransaction({ accounts, network, selectedAcc, reques
 
 function SendTransactionWithBundle ({ bundle, network, account, resolveMany, relayerURL, onDismiss }) {
   const [estimation, setEstimation] = useState(null)
-  const [signingInProgress, setSigningInProgress] = useState(false)
+  const [signingStatus, setSigningStatus] = useState(false)
   const [feeSpeed, setFeeSpeed] = useState(DEFAULT_SPEED)
   const { addToast } = useToasts()
   useEffect(() => {
@@ -145,10 +146,10 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
   const approveTxnImpl = async () => {
     if (!estimation) return
 
-    const requestIds = bundle.requestIds
     const finalBundle = getFinalBundle()
     const provider = getDefaultProvider(network.rpc)
     const signer = finalBundle.signer
+
     const wallet = getWallet({
       signer,
       signerExtra: account.signerExtra,
@@ -157,35 +158,62 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
     if (relayerURL) {
       await finalBundle.getNonce(provider)
       await finalBundle.sign(wallet)
-      const bundleResult = await finalBundle.submit({ relayerURL, fetch })
-      resolveMany(requestIds, { success: bundleResult.success, result: bundleResult.txId, message: bundleResult.message })
-      return bundleResult
+      return await finalBundle.submit({ relayerURL, fetch })
     } else {
-      const result = await sendNoRelayer({ finalBundle, account, network, wallet, estimation, feeSpeed, provider, nativeAssetSymbol })
-      resolveMany(requestIds, { success: true, result: result.txId })
-      return result
+      return await sendNoRelayer({
+        finalBundle, account, network, wallet, estimation, feeSpeed, provider, nativeAssetSymbol
+      })
     }
   }
 
-  const approveTxn = () => {
-    if (signingInProgress) return
-    setSigningInProgress(true)
+  const approveTxnImplQuickAcc = async ({ quickAccSigning }) => {
+    if (!relayerURL) throw new Error('Email/passphrase account signing without the relayer is not supported yet')
 
-    const explorerUrl = network.explorerUrl
-    approveTxnImpl()
-      .then(bundleResult => {
+    const finalBundle = getFinalBundle()
+    const provider = getDefaultProvider(network.rpc)
+    const signer = finalBundle.signer
+
+    await finalBundle.getNonce(provider)
+    const { signature, success, message, confCodeRequired } = await fetchPost(`${relayerURL}/second-key/${bundle.identity}/${network.id}/sign`, {
+      signer, txns: finalBundle.txns, nonce: finalBundle.nonce, gasLimit: finalBundle.gasLimit
+    })
+    if (!success) throw new Error(`Secondary key error: ${message}`)
+    if (confCodeRequired) {
+      setSigningStatus({ quickAcc: true })
+    } else {
+      if (!signature) throw new Error(`QuickAcc internal error: there should be a signature`)
+      //if (!quickAccSigning.wallet) throw new Error(`QuickAcc internal error: there should be a wallet`)
+      setSigningStatus({ quickAcc: true, inProgress: true })
+      const pwd = quickAccSigning.passphrase || alert('Enter passphrase')
+
+    }
+  }
+
+  const approveTxn = ({ quickAccSigning }) => {
+    if (signingStatus) return
+    setSigningStatus({ inProgress: true })
+
+    const requestIds = bundle.requestIds
+    const blockExplorerUrl = network.explorerUrl
+    const approveTxnPromise = bundle.signer.quickAccManager ?
+      approveTxnImplQuickAcc({ quickAccSigning })
+      : approveTxnImpl()
+    approveTxnPromise.then(bundleResult => {
         // be careful not to call this after onDimiss, cause it might cause state to be changed post-unmount
-        setSigningInProgress(false)
+        setSigningStatus(null)
+
+        // Inform everything that's waiting on the results (eg WalletConnect)
+        resolveMany(requestIds, { success: bundleResult.success, result: bundleResult.txId, message: bundleResult.message })
 
         if (bundleResult.success) addToast((
           <span>Transaction signed and sent successfully!
-            &nbsp;<a href={explorerUrl+'/tx/'+bundleResult.txId} target='_blank' rel='noreferrer'>View on block explorer.</a>
+            &nbsp;<a href={blockExplorerUrl+'/tx/'+bundleResult.txId} target='_blank' rel='noreferrer'>View on block explorer.</a>
           </span>))
         else addToast(`Transaction error: ${bundleResult.message || 'unspecified error'}`, { error: true })
         onDismiss()
       })
       .catch(e => {
-        setSigningInProgress(false)
+        setSigningStatus(null)
         console.error(e)
         if (e && e.message.includes('must provide an Ethereum address')) {
           addToast(`Signing error: not connected with the correct address. Make sure you're connected with ${bundle.signer.address}.`, { error: true })
@@ -256,7 +284,7 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
                   <Actions
                     estimation={estimation}
                     approveTxn={approveTxn} rejectTxn={rejectTxn}
-                    signingInProgress={signingInProgress}
+                    signingStatus={signingStatus}
                     feeSpeed={feeSpeed}
                   />
               </div>
@@ -265,7 +293,7 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
   </div>)
 }
 
-function Actions({ estimation, feeSpeed, approveTxn, rejectTxn, signingInProgress }) {
+function Actions({ estimation, feeSpeed, approveTxn, rejectTxn, signingStatus }) {
   const rejectButton = (
     <button className='rejectTxn' onClick={rejectTxn}>Reject</button>
   )
@@ -280,8 +308,8 @@ function Actions({ estimation, feeSpeed, approveTxn, rejectTxn, signingInProgres
 
   return (<div className='buttons'>
       {rejectButton}
-      <button className='approveTxn' disabled={!estimation || signingInProgress} onClick={approveTxn}>
-        {signingInProgress ?
+      <button className='approveTxn' disabled={!estimation || signingStatus} onClick={approveTxn}>
+        {signingStatus ?
           (<><Loading/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Signing...</>)
           : (<>Sign and send</>)
         }
