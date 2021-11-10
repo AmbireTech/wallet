@@ -53,6 +53,7 @@
     background-color: rgba(0, 0, 0, 0.2);
     margin-bottom: 2em;
     max-width: 650px;
+    display: block;
 }
 
 #sendTransaction .panel .heading {
