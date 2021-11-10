@@ -5,6 +5,7 @@ import { GiToken } from 'react-icons/gi'
 
 import { Chart, Loading, Segments } from '../../common'
 import AssetsPlaceholder from './AssetsPlaceholder/AssetsPlaceholder'
+import Collectables from './Collectables/Collectables'
 
 export default function Dashboard({ portfolio, allNetworks, setNetwork }) {
     const [chartTokensData, setChartTokensData] = useState([]);
@@ -157,25 +158,7 @@ export default function Dashboard({ portfolio, allNetworks, setNetwork }) {
                                         </div>
                                     ))
                                     :
-                                    <div className="collectables">
-                                        {
-                                            portfolio.collectables.map(({ tokens }) => tokens.map(({ collectionName, collectionImg, assets }) => assets.map(({ tokenId, assetName, assetImg, balanceUSD }) => (
-                                                <div className="collectable" key={tokenId}>
-                                                    <div className="artwork" style={{backgroundImage: `url(${assetImg})`}}/>
-                                                    <div className="info">
-                                                        <div className="collection">
-                                                            <div className="collection-icon" style={{backgroundImage: `url(${collectionImg})`}}></div>
-                                                            { collectionName }
-                                                        </div>
-                                                        <div className="details">
-                                                            <div className="name">{ assetName }</div>
-                                                            <div className="value"><span className="purple-highlight">$</span> { balanceUSD.toFixed(2) }</div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            ))))
-                                        }
-                                    </div>
+                                    <Collectables collectables={portfolio.collectables}/>
                     }
                 </div>
                 {
