@@ -376,7 +376,7 @@ function TxnPreview ({ txn, onDismiss, bundle, network, isFirstFailing }) {
   const contractName = getContractName(txn, network.id)
   return (
     <div className={isFirstFailing ? 'txnSummary firstFailing' : 'txnSummary'}>
-        <div>{getTransactionSummary(txn, bundle.network)}</div>
+        <div>{getTransactionSummary(txn, bundle.network, bundle.identity)}</div>
         {isFirstFailing ? (<div className='firstFailingLabel'>This is the first failing transaction.</div>) : (<></>)}
 
         {
