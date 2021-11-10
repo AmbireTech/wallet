@@ -203,29 +203,32 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
       approveTxnImplQuickAcc({ quickAccCredentials })
       : approveTxnImpl()
     approveTxnPromise.then(bundleResult => {
-        // be careful not to call this after onDimiss, cause it might cause state to be changed post-unmount
-        setSigningStatus(null)
+      // special case for approveTxnImplQuickAcc
+      if (!bundleResult) return
 
-        // Inform everything that's waiting on the results (eg WalletConnect)
-        resolveMany(requestIds, { success: bundleResult.success, result: bundleResult.txId, message: bundleResult.message })
+      // be careful not to call this after onDimiss, cause it might cause state to be changed post-unmount
+      setSigningStatus(null)
 
-        if (bundleResult.success) addToast((
-          <span>Transaction signed and sent successfully!
-            &nbsp;<a href={blockExplorerUrl+'/tx/'+bundleResult.txId} target='_blank' rel='noreferrer'>View on block explorer.</a>
-          </span>))
-        else addToast(`Transaction error: ${bundleResult.message || 'unspecified error'}`, { error: true })
-        onDismiss()
-      })
-      .catch(e => {
-        setSigningStatus(null)
-        console.error(e)
-        if (e && e.message.includes('must provide an Ethereum address')) {
-          addToast(`Signing error: not connected with the correct address. Make sure you're connected with ${bundle.signer.address}.`, { error: true })
-        } else {
-          console.log(e.message)
-          addToast(`Signing error: ${e.message || e}`, { error: true })
-        }
-      })
+      // Inform everything that's waiting on the results (eg WalletConnect)
+      resolveMany(requestIds, { success: bundleResult.success, result: bundleResult.txId, message: bundleResult.message })
+
+      if (bundleResult.success) addToast((
+        <span>Transaction signed and sent successfully!
+          &nbsp;<a href={blockExplorerUrl+'/tx/'+bundleResult.txId} target='_blank' rel='noreferrer'>View on block explorer.</a>
+        </span>))
+      else addToast(`Transaction error: ${bundleResult.message || 'unspecified error'}`, { error: true })
+      onDismiss()
+    })
+    .catch(e => {
+      setSigningStatus(null)
+      console.error(e)
+      if (e && e.message.includes('must provide an Ethereum address')) {
+        addToast(`Signing error: not connected with the correct address. Make sure you're connected with ${bundle.signer.address}.`, { error: true })
+      } else {
+        console.log(e.message)
+        addToast(`Signing error: ${e.message || e}`, { error: true })
+      }
+    })
   }
 
   const rejectTxn = () => {
@@ -317,9 +320,9 @@ function Actions({ estimation, feeSpeed, approveTxn, rejectTxn, signingStatus })
     : (<>Sign and send</>)
 
   if (signingStatus && signingStatus.quickAcc) {
-    // @TODO
+    // @TODO use submit to take advantage of html5 form validation
     return (<>
-      <input type="password" required minLength={6} placeholder="Email confirmation code" value={quickAccCredentials.code} onChange={e => setQuickAccCredentials({ ...quickAccCredentials, code: e.target.value })}></input>
+      <input type="numeric" required minLength={6} maxLength={6} placeholder="Email confirmation code" value={quickAccCredentials.code} onChange={e => setQuickAccCredentials({ ...quickAccCredentials, code: e.target.value })}></input>
       <input type="password" required minLength={8} placeholder="Passphrase" value={quickAccCredentials.passphrase} onChange={e => setQuickAccCredentials({ ...quickAccCredentials, passphrase: e.target.value })}></input>
       {rejectButton}
       <button className='approveTxn' disabled={!estimation || signingStatus} onClick={approveTxn}>

@@ -219,3 +219,9 @@
     width: 90px;
     height: 90px;
 }
+
+#sendTransaction input {
+    border-bottom: 2px solid #b3c4e6;
+    margin: 6px;
+    color: white;
+}
