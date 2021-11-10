@@ -170,11 +170,13 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
     if (!estimation) throw new Error('no estimation: should never happen')
     if (!relayerURL) throw new Error('Email/passphrase account signing without the relayer is not supported yet')
 
-    const finalBundle = getFinalBundle()
-    const provider = getDefaultProvider(network.rpc)
+    const finalBundle = signingStatus.finalBundle || getFinalBundle()
     const signer = finalBundle.signer
 
-    await finalBundle.getNonce(provider)
+    if (typeof finalBundle.nonce !== 'number') {
+      await finalBundle.getNonce(getDefaultProvider(network.rpc))
+    }
+
     const { signature, success, message, confCodeRequired } = await fetchPost(
       `${relayerURL}/second-key/${bundle.identity}/${network.id}/sign`, {
         signer, txns: finalBundle.txns, nonce: finalBundle.nonce, gasLimit: finalBundle.gasLimit,
@@ -189,7 +191,7 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
       throw new Error(`Secondary key error: ${message}`)
     }
     if (confCodeRequired) {
-      setSigningStatus({ quickAcc: true })
+      setSigningStatus({ quickAcc: true, finalBundle })
     } else {
       if (!signature) throw new Error(`QuickAcc internal error: there should be a signature`)
       if (!account.primaryKeyBackup) throw new Error(`No key backup found: perhaps you need to import the account via JSON?`)
@@ -281,6 +283,7 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
                               Fee
                           </div>
                           <FeeSelector
+                            disabled={signingStatus && signingStatus.finalBundle}
                             signer={bundle.signer}
                             estimation={estimation}
                             setEstimation={setEstimation}
