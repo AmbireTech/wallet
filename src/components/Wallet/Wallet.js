@@ -7,6 +7,8 @@ import SideBar from "./SideBar/SideBar";
 import Deposit from "./Deposit/Deposit"
 import Trading from "./Trading/Trading"
 import Transfer from "./Transfer/Transfer"
+import PluginGnosisSafeApps from "../Plugins/GnosisSafeApps/GnosisSafeApps"
+import { usePortfolio } from '../../hooks'
 
 export default function Wallet(props) {
   return (
@@ -31,6 +33,14 @@ export default function Wallet(props) {
           <Route path={props.match.url + "/transactions"}></Route>
           <Route path={props.match.url + "/swap"}></Route>
           <Route path={props.match.url + "/earn"}></Route>
+
+		  <Route path={props.match.url + "/plugins/gnosis"}>
+			  <PluginGnosisSafeApps
+				  gnosisConnect={props.gnosisConnect}
+				  selectedAcc={props.selectedAcc}
+				  network={props.network}
+			  />
+		  </Route>
 
           <Route path={props.match.url + "/"}>
             <Redirect to={props.match.url + "/dashboard"} />
