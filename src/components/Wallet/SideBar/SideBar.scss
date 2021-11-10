@@ -7,6 +7,12 @@
     bottom: 0px;
     top: 0px;
     box-sizing: border-box;
+    overflow: hidden;
+    transition: width 0.1s ease-in-out;
+
+    .logo, .icon {
+        transition: opacity 0.1s ease-in-out;
+    }
 
     .logo {
         background-image: url('../../../resources/logo.png');
@@ -16,6 +22,18 @@
         background-size: contain;
         background-repeat: no-repeat;
         background-position: center left;
+    }
+
+    .icon {
+        position: absolute;
+        top: 10px;
+        height: 90px;
+        width: $sidebar-mobile-width;
+        background-image: url('../../../resources/icon.png');
+        background-size: contain;
+        background-repeat: no-repeat;
+        background-position: center center;
+        opacity: 0;
     }
 
     .balance {
@@ -30,10 +48,19 @@
     }
 
     .item {
-        padding: 15px 0px;
+        display: flex;
+        align-items: center;
+        gap: 30px;
+        padding: 15px 15px;
         line-height: 30px;
         cursor: pointer;
         color: #bbb;
+        transition: all 0.1s ease-in-out;
+
+        svg {
+            color: #bbb;
+            transition: color 0.1s ease-in-out;
+        }
 
         &:hover {
             background-color: rgba(0, 0, 0, 0.3);
@@ -42,13 +69,6 @@
             svg {
                 color: #fff;
             }
-        }
-
-        svg {
-            margin-right: 30px;
-            margin-left: 15px;
-            color: #bbb;
-            float: left;
         }
     }
 
@@ -66,5 +86,38 @@
 
     .balanceDollarAmount {
         font-size: 2em;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
+}
+
+@media screen and (max-width: 1400px) {
+    #sidebar {
+        width: $sidebar-mobile-width;
+
+        .logo {
+            opacity: 0;
+        }
+
+        .icon {
+            opacity: 1;
+        }
+
+        .balance {
+            font-size: 15px;
+
+            .balanceDollarAmount {
+                font-size: 15px;
+                font-weight: bold;
+            }
+        }
+
+        .item {
+            gap: 5px;
+            flex-direction: column;
+            justify-content: center;
+            font-size: 15px;
+        }
     }
 }
