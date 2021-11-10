@@ -181,7 +181,13 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
         code: quickAccCredentials && quickAccCredentials.code
       }
     )
-    if (!success) throw new Error(`Secondary key error: ${message}`)
+    if (!success) {
+      if (message.includes('invalid confirmation code')) {
+        addToast('Unable to sign: wrong confirmation code', { error: true })
+        return
+      }
+      throw new Error(`Secondary key error: ${message}`)
+    }
     if (confCodeRequired) {
       setSigningStatus({ quickAcc: true })
     } else {
@@ -312,7 +318,7 @@ function Actions({ estimation, feeSpeed, approveTxn, rejectTxn, signingStatus })
   const form = useRef(null)
 
   const rejectButton = (
-    <button className='rejectTxn' onClick={rejectTxn}>Reject</button>
+    <button type='button' className='rejectTxn' onClick={rejectTxn}>Reject</button>
   )
   const insufficientFee = estimation && estimation.feeInUSD
     && !isTokenEligible(estimation.selectedFeeToken, feeSpeed, estimation)
@@ -328,15 +334,21 @@ function Actions({ estimation, feeSpeed, approveTxn, rejectTxn, signingStatus })
     : (<>Sign and send</>)
 
   if (signingStatus && signingStatus.quickAcc) {
-    // @TODO use submit to take advantage of html5 form validation
     return (<>
       <input type='password' required minLength={8} placeholder='Passphrase' value={quickAccCredentials.passphrase} onChange={e => setQuickAccCredentials({ ...quickAccCredentials, passphrase: e.target.value })}></input>
-      <form ref={form} className='quickAccSigningForm' onSubmit={e => e.preventDefault()}>
+      <form ref={form} className='quickAccSigningForm' onSubmit={e => { e.preventDefault() }}>
         {/* Changing the autoComplete prop to a random string seems to disable it more often */}
-        <input type='text' pattern='[0-9]+' title='Confirmation code should be 6 digits' autoComplete='nope' required minLength={6} maxLength={6} placeholder='Confirmation code' value={quickAccCredentials.code} onChange={e => setQuickAccCredentials({ ...quickAccCredentials, code: e.target.value })}></input>
+        <input
+          type='text' pattern='[0-9]+'
+          title='Confirmation code should be 6 digits'
+          autoComplete='nope'
+          required minLength={6} maxLength={6}
+          placeholder='Confirmation code'
+          value={quickAccCredentials.code}
+          onChange={e => setQuickAccCredentials({ ...quickAccCredentials, code: e.target.value })}
+        ></input>
         {rejectButton}
         <button className='approveTxn'
-          disabled={!(estimation && quickAccCredentials.code.length === 6 && quickAccCredentials.passphrase)}
           onClick={() => {
             if (!form.current.checkValidity()) return
             approveTxn({ quickAccCredentials })
