@@ -317,7 +317,7 @@ function Actions({ estimation, feeSpeed, approveTxn, rejectTxn, signingStatus })
   </div>)
 }
 
-function TxnPreview ({ txn, omDismiss, bundle, network, isFirstFailing }) {
+function TxnPreview ({ txn, onDismiss, bundle, network, isFirstFailing }) {
   const [isExpanded, setExpanded] = useState(false)
   const contractName = getContractName(txn, network.id)
   return (
@@ -336,7 +336,7 @@ function TxnPreview ({ txn, omDismiss, bundle, network, isFirstFailing }) {
         <span className='expandTxn' onClick={() => setExpanded(e => !e)}>
           {isExpanded ? (<FaChevronUp/>) : (<FaChevronDown/>)}
         </span>
-        <span className='dismissTxn' onClick={omDismiss}><FaTimes/></span>
+        <span className='dismissTxn' onClick={onDismiss}><FaTimes/></span>
     </div>
   )
 }
