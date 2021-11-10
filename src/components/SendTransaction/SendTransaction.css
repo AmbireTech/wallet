@@ -52,6 +52,7 @@
     box-sizing: border-box;
     background-color: rgba(0, 0, 0, 0.2);
     margin-bottom: 2em;
+    max-width: 650px;
 }
 
 #sendTransaction .panel .heading {
@@ -72,8 +73,8 @@
 }
 
 #sendTransaction .secondaryPanel {
-    min-width: 450px;
-    max-width: 650px;
+    min-width: 500px;
+    max-width: 550px;
 }
 
 #sendTransaction .feePanel {
@@ -148,4 +149,88 @@
     position: absolute;
     top: 20px;
     left: 8px;
+}
+
+#sendTransaction .listOfTransactions {
+    min-height: 300px;
+    min-width: 350px;
+}
+#sendTransaction .txnSummary {
+    background-color: rgba(0, 0, 0, 0.2);
+    padding: 20px;
+    margin: 10px auto;
+    min-height: 50px;
+    position: relative;
+    user-select: none;
+}
+
+#sendTransaction .txnSummary > div {
+    width: calc(100% - 70px);
+}
+
+#sendTransaction .txnSummary .dismissTxn > svg {
+    right: 20px;
+}
+#sendTransaction .txnSummary .expandTxn > svg {
+    right: 70px;
+}
+#sendTransaction .txnSummary svg {
+    position: absolute;
+    top: 30px;
+    bottom: 0px;
+    width: 25px;
+    height: 30px;
+    color: #ccc;
+    cursor: pointer;
+}
+#sendTransaction .txnSummary svg:hover {
+    color: #fff;
+}
+
+#sendTransaction .txnSummary .firstFailingLabel {
+    font-weight: bold;
+    color: red;
+}
+
+#sendTransaction .advanced {
+    word-wrap: break-word;
+    max-width: 600px;
+    font-family: monospace;
+    margin-top: 30px;
+}
+#sendTransaction .advanced div {
+    margin-bottom: 20px;
+    user-select: text;
+}
+
+#sendTransaction .failingTxn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#sendTransaction .failingTxn svg {
+    width: 50px;
+    height: 50px;
+}
+
+#sendTransaction .failingTxn svg:first-child {
+    color: red;
+    width: 90px;
+    height: 90px;
+}
+
+#sendTransaction input {
+    border-bottom: 2px solid #b3c4e6;
+    margin: 6px;
+    color: white;
+}
+
+
+#sendTransaction .quickAccSigningForm {
+    display: inline;
+}
+
+#sendTransaction .quickAccSigningForm button {
+    height: 50px;
 }
