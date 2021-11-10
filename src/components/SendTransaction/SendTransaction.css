@@ -74,13 +74,16 @@
 }
 
 #sendTransaction .secondaryPanel {
-    min-width: 500px;
+    min-width: 550px;
     max-width: 550px;
 }
 
 #sendTransaction .feePanel {
     justify-content: center;
     display: flex;
+}
+#sendTransaction .feePanel .loading {
+    margin: 1em auto;
 }
 
 #sendTransaction .feeAmountSelectors {
@@ -106,6 +109,10 @@
     overflow: hidden;
     cursor: pointer;
     user-select: none;
+}
+#sendTransaction .feeSquare.disabled {
+    opacity: 0.5;
+    cursor: default;
 }
 #sendTransaction .feeSquare.selected {
     border: 5px solid rgb(128, 255, 219);
@@ -234,4 +241,8 @@
 
 #sendTransaction .quickAccSigningForm button {
     min-height: 50px;
+}
+
+#sendTransaction .quickAccSigningForm button .loading {
+    top: 10px;
 }
