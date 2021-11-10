@@ -30,9 +30,10 @@ function AppInner () {
     chainId: network.chainId
   })
 
-  const { requests: gnosisRequests, resolveMany: gnosisResolveMany, connect: gnosisConnect } = useGnosisSafe({
+  const { requests: gnosisRequests, resolveMany: gnosisResolveMany, connect: gnosisConnect, disconnect: gnosisDisconnect } = useGnosisSafe({
 	  selectedAccount: selectedAcc,
-	  network: network
+	  network: network,
+    verbose: 1
 	},[selectedAcc, network]);
 
   const requests = WCRequests.concat(gnosisRequests);
@@ -92,6 +93,7 @@ function AppInner () {
 			connect={connect}
 			disconnect={disconnect}
 			gnosisConnect={gnosisConnect}
+      gnosisDisconnect={gnosisDisconnect}
 		>
 		</Wallet>
       </Route>
