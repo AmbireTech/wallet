@@ -11,7 +11,7 @@ let wallets = {}
 // passphrase: string
 // noCache: boolean
 export function getWallet ({ signer, signerExtra, chainId }, opts = {}) {
-    const id = signer.address || signer.one
+    const id = `${signer.address || signer.one}${chainId}`
     if (wallets[id]) return wallets[id]
     return wallets[id] = getWalletNew({ signer, signerExtra, chainId }, opts)
 }
@@ -41,7 +41,8 @@ function getWalletNew ({ chainId, signer, signerExtra }, opts) {
     } else if (signer.address) {
         if (!window.ethereum) throw new Error('No web3 support detected in your browser: if you created this account through MetaMask, please install it.')
         // NOTE: for metamask, use `const provider = new ethers.providers.Web3Provider(window.ethereum)`
-        const provider = new ethers.providers.Web3Provider(window.ethereum)
+        // 'any' is explained here: https://github.com/ethers-io/ethers.js/issues/1107
+        const provider = new ethers.providers.Web3Provider(window.ethereum, 'any')
         return provider.getSigner(signer.address)
     } else if (signer.one) {
         // @TODO quickAccounts
