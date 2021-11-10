@@ -45,7 +45,7 @@ export default function usePortfolio({ currentNetwork, account }) {
         }
     }
 
-    const fetchBalances = async (account) => {
+    const fetchBalances = useCallback(async (account) => {
         try {
             let failedRequests = 0
             const requestsCount = suportedProtocols.length
@@ -87,9 +87,9 @@ export default function usePortfolio({ currentNetwork, account }) {
             addToast(error.message, { error: true })
             return false
         }
-    }
+    }, [addToast])
 
-    const fetchOtherProtocols = async (account) => {
+    const fetchOtherProtocols = useCallback(async (account) => {
         try {
             let failedRequests = 0
             const requestsCount = suportedProtocols.reduce((acc, curr) => curr.protocols.length + acc, 0)
@@ -118,11 +118,11 @@ export default function usePortfolio({ currentNetwork, account }) {
             addToast(error.message, { error: true })
             return false
         }
-    }
+    }, [addToast])
 
     const refreshBalanceIfFocused = useCallback(() => {
         if (document.hasFocus() && !isBalanceLoading) fetchBalances(account)
-    }, [isBalanceLoading, account])
+    }, [isBalanceLoading, account, fetchBalances])
 
     const requestOtherProtocolsRefresh = async () => {
         if ((Date.now() - lastOtherProcolsRefresh) > 30000 && !areAssetsLoading) await fetchOtherProtocols(account)
@@ -146,7 +146,7 @@ export default function usePortfolio({ currentNetwork, account }) {
 
         loadBalance()
         loadProtocols()
-    }, [account])
+    }, [account, fetchBalances, fetchOtherProtocols])
 
     // Update states on network change
     useEffect(() => updateStates(currentNetwork), [isBalanceLoading, areAssetsLoading, currentNetwork])
