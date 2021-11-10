@@ -1,8 +1,7 @@
 import "./Security.scss";
 
 import { usePrivileges } from "../../../hooks";
-import { Loading } from "../../common";
-import { Select } from "../../common";
+import { Loading, Select, TextInput } from "../../common";
 import { Interface } from "ethers/lib/utils";
 import privilegesOptions from "../../../consts/privilegesOptions";
 
@@ -33,7 +32,7 @@ const Security = (props) => {
 
     return (
       <li key={key}>
-        <div>{key}</div>
+        <TextInput className="depositAddress" value={key} disabled/>
         <Select
           defaultValue={privileges[key]}
           items={privilegesOptions}
