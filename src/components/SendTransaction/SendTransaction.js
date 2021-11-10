@@ -8,7 +8,7 @@ import { Loading } from '../common'
 import { useEffect, useState, useMemo } from 'react'
 import fetch from 'node-fetch'
 import { Bundle } from 'adex-protocol-eth/js'
-import { getDefaultProvider } from 'ethers'
+import { getDefaultProvider, Wallet } from 'ethers'
 import { Interface, formatUnits } from 'ethers/lib/utils'
 import { useToasts } from '../../hooks/toasts'
 import { getWallet } from '../../lib/getWallet'
@@ -144,7 +144,7 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
   }
 
   const approveTxnImpl = async () => {
-    if (!estimation) return
+    if (!estimation) throw new Error('no estimation: should never happen')
 
     const finalBundle = getFinalBundle()
     const provider = getDefaultProvider(network.rpc)
@@ -166,7 +166,8 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
     }
   }
 
-  const approveTxnImplQuickAcc = async ({ quickAccSigning }) => {
+  const approveTxnImplQuickAcc = async ({ quickAccCredentials }) => {
+    if (!estimation) throw new Error('no estimation: should never happen')
     if (!relayerURL) throw new Error('Email/passphrase account signing without the relayer is not supported yet')
 
     const finalBundle = getFinalBundle()
@@ -182,21 +183,24 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
       setSigningStatus({ quickAcc: true })
     } else {
       if (!signature) throw new Error(`QuickAcc internal error: there should be a signature`)
-      //if (!quickAccSigning.wallet) throw new Error(`QuickAcc internal error: there should be a wallet`)
+      if (!account.primaryKeyBackup) throw new Error(`No key backup found: perhaps you need to import the account via JSON?`)
       setSigningStatus({ quickAcc: true, inProgress: true })
-      const pwd = quickAccSigning.passphrase || alert('Enter passphrase')
-
+      const pwd = quickAccCredentials.passphrase || alert('Enter passphrase')
+      const wallet = await Wallet.fromEncryptedJson(JSON.parse(account.primaryKeyBackup), pwd)
+      await finalBundle.sign(wallet)
+      finalBundle.signatureTwo = signature
+      return await finalBundle.submit({ relayerURL, fetch })
     }
   }
 
-  const approveTxn = ({ quickAccSigning }) => {
+  const approveTxn = ({ quickAccCredentials }) => {
     if (signingStatus) return
     setSigningStatus({ inProgress: true })
 
     const requestIds = bundle.requestIds
     const blockExplorerUrl = network.explorerUrl
     const approveTxnPromise = bundle.signer.quickAccManager ?
-      approveTxnImplQuickAcc({ quickAccSigning })
+      approveTxnImplQuickAcc({ quickAccCredentials })
       : approveTxnImpl()
     approveTxnPromise.then(bundleResult => {
         // be careful not to call this after onDimiss, cause it might cause state to be changed post-unmount
@@ -294,6 +298,8 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
 }
 
 function Actions({ estimation, feeSpeed, approveTxn, rejectTxn, signingStatus }) {
+  const [quickAccCredentials, setQuickAccCredentials] = useState({ code: '', passphrase: '' })
+
   const rejectButton = (
     <button className='rejectTxn' onClick={rejectTxn}>Reject</button>
   )
@@ -306,13 +312,26 @@ function Actions({ estimation, feeSpeed, approveTxn, rejectTxn, signingStatus })
     </div>)
   }
 
+  const signButtonLabel = signingStatus && signingStatus.inProgress ?
+    (<><Loading/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Signing...</>)
+    : (<>Sign and send</>)
+
+  if (signingStatus && signingStatus.quickAcc) {
+    // @TODO
+    return (<>
+      <input type="password" required minLength={6} placeholder="Email confirmation code" value={quickAccCredentials.code} onChange={e => setQuickAccCredentials({ ...quickAccCredentials, code: e.target.value })}></input>
+      <input type="password" required minLength={8} placeholder="Passphrase" value={quickAccCredentials.passphrase} onChange={e => setQuickAccCredentials({ ...quickAccCredentials, passphrase: e.target.value })}></input>
+      {rejectButton}
+      <button className='approveTxn' disabled={!estimation || signingStatus} onClick={approveTxn}>
+        {signButtonLabel}
+      </button>
+    </>)
+  }
+
   return (<div className='buttons'>
       {rejectButton}
       <button className='approveTxn' disabled={!estimation || signingStatus} onClick={approveTxn}>
-        {signingStatus ?
-          (<><Loading/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Signing...</>)
-          : (<>Sign and send</>)
-        }
+        {signButtonLabel}
       </button>
   </div>)
 }
