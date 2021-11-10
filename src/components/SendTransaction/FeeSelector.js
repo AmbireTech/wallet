@@ -5,7 +5,7 @@ import { isTokenEligible, getFeePaymentConsequences, mapTxnErrMsg, getErrHint } 
 
 const SPEEDS = ['slow', 'medium', 'fast', 'ape']
 
-export function FeeSelector ({ signer, estimation, network, setEstimation, feeSpeed, setFeeSpeed }) {
+export function FeeSelector ({ disabled, signer, estimation, network, setEstimation, feeSpeed, setFeeSpeed }) {
     if (!estimation) return (<Loading/>)
   
     const insufficientFee = estimation && estimation.feeInUSD
@@ -33,7 +33,7 @@ export function FeeSelector ({ signer, estimation, network, setEstimation, feeSp
     }
     const feeCurrencySelect = estimation.feeInUSD ? (<>
       <span style={{ marginTop: '1em' }}>Fee currency</span>
-      <select defaultValue={estimation.selectedFeeToken.symbol} onChange={onFeeCurrencyChange}>
+      <select disabled={disabled} defaultValue={estimation.selectedFeeToken.symbol} onChange={onFeeCurrencyChange}>
         {tokens.map(token => 
           (<option
             disabled={!isTokenEligible(token, feeSpeed, estimation)}
@@ -50,8 +50,8 @@ export function FeeSelector ({ signer, estimation, network, setEstimation, feeSp
     const feeAmountSelectors = SPEEDS.map(speed => (
       <div 
         key={speed}
-        className={feeSpeed === speed ? 'feeSquare selected' : 'feeSquare'}
-        onClick={() => setFeeSpeed(speed)}
+        className={`feeSquare${feeSpeed === speed ? ' selected' : ''}${disabled ? ' disabled' : ''}`}
+        onClick={() => !disabled && setFeeSpeed(speed)}
       >
         <div className='speed'>{speed}</div>
         <div className='feeEstimation'>
