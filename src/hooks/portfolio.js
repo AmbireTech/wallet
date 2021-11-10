@@ -4,6 +4,7 @@ import { ZAPPER_API_KEY } from '../config';
 import { fetchGet } from '../lib/fetch';
 import { ZAPPER_API_ENDPOINT } from '../config'
 import suportedProtocols from '../consts/supportedProtocols';
+import { useToasts } from '../hooks/toasts'
 
 const getBalances = (apiKey, network, protocol, address) => fetchGet(`${ZAPPER_API_ENDPOINT}/protocols/${protocol}/balances?addresses[]=${address}&network=${network}&api_key=${apiKey}&newBalances=true`)
 
@@ -12,7 +13,8 @@ let balanceByNetworks = []
 let otherProtocolsByNetworks = []
 let lastOtherProcolsRefresh = null
 
-export default function usePortfolio({ currentNetwork, account, onError }) {
+export default function usePortfolio({ currentNetwork, account }) {
+    const { addToast } = useToasts()
     const [isBalanceLoading, setBalanceLoading] = useState(true);
     const [areAssetsLoading, setAssetsLoading] = useState(true);
     const [balance, setBalance] = useState({
@@ -82,7 +84,7 @@ export default function usePortfolio({ currentNetwork, account, onError }) {
 
             return true
         } catch (error) {
-            onError(error)
+            addToast(error.message, { error: true })
             return false
         }
     }
@@ -113,7 +115,7 @@ export default function usePortfolio({ currentNetwork, account, onError }) {
             if (failedRequests >= requestsCount) throw new Error('Failed to fetch other Protocols from Zapper API')
             return true
         } catch (error) {
-            onError(error)
+            addToast(error.message, { error: true })
             return false
         }
     }
