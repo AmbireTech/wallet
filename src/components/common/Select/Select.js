@@ -5,7 +5,7 @@ import { BsChevronUp, BsChevronDown } from 'react-icons/bs'
 import { CSSTransition } from 'react-transition-group';
 import useOnClickOutside from '../../../helpers/onClickOutside';
 
-const Select = ({ children, native, searchable, defaultValue, items, onChange }) => {
+const Select = ({ children, native, monospace, searchable, defaultValue, items, onChange }) => {
     const ref = useRef();
     const hiddenTextInput = useRef();
     const transitionRef = useRef();
@@ -40,7 +40,7 @@ const Select = ({ children, native, searchable, defaultValue, items, onChange })
 
     return (
         !native ? 
-            <div className="select" onClick={() => setOpen(!isOpen)} ref={ref}>
+            <div className={`select ${monospace ? 'monospace': ''}`} onClick={() => setOpen(!isOpen)} ref={ref}>
                 {
                     searchable ? 
                         <input type="text" className="search-input" value={search} ref={hiddenTextInput} onInput={({ target }) => setSearch(target.value)}/>

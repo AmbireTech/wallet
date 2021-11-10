@@ -1,4 +1,4 @@
-import './Providers.css'
+import './Providers.scss'
 
 import RAMP_LOGO from '../../../../resources/ramp.svg';
 import PAYTRIE_LOGO from '../../../../resources/paytrie.svg';
@@ -15,8 +15,8 @@ export default function Providers({ walletAddress, selectedNetwork }) {
             fees: '0.49%-2.9%',
             limits: '10,000EUR/m',
             currencies: 'USD, EUR, GBP',
-            networks: ['ethereum', 'polygon', 'avalanche', 'arbitrum'],
-            onClick: () => openRampNetwork({walletAddress})
+            networks: ['ethereum', 'polygon', 'avalanche'],
+            onClick: () => openRampNetwork({walletAddress, selectedNetwork})
         },
         {
             logo: PAYTRIE_LOGO,
@@ -25,8 +25,8 @@ export default function Providers({ walletAddress, selectedNetwork }) {
             fees: '1% (min. $2 CAD)',
             limits: '$2,000CAD/day',
             currencies: 'CAD',
-            networks: ['ethereum'],
-            onClick: () => openPayTrie({walletAddress})
+            networks: ['ethereum', 'polygon'],
+            onClick: () => openPayTrie({walletAddress, selectedNetwork})
         },
         {
             logo: TRANSAK_LOGO,
@@ -35,8 +35,8 @@ export default function Providers({ walletAddress, selectedNetwork }) {
             fees: 'from 0.5%',
             limits: 'up to 15,000 EUR/day',
             currencies: 'GBP, EUR, USD and many more',
-            networks: ['ethereum'],
-            onClick: () => openTransak({walletAddress})
+            networks: ['ethereum', 'polygon', 'avalanche', 'arbitrum'],
+            onClick: () => openTransak({walletAddress, selectedNetwork})
         }
     ];
 

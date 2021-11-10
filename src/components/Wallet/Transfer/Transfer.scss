@@ -16,25 +16,16 @@
         justify-content: center;
         font-size: 30px;
         font-weight: bold;
-        color: rgba(255, 255, 255, 0.5);
-        backdrop-filter: blur(7px);
+        color: rgba(255, 255, 255, 0.6);
         background-color: rgba(0, 0, 0, 0.1);
     }
 
-    .panel {
-        position: relative;
-        display: flex;
-        flex-direction: column;
-        gap: 1.5em;
-        flex: 0 1 50%;
-        padding: 30px;
-        padding-bottom: 40px;
-        background-color: $panel-background-color;
+    .blurred {
+        filter: blur(7px);
+    }
 
-        .title {
-            font-size: 1.5em;
-            font-weight: bold;
-        }
+    .panel {
+        flex: 0 1 50%;
     }
 
     .form {

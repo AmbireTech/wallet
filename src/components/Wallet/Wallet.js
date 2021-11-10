@@ -18,7 +18,7 @@ export default function Wallet(props) {
       <div id="wallet-container">
         <Switch>
           <Route path={props.match.url + "/dashboard"}>
-            <Dashboard portfolio={props.portfolio} />
+            <Dashboard portfolio={props.portfolio} allNetworks={props.allNetworks} setNetwork={props.setNetwork} />
           </Route>
           <Route path={props.match.url + "/deposit"}>
             <Deposit selectedAcc={props.selectedAcc} selectedNetwork={props.network.id} />
