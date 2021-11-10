@@ -225,3 +225,12 @@
     margin: 6px;
     color: white;
 }
+
+
+#sendTransaction .quickAccSigningForm {
+    display: inline;
+}
+
+#sendTransaction .quickAccSigningForm button {
+    height: 50px;
+}
