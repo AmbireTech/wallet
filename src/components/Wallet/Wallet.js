@@ -29,7 +29,7 @@ export default function Wallet(props) {
           <Route path={props.match.url + "/swap"}></Route>
           <Route path={props.match.url + "/earn"}></Route>
           <Route path={props.match.url + "/nft/:network/:collectionAddr/:tokenId"}>
-            <Collectable/>
+            <Collectable allNetworks={props.allNetworks}/>
           </Route>
 
           <Route path={props.match.url + "/"}>
