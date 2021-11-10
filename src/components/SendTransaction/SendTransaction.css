@@ -110,6 +110,10 @@
     cursor: pointer;
     user-select: none;
 }
+#sendTransaction .feeSquare.disabled {
+    opacity: 0.5;
+    cursor: default;
+}
 #sendTransaction .feeSquare.selected {
     border: 5px solid rgb(128, 255, 219);
 }
