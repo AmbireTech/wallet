@@ -13,7 +13,7 @@ import { Interface, formatUnits } from 'ethers/lib/utils'
 import { useToasts } from '../../hooks/toasts'
 import { getWallet } from '../../lib/getWallet'
 import accountPresets from '../../consts/accountPresets'
-import { FeeSelector } from './FeeSelector'
+import { FeeSelector, FailingTxn } from './FeeSelector'
 import { sendNoRelayer } from './noRelayer'
 import { isTokenEligible, getFeePaymentConsequences } from './helpers'
 import { fetchPost } from '../../lib/fetch'
@@ -170,20 +170,28 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
     if (!estimation) throw new Error('no estimation: should never happen')
     if (!relayerURL) throw new Error('Email/passphrase account signing without the relayer is not supported yet')
 
-    const finalBundle = getFinalBundle()
-    const provider = getDefaultProvider(network.rpc)
+    const finalBundle = signingStatus.finalBundle || getFinalBundle()
     const signer = finalBundle.signer
 
-    await finalBundle.getNonce(provider)
+    if (typeof finalBundle.nonce !== 'number') {
+      await finalBundle.getNonce(getDefaultProvider(network.rpc))
+    }
+
     const { signature, success, message, confCodeRequired } = await fetchPost(
       `${relayerURL}/second-key/${bundle.identity}/${network.id}/sign`, {
         signer, txns: finalBundle.txns, nonce: finalBundle.nonce, gasLimit: finalBundle.gasLimit,
         code: quickAccCredentials && quickAccCredentials.code
       }
     )
-    if (!success) throw new Error(`Secondary key error: ${message}`)
+    if (!success) {
+      if (message.includes('invalid confirmation code')) {
+        addToast('Unable to sign: wrong confirmation code', { error: true })
+        return
+      }
+      throw new Error(`Secondary key error: ${message}`)
+    }
     if (confCodeRequired) {
-      setSigningStatus({ quickAcc: true })
+      setSigningStatus({ quickAcc: true, finalBundle })
     } else {
       if (!signature) throw new Error(`QuickAcc internal error: there should be a signature`)
       if (!account.primaryKeyBackup) throw new Error(`No key backup found: perhaps you need to import the account via JSON?`)
@@ -212,7 +220,7 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
       // be careful not to call this after onDimiss, cause it might cause state to be changed post-unmount
       setSigningStatus(null)
 
-      // Inform everything that's waiting on the results (eg WalletConnect)
+      // Inform everything that's waiting for the results (eg WalletConnect)
       resolveMany(requestIds, { success: bundleResult.success, result: bundleResult.txId, message: bundleResult.message })
 
       if (bundleResult.success) addToast((
@@ -275,6 +283,7 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
                               Fee
                           </div>
                           <FeeSelector
+                            disabled={signingStatus && signingStatus.finalBundle}
                             signer={bundle.signer}
                             estimation={estimation}
                             setEstimation={setEstimation}
@@ -291,12 +300,16 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
                           Sign
                       </div>
                   </div>
-                  <Actions
-                    estimation={estimation}
-                    approveTxn={approveTxn} rejectTxn={rejectTxn}
-                    signingStatus={signingStatus}
-                    feeSpeed={feeSpeed}
-                  />
+                  {(bundle.signer.quickAccManager && !relayerURL) ? (
+                    <FailingTxn message='Signing transactions with an email/passphrase account without being connected to the relayer is unsupported.'></FailingTxn>
+                  ) : (
+                      <Actions
+                        estimation={estimation}
+                        approveTxn={approveTxn} rejectTxn={rejectTxn}
+                        signingStatus={signingStatus}
+                        feeSpeed={feeSpeed}
+                      />
+                  )}
               </div>
           </div>
       </div>
@@ -308,7 +321,7 @@ function Actions({ estimation, feeSpeed, approveTxn, rejectTxn, signingStatus })
   const form = useRef(null)
 
   const rejectButton = (
-    <button className='rejectTxn' onClick={rejectTxn}>Reject</button>
+    <button type='button' className='rejectTxn' onClick={rejectTxn}>Reject</button>
   )
   const insufficientFee = estimation && estimation.feeInUSD
     && !isTokenEligible(estimation.selectedFeeToken, feeSpeed, estimation)
@@ -324,15 +337,21 @@ function Actions({ estimation, feeSpeed, approveTxn, rejectTxn, signingStatus })
     : (<>Sign and send</>)
 
   if (signingStatus && signingStatus.quickAcc) {
-    // @TODO use submit to take advantage of html5 form validation
     return (<>
       <input type='password' required minLength={8} placeholder='Passphrase' value={quickAccCredentials.passphrase} onChange={e => setQuickAccCredentials({ ...quickAccCredentials, passphrase: e.target.value })}></input>
-      <form ref={form} className='quickAccSigningForm' onSubmit={e => e.preventDefault()}>
+      <form ref={form} className='quickAccSigningForm' onSubmit={e => { e.preventDefault() }}>
         {/* Changing the autoComplete prop to a random string seems to disable it more often */}
-        <input type='text' pattern='[0-9]+' title='Confirmation code should be 6 digits' autoComplete='nope' required minLength={6} maxLength={6} placeholder='Confirmation code' value={quickAccCredentials.code} onChange={e => setQuickAccCredentials({ ...quickAccCredentials, code: e.target.value })}></input>
+        <input
+          type='text' pattern='[0-9]+'
+          title='Confirmation code should be 6 digits'
+          autoComplete='nope'
+          required minLength={6} maxLength={6}
+          placeholder='Confirmation code'
+          value={quickAccCredentials.code}
+          onChange={e => setQuickAccCredentials({ ...quickAccCredentials, code: e.target.value })}
+        ></input>
         {rejectButton}
         <button className='approveTxn'
-          disabled={!(estimation && quickAccCredentials.code.length === 6 && quickAccCredentials.passphrase)}
           onClick={() => {
             if (!form.current.checkValidity()) return
             approveTxn({ quickAccCredentials })
