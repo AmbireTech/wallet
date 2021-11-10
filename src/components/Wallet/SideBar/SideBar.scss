@@ -10,11 +10,11 @@
     overflow: hidden;
     transition: width 0.1s ease-in-out;
 
-    .logo, .icon {
+    #logo, #icon {
         transition: opacity 0.1s ease-in-out;
     }
 
-    .logo {
+    #logo {
         background-image: url('../../../resources/logo.png');
         width: 100%;
         margin: 1em 0em 3em 0.5em;
@@ -24,7 +24,7 @@
         background-position: center left;
     }
 
-    .icon {
+    #icon {
         position: absolute;
         top: 10px;
         height: 90px;
@@ -96,11 +96,11 @@
     #sidebar {
         width: $sidebar-mobile-width;
 
-        .logo {
+        #logo {
             opacity: 0;
         }
 
-        .icon {
+        #icon {
             opacity: 1;
         }
 
