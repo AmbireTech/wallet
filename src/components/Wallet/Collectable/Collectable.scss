@@ -4,5 +4,53 @@
 
     .panel {
         flex: 0 1 50%;
+
+        .content {
+            height: 100%;
+
+            .separator {
+                flex-grow: 1;
+            }
+        }
+    }
+
+    .metadata {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+
+        .collection {
+            font-size: 15px;
+            font-weight: bold;
+        }
+
+        .image {
+            z-index: 48;
+            height: 250px;
+            width: 250px;
+            background-size: contain;
+            background-position: center center;
+            background-repeat: no-repeat;
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .info {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+
+            .name {
+                font-size: 18px;
+                font-weight: bold;
+                color: white;
+            }
+
+            .description {
+                font-size: 15px;
+                font-weight: 500;
+                color: white;
+                opacity: 0.6;
+            }
+        }
     }
 }
