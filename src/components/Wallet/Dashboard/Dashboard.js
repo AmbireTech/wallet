@@ -10,6 +10,7 @@ export default function Dashboard({ portfolio, allNetworks, setNetwork }) {
     const [chartTokensData, setChartTokensData] = useState([]);
     const [chartAssetsData, setChartAssetsData] = useState([]);
     const [chartType, setChartType] = useState([]);
+    const [tableType, setTableType] = useState([]);
 
     const chartSegments = [
         {
@@ -17,6 +18,15 @@ export default function Dashboard({ portfolio, allNetworks, setNetwork }) {
         },
         {
             value: 'By Asset'
+        }
+    ]
+
+    const tableSegments = [
+        {
+            value: 'Portfolio'
+        },
+        {
+            value: 'Collectables'
         }
     ]
 
@@ -98,7 +108,10 @@ export default function Dashboard({ portfolio, allNetworks, setNetwork }) {
                 </div>
             </div>
             <div id="table" className="panel">
-                <div className="title">Assets</div>
+                <div className="title">
+                    Assets
+                    <Segments small defaultValue={tableSegments[0].value} segments={tableSegments} onChange={setTableType}></Segments>
+                </div>
                 <div className="content">
                     {
                         portfolio.areAssetsLoading ?
@@ -107,41 +120,62 @@ export default function Dashboard({ portfolio, allNetworks, setNetwork }) {
                             !portfolio.assets.length ?
                                 <AssetsPlaceholder/>
                                 :
-                                portfolio.assets.map(({ label, assets }, i) => (
-                                    <div className="category" key={`category-${i}`}>
-                                        <div className="title">{ label }</div>
-                                        <div className="list">
-                                            {
-                                                assets.map(({ tokens }) => 
-                                                    tokens.map(({ label, collectionName, symbol, img, collectionImg, balance, balanceUSD }, i) => (
-                                                        <div className="token" key={`token-${i}`}>
-                                                            <div className="icon">
-                                                                {
-                                                                    img || collectionImg ? 
-                                                                        <img src={img || collectionImg} alt="Token Icon"/>
-                                                                        :
-                                                                        <GiToken size={20}/>
-                                                                }
-                                                            </div>
-                                                            <div className="name">
-                                                                { label || collectionName || symbol }
-                                                            </div>
-                                                            <div className="separator"></div>
-                                                            <div className="balance">
-                                                                <div className="currency">
-                                                                    { balance } <span className="symbol">{ symbol }</span>
+                                tableType === tableSegments[0].value ?
+                                    portfolio.assets.map(({ label, assets }, i) => (
+                                        <div className="category" key={`category-${i}`}>
+                                            <div className="title">{ label }</div>
+                                            <div className="list">
+                                                {
+                                                    assets.map(({ tokens }) => 
+                                                        tokens.map(({ label, collectionName, symbol, img, collectionImg, balance, balanceUSD }, i) => (
+                                                            <div className="token" key={`token-${i}`}>
+                                                                <div className="icon">
+                                                                    {
+                                                                        img || collectionImg ? 
+                                                                            <img src={img || collectionImg} alt="Token Icon"/>
+                                                                            :
+                                                                            <GiToken size={20}/>
+                                                                    }
                                                                 </div>
-                                                                <div className="dollar">
-                                                                    <span className="symbol">$</span> { balanceUSD }
+                                                                <div className="name">
+                                                                    { label || collectionName || symbol }
+                                                                </div>
+                                                                <div className="separator"></div>
+                                                                <div className="balance">
+                                                                    <div className="currency">
+                                                                        { balance } <span className="symbol">{ symbol }</span>
+                                                                    </div>
+                                                                    <div className="dollar">
+                                                                        <span className="symbol">$</span> { balanceUSD }
+                                                                    </div>
                                                                 </div>
                                                             </div>
-                                                        </div>
-                                                    ))
-                                                )
-                                            }
+                                                        ))
+                                                    )
+                                                }
+                                            </div>
                                         </div>
+                                    ))
+                                    :
+                                    <div className="collectables">
+                                        {
+                                            portfolio.collectables.map(({ tokens }) => tokens.map(({ collectionName, collectionImg, assets }) => assets.map(({ tokenId, assetName, assetImg, balanceUSD }) => (
+                                                <div className="collectable" key={tokenId}>
+                                                    <div className="artwork" style={{backgroundImage: `url(${assetImg})`}}/>
+                                                    <div className="info">
+                                                        <div className="collection">
+                                                            <div className="collection-icon" style={{backgroundImage: `url(${collectionImg})`}}></div>
+                                                            { collectionName }
+                                                        </div>
+                                                        <div className="details">
+                                                            <div className="name">{ assetName }</div>
+                                                            <div className="value"><span className="purple-highlight">$</span> { balanceUSD.toFixed(2) }</div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            ))))
+                                        }
                                     </div>
-                                ))
                     }
                 </div>
                 {
