@@ -17,12 +17,11 @@ const Collectable = ({ allNetworks }) => {
         collection: ''
     })
 
-    const { rpc } = allNetworks.find(({ id }) => id === network)
-    const provider = getDefaultProvider(rpc)
-
-    const contract = new ethers.Contract(collectionAddr, ERC721Abi, provider)
-
     const fetchMetadata = useCallback(async () => {
+        const { rpc } = allNetworks.find(({ id }) => id === network)
+        const provider = getDefaultProvider(rpc)
+        const contract = new ethers.Contract(collectionAddr, ERC721Abi, provider)
+
         try {
             let collection = await contract.name()
             setMetadata(metadata => ({
@@ -46,11 +45,9 @@ const Collectable = ({ allNetworks }) => {
         } catch(e) {
             addToast('Failed to fetch metadata', { error: true })
         }
-    }, [])
+    }, [addToast, allNetworks, tokenId, collectionAddr, network])
 
-    useEffect(() => {
-        fetchMetadata()
-    }, [fetchMetadata])
+    useEffect(() => fetchMetadata(), [fetchMetadata])
 
     return (
         <div id="collectable">
