@@ -12,10 +12,10 @@ export function FeeSelector ({ signer, estimation, network, setEstimation, feeSp
       && !isTokenEligible(estimation.selectedFeeToken, feeSpeed, estimation)
     const willFail = (estimation && !estimation.success) || insufficientFee
     if (willFail) return insufficientFee ?
-        (<h3 class='error'>Insufficient balance for the fee. Accepted tokens: {estimation.remainingFeeTokenBalances.map(x => x.symbol).join(', ')}</h3>)
+        (<h3 className='error'>Insufficient balance for the fee. Accepted tokens: {estimation.remainingFeeTokenBalances.map(x => x.symbol).join(', ')}</h3>)
         : (<div className='failingTxn'>
           <AiOutlineWarning></AiOutlineWarning>
-          <h3 class='error'>The current transaction batch cannot be sent because it will fail: {mapTxnErrMsg(estimation.message)}</h3>
+          <h3 className='error'>The current transaction batch cannot be sent because it will fail: {mapTxnErrMsg(estimation.message)}</h3>
           <FiHelpCircle title={getErrHint(estimation.message)}></FiHelpCircle>
       </div>)
   
