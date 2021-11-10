@@ -17,7 +17,7 @@ export function getTransactionSummary(txn, networkId) {
     const contractInfo = verifiedContracts[contractKey]
 
   if (parseInt(value) > 0) sendSummary = `send ${(parseInt(value)/1e18).toFixed(4)} ${network ? network.nativeAssetSymbol : 'unknown native token'} to ${contractInfo ? contractInfo.name : to}`
-	else if (parseInt(value) == 0 && data === '0x' && txn.to?.toLowerCase() == txn.from?.toLowerCase()) sendSummary = `Self cancel transaction`
+	else if (parseInt(value) === 0 && data === '0x' && txn.to?.toLowerCase() === txn.from?.toLowerCase()) sendSummary = `Self cancel transaction`
 
   if (data !== '0x') {
       if (data.startsWith(TRANSFER_SIGHASH)) {

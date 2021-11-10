@@ -7,25 +7,25 @@ const SPEEDS = ['slow', 'medium', 'fast', 'ape']
 
 export function FeeSelector ({ signer, estimation, network, setEstimation, feeSpeed, setFeeSpeed }) {
     if (!estimation) return (<Loading/>)
-  
+
     const insufficientFee = estimation && estimation.feeInUSD
       && !isTokenEligible(estimation.selectedFeeToken, feeSpeed, estimation)
     const willFail = (estimation && !estimation.success) || insufficientFee
     if (willFail) return insufficientFee ?
-        (<h3 className='error'>Insufficient balance for the fee. Accepted tokens: {estimation.remainingFeeTokenBalances.map(x => x.symbol).join(', ')}</h3>)
+        (<h3 className='error'>Insufficient balance for the fee. Accepted tokens: {(estimation.remainingFeeTokenBalances||[]).map(x => x.symbol).join(', ')}</h3>)
         : (<div className='failingTxn'>
           <AiOutlineWarning></AiOutlineWarning>
           <h3 className='error'>The current transaction batch cannot be sent because it will fail: {mapTxnErrMsg(estimation.message)}</h3>
           <FiHelpCircle title={getErrHint(estimation.message)}></FiHelpCircle>
       </div>)
-  
+
     if (!estimation.feeInNative) return (<></>)
     if (estimation && !estimation.feeInUSD && estimation.gasLimit < 40000) {
       return (<div>
         <b>WARNING:</b> Fee estimation unavailable when you're doing your first account transaction and you are not connected to a relayer. You will pay the fee from <b>{signer.address}</b>, make sure you have {network.nativeAssetSymbol} there.
       </div>)
     }
-  
+
     const { nativeAssetSymbol } = network
     const tokens = estimation.remainingFeeTokenBalances || ({ symbol: nativeAssetSymbol, decimals: 18 })
     const onFeeCurrencyChange = e => {
@@ -35,7 +35,7 @@ export function FeeSelector ({ signer, estimation, network, setEstimation, feeSp
     const feeCurrencySelect = estimation.feeInUSD ? (<>
       <span style={{ marginTop: '1em' }}>Fee currency</span>
       <select defaultValue={estimation.selectedFeeToken.symbol} onChange={onFeeCurrencyChange}>
-        {tokens.map(token => 
+        {tokens.map(token =>
           (<option
             disabled={!isTokenEligible(token, feeSpeed, estimation)}
             key={token.symbol}>
@@ -45,11 +45,11 @@ export function FeeSelector ({ signer, estimation, network, setEstimation, feeSp
         )}
       </select>
     </>) : (<></>)
-  
+
     const { isStable } = estimation.selectedFeeToken
     const { multiplier } = getFeePaymentConsequences(estimation.selectedFeeToken, estimation)
     const feeAmountSelectors = SPEEDS.map(speed => (
-      <div 
+      <div
         key={speed}
         className={feeSpeed === speed ? 'feeSquare selected' : 'feeSquare'}
         onClick={() => setFeeSpeed(speed)}
@@ -67,7 +67,7 @@ export function FeeSelector ({ signer, estimation, network, setEstimation, feeSp
         </div>
       </div>
     ))
-  
+
     return (<>
       {feeCurrencySelect}
       <div className='feeAmountSelectors'>
