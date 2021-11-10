@@ -7,23 +7,16 @@ import ERC20ABI from 'adex-protocol-eth/abi/ERC20'
 const ERC20 = new Interface(ERC20ABI)
 const TRANSFER_SIGHASH = ERC20.getSighash(ERC20.getFunction('transfer').format())
 
-export function getBundleShortSummary(bundle) {
-    return bundle.txns
-        .map(txn => getTransactionSummary(txn, bundle))
-        .join(',')
-        .slice(0, 50) + '...'
-}
 // @TODO custom parsing for univ2 contracts, exact output, etc.
-export function getTransactionSummary(txn, bundle) {
+export function getTransactionSummary(txn, networkId) {
     const [to, value, data] = txn
     let callSummary, sendSummary
-    // @TODO proper asset symbol
-    const network = networks.find(x => x.id === bundle.network)
+    const network = networks.find(x => x.id === networkId || x.chainId === networkId)
 
-    const contractKey = bundle.network + ':' + getAddress(to)
+    const contractKey = network.id + ':' + getAddress(to)
     const contractInfo = verifiedContracts[contractKey]
 
-    if (parseInt(value) > 0) sendSummary = `send ${(parseInt(value)/1e18).toFixed(4)} ${network.nativeAssetSymbol} to ${contractInfo ? contractInfo.name : to}`
+    if (parseInt(value) > 0) sendSummary = `send ${(parseInt(value)/1e18).toFixed(4)} ${network ? network.nativeAssetSymbol : 'unknown native token'} to ${contractInfo ? contractInfo.name : to}`
     if (data !== '0x') {
         if (data.startsWith(TRANSFER_SIGHASH)) {
             const [to, amount] = ERC20.decodeFunctionData('transfer', data)
@@ -41,4 +34,12 @@ export function getTransactionSummary(txn, bundle) {
         } else callSummary = `unknown call to ${to}`
     }
     return [callSummary, sendSummary].filter(x => x).join(', ')
+}
+
+export function getContractName(txn, networkId) {
+    const [to] = txn
+    const network = networks.find(x => x.id === networkId || x.chainId === networkId)
+    const contractKey = network.id + ':' + getAddress(to)
+    const contractInfo = verifiedContracts[contractKey]
+    return contractInfo ? contractInfo.name : null
 }
