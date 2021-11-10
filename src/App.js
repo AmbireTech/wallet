@@ -17,13 +17,11 @@ import useNetwork from './hooks/network'
 import useWalletConnect from './hooks/walletconnect'
 import useNotifications from './hooks/notifications'
 import { usePortfolio } from './hooks'
-import { useToasts } from './hooks/toasts'
 
 // @TODO consts/cfg, dev vs prod
 const relayerURL = 'http://localhost:1934'
 
 function AppInner () {
-  const { addToast } = useToasts();
   const { accounts, selectedAcc, onSelectAcc, onAddAccount } = useAccounts()
   const { network, setNetwork, allNetworks } = useNetwork()
   const { connections, connect, disconnect, requests, resolveMany } = useWalletConnect({
@@ -32,8 +30,7 @@ function AppInner () {
   })
   const portfolio = usePortfolio({
     currentNetwork: network.id,
-    account: selectedAcc,
-    onError: (error) => addToast(error.message, { error: true })
+    account: selectedAcc
   })
 
   // Show notifications for all requests
