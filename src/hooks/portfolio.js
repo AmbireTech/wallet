@@ -27,6 +27,7 @@ export default function usePortfolio({ currentNetwork, account }) {
     });
     const [otherBalances, setOtherBalances] = useState([]);
     const [assets, setAssets] = useState([]);
+    const [collectables, setCollectables] = useState([]);
 
     const updateStates = (currentNetwork) => {
         const balance = balanceByNetworks.find(({ network }) => network === currentNetwork)
@@ -40,8 +41,9 @@ export default function usePortfolio({ currentNetwork, account }) {
         if (tokens && otherProtocols) {
             setAssets([
                 ...tokens.products,
-                ...otherProtocols.protocols
+                ...otherProtocols.protocols.filter(({ label }) => label !== 'NFTs')
             ])
+            setCollectables(otherProtocols.protocols.find(({ label }) => label === 'NFTs').assets)
         }
     }
 
@@ -169,6 +171,7 @@ export default function usePortfolio({ currentNetwork, account }) {
         balance,
         otherBalances,
         assets,
+        collectables,
         requestOtherProtocolsRefresh
     }
 }
