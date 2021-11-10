@@ -89,7 +89,7 @@ export default function usePortfolio({ currentNetwork, account }) {
             await fetchBalances(account)
             setBalanceLoading(false)
         }
-        
+
         async function loadProtocols() {
             setAssetsLoading(true)
             await fetchOtherProtocols(account)
@@ -122,5 +122,6 @@ export default function usePortfolio({ currentNetwork, account }) {
         otherBalances,
         assets,
         requestOtherProtocolsRefresh
+        //updatePortfolio//TODO find a non dirty way to be able to reply to getSafeBalances from the dapps, after the first refresh
     }
 }
