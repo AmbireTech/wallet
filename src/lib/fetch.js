@@ -17,7 +17,7 @@ export const fetchGet = async url => {
         'Content-Type': 'application/json'
       }
     });
-    return response.json()
+    return response.status !== 200 ? null : response.json()
   } catch(e){
     console.error(e)
     return null;

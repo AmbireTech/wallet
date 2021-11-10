@@ -6,36 +6,42 @@
     bottom: 0;
     display: flex;
     flex-direction: column;
-    align-items: center;
     padding-bottom: 20px;
     width: 100%;
 
-    .toast {
+    .transition-group {
         display: flex;
+        flex-direction: column;
         align-items: center;
-        height: 50px;
-        padding: 0 20px;
-        margin-top: 15px;
-        font-size: 15px;
-        font-weight: bold;
-        color: black;
-        background-color: $primary-accent-color;
-        box-shadow: 0px 5px 10px 0 rgba(0, 0, 0, 0.25);
-        cursor: pointer;
-        user-select: none;
 
-        &.error {
-            color: white;
-            background-color: $danger-color;
+        .toast {
+            display: flex;
+            align-items: center;
+            height: 50px;
+            padding: 0 20px;
+            margin-top: 15px;
+            font-size: 15px;
+            font-weight: bold;
+            color: black;
+            background-color: $primary-accent-color;
+            box-shadow: 0px 5px 10px 0 rgba(0, 0, 0, 0.25);
+            cursor: pointer;
+            user-select: none;
+
+            &.error {
+                color: white;
+                background-color: $danger-color;
+
+                a {
+                    color: #ccc;
+                    text-decoration: underline;
+                }
+            }
+
             a {
-                color: #ccc;
+                color: #222;
                 text-decoration: underline;
             }
-        }
-
-        a {
-            color: #222;
-            text-decoration: underline;
         }
     }
 }

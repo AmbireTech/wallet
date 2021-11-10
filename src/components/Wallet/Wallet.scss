@@ -7,4 +7,11 @@
     right: 0;
     bottom: 0;
     padding: 50px;
+    transition: left 0.1s ease-in-out;
+}
+
+@media screen and (max-width: 1400px) {
+    #wallet-container {
+        left: $sidebar-mobile-width;
+    }
 }
