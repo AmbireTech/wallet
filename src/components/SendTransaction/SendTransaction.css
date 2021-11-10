@@ -82,6 +82,9 @@
     justify-content: center;
     display: flex;
 }
+#sendTransaction .feePanel .loading {
+    margin: 1em auto;
+}
 
 #sendTransaction .feeAmountSelectors {
     overflow: hidden;
