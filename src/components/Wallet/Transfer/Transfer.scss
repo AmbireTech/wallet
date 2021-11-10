@@ -4,6 +4,45 @@
     display: flex;
     gap: 30px;
 
+    #recipient-field {
+        position: relative;
+        display: flex;
+
+        .dropdown {
+            position: absolute;
+            right: 0;
+            height: 60px;
+
+            .list {
+                top: 60px;
+
+                label {
+                    font-weight: bold;
+                    padding: 10px 20px;
+                }
+
+                .item {
+                    height: 50px;
+                    font-size: 15px;
+                    font-weight: bold;
+                    font-family: monospace;
+                    padding: 0 20px;
+                    cursor: pointer;
+                    opacity: 0.7;
+
+                    &.active {
+                        opacity: 1;
+                    }
+
+                    &:hover {
+                        background-color: rgba(0, 0, 0, 0.1);
+                        opacity: 0.9;
+                    }
+                }
+            }
+        }
+    }
+
     .overlay {
         z-index: 98;
         position: absolute;
