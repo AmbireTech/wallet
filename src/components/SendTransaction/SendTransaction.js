@@ -175,9 +175,12 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
     const signer = finalBundle.signer
 
     await finalBundle.getNonce(provider)
-    const { signature, success, message, confCodeRequired } = await fetchPost(`${relayerURL}/second-key/${bundle.identity}/${network.id}/sign`, {
-      signer, txns: finalBundle.txns, nonce: finalBundle.nonce, gasLimit: finalBundle.gasLimit
-    })
+    const { signature, success, message, confCodeRequired } = await fetchPost(
+      `${relayerURL}/second-key/${bundle.identity}/${network.id}/sign`, {
+        signer, txns: finalBundle.txns, nonce: finalBundle.nonce, gasLimit: finalBundle.gasLimit,
+        code: quickAccCredentials.code
+      }
+    )
     if (!success) throw new Error(`Secondary key error: ${message}`)
     if (confCodeRequired) {
       setSigningStatus({ quickAcc: true })
