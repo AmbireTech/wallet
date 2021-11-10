@@ -235,3 +235,7 @@
 #sendTransaction .quickAccSigningForm button {
     min-height: 50px;
 }
+
+#sendTransaction .quickAccSigningForm button .loading {
+    top: 15px;
+}
