@@ -43,7 +43,7 @@ export default function usePortfolio({ currentNetwork, account }) {
                 ...tokens.products,
                 ...otherProtocols.protocols.filter(({ label }) => label !== 'NFTs')
             ])
-            setCollectables(otherProtocols.protocols.find(({ label }) => label === 'NFTs').assets)
+            setCollectables(otherProtocols.protocols.find(({ label }) => label === 'NFTs')?.assets || [])
         }
     }
 
