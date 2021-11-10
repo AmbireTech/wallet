@@ -3,11 +3,13 @@ import './Trading.scss';
 import React from 'react';
 import Swap from './SushiIframe'
 
-export default function Dashboard({ portfolio }) {
+export default function Trading(props) {
+
+    console.log('props', props)
 
     return (
         <section id="trading">     
-            <Swap />  
+            <Swap {...props} />  
         </section>
     )
 }
