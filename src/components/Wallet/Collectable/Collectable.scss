@@ -1,0 +1,8 @@
+#collectable {
+    display: flex;
+    gap: 30px;
+
+    .panel {
+        flex: 0 1 50%;
+    }
+}
