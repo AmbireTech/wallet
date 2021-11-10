@@ -48,6 +48,6 @@ export default function useAccounts () {
       if (Object.keys(accounts).length) {
         history.push('/wallet/dashboard')
       }
-    }, [accounts, addToast])
+    }, [accounts, addToast, history])
     return { accounts, selectedAcc, onSelectAcc, onAddAccount }
   }
