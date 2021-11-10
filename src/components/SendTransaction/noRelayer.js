@@ -2,7 +2,7 @@ import { Interface, hexlify } from 'ethers/lib/utils'
 const IdentityInterface = new Interface(require('adex-protocol-eth/abi/Identity5.2'))
 const FactoryInterface = new Interface(require('adex-protocol-eth/abi/IdentityFactory5.2'))
 
-export async function sendNoRelayer ({ finalBundle, account, wallet, estimation, feeSpeed, provider, nativeAssetSymbol }) {
+export async function sendNoRelayer ({ finalBundle, account, network, wallet, estimation, feeSpeed, provider, nativeAssetSymbol }) {
     const { signer } = finalBundle
     // @TODO: in case we need deploying, run using deployAndCall pipeline with signed msgs
     // @TODO: quickAccManager
@@ -14,6 +14,7 @@ export async function sendNoRelayer ({ finalBundle, account, wallet, estimation,
     // NOTE: just adding values to gasLimit is bad because 1) they're hardcoded estimates
     // and 2) the fee displayed in the UI does not reflect that
     const isDeployed = await provider.getCode(finalBundle.identity).then(code => code !== '0x')
+
     let gasLimit
     let to, data
     if (isDeployed) {
@@ -45,7 +46,9 @@ export async function sendNoRelayer ({ finalBundle, account, wallet, estimation,
         txId = (await provider.sendTransaction(signed)).hash
       } else {
         // web3 injectors which can't sign, but can sign+send
-        // they also don't like the gas arg
+        // they also don't like the gas arg they fully control the chain ID
+        const { chainId } = await wallet.provider.getNetwork()
+        if (network.chainId !== chainId) throw new Error(`Connected to the wrong network: please switch to ${network.name}`)
         txId = (await wallet.sendTransaction({ from: txn.from, to: txn.to, data: txn.data, gasPrice: txn.gasPrice, nonce: txn.nonce })).hash
       }
       return { success: true, txId }
