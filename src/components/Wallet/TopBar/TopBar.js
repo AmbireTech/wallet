@@ -49,11 +49,6 @@ const TopBar = ({
     }
   }, [connect]);
 
-  useEffect(() => {
-    window.addEventListener('focus', readClipboard)
-    return () => window.removeEventListener('focus', readClipboard)
-  }, [readClipboard])
-
   const accountsItems = accounts.map(({ id }) => ({
     value: id,
     iconColor: `#${id.slice(id.length - 6, id.length)}`
