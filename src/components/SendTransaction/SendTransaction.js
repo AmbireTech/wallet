@@ -325,8 +325,8 @@ function Actions({ estimation, feeSpeed, approveTxn, rejectTxn, signingStatus })
   if (signingStatus && signingStatus.quickAcc) {
     // @TODO use submit to take advantage of html5 form validation
     return (<>
-      <input type='text' autoComplete='off' required minLength={6} maxLength={6} placeholder='Confirmation code' value={quickAccCredentials.code} onChange={e => setQuickAccCredentials({ ...quickAccCredentials, code: e.target.value })}></input>
       <input type='password' required minLength={8} placeholder='Passphrase' value={quickAccCredentials.passphrase} onChange={e => setQuickAccCredentials({ ...quickAccCredentials, passphrase: e.target.value })}></input>
+      <input type='text' pattern='[0-9]+' autoComplete='off' required minLength={6} maxLength={6} placeholder='Confirmation code' value={quickAccCredentials.code} onChange={e => setQuickAccCredentials({ ...quickAccCredentials, code: e.target.value })}></input>
       {rejectButton}
       <button className='approveTxn'
         disabled={!(estimation && quickAccCredentials.code.length === 6 && quickAccCredentials.passphrase)}
