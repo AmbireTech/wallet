@@ -194,8 +194,8 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
   }
 
   const approveTxn = ({ quickAccCredentials }) => {
-    if (signingStatus) return
-    setSigningStatus({ inProgress: true })
+    if (signingStatus && signingStatus.inProgress) return
+    setSigningStatus(signingStatus || { inProgress: true })
 
     const requestIds = bundle.requestIds
     const blockExplorerUrl = network.explorerUrl
@@ -322,10 +322,13 @@ function Actions({ estimation, feeSpeed, approveTxn, rejectTxn, signingStatus })
   if (signingStatus && signingStatus.quickAcc) {
     // @TODO use submit to take advantage of html5 form validation
     return (<>
-      <input type="numeric" required minLength={6} maxLength={6} placeholder="Email confirmation code" value={quickAccCredentials.code} onChange={e => setQuickAccCredentials({ ...quickAccCredentials, code: e.target.value })}></input>
-      <input type="password" required minLength={8} placeholder="Passphrase" value={quickAccCredentials.passphrase} onChange={e => setQuickAccCredentials({ ...quickAccCredentials, passphrase: e.target.value })}></input>
+      <input type='text' autoComplete='off' required minLength={6} maxLength={6} placeholder='Confirmation code' value={quickAccCredentials.code} onChange={e => setQuickAccCredentials({ ...quickAccCredentials, code: e.target.value })}></input>
+      <input type='password' required minLength={8} placeholder='Passphrase' value={quickAccCredentials.passphrase} onChange={e => setQuickAccCredentials({ ...quickAccCredentials, passphrase: e.target.value })}></input>
       {rejectButton}
-      <button className='approveTxn' disabled={!estimation || signingStatus} onClick={approveTxn}>
+      <button className='approveTxn'
+        disabled={!(estimation && quickAccCredentials.code.length === 6 && quickAccCredentials.passphrase)}
+        onClick={() => approveTxn({ quickAccCredentials })}
+      >
         {signButtonLabel}
       </button>
     </>)
