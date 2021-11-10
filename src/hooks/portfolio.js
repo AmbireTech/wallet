@@ -16,7 +16,11 @@ export default function usePortfolio({ currentNetwork, account, onError }) {
     const [isBalanceLoading, setBalanceLoading] = useState(true);
     const [areAssetsLoading, setAssetsLoading] = useState(true);
     const [balance, setBalance] = useState({
-        total: {},
+        total: {
+            full: 0,
+            truncated: 0,
+            decimals: '00'
+        },
         tokens: []
     });
     const [otherBalances, setOtherBalances] = useState([]);
@@ -34,26 +38,33 @@ export default function usePortfolio({ currentNetwork, account, onError }) {
         if (tokens && otherProtocols) {
             setAssets([
                 ...tokens.products,
-                ...otherProtocols
+                ...otherProtocols.protocols
             ])
         }
     }
 
     const fetchBalances = async (account) => {
         try {
-            tokensByNetworks = (await Promise.all(suportedProtocols.map(async ({ network }) => {
-                const balance = await getBalances(ZAPPER_API_KEY, network, 'tokens', account)
-                if (!balance) return null
+            let failedRequests = 0
+            const requestsCount = suportedProtocols.length
 
-                const { meta, products } = Object.values(balance)[0]
-                return meta.length && products.length ? {
-                    network,
-                    meta,
-                    products
-                } : null
+            tokensByNetworks = (await Promise.all(suportedProtocols.map(async ({ network }) => {
+                try {
+                    const balance = await getBalances(ZAPPER_API_KEY, network, 'tokens', account)
+                    if (!balance) return null
+
+                    const { meta, products } = Object.values(balance)[0]
+                    return meta.length && products.length ? {
+                        network,
+                        meta,
+                        products
+                    } : null
+                } catch(_) {
+                    failedRequests++
+                }
             }))).filter(data => data)
 
-            if (!tokensByNetworks.length) throw new Error('Failed to fetch Tokens from Zapper API')
+            if (failedRequests >= requestsCount) throw new Error('Failed to fetch Tokens from Zapper API')
 
             balanceByNetworks = tokensByNetworks.map(({ network, meta, products }) => {
                 const balanceUSD = meta.find(({ label }) => label === 'Total').value + meta.find(({ label }) => label === 'Debt').value
@@ -78,23 +89,28 @@ export default function usePortfolio({ currentNetwork, account, onError }) {
 
     const fetchOtherProtocols = async (account) => {
         try {
+            let failedRequests = 0
+            const requestsCount = suportedProtocols.reduce((acc, curr) => curr.protocols.length + acc, 0)
+
             otherProtocolsByNetworks = (await Promise.all(suportedProtocols.map(async ({ network, protocols }) => {
                 const all = (await Promise.all(protocols.map(async protocol => {
-                    const balance = await getBalances(ZAPPER_API_KEY, network, protocol, account)
-                    if (!balance) return null
-                    const { products } = Object.values(balance)[0]
-                    return products
+                    try {
+                        const balance = await getBalances(ZAPPER_API_KEY, network, protocol, account)
+                        return balance ? Object.values(balance)[0] : null
+                    } catch(_) {
+                        failedRequests++
+                    }
                 }))).filter(data => data).flat()
 
                 return all.length ? {
                     network,
-                    ...all
+                    protocols: all.map(({ products }) => products).flat(2)
                 } : null
             }))).filter(data => data)
             
             lastOtherProcolsRefresh = Date.now()
 
-            if (!otherProtocolsByNetworks.length) throw new Error('Failed to fetch other Protocols from Zapper API')
+            if (failedRequests >= requestsCount) throw new Error('Failed to fetch other Protocols from Zapper API')
             return true
         } catch (error) {
             onError(error)
@@ -112,6 +128,10 @@ export default function usePortfolio({ currentNetwork, account, onError }) {
 
     // Fetch balances and protocols on account change
     useEffect(() => {
+        tokensByNetworks = []
+        balanceByNetworks = []
+        otherProtocolsByNetworks = []
+
         async function loadBalance() {
             setBalanceLoading(true)
             if (await fetchBalances(account)) setBalanceLoading(false)
