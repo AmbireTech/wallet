@@ -12,12 +12,11 @@ export function FeeSelector ({ signer, estimation, network, setEstimation, feeSp
       && !isTokenEligible(estimation.selectedFeeToken, feeSpeed, estimation)
     const willFail = (estimation && !estimation.success) || insufficientFee
     if (willFail) return insufficientFee ?
-        (<h3 className='error'>Insufficient balance for the fee. Accepted tokens: {estimation.remainingFeeTokenBalances.map(x => x.symbol).join(', ')}</h3>)
-        : (<div className='failingTxn'>
-          <AiOutlineWarning></AiOutlineWarning>
-          <h3 className='error'>The current transaction batch cannot be sent because it will fail: {mapTxnErrMsg(estimation.message)}</h3>
-          <FiHelpCircle title={getErrHint(estimation.message)}></FiHelpCircle>
-      </div>)
+        (<h3 className='error'>Insufficient balance for the fee. Accepted tokens: {(estimation.remainingFeeTokenBalances || []).map(x => x.symbol).join(', ')}</h3>)
+        : (<FailingTxn
+            message={<>The current transaction batch cannot be sent because it will fail: {mapTxnErrMsg(estimation.message)}</>}
+            tooltip={getErrHint(estimation.message)}
+        />)
   
     if (!estimation.feeInNative) return (<></>)
     if (estimation && !estimation.feeInUSD && estimation.gasLimit < 40000) {
@@ -77,4 +76,12 @@ export function FeeSelector ({ signer, estimation, network, setEstimation, feeSp
         (<span><b>WARNING:</b> Paying fees in tokens other than {nativeAssetSymbol} is unavailable because you are not connected to a relayer. You will pay the fee from <b>{signer.address}</b>.</span>)
         : (<></>)}
     </>)
-  }
+}
+
+export function FailingTxn ({ message, tooltip = '' }) {
+    return (<div className='failingTxn'>
+        <AiOutlineWarning></AiOutlineWarning>
+        <h3 className='error'>{message}</h3>
+        <FiHelpCircle title={tooltip}></FiHelpCircle>
+    </div>)
+}

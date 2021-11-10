@@ -13,7 +13,7 @@ import { Interface, formatUnits } from 'ethers/lib/utils'
 import { useToasts } from '../../hooks/toasts'
 import { getWallet } from '../../lib/getWallet'
 import accountPresets from '../../consts/accountPresets'
-import { FeeSelector } from './FeeSelector'
+import { FeeSelector, FailingTxn } from './FeeSelector'
 import { sendNoRelayer } from './noRelayer'
 import { isTokenEligible, getFeePaymentConsequences } from './helpers'
 import { fetchPost } from '../../lib/fetch'
@@ -212,7 +212,7 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
       // be careful not to call this after onDimiss, cause it might cause state to be changed post-unmount
       setSigningStatus(null)
 
-      // Inform everything that's waiting on the results (eg WalletConnect)
+      // Inform everything that's waiting for the results (eg WalletConnect)
       resolveMany(requestIds, { success: bundleResult.success, result: bundleResult.txId, message: bundleResult.message })
 
       if (bundleResult.success) addToast((
@@ -291,12 +291,16 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
                           Sign
                       </div>
                   </div>
-                  <Actions
-                    estimation={estimation}
-                    approveTxn={approveTxn} rejectTxn={rejectTxn}
-                    signingStatus={signingStatus}
-                    feeSpeed={feeSpeed}
-                  />
+                  {(bundle.signer.quickAccManager && !relayerURL) ? (
+                    <FailingTxn message='Signing transactions with an email/passphrase account without being connected to the relayer is unsupported.'></FailingTxn>
+                  ) : (
+                      <Actions
+                        estimation={estimation}
+                        approveTxn={approveTxn} rejectTxn={rejectTxn}
+                        signingStatus={signingStatus}
+                        feeSpeed={feeSpeed}
+                      />
+                  )}
               </div>
           </div>
       </div>
