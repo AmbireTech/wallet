@@ -3,7 +3,7 @@ import './TextInput.scss'
 import { MdContentCopy } from 'react-icons/md';
 import { useToasts } from '../../../hooks/toasts';
 
-export default function TextInput({ value, placeholder, info, disabled, copy, onInput }) {
+export default function TextInput({ value, placeholder, info, label, disabled, copy, onInput }) {
     const { addToast } = useToasts();
 
     const onClick = async () => {
@@ -12,8 +12,24 @@ export default function TextInput({ value, placeholder, info, disabled, copy, on
     };
 
     return (
-        <div className={`text-input ${copy ? 'copy' : ''}`} onClick={copy ? onClick : null}>
-            <input value={value} type="text" placeholder={placeholder} disabled={copy || disabled} onInput={ev => onInput(ev.target.value)}/>
+        <div className={`text-input ${copy ? 'copy' : ''}`}>
+            {
+                label ?
+                    <label>{ label }</label>
+                    :
+                    null
+            }
+            <div className="text-input-container" onClick={copy ? onClick : null}>
+                <input value={value} type="text" placeholder={placeholder} disabled={copy || disabled} onInput={ev => onInput(ev.target.value)}/>
+                {
+                    copy ?
+                        <div className="icon">
+                            <MdContentCopy size={20}/>
+                        </div>
+                        :
+                        null
+                }
+            </div>
             {
                 info ?
                     <div className="info">
@@ -22,15 +38,6 @@ export default function TextInput({ value, placeholder, info, disabled, copy, on
                     :
                     null
             }
-            {
-                copy ?
-                    <div className="icon">
-                        <MdContentCopy size={20}/>
-                    </div>
-                    :
-                    null
-            }
-            
         </div>
     )
 }

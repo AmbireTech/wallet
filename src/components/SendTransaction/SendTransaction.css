@@ -53,6 +53,7 @@
     background-color: rgba(0, 0, 0, 0.2);
     margin-bottom: 2em;
     max-width: 650px;
+    display: block;
 }
 
 #sendTransaction .panel .heading {
@@ -224,4 +225,13 @@
     border-bottom: 2px solid #b3c4e6;
     margin: 6px;
     color: white;
+}
+
+
+#sendTransaction .quickAccSigningForm {
+    display: inline;
+}
+
+#sendTransaction .quickAccSigningForm button {
+    min-height: 50px;
 }

@@ -1,4 +1,9 @@
 #assets-placeholder {
+    .category {
+        filter: blur(7px);
+        background-color: rgba(0, 0, 0, 0.1);
+    }
+
     .overlay {
         z-index: 98;
         position: absolute;
@@ -14,7 +19,5 @@
         font-size: 22px;
         font-weight: 500;
         color: rgba(255, 255, 255, 0.6);
-        backdrop-filter: blur(7px);
-        background-color: rgba(0, 0, 0, 0.1);
     }
 }
