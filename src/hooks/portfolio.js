@@ -3,102 +3,124 @@ import { useCallback, useEffect, useState } from 'react';
 import { ZAPPER_API_KEY } from '../config';
 import { fetchGet } from '../lib/fetch';
 import { ZAPPER_API_ENDPOINT } from '../config'
+import suportedProtocols from '../consts/supportedProtocols';
 
-const supportedBalances = (apiKey) => fetchGet(`${ZAPPER_API_ENDPOINT}/protocols/balances/supported?api_key=${apiKey}`)
 const getBalances = (apiKey, network, protocol, address) => fetchGet(`${ZAPPER_API_ENDPOINT}/protocols/${protocol}/balances?addresses[]=${address}&network=${network}&api_key=${apiKey}&newBalances=true`)
 
+let tokensByNetworks = {}
+let balanceByNetworks = {}
+let otherProtocolsByNetworks = {}
+let lastOtherProcolsRefresh = null
+
 export default function usePortfolio({ currentNetwork, account }) {
-    const [isLoading, setLoading] = useState(true);
-    const [isRefreshing, setRefreshing] = useState(false);
-    const [balances, setBalance] = useState([]);
-    const [tokens, setTokens] = useState([]);
-    const [assets, setAssets] = useState([]);
-    const [totalUSD, setTotalUSD] = useState({
-        full: 0,
-        formated: null,
-        decimals: null
+    const [isBalanceLoading, setBalanceLoading] = useState(true);
+    const [areAssetsLoading, setAssetsLoading] = useState(true);
+    const [balance, setBalance] = useState({
+        total: {},
+        tokens: []
     });
+    const [otherBalances, setOtherBalances] = useState([]);
+    const [assets, setAssets] = useState([]);
 
-    const updatePortfolio = async (currentNetwork, address, refresh) => {
-        if (!address) return
+    const updateStates = (currentNetwork) => {
+        if (balanceByNetworks[currentNetwork]) {
+            setBalance(balanceByNetworks[currentNetwork])
+            setOtherBalances(Object.fromEntries(Object.entries(balanceByNetworks).filter(([network]) => network !== currentNetwork)))
+        }
 
-        refresh ? setRefreshing(true) : setLoading(true)
-
-        const supBalances = await supportedBalances(ZAPPER_API_KEY)
-        const { apps } = supBalances.find(({ network }) => network === currentNetwork);
-        
-        const balances = await Promise.all(apps.map(async ({appId}) => {
-            const balance = await getBalances(ZAPPER_API_KEY, currentNetwork, appId, address);
-            return balance ? {
-                appId,
-                ...Object.values(balance)[0]
-            } : {}
-        }));
-
-        const total = balances
-            .filter(({ meta }) => meta && meta.length)
-            .map(({ meta }) => meta.find(({ label }) => label === 'Total').value + meta.find(({ label }) => label === 'Debt').value)
-            .reduce((acc, curr) => acc + curr, 0)
-            .toFixed(2)
-
-        const [truncated, decimals] = total.toString().split('.');
-        const formated = Number(truncated).toLocaleString('en-US');
-
-        const tokens = balances
-            .find(({ appId }) => appId === 'tokens')
-            ?.products.map(({ assets }) => assets.map(({ tokens }) => tokens))
-            .flat(2);
-
-        const assets = balances
-            .filter(({ products }) => products && products.length)
-            .map(({ products }) => products.map(({ label, assets }) => ({ label, assets })))
-            .flat(1)
-            .sort((a, b) => {
-                if (a.label < b.label) return -1
-                if (a.label > b.label) return 1
-                return 0
-            })
-
-        setBalance(balances);
-        setTotalUSD({
-            full: total,
-            formated,
-            decimals: decimals ? decimals : '00'
-        });
-        setTokens(tokens);
-        setAssets(assets);
-
-        refresh ? setRefreshing(false) : setLoading(false)
+        if (tokensByNetworks[currentNetwork] && otherProtocolsByNetworks[currentNetwork])
+            setAssets([
+                ...tokensByNetworks[currentNetwork].products,
+                ...otherProtocolsByNetworks[currentNetwork]
+            ])
     }
 
-    const refreshIfFocused = useCallback(() => {
-        if (document.hasFocus() && !isLoading && !isRefreshing) {
-            updatePortfolio(currentNetwork, account, true)
+    const fetchBalances = async (account) => {
+        tokensByNetworks = Object.fromEntries((await Promise.all(Object.values(suportedProtocols).map(async ({ network }) => {
+            const balance = await getBalances(ZAPPER_API_KEY, network, 'tokens', account)
+            return [
+                network,
+                balance ? Object.values(balance)[0] : null
+            ]
+        }))).filter(([, values]) => values))
+
+        balanceByNetworks = Object.fromEntries(Object.entries(tokensByNetworks).map(([network, { meta, products }]) => {
+            const balanceUSD = meta.find(({ label }) => label === 'Total').value + meta.find(({ label }) => label === 'Debt').value
+            const [truncated, decimals] = Number(balanceUSD.toString()).toFixed(2).split('.')
+
+            return [network, {
+                total: {
+                    full: balanceUSD,
+                    truncated: Number(truncated).toLocaleString('en-US'),
+                    decimals
+                },
+                tokens: products.map(({ assets }) => assets.map(({ tokens }) => tokens)).flat(2)
+            }]
+        }))
+    }
+
+    const fetchOtherProtocols = async (account) => {
+        otherProtocolsByNetworks = Object.fromEntries((await Promise.all(suportedProtocols.map(async ({ network, protocols }) => [
+            network,
+            await Promise.all(protocols.map(async protocol => {
+                const balance = await getBalances(ZAPPER_API_KEY, network, protocol, account)
+                if (!balance) return []
+                const { products } = Object.values(balance)[0]
+                return products
+            }
+        ))]))).map(([network, protocols]) => [network, protocols.flat(2)]))
+    }
+
+    const refreshBalanceIfFocused = useCallback(() => {
+        if (document.hasFocus() && !isBalanceLoading) fetchBalances(account)
+    }, [isBalanceLoading, account])
+
+    const requestOtherProtocolsRefresh = async () => {
+        if ((Date.now() - lastOtherProcolsRefresh) > 30000) {
+            await fetchOtherProtocols(account)
+            lastOtherProcolsRefresh = Date.now()
         }
-    }, [isLoading, isRefreshing, currentNetwork, account])
+    }
 
-    // Update portfolio when currentNetwork or account are updated
+    // Fetch balances and protocols on account change
     useEffect(() => {
-        updatePortfolio(currentNetwork, account);
-    }, [currentNetwork, account]);
+        async function loadBalance() {
+            setBalanceLoading(true)
+            await fetchBalances(account)
+            setBalanceLoading(false)
+        }
+        
+        async function loadProtocols() {
+            setAssetsLoading(true)
+            await fetchOtherProtocols(account)
+            setAssetsLoading(false)
+        }
 
-    // Refresh periodically
+        loadBalance()
+        loadProtocols()
+    }, [account])
+
+    // Update states on network change
+    useEffect(() => updateStates(currentNetwork), [isBalanceLoading, areAssetsLoading, currentNetwork])
+
+    // Refresh balance periodically
     useEffect(() => {
-        const refreshInterval = setInterval(refreshIfFocused, 60000)
+        const refreshInterval = setInterval(refreshBalanceIfFocused, 30000)
         return () => clearInterval(refreshInterval)
-    }, [currentNetwork, account, refreshIfFocused])
+    }, [refreshBalanceIfFocused])
 
-    // Refresh when window is focused
+    // Refresh balance when window is focused
     useEffect(() => {
-        window.addEventListener('focus', refreshIfFocused)
-        return () => window.removeEventListener('focus', refreshIfFocused)
-    }, [refreshIfFocused])
+        window.addEventListener('focus', refreshBalanceIfFocused)
+        return () => window.removeEventListener('focus', refreshBalanceIfFocused)
+    }, [refreshBalanceIfFocused])
 
     return {
-        balances,
-        totalUSD,
-        tokens,
+        isBalanceLoading,
+        areAssetsLoading,
+        balance,
+        otherBalances,
         assets,
-        isLoading
+        requestOtherProtocolsRefresh
     }
 }
