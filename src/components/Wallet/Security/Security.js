@@ -1,6 +1,6 @@
 import "./Security.scss";
 
-import usePrivileges from "../../../hooks/privileges";
+import { usePrivileges } from "../../../hooks";
 import { Loading } from "../../common";
 import { Select } from "../../common";
 import { Interface } from "ethers/lib/utils";
