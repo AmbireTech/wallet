@@ -4,14 +4,16 @@ import { useParams } from 'react-router-dom'
 import { ethers, getDefaultProvider } from 'ethers'
 import { useCallback, useEffect, useState } from 'react'
 import { AiOutlineSend } from 'react-icons/ai'
+import { BsFillImageFill } from 'react-icons/bs'
 import * as blockies from 'blockies-ts';
 import { useToasts } from '../../../hooks/toasts'
-import { TextInput, Button } from '../../common'
+import { TextInput, Button, Loading } from '../../common'
 import ERC721Abi from '../../../consts/ERC721Abi'
 
 const Collectable = ({ allNetworks }) => {
     const { addToast } = useToasts()
     const { network, collectionAddr, tokenId } = useParams()
+    const [isLoading, setLoading] = useState()
     const [metadata, setMetadata] = useState({
         owner: {
             address: '',
@@ -25,6 +27,8 @@ const Collectable = ({ allNetworks }) => {
     })
 
     const fetchMetadata = useCallback(async () => {
+        setLoading(true)
+
         const { rpc, explorerUrl } = allNetworks.find(({ id }) => id === network)
         const provider = getDefaultProvider(rpc)
         const contract = new ethers.Contract(collectionAddr, ERC721Abi, provider)
@@ -66,6 +70,8 @@ const Collectable = ({ allNetworks }) => {
         } catch(e) {
             addToast('Failed to fetch metadata', { error: true })
         }
+
+        setLoading(false)
     }, [addToast, allNetworks, tokenId, collectionAddr, network])
 
     useEffect(() => fetchMetadata(), [fetchMetadata])
@@ -79,24 +85,31 @@ const Collectable = ({ allNetworks }) => {
                         Contract address: <a className="address" href={`${metadata.explorerUrl}/address/${collectionAddr}`} target="_blank" rel="noreferrer">{ collectionAddr }</a>
                     </div>
                 </div>
-                <div className="metadata">
-                    <div className="image" style={{backgroundImage: `url(${metadata.image})`}}></div>
-                    <div className="info">
-                        <div className="name">
-                            { metadata.name }
+                {
+                    isLoading ?
+                        <Loading/>
+                        :
+                        <div className="metadata">
+                            <div className="image" style={{backgroundImage: `url(${metadata.image})`}}>
+                                { !metadata.image ? <BsFillImageFill/> : null }
+                            </div>
+                            <div className="info">
+                                <div className="name">
+                                    { metadata.name }
+                                </div>
+                                <div className="description">
+                                    { metadata.description }
+                                </div>
+                            </div>
+                            <div className="owner">
+                                Owner:
+                                <a className="address" href={`${metadata.explorerUrl}/address/${metadata.owner.address}`} target="_blank" rel="noreferrer">
+                                    <div className="icon" style={{backgroundImage: `url(${metadata.owner.icon})`}}></div>
+                                    { metadata.owner.address }
+                                </a>
+                            </div>
                         </div>
-                        <div className="description">
-                            { metadata.description }
-                        </div>
-                    </div>
-                    <div className="owner">
-                        Owner:
-                        <a className="address" href={`${metadata.explorerUrl}/address/${metadata.owner.address}`} target="_blank" rel="noreferrer">
-                            <div className="icon" style={{backgroundImage: `url(${metadata.owner.icon})`}}></div>
-                            { metadata.owner.address }
-                        </a>
-                    </div>
-                </div>
+                }
             </div>
             <div className="panel">
                 <div className="title">Transfer</div>
