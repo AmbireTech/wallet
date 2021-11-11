@@ -12,6 +12,7 @@ const Collectable = ({ allNetworks }) => {
     const { addToast } = useToasts()
     const { network, collectionAddr, tokenId } = useParams()
     const [metadata, setMetadata] = useState({
+        owner: '',
         name: '',
         description: '',
         image: '',
@@ -33,6 +34,16 @@ const Collectable = ({ allNetworks }) => {
             }))
         } catch(e) {
             addToast('Failed to fetch collection name', { error: true })
+        }
+
+        try {
+            let owner = await contract.ownerOf(tokenId)
+            setMetadata(metadata => ({
+                ...metadata,
+                owner
+            }))
+        } catch(e) {
+            addToast('Failed to fetch owner address', { error: true })
         }
 
         try {
@@ -58,7 +69,7 @@ const Collectable = ({ allNetworks }) => {
                 <div className="title">
                     { metadata.collection } #{ tokenId }
                     <div className="contract">
-                        Contract address: <a href={`${metadata.explorerUrl}/address/${collectionAddr}`} target="_blank" rel="noreferrer">{ collectionAddr }</a>
+                        Contract address: <a className="address" href={`${metadata.explorerUrl}/address/${collectionAddr}`} target="_blank" rel="noreferrer">{ collectionAddr }</a>
                     </div>
                 </div>
                 <div className="metadata">
@@ -70,6 +81,9 @@ const Collectable = ({ allNetworks }) => {
                         <div className="description">
                             { metadata.description }
                         </div>
+                    </div>
+                    <div className="owner">
+                        Owner: <a className="address" href={`${metadata.explorerUrl}/address/${metadata.owner}`} target="_blank" rel="noreferrer">{ metadata.owner }</a>
                     </div>
                 </div>
             </div>
