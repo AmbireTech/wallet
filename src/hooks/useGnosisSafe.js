@@ -14,12 +14,7 @@ export default function useGnosisSafe({ selectedAccount, network, verbose = 0 })
 
   const uniqueId = useMemo(() => new Date().getTime() + ' ' + network.chainId + ' ' + selectedAccount, [selectedAccount, network])
 
-  const {addToast} = useToasts()
-
-  const portfolio = usePortfolio({
-    currentNetwork: network.id,
-    account: selectedAccount
-  })
+  const { addToast } = useToasts()
 
   // This is needed cause of the WalletConnect event handlers
   const stateRef = useRef()
@@ -112,19 +107,19 @@ export default function useGnosisSafe({ selectedAccount, network, verbose = 0 })
 
       const provider = getDefaultProvider(network.rpc)
       let result
-      if(method === "eth_call"){
+      if (method === "eth_call") {
         result = await provider.call(callTx[0], callTx[1]).catch(err => {
           throw err
         })
-      }else if(method === "eth_getBalance"){
+      } else if(method === "eth_getBalance") {
         result = await provider.getBalance(callTx[0], callTx[1]).catch(err => {
           throw err
         })
-      }else if(method === "eth_getCode"){
+      } else if(method === "eth_getCode") {
         result = await provider.getCode(callTx[0], callTx[1]).catch(err => {
           throw err
         })
-      }else{
+      } else {
         throw new Error("method not supported " + method)
       }
       return result
@@ -162,7 +157,7 @@ export default function useGnosisSafe({ selectedAccount, network, verbose = 0 })
     })
 
     return connector.current
-  }, [selectedAccount, network, uniqueId, addToast, portfolio, verbose])
+  }, [selectedAccount, network, uniqueId, addToast, verbose])
 
   const disconnect = useCallback(() => {
     verbose>1 && console.log("GS: disconnecting connector")
