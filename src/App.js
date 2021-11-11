@@ -6,7 +6,7 @@ import {
   Route,
   Redirect
 } from 'react-router-dom'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import EmailLogin from './components/EmailLogin/EmailLogin'
 import AddAccount from './components/AddAccount/AddAccount'
 import Wallet from './components/Wallet/Wallet'
@@ -37,12 +37,12 @@ function AppInner () {
   useNotifications(requests)
 
   // Navigate to the send transaction dialog if we have a new txn
-  const eligibleRequests = requests
+  const eligibleRequests = useMemo(() => requests
     .filter(({ type, chainId, account }) =>
       type === 'eth_sendTransaction'
       && chainId === network.chainId
       && account === selectedAcc
-    )
+    ), [requests, network.chainId, selectedAcc])
   const [sendTxnsShowing, setSendTxnsShowing] = useState(() => !!eligibleRequests.length)
   useEffect(
     () => setSendTxnsShowing(!!eligibleRequests.length),
