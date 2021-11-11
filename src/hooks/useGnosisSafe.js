@@ -148,8 +148,6 @@ export default function useGnosisSafe({ selectedAccount, network, verbose = 0 })
 
       setRequests(prevRequests => [...prevRequests, request])
     })
-
-    return connector.current
   }, [uniqueId, addToast, verbose])
 
   const disconnect = useCallback(() => {
