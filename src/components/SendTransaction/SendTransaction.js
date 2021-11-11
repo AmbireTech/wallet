@@ -303,7 +303,7 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
                               Fee
                           </div>
                           <FeeSelector
-                            disabled={signingStatus && signingStatus.finalBundle}
+                            disabled={signingStatus && signingStatus.finalBundle && !(estimation && !estimation.success)}
                             signer={bundle.signer}
                             estimation={estimation}
                             setEstimation={setEstimation}
@@ -359,7 +359,7 @@ function Actions({ estimation, feeSpeed, approveTxn, rejectTxn, signingStatus })
 
   if (signingStatus && signingStatus.quickAcc) {
     return (<>
-      <div>A confirmation code was sent to your email, please enter it along with your passphrase.</div>
+      <div><b>A confirmation code was sent to your email, please enter it along with your passphrase.</b></div>
       <input type='password' required minLength={8} placeholder='Passphrase' value={quickAccCredentials.passphrase} onChange={e => setQuickAccCredentials({ ...quickAccCredentials, passphrase: e.target.value })}></input>
       <form ref={form} className='quickAccSigningForm' onSubmit={e => { e.preventDefault() }}>
         {/* Changing the autoComplete prop to a random string seems to disable it more often */}
