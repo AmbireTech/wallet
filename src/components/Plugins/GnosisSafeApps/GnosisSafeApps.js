@@ -42,7 +42,7 @@ export default function GnosisSafeApps({network, selectedAcc, gnosisConnect, gno
     }
 
     return () => {
-      gnosisDisconnect();
+      gnosisDisconnect()
     }
   }, [selectedApp, network, selectedAcc, iframeRef])
 

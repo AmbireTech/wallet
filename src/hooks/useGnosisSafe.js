@@ -10,16 +10,16 @@ const STORAGE_KEY = 'gnosis_safe_state'
 
 export default function useGnosisSafe({selectedAccount, network, verbose = 0}) {
 
-  const connector = useRef(null);
+  const connector = useRef(null)
 
-  const uniqueId = useMemo(() => new Date().getTime() + ' ' + network.chainId + ' ' + selectedAccount, [selectedAccount, network]);
+  const uniqueId = useMemo(() => new Date().getTime() + ' ' + network.chainId + ' ' + selectedAccount, [selectedAccount, network])
 
   const {addToast} = useToasts()
 
   const portfolio = usePortfolio({
     currentNetwork: network.id,
     account: selectedAccount
-  });
+  })
 
   // This is needed cause of the WalletConnect event handlers
   const stateRef = useRef()
@@ -40,7 +40,7 @@ export default function useGnosisSafe({selectedAccount, network, verbose = 0}) {
 
   const connect = useCallback(connectorOpts => {
 
-    verbose>1 && console.log("GS: creating connector");
+    verbose>1 && console.log("GS: creating connector")
 
     const getSafeInfo = () => {
       return {
@@ -54,8 +54,8 @@ export default function useGnosisSafe({selectedAccount, network, verbose = 0}) {
 
     const getSafeBalances = async () => {
       //TODO later
-      //await portfolio.updatePortfolio("polygon", selectedAccount, true);//not this because it does NOT return the updated state anyway
-      //console.log(portfolio);
+      //await portfolio.updatePortfolio("polygon", selectedAccount, true)//not this because it does NOT return the updated state anyway
+      //console.log(portfolio)
 
       //struct template
       /*return {
@@ -96,43 +96,43 @@ export default function useGnosisSafe({selectedAccount, network, verbose = 0}) {
 
     //reply back to iframe with safe data
     connector.current.on(Methods.getSafeBalances, async (msg) => {
-      verbose>0 && console.log("DApp requested getSafeBalances") && console.log(msg);
-      return await getSafeBalances();
+      verbose>0 && console.log("DApp requested getSafeBalances") && console.log(msg)
+      return await getSafeBalances()
     })
 
     connector.current.on(Methods.rpcCall, async (msg) => {
 
-      verbose>0 && console.log("DApp requested rpcCall") && console.log(msg);
+      verbose>0 && console.log("DApp requested rpcCall") && console.log(msg)
 
       if(!msg?.data?.params){
-        throw new Error("invalid call object");
+        throw new Error("invalid call object")
       }
-      const method = msg.data.params.call;//0 == tx, 1 == blockNum
-      const callTx = msg.data.params.params;//0 == tx, 1 == blockNum
+      const method = msg.data.params.call//0 == tx, 1 == blockNum
+      const callTx = msg.data.params.params//0 == tx, 1 == blockNum
 
-      const provider = getDefaultProvider(network.rpc);
-      let result;
+      const provider = getDefaultProvider(network.rpc)
+      let result
       if(method === "eth_call"){
         result = await provider.call(callTx[0], callTx[1]).catch(err => {
-          throw err;
-        });
+          throw err
+        })
       }else if(method === "eth_getBalance"){
         result = await provider.getBalance(callTx[0], callTx[1]).catch(err => {
-          throw err;
-        });
+          throw err
+        })
       }else if(method === "eth_getCode"){
         result = await provider.getCode(callTx[0], callTx[1]).catch(err => {
-          throw err;
-        });
+          throw err
+        })
       }else{
-        throw new Error("method not supported " + method);
+        throw new Error("method not supported " + method)
       }
-      return result;
+      return result
     })
 
 
     connector.current.on(Methods.sendTransactions, (msg) => {
-      verbose>0 && console.log("DApp requested sendTx") && console.log(msg);
+      verbose>0 && console.log("DApp requested sendTx") && console.log(msg)
       const data = msg?.data
       if (!data) {
         console.error('no data')
@@ -165,9 +165,9 @@ export default function useGnosisSafe({selectedAccount, network, verbose = 0}) {
   }, [selectedAccount, network, uniqueId, addToast, portfolio])
 
   const disconnect = useCallback(() => {
-    verbose>1 && console.log("GS: disconnecting connector");
-    connector.current?.clear();
-  }, []);
+    verbose>1 && console.log("GS: disconnecting connector")
+    connector.current?.clear()
+  }, [])
 
   const resolveMany = (ids, resolution) => {
     for (let req of requests.filter(x => ids.includes(x.id))) {
@@ -181,14 +181,14 @@ export default function useGnosisSafe({selectedAccount, network, verbose = 0}) {
         replyData.error = 'Nothing to resolve'
         replyData.success = false
       }else if(!resolution.success){
-        replyData.error = resolution.message;
+        replyData.error = resolution.message
         replyData.success = false
       } else{ //onSuccess
-        replyData.success = true;
-        replyData.txId = resolution.txId;
+        replyData.success = true
+        replyData.txId = resolution.txId
       }
       if(!connector.current){
-        throw new Error("gnosis safe connector not set");
+        throw new Error("gnosis safe connector not set")
       }
       connector.current.send(replyData, req.forwardId, replyData.error)
     }
