@@ -44,6 +44,11 @@
             z-index: 48;
             height: 250px;
             width: 250px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            color: rgba(255, 255, 255, 0.5);
             background-size: contain;
             background-position: center center;
             background-repeat: no-repeat;
