@@ -37,7 +37,19 @@ export default function useGnosisSafe({ selectedAccount, network, verbose = 0 })
 
     verbose>1 && console.log("GS: creating connector")
 
-    const getSafeInfo = () => {
+    try {
+      connector.current = new GnosisConnector(
+        connectorOpts.iframeRef,
+        connectorOpts.app,
+        uniqueId
+      )
+    } catch (e) {
+      addToast(`Unable to connect to ${connectorOpts.app.url}: ${e.message}`)
+      return null
+    }
+
+    //reply back to iframe with safe data
+    connector.current.on(Methods.getSafeInfo, () => {
       return {
         safeAddress: selectedAccount,
         network: network.id,
@@ -45,10 +57,14 @@ export default function useGnosisSafe({ selectedAccount, network, verbose = 0 })
         owners: [selectedAccount],
         threshold: 1, //Number of confirmations (not used in ambire)
       }
-    }
+    })
 
-    const getSafeBalances = async () => {
-      //TODO later
+    //reply back to iframe with safe data
+
+    // connector.current.on(Methods.getSafeBalances, async (msg) => {
+    //   verbose>0 && console.log("DApp requested getSafeBalances") && console.log(msg)
+
+    //TODO later
       //await portfolio.updatePortfolio("polygon", selectedAccount, true)//not this because it does NOT return the updated state anyway
       //console.log(portfolio)
 
@@ -71,29 +87,7 @@ export default function useGnosisSafe({ selectedAccount, network, verbose = 0 })
           }
         ]
       }*/
-    }
-
-    try {
-      connector.current = new GnosisConnector(
-        connectorOpts.iframeRef,
-        connectorOpts.app,
-        uniqueId
-      )
-    } catch (e) {
-      addToast(`Unable to connect to ${connectorOpts.app.url}: ${e.message}`)
-      return null
-    }
-
-    //reply back to iframe with safe data
-    connector.current.on(Methods.getSafeInfo, () => {
-      return getSafeInfo()
-    })
-
-    //reply back to iframe with safe data
-    connector.current.on(Methods.getSafeBalances, async (msg) => {
-      verbose>0 && console.log("DApp requested getSafeBalances") && console.log(msg)
-      return await getSafeBalances()
-    })
+    // })
 
     connector.current.on(Methods.rpcCall, async (msg) => {
 
