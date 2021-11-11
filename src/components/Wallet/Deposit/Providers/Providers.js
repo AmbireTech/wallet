@@ -1,4 +1,4 @@
-import './Providers.css'
+import './Providers.scss'
 
 import RAMP_LOGO from '../../../../resources/ramp.svg';
 import PAYTRIE_LOGO from '../../../../resources/paytrie.svg';
@@ -6,7 +6,7 @@ import TRANSAK_LOGO from '../../../../resources/transak.svg';
 
 import { openRampNetwork, openPayTrie, openTransak } from '../../../../services/providers'
 
-export default function Providers({ walletAddress, selectedNetwork }) {
+export default function Providers({ walletAddress, networkDetails }) {
     const providers = [
         {
             logo: RAMP_LOGO,
@@ -15,8 +15,8 @@ export default function Providers({ walletAddress, selectedNetwork }) {
             fees: '0.49%-2.9%',
             limits: '10,000EUR/m',
             currencies: 'USD, EUR, GBP',
-            networks: ['ethereum', 'polygon', 'avalanche', 'arbitrum'],
-            onClick: () => openRampNetwork({walletAddress})
+            networks: ['ethereum', 'polygon', 'avalanche'],
+            onClick: () => openRampNetwork({walletAddress, selectedNetwork: networkDetails.id})
         },
         {
             logo: PAYTRIE_LOGO,
@@ -25,8 +25,8 @@ export default function Providers({ walletAddress, selectedNetwork }) {
             fees: '1% (min. $2 CAD)',
             limits: '$2,000CAD/day',
             currencies: 'CAD',
-            networks: ['ethereum'],
-            onClick: () => openPayTrie({walletAddress})
+            networks: ['ethereum', 'polygon'],
+            onClick: () => openPayTrie({walletAddress, selectedNetwork: networkDetails.id})
         },
         {
             logo: TRANSAK_LOGO,
@@ -35,13 +35,13 @@ export default function Providers({ walletAddress, selectedNetwork }) {
             fees: 'from 0.5%',
             limits: 'up to 15,000 EUR/day',
             currencies: 'GBP, EUR, USD and many more',
-            networks: ['ethereum'],
-            onClick: () => openTransak({walletAddress})
+            networks: ['ethereum', 'polygon', 'avalanche', 'arbitrum'],
+            onClick: () => openTransak({walletAddress, selectedNetwork: networkDetails.id})
         }
     ];
 
     const shouldBeDisabled = (networks) => {
-        return networks.includes(selectedNetwork) ? null : 'disabled'; 
+        return networks.includes(networkDetails.id) ? null : 'disabled'; 
     };
 
     return (
@@ -70,9 +70,9 @@ export default function Providers({ walletAddress, selectedNetwork }) {
                 )
             }
             {
-                selectedNetwork !== 'ethereum' ? 
+                networkDetails.id !== 'ethereum' ? 
                     <div id="network-warning">
-                        <b>NOTE:</b> Some deposit methods are unavailable on <b>{selectedNetwork}</b>. Switch to Ethereum for the widest support.
+                        <b>NOTE:</b> Some deposit methods are unavailable on <b>{networkDetails.name}</b>. Switch to Ethereum for the widest support.
                     </div>
                     :
                     null

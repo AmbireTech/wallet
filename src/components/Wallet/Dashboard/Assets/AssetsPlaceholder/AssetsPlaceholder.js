@@ -2,7 +2,7 @@ import './AssetsPlaceholder.scss'
 
 import { NavLink } from 'react-router-dom'
 import { GiReceiveMoney } from 'react-icons/gi'
-import { Button } from '../../../common'
+import { Button } from '../../../../common'
 
 const AssetsPlaceholder = () => {
     const tokens = [
@@ -27,8 +27,8 @@ const AssetsPlaceholder = () => {
     ]
 
     return (
-        <div id="assets-placeholder" className="category">
-            <div className="overlay">
+        <div id="assets-placeholder" >
+            <div className="placeholder-overlay">
                 <label>
                     Welcome! You don't have any funds on this account.
                 </label>
@@ -36,29 +36,31 @@ const AssetsPlaceholder = () => {
                     <Button small icon={<GiReceiveMoney/>}>Deposit</Button>
                 </NavLink>
             </div>
-            <div className="title">Tokens</div>
-            <div className="list">
-                {
-                    tokens.map(({ icon, symbol, balance, balanceUSD }) => (
-                        <div className="token" key={symbol}>
-                            <div className="icon">
-                                <img src={icon} alt="Token Icon"/>
-                            </div>
-                            <div className="name">
-                                { symbol }
-                            </div>
-                            <div className="separator"></div>
-                            <div className="balance">
-                                <div className="currency">
-                                    { balance } <span className="symbol">{ symbol }</span>
+            <div className="category">
+                <div className="title">Tokens</div>
+                <div className="list">
+                    {
+                        tokens.map(({ icon, symbol, balance, balanceUSD }) => (
+                            <div className="token" key={symbol}>
+                                <div className="icon">
+                                    <img src={icon} alt="Token Icon"/>
                                 </div>
-                                <div className="dollar">
-                                    <span className="symbol">$</span> { balanceUSD }
+                                <div className="name">
+                                    { symbol }
+                                </div>
+                                <div className="separator"></div>
+                                <div className="balance">
+                                    <div className="currency">
+                                        { balance } <span className="symbol">{ symbol }</span>
+                                    </div>
+                                    <div className="dollar">
+                                        <span className="symbol">$</span> { balanceUSD }
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    ))
-                }
+                        ))
+                    }
+                </div>
             </div>
         </div>
     )

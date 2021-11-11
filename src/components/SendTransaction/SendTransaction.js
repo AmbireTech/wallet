@@ -1,28 +1,28 @@
 //import { GrInspect } from 'react-icons/gr'
 // GiObservatory is also interesting
 import { GiTakeMyMoney, GiSpectacles } from 'react-icons/gi'
-import { FaSignature, FaTimes } from 'react-icons/fa'
-import { getTransactionSummary } from '../../lib/humanReadableTransactions'
+import { FaSignature, FaTimes, FaChevronLeft, FaChevronDown, FaChevronUp } from 'react-icons/fa'
+import { MdOutlineAccountCircle } from 'react-icons/md'
+import { getContractName, getTransactionSummary } from '../../lib/humanReadableTransactions'
 import './SendTransaction.css'
 import { Loading } from '../common'
-import { useEffect, useState, useMemo } from 'react'
-
+import { useEffect, useRef, useState, useMemo } from 'react'
 import fetch from 'node-fetch'
 import { Bundle } from 'adex-protocol-eth/js'
-import { getDefaultProvider } from 'ethers'
-import { Interface } from 'ethers/lib/utils'
-import { useHistory } from 'react-router'
+import { getDefaultProvider, Wallet } from 'ethers'
+import { Interface, formatUnits } from 'ethers/lib/utils'
+import * as blockies from 'blockies-ts';
 import { useToasts } from '../../hooks/toasts'
 import { getWallet } from '../../lib/getWallet'
 import accountPresets from '../../consts/accountPresets'
+import { FeeSelector, FailingTxn } from './FeeSelector'
 import { sendNoRelayer } from './noRelayer'
+import { isTokenEligible, getFeePaymentConsequences } from './helpers'
+import { fetchPost } from '../../lib/fetch'
 
 const ERC20 = new Interface(require('adex-protocol-eth/abi/ERC20'))
 
-const SPEEDS = ['slow', 'medium', 'fast', 'ape']
 const DEFAULT_SPEED = 'fast'
-const ADDED_GAS_TOKEN = 20000
-const ADDED_GAS_NATIVE = 10000
 const REESTIMATE_INTERVAL = 15000
 
 function toBundleTxn({ to, value, data }) {
@@ -40,7 +40,7 @@ function makeBundle(account, networkId, requests) {
   return bundle
 }
 
-export default function SendTransaction({ accounts, network, selectedAcc, requests, resolveMany, relayerURL }) {
+export default function SendTransaction({ accounts, network, selectedAcc, requests, resolveMany, relayerURL, onDismiss }) {
   const account = accounts.find(x => x.id === selectedAcc)
 
   // Also filtered in App.js, but better safe than sorry here
@@ -58,21 +58,29 @@ export default function SendTransaction({ accounts, network, selectedAcc, reques
     [network.id, account, eligibleRequests]
   )
 
-  if (!account) return (<h3 className='error'>No selected account</h3>)
-
-  return SendTransactionWithBundle({ bundle, network, account, resolveMany, relayerURL })
+  if (!account || !eligibleRequests.length) return (<div id='sendTransaction'>
+      <h3 className='error'>No account or no requests: should never happen.</h3>
+  </div>)
+  return (<SendTransactionWithBundle
+      bundle={bundle}
+      network={network}
+      account={account}
+      resolveMany={resolveMany}
+      relayerURL={relayerURL}
+      onDismiss={onDismiss}
+  />)
 }
 
-function SendTransactionWithBundle ({ bundle, network, account, resolveMany, relayerURL }) {
+function SendTransactionWithBundle ({ bundle, network, account, resolveMany, relayerURL, onDismiss }) {
   const [estimation, setEstimation] = useState(null)
-  const [signingInProgress, setSigningInProgress] = useState(false)
-  const history = useHistory()
+  const [signingStatus, setSigningStatus] = useState(false)
+  const [feeSpeed, setFeeSpeed] = useState(DEFAULT_SPEED)
   const { addToast } = useToasts()
-
-  const { nativeAssetSymbol } = network
-
-  useEffect(() => {    // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => {
+    if (!bundle.txns.length) return
     setEstimation(null)
+  }, [bundle, setEstimation])
+  useEffect(() => {    // eslint-disable-next-line react-hooks/exhaustive-deps
     if (!bundle.txns.length) return
 
     let unmounted = false
@@ -84,19 +92,17 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
     )
       .then(estimation => {
         if (unmounted) return
-        estimation.selectedFee = {
-          speed: DEFAULT_SPEED,
-          token: { symbol: network.nativeAssetSymbol }
-        }
+        estimation.selectedFeeToken = { symbol: network.nativeAssetSymbol }
         if (estimation.remainingFeeTokenBalances) {
           const eligibleToken = estimation.remainingFeeTokenBalances
-            .find(token => isTokenEligible(token, estimation))
+            .find(token => isTokenEligible(token, feeSpeed, estimation))
           // If there's no eligibleToken, set it to the first one cause it looks more user friendly (it's the preferred one, usually a stablecoin)
-          estimation.selectedFee.token = eligibleToken || estimation.remainingFeeTokenBalances[0]
+          estimation.selectedFeeToken = eligibleToken || estimation.remainingFeeTokenBalances[0]
         }
         setEstimation(estimation)
       })
       .catch(e => {
+        if (unmounted) return
         console.log('estimation error', e)
         addToast(`Estimation error: ${e.message || e}`, { error: true })
       })
@@ -108,235 +114,305 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
       unmounted = true
       clearInterval(intvl)
     }
-  }, [bundle, setEstimation, addToast, network, relayerURL])
+  }, [bundle, setEstimation, feeSpeed, addToast, network, relayerURL])
 
-  const approveTxnImpl = async () => {
-    if (!estimation) return
 
-    const requestIds = bundle.requestIds
-    const { token: feeToken, speed } = estimation.selectedFee
+  const { nativeAssetSymbol } = network
+
+  const getFinalBundle = () => {
+    if (!relayerURL) return new Bundle({
+      ...bundle,
+      gasLimit: estimation.gasLimit
+    })
+
+    const feeToken = estimation.selectedFeeToken
     const { addedGas, multiplier } = getFeePaymentConsequences(feeToken, estimation)
     const toHexAmount = amnt => '0x'+Math.round(amnt).toString(16)
     const feeTxn = feeToken.symbol === nativeAssetSymbol 
-      ? [accountPresets.feeCollector, toHexAmount(estimation.feeInNative[speed]*multiplier*1e18), '0x']
+      ? [accountPresets.feeCollector, toHexAmount(estimation.feeInNative[feeSpeed]*multiplier*1e18), '0x']
       : [feeToken.address, '0x0', ERC20.encodeFunctionData('transfer', [
         accountPresets.feeCollector,
         toHexAmount(
-          (feeToken.isStable ? estimation.feeInUSD[speed] : estimation.feeInNative[speed])
+          (feeToken.isStable ? estimation.feeInUSD[feeSpeed] : estimation.feeInNative[feeSpeed])
           * multiplier
           * Math.pow(10, feeToken.decimals)
         )
     ])]
-    const finalBundle = new Bundle({
+    return new Bundle({
       ...bundle,
-      txns: relayerURL ? [...bundle.txns, feeTxn] : [...bundle.txns]
+      txns: [...bundle.txns, feeTxn],
+      gasLimit: estimation.gasLimit + addedGas
     })
+  }
 
+  const approveTxnImpl = async () => {
+    if (!estimation) throw new Error('no estimation: should never happen')
+
+    const finalBundle = getFinalBundle()
     const provider = getDefaultProvider(network.rpc)
     const signer = finalBundle.signer
+
     const wallet = getWallet({
       signer,
       signerExtra: account.signerExtra,
       chainId: network.chainId
     })
     if (relayerURL) {
-      finalBundle.gasLimit = estimation.gasLimit + addedGas
-
       await finalBundle.getNonce(provider)
       await finalBundle.sign(wallet)
-      const bundleResult = await finalBundle.submit({ relayerURL, fetch })
-      resolveMany(requestIds, { success: bundleResult.success, result: bundleResult.txId, message: bundleResult.message })
-      return bundleResult
+      return await finalBundle.submit({ relayerURL, fetch })
     } else {
-      const result = await sendNoRelayer({ finalBundle, account, wallet, estimation, provider, nativeAssetSymbol })
-      resolveMany(requestIds, { success: true, result: result.txId })
-      return result
+      return await sendNoRelayer({
+        finalBundle, account, network, wallet, estimation, feeSpeed, provider, nativeAssetSymbol
+      })
     }
   }
 
-  const approveTxn = () => {
-    if (signingInProgress) return
-    setSigningInProgress(true)
+  const approveTxnImplQuickAcc = async ({ quickAccCredentials }) => {
+    if (!estimation) throw new Error('no estimation: should never happen')
+    if (!relayerURL) throw new Error('Email/passphrase account signing without the relayer is not supported yet')
 
-    const explorerUrl = network.explorerUrl
-    approveTxnImpl()
-      .then(bundleResult => {
-        if (bundleResult.success) addToast((
-          <span>Transaction signed and sent successfully!
-            &nbsp;<a href={explorerUrl+'/tx/'+bundleResult.txId} target='_blank' rel='noreferrer'>View on block explorer.</a>
-          </span>))
-        else addToast(`Transaction error: ${bundleResult.message || 'unspecified error'}`, { error: true })
+    const finalBundle = (signingStatus && signingStatus.finalBundle) || getFinalBundle()
+    const signer = finalBundle.signer
 
-        history.goBack()
-      })
-      .catch(e => {
-        console.error(e)
-        if (e && e.message.includes('must provide an Ethereum address')) {
-          addToast(`Signing error: not connected with the correct address. Make sure you're connected with ${bundle.signer.address}.`, { error: true })
-        } else addToast(`Signing error: ${e.message || e}`, { error: true })
-      })
-      .then(() => setSigningInProgress(false))
+    if (typeof finalBundle.nonce !== 'number') {
+      await finalBundle.getNonce(getDefaultProvider(network.rpc))
+    }
 
+    const { signature, success, message, confCodeRequired } = await fetchPost(
+      `${relayerURL}/second-key/${bundle.identity}/${network.id}/sign`, {
+        signer, txns: finalBundle.txns, nonce: finalBundle.nonce, gasLimit: finalBundle.gasLimit,
+        code: quickAccCredentials && quickAccCredentials.code
+      }
+    )
+    if (!success) {
+      if (message.includes('invalid confirmation code')) {
+        addToast('Unable to sign: wrong confirmation code', { error: true })
+        return
+      }
+      throw new Error(`Secondary key error: ${message}`)
+    }
+    if (confCodeRequired) {
+      setSigningStatus({ quickAcc: true, finalBundle })
+    } else {
+      if (!signature) throw new Error(`QuickAcc internal error: there should be a signature`)
+      if (!account.primaryKeyBackup) throw new Error(`No key backup found: perhaps you need to import the account via JSON?`)
+      setSigningStatus({ quickAcc: true, inProgress: true })
+      const pwd = quickAccCredentials.passphrase || alert('Enter passphrase')
+      const wallet = await Wallet.fromEncryptedJson(JSON.parse(account.primaryKeyBackup), pwd)
+      await finalBundle.sign(wallet)
+      finalBundle.signatureTwo = signature
+      return await finalBundle.submit({ relayerURL, fetch })
+    }
+  }
+
+  const approveTxn = ({ quickAccCredentials }) => {
+    if (signingStatus && signingStatus.inProgress) return
+    setSigningStatus(signingStatus || { inProgress: true })
+
+    const requestIds = bundle.requestIds
+    const blockExplorerUrl = network.explorerUrl
+    const approveTxnPromise = bundle.signer.quickAccManager ?
+      approveTxnImplQuickAcc({ quickAccCredentials })
+      : approveTxnImpl()
+    approveTxnPromise.then(bundleResult => {
+      // special case for approveTxnImplQuickAcc
+      if (!bundleResult) return
+
+      // be careful not to call this after onDimiss, cause it might cause state to be changed post-unmount
+      setSigningStatus(null)
+
+      // Inform everything that's waiting for the results (eg WalletConnect)
+      resolveMany(requestIds, { success: bundleResult.success, result: bundleResult.txId, message: bundleResult.message })
+
+      if (bundleResult.success) addToast((
+        <span>Transaction signed and sent successfully!
+          &nbsp;Click to view on block explorer.
+        </span>), { url: blockExplorerUrl+'/tx/'+bundleResult.txId })
+      else addToast(`Transaction error: ${bundleResult.message || 'unspecified error'}`, { error: true })
+      onDismiss()
+    })
+    .catch(e => {
+      setSigningStatus(null)
+      console.error(e)
+      if (e && e.message.includes('must provide an Ethereum address')) {
+        addToast(`Signing error: not connected with the correct address. Make sure you're connected with ${bundle.signer.address}.`, { error: true })
+      } else {
+        console.log(e.message)
+        addToast(`Signing error: ${e.message || e}`, { error: true })
+      }
+    })
   }
 
   const rejectTxn = () => {
     resolveMany(bundle.requestIds, { message: 'rejected' })
-    history.goBack()
   }
 
-  return (<div id="sendTransaction">
-      <h2>Pending transaction</h2>
-      <div className="panelHolder">
-          <div className="panel">
-              <div className="heading">
-                      <div className="title">
+  return (<div id='sendTransaction'>
+      <div className='dismiss' onClick={onDismiss}>
+        <FaChevronLeft size={35}/><span>back</span>
+      </div>
+      <h2>Pending transactions: {bundle.txns.length}</h2>
+      <div className='container'>
+        <div id="topPanel" className="panel">
+          <div className="title">
+            <MdOutlineAccountCircle/>
+            Signing with account:
+          </div>
+          <div className="content">
+            <div className="account">
+              <img className="icon" src={blockies.create({ seed: account.id }).toDataURL()} alt="Account Icon"/>
+              { account.id }
+            </div>
+            on
+            <div className="network">
+              <img className="icon" src={network.icon} alt="Network Icon"/>
+              { network.name }
+            </div>
+          </div>
+        </div>
+        <div id='panelHolder'>
+          <div className='panel'>
+              <div className='heading'>
+                      <div className='title'>
                           <GiSpectacles size={35}/>
                           Transaction summary
                       </div>
-                      <ul>
+                      <div className='listOfTransactions'>
                           {bundle.txns.map((txn, i) => {
                             const isFirstFailing = estimation && !estimation.success && estimation.firstFailing === i
-                            return (
-                              <li key={txn} className={isFirstFailing ? 'firstFailing' : ''}>
-                                  {getTransactionSummary(txn, bundle.network)}
-                                  {isFirstFailing ? (<div><b>This is the first failing transaction.</b></div>) : (<></>)}
-                                  <button onClick={() => resolveMany([bundle.requestIds[i]], { message: 'rejected' })}><FaTimes></FaTimes></button>
-                              </li>
-                          )})}
-                      </ul>
-                      <span>
-                          <b>NOTE:</b> Transaction batching is enabled, you're signing {bundle.txns.length} transactions at once. You can add more transactions to this batch by interacting with a connected dApp right now.
-                      </span>
+                            return (<TxnPreview
+                              key={bundle.requestIds[i]}
+                              network={network}
+                              onDismiss={() => resolveMany([bundle.requestIds[i]], { message: 'rejected' })}
+                              txn={txn} bundle={bundle}
+                              isFirstFailing={isFirstFailing}/>
+                            )
+                          })}
+                      </div>
+                      <div className='batchingNote'>
+                          <b>DEGEN TIP:</b> You can sign multiple transactions at once. Add more transactions to this batch by interacting with a connected dApp right now.
+                      </div>
               </div>
           </div>
-          <div className="secondaryPanel">
-              <div className="panel feePanel">
-                  <div className="heading">
-                          <div className="title">
+          <div className='secondaryPanel'>
+              <div className='panel feePanel'>
+                  <div className='heading'>
+                          <div className='title'>
                               <GiTakeMyMoney size={35}/>
                               Fee
                           </div>
                           <FeeSelector
+                            disabled={signingStatus && signingStatus.finalBundle && !(estimation && !estimation.success)}
                             signer={bundle.signer}
                             estimation={estimation}
                             setEstimation={setEstimation}
                             network={network}
+                            feeSpeed={feeSpeed}
+                            setFeeSpeed={setFeeSpeed}
                           ></FeeSelector>
                   </div>
               </div>
-              <div className="panel actions">
-                  <div className="heading">
-                      <div className="title">
+              <div className='panel actions'>
+                  <div className='heading'>
+                      <div className='title'>
                           <FaSignature size={35}/>
                           Sign
                       </div>
                   </div>
-                  <Actions estimation={estimation} approveTxn={approveTxn} rejectTxn={rejectTxn} signingInProgress={signingInProgress}></Actions>
+                  {(bundle.signer.quickAccManager && !relayerURL) ? (
+                    <FailingTxn message='Signing transactions with an email/passphrase account without being connected to the relayer is unsupported.'></FailingTxn>
+                  ) : (
+                      <Actions
+                        estimation={estimation}
+                        approveTxn={approveTxn} rejectTxn={rejectTxn}
+                        signingStatus={signingStatus}
+                        feeSpeed={feeSpeed}
+                      />
+                  )}
               </div>
           </div>
+        </div>
       </div>
   </div>)
 }
 
-function Actions({ estimation, approveTxn, rejectTxn, signingInProgress }) {
+function Actions({ estimation, feeSpeed, approveTxn, rejectTxn, signingStatus }) {
+  const [quickAccCredentials, setQuickAccCredentials] = useState({ code: '', passphrase: '' })
+  const form = useRef(null)
+
   const rejectButton = (
-    <button className='rejectTxn' onClick={rejectTxn}>Reject</button>
+    <button type='button' className='rejectTxn' onClick={rejectTxn}>Reject</button>
   )
-  const insufficientFee = estimation && estimation.feeInUSD && !isTokenEligible(estimation.selectedFee.token, estimation)
+  const insufficientFee = estimation && estimation.feeInUSD
+    && !isTokenEligible(estimation.selectedFeeToken, feeSpeed, estimation)
   const willFail = (estimation && !estimation.success) || insufficientFee
   if (willFail) {
-    return (<>
-      <h2 className='error'>
-        {insufficientFee ?
-          `Insufficient balance for the fee. Accepted tokens: ${estimation.remainingFeeTokenBalances.map(x => x.symbol).join(', ')}`
-          : `The current transaction cannot be broadcasted because it will fail: ${estimation.message}`
-        }
-      </h2>
+    return (<div className='buttons'>
       {rejectButton}
+    </div>)
+  }
+
+  const signButtonLabel = signingStatus && signingStatus.inProgress ?
+    (<><Loading/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Signing...</>)
+    : (<>Sign and send</>)
+
+  if (signingStatus && signingStatus.quickAcc) {
+    return (<>
+      <div><b>A confirmation code was sent to your email, please enter it along with your passphrase.</b></div>
+      <input type='password' required minLength={8} placeholder='Passphrase' value={quickAccCredentials.passphrase} onChange={e => setQuickAccCredentials({ ...quickAccCredentials, passphrase: e.target.value })}></input>
+      <form ref={form} className='quickAccSigningForm' onSubmit={e => { e.preventDefault() }}>
+        {/* Changing the autoComplete prop to a random string seems to disable it more often */}
+        <input
+          type='text' pattern='[0-9]+'
+          title='Confirmation code should be 6 digits'
+          autoComplete='nope'
+          required minLength={6} maxLength={6}
+          placeholder='Confirmation code'
+          value={quickAccCredentials.code}
+          onChange={e => setQuickAccCredentials({ ...quickAccCredentials, code: e.target.value })}
+        ></input>
+        {rejectButton}
+        <button className='approveTxn'
+          onClick={() => {
+            if (!form.current.checkValidity()) return
+            approveTxn({ quickAccCredentials })
+          }}
+        >
+          {signButtonLabel}
+        </button>
+      </form>
     </>)
   }
 
-  return (<div>
+  return (<div className='buttons'>
       {rejectButton}
-      <button className='approveTxn' disabled={!estimation || signingInProgress} onClick={approveTxn}>
-        {signingInProgress ? (<><Loading/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Signing...</>) : (<>Sign and send</>)}
+      <button className='approveTxn' disabled={!estimation || signingStatus} onClick={approveTxn}>
+        {signButtonLabel}
       </button>
   </div>)
 }
 
-function FeeSelector ({ signer, estimation, network, setEstimation }) {
-  if (!estimation) return (<Loading/>)
-  if (!estimation.feeInNative) return (<></>)
-  if (estimation && !estimation.feeInUSD && estimation.gasLimit < 40000) {
-    return (<div>
-      <b>WARNING:</b> Fee estimation unavailable when you're doing your first account transaction and you are not connected to a relayer. You will pay the fee from <b>{signer.address}</b>, make sure you have {network.nativeAssetSymbol} there.
-    </div>)
-  }
+function TxnPreview ({ txn, onDismiss, bundle, network, isFirstFailing }) {
+  const [isExpanded, setExpanded] = useState(false)
+  const contractName = getContractName(txn, network.id)
+  return (
+    <div className={isFirstFailing ? 'txnSummary firstFailing' : 'txnSummary'}>
+        <div>{getTransactionSummary(txn, bundle.network, bundle.identity)}</div>
+        {isFirstFailing ? (<div className='firstFailingLabel'>This is the first failing transaction.</div>) : (<></>)}
 
-  const { nativeAssetSymbol } = network
-  const tokens = estimation.remainingFeeTokenBalances || ({ symbol: nativeAssetSymbol, decimals: 18 })
-  const onFeeCurrencyChange = e => {
-    const token = tokens.find(({ symbol }) => symbol === e.target.value)
-    setEstimation({ ...estimation, selectedFee: { ...estimation.selectedFee, token } })
-  }
-  const feeCurrencySelect = estimation.feeInUSD ? (<>
-    <span style={{ marginTop: '1em' }}>Fee currency</span>
-    <select defaultValue={estimation.selectedFee.token.symbol} onChange={onFeeCurrencyChange}>
-      {tokens.map(token => 
-        (<option
-          disabled={!isTokenEligible(token, estimation)}
-          key={token.symbol}>
-            {token.symbol}
-          </option>
-        )
-      )}
-    </select>
-  </>) : (<></>)
+        {
+          isExpanded ? (<div className='advanced'>
+            <div><b>Interacting with (<i>to</i>):</b> {txn[0]}{contractName ? ` (${contractName})` : ''}</div>
+            <div><b>{network.nativeAssetSymbol} to be sent (<i>value</i>):</b> {formatUnits(txn[1], 18)}</div>
+            <div><b>Data:</b> {txn[2]}</div>
+          </div>) : (<></>)
+        }
 
-  const { isStable } = estimation.selectedFee.token
-  const { multiplier } = getFeePaymentConsequences(estimation.selectedFee.token, estimation)
-  const feeAmountSelectors = SPEEDS.map(speed => (
-    <div 
-      key={speed}
-      className={estimation.selectedFee.speed === speed ? 'feeSquare selected' : 'feeSquare'}
-      onClick={() => setEstimation({ ...estimation, selectedFee: { ...estimation.selectedFee, speed } })}
-    >
-      <div className='speed'>{speed}</div>
-      {isStable
-        ? '$'+(estimation.feeInUSD[speed] * multiplier)
-        : (estimation.feeInNative[speed] * multiplier)+' '+nativeAssetSymbol
-      }
+        <span className='expandTxn' onClick={() => setExpanded(e => !e)}>
+          {isExpanded ? (<FaChevronUp/>) : (<FaChevronDown/>)}
+        </span>
+        {onDismiss ? (<span className='dismissTxn' onClick={onDismiss}><FaTimes/></span>) : (<></>)}
     </div>
-  ))
-
-  return (<>
-    {feeCurrencySelect}
-    <div className='feeAmountSelectors'>
-      {feeAmountSelectors}
-    </div>
-    {!estimation.feeInUSD ?
-      (<span><b>WARNING:</b> Paying fees in tokens other than {nativeAssetSymbol} is unavailable because you are not connected to a relayer. You will pay the fee from <b>{signer.address}</b>.</span>)
-      : (<></>)}
-  </>)
-}
-
-// helpers
-function isTokenEligible (token, estimation) {
-  const speed = estimation.selectedFee.speed || DEFAULT_SPEED
-  const min = token.isStable ? estimation.feeInUSD[speed] : estimation.feeInNative[speed]
-  return parseInt(token.balance) / Math.pow(10, token.decimals) > min
-}
-
-// can't think of a less funny name for that
-function getFeePaymentConsequences (token, estimation) {
-  // Relayerless mode
-  if (!estimation.feeInUSD) return { multiplier: 1, addedGas: 0 }
-  // Relayer mode
-  const addedGas = !token.address || token.address === '0x0000000000000000000000000000000000000000'
-    ? ADDED_GAS_NATIVE
-    : ADDED_GAS_TOKEN
- return {
-   multiplier: (estimation.gasLimit + addedGas) / estimation.gasLimit,
-   addedGas
- }
+  )
 }
