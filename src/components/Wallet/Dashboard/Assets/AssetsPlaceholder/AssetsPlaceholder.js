@@ -2,7 +2,7 @@ import './AssetsPlaceholder.scss'
 
 import { NavLink } from 'react-router-dom'
 import { GiReceiveMoney } from 'react-icons/gi'
-import { Button } from '../../../common'
+import { Button } from '../../../../common'
 
 const AssetsPlaceholder = () => {
     const tokens = [
