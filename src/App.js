@@ -38,7 +38,7 @@ function AppInner () {
 
   const requests = WCRequests.concat(gnosisRequests);
   const resolveMany = (ids, resolution) => {
-  	WCResolveMany(ids, resolution);
+    WCResolveMany(ids, resolution);
     gnosisResolveMany(ids, resolution);
   }
 

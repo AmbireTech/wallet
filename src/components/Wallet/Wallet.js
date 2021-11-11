@@ -30,14 +30,14 @@ export default function Wallet(props) {
           <Route path={props.match.url + "/swap"}></Route>
           <Route path={props.match.url + "/earn"}></Route>
 
-		  <Route path={props.match.url + "/plugins/gnosis"}>
-			  <PluginGnosisSafeApps
-				  gnosisConnect={props.gnosisConnect}
-          gnosisDisconnect={props.gnosisDisconnect}
-				  selectedAcc={props.selectedAcc}
-				  network={props.network}
-			  />
-		  </Route>
+          <Route path={props.match.url + "/plugins/gnosis"}>
+            <PluginGnosisSafeApps
+              gnosisConnect={props.gnosisConnect}
+              gnosisDisconnect={props.gnosisDisconnect}
+              selectedAcc={props.selectedAcc}
+              network={props.network}
+            />
+          </Route>
 
           <Route path={props.match.url + "/"}>
             <Redirect to={props.match.url + "/dashboard"} />
