@@ -2,7 +2,7 @@ import './AssetsPlaceholder.scss'
 
 import { NavLink } from 'react-router-dom'
 import { GiReceiveMoney } from 'react-icons/gi'
-import { Button } from '../../../common'
+import { Button } from '../../../../common'
 
 const AssetsPlaceholder = () => {
     const tokens = [
@@ -28,7 +28,7 @@ const AssetsPlaceholder = () => {
 
     return (
         <div id="assets-placeholder" >
-            <div className="overlay">
+            <div className="placeholder-overlay">
                 <label>
                     Welcome! You don't have any funds on this account.
                 </label>

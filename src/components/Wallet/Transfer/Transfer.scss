@@ -43,19 +43,7 @@
         }
     }
 
-    .overlay {
-        z-index: 49;
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 30px;
-        font-weight: bold;
-        color: rgba(255, 255, 255, 0.6);
+    .placeholder-overlay {
         background-color: rgba(0, 0, 0, 0.1);
     }
 

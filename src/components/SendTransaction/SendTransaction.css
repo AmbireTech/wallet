@@ -5,6 +5,7 @@
     right: 0px;
     bottom: 0px;
     z-index: 999;
+    overflow-y: auto;
     background-color: #282b33;
     /*
     background-color: rgba(40, 43, 51, 0.95);
@@ -40,19 +41,18 @@
     margin-bottom: 30px;
 }
 
-#sendTransaction .panelHolder {
+#sendTransaction .container {
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+    align-items: center;
     gap: 2em;
-    margin: 2em;
+    padding: 0 20em;
 }
 
 #sendTransaction .panel {
     padding: 2em;
     box-sizing: border-box;
     background-color: rgba(0, 0, 0, 0.2);
-    margin-bottom: 2em;
-    max-width: 650px;
     display: block;
 }
 
@@ -74,7 +74,64 @@
     text-transform: uppercase;
 }
 
+#sendTransaction #panelHolder {
+    display: flex;
+    align-items: normal;
+    gap: 2em;
+}
+
+#sendTransaction #topPanel {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+
+#sendTransaction .title {
+    align-items: center;
+    justify-content: flex-start;
+    gap: 10px;
+    color: rgb(128, 255, 219);
+    text-transform: uppercase;
+}
+
+#sendTransaction #topPanel .content {
+    display: flex;
+    flex-direction: row;
+    gap: 0.5em;
+}
+
+#sendTransaction #topPanel .content .account,
+#sendTransaction #topPanel .content .network {
+    display: flex;
+    align-items: center;
+}
+
+#sendTransaction #topPanel .content .account {
+    gap: 10px;
+    font-family: monospace;
+    font-size: 15px;
+    font-weight: bold;
+}
+
+#sendTransaction #topPanel .content .network {
+    gap: 7px;
+    font-size: 17px;
+    font-weight: bold;
+}
+
+#sendTransaction #topPanel .content .account .icon,
+#sendTransaction #topPanel .content .network .icon {
+    height: 20px;
+    width: 20px;
+    border-radius: 100%;
+}
+
 #sendTransaction .secondaryPanel {
+    display: flex;
+    flex-direction: column;
+    gap: 2em;
     min-width: 550px;
     max-width: 550px;
 }
