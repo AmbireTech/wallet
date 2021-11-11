@@ -87,10 +87,10 @@ const Transfer = ({ portfolio, selectedAcc, accounts }) => {
                }
            </div>
            <div className="panel">
-               <div className="overlay">
+               <div className="placeholder-overlay">
                     Coming Soon...
                </div>
-               <div className="title">
+               <div className="title blurred">
                    Cross-chain
                </div>
                <div className="form blurred">

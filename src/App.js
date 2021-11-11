@@ -25,7 +25,7 @@ const relayerURL = 'http://localhost:1934'
 function AppInner () {
   const { accounts, selectedAcc, onSelectAcc, onAddAccount } = useAccounts()
   const { network, setNetwork, allNetworks } = useNetwork()
-  const { connections, connect, disconnect, requests: WCRequests, resolveMany: WCResolveMany } = useWalletConnect({
+  const { connections, connect, disconnect, requests: wcRequests, resolveMany } = useWalletConnect({
     account: selectedAcc,
     chainId: network.chainId
   })
@@ -46,6 +46,14 @@ function AppInner () {
     currentNetwork: network.id,
     account: selectedAcc
   })
+
+  // Internal requests: eg from the Transfer page, Security page, etc. - requests originating in the wallet UI itself
+  // unlike WalletConnect or SafeSDK requests, those do not need to be persisted
+  const [internalRequests, setInternalRequests] = useState([])
+  const addRequest = req => setInternalRequests(reqs => [...reqs, req])
+
+  // Merge all requests
+  const requests = useMemo(() => internalRequests.concat(wcRequests), [wcRequests, internalRequests])
 
   // Show notifications for all requests
   useNotifications(requests)
@@ -80,22 +88,7 @@ function AppInner () {
       </Route>
 
       <Route path="/wallet">
-        <Wallet
-			match={{ url: "/wallet" }}
-			accounts={accounts}
-			selectedAcc={selectedAcc}
-			portfolio={portfolio}
-			onSelectAcc={onSelectAcc}
-			allNetworks={allNetworks}
-			network={network}
-			setNetwork={setNetwork}
-			connections={connections}
-			connect={connect}
-			disconnect={disconnect}
-			gnosisConnect={gnosisConnect}
-      gnosisDisconnect={gnosisDisconnect}
-		>
-		</Wallet>
+        <Wallet match={{ url: "/wallet" }} accounts={accounts} selectedAcc={selectedAcc} portfolio={portfolio} onSelectAcc={onSelectAcc} allNetworks={allNetworks} network={network} setNetwork={setNetwork} addRequest={addRequest} connections={connections} connect={connect} disconnect={disconnect}></Wallet>
       </Route>
 
       <Route path="/">
