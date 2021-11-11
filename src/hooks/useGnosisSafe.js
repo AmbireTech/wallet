@@ -8,7 +8,7 @@ import {getDefaultProvider} from 'ethers'
 
 const STORAGE_KEY = 'gnosis_safe_state'
 
-export default function useGnosisSafe({selectedAccount, network, verbose = 0}) {
+export default function useGnosisSafe({ selectedAccount, network, verbose = 0 }) {
 
   const connector = useRef(null)
 
@@ -48,7 +48,7 @@ export default function useGnosisSafe({selectedAccount, network, verbose = 0}) {
         network: network.id,
         chainId: network.chainId,
         owners: [selectedAccount],
-        threshold: 1,//Number of confirmations (not used in ambire)
+        threshold: 1, //Number of confirmations (not used in ambire)
       }
     }
 
@@ -153,7 +153,7 @@ export default function useGnosisSafe({selectedAccount, network, verbose = 0}) {
         id,
         forwardId: msg.data.id,
         type: 'eth_sendTransaction',
-        txn: txs[0],//if anyone finds a dapp that sends a bundle, please reach me out
+        txn: txs[0], //if anyone finds a dapp that sends a bundle, please reach me out
         chainId: network.chainId,
         account: selectedAccount
       }
@@ -162,32 +162,32 @@ export default function useGnosisSafe({selectedAccount, network, verbose = 0}) {
     })
 
     return connector.current
-  }, [selectedAccount, network, uniqueId, addToast, portfolio])
+  }, [selectedAccount, network, uniqueId, addToast, portfolio, verbose])
 
   const disconnect = useCallback(() => {
     verbose>1 && console.log("GS: disconnecting connector")
     connector.current?.clear()
-  }, [])
+  }, [verbose])
 
   const resolveMany = (ids, resolution) => {
     for (let req of requests.filter(x => ids.includes(x.id))) {
       const replyData = {
         id: req.forwardId,
         success: null,
-        txId:null,
-        error:null
+        txId: null,
+        error: null
       }
-      if(!resolution){
+      if (!resolution) {
         replyData.error = 'Nothing to resolve'
         replyData.success = false
-      }else if(!resolution.success){
+      } else if(!resolution.success) {
         replyData.error = resolution.message
         replyData.success = false
-      } else{ //onSuccess
+      } else { //onSuccess
         replyData.success = true
         replyData.txId = resolution.txId
       }
-      if(!connector.current){
+      if (!connector.current) {
         throw new Error("gnosis safe connector not set")
       }
       connector.current.send(replyData, req.forwardId, replyData.error)

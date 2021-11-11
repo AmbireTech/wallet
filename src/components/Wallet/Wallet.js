@@ -7,7 +7,6 @@ import SideBar from "./SideBar/SideBar";
 import Deposit from "./Deposit/Deposit"
 import Transfer from "./Transfer/Transfer"
 import PluginGnosisSafeApps from "../Plugins/GnosisSafeApps/GnosisSafeApps"
-import { usePortfolio } from '../../hooks'
 import Collectable from "./Collectable/Collectable";
 
 export default function Wallet(props) {
