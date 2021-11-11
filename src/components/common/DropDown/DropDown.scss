@@ -9,6 +9,7 @@
     .content {
         height: 100%;
         display: flex;
+        flex-direction: row;
         align-items: center;
         gap: 0.5em;
         padding-left: 20px;
@@ -40,9 +41,12 @@
     }
 
     .list {
+        z-index: 97;
         position: absolute;
         top: 50px;
         right: 0;
+        display: flex;
+        flex-direction: column;
         background-color: $input-background-color;
         box-shadow: $box-shadow;
         overflow: hidden;

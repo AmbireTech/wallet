@@ -10,25 +10,12 @@
         color: $primary-accent-color;
     }
 
+    .purple-highlight {
+        color: $secondary-accent-color;
+    }
+
     .panel {
         flex: 0 1 50%;
-        display: flex;
-        flex-direction: column;
-        gap: 25px;
-        padding: 30px;
-        padding-top: 25px;
-        background-color: $panel-background-color;
-
-        .title {
-            font-size: 1.5em;
-            font-weight: bold;
-        }
-
-        .content {
-            display: flex;
-            flex-direction: column;
-            gap: 25px;
-        }
     }
 
     #overview {
@@ -37,100 +24,34 @@
         gap: 30px;
 
         #balance {
+            gap: 10px;
+
             #total {
-                font-size: 2em;
-            }
-        }
-    }
+                font-size: 40px;
 
-    #table {
-        .category {
-            position: relative;
-            overflow: hidden;
-
-            .title {
-                padding: 15px 20px;
-                font-size: 20px;
-                font-weight: bold;
-                background-color: rgba(255, 255, 255, 0.1);
-            }
-
-            .list {
-                display: flex;
-                flex-direction: column;
-
-                .token {
+                #other-balances {
                     display: flex;
-                    align-items: center;
-                    gap: 12px;
-                    padding: 15px 20px;
-                    font-size: 15px;
-                    color: white;
+                    flex-direction: column;
+                    margin-top: 5px;
 
-                    &:nth-child(odd) {
-                        background-color: rgba(255, 255, 255, 0.04);
-                    }
-
-                    &:nth-child(even) {
-                        background-color: rgba(255, 255, 255, 0.02);
-                    }
-
-                    .separator {
-                        flex-grow: 1;
-                    }
-
-                    .icon {
-                        flex: 0 0 auto;
-                        display: flex;
-                        align-items: center;
-                        justify-content: center;
-                        height: 40px;
-                        width: 40px;
-                        border-radius: 100%;
-                        color: rgba(255, 255, 255, 0.5);
-                        background-color: rgba(255, 255, 255, 0.1);
-                        overflow: hidden;
-
-                        img {
-                            height: 100%;
-                        }
-                    }
-
-                    .name {
-                        font-size: 17px;
-                        font-weight: bold;
-                    }
-
-                    .balance {
-                        display: flex;
-                        flex-direction: column;
-                        text-align: right;
-                    }
-
-                    .currency {
+                    .other-balance {
+                        font-weight: 500;
                         font-size: 18px;
-                        font-weight: 500;
+                        opacity: 0.6;
+                        cursor: pointer;
+                        transition: opacity 0.1s ease-in-out;
+                        user-select: none;
 
-                        .symbol {
-                            font-weight: bold;
-                            color: $primary-accent-color;
-                        }
-                    }
-
-                    .dollar {
-                        font-size: 14px;
-                        font-weight: 500;
-                        color: #bbb;
-
-                        .symbol {
-                            font-weight: bold;
-                            color: $secondary-accent-color;
+                        &:hover {
+                            opacity: 0.8;
                         }
                     }
                 }
             }
         }
+    }
 
+    #table {
         .powered {
             text-align: right;
             font-size: 12px;

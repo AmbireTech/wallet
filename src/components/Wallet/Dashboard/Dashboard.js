@@ -1,29 +1,63 @@
 import './Dashboard.scss'
 
-import { useLayoutEffect, useState } from 'react'
-import { GiToken } from 'react-icons/gi'
+import { useCallback, useEffect, useLayoutEffect, useState } from 'react'
 
-import { Chart, Loading } from '../../common'
-import AssetsPlaceholder from './AssetsPlaceholder/AssetsPlaceholder'
+import { Chart, Loading, Segments } from '../../common'
+import Assets from './Assets/Assets'
+import Collectables from './Collectables/Collectables'
 
-export default function Dashboard({ portfolio }) {
-    const [chartData, setChartData] = useState([]);
+export default function Dashboard({ portfolio, allNetworks, setNetwork }) {
+    const [chartTokensData, setChartTokensData] = useState([]);
+    const [chartAssetsData, setChartAssetsData] = useState([]);
+    const [chartType, setChartType] = useState([]);
+    const [tableType, setTableType] = useState([]);
+
+    const chartSegments = [
+        {
+            value: 'By Token'
+        },
+        {
+            value: 'By Asset'
+        }
+    ]
+
+    const tableSegments = [
+        {
+            value: 'Tokens'
+        },
+        {
+            value: 'Collectables'
+        }
+    ]
+
+    const networkDetails = useCallback((network) => allNetworks.find(({ id }) => id === network), [allNetworks])
 
     useLayoutEffect(() => {
-        const total = portfolio.tokens.map(({ balanceUSD }) => balanceUSD).reduce((acc, curr) => acc + curr, 0);
-        const chartData = portfolio.tokens
+        const tokensData = portfolio.balance.tokens
             .map(({ label, balanceUSD }) => ({
                 label,
-                value: balanceUSD
-            }))
-            .map(({ label, value }) => ({
-                label,
-                value: Number(((value / total) * 100).toFixed(2))
+                value: Number(((balanceUSD / portfolio.balance.total.full) * 100).toFixed(2))
             }))
             .filter(({ value }) => value > 0);
 
-        setChartData(chartData);
-    }, [portfolio.totalUSD, portfolio.tokens]);
+        const totalAssets = portfolio.assets.map(({ assets }) => 
+            assets
+                .map(({ balanceUSD }) => balanceUSD)
+                .reduce((acc, curr) => acc + curr, 0))
+            .reduce((acc, curr) => acc + curr, 0)
+
+        const assetsData = portfolio.assets
+            .map(({ label, assets }) => ({
+                label,
+                value: Number(((assets.map(({ balanceUSD }) => balanceUSD).reduce((acc, curr) => acc + curr, 0) / totalAssets) * 100).toFixed(2))
+            }))
+            .filter(({ value }) => value > 0)
+
+        setChartTokensData(tokensData);
+        setChartAssetsData(assetsData)
+    }, [portfolio.balance, portfolio.assets]);
+
+    useEffect(() => portfolio.requestOtherProtocolsRefresh(), [portfolio])
 
     return (
         <section id="dashboard">
@@ -32,77 +66,68 @@ export default function Dashboard({ portfolio }) {
                     <div className="title">Balance</div>
                     <div className="content">
                         {
-                            portfolio.isLoading ? 
+                            portfolio.isBalanceLoading ? 
                                 <Loading/>
                                 :
                                 <div id="total">
-                                    <span className="green-highlight">$</span> { portfolio.totalUSD.formated }
-                                    <span className="green-highlight">.{ portfolio.totalUSD.decimals }</span>
+                                    <span className="green-highlight">$</span> { portfolio.balance.total.truncated }
+                                    <span className="green-highlight">.{ portfolio.balance.total.decimals }</span>
+                                    <div id="other-balances">
+                                        {
+                                            portfolio.otherBalances.map(({ network, total }) => (
+                                                total.full > 0 ?
+                                                    <div className="other-balance" key={network} onClick={() => setNetwork(network)}>
+                                                        You also have <span className="purple-highlight">$</span> { total.truncated }
+                                                        <span className="purple-highlight">.{total.decimals}</span> on { networkDetails(network).name }
+                                                    </div>
+                                                    :
+                                                    null
+                                            ))
+                                        }
+                                    </div>
                                 </div>
                         }
                     </div>
                 </div>
                 <div id="chart" className="panel">
-                    <div className="title">Balance by token</div>
+                    <div className="title">
+                        Balance by
+                        <Segments small defaultValue={chartSegments[0].value} segments={chartSegments} onChange={setChartType}/>
+                    </div>
                     <div className="content">
                         {
-                            portfolio.isLoading ? 
-                                <Loading/>
+                            chartType === chartSegments[0].value ?
+                                portfolio.isBalanceLoading ?
+                                    <Loading/>
+                                    :
+                                    <Chart data={chartTokensData} size={200}/>
                                 :
-                                <Chart data={chartData} size={200}/>
+                                portfolio.areAssetsLoading ?
+                                    <Loading/>
+                                    :
+                                    <Chart data={chartAssetsData} size={200}/>
                         }
                     </div>
                 </div>
             </div>
             <div id="table" className="panel">
-                <div className="title">Assets</div>
+                <div className="title">
+                    Assets
+                    <Segments small defaultValue={tableSegments[0].value} segments={tableSegments} onChange={setTableType}></Segments>
+                </div>
                 <div className="content">
                     {
-                        portfolio.isLoading ?
+                        portfolio.areAssetsLoading ?
                             <Loading/>
                             :
-                            !portfolio.assets.length ?
-                                <AssetsPlaceholder/>
+                            tableType === tableSegments[0].value ?
+                                <Assets assets={portfolio.assets}/>
                                 :
-                                portfolio.assets.map(({ label, assets }, i) => (
-                                    <div className="category" key={`category-${i}`}>
-                                        <div className="title">{ label }</div>
-                                        <div className="list">
-                                            {
-                                                assets.map(({ tokens }) => 
-                                                    tokens.map(({ label, collectionName, symbol, img, collectionImg, balance, balanceUSD }, i) => (
-                                                        <div className="token" key={`token-${i}`}>
-                                                            <div className="icon">
-                                                                {
-                                                                    img || collectionImg ? 
-                                                                        <img src={img || collectionImg} alt="Token Icon"/>
-                                                                        :
-                                                                        <GiToken size={20}/>
-                                                                }
-                                                            </div>
-                                                            <div className="name">
-                                                                { label || collectionName || symbol }
-                                                            </div>
-                                                            <div className="separator"></div>
-                                                            <div className="balance">
-                                                                <div className="currency">
-                                                                    { balance } <span className="symbol">{ symbol }</span>
-                                                                </div>
-                                                                <div className="dollar">
-                                                                    <span className="symbol">$</span> { balanceUSD }
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    ))
-                                                )
-                                            }
-                                        </div>
-                                    </div>
-                                ))
+                                <Collectables collectables={portfolio.collectables}/>
                     }
                 </div>
                 {
-                    portfolio.isLoading || !portfolio.assets.length ?
+                    portfolio.areAssetsLoading || !portfolio.assets.length ?
                         null
                         :
                         <div className="powered">

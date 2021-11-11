@@ -5,28 +5,35 @@ import url from 'url'
 
 import { RAMP_HOST_API_KEY, PAYTRIE_PARTNER_URL, TRANSAK_API_KEY, TRANSAK_ENV } from '../config'
 
-export const openRampNetwork = ({ walletAddress }) => {
+export const openRampNetwork = ({ walletAddress, selectedNetwork }) => {
+    const assetsList = {
+        ethereum: 'ERC20_*,ETH_*',
+        polygon: 'MATIC_ERC20_*,MATIC_*',
+        avalanche: 'AVAX_*',
+    }
+
     const widget = new RampInstantSDK({
         hostAppName: 'Ambire',
         hostLogoUrl: 'https://www.ambire.com/ambire-logo.png',
         variant: 'auto',
-        swapAsset: 'USDC',
+        swapAsset: assetsList[selectedNetwork],
         userAddress: walletAddress,
         hostApiKey: RAMP_HOST_API_KEY,
     })
     widget.show()
 };
 
-export const openPayTrie = ({ walletAddress, email, ...rest }) => {
+export const openPayTrie = ({ walletAddress, selectedNetwork }) => {
+    const rightSideLabel = selectedNetwork === 'polygon' ? 'USDC-P' : 'USDC'
+
     const URL = url.parse(PAYTRIE_PARTNER_URL, true)
     URL.search = null
     URL.query = {
         ...URL.query,
         addr: walletAddress,
-        email,
-        rightSideLabel: 'USDC',
-        ...rest,
+        rightSideLabel
     }
+
     popupCenter({
         url: url.format(URL),
         title: 'Paytrie Deposit',
@@ -35,14 +42,22 @@ export const openPayTrie = ({ walletAddress, email, ...rest }) => {
     })
 };
 
-export const openTransak = ({ walletAddress }) => {
+export const openTransak = ({ walletAddress, selectedNetwork }) => {
+    let networks = selectedNetwork === 'avalanche' ? 'avaxcchain' : selectedNetwork
+    let defaultCurency = {
+        'ethereum': 'USDC',
+        'polygon': 'USDC',
+        'arbitrum': 'ETH',
+        'avaxcchain': 'AVAX'
+    }
+
     const transak = new transakSDK({
         apiKey: TRANSAK_API_KEY,
         environment: TRANSAK_ENV,
-        cryptoCurrencyList: 'USDC',
-        defaultCryptoCurrency: 'USDC',
+        networks,
+        defaultCryptoCurrency: defaultCurency[networks],
         disableWalletAddressForm: true,
-        walletAddress: walletAddress,
+        walletAddress,
         themeColor: '282b33',
         email: '',
         redirectURL: '',

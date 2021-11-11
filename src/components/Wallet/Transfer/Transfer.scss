@@ -4,37 +4,55 @@
     display: flex;
     gap: 30px;
 
-    .overlay {
-        z-index: 98;
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        left: 0;
-        right: 0;
+    #recipient-field {
+        position: relative;
         display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 30px;
-        font-weight: bold;
-        color: rgba(255, 255, 255, 0.5);
-        backdrop-filter: blur(7px);
+
+        .dropdown {
+            position: absolute;
+            right: 0;
+            height: 60px;
+
+            .list {
+                top: 60px;
+
+                label {
+                    font-weight: bold;
+                    padding: 10px 20px;
+                }
+
+                .item {
+                    height: 50px;
+                    font-size: 15px;
+                    font-weight: bold;
+                    font-family: monospace;
+                    padding: 0 20px;
+                    cursor: pointer;
+                    opacity: 0.7;
+
+                    &.active {
+                        opacity: 1;
+                    }
+
+                    &:hover {
+                        background-color: rgba(0, 0, 0, 0.1);
+                        opacity: 0.9;
+                    }
+                }
+            }
+        }
+    }
+
+    .placeholder-overlay {
         background-color: rgba(0, 0, 0, 0.1);
     }
 
-    .panel {
-        position: relative;
-        display: flex;
-        flex-direction: column;
-        gap: 1.5em;
-        flex: 0 1 50%;
-        padding: 30px;
-        padding-bottom: 40px;
-        background-color: $panel-background-color;
+    .blurred {
+        filter: blur(7px);
+    }
 
-        .title {
-            font-size: 1.5em;
-            font-weight: bold;
-        }
+    .panel {
+        flex: 0 1 50%;
     }
 
     .form {

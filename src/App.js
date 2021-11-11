@@ -4,10 +4,9 @@ import {
   HashRouter as Router,
   Switch,
   Route,
-  Redirect,
-  useHistory
+  Redirect
 } from 'react-router-dom'
-import { useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import EmailLogin from './components/EmailLogin/EmailLogin'
 import AddAccount from './components/AddAccount/AddAccount'
 import Wallet from './components/Wallet/Wallet'
@@ -25,7 +24,7 @@ const relayerURL = 'http://localhost:1934'
 function AppInner () {
   const { accounts, selectedAcc, onSelectAcc, onAddAccount } = useAccounts()
   const { network, setNetwork, allNetworks } = useNetwork()
-  const { connections, connect, disconnect, requests, resolveMany } = useWalletConnect({
+  const { connections, connect, disconnect, requests: wcRequests, resolveMany } = useWalletConnect({
     account: selectedAcc,
     chainId: network.chainId
   })
@@ -34,22 +33,37 @@ function AppInner () {
     account: selectedAcc
   })
 
+  // Internal requests: eg from the Transfer page, Security page, etc. - requests originating in the wallet UI itself
+  // unlike WalletConnect or SafeSDK requests, those do not need to be persisted
+  const [internalRequests, setInternalRequests] = useState([])
+  const addRequest = req => setInternalRequests(reqs => [...reqs, req])
+
+  // Merge all requests
+  const requests = useMemo(() => internalRequests.concat(wcRequests), [wcRequests, internalRequests])
+
   // Show notifications for all requests
   useNotifications(requests)
 
   // Navigate to the send transaction dialog if we have a new txn
-  const history = useHistory()
-  const eligibleRequests = requests
+  const eligibleRequests = useMemo(() => requests
     .filter(({ type, chainId, account }) =>
       type === 'eth_sendTransaction'
       && chainId === network.chainId
       && account === selectedAcc
-    )
-  useEffect(() => {
-    if (eligibleRequests.length) history.push('/send-transaction')
-  }, [eligibleRequests.length, history])
+    ), [requests, network.chainId, selectedAcc])
+  const [sendTxnsShowing, setSendTxnsShowing] = useState(() => !!eligibleRequests.length)
+  useEffect(
+    () => setSendTxnsShowing(!!eligibleRequests.length),
+    [eligibleRequests.length]
+  )
+  const onDismiss = () => setSendTxnsShowing(false)
 
   return (<>
+    {sendTxnsShowing ? (
+      <SendTransaction accounts={accounts} selectedAcc={selectedAcc} network={network} requests={eligibleRequests} resolveMany={resolveMany} relayerURL={relayerURL} onDismiss={onDismiss}>
+      </SendTransaction>
+      ) : (<></>)
+    }
     <Switch>
       <Route path="/add-account">
         <AddAccount relayerURL={relayerURL} onAddAccount={onAddAccount}></AddAccount>
@@ -59,13 +73,8 @@ function AppInner () {
         <EmailLogin relayerURL={relayerURL} onAddAccount={onAddAccount}></EmailLogin>
       </Route>
 
-      <Route path="/send-transaction">
-        <SendTransaction accounts={accounts} selectedAcc={selectedAcc} network={network} requests={eligibleRequests} resolveMany={resolveMany} relayerURL={relayerURL}>
-        </SendTransaction>
-      </Route>
-
       <Route path="/wallet">
-        <Wallet match={{ url: "/wallet" }} accounts={accounts} selectedAcc={selectedAcc} portfolio={portfolio} onSelectAcc={onSelectAcc} allNetworks={allNetworks} network={network} setNetwork={setNetwork} connections={connections} connect={connect} disconnect={disconnect}></Wallet>
+        <Wallet match={{ url: "/wallet" }} accounts={accounts} selectedAcc={selectedAcc} portfolio={portfolio} onSelectAcc={onSelectAcc} allNetworks={allNetworks} network={network} setNetwork={setNetwork} addRequest={addRequest} connections={connections} connect={connect} disconnect={disconnect}></Wallet>
       </Route>
 
       <Route path="/">
