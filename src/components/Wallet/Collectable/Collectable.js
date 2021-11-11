@@ -15,11 +15,12 @@ const Collectable = ({ allNetworks }) => {
         name: '',
         description: '',
         image: '',
-        collection: ''
+        collection: '',
+        explorerUrl: ''
     })
 
     const fetchMetadata = useCallback(async () => {
-        const { rpc } = allNetworks.find(({ id }) => id === network)
+        const { rpc, explorerUrl } = allNetworks.find(({ id }) => id === network)
         const provider = getDefaultProvider(rpc)
         const contract = new ethers.Contract(collectionAddr, ERC721Abi, provider)
 
@@ -27,7 +28,8 @@ const Collectable = ({ allNetworks }) => {
             let collection = await contract.name()
             setMetadata(metadata => ({
                 ...metadata,
-                collection
+                collection,
+                explorerUrl
             }))
         } catch(e) {
             addToast('Failed to fetch collection name', { error: true })
@@ -55,7 +57,9 @@ const Collectable = ({ allNetworks }) => {
             <div className="panel">
                 <div className="title">
                     { metadata.collection } #{ tokenId }
-                    <div className="contract">{ collectionAddr }</div>
+                    <div className="contract">
+                        Contract address: <a href={`${metadata.explorerUrl}/address/${collectionAddr}`} target="_blank" rel="noreferrer">{ collectionAddr }</a>
+                    </div>
                 </div>
                 <div className="metadata">
                     <div className="image" style={{backgroundImage: `url(${metadata.image})`}}></div>
