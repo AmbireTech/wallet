@@ -4,6 +4,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import { NavLink } from "react-router-dom";
 import { FiHelpCircle } from "react-icons/fi";
 import { AiOutlinePlus } from "react-icons/ai";
+import * as blockies from 'blockies-ts';
 import { DropDown, Select, Button } from "../../common";
 
 const TopBar = ({
@@ -51,7 +52,7 @@ const TopBar = ({
 
   const accountsItems = accounts.map(({ id }) => ({
     value: id,
-    iconColor: `#${id.slice(id.length - 6, id.length)}`
+    icon: blockies.create({ seed: id }).toDataURL()
   }))
   const networksItems = allNetworks.map(({ id, name, icon }) => ({
     label: name,
