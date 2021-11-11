@@ -1,12 +1,13 @@
 import './Dashboard.scss'
 
-import { useCallback, useEffect, useLayoutEffect, useState } from 'react'
+import { useEffect, useLayoutEffect, useState } from 'react'
 
 import { Chart, Loading, Segments } from '../../common'
 import Assets from './Assets/Assets'
 import Collectables from './Collectables/Collectables'
+import networks from '../../../consts/networks'
 
-export default function Dashboard({ portfolio, allNetworks, setNetwork }) {
+export default function Dashboard({ portfolio, setNetwork }) {
     const [chartTokensData, setChartTokensData] = useState([]);
     const [chartAssetsData, setChartAssetsData] = useState([]);
     const [chartType, setChartType] = useState([]);
@@ -30,7 +31,7 @@ export default function Dashboard({ portfolio, allNetworks, setNetwork }) {
         }
     ]
 
-    const networkDetails = useCallback((network) => allNetworks.find(({ id }) => id === network), [allNetworks])
+    const networkDetails = (network) => networks.find(({ id }) => id === network)
 
     useLayoutEffect(() => {
         const tokensData = portfolio.balance.tokens
