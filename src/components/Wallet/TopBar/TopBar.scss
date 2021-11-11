@@ -10,8 +10,8 @@
     display: flex;
     justify-content: flex-end;
     gap: 1em;
-    background-color: rgb(40, 43, 51);
-    box-shadow: 0 5px 20px 5px rgb(40, 43, 51);
+    background-color: $background-color;
+    box-shadow: 0 5px 20px 5px $background-color;
 
     .container {
         display: flex;
@@ -75,8 +75,6 @@
 }
 
 #connect-dapp {
-  display: flex;
-  flex-direction: column;
   gap: 10px;
   padding: 20px;
   padding-bottom: 10px;
