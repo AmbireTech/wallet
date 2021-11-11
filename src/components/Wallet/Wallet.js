@@ -19,7 +19,7 @@ export default function Wallet(props) {
             <Dashboard portfolio={props.portfolio} allNetworks={props.allNetworks} setNetwork={props.setNetwork} />
           </Route>
           <Route path={props.match.url + "/deposit"}>
-            <Deposit selectedAcc={props.selectedAcc} selectedNetwork={props.network.id} />
+            <Deposit selectedAcc={props.selectedAcc} allNetworks={props.allNetworks} selectedNetwork={props.network.id} />
           </Route>
           <Route path={props.match.url + "/transfer"}>
             <Transfer portfolio={props.portfolio} selectedAcc={props.selectedAcc} accounts={props.accounts}/>
