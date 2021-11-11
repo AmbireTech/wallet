@@ -25,7 +25,7 @@ const relayerURL = 'http://localhost:1934'
 function AppInner () {
   const { accounts, selectedAcc, onSelectAcc, onAddAccount } = useAccounts()
   const { network, setNetwork, allNetworks } = useNetwork()
-  const { connections, connect, disconnect, requests: wcRequests, resolveMany } = useWalletConnect({
+  const { connections, connect, disconnect, requests: wcRequests, resolveMany: wcResolveMany } = useWalletConnect({
     account: selectedAcc,
     chainId: network.chainId
   })
@@ -36,9 +36,8 @@ function AppInner () {
     verbose: 1
 	},[selectedAcc, network]);
 
-  const requests = WCRequests.concat(gnosisRequests);
   const resolveMany = (ids, resolution) => {
-    WCResolveMany(ids, resolution);
+    wcResolveMany(ids, resolution);
     gnosisResolveMany(ids, resolution);
   }
 
@@ -53,7 +52,7 @@ function AppInner () {
   const addRequest = req => setInternalRequests(reqs => [...reqs, req])
 
   // Merge all requests
-  const requests = useMemo(() => internalRequests.concat(wcRequests), [wcRequests, internalRequests])
+  const requests = useMemo(() => internalRequests.concat(...wcRequests,...gnosisRequests), [wcRequests, internalRequests, gnosisRequests])
 
   // Show notifications for all requests
   useNotifications(requests)
@@ -88,7 +87,23 @@ function AppInner () {
       </Route>
 
       <Route path="/wallet">
-        <Wallet match={{ url: "/wallet" }} accounts={accounts} selectedAcc={selectedAcc} portfolio={portfolio} onSelectAcc={onSelectAcc} allNetworks={allNetworks} network={network} setNetwork={setNetwork} addRequest={addRequest} connections={connections} connect={connect} disconnect={disconnect}></Wallet>
+        <Wallet
+          match={{ url: "/wallet" }}
+          accounts={accounts}
+          selectedAcc={selectedAcc}
+          portfolio={portfolio}
+          onSelectAcc={onSelectAcc}
+          allNetworks={allNetworks}
+          network={network}
+          setNetwork={setNetwork}
+          addRequest={addRequest}
+          connections={connections}
+          connect={connect}
+          disconnect={disconnect}
+          gnosisConnect={gnosisConnect}
+          gnosisDisconnect={gnosisDisconnect}
+        >
+        </Wallet>
       </Route>
 
       <Route path="/">

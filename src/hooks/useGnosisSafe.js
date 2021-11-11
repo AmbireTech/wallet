@@ -1,4 +1,4 @@
-import {useCallback, useEffect, useReducer, useRef, useMemo} from 'react'
+import {useCallback, useEffect, useState, useRef, useMemo} from 'react'
 import {useToasts} from '../hooks/toasts'
 
 import {Methods} from '@gnosis.pm/safe-apps-sdk'
@@ -7,8 +7,6 @@ import {usePortfolio} from './index'
 import {getDefaultProvider} from 'ethers'
 
 const STORAGE_KEY = 'gnosis_safe_state'
-
-const getDefaultState = () => ({requests: []})
 
 export default function useGnosisSafe({selectedAccount, network, verbose = 0}) {
 
@@ -27,28 +25,16 @@ export default function useGnosisSafe({selectedAccount, network, verbose = 0}) {
   const stateRef = useRef()
   stateRef.current = {selectedAccount, network}
 
-  const [state, dispatch] = useReducer((state, action) => {
-    if (action.type === 'requestAdded') {
-      return {...state, requests: [...state.requests, action.request]}
-    }
-    if (action.type === 'requestsResolved') {
-      return {
-        ...state,
-        requests: state.requests.filter(x => !action.ids.includes(x.id))
-      }
-    }
-    return {...state}
-  }, null, () => {
+  const [requests, setRequests] = useState(() => {
     const json = localStorage[STORAGE_KEY]
-    if (!json) return getDefaultState()
+    if (!json) return []
     try {
-      return {
-        ...getDefaultState(),
+      return [
         ...JSON.parse(json)
-      }
+      ]
     } catch (e) {
       console.error(e)
-      return getDefaultState()
+      return []
     }
   })
 
@@ -67,7 +53,6 @@ export default function useGnosisSafe({selectedAccount, network, verbose = 0}) {
     }
 
     const getSafeBalances = async () => {
-
       //TODO later
       //await portfolio.updatePortfolio("polygon", selectedAccount, true);//not this because it does NOT return the updated state anyway
       //console.log(portfolio);
@@ -91,7 +76,6 @@ export default function useGnosisSafe({selectedAccount, network, verbose = 0}) {
           }
         ]
       }*/
-
     }
 
     try {
@@ -174,7 +158,7 @@ export default function useGnosisSafe({selectedAccount, network, verbose = 0}) {
         account: selectedAccount
       }
 
-      dispatch({type: 'requestAdded', request: request})
+      setRequests(prevRequests => [...prevRequests, request])
     })
 
     return connector.current
@@ -186,7 +170,7 @@ export default function useGnosisSafe({selectedAccount, network, verbose = 0}) {
   }, []);
 
   const resolveMany = (ids, resolution) => {
-    for (let req of state.requests.filter(x => ids.includes(x.id))) {
+    for (let req of requests.filter(x => ids.includes(x.id))) {
       const replyData = {
         id: req.forwardId,
         success: null,
@@ -203,19 +187,22 @@ export default function useGnosisSafe({selectedAccount, network, verbose = 0}) {
         replyData.success = true;
         replyData.txId = resolution.txId;
       }
-      connector.current?.send(replyData, req.forwardId, replyData.error)
+      if(!connector.current){
+        throw new Error("gnosis safe connector not set");
+      }
+      connector.current.send(replyData, req.forwardId, replyData.error)
     }
 
-    dispatch({type: 'requestsResolved', ids})
+    setRequests(prevRequests => prevRequests.filter(x => !ids.includes(x.id)))
   }
 
   // Side effects that will run on every state change/rerender
   useEffect(() => {
-    localStorage[STORAGE_KEY] = JSON.stringify(state)
-  }, [state, selectedAccount, network])
+    localStorage[STORAGE_KEY] = JSON.stringify(requests)
+  }, [requests, selectedAccount, network])
 
   return {
-    requests: state.requests,
+    requests: requests,
     resolveMany: resolveMany,
     connect,
     disconnect
