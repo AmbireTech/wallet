@@ -123,10 +123,12 @@ export default function usePortfolio({ currentNetwork, account }) {
     }, [addToast])
 
     const refreshBalanceIfFocused = useCallback(() => {
+        if (!account) return
         if (document.hasFocus() && !isBalanceLoading) fetchBalances(account)
     }, [isBalanceLoading, account, fetchBalances])
 
     const requestOtherProtocolsRefresh = async () => {
+        if (!account) return
         if ((Date.now() - lastOtherProcolsRefresh) > 30000 && !areAssetsLoading) await fetchOtherProtocols(account)
     }
 
@@ -136,11 +138,13 @@ export default function usePortfolio({ currentNetwork, account }) {
         otherProtocolsByNetworks = []
 
         async function loadBalance() {
+            if (!account) return
             setBalanceLoading(true)
             if (await fetchBalances(account)) setBalanceLoading(false)
         }
 
         async function loadProtocols() {
+            if (!account) return
             setAssetsLoading(true)
             if (await fetchOtherProtocols(account)) setAssetsLoading(false)
         }
