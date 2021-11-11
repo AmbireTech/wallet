@@ -12,9 +12,10 @@ const ToastProvider = ({ children }) => {
     const [toasts, setToasts] = useState([]);
 
     const addToast = useCallback((content, options) => {
-        const { timeout, error } = {
+        const { timeout, error, url } = {
             timeout: 8000,
             error: false,
+            url: null,
             ...options
         }
 
@@ -22,6 +23,7 @@ const ToastProvider = ({ children }) => {
             id: id++,
             content,
             error,
+            url,
             ref: createRef()
         }
         
@@ -45,13 +47,15 @@ const ToastProvider = ({ children }) => {
         >
             
                 <div id="toast-container">
-                    <TransitionGroup>
+                    <TransitionGroup className="transition-group">
                     {
                         toasts.map(toast => (
                             <CSSTransition timeout={200} classNames="slide-fade" key={toast.id} nodeRef={toast.ref}>
-                                <div className={`toast ${toast.error ? 'error' : ''}`} ref={toast.ref} onClick={() => removeToast(toast.id)}>
-                                    { toast.content }
-                                </div>
+                                <a href={toast.url} target="_blank" rel="noreferrer">
+                                    <div className={`toast ${toast.error ? 'error' : ''}`} ref={toast.ref} onClick={() => removeToast(toast.id)}>
+                                        { toast.content }
+                                    </div>
+                                </a>
                             </CSSTransition>
                         ))
                     }

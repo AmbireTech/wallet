@@ -6,16 +6,12 @@
     gap: 2em;
 
     .panel {
-        display: flex;
-        flex-direction: column;
         gap: 2em;
         width: 36em;
         text-align: center;
         padding: 0 2.5em;
         padding-top: 2.5em;
         padding-bottom: 3em;
-        box-sizing: border-box;
-        background-color: rgba(0, 0, 0, 0.2);
         overflow: hidden;
 
         .heading {
@@ -72,7 +68,7 @@
     }
 }
 
-@media screen and (max-width: 1400px) {
+@media screen and (max-width: 1200px) {
    #deposit {
        flex-direction: column;
 

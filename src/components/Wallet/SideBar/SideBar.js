@@ -11,17 +11,18 @@ const SideBar = ({match, portfolio}) => {
     return (
         <div id="sidebar">
                 <NavLink to={match.url + "/dashboard"}>
-                    <div className="logo" />
+                    <div id="logo" />
+                    <div id="icon" />
                 </NavLink>
 
                 <div className="balance">
                     <label>Balance</label>
                     {
-                        portfolio.isLoading ?
+                        portfolio.isBalanceLoading ?
                             <Loading/>
                             :
                             <div className="balanceDollarAmount">
-                                <span className="dollarSign highlight">$</span>{ portfolio.totalUSD.formated }<span className="highlight">.{ portfolio.totalUSD.decimals }</span>
+                                <span className="dollarSign highlight">$</span>{ portfolio.balance.total.truncated }<span className="highlight">.{ portfolio.balance.total.decimals }</span>
                             </div>
                     }
                 </div>
