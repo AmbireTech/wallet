@@ -7,6 +7,7 @@ import SideBar from "./SideBar/SideBar";
 import Deposit from "./Deposit/Deposit"
 import Transfer from "./Transfer/Transfer"
 import Security from "./Security/Security";
+import Transactions from "./Transactions/Transactions";
 
 export default function Wallet(props) {
   return (
@@ -27,7 +28,9 @@ export default function Wallet(props) {
           <Route path={props.match.url + "/security"}>
             <Security selectedAcc={props.selectedAcc} selectedNetwork={props.network.id} accounts={props.accounts}/>
           </Route>
-          <Route path={props.match.url + "/transactions"}></Route>
+          <Route path={props.match.url + "/transactions"}>
+            <Transactions selectedAcc={props.selectedAcc} selectedNetwork={props.network.id} />
+          </Route>
           <Route path={props.match.url + "/swap"}></Route>
           <Route path={props.match.url + "/earn"}></Route>
 

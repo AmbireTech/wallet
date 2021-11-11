@@ -7,6 +7,8 @@ import Segments from './Segments/Segments';
 import Select from './Select/Select';
 import TextInput from './TextInput/TextInput';
 import NumberInput from './NumberInput/NumberInput';
+import Tooltip from './Tooltip/Tooltip';
+import Table from './Table/Table';
 
 export {
     Button,
@@ -17,5 +19,7 @@ export {
     Segments,
     Select,
     TextInput,
-    NumberInput
+    NumberInput,
+    Tooltip,
+    Table
 };
