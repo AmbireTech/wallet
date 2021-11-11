@@ -41,7 +41,7 @@ const CollectablesPlaceholder = () => {
 
     return (
         <div id="collectables-placeholder">
-            <div className="overlay">
+            <div className="placeholder-overlay">
                 You don't have any collectables (NFTs) yet
             </div>
             <div id="collectables">

@@ -28,7 +28,7 @@ const AssetsPlaceholder = () => {
 
     return (
         <div id="assets-placeholder" >
-            <div className="overlay">
+            <div className="placeholder-overlay">
                 <label>
                     Welcome! You don't have any funds on this account.
                 </label>
