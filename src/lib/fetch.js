@@ -10,18 +10,14 @@ export async function fetchPost (url, body) {
 }
 
 export const fetchGet = async url => {
-  try {
-    const response = await fetch(url, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    });
-    return response.json()
-  } catch(e){
-    console.error(e)
-    return null;
-  }
+  const response = await fetch(url, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  });
+  if (response.status !== 200) throw new Error('Failed to fetch')
+  return response.json()
 }
 
 export async function fetchCaught (url, params) {
