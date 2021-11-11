@@ -35,7 +35,7 @@ const Assets = ({ assets }) => {
                                                             { balance } <span className="symbol">{ symbol }</span>
                                                         </div>
                                                         <div className="dollar">
-                                                            <span className="symbol">$</span> { balanceUSD }
+                                                            <span className="symbol">$</span> { balanceUSD.toFixed(2) }
                                                         </div>
                                                     </div>
                                                 </div>
