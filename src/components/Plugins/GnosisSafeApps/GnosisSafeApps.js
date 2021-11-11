@@ -44,12 +44,12 @@ export default function GnosisSafeApps({network, selectedAcc, gnosisConnect, gno
     return () => {
       gnosisDisconnect()
     }
-  }, [selectedApp, network, selectedAcc, iframeRef])
+  }, [selectedApp, network, selectedAcc, iframeRef, gnosisConnect, gnosisDisconnect])
 
   return (
     <div id="plugin-gnosis-conainer">
       {selectedApp ? (
-        <iframe key={genHash()} ref={iframeRef} src={selectedApp.url}/>
+        <iframe title='Ambire Plugin' key={genHash()} ref={iframeRef} src={selectedApp.url}/>
       ) : (
         <ul id="dapps-container">
           {dapps.map((dapp, index) => (
