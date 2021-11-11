@@ -38,6 +38,7 @@ npm start
 * 2 spaces for identation
 * Single quote (') instead of double (")
 * Error handling: make sure to catch all errors that may originate in external IO (expected errors) and display them in a human friendly way with `addToast`; also, at a top-level, every time you spawn an async operation, make sure you `.catch` the entire thing to catch unexpected errors
+* Camel case
 
 ## Available Scripts
 
