@@ -1,15 +1,16 @@
 import './Dashboard.scss'
 
 import { useCallback, useEffect, useLayoutEffect, useState } from 'react'
-import { GiToken } from 'react-icons/gi'
 
 import { Chart, Loading, Segments } from '../../common'
-import AssetsPlaceholder from './AssetsPlaceholder/AssetsPlaceholder'
+import Assets from './Assets/Assets'
+import Collectables from './Collectables/Collectables'
 
 export default function Dashboard({ portfolio, allNetworks, setNetwork }) {
     const [chartTokensData, setChartTokensData] = useState([]);
     const [chartAssetsData, setChartAssetsData] = useState([]);
     const [chartType, setChartType] = useState([]);
+    const [tableType, setTableType] = useState([]);
 
     const chartSegments = [
         {
@@ -17,6 +18,15 @@ export default function Dashboard({ portfolio, allNetworks, setNetwork }) {
         },
         {
             value: 'By Asset'
+        }
+    ]
+
+    const tableSegments = [
+        {
+            value: 'Tokens'
+        },
+        {
+            value: 'Collectables'
         }
     ]
 
@@ -65,10 +75,13 @@ export default function Dashboard({ portfolio, allNetworks, setNetwork }) {
                                     <div id="other-balances">
                                         {
                                             portfolio.otherBalances.map(({ network, total }) => (
-                                                <div className="balance" key={network} onClick={() => setNetwork(network)}>
-                                                    <span className="purple-highlight">$</span> { total.truncated }
-                                                    <span className="purple-highlight">.{total.decimals}</span> on { networkDetails(network).name }
-                                                </div>
+                                                total.full > 0 ?
+                                                    <div className="other-balance" key={network} onClick={() => setNetwork(network)}>
+                                                        You also have <span className="purple-highlight">$</span> { total.truncated }
+                                                        <span className="purple-highlight">.{total.decimals}</span> on { networkDetails(network).name }
+                                                    </div>
+                                                    :
+                                                    null
                                             ))
                                         }
                                     </div>
@@ -98,50 +111,19 @@ export default function Dashboard({ portfolio, allNetworks, setNetwork }) {
                 </div>
             </div>
             <div id="table" className="panel">
-                <div className="title">Assets</div>
+                <div className="title">
+                    Assets
+                    <Segments small defaultValue={tableSegments[0].value} segments={tableSegments} onChange={setTableType}></Segments>
+                </div>
                 <div className="content">
                     {
                         portfolio.areAssetsLoading ?
                             <Loading/>
                             :
-                            !portfolio.assets.length ?
-                                <AssetsPlaceholder/>
+                            tableType === tableSegments[0].value ?
+                                <Assets assets={portfolio.assets}/>
                                 :
-                                portfolio.assets.map(({ label, assets }, i) => (
-                                    <div className="category" key={`category-${i}`}>
-                                        <div className="title">{ label }</div>
-                                        <div className="list">
-                                            {
-                                                assets.map(({ tokens }) => 
-                                                    tokens.map(({ label, collectionName, symbol, img, collectionImg, balance, balanceUSD }, i) => (
-                                                        <div className="token" key={`token-${i}`}>
-                                                            <div className="icon">
-                                                                {
-                                                                    img || collectionImg ? 
-                                                                        <img src={img || collectionImg} alt="Token Icon"/>
-                                                                        :
-                                                                        <GiToken size={20}/>
-                                                                }
-                                                            </div>
-                                                            <div className="name">
-                                                                { label || collectionName || symbol }
-                                                            </div>
-                                                            <div className="separator"></div>
-                                                            <div className="balance">
-                                                                <div className="currency">
-                                                                    { balance } <span className="symbol">{ symbol }</span>
-                                                                </div>
-                                                                <div className="dollar">
-                                                                    <span className="symbol">$</span> { balanceUSD }
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    ))
-                                                )
-                                            }
-                                        </div>
-                                    </div>
-                                ))
+                                <Collectables collectables={portfolio.collectables}/>
                     }
                 </div>
                 {
