@@ -10,9 +10,7 @@ const STORAGE_KEY = 'gnosis_safe_state'
 
 const getDefaultState = () => ({requests: []})
 
-export default function useGnosisSafe({selectedAccount, network, verbose}) {
-
-  verbose = verbose || 0;
+export default function useGnosisSafe({selectedAccount, network, verbose = 0}) {
 
   const connector = useRef(null);
 
@@ -168,7 +166,7 @@ export default function useGnosisSafe({selectedAccount, network, verbose}) {
       }
 
       const request = {
-        id: id,
+        id,
         forwardId: msg.data.id,
         type: 'eth_sendTransaction',
         txn: txs[0],//if anyone finds a dapp that sends a bundle, please reach me out
@@ -193,12 +191,12 @@ export default function useGnosisSafe({selectedAccount, network, verbose}) {
         id: req.forwardId,
         success: null,
         txId:null,
-				error:null
+        error:null
       }
       if(!resolution){
         replyData.error = 'Nothing to resolve'
         replyData.success = false
-			}else if(!resolution.success){
+      }else if(!resolution.success){
         replyData.error = resolution.message;
         replyData.success = false
       } else{ //onSuccess
