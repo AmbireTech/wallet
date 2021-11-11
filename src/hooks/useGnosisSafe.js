@@ -47,7 +47,7 @@ export default function useGnosisSafe({ selectedAccount, network, verbose = 0 })
       return null
     }
 
-    //reply back to iframe with safe data
+    // reply back to iframe with safe data
     connector.current.on(Methods.getSafeInfo, () => {
       return {
         safeAddress: stateRef.current.selectedAccount,
