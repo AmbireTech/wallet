@@ -33,7 +33,8 @@ function AppInner () {
     account: selectedAcc
   })
 
-  // Internal requests
+  // Internal requests: eg from the Transfer page, Security page, etc. - requests originating in the wallet UI itself
+  // unlike WalletConnect or SafeSDK requests, those do not need to be persisted
   const [internalRequests, setInternalRequests] = useState([])
   const addRequest = req => setInternalRequests(reqs => [...reqs, req])
 
