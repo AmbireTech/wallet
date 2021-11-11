@@ -237,6 +237,10 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
       console.error(e)
       if (e && e.message.includes('must provide an Ethereum address')) {
         addToast(`Signing error: not connected with the correct address. Make sure you're connected with ${bundle.signer.address}.`, { error: true })
+      } else if (e && e.message.includes('0x6b0c')) {
+        // not sure if that's actually the case with this hellish error, but after unlocking the device it no longer appeared
+        // however, it stopped appearing after that even if the device is locked, so I'm not sure it's related...
+        addToast(`Ledger: unknown error (0x6b0c): is your Ledger unlocked and in the Ethereum application?`, { error: true })
       } else {
         console.log(e.message)
         addToast(`Signing error: ${e.message || e}`, { error: true })
