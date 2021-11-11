@@ -170,7 +170,7 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
     if (!estimation) throw new Error('no estimation: should never happen')
     if (!relayerURL) throw new Error('Email/passphrase account signing without the relayer is not supported yet')
 
-    const finalBundle = signingStatus.finalBundle || getFinalBundle()
+    const finalBundle = (signingStatus && signingStatus.finalBundle) || getFinalBundle()
     const signer = finalBundle.signer
 
     if (typeof finalBundle.nonce !== 'number') {
@@ -338,6 +338,7 @@ function Actions({ estimation, feeSpeed, approveTxn, rejectTxn, signingStatus })
 
   if (signingStatus && signingStatus.quickAcc) {
     return (<>
+      <div>A confirmation code was sent to your email, please enter it along with your passphrase.</div>
       <input type='password' required minLength={8} placeholder='Passphrase' value={quickAccCredentials.passphrase} onChange={e => setQuickAccCredentials({ ...quickAccCredentials, passphrase: e.target.value })}></input>
       <form ref={form} className='quickAccSigningForm' onSubmit={e => { e.preventDefault() }}>
         {/* Changing the autoComplete prop to a random string seems to disable it more often */}
@@ -376,7 +377,7 @@ function TxnPreview ({ txn, onDismiss, bundle, network, isFirstFailing }) {
   const contractName = getContractName(txn, network.id)
   return (
     <div className={isFirstFailing ? 'txnSummary firstFailing' : 'txnSummary'}>
-        <div>{getTransactionSummary(txn, bundle.network)}</div>
+        <div>{getTransactionSummary(txn, bundle.network, bundle.identity)}</div>
         {isFirstFailing ? (<div className='firstFailingLabel'>This is the first failing transaction.</div>) : (<></>)}
 
         {
@@ -390,7 +391,7 @@ function TxnPreview ({ txn, onDismiss, bundle, network, isFirstFailing }) {
         <span className='expandTxn' onClick={() => setExpanded(e => !e)}>
           {isExpanded ? (<FaChevronUp/>) : (<FaChevronDown/>)}
         </span>
-        <span className='dismissTxn' onClick={onDismiss}><FaTimes/></span>
+        {onDismiss ? (<span className='dismissTxn' onClick={onDismiss}><FaTimes/></span>) : (<></>)}
     </div>
   )
 }

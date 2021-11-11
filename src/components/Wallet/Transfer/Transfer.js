@@ -1,11 +1,12 @@
 import './Transfer.scss'
 
 import { BsArrowDown } from 'react-icons/bs'
-import { TextInput, NumberInput, Button, Select, Loading } from '../../common'
+import { FaAddressCard } from 'react-icons/fa'
+import { TextInput, NumberInput, Button, Select, Loading, DropDown } from '../../common'
 import { useCallback, useEffect, useState } from 'react'
 import SendPlaceholder from './SendPlaceholder/SendPlaceholder'
 
-const Transfer = ({ portfolio }) => {
+const Transfer = ({ portfolio, selectedAcc, accounts }) => {
     const [asset, setAsset] = useState()
     const [amount, setAmount] = useState(0)
     const [address, setAddress] = useState()
@@ -21,6 +22,10 @@ const Transfer = ({ portfolio }) => {
         const { balanceRaw, decimals } = portfolio.balance.tokens.find(({ symbol }) => symbol === asset)
         setAmount(Number(balanceRaw / `1e${decimals}`))
     }, [portfolio.balance.tokens, asset])
+
+    const addressesItems = accounts
+        .filter(({ id }) => id !== selectedAcc)
+        .map(({ id }) => id)
 
     const crossChainAssets = [
         {
@@ -56,12 +61,24 @@ const Transfer = ({ portfolio }) => {
                             <div className="form">
                                 <Select searchable defaultValue={asset} items={assetsItems} onChange={value => setAsset(value)}/>
                                 <NumberInput value={amount} min="0" onInput={value => setAmount(value)} button="MAX" onButtonClick={() => setMaxAmount()}/>
-                                <TextInput
-                                    placeholder="Recipient"
-                                    info="Please double-check the recipient address, blockchain transactions are not reversible."
-                                    defaultValue={address}
-                                    onInput={setAddress}
-                                />
+                                <div id="recipient-field">
+                                    <TextInput
+                                        placeholder="Recipient"
+                                        info="Please double-check the recipient address, blockchain transactions are not reversible."
+                                        value={address}
+                                        onInput={setAddress}
+                                    />
+                                    <DropDown title={<FaAddressCard/>}>
+                                        <label>Select from your accounts:</label>
+                                        {
+                                            addressesItems.map(id => (
+                                                <div className={`item ${id === address ? 'active' : ''}`} key={id} onClick={() => setAddress(id)}>
+                                                    { id }
+                                                </div>
+                                            ))
+                                        }
+                                    </DropDown>
+                                </div>
                                 <div className="separator"/>
                                 <Button disabled={disabled}>Send</Button>
                             </div>
