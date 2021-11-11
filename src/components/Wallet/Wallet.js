@@ -6,6 +6,7 @@ import TopBar from "./TopBar/TopBar";
 import SideBar from "./SideBar/SideBar";
 import Deposit from "./Deposit/Deposit"
 import Transfer from "./Transfer/Transfer"
+import PluginGnosisSafeApps from "../Plugins/GnosisSafeApps/GnosisSafeApps"
 import Collectable from "./Collectable/Collectable";
 
 export default function Wallet(props) {
@@ -30,6 +31,15 @@ export default function Wallet(props) {
           <Route path={props.match.url + "/earn"}></Route>
           <Route path={props.match.url + "/nft/:network/:collectionAddr/:tokenId"}>
             <Collectable allNetworks={props.allNetworks}/>
+          </Route>
+
+          <Route path={props.match.url + "/plugins/gnosis"}>
+            <PluginGnosisSafeApps
+              gnosisConnect={props.gnosisConnect}
+              gnosisDisconnect={props.gnosisDisconnect}
+              selectedAcc={props.selectedAcc}
+              network={props.network}
+            />
           </Route>
 
           <Route path={props.match.url + "/"}>
