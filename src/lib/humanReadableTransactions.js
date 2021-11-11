@@ -1,4 +1,4 @@
-import { Interface, getAddress } from 'ethers/lib/utils'
+import { Interface, getAddress, formatUnits } from 'ethers/lib/utils'
 
 import { verifiedContracts, tokens } from '../consts/verifiedContracts'
 import networks from '../consts/networks'
@@ -8,7 +8,7 @@ const ERC20 = new Interface(ERC20ABI)
 const TRANSFER_SIGHASH = ERC20.getSighash(ERC20.getFunction('transfer').format())
 
 // @TODO custom parsing for univ2 contracts, exact output, etc.
-export function getTransactionSummary(txn, networkId) {
+export function getTransactionSummary(txn, networkId, accountAddr) {
     const [to, value, data] = txn
     let callSummary, sendSummary
     const network = networks.find(x => x.id === networkId || x.chainId === networkId)
@@ -16,7 +16,8 @@ export function getTransactionSummary(txn, networkId) {
     const contractKey = network.id + ':' + getAddress(to)
     const contractInfo = verifiedContracts[contractKey]
 
-    if (parseInt(value) > 0) sendSummary = `send ${(parseInt(value)/1e18).toFixed(4)} ${network ? network.nativeAssetSymbol : 'unknown native token'} to ${contractInfo ? contractInfo.name : to}`
+    const nativeAsset = network ? network.nativeAssetSymbol : 'unknown native token'
+    if (parseInt(value) > 0) sendSummary = `send ${(parseInt(value)/1e18).toFixed(4)} ${nativeAsset} to ${contractInfo ? contractInfo.name : to}`
     if (data !== '0x') {
         if (data.startsWith(TRANSFER_SIGHASH)) {
             const [to, amount] = ERC20.decodeFunctionData('transfer', data)
@@ -30,7 +31,17 @@ export function getTransactionSummary(txn, networkId) {
         } else if (contractInfo) {
             const iface = new Interface(contractInfo.abi)
             const parsed = iface.parseTransaction({ data, value })
-            callSummary = `Interaction with ${contractInfo.name}: ${parsed.name}`
+            // @TODO: some elegant way to try-catch potential issues here
+            if (parsed.name === 'swapExactETHForTokens') {
+                const tokenAddr = parsed.args.path[parsed.args.path.length - 1]
+                const token = tokens[getAddress(tokenAddr)]
+                const output = token ? `${formatUnits(parsed.args.amountOutMin, token[1])} ${token[0]}` : `${parsed.args.amountOutMin} of token ${tokenAddr}`
+                const contractNote = ` on ${contractInfo.name}`
+                const recipientNote = parsed.args.to.toLowerCase() === accountAddr.toLowerCase() ? `` : ` and send it to ${parsed.args.to}`
+                return `Swap ${formatUnits(value, 18)} ${nativeAsset} for at least ${output}${contractNote}${recipientNote}`
+            } else {
+                callSummary = `Interaction with ${contractInfo.name}: ${parsed.name}`
+            }
         } else callSummary = `unknown call to ${to}`
     }
     return [callSummary, sendSummary].filter(x => x).join(', ')
