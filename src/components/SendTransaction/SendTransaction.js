@@ -2,6 +2,7 @@
 // GiObservatory is also interesting
 import { GiTakeMyMoney, GiSpectacles } from 'react-icons/gi'
 import { FaSignature, FaTimes, FaChevronLeft, FaChevronDown, FaChevronUp } from 'react-icons/fa'
+import { MdOutlineAccountCircle } from 'react-icons/md'
 import { getContractName, getTransactionSummary } from '../../lib/humanReadableTransactions'
 import './SendTransaction.css'
 import { Loading } from '../common'
@@ -10,6 +11,7 @@ import fetch from 'node-fetch'
 import { Bundle } from 'adex-protocol-eth/js'
 import { getDefaultProvider, Wallet } from 'ethers'
 import { Interface, formatUnits } from 'ethers/lib/utils'
+import * as blockies from 'blockies-ts';
 import { useToasts } from '../../hooks/toasts'
 import { getWallet } from '../../lib/getWallet'
 import accountPresets from '../../consts/accountPresets'
@@ -251,7 +253,25 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
         <FaChevronLeft size={35}/><span>back</span>
       </div>
       <h2>Pending transactions: {bundle.txns.length}</h2>
-      <div className='panelHolder'>
+      <div className='container'>
+        <div id="topPanel" className="panel">
+          <div className="title">
+            <MdOutlineAccountCircle/>
+            Signing with account:
+          </div>
+          <div className="content">
+            <div className="account">
+              <img className="icon" src={blockies.create({ seed: account.id }).toDataURL()} alt="Account Icon"/>
+              { account.id }
+            </div>
+            on
+            <div className="network">
+              <img className="icon" src={network.icon} alt="Network Icon"/>
+              { network.name }
+            </div>
+          </div>
+        </div>
+        <div id='panelHolder'>
           <div className='panel'>
               <div className='heading'>
                       <div className='title'>
@@ -312,6 +332,7 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
                   )}
               </div>
           </div>
+        </div>
       </div>
   </div>)
 }
