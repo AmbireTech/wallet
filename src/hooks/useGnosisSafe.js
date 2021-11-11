@@ -3,30 +3,30 @@ import {useToasts} from '../hooks/toasts'
 
 import {Methods} from '@gnosis.pm/safe-apps-sdk'
 import {GnosisConnector} from '../lib/GnosisConnector'
-import {usePortfolio} from './index'
 import {getDefaultProvider} from 'ethers'
 
 const STORAGE_KEY = 'gnosis_safe_state'
 
 export default function useGnosisSafe({ selectedAccount, network, verbose = 0 }) {
-
+  // One connector at a time
   const connector = useRef(null)
 
   const uniqueId = useMemo(() => new Date().getTime() + ' ' + network.chainId + ' ' + selectedAccount, [selectedAccount, network])
 
   const { addToast } = useToasts()
 
-  // This is needed cause of the WalletConnect event handlers
+  // This is needed cause of the Gnosis Safe event handlers (listeners)
   const stateRef = useRef()
-  stateRef.current = {selectedAccount, network}
+  stateRef.current = {
+    selectedAccount,
+    network
+  }
 
   const [requests, setRequests] = useState(() => {
     const json = localStorage[STORAGE_KEY]
     if (!json) return []
     try {
-      return [
-        ...JSON.parse(json)
-      ]
+      return JSON.parse(json)
     } catch (e) {
       console.error(e)
       return []
@@ -34,7 +34,6 @@ export default function useGnosisSafe({ selectedAccount, network, verbose = 0 })
   })
 
   const connect = useCallback(connectorOpts => {
-
     verbose>1 && console.log("GS: creating connector")
 
     try {
@@ -51,10 +50,10 @@ export default function useGnosisSafe({ selectedAccount, network, verbose = 0 })
     //reply back to iframe with safe data
     connector.current.on(Methods.getSafeInfo, () => {
       return {
-        safeAddress: selectedAccount,
-        network: network.id,
-        chainId: network.chainId,
-        owners: [selectedAccount],
+        safeAddress: stateRef.current.selectedAccount,
+        network: stateRef.current.network.id,
+        chainId: stateRef.current.network.chainId,
+        owners: [stateRef.current.selectedAccount],
         threshold: 1, //Number of confirmations (not used in ambire)
       }
     })
@@ -90,16 +89,15 @@ export default function useGnosisSafe({ selectedAccount, network, verbose = 0 })
     // })
 
     connector.current.on(Methods.rpcCall, async (msg) => {
-
       verbose>0 && console.log("DApp requested rpcCall") && console.log(msg)
 
-      if(!msg?.data?.params){
+      if (!msg?.data?.params){
         throw new Error("invalid call object")
       }
       const method = msg.data.params.call//0 == tx, 1 == blockNum
       const callTx = msg.data.params.params//0 == tx, 1 == blockNum
 
-      const provider = getDefaultProvider(network.rpc)
+      const provider = getDefaultProvider(stateRef.current.network.rpc)
       let result
       if (method === "eth_call") {
         result = await provider.call(callTx[0], callTx[1]).catch(err => {
@@ -119,12 +117,12 @@ export default function useGnosisSafe({ selectedAccount, network, verbose = 0 })
       return result
     })
 
-
     connector.current.on(Methods.sendTransactions, (msg) => {
       verbose>0 && console.log("DApp requested sendTx") && console.log(msg)
+
       const data = msg?.data
       if (!data) {
-        console.error('no data')
+        console.error('GS: no data')
         return
       }
 
@@ -132,10 +130,11 @@ export default function useGnosisSafe({ selectedAccount, network, verbose = 0 })
       const txs = data?.params?.txs
       if (txs?.length) {
         for (let i in txs) {
-          if (!txs[i].from) txs[i].from = selectedAccount
+          if (!txs[i].from) txs[i].from = stateRef.current.selectedAccount
         }
       } else {
-        console.error('no txs in received payload')
+        console.error('GS: no txs in received payload')
+        return
       }
 
       const request = {
@@ -143,15 +142,15 @@ export default function useGnosisSafe({ selectedAccount, network, verbose = 0 })
         forwardId: msg.data.id,
         type: 'eth_sendTransaction',
         txn: txs[0], //if anyone finds a dapp that sends a bundle, please reach me out
-        chainId: network.chainId,
-        account: selectedAccount
+        chainId: stateRef.current.network.chainId,
+        account: stateRef.current.selectedAccount
       }
 
       setRequests(prevRequests => [...prevRequests, request])
     })
 
     return connector.current
-  }, [selectedAccount, network, uniqueId, addToast, verbose])
+  }, [uniqueId, addToast, verbose])
 
   const disconnect = useCallback(() => {
     verbose>1 && console.log("GS: disconnecting connector")
@@ -191,8 +190,8 @@ export default function useGnosisSafe({ selectedAccount, network, verbose = 0 })
   }, [requests, selectedAccount, network])
 
   return {
-    requests: requests,
-    resolveMany: resolveMany,
+    requests,
+    resolveMany,
     connect,
     disconnect
   }
