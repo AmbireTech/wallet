@@ -9,8 +9,9 @@ import * as blockies from 'blockies-ts';
 import { useToasts } from '../../../hooks/toasts'
 import { TextInput, Button, Loading } from '../../common'
 import ERC721Abi from '../../../consts/ERC721Abi'
+import networks from '../../../consts/networks'
 
-const Collectable = ({ allNetworks }) => {
+const Collectable = () => {
     const { addToast } = useToasts()
     const { network, collectionAddr, tokenId } = useParams()
     const [isLoading, setLoading] = useState()
@@ -29,7 +30,7 @@ const Collectable = ({ allNetworks }) => {
     const fetchMetadata = useCallback(async () => {
         setLoading(true)
 
-        const { rpc, explorerUrl } = allNetworks.find(({ id }) => id === network)
+        const { rpc, explorerUrl } = networks.find(({ id }) => id === network)
         const provider = getDefaultProvider(rpc)
         const contract = new ethers.Contract(collectionAddr, ERC721Abi, provider)
 
@@ -72,7 +73,7 @@ const Collectable = ({ allNetworks }) => {
         }
 
         setLoading(false)
-    }, [addToast, allNetworks, tokenId, collectionAddr, network])
+    }, [addToast, tokenId, collectionAddr, network])
 
     useEffect(() => fetchMetadata(), [fetchMetadata])
 
