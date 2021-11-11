@@ -156,7 +156,7 @@ export default function usePortfolio({ currentNetwork, account }) {
 
     // Refresh balance periodically
     useEffect(() => {
-        const refreshInterval = setInterval(refreshBalanceIfFocused, 30000)
+        const refreshInterval = setInterval(refreshBalanceIfFocused, 20000)
         return () => clearInterval(refreshInterval)
     }, [refreshBalanceIfFocused])
 
