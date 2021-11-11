@@ -75,10 +75,13 @@ export default function Dashboard({ portfolio, allNetworks, setNetwork }) {
                                     <div id="other-balances">
                                         {
                                             portfolio.otherBalances.map(({ network, total }) => (
-                                                <div className="balance" key={network} onClick={() => setNetwork(network)}>
-                                                    <span className="purple-highlight">$</span> { total.truncated }
-                                                    <span className="purple-highlight">.{total.decimals}</span> on { networkDetails(network).name }
-                                                </div>
+                                                total.full > 0 ?
+                                                    <div className="other-balance" key={network} onClick={() => setNetwork(network)}>
+                                                        You also have <span className="purple-highlight">$</span> { total.truncated }
+                                                        <span className="purple-highlight">.{total.decimals}</span> on { networkDetails(network).name }
+                                                    </div>
+                                                    :
+                                                    null
                                             ))
                                         }
                                     </div>

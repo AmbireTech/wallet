@@ -27,16 +27,16 @@
             gap: 10px;
 
             #total {
-                font-size: 2em;
+                font-size: 40px;
 
                 #other-balances {
                     display: flex;
                     flex-direction: column;
                     margin-top: 5px;
 
-                    .balance {
+                    .other-balance {
                         font-weight: 500;
-                        font-size: 17px;
+                        font-size: 18px;
                         opacity: 0.6;
                         cursor: pointer;
                         transition: opacity 0.1s ease-in-out;
