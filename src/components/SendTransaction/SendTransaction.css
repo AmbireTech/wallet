@@ -8,8 +8,8 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    background-color: #282b33;
     overflow-y: auto;
+    background-color: #282b33;
     /*
     background-color: rgba(40, 43, 51, 0.95);
     backdrop-filter: blur(8px);
