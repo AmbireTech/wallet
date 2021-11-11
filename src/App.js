@@ -29,12 +29,11 @@ function AppInner () {
     account: selectedAcc,
     chainId: network.chainId
   })
-
   const { requests: gnosisRequests, resolveMany: gnosisResolveMany, connect: gnosisConnect, disconnect: gnosisDisconnect } = useGnosisSafe({
 	  selectedAccount: selectedAcc,
 	  network: network,
     verbose: 1
-	},[selectedAcc, network]);
+	}, [selectedAcc, network])
 
   const resolveMany = (ids, resolution) => {
     wcResolveMany(ids, resolution);
@@ -52,7 +51,7 @@ function AppInner () {
   const addRequest = req => setInternalRequests(reqs => [...reqs, req])
 
   // Merge all requests
-  const requests = useMemo(() => internalRequests.concat(...wcRequests,...gnosisRequests), [wcRequests, internalRequests, gnosisRequests])
+  const requests = useMemo(() => [...internalRequests, ...wcRequests, ...gnosisRequests], [wcRequests, internalRequests, gnosisRequests])
 
   // Show notifications for all requests
   useNotifications(requests)
