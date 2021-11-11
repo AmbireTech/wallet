@@ -5,7 +5,7 @@ import { BsChevronUp, BsChevronDown } from 'react-icons/bs'
 import { CSSTransition } from 'react-transition-group';
 import useOnClickOutside from '../../../helpers/onClickOutside';
 
-const Select = ({ children, native, searchable, defaultValue, items, onChange }) => {
+const Select = ({ children, native, monospace, searchable, defaultValue, items, onChange }) => {
     const ref = useRef();
     const hiddenTextInput = useRef();
     const transitionRef = useRef();
@@ -15,7 +15,6 @@ const Select = ({ children, native, searchable, defaultValue, items, onChange })
         label: null,
         value: null,
         icon: null,
-        iconColor: null
     });
 
     const filteredItems = search.length ? items.filter(({ label }) => label.toLowerCase().includes(search.toLowerCase())) : items
@@ -40,7 +39,7 @@ const Select = ({ children, native, searchable, defaultValue, items, onChange })
 
     return (
         !native ? 
-            <div className="select" onClick={() => setOpen(!isOpen)} ref={ref}>
+            <div className={`select ${monospace ? 'monospace': ''}`} onClick={() => setOpen(!isOpen)} ref={ref}>
                 {
                     searchable ? 
                         <input type="text" className="search-input" value={search} ref={hiddenTextInput} onInput={({ target }) => setSearch(target.value)}/>
@@ -50,7 +49,7 @@ const Select = ({ children, native, searchable, defaultValue, items, onChange })
                 {
                     selectedItem ? 
                         <div className="value">
-                            <div className="icon" style={{'backgroundColor': selectedItem.iconColor}}>
+                            <div className="icon">
                                 {
                                     selectedItem.icon ? 
                                         <img src={selectedItem.icon} alt="Icon" />
@@ -78,7 +77,7 @@ const Select = ({ children, native, searchable, defaultValue, items, onChange })
                             {
                                 filteredItems.map(item => (
                                     <div className={`option ${item.value === selectedItem.value ? 'active' : ''}`} key={item.value} onClick={() => selectItem(item)}>
-                                        <div className="icon" style={{'backgroundColor': item.iconColor}}>
+                                        <div className="icon">
                                             {
                                                 item.icon ? 
                                                     <img src={item.icon} alt="Icon" />

@@ -8,11 +8,15 @@
 * Security model: https://gist.github.com/Ivshti/fe86f13c3adff3404a1f5ce1e364304c
 * Tokenomics (confidential): https://gist.github.com/Ivshti/c6b93745dd0ba0d9c8256bc39769a601l
 * Deck: https://docsend.com/view/qijz3atn4j43f3za
-* FAQs: https://help.adex.network/hc/en-us/categories/4404980091538-Ambire-Wallet
+* FAQs: https://help.ambire.com/hc/en-us/categories/4404980091538-Ambire-Wallet
+* Front-end (this repo) development plan and estimation: https://docs.google.com/spreadsheets/d/1pqtRPcNRW98D97GL3nrdoipD3sWehz2k7zWclzYk-SM
+* Original concept: https://github.com/AdExNetwork/aips/issues/69 (note that the feature scope is not up to date)
 
 ## Running
 
-**NOTE:** make sure that you use the `wallet-v2` branch of the relayer
+**NOTE: make sure that you use the `wallet-v2` branch of the relayer.**
+
+**NOTE 2: we test on Polygon,** because it's cheap enough and it's a real environment with all the supported protocols - Sushiswap, Uniswap, Aave, and others. Ping #dev-wallet channel on Slack so we can send you some MATIC tokens.
 
 First, clone and run the relayer
 ```
