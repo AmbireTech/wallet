@@ -56,11 +56,11 @@ export default function usePortfolio({ currentNetwork, account }) {
                     if (!balance) return null
 
                     const { meta, products } = Object.values(balance)[0]
-                    return meta.length && products.length ? {
+                    return {
                         network,
                         meta,
                         products
-                    } : null
+                    }
                 } catch(_) {
                     failedRequests++
                 }
