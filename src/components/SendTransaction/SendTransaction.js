@@ -245,7 +245,7 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
   }
 
   const rejectTxn = () => {
-    resolveMany(bundle.requestIds, { message: 'rejected' })
+    resolveMany(bundle.requestIds, { message: 'user rejected' })
   }
 
   return (<div id='sendTransaction'>
