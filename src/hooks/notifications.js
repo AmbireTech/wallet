@@ -4,13 +4,16 @@ import { getTransactionSummary } from '../lib/humanReadableTransactions'
 const REQUEST_TITLE = 'Ambire Wallet: new transaction request'
 let currentNotifs = []
 
-export default function useNotifications (requests) {
+export default function useNotifications (requests, allRequests) {
     useEffect(() => {
         if (window.Notification && Notification.permission !== 'denied') {
             Notification.requestPermission(() => {
                 // @TODO: perhaps warn the user in some way
             })
         }
+        if (requests.length !== allRequests.length) new Notification('Pending requests', {
+            body: `You have ${allRequests.length - requests.length} requests on accounts/networks that are not selected`
+        })
     }, [])
 
     requests.forEach(request => {

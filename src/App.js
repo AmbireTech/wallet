@@ -53,9 +53,6 @@ function AppInner () {
   // Merge all requests
   const requests = useMemo(() => [...internalRequests, ...wcRequests, ...gnosisRequests], [wcRequests, internalRequests, gnosisRequests])
 
-  // Show notifications for all requests
-  useNotifications(requests)
-
   // Navigate to the send transaction dialog if we have a new txn
   const eligibleRequests = useMemo(() => requests
     .filter(({ type, chainId, account }) =>
@@ -63,6 +60,11 @@ function AppInner () {
       && chainId === network.chainId
       && account === selectedAcc
     ), [requests, network.chainId, selectedAcc])
+
+  // Show notifications for all relevant requests
+  useNotifications(eligibleRequests, requests)
+
+  // Sign transactions modal
   const [sendTxnsShowing, setSendTxnsShowing] = useState(() => !!eligibleRequests.length)
   useEffect(
     () => setSendTxnsShowing(!!eligibleRequests.length),
