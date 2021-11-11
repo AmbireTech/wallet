@@ -2,6 +2,7 @@
 // GiObservatory is also interesting
 import { GiTakeMyMoney, GiSpectacles } from 'react-icons/gi'
 import { FaSignature, FaTimes, FaChevronLeft, FaChevronDown, FaChevronUp } from 'react-icons/fa'
+import { MdOutlineAccountCircle } from 'react-icons/md'
 import { getContractName, getTransactionSummary } from '../../lib/humanReadableTransactions'
 import './SendTransaction.css'
 import { Loading } from '../common'
@@ -255,6 +256,7 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
       <div className='container'>
         <div id="topPanel" className="panel">
           <div className="title">
+            <MdOutlineAccountCircle/>
             Signing with account:
           </div>
           <div className="content">
