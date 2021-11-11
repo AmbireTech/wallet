@@ -15,7 +15,6 @@ const Select = ({ children, native, monospace, searchable, defaultValue, items, 
         label: null,
         value: null,
         icon: null,
-        iconColor: null
     });
 
     const filteredItems = search.length ? items.filter(({ label }) => label.toLowerCase().includes(search.toLowerCase())) : items
@@ -50,7 +49,7 @@ const Select = ({ children, native, monospace, searchable, defaultValue, items, 
                 {
                     selectedItem ? 
                         <div className="value">
-                            <div className="icon" style={{'backgroundColor': selectedItem.iconColor}}>
+                            <div className="icon">
                                 {
                                     selectedItem.icon ? 
                                         <img src={selectedItem.icon} alt="Icon" />
@@ -78,7 +77,7 @@ const Select = ({ children, native, monospace, searchable, defaultValue, items, 
                             {
                                 filteredItems.map(item => (
                                     <div className={`option ${item.value === selectedItem.value ? 'active' : ''}`} key={item.value} onClick={() => selectItem(item)}>
-                                        <div className="icon" style={{'backgroundColor': item.iconColor}}>
+                                        <div className="icon">
                                             {
                                                 item.icon ? 
                                                     <img src={item.icon} alt="Icon" />
