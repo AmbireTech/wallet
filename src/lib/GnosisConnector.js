@@ -35,8 +35,8 @@ function GnosisConnector(_iframeRef, _app) {
       : MessageFormatter.makeResponse(requestId, data, sdkVersion)
 
     if (this.iframeRef) {
-      //console.log("Posting to child");
-      //console.log(msg);
+      //console.log("Posting to child")
+      //console.log(msg)
       this.iframeRef.current?.contentWindow?.postMessage(msg, '*')
     } else {
       console.log('Iframe not referenced ')
