@@ -5,6 +5,17 @@
     .panel {
         flex: 0 1 50%;
 
+        .title {
+            display: flex;
+            flex-direction: column;
+
+            .contract {
+                font-size: 15px;
+                font-weight: 500;
+                opacity: 0.6;
+            }
+        }
+
         .content {
             height: 100%;
 
