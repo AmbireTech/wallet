@@ -3,6 +3,7 @@ import './Collectable.scss'
 import { useParams } from 'react-router-dom'
 import { ethers, getDefaultProvider } from 'ethers'
 import { useCallback, useEffect, useState } from 'react'
+import { AiOutlineSend } from 'react-icons/ai'
 import { useToasts } from '../../../hooks/toasts'
 import { TextInput, Button } from '../../common'
 import ERC721Abi from '../../../consts/ERC721Abi'
@@ -52,8 +53,11 @@ const Collectable = ({ allNetworks }) => {
     return (
         <div id="collectable">
             <div className="panel">
-                <div className="title">{ metadata.collection } #{ tokenId }</div>
-               <div className="metadata">
+                <div className="title">
+                    { metadata.collection } #{ tokenId }
+                    <div className="contract">{ collectionAddr }</div>
+                </div>
+                <div className="metadata">
                     <div className="image" style={{backgroundImage: `url(${metadata.image})`}}></div>
                     <div className="info">
                         <div className="name">
@@ -63,14 +67,14 @@ const Collectable = ({ allNetworks }) => {
                             { metadata.description }
                         </div>
                     </div>
-               </div>
+                </div>
             </div>
             <div className="panel">
                 <div className="title">Transfer</div>
                 <div className="content">
-                    <TextInput placeholder="Recipient"/>
+                    <TextInput placeholder="Recipient Address"/>
                     <div className="separator"></div>
-                    <Button>Send</Button>
+                    <Button icon={<AiOutlineSend/>}>Send</Button>
                 </div>
             </div>
         </div>
