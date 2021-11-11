@@ -1,13 +1,13 @@
 import "./Wallet.scss"
 
-import { Switch, Route, Redirect } from "react-router-dom";
-import Dashboard from "./Dashboard/Dashboard";
-import TopBar from "./TopBar/TopBar";
-import SideBar from "./SideBar/SideBar";
+import { Switch, Route, Redirect } from "react-router-dom"
+import Dashboard from "./Dashboard/Dashboard"
+import TopBar from "./TopBar/TopBar"
+import SideBar from "./SideBar/SideBar"
 import Deposit from "./Deposit/Deposit"
 import Transfer from "./Transfer/Transfer"
 import PluginGnosisSafeApps from "../Plugins/GnosisSafeApps/GnosisSafeApps"
-import Collectable from "./Collectable/Collectable";
+import Collectable from "./Collectable/Collectable"
 
 export default function Wallet(props) {
   return (
