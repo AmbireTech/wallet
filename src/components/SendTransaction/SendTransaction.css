@@ -5,6 +5,7 @@
     right: 0px;
     bottom: 0px;
     z-index: 999;
+    overflow-y: auto;
     background-color: #282b33;
     /*
     background-color: rgba(40, 43, 51, 0.95);
