@@ -6,6 +6,7 @@ import TopBar from "./TopBar/TopBar";
 import SideBar from "./SideBar/SideBar";
 import Deposit from "./Deposit/Deposit"
 import Transfer from "./Transfer/Transfer"
+import Collectable from "./Collectable/Collectable";
 
 export default function Wallet(props) {
   return (
@@ -18,7 +19,7 @@ export default function Wallet(props) {
             <Dashboard portfolio={props.portfolio} allNetworks={props.allNetworks} setNetwork={props.setNetwork} />
           </Route>
           <Route path={props.match.url + "/deposit"}>
-            <Deposit selectedAcc={props.selectedAcc} selectedNetwork={props.network.id} />
+            <Deposit selectedAcc={props.selectedAcc} allNetworks={props.allNetworks} selectedNetwork={props.network.id} />
           </Route>
           <Route path={props.match.url + "/transfer"}>
             <Transfer portfolio={props.portfolio} selectedAcc={props.selectedAcc} accounts={props.accounts}/>
@@ -27,6 +28,9 @@ export default function Wallet(props) {
           <Route path={props.match.url + "/transactions"}></Route>
           <Route path={props.match.url + "/swap"}></Route>
           <Route path={props.match.url + "/earn"}></Route>
+          <Route path={props.match.url + "/nft/:network/:collectionAddr/:tokenId"}>
+            <Collectable allNetworks={props.allNetworks}/>
+          </Route>
 
           <Route path={props.match.url + "/"}>
             <Redirect to={props.match.url + "/dashboard"} />

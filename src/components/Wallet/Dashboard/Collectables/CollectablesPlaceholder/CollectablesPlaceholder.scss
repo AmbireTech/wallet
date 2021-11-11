@@ -1,0 +1,12 @@
+#collectables-placeholder {
+    overflow: hidden;
+    padding: 40px;
+
+    .placeholder-overlay {
+        background-color: rgba(0, 0, 0, 0.2);
+    }
+
+    #collectables {
+        filter: blur(20px);
+    }
+}

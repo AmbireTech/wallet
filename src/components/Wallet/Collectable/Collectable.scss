@@ -1,0 +1,100 @@
+#collectable {
+    display: flex;
+    gap: 30px;
+
+    .address {
+        font-family: monospace;
+        font-weight: 500;
+    }
+
+    .panel {
+        flex: 0 1 50%;
+
+        .title {
+            display: flex;
+            flex-direction: column;
+
+            .contract {
+                font-size: 15px;
+                font-weight: 500;
+                opacity: 0.6;
+            }
+        }
+
+        .content {
+            height: 100%;
+
+            .separator {
+                flex-grow: 1;
+            }
+        }
+    }
+
+    .metadata {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+
+        .collection {
+            font-size: 15px;
+            font-weight: bold;
+        }
+
+        .image {
+            z-index: 48;
+            height: 250px;
+            width: 250px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            color: rgba(255, 255, 255, 0.5);
+            background-size: contain;
+            background-position: center center;
+            background-repeat: no-repeat;
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .info {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+
+            .name {
+                font-size: 18px;
+                font-weight: bold;
+                color: white;
+            }
+
+            .description {
+                font-size: 15px;
+                font-weight: 500;
+                color: white;
+                opacity: 0.6;
+            }
+        }
+
+        .owner {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 5px;
+            margin-top: 10px;
+            font-size: 15px;
+            font-weight: 500;
+            opacity: 0.6;
+
+            .address {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+
+                .icon {
+                    height: 14px;
+                    width: 14px;
+                    border-radius: 100%;
+                }
+            }
+        }
+    }
+}
