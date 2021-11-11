@@ -26,7 +26,8 @@ export default function useGnosisSafe({ selectedAccount, network, verbose = 0 })
     const json = localStorage[STORAGE_KEY]
     if (!json) return []
     try {
-      return JSON.parse(json)
+      const parsed = JSON.parse(json)
+      return Array.isArray(parsed) ? parsed : []
     } catch (e) {
       console.error(e)
       return []
