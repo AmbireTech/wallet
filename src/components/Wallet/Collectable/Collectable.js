@@ -4,6 +4,7 @@ import { useParams } from 'react-router-dom'
 import { ethers, getDefaultProvider } from 'ethers'
 import { useCallback, useEffect, useState } from 'react'
 import { AiOutlineSend } from 'react-icons/ai'
+import * as blockies from 'blockies-ts';
 import { useToasts } from '../../../hooks/toasts'
 import { TextInput, Button } from '../../common'
 import ERC721Abi from '../../../consts/ERC721Abi'
@@ -12,7 +13,10 @@ const Collectable = ({ allNetworks }) => {
     const { addToast } = useToasts()
     const { network, collectionAddr, tokenId } = useParams()
     const [metadata, setMetadata] = useState({
-        owner: '',
+        owner: {
+            address: '',
+            icon: ''
+        },
         name: '',
         description: '',
         image: '',
@@ -37,10 +41,13 @@ const Collectable = ({ allNetworks }) => {
         }
 
         try {
-            let owner = await contract.ownerOf(tokenId)
+            let address = await contract.ownerOf(tokenId)
             setMetadata(metadata => ({
                 ...metadata,
-                owner
+                owner: {
+                    address,
+                    icon: blockies.create({ seed: address }).toDataURL()
+                }
             }))
         } catch(e) {
             addToast('Failed to fetch owner address', { error: true })
@@ -83,7 +90,11 @@ const Collectable = ({ allNetworks }) => {
                         </div>
                     </div>
                     <div className="owner">
-                        Owner: <a className="address" href={`${metadata.explorerUrl}/address/${metadata.owner}`} target="_blank" rel="noreferrer">{ metadata.owner }</a>
+                        Owner:
+                        <a className="address" href={`${metadata.explorerUrl}/address/${metadata.owner.address}`} target="_blank" rel="noreferrer">
+                            <div className="icon" style={{backgroundImage: `url(${metadata.owner.icon})`}}></div>
+                            { metadata.owner.address }
+                        </a>
                     </div>
                 </div>
             </div>

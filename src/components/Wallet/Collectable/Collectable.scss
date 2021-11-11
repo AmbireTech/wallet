@@ -70,10 +70,26 @@
         }
 
         .owner {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 5px;
             margin-top: 10px;
             font-size: 15px;
             font-weight: 500;
             opacity: 0.6;
+
+            .address {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+
+                .icon {
+                    height: 14px;
+                    width: 14px;
+                    border-radius: 100%;
+                }
+            }
         }
     }
 }
