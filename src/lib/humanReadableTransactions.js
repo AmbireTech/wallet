@@ -3,7 +3,6 @@ import { Interface, getAddress, formatUnits } from 'ethers/lib/utils'
 import { verifiedContracts, tokens } from '../consts/verifiedContracts'
 import networks from '../consts/networks'
 import ERC20ABI from 'adex-protocol-eth/abi/ERC20'
-import { BUNDLE_PROGRESS } from 'trezor-connect/lib/constants/ui'
 
 const ERC20 = new Interface(ERC20ABI)
 const TRANSFER_SIGHASH = ERC20.getSighash(ERC20.getFunction('transfer').format())

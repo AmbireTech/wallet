@@ -42,7 +42,7 @@ function AppInner () {
       type === 'eth_sendTransaction'
       && chainId === network.chainId
       && account === selectedAcc
-    ), [requests])
+    ), [requests, network.chainId, selectedAcc])
   const [sendTxnsShowing, setSendTxnsShowing] = useState(() => !!eligibleRequests.length)
   useEffect(
     () => setSendTxnsShowing(!!eligibleRequests.length),
