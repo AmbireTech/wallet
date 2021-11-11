@@ -24,7 +24,7 @@ export default function Dashboard({ portfolio, allNetworks, setNetwork }) {
 
     const tableSegments = [
         {
-            value: 'Portfolio'
+            value: 'Tokens'
         },
         {
             value: 'Collectables'
