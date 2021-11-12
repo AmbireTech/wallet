@@ -8,6 +8,8 @@
     bottom: 0;
     padding: 50px;
     transition: left 0.1s ease-in-out;
+    overflow: hidden;
+    overflow-y: auto;
 
     .placeholder-overlay {
         z-index: 49;

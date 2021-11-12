@@ -86,6 +86,7 @@ export default function usePortfolio({ currentNetwork, account }) {
 
             return true
         } catch (error) {
+            console.error(error)
             addToast(error.message, { error: true })
             return false
         }
@@ -117,16 +118,19 @@ export default function usePortfolio({ currentNetwork, account }) {
             if (failedRequests >= requestsCount) throw new Error('Failed to fetch other Protocols from Zapper API')
             return true
         } catch (error) {
+            console.error(error)
             addToast(error.message, { error: true })
             return false
         }
     }, [addToast])
 
     const refreshBalanceIfFocused = useCallback(() => {
+        if (!account) return
         if (document.hasFocus() && !isBalanceLoading) fetchBalances(account)
     }, [isBalanceLoading, account, fetchBalances])
 
     const requestOtherProtocolsRefresh = async () => {
+        if (!account) return
         if ((Date.now() - lastOtherProcolsRefresh) > 30000 && !areAssetsLoading) await fetchOtherProtocols(account)
     }
 
@@ -136,11 +140,13 @@ export default function usePortfolio({ currentNetwork, account }) {
         otherProtocolsByNetworks = []
 
         async function loadBalance() {
+            if (!account) return
             setBalanceLoading(true)
             if (await fetchBalances(account)) setBalanceLoading(false)
         }
-        
+
         async function loadProtocols() {
+            if (!account) return
             setAssetsLoading(true)
             if (await fetchOtherProtocols(account)) setAssetsLoading(false)
         }
@@ -172,5 +178,6 @@ export default function usePortfolio({ currentNetwork, account }) {
         assets,
         collectables,
         requestOtherProtocolsRefresh
+        //updatePortfolio//TODO find a non dirty way to be able to reply to getSafeBalances from the dapps, after the first refresh
     }
 }
