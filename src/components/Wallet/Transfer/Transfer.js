@@ -113,7 +113,7 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, accounts, 
                                     />
                                     {
                                         addressesItems.length ? 
-                                            <DropDown title={<FaAddressCard/>}>
+                                            <DropDown title={<FaAddressCard/>} closeOnClick={true}>
                                                 <label>Select from your accounts:</label>
                                                 {
                                                     addressesItems.map(id => (
