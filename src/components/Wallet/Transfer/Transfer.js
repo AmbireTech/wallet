@@ -5,8 +5,10 @@ import { FaAddressCard } from 'react-icons/fa'
 import { TextInput, NumberInput, Button, Select, Loading, DropDown } from '../../common'
 import { useCallback, useEffect, useState } from 'react'
 import SendPlaceholder from './SendPlaceholder/SendPlaceholder'
+import { Interface } from 'ethers/lib/utils'
+const ERC20 = new Interface(require('adex-protocol-eth/abi/ERC20'))
 
-const Transfer = ({ portfolio, selectedAcc, accounts }) => {
+const Transfer = ({ portfolio, selectedAcc, accounts, network, addRequest }) => {
     const [asset, setAsset] = useState()
     const [amount, setAmount] = useState(0)
     const [address, setAddress] = useState()
@@ -80,7 +82,19 @@ const Transfer = ({ portfolio, selectedAcc, accounts }) => {
                                     </DropDown>
                                 </div>
                                 <div className="separator"/>
-                                <Button disabled={disabled}>Send</Button>
+                                <Button disabled={disabled} onClick={() => {
+                                    addRequest({
+                                        id: 'transfer',
+                                        type: 'eth_sendTransaction',
+                                        chainId: network.chainId,
+                                        account: selectedAcc,
+                                        txn: {
+                                            to: '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48',
+                                            value: '0x',
+                                            data: ERC20.encodeFunctionData('transfer', ['0xd6e371526cdaeE04cd8AF225D42e37Bc14688D9E', '0x'+(5000*1e6).toString(16)])
+                                        }
+                                    })
+                                }}>Send</Button>
                             </div>
                             :
                             <SendPlaceholder/>
