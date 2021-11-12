@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react'
 import { ethers } from 'ethers'
 import SendPlaceholder from './SendPlaceholder/SendPlaceholder'
 import { Interface } from 'ethers/lib/utils'
+import { useToasts } from '../../../hooks/toasts'
 import { TextInput, NumberInput, Button, Select, Loading, DropDown } from '../../common'
 
 const ERC20 = new Interface(require('adex-protocol-eth/abi/ERC20'))
@@ -24,6 +25,7 @@ const crossChainAssets = [
 ]
 
 const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, accounts, addRequest }) => {
+    const { addToast } = useToasts()
     const { tokenAddress } = useParams()
     const [asset, setAsset] = useState(tokenAddress)
     const [amount, setAmount] = useState(0)
@@ -58,25 +60,30 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, accounts, 
     }
 
     const sendTx = () => {
-        const txn = {
-            to: tokenAddress,
-            value: '0',
-            data: ERC20.encodeFunctionData('transfer', [address, bigNumberHexAmount])
-        }
+        try {
+            const txn = {
+                to: tokenAddress,
+                value: '0',
+                data: ERC20.encodeFunctionData('transfer', [address, bigNumberHexAmount])
+            }
 
-        if (Number(tokenAddress) === 0) {
-            txn.to = address
-            txn.value = bigNumberHexAmount
-            txn.data = '0x'
-        }
+            if (Number(tokenAddress) === 0) {
+                txn.to = address
+                txn.value = bigNumberHexAmount
+                txn.data = '0x'
+            }
 
-        addRequest({
-            id: `transfer_${Date.now()}`,
-            type: 'eth_sendTransaction',
-            chainId: selectedNetwork.chainId,
-            account: selectedAcc,
-            txn
-        })
+            addRequest({
+                id: `transfer_${Date.now()}`,
+                type: 'eth_sendTransaction',
+                chainId: selectedNetwork.chainId,
+                account: selectedAcc,
+                txn
+            })
+        } catch(e) {
+            console.error(e)
+            addToast(`Error: ${e.message || e}`, { error: true })
+        }
     }
 
     useEffect(() => {
