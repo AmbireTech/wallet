@@ -7,19 +7,19 @@ module.exports = {
             {
                 name: "swapExactETHForTokens",
                 summary: function(contractManager, chain, txData, inputs) {
-                    return "Swap " + erc20Lib.humanAmount(chain, 'native', txData.value) + " " + (erc20Lib.getTokenSymbol(chain, 'native')) + " for at least " + erc20Lib.humanAmount(chain, inputs.path[inputs.path.length-1], inputs.amountOutMin) + " " + erc20Lib.getTokenSymbol(chain, inputs.path[inputs.path.length-1]);
+                    return `Swap ${erc20Lib.humanAmount(chain, 'native', txData.value)} ${(erc20Lib.getTokenSymbol(chain, 'native'))}  for at least ${erc20Lib.humanAmount(chain, inputs.path[inputs.path.length-1], inputs.amountOutMin)} ${erc20Lib.getTokenSymbol(chain, inputs.path[inputs.path.length-1])}`;
                 }
             },
             {
                 name: "swapExactTokensForTokens",
                 summary: function(contractManager, chain, txData, inputs) {
-                    return "Swap " + erc20Lib.humanAmount(chain, inputs.path[0], txData.amountIn) + " " + (erc20Lib.getTokenSymbol(chain, inputs.path[0])) + " for at least " + erc20Lib.humanAmount(chain, inputs.path[inputs.path.length-1], inputs.amountOutMin) + " " + erc20Lib.getTokenSymbol(chain, inputs.path[inputs.path.length-1]);
+                    return `Swap ${erc20Lib.humanAmount(chain, inputs.path[0], txData.amountIn)} ${(erc20Lib.getTokenSymbol(chain, inputs.path[0]))} for at least ${erc20Lib.humanAmount(chain, inputs.path[inputs.path.length-1], inputs.amountOutMin)}  ${erc20Lib.getTokenSymbol(chain, inputs.path[inputs.path.length-1])}`;
                 }
             },
             {
                 name: "swapExactTokensForETH",
                 summary: function(contractManager, chain, txData, inputs) {
-                    return "Swap " + erc20Lib.humanAmount(chain, inputs.path[0], inputs.amountIn) + " " + (erc20Lib.getTokenSymbol(chain, inputs.path[0])) + " for at least " + erc20Lib.humanAmount(chain, 'native', inputs.amountOutMin) + " " + erc20Lib.getTokenSymbol(chain, 'native');
+                    return `Swap ${erc20Lib.humanAmount(chain, inputs.path[0], inputs.amountIn)} + ${(erc20Lib.getTokenSymbol(chain, inputs.path[0]))} for at least ${erc20Lib.humanAmount(chain, 'native', inputs.amountOutMin)} ${erc20Lib.getTokenSymbol(chain, 'native')}`;
                 }
             },
         ],
