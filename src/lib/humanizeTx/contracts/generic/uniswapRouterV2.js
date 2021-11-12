@@ -1,25 +1,23 @@
-const erc20Lib = require("../../erc20Lib");
-
 module.exports = {
     description: "UniswapV2Router02",
     interface: {
         methods:[
             {
                 name: "swapExactETHForTokens",
-                summary: function(contractManager, chain, txData, inputs) {
-                    return `Swap ${erc20Lib.humanAmount(chain, 'native', txData.value)} ${(erc20Lib.getTokenSymbol(chain, 'native'))}  for at least ${erc20Lib.humanAmount(chain, inputs.path[inputs.path.length-1], inputs.amountOutMin)} ${erc20Lib.getTokenSymbol(chain, inputs.path[inputs.path.length-1])}`;
+                summary: ({network, txData, inputs, contract}) => {
+                    return `Swap ${contract.humanAmount(network, 'native', txData.value)} ${(contract.getTokenSymbol(network, 'native'))} for at least ${contract.humanAmount(network, inputs.path[inputs.path.length-1], inputs.amountOutMin)} ${contract.getTokenSymbol(network, inputs.path[inputs.path.length-1])}`;
                 }
             },
             {
                 name: "swapExactTokensForTokens",
-                summary: function(contractManager, chain, txData, inputs) {
-                    return `Swap ${erc20Lib.humanAmount(chain, inputs.path[0], txData.amountIn)} ${(erc20Lib.getTokenSymbol(chain, inputs.path[0]))} for at least ${erc20Lib.humanAmount(chain, inputs.path[inputs.path.length-1], inputs.amountOutMin)}  ${erc20Lib.getTokenSymbol(chain, inputs.path[inputs.path.length-1])}`;
+                summary: ({network, txData, inputs, contract}) => {
+                    return `Swap ${contract.humanAmount(network, inputs.path[0], txData.amountIn)} ${(contract.getTokenSymbol(network, inputs.path[0]))} for at least ${contract.humanAmount(network, inputs.path[inputs.path.length-1], inputs.amountOutMin)}  ${contract.getTokenSymbol(network, inputs.path[inputs.path.length-1])}`;
                 }
             },
             {
                 name: "swapExactTokensForETH",
-                summary: function(contractManager, chain, txData, inputs) {
-                    return `Swap ${erc20Lib.humanAmount(chain, inputs.path[0], inputs.amountIn)} + ${(erc20Lib.getTokenSymbol(chain, inputs.path[0]))} for at least ${erc20Lib.humanAmount(chain, 'native', inputs.amountOutMin)} ${erc20Lib.getTokenSymbol(chain, 'native')}`;
+                summary: ({network, txData, inputs, contract}) => {
+                    return `Swap ${contract.humanAmount(network, inputs.path[0], inputs.amountIn)} ${(contract.getTokenSymbol(network, inputs.path[0]))} for at least ${contract.humanAmount(network, 'native', inputs.amountOutMin)} ${contract.getTokenSymbol(network, 'native')}`;
                 }
             },
         ],
