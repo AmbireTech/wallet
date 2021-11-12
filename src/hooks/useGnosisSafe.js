@@ -7,7 +7,7 @@ import {getDefaultProvider} from 'ethers'
 
 const STORAGE_KEY = 'gnosis_safe_state'
 
-export default function useGnosisSafe({ selectedAccount, network, verbose = 0 }) {
+export default function useGnosisSafe({ selectedAccount, network, verbose = 1 }) {
   // One connector at a time
   const connector = useRef(null)
 
@@ -189,7 +189,42 @@ export default function useGnosisSafe({ selectedAccount, network, verbose = 0 })
 
       setRequests(prevRequests => prevRequests.find(x => x.id === request.id) ? prevRequests : [...prevRequests, request])
     })
+
+    connector.current.on(Methods.getTxBySafeTxHash, async (msg) => {
+      const { safeTxHash } = msg.data.params
+      const provider = getDefaultProvider(stateRef.current.network.rpc)
+      try{
+        const res = await provider.getTransaction(safeTxHash)
+        return {
+          hash: res.hash,
+          type: res.type,
+          accessList: res.accessList,
+          blockHash: res.blockHash,
+          blockNumber: res.blockNumber,
+          transactionIndex: res.transactionIndex,
+          confirmations: res.confirmations,
+          from: res.from,
+          gasPrice: res.gasPrice.toString(),
+          gasLimit: res.gasLimit.toString(),
+          to: res.to,
+          value: res.value.toString(),
+          nonce: res.nonce,
+          data: res.data,
+          r: res.r,
+          s: res.s,
+          v: res.v,
+          creates: res.creates,
+          chainId: res.chainId,
+        }
+      }catch(e){
+        console.error("GS: Err getting transaction " + safeTxHash);
+        console.log(e);
+        return {};
+      }
+    })
+
   }, [uniqueId, addToast, verbose])
+
 
   const disconnect = useCallback(() => {
     verbose>1 && console.log("GS: disconnecting connector")
