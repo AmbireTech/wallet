@@ -6,8 +6,11 @@ import Providers from './Providers/Providers'
 
 import ETHEREUM_LOGO from '../../../resources/ethereum-logo.png'
 import POLYGON_LOGO from '../../../resources/polygon-logo.svg'
+import networks from '../../../consts/networks'
 
 export default function Deposit({ selectedAcc, selectedNetwork }) {
+    const networkDetails = networks.find(({ id }) => id === selectedNetwork)
+
     return (
         <section id="deposit">
             <div className="panel">
@@ -44,7 +47,7 @@ export default function Deposit({ selectedAcc, selectedNetwork }) {
                 <div className="description">
                     Deposit with credit card to your account directly using one of our partners
                 </div>
-                <Providers walletAddress={selectedAcc} selectedNetwork={selectedNetwork}/>
+                <Providers walletAddress={selectedAcc} networkDetails={networkDetails}/>
             </div>
         </section>
     )

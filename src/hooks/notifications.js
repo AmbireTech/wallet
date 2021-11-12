@@ -20,7 +20,7 @@ export default function useNotifications (requests) {
         // @TODO network name
         const notification = new Notification(REQUEST_TITLE, {
             requireInteraction: true,
-            body: getTransactionSummary([request.txn.to, request.txn.value, request.txn.data], request.chainId),
+            body: getTransactionSummary([request.txn.to, request.txn.value, request.txn.data], request.chainId, request.account),
             icon: 'public/logo192.png',
         })
         //notification.onclose = 

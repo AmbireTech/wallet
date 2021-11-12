@@ -208,7 +208,7 @@ export default function useWalletConnect ({ account, chainId, onCallRequest }) {
                 }
             }
         })
-
+        
         localStorage[STORAGE_KEY] = JSON.stringify(state)
 
         if (updateConnections) dispatch({
