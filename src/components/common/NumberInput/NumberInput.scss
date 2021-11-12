@@ -29,9 +29,7 @@
         top: 0;
         right: 0;
         height: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
+        @include flex-center-center;
         padding: 0 1.5rem;
         cursor: pointer;
         font-size: 15px;
