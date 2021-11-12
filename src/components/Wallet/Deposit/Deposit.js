@@ -6,9 +6,10 @@ import Providers from './Providers/Providers'
 
 import ETHEREUM_LOGO from '../../../resources/ethereum-logo.png'
 import POLYGON_LOGO from '../../../resources/polygon-logo.svg'
+import networks from '../../../consts/networks'
 
-export default function Deposit({ selectedAcc, allNetworks, selectedNetwork }) {
-    const networkDetails = allNetworks.find(({ id }) => id === selectedNetwork)
+export default function Deposit({ selectedAcc, selectedNetwork }) {
+    const networkDetails = networks.find(({ id }) => id === selectedNetwork)
 
     return (
         <section id="deposit">
