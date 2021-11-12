@@ -112,6 +112,10 @@ export default function useGnosisSafe({ selectedAccount, network, verbose = 0 })
         result = await provider.getCode(callTx[0], callTx[1]).catch(err => {
           throw err
         })
+      } else if(method === "eth_getBlockByNumber") {
+        result = await provider.getBlock(callTx[0], callTx[1]).catch(err => {
+          throw err
+        })
       } else {
         throw new Error("method not supported " + method)
       }
