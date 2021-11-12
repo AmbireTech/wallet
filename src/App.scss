@@ -75,6 +75,7 @@ button, input {
   padding: 1em;
   box-sizing: border-box;
   font-family: 'Open Sans';
+  transition: all 0.1s ease-in-out;
 }
 
 button {
@@ -150,6 +151,7 @@ input:disabled, button:disabled {
   font-size: 1.5em;
   font-weight: 600;
   position: relative;
+  max-width: 300px;
 }
 
 #loginEmail .error {
