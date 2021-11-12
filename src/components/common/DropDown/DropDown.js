@@ -5,7 +5,7 @@ import { BsChevronUp, BsChevronDown } from 'react-icons/bs'
 import { CSSTransition } from 'react-transition-group';
 import useOnClickOutside from '../../../helpers/onClickOutside';
 
-export default function DropDown(props) {
+export default function DropDown({ children, title, badge, closeOnClick }) {
     const ref = useRef();
     const transitionRef = useRef();
     const [isDropDownOpen, setDropDownOpen] = useState(false);
@@ -15,11 +15,11 @@ export default function DropDown(props) {
     return (
         <div className="dropdown" ref={ref}>
             <div className="content" onClick={() => setDropDownOpen(!isDropDownOpen)}>
-                <div className="title">{props.title}</div>
+                <div className="title">{ title }</div>
                 {
-                    props.badge ? 
+                    badge ? 
                         <div className="badge">
-                            { props.badge > 9 ? '9+' : props.badge }
+                            { badge > 9 ? '9+' : badge }
                         </div>
                         :
                         null
@@ -34,8 +34,8 @@ export default function DropDown(props) {
                 </div>
             </div>
             <CSSTransition unmountOnExit in={isDropDownOpen} timeout={200} classNames="fade" nodeRef={transitionRef}>
-                <div className="list" ref={transitionRef}>
-                    {props.children}
+                <div className="list" ref={transitionRef} onClick={closeOnClick ? () => setDropDownOpen(false) : null}>
+                    { children }
                 </div>
             </CSSTransition>
         </div>
