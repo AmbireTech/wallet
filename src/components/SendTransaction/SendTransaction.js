@@ -2,6 +2,7 @@
 // GiObservatory is also interesting
 import { GiTakeMyMoney, GiSpectacles } from 'react-icons/gi'
 import { FaSignature, FaTimes, FaChevronLeft, FaChevronDown, FaChevronUp } from 'react-icons/fa'
+import { MdOutlineAccountCircle } from 'react-icons/md'
 import { getContractName, getTransactionSummary } from '../../lib/humanReadableTransactions'
 import './SendTransaction.css'
 import { Loading } from '../common'
@@ -10,10 +11,11 @@ import fetch from 'node-fetch'
 import { Bundle } from 'adex-protocol-eth/js'
 import { getDefaultProvider, Wallet } from 'ethers'
 import { Interface, formatUnits } from 'ethers/lib/utils'
+import * as blockies from 'blockies-ts';
 import { useToasts } from '../../hooks/toasts'
 import { getWallet } from '../../lib/getWallet'
 import accountPresets from '../../consts/accountPresets'
-import { FeeSelector } from './FeeSelector'
+import { FeeSelector, FailingTxn } from './FeeSelector'
 import { sendNoRelayer } from './noRelayer'
 import { isTokenEligible, getFeePaymentConsequences } from './helpers'
 import { fetchPost } from '../../lib/fetch'
@@ -170,20 +172,28 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
     if (!estimation) throw new Error('no estimation: should never happen')
     if (!relayerURL) throw new Error('Email/passphrase account signing without the relayer is not supported yet')
 
-    const finalBundle = getFinalBundle()
-    const provider = getDefaultProvider(network.rpc)
+    const finalBundle = (signingStatus && signingStatus.finalBundle) || getFinalBundle()
     const signer = finalBundle.signer
 
-    await finalBundle.getNonce(provider)
+    if (typeof finalBundle.nonce !== 'number') {
+      await finalBundle.getNonce(getDefaultProvider(network.rpc))
+    }
+
     const { signature, success, message, confCodeRequired } = await fetchPost(
       `${relayerURL}/second-key/${bundle.identity}/${network.id}/sign`, {
         signer, txns: finalBundle.txns, nonce: finalBundle.nonce, gasLimit: finalBundle.gasLimit,
         code: quickAccCredentials && quickAccCredentials.code
       }
     )
-    if (!success) throw new Error(`Secondary key error: ${message}`)
+    if (!success) {
+      if (message.includes('invalid confirmation code')) {
+        addToast('Unable to sign: wrong confirmation code', { error: true })
+        return
+      }
+      throw new Error(`Secondary key error: ${message}`)
+    }
     if (confCodeRequired) {
-      setSigningStatus({ quickAcc: true })
+      setSigningStatus({ quickAcc: true, finalBundle })
     } else {
       if (!signature) throw new Error(`QuickAcc internal error: there should be a signature`)
       if (!account.primaryKeyBackup) throw new Error(`No key backup found: perhaps you need to import the account via JSON?`)
@@ -212,7 +222,7 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
       // be careful not to call this after onDimiss, cause it might cause state to be changed post-unmount
       setSigningStatus(null)
 
-      // Inform everything that's waiting on the results (eg WalletConnect)
+      // Inform everything that's waiting for the results (eg WalletConnect)
       resolveMany(requestIds, { success: bundleResult.success, result: bundleResult.txId, message: bundleResult.message })
 
       if (bundleResult.success) addToast((
@@ -227,6 +237,10 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
       console.error(e)
       if (e && e.message.includes('must provide an Ethereum address')) {
         addToast(`Signing error: not connected with the correct address. Make sure you're connected with ${bundle.signer.address}.`, { error: true })
+      } else if (e && e.message.includes('0x6b0c')) {
+        // not sure if that's actually the case with this hellish error, but after unlocking the device it no longer appeared
+        // however, it stopped appearing after that even if the device is locked, so I'm not sure it's related...
+        addToast(`Ledger: unknown error (0x6b0c): is your Ledger unlocked and in the Ethereum application?`, { error: true })
       } else {
         console.log(e.message)
         addToast(`Signing error: ${e.message || e}`, { error: true })
@@ -235,7 +249,7 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
   }
 
   const rejectTxn = () => {
-    resolveMany(bundle.requestIds, { message: 'rejected' })
+    resolveMany(bundle.requestIds, { message: 'user rejected' })
   }
 
   return (<div id='sendTransaction'>
@@ -243,7 +257,25 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
         <FaChevronLeft size={35}/><span>back</span>
       </div>
       <h2>Pending transactions: {bundle.txns.length}</h2>
-      <div className='panelHolder'>
+      <div className='container'>
+        <div id="topPanel" className="panel">
+          <div className="title">
+            <MdOutlineAccountCircle/>
+            Signing with account:
+          </div>
+          <div className="content">
+            <div className="account">
+              <img className="icon" src={blockies.create({ seed: account.id }).toDataURL()} alt="Account Icon"/>
+              { account.id }
+            </div>
+            on
+            <div className="network">
+              <img className="icon" src={network.icon} alt="Network Icon"/>
+              { network.name }
+            </div>
+          </div>
+        </div>
+        <div id='panelHolder'>
           <div className='panel'>
               <div className='heading'>
                       <div className='title'>
@@ -275,6 +307,7 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
                               Fee
                           </div>
                           <FeeSelector
+                            disabled={signingStatus && signingStatus.finalBundle && !(estimation && !estimation.success)}
                             signer={bundle.signer}
                             estimation={estimation}
                             setEstimation={setEstimation}
@@ -291,14 +324,19 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
                           Sign
                       </div>
                   </div>
-                  <Actions
-                    estimation={estimation}
-                    approveTxn={approveTxn} rejectTxn={rejectTxn}
-                    signingStatus={signingStatus}
-                    feeSpeed={feeSpeed}
-                  />
+                  {(bundle.signer.quickAccManager && !relayerURL) ? (
+                    <FailingTxn message='Signing transactions with an email/passphrase account without being connected to the relayer is unsupported.'></FailingTxn>
+                  ) : (
+                      <Actions
+                        estimation={estimation}
+                        approveTxn={approveTxn} rejectTxn={rejectTxn}
+                        signingStatus={signingStatus}
+                        feeSpeed={feeSpeed}
+                      />
+                  )}
               </div>
           </div>
+        </div>
       </div>
   </div>)
 }
@@ -308,7 +346,7 @@ function Actions({ estimation, feeSpeed, approveTxn, rejectTxn, signingStatus })
   const form = useRef(null)
 
   const rejectButton = (
-    <button className='rejectTxn' onClick={rejectTxn}>Reject</button>
+    <button type='button' className='rejectTxn' onClick={rejectTxn}>Reject</button>
   )
   const insufficientFee = estimation && estimation.feeInUSD
     && !isTokenEligible(estimation.selectedFeeToken, feeSpeed, estimation)
@@ -324,15 +362,22 @@ function Actions({ estimation, feeSpeed, approveTxn, rejectTxn, signingStatus })
     : (<>Sign and send</>)
 
   if (signingStatus && signingStatus.quickAcc) {
-    // @TODO use submit to take advantage of html5 form validation
     return (<>
+      <div><b>A confirmation code was sent to your email, please enter it along with your passphrase.</b></div>
       <input type='password' required minLength={8} placeholder='Passphrase' value={quickAccCredentials.passphrase} onChange={e => setQuickAccCredentials({ ...quickAccCredentials, passphrase: e.target.value })}></input>
-      <form ref={form} className='quickAccSigningForm' onSubmit={e => e.preventDefault()}>
+      <form ref={form} className='quickAccSigningForm' onSubmit={e => { e.preventDefault() }}>
         {/* Changing the autoComplete prop to a random string seems to disable it more often */}
-        <input type='text' pattern='[0-9]+' title='Confirmation code should be 6 digits' autoComplete='nope' required minLength={6} maxLength={6} placeholder='Confirmation code' value={quickAccCredentials.code} onChange={e => setQuickAccCredentials({ ...quickAccCredentials, code: e.target.value })}></input>
+        <input
+          type='text' pattern='[0-9]+'
+          title='Confirmation code should be 6 digits'
+          autoComplete='nope'
+          required minLength={6} maxLength={6}
+          placeholder='Confirmation code'
+          value={quickAccCredentials.code}
+          onChange={e => setQuickAccCredentials({ ...quickAccCredentials, code: e.target.value })}
+        ></input>
         {rejectButton}
         <button className='approveTxn'
-          disabled={!(estimation && quickAccCredentials.code.length === 6 && quickAccCredentials.passphrase)}
           onClick={() => {
             if (!form.current.checkValidity()) return
             approveTxn({ quickAccCredentials })
@@ -357,7 +402,7 @@ function TxnPreview ({ txn, onDismiss, bundle, network, isFirstFailing }) {
   const contractName = getContractName(txn, network.id)
   return (
     <div className={isFirstFailing ? 'txnSummary firstFailing' : 'txnSummary'}>
-        <div>{getTransactionSummary(txn, bundle.network)}</div>
+        <div>{getTransactionSummary(txn, bundle.network, bundle.identity)}</div>
         {isFirstFailing ? (<div className='firstFailingLabel'>This is the first failing transaction.</div>) : (<></>)}
 
         {
@@ -371,7 +416,7 @@ function TxnPreview ({ txn, onDismiss, bundle, network, isFirstFailing }) {
         <span className='expandTxn' onClick={() => setExpanded(e => !e)}>
           {isExpanded ? (<FaChevronUp/>) : (<FaChevronDown/>)}
         </span>
-        <span className='dismissTxn' onClick={onDismiss}><FaTimes/></span>
+        {onDismiss ? (<span className='dismissTxn' onClick={onDismiss}><FaTimes/></span>) : (<></>)}
     </div>
   )
 }
