@@ -92,6 +92,16 @@
     }
 }
 
+@media screen and (min-width: 1400px) {
+    #sidebar {
+        .balance {
+            .balanceDollarAmount {
+                font-size: 2em !important;
+            }
+        }
+    }
+}
+
 @media screen and (max-width: 1400px) {
     #sidebar {
         width: $sidebar-mobile-width;
@@ -105,11 +115,10 @@
         }
 
         .balance {
-            font-size: 15px;
+            font-size: 0.8em !important;
 
-            .balanceDollarAmount {
-                font-size: 15px;
-                font-weight: bold;
+            label {
+                font-size: 1.1em !important;
             }
         }
 
