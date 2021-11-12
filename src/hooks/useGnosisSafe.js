@@ -69,7 +69,8 @@ export default function useGnosisSafe({ selectedAccount, network, verbose = 0 })
       //console.log(portfolio)
 
       //struct template
-      /*return {
+    /*connector.current.on(Methods.getSafeBalances, () => {
+      return {
         "fiatTotal": "0.18072",
           "items": [
           {
@@ -86,8 +87,8 @@ export default function useGnosisSafe({ selectedAccount, network, verbose = 0 })
             "fiatConversion": "1.8072"
           }
         ]
-      }*/
-    // })
+      }
+     })*/
 
     connector.current.on(Methods.rpcCall, async (msg) => {
       verbose>0 && console.log("DApp requested rpcCall") && console.log(msg)
@@ -106,6 +107,24 @@ export default function useGnosisSafe({ selectedAccount, network, verbose = 0 })
         })
       } else if(method === "eth_getBalance") {
         result = await provider.getBalance(callTx[0], callTx[1]).catch(err => {
+          throw err
+        })
+      } else if(method === "eth_blockNumber") {
+        result = await provider.getBlockNumber().catch(err => {
+          throw err
+        })
+      } else if(method === "eth_getBlockByNumber" || method === "eth_getBlockByHash") {
+        if(callTx[1]) {
+          result = await provider.getBlockWithTransactions(callTx[0]).catch(err => {
+            throw err
+          })
+        } else {
+          result = await provider.getBlock(callTx[0]).catch(err => {
+            throw err
+          })
+        }
+      } else if(method === "eth_getTransactionByHash") {
+        result = await provider.getTransaction(callTx[0]).catch(err => {
           throw err
         })
       } else if(method === "eth_getCode") {
@@ -175,9 +194,12 @@ export default function useGnosisSafe({ selectedAccount, network, verbose = 0 })
         replyData.txId = resolution.txId
       }
       if (!connector.current) {
-        throw new Error("gnosis safe connector not set")
+        //soft error handling: sendTransaction has issues
+        //throw new Error("gnosis safe connector not set")
+        console.error("gnosis safe connector not set");
+      }else{
+        connector.current.send(replyData, req.forwardId, replyData.error)
       }
-      connector.current.send(replyData, req.forwardId, replyData.error)
     }
 
     setRequests(prevRequests => prevRequests.filter(x => !ids.includes(x.id)))
