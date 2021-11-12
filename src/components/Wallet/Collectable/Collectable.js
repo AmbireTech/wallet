@@ -35,6 +35,7 @@ const Collectable = ({ selectedAcc, selectedNetwork, addRequest }) => {
         explorerUrl: ''
     })
     const [recipientAddress, setRecipientAddress] = useState('')
+    const [isTransferDisabled, setTransferDisabled] = useState(true)
 
     const sendTransferTx = () => {
         addRequest({
@@ -49,6 +50,11 @@ const Collectable = ({ selectedAcc, selectedNetwork, addRequest }) => {
             }
         })
     }
+
+    useEffect(() => {
+        const isAddressValid = /^0x[a-fA-F0-9]{40}$/.test(recipientAddress)
+        setTransferDisabled(!isAddressValid || selectedAcc === recipientAddress || metadata.owner.address !== selectedAcc || selectedNetwork.id !== network)
+    }, [recipientAddress, metadata, selectedNetwork, selectedAcc, network])
 
     const fetchMetadata = useCallback(async () => {
         try {
@@ -141,7 +147,7 @@ const Collectable = ({ selectedAcc, selectedNetwork, addRequest }) => {
                 <div className="content">
                     <TextInput placeholder="Recipient Address" onInput={(value) => setRecipientAddress(value)}/>
                     <div className="separator"></div>
-                    <Button icon={<AiOutlineSend/>} onClick={sendTransferTx}>Send</Button>
+                    <Button icon={<AiOutlineSend/>} disabled={isTransferDisabled} onClick={sendTransferTx}>Send</Button>
                 </div>
             </div>
         </div>
