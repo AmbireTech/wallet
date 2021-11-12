@@ -21,7 +21,7 @@ export default function Wallet(props) {
     },
     {
       path: '/transfer',
-      component: <Transfer portfolio={props.portfolio} selectedAcc={props.selectedAcc} accounts={props.accounts}/>
+      component: <Transfer portfolio={props.portfolio} addRequest={props.addRequest} selectedAcc={props.selectedAcc} accounts={props.accounts}/>
     },
     {
       path: '/security'
