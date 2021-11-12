@@ -143,6 +143,7 @@ export default function AddAccount ({ relayerURL, onAddAccount }) {
         const ethereum = window.ethereum
         const web3Accs = await ethereum.request({ method: 'eth_requestAccounts' })
         if (!web3Accs.length) throw new Error('No accounts connected')
+        if (!relayerURL) return onAddAccount(await createFromEOA(web3Accs[0]), { select: true })
         const owned = await getOwnedByEOAs(web3Accs)
         if (!owned.length) onAddAccount(await createFromEOA(web3Accs[0]), { select: true })
         else owned.forEach((acc, i) => onAddAccount(acc, { select: i === 0 }))
