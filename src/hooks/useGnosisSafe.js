@@ -48,6 +48,20 @@ export default function useGnosisSafe({ selectedAccount, network, verbose = 0 })
       return null
     }
 
+	connector.current.on(Methods.getTxBySafeTxHash, async (msg) => {
+		const provider = getDefaultProvider(stateRef.current.network.rpc)
+		
+		const safeTxHash = msg.data?.params?.safeTxHash
+		if (!safeTxHash) {
+			throw new Error(`${Methods.getTxBySafeTxHash} - no safeTxHash`)
+		} 
+		const res = await provider.getTransaction(safeTxHash).catch(err => {
+			throw err
+		  })
+
+		  return res
+	  })
+
     // reply back to iframe with safe data
     connector.current.on(Methods.getSafeInfo, () => {
       return {
@@ -150,7 +164,7 @@ export default function useGnosisSafe({ selectedAccount, network, verbose = 0 })
         return
       }
 
-      const id = 'gs_' + new Date().getTime() + '_' + data.id
+      const id = 'gs_' + data.id
       const txs = data?.params?.txs
       if (txs?.length) {
         for (let i in txs) {
@@ -170,7 +184,7 @@ export default function useGnosisSafe({ selectedAccount, network, verbose = 0 })
         account: stateRef.current.selectedAccount
       }
 
-      setRequests(prevRequests => [...prevRequests, request])
+      setRequests(prevRequests => prevRequests.find(x => x.id === request.id) ? prevRequests : [...prevRequests, request])
     })
   }, [uniqueId, addToast, verbose])
 
@@ -196,12 +210,17 @@ export default function useGnosisSafe({ selectedAccount, network, verbose = 0 })
       } else { //onSuccess
         replyData.success = true
         replyData.txId = resolution.result
+        replyData.hash = resolution.result
+        replyData.txHash = resolution.result
+        replyData.result = resolution.result
+        replyData.safeTxHash = resolution.result
       }
       if (!connector.current) {
         //soft error handling: sendTransaction has issues
         //throw new Error("gnosis safe connector not set")
         console.error("gnosis safe connector not set");
       }else{
+		  console.log('replyData', replyData)
         connector.current.send(replyData, req.forwardId, replyData.error)
       }
     }
