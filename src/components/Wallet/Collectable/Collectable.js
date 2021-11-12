@@ -2,6 +2,7 @@ import './Collectable.scss'
 
 import { useParams } from 'react-router-dom'
 import { ethers, getDefaultProvider } from 'ethers'
+import { Interface } from 'ethers/lib/utils'
 import { useCallback, useEffect, useState } from 'react'
 import { AiOutlineSend } from 'react-icons/ai'
 import { BsFillImageFill } from 'react-icons/bs'
@@ -11,10 +12,17 @@ import { TextInput, Button, Loading } from '../../common'
 import ERC721Abi from '../../../consts/ERC721Abi'
 import networks from '../../../consts/networks'
 
-const Collectable = () => {
+const ERC721 = new Interface(ERC721Abi)
+
+const handleUri = uri => {
+    uri = uri.startsWith('data:application/json') ? uri.replace('data:application/json;utf8,', '') : uri
+    return uri.startsWith('ipfs://') ? uri.replace(/ipfs:\/\/ipfs\/|ipfs:\/\//g, 'https://ipfs.io/ipfs/') : uri
+}
+
+const Collectable = ({ selectedAcc, selectedNetwork, addRequest }) => {
     const { addToast } = useToasts()
     const { network, collectionAddr, tokenId } = useParams()
-    const [isLoading, setLoading] = useState()
+    const [isLoading, setLoading] = useState(true)
     const [metadata, setMetadata] = useState({
         owner: {
             address: '',
@@ -26,15 +34,23 @@ const Collectable = () => {
         collection: '',
         explorerUrl: ''
     })
+    const [recipientAddress, setRecipientAddress] = useState('')
 
-    const handleUri = uri => {
-        uri = uri.startsWith('data:application/json') ? uri.replace('data:application/json;utf8,', '') : uri
-        return uri.startsWith('ipfs://') ? uri.replace(/ipfs:\/\/ipfs\/|ipfs:\/\//g, 'https://ipfs.io/ipfs/') : uri
+    const sendTransferTx = () => {
+        addRequest({
+            id: `transfer_nft_${Date.now()}`,
+            type: 'eth_sendTransaction',
+            chainId: selectedNetwork.chainId,
+            account: selectedAcc,
+            txn: {
+                to: collectionAddr,
+                value: '0',
+                data: ERC721.encodeFunctionData('transferFrom', [metadata.owner.address, recipientAddress, tokenId])
+            }
+        })
     }
 
     const fetchMetadata = useCallback(async () => {
-        setLoading(true)
-
         try {
             const { rpc, explorerUrl } = networks.find(({ id }) => id === network)
             const provider = getDefaultProvider(rpc)
@@ -123,9 +139,9 @@ const Collectable = () => {
             <div className="panel">
                 <div className="title">Transfer</div>
                 <div className="content">
-                    <TextInput placeholder="Recipient Address"/>
+                    <TextInput placeholder="Recipient Address" onInput={(value) => setRecipientAddress(value)}/>
                     <div className="separator"></div>
-                    <Button icon={<AiOutlineSend/>}>Send</Button>
+                    <Button icon={<AiOutlineSend/>} onClick={sendTransferTx}>Send</Button>
                 </div>
             </div>
         </div>
