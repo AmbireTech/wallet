@@ -20,8 +20,8 @@ export default function Wallet(props) {
       component: <Deposit selectedAcc={props.selectedAcc} selectedNetwork={props.network.id} />
     },
     {
-      path: '/transfer',
-      component: <Transfer portfolio={props.portfolio} selectedAcc={props.selectedAcc} accounts={props.accounts}/>
+      path: '/transfer/:tokenAddress?',
+      component: <Transfer portfolio={props.portfolio} selectedAcc={props.selectedAcc} selectedNetwork={{...props.network}} accounts={props.accounts} addRequest={props.addRequest}/>
     },
     {
       path: '/security'
