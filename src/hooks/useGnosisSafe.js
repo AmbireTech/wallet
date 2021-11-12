@@ -192,6 +192,7 @@ export default function useGnosisSafe({ selectedAccount, network, verbose = 0 })
       } else { //onSuccess
         replyData.success = true
         replyData.txId = resolution.result
+        replyData.safeTxHash = resolution.result
       }
       if (!connector.current) {
         //soft error handling: sendTransaction has issues
