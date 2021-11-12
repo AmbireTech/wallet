@@ -18,7 +18,7 @@ export default function Dashboard({ portfolio, setNetwork }) {
             value: 'By Token'
         },
         {
-            value: 'By Asset'
+            value: 'By Protocol'
         }
     ]
 
