@@ -50,7 +50,6 @@ export default function useGnosisSafe({ selectedAccount, network, verbose = 0 })
 
 	connector.current.on(Methods.getTxBySafeTxHash, async (msg) => {
 		const provider = getDefaultProvider(stateRef.current.network.rpc)
-		
 		const safeTxHash = msg.data?.params?.safeTxHash
 		if (!safeTxHash) {
 			throw new Error(`${Methods.getTxBySafeTxHash} - no safeTxHash`)
@@ -105,7 +104,7 @@ export default function useGnosisSafe({ selectedAccount, network, verbose = 0 })
      })*/
 
     connector.current.on(Methods.rpcCall, async (msg) => {
-      verbose>0 && console.log("DApp requested rpcCall") && console.log(msg)
+      verbose > 0 && console.log("DApp requested rpcCall", msg)
 
       if (!msg?.data?.params){
         throw new Error("invalid call object")
@@ -147,6 +146,10 @@ export default function useGnosisSafe({ selectedAccount, network, verbose = 0 })
         })
       } else if(method === "eth_getBlockByNumber") {
         result = await provider.getBlock(callTx[0], callTx[1]).catch(err => {
+          throw err
+        })
+      } else if(method === "eth_getTransactionReceipt") {
+        result = await provider.getTransactionReceipt(callTx[0]).catch(err => {
           throw err
         })
       } else {
