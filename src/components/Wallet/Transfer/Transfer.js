@@ -111,16 +111,21 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, accounts, 
                                         value={address}
                                         onInput={setAddress}
                                     />
-                                    <DropDown title={<FaAddressCard/>}>
-                                        <label>Select from your accounts:</label>
-                                        {
-                                            addressesItems.map(id => (
-                                                <div className={`item ${id === address ? 'active' : ''}`} key={id} onClick={() => setAddress(id)}>
-                                                    { id }
-                                                </div>
-                                            ))
-                                        }
-                                    </DropDown>
+                                    {
+                                        addressesItems.length ? 
+                                            <DropDown title={<FaAddressCard/>}>
+                                                <label>Select from your accounts:</label>
+                                                {
+                                                    addressesItems.map(id => (
+                                                        <div className={`item ${id === address ? 'active' : ''}`} key={id} onClick={() => setAddress(id)}>
+                                                            { id }
+                                                        </div>
+                                                    ))
+                                                }
+                                            </DropDown>
+                                            :
+                                            null
+                                    }
                                 </div>
                                 <div className="separator"/>
                                 <Button disabled={disabled} onClick={sendTx}>Send</Button>
