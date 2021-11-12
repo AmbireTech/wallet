@@ -7,7 +7,6 @@ import { Button } from '../../../common'
 import AssetsPlaceholder from './AssetsPlaceholder/AssetsPlaceholder'
 
 const Assets = ({ assets }) => {
-    console.log(assets);
     return (
         <div id="assets-table">
             {
