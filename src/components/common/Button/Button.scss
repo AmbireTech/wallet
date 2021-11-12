@@ -2,9 +2,7 @@
 
 button.buttonComponent {
     height: 60px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    @include flex-center-center;
     gap: 10px;
     padding: 0 20px;
     font-size: 20px;
@@ -14,9 +12,7 @@ button.buttonComponent {
     text-transform: uppercase;
     
     .icon-button {
-        display: flex;
-        align-items: center;
-        justify-content: center;
+        @include flex-center-center;
         color: black !important;
     }
 

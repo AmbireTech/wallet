@@ -63,9 +63,7 @@
 
         .separator {
             flex-grow: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            @include flex-center-center;
             font-size: 40px;
             opacity: 0.5;
         }

@@ -1,3 +1,5 @@
+@import '../../../variables.scss';
+
 #collectable {
     display: flex;
     gap: 30px;
@@ -44,9 +46,7 @@
             z-index: 48;
             height: 250px;
             width: 250px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            @include flex-center-center;
             font-size: 40px;
             color: rgba(255, 255, 255, 0.5);
             background-size: contain;
