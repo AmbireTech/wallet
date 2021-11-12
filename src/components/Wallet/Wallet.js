@@ -26,7 +26,7 @@ export default function Wallet(props) {
             <Transfer portfolio={props.portfolio} selectedAcc={props.selectedAcc} accounts={props.accounts}/>
           </Route>
           <Route path={props.match.url + "/security"}>
-            <Security selectedAcc={props.selectedAcc} selectedNetwork={props.network.id} accounts={props.accounts}/>
+            <Security selectedAcc={props.selectedAcc} selectedNetwork={props.network} accounts={props.accounts} addRequest={props.addRequest}/>
           </Route>
           <Route path={props.match.url + "/transactions"}></Route>
           <Route path={props.match.url + "/swap"}></Route>

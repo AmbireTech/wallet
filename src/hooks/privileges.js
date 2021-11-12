@@ -9,15 +9,8 @@ export default function usePrivileges({ identity, network, accounts }) {
     setLoading(true);
     let requestPrivResp = await getPrivileges(identity, network, {});
 
-    if (requestPrivResp.resp.status === 200) {
-      const selectedAccount = accounts.find((x) => x.id === identity);
-      const signerAddress = selectedAccount.signer.address;
-      const filteredPrivBySelectedAccount = Object.keys(requestPrivResp.body.privileges).filter(
-        (x) => x === signerAddress
-      );
-      const filtered = filteredPrivBySelectedAccount.reduce((obj, key) => ({ ...obj, [key]: requestPrivResp.body.privileges[key] }), {});
-      
-      setPrivileges(filtered)
+    if (requestPrivResp.resp.status === 200) {  
+      setPrivileges(requestPrivResp.body.privileges)
     } else {
       console.log(requestPrivResp.errMsg);
       // setErr(requestPrivResp.body.message ? `Relayer error: ${requestPrivResp.body.message}` : `Unknown no-message error: ${resp.status}`)
