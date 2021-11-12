@@ -136,7 +136,13 @@ const Collectable = ({ selectedAcc, selectedNetwork, addRequest }) => {
                                 Owner:
                                 <a className="address" href={`${metadata.explorerUrl}/address/${metadata.owner.address}`} target="_blank" rel="noreferrer">
                                     <div className="icon" style={{backgroundImage: `url(${metadata.owner.icon})`}}></div>
-                                    { metadata.owner.address }
+                                    { 
+                                        metadata.owner.address === selectedAcc ? 
+                                            <span>You ({ metadata.owner.address })</span>
+                                            :
+                                            metadata.owner.address
+                                    }
+                                    
                                 </a>
                             </div>
                         </div>
