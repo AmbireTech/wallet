@@ -1,4 +1,4 @@
-const ADDED_GAS_TOKEN = 23000
+const ADDED_GAS_TOKEN = 24000
 const ADDED_GAS_NATIVE = 13000
 
 export function isTokenEligible (token, speed, estimation) {
