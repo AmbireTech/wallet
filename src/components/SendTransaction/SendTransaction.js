@@ -40,7 +40,7 @@ function makeBundle(account, networkId, requests) {
   return bundle
 }
 
-export default function SendTransaction({ accounts, network, selectedAcc, requests, resolveMany, relayerURL, onDismiss }) {
+export default function SendTransaction({ relayerURL, accounts, network, selectedAcc, requests, resolveMany, replacingBundle, onDismiss }) {
   const account = accounts.find(x => x.id === selectedAcc)
 
   // Also filtered in App.js, but better safe than sorry here
@@ -62,16 +62,17 @@ export default function SendTransaction({ accounts, network, selectedAcc, reques
       <h3 className='error'>No account or no requests: should never happen.</h3>
   </div>)
   return (<SendTransactionWithBundle
+      relayerURL={relayerURL}
       bundle={bundle}
+      replacingBundle={replacingBundle}
       network={network}
       account={account}
       resolveMany={resolveMany}
-      relayerURL={relayerURL}
       onDismiss={onDismiss}
   />)
 }
 
-function SendTransactionWithBundle ({ bundle, network, account, resolveMany, relayerURL, onDismiss }) {
+function SendTransactionWithBundle ({ bundle, network, account, resolveMany, relayerURL, replacingBundle, onDismiss }) {
   const [estimation, setEstimation] = useState(null)
   const [signingStatus, setSigningStatus] = useState(false)
   const [feeSpeed, setFeeSpeed] = useState(DEFAULT_SPEED)
@@ -122,7 +123,8 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
   const getFinalBundle = () => {
     if (!relayerURL) return new Bundle({
       ...bundle,
-      gasLimit: estimation.gasLimit
+      gasLimit: estimation.gasLimit,
+      nonce: replacingBundle ? replacingBundle.nonce : undefined
     })
 
     const feeToken = estimation.selectedFeeToken
@@ -158,7 +160,7 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
       chainId: network.chainId
     })
     if (relayerURL) {
-      await finalBundle.getNonce(provider)
+      if (typeof finalBundle.nonce !== 'number') await finalBundle.getNonce(provider)
       await finalBundle.sign(wallet)
       return await finalBundle.submit({ relayerURL, fetch })
     } else {
