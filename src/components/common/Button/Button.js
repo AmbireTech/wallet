@@ -1,9 +1,9 @@
 import './Button.scss'
 
-const Button = ({ children, small, icon, disabled }) => {
+const Button = ({ children, small, icon, disabled, onClick, red }) => {
     return (
-        <button className={`buttonComponent ${small ? 'small' : ''}`} disabled={disabled}>
-            <div className="icon">{ icon }</div>
+        <button onClick={onClick} className={`buttonComponent ${small ? 'small' : ''} ${red ? 'red' : ''}`} disabled={disabled}>
+            {icon && <div className="icon">{ icon }</div>}
             { children }
         </button>
     )
