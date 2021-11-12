@@ -22,9 +22,7 @@
         .badge {
             height: 20px;
             width: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            @include flex-center-center;
             font-size: 12px;
             font-weight: bold;
             color: black;
@@ -33,9 +31,7 @@
         }
 
         .handle {
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            @include flex-center-center;
             margin-left: 15px;
             transition: all 0.1s ease-in-out;
 
