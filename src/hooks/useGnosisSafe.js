@@ -213,9 +213,6 @@ export default function useGnosisSafe({ selectedAccount, network, verbose = 0 })
       } else { //onSuccess
         replyData.success = true
         replyData.txId = resolution.result
-        replyData.hash = resolution.result
-        replyData.txHash = resolution.result
-        replyData.result = resolution.result
         replyData.safeTxHash = resolution.result
       }
       if (!connector.current) {
