@@ -5,7 +5,7 @@ import Dashboard from "./Dashboard/Dashboard"
 import TopBar from "./TopBar/TopBar"
 import SideBar from "./SideBar/SideBar"
 import Deposit from "./Deposit/Deposit"
-import Trading from "./Trading/Trading"
+import Swap from "./Swap/Swap"
 import Transfer from "./Transfer/Transfer"
 import PluginGnosisSafeApps from "../Plugins/GnosisSafeApps/GnosisSafeApps"
 import Collectable from "./Collectable/Collectable"
@@ -21,22 +21,19 @@ export default function Wallet(props) {
       component: <Deposit selectedAcc={props.selectedAcc} selectedNetwork={props.network.id} />
     },
     {
-      path: '/trading',
-      component: <Trading
-        gnosisConnect={props.gnosisConnect}
-        selectedAcc={props.selectedAcc}
-        network={props.network} s
-      />
-    },
-    {
       path: '/transfer',
-      component: <Transfer portfolio={props.portfolio} addRequest={props.addRequest} network={props.network} selectedAcc={props.selectedAcc} accounts={props.accounts}/>
+      component: <Transfer portfolio={props.portfolio} addRequest={props.addRequest} network={props.network} selectedAcc={props.selectedAcc} accounts={props.accounts} />
     },
     {
       path: '/security'
     },
     {
-      path: '/swap'
+      path: '/swap',
+      component: <Swap
+        gnosisConnect={props.gnosisConnect}
+        selectedAcc={props.selectedAcc}
+        network={props.network} s
+      />
     },
     {
       path: '/earn'
@@ -65,7 +62,7 @@ export default function Wallet(props) {
           {
             routes.map(({ path, component }) => (
               <Route path={props.match.url + path} key={path}>
-                { component ? component : null }
+                {component ? component : null}
               </Route>
             ))
           }

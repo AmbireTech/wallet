@@ -48,6 +48,19 @@ export default function useGnosisSafe({ selectedAccount, network, verbose = 1 })
       return null
     }
 
+	connector.current.on(Methods.getTxBySafeTxHash, async (msg) => {
+		const provider = getDefaultProvider(stateRef.current.network.rpc)
+		const safeTxHash = msg.data?.params?.safeTxHash
+		if (!safeTxHash) {
+			throw new Error(`${Methods.getTxBySafeTxHash} - no safeTxHash`)
+		} 
+		const res = await provider.getTransaction(safeTxHash).catch(err => {
+			throw err
+		  })
+
+		  return res
+	  })
+
     // reply back to iframe with safe data
     connector.current.on(Methods.getSafeInfo, () => {
       return {
@@ -91,7 +104,7 @@ export default function useGnosisSafe({ selectedAccount, network, verbose = 1 })
      })*/
 
     connector.current.on(Methods.rpcCall, async (msg) => {
-      verbose>0 && console.log("DApp requested rpcCall") && console.log(msg)
+      verbose > 0 && console.log("DApp requested rpcCall", msg)
 
       if (!msg?.data?.params){
         throw new Error("invalid call object")
@@ -135,6 +148,10 @@ export default function useGnosisSafe({ selectedAccount, network, verbose = 1 })
         result = await provider.getBlock(callTx[0], callTx[1]).catch(err => {
           throw err
         })
+      } else if(method === "eth_getTransactionReceipt") {
+        result = await provider.getTransactionReceipt(callTx[0]).catch(err => {
+          throw err
+        })
       } else {
         throw new Error("method not supported " + method)
       }
@@ -150,7 +167,7 @@ export default function useGnosisSafe({ selectedAccount, network, verbose = 1 })
         return
       }
 
-      const id = 'gs_' + new Date().getTime() + '_' + data.id
+      const id = 'gs_' + data.id
       const txs = data?.params?.txs
       if (txs?.length) {
         for (let i in txs) {
@@ -170,7 +187,7 @@ export default function useGnosisSafe({ selectedAccount, network, verbose = 1 })
         account: stateRef.current.selectedAccount
       }
 
-      setRequests(prevRequests => [...prevRequests, request])
+      setRequests(prevRequests => prevRequests.find(x => x.id === request.id) ? prevRequests : [...prevRequests, request])
     })
 
     connector.current.on(Methods.getTxBySafeTxHash, async (msg) => {
@@ -230,13 +247,18 @@ export default function useGnosisSafe({ selectedAccount, network, verbose = 1 })
         replyData.success = false
       } else { //onSuccess
         replyData.success = true
-        replyData.txId = resolution.txId
+        replyData.txId = resolution.result
+        replyData.hash = resolution.result
+        replyData.txHash = resolution.result
+        replyData.result = resolution.result
+        replyData.safeTxHash = resolution.result
       }
       if (!connector.current) {
         //soft error handling: sendTransaction has issues
         //throw new Error("gnosis safe connector not set")
         console.error("gnosis safe connector not set");
       }else{
+		  console.log('replyData', replyData)
         connector.current.send(replyData, req.forwardId, replyData.error)
       }
     }
