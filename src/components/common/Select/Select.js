@@ -59,13 +59,8 @@ const Select = ({ children, native, monospace, searchable, defaultValue, items, 
                             </div>
                             { selectedItem.label || selectedItem.value }
                             <div className="separator"></div>
-                            <div className="handle">
-                                {
-                                    isOpen ? 
-                                        <BsChevronUp size={20}></BsChevronUp>
-                                        :
-                                        <BsChevronDown size={20}></BsChevronDown>
-                                }
+                            <div className={`handle ${isOpen ? 'open' : ''}`}>
+                                <BsChevronDown size={20}></BsChevronDown>
                             </div>
                         </div>
                         :
