@@ -37,6 +37,11 @@
             align-items: center;
             justify-content: center;
             margin-left: 15px;
+            transition: all 0.1s ease-in-out;
+
+            &.open {
+                transform: scaleY(-1);
+            }
         }
     }
 
