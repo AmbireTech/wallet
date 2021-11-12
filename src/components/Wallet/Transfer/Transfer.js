@@ -28,7 +28,7 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, accounts, 
     const [asset, setAsset] = useState(tokenAddress)
     const [amount, setAmount] = useState(0)
     const [bigNumberHexAmount, setBigNumberHexAmount] = useState('')
-    const [address, setAddress] = useState()
+    const [address, setAddress] = useState('')
     const [disabled, setDisabled] = useState(true)
 
     const assetsItems = portfolio.balance.tokens.map(({ label, address, img }) => ({
