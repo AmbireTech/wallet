@@ -38,17 +38,22 @@ const Collectable = ({ selectedAcc, selectedNetwork, addRequest }) => {
     const [isTransferDisabled, setTransferDisabled] = useState(true)
 
     const sendTransferTx = () => {
-        addRequest({
-            id: `transfer_nft_${Date.now()}`,
-            type: 'eth_sendTransaction',
-            chainId: selectedNetwork.chainId,
-            account: selectedAcc,
-            txn: {
-                to: collectionAddr,
-                value: '0',
-                data: ERC721.encodeFunctionData('transferFrom', [metadata.owner.address, recipientAddress, tokenId])
-            }
-        })
+        try {
+            addRequest({
+                id: `transfer_nft_${Date.now()}`,
+                type: 'eth_sendTransaction',
+                chainId: selectedNetwork.chainId,
+                account: selectedAcc,
+                txn: {
+                    to: collectionAddr,
+                    value: '0',
+                    data: ERC721.encodeFunctionData('transferFrom', [metadata.owner.address, recipientAddress, tokenId])
+                }
+            })
+        } catch(e) {
+            console.error(e)
+            addToast(`Error: ${e.message || e}`, { error: true })
+        }
     }
 
     useEffect(() => {
