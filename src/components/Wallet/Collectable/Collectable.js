@@ -9,8 +9,9 @@ import * as blockies from 'blockies-ts';
 import { useToasts } from '../../../hooks/toasts'
 import { TextInput, Button, Loading } from '../../common'
 import ERC721Abi from '../../../consts/ERC721Abi'
+import networks from '../../../consts/networks'
 
-const Collectable = ({ allNetworks }) => {
+const Collectable = () => {
     const { addToast } = useToasts()
     const { network, collectionAddr, tokenId } = useParams()
     const [isLoading, setLoading] = useState()
@@ -26,53 +27,61 @@ const Collectable = ({ allNetworks }) => {
         explorerUrl: ''
     })
 
+    const handleUri = uri => {
+        uri = uri.startsWith('data:application/json') ? uri.replace('data:application/json;utf8,', '') : uri
+        return uri.startsWith('ipfs://') ? uri.replace(/ipfs:\/\/ipfs\/|ipfs:\/\//g, 'https://ipfs.io/ipfs/') : uri
+    }
+
     const fetchMetadata = useCallback(async () => {
         setLoading(true)
 
-        const { rpc, explorerUrl } = allNetworks.find(({ id }) => id === network)
-        const provider = getDefaultProvider(rpc)
-        const contract = new ethers.Contract(collectionAddr, ERC721Abi, provider)
-
         try {
-            let collection = await contract.name()
+            const { rpc, explorerUrl } = networks.find(({ id }) => id === network)
+            const provider = getDefaultProvider(rpc)
+            const contract = new ethers.Contract(collectionAddr, ERC721Abi, provider)
+
+            const [collection, address, uri] = await Promise.all([
+                contract.name(),
+                contract.ownerOf(tokenId),
+                contract.tokenURI(tokenId)
+            ])
+
+            try {
+                let json = {}
+
+                if (uri.startsWith('data:application/json')) {
+                    json = JSON.parse(uri.replace('data:application/json;utf8,', ''))
+                } else {
+                    const jsonUrl = handleUri(uri)
+                    const response = await fetch(jsonUrl)
+                    json = await response.json()
+                }
+
+                setMetadata(metadata => ({
+                    ...metadata,
+                    ...json,
+                    image: json ? handleUri(json.image) : null
+                }))
+            } catch(e) {
+                throw e
+            }
+
             setMetadata(metadata => ({
                 ...metadata,
                 collection,
-                explorerUrl
-            }))
-        } catch(e) {
-            addToast('Failed to fetch collection name', { error: true })
-        }
-
-        try {
-            let address = await contract.ownerOf(tokenId)
-            setMetadata(metadata => ({
-                ...metadata,
                 owner: {
                     address,
                     icon: blockies.create({ seed: address }).toDataURL()
-                }
+                },
+                explorerUrl
             }))
         } catch(e) {
-            addToast('Failed to fetch owner address', { error: true })
-        }
-
-        try {
-            let url = await contract.tokenURI(tokenId)
-            if (url.startsWith('ipfs://')) url = url.replace('ipfs://', 'https://ipfs.io/ipfs/')
-
-            const response = await fetch(url)
-            const data = await response.json()
-            setMetadata(metadata => ({
-                ...metadata,
-                ...data
-            }))
-        } catch(e) {
-            addToast('Failed to fetch metadata', { error: true })
+            console.error(e)
+            addToast(`Error: ${e.message || e}`, { error: true })
         }
 
         setLoading(false)
-    }, [addToast, allNetworks, tokenId, collectionAddr, network])
+    }, [addToast, tokenId, collectionAddr, network])
 
     useEffect(() => fetchMetadata(), [fetchMetadata])
 

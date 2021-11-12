@@ -199,10 +199,11 @@ export default function AddAccount ({ relayerURL, onAddAccount }) {
             ledgerEthereumClientFactoryAsync: ledgerEthereumBrowserClientFactoryAsync,
             //baseDerivationPath: this.baseDerivationPath
         })
-        const [addresses, signerExtra] = await Promise.all([
-            provider.getAccountsAsync(50),
-            provider._initialDerivedKeyInfoAsync().then(info => ({ type: 'ledger', info: JSON.parse(JSON.stringify(info)) }))
-        ])
+        // NOTE: do not attempt to do both of these together (await Promise.all)
+        // there is a bug in the ledger subprovider (race condition), so it will think we're trying to make two connections simultaniously
+        // cause one call won't be aware of the other's attempt to connect
+        const addresses = await provider.getAccountsAsync(50)
+        const signerExtra = await provider._initialDerivedKeyInfoAsync().then(info => ({ type: 'ledger', info: JSON.parse(JSON.stringify(info)) }))
         setChooseSigners({ addresses, signerExtra })
     }
 

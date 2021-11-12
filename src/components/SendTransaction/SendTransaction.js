@@ -40,7 +40,7 @@ function makeBundle(account, networkId, requests) {
   return bundle
 }
 
-export default function SendTransaction({ accounts, network, selectedAcc, requests, resolveMany, relayerURL, onDismiss }) {
+export default function SendTransaction({ relayerURL, accounts, network, selectedAcc, requests, resolveMany, replacingBundle, onDismiss }) {
   const account = accounts.find(x => x.id === selectedAcc)
 
   // Also filtered in App.js, but better safe than sorry here
@@ -62,16 +62,17 @@ export default function SendTransaction({ accounts, network, selectedAcc, reques
       <h3 className='error'>No account or no requests: should never happen.</h3>
   </div>)
   return (<SendTransactionWithBundle
+      relayerURL={relayerURL}
       bundle={bundle}
+      replacingBundle={replacingBundle}
       network={network}
       account={account}
       resolveMany={resolveMany}
-      relayerURL={relayerURL}
       onDismiss={onDismiss}
   />)
 }
 
-function SendTransactionWithBundle ({ bundle, network, account, resolveMany, relayerURL, onDismiss }) {
+function SendTransactionWithBundle ({ bundle, network, account, resolveMany, relayerURL, replacingBundle, onDismiss }) {
   const [estimation, setEstimation] = useState(null)
   const [signingStatus, setSigningStatus] = useState(false)
   const [feeSpeed, setFeeSpeed] = useState(DEFAULT_SPEED)
@@ -122,7 +123,8 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
   const getFinalBundle = () => {
     if (!relayerURL) return new Bundle({
       ...bundle,
-      gasLimit: estimation.gasLimit
+      gasLimit: estimation.gasLimit,
+      nonce: replacingBundle ? replacingBundle.nonce : undefined
     })
 
     const feeToken = estimation.selectedFeeToken
@@ -158,7 +160,7 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
       chainId: network.chainId
     })
     if (relayerURL) {
-      await finalBundle.getNonce(provider)
+      if (typeof finalBundle.nonce !== 'number') await finalBundle.getNonce(provider)
       await finalBundle.sign(wallet)
       return await finalBundle.submit({ relayerURL, fetch })
     } else {
@@ -237,6 +239,10 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
       console.error(e)
       if (e && e.message.includes('must provide an Ethereum address')) {
         addToast(`Signing error: not connected with the correct address. Make sure you're connected with ${bundle.signer.address}.`, { error: true })
+      } else if (e && e.message.includes('0x6b0c')) {
+        // not sure if that's actually the case with this hellish error, but after unlocking the device it no longer appeared
+        // however, it stopped appearing after that even if the device is locked, so I'm not sure it's related...
+        addToast(`Ledger: unknown error (0x6b0c): is your Ledger unlocked and in the Ethereum application?`, { error: true })
       } else {
         console.log(e.message)
         addToast(`Signing error: ${e.message || e}`, { error: true })
@@ -245,7 +251,7 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
   }
 
   const rejectTxn = () => {
-    resolveMany(bundle.requestIds, { message: 'rejected' })
+    resolveMany(bundle.requestIds, { message: 'user rejected' })
   }
 
   return (<div id='sendTransaction'>
