@@ -143,10 +143,8 @@ export default function AddAccount ({ relayerURL, onAddAccount }) {
         const ethereum = window.ethereum
         const web3Accs = await ethereum.request({ method: 'eth_requestAccounts' })
         if (!web3Accs.length) throw new Error('No accounts connected')
-        if (!relayerURL) return onAddAccount(await createFromEOA(web3Accs[0]), { select: true })
-        const owned = await getOwnedByEOAs(web3Accs)
-        if (!owned.length) onAddAccount(await createFromEOA(web3Accs[0]), { select: true })
-        else owned.forEach((acc, i) => onAddAccount(acc, { select: i === 0 }))
+        if (web3Accs.length === 1) return onEOASelected(web3Accs[0])
+        setChooseSigners({ addresses: web3Accs })
     }
 
     async function getOwnedByEOAs(eoas) {
@@ -172,6 +170,7 @@ export default function AddAccount ({ relayerURL, onAddAccount }) {
         // Plus, in the future this call may be used to retrieve other things
         const { salt, identityFactoryAddr, baseIdentityAddr, bytecode } = await fetch(`${relayerURL}/identity/${idAddr}`)
             .then(r => r.json())
+        if (!(salt && identityFactoryAddr && baseIdentityAddr && bytecode)) throw new Error(`Incomplete data from relayer for ${idAddr}`)
         return {
             id: idAddr,
             salt, identityFactoryAddr, baseIdentityAddr, bytecode,
