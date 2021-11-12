@@ -1,5 +1,5 @@
-const ADDED_GAS_TOKEN = 20000
-const ADDED_GAS_NATIVE = 10000
+const ADDED_GAS_TOKEN = 23000
+const ADDED_GAS_NATIVE = 13000
 
 export function isTokenEligible (token, speed, estimation) {
   const min = token.isStable ? estimation.feeInUSD[speed] : estimation.feeInNative[speed]
