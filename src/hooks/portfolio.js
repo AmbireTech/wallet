@@ -86,6 +86,7 @@ export default function usePortfolio({ currentNetwork, account }) {
 
             return true
         } catch (error) {
+            console.error(error)
             addToast(error.message, { error: true })
             return false
         }
@@ -117,6 +118,7 @@ export default function usePortfolio({ currentNetwork, account }) {
             if (failedRequests >= requestsCount) throw new Error('Failed to fetch other Protocols from Zapper API')
             return true
         } catch (error) {
+            console.error(error)
             addToast(error.message, { error: true })
             return false
         }
