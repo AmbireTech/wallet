@@ -57,8 +57,14 @@ const Collectable = ({ selectedAcc, selectedNetwork, addRequest }) => {
     }, [recipientAddress, metadata, selectedNetwork, selectedAcc, network])
 
     const fetchMetadata = useCallback(async () => {
+        setLoading(true)
+        setMetadata({})
+    
         try {
-            const { rpc, explorerUrl } = networks.find(({ id }) => id === network)
+            const networkDetails = networks.find(({ id }) => id === network)
+            if (!networkDetails) throw new Error('This network is not supported')
+
+            const { rpc, explorerUrl } = networkDetails
             const provider = getDefaultProvider(rpc)
             const contract = new ethers.Contract(collectionAddr, ERC721Abi, provider)
 
@@ -97,12 +103,12 @@ const Collectable = ({ selectedAcc, selectedNetwork, addRequest }) => {
                 },
                 explorerUrl
             }))
+
+            setLoading(false)
         } catch(e) {
             console.error(e)
             addToast(`Error: ${e.message || e}`, { error: true })
         }
-
-        setLoading(false)
     }, [addToast, tokenId, collectionAddr, network])
 
     useEffect(() => fetchMetadata(), [fetchMetadata])
