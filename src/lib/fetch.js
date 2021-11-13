@@ -35,5 +35,5 @@ export async function fetchCaught (url, params) {
       console.error(e)
       return { errMsg: `Unexpected error: ${resp.status}, ${e && e.message}`, resp }
     }
-    return { body, resp, errMsg: '' }
+    return { body, resp, errMsg: `status code ${resp.status}` }
 }
