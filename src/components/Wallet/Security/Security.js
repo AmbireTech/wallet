@@ -9,11 +9,12 @@ const IDENTITY_INTERFACE = new Interface(
   require('adex-protocol-eth/abi/Identity5.2')
 )
 
-const Security = ({ selectedAcc, selectedNetwork, accounts, addRequest }) => {
-  const { privileges, updatedBlock, isLoading } = usePrivileges({
+const Security = ({ relayerURL, selectedAcc, selectedNetwork, accounts, addRequest }) => {
+  const { privileges, isLoading } = usePrivileges({
     identity: selectedAcc,
     network: selectedNetwork.id,
-    accounts: accounts,
+    accounts,
+    relayerURL
   })
 
   const craftTransaction = (address, privLevel) => {
@@ -29,7 +30,7 @@ const Security = ({ selectedAcc, selectedNetwork, accounts, addRequest }) => {
 
   const addTransactionToAddRequest = txn => {
     addRequest({
-      id: 'setPriv',
+      id: `setPriv_${txn.data}`,
       txn: txn,
       chainId: selectedNetwork.chainId,
       account: selectedAcc,
@@ -52,7 +53,6 @@ const Security = ({ selectedAcc, selectedNetwork, accounts, addRequest }) => {
   const selectedAccount = accounts.find(x => x.id === selectedAcc)
 
   const privList = Object.keys(privileges).map(key => {
-    console.log('Selected Account', selectedAccount)
     const isQuickAcc = selectedAccount.signer.hasOwnProperty('quickAccManager')
     const privText = isQuickAcc
       ? `Email/passphrase signer ${selectedAccount.email}`
