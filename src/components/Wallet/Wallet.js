@@ -6,6 +6,7 @@ import TopBar from "./TopBar/TopBar"
 import SideBar from "./SideBar/SideBar"
 import Deposit from "./Deposit/Deposit"
 import Transfer from "./Transfer/Transfer"
+import Security from "./Security/Security"
 import PluginGnosisSafeApps from "../Plugins/GnosisSafeApps/GnosisSafeApps"
 import Collectable from "./Collectable/Collectable"
 
@@ -24,7 +25,8 @@ export default function Wallet(props) {
       component: <Transfer portfolio={props.portfolio} selectedAcc={props.selectedAcc} selectedNetwork={{...props.network}} accounts={props.accounts} addRequest={props.addRequest}/>
     },
     {
-      path: '/security'
+      path: '/security',
+      component: <Security relayerURL={props.relayerURL} selectedAcc={props.selectedAcc} selectedNetwork={props.network} accounts={props.accounts} addRequest={props.addRequest}/>
     },
     {
       path: '/swap'
