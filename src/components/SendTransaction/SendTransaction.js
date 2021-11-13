@@ -228,12 +228,13 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
       // Inform everything that's waiting for the results (eg WalletConnect)
       resolveMany(requestIds, { success: bundleResult.success, result: bundleResult.txId, message: bundleResult.message })
 
-      if (bundleResult.success) addToast((
-        <span>Transaction signed and sent successfully!
-          &nbsp;Click to view on block explorer.
-        </span>), { url: blockExplorerUrl+'/tx/'+bundleResult.txId })
-      else addToast(`Transaction error: ${bundleResult.message || 'unspecified error'}`, { error: true })
-      onDismiss()
+      if (bundleResult.success) {
+        addToast((
+          <span>Transaction signed and sent successfully!
+            &nbsp;Click to view on block explorer.
+          </span>), { url: blockExplorerUrl+'/tx/'+bundleResult.txId })
+        onDismiss()
+      } else addToast(`Transaction error: ${bundleResult.message || 'unspecified error'}`, { error: true })
     })
     .catch(e => {
       setSigningStatus(null)
