@@ -1,27 +1,34 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useCallback, useState } from 'react'
 import { fetchCaught } from '../lib/fetch'
+import { useToasts } from './toasts'
 
-export default function usePrivileges({ identity, network, accounts, relayerURL }) {
+export default function usePrivileges({ identity, network, relayerURL }) {
   const [isLoading, setLoading] = useState(true)
   const [privileges, setPrivileges] = useState({})
+  const { addToast } = useToasts()
 
-  const updatePrivileges = async (relayerURL, identity, network) => {
-    setLoading(true)
+  const updatePrivileges = useCallback(async () => {
     const requestPrivResp = await fetchCaught(`${relayerURL}/identity/${identity}/${network}/privileges`)
 
     if (requestPrivResp.resp.status === 200) {  
-      setPrivileges(requestPrivResp.body.privileges)
+      return requestPrivResp.body.privileges
     } else {
       console.log('getPrivileges error', requestPrivResp)
-      // setErr(requestPrivResp.body.message ? `Relayer error: ${requestPrivResp.body.message}` : `Unknown no-message error: ${resp.status}`)
+      throw new Error(requestPrivResp.errMsg || `status code ${requestPrivResp.resp.status}`)
     }
-    setLoading(false)
-  }
+  }, [relayerURL, identity, network])
 
   useEffect(() => {
-    if (!relayerURL) return
-    updatePrivileges(relayerURL, identity, network)
-  }, [relayerURL, identity, network, accounts])
+    let unloaded = false
+    setLoading(true)
+    updatePrivileges()
+      .then(privileges => !unloaded && setPrivileges(privileges))
+      .catch(e => {
+        addToast(`Error getting authorized signers: ${e.message || e}`, { error: true })
+      })
+      .then(() => !unloaded && setLoading(false))
+    return () => unloaded = true
+  }, [updatePrivileges, addToast])
 
   return { privileges, isLoading }
 }
