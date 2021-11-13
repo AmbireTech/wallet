@@ -37,8 +37,7 @@ const Security = ({ relayerURL, selectedAcc, selectedNetwork, accounts, addReque
   }
 
   const onMakeDefaultBtnClicked = key => {
-    const txn = craftTransaction(key, privilegesOptions.true)
-    addTransactionToAddRequest(txn)
+    // @TODO
   }
 
   const onRemoveBtnClicked = key => {
@@ -84,7 +83,6 @@ const Security = ({ relayerURL, selectedAcc, selectedNetwork, accounts, addReque
         <div className="title">Authorized signers</div>
         {errMsg && (<h3 className='error'>{errMsg}</h3>)}
         {isLoading && <Loading />}
-        {/* Set a msg if no privileges */}
         <ul className="content">{!isLoading && privList}</ul>
       </div>
     </section>
