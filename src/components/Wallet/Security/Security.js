@@ -10,7 +10,7 @@ const IDENTITY_INTERFACE = new Interface(
 )
 
 const Security = ({ relayerURL, selectedAcc, selectedNetwork, accounts, addRequest }) => {
-  const { privileges, isLoading } = usePrivileges({
+  const { privileges, errMsg, isLoading } = usePrivileges({
     identity: selectedAcc,
     network: selectedNetwork.id,
     relayerURL
@@ -39,14 +39,11 @@ const Security = ({ relayerURL, selectedAcc, selectedNetwork, accounts, addReque
   const onMakeDefaultBtnClicked = key => {
     const txn = craftTransaction(key, privilegesOptions.true)
     addTransactionToAddRequest(txn)
-
-    console.log('Make default', txn)
   }
 
   const onRemoveBtnClicked = key => {
     const txn = craftTransaction(key, privilegesOptions.false)
     addTransactionToAddRequest(txn)
-    console.log('Remove clicked', txn)
   }
 
   const selectedAccount = accounts.find(x => x.id === selectedAcc)
@@ -59,20 +56,20 @@ const Security = ({ relayerURL, selectedAcc, selectedNetwork, accounts, addReque
     const signerAddress = isQuickAcc
       ? selectedAccount.signer.quickAccManager
       : selectedAccount.signer.address
-    const disabled = signerAddress === key
+    const isSelected = signerAddress === key
 
     return (
       <li key={key}>
         <TextInput className="depositAddress" value={privText} disabled />
         <div className="btns-wrapper">
-          <Button onClick={() => onMakeDefaultBtnClicked(key)} small>
+          {!isSelected && (<Button onClick={() => onMakeDefaultBtnClicked(key)} small>
             Make default
-          </Button>
+          </Button>)}
           <Button
             onClick={() => onRemoveBtnClicked(key)}
             small
             red
-            disabled={disabled}
+            disabled={isSelected}
           >
             Remove
           </Button>
@@ -85,6 +82,7 @@ const Security = ({ relayerURL, selectedAcc, selectedNetwork, accounts, addReque
     <section id="security">
       <div className="panel">
         <div className="title">Authorized signers</div>
+        {errMsg && (<h3 className='error'>{errMsg}</h3>)}
         {isLoading && <Loading />}
         {/* Set a msg if no privileges */}
         <ul className="content">{!isLoading && privList}</ul>
