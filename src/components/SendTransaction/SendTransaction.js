@@ -188,6 +188,7 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
       }
     )
     if (!success) {
+      if (!message) throw new Error(`Secondary key: no success but no error message`)
       if (message.includes('invalid confirmation code')) {
         addToast('Unable to sign: wrong confirmation code', { error: true })
         return
@@ -195,7 +196,7 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
       throw new Error(`Secondary key error: ${message}`)
     }
     if (confCodeRequired) {
-      setSigningStatus({ quickAcc: true, finalBundle })
+      setSigningStatus({ quickAcc: true, finalBundle, confCodeRequired })
     } else {
       if (!signature) throw new Error(`QuickAcc internal error: there should be a signature`)
       if (!account.primaryKeyBackup) throw new Error(`No key backup found: perhaps you need to import the account via JSON?`)
@@ -365,7 +366,10 @@ function Actions({ estimation, feeSpeed, approveTxn, rejectTxn, signingStatus })
 
   if (signingStatus && signingStatus.quickAcc) {
     return (<>
-      <div><b>A confirmation code was sent to your email, please enter it along with your passphrase.</b></div>
+      <div>
+        {signingStatus.confCodeRequired === 'otp' ? (<b>Please enter your OTP code and your passphrase.</b>) : (<></>)}
+        {signingStatus.confCodeRequired === 'email' ? (<b>A confirmation code was sent to your email, please enter it along with your passphrase.</b>) : (<></>)}
+      </div>
       <input type='password' required minLength={8} placeholder='Passphrase' value={quickAccCredentials.passphrase} onChange={e => setQuickAccCredentials({ ...quickAccCredentials, passphrase: e.target.value })}></input>
       <form ref={form} className='quickAccSigningForm' onSubmit={e => { e.preventDefault() }}>
         {/* Changing the autoComplete prop to a random string seems to disable it more often */}
