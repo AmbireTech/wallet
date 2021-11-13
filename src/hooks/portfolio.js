@@ -8,6 +8,17 @@ import { useToasts } from '../hooks/toasts'
 
 const getBalances = (apiKey, network, protocol, address) => fetchGet(`${ZAPPER_API_ENDPOINT}/protocols/${protocol}/balances?addresses[]=${address}&network=${network}&api_key=${apiKey}&newBalances=true`)
 
+let hidden, visibilityChange;
+if (typeof document.hidden !== 'undefined') {
+    hidden = 'hidden';
+    visibilityChange = 'visibilitychange';
+} else if (typeof document.msHidden !== 'undefined') {
+    hidden = 'msHidden';
+    visibilityChange = 'msvisibilitychange';
+} else if (typeof document.webkitHidden !== 'undefined') {
+    hidden = 'webkitHidden';
+    visibilityChange = 'webkitvisibilitychange';
+}
 let lastOtherProcolsRefresh = null
 
 export default function usePortfolio({ currentNetwork, account }) {
@@ -95,7 +106,7 @@ export default function usePortfolio({ currentNetwork, account }) {
 
     const refreshBalanceIfFocused = useCallback(() => {
         if (!account) return
-        if (document.hasFocus() && !isBalanceLoading) fetchTokens(account)
+        if (!document[hidden] && !isBalanceLoading) fetchTokens(account)
     }, [isBalanceLoading, account, fetchTokens])
 
     const requestOtherProtocolsRefresh = async () => {
@@ -163,8 +174,8 @@ export default function usePortfolio({ currentNetwork, account }) {
 
     // Refresh balance when window is focused
     useEffect(() => {
-        window.addEventListener('focus', refreshBalanceIfFocused)
-        return () => window.removeEventListener('focus', refreshBalanceIfFocused)
+        document.addEventListener(visibilityChange, refreshBalanceIfFocused, false);
+        return () => document.removeEventListener(visibilityChange, refreshBalanceIfFocused, false);
     }, [refreshBalanceIfFocused])
 
     return {
