@@ -3,7 +3,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { ZAPPER_API_KEY } from '../config';
 import { fetchGet } from '../lib/fetch';
 import { ZAPPER_API_ENDPOINT } from '../config'
-import suportedProtocols from '../consts/supportedProtocols';
+import supportedProtocols from '../consts/supportedProtocols';
 import { useToasts } from '../hooks/toasts'
 
 const getBalances = (apiKey, network, protocol, address) => fetchGet(`${ZAPPER_API_ENDPOINT}/protocols/${protocol}/balances?addresses[]=${address}&network=${network}&api_key=${apiKey}&newBalances=true`)
@@ -42,12 +42,14 @@ export default function usePortfolio({ currentNetwork, account }) {
     const [protocols, setProtocols] = useState([]);
     const [collectables, setCollectables] = useState([]);
 
-    const fetchTokens = useCallback(async (account) => {
+    const fetchTokens = useCallback(async (account, currentNetwork = false) => {
         try {
-            let failedRequests = 0
-            const requestsCount = suportedProtocols.length
+            const networks = currentNetwork ? [currentNetwork] : supportedProtocols.map(({ network }) => network)
 
-            setTokensByNetworks((await Promise.all(suportedProtocols.map(async ({ network }) => {
+            let failedRequests = 0
+            const requestsCount = networks.length
+
+            const updatedTokens = (await Promise.all(networks.map(async network => {
                 try {
                     const balance = await getBalances(ZAPPER_API_KEY, network, 'tokens', account)
                     if (!balance) return null
@@ -61,7 +63,13 @@ export default function usePortfolio({ currentNetwork, account }) {
                 } catch(_) {
                     failedRequests++
                 }
-            }))).filter(data => data))
+            }))).filter(data => data)
+            const updatedNetworks = updatedTokens.map(({ network }) => network)
+
+            setTokensByNetworks(tokensByNetworks => ([
+                ...tokensByNetworks.filter(({ network }) => !updatedNetworks.includes(network)),
+                ...updatedTokens
+            ]))
 
             if (failedRequests >= requestsCount) throw new Error('Failed to fetch Tokens from Zapper API')
             return true
@@ -72,12 +80,14 @@ export default function usePortfolio({ currentNetwork, account }) {
         }
     }, [addToast])
 
-    const fetchOtherProtocols = useCallback(async (account) => {
+    const fetchOtherProtocols = useCallback(async (account, currentNetwork = false) => {
         try {
-            let failedRequests = 0
-            const requestsCount = suportedProtocols.reduce((acc, curr) => curr.protocols.length + acc, 0)
+            const protocols = currentNetwork ? [supportedProtocols.find(({ network }) => network === currentNetwork)] : supportedProtocols
 
-            setOtherProtocolsByNetworks((await Promise.all(suportedProtocols.map(async ({ network, protocols }) => {
+            let failedRequests = 0
+            const requestsCount = protocols.reduce((acc, curr) => curr.protocols.length + acc, 0)
+
+            const updatedProtocols = (await Promise.all(protocols.map(async ({ network, protocols }) => {
                 const all = (await Promise.all(protocols.map(async protocol => {
                     try {
                         const balance = await getBalances(ZAPPER_API_KEY, network, protocol, account)
@@ -91,7 +101,13 @@ export default function usePortfolio({ currentNetwork, account }) {
                     network,
                     protocols: all.map(({ products }) => products).flat(2)
                 } : null
-            }))).filter(data => data))
+            }))).filter(data => data)
+            const updatedNetworks = updatedProtocols.map(({ network }) => network)
+
+            setOtherProtocolsByNetworks(protocolsByNetworks => ([
+                ...protocolsByNetworks.filter(({ network }) => !updatedNetworks.includes(network)),
+                ...updatedProtocols
+            ]))
             
             lastOtherProcolsRefresh = Date.now()
 
@@ -106,12 +122,12 @@ export default function usePortfolio({ currentNetwork, account }) {
 
     const refreshBalanceIfFocused = useCallback(() => {
         if (!account) return
-        if (!document[hidden] && !isBalanceLoading) fetchTokens(account)
-    }, [isBalanceLoading, account, fetchTokens])
+        if (!document[hidden] && !isBalanceLoading) fetchTokens(account, currentNetwork)
+    }, [isBalanceLoading, account, fetchTokens, currentNetwork])
 
     const requestOtherProtocolsRefresh = async () => {
         if (!account) return
-        if ((Date.now() - lastOtherProcolsRefresh) > 30000 && !areProtocolsLoading) await fetchOtherProtocols(account)
+        if ((Date.now() - lastOtherProcolsRefresh) > 30000 && !areProtocolsLoading) await fetchOtherProtocols(account, currentNetwork)
     }
 
     // Fetch balances and protocols on account change
