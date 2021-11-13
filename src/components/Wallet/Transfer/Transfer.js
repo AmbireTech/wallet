@@ -94,7 +94,7 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, accounts, 
 
     useEffect(() => {
         const isAddressValid = /^0x[a-fA-F0-9]{40}$/.test(address)
-        setDisabled(!isAddressValid || !(amount > 0))
+        setDisabled(!isAddressValid || !(amount > 0) || address === selectedAcc)
     }, [address, amount])
 
     return (
