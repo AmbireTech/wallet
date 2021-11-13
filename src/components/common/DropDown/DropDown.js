@@ -1,7 +1,7 @@
 import './DropDown.scss'
 
 import { useRef, useState } from 'react';
-import { BsChevronUp, BsChevronDown } from 'react-icons/bs'
+import { BsChevronDown } from 'react-icons/bs'
 import { CSSTransition } from 'react-transition-group';
 import useOnClickOutside from '../../../helpers/onClickOutside';
 
