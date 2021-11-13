@@ -3,6 +3,7 @@ import './Security.scss'
 import { usePrivileges } from '../../../hooks'
 import { Loading, TextInput, Button } from '../../common'
 import { Interface } from 'ethers/lib/utils'
+import accountPresets from '../../../consts/accountPresets'
 import privilegesOptions from '../../../consts/privilegesOptions'
 
 const IDENTITY_INTERFACE = new Interface(
@@ -47,27 +48,29 @@ const Security = ({ relayerURL, selectedAcc, selectedNetwork, accounts, addReque
 
   const selectedAccount = accounts.find(x => x.id === selectedAcc)
 
-  const privList = Object.keys(privileges).map(key => {
-    const isQuickAcc = selectedAccount.signer.hasOwnProperty('quickAccManager')
+  const privList = Object.entries(privileges).map(([addr, privValue]) => {
+    if (!privValue) return null
+    const isQuickAcc = addr === accountPresets.quickAccManager
     const privText = isQuickAcc
       ? `Email/passphrase signer ${selectedAccount.email}`
-      : key
+      : addr
     const signerAddress = isQuickAcc
       ? selectedAccount.signer.quickAccManager
       : selectedAccount.signer.address
-    const isSelected = signerAddress === key
+    const isSelected = signerAddress === addr
 
     return (
-      <li key={key}>
+      <li key={addr}>
         <TextInput className="depositAddress" value={privText} disabled />
         <div className="btns-wrapper">
-          {!isSelected && (<Button onClick={() => onMakeDefaultBtnClicked(key)} small>
+          {!isSelected && (<Button onClick={() => onMakeDefaultBtnClicked(addr)} small>
             Make default
           </Button>)}
           <Button
-            onClick={() => onRemoveBtnClicked(key)}
+            onClick={() => onRemoveBtnClicked(addr)}
             small
             red
+            title={isSelected ? 'Cannot remove the currently used signer' : ''}
             disabled={isSelected}
           >
             Remove
@@ -75,7 +78,7 @@ const Security = ({ relayerURL, selectedAcc, selectedNetwork, accounts, addReque
         </div>
       </li>
     )
-  })
+  }).filter(x => x)
 
   return (
     <section id="security">
