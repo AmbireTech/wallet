@@ -120,7 +120,7 @@ export default function usePortfolio({ currentNetwork, account }) {
         }
     }, [addToast])
 
-    const refreshBalanceIfFocused = useCallback(() => {
+    const refreshTokensIfVisible = useCallback(() => {
         if (!account) return
         if (!document[hidden] && !isBalanceLoading) fetchTokens(account, currentNetwork)
     }, [isBalanceLoading, account, fetchTokens, currentNetwork])
@@ -182,17 +182,22 @@ export default function usePortfolio({ currentNetwork, account }) {
         }
     }, [currentNetwork, tokensByNetworks, otherProtocolsByNetworks])
 
+    // Refresh tokens on network change
+    useEffect(() => {
+        refreshTokensIfVisible()
+    }, [currentNetwork, refreshTokensIfVisible])
+
     // Refresh balance periodically
     useEffect(() => {
-        const refreshInterval = setInterval(refreshBalanceIfFocused, 20000)
+        const refreshInterval = setInterval(refreshTokensIfVisible, 20000)
         return () => clearInterval(refreshInterval)
-    }, [refreshBalanceIfFocused])
+    }, [refreshTokensIfVisible])
 
     // Refresh balance when window is focused
     useEffect(() => {
-        document.addEventListener(visibilityChange, refreshBalanceIfFocused, false);
-        return () => document.removeEventListener(visibilityChange, refreshBalanceIfFocused, false);
-    }, [refreshBalanceIfFocused])
+        document.addEventListener(visibilityChange, refreshTokensIfVisible, false);
+        return () => document.removeEventListener(visibilityChange, refreshTokensIfVisible, false);
+    }, [refreshTokensIfVisible])
 
     return {
         isBalanceLoading,
