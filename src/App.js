@@ -35,11 +35,6 @@ function AppInner () {
     verbose: 1
 	}, [selectedAcc, network])
 
-  const resolveMany = (ids, resolution) => {
-    wcResolveMany(ids, resolution);
-    gnosisResolveMany(ids, resolution);
-  }
-
   const portfolio = usePortfolio({
     currentNetwork: network.id,
     account: selectedAcc
@@ -52,6 +47,11 @@ function AppInner () {
 
   // Merge all requests
   const requests = useMemo(() => [...internalRequests, ...wcRequests, ...gnosisRequests], [wcRequests, internalRequests, gnosisRequests])
+  const resolveMany = (ids, resolution) => {
+    wcResolveMany(ids, resolution)
+    gnosisResolveMany(ids, resolution)
+    setInternalRequests(reqs => reqs.filter(x => !ids.includes(x.id)))
+  }
 
   // Show notifications for all requests
   useNotifications(requests)
