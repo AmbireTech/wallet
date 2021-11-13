@@ -20,6 +20,11 @@ module.exports = {
             name: 'UniswapV3 Router',
             address: '0xe592427a0aece92de3edee1f18e0157c05861564',
             interface: generic_resources.uniswapV3Router.interface
+        },
+        {
+            name: 'WETH',
+            address: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',
+            interface: require('./specific/weth').interface
         }
     ]
 }
