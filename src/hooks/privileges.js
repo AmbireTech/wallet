@@ -1,11 +1,10 @@
 import { useEffect, useCallback, useState } from 'react'
 import { fetchCaught } from '../lib/fetch'
-import { useToasts } from './toasts'
 
 export default function usePrivileges({ identity, network, relayerURL }) {
   const [isLoading, setLoading] = useState(true)
   const [privileges, setPrivileges] = useState({})
-  const { addToast } = useToasts()
+  const [err, setErr] = useState(null)
 
   const updatePrivileges = useCallback(async () => {
     const requestPrivResp = await fetchCaught(`${relayerURL}/identity/${identity}/${network}/privileges`)
@@ -21,14 +20,13 @@ export default function usePrivileges({ identity, network, relayerURL }) {
   useEffect(() => {
     let unloaded = false
     setLoading(true)
+    setErr(null)
     updatePrivileges()
       .then(privileges => !unloaded && setPrivileges(privileges))
-      .catch(e => {
-        addToast(`Error getting authorized signers: ${e.message || e}`, { error: true })
-      })
+      .catch(e => !unloaded && setErr(`Error getting authorized signers: ${e.message || e}`))
       .then(() => !unloaded && setLoading(false))
     return () => unloaded = true
-  }, [updatePrivileges, addToast])
+  }, [updatePrivileges])
 
-  return { privileges, isLoading }
+  return { privileges, isLoading, errMsg: err }
 }
