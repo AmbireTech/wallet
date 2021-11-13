@@ -1,21 +1,21 @@
 //import { GrInspect } from 'react-icons/gr'
 // GiObservatory is also interesting
 import { GiTakeMyMoney, GiSpectacles } from 'react-icons/gi'
-import { FaSignature, FaTimes, FaChevronLeft, FaChevronDown, FaChevronUp } from 'react-icons/fa'
+import { FaSignature, FaChevronLeft } from 'react-icons/fa'
 import { MdOutlineAccountCircle } from 'react-icons/md'
-import { getContractName, getTransactionSummary } from '../../lib/humanReadableTransactions'
 import './SendTransaction.css'
-import { Loading } from '../common'
-import { useEffect, useRef, useState, useMemo } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 import fetch from 'node-fetch'
 import { Bundle } from 'adex-protocol-eth/js'
 import { getDefaultProvider, Wallet } from 'ethers'
-import { Interface, formatUnits } from 'ethers/lib/utils'
+import { Interface } from 'ethers/lib/utils'
 import * as blockies from 'blockies-ts';
 import { useToasts } from '../../hooks/toasts'
 import { getWallet } from '../../lib/getWallet'
 import accountPresets from '../../consts/accountPresets'
 import { FeeSelector, FailingTxn } from './FeeSelector'
+import Actions from './Actions'
+import TxnPreview from '../common/TxnPreview/TxnPreview'
 import { sendNoRelayer } from './noRelayer'
 import { isTokenEligible, getFeePaymentConsequences } from './helpers'
 import { fetchPost } from '../../lib/fetch'
@@ -343,87 +343,4 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
         </div>
       </div>
   </div>)
-}
-
-function Actions({ estimation, feeSpeed, approveTxn, rejectTxn, signingStatus }) {
-  const [quickAccCredentials, setQuickAccCredentials] = useState({ code: '', passphrase: '' })
-  const form = useRef(null)
-
-  const rejectButton = (
-    <button type='button' className='rejectTxn' onClick={rejectTxn}>Reject</button>
-  )
-  const insufficientFee = estimation && estimation.feeInUSD
-    && !isTokenEligible(estimation.selectedFeeToken, feeSpeed, estimation)
-  const willFail = (estimation && !estimation.success) || insufficientFee
-  if (willFail) {
-    return (<div className='buttons'>
-      {rejectButton}
-    </div>)
-  }
-
-  const signButtonLabel = signingStatus && signingStatus.inProgress ?
-    (<><Loading/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Signing...</>)
-    : (<>Sign and send</>)
-
-  if (signingStatus && signingStatus.quickAcc) {
-    return (<>
-      <div>
-        {signingStatus.confCodeRequired === 'otp' ? (<b>Please enter your OTP code and your passphrase.</b>) : (<></>)}
-        {signingStatus.confCodeRequired === 'email' ? (<b>A confirmation code was sent to your email, please enter it along with your passphrase.</b>) : (<></>)}
-      </div>
-      <input type='password' required minLength={8} placeholder='Passphrase' value={quickAccCredentials.passphrase} onChange={e => setQuickAccCredentials({ ...quickAccCredentials, passphrase: e.target.value })}></input>
-      <form ref={form} className='quickAccSigningForm' onSubmit={e => { e.preventDefault() }}>
-        {/* Changing the autoComplete prop to a random string seems to disable it more often */}
-        <input
-          type='text' pattern='[0-9]+'
-          title='Confirmation code should be 6 digits'
-          autoComplete='nope'
-          required minLength={6} maxLength={6}
-          placeholder='Confirmation code'
-          value={quickAccCredentials.code}
-          onChange={e => setQuickAccCredentials({ ...quickAccCredentials, code: e.target.value })}
-        ></input>
-        {rejectButton}
-        <button className='approveTxn'
-          onClick={() => {
-            if (!form.current.checkValidity()) return
-            approveTxn({ quickAccCredentials })
-          }}
-        >
-          {signButtonLabel}
-        </button>
-      </form>
-    </>)
-  }
-
-  return (<div className='buttons'>
-      {rejectButton}
-      <button className='approveTxn' disabled={!estimation || signingStatus} onClick={approveTxn}>
-        {signButtonLabel}
-      </button>
-  </div>)
-}
-
-function TxnPreview ({ txn, onDismiss, bundle, network, isFirstFailing }) {
-  const [isExpanded, setExpanded] = useState(false)
-  const contractName = getContractName(txn, network.id)
-  return (
-    <div className={isFirstFailing ? 'txnSummary firstFailing' : 'txnSummary'}>
-        <div>{getTransactionSummary(txn, bundle.network, bundle.identity)}</div>
-        {isFirstFailing ? (<div className='firstFailingLabel'>This is the first failing transaction.</div>) : (<></>)}
-
-        {
-          isExpanded ? (<div className='advanced'>
-            <div><b>Interacting with (<i>to</i>):</b> {txn[0]}{contractName ? ` (${contractName})` : ''}</div>
-            <div><b>{network.nativeAssetSymbol} to be sent (<i>value</i>):</b> {formatUnits(txn[1], 18)}</div>
-            <div><b>Data:</b> {txn[2]}</div>
-          </div>) : (<></>)
-        }
-
-        <span className='expandTxn' onClick={() => setExpanded(e => !e)}>
-          {isExpanded ? (<FaChevronUp/>) : (<FaChevronDown/>)}
-        </span>
-        {onDismiss ? (<span className='dismissTxn' onClick={onDismiss}><FaTimes/></span>) : (<></>)}
-    </div>
-  )
 }
