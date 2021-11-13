@@ -15,10 +15,10 @@ export default function Dashboard({ portfolio, setNetwork }) {
 
     const chartSegments = [
         {
-            value: 'By Token'
+            value: 'Tokens'
         },
         {
-            value: 'By Protocol'
+            value: 'Protocols'
         }
     ]
 
