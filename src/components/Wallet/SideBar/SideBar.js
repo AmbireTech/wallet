@@ -6,10 +6,32 @@ import { GiReceiveMoney } from 'react-icons/gi'
 import { BsPiggyBank } from 'react-icons/bs'
 import { BiTransfer } from 'react-icons/bi'
 import { Loading } from "../../common"
+import { useCallback, useEffect, useRef, useState } from "react"
 
 const SideBar = ({match, portfolio}) => {
+    const sidebarRef = useRef()
+    const [balanceFontSize, setBalanceFontSize] = useState(0)
+
+    const resizeBalance = useCallback(() => {
+        const balanceFontSizes = {
+            3: '2em',
+            5: '1.5em',
+            7: '1.3em',
+            9: '1.2em',
+            11: '1em',
+        }
+
+        if (portfolio.balance.total.truncated) {
+            const charLength = portfolio.balance.total.truncated.length
+            const closest = Object.keys(balanceFontSizes).reduce((prev, current) => Math.abs(current - charLength) < Math.abs(prev - charLength) ? current : prev)
+            setBalanceFontSize(balanceFontSizes[closest])
+        }
+    }, [portfolio.balance.total])
+
+    useEffect(() => resizeBalance(), [resizeBalance])
+
     return (
-        <div id="sidebar">
+        <div id="sidebar" ref={sidebarRef}>
                 <NavLink to={match.url + "/dashboard"}>
                     <div id="logo" />
                     <div id="icon" />
@@ -21,7 +43,7 @@ const SideBar = ({match, portfolio}) => {
                         portfolio.isBalanceLoading ?
                             <Loading/>
                             :
-                            <div className="balanceDollarAmount">
+                            <div className="balanceDollarAmount" style={{fontSize: balanceFontSize}}>
                                 <span className="dollarSign highlight">$</span>{ portfolio.balance.total.truncated }<span className="highlight">.{ portfolio.balance.total.decimals }</span>
                             </div>
                     }
