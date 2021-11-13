@@ -4,20 +4,20 @@ module.exports = {
         methods:[
             {
                 name: "swapExactETHForTokens",
-                summary: ({network, txData, inputs, contract}) => {
-                    return `Swap ${contract.humanAmount(network, 'native', txData.value)} ${(contract.getTokenSymbol(network, 'native'))} for at least ${contract.humanAmount(network, inputs.path[inputs.path.length-1], inputs.amountOutMin)} ${contract.getTokenSymbol(network, inputs.path[inputs.path.length-1])}`;
+                summary: ({network, txn, inputs, contract}) => {
+                    return `Swap ${contract.humanAmount(network, 'native', txn.value)} ${(contract.tokenSymbol(network, 'native'))} for at least ${contract.humanAmount(network, inputs.path[inputs.path.length-1], inputs.amountOutMin)} ${contract.tokenSymbol(network, inputs.path[inputs.path.length-1])}`;
                 }
             },
             {
                 name: "swapExactTokensForTokens",
-                summary: ({network, txData, inputs, contract}) => {
-                    return `Swap ${contract.humanAmount(network, inputs.path[0], txData.amountIn)} ${(contract.getTokenSymbol(network, inputs.path[0]))} for at least ${contract.humanAmount(network, inputs.path[inputs.path.length-1], inputs.amountOutMin)}  ${contract.getTokenSymbol(network, inputs.path[inputs.path.length-1])}`;
+                summary: ({network, txn, inputs, contract}) => {
+                    return `Swap ${contract.humanAmount(network, inputs.path[0], txn.amountIn)} ${(contract.tokenSymbol(network, inputs.path[0]))} for at least ${contract.humanAmount(network, inputs.path[inputs.path.length-1], inputs.amountOutMin)}  ${contract.tokenSymbol(network, inputs.path[inputs.path.length-1])}`;
                 }
             },
             {
                 name: "swapExactTokensForETH",
-                summary: ({network, txData, inputs, contract}) => {
-                    return `Swap ${contract.humanAmount(network, inputs.path[0], inputs.amountIn)} ${(contract.getTokenSymbol(network, inputs.path[0]))} for at least ${contract.humanAmount(network, 'native', inputs.amountOutMin)} ${contract.getTokenSymbol(network, 'native')}`;
+                summary: ({network, txn, inputs, contract}) => {
+                    return `Swap ${contract.humanAmount(network, inputs.path[0], inputs.amountIn)} ${(contract.tokenSymbol(network, inputs.path[0]))} for at least ${contract.humanAmount(network, 'native', inputs.amountOutMin)} ${contract.tokenSymbol(network, 'native')}`;
                 }
             },
         ],

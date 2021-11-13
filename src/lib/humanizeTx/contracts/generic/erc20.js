@@ -4,14 +4,14 @@ module.exports = {
         methods:[
             {
                 name: "approve",
-                summary: ({network, txData, inputs, contract}) => {
-                    return `Approve ${contract.getContractName(network, inputs._spender)} to spend ${contract.humanAmount(network, txData.to, inputs._value)} ${contract.getTokenSymbol(network, txData.to)}`;
+                summary: ({network, txn, inputs, contract}) => {
+                    return `Approve ${contract.alias(network, txn.from, inputs._spender)} to spend ${contract.humanAmount(network, txn.to, inputs._value)} ${contract.tokenSymbol(network, txn.to)}`;
                 }
             },
             {
                 name: "transfer",
-                summary: ({network, txData, inputs, contract}) => {
-                    return `Transfer ${contract.humanAmount(network, txData.to, inputs._value)} ${contract.getTokenSymbol(network, txData.to)} to ${contract.getContractName(network, inputs._to)}`;
+                summary: ({network, txn, inputs, contract}) => {
+                    return `Transfer ${contract.humanAmount(network, txn.to, inputs._value)} ${contract.tokenSymbol(network, txn.to)} to ${contract.alias(network, txn.from, inputs._to)}`;
                 }
             }
         ],
