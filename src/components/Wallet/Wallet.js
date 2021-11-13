@@ -26,7 +26,7 @@ export default function Wallet(props) {
     },
     {
       path: '/security',
-      component: <Security selectedAcc={props.selectedAcc} selectedNetwork={props.network} accounts={props.accounts} addRequest={props.addRequest}/>
+      component: <Security relayerURL={props.relayerURL} selectedAcc={props.selectedAcc} selectedNetwork={props.network} accounts={props.accounts} addRequest={props.addRequest}/>
     },
     {
       path: '/swap'
