@@ -88,7 +88,9 @@ const TopBar = ({
                   alt={session.peerMeta.name}
                 ></img>
               </div>
-              <div className="name">{session.peerMeta.name}</div>
+              <a href={session.peerMeta.url} target="_blank" rel="noreferrer">
+                <div className="name">{session.peerMeta.name}</div>
+              </a>
               <div className="separator"></div>
               <button onClick={() => disconnect(uri)}>Disconnect</button>
             </div>

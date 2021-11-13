@@ -63,11 +63,12 @@ body {
 a {
   text-decoration: none;
   color: #ccc;
-}
-a:hover {
-  color: white;
-}
+  transition: color 0.1s ease-in-out;
 
+  &:hover {
+    color: white;
+  }
+}
 button, input {
   font-size: 1em;
   border: 0px;
