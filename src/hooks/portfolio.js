@@ -8,15 +8,16 @@ import { useToasts } from '../hooks/toasts'
 
 const getBalances = (apiKey, network, protocol, address) => fetchGet(`${ZAPPER_API_ENDPOINT}/protocols/${protocol}/balances?addresses[]=${address}&network=${network}&api_key=${apiKey}&newBalances=true`)
 
-let tokensByNetworks = []
-let otherProtocolsByNetworks = []
 let lastOtherProcolsRefresh = null
 
 export default function usePortfolio({ currentNetwork, account }) {
     const { addToast } = useToasts()
-    const [balanceByNetworks, setBalanceByNetworks] = useState([]);
     const [isBalanceLoading, setBalanceLoading] = useState(true);
-    const [areAssetsLoading, setAssetsLoading] = useState(true);
+    const [areProtocolsLoading, setProtocolsLoading] = useState(true);
+
+    const [tokensByNetworks, setTokensByNetworks] = useState([])
+    const [otherProtocolsByNetworks, setOtherProtocolsByNetworks] = useState([])
+
     const [balance, setBalance] = useState({
         total: {
             full: 0,
@@ -26,33 +27,16 @@ export default function usePortfolio({ currentNetwork, account }) {
         tokens: []
     });
     const [otherBalances, setOtherBalances] = useState([]);
-    const [assets, setAssets] = useState([]);
+    const [tokens, setTokens] = useState([]);
+    const [protocols, setProtocols] = useState([]);
     const [collectables, setCollectables] = useState([]);
 
-    const updateStates = useCallback((currentNetwork) => {
-        const balance = balanceByNetworks.find(({ network }) => network === currentNetwork)
-        if (balance) {
-            setBalance(balance)
-            setOtherBalances(balanceByNetworks.filter(({ network }) => network !== currentNetwork))
-        }
-
-        const tokens = tokensByNetworks.find(({ network }) => network === currentNetwork)
-        const otherProtocols = otherProtocolsByNetworks.find(({ network }) => network === currentNetwork)
-        if (tokens && otherProtocols) {
-            setAssets([
-                ...tokens.products,
-                ...otherProtocols.protocols.filter(({ label }) => label !== 'NFTs')
-            ])
-            setCollectables(otherProtocols.protocols.find(({ label }) => label === 'NFTs')?.assets || [])
-        }
-    }, [balanceByNetworks])
-
-    const fetchBalances = useCallback(async (account) => {
+    const fetchTokens = useCallback(async (account) => {
         try {
             let failedRequests = 0
             const requestsCount = suportedProtocols.length
 
-            tokensByNetworks = (await Promise.all(suportedProtocols.map(async ({ network }) => {
+            setTokensByNetworks((await Promise.all(suportedProtocols.map(async ({ network }) => {
                 try {
                     const balance = await getBalances(ZAPPER_API_KEY, network, 'tokens', account)
                     if (!balance) return null
@@ -66,24 +50,9 @@ export default function usePortfolio({ currentNetwork, account }) {
                 } catch(_) {
                     failedRequests++
                 }
-            }))).filter(data => data)
+            }))).filter(data => data))
 
             if (failedRequests >= requestsCount) throw new Error('Failed to fetch Tokens from Zapper API')
-
-            setBalanceByNetworks(tokensByNetworks.map(({ network, meta, products }) => {
-                const balanceUSD = meta.find(({ label }) => label === 'Total').value + meta.find(({ label }) => label === 'Debt').value
-                const [truncated, decimals] = Number(balanceUSD.toString()).toFixed(2).split('.')
-                return {
-                    network,
-                    total: {
-                        full: balanceUSD,
-                        truncated: Number(truncated).toLocaleString('en-US'),
-                        decimals
-                    },
-                    tokens: products.map(({ assets }) => assets.map(({ tokens }) => tokens)).flat(2)
-                }
-            }))
-
             return true
         } catch (error) {
             console.error(error)
@@ -97,7 +66,7 @@ export default function usePortfolio({ currentNetwork, account }) {
             let failedRequests = 0
             const requestsCount = suportedProtocols.reduce((acc, curr) => curr.protocols.length + acc, 0)
 
-            otherProtocolsByNetworks = (await Promise.all(suportedProtocols.map(async ({ network, protocols }) => {
+            setOtherProtocolsByNetworks((await Promise.all(suportedProtocols.map(async ({ network, protocols }) => {
                 const all = (await Promise.all(protocols.map(async protocol => {
                     try {
                         const balance = await getBalances(ZAPPER_API_KEY, network, protocol, account)
@@ -111,7 +80,7 @@ export default function usePortfolio({ currentNetwork, account }) {
                     network,
                     protocols: all.map(({ products }) => products).flat(2)
                 } : null
-            }))).filter(data => data)
+            }))).filter(data => data))
             
             lastOtherProcolsRefresh = Date.now()
 
@@ -126,37 +95,65 @@ export default function usePortfolio({ currentNetwork, account }) {
 
     const refreshBalanceIfFocused = useCallback(() => {
         if (!account) return
-        if (document.hasFocus() && !isBalanceLoading) fetchBalances(account)
-    }, [isBalanceLoading, account, fetchBalances])
+        if (document.hasFocus() && !isBalanceLoading) fetchTokens(account)
+    }, [isBalanceLoading, account, fetchTokens])
 
     const requestOtherProtocolsRefresh = async () => {
         if (!account) return
-        if ((Date.now() - lastOtherProcolsRefresh) > 30000 && !areAssetsLoading) await fetchOtherProtocols(account)
+        if ((Date.now() - lastOtherProcolsRefresh) > 30000 && !areProtocolsLoading) await fetchOtherProtocols(account)
     }
 
     // Fetch balances and protocols on account change
     useEffect(() => {
-        tokensByNetworks = []
-        otherProtocolsByNetworks = []
-
         async function loadBalance() {
             if (!account) return
             setBalanceLoading(true)
-            if (await fetchBalances(account)) setBalanceLoading(false)
+            if (await fetchTokens(account)) setBalanceLoading(false)
         }
 
         async function loadProtocols() {
             if (!account) return
-            setAssetsLoading(true)
-            if (await fetchOtherProtocols(account)) setAssetsLoading(false)
+            setProtocolsLoading(true)
+            if (await fetchOtherProtocols(account)) setProtocolsLoading(false)
         }
 
         loadBalance()
         loadProtocols()
-    }, [account, fetchBalances, fetchOtherProtocols])
+    }, [account, fetchTokens, fetchOtherProtocols])
 
-    // Update states on network change
-    useEffect(() => updateStates(currentNetwork), [updateStates, balanceByNetworks, areAssetsLoading, currentNetwork])
+    // Update states on network, tokens and ohterProtocols change
+    useEffect(() => {
+        const balanceByNetworks = tokensByNetworks.map(({ network, meta }) => {
+            const balanceUSD = meta.find(({ label }) => label === 'Total').value + meta.find(({ label }) => label === 'Debt').value
+            const [truncated, decimals] = Number(balanceUSD.toString()).toFixed(2).split('.')
+            return {
+                network,
+                total: {
+                    full: balanceUSD,
+                    truncated: Number(truncated).toLocaleString('en-US'),
+                    decimals
+                }
+            }
+        })
+
+        const balance = balanceByNetworks.find(({ network }) => network === currentNetwork)
+        if (balance) {
+            setBalance(balance)
+            setOtherBalances(balanceByNetworks.filter(({ network }) => network !== currentNetwork))
+        }
+
+        const tokens = tokensByNetworks.find(({ network }) => network === currentNetwork)
+        if (tokens) setTokens(tokens.products.map(({ assets }) => assets.map(({ tokens }) => tokens)).flat(2))
+
+        const otherProtocols = otherProtocolsByNetworks.find(({ network }) => network === currentNetwork)
+        if (tokens && otherProtocols) {
+            setProtocols([
+                ...tokens.products,
+                ...otherProtocols.protocols.filter(({ label }) => label !== 'NFTs')
+            ])
+            setCollectables(otherProtocols.protocols.find(({ label }) => label === 'NFTs')?.assets || [])
+        }
+    }, [currentNetwork, tokensByNetworks, otherProtocolsByNetworks])
 
     // Refresh balance periodically
     useEffect(() => {
@@ -172,10 +169,11 @@ export default function usePortfolio({ currentNetwork, account }) {
 
     return {
         isBalanceLoading,
-        areAssetsLoading,
+        areProtocolsLoading,
         balance,
         otherBalances,
-        assets,
+        tokens,
+        protocols,
         collectables,
         requestOtherProtocolsRefresh
         //updatePortfolio//TODO find a non dirty way to be able to reply to getSafeBalances from the dapps, after the first refresh
