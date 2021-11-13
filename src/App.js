@@ -101,6 +101,8 @@ function AppInner () {
           disconnect={disconnect}
           gnosisConnect={gnosisConnect}
           gnosisDisconnect={gnosisDisconnect}
+          // required for the security page
+          relayerURL={relayerURL}
         >
         </Wallet>
       </Route>
