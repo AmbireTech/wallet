@@ -52,7 +52,7 @@ const Security = ({ relayerURL, selectedAcc, selectedNetwork, accounts, addReque
     if (!privValue) return null
     const isQuickAcc = addr === accountPresets.quickAccManager
     const privText = isQuickAcc
-      ? `Email/passphrase signer ${selectedAccount.email}`
+      ? `Email/passphrase signer (${selectedAccount.email})`
       : addr
     const signerAddress = isQuickAcc
       ? selectedAccount.signer.quickAccManager
@@ -61,11 +61,11 @@ const Security = ({ relayerURL, selectedAcc, selectedNetwork, accounts, addReque
 
     return (
       <li key={addr}>
-        <TextInput className="depositAddress" value={privText} disabled />
-        <div className="btns-wrapper">
-          {!isSelected && (<Button onClick={() => onMakeDefaultBtnClicked(addr)} small>
-            Make default
-          </Button>)}
+        <TextInput className='depositAddress' value={privText} disabled />
+        <div className='btns-wrapper'>
+          <Button disabled={isSelected} onClick={() => onMakeDefaultBtnClicked(addr)} small>
+            {isSelected ? 'Current signer' : 'Make default'}
+          </Button>
           <Button
             onClick={() => onRemoveBtnClicked(addr)}
             small
