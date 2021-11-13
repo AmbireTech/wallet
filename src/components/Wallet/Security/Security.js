@@ -13,7 +13,6 @@ const Security = ({ relayerURL, selectedAcc, selectedNetwork, accounts, addReque
   const { privileges, isLoading } = usePrivileges({
     identity: selectedAcc,
     network: selectedNetwork.id,
-    accounts,
     relayerURL
   })
 
@@ -85,7 +84,7 @@ const Security = ({ relayerURL, selectedAcc, selectedNetwork, accounts, addReque
   return (
     <section id="security">
       <div className="panel">
-        <div className="title">Security</div>
+        <div className="title">Authorized signers</div>
         {isLoading && <Loading />}
         {/* Set a msg if no privileges */}
         <ul className="content">{!isLoading && privList}</ul>
