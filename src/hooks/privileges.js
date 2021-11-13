@@ -12,7 +12,7 @@ export default function usePrivileges({ identity, network, relayerURL }) {
     if (requestPrivResp.resp.status === 200) {  
       return requestPrivResp.body.privileges
     } else {
-      console.log('getPrivileges error', requestPrivResp)
+      console.log('GET /privileges error', requestPrivResp)
       throw new Error(requestPrivResp.errMsg || `status code ${requestPrivResp.resp.status}`)
     }
   }, [relayerURL, identity, network])
