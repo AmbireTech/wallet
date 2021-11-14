@@ -4,6 +4,7 @@ import { useRelayerData } from '../../../hooks'
 import TxnPreview from '../../common/TxnPreview/TxnPreview'
 import { Loading } from '../../common'
 import accountPresets from '../../../consts/accountPresets'
+import networks from '../../../consts/networks'
 
 function Transactions ({ relayerURL, selectedAcc, selectedNetwork, eligibleRequests, showSendTxns }) {
   // @TODO refresh this after we submit a bundle; perhaps with the service
@@ -50,6 +51,7 @@ function Transactions ({ relayerURL, selectedAcc, selectedNetwork, eligibleReque
 }
 
 function MinedBundle(bundle) {
+  const network = networks.find(x => x.id === bundle.network)
   const lastTxn = bundle.txns[bundle.txns.length - 1]
   // terribly hacky; @TODO fix
   // all of the values are prob checksummed so we may not need toLowerCase
@@ -64,6 +66,10 @@ function MinedBundle(bundle) {
     ))}
     {hasFee && (<div className='fee'><b>Fee:</b> </div>)}
     <div><b>Submitted at:</b> {bundle.submittedAt && (new Date(bundle.submittedAt)).toString()}</div>
+    { bundle.txId && (<div
+      ><b>Block explorer:</b> <a href={network.explorerUrl+'/tx/'+bundle.txId} target='_blank' rel='nofollow'>{network.explorerUrl.split('/')[2]}</a>
+    </div>) }
+
   </div>)
 }
 
