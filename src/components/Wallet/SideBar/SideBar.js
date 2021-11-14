@@ -56,11 +56,6 @@ const SideBar = ({match, portfolio}) => {
                         <MdDashboard size={30}/>Dashboard
                     </div>
                 </NavLink>
-                <NavLink to={match.url + "/swap"} activeClassName="selected">
-                    <div className="item">
-                        <BsCurrencyExchange size={30}/>Swap
-                    </div>
-                </NavLink>
                 <NavLink to={match.url + "/deposit"} activeClassName="selected">
                     <div className="item">
                         <GiReceiveMoney size={30}/>Deposit
@@ -69,6 +64,11 @@ const SideBar = ({match, portfolio}) => {
                 <NavLink to={match.url + "/transfer"} activeClassName="selected">
                     <div className="item">
                         <BiTransfer size={30}/>Transfer
+                    </div>
+                </NavLink>
+                <NavLink to={match.url + "/swap"} activeClassName="selected">
+                    <div className="item">
+                        <BsCurrencyExchange size={30}/>Swap
                     </div>
                 </NavLink>
                 <NavLink to={match.url + "/earn"} activeClassName="selected">
