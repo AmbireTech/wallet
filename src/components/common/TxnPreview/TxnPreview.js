@@ -27,10 +27,12 @@ export default function TxnPreview ({ txn, onDismiss, network, account, isFirstF
           </div>) : (<></>)
         }
 
-        <span className='expandTxn' onClick={() => setExpanded(e => !e)}>
-          {isExpanded ? (<FaChevronUp/>) : (<FaChevronDown/>)}
-        </span>
-        {onDismiss ? (<span className='dismissTxn' onClick={onDismiss}><FaTimes/></span>) : (<></>)}
+        <div className='actionIcons'>
+          <span className='expandTxn' onClick={() => setExpanded(e => !e)}>
+            {isExpanded ? (<FaChevronUp/>) : (<FaChevronDown/>)}
+          </span>
+          {onDismiss ? (<span className='dismissTxn' onClick={onDismiss}><FaTimes/></span>) : (<></>)}
+        </div>
     </div>
   )
 }
