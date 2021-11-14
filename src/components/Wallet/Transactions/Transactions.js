@@ -1,11 +1,11 @@
 import './Transactions.scss'
-
+import { FaSignature } from 'react-icons/fa'
 import { useRelayerData } from '../../../hooks'
 import TxnPreview from '../../common/TxnPreview/TxnPreview'
 import { Loading } from '../../common'
 import accountPresets from '../../../consts/accountPresets'
 
-function Transactions ({ relayerURL, selectedAcc, selectedNetwork, eligibleRequests }) {
+function Transactions ({ relayerURL, selectedAcc, selectedNetwork, eligibleRequests, showSendTxns }) {
   const { data, errMsg, isLoading } = useRelayerData(relayerURL ? `${relayerURL}/identity/${selectedAcc}/${selectedNetwork.id}/transactions` : null)
 
   // @TODO implement a service that stores sent transactions locally that will be used in relayerless mode
@@ -15,8 +15,8 @@ function Transactions ({ relayerURL, selectedAcc, selectedNetwork, eligibleReque
 
   return (
     <section id='transactions'>
-      {eligibleRequests.length && (<div className='panel'>
-        <div className='title'>Waiting to be signed</div>
+      {eligibleRequests.length && (<div onClick={showSendTxns} className='panel'>
+        <div className='title'><FaSignature size={35}/>&nbsp;&nbsp;&nbsp;Waiting to be signed</div>
         {eligibleRequests.map(req => (
           <TxnPreview
               key={req.id}
