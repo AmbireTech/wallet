@@ -27,6 +27,7 @@ function Contract(manager, contractData){
         const method = this.methods.find(a => a.signature === txCallSignature)
         //console.log(txCallSignature);
         if(method){
+            console.log(":::: " + method.name);
             const inputs = this.interface.decodeFunctionData(method.name, txn.data)
             return method.summary({
                 network,
@@ -39,6 +40,10 @@ function Contract(manager, contractData){
 
     this.humanAmount = (network, address, weiValue, displayDecimals=4) => {
         return this.manager.humanAmount(network, address, weiValue, displayDecimals);
+    }
+
+    this.humanAmountSymbol = (network, address, weiValue, displayDecimals=4, unknownCallback) => {
+        return this.manager.humanAmount(network, address, weiValue, displayDecimals) + " " + this.tokenSymbol(network, address, unknownCallback);
     }
 
     this.tokenSymbol = (network, address, unknownCallback) => {

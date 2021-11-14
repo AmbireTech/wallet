@@ -3,11 +3,13 @@ const Contract = require("./contract");
 const resources  = require("./contracts/resources");
 const generic_resources  = require( "./contracts/generic_resources");
 const tokens = require('./contracts/erc20/list');
+const erc721Tokens = require('./contracts/erc721/list');
 const nativeTokens = require("./nativeTokens");
 const BigNumber = require('bignumber.js');//BN that supports decimals
 
 module.exports = {
     erc20Tokens: tokens,
+    erc721Tokens: erc721Tokens,
     contracts: {},
     generic_contracts: [],
     addressBook:{},
@@ -26,7 +28,6 @@ module.exports = {
             this.generic_contracts.push(contract);
         }
     },
-
 
     initAddressBook(contactsByChain){
         //{
@@ -60,7 +61,10 @@ module.exports = {
         let summary;
         if(txCallSignature != "0x"){
             if(!txn.to){
-                return `Deploy new contract sending ${this.humanAmount(network, 'native', txn.value)} ${this.tokenSymbol(network, 'native')}`;
+                return [
+                  `Deploy new contract`,
+                    txn.value?`Sending ${this.humanAmount(network, 'native', txn.value)} ${this.tokenSymbol(network, 'native')}`:null
+                ].filter(a => a !== null);
             }else{
                 const destinationContract = this.contracts[network.id.toLowerCase()].find(a => a.address.toLowerCase() === txn.to.toLowerCase());
                 if (destinationContract) {
@@ -72,7 +76,7 @@ module.exports = {
                         summary = genericContract.getSummary(network, txn);
                     }
                 }
-                return summary || `Unknown call(${txCallSignature}) to " + ${this.alias(network, txn.from, txn.to)}`;
+                return summary || [(txn.value?`Sending ${this.humanAmount(network, 'native', txn.value)} ${this.tokenSymbol(network, 'native')}`:null), `Unknown call(${txCallSignature}) to ${this.alias(network, txn.from, txn.to)}`].filter(a => a !== null)
             }
         }else{
             if(txn.value){
@@ -80,9 +84,9 @@ module.exports = {
             }else{
                 if(txn.from == txn.to) {
                     //TODO find a way to compare the nonces
-                    return `Sending nothing to self (probably replacement transaction)`
+                    return [`Sending nothing to self (probably replacement transaction)`]
                 }
-                return `Send valueless transaction to ${this.alias(network, txn.from, txn.to)}`
+                return [`Send valueless transaction to ${this.alias(network, txn.from, txn.to)}`]
             }
         }
     },

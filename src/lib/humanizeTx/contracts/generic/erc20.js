@@ -5,13 +5,13 @@ module.exports = {
             {
                 name: "approve",
                 summary: ({network, txn, inputs, contract}) => {
-                    return `Approve ${contract.alias(network, txn.from, inputs._spender)} to spend ${contract.humanAmount(network, txn.to, inputs._value)} ${contract.tokenSymbol(network, txn.to)}`;
+                    return [`Approve ${contract.alias(network, txn.from, inputs._spender)} to spend ${contract.humanAmount(network, txn.to, inputs._value)} ${contract.tokenSymbol(network, txn.to)}`];
                 }
             },
             {
                 name: "transfer",
                 summary: ({network, txn, inputs, contract}) => {
-                    return `Transfer ${contract.humanAmount(network, txn.to, inputs._value)} ${contract.tokenSymbol(network, txn.to)} to ${contract.alias(network, txn.from, inputs._to)}`;
+                    return [`Transfer ${contract.humanAmount(network, txn.to, inputs._value)} ${contract.tokenSymbol(network, txn.to)} to ${contract.alias(network, txn.from, inputs._to)}`];
                 }
             }
         ],

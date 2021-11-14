@@ -1,5 +1,6 @@
 const generic_resources = require('./generic_resources');
 const tokens = require('./erc20/list');
+const erc721 = require('./erc721/list');
 
 module.exports = {
     polygon: [
@@ -14,6 +15,12 @@ module.exports = {
             address: a.address,
             interface: generic_resources.erc20.interface,
         }
+    })).concat(Object.values(erc721.polygon).map(a => {
+        return {
+            name: a.symbol,
+            address: a.address,
+            interface: generic_resources.erc721.interface,
+        }
     })),
     ethereum: [
         {
@@ -22,9 +29,31 @@ module.exports = {
             interface: generic_resources.uniswapV3Router.interface
         },
         {
+            name: 'Sushi Masterchef V1',
+            address: '0xc2edad668740f1aa35e4d8f227fb8e17dca888cd',
+            interface: generic_resources.masterchefV1.interface
+        },
+        {
             name: 'WETH',
             address: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',
             interface: require('./specific/weth').interface
+        },
+        {
+            name: 'AaveLendingPool',
+            address: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',
+            interface: require('./specific/weth').interface
         }
-    ]
+    ].concat(Object.values(tokens.ethereum).map(a => {
+        return {
+            name: a.symbol,
+            address: a.address,
+            interface: generic_resources.erc20.interface,
+        }
+    })).concat(Object.values(erc721.ethereum).map(a => {
+        return {
+            name: a.symbol,
+            address: a.address,
+            interface: generic_resources.erc721.interface,
+        }
+    }))
 }

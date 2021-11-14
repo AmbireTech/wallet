@@ -5,13 +5,13 @@ module.exports = {
             {
                 name: "deposit",
                 summary: ({network, txn, inputs, contract}) => {
-                    return `Wrap ${contract.humanAmount(network, 'native', txn.value)} ETH`;
+                    return [`Wrap ${contract.humanAmount(network, 'native', txn.value)} ETH`];
                 }
             },
             {
                 name: "withdraw",
                 summary: ({network, txn, inputs, contract}) => {
-                    return `Unwrap ${contract.humanAmount(network, 'native', inputs.wad)} WETH`;
+                    return [`Unwrap ${contract.humanAmount(network, 'native', inputs.wad)} WETH`];
                 }
             },
         ],

@@ -28,28 +28,60 @@ module.exports = {
             {
                 name: "selfPermit",
                 summary: ({network, txn, inputs, contract}) => {
-                    return `SELF PERMIT`;
+                    return [`SELF PERMIT`];
+                }
+            },
+            {
+                name: "exactInputSingle",
+                summary: ({network, txn, inputs, contract}) => {
+                    return [
+                        `Swap ${contract.humanAmountSymbol(network, inputs.params.tokenIn, inputs.params.amountIn.toString())}`
+                        + ` for at least ${(contract.humanAmountSymbol(network, inputs.params.tokenOut, inputs.params.amountOutMinimum.toString()))}`
+                  ]
                 }
             },
             {
                 name: "exactInput",
                 summary: ({network, txn, inputs, contract}) => {
-                    return `EXACTINPUT`;
+                    //some decodePacked fun
+                    const path = [];
+                    for (let i = 2; i < inputs.params.path.length; i+=46) {//address, uint24
+                        path.push('0x' + inputs.params.path.substr(i, 40));
+                    }
+                    return [
+                        `Swap ${contract.humanAmountSymbol(network, path[0], inputs.params.amountIn.toString())}`
+                        + ` for at least ${(contract.humanAmountSymbol(network, path[path.length-1], inputs.params.amountOutMinimum.toString()))}`
+                    ]
                 }
             },
             {
                 name: "exactOutputSingle",
                 summary: ({network, txn, inputs, contract}) => {
-                    return `Swap a maximum of ${contract.humanAmount(network, inputs.params.tokenIn, inputs.params.amountInMaximum.toString())}`
-                            + ` ${(contract.tokenSymbol(network, inputs.params.tokenIn))}`
-                            + ` for exactly ${(contract.humanAmount(network, inputs.params.tokenOut, inputs.params.amountOut.toString()))}`
-                            + ` ${(contract.tokenSymbol(network, inputs.params.tokenOut))}`;
+                    return [
+                        `Swap a maximum of ${contract.humanAmountSymbol(network, inputs.params.tokenIn, inputs.params.amountInMaximum.toString())}`
+                        + ` for exactly ${(contract.humanAmountSymbol(network, inputs.params.tokenOut, inputs.params.amountOut.toString()))}`
+                    ]
+                }
+            },
+            //to be tested
+            {
+                name: "exactOutput",
+                summary: ({network, txn, inputs, contract}) => {
+                    //some decodePacked fun
+                    const path = [];
+                    for (let i = 2; i < inputs.params.path.length; i+=46) {//address, uint24
+                        path.push('0x' + inputs.params.path.substr(i, 40));
+                    }
+                    return [
+                        `Swap ${contract.humanAmountSymbol(network, path[0], inputs.params.amountInMaximum.toString())} maximum`
+                        + ` for ${(contract.humanAmountSymbol(network, path[path.length-1], inputs.params.amountOut.toString()))}`
+                    ]
                 }
             },
             {
                 name: "unwrapWETH9",
                 summary: ({network, txn, inputs, contract}) => {
-                    return `Unwrap ${contract.humanAmount(network, 'native', inputs.amountMinimum.toString())} WETH`;//hax for 18 decimals
+                    return [`Unwrap ${contract.humanAmount(network, 'native', inputs.amountMinimum.toString())} WETH`]//hax for 18 decimals
                 }
             },
         ],
