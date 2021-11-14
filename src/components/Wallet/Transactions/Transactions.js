@@ -6,7 +6,12 @@ import { Loading } from '../../common'
 import accountPresets from '../../../consts/accountPresets'
 
 function Transactions ({ relayerURL, selectedAcc, selectedNetwork, eligibleRequests, showSendTxns }) {
-  const { data, errMsg, isLoading } = useRelayerData(relayerURL ? `${relayerURL}/identity/${selectedAcc}/${selectedNetwork.id}/transactions` : null)
+  // @TODO refresh this after we submit a bundle; perhaps with the service
+  // we can just append a cache break to the URL - that way we force the hook to refresh, and we have a cachebreak just in case
+  const url = relayerURL
+    ? `${relayerURL}/identity/${selectedAcc}/${selectedNetwork.id}/transactions`
+    : null
+  const { data, errMsg, isLoading } = useRelayerData(url)
 
   // @TODO implement a service that stores sent transactions locally that will be used in relayerless mode
   if (!relayerURL) return (<section id='transactions'>
@@ -15,7 +20,7 @@ function Transactions ({ relayerURL, selectedAcc, selectedNetwork, eligibleReque
 
   return (
     <section id='transactions'>
-      {eligibleRequests.length && (<div onClick={showSendTxns} className='panel'>
+      {!!eligibleRequests.length && (<div onClick={showSendTxns} className='panel'>
         <div className='title'><FaSignature size={35}/>&nbsp;&nbsp;&nbsp;Waiting to be signed</div>
         {eligibleRequests.map(req => (
           <TxnPreview
@@ -35,7 +40,7 @@ function Transactions ({ relayerURL, selectedAcc, selectedNetwork, eligibleReque
       {isLoading && <Loading />}
       {
           // @TODO respect the limit and implement pagination
-          !isLoading && data && data.txns.map(MinedBundle)
+          !isLoading && data && data.txns.filter(x => x.executed && x.executed.mined).map(MinedBundle)
       }
     </section>
   )
