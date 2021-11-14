@@ -292,7 +292,7 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
                             return (<TxnPreview
                               key={bundle.requestIds[i]}
                               onDismiss={() => resolveMany([bundle.requestIds[i]], { message: 'rejected' })}
-                              txn={txn} bundle={bundle}
+                              txn={txn} network={bundle.network} account={bundle.identity}
                               isFirstFailing={isFirstFailing}/>
                             )
                           })}

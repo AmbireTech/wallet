@@ -97,12 +97,16 @@ function AppInner () {
           setNetwork={setNetwork}
           addRequest={addRequest}
           connections={connections}
+          // needed by the top bar to disconnect/connect dapps
           connect={connect}
           disconnect={disconnect}
+          // needed by the gnosis plugins
           gnosisConnect={gnosisConnect}
           gnosisDisconnect={gnosisDisconnect}
-          // required for the security page
+          // required for the security and transactions pages
           relayerURL={relayerURL}
+          // required by the transactions page
+          eligibleRequests={eligibleRequests}
         >
         </Wallet>
       </Route>
