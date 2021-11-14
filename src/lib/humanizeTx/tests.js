@@ -254,7 +254,37 @@ const ethTxs = [
         data:"0x2e1a7d4d000000000000000000000000000000000000000000006178abdc9c14adaa80b3"
     },
 
+    //Synthetix
+    //Claim
+    {
+        from: "0xE7BE8f0663De85F88E64D269754903377B536DFA",
+        to: "0x8302fe9f0c509a996573d3cc5b0d5d51e4fdd5ec",
+        data:"0x3d18b912"
+    },
 
+    //Synthetix
+    //Exit
+    {
+        from: "0xE7BE8f0663De85F88E64D269754903377B536DFA",
+        to: "0x8302fe9f0c509a996573d3cc5b0d5d51e4fdd5ec",
+        data:"0x3d18b912"
+    },
+
+    //Synthetix
+    //Withdraw
+    {
+        from: "0xE7BE8f0663De85F88E64D269754903377B536DFA",
+        to: "0x8302fe9f0c509a996573d3cc5b0d5d51e4fdd5ec",
+        data:"0x2e1a7d4d000000000000000000000000000000000000000000000000000005532e772fd0"
+    },
+
+    //Synthetix
+    //Stake
+    {
+        from: "0xE7BE8f0663De85F88E64D269754903377B536DFA",
+        to: "0x8302fe9f0c509a996573d3cc5b0d5d51e4fdd5ec",
+        data:"0xa694fc3a0000000000000000000000000000000000000000000000000000097c392b0ddd"
+    },
 ]
 
 //NOTES : make summary UI in 2 parts 1 : humanize TO(contract interaction), 2 : display sentence

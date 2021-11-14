@@ -89,9 +89,14 @@ module.exports = {
             },
             interface: require('./generic/curveGauge').interface
         },
-
-
-
+        {
+            name: 'synthetixStakingRewards_UniV2_sXAU',
+            address: '0x8302fe9f0c509a996573d3cc5b0d5d51e4fdd5ec',
+            data: {
+                lpToken: tokens.ethereum.UniV2_LP_sXau_USDC
+            },
+            interface: require('./generic/synthetixStakingRewards').interface
+        },
 
     ].concat(Object.values(tokens.ethereum).map(a => {
         return {

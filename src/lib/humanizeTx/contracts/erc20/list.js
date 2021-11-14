@@ -20,6 +20,11 @@ module.exports = {
 
 
         //curveTokens
-        curveFi_cDAI_cUSDC_USDT: { symbol: 'cDAI+cUSDC+USDT',     decimals: 18,    address: '0x9fc689ccada600b6df723d9e47d84d76664a1f23'}
+        curveFi_cDAI_cUSDC_USDT: { symbol: 'cDAI+cUSDC+USDT',     decimals: 18,    address: '0x9fc689ccada600b6df723d9e47d84d76664a1f23'},
+
+
+        //Synthetix
+        UniV2_LP_sXau_USDC: { symbol: 'UniV2_LP_sXau_USDC',     decimals: 18,    address: '0x34a0216c5057bc18e5d34d4405284564efd759b2'},
+
     }
 }
