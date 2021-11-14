@@ -224,17 +224,6 @@
     min-width: 350px;
 }
 
-#sendTransaction .advanced {
-    word-wrap: break-word;
-    max-width: 400px;
-    font-family: monospace;
-    margin-top: 30px;
-}
-#sendTransaction .advanced div {
-    margin-bottom: 20px;
-    user-select: text;
-}
-
 #sendTransaction .failingTxn {
     display: flex;
     justify-content: center;

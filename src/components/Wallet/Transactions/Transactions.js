@@ -21,7 +21,7 @@ function Transactions ({ relayerURL, selectedAcc, selectedNetwork, eligibleReque
   return (
     <section id='transactions'>
       {!!eligibleRequests.length && (<div onClick={showSendTxns} className='panel'>
-        <div className='title'><FaSignature size={35}/>&nbsp;&nbsp;&nbsp;Waiting to be signed</div>
+        <div className='title'><FaSignature size={25}/>&nbsp;&nbsp;&nbsp;Waiting to be signed</div>
         {eligibleRequests.map(req => (
           <TxnPreview
               key={req.id}
@@ -59,8 +59,8 @@ function MinedBundle(bundle) {
       key={i} // safe to do this, individual TxnPreviews won't change within a specific bundle
       txn={txn} network={bundle.network} account={bundle.identity}/>
     ))}
-    {hasFee && (<div className='fee'>Fee: </div>)}
-    <div>Submitted at: {bundle.submittedAt}</div>
+    {hasFee && (<div className='fee'><b>Fee:</b> </div>)}
+    <div><b>Submitted at:</b> {bundle.submittedAt && (new Date(bundle.submittedAt)).toString()}</div>
   </div>)
 }
 
