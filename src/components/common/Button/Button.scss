@@ -13,14 +13,19 @@ button.buttonComponent {
     background-color: $primary-accent-color;
     text-transform: uppercase;
     
-    .icon {
+    .icon-button {
         display: flex;
         align-items: center;
         justify-content: center;
+        color: black !important;
     }
 
     &.small {
         height: 50px;
         font-size: 17px;
+    }
+
+    &.red {
+        background: #da5151;
     }
 }
