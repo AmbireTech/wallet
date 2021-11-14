@@ -8,6 +8,7 @@ import SideBar from "./SideBar/SideBar"
 import Deposit from "./Deposit/Deposit"
 import Transfer from "./Transfer/Transfer"
 import Security from "./Security/Security"
+import Transactions from './Transactions/Transactions'
 import PluginGnosisSafeApps from "../Plugins/GnosisSafeApps/GnosisSafeApps"
 import Collectable from "./Collectable/Collectable"
 import { createRef } from "react"
@@ -33,6 +34,10 @@ export default function Wallet(props) {
     {
       path: '/security',
       component: <Security relayerURL={props.relayerURL} selectedAcc={props.selectedAcc} selectedNetwork={props.network} accounts={props.accounts} addRequest={props.addRequest}/>
+    },
+    {
+      path: '/transactions',
+      component: <Transactions relayerURL={props.relayerURL} selectedAcc={props.selectedAcc} selectedNetwork={props.network} addRequest={props.addRequest} eligibleRequests={props.eligibleRequests} showSendTxns={props.showSendTxns}/>
     },
     {
       path: '/swap'

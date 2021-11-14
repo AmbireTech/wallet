@@ -68,11 +68,11 @@ function AppInner () {
     () => setSendTxnsShowing(!!eligibleRequests.length),
     [eligibleRequests.length]
   )
-  const onDismiss = () => setSendTxnsShowing(false)
+  const dismissSendTxns = () => setSendTxnsShowing(false)
 
   return (<>
     {sendTxnsShowing ? (
-      <SendTransaction accounts={accounts} selectedAcc={selectedAcc} network={network} requests={eligibleRequests} resolveMany={resolveMany} relayerURL={relayerURL} onDismiss={onDismiss}>
+      <SendTransaction accounts={accounts} selectedAcc={selectedAcc} network={network} requests={eligibleRequests} resolveMany={resolveMany} relayerURL={relayerURL} onDismiss={dismissSendTxns}>
       </SendTransaction>
       ) : (<></>)
     }
@@ -97,12 +97,17 @@ function AppInner () {
           setNetwork={setNetwork}
           addRequest={addRequest}
           connections={connections}
+          // needed by the top bar to disconnect/connect dapps
           connect={connect}
           disconnect={disconnect}
+          // needed by the gnosis plugins
           gnosisConnect={gnosisConnect}
           gnosisDisconnect={gnosisDisconnect}
-          // required for the security page
+          // required for the security and transactions pages
           relayerURL={relayerURL}
+          // required by the transactions page
+          eligibleRequests={eligibleRequests}
+          showSendTxns={() => setSendTxnsShowing(true)}
         >
         </Wallet>
       </Route>
