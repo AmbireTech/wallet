@@ -223,53 +223,6 @@
     min-height: 300px;
     min-width: 350px;
 }
-#sendTransaction .txnSummary {
-    background-color: rgba(0, 0, 0, 0.2);
-    padding: 20px;
-    margin: 10px auto;
-    min-height: 50px;
-    position: relative;
-    user-select: none;
-}
-
-#sendTransaction .txnSummary > div {
-    width: calc(100% - 100px);
-}
-
-#sendTransaction .txnSummary .dismissTxn > svg {
-    right: 20px;
-}
-#sendTransaction .txnSummary .expandTxn > svg {
-    right: 70px;
-}
-#sendTransaction .txnSummary svg {
-    position: absolute;
-    top: 30px;
-    bottom: 0px;
-    width: 25px;
-    height: 30px;
-    color: #ccc;
-    cursor: pointer;
-}
-#sendTransaction .txnSummary svg:hover {
-    color: #fff;
-}
-
-#sendTransaction .txnSummary .firstFailingLabel {
-    font-weight: bold;
-    color: red;
-}
-
-#sendTransaction .advanced {
-    word-wrap: break-word;
-    max-width: 600px;
-    font-family: monospace;
-    margin-top: 30px;
-}
-#sendTransaction .advanced div {
-    margin-bottom: 20px;
-    user-select: text;
-}
 
 #sendTransaction .failingTxn {
     display: flex;
