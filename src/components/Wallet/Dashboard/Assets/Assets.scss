@@ -62,26 +62,43 @@
                     display: flex;
                     flex-direction: column;
                     text-align: right;
-                }
 
-                .currency {
-                    font-size: 18px;
-                    font-weight: 500;
+                    .currency {
+                        font-size: 18px;
+                        font-weight: 500;
 
-                    .symbol {
-                        font-weight: bold;
-                        color: $primary-accent-color;
+                        .symbol {
+                            font-weight: bold;
+                            color: $primary-accent-color;
+                        }
+                    }
+
+                    .dollar {
+                        font-size: 14px;
+                        font-weight: 500;
+                        color: #bbb;
+
+                        .symbol {
+                            font-weight: bold;
+                            color: $secondary-accent-color;
+                        }
                     }
                 }
 
-                .dollar {
-                    font-size: 14px;
-                    font-weight: 500;
-                    color: #bbb;
+                .actions {
+                    width: 0;
+                    display: flex;
+                    align-items: center;
+                    justify-content: flex-end;
+                    opacity: 0;
+                    transition: all 0.1s ease-in-out;
+                    transition-delay: 0.25s;
+                }
 
-                    .symbol {
-                        font-weight: bold;
-                        color: $secondary-accent-color;
+                &:hover {
+                    .actions {
+                        width: 125px;
+                        opacity: 1;
                     }
                 }
             }
