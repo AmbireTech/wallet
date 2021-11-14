@@ -13,7 +13,6 @@ function getNetworkSymbol(networkId) {
 }
 export default function TxnPreview ({ txn, onDismiss, network, account, isFirstFailing }) {
   const [isExpanded, setExpanded] = useState(false)
-  console.log(network)
   const contractName = getContractName(txn, network)
   return (
     <div className={isFirstFailing ? 'txnPreview firstFailing' : 'txnPreview'}>
