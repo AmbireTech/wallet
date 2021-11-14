@@ -5,7 +5,7 @@ import TxnPreview from '../../common/TxnPreview/TxnPreview'
 import { Loading } from '../../common'
 import accountPresets from '../../../consts/accountPresets'
 
-function Transactions ({ relayerURL, selectedAcc, selectedNetwork }) {
+function Transactions ({ relayerURL, selectedAcc, selectedNetwork, eligibleRequests }) {
   const { data, errMsg, isLoading } = useRelayerData(relayerURL ? `${relayerURL}/identity/${selectedAcc}/${selectedNetwork.id}/transactions` : null)
 
   // @TODO implement a service that stores sent transactions locally that will be used in relayerless mode
@@ -15,9 +15,23 @@ function Transactions ({ relayerURL, selectedAcc, selectedNetwork }) {
 
   return (
     <section id='transactions'>
-      <h3>Mined transactions</h3>
+      {eligibleRequests.length && (<div className='panel'>
+        <div className='title'>Waiting to be signed</div>
+        {eligibleRequests.map(req => (
+          <TxnPreview
+              key={req.id}
+              network={selectedNetwork.id}
+              account={selectedAcc}
+              txn={[req.txn.to, req.txn.value, req.txn.data]}/>
+        ))}
+      </div>)}
+      { false && (<div className='panel'>
+        <div className='title'>Pending transaction bundle</div>
+        {/* TODO */}
+      </div>) }
+      <h2>Confirmed transactions</h2>
       {!relayerURL && (<h3 className='error'>Unsupported: not currently connected to a relayer.</h3>)}
-      {errMsg && (<h3 className='error'>Error getting mined transactions: {errMsg}</h3>)}
+      {errMsg && (<h3 className='error'>Error getting list of transactions: {errMsg}</h3>)}
       {isLoading && <Loading />}
       {
           // @TODO respect the limit and implement pagination
@@ -38,7 +52,7 @@ function MinedBundle(bundle) {
   return (<div className='minedBundle' key={bundle._id}>
     {txns.map((txn, i) => (<TxnPreview
       key={i} // safe to do this, individual TxnPreviews won't change within a specific bundle
-      txn={txn} bundle={bundle}/>
+      txn={txn} network={bundle.network} account={bundle.identity}/>
     ))}
     {hasFee && (<div className='fee'>Fee: </div>)}
     <div>Submitted at: {bundle.submittedAt}</div>
