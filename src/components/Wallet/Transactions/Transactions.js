@@ -67,7 +67,7 @@ function MinedBundle(bundle) {
     {hasFee && (<div className='fee'><b>Fee:</b> </div>)}
     <div><b>Submitted at:</b> {bundle.submittedAt && (new Date(bundle.submittedAt)).toString()}</div>
     { bundle.txId && (<div
-      ><b>Block explorer:</b> <a href={network.explorerUrl+'/tx/'+bundle.txId} target='_blank' rel='nofollow'>{network.explorerUrl.split('/')[2]}</a>
+      ><b>Block explorer:</b> <a href={network.explorerUrl+'/tx/'+bundle.txId} target='_blank' rel='noreferrer'>{network.explorerUrl.split('/')[2]}</a>
     </div>) }
 
   </div>)
