@@ -78,7 +78,7 @@ export default function Wallet(props) {
                     unmountOnExit
                     nodeRef={viewRef}
                   >
-                    <div className="wallet-container" ref={viewRef}>
+                    <div className="view-container" ref={viewRef}>
                       { component ? component : null }
                     </div>
                   </CSSTransition>
