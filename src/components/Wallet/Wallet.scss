@@ -1,37 +1,41 @@
 @import '../../variables.scss';
 
-#wallet-container {
-    position: absolute;
-    top: 100px;
-    left: $sidebar-width;
-    right: 0;
-    bottom: 0;
-    padding: 50px;
-    transition: left 0.1s ease-in-out;
-    overflow: hidden;
-    overflow-y: auto;
-
-    .placeholder-overlay {
-        z-index: 49;
+#wallet {
+    .wallet-container {
         position: absolute;
-        top: 0;
-        bottom: 0;
-        left: 0;
+        top: 100px;
+        left: $sidebar-width;
         right: 0;
-        display: flex;
-        flex-direction: column;
-        gap: 20px;
-        align-items: center;
-        justify-content: center;
-        font-size: 22px;
-        font-weight: bold;
-        color: white;
-        text-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        bottom: 0;
+        padding: 50px;
+        transition: left 0.1s ease-in-out;
+        overflow: hidden;
+        overflow-y: auto;
+
+        .placeholder-overlay {
+            z-index: 49;
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            font-weight: bold;
+            color: white;
+            text-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        }
     }
 }
 
 @media screen and (max-width: 1400px) {
-    #wallet-container {
-        left: $sidebar-mobile-width;
+    #wallet {
+        .wallet-container {
+            left: $sidebar-mobile-width;
+        }
     }
 }
