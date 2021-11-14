@@ -143,9 +143,8 @@ export default function AddAccount ({ relayerURL, onAddAccount }) {
         const ethereum = window.ethereum
         const web3Accs = await ethereum.request({ method: 'eth_requestAccounts' })
         if (!web3Accs.length) throw new Error('No accounts connected')
-        const owned = await getOwnedByEOAs(web3Accs)
-        if (!owned.length) onAddAccount(await createFromEOA(web3Accs[0]), { select: true })
-        else owned.forEach((acc, i) => onAddAccount(acc, { select: i === 0 }))
+        if (web3Accs.length === 1) return onEOASelected(web3Accs[0])
+        setChooseSigners({ addresses: web3Accs })
     }
 
     async function getOwnedByEOAs(eoas) {
@@ -171,6 +170,7 @@ export default function AddAccount ({ relayerURL, onAddAccount }) {
         // Plus, in the future this call may be used to retrieve other things
         const { salt, identityFactoryAddr, baseIdentityAddr, bytecode } = await fetch(`${relayerURL}/identity/${idAddr}`)
             .then(r => r.json())
+        if (!(salt && identityFactoryAddr && baseIdentityAddr && bytecode)) throw new Error(`Incomplete data from relayer for ${idAddr}`)
         return {
             id: idAddr,
             salt, identityFactoryAddr, baseIdentityAddr, bytecode,
@@ -199,10 +199,11 @@ export default function AddAccount ({ relayerURL, onAddAccount }) {
             ledgerEthereumClientFactoryAsync: ledgerEthereumBrowserClientFactoryAsync,
             //baseDerivationPath: this.baseDerivationPath
         })
-        const [addresses, signerExtra] = await Promise.all([
-            provider.getAccountsAsync(50),
-            provider._initialDerivedKeyInfoAsync().then(info => ({ type: 'ledger', info: JSON.parse(JSON.stringify(info)) }))
-        ])
+        // NOTE: do not attempt to do both of these together (await Promise.all)
+        // there is a bug in the ledger subprovider (race condition), so it will think we're trying to make two connections simultaniously
+        // cause one call won't be aware of the other's attempt to connect
+        const addresses = await provider.getAccountsAsync(50)
+        const signerExtra = await provider._initialDerivedKeyInfoAsync().then(info => ({ type: 'ledger', info: JSON.parse(JSON.stringify(info)) }))
         setChooseSigners({ addresses, signerExtra })
     }
 

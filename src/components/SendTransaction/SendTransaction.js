@@ -1,21 +1,21 @@
 //import { GrInspect } from 'react-icons/gr'
 // GiObservatory is also interesting
 import { GiTakeMyMoney, GiSpectacles } from 'react-icons/gi'
-import { FaSignature, FaTimes, FaChevronLeft, FaChevronDown, FaChevronUp } from 'react-icons/fa'
+import { FaSignature, FaChevronLeft } from 'react-icons/fa'
 import { MdOutlineAccountCircle } from 'react-icons/md'
-import { getContractName, getTransactionSummary } from '../../lib/humanReadableTransactions'
 import './SendTransaction.css'
-import { Loading } from '../common'
-import { useEffect, useRef, useState, useMemo } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 import fetch from 'node-fetch'
 import { Bundle } from 'adex-protocol-eth/js'
 import { getDefaultProvider, Wallet } from 'ethers'
-import { Interface, formatUnits } from 'ethers/lib/utils'
+import { Interface } from 'ethers/lib/utils'
 import * as blockies from 'blockies-ts';
 import { useToasts } from '../../hooks/toasts'
 import { getWallet } from '../../lib/getWallet'
 import accountPresets from '../../consts/accountPresets'
 import { FeeSelector, FailingTxn } from './FeeSelector'
+import Actions from './Actions'
+import TxnPreview from '../common/TxnPreview/TxnPreview'
 import { sendNoRelayer } from './noRelayer'
 import { isTokenEligible, getFeePaymentConsequences } from './helpers'
 import { fetchPost } from '../../lib/fetch'
@@ -40,7 +40,7 @@ function makeBundle(account, networkId, requests) {
   return bundle
 }
 
-export default function SendTransaction({ accounts, network, selectedAcc, requests, resolveMany, relayerURL, onDismiss }) {
+export default function SendTransaction({ relayerURL, accounts, network, selectedAcc, requests, resolveMany, replacingBundle, onDismiss }) {
   const account = accounts.find(x => x.id === selectedAcc)
 
   // Also filtered in App.js, but better safe than sorry here
@@ -62,16 +62,17 @@ export default function SendTransaction({ accounts, network, selectedAcc, reques
       <h3 className='error'>No account or no requests: should never happen.</h3>
   </div>)
   return (<SendTransactionWithBundle
+      relayerURL={relayerURL}
       bundle={bundle}
+      replacingBundle={replacingBundle}
       network={network}
       account={account}
       resolveMany={resolveMany}
-      relayerURL={relayerURL}
       onDismiss={onDismiss}
   />)
 }
 
-function SendTransactionWithBundle ({ bundle, network, account, resolveMany, relayerURL, onDismiss }) {
+function SendTransactionWithBundle ({ bundle, network, account, resolveMany, relayerURL, replacingBundle, onDismiss }) {
   const [estimation, setEstimation] = useState(null)
   const [signingStatus, setSigningStatus] = useState(false)
   const [feeSpeed, setFeeSpeed] = useState(DEFAULT_SPEED)
@@ -122,7 +123,8 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
   const getFinalBundle = () => {
     if (!relayerURL) return new Bundle({
       ...bundle,
-      gasLimit: estimation.gasLimit
+      gasLimit: estimation.gasLimit,
+      nonce: replacingBundle ? replacingBundle.nonce : undefined
     })
 
     const feeToken = estimation.selectedFeeToken
@@ -158,7 +160,7 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
       chainId: network.chainId
     })
     if (relayerURL) {
-      await finalBundle.getNonce(provider)
+      if (typeof finalBundle.nonce !== 'number') await finalBundle.getNonce(provider)
       await finalBundle.sign(wallet)
       return await finalBundle.submit({ relayerURL, fetch })
     } else {
@@ -186,6 +188,7 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
       }
     )
     if (!success) {
+      if (!message) throw new Error(`Secondary key: no success but no error message`)
       if (message.includes('invalid confirmation code')) {
         addToast('Unable to sign: wrong confirmation code', { error: true })
         return
@@ -193,7 +196,7 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
       throw new Error(`Secondary key error: ${message}`)
     }
     if (confCodeRequired) {
-      setSigningStatus({ quickAcc: true, finalBundle })
+      setSigningStatus({ quickAcc: true, finalBundle, confCodeRequired })
     } else {
       if (!signature) throw new Error(`QuickAcc internal error: there should be a signature`)
       if (!account.primaryKeyBackup) throw new Error(`No key backup found: perhaps you need to import the account via JSON?`)
@@ -225,18 +228,23 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
       // Inform everything that's waiting for the results (eg WalletConnect)
       resolveMany(requestIds, { success: bundleResult.success, result: bundleResult.txId, message: bundleResult.message })
 
-      if (bundleResult.success) addToast((
-        <span>Transaction signed and sent successfully!
-          &nbsp;Click to view on block explorer.
-        </span>), { url: blockExplorerUrl+'/tx/'+bundleResult.txId })
-      else addToast(`Transaction error: ${bundleResult.message || 'unspecified error'}`, { error: true })
-      onDismiss()
+      if (bundleResult.success) {
+        addToast((
+          <span>Transaction signed and sent successfully!
+            &nbsp;Click to view on block explorer.
+          </span>), { url: blockExplorerUrl+'/tx/'+bundleResult.txId })
+        onDismiss()
+      } else addToast(`Transaction error: ${bundleResult.message || 'unspecified error'}`, { error: true })
     })
     .catch(e => {
       setSigningStatus(null)
       console.error(e)
       if (e && e.message.includes('must provide an Ethereum address')) {
         addToast(`Signing error: not connected with the correct address. Make sure you're connected with ${bundle.signer.address}.`, { error: true })
+      } else if (e && e.message.includes('0x6b0c')) {
+        // not sure if that's actually the case with this hellish error, but after unlocking the device it no longer appeared
+        // however, it stopped appearing after that even if the device is locked, so I'm not sure it's related...
+        addToast(`Ledger: unknown error (0x6b0c): is your Ledger unlocked and in the Ethereum application?`, { error: true })
       } else {
         console.log(e.message)
         addToast(`Signing error: ${e.message || e}`, { error: true })
@@ -245,7 +253,7 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
   }
 
   const rejectTxn = () => {
-    resolveMany(bundle.requestIds, { message: 'rejected' })
+    resolveMany(bundle.requestIds, { message: 'user rejected' })
   }
 
   return (<div id='sendTransaction'>
@@ -283,9 +291,8 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
                             const isFirstFailing = estimation && !estimation.success && estimation.firstFailing === i
                             return (<TxnPreview
                               key={bundle.requestIds[i]}
-                              network={network}
                               onDismiss={() => resolveMany([bundle.requestIds[i]], { message: 'rejected' })}
-                              txn={txn} bundle={bundle}
+                              txn={txn} network={bundle.network} account={bundle.identity}
                               isFirstFailing={isFirstFailing}/>
                             )
                           })}
@@ -335,84 +342,4 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
         </div>
       </div>
   </div>)
-}
-
-function Actions({ estimation, feeSpeed, approveTxn, rejectTxn, signingStatus }) {
-  const [quickAccCredentials, setQuickAccCredentials] = useState({ code: '', passphrase: '' })
-  const form = useRef(null)
-
-  const rejectButton = (
-    <button type='button' className='rejectTxn' onClick={rejectTxn}>Reject</button>
-  )
-  const insufficientFee = estimation && estimation.feeInUSD
-    && !isTokenEligible(estimation.selectedFeeToken, feeSpeed, estimation)
-  const willFail = (estimation && !estimation.success) || insufficientFee
-  if (willFail) {
-    return (<div className='buttons'>
-      {rejectButton}
-    </div>)
-  }
-
-  const signButtonLabel = signingStatus && signingStatus.inProgress ?
-    (<><Loading/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Signing...</>)
-    : (<>Sign and send</>)
-
-  if (signingStatus && signingStatus.quickAcc) {
-    return (<>
-      <div><b>A confirmation code was sent to your email, please enter it along with your passphrase.</b></div>
-      <input type='password' required minLength={8} placeholder='Passphrase' value={quickAccCredentials.passphrase} onChange={e => setQuickAccCredentials({ ...quickAccCredentials, passphrase: e.target.value })}></input>
-      <form ref={form} className='quickAccSigningForm' onSubmit={e => { e.preventDefault() }}>
-        {/* Changing the autoComplete prop to a random string seems to disable it more often */}
-        <input
-          type='text' pattern='[0-9]+'
-          title='Confirmation code should be 6 digits'
-          autoComplete='nope'
-          required minLength={6} maxLength={6}
-          placeholder='Confirmation code'
-          value={quickAccCredentials.code}
-          onChange={e => setQuickAccCredentials({ ...quickAccCredentials, code: e.target.value })}
-        ></input>
-        {rejectButton}
-        <button className='approveTxn'
-          onClick={() => {
-            if (!form.current.checkValidity()) return
-            approveTxn({ quickAccCredentials })
-          }}
-        >
-          {signButtonLabel}
-        </button>
-      </form>
-    </>)
-  }
-
-  return (<div className='buttons'>
-      {rejectButton}
-      <button className='approveTxn' disabled={!estimation || signingStatus} onClick={approveTxn}>
-        {signButtonLabel}
-      </button>
-  </div>)
-}
-
-function TxnPreview ({ txn, onDismiss, bundle, network, isFirstFailing }) {
-  const [isExpanded, setExpanded] = useState(false)
-  const contractName = getContractName(txn, network.id)
-  return (
-    <div className={isFirstFailing ? 'txnSummary firstFailing' : 'txnSummary'}>
-        <div>{getTransactionSummary(txn, bundle.network, bundle.identity)}</div>
-        {isFirstFailing ? (<div className='firstFailingLabel'>This is the first failing transaction.</div>) : (<></>)}
-
-        {
-          isExpanded ? (<div className='advanced'>
-            <div><b>Interacting with (<i>to</i>):</b> {txn[0]}{contractName ? ` (${contractName})` : ''}</div>
-            <div><b>{network.nativeAssetSymbol} to be sent (<i>value</i>):</b> {formatUnits(txn[1], 18)}</div>
-            <div><b>Data:</b> {txn[2]}</div>
-          </div>) : (<></>)
-        }
-
-        <span className='expandTxn' onClick={() => setExpanded(e => !e)}>
-          {isExpanded ? (<FaChevronUp/>) : (<FaChevronDown/>)}
-        </span>
-        {onDismiss ? (<span className='dismissTxn' onClick={onDismiss}><FaTimes/></span>) : (<></>)}
-    </div>
-  )
 }

@@ -11,6 +11,7 @@
 * FAQs: https://help.ambire.com/hc/en-us/categories/4404980091538-Ambire-Wallet
 * Front-end (this repo) development plan and estimation: https://docs.google.com/spreadsheets/d/1pqtRPcNRW98D97GL3nrdoipD3sWehz2k7zWclzYk-SM
 * Original concept: https://github.com/AdExNetwork/aips/issues/69 (note that the feature scope is not up to date)
+* [UX decisions](#ux-decisions)
 
 ## Running
 
@@ -31,6 +32,14 @@ Then run the Ambire Wallet:
 npm i
 npm start
 ```
+
+## Code style and recommendations
+
+* No semicolons
+* 2 spaces for identation
+* Single quote (') instead of double (")
+* Error handling: make sure to catch all errors that may originate in external IO (expected errors) and display them in a human friendly way with `addToast`; also, at a top-level, every time you spawn an async operation, make sure you `.catch` the entire thing to catch unexpected errors
+* Camel case
 
 ## Available Scripts
 
@@ -69,7 +78,20 @@ Instead, it will copy all the configuration files and the transitive dependencie
 
 You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
 
-### Internal data formats
+## UX decisions
+
+### Terms
+* Signer: the signer is an actual keypair used for authentication. Also called an "EOA" (externally owned address). For example, a signer could be a Trezor address, Ledger address, Metamask address, or a double-keypair representing an email/passphrase authentication. We use this term to distinct it from "account", which is the actual smart wallet account.
+
+### Multi-account behavior
+* When adding an account with Trezor, Ledger or a web3 wallet, we create one automatically if it doesn't exist; if we control multiple, we add all those accounts and show a toast notification "this key controls N accounts"
+* We also auto-add all accounts FORMERLY controlled by the connected signer
+* When trying to sign a transaction/message with an added account, and the signer is not available, we show a toast notification explaining to the user they have to connect the relevant signer; unless it's a HW Wallet, in which case we can just prompt the user to connect it
+* When an account is added with a signer, but that signer no longer controls it, we should warn the user: "You are currently not authorized to send transactions from <> on <network>. Please re-add the account with a key that controls it."
+* If someone goes through "add account"/"email login" but the given account is already added, we won't attempt to warn them early; the reason for this is 1) for simplicity and 2) cause re-adding an acc will change to the latest used signer (eg former quickacc, readding as trezor-controlled) 3) cause re-adding an account might reset it's state and fix tech issues in the future
+
+
+## Internal data formats
 
 #### Signing request
 
@@ -95,7 +117,7 @@ This is used by the WalletConnect and Gnosis Safe Apps hooks for the queue of si
 ```
 
 
-### Deployment
+## Deployment
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
 
