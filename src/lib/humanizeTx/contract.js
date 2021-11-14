@@ -55,8 +55,8 @@ function Contract(manager, contractData){
         return this.manager.tokenDecimals(network, address);
     }
 
-    this.alias = (network, from, txOriginAddress) =>{
-        return this.manager.alias(network, from, txOriginAddress);
+    this.alias = (network, txOriginAddress, address) =>{
+        return this.manager.alias(network, txOriginAddress, address);
     }
 }
 

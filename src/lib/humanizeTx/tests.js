@@ -285,6 +285,14 @@ const ethTxs = [
         to: "0x8302fe9f0c509a996573d3cc5b0d5d51e4fdd5ec",
         data:"0xa694fc3a0000000000000000000000000000000000000000000000000000097c392b0ddd"
     },
+
+    //Identity
+    //addPrivilege
+    {
+        from: "0xE7BE8f0663De85F88E64D269754903377B536DFA",
+        to: "0x900C6A3417631F54d130b9382264C6b3c712CADD",
+        data:"0x0d5828d4000000000000000000000000942f9ce5d9a33a82f88d233aeb3292e6802303480000000000000000000000000000000000000000000000000000000000000001"
+    },
 ]
 
 //NOTES : make summary UI in 2 parts 1 : humanize TO(contract interaction), 2 : display sentence

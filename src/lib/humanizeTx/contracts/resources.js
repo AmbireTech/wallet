@@ -98,6 +98,13 @@ module.exports = {
             interface: require('./generic/synthetixStakingRewards').interface
         },
 
+        //Ambire
+        {
+            name: 'AmbireIdentity',
+            address: '0x900C6A3417631F54d130b9382264C6b3c712CADD',
+            interface: require('./specific/ambireIdentity').interface
+        },
+
     ].concat(Object.values(tokens.ethereum).map(a => {
         return {
             name: a.symbol,
