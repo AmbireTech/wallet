@@ -1,21 +1,18 @@
 import './Security.scss'
 
-import { usePrivileges } from '../../../hooks'
 import { Loading, TextInput, Button } from '../../common'
 import { Interface } from 'ethers/lib/utils'
 import accountPresets from '../../../consts/accountPresets'
 import privilegesOptions from '../../../consts/privilegesOptions'
+import { useRelayerData } from '../../../hooks'
 
 const IDENTITY_INTERFACE = new Interface(
   require('adex-protocol-eth/abi/Identity5.2')
 )
 
 const Security = ({ relayerURL, selectedAcc, selectedNetwork, accounts, addRequest }) => {
-  const { privileges, errMsg, isLoading } = usePrivileges({
-    identity: selectedAcc,
-    network: selectedNetwork.id,
-    relayerURL
-  })
+  const { data, errMsg, isLoading } = useRelayerData(relayerURL ? `${relayerURL}/identity/${selectedAcc}/${selectedNetwork.id}/privileges` : null)
+  const privileges = data ? data.privileges : {}
 
   const craftTransaction = (address, privLevel) => {
     return {
@@ -90,7 +87,7 @@ const Security = ({ relayerURL, selectedAcc, selectedNetwork, accounts, addReque
     <section id='security'>
       <div className='panel'>
         <div className='title'>Authorized signers</div>
-        {errMsg && (<h3 className='error'>{errMsg}</h3>)}
+        {errMsg && (<h3 className='error'>Error getting authorized signers: {errMsg}</h3>)}
         {isLoading && <Loading />}
         <ul className='content'>{!isLoading && privList}</ul>
       </div>
