@@ -68,11 +68,11 @@ function AppInner () {
     () => setSendTxnsShowing(!!eligibleRequests.length),
     [eligibleRequests.length]
   )
-  const onDismiss = () => setSendTxnsShowing(false)
+  const dismissSendTxns = () => setSendTxnsShowing(false)
 
   return (<>
     {sendTxnsShowing ? (
-      <SendTransaction accounts={accounts} selectedAcc={selectedAcc} network={network} requests={eligibleRequests} resolveMany={resolveMany} relayerURL={relayerURL} onDismiss={onDismiss}>
+      <SendTransaction accounts={accounts} selectedAcc={selectedAcc} network={network} requests={eligibleRequests} resolveMany={resolveMany} relayerURL={relayerURL} onDismiss={dismissSendTxns}>
       </SendTransaction>
       ) : (<></>)
     }
@@ -107,6 +107,7 @@ function AppInner () {
           relayerURL={relayerURL}
           // required by the transactions page
           eligibleRequests={eligibleRequests}
+          showSendTxns={() => setSendTxnsShowing(true)}
         >
         </Wallet>
       </Route>

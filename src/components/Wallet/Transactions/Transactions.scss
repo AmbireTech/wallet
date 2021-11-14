@@ -3,13 +3,17 @@
         max-width: 100%;
     }
     .minedBundle {
-        padding: 1em;
+        padding: 2em;
+        padding-top: 1em;
         background-color: rgba(0, 0, 0, 0.2);
         margin: 2em 0px;
     }
 
     .panel {
         margin-bottom: 2em;
+        display: block;
+    }
+    .title {
         display: block;
     }
 }
