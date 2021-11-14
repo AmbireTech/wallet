@@ -19,8 +19,12 @@ function Contract(manager, contractData){
     this.interface = new ethers.utils.Interface(contractData.interface.abi);
 
     for(let m in contractData.interface.methods){
-        contractData.interface.methods[m].signature = this.interface.getSighash(contractData.interface.methods[m].name);
-        this.methods.push(contractData.interface.methods[m])
+        try{
+            contractData.interface.methods[m].signature = this.interface.getSighash(contractData.interface.methods[m].name);
+            this.methods.push(contractData.interface.methods[m])
+        }catch(e){
+            console.error("Contract Init : " + e);
+        }
     }
 
     this.getSummary = (network, txn) => {
@@ -29,13 +33,20 @@ function Contract(manager, contractData){
         //console.log(txCallSignature);
         if(method){
             console.log(":::: " + method.name);
-            const inputs = this.interface.decodeFunctionData(method.name, txn.data)
-            return method.summary({
-                network,
-                txn,
-                inputs,
-                contract: this
-            })
+            try{
+                const inputs = this.interface.decodeFunctionData(method.name, txn.data)
+                return method.summary({
+                    network,
+                    txn,
+                    inputs,
+                    contract: this
+                })
+            }catch(e){
+                console.error('getSummary : ' + e)
+                return [
+                  `Unknown call to ${this.alias(network, txn.from, txn.to)} (unable to parse)`
+                ]
+            }
         }
     }
 
