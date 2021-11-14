@@ -226,7 +226,8 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
       setSigningStatus(null)
 
       // Inform everything that's waiting for the results (eg WalletConnect)
-      resolveMany(requestIds, { success: bundleResult.success, result: bundleResult.txId, message: bundleResult.message })
+      const skipResolve = !bundleResult.success && bundleResult.message && bundleResult.message.includes('UNDERPRICED')
+      if (!skipResolve) resolveMany(requestIds, { success: bundleResult.success, result: bundleResult.txId, message: bundleResult.message })
 
       if (bundleResult.success) {
         addToast((

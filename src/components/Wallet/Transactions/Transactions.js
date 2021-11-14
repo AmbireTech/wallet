@@ -18,6 +18,9 @@ function Transactions ({ relayerURL, selectedAcc, selectedNetwork, eligibleReque
     <h3 className='error'>Unsupported: not currently connected to a relayer.</h3>
   </section>)
 
+  // @TODO: visualize others
+  const firstPending = data && data.txns.find(x => !x.executed)
+
   return (
     <section id='transactions'>
       {!!eligibleRequests.length && (<div onClick={showSendTxns} className='panel'>
@@ -30,9 +33,9 @@ function Transactions ({ relayerURL, selectedAcc, selectedNetwork, eligibleReque
               txn={[req.txn.to, req.txn.value, req.txn.data]}/>
         ))}
       </div>)}
-      { false && (<div className='panel'>
+      { !!firstPending && (<div className='panel'>
         <div className='title'>Pending transaction bundle</div>
-        {/* TODO */}
+        {firstPending && (<MinedBundle bundle={firstPending}></MinedBundle>)}
       </div>) }
       <h2>Confirmed transactions</h2>
       {!relayerURL && (<h3 className='error'>Unsupported: not currently connected to a relayer.</h3>)}
