@@ -35,11 +35,6 @@ function AppInner () {
     verbose: 1
 	}, [selectedAcc, network])
 
-  const resolveMany = (ids, resolution) => {
-    wcResolveMany(ids, resolution);
-    gnosisResolveMany(ids, resolution);
-  }
-
   const portfolio = usePortfolio({
     currentNetwork: network.id,
     account: selectedAcc
@@ -52,6 +47,11 @@ function AppInner () {
 
   // Merge all requests
   const requests = useMemo(() => [...internalRequests, ...wcRequests, ...gnosisRequests], [wcRequests, internalRequests, gnosisRequests])
+  const resolveMany = (ids, resolution) => {
+    wcResolveMany(ids, resolution)
+    gnosisResolveMany(ids, resolution)
+    setInternalRequests(reqs => reqs.filter(x => !ids.includes(x.id)))
+  }
 
   // Show notifications for all requests
   useNotifications(requests)
@@ -68,11 +68,11 @@ function AppInner () {
     () => setSendTxnsShowing(!!eligibleRequests.length),
     [eligibleRequests.length]
   )
-  const onDismiss = () => setSendTxnsShowing(false)
+  const dismissSendTxns = () => setSendTxnsShowing(false)
 
   return (<>
     {sendTxnsShowing ? (
-      <SendTransaction accounts={accounts} selectedAcc={selectedAcc} network={network} requests={eligibleRequests} resolveMany={resolveMany} relayerURL={relayerURL} onDismiss={onDismiss}>
+      <SendTransaction accounts={accounts} selectedAcc={selectedAcc} network={network} requests={eligibleRequests} resolveMany={resolveMany} relayerURL={relayerURL} onDismiss={dismissSendTxns}>
       </SendTransaction>
       ) : (<></>)
     }
@@ -97,10 +97,17 @@ function AppInner () {
           setNetwork={setNetwork}
           addRequest={addRequest}
           connections={connections}
+          // needed by the top bar to disconnect/connect dapps
           connect={connect}
           disconnect={disconnect}
+          // needed by the gnosis plugins
           gnosisConnect={gnosisConnect}
           gnosisDisconnect={gnosisDisconnect}
+          // required for the security and transactions pages
+          relayerURL={relayerURL}
+          // required by the transactions page
+          eligibleRequests={eligibleRequests}
+          showSendTxns={() => setSendTxnsShowing(true)}
         >
         </Wallet>
       </Route>
