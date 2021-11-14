@@ -1,21 +1,18 @@
 import './Security.scss'
 
-import { usePrivileges } from '../../../hooks'
 import { Loading, TextInput, Button } from '../../common'
 import { Interface } from 'ethers/lib/utils'
 import accountPresets from '../../../consts/accountPresets'
 import privilegesOptions from '../../../consts/privilegesOptions'
+import { useRelayerData } from '../../../hooks'
 
 const IDENTITY_INTERFACE = new Interface(
   require('adex-protocol-eth/abi/Identity5.2')
 )
 
 const Security = ({ relayerURL, selectedAcc, selectedNetwork, accounts, addRequest }) => {
-  const { privileges, errMsg, isLoading } = usePrivileges({
-    identity: selectedAcc,
-    network: selectedNetwork.id,
-    relayerURL
-  })
+  const { data, errMsg, isLoading } = useRelayerData(relayerURL ? `${relayerURL}/identity/${selectedAcc}/${selectedNetwork.id}/privileges` : null)
+  const privileges = data ? data.privileges : {}
 
   const craftTransaction = (address, privLevel) => {
     return {
@@ -80,13 +77,19 @@ const Security = ({ relayerURL, selectedAcc, selectedNetwork, accounts, addReque
     )
   }).filter(x => x)
 
+  // @TODO relayerless mode: it's not that hard to implement in a primitive form, we need everything as-is
+  // but rendering the initial privileges instead; or maybe using the relayerless transactions hook/service
+  // and aggregate from that
+  if (!relayerURL) return (<section id='security'>
+    <h3 className='error'>Unsupported: not currently connected to a relayer.</h3>
+  </section>)
   return (
-    <section id="security">
-      <div className="panel">
-        <div className="title">Authorized signers</div>
-        {errMsg && (<h3 className='error'>{errMsg}</h3>)}
+    <section id='security'>
+      <div className='panel'>
+        <div className='title'>Authorized signers</div>
+        {errMsg && (<h3 className='error'>Error getting authorized signers: {errMsg}</h3>)}
         {isLoading && <Loading />}
-        <ul className="content">{!isLoading && privList}</ul>
+        <ul className='content'>{!isLoading && privList}</ul>
       </div>
     </section>
   )
