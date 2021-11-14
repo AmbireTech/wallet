@@ -12,6 +12,14 @@ module.exports = {
         USDT:     { symbol: 'USDT',    decimals: 6,    address: '0xdAC17F958D2ee523a2206206994597C13D831ec7'},
         DAI:      { symbol: 'DAI',     decimals: 18,    address: '0x6B175474E89094C44Da98b954EedeAC495271d0F'},
         SUSHI:      { symbol: 'SUSHI',     decimals: 18,    address: '0x6B3595068778DD592e39A122f4f5a5cF09C90fE2'},
+        WBTC:      { symbol: 'WBTC',     decimals: 8,    address: '0x2260fac5e5542a773aa44fbcfedf7c193bc2c599'},
         TRUST:      { symbol: 'TRUST',     decimals: 18,    address: '0x70Cc41a7BA9101FDf402Bc0758B7C40fc704ad05'},//dunno this token, just took random onchain uniV3 swaps
+
+        //cTokens
+        cDAI:      { symbol: 'cDAI',     decimals: 8,    address: '0x5d3a536e4d6dbd6114cc1ead35777bab948e3643'},
+
+
+        //curveTokens
+        curveFi_cDAI_cUSDC_USDT: { symbol: 'cDAI+cUSDC+USDT',     decimals: 18,    address: '0x9fc689ccada600b6df723d9e47d84d76664a1f23'}
     }
 }

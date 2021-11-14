@@ -92,13 +92,15 @@ module.exports = {
     },
 
 
-    humanAmount(network, address, weiValue, displayDecimals=4){
+    humanAmount(network, address, weiValue, displayDecimals=4, amountCallback){
         if (new BigNumber(new BigNumber(weiValue.toString()).comparedTo("1e70")) == 1) {//=== number comparison fails
+            if(amountCallback){ return amountCallback({ infinity:true, amount:weiValue, decimals:null })}
             return '(∞)';
         }
 
         const decimals = this.tokenDecimals(network, address);
         if(decimals == 0){
+            if(amountCallback){ return amountCallback({ unknownDecimals:true, amountWei: weiValue, decimals:0})}
             return weiValue + "(wei)"//TODO: check whats the best fallback
         }
         return new BigNumber(weiValue).div(10**decimals).toFixed(displayDecimals)

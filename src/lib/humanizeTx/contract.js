@@ -6,6 +6,7 @@ function Contract(manager, contractData){
     this.methods = [];
     this.id = new Date().getTime();
     this.interface = null;
+    this.data = contractData.data || {};
     this.address = contractData.address;
     this.name = contractData.name;
 
@@ -42,8 +43,8 @@ function Contract(manager, contractData){
         return this.manager.humanAmount(network, address, weiValue, displayDecimals);
     }
 
-    this.humanAmountSymbol = (network, address, weiValue, displayDecimals=4, unknownCallback) => {
-        return this.manager.humanAmount(network, address, weiValue, displayDecimals) + " " + this.tokenSymbol(network, address, unknownCallback);
+    this.humanAmountSymbol = (network, address, weiValue, displayDecimals=4, unknownCallback, amountCallback) => {
+        return this.manager.humanAmount(network, address, weiValue, displayDecimals, amountCallback) + " " + this.tokenSymbol(network, address, unknownCallback);
     }
 
     this.tokenSymbol = (network, address, unknownCallback) => {
