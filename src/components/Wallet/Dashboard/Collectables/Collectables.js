@@ -17,7 +17,7 @@ const Collectables = ({ collectables }) => {
                                 <div className="info">
                                     <div className="collection">
                                         <div className="collection-icon" style={{backgroundImage: `url(${collectionImg})`}}></div>
-                                        { collectionName }
+                                        <span className="collection-name">{ collectionName }</span>
                                     </div>
                                     <div className="details">
                                         <div className="name">{ assetName }</div>
