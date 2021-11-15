@@ -5,7 +5,7 @@ import { BsChevronDown } from 'react-icons/bs'
 import { CSSTransition } from 'react-transition-group';
 import useOnClickOutside from '../../../helpers/onClickOutside';
 
-const Select = ({ children, native, monospace, searchable, defaultValue, items, onChange }) => {
+const Select = ({ children, native, monospace, searchable, disabled, label, defaultValue, items, onChange }) => {
     const ref = useRef();
     const hiddenTextInput = useRef();
     const transitionRef = useRef();
@@ -39,16 +39,22 @@ const Select = ({ children, native, monospace, searchable, defaultValue, items, 
 
     return (
         !native ? 
-            <div className={`select ${monospace ? 'monospace': ''}`} onClick={() => setOpen(!isOpen)} ref={ref}>
+            <div className={`select ${monospace ? 'monospace': ''} ${disabled ? 'disabled' : ''}`} onClick={() => setOpen(!isOpen)} ref={ref}>
                 {
                     searchable ? 
-                        <input type="text" className="search-input" value={search} ref={hiddenTextInput} onInput={({ target }) => setSearch(target.value)}/>
+                        <input type="text" className="search-input" disabled={disabled} value={search} ref={hiddenTextInput} onInput={({ target }) => setSearch(target.value)}/>
+                        :
+                        null
+                }
+                {
+                    label ? 
+                        <label>{ label }</label>
                         :
                         null
                 }
                 {
                     selectedItem ? 
-                        <div className="value">
+                        <div className="input">
                             <div className="icon">
                                 {
                                     selectedItem.icon ? 
@@ -62,35 +68,35 @@ const Select = ({ children, native, monospace, searchable, defaultValue, items, 
                             <div className={`handle ${isOpen ? 'open' : ''}`}>
                                 <BsChevronDown size={20}></BsChevronDown>
                             </div>
+                            {
+                                <CSSTransition unmountOnExit in={isOpen} timeout={200} classNames="fade" nodeRef={transitionRef}>
+                                    <div className="list" ref={transitionRef}>
+                                        {
+                                            filteredItems.map(item => (
+                                                <div className={`option ${item.value === selectedItem.value ? 'active' : ''}`} key={item.value} onClick={() => selectItem(item)}>
+                                                    <div className="icon">
+                                                        {
+                                                            item.icon ? 
+                                                                <img src={item.icon} alt="Icon" />
+                                                                :
+                                                                null
+                                                        }
+                                                    </div>
+                                                    { item.label || item.value }
+                                                </div>
+                                            ))
+                                        }
+                                        { children }
+                                    </div>
+                                </CSSTransition>
+                            }
                         </div>
                         :
                         null
                 }
-                {
-                    <CSSTransition unmountOnExit in={isOpen} timeout={200} classNames="fade" nodeRef={transitionRef}>
-                        <div className="list" ref={transitionRef}>
-                            {
-                                filteredItems.map(item => (
-                                    <div className={`option ${item.value === selectedItem.value ? 'active' : ''}`} key={item.value} onClick={() => selectItem(item)}>
-                                        <div className="icon">
-                                            {
-                                                item.icon ? 
-                                                    <img src={item.icon} alt="Icon" />
-                                                    :
-                                                    null
-                                            }
-                                        </div>
-                                        { item.label || item.value }
-                                    </div>
-                                ))
-                            }
-                            { children }
-                        </div>
-                    </CSSTransition>
-                }
             </div>
             :
-            <select className="select" onChange={ev => onChange(ev.target.value)} defaultValue={defaultValue}>
+            <select className="select" disabled={disabled} onChange={ev => onChange(ev.target.value)} defaultValue={defaultValue}>
                 {
                     items.map(item => (
                         <option key={item.value} value={item.value}>
