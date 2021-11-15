@@ -29,7 +29,7 @@ const networks = [{
 		nativeAssetSymbol: 'AETH',
 		name: 'Arbitrum',
 		icon: '/resources/networks/arbitrum.svg',
-		explorerUrl: 'https://explorer.offchainlabs.com'
+		explorerUrl: 'https://arbiscan.io'
 }]
 
 export default networks
