@@ -35,7 +35,7 @@ const Card = ({ tokens, icon, details, onTokenSelect }) => {
                     }
                 </ul>
                 <Segments small defaultValue={segment} segments={segments} onChange={(value) => setSegment(value)}></Segments>
-                <NumberInput min="0" max={currentToken?.balance} value={amount} label={`Available Amount: ${currentToken?.balance} ${currentToken?.label}`} onInput={(value) => setAmount(value)} button="MAX" onButtonClick={setMaxValue}></NumberInput>
+                <NumberInput min="0" max={currentToken?.balance} value={amount} label={`Available Amount: ${currentToken?.balance} ${currentToken?.symbol}`} onInput={(value) => setAmount(value)} button="MAX" onButtonClick={setMaxValue}></NumberInput>
                 <Button>{ segment }</Button>
             </div>
         </div>
