@@ -1,6 +1,6 @@
 import { ethers, getDefaultProvider } from 'ethers'
 import { Interface } from 'ethers/lib/utils'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useToasts } from '../../../../hooks/toasts'
 import AAVELendingPoolAbi from '../../../../consts/AAVELendingPoolAbi'
 
@@ -17,6 +17,7 @@ const RAY = 10**27
 
 const AAVECard = ({ network, tokens }) => {
     const { addToast } = useToasts()
+    const [token, setToken] = useState(tokens[0].value)
     const [details, setDetails] = useState([])
 
     const { rpc } = network
@@ -43,13 +44,13 @@ const AAVECard = ({ network, tokens }) => {
         }
     }
 
-    const onTokenSelect = value => {
-        const token = tokens.find(token => token.value === value)
-        if (token) updateDetails(token.value)
-    }
+    useEffect(() => {
+        const selectedToken = tokens.find(({ value }) => value === token)
+        if (selectedToken) updateDetails(selectedToken.value)
+    }, [token])
 
     return (
-        <Card icon={AAVE_ICON} details={details} tokens={tokens} onTokenSelect={onTokenSelect}/>
+        <Card icon={AAVE_ICON} details={details} tokens={tokens} onTokenSelect={(value) => setToken(value)}/>
     )
 }
 
