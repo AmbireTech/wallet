@@ -57,7 +57,7 @@ export default function Wallet(props) {
   return (
     <div id="wallet">
       <TopBar {...props} />
-      <SideBar match={props.match} portfolio={props.portfolio}/>
+      <SideBar match={props.match} portfolio={props.portfolio} eligibleReqLength={props.eligibleRequests.length}/>
       <div id="wallet-container">
         <Switch>
           {
