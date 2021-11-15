@@ -48,19 +48,6 @@ export default function useGnosisSafe({ selectedAccount, network, verbose = 1 })
       return null
     }
 
-	connector.current.on(Methods.getTxBySafeTxHash, async (msg) => {
-		const provider = getDefaultProvider(stateRef.current.network.rpc)
-		const safeTxHash = msg.data?.params?.safeTxHash
-		if (!safeTxHash) {
-			throw new Error(`${Methods.getTxBySafeTxHash} - no safeTxHash`)
-		} 
-		const res = await provider.getTransaction(safeTxHash).catch(err => {
-			throw err
-		  })
-
-		  return res
-	  })
-
     // reply back to iframe with safe data
     connector.current.on(Methods.getSafeInfo, () => {
       return {
@@ -196,25 +183,10 @@ export default function useGnosisSafe({ selectedAccount, network, verbose = 1 })
       try{
         const res = await provider.getTransaction(safeTxHash)
         return {
-          hash: res.hash,
-          type: res.type,
-          accessList: res.accessList,
-          blockHash: res.blockHash,
-          blockNumber: res.blockNumber,
-          transactionIndex: res.transactionIndex,
-          confirmations: res.confirmations,
-          from: res.from,
           gasPrice: res.gasPrice.toString(),
           gasLimit: res.gasLimit.toString(),
-          to: res.to,
           value: res.value.toString(),
-          nonce: res.nonce,
-          data: res.data,
-          r: res.r,
-          s: res.s,
-          v: res.v,
-          creates: res.creates,
-          chainId: res.chainId,
+          ...res
         }
       }catch(e){
         console.error("GS: Err getting transaction " + safeTxHash);
