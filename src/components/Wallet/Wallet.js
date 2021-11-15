@@ -1,7 +1,6 @@
 import "./Wallet.scss"
 
-import { Route, Redirect } from "react-router-dom"
-import { TransitionGroup, CSSTransition } from "react-transition-group"
+import { Switch, Route, Redirect } from "react-router-dom"
 import Dashboard from "./Dashboard/Dashboard"
 import TopBar from "./TopBar/TopBar"
 import SideBar from "./SideBar/SideBar"
@@ -11,14 +10,9 @@ import Security from "./Security/Security"
 import Transactions from './Transactions/Transactions'
 import PluginGnosisSafeApps from "../Plugins/GnosisSafeApps/GnosisSafeApps"
 import Collectable from "./Collectable/Collectable"
-import { createRef } from "react"
 
 export default function Wallet(props) {
   const routes = [
-    {
-      path: '/',
-      component: <Redirect to={props.match.url + '/dashboard'} />
-    },
     {
       path: '/dashboard',
       component: <Dashboard portfolio={props.portfolio} setNetwork={props.setNetwork} />
@@ -64,30 +58,20 @@ export default function Wallet(props) {
     <div id="wallet">
       <TopBar {...props} />
       <SideBar match={props.match} portfolio={props.portfolio}/>
-      <TransitionGroup>
-        {
-          routes.map(({ path, component }) => (
-            <Route key={path} exact path={props.match.url + path}>
-              {({ match }) => {
-                const viewRef = createRef()
-                return (
-                  <CSSTransition
-                    in={match != null}
-                    timeout={300}
-                    classNames="fade"
-                    unmountOnExit
-                    nodeRef={viewRef}
-                  >
-                    <div className="view-container" ref={viewRef}>
-                      { component ? component : null }
-                    </div>
-                  </CSSTransition>
-                )
-              }}
-            </Route>
-          ))
-        }
-        </TransitionGroup>
+      <div id="wallet-container">
+        <Switch>
+          {
+            routes.map(({ path, component }) => (
+              <Route path={props.match.url + path} key={path}>
+                { component ? component : null }
+              </Route>
+            ))
+          }
+          <Route path={props.match.url + "/"}>
+            <Redirect to={props.match.url + "/dashboard"} />
+          </Route>
+        </Switch>
+      </div>
     </div>
   );
 }
