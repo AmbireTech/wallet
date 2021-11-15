@@ -4,12 +4,14 @@ module.exports = {
         methods:[
             {
                 name: "deposit",
+                signature: '0xd0e30db0',
                 summary: ({network, txn, inputs, contract}) => {
                     return [`Wrap ${contract.humanAmount(network, 'native', txn.value)} ETH`];
                 }
             },
             {
                 name: "withdraw",
+                signature: '0x2e1a7d4d',
                 summary: ({network, txn, inputs, contract}) => {
                     return [`Unwrap ${contract.humanAmount(network, 'native', inputs.wad)} WETH`];
                 }

@@ -1,9 +1,10 @@
 module.exports = {
-    description: "MasterchefV2",
+    name: "MasterchefV2",
     interface: {
         methods:[
             {
                 name: "deposit",
+                signature: '0x8dbdbe6d',
                 summary: ({network, txn, inputs, contract}) => {
                     return [
                         `Stake ${inputs.amount} tokens in pool #${inputs.pid}`,
@@ -13,6 +14,7 @@ module.exports = {
             },
             {
                 name: "withdraw",
+                signature: '0x0ad58d2f',
                 summary: ({network, txn, inputs, contract}) => {
                     return [
                         `Withdraw ${inputs.amount} tokens from pool #${inputs.pid}`,
@@ -22,6 +24,7 @@ module.exports = {
             },
             {
                 name: "harvest",
+                signature: '0x18fccc76',
                 summary: ({network, txn, inputs, contract}) => {
                     return [
                         `Claim rewards of pool #${inputs.pid}`,
@@ -31,6 +34,7 @@ module.exports = {
             },
             {
                 name: "withdrawAndHarvest",
+                signature: '0xd1abb907',
                 summary: ({network, txn, inputs, contract}) => {
                     return [
                         `Withdraw ${inputs.amount} tokens from pool #${inputs.pid}`,

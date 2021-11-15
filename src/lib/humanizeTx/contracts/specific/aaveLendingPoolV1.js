@@ -4,6 +4,7 @@ module.exports = {
         methods:[
             {
                 name: "deposit",
+                signature: '0xd2d0e066',
                 summary: ({network, txn, inputs, contract}) => {
                     return [
                         `Deposit ${contract.humanAmountSymbol(network, inputs._reserve, inputs._amount)} as collateral`,
@@ -12,6 +13,7 @@ module.exports = {
             },
             {
                 name: "borrow",
+                signature: '0xc858f5f9',
                 summary: ({network, txn, inputs, contract}) => {
                     return [
                         `Borrow ${contract.humanAmountSymbol(network, inputs._reserve, inputs._amount)}`,
@@ -20,6 +22,7 @@ module.exports = {
             },
             {
                 name: "repay",
+                signature: '0x5ceae9c4',
                 summary: ({network, txn, inputs, contract}) => {
                     return [
                         `Repay ${contract.humanAmountSymbol(network, inputs._reserve, inputs._amount, null,null, (data) => (data.infinity?'maximum':data.amount))}`,
@@ -29,6 +32,7 @@ module.exports = {
             },
             {
                 name: "redeemUnderlying",
+                signature: '0x9895e3d8',
                 summary: ({network, txn, inputs, contract}) => {
                     return [
                         `Redeem underlying ${contract.humanAmountSymbol(network, inputs._reserve, inputs._amount, null,null, (data) => (data.infinity?'maximum':data.amount))}`,

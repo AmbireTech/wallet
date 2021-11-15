@@ -19,12 +19,15 @@ function Contract(manager, contractData){
     this.interface = new ethers.utils.Interface(contractData.interface.abi);
 
     for(let m in contractData.interface.methods){
-        try{
-            contractData.interface.methods[m].signature = this.interface.getSighash(contractData.interface.methods[m].name);
-            this.methods.push(contractData.interface.methods[m])
-        }catch(e){
-            console.error("Contract Init : " + e);
-        }
+        if(!contractData.interface.methods[m].signature){
+          console.error("Signature missing for " + contractData.name + " : " + contractData.interface.methods[m].name)
+            try{
+                contractData.interface.methods[m].signature = this.interface.getSighash(contractData.interface.methods[m].name);
+            }catch(e){
+                console.error("Contract Init : " + e);
+            }
+         }
+        this.methods.push(contractData.interface.methods[m])
     }
 
     this.getSummary = (network, txn) => {
@@ -42,7 +45,8 @@ function Contract(manager, contractData){
                     contract: this
                 })
             }catch(e){
-                console.error('getSummary : ' + e)
+                console.error('getSummary Error')
+                console.log(e);
                 return [
                   `Unknown call to ${this.alias(network, txn.from, txn.to)} (unable to parse)`
                 ]
@@ -50,14 +54,17 @@ function Contract(manager, contractData){
         }
     }
 
+    //will be deprecated
     this.humanAmount = (network, address, weiValue, displayDecimals=4) => {
         return this.manager.humanAmount(network, address, weiValue, displayDecimals);
     }
 
+    //will be deprecated
     this.humanAmountSymbol = (network, address, weiValue, displayDecimals=4, unknownCallback, amountCallback) => {
-        return this.manager.humanAmount(network, address, weiValue, displayDecimals, amountCallback) + " " + this.tokenSymbol(network, address, unknownCallback);
+        return this.manager.humanAmountSymbol(network, address, weiValue, displayDecimals, unknownCallback, amountCallback);
     }
 
+    //will be deprecated
     this.tokenSymbol = (network, address, unknownCallback) => {
         return this.manager.tokenSymbol(network, address, unknownCallback);
     }
@@ -66,6 +73,7 @@ function Contract(manager, contractData){
         return this.manager.tokenDecimals(network, address);
     }
 
+    //will be deprecated
     this.alias = (network, txOriginAddress, address) =>{
         return this.manager.alias(network, txOriginAddress, address);
     }

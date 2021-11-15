@@ -1,9 +1,10 @@
 module.exports = {
-    description: "synthetixStakingRewards",
+    name: "synthetixStakingRewards",
     interface: {
         methods:[
             {
                 name: "getReward",
+                signature: '0x3d18b912',
                 summary: ({network, txn, inputs, contract}) => {
                     return [
                         `Claim rewards`,
@@ -12,6 +13,7 @@ module.exports = {
             },
             {
                 name: "exit",
+                signature: '0xe9fad8ee',
                 summary: ({network, txn, inputs, contract}) => {
                     return [
                         `exit`,
@@ -20,6 +22,7 @@ module.exports = {
             },
             {
                 name: "withdraw",
+                signature: '0x2e1a7d4d',
                 summary: ({network, txn, inputs, contract}) => {
                     const lpTokenAddress = (contract.data.lpToken && contract.data.lpToken.address)?contract.data.lpToken.address:""
                     return [
@@ -29,6 +32,7 @@ module.exports = {
             },
             {
                 name: "stake",
+                signature: '0xa694fc3a',
                 summary: ({network, txn, inputs, contract}) => {
                     const lpTokenAddress = (contract.data.lpToken && contract.data.lpToken.address)?contract.data.lpToken.address:""
                     return [

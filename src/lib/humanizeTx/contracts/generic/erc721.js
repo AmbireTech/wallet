@@ -1,11 +1,19 @@
+const SummaryFormatter = require('../../summaryFormatter');
+
 module.exports = {
-    description: "ERC721",
+    name: "ERC721",
     interface: {
         methods:[
             {
                 name: "approve",
+                signature: '0x095ea7b3',
                 summary: ({network, txn, inputs, contract}) => {
-                    return [`Approve Token #${inputs.tokenId} to be transfered by ${contract.alias(network, txn.from, inputs.to)}`];
+                    const SF = new SummaryFormatter(contract.manager)
+                    return SF.actions([
+                        SF.text(`Approve Token #${inputs.tokenId} to be transfered by`)
+                          .alias(network, txn.from, inputs.to)
+                          .action()
+                    ])
                 }
             },
             /*{
@@ -24,20 +32,42 @@ module.exports = {
             },*/
             {
                 name: "transferFrom",
+                signature: '0x23b872dd',
                 summary: ({network, txn, inputs, contract}) => {
-                    return [`Transfer Token #${inputs.tokenId} from ${contract.alias(network, txn.from, inputs.from)} to ${contract.alias(network, txn.from, inputs.to)}`];
+                    const SF = new SummaryFormatter(contract.manager)
+                    return SF.actions([
+                        SF.text(`Transfer Token #${inputs.tokenId} from`)
+                          .alias(network, txn.from, inputs.from)
+                          .test('to')
+                          .alias(network, txn.from, inputs.to)
+                          .action()
+                    ])
                 }
             },
             {
                 name: "safeTransferFrom",//how many cases exist with same methodName and different signature?
+                signature: '0x42842e0e',
                 summary: ({network, txn, inputs, contract}) => {
-                    return [`Transfer Token #${inputs.tokenId} from ${contract.alias(network, txn.from, inputs.from)} to ${contract.alias(network, txn.from, inputs.to)}`];
+                    const SF = new SummaryFormatter(contract.manager)
+                    return SF.actions([
+                        SF.text(`Transfer Token #${inputs.tokenId} from`)
+                          .alias(network, txn.from, inputs.from)
+                          .test('to')
+                          .alias(network, txn.from, inputs.to)
+                          .action()
+                    ])
                 }
             },
             {//NOT AN ERC721 STANDARD???
                 name: "transfer",
+                signature: '0xa9059cbb',
                 summary: ({network, txn, inputs, contract}) => {
-                    return [`Transfer Token #${inputs._tokenId} to ${contract.alias(network, txn.from, inputs._to)}`];
+                    const SF = new SummaryFormatter(contract.manager)
+                    return SF.actions([
+                        SF.text(`Transfer Token #${inputs._tokenId} to`)
+                          .alias(network, txn.from, inputs._to)
+                          .action()
+                    ])
                 }
             }
         ],

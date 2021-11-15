@@ -6,6 +6,7 @@ module.exports = {
         methods:[
             {
                 name: "setAddrPrivilege",
+                signature: '0x0d5828d4',
                 summary: ({network, txn, inputs, contract}) => {
                     const grant = new BigNumber(inputs.priv).eq(1);
                     const revoke = new BigNumber(inputs.priv).eq(0);

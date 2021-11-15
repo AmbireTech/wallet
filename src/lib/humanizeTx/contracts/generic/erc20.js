@@ -1,17 +1,35 @@
+const SummaryFormatter = require('../../summaryFormatter');
+
 module.exports = {
-    description: "ERC20",
+    name: "ERC20",
     interface: {
         methods:[
             {
-                name: "approve",
+                name: 'approve',
+                signature: '0x095ea7b3',
                 summary: ({network, txn, inputs, contract}) => {
-                    return [`Approve ${contract.alias(network, txn.from, inputs._spender)} to spend ${contract.humanAmount(network, txn.to, inputs._value)} ${contract.tokenSymbol(network, txn.to)}`];
+                    const SF = new SummaryFormatter(contract.manager)
+                    return SF.actions([
+                        SF.text('Approve')
+                          .alias(network, txn.from, inputs._spender)
+                          .text('to spend')
+                          .tokenAmount(network, txn.to, inputs._value)
+                          .action()
+                    ])
                 }
             },
             {
-                name: "transfer",
+                name: 'transfer',
+                signature: '0xa9059cbb',
                 summary: ({network, txn, inputs, contract}) => {
-                    return [`Transfer ${contract.humanAmount(network, txn.to, inputs._value)} ${contract.tokenSymbol(network, txn.to)} to ${contract.alias(network, txn.from, inputs._to)}`];
+                    const SF = new SummaryFormatter(contract.manager)
+                    return SF.actions([
+                        SF.text('Transfer')
+                          .tokenAmount(network, txn.to, inputs._value)
+                          .text('to')
+                          .alias(network, txn.from, inputs._to)
+                          .action()
+                    ])
                 }
             }
         ],

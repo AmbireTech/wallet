@@ -1,9 +1,10 @@
 module.exports = {
-    description: "MasterchefV1",
+    name: "MasterchefV1",
     interface: {
         methods:[
             {
                 name: "deposit",
+                signature: '0xe2bbb158',
                 summary: ({network, txn, inputs, contract}) => {
                     let action;
                     if(inputs._amount.toString() > 0){
@@ -18,6 +19,7 @@ module.exports = {
             },
             {
                 name: "withdraw",
+                signature: '0x441a3e70',
                 summary: ({network, txn, inputs, contract}) => {
                     return [
                         `Withdraw ${inputs._amount} tokens of pool #${inputs._pid}`,

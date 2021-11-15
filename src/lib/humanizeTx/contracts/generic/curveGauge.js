@@ -1,9 +1,10 @@
 module.exports = {
-    description: "curveGauge",
+    name: "curveGauge",
     interface: {
         methods:[
             {
                 name: "deposit",
+                signature: '0xb6b55f25',
                 summary: ({network, txn, inputs, contract}) => {
                     const lpAddress = (contract.data.lpToken && contract.data.lpToken.address)?contract.data.lpToken.address:""
                     return [
@@ -13,6 +14,7 @@ module.exports = {
             },
             {
                 name: "withdraw",
+                signature: '0x2e1a7d4d',
                 summary: ({network, txn, inputs, contract}) => {
                     const lpAddress = (contract.data.lpToken && contract.data.lpToken.address)?contract.data.lpToken.address:""
 

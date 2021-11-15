@@ -1,9 +1,10 @@
 module.exports = {
-    description: "curveDeposit",
+    name: "curveDeposit",
     interface: {
         methods:[
             {
                 name: "exchange_underlying",
+                signature: '0xa6417ed6',
                 summary: ({network, txn, inputs, contract}) => {
                     //index out of bounds check
                     const inAddress = (contract.data.underlying && contract.data.underlying[inputs.i] && contract.data.underlying[inputs.i].address)?contract.data.underlying[inputs.i].address:""
@@ -15,6 +16,7 @@ module.exports = {
             },
             {
                 name: "remove_liquidity_imbalance",
+                signature: '0x9fdaea0c',
                 summary: ({network, txn, inputs, contract}) => {
 
                     const liquidityAddresses = {
@@ -33,6 +35,7 @@ module.exports = {
             },
             {
                 name: "add_liquidity",
+                signature: '0x4515cef3',
                 summary: ({network, txn, inputs, contract}) => {
 
                     const liquidityAddresses = {

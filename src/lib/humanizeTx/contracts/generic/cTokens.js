@@ -4,6 +4,7 @@ module.exports = {
         methods:[
             {
                 name: "mint",
+                signature: '0xa0712d68',
                 summary: ({network, txn, inputs, contract}) => {
                     const underlyingAddress = contract.data.underlying?contract.data.underlying.address:'';
                     return [
@@ -13,6 +14,7 @@ module.exports = {
             },
             {
                 name: "redeem",
+                signature: '0xdb006a75',
                 summary: ({network, txn, inputs, contract}) => {
                     return [
                         `Withdraw ${contract.humanAmountSymbol(network, contract.address, inputs.redeemTokens)}`,
@@ -21,6 +23,7 @@ module.exports = {
             },
             {
                 name: "repayBorrow",
+                signature: '0x0e752702',
                 summary: ({network, txn, inputs, contract}) => {
                     const underlyingAddress = contract.data.underlying?contract.data.underlying.address:'';
                     return [

@@ -1,26 +1,48 @@
+const SummaryFormatter = require('../../summaryFormatter');
+
 module.exports = {
-    description: "UniswapV2Router02",
+    name: "UniswapV2Router02",
     interface: {
         methods:[
             ////////////////////////////////
             /////   ADDING LIQUIDITY
             ////////////////////////////////
             {
-                name: "addLiquidity",
+                name: 'addLiquidity',
+                signature: '0xe8e33700',
                 summary: ({network, txn, inputs, contract}) => {
-                    return [
-                        `Add liquidity for ${contract.humanAmountSymbol(network, inputs.amountAMin, inputs.tokenA)} and ${contract.humanAmountSymbol(network, inputs.amountBMin, inputs.tokenB)}`,
-                        txn.from.toLowerCase() !== inputs.to.toLowerCase()?`Send it to ${contract.alias(network, txn.from, inputs.to)}`:null
-                    ].filter(a => a !== null)
+                    const SF = new SummaryFormatter(contract.manager)
+                    return SF.actions([
+                        SF.text('Add liquidity for')
+                          .tokenAmount(network, inputs.amountAMin, inputs.tokenA)
+                          .text('and')
+                          .tokenAmount(network, inputs.amountBMin, inputs.tokenB)
+                          .action(),
+
+                        txn.from.toLowerCase() !== inputs.to.toLowerCase()
+                        && SF.text('Send it to')
+                          .alias(network, txn.from, inputs.to)
+                          .action()
+                    ])
                 }
             },
             {
                 name: "addLiquidityETH",
+                signature: '0xf305d719',
                 summary: ({network, txn, inputs, contract}) => {
-                    return [
-                        `Add liquidity for ${contract.humanAmountSymbol(network, inputs.amountETHMin, 'native')} and ${contract.humanAmountSymbol(network, inputs.amountTokenMin, inputs.token)}`,
-                        txn.from.toLowerCase() !== inputs.to.toLowerCase()?`Send it to ${contract.alias(network, txn.from, inputs.to)}`:null
-                    ].filter(a => a !== null)
+                    const SF = new SummaryFormatter(contract.manager)
+                    return SF.actions([
+                        SF.text('Add liquidity for')
+                          .tokenAmount(network, inputs.amountETHMin, 'native')
+                          .text('and')
+                          .tokenAmount(network, inputs.amountTokenMin, inputs.token)
+                          .action(),
+
+                        txn.from.toLowerCase() !== inputs.to.toLowerCase()
+                        && SF.text('Send it to')
+                          .alias(network, txn.from, inputs.to)
+                          .action()
+                    ])
                 }
             },
 
@@ -29,56 +51,118 @@ module.exports = {
             ////////////////////////////////
             {
                 name: "removeLiquidity",
+                signature: '0xbaa2abde',
                 summary: ({network, txn, inputs, contract}) => {
-                    return [
-                        `Remove liquidity for ${contract.humanAmountSymbol(network, inputs.amountETHMin, 'native')} and ${contract.humanAmountSymbol(network, inputs.amountTokenMin, inputs.token)}`,
-                        txn.from.toLowerCase() !== inputs.to.toLowerCase()?`Send it to ${contract.alias(network, txn.from, inputs.to)}`:null
-                    ].filter(a => a !== null)
+                    const SF = new SummaryFormatter(contract.manager)
+                    return SF.actions([
+                        SF.text('Remove liquidity for')
+                          .tokenAmount(network, inputs.amountAMin, inputs.tokenA)
+                          .text('and')
+                          .tokenAmount(network, inputs.amountBMin, inputs.tokenB)
+                          .action(),
+
+                        txn.from.toLowerCase() !== inputs.to.toLowerCase()
+                        && SF.text('Send it to')
+                          .alias(network, txn.from, inputs.to)
+                          .action()
+                    ])
                 }
             },
             {
                 name: "removeLiquidityETH",
+                signature: '0x02751cec',
                 summary: ({network, txn, inputs, contract}) => {
-                    return [
-                        `Remove liquidity for ${contract.humanAmountSymbol(network, inputs.amountAMin, inputs.tokenA)} and ${contract.humanAmountSymbol(network, inputs.amountBMin, inputs.tokenB)}`,
-                        txn.from.toLowerCase() !== inputs.to.toLowerCase()?`Send it to ${contract.alias(network, txn.from, inputs.to)}`:null
-                    ].filter(a => a !== null)
+                    const SF = new SummaryFormatter(contract.manager)
+                    return SF.actions([
+                        SF.text('Remove liquidity for')
+                          .tokenAmount(network, inputs.amountETHMin, 'native')
+                          .text('and')
+                          .tokenAmount(network, inputs.amountTokenMin, inputs.token)
+                          .action(),
+
+                        txn.from.toLowerCase() !== inputs.to.toLowerCase()
+                        && SF.text('Send it to')
+                          .alias(network, txn.from, inputs.to)
+                          .action()
+                    ])
                 }
             },
             {
                 name: "removeLiquidityWithPermit",
+                signature: '0x2195995c',
                 summary: ({network, txn, inputs, contract}) => {
-                    return [
-                        `Remove liquidity with permit for ${contract.humanAmountSymbol(network, inputs.amountETHMin, 'native')} and ${contract.humanAmountSymbol(network, inputs.amountTokenMin, inputs.token)}`,
-                        txn.from.toLowerCase() !== inputs.to.toLowerCase()?`Send it to ${contract.alias(network, txn.from, inputs.to)}`:null
-                    ].filter(a => a !== null)
+                    const SF = new SummaryFormatter(contract.manager)
+                    return SF.actions([
+                        SF.text('Remove liquidity with permit for')
+                          .tokenAmount(network, inputs.amountAMin, inputs.tokenA)
+                          .text('and')
+                          .tokenAmount(network, inputs.amountBMin, inputs.tokenB)
+                          .action(),
+
+                        txn.from.toLowerCase() !== inputs.to.toLowerCase()
+                        && SF.text('Send it to')
+                          .alias(network, txn.from, inputs.to)
+                          .action()
+                    ])
                 }
             },
             {
                 name: "removeLiquidityETHWithPermit",
+                signature: '0xded9382a',
                 summary: ({network, txn, inputs, contract}) => {
-                    return [
-                        `Remove liquidity with permit for ${contract.humanAmountSymbol(network, inputs.amountAMin, inputs.tokenA)} and ${contract.humanAmountSymbol(network, inputs.amountBMin, inputs.tokenB)}`,
-                        txn.from.toLowerCase() !== inputs.to.toLowerCase()?`Send it to ${contract.alias(network, txn.from, inputs.to)}`:null
-                    ].filter(a => a !== null)
+                    const SF = new SummaryFormatter(contract.manager)
+                    return SF.actions([
+                        SF.text('Remove liquidity with permit for')
+                          .tokenAmount(network, inputs.amountETHMin, 'native')
+                          .text('and')
+                          .tokenAmount(network, inputs.amountTokenMin, inputs.token)
+                          .action(),
+
+                        txn.from.toLowerCase() !== inputs.to.toLowerCase()
+                        && SF.text('Send it to')
+                          .alias(network, txn.from, inputs.to)
+                          .action()
+                    ])
                 }
             },
             {
                 name: "removeLiquidityETHSupportingFeeOnTransferTokens",
+                signature: '0xaf2979eb',
                 summary: ({network, txn, inputs, contract}) => {
-                    return [
-                        `Remove liquidity for ${contract.humanAmountSymbol(network, inputs.amountAMin, inputs.tokenA)} and ${contract.humanAmountSymbol(network, inputs.amountBMin, inputs.tokenB)} (deducting token fees)`,
-                        txn.from.toLowerCase() !== inputs.to.toLowerCase()?`Send it to ${contract.alias(network, txn.from, inputs.to)}`:null
-                    ].filter(a => a !== null)
+                    const SF = new SummaryFormatter(contract.manager)
+                    return SF.actions([
+                        SF.text('Remove liquidity for')
+                          .tokenAmount(network, inputs.amountETHMin, 'native')
+                          .text('and')
+                          .tokenAmount(network, inputs.amountTokenMin, inputs.token)
+                          .text('(deducting token fees)')
+                          .action(),
+
+                        txn.from.toLowerCase() !== inputs.to.toLowerCase()
+                        && SF.text('Send it to')
+                          .alias(network, txn.from, inputs.to)
+                          .action()
+                    ])
                 }
             },
             {
                 name: "removeLiquidityETHWithPermitSupportingFeeOnTransferTokens",
+                signature: '0x5b0d5984',
                 summary: ({network, txn, inputs, contract}) => {
-                    return [
-                        `Remove liquidity with permit for ${contract.humanAmountSymbol(network, inputs.amountAMin, inputs.tokenA)} and ${contract.humanAmountSymbol(network, inputs.amountBMin, inputs.tokenB)} (deducting token fees)`,
-                        txn.from.toLowerCase() !== inputs.to.toLowerCase()?`Send it to ${contract.alias(network, txn.from, inputs.to)}`:null
-                    ].filter(a => a !== null)
+                    const SF = new SummaryFormatter(contract.manager)
+                    return SF.actions([
+                        SF.text('Remove liquidity with permit for')
+                          .tokenAmount(network, inputs.amountETHMin, 'native')
+                          .text('and')
+                          .tokenAmount(network, inputs.amountTokenMin, inputs.token)
+                          .text('(deducting token fees)')
+                          .action(),
+
+                        txn.from.toLowerCase() !== inputs.to.toLowerCase()
+                        && SF.text('Send it to')
+                          .alias(network, txn.from, inputs.to)
+                          .action()
+                    ])
                 }
             },
 
@@ -87,86 +171,179 @@ module.exports = {
             ////////////////////////////////
             {
                 name: "swapExactTokensForTokens",
+                signature: '0x38ed1739',
                 summary: ({network, txn, inputs, contract}) => {
-                    return [
-                        `Swap ${contract.humanAmount(network, inputs.path[0], txn.amountIn)} ${(contract.tokenSymbol(network, inputs.path[0]))} for at least ${contract.humanAmount(network, inputs.path[inputs.path.length-1], inputs.amountOutMin)}  ${contract.tokenSymbol(network, inputs.path[inputs.path.length-1])}`,
-                        txn.from.toLowerCase() !== inputs.to.toLowerCase()?`Send it to ${contract.alias(network, txn.from, inputs.to)}`:null
-                    ].filter(a => a !== null)
+                    const SF = new SummaryFormatter(contract.manager)
+                    return SF.actions([
+                        SF.text('Swap')
+                          .tokenAmount(network, inputs.path[0], txn.amountIn)
+                          .text('for at least')
+                          .tokenAmount(network, inputs.path[inputs.path.length-1], inputs.amountOutMin)
+                          .action(),
+
+                        txn.from.toLowerCase() !== inputs.to.toLowerCase()
+                        && SF.text('Send it to')
+                          .alias(network, txn.from, inputs.to)
+                          .action()
+                    ])
                 }
             },
             {
                 name: "swapTokensForExactTokens",
+                signature: '0x8803dbee',
                 summary: ({network, txn, inputs, contract}) => {
-                    return [
-                        `Swap ${contract.humanAmountSymbol(network, inputs.path[0], txn.amountInMax)} maximum for ${contract.humanAmountSymbol(network, inputs.path[inputs.path.length-1], inputs.amountOut)}}`,
-                        txn.from.toLowerCase() !== inputs.to.toLowerCase()?`Send it to ${contract.alias(network, txn.from, inputs.to)}`:null
-                    ].filter(a => a !== null)
+                    const SF = new SummaryFormatter(contract.manager)
+                    return SF.actions([
+                        SF.text('Swap')
+                          .tokenAmount(network, inputs.path[0], txn.amountInMax)
+                          .text('maximum for')
+                          .tokenAmount(network, inputs.path[inputs.path.length-1], inputs.amountOut)
+                          .action(),
+
+                        txn.from.toLowerCase() !== inputs.to.toLowerCase()
+                        && SF.text('Send it to')
+                          .alias(network, txn.from, inputs.to)
+                          .action()
+                    ])
                 }
             },
             {
                 name: "swapExactETHForTokens",
+                signature: '0x7ff36ab5',
                 summary: ({network, txn, inputs, contract}) => {
-                    return [
-                        `Swap ${contract.humanAmountSymbol(network, 'native', txn.value)} for at least ${contract.humanAmountSymbol(network, 'native', inputs.amountOutMin)}`,
-                        txn.from.toLowerCase() !== inputs.to.toLowerCase()?`Send it to ${contract.alias(network, txn.from, inputs.to)}`:null
-                    ].filter(a => a !== null)
+                    const SF = new SummaryFormatter(contract.manager)
+                    return SF.actions([
+                      SF.text('Swap')
+                        .tokenAmount(network, 'native', txn.value)
+                        .text('for at least')
+                        .tokenAmount(network, inputs.path[inputs.path.length-1], inputs.amountOutMin)
+                        .action(),
+
+                        txn.from.toLowerCase() !== inputs.to.toLowerCase()
+                        && SF.text('Send it to')
+                            .alias(network, txn.from, inputs.to)
+                            .action()
+                    ])
                 }
             },
             {
                 name: "swapTokensForExactETH",
+                signature: '0x4a25d94a',
                 summary: ({network, txn, inputs, contract}) => {
-                    return [
-                        `Swap ${contract.humanAmountSymbol(network, inputs.path[0], inputs.amountIn)} maximum for ${contract.humanAmountSymbol(network, 'native', inputs.amountOut)}`,
-                        txn.from.toLowerCase() !== inputs.to.toLowerCase()?`Send it to ${contract.alias(network, txn.from, inputs.to)}`:null
-                    ].filter(a => a !== null)
+                    const SF = new SummaryFormatter(contract.manager)
+                    return SF.actions([
+                        SF.text('Swap')
+                          .tokenAmount(network, inputs.path[0], inputs.amountIn)
+                          .text('maximum for')
+                          .tokenAmount(network, 'native', inputs.amountOut)
+                          .action(),
+
+                        txn.from.toLowerCase() !== inputs.to.toLowerCase()
+                        && SF.text('Send it to')
+                          .alias(network, txn.from, inputs.to)
+                          .action()
+                    ])
                 }
             },
             {
                 name: "swapExactTokensForETH",
+                signature: '0x18cbafe5',
                 summary: ({network, txn, inputs, contract}) => {
-                    return [
-                        `Swap ${contract.humanAmount(network, inputs.path[0], inputs.amountIn)} ${(contract.tokenSymbol(network, inputs.path[0]))} for at least ${contract.humanAmount(network, 'native', inputs.amountOutMin)} ${contract.tokenSymbol(network, 'native')}`,
-                        txn.from.toLowerCase() !== inputs.to.toLowerCase()?`Send it to ${contract.alias(network, txn.from, inputs.to)}`:null
-                    ].filter(a => a !== null)
+                    const SF = new SummaryFormatter(contract.manager)
+                    return SF.actions([
+                        SF.text('Swap')
+                          .tokenAmount(network, inputs.path[0], inputs.amountIn)
+                          .text('for at least')
+                          .tokenAmount(network, 'native', inputs.amountOutMin)
+                          .action(),
+
+                        txn.from.toLowerCase() !== inputs.to.toLowerCase()
+                        && SF.text('Send it to')
+                          .alias(network, txn.from, inputs.to)
+                          .action()
+                    ])
                 }
             },
             {
                 name: "swapETHForExactTokens",
+                signature: '0xfb3bdb41',
                 summary: ({network, txn, inputs, contract}) => {
-                    return [
-                        `Swap ${contract.humanAmountSymbol(network, 'native', txn.value)} maximum for ${contract.humanAmountSymbol(network, 'native', inputs.amountOut)}`,
-                        txn.from.toLowerCase() !== inputs.to.toLowerCase()?`Send it to ${contract.alias(network, txn.from, inputs.to)}`:null
-                    ].filter(a => a !== null)
+                    const SF = new SummaryFormatter(contract.manager)
+                    return SF.actions([
+                        SF.text('Swap')
+                          .tokenAmount(network, 'native', txn.value)
+                          .text('maximum for')
+                          .tokenAmount(network, inputs.path[inputs.path.length-1], inputs.amountOut)
+                          .action(),
+
+                        txn.from.toLowerCase() !== inputs.to.toLowerCase()
+                        && SF.text('Send it to')
+                          .alias(network, txn.from, inputs.to)
+                          .action()
+                    ])
                 }
             },
 
             {
                 name: "swapExactTokensForTokensSupportingFeeOnTransferTokens",
+                signature: '0x5c11d795',
                 summary: ({network, txn, inputs, contract}) => {
-                    return [
-                        `Swap ${contract.humanAmount(network, inputs.path[0], txn.amountIn)} ${(contract.tokenSymbol(network, inputs.path[0]))} for at least ${contract.humanAmount(network, inputs.path[inputs.path.length-1], inputs.amountOutMin)}  ${contract.tokenSymbol(network, inputs.path[inputs.path.length-1])} (deducting fees)`,
-                        txn.from.toLowerCase() !== inputs.to.toLowerCase()?`Send it to ${contract.alias(network, txn.from, inputs.to)}`:null
-                    ].filter(a => a !== null)
+                    const SF = new SummaryFormatter(contract.manager)
+                    return SF.actions([
+                        SF.text('Swap')
+                          .tokenAmount(network, inputs.path[0], txn.amountIn)
+                          .text('for at least')
+                          .tokenAmount(network, inputs.path[inputs.path.length-1], inputs.amountOutMin)
+                          .text('(deducting fees)')
+                          .action(),
+
+                        txn.from.toLowerCase() !== inputs.to.toLowerCase()
+                        && SF.text('Send it to')
+                          .alias(network, txn.from, inputs.to)
+                          .action()
+                    ])
                 }
             },
 
             {
                 name: "swapExactETHForTokensSupportingFeeOnTransferTokens",
+                signature: '0xb6f9de95',
                 summary: ({network, txn, inputs, contract}) => {
-                    return [
-                        `Swap ${contract.humanAmountSymbol(network, 'native', txn.value)} for at least ${contract.humanAmountSymbol(network, 'native', inputs.amountOutMin)} (token fees deducted)`,
-                        txn.from.toLowerCase() !== inputs.to.toLowerCase()?`Send it to ${contract.alias(network, txn.from, inputs.to)}`:null
-                    ].filter(a => a !== null)
+                    const SF = new SummaryFormatter(contract.manager)
+                    return SF.actions([
+                        SF.text('Swap')
+                          .tokenAmount(network, 'native', txn.value)
+                          .text('for at least')
+                          .tokenAmount(network, inputs.path[inputs.path.length-1], inputs.amountOutMin)
+                          .text('(token fees deducted)')
+                          .action(),
+
+                        txn.from.toLowerCase() !== inputs.to.toLowerCase()
+                        && SF.text('Send it to')
+                          .alias(network, txn.from, inputs.to)
+                          .action()
+                    ])
                 }
             },
 
             {
                 name: "swapExactTokensForETHSupportingFeeOnTransferTokens",
+                signature: '0x791ac947',
                 summary: ({network, txn, inputs, contract}) => {
-                    return [
-                        `Swap ${contract.humanAmount(network, inputs.path[0], inputs.amountIn)} ${(contract.tokenSymbol(network, inputs.path[0]))} for at least ${contract.humanAmount(network, 'native', inputs.amountOutMin)} ${contract.tokenSymbol(network, 'native')} (token fees deducted)`,
-                        txn.from.toLowerCase() !== inputs.to.toLowerCase()?`Send it to ${contract.alias(network, txn.from, inputs.to)}`:null
-                    ].filter(a => a !== null)
+                    const SF = new SummaryFormatter(contract.manager)
+                    return SF.actions([
+                        SF.text('Swap')
+                          .tokenAmount(network, inputs.path[0], txn.value)
+                          .text('for at least')
+                          .tokenAmount(network, 'native', inputs.amountOutMin)
+                          .text('(deducting fees)')
+                          .action(),
+
+                        txn.from.toLowerCase() !== inputs.to.toLowerCase()
+                        && SF.text('Send it to')
+                          .alias(network, txn.from, inputs.to)
+                          .action()
+                    ])
                 }
             },
         ],
