@@ -36,6 +36,7 @@ function makeBundle(account, networkId, requests) {
     txns: requests.map(({ txn }) => toBundleTxn(txn)),
     signer: account.signer
   })
+  bundle.extraGas = requests.map(x => x.extraGas || 0).reduce((a, b) => a + b, 0)
   bundle.requestIds = requests.map(x => x.id)
   return bundle
 }
@@ -142,7 +143,7 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
     return new Bundle({
       ...bundle,
       txns: [...bundle.txns, feeTxn],
-      gasLimit: estimation.gasLimit + addedGas
+      gasLimit: estimation.gasLimit + addedGas + (bundle.extraGas || 0)
     })
   }
 
