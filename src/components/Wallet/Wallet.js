@@ -38,8 +38,9 @@ export default function Wallet(props) {
       path: '/swap',
       component: <Swap
         gnosisConnect={props.gnosisConnect}
+        gnosisDisconnect={props.gnosisDisconnect}
         selectedAcc={props.selectedAcc}
-        network={props.network} s
+        network={props.network}
       />
     },
     {
