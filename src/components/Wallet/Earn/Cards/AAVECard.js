@@ -21,46 +21,9 @@ let lendingPoolAddress = null
 const AAVECard = ({ network, tokens, account, addRequest }) => {
     const { addToast } = useToasts()
 
+    const [isLoading, setLoading] = useState(true)
     const [tokenItems, setTokenItems] = useState([])
     const [details, setDetails] = useState([])
-
-    const initPool = useCallback(async () => {
-        try {
-            const { rpc } = network
-            const provider = getDefaultProvider(rpc)
-            const lendingPoolProviderContract = new ethers.Contract(lendingPoolProvider[network.id], AAVELendingPool, provider)
-            lendingPoolAddress = await lendingPoolProviderContract.getLendingPool()
-        
-            const lendingPoolContract = new ethers.Contract(lendingPoolAddress, AAVELendingPool, provider)
-            const reserves = await lendingPoolContract.getReservesList()
-            const availableTokens = tokens.filter(({ address }) => reserves.map(reserve => reserve.toLowerCase()).includes(address))
-    
-            const tokensWithApr = await Promise.all(availableTokens.map(async token => {
-                const data = await lendingPoolContract.getReserveData(token.address)
-                const { liquidityRate } = data
-                return {
-                    ...token,
-                    apr: ((liquidityRate / RAY) * 100).toFixed(2)
-                }
-            }))
-
-            const tokenItems = tokensWithApr.map(({ img, symbol, address, balance, decimals, apr }) => ({
-                icon: img,
-                label: `${symbol} (${apr}% APR)`,
-                value: address,
-                address,
-                balance,
-                symbol,
-                decimals,
-                apr
-            }))
-
-            setTokenItems(tokenItems)
-        } catch(e) {
-            console.error(e);
-            addToast(e.message | e, { error: true })
-        }
-    }, [addToast, tokens, network])
 
     const onTokenSelect = useCallback(async (value) => {
         const token = tokenItems.find(({ address }) => address === value)
@@ -132,10 +95,52 @@ const AAVECard = ({ network, tokens, account, addRequest }) => {
         }
     }
 
-    useEffect(() => initPool(), [tokens, initPool])
+    useEffect(() => {
+        const loadPool = async () => {
+            try {
+                const { rpc } = network
+                const provider = getDefaultProvider(rpc)
+                const lendingPoolProviderContract = new ethers.Contract(lendingPoolProvider[network.id], AAVELendingPool, provider)
+                lendingPoolAddress = await lendingPoolProviderContract.getLendingPool()
+            
+                const lendingPoolContract = new ethers.Contract(lendingPoolAddress, AAVELendingPool, provider)
+                const reserves = await lendingPoolContract.getReservesList()
+                const availableTokens = tokens.filter(({ address }) => reserves.map(reserve => reserve.toLowerCase()).includes(address))
+        
+                const tokensWithApr = await Promise.all(availableTokens.map(async token => {
+                    const data = await lendingPoolContract.getReserveData(token.address)
+                    const { liquidityRate } = data
+                    return {
+                        ...token,
+                        apr: ((liquidityRate / RAY) * 100).toFixed(2)
+                    }
+                }))
+
+                const tokenItems = tokensWithApr.map(({ img, symbol, address, balance, decimals, apr }) => ({
+                    icon: img,
+                    label: `${symbol} (${apr}% APR)`,
+                    value: address,
+                    address,
+                    balance,
+                    symbol,
+                    decimals,
+                    apr
+                }))
+
+                setTokenItems(tokenItems)
+
+                setLoading(false)
+            } catch(e) {
+                console.error(e);
+                addToast(e.message | e, { error: true })
+            }
+        }
+
+        loadPool()
+    }, [addToast, tokens, network])
 
     return (
-        <Card icon={AAVE_ICON} details={details} tokens={tokenItems} onTokenSelect={onTokenSelect} onValidate={onValidate}/>
+        <Card loading={isLoading} icon={AAVE_ICON} details={details} tokens={tokenItems} onTokenSelect={onTokenSelect} onValidate={onValidate}/>
     )
 }
 
