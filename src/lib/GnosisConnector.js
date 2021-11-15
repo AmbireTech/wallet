@@ -59,6 +59,7 @@ function GnosisConnector(_iframeRef, _app) {
           this.send(response, msg.data.id)
         }
       } catch (err) {
+        console.error("GS : " + err);
         this.send(err.message, msg.data.id, true)
         /*trackError(Errors._901, err.message, {
           contexts: {

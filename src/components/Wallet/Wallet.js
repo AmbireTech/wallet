@@ -5,7 +5,9 @@ import Dashboard from "./Dashboard/Dashboard"
 import TopBar from "./TopBar/TopBar"
 import SideBar from "./SideBar/SideBar"
 import Deposit from "./Deposit/Deposit"
+import Swap from "./Swap/Swap"
 import Transfer from "./Transfer/Transfer"
+import Earn from "./Earn/Earn"
 import Security from "./Security/Security"
 import Transactions from './Transactions/Transactions'
 import PluginGnosisSafeApps from "../Plugins/GnosisSafeApps/GnosisSafeApps"
@@ -26,6 +28,10 @@ export default function Wallet(props) {
       component: <Transfer portfolio={props.portfolio} selectedAcc={props.selectedAcc} selectedNetwork={{...props.network}} accounts={props.accounts} addRequest={props.addRequest}/>
     },
     {
+      path: '/earn',
+      component: <Earn portfolio={props.portfolio} selectedNetwork={{...props.network}} selectedAcc={props.selectedAcc} addRequest={props.addRequest}/>
+    },
+    {
       path: '/security',
       component: <Security relayerURL={props.relayerURL} selectedAcc={props.selectedAcc} selectedNetwork={props.network} accounts={props.accounts} addRequest={props.addRequest}/>
     },
@@ -34,10 +40,13 @@ export default function Wallet(props) {
       component: <Transactions relayerURL={props.relayerURL} selectedAcc={props.selectedAcc} selectedNetwork={props.network} addRequest={props.addRequest} eligibleRequests={props.eligibleRequests} showSendTxns={props.showSendTxns}/>
     },
     {
-      path: '/swap'
-    },
-    {
-      path: '/earn'
+      path: '/swap',
+      component: <Swap
+        gnosisConnect={props.gnosisConnect}
+        gnosisDisconnect={props.gnosisDisconnect}
+        selectedAcc={props.selectedAcc}
+        network={props.network}
+      />
     },
     {
       path: '/nft/:network/:collectionAddr/:tokenId',

@@ -7,7 +7,7 @@ import {getDefaultProvider} from 'ethers'
 
 const STORAGE_KEY = 'gnosis_safe_state'
 
-export default function useGnosisSafe({ selectedAccount, network, verbose = 0 }) {
+export default function useGnosisSafe({ selectedAccount, network, verbose = 1 }) {
   // One connector at a time
   const connector = useRef(null)
 
@@ -91,7 +91,7 @@ export default function useGnosisSafe({ selectedAccount, network, verbose = 0 })
      })*/
 
     connector.current.on(Methods.rpcCall, async (msg) => {
-      verbose>0 && console.log("DApp requested rpcCall") && console.log(msg)
+      verbose > 0 && console.log("DApp requested rpcCall", msg)
 
       if (!msg?.data?.params){
         throw new Error("invalid call object")
@@ -131,6 +131,14 @@ export default function useGnosisSafe({ selectedAccount, network, verbose = 0 })
         result = await provider.getCode(callTx[0], callTx[1]).catch(err => {
           throw err
         })
+      } else if(method === "eth_getBlockByNumber") {
+        result = await provider.getBlock(callTx[0], callTx[1]).catch(err => {
+          throw err
+        })
+      } else if(method === "eth_getTransactionReceipt") {
+        result = await provider.getTransactionReceipt(callTx[0]).catch(err => {
+          throw err
+        })
       } else {
         throw new Error("method not supported " + method)
       }
@@ -146,7 +154,7 @@ export default function useGnosisSafe({ selectedAccount, network, verbose = 0 })
         return
       }
 
-      const id = 'gs_' + new Date().getTime() + '_' + data.id
+      const id = 'gs_' + data.id
       const txs = data?.params?.txs
       if (txs?.length) {
         for (let i in txs) {
@@ -166,9 +174,29 @@ export default function useGnosisSafe({ selectedAccount, network, verbose = 0 })
         account: stateRef.current.selectedAccount
       }
 
-      setRequests(prevRequests => [...prevRequests, request])
+      setRequests(prevRequests => prevRequests.find(x => x.id === request.id) ? prevRequests : [...prevRequests, request])
     })
+
+    connector.current.on(Methods.getTxBySafeTxHash, async (msg) => {
+      const { safeTxHash } = msg.data.params
+      const provider = getDefaultProvider(stateRef.current.network.rpc)
+      try{
+        const res = await provider.getTransaction(safeTxHash)
+        return {
+          gasPrice: res.gasPrice.toString(),
+          gasLimit: res.gasLimit.toString(),
+          value: res.value.toString(),
+          ...res
+        }
+      }catch(e){
+        console.error("GS: Err getting transaction " + safeTxHash);
+        console.log(e);
+        return {};
+      }
+    })
+
   }, [uniqueId, addToast, verbose])
+
 
   const disconnect = useCallback(() => {
     verbose>1 && console.log("GS: disconnecting connector")
@@ -199,6 +227,7 @@ export default function useGnosisSafe({ selectedAccount, network, verbose = 0 })
         //throw new Error("gnosis safe connector not set")
         console.error("gnosis safe connector not set");
       }else{
+		  console.log('replyData', replyData)
         connector.current.send(replyData, req.forwardId, replyData.error)
       }
     }
