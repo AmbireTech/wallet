@@ -1,6 +1,7 @@
 import { ethers, getDefaultProvider } from 'ethers'
 import { Interface } from 'ethers/lib/utils'
 import { useState } from 'react'
+import { useToasts } from '../../../../hooks/toasts'
 import AAVELendingPoolAbi from '../../../../consts/AAVELendingPoolAbi'
 
 import AAVE_ICON from '../../../../resources/aave.svg'
@@ -14,6 +15,7 @@ const lendingPoolProvider = {
 const RAY = 10**27
 
 const AAVECard = ({ network, tokens }) => {
+    const { addToast } = useToasts()
     const [details, setDetails] = useState([])
 
     const { rpc } = network
@@ -21,18 +23,23 @@ const AAVECard = ({ network, tokens }) => {
     const lendingPoolProviderContract = new ethers.Contract(lendingPoolProvider[network.id], AAVELendingPool, provider)
 
     const updateDetails = async (tokenAddress) => {
-        const lendingPoolAddress = await lendingPoolProviderContract.getLendingPool()
-        const lendingPoolContract = new ethers.Contract(lendingPoolAddress, AAVELendingPool, provider)
+        try {
+            const lendingPoolAddress = await lendingPoolProviderContract.getLendingPool()
+            const lendingPoolContract = new ethers.Contract(lendingPoolAddress, AAVELendingPool, provider)
 
-        const data = await lendingPoolContract.getReserveData(tokenAddress)
-        const { liquidityRate } = data
-        const depositAPR = ((liquidityRate / RAY) * 100).toFixed(2)
+            const data = await lendingPoolContract.getReserveData(tokenAddress)
+            const { liquidityRate } = data
+            const depositAPR = ((liquidityRate / RAY) * 100).toFixed(2)
 
-        setDetails([
-            ['Annual Percentage Rate (APR)', `${depositAPR}%`],
-            ['Lock', 'No Lock'],
-            ['TYPE', 'Variable Rate'],
-        ])
+            setDetails([
+                ['Annual Percentage Rate (APR)', `${depositAPR}%`],
+                ['Lock', 'No Lock'],
+                ['TYPE', 'Variable Rate'],
+            ])
+        } catch(e) {
+            console.error(e);
+            addToast(e | e.error, { error: true })
+        }
     }
 
     const onTokenSelect = value => {
