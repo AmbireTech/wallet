@@ -1,8 +1,8 @@
 import './NumberInput.scss'
 
-const NumberInput = ({ min, max, label, value, button, onButtonClick, onInput }) => {
+const NumberInput = ({ disabled, min, max, label, value, button, onButtonClick, onInput }) => {
     return (
-        <div className="number-input">
+        <div className={`number-input ${disabled ? 'disabled' : ''}`}>
             {
                 label ?
                     <label>{ label }</label>
@@ -10,7 +10,7 @@ const NumberInput = ({ min, max, label, value, button, onButtonClick, onInput })
                     null
             }
             <div className="input">
-                <input type="number" value={value} min={min} max={max} onInput={({ target }) => onInput(target.value)}/>
+                <input type="number" disabled={disabled} value={value} min={min} max={max} onInput={({ target }) => onInput(target.value)}/>
                 {
                     button ?
                         <div className="button" onClick={onButtonClick}>
