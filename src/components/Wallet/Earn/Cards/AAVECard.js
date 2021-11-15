@@ -17,7 +17,15 @@ const RAY = 10**27
 
 const AAVECard = ({ network, tokens }) => {
     const { addToast } = useToasts()
-    const [token, setToken] = useState(tokens[0].value)
+
+    const [tokenItems, setTokenItems] = useState(tokens.map(({ img, symbol, address, balance }) => ({
+        icon: img,
+        label: symbol,
+        value: address,
+        symbol,
+        balance: balance.toFixed(2)
+    })))
+    const [token, setToken] = useState(tokenItems[0].value)
     const [details, setDetails] = useState([])
 
     const { rpc } = network
@@ -38,6 +46,16 @@ const AAVECard = ({ network, tokens }) => {
                 ['Lock', 'No Lock'],
                 ['Type', 'Variable Rate'],
             ])
+
+            const token = tokenItems.find(({ value }) => value === tokenAddress);
+            
+            setTokenItems([
+                ...tokenItems.filter(({ value }) => value !== tokenAddress),
+                {
+                    ...token,
+                    label: `${token.symbol} (${depositAPR}% APR)`
+                }
+            ])
         } catch(e) {
             console.error(e);
             addToast(e.message | e, { error: true })
@@ -45,12 +63,12 @@ const AAVECard = ({ network, tokens }) => {
     }
 
     useEffect(() => {
-        const selectedToken = tokens.find(({ value }) => value === token)
+        const selectedToken = tokenItems.find(({ value }) => value === token)
         if (selectedToken) updateDetails(selectedToken.value)
     }, [token])
 
     return (
-        <Card icon={AAVE_ICON} details={details} tokens={tokens} onTokenSelect={(value) => setToken(value)}/>
+        <Card icon={AAVE_ICON} details={details} tokens={tokenItems} onTokenSelect={(value) => setToken(value)}/>
     )
 }
 
