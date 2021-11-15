@@ -226,7 +226,7 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
       setSigningStatus(null)
 
       // Inform everything that's waiting for the results (eg WalletConnect)
-      const skipResolve = !bundleResult.success && bundleResult.message && bundleResult.message.includes('UNDERPRICED')
+      const skipResolve = !bundleResult.success && bundleResult.message && bundleResult.message.match(/underpriced/i)
       if (!skipResolve) resolveMany(requestIds, { success: bundleResult.success, result: bundleResult.txId, message: bundleResult.message })
 
       if (bundleResult.success) {
