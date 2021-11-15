@@ -15,6 +15,7 @@ import SendTransaction from './components/SendTransaction/SendTransaction'
 import useAccounts from './hooks/accounts'
 import useNetwork from './hooks/network'
 import useWalletConnect from './hooks/walletconnect'
+import useGnosisSafe from './hooks/useGnosisSafe'
 import useNotifications from './hooks/notifications'
 import { usePortfolio } from './hooks'
 
@@ -24,10 +25,16 @@ const relayerURL = 'http://localhost:1934'
 function AppInner () {
   const { accounts, selectedAcc, onSelectAcc, onAddAccount } = useAccounts()
   const { network, setNetwork, allNetworks } = useNetwork()
-  const { connections, connect, disconnect, requests: wcRequests, resolveMany } = useWalletConnect({
+  const { connections, connect, disconnect, requests: wcRequests, resolveMany: wcResolveMany } = useWalletConnect({
     account: selectedAcc,
     chainId: network.chainId
   })
+  const { requests: gnosisRequests, resolveMany: gnosisResolveMany, connect: gnosisConnect, disconnect: gnosisDisconnect } = useGnosisSafe({
+	  selectedAccount: selectedAcc,
+	  network: network,
+    verbose: 1
+	}, [selectedAcc, network])
+
   const portfolio = usePortfolio({
     currentNetwork: network.id,
     account: selectedAcc
@@ -39,7 +46,12 @@ function AppInner () {
   const addRequest = req => setInternalRequests(reqs => [...reqs, req])
 
   // Merge all requests
-  const requests = useMemo(() => internalRequests.concat(wcRequests), [wcRequests, internalRequests])
+  const requests = useMemo(() => [...internalRequests, ...wcRequests, ...gnosisRequests], [wcRequests, internalRequests, gnosisRequests])
+  const resolveMany = (ids, resolution) => {
+    wcResolveMany(ids, resolution)
+    gnosisResolveMany(ids, resolution)
+    setInternalRequests(reqs => reqs.filter(x => !ids.includes(x.id)))
+  }
 
   // Show notifications for all requests
   useNotifications(requests)
@@ -56,11 +68,11 @@ function AppInner () {
     () => setSendTxnsShowing(!!eligibleRequests.length),
     [eligibleRequests.length]
   )
-  const onDismiss = () => setSendTxnsShowing(false)
+  const dismissSendTxns = () => setSendTxnsShowing(false)
 
   return (<>
     {sendTxnsShowing ? (
-      <SendTransaction accounts={accounts} selectedAcc={selectedAcc} network={network} requests={eligibleRequests} resolveMany={resolveMany} relayerURL={relayerURL} onDismiss={onDismiss}>
+      <SendTransaction accounts={accounts} selectedAcc={selectedAcc} network={network} requests={eligibleRequests} resolveMany={resolveMany} relayerURL={relayerURL} onDismiss={dismissSendTxns}>
       </SendTransaction>
       ) : (<></>)
     }
@@ -74,7 +86,30 @@ function AppInner () {
       </Route>
 
       <Route path="/wallet">
-        <Wallet match={{ url: "/wallet" }} accounts={accounts} selectedAcc={selectedAcc} portfolio={portfolio} onSelectAcc={onSelectAcc} allNetworks={allNetworks} network={network} setNetwork={setNetwork} addRequest={addRequest} connections={connections} connect={connect} disconnect={disconnect}></Wallet>
+        <Wallet
+          match={{ url: "/wallet" }}
+          accounts={accounts}
+          selectedAcc={selectedAcc}
+          portfolio={portfolio}
+          onSelectAcc={onSelectAcc}
+          allNetworks={allNetworks}
+          network={network}
+          setNetwork={setNetwork}
+          addRequest={addRequest}
+          connections={connections}
+          // needed by the top bar to disconnect/connect dapps
+          connect={connect}
+          disconnect={disconnect}
+          // needed by the gnosis plugins
+          gnosisConnect={gnosisConnect}
+          gnosisDisconnect={gnosisDisconnect}
+          // required for the security and transactions pages
+          relayerURL={relayerURL}
+          // required by the transactions page
+          eligibleRequests={eligibleRequests}
+          showSendTxns={() => setSendTxnsShowing(true)}
+        >
+        </Wallet>
       </Route>
 
       <Route path="/">

@@ -1,6 +1,9 @@
 import './Assets.scss'
 
 import { GiToken } from 'react-icons/gi'
+import { AiOutlineSend } from 'react-icons/ai'
+import { NavLink } from 'react-router-dom'
+import { Button } from '../../../common'
 import AssetsPlaceholder from './AssetsPlaceholder/AssetsPlaceholder'
 
 const Assets = ({ assets }) => {
@@ -16,7 +19,7 @@ const Assets = ({ assets }) => {
                                 <div className="list">
                                     {
                                         assets.map(({ tokens }) => 
-                                            tokens.map(({ label, collectionName, symbol, img, collectionImg, balance, balanceUSD }, i) => (
+                                            tokens.map(({ label, collectionName, symbol, img, collectionImg, balance, balanceUSD, address }, i) => (
                                                 <div className="token" key={`token-${i}`}>
                                                     <div className="icon">
                                                         {
@@ -37,6 +40,11 @@ const Assets = ({ assets }) => {
                                                         <div className="dollar">
                                                             <span className="symbol">$</span> { balanceUSD.toFixed(2) }
                                                         </div>
+                                                    </div>
+                                                    <div className="actions">
+                                                        <NavLink to={`/wallet/transfer/${address}`}>
+                                                            <Button small icon={<AiOutlineSend/>}>Send</Button>
+                                                        </NavLink>
                                                     </div>
                                                 </div>
                                             ))

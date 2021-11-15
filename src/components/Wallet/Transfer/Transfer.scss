@@ -69,6 +69,14 @@
             font-size: 40px;
             opacity: 0.5;
         }
+
+        .text-input {
+            width: 100%;
+
+            input {
+                padding-right: 100px;
+            }
+        }
     }
 }
 
