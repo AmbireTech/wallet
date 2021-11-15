@@ -1,9 +1,9 @@
 import './Card.scss'
 
-import { Select, Segments, NumberInput, Button } from '../../../../common'
+import { Select, Segments, NumberInput, Button, Loading } from '../../../../common'
 import { useEffect, useState } from 'react'
 
-const Card = ({ tokens, icon, details, onTokenSelect, onValidate }) => {
+const Card = ({ loading, tokens, icon, details, onTokenSelect, onValidate }) => {
     const segments = [{ value: 'Deposit' }, { value: 'Withdraw' }]
     const [segment, setSegment] = useState(segments[0].value)
     const [token, setToken] = useState()
@@ -26,24 +26,29 @@ const Card = ({ tokens, icon, details, onTokenSelect, onValidate }) => {
             <div className="title">
                 <img src={icon} alt="Icon" />
             </div>
-            <div className="content">
-                <Select searchable disabled={disabled} label="Choose Token" defaultValue={token} items={tokens} onChange={(value) => setToken(value)}/>
-                {
-                    !disabled ? 
-                        <ul className="details">
-                            {
-                                details.map(([type, value]) => (
-                                    <li key={type}><b>{type}</b> {value}</li>
-                                ))
-                            }
-                        </ul>
-                        :
-                        null
-                }
-                <Segments small defaultValue={segment} segments={segments} onChange={(value) => setSegment(value)}></Segments>
-                <NumberInput disabled={disabled} min="0" max={currentToken?.balance} value={amount} label={`Available Amount: ${!disabled ? `${currentToken?.balance} ${currentToken?.symbol}` : ''}`} onInput={(value) => setAmount(value)} button="MAX" onButtonClick={setMaxValue}></NumberInput>
-                <Button disabled={disabled} onClick={() => onValidate(segment, token, amount)}>{ segment }</Button>
-            </div>
+            {
+                loading ?
+                    <Loading/>
+                    :
+                    <div className="content">
+                        <Select searchable disabled={disabled} label="Choose Token" defaultValue={token} items={tokens} onChange={(value) => setToken(value)}/>
+                        {
+                            !disabled ? 
+                                <ul className="details">
+                                    {
+                                        details.map(([type, value]) => (
+                                            <li key={type}><b>{type}</b> {value}</li>
+                                        ))
+                                    }
+                                </ul>
+                                :
+                                null
+                        }
+                        <Segments small defaultValue={segment} segments={segments} onChange={(value) => setSegment(value)}></Segments>
+                        <NumberInput disabled={disabled} min="0" max={currentToken?.balance} value={amount} label={`Available Amount: ${!disabled ? `${currentToken?.balance} ${currentToken?.symbol}` : ''}`} onInput={(value) => setAmount(value)} button="MAX" onButtonClick={setMaxValue}></NumberInput>
+                        <Button disabled={disabled} onClick={() => onValidate(segment, token, amount)}>{ segment }</Button>
+                    </div>
+            }
         </div>
     )
 }
