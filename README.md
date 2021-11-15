@@ -93,6 +93,17 @@ You don’t have to ever use `eject`. The curated feature set is suitable for sm
 
 ## Internal data formats
 
+#### Account
+```
+{
+	id, // address (checksummed) of the account itself
+	signer, // object, either { address } or { quickAccManager, one, two, timelock }
+        salt, identityFactoryAddr, baseIdentityAddr, bytecode // all hex strings, account identity deploy data; all required
+	email, // optional: only in case of quick accounts
+        primaryKeyBackup, // optional, only in case of quick accounts, stringified JSON in a keystore format
+}
+```
+
 #### Signing request
 
 This is used by the WalletConnect and Gnosis Safe Apps hooks for the queue of signing requests: those could be transactions, personal messages, etc.

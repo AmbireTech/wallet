@@ -9,11 +9,11 @@ export default function useRelayerData(url) {
   const updateData = useCallback(async () => {
     const { resp, body, errMsg } = await fetchCaught(url)
 
-    if (resp.status === 200) {
+    if (resp && resp.status === 200) {
       return body
     } else {
       console.log('relayerData error', { resp, body, errMsg })
-      throw new Error(errMsg || `status code ${resp.status}`)
+      throw new Error(errMsg || `status code ${resp && resp.status}`)
     }
   }, [url])
 

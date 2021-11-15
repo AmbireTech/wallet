@@ -4,3 +4,4 @@ export const TRANSAK_API_KEY = process.env.REACT_APP_TRANSAK_API_KEY;
 export const TRANSAK_ENV = process.env.REACT_APP_TRANSAK_ENV;
 export const ZAPPER_API_KEY = process.env.REACT_APP_ZAPPER_API_KEY;
 export const ZAPPER_API_ENDPOINT = process.env.REACT_APP_ZAPPER_API_ENDPOINT;
+export const SUSHI_SWAP_FRAME = process.env.REACT_APP_SUSHI_SWAP_FRAME_URL;

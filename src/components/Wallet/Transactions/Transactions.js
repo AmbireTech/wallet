@@ -31,14 +31,15 @@ function Transactions ({ relayerURL, selectedAcc, selectedNetwork, eligibleReque
               key={req.id}
               network={selectedNetwork.id}
               account={selectedAcc}
-              txn={[req.txn.to, req.txn.value, req.txn.data]}/>
+              txn={[req.txn.to, req.txn.value || '0x0', req.txn.data || '0x' ]}/>
         ))}
       </div>)}
       { !!firstPending && (<div className='panel'>
         <div className='title'>Pending transaction bundle</div>
         {firstPending && (<MinedBundle bundle={firstPending}></MinedBundle>)}
       </div>) }
-      <h2>Confirmed transactions</h2>
+
+      <h2>{(data && data.txns.length === 0) ? 'No transactions yet.' : 'Confirmed transactions'}</h2>
       {!relayerURL && (<h3 className='error'>Unsupported: not currently connected to a relayer.</h3>)}
       {errMsg && (<h3 className='error'>Error getting list of transactions: {errMsg}</h3>)}
       {isLoading && <Loading />}
@@ -52,6 +53,7 @@ function Transactions ({ relayerURL, selectedAcc, selectedNetwork, eligibleReque
 
 function MinedBundle(bundle) {
   const network = networks.find(x => x.id === bundle.network)
+  if (!Array.isArray(bundle.txns)) return (<h3 className='error'>Bundle has no transactions (should never happen)</h3>)
   const lastTxn = bundle.txns[bundle.txns.length - 1]
   // terribly hacky; @TODO fix
   // all of the values are prob checksummed so we may not need toLowerCase
@@ -67,7 +69,7 @@ function MinedBundle(bundle) {
     {hasFee && (<div className='fee'><b>Fee:</b> </div>)}
     <div><b>Submitted at:</b> {bundle.submittedAt && (new Date(bundle.submittedAt)).toString()}</div>
     { bundle.txId && (<div
-      ><b>Block explorer:</b> <a href={network.explorerUrl+'/tx/'+bundle.txId} target='_blank' rel='nofollow'>{network.explorerUrl.split('/')[2]}</a>
+      ><b>Block explorer:</b> <a href={network.explorerUrl+'/tx/'+bundle.txId} target='_blank' rel='noreferrer'>{network.explorerUrl.split('/')[2]}</a>
     </div>) }
 
   </div>)
