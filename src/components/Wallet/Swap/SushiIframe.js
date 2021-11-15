@@ -14,15 +14,18 @@ const ambireSushi = {
 export default function SushiSwap({ network, selectedAcc, gnosisConnect, gnosisDisconnect }) {
     const iframeRef = useRef(null);
 
-
     useEffect(() => {
         gnosisConnect({
-            selectedAcc: selectedAcc,
-            iframeRef: iframeRef,
+            selectedAcc,
+            iframeRef,
             app: ambireSushi
         });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [network, selectedAcc, iframeRef])
+
+        return () => {
+            gnosisDisconnect()
+        }
+
+    }, [network, selectedAcc, iframeRef, gnosisConnect, gnosisDisconnect])
 
 
 
