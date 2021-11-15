@@ -22,7 +22,7 @@ const networks = [{
 		name: 'Avalanche',
 		icon: '/resources/networks/avalanche.png',
 		explorerUrl: 'https://cchain.explorer.avax.network'
-	}, {
+	}/*, {
 		id: 'arbitrum',
 		chainId: 42161,
 		rpc: 'https://arb1.arbitrum.io/rpc',
@@ -30,6 +30,6 @@ const networks = [{
 		name: 'Arbitrum',
 		icon: '/resources/networks/arbitrum.svg',
 		explorerUrl: 'https://arbiscan.io'
-}]
+}*/]
 
 export default networks
