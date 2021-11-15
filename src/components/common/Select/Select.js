@@ -5,7 +5,7 @@ import { BsChevronDown } from 'react-icons/bs'
 import { CSSTransition } from 'react-transition-group';
 import useOnClickOutside from '../../../helpers/onClickOutside';
 
-const Select = ({ children, native, monospace, searchable, defaultValue, items, onChange }) => {
+const Select = ({ children, native, monospace, searchable, label, defaultValue, items, onChange }) => {
     const ref = useRef();
     const hiddenTextInput = useRef();
     const transitionRef = useRef();
@@ -47,8 +47,14 @@ const Select = ({ children, native, monospace, searchable, defaultValue, items, 
                         null
                 }
                 {
+                    label ? 
+                        <label>{ label }</label>
+                        :
+                        null
+                }
+                {
                     selectedItem ? 
-                        <div className="value">
+                        <div className="input">
                             <div className="icon">
                                 {
                                     selectedItem.icon ? 
@@ -62,31 +68,31 @@ const Select = ({ children, native, monospace, searchable, defaultValue, items, 
                             <div className={`handle ${isOpen ? 'open' : ''}`}>
                                 <BsChevronDown size={20}></BsChevronDown>
                             </div>
+                            {
+                                <CSSTransition unmountOnExit in={isOpen} timeout={200} classNames="fade" nodeRef={transitionRef}>
+                                    <div className="list" ref={transitionRef}>
+                                        {
+                                            filteredItems.map(item => (
+                                                <div className={`option ${item.value === selectedItem.value ? 'active' : ''}`} key={item.value} onClick={() => selectItem(item)}>
+                                                    <div className="icon">
+                                                        {
+                                                            item.icon ? 
+                                                                <img src={item.icon} alt="Icon" />
+                                                                :
+                                                                null
+                                                        }
+                                                    </div>
+                                                    { item.label || item.value }
+                                                </div>
+                                            ))
+                                        }
+                                        { children }
+                                    </div>
+                                </CSSTransition>
+                            }
                         </div>
                         :
                         null
-                }
-                {
-                    <CSSTransition unmountOnExit in={isOpen} timeout={200} classNames="fade" nodeRef={transitionRef}>
-                        <div className="list" ref={transitionRef}>
-                            {
-                                filteredItems.map(item => (
-                                    <div className={`option ${item.value === selectedItem.value ? 'active' : ''}`} key={item.value} onClick={() => selectItem(item)}>
-                                        <div className="icon">
-                                            {
-                                                item.icon ? 
-                                                    <img src={item.icon} alt="Icon" />
-                                                    :
-                                                    null
-                                            }
-                                        </div>
-                                        { item.label || item.value }
-                                    </div>
-                                ))
-                            }
-                            { children }
-                        </div>
-                    </CSSTransition>
                 }
             </div>
             :
