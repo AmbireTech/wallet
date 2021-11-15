@@ -3,7 +3,7 @@ import './Card.scss'
 import { Select, Segments, NumberInput, Button } from '../../../common'
 import { useState } from 'react'
 
-const Card = ({ tokens, icon, details }) => {
+const Card = ({ tokens, icon, details, onTokenSelect }) => {
     const segments = [{ value: 'Deposit' }, { value: 'Widthdraw' }]
     const [segment, setSegment] = useState(segments[0].value)
     const [token, setToken] = useState()
@@ -15,17 +15,22 @@ const Card = ({ tokens, icon, details }) => {
         setAmount(currentToken?.balance)
     }
 
+    const selectToken = value => {
+        setToken(value)
+        onTokenSelect(value)
+    }
+
     return (
         <div className="card">
             <div className="title">
                 <img src={icon} alt="Icon" />
             </div>
             <div className="content">
-                <Select searchable label="Choose Token" defaultValue={token} items={tokens} onChange={(value) => setToken(value)}/>
+                <Select searchable label="Choose Token" defaultValue={token} items={tokens} onChange={selectToken}/>
                 <ul className="details">
                     {
                         details.map(([type, value]) => (
-                            <li><b>{type}</b> {value}</li>
+                            <li key={type}><b>{type}</b> {value}</li>
                         ))
                     }
                 </ul>
