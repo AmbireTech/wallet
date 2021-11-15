@@ -1,5 +1,6 @@
 import './Earn.scss'
 import AAVECard from './Cards/AAVECard'
+import { Loading } from '../../common'
 
 const Earn = ({ portfolio, selectedNetwork }) => {
     const tokenItems = portfolio.tokens.map(({ img, symbol, address, balance }) => ({
@@ -11,7 +12,12 @@ const Earn = ({ portfolio, selectedNetwork }) => {
 
     return (
         <div id="earn">
-            <AAVECard network={{...selectedNetwork}} tokens={tokenItems}/>
+            {
+                portfolio.isBalanceLoading ?
+                    <Loading/>
+                    :
+                    <AAVECard network={{...selectedNetwork}} tokens={tokenItems}/>
+            }
         </div>
     )
 }
