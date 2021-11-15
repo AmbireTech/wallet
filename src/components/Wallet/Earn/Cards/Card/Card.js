@@ -1,7 +1,7 @@
 import './Card.scss'
 
 import { Select, Segments, NumberInput, Button } from '../../../../common'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 const Card = ({ tokens, icon, details, onTokenSelect }) => {
     const segments = [{ value: 'Deposit' }, { value: 'Widthdraw' }]
@@ -15,10 +15,7 @@ const Card = ({ tokens, icon, details, onTokenSelect }) => {
         setAmount(currentToken?.balance)
     }
 
-    const selectToken = value => {
-        setToken(value)
-        onTokenSelect(value)
-    }
+    useEffect(() => onTokenSelect(token), [token, onTokenSelect])
 
     return (
         <div className="card">
@@ -26,7 +23,7 @@ const Card = ({ tokens, icon, details, onTokenSelect }) => {
                 <img src={icon} alt="Icon" />
             </div>
             <div className="content">
-                <Select searchable label="Choose Token" defaultValue={token} items={tokens} onChange={selectToken}/>
+                <Select searchable label="Choose Token" defaultValue={token} items={tokens} onChange={(value) => setToken(value)}/>
                 <ul className="details">
                     {
                         details.map(([type, value]) => (
