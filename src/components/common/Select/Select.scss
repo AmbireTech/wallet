@@ -2,8 +2,9 @@
 
 .select {
     position: relative;
-    height: 50px;
-    background-color: $input-background-color;
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
     user-select: none;
     font-weight: bold;
     cursor: pointer;
@@ -12,6 +13,10 @@
         position: absolute;
         opacity: 0;
         cursor: pointer;
+    }
+
+    label {
+        font-weight: 500;
     }
 
     .icon {
@@ -29,14 +34,16 @@
         }
     }
 
-    .value {
-        height: 100%;
+    .input {
+        position: relative;
+        height: 50px;
         display: flex;
         align-items: center;
         gap: 12px;
         padding: 0 20px;
         font-size: 16px;
         font-weight: bold;
+        background-color: $input-background-color;
 
         .separator {
             flex-grow: 1;
@@ -58,6 +65,8 @@
     .list {
         z-index: 97;
         position: absolute;
+        top: 50px;
+        left: 0;
         min-height: 50px;
         max-height: 250px;
         width: 100%;
