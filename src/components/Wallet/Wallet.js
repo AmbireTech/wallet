@@ -34,7 +34,7 @@ export default function Wallet(props) {
     },
     {
       path: '/earn',
-      component: <Earn portfolio={props.portfolio}/>
+      component: <Earn portfolio={props.portfolio} selectedNetwork={{...props.network}}/>
     },
     {
       path: '/security',
