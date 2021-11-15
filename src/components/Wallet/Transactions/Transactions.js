@@ -31,7 +31,7 @@ function Transactions ({ relayerURL, selectedAcc, selectedNetwork, eligibleReque
               key={req.id}
               network={selectedNetwork.id}
               account={selectedAcc}
-              txn={[req.txn.to, req.txn.value, req.txn.data]}/>
+              txn={[req.txn.to, req.txn.value || '0x0', req.txn.data || '0x' ]}/>
         ))}
       </div>)}
       { !!firstPending && (<div className='panel'>
