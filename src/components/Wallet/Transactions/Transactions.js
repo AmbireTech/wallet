@@ -31,7 +31,7 @@ function Transactions ({ relayerURL, selectedAcc, selectedNetwork, eligibleReque
               key={req.id}
               network={selectedNetwork.id}
               account={selectedAcc}
-              txn={[req.txn.to, req.txn.value, req.txn.data]}/>
+              txn={[req.txn.to, req.txn.value || '0x0', req.txn.data || '0x' ]}/>
         ))}
       </div>)}
       { !!firstPending && (<div className='panel'>
@@ -52,6 +52,7 @@ function Transactions ({ relayerURL, selectedAcc, selectedNetwork, eligibleReque
 
 function MinedBundle(bundle) {
   const network = networks.find(x => x.id === bundle.network)
+  if (!Array.isArray(bundle.txns)) return (<h3 className='error'>Bundle has no transactions (should never happen)</h3>)
   const lastTxn = bundle.txns[bundle.txns.length - 1]
   // terribly hacky; @TODO fix
   // all of the values are prob checksummed so we may not need toLowerCase
