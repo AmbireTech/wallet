@@ -19,7 +19,7 @@ const Card = ({ tokens, icon, details, onTokenSelect, onValidate }) => {
     useEffect(() => {
         onTokenSelect(token)
         setDisabled(!token || amount <= 0 || !tokens.length)
-    }, [token, onTokenSelect])
+    }, [token, onTokenSelect, amount, tokens.length])
 
     return (
         <div className="card">
