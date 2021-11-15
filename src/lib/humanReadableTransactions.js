@@ -24,9 +24,8 @@ export function getTransactionSummary(txn, networkId, accountAddr) {
     if (data !== '0x') {
         if (data.startsWith(TRANSFER_SIGHASH)) {
             const [to, amount] = ERC20.decodeFunctionData('transfer', data)
-            const token = tokens[getAddress(to)]
-            if (token) {
-                callSummary = `send ${(amount/Math.pow(10, token[1])).toFixed(4)} ${token[0]} to ${to}`
+            if (tokenInfo) {
+                callSummary = `send ${(amount/Math.pow(10, tokenInfo[1])).toFixed(4)} ${tokenInfo[0]} to ${to}`
             } else {
                 // @TODO: maybe we can call the contract and get detailed data
                 callSummary = `send ${amount/1e18} unknown token to ${to}`
@@ -37,8 +36,7 @@ export function getTransactionSummary(txn, networkId, accountAddr) {
             // @TODO: some elegant way to try-catch potential issues here
             if (parsed.name === 'swapExactETHForTokens') {
                 const tokenAddr = parsed.args.path[parsed.args.path.length - 1]
-                const token = tokens[getAddress(tokenAddr)]
-                const output = token ? `${formatUnits(parsed.args.amountOutMin, token[1])} ${token[0]}` : `${parsed.args.amountOutMin} of token ${tokenAddr}`
+                const output = tokenInfo ? `${formatUnits(parsed.args.amountOutMin, tokenInfo[1])} ${tokenInfo[0]}` : `${parsed.args.amountOutMin} of token ${tokenAddr}`
                 const contractNote = ` on ${contractInfo.name}`
                 const recipientNote = parsed.args.to.toLowerCase() === accountAddr.toLowerCase() ? `` : ` and send it to ${parsed.args.to}`
                 return `Swap ${formatUnits(value, 18)} ${nativeAsset} for at least ${output}${contractNote}${recipientNote}`
