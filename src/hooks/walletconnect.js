@@ -245,14 +245,15 @@ function runInitEffects(wcConnect) {
     const isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1
     const tryReadClipboard = async () => {
         if (isFirefox) return
-        const result = navigator.permissions.query({ name: 'clipboard-read' })
-        if (result.state === 'granted' || result.state === 'prompt') {
-             navigator.clipboard.readText().then(clipboard => {
-                 if (clipboard.startsWith('wc:') && !connectors[clipboard]) wcConnect({ uri: clipboard })
-             }).catch(clipboardError)
-        }
+	try {
+                const result = await navigator.permissions.query({ name: 'clipboard-read' })
+                if (result.state === 'granted' || result.state === 'prompt') {
+                     const clipboard = await navigator.clipboard.readText()
+		     if (clipboard.startsWith('wc:') && !connectors[clipboard]) wcConnect({ uri: clipboard })
+                }
+        } catch(e) { clipboardError(e)  }
     }
-    try { tryReadClipboard() } catch(e) { clipboardError(e) }
+    tryReadClipboard()
     window.addEventListener('focus', tryReadClipboard)
     return () => window.removeEventListener('focus', tryReadClipboard)
 }
