@@ -6,6 +6,11 @@
     flex-direction: column;
     gap: 7px;
 
+    &.disabled {
+        pointer-events: none;
+        opacity: 0.5;
+    }
+
     label {
         font-weight: 500;
     }
