@@ -122,7 +122,8 @@ const AAVECard = ({ network, tokens, account, addRequest }) => {
                         to: lendingPoolAddress,
                         value: '0x0',
                         data: AAVELendingPool.encodeFunctionData('deposit', [tokenAddress, bigNumberHexAmount, account, 0])
-                    }
+                    },
+                    extraGas: 60000
                 })
             } catch(e) {
                 console.error(e)
