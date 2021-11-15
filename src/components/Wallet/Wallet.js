@@ -6,6 +6,7 @@ import Dashboard from "./Dashboard/Dashboard"
 import TopBar from "./TopBar/TopBar"
 import SideBar from "./SideBar/SideBar"
 import Deposit from "./Deposit/Deposit"
+import Swap from "./Swap/Swap"
 import Transfer from "./Transfer/Transfer"
 import Earn from "./Earn/Earn"
 import Security from "./Security/Security"
@@ -45,7 +46,12 @@ export default function Wallet(props) {
       component: <Transactions relayerURL={props.relayerURL} selectedAcc={props.selectedAcc} selectedNetwork={props.network} addRequest={props.addRequest} eligibleRequests={props.eligibleRequests} showSendTxns={props.showSendTxns}/>
     },
     {
-      path: '/swap'
+      path: '/swap',
+      component: <Swap
+        gnosisConnect={props.gnosisConnect}
+        selectedAcc={props.selectedAcc}
+        network={props.network} s
+      />
     },
     {
       path: '/nft/:network/:collectionAddr/:tokenId',

@@ -1,0 +1,8 @@
+@import '../../../variables.scss';
+
+#swap {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    height: 100%;
+}
