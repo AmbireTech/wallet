@@ -263,19 +263,19 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
       </div>
       <h2>Pending transactions: {bundle.txns.length}</h2>
       <div className='container'>
-        <div id="topPanel" className="panel">
-          <div className="title">
+        <div id='topPanel' className='panel'>
+          <div className='title'>
             <MdOutlineAccountCircle/>
             Signing with account:
           </div>
           <div className="content">
-            <div className="account">
-              <img className="icon" src={blockies.create({ seed: account.id }).toDataURL()} alt="Account Icon"/>
+            <div className='account'>
+              <img className='icon' src={blockies.create({ seed: account.id }).toDataURL()} alt='Account Icon'/>
               { account.id }
             </div>
             on
-            <div className="network">
-              <img className="icon" src={network.icon} alt="Network Icon"/>
+            <div className='network'>
+              <img className='icon' src={network.icon} alt='Network Icon'/>
               { network.name }
             </div>
           </div>
