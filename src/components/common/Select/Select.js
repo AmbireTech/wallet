@@ -5,7 +5,7 @@ import { BsChevronDown } from 'react-icons/bs'
 import { CSSTransition } from 'react-transition-group';
 import useOnClickOutside from '../../../helpers/onClickOutside';
 
-const Select = ({ children, native, monospace, searchable, label, defaultValue, items, onChange }) => {
+const Select = ({ children, native, monospace, searchable, disabled, label, defaultValue, items, onChange }) => {
     const ref = useRef();
     const hiddenTextInput = useRef();
     const transitionRef = useRef();
@@ -39,10 +39,10 @@ const Select = ({ children, native, monospace, searchable, label, defaultValue, 
 
     return (
         !native ? 
-            <div className={`select ${monospace ? 'monospace': ''}`} onClick={() => setOpen(!isOpen)} ref={ref}>
+            <div className={`select ${monospace ? 'monospace': ''} ${disabled ? 'disabled' : ''}`} onClick={() => setOpen(!isOpen)} ref={ref}>
                 {
                     searchable ? 
-                        <input type="text" className="search-input" value={search} ref={hiddenTextInput} onInput={({ target }) => setSearch(target.value)}/>
+                        <input type="text" className="search-input" disabled={disabled} value={search} ref={hiddenTextInput} onInput={({ target }) => setSearch(target.value)}/>
                         :
                         null
                 }
@@ -96,7 +96,7 @@ const Select = ({ children, native, monospace, searchable, label, defaultValue, 
                 }
             </div>
             :
-            <select className="select" onChange={ev => onChange(ev.target.value)} defaultValue={defaultValue}>
+            <select className="select" disabled={disabled} onChange={ev => onChange(ev.target.value)} defaultValue={defaultValue}>
                 {
                     items.map(item => (
                         <option key={item.value} value={item.value}>
