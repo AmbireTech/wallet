@@ -39,7 +39,7 @@ const AAVECard = ({ network, tokens }) => {
             ])
         } catch(e) {
             console.error(e);
-            addToast(e | e.error, { error: true })
+            addToast(e.message | e, { error: true })
         }
     }
 
