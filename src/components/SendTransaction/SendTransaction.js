@@ -40,7 +40,7 @@ function makeBundle(account, networkId, requests) {
   return bundle
 }
 
-export default function SendTransaction({ relayerURL, accounts, network, selectedAcc, requests, resolveMany, replacingBundle, onDismiss }) {
+export default function SendTransaction({ relayerURL, accounts, network, selectedAcc, requests, resolveMany, replacementBundle, onDismiss }) {
   const account = accounts.find(x => x.id === selectedAcc)
 
   // Also filtered in App.js, but better safe than sorry here
@@ -54,8 +54,8 @@ export default function SendTransaction({ relayerURL, accounts, network, selecte
     // eslint-disable-next-line react-hooks/exhaustive-deps
     ), [requests.map(x => x.id).join(','), network.chainId, selectedAcc])
   const bundle = useMemo(
-    () => makeBundle(account, network.id, eligibleRequests),
-    [network.id, account, eligibleRequests]
+    () => replacementBundle || makeBundle(account, network.id, eligibleRequests),
+    [replacementBundle, network.id, account, eligibleRequests]
   )
 
   if (!account || !eligibleRequests.length) return (<div id='sendTransaction'>
@@ -64,7 +64,6 @@ export default function SendTransaction({ relayerURL, accounts, network, selecte
   return (<SendTransactionWithBundle
       relayerURL={relayerURL}
       bundle={bundle}
-      replacingBundle={replacingBundle}
       network={network}
       account={account}
       resolveMany={resolveMany}
@@ -72,7 +71,7 @@ export default function SendTransaction({ relayerURL, accounts, network, selecte
   />)
 }
 
-function SendTransactionWithBundle ({ bundle, network, account, resolveMany, relayerURL, replacingBundle, onDismiss }) {
+function SendTransactionWithBundle ({ bundle, network, account, resolveMany, relayerURL, replacementBundle, onDismiss }) {
   const [estimation, setEstimation] = useState(null)
   const [signingStatus, setSigningStatus] = useState(false)
   const [feeSpeed, setFeeSpeed] = useState(DEFAULT_SPEED)
@@ -123,8 +122,8 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
   const getFinalBundle = () => {
     if (!relayerURL) return new Bundle({
       ...bundle,
-      gasLimit: estimation.gasLimit,
-      nonce: replacingBundle ? replacingBundle.nonce : undefined
+      gasLimit: estimation.gasLimit
+      // set nonce here when we implement "replace current pending transaction"
     })
 
     const feeToken = estimation.selectedFeeToken
@@ -227,7 +226,7 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
 
       // Inform everything that's waiting for the results (eg WalletConnect)
       const skipResolve = !bundleResult.success && bundleResult.message && bundleResult.message.match(/underpriced/i)
-      if (!skipResolve) resolveMany(requestIds, { success: bundleResult.success, result: bundleResult.txId, message: bundleResult.message })
+      if (!skipResolve && requestIds) resolveMany(requestIds, { success: bundleResult.success, result: bundleResult.txId, message: bundleResult.message })
 
       if (bundleResult.success) {
         addToast((
@@ -253,9 +252,10 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
     })
   }
 
-  const rejectTxn = () => {
+  // Not applicable when .requestIds is not defined (replacement bundle)
+  const rejectTxn = bundle.requestIds && (() => {
     resolveMany(bundle.requestIds, { message: 'user rejected' })
-  }
+  })
 
   return (<div id='sendTransaction'>
       <div className='dismiss' onClick={onDismiss}>
@@ -291,8 +291,8 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
                           {bundle.txns.map((txn, i) => {
                             const isFirstFailing = estimation && !estimation.success && estimation.firstFailing === i
                             return (<TxnPreview
-                              key={bundle.requestIds[i]}
-                              onDismiss={() => resolveMany([bundle.requestIds[i]], { message: 'rejected' })}
+                              key={txn.join(':')}
+                              onDismiss={bundle.requestIds && (() => resolveMany([bundle.requestIds[i]], { message: 'rejected' }))}
                               txn={txn} network={bundle.network} account={bundle.identity}
                               isFirstFailing={isFirstFailing}/>
                             )
@@ -333,7 +333,8 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
                   ) : (
                       <Actions
                         estimation={estimation}
-                        approveTxn={approveTxn} rejectTxn={rejectTxn}
+                        approveTxn={approveTxn}
+                        rejectTxn={rejectTxn}
                         signingStatus={signingStatus}
                         feeSpeed={feeSpeed}
                       />
