@@ -33,7 +33,7 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, accounts, 
     const [address, setAddress] = useState('')
     const [disabled, setDisabled] = useState(true)
 
-    const assetsItems = portfolio.balance.tokens.map(({ label, address, img }) => ({
+    const assetsItems = portfolio.tokens.map(({ label, address, img }) => ({
         label,
         value: address,
         icon: img
@@ -43,7 +43,7 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, accounts, 
         .filter(({ id }) => id !== selectedAcc)
         .map(({ id }) => id)
 
-    const selectedAsset = portfolio.balance.tokens.find(({ address }) => address === asset)
+    const selectedAsset = portfolio.tokens.find(({ address }) => address === asset)
 
     const setMaxAmount = () => {
         const { balanceRaw, decimals } = selectedAsset
@@ -94,8 +94,8 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, accounts, 
 
     useEffect(() => {
         const isAddressValid = /^0x[a-fA-F0-9]{40}$/.test(address)
-        setDisabled(!isAddressValid || !(amount > 0))
-    }, [address, amount])
+        setDisabled(!isAddressValid || !(amount > 0) || address === selectedAcc)
+    }, [address, amount, selectedAcc])
 
     return (
         <div id="transfer">
@@ -104,7 +104,7 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, accounts, 
                    Send
                </div>
                {
-                    portfolio.isLoading ?
+                    portfolio.isBalanceLoading ?
                         <Loading/>
                         :
                         assetsItems.length ? 
