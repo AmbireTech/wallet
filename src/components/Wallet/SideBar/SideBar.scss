@@ -1,136 +1,147 @@
 @import '../../../variables.scss';
 
 #sidebar {
-    width: $sidebar-width;
-    position: fixed;
-    left: 0px;
-    bottom: 0px;
-    top: 0px;
-    box-sizing: border-box;
-    overflow: hidden;
-    transition: width 0.1s ease-in-out;
+  width: $sidebar-width;
+  position: fixed;
+  left: 0px;
+  bottom: 0px;
+  top: 0px;
+  box-sizing: border-box;
+  overflow: hidden;
+  transition: width 0.1s ease-in-out;
 
-    #logo, #icon {
-        transition: opacity 0.1s ease-in-out;
-    }
+  #logo,
+  #icon {
+    transition: opacity 0.1s ease-in-out;
+  }
 
-    #logo {
-        background-image: url('../../../resources/logo.png');
-        width: 100%;
-        margin: 1em 0em 3em 0.5em;
-        height: 70px;
-        background-size: contain;
-        background-repeat: no-repeat;
-        background-position: center left;
-    }
+  #logo {
+    background-image: url('../../../resources/logo.png');
+    width: 100%;
+    margin: 1em 0em 3em 0.5em;
+    height: 70px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center left;
+  }
 
-    #icon {
-        position: absolute;
-        top: 10px;
-        height: 90px;
-        width: $sidebar-mobile-width;
-        background-image: url('../../../resources/icon.png');
-        background-size: contain;
-        background-repeat: no-repeat;
-        background-position: center center;
-        opacity: 0;
-    }
+  #icon {
+    position: absolute;
+    top: 10px;
+    height: 90px;
+    width: $sidebar-mobile-width;
+    background-image: url('../../../resources/icon.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center center;
+    opacity: 0;
+  }
 
-    .balance {
-        margin-bottom: 3em;
-        padding-left: 1em;
+  .balance {
+    margin-bottom: 3em;
+    padding-left: 1em;
 
-        label {
-            text-transform: uppercase;
-            line-height: 1.75;
-            font-weight: 600;
-        }
-
-        .balanceDollarAmount {
-            transition: font-size 0.1s ease-in-out;
-        }
-    }
-
-    .item {
-        display: flex;
-        align-items: center;
-        gap: 30px;
-        padding: 15px 15px;
-        line-height: 30px;
-        cursor: pointer;
-        color: #bbb;
-        transition: all 0.1s ease-in-out;
-
-        svg {
-            color: #bbb;
-            transition: color 0.1s ease-in-out;
-        }
-
-        &:hover {
-            background-color: rgba(0, 0, 0, 0.3);
-            color: #fff;
-
-            svg {
-                color: #fff;
-            }
-        }
-    }
-
-    a.selected .item svg {
-        color: $secondary-accent-color;
-    }
-
-    .highlight {
-        color: $primary-accent-color;
-    }
-
-    .dollarSign {
-        margin-right: 5px;
+    label {
+      text-transform: uppercase;
+      line-height: 1.75;
+      font-weight: 600;
     }
 
     .balanceDollarAmount {
-        font-size: 2em;
-        overflow: hidden;
-        white-space: nowrap;
-        text-overflow: ellipsis;
+      transition: font-size 0.1s ease-in-out;
     }
+  }
+
+  .item {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+    padding: 15px 15px;
+    line-height: 30px;
+    cursor: pointer;
+    color: #bbb;
+    transition: all 0.1s ease-in-out;
+
+    svg {
+      color: #bbb;
+      transition: color 0.1s ease-in-out;
+    }
+
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.3);
+      color: #fff;
+
+      svg {
+        color: #fff;
+      }
+    }
+
+    .badge-wrapper {
+      font-weight: bold;
+      width: 30px;
+      height: 30px;
+      text-align: center;
+      border: 1px solid $danger-color;
+      border-radius: 50%;
+      background: $danger-color;
+    }
+  }
+
+  a.selected .item svg {
+    color: $secondary-accent-color;
+  }
+
+  .highlight {
+    color: $primary-accent-color;
+  }
+
+  .dollarSign {
+    margin-right: 5px;
+  }
+
+  .balanceDollarAmount {
+    font-size: 2em;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
 }
 
 @media screen and (min-width: 1400px) {
-    #sidebar {
-        .balance {
-            .balanceDollarAmount {
-                font-size: 2em !important;
-            }
-        }
+  #sidebar {
+    .balance {
+      .balanceDollarAmount {
+        font-size: 2em !important;
+      }
     }
+  }
 }
 
 @media screen and (max-width: 1400px) {
-    #sidebar {
-        width: $sidebar-mobile-width;
+  #sidebar {
+    width: $sidebar-mobile-width;
 
-        #logo {
-            opacity: 0;
-        }
-
-        #icon {
-            opacity: 1;
-        }
-
-        .balance {
-            font-size: 0.8em !important;
-
-            label {
-                font-size: 1.1em !important;
-            }
-        }
-
-        .item {
-            gap: 5px;
-            flex-direction: column;
-            justify-content: center;
-            font-size: 15px;
-        }
+    #logo {
+      opacity: 0;
     }
+
+    #icon {
+      opacity: 1;
+    }
+
+    .balance {
+      font-size: 0.8em !important;
+
+      label {
+        font-size: 1.1em !important;
+      }
+    }
+
+    .item {
+      gap: 5px;
+      flex-direction: column;
+      justify-content: center;
+      font-size: 15px;
+    }
+  }
 }
