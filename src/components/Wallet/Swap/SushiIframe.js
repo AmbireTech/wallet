@@ -14,6 +14,10 @@ const ambireSushi = {
 export default function SushiSwap({ network, selectedAcc, gnosisConnect, gnosisDisconnect }) {
     const iframeRef = useRef(null);
 
+    const genHash = () => {
+        return ambireSushi.url + network.chainId + selectedAcc
+    }
+
     useEffect(() => {
         gnosisConnect({
             selectedAcc,
@@ -27,11 +31,9 @@ export default function SushiSwap({ network, selectedAcc, gnosisConnect, gnosisD
 
     }, [network, selectedAcc, iframeRef, gnosisConnect, gnosisDisconnect])
 
-
-
     return (
         <div className='iframe-container'>
-            <iframe id='swap-frame' ref={iframeRef} title='sushi-swap' src={SUSHI_SWAP_FRAME} />
+            <iframe id='swap-frame' ref={iframeRef} key={genHash()} title='sushi-swap' src={SUSHI_SWAP_FRAME} />
         </div>
     )
 }
