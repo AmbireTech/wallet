@@ -28,13 +28,18 @@ const Card = ({ tokens, icon, details, onTokenSelect, onValidate }) => {
             </div>
             <div className="content">
                 <Select searchable disabled={disabled} label="Choose Token" defaultValue={token} items={tokens} onChange={(value) => setToken(value)}/>
-                <ul className="details">
-                    {
-                        details.map(([type, value]) => (
-                            <li key={type}><b>{type}</b> {value}</li>
-                        ))
-                    }
-                </ul>
+                {
+                    !disabled ? 
+                        <ul className="details">
+                            {
+                                details.map(([type, value]) => (
+                                    <li key={type}><b>{type}</b> {value}</li>
+                                ))
+                            }
+                        </ul>
+                        :
+                        null
+                }
                 <Segments small defaultValue={segment} segments={segments} onChange={(value) => setSegment(value)}></Segments>
                 <NumberInput disabled={disabled} min="0" max={currentToken?.balance} value={amount} label={`Available Amount: ${!disabled ? `${currentToken?.balance} ${currentToken?.symbol}` : ''}`} onInput={(value) => setAmount(value)} button="MAX" onButtonClick={setMaxValue}></NumberInput>
                 <Button disabled={disabled} onClick={() => onValidate(segment, token, amount)}>{ segment }</Button>
