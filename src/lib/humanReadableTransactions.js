@@ -9,13 +9,15 @@ const TRANSFER_SIGHASH = ERC20.getSighash(ERC20.getFunction('transfer').format()
 
 // @TODO custom parsing for univ2 contracts, exact output, etc.
 export function getTransactionSummary(txn, networkId, accountAddr) {
-    const [to, value, data] = txn
+    const [, value, data] = txn
+    const to = getAddress(txn[0])
     let callSummary, sendSummary
     const network = networks.find(x => x.id === networkId || x.chainId === networkId)
     if (!network) return 'Unknown newtork (unable to parse'
 
     const contractKey = network.id + ':' + getAddress(to)
     const contractInfo = verifiedContracts[contractKey]
+    const tokenInfo = tokens[to]
 
     const nativeAsset = network ? network.nativeAssetSymbol : 'unknown native token'
     if (parseInt(value) > 0) sendSummary = `send ${(parseInt(value)/1e18).toFixed(4)} ${nativeAsset} to ${contractInfo ? contractInfo.name : to}`
@@ -43,7 +45,7 @@ export function getTransactionSummary(txn, networkId, accountAddr) {
             } else {
                 callSummary = `Interaction with ${contractInfo.name}: ${parsed.name}`
             }
-        } else callSummary = `unknown call to ${to}`
+        } else callSummary = `unknown call to ${contractInfo ? contractInfo.name : (tokenInfo ? tokenInfo[0] : to)}`
     }
     return [callSummary, sendSummary].filter(x => x).join(', ')
 }
