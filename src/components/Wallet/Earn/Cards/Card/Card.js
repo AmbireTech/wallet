@@ -1,6 +1,6 @@
 import './Card.scss'
 
-import { Select, Segments, NumberInput, Button } from '../../../common'
+import { Select, Segments, NumberInput, Button } from '../../../../common'
 import { useState } from 'react'
 
 const Card = ({ tokens, icon, details, onTokenSelect }) => {

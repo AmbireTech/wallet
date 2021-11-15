@@ -4,7 +4,7 @@ import { useState } from 'react'
 import AAVELendingPoolAbi from '../../../../consts/AAVELendingPoolAbi'
 
 import AAVE_ICON from '../../../../resources/aave.svg'
-import Card from '../Card/Card'
+import Card from './Card/Card'
 
 const AAVELendingPool = new Interface(AAVELendingPoolAbi)
 const lendingPoolProvider = {
