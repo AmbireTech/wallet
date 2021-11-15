@@ -7,6 +7,7 @@ import TopBar from "./TopBar/TopBar"
 import SideBar from "./SideBar/SideBar"
 import Deposit from "./Deposit/Deposit"
 import Transfer from "./Transfer/Transfer"
+import Earn from "./Earn/Earn"
 import Security from "./Security/Security"
 import Transactions from './Transactions/Transactions'
 import PluginGnosisSafeApps from "../Plugins/GnosisSafeApps/GnosisSafeApps"
@@ -32,6 +33,10 @@ export default function Wallet(props) {
       component: <Transfer portfolio={props.portfolio} selectedAcc={props.selectedAcc} selectedNetwork={{...props.network}} accounts={props.accounts} addRequest={props.addRequest}/>
     },
     {
+      path: '/earn',
+      component: <Earn portfolio={props.portfolio}/>
+    },
+    {
       path: '/security',
       component: <Security relayerURL={props.relayerURL} selectedAcc={props.selectedAcc} selectedNetwork={props.network} accounts={props.accounts} addRequest={props.addRequest}/>
     },
@@ -41,9 +46,6 @@ export default function Wallet(props) {
     },
     {
       path: '/swap'
-    },
-    {
-      path: '/earn'
     },
     {
       path: '/nft/:network/:collectionAddr/:tokenId',
