@@ -1,0 +1,42 @@
+@import '../../../.././../variables.scss';
+
+.card {
+    width: 350px;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    padding: 20px 25px;
+    padding-bottom: 25px;
+    background-color: $panel-background-color;
+
+    .title {
+        display: flex;
+        justify-content: center;
+        padding: 15px 0;
+    
+        img {
+            height: 35px;
+        }
+    }
+
+    .content {
+        display: flex;
+        flex-direction: column !important;
+        gap: 30px;
+
+        .details {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            list-style-type: none;
+            padding: 0 5px;
+            margin: 0;
+
+            li {
+                display: flex;
+                justify-content: space-between;
+                opacity: 0.9;
+            }
+        }
+    }
+}

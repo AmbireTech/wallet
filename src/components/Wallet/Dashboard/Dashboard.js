@@ -3,22 +3,22 @@ import './Dashboard.scss'
 import { useEffect, useLayoutEffect, useState } from 'react'
 
 import { Chart, Loading, Segments } from '../../common'
-import Assets from './Assets/Assets'
+import Protocols from './Protocols/Protocols'
 import Collectables from './Collectables/Collectables'
 import networks from '../../../consts/networks'
 
 export default function Dashboard({ portfolio, setNetwork }) {
     const [chartTokensData, setChartTokensData] = useState([]);
-    const [chartAssetsData, setChartAssetsData] = useState([]);
+    const [chartProtocolsData, setChartProtocolsData] = useState([]);
     const [chartType, setChartType] = useState([]);
     const [tableType, setTableType] = useState([]);
 
     const chartSegments = [
         {
-            value: 'By Token'
+            value: 'Tokens'
         },
         {
-            value: 'By Asset'
+            value: 'Protocols'
         }
     ]
 
@@ -34,29 +34,29 @@ export default function Dashboard({ portfolio, setNetwork }) {
     const networkDetails = (network) => networks.find(({ id }) => id === network)
 
     useLayoutEffect(() => {
-        const tokensData = portfolio.balance.tokens
+        const tokensData = portfolio.tokens
             .map(({ label, balanceUSD }) => ({
                 label,
                 value: Number(((balanceUSD / portfolio.balance.total.full) * 100).toFixed(2))
             }))
             .filter(({ value }) => value > 0);
 
-        const totalAssets = portfolio.assets.map(({ assets }) => 
+        const totalProtocols = portfolio.protocols.map(({ assets }) => 
             assets
                 .map(({ balanceUSD }) => balanceUSD)
                 .reduce((acc, curr) => acc + curr, 0))
             .reduce((acc, curr) => acc + curr, 0)
 
-        const assetsData = portfolio.assets
+        const protocolsData = portfolio.protocols
             .map(({ label, assets }) => ({
                 label,
-                value: Number(((assets.map(({ balanceUSD }) => balanceUSD).reduce((acc, curr) => acc + curr, 0) / totalAssets) * 100).toFixed(2))
+                value: Number(((assets.map(({ balanceUSD }) => balanceUSD).reduce((acc, curr) => acc + curr, 0) / totalProtocols) * 100).toFixed(2))
             }))
             .filter(({ value }) => value > 0)
 
         setChartTokensData(tokensData);
-        setChartAssetsData(assetsData)
-    }, [portfolio.balance, portfolio.assets]);
+        setChartProtocolsData(protocolsData)
+    }, [portfolio.balance, portfolio.tokens, portfolio.protocols]);
 
     useEffect(() => portfolio.requestOtherProtocolsRefresh(), [portfolio])
 
@@ -103,10 +103,10 @@ export default function Dashboard({ portfolio, setNetwork }) {
                                     :
                                     <Chart data={chartTokensData} size={200}/>
                                 :
-                                portfolio.areAssetsLoading ?
+                                portfolio.areProtocolsLoading ?
                                     <Loading/>
                                     :
-                                    <Chart data={chartAssetsData} size={200}/>
+                                    <Chart data={chartProtocolsData} size={200}/>
                         }
                     </div>
                 </div>
@@ -118,17 +118,17 @@ export default function Dashboard({ portfolio, setNetwork }) {
                 </div>
                 <div className="content">
                     {
-                        portfolio.areAssetsLoading ?
+                        portfolio.areProtocolsLoading ?
                             <Loading/>
                             :
                             tableType === tableSegments[0].value ?
-                                <Assets assets={portfolio.assets}/>
+                                <Protocols protocols={portfolio.protocols}/>
                                 :
                                 <Collectables collectables={portfolio.collectables}/>
                     }
                 </div>
                 {
-                    portfolio.areAssetsLoading || !portfolio.assets.length ?
+                    portfolio.areProtocolsLoading || !portfolio.protocols.length ?
                         null
                         :
                         <div className="powered">

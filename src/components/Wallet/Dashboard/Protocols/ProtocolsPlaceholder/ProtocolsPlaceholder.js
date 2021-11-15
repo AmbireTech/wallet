@@ -1,10 +1,10 @@
-import './AssetsPlaceholder.scss'
+import './ProtocolsPlaceholder.scss'
 
 import { NavLink } from 'react-router-dom'
 import { GiReceiveMoney } from 'react-icons/gi'
 import { Button } from '../../../../common'
 
-const AssetsPlaceholder = () => {
+const ProtocolsPlaceholder = () => {
     const tokens = [
         {
             icon: 'https://storage.googleapis.com/zapper-fi-assets/tokens/ethereum/0xade00c28244d5ce17d72e40330b1c318cd12b7c3.png',
@@ -27,7 +27,7 @@ const AssetsPlaceholder = () => {
     ]
 
     return (
-        <div id="assets-placeholder" >
+        <div id="protocols-placeholder" >
             <div className="placeholder-overlay">
                 <label>
                     Welcome! You don't have any funds on this account.
@@ -66,4 +66,4 @@ const AssetsPlaceholder = () => {
     )
 }
 
-export default AssetsPlaceholder
+export default ProtocolsPlaceholder
