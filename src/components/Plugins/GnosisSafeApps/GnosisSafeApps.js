@@ -4,8 +4,8 @@ import {useEffect, useRef, useState} from 'react'
 
 const dapps = [{
   name: 'LocalTest',
-  url: 'http://localhost:3002',
-  logo: 'http://localhost:3002/logo-test.png',
+  url: 'http://localhost:3003',
+  logo: 'http://localhost:3003/logo-test.png',
   desc: 'Local dapp test with some lorem ipsum stuff'
 },
   {

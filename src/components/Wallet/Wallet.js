@@ -5,6 +5,7 @@ import Dashboard from "./Dashboard/Dashboard"
 import TopBar from "./TopBar/TopBar"
 import SideBar from "./SideBar/SideBar"
 import Deposit from "./Deposit/Deposit"
+import Swap from "./Swap/Swap"
 import Transfer from "./Transfer/Transfer"
 import Security from "./Security/Security"
 import Transactions from './Transactions/Transactions'
@@ -34,7 +35,12 @@ export default function Wallet(props) {
       component: <Transactions relayerURL={props.relayerURL} selectedAcc={props.selectedAcc} selectedNetwork={props.network} addRequest={props.addRequest} eligibleRequests={props.eligibleRequests} showSendTxns={props.showSendTxns}/>
     },
     {
-      path: '/swap'
+      path: '/swap',
+      component: <Swap
+        gnosisConnect={props.gnosisConnect}
+        selectedAcc={props.selectedAcc}
+        network={props.network} s
+      />
     },
     {
       path: '/earn'
@@ -57,21 +63,21 @@ export default function Wallet(props) {
   return (
     <div id="wallet">
       <TopBar {...props} />
-      <SideBar match={props.match} portfolio={props.portfolio}/>
+      <SideBar match={props.match} portfolio={props.portfolio} />
       <div id="wallet-container">
         <Switch>
           {
             routes.map(({ path, component }) => (
               <Route path={props.match.url + path} key={path}>
-                { component ? component : null }
+                {component ? component : null}
               </Route>
             ))
           }
           <Route path={props.match.url + "/"}>
             <Redirect to={props.match.url + "/dashboard"} />
           </Route>
-        </Switch>
-      </div>
-    </div>
+        </Switch >
+      </div >
+    </div >
   );
 }
