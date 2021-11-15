@@ -52,6 +52,7 @@ function Transactions ({ relayerURL, selectedAcc, selectedNetwork, eligibleReque
 
 function MinedBundle(bundle) {
   const network = networks.find(x => x.id === bundle.network)
+  if (!Array.isArray(bundle.txns)) return (<h3 className='error'>Bundle has no transactions (should never happen)</h3>)
   const lastTxn = bundle.txns[bundle.txns.length - 1]
   // terribly hacky; @TODO fix
   // all of the values are prob checksummed so we may not need toLowerCase
