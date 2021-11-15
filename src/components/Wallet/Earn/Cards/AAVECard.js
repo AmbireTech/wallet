@@ -34,7 +34,7 @@ const AAVECard = ({ network, tokens }) => {
             setDetails([
                 ['Annual Percentage Rate (APR)', `${depositAPR}%`],
                 ['Lock', 'No Lock'],
-                ['TYPE', 'Variable Rate'],
+                ['Type', 'Variable Rate'],
             ])
         } catch(e) {
             console.error(e);
