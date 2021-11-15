@@ -38,7 +38,8 @@ function Transactions ({ relayerURL, selectedAcc, selectedNetwork, eligibleReque
         <div className='title'>Pending transaction bundle</div>
         {firstPending && (<MinedBundle bundle={firstPending}></MinedBundle>)}
       </div>) }
-      <h2>Confirmed transactions</h2>
+
+      <h2>{(data && data.txns.length === 0) ? 'No transactions yet.' : 'Confirmed transactions'}</h2>
       {!relayerURL && (<h3 className='error'>Unsupported: not currently connected to a relayer.</h3>)}
       {errMsg && (<h3 className='error'>Error getting list of transactions: {errMsg}</h3>)}
       {isLoading && <Loading />}
