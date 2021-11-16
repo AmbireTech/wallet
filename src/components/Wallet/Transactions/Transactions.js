@@ -46,13 +46,13 @@ function Transactions ({ relayerURL, selectedAcc, selectedNetwork, eligibleReque
       {isLoading && <Loading />}
       {
           // @TODO respect the limit and implement pagination
-          !isLoading && data && data.txns.filter(x => x.executed && x.executed.mined).map(MinedBundle)
+          !isLoading && data && data.txns.filter(x => x.executed && x.executed.mined).map(bundle => MinedBundle({ bundle }))
       }
     </section>
   )
 }
 
-function MinedBundle(bundle) {
+function MinedBundle({ bundle }) {
   const network = networks.find(x => x.id === bundle.network)
   if (!Array.isArray(bundle.txns)) return (<h3 className='error'>Bundle has no transactions (should never happen)</h3>)
   const lastTxn = bundle.txns[bundle.txns.length - 1]
