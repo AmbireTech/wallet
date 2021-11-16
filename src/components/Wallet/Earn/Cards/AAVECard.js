@@ -4,17 +4,13 @@ import { useCallback, useEffect, useState } from 'react'
 import { useToasts } from '../../../../hooks/toasts'
 import ERC20Abi from 'adex-protocol-eth/abi/ERC20.json'
 import AAVELendingPoolAbi from '../../../../consts/AAVELendingPoolAbi'
+import AAVELendingPoolProviders from '../../../../consts/AAVELendingPoolProviders'
 
 import AAVE_ICON from '../../../../resources/aave.svg'
 import Card from './Card/Card'
 
 const ERC20Interface = new Interface(ERC20Abi)
 const AAVELendingPool = new Interface(AAVELendingPoolAbi)
-const lendingPoolProvider = {
-    ethereum: '0xb53c1a33016b2dc2ff3653530bff1848a515c8c5',
-    polygon: '0xd05e3E715d945B59290df0ae8eF85c1BdB684744',
-    avalanche: '0xb6A86025F0FE1862B372cb0ca18CE3EDe02A318f'
-}
 const RAY = 10**27
 let lendingPoolAddress = null
 
@@ -128,7 +124,7 @@ const AAVECard = ({ network, tokens, protocols, account, addRequest }) => {
             try {
                 const { rpc } = network
                 const provider = getDefaultProvider(rpc)
-                const lendingPoolProviderContract = new ethers.Contract(lendingPoolProvider[network.id], AAVELendingPool, provider)
+                const lendingPoolProviderContract = new ethers.Contract(AAVELendingPoolProviders[network.id], AAVELendingPool, provider)
                 lendingPoolAddress = await lendingPoolProviderContract.getLendingPool()
             
                 const lendingPoolContract = new ethers.Contract(lendingPoolAddress, AAVELendingPool, provider)
