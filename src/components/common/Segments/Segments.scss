@@ -27,6 +27,7 @@ $segment-small-height: 40px;
         text-transform: uppercase;
 
         .icon {
+            @include flex-center-center;
             font-size: 20px;
         }
 
@@ -46,6 +47,10 @@ $segment-small-height: 40px;
     &.small {
         height: $segment-small-height;
         padding: 0;
+
+        .icon {
+            font-size: 15px;
+        }
 
         .segment {
             height: $segment-small-height;
