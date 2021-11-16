@@ -19,6 +19,12 @@
         }
     }
 
+    .unavailable {
+        display: flex;
+        justify-content: center;
+        font-weight: bold;
+    }
+
     .content {
         display: flex;
         flex-direction: column !important;
