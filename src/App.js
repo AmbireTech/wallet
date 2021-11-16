@@ -62,17 +62,24 @@ function AppInner () {
       && chainId === network.chainId
       && account === selectedAcc
     ), [requests, network.chainId, selectedAcc])
-  const [sendTxnsShowing, setSendTxnsShowing] = useState(() => !!eligibleRequests.length)
+  const [sendTxnState, setSendTxnState] = useState(() => ({ showing: !!eligibleRequests.length }))
   useEffect(
-    () => setSendTxnsShowing(!!eligibleRequests.length),
+    () => setSendTxnState({ showing: !!eligibleRequests.length }),
     [eligibleRequests.length]
   )
-  const dismissSendTxns = () => setSendTxnsShowing(false)
 
   return (<>
-    {sendTxnsShowing ? (
-      <SendTransaction accounts={accounts} selectedAcc={selectedAcc} network={network} requests={eligibleRequests} resolveMany={resolveMany} relayerURL={relayerURL} onDismiss={dismissSendTxns}>
-      </SendTransaction>
+    {sendTxnState.showing ? (
+      <SendTransaction
+          accounts={accounts}
+          selectedAcc={selectedAcc}
+          network={network}
+          requests={eligibleRequests}
+          resolveMany={resolveMany}
+          relayerURL={relayerURL}
+          onDismiss={() => setSendTxnState({ showing: false })}
+          replacementBundle={sendTxnState.replacementBundle}
+      ></SendTransaction>
       ) : (<></>)
     }
     <Switch>
@@ -106,7 +113,7 @@ function AppInner () {
           relayerURL={relayerURL}
           // required by the transactions page
           eligibleRequests={eligibleRequests}
-          showSendTxns={() => setSendTxnsShowing(true)}
+          showSendTxns={bundle => setSendTxnState({ showing: true, replacementBundle: bundle })}
         >
         </Wallet>
       </Route>
