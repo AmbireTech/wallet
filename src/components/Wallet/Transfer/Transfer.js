@@ -110,7 +110,14 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, accounts, 
                         assetsItems.length ? 
                             <div className="form">
                                 <Select searchable defaultValue={asset} items={assetsItems} onChange={(value) => setAsset(value)}/>
-                                <NumberInput value={amount} min="0" onInput={onAmountChange} button="MAX" onButtonClick={() => setMaxAmount()}/>
+                                <NumberInput
+                                    label={`Available Amount: ${selectedAsset?.balance} ${selectedAsset?.symbol}`}
+                                    value={amount}
+                                    min="0"
+                                    onInput={onAmountChange}
+                                    button="MAX"
+                                    onButtonClick={() => setMaxAmount()}
+                                />
                                 <div id="recipient-field">
                                     <TextInput
                                         placeholder="Recipient"
