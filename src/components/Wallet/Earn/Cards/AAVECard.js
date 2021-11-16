@@ -32,6 +32,9 @@ const AAVECard = ({ network, tokens, protocols, account, addRequest }) => {
         }
     }, [tokensItems])
 
+    const getToken = (type, address) => tokensItems.filter(token => token.type === type).find(token => token.address === address)
+    const addRequestTxn = (id, txn, extraGas = 0) => addRequest({ id, type: 'eth_sendTransaction', chainId: network.chainId, account, txn, extraGas })
+
     const approveToken = async (tokenAddress, bigNumberHexAmount) => {
         try {
             const ZERO = ethers.BigNumber.from(0)
@@ -41,27 +44,17 @@ const AAVECard = ({ network, tokens, protocols, account, addRequest }) => {
             const allowance = await tokenContract.allowance(account, tokenAddress)
 
             if (allowance.lt(bigNumberHexAmount)) {
-                if (allowance.gt(ZERO)) addRequest({
-                    id: `aave_pool_approve_${Date.now()}`,
-                    type: 'eth_sendTransaction',
-                    chainId: network.chainId,
-                    account,
-                    txn: {
+                if (allowance.gt(ZERO)) {
+                    addRequestTxn(`aave_pool_approve_${Date.now()}`, {
                         to: lendingPoolAddress,
                         value: bigNumberHexAmount,
                         data: '0x'
-                    }
-                })
-                addRequest({
-                    id: `aave_pool_approve_${Date.now()}`,
-                    type: 'eth_sendTransaction',
-                    chainId: network.chainId,
-                    account,
-                    txn: {
-                        to: tokenAddress,
-                        value: '0x0',
-                        data: ERC20Interface.encodeFunctionData('approve', [lendingPoolAddress, bigNumberHexAmount])
-                    }
+                    })
+                }
+                addRequestTxn(`aave_pool_approve_${Date.now()}`, {
+                    to: tokenAddress,
+                    value: '0x0',
+                    data: ERC20Interface.encodeFunctionData('approve', [lendingPoolAddress, bigNumberHexAmount])
                 })
             }
         } catch(e) {
@@ -72,46 +65,32 @@ const AAVECard = ({ network, tokens, protocols, account, addRequest }) => {
 
     const onValidate = async (type, tokenAddress, amount) => {
         if (type === 'Deposit') {
-            const token = tokensItems.filter(({ type }) => type === 'deposit').find(({ address }) => address === tokenAddress)
+            const token = getToken('deposit', tokenAddress)
             const bigNumberHexAmount = ethers.utils.parseUnits(amount.toString(), token.decimals).toHexString()
             await approveToken(tokenAddress, bigNumberHexAmount)
 
             try {
-                addRequest({
-                    id: `aave_pool_deposit_${Date.now()}`,
-                    type: 'eth_sendTransaction',
-                    chainId: network.chainId,
-                    account,
-                    txn: {
-                        to: lendingPoolAddress,
-                        value: '0x0',
-                        data: AAVELendingPool.encodeFunctionData('deposit', [tokenAddress, bigNumberHexAmount, account, 0])
-                    },
-                    extraGas: 60000
-                })
+                addRequestTxn(`aave_pool_deposit_${Date.now()}`, {
+                    to: lendingPoolAddress,
+                    value: '0x0',
+                    data: AAVELendingPool.encodeFunctionData('deposit', [tokenAddress, bigNumberHexAmount, account, 0])
+                }, 60000)
             } catch(e) {
                 console.error(e)
                 addToast(`Error: ${e.message || e}`, { error: true })
             }
         }
         else if (type === 'Withdraw') {
-            const token = tokensItems.filter(({ type }) => type === 'withdraw').find(({ address }) => address === tokenAddress)
+            const token = getToken('withdraw', tokenAddress)
             const bigNumberHexAmount = ethers.utils.parseUnits(amount.toString(), token.decimals).toHexString()
             await approveToken(tokenAddress, bigNumberHexAmount)
 
             try {
-                addRequest({
-                    id: `aave_pool_withdraw_${Date.now()}`,
-                    type: 'eth_sendTransaction',
-                    chainId: network.chainId,
-                    account,
-                    txn: {
-                        to: lendingPoolAddress,
-                        value: '0x0',
-                        data: AAVELendingPool.encodeFunctionData('withdraw', [tokenAddress, bigNumberHexAmount, account])
-                    },
-                    extraGas: 60000
-                })
+                addRequestTxn(`aave_pool_withdraw_${Date.now()}`, {
+                    to: lendingPoolAddress,
+                    value: '0x0',
+                    data: AAVELendingPool.encodeFunctionData('withdraw', [tokenAddress, bigNumberHexAmount, account])
+                }, 60000)
             } catch(e) {
                 console.error(e)
                 addToast(`Error: ${e.message || e}`, { error: true })
