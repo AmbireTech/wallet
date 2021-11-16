@@ -18,10 +18,11 @@ const Card = ({ loading, unavailable, tokensItems, icon, details, onTokenSelect,
     const setMaxValue = () => setAmount(currentToken?.balance)
 
     useEffect(() => {
-        setAmount(0)
         if (segment === segments[0].value) setTokens(tokensItems.filter(({ type }) => type === 'deposit'))
         if (segment === segments[1].value) setTokens(tokensItems.filter(({ type }) => type === 'withdraw'))
     }, [segment, tokensItems])
+
+    useEffect(() => setAmount(0), [segment])
 
     useEffect(() => {
         onTokenSelect(token)
