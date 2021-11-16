@@ -2,6 +2,7 @@ import './Card.scss'
 
 import { Select, Segments, NumberInput, Button, Loading } from '../../../../common'
 import { useEffect, useState } from 'react'
+import { BsArrowDownSquare, BsArrowUpSquare } from 'react-icons/bs'
 
 const segments = [{ value: 'Deposit' }, { value: 'Withdraw' }]
 
@@ -56,7 +57,7 @@ const Card = ({ loading, tokensItems, icon, details, onTokenSelect, onValidate }
                         }
                         <Segments small defaultValue={segment} segments={segments} onChange={(value) => setSegment(value)}></Segments>
                         <NumberInput disabled={disabled} min="0" max={currentToken?.balance} value={amount} label={`Available Amount: ${!disabled ? `${currentToken?.balance} ${currentToken?.symbol}` : ''}`} onInput={(value) => setAmount(value)} button="MAX" onButtonClick={setMaxValue}></NumberInput>
-                        <Button disabled={disabled} onClick={() => onValidate(segment, token, amount)}>{ segment }</Button>
+                        <Button disabled={disabled} icon={segment === segments[0].value ? <BsArrowDownSquare/> : <BsArrowUpSquare/>} onClick={() => onValidate(segment, token, amount)}>{ segment }</Button>
                     </div>
             }
         </div>
