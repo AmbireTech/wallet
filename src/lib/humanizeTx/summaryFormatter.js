@@ -3,21 +3,21 @@ function SummaryFormatter(network, contractManager){
     this.cm = contractManager
     this.network = network
     this._mainAction = null//TODO
-    this.actions = [];
+    this.actions = []
 
     this.currentSegments = []
     this.currentRichSegments = []
 
     this.mainAction = function(action){
-        this._mainAction = action;
-        return this;
+        this._mainAction = action
+        return this
     }
 
     this.actions = function(actions) {
         return {
             action:this._mainAction,
             actions: actions.filter(a => a !== null && a !== false)
-        };
+        }
     }
 
     this.action = function(){
@@ -25,9 +25,9 @@ function SummaryFormatter(network, contractManager){
             plain: this.currentSegments.join(' '),
             rich: this.currentRichSegments
         }
-        this.currentSegments = [];
-        this.currentRichSegments = [];
-        return action;
+        this.currentSegments = []
+        this.currentRichSegments = []
+        return action
     }
 
     this.add = function(){
@@ -36,10 +36,10 @@ function SummaryFormatter(network, contractManager){
                 segments: this.currentSegments,
                 richSegments: this.currentRichSegments
             })
-            this.currentSegments = [];
-            this.currentRichSegments = [];
+            this.currentSegments = []
+            this.currentRichSegments = []
         }
-        return this;
+        return this
     }
 
     /*this.format = function(){
@@ -47,41 +47,41 @@ function SummaryFormatter(network, contractManager){
               segments: this.currentSegments,
               richSegments: this.currentRichSegments
         })
-        return this.actions;
+        return this.actions
     }*/
 
     //Formatting funcs
     this.text = function (content) {
-        this.currentSegments.push(content);
+        this.currentSegments.push(content)
         this.currentRichSegments.push({
             type: 'plain',
             data: content
-        });
-        return this;
+        })
+        return this
     }
 
     this.tokenAmount = function (address, weiValue, displayDecimals=4, unknownCallback, amountCallback) {
         const humanAmount = this.cm.humanAmount(this.network, address, weiValue, displayDecimals, amountCallback)
         const tokenData = this.cm.tokenData(this.network, address, unknownCallback)
-        this.currentSegments.push(humanAmount + ' ' + tokenData.symbol);
+        this.currentSegments.push(humanAmount + ' ' + tokenData.symbol)
         this.currentRichSegments.push({
             type: 'tokenAmount',
             data: {...tokenData, humanAmount:humanAmount, amount:weiValue.toString()}
-        });
-        return this;
+        })
+        return this
     }
 
     this.alias = function(txOriginAddress, address){
-        const aliasData = this.cm.aliasData(this.network, txOriginAddress, address);
-        this.currentSegments.push(aliasData.alias);
+        const aliasData = this.cm.aliasData(this.network, txOriginAddress, address)
+        this.currentSegments.push(aliasData.alias)
         this.currentRichSegments.push({
             type: 'alias',
             data: aliasData
-        });
-        return this;
+        })
+        return this
     }
 
-    return this;
+    return this
 }
 
-module.exports = SummaryFormatter;
+module.exports = SummaryFormatter

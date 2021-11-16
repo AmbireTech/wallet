@@ -1,12 +1,12 @@
-const { ethers } = require("ethers");
-const Contract = require("./contract");
-const resources  = require("./contracts/resources");
-const generic_resources  = require( "./contracts/generic_resources");
-const tokens = require('./contracts/erc20/list');
-const erc721Tokens = require('./contracts/erc721/list');
-const nativeTokens = require("./nativeTokens");
-const BigNumber = require('bignumber.js');//BN that supports decimals
-const SummaryFormatter = require('./summaryFormatter');
+const { ethers } = require('ethers')
+const Contract = require('./contract')
+const resources  = require('./contracts/resources')
+const generic_resources  = require( './contracts/generic_resources')
+const tokens = require('./contracts/erc20/list')
+const erc721Tokens = require('./contracts/erc721/list')
+const nativeTokens = require('./nativeTokens')
+const BigNumber = require('bignumber.js')//BN that supports decimals
+const SummaryFormatter = require('./summaryFormatter')
 
 module.exports = {
     erc20Tokens: tokens,
@@ -17,16 +17,16 @@ module.exports = {
     init(){
         for(let chain in resources){
             for(let c in resources[chain]){
-                if(!this.contracts[chain]) this.contracts[chain] = [];
-                const contract = new Contract(this, resources[chain][c]);
-                this.contracts[chain].push(contract);
+                if(!this.contracts[chain]) this.contracts[chain] = []
+                const contract = new Contract(this, resources[chain][c])
+                this.contracts[chain].push(contract)
             }
         }
 
         //for unknown destination, to try to match signature
         for(let c in generic_resources){
-            const contract = new Contract(this, generic_resources[c]);
-            this.generic_contracts.push(contract);
+            const contract = new Contract(this, generic_resources[c])
+            this.generic_contracts.push(contract)
         }
     },
 
@@ -34,12 +34,12 @@ module.exports = {
         //{
         // polygon: [
         //  {
-        //      addr:"0x",
-        //      name: "Alice"
+        //      addr:'0x',
+        //      name: 'Alice'
         //  },
         // ]
         // }
-        this.addressBook = contactsByChain;
+        this.addressBook = contactsByChain
     },
 
     //signature expectd lowerCase
@@ -57,9 +57,9 @@ module.exports = {
     },
 
     getSummary(network, txn){
-        const txCallSignature = txn.data?txn.data.substr(0, 10) : "0x"
+        const txCallSignature = txn.data?txn.data.substr(0, 10) : '0x'
         //upstream redundant?
-        const SF = new SummaryFormatter(network, this);
+        const SF = new SummaryFormatter(network, this)
         const summary = {
             interaction: {
                 signature: null,
@@ -67,9 +67,9 @@ module.exports = {
             },
             summaries: [],
             value: txn.value,
-        };
+        }
 
-        if(txCallSignature != "0x"){
+        if(txCallSignature != '0x'){
             if(!txn.to){
                 summary.summaries = SF.actions([
                   SF.text(`Deploy new contract`)
@@ -81,20 +81,20 @@ module.exports = {
                         .action()
                 ])
             }else{
-                let s;
-                const destinationContract = this.contracts[network.id.toLowerCase()].find(a => a.address.toLowerCase() === txn.to.toLowerCase());
+                let s
+                const destinationContract = this.contracts[network.id.toLowerCase()].find(a => a.address.toLowerCase() === txn.to.toLowerCase())
                 if (destinationContract) {
                     summary.interaction = {
                         signature: txCallSignature,
                         name: destinationContract.name,
                         icon: destinationContract.icon
                     }
-                    s = destinationContract.getSummary(network, txn);
+                    s = destinationContract.getSummary(network, txn)
                 } else {
                     //TODO optimize
-                    const {genericContract, genericMethod} = this.getGenericMethodBySignature(txCallSignature);
+                    const {genericContract, genericMethod} = this.getGenericMethodBySignature(txCallSignature)
                     if(genericContract){
-                        s = genericContract.getSummary(network, txn);
+                        s = genericContract.getSummary(network, txn)
                         const contractAliasData = this.aliasData(network, txn.from, txn.to)
                         summary.interaction = {
                             signature: txCallSignature,
@@ -154,33 +154,33 @@ module.exports = {
             }
         }
 
-        return summary;
+        return summary
     },
 
     //will deprecate
     humanAmountSymbol(network, address, weiValue, displayDecimals=4, unknownCallback, amountCallback){
-        return this.humanAmount(network, address, weiValue, displayDecimals, amountCallback) + " " + this.tokenSymbol(network, address, unknownCallback);
+        return this.humanAmount(network, address, weiValue, displayDecimals, amountCallback) + ' ' + this.tokenSymbol(network, address, unknownCallback)
     },
 
     //will deprecate
     humanAmount(network, address, weiValue, displayDecimals=4, amountCallback){
-        if (new BigNumber(new BigNumber(weiValue.toString()).comparedTo("1e70")) == 1) {//=== number comparison fails
+        if (new BigNumber(new BigNumber(weiValue.toString()).comparedTo('1e70')) == 1) {//=== number comparison fails
             if(amountCallback){ return amountCallback({ infinity:true, amount:weiValue, decimals:null })}
-            return '(∞)';
+            return '(∞)'
         }
 
         const decimals = this.tokenDecimals(network, address);
         if(decimals == 0){
             if(amountCallback){ return amountCallback({ unknownDecimals:true, amountWei: weiValue, decimals:0})}
-            return weiValue + "(wei)"//TODO: check whats the best fallback
+            return weiValue + '(wei)'//TODO: check whats the best fallback
         }
         return new BigNumber(weiValue).div(10**decimals).toFixed(displayDecimals)
     },
 
     //will deprecate
     tokenSymbol (network, address, unknownFallback) {
-        if (address === "native") {
-            return nativeTokens[network.id].symbol || "NATIVE";
+        if (address === 'native') {
+            return nativeTokens[network.id].symbol || 'NATIVE';
         }
         if (this.erc20Tokens[network.id]) {
             const token = Object.values(this.erc20Tokens[network.id]).find(a => a.address.toLowerCase() === address.toLowerCase());
@@ -202,8 +202,8 @@ module.exports = {
             network: network.id,
             address: address
         };
-        if (address === "native") {
-            tokenData.symbol = nativeTokens[network.id].symbol || "NATIVE";
+        if (address === 'native') {
+            tokenData.symbol = nativeTokens[network.id].symbol || 'NATIVE';
             return tokenData;
         }
         if (this.erc20Tokens[network.id]) {
@@ -259,7 +259,7 @@ module.exports = {
 
     tokenDecimals(network, address){
         if(!address) return 0;//TODO : best way to handle unknown decimals situation. should not happen. good fallback? if 1 : if user sees insane numbers, it would turn him off? if 0, he might be cancel as well
-        if(address === "native"){
+        if(address === 'native'){
             return nativeTokens[network.id].decimals || 0
         }
         if(!this.erc20Tokens[network.id]) return 0
