@@ -31,7 +31,7 @@ const Accounts = ({ accounts, selectedAddress, onSelectAcc, onRemoveAccount }) =
           <div className="list">
             {
               accounts.map(({ id, email, signer, signerExtra }) => 
-                !accountWarning ?
+                accountWarning !== id ?
                     <div className={`account ${isActive(id)}`} key={id}>
                         <div className="inner" onClick={() => onSelectAcc(id)}>
                             <div className="icon" style={toIconBackgroundImage(id)}></div>
@@ -43,7 +43,7 @@ const Accounts = ({ accounts, selectedAddress, onSelectAcc, onRemoveAccount }) =
                         <div className="button" onClick={() => copyAddress(id)}>
                             <MdOutlineContentCopy/>
                         </div>
-                        <div className="button" onClick={() => setAccountWarning(true)}>
+                        <div className="button" onClick={() => setAccountWarning(id)}>
                             <MdOutlineDelete/>
                         </div>
                     </div>
