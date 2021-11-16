@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  relayer-mongo:
+    image: mongo
+    container_name: relayer-mongo
+    restart: always
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: mongo
+      MONGO_INITDB_ROOT_PASSWORD: docker
+
+  ambire-ralayer:
+    image: adexnetwork/relayer:wallet-v2
+    container_name: relayer-wallet-v2
+    # restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      PORT: 3000
+      MONGO_DB_URL: "mongodb://mongo:docker@0.0.0.0:27017"
+    networks:
+      - ambire-external
+
+  ambire-wallet:
+    build: .
+    container_name: ambire-wallet
+    restart: always
+    ports:
+      - "4000:4000"
+    environment:
+      PORT: 4000
+    # entrypoint: [ "node", "run", "--production" ]
+    networks:
+      - ambire-external
+
+networks:
+  ambire-external:
