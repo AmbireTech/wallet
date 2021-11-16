@@ -1,3 +1,4 @@
+const SummaryFormatter = require('../../summaryFormatter');
 module.exports = {
     name: "curveGauge",
     interface: {
@@ -7,9 +8,13 @@ module.exports = {
                 signature: '0xb6b55f25',
                 summary: ({network, txn, inputs, contract}) => {
                     const lpAddress = (contract.data.lpToken && contract.data.lpToken.address)?contract.data.lpToken.address:""
-                    return [
-                        `Deposit ${contract.humanAmountSymbol(network, lpAddress, inputs._value)} to curve gauge`,
-                    ]
+                    const SF = new SummaryFormatter(network, contract.manager).mainAction('deposit')
+                    return SF.actions([
+                        SF.text('Deposit')
+                          .tokenAmount( lpAddress, inputs._value)
+                          .text('to curve gauge')
+                          .action()
+                    ]);
                 }
             },
             {
@@ -18,9 +23,13 @@ module.exports = {
                 summary: ({network, txn, inputs, contract}) => {
                     const lpAddress = (contract.data.lpToken && contract.data.lpToken.address)?contract.data.lpToken.address:""
 
-                    return [
-                        `Deposit ${contract.humanAmountSymbol(network, lpAddress, inputs._value)} from curve gauge`,
-                    ]
+                    const SF = new SummaryFormatter(network, contract.manager).mainAction('withdraw')
+                    return SF.actions([
+                        SF.text('Withdraw')
+                          .tokenAmount( lpAddress, inputs._value)
+                          .text('to curve gauge')
+                          .action()
+                    ]);
                 }
             },
         ],

@@ -11,17 +11,17 @@ module.exports = {
                 name: 'addLiquidity',
                 signature: '0xe8e33700',
                 summary: ({network, txn, inputs, contract}) => {
-                    const SF = new SummaryFormatter(contract.manager)
+                    const SF = new SummaryFormatter(network, contract.manager).mainAction('addLiquidity')
                     return SF.actions([
                         SF.text('Add liquidity for')
-                          .tokenAmount(network, inputs.amountAMin, inputs.tokenA)
+                          .tokenAmount( inputs.amountAMin, inputs.tokenA)
                           .text('and')
-                          .tokenAmount(network, inputs.amountBMin, inputs.tokenB)
+                          .tokenAmount( inputs.amountBMin, inputs.tokenB)
                           .action(),
 
                         txn.from.toLowerCase() !== inputs.to.toLowerCase()
                         && SF.text('Send it to')
-                          .alias(network, txn.from, inputs.to)
+                          .alias( txn.from, inputs.to)
                           .action()
                     ])
                 }
@@ -30,17 +30,17 @@ module.exports = {
                 name: "addLiquidityETH",
                 signature: '0xf305d719',
                 summary: ({network, txn, inputs, contract}) => {
-                    const SF = new SummaryFormatter(contract.manager)
+                    const SF = new SummaryFormatter(network, contract.manager).mainAction('addLiquidity')
                     return SF.actions([
                         SF.text('Add liquidity for')
-                          .tokenAmount(network, inputs.amountETHMin, 'native')
+                          .tokenAmount( inputs.amountETHMin, 'native')
                           .text('and')
-                          .tokenAmount(network, inputs.amountTokenMin, inputs.token)
+                          .tokenAmount( inputs.amountTokenMin, inputs.token)
                           .action(),
 
                         txn.from.toLowerCase() !== inputs.to.toLowerCase()
                         && SF.text('Send it to')
-                          .alias(network, txn.from, inputs.to)
+                          .alias( txn.from, inputs.to)
                           .action()
                     ])
                 }
@@ -53,17 +53,17 @@ module.exports = {
                 name: "removeLiquidity",
                 signature: '0xbaa2abde',
                 summary: ({network, txn, inputs, contract}) => {
-                    const SF = new SummaryFormatter(contract.manager)
+                    const SF = new SummaryFormatter(network, contract.manager).mainAction('removeLiquidity')
                     return SF.actions([
                         SF.text('Remove liquidity for')
-                          .tokenAmount(network, inputs.amountAMin, inputs.tokenA)
+                          .tokenAmount( inputs.amountAMin, inputs.tokenA)
                           .text('and')
-                          .tokenAmount(network, inputs.amountBMin, inputs.tokenB)
+                          .tokenAmount( inputs.amountBMin, inputs.tokenB)
                           .action(),
 
                         txn.from.toLowerCase() !== inputs.to.toLowerCase()
                         && SF.text('Send it to')
-                          .alias(network, txn.from, inputs.to)
+                          .alias( txn.from, inputs.to)
                           .action()
                     ])
                 }
@@ -72,17 +72,17 @@ module.exports = {
                 name: "removeLiquidityETH",
                 signature: '0x02751cec',
                 summary: ({network, txn, inputs, contract}) => {
-                    const SF = new SummaryFormatter(contract.manager)
+                    const SF = new SummaryFormatter(network, contract.manager).mainAction('removeLiquidity')
                     return SF.actions([
                         SF.text('Remove liquidity for')
-                          .tokenAmount(network, inputs.amountETHMin, 'native')
+                          .tokenAmount( inputs.amountETHMin, 'native')
                           .text('and')
-                          .tokenAmount(network, inputs.amountTokenMin, inputs.token)
+                          .tokenAmount( inputs.amountTokenMin, inputs.token)
                           .action(),
 
                         txn.from.toLowerCase() !== inputs.to.toLowerCase()
                         && SF.text('Send it to')
-                          .alias(network, txn.from, inputs.to)
+                          .alias( txn.from, inputs.to)
                           .action()
                     ])
                 }
@@ -91,17 +91,17 @@ module.exports = {
                 name: "removeLiquidityWithPermit",
                 signature: '0x2195995c',
                 summary: ({network, txn, inputs, contract}) => {
-                    const SF = new SummaryFormatter(contract.manager)
+                    const SF = new SummaryFormatter(network, contract.manager).mainAction('removeLiquidity')
                     return SF.actions([
                         SF.text('Remove liquidity with permit for')
-                          .tokenAmount(network, inputs.amountAMin, inputs.tokenA)
+                          .tokenAmount( inputs.amountAMin, inputs.tokenA)
                           .text('and')
-                          .tokenAmount(network, inputs.amountBMin, inputs.tokenB)
+                          .tokenAmount( inputs.amountBMin, inputs.tokenB)
                           .action(),
 
                         txn.from.toLowerCase() !== inputs.to.toLowerCase()
                         && SF.text('Send it to')
-                          .alias(network, txn.from, inputs.to)
+                          .alias( txn.from, inputs.to)
                           .action()
                     ])
                 }
@@ -110,17 +110,17 @@ module.exports = {
                 name: "removeLiquidityETHWithPermit",
                 signature: '0xded9382a',
                 summary: ({network, txn, inputs, contract}) => {
-                    const SF = new SummaryFormatter(contract.manager)
+                    const SF = new SummaryFormatter(network, contract.manager).mainAction('removeLiquidity')
                     return SF.actions([
                         SF.text('Remove liquidity with permit for')
-                          .tokenAmount(network, inputs.amountETHMin, 'native')
+                          .tokenAmount( inputs.amountETHMin, 'native')
                           .text('and')
-                          .tokenAmount(network, inputs.amountTokenMin, inputs.token)
+                          .tokenAmount( inputs.amountTokenMin, inputs.token)
                           .action(),
 
                         txn.from.toLowerCase() !== inputs.to.toLowerCase()
                         && SF.text('Send it to')
-                          .alias(network, txn.from, inputs.to)
+                          .alias( txn.from, inputs.to)
                           .action()
                     ])
                 }
@@ -129,18 +129,18 @@ module.exports = {
                 name: "removeLiquidityETHSupportingFeeOnTransferTokens",
                 signature: '0xaf2979eb',
                 summary: ({network, txn, inputs, contract}) => {
-                    const SF = new SummaryFormatter(contract.manager)
+                    const SF = new SummaryFormatter(network, contract.manager).mainAction('removeLiquidity')
                     return SF.actions([
                         SF.text('Remove liquidity for')
-                          .tokenAmount(network, inputs.amountETHMin, 'native')
+                          .tokenAmount( inputs.amountETHMin, 'native')
                           .text('and')
-                          .tokenAmount(network, inputs.amountTokenMin, inputs.token)
+                          .tokenAmount( inputs.amountTokenMin, inputs.token)
                           .text('(deducting token fees)')
                           .action(),
 
                         txn.from.toLowerCase() !== inputs.to.toLowerCase()
                         && SF.text('Send it to')
-                          .alias(network, txn.from, inputs.to)
+                          .alias( txn.from, inputs.to)
                           .action()
                     ])
                 }
@@ -149,18 +149,18 @@ module.exports = {
                 name: "removeLiquidityETHWithPermitSupportingFeeOnTransferTokens",
                 signature: '0x5b0d5984',
                 summary: ({network, txn, inputs, contract}) => {
-                    const SF = new SummaryFormatter(contract.manager)
+                    const SF = new SummaryFormatter(network, contract.manager).mainAction('removeLiquidity')
                     return SF.actions([
                         SF.text('Remove liquidity with permit for')
-                          .tokenAmount(network, inputs.amountETHMin, 'native')
+                          .tokenAmount( inputs.amountETHMin, 'native')
                           .text('and')
-                          .tokenAmount(network, inputs.amountTokenMin, inputs.token)
+                          .tokenAmount( inputs.amountTokenMin, inputs.token)
                           .text('(deducting token fees)')
                           .action(),
 
                         txn.from.toLowerCase() !== inputs.to.toLowerCase()
                         && SF.text('Send it to')
-                          .alias(network, txn.from, inputs.to)
+                          .alias( txn.from, inputs.to)
                           .action()
                     ])
                 }
@@ -173,17 +173,17 @@ module.exports = {
                 name: "swapExactTokensForTokens",
                 signature: '0x38ed1739',
                 summary: ({network, txn, inputs, contract}) => {
-                    const SF = new SummaryFormatter(contract.manager)
+                    const SF = new SummaryFormatter(network, contract.manager).mainAction('swap')
                     return SF.actions([
                         SF.text('Swap')
-                          .tokenAmount(network, inputs.path[0], txn.amountIn)
+                          .tokenAmount( inputs.path[0], txn.amountIn)
                           .text('for at least')
-                          .tokenAmount(network, inputs.path[inputs.path.length-1], inputs.amountOutMin)
+                          .tokenAmount( inputs.path[inputs.path.length-1], inputs.amountOutMin)
                           .action(),
 
                         txn.from.toLowerCase() !== inputs.to.toLowerCase()
                         && SF.text('Send it to')
-                          .alias(network, txn.from, inputs.to)
+                          .alias( txn.from, inputs.to)
                           .action()
                     ])
                 }
@@ -192,17 +192,17 @@ module.exports = {
                 name: "swapTokensForExactTokens",
                 signature: '0x8803dbee',
                 summary: ({network, txn, inputs, contract}) => {
-                    const SF = new SummaryFormatter(contract.manager)
+                    const SF = new SummaryFormatter(network, contract.manager).mainAction('swap')
                     return SF.actions([
                         SF.text('Swap')
-                          .tokenAmount(network, inputs.path[0], txn.amountInMax)
+                          .tokenAmount( inputs.path[0], txn.amountInMax)
                           .text('maximum for')
-                          .tokenAmount(network, inputs.path[inputs.path.length-1], inputs.amountOut)
+                          .tokenAmount( inputs.path[inputs.path.length-1], inputs.amountOut)
                           .action(),
 
                         txn.from.toLowerCase() !== inputs.to.toLowerCase()
                         && SF.text('Send it to')
-                          .alias(network, txn.from, inputs.to)
+                          .alias( txn.from, inputs.to)
                           .action()
                     ])
                 }
@@ -211,17 +211,17 @@ module.exports = {
                 name: "swapExactETHForTokens",
                 signature: '0x7ff36ab5',
                 summary: ({network, txn, inputs, contract}) => {
-                    const SF = new SummaryFormatter(contract.manager)
+                    const SF = new SummaryFormatter(network, contract.manager).mainAction('swap')
                     return SF.actions([
                       SF.text('Swap')
-                        .tokenAmount(network, 'native', txn.value)
+                        .tokenAmount( 'native', txn.value)
                         .text('for at least')
-                        .tokenAmount(network, inputs.path[inputs.path.length-1], inputs.amountOutMin)
+                        .tokenAmount( inputs.path[inputs.path.length-1], inputs.amountOutMin)
                         .action(),
 
                         txn.from.toLowerCase() !== inputs.to.toLowerCase()
                         && SF.text('Send it to')
-                            .alias(network, txn.from, inputs.to)
+                            .alias( txn.from, inputs.to)
                             .action()
                     ])
                 }
@@ -230,17 +230,17 @@ module.exports = {
                 name: "swapTokensForExactETH",
                 signature: '0x4a25d94a',
                 summary: ({network, txn, inputs, contract}) => {
-                    const SF = new SummaryFormatter(contract.manager)
+                    const SF = new SummaryFormatter(network, contract.manager).mainAction('swap')
                     return SF.actions([
                         SF.text('Swap')
-                          .tokenAmount(network, inputs.path[0], inputs.amountIn)
+                          .tokenAmount( inputs.path[0], inputs.amountIn)
                           .text('maximum for')
-                          .tokenAmount(network, 'native', inputs.amountOut)
+                          .tokenAmount( 'native', inputs.amountOut)
                           .action(),
 
                         txn.from.toLowerCase() !== inputs.to.toLowerCase()
                         && SF.text('Send it to')
-                          .alias(network, txn.from, inputs.to)
+                          .alias( txn.from, inputs.to)
                           .action()
                     ])
                 }
@@ -249,17 +249,17 @@ module.exports = {
                 name: "swapExactTokensForETH",
                 signature: '0x18cbafe5',
                 summary: ({network, txn, inputs, contract}) => {
-                    const SF = new SummaryFormatter(contract.manager)
+                    const SF = new SummaryFormatter(network, contract.manager).mainAction('swap')
                     return SF.actions([
                         SF.text('Swap')
-                          .tokenAmount(network, inputs.path[0], inputs.amountIn)
+                          .tokenAmount( inputs.path[0], inputs.amountIn)
                           .text('for at least')
-                          .tokenAmount(network, 'native', inputs.amountOutMin)
+                          .tokenAmount( 'native', inputs.amountOutMin)
                           .action(),
 
                         txn.from.toLowerCase() !== inputs.to.toLowerCase()
                         && SF.text('Send it to')
-                          .alias(network, txn.from, inputs.to)
+                          .alias( txn.from, inputs.to)
                           .action()
                     ])
                 }
@@ -268,17 +268,17 @@ module.exports = {
                 name: "swapETHForExactTokens",
                 signature: '0xfb3bdb41',
                 summary: ({network, txn, inputs, contract}) => {
-                    const SF = new SummaryFormatter(contract.manager)
+                    const SF = new SummaryFormatter(network, contract.manager).mainAction('swap')
                     return SF.actions([
                         SF.text('Swap')
-                          .tokenAmount(network, 'native', txn.value)
+                          .tokenAmount( 'native', txn.value)
                           .text('maximum for')
-                          .tokenAmount(network, inputs.path[inputs.path.length-1], inputs.amountOut)
+                          .tokenAmount( inputs.path[inputs.path.length-1], inputs.amountOut)
                           .action(),
 
                         txn.from.toLowerCase() !== inputs.to.toLowerCase()
                         && SF.text('Send it to')
-                          .alias(network, txn.from, inputs.to)
+                          .alias( txn.from, inputs.to)
                           .action()
                     ])
                 }
@@ -288,18 +288,18 @@ module.exports = {
                 name: "swapExactTokensForTokensSupportingFeeOnTransferTokens",
                 signature: '0x5c11d795',
                 summary: ({network, txn, inputs, contract}) => {
-                    const SF = new SummaryFormatter(contract.manager)
+                    const SF = new SummaryFormatter(network, contract.manager).mainAction('swap')
                     return SF.actions([
                         SF.text('Swap')
-                          .tokenAmount(network, inputs.path[0], txn.amountIn)
+                          .tokenAmount( inputs.path[0], txn.amountIn)
                           .text('for at least')
-                          .tokenAmount(network, inputs.path[inputs.path.length-1], inputs.amountOutMin)
+                          .tokenAmount( inputs.path[inputs.path.length-1], inputs.amountOutMin)
                           .text('(deducting fees)')
                           .action(),
 
                         txn.from.toLowerCase() !== inputs.to.toLowerCase()
                         && SF.text('Send it to')
-                          .alias(network, txn.from, inputs.to)
+                          .alias( txn.from, inputs.to)
                           .action()
                     ])
                 }
@@ -309,18 +309,18 @@ module.exports = {
                 name: "swapExactETHForTokensSupportingFeeOnTransferTokens",
                 signature: '0xb6f9de95',
                 summary: ({network, txn, inputs, contract}) => {
-                    const SF = new SummaryFormatter(contract.manager)
+                    const SF = new SummaryFormatter(network, contract.manager).mainAction('swap')
                     return SF.actions([
                         SF.text('Swap')
-                          .tokenAmount(network, 'native', txn.value)
+                          .tokenAmount( 'native', txn.value)
                           .text('for at least')
-                          .tokenAmount(network, inputs.path[inputs.path.length-1], inputs.amountOutMin)
+                          .tokenAmount( inputs.path[inputs.path.length-1], inputs.amountOutMin)
                           .text('(token fees deducted)')
                           .action(),
 
                         txn.from.toLowerCase() !== inputs.to.toLowerCase()
                         && SF.text('Send it to')
-                          .alias(network, txn.from, inputs.to)
+                          .alias( txn.from, inputs.to)
                           .action()
                     ])
                 }
@@ -330,18 +330,18 @@ module.exports = {
                 name: "swapExactTokensForETHSupportingFeeOnTransferTokens",
                 signature: '0x791ac947',
                 summary: ({network, txn, inputs, contract}) => {
-                    const SF = new SummaryFormatter(contract.manager)
+                    const SF = new SummaryFormatter(network, contract.manager).mainAction('swap')
                     return SF.actions([
                         SF.text('Swap')
-                          .tokenAmount(network, inputs.path[0], txn.value)
+                          .tokenAmount( inputs.path[0], txn.value)
                           .text('for at least')
-                          .tokenAmount(network, 'native', inputs.amountOutMin)
+                          .tokenAmount( 'native', inputs.amountOutMin)
                           .text('(deducting fees)')
                           .action(),
 
                         txn.from.toLowerCase() !== inputs.to.toLowerCase()
                         && SF.text('Send it to')
-                          .alias(network, txn.from, inputs.to)
+                          .alias( txn.from, inputs.to)
                           .action()
                     ])
                 }

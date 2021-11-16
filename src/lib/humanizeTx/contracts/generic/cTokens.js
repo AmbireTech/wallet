@@ -1,3 +1,4 @@
+const SummaryFormatter = require('../../summaryFormatter');
 module.exports = {
     description: "cTokens",
     interface: {
@@ -7,18 +8,24 @@ module.exports = {
                 signature: '0xa0712d68',
                 summary: ({network, txn, inputs, contract}) => {
                     const underlyingAddress = contract.data.underlying?contract.data.underlying.address:'';
-                    return [
-                        `Supply ${contract.humanAmountSymbol(network, underlyingAddress, inputs.mintAmount)} tokens`,
-                    ]
+                    const SF = new SummaryFormatter(network, contract.manager).mainAction('supply')
+                    return SF.actions([
+                        SF.text('Supply')
+                          .tokenAmount( underlyingAddress, inputs.mintAmount)
+                          .action(),
+                    ]);
                 }
             },
             {
                 name: "redeem",
                 signature: '0xdb006a75',
                 summary: ({network, txn, inputs, contract}) => {
-                    return [
-                        `Withdraw ${contract.humanAmountSymbol(network, contract.address, inputs.redeemTokens)}`,
-                    ]
+                    const SF = new SummaryFormatter(network, contract.manager).mainAction('withdraw')
+                    return SF.actions([
+                        SF.text('Withdraw')
+                          .tokenAmount( contract.address, inputs.redeemTokens)
+                          .action()
+                    ]);
                 }
             },
             {
@@ -26,12 +33,16 @@ module.exports = {
                 signature: '0x0e752702',
                 summary: ({network, txn, inputs, contract}) => {
                     const underlyingAddress = contract.data.underlying?contract.data.underlying.address:'';
-                    return [
-                        `Repay borrow with ${contract.humanAmountSymbol(network, underlyingAddress, inputs.repayAmount, null, null, (data) => {
-                            if(data.infinity) return 'the maximum possible'
-                            return data.amount;
-                        })} tokens`,
-                    ]
+                    const SF = new SummaryFormatter(network, contract.manager).mainAction('repay_borrow')
+                    return SF.actions([
+                        SF.text('Repay borrow with')
+                          .tokenAmount( underlyingAddress, inputs.repayAmount, null, null, (data) => {
+                              if(data.infinity) return 'the maximum possible'
+                              return data.amount;
+                          })
+                          .text('tokens')
+                          .action()
+                    ]);
                 }
             },
         ],

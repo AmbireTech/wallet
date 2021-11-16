@@ -59,7 +59,7 @@ module.exports = {
     getSummary(network, txn){
         const txCallSignature = txn.data?txn.data.substr(0, 10) : "0x"
         //upstream redundant?
-        const SF = new SummaryFormatter(this);
+        const SF = new SummaryFormatter(network, this);
         const summary = {
             interaction: {
                 signature: null,
@@ -77,7 +77,7 @@ module.exports = {
 
                   txn.value>0
                     && SF.text(`Sending`)
-                        .tokenAmount(network, 'native', txn.value)
+                        .tokenAmount( 'native', txn.value)
                         .action()
                 ])
             }else{
@@ -95,9 +95,10 @@ module.exports = {
                     const {genericContract, genericMethod} = this.getGenericMethodBySignature(txCallSignature);
                     if(genericContract){
                         s = genericContract.getSummary(network, txn);
+                        const contractAliasData = this.aliasData(network, txn.from, txn.to)
                         summary.interaction = {
                             signature: txCallSignature,
-                            name: `${this.alias(network, txn.from, txn.to)} (${genericContract.name})`,
+                            name: `${contractAliasData.alias} (${genericContract.name})`,
                         }
                     }else{
                         summary.interaction = {
@@ -112,27 +113,28 @@ module.exports = {
                     summary.summaries = SF.actions([
                         txn.value>0
                         && SF.text(`Sending`)
-                          .tokenAmount(network, 'native', txn.value)
+                          .tokenAmount( 'native', txn.value)
                           .action(),
 
                         SF.text(`Unknown call(${txCallSignature}) to`)
-                          .alias(network, txn.from, txn.to)
+                          .alias(txn.from, txn.to)
                           .action(),
                     ])
                 }
             }
         }else{
+            const interactionAliasData = this.aliasData(network, txn.from, txn.to)
             summary.interaction = {
                 signature: false,
-                name: this.alias(network, txn.from, txn.to)
+                name: interactionAliasData.alias
             }
             if(txn.value){
                 summary.summaries = SF.actions([
                     txn.value>0
                     && SF.text(`Send`)
-                      .tokenAmount(network, 'native', txn.value)
+                      .tokenAmount( 'native', txn.value)
                       .text('to')
-                      .alias(network, txn.from, txn.to)
+                      .alias( txn.from, txn.to)
                       .action()
                 ])
             }else{
@@ -145,7 +147,7 @@ module.exports = {
                 }else{
                     summary.summaries = SF.actions([
                         SF.text(`Send valueless transaction to`)
-                          .alias(network, txn.from, txn.to)
+                          .alias( txn.from, txn.to)
                           .action()
                     ])
                 }
@@ -267,26 +269,5 @@ module.exports = {
         }
         return 0
     },
-
-    //will deprecate
-    alias(network, txOriginAddress, address){
-        if(txOriginAddress.toLowerCase() === address.toLowerCase()) return "self";
-
-        if(this.contracts[network.id]){
-            const contract = this.contracts[network.id].find(a => a.address.toLowerCase() === address.toLowerCase());
-            if(contract){
-                return contract.name;
-            }
-        }
-
-        if(this.addressBook[network.id]){
-            const contact = this.addressBook[network.id].find(a => a.address.toLowerCase() === address.toLowerCase());
-            if(contact){
-                return contact.name;
-            }
-        }
-
-        return address;
-    }
 
 }

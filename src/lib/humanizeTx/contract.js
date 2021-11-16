@@ -48,7 +48,7 @@ function Contract(manager, contractData){
                 console.error('getSummary Error')
                 console.log(e);
                 return [
-                  `Unknown call to ${this.alias(network, txn.from, txn.to)} (unable to parse)`
+                  `Unknown call to ${this.alias( txn.from, txn.to)} (unable to parse)`
                 ]
             }
         }
@@ -75,7 +75,7 @@ function Contract(manager, contractData){
 
     //will be deprecated
     this.alias = (network, txOriginAddress, address) =>{
-        return this.manager.alias(network, txOriginAddress, address);
+        return this.manager.alias( txOriginAddress, address);
     }
 }
 

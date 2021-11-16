@@ -1,3 +1,4 @@
+const SummaryFormatter = require('../../summaryFormatter');
 module.exports = {
     name: "MasterchefV1",
     interface: {
@@ -6,24 +7,30 @@ module.exports = {
                 name: "deposit",
                 signature: '0xe2bbb158',
                 summary: ({network, txn, inputs, contract}) => {
-                    let action;
                     if(inputs._amount.toString() > 0){
-                        action = `Stake ${inputs._amount} tokens in pool #${inputs._pid}`
+                        const SF = new SummaryFormatter(network, contract.manager).mainAction('stake')
+                        return SF.actions([
+                            SF.text(`Stake ${inputs._amount} tokens in pool #${inputs._pid}`)
+                              .action()
+                        ]);
                     }else{
-                        action = `Claim rewards of pool #${inputs._pid}`
+                        const SF = new SummaryFormatter(network, contract.manager).mainAction('claim')
+                        return SF.actions([
+                            SF.text(`Claim rewards of pool #${inputs._pid}`)
+                              .action()
+                        ]);
                     }
-                    return [
-                        action
-                    ]
                 }
             },
             {
                 name: "withdraw",
                 signature: '0x441a3e70',
                 summary: ({network, txn, inputs, contract}) => {
-                    return [
-                        `Withdraw ${inputs._amount} tokens of pool #${inputs._pid}`,
-                    ]
+                    const SF = new SummaryFormatter(network, contract.manager).mainAction('withdraw')
+                    return SF.actions([
+                        SF.text(`Withdraw ${inputs._amount} tokens of pool #${inputs._pid}`)
+                          .action()
+                    ]);
                 }
             },
         ],

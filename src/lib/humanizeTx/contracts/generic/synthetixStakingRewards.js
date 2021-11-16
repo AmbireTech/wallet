@@ -1,3 +1,4 @@
+const SummaryFormatter = require('../../summaryFormatter');
 module.exports = {
     name: "synthetixStakingRewards",
     interface: {
@@ -6,18 +7,22 @@ module.exports = {
                 name: "getReward",
                 signature: '0x3d18b912',
                 summary: ({network, txn, inputs, contract}) => {
-                    return [
-                        `Claim rewards`,
-                    ]
+                    const SF = new SummaryFormatter(network, contract.manager).mainAction('claim')
+                    return SF.actions([
+                        SF.text(`Claim rewards`)
+                          .action(),
+                    ]);
                 }
             },
             {
                 name: "exit",
                 signature: '0xe9fad8ee',
                 summary: ({network, txn, inputs, contract}) => {
-                    return [
-                        `exit`,
-                    ]
+                    const SF = new SummaryFormatter(network, contract.manager).mainAction('exit')
+                    return SF.actions([
+                        SF.text(`Exit`)
+                          .action(),
+                    ]);
                 }
             },
             {
@@ -25,9 +30,12 @@ module.exports = {
                 signature: '0x2e1a7d4d',
                 summary: ({network, txn, inputs, contract}) => {
                     const lpTokenAddress = (contract.data.lpToken && contract.data.lpToken.address)?contract.data.lpToken.address:""
-                    return [
-                        `Withdraw ${contract.humanAmountSymbol(network, lpTokenAddress, inputs.amount, 8)}`,
-                    ]
+                    const SF = new SummaryFormatter(network, contract.manager).mainAction('exit')
+                    return SF.actions([
+                        SF.text(`Withdraw`)
+                          .tokenAmount(lpTokenAddress, inputs.amount, 8)
+                          .action(),
+                    ]);
                 }
             },
             {
@@ -35,9 +43,12 @@ module.exports = {
                 signature: '0xa694fc3a',
                 summary: ({network, txn, inputs, contract}) => {
                     const lpTokenAddress = (contract.data.lpToken && contract.data.lpToken.address)?contract.data.lpToken.address:""
-                    return [
-                        `Stake ${contract.humanAmountSymbol(network, lpTokenAddress, inputs.amount, 8)}`,
-                    ]
+                    const SF = new SummaryFormatter(network, contract.manager).mainAction('stake')
+                    return SF.actions([
+                        SF.text(`Stake`)
+                          .tokenAmount(lpTokenAddress, inputs.amount, 8)
+                          .action(),
+                    ]);
                 }
             },
         ],

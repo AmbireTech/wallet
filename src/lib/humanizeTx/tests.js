@@ -1,5 +1,8 @@
 const contractsManager = require('./contractsManager');
+const { convertArrayToCSV } = require('convert-array-to-csv');
+const fs = require("fs");
 
+const CSV = [];
 let polygonTxs = [
     //swapExactETHForTokens
     {
@@ -78,7 +81,7 @@ let polygonTxs = [
 
 
 const ethTxs = [
-    /*//WETH deposit
+    //WETH deposit
     {
         from: '0x5891f2A88311408A52289903df30175885626003',
         to: '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2',
@@ -284,7 +287,7 @@ const ethTxs = [
         from: '0xE7BE8f0663De85F88E64D269754903377B536DFA',
         to: '0x900C6A3417631F54d130b9382264C6b3c712CADD',
         data:'0x0d5828d4000000000000000000000000942f9ce5d9a33a82f88d233aeb3292e6802303480000000000000000000000000000000000000000000000000000000000000001'
-    },*/
+    },
 ]
 
 //NOTES : make summary UI in 2 parts 1 : humanize TO(contract interaction), 2 : display sentence
@@ -304,40 +307,63 @@ let i = 0;
 i = 0;
 for(let tx of polygonTxs){
     const summary = contractsManager.getSummary({chainId:137, id:'polygon'}, tx);
-    displaySummary(i++, summary);
+    displaySummary('polygon', i++, summary);
 }
 
-console.log('Humanize some tx of ETH');
 i = 0;
 for(let tx of ethTxs){
     const summary = contractsManager.getSummary({chainId:1, id:'ethereum'}, tx);
-    displaySummary(i++, summary);
+    displaySummary('ethereum', i++, summary);
 }
 
-
-function displaySummary(i, summary){
+function displaySummary(network, i, summary){
     console.log('================================================');
 
     if(summary.interaction.signature){
-        console.log(' ' + i + ' [Interacting with contract]    ' + summary.interaction.name + ' (' + summary.interaction.signature + ')')
+        console.log(`${i} [Interacting with contract] ${summary.summaries.action?(':'+summary.summaries.action+':'):''} ${summary.interaction.name} (${summary.interaction.signature})`)
     }else{
         console.log(' ' + i + ' [To]   ' + summary.interaction.name)
     }
     console.log('================================================');
 
-    if( summary.summaries.length > 1){//MULTICALLS OR Multiple explicit actions
+    let subPlain = [];
+    let subRich = [];
+
+    if( summary.summaries.actions.length > 1){//MULTICALLS OR Multiple explicit actions
         console.log('Multiple actions:');
-        for(let sub of summary.summaries){
+        for(let sub of summary.summaries.actions){
             console.log('')
             console.log(' - ' + sub.plain);
+            subPlain.push(sub.plain);
             console.log('')
             console.log(sub.rich);
+            subRich.push(sub.rich);
         }
     }else{
         console.log('')
-        console.log(summary.summaries[0].plain);
+        console.log(summary.summaries.actions[0].plain);
+        subPlain.push(summary.summaries.actions[0].plain);
         console.log('')
-        console.log(summary.summaries[0].rich);
+        console.log(summary.summaries.actions[0].rich);
+        subRich.push(summary.summaries.actions[0].rich);
     }
     console.log('');
+
+    CSV.push({
+        network: network,
+        id: i,
+        signature: summary.interaction.signature,
+        to : summary.interaction.name,
+        mainAction : summary.summaries.action,
+        plainActions: JSON.stringify(subPlain, "\n", "\t"),
+        richActions: JSON.stringify(subRich, "\n", "\t"),
+    })
 }
+
+const header = ['network', 'id', 'signature', 'to', 'mainAction', 'plainActions', 'richActions'];
+const CSVStr = convertArrayToCSV(CSV, {
+    header,
+    separator: ';'
+});
+
+fs.writeFileSync('./report.csv', CSVStr);

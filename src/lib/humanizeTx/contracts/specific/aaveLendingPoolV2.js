@@ -1,3 +1,4 @@
+const SummaryFormatter = require('../../summaryFormatter');
 module.exports = {
     description: "AaveLendingPoolV2",
     interface: {
@@ -6,30 +7,50 @@ module.exports = {
                 name: "deposit",
                 signature: '0xe8eda9df',
                 summary: ({network, txn, inputs, contract}) => {
-                    return [
-                        `Deposit ${contract.humanAmountSymbol(network, inputs.asset, inputs.amount)} as collateral`,
-                        txn.from.toLowerCase() !== inputs.onBehalfOf.toLowerCase()?`On behalf of ${contract.alias(network, txn.from, inputs.onBehalfOf)}`:null
-                    ].filter(a => a !== null)
+                    const SF = new SummaryFormatter(network, contract.manager).mainAction('deposit')
+                    return SF.actions([
+                        SF.text('Deposit')
+                          .tokenAmount( inputs.asset, inputs.amount)
+                          .text('as collteral')
+                          .action(),
+
+                        txn.from.toLowerCase() !== inputs.onBehalfOf.toLowerCase()
+                        && SF.text('On behalf of')
+                          .alias(txn.from, inputs.onBehalfOf)
+                    ])
                 }
             },
             {
                 name: "borrow",
                 signature: '0xa415bcad',
                 summary: ({network, txn, inputs, contract}) => {
-                    return [
-                        `Borrow ${contract.humanAmountSymbol(network, inputs.asset, inputs.amount)}`,
-                        txn.from.toLowerCase() !== inputs.onBehalfOf.toLowerCase()?`On behalf of ${contract.alias(network, txn.from, inputs.onBehalfOf)}`:null
-                    ].filter(a => a !== null)
+                    const SF = new SummaryFormatter(network, contract.manager).mainAction('borrow')
+                    return SF.actions([
+                        SF.text('Borrow')
+                          .tokenAmount( inputs.asset, inputs.amount)
+                          .text('as collteral')
+                          .action(),
+
+                        txn.from.toLowerCase() !== inputs.onBehalfOf.toLowerCase()
+                        && SF.text('On behalf of')
+                          .alias(txn.from, inputs.onBehalfOf)
+                    ])
                 }
             },
             {
                 name: "repay",
                 signature: '0x573ade81',
                 summary: ({network, txn, inputs, contract}) => {
-                    return [
-                        `Repay ${contract.humanAmountSymbol(network, inputs.asset, inputs.amount, null,null, (data) => (data.infinity?'maximum':data.amount))}`,
-                        txn.from.toLowerCase() !== inputs.onBehalfOf.toLowerCase()?`On behalf of ${contract.alias(network, txn.from, inputs.onBehalfOf)}`:null
-                    ].filter(a => a !== null)
+                    const SF = new SummaryFormatter(network, contract.manager).mainAction('repay')
+                    return SF.actions([
+                        SF.text('Borrow')
+                          .tokenAmount( inputs.asset, inputs.amount, null,null, (data) => (data.infinity?'maximum':data.amount))
+                          .action(),
+
+                        txn.from.toLowerCase() !== inputs.onBehalfOf.toLowerCase()
+                        && SF.text('On behalf of')
+                          .alias(txn.from, inputs.onBehalfOf)
+                    ])
                 }
             },
         ],

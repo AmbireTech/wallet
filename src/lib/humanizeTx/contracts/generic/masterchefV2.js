@@ -1,3 +1,4 @@
+const SummaryFormatter = require('../../summaryFormatter');
 module.exports = {
     name: "MasterchefV2",
     interface: {
@@ -6,41 +7,67 @@ module.exports = {
                 name: "deposit",
                 signature: '0x8dbdbe6d',
                 summary: ({network, txn, inputs, contract}) => {
-                    return [
-                        `Stake ${inputs.amount} tokens in pool #${inputs.pid}`,
-                        txn.from.toLowerCase() !== inputs.to.toLowerCase()?`Give the benefits to ${contract.alias(network, txn.from, inputs.to)}`:null
-                    ].filter(a => a !== null)
+                    const SF = new SummaryFormatter(network, contract.manager).mainAction('stake')
+                    return SF.actions([
+                        SF.text(`Stake ${inputs.amount} tokens in pool #${inputs.pid}`)
+                          .action(),
+
+                        txn.from.toLowerCase() !== inputs.to.toLowerCase()
+                        && SF.text(`Give the benefits to`)
+                          .alias(txn.from, inputs.to)
+                          .action(),
+                    ]);
                 }
             },
             {
                 name: "withdraw",
                 signature: '0x0ad58d2f',
                 summary: ({network, txn, inputs, contract}) => {
-                    return [
-                        `Withdraw ${inputs.amount} tokens from pool #${inputs.pid}`,
-                        txn.from.toLowerCase() !== inputs.to.toLowerCase()?`Send tokens to ${contract.alias(network, txn.from, inputs.to)}`:null
-                    ].filter(a => a !== null)
+                    const SF = new SummaryFormatter(network, contract.manager).mainAction('withdraw')
+                    return SF.actions([
+                        SF.text(`Withdraw ${inputs.amount} tokens from pool #${inputs.pid}`)
+                          .action(),
+
+                        txn.from.toLowerCase() !== inputs.to.toLowerCase()
+                        && SF.text(`Give the benefits to`)
+                          .alias(txn.from, inputs.to)
+                          .action(),
+                    ]);
                 }
             },
             {
                 name: "harvest",
                 signature: '0x18fccc76',
                 summary: ({network, txn, inputs, contract}) => {
-                    return [
-                        `Claim rewards of pool #${inputs.pid}`,
-                        txn.from.toLowerCase() !== inputs.to.toLowerCase()?`Send tokens to ${contract.alias(network, txn.from, inputs.to)}`:null
-                    ].filter(a => a !== null)
+                    const SF = new SummaryFormatter(network, contract.manager).mainAction('claim')
+                    return SF.actions([
+                        SF.text(`Claim rewards of pool #${inputs.pid}`)
+                          .action(),
+
+                        txn.from.toLowerCase() !== inputs.to.toLowerCase()
+                        && SF.text(`Give the benefits to`)
+                          .alias(txn.from, inputs.to)
+                          .action(),
+                    ]);
                 }
             },
             {
                 name: "withdrawAndHarvest",
                 signature: '0xd1abb907',
                 summary: ({network, txn, inputs, contract}) => {
-                    return [
-                        `Withdraw ${inputs.amount} tokens from pool #${inputs.pid}`,
-                        `Claim rewards of pool #${inputs.pid}`,
-                        txn.from.toLowerCase() !== inputs.to.toLowerCase()?`Send tokens and rewards to ${contract.alias(network, txn.from, inputs.to)}`:null
-                    ].filter(a => a !== null)
+                    const SF = new SummaryFormatter(network, contract.manager).mainAction('withdraw')
+                    return SF.actions([
+                        SF.text(`Withdraw ${inputs.amount} tokens from pool #${inputs.pid}`)
+                          .action(),
+
+                        SF.text(`Claim rewards of pool #${inputs.pid}`)
+                          .action(),
+
+                        txn.from.toLowerCase() !== inputs.to.toLowerCase()
+                        && SF.text(`Give the benefits to`)
+                          .alias(txn.from, inputs.to)
+                          .action(),
+                    ]);
                 }
             },
         ],

@@ -1,3 +1,4 @@
+const SummaryFormatter = require('../../summaryFormatter');
 module.exports = {
     name: "curveDeposit",
     interface: {
@@ -9,28 +10,33 @@ module.exports = {
                     //index out of bounds check
                     const inAddress = (contract.data.underlying && contract.data.underlying[inputs.i] && contract.data.underlying[inputs.i].address)?contract.data.underlying[inputs.i].address:""
                     const outAddress = (contract.data.underlying && contract.data.underlying[inputs.j] && contract.data.underlying[inputs.j].address)?contract.data.underlying[inputs.j].address:""
-                    return [
-                        `Swap ${contract.humanAmountSymbol(network, inAddress, inputs.dx)} to at least ${contract.humanAmountSymbol(network, outAddress, inputs.min_dy)}`,
-                    ]
+                    const SF = new SummaryFormatter(network, contract.manager).mainAction('swap')
+                    return SF.actions([
+                        SF.text('Swap')
+                          .tokenAmount( inAddress, inputs.dx)
+                          .text('for at least')
+                          .tokenAmount( outAddress, inputs.min_dy)
+                          .action()
+                    ]);
                 }
             },
             {
                 name: "remove_liquidity_imbalance",
                 signature: '0x9fdaea0c',
                 summary: ({network, txn, inputs, contract}) => {
-
                     const liquidityAddresses = {
                         0: (contract.data.underlying && contract.data.underlying[0] && contract.data.underlying[0].address)?contract.data.underlying[0].address:"",
                         1: (contract.data.underlying && contract.data.underlying[1] && contract.data.underlying[1].address)?contract.data.underlying[1].address:"",
                         2: (contract.data.underlying && contract.data.underlying[2] && contract.data.underlying[2].address)?contract.data.underlying[2].address:""
                     }
 
-                    return [
-                        `Remove liquidity for`,
-                        inputs.amounts[0]>0?`${contract.humanAmountSymbol(network, liquidityAddresses[0], inputs.amounts[0])}`:null,
-                        inputs.amounts[1]>0?`${contract.humanAmountSymbol(network, liquidityAddresses[1], inputs.amounts[1])}`:null,
-                        inputs.amounts[2]>0?`${contract.humanAmountSymbol(network, liquidityAddresses[2], inputs.amounts[2])}`:null
-                    ].filter(a => a !== null)
+                    const SF = new SummaryFormatter(network, contract.manager).mainAction('remove_liquidity')
+                    return SF.actions([
+                        SF.text('Remove liquidity for').action(),
+                        inputs.amounts[0]>0 && SF.tokenAmount( liquidityAddresses[0], inputs.amounts[0]).action(),
+                        inputs.amounts[1]>0 && SF.tokenAmount( liquidityAddresses[1], inputs.amounts[1]).action(),
+                        inputs.amounts[2]>0 && SF.tokenAmount( liquidityAddresses[2], inputs.amounts[2]).action()
+                    ]);
                 }
             },
             {
@@ -44,12 +50,15 @@ module.exports = {
                         2: (contract.data.underlying && contract.data.underlying[2] && contract.data.underlying[2].address)?contract.data.underlying[2].address:""
                     }
 
-                    return [
-                        `Add liquidity for at least ${contract.humanAmountSymbol(network, contract.data.lpToken.address, inputs.min_mint_amount)} providing`,
-                        inputs.amounts[0]>0?`${contract.humanAmountSymbol(network, liquidityAddresses[0], inputs.amounts[0])}`:null,
-                        inputs.amounts[1]>0?`${contract.humanAmountSymbol(network, liquidityAddresses[1], inputs.amounts[1])}`:null,
-                        inputs.amounts[2]>0?`${contract.humanAmountSymbol(network, liquidityAddresses[2], inputs.amounts[2])}`:null,
-                    ].filter(a => a !== null)
+                    const SF = new SummaryFormatter(network, contract.manager).mainAction('add_liquidity')
+                    return SF.actions([
+                        SF.text('Add liquidity fir at least')
+                          .tokenAmount( contract.data.lpToken.address, inputs.min_mint_amount)
+                          .action(),
+                        inputs.amounts[0]>0 && SF.tokenAmount( liquidityAddresses[0], inputs.amounts[0]).action(),
+                        inputs.amounts[1]>0 && SF.tokenAmount( liquidityAddresses[1], inputs.amounts[1]).action(),
+                        inputs.amounts[2]>0 && SF.tokenAmount( liquidityAddresses[2], inputs.amounts[2]).action()
+                    ]);
                 }
             },
         ],

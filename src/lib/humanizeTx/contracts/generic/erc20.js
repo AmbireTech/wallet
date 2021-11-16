@@ -8,12 +8,12 @@ module.exports = {
                 name: 'approve',
                 signature: '0x095ea7b3',
                 summary: ({network, txn, inputs, contract}) => {
-                    const SF = new SummaryFormatter(contract.manager)
+                    const SF = new SummaryFormatter(network, contract.manager)
                     return SF.actions([
                         SF.text('Approve')
-                          .alias(network, txn.from, inputs._spender)
+                          .alias( txn.from, inputs._spender)
                           .text('to spend')
-                          .tokenAmount(network, txn.to, inputs._value)
+                          .tokenAmount( txn.to, inputs._value)
                           .action()
                     ])
                 }
@@ -22,12 +22,12 @@ module.exports = {
                 name: 'transfer',
                 signature: '0xa9059cbb',
                 summary: ({network, txn, inputs, contract}) => {
-                    const SF = new SummaryFormatter(contract.manager)
+                    const SF = new SummaryFormatter(network, contract.manager)
                     return SF.actions([
                         SF.text('Transfer')
-                          .tokenAmount(network, txn.to, inputs._value)
+                          .tokenAmount( txn.to, inputs._value)
                           .text('to')
-                          .alias(network, txn.from, inputs._to)
+                          .alias( txn.from, inputs._to)
                           .action()
                     ])
                 }

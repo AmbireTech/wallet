@@ -1,3 +1,5 @@
+const SummaryFormatter = require('../../summaryFormatter');
+
 module.exports = {
     description: "WETH",
     interface: {
@@ -6,14 +8,24 @@ module.exports = {
                 name: "deposit",
                 signature: '0xd0e30db0',
                 summary: ({network, txn, inputs, contract}) => {
-                    return [`Wrap ${contract.humanAmount(network, 'native', txn.value)} ETH`];
+                    const SF = new SummaryFormatter(network, contract.manager).mainAction('wrap')
+                    return SF.actions([
+                        SF.text('Wrap')
+                          .tokenAmount( 'native', txn.value)
+                          .action()
+                    ])
                 }
             },
             {
                 name: "withdraw",
                 signature: '0x2e1a7d4d',
                 summary: ({network, txn, inputs, contract}) => {
-                    return [`Unwrap ${contract.humanAmount(network, 'native', inputs.wad)} WETH`];
+                    const SF = new SummaryFormatter(network, contract.manager).mainAction('unwrap')
+                    return SF.actions([
+                        SF.text('Unwrap')
+                          .tokenAmount( 'native', inputs.wad)
+                          .action()
+                    ])
                 }
             },
         ],

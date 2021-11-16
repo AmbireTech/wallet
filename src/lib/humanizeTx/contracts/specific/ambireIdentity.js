@@ -1,3 +1,4 @@
+const SummaryFormatter = require('../../summaryFormatter');
 const BigNumber = require('bignumber.js');
 
 module.exports = {
@@ -11,11 +12,28 @@ module.exports = {
                     const grant = new BigNumber(inputs.priv).eq(1);
                     const revoke = new BigNumber(inputs.priv).eq(0);
                     const passphrase = !(grant||revoke)
-                    return [
-                        (grant && `Authenticate signer ${contract.alias(network, txn.from, inputs.addr)}`) || null,
-                        (revoke && `Revoke signer ${contract.alias(network, txn.from, inputs.addr)}`) || null,
-                        (passphrase && `Add email/passphrase to ${contract.alias(network, txn.from, inputs.addr)}`) || null,
-                    ].filter(a => a !== null)
+                    if(grant){
+                        const SF = new SummaryFormatter(network, contract.manager).mainAction('authenticate')
+                        return SF.actions([
+                            SF.text('Authenticate signer')
+                              .alias(txn.from, inputs.addr)
+                              .action(),
+                        ])
+                    }else if(revoke){
+                        const SF = new SummaryFormatter(network, contract.manager).mainAction('revoke')
+                        return SF.actions([
+                            SF.text('Revoke signer')
+                              .alias(txn.from, inputs.addr)
+                              .action(),
+                        ])
+                    }else{
+                        const SF = new SummaryFormatter(network, contract.manager).mainAction('ambire_update_passphrase')
+                        return SF.actions([
+                            SF.text('Add email/passphrase to')
+                              .alias(txn.from, inputs.addr)
+                              .action(),
+                        ])
+                    }
                 }
             },
         ],

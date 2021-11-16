@@ -8,10 +8,10 @@ module.exports = {
                 name: "approve",
                 signature: '0x095ea7b3',
                 summary: ({network, txn, inputs, contract}) => {
-                    const SF = new SummaryFormatter(contract.manager)
+                    const SF = new SummaryFormatter(network, contract.manager)
                     return SF.actions([
                         SF.text(`Approve Token #${inputs.tokenId} to be transfered by`)
-                          .alias(network, txn.from, inputs.to)
+                          .alias( txn.from, inputs.to)
                           .action()
                     ])
                 }
@@ -21,9 +21,9 @@ module.exports = {
                 summary: ({network, txn, inputs, contract}) => {
                     let action;
                     if(inputs.approved){
-                        action = `Approve ${contract.alias(network, txn.from, inputs.to)} to be transfer all the tokens ${contract.alias(network, txn.from, inputs.to)}`
+                        action = `Approve ${contract.alias( txn.from, inputs.to)} to be transfer all the tokens ${contract.alias( txn.from, inputs.to)}`
                     }else{
-                        action = `Deny ${contract.alias(network, txn.from, inputs.to)} to be transfer all the tokens ${contract.alias(network, txn.from, inputs.to)}`
+                        action = `Deny ${contract.alias( txn.from, inputs.to)} to be transfer all the tokens ${contract.alias( txn.from, inputs.to)}`
                     }
                     return [
                         action
@@ -34,12 +34,12 @@ module.exports = {
                 name: "transferFrom",
                 signature: '0x23b872dd',
                 summary: ({network, txn, inputs, contract}) => {
-                    const SF = new SummaryFormatter(contract.manager)
+                    const SF = new SummaryFormatter(network, contract.manager)
                     return SF.actions([
                         SF.text(`Transfer Token #${inputs.tokenId} from`)
-                          .alias(network, txn.from, inputs.from)
-                          .test('to')
-                          .alias(network, txn.from, inputs.to)
+                          .alias( txn.from, inputs.from)
+                          .text('to')
+                          .alias( txn.from, inputs.to)
                           .action()
                     ])
                 }
@@ -48,12 +48,12 @@ module.exports = {
                 name: "safeTransferFrom",//how many cases exist with same methodName and different signature?
                 signature: '0x42842e0e',
                 summary: ({network, txn, inputs, contract}) => {
-                    const SF = new SummaryFormatter(contract.manager)
+                    const SF = new SummaryFormatter(network, contract.manager)
                     return SF.actions([
                         SF.text(`Transfer Token #${inputs.tokenId} from`)
-                          .alias(network, txn.from, inputs.from)
-                          .test('to')
-                          .alias(network, txn.from, inputs.to)
+                          .alias( txn.from, inputs.from)
+                          .text('to')
+                          .alias( txn.from, inputs.to)
                           .action()
                     ])
                 }
@@ -62,10 +62,10 @@ module.exports = {
                 name: "transfer",
                 signature: '0xa9059cbb',
                 summary: ({network, txn, inputs, contract}) => {
-                    const SF = new SummaryFormatter(contract.manager)
+                    const SF = new SummaryFormatter(network, contract.manager)
                     return SF.actions([
                         SF.text(`Transfer Token #${inputs._tokenId} to`)
-                          .alias(network, txn.from, inputs._to)
+                          .alias( txn.from, inputs._to)
                           .action()
                     ])
                 }

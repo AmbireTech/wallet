@@ -1,13 +1,23 @@
-function SummaryFormatter(contractManager){
+function SummaryFormatter(network, contractManager){
 
     this.cm = contractManager
+    this.network = network
+    this._mainAction = null//TODO
     this.actions = [];
 
     this.currentSegments = []
     this.currentRichSegments = []
 
+    this.mainAction = function(action){
+        this._mainAction = action;
+        return this;
+    }
+
     this.actions = function(actions) {
-        return actions.filter(a => a !== null && a !== false);
+        return {
+            action:this._mainAction,
+            actions: actions.filter(a => a !== null && a !== false)
+        };
     }
 
     this.action = function(){
@@ -50,9 +60,9 @@ function SummaryFormatter(contractManager){
         return this;
     }
 
-    this.tokenAmount = function (network, address, weiValue, displayDecimals=4, unknownCallback, amountCallback) {
-        const humanAmount = this.cm.humanAmount(network, address, weiValue, displayDecimals, amountCallback)
-        const tokenData = this.cm.tokenData(network, address, unknownCallback)
+    this.tokenAmount = function (address, weiValue, displayDecimals=4, unknownCallback, amountCallback) {
+        const humanAmount = this.cm.humanAmount(this.network, address, weiValue, displayDecimals, amountCallback)
+        const tokenData = this.cm.tokenData(this.network, address, unknownCallback)
         this.currentSegments.push(humanAmount + ' ' + tokenData.symbol);
         this.currentRichSegments.push({
             type: 'tokenAmount',
@@ -61,8 +71,8 @@ function SummaryFormatter(contractManager){
         return this;
     }
 
-    this.alias = function(network, txOriginAddress, address){
-        const aliasData = this.cm.aliasData(network, txOriginAddress, address);
+    this.alias = function(txOriginAddress, address){
+        const aliasData = this.cm.aliasData(this.network, txOriginAddress, address);
         this.currentSegments.push(aliasData.alias);
         this.currentRichSegments.push({
             type: 'alias',
