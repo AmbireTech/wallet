@@ -80,6 +80,8 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, accounts, 
                 account: selectedAcc,
                 txn
             })
+
+            setAmount(0)
         } catch(e) {
             console.error(e)
             addToast(`Error: ${e.message || e}`, { error: true })
