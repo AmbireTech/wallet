@@ -11,15 +11,13 @@ import { useEffect, useState } from 'react'
 
 function Transactions ({ relayerURL, selectedAcc, selectedNetwork, eligibleRequests, showSendTxns }) {
   const [cacheBreak, setCacheBreak] = useState(() => Date.now())
+  // @TODO refresh this after we submit a bundle; perhaps with the upcoming transactions service
   // We want this pretty much on every rerender with a 5 sec debounce
   useEffect(() => {
     if ((Date.now() - cacheBreak) > 5000) setCacheBreak(Date.now())
     const intvl = setInterval(() => setCacheBreak(Date.now()), 10000)
     return () => clearInterval(intvl)
   })
-
-  // @TODO refresh this after we submit a bundle; perhaps with the service
-  // we can just append a cache break to the URL - that way we force the hook to refresh, and we have a cachebreak just in case
   const url = relayerURL
     ? `${relayerURL}/identity/${selectedAcc}/${selectedNetwork.id}/transactions?cacheBreak=${cacheBreak}`
     : null
