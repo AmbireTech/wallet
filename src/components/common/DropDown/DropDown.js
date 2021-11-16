@@ -1,7 +1,7 @@
 import './DropDown.scss'
 
 import { useRef, useState } from 'react';
-import { BsChevronUp, BsChevronDown } from 'react-icons/bs'
+import { BsChevronDown } from 'react-icons/bs'
 import { CSSTransition } from 'react-transition-group';
 import useOnClickOutside from '../../../helpers/onClickOutside';
 
@@ -24,13 +24,8 @@ export default function DropDown({ children, title, badge, closeOnClick }) {
                         :
                         null
                 }
-                <div className="handle">
-                    {
-                        isDropDownOpen ? 
-                            <BsChevronUp size={20}></BsChevronUp>
-                            :
-                            <BsChevronDown size={20}></BsChevronDown>
-                    }
+                <div className={`handle ${isDropDownOpen ? 'open' : ''}`}>
+                    <BsChevronDown size={20}></BsChevronDown>
                 </div>
             </div>
             <CSSTransition unmountOnExit in={isDropDownOpen} timeout={200} classNames="fade" nodeRef={transitionRef}>

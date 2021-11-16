@@ -5,7 +5,7 @@ const networks = [{
 		nativeAssetSymbol: 'ETH',
 		name: 'Ethereum',
 		icon: '/resources/networks/ethereum.png',
-		explorerUrl: 'https://etherscan.io/'
+		explorerUrl: 'https://etherscan.io'
 	},  {
 		id: 'polygon',
 		chainId: 137,
@@ -13,7 +13,7 @@ const networks = [{
 		nativeAssetSymbol: 'MATIC',
 		name: 'Polygon',
 		icon: '/resources/networks/polygon.png',
-		explorerUrl: 'https://polygonscan.com/'
+		explorerUrl: 'https://polygonscan.com'
 	}, {
 		id: 'avalanche',
 		chainId: 43114,
@@ -21,15 +21,15 @@ const networks = [{
 		nativeAssetSymbol: 'AVAX',
 		name: 'Avalanche',
 		icon: '/resources/networks/avalanche.png',
-		explorerUrl: 'https://cchain.explorer.avax.network/'
-	}, {
+		explorerUrl: 'https://cchain.explorer.avax.network'
+	}/*, {
 		id: 'arbitrum',
 		chainId: 42161,
 		rpc: 'https://arb1.arbitrum.io/rpc',
 		nativeAssetSymbol: 'AETH',
 		name: 'Arbitrum',
 		icon: '/resources/networks/arbitrum.svg',
-		explorerUrl: 'https://explorer.offchainlabs.com/'
-}]
+		explorerUrl: 'https://arbiscan.io'
+}*/]
 
 export default networks
