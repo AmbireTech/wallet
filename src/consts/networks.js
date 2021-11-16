@@ -21,15 +21,15 @@ const networks = [{
 		nativeAssetSymbol: 'AVAX',
 		name: 'Avalanche',
 		icon: '/resources/networks/avalanche.png',
-		explorerUrl: 'https://cchain.explorer.avax.network'
-	}, {
+		explorerUrl: 'https://snowtrace.io'
+	}/*, {
 		id: 'arbitrum',
 		chainId: 42161,
 		rpc: 'https://arb1.arbitrum.io/rpc',
 		nativeAssetSymbol: 'AETH',
 		name: 'Arbitrum',
 		icon: '/resources/networks/arbitrum.svg',
-		explorerUrl: 'https://explorer.offchainlabs.com'
-}]
+		explorerUrl: 'https://arbiscan.io'
+}*/]
 
 export default networks
