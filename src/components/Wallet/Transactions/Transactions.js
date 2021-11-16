@@ -6,6 +6,7 @@ import { Loading } from '../../common'
 import accountPresets from '../../../consts/accountPresets'
 import networks from '../../../consts/networks'
 import { getTransactionSummary } from '../../../lib/humanReadableTransactions'
+import { Bundle } from 'adex-protocol-eth'
 
 function Transactions ({ relayerURL, selectedAcc, selectedNetwork, eligibleRequests, showSendTxns }) {
   // @TODO refresh this after we submit a bundle; perhaps with the service
@@ -20,12 +21,22 @@ function Transactions ({ relayerURL, selectedAcc, selectedNetwork, eligibleReque
     <h3 className='error'>Unsupported: not currently connected to a relayer.</h3>
   </section>)
 
-  // @TODO: visualize others
-  const firstPending = data && data.txns.find(x => !x.executed)
+  // @TODO: visualize other pending bundles
+  const firstPending = data && data.txns.find(x => !x.executed && !x.replaced)
+
+  const mapToBundle = (relayerBundle, extra = {}) => (new Bundle({
+    ...relayerBundle,
+    nonce: relayerBundle.nonce.num,
+    gasLimit: null,
+    ...extra
+  }))
+  const cancel = relayerBundle => showSendTxns(mapToBundle(relayerBundle, { txns: [[selectedAcc, '0x0', '0x']] }))
+  // @TODO: we are currently assuming the last txn is a fee; change that (detect it)
+  const speedup = relayerBundle => showSendTxns(mapToBundle(relayerBundle, { txns: relayerBundle.txns.slice(0, -1) }))
 
   return (
     <section id='transactions'>
-      {!!eligibleRequests.length && (<div onClick={showSendTxns} className='panel'>
+      {!!eligibleRequests.length && (<div onClick={() => showSendTxns(null)} className='panel'>
         <div className='title'><FaSignature size={25}/>&nbsp;&nbsp;&nbsp;Waiting to be signed</div>
         {eligibleRequests.map(req => (
           <TxnPreview
@@ -37,7 +48,11 @@ function Transactions ({ relayerURL, selectedAcc, selectedNetwork, eligibleReque
       </div>)}
       { !!firstPending && (<div className='panel'>
         <div className='title'>Pending transaction bundle</div>
-        {firstPending && (<MinedBundle bundle={firstPending}></MinedBundle>)}
+        <MinedBundle bundle={firstPending}></MinedBundle>
+        <div className='actions'>
+          <button onClick={() => cancel(firstPending)}>Cancel</button>
+          <button className='cancel' onClick={() => speedup(firstPending)}>Speed up</button>
+        </div>
       </div>) }
 
       <h2>{(data && data.txns.length === 0) ? 'No transactions yet.' : 'Confirmed transactions'}</h2>
