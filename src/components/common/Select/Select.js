@@ -26,6 +26,7 @@ const Select = ({ children, native, monospace, searchable, disabled, label, defa
 
     useEffect(() => {
         if (items.length) selectItem(items.find(item => item.value === defaultValue) || items[0])
+        else setSelectedItem({})
     }, [defaultValue, items, selectItem]);
 
     useEffect(() => {
@@ -55,14 +56,14 @@ const Select = ({ children, native, monospace, searchable, disabled, label, defa
                 {
                     selectedItem ? 
                         <div className="input">
-                            <div className="icon">
-                                {
-                                    selectedItem.icon ? 
+                            {
+                                selectedItem.icon ? 
+                                    <div className="icon">
                                         <img src={selectedItem.icon} alt="Icon" />
-                                        :
-                                        null
-                                }
-                            </div>
+                                    </div>
+                                    :
+                                    null
+                            }
                             { selectedItem.label || selectedItem.value }
                             <div className="separator"></div>
                             <div className={`handle ${isOpen ? 'open' : ''}`}>
