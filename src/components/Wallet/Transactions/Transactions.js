@@ -15,9 +15,9 @@ function Transactions ({ relayerURL, selectedAcc, selectedNetwork, eligibleReque
   // We want this pretty much on every rerender with a 5 sec debounce
   useEffect(() => {
     if ((Date.now() - cacheBreak) > 5000) setCacheBreak(Date.now())
-    const intvl = setInterval(() => setCacheBreak(Date.now()), 10000)
-    return () => clearInterval(intvl)
-  })
+    const intvl = setTimeout(() => setCacheBreak(Date.now()), 10000)
+    return () => clearTimeout(intvl)
+  }, [cacheBreak])
   const url = relayerURL
     ? `${relayerURL}/identity/${selectedAcc}/${selectedNetwork.id}/transactions?cacheBreak=${cacheBreak}`
     : null
