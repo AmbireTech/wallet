@@ -20,9 +20,9 @@ module.exports = {
           name: 'setApprovalForAll',
           summary: ({network, txn, inputs, contract}) => {
               let action
-              if(inputs.approved){
+              if (inputs.approved) {
                   action = `Approve ${contract.alias( txn.from, inputs.to)} to be transfer all the tokens ${contract.alias( txn.from, inputs.to)}`
-              }else{
+              } else {
                   action = `Deny ${contract.alias( txn.from, inputs.to)} to be transfer all the tokens ${contract.alias( txn.from, inputs.to)}`
               }
               return [

@@ -31,7 +31,7 @@ function SummaryFormatter(network, contractManager){
     }
 
     this.add = function(){
-        if(this.segments.length){
+        if (this.segments.length) {
             this.actions.push({
                 segments: this.currentSegments,
                 richSegments: this.currentRichSegments

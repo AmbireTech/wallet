@@ -10,7 +10,7 @@ function Contract(manager, contractData){
     this.address = contractData.address
     this.name = contractData.name
 
-    if(!contractData.interface.abi){
+    if (!contractData.interface.abi) {
         console.log('Missing ABI for contract')
         console.log(contractData)
         return
@@ -18,8 +18,8 @@ function Contract(manager, contractData){
 
     this.interface = new ethers.utils.Interface(contractData.interface.abi)
 
-    for(let m in contractData.interface.methods){
-        if(!contractData.interface.methods[m].signature){
+    for (let m in contractData.interface.methods) {
+        if (!contractData.interface.methods[m].signature) {
           console.error('Signature missing for ' + contractData.name + ' : ' + contractData.interface.methods[m].name)
             try{
                 contractData.interface.methods[m].signature = this.interface.getSighash(contractData.interface.methods[m].name)
@@ -34,7 +34,7 @@ function Contract(manager, contractData){
         const txCallSignature = txn.data.substr(0, 10)
         const method = this.methods.find(a => a.signature === txCallSignature)
         //console.log(txCallSignature)
-        if(method){
+        if (method) {
             console.log(':::: ' + method.name)
             try{
                 const inputs = this.interface.decodeFunctionData(method.name, txn.data)

@@ -15,16 +15,16 @@ module.exports = {
     generic_contracts: [],
     addressBook:{},
     init(){
-        for(let chain in resources){
-            for(let c in resources[chain]){
-                if(!this.contracts[chain]) this.contracts[chain] = []
+        for (let chain in resources) {
+            for (let c in resources[chain] ){
+                if (!this.contracts[chain]) this.contracts[chain] = []
                 const contract = new Contract(this, resources[chain][c])
                 this.contracts[chain].push(contract)
             }
         }
 
         //for unknown destination, to try to match signature
-        for(let c in generic_resources){
+        for (let c in generic_resources) {
             const contract = new Contract(this, generic_resources[c])
             this.generic_contracts.push(contract)
         }
@@ -44,9 +44,9 @@ module.exports = {
 
     //signature expectd lowerCase
     getGenericMethodBySignature(signature){
-        for(let i in this.generic_contracts){
+        for (let i in this.generic_contracts) {
             const method = this.generic_contracts[i].methods.find(m => m.signature === signature)
-            if(method){
+            if (method) {
                 return {
                     genericContract: this.generic_contracts[i],
                     genericMethod: method
@@ -69,8 +69,8 @@ module.exports = {
             value: txn.value,
         }
 
-        if(txCallSignature != '0x'){
-            if(!txn.to){
+        if (txCallSignature != '0x') {
+            if (!txn.to) {
                 summary.summaries = SF.actions([
                   SF.text(`Deploy new contract`)
                     .action(),
@@ -80,7 +80,7 @@ module.exports = {
                         .tokenAmount( 'native', txn.value)
                         .action()
                 ])
-            }else{
+            } else {
                 let s
                 const destinationContract = this.contracts[network.id.toLowerCase()].find(a => a.address.toLowerCase() === txn.to.toLowerCase())
                 if (destinationContract) {
@@ -93,23 +93,23 @@ module.exports = {
                 } else {
                     //TODO optimize
                     const {genericContract, genericMethod} = this.getGenericMethodBySignature(txCallSignature)
-                    if(genericContract){
+                    if (genericContract) {
                         s = genericContract.getSummary(network, txn)
                         const contractAliasData = this.aliasData(network, txn.from, txn.to)
                         summary.interaction = {
                             signature: txCallSignature,
                             name: `${contractAliasData.alias} (${genericContract.name})`,
                         }
-                    }else{
+                    } else {
                         summary.interaction = {
                             signature: txCallSignature,
                             name: `Unknown`
                         }
                     }
                 }
-                if(s){
+                if (s) {
                     summary.summaries = s
-                }else{
+                } else {
                     summary.summaries = SF.actions([
                         txn.value>0
                         && SF.text(`Sending`)
@@ -122,13 +122,13 @@ module.exports = {
                     ])
                 }
             }
-        }else{
+        } else {
             const interactionAliasData = this.aliasData(network, txn.from, txn.to)
             summary.interaction = {
                 signature: false,
                 name: interactionAliasData.alias
             }
-            if(txn.value){
+            if (txn.value) {
                 summary.summaries = SF.actions([
                     txn.value>0
                     && SF.text(`Send`)
@@ -137,14 +137,14 @@ module.exports = {
                       .alias( txn.from, txn.to)
                       .action()
                 ])
-            }else{
-                if(txn.from == txn.to) {
+            } else {
+                if (txn.from == txn.to) {
                     //TODO find a way to compare the nonces
                     summary.summaries = SF.actions([
                         SF.text(`Send nothing to self (probably replacement transaction)`)
                           .action()
                     ])
-                }else{
+                } else {
                     summary.summaries = SF.actions([
                         SF.text(`Send valueless transaction to`)
                           .alias( txn.from, txn.to)
@@ -165,13 +165,13 @@ module.exports = {
     //will deprecate
     humanAmount(network, address, weiValue, displayDecimals=4, amountCallback){
         if (new BigNumber(new BigNumber(weiValue.toString()).comparedTo('1e70')) == 1) {//=== number comparison fails
-            if(amountCallback){ return amountCallback({ infinity:true, amount:weiValue, decimals:null })}
+            if (amountCallback) { return amountCallback({ infinity:true, amount:weiValue, decimals:null })}
             return '(∞)'
         }
 
         const decimals = this.tokenDecimals(network, address);
-        if(decimals == 0){
-            if(amountCallback){ return amountCallback({ unknownDecimals:true, amountWei: weiValue, decimals:0})}
+        if (decimals == 0) {
+            if (amountCallback) { return amountCallback({ unknownDecimals:true, amountWei: weiValue, decimals:0})}
             return weiValue + '(wei)'//TODO: check whats the best fallback
         }
         return new BigNumber(weiValue).div(10**decimals).toFixed(displayDecimals)
@@ -184,7 +184,7 @@ module.exports = {
         }
         if (this.erc20Tokens[network.id]) {
             const token = Object.values(this.erc20Tokens[network.id]).find(a => a.address.toLowerCase() === address.toLowerCase());
-            if(token){
+            if (token) {
                 return token.symbol;
             }
         }
@@ -208,7 +208,7 @@ module.exports = {
         }
         if (this.erc20Tokens[network.id]) {
             const token = Object.values(this.erc20Tokens[network.id]).find(a => a.address.toLowerCase() === address.toLowerCase());
-            if(token){
+            if (token) {
                 tokenData.symbol = token.symbol
                 return tokenData
             }
@@ -229,24 +229,24 @@ module.exports = {
             self: false
         };
 
-        if(txOriginAddress.toLowerCase() === address.toLowerCase()){
+        if (txOriginAddress.toLowerCase() === address.toLowerCase()) {
             aliasData.self = true;
             aliasData.alias= 'self';
             return aliasData;
         }
 
-        if(this.contracts[network.id]){
+        if (this.contracts[network.id]) {
             const contract = this.contracts[network.id].find(a => a.address.toLowerCase() === address.toLowerCase());
-            if(contract){
+            if (contract) {
                 aliasData.contract = true;
                 aliasData.alias = contract.name;
                 return aliasData;
             }
         }
 
-        if(this.addressBook[network.id]){
+        if (this.addressBook[network.id]) {
             const contact = this.addressBook[network.id].find(a => a.address.toLowerCase() === address.toLowerCase());
-            if(contact){
+            if (contact) {
                 aliasData.contract = false;
                 aliasData.alias = contact.name;
                 return aliasData;
@@ -258,13 +258,13 @@ module.exports = {
 
 
     tokenDecimals(network, address){
-        if(!address) return 0;//TODO : best way to handle unknown decimals situation. should not happen. good fallback? if 1 : if user sees insane numbers, it would turn him off? if 0, he might be cancel as well
-        if(address === 'native'){
+        if (!address) return 0;//TODO : best way to handle unknown decimals situation. should not happen. good fallback? if 1 : if user sees insane numbers, it would turn him off? if 0, he might be cancel as well
+        if (address === 'native') {
             return nativeTokens[network.id].decimals || 0
         }
-        if(!this.erc20Tokens[network.id]) return 0
+        if (!this.erc20Tokens[network.id]) return 0
         const token = Object.values(this.erc20Tokens[network.id]).find(a => a.address.toLowerCase() === address.toLowerCase())
-        if(token){
+        if (token) {
             return token.decimals;
         }
         return 0
