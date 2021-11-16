@@ -1,4 +1,4 @@
-import './Collectable.scss'
+import './Collectible.scss'
 
 import { useParams } from 'react-router-dom'
 import { ethers, getDefaultProvider } from 'ethers'
@@ -19,7 +19,7 @@ const handleUri = uri => {
     return uri.startsWith('ipfs://') ? uri.replace(/ipfs:\/\/ipfs\/|ipfs:\/\//g, 'https://ipfs.io/ipfs/') : uri
 }
 
-const Collectable = ({ selectedAcc, selectedNetwork, addRequest }) => {
+const Collectible = ({ selectedAcc, selectedNetwork, addRequest }) => {
     const { addToast } = useToasts()
     const { network, collectionAddr, tokenId } = useParams()
     const [isLoading, setLoading] = useState(true)
@@ -119,7 +119,7 @@ const Collectable = ({ selectedAcc, selectedNetwork, addRequest }) => {
     useEffect(() => fetchMetadata(), [fetchMetadata])
 
     return (
-        <div id="collectable">
+        <div id="collectible">
             <div className="panel">
                 <div className="title">
                     { metadata.collection } #{ tokenId }
@@ -171,4 +171,4 @@ const Collectable = ({ selectedAcc, selectedNetwork, addRequest }) => {
     )
 }
 
-export default Collectable
+export default Collectible

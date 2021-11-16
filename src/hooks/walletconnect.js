@@ -243,15 +243,15 @@ function runInitEffects(wcConnect) {
     // @TODO on focus and on user action
     const clipboardError = e => console.log('non-fatal clipboard err', e)
     const isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1
-    const tryReadClipboard = () => {
+    const tryReadClipboard = async () => {
         if (isFirefox) return
-        navigator.permissions.query({ name: 'clipboard-read' }).then(result => {
-            if (result.state === 'granted' || result.state === 'prompt') {
-                navigator.clipboard.readText().then(clipboard => {
-                    if (clipboard.startsWith('wc:') && !connectors[clipboard]) wcConnect({ uri: clipboard })
-                }).catch(clipboardError)
-            }
-        }).catch(clipboardError)
+	try {
+                const result = await navigator.permissions.query({ name: 'clipboard-read' })
+                if (result.state === 'granted' || result.state === 'prompt') {
+                     const clipboard = await navigator.clipboard.readText()
+		     if (clipboard.startsWith('wc:') && !connectors[clipboard]) wcConnect({ uri: clipboard })
+                }
+        } catch(e) { clipboardError(e)  }
     }
     tryReadClipboard()
     window.addEventListener('focus', tryReadClipboard)
