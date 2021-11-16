@@ -1,6 +1,6 @@
 @import '../../../../variables.scss';
 
-#assets-table {
+#protocols-table {
     .category {
         position: relative;
         overflow: hidden;
@@ -38,9 +38,7 @@
 
                 .icon {
                     flex: 0 0 auto;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
+                    @include flex-center-center;
                     height: 40px;
                     width: 40px;
                     border-radius: 100%;
