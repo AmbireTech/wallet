@@ -1,14 +1,17 @@
 import './Accounts.scss'
 
-import * as blockies from 'blockies-ts';
-import { AiOutlinePlus } from 'react-icons/ai'
-import { MdOutlineContentCopy, MdOutlineDelete } from 'react-icons/md'
+import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
+import { AiOutlinePlus } from 'react-icons/ai'
+import { MdOutlineContentCopy, MdOutlineDelete, MdOutlineClose, MdOutlineCheck } from 'react-icons/md'
+import * as blockies from 'blockies-ts';
 import { DropDown, Button } from '../../../common';
 import { useToasts } from '../../../../hooks/toasts';
 
 const Accounts = ({ accounts, selectedAddress, onSelectAcc, onRemoveAccount }) => {
     const { addToast } = useToasts()
+    const [accountWarning, setAccountWarning] = useState(false)
+
     const shortenedAddress = address => address.slice(0, 5) + '...' + address.slice(-3)
     const isActive = id => id === selectedAddress ? 'active' : ''
     const toIcon = seed => blockies.create({ seed }).toDataURL()
@@ -27,23 +30,36 @@ const Accounts = ({ accounts, selectedAddress, onSelectAcc, onRemoveAccount }) =
         <DropDown id="accounts" icon={toIcon(selectedAddress)} title={shortenedAddress(selectedAddress)}>
           <div className="list">
             {
-              accounts.map(({ id, email, signer, signerExtra }) => (
-                <div className={`account ${isActive(id)}`} key={id}>
-                    <div className="inner" onClick={() => onSelectAcc(id)}>
-                        <div className="icon" style={toIconBackgroundImage(id)}></div>
-                        <div className="details">
-                            <div className="address">{ id }</div>
-                            <label>{ email ? `Email/passphrase account (${email})` : `${walletType(signerExtra)} (${shortenedAddress(signer.address)})` }</label>
+              accounts.map(({ id, email, signer, signerExtra }) => 
+                !accountWarning ?
+                    <div className={`account ${isActive(id)}`} key={id}>
+                        <div className="inner" onClick={() => onSelectAcc(id)}>
+                            <div className="icon" style={toIconBackgroundImage(id)}></div>
+                            <div className="details">
+                                <div className="address">{ id }</div>
+                                <label>{ email ? `Email/passphrase account (${email})` : `${walletType(signerExtra)} (${shortenedAddress(signer.address)})` }</label>
+                            </div>
+                        </div>
+                        <div className="button" onClick={() => copyAddress(id)}>
+                            <MdOutlineContentCopy/>
+                        </div>
+                        <div className="button" onClick={() => setAccountWarning(true)}>
+                            <MdOutlineDelete/>
                         </div>
                     </div>
-                    <div className="button" onClick={() => copyAddress(id)}>
-                        <MdOutlineContentCopy/>
+                    :
+                    <div id="confirm-delete-account" className={`account ${isActive(id)}`} key={id}>
+                        <div className="message">
+                            Are you sure you want to remove this account ?
+                        </div>
+                        <div className="button danger" onClick={() => onRemoveAccount(id)}>
+                            <MdOutlineCheck/>
+                        </div>
+                        <div className="button" onClick={() => setAccountWarning(false)}>
+                            <MdOutlineClose/>
+                        </div>
                     </div>
-                    <div className="button" onClick={() => onRemoveAccount(id)}>
-                        <MdOutlineDelete/>
-                    </div>
-                </div>
-              ))
+              )
             }
           </div>
           <div id="add-account">
