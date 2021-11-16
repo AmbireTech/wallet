@@ -16,25 +16,34 @@
             justify-content: flex-start;
             gap: 15px;
             padding: 0 20px;
-            font-family: monospace;
+            padding-right: 30px;
             opacity: 0.6;
+            cursor: pointer;
 
             .icon {
-                height: 25px;
-                width: 25px;
+                height: 30px;
+                width: 30px;
                 @include flex-center-center;
                 border-radius: 100%;
                 background-size: cover;
             }
 
             .details {
+                display: flex;
+                flex-direction: column;
+                gap: 2px;
+
                 .address {
+                    font-family: monospace;
                     font-size: 15px;
                     font-weight: bold;
                 }
 
                 label {
+                    font-size: 12px;
+                    font-weight: 500;
                     opacity: 0.5;
+                    cursor: pointer;
                 }
             }
 
@@ -44,7 +53,6 @@
 
             &:hover {
                 background-color: rgba(0, 0, 0, 0.2);
-                cursor: pointer;
             }
         }
     }
