@@ -18,15 +18,15 @@ const lendingPoolProvider = {
 const RAY = 10**27
 let lendingPoolAddress = null
 
-const AAVECard = ({ network, tokens, account, addRequest }) => {
+const AAVECard = ({ network, tokens, protocols, account, addRequest }) => {
     const { addToast } = useToasts()
 
     const [isLoading, setLoading] = useState(true)
-    const [tokenItems, setTokenItems] = useState([])
+    const [tokensItems, setTokensItems] = useState([])
     const [details, setDetails] = useState([])
 
     const onTokenSelect = useCallback(async (value) => {
-        const token = tokenItems.find(({ address }) => address === value)
+        const token = tokensItems.find(({ address }) => address === value)
         if (token) {
             setDetails([
                 ['Annual Percentage Rate (APR)', `${token.apr}%`],
@@ -34,7 +34,7 @@ const AAVECard = ({ network, tokens, account, addRequest }) => {
                 ['Type', 'Variable Rate'],
             ])
         }
-    }, [tokenItems])
+    }, [tokensItems])
 
     const approveToken = async (tokenAddress, bigNumberHexAmount) => {
         const ZERO = ethers.BigNumber.from(0)
@@ -70,11 +70,11 @@ const AAVECard = ({ network, tokens, account, addRequest }) => {
     }
 
     const onValidate = async (type, tokenAddress, amount) => {
-        const token = tokenItems.find(({ address }) => address === tokenAddress)
-        const bigNumberHexAmount = ethers.utils.parseUnits(amount.toString(), token.decimals).toHexString()
-        await approveToken(tokenAddress, bigNumberHexAmount)
-
         if (type === 'Deposit') {
+            const token = tokensItems.filter(({ type }) => type === 'deposit').find(({ address }) => address === tokenAddress)
+            const bigNumberHexAmount = ethers.utils.parseUnits(amount.toString(), token.decimals).toHexString()
+            await approveToken(tokenAddress, bigNumberHexAmount)
+
             try {
                 addRequest({
                     id: `aave_pool_deposit_${Date.now()}`,
@@ -85,6 +85,29 @@ const AAVECard = ({ network, tokens, account, addRequest }) => {
                         to: lendingPoolAddress,
                         value: '0x0',
                         data: AAVELendingPool.encodeFunctionData('deposit', [tokenAddress, bigNumberHexAmount, account, 0])
+                    },
+                    extraGas: 60000
+                })
+            } catch(e) {
+                console.error(e)
+                addToast(`Error: ${e.message || e}`, { error: true })
+            }
+        }
+        else if (type === 'Withdraw') {
+            const token = tokensItems.filter(({ type }) => type === 'withdraw').find(({ address }) => address === tokenAddress)
+            const bigNumberHexAmount = ethers.utils.parseUnits(amount.toString(), token.decimals).toHexString()
+            await approveToken(tokenAddress, bigNumberHexAmount)
+
+            try {
+                addRequest({
+                    id: `aave_pool_withdraw_${Date.now()}`,
+                    type: 'eth_sendTransaction',
+                    chainId: network.chainId,
+                    account,
+                    txn: {
+                        to: lendingPoolAddress,
+                        value: '0x0',
+                        data: AAVELendingPool.encodeFunctionData('withdraw', [tokenAddress, bigNumberHexAmount, account])
                     },
                     extraGas: 60000
                 })
@@ -105,21 +128,38 @@ const AAVECard = ({ network, tokens, account, addRequest }) => {
             
                 const lendingPoolContract = new ethers.Contract(lendingPoolAddress, AAVELendingPool, provider)
                 const reserves = await lendingPoolContract.getReservesList()
-                const availableTokens = tokens.filter(({ address }) => reserves.map(reserve => reserve.toLowerCase()).includes(address))
-        
-                const tokensWithApr = await Promise.all(availableTokens.map(async token => {
+                const reservesAddresses = reserves.map(reserve => reserve.toLowerCase())
+
+                const withdrawTokens = (protocols.find(({ label }) => label === 'Aave V2')?.assets || [])
+                    .map(({ tokens }) => tokens.map(({ img, symbol, tokens }) => tokens.map(token => ({
+                        ...token,
+                        img,
+                        symbol,
+                        type: 'withdraw'
+                    }))))
+                    .flat(2)
+
+                const depositTokens = tokens.filter(({ address }) => reservesAddresses.includes(address)).map(token => ({
+                    ...token,
+                    type: 'deposit'
+                }))
+
+                const tokensItems = (await Promise.all([
+                    ...withdrawTokens,
+                    ...depositTokens
+                ].map(async token => {
                     const data = await lendingPoolContract.getReserveData(token.address)
                     const { liquidityRate } = data
                     return {
                         ...token,
                         apr: ((liquidityRate / RAY) * 100).toFixed(2)
                     }
-                }))
-
-                const tokenItems = tokensWithApr.map(({ img, symbol, address, balance, decimals, apr }) => ({
+                })))
+                .map(({ type, img, symbol, address, balance, decimals, apr }) => ({
                     icon: img,
                     label: `${symbol} (${apr}% APR)`,
                     value: address,
+                    type,
                     address,
                     balance,
                     symbol,
@@ -127,8 +167,7 @@ const AAVECard = ({ network, tokens, account, addRequest }) => {
                     apr
                 }))
 
-                setTokenItems(tokenItems)
-
+                setTokensItems(tokensItems)
                 setLoading(false)
             } catch(e) {
                 console.error(e);
@@ -137,10 +176,10 @@ const AAVECard = ({ network, tokens, account, addRequest }) => {
         }
 
         loadPool()
-    }, [addToast, tokens, network])
+    }, [addToast, tokens, protocols, network])
 
     return (
-        <Card loading={isLoading} icon={AAVE_ICON} details={details} tokens={tokenItems} onTokenSelect={onTokenSelect} onValidate={onValidate}/>
+        <Card loading={isLoading} icon={AAVE_ICON} details={details} tokensItems={tokensItems} onTokenSelect={onTokenSelect} onValidate={onValidate}/>
     )
 }
 
