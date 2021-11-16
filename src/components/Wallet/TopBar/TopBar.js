@@ -55,6 +55,8 @@ const TopBar = ({
 
   useEffect(() => checkPermissions(), []);
 
+  console.log(accounts);
+
   return (
     <div id="topbar">
       <div className="container">
