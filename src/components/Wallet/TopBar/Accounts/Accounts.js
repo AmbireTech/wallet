@@ -2,12 +2,12 @@ import './Accounts.scss'
 
 import * as blockies from 'blockies-ts';
 import { AiOutlinePlus } from 'react-icons/ai'
-import { MdOutlineContentCopy } from 'react-icons/md'
+import { MdOutlineContentCopy, MdOutlineDelete } from 'react-icons/md'
 import { NavLink } from 'react-router-dom';
 import { DropDown, Button } from '../../../common';
 import { useToasts } from '../../../../hooks/toasts';
 
-const Accounts = ({ accounts, selectedAddress, onSelectAcc }) => {
+const Accounts = ({ accounts, selectedAddress, onSelectAcc, onRemoveAccount }) => {
     const { addToast } = useToasts()
     const shortenedAddress = address => address.slice(0, 5) + '...' + address.slice(-3)
     const isActive = id => id === selectedAddress ? 'active' : ''
@@ -36,8 +36,11 @@ const Accounts = ({ accounts, selectedAddress, onSelectAcc }) => {
                             <label>{ email ? `Email/passphrase account (${email})` : `${walletType(signerExtra)} (${shortenedAddress(signer.address)})` }</label>
                         </div>
                     </div>
-                    <div className="copy-button" onClick={() => copyAddress(id)}>
+                    <div className="button" onClick={() => copyAddress(id)}>
                         <MdOutlineContentCopy/>
+                    </div>
+                    <div className="button" onClick={() => onRemoveAccount(id)}>
+                        <MdOutlineDelete/>
                     </div>
                 </div>
               ))

@@ -55,13 +55,13 @@
                 &:hover {
                     background-color: rgba(0, 0, 0, 0.2);
 
-                    ~ .copy-button {
+                    ~ .button {
                         background-color: rgba(0, 0, 0, 0.2);
                     }
                 }
             }
 
-            .copy-button {
+            .button {
                 z-index: 50;
                 height: 60px;
                 width: 50px;
