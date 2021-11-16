@@ -80,7 +80,7 @@ const Card = ({ loading, unavailable, tokensItems, icon, details, onTokenSelect,
                                 onButtonClick={setMaxValue}
                             />
                             <Button 
-                                disabled={disabled || amount <= 0}
+                                disabled={disabled || amount <= 0 || amount > currentToken?.balance}
                                 icon={segment === segments[0].value ? <BsArrowDownSquare/> : <BsArrowUpSquare/>}
                                 onClick={() => onValidate(segment, token, amount)}>
                                     { segment }
