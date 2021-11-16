@@ -49,5 +49,15 @@ export default function useAccounts () {
         history.push('/wallet/dashboard')
       }
     }, [accounts, addToast, history])
-    return { accounts, selectedAcc, onSelectAcc, onAddAccount }
+  
+    const onRemoveAccount = useCallback(id => {
+      if (!id) throw new Error('account: internal err: missing ID/Address')
+
+      const clearedAccounts = accounts.filter(account => account.id !== id)
+      setAccounts([...clearedAccounts])
+      localStorage.accounts = JSON.stringify(clearedAccounts)
+      
+      if (!clearedAccounts.length) history.push('/add-account')
+    }, [accounts, history])
+    return { accounts, selectedAcc, onSelectAcc, onAddAccount, onRemoveAccount }
   }
