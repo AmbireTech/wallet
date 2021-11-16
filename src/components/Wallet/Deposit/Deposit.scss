@@ -20,9 +20,7 @@
             gap: 0.2rem;
 
             .title {
-                display: flex;
-                align-items: center;
-                justify-content: center;
+                @include flex-center-center;
                 gap: 0.5rem;
                 font-size: 1.5em;
                 font-weight: bold;
