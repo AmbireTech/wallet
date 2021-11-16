@@ -46,7 +46,7 @@ const AAVECard = ({ network, tokens, protocols, account, addRequest }) => {
 
             if (allowance.lt(bigNumberHexAmount)) {
                 if (allowance.gt(ZERO)) addRequest({
-                    id: `aave_pool_deposit_${Date.now()}`,
+                    id: `aave_pool_approve_${Date.now()}`,
                     type: 'eth_sendTransaction',
                     chainId: network.chainId,
                     account,
@@ -57,7 +57,7 @@ const AAVECard = ({ network, tokens, protocols, account, addRequest }) => {
                     }
                 })
                 addRequest({
-                    id: `aave_pool_deposit_${Date.now()}`,
+                    id: `aave_pool_approve_${Date.now()}`,
                     type: 'eth_sendTransaction',
                     chainId: network.chainId,
                     account,
