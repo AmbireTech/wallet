@@ -4,7 +4,7 @@ import { useEffect, useLayoutEffect, useState } from 'react'
 
 import { Chart, Loading, Segments } from '../../common'
 import Protocols from './Protocols/Protocols'
-import Collectables from './Collectables/Collectables'
+import Collectibles from './Collectibles/Collectibles'
 import networks from '../../../consts/networks'
 
 export default function Dashboard({ portfolio, setNetwork }) {
@@ -27,7 +27,7 @@ export default function Dashboard({ portfolio, setNetwork }) {
             value: 'Tokens'
         },
         {
-            value: 'Collectables'
+            value: 'Collectibles'
         }
     ]
 
@@ -124,7 +124,7 @@ export default function Dashboard({ portfolio, setNetwork }) {
                             tableType === tableSegments[0].value ?
                                 <Protocols protocols={portfolio.protocols}/>
                                 :
-                                <Collectables collectables={portfolio.collectables}/>
+                                <Collectibles collectibles={portfolio.collectibles}/>
                     }
                 </div>
                 {

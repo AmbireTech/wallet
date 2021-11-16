@@ -233,7 +233,7 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
         addToast((
           <span>Transaction signed and sent successfully!
             &nbsp;Click to view on block explorer.
-          </span>), { url: blockExplorerUrl+'/tx/'+bundleResult.txId })
+          </span>), { url: blockExplorerUrl+'/tx/'+bundleResult.txId, timeout: 15000 })
         onDismiss()
       } else addToast(`Transaction error: ${bundleResult.message || 'unspecified error'}`, { error: true })
     })
