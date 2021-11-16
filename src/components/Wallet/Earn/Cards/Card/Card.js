@@ -74,7 +74,7 @@ const Card = ({ loading, unavailable, tokensItems, icon, details, onTokenSelect,
                                 min="0"
                                 max={currentToken?.balance}
                                 value={amount}
-                                label={`Available Amount: ${!disabled ? `${currentToken?.balance} ${currentToken?.symbol}` : ''}`}
+                                label={`Available Amount: ${!disabled ? `${currentToken?.balance} ${currentToken?.symbol}` : '0'}`}
                                 onInput={(value) => setAmount(value)}
                                 button="MAX"
                                 onButtonClick={setMaxValue}
