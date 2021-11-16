@@ -40,7 +40,7 @@ export default function usePortfolio({ currentNetwork, account }) {
     const [otherBalances, setOtherBalances] = useState([]);
     const [tokens, setTokens] = useState([]);
     const [protocols, setProtocols] = useState([]);
-    const [collectables, setCollectables] = useState([]);
+    const [collectibles, setCollectibles] = useState([]);
 
     const fetchTokens = useCallback(async (account, currentNetwork = false) => {
         try {
@@ -178,7 +178,7 @@ export default function usePortfolio({ currentNetwork, account }) {
                 ...tokens.products,
                 ...otherProtocols.protocols.filter(({ label }) => label !== 'NFTs')
             ])
-            setCollectables(otherProtocols.protocols.find(({ label }) => label === 'NFTs')?.assets || [])
+            setCollectibles(otherProtocols.protocols.find(({ label }) => label === 'NFTs')?.assets || [])
         }
     }, [currentNetwork, tokensByNetworks, otherProtocolsByNetworks])
 
@@ -206,7 +206,7 @@ export default function usePortfolio({ currentNetwork, account }) {
         otherBalances,
         tokens,
         protocols,
-        collectables,
+        collectibles,
         requestOtherProtocolsRefresh
         //updatePortfolio//TODO find a non dirty way to be able to reply to getSafeBalances from the dapps, after the first refresh
     }
