@@ -1,7 +1,7 @@
-import './CollectablesPlaceholder.scss'
+import './CollectiblesPlaceholder.scss'
 
-const CollectablesPlaceholder = () => {
-    const collectables = [
+const CollectiblesPlaceholder = () => {
+    const collectibles = [
         {
             collectionName: 'Party Bone',
             collectionImg: 'https://lh3.googleusercontent.com/ZNc-hDBHOxgioSltBcDvh5hBfWEj623dETJj2nrEC0cLbjuULbo4Ign7OnLDX9qf2XaALrkXsZCRylRqPPHqQgzJOabJg4TRq3MDhA=s2500',
@@ -40,14 +40,14 @@ const CollectablesPlaceholder = () => {
     ]
 
     return (
-        <div id="collectables-placeholder">
+        <div id="collectibles-placeholder">
             <div className="placeholder-overlay">
-                You don't have any collectables (NFTs) yet
+                You don't have any collectibles (NFTs) yet
             </div>
-            <div id="collectables">
+            <div id="collectibles">
                 {
-                    collectables.map(({ collectionName, collectionImg, name, image, price}) => (
-                        <div className="collectable" key={name}>
+                    collectibles.map(({ collectionName, collectionImg, name, image, price}) => (
+                        <div className="collectible" key={name}>
                             <div className="artwork" style={{backgroundImage: `url(${image})`}}/>
                             <div className="info">
                                 <div className="collection">
@@ -67,4 +67,4 @@ const CollectablesPlaceholder = () => {
     )
 }
 
-export default CollectablesPlaceholder
+export default CollectiblesPlaceholder

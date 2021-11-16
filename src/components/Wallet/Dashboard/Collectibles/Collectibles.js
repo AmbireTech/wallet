@@ -1,17 +1,17 @@
-import './Collectables.scss'
+import './Collectibles.scss'
 
 import { NavLink } from 'react-router-dom'
-import CollectablesPlaceholder from './CollectablesPlaceholder/CollectablesPlaceholder'
+import CollectiblesPlaceholder from './CollectiblesPlaceholder/CollectiblesPlaceholder'
 
-const Collectables = ({ collectables }) => {
+const Collectibles = ({ collectibles }) => {
     return (
-        !collectables.length ?
-            <CollectablesPlaceholder/>
+        !collectibles.length ?
+            <CollectiblesPlaceholder/>
             :
-            <div id="collectables">
+            <div id="collectibles">
                 {
-                    collectables.map(({ tokens }) => tokens.map(({ network, address, collectionName, collectionImg, assets }) => assets.map(({ tokenId, assetName, assetImg, balanceUSD }) => (
-                        <div className="collectable" key={tokenId}>
+                    collectibles.map(({ tokens }) => tokens.map(({ network, address, collectionName, collectionImg, assets }) => assets.map(({ tokenId, assetName, assetImg, balanceUSD }) => (
+                        <div className="collectible" key={tokenId}>
                             <NavLink to={`/wallet/nft/${network}/${address}/${tokenId}`}>
                                 <div className="artwork" style={{backgroundImage: `url(${assetImg})`}}/>
                                 <div className="info">
@@ -32,4 +32,4 @@ const Collectables = ({ collectables }) => {
     )
 }
 
-export default Collectables
+export default Collectibles
