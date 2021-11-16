@@ -18,6 +18,7 @@ const AAVECard = ({ network, tokens, protocols, account, addRequest }) => {
     const { addToast } = useToasts()
 
     const [isLoading, setLoading] = useState(true)
+    const [unavailable, setUnavailable] = useState(false)
     const [tokensItems, setTokensItems] = useState([])
     const [details, setDetails] = useState([])
 
@@ -100,10 +101,17 @@ const AAVECard = ({ network, tokens, protocols, account, addRequest }) => {
 
     useEffect(() => {
         const loadPool = async () => {
+            const providerAddress = AAVELendingPoolProviders[network.id]
+            if (!providerAddress) {
+                setLoading(false)
+                setUnavailable(true)
+                return
+            }
+
             try {
                 const { rpc } = network
                 const provider = getDefaultProvider(rpc)
-                const lendingPoolProviderContract = new ethers.Contract(AAVELendingPoolProviders[network.id], AAVELendingPool, provider)
+                const lendingPoolProviderContract = new ethers.Contract(providerAddress, AAVELendingPool, provider)
                 lendingPoolAddress = await lendingPoolProviderContract.getLendingPool()
             
                 const lendingPoolContract = new ethers.Contract(lendingPoolAddress, AAVELendingPool, provider)
@@ -149,6 +157,7 @@ const AAVECard = ({ network, tokens, protocols, account, addRequest }) => {
 
                 setTokensItems(tokensItems)
                 setLoading(false)
+                setUnavailable(false)
             } catch(e) {
                 console.error(e);
                 addToast(e.message | e, { error: true })
@@ -159,7 +168,7 @@ const AAVECard = ({ network, tokens, protocols, account, addRequest }) => {
     }, [addToast, tokens, protocols, network])
 
     return (
-        <Card loading={isLoading} icon={AAVE_ICON} details={details} tokensItems={tokensItems} onTokenSelect={onTokenSelect} onValidate={onValidate}/>
+        <Card loading={isLoading} unavailable={unavailable} icon={AAVE_ICON} details={details} tokensItems={tokensItems} onTokenSelect={onTokenSelect} onValidate={onValidate}/>
     )
 }
 
