@@ -10,17 +10,22 @@ const Accounts = ({ accounts, selectedAddress, onSelectAcc }) => {
     const isActive = id => id === selectedAddress ? 'active' : ''
     const toIcon = seed => blockies.create({ seed }).toDataURL()
     const toIconBackgroundImage = seed => ({ backgroundImage: `url(${toIcon(seed)})`})
+    const walletType = signerExtra => {
+        if (signerExtra && signerExtra.type === 'ledger') return 'Ledger'
+        else if (signerExtra && signerExtra.type === 'trezor') return 'Trezor'
+        else return 'Web3'
+    } 
 
     return (
         <DropDown id="accounts" icon={toIcon(selectedAddress)} title={shortenedAddress(selectedAddress)} closeOnClick>
           <div className="list">
             {
-              accounts.map(({ id, signer }) => (
+              accounts.map(({ id, email, signer, signerExtra }) => (
                 <div className={`account ${isActive(id)}`} key={id} onClick={() => onSelectAcc(id)}>
                   <div className="icon" style={toIconBackgroundImage(id)}></div>
                   <div className="details">
                     <div className="address">{ id }</div>
-                    <div className="signer">{ shortenedAddress(signer.address) }</div>
+                    <label>{ email ? `Email/passphrase account (${email})` : `${walletType(signerExtra)} (${shortenedAddress(signer.address)})` }</label>
                   </div>
                 </div>
               ))
