@@ -1,0 +1,51 @@
+@import '../../../../variables.scss';
+
+#accounts {
+    .title {
+        font-family: monospace;
+        font-weight: bold;
+    }
+
+    .menu {
+        padding-top: 10px;
+
+        .account {
+            height: 55px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 15px;
+            padding: 0 20px;
+            font-family: monospace;
+            opacity: 0.6;
+
+            .icon {
+                height: 25px;
+                width: 25px;
+                @include flex-center-center;
+                border-radius: 100%;
+                background-size: cover;
+            }
+
+            .details {
+                .address {
+                    font-size: 15px;
+                    font-weight: bold;
+                }
+
+                .signer {
+                    opacity: 0.5;
+                }
+            }
+
+            &.active {
+                opacity: 1;
+            }
+
+            &:hover {
+                background-color: rgba(0, 0, 0, 0.2);
+                cursor: pointer;
+            }
+        }
+    }
+}
