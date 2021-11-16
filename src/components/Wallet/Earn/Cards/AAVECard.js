@@ -37,36 +37,41 @@ const AAVECard = ({ network, tokens, protocols, account, addRequest }) => {
     }, [tokensItems])
 
     const approveToken = async (tokenAddress, bigNumberHexAmount) => {
-        const ZERO = ethers.BigNumber.from(0)
-        const { rpc } = network
-        const provider = getDefaultProvider(rpc)
-        const tokenContract = new ethers.Contract(tokenAddress, ERC20Interface, provider)
-        const allowance = await tokenContract.allowance(account, tokenAddress)
+        try {
+            const ZERO = ethers.BigNumber.from(0)
+            const { rpc } = network
+            const provider = getDefaultProvider(rpc)
+            const tokenContract = new ethers.Contract(tokenAddress, ERC20Interface, provider)
+            const allowance = await tokenContract.allowance(account, tokenAddress)
 
-        if (allowance.lt(bigNumberHexAmount)) {
-            if (allowance.gt(ZERO)) addRequest({
-                id: `aave_pool_deposit_${Date.now()}`,
-                type: 'eth_sendTransaction',
-                chainId: network.chainId,
-                account,
-                txn: {
-                    to: lendingPoolAddress,
-                    value: bigNumberHexAmount,
-                    data: '0x'
-                }
-            })
-            addRequest({
-                id: `aave_pool_deposit_${Date.now()}`,
-                type: 'eth_sendTransaction',
-                chainId: network.chainId,
-                account,
-                txn: {
-                    to: tokenAddress,
-                    value: '0x0',
-                    data: ERC20Interface.encodeFunctionData('approve', [lendingPoolAddress, bigNumberHexAmount])
-                }
-            })
-	    }
+            if (allowance.lt(bigNumberHexAmount)) {
+                if (allowance.gt(ZERO)) addRequest({
+                    id: `aave_pool_deposit_${Date.now()}`,
+                    type: 'eth_sendTransaction',
+                    chainId: network.chainId,
+                    account,
+                    txn: {
+                        to: lendingPoolAddress,
+                        value: bigNumberHexAmount,
+                        data: '0x'
+                    }
+                })
+                addRequest({
+                    id: `aave_pool_deposit_${Date.now()}`,
+                    type: 'eth_sendTransaction',
+                    chainId: network.chainId,
+                    account,
+                    txn: {
+                        to: tokenAddress,
+                        value: '0x0',
+                        data: ERC20Interface.encodeFunctionData('approve', [lendingPoolAddress, bigNumberHexAmount])
+                    }
+                })
+            }
+        } catch(e) {
+            console.error(e)
+            addToast(`Error: ${e.message || e}`, { error: true })
+        }
     }
 
     const onValidate = async (type, tokenAddress, amount) => {
