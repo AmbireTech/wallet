@@ -24,7 +24,7 @@ export default function Deposit({ selectedAcc, selectedNetwork }) {
                     </div>
                 </div>
                 <div className="description">
-                    <TextInput className="depositAddress" label="Send tokens or collectables (NFTs) to this address:" value={selectedAcc} copy/>
+                    <TextInput className="depositAddress" label="Send tokens or collectibles (NFTs) to this address:" value={selectedAcc} copy/>
                 </div>
                 <div id="networks">
                     Following networks supported:
