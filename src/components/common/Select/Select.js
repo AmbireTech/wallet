@@ -40,7 +40,7 @@ const Select = ({ children, native, monospace, searchable, disabled, label, defa
 
     return (
         !native ? 
-            <div className={`select ${monospace ? 'monospace': ''} ${disabled ? 'disabled' : ''}`} onClick={() => setOpen(!isOpen)} ref={ref}>
+            <div className={`select ${monospace ? 'monospace': ''} ${disabled ? 'disabled' : ''}`} ref={ref}>
                 {
                     searchable ? 
                         <input type="text" className="search-input" disabled={disabled} value={search} ref={hiddenTextInput} onInput={({ target }) => setSearch(target.value)}/>
@@ -55,7 +55,7 @@ const Select = ({ children, native, monospace, searchable, disabled, label, defa
                 }
                 {
                     selectedItem ? 
-                        <div className="input">
+                        <div className="input" onClick={() => setOpen(!isOpen)}>
                             {
                                 selectedItem.icon ? 
                                     <div className="icon">
