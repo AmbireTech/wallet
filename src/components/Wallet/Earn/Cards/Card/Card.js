@@ -43,7 +43,14 @@ const Card = ({ loading, unavailable, tokensItems, icon, details, onTokenSelect,
                         </div>
                         :
                         <div className="content">
-                            <Select searchable disabled={disabled} label="Choose Token" defaultValue={token} items={tokens} onChange={(value) => setToken(value)}/>
+                            <Select
+                                searchable
+                                disabled={disabled}
+                                label="Choose Token"
+                                defaultValue={token}
+                                items={tokens}
+                                onChange={(value) => setToken(value)}
+                            />
                             {
                                 !disabled ? 
                                     <ul className="details">
@@ -61,8 +68,22 @@ const Card = ({ loading, unavailable, tokensItems, icon, details, onTokenSelect,
                                     </div>
                             }
                             <Segments small defaultValue={segment} segments={segments} onChange={(value) => setSegment(value)}></Segments>
-                            <NumberInput disabled={disabled} min="0" max={currentToken?.balance} value={amount} label={`Available Amount: ${!disabled ? `${currentToken?.balance} ${currentToken?.symbol}` : ''}`} onInput={(value) => setAmount(value)} button="MAX" onButtonClick={setMaxValue}></NumberInput>
-                            <Button disabled={disabled} icon={segment === segments[0].value ? <BsArrowDownSquare/> : <BsArrowUpSquare/>} onClick={() => onValidate(segment, token, amount)}>{ segment }</Button>
+                            <NumberInput
+                                disabled={disabled}
+                                min="0"
+                                max={currentToken?.balance}
+                                value={amount}
+                                label={`Available Amount: ${!disabled ? `${currentToken?.balance} ${currentToken?.symbol}` : ''}`}
+                                onInput={(value) => setAmount(value)}
+                                button="MAX"
+                                onButtonClick={setMaxValue}
+                            />
+                            <Button 
+                                disabled={disabled}
+                                icon={segment === segments[0].value ? <BsArrowDownSquare/> : <BsArrowUpSquare/>}
+                                onClick={() => onValidate(segment, token, amount)}>
+                                    { segment }
+                            </Button>
                         </div>
             }
         </div>
