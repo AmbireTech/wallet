@@ -22,7 +22,7 @@ import { usePortfolio } from './hooks'
 const relayerURL = process.env.hasOwnProperty('REACT_APP_RELAYER_URL') ? process.env.REACT_APP_RELAYER_URL : 'http://localhost:1934'
 
 function AppInner () {
-  const { accounts, selectedAcc, onSelectAcc, onAddAccount } = useAccounts()
+  const { accounts, selectedAcc, onSelectAcc, onAddAccount, onRemoveAccount } = useAccounts()
   const { network, setNetwork, allNetworks } = useNetwork()
   const { connections, connect, disconnect, requests: wcRequests, resolveMany: wcResolveMany } = useWalletConnect({
     account: selectedAcc,
@@ -91,6 +91,7 @@ function AppInner () {
           selectedAcc={selectedAcc}
           portfolio={portfolio}
           onSelectAcc={onSelectAcc}
+          onRemoveAccount={onRemoveAccount}
           allNetworks={allNetworks}
           network={network}
           setNetwork={setNetwork}

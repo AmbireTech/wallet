@@ -10,6 +10,7 @@ const TopBar = ({
   connect,
   disconnect,
   onSelectAcc,
+  onRemoveAccount,
   selectedAcc,
   accounts,
   network,
@@ -55,8 +56,6 @@ const TopBar = ({
 
   useEffect(() => checkPermissions(), []);
 
-  console.log(accounts);
-
   return (
     <div id="topbar">
       <div className="container">
@@ -92,7 +91,7 @@ const TopBar = ({
           ))}
         </DropDown>
 
-        <Accounts accounts={accounts} selectedAddress={selectedAcc} onSelectAcc={onSelectAcc}/>
+        <Accounts accounts={accounts} selectedAddress={selectedAcc} onSelectAcc={onSelectAcc} onRemoveAccount={onRemoveAccount}/>
 
         <Select defaultValue={network.id} items={networksItems} onChange={value => setNetwork(value)}/>
       </div>
