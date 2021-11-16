@@ -9,7 +9,7 @@ const Earn = ({ portfolio, selectedNetwork, selectedAcc, addRequest }) => {
                 portfolio.isBalanceLoading ?
                     <Loading/>
                     :
-                    <AAVECard network={{...selectedNetwork}} tokens={portfolio.tokens} protocols={portfolio.protocols} account={selectedAcc} addRequest={addRequest}/>
+                    <AAVECard networkId={selectedNetwork.id} tokens={portfolio.tokens} protocols={portfolio.protocols} account={selectedAcc} addRequest={addRequest}/>
             }
         </div>
     )
