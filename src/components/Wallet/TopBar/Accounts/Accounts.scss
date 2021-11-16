@@ -62,7 +62,7 @@
             }
 
             .button {
-                z-index: 50;
+                flex: 0 0 auto;
                 height: 60px;
                 width: 50px;
                 @include flex-center-center;
@@ -90,6 +90,17 @@
                 .inner {
                     opacity: 1;
                 }
+            }
+        }
+
+        #confirm-delete-account {
+            padding-left: 25px;
+            white-space: nowrap;
+            
+            .message {
+                padding-right: 30px;
+                font-size: 15px;
+                font-weight: bold;
             }
         }
     }
