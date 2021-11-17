@@ -1,20 +1,21 @@
 import './DropDown.scss'
 
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { BsChevronDown } from 'react-icons/bs'
 import { CSSTransition } from 'react-transition-group';
 import useOnClickOutside from '../../../helpers/onClickOutside';
 
-export default function DropDown({ children, id, className, icon, title, badge, closeOnClick }) {
+export default function DropDown({ children, id, className, icon, title, badge, closeOnClick, onMenuOpen }) {
     const ref = useRef();
     const transitionRef = useRef();
-    const [isDropDownOpen, setDropDownOpen] = useState(false);
+    const [isMenuOpen, setMenuOpen] = useState(false);
 
-    useOnClickOutside(ref, () => setDropDownOpen(false));
+    useEffect(() => onMenuOpen && isMenuOpen ? onMenuOpen() : null, [isMenuOpen, onMenuOpen]);
+    useOnClickOutside(ref, () => setMenuOpen(false));
 
     return (
         <div id={id} className={`dropdown ${className}`} ref={ref}>
-            <div className="content" onClick={() => setDropDownOpen(!isDropDownOpen)}>
+            <div className="content" onClick={() => setMenuOpen(!isMenuOpen)}>
                 {
                     icon ?
                         <div className="icon" style={{backgroundImage: `url(${icon})`}} />
@@ -30,12 +31,12 @@ export default function DropDown({ children, id, className, icon, title, badge, 
                         :
                         null
                 }
-                <div className={`handle ${isDropDownOpen ? 'open' : ''}`}>
+                <div className={`handle ${isMenuOpen ? 'open' : ''}`}>
                     <BsChevronDown size={20}></BsChevronDown>
                 </div>
             </div>
-            <CSSTransition unmountOnExit in={isDropDownOpen} timeout={200} classNames="fade" nodeRef={transitionRef}>
-                <div className="menu" ref={transitionRef} onClick={closeOnClick ? () => setDropDownOpen(false) : null}>
+            <CSSTransition unmountOnExit in={isMenuOpen} timeout={200} classNames="fade" nodeRef={transitionRef}>
+                <div className="menu" ref={transitionRef} onClick={closeOnClick ? () => setMenuOpen(false) : null}>
                     { children }
                 </div>
             </CSSTransition>
