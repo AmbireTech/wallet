@@ -1,0 +1,117 @@
+@import '../../../variables.scss';
+
+$heading-height: 45px;
+
+.address-book {
+    .list {
+        top: 60px !important;
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+        padding: 0;
+        white-space: nowrap;
+
+        .button {
+            height: 100%;
+            @include flex-center-center;
+            font-size: 17px;
+            font-weight: bold;
+            color: white;
+
+            &:not([disabled]):hover {
+                cursor: pointer;
+                opacity: 1;
+                background-color: rgba(0, 0, 0, 0.2) !important;
+            }
+
+            &:active {
+                background-color: rgba(255, 255, 255, 0.05) !important;
+            }
+        }
+
+        .heading {
+            height: $heading-height;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-left: 20px;
+            
+            .title {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                font-size: 15px;
+                font-weight: bold;
+            }
+
+            .button {
+                width: $heading-height;
+            }
+        }
+
+        .content {
+            display: flex;
+            flex-direction: column;
+            min-width: 300px;
+            padding: 0;
+
+            .fields {
+                display: flex;
+                gap: 10px;
+
+                input[type=text] {
+                    height: 40px;
+                    color: white;
+                    background-color: rgba(0, 0, 0, 0.1);
+                }
+            }
+
+            button {
+                height: 50px;
+                width: 100%;
+                display: flex;
+                gap: 10px;
+                text-transform: uppercase;
+                background-color: rgba(0, 0, 0, 0.1);
+            }
+
+            .text-input {
+                flex: 0 0 50%;
+
+                input {
+                    padding-right: initial !important;
+                }
+            }
+
+            .items {
+                .item {
+                    height: 60px;
+                    display: flex;
+                    flex-direction: column;
+                    align-items: flex-start;
+                    justify-content: center;
+                    gap: 5px;
+                    padding: 0 20px;
+                    cursor: pointer;
+
+                    label {
+                        font-size: 12px;
+                        font-weight: 500;
+                        opacity: 0.5;
+                        cursor: pointer;
+                    }
+
+                    .address {
+                        font-family: monospace;
+                        font-size: 15px;
+                        font-weight: bold;
+                    }
+
+                    &:hover {
+                        background-color: rgba(0, 0, 0, 0.2);
+                    }
+                }
+            }
+        }
+    }
+}
