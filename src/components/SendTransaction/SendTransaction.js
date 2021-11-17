@@ -300,9 +300,9 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
                           })}
                       </div>
                       <div className='transactionsNote'>
-                        {bundle.requestIds && (<>
+                        {bundle.requestIds ? (<>
                           <b>DEGEN TIP:</b> You can sign multiple transactions at once. Add more transactions to this batch by interacting with a connected dApp right now.
-                        </>)}
+                        </>) : (<><b>NOTE:</b> You are currently replacing a pending transaction.</>)}
                       </div>
               </div>
           </div>
