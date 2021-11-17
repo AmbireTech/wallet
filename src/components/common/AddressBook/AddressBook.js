@@ -2,6 +2,7 @@ import './AddressBook.scss'
 
 import { FaAddressCard } from 'react-icons/fa'
 import { MdOutlineAdd, MdClose, MdOutlineDelete } from 'react-icons/md'
+import * as blockies from 'blockies-ts';
 import { useAddressBook, useAccounts } from '../../../hooks'
 import { DropDown } from '..'
 import { useCallback, useEffect, useState } from 'react'
@@ -20,6 +21,8 @@ const AddressBook = ({ newAddress, onClose, onSelectAddress }) => {
         const walletType = signerExtra && signerExtra.type === 'ledger' ? 'Ledger' : signerExtra && signerExtra.type === 'trezor' ? 'Trezor' : 'Web3'
         return email ? `Ambire account for ${email}` : `Ambire account (${walletType})`
     }
+    const toIcon = seed => blockies.create({ seed }).toDataURL()
+    const toIconBackgroundImage = seed => ({ backgroundImage: `url(${toIcon(seed)})`})
     const selectAddress = address => onSelectAddress ? onSelectAddress(address) : null
     
     const isAddAddressFormValid = address.length && name.length && /^0x[a-fA-F0-9]{40}$/.test(address)
@@ -86,8 +89,11 @@ const AddressBook = ({ newAddress, onClose, onSelectAddress }) => {
                                         accountsList.map(account => (
                                             <div className="item" key={account.id} onClick={() => selectAddress(account.id)}>
                                                 <div className="inner">
-                                                    <label>{ accountType(account) }</label>
-                                                    <div className="address">{ account.id }</div>
+                                                    <div className="icon" style={toIconBackgroundImage(account.id)}></div>
+                                                    <div className="details">
+                                                        <label>{ accountType(account) }</label>
+                                                        <div className="address">{ account.id }</div>
+                                                    </div>
                                                 </div>
                                             </div>
                                         ))
@@ -96,8 +102,11 @@ const AddressBook = ({ newAddress, onClose, onSelectAddress }) => {
                                         addresses.map(({ name, address }) => (
                                             <div className="item" key={address + name}>
                                                 <div className="inner" onClick={() => selectAddress(address)}>
-                                                    <label>{ name }</label>
-                                                    <div className="address">{ address }</div>
+                                                    <div className="icon" style={toIconBackgroundImage(address)}></div>
+                                                    <div className="details">
+                                                        <label>{ name }</label>
+                                                        <div className="address">{ address }</div>
+                                                    </div>
                                                 </div>
                                                 <div className="button" onClick={() => removeAddress(name, address)}>
                                                     <MdOutlineDelete/>
