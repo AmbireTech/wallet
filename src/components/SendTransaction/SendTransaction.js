@@ -172,7 +172,7 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
 
   const approveTxnImplQuickAcc = async ({ quickAccCredentials }) => {
     if (!estimation) throw new Error('no estimation: should never happen')
-    if (!relayerURL) throw new Error('Email/passphrase account signing without the relayer is not supported yet')
+    if (!relayerURL) throw new Error('Email/Password account signing without the relayer is not supported yet')
 
     const finalBundle = (signingStatus && signingStatus.finalBundle) || getFinalBundle()
     const signer = finalBundle.signer
@@ -201,7 +201,7 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
       if (!signature) throw new Error(`QuickAcc internal error: there should be a signature`)
       if (!account.primaryKeyBackup) throw new Error(`No key backup found: perhaps you need to import the account via JSON?`)
       setSigningStatus({ quickAcc: true, inProgress: true })
-      const pwd = quickAccCredentials.passphrase || alert('Enter passphrase')
+      const pwd = quickAccCredentials.passphrase || alert('Enter password')
       const wallet = await Wallet.fromEncryptedJson(JSON.parse(account.primaryKeyBackup), pwd)
       await finalBundle.sign(wallet)
       finalBundle.signatureTwo = signature
