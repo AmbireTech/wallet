@@ -86,25 +86,33 @@ $heading-height: 45px;
             .items {
                 .item {
                     height: 60px;
-                    display: flex;
-                    flex-direction: column;
-                    align-items: flex-start;
-                    justify-content: center;
-                    gap: 5px;
-                    padding: 0 20px;
+                    padding: 0;
                     cursor: pointer;
 
-                    label {
-                        font-size: 12px;
-                        font-weight: 500;
-                        opacity: 0.5;
-                        cursor: pointer;
+                    .inner {
+                        display: flex;
+                        flex-direction: column;
+                        align-items: flex-start;
+                        justify-content: center;
+                        gap: 5px;
+                        padding: 0 20px;
+
+                        label {
+                            font-size: 12px;
+                            font-weight: 500;
+                            opacity: 0.5;
+                            cursor: pointer;
+                        }
+
+                        .address {
+                            font-family: monospace;
+                            font-size: 15px;
+                            font-weight: bold;
+                        }
                     }
 
-                    .address {
-                        font-family: monospace;
-                        font-size: 15px;
-                        font-weight: bold;
+                    .button {
+                        width: 50px;
                     }
 
                     &:hover {
