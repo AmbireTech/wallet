@@ -35,6 +35,7 @@ $heading-height: 45px;
             align-items: center;
             justify-content: space-between;
             padding-left: 20px;
+            background-color: $input-background-color;
             
             .title {
                 display: flex;
@@ -50,10 +51,12 @@ $heading-height: 45px;
         }
 
         .content {
+            max-height: 250px;
             display: flex;
             flex-direction: column;
             min-width: 300px;
             padding: 0;
+            overflow-y: auto;
 
             .text-input {
                 input {
