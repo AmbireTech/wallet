@@ -4,7 +4,7 @@ import { AiOutlineWarning } from 'react-icons/ai'
 import { BsArrowDown } from 'react-icons/bs'
 import { MdOutlineAdd } from 'react-icons/md'
 import { useParams, withRouter } from 'react-router'
-import { useCallback, useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { ethers } from 'ethers'
 import SendPlaceholder from './SendPlaceholder/SendPlaceholder'
 import { Interface } from 'ethers/lib/utils'
@@ -67,10 +67,12 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, accounts, 
         }
     }
 
-    const isKnownAddress = useCallback(() => [
+    const isKnownAddress = useMemo(() => [
         ...addresses.map(({ address }) => address),
         ...accounts.map(({ id }) => id)
     ].includes(address), [addresses, accounts, address])
+    const isAddressValid = useMemo(() => /^0x[a-fA-F0-9]{40}$/.test(address), [address])
+    const shouldShowUnknowAddressWarning = useMemo(() => isAddressValid && !isKnownAddress, [isAddressValid, isKnownAddress])
 
     const sendTx = () => {
         try {
@@ -112,11 +114,10 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, accounts, 
         const tokensAddresses = Object.keys(tokens).map(address => address.toLowerCase())
         const contractsAddresses = Object.keys(verifiedContracts).map(key => key.split(':')[1].toLowerCase())
         const isKnowTokenOrContract = tokensAddresses.includes(addressToLowerCase) || contractsAddresses.includes(addressToLowerCase)
-        const isAddressValid = /^0x[a-fA-F0-9]{40}$/.test(address)
 
         setWarning(isKnowTokenOrContract)
-        setDisabled(isKnowTokenOrContract || !isAddressValid || !(amount > 0) || !(amount <= selectedAsset?.balance) || address === selectedAcc || (!isKnownAddress() && !addressConfirmed))
-    }, [address, amount, selectedAcc, selectedAsset, addressConfirmed, isKnownAddress])
+        setDisabled(isKnowTokenOrContract || !isAddressValid || !(amount > 0) || !(amount <= selectedAsset?.balance) || address === selectedAcc || (!isKnownAddress && !addressConfirmed))
+    }, [address, amount, selectedAcc, selectedAsset, addressConfirmed, isAddressValid, isKnownAddress])
 
     return (
         <div id="transfer">
@@ -153,7 +154,7 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, accounts, 
                                     />
                                 </div>
                                 {
-                                    address && !isKnownAddress() ?
+                                    shouldShowUnknowAddressWarning ?
                                         <div id="unknown-address-warning">
                                             <Checkbox
                                                 label="Confirm sending to a previously unknown address"
