@@ -1,14 +1,13 @@
 import './Transfer.scss'
 
 import { BsArrowDown } from 'react-icons/bs'
-import { FaAddressCard } from 'react-icons/fa'
 import { useParams, withRouter } from 'react-router'
 import { useEffect, useState } from 'react'
 import { ethers } from 'ethers'
 import SendPlaceholder from './SendPlaceholder/SendPlaceholder'
 import { Interface } from 'ethers/lib/utils'
 import { useToasts } from '../../../hooks/toasts'
-import { TextInput, NumberInput, Button, Select, Loading, DropDown } from '../../common'
+import { TextInput, NumberInput, Button, Select, Loading, AddressBook } from '../../common'
 
 const ERC20 = new Interface(require('adex-protocol-eth/abi/ERC20'))
 const crossChainAssets = [
@@ -38,10 +37,6 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, accounts, 
         value: address,
         icon: img
     }))
-
-    const addressesItems = accounts
-        .filter(({ id }) => id !== selectedAcc)
-        .map(({ id }) => id)
 
     const selectedAsset = portfolio.tokens.find(({ address }) => address === asset)
 
@@ -118,21 +113,7 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, accounts, 
                                         value={address}
                                         onInput={setAddress}
                                     />
-                                    {
-                                        addressesItems.length ? 
-                                            <DropDown title={<FaAddressCard/>} closeOnClick={true}>
-                                                <label>Select from your accounts:</label>
-                                                {
-                                                    addressesItems.map(id => (
-                                                        <div className={`item ${id === address ? 'active' : ''}`} key={id} onClick={() => setAddress(id)}>
-                                                            { id }
-                                                        </div>
-                                                    ))
-                                                }
-                                            </DropDown>
-                                            :
-                                            null
-                                    }
+                                    <AddressBook onSelectAddress={address => setAddress(address)}/>
                                 </div>
                                 <div className="separator"/>
                                 <Button disabled={disabled} onClick={sendTx}>Send</Button>
