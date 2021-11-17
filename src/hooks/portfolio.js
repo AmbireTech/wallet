@@ -153,7 +153,15 @@ export default function usePortfolio({ currentNetwork, account }) {
         try {
             const balanceByNetworks = tokensByNetworks.map(({ network, meta }) => {
                 const balanceUSD = meta.find(({ label }) => label === 'Total')?.value + meta.find(({ label }) => label === 'Debt')?.value
-                if (!balanceUSD) return {} 
+                if (!balanceUSD) return {
+                    network,
+                    total: {
+                        full: 0,
+                        truncated: 0,
+                        decimals: '00'
+                    }
+                }
+
                 const [truncated, decimals] = Number(balanceUSD.toString()).toFixed(2).split('.')
                 return {
                     network,
