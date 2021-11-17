@@ -6,7 +6,7 @@ export default function Actions({ estimation, feeSpeed, approveTxn, rejectTxn, s
   const [quickAccCredentials, setQuickAccCredentials] = useState({ code: '', passphrase: '' })
   const form = useRef(null)
 
-  const rejectButton = (
+  const rejectButton = rejectTxn && (
     <button type='button' className='rejectTxn' onClick={rejectTxn}>Reject</button>
   )
   const insufficientFee = estimation && estimation.feeInUSD

@@ -7,7 +7,7 @@ import {getDefaultProvider} from 'ethers'
 
 const STORAGE_KEY = 'gnosis_safe_state'
 
-export default function useGnosisSafe({ selectedAccount, network, verbose = 1 }) {
+export default function useGnosisSafe({ selectedAccount, network, verbose = 0 }) {
   // One connector at a time
   const connector = useRef(null)
 
