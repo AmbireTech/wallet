@@ -33,7 +33,7 @@ export function FeeSelector ({ disabled, signer, estimation, network, setEstimat
     }
     const feeCurrencySelect = estimation.feeInUSD ? (<>
       <span style={{ marginTop: '1em' }}>Fee currency</span>
-      <select disabled={disabled} defaultValue={estimation.selectedFeeToken.symbol} onChange={onFeeCurrencyChange}>
+      <select disabled={disabled} value={estimation.selectedFeeToken.symbol} onChange={onFeeCurrencyChange}>
         {tokens.map(token => 
           (<option
             disabled={!isTokenEligible(token, feeSpeed, estimation)}
