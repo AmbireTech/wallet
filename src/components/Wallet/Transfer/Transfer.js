@@ -55,11 +55,15 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, accounts, 
     }
 
     const onAmountChange = (value) => {
-        const amount = value || '0'
-        const { decimals } = selectedAsset
-        const bigNumberAmount = ethers.utils.parseUnits(amount, decimals).toHexString()
-        setAmount(amount)
-        setBigNumberHexAmount(bigNumberAmount)
+        setAmount(value)
+
+        if (value.length) {
+            const amount = value || '0'
+            const { decimals } = selectedAsset
+            const bigNumberAmount = ethers.utils.parseUnits(amount, decimals).toHexString()
+            setAmount(amount)
+            setBigNumberHexAmount(bigNumberAmount)
+        }
     }
 
     const sendTx = () => {
@@ -83,6 +87,8 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, accounts, 
                 account: selectedAcc,
                 txn
             })
+
+            setAmount(0)
         } catch(e) {
             console.error(e)
             addToast(`Error: ${e.message || e}`, { error: true })
@@ -103,8 +109,8 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, accounts, 
         const isAddressValid = /^0x[a-fA-F0-9]{40}$/.test(address)
 
         setWarning(isKnowTokenOrContract)
-        setDisabled(isKnowTokenOrContract || !isAddressValid || !(amount > 0) || address === selectedAcc)
-    }, [address, amount, selectedAcc])
+        setDisabled(isKnowTokenOrContract || !isAddressValid || !(amount > 0) || !(amount <= selectedAsset?.balance) || address === selectedAcc)
+    }, [address, amount, selectedAcc, selectedAsset])
 
     return (
         <div id="transfer">
@@ -119,7 +125,14 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, accounts, 
                         assetsItems.length ? 
                             <div className="form">
                                 <Select searchable defaultValue={asset} items={assetsItems} onChange={(value) => setAsset(value)}/>
-                                <NumberInput value={amount} min="0" onInput={onAmountChange} button="MAX" onButtonClick={() => setMaxAmount()}/>
+                                <NumberInput
+                                    label={`Available Amount: ${selectedAsset?.balance} ${selectedAsset?.symbol}`}
+                                    value={amount}
+                                    min="0"
+                                    onInput={onAmountChange}
+                                    button="MAX"
+                                    onButtonClick={() => setMaxAmount()}
+                                />
                                 <div id="recipient-field">
                                     <TextInput
                                         placeholder="Recipient"
