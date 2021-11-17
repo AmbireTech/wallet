@@ -297,7 +297,7 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
                           {bundle.txns.map((txn, i) => {
                             const isFirstFailing = estimation && !estimation.success && estimation.firstFailing === i
                             return (<TxnPreview
-                              key={txn.join(':')}
+                              key={[...txn, i].join(':')}
                               onDismiss={bundle.requestIds && (() => resolveMany([bundle.requestIds[i]], { message: 'rejected' }))}
                               txn={txn} network={bundle.network} account={bundle.identity}
                               isFirstFailing={isFirstFailing}/>
