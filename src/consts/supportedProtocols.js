@@ -8,6 +8,10 @@ const suportedProtocols = [
     {
         network: 'polygon',
         protocols: ['aave-v2', 'quickswap', 'sushiswap']
+    },
+    {
+        network: 'avalanche',
+        protocols: ['aave-v2']
     }
 ]
 
