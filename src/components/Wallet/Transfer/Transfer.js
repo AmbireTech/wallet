@@ -1,5 +1,6 @@
 import './Transfer.scss'
 
+import { AiOutlineWarning } from 'react-icons/ai'
 import { BsArrowDown } from 'react-icons/bs'
 import { useParams, withRouter } from 'react-router'
 import { useEffect, useState } from 'react'
@@ -8,6 +9,7 @@ import SendPlaceholder from './SendPlaceholder/SendPlaceholder'
 import { Interface } from 'ethers/lib/utils'
 import { useToasts } from '../../../hooks/toasts'
 import { TextInput, NumberInput, Button, Select, Loading, AddressBook } from '../../common'
+import { verifiedContracts, tokens } from '../../../consts/verifiedContracts'
 
 const ERC20 = new Interface(require('adex-protocol-eth/abi/ERC20'))
 const crossChainAssets = [
@@ -31,6 +33,7 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, accounts, 
     const [bigNumberHexAmount, setBigNumberHexAmount] = useState('')
     const [address, setAddress] = useState('')
     const [disabled, setDisabled] = useState(true)
+    const [warning, setWarning] = useState(false)
 
     const assetsItems = portfolio.tokens.map(({ label, address, img }) => ({
         label,
@@ -47,11 +50,15 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, accounts, 
     }
 
     const onAmountChange = (value) => {
-        const amount = value || '0'
-        const { decimals } = selectedAsset
-        const bigNumberAmount = ethers.utils.parseUnits(amount, decimals).toHexString()
-        setAmount(amount)
-        setBigNumberHexAmount(bigNumberAmount)
+        setAmount(value)
+
+        if (value.length) {
+            const amount = value || '0'
+            const { decimals } = selectedAsset
+            const bigNumberAmount = ethers.utils.parseUnits(amount, decimals).toHexString()
+            setAmount(amount)
+            setBigNumberHexAmount(bigNumberAmount)
+        }
     }
 
     const sendTx = () => {
@@ -75,6 +82,8 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, accounts, 
                 account: selectedAcc,
                 txn
             })
+
+            setAmount(0)
         } catch(e) {
             console.error(e)
             addToast(`Error: ${e.message || e}`, { error: true })
@@ -88,9 +97,15 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, accounts, 
     }, [asset, history])
 
     useEffect(() => {
+        const addressToLowerCase = address.toLowerCase()
+        const tokensAddresses = Object.keys(tokens).map(address => address.toLowerCase())
+        const contractsAddresses = Object.keys(verifiedContracts).map(key => key.split(':')[1].toLowerCase())
+        const isKnowTokenOrContract = tokensAddresses.includes(addressToLowerCase) || contractsAddresses.includes(addressToLowerCase)
         const isAddressValid = /^0x[a-fA-F0-9]{40}$/.test(address)
-        setDisabled(!isAddressValid || !(amount > 0) || address === selectedAcc)
-    }, [address, amount, selectedAcc])
+
+        setWarning(isKnowTokenOrContract)
+        setDisabled(isKnowTokenOrContract || !isAddressValid || !(amount > 0) || !(amount <= selectedAsset?.balance) || address === selectedAcc)
+    }, [address, amount, selectedAcc, selectedAsset])
 
     return (
         <div id="transfer">
@@ -105,7 +120,14 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, accounts, 
                         assetsItems.length ? 
                             <div className="form">
                                 <Select searchable defaultValue={asset} items={assetsItems} onChange={(value) => setAsset(value)}/>
-                                <NumberInput value={amount} min="0" onInput={onAmountChange} button="MAX" onButtonClick={() => setMaxAmount()}/>
+                                <NumberInput
+                                    label={`Available Amount: ${selectedAsset?.balance} ${selectedAsset?.symbol}`}
+                                    value={amount}
+                                    min="0"
+                                    onInput={onAmountChange}
+                                    button="MAX"
+                                    onButtonClick={() => setMaxAmount()}
+                                />
                                 <div id="recipient-field">
                                     <TextInput
                                         placeholder="Recipient"
@@ -116,6 +138,15 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, accounts, 
                                     <AddressBook onSelectAddress={address => setAddress(address)}/>
                                 </div>
                                 <div className="separator"/>
+                                {
+                                    warning ?
+                                        <div id="address-warning">
+                                            <AiOutlineWarning/>
+                                            You are trying to send tokens to a smart contract. Doing so would burn them.
+                                        </div>
+                                        :
+                                        null
+                                }
                                 <Button disabled={disabled} onClick={sendTx}>Send</Button>
                             </div>
                             :
