@@ -18,7 +18,7 @@ const Protocols = ({ protocols }) => {
                                 <div className="title">{ label }</div>
                                 <div className="list">
                                     {
-                                        assets.map(({ tokens }) => 
+                                        assets.map(({ type, tokens }) => 
                                             tokens.map(({ label, collectionName, symbol, img, collectionImg, balance, balanceUSD, address }, i) => (
                                                 <div className="token" key={`token-${i}`}>
                                                     <div className="icon">
@@ -41,11 +41,16 @@ const Protocols = ({ protocols }) => {
                                                             <span className="symbol">$</span> { balanceUSD.toFixed(2) }
                                                         </div>
                                                     </div>
-                                                    <div className="actions">
-                                                        <NavLink to={`/wallet/transfer/${address}`}>
-                                                            <Button small icon={<AiOutlineSend/>}>Send</Button>
-                                                        </NavLink>
-                                                    </div>
+                                                    {
+                                                        type === 'wallet' ?
+                                                            <div className="actions">
+                                                                <NavLink to={`/wallet/transfer/${address}`}>
+                                                                    <Button small icon={<AiOutlineSend/>}>Send</Button>
+                                                                </NavLink>
+                                                            </div>
+                                                            :
+                                                            null
+                                                     }
                                                 </div>
                                             ))
                                         )

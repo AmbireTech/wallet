@@ -30,8 +30,7 @@ function AppInner () {
   })
   const { requests: gnosisRequests, resolveMany: gnosisResolveMany, connect: gnosisConnect, disconnect: gnosisDisconnect } = useGnosisSafe({
 	  selectedAccount: selectedAcc,
-	  network: network,
-    verbose: 1
+	  network: network
 	}, [selectedAcc, network])
 
   const portfolio = usePortfolio({
