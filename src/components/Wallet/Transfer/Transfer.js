@@ -3,13 +3,14 @@ import './Transfer.scss'
 import { AiOutlineWarning } from 'react-icons/ai'
 import { BsArrowDown } from 'react-icons/bs'
 import { useParams, withRouter } from 'react-router'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { ethers } from 'ethers'
 import SendPlaceholder from './SendPlaceholder/SendPlaceholder'
 import { Interface } from 'ethers/lib/utils'
 import { useToasts } from '../../../hooks/toasts'
-import { TextInput, NumberInput, Button, Select, Loading, AddressBook } from '../../common'
+import { TextInput, NumberInput, Button, Select, Loading, AddressBook, Checkbox } from '../../common'
 import { verifiedContracts, tokens } from '../../../consts/verifiedContracts'
+import { useAddressBook } from '../../../hooks'
 
 const ERC20 = new Interface(require('adex-protocol-eth/abi/ERC20'))
 const crossChainAssets = [
@@ -26,14 +27,17 @@ const crossChainAssets = [
 ]
 
 const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, accounts, addRequest }) => {
-    const { addToast } = useToasts()
     const { tokenAddress } = useParams()
+    const { addToast } = useToasts()
+    const { addresses } = useAddressBook()
+
     const [asset, setAsset] = useState(tokenAddress)
     const [amount, setAmount] = useState(0)
     const [bigNumberHexAmount, setBigNumberHexAmount] = useState('')
     const [address, setAddress] = useState('')
     const [disabled, setDisabled] = useState(true)
     const [warning, setWarning] = useState(false)
+    const [addressConfirmed, setAddressConfirmed] = useState(false)
 
     const assetsItems = portfolio.tokens.map(({ label, address, img }) => ({
         label,
@@ -60,6 +64,11 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, accounts, 
             setBigNumberHexAmount(bigNumberAmount)
         }
     }
+
+    const isKnownAddress = useCallback(() => [
+        ...addresses.map(({ address }) => address),
+        ...accounts.map(({ id }) => id)
+    ].includes(address), [addresses, accounts, address])
 
     const sendTx = () => {
         try {
@@ -104,8 +113,8 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, accounts, 
         const isAddressValid = /^0x[a-fA-F0-9]{40}$/.test(address)
 
         setWarning(isKnowTokenOrContract)
-        setDisabled(isKnowTokenOrContract || !isAddressValid || !(amount > 0) || !(amount <= selectedAsset?.balance) || address === selectedAcc)
-    }, [address, amount, selectedAcc, selectedAsset])
+        setDisabled(isKnowTokenOrContract || !isAddressValid || !(amount > 0) || !(amount <= selectedAsset?.balance) || address === selectedAcc || (!isKnownAddress() && !addressConfirmed))
+    }, [address, amount, selectedAcc, selectedAsset, addressConfirmed, isKnownAddress])
 
     return (
         <div id="transfer">
@@ -137,6 +146,12 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, accounts, 
                                     />
                                     <AddressBook onSelectAddress={address => setAddress(address)}/>
                                 </div>
+                                {
+                                    !isKnownAddress() ?
+                                        <Checkbox label="Confirm sending to a previously unknown address" checked={addressConfirmed} onChange={({ target }) => setAddressConfirmed(target.checked)}/>
+                                        :
+                                        null
+                                }
                                 <div className="separator"/>
                                 {
                                     warning ?
