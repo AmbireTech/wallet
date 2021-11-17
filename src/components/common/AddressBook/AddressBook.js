@@ -50,7 +50,7 @@ const AddressBook = ({ onSelectAddress }) => {
             </div>
             {
                 openAddAddress ?
-                    <div className="content">
+                    <div id="add-address" className="content">
                         <div className="fields">
                             <input type="text" placeholder="Name" defaultValue={name} onInput={({ target }) => setName(target.value)}/>
                             <input type="text" placeholder="Address" defaultValue={address} onInput={({ target }) => setAddress(target.value)}/>
