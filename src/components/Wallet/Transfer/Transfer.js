@@ -2,6 +2,7 @@ import './Transfer.scss'
 
 import { AiOutlineWarning } from 'react-icons/ai'
 import { BsArrowDown } from 'react-icons/bs'
+import { MdOutlineAdd } from 'react-icons/md'
 import { useParams, withRouter } from 'react-router'
 import { useCallback, useEffect, useState } from 'react'
 import { ethers } from 'ethers'
@@ -159,7 +160,10 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, accounts, 
                                                 checked={addressConfirmed}
                                                 onChange={({ target }) => setAddressConfirmed(target.checked)}
                                             />
-                                            <label onClick={() => setNewAddress(address)}>Add it to the address book.</label>
+                                            <div class="button" onClick={() => setNewAddress(address)}>
+                                                <MdOutlineAdd/>
+                                                Add it to the address book
+                                            </div>
                                         </div>
                                         :
                                         null
