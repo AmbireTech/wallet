@@ -77,6 +77,7 @@ function AppInner () {
   return (<>
     {toSign && (<SignMessage
       selectedAcc={selectedAcc}
+      account={accounts.find(x => x.id === selectedAcc)}
       toSign={toSign}
       resolve={outcome => resolveMany([toSign.id], outcome)}
     ></SignMessage>)}
