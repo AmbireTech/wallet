@@ -26,13 +26,15 @@ const AddressBook = ({ onSelectAddress }) => {
         addAddress(name, address)
     }, [name, address, addAddress])
 
+    const onMenuOpen = useCallback(() => setOpenAddAddress(false), [])
+
     useEffect(() => {
         setAddress('')
         setName('')
     }, [openAddAddress])
 
     return (
-        <DropDown title={<FaAddressCard/>} className="address-book">
+        <DropDown title={<FaAddressCard/>} className="address-book" onMenuOpen={onMenuOpen}>
             <div className="heading">
                 <div className="title">
                     <FaAddressCard/> Address Book
