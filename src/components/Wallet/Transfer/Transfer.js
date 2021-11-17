@@ -38,6 +38,7 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, accounts, 
     const [disabled, setDisabled] = useState(true)
     const [warning, setWarning] = useState(false)
     const [addressConfirmed, setAddressConfirmed] = useState(false)
+    const [newAddress, setNewAddress] = useState('')
 
     const assetsItems = portfolio.tokens.map(({ label, address, img }) => ({
         label,
@@ -144,11 +145,22 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, accounts, 
                                         value={address}
                                         onInput={setAddress}
                                     />
-                                    <AddressBook onSelectAddress={address => setAddress(address)}/>
+                                    <AddressBook 
+                                        newAddress={newAddress}
+                                        onClose={() => setNewAddress(null)}
+                                        onSelectAddress={address => setAddress(address)}
+                                    />
                                 </div>
                                 {
                                     !isKnownAddress() ?
-                                        <Checkbox label="Confirm sending to a previously unknown address" checked={addressConfirmed} onChange={({ target }) => setAddressConfirmed(target.checked)}/>
+                                        <div id="unknown-address-warning">
+                                            <Checkbox
+                                                label="Confirm sending to a previously unknown address"
+                                                checked={addressConfirmed}
+                                                onChange={({ target }) => setAddressConfirmed(target.checked)}
+                                            />
+                                            <label onClick={() => setNewAddress(address)}>Add it to the address book.</label>
+                                        </div>
                                         :
                                         null
                                 }

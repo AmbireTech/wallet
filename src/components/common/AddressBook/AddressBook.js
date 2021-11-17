@@ -6,12 +6,13 @@ import { useAddressBook, useAccounts } from '../../../hooks'
 import { DropDown } from '..'
 import { useCallback, useEffect, useState } from 'react'
 
-const AddressBook = ({ onSelectAddress }) => {
+const AddressBook = ({ newAddress, onClose, onSelectAddress }) => {
     const { accounts, selectedAcc } = useAccounts()
     const { addresses, addAddress, removeAddress } = useAddressBook()
 
     const [address, setAddress] = useState('')
     const [name, setName] = useState('')
+    const [isOpen, setOpenMenu] = useState(false)
     const [openAddAddress, setOpenAddAddress] = useState(false)
 
     const accountsList = accounts.filter(({ id }) => id !== selectedAcc)
@@ -26,16 +27,26 @@ const AddressBook = ({ onSelectAddress }) => {
         setOpenAddAddress(false)
         addAddress(name, address)
     }, [name, address, addAddress])
-    
-    const onMenuOpen = useCallback(() => setOpenAddAddress(false), [])
+
+    const onMenuClose = useCallback(() => {
+        setName('')
+        setAddress('')
+        setOpenMenu(false)
+        setOpenAddAddress(false)
+    }, [])
+
+    useEffect(() => !isOpen && onClose ? onClose() : null, [isOpen, onClose])
 
     useEffect(() => {
-        setAddress('')
-        setName('')
-    }, [openAddAddress])
+        if (newAddress) {
+            setAddress(newAddress)
+            setOpenMenu(true)
+            setOpenAddAddress(true)
+        }
+    }, [newAddress])
 
     return (
-        <DropDown title={<FaAddressCard/>} className="address-book" onMenuOpen={onMenuOpen}>
+        <DropDown title={<FaAddressCard/>} className="address-book" open={isOpen} onClose={onMenuClose}>
             <div className="heading">
                 <div className="title">
                     <FaAddressCard/> Address Book
