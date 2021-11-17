@@ -70,7 +70,7 @@ const AddressBook = ({ onSelectAddress }) => {
                                 <div className="items">
                                     {
                                         addresses.map(({ id, name }) => (
-                                            <div className="item" onClick={() => selectAddress(id)}>
+                                            <div className="item" key={id + name} onClick={() => selectAddress(id)}>
                                                 <label>{ name }</label>
                                                 <div className="address">{ id }</div>
                                             </div>
@@ -78,7 +78,7 @@ const AddressBook = ({ onSelectAddress }) => {
                                     }
                                     {
                                         accountsList.map(account => (
-                                            <div className="item" onClick={() => selectAddress(account.id)}>
+                                            <div className="item" key={account.id} onClick={() => selectAddress(account.id)}>
                                                 <label>{ accountType(account) }</label>
                                                 <div className="address">{ account.id }</div>
                                             </div>
