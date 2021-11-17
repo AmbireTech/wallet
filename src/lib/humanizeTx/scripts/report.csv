@@ -1,5 +1,5 @@
-network;id;signature;to;mainAction;plainActions;richActions
-polygon;0;0x7ff36ab5;QuickSwap Router;swap;"[
+network;id;methodName;signature;to;mainAction;plainActions;richActions
+polygon;0;swapExactETHForTokens;0x7ff36ab5;QuickSwap Router;swap;"[
 	""Swap 1.0000 MATIC for at least 454837629388505659890(wei) Unknown token""
 ]";"[
 	[
@@ -35,7 +35,7 @@ polygon;0;0x7ff36ab5;QuickSwap Router;swap;"[
 		}
 	]
 ]"
-polygon;1;0x7ff36ab5;QuickSwap Router;swap;"[
+polygon;1;swapExactETHForTokens;0x7ff36ab5;QuickSwap Router;swap;"[
 	""Swap 1.0000 MATIC for at least 454837629388505659890(wei) Unknown token"",
 	""Send it to 0xa29a414a809E2fe93f7Ce2BB746d6449Ad577fE9""
 ]";"[
@@ -87,7 +87,7 @@ polygon;1;0x7ff36ab5;QuickSwap Router;swap;"[
 		}
 	]
 ]"
-polygon;2;0x18cbafe5;QuickSwap Router;swap;"[
+polygon;2;swapExactTokensForETH;0x18cbafe5;QuickSwap Router;swap;"[
 	""Swap 0.0011 WETH for at least 3.0863 MATIC"",
 	""Send it to 0x3707aa64A35fE74Dd4a21bDca160071929F6512a""
 ]";"[
@@ -139,7 +139,7 @@ polygon;2;0x18cbafe5;QuickSwap Router;swap;"[
 		}
 	]
 ]"
-polygon;3;0xa9059cbb;Quick;"";"[
+polygon;3;transfer;0xa9059cbb;Quick;"";"[
 	""Transfer 11.0000 Quick to Alice""
 ]";"[
 	[
@@ -173,7 +173,7 @@ polygon;3;0xa9059cbb;Quick;"";"[
 		}
 	]
 ]"
-polygon;4;0x095ea7b3;Quick;"";"[
+polygon;4;approve;0x095ea7b3;Quick;"";"[
 	""Approve QuickSwap Router to spend (∞) Quick""
 ]";"[
 	[
@@ -207,7 +207,7 @@ polygon;4;0x095ea7b3;Quick;"";"[
 		}
 	]
 ]"
-polygon;5;false;Quick;"";"[
+polygon;5;"";false;Quick;"";"[
 	""Send valueless transaction to Quick""
 ]";"[
 	[
@@ -226,7 +226,7 @@ polygon;5;false;Quick;"";"[
 		}
 	]
 ]"
-polygon;6;"";"";"";"[
+polygon;6;"";"";"";"";"[
 	""Deploy new contract""
 ]";"[
 	[
@@ -236,7 +236,7 @@ polygon;6;"";"";"";"[
 		}
 	]
 ]"
-polygon;7;false;self;"";"[
+polygon;7;"";false;self;"";"[
 	""Send nothing to self (probably replacement transaction)""
 ]";"[
 	[
@@ -246,7 +246,7 @@ polygon;7;false;self;"";"[
 		}
 	]
 ]"
-polygon;8;0x095ea7b3;0x6af1d9376a7060488558cfb443939ed67bb9b48d (ERC20);"";"[
+polygon;8;approve;0x095ea7b3;0x6af1d9376a7060488558cfb443939ed67bb9b48d (ERC20);"";"[
 	""Approve QuickSwap Router to spend (∞) Unknown token""
 ]";"[
 	[
@@ -280,7 +280,7 @@ polygon;8;0x095ea7b3;0x6af1d9376a7060488558cfb443939ed67bb9b48d (ERC20);"";"[
 		}
 	]
 ]"
-polygon;9;0x095eb7b3;Unknown;"";"[
+polygon;9;"";0x095eb7b3;Unknown;"";"[
 	""Sending 12.3457 MATIC"",
 	""Unknown call(0x095eb7b3) to 0x6af1d9376a7060488558cfb443939ed67bb9b48d""
 ]";"[
@@ -317,7 +317,7 @@ polygon;9;0x095eb7b3;Unknown;"";"[
 		}
 	]
 ]"
-ethereum;0;0xd0e30db0;WETH;wrap;"[
+ethereum;0;deposit;0xd0e30db0;WETH;wrap;"[
 	""Wrap 1.0000 ETH""
 ]";"[
 	[
@@ -338,7 +338,7 @@ ethereum;0;0xd0e30db0;WETH;wrap;"[
 		}
 	]
 ]"
-ethereum;1;0x2e1a7d4d;WETH;unwrap;"[
+ethereum;1;withdraw;0x2e1a7d4d;WETH;unwrap;"[
 	""Unwrap 0.0011 ETH""
 ]";"[
 	[
@@ -359,7 +359,7 @@ ethereum;1;0x2e1a7d4d;WETH;unwrap;"[
 		}
 	]
 ]"
-ethereum;2;0xac9650d8;UniswapV3 Router;multicall;"[
+ethereum;2;multicall;0xac9650d8;UniswapV3 Router;multicall;"[
 	""Swap a maximum of 5679.0286 TRUST for 0.7380 WETH"",
 	""Send it to 0x0000000000000000000000000000000000000000"",
 	""Unwrap 0.7380 ETH WETH""
@@ -433,7 +433,7 @@ ethereum;2;0xac9650d8;UniswapV3 Router;multicall;"[
 		}
 	]
 ]"
-ethereum;3;0xe2bbb158;Sushi Masterchef V1;claim;"[
+ethereum;3;deposit;0xe2bbb158;Sushi Masterchef V1;claim;"[
 	""Claim rewards of pool #129""
 ]";"[
 	[
@@ -443,7 +443,7 @@ ethereum;3;0xe2bbb158;Sushi Masterchef V1;claim;"[
 		}
 	]
 ]"
-ethereum;4;0x441a3e70; 0xc2edad668740f1aa35e4d8f227fb8e17dca888cd (MasterchefV1);withdraw;"[
+ethereum;4;withdraw;0x441a3e70; 0xc2edad668740f1aa35e4d8f227fb8e17dca888cd (MasterchefV1);withdraw;"[
 	""Withdraw 3403999713057754685 tokens of pool #334""
 ]";"[
 	[
@@ -453,7 +453,7 @@ ethereum;4;0x441a3e70; 0xc2edad668740f1aa35e4d8f227fb8e17dca888cd (MasterchefV1)
 		}
 	]
 ]"
-ethereum;5;0x8dbdbe6d; 0xef0881ec094552b2e128cf945ef17a6752b4ec5d (MasterchefV2);stake;"[
+ethereum;5;deposit;0x8dbdbe6d; 0xef0881ec094552b2e128cf945ef17a6752b4ec5d (MasterchefV2);stake;"[
 	""Stake 13133382117923059048 tokens in pool #24"",
 	""Give the benefits to 0xEF6f774DC2fF41dB3481e83e1b5AbDa19d3c4323""
 ]";"[
@@ -479,7 +479,7 @@ ethereum;5;0x8dbdbe6d; 0xef0881ec094552b2e128cf945ef17a6752b4ec5d (MasterchefV2)
 		}
 	]
 ]"
-ethereum;6;0x0ad58d2f; 0xef0881ec094552b2e128cf945ef17a6752b4ec5d (MasterchefV2);withdraw;"[
+ethereum;6;withdraw;0x0ad58d2f; 0xef0881ec094552b2e128cf945ef17a6752b4ec5d (MasterchefV2);withdraw;"[
 	""Withdraw 3338260047273924905 tokens from pool #24""
 ]";"[
 	[
@@ -489,7 +489,7 @@ ethereum;6;0x0ad58d2f; 0xef0881ec094552b2e128cf945ef17a6752b4ec5d (MasterchefV2)
 		}
 	]
 ]"
-ethereum;7;0xa9059cbb;CK;"";"[
+ethereum;7;transfer;0xa9059cbb;CK;"";"[
 	""Transfer Token #2001745 to 0x63760E7c402f64661da16c13C2353C839b210e93""
 ]";"[
 	[
@@ -508,7 +508,7 @@ ethereum;7;0xa9059cbb;CK;"";"[
 		}
 	]
 ]"
-ethereum;8;0x23b872dd;CK;"";"[
+ethereum;8;transferFrom;0x23b872dd;CK;"";"[
 	""Transfer Token #8934 from 0x9646AA0F9152C126b42F7ce4698F35FA700C8CdE to 0xe7Fa846ad3D12d89872220F53D70D082477E7981""
 ]";"[
 	[
@@ -540,7 +540,7 @@ ethereum;8;0x23b872dd;CK;"";"[
 		}
 	]
 ]"
-ethereum;9;0xd2d0e066;AaveLendingPooV1;deposit;"[
+ethereum;9;deposit;0xd2d0e066;AaveLendingPooV1;deposit;"[
 	""Deposit 10.0000 USDC as collteral""
 ]";"[
 	[
@@ -565,7 +565,7 @@ ethereum;9;0xd2d0e066;AaveLendingPooV1;deposit;"[
 		}
 	]
 ]"
-ethereum;10;0xc858f5f9;AaveLendingPooV1;borrow;"[
+ethereum;10;borrow;0xc858f5f9;AaveLendingPooV1;borrow;"[
 	""Borrow 2.0573 DAI""
 ]";"[
 	[
@@ -586,7 +586,7 @@ ethereum;10;0xc858f5f9;AaveLendingPooV1;borrow;"[
 		}
 	]
 ]"
-ethereum;11;0x5ceae9c4;AaveLendingPooV1;repay;"[
+ethereum;11;repay;0x5ceae9c4;AaveLendingPooV1;repay;"[
 	""Repay maximum DAI"",
 	null
 ]";"[
@@ -609,7 +609,7 @@ ethereum;11;0x5ceae9c4;AaveLendingPooV1;repay;"[
 	],
 	null
 ]"
-ethereum;12;0xa415bcad;AaveLendingPooV2;borrow;"[
+ethereum;12;borrow;0xa415bcad;AaveLendingPooV2;borrow;"[
 	""Borrow 2000000.0000 USDC as collteral"",
 	null
 ]";"[
@@ -636,7 +636,7 @@ ethereum;12;0xa415bcad;AaveLendingPooV2;borrow;"[
 	],
 	null
 ]"
-ethereum;13;0x573ade81;AaveLendingPooV2;repay;"[
+ethereum;13;repay;0x573ade81;AaveLendingPooV2;repay;"[
 	""Borrow maximum USDC""
 ]";"[
 	[
@@ -657,7 +657,7 @@ ethereum;13;0x573ade81;AaveLendingPooV2;repay;"[
 		}
 	]
 ]"
-ethereum;14;0xe8eda9df;AaveLendingPooV2;deposit;"[
+ethereum;14;deposit;0xe8eda9df;AaveLendingPooV2;deposit;"[
 	""Deposit 58.8553 WBTC as collteral"",
 	null
 ]";"[
@@ -684,7 +684,7 @@ ethereum;14;0xe8eda9df;AaveLendingPooV2;deposit;"[
 	],
 	null
 ]"
-ethereum;15;0xa0712d68;cDai;supply;"[
+ethereum;15;mint;0xa0712d68;cDai;supply;"[
 	""Supply 10853.2109 DAI""
 ]";"[
 	[
@@ -705,7 +705,7 @@ ethereum;15;0xa0712d68;cDai;supply;"[
 		}
 	]
 ]"
-ethereum;16;0xdb006a75;cDai;withdraw;"[
+ethereum;16;redeem;0xdb006a75;cDai;withdraw;"[
 	""Withdraw 181160.1164 cDAI""
 ]";"[
 	[
@@ -726,7 +726,7 @@ ethereum;16;0xdb006a75;cDai;withdraw;"[
 		}
 	]
 ]"
-ethereum;17;0x0e752702;cDai;repay_borrow;"[
+ethereum;17;repayBorrow;0x0e752702;cDai;repay_borrow;"[
 	""Repay borrow with the maximum possible DAI tokens""
 ]";"[
 	[
@@ -751,7 +751,7 @@ ethereum;17;0x0e752702;cDai;repay_borrow;"[
 		}
 	]
 ]"
-ethereum;18;0xa6417ed6;curveUSDTSwap;swap;"[
+ethereum;18;exchange_underlying;0xa6417ed6;curveUSDTSwap;swap;"[
 	""Swap 20000.0000 USDC for at least 19786.2209 USDT""
 ]";"[
 	[
@@ -787,7 +787,7 @@ ethereum;18;0xa6417ed6;curveUSDTSwap;swap;"[
 		}
 	]
 ]"
-ethereum;19;0x9fdaea0c;curveUSDTSwap;remove_liquidity;"[
+ethereum;19;remove_liquidity_imbalance;0x9fdaea0c;curveUSDTSwap;remove_liquidity;"[
 	""Remove liquidity for"",
 	""890.2105 USDT""
 ]";"[
@@ -811,7 +811,7 @@ ethereum;19;0x9fdaea0c;curveUSDTSwap;remove_liquidity;"[
 		}
 	]
 ]"
-ethereum;20;0x4515cef3;curveUSDTSwap;add_liquidity;"[
+ethereum;20;add_liquidity;0x4515cef3;curveUSDTSwap;add_liquidity;"[
 	""Add liquidity for at least 131.6031 cDAI+cUSDC+USDT"",
 	""151.0542 USDT""
 ]";"[
@@ -846,7 +846,7 @@ ethereum;20;0x4515cef3;curveUSDTSwap;add_liquidity;"[
 		}
 	]
 ]"
-ethereum;21;0x4515cef3;curveUSDTDeposit;add_liquidity;"[
+ethereum;21;add_liquidity;0x4515cef3;curveUSDTDeposit;add_liquidity;"[
 	""Add liquidity fir at least 986069.0088 cDAI+cUSDC+USDT"",
 	""1090000.0000 USDT""
 ]";"[
@@ -881,7 +881,7 @@ ethereum;21;0x4515cef3;curveUSDTDeposit;add_liquidity;"[
 		}
 	]
 ]"
-ethereum;22;0xb6b55f25;curveUSDTGauge;deposit;"[
+ethereum;22;deposit;0xb6b55f25;curveUSDTGauge;deposit;"[
 	""Deposit 73172.6706 cDAI+cUSDC+USDT to curve gauge""
 ]";"[
 	[
@@ -906,7 +906,7 @@ ethereum;22;0xb6b55f25;curveUSDTGauge;deposit;"[
 		}
 	]
 ]"
-ethereum;23;0x2e1a7d4d;curveUSDTGauge;withdraw;"[
+ethereum;23;withdraw;0x2e1a7d4d;curveUSDTGauge;withdraw;"[
 	""Withdraw 460295.5421 cDAI+cUSDC+USDT to curve gauge""
 ]";"[
 	[
@@ -931,7 +931,7 @@ ethereum;23;0x2e1a7d4d;curveUSDTGauge;withdraw;"[
 		}
 	]
 ]"
-ethereum;24;0x3d18b912;synthetixStakingRewards_UniV2_sXAU;claim;"[
+ethereum;24;getReward;0x3d18b912;synthetixStakingRewards_UniV2_sXAU;claim;"[
 	""Claim rewards""
 ]";"[
 	[
@@ -941,7 +941,7 @@ ethereum;24;0x3d18b912;synthetixStakingRewards_UniV2_sXAU;claim;"[
 		}
 	]
 ]"
-ethereum;25;0x3d18b912;synthetixStakingRewards_UniV2_sXAU;claim;"[
+ethereum;25;getReward;0x3d18b912;synthetixStakingRewards_UniV2_sXAU;claim;"[
 	""Claim rewards""
 ]";"[
 	[
@@ -951,7 +951,7 @@ ethereum;25;0x3d18b912;synthetixStakingRewards_UniV2_sXAU;claim;"[
 		}
 	]
 ]"
-ethereum;26;0x2e1a7d4d;synthetixStakingRewards_UniV2_sXAU;exit;"[
+ethereum;26;withdraw;0x2e1a7d4d;synthetixStakingRewards_UniV2_sXAU;exit;"[
 	""Withdraw 0.00000585 UniV2_LP_sXau_USDC""
 ]";"[
 	[
@@ -972,7 +972,7 @@ ethereum;26;0x2e1a7d4d;synthetixStakingRewards_UniV2_sXAU;exit;"[
 		}
 	]
 ]"
-ethereum;27;0xa694fc3a;synthetixStakingRewards_UniV2_sXAU;stake;"[
+ethereum;27;stake;0xa694fc3a;synthetixStakingRewards_UniV2_sXAU;stake;"[
 	""Stake 0.00001043 UniV2_LP_sXau_USDC""
 ]";"[
 	[
@@ -993,7 +993,7 @@ ethereum;27;0xa694fc3a;synthetixStakingRewards_UniV2_sXAU;stake;"[
 		}
 	]
 ]"
-ethereum;28;0x0d5828d4;AmbireIdentity;authenticate;"[
+ethereum;28;setAddrPrivilege;0x0d5828d4;AmbireIdentity;authenticate;"[
 	""Authenticate signer 0x942f9CE5D9a33a82F88D233AEb3292E680230348""
 ]";"[
 	[

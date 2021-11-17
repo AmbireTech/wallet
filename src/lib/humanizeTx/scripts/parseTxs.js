@@ -1,4 +1,4 @@
-const contractsManager = require('./../contractsManager')
+const contractsManager = require('./../HumanContractsManager')
 const {convertArrayToCSV} = require('convert-array-to-csv')
 const fs = require('fs')
 
@@ -320,7 +320,7 @@ function displaySummary(network, i, summary) {
   console.log('================================================')
 
   if (summary.interaction.signature) {
-    console.log(`${i} [Interacting with contract] ${summary.summaries.action ? (':' + summary.summaries.action + ':') : ''} ${summary.interaction.name} (${summary.interaction.signature})`)
+    console.log(`${i} [Interacting with contract] ${summary.summaries.action ? (':' + summary.summaries.action + ':') : ''} ${summary.interaction.name} (${summary.interaction.method}:${summary.interaction.signature})`)
   } else {
     console.log(' ' + i + ' [To]   ' + summary.interaction.name)
   }
@@ -352,6 +352,7 @@ function displaySummary(network, i, summary) {
   CSV.push({
     network: network,
     id: i,
+    methodName: summary.interaction.method,
     signature: summary.interaction.signature,
     to: summary.interaction.name,
     mainAction: summary.summaries.action,
@@ -360,7 +361,7 @@ function displaySummary(network, i, summary) {
   })
 }
 
-const header = ['network', 'id', 'signature', 'to', 'mainAction', 'plainActions', 'richActions']
+const header = ['network', 'id', 'methodName', 'signature', 'to', 'mainAction', 'plainActions', 'richActions']
 const CSVStr = convertArrayToCSV(CSV, {
   header,
   separator: ';'
