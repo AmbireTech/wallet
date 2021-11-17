@@ -55,7 +55,7 @@ const AddressBook = ({ onSelectAddress }) => {
                     <div id="add-address" className="content">
                         <div className="fields">
                             <input type="text" placeholder="Name" defaultValue={name} onInput={({ target }) => setName(target.value)}/>
-                            <input type="text" autocomplete="nope" placeholder="Address" defaultValue={address} onInput={({ target }) => setAddress(target.value)}/>
+                            <input type="text" autoComplete="nope" placeholder="Address" defaultValue={address} onInput={({ target }) => setAddress(target.value)}/>
                         </div>
                         <button className="button" disabled={!name.length || !address.length} onClick={onAddAddress}>
                             <MdOutlineAdd/> Add Address
