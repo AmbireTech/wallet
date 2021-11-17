@@ -161,7 +161,7 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, accounts, 
                                                 checked={addressConfirmed}
                                                 onChange={({ target }) => setAddressConfirmed(target.checked)}
                                             />
-                                            <div class="button" onClick={() => setNewAddress(address)}>
+                                            <div className="button" onClick={() => setNewAddress(address)}>
                                                 <MdOutlineAdd/>
                                                 Add it to the address book
                                             </div>
