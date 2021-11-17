@@ -55,29 +55,7 @@ $heading-height: 45px;
             min-width: 300px;
             padding: 0;
 
-            .fields {
-                display: flex;
-                gap: 10px;
-
-                input[type=text] {
-                    height: 40px;
-                    color: white;
-                    background-color: rgba(0, 0, 0, 0.1);
-                }
-            }
-
-            button {
-                height: 50px;
-                width: 100%;
-                display: flex;
-                gap: 10px;
-                text-transform: uppercase;
-                background-color: rgba(0, 0, 0, 0.1);
-            }
-
             .text-input {
-                flex: 0 0 50%;
-
                 input {
                     padding-right: initial !important;
                 }
@@ -119,6 +97,32 @@ $heading-height: 45px;
                         background-color: rgba(0, 0, 0, 0.2);
                     }
                 }
+            }
+        }
+
+        #add-address {
+            padding: 10px;
+
+            .fields {
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+
+                input[type=text] {
+                    height: 40px;
+                    width: 300px;
+                    color: white;
+                    background-color: rgba(0, 0, 0, 0.1);
+                }
+            }
+
+            button {
+                height: 50px;
+                width: 100%;
+                display: flex;
+                gap: 10px;
+                text-transform: uppercase;
+                background-color: rgba(0, 0, 0, 0.1);
             }
         }
     }
