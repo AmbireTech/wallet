@@ -1,7 +1,15 @@
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useToasts } from './toasts'
 
 const isAddressValid = address => /^0x[a-fA-F0-9]{40}$/.test(address)
+
+const storeItem = (key, value) => {
+    localStorage.setItem(key, value)
+    const event = new Event('storage');
+    event.value = value;
+    event.key = key;
+    window.dispatchEvent(event);
+}
 
 const useAddressBook = () => {
     const { addToast } = useToasts()
@@ -30,7 +38,7 @@ const useAddressBook = () => {
         ]
 
         setAddresses(newAddresses)
-        localStorage.addresses = JSON.stringify(newAddresses)
+        storeItem('addresses', JSON.stringify(newAddresses))
 
         addToast(`${address} added to your Address Book.`)
     }, [addresses, addToast])
@@ -42,10 +50,18 @@ const useAddressBook = () => {
         const newAddresses = addresses.filter(a => JSON.stringify(a) !== JSON.stringify({ name, address }))
 
         setAddresses(newAddresses)
-        localStorage.addresses = JSON.stringify(newAddresses)
+        storeItem('addresses', JSON.stringify(newAddresses))
 
         addToast(`${address} removed from your Address Book.`)
     }, [addresses, addToast])
+
+    useEffect(() => {
+        const onReceieveMessage = ({ key, value }) => {
+            if (key === 'addresses') setAddresses(JSON.parse(value))
+        }
+        window.addEventListener('storage', onReceieveMessage)
+        return () => window.removeEventListener('storage', onReceieveMessage)
+    }, [])
 
     return {
         addresses,
