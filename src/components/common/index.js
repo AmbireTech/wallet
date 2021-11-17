@@ -7,6 +7,7 @@ import Segments from './Segments/Segments';
 import Select from './Select/Select';
 import TextInput from './TextInput/TextInput';
 import NumberInput from './NumberInput/NumberInput';
+import Modal from './Modal/Modal';
 
 export {
     Button,
@@ -17,5 +18,6 @@ export {
     Segments,
     Select,
     TextInput,
-    NumberInput
+    NumberInput,
+    Modal
 };

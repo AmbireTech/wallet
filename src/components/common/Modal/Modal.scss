@@ -1,0 +1,24 @@
+@import '../../../variables.scss';
+
+.modal {
+  position: fixed;
+  z-index: 500;
+  background-color: $background-color;
+  width: 70%;
+  border: 1px solid $secondary-accent-color;
+  box-shadow: 1px 1px 1px $secondary-accent-color;
+  padding: 16px;
+  left: 15%;
+  top: 15%;
+  box-sizing: border-box;
+  transition: all 0.3s ease-out;
+}
+
+@media (min-width: 600px) {
+  .modal {
+    width: 700px;
+    left: calc(50% - 350px);
+    max-height: 700px;
+    overflow: scroll;
+  }
+}

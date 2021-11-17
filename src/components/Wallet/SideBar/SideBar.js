@@ -77,6 +77,11 @@ const SideBar = ({ match, portfolio, eligibleReqLength }) => {
           Transfer
         </div>
       </NavLink>
+      <NavLink to={match.url + "/swap"} activeClassName="selected">
+          <div className="item">
+              <BsCurrencyExchange size={30}/>Swap
+          </div>
+      </NavLink>
       <NavLink to={match.url + '/earn'} activeClassName="selected">
         <div className="item">
           <BsPiggyBank size={30} />

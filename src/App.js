@@ -107,6 +107,7 @@ function AppInner () {
           // required by the transactions page
           eligibleRequests={eligibleRequests}
           showSendTxns={() => setSendTxnsShowing(true)}
+          onAddAccount={onAddAccount}
         >
         </Wallet>
       </Route>
