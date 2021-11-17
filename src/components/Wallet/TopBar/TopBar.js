@@ -1,18 +1,16 @@
 import "./TopBar.scss";
 
 import React, { useState, useEffect, useCallback } from "react";
-import { NavLink } from "react-router-dom";
 import { FiHelpCircle } from "react-icons/fi";
-import { AiOutlinePlus } from "react-icons/ai";
-import * as blockies from 'blockies-ts';
-import { DropDown, Select, Button } from "../../common";
+import { DropDown, Select } from "../../common";
+import Accounts from "./Accounts/Accounts";
 
 const TopBar = ({
-  match,
   connections,
   connect,
   disconnect,
   onSelectAcc,
+  onRemoveAccount,
   selectedAcc,
   accounts,
   network,
@@ -50,10 +48,6 @@ const TopBar = ({
     }
   }, [connect]);
 
-  const accountsItems = accounts.map(({ id }) => ({
-    value: id,
-    icon: blockies.create({ seed: id }).toDataURL()
-  }))
   const networksItems = allNetworks.map(({ id, name, icon }) => ({
     label: name,
     value: id,
@@ -97,13 +91,8 @@ const TopBar = ({
           ))}
         </DropDown>
 
-        <Select monospace defaultValue={selectedAcc} items={accountsItems} onChange={value => onSelectAcc(value)}>
-          <div id="add-account">
-            <NavLink to="/add-account">
-              <Button icon={<AiOutlinePlus/>} small>Add Account</Button>
-            </NavLink>
-          </div>
-        </Select>
+        <Accounts accounts={accounts} selectedAddress={selectedAcc} onSelectAcc={onSelectAcc} onRemoveAccount={onRemoveAccount}/>
+
         <Select defaultValue={network.id} items={networksItems} onChange={value => setNetwork(value)}/>
       </div>
     </div>
