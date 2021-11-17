@@ -90,7 +90,7 @@ function MinedBundle({ bundle }) {
       txn={txn} network={bundle.network} account={bundle.identity}/>
     ))}
     {hasFeeMatch && (<div className='fee'><b>Fee:</b> {lastTxnSummary.slice(5, -hasFeeMatch[0].length)}</div>)}
-    <div><b>Submitted at:</b> {bundle.submittedAt && (new Date(bundle.submittedAt)).toString()}</div>
+    <div><b>Submitted on:</b> {bundle.submittedAt && (new Date(bundle.submittedAt)).toString()}</div>
     { bundle.replacesTxId && (<div><b>Replaces transaction:</b> {bundle.replacesTxId}</div>) }
     { bundle.txId && (<div
       ><b>Block explorer:</b> <a href={network.explorerUrl+'/tx/'+bundle.txId} target='_blank' rel='noreferrer'>{network.explorerUrl.split('/')[2]}</a>
