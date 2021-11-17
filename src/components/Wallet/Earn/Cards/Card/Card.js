@@ -3,6 +3,7 @@ import './Card.scss'
 import { Select, Segments, NumberInput, Button, Loading } from '../../../../common'
 import { useEffect, useState } from 'react'
 import { BsArrowDownSquare, BsArrowUpSquare } from 'react-icons/bs'
+import { ethers } from 'ethers'
 
 const segments = [{ value: 'Deposit' }, { value: 'Withdraw' }]
 
@@ -15,7 +16,13 @@ const Card = ({ loading, unavailable, tokensItems, icon, details, onTokenSelect,
 
     const currentToken = tokens.find(({ value }) => value === token)
 
-    const setMaxValue = () => setAmount(currentToken?.balance)
+    const setMaxValue = () => {
+        if (currentToken) {
+            const { balanceRaw, decimals } = currentToken
+            const amount = ethers.utils.formatUnits(balanceRaw, decimals)
+            setAmount(amount)
+        }
+    }
 
     useEffect(() => {
         if (segment === segments[0].value) setTokens(tokensItems.filter(({ type }) => type === 'deposit'))
