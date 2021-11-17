@@ -150,37 +150,51 @@ export default function usePortfolio({ currentNetwork, account }) {
 
     // Update states on network, tokens and ohterProtocols change
     useEffect(() => {
-        const balanceByNetworks = tokensByNetworks.map(({ network, meta }) => {
-            const balanceUSD = meta.find(({ label }) => label === 'Total').value + meta.find(({ label }) => label === 'Debt').value
-            const [truncated, decimals] = Number(balanceUSD.toString()).toFixed(2).split('.')
-            return {
-                network,
-                total: {
-                    full: balanceUSD,
-                    truncated: Number(truncated).toLocaleString('en-US'),
-                    decimals
+        try {
+            const balanceByNetworks = tokensByNetworks.map(({ network, meta }) => {
+                const balanceUSD = meta.find(({ label }) => label === 'Total')?.value + meta.find(({ label }) => label === 'Debt')?.value
+                if (!balanceUSD) return {
+                    network,
+                    total: {
+                        full: 0,
+                        truncated: 0,
+                        decimals: '00'
+                    }
                 }
+
+                const [truncated, decimals] = Number(balanceUSD.toString()).toFixed(2).split('.')
+                return {
+                    network,
+                    total: {
+                        full: balanceUSD,
+                        truncated: Number(truncated).toLocaleString('en-US'),
+                        decimals
+                    }
+                }
+            })
+
+            const balance = balanceByNetworks.find(({ network }) => network === currentNetwork)
+            if (balance) {
+                setBalance(balance)
+                setOtherBalances(balanceByNetworks.filter(({ network }) => network !== currentNetwork))
             }
-        })
 
-        const balance = balanceByNetworks.find(({ network }) => network === currentNetwork)
-        if (balance) {
-            setBalance(balance)
-            setOtherBalances(balanceByNetworks.filter(({ network }) => network !== currentNetwork))
+            const tokens = tokensByNetworks.find(({ network }) => network === currentNetwork)
+            if (tokens) setTokens(tokens.products.map(({ assets }) => assets.map(({ tokens }) => tokens)).flat(2))
+
+            const otherProtocols = otherProtocolsByNetworks.find(({ network }) => network === currentNetwork)
+            if (tokens && otherProtocols) {
+                setProtocols([
+                    ...tokens.products,
+                    ...otherProtocols.protocols.filter(({ label }) => label !== 'NFTs')
+                ])
+                setCollectibles(otherProtocols.protocols.find(({ label }) => label === 'NFTs')?.assets || [])
+            }
+        } catch(e) {
+            console.error(e);
+            addToast(e.message | e, { error: true })
         }
-
-        const tokens = tokensByNetworks.find(({ network }) => network === currentNetwork)
-        if (tokens) setTokens(tokens.products.map(({ assets }) => assets.map(({ tokens }) => tokens)).flat(2))
-
-        const otherProtocols = otherProtocolsByNetworks.find(({ network }) => network === currentNetwork)
-        if (tokens && otherProtocols) {
-            setProtocols([
-                ...tokens.products,
-                ...otherProtocols.protocols.filter(({ label }) => label !== 'NFTs')
-            ])
-            setCollectibles(otherProtocols.protocols.find(({ label }) => label === 'NFTs')?.assets || [])
-        }
-    }, [currentNetwork, tokensByNetworks, otherProtocolsByNetworks])
+    }, [currentNetwork, tokensByNetworks, otherProtocolsByNetworks, addToast])
 
     // Refresh tokens on network change
     useEffect(() => {
