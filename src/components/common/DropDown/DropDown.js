@@ -5,12 +5,13 @@ import { BsChevronDown } from 'react-icons/bs'
 import { CSSTransition } from 'react-transition-group';
 import useOnClickOutside from '../../../helpers/onClickOutside';
 
-export default function DropDown({ children, id, className, icon, title, badge, closeOnClick, onMenuOpen }) {
+export default function DropDown({ children, id, className, icon, title, badge, closeOnClick, open, onClose }) {
     const ref = useRef();
     const transitionRef = useRef();
     const [isMenuOpen, setMenuOpen] = useState(false);
 
-    useEffect(() => onMenuOpen && isMenuOpen ? onMenuOpen() : null, [isMenuOpen, onMenuOpen]);
+    useEffect(() => setMenuOpen(open), [open]);
+    useEffect(() => onClose && !isMenuOpen ? onClose() : null, [isMenuOpen, onClose]);
     useOnClickOutside(ref, () => setMenuOpen(false));
 
     return (
