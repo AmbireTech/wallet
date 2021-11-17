@@ -59,7 +59,7 @@ export default function SendTransaction({ relayerURL, accounts, network, selecte
     [replacementBundle, network.id, account, eligibleRequests]
   )
 
-  if (!account || !eligibleRequests.length) return (<div id='sendTransaction'>
+  if (!account || !bundle.txns.length) return (<div id='sendTransaction'>
       <h3 className='error'>No account or no requests: should never happen.</h3>
   </div>)
   return (<SendTransactionWithBundle
@@ -288,7 +288,7 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
                           <GiSpectacles size={35}/>
                           Transaction summary
                       </div>
-                      <div className='listOfTransactions'>
+                      <div className={`listOfTransactions${bundle.requestIds ? '' : ' frozen'}`}>
                           {bundle.txns.map((txn, i) => {
                             const isFirstFailing = estimation && !estimation.success && estimation.firstFailing === i
                             return (<TxnPreview
@@ -299,8 +299,10 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
                             )
                           })}
                       </div>
-                      <div className='batchingNote'>
+                      <div className='transactionsNote'>
+                        {bundle.requestIds && (<>
                           <b>DEGEN TIP:</b> You can sign multiple transactions at once. Add more transactions to this batch by interacting with a connected dApp right now.
+                        </>)}
                       </div>
               </div>
           </div>

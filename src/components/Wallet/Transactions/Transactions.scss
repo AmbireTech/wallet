@@ -4,6 +4,7 @@
     }
     .title {
         color: #80ffdb;
+        display: block;
     }
     .minedBundle {
         padding: 2em;
@@ -16,7 +17,18 @@
         margin-bottom: 2em;
         display: block;
     }
-    .title {
-        display: block;
+
+
+    .actions button {
+        background-color: #80ffdb;
+        margin-right: 1em;
+        padding: 1em;
+        font-weight: bold;
+        text-transform: uppercase;
+    }
+
+    .actions button.cancel {
+        background-color: #da5151;
+        color: white;
     }
 }

@@ -14,6 +14,7 @@ export default function useNotifications (requests) {
     }, [])
 
     requests.forEach(request => {
+        if (request.type !== 'eth_sendTransaction') return
         if (currentNotifs.find(n => n.id === request.id)) return
         // @TODO: other request types, eg signature
         if (!request.txn) return
