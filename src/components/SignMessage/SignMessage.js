@@ -3,8 +3,10 @@ import { FaSignature } from 'react-icons/fa'
 import { toUtf8String } from 'ethers/lib/utils'
 
 export default function SignMessage ({ toSign, resolve, selectedAcc }) {
-
   if (!toSign) return (<></>)
+
+  const approve = async () => {
+  }
   return (<div id='signMessage'>
     <div className='panel'>
         <div className='heading'>
@@ -16,7 +18,6 @@ export default function SignMessage ({ toSign, resolve, selectedAcc }) {
 
         <textarea
           className='message'
-          resize='none'
           type='text'
           value={getMessageAsText(toSign.txn)}
           readOnly={true}
@@ -24,6 +25,7 @@ export default function SignMessage ({ toSign, resolve, selectedAcc }) {
 
         <div className='actions'>
             <button type='button' className='reject' onClick={() => resolve({ message: 'signature denied' })}>Reject</button>
+            <button type='button' className='approve' onClick={approve}>Sign</button>
 
         </div>
     </div>
