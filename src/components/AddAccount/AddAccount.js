@@ -242,7 +242,7 @@ export default function AddAccount ({ relayerURL, onAddAccount }) {
             <div id="loginOthers">
                 <h3>Add an account</h3>
                 {addFromSignerButtons}
-                <h3>NOTE: You can enable email/passphrase login by connecting to a relayer.</h3>
+                <h3>NOTE: You can enable email/password login by connecting to a relayer.</h3>
             </div>
             </section>
         </div>)

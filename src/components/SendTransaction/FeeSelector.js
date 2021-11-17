@@ -33,7 +33,7 @@ export function FeeSelector ({ disabled, signer, estimation, network, setEstimat
     }
     const feeCurrencySelect = estimation.feeInUSD ? (<>
       <span style={{ marginTop: '1em' }}>Fee currency</span>
-      <select disabled={disabled} defaultValue={estimation.selectedFeeToken.symbol} onChange={onFeeCurrencyChange}>
+      <select disabled={disabled} value={estimation.selectedFeeToken.symbol} onChange={onFeeCurrencyChange}>
         {tokens.map(token => 
           (<option
             disabled={!isTokenEligible(token, feeSpeed, estimation)}
@@ -72,6 +72,11 @@ export function FeeSelector ({ disabled, signer, estimation, network, setEstimat
       <div className='feeAmountSelectors'>
         {feeAmountSelectors}
       </div>
+      { // Visualize the fee once again with a USD estimation if in native currency
+      !isStable && (<div>
+        Fee: {(estimation.feeInNative[feeSpeed] * multiplier)+' '+nativeAssetSymbol}
+        &nbsp;(~ ${(estimation.feeInNative[feeSpeed] * multiplier * estimation.nativeAssetPriceInUSD).toFixed(2)})
+      </div>)}
       {!estimation.feeInUSD ?
         (<span><b>WARNING:</b> Paying fees in tokens other than {nativeAssetSymbol} is unavailable because you are not connected to a relayer. You will pay the fee from <b>{signer.address}</b>.</span>)
         : (<></>)}

@@ -49,11 +49,13 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, accounts, 
 
     const selectedAsset = portfolio.tokens.find(({ address }) => address === asset)
 
-    const setMaxAmount = () => {
+    const getMaxAmount = () => {
+        if (!selectedAsset) return 0;
         const { balanceRaw, decimals } = selectedAsset
-        const amount = ethers.utils.formatUnits(balanceRaw, decimals)
-        onAmountChange(amount)
+        return ethers.utils.formatUnits(balanceRaw, decimals)
     }
+
+    const setMaxAmount = () => onAmountChange(getMaxAmount(amount))
 
     const onAmountChange = (value) => {
         setAmount(value)
@@ -133,7 +135,7 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, accounts, 
                             <div className="form">
                                 <Select searchable defaultValue={asset} items={assetsItems} onChange={(value) => setAsset(value)}/>
                                 <NumberInput
-                                    label={`Available Amount: ${selectedAsset?.balance} ${selectedAsset?.symbol}`}
+                                    label={`Available Amount: ${getMaxAmount()} ${selectedAsset?.symbol}`}
                                     value={amount}
                                     min="0"
                                     onInput={onAmountChange}
