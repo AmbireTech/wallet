@@ -33,7 +33,7 @@ const useAddressBook = () => {
         localStorage.addresses = JSON.stringify(newAddresses)
 
         addToast(`${address} added to your Address Book.`)
-    }, [addresses])
+    }, [addresses, addToast])
 
     const removeAddress = useCallback(address => {
         if (!isAddressValid(address)) throw new Error('Address Book: invalid address format')
@@ -44,7 +44,7 @@ const useAddressBook = () => {
         localStorage.addresses = JSON.stringify(newAddresses)
 
         addToast(`${address} removed from your Address Book.`)
-    }, [addresses])
+    }, [addresses, addToast])
 
     return {
         addresses,
