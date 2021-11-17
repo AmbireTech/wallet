@@ -95,12 +95,14 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
         if (unmounted) return
         estimation.selectedFeeToken = { symbol: network.nativeAssetSymbol }
         if (estimation.remainingFeeTokenBalances) {
-          const eligibleToken = estimation.remainingFeeTokenBalances
-            .find(token => isTokenEligible(token, feeSpeed, estimation))
-          // If there's no eligibleToken, set it to the first one cause it looks more user friendly (it's the preferred one, usually a stablecoin)
-          estimation.selectedFeeToken = eligibleToken || estimation.remainingFeeTokenBalances[0]
+          setEstimation(prevEstimation => {
+            // If there's no eligible token, set it to the first one cause it looks more user friendly (it's the preferred one, usually a stablecoin)
+            estimation.selectedFeeToken = (prevEstimation && prevEstimation.selectedFeeToken)
+              || estimation.remainingFeeTokenBalances.find(token => isTokenEligible(token, feeSpeed, estimation))
+              || estimation.remainingFeeTokenBalances[0]
+            return estimation
+          })
         }
-        setEstimation(estimation)
       })
       .catch(e => {
         if (unmounted) return
