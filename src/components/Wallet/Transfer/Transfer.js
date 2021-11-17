@@ -152,7 +152,7 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, accounts, 
                                     />
                                 </div>
                                 {
-                                    !isKnownAddress() ?
+                                    address && !isKnownAddress() ?
                                         <div id="unknown-address-warning">
                                             <Checkbox
                                                 label="Confirm sending to a previously unknown address"
