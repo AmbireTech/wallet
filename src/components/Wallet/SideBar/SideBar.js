@@ -50,7 +50,6 @@ const SideBar = ({match, portfolio}) => {
                     }
                 </div>
 
-                {/* TODO proper navi, programmatic selected class */}
                 <NavLink to={match.url + "/dashboard"} activeClassName="selected">
                     <div className="item">
                         <MdDashboard size={30}/>Dashboard
