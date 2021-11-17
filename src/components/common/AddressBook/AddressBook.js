@@ -72,6 +72,16 @@ const AddressBook = ({ onSelectAddress }) => {
                             {
                                 <div className="items">
                                     {
+                                        accountsList.map(account => (
+                                            <div className="item" key={account.id} onClick={() => selectAddress(account.id)}>
+                                                <div className="inner">
+                                                    <label>{ accountType(account) }</label>
+                                                    <div className="address">{ account.id }</div>
+                                                </div>
+                                            </div>
+                                        ))
+                                    }
+                                    {
                                         addresses.map(({ name, address }) => (
                                             <div className="item" key={address + name} onClick={() => selectAddress(address)}>
                                                 <div className="inner">
@@ -80,16 +90,6 @@ const AddressBook = ({ onSelectAddress }) => {
                                                 </div>
                                                 <div className="button" onClick={() => removeAddress(name, address)}>
                                                     <MdOutlineDelete/>
-                                                </div>
-                                            </div>
-                                        ))
-                                    }
-                                    {
-                                        accountsList.map(account => (
-                                            <div className="item" key={account.id} onClick={() => selectAddress(account.id)}>
-                                                <div className="inner">
-                                                    <label>{ accountType(account) }</label>
-                                                    <div className="address">{ account.id }</div>
                                                 </div>
                                             </div>
                                         ))
