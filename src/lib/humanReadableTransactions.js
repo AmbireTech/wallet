@@ -13,7 +13,7 @@ export function getTransactionSummary(txn, networkId, accountAddr) {
     const to = getAddress(txn[0])
     let callSummary, sendSummary
     const network = networks.find(x => x.id === networkId || x.chainId === networkId)
-    if (!network) return 'Unknown newtork (unable to parse'
+    if (!network) return 'Unknown network (unable to parse)'
 
     const contractKey = network.id + ':' + getAddress(to)
     const contractInfo = verifiedContracts[contractKey]
