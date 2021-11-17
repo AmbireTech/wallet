@@ -70,7 +70,7 @@
                 cursor: pointer;
 
                 svg {
-                    opacity: 0.6;
+                    opacity: 0.3;
                 }
 
                 &:hover {
@@ -87,6 +87,10 @@
             }
 
             &.active {
+                .icon {
+                    box-shadow: 0 0 0 2px $primary-accent-color;
+                }
+                
                 .inner {
                     opacity: 1;
                 }
