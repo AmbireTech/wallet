@@ -24,8 +24,8 @@ const useAddressBook = () => {
         const newAddresses = [
             ...addresses,
             {
-                id: address,
-                name
+                name,
+                address
             }
         ]
 
@@ -35,10 +35,11 @@ const useAddressBook = () => {
         addToast(`${address} added to your Address Book.`)
     }, [addresses, addToast])
 
-    const removeAddress = useCallback(address => {
+    const removeAddress = useCallback((name, address) => {
+        if (!name || !address) throw new Error('Address Book: invalid arguments supplied')
         if (!isAddressValid(address)) throw new Error('Address Book: invalid address format')
 
-        const newAddresses = addresses.filter(({ id }) => id !== address)
+        const newAddresses = addresses.filter(a => JSON.stringify(a) !== JSON.stringify({ name, address }))
 
         setAddresses(newAddresses)
         localStorage.addresses = JSON.stringify(newAddresses)

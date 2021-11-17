@@ -71,13 +71,13 @@ const AddressBook = ({ onSelectAddress }) => {
                             {
                                 <div className="items">
                                     {
-                                        addresses.map(({ id, name }) => (
-                                            <div className="item" key={id + name} onClick={() => selectAddress(id)}>
+                                        addresses.map(({ name, address }) => (
+                                            <div className="item" key={address + name} onClick={() => selectAddress(address)}>
                                                 <div className="inner">
                                                     <label>{ name }</label>
-                                                    <div className="address">{ id }</div>
+                                                    <div className="address">{ address }</div>
                                                 </div>
-                                                <div className="button" onClick={() => removeAddress(id)}>
+                                                <div className="button" onClick={() => removeAddress(name, address)}>
                                                     <MdOutlineDelete/>
                                                 </div>
                                             </div>
