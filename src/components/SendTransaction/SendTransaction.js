@@ -81,6 +81,8 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
     if (!bundle.txns.length) return
     setEstimation(null)
   }, [bundle, setEstimation])
+
+  // Estimate the bundle & reestimate periodically
   useEffect(() => {    // eslint-disable-next-line react-hooks/exhaustive-deps
     if (!bundle.txns.length) return
 
@@ -119,9 +121,6 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
     }
   }, [bundle, setEstimation, feeSpeed, addToast, network, relayerURL])
 
-
-  const { nativeAssetSymbol } = network
-
   const getFinalBundle = () => {
     if (!relayerURL) return new Bundle({
       ...bundle,
@@ -132,7 +131,7 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
     const feeToken = estimation.selectedFeeToken
     const { addedGas, multiplier } = getFeePaymentConsequences(feeToken, estimation)
     const toHexAmount = amnt => '0x'+Math.round(amnt).toString(16)
-    const feeTxn = feeToken.symbol === nativeAssetSymbol 
+    const feeTxn = feeToken.symbol === network.nativeAssetSymbol
       ? [accountPresets.feeCollector, toHexAmount(estimation.feeInNative[feeSpeed]*multiplier*1e18), '0x']
       : [feeToken.address, '0x0', ERC20.encodeFunctionData('transfer', [
         accountPresets.feeCollector,
@@ -170,7 +169,7 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
       return await finalBundle.submit({ relayerURL, fetch })
     } else {
       return await sendNoRelayer({
-        finalBundle, account, network, wallet, estimation, feeSpeed, provider, nativeAssetSymbol
+        finalBundle, account, network, wallet, estimation, feeSpeed, provider
       })
     }
   }
