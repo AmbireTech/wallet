@@ -49,7 +49,7 @@ const Security = ({ relayerURL, selectedAcc, selectedNetwork, accounts, addReque
     if (!privValue) return null
     const isQuickAcc = addr === accountPresets.quickAccManager
     const privText = isQuickAcc
-      ? `Email/passphrase signer (${selectedAccount.email})`
+      ? `Email/Password signer (${selectedAccount.email})`
       : addr
     const signerAddress = isQuickAcc
       ? selectedAccount.signer.quickAccManager

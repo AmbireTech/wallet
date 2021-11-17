@@ -25,7 +25,7 @@ export default function LoginOrSignupForm({ action = 'LOGIN', onAccRequest, inPr
       )
       // @TODO translation string
       if (passConfirmInput.current) {
-          passConfirmInput.current.setCustomValidity(invalid ? 'Passphrase must match' : '')
+          passConfirmInput.current.setCustomValidity(invalid ? 'Passwords must match' : '')
       }
     }
     const minPwdLen = 8
@@ -40,7 +40,7 @@ export default function LoginOrSignupForm({ action = 'LOGIN', onAccRequest, inPr
           required
           minLength={minPwdLen}
           type="password"
-          placeholder="Confirm passphrase"
+          placeholder="Confirm password"
           value={state.passphraseConfirm}
           onChange={e => onUpdate({ passphraseConfirm: e.target.value })}></input>
         <Checkbox label="I agree to to the Terms of Use and Privacy policy." required={true}></Checkbox>
@@ -51,7 +51,7 @@ export default function LoginOrSignupForm({ action = 'LOGIN', onAccRequest, inPr
     return (
       <form onSubmit={onSubmit}>
         <input type="email" required placeholder="Email" value={state.email} onChange={e => onUpdate({ email: e.target.value })}></input>
-        <input type="password" required minLength={minPwdLen} placeholder="Passphrase" value={state.passphrase} onChange={e => onUpdate({ passphrase: e.target.value })}></input>
+        <input type="password" required minLength={minPwdLen} placeholder="Password" value={state.passphrase} onChange={e => onUpdate({ passphrase: e.target.value })}></input>
         {additionalInputs}
         <input type="submit" disabled={inProgress} value={isSignup ?
           (inProgress ? "Signing up..." : "Sign up")
