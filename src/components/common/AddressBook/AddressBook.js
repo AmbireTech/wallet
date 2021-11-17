@@ -83,8 +83,8 @@ const AddressBook = ({ onSelectAddress }) => {
                                     }
                                     {
                                         addresses.map(({ name, address }) => (
-                                            <div className="item" key={address + name} onClick={() => selectAddress(address)}>
-                                                <div className="inner">
+                                            <div className="item" key={address + name}>
+                                                <div className="inner" onClick={() => selectAddress(address)}>
                                                     <label>{ name }</label>
                                                     <div className="address">{ address }</div>
                                                 </div>
