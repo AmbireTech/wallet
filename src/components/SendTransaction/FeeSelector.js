@@ -72,6 +72,11 @@ export function FeeSelector ({ disabled, signer, estimation, network, setEstimat
       <div className='feeAmountSelectors'>
         {feeAmountSelectors}
       </div>
+      { // Visualize the fee once again with a USD estimation if in native currency
+      !isStable && (<div>
+        Fee: {(estimation.feeInNative[feeSpeed] * multiplier)+' '+nativeAssetSymbol}
+        &nbsp;(~ ${(estimation.feeInNative[feeSpeed] * multiplier * estimation.nativeAssetPriceInUSD).toFixed(2)})
+      </div>)}
       {!estimation.feeInUSD ?
         (<span><b>WARNING:</b> Paying fees in tokens other than {nativeAssetSymbol} is unavailable because you are not connected to a relayer. You will pay the fee from <b>{signer.address}</b>.</span>)
         : (<></>)}
