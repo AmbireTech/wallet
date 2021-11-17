@@ -22,9 +22,11 @@ export default function SignMessage ({ toSign, resolve, account }) {
       chainId: 1 // does not matter
     })
 
-    const hashToSign = keccak256(arrayify(toSign.txn))
+    // NOTE: doesn't need to be a hash, it's msgOrHash actually (https://docs.ethers.io/v5/api/signer/#Signer-signMessage)
+    // The benefit of passing the full binary data is that web3 wallets/hw wallets can display the full text
+    // const hashToSign = keccak256(arrayify(toSign.txn))
     try {
-      const sig = await signMsgHash(wallet, account.id, account.signer, hashToSign)
+      const sig = await signMsgHash(wallet, account.id, account.signer, arrayify(toSign.txn))
       resolve({ success: true, result: sig })
     } catch(e) {
       console.error(e)
