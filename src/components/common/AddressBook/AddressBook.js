@@ -1,9 +1,9 @@
 import './AddressBook.scss'
 
 import { FaAddressCard } from 'react-icons/fa'
-import { MdOutlineAdd, MdClose } from 'react-icons/md'
+import { MdOutlineAdd, MdClose, MdOutlineDelete } from 'react-icons/md'
 import { useAddressBook, useAccounts } from '../../../hooks'
-import { DropDown, TextInput } from '..'
+import { DropDown } from '..'
 import { useCallback, useEffect, useState } from 'react'
 
 const AddressBook = ({ onSelectAddress }) => {
@@ -24,7 +24,7 @@ const AddressBook = ({ onSelectAddress }) => {
     const onAddAddress = useCallback(() => {
         setOpenAddAddress(false)
         addAddress(name, address)
-    }, [name, address])
+    }, [name, address, addAddress])
 
     useEffect(() => {
         setAddress('')
@@ -71,16 +71,23 @@ const AddressBook = ({ onSelectAddress }) => {
                                     {
                                         addresses.map(({ id, name }) => (
                                             <div className="item" key={id + name} onClick={() => selectAddress(id)}>
-                                                <label>{ name }</label>
-                                                <div className="address">{ id }</div>
+                                                <div className="inner">
+                                                    <label>{ name }</label>
+                                                    <div className="address">{ id }</div>
+                                                </div>
+                                                <div className="button" onClick={() => removeAddress(id)}>
+                                                    <MdOutlineDelete/>
+                                                </div>
                                             </div>
                                         ))
                                     }
                                     {
                                         accountsList.map(account => (
                                             <div className="item" key={account.id} onClick={() => selectAddress(account.id)}>
-                                                <label>{ accountType(account) }</label>
-                                                <div className="address">{ account.id }</div>
+                                                <div className="inner">
+                                                    <label>{ accountType(account) }</label>
+                                                    <div className="address">{ account.id }</div>
+                                                </div>
                                             </div>
                                         ))
                                     }
