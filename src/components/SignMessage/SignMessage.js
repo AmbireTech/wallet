@@ -1,12 +1,37 @@
 import './SignMessage.scss'
 import { FaSignature } from 'react-icons/fa'
-import { toUtf8String } from 'ethers/lib/utils'
+import { toUtf8String, keccak256, arrayify } from 'ethers/lib/utils'
+import { signMsgHash } from 'adex-protocol-eth/js/Bundle'
+import { getWallet } from '../../lib/getWallet'
+import { useToasts } from '../../hooks/toasts'
 
-export default function SignMessage ({ toSign, resolve, selectedAcc }) {
-  if (!toSign) return (<></>)
+export default function SignMessage ({ toSign, resolve, account }) {
+  const { addToast } = useToasts()
+
+  if (!toSign || !account) return (<></>)
 
   const approve = async () => {
+    // @TODO quickAccount support
+    if (account.signer.quickAccManager) {
+      addToast('email/pass accounts not supported yet', { error: true })
+      return
+    }
+    const wallet = getWallet({
+      signer: account.signer,
+      signerExtra: account.signerExtra,
+      chainId: 1 // does not matter
+    })
+
+    const hashToSign = keccak256(arrayify(toSign.txn))
+    try {
+      const sig = await signMsgHash(wallet, account.id, account.signer, hashToSign)
+      resolve({ success: true, result: sig })
+    } catch(e) {
+      console.error(e)
+      addToast(`Signing error: ${e.message || e}`, { error: true })
+    }
   }
+
   return (<div id='signMessage'>
     <div className='panel'>
         <div className='heading'>
