@@ -2,7 +2,7 @@ import { Interface, hexlify } from 'ethers/lib/utils'
 const IdentityInterface = new Interface(require('adex-protocol-eth/abi/Identity5.2'))
 const FactoryInterface = new Interface(require('adex-protocol-eth/abi/IdentityFactory5.2'))
 
-export async function sendNoRelayer ({ finalBundle, account, network, wallet, estimation, feeSpeed, provider, nativeAssetSymbol }) {
+export async function sendNoRelayer ({ finalBundle, account, network, wallet, estimation, feeSpeed, provider }) {
     const { signer } = finalBundle
     // @TODO: in case we need deploying, run using deployAndCall pipeline with signed msgs
     // @TODO: quickAccManager
@@ -53,7 +53,7 @@ export async function sendNoRelayer ({ finalBundle, account, network, wallet, es
       }
       return { success: true, txId }
     } catch(e) {
-      if (e.code === 'INSUFFICIENT_FUNDS') throw new Error(`Insufficient gas fees: you need to have ${nativeAssetSymbol} on ${signer.address}`)
+      if (e.code === 'INSUFFICIENT_FUNDS') throw new Error(`Insufficient gas fees: you need to have ${network.nativeAssetSymbol} on ${signer.address}`)
       throw e
     }
   }
