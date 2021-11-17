@@ -10,6 +10,7 @@ import { ledgerEthereumBrowserClientFactoryAsync } from '@0x/subproviders/lib/sr
 import { hexZeroPad, AbiCoder, keccak256, id, getAddress } from 'ethers/lib/utils'
 import { fetch, fetchPost } from '../../lib/fetch'
 import accountPresets from '../../consts/accountPresets'
+import { useToasts } from '../../hooks/toasts'
 
 TrezorConnect.manifest({
   email: 'contactus@ambire.com',
@@ -31,6 +32,7 @@ export default function AddAccount ({ relayerURL, onAddAccount }) {
     const [err, setErr] = useState('')
     const [addAccErr, setAddAccErr] = useState('')
     const [inProgress, setInProgress] = useState(false)
+    const { addToast } = useToasts()
 
     const wrapProgress = async fn => {
         setInProgress(true)
@@ -216,7 +218,10 @@ export default function AddAccount ({ relayerURL, onAddAccount }) {
         // otherwise check which accs we already own and add them
         const owned = await getOwnedByEOAs([addr])
         if (!owned.length) return addAccount(await createFromEOA(addr), { select: true })
-        else owned.forEach((acc, i) => addAccount(acc , { select: i === 0 }))
+        else {
+            addToast(`Found ${owned.length} existing accounts with signer ${addr}`, { timeout: 15000 })
+            owned.forEach((acc, i) => addAccount(acc , { select: i === 0 }))
+        }
     }
 
     // The UI for choosing a signer to create/add an account with, for example
