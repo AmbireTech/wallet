@@ -20,12 +20,13 @@ const AddressBook = ({ onSelectAddress }) => {
         return email ? `Ambire account for ${email}` : `Ambire account (${walletType})`
     }
     const selectAddress = address => onSelectAddress ? onSelectAddress(address) : null
-
+    
+    const isAddAddressFormValid = address.length && name.length && /^0x[a-fA-F0-9]{40}$/.test(address)
     const onAddAddress = useCallback(() => {
         setOpenAddAddress(false)
         addAddress(name, address)
     }, [name, address, addAddress])
-
+    
     const onMenuOpen = useCallback(() => setOpenAddAddress(false), [])
 
     useEffect(() => {
@@ -57,7 +58,7 @@ const AddressBook = ({ onSelectAddress }) => {
                             <input type="text" placeholder="Name" defaultValue={name} onInput={({ target }) => setName(target.value)}/>
                             <input type="text" autoComplete="nope" placeholder="Address" defaultValue={address} onInput={({ target }) => setAddress(target.value)}/>
                         </div>
-                        <button className="button" disabled={!name.length || !address.length} onClick={onAddAddress}>
+                        <button className="button" disabled={!isAddAddressFormValid} onClick={onAddAddress}>
                             <MdOutlineAdd/> Add Address
                         </button>
                     </div>
