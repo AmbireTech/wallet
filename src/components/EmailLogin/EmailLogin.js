@@ -40,7 +40,7 @@ export default function EmailLogin({ relayerURL, onAddAccount }) {
           signer: quickAccSigner
         }, { select: true })
       } catch (e) {
-        if (e.message.includes('invalid password')) setErr('Invalid passphrase')
+        if (e.message.includes('invalid password')) setErr('Invalid password')
         else {
           setErr(`Unexpected login error: ${e.message}`)
           console.error(e)
@@ -138,7 +138,7 @@ export default function EmailLogin({ relayerURL, onAddAccount }) {
   
         {err ? (<p className="error">{err}</p>) : (<></>)}
   
-        <a href="/#/">I forgot my passphrase</a>
+        <a href="/#/">I forgot my password</a>
         <a href={importJSONHref}>Import JSON</a>
       </div>)
       

@@ -37,7 +37,7 @@ const Accounts = ({ accounts, selectedAddress, onSelectAcc, onRemoveAccount }) =
                             <div className="icon" style={toIconBackgroundImage(id)}></div>
                             <div className="details">
                                 <div className="address">{ id }</div>
-                                <label>{ email ? `Email/passphrase account (${email})` : `${walletType(signerExtra)} (${shortenedAddress(signer.address)})` }</label>
+                                <label>{ email ? `Email/Password account (${email})` : `${walletType(signerExtra)} (${shortenedAddress(signer.address)})` }</label>
                             </div>
                         </div>
                         <div className="button" onClick={() => copyAddress(id)}>
