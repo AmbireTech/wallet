@@ -16,13 +16,13 @@ const Card = ({ loading, unavailable, tokensItems, icon, details, onTokenSelect,
 
     const currentToken = tokens.find(({ value }) => value === token)
 
-    const setMaxValue = () => {
-        if (currentToken) {
-            const { balanceRaw, decimals } = currentToken
-            const amount = ethers.utils.formatUnits(balanceRaw, decimals)
-            setAmount(amount)
-        }
+    const getMaxAmount = () => {
+        if (!currentToken) return 0;
+        const { balanceRaw, decimals } = currentToken
+        return ethers.utils.formatUnits(balanceRaw, decimals)
     }
+
+    const setMaxAmount = () => setAmount(getMaxAmount(amount))
 
     useEffect(() => {
         if (segment === segments[0].value) setTokens(tokensItems.filter(({ type }) => type === 'deposit'))
@@ -81,10 +81,10 @@ const Card = ({ loading, unavailable, tokensItems, icon, details, onTokenSelect,
                                 min="0"
                                 max={currentToken?.balance}
                                 value={amount}
-                                label={`Available Amount: ${!disabled ? `${currentToken?.balance} ${currentToken?.symbol}` : '0'}`}
+                                label={`Available Amount: ${!disabled ? `${getMaxAmount()} ${currentToken?.symbol}` : '0'}`}
                                 onInput={(value) => setAmount(value)}
                                 button="MAX"
-                                onButtonClick={setMaxValue}
+                                onButtonClick={setMaxAmount}
                             />
                             <Button 
                                 disabled={disabled || amount <= 0 || amount > currentToken?.balance}
