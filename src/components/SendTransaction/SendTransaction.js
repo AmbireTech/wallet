@@ -95,12 +95,14 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
         if (unmounted) return
         estimation.selectedFeeToken = { symbol: network.nativeAssetSymbol }
         if (estimation.remainingFeeTokenBalances) {
-          const eligibleToken = estimation.remainingFeeTokenBalances
-            .find(token => isTokenEligible(token, feeSpeed, estimation))
-          // If there's no eligibleToken, set it to the first one cause it looks more user friendly (it's the preferred one, usually a stablecoin)
-          estimation.selectedFeeToken = eligibleToken || estimation.remainingFeeTokenBalances[0]
+          setEstimation(prevEstimation => {
+            // If there's no eligible token, set it to the first one cause it looks more user friendly (it's the preferred one, usually a stablecoin)
+            estimation.selectedFeeToken = (prevEstimation && prevEstimation.selectedFeeToken)
+              || estimation.remainingFeeTokenBalances.find(token => isTokenEligible(token, feeSpeed, estimation))
+              || estimation.remainingFeeTokenBalances[0]
+            return estimation
+          })
         }
-        setEstimation(estimation)
       })
       .catch(e => {
         if (unmounted) return
@@ -160,6 +162,9 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
       chainId: network.chainId
     })
     if (relayerURL) {
+      // Temporary way of debugging the fee cost
+      // const initialLimit = finalBundle.gasLimit - getFeePaymentConsequences(estimation.selectedFeeToken, estimation).addedGas
+      // finalBundle.estimate({ relayerURL, fetch }).then(estimation => console.log('fee costs: ', estimation.gasLimit - initialLimit), estimation.selectedFeeToken).catch(console.error)
       if (typeof finalBundle.nonce !== 'number') await finalBundle.getNonce(provider)
       await finalBundle.sign(wallet)
       return await finalBundle.submit({ relayerURL, fetch })
@@ -172,7 +177,7 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
 
   const approveTxnImplQuickAcc = async ({ quickAccCredentials }) => {
     if (!estimation) throw new Error('no estimation: should never happen')
-    if (!relayerURL) throw new Error('Email/passphrase account signing without the relayer is not supported yet')
+    if (!relayerURL) throw new Error('Email/Password account signing without the relayer is not supported yet')
 
     const finalBundle = (signingStatus && signingStatus.finalBundle) || getFinalBundle()
     const signer = finalBundle.signer
@@ -201,7 +206,7 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
       if (!signature) throw new Error(`QuickAcc internal error: there should be a signature`)
       if (!account.primaryKeyBackup) throw new Error(`No key backup found: perhaps you need to import the account via JSON?`)
       setSigningStatus({ quickAcc: true, inProgress: true })
-      const pwd = quickAccCredentials.passphrase || alert('Enter passphrase')
+      const pwd = quickAccCredentials.passphrase || alert('Enter password')
       const wallet = await Wallet.fromEncryptedJson(JSON.parse(account.primaryKeyBackup), pwd)
       await finalBundle.sign(wallet)
       finalBundle.signatureTwo = signature
@@ -292,7 +297,7 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
                           {bundle.txns.map((txn, i) => {
                             const isFirstFailing = estimation && !estimation.success && estimation.firstFailing === i
                             return (<TxnPreview
-                              key={txn.join(':')}
+                              key={[...txn, i].join(':')}
                               onDismiss={bundle.requestIds && (() => resolveMany([bundle.requestIds[i]], { message: 'rejected' }))}
                               txn={txn} network={bundle.network} account={bundle.identity}
                               isFirstFailing={isFirstFailing}/>
@@ -300,9 +305,9 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
                           })}
                       </div>
                       <div className='transactionsNote'>
-                        {bundle.requestIds && (<>
+                        {bundle.requestIds ? (<>
                           <b>DEGEN TIP:</b> You can sign multiple transactions at once. Add more transactions to this batch by interacting with a connected dApp right now.
-                        </>)}
+                        </>) : (<><b>NOTE:</b> You are currently replacing a pending transaction.</>)}
                       </div>
               </div>
           </div>

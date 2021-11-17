@@ -8,8 +8,11 @@ import networks from '../../../consts/networks'
 import { getTransactionSummary } from '../../../lib/humanReadableTransactions'
 import { Bundle } from 'adex-protocol-eth'
 import { useEffect, useState } from 'react'
+import fetch from 'node-fetch'
+import { useToasts } from '../../../hooks/toasts'
 
 function Transactions ({ relayerURL, selectedAcc, selectedNetwork, eligibleRequests, showSendTxns }) {
+  const { addToast } = useToasts()
   const [cacheBreak, setCacheBreak] = useState(() => Date.now())
   // @TODO refresh this after we submit a bundle; perhaps with the upcoming transactions service
   // We want this pretty much on every rerender with a 5 sec debounce
@@ -37,7 +40,24 @@ function Transactions ({ relayerURL, selectedAcc, selectedNetwork, eligibleReque
     gasLimit: null,
     ...extra
   }))
-  const cancel = relayerBundle => showSendTxns(mapToBundle(relayerBundle, { txns: [[selectedAcc, '0x0', '0x']] }))
+  const cancelByReplacing = relayerBundle => showSendTxns(mapToBundle(relayerBundle, { txns: [[selectedAcc, '0x0', '0x']] }))
+  const cancel = relayerBundle => {
+    // @TODO relayerless
+    mapToBundle(relayerBundle).cancel({ relayerURL, fetch })
+      .then(({ success }) => {
+        if (!success) {
+          addToast('Transaction already picked up by the network, you will need to pay a fee to replace it with a cancellation transaction.')
+          cancelByReplacing(relayerBundle)
+        } else {
+          addToast('Transaction cancelled successfully')
+        }
+      })
+      .catch(e => {
+        console.error(e)
+        cancelByReplacing(relayerBundle)
+      })
+  }
+
   // @TODO: we are currently assuming the last txn is a fee; change that (detect it)
   const speedup = relayerBundle => showSendTxns(mapToBundle(relayerBundle, { txns: relayerBundle.txns.slice(0, -1) }))
 
@@ -90,7 +110,7 @@ function MinedBundle({ bundle }) {
       txn={txn} network={bundle.network} account={bundle.identity}/>
     ))}
     {hasFeeMatch && (<div className='fee'><b>Fee:</b> {lastTxnSummary.slice(5, -hasFeeMatch[0].length)}</div>)}
-    <div><b>Submitted at:</b> {bundle.submittedAt && (new Date(bundle.submittedAt)).toString()}</div>
+    <div><b>Submitted on:</b> {bundle.submittedAt && (new Date(bundle.submittedAt)).toString()}</div>
     { bundle.replacesTxId && (<div><b>Replaces transaction:</b> {bundle.replacesTxId}</div>) }
     { bundle.txId && (<div
       ><b>Block explorer:</b> <a href={network.explorerUrl+'/tx/'+bundle.txId} target='_blank' rel='noreferrer'>{network.explorerUrl.split('/')[2]}</a>
