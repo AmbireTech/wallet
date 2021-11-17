@@ -55,11 +55,15 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, accounts, 
     }
 
     const onAmountChange = (value) => {
-        const amount = value || '0'
-        const { decimals } = selectedAsset
-        const bigNumberAmount = ethers.utils.parseUnits(amount, decimals).toHexString()
-        setAmount(amount)
-        setBigNumberHexAmount(bigNumberAmount)
+        setAmount(value)
+
+        if (value.length) {
+            const amount = value || '0'
+            const { decimals } = selectedAsset
+            const bigNumberAmount = ethers.utils.parseUnits(amount, decimals).toHexString()
+            setAmount(amount)
+            setBigNumberHexAmount(bigNumberAmount)
+        }
     }
 
     const sendTx = () => {
