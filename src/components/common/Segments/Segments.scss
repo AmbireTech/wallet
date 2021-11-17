@@ -7,8 +7,8 @@ $segment-small-height: 40px;
     flex: 0 0 auto;
     height: $segment-height;
     display: flex;
+    gap: 10px;
     padding: 15px;
-    background-color: $input-background-color;
 
     .segment {
         position: relative;
@@ -33,13 +33,13 @@ $segment-small-height: 40px;
 
         &.active {
             font-weight: bold;
-            color: black;
-            background-color: $primary-accent-color;
+            color: white;
+            box-shadow: 0 2px 0 0 $primary-accent-color;
             opacity: 1;
         }
 
         &:not(.active):hover {
-            background-color: rgba(0, 0, 0, 0.2);
+            box-shadow: 0 2px 0 0 rgba(255, 255, 255, 0.1);
             opacity: 0.8;
         }
     }
@@ -54,7 +54,7 @@ $segment-small-height: 40px;
 
         .segment {
             height: $segment-small-height;
-            padding: 0 20px;
+            padding: 0 10px;
             font-size: 14px;
         }
     }
