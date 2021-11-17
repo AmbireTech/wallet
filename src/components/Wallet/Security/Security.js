@@ -5,14 +5,28 @@ import { Interface } from 'ethers/lib/utils'
 import accountPresets from '../../../consts/accountPresets'
 import privilegesOptions from '../../../consts/privilegesOptions'
 import { useRelayerData } from '../../../hooks'
+import AddAuthSigner from './AddAuthSigner/AddAuthSigner'
 
 const IDENTITY_INTERFACE = new Interface(
   require('adex-protocol-eth/abi/Identity5.2')
 )
 
-const Security = ({ relayerURL, selectedAcc, selectedNetwork, accounts, addRequest }) => {
-  const { data, errMsg, isLoading } = useRelayerData(relayerURL ? `${relayerURL}/identity/${selectedAcc}/${selectedNetwork.id}/privileges` : null)
+const Security = ({
+  relayerURL,
+  selectedAcc,
+  selectedNetwork,
+  accounts,
+  addRequest,
+  onAddAccount,
+}) => {
+  const { data, errMsg, isLoading } = useRelayerData(
+    relayerURL
+      ? `${relayerURL}/identity/${selectedAcc}/${selectedNetwork.id}/privileges`
+      : null
+  )
   const privileges = data ? data.privileges : {}
+
+  console.log('privileges', privileges)
 
   const craftTransaction = (address, privLevel) => {
     return {
@@ -43,53 +57,79 @@ const Security = ({ relayerURL, selectedAcc, selectedNetwork, accounts, addReque
     addTransactionToAddRequest(txn)
   }
 
+  const onAddBtnClickedHandler = (newSignerAddress) => {
+    console.log('newSignerAddress', newSignerAddress)
+  }
+
   const selectedAccount = accounts.find(x => x.id === selectedAcc)
+  console.log('==================================================')
+  console.log('selected Account', selectedAccount)
+  console.log('==================================================')
 
-  const privList = Object.entries(privileges).map(([addr, privValue]) => {
-    if (!privValue) return null
-    const isQuickAcc = addr === accountPresets.quickAccManager
-    const privText = isQuickAcc
-      ? `Email/passphrase signer (${selectedAccount.email})`
-      : addr
-    const signerAddress = isQuickAcc
-      ? selectedAccount.signer.quickAccManager
-      : selectedAccount.signer.address
-    const isSelected = signerAddress === addr
+  const privList = Object.entries(privileges)
+    .map(([addr, privValue]) => {
+      if (!privValue) return null
+      const isQuickAcc = addr === accountPresets.quickAccManager
+      const privText = isQuickAcc
+        ? `Email/passphrase signer (${selectedAccount.email})`
+        : addr
+      const signerAddress = isQuickAcc
+        ? selectedAccount.signer.quickAccManager
+        : selectedAccount.signer.address
+      const isSelected = signerAddress === addr
 
-    return (
-      <li key={addr}>
-        <TextInput className='depositAddress' value={privText} disabled />
-        <div className='btns-wrapper'>
-          <Button disabled={isSelected} onClick={() => onMakeDefaultBtnClicked(addr)} small>
-            {isSelected ? 'Current signer' : 'Make default'}
-          </Button>
-          <Button
-            onClick={() => onRemoveBtnClicked(addr)}
-            small
-            red
-            title={isSelected ? 'Cannot remove the currently used signer' : ''}
-            disabled={isSelected}
-          >
-            Remove
-          </Button>
-        </div>
-      </li>
-    )
-  }).filter(x => x)
+      return (
+        <li key={addr}>
+          <TextInput className="depositAddress" value={privText} disabled />
+          <div className="btns-wrapper">
+            <Button
+              disabled={isSelected}
+              onClick={() => onMakeDefaultBtnClicked(addr)}
+              small
+            >
+              {isSelected ? 'Current signer' : 'Make default'}
+            </Button>
+            <Button
+              onClick={() => onRemoveBtnClicked(addr)}
+              small
+              red
+              title={
+                isSelected ? 'Cannot remove the currently used signer' : ''
+              }
+              disabled={isSelected}
+            >
+              Remove
+            </Button>
+          </div>
+        </li>
+      )
+    })
+    .filter(x => x)
 
   // @TODO relayerless mode: it's not that hard to implement in a primitive form, we need everything as-is
   // but rendering the initial privileges instead; or maybe using the relayerless transactions hook/service
   // and aggregate from that
-  if (!relayerURL) return (<section id='security'>
-    <h3 className='error'>Unsupported: not currently connected to a relayer.</h3>
-  </section>)
+  if (!relayerURL)
+    return (
+      <section id="security">
+        <h3 className="error">
+          Unsupported: not currently connected to a relayer.
+        </h3>
+      </section>
+    )
   return (
-    <section id='security'>
-      <div className='panel'>
-        <div className='title'>Authorized signers</div>
-        {errMsg && (<h3 className='error'>Error getting authorized signers: {errMsg}</h3>)}
+    <section id="security">
+      <div className="panel">
+        <div className="panel-title">Authorized signers</div>
+        {errMsg && (
+          <h3 className="error">Error getting authorized signers: {errMsg}</h3>
+        )}
         {isLoading && <Loading />}
-        <ul className='content'>{!isLoading && privList}</ul>
+        <ul className="content">{!isLoading && privList}</ul>
+      </div>
+      <div className="panel">
+        <div className="panel-title">Add new signer</div>
+        <AddAuthSigner onAddBtnClicked={onAddBtnClickedHandler} />
       </div>
     </section>
   )
