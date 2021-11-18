@@ -1,7 +1,7 @@
 import './SignMessage.scss'
 import { FaSignature } from 'react-icons/fa'
 import { Wallet } from 'ethers'
-import { toUtf8String/*, keccak256*/, arrayify } from 'ethers/lib/utils'
+import { toUtf8String, keccak256, arrayify } from 'ethers/lib/utils'
 import { signMsgHash } from 'adex-protocol-eth/js/Bundle'
 import { getWallet } from '../../lib/getWallet'
 import { useToasts } from '../../hooks/toasts'
@@ -25,11 +25,13 @@ export default function SignMessage ({ toSign, resolve, account, relayerURL }) {
       return
     }
     try {
+      const hash = keccak256(arrayify(toSign.txn))
+
       const { signature, success, message, confCodeRequired } = await fetchPost(
         // network doesn't matter when signing
         `${relayerURL}/second-key/${account.id}/ethereum/sign`, {
           signer: account.signer,
-          toSign: toSign.txn,
+          toSign: hash,
           code: confirmationCode
         }
       )
@@ -49,7 +51,7 @@ export default function SignMessage ({ toSign, resolve, account, relayerURL }) {
       }
 
       const wallet = await Wallet.fromEncryptedJson(JSON.parse(account.primaryKeyBackup), signingState.passphrase)
-      const sig = await signMsgHash(wallet, account.id, account.signer, arrayify(toSign.txn), signature)
+      const sig = await signMsgHash(wallet, account.id, account.signer, arrayify(hash), signature)
       resolve({ success: true, result: sig })
     } catch(e) {
       console.error('Signing error', e)
@@ -71,11 +73,12 @@ export default function SignMessage ({ toSign, resolve, account, relayerURL }) {
       signerExtra: account.signerExtra,
       chainId: 1 // does not matter
     })
-    // NOTE: doesn't need to be a hash, it's msgOrHash actually (https://docs.ethers.io/v5/api/signer/#Signer-signMessage)
-    // The benefit of passing the full binary data is that web3 wallets/hw wallets can display the full text
-    // const hashToSign = keccak256(arrayify(toSign.txn))
     try {
-      const sig = await signMsgHash(wallet, account.id, account.signer, arrayify(toSign.txn))
+      // It would be great if we could pass the full data cause then web3 wallets/hw wallets can display the full text
+      // Unfortunately that isn't possible, because isValidSignature only takes a bytes32 hash; so to sign this with
+      // a personal message, we need to be signing the hash itself as binary data such that we match 'Ethereum signed message:\n32<hash binary data>' on the contract
+      const hash = keccak256(arrayify(toSign.txn)) // hacky equivalent is: id(toUtf8String(toSign.txn)) 
+      const sig = await signMsgHash(wallet, account.id, account.signer, arrayify(hash))
       resolve({ success: true, result: sig })
     } catch(e) {
       console.error(e)
