@@ -201,11 +201,18 @@ export default function usePortfolio({ currentNetwork, account }) {
         refreshTokensIfVisible()
     }, [currentNetwork, refreshTokensIfVisible])
 
-    // Refresh balance periodically
+    // Refresh balance every 20s if visible
     useEffect(() => {
         const refreshInterval = setInterval(refreshTokensIfVisible, 20000)
         return () => clearInterval(refreshInterval)
     }, [refreshTokensIfVisible])
+
+    // Refresh balance every 60s if hidden
+    useEffect(() => {
+        const refreshIfHidden = document[hidden] && !isBalanceLoading ? fetchTokens(account, currentNetwork) : null
+        const refreshInterval = setInterval(refreshIfHidden, 60000)
+        return () => clearInterval(refreshInterval)
+    }, [account, currentNetwork, isBalanceLoading, fetchTokens])
 
     // Refresh balance when window is focused
     useEffect(() => {
