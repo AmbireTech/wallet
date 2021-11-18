@@ -1,14 +1,15 @@
 import { ethers, getDefaultProvider } from 'ethers'
 import { Interface } from 'ethers/lib/utils'
-import { useCallback, useEffect, useState } from 'react'
-import { useToasts } from '../../../../hooks/toasts'
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useToasts } from '../../../../../hooks/toasts'
 import ERC20Abi from 'adex-protocol-eth/abi/ERC20.json'
-import AAVELendingPoolAbi from '../../../../consts/AAVELendingPoolAbi'
-import AAVELendingPoolProviders from '../../../../consts/AAVELendingPoolProviders'
-import networks from '../../../../consts/networks'
+import AAVELendingPoolAbi from '../../../../../consts/AAVELendingPoolAbi'
+import AAVELendingPoolProviders from '../../../../../consts/AAVELendingPoolProviders'
+import networks from '../../../../../consts/networks'
 
-import AAVE_ICON from '../../../../resources/aave.svg'
-import Card from './Card/Card'
+import AAVE_ICON from '../../../../../resources/aave.svg'
+import Card from '../Card/Card'
+import { getDefaultTokensItems } from './defaultTokens'
 
 const ERC20Interface = new Interface(ERC20Abi)
 const AAVELendingPool = new Interface(AAVELendingPoolAbi)
@@ -35,6 +36,7 @@ const AAVECard = ({ networkId, tokens, protocols, account, addRequest }) => {
     }, [tokensItems])
 
     const networkDetails = networks.find(({ id }) => id === networkId)
+    const defaultTokens = useMemo(() => getDefaultTokensItems(networkDetails.id), [networkDetails.id])
     const getToken = (type, address) => tokensItems.filter(token => token.type === type).find(token => token.address === address)
     const addRequestTxn = (id, txn, extraGas = 0) => addRequest({ id, type: 'eth_sendTransaction', chainId: networkDetails.chainId, account, txn, extraGas })
 
@@ -131,28 +133,27 @@ const AAVECard = ({ networkId, tokens, protocols, account, addRequest }) => {
                 type: 'deposit'
             }))
 
-            const tokensItems = (await Promise.all([
+            const allTokens = (await Promise.all([
+                ...defaultTokens.filter(({ type, address }) => type === 'deposit' && !depositTokens.map(({ address }) => address).includes(address)),
+                ...defaultTokens.filter(({ type, address }) => type === 'withdraw' && !withdrawTokens.map(({ address }) => address).includes(address)),
                 ...withdrawTokens,
                 ...depositTokens
-            ].map(async token => {
-                const data = await lendingPoolContract.getReserveData(token.address)
+            ]))
+            
+            const uniqueTokenAddresses = [...new Set(allTokens.map(({ address }) => address))]
+            const tokensAPR = Object.fromEntries(await Promise.all(uniqueTokenAddresses.map(async address => {
+                const data = await lendingPoolContract.getReserveData(address)
                 const { liquidityRate } = data
-                return {
-                    ...token,
-                    apr: ((liquidityRate / RAY) * 100).toFixed(2)
-                }
+                const apr = ((liquidityRate / RAY) * 100).toFixed(2)
+                return [address, apr]
             })))
-            .map(({ type, img, symbol, address, balance, balanceRaw, decimals, apr }) => ({
-                icon: img,
-                label: `${symbol} (${apr}% APR)`,
-                value: address,
-                type,
-                address,
-                balance,
-                balanceRaw,
-                symbol,
-                decimals,
-                apr
+
+            const tokensItems = allTokens.map(token => ({
+                ...token,
+                apr: tokensAPR[token.address],
+                icon: token.img,
+                label: `${token.symbol} (${tokensAPR[token.address]}% APR)`,
+                value: token.address
             }))
 
             setTokensItems(tokensItems)
@@ -162,7 +163,7 @@ const AAVECard = ({ networkId, tokens, protocols, account, addRequest }) => {
             console.error(e);
             addToast(e.message | e, { error: true })
         }
-    }, [addToast, protocols, tokens, networkDetails.id, networkDetails.rpc])
+    }, [addToast, protocols, tokens, defaultTokens, networkDetails.id, networkDetails.rpc])
 
     useEffect(() => loadPool(), [loadPool])
     useEffect(() => setLoading(true), [networkId])
