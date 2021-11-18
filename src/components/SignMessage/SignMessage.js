@@ -1,5 +1,6 @@
 import './SignMessage.scss'
 import { FaSignature } from 'react-icons/fa'
+import { Wallet } from 'ethers'
 import { toUtf8String/*, keccak256*/, arrayify } from 'ethers/lib/utils'
 import { signMsgHash } from 'adex-protocol-eth/js/Bundle'
 import { getWallet } from '../../lib/getWallet'
@@ -8,27 +9,28 @@ import { fetchPost } from '../../lib/fetch'
 import { useState } from 'react'
 
 export default function SignMessage ({ toSign, resolve, account, relayerURL }) {
-  const defaultState = () => ({ codeRequired: false, passphrase: '', code: '' })
+  const defaultState = () => ({ codeRequired: false, passphrase: '' })
   const { addToast } = useToasts()
   const [signingState, setSigningState] = useState(defaultState())
 
   if (!toSign || !account) return (<></>)
 
-  const approveQuickAcc = async () => {
+  const approveQuickAcc = async confirmationCode => {
     if (!relayerURL) {
       addToast('Email/pass accounts not supported without a relayer connection', { error: true })
       return
     }
+    if (!signingState.passphrase) {
+      addToast('Password required to unlock the account', { error: true })
+      return
+    }
     try {
-      console.log(signingState)
-      //  const wallet = await Wallet.fromEncryptedJson(JSON.parse(account.primaryKeyBackup), pwd)
-
       const { signature, success, message, confCodeRequired } = await fetchPost(
-          // network doesn't matter when signing
+        // network doesn't matter when signing
         `${relayerURL}/second-key/${account.id}/ethereum/sign`, {
           signer: account.signer,
           toSign: toSign.txn,
-          code: signingState.code
+          code: confirmationCode
         }
       )
       if (!success) {
@@ -36,20 +38,26 @@ export default function SignMessage ({ toSign, resolve, account, relayerURL }) {
         if (message.includes('invalid confirmation code')) {
           addToast('Unable to sign: wrong confirmation code', { error: true })
         }
-        addToast(`Second signature error: ${message}`)
+        addToast(`Second signature error: ${message}`, { error: true })
         return
       }
       if (confCodeRequired) {
-        setSigningState({ codeRequired: true })
+        const confCode = prompt('A confirmation code has been sent to your email, it is valid for 5 minutes. Please enter it here:')
+        if (!confCode) throw new Error('You must enter a confirmation code')
+        await approveQuickAcc(confCode)
         return
       }
-      console.log(signature, success, message)
+
+      const wallet = await Wallet.fromEncryptedJson(JSON.parse(account.primaryKeyBackup), signingState.passphrase)
+      const sig = await signMsgHash(wallet, account.id, account.signer, arrayify(toSign.txn), signature)
+      resolve({ success: true, result: sig })
     } catch(e) {
-      console.error('Relayer error', e)
-      addToast(`Relayer error: ${e.message || e}`, { error: true })
+      console.error('Signing error', e)
+      addToast(`Signing error: ${e.message || e}`, { error: true })
       return
     }
   }
+
   const approve = async () => {
     if (account.signer.quickAccManager) {
       await approveQuickAcc()
@@ -92,26 +100,19 @@ export default function SignMessage ({ toSign, resolve, account, relayerURL }) {
         />
 
         <div className='actions'>
-          <button type='button' className='reject' onClick={() => resolve({ message: 'signature denied' })}>Reject</button>
-          <button type='button' className='approve' onClick={approve}>Sign</button>
+          <form onSubmit={e => { e.preventDefault() }}>
+            {account.signer.quickAccManager && (<>
+              <input type='password'
+                required minLength={3}
+                placeholder='Account password'
+                value={signingState.passphrase}
+                onChange={e => setSigningState({ ...signingState, passphrase: e.target.value })}
+              ></input>
+            </>)}
 
-          {signingState.codeRequired && (<>
-            <input type='password'
-              required minLength={3}
-              placeholder='Password'
-              value={signingState.passphrase}
-              onChange={e => setSigningState({ ...signingState, passphrase: e.target.value })}
-            ></input>
-            <input
-              type='text' pattern='[0-9]+'
-              title='Confirmation code should be 6 digits'
-              autoComplete='nope'
-              required minLength={6} maxLength={6}
-              value={signingState.code}
-              onChange={e => setSigningState({ ...signingState, code: e.target.value })}
-              placeholder='Confirmation code'></input>
-            <button onClick={() => { setSigningState(defaultState()); approve() }}>resend</button>
-          </>)}
+            <button type='button' type='button' className='reject' onClick={() => resolve({ message: 'signature denied' })}>Reject</button>
+            <button className='approve' onClick={approve}>Sign</button>
+          </form>
         </div>
     </div>
   </div>)
