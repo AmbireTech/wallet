@@ -8,13 +8,21 @@ import { useToasts } from '../../hooks/toasts'
 import { fetchPost } from '../../lib/fetch'
 import { useState } from 'react'
 
-export default function SignMessage ({ toSign, resolve, account, relayerURL }) {
+export default function SignMessage ({ toSign, resolve, account, relayerURL, totalRequests }) {
   const defaultState = () => ({ codeRequired: false, passphrase: '' })
   const { addToast } = useToasts()
   const [signingState, setSigningState] = useState(defaultState())
 
   if (!toSign || !account) return (<></>)
 
+  const handleSigningErr = e => {
+    console.error('Signing error', e)
+    if (e && e.message.includes('must provide an Ethereum address')) {
+      addToast(`Signing error: not connected with the correct address. Make sure you're connected with ${account.id}.`, { error: true })
+    } else {
+      addToast(`Signing error: ${e.message || e}`, { error: true })
+    }
+  }
   const approveQuickAcc = async confirmationCode => {
     if (!relayerURL) {
       addToast('Email/pass accounts not supported without a relayer connection', { error: true })
@@ -53,11 +61,7 @@ export default function SignMessage ({ toSign, resolve, account, relayerURL }) {
       const sig = await signMsgHash(wallet, account.id, account.signer, arrayify(hash), signature)
       resolve({ success: true, result: sig })
       addToast(`Successfully signed!`)
-    } catch(e) {
-      console.error('Signing error', e)
-      addToast(`Signing error: ${e.message || e}`, { error: true })
-      return
-    }
+    } catch(e) { handleSigningErr(e) }
   }
 
   const approve = async () => {
@@ -81,10 +85,7 @@ export default function SignMessage ({ toSign, resolve, account, relayerURL }) {
       const sig = await signMsgHash(wallet, account.id, account.signer, arrayify(hash))
       resolve({ success: true, result: sig })
       addToast(`Successfully signed!`)
-    } catch(e) {
-      console.error(e)
-      addToast(`Signing error: ${e.message || e}`, { error: true })
-    }
+    } catch(e) { handleSigningErr(e) }
   }
 
   return (<div id='signMessage'>
@@ -93,6 +94,9 @@ export default function SignMessage ({ toSign, resolve, account, relayerURL }) {
             <div className='title'>
                 <FaSignature size={35}/>
                 Sign message
+            </div>
+            <div style={{ marginTop: 20 }}>
+              <b>A dApp is requesting your signature.</b>{totalRequests > 1 ? ` You have ${totalRequests - 1} more pending requests.` : ''}
             </div>
         </div>
 

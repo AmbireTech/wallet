@@ -69,18 +69,19 @@ function AppInner () {
   )
 
   // Network shouldn't matter here
-  const toSign = useMemo(() => requests
-    .find(({ type, chainId, account }) => type === 'personal_sign'
+  const everythingToSign = useMemo(() => requests
+    .filter(({ type, chainId, account }) => type === 'personal_sign'
       && account === selectedAcc
     ), [requests, selectedAcc])
 
   return (<>
-    {toSign && (<SignMessage
+    {!!everythingToSign.length && (<SignMessage
       selectedAcc={selectedAcc}
       account={accounts.find(x => x.id === selectedAcc)}
-      toSign={toSign}
+      toSign={everythingToSign[0]}
+      totalRequests={everythingToSign.length}
       relayerURL={relayerURL}
-      resolve={outcome => resolveMany([toSign.id], outcome)}
+      resolve={outcome => resolveMany([everythingToSign[0].id], outcome)}
     ></SignMessage>)}
 
     {sendTxnState.showing ? (
