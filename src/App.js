@@ -53,7 +53,7 @@ function AppInner () {
   }
 
   // Show notifications for all requests
-  useNotifications(requests, portfolio)
+  useNotifications(requests, portfolio, selectedAcc)
 
   // Navigate to the send transaction dialog if we have a new txn
   const eligibleRequests = useMemo(() => requests

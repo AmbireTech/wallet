@@ -9,7 +9,7 @@ let currentNotifs = []
 let isLastTotalBalanceInit = false
 let lastTokensBalanceRaw = []
 
-export default function useNotifications (requests, portfolio) {
+export default function useNotifications (requests, portfolio, selectedAcc) {
     useEffect(() => {
         if (window.Notification && Notification.permission !== 'denied') {
             Notification.requestPermission(() => {
@@ -85,6 +85,11 @@ export default function useNotifications (requests, portfolio) {
             })
         }
     }, [portfolio])
+
+    useEffect(() => {
+        isLastTotalBalanceInit = false
+        lastTokensBalanceRaw = []
+    }, [selectedAcc])
 
     currentNotifs = currentNotifs.filter(({ id, notification }) => {
         if (!requests.find(r => r.id === id)) {
