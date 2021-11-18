@@ -8,6 +8,7 @@ import Segments from './Segments/Segments';
 import Select from './Select/Select';
 import TextInput from './TextInput/TextInput';
 import NumberInput from './NumberInput/NumberInput';
+import UnknownAddress from './UnknownAddress/UnknownAddress';
 
 export {
     AddressBook,
@@ -19,5 +20,6 @@ export {
     Segments,
     Select,
     TextInput,
-    NumberInput
+    NumberInput,
+    UnknownAddress
 };
