@@ -3,12 +3,13 @@ import './Collectible.scss'
 import { useParams } from 'react-router-dom'
 import { ethers, getDefaultProvider } from 'ethers'
 import { Interface } from 'ethers/lib/utils'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { AiOutlineSend } from 'react-icons/ai'
 import { BsFillImageFill } from 'react-icons/bs'
 import * as blockies from 'blockies-ts';
 import { useToasts } from '../../../hooks/toasts'
-import { TextInput, Button, Loading, AddressBook } from '../../common'
+import { useAddressBook } from '../../../hooks'
+import { TextInput, Button, Loading, AddressBook, UnknownAddress } from '../../common'
 import ERC721Abi from '../../../consts/ERC721Abi'
 import networks from '../../../consts/networks'
 
@@ -21,6 +22,7 @@ const handleUri = uri => {
 
 const Collectible = ({ selectedAcc, selectedNetwork, addRequest }) => {
     const { addToast } = useToasts()
+    const { addresses } = useAddressBook()
     const { network, collectionAddr, tokenId } = useParams()
     const [isLoading, setLoading] = useState(true)
     const [metadata, setMetadata] = useState({
@@ -36,6 +38,15 @@ const Collectible = ({ selectedAcc, selectedNetwork, addRequest }) => {
     })
     const [recipientAddress, setRecipientAddress] = useState('')
     const [isTransferDisabled, setTransferDisabled] = useState(true)
+    const [addressConfirmed, setAddressConfirmed] = useState(false)
+    const [newAddress, setNewAddress] = useState(null)
+
+    const isKnownAddress = useMemo(() => [
+        ...addresses.map(({ address }) => address),
+        // ...accounts.map(({ id }) => id)
+    ].includes(recipientAddress), [addresses, recipientAddress])
+    const isAddressValid = useMemo(() => /^0x[a-fA-F0-9]{40}$/.test(recipientAddress), [recipientAddress])
+    const shouldShowUnknowAddressWarning = useMemo(() => isAddressValid && !isKnownAddress, [isAddressValid, isKnownAddress])
 
     const sendTransferTx = () => {
         try {
@@ -58,8 +69,8 @@ const Collectible = ({ selectedAcc, selectedNetwork, addRequest }) => {
 
     useEffect(() => {
         const isAddressValid = /^0x[a-fA-F0-9]{40}$/.test(recipientAddress)
-        setTransferDisabled(!isAddressValid || selectedAcc === recipientAddress || metadata.owner.address !== selectedAcc || selectedNetwork.id !== network)
-    }, [recipientAddress, metadata, selectedNetwork, selectedAcc, network])
+        setTransferDisabled(!isAddressValid || selectedAcc === recipientAddress || metadata.owner?.address !== selectedAcc || selectedNetwork.id !== network || !addressConfirmed)
+    }, [recipientAddress, metadata, selectedNetwork, selectedAcc, network, addressConfirmed])
 
     const fetchMetadata = useCallback(async () => {
         setLoading(true)
@@ -165,10 +176,21 @@ const Collectible = ({ selectedAcc, selectedNetwork, addRequest }) => {
                     <div id="recipient-address">
                         <TextInput placeholder="Recipient Address" value={recipientAddress} onInput={(value) => setRecipientAddress(value)}/>
                         <AddressBook 
+                            newAddress={newAddress}
+                            onClose={() => setNewAddress(null)}
                             onSelectAddress={address => setRecipientAddress(address)}
                         />
                     </div>
                     <div className="separator"></div>
+                    {
+                        shouldShowUnknowAddressWarning ?
+                            <UnknownAddress
+                                onAddNewAddress={() => setNewAddress(recipientAddress)}
+                                onChange={(value) => setAddressConfirmed(value)}
+                            />
+                            :
+                            null
+                    }
                     <Button icon={<AiOutlineSend/>} disabled={isTransferDisabled} onClick={sendTransferTx}>Send</Button>
                 </div>
             </div>
