@@ -110,7 +110,7 @@ const AddAuthSigner = (props) => {
   
     const onTextInput = value => {
       if (textInputInfo.length) setTextInputInfo('')
-      setSignerAddress(value)
+      setSignerAddress({ ...signerAddress, address: value })
     }
   
     return (
@@ -132,6 +132,7 @@ const AddAuthSigner = (props) => {
           />
           <DropDown title="connect wallet">{addFromSignerButtons}</DropDown>
           <div className="btns-wrapper">
+            {/* check if the address is valid */}
             <Button onClick={() => props.onAddBtnClicked(signerAddress.address)} small>Add</Button>
           </div>
         </div>
