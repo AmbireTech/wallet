@@ -3,6 +3,8 @@
 $heading-height: 45px;
 
 .address-book {
+    height: 60px !important;
+
     .menu {
         top: 60px !important;
         display: flex;
@@ -39,6 +41,7 @@ $heading-height: 45px;
             
             .title {
                 display: flex;
+                flex-direction: row !important;
                 align-items: center;
                 gap: 10px;
                 font-size: 15px;
