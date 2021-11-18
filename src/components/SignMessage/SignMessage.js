@@ -52,6 +52,7 @@ export default function SignMessage ({ toSign, resolve, account, relayerURL }) {
       const wallet = await Wallet.fromEncryptedJson(JSON.parse(account.primaryKeyBackup), signingState.passphrase)
       const sig = await signMsgHash(wallet, account.id, account.signer, arrayify(hash), signature)
       resolve({ success: true, result: sig })
+      addToast(`Successfully signed!`)
     } catch(e) {
       console.error('Signing error', e)
       addToast(`Signing error: ${e.message || e}`, { error: true })
@@ -79,6 +80,7 @@ export default function SignMessage ({ toSign, resolve, account, relayerURL }) {
       const hash = keccak256(arrayify(toSign.txn)) // hacky equivalent is: id(toUtf8String(toSign.txn)) 
       const sig = await signMsgHash(wallet, account.id, account.signer, arrayify(hash))
       resolve({ success: true, result: sig })
+      addToast(`Successfully signed!`)
     } catch(e) {
       console.error(e)
       addToast(`Signing error: ${e.message || e}`, { error: true })
