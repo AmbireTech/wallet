@@ -4,7 +4,8 @@ import {
   HashRouter as Router,
   Switch,
   Route,
-  Redirect
+  Redirect,
+  Prompt
 } from 'react-router-dom'
 import { useState, useEffect, useMemo } from 'react'
 import EmailLogin from './components/EmailLogin/EmailLogin'
@@ -74,7 +75,26 @@ function AppInner () {
       && account === selectedAcc
     ), [requests, selectedAcc])
 
+  // When the user presses back, we first hide the SendTransactions dialog (keeping the queue)
+  // Then, signature requests will need to be dismissed one by one, starting with the oldest
+  const onPopHistory = () => {
+    if (sendTxnState.showing) {
+      setSendTxnState({ showing: false })
+      return false
+    }
+    if (everythingToSign.length) {
+      resolveMany([everythingToSign[0].id], { message: 'signature rejected' })
+      return false
+    }
+    return true
+  }
   return (<>
+    <Prompt
+      message={(location, action) => {
+        if (action === 'POP') return onPopHistory()
+        return true
+    }}/>
+
     {!!everythingToSign.length && (<SignMessage
       selectedAcc={selectedAcc}
       account={accounts.find(x => x.id === selectedAcc)}
