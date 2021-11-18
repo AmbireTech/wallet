@@ -3,6 +3,7 @@ import './Card.scss'
 import { Select, Segments, NumberInput, Button, Loading } from '../../../../common'
 import { useEffect, useState } from 'react'
 import { BsArrowDownSquare, BsArrowUpSquare } from 'react-icons/bs'
+import { ethers } from 'ethers'
 
 const segments = [{ value: 'Deposit' }, { value: 'Withdraw' }]
 
@@ -15,7 +16,13 @@ const Card = ({ loading, unavailable, tokensItems, icon, details, onTokenSelect,
 
     const currentToken = tokens.find(({ value }) => value === token)
 
-    const setMaxValue = () => setAmount(currentToken?.balance)
+    const getMaxAmount = () => {
+        if (!currentToken) return 0;
+        const { balanceRaw, decimals } = currentToken
+        return ethers.utils.formatUnits(balanceRaw, decimals)
+    }
+
+    const setMaxAmount = () => setAmount(getMaxAmount(amount))
 
     useEffect(() => {
         if (segment === segments[0].value) setTokens(tokensItems.filter(({ type }) => type === 'deposit'))
@@ -74,10 +81,10 @@ const Card = ({ loading, unavailable, tokensItems, icon, details, onTokenSelect,
                                 min="0"
                                 max={currentToken?.balance}
                                 value={amount}
-                                label={`Available Amount: ${!disabled ? `${currentToken?.balance} ${currentToken?.symbol}` : '0'}`}
+                                label={`Available Amount: ${!disabled ? `${getMaxAmount()} ${currentToken?.symbol}` : '0'}`}
                                 onInput={(value) => setAmount(value)}
                                 button="MAX"
-                                onButtonClick={setMaxValue}
+                                onButtonClick={setMaxAmount}
                             />
                             <Button 
                                 disabled={disabled || amount <= 0 || amount > currentToken?.balance}
