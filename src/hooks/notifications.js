@@ -11,6 +11,11 @@ let currentNotifs = []
 let isLastTotalBalanceInit = false
 let lastTokensBalanceRaw = []
 
+const getAmountReceived = (lastToken, newBalanceRaw, decimals) => {
+    const amountRecieved = lastToken ? newBalanceRaw - lastToken.balanceRaw : newBalanceRaw
+    return ethers.utils.formatUnits(amountRecieved.toString(), decimals)
+}
+
 export default function useNotifications (requests, onShow, portfolio, selectedAcc) {
     const { addToast } = useToasts()
 
@@ -67,20 +72,18 @@ export default function useNotifications (requests, onShow, portfolio, selectedA
 
                 const changedAmounts = portfolio.tokens.filter(({ address, balanceRaw, decimals }) => {
                     const lastToken = lastTokensBalanceRaw.find(token => token.address === address)
-                    const amountRecieved = lastToken ? balanceRaw - lastToken.balanceRaw : balanceRaw
-                    const amountRecievedFormatted = ethers.utils.formatUnits(amountRecieved.toString(), decimals)
-                    return !lastToken || (lastToken && (balanceRaw > lastToken.balanceRaw) && (amountRecievedFormatted > BALANCE_TRESHOLD)) ? true : false 
+                    const amountRecieved = getAmountReceived(lastToken, balanceRaw, decimals)
+                    return !lastToken || (lastToken && (balanceRaw > lastToken.balanceRaw) && (amountRecieved > BALANCE_TRESHOLD)) ? true : false 
                 })
 
                 changedAmounts.forEach(({ address, symbol, decimals, balanceRaw }) => {
                     const lastToken = lastTokensBalanceRaw.find(token => token.address === address)
-                    const amountRecieved = lastToken ? balanceRaw - lastToken.balanceRaw : balanceRaw
-                    const amountRecievedFormatted = ethers.utils.formatUnits(amountRecieved.toString(), decimals)
+                    const amountRecieved = getAmountReceived(lastToken, balanceRaw, decimals)
 
                     showNotification({
                         id: `received_amount_${Date.now()}`,
-                        title: `${amountRecievedFormatted} ${symbol} Received.`,
-                        body: `Your ${symbol} balance increased by ${amountRecievedFormatted} ${symbol}`
+                        title: `${amountRecieved} ${symbol} Received.`,
+                        body: `Your ${symbol} balance increased by ${amountRecieved} ${symbol}`
                     })
 
                     lastToken ? lastTokensBalanceRaw = [
