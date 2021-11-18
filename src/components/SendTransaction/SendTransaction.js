@@ -62,7 +62,7 @@ export default function SendTransaction({ relayerURL, accounts, network, selecte
   )
 
   if (!account || !bundle.txns.length) return (<div id='sendTransaction'>
-      <h3 className='error'>No account or no requests: should never happen.</h3>
+      <h3 className='error'>SendTransactions: No account or no requests: should never happen.</h3>
   </div>)
   return (<SendTransactionWithBundle
       relayerURL={relayerURL}
