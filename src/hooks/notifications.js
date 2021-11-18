@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import { getTransactionSummary } from '../lib/humanReadableTransactions'
 import { ethers } from 'ethers'
+import { useToasts } from './toasts'
 import networks from '../consts/networks'
 
 const REQUEST_TITLE_PREFIX = 'Ambire Wallet: '
@@ -10,6 +11,8 @@ let isLastTotalBalanceInit = false
 let lastTokensBalanceRaw = []
 
 export default function useNotifications (requests, portfolio, selectedAcc) {
+    const { addToast } = useToasts()
+
     useEffect(() => {
         if (window.Notification && Notification.permission !== 'denied') {
             Notification.requestPermission(() => {
@@ -54,37 +57,42 @@ export default function useNotifications (requests, portfolio, selectedAcc) {
     })
 
     useEffect(() => {
-        if (!portfolio.isBalanceLoading && portfolio.balance) {
-            if (!isLastTotalBalanceInit) {
-                isLastTotalBalanceInit = true
-                lastTokensBalanceRaw = portfolio.tokens.map(({ address, balanceRaw }) => ({ address, balanceRaw }))
-            }
+        try {
+            if (!portfolio.isBalanceLoading && portfolio.balance) {
+                if (!isLastTotalBalanceInit) {
+                    isLastTotalBalanceInit = true
+                    lastTokensBalanceRaw = portfolio.tokens.map(({ address, balanceRaw }) => ({ address, balanceRaw }))
+                }
 
-            const changedAmounts = portfolio.tokens.filter(({ address, balanceRaw }) => {
-                const lastToken = lastTokensBalanceRaw.find(token => token.address === address)
-                return lastToken && balanceRaw > lastToken.balanceRaw ? true : false 
-            })
-
-            changedAmounts.forEach(({ address, symbol, decimals, balanceRaw }) => {
-                const lastToken = lastTokensBalanceRaw.find(token => token.address === address)
-                const amountRecieved = ethers.utils.formatUnits((balanceRaw - lastToken.balanceRaw).toString(), decimals)
-
-                showNotification({
-                    id: `received_amount_${Date.now()}`,
-                    title: `${amountRecieved} ${symbol} Received.`,
-                    body: `Your ${symbol} balance increased by ${amountRecieved} ${symbol}`
+                const changedAmounts = portfolio.tokens.filter(({ address, balanceRaw }) => {
+                    const lastToken = lastTokensBalanceRaw.find(token => token.address === address)
+                    return lastToken && balanceRaw > lastToken.balanceRaw ? true : false 
                 })
 
-                lastTokensBalanceRaw = [
-                    ...lastTokensBalanceRaw.filter(token => token.address !== address),
-                    {
-                        ...lastToken,
-                        balanceRaw
-                    }
-                ]
-            })
+                changedAmounts.forEach(({ address, symbol, decimals, balanceRaw }) => {
+                    const lastToken = lastTokensBalanceRaw.find(token => token.address === address)
+                    const amountRecieved = ethers.utils.formatUnits((balanceRaw - lastToken.balanceRaw).toString(), decimals)
+
+                    showNotification({
+                        id: `received_amount_${Date.now()}`,
+                        title: `${amountRecieved} ${symbol} Received.`,
+                        body: `Your ${symbol} balance increased by ${amountRecieved} ${symbol}`
+                    })
+
+                    lastTokensBalanceRaw = [
+                        ...lastTokensBalanceRaw.filter(token => token.address !== address),
+                        {
+                            ...lastToken,
+                            balanceRaw
+                        }
+                    ]
+                })
+            }
+        } catch(e) {
+            console.error(e);
+            addToast(e.message | e, { error: true })
         }
-    }, [portfolio])
+    }, [portfolio, addToast])
 
     useEffect(() => {
         isLastTotalBalanceInit = false
