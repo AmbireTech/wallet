@@ -42,6 +42,8 @@ function makeBundle(account, networkId, requests) {
 }
 
 export default function SendTransaction({ relayerURL, accounts, network, selectedAcc, requests, resolveMany, replacementBundle, onDismiss }) {
+  // NOTE: this can be refactored at a top level to only pass the selected account (full object)
+  // keeping it that way right now (selectedAcc, accounts) cause maybe we'll need the others at some point?
   const account = accounts.find(x => x.id === selectedAcc)
 
   // Also filtered in App.js, but better safe than sorry here
@@ -336,7 +338,7 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
                       </div>
                   </div>
                   {(bundle.signer.quickAccManager && !relayerURL) ? (
-                    <FailingTxn message='Signing transactions with an email/passphrase account without being connected to the relayer is unsupported.'></FailingTxn>
+                    <FailingTxn message='Signing transactions with an email/password account without being connected to the relayer is unsupported.'></FailingTxn>
                   ) : (
                       <Actions
                         estimation={estimation}

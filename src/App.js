@@ -12,6 +12,7 @@ import AddAccount from './components/AddAccount/AddAccount'
 import Wallet from './components/Wallet/Wallet'
 import ToastProvider from './components/ToastProvider/ToastProvider'
 import SendTransaction from './components/SendTransaction/SendTransaction'
+import SignMessage from './components/SignMessage/SignMessage'
 import useAccounts from './hooks/accounts'
 import useNetwork from './hooks/network'
 import useWalletConnect from './hooks/walletconnect'
@@ -67,7 +68,21 @@ function AppInner () {
     [eligibleRequests.length]
   )
 
+  // Network shouldn't matter here
+  const toSign = useMemo(() => requests
+    .find(({ type, chainId, account }) => type === 'personal_sign'
+      && account === selectedAcc
+    ), [requests, selectedAcc])
+
   return (<>
+    {toSign && (<SignMessage
+      selectedAcc={selectedAcc}
+      account={accounts.find(x => x.id === selectedAcc)}
+      toSign={toSign}
+      relayerURL={relayerURL}
+      resolve={outcome => resolveMany([toSign.id], outcome)}
+    ></SignMessage>)}
+
     {sendTxnState.showing ? (
       <SendTransaction
           accounts={accounts}
@@ -81,6 +96,7 @@ function AppInner () {
       ></SendTransaction>
       ) : (<></>)
     }
+
     <Switch>
       <Route path="/add-account">
         <AddAccount relayerURL={relayerURL} onAddAccount={onAddAccount}></AddAccount>
