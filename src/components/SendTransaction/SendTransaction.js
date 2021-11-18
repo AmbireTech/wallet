@@ -338,7 +338,7 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
                       </div>
                   </div>
                   {(bundle.signer.quickAccManager && !relayerURL) ? (
-                    <FailingTxn message='Signing transactions with an email/passphrase account without being connected to the relayer is unsupported.'></FailingTxn>
+                    <FailingTxn message='Signing transactions with an email/password account without being connected to the relayer is unsupported.'></FailingTxn>
                   ) : (
                       <Actions
                         estimation={estimation}
