@@ -10,7 +10,7 @@ let currentNotifs = []
 let isLastTotalBalanceInit = false
 let lastTokensBalanceRaw = []
 
-export default function useNotifications (requests, portfolio, selectedAcc) {
+export default function useNotifications (requests, onShow, portfolio, selectedAcc) {
     const { addToast } = useToasts()
 
     useEffect(() => {
@@ -31,6 +31,7 @@ export default function useNotifications (requests, portfolio, selectedAcc) {
         notification.onclick = () => {
             window.focus()
             notification.close()
+            onShow()
         }
         currentNotifs.push({ id, notification })
     }
