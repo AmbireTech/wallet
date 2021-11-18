@@ -27,7 +27,7 @@ export default function useNotifications (requests, onShow, portfolio, selectedA
         }
     }, [])
     
-    const showNotification = useCallback(({ id, title, body, requireInteraction }) => {
+    const showNotification = useCallback(({ id, title, body, requireInteraction, isSendTransaction }) => {
         const notification = new Notification(title, {
             requireInteraction: requireInteraction || false,
             body,
@@ -37,7 +37,7 @@ export default function useNotifications (requests, onShow, portfolio, selectedA
         notification.onclick = () => {
             window.focus()
             notification.close()
-            onShow()
+            isSendTransaction && onShow()
         }
         currentNotifs.push({ id, notification })
     }, [onShow])
@@ -58,6 +58,7 @@ export default function useNotifications (requests, onShow, portfolio, selectedA
             id: request.id,
             title,
             body,
+            isSendTransaction: request.type === 'eth_sendTransaction',
             requireInteraction: true
         })
     })
