@@ -6,7 +6,7 @@ const REQUEST_TITLE_PREFIX = 'Ambire Wallet: '
 const SUPPORTED_TYPES =  ['eth_sendTransaction', 'personal_sign']
 let currentNotifs = []
 
-export default function useNotifications (requests) {
+export default function useNotifications (requests, onShow) {
     useEffect(() => {
         if (window.Notification && Notification.permission !== 'denied') {
             Notification.requestPermission(() => {
@@ -34,6 +34,7 @@ export default function useNotifications (requests) {
         })
         //notification.onclose = 
         notification.onclick = () => {
+            onShow()
             window.focus()
             notification.close()
         }

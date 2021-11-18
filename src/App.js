@@ -24,8 +24,11 @@ import { usePortfolio } from './hooks'
 const relayerURL = process.env.hasOwnProperty('REACT_APP_RELAYER_URL') ? process.env.REACT_APP_RELAYER_URL : 'http://localhost:1934'
 
 function AppInner () {
+  // basic stuff: currently selected account, all accounts, currently selected network
   const { accounts, selectedAcc, onSelectAcc, onAddAccount, onRemoveAccount } = useAccounts()
   const { network, setNetwork, allNetworks } = useNetwork()
+
+  // Signing requests: transactions/signed msgs: all requests are pushed into .requests
   const { connections, connect, disconnect, requests: wcRequests, resolveMany: wcResolveMany } = useWalletConnect({
     account: selectedAcc,
     chainId: network.chainId
@@ -34,11 +37,6 @@ function AppInner () {
 	  selectedAccount: selectedAcc,
 	  network: network
 	}, [selectedAcc, network])
-
-  const portfolio = usePortfolio({
-    currentNetwork: network.id,
-    account: selectedAcc
-  })
 
   // Internal requests: eg from the Transfer page, Security page, etc. - requests originating in the wallet UI itself
   // unlike WalletConnect or SafeSDK requests, those do not need to be persisted
@@ -53,8 +51,11 @@ function AppInner () {
     setInternalRequests(reqs => reqs.filter(x => !ids.includes(x.id)))
   }
 
-  // Show notifications for all requests
-  useNotifications(requests)
+  // Portfolio: this hook actively updates the balances/assets of the currently selected user
+  const portfolio = usePortfolio({
+    currentNetwork: network.id,
+    account: selectedAcc
+  })
 
   // Navigate to the send transaction dialog if we have a new txn
   const eligibleRequests = useMemo(() => requests
@@ -88,6 +89,10 @@ function AppInner () {
     }
     return true
   }
+
+  // Show notifications for all requests
+  useNotifications(requests, () => setSendTxnState({ ...sendTxnState, showing: true }))
+
   return (<>
     <Prompt
       message={(location, action) => {
