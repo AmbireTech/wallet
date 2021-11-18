@@ -1,8 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useToasts } from './toasts'
 
-const isAddressValid = address => /^0x[a-fA-F0-9]{40}$/.test(address)
-
 const storeItem = (key, value) => {
     localStorage.setItem(key, value)
     const event = new Event('storage');
@@ -13,6 +11,8 @@ const storeItem = (key, value) => {
 
 const useAddressBook = () => {
     const { addToast } = useToasts()
+
+    const isValidAddress = useCallback(address => /^0x[a-fA-F0-9]{40}$/.test(address), [])
 
     const [addresses, setAddresses] = useState(() => {
         try {
@@ -27,7 +27,7 @@ const useAddressBook = () => {
 
     const addAddress = useCallback((name, address) => {
         if (!name || !address) throw new Error('Address Book: invalid arguments supplied')
-        if (!isAddressValid(address)) throw new Error('Address Book: invalid address format')
+        if (!isValidAddress(address)) throw new Error('Address Book: invalid address format')
 
         const newAddresses = [
             ...addresses,
@@ -41,11 +41,11 @@ const useAddressBook = () => {
         storeItem('addresses', JSON.stringify(newAddresses))
 
         addToast(`${address} added to your Address Book.`)
-    }, [addresses, addToast])
+    }, [addresses, isValidAddress, addToast])
 
     const removeAddress = useCallback((name, address) => {
         if (!name || !address) throw new Error('Address Book: invalid arguments supplied')
-        if (!isAddressValid(address)) throw new Error('Address Book: invalid address format')
+        if (!isValidAddress(address)) throw new Error('Address Book: invalid address format')
 
         const newAddresses = addresses.filter(a => JSON.stringify(a) !== JSON.stringify({ name, address }))
 
@@ -53,7 +53,7 @@ const useAddressBook = () => {
         storeItem('addresses', JSON.stringify(newAddresses))
 
         addToast(`${address} removed from your Address Book.`)
-    }, [addresses, addToast])
+    }, [addresses, isValidAddress, addToast])
 
     useEffect(() => {
         const onReceieveMessage = ({ key, value }) => {
@@ -66,7 +66,8 @@ const useAddressBook = () => {
     return {
         addresses,
         addAddress,
-        removeAddress
+        removeAddress,
+        isValidAddress
     }
 }
 
