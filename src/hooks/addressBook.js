@@ -1,16 +1,11 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useToasts } from './toasts'
-
-const storeItem = (key, value) => {
-    localStorage.setItem(key, value)
-    const event = new Event('storage');
-    event.value = value;
-    event.key = key;
-    window.dispatchEvent(event);
-}
+import { useAccounts } from '.'
+import storeItem from '../helpers/storeItemDispatchEvent'
 
 const useAddressBook = () => {
     const { addToast } = useToasts()
+    const { accounts } = useAccounts()
 
     const isValidAddress = useCallback(address => /^0x[a-fA-F0-9]{40}$/.test(address), [])
 
@@ -56,11 +51,9 @@ const useAddressBook = () => {
     }, [addresses, isValidAddress, addToast])
 
     useEffect(() => {
-        const onReceieveMessage = ({ key, value }) => {
-            if (key === 'addresses') setAddresses(JSON.parse(value))
-        }
-        window.addEventListener('storage', onReceieveMessage)
-        return () => window.removeEventListener('storage', onReceieveMessage)
+        const onAddressesChanged = ({ value }) => setAddresses(JSON.parse(value))
+        window.addEventListener('storage.addresses', onAddressesChanged)
+        return () => window.removeEventListener('storage.addresses', onAddressesChanged)
     }, [])
 
     return {
