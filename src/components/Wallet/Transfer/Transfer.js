@@ -26,10 +26,10 @@ const crossChainAssets = [
     }
 ]
 
-const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, accounts, addRequest }) => {
+const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest }) => {
     const { tokenAddress } = useParams()
     const { addToast } = useToasts()
-    const { addresses, isValidAddress } = useAddressBook()
+    const { isValidAddress, isKnownAddress } = useAddressBook()
 
     const [asset, setAsset] = useState(tokenAddress)
     const [amount, setAmount] = useState(0)
@@ -68,11 +68,7 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, accounts, 
         }
     }
 
-    const isKnownAddress = useMemo(() => [
-        ...addresses.map(({ address }) => address),
-        ...accounts.map(({ id }) => id)
-    ].includes(address), [addresses, accounts, address])
-    const shouldShowUnknowAddressWarning = useMemo(() => isValidAddress(address) && !isKnownAddress, [address, isValidAddress, isKnownAddress])
+    const shouldShowUnknowAddressWarning = useMemo(() => isValidAddress(address) && !isKnownAddress(address), [address, isValidAddress, isKnownAddress])
 
     const sendTx = () => {
         try {
@@ -116,7 +112,7 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, accounts, 
         const isKnowTokenOrContract = tokensAddresses.includes(addressToLowerCase) || contractsAddresses.includes(addressToLowerCase)
 
         setWarning(isKnowTokenOrContract)
-        setDisabled(isKnowTokenOrContract || !isValidAddress(address) || !(amount > 0) || !(amount <= selectedAsset?.balance) || address === selectedAcc || (!isKnownAddress && !addressConfirmed))
+        setDisabled(isKnowTokenOrContract || !isValidAddress(address) || !(amount > 0) || !(amount <= selectedAsset?.balance) || address === selectedAcc || (!isKnownAddress(address) && !addressConfirmed))
     }, [address, amount, selectedAcc, selectedAsset, addressConfirmed, isValidAddress, isKnownAddress])
 
     return (

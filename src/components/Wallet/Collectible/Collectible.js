@@ -20,9 +20,9 @@ const handleUri = uri => {
     return uri.startsWith('ipfs://') ? uri.replace(/ipfs:\/\/ipfs\/|ipfs:\/\//g, 'https://ipfs.io/ipfs/') : uri
 }
 
-const Collectible = ({ selectedAcc, accounts, selectedNetwork, addRequest }) => {
+const Collectible = ({ selectedAcc, selectedNetwork, addRequest }) => {
     const { addToast } = useToasts()
-    const { addresses, isValidAddress } = useAddressBook()
+    const { isValidAddress, isKnownAddress } = useAddressBook()
     const { network, collectionAddr, tokenId } = useParams()
     const [isLoading, setLoading] = useState(true)
     const [metadata, setMetadata] = useState({
@@ -41,11 +41,7 @@ const Collectible = ({ selectedAcc, accounts, selectedNetwork, addRequest }) => 
     const [addressConfirmed, setAddressConfirmed] = useState(false)
     const [newAddress, setNewAddress] = useState(null)
 
-    const isKnownAddress = useMemo(() => [
-        ...addresses.map(({ address }) => address),
-        ...accounts.map(({ id }) => id)
-    ].includes(recipientAddress), [addresses, accounts, recipientAddress])
-    const shouldShowUnknowAddressWarning = useMemo(() => isValidAddress(recipientAddress) && !isKnownAddress, [recipientAddress, isValidAddress, isKnownAddress])
+    const shouldShowUnknowAddressWarning = useMemo(() => isValidAddress(recipientAddress) && !isKnownAddress(recipientAddress), [recipientAddress, isValidAddress, isKnownAddress])
 
     const sendTransferTx = () => {
         try {
