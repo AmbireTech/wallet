@@ -39,7 +39,6 @@ export default function useNotifications (requests, onShow, portfolio, selectedA
     requests.forEach(request => {
         if (!SUPPORTED_TYPES.includes(request.type)) return
         if (currentNotifs.find(n => n.id === request.id)) return
-        // @TODO: other request types, eg signature
         if (!request.txn) return
         const isSign = request.type === 'personal_sign'
         const network = networks.find(x => x.chainId === request.chainId)
