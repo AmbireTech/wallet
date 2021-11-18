@@ -22,7 +22,7 @@ const handleUri = uri => {
 
 const Collectible = ({ selectedAcc, accounts, selectedNetwork, addRequest }) => {
     const { addToast } = useToasts()
-    const { addresses } = useAddressBook()
+    const { addresses, isValidAddress } = useAddressBook()
     const { network, collectionAddr, tokenId } = useParams()
     const [isLoading, setLoading] = useState(true)
     const [metadata, setMetadata] = useState({
@@ -45,8 +45,7 @@ const Collectible = ({ selectedAcc, accounts, selectedNetwork, addRequest }) => 
         ...addresses.map(({ address }) => address),
         ...accounts.map(({ id }) => id)
     ].includes(recipientAddress), [addresses, accounts, recipientAddress])
-    const isAddressValid = useMemo(() => /^0x[a-fA-F0-9]{40}$/.test(recipientAddress), [recipientAddress])
-    const shouldShowUnknowAddressWarning = useMemo(() => isAddressValid && !isKnownAddress, [isAddressValid, isKnownAddress])
+    const shouldShowUnknowAddressWarning = useMemo(() => isValidAddress(recipientAddress) && !isKnownAddress, [recipientAddress, isValidAddress, isKnownAddress])
 
     const sendTransferTx = () => {
         try {
@@ -68,9 +67,8 @@ const Collectible = ({ selectedAcc, accounts, selectedNetwork, addRequest }) => 
     }
 
     useEffect(() => {
-        const isAddressValid = /^0x[a-fA-F0-9]{40}$/.test(recipientAddress)
-        setTransferDisabled(!isAddressValid || selectedAcc === recipientAddress || metadata.owner?.address !== selectedAcc || selectedNetwork.id !== network || !addressConfirmed)
-    }, [recipientAddress, metadata, selectedNetwork, selectedAcc, network, addressConfirmed])
+        setTransferDisabled(!isValidAddress(recipientAddress) || selectedAcc === recipientAddress || metadata.owner?.address !== selectedAcc || selectedNetwork.id !== network || !addressConfirmed)
+    }, [recipientAddress, metadata, selectedNetwork, selectedAcc, network, addressConfirmed, isValidAddress])
 
     const fetchMetadata = useCallback(async () => {
         setLoading(true)
