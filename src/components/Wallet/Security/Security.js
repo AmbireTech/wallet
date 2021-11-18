@@ -6,6 +6,7 @@ import accountPresets from '../../../consts/accountPresets'
 import privilegesOptions from '../../../consts/privilegesOptions'
 import { useRelayerData } from '../../../hooks'
 import AddAuthSigner from './AddAuthSigner/AddAuthSigner'
+import { useToasts } from '../../../hooks/toasts'
 
 const IDENTITY_INTERFACE = new Interface(
   require('adex-protocol-eth/abi/Identity5.2')
@@ -25,6 +26,7 @@ const Security = ({
       : null
   )
   const privileges = data ? data.privileges : {}
+  const { addToast } = useToasts()
 
   console.log('privileges', privileges)
 
@@ -35,17 +37,23 @@ const Security = ({
         address,
         privLevel,
       ]),
-      value: '0x',
+      value: '0',
     }
   }
 
   const addTransactionToAddRequest = txn => {
-    addRequest({
-      id: `setPriv_${txn.data}`,
-      txn: txn,
-      chainId: selectedNetwork.chainId,
-      account: selectedAcc,
-    })
+    try {
+      addRequest({
+        id: `setPriv_${txn.data}`,
+        type: 'eth_sendTransaction',
+        txn: txn,
+        chainId: selectedNetwork.chainId,
+        account: selectedAcc,
+      })
+    } catch(err) {
+        console.error(err)
+        addToast(`Error: ${err.message || err}`, { error: true })
+    }
   }
 
   const onMakeDefaultBtnClicked = key => {
@@ -58,14 +66,12 @@ const Security = ({
   }
 
   const onAddBtnClickedHandler = (newSignerAddress) => {
-    console.log('newSignerAddress', newSignerAddress)
+    const txn = craftTransaction(newSignerAddress, privilegesOptions.true)
+    addTransactionToAddRequest(txn)
   }
 
   const selectedAccount = accounts.find(x => x.id === selectedAcc)
-  console.log('==================================================')
-  console.log('selected Account', selectedAccount)
-  console.log('==================================================')
-
+  
   const privList = Object.entries(privileges)
     .map(([addr, privValue]) => {
       if (!privValue) return null
