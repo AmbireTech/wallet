@@ -66,26 +66,24 @@ export default function useNotifications (requests, portfolio, selectedAcc) {
 
                 const changedAmounts = portfolio.tokens.filter(({ address, balanceRaw }) => {
                     const lastToken = lastTokensBalanceRaw.find(token => token.address === address)
-                    return lastToken && balanceRaw > lastToken.balanceRaw ? true : false 
+                    return !lastToken || (lastToken && balanceRaw > lastToken.balanceRaw) ? true : false 
                 })
 
                 changedAmounts.forEach(({ address, symbol, decimals, balanceRaw }) => {
                     const lastToken = lastTokensBalanceRaw.find(token => token.address === address)
-                    const amountRecieved = ethers.utils.formatUnits((balanceRaw - lastToken.balanceRaw).toString(), decimals)
+                    const amountRecieved = lastToken ? balanceRaw - lastToken.balanceRaw : balanceRaw
+                    const amountRecievedFormatted = ethers.utils.formatUnits(amountRecieved.toString(), decimals)
 
                     showNotification({
                         id: `received_amount_${Date.now()}`,
-                        title: `${amountRecieved} ${symbol} Received.`,
-                        body: `Your ${symbol} balance increased by ${amountRecieved} ${symbol}`
+                        title: `${amountRecievedFormatted} ${symbol} Received.`,
+                        body: `Your ${symbol} balance increased by ${amountRecievedFormatted} ${symbol}`
                     })
 
-                    lastTokensBalanceRaw = [
+                    lastToken ? lastTokensBalanceRaw = [
                         ...lastTokensBalanceRaw.filter(token => token.address !== address),
-                        {
-                            ...lastToken,
-                            balanceRaw
-                        }
-                    ]
+                        { address, balanceRaw }
+                    ] : lastTokensBalanceRaw.push({ address, balanceRaw })
                 })
             }
         } catch(e) {
