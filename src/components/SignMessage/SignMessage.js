@@ -42,7 +42,7 @@ export default function SignMessage ({ toSign, resolve, account, relayerURL }) {
         return
       }
       if (confCodeRequired) {
-        const confCode = prompt('A confirmation code has been sent to your email, it is valid for 5 minutes. Please enter it here:')
+        const confCode = prompt('A confirmation code has been sent to your email, it is valid for 3 minutes. Please enter it here:')
         if (!confCode) throw new Error('You must enter a confirmation code')
         await approveQuickAcc(confCode)
         return
