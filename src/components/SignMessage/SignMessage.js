@@ -110,7 +110,7 @@ export default function SignMessage ({ toSign, resolve, account, relayerURL }) {
               ></input>
             </>)}
 
-            <button type='button' type='button' className='reject' onClick={() => resolve({ message: 'signature denied' })}>Reject</button>
+            <button type='button' className='reject' onClick={() => resolve({ message: 'signature denied' })}>Reject</button>
             <button className='approve' onClick={approve}>Sign</button>
           </form>
         </div>
