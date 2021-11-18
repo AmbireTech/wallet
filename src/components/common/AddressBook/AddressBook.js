@@ -3,14 +3,10 @@ import './AddressBook.scss'
 import { FaAddressCard } from 'react-icons/fa'
 import { MdOutlineAdd, MdClose, MdOutlineDelete } from 'react-icons/md'
 import * as blockies from 'blockies-ts';
-import { useAddressBook, useAccounts } from '../../../hooks'
 import { DropDown } from '..'
 import { useCallback, useEffect, useState } from 'react'
 
-const AddressBook = ({ newAddress, onClose, onSelectAddress }) => {
-    const { accounts, selectedAcc } = useAccounts()
-    const { addresses, addAddress, removeAddress } = useAddressBook()
-
+const AddressBook = ({ accounts, selectedAcc, addresses, addAddress, removeAddress, newAddress, onClose, onSelectAddress }) => {
     const [address, setAddress] = useState('')
     const [name, setName] = useState('')
     const [isOpen, setOpenMenu] = useState(false)

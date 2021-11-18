@@ -25,7 +25,18 @@ export default function Wallet(props) {
     },
     {
       path: '/transfer/:tokenAddress?',
-      component: <Transfer portfolio={props.portfolio} selectedAcc={props.selectedAcc} selectedNetwork={{...props.network}} addRequest={props.addRequest}/>
+      component: <Transfer
+        portfolio={props.portfolio}
+        selectedAcc={props.selectedAcc}
+        selectedNetwork={{...props.network}}
+        addRequest={props.addRequest}
+        accounts={props.accounts}
+        addresses={props.addresses}
+        addAddress={props.addAddress}
+        removeAddress={props.removeAddress}
+        isKnownAddress={props.isKnownAddress}
+        isValidAddress={props.isValidAddress}
+      />
     },
     {
       path: '/earn',
@@ -50,7 +61,17 @@ export default function Wallet(props) {
     },
     {
       path: '/nft/:network/:collectionAddr/:tokenId',
-      component: <Collectible selectedAcc={props.selectedAcc} selectedNetwork={{...props.network}} addRequest={props.addRequest}/>
+      component: <Collectible
+        selectedAcc={props.selectedAcc}
+        selectedNetwork={{...props.network}}
+        addRequest={props.addRequest}
+        accounts={props.accounts}
+        addresses={props.addresses}
+        addAddress={props.addAddress}
+        removeAddress={props.removeAddress}
+        isKnownAddress={props.isKnownAddress}
+        isValidAddress={props.isValidAddress}
+      />
     },
     {
       path: '/gnosis/plugins',
