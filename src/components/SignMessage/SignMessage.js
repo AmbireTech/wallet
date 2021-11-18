@@ -15,6 +15,14 @@ export default function SignMessage ({ toSign, resolve, account, relayerURL }) {
 
   if (!toSign || !account) return (<></>)
 
+  const handleSigningErr = e => {
+    console.error('Signing error', e)
+    if (e && e.message.includes('must provide an Ethereum address')) {
+      addToast(`Signing error: not connected with the correct address. Make sure you're connected with ${account.id}.`, { error: true })
+    } else {
+      addToast(`Signing error: ${e.message || e}`, { error: true })
+    }
+  }
   const approveQuickAcc = async confirmationCode => {
     if (!relayerURL) {
       addToast('Email/pass accounts not supported without a relayer connection', { error: true })
@@ -53,11 +61,7 @@ export default function SignMessage ({ toSign, resolve, account, relayerURL }) {
       const sig = await signMsgHash(wallet, account.id, account.signer, arrayify(hash), signature)
       resolve({ success: true, result: sig })
       addToast(`Successfully signed!`)
-    } catch(e) {
-      console.error('Signing error', e)
-      addToast(`Signing error: ${e.message || e}`, { error: true })
-      return
-    }
+    } catch(e) { handleSigningErr(e) }
   }
 
   const approve = async () => {
@@ -81,10 +85,7 @@ export default function SignMessage ({ toSign, resolve, account, relayerURL }) {
       const sig = await signMsgHash(wallet, account.id, account.signer, arrayify(hash))
       resolve({ success: true, result: sig })
       addToast(`Successfully signed!`)
-    } catch(e) {
-      console.error(e)
-      addToast(`Signing error: ${e.message || e}`, { error: true })
-    }
+    } catch(e) { handleSigningErr(e) }
   }
 
   return (<div id='signMessage'>
