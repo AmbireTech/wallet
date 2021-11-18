@@ -79,6 +79,7 @@ function AppInner () {
       selectedAcc={selectedAcc}
       account={accounts.find(x => x.id === selectedAcc)}
       toSign={toSign}
+      relayerURL={relayerURL}
       resolve={outcome => resolveMany([toSign.id], outcome)}
     ></SignMessage>)}
 

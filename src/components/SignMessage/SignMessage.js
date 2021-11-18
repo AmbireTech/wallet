@@ -4,22 +4,58 @@ import { toUtf8String/*, keccak256*/, arrayify } from 'ethers/lib/utils'
 import { signMsgHash } from 'adex-protocol-eth/js/Bundle'
 import { getWallet } from '../../lib/getWallet'
 import { useToasts } from '../../hooks/toasts'
+import { fetchPost } from '../../lib/fetch'
+import { useState } from 'react'
 
-export default function SignMessage ({ toSign, resolve, account }) {
+export default function SignMessage ({ toSign, resolve, account, relayerURL }) {
+  const defaultState = () => ({ codeRequired: false, passphrase: '', code: '' })
   const { addToast } = useToasts()
-
-  // @TODO state for the confirmation code
+  const [signingState, setSigningState] = useState(defaultState())
 
   if (!toSign || !account) return (<></>)
 
-  const approve = async () => {
-    // @TODO quickAccount support
-    if (account.signer.quickAccManager) {
-      // pull the confirmation code 
-      // @TODO
-      addToast('email/pass accounts not supported yet', { error: true })
+  const approveQuickAcc = async () => {
+    if (!relayerURL) {
+      addToast('Email/pass accounts not supported without a relayer connection', { error: true })
       return
     }
+    try {
+      console.log(signingState)
+      //  const wallet = await Wallet.fromEncryptedJson(JSON.parse(account.primaryKeyBackup), pwd)
+
+      const { signature, success, message, confCodeRequired } = await fetchPost(
+          // network doesn't matter when signing
+        `${relayerURL}/second-key/${account.id}/ethereum/sign`, {
+          signer: account.signer,
+          toSign: toSign.txn,
+          code: signingState.code
+        }
+      )
+      if (!success) {
+        if (!message) throw new Error(`Secondary key: no success but no error message`)
+        if (message.includes('invalid confirmation code')) {
+          addToast('Unable to sign: wrong confirmation code', { error: true })
+        }
+        addToast(`Second signature error: ${message}`)
+        return
+      }
+      if (confCodeRequired) {
+        setSigningState({ codeRequired: true })
+        return
+      }
+      console.log(signature, success, message)
+    } catch(e) {
+      console.error('Relayer error', e)
+      addToast(`Relayer error: ${e.message || e}`, { error: true })
+      return
+    }
+  }
+  const approve = async () => {
+    if (account.signer.quickAccManager) {
+      await approveQuickAcc()
+      return
+    }
+
     // if quick account, wallet = await fromEncryptedBackup
     // and just pass the signature as secondSig to signMsgHash
     const wallet = getWallet({
@@ -59,15 +95,23 @@ export default function SignMessage ({ toSign, resolve, account }) {
           <button type='button' className='reject' onClick={() => resolve({ message: 'signature denied' })}>Reject</button>
           <button type='button' className='approve' onClick={approve}>Sign</button>
 
-          {/*
-          <input type='password' required minLength={3} placeholder='Password'></input>
-          <input
-            type='text' pattern='[0-9]+'
-            title='Confirmation code should be 6 digits'
-            autoComplete='nope'
-            required minLength={6} maxLength={6}
-            placeholder='Confirmation code'></input>
-          */}
+          {signingState.codeRequired && (<>
+            <input type='password'
+              required minLength={3}
+              placeholder='Password'
+              value={signingState.passphrase}
+              onChange={e => setSigningState({ ...signingState, passphrase: e.target.value })}
+            ></input>
+            <input
+              type='text' pattern='[0-9]+'
+              title='Confirmation code should be 6 digits'
+              autoComplete='nope'
+              required minLength={6} maxLength={6}
+              value={signingState.code}
+              onChange={e => setSigningState({ ...signingState, code: e.target.value })}
+              placeholder='Confirmation code'></input>
+            <button onClick={() => { setSigningState(defaultState()); approve() }}>resend</button>
+          </>)}
         </div>
     </div>
   </div>)
