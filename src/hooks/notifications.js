@@ -73,7 +73,7 @@ export default function useNotifications (requests, onShow, portfolio, selectedA
                 const changedAmounts = portfolio.tokens.filter(({ address, balanceRaw, decimals }) => {
                     const lastToken = lastTokensBalanceRaw.find(token => token.address === address)
                     const amountRecieved = getAmountReceived(lastToken, balanceRaw, decimals)
-                    return !lastToken || (lastToken && (balanceRaw > lastToken.balanceRaw) && (amountRecieved > BALANCE_TRESHOLD)) ? true : false 
+                    return !lastToken || (lastToken && (balanceRaw > lastToken.balanceRaw) && (amountRecieved > BALANCE_TRESHOLD))
                 })
 
                 changedAmounts.forEach(({ address, symbol, decimals, balanceRaw }) => {
