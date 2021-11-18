@@ -50,7 +50,7 @@ export default function Wallet(props) {
     },
     {
       path: '/nft/:network/:collectionAddr/:tokenId',
-      component: <Collectible selectedAcc={props.selectedAcc} selectedNetwork={{...props.network}} addRequest={props.addRequest}/>
+      component: <Collectible selectedAcc={props.selectedAcc} accounts={props.accounts} selectedNetwork={{...props.network}} addRequest={props.addRequest}/>
     },
     {
       path: '/gnosis/plugins',
