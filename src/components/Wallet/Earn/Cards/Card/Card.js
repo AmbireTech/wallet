@@ -77,7 +77,7 @@ const Card = ({ loading, unavailable, tokensItems, icon, details, onTokenSelect,
                             }
                             <Segments small defaultValue={segment} segments={segments} onChange={(value) => setSegment(value)}></Segments>
                             <NumberInput
-                                disabled={disabled}
+                                disabled={!currentToken?.balance}
                                 min="0"
                                 max={currentToken?.balance}
                                 value={amount}
