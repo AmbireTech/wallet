@@ -1,5 +1,5 @@
 import './Earn.scss'
-import AAVECard from './Cards/AAVECard'
+import AAVECard from './Cards/AAVECard/AAVECard'
 import { Loading } from '../../common'
 
 const Earn = ({ portfolio, selectedNetwork, selectedAcc, addRequest }) => {
