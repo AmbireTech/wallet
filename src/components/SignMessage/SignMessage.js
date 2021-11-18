@@ -8,7 +8,7 @@ import { useToasts } from '../../hooks/toasts'
 import { fetchPost } from '../../lib/fetch'
 import { useState } from 'react'
 
-export default function SignMessage ({ toSign, resolve, account, relayerURL }) {
+export default function SignMessage ({ toSign, resolve, account, relayerURL, totalRequests }) {
   const defaultState = () => ({ codeRequired: false, passphrase: '' })
   const { addToast } = useToasts()
   const [signingState, setSigningState] = useState(defaultState())
@@ -94,6 +94,9 @@ export default function SignMessage ({ toSign, resolve, account, relayerURL }) {
             <div className='title'>
                 <FaSignature size={35}/>
                 Sign message
+            </div>
+            <div style={{ marginTop: 20 }}>
+              <b>A dApp is requesting your signature.</b>{totalRequests > 1 ? ` You have ${totalRequests - 1} more pending requests.` : ''}
             </div>
         </div>
 
