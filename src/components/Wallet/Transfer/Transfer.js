@@ -9,7 +9,7 @@ import { ethers } from 'ethers'
 import SendPlaceholder from './SendPlaceholder/SendPlaceholder'
 import { Interface } from 'ethers/lib/utils'
 import { useToasts } from '../../../hooks/toasts'
-import { TextInput, NumberInput, Button, Select, Loading, AddressBook, Checkbox } from '../../common'
+import { TextInput, NumberInput, Button, Select, Loading, AddressBook, Checkbox, UnknownAddress } from '../../common'
 import { verifiedContracts, tokens } from '../../../consts/verifiedContracts'
 import { useAddressBook } from '../../../hooks'
 
@@ -157,17 +157,10 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, accounts, 
                                 </div>
                                 {
                                     shouldShowUnknowAddressWarning ?
-                                        <div id="unknown-address-warning">
-                                            <Checkbox
-                                                label="Confirm sending to a previously unknown address"
-                                                checked={addressConfirmed}
-                                                onChange={({ target }) => setAddressConfirmed(target.checked)}
-                                            />
-                                            <div className="button" onClick={() => setNewAddress(address)}>
-                                                <MdOutlineAdd/>
-                                                Add it to the address book
-                                            </div>
-                                        </div>
+                                        <UnknownAddress
+                                            onAddNewAddress={() => setNewAddress(address)}
+                                            onChange={(value) => setAddressConfirmed(value)}
+                                        />
                                         :
                                         null
                                 }
