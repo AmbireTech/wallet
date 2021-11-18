@@ -7,11 +7,13 @@ import { getWallet } from '../../lib/getWallet'
 import { useToasts } from '../../hooks/toasts'
 import { fetchPost } from '../../lib/fetch'
 import { useState } from 'react'
+import { Loading } from '../common'
 
 export default function SignMessage ({ toSign, resolve, account, relayerURL, totalRequests }) {
   const defaultState = () => ({ codeRequired: false, passphrase: '' })
   const { addToast } = useToasts()
   const [signingState, setSigningState] = useState(defaultState())
+  const [isLoading, setLoading] = useState(false)
 
   if (!toSign || !account) return (<></>)
 
@@ -32,6 +34,7 @@ export default function SignMessage ({ toSign, resolve, account, relayerURL, tot
       addToast('Password required to unlock the account', { error: true })
       return
     }
+    setLoading(true)
     try {
       const hash = keccak256(arrayify(toSign.txn))
 
@@ -62,6 +65,7 @@ export default function SignMessage ({ toSign, resolve, account, relayerURL, tot
       resolve({ success: true, result: sig })
       addToast(`Successfully signed!`)
     } catch(e) { handleSigningErr(e) }
+    setLoading(false)
   }
 
   const approve = async () => {
@@ -70,14 +74,15 @@ export default function SignMessage ({ toSign, resolve, account, relayerURL, tot
       return
     }
 
-    // if quick account, wallet = await fromEncryptedBackup
-    // and just pass the signature as secondSig to signMsgHash
-    const wallet = getWallet({
-      signer: account.signer,
-      signerExtra: account.signerExtra,
-      chainId: 1 // does not matter
-    })
+    setLoading(true)
     try {
+      // if quick account, wallet = await fromEncryptedBackup
+      // and just pass the signature as secondSig to signMsgHash
+      const wallet = getWallet({
+        signer: account.signer,
+        signerExtra: account.signerExtra,
+        chainId: 1 // does not matter
+      })
       // It would be great if we could pass the full data cause then web3 wallets/hw wallets can display the full text
       // Unfortunately that isn't possible, because isValidSignature only takes a bytes32 hash; so to sign this with
       // a personal message, we need to be signing the hash itself as binary data such that we match 'Ethereum signed message:\n32<hash binary data>' on the contract
@@ -86,6 +91,7 @@ export default function SignMessage ({ toSign, resolve, account, relayerURL, tot
       resolve({ success: true, result: sig })
       addToast(`Successfully signed!`)
     } catch(e) { handleSigningErr(e) }
+    setLoading(false)
   }
 
   return (<div id='signMessage'>
@@ -119,7 +125,10 @@ export default function SignMessage ({ toSign, resolve, account, relayerURL, tot
             </>)}
 
             <button type='button' className='reject' onClick={() => resolve({ message: 'signature denied' })}>Reject</button>
-            <button className='approve' onClick={approve}>Sign</button>
+            <button className='approve' onClick={approve} disabled={isLoading}>
+                {isLoading ? (<><Loading/>&nbsp;&nbsp;&nbsp;&nbsp;Signing...</>)
+                : (<>Sign</>)}
+            </button>
           </form>
         </div>
     </div>
