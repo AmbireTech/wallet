@@ -8,7 +8,7 @@ import { AiOutlineSend } from 'react-icons/ai'
 import { BsFillImageFill } from 'react-icons/bs'
 import * as blockies from 'blockies-ts';
 import { useToasts } from '../../../hooks/toasts'
-import { TextInput, Button, Loading } from '../../common'
+import { TextInput, Button, Loading, AddressBook } from '../../common'
 import ERC721Abi from '../../../consts/ERC721Abi'
 import networks from '../../../consts/networks'
 
@@ -162,7 +162,12 @@ const Collectible = ({ selectedAcc, selectedNetwork, addRequest }) => {
             <div className="panel">
                 <div className="title">Transfer</div>
                 <div className="content">
-                    <TextInput placeholder="Recipient Address" onInput={(value) => setRecipientAddress(value)}/>
+                    <div id="recipient-address">
+                        <TextInput placeholder="Recipient Address" value={recipientAddress} onInput={(value) => setRecipientAddress(value)}/>
+                        <AddressBook 
+                            onSelectAddress={address => setRecipientAddress(address)}
+                        />
+                    </div>
                     <div className="separator"></div>
                     <Button icon={<AiOutlineSend/>} disabled={isTransferDisabled} onClick={sendTransferTx}>Send</Button>
                 </div>
