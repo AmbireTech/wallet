@@ -10,7 +10,6 @@ import { Interface } from 'ethers/lib/utils'
 import { useToasts } from '../../../hooks/toasts'
 import { TextInput, NumberInput, Button, Select, Loading, AddressBook, UnknownAddress } from '../../common'
 import { verifiedContracts, tokens } from '../../../consts/verifiedContracts'
-import { useAddressBook } from '../../../hooks'
 
 const ERC20 = new Interface(require('adex-protocol-eth/abi/ERC20'))
 const crossChainAssets = [
@@ -26,10 +25,9 @@ const crossChainAssets = [
     }
 ]
 
-const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest }) => {
+const Transfer = ({ history, portfolio, accounts, selectedAcc, selectedNetwork, addRequest, addresses, addAddress, removeAddress, isKnownAddress, isValidAddress }) => {
     const { tokenAddress } = useParams()
     const { addToast } = useToasts()
-    const { isValidAddress, isKnownAddress } = useAddressBook()
 
     const [asset, setAsset] = useState(tokenAddress)
     const [amount, setAmount] = useState(0)
@@ -144,6 +142,11 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
                                         onInput={setAddress}
                                     />
                                     <AddressBook 
+                                        accounts={accounts}
+                                        selectedAcc={selectedAcc}
+                                        addresses={addresses}
+                                        addAddress={addAddress}
+                                        removeAddress={removeAddress}
                                         newAddress={newAddress}
                                         onClose={() => setNewAddress(null)}
                                         onSelectAddress={address => setAddress(address)}

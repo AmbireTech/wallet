@@ -1,7 +1,6 @@
-import { useState, useCallback, useEffect } from 'react'
+import { useState, useCallback } from 'react'
 import { useToasts } from '../hooks/toasts'
 import { useHistory } from 'react-router-dom'
-import storeItem from '../helpers/storeItemDispatchEvent'
 
 export default function useAccounts () {
     const { addToast } = useToasts()
@@ -43,7 +42,7 @@ export default function useAccounts () {
       // need to make a copy, otherwise no rerender
       setAccounts([ ...accounts ])
   
-      storeItem('accounts', JSON.stringify(accounts))
+      localStorage.accounts = JSON.stringify(accounts)
   
       if (opts.select) onSelectAcc(acc.id)
       if (Object.keys(accounts).length) {
@@ -56,16 +55,10 @@ export default function useAccounts () {
 
       const clearedAccounts = accounts.filter(account => account.id !== id)
       setAccounts([...clearedAccounts])
-      storeItem('accounts', JSON.stringify(clearedAccounts))
+      localStorage.accounts = JSON.stringify(clearedAccounts)
       
       if (!clearedAccounts.length) history.push('/add-account')
     }, [accounts, history])
 
-    useEffect(() => {
-      const onAccountsChanged = ({ value }) => setAccounts(JSON.parse(value))
-      window.addEventListener('storage.accounts', onAccountsChanged)
-      return () => window.removeEventListener('storage.accounts', onAccountsChanged)
-    }, [])
-  
     return { accounts, selectedAcc, onSelectAcc, onAddAccount, onRemoveAccount }
   }

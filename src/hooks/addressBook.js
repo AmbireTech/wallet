@@ -1,11 +1,8 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useState } from 'react'
 import { useToasts } from './toasts'
-import { useAccounts } from '.'
-import storeItem from '../helpers/storeItemDispatchEvent'
 
-const useAddressBook = () => {
+const useAddressBook = ({ accounts }) => {
     const { addToast } = useToasts()
-    const { accounts } = useAccounts()
 
     const [addresses, setAddresses] = useState(() => {
         try {
@@ -37,7 +34,7 @@ const useAddressBook = () => {
         ]
 
         setAddresses(newAddresses)
-        storeItem('addresses', JSON.stringify(newAddresses))
+        localStorage.addresses = JSON.stringify(newAddresses)
 
         addToast(`${address} added to your Address Book.`)
     }, [addresses, isValidAddress, addToast])
@@ -49,16 +46,10 @@ const useAddressBook = () => {
         const newAddresses = addresses.filter(a => JSON.stringify(a) !== JSON.stringify({ name, address }))
 
         setAddresses(newAddresses)
-        storeItem('addresses', JSON.stringify(newAddresses))
+        localStorage.addresses = JSON.stringify(newAddresses)
 
         addToast(`${address} removed from your Address Book.`)
     }, [addresses, isValidAddress, addToast])
-
-    useEffect(() => {
-        const onAddressesChanged = ({ value }) => setAddresses(JSON.parse(value))
-        window.addEventListener('storage.addresses', onAddressesChanged)
-        return () => window.removeEventListener('storage.addresses', onAddressesChanged)
-    }, [])
 
     return {
         addresses,

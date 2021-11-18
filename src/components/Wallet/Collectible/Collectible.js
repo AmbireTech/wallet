@@ -8,7 +8,6 @@ import { AiOutlineSend } from 'react-icons/ai'
 import { BsFillImageFill } from 'react-icons/bs'
 import * as blockies from 'blockies-ts';
 import { useToasts } from '../../../hooks/toasts'
-import { useAddressBook } from '../../../hooks'
 import { TextInput, Button, Loading, AddressBook, UnknownAddress } from '../../common'
 import ERC721Abi from '../../../consts/ERC721Abi'
 import networks from '../../../consts/networks'
@@ -20,9 +19,8 @@ const handleUri = uri => {
     return uri.startsWith('ipfs://') ? uri.replace(/ipfs:\/\/ipfs\/|ipfs:\/\//g, 'https://ipfs.io/ipfs/') : uri
 }
 
-const Collectible = ({ selectedAcc, selectedNetwork, addRequest }) => {
+const Collectible = ({ accounts, selectedAcc, selectedNetwork, addRequest, addresses, addAddress, removeAddress, isValidAddress, isKnownAddress }) => {
     const { addToast } = useToasts()
-    const { isValidAddress, isKnownAddress } = useAddressBook()
     const { network, collectionAddr, tokenId } = useParams()
     const [isLoading, setLoading] = useState(true)
     const [metadata, setMetadata] = useState({
@@ -170,6 +168,11 @@ const Collectible = ({ selectedAcc, selectedNetwork, addRequest }) => {
                     <div id="recipient-address">
                         <TextInput placeholder="Recipient Address" value={recipientAddress} onInput={(value) => setRecipientAddress(value)}/>
                         <AddressBook 
+                            accounts={accounts}
+                            selectedAcc={selectedAcc}
+                            addresses={addresses}
+                            addAddress={addAddress}
+                            removeAddress={removeAddress}
                             newAddress={newAddress}
                             onClose={() => setNewAddress(null)}
                             onSelectAddress={address => setRecipientAddress(address)}
