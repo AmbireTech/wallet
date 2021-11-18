@@ -261,6 +261,7 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
 
   // Not applicable when .requestIds is not defined (replacement bundle)
   const rejectTxn = bundle.requestIds && (() => {
+    onDismiss()
     resolveMany(bundle.requestIds, { message: 'user rejected' })
   })
 
