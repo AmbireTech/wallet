@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useCallback, useEffect } from 'react'
 import { getTransactionSummary } from '../lib/humanReadableTransactions'
 import { ethers } from 'ethers'
 import { useToasts } from './toasts'
@@ -27,7 +27,7 @@ export default function useNotifications (requests, onShow, portfolio, selectedA
         }
     }, [])
     
-    const showNotification = ({ id, title, body, requireInteraction }) => {
+    const showNotification = useCallback(({ id, title, body, requireInteraction }) => {
         const notification = new Notification(title, {
             requireInteraction: requireInteraction || false,
             body,
@@ -40,7 +40,7 @@ export default function useNotifications (requests, onShow, portfolio, selectedA
             onShow()
         }
         currentNotifs.push({ id, notification })
-    }
+    }, [onShow])
 
     requests.forEach(request => {
         if (!SUPPORTED_TYPES.includes(request.type)) return
@@ -96,7 +96,7 @@ export default function useNotifications (requests, onShow, portfolio, selectedA
             console.error(e);
             addToast(e.message | e, { error: true })
         }
-    }, [portfolio, addToast])
+    }, [portfolio, addToast, showNotification])
 
     useEffect(() => {
         isLastTotalBalanceInit = false
