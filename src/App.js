@@ -17,12 +17,13 @@ import useNetwork from './hooks/network'
 import useWalletConnect from './hooks/walletconnect'
 import useGnosisSafe from './hooks/useGnosisSafe'
 import useNotifications from './hooks/notifications'
-import { usePortfolio } from './hooks'
+import { usePortfolio, useAddressBook } from './hooks'
 
 const relayerURL = process.env.hasOwnProperty('REACT_APP_RELAYER_URL') ? process.env.REACT_APP_RELAYER_URL : 'http://localhost:1934'
 
 function AppInner () {
   const { accounts, selectedAcc, onSelectAcc, onAddAccount, onRemoveAccount } = useAccounts()
+  const { addresses, addAddress, removeAddress, isKnownAddress, isValidAddress } = useAddressBook({ accounts })
   const { network, setNetwork, allNetworks } = useNetwork()
   const { connections, connect, disconnect, requests: wcRequests, resolveMany: wcResolveMany } = useWalletConnect({
     account: selectedAcc,
@@ -95,6 +96,11 @@ function AppInner () {
           match={{ url: "/wallet" }}
           accounts={accounts}
           selectedAcc={selectedAcc}
+          addresses={addresses}
+          addAddress={addAddress}
+          removeAddress={removeAddress}
+          isKnownAddress={isKnownAddress}
+          isValidAddress={isValidAddress}
           portfolio={portfolio}
           onSelectAcc={onSelectAcc}
           onRemoveAccount={onRemoveAccount}
