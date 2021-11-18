@@ -45,7 +45,7 @@ function getWalletNew ({ chainId, signer, signerExtra }, opts) {
         const provider = new ethers.providers.Web3Provider(window.ethereum, 'any')
         return provider.getSigner(signer.address)
     } else if (signer.one) {
-        // @TODO quickAccounts
+        throw new Error('getWallet not applicable for QuickAccounts: use primaryKeyBackup with the passphrase and /second-sig')
     } else {
         throw new Error('unknown signer type')
     }
