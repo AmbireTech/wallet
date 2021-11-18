@@ -7,8 +7,6 @@ const useAddressBook = () => {
     const { addToast } = useToasts()
     const { accounts } = useAccounts()
 
-    const isValidAddress = useCallback(address => /^0x[a-fA-F0-9]{40}$/.test(address), [])
-
     const [addresses, setAddresses] = useState(() => {
         try {
             const addresses = JSON.parse(localStorage.addresses || '[]')
@@ -19,6 +17,12 @@ const useAddressBook = () => {
             return []
         }
     })
+
+    const isValidAddress = useCallback(address => /^0x[a-fA-F0-9]{40}$/.test(address), [])
+    const isKnownAddress = useCallback(address => [
+        ...addresses.map(({ address }) => address),
+        ...accounts.map(({ id }) => id)
+    ].includes(address), [addresses, accounts])
 
     const addAddress = useCallback((name, address) => {
         if (!name || !address) throw new Error('Address Book: invalid arguments supplied')
@@ -60,7 +64,8 @@ const useAddressBook = () => {
         addresses,
         addAddress,
         removeAddress,
-        isValidAddress
+        isValidAddress,
+        isKnownAddress
     }
 }
 
