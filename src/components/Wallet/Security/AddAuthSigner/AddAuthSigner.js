@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 import { TextInput, Button, Modal, DropDown } from '../../../common'
 import { LedgerSubprovider } from '@0x/subproviders/lib/src/subproviders/ledger' // https://github.com/0xProject/0x-monorepo/issues/1400
@@ -10,6 +10,7 @@ const AddAuthSigner = (props) => {
     const [addAccErr, setAddAccErr] = useState('')
     const [modalToggle, setModalToggle] = useState(true)
     const [textInputInfo, setTextInputInfo] = useState('')
+    const [disabled, setDisabled] = useState(true)
   
     const modalHandler = () => {
       setModalToggle(prevState => !prevState)
@@ -112,6 +113,11 @@ const AddAuthSigner = (props) => {
       if (textInputInfo.length) setTextInputInfo('')
       setSignerAddress({ ...signerAddress, address: value })
     }
+
+    useEffect(() => {
+        const isAddressValid = /^0x[a-fA-F0-9]{40}$/.test(signerAddress.address)
+        setDisabled(!isAddressValid)
+    }, [signerAddress.address])
   
     return (
       <div className="content">
@@ -123,8 +129,8 @@ const AddAuthSigner = (props) => {
             marginBottom: '1em',
           }}
         >
-          {/* TODO: Text input should be editable */}
           <TextInput
+            placeholder='Enter address'
             className="depositAddress"
             value={signerAddress.address}
             info={textInputInfo}
@@ -132,8 +138,7 @@ const AddAuthSigner = (props) => {
           />
           <DropDown title="connect wallet">{addFromSignerButtons}</DropDown>
           <div className="btns-wrapper">
-            {/* check if the address is valid */}
-            <Button onClick={() => props.onAddBtnClicked(signerAddress.address)} small>Add</Button>
+            <Button disabled={disabled} onClick={() => props.onAddBtnClicked(signerAddress.address)} small>Add</Button>
           </div>
         </div>
         {signersToChoose && signersToChooseModal}
