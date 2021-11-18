@@ -30,7 +30,6 @@ export default function SignMessage ({ toSign, resolve, account, relayerURL }) {
       const { signature, success, message, confCodeRequired } = await fetchPost(
         // network doesn't matter when signing
         `${relayerURL}/second-key/${account.id}/ethereum/sign`, {
-          signer: account.signer,
           toSign: hash,
           code: confirmationCode
         }
