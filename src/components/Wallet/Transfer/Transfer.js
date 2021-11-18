@@ -100,7 +100,7 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, accounts, 
     useEffect(() => {
         setAmount(0)
         setBigNumberHexAmount('')
-        history.push({ pathname: `/wallet/transfer/${asset}` })
+        history.replace({ pathname: `/wallet/transfer/${asset}` })
     }, [asset, history])
 
     useEffect(() => {
