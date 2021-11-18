@@ -35,7 +35,6 @@ const AddressBook = ({ newAddress, onClose, onSelectAddress }) => {
         setName('')
         setAddress('')
         setOpenMenu(false)
-        setOpenAddAddress(false)
     }, [])
 
     useEffect(() => !isOpen && onClose ? onClose() : null, [isOpen, onClose])
