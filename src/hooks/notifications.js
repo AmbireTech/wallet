@@ -6,6 +6,7 @@ import networks from '../consts/networks'
 
 const REQUEST_TITLE_PREFIX = 'Ambire Wallet: '
 const SUPPORTED_TYPES =  ['eth_sendTransaction', 'personal_sign']
+const BALANCE_TRESHOLD = 0.00005 
 let currentNotifs = []
 let isLastTotalBalanceInit = false
 let lastTokensBalanceRaw = []
@@ -64,9 +65,11 @@ export default function useNotifications (requests, onShow, portfolio, selectedA
                     lastTokensBalanceRaw = portfolio.tokens.map(({ address, balanceRaw }) => ({ address, balanceRaw }))
                 }
 
-                const changedAmounts = portfolio.tokens.filter(({ address, balanceRaw }) => {
+                const changedAmounts = portfolio.tokens.filter(({ address, balanceRaw, decimals }) => {
                     const lastToken = lastTokensBalanceRaw.find(token => token.address === address)
-                    return !lastToken || (lastToken && balanceRaw > lastToken.balanceRaw) ? true : false 
+                    const amountRecieved = lastToken ? balanceRaw - lastToken.balanceRaw : balanceRaw
+                    const amountRecievedFormatted = ethers.utils.formatUnits(amountRecieved.toString(), decimals)
+                    return !lastToken || (lastToken && (balanceRaw > lastToken.balanceRaw) && (amountRecievedFormatted > BALANCE_TRESHOLD)) ? true : false 
                 })
 
                 changedAmounts.forEach(({ address, symbol, decimals, balanceRaw }) => {
