@@ -142,13 +142,14 @@ const AAVECard = ({ networkId, tokens, protocols, account, addRequest }) => {
                     apr: ((liquidityRate / RAY) * 100).toFixed(2)
                 }
             })))
-            .map(({ type, img, symbol, address, balance, decimals, apr }) => ({
+            .map(({ type, img, symbol, address, balance, balanceRaw, decimals, apr }) => ({
                 icon: img,
                 label: `${symbol} (${apr}% APR)`,
                 value: address,
                 type,
                 address,
                 balance,
+                balanceRaw,
                 symbol,
                 decimals,
                 apr
