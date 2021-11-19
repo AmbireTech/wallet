@@ -7,13 +7,13 @@ import {getDefaultProvider} from 'ethers'
 
 const STORAGE_KEY = 'gnosis_safe_state'
 
-export default function useGnosisSafe({ selectedAccount, network, verbose = 0 }) {
+export default function useGnosisSafe({selectedAccount, network, verbose = 0}) {
   // One connector at a time
   const connector = useRef(null)
 
   const uniqueId = useMemo(() => new Date().getTime() + ' ' + network.chainId + ' ' + selectedAccount, [selectedAccount, network])
 
-  const { addToast } = useToasts()
+  const {addToast} = useToasts()
 
   // This is needed cause of the Gnosis Safe event handlers (listeners)
   const stateRef = useRef()
@@ -35,7 +35,7 @@ export default function useGnosisSafe({ selectedAccount, network, verbose = 0 })
   })
 
   const connect = useCallback(connectorOpts => {
-    verbose>1 && console.log("GS: creating connector")
+    verbose > 1 && console.log("GS: creating connector")
 
     try {
       connector.current = new GnosisConnector(
@@ -65,10 +65,10 @@ export default function useGnosisSafe({ selectedAccount, network, verbose = 0 })
     //   verbose>0 && console.log("DApp requested getSafeBalances") && console.log(msg)
 
     //TODO later
-      //await portfolio.updatePortfolio("polygon", selectedAccount, true)//not this because it does NOT return the updated state anyway
-      //console.log(portfolio)
+    //await portfolio.updatePortfolio("polygon", selectedAccount, true)//not this because it does NOT return the updated state anyway
+    //console.log(portfolio)
 
-      //struct template
+    //struct template
     /*connector.current.on(Methods.getSafeBalances, () => {
       return {
         "fiatTotal": "0.18072",
@@ -93,7 +93,7 @@ export default function useGnosisSafe({ selectedAccount, network, verbose = 0 })
     connector.current.on(Methods.rpcCall, async (msg) => {
       verbose > 0 && console.log("DApp requested rpcCall", msg)
 
-      if (!msg?.data?.params){
+      if (!msg?.data?.params) {
         throw new Error("invalid call object")
       }
       const method = msg.data.params.call//0 == tx, 1 == blockNum
@@ -105,16 +105,16 @@ export default function useGnosisSafe({ selectedAccount, network, verbose = 0 })
         result = await provider.call(callTx[0], callTx[1]).catch(err => {
           throw err
         })
-      } else if(method === "eth_getBalance") {
+      } else if (method === "eth_getBalance") {
         result = await provider.getBalance(callTx[0], callTx[1]).catch(err => {
           throw err
         })
-      } else if(method === "eth_blockNumber") {
+      } else if (method === "eth_blockNumber") {
         result = await provider.getBlockNumber().catch(err => {
           throw err
         })
-      } else if(method === "eth_getBlockByNumber" || method === "eth_getBlockByHash") {
-        if(callTx[1]) {
+      } else if (method === "eth_getBlockByNumber" || method === "eth_getBlockByHash") {
+        if (callTx[1]) {
           result = await provider.getBlockWithTransactions(callTx[0]).catch(err => {
             throw err
           })
@@ -123,20 +123,24 @@ export default function useGnosisSafe({ selectedAccount, network, verbose = 0 })
             throw err
           })
         }
-      } else if(method === "eth_getTransactionByHash") {
+      } else if (method === "eth_getTransactionByHash") {
         result = await provider.getTransaction(callTx[0]).catch(err => {
           throw err
         })
-      } else if(method === "eth_getCode") {
+      } else if (method === "eth_getCode") {
         result = await provider.getCode(callTx[0], callTx[1]).catch(err => {
           throw err
         })
-      } else if(method === "eth_getBlockByNumber") {
+      } else if (method === "eth_getBlockByNumber") {
         result = await provider.getBlock(callTx[0], callTx[1]).catch(err => {
           throw err
         })
-      } else if(method === "eth_getTransactionReceipt") {
+      } else if (method === "eth_getTransactionReceipt") {
         result = await provider.getTransactionReceipt(callTx[0]).catch(err => {
+          throw err
+        })
+      } else if (method === "personal_sign") {
+        result = await handlePersonalSign(msg).catch(err => {
           throw err
         })
       } else {
@@ -146,7 +150,7 @@ export default function useGnosisSafe({ selectedAccount, network, verbose = 0 })
     })
 
     connector.current.on(Methods.sendTransactions, (msg) => {
-      verbose>0 && console.log("DApp requested sendTx") && console.log(msg)
+      verbose > 0 && console.log("DApp requested sendTx") && console.log(msg)
 
       const data = msg?.data
       if (!data) {
@@ -177,25 +181,58 @@ export default function useGnosisSafe({ selectedAccount, network, verbose = 0 })
       setRequests(prevRequests => prevRequests.find(x => x.id === request.id) ? prevRequests : [...prevRequests, request])
     })
 
+    const handlePersonalSign = (msg) => {
+      verbose > 0 && console.log("DApp requested signMessage") && console.log(msg)
+
+      console.log(msg);
+
+      const data = msg?.data
+      if (!data) {
+        console.error('GS: no data')
+        return
+      }
+
+      const id = 'gs_' + data.id
+      const message = data?.params?.message
+      if (!message) {
+        console.error('GS: no message in received payload')
+        return
+      }
+
+      const request = {
+        id,
+        forwardId: msg.data.id,
+        type: 'personal_sign',
+        txn: message,
+        chainId: stateRef.current.network.chainId,
+        account: stateRef.current.selectedAccount
+      }
+
+      setRequests(prevRequests => prevRequests.find(x => x.id === request.id) ? prevRequests : [...prevRequests, request])
+    }
+
+    connector.current.on(Methods.signMessage, (msg) => {
+        return handlePersonalSign(msg)
+    })
+
     connector.current.on(Methods.getTxBySafeTxHash, async (msg) => {
-      const { safeTxHash } = msg.data.params
+      const {safeTxHash} = msg.data.params
       const provider = getDefaultProvider(stateRef.current.network.rpc)
-      try{
+      try {
         const res = await provider.getTransaction(safeTxHash)
 
         return res
-      }catch(e){
-        console.error("GS: Err getting transaction " + safeTxHash);
-        console.log(e);
-        return {};
+      } catch (e) {
+        console.error("GS: Err getting transaction " + safeTxHash)
+        console.log(e)
+        return {}
       }
     })
-
   }, [uniqueId, addToast, verbose])
 
 
   const disconnect = useCallback(() => {
-    verbose>1 && console.log("GS: disconnecting connector")
+    verbose > 1 && console.log("GS: disconnecting connector")
     connector.current?.clear()
   }, [verbose])
 
@@ -210,7 +247,7 @@ export default function useGnosisSafe({ selectedAccount, network, verbose = 0 })
       if (!resolution) {
         replyData.error = 'Nothing to resolve'
         replyData.success = false
-      } else if(!resolution.success) {
+      } else if (!resolution.success) {
         replyData.error = resolution.message
         replyData.success = false
       } else { //onSuccess
@@ -221,8 +258,9 @@ export default function useGnosisSafe({ selectedAccount, network, verbose = 0 })
       if (!connector.current) {
         //soft error handling: sendTransaction has issues
         //throw new Error("gnosis safe connector not set")
-        console.error("gnosis safe connector not set");
-      }else{
+        console.error("gnosis safe connector not set")
+      } else {
+        console.log('replyData', replyData)
         connector.current.send(replyData, req.forwardId, replyData.error)
       }
     }
