@@ -1,0 +1,35 @@
+@import '.././/../../variables.scss';
+
+.modal {
+    z-index: 52;
+    position: relative;
+    min-height: 300px;
+    max-width: 50vh;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 25px;
+    background-color: $input-background-color;
+    box-shadow: $box-shadow;
+
+    .heading {
+        .title {
+            font-size: 25px;
+            font-weight: bold;
+        }
+
+        .close {
+            height: 50px;
+            width: 50px;
+            position: absolute;
+            top: 0;
+            right: 0;
+            @include flex-center-center;
+            font-size: 20px;
+
+            &:hover {
+                background-color: rgba(0, 0, 0, 0.1);
+            }
+        }
+    }
+}
