@@ -18,8 +18,8 @@ const getAmountReceived = (lastToken, newBalanceRaw, decimals) => {
 
 export default function useNotifications (requests, onShow, portfolio, selectedAcc) {
     const { addToast } = useToasts()
-    const onShowRef = useRef()
-    onShowRef.current = onShow
+    const onShowRef = useRef({})
+    onShowRef.current.onShow = onShow
 
     useEffect(() => {
         if (window.Notification && Notification.permission !== 'denied') {
@@ -40,7 +40,7 @@ export default function useNotifications (requests, onShow, portfolio, selectedA
             window.focus()
             notification.close()
             if (request.type === 'eth_sendTransaction') {
-                onShowRef.current(request)
+                onShowRef.current.onShow(request)
             }
         }
         currentNotifs.push({ id, notification })
