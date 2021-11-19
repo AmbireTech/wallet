@@ -34,7 +34,7 @@ const TopBar = ({
       const uri = prompt("Enter WalletConnect URI");
       if (uri) connect({ uri });
     }
-  }, [connect]);
+  }, [connect, isClipboardGranted]);
 
   const networksItems = allNetworks.map(({ id, name, icon }) => ({
     label: name,
