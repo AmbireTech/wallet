@@ -1,0 +1,53 @@
+import './PermissionsModal.scss'
+
+import { useEffect, useState } from 'react'
+import { MdCheck, MdClose } from 'react-icons/md'
+import { useModals } from '../../../hooks'
+import { checkClipboardPermission, checkNotificationPermission } from '../../../helpers/permissions'
+import { Modal, Toggle, Button } from "../../common"
+
+const PermissionsModal = () => {
+    const { hideModal } = useModals()
+    const [notificationGranted, setNotificationGranted] = useState(false)
+    const [clipboardGranted, setClipboardGranted] = useState(false)
+
+    const checkForPermissions = async () => {
+        setClipboardGranted(await checkClipboardPermission(true))
+        setNotificationGranted(await checkNotificationPermission(true))
+    }
+
+    useEffect(() => checkForPermissions(), [])
+
+    return (
+        <Modal id="permissions-modal" title="Permissions">
+            <div className="intro">
+                Ambire Wallet needs you to allow some browser permissions to improve your experience.
+            </div>
+            <div className="permission">
+                <div className="details">
+                    <div className="name">Notifications</div>
+                    <div className="description">
+                        Needed to draw your attention to Ambire Wallet when there is a transaction signing request.
+                        You can also click notifications to directly go to the Ambire tab.
+                    </div>
+                </div>
+                <Toggle checked={notificationGranted} onChange={() => {}}/>
+            </div>
+            <div className="permission">
+                <div className="details">
+                    <div className="name">Clipboard</div>
+                    <div className="description">
+                        Needed so that dApps can be connected automatically just by copying their WalletConnect URL
+                    </div>
+                </div>
+                <Toggle checked={clipboardGranted} onChange={() => {}}/>
+            </div>
+            <div className="buttons">
+                <Button clear small icon={<MdClose/>} onClick={hideModal}>Ignore</Button>
+                <Button small icon={<MdCheck/>} disabled={!clipboardGranted || !notificationGranted} onClick={hideModal}>Done</Button>
+            </div>
+        </Modal>
+    )
+}
+
+export default PermissionsModal

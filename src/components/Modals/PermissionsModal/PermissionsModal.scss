@@ -1,0 +1,42 @@
+#permissions-modal {
+    .content {
+        display: flex;
+        flex-direction: column;
+        gap: 30px;
+
+        .intro {
+            opacity: 0.6;
+        }
+
+        .permission {
+            display: flex;
+            gap: 30px;
+
+            .details {
+                display: flex;
+                flex-direction: column;
+                gap: 5px;
+
+                .name {
+                    font-size: 17px;
+                    font-weight: 500;
+                }
+
+                .description {
+                    font-size: 15px;
+                    opacity: 0.6;
+                }
+            }
+        }
+
+        .buttons {
+            display: flex;
+            gap: 30px;
+            margin-top: 20px;
+
+            button {
+                flex: 0 1 50% !important;
+            }
+        }
+    }
+}
