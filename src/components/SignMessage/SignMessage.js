@@ -1,7 +1,7 @@
 import './SignMessage.scss'
 import { FaSignature } from 'react-icons/fa'
 import { Wallet } from 'ethers'
-import { toUtf8String, keccak256, arrayify } from 'ethers/lib/utils'
+import { toUtf8String, keccak256, arrayify, isHexString } from 'ethers/lib/utils'
 import { signMsgHash } from 'adex-protocol-eth/js/Bundle'
 import { getWallet } from '../../lib/getWallet'
 import { useToasts } from '../../hooks/toasts'
@@ -16,6 +16,7 @@ export default function SignMessage ({ toSign, resolve, account, relayerURL, tot
   const [isLoading, setLoading] = useState(false)
 
   if (!toSign || !account) return (<></>)
+  if (toSign && !isHexString(toSign.txn)) return (<h3 className='error'>Invalid signing request: .txn has to be a hex string</h3>)
 
   const handleSigningErr = e => {
     console.error('Signing error', e)
