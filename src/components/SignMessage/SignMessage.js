@@ -16,7 +16,9 @@ export default function SignMessage ({ toSign, resolve, account, relayerURL, tot
   const [isLoading, setLoading] = useState(false)
 
   if (!toSign || !account) return (<></>)
-  if (toSign && !isHexString(toSign.txn)) return (<h3 className='error'>Invalid signing request: .txn has to be a hex string</h3>)
+  if (toSign && !isHexString(toSign.txn)) return (<div id='signMessage'>
+    <h3 className='error'>Invalid signing request: .txn has to be a hex string</h3>
+  </div>)
 
   const handleSigningErr = e => {
     console.error('Signing error', e)
