@@ -4,7 +4,8 @@ import {
   HashRouter as Router,
   Switch,
   Route,
-  Redirect
+  Redirect,
+  Prompt
 } from 'react-router-dom'
 import { useState, useEffect, useMemo } from 'react'
 import EmailLogin from './components/EmailLogin/EmailLogin'
@@ -13,6 +14,7 @@ import Wallet from './components/Wallet/Wallet'
 import ToastProvider from './components/ToastProvider/ToastProvider'
 import ModalProvider from './components/ModalProvider/ModalProvider'
 import SendTransaction from './components/SendTransaction/SendTransaction'
+import SignMessage from './components/SignMessage/SignMessage'
 import useAccounts from './hooks/accounts'
 import useNetwork from './hooks/network'
 import useWalletConnect from './hooks/walletconnect'
@@ -23,8 +25,11 @@ import { usePortfolio } from './hooks'
 const relayerURL = process.env.hasOwnProperty('REACT_APP_RELAYER_URL') ? process.env.REACT_APP_RELAYER_URL : 'http://localhost:1934'
 
 function AppInner () {
+  // basic stuff: currently selected account, all accounts, currently selected network
   const { accounts, selectedAcc, onSelectAcc, onAddAccount, onRemoveAccount } = useAccounts()
   const { network, setNetwork, allNetworks } = useNetwork()
+
+  // Signing requests: transactions/signed msgs: all requests are pushed into .requests
   const { connections, connect, disconnect, requests: wcRequests, resolveMany: wcResolveMany } = useWalletConnect({
     account: selectedAcc,
     chainId: network.chainId
@@ -33,11 +38,6 @@ function AppInner () {
 	  selectedAccount: selectedAcc,
 	  network: network
 	}, [selectedAcc, network])
-
-  const portfolio = usePortfolio({
-    currentNetwork: network.id,
-    account: selectedAcc
-  })
 
   // Internal requests: eg from the Transfer page, Security page, etc. - requests originating in the wallet UI itself
   // unlike WalletConnect or SafeSDK requests, those do not need to be persisted
@@ -52,8 +52,11 @@ function AppInner () {
     setInternalRequests(reqs => reqs.filter(x => !ids.includes(x.id)))
   }
 
-  // Show notifications for all requests
-  useNotifications(requests)
+  // Portfolio: this hook actively updates the balances/assets of the currently selected user
+  const portfolio = usePortfolio({
+    currentNetwork: network.id,
+    account: selectedAcc
+  })
 
   // Navigate to the send transaction dialog if we have a new txn
   const eligibleRequests = useMemo(() => requests
@@ -68,7 +71,48 @@ function AppInner () {
     [eligibleRequests.length]
   )
 
+  // Network shouldn't matter here
+  const everythingToSign = useMemo(() => requests
+    .filter(({ type, chainId, account }) => type === 'personal_sign'
+      && account === selectedAcc
+    ), [requests, selectedAcc])
+
+  // When the user presses back, we first hide the SendTransactions dialog (keeping the queue)
+  // Then, signature requests will need to be dismissed one by one, starting with the oldest
+  const onPopHistory = () => {
+    if (sendTxnState.showing) {
+      setSendTxnState({ showing: false })
+      return false
+    }
+    if (everythingToSign.length) {
+      resolveMany([everythingToSign[0].id], { message: 'signature rejected' })
+      return false
+    }
+    return true
+  }
+
+  // Show notifications for all requests
+  useNotifications(requests, request => {
+    onSelectAcc(request.account)
+    setSendTxnState(state => ({ ...state, showing: true }))
+  }, portfolio, selectedAcc)
+
   return (<>
+    <Prompt
+      message={(location, action) => {
+        if (action === 'POP') return onPopHistory()
+        return true
+    }}/>
+
+    {!!everythingToSign.length && (<SignMessage
+      selectedAcc={selectedAcc}
+      account={accounts.find(x => x.id === selectedAcc)}
+      toSign={everythingToSign[0]}
+      totalRequests={everythingToSign.length}
+      relayerURL={relayerURL}
+      resolve={outcome => resolveMany([everythingToSign[0].id], outcome)}
+    ></SignMessage>)}
+
     {sendTxnState.showing ? (
       <SendTransaction
           accounts={accounts}
@@ -82,6 +126,7 @@ function AppInner () {
       ></SendTransaction>
       ) : (<></>)
     }
+
     <Switch>
       <Route path="/add-account">
         <AddAccount relayerURL={relayerURL} onAddAccount={onAddAccount}></AddAccount>
