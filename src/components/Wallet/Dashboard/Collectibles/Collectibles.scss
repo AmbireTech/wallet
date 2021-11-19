@@ -1,18 +1,18 @@
 @import '../../../../variables.scss';
 
-$collectable-details-height: 70px;
-$collectable-size: 250px;
+$collectible-details-height: 70px;
+$collectible-size: 250px;
 
-#collectables {
+#collectibles {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
     grid-gap: 2.5vh 1.5vh;
     justify-items: center;
 
-    .collectable {
+    .collectible {
         position: relative;
-        height: calc(#{$collectable-size} + #{$collectable-details-height});
-        width: $collectable-size;
+        height: calc(#{$collectible-size} + #{$collectible-details-height});
+        width: $collectible-size;
         background-color: rgba(255, 255, 255, 0.1);
         overflow: hidden;
         transition: all 0.1s ease-in-out;
@@ -31,7 +31,7 @@ $collectable-size: 250px;
 
         .info {
             z-index: 49;
-            height: $collectable-details-height;
+            height: $collectible-details-height;
             position: absolute;
             left: 0;
             right: 0;

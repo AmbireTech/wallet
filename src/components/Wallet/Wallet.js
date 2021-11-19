@@ -11,7 +11,7 @@ import Earn from "./Earn/Earn"
 import Security from "./Security/Security"
 import Transactions from './Transactions/Transactions'
 import PluginGnosisSafeApps from "../Plugins/GnosisSafeApps/GnosisSafeApps"
-import Collectable from "./Collectable/Collectable"
+import Collectible from "./Collectible/Collectible"
 
 export default function Wallet(props) {
   const routes = [
@@ -50,7 +50,7 @@ export default function Wallet(props) {
     },
     {
       path: '/nft/:network/:collectionAddr/:tokenId',
-      component: <Collectable selectedAcc={props.selectedAcc} selectedNetwork={{...props.network}} addRequest={props.addRequest}/>
+      component: <Collectible selectedAcc={props.selectedAcc} selectedNetwork={{...props.network}} addRequest={props.addRequest}/>
     },
     {
       path: '/gnosis/plugins',

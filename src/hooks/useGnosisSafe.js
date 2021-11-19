@@ -7,7 +7,7 @@ import {getDefaultProvider} from 'ethers'
 
 const STORAGE_KEY = 'gnosis_safe_state'
 
-export default function useGnosisSafe({ selectedAccount, network, verbose = 1 }) {
+export default function useGnosisSafe({ selectedAccount, network, verbose = 0 }) {
   // One connector at a time
   const connector = useRef(null)
 
@@ -182,12 +182,8 @@ export default function useGnosisSafe({ selectedAccount, network, verbose = 1 })
       const provider = getDefaultProvider(stateRef.current.network.rpc)
       try{
         const res = await provider.getTransaction(safeTxHash)
-        return {
-          gasPrice: res.gasPrice.toString(),
-          gasLimit: res.gasLimit.toString(),
-          value: res.value.toString(),
-          ...res
-        }
+
+        return res
       }catch(e){
         console.error("GS: Err getting transaction " + safeTxHash);
         console.log(e);
@@ -227,7 +223,6 @@ export default function useGnosisSafe({ selectedAccount, network, verbose = 1 })
         //throw new Error("gnosis safe connector not set")
         console.error("gnosis safe connector not set");
       }else{
-		  console.log('replyData', replyData)
         connector.current.send(replyData, req.forwardId, replyData.error)
       }
     }
