@@ -63,7 +63,11 @@ function AppInner () {
   const addRequest = req => setInternalRequests(reqs => [...reqs, req])
 
   // Merge all requests
-  const requests = useMemo(() => [...internalRequests, ...wcRequests, ...gnosisRequests], [wcRequests, internalRequests, gnosisRequests])
+  const requests = useMemo(
+    () => [...internalRequests, ...wcRequests, ...gnosisRequests]
+      .filter(({ account }) => accounts.find(({ id }) => id === account)),
+    [wcRequests, internalRequests, gnosisRequests, accounts]
+  )
   const resolveMany = (ids, resolution) => {
     wcResolveMany(ids, resolution)
     gnosisResolveMany(ids, resolution)
