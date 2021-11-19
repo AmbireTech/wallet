@@ -19,11 +19,13 @@ import useNetwork from './hooks/network'
 import useWalletConnect from './hooks/walletconnect'
 import useGnosisSafe from './hooks/useGnosisSafe'
 import useNotifications from './hooks/notifications'
+import { useToasts} from './hooks/toasts'
 import { usePortfolio } from './hooks'
 
 const relayerURL = process.env.hasOwnProperty('REACT_APP_RELAYER_URL') ? process.env.REACT_APP_RELAYER_URL : 'http://localhost:1934'
 
 function AppInner () {
+  const { addToast } = useToasts()
   // basic stuff: currently selected account, all accounts, currently selected network
   const { accounts, selectedAcc, onSelectAcc, onAddAccount, onRemoveAccount } = useAccounts()
   const { network, setNetwork, allNetworks } = useNetwork()
@@ -95,6 +97,15 @@ function AppInner () {
     onSelectAcc(request.account)
     setSendTxnState(state => ({ ...state, showing: true }))
   }, portfolio, selectedAcc)
+
+  useEffect(() => {
+    if (eligibleRequests.length) addToast('Transactions waiting to be signed', {
+      position: 'right',
+      sticky: true,
+      badge: eligibleRequests.length,
+      onClick: () => setSendTxnState({ showing: true })
+    })
+  }, [eligibleRequests, addToast])
 
   return (<>
     <Prompt
