@@ -16,7 +16,7 @@ const checkPermissions = async (name, onPrompt) => {
             } else return false
         }
     } catch (e) {
-        console.log('non-fatal clipboard error', e)
+        console.error('Error while trying to query permissions', e)
     }
 
     return status;
