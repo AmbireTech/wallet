@@ -16,6 +16,10 @@ export default function TxnPreview ({ txn, onDismiss, network, account, isFirstF
   const contractName = getContractName(txn, network)
   return (
     <div className={isFirstFailing ? 'txnPreview firstFailing' : 'txnPreview'}>
+        <div className='expandTxn' onClick={() => setExpanded(e => !e)}>
+          {isExpanded ? (<FaChevronUp/>) : (<FaChevronDown/>)}
+        </div>
+        
         <div>{getTransactionSummary(txn, network, account)}</div>
         {isFirstFailing ? (<div className='firstFailingLabel'>This is the first failing transaction.</div>) : (<></>)}
 
@@ -28,9 +32,6 @@ export default function TxnPreview ({ txn, onDismiss, network, account, isFirstF
         }
 
         <div className='actionIcons'>
-          <span className='expandTxn' onClick={() => setExpanded(e => !e)}>
-            {isExpanded ? (<FaChevronUp/>) : (<FaChevronDown/>)}
-          </span>
           {onDismiss ? (<span className='dismissTxn' onClick={onDismiss}><FaTimes/></span>) : (<></>)}
         </div>
     </div>
