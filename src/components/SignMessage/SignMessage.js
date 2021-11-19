@@ -18,6 +18,7 @@ export default function SignMessage ({ toSign, resolve, account, relayerURL, tot
   if (!toSign || !account) return (<></>)
   if (toSign && !isHexString(toSign.txn)) return (<div id='signMessage'>
     <h3 className='error'>Invalid signing request: .txn has to be a hex string</h3>
+    <button type='button' className='reject' onClick={() => resolve({ message: 'signature denied' })}>Reject</button>
   </div>)
 
   const handleSigningErr = e => {
