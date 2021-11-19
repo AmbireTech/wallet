@@ -8,6 +8,7 @@ import Segments from './Segments/Segments';
 import Select from './Select/Select';
 import TextInput from './TextInput/TextInput';
 import NumberInput from './NumberInput/NumberInput';
+import Toggle from './Toggle/Toggle';
 
 export {
     Button,
@@ -19,5 +20,6 @@ export {
     Segments,
     Select,
     TextInput,
-    NumberInput
+    NumberInput,
+    Toggle
 };
