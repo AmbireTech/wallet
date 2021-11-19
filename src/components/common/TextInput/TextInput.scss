@@ -32,9 +32,7 @@ $input-height: 60px;
             right: 0;
             height: 100%;
             width: 3.5em;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            @include flex-center-center;
             color: white;
         }
     }

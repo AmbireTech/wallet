@@ -8,19 +8,17 @@ import { TrezorSubprovider } from '@0x/subproviders/lib/src/subproviders/trezor'
 import { LedgerSubprovider } from '@0x/subproviders/lib/src/subproviders/ledger' // https://github.com/0xProject/0x-monorepo/issues/1400
 import { ledgerEthereumBrowserClientFactoryAsync } from '@0x/subproviders/lib/src' // https://github.com/0xProject/0x-monorepo/issues/1400
 import { hexZeroPad, AbiCoder, keccak256, id, getAddress } from 'ethers/lib/utils'
+import { Wallet } from 'ethers'
+import { generateAddress2 } from 'ethereumjs-util'
+import { getProxyDeployBytecode } from 'adex-protocol-eth/js/IdentityProxyDeploy'
 import { fetch, fetchPost } from '../../lib/fetch'
 import accountPresets from '../../consts/accountPresets'
+import { useToasts } from '../../hooks/toasts'
 
 TrezorConnect.manifest({
   email: 'contactus@ambire.com',
   appUrl: 'https://www.ambire.com'
 })
-
-
-// @TODO REFACTOR: use import for these
-const { generateAddress2 } = require('ethereumjs-util')
-const { getProxyDeployBytecode } = require('adex-protocol-eth/js/IdentityProxyDeploy')
-const { Wallet } = require('ethers')
 
 // NOTE: This is a compromise, but we can afford it cause QuickAccs require a secondary key
 // Consider more
@@ -31,6 +29,7 @@ export default function AddAccount ({ relayerURL, onAddAccount }) {
     const [err, setErr] = useState('')
     const [addAccErr, setAddAccErr] = useState('')
     const [inProgress, setInProgress] = useState(false)
+    const { addToast } = useToasts()
 
     const wrapProgress = async fn => {
         setInProgress(true)
@@ -59,12 +58,10 @@ export default function AddAccount ({ relayerURL, onAddAccount }) {
         // async hack to let React run a tick so it can re-render before the blocking Wallet.createRandom()
         await new Promise(resolve => setTimeout(resolve, 0))
 
-        const firstKeyWallet = Wallet.createRandom()
-        // @TODO fix this hack, use another source of randomness
+        const extraEntropy = id(req.email+':'+Date.now()+':'+Math.random()+':'+(typeof performance === 'object' && performance.now()))
+        const firstKeyWallet = Wallet.createRandom({ extraEntropy })
         // 6 words is 2048**6
-        const secondKeySecret = Wallet.createRandom({
-            extraEntropy: id(req.email+':'+Date.now())
-        }).mnemonic.phrase.split(' ').slice(0, 6).join(' ') + ' ' + req.email
+        const secondKeySecret = Wallet.createRandom({ extraEntropy }).mnemonic.phrase.split(' ').slice(0, 6).join(' ') + ' ' + req.email
 
         const secondKeyResp = await fetchPost(`${relayerURL}/second-key`, { secondKeySecret })
         if (!secondKeyResp.address) throw new Error(`second-key returned no address, error: ${secondKeyResp.message || secondKeyResp}`)
@@ -110,9 +107,6 @@ export default function AddAccount ({ relayerURL, onAddAccount }) {
 
     // EOA implementations
     // Add or create accounts from Trezor/Ledger/Metamask/etc.
-
-    // @TODO refactor into create with privileges perhaps?
-    // only if we can have the whitelisted* stuff in advance; we can hardcode them
     async function createFromEOA (addr) {
         const privileges = [[getAddress(addr), hexZeroPad('0x01', 32)]]
         const { salt, baseIdentityAddr, identityFactoryAddr } = accountPresets
@@ -135,9 +129,7 @@ export default function AddAccount ({ relayerURL, onAddAccount }) {
     }
 
     async function connectWeb3AndGetAccounts () {
-        // @TODO: pending state; should bein the LoginORSignup (AddAccount) component
         if (typeof window.ethereum === 'undefined') {
-            // @TODO catch this
             throw new Error('MetaMask not available')
         }
         const ethereum = window.ethereum
@@ -195,7 +187,7 @@ export default function AddAccount ({ relayerURL, onAddAccount }) {
 
     async function connectLedgerAndGetAccounts () {
         const provider = new LedgerSubprovider({
-            networkId: 0, // @TODO: is this needed?
+            networkId: 0, // @TODO: probably not needed
             ledgerEthereumClientFactoryAsync: ledgerEthereumBrowserClientFactoryAsync,
             //baseDerivationPath: this.baseDerivationPath
         })
@@ -216,7 +208,10 @@ export default function AddAccount ({ relayerURL, onAddAccount }) {
         // otherwise check which accs we already own and add them
         const owned = await getOwnedByEOAs([addr])
         if (!owned.length) return addAccount(await createFromEOA(addr), { select: true })
-        else owned.forEach((acc, i) => addAccount(acc , { select: i === 0 }))
+        else {
+            addToast(`Found ${owned.length} existing accounts with signer ${addr}`, { timeout: 15000 })
+            owned.forEach((acc, i) => addAccount(acc , { select: i === 0 }))
+        }
     }
 
     // The UI for choosing a signer to create/add an account with, for example
@@ -247,7 +242,7 @@ export default function AddAccount ({ relayerURL, onAddAccount }) {
             <div id="loginOthers">
                 <h3>Add an account</h3>
                 {addFromSignerButtons}
-                <h3>NOTE: You can enable email/passphrase login by connecting to a relayer.</h3>
+                <h3>NOTE: You can enable email/password login by connecting to a relayer.</h3>
             </div>
             </section>
         </div>)

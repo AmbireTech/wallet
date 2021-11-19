@@ -115,6 +115,7 @@ export default function useWalletConnect ({ account, chainId, onCallRequest }) {
                 return
             }
             if (!SUPPORTED_METHODS.includes(payload.method)) {
+                addToast(`dApp requested unsupported method: ${payload.method}`, { error: true })
                 connector.rejectRequest({ id: payload.id, error: { message: 'METHOD_NOT_SUPPORTED' }})
                 return
             }
@@ -243,15 +244,15 @@ function runInitEffects(wcConnect) {
     // @TODO on focus and on user action
     const clipboardError = e => console.log('non-fatal clipboard err', e)
     const isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1
-    const tryReadClipboard = () => {
+    const tryReadClipboard = async () => {
         if (isFirefox) return
-        navigator.permissions.query({ name: 'clipboard-read' }).then(result => {
-            if (result.state === 'granted' || result.state === 'prompt') {
-                navigator.clipboard.readText().then(clipboard => {
+        try {
+                const result = await navigator.permissions.query({ name: 'clipboard-read' })
+                if (result.state === 'granted' || result.state === 'prompt') {
+                    const clipboard = await navigator.clipboard.readText()
                     if (clipboard.startsWith('wc:') && !connectors[clipboard]) wcConnect({ uri: clipboard })
-                }).catch(clipboardError)
-            }
-        }).catch(clipboardError)
+                }
+        } catch(e) { clipboardError(e)  }
     }
     tryReadClipboard()
     window.addEventListener('focus', tryReadClipboard)

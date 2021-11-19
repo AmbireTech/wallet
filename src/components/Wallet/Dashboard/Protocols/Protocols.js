@@ -1,24 +1,24 @@
-import './Assets.scss'
+import './Protocols.scss'
 
 import { GiToken } from 'react-icons/gi'
 import { AiOutlineSend } from 'react-icons/ai'
 import { NavLink } from 'react-router-dom'
 import { Button } from '../../../common'
-import AssetsPlaceholder from './AssetsPlaceholder/AssetsPlaceholder'
+import ProtocolsPlaceholder from './ProtocolsPlaceholder/ProtocolsPlaceholder'
 
-const Assets = ({ assets }) => {
+const Protocols = ({ protocols }) => {
     return (
-        <div id="assets-table">
+        <div id="protocols-table">
             {
-                !assets.length ?
-                    <AssetsPlaceholder/>
+                !protocols.length ?
+                    <ProtocolsPlaceholder/>
                     :
-                    assets.map(({ label, assets }, i) => (
+                    protocols.map(({ label, assets }, i) => (
                             <div className="category" key={`category-${i}`}>
                                 <div className="title">{ label }</div>
                                 <div className="list">
                                     {
-                                        assets.map(({ tokens }) => 
+                                        assets.map(({ type, tokens }) => 
                                             tokens.map(({ label, collectionName, symbol, img, collectionImg, balance, balanceUSD, address }, i) => (
                                                 <div className="token" key={`token-${i}`}>
                                                     <div className="icon">
@@ -41,11 +41,16 @@ const Assets = ({ assets }) => {
                                                             <span className="symbol">$</span> { balanceUSD.toFixed(2) }
                                                         </div>
                                                     </div>
-                                                    <div className="actions">
-                                                        <NavLink to={`/wallet/transfer/${address}`}>
-                                                            <Button small icon={<AiOutlineSend/>}>Send</Button>
-                                                        </NavLink>
-                                                    </div>
+                                                    {
+                                                        type === 'wallet' ?
+                                                            <div className="actions">
+                                                                <NavLink to={`/wallet/transfer/${address}`}>
+                                                                    <Button small icon={<AiOutlineSend/>}>Send</Button>
+                                                                </NavLink>
+                                                            </div>
+                                                            :
+                                                            null
+                                                     }
                                                 </div>
                                             ))
                                         )
@@ -58,4 +63,4 @@ const Assets = ({ assets }) => {
     )
 }
 
-export default Assets
+export default Protocols

@@ -36,11 +36,14 @@ function makeBundle(account, networkId, requests) {
     txns: requests.map(({ txn }) => toBundleTxn(txn)),
     signer: account.signer
   })
+  bundle.extraGas = requests.map(x => x.extraGas || 0).reduce((a, b) => a + b, 0)
   bundle.requestIds = requests.map(x => x.id)
   return bundle
 }
 
-export default function SendTransaction({ relayerURL, accounts, network, selectedAcc, requests, resolveMany, replacingBundle, onDismiss }) {
+export default function SendTransaction({ relayerURL, accounts, network, selectedAcc, requests, resolveMany, replacementBundle, onDismiss }) {
+  // NOTE: this can be refactored at a top level to only pass the selected account (full object)
+  // keeping it that way right now (selectedAcc, accounts) cause maybe we'll need the others at some point?
   const account = accounts.find(x => x.id === selectedAcc)
 
   // Also filtered in App.js, but better safe than sorry here
@@ -54,17 +57,16 @@ export default function SendTransaction({ relayerURL, accounts, network, selecte
     // eslint-disable-next-line react-hooks/exhaustive-deps
     ), [requests.map(x => x.id).join(','), network.chainId, selectedAcc])
   const bundle = useMemo(
-    () => makeBundle(account, network.id, eligibleRequests),
-    [network.id, account, eligibleRequests]
+    () => replacementBundle || makeBundle(account, network.id, eligibleRequests),
+    [replacementBundle, network.id, account, eligibleRequests]
   )
 
-  if (!account || !eligibleRequests.length) return (<div id='sendTransaction'>
-      <h3 className='error'>No account or no requests: should never happen.</h3>
+  if (!account || !bundle.txns.length) return (<div id='sendTransaction'>
+      <h3 className='error'>SendTransactions: No account or no requests: should never happen.</h3>
   </div>)
   return (<SendTransactionWithBundle
       relayerURL={relayerURL}
       bundle={bundle}
-      replacingBundle={replacingBundle}
       network={network}
       account={account}
       resolveMany={resolveMany}
@@ -72,7 +74,7 @@ export default function SendTransaction({ relayerURL, accounts, network, selecte
   />)
 }
 
-function SendTransactionWithBundle ({ bundle, network, account, resolveMany, relayerURL, replacingBundle, onDismiss }) {
+function SendTransactionWithBundle ({ bundle, network, account, resolveMany, relayerURL, replacementBundle, onDismiss }) {
   const [estimation, setEstimation] = useState(null)
   const [signingStatus, setSigningStatus] = useState(false)
   const [feeSpeed, setFeeSpeed] = useState(DEFAULT_SPEED)
@@ -81,6 +83,8 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
     if (!bundle.txns.length) return
     setEstimation(null)
   }, [bundle, setEstimation])
+
+  // Estimate the bundle & reestimate periodically
   useEffect(() => {    // eslint-disable-next-line react-hooks/exhaustive-deps
     if (!bundle.txns.length) return
 
@@ -94,13 +98,15 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
       .then(estimation => {
         if (unmounted) return
         estimation.selectedFeeToken = { symbol: network.nativeAssetSymbol }
-        if (estimation.remainingFeeTokenBalances) {
-          const eligibleToken = estimation.remainingFeeTokenBalances
-            .find(token => isTokenEligible(token, feeSpeed, estimation))
-          // If there's no eligibleToken, set it to the first one cause it looks more user friendly (it's the preferred one, usually a stablecoin)
-          estimation.selectedFeeToken = eligibleToken || estimation.remainingFeeTokenBalances[0]
-        }
-        setEstimation(estimation)
+        setEstimation(prevEstimation => {
+          if (estimation.remainingFeeTokenBalances) {
+            // If there's no eligible token, set it to the first one cause it looks more user friendly (it's the preferred one, usually a stablecoin)
+            estimation.selectedFeeToken = (prevEstimation && prevEstimation.selectedFeeToken)
+              || estimation.remainingFeeTokenBalances.find(token => isTokenEligible(token, feeSpeed, estimation))
+              || estimation.remainingFeeTokenBalances[0]
+          }
+          return estimation
+        })
       })
       .catch(e => {
         if (unmounted) return
@@ -117,20 +123,17 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
     }
   }, [bundle, setEstimation, feeSpeed, addToast, network, relayerURL])
 
-
-  const { nativeAssetSymbol } = network
-
   const getFinalBundle = () => {
     if (!relayerURL) return new Bundle({
       ...bundle,
-      gasLimit: estimation.gasLimit,
-      nonce: replacingBundle ? replacingBundle.nonce : undefined
+      gasLimit: estimation.gasLimit
+      // set nonce here when we implement "replace current pending transaction"
     })
 
     const feeToken = estimation.selectedFeeToken
     const { addedGas, multiplier } = getFeePaymentConsequences(feeToken, estimation)
     const toHexAmount = amnt => '0x'+Math.round(amnt).toString(16)
-    const feeTxn = feeToken.symbol === nativeAssetSymbol 
+    const feeTxn = feeToken.symbol === network.nativeAssetSymbol
       ? [accountPresets.feeCollector, toHexAmount(estimation.feeInNative[feeSpeed]*multiplier*1e18), '0x']
       : [feeToken.address, '0x0', ERC20.encodeFunctionData('transfer', [
         accountPresets.feeCollector,
@@ -143,7 +146,7 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
     return new Bundle({
       ...bundle,
       txns: [...bundle.txns, feeTxn],
-      gasLimit: estimation.gasLimit + addedGas
+      gasLimit: estimation.gasLimit + addedGas + (bundle.extraGas || 0)
     })
   }
 
@@ -160,19 +163,22 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
       chainId: network.chainId
     })
     if (relayerURL) {
+      // Temporary way of debugging the fee cost
+      // const initialLimit = finalBundle.gasLimit - getFeePaymentConsequences(estimation.selectedFeeToken, estimation).addedGas
+      // finalBundle.estimate({ relayerURL, fetch }).then(estimation => console.log('fee costs: ', estimation.gasLimit - initialLimit), estimation.selectedFeeToken).catch(console.error)
       if (typeof finalBundle.nonce !== 'number') await finalBundle.getNonce(provider)
       await finalBundle.sign(wallet)
       return await finalBundle.submit({ relayerURL, fetch })
     } else {
       return await sendNoRelayer({
-        finalBundle, account, network, wallet, estimation, feeSpeed, provider, nativeAssetSymbol
+        finalBundle, account, network, wallet, estimation, feeSpeed, provider
       })
     }
   }
 
   const approveTxnImplQuickAcc = async ({ quickAccCredentials }) => {
     if (!estimation) throw new Error('no estimation: should never happen')
-    if (!relayerURL) throw new Error('Email/passphrase account signing without the relayer is not supported yet')
+    if (!relayerURL) throw new Error('Email/Password account signing without the relayer is not supported yet')
 
     const finalBundle = (signingStatus && signingStatus.finalBundle) || getFinalBundle()
     const signer = finalBundle.signer
@@ -201,7 +207,7 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
       if (!signature) throw new Error(`QuickAcc internal error: there should be a signature`)
       if (!account.primaryKeyBackup) throw new Error(`No key backup found: perhaps you need to import the account via JSON?`)
       setSigningStatus({ quickAcc: true, inProgress: true })
-      const pwd = quickAccCredentials.passphrase || alert('Enter passphrase')
+      const pwd = quickAccCredentials.passphrase || alert('Enter password')
       const wallet = await Wallet.fromEncryptedJson(JSON.parse(account.primaryKeyBackup), pwd)
       await finalBundle.sign(wallet)
       finalBundle.signatureTwo = signature
@@ -226,14 +232,14 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
       setSigningStatus(null)
 
       // Inform everything that's waiting for the results (eg WalletConnect)
-      const skipResolve = !bundleResult.success && bundleResult.message && bundleResult.message.includes('UNDERPRICED')
-      if (!skipResolve) resolveMany(requestIds, { success: bundleResult.success, result: bundleResult.txId, message: bundleResult.message })
+      const skipResolve = !bundleResult.success && bundleResult.message && bundleResult.message.match(/underpriced/i)
+      if (!skipResolve && requestIds) resolveMany(requestIds, { success: bundleResult.success, result: bundleResult.txId, message: bundleResult.message })
 
       if (bundleResult.success) {
         addToast((
           <span>Transaction signed and sent successfully!
             &nbsp;Click to view on block explorer.
-          </span>), { url: blockExplorerUrl+'/tx/'+bundleResult.txId })
+          </span>), { url: blockExplorerUrl+'/tx/'+bundleResult.txId, timeout: 15000 })
         onDismiss()
       } else addToast(`Transaction error: ${bundleResult.message || 'unspecified error'}`, { error: true })
     })
@@ -253,9 +259,11 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
     })
   }
 
-  const rejectTxn = () => {
+  // Not applicable when .requestIds is not defined (replacement bundle)
+  const rejectTxn = bundle.requestIds && (() => {
+    onDismiss()
     resolveMany(bundle.requestIds, { message: 'user rejected' })
-  }
+  })
 
   return (<div id='sendTransaction'>
       <div className='dismiss' onClick={onDismiss}>
@@ -263,19 +271,19 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
       </div>
       <h2>Pending transactions: {bundle.txns.length}</h2>
       <div className='container'>
-        <div id="topPanel" className="panel">
-          <div className="title">
+        <div id='topPanel' className='panel'>
+          <div className='title'>
             <MdOutlineAccountCircle/>
             Signing with account:
           </div>
           <div className="content">
-            <div className="account">
-              <img className="icon" src={blockies.create({ seed: account.id }).toDataURL()} alt="Account Icon"/>
+            <div className='account'>
+              <img className='icon' src={blockies.create({ seed: account.id }).toDataURL()} alt='Account Icon'/>
               { account.id }
             </div>
             on
-            <div className="network">
-              <img className="icon" src={network.icon} alt="Network Icon"/>
+            <div className='network'>
+              <img className='icon' src={network.icon} alt='Network Icon'/>
               { network.name }
             </div>
           </div>
@@ -287,19 +295,21 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
                           <GiSpectacles size={35}/>
                           Transaction summary
                       </div>
-                      <div className='listOfTransactions'>
+                      <div className={`listOfTransactions${bundle.requestIds ? '' : ' frozen'}`}>
                           {bundle.txns.map((txn, i) => {
                             const isFirstFailing = estimation && !estimation.success && estimation.firstFailing === i
                             return (<TxnPreview
-                              key={bundle.requestIds[i]}
-                              onDismiss={() => resolveMany([bundle.requestIds[i]], { message: 'rejected' })}
+                              key={[...txn, i].join(':')}
+                              onDismiss={bundle.requestIds && (() => resolveMany([bundle.requestIds[i]], { message: 'rejected' }))}
                               txn={txn} network={bundle.network} account={bundle.identity}
                               isFirstFailing={isFirstFailing}/>
                             )
                           })}
                       </div>
-                      <div className='batchingNote'>
+                      <div className='transactionsNote'>
+                        {bundle.requestIds ? (<>
                           <b>DEGEN TIP:</b> You can sign multiple transactions at once. Add more transactions to this batch by interacting with a connected dApp right now.
+                        </>) : (<><b>NOTE:</b> You are currently replacing a pending transaction.</>)}
                       </div>
               </div>
           </div>
@@ -329,11 +339,12 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
                       </div>
                   </div>
                   {(bundle.signer.quickAccManager && !relayerURL) ? (
-                    <FailingTxn message='Signing transactions with an email/passphrase account without being connected to the relayer is unsupported.'></FailingTxn>
+                    <FailingTxn message='Signing transactions with an email/password account without being connected to the relayer is unsupported.'></FailingTxn>
                   ) : (
                       <Actions
                         estimation={estimation}
-                        approveTxn={approveTxn} rejectTxn={rejectTxn}
+                        approveTxn={approveTxn}
+                        rejectTxn={rejectTxn}
                         signingStatus={signingStatus}
                         feeSpeed={feeSpeed}
                       />
