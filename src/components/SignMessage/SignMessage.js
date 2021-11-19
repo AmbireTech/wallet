@@ -1,8 +1,10 @@
 import './SignMessage.scss'
 import { FaSignature } from 'react-icons/fa'
+import { MdOutlineAccountCircle } from 'react-icons/md'
 import { Wallet } from 'ethers'
 import { toUtf8String, keccak256, arrayify, isHexString } from 'ethers/lib/utils'
 import { signMsgHash } from 'adex-protocol-eth/js/Bundle'
+import * as blockies from 'blockies-ts';
 import { getWallet } from '../../lib/getWallet'
 import { useToasts } from '../../hooks/toasts'
 import { fetchPost } from '../../lib/fetch'
@@ -99,6 +101,16 @@ export default function SignMessage ({ toSign, resolve, account, relayerURL, tot
   }
 
   return (<div id='signMessage'>
+    <div id='signingAccount' className='panel'>
+      <div className='title'>
+        <MdOutlineAccountCircle/>
+        Signing with account
+      </div>
+      <div className="content">
+        <img className='icon' src={blockies.create({ seed: account.id }).toDataURL()} alt='Account Icon'/>
+        { account.id }
+      </div>
+    </div>
     <div className='panel'>
         <div className='heading'>
             <div className='title'>
