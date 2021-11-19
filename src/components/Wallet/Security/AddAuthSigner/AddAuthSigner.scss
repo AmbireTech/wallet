@@ -1,0 +1,26 @@
+@import '../../../../variables.scss';
+
+.wallet-btns-wrapper {
+    width: 300px;
+    display: flex;
+    flex-direction: column;
+
+    .button {
+        box-sizing: border-box;
+        text-align: left;
+        margin: 1em;
+        border: 0px;
+        color: black;
+        background-color: $secondary-accent-color;
+        line-height: 25px;
+      }
+
+      .icon {
+        margin-right: 10px;
+        width: 25px;
+        height: 25px;
+        background-repeat: no-repeat;
+        background-size: contain;
+        float: left;
+      }
+}
