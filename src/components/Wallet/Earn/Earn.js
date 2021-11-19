@@ -1,5 +1,5 @@
 import './Earn.scss'
-import AAVECard from './Cards/AAVECard'
+import AAVECard from './Cards/AAVECard/AAVECard'
 import { Loading } from '../../common'
 
 const Earn = ({ portfolio, selectedNetwork, selectedAcc, addRequest }) => {
@@ -9,7 +9,7 @@ const Earn = ({ portfolio, selectedNetwork, selectedAcc, addRequest }) => {
                 portfolio.isBalanceLoading ?
                     <Loading/>
                     :
-                    <AAVECard network={{...selectedNetwork}} tokens={portfolio.tokens} account={selectedAcc} addRequest={addRequest}/>
+                    <AAVECard networkId={selectedNetwork.id} tokens={portfolio.tokens} protocols={portfolio.protocols} account={selectedAcc} addRequest={addRequest}/>
             }
         </div>
     )
