@@ -1,0 +1,1014 @@
+network;id;methodName;signature;to;mainAction;plainActions;richActions
+polygon;0;swapExactETHForTokens;0x7ff36ab5;QuickSwap Router;swap;"[
+	""Swap 1.0000 MATIC for at least 454837629388505659890(wei) Unknown token""
+]";"[
+	[
+		{
+			""type"": ""plain"",
+			""data"": ""Swap""
+		},
+		{
+			""type"": ""tokenAmount"",
+			""data"": {
+				""exists"": true,
+				""symbol"": ""MATIC"",
+				""network"": ""polygon"",
+				""address"": ""native"",
+				""humanAmount"": ""1.0000"",
+				""amount"": ""1000000000000000000""
+			}
+		},
+		{
+			""type"": ""plain"",
+			""data"": ""for at least""
+		},
+		{
+			""type"": ""tokenAmount"",
+			""data"": {
+				""exists"": false,
+				""symbol"": ""Unknown token"",
+				""network"": ""polygon"",
+				""address"": ""0x229b1b6C23ff8953D663C4cBB519717e323a0a84"",
+				""humanAmount"": ""454837629388505659890(wei)"",
+				""amount"": ""454837629388505659890""
+			}
+		}
+	]
+]"
+polygon;1;swapExactETHForTokens;0x7ff36ab5;QuickSwap Router;swap;"[
+	""Swap 1.0000 MATIC for at least 454837629388505659890(wei) Unknown token"",
+	""Send it to 0xa29a414a809E2fe93f7Ce2BB746d6449Ad577fE9""
+]";"[
+	[
+		{
+			""type"": ""plain"",
+			""data"": ""Swap""
+		},
+		{
+			""type"": ""tokenAmount"",
+			""data"": {
+				""exists"": true,
+				""symbol"": ""MATIC"",
+				""network"": ""polygon"",
+				""address"": ""native"",
+				""humanAmount"": ""1.0000"",
+				""amount"": ""1000000000000000000""
+			}
+		},
+		{
+			""type"": ""plain"",
+			""data"": ""for at least""
+		},
+		{
+			""type"": ""tokenAmount"",
+			""data"": {
+				""exists"": false,
+				""symbol"": ""Unknown token"",
+				""network"": ""polygon"",
+				""address"": ""0x229b1b6C23ff8953D663C4cBB519717e323a0a84"",
+				""humanAmount"": ""454837629388505659890(wei)"",
+				""amount"": ""454837629388505659890""
+			}
+		}
+	],
+	[
+		{
+			""type"": ""plain"",
+			""data"": ""Send it to""
+		},
+		{
+			""type"": ""alias"",
+			""data"": {
+				""address"": ""0xa29a414a809E2fe93f7Ce2BB746d6449Ad577fE9"",
+				""alias"": ""0xa29a414a809E2fe93f7Ce2BB746d6449Ad577fE9"",
+				""contract"": false,
+				""self"": false
+			}
+		}
+	]
+]"
+polygon;2;swapExactTokensForETH;0x18cbafe5;QuickSwap Router;swap;"[
+	""Swap 0.0011 WETH for at least 3.0863 MATIC"",
+	""Send it to 0x3707aa64A35fE74Dd4a21bDca160071929F6512a""
+]";"[
+	[
+		{
+			""type"": ""plain"",
+			""data"": ""Swap""
+		},
+		{
+			""type"": ""tokenAmount"",
+			""data"": {
+				""exists"": true,
+				""symbol"": ""WETH"",
+				""network"": ""polygon"",
+				""address"": ""0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619"",
+				""humanAmount"": ""0.0011"",
+				""amount"": ""1141175885135830""
+			}
+		},
+		{
+			""type"": ""plain"",
+			""data"": ""for at least""
+		},
+		{
+			""type"": ""tokenAmount"",
+			""data"": {
+				""exists"": true,
+				""symbol"": ""MATIC"",
+				""network"": ""polygon"",
+				""address"": ""native"",
+				""humanAmount"": ""3.0863"",
+				""amount"": ""3086279266441975616""
+			}
+		}
+	],
+	[
+		{
+			""type"": ""plain"",
+			""data"": ""Send it to""
+		},
+		{
+			""type"": ""alias"",
+			""data"": {
+				""address"": ""0x3707aa64A35fE74Dd4a21bDca160071929F6512a"",
+				""alias"": ""0x3707aa64A35fE74Dd4a21bDca160071929F6512a"",
+				""contract"": false,
+				""self"": false
+			}
+		}
+	]
+]"
+polygon;3;transfer;0xa9059cbb;Quick;"";"[
+	""Transfer 11.0000 Quick to Alice""
+]";"[
+	[
+		{
+			""type"": ""plain"",
+			""data"": ""Transfer""
+		},
+		{
+			""type"": ""tokenAmount"",
+			""data"": {
+				""exists"": true,
+				""symbol"": ""Quick"",
+				""network"": ""polygon"",
+				""address"": ""0x831753dd7087cac61ab5644b308642cc1c33dc13"",
+				""humanAmount"": ""11.0000"",
+				""amount"": ""11000000000000000000""
+			}
+		},
+		{
+			""type"": ""plain"",
+			""data"": ""to""
+		},
+		{
+			""type"": ""alias"",
+			""data"": {
+				""address"": ""0x4c66eDBb7fD0567036482D09640ea55cB205Bc0B"",
+				""alias"": ""Alice"",
+				""contract"": false,
+				""self"": false
+			}
+		}
+	]
+]"
+polygon;4;approve;0x095ea7b3;Quick;"";"[
+	""Approve QuickSwap Router to spend (∞) Quick""
+]";"[
+	[
+		{
+			""type"": ""plain"",
+			""data"": ""Approve""
+		},
+		{
+			""type"": ""alias"",
+			""data"": {
+				""address"": ""0xa5E0829CaCEd8fFDD4De3c43696c57F7D7A678ff"",
+				""alias"": ""QuickSwap Router"",
+				""contract"": true,
+				""self"": false
+			}
+		},
+		{
+			""type"": ""plain"",
+			""data"": ""to spend""
+		},
+		{
+			""type"": ""tokenAmount"",
+			""data"": {
+				""exists"": true,
+				""symbol"": ""Quick"",
+				""network"": ""polygon"",
+				""address"": ""0x831753dd7087cac61ab5644b308642cc1c33dc13"",
+				""humanAmount"": ""(∞)"",
+				""amount"": ""115792089237316195423570985008687907853269984665640564039457584007913129639935""
+			}
+		}
+	]
+]"
+polygon;5;"";false;Quick;"";"[
+	""Send valueless transaction to Quick""
+]";"[
+	[
+		{
+			""type"": ""plain"",
+			""data"": ""Send valueless transaction to""
+		},
+		{
+			""type"": ""alias"",
+			""data"": {
+				""address"": ""0x831753dd7087cac61ab5644b308642cc1c33dc13"",
+				""alias"": ""Quick"",
+				""contract"": true,
+				""self"": false
+			}
+		}
+	]
+]"
+polygon;6;"";"";"";"";"[
+	""Deploy new contract""
+]";"[
+	[
+		{
+			""type"": ""plain"",
+			""data"": ""Deploy new contract""
+		}
+	]
+]"
+polygon;7;"";false;self;"";"[
+	""Send nothing to self (probably replacement transaction)""
+]";"[
+	[
+		{
+			""type"": ""plain"",
+			""data"": ""Send nothing to self (probably replacement transaction)""
+		}
+	]
+]"
+polygon;8;approve;0x095ea7b3;0x6af1d9376a7060488558cfb443939ed67bb9b48d (ERC20);"";"[
+	""Approve QuickSwap Router to spend (∞) Unknown token""
+]";"[
+	[
+		{
+			""type"": ""plain"",
+			""data"": ""Approve""
+		},
+		{
+			""type"": ""alias"",
+			""data"": {
+				""address"": ""0xa5E0829CaCEd8fFDD4De3c43696c57F7D7A678ff"",
+				""alias"": ""QuickSwap Router"",
+				""contract"": true,
+				""self"": false
+			}
+		},
+		{
+			""type"": ""plain"",
+			""data"": ""to spend""
+		},
+		{
+			""type"": ""tokenAmount"",
+			""data"": {
+				""exists"": false,
+				""symbol"": ""Unknown token"",
+				""network"": ""polygon"",
+				""address"": ""0x6af1d9376a7060488558cfb443939ed67bb9b48d"",
+				""humanAmount"": ""(∞)"",
+				""amount"": ""115792089237316195423570985008687907853269984665640564039457584007913129639935""
+			}
+		}
+	]
+]"
+polygon;9;"";0x095eb7b3;Unknown;"";"[
+	""Sending 12.3457 MATIC"",
+	""Unknown call(0x095eb7b3) to 0x6af1d9376a7060488558cfb443939ed67bb9b48d""
+]";"[
+	[
+		{
+			""type"": ""plain"",
+			""data"": ""Sending""
+		},
+		{
+			""type"": ""tokenAmount"",
+			""data"": {
+				""exists"": true,
+				""symbol"": ""MATIC"",
+				""network"": ""polygon"",
+				""address"": ""native"",
+				""humanAmount"": ""12.3457"",
+				""amount"": ""12345678912345123000""
+			}
+		}
+	],
+	[
+		{
+			""type"": ""plain"",
+			""data"": ""Unknown call(0x095eb7b3) to""
+		},
+		{
+			""type"": ""alias"",
+			""data"": {
+				""address"": ""0x6af1d9376a7060488558cfb443939ed67bb9b48d"",
+				""alias"": ""0x6af1d9376a7060488558cfb443939ed67bb9b48d"",
+				""contract"": false,
+				""self"": false
+			}
+		}
+	]
+]"
+ethereum;0;deposit;0xd0e30db0;WETH;wrap;"[
+	""Wrap 1.0000 ETH""
+]";"[
+	[
+		{
+			""type"": ""plain"",
+			""data"": ""Wrap""
+		},
+		{
+			""type"": ""tokenAmount"",
+			""data"": {
+				""exists"": true,
+				""symbol"": ""ETH"",
+				""network"": ""ethereum"",
+				""address"": ""native"",
+				""humanAmount"": ""1.0000"",
+				""amount"": ""1000000000000000000""
+			}
+		}
+	]
+]"
+ethereum;1;withdraw;0x2e1a7d4d;WETH;unwrap;"[
+	""Unwrap 0.0011 ETH""
+]";"[
+	[
+		{
+			""type"": ""plain"",
+			""data"": ""Unwrap""
+		},
+		{
+			""type"": ""tokenAmount"",
+			""data"": {
+				""exists"": true,
+				""symbol"": ""ETH"",
+				""network"": ""ethereum"",
+				""address"": ""native"",
+				""humanAmount"": ""0.0011"",
+				""amount"": ""1066438400000100""
+			}
+		}
+	]
+]"
+ethereum;2;multicall;0xac9650d8;UniswapV3 Router;multicall;"[
+	""Swap a maximum of 5679.0286 TRUST for 0.7380 WETH"",
+	""Send it to 0x0000000000000000000000000000000000000000"",
+	""Unwrap 0.7380 ETH WETH""
+]";"[
+	[
+		{
+			""type"": ""plain"",
+			""data"": ""Swap a maximum of""
+		},
+		{
+			""type"": ""tokenAmount"",
+			""data"": {
+				""exists"": true,
+				""symbol"": ""TRUST"",
+				""network"": ""ethereum"",
+				""address"": ""0x70Cc41a7BA9101FDf402Bc0758B7C40fc704ad05"",
+				""humanAmount"": ""5679.0286"",
+				""amount"": ""5679028641665031876276""
+			}
+		},
+		{
+			""type"": ""plain"",
+			""data"": ""for""
+		},
+		{
+			""type"": ""tokenAmount"",
+			""data"": {
+				""exists"": true,
+				""symbol"": ""WETH"",
+				""network"": ""ethereum"",
+				""address"": ""0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2"",
+				""humanAmount"": ""0.7380"",
+				""amount"": ""738000000000000000""
+			}
+		}
+	],
+	[
+		{
+			""type"": ""plain"",
+			""data"": ""Send it to""
+		},
+		{
+			""type"": ""alias"",
+			""data"": {
+				""address"": ""0x0000000000000000000000000000000000000000"",
+				""alias"": ""0x0000000000000000000000000000000000000000"",
+				""contract"": false,
+				""self"": false
+			}
+		}
+	],
+	[
+		{
+			""type"": ""plain"",
+			""data"": ""Unwrap""
+		},
+		{
+			""type"": ""tokenAmount"",
+			""data"": {
+				""exists"": true,
+				""symbol"": ""ETH"",
+				""network"": ""ethereum"",
+				""address"": ""native"",
+				""humanAmount"": ""0.7380"",
+				""amount"": ""738000000000000000""
+			}
+		},
+		{
+			""type"": ""plain"",
+			""data"": ""WETH""
+		}
+	]
+]"
+ethereum;3;deposit;0xe2bbb158;Sushi Masterchef V1;claim;"[
+	""Claim rewards of pool #129""
+]";"[
+	[
+		{
+			""type"": ""plain"",
+			""data"": ""Claim rewards of pool #129""
+		}
+	]
+]"
+ethereum;4;withdraw;0x441a3e70; 0xc2edad668740f1aa35e4d8f227fb8e17dca888cd (MasterchefV1);withdraw;"[
+	""Withdraw 3403999713057754685 tokens of pool #334""
+]";"[
+	[
+		{
+			""type"": ""plain"",
+			""data"": ""Withdraw 3403999713057754685 tokens of pool #334""
+		}
+	]
+]"
+ethereum;5;deposit;0x8dbdbe6d; 0xef0881ec094552b2e128cf945ef17a6752b4ec5d (MasterchefV2);stake;"[
+	""Stake 13133382117923059048 tokens in pool #24"",
+	""Give the benefits to 0xEF6f774DC2fF41dB3481e83e1b5AbDa19d3c4323""
+]";"[
+	[
+		{
+			""type"": ""plain"",
+			""data"": ""Stake 13133382117923059048 tokens in pool #24""
+		}
+	],
+	[
+		{
+			""type"": ""plain"",
+			""data"": ""Give the benefits to""
+		},
+		{
+			""type"": ""alias"",
+			""data"": {
+				""address"": ""0xEF6f774DC2fF41dB3481e83e1b5AbDa19d3c4323"",
+				""alias"": ""0xEF6f774DC2fF41dB3481e83e1b5AbDa19d3c4323"",
+				""contract"": false,
+				""self"": false
+			}
+		}
+	]
+]"
+ethereum;6;withdraw;0x0ad58d2f; 0xef0881ec094552b2e128cf945ef17a6752b4ec5d (MasterchefV2);withdraw;"[
+	""Withdraw 3338260047273924905 tokens from pool #24""
+]";"[
+	[
+		{
+			""type"": ""plain"",
+			""data"": ""Withdraw 3338260047273924905 tokens from pool #24""
+		}
+	]
+]"
+ethereum;7;transfer;0xa9059cbb;CK;"";"[
+	""Transfer Token #2001745 to 0x63760E7c402f64661da16c13C2353C839b210e93""
+]";"[
+	[
+		{
+			""type"": ""plain"",
+			""data"": ""Transfer Token #2001745 to""
+		},
+		{
+			""type"": ""alias"",
+			""data"": {
+				""address"": ""0x63760E7c402f64661da16c13C2353C839b210e93"",
+				""alias"": ""0x63760E7c402f64661da16c13C2353C839b210e93"",
+				""contract"": false,
+				""self"": false
+			}
+		}
+	]
+]"
+ethereum;8;transferFrom;0x23b872dd;CK;"";"[
+	""Transfer Token #8934 from 0x9646AA0F9152C126b42F7ce4698F35FA700C8CdE to 0xe7Fa846ad3D12d89872220F53D70D082477E7981""
+]";"[
+	[
+		{
+			""type"": ""plain"",
+			""data"": ""Transfer Token #8934 from""
+		},
+		{
+			""type"": ""alias"",
+			""data"": {
+				""address"": ""0x9646AA0F9152C126b42F7ce4698F35FA700C8CdE"",
+				""alias"": ""0x9646AA0F9152C126b42F7ce4698F35FA700C8CdE"",
+				""contract"": false,
+				""self"": false
+			}
+		},
+		{
+			""type"": ""plain"",
+			""data"": ""to""
+		},
+		{
+			""type"": ""alias"",
+			""data"": {
+				""address"": ""0xe7Fa846ad3D12d89872220F53D70D082477E7981"",
+				""alias"": ""0xe7Fa846ad3D12d89872220F53D70D082477E7981"",
+				""contract"": false,
+				""self"": false
+			}
+		}
+	]
+]"
+ethereum;9;deposit;0xd2d0e066;AaveLendingPooV1;deposit;"[
+	""Deposit 10.0000 USDC as collteral""
+]";"[
+	[
+		{
+			""type"": ""plain"",
+			""data"": ""Deposit""
+		},
+		{
+			""type"": ""tokenAmount"",
+			""data"": {
+				""exists"": true,
+				""symbol"": ""USDC"",
+				""network"": ""ethereum"",
+				""address"": ""0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"",
+				""humanAmount"": ""10.0000"",
+				""amount"": ""10000000""
+			}
+		},
+		{
+			""type"": ""plain"",
+			""data"": ""as collteral""
+		}
+	]
+]"
+ethereum;10;borrow;0xc858f5f9;AaveLendingPooV1;borrow;"[
+	""Borrow 2.0573 DAI""
+]";"[
+	[
+		{
+			""type"": ""plain"",
+			""data"": ""Borrow""
+		},
+		{
+			""type"": ""tokenAmount"",
+			""data"": {
+				""exists"": true,
+				""symbol"": ""DAI"",
+				""network"": ""ethereum"",
+				""address"": ""0x6B175474E89094C44Da98b954EedeAC495271d0F"",
+				""humanAmount"": ""2.0573"",
+				""amount"": ""2057343838597827727""
+			}
+		}
+	]
+]"
+ethereum;11;repay;0x5ceae9c4;AaveLendingPooV1;repay;"[
+	""Repay maximum DAI"",
+	null
+]";"[
+	[
+		{
+			""type"": ""plain"",
+			""data"": ""Repay""
+		},
+		{
+			""type"": ""tokenAmount"",
+			""data"": {
+				""exists"": true,
+				""symbol"": ""DAI"",
+				""network"": ""ethereum"",
+				""address"": ""0x6B175474E89094C44Da98b954EedeAC495271d0F"",
+				""humanAmount"": ""maximum"",
+				""amount"": ""115792089237316195423570985008687907853269984665640564039457584007913129639935""
+			}
+		}
+	],
+	null
+]"
+ethereum;12;borrow;0xa415bcad;AaveLendingPooV2;borrow;"[
+	""Borrow 2000000.0000 USDC as collteral"",
+	null
+]";"[
+	[
+		{
+			""type"": ""plain"",
+			""data"": ""Borrow""
+		},
+		{
+			""type"": ""tokenAmount"",
+			""data"": {
+				""exists"": true,
+				""symbol"": ""USDC"",
+				""network"": ""ethereum"",
+				""address"": ""0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"",
+				""humanAmount"": ""2000000.0000"",
+				""amount"": ""2000000000000""
+			}
+		},
+		{
+			""type"": ""plain"",
+			""data"": ""as collteral""
+		}
+	],
+	null
+]"
+ethereum;13;repay;0x573ade81;AaveLendingPooV2;repay;"[
+	""Borrow maximum USDC""
+]";"[
+	[
+		{
+			""type"": ""plain"",
+			""data"": ""Borrow""
+		},
+		{
+			""type"": ""tokenAmount"",
+			""data"": {
+				""exists"": true,
+				""symbol"": ""USDC"",
+				""network"": ""ethereum"",
+				""address"": ""0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"",
+				""humanAmount"": ""maximum"",
+				""amount"": ""115792089237316195423570985008687907853269984665640564039457584007913129639935""
+			}
+		}
+	]
+]"
+ethereum;14;deposit;0xe8eda9df;AaveLendingPooV2;deposit;"[
+	""Deposit 58.8553 WBTC as collteral"",
+	null
+]";"[
+	[
+		{
+			""type"": ""plain"",
+			""data"": ""Deposit""
+		},
+		{
+			""type"": ""tokenAmount"",
+			""data"": {
+				""exists"": true,
+				""symbol"": ""WBTC"",
+				""network"": ""ethereum"",
+				""address"": ""0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599"",
+				""humanAmount"": ""58.8553"",
+				""amount"": ""5885532126""
+			}
+		},
+		{
+			""type"": ""plain"",
+			""data"": ""as collteral""
+		}
+	],
+	null
+]"
+ethereum;15;mint;0xa0712d68;cDai;supply;"[
+	""Supply 10853.2109 DAI""
+]";"[
+	[
+		{
+			""type"": ""plain"",
+			""data"": ""Supply""
+		},
+		{
+			""type"": ""tokenAmount"",
+			""data"": {
+				""exists"": true,
+				""symbol"": ""DAI"",
+				""network"": ""ethereum"",
+				""address"": ""0x6B175474E89094C44Da98b954EedeAC495271d0F"",
+				""humanAmount"": ""10853.2109"",
+				""amount"": ""10853210949837180127433""
+			}
+		}
+	]
+]"
+ethereum;16;redeem;0xdb006a75;cDai;withdraw;"[
+	""Withdraw 181160.1164 cDAI""
+]";"[
+	[
+		{
+			""type"": ""plain"",
+			""data"": ""Withdraw""
+		},
+		{
+			""type"": ""tokenAmount"",
+			""data"": {
+				""exists"": true,
+				""symbol"": ""cDAI"",
+				""network"": ""ethereum"",
+				""address"": ""0x5d3a536e4d6dbd6114cc1ead35777bab948e3643"",
+				""humanAmount"": ""181160.1164"",
+				""amount"": ""18116011642066""
+			}
+		}
+	]
+]"
+ethereum;17;repayBorrow;0x0e752702;cDai;repay_borrow;"[
+	""Repay borrow with the maximum possible DAI tokens""
+]";"[
+	[
+		{
+			""type"": ""plain"",
+			""data"": ""Repay borrow with""
+		},
+		{
+			""type"": ""tokenAmount"",
+			""data"": {
+				""exists"": true,
+				""symbol"": ""DAI"",
+				""network"": ""ethereum"",
+				""address"": ""0x6B175474E89094C44Da98b954EedeAC495271d0F"",
+				""humanAmount"": ""the maximum possible"",
+				""amount"": ""115792089237316195423570985008687907853269984665640564039457584007913129639935""
+			}
+		},
+		{
+			""type"": ""plain"",
+			""data"": ""tokens""
+		}
+	]
+]"
+ethereum;18;exchange_underlying;0xa6417ed6;curveUSDTSwap;swap;"[
+	""Swap 20000.0000 USDC for at least 19786.2209 USDT""
+]";"[
+	[
+		{
+			""type"": ""plain"",
+			""data"": ""Swap""
+		},
+		{
+			""type"": ""tokenAmount"",
+			""data"": {
+				""exists"": true,
+				""symbol"": ""USDC"",
+				""network"": ""ethereum"",
+				""address"": ""0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"",
+				""humanAmount"": ""20000.0000"",
+				""amount"": ""20000000000""
+			}
+		},
+		{
+			""type"": ""plain"",
+			""data"": ""for at least""
+		},
+		{
+			""type"": ""tokenAmount"",
+			""data"": {
+				""exists"": true,
+				""symbol"": ""USDT"",
+				""network"": ""ethereum"",
+				""address"": ""0xdAC17F958D2ee523a2206206994597C13D831ec7"",
+				""humanAmount"": ""19786.2209"",
+				""amount"": ""19786220911""
+			}
+		}
+	]
+]"
+ethereum;19;remove_liquidity_imbalance;0x9fdaea0c;curveUSDTSwap;remove_liquidity;"[
+	""Remove liquidity for"",
+	""890.2105 USDT""
+]";"[
+	[
+		{
+			""type"": ""plain"",
+			""data"": ""Remove liquidity for""
+		}
+	],
+	[
+		{
+			""type"": ""tokenAmount"",
+			""data"": {
+				""exists"": true,
+				""symbol"": ""USDT"",
+				""network"": ""ethereum"",
+				""address"": ""0xdAC17F958D2ee523a2206206994597C13D831ec7"",
+				""humanAmount"": ""890.2105"",
+				""amount"": ""890210466""
+			}
+		}
+	]
+]"
+ethereum;20;add_liquidity;0x4515cef3;curveUSDTSwap;add_liquidity;"[
+	""Add liquidity for at least 131.6031 cDAI+cUSDC+USDT"",
+	""151.0542 USDT""
+]";"[
+	[
+		{
+			""type"": ""plain"",
+			""data"": ""Add liquidity for at least""
+		},
+		{
+			""type"": ""tokenAmount"",
+			""data"": {
+				""exists"": true,
+				""symbol"": ""cDAI+cUSDC+USDT"",
+				""network"": ""ethereum"",
+				""address"": ""0x9fc689ccada600b6df723d9e47d84d76664a1f23"",
+				""humanAmount"": ""131.6031"",
+				""amount"": ""131603132899878311367""
+			}
+		}
+	],
+	[
+		{
+			""type"": ""tokenAmount"",
+			""data"": {
+				""exists"": true,
+				""symbol"": ""USDT"",
+				""network"": ""ethereum"",
+				""address"": ""0xdAC17F958D2ee523a2206206994597C13D831ec7"",
+				""humanAmount"": ""151.0542"",
+				""amount"": ""151054198""
+			}
+		}
+	]
+]"
+ethereum;21;add_liquidity;0x4515cef3;curveUSDTDeposit;add_liquidity;"[
+	""Add liquidity fir at least 986069.0088 cDAI+cUSDC+USDT"",
+	""1090000.0000 USDT""
+]";"[
+	[
+		{
+			""type"": ""plain"",
+			""data"": ""Add liquidity fir at least""
+		},
+		{
+			""type"": ""tokenAmount"",
+			""data"": {
+				""exists"": true,
+				""symbol"": ""cDAI+cUSDC+USDT"",
+				""network"": ""ethereum"",
+				""address"": ""0x9fc689ccada600b6df723d9e47d84d76664a1f23"",
+				""humanAmount"": ""986069.0088"",
+				""amount"": ""986069008828900954641431""
+			}
+		}
+	],
+	[
+		{
+			""type"": ""tokenAmount"",
+			""data"": {
+				""exists"": true,
+				""symbol"": ""USDT"",
+				""network"": ""ethereum"",
+				""address"": ""0xdAC17F958D2ee523a2206206994597C13D831ec7"",
+				""humanAmount"": ""1090000.0000"",
+				""amount"": ""1090000000000""
+			}
+		}
+	]
+]"
+ethereum;22;deposit;0xb6b55f25;curveUSDTGauge;deposit;"[
+	""Deposit 73172.6706 cDAI+cUSDC+USDT to curve gauge""
+]";"[
+	[
+		{
+			""type"": ""plain"",
+			""data"": ""Deposit""
+		},
+		{
+			""type"": ""tokenAmount"",
+			""data"": {
+				""exists"": true,
+				""symbol"": ""cDAI+cUSDC+USDT"",
+				""network"": ""ethereum"",
+				""address"": ""0x9fc689ccada600b6df723d9e47d84d76664a1f23"",
+				""humanAmount"": ""73172.6706"",
+				""amount"": ""73172670569542708988932""
+			}
+		},
+		{
+			""type"": ""plain"",
+			""data"": ""to curve gauge""
+		}
+	]
+]"
+ethereum;23;withdraw;0x2e1a7d4d;curveUSDTGauge;withdraw;"[
+	""Withdraw 460295.5421 cDAI+cUSDC+USDT to curve gauge""
+]";"[
+	[
+		{
+			""type"": ""plain"",
+			""data"": ""Withdraw""
+		},
+		{
+			""type"": ""tokenAmount"",
+			""data"": {
+				""exists"": true,
+				""symbol"": ""cDAI+cUSDC+USDT"",
+				""network"": ""ethereum"",
+				""address"": ""0x9fc689ccada600b6df723d9e47d84d76664a1f23"",
+				""humanAmount"": ""460295.5421"",
+				""amount"": ""460295542071888720855219""
+			}
+		},
+		{
+			""type"": ""plain"",
+			""data"": ""to curve gauge""
+		}
+	]
+]"
+ethereum;24;getReward;0x3d18b912;synthetixStakingRewards_UniV2_sXAU;claim;"[
+	""Claim rewards""
+]";"[
+	[
+		{
+			""type"": ""plain"",
+			""data"": ""Claim rewards""
+		}
+	]
+]"
+ethereum;25;getReward;0x3d18b912;synthetixStakingRewards_UniV2_sXAU;claim;"[
+	""Claim rewards""
+]";"[
+	[
+		{
+			""type"": ""plain"",
+			""data"": ""Claim rewards""
+		}
+	]
+]"
+ethereum;26;withdraw;0x2e1a7d4d;synthetixStakingRewards_UniV2_sXAU;exit;"[
+	""Withdraw 0.00000585 UniV2_LP_sXau_USDC""
+]";"[
+	[
+		{
+			""type"": ""plain"",
+			""data"": ""Withdraw""
+		},
+		{
+			""type"": ""tokenAmount"",
+			""data"": {
+				""exists"": true,
+				""symbol"": ""UniV2_LP_sXau_USDC"",
+				""network"": ""ethereum"",
+				""address"": ""0x34a0216c5057bc18e5d34d4405284564efd759b2"",
+				""humanAmount"": ""0.00000585"",
+				""amount"": ""5854819987408""
+			}
+		}
+	]
+]"
+ethereum;27;stake;0xa694fc3a;synthetixStakingRewards_UniV2_sXAU;stake;"[
+	""Stake 0.00001043 UniV2_LP_sXau_USDC""
+]";"[
+	[
+		{
+			""type"": ""plain"",
+			""data"": ""Stake""
+		},
+		{
+			""type"": ""tokenAmount"",
+			""data"": {
+				""exists"": true,
+				""symbol"": ""UniV2_LP_sXau_USDC"",
+				""network"": ""ethereum"",
+				""address"": ""0x34a0216c5057bc18e5d34d4405284564efd759b2"",
+				""humanAmount"": ""0.00001043"",
+				""amount"": ""10429139717597""
+			}
+		}
+	]
+]"
+ethereum;28;setAddrPrivilege;0x0d5828d4;AmbireIdentity;authenticate;"[
+	""Authenticate signer 0x942f9CE5D9a33a82F88D233AEb3292E680230348""
+]";"[
+	[
+		{
+			""type"": ""plain"",
+			""data"": ""Authenticate signer""
+		},
+		{
+			""type"": ""alias"",
+			""data"": {
+				""address"": ""0x942f9CE5D9a33a82F88D233AEb3292E680230348"",
+				""alias"": ""0x942f9CE5D9a33a82F88D233AEb3292E680230348"",
+				""contract"": false,
+				""self"": false
+			}
+		}
+	]
+]"

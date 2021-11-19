@@ -1,59 +1,127 @@
-const generic_resources = require('./generic_resources');
-const tokens = require('./erc20/list');
-const erc721 = require('./erc721/list');
+const generic_resources = require('./generic_resources')
+const tokens = require('./erc20/list')
+const erc721 = require('./erc721/list')
+const { getAddressByName } = require('../../abiFetcher')
 
 module.exports = {
-    polygon: [
-        {
-            name:'QuickSwap Router',
-            address: '0xa5E0829CaCEd8fFDD4De3c43696c57F7D7A678ff',
-            interface: generic_resources.uniswapV2Router.interface,
+  polygon: [
+    {
+      name: 'QuickSwap Router',
+      address: getAddressByName('QuickswapRouter', 'polygon'),
+      interface: generic_resources.uniswapV2Router.interface,
+    },
+  ].concat(Object.values(tokens.polygon).map(a => {
+    return {
+      name: a.symbol,
+      address: a.address,
+      interface: generic_resources.erc20.interface,
+    }
+  })).concat(Object.values(erc721.polygon).map(a => {
+    return {
+      name: a.symbol,
+      address: a.address,
+      interface: generic_resources.erc721.interface,
+    }
+  })),
+  ethereum: [
+    {
+      name: 'UniswapV3 Router',
+      address: getAddressByName('UniswapV3Router', 'ethereum'),
+      interface: generic_resources.uniswapV3Router.interface
+    },
+    {
+      name: 'Sushi Masterchef V1',
+      address: getAddressByName('SushiMasterchefV1', 'ethereum'),
+      interface: generic_resources.masterchefV1.interface
+    },
+    {
+      name: 'Sushi Masterchef V2',
+      address: getAddressByName('SushiMasterchefV2', 'ethereum'),
+      interface: generic_resources.masterchefV2.interface
+    },
+    {
+      name: 'WETH',
+      address: getAddressByName('WETH', 'ethereum'),
+      interface: require('./generic/weth').interface
+    },
+    {
+      name: 'AaveLendingPooV1',
+      address: getAddressByName('AaveLendingPool1', 'ethereum'),
+      interface: require('./specific/aaveLendingPoolV1').interface
+    },
+    {
+      name: 'AaveLendingPooV2',
+      address: getAddressByName('AaveLendingPool2', 'ethereum'),
+      interface: require('./specific/aaveLendingPoolV2').interface
+    },
+    {
+      name: 'cDai',
+      address: getAddressByName('cdai', 'ethereum'),
+      data: {underlying: tokens.ethereum.DAI},
+      interface: require('./generic/cTokens').interface
+    },
+
+    {
+      name: 'curveUSDTSwap',
+      address: getAddressByName('curveUSDTSwap', 'ethereum'),
+      data: {
+        underlying: {
+          0: tokens.ethereum.DAI,
+          1: tokens.ethereum.USDC,
+          2: tokens.ethereum.USDT
         },
-    ].concat(Object.values(tokens.polygon).map(a => {
-        return {
-            name: a.symbol,
-            address: a.address,
-            interface: generic_resources.erc20.interface,
-        }
-    })).concat(Object.values(erc721.polygon).map(a => {
-        return {
-            name: a.symbol,
-            address: a.address,
-            interface: generic_resources.erc721.interface,
-        }
-    })),
-    ethereum: [
-        {
-            name: 'UniswapV3 Router',
-            address: '0xe592427a0aece92de3edee1f18e0157c05861564',
-            interface: generic_resources.uniswapV3Router.interface
+        lpToken: tokens.ethereum.curveFi_cDAI_cUSDC_USDT
+      },
+      interface: require('./generic/curveSwap').interface
+    },
+    {
+      name: 'curveUSDTDeposit',
+      address: getAddressByName('curveUSDTDeposit', 'ethereum'),
+      data: {
+        underlying: {
+          0: tokens.ethereum.DAI,
+          1: tokens.ethereum.USDC,
+          2: tokens.ethereum.USDT
         },
-        {
-            name: 'Sushi Masterchef V1',
-            address: '0xc2edad668740f1aa35e4d8f227fb8e17dca888cd',
-            interface: generic_resources.masterchefV1.interface
-        },
-        {
-            name: 'WETH',
-            address: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',
-            interface: require('./specific/weth').interface
-        },
-        {
-            name: 'AaveLendingPool',
-            address: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',
-            interface: require('./specific/weth').interface
-        }
-    ].concat(Object.values(tokens.ethereum).map(a => {
-        return {
-            name: a.symbol,
-            address: a.address,
-            interface: generic_resources.erc20.interface,
-        }
-    })).concat(Object.values(erc721.ethereum).map(a => {
-        return {
-            name: a.symbol,
-            address: a.address,
-            interface: generic_resources.erc721.interface,
-        }
-    }))
+        lpToken: tokens.ethereum.curveFi_cDAI_cUSDC_USDT
+      },
+      interface: require('./generic/curveDeposit').interface
+    },
+    {
+      name: 'curveUSDTGauge',
+      address: getAddressByName('curveUSDTGauge', 'ethereum'),
+      data: {
+        lpToken: tokens.ethereum.curveFi_cDAI_cUSDC_USDT
+      },
+      interface: require('./generic/curveGauge').interface
+    },
+    {
+      name: 'synthetixStakingRewards_UniV2_sXAU',
+      address: getAddressByName('synthetixStakingRewards_UniV2_sXAU', 'ethereum'),
+      data: {
+        lpToken: tokens.ethereum.UniV2_LP_sXau_USDC
+      },
+      interface: require('./generic/synthetixStakingRewards').interface
+    },
+
+    //Ambire
+    {
+      name: 'AmbireIdentity',
+      address: getAddressByName('AmbireIdentity', 'polygon'),
+      interface: require('./specific/ambireIdentity').interface
+    },
+
+  ].concat(Object.values(tokens.ethereum).map(a => {
+    return {
+      name: a.symbol,
+      address: a.address,
+      interface: generic_resources.erc20.interface,
+    }
+  })).concat(Object.values(erc721.ethereum).map(a => {
+    return {
+      name: a.symbol,
+      address: a.address,
+      interface: generic_resources.erc721.interface,
+    }
+  }))
 }
