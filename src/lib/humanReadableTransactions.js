@@ -14,10 +14,14 @@ export function getTransactionSummary(txn, networkId, accountAddr) {
     const network = networks.find(x => x.id === networkId || x.chainId === networkId)
     if (!network) return 'Unknown network (unable to parse)'
 
-    const { summaries } = contractsManager.getSummary(network, {to, value, data, from: accountAddr})
-
-    // ${summaries.action ? summaries.action + ': ' : ''} ${interaction.name}: 
-    return `${summaries.actions.map(x => x.plain).join(', ')}`
+    try {
+        const { summaries } = contractsManager.getSummary(network, {to, value, data, from: accountAddr})
+        // ${summaries.action ? summaries.action + ': ' : ''} ${interaction.name}: 
+        return `${summaries.actions.map(x => x.plain).join(', ')}`
+    } catch (e) {
+        console.error('parsing error', e)
+        return `Unknown call`
+    }
 }
 
 export function getContractName(txn, networkId) {
