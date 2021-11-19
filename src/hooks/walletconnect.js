@@ -115,6 +115,7 @@ export default function useWalletConnect ({ account, chainId, onCallRequest }) {
                 return
             }
             if (!SUPPORTED_METHODS.includes(payload.method)) {
+                addToast(`dApp requested unsupported method: ${payload.method}`)
                 connector.rejectRequest({ id: payload.id, error: { message: 'METHOD_NOT_SUPPORTED' }})
                 return
             }
