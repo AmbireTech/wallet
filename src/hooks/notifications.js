@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from 'react'
+import { useCallback, useRef, useEffect } from 'react'
 import { getTransactionSummary } from '../lib/humanReadableTransactions'
 import { ethers } from 'ethers'
 import { useToasts } from './toasts'
@@ -18,6 +18,8 @@ const getAmountReceived = (lastToken, newBalanceRaw, decimals) => {
 
 export default function useNotifications (requests, onShow, portfolio, selectedAcc) {
     const { addToast } = useToasts()
+    const onShowRef = useRef()
+    onShowRef.current = onShow
 
     useEffect(() => {
         if (window.Notification && Notification.permission !== 'denied') {
@@ -27,7 +29,7 @@ export default function useNotifications (requests, onShow, portfolio, selectedA
         }
     }, [])
     
-    const showNotification = (({ id, title, body, requireInteraction, request }) => {
+    const showNotification = useCallback(({ id, title, body, requireInteraction, request }) => {
         const notification = new Notification(title, {
             requireInteraction: requireInteraction || false,
             body,
@@ -37,10 +39,12 @@ export default function useNotifications (requests, onShow, portfolio, selectedA
         notification.onclick = () => {
             window.focus()
             notification.close()
-            if (request.type === 'eth_sendTransaction') onShow(request)
+            if (request.type === 'eth_sendTransaction') {
+                onShowRef.current(request)
+            }
         }
         currentNotifs.push({ id, notification })
-    }, [onShow])
+    }, [])
 
     requests.forEach(request => {
         if (!SUPPORTED_TYPES.includes(request.type)) return
