@@ -4,18 +4,21 @@
     z-index: 52;
     position: relative;
     min-height: 300px;
-    max-width: 50vh;
+    max-width: 45vh;
     display: flex;
     flex-direction: column;
     gap: 10px;
-    padding: 25px;
+    padding: 25px 35px;
+    padding-bottom: 30px;
     background-color: $input-background-color;
     box-shadow: $box-shadow;
 
     .heading {
         .title {
+            height: 60px;
             font-size: 25px;
             font-weight: bold;
+            text-align: center;
         }
 
         .close {
