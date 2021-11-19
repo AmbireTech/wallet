@@ -91,7 +91,10 @@ function AppInner () {
   }
 
   // Show notifications for all requests
-  useNotifications(requests, () => setSendTxnState({ ...sendTxnState, showing: true }), portfolio, selectedAcc)
+  useNotifications(requests, request => {
+    onSelectAcc(request.account)
+    setSendTxnState(state => ({ ...state, showing: true }))
+  }, portfolio, selectedAcc)
 
   return (<>
     <Prompt
