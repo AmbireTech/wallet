@@ -4,6 +4,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import { FiHelpCircle } from "react-icons/fi";
 import { DropDown, Select } from "../../common";
 import Accounts from "./Accounts/Accounts";
+import { checkClipboardPermission } from "../../../helpers/permissions";
 
 const TopBar = ({
   connections,
@@ -19,27 +20,14 @@ const TopBar = ({
 }) => {
   const [isClipboardGranted, setClipboardGranted] = useState(false);
 
-  const checkPermissions = async () => {
-    let status = false;
-    var isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1
-    if (isFirefox) {
-      return
-    }
-    try {
-      const response = await navigator.permissions.query({
-        name: "clipboard-read",
-        allowWithoutGesture: false,
-      });
-      status = response.state === 'granted'
-    } catch (e) {
-      console.log('non-fatal clipboard error', e);
-    }
-    setClipboardGranted(status);
-    return status;
-  };
+  const checkPermission = async () => {
+    const status = await checkClipboardPermission()
+    setClipboardGranted(status)
+    return status
+  }
 
   const readClipboard = useCallback(async () => {
-    if (await checkPermissions()) {
+    if (isClipboardGranted) {
       const content = await navigator.clipboard.readText();
       if (content.startsWith('wc:')) connect({ uri: content });
     } else {
@@ -54,7 +42,7 @@ const TopBar = ({
     icon
   }))
 
-  useEffect(() => checkPermissions(), []);
+  useEffect(() => checkPermission(), []);
 
   return (
     <div id="topbar">
