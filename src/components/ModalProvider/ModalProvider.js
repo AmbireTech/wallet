@@ -1,10 +1,10 @@
-import { createContext, useCallback, useState } from 'react';
+import { createContext, useCallback, useState } from 'react'
 import './ModalProvider.scss'
 
-const ModalContext = createContext(null);
+const ModalContext = createContext(null)
 
 const ModalProvider = ({ children }) => {
-    const [modal, setModal] = useState(null);
+    const [modal, setModal] = useState(null)
 
     const showModal = useCallback(element => setModal(element), [])
     const hideModal = useCallback(() => setModal(null), [])
