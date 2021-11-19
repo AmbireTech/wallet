@@ -11,6 +11,7 @@ import EmailLogin from './components/EmailLogin/EmailLogin'
 import AddAccount from './components/AddAccount/AddAccount'
 import Wallet from './components/Wallet/Wallet'
 import ToastProvider from './components/ToastProvider/ToastProvider'
+import ModalProvider from './components/ModalProvider/ModalProvider'
 import SendTransaction from './components/SendTransaction/SendTransaction'
 import useAccounts from './hooks/accounts'
 import useNetwork from './hooks/network'
@@ -130,9 +131,11 @@ function AppInner () {
 export default function App() {
   return (
     <ToastProvider>
-      <Router>
-        <AppInner/>
-      </Router>
+      <ModalProvider>
+        <Router>
+          <AppInner/>
+        </Router>
+      </ModalProvider>
     </ToastProvider>
   )
 }
