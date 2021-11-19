@@ -12,7 +12,6 @@ module.exports = {
         summary: ({network, txn, inputs, humanContract}) => {
           const grant = new BigNumber(inputs.priv).eq(1)
           const revoke = new BigNumber(inputs.priv).eq(0)
-          const passphrase = !(grant || revoke)
           if (grant) {
             const SF = new SummaryFormatter(network, humanContract.manager).mainAction('authenticate')
             return SF.actions([

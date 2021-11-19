@@ -1,8 +1,7 @@
-import { Interface, getAddress, formatUnits } from 'ethers/lib/utils'
+import { getAddress } from 'ethers/lib/utils'
 
-import { verifiedContracts, tokens } from '../consts/verifiedContracts'
+import { verifiedContracts } from '../consts/verifiedContracts'
 import networks from '../consts/networks'
-import ERC20ABI from 'adex-protocol-eth/abi/ERC20'
 
 const contractsManager = require('./humanizeTx/HumanContractsManager')
 contractsManager.init()

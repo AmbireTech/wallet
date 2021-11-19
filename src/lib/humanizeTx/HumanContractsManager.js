@@ -68,7 +68,7 @@ module.exports = {
       value: txn.value,
     }
 
-    if (txCallSignature != '0x') {
+    if (txCallSignature !== '0x') {
       if (!txn.to) {
         summary.summaries = SF.actions([
           SF.text(`Deploy new contract`)
@@ -92,7 +92,7 @@ module.exports = {
           s = destinationContract.getSummary(network, txn)
         } else {
           //TODO optimize
-          const {genericContract, genericMethod} = this.getGenericMethodBySignature(txCallSignature)
+          const {genericContract} = this.getGenericMethodBySignature(txCallSignature)
           if (genericContract) {
             s = genericContract.getSummary(network, txn)
             const contractAliasData = this.aliasData(network, txn.from, txn.to)
@@ -139,7 +139,7 @@ module.exports = {
             .action()
         ])
       } else {
-        if (txn.from == txn.to) {
+        if (txn.from === txn.to) {
           //TODO find a way to compare the nonces
           summary.summaries = SF.actions([
             SF.text(`Send nothing to self (probably replacement transaction)`)
@@ -160,7 +160,7 @@ module.exports = {
 
 
   humanAmount(network, address, weiValue, displayDecimals = 4, amountCallback) {
-    if (new BigNumber(new BigNumber(weiValue.toString()).comparedTo('1e70')) == 1) {//=== number comparison fails
+    if (new BigNumber(new BigNumber(weiValue.toString()).comparedTo('1e70')) === 1) {//=== number comparison fails
       if (amountCallback) {
         return amountCallback({infinity: true, amount: weiValue, decimals: null})
       }
@@ -168,7 +168,7 @@ module.exports = {
     }
 
     const decimals = this.tokenDecimals(network, address)
-    if (decimals == 0) {
+    if (decimals === 0) {
       if (amountCallback) {
         return amountCallback({unknownDecimals: true, amountWei: weiValue, decimals: 0})
       }
