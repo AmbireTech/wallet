@@ -24,11 +24,7 @@ import { usePortfolio } from './hooks'
 const relayerURL = process.env.hasOwnProperty('REACT_APP_RELAYER_URL') ? process.env.REACT_APP_RELAYER_URL : 'http://localhost:1934'
 
 setTimeout(() => {
-  //console.error('💣 Your money? Gone? PLEASE, do NOT copy / paste anything here ! 💣')
   //console.warn('☢️ If you do, malicious code could steal your funds! ☢️')
-  console.log("")
-  console.log("")
-  console.log("")
   //console.error('Only use the console if you are an experienced developer who knows what he\'s doing')
   console.log(" ✋ Hey...! Slow down you ambitious adventurer! You want to keep your funds safe! 🦄")
   console.error('       💀 DO NOT PASTE ANY CODE HERE ! 💀')
@@ -38,9 +34,6 @@ setTimeout(() => {
   console.error('(_)        |___/ |_|_||_|\\_| \\___||___||_|_\\       (_)')
   console.log('At Ambire, we care about our users 💜. Safety is our top priority! DO NOT PASTE ANYTHING HERE or it could result in the LOSS OF YOUR FUNDS!')
 }, 4000);
-
-
-
 
 function AppInner () {
   // basic stuff: currently selected account, all accounts, currently selected network
