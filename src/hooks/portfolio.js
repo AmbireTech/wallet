@@ -40,7 +40,7 @@ export default function usePortfolio({ currentNetwork, account }) {
     const [otherBalances, setOtherBalances] = useState([]);
     const [tokens, setTokens] = useState([]);
     const [protocols, setProtocols] = useState([]);
-    const [collectables, setCollectables] = useState([]);
+    const [collectibles, setCollectibles] = useState([]);
 
     const fetchTokens = useCallback(async (account, currentNetwork = false) => {
         try {
@@ -150,48 +150,69 @@ export default function usePortfolio({ currentNetwork, account }) {
 
     // Update states on network, tokens and ohterProtocols change
     useEffect(() => {
-        const balanceByNetworks = tokensByNetworks.map(({ network, meta }) => {
-            const balanceUSD = meta.find(({ label }) => label === 'Total').value + meta.find(({ label }) => label === 'Debt').value
-            const [truncated, decimals] = Number(balanceUSD.toString()).toFixed(2).split('.')
-            return {
-                network,
-                total: {
-                    full: balanceUSD,
-                    truncated: Number(truncated).toLocaleString('en-US'),
-                    decimals
+        try {
+            const balanceByNetworks = tokensByNetworks.map(({ network, meta }) => {
+                const balanceUSD = meta.find(({ label }) => label === 'Total')?.value + meta.find(({ label }) => label === 'Debt')?.value
+                if (!balanceUSD) return {
+                    network,
+                    total: {
+                        full: 0,
+                        truncated: 0,
+                        decimals: '00'
+                    }
                 }
+
+                const [truncated, decimals] = Number(balanceUSD.toString()).toFixed(2).split('.')
+                return {
+                    network,
+                    total: {
+                        full: balanceUSD,
+                        truncated: Number(truncated).toLocaleString('en-US'),
+                        decimals
+                    }
+                }
+            })
+
+            const balance = balanceByNetworks.find(({ network }) => network === currentNetwork)
+            if (balance) {
+                setBalance(balance)
+                setOtherBalances(balanceByNetworks.filter(({ network }) => network !== currentNetwork))
             }
-        })
 
-        const balance = balanceByNetworks.find(({ network }) => network === currentNetwork)
-        if (balance) {
-            setBalance(balance)
-            setOtherBalances(balanceByNetworks.filter(({ network }) => network !== currentNetwork))
+            const tokens = tokensByNetworks.find(({ network }) => network === currentNetwork)
+            if (tokens) setTokens(tokens.products.map(({ assets }) => assets.map(({ tokens }) => tokens)).flat(2))
+
+            const otherProtocols = otherProtocolsByNetworks.find(({ network }) => network === currentNetwork)
+            if (tokens && otherProtocols) {
+                setProtocols([
+                    ...tokens.products,
+                    ...otherProtocols.protocols.filter(({ label }) => label !== 'NFTs')
+                ])
+                setCollectibles(otherProtocols.protocols.find(({ label }) => label === 'NFTs')?.assets || [])
+            }
+        } catch(e) {
+            console.error(e);
+            addToast(e.message | e, { error: true })
         }
-
-        const tokens = tokensByNetworks.find(({ network }) => network === currentNetwork)
-        if (tokens) setTokens(tokens.products.map(({ assets }) => assets.map(({ tokens }) => tokens)).flat(2))
-
-        const otherProtocols = otherProtocolsByNetworks.find(({ network }) => network === currentNetwork)
-        if (tokens && otherProtocols) {
-            setProtocols([
-                ...tokens.products,
-                ...otherProtocols.protocols.filter(({ label }) => label !== 'NFTs')
-            ])
-            setCollectables(otherProtocols.protocols.find(({ label }) => label === 'NFTs')?.assets || [])
-        }
-    }, [currentNetwork, tokensByNetworks, otherProtocolsByNetworks])
+    }, [currentNetwork, tokensByNetworks, otherProtocolsByNetworks, addToast])
 
     // Refresh tokens on network change
     useEffect(() => {
         refreshTokensIfVisible()
     }, [currentNetwork, refreshTokensIfVisible])
 
-    // Refresh balance periodically
+    // Refresh balance every 20s if visible
     useEffect(() => {
         const refreshInterval = setInterval(refreshTokensIfVisible, 20000)
         return () => clearInterval(refreshInterval)
     }, [refreshTokensIfVisible])
+
+    // Refresh balance every 60s if hidden
+    useEffect(() => {
+        const refreshIfHidden = document[hidden] && !isBalanceLoading ? fetchTokens(account, currentNetwork) : null
+        const refreshInterval = setInterval(refreshIfHidden, 60000)
+        return () => clearInterval(refreshInterval)
+    }, [account, currentNetwork, isBalanceLoading, fetchTokens])
 
     // Refresh balance when window is focused
     useEffect(() => {
@@ -206,7 +227,7 @@ export default function usePortfolio({ currentNetwork, account }) {
         otherBalances,
         tokens,
         protocols,
-        collectables,
+        collectibles,
         requestOtherProtocolsRefresh
         //updatePortfolio//TODO find a non dirty way to be able to reply to getSafeBalances from the dapps, after the first refresh
     }

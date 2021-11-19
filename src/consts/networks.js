@@ -21,7 +21,7 @@ const networks = [{
 		nativeAssetSymbol: 'AVAX',
 		name: 'Avalanche',
 		icon: '/resources/networks/avalanche.png',
-		explorerUrl: 'https://cchain.explorer.avax.network'
+		explorerUrl: 'https://snowtrace.io'
 	}/*, {
 		id: 'arbitrum',
 		chainId: 42161,

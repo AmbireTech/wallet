@@ -224,6 +224,10 @@
     min-width: 350px;
 }
 
+#sendTransaction .listOfTransactions.frozen {
+    opacity: 0.5;
+}
+
 #sendTransaction .failingTxn {
     display: flex;
     justify-content: center;

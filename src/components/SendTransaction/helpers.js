@@ -1,5 +1,9 @@
-const ADDED_GAS_TOKEN = 24000
-const ADDED_GAS_NATIVE = 13000
+// It costs around 19k to send a token, if that token was interacted with before in the same transaction,
+// because of SLOAD costs - they depend on whether a slot has been read
+// however, it costs 30k if the token has not been interacted with
+// we may decrease it a bit and lean on the relayer failsafe values (cfg.gasAddedOnEstimate) later on
+const ADDED_GAS_TOKEN = 30000
+const ADDED_GAS_NATIVE = 12000
 
 export function isTokenEligible (token, speed, estimation) {
   const min = token.isStable ? estimation.feeInUSD[speed] : estimation.feeInNative[speed]
