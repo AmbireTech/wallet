@@ -1,7 +1,7 @@
+const isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1
+
 const checkPermissions = async (name, onPrompt) => {
     let status = false;
-    var isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1
-    if (isFirefox) return
 
     try {
         const { state } = await navigator.permissions.query({
@@ -22,10 +22,11 @@ const checkPermissions = async (name, onPrompt) => {
     return status;
 }
 
-const checkClipboardPermission = (prompt = false) => prompt ? checkPermissions('clipboard-read', navigator.clipboard.readText()) : checkPermissions('clipboard-read')
+const checkClipboardPermission = (prompt = false) => isFirefox ? false : prompt ? checkPermissions('clipboard-read', navigator.clipboard.readText()) : checkPermissions('clipboard-read')
 const checkNotificationPermission = (prompt = false) => prompt ? checkPermissions('notifications', Notification.requestPermission()) : checkPermissions('notifications')
 
 export {
     checkClipboardPermission,
-    checkNotificationPermission
+    checkNotificationPermission,
+    isFirefox
 }

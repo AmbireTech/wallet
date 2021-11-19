@@ -15,7 +15,7 @@ import Collectible from "./Collectible/Collectible"
 import { PermissionsModal } from '../Modals'
 import { useModals } from "../../hooks"
 import { useCallback, useEffect } from "react"
-import { checkClipboardPermission, checkNotificationPermission } from '../../helpers/permissions'
+import { checkClipboardPermission, checkNotificationPermission, isFirefox } from '../../helpers/permissions'
 
 export default function Wallet(props) {
   const { showModal } = useModals()
@@ -71,7 +71,7 @@ export default function Wallet(props) {
 
   const handlePermissionsModal = useCallback(async () => {
     const [clipboardGranted, notificationGranted] = await Promise.all([checkClipboardPermission(), checkNotificationPermission()])
-    if (!clipboardGranted || !notificationGranted) showModal(<PermissionsModal/>)
+    if ((!isFirefox && !clipboardGranted) || !notificationGranted) showModal(<PermissionsModal/>)
   }, [showModal])
 
   useEffect(() => handlePermissionsModal(), [handlePermissionsModal])
