@@ -1,3 +1,5 @@
+@import '../../../variables.scss';
+
 #permissions-modal {
     .content {
         display: flex;
@@ -20,12 +22,23 @@
                 .name {
                     font-size: 17px;
                     font-weight: 500;
+
+                    .unavailable {
+                        padding-left: 5px;
+                        font-size: 15px !important;
+                        font-weight: bold !important;
+                        color: $secondary-accent-color;
+                    }
                 }
 
                 .description {
                     font-size: 15px;
                     opacity: 0.6;
                 }
+            }
+
+            &.disabled {
+                opacity: 0.5;
             }
         }
 

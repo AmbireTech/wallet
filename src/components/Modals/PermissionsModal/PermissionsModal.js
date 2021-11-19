@@ -3,13 +3,13 @@ import './PermissionsModal.scss'
 import { useEffect, useState } from 'react'
 import { MdCheck, MdClose } from 'react-icons/md'
 import { useModals } from '../../../hooks'
-import { checkClipboardPermission, checkNotificationPermission } from '../../../helpers/permissions'
+import { checkClipboardPermission, checkNotificationPermission, isFirefox } from '../../../helpers/permissions'
 import { Modal, Toggle, Button } from "../../common"
 
 const PermissionsModal = () => {
     const { hideModal } = useModals()
-    const [notificationGranted, setNotificationGranted] = useState(false)
     const [clipboardGranted, setClipboardGranted] = useState(false)
+    const [notificationGranted, setNotificationGranted] = useState(false)
 
     const checkForPermissions = async () => {
         setClipboardGranted(await checkClipboardPermission(true))
@@ -34,9 +34,9 @@ const PermissionsModal = () => {
                 </div>
                 <Toggle checked={notificationGranted} onChange={() => {}}/>
             </div>
-            <div className="permission">
+            <div className={`permission ${isFirefox ? 'disabled' : ''}`}>
                 <div className="details">
-                    <div className="name">Clipboard</div>
+                    <div className="name">Clipboard { isFirefox ? <span className="unavailable">(Unavailable in Firefox)</span> : null }</div>
                     <div className="description">
                         Needed so that dApps can be connected automatically just by copying their WalletConnect URL
                     </div>
@@ -45,7 +45,7 @@ const PermissionsModal = () => {
             </div>
             <div className="buttons">
                 <Button clear small icon={<MdClose/>} onClick={hideModal}>Ignore</Button>
-                <Button small icon={<MdCheck/>} disabled={!clipboardGranted || !notificationGranted} onClick={hideModal}>Done</Button>
+                <Button small icon={<MdCheck/>} disabled={(!isFirefox && !clipboardGranted) || !notificationGranted} onClick={hideModal}>Done</Button>
             </div>
         </Modal>
     )
