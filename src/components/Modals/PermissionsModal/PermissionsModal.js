@@ -27,8 +27,9 @@ const PermissionsModal = () => {
                 <div className="details">
                     <div className="name">Notifications</div>
                     <div className="description">
-                        Needed to draw your attention to Ambire Wallet when there is a transaction signing request.
-                        You can also click notifications to directly go to the Ambire tab.
+                        Needed to draw your attention to Ambire Wallet when there is a transaction signing request.<br/>
+                        You can also click the notifications to go directly to the Ambire tab.<br/>
+                        We do not send any other notifications.
                     </div>
                 </div>
                 <Toggle checked={notificationGranted} onChange={() => {}}/>
