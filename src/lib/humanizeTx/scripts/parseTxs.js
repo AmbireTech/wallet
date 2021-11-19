@@ -77,10 +77,13 @@ let polygonTxs = [
     value: 12345678912345123456,
     data: '0x095eb7b3000000000000000000000000a5E0829CaCEd8fFDD4De3c43696c57F7D7A678ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff'
   },
+
+  //bad input on purpose
+  {"to": "0x922B602B6ZA61625b5D28840ACC159D4d0C73D0f52", "value": "0x016345785d8a0000", "data": "0x"}
 ]
 
 
-const ethTxs = [
+let ethTxs = [
   //WETH deposit
   {
     from: '0x5891f2A88311408A52289903df30175885626003',
@@ -289,7 +292,6 @@ const ethTxs = [
     data: '0x0d5828d4000000000000000000000000942f9ce5d9a33a82f88d233aeb3292e6802303480000000000000000000000000000000000000000000000000000000000000001'
   },
 ]
-
 //NOTES : make summary UI in 2 parts 1 : humanize TO(contract interaction), 2 : display sentence
 // some parts are not parsable : callbackFunc with bytes[] / masterchef batches?
 

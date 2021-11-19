@@ -56,6 +56,7 @@ module.exports = {
   },
 
   getSummary(network, txn) {
+
     const txCallSignature = txn.data ? txn.data.substr(0, 10) : '0x'
     //upstream redundant?
     const SF = new SummaryFormatter(network, this)
@@ -68,90 +69,102 @@ module.exports = {
       value: txn.value,
     }
 
-    if (txCallSignature !== '0x') {
-      if (!txn.to) {
-        summary.summaries = SF.actions([
-          SF.text(`Deploy new contract`)
-            .action(),
-
-          txn.value > 0
-          && SF.text(`Sending`)
-            .tokenAmount('native', txn.value)
-            .action()
-        ])
-      } else {
-        let s
-        const destinationContract = this.contracts[network.id.toLowerCase()].find(a => a.address.toLowerCase() === txn.to.toLowerCase())
-        if (destinationContract) {
-          summary.interaction = {
-            signature: txCallSignature,
-            method: destinationContract.getMethodName(txCallSignature),
-            name: destinationContract.name,
-            icon: destinationContract.icon
-          }
-          s = destinationContract.getSummary(network, txn)
-        } else {
-          //TODO optimize
-          const {genericContract} = this.getGenericMethodBySignature(txCallSignature)
-          if (genericContract) {
-            s = genericContract.getSummary(network, txn)
-            const contractAliasData = this.aliasData(network, txn.from, txn.to)
-            summary.interaction = {
-              signature: txCallSignature,
-              method: genericContract.getMethodName(txCallSignature),
-              name: `${contractAliasData.alias} (${genericContract.name})`,
-            }
-          } else {
-            summary.interaction = {
-              signature: txCallSignature,
-              name: `Unknown`
-            }
-          }
-        }
-        if (s) {
-          summary.summaries = s
-        } else {
+    try{
+      if (txCallSignature !== '0x') {
+        if (!txn.to) {
           summary.summaries = SF.actions([
+            SF.text(`Deploy new contract`)
+              .action(),
+
             txn.value > 0
             && SF.text(`Sending`)
               .tokenAmount('native', txn.value)
-              .action(),
-
-            SF.text(`Unknown call(${txCallSignature}) to`)
-              .alias(txn.from, txn.to)
-              .action(),
-          ])
-        }
-      }
-    } else {
-      const interactionAliasData = this.aliasData(network, txn.from, txn.to)
-      summary.interaction = {
-        signature: false,
-        name: interactionAliasData.alias
-      }
-      if (txn.value) {
-        summary.summaries = SF.actions([
-          txn.value > 0
-          && SF.text(`Send`)
-            .tokenAmount('native', txn.value)
-            .text('to')
-            .alias(txn.from, txn.to)
-            .action()
-        ])
-      } else {
-        if (txn.from === txn.to) {
-          //TODO find a way to compare the nonces
-          summary.summaries = SF.actions([
-            SF.text(`Send nothing to self (probably replacement transaction)`)
               .action()
           ])
         } else {
+          let s
+          const destinationContract = this.contracts[network.id.toLowerCase()].find(a => a.address.toLowerCase() === txn.to.toLowerCase())
+          if (destinationContract) {
+            summary.interaction = {
+              signature: txCallSignature,
+              method: destinationContract.getMethodName(txCallSignature),
+              name: destinationContract.name,
+              icon: destinationContract.icon
+            }
+            s = destinationContract.getSummary(network, txn)
+          } else {
+            //TODO optimize
+            const {genericContract} = this.getGenericMethodBySignature(txCallSignature)
+            if (genericContract) {
+              s = genericContract.getSummary(network, txn)
+              const contractAliasData = this.aliasData(network, txn.from, txn.to)
+              summary.interaction = {
+                signature: txCallSignature,
+                method: genericContract.getMethodName(txCallSignature),
+                name: `${contractAliasData.alias} (${genericContract.name})`,
+              }
+            } else {
+              summary.interaction = {
+                signature: txCallSignature,
+                name: `Unknown`
+              }
+            }
+          }
+          if (s) {
+            summary.summaries = s
+          } else {
+            summary.summaries = SF.actions([
+              txn.value > 0
+              && SF.text(`Sending`)
+                .tokenAmount('native', txn.value)
+                .action(),
+
+              SF.text(`Unknown call(${txCallSignature}) to`)
+                .alias(txn.from, txn.to)
+                .action(),
+            ])
+          }
+        }
+      } else {
+        const interactionAliasData = this.aliasData(network, txn.from, txn.to)
+        summary.interaction = {
+          signature: false,
+          name: interactionAliasData.alias
+        }
+        if (txn.value) {
           summary.summaries = SF.actions([
-            SF.text(`Send valueless transaction to`)
+            txn.value > 0
+            && SF.text(`Send`)
+              .tokenAmount('native', txn.value)
+              .text('to')
               .alias(txn.from, txn.to)
               .action()
           ])
+        } else {
+          if (txn.from === txn.to) {
+            //TODO find a way to compare the nonces
+            summary.summaries = SF.actions([
+              SF.text(`Send nothing to self (probably replacement transaction)`)
+                .action()
+            ])
+          } else {
+            summary.summaries = SF.actions([
+              SF.text(`Send valueless transaction to`)
+                .alias(txn.from, txn.to)
+                .action()
+            ])
+          }
         }
+      }
+    }catch(e){
+      console.error("Failed to get summary for tx.");
+      console.log(txn);
+      summary.summaries = {
+        action: 'Unknown',
+        actions: [{
+          plain: 'Failed to parse ' + JSON.stringify(txn),
+          rich: null
+        }]
       }
     }
 

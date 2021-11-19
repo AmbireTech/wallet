@@ -174,7 +174,7 @@ polygon;3;transfer;0xa9059cbb;Quick;"";"[
 	]
 ]"
 polygon;4;approve;0x095ea7b3;Quick;"";"[
-	""Approve QuickSwap Router to spend (∞) Quick""
+	""Approve QuickSwap Router to spend 115792089237316195423570985008687907853269984665640564039457.5840 Quick""
 ]";"[
 	[
 		{
@@ -201,7 +201,7 @@ polygon;4;approve;0x095ea7b3;Quick;"";"[
 				""symbol"": ""Quick"",
 				""network"": ""polygon"",
 				""address"": ""0x831753dd7087cac61ab5644b308642cc1c33dc13"",
-				""humanAmount"": ""(∞)"",
+				""humanAmount"": ""115792089237316195423570985008687907853269984665640564039457.5840"",
 				""amount"": ""115792089237316195423570985008687907853269984665640564039457584007913129639935""
 			}
 		}
@@ -247,7 +247,7 @@ polygon;7;"";false;self;"";"[
 	]
 ]"
 polygon;8;approve;0x095ea7b3;0x6af1d9376a7060488558cfb443939ed67bb9b48d (ERC20);"";"[
-	""Approve QuickSwap Router to spend (∞) Unknown token""
+	""Approve QuickSwap Router to spend 115792089237316195423570985008687907853269984665640564039457584007913129639935(wei) Unknown token""
 ]";"[
 	[
 		{
@@ -274,7 +274,7 @@ polygon;8;approve;0x095ea7b3;0x6af1d9376a7060488558cfb443939ed67bb9b48d (ERC20);
 				""symbol"": ""Unknown token"",
 				""network"": ""polygon"",
 				""address"": ""0x6af1d9376a7060488558cfb443939ed67bb9b48d"",
-				""humanAmount"": ""(∞)"",
+				""humanAmount"": ""115792089237316195423570985008687907853269984665640564039457584007913129639935(wei)"",
 				""amount"": ""115792089237316195423570985008687907853269984665640564039457584007913129639935""
 			}
 		}
@@ -316,6 +316,11 @@ polygon;9;"";0x095eb7b3;Unknown;"";"[
 			}
 		}
 	]
+]"
+polygon;10;"";"";"";Unknown;"[
+	""Failed to parse {\""to\"":\""0x922B602B6ZA61625b5D28840ACC159D4d0C73D0f52\"",\""value\"":\""0x016345785d8a0000\"",\""data\"":\""0x\""}""
+]";"[
+	null
 ]"
 ethereum;0;deposit;0xd0e30db0;WETH;wrap;"[
 	""Wrap 1.0000 ETH""
@@ -587,7 +592,7 @@ ethereum;10;borrow;0xc858f5f9;AaveLendingPooV1;borrow;"[
 	]
 ]"
 ethereum;11;repay;0x5ceae9c4;AaveLendingPooV1;repay;"[
-	""Repay maximum DAI"",
+	""Repay 115792089237316195423570985008687907853269984665640564039457.584007913129639935 DAI"",
 	null
 ]";"[
 	[
@@ -602,7 +607,7 @@ ethereum;11;repay;0x5ceae9c4;AaveLendingPooV1;repay;"[
 				""symbol"": ""DAI"",
 				""network"": ""ethereum"",
 				""address"": ""0x6B175474E89094C44Da98b954EedeAC495271d0F"",
-				""humanAmount"": ""maximum"",
+				""humanAmount"": ""115792089237316195423570985008687907853269984665640564039457.584007913129639935"",
 				""amount"": ""115792089237316195423570985008687907853269984665640564039457584007913129639935""
 			}
 		}
@@ -637,7 +642,7 @@ ethereum;12;borrow;0xa415bcad;AaveLendingPooV2;borrow;"[
 	null
 ]"
 ethereum;13;repay;0x573ade81;AaveLendingPooV2;repay;"[
-	""Borrow maximum USDC""
+	""Borrow 115792089237316195423570985008687907853269984665640564039457584007913129.639935 USDC""
 ]";"[
 	[
 		{
@@ -651,7 +656,7 @@ ethereum;13;repay;0x573ade81;AaveLendingPooV2;repay;"[
 				""symbol"": ""USDC"",
 				""network"": ""ethereum"",
 				""address"": ""0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"",
-				""humanAmount"": ""maximum"",
+				""humanAmount"": ""115792089237316195423570985008687907853269984665640564039457584007913129.639935"",
 				""amount"": ""115792089237316195423570985008687907853269984665640564039457584007913129639935""
 			}
 		}
@@ -727,7 +732,7 @@ ethereum;16;redeem;0xdb006a75;cDai;withdraw;"[
 	]
 ]"
 ethereum;17;repayBorrow;0x0e752702;cDai;repay_borrow;"[
-	""Repay borrow with the maximum possible DAI tokens""
+	""Repay borrow with 115792089237316195423570985008687907853269984665640564039457.584007913129639935 DAI tokens""
 ]";"[
 	[
 		{
@@ -741,7 +746,7 @@ ethereum;17;repayBorrow;0x0e752702;cDai;repay_borrow;"[
 				""symbol"": ""DAI"",
 				""network"": ""ethereum"",
 				""address"": ""0x6B175474E89094C44Da98b954EedeAC495271d0F"",
-				""humanAmount"": ""the maximum possible"",
+				""humanAmount"": ""115792089237316195423570985008687907853269984665640564039457.584007913129639935"",
 				""amount"": ""115792089237316195423570985008687907853269984665640564039457584007913129639935""
 			}
 		},
