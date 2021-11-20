@@ -7,7 +7,7 @@ import {
   Redirect,
   Prompt
 } from 'react-router-dom'
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect, useMemo, useRef } from 'react'
 import EmailLogin from './components/EmailLogin/EmailLogin'
 import AddAccount from './components/AddAccount/AddAccount'
 import Wallet from './components/Wallet/Wallet'
@@ -37,7 +37,7 @@ setTimeout(() => {
 }, 4000);
 
 function AppInner () {
-  const { addToast } = useToasts()
+  const { addToast, removeToast } = useToasts()
   // basic stuff: currently selected account, all accounts, currently selected network
   const { accounts, selectedAcc, onSelectAcc, onAddAccount, onRemoveAccount } = useAccounts()
   const { network, setNetwork, allNetworks } = useNetwork()
@@ -114,13 +114,17 @@ function AppInner () {
     setSendTxnState(state => ({ ...state, showing: true }))
   }, portfolio, selectedAcc, network)
 
+  let stickyId = useRef()
   useEffect(() => {
-    if (eligibleRequests.length) addToast('Transactions waiting to be signed', {
-      position: 'right',
-      sticky: true,
-      badge: eligibleRequests.length,
-      onClick: () => setSendTxnState({ showing: true })
-    })
+    removeToast(stickyId.current)
+    if (eligibleRequests.length) {
+      stickyId.current = addToast('Transactions waiting to be signed', {
+        position: 'right',
+        sticky: true,
+        badge: eligibleRequests.length,
+        onClick: () => setSendTxnState({ showing: true })
+      })
+    }
   }, [eligibleRequests, addToast])
 
   return (<>
