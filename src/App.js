@@ -111,6 +111,7 @@ function AppInner () {
   // Show notifications for all requests
   useNotifications(requests, request => {
     onSelectAcc(request.account)
+    setNetwork(request.chainId)
     setSendTxnState(state => ({ ...state, showing: true }))
   }, portfolio, selectedAcc, network)
 
