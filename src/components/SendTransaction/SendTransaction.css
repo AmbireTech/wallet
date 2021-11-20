@@ -220,6 +220,9 @@
 }
 
 #sendTransaction .listOfTransactions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
     min-height: 300px;
     min-width: 350px;
 }

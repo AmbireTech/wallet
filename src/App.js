@@ -23,6 +23,18 @@ import { usePortfolio } from './hooks'
 
 const relayerURL = process.env.hasOwnProperty('REACT_APP_RELAYER_URL') ? process.env.REACT_APP_RELAYER_URL : 'http://localhost:1934'
 
+setTimeout(() => {
+  //console.warn('☢️ If you do, malicious code could steal your funds! ☢️')
+  //console.error('Only use the console if you are an experienced developer who knows what he\'s doing')
+  console.log(" ✋ Hey...! Slow down you ambitious adventurer! You want to keep your funds safe! 🦄")
+  console.error('       💀 DO NOT PASTE ANY CODE HERE ! 💀')
+  console.error(' _          ___   ___  _  _   ___  ___  ___         _')
+  console.error('| |        |   \\ /   \\| \\| | / __|| __|| _ \\       | |')
+  console.error('|_|        | |) || - || .  || (_ || _| |   /       |_|')
+  console.error('(_)        |___/ |_|_||_|\\_| \\___||___||_|_\\       (_)')
+  console.log('At Ambire, we care about our users 💜. Safety is our top priority! DO NOT PASTE ANYTHING HERE or it could result in the LOSS OF YOUR FUNDS!')
+}, 4000);
+
 function AppInner () {
   // basic stuff: currently selected account, all accounts, currently selected network
   const { accounts, selectedAcc, onSelectAcc, onAddAccount, onRemoveAccount } = useAccounts()
@@ -44,7 +56,11 @@ function AppInner () {
   const addRequest = req => setInternalRequests(reqs => [...reqs, req])
 
   // Merge all requests
-  const requests = useMemo(() => [...internalRequests, ...wcRequests, ...gnosisRequests], [wcRequests, internalRequests, gnosisRequests])
+  const requests = useMemo(
+    () => [...internalRequests, ...wcRequests, ...gnosisRequests]
+      .filter(({ account }) => accounts.find(({ id }) => id === account)),
+    [wcRequests, internalRequests, gnosisRequests, accounts]
+  )
   const resolveMany = (ids, resolution) => {
     wcResolveMany(ids, resolution)
     gnosisResolveMany(ids, resolution)
@@ -93,8 +109,9 @@ function AppInner () {
   // Show notifications for all requests
   useNotifications(requests, request => {
     onSelectAcc(request.account)
+    setNetwork(request.chainId)
     setSendTxnState(state => ({ ...state, showing: true }))
-  }, portfolio, selectedAcc)
+  }, portfolio, selectedAcc, network)
 
   return (<>
     <Prompt
