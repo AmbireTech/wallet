@@ -16,7 +16,7 @@ const getAmountReceived = (lastToken, newBalanceRaw, decimals) => {
     return ethers.utils.formatUnits(amountRecieved.toString(), decimals)
 }
 
-export default function useNotifications (requests, onShow, portfolio, selectedAcc) {
+export default function useNotifications (requests, onShow, portfolio, selectedAcc, network) {
     const { addToast } = useToasts()
     const onShowRef = useRef({})
     onShowRef.current.onShow = onShow
@@ -106,7 +106,7 @@ export default function useNotifications (requests, onShow, portfolio, selectedA
     useEffect(() => {
         isLastTotalBalanceInit = false
         lastTokensBalanceRaw = []
-    }, [selectedAcc])
+    }, [selectedAcc, network])
 
     currentNotifs = currentNotifs.filter(({ id, notification }) => {
         if (!requests.find(r => r.id === id)) {
