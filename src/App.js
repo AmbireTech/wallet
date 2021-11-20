@@ -125,7 +125,7 @@ function AppInner () {
         onClick: () => setSendTxnState({ showing: true })
       })
     }
-  }, [eligibleRequests, addToast])
+  }, [eligibleRequests, addToast, removeToast])
 
   return (<>
     <Prompt
