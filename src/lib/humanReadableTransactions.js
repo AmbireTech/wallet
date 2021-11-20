@@ -9,8 +9,8 @@ const ERC20 = new Interface(ERC20ABI)
 const AAVE = new Interface(AAVELENDINGPOOLABI)
 const TRANSFER_SIGHASH = ERC20.getSighash(ERC20.getFunction('transfer').format())
 const APPROVE_SIGHASH = ERC20.getSighash(ERC20.getFunction('approve').format())
-const AAVE_DEPOSIT = AAVE.getSighash(AAVE.getFunction('deposit').format())
-const AAVE_WITHDRAW = AAVE.getSighash(AAVE.getFunction('withdraw').format())
+const AAVE_DEPOSIT_SIGHASH = AAVE.getSighash(AAVE.getFunction('deposit').format())
+const AAVE_WITHDRAW_SIGHASH = AAVE.getSighash(AAVE.getFunction('withdraw').format())
 
 // @TODO custom parsing for univ2 contracts, exact output, etc.
 export function getTransactionSummary(txn, networkId, accountAddr) {
@@ -55,7 +55,7 @@ export function getTransactionSummary(txn, networkId, accountAddr) {
             } else {
                 callSummary = `Approve sending ${amount / 1e18} unknown token to ${tokenAddress}`
             }
-        } else if (data.startsWith(AAVE_DEPOSIT)) {
+        } else if (data.startsWith(AAVE_DEPOSIT_SIGHASH)) {
             const [asset, amount] = AAVE.decodeFunctionData('deposit', data)
             const assetInfo = tokens[asset]
             if (assetInfo) {
@@ -63,7 +63,7 @@ export function getTransactionSummary(txn, networkId, accountAddr) {
             } else {
                 callSummary = `Deposit ${amount / 1e18} unknown token to AAVE Lending Pool`
             }
-        } else if (data.startsWith(AAVE_WITHDRAW)) {
+        } else if (data.startsWith(AAVE_WITHDRAW_SIGHASH)) {
             const [asset, amount] = AAVE.decodeFunctionData('withdraw', data)
             const assetInfo = tokens[asset]
             if (assetInfo) {
