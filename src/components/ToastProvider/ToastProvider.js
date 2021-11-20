@@ -11,6 +11,10 @@ let id = 0
 const ToastProvider = ({ children }) => {
     const [toasts, setToasts] = useState([]);
 
+    const removeToast = useCallback(id => {
+        setToasts(toasts => toasts.filter(t => t.id !== id));
+    }, []);
+
     const addToast = useCallback((content, options) => {
         const defaultOptions = {
             timeout: 8000,
@@ -38,11 +42,7 @@ const ToastProvider = ({ children }) => {
         !toast.sticky && setTimeout(() => removeToast(toast.id), toast.timeout)
 
         return toast.id;
-    }, [setToasts]);
-
-    const removeToast = useCallback(id => {
-        setToasts(toasts => toasts.filter(t => t.id !== id));
-    }, []);
+    }, [setToasts, removeToast]);
     
     return (
         <ToastContext.Provider
