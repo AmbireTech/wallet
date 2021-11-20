@@ -4,6 +4,7 @@ import { names, abis, tokens } from '../consts/humanizerInfo'
 import networks from '../consts/networks'
 import ERC20ABI from 'adex-protocol-eth/abi/ERC20'
 import AAVELENDINGPOOLABI from '../consts/AAVELendingPoolAbi'
+import humanizers from './humanizers'
 
 const ERC20 = new Interface(ERC20ABI)
 const AAVE = new Interface(AAVELENDINGPOOLABI)
@@ -71,6 +72,10 @@ export function getTransactionSummary(txn, networkId, accountAddr) {
                 callSummary = `Withdraw ${amount / 1e18} unknown token from Aave`
             }
         } else callSummary = `unknown call to ${name || (tokenInfo ? tokenInfo[0] : to)}`
+    }
+    const sigHash = data.slice(0, 10)
+    if (humanizers[sigHash]) {
+        console.log(humanizers[sigHash]({ to, value, data }, network))
     }
     return [callSummary, sendSummary].filter(x => x).join(', ')
 }

@@ -15,7 +15,7 @@ const contracts = [
 	{ name: 'QuickSwap', network: 'polygon', addr: '0xa5e0829caced8ffdd4de3c43696c57f7d7a678ff' },
 	{ name: 'Wrapped ETH', network: 'ethereum', addr: '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2', abiName: 'WETH' },
 	{ name: 'Wrapped MATIC', network: 'polygon', addr: '0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270' },
-	{ name: 'Aave', network: 'ethereum', addr: '0x7d2768de32b0b80b7a3454c06bdac94a69ddc7a9', abiName: 'AaveLendingPoolV2' },
+	{ name: 'Aave', network: 'ethereum', addr: '0x7d2768de32b0b80b7a3454c06bdac94a69ddc7a9', abiAddr: '0xc6845a5c768bf8d7681249f8927877efda425baf', abiName: 'AaveLendingPoolV2' },
 	{ name: 'Aave', network: 'polygon', addr: '0x8dff5e27ea6b7ac08ebfdf9eb090f32ee9a30fcf' }
 ]
 const tokenlists = [
@@ -26,11 +26,11 @@ const tokenlists = [
 async function generate () {
 	let abis = {}
 	for (let contract of contracts) {
-		const { network, addr, abiName } = contract
+		const { network, addr, abiName, abiAddr } = contract
 		if (!abiName) continue
 		const { host, key } = etherscans[network]
 		// @TODO rate limiting
-		const abiResp = await fetch(`https://${host}/api?module=contract&action=getabi&address=${addr}&apikey=${key}`)
+		const abiResp = await fetch(`https://${host}/api?module=contract&action=getabi&address=${abiAddr || addr}&apikey=${key}`)
 			.then(r => r.json())
 		if (abiResp.status !== '1') throw abiResp
 		abis[abiName] = JSON.parse(abiResp.result)
