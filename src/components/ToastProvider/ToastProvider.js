@@ -40,9 +40,9 @@ const ToastProvider = ({ children }) => {
         return toast.id;
     }, [setToasts]);
 
-    const removeToast = id => {
+    const removeToast = useCallback(id => {
         setToasts(toasts => toasts.filter(t => t.id !== id));
-    };
+    }, []);
     
     return (
         <ToastContext.Provider
