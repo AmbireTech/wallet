@@ -31,7 +31,7 @@ const ToastProvider = ({ children }) => {
         }
         
         setToasts(toasts => [
-            ...toasts.filter(sticky => toast.sticky ? !sticky : true),
+            ...toasts,
             toast
         ]);
 
