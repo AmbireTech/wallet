@@ -111,7 +111,7 @@ function AppInner () {
   useNotifications(requests, request => {
     onSelectAcc(request.account)
     setSendTxnState(state => ({ ...state, showing: true }))
-  }, portfolio, selectedAcc)
+  }, portfolio, selectedAcc, network)
 
   return (<>
     <Prompt
