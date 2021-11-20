@@ -11,6 +11,7 @@ import { useToasts } from '../../../../hooks/toasts';
 const Accounts = ({ accounts, selectedAddress, onSelectAcc, onRemoveAccount }) => {
     const { addToast } = useToasts()
     const [accountWarning, setAccountWarning] = useState(false)
+    const [closed, setClosed] = useState(false)
 
     const shortenedAddress = address => address.slice(0, 5) + '...' + address.slice(-3)
     const isActive = id => id === selectedAddress ? 'active' : ''
@@ -26,14 +27,19 @@ const Accounts = ({ accounts, selectedAddress, onSelectAcc, onRemoveAccount }) =
         addToast('Copied to clipboard!')
     }
 
+    const onSelectAccount = (id) => {
+        onSelectAcc(id)
+        setClosed(true)
+    }
+
     return (
-        <DropDown id="accounts" icon={toIcon(selectedAddress)} title={shortenedAddress(selectedAddress)}>
+        <DropDown id="accounts" icon={toIcon(selectedAddress)} title={shortenedAddress(selectedAddress)} closed={closed} onOpen={() => setClosed(false)}>
           <div className="list">
             {
               accounts.map(({ id, email, signer, signerExtra }) => 
                 accountWarning !== id ?
                     <div className={`account ${isActive(id)}`} key={id}>
-                        <div className="inner" onClick={() => onSelectAcc(id)}>
+                        <div className="inner" onClick={() => onSelectAccount(id)}>
                             <div className="icon" style={toIconBackgroundImage(id)}></div>
                             <div className="details">
                                 <div className="address">{ id }</div>
