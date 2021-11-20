@@ -1,6 +1,7 @@
 .txnPreview {
     background-color: rgba(0, 0, 0, 0.2);
-    padding: 20px;
+    padding: 20px 40px;
+    padding-left: 60px;
     margin: 10px auto;
     min-height: 50px;
     position: relative;
@@ -11,13 +12,19 @@
     width: calc(100% - 100px);
 }
 
+.txnPreview .expandTxn {
+    position: absolute;
+    top: 25px;
+    left: 15px;
+    width: auto;
+}
 .txnPreview .actionIcons {
     position: absolute;
     top: 25px;
     right: 20px;
     width: auto;
 }
-.txnPreview .actionIcons svg {
+.txnPreview .actionIcons svg, .txnPreview .expandTxn svg {
     float: left;
     margin: 5px;
     color: #ccc;
