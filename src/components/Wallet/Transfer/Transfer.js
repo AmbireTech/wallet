@@ -10,7 +10,7 @@ import SendPlaceholder from './SendPlaceholder/SendPlaceholder'
 import { Interface } from 'ethers/lib/utils'
 import { useToasts } from '../../../hooks/toasts'
 import { TextInput, NumberInput, Button, Select, Loading, DropDown } from '../../common'
-import { verifiedContracts, tokens } from '../../../consts/verifiedContracts'
+import { names, tokens } from '../../../consts/humanizerInfo'
 
 const ERC20 = new Interface(require('adex-protocol-eth/abi/ERC20'))
 const crossChainAssets = [
@@ -105,8 +105,8 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, accounts, 
 
     useEffect(() => {
         const addressToLowerCase = address.toLowerCase()
-        const tokensAddresses = Object.keys(tokens).map(address => address.toLowerCase())
-        const contractsAddresses = Object.keys(verifiedContracts).map(key => key.split(':')[1].toLowerCase())
+        const tokensAddresses = Object.keys(tokens)
+        const contractsAddresses = Object.keys(names)
         const isKnowTokenOrContract = tokensAddresses.includes(addressToLowerCase) || contractsAddresses.includes(addressToLowerCase)
         const isAddressValid = /^0x[a-fA-F0-9]{40}$/.test(address)
 
