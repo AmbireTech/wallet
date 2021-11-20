@@ -15,6 +15,7 @@ export function getTransactionSummary(txn, networkId, accountAddr) {
     if (!network) return 'Unknown network (unable to parse)'
 
     try {
+        // console.log(contractsManager.getSummary(network, {to, value, data, from: accountAddr}))
         const { summaries } = contractsManager.getSummary(network, {to, value, data, from: accountAddr})
         // ${summaries.action ? summaries.action + ': ' : ''} ${interaction.name}: 
         return `${summaries.actions.map(x => x.plain).join(', ')}`

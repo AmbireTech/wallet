@@ -5,4 +5,5 @@ module.exports = {
   masterchefV2: require('./generic/masterchefV2'),
   erc20: require('./generic/erc20'),
   erc721: require('./generic/erc721'),
+  aave: require('./specific/aaveLendingPoolV2'),
 }

@@ -13,7 +13,7 @@ module.exports = {
           return SF.actions([
             SF.text('Deposit')
               .tokenAmount(inputs.asset, inputs.amount)
-              .text('as collteral')
+              .text('as collateral')
               .action(),
 
             txn.from.toLowerCase() !== inputs.onBehalfOf.toLowerCase()
@@ -30,7 +30,7 @@ module.exports = {
           return SF.actions([
             SF.text('Borrow')
               .tokenAmount(inputs.asset, inputs.amount)
-              .text('as collteral')
+              .text('as collateral')
               .action(),
 
             txn.from.toLowerCase() !== inputs.onBehalfOf.toLowerCase()
