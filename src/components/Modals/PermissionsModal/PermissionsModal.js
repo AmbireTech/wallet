@@ -1,22 +1,13 @@
 import './PermissionsModal.scss'
 
-import { useEffect, useState } from 'react'
 import { MdCheck, MdClose } from 'react-icons/md'
-import { useModals } from '../../../hooks'
-import { checkClipboardPermission, checkNotificationPermission, isFirefox } from '../../../helpers/permissions'
+import { useModals, usePermissions } from '../../../hooks'
+import { isFirefox } from '../../../helpers/permissions'
 import { Modal, Toggle, Button } from "../../common"
 
 const PermissionsModal = () => {
     const { hideModal } = useModals()
-    const [clipboardGranted, setClipboardGranted] = useState(false)
-    const [notificationGranted, setNotificationGranted] = useState(false)
-
-    const checkForPermissions = async () => {
-        setClipboardGranted(await checkClipboardPermission(true))
-        setNotificationGranted(await checkNotificationPermission(true))
-    }
-
-    useEffect(() => checkForPermissions(), [])
+    const { isNoticationsGranted, isClipboardGranted } = usePermissions()
 
     return (
         <Modal id="permissions-modal" title="Permissions">
@@ -32,7 +23,7 @@ const PermissionsModal = () => {
                         We do not send any other notifications.
                     </div>
                 </div>
-                <Toggle checked={notificationGranted} onChange={() => {}}/>
+                <Toggle checked={isNoticationsGranted} onChange={() => {}}/>
             </div>
             <div className={`permission ${isFirefox ? 'disabled' : ''}`}>
                 <div className="details">
@@ -41,11 +32,11 @@ const PermissionsModal = () => {
                         Needed so that dApps can be connected automatically just by copying their WalletConnect URL
                     </div>
                 </div>
-                <Toggle checked={clipboardGranted} onChange={() => {}}/>
+                <Toggle checked={isClipboardGranted} onChange={() => {}}/>
             </div>
             <div className="buttons">
                 <Button clear small icon={<MdClose/>} onClick={hideModal}>Ignore</Button>
-                <Button small icon={<MdCheck/>} disabled={(!isFirefox && !clipboardGranted) || !notificationGranted} onClick={hideModal}>Done</Button>
+                <Button small icon={<MdCheck/>} disabled={(!isFirefox && !isClipboardGranted) || !isNoticationsGranted} onClick={hideModal}>Done</Button>
             </div>
         </Modal>
     )
