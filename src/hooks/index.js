@@ -4,6 +4,7 @@ import usePortfolio from "./portfolio"
 import useWalletConnect from "./walletconnect"
 import useRelayerData from './relayerData'
 import useModals from './modals'
+import usePermissions from './permissions'
 
 export {
     useAccounts,
@@ -11,5 +12,6 @@ export {
     usePortfolio,
     useWalletConnect,
     useRelayerData,
-    useModals
+    useModals,
+    usePermissions
 }
