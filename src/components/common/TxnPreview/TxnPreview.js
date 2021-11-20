@@ -1,4 +1,4 @@
-import './TxnPreview.css'
+import './TxnPreview.scss'
 
 import { useState } from 'react'
 import { FaTimes, FaChevronDown, FaChevronUp } from 'react-icons/fa'
@@ -16,13 +16,20 @@ export default function TxnPreview ({ txn, onDismiss, network, account, isFirstF
   const contractName = getContractName(txn, network)
   return (
     <div className={isFirstFailing ? 'txnPreview firstFailing' : 'txnPreview'}>
-        <div className='expandTxn' onClick={() => setExpanded(e => !e)}>
-          {isExpanded ? (<FaChevronUp/>) : (<FaChevronDown/>)}
+        <div className="heading" onClick={() => setExpanded(e => !e)}>
+          <div className="info">
+            <div className="summary-container">
+              <div className='expandTxn'>
+                {isExpanded ? (<FaChevronUp/>) : (<FaChevronDown/>)}
+              </div>
+              <div className="summary">{getTransactionSummary(txn, network, account)}</div>
+            </div>
+            {isFirstFailing ? (<div className='firstFailingLabel'>This is the first failing transaction.</div>) : (<></>)}
+          </div>
+          <div className='actionIcons'>
+              {onDismiss ? (<span className='dismissTxn' onClick={onDismiss}><FaTimes/></span>) : (<></>)}
+            </div>
         </div>
-        
-        <div>{getTransactionSummary(txn, network, account)}</div>
-        {isFirstFailing ? (<div className='firstFailingLabel'>This is the first failing transaction.</div>) : (<></>)}
-
         {
           isExpanded ? (<div className='advanced'>
             <div><b>Interacting with (<i>to</i>):</b> {txn[0]}{contractName ? ` (${contractName})` : ''}</div>
@@ -30,10 +37,6 @@ export default function TxnPreview ({ txn, onDismiss, network, account, isFirstF
             <div><b>Data:</b> {txn[2]}</div>
           </div>) : (<></>)
         }
-
-        <div className='actionIcons'>
-          {onDismiss ? (<span className='dismissTxn' onClick={onDismiss}><FaTimes/></span>) : (<></>)}
-        </div>
     </div>
   )
 }
