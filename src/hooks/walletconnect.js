@@ -221,7 +221,7 @@ export default function useWalletConnect ({ account, chainId, onCallRequest }) {
     }, [state, account, chainId, connect])
 
     // Initialization effects
-    useEffect(() => runInitEffects(connect), [connect])
+    useEffect(() => runInitEffects(connect, account), [connect, account])
 
     return {
         connections: state.connections,
@@ -233,7 +233,7 @@ export default function useWalletConnect ({ account, chainId, onCallRequest }) {
 
 // Initialization side effects
 // Connect to the URL, read from clipboard, etc.
-function runInitEffects(wcConnect) {
+function runInitEffects(wcConnect, account) {
     const query = new URLSearchParams(window.location.href.split('?').slice(1).join('?'))
     const wcUri = query.get('uri')
     if (wcUri) wcConnect({ uri: wcUri })
@@ -245,6 +245,7 @@ function runInitEffects(wcConnect) {
     const clipboardError = e => console.log('non-fatal clipboard err', e)
     const isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1
     const tryReadClipboard = async () => {
+        if (!account) return
         if (isFirefox) return
         try {
                 const result = await navigator.permissions.query({ name: 'clipboard-read' })
@@ -254,6 +255,7 @@ function runInitEffects(wcConnect) {
                 }
         } catch(e) { clipboardError(e)  }
     }
+
     tryReadClipboard()
     window.addEventListener('focus', tryReadClipboard)
     return () => window.removeEventListener('focus', tryReadClipboard)
