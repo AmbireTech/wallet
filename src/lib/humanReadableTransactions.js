@@ -81,5 +81,6 @@ export function getTransactionSummary(txn, networkId, accountAddr) {
 }
 
 export function getContractName(txn/*, networkId*/) {
-    return names[txn[0].toLowerCase()]
+    const addr = txn[0].toLowerCase()
+    return names[addr] || (tokens[addr] ? tokens[addr][0] + ' token' : null)
 }
