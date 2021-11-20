@@ -42,12 +42,10 @@ const TopBar = ({
     icon
   }))
 
-  useEffect(() => checkPermission(), []);
-
   return (
     <div id="topbar">
       <div className="container">
-        <DropDown title="dApps" badge={connections.length}>
+        <DropDown title="dApps" badge={connections.length} onOpen={() => checkPermission()}>
           <div id="connect-dapp">
             <div className="heading">
               <button disabled={isClipboardGranted} onClick={readClipboard}>
