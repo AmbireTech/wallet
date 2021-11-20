@@ -13,12 +13,13 @@ import Transactions from './Transactions/Transactions'
 import PluginGnosisSafeApps from "../Plugins/GnosisSafeApps/GnosisSafeApps"
 import Collectible from "./Collectible/Collectible"
 import { PermissionsModal } from '../Modals'
-import { useModals } from "../../hooks"
+import { useModals, usePermissions } from "../../hooks"
 import { useCallback, useEffect } from "react"
-import { checkClipboardPermission, checkNotificationPermission, isFirefox } from '../../helpers/permissions'
+import { isFirefox } from '../../helpers/permissions'
 
 export default function Wallet(props) {
   const { showModal } = useModals()
+  const { isClipboardGranted, isNoticationsGranted, arePermissionsLoaded } = usePermissions()
 
   const routes = [
     {
@@ -70,9 +71,8 @@ export default function Wallet(props) {
   ]
 
   const handlePermissionsModal = useCallback(async () => {
-    const [clipboardGranted, notificationGranted] = await Promise.all([checkClipboardPermission(), checkNotificationPermission()])
-    if ((!isFirefox && !clipboardGranted) || !notificationGranted) showModal(<PermissionsModal/>)
-  }, [showModal])
+    if (arePermissionsLoaded && ((!isFirefox && !isClipboardGranted) || !isNoticationsGranted)) showModal(<PermissionsModal/>)
+  }, [showModal, isClipboardGranted, isNoticationsGranted, arePermissionsLoaded])
 
   useEffect(() => handlePermissionsModal(), [handlePermissionsModal])
 
