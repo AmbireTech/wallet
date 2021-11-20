@@ -167,6 +167,7 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/t
 * Relayerless mode: ability to function without being connected to the relayer
 * Fee payment in stablecoins: auto-detects what tokens you have left after your transaction batch
 * Transactions: list all the transaction history
+* OTP (Authenticator) support for extra security with email/pass accounts
 
 ### First sprint (v0.2.0)
 
@@ -178,4 +179,5 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/t
 * Swap: approve tokens automatically, removing the need for a separate transaction batch
 * Notifications for incoming funds
 * Advanced transaction parsing: more types of transactions understood and displayed in human-friendly manner
+* Welcome email & onboarding UX improvements
 * Permissions (clipboard, notifications) are now requested through a modal
