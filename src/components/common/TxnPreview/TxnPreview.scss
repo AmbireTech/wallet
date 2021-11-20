@@ -25,6 +25,7 @@
             flex-direction: column;
             align-items: flex-start;
             gap: 10px;
+            padding-right: 40px;
 
             .summary-container {
                 display: flex;
@@ -38,7 +39,7 @@
                 }
 
                 .summary {
-                    white-space: break-word;
+                    word-break: break-all;
                 }
             }
 
@@ -49,7 +50,9 @@
         }
 
         .actionIcons {
-            width: auto;
+            position: absolute;
+            right: 10px;
+
 
             svg {
                 float: left;
