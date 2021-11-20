@@ -3,9 +3,14 @@ import { Interface, getAddress, formatUnits } from 'ethers/lib/utils'
 import { verifiedContracts, tokens } from '../consts/verifiedContracts'
 import networks from '../consts/networks'
 import ERC20ABI from 'adex-protocol-eth/abi/ERC20'
+import AAVELENDINGPOOLABI from '../consts/AAVELendingPoolAbi'
 
 const ERC20 = new Interface(ERC20ABI)
+const AAVE = new Interface(AAVELENDINGPOOLABI)
 const TRANSFER_SIGHASH = ERC20.getSighash(ERC20.getFunction('transfer').format())
+const APPROVE_SIGHASH = ERC20.getSighash(ERC20.getFunction('approve').format())
+const AAVE_DEPOSIT = AAVE.getSighash(AAVE.getFunction('deposit').format())
+const AAVE_WITHDRAW = AAVE.getSighash(AAVE.getFunction('withdraw').format())
 
 // @TODO custom parsing for univ2 contracts, exact output, etc.
 export function getTransactionSummary(txn, networkId, accountAddr) {
@@ -42,6 +47,29 @@ export function getTransactionSummary(txn, networkId, accountAddr) {
                 return `Swap ${formatUnits(value, 18)} ${nativeAsset} for at least ${output}${contractNote}${recipientNote}`
             } else {
                 callSummary = `Interaction with ${contractInfo.name}: ${parsed.name}`
+            }
+        } else if (data.startsWith(APPROVE_SIGHASH)) {
+            const [tokenAddress, amount] = ERC20.decodeFunctionData('approve', data)
+            if (tokenInfo) {
+                callSummary = `Approve sending ${(amount / Math.pow(10, tokenInfo[1])).toFixed(4)} ${tokenInfo[0]} to ${tokenAddress}`
+            } else {
+                callSummary = `Approve sending ${amount / 1e18} unknown token to ${tokenAddress}`
+            }
+        } else if (data.startsWith(AAVE_DEPOSIT)) {
+            const [asset, amount] = AAVE.decodeFunctionData('deposit', data)
+            const assetInfo = tokens[asset]
+            if (assetInfo) {
+                callSummary = `Deposit ${(amount / Math.pow(10, assetInfo[1])).toFixed(4)} ${assetInfo[0]} to AAVE Lending Pool`
+            } else {
+                callSummary = `Deposit ${amount / 1e18} unknown token to AAVE Lending Pool`
+            }
+        } else if (data.startsWith(AAVE_WITHDRAW)) {
+            const [asset, amount] = AAVE.decodeFunctionData('withdraw', data)
+            const assetInfo = tokens[asset]
+            if (assetInfo) {
+                callSummary = `Withdraw ${(amount / Math.pow(10, assetInfo[1])).toFixed(4)} ${assetInfo[0]} from AAVE Lending Pool`
+            } else {
+                callSummary = `Withdraw ${amount / 1e18} unknown token from AAVE Lending Pool`
             }
         } else callSummary = `unknown call to ${contractInfo ? contractInfo.name : (tokenInfo ? tokenInfo[0] : to)}`
     }
