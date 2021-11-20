@@ -139,3 +139,45 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/d
 ### `npm run build` fails to minify
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+
+
+## Change log
+
+### First private beta (v0.1.0)
+
+* Email/password accounts
+* Ledger support
+* Trezor support
+* Multiple accounts
+* Multiple networks: Ethereum, Polygon, Avalanche
+* WalletConnect v1
+* WalletConnect: multi-dApp support
+* Transaction preview: transactions parsed to display meaning
+* Transaction batching: add multiple transactions to automatically batch them
+* Notifications for pending to sign, ability to click notifications to go directly to the tab
+* Deposit page
+* Deposit through on-ramps
+* Transfer page: send tokens
+* Dashboard: display all tokens you own with their $ values
+* Dashboard: display all NFTs you own
+* Plugin system: iframe-based plugins supported
+* Swap: ability to swap tokens through an embedded Sushiswap plugin
+* Earn: ability to easily deposit/withdraw to and from Aave
+* Security: add/remove authorized signers
+* Relayerless mode: ability to function without being connected to the relayer
+* Fee payment in stablecoins: auto-detects what tokens you have left after your transaction batch
+* Transactions: list all the transaction history
+* OTP (Authenticator) support for extra security with email/pass accounts
+
+### First sprint (v0.2.0)
+
+* Ability to copy the address from the top left
+* Ability to remove accounts
+* Transaction cancellation and speed-up
+* Fix: relayer: better gas estimations to avoid "out of gas", "execution reverted"
+* Ability to sign messages
+* Swap: approve tokens automatically, removing the need for a separate transaction batch
+* Notifications for incoming funds
+* Advanced transaction parsing: more types of transactions understood and displayed in human-friendly manner
+* Welcome email & onboarding UX improvements
+* Permissions (clipboard, notifications) are now requested through a modal
