@@ -295,22 +295,24 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
                           <GiSpectacles size={35}/>
                           Transaction summary
                       </div>
-                      <div className={`listOfTransactions${bundle.requestIds ? '' : ' frozen'}`}>
-                          {bundle.txns.map((txn, i) => {
-                            const isFirstFailing = estimation && !estimation.success && estimation.firstFailing === i
-                            return (<TxnPreview
-                              key={[...txn, i].join(':')}
-                              onDismiss={bundle.requestIds && (() => resolveMany([bundle.requestIds[i]], { message: 'rejected' }))}
-                              txn={txn} network={bundle.network} account={bundle.identity}
-                              isFirstFailing={isFirstFailing}/>
-                            )
-                          })}
-                      </div>
-                      <div className='transactionsNote'>
-                        {bundle.requestIds ? (<>
-                          <b>DEGEN TIP:</b> You can sign multiple transactions at once. Add more transactions to this batch by interacting with a connected dApp right now.
-                        </>) : (<><b>NOTE:</b> You are currently replacing a pending transaction.</>)}
-                      </div>
+              </div>
+              <div className="content">
+                <div className={`listOfTransactions${bundle.requestIds ? '' : ' frozen'}`}>
+                    {bundle.txns.map((txn, i) => {
+                      const isFirstFailing = estimation && !estimation.success && estimation.firstFailing === i
+                      return (<TxnPreview
+                        key={[...txn, i].join(':')}
+                        onDismiss={bundle.requestIds && (() => resolveMany([bundle.requestIds[i]], { message: 'rejected' }))}
+                        txn={txn} network={bundle.network} account={bundle.identity}
+                        isFirstFailing={isFirstFailing}/>
+                      )
+                    })}
+                </div>
+                <div className='transactionsNote'>
+                  {bundle.requestIds ? (<>
+                    <b>DEGEN TIP:</b> You can sign multiple transactions at once. Add more transactions to this batch by interacting with a connected dApp right now.
+                  </>) : (<><b>NOTE:</b> You are currently replacing a pending transaction.</>)}
+                </div>
               </div>
           </div>
           <div className='secondaryPanel'>
