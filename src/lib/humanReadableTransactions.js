@@ -10,7 +10,6 @@ const ERC20 = new Interface(ERC20ABI)
 const AAVE = new Interface(AAVELENDINGPOOLABI)
 const TRANSFER_SIGHASH = ERC20.getSighash(ERC20.getFunction('transfer').format())
 const APPROVE_SIGHASH = ERC20.getSighash(ERC20.getFunction('approve').format())
-const AAVE_DEPOSIT_SIGHASH = AAVE.getSighash(AAVE.getFunction('deposit').format())
 const AAVE_WITHDRAW_SIGHASH = AAVE.getSighash(AAVE.getFunction('withdraw').format())
 
 // @TODO custom parsing for univ2 contracts, exact output, etc.
@@ -55,14 +54,6 @@ export function getTransactionSummary(txn, networkId, accountAddr) {
             } else {
                 callSummary = `Approve sending ${amount / 1e18} unknown token to ${approvedName}`
             }
-        } else if (data.startsWith(AAVE_DEPOSIT_SIGHASH)) {
-            const [asset, amount] = AAVE.decodeFunctionData('deposit', data)
-            const assetInfo = tokens[asset.toLowerCase()]
-            if (assetInfo) {
-                callSummary = `Deposit ${(amount / Math.pow(10, assetInfo[1])).toFixed(4)} ${assetInfo[0]} to Aave`
-            } else {
-                callSummary = `Deposit ${amount / 1e18} unknown token to Aave`
-            }
         } else if (data.startsWith(AAVE_WITHDRAW_SIGHASH)) {
             const [asset, amount] = AAVE.decodeFunctionData('withdraw', data)
             const assetInfo = tokens[asset]
@@ -71,11 +62,21 @@ export function getTransactionSummary(txn, networkId, accountAddr) {
             } else {
                 callSummary = `Withdraw ${amount / 1e18} unknown token from Aave`
             }
-        } else callSummary = `unknown call to ${name || (tokenInfo ? tokenInfo[0] : to)}`
-    }
-    const sigHash = data.slice(0, 10)
-    if (humanizers[sigHash]) {
-        console.log(humanizers[sigHash]({ to, value, data }, network))
+        } else {
+            // @TODO refactor this whole callSummary thing with returns, will be way more elegant
+            callSummary = `unknown call to ${name || (tokenInfo ? tokenInfo[0] : to)}`
+
+            const sigHash = data.slice(0, 10)
+            const humanizer = humanizers[sigHash]
+            if (humanizer) {
+                try {
+                    const actions = humanizer({ to, value, data }, network)
+                    return actions.join(', ')
+                } catch (e) {
+                    console.error('internal tx humanization error', e)
+                }
+            }
+        }
     }
     return [callSummary, sendSummary].filter(x => x).join(', ')
 }
@@ -83,4 +84,14 @@ export function getTransactionSummary(txn, networkId, accountAddr) {
 export function getContractName(txn/*, networkId*/) {
     const addr = txn[0].toLowerCase()
     return names[addr] || (tokens[addr] ? tokens[addr][0] + ' token' : null)
+}
+
+export function token(addr, amount) {
+    const address = addr.toLowerCase()
+    const assetInfo = tokens[address]
+    if (assetInfo) {
+        return `${formatUnits(amount, assetInfo[1])} ${assetInfo[0]}`
+    } else {
+        return `${formatUnits(amount, 0)} units of unknown token`
+    }
 }
