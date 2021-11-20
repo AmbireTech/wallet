@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 const fetch = require('node-fetch')
-const { getAddress } = require('ethers').utils
+const ERC20 = require('adex-protocol-eth/abi/ERC20')
 
 const etherscans = {
 	ethereum: { host: 'api.etherscan.io', key: 'KJJ4NZ9EQHIFCQY5IJ775PT128YE15AV5S' },
@@ -35,6 +35,7 @@ async function generate () {
 		if (abiResp.status !== '1') throw abiResp
 		abis[abiName] = JSON.parse(abiResp.result)
 	}
+	abis.ERC20 = ERC20
 
 	let names = {}
 	contracts.forEach(({ name, addr }) => {
