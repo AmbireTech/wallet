@@ -2,12 +2,24 @@ import './PermissionsModal.scss'
 
 import { MdCheck, MdClose } from 'react-icons/md'
 import { useModals, usePermissions } from '../../../hooks'
-import { isFirefox } from '../../../helpers/permissions'
+import { useToasts } from '../../../hooks/toasts'
+import { askForPermission, isFirefox } from '../../../helpers/permissions'
 import { Modal, Toggle, Button } from "../../common"
 
 const PermissionsModal = () => {
     const { hideModal } = useModals()
     const { isNoticationsGranted, isClipboardGranted } = usePermissions()
+    const { addToast } = useToasts()
+
+    const requestNotificationsPermission = async () => {
+        const status = await askForPermission('notifications')
+        if (!status) addToast('You blocked the Notifications permission.', { error: true })
+    }
+
+    const requestClipboardPermission = async () => {
+        const status = await askForPermission('clipboard-read')
+        if (!status) addToast('You blocked the Clipboard permission.', { error: true })
+    }
 
     return (
         <Modal id="permissions-modal" title="Permissions">
@@ -23,7 +35,7 @@ const PermissionsModal = () => {
                         We do not send any other notifications.
                     </div>
                 </div>
-                <Toggle checked={isNoticationsGranted} onChange={() => {}}/>
+                <Toggle checked={isNoticationsGranted} onChange={() => requestNotificationsPermission()}/>
             </div>
             <div className={`permission ${isFirefox ? 'disabled' : ''}`}>
                 <div className="details">
@@ -32,7 +44,7 @@ const PermissionsModal = () => {
                         Needed so that dApps can be connected automatically just by copying their WalletConnect URL
                     </div>
                 </div>
-                <Toggle checked={isClipboardGranted} onChange={() => {}}/>
+                <Toggle checked={isClipboardGranted} onChange={() => requestClipboardPermission()}/>
             </div>
             <div className="buttons">
                 <Button clear small icon={<MdClose/>} onClick={hideModal}>Ignore</Button>
