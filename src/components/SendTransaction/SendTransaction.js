@@ -300,8 +300,10 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
                 <div className={`listOfTransactions${bundle.requestIds ? '' : ' frozen'}`}>
                     {bundle.txns.map((txn, i) => {
                       const isFirstFailing = estimation && !estimation.success && estimation.firstFailing === i
+                      // we need to re-render twice per minute cause of DEX deadlines
+                      const min = Math.floor(Date.now() / 30000)
                       return (<TxnPreview
-                        key={[...txn, i].join(':')}
+                        key={[...txn, i, min].join(':')}
                         onDismiss={bundle.requestIds && (() => resolveMany([bundle.requestIds[i]], { message: 'rejected' }))}
                         txn={txn} network={bundle.network} account={bundle.identity}
                         isFirstFailing={isFirstFailing}/>
