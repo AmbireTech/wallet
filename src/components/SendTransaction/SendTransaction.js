@@ -26,7 +26,7 @@ const DEFAULT_SPEED = 'fast'
 const REESTIMATE_INTERVAL = 15000
 
 function toBundleTxn({ to, value, data }) {
-  return [to, value || '0x0', data || '0x']
+  return [to || '0x', value || '0x0', data || '0x']
 }
 
 function makeBundle(account, networkId, requests) {
