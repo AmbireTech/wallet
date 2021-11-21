@@ -9,6 +9,10 @@ export function getTransactionSummary(txn, networkId, accountAddr) {
     const network = networks.find(x => x.id === networkId || x.chainId === networkId)
     if (!network) return 'Unknown network (unable to parse)'
 
+    if (to === '0x' || !to) {
+        return 'Deploy contract'
+    }
+
     const tokenInfo = tokens[to.toLowerCase()]
     const name = names[to.toLowerCase()]
 
