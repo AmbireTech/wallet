@@ -56,16 +56,14 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, accounts, 
 
     const setMaxAmount = () => onAmountChange(getMaxAmount(amount))
 
-    const onAmountChange = (value) => {
-        setAmount(value)
-
-        if (value.length) {
-            const amount = value || '0'
+    const onAmountChange = value => {
+        if (value) {
             const { decimals } = selectedAsset
-            const bigNumberAmount = ethers.utils.parseUnits(amount, decimals).toHexString()
-            setAmount(amount)
+            const bigNumberAmount = ethers.utils.parseUnits(value, decimals).toHexString()
             setBigNumberHexAmount(bigNumberAmount)
         }
+
+        setAmount(value)
     }
 
     const sendTx = () => {
