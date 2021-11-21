@@ -25,7 +25,27 @@ const checkPermissions = async (name, onPrompt) => {
 const checkClipboardPermission = (prompt = false) => isFirefox ? false : prompt ? checkPermissions('clipboard-read', navigator.clipboard.readText()) : checkPermissions('clipboard-read')
 const checkNotificationPermission = (prompt = false) => prompt ? checkPermissions('notifications', Notification.requestPermission()) : checkPermissions('notifications')
 
+const askForPermission = async name => {
+    try {
+        if (name === 'clipboard-read') {
+            await navigator.clipboard.readText()
+            return true
+        }
+
+        if (name === 'notifications') {
+            const status = await Notification.requestPermission()
+            return status === 'granted' || status === 'default'
+        }
+
+        return false
+    } catch(e) {
+        console.error(`Permission ${name} blocked`);
+        return false
+    }
+}
+
 export {
+    askForPermission,
     checkClipboardPermission,
     checkNotificationPermission,
     isFirefox
