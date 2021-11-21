@@ -111,6 +111,10 @@ const uniV3Mapping = {
     const path = parsePath(params.path)
     return [`Swap up to ${token(path[0], params.amountInMaximum)} for ${token(path[path.length - 1], params.amountOut)}${recipientText(params.recipient, txn.from)}${deadlineText(params.deadline)}`]
   },
+  [ifaceV3.getSighash('unwrapWETH9')]: (txn, network) => {
+    const [ amountMin, recipient ] = ifaceV3.parseTransaction(txn).args
+    return [`Unwrap at least ${nativeToken(network, amountMin)}${recipientText(recipient, txn.from)}`]
+  },
 }
 
 const mapping = { ...uniV2Mapping, ...uniV3Mapping }
