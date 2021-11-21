@@ -1,6 +1,6 @@
 //import { GrInspect } from 'react-icons/gr'
 // GiObservatory is also interesting
-import { GiTakeMyMoney, GiSpectacles } from 'react-icons/gi'
+import { GiTakeMyMoney, GiSpectacles, GiGorilla } from 'react-icons/gi'
 import { FaSignature, FaChevronLeft } from 'react-icons/fa'
 import { MdOutlineAccountCircle } from 'react-icons/md'
 import './SendTransaction.css'
@@ -312,7 +312,7 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
                 </div>
                 <div className='transactionsNote'>
                   {bundle.requestIds ? (<>
-                    <b>DEGEN TIP:</b> You can sign multiple transactions at once. Add more transactions to this batch by interacting with a connected dApp right now.
+                    <b><GiGorilla size={16}/> DEGEN TIP:</b> You can sign multiple transactions at once. Add more transactions to this batch by interacting with a connected dApp right now.
                   </>) : (<><b>NOTE:</b> You are currently replacing a pending transaction.</>)}
                 </div>
               </div>
