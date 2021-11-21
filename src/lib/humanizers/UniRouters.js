@@ -91,7 +91,7 @@ const uniV3Mapping = {
     // the current verbosity of "Swap ..., unwrap WETH to ETH" will be a nice pedantic quirk
     return calls.map(data => {
       const humanizer = uniV3Mapping[data.slice(0, 10)]
-      return humanizer ? humanizer({ ...txn, data }) : null
+      return humanizer ? humanizer({ ...txn, data }, network) : null
     }).flat().filter(x => x)
   },
   // NOTE: selfPermit is not supported cause it requires an ecrecover signature
