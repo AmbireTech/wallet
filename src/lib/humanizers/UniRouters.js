@@ -9,6 +9,7 @@ const deadlineText = deadlineSecs => {
   const minute = 60000
   const deadline = deadlineSecs * 1000
   const diff = deadline - Date.now()
+  if (diff < 0 && diff > -minute*2) return `, expired just now`
   if (diff < 0) return `, expired ${Math.floor(-diff / minute)} minutes ago`
   if (diff < minute) return `, expires in less than a minute`
   if (diff < 10*minute) return `, expires in ${Math.floor(diff / minute)} minutes`
