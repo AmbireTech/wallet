@@ -4,7 +4,6 @@ import { names, tokens } from '../consts/humanizerInfo'
 import networks from '../consts/networks'
 import humanizers from './humanizers'
 
-// @TODO custom parsing for univ2 contracts, exact output, etc.
 export function getTransactionSummary(txn, networkId, accountAddr) {
     const [to, value, data = '0x'] = txn
     const network = networks.find(x => x.id === networkId || x.chainId === networkId)
@@ -30,6 +29,7 @@ export function getTransactionSummary(txn, networkId, accountAddr) {
                 const actions = humanizer({ to, value, data, from: accountAddr }, network)
                 return actions.join(', ')
             } catch (e) {
+                callSummary += ' (unable to parse)'
                 console.error('internal tx humanization error', e)
             }
         }
@@ -37,7 +37,8 @@ export function getTransactionSummary(txn, networkId, accountAddr) {
     return [callSummary, sendSummary].filter(x => x).join(', ')
 }
 
-export function getContractName(addr/*, networkId*/) {
+// Currently takes network because one day we may be seeing the same addresses used on different networks
+export function getContractName(addr, network) {
     const address = addr.toLowerCase()
     return names[address] || (tokens[address] ? tokens[address][0] + ' token' : null) || addr
 }
@@ -61,3 +62,6 @@ export function nativeToken(network, amount) {
         return `${formatUnits(amount, 18)} unknown native token`
     }
 }
+
+// @TODO
+// export function getMethodName(txn)
