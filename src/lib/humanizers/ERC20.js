@@ -1,14 +1,18 @@
 import { abis } from '../../consts/humanizerInfo'
 import { Interface } from 'ethers/lib/utils'
 import { token, getContractName } from '../humanReadableTransactions'
+import { constants } from 'ethers'
 
 const iface = new Interface(abis.ERC20)
 
 export default {
   [iface.getSighash('approve')]: (txn, network) => {
     const [ approvedAddress, amount ] = iface.parseTransaction(txn).args
-    if (amount.eq(0)) return [`Revoke approval for ${getContractName(approvedAddress, network)} to spend ${getContractName(txn.to, network)}`]
-    return [`Approve ${getContractName(approvedAddress, network)} to spend ${token(txn.to, amount)}`]
+    const name = getContractName(approvedAddress, network)
+    const tokenName = getContractName(txn.to, network)
+    if (amount.eq(0)) return [`Revoke approval for ${name} to spend ${tokenName}`]
+    if (amount.eq(constants.MaxUint256)) return [`Approve ${name} to use your ${tokenName}`]
+    return [`Approve ${name} to spend ${token(txn.to, amount)}`]
   },
   [iface.getSighash('transfer')]: (txn, network) => {
     const [ to, amount ] = iface.parseTransaction(txn).args
