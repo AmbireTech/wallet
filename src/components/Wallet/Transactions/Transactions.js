@@ -117,7 +117,7 @@ function MinedBundle({ bundle }) {
   const lastTxn = bundle.txns[bundle.txns.length - 1]
   // terribly hacky; @TODO fix
   // all of the values are prob checksummed so we may not need toLowerCase
-  const lastTxnSummary = getTransactionSummary(lastTxn, bundle.network, bundle.account)
+  const lastTxnSummary = getTransactionSummary(lastTxn, bundle.network, bundle.identity)
   const hasFeeMatch = lastTxnSummary.match(new RegExp(`to ${accountPresets.feeCollector}`, 'i'))
   const txns = hasFeeMatch ? bundle.txns.slice(0, -1) : bundle.txns
   const toLocaleDateTime = date => `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`
