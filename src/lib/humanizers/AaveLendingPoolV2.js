@@ -7,7 +7,7 @@ const onBehalfText = (onBehalf, txnFrom) => onBehalf.toLowerCase() !== txnFrom.t
   ? ' on behalf of '+onBehalf
   : ''
 
-export default {
+const AaveMapping = {
   [iface.getSighash('deposit')]: (txn, network) => {
     const [ asset, amount, onBehalf ] = iface.parseTransaction(txn).args
     return [`Deposit ${token(asset, amount)} to Aave lending pool${onBehalfText(onBehalf, txn.from)}`]
@@ -21,3 +21,4 @@ export default {
     return [`Repay ${token(asset, amount)} to Aave lending pool$${onBehalfText(onBehalf, txn.from)}`]
   },
 }
+export default AaveMapping
