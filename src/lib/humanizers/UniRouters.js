@@ -1,5 +1,5 @@
 import { abis } from '../../consts/humanizerInfo'
-import { Interface, AbiCoder } from 'ethers/lib/utils'
+import { Interface } from 'ethers/lib/utils'
 import { nativeToken, token } from '../humanReadableTransactions'
 
 const iface = new Interface(abis.UniV2Router)
