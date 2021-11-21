@@ -18,8 +18,10 @@ export default {
     const [ to, amount ] = iface.parseTransaction(txn).args
     return [`Send ${token(txn.to, amount)} to ${getContractName(to, network)}`]
   },
+  /*
+  // HACK: since this conflicts with ERC721 in terms of sigHash, but ERC721 is more likely to use this function from a user perspective, do not define this one
   [iface.getSighash('transferFrom')]: (txn, network) => {
     const [ from, to, amount ] = iface.parseTransaction(txn).args
     return [`Send ${token(txn.to, amount)} from ${getContractName(from, network)} to ${getContractName(to, network)}`]
-  },
+  },*/
 }
