@@ -5,7 +5,7 @@ import { constants } from 'ethers'
 
 const iface = new Interface(abis.ERC20)
 
-export default {
+const ERC20Mapping = {
   [iface.getSighash('approve')]: (txn, network) => {
     const [ approvedAddress, amount ] = iface.parseTransaction(txn).args
     const name = getContractName(approvedAddress, network)
@@ -25,3 +25,4 @@ export default {
     return [`Send ${token(txn.to, amount)} from ${getContractName(from, network)} to ${getContractName(to, network)}`]
   },*/
 }
+export default ERC20Mapping

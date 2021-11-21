@@ -3,7 +3,7 @@ import { Interface } from 'ethers/lib/utils'
 import { nativeToken } from '../humanReadableTransactions'
 
 const iface = new Interface(abis.WETH)
-export default {
+const WETHMapping = {
   [iface.getSighash('deposit')]: (txn, network) => {
     const { value } = iface.parseTransaction(txn)
     return [`Wrap ${nativeToken(network, value)}`]
@@ -13,3 +13,4 @@ export default {
     return [`Unwrap ${nativeToken(network, amount)}`]
   },
 }
+export default WETHMapping
