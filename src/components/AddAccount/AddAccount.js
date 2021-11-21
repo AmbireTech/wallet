@@ -15,6 +15,8 @@ import { fetch, fetchPost } from '../../lib/fetch'
 import accountPresets from '../../consts/accountPresets'
 import { useToasts } from '../../hooks/toasts'
 
+import { getLedgerAddresses } from '../../lib/ledgerWebHID'
+
 TrezorConnect.manifest({
   email: 'contactus@ambire.com',
   appUrl: 'https://www.ambire.com'
@@ -199,6 +201,32 @@ export default function AddAccount ({ relayerURL, onAddAccount }) {
         setChooseSigners({ addresses, signerExtra })
     }
 
+    async function connectLedgerWebHIDAndGetAccounts () {
+        let error = null;
+        try{
+            const addresses = await getLedgerAddresses()
+            if(addresses){
+                console.log("Got addresses " + JSON.stringify(addresses));
+                const signerExtra = { type: 'ledger', info: {stuff: 'someInfo'}}
+
+                onEOASelected(addresses[0], signerExtra)
+            }else{
+                error = 'No accounts found in ledger. Please try again';
+            }
+        }catch(e){
+            console.log(e);
+            if(e.statusCode && e.statusCode == 25873){
+                error = "Please make sure your ledger is connected and the ethereum app is open"
+            }else{
+                error = e.message;
+            }
+        }
+
+        if(error){
+            setAddAccErr(error);
+        }
+    }
+
     async function onEOASelected (addr, signerExtra) {
         const addAccount = (acc, opts) => onAddAccount({ ...acc, signerExtra }, opts)
         // when there is no relayer, we can only add the 'default' account created from that EOA
@@ -233,6 +261,7 @@ export default function AddAccount ({ relayerURL, onAddAccount }) {
         <button onClick={() => wrapErr(connectTrezorAndGetAccounts)}><div className="icon" style={{ backgroundImage: 'url(./resources/trezor.png)' }}/>Trezor</button>
         <button onClick={() => wrapErr(connectLedgerAndGetAccounts)}><div className="icon" style={{ backgroundImage: 'url(./resources/ledger.png)' }}/>Ledger</button>
         <button onClick={() => wrapErr(connectWeb3AndGetAccounts)}><div className="icon" style={{ backgroundImage: 'url(./resources/metamask.png)' }}/>Metamask / Browser</button>
+        <button onClick={() => wrapErr(connectLedgerWebHIDAndGetAccounts)}><div className="icon" style={{ backgroundImage: 'url(./resources/ledger.png)' }}/>LedgerWebHID</button>
     </>)
 
     if (!relayerURL) {
@@ -260,13 +289,13 @@ export default function AddAccount ({ relayerURL, onAddAccount }) {
             ></LoginOrSignup>
             {err ? (<p className="error">{err}</p>) : (<></>)}
           </div>
-    
+
           <div id="loginSeparator">
             <div className="verticalLine"></div>
             <span>or</span>
             <div className="verticalLine"></div>
           </div>
-    
+
           <div id="loginOthers">
             <h3>Add an account</h3>
             <Link to="/email-login">
