@@ -14,45 +14,18 @@ export function getTransactionSummary(txn, networkId, accountAddr) {
     const name = names[to.toLowerCase()]
 
     let callSummary, sendSummary
-    const nativeAsset = network ? network.nativeAssetSymbol : 'unknown native token'
-    if (parseInt(value) > 0) sendSummary = `send ${formatUnits(value, 18)} ${nativeAsset} to ${name || to}`
+    if (parseInt(value) > 0) sendSummary = `sending ${nativeToken(network, value)} to ${name || to}`
     if (data !== '0x') {
-        if (false) {
-        }
-        /*if (data.startsWith(TRANSFER_SIGHASH)) {
-            const [to, amount] = ERC20.decodeFunctionData('transfer', data)
-            if (tokenInfo) {
-                callSummary = `send ${(amount/Math.pow(10, tokenInfo[1])).toFixed(4)} ${tokenInfo[0]} to ${name || to}`
-            } else {
-                // @TODO: maybe we can call the contract and get detailed data
-                callSummary = `send ${amount/1e18} unknown token to ${to}`
-            }
-        } else if (contractInfo) {
-            const iface = new Interface(contractInfo.abi)
-            const parsed = iface.parseTransaction({ data, value })
-            // @TODO: some elegant way to try-catch potential issues here
-            if (parsed.name === 'swapExactETHForTokens') {
-                const tokenAddr = parsed.args.path[parsed.args.path.length - 1]
-                const output = tokenInfo ? `${formatUnits(parsed.args.amountOutMin, tokenInfo[1])} ${tokenInfo[0]}` : `${parsed.args.amountOutMin} of token ${tokenAddr}`
-                const contractNote = ` on ${contractInfo.name}`
-                const recipientNote = parsed.args.to.toLowerCase() === accountAddr.toLowerCase() ? `` : ` and send it to ${parsed.args.to}`
-                return `Swap ${formatUnits(value, 18)} ${nativeAsset} for at least ${output}${contractNote}${recipientNote}`
-            } else {
-                callSummary = `Interaction with ${contractInfo.name}: ${parsed.name}`
-            }
-        } */ else {
-            // @TODO refactor this whole callSummary thing with returns, will be way more elegant
-            callSummary = `unknown call to ${name || (tokenInfo ? tokenInfo[0] : to)}`
+        callSummary = `Unknown interaction with ${name || (tokenInfo ? tokenInfo[0] : to)}`
 
-            const sigHash = data.slice(0, 10)
-            const humanizer = humanizers[sigHash]
-            if (humanizer) {
-                try {
-                    const actions = humanizer({ to, value, data, from: accountAddr }, network)
-                    return actions.join(', ')
-                } catch (e) {
-                    console.error('internal tx humanization error', e)
-                }
+        const sigHash = data.slice(0, 10)
+        const humanizer = humanizers[sigHash]
+        if (humanizer) {
+            try {
+                const actions = humanizer({ to, value, data, from: accountAddr }, network)
+                return actions.join(', ')
+            } catch (e) {
+                console.error('internal tx humanization error', e)
             }
         }
     }
@@ -72,5 +45,14 @@ export function token(addr, amount) {
         return `${formatUnits(amount, assetInfo[1])} ${assetInfo[0]}`
     } else {
         return `${formatUnits(amount, 0)} units of unknown token`
+    }
+}
+
+export function nativeToken(network, amount) {
+    // All EVM chains use a 18 decimal native asset
+    if (network) {
+        return `${formatUnits(amount, 18)} ${network.nativeAssetSymbol}`
+    } else {
+        return `${formatUnits(amount, 18)} unknown native token`
     }
 }
