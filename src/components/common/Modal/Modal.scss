@@ -1,17 +1,21 @@
 @import '.././/../../variables.scss';
 
+$modal-height: 600px;
+$modal-width: 530px;
+
 .modal {
     z-index: 52;
     position: relative;
-    min-height: 300px;
-    max-width: 45vh;
+    height: $modal-height;
+    width: $modal-width;
     display: flex;
     flex-direction: column;
     gap: 10px;
-    padding: 25px 35px;
+    padding: 25px 0;
     padding-bottom: 30px;
     background-color: $input-background-color;
     box-shadow: $box-shadow;
+    box-sizing: border-box;
 
     .heading {
         .title {
@@ -34,5 +38,40 @@
                 background-color: rgba(0, 0, 0, 0.1);
             }
         }
+    }
+    
+    .content {
+        padding: 0 35px;
+        padding-bottom: 60px;
+        overflow: hidden;
+        overflow-y: auto;
+        scrollbar-width: thin;
+
+        .buttons {
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            height: 60px;
+            width: 100%;
+            display: flex;
+            box-sizing: border-box;
+            background-color: $input-background-color;
+
+            button {
+                height: 100%;
+            }
+        }
+    }
+}
+
+@media screen and (max-height: calc(#{$modal-height} + 100px)) {
+    .modal {
+        height: 100vh;
+    }
+}
+
+@media screen and (max-width: calc(#{$modal-width} + 100px)) {
+    .modal {
+        width: 100vw;
     }
 }
