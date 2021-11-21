@@ -8,7 +8,10 @@ const recipientText = (recipient, txnFrom) => recipient.toLowerCase() === txnFro
 const deadlineText = deadlineSecs => {
   const minute = 60000
   const deadline = deadlineSecs * 1000
-  if (deadline-Date.now() < 10*minute) return `, expires in ${Math.floor((deadline-Date.now()) / minute)} minutes`
+  const diff = deadline - Date.now()
+  if (diff < 0) return `, expired ${Math.floor(-diff / minute)} minutes ago`
+  if (diff < minute) return `, expires in less than a minute`
+  if (diff < 10*minute) return `, expires in ${Math.floor(diff / minute)} minutes`
   return ''
 }
 
@@ -25,6 +28,12 @@ export default {
     const outputAsset = path[path.length - 1]
     return [`Swap up to ${token(path[0], amountInMax)} for ${token(outputAsset, amountOut)}${recipientText(to, txn.from)}${deadlineText(deadline)}`]
   },
+  [iface.getSighash('swapExactETHForTokens')]: (txn, network) => {
+    const { args, value } = iface.parseTransaction(txn)
+    const [ amountOutMin, path, to, deadline ] = args
+    const outputAsset = path[path.length - 1]
+    return [`Swap ${nativeToken(network, value)} for at least ${token(outputAsset, amountOutMin)}${recipientText(to, txn.from)}${deadlineText(deadline)}`]
+  },
   [iface.getSighash('swapTokensForExactETH')]: (txn, network) => {
     const [ amountOut, amountInMax, path, to, deadline ] = iface.parseTransaction(txn).args
     return [`Swap up to ${token(path[0], amountInMax)} for ${nativeToken(network, amountOut)}${recipientText(to, txn.from)}${deadlineText(deadline)}`]
@@ -33,10 +42,10 @@ export default {
     const [ amountIn, amountOutMin, path, to, deadline ] = iface.parseTransaction(txn).args
     return [`Swap ${token(path[0], amountIn)} for at least ${nativeToken(network, amountOutMin)}${recipientText(to, txn.from)}${deadlineText(deadline)}`]
   },
-  [iface.getSighash('swapExactETHForTokens')]: (txn, network) => {
+  [iface.getSighash('swapETHForExactTokens')]: (txn, network) => {
     const { args, value } = iface.parseTransaction(txn)
-    const [ amountOutMin, path, to, deadline ] = args
+    const [ amountOut, path, to, deadline ] = args
     const outputAsset = path[path.length - 1]
-    return [`Swap ${nativeToken(network, value)} for at least ${token(outputAsset, amountOutMin)}${recipientText(to, txn.from)}${deadlineText(deadline)}`]
+    return [`Swap up to ${nativeToken(network, value)} for ${token(outputAsset, amountOut)}${recipientText(to, txn.from)}${deadlineText(deadline)}`]
   },
 }
