@@ -15,14 +15,7 @@ const usePermissions = () => {
     const [arePermissionsLoaded, setPermissionsLoaded] = useState(false)
     const [isClipboardGranted, setClipboardGranted] = useState(false)
     const [isNoticationsGranted, setNotificationsGranted] = useState(false)
-    const [modalHidden, setModalHidden] = useState(() => {
-        try {
-            return JSON.parse(localStorage.permissionsModalHidden) || false
-        } catch(e) {
-            console.error(e)
-            return false
-        }
-    })
+    const [modalHidden, setModalHidden] = useState(() => localStorage.permissionsModalHidden === 'true')
 
     const checkForPermissions = async () => {
         const clipboardState = await onPermissionChange('clipboard-read', state => setClipboardGranted(state))
