@@ -6,15 +6,20 @@ import humanizers from './humanizers'
 
 // @TODO custom parsing for univ2 contracts, exact output, etc.
 export function getTransactionSummary(txn, networkId, accountAddr) {
-    const [to, value, data] = txn
+    const [to, value, data = '0x'] = txn
     const network = networks.find(x => x.id === networkId || x.chainId === networkId)
     if (!network) return 'Unknown network (unable to parse)'
 
     const tokenInfo = tokens[to.toLowerCase()]
     const name = names[to.toLowerCase()]
 
+    if (data === '0x' && to.toLowerCase() === accountAddr.toLowerCase()) {
+        // Doesn't matter what the value is, this is always a no-op
+        return `Transaction cancellation`
+    }
+
     let callSummary, sendSummary
-    if (parseInt(value) > 0) sendSummary = `sending ${nativeToken(network, value)} to ${name || to}`
+    if (parseInt(value) > 0) sendSummary = `send ${nativeToken(network, value)} to ${name || to}`
     if (data !== '0x') {
         callSummary = `Unknown interaction with ${name || (tokenInfo ? tokenInfo[0] : to)}`
 
