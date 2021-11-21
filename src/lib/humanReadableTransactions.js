@@ -1,4 +1,5 @@
 import { formatUnits } from 'ethers/lib/utils'
+import { constants } from 'ethers'
 import { names, tokens } from '../consts/humanizerInfo'
 import networks from '../consts/networks'
 import humanizers from './humanizers'
@@ -67,6 +68,7 @@ export function token(addr, amount) {
     const address = addr.toLowerCase()
     const assetInfo = tokens[address]
     if (assetInfo) {
+        if (constants.MaxUint256.eq(amount)) return `maximum ${assetInfo[0]}`
         return `${formatUnits(amount, assetInfo[1])} ${assetInfo[0]}`
     } else {
         return `${formatUnits(amount, 0)} units of unknown token`
