@@ -20,9 +20,9 @@ const contracts = [
 ]
 const tokenlists = [
 	'https://github.com/trustwallet/assets/raw/master/blockchains/ethereum/tokenlist.json',
-	'https://github.com/trustwallet/assets/raw/master/blockchains/polygon/tokenlist.json'
+	'https://github.com/trustwallet/assets/raw/master/blockchains/polygon/tokenlist.json',
+	'https://api-polygon-tokens.polygon.technology/tokenlists/allTokens.tokenlist.json'
 ]
-
 async function generate () {
 	let abis = {}
 	for (let contract of contracts) {
