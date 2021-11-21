@@ -184,7 +184,7 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, accounts, 
                <div className="form blurred">
                     <label>From</label>
                     <Select searchable items={assetsItems} onChange={() => {}}/>
-                    <NumberInput value={amount} min="0" onInput={value => setAmount(value)} button="MAX" onButtonClick={() => setMaxAmount()}/>
+                    <NumberInput value={0} min="0" onInput={() => {}} button="MAX" onButtonClick={() => setMaxAmount()}/>
                     <div className="separator">
                         <BsArrowDown/>
                     </div>
