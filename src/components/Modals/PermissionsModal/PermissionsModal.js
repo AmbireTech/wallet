@@ -4,11 +4,11 @@ import { MdCheck, MdClose } from 'react-icons/md'
 import { useModals, usePermissions } from '../../../hooks'
 import { useToasts } from '../../../hooks/toasts'
 import { askForPermission, isFirefox } from '../../../helpers/permissions'
-import { Modal, Toggle, Button } from "../../common"
+import { Modal, Toggle, Button, Checkbox } from "../../common"
 
 const PermissionsModal = () => {
     const { hideModal } = useModals()
-    const { isNoticationsGranted, isClipboardGranted } = usePermissions()
+    const { isNoticationsGranted, isClipboardGranted, modalHidden, setModalHidden } = usePermissions()
     const { addToast } = useToasts()
 
     const requestNotificationsPermission = async () => {
@@ -20,6 +20,8 @@ const PermissionsModal = () => {
         const status = await askForPermission('clipboard-read')
         if (!status) addToast('You blocked the Clipboard permission.', { error: true })
     }
+
+    const buttonDisabled = !modalHidden && ((!isFirefox && !isClipboardGranted) || !isNoticationsGranted)
 
     return (
         <Modal id="permissions-modal" title="Permissions">
@@ -46,9 +48,10 @@ const PermissionsModal = () => {
                 </div>
                 <Toggle checked={isClipboardGranted} onChange={() => requestClipboardPermission()}/>
             </div>
+            <Checkbox label="I understand, do not show this modal again." checked={modalHidden} onChange={({ target }) => setModalHidden(target.checked)}/>
             <div className="buttons">
                 <Button clear small icon={<MdClose/>} onClick={hideModal}>Ignore</Button>
-                <Button small icon={<MdCheck/>} disabled={(!isFirefox && !isClipboardGranted) || !isNoticationsGranted} onClick={hideModal}>Done</Button>
+                <Button small icon={<MdCheck/>} disabled={buttonDisabled} onClick={hideModal}>Done</Button>
             </div>
         </Modal>
     )
