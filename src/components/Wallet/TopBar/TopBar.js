@@ -1,6 +1,6 @@
 import "./TopBar.scss";
 
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useCallback } from "react";
 import { FiHelpCircle } from "react-icons/fi";
 import { DropDown, Select } from "../../common";
 import Accounts from "./Accounts/Accounts";
