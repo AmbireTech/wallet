@@ -47,7 +47,7 @@ export function getTransactionSummary(txn, networkId, accountAddr) {
             const humanizer = humanizers[sigHash]
             if (humanizer) {
                 try {
-                    const actions = humanizer({ to, value, data }, network)
+                    const actions = humanizer({ to, value, data, from: accountAddr }, network)
                     return actions.join(', ')
                 } catch (e) {
                     console.error('internal tx humanization error', e)
