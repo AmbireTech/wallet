@@ -115,6 +115,8 @@ export default function useWalletConnect ({ account, chainId, onCallRequest }) {
                 return
             }
             if (!SUPPORTED_METHODS.includes(payload.method)) {
+                // @TODO: if the dapp is in a "allow list" of dApps that have fallbacks, ignore certain messages
+                // eg uni has a fallback for eth_signTypedData_v4
                 addToast(`dApp requested unsupported method: ${payload.method}`, { error: true })
                 connector.rejectRequest({ id: payload.id, error: { message: 'METHOD_NOT_SUPPORTED' }})
                 return
