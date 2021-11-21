@@ -1,5 +1,4 @@
 import './Transactions.scss'
-import { FaSignature } from 'react-icons/fa'
 import { BsCoin, BsCalendarWeek, BsGlobe2, BsCheck2All } from 'react-icons/bs'
 import { MdOutlinePendingActions } from 'react-icons/md'
 import { useRelayerData } from '../../../hooks'
@@ -13,7 +12,7 @@ import { useEffect, useState } from 'react'
 import fetch from 'node-fetch'
 import { useToasts } from '../../../hooks/toasts'
 
-function Transactions ({ relayerURL, selectedAcc, selectedNetwork, eligibleRequests, showSendTxns }) {
+function Transactions ({ relayerURL, selectedAcc, selectedNetwork, showSendTxns }) {
   const { addToast } = useToasts()
   const [cacheBreak, setCacheBreak] = useState(() => Date.now())
   // @TODO refresh this after we submit a bundle; perhaps with the upcoming transactions service
@@ -65,20 +64,6 @@ function Transactions ({ relayerURL, selectedAcc, selectedNetwork, eligibleReque
 
   return (
     <section id='transactions'>
-      {!!eligibleRequests.length && (<div onClick={() => showSendTxns(null)} className='panel'>
-        <div className='title'><FaSignature size={25}/>Waiting to be signed</div>
-        <div className="content">
-          <div className="bundle">
-            {eligibleRequests.map(req => (
-              <TxnPreview
-                  key={req.id}
-                  network={selectedNetwork.id}
-                  account={selectedAcc}
-                  txn={[req.txn.to, req.txn.value || '0x0', req.txn.data || '0x' ]}/>
-            ))}
-          </div>
-        </div>
-      </div>)}
       { !!firstPending && (<div className='panel'>
         <div className='title'><MdOutlinePendingActions/>Pending transaction bundle</div>
         <div className="content">
