@@ -1,6 +1,6 @@
 //import { GrInspect } from 'react-icons/gr'
 // GiObservatory is also interesting
-import { GiTakeMyMoney, GiSpectacles } from 'react-icons/gi'
+import { GiTakeMyMoney, GiSpectacles, GiGorilla } from 'react-icons/gi'
 import { FaSignature, FaChevronLeft } from 'react-icons/fa'
 import { MdOutlineAccountCircle } from 'react-icons/md'
 import './SendTransaction.css'
@@ -300,8 +300,10 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
                 <div className={`listOfTransactions${bundle.requestIds ? '' : ' frozen'}`}>
                     {bundle.txns.map((txn, i) => {
                       const isFirstFailing = estimation && !estimation.success && estimation.firstFailing === i
+                      // we need to re-render twice per minute cause of DEX deadlines
+                      const min = Math.floor(Date.now() / 30000)
                       return (<TxnPreview
-                        key={[...txn, i].join(':')}
+                        key={[...txn, i, min].join(':')}
                         onDismiss={bundle.requestIds && (() => resolveMany([bundle.requestIds[i]], { message: 'rejected' }))}
                         txn={txn} network={bundle.network} account={bundle.identity}
                         isFirstFailing={isFirstFailing}/>
@@ -310,7 +312,7 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
                 </div>
                 <div className='transactionsNote'>
                   {bundle.requestIds ? (<>
-                    <b>DEGEN TIP:</b> You can sign multiple transactions at once. Add more transactions to this batch by interacting with a connected dApp right now.
+                    <b><GiGorilla size={16}/> DEGEN TIP:</b> You can sign multiple transactions at once. Add more transactions to this batch by interacting with a connected dApp right now.
                   </>) : (<><b>NOTE:</b> You are currently replacing a pending transaction.</>)}
                 </div>
               </div>
