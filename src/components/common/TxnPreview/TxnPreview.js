@@ -20,7 +20,7 @@ export default function TxnPreview ({ txn, onDismiss, network, account, isFirstF
           <div className="info">
             <div className="summary-container">
               <div className='expandTxn'>
-                {isExpanded ? (<FaChevronUp/>) : (<FaChevronDown/>)}
+                {isExpanded ? (<FaChevronDown/>) : (<FaChevronUp/>)}
               </div>
               <div className="summary">{getTransactionSummary(txn, network, account)}</div>
             </div>
