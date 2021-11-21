@@ -19,7 +19,7 @@ import { isFirefox } from '../../helpers/permissions'
 
 export default function Wallet(props) {
   const { showModal } = useModals()
-  const { isClipboardGranted, isNoticationsGranted, arePermissionsLoaded } = usePermissions()
+  const { isClipboardGranted, isNoticationsGranted, arePermissionsLoaded, modalHidden } = usePermissions()
 
   const routes = [
     {
@@ -71,7 +71,7 @@ export default function Wallet(props) {
   ]
 
   const handlePermissionsModal = useCallback(async () => {
-    if (arePermissionsLoaded && ((!isFirefox && !isClipboardGranted) || !isNoticationsGranted)) showModal(<PermissionsModal/>)
+    if (!modalHidden && arePermissionsLoaded && ((!isFirefox && !isClipboardGranted) || !isNoticationsGranted)) showModal(<PermissionsModal/>)
   }, [showModal, isClipboardGranted, isNoticationsGranted, arePermissionsLoaded])
 
   useEffect(() => handlePermissionsModal(), [handlePermissionsModal])
