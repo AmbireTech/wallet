@@ -92,7 +92,7 @@ const AddAuthSigner = props => {
   }
 
   useEffect(() => {
-    if (modalToggle && signersToChoose) showModal(<SelectSignerAccountModal signersToChoose={signersToChoose.addresses} selectedNetwork={props.selectedNetwork}/>)
+    if (modalToggle && signersToChoose) showModal(<SelectSignerAccountModal signersToChoose={signersToChoose.addresses} selectedNetwork={props.selectedNetwork} onSignerAddressClicked={onSignerAddressClicked}/>)
   }, [modalToggle, signersToChoose])
 
   const addFromSignerButtons = (
