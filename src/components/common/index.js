@@ -3,6 +3,7 @@ import Chart from './Chart/Chart';
 import Checkbox from './Checkbox/Checkbox';
 import DropDown from './DropDown/DropDown';
 import Loading from './Loading/Loading';
+import InfiniteProgressBar from './Loading/InfiniteProgressBar';
 import Modal from './Modal/Modal';
 import Segments from './Segments/Segments';
 import Select from './Select/Select';
@@ -16,6 +17,7 @@ export {
     Checkbox,
     DropDown,
     Loading,
+    InfiniteProgressBar,
     Modal,
     Segments,
     Select,
