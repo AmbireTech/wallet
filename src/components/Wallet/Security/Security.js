@@ -13,7 +13,7 @@ const IDENTITY_INTERFACE = new Interface(
   require('adex-protocol-eth/abi/Identity5.2')
 )
 
-const Security = ({ relayerURL, selectedAcc, selectedNetwork, accounts, addresses, addAddress, removeAddress, addRequest }) => {
+const Security = ({ relayerURL, selectedAcc, selectedNetwork, accounts, addresses, addAddress, removeAddress, addRequest, isValidAddress }) => {
   const { showModal } = useModals()
   const { data, errMsg, isLoading } = useRelayerData(relayerURL ? `${relayerURL}/identity/${selectedAcc}/${selectedNetwork.id}/privileges` : null)
   const privileges = data ? data.privileges : {}
@@ -90,7 +90,7 @@ const Security = ({ relayerURL, selectedAcc, selectedNetwork, accounts, addresse
   const toIcon = seed => blockies.create({ seed }).toDataURL()
   const toIconBackgroundImage = seed => ({ backgroundImage: `url(${toIcon(seed)})`})
 
-  const modalInputs = [{ label: 'Name' }, { label: 'Address' }] 
+  const modalInputs = [{ label: 'Name' }, { label: 'Address', validate: value => isValidAddress(value) }] 
   const inputModal = <InputModal title="Add New Address" inputs={modalInputs} onClose={([name, address]) => addAddress(name, address)}></InputModal>
   const showInputModal = () => showModal(inputModal)
 
