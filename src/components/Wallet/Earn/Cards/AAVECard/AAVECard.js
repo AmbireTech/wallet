@@ -154,7 +154,10 @@ const AAVECard = ({ networkId, tokens, protocols, account, addRequest }) => {
                 icon: token.img,
                 label: `${token.symbol} (${tokensAPR[token.address]}% APR)`,
                 value: token.address
-            }))
+            })).sort((a, b) => {
+                const getEquToken = token => allTokens.find((({ address, type }) => address === token.address && (token.type === 'deposit' ? type === 'withdraw' : type === 'deposit')))
+                return (b.balance + getEquToken(b).balance) - (a.balance + getEquToken(a).balance)
+            })
 
             setTokensItems(tokensItems)
             setLoading(false)
