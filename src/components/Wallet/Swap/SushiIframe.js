@@ -1,8 +1,9 @@
 import './SushiFrame.scss';
 
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 
 import { SUSHI_SWAP_FRAME } from '../../../config'
+import { InfiniteProgressBar } from '../../common'
 
 const ambireSushi = {
     name: "Ambire swap",
@@ -12,11 +13,20 @@ const ambireSushi = {
 }
 
 export default function SushiSwap({ network, selectedAcc, gnosisConnect, gnosisDisconnect }) {
+    const { chainId } = network || []
+    const [loading, setLoading] = useState(true)
+    const [hash, setHash] = useState('')
     const iframeRef = useRef(null);
 
-    const genHash = () => {
-        return ambireSushi.url + network.chainId + selectedAcc
-    }
+
+    useEffect(() => {
+        const newHash = ambireSushi.url + chainId + selectedAcc
+        setHash(newHash)
+    }, [chainId, selectedAcc])
+
+    useEffect(() => {
+        setLoading(true)
+    }, [hash])
 
     useEffect(() => {
         gnosisConnect({
@@ -33,7 +43,16 @@ export default function SushiSwap({ network, selectedAcc, gnosisConnect, gnosisD
 
     return (
         <div className='iframe-container'>
-            <iframe id='swap-frame' ref={iframeRef} key={genHash()} title='sushi-swap' src={SUSHI_SWAP_FRAME} />
+            {loading && <InfiniteProgressBar />}
+            <iframe
+                id='swap-frame'
+                key={hash}
+                ref={iframeRef}
+                title='sushi-swap'
+                src={SUSHI_SWAP_FRAME}
+
+                onLoad={() => setLoading(false)}
+            />
         </div>
     )
 }
