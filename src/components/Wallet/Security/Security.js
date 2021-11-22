@@ -1,5 +1,7 @@
 import './Security.scss'
 
+import * as blockies from 'blockies-ts';
+import { MdOutlineDelete } from 'react-icons/md'
 import { Loading, TextInput, Button } from '../../common'
 import { Interface } from 'ethers/lib/utils'
 import accountPresets from '../../../consts/accountPresets'
@@ -10,7 +12,7 @@ const IDENTITY_INTERFACE = new Interface(
   require('adex-protocol-eth/abi/Identity5.2')
 )
 
-const Security = ({ relayerURL, selectedAcc, selectedNetwork, accounts, addRequest }) => {
+const Security = ({ relayerURL, selectedAcc, selectedNetwork, accounts, addresses, addAddress, removeAddress, addRequest }) => {
   const { data, errMsg, isLoading } = useRelayerData(relayerURL ? `${relayerURL}/identity/${selectedAcc}/${selectedNetwork.id}/privileges` : null)
   const privileges = data ? data.privileges : {}
 
@@ -77,6 +79,14 @@ const Security = ({ relayerURL, selectedAcc, selectedNetwork, accounts, addReque
     )
   }).filter(x => x)
 
+  const accountsList = accounts.filter(({ id }) => id !== selectedAcc)
+  const accountType = ({ email, signerExtra }) => {
+    const walletType = signerExtra && signerExtra.type === 'ledger' ? 'Ledger' : signerExtra && signerExtra.type === 'trezor' ? 'Trezor' : 'Web3'
+    return email ? `Ambire account for ${email}` : `Ambire account (${walletType})`
+  }
+  const toIcon = seed => blockies.create({ seed }).toDataURL()
+  const toIconBackgroundImage = seed => ({ backgroundImage: `url(${toIcon(seed)})`})
+
   // @TODO relayerless mode: it's not that hard to implement in a primitive form, we need everything as-is
   // but rendering the initial privileges instead; or maybe using the relayerless transactions hook/service
   // and aggregate from that
@@ -90,6 +100,41 @@ const Security = ({ relayerURL, selectedAcc, selectedNetwork, accounts, addReque
         {errMsg && (<h3 className='error'>Error getting authorized signers: {errMsg}</h3>)}
         {isLoading && <Loading />}
         <ul className='content'>{!isLoading && privList}</ul>
+      </div>
+  
+      <div id="addresses" className='panel'>
+        <div className='title'>Addresses</div>
+        <div className="content">
+          {
+              accountsList.map(account => (
+                  <div className="item" key={account.id} onClick={() => {}}>
+                      <div className="inner">
+                          <div className="icon" style={toIconBackgroundImage(account.id)}></div>
+                          <div className="details">
+                              <label>{ accountType(account) }</label>
+                              <div className="address">{ account.id }</div>
+                          </div>
+                      </div>
+                  </div>
+              ))
+          }
+          {
+              addresses.map(({ name, address }) => (
+                  <div className="item" key={address + name}>
+                      <div className="inner" onClick={() => {}}>
+                          <div className="icon" style={toIconBackgroundImage(address)}></div>
+                          <div className="details">
+                              <label>{ name }</label>
+                              <div className="address">{ address }</div>
+                          </div>
+                      </div>
+                      <div className="button" onClick={() => removeAddress(name, address)}>
+                          <MdOutlineDelete/>
+                      </div>
+                  </div>
+              ))
+          }
+        </div>
       </div>
     </section>
   )
