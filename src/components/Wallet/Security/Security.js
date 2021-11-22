@@ -1,12 +1,13 @@
 import './Security.scss'
 
-import { MdOutlineAdd, MdOutlineDelete } from 'react-icons/md'
+import { MdOutlineAdd } from 'react-icons/md'
 import { Loading, TextInput, Button } from '../../common'
 import { Interface } from 'ethers/lib/utils'
 import accountPresets from '../../../consts/accountPresets'
 import privilegesOptions from '../../../consts/privilegesOptions'
 import { useRelayerData, useModals } from '../../../hooks'
 import { InputModal } from '../../Modals';
+import AddressList from '../../common/AddressBook/AddressList/AddressList'
 
 const IDENTITY_INTERFACE = new Interface(
   require('adex-protocol-eth/abi/Identity5.2')
@@ -103,29 +104,10 @@ const Security = ({ relayerURL, selectedAcc, selectedNetwork, accounts, addresse
       <div id="addresses" className='panel'>
         <div className='title'>Addresses</div>
         <div className="content">
-          <div className="list">
-            {
-              addresses.map(({ isAccount, icon, name, address }) => (
-                <div className="item" key={address + name}>
-                  <div className="inner" onClick={() => {}}>
-                    <div className="icon" style={{ backgroundImage: `url(${icon})`}}></div>
-                    <div className="details">
-                      <label>{ name }</label>
-                      <div className="address">{ address }</div>
-                  </div>
-                  </div>
-                  {
-                    !isAccount ?
-                      <div className="button" onClick={() => removeAddress(name, address)}>
-                        <MdOutlineDelete/>
-                      </div>
-                      :
-                      null
-                  }
-                </div>
-              ))
-            }
-          </div>
+          <AddressList
+            addresses={addresses}
+            removeAddress={removeAddress}
+          />
           <Button small icon={<MdOutlineAdd/>} onClick={showInputModal}>Add Address</Button>
         </div>
       </div>
