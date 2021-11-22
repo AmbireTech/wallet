@@ -1,9 +1,13 @@
 import './NumberInput.scss'
 
-const NumberInput = ({ disabled, min, max, label, value, button, onButtonClick, onInput, onChange }) => {
+const NumberInput = ({ disabled, precision, label, value, button, onButtonClick, onInput, onChange }) => {
     const onInputValue = ({ target }) => {
         if (!onInput) return
         if (!target.value.length) return onInput('')
+
+        const afterDecimals = target.value.split('.')[1] 
+        if (afterDecimals && afterDecimals.length > precision) return
+
         const isIntOrFloat = /^[0-9]+\.{0,1}[0-9]*$/g.test(target.value)
         isIntOrFloat && onInput(target.value)
     }
