@@ -4,7 +4,7 @@ import { AiOutlineWarning } from 'react-icons/ai'
 import { BsArrowDown } from 'react-icons/bs'
 import { FaAddressCard } from 'react-icons/fa'
 import { useParams, withRouter } from 'react-router'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { ethers } from 'ethers'
 import SendPlaceholder from './SendPlaceholder/SendPlaceholder'
 import { Interface } from 'ethers/lib/utils'
@@ -128,7 +128,7 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, accounts, 
                                 <NumberInput
                                     label={`Available Amount: ${getMaxAmount()} ${selectedAsset?.symbol}`}
                                     value={amount}
-                                    min="0"
+                                    precision={selectedAsset?.decimals}
                                     onInput={onAmountChange}
                                     button="MAX"
                                     onButtonClick={() => setMaxAmount()}
