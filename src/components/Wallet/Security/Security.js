@@ -71,16 +71,18 @@ const Security = ({
 
   const onMakeDefaultBtnClicked = async (account, address, isQuickAccount) => {
     if (isQuickAccount) {
-      const resp = await fetchGet(
-        `${relayerURL}/identity/${selectedAcc}`
-      )
-      
+      const resp = await fetchGet(`${relayerURL}/identity/${selectedAcc}`)
+
       const respData = await resp
       const quickAccSignerData = respData.meta.quickAccSigner
 
       onAddAccount({ ...account, signer: quickAccSignerData })
     } else {
-      onAddAccount({...account, signer: {address: address}})
+      onAddAccount({ ...account, signer: { address: address } })
+      addToast(
+        'This signer is now the default. If it is a hardware wallet, you will have to re-add the account manually to connect it directly, otherwise you will have to add this signer address to your web3 wallet.',
+        { timeout: 30000 }
+      )
     }
 
     history.push('/wallet/security')
@@ -106,7 +108,9 @@ const Security = ({
           <div className="btns-wrapper">
             <Button
               disabled={isSelected}
-              onClick={() => onMakeDefaultBtnClicked(selectedAccount, addr, isQuickAcc)}
+              onClick={() =>
+                onMakeDefaultBtnClicked(selectedAccount, addr, isQuickAcc)
+              }
               small
             >
               {isSelected ? 'Current signer' : 'Make default'}
