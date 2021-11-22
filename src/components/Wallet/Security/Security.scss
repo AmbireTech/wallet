@@ -51,7 +51,9 @@
     gap: 15px;
 
     .content {
-      gap: 0;
+      .buttonComponent {
+        align-self: flex-end;
+      }
     }
 
     .item {
