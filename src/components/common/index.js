@@ -8,7 +8,6 @@ import Segments from './Segments/Segments';
 import Select from './Select/Select';
 import TextInput from './TextInput/TextInput';
 import NumberInput from './NumberInput/NumberInput';
-import Modal from './Modal/Modal';
 import Toggle from './Toggle/Toggle';
 
 export {
@@ -22,6 +21,5 @@ export {
     Select,
     TextInput,
     NumberInput,
-    Modal,
     Toggle
 };

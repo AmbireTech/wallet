@@ -24,3 +24,14 @@
         float: left;
       }
 }
+
+
+.modal-btns-wrapper {
+  display: flex;
+  flex-direction: row;
+  justify-content: right;
+
+  .buttonComponent {
+    background: rosybrown;
+  }
+}
