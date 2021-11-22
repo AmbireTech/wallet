@@ -22,13 +22,14 @@ export default function Actions({ estimation, feeSpeed, approveTxn, rejectTxn, s
     (<><Loading/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Signing...</>)
     : (<>Sign and send</>)
 
+  // @TODO make this common
   if (signingStatus && signingStatus.quickAcc) {
     return (<>
       <div>
         {signingStatus.confCodeRequired === 'otp' ? (<b>Please enter your OTP code and your password.</b>) : (<></>)}
-        {signingStatus.confCodeRequired === 'email' ? (<b>A confirmation code was sent to your email, please enter it along with your passphrase.</b>) : (<></>)}
+        {signingStatus.confCodeRequired === 'email' ? (<b>A confirmation code was sent to your email, please enter it along with your password.</b>) : (<></>)}
       </div>
-      <input type='password' required minLength={8} placeholder='Password' value={quickAccCredentials.passphrase} onChange={e => setQuickAccCredentials({ ...quickAccCredentials, passphrase: e.target.value })}></input>
+      <input type='password' required minLength={3} placeholder='Password' value={quickAccCredentials.passphrase} onChange={e => setQuickAccCredentials({ ...quickAccCredentials, passphrase: e.target.value })}></input>
       <form ref={form} className='quickAccSigningForm' onSubmit={e => { e.preventDefault() }}>
         {/* Changing the autoComplete prop to a random string seems to disable it more often */}
         <input
