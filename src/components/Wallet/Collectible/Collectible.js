@@ -59,8 +59,8 @@ const Collectible = ({ selectedAcc, selectedNetwork, addRequest, addresses, addA
     }
 
     useEffect(() => {
-        setTransferDisabled(!isValidAddress(recipientAddress) || selectedAcc === recipientAddress || metadata.owner?.address !== selectedAcc || selectedNetwork.id !== network || !addressConfirmed)
-    }, [recipientAddress, metadata, selectedNetwork, selectedAcc, network, addressConfirmed, isValidAddress])
+        setTransferDisabled(!isValidAddress(recipientAddress) || selectedAcc === recipientAddress || metadata.owner?.address !== selectedAcc || selectedNetwork.id !== network || (!isKnownAddress(recipientAddress) && !addressConfirmed))
+    }, [recipientAddress, metadata, selectedNetwork, selectedAcc, network, addressConfirmed, isValidAddress, isKnownAddress])
 
     const fetchMetadata = useCallback(async () => {
         setLoading(true)
