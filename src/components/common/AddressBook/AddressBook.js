@@ -1,9 +1,10 @@
 import './AddressBook.scss'
 
 import { FaAddressCard } from 'react-icons/fa'
-import { MdOutlineAdd, MdClose, MdOutlineDelete } from 'react-icons/md'
+import { MdOutlineAdd, MdClose } from 'react-icons/md'
 import { DropDown } from '..'
 import { useCallback, useEffect, useState } from 'react'
+import AddressList from './AddressList/AddressList'
 
 const AddressBook = ({ addresses, addAddress, removeAddress, newAddress, onClose, onSelectAddress }) => {
     const [address, setAddress] = useState('')
@@ -70,31 +71,11 @@ const AddressBook = ({ addresses, addAddress, removeAddress, newAddress, onClose
                         </div>
                         :
                         <div className="content">
-                            {
-                                <div className="items">
-                                    {
-                                        addresses.map(({ isAccount, icon, name, address }) => (
-                                            <div className="item" key={address + name}>
-                                                <div className="inner" onClick={() => selectAddress(address)}>
-                                                    <div className="icon" style={{ backgroundImage: `url(${icon})`}}></div>
-                                                    <div className="details">
-                                                        <label>{ name }</label>
-                                                        <div className="address">{ address }</div>
-                                                    </div>
-                                                </div>
-                                                {
-                                                    !isAccount ? 
-                                                         <div className="button" onClick={() => removeAddress(name, address)}>
-                                                            <MdOutlineDelete/>
-                                                        </div>
-                                                        :
-                                                        null
-                                                }
-                                            </div>
-                                        ))
-                                    }
-                                </div>
-                            }
+                            <AddressList
+                                addresses={addresses}
+                                onSelectAddress={selectAddress}
+                                removeAddress={removeAddress}
+                            />
                         </div>
             }
         </DropDown>
