@@ -7,15 +7,12 @@ import privilegesOptions from '../../../consts/privilegesOptions'
 import { useRelayerData } from '../../../hooks'
 import AddAuthSigner from './AddAuthSigner/AddAuthSigner'
 import { useToasts } from '../../../hooks/toasts'
-import { hexZeroPad, getAddress } from 'ethers/lib/utils'
-import { fetch, fetchPost } from '../../../lib/fetch'
+import { fetchGet } from '../../../lib/fetch'
+import { useHistory } from 'react-router-dom'
 
 const IDENTITY_INTERFACE = new Interface(
   require('adex-protocol-eth/abi/Identity5.2')
 )
-
-const { generateAddress2 } = require('ethereumjs-util')
-const { getProxyDeployBytecode } = require('adex-protocol-eth/js/IdentityProxyDeploy')
 
 const Security = ({
   relayerURL,
@@ -28,10 +25,10 @@ const Security = ({
   const url = relayerURL
     ? `${relayerURL}/identity/${selectedAcc}/${selectedNetwork.id}/privileges`
     : null
-
-  const { data, errMsg, isLoading } = useRelayerData(url)  
+  const { data, errMsg, isLoading } = useRelayerData(url)
   const privileges = data ? data.privileges : {}
   const { addToast } = useToasts()
+  const history = useHistory()
 
   const craftTransaction = (address, privLevel) => {
     return {
@@ -59,84 +56,35 @@ const Security = ({
     }
   }
 
-  // const onMakeDefaultBtnClicked = key => {
-  //   // @TODO
-  // }
-
   const onRemoveBtnClicked = key => {
     const txn = craftTransaction(key, privilegesOptions.false)
     addTransactionToAddRequest(txn)
   }
 
   const onAddBtnClickedHandler = newSignerAddress => {
-    console.log('newSigner', newSignerAddress)
-    // const txn = craftTransaction(newSignerAddress, privilegesOptions.true)
-    // addTransactionToAddRequest(txn)
-  }
-
-  async function onMakeDefaultBtnClicked (addr, signerExtra) {
-    const addAccount = (acc, opts) => onAddAccount({ ...acc, signerExtra }, opts)
-    // when there is no relayer, we can only add the 'default' account created from that EOA
-    // @TODO in the future, it would be nice to do getLogs from the provider here to find out which other addrs we control
-    //   ... maybe we can isolate the code for that in lib/relayerless or something like that to not clutter this code
-    if (!relayerURL) return addAccount(await createFromEOA(addr), { select: true })
-    // otherwise check which accs we already own and add them
-    const owned = await getOwnedByEOAs([addr])
-    if (!owned.length) return addAccount(await createFromEOA(addr), { select: true })
-    else owned.forEach((acc, i) => addAccount(acc , { select: i === 0 }))
-  }
-
-  async function getOwnedByEOAs(eoas) {
-    let allUniqueOwned = {}
-
-    await Promise.all(eoas.map(
-        async signerAddr => {
-            const resp = await fetch(`${relayerURL}/identity/any/by-owner/${signerAddr}?includeFormerlyOwned=true`)
-            const privEntries = Object.entries(await resp.json())
-            // discard the privileges value, we do not need it as we wanna add all accounts EVER owned by this eoa
-            privEntries.forEach(([id, _]) => allUniqueOwned[id] = getAddress(signerAddr))
-        }
-    ))
-
-    return await Promise.all(
-        Object.entries(allUniqueOwned).map(([id, signer]) => getAccountByAddr(id, signer))
+    const txn = craftTransaction(
+      newSignerAddress.address,
+      privilegesOptions.true
     )
-}
-
-async function getAccountByAddr (idAddr, signerAddr) {
-  // In principle, we need these values to be able to operate in relayerless mode,
-  // so we just store them in all cases
-  // Plus, in the future this call may be used to retrieve other things
-  const { salt, identityFactoryAddr, baseIdentityAddr, bytecode } = await fetch(`${relayerURL}/identity/${idAddr}`)
-      .then(r => r.json())
-  if (!(salt && identityFactoryAddr && baseIdentityAddr && bytecode)) throw new Error(`Incomplete data from relayer for ${idAddr}`)
-  return {
-      id: idAddr,
-      salt, identityFactoryAddr, baseIdentityAddr, bytecode,
-      signer: { address: signerAddr }
-  }
-}
-
-async function createFromEOA (addr) {
-  const privileges = [[getAddress(addr), hexZeroPad('0x01', 32)]]
-  const { salt, baseIdentityAddr, identityFactoryAddr } = accountPresets
-  const bytecode = getProxyDeployBytecode(baseIdentityAddr, privileges, { privSlot: 0 })
-  const identityAddr = getAddress('0x' + generateAddress2(identityFactoryAddr, salt, bytecode).toString('hex'))
-
-  if (relayerURL) {
-      const createResp = await fetchPost(`${relayerURL}/identity/${identityAddr}`, {
-          salt, identityFactoryAddr, baseIdentityAddr,
-          privileges
-      })
-      if (!createResp.success && !(createResp.message && createResp.message.includes('already exists'))) throw createResp
+    addTransactionToAddRequest(txn)
   }
 
-  return {
-      id: identityAddr,
-      salt, identityFactoryAddr, baseIdentityAddr, bytecode,
-      signer: { address: getAddress(addr) }
+  const onMakeDefaultBtnClicked = async (account, address, isQuickAccount) => {
+    if (isQuickAccount) {
+      const resp = await fetchGet(
+        `${relayerURL}/identity/${selectedAcc}`
+      )
+      
+      const respData = await resp
+      const quickAccSignerData = respData.meta.quickAccSigner
+
+      onAddAccount({ ...account, signer: quickAccSignerData })
+    } else {
+      onAddAccount({...account, signer: {address: address}})
+    }
+
+    history.push('/wallet/security')
   }
-}
 
   const selectedAccount = accounts.find(x => x.id === selectedAcc)
 
@@ -158,7 +106,7 @@ async function createFromEOA (addr) {
           <div className="btns-wrapper">
             <Button
               disabled={isSelected}
-              onClick={() => onMakeDefaultBtnClicked(addr)}
+              onClick={() => onMakeDefaultBtnClicked(selectedAccount, addr, isQuickAcc)}
               small
             >
               {isSelected ? 'Current signer' : 'Make default'}
@@ -203,7 +151,10 @@ async function createFromEOA (addr) {
       </div>
       <div className="panel">
         <div className="panel-title">Add new signer</div>
-        <AddAuthSigner onAddBtnClicked={onAddBtnClickedHandler} selectedNetwork={selectedNetwork} />
+        <AddAuthSigner
+          onAddBtnClicked={onAddBtnClickedHandler}
+          selectedNetwork={selectedNetwork}
+        />
       </div>
     </section>
   )
