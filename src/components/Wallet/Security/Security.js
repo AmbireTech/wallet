@@ -6,13 +6,15 @@ import { Loading, TextInput, Button } from '../../common'
 import { Interface } from 'ethers/lib/utils'
 import accountPresets from '../../../consts/accountPresets'
 import privilegesOptions from '../../../consts/privilegesOptions'
-import { useRelayerData } from '../../../hooks'
+import { useRelayerData, useModals } from '../../../hooks'
+import { InputModal } from '../../Modals';
 
 const IDENTITY_INTERFACE = new Interface(
   require('adex-protocol-eth/abi/Identity5.2')
 )
 
 const Security = ({ relayerURL, selectedAcc, selectedNetwork, accounts, addresses, addAddress, removeAddress, addRequest }) => {
+  const { showModal } = useModals()
   const { data, errMsg, isLoading } = useRelayerData(relayerURL ? `${relayerURL}/identity/${selectedAcc}/${selectedNetwork.id}/privileges` : null)
   const privileges = data ? data.privileges : {}
 
@@ -88,6 +90,10 @@ const Security = ({ relayerURL, selectedAcc, selectedNetwork, accounts, addresse
   const toIcon = seed => blockies.create({ seed }).toDataURL()
   const toIconBackgroundImage = seed => ({ backgroundImage: `url(${toIcon(seed)})`})
 
+  const modalInputs = [{ label: 'Name' }, { label: 'Address' }] 
+  const inputModal = <InputModal title="Add New Address" inputs={modalInputs} onClose={([name, address]) => addAddress(name, address)}></InputModal>
+  const showInputModal = () => showModal(inputModal)
+
   // @TODO relayerless mode: it's not that hard to implement in a primitive form, we need everything as-is
   // but rendering the initial privileges instead; or maybe using the relayerless transactions hook/service
   // and aggregate from that
@@ -137,7 +143,7 @@ const Security = ({ relayerURL, selectedAcc, selectedNetwork, accounts, addresse
                 ))
             }
           </div>
-          <Button small icon={<MdOutlineAdd/>}>Add Address</Button>
+          <Button small icon={<MdOutlineAdd/>} onClick={showInputModal}>Add Address</Button>
         </div>
       </div>
     </section>
