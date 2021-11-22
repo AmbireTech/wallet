@@ -12,8 +12,15 @@ import Security from "./Security/Security"
 import Transactions from './Transactions/Transactions'
 import PluginGnosisSafeApps from "../Plugins/GnosisSafeApps/GnosisSafeApps"
 import Collectible from "./Collectible/Collectible"
+import { PermissionsModal } from '../Modals'
+import { useModals, usePermissions } from "../../hooks"
+import { useCallback, useEffect } from "react"
+import { isFirefox } from '../../helpers/permissions'
 
 export default function Wallet(props) {
+  const { showModal } = useModals()
+  const { isClipboardGranted, isNoticationsGranted, arePermissionsLoaded, modalHidden } = usePermissions()
+
   const routes = [
     {
       path: '/dashboard',
@@ -62,6 +69,12 @@ export default function Wallet(props) {
       />
     }
   ]
+
+  const handlePermissionsModal = useCallback(async () => {
+    if (!modalHidden && arePermissionsLoaded && ((!isFirefox && !isClipboardGranted) || !isNoticationsGranted)) showModal(<PermissionsModal/>)
+  }, [showModal, isClipboardGranted, isNoticationsGranted, arePermissionsLoaded, modalHidden])
+
+  useEffect(() => handlePermissionsModal(), [handlePermissionsModal])
 
   return (
     <div id="wallet">

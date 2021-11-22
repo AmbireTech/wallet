@@ -12,6 +12,7 @@ import EmailLogin from './components/EmailLogin/EmailLogin'
 import AddAccount from './components/AddAccount/AddAccount'
 import Wallet from './components/Wallet/Wallet'
 import ToastProvider from './components/ToastProvider/ToastProvider'
+import ModalProvider from './components/ModalProvider/ModalProvider'
 import SendTransaction from './components/SendTransaction/SendTransaction'
 import SignMessage from './components/SignMessage/SignMessage'
 import useAccounts from './hooks/accounts'
@@ -22,6 +23,18 @@ import useNotifications from './hooks/notifications'
 import { usePortfolio } from './hooks'
 
 const relayerURL = process.env.hasOwnProperty('REACT_APP_RELAYER_URL') ? process.env.REACT_APP_RELAYER_URL : 'http://localhost:1934'
+
+setTimeout(() => {
+  //console.warn('☢️ If you do, malicious code could steal your funds! ☢️')
+  //console.error('Only use the console if you are an experienced developer who knows what he\'s doing')
+  console.log(" ✋ Hey...! Slow down you ambitious adventurer! You want to keep your funds safe! 🦄")
+  console.error('       💀 DO NOT PASTE ANY CODE HERE ! 💀')
+  console.error(' _          ___   ___  _  _   ___  ___  ___         _')
+  console.error('| |        |   \\ /   \\| \\| | / __|| __|| _ \\       | |')
+  console.error('|_|        | |) || - || .  || (_ || _| |   /       |_|')
+  console.error('(_)        |___/ |_|_||_|\\_| \\___||___||_|_\\       (_)')
+  console.log('At Ambire, we care about our users 💜. Safety is our top priority! DO NOT PASTE ANYTHING HERE or it could result in the LOSS OF YOUR FUNDS!')
+}, 4000);
 
 function AppInner () {
   // basic stuff: currently selected account, all accounts, currently selected network
@@ -97,8 +110,9 @@ function AppInner () {
   // Show notifications for all requests
   useNotifications(requests, request => {
     onSelectAcc(request.account)
+    setNetwork(request.chainId)
     setSendTxnState(state => ({ ...state, showing: true }))
-  }, portfolio, selectedAcc)
+  }, portfolio, selectedAcc, network)
 
   return (<>
     <Prompt
@@ -179,9 +193,11 @@ function AppInner () {
 export default function App() {
   return (
     <ToastProvider>
-      <Router>
-        <AppInner/>
-      </Router>
+      <ModalProvider>
+        <Router>
+          <AppInner/>
+        </Router>
+      </ModalProvider>
     </ToastProvider>
   )
 }
