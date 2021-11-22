@@ -3,7 +3,7 @@ import './Collectible.scss'
 import { useParams } from 'react-router-dom'
 import { ethers, getDefaultProvider } from 'ethers'
 import { Interface } from 'ethers/lib/utils'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { AiOutlineSend } from 'react-icons/ai'
 import { BsFillImageFill } from 'react-icons/bs'
 import * as blockies from 'blockies-ts';
@@ -19,7 +19,7 @@ const handleUri = uri => {
     return uri.startsWith('ipfs://') ? uri.replace(/ipfs:\/\/ipfs\/|ipfs:\/\//g, 'https://ipfs.io/ipfs/') : uri
 }
 
-const Collectible = ({ accounts, selectedAcc, selectedNetwork, addRequest, addresses, addAddress, removeAddress, isValidAddress, isKnownAddress }) => {
+const Collectible = ({ selectedAcc, selectedNetwork, addRequest, addresses, addAddress, removeAddress, isValidAddress, isKnownAddress }) => {
     const { addToast } = useToasts()
     const { network, collectionAddr, tokenId } = useParams()
     const [isLoading, setLoading] = useState(true)
@@ -38,8 +38,6 @@ const Collectible = ({ accounts, selectedAcc, selectedNetwork, addRequest, addre
     const [isTransferDisabled, setTransferDisabled] = useState(true)
     const [addressConfirmed, setAddressConfirmed] = useState(false)
     const [newAddress, setNewAddress] = useState(null)
-
-    const shouldShowUnknowAddressWarning = useMemo(() => isValidAddress(recipientAddress) && !isKnownAddress(recipientAddress), [recipientAddress, isValidAddress, isKnownAddress])
 
     const sendTransferTx = () => {
         try {
@@ -168,8 +166,6 @@ const Collectible = ({ accounts, selectedAcc, selectedNetwork, addRequest, addre
                     <div id="recipient-address">
                         <TextInput placeholder="Recipient Address" value={recipientAddress} onInput={(value) => setRecipientAddress(value)}/>
                         <AddressBook 
-                            accounts={accounts}
-                            selectedAcc={selectedAcc}
                             addresses={addresses}
                             addAddress={addAddress}
                             removeAddress={removeAddress}
@@ -179,15 +175,13 @@ const Collectible = ({ accounts, selectedAcc, selectedNetwork, addRequest, addre
                         />
                     </div>
                     <div className="separator"></div>
-                    {
-                        shouldShowUnknowAddressWarning ?
-                            <UnknownAddress
-                                onAddNewAddress={() => setNewAddress(recipientAddress)}
-                                onChange={(value) => setAddressConfirmed(value)}
-                            />
-                            :
-                            null
-                    }
+                    <UnknownAddress
+                        address={recipientAddress}
+                        onAddNewAddress={() => setNewAddress(recipientAddress)}
+                        onChange={(value) => setAddressConfirmed(value)}
+                        isKnownAddress={isKnownAddress}
+                        isValidAddress={isValidAddress}
+                    />
                     <Button icon={<AiOutlineSend/>} disabled={isTransferDisabled} onClick={sendTransferTx}>Send</Button>
                 </div>
             </div>

@@ -3,7 +3,7 @@ import './Transfer.scss'
 import { AiOutlineWarning } from 'react-icons/ai'
 import { BsArrowDown } from 'react-icons/bs'
 import { useParams, withRouter } from 'react-router'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { ethers } from 'ethers'
 import SendPlaceholder from './SendPlaceholder/SendPlaceholder'
 import { Interface } from 'ethers/lib/utils'
@@ -25,7 +25,7 @@ const crossChainAssets = [
     }
 ]
 
-const Transfer = ({ history, portfolio, accounts, selectedAcc, selectedNetwork, addRequest, addresses, addAddress, removeAddress, isKnownAddress, isValidAddress }) => {
+const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest, addresses, addAddress, removeAddress, isKnownAddress, isValidAddress }) => {
     const { tokenAddress } = useParams()
     const { addToast } = useToasts()
 
@@ -63,8 +63,6 @@ const Transfer = ({ history, portfolio, accounts, selectedAcc, selectedNetwork, 
 
         setAmount(value)
     }
-
-    const shouldShowUnknowAddressWarning = useMemo(() => isValidAddress(address) && !isKnownAddress(address), [address, isValidAddress, isKnownAddress])
 
     const sendTx = () => {
         try {
@@ -140,8 +138,6 @@ const Transfer = ({ history, portfolio, accounts, selectedAcc, selectedNetwork, 
                                         onInput={setAddress}
                                     />
                                     <AddressBook 
-                                        accounts={accounts}
-                                        selectedAcc={selectedAcc}
                                         addresses={addresses}
                                         addAddress={addAddress}
                                         removeAddress={removeAddress}
@@ -150,15 +146,13 @@ const Transfer = ({ history, portfolio, accounts, selectedAcc, selectedNetwork, 
                                         onSelectAddress={address => setAddress(address)}
                                     />
                                 </div>
-                                {
-                                    shouldShowUnknowAddressWarning ?
-                                        <UnknownAddress
-                                            onAddNewAddress={() => setNewAddress(address)}
-                                            onChange={(value) => setAddressConfirmed(value)}
-                                        />
-                                        :
-                                        null
-                                }
+                                <UnknownAddress
+                                    address={address}
+                                    onAddNewAddress={() => setNewAddress(address)}
+                                    onChange={(value) => setAddressConfirmed(value)}
+                                    isKnownAddress={isKnownAddress}
+                                    isValidAddress={isValidAddress}
+                                />
                                 <div className="separator"/>
                                 {
                                     warning ?
