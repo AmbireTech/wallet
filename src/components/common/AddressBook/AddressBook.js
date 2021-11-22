@@ -2,23 +2,15 @@ import './AddressBook.scss'
 
 import { FaAddressCard } from 'react-icons/fa'
 import { MdOutlineAdd, MdClose, MdOutlineDelete } from 'react-icons/md'
-import * as blockies from 'blockies-ts';
 import { DropDown } from '..'
 import { useCallback, useEffect, useState } from 'react'
 
-const AddressBook = ({ accounts, selectedAcc, addresses, addAddress, removeAddress, newAddress, onClose, onSelectAddress }) => {
+const AddressBook = ({ addresses, addAddress, removeAddress, newAddress, onClose, onSelectAddress }) => {
     const [address, setAddress] = useState('')
     const [name, setName] = useState('')
     const [isOpen, setOpenMenu] = useState(false)
     const [openAddAddress, setOpenAddAddress] = useState(false)
 
-    const accountsList = accounts.filter(({ id }) => id !== selectedAcc)
-    const accountType = ({ email, signerExtra }) => {
-        const walletType = signerExtra && signerExtra.type === 'ledger' ? 'Ledger' : signerExtra && signerExtra.type === 'trezor' ? 'Trezor' : 'Web3'
-        return email ? `Ambire account for ${email}` : `Ambire account (${walletType})`
-    }
-    const toIcon = seed => blockies.create({ seed }).toDataURL()
-    const toIconBackgroundImage = seed => ({ backgroundImage: `url(${toIcon(seed)})`})
     const selectAddress = address => onSelectAddress ? onSelectAddress(address) : null
     
     const isAddAddressFormValid = address.length && name.length && /^0x[a-fA-F0-9]{40}$/.test(address)
@@ -72,7 +64,7 @@ const AddressBook = ({ accounts, selectedAcc, addresses, addAddress, removeAddre
                         </button>
                     </div>
                     :
-                    !addresses.length && !accountsList.length ?
+                    !addresses.length ?
                         <div className="content">
                             Your Address Book is empty.
                         </div>
@@ -81,31 +73,23 @@ const AddressBook = ({ accounts, selectedAcc, addresses, addAddress, removeAddre
                             {
                                 <div className="items">
                                     {
-                                        accountsList.map(account => (
-                                            <div className="item" key={account.id} onClick={() => selectAddress(account.id)}>
-                                                <div className="inner">
-                                                    <div className="icon" style={toIconBackgroundImage(account.id)}></div>
-                                                    <div className="details">
-                                                        <label>{ accountType(account) }</label>
-                                                        <div className="address">{ account.id }</div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        ))
-                                    }
-                                    {
-                                        addresses.map(({ name, address }) => (
+                                        addresses.map(({ isAccount, icon, name, address }) => (
                                             <div className="item" key={address + name}>
                                                 <div className="inner" onClick={() => selectAddress(address)}>
-                                                    <div className="icon" style={toIconBackgroundImage(address)}></div>
+                                                    <div className="icon" style={{ backgroundImage: `url(${icon})`}}></div>
                                                     <div className="details">
                                                         <label>{ name }</label>
                                                         <div className="address">{ address }</div>
                                                     </div>
                                                 </div>
-                                                <div className="button" onClick={() => removeAddress(name, address)}>
-                                                    <MdOutlineDelete/>
-                                                </div>
+                                                {
+                                                    !isAccount ? 
+                                                         <div className="button" onClick={() => removeAddress(name, address)}>
+                                                            <MdOutlineDelete/>
+                                                        </div>
+                                                        :
+                                                        null
+                                                }
                                             </div>
                                         ))
                                     }
