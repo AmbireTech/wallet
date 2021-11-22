@@ -8,13 +8,41 @@
   background-color: #282b33;
 
   display: flex;
+  flex-direction: column;
+  align-items: center;
   justify-content: center;
   gap: 2em;
+
+  #signingAccount {
+    .title {
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      color: rgb(128, 255, 219);
+      text-transform: uppercase;
+    }
+
+    .content {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      font-family: monospace;
+      font-size: 15px;
+      font-weight: bold;
+
+      .icon {
+        height: 20px;
+        width: 20px;
+        border-radius: 100%;
+      }
+    }
+  }
 
   .panel {
     min-width: 600px;
     max-width: 900px;
-    margin: 2em;
   
     padding: 2em;
     box-sizing: border-box;

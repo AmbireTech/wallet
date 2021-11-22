@@ -19,7 +19,8 @@ export function getFeePaymentConsequences (token, estimation) {
     ? ADDED_GAS_NATIVE
     : ADDED_GAS_TOKEN
   return {
-    multiplier: (estimation.gasLimit + addedGas) / estimation.gasLimit,
+    // otherwise we get very long floating point numbers with trailing .999999
+    multiplier: parseFloat(((estimation.gasLimit + addedGas) / estimation.gasLimit).toFixed(4)),
     addedGas
   }
 }

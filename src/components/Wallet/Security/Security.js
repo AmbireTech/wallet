@@ -37,7 +37,7 @@ const Security = ({
         address,
         privLevel,
       ]),
-      value: '0',
+      value: '0x00',
     }
   }
 

@@ -10,7 +10,7 @@ import SendPlaceholder from './SendPlaceholder/SendPlaceholder'
 import { Interface } from 'ethers/lib/utils'
 import { useToasts } from '../../../hooks/toasts'
 import { TextInput, NumberInput, Button, Select, Loading, DropDown } from '../../common'
-import { verifiedContracts, tokens } from '../../../consts/verifiedContracts'
+import { names, tokens } from '../../../consts/humanizerInfo'
 
 const ERC20 = new Interface(require('adex-protocol-eth/abi/ERC20'))
 const crossChainAssets = [
@@ -105,8 +105,8 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, accounts, 
 
     useEffect(() => {
         const addressToLowerCase = address.toLowerCase()
-        const tokensAddresses = Object.keys(tokens).map(address => address.toLowerCase())
-        const contractsAddresses = Object.keys(verifiedContracts).map(key => key.split(':')[1].toLowerCase())
+        const tokensAddresses = Object.keys(tokens)
+        const contractsAddresses = Object.keys(names)
         const isKnowTokenOrContract = tokensAddresses.includes(addressToLowerCase) || contractsAddresses.includes(addressToLowerCase)
         const isAddressValid = /^0x[a-fA-F0-9]{40}$/.test(address)
 
@@ -183,13 +183,13 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, accounts, 
                </div>
                <div className="form blurred">
                     <label>From</label>
-                    <Select searchable defaultValue={asset} items={assetsItems} onChange={value => setAsset(value)}/>
+                    <Select searchable items={assetsItems} onChange={() => {}}/>
                     <NumberInput value={amount} min="0" onInput={value => setAmount(value)} button="MAX" onButtonClick={() => setMaxAmount()}/>
                     <div className="separator">
                         <BsArrowDown/>
                     </div>
                     <label>To</label>
-                    <Select searchable defaultValue={asset} items={crossChainAssets} onChange={() => {}}/>
+                    <Select searchable items={crossChainAssets} onChange={() => {}}/>
                     <NumberInput value={0} min="0" onInput={() => {}} button="MAX" onButtonClick={() => {}}/>
                     <Button>Transfer</Button>
                 </div>
