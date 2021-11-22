@@ -56,16 +56,14 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, accounts, 
 
     const setMaxAmount = () => onAmountChange(getMaxAmount(amount))
 
-    const onAmountChange = (value) => {
-        setAmount(value)
-
-        if (value.length) {
-            const amount = value || '0'
+    const onAmountChange = value => {
+        if (value) {
             const { decimals } = selectedAsset
-            const bigNumberAmount = ethers.utils.parseUnits(amount, decimals).toHexString()
-            setAmount(amount)
+            const bigNumberAmount = ethers.utils.parseUnits(value, decimals).toHexString()
             setBigNumberHexAmount(bigNumberAmount)
         }
+
+        setAmount(value)
     }
 
     const sendTx = () => {
@@ -130,7 +128,7 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, accounts, 
                                 <NumberInput
                                     label={`Available Amount: ${getMaxAmount()} ${selectedAsset?.symbol}`}
                                     value={amount}
-                                    min="0"
+                                    precision={selectedAsset?.decimals}
                                     onInput={onAmountChange}
                                     button="MAX"
                                     onButtonClick={() => setMaxAmount()}
@@ -184,7 +182,7 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, accounts, 
                <div className="form blurred">
                     <label>From</label>
                     <Select searchable items={assetsItems} onChange={() => {}}/>
-                    <NumberInput value={amount} min="0" onInput={value => setAmount(value)} button="MAX" onButtonClick={() => setMaxAmount()}/>
+                    <NumberInput value={0} min="0" onInput={() => {}} button="MAX" onButtonClick={() => setMaxAmount()}/>
                     <div className="separator">
                         <BsArrowDown/>
                     </div>
