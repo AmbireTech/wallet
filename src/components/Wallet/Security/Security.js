@@ -1,6 +1,5 @@
 import './Security.scss'
 
-import * as blockies from 'blockies-ts';
 import { MdOutlineAdd, MdOutlineDelete } from 'react-icons/md'
 import { Loading, TextInput, Button } from '../../common'
 import { Interface } from 'ethers/lib/utils'
@@ -82,14 +81,6 @@ const Security = ({ relayerURL, selectedAcc, selectedNetwork, accounts, addresse
     )
   }).filter(x => x)
 
-  const accountsList = accounts.filter(({ id }) => id !== selectedAcc)
-  const accountType = ({ email, signerExtra }) => {
-    const walletType = signerExtra && signerExtra.type === 'ledger' ? 'Ledger' : signerExtra && signerExtra.type === 'trezor' ? 'Trezor' : 'Web3'
-    return email ? `Ambire account for ${email}` : `Ambire account (${walletType})`
-  }
-  const toIcon = seed => blockies.create({ seed }).toDataURL()
-  const toIconBackgroundImage = seed => ({ backgroundImage: `url(${toIcon(seed)})`})
-
   const modalInputs = [{ label: 'Name' }, { label: 'Address', validate: value => isValidAddress(value) }] 
   const inputModal = <InputModal title="Add New Address" inputs={modalInputs} onClose={([name, address]) => addAddress(name, address)}></InputModal>
   const showInputModal = () => showModal(inputModal)
@@ -114,33 +105,25 @@ const Security = ({ relayerURL, selectedAcc, selectedNetwork, accounts, addresse
         <div className="content">
           <div className="list">
             {
-              accountsList.map(account => (
-                  <div className="item" key={account.id} onClick={() => {}}>
-                      <div className="inner">
-                          <div className="icon" style={toIconBackgroundImage(account.id)}></div>
-                          <div className="details">
-                              <label>{ accountType(account) }</label>
-                              <div className="address">{ account.id }</div>
-                          </div>
-                      </div>
+              addresses.map(({ isAccount, icon, name, address }) => (
+                <div className="item" key={address + name}>
+                  <div className="inner" onClick={() => {}}>
+                    <div className="icon" style={{ backgroundImage: `url(${icon})`}}></div>
+                    <div className="details">
+                      <label>{ name }</label>
+                      <div className="address">{ address }</div>
                   </div>
+                  </div>
+                  {
+                    !isAccount ?
+                      <div className="button" onClick={() => removeAddress(name, address)}>
+                        <MdOutlineDelete/>
+                      </div>
+                      :
+                      null
+                  }
+                </div>
               ))
-            }
-            {
-                addresses.map(({ name, address }) => (
-                    <div className="item" key={address + name}>
-                        <div className="inner" onClick={() => {}}>
-                            <div className="icon" style={toIconBackgroundImage(address)}></div>
-                            <div className="details">
-                                <label>{ name }</label>
-                                <div className="address">{ address }</div>
-                            </div>
-                        </div>
-                        <div className="button" onClick={() => removeAddress(name, address)}>
-                            <MdOutlineDelete/>
-                        </div>
-                    </div>
-                ))
             }
           </div>
           <Button small icon={<MdOutlineAdd/>} onClick={showInputModal}>Add Address</Button>
