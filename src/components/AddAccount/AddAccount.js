@@ -15,7 +15,7 @@ import { fetch, fetchPost } from '../../lib/fetch'
 import accountPresets from '../../consts/accountPresets'
 import { useToasts } from '../../hooks/toasts'
 
-import { getLedgerAddresses } from '../../lib/ledgerWebHID'
+import { ledgerGetAddresses } from '../../lib/ledgerWebHID'
 
 TrezorConnect.manifest({
   email: 'contactus@ambire.com',
@@ -204,10 +204,10 @@ export default function AddAccount ({ relayerURL, onAddAccount }) {
     async function connectLedgerWebHIDAndGetAccounts () {
         let error = null;
         try{
-            const addresses = await getLedgerAddresses()
+            const addresses = await ledgerGetAddresses()
             if(addresses){
                 console.log("Got addresses " + JSON.stringify(addresses));
-                const signerExtra = { type: 'ledger', info: {stuff: 'someInfo'}}
+                const signerExtra = { type: 'ledger', info: {stuff: 'someInfo'}, transportProtocol: 'webHID'}
 
                 onEOASelected(addresses[0], signerExtra)
             }else{
@@ -215,7 +215,9 @@ export default function AddAccount ({ relayerURL, onAddAccount }) {
             }
         }catch(e){
             console.log(e);
-            if(e.statusCode && e.statusCode == 25873){
+            if(e.statusCode && e.id === 'InvalidChannel'){
+                error = "Invalid channel"
+            }else if(e.statusCode && e.statusCode === 25873){
                 error = "Please make sure your ledger is connected and the ethereum app is open"
             }else{
                 error = e.message;

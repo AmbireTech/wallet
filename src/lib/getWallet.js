@@ -4,7 +4,7 @@ import { ethers } from 'ethers'
 import HDNode from 'hdkey'
 import { LedgerSubprovider } from '@0x/subproviders/lib/src/subproviders/ledger' // https://github.com/0xProject/0x-monorepo/issues/1400
 import { ledgerEthereumBrowserClientFactoryAsync } from '@0x/subproviders/lib/src' // https://github.com/0xProject/0x-monorepo/issues/1400
-
+import { ledgerSignMessage, ledgerSignTransaction } from './ledgerWebHID'
 let wallets = {}
 
 // opts
@@ -29,14 +29,21 @@ function getWalletNew ({ chainId, signer, signerExtra }, opts) {
             signTransaction: params => providerTrezor.signTransactionAsync({ ...params, from: signer.address })
         }
     } else if (signerExtra && signerExtra.type === 'ledger') {
-        const provider = new LedgerSubprovider({
-            networkId: chainId,
-            ledgerEthereumClientFactoryAsync: ledgerEthereumBrowserClientFactoryAsync,
-            baseDerivationPath: signerExtra.info.baseDerivationPath
-        })
-        return {
-            signMessage: hash => provider.signPersonalMessageAsync(ethers.utils.hexlify(hash), signer.address),
-            signTransaction: params => provider.signTransactionAsync({ ...params, from: signer.address })
+        if(signerExtra.transportProtocol === 'webHID'){
+            return {
+                signMessage: hash => ledgerSignMessage(ethers.utils.hexlify(hash), signer.address),
+                signTransaction: params => ledgerSignTransaction(params, chainId)
+            }
+        }else{
+            const provider = new LedgerSubprovider({
+                networkId: chainId,
+                ledgerEthereumClientFactoryAsync: ledgerEthereumBrowserClientFactoryAsync,
+                baseDerivationPath: signerExtra.info.baseDerivationPath
+            })
+            return {
+                signMessage: hash => provider.signPersonalMessageAsync(ethers.utils.hexlify(hash), signer.address),
+                signTransaction: params => provider.signTransactionAsync({ ...params, from: signer.address })
+            }
         }
     } else if (signer.address) {
         if (!window.ethereum) throw new Error('No web3 support detected in your browser: if you created this account through MetaMask, please install it.')

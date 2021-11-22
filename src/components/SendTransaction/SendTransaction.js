@@ -162,7 +162,8 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
       signerExtra: account.signerExtra,
       chainId: network.chainId
     })
-    if (relayerURL) {
+
+    if (relayerURL && false) {
       // Temporary way of debugging the fee cost
       // const initialLimit = finalBundle.gasLimit - getFeePaymentConsequences(estimation.selectedFeeToken, estimation).addedGas
       // finalBundle.estimate({ relayerURL, fetch }).then(estimation => console.log('fee costs: ', estimation.gasLimit - initialLimit), estimation.selectedFeeToken).catch(console.error)
