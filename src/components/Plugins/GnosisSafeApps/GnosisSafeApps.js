@@ -4,8 +4,8 @@ import {useEffect, useRef, useState} from 'react'
 
 const dapps = [{
   name: 'LocalTest',
-  url: 'http://localhost:3003',
-  logo: 'http://localhost:3003/logo-test.png',
+  url: 'http://localhost:3002',
+  logo: 'http://localhost:3002/logo-test.png',
   desc: 'Local dapp test with some lorem ipsum stuff'
 },
   {
@@ -19,7 +19,13 @@ const dapps = [{
     url: 'https://apy.plasma.finance',
     logo: 'https://apy.plasma.finance/logo.svg',
     desc: 'Cross-chain DeFi & DEX aggregator, farming, asset management, fiat on-ramp'
-  }
+  },
+  {
+    name: 'MEW',
+    url: 'https://www.myetherwallet.com/wallet/sign',
+    logo: 'https://www.myetherwallet.com/wallet/sign/logo.svg',
+    desc: 'MEW as dapp'
+  },
 ]
 
 export default function GnosisSafeApps({network, selectedAcc, gnosisConnect, gnosisDisconnect}) {
