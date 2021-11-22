@@ -1,18 +1,22 @@
 import './Modal.scss'
 
-const Modal = props => {
-  return (
-    <div
-      className="modal"
-      style={{
-        transform: props.show ? 'translateY(0)' : 'translateY(-100vh)',
-        opacity: props.show ? 1 : 0,
-      }}
-    >
-      {props.children}
-      <button type="button" onClick={props.modalClosed}>CLOSE</button>
-    </div>
-  )
+import { MdClose } from 'react-icons/md'
+import { useModals } from '../../../hooks'
+
+const Modal = ({ children, id, title }) => {
+    const { hideModal } = useModals()
+
+    return (
+        <div id={id} className="modal">
+            <div className="heading">
+                <div className="title">{ title }</div>
+                <div className="close" onClick={hideModal}>
+                    <MdClose/>
+                </div>
+            </div>
+            <div className="content">{ children }</div>
+        </div>
+    )
 }
 
 export default Modal
