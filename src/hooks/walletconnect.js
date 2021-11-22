@@ -115,6 +115,9 @@ export default function useWalletConnect ({ account, chainId, onCallRequest }) {
                 return
             }
             if (!SUPPORTED_METHODS.includes(payload.method)) {
+                // @TODO: if the dapp is in a "allow list" of dApps that have fallbacks, ignore certain messages
+                // eg uni has a fallback for eth_signTypedData_v4
+                addToast(`dApp requested unsupported method: ${payload.method}`, { error: true })
                 connector.rejectRequest({ id: payload.id, error: { message: 'METHOD_NOT_SUPPORTED' }})
                 return
             }
@@ -220,7 +223,7 @@ export default function useWalletConnect ({ account, chainId, onCallRequest }) {
     }, [state, account, chainId, connect])
 
     // Initialization effects
-    useEffect(() => runInitEffects(connect), [connect])
+    useEffect(() => runInitEffects(connect, account), [connect, account])
 
     return {
         connections: state.connections,
@@ -232,7 +235,7 @@ export default function useWalletConnect ({ account, chainId, onCallRequest }) {
 
 // Initialization side effects
 // Connect to the URL, read from clipboard, etc.
-function runInitEffects(wcConnect) {
+function runInitEffects(wcConnect, account) {
     const query = new URLSearchParams(window.location.href.split('?').slice(1).join('?'))
     const wcUri = query.get('uri')
     if (wcUri) wcConnect({ uri: wcUri })
@@ -241,18 +244,17 @@ function runInitEffects(wcConnect) {
     window.wcConnect = uri => wcConnect({ uri })
 
     // @TODO on focus and on user action
-    const clipboardError = e => console.log('non-fatal clipboard err', e)
+    const clipboardError = e => console.log('non-fatal clipboard/walletconnect err:', e.message)
     const isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1
     const tryReadClipboard = async () => {
+        if (!account) return
         if (isFirefox) return
-	try {
-                const result = await navigator.permissions.query({ name: 'clipboard-read' })
-                if (result.state === 'granted' || result.state === 'prompt') {
-                     const clipboard = await navigator.clipboard.readText()
-		     if (clipboard.startsWith('wc:') && !connectors[clipboard]) wcConnect({ uri: clipboard })
-                }
-        } catch(e) { clipboardError(e)  }
+        try {
+            const clipboard = await navigator.clipboard.readText()
+            if (clipboard.startsWith('wc:') && !connectors[clipboard]) wcConnect({ uri: clipboard })
+        } catch(e) { clipboardError(e) }
     }
+
     tryReadClipboard()
     window.addEventListener('focus', tryReadClipboard)
     return () => window.removeEventListener('focus', tryReadClipboard)

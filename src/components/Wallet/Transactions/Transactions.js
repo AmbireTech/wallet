@@ -1,5 +1,6 @@
 import './Transactions.scss'
-import { FaSignature } from 'react-icons/fa'
+import { BsCoin, BsCalendarWeek, BsGlobe2, BsCheck2All } from 'react-icons/bs'
+import { MdOutlinePendingActions } from 'react-icons/md'
 import { useRelayerData } from '../../../hooks'
 import TxnPreview from '../../common/TxnPreview/TxnPreview'
 import { Loading } from '../../common'
@@ -11,7 +12,7 @@ import { useEffect, useState } from 'react'
 import fetch from 'node-fetch'
 import { useToasts } from '../../../hooks/toasts'
 
-function Transactions ({ relayerURL, selectedAcc, selectedNetwork, eligibleRequests, showSendTxns }) {
+function Transactions ({ relayerURL, selectedAcc, selectedNetwork, showSendTxns }) {
   const { addToast } = useToasts()
   const [cacheBreak, setCacheBreak] = useState(() => Date.now())
   // @TODO refresh this after we submit a bundle; perhaps with the upcoming transactions service
@@ -63,33 +64,34 @@ function Transactions ({ relayerURL, selectedAcc, selectedNetwork, eligibleReque
 
   return (
     <section id='transactions'>
-      {!!eligibleRequests.length && (<div onClick={() => showSendTxns(null)} className='panel'>
-        <div className='title'><FaSignature size={25}/>&nbsp;&nbsp;&nbsp;Waiting to be signed</div>
-        {eligibleRequests.map(req => (
-          <TxnPreview
-              key={req.id}
-              network={selectedNetwork.id}
-              account={selectedAcc}
-              txn={[req.txn.to, req.txn.value || '0x0', req.txn.data || '0x' ]}/>
-        ))}
-      </div>)}
       { !!firstPending && (<div className='panel'>
-        <div className='title'>Pending transaction bundle</div>
-        <MinedBundle bundle={firstPending}></MinedBundle>
-        <div className='actions'>
-          <button onClick={() => cancel(firstPending)}>Cancel</button>
-          <button className='cancel' onClick={() => speedup(firstPending)}>Speed up</button>
+        <div className='title'><MdOutlinePendingActions/>Pending transaction bundle</div>
+        <div className="content">
+          <div className="bundle">
+            <MinedBundle bundle={firstPending}></MinedBundle>
+            <div className='actions'>
+              <button onClick={() => cancel(firstPending)}>Cancel</button>
+              <button className='cancel' onClick={() => speedup(firstPending)}>Speed up</button>
+            </div>
+          </div>
         </div>
       </div>) }
 
-      <h2>{(data && data.txns.length === 0) ? 'No transactions yet.' : 'Confirmed transactions'}</h2>
-      {!relayerURL && (<h3 className='error'>Unsupported: not currently connected to a relayer.</h3>)}
-      {errMsg && (<h3 className='error'>Error getting list of transactions: {errMsg}</h3>)}
-      {(isLoading && !data) && <Loading />}
-      {
-          // @TODO respect the limit and implement pagination
-          data && data.txns.filter(x => x.executed && x.executed.mined).map(bundle => MinedBundle({ bundle }))
-      }
+      <div id="confirmed" className="panel">
+        <div className="title">
+          <BsCheck2All/>
+          {(data && data.txns.length === 0) ? 'No transactions yet.' : 'Confirmed transactions'}
+        </div>
+        <div className="content">
+          {!relayerURL && (<h3 className='error'>Unsupported: not currently connected to a relayer.</h3>)}
+          {errMsg && (<h3 className='error'>Error getting list of transactions: {errMsg}</h3>)}
+          {(isLoading && !data) && <Loading />}
+          {
+              // @TODO respect the limit and implement pagination
+              data && data.txns.filter(x => x.executed && x.executed.mined).map(bundle => MinedBundle({ bundle }))
+          }
+        </div>
+      </div>
     </section>
   )
 }
@@ -100,21 +102,49 @@ function MinedBundle({ bundle }) {
   const lastTxn = bundle.txns[bundle.txns.length - 1]
   // terribly hacky; @TODO fix
   // all of the values are prob checksummed so we may not need toLowerCase
-  const lastTxnSummary = getTransactionSummary(lastTxn, bundle.network, bundle.account)
+  const lastTxnSummary = getTransactionSummary(lastTxn, bundle.network, bundle.identity)
   const hasFeeMatch = lastTxnSummary.match(new RegExp(`to ${accountPresets.feeCollector}`, 'i'))
   const txns = hasFeeMatch ? bundle.txns.slice(0, -1) : bundle.txns
+  const toLocaleDateTime = date => `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`
 
-  return (<div className='minedBundle' key={bundle._id}>
+  return (<div className='minedBundle bundle' key={bundle._id}>
     {txns.map((txn, i) => (<TxnPreview
       key={i} // safe to do this, individual TxnPreviews won't change within a specific bundle
       txn={txn} network={bundle.network} account={bundle.identity}/>
     ))}
-    {hasFeeMatch && (<div className='fee'><b>Fee:</b> {lastTxnSummary.slice(5, -hasFeeMatch[0].length)}</div>)}
-    <div><b>Submitted on:</b> {bundle.submittedAt && (new Date(bundle.submittedAt)).toString()}</div>
-    { bundle.replacesTxId && (<div><b>Replaces transaction:</b> {bundle.replacesTxId}</div>) }
-    { bundle.txId && (<div
-      ><b>Block explorer:</b> <a href={network.explorerUrl+'/tx/'+bundle.txId} target='_blank' rel='noreferrer'>{network.explorerUrl.split('/')[2]}</a>
-    </div>) }
+    <ul className="details">
+      {
+        hasFeeMatch ?
+          <li>
+            <label><BsCoin/>Fee</label>
+            <p>{lastTxnSummary.slice(5, -hasFeeMatch[0].length)}</p>
+          </li>
+          :
+          null
+      }
+      <li>
+        <label><BsCalendarWeek/>Submitted on</label>
+        <p>{bundle.submittedAt && (toLocaleDateTime(new Date(bundle.submittedAt))).toString()}</p>
+      </li>
+      {
+        bundle.replacesTxId ?
+          <li>
+            <label>Replaces transaction</label>
+            <p>{bundle.replacesTxId}</p>
+          </li>
+          :
+          null
+      }
+      {
+        bundle.txId ?
+          <li>
+            <label><BsGlobe2/>Block Explorer</label>
+            <p><a href={network.explorerUrl+'/tx/'+bundle.txId} target='_blank' rel='noreferrer'>{network.explorerUrl.split('/')[2]}</a></p>
+          </li>
+          :
+          null
+      }
+    </ul>
   </div>)
 }
 

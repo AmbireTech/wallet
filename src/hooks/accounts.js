@@ -24,10 +24,10 @@ export default function useAccounts () {
       return initialSelectedAcc
     })
   
-    const onSelectAcc = selected => {
+    const onSelectAcc = useCallback(selected => {
       localStorage.selectedAcc = selected
       setSelectedAcc(selected)
-    }
+    }, [setSelectedAcc])
     const onAddAccount = useCallback((acc, opts = {}) => {
       if (!(acc.id && acc.signer)) throw new Error('account: internal err: missing ID or signer')
 
@@ -48,7 +48,7 @@ export default function useAccounts () {
       if (Object.keys(accounts).length) {
         history.push('/wallet/dashboard')
       }
-    }, [accounts, addToast, history])
+    }, [accounts, addToast, onSelectAcc, history])
   
     const onRemoveAccount = useCallback(id => {
       if (!id) throw new Error('account: internal err: missing ID/Address')
