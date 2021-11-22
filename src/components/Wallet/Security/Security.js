@@ -1,7 +1,7 @@
 import './Security.scss'
 
 import * as blockies from 'blockies-ts';
-import { MdOutlineDelete } from 'react-icons/md'
+import { MdOutlineAdd, MdOutlineDelete } from 'react-icons/md'
 import { Loading, TextInput, Button } from '../../common'
 import { Interface } from 'ethers/lib/utils'
 import accountPresets from '../../../consts/accountPresets'
@@ -105,7 +105,8 @@ const Security = ({ relayerURL, selectedAcc, selectedNetwork, accounts, addresse
       <div id="addresses" className='panel'>
         <div className='title'>Addresses</div>
         <div className="content">
-          {
+          <div className="list">
+            {
               accountsList.map(account => (
                   <div className="item" key={account.id} onClick={() => {}}>
                       <div className="inner">
@@ -117,23 +118,25 @@ const Security = ({ relayerURL, selectedAcc, selectedNetwork, accounts, addresse
                       </div>
                   </div>
               ))
-          }
-          {
-              addresses.map(({ name, address }) => (
-                  <div className="item" key={address + name}>
-                      <div className="inner" onClick={() => {}}>
-                          <div className="icon" style={toIconBackgroundImage(address)}></div>
-                          <div className="details">
-                              <label>{ name }</label>
-                              <div className="address">{ address }</div>
-                          </div>
-                      </div>
-                      <div className="button" onClick={() => removeAddress(name, address)}>
-                          <MdOutlineDelete/>
-                      </div>
-                  </div>
-              ))
-          }
+            }
+            {
+                addresses.map(({ name, address }) => (
+                    <div className="item" key={address + name}>
+                        <div className="inner" onClick={() => {}}>
+                            <div className="icon" style={toIconBackgroundImage(address)}></div>
+                            <div className="details">
+                                <label>{ name }</label>
+                                <div className="address">{ address }</div>
+                            </div>
+                        </div>
+                        <div className="button" onClick={() => removeAddress(name, address)}>
+                            <MdOutlineDelete/>
+                        </div>
+                    </div>
+                ))
+            }
+          </div>
+          <Button small icon={<MdOutlineAdd/>}>Add Address</Button>
         </div>
       </div>
     </section>
