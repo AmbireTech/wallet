@@ -16,7 +16,7 @@ const getAmountReceived = (lastToken, newBalanceRaw, decimals) => {
     return ethers.utils.formatUnits(amountRecieved.toString(), decimals)
 }
 
-export default function useNotifications (requests, onShow, portfolio, selectedAcc) {
+export default function useNotifications (requests, onShow, portfolio, selectedAcc, network) {
     const { addToast } = useToasts()
     const onShowRef = useRef({})
     onShowRef.current.onShow = onShow
@@ -27,6 +27,8 @@ export default function useNotifications (requests, onShow, portfolio, selectedA
                 // @TODO: perhaps warn the user in some way
             })
         }
+        // hack because for whatever reason it doesn't work when we access the ref directly
+        window.onClickNotif = req => onShowRef.current.onShow(req)
     }, [])
     
     const showNotification = useCallback(({ id, title, body, requireInteraction, request }) => {
@@ -37,11 +39,9 @@ export default function useNotifications (requests, onShow, portfolio, selectedA
         })
         //notification.onclose = 
         notification.onclick = () => {
+            if (request.type === 'eth_sendTransaction') window.onClickNotif(request)
             window.focus()
             notification.close()
-            if (request.type === 'eth_sendTransaction') {
-                onShowRef.current.onShow(request)
-            }
         }
         currentNotifs.push({ id, notification })
     }, [])
@@ -106,7 +106,7 @@ export default function useNotifications (requests, onShow, portfolio, selectedA
     useEffect(() => {
         isLastTotalBalanceInit = false
         lastTokensBalanceRaw = []
-    }, [selectedAcc])
+    }, [selectedAcc, network])
 
     currentNotifs = currentNotifs.filter(({ id, notification }) => {
         if (!requests.find(r => r.id === id)) {

@@ -24,4 +24,17 @@ button.buttonComponent {
     &.red {
         background: #da5151;
     }
+
+    &.clear {
+        color: white;
+        background-color: transparent;
+
+        .icon-button {
+            color: white !important;
+        }
+
+        &:hover {
+            background-color: rgba(0, 0, 0, 0.2);
+        }
+    }
 }

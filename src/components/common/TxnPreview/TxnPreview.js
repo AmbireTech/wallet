@@ -1,4 +1,4 @@
-import './TxnPreview.css'
+import './TxnPreview.scss'
 
 import { useState } from 'react'
 import { FaTimes, FaChevronDown, FaChevronUp } from 'react-icons/fa'
@@ -13,12 +13,23 @@ function getNetworkSymbol(networkId) {
 }
 export default function TxnPreview ({ txn, onDismiss, network, account, isFirstFailing }) {
   const [isExpanded, setExpanded] = useState(false)
-  const contractName = getContractName(txn, network)
+  const contractName = getContractName(txn[0], network)
   return (
     <div className={isFirstFailing ? 'txnPreview firstFailing' : 'txnPreview'}>
-        <div>{getTransactionSummary(txn, network, account)}</div>
-        {isFirstFailing ? (<div className='firstFailingLabel'>This is the first failing transaction.</div>) : (<></>)}
-
+        <div className="heading" onClick={() => setExpanded(e => !e)}>
+          <div className="info">
+            <div className="summary-container">
+              <div className='expandTxn'>
+                {isExpanded ? (<FaChevronDown/>) : (<FaChevronUp/>)}
+              </div>
+              <div className="summary">{getTransactionSummary(txn, network, account)}</div>
+            </div>
+            {isFirstFailing ? (<div className='firstFailingLabel'>This is the first failing transaction.</div>) : (<></>)}
+          </div>
+          <div className='actionIcons'>
+              {onDismiss ? (<span className='dismissTxn' onClick={onDismiss}><FaTimes/></span>) : (<></>)}
+            </div>
+        </div>
         {
           isExpanded ? (<div className='advanced'>
             <div><b>Interacting with (<i>to</i>):</b> {txn[0]}{contractName ? ` (${contractName})` : ''}</div>
@@ -26,13 +37,6 @@ export default function TxnPreview ({ txn, onDismiss, network, account, isFirstF
             <div><b>Data:</b> {txn[2]}</div>
           </div>) : (<></>)
         }
-
-        <div className='actionIcons'>
-          <span className='expandTxn' onClick={() => setExpanded(e => !e)}>
-            {isExpanded ? (<FaChevronUp/>) : (<FaChevronDown/>)}
-          </span>
-          {onDismiss ? (<span className='dismissTxn' onClick={onDismiss}><FaTimes/></span>) : (<></>)}
-        </div>
     </div>
   )
 }
