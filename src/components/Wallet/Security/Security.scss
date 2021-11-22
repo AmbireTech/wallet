@@ -58,11 +58,8 @@
 
     .item {
       height: 65px;
-      position: relative;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding-left: 20px;
+      padding-left: 20px !important;
+      cursor: default;
 
       &:nth-child(odd) {
         background-color: rgba(0, 0, 0, 0.025);
@@ -71,64 +68,8 @@
         background-color: rgba(0, 0, 0, 0.1);
       }
 
-      .inner {
-        flex: 0 1 auto;
-        display: flex;
-        align-items: center;
-        justify-content: flex-start;
-        gap: 15px;
-        white-space: nowrap;
-        overflow: hidden;
-
-        .icon {
-          flex: 0 0 auto;
-          height: 30px;
-          width: 30px;
-          @include flex-center-center;
-          border-radius: 100%;
-          background-size: cover;
-        }
-
-        .details {
-          display: flex;
-          flex-direction: column;
-          align-items: flex-start;
-          justify-content: center;
-          gap: 2px;
-          overflow: hidden;
-
-          label {
-            font-size: 12px;
-            font-weight: 500;
-            opacity: 0.5;
-          }
-
-          .address {
-            font-family: monospace;
-            font-size: 15px;
-            font-weight: bold;
-          }
-        }
-      }
-
       .button {
-        flex: 0 0 auto;
-        height: 100%;
         width: 60px;
-        @include flex-center-center;
-        font-size: 17px;
-        font-weight: bold;
-        color: white;
-
-        &:not([disabled]):hover {
-          cursor: pointer;
-          opacity: 1;
-          background-color: rgba(0, 0, 0, 0.2) !important;
-        }
-
-        &:active {
-          background-color: rgba(255, 255, 255, 0.05) !important;
-        }
       }
     }
   }
