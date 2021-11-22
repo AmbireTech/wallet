@@ -56,7 +56,7 @@ const AddressBook = ({ addresses, addAddress, removeAddress, newAddress, onClose
                 openAddAddress ?
                     <div id="add-address" className="content">
                         <div className="fields">
-                            <input type="text" placeholder="Name" defaultValue={name} onInput={({ target }) => setName(target.value)}/>
+                            <input type="text" autoComplete="nope" placeholder="Name" defaultValue={name} onInput={({ target }) => setName(target.value)}/>
                             <input type="text" autoComplete="nope" placeholder="Address" defaultValue={address} onInput={({ target }) => setAddress(target.value)}/>
                         </div>
                         <button className="button" disabled={!isAddAddressFormValid} onClick={onAddAddress}>
