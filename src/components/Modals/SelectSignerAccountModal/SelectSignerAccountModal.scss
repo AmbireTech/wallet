@@ -1,0 +1,58 @@
+@import '../../../variables.scss';
+
+#select-signer-modal {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+
+  .intro {
+    color: $text-container-color;
+  }
+
+  .loginSignupWrapper.chooseSigners {
+    background: transparent;
+    margin-top: 20px;
+  }
+
+  ul {
+    height: 290px;
+    width: 460px !important;
+    padding: 0;
+    line-height: 3em !important;
+    margin: 10px auto;
+
+    .odd-rows-bg {
+      background: $background-color;
+    }
+
+    li {
+      display: flex;
+      justify-content: space-between;
+      padding: 0 20px;
+
+      .index-row {
+        width: 25px;
+      }
+
+      svg {
+        margin-bottom: -5px;
+      }
+    }
+  }
+
+  .pages {
+    text-align: center;
+    padding-top: 20px;
+  }
+
+  .buttons {
+    // left: 30px;
+    // right: 30px;
+    // bottom: 30px;
+    // width: auto;
+
+    button {
+      flex: 0 1 50% !important;
+    }
+  }
+}
