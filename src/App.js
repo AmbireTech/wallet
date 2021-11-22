@@ -39,7 +39,7 @@ setTimeout(() => {
 function AppInner () {
   // basic stuff: currently selected account, all accounts, currently selected network
   const { accounts, selectedAcc, onSelectAcc, onAddAccount, onRemoveAccount } = useAccounts()
-  const { addresses, addAddress, removeAddress, isKnownAddress, isValidAddress } = useAddressBook({ accounts })
+  const { addresses, addAddress, removeAddress, isKnownAddress, isValidAddress } = useAddressBook({ accounts, selectedAcc })
   const { network, setNetwork, allNetworks } = useNetwork()
 
   // Signing requests: transactions/signed msgs: all requests are pushed into .requests
