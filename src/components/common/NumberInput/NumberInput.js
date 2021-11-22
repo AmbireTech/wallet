@@ -1,6 +1,6 @@
 import './NumberInput.scss'
 
-const NumberInput = ({ disabled, precision, label, value, button, onButtonClick, onInput, onChange }) => {
+const NumberInput = ({ disabled, precision, label, value, button, onButtonClick, onInput }) => {
     const onInputValue = ({ target }) => {
         if (!onInput) return
         if (!target.value.length) return onInput('')
