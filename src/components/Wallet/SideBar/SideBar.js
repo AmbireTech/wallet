@@ -21,11 +21,9 @@ const SideBar = ({ match, portfolio }) => {
             11: '1em',
         }
 
-        if (portfolio.balance.total.truncated) {
-            const charLength = portfolio.balance.total.truncated.length
-            const closest = Object.keys(balanceFontSizes).reduce((prev, current) => Math.abs(current - charLength) < Math.abs(prev - charLength) ? current : prev)
-            setBalanceFontSize(balanceFontSizes[closest])
-        }
+        const charLength = portfolio.balance.total.truncated.length
+        const closest = Object.keys(balanceFontSizes).reduce((prev, current) => Math.abs(current - charLength) < Math.abs(prev - charLength) ? current : prev)
+        setBalanceFontSize(balanceFontSizes[closest])
     }, [portfolio.balance.total])
 
     useEffect(() => resizeBalance(), [resizeBalance])
