@@ -31,7 +31,7 @@
       padding: 16px;
       border-radius: 8px;
       cursor: pointer;
-      transition: all 0.2s ease-in-out;
+      transition: $basic-transition;
 
       &:hover {
         background: lighten($panel-background-color, 5%);
