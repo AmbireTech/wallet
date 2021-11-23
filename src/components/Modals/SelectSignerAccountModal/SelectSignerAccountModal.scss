@@ -5,6 +5,10 @@
   flex-direction: column;
   gap: 30px;
 
+  .content {
+    overflow: visible !important;
+  }
+
   .intro {
     color: $text-container-color;
   }
@@ -15,10 +19,10 @@
   }
 
   ul {
-    height: 290px;
+    height: 245px;
     width: 460px !important;
     padding: 0;
-    line-height: 3em !important;
+    line-height: 2.5em !important;
     margin: 10px auto;
 
     .odd-rows-bg {
@@ -46,11 +50,6 @@
   }
 
   .buttons {
-    // left: 30px;
-    // right: 30px;
-    // bottom: 30px;
-    // width: auto;
-
     button {
       flex: 0 1 50% !important;
     }

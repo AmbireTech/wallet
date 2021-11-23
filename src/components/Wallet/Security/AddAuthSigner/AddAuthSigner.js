@@ -6,22 +6,22 @@ import { LedgerSubprovider } from '@0x/subproviders/lib/src/subproviders/ledger'
 import { ledgerEthereumBrowserClientFactoryAsync } from '@0x/subproviders/lib/src' // https://github.com/0xProject/0x-monorepo/issues/1400
 import TrezorConnect from 'trezor-connect'
 import { TrezorSubprovider } from '@0x/subproviders/lib/src/subproviders/trezor' // https://github.com/0xProject/0x-monorepo/issues/1400
-import { SelectSignerAccountModal } from '../../../Modals'  
-import { useModals } from "../../../../hooks"
-
+import { SelectSignerAccountModal } from '../../../Modals'
+import { useModals } from '../../../../hooks'
 
 const AddAuthSigner = props => {
   const [signerAddress, setSignerAddress] = useState({
     address: '',
     index: 0,
   })
-  const [signersToChoose, setChooseSigners] = useState(null)
   const [addAccErr, setAddAccErr] = useState('')
-  const [modalToggle, setModalToggle] = useState(true)
-  const [textInputInfo, setTextInputInfo] = useState('')
   const [disabled, setDisabled] = useState(true)
+  const [modalToggle, setModalToggle] = useState(true)
+  const [signersToChoose, setChooseSigners] = useState(null)
+  const [textInputInfo, setTextInputInfo] = useState('')
+  const [newSignedName, setNewSignedName] = useState('')
   const { showModal } = useModals()
-  
+
   async function connectLedgerAndGetAccounts() {
     const provider = new LedgerSubprovider({
       networkId: 0, // @TODO: is this needed?
@@ -32,7 +32,7 @@ const AddAuthSigner = props => {
     // there is a bug in the ledger subprovider (race condition), so it will think we're trying to make two connections simultaniously
     // cause one call won't be aware of the other's attempt to connect
     const addresses = await provider.getAccountsAsync(100)
-    
+    setNewSignedName('Ledger')
     setChooseSigners({ addresses })
     setModalToggle(true)
   }
@@ -48,9 +48,8 @@ const AddAuthSigner = props => {
       trezorConnectClientApi: TrezorConnect,
     })
     const addresses = await provider.getAccountsAsync(100)
-    setChooseSigners({
-      addresses,
-    })
+    setNewSignedName('Trezor')
+    setChooseSigners({ addresses })
     setModalToggle(true)
   }
 
@@ -68,7 +67,10 @@ const AddAuthSigner = props => {
         address: web3Accs[0],
         index: 0,
       })
+
+    setNewSignedName('Web3')
     setChooseSigners({ addresses: web3Accs })
+    setModalToggle(true)
   }
 
   const modalHandler = () => {
@@ -88,11 +90,19 @@ const AddAuthSigner = props => {
   const onSignerAddressClicked = value => {
     setSignerAddress(value)
     modalHandler()
-    setTextInputInfo(`Trezor/Ledger address # ${value.index + 1}`)
+    setTextInputInfo(`${newSignedName} address # ${value.index + 1}`)
   }
 
   useEffect(() => {
-    if (modalToggle && signersToChoose) showModal(<SelectSignerAccountModal signersToChoose={signersToChoose.addresses} selectedNetwork={props.selectedNetwork} onSignerAddressClicked={onSignerAddressClicked}/>)
+    if (modalToggle && signersToChoose)
+      showModal(
+        <SelectSignerAccountModal
+          signersToChoose={signersToChoose.addresses}
+          selectedNetwork={props.selectedNetwork}
+          onSignerAddressClicked={onSignerAddressClicked}
+          newSignedName={newSignedName}
+        />
+      )
   }, [modalToggle, signersToChoose])
 
   const addFromSignerButtons = (
@@ -157,7 +167,11 @@ const AddAuthSigner = props => {
           info={textInputInfo}
           onInput={onTextInput}
         />
-        <DropDown style={{ height: '60px' }} title="connect wallet" closeOnClick>
+        <DropDown
+          style={{ height: '60px' }}
+          title="Connect signer"
+          closeOnClick
+        >
           {addFromSignerButtons}
         </DropDown>
         <div className="btns-wrapper">
