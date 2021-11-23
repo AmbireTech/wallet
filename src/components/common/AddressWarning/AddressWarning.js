@@ -4,11 +4,12 @@ import { MdOutlineAdd } from 'react-icons/md'
 import { AiOutlineWarning } from 'react-icons/ai'
 import { Checkbox } from '..'
 import { useEffect, useMemo, useState } from 'react'
+import { isValidAddress, isKnownTokenOrContract } from '../../../helpers/address';
 
-const AddressWarning = ({ address, onChange, onAddNewAddress, isValidAddress, isKnownAddress, isKnownTokenOrContract }) => {
+const AddressWarning = ({ address, onChange, onAddNewAddress, isKnownAddress }) => {
     const [confirmed, setConfirmed] = useState(false)
-    const unknownWarning = useMemo(() => isValidAddress(address) && !isKnownAddress(address), [address, isValidAddress, isKnownAddress])
-    const smartContractWarning = useMemo(() => isKnownTokenOrContract(address), [address, isKnownTokenOrContract])
+    const unknownWarning = useMemo(() => isValidAddress(address) && !isKnownAddress(address), [address, isKnownAddress])
+    const smartContractWarning = useMemo(() => isKnownTokenOrContract(address), [address])
 
     useEffect(() => {
         if (onChange) onChange(confirmed)
