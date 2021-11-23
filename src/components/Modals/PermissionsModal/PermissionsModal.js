@@ -6,6 +6,8 @@ import { useToasts } from '../../../hooks/toasts'
 import { askForPermission, isFirefox } from '../../../helpers/permissions'
 import { Modal, Toggle, Button, Checkbox } from "../../common"
 
+const toastErrorMessage = name => `You blocked the ${name} permission. Check your browser permissions tab.`
+
 const PermissionsModal = () => {
     const { hideModal } = useModals()
     const { isNoticationsGranted, isClipboardGranted, modalHidden, setModalHidden } = usePermissions()
@@ -13,12 +15,12 @@ const PermissionsModal = () => {
 
     const requestNotificationsPermission = async () => {
         const status = await askForPermission('notifications')
-        if (!status) addToast('You blocked the Notifications permission.', { error: true })
+        if (!status) addToast(toastErrorMessage('Notifications'), { error: true })
     }
 
     const requestClipboardPermission = async () => {
         const status = await askForPermission('clipboard-read')
-        if (!status) addToast('You blocked the Clipboard permission.', { error: true })
+        if (!status) addToast(toastErrorMessage('Clipboard'), { error: true })
     }
 
     const buttonDisabled = !modalHidden && ((!isFirefox && !isClipboardGranted) || !isNoticationsGranted)
