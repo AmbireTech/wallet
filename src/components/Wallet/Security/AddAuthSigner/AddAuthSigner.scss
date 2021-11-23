@@ -2,13 +2,14 @@
 
 .wallet-btns-wrapper {
     width: 300px;
+    padding: 20px;
     display: flex;
     flex-direction: column;
 
     .button {
         box-sizing: border-box;
         text-align: left;
-        margin: 1em;
+        margin: 10px;
         border: 0px;
         color: black;
         line-height: 25px;

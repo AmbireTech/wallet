@@ -86,7 +86,7 @@ const AddAuthSigner = props => {
   const onSignerAddressClicked = useCallback(value => {
     setSignerAddress(value)
     modalHandler()
-    setTextInputInfo(`${signersToChoose.signerName} address # ${value.index + 1}`)
+    if (signersToChoose) setTextInputInfo(`${signersToChoose.signerName} address # ${value.index + 1}`)
   }, [signersToChoose])
 
   useEffect(() => {
