@@ -43,6 +43,7 @@ export default function Wallet(props) {
         removeAddress={props.removeAddress}
         isKnownAddress={props.isKnownAddress}
         isValidAddress={props.isValidAddress}
+        isKnownTokenOrContract={props.isKnownTokenOrContract}
       />
     },
     {

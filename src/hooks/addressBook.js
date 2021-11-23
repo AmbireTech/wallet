@@ -90,7 +90,8 @@ const useAddressBook = ({ accounts, selectedAcc }) => {
         addAddress,
         removeAddress,
         isValidAddress,
-        isKnownAddress
+        isKnownAddress,
+        isKnownTokenOrContract
     }
 }
 
