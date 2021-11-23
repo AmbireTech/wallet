@@ -1,5 +1,6 @@
 import './Security.scss'
 
+import { useState, useEffect } from 'react'
 import { Loading, TextInput, Button } from '../../common'
 import { Interface } from 'ethers/lib/utils'
 import accountPresets from '../../../consts/accountPresets'
@@ -22,8 +23,16 @@ const Security = ({
   addRequest,
   onAddAccount,
 }) => {
+  const [ cacheBreak, setCacheBreak ] = useState(() => Date.now())
+  
+  useEffect(() => {
+    if ((Date.now() - cacheBreak) > 30000) setCacheBreak(Date.now())
+    const intvl = setTimeout(() => setCacheBreak(Date.now()), 350000)
+    return () => clearTimeout(intvl)
+  }, [cacheBreak])
+
   const url = relayerURL
-    ? `${relayerURL}/identity/${selectedAcc}/${selectedNetwork.id}/privileges`
+    ? `${relayerURL}/identity/${selectedAcc}/${selectedNetwork.id}/privileges?cacheBreak=${cacheBreak}`
     : null
   const { data, errMsg, isLoading } = useRelayerData(url)
   const privileges = data ? data.privileges : {}
@@ -72,7 +81,6 @@ const Security = ({
   const onMakeDefaultBtnClicked = async (account, address, isQuickAccount) => {
     if (isQuickAccount) {
       const resp = await fetchGet(`${relayerURL}/identity/${selectedAcc}`)
-
       const respData = await resp
       const quickAccSignerData = respData.meta.quickAccSigner
 
