@@ -24,12 +24,12 @@ const Security = ({
   selectedAcc,
   selectedNetwork,
   accounts,
-  addresses,
-  addAddress,
-  removeAddress,
+  addressBook,
   addRequest,
   onAddAccount,
 }) => {
+  const { addresses, addAddress, removeAddress } = addressBook
+
   const { showModal } = useModals()
   const [ cacheBreak, setCacheBreak ] = useState(() => Date.now())
   
@@ -46,6 +46,7 @@ const Security = ({
   const privileges = data ? data.privileges : {}
   const { addToast } = useToasts()
   const history = useHistory()
+
 
   const craftTransaction = (address, privLevel) => {
     return {
