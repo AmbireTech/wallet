@@ -4,4 +4,9 @@
     display: flex;
     flex-direction: row;
     gap: 30px;
+
+    .cards {
+        display: flex;
+        gap: 30px;
+    }
 }
