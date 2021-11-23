@@ -13,14 +13,14 @@ function getNetworkSymbol(networkId) {
 }
 export default function TxnPreview ({ txn, onDismiss, network, account, isFirstFailing }) {
   const [isExpanded, setExpanded] = useState(false)
-  const contractName = getContractName(txn, network)
+  const contractName = getContractName(txn[0], network)
   return (
     <div className={isFirstFailing ? 'txnPreview firstFailing' : 'txnPreview'}>
         <div className="heading" onClick={() => setExpanded(e => !e)}>
           <div className="info">
             <div className="summary-container">
               <div className='expandTxn'>
-                {isExpanded ? (<FaChevronUp/>) : (<FaChevronDown/>)}
+                {isExpanded ? (<FaChevronDown/>) : (<FaChevronUp/>)}
               </div>
               <div className="summary">{getTransactionSummary(txn, network, account)}</div>
             </div>
