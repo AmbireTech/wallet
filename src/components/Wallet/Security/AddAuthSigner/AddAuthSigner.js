@@ -139,7 +139,6 @@ const AddAuthSigner = props => {
   const onTextInput = value => {
     if (textInputInfo.length) setTextInputInfo('')
     setSignerAddress({ ...signerAddress, address: value })
-    console.log('signerAddress', signerAddress)
   }
 
   useEffect(() => {
