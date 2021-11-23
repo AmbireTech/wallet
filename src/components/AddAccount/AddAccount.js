@@ -1,6 +1,6 @@
 import './AddAccount.scss'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import LoginOrSignup from '../LoginOrSignupForm/LoginOrSignupForm'
 import TrezorConnect from 'trezor-connect'
@@ -14,6 +14,8 @@ import { getProxyDeployBytecode } from 'adex-protocol-eth/js/IdentityProxyDeploy
 import { fetch, fetchPost } from '../../lib/fetch'
 import accountPresets from '../../consts/accountPresets'
 import { useToasts } from '../../hooks/toasts'
+import { SelectSignerAccountModal } from '../Modals'
+import { useModals } from '../../hooks'
 
 TrezorConnect.manifest({
   email: 'contactus@ambire.com',
@@ -26,10 +28,12 @@ const SCRYPT_ITERATIONS = 131072/8
 
 export default function AddAccount ({ relayerURL, onAddAccount }) {
     const [signersToChoose, setChooseSigners] = useState(null)
+    const [newSignedName, setNewSignedName] = useState('')
     const [err, setErr] = useState('')
     const [addAccErr, setAddAccErr] = useState('')
     const [inProgress, setInProgress] = useState(false)
     const { addToast } = useToasts()
+    const { showModal } = useModals()
 
     const wrapProgress = async fn => {
         setInProgress(true)
@@ -136,6 +140,7 @@ export default function AddAccount ({ relayerURL, onAddAccount }) {
         const web3Accs = await ethereum.request({ method: 'eth_requestAccounts' })
         if (!web3Accs.length) throw new Error('No accounts connected')
         if (web3Accs.length === 1) return onEOASelected(web3Accs[0])
+        setNewSignedName('Web3')
         setChooseSigners({ addresses: web3Accs })
     }
 
@@ -179,6 +184,7 @@ export default function AddAccount ({ relayerURL, onAddAccount }) {
         */
         const provider = new TrezorSubprovider({ trezorConnectClientApi: TrezorConnect })
         const addresses = await provider.getAccountsAsync(50)
+        setNewSignedName('Trezor')
         setChooseSigners({ addresses, signerExtra: {
             type: 'trezor',
             info: JSON.parse(JSON.stringify(provider._initialDerivedKeyInfo))
@@ -196,6 +202,7 @@ export default function AddAccount ({ relayerURL, onAddAccount }) {
         // cause one call won't be aware of the other's attempt to connect
         const addresses = await provider.getAccountsAsync(50)
         const signerExtra = await provider._initialDerivedKeyInfoAsync().then(info => ({ type: 'ledger', info: JSON.parse(JSON.stringify(info)) }))
+        setNewSignedName('Ledger')
         setChooseSigners({ addresses, signerExtra })
     }
 
@@ -214,18 +221,23 @@ export default function AddAccount ({ relayerURL, onAddAccount }) {
         }
     }
 
+    const onSignerAddressClicked = val => {
+        wrapErr(() => onEOASelected(val.address, signersToChoose.signerExtra))
+    }
+
     // The UI for choosing a signer to create/add an account with, for example
     // when connecting a hardware wallet, it has many addrs you can choose from
-    if (signersToChoose) {
-        return (<div className="loginSignupWrapper chooseSigners">
-            <h3>Choose a signer</h3>
-            <ul id="signersToChoose">
-                {signersToChoose.addresses.map(addr =>
-                    (<li key={addr} onClick={() => wrapErr(() => onEOASelected(addr, signersToChoose.signerExtra))}>{addr}</li>)
-                )}
-            </ul>
-        </div>)
-    }
+    useEffect(() => {
+        if (signersToChoose) {
+            showModal(
+                <SelectSignerAccountModal
+                signersToChoose={signersToChoose.addresses}
+                onSignerAddressClicked={onSignerAddressClicked}
+                newSignedName={newSignedName}
+                />
+            )
+        }
+    }, [signersToChoose])
 
     // Adding accounts from existing signers
     // @TODO: progress indicators for those
@@ -235,7 +247,7 @@ export default function AddAccount ({ relayerURL, onAddAccount }) {
         <button onClick={() => wrapErr(connectWeb3AndGetAccounts)}><div className="icon" style={{ backgroundImage: 'url(./resources/metamask.png)' }}/>Metamask / Browser</button>
     </>)
 
-    if (!relayerURL) {
+  if (!relayerURL) {
         return (<div className="loginSignupWrapper">
             <div id="logo"/>
             <section id="addAccount">
