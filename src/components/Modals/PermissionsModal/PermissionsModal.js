@@ -43,8 +43,14 @@ const PermissionsModal = () => {
                 <div className="details">
                     <div className="name">Clipboard { isFirefox ? <span className="unavailable">(Unavailable in Firefox)</span> : null }</div>
                     <div className="description">
-                        Needed so that dApps can be connected automatically just by copying their WalletConnect URL
+                        Needed so that dApps can be connected automatically just by copying their WalletConnect URL.
                     </div>
+                    { 
+                        isFirefox ? 
+                            <div className="unavailable">
+                                Without this, you can still use Ambire, but you will have to paste URLs manually
+                            </div> : null
+                    }
                 </div>
                 <Toggle checked={isClipboardGranted} onChange={() => requestClipboardPermission()}/>
             </div>
