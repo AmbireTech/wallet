@@ -3,7 +3,6 @@ import { constants } from 'ethers'
 import { names, tokens } from '../consts/humanizerInfo'
 import networks from '../consts/networks'
 import humanizers from './humanizers'
-import accountPresets from '../consts/accountPresets'
 
 export function getTransactionSummary(txn, networkId, accountAddr) {
     const [to, value, data = '0x'] = txn
@@ -11,10 +10,6 @@ export function getTransactionSummary(txn, networkId, accountAddr) {
     if (!network) return 'Unknown network (unable to parse)'
 
     if (to === '0x' || !to) {
-        return 'Deploy contract'
-    }
-    // @TODO: in this case, we can pre-calculate the address; we will need to parse the args tho
-    if (to === accountPresets.identityFactoryAddr) {
         return 'Deploy contract'
     }
 
