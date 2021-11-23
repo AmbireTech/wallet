@@ -1,12 +1,20 @@
 import { useCallback, useState } from 'react'
 import { useToasts } from './toasts'
 import * as blockies from 'blockies-ts';
+import { names, tokens } from '../consts/humanizerInfo'
 
 const accountType = ({ email, signerExtra }) => {
     const walletType = signerExtra && signerExtra.type === 'ledger' ? 'Ledger' : signerExtra && signerExtra.type === 'trezor' ? 'Trezor' : 'Web3'
     return email ? `Ambire account for ${email}` : `Ambire account (${walletType})`
 }
 const toIcon = seed => blockies.create({ seed }).toDataURL()
+
+const isKnownTokenOrContract = address => {
+    const addressToLowerCase = address.toLowerCase()
+    const tokensAddresses = Object.keys(tokens)
+    const contractsAddresses = Object.keys(names)
+    return tokensAddresses.includes(addressToLowerCase) || contractsAddresses.includes(addressToLowerCase)
+}
 
 const useAddressBook = ({ accounts, selectedAcc }) => {
     const { addToast } = useToasts()
@@ -50,6 +58,7 @@ const useAddressBook = ({ accounts, selectedAcc }) => {
     const addAddress = useCallback((name, address) => {
         if (!name || !address) throw new Error('Address Book: invalid arguments supplied')
         if (!isValidAddress(address)) throw new Error('Address Book: invalid address format')
+        if (isKnownTokenOrContract(address)) return addToast('The address you\'re trying to add is a smart contract.', { error: true })
 
         const newAddresses = [
             ...addresses,
