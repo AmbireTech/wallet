@@ -1,6 +1,6 @@
 import './AddAccount.scss'
 
-import { useState } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { Link } from 'react-router-dom'
 import LoginOrSignup from '../LoginOrSignupForm/LoginOrSignupForm'
 import TrezorConnect from 'trezor-connect'
@@ -14,6 +14,8 @@ import { getProxyDeployBytecode } from 'adex-protocol-eth/js/IdentityProxyDeploy
 import { fetch, fetchPost } from '../../lib/fetch'
 import accountPresets from '../../consts/accountPresets'
 import { useToasts } from '../../hooks/toasts'
+import { SelectSignerAccountModal } from '../Modals'
+import { useModals } from '../../hooks'
 
 TrezorConnect.manifest({
   email: 'contactus@ambire.com',
@@ -30,6 +32,7 @@ export default function AddAccount ({ relayerURL, onAddAccount }) {
     const [addAccErr, setAddAccErr] = useState('')
     const [inProgress, setInProgress] = useState(false)
     const { addToast } = useToasts()
+    const { showModal } = useModals()
 
     const wrapProgress = async fn => {
         setInProgress(true)
@@ -107,7 +110,7 @@ export default function AddAccount ({ relayerURL, onAddAccount }) {
 
     // EOA implementations
     // Add or create accounts from Trezor/Ledger/Metamask/etc.
-    async function createFromEOA (addr) {
+    const createFromEOA = useCallback(async(addr) => {
         const privileges = [[getAddress(addr), hexZeroPad('0x01', 32)]]
         const { salt, baseIdentityAddr, identityFactoryAddr } = accountPresets
         const bytecode = getProxyDeployBytecode(baseIdentityAddr, privileges, { privSlot: 0 })
@@ -126,7 +129,7 @@ export default function AddAccount ({ relayerURL, onAddAccount }) {
             salt, identityFactoryAddr, baseIdentityAddr, bytecode,
             signer: { address: getAddress(addr) }
         }
-    }
+    }, [relayerURL])
 
     async function connectWeb3AndGetAccounts () {
         if (typeof window.ethereum === 'undefined') {
@@ -136,10 +139,25 @@ export default function AddAccount ({ relayerURL, onAddAccount }) {
         const web3Accs = await ethereum.request({ method: 'eth_requestAccounts' })
         if (!web3Accs.length) throw new Error('No accounts connected')
         if (web3Accs.length === 1) return onEOASelected(web3Accs[0])
-        setChooseSigners({ addresses: web3Accs })
+        
+        setChooseSigners({ addresses: web3Accs, signerName: 'Web3' })
     }
 
-    async function getOwnedByEOAs(eoas) {
+    const getAccountByAddr = useCallback(async(idAddr, signerAddr) => {
+        // In principle, we need these values to be able to operate in relayerless mode,
+        // so we just store them in all cases
+        // Plus, in the future this call may be used to retrieve other things
+        const { salt, identityFactoryAddr, baseIdentityAddr, bytecode } = await fetch(`${relayerURL}/identity/${idAddr}`)
+            .then(r => r.json())
+        if (!(salt && identityFactoryAddr && baseIdentityAddr && bytecode)) throw new Error(`Incomplete data from relayer for ${idAddr}`)
+        return {
+            id: idAddr,
+            salt, identityFactoryAddr, baseIdentityAddr, bytecode,
+            signer: { address: signerAddr }
+        }
+    }, [relayerURL])
+
+    const getOwnedByEOAs= useCallback(async(eoas) => {
         let allUniqueOwned = {}
 
         await Promise.all(eoas.map(
@@ -154,22 +172,8 @@ export default function AddAccount ({ relayerURL, onAddAccount }) {
         return await Promise.all(
             Object.entries(allUniqueOwned).map(([id, signer]) => getAccountByAddr(id, signer))
         )
-    }
-
-    async function getAccountByAddr (idAddr, signerAddr) {
-        // In principle, we need these values to be able to operate in relayerless mode,
-        // so we just store them in all cases
-        // Plus, in the future this call may be used to retrieve other things
-        const { salt, identityFactoryAddr, baseIdentityAddr, bytecode } = await fetch(`${relayerURL}/identity/${idAddr}`)
-            .then(r => r.json())
-        if (!(salt && identityFactoryAddr && baseIdentityAddr && bytecode)) throw new Error(`Incomplete data from relayer for ${idAddr}`)
-        return {
-            id: idAddr,
-            salt, identityFactoryAddr, baseIdentityAddr, bytecode,
-            signer: { address: signerAddr }
-        }
-    }
-
+    }, [getAccountByAddr, relayerURL])
+ 
     async function connectTrezorAndGetAccounts () {
         /*
         const engine = new Web3ProviderEngine({ pollingInterval: this.pollingInterval })
@@ -179,10 +183,10 @@ export default function AddAccount ({ relayerURL, onAddAccount }) {
         */
         const provider = new TrezorSubprovider({ trezorConnectClientApi: TrezorConnect })
         const addresses = await provider.getAccountsAsync(50)
-        setChooseSigners({ addresses, signerExtra: {
+        setChooseSigners({ addresses, signerName: 'Trezor', signerExtra: {
             type: 'trezor',
             info: JSON.parse(JSON.stringify(provider._initialDerivedKeyInfo))
-        } })
+        } },)
     }
 
     async function connectLedgerAndGetAccounts () {
@@ -196,10 +200,11 @@ export default function AddAccount ({ relayerURL, onAddAccount }) {
         // cause one call won't be aware of the other's attempt to connect
         const addresses = await provider.getAccountsAsync(50)
         const signerExtra = await provider._initialDerivedKeyInfoAsync().then(info => ({ type: 'ledger', info: JSON.parse(JSON.stringify(info)) }))
-        setChooseSigners({ addresses, signerExtra })
+        
+        setChooseSigners({ addresses, signerName: 'Ledger', signerExtra })
     }
 
-    async function onEOASelected (addr, signerExtra) {
+    const onEOASelected = useCallback(async (addr, signerExtra) => {
         const addAccount = (acc, opts) => onAddAccount({ ...acc, signerExtra }, opts)
         // when there is no relayer, we can only add the 'default' account created from that EOA
         // @TODO in the future, it would be nice to do getLogs from the provider here to find out which other addrs we control
@@ -212,20 +217,27 @@ export default function AddAccount ({ relayerURL, onAddAccount }) {
             addToast(`Found ${owned.length} existing accounts with signer ${addr}`, { timeout: 15000 })
             owned.forEach((acc, i) => addAccount(acc , { select: i === 0 }))
         }
-    }
+    }, [addToast, createFromEOA, getOwnedByEOAs, onAddAccount, relayerURL])
+
+    const onSignerAddressClicked = useCallback(val => {
+        wrapErr(() => onEOASelected(val.address, signersToChoose.signerExtra))
+        setChooseSigners(null)
+    }, [onEOASelected, signersToChoose])
 
     // The UI for choosing a signer to create/add an account with, for example
     // when connecting a hardware wallet, it has many addrs you can choose from
-    if (signersToChoose) {
-        return (<div className="loginSignupWrapper chooseSigners">
-            <h3>Choose a signer</h3>
-            <ul id="signersToChoose">
-                {signersToChoose.addresses.map(addr =>
-                    (<li key={addr} onClick={() => wrapErr(() => onEOASelected(addr, signersToChoose.signerExtra))}>{addr}</li>)
-                )}
-            </ul>
-        </div>)
-    }
+    useEffect(() => {
+        if (signersToChoose) {
+            showModal(
+                <SelectSignerAccountModal
+                    signersToChoose={signersToChoose.addresses}
+                    onSignerAddressClicked={onSignerAddressClicked}
+                    description={`Signer address is the ${signersToChoose.signerName} address you will use to sign transactions on Ambire Wallet.
+                    А new account will be created using this signer if you don’t have one.`}
+                />
+            )
+        }
+    }, [onSignerAddressClicked, showModal, signersToChoose])
 
     // Adding accounts from existing signers
     // @TODO: progress indicators for those
@@ -235,7 +247,7 @@ export default function AddAccount ({ relayerURL, onAddAccount }) {
         <button onClick={() => wrapErr(connectWeb3AndGetAccounts)}><div className="icon" style={{ backgroundImage: 'url(./resources/metamask.png)' }}/>Metamask / Browser</button>
     </>)
 
-    if (!relayerURL) {
+  if (!relayerURL) {
         return (<div className="loginSignupWrapper">
             <div id="logo"/>
             <section id="addAccount">
