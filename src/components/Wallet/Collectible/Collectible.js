@@ -8,7 +8,7 @@ import { AiOutlineSend } from 'react-icons/ai'
 import { BsFillImageFill } from 'react-icons/bs'
 import * as blockies from 'blockies-ts';
 import { useToasts } from '../../../hooks/toasts'
-import { TextInput, Button, Loading, AddressBook, UnknownAddress } from '../../common'
+import { TextInput, Button, Loading, AddressBook, AddressWarning } from '../../common'
 import ERC721Abi from '../../../consts/ERC721Abi'
 import networks from '../../../consts/networks'
 
@@ -19,7 +19,7 @@ const handleUri = uri => {
     return uri.startsWith('ipfs://') ? uri.replace(/ipfs:\/\/ipfs\/|ipfs:\/\//g, 'https://ipfs.io/ipfs/') : uri
 }
 
-const Collectible = ({ selectedAcc, selectedNetwork, addRequest, addresses, addAddress, removeAddress, isValidAddress, isKnownAddress }) => {
+const Collectible = ({ selectedAcc, selectedNetwork, addRequest, addresses, addAddress, removeAddress, isValidAddress, isKnownAddress, isKnownTokenOrContract }) => {
     const { addToast } = useToasts()
     const { network, collectionAddr, tokenId } = useParams()
     const [isLoading, setLoading] = useState(true)
@@ -175,12 +175,13 @@ const Collectible = ({ selectedAcc, selectedNetwork, addRequest, addresses, addA
                         />
                     </div>
                     <div className="separator"></div>
-                    <UnknownAddress
+                    <AddressWarning
                         address={recipientAddress}
                         onAddNewAddress={() => setNewAddress(recipientAddress)}
                         onChange={(value) => setAddressConfirmed(value)}
                         isKnownAddress={isKnownAddress}
                         isValidAddress={isValidAddress}
+                        isKnownTokenOrContract={isKnownTokenOrContract}
                     />
                     <Button icon={<AiOutlineSend/>} disabled={isTransferDisabled} onClick={sendTransferTx}>Send</Button>
                 </div>
