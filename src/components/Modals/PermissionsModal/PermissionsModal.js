@@ -6,6 +6,8 @@ import { useToasts } from '../../../hooks/toasts'
 import { askForPermission, isFirefox } from '../../../helpers/permissions'
 import { Modal, Toggle, Button, Checkbox } from "../../common"
 
+const toastErrorMessage = name => `You blocked the ${name} permission. Check your browser permissions tab.`
+
 const PermissionsModal = () => {
     const { hideModal } = useModals()
     const { isNoticationsGranted, isClipboardGranted, modalHidden, setModalHidden } = usePermissions()
@@ -13,12 +15,12 @@ const PermissionsModal = () => {
 
     const requestNotificationsPermission = async () => {
         const status = await askForPermission('notifications')
-        if (!status) addToast('You blocked the Notifications permission.', { error: true })
+        if (!status) addToast(toastErrorMessage('Notifications'), { error: true })
     }
 
     const requestClipboardPermission = async () => {
         const status = await askForPermission('clipboard-read')
-        if (!status) addToast('You blocked the Clipboard permission.', { error: true })
+        if (!status) addToast(toastErrorMessage('Clipboard'), { error: true })
     }
 
     const buttonDisabled = !modalHidden && ((!isFirefox && !isClipboardGranted) || !isNoticationsGranted)
@@ -43,8 +45,14 @@ const PermissionsModal = () => {
                 <div className="details">
                     <div className="name">Clipboard { isFirefox ? <span className="unavailable">(Unavailable in Firefox)</span> : null }</div>
                     <div className="description">
-                        Needed so that dApps can be connected automatically just by copying their WalletConnect URL
+                        Needed so that dApps can be connected automatically just by copying their WalletConnect URL.
                     </div>
+                    { 
+                        isFirefox ? 
+                            <div className="unavailable">
+                                Without this, you can still use Ambire, but you will have to paste URLs manually
+                            </div> : null
+                    }
                 </div>
                 <Toggle checked={isClipboardGranted} onChange={() => requestClipboardPermission()}/>
             </div>
