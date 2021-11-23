@@ -40,7 +40,20 @@ export default function GnosisSafeApps({
 
   return (
     <div id="plugin-gnosis-conainer">
-      {selectedApp ? (
+      <ul id="dapps-container" className={selectedApp ? 'small-thumbs' : ''}>
+        {dapps.map((dapp, index) => (
+          <li
+            key={index}
+            onClick={() => setSelectedApp(dapp)}
+            className={(selectedApp && dapp.url === selectedApp.url) ? 'selected' : ''}
+          >
+            <div className="logo-container" style={{ backgroundImage: `url(${dapp.logo})` }}></div>
+            <div className="dapp-name">{dapp.name}</div>
+            <div className="dapp-desc">{dapp.desc}</div>
+          </li>
+        ))}
+      </ul>
+      {selectedApp &&
         <GnosisSafeAppIframe
           network={network}
           selectedApp={selectedApp}
@@ -49,16 +62,6 @@ export default function GnosisSafeApps({
           gnosisDisconnect={gnosisDisconnect}
 
         />
-      ) : (
-        <ul id="dapps-container">
-          {dapps.map((dapp, index) => (
-            <li key={index} onClick={() => setSelectedApp(dapp)}>
-              <div className="logo-container" style={{ backgroundImage: `url(${dapp.logo})` }}></div>
-              <div className="dapp-name">{dapp.name}</div>
-              <div className="dapp-desc">{dapp.desc}</div>
-            </li>
-          ))}
-        </ul>
-      )}
+      }
     </div>)
 }
