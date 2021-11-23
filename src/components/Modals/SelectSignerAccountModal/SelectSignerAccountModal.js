@@ -41,7 +41,7 @@ const SelectSignerAccountModal = ({
   }
 
   const formatAddress = addr => {
-    return addr.slice(0, 4) + '...' + addr.slice(addr.length - 4, addr.length)
+    return addr.slice(0, 5) + '...' + addr.slice(addr.length - 4, addr.length)
   }
 
   const prevBtnDisabled = currentPage === 0
@@ -57,7 +57,7 @@ const SelectSignerAccountModal = ({
   }
 
   return (
-    <Modal id="select-signer-modal" title="Select a signer account">
+    <Modal id="select-signer-modal" title="Select a signer address">
       <div className="intro">{description}</div>
       <div className="loginSignupWrapper chooseSigners">
         <ul id="signersToChoose">
@@ -66,21 +66,21 @@ const SelectSignerAccountModal = ({
                 <li
                   key={addr}
                   className={!(index % 2) ? ' odd-rows-bg' : ''}
+                  onClick={() =>
+                    onAddressClicked(addr, currentPage * pageSize + index)
+                  }
                 >
                   <span className="index-row">
                     {currentPage * pageSize + index + 1}
                   </span>
-                  <span
-                    onClick={() =>
-                      onAddressClicked(addr, currentPage * pageSize + index)
-                    }
-                  >
+                  <span>
                     {formatAddress(addr)}
                   </span>
                   <a
                     href={selectedNetwork.explorerUrl + '/address/' + addr}
-                    target="_blank"
-                    rel="noreferrer"
+                    target='_blank'
+                    rel='noreferrer'
+                    onClick={e => e.stopPropagation()}
                   >
                     <HiOutlineExternalLink size={25} />
                   </a>
