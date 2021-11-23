@@ -10,7 +10,7 @@ const SelectSignerAccountModal = ({
   signersToChoose,
   onSignerAddressClicked,
   selectedNetwork = { explorerUrl: 'https://etherscan.io' },
-  newSignedName,
+  description = ''
 }) => {
   const { hideModal } = useModals()
   const [currentPage, setCurrentPage] = useState(0)
@@ -58,10 +58,7 @@ const SelectSignerAccountModal = ({
 
   return (
     <Modal id="select-signer-modal" title="Select a signer account">
-      <div className="intro">
-        Signer account is the {newSignedName} account you will use to sign
-        transactions with on Ambire Wallet. А new account will be created using this signer if you don't have one.
-      </div>
+      <div className="intro">{description}</div>
       <div className="loginSignupWrapper chooseSigners">
         <ul id="signersToChoose">
           {signersToChoose
