@@ -4,6 +4,8 @@ import usePortfolio from "./portfolio"
 import useWalletConnect from "./walletconnect"
 import useRelayerData from './relayerData'
 import useAttentionGrabber from './attentionGrabber'
+import useModals from './modals'
+import usePermissions from './permissions'
 
 export {
     useAccounts,
@@ -11,5 +13,7 @@ export {
     usePortfolio,
     useWalletConnect,
     useRelayerData,
-    useAttentionGrabber
+    useAttentionGrabber,
+    useModals,
+    usePermissions
 }

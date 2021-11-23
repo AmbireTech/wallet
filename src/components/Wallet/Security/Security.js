@@ -21,13 +21,14 @@ const Security = ({ relayerURL, selectedAcc, selectedNetwork, accounts, addReque
         address,
         privLevel,
       ]),
-      value: '0x',
+      value: '0x00',
     }
   }
 
   const addTransactionToAddRequest = txn => {
     addRequest({
       id: `setPriv_${txn.data}`,
+      type: 'eth_sendTransaction',
       txn: txn,
       chainId: selectedNetwork.chainId,
       account: selectedAcc,
