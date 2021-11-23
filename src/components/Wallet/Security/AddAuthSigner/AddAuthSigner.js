@@ -96,7 +96,7 @@ const AddAuthSigner = props => {
           signersToChoose={signersToChoose.addresses}
           selectedNetwork={props.selectedNetwork}
           onSignerAddressClicked={onSignerAddressClicked}
-          newSignedName={signersToChoose.signerName}
+          description={`You will authorize the selected ${signersToChoose.signerName} address to sign transactions for your account.`}
         />
       )
   }, [modalToggle, onSignerAddressClicked, props.selectedNetwork, showModal, signersToChoose])

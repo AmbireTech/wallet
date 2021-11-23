@@ -232,7 +232,8 @@ export default function AddAccount ({ relayerURL, onAddAccount }) {
                 <SelectSignerAccountModal
                     signersToChoose={signersToChoose.addresses}
                     onSignerAddressClicked={onSignerAddressClicked}
-                    newSignedName={signersToChoose.signerName}
+                    description={`Signer address is the ${signersToChoose.signerName} address you will use to sign transactions on Ambire Wallet.
+                    А new account will be created using this signer if you don’t have one.`}
                 />
             )
         }
