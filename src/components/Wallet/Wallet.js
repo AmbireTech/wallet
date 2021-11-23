@@ -61,6 +61,7 @@ export default function Wallet(props) {
         addAddress={props.addAddress}
         removeAddress={props.removeAddress}
         addRequest={props.addRequest}
+        onAddAccount={props.onAddAccount}
       />
     },
     {

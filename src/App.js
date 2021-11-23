@@ -7,7 +7,7 @@ import {
   Redirect,
   Prompt
 } from 'react-router-dom'
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect, useMemo, useCallback } from 'react'
 import EmailLogin from './components/EmailLogin/EmailLogin'
 import AddAccount from './components/AddAccount/AddAccount'
 import Wallet from './components/Wallet/Wallet'
@@ -20,7 +20,7 @@ import useNetwork from './hooks/network'
 import useWalletConnect from './hooks/walletconnect'
 import useGnosisSafe from './hooks/useGnosisSafe'
 import useNotifications from './hooks/notifications'
-import { usePortfolio, useAddressBook } from './hooks'
+import { useAttentionGrabber, usePortfolio, useAddressBook } from './hooks'
 
 const relayerURL = process.env.hasOwnProperty('REACT_APP_RELAYER_URL') ? process.env.REACT_APP_RELAYER_URL : 'http://localhost:1934'
 
@@ -115,6 +115,12 @@ function AppInner () {
     setSendTxnState(state => ({ ...state, showing: true }))
   }, portfolio, selectedAcc, network)
 
+  useAttentionGrabber({
+    eligibleRequests,
+    isSendTxnShowing: sendTxnState.showing,
+    onSitckyClick: useCallback(() => setSendTxnState({ showing: true }), [])
+  })
+
   return (<>
     <Prompt
       message={(location, action) => {
@@ -182,6 +188,7 @@ function AppInner () {
           // required by the transactions page
           eligibleRequests={eligibleRequests}
           showSendTxns={bundle => setSendTxnState({ showing: true, replacementBundle: bundle })}
+          onAddAccount={onAddAccount}
         >
         </Wallet>
       </Route>
