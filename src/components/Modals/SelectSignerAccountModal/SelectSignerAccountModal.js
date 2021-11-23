@@ -9,7 +9,7 @@ import { MdKeyboardArrowLeft, MdKeyboardArrowRight } from 'react-icons/md'
 const SelectSignerAccountModal = ({
   signersToChoose,
   onSignerAddressClicked,
-  selectedNetwork,
+  selectedNetwork = { explorerUrl: 'https://etherscan.io' },
   newSignedName,
 }) => {
   const { hideModal } = useModals()
@@ -26,7 +26,7 @@ const SelectSignerAccountModal = ({
   }
 
   let pages = []
-  let pageSize = 5
+  const pageSize = 5
 
   pages = paginate(signersToChoose, pageSize)
 
@@ -43,6 +43,9 @@ const SelectSignerAccountModal = ({
   const formatAddress = addr => {
     return addr.slice(0, 4) + '...' + addr.slice(addr.length - 4, addr.length)
   }
+
+  const prevBtnDisabled = currentPage === 0
+  const nextBtnDisabled = currentPage === pages.length - 1
 
   const onAddressClicked = (addr, index) => {
     onSignerAddressClicked({
@@ -65,7 +68,7 @@ const SelectSignerAccountModal = ({
             ? pages[currentPage].map((addr, index) => (
                 <li
                   key={addr}
-                  className={!(index % 2) && ' odd-rows-bg'}
+                  className={!(index % 2) ? ' odd-rows-bg' : ''}
                 >
                   <span className="index-row">
                     {currentPage * pageSize + index + 1}
@@ -92,10 +95,10 @@ const SelectSignerAccountModal = ({
           {currentPage + 1}/{pages.length}
         </div>
         <div className="buttons">
-          <Button icon={<MdKeyboardArrowLeft/>} clear small type="button" onClick={prevPage}>
+          <Button disabled={prevBtnDisabled} icon={<MdKeyboardArrowLeft/>} small type="button" onClick={prevPage}>
             Prev
           </Button>
-          <Button iconAfter={<MdKeyboardArrowRight/>} small type="button" onClick={nextPage}>
+          <Button disabled={nextBtnDisabled} iconAfter={<MdKeyboardArrowRight/>} small type="button" onClick={nextPage}>
             Next
           </Button>
         </div>
