@@ -115,9 +115,10 @@ function AppInner () {
     setSendTxnState(state => ({ ...state, showing: true }))
   }, portfolio, selectedAcc, network)
 
+  let titleTmp = useRef(document.title)
+  let titleInterval = useRef(null)
   let stickyId = useRef()
   useEffect(() => {
-    removeToast(stickyId.current)
     if (eligibleRequests.length) {
       stickyId.current = addToast('Transactions waiting to be signed', {
         position: 'right',
@@ -125,6 +126,16 @@ function AppInner () {
         badge: eligibleRequests.length,
         onClick: () => setSendTxnState({ showing: true })
       })
+
+      let count = 0
+      titleInterval.current = setInterval(() => {
+        document.title = (count % 2 === 0 ? '⚠️' : '🔥') + ' PENDING SIGNING REQUEST'
+        count++
+      }, 500)
+    } else {
+      removeToast(stickyId.current)
+      clearInterval(titleInterval.current)
+      document.title = titleTmp.current
     }
   }, [eligibleRequests, addToast, removeToast])
 
