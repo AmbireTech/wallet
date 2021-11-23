@@ -9,12 +9,9 @@ import { BiTransfer } from 'react-icons/bi'
 import { Loading } from '../../common'
 import { useCallback, useEffect, useRef, useState } from 'react'
 
-const SideBar = ({ match, portfolio, eligibleReqLength }) => {
+const SideBar = ({ match, portfolio }) => {
   const sidebarRef = useRef()
   const [balanceFontSize, setBalanceFontSize] = useState(0)
-  const pendingTransactions = eligibleReqLength > 0
-  const pendingTxnCount = (eligibleReqLength > 9) ? '9+' : eligibleReqLength.toString()
-
     const resizeBalance = useCallback(() => {
         const balanceFontSizes = {
             3: '2em',
@@ -57,7 +54,6 @@ const SideBar = ({ match, portfolio, eligibleReqLength }) => {
           </div>
         )}
       </div>
-
                 <NavLink to={match.url + "/dashboard"} activeClassName="selected">
                     <div className="item">
                         <MdDashboard size={30}/>Dashboard
@@ -85,17 +81,7 @@ const SideBar = ({ match, portfolio, eligibleReqLength }) => {
                 </NavLink>
                 <NavLink to={match.url + "/transactions"} activeClassName="selected">
                     <div className="item">
-                      {pendingTransactions ? (
-                        <>
-                          <span className="badge-wrapper ">{pendingTxnCount}</span>
-                          <span>Transactions</span>
-                        </>
-                      ) : (
-                        <>
-                          <MdCompareArrows size={30} />
-                          Transactions
-                        </>
-                      )}
+                          <MdCompareArrows size={30}/>Transactions
                     </div>
                 </NavLink>
                 <NavLink to={match.url + "/security"} activeClassName="selected">
