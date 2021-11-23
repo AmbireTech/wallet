@@ -8,12 +8,13 @@ import privilegesOptions from '../../../consts/privilegesOptions'
 import { useRelayerData, useModals } from '../../../hooks'
 import { InputModal } from '../../Modals';
 import AddressList from '../../common/AddressBook/AddressList/AddressList'
+import { isValidAddress } from '../../../helpers/address';
 
 const IDENTITY_INTERFACE = new Interface(
   require('adex-protocol-eth/abi/Identity5.2')
 )
 
-const Security = ({ relayerURL, selectedAcc, selectedNetwork, accounts, addresses, addAddress, removeAddress, addRequest, isValidAddress }) => {
+const Security = ({ relayerURL, selectedAcc, selectedNetwork, accounts, addresses, addAddress, removeAddress, addRequest }) => {
   const { showModal } = useModals()
   const { data, errMsg, isLoading } = useRelayerData(relayerURL ? `${relayerURL}/identity/${selectedAcc}/${selectedNetwork.id}/privileges` : null)
   const privileges = data ? data.privileges : {}

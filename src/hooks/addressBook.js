@@ -1,20 +1,13 @@
 import { useCallback, useState } from 'react'
 import { useToasts } from './toasts'
 import * as blockies from 'blockies-ts';
-import { names, tokens } from '../consts/humanizerInfo'
+import { isValidAddress, isKnownTokenOrContract } from '../helpers/address';
 
 const accountType = ({ email, signerExtra }) => {
     const walletType = signerExtra && signerExtra.type === 'ledger' ? 'Ledger' : signerExtra && signerExtra.type === 'trezor' ? 'Trezor' : 'Web3'
     return email ? `Ambire account for ${email}` : `Ambire account (${walletType})`
 }
 const toIcon = seed => blockies.create({ seed }).toDataURL()
-
-const isKnownTokenOrContract = address => {
-    const addressToLowerCase = address.toLowerCase()
-    const tokensAddresses = Object.keys(tokens)
-    const contractsAddresses = Object.keys(names)
-    return tokensAddresses.includes(addressToLowerCase) || contractsAddresses.includes(addressToLowerCase)
-}
 
 const useAddressBook = ({ accounts, selectedAcc }) => {
     const { addToast } = useToasts()
@@ -49,7 +42,6 @@ const useAddressBook = ({ accounts, selectedAcc }) => {
         localStorage.addresses = JSON.stringify(addresses.filter(({ isAccount }) => !isAccount))
     }
 
-    const isValidAddress = useCallback(address => /^0x[a-fA-F0-9]{40}$/.test(address), [])
     const isKnownAddress = useCallback(address => [
         ...addresses.map(({ address }) => address),
         ...accounts.map(({ id }) => id)
@@ -71,7 +63,7 @@ const useAddressBook = ({ accounts, selectedAcc }) => {
         updateAddresses(newAddresses)
 
         addToast(`${address} added to your Address Book.`)
-    }, [addresses, isValidAddress, addToast])
+    }, [addresses, addToast])
 
     const removeAddress = useCallback((name, address) => {
         if (!name || !address) throw new Error('Address Book: invalid arguments supplied')
@@ -83,15 +75,13 @@ const useAddressBook = ({ accounts, selectedAcc }) => {
         updateAddresses(newAddresses)
 
         addToast(`${address} removed from your Address Book.`)
-    }, [addresses, isValidAddress, addToast])
+    }, [addresses, addToast])
 
     return {
         addresses,
         addAddress,
         removeAddress,
-        isValidAddress,
-        isKnownAddress,
-        isKnownTokenOrContract
+        isKnownAddress
     }
 }
 

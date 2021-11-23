@@ -42,8 +42,6 @@ export default function Wallet(props) {
         addAddress={props.addAddress}
         removeAddress={props.removeAddress}
         isKnownAddress={props.isKnownAddress}
-        isValidAddress={props.isValidAddress}
-        isKnownTokenOrContract={props.isKnownTokenOrContract}
       />
     },
     {
@@ -61,7 +59,6 @@ export default function Wallet(props) {
         addAddress={props.addAddress}
         removeAddress={props.removeAddress}
         addRequest={props.addRequest}
-        isValidAddress={props.isValidAddress}
       />
     },
     {
@@ -88,8 +85,6 @@ export default function Wallet(props) {
         addAddress={props.addAddress}
         removeAddress={props.removeAddress}
         isKnownAddress={props.isKnownAddress}
-        isValidAddress={props.isValidAddress}
-        isKnownTokenOrContract={props.isKnownTokenOrContract}
       />
     },
     {

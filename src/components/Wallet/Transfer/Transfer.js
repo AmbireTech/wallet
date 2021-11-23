@@ -8,6 +8,7 @@ import SendPlaceholder from './SendPlaceholder/SendPlaceholder'
 import { Interface } from 'ethers/lib/utils'
 import { useToasts } from '../../../hooks/toasts'
 import { TextInput, NumberInput, Button, Select, Loading, AddressBook, AddressWarning } from '../../common'
+import { isValidAddress, isKnownTokenOrContract } from '../../../helpers/address';
 
 const ERC20 = new Interface(require('adex-protocol-eth/abi/ERC20'))
 const crossChainAssets = [
@@ -23,7 +24,7 @@ const crossChainAssets = [
     }
 ]
 
-const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest, addresses, addAddress, removeAddress, isKnownAddress, isValidAddress, isKnownTokenOrContract }) => {
+const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest, addresses, addAddress, removeAddress, isKnownAddress }) => {
     const { tokenAddress } = useParams()
     const { addToast } = useToasts()
 
@@ -98,7 +99,7 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
 
     useEffect(() => {
         setDisabled(isKnownTokenOrContract(address) || !isValidAddress(address) || !(amount > 0) || !(amount <= selectedAsset?.balance) || address === selectedAcc || (!isKnownAddress(address) && !addressConfirmed))
-    }, [address, amount, selectedAcc, selectedAsset, addressConfirmed, isValidAddress, isKnownAddress])
+    }, [address, amount, selectedAcc, selectedAsset, addressConfirmed, isKnownAddress])
 
     return (
         <div id="transfer">
@@ -143,8 +144,6 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
                                     onAddNewAddress={() => setNewAddress(address)}
                                     onChange={(value) => setAddressConfirmed(value)}
                                     isKnownAddress={isKnownAddress}
-                                    isValidAddress={isValidAddress}
-                                    isKnownTokenOrContract={isKnownTokenOrContract}
                                 />
                                 <Button disabled={disabled} onClick={sendTx}>Send</Button>
                             </div>

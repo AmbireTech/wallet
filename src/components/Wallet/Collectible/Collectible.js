@@ -11,6 +11,7 @@ import { useToasts } from '../../../hooks/toasts'
 import { TextInput, Button, Loading, AddressBook, AddressWarning } from '../../common'
 import ERC721Abi from '../../../consts/ERC721Abi'
 import networks from '../../../consts/networks'
+import { isValidAddress, isKnownTokenOrContract } from '../../../helpers/address';
 
 const ERC721 = new Interface(ERC721Abi)
 
@@ -19,7 +20,7 @@ const handleUri = uri => {
     return uri.startsWith('ipfs://') ? uri.replace(/ipfs:\/\/ipfs\/|ipfs:\/\//g, 'https://ipfs.io/ipfs/') : uri
 }
 
-const Collectible = ({ selectedAcc, selectedNetwork, addRequest, addresses, addAddress, removeAddress, isValidAddress, isKnownAddress, isKnownTokenOrContract }) => {
+const Collectible = ({ selectedAcc, selectedNetwork, addRequest, addresses, addAddress, removeAddress, isKnownAddress }) => {
     const { addToast } = useToasts()
     const { network, collectionAddr, tokenId } = useParams()
     const [isLoading, setLoading] = useState(true)
@@ -59,8 +60,8 @@ const Collectible = ({ selectedAcc, selectedNetwork, addRequest, addresses, addA
     }
 
     useEffect(() => {
-        setTransferDisabled(!isValidAddress(recipientAddress) || selectedAcc === recipientAddress || metadata.owner?.address !== selectedAcc || selectedNetwork.id !== network || (!isKnownAddress(recipientAddress) && !addressConfirmed))
-    }, [recipientAddress, metadata, selectedNetwork, selectedAcc, network, addressConfirmed, isValidAddress, isKnownAddress])
+        setTransferDisabled(isKnownTokenOrContract(recipientAddress) || !isValidAddress(recipientAddress) || selectedAcc === recipientAddress || metadata.owner?.address !== selectedAcc || selectedNetwork.id !== network || (!isKnownAddress(recipientAddress) && !addressConfirmed))
+    }, [recipientAddress, metadata, selectedNetwork, selectedAcc, network, addressConfirmed, isKnownAddress])
 
     const fetchMetadata = useCallback(async () => {
         setLoading(true)
@@ -180,8 +181,6 @@ const Collectible = ({ selectedAcc, selectedNetwork, addRequest, addresses, addA
                         onAddNewAddress={() => setNewAddress(recipientAddress)}
                         onChange={(value) => setAddressConfirmed(value)}
                         isKnownAddress={isKnownAddress}
-                        isValidAddress={isValidAddress}
-                        isKnownTokenOrContract={isKnownTokenOrContract}
                     />
                     <Button icon={<AiOutlineSend/>} disabled={isTransferDisabled} onClick={sendTransferTx}>Send</Button>
                 </div>
