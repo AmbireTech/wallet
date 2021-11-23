@@ -12,8 +12,17 @@ import Security from "./Security/Security"
 import Transactions from './Transactions/Transactions'
 import PluginGnosisSafeApps from "../Plugins/GnosisSafeApps/GnosisSafeApps"
 import Collectible from "./Collectible/Collectible"
+import { PermissionsModal } from '../Modals'
+import { useModals, usePermissions } from "../../hooks"
+import { useCallback, useEffect, useMemo } from "react"
+import { isFirefox } from '../../helpers/permissions'
 
 export default function Wallet(props) {
+  const { showModal } = useModals()
+  const { isClipboardGranted, isNoticationsGranted, arePermissionsLoaded, modalHidden } = usePermissions()
+
+  const isLoggedIn = useMemo(() => props.accounts.length > 0, [props.accounts])
+
   const routes = [
     {
       path: '/dashboard',
@@ -63,6 +72,12 @@ export default function Wallet(props) {
     }
   ]
 
+  const handlePermissionsModal = useCallback(async () => {
+    if (!modalHidden && arePermissionsLoaded && ((!isFirefox && !isClipboardGranted) || !isNoticationsGranted)) showModal(<PermissionsModal/>)
+  }, [showModal, isClipboardGranted, isNoticationsGranted, arePermissionsLoaded, modalHidden])
+
+  useEffect(() => handlePermissionsModal(), [handlePermissionsModal])
+
   return (
     <div id="wallet">
       <TopBar {...props} />
@@ -71,13 +86,18 @@ export default function Wallet(props) {
         <Switch>
           {
             routes.map(({ path, component }) => (
-              <Route path={props.match.url + path} key={path}>
-                { component ? component : null }
+              <Route exact path={props.match.url + path} key={path}>
+                {
+                  !isLoggedIn ? 
+                    <Redirect to="/add-account" />
+                    :
+                    component ? component : null
+                }
               </Route>
             ))
           }
-          <Route path={props.match.url + "/"}>
-            <Redirect to={props.match.url + "/dashboard"} />
+          <Route path={props.match.url + '/*'}>
+            <Redirect to={props.match.url + '/dashboard'} />
           </Route>
         </Switch>
       </div>
