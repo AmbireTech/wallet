@@ -48,18 +48,6 @@
             opacity: 0.5;
         }
     }
-
-    #address-warning {
-        display: flex;
-        align-items: center;
-        gap: 5px;
-        font-weight: bold;
-        color: $danger-color;
-
-        svg {
-            font-size: 20px;
-        }
-    }
 }
 
 @media screen and (max-width: 1400px) {

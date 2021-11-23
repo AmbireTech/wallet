@@ -22,3 +22,15 @@
         }
     }
 }
+
+#smart-contract-warning {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-weight: bold;
+    color: $danger-color;
+
+    svg {
+        font-size: 20px;
+    }
+}

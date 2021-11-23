@@ -1,6 +1,5 @@
 import './Transfer.scss'
 
-import { AiOutlineWarning } from 'react-icons/ai'
 import { BsArrowDown } from 'react-icons/bs'
 import { useParams, withRouter } from 'react-router'
 import { useEffect, useState } from 'react'
@@ -8,8 +7,7 @@ import { ethers } from 'ethers'
 import SendPlaceholder from './SendPlaceholder/SendPlaceholder'
 import { Interface } from 'ethers/lib/utils'
 import { useToasts } from '../../../hooks/toasts'
-import { TextInput, NumberInput, Button, Select, Loading, AddressBook, UnknownAddress } from '../../common'
-import { names, tokens } from '../../../consts/humanizerInfo'
+import { TextInput, NumberInput, Button, Select, Loading, AddressBook, AddressWarning } from '../../common'
 
 const ERC20 = new Interface(require('adex-protocol-eth/abi/ERC20'))
 const crossChainAssets = [
@@ -34,7 +32,6 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
     const [bigNumberHexAmount, setBigNumberHexAmount] = useState('')
     const [address, setAddress] = useState('')
     const [disabled, setDisabled] = useState(true)
-    const [warning, setWarning] = useState(false)
     const [addressConfirmed, setAddressConfirmed] = useState(false)
     const [newAddress, setNewAddress] = useState('')
 
@@ -100,7 +97,6 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
     }, [asset, history])
 
     useEffect(() => {
-        setWarning(isKnownTokenOrContract(address))
         setDisabled(isKnownTokenOrContract(address) || !isValidAddress(address) || !(amount > 0) || !(amount <= selectedAsset?.balance) || address === selectedAcc || (!isKnownAddress(address) && !addressConfirmed))
     }, [address, amount, selectedAcc, selectedAsset, addressConfirmed, isValidAddress, isKnownAddress])
 
@@ -141,23 +137,15 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
                                         onSelectAddress={address => setAddress(address)}
                                     />
                                 </div>
-                                <UnknownAddress
+                                <div className="separator"/>
+                                <AddressWarning
                                     address={address}
                                     onAddNewAddress={() => setNewAddress(address)}
                                     onChange={(value) => setAddressConfirmed(value)}
                                     isKnownAddress={isKnownAddress}
                                     isValidAddress={isValidAddress}
+                                    isKnownTokenOrContract={isKnownTokenOrContract}
                                 />
-                                <div className="separator"/>
-                                {
-                                    warning ?
-                                        <div id="address-warning">
-                                            <AiOutlineWarning/>
-                                            You are trying to send tokens to a smart contract. Doing so would burn them.
-                                        </div>
-                                        :
-                                        null
-                                }
                                 <Button disabled={disabled} onClick={sendTx}>Send</Button>
                             </div>
                             :
