@@ -7,7 +7,7 @@ import {
   Redirect,
   Prompt
 } from 'react-router-dom'
-import { useState, useEffect, useMemo, useRef } from 'react'
+import { useState, useEffect, useMemo, useCallback } from 'react'
 import EmailLogin from './components/EmailLogin/EmailLogin'
 import AddAccount from './components/AddAccount/AddAccount'
 import Wallet from './components/Wallet/Wallet'
@@ -19,8 +19,7 @@ import useNetwork from './hooks/network'
 import useWalletConnect from './hooks/walletconnect'
 import useGnosisSafe from './hooks/useGnosisSafe'
 import useNotifications from './hooks/notifications'
-import { useToasts} from './hooks/toasts'
-import { usePortfolio } from './hooks'
+import { useAttentionGrabber, usePortfolio } from './hooks'
 
 const relayerURL = process.env.hasOwnProperty('REACT_APP_RELAYER_URL') ? process.env.REACT_APP_RELAYER_URL : 'http://localhost:1934'
 
@@ -37,7 +36,6 @@ setTimeout(() => {
 }, 4000);
 
 function AppInner () {
-  const { addToast, removeToast } = useToasts()
   // basic stuff: currently selected account, all accounts, currently selected network
   const { accounts, selectedAcc, onSelectAcc, onAddAccount, onRemoveAccount } = useAccounts()
   const { network, setNetwork, allNetworks } = useNetwork()
@@ -115,32 +113,11 @@ function AppInner () {
     setSendTxnState(state => ({ ...state, showing: true }))
   }, portfolio, selectedAcc, network)
 
-  let titleTmp = useRef(document.title)
-  let titleInterval = useRef(null)
-  let stickyId = useRef()
-  useEffect(() => {
-    if (eligibleRequests.length) {
-      if (sendTxnState.showing) removeToast(stickyId.current)
-      else {
-        stickyId.current = addToast('Transactions waiting to be signed', {
-          position: 'right',
-          sticky: true,
-          badge: eligibleRequests.length,
-          onClick: () => setSendTxnState({ showing: true })
-        })
-      }
-
-      let count = 0
-      titleInterval.current = setInterval(() => {
-        document.title = (count % 2 === 0 ? '⚠️' : '🔥') + ' PENDING SIGNING REQUEST'
-        count++
-      }, 500)
-    } else {
-      removeToast(stickyId.current)
-      clearInterval(titleInterval.current)
-      document.title = titleTmp.current
-    }
-  }, [eligibleRequests, sendTxnState.showing, addToast, removeToast])
+  useAttentionGrabber({
+    eligibleRequests,
+    isSendTxnShowing: sendTxnState.showing,
+    onSitckyClick: useCallback(() => setSendTxnState({ showing: true }), [])
+  })
 
   return (<>
     <Prompt
