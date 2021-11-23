@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react'
 import { InfiniteProgressBar } from '../../common'
 
 export default function GnosisSafeAppIframe({
-    selectedApp,
+    selectedApp = {},
     title = 'Ambire Plugin',
     network,
     selectedAcc,
@@ -12,16 +12,18 @@ export default function GnosisSafeAppIframe({
     gnosisDisconnect
 }) {
 
-    const { chainId } = network || []
+    const { chainId } = network || {}
+    const { url } = selectedApp || {}
+    console.log({chainId})
     const [loading, setLoading] = useState(true)
     const [hash, setHash] = useState('')
     const iframeRef = useRef(null);
 
 
     useEffect(() => {
-        const newHash = selectedAcc.url + chainId + selectedAcc
+        const newHash = url + chainId + selectedAcc
         setHash(newHash)
-    }, [chainId, selectedAcc])
+    }, [chainId, selectedAcc, url])
 
     useEffect(() => {
         setLoading(true)
@@ -44,12 +46,12 @@ export default function GnosisSafeAppIframe({
         <div id="plugin-gnosis-conainer">
             {loading && <InfiniteProgressBar />}
 
-            {selectedApp && <iframe
+            {url && <iframe
                 id={hash}
                 key={hash}
                 ref={iframeRef}
                 title={title}
-                src={selectedApp.url}
+                src={url}
                 onLoad={() => setLoading(false)}
             />}
         </div>)
