@@ -14,7 +14,6 @@ export default function GnosisSafeAppIframe({
 
     const { chainId } = network || {}
     const { url } = selectedApp || {}
-    console.log({chainId})
     const [loading, setLoading] = useState(true)
     const [hash, setHash] = useState('')
     const iframeRef = useRef(null);
