@@ -6,7 +6,7 @@
     left: $sidebar-width;
     right: 0;
     bottom: 0;
-    padding: 50px;
+    padding: $layout-spacing;
     transition: left 0.1s ease-in-out;
     overflow: hidden;
     overflow-y: auto;
