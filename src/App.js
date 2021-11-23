@@ -120,12 +120,15 @@ function AppInner () {
   let stickyId = useRef()
   useEffect(() => {
     if (eligibleRequests.length) {
-      stickyId.current = addToast('Transactions waiting to be signed', {
-        position: 'right',
-        sticky: true,
-        badge: eligibleRequests.length,
-        onClick: () => setSendTxnState({ showing: true })
-      })
+      if (sendTxnState.showing) removeToast(stickyId.current)
+      else {
+        stickyId.current = addToast('Transactions waiting to be signed', {
+          position: 'right',
+          sticky: true,
+          badge: eligibleRequests.length,
+          onClick: () => setSendTxnState({ showing: true })
+        })
+      }
 
       let count = 0
       titleInterval.current = setInterval(() => {
@@ -137,7 +140,7 @@ function AppInner () {
       clearInterval(titleInterval.current)
       document.title = titleTmp.current
     }
-  }, [eligibleRequests, addToast, removeToast])
+  }, [eligibleRequests, sendTxnState.showing, addToast, removeToast])
 
   return (<>
     <Prompt
