@@ -86,6 +86,7 @@ const Card = ({ loading, unavailable, tokensItems, icon, details, onTokenSelect,
                                 button="MAX"
                                 onButtonClick={setMaxAmount}
                             />
+                            <div className="separator"></div>
                             <Button 
                                 disabled={disabled || amount <= 0 || amount > currentToken?.balance}
                                 icon={segment === segments[0].value ? <BsArrowDownSquare/> : <BsArrowUpSquare/>}
