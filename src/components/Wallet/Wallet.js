@@ -40,10 +40,7 @@ export default function Wallet(props) {
         selectedNetwork={{...props.network}}
         addRequest={props.addRequest}
         accounts={props.accounts}
-        addresses={props.addresses}
-        addAddress={props.addAddress}
-        removeAddress={props.removeAddress}
-        isKnownAddress={props.isKnownAddress}
+        addressBook={props.addressBook}
       />
     },
     {
@@ -57,9 +54,7 @@ export default function Wallet(props) {
         selectedAcc={props.selectedAcc}
         selectedNetwork={props.network}
         accounts={props.accounts}
-        addresses={props.addresses}
-        addAddress={props.addAddress}
-        removeAddress={props.removeAddress}
+        addressBook={props.addressBook}
         addRequest={props.addRequest}
         onAddAccount={props.onAddAccount}
       />
@@ -84,10 +79,7 @@ export default function Wallet(props) {
         selectedNetwork={{...props.network}}
         addRequest={props.addRequest}
         accounts={props.accounts}
-        addresses={props.addresses}
-        addAddress={props.addAddress}
-        removeAddress={props.removeAddress}
-        isKnownAddress={props.isKnownAddress}
+        addressBook={props.addressBook}
       />
     },
     {

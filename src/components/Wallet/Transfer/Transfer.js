@@ -24,7 +24,9 @@ const crossChainAssets = [
     }
 ]
 
-const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest, addresses, addAddress, removeAddress, isKnownAddress }) => {
+const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest, addressBook }) => {
+    const { addresses, addAddress, removeAddress, isKnownAddress } = addressBook
+
     const { tokenAddress } = useParams()
     const { addToast } = useToasts()
 

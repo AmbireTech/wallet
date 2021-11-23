@@ -20,7 +20,9 @@ const handleUri = uri => {
     return uri.startsWith('ipfs://') ? uri.replace(/ipfs:\/\/ipfs\/|ipfs:\/\//g, 'https://ipfs.io/ipfs/') : uri
 }
 
-const Collectible = ({ selectedAcc, selectedNetwork, addRequest, addresses, addAddress, removeAddress, isKnownAddress }) => {
+const Collectible = ({ selectedAcc, selectedNetwork, addRequest, addressBook }) => {
+    const { addresses, addAddress, removeAddress, isKnownAddress } = addressBook
+
     const { addToast } = useToasts()
     const { network, collectionAddr, tokenId } = useParams()
     const [isLoading, setLoading] = useState(true)
