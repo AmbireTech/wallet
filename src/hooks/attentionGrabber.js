@@ -31,6 +31,8 @@ const useAttentionGrabber = ({ eligibleRequests, isSendTxnShowing, onSitckyClick
             clearInterval(flashingTitleInterval)
             document.title = documentTitle
         }
+
+        return () => clearInterval(flashingTitleInterval)
     }, [eligibleRequests, isSendTxnShowing, onSitckyClick, addToast, removeToast])
 }
 
