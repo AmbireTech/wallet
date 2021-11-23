@@ -25,7 +25,7 @@ const crossChainAssets = [
     }
 ]
 
-const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest, addresses, addAddress, removeAddress, isKnownAddress, isValidAddress }) => {
+const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest, addresses, addAddress, removeAddress, isKnownAddress, isValidAddress, isKnownTokenOrContract }) => {
     const { tokenAddress } = useParams()
     const { addToast } = useToasts()
 
@@ -100,13 +100,8 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
     }, [asset, history])
 
     useEffect(() => {
-        const addressToLowerCase = address.toLowerCase()
-        const tokensAddresses = Object.keys(tokens)
-        const contractsAddresses = Object.keys(names)
-        const isKnowTokenOrContract = tokensAddresses.includes(addressToLowerCase) || contractsAddresses.includes(addressToLowerCase)
-
-        setWarning(isKnowTokenOrContract)
-        setDisabled(isKnowTokenOrContract || !isValidAddress(address) || !(amount > 0) || !(amount <= selectedAsset?.balance) || address === selectedAcc || (!isKnownAddress(address) && !addressConfirmed))
+        setWarning(isKnownTokenOrContract(address))
+        setDisabled(isKnownTokenOrContract(address) || !isValidAddress(address) || !(amount > 0) || !(amount <= selectedAsset?.balance) || address === selectedAcc || (!isKnownAddress(address) && !addressConfirmed))
     }, [address, amount, selectedAcc, selectedAsset, addressConfirmed, isValidAddress, isKnownAddress])
 
     return (
