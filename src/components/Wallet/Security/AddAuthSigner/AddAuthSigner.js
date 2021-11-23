@@ -156,7 +156,7 @@ const AddAuthSigner = props => {
         }}
       >
         <TextInput
-          placeholder="Enter address"
+          placeholder="Enter signer address"
           className="depositAddress"
           value={signerAddress.address}
           info={textInputInfo}
