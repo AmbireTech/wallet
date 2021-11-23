@@ -92,11 +92,11 @@ const SelectSignerAccountModal = ({
           {currentPage + 1}/{pages.length}
         </div>
         <div className="buttons">
-          <Button disabled={prevBtnDisabled} icon={<MdKeyboardArrowLeft/>} small type="button" onClick={prevPage}>
-            Prev
+          <Button disabled={prevBtnDisabled} icon={<MdKeyboardArrowLeft/>} small clear type="button" onClick={prevPage}>
+            Previous page
           </Button>
-          <Button disabled={nextBtnDisabled} iconAfter={<MdKeyboardArrowRight/>} small type="button" onClick={nextPage}>
-            Next
+          <Button disabled={nextBtnDisabled} iconAfter={<MdKeyboardArrowRight/>} small clear type="button" onClick={nextPage}>
+            Next page
           </Button>
         </div>
       </div>
