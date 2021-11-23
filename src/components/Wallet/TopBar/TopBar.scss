@@ -6,7 +6,7 @@
     position: fixed;
     top: 0;
     left: $sidebar-width;
-    right: 40px;
+    right: $layout-spacing;
     display: flex;
     justify-content: flex-end;
     gap: 1em;
