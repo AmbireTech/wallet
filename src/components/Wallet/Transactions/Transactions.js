@@ -70,8 +70,8 @@ function Transactions ({ relayerURL, selectedAcc, selectedNetwork, showSendTxns 
           <div className="bundle">
             <MinedBundle bundle={firstPending}></MinedBundle>
             <div className='actions'>
-              <button onClick={() => cancel(firstPending)}>Cancel</button>
-              <button className='cancel' onClick={() => speedup(firstPending)}>Speed up</button>
+              <button className='cancel' onClick={() => cancel(firstPending)}>Cancel</button>
+              <button onClick={() => speedup(firstPending)}>Speed up</button>
             </div>
           </div>
         </div>
