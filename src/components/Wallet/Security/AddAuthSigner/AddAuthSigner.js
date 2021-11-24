@@ -86,7 +86,7 @@ const AddAuthSigner = props => {
   const onSignerAddressClicked = useCallback(value => {
     setSignerAddress(value)
     modalHandler()
-    setTextInputInfo(`${signersToChoose.signerName} address # ${value.index + 1}`)
+    if (signersToChoose) setTextInputInfo(`${signersToChoose.signerName} address # ${value.index + 1}`)
   }, [signersToChoose])
 
   useEffect(() => {
@@ -139,7 +139,6 @@ const AddAuthSigner = props => {
   const onTextInput = value => {
     if (textInputInfo.length) setTextInputInfo('')
     setSignerAddress({ ...signerAddress, address: value })
-    console.log('signerAddress', signerAddress)
   }
 
   useEffect(() => {
@@ -157,7 +156,7 @@ const AddAuthSigner = props => {
         }}
       >
         <TextInput
-          placeholder="Enter address"
+          placeholder="Enter signer address"
           className="depositAddress"
           value={signerAddress.address}
           info={textInputInfo}

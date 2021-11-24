@@ -42,7 +42,7 @@ const SelectSignerAccountModal = ({
   }
 
   const formatAddress = addr => {
-    return addr.slice(0, 4) + '...' + addr.slice(addr.length - 4, addr.length)
+    return addr.slice(0, 5) + '...' + addr.slice(addr.length - 4, addr.length)
   }
 
   const prevBtnDisabled = currentPage === 0
@@ -67,21 +67,21 @@ const SelectSignerAccountModal = ({
                 <li
                   key={addr}
                   className={!(index % 2) ? ' odd-rows-bg' : ''}
+                  onClick={() =>
+                    onAddressClicked(addr, currentPage * pageSize + index)
+                  }
                 >
                   <span className="index-row">
                     {currentPage * pageSize + index + 1}
                   </span>
-                  <span
-                    onClick={() =>
-                      onAddressClicked(addr, currentPage * pageSize + index)
-                    }
-                  >
+                  <span>
                     {formatAddress(addr)}
                   </span>
                   <a
                     href={selectedNetwork.explorerUrl + '/address/' + addr}
-                    target="_blank"
-                    rel="noreferrer"
+                    target='_blank'
+                    rel='noreferrer'
+                    onClick={e => e.stopPropagation()}
                   >
                     <HiOutlineExternalLink size={25} />
                   </a>
@@ -93,11 +93,11 @@ const SelectSignerAccountModal = ({
           {currentPage + 1}/{pages.length}
         </div>
         <div className="buttons">
-          <Button disabled={prevBtnDisabled} icon={<MdKeyboardArrowLeft/>} small type="button" onClick={prevPage}>
-            Prev
+          <Button disabled={prevBtnDisabled} icon={<MdKeyboardArrowLeft/>} small clear type="button" onClick={prevPage}>
+            Previous page
           </Button>
-          <Button disabled={nextBtnDisabled} iconAfter={<MdKeyboardArrowRight/>} small type="button" onClick={nextPage}>
-            Next
+          <Button disabled={nextBtnDisabled} iconAfter={<MdKeyboardArrowRight/>} small clear type="button" onClick={nextPage}>
+            Next page
           </Button>
         </div>
       </div>
