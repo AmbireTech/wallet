@@ -8,13 +8,14 @@
         justify-content: space-between;
         gap: 1em;
         padding: 1.5em;
-        background-color: rgba(0, 0, 0, 0.1);
+        background-color: rgba(0, 0, 0, 0.2);
         cursor: pointer;
         transition: all 0.1s ease-in;
 
         .logo {
             flex: 0 0 auto;
             width: 8em;
+            opacity: 0.9;
 
             img {
                 width: 100%;
@@ -34,7 +35,11 @@
         }
 
         &:not(.disabled):hover {
-            background-color: rgba(0, 0, 0, 0.2);
+            background-color: rgba(0, 0, 0, 0.4);
+
+            .logo {
+                opacity: 1;
+            }
         }
 
         &.disabled {
