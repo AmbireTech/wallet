@@ -10,7 +10,8 @@ const SelectSignerAccountModal = ({
   signersToChoose,
   onSignerAddressClicked,
   selectedNetwork = { explorerUrl: 'https://etherscan.io' },
-  description = ''
+  description = '',
+  isCloseBtnShown = true
 }) => {
   const { hideModal } = useModals()
   const [currentPage, setCurrentPage] = useState(0)
@@ -57,7 +58,7 @@ const SelectSignerAccountModal = ({
   }
 
   return (
-    <Modal id="select-signer-modal" title="Select a signer address">
+    <Modal id="select-signer-modal" title="Select a signer account" isCloseBtnShown={isCloseBtnShown}>
       <div className="intro">{description}</div>
       <div className="loginSignupWrapper chooseSigners">
         <ul id="signersToChoose">
