@@ -16,10 +16,9 @@ import accountPresets from '../../consts/accountPresets'
 import { useToasts } from '../../hooks/toasts'
 import { SelectSignerAccountModal } from '../Modals'
 import { useModals } from '../../hooks'
+import { Loading } from '../common'
 
 import { ledgerGetAddresses } from '../../lib/ledgerWebHID'
-
-import { ImSpinner9 } from 'react-icons/im'
 
 
 TrezorConnect.manifest({
@@ -322,9 +321,9 @@ export default function AddAccount ({ relayerURL, onAddAccount }) {
                   </Link>
                   {addFromSignerButtons}
                   {addAccErr ? (<p className="error">{addAccErr}</p>) : (<></>)}
-              </>): <div className="accountLoader">
-                  <ImSpinner9 className="spinner"/>
-              </div>}
+              </>) : (<div className="accountLoader">
+                  <Loading/>
+              </div>)}
           </div>
         </section>
       </div>
