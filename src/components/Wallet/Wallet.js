@@ -14,12 +14,14 @@ import PluginGnosisSafeApps from "../Plugins/GnosisSafeApps/GnosisSafeApps"
 import Collectible from "./Collectible/Collectible"
 import { PermissionsModal } from '../Modals'
 import { useModals, usePermissions } from "../../hooks"
-import { useCallback, useEffect } from "react"
+import { useCallback, useEffect, useMemo } from "react"
 import { isFirefox } from '../../helpers/permissions'
 
 export default function Wallet(props) {
   const { showModal } = useModals()
   const { isClipboardGranted, isNoticationsGranted, arePermissionsLoaded, modalHidden } = usePermissions()
+
+  const isLoggedIn = useMemo(() => props.accounts.length > 0, [props.accounts])
 
   const routes = [
     {
@@ -40,7 +42,7 @@ export default function Wallet(props) {
     },
     {
       path: '/security',
-      component: <Security relayerURL={props.relayerURL} selectedAcc={props.selectedAcc} selectedNetwork={props.network} accounts={props.accounts} addRequest={props.addRequest}/>
+      component: <Security relayerURL={props.relayerURL} selectedAcc={props.selectedAcc} selectedNetwork={props.network} accounts={props.accounts} addRequest={props.addRequest} onAddAccount={props.onAddAccount}/>
     },
     {
       path: '/transactions',
@@ -84,13 +86,18 @@ export default function Wallet(props) {
         <Switch>
           {
             routes.map(({ path, component }) => (
-              <Route path={props.match.url + path} key={path}>
-                { component ? component : null }
+              <Route exact path={props.match.url + path} key={path}>
+                {
+                  !isLoggedIn ? 
+                    <Redirect to="/add-account" />
+                    :
+                    component ? component : null
+                }
               </Route>
             ))
           }
-          <Route path={props.match.url + "/"}>
-            <Redirect to={props.match.url + "/dashboard"} />
+          <Route path={props.match.url + '/*'}>
+            <Redirect to={props.match.url + '/dashboard'} />
           </Route>
         </Switch>
       </div>
