@@ -32,7 +32,7 @@ export default function AddAccount ({ relayerURL, onAddAccount }) {
     const [addAccErr, setAddAccErr] = useState('')
     const [inProgress, setInProgress] = useState(false)
     const { addToast } = useToasts()
-    const { showModal } = useModals()
+    const { showModal, deactivateBackdrop } = useModals()
 
     const wrapProgress = async fn => {
         setInProgress(true)
@@ -228,16 +228,18 @@ export default function AddAccount ({ relayerURL, onAddAccount }) {
     // when connecting a hardware wallet, it has many addrs you can choose from
     useEffect(() => {
         if (signersToChoose) {
+            deactivateBackdrop()
             showModal(
                 <SelectSignerAccountModal
                     signersToChoose={signersToChoose.addresses}
                     onSignerAddressClicked={onSignerAddressClicked}
                     description={`Signer address is the ${signersToChoose.signerName} address you will use to sign transactions on Ambire Wallet.
                     А new account will be created using this signer if you don’t have one.`}
+                    isCloseBtnShown={false}
                 />
             )
         }
-    }, [onSignerAddressClicked, showModal, signersToChoose])
+    }, [deactivateBackdrop, onSignerAddressClicked, showModal, signersToChoose])
 
     // Adding accounts from existing signers
     // @TODO: progress indicators for those
