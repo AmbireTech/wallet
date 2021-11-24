@@ -234,7 +234,7 @@ export default function AddAccount ({ relayerURL, onAddAccount }) {
         }
 
         if (error) {
-            setAddAccErr(error)
+            setAddAccErr(`Ledger error: ${e.message || e}`)
         }
         setInProgress(false)
     }
