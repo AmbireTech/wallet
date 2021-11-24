@@ -9,7 +9,7 @@ const AddressList = ({ noAccounts, addresses, onSelectAddress, removeAddress }) 
         <div className="address-list">
             {
                 !items.length ?
-                    <div>Your Address Book is empty</div>
+                    <div className="placeholder">Your Address Book is empty</div>
                     :
                     items.map(({ isAccount, icon, name, address }) => (
                         <div className="item" key={address + name}>
