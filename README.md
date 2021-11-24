@@ -184,3 +184,4 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/t
 * Security: ability to add additional signers and remove signers
 * Attention grabbing: pinned notification in the bottom right if you have requests pending to be signed
 * Ability to deploy smart contracts
+* Address book: ability to save and label addresses

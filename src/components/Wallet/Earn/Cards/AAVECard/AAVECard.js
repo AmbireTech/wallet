@@ -63,7 +63,7 @@ const AAVECard = ({ networkId, tokens, protocols, account, addRequest }) => {
             }
         } catch(e) {
             console.error(e)
-            addToast(`Error: ${e.message || e}`, { error: true })
+            addToast(`Aave Approve Error: ${e.message || e}`, { error: true })
         }
     }
 
@@ -81,7 +81,7 @@ const AAVECard = ({ networkId, tokens, protocols, account, addRequest }) => {
                 }, 60000)
             } catch(e) {
                 console.error(e)
-                addToast(`Error: ${e.message || e}`, { error: true })
+                addToast(`Aave Deposit Error: ${e.message || e}`, { error: true })
             }
         }
         else if (type === 'Withdraw') {
@@ -97,7 +97,7 @@ const AAVECard = ({ networkId, tokens, protocols, account, addRequest }) => {
                 }, 60000)
             } catch(e) {
                 console.error(e)
-                addToast(`Error: ${e.message || e}`, { error: true })
+                addToast(`Aave Withdraw Error: ${e.message || e}`, { error: true })
             }
         }
     }
@@ -164,7 +164,7 @@ const AAVECard = ({ networkId, tokens, protocols, account, addRequest }) => {
             setUnavailable(false)
         } catch(e) {
             console.error(e);
-            addToast(e.message | e, { error: true })
+            addToast(`Aave load pool error: ${e.message || e}`, { error: true })
         }
     }, [addToast, protocols, tokens, defaultTokens, networkDetails.id, networkDetails.rpc])
 
