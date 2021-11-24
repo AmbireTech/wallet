@@ -186,6 +186,7 @@ const Security = ({
         <div className='title'>Address Book</div>
         <div className="content">
           <AddressList
+            noAccounts={true}
             addresses={addresses}
             removeAddress={removeAddress}
           />
