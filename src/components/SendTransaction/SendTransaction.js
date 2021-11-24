@@ -1,6 +1,6 @@
 //import { GrInspect } from 'react-icons/gr'
 // GiObservatory is also interesting
-import { GiTakeMyMoney, GiSpectacles } from 'react-icons/gi'
+import { GiTakeMyMoney, GiSpectacles, GiGorilla } from 'react-icons/gi'
 import { FaSignature, FaChevronLeft } from 'react-icons/fa'
 import { MdOutlineAccountCircle } from 'react-icons/md'
 import './SendTransaction.css'
@@ -19,21 +19,18 @@ import TxnPreview from '../common/TxnPreview/TxnPreview'
 import { sendNoRelayer } from './noRelayer'
 import { isTokenEligible, getFeePaymentConsequences } from './helpers'
 import { fetchPost } from '../../lib/fetch'
+import { toBundleTxn } from '../../lib/requestToBundleTxn'
 
 const ERC20 = new Interface(require('adex-protocol-eth/abi/ERC20'))
 
 const DEFAULT_SPEED = 'fast'
 const REESTIMATE_INTERVAL = 15000
 
-function toBundleTxn({ to, value, data }) {
-  return [to, value || '0x0', data || '0x']
-}
-
 function makeBundle(account, networkId, requests) {
   const bundle = new Bundle({
     network: networkId,
     identity: account.id,
-    txns: requests.map(({ txn }) => toBundleTxn(txn)),
+    txns: requests.map(({ txn }) => toBundleTxn(txn, account.id)),
     signer: account.signer
   })
   bundle.extraGas = requests.map(x => x.extraGas || 0).reduce((a, b) => a + b, 0)
@@ -263,7 +260,7 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
   // Not applicable when .requestIds is not defined (replacement bundle)
   const rejectTxn = bundle.requestIds && (() => {
     onDismiss()
-    resolveMany(bundle.requestIds, { message: 'user rejected' })
+    resolveMany(bundle.requestIds, { message: 'Ambire user rejected the request' })
   })
 
   return (<div id='sendTransaction'>
@@ -296,22 +293,26 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
                           <GiSpectacles size={35}/>
                           Transaction summary
                       </div>
-                      <div className={`listOfTransactions${bundle.requestIds ? '' : ' frozen'}`}>
-                          {bundle.txns.map((txn, i) => {
-                            const isFirstFailing = estimation && !estimation.success && estimation.firstFailing === i
-                            return (<TxnPreview
-                              key={[...txn, i].join(':')}
-                              onDismiss={bundle.requestIds && (() => resolveMany([bundle.requestIds[i]], { message: 'rejected' }))}
-                              txn={txn} network={bundle.network} account={bundle.identity}
-                              isFirstFailing={isFirstFailing}/>
-                            )
-                          })}
-                      </div>
-                      <div className='transactionsNote'>
-                        {bundle.requestIds ? (<>
-                          <b>DEGEN TIP:</b> You can sign multiple transactions at once. Add more transactions to this batch by interacting with a connected dApp right now.
-                        </>) : (<><b>NOTE:</b> You are currently replacing a pending transaction.</>)}
-                      </div>
+              </div>
+              <div className="content">
+                <div className={`listOfTransactions${bundle.requestIds ? '' : ' frozen'}`}>
+                    {bundle.txns.map((txn, i) => {
+                      const isFirstFailing = estimation && !estimation.success && estimation.firstFailing === i
+                      // we need to re-render twice per minute cause of DEX deadlines
+                      const min = Math.floor(Date.now() / 30000)
+                      return (<TxnPreview
+                        key={[...txn, i, min].join(':')}
+                        onDismiss={bundle.requestIds && (() => resolveMany([bundle.requestIds[i]], { message: 'rejected' }))}
+                        txn={txn} network={bundle.network} account={bundle.identity}
+                        isFirstFailing={isFirstFailing}/>
+                      )
+                    })}
+                </div>
+                <div className='transactionsNote'>
+                  {bundle.requestIds ? (<>
+                    <b><GiGorilla size={16}/> DEGEN TIP:</b> You can sign multiple transactions at once. Add more transactions to this batch by interacting with a connected dApp right now.
+                  </>) : (<><b>NOTE:</b> You are currently replacing a pending transaction.</>)}
+                </div>
               </div>
           </div>
           <div className='secondaryPanel'>
