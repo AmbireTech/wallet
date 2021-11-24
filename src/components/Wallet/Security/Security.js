@@ -183,7 +183,7 @@ const Security = ({
       </div>
   
       <div id="addresses" className='panel'>
-        <div className='title'>Addresses</div>
+        <div className='title'>Address Book</div>
         <div className="content">
           <AddressList
             addresses={addresses}
