@@ -27,8 +27,8 @@ const InputModal = ({ title, inputs, onClose }) => {
     return (
         <Modal id="input-modal" title={title}>
             {
-                inputsFields.map(({ id, label, ref }) => (
-                    <TextInput key={id || label} label={label} onInput={onInput} ref={ref}/>
+                inputsFields.map(({ id, label, placeholder, ref }) => (
+                    <TextInput key={id || label} label={label} placeholder={placeholder} onInput={onInput} ref={ref}/>
                 ))
             }
             <div className="buttons">
