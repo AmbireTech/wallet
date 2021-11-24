@@ -2,7 +2,7 @@ import "./TopBar.scss";
 
 import React, { useState, useCallback } from "react";
 import { FiHelpCircle } from "react-icons/fi";
-import { DropDown, Select } from "../../common";
+import { DropDown, Select, ToolTip } from "../../common";
 import Accounts from "./Accounts/Accounts";
 import { checkClipboardPermission } from "../../../helpers/permissions";
 import { MdOutlineWarning } from "react-icons/md";
@@ -75,9 +75,9 @@ const TopBar = ({
                 <div className="name">{session.peerMeta.name}</div>
                 { 
                   isLegacyWC(session) ? 
-                    <div className="session-warning">
+                    <ToolTip className="session-warning" label="dApp uses legacy WalletConnect bridge which is unreliable and often doesn't work. Please tell the dApp to update to the latest WalletConnect version.">
                       <MdOutlineWarning/>
-                    </div>
+                    </ToolTip>
                     :
                     null
                 }
