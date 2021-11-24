@@ -6,7 +6,7 @@ const ModalContext = createContext(null)
 const ModalProvider = ({ children }) => {
     const [modal, setModal] = useState(null)
     
-    const showModal = useCallback((element, opts) => setModal({element, opts}), [])
+    const showModal = useCallback((element, opts = { disableClose: false }) => setModal({element, opts}), [])
     const hideModal = useCallback(() => setModal(null), [])
     
     return (
