@@ -52,15 +52,17 @@ const DApps = ({ connections, connect, disconnect }) => {
                         ></img>
                     </div>
                     <a href={session.peerMeta.url} target="_blank" rel="noreferrer">
-                        <div className="name">{session.peerMeta.name}</div>
-                        { 
-                            isLegacyWC(session) ? 
-                                <ToolTip className="session-warning" label="dApp uses legacy WalletConnect bridge which is unreliable and often doesn't work. Please tell the dApp to update to the latest WalletConnect version.">
-                                    <MdOutlineWarning/>
-                                </ToolTip>
-                                :
-                                null
-                        }
+                        <div className="details">
+                            { 
+                                isLegacyWC(session) ? 
+                                    <ToolTip className="session-warning" label="dApp uses legacy WalletConnect bridge which is unreliable and often doesn't work. Please tell the dApp to update to the latest WalletConnect version.">
+                                        <MdOutlineWarning/>
+                                    </ToolTip>
+                                    :
+                                    null
+                            }
+                            <div className="name">{session.peerMeta.name}</div>
+                        </div>
                     </a>
                     <div className="separator"></div>
                     <button onClick={() => disconnect(uri)}>Disconnect</button>
