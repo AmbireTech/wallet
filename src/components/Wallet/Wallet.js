@@ -34,19 +34,34 @@ export default function Wallet(props) {
     },
     {
       path: '/transfer/:tokenAddress?',
-      component: <Transfer portfolio={props.portfolio} selectedAcc={props.selectedAcc} selectedNetwork={{...props.network}} accounts={props.accounts} addRequest={props.addRequest}/>
+      component: <Transfer
+        portfolio={props.portfolio}
+        selectedAcc={props.selectedAcc}
+        selectedNetwork={{...props.network}}
+        addRequest={props.addRequest}
+        accounts={props.accounts}
+        addressBook={props.addressBook}
+      />
     },
     {
       path: '/earn',
-      component: <Earn portfolio={props.portfolio} selectedNetwork={{...props.network}} selectedAcc={props.selectedAcc} addRequest={props.addRequest}/>
+      component: <Earn portfolio={props.portfolio} selectedNetwork={{ ...props.network }} selectedAcc={props.selectedAcc} addRequest={props.addRequest} />
     },
     {
       path: '/security',
-      component: <Security relayerURL={props.relayerURL} selectedAcc={props.selectedAcc} selectedNetwork={props.network} accounts={props.accounts} addRequest={props.addRequest} onAddAccount={props.onAddAccount}/>
+      component: <Security
+        relayerURL={props.relayerURL}
+        selectedAcc={props.selectedAcc}
+        selectedNetwork={props.network}
+        accounts={props.accounts}
+        addressBook={props.addressBook}
+        addRequest={props.addRequest}
+        onAddAccount={props.onAddAccount}
+      />
     },
     {
       path: '/transactions',
-      component: <Transactions relayerURL={props.relayerURL} selectedAcc={props.selectedAcc} selectedNetwork={props.network} addRequest={props.addRequest} eligibleRequests={props.eligibleRequests} showSendTxns={props.showSendTxns}/>
+      component: <Transactions relayerURL={props.relayerURL} selectedAcc={props.selectedAcc} selectedNetwork={props.network} addRequest={props.addRequest} eligibleRequests={props.eligibleRequests} showSendTxns={props.showSendTxns} />
     },
     {
       path: '/swap',
@@ -59,7 +74,13 @@ export default function Wallet(props) {
     },
     {
       path: '/nft/:network/:collectionAddr/:tokenId',
-      component: <Collectible selectedAcc={props.selectedAcc} selectedNetwork={{...props.network}} addRequest={props.addRequest}/>
+      component: <Collectible
+        selectedAcc={props.selectedAcc}
+        selectedNetwork={{...props.network}}
+        addRequest={props.addRequest}
+        accounts={props.accounts}
+        addressBook={props.addressBook}
+      />
     },
     {
       path: '/gnosis/plugins',
@@ -73,33 +94,39 @@ export default function Wallet(props) {
   ]
 
   const handlePermissionsModal = useCallback(async () => {
-    if (!modalHidden && arePermissionsLoaded && ((!isFirefox && !isClipboardGranted) || !isNoticationsGranted)) showModal(<PermissionsModal/>)
+    if (!modalHidden && arePermissionsLoaded && ((!isFirefox && !isClipboardGranted) || !isNoticationsGranted)) showModal(<PermissionsModal />)
   }, [showModal, isClipboardGranted, isNoticationsGranted, arePermissionsLoaded, modalHidden])
 
   useEffect(() => handlePermissionsModal(), [handlePermissionsModal])
 
   return (
     <div id="wallet">
-      <TopBar {...props} />
-      <SideBar match={props.match} portfolio={props.portfolio}/>
-      <div id="wallet-container">
-        <Switch>
-          {
-            routes.map(({ path, component }) => (
-              <Route exact path={props.match.url + path} key={path}>
-                {
-                  !isLoggedIn ? 
-                    <Redirect to="/add-account" />
-                    :
-                    component ? component : null
-                }
+
+      <SideBar match={props.match} portfolio={props.portfolio} />
+      <div id="wallet-layout">
+
+        <TopBar {...props} />
+        <div id="wallet-container">
+          <div id="wallet-container-inner">
+            <Switch>
+              {
+                routes.map(({ path, component }) => (
+                  <Route exact path={props.match.url + path} key={path}>
+                    {
+                      !isLoggedIn ?
+                        <Redirect to="/add-account" />
+                        :
+                        component ? component : null
+                    }
+                  </Route>
+                ))
+              }
+              <Route path={props.match.url + '/*'}>
+                <Redirect to={props.match.url + '/dashboard'} />
               </Route>
-            ))
-          }
-          <Route path={props.match.url + '/*'}>
-            <Redirect to={props.match.url + '/dashboard'} />
-          </Route>
-        </Switch>
+            </Switch>
+          </div>
+        </div>
       </div>
     </div>
   );
