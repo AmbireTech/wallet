@@ -1,6 +1,11 @@
 @import '../../../../variables.scss';
 
 .address-list {
+    .placeholder {
+        font-size: 15px;
+        font-weight: 500;
+    }
+
     .item {
         height: 60px;
         position: relative;
