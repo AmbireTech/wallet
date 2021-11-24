@@ -17,6 +17,9 @@ import { useToasts } from '../../hooks/toasts'
 
 import { ledgerGetAddresses } from '../../lib/ledgerWebHID'
 
+import { ImSpinner9 } from 'react-icons/im'
+
+
 TrezorConnect.manifest({
   email: 'contactus@ambire.com',
   appUrl: 'https://www.ambire.com'
@@ -203,15 +206,16 @@ export default function AddAccount ({ relayerURL, onAddAccount }) {
 
     async function connectLedgerWebHIDAndGetAccounts () {
         let error = null;
+        setInProgress(true)
         try{
-            const addresses = await ledgerGetAddresses()
-            if(addresses){
-                console.log("Got addresses " + JSON.stringify(addresses));
+            const addrData = await ledgerGetAddresses()
+            if(!addrData.error){
+                console.log("Got addresses " + JSON.stringify(addrData.addresses));
                 const signerExtra = { type: 'ledger', info: {stuff: 'someInfo'}, transportProtocol: 'webHID'}
 
-                onEOASelected(addresses[0], signerExtra)
+                onEOASelected(addrData.addresses[0], signerExtra)
             }else{
-                error = 'No accounts found in ledger. Please try again';
+                error = addrData.error;
             }
         }catch(e){
             console.log(e);
@@ -227,6 +231,7 @@ export default function AddAccount ({ relayerURL, onAddAccount }) {
         if(error){
             setAddAccErr(error);
         }
+        setInProgress(false)
     }
 
     async function onEOASelected (addr, signerExtra) {
@@ -278,7 +283,7 @@ export default function AddAccount ({ relayerURL, onAddAccount }) {
             </section>
         </div>)
     }
-
+    //TODO: Would be great to create Ambire spinners(like 1inch but simpler) (I can have a look at them if you need)
     return (<div className="loginSignupWrapper">
         <div id="logo"/>
         <section id="addAccount">
@@ -297,14 +302,17 @@ export default function AddAccount ({ relayerURL, onAddAccount }) {
             <span>or</span>
             <div className="verticalLine"></div>
           </div>
-
           <div id="loginOthers">
             <h3>Add an account</h3>
-            <Link to="/email-login">
-              <button><div className="icon" style={{ backgroundImage: 'url(./resources/envelope.png)' }}/>Email</button>
-            </Link>
-            {addFromSignerButtons}
-            {addAccErr ? (<p className="error">{addAccErr}</p>) : (<></>)}
+              {!inProgress ? (<>
+                  <Link to="/email-login">
+                      <button><div className="icon" style={{ backgroundImage: 'url(./resources/envelope.png)' }}/>Email</button>
+                  </Link>
+                  {addFromSignerButtons}
+                  {addAccErr ? (<p className="error">{addAccErr}</p>) : (<></>)}
+              </>): <div className="accountLoader">
+                  <ImSpinner9 className="spinner"/>
+              </div>}
           </div>
         </section>
       </div>
