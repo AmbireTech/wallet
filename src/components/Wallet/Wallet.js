@@ -34,7 +34,14 @@ export default function Wallet(props) {
     },
     {
       path: '/transfer/:tokenAddress?',
-      component: <Transfer portfolio={props.portfolio} selectedAcc={props.selectedAcc} selectedNetwork={{ ...props.network }} accounts={props.accounts} addRequest={props.addRequest} />
+      component: <Transfer
+        portfolio={props.portfolio}
+        selectedAcc={props.selectedAcc}
+        selectedNetwork={{...props.network}}
+        addRequest={props.addRequest}
+        accounts={props.accounts}
+        addressBook={props.addressBook}
+      />
     },
     {
       path: '/earn',
@@ -42,7 +49,15 @@ export default function Wallet(props) {
     },
     {
       path: '/security',
-      component: <Security relayerURL={props.relayerURL} selectedAcc={props.selectedAcc} selectedNetwork={props.network} accounts={props.accounts} addRequest={props.addRequest} onAddAccount={props.onAddAccount}/>
+      component: <Security
+        relayerURL={props.relayerURL}
+        selectedAcc={props.selectedAcc}
+        selectedNetwork={props.network}
+        accounts={props.accounts}
+        addressBook={props.addressBook}
+        addRequest={props.addRequest}
+        onAddAccount={props.onAddAccount}
+      />
     },
     {
       path: '/transactions',
@@ -59,7 +74,13 @@ export default function Wallet(props) {
     },
     {
       path: '/nft/:network/:collectionAddr/:tokenId',
-      component: <Collectible selectedAcc={props.selectedAcc} selectedNetwork={{ ...props.network }} addRequest={props.addRequest} />
+      component: <Collectible
+        selectedAcc={props.selectedAcc}
+        selectedNetwork={{...props.network}}
+        addRequest={props.addRequest}
+        accounts={props.accounts}
+        addressBook={props.addressBook}
+      />
     },
     {
       path: '/gnosis/plugins',

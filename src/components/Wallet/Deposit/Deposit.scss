@@ -14,6 +14,12 @@
         padding-bottom: 3em;
         overflow: hidden;
 
+        .text-input {
+            input {
+                font-size: 18px;
+            }
+        }
+
         .heading {
             display: flex;
             flex-direction: column;
@@ -74,4 +80,14 @@
             width: 100%;
         }
    }
+}
+
+@media screen and (min-width: 1000px) and (max-width: 1450px) {
+    #deposit {
+        .text-input {
+            input {
+                font-size: 16px !important;
+            }
+        }
+    }
 }
