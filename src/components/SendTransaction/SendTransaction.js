@@ -19,21 +19,18 @@ import TxnPreview from '../common/TxnPreview/TxnPreview'
 import { sendNoRelayer } from './noRelayer'
 import { isTokenEligible, getFeePaymentConsequences } from './helpers'
 import { fetchPost } from '../../lib/fetch'
+import { toBundleTxn } from '../../lib/requestToBundleTxn'
 
 const ERC20 = new Interface(require('adex-protocol-eth/abi/ERC20'))
 
 const DEFAULT_SPEED = 'fast'
 const REESTIMATE_INTERVAL = 15000
 
-function toBundleTxn({ to, value, data }) {
-  return [to || '0x', value || '0x0', data || '0x']
-}
-
 function makeBundle(account, networkId, requests) {
   const bundle = new Bundle({
     network: networkId,
     identity: account.id,
-    txns: requests.map(({ txn }) => toBundleTxn(txn)),
+    txns: requests.map(({ txn }) => toBundleTxn(txn, account.id)),
     signer: account.signer
   })
   bundle.extraGas = requests.map(x => x.extraGas || 0).reduce((a, b) => a + b, 0)
