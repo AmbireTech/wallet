@@ -2,11 +2,11 @@ import './AddressList.scss'
 
 import { MdOutlineDelete } from 'react-icons/md'
 
-const AddressList = ({ addresses, onSelectAddress, removeAddress }) => {
+const AddressList = ({ noAccounts, addresses, onSelectAddress, removeAddress }) => {
     return (
         <div className="address-list">
             {
-                addresses.map(({ isAccount, icon, name, address }) => (
+                addresses.filter(({ isAccount }) => !(isAccount && noAccounts)).map(({ isAccount, icon, name, address }) => (
                     <div className="item" key={address + name}>
                         <div className="inner" onClick={() => onSelectAddress && onSelectAddress(address)}>
                             <div className="icon" style={{ backgroundImage: `url(${icon})`}}></div>
