@@ -8,7 +8,6 @@ export function toBundleTxn({ to, value, data }, from) {
   // however, our accounts are not EOAs, so we will just call the factory with a user-specific nonce, that's also identifiable (0x6942)
   if (to === '0x' || !to) {
     const salt = `0x69420000000000${Date.now().toString(16).slice(1,9)}00${from.slice(2)}`
-    console.log(salt)
     return [accountPresets.identityFactoryAddr, value, IdentityFactory.encodeFunctionData('deploy', [data, salt])]
   }
   return [to, value || '0x0', data || '0x']
