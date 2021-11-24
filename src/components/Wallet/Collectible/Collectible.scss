@@ -97,4 +97,12 @@
             }
         }
     }
+
+    #recipient-address {
+        display: flex;
+
+        .text-input {
+            width: 100%;
+        }
+    }
 }
