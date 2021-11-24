@@ -5,6 +5,7 @@ import { FiHelpCircle } from "react-icons/fi";
 import { DropDown, Select } from "../../common";
 import Accounts from "./Accounts/Accounts";
 import { checkClipboardPermission } from "../../../helpers/permissions";
+import { MdOutlineWarning } from "react-icons/md";
 
 const TopBar = ({
   connections,
@@ -42,6 +43,8 @@ const TopBar = ({
     icon
   }))
 
+  const isLegacyWC = ({ bridge }) => /https:\/\/bridge.walletconnect.org/g.test(bridge)
+
   return (
     <div id="topbar">
       <div className="container">
@@ -70,6 +73,14 @@ const TopBar = ({
               </div>
               <a href={session.peerMeta.url} target="_blank" rel="noreferrer">
                 <div className="name">{session.peerMeta.name}</div>
+                { 
+                  isLegacyWC(session) ? 
+                    <div className="session-warning">
+                      <MdOutlineWarning/>
+                    </div>
+                    :
+                    null
+                }
               </a>
               <div className="separator"></div>
               <button onClick={() => disconnect(uri)}>Disconnect</button>
