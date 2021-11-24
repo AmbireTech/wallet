@@ -183,3 +183,4 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/t
 * Permissions (clipboard, notifications) are now requested through a modal
 * Security: ability to add additional signers and remove signers
 * Attention grabbing: pinned notification in the bottom right if you have requests pending to be signed
+* Ability to deploy smart contracts
