@@ -59,5 +59,6 @@ export default function useAccounts () {
       
       if (!clearedAccounts.length) history.push('/add-account')
     }, [accounts, history])
+
     return { accounts, selectedAcc, onSelectAcc, onAddAccount, onRemoveAccount }
   }
