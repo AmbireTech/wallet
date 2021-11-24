@@ -181,3 +181,5 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/t
 * Advanced transaction parsing: more types of transactions understood and displayed in human-friendly manner
 * Welcome email & onboarding UX improvements
 * Permissions (clipboard, notifications) are now requested through a modal
+* Security: ability to add additional signers and remove signers
+* Attention grabbing: pinned notification in the bottom right if you have requests pending to be signed
