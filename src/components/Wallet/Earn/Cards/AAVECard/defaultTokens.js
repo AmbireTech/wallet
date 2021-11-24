@@ -86,7 +86,7 @@ const getDefaultTokensItems = network => {
         img: `${zapperStorage}/${network}/${token.address}.png`,
         balance: 0,
         balanceRaw: '0',
-    }))
+    })) || []
 
     return [
         ...items.map(token => ({ ...token, type: 'deposit' })),
