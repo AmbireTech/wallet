@@ -1,6 +1,10 @@
 @import '../../../../variables.scss';
 
 #protocols-table {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+
     .category {
         position: relative;
         overflow: hidden;
