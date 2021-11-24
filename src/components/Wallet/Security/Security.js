@@ -149,7 +149,7 @@ const Security = ({
     })
     .filter(x => x)
 
-  const modalInputs = [{ label: 'Name' }, { label: 'Address', validate: value => isValidAddress(value) }] 
+  const modalInputs = [{ label: 'Name', placeholder: 'My Address' }, { label: 'Address', placeholder: '0x', validate: value => isValidAddress(value) }] 
   const inputModal = <InputModal title="Add New Address" inputs={modalInputs} onClose={([name, address]) => addAddress(name, address)}></InputModal>
   const showInputModal = () => showModal(inputModal)
 
