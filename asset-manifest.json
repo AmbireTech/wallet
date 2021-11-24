@@ -1,8 +1,8 @@
 {
   "files": {
     "main.css": "/static/css/main.b138f3ea.chunk.css",
-    "main.js": "/static/js/main.53f0ef83.chunk.js",
-    "main.js.map": "/static/js/main.53f0ef83.chunk.js.map",
+    "main.js": "/static/js/main.d58caee2.chunk.js",
+    "main.js.map": "/static/js/main.d58caee2.chunk.js.map",
     "runtime-main.js": "/static/js/runtime-main.7dab1a7b.js",
     "runtime-main.js.map": "/static/js/runtime-main.7dab1a7b.js.map",
     "static/js/2.c3f1b284.chunk.js": "/static/js/2.c3f1b284.chunk.js",
@@ -16,7 +16,7 @@
     "static/media/aave.58aec338.svg": "/static/media/aave.58aec338.svg",
     "static/media/AddAccount.scss": "/static/media/hero-darkened.32d9e32c.svg",
     "static/media/SideBar.scss": "/static/media/logo.ab51d124.png",
-    "static/media/paytrie.13387787.svg": "/static/media/paytrie.13387787.svg",
+    "static/media/paytrie.338f7c3b.svg": "/static/media/paytrie.338f7c3b.svg",
     "static/media/polygon-logo.d08b26bd.svg": "/static/media/polygon-logo.d08b26bd.svg",
     "static/media/ramp.26a99e26.svg": "/static/media/ramp.26a99e26.svg",
     "static/media/transak.e01c0265.svg": "/static/media/transak.e01c0265.svg"
@@ -25,6 +25,6 @@
     "static/js/runtime-main.7dab1a7b.js",
     "static/js/2.c3f1b284.chunk.js",
     "static/css/main.b138f3ea.chunk.css",
-    "static/js/main.53f0ef83.chunk.js"
+    "static/js/main.d58caee2.chunk.js"
   ]
 }
