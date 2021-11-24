@@ -183,6 +183,7 @@ function AppInner () {
           // required by the transactions page
           eligibleRequests={eligibleRequests}
           showSendTxns={bundle => setSendTxnState({ showing: true, replacementBundle: bundle })}
+          onAddAccount={onAddAccount}
         >
         </Wallet>
       </Route>

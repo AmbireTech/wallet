@@ -18,7 +18,7 @@
     //  overflow: hidden;
     background-color: $panel-background-color;
 
-    .title {
+    .panel-title {
       font-size: 1.5em;
       font-weight: bold;
       text-align: start;
@@ -27,6 +27,53 @@
     .content {
       list-style-type: none;
       padding-left: 0 !important;
+
+      .buttonComponent {
+        height: 60px;
+      }
+
+      // .button {
+      //   width: 100%;
+      //   box-sizing: border-box;
+      //   text-align: left;
+      //   margin: 1.5em 0px;
+      //   border: 0px;
+      //   color: black;
+      //   background-color: white;
+      //   line-height: 25px;
+      // }
+
+      // .icon {
+      //   margin-right: 10px;
+      //   width: 25px;
+      //   height: 25px;
+      //   background-repeat: no-repeat;
+      //   background-size: contain;
+      //   float: left;
+      // }
+
+      .text-input {
+        flex-grow: 2.8;
+      }
+
+      &.dropdown {
+        height: 60px;
+
+        .list.fade-enter-done {
+          width: 220px !important;
+        }
+      }
+
+      .btns-wrapper {
+        display: flex;
+        justify-content: right;
+        gap: 1em;
+        flex-grow: 0.8;
+
+        button {
+          width: 90%;
+        }
+      }
 
       li {
         display: flex;
