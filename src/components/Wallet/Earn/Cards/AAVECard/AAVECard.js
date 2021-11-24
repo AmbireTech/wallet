@@ -120,7 +120,7 @@ const AAVECard = ({ networkId, tokens, protocols, account, addRequest }) => {
             const reservesAddresses = reserves.map(reserve => reserve.toLowerCase())
 
             const withdrawTokens = (protocols.find(({ label }) => label === 'Aave V2')?.assets || [])
-                .map(({ tokens }) => tokens.map(({ img, symbol, tokens }) => tokens.map(token => ({
+                .map(({ tokens }) => tokens && tokens.map(({ img, symbol, tokens }) => tokens && tokens.map(token => ({
                     ...token,
                     img,
                     symbol,
