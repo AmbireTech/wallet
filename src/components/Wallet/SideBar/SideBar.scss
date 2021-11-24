@@ -1,11 +1,14 @@
 @import '../../../variables.scss';
 
 #sidebar {
+  height: 100%;
   width: $sidebar-width;
   position: fixed;
   left: 0px;
   bottom: 0px;
   top: 0px;
+  display: flex;
+  flex-direction: column;
   box-sizing: border-box;
   overflow: hidden;
   transition: width 0.1s ease-in-out;
@@ -52,38 +55,43 @@
     }
   }
 
-  .item {
-    display: flex;
-    align-items: center;
-    gap: 30px;
-    padding: 15px 15px;
-    line-height: 30px;
-    cursor: pointer;
-    color: #bbb;
-    transition: all 0.1s ease-in-out;
+  nav {
+    overflow-y: auto;
+    scrollbar-width: thin;
 
-    svg {
+    .item {
+      display: flex;
+      align-items: center;
+      gap: 30px;
+      padding: 15px 15px;
+      line-height: 30px;
+      cursor: pointer;
       color: #bbb;
-      transition: color 0.1s ease-in-out;
-    }
-
-    &:hover {
-      background-color: rgba(0, 0, 0, 0.3);
-      color: #fff;
+      transition: all 0.1s ease-in-out;
 
       svg {
-        color: #fff;
+        color: #bbb;
+        transition: color 0.1s ease-in-out;
       }
-    }
 
-    .badge-wrapper {
-      font-weight: bold;
-      width: 30px;
-      height: 30px;
-      text-align: center;
-      border: 1px solid $danger-color;
-      border-radius: 50%;
-      background: $danger-color;
+      &:hover {
+        background-color: rgba(0, 0, 0, 0.3);
+        color: #fff;
+
+        svg {
+          color: #fff;
+        }
+      }
+
+      .badge-wrapper {
+        font-weight: bold;
+        width: 30px;
+        height: 30px;
+        text-align: center;
+        border: 1px solid $danger-color;
+        border-radius: 50%;
+        background: $danger-color;
+      }
     }
   }
 
@@ -137,11 +145,13 @@
       }
     }
 
-    .item {
-      gap: 5px;
-      flex-direction: column;
-      justify-content: center;
-      font-size: 15px;
+    nav {
+      .item {
+        gap: 5px;
+        flex-direction: column;
+        justify-content: center;
+        font-size: 15px;
+      }
     }
   }
 }

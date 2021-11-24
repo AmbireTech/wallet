@@ -268,7 +268,9 @@ export default function AddAccount ({ relayerURL, onAddAccount }) {
                     onSignerAddressClicked={onSignerAddressClicked}
                     description={`Signer address is the ${signersToChoose.signerName} address you will use to sign transactions on Ambire Wallet.
                     А new account will be created using this signer if you don’t have one.`}
-                />
+                    isCloseBtnShown={false}
+                />, 
+                { disableClose: true }
             )
         }
     }, [onSignerAddressClicked, showModal, signersToChoose])

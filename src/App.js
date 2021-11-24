@@ -20,7 +20,7 @@ import useNetwork from './hooks/network'
 import useWalletConnect from './hooks/walletconnect'
 import useGnosisSafe from './hooks/useGnosisSafe'
 import useNotifications from './hooks/notifications'
-import { useAttentionGrabber, usePortfolio } from './hooks'
+import { useAttentionGrabber, usePortfolio, useAddressBook } from './hooks'
 
 const relayerURL = process.env.hasOwnProperty('REACT_APP_RELAYER_URL') ? process.env.REACT_APP_RELAYER_URL : 'http://localhost:1934'
 
@@ -39,6 +39,7 @@ setTimeout(() => {
 function AppInner () {
   // basic stuff: currently selected account, all accounts, currently selected network
   const { accounts, selectedAcc, onSelectAcc, onAddAccount, onRemoveAccount } = useAccounts()
+  const addressBook = useAddressBook({ accounts, selectedAcc })
   const { network, setNetwork, allNetworks } = useNetwork()
 
   // Signing requests: transactions/signed msgs: all requests are pushed into .requests
@@ -164,6 +165,7 @@ function AppInner () {
           match={{ url: "/wallet" }}
           accounts={accounts}
           selectedAcc={selectedAcc}
+          addressBook={addressBook}
           portfolio={portfolio}
           onSelectAcc={onSelectAcc}
           onRemoveAccount={onRemoveAccount}

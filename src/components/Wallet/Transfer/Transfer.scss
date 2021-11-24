@@ -12,33 +12,13 @@
             position: absolute;
             right: 0;
             height: 60px;
+        }
 
-            .list {
-                top: 60px;
+        .text-input {
+            width: 100%;
 
-                label {
-                    font-weight: bold;
-                    padding: 10px 20px;
-                }
-
-                .item {
-                    height: 50px;
-                    font-size: 15px;
-                    font-weight: bold;
-                    font-family: monospace;
-                    padding: 0 20px;
-                    cursor: pointer;
-                    opacity: 0.7;
-
-                    &.active {
-                        opacity: 1;
-                    }
-
-                    &:hover {
-                        background-color: rgba(0, 0, 0, 0.1);
-                        opacity: 0.9;
-                    }
-                }
+            input {
+                padding-right: 100px;
             }
         }
     }
@@ -67,31 +47,30 @@
             font-size: 40px;
             opacity: 0.5;
         }
-
-        .text-input {
-            width: 100%;
-
-            input {
-                padding-right: 100px;
-            }
-        }
-    }
-
-    #address-warning {
-        display: flex;
-        align-items: center;
-        gap: 5px;
-        font-weight: bold;
-        color: $danger-color;
-
-        svg {
-            font-size: 20px;
-        }
     }
 }
 
 @media screen and (max-width: 1400px) {
     #transfer {
         flex-direction: column;
+    }
+}
+
+@media screen and (min-width: 1550px) and (max-width: 1700px) {
+    #transfer {
+        .text-input {
+            input {
+                font-size: 16px;
+            }
+        }
+    }
+}
+@media screen and (min-width: 1400px) and (max-width: 1550px) {
+    #transfer {
+        .text-input {
+            input {
+                font-size: 13px;
+            }
+        }
     }
 }
