@@ -115,7 +115,16 @@
         background-color: rgba(0, 0, 0, 0.1);
       }
 
+      .details {
+       .address {
+        word-break: break-all;
+        text-align: left;
+        padding-right: 20px;
+       }
+      }
+
       .button {
+        flex: 0 0 auto;
         width: 60px;
       }
     }
