@@ -1,3 +1,5 @@
+import AddressBook from './AddressBook/AddressBook';
+import AddressWarning from './AddressWarning/AddressWarning';
 import Button from './Button/Button';
 import Chart from './Chart/Chart';
 import Checkbox from './Checkbox/Checkbox';
@@ -14,6 +16,8 @@ import NumberInput from './NumberInput/NumberInput';
 import Toggle from './Toggle/Toggle';
 
 export {
+    AddressBook,
+    AddressWarning,
     Button,
     Chart,
     Checkbox,
