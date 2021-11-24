@@ -55,3 +55,22 @@
         flex-direction: column;
     }
 }
+
+@media screen and (min-width: 1550px) and (max-width: 1700px) {
+    #transfer {
+        .text-input {
+            input {
+                font-size: 16px;
+            }
+        }
+    }
+}
+@media screen and (min-width: 1400px) and (max-width: 1550px) {
+    #transfer {
+        .text-input {
+            input {
+                font-size: 13px;
+            }
+        }
+    }
+}
