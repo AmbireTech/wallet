@@ -1,21 +1,67 @@
+@import '../../../variables.scss';
+
 #transactions {
-    .txnPreview {
-        max-width: 100%;
+    .bundle {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        padding: 1.5em;
+        background-color: $panel-background-color;
     }
-    .title {
-        color: #80ffdb;
-        display: block;
-    }
+
     .minedBundle {
-        padding: 2em;
-        padding-top: 1em;
-        background-color: rgba(0, 0, 0, 0.2);
-        margin: 2em 0px;
+        .details {
+            display: flex;
+            gap: 50px;
+            padding: 0 10px;
+            margin: 0;
+            margin-top: 20px;
+            list-style-type: none;
+
+            li {
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+
+                label {
+                    display: flex;
+                    align-items: center;
+                    gap: 10px;
+                    font-size: 17px;
+                    font-weight: bold;
+                }
+
+                p {
+                    margin: 0;
+                    font-size: 16px;
+                    font-weight: 500;
+                    opacity: 0.7;
+                }
+            }
+        }
     }
 
     .panel {
-        margin-bottom: 2em;
-        display: block;
+        gap: 10px;
+        padding: 0;
+        padding-bottom: 30px;
+        background-color: transparent !important;
+
+        .title {
+            height: 75px;
+            z-index: 49;
+            position: sticky;
+            top: -40px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            justify-content: flex-start;
+            background-color: $background-color;
+        }
+
+        .content {
+            gap: 25px;
+        }
     }
 
 
@@ -30,5 +76,9 @@
     .actions button.cancel {
         background-color: #da5151;
         color: white;
+    }
+
+    .txnPreview .summary {
+        max-width: 700px;
     }
 }

@@ -258,9 +258,8 @@ export default function useGnosisSafe({selectedAccount, network, verbose = 0}) {
       if (!connector.current) {
         //soft error handling: sendTransaction has issues
         //throw new Error("gnosis safe connector not set")
-        console.error("gnosis safe connector not set")
+        console.error('gnosis safe connector not set')
       } else {
-        console.log('replyData', replyData)
         connector.current.send(replyData, req.forwardId, replyData.error)
       }
     }
