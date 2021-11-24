@@ -284,7 +284,7 @@ export default function AddAccount ({ relayerURL, onAddAccount }) {
           <div id="loginOthers">
             <h3>Add an account</h3>
             <Link to="/email-login">
-              <button><div className="icon" style={{ backgroundImage: 'url(./resources/envelope.png)' }}/>Email</button>
+              <button><div className="icon" style={{ backgroundImage: 'url(./resources/envelope.png)' }}/>Email login</button>
             </Link>
             {addFromSignerButtons}
             {addAccErr ? (<p className="error">{addAccErr}</p>) : (<></>)}
