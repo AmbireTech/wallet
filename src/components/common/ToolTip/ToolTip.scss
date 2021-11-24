@@ -14,6 +14,7 @@
         color: white;
         background-color: $background-color;
         box-shadow: $box-shadow;
+        white-space: normal;
         opacity: 0;
         overflow: hidden;
         transition: opacity 0.1s ease-in-out;
