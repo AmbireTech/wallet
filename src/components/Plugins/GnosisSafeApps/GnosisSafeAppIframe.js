@@ -1,7 +1,7 @@
 import './GnosisSafeApps.scss'
 
 import { useEffect, useRef, useState } from 'react'
-import { InfiniteProgressBar } from '../../common'
+import { InfiniteProgressBar, Skeleton, Dots } from '../../common'
 
 export default function GnosisSafeAppIframe({
     selectedApp = {},
@@ -43,7 +43,18 @@ export default function GnosisSafeAppIframe({
 
     return (
         <div id="plugin-gnosis-conainer">
-            {loading && <InfiniteProgressBar />}
+            {loading &&
+                <div className='iframe-placeholder'>
+                    <InfiniteProgressBar />
+                    <Skeleton >
+
+                        <div>
+                            {'Loading'}
+                            <Dots />
+                        </div>
+                    </Skeleton>
+                </div>
+            }
 
             {url && <iframe
                 id={hash}

@@ -17,6 +17,10 @@
     border: 0;
   }
 
+  .iframe-placeholder {
+    height: 100%;
+  }
+
   #dapps-container {
     padding: 0;
     display: flex;
@@ -29,7 +33,6 @@
       list-style: none;
       background: $panel-background-color;
       padding: 16px;
-      border-radius: 8px;
       cursor: pointer;
       transition: $basic-transition;
 
@@ -45,7 +48,6 @@
         margin: 12px auto 8px auto;
         width: 48px;
         height: 48px;
-        border-radius: 4px;
         background-size: contain;
         background-repeat: no-repeat;
       }
