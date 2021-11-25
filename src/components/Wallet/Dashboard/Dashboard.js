@@ -76,7 +76,7 @@ export default function Dashboard({ portfolio, selectedNetwork, setNetwork }) {
                                     <span className="green-highlight">$</span> { portfolio.balance.total.truncated }
                                     <span className="green-highlight">.{ portfolio.balance.total.decimals }</span>
                                     <div id="other-balances">
-                                        <label>You also have</label>
+                                        { otherBalances.length ? <label>You also have</label> : null }
                                         {
                                             otherBalances.map(({ network, total }, i) => (
                                                 <div className="balance-container" key={network}>
