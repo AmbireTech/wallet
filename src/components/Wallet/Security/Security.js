@@ -112,7 +112,7 @@ const Security = ({
       if (!privValue) return null
       const isQuickAcc = addr === accountPresets.quickAccManager
       const privText = isQuickAcc
-        ? `Email/passphrase signer (${selectedAccount.email})`
+        ? `Email/passphrase signer (${selectedAccount.email || 'unknown email'})`
         : addr
       const signerAddress = isQuickAcc
         ? selectedAccount.signer.quickAccManager
