@@ -24,7 +24,6 @@ const usePermissions = () => {
 	} else {
 		const clipboardState = await onPermissionChange('clipboard-read', state => setClipboardGranted(state))
 		setClipboardGranted(clipboardState)
-		console.log(clipboardState)
 	}
 
         const notificationsState = await onPermissionChange('notifications', state => setNotificationsGranted(state))

@@ -201,14 +201,12 @@ export default function AddAccount({ relayerURL, onAddAccount }) {
   }
 
   async function connectLedgerAndGetAccounts() {
-    debugger
     if (isFirefox()) {
       await connectLedgerAndGetAccountsU2F()
     } else {
       await connectLedgerAndGetAccountsWebHID()
     }
   }
-
 
   async function connectLedgerAndGetAccountsU2F() {
     setInProgress(true)
@@ -237,9 +235,12 @@ export default function AddAccount({ relayerURL, onAddAccount }) {
     try {
       const addrData = await ledgerGetAddresses()
       if (!addrData.error) {
-        const signerExtra = { type: 'ledger', info: { stuff: 'someInfo' }, transportProtocol: 'webHID' }
-
-        onEOASelected(addrData.addresses[0], signerExtra)
+        const signerExtra = { type: 'ledger', transportProtocol: 'webHID' }
+        if (addrData.addresses.length === 1) {
+            onEOASelected(addrData.addresses[0], signerExtra)
+        } else {
+            setChooseSigners({ addresses: addrData.addresses, signerName: 'Ledger', signerExtra })
+        }
       } else {
         error = addrData.error
       }
