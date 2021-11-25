@@ -8,6 +8,10 @@ $input-height: 60px;
     flex-direction: column;
     gap: 10px;
 
+    label {
+        font-weight: 500;
+    }
+
     .text-input-container {
         position: relative;
 

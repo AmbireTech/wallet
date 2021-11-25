@@ -3,8 +3,9 @@ import './PermissionsModal.scss'
 import { MdCheck, MdClose } from 'react-icons/md'
 import { useModals, usePermissions } from '../../../hooks'
 import { useToasts } from '../../../hooks/toasts'
-import { askForPermission, isFirefox } from '../../../helpers/permissions'
-import { Modal, Toggle, Button, Checkbox } from "../../common"
+import { askForPermission } from '../../../helpers/permissions'
+import { Modal, Toggle, Button, Checkbox } from '../../common'
+import { isFirefox } from '../../../lib/isFirefox'
 
 const toastErrorMessage = name => `You blocked the ${name} permission. Check your browser permissions tab.`
 
@@ -23,7 +24,7 @@ const PermissionsModal = () => {
         if (!status) addToast(toastErrorMessage('Clipboard'), { error: true })
     }
 
-    const buttonDisabled = !modalHidden && ((!isFirefox && !isClipboardGranted) || !isNoticationsGranted)
+    const buttonDisabled = !modalHidden && ((!isFirefox() && !isClipboardGranted) || !isNoticationsGranted)
 
     return (
         <Modal id="permissions-modal" title="Permissions">
@@ -41,14 +42,14 @@ const PermissionsModal = () => {
                 </div>
                 <Toggle checked={isNoticationsGranted} onChange={() => requestNotificationsPermission()}/>
             </div>
-            <div className={`permission ${isFirefox ? 'disabled' : ''}`}>
+            <div className={`permission ${isFirefox() ? 'disabled' : ''}`}>
                 <div className="details">
-                    <div className="name">Clipboard { isFirefox ? <span className="unavailable">(Unavailable in Firefox)</span> : null }</div>
+                    <div className="name">Clipboard { isFirefox() ? <span className="unavailable">(Unavailable in Firefox)</span> : null }</div>
                     <div className="description">
                         Needed so that dApps can be connected automatically just by copying their WalletConnect URL.
                     </div>
                     { 
-                        isFirefox ? 
+                        isFirefox() ? 
                             <div className="unavailable">
                                 Without this, you can still use Ambire, but you will have to paste URLs manually
                             </div> : null
