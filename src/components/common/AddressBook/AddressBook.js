@@ -37,7 +37,7 @@ const AddressBook = ({ addresses, addAddress, removeAddress, newAddress, onClose
     }, [newAddress])
 
     return (
-        <DropDown title={<FaAddressCard/>} className="address-book" open={isOpen} onClose={onMenuClose}>
+        <DropDown title={<><FaAddressCard/>Address Book</>} className="address-book" open={isOpen} onClose={onMenuClose}>
             <div className="heading">
                 <div className="title">
                     <FaAddressCard/> Address Book
