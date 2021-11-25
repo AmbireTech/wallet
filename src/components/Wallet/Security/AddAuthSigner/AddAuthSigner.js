@@ -1,13 +1,15 @@
 import './AddAuthSigner.scss'
-import { useState, useEffect, useCallback } from 'react'
+import {useState, useEffect, useCallback} from 'react'
 
-import { TextInput, Button, DropDown } from '../../../common'
-import { LedgerSubprovider } from '@0x/subproviders/lib/src/subproviders/ledger' // https://github.com/0xProject/0x-monorepo/issues/1400
-import { ledgerEthereumBrowserClientFactoryAsync } from '@0x/subproviders/lib/src' // https://github.com/0xProject/0x-monorepo/issues/1400
+import {TextInput, Button, DropDown} from '../../../common'
+import {LedgerSubprovider} from '@0x/subproviders/lib/src/subproviders/ledger' // https://github.com/0xProject/0x-monorepo/issues/1400
+import {ledgerEthereumBrowserClientFactoryAsync} from '@0x/subproviders/lib/src' // https://github.com/0xProject/0x-monorepo/issues/1400
 import TrezorConnect from 'trezor-connect'
-import { TrezorSubprovider } from '@0x/subproviders/lib/src/subproviders/trezor' // https://github.com/0xProject/0x-monorepo/issues/1400
-import { SelectSignerAccountModal } from '../../../Modals'
-import { useModals } from '../../../../hooks'
+import {TrezorSubprovider} from '@0x/subproviders/lib/src/subproviders/trezor' // https://github.com/0xProject/0x-monorepo/issues/1400
+import {SelectSignerAccountModal} from '../../../Modals'
+import {useModals} from '../../../../hooks'
+import {isFirefox} from '../../../../lib/isFirefox'
+import {ledgerGetAddresses} from "../../../../lib/ledgerWebHID"
 
 const AddAuthSigner = props => {
   const [signerAddress, setSignerAddress] = useState({
@@ -19,9 +21,18 @@ const AddAuthSigner = props => {
   const [modalToggle, setModalToggle] = useState(true)
   const [signersToChoose, setChooseSigners] = useState(null)
   const [textInputInfo, setTextInputInfo] = useState('')
-  const { showModal } = useModals()
+  const {showModal} = useModals()
+
 
   async function connectLedgerAndGetAccounts() {
+    if (isFirefox()) {
+      await connectLedgerAndGetAccountsU2F()
+    } else {
+      await connectLedgerAndGetAccountsWebHID()
+    }
+  }
+
+  async function connectLedgerAndGetAccountsU2F() {
     const provider = new LedgerSubprovider({
       networkId: 0, // @TODO: is this needed?
       ledgerEthereumClientFactoryAsync: ledgerEthereumBrowserClientFactoryAsync,
@@ -31,8 +42,38 @@ const AddAuthSigner = props => {
     // there is a bug in the ledger subprovider (race condition), so it will think we're trying to make two connections simultaniously
     // cause one call won't be aware of the other's attempt to connect
     const addresses = await provider.getAccountsAsync(100)
-    setChooseSigners({ addresses, signerName: 'Ledger' })
+    setChooseSigners({addresses, signerName: 'Ledger'})
     setModalToggle(true)
+  }
+
+
+  async function connectLedgerAndGetAccountsWebHID() {
+    let error = null
+    try {
+      const addrData = await ledgerGetAddresses()
+      if (!addrData.error) {
+        setChooseSigners({
+          addresses: addrData.addresses,
+          signerName: 'Ledger'
+        })
+        setModalToggle(true)
+      } else {
+        error = addrData.error
+      }
+    } catch (e) {
+      console.log(e)
+      if (e.statusCode && e.id === 'InvalidChannel') {
+        error = "Invalid channel"
+      } else if (e.statusCode && e.statusCode === 25873) {
+        error = "Please make sure your ledger is connected and the ethereum app is open"
+      } else {
+        error = e.message
+      }
+    }
+
+    if (error) {
+      setAddAccErr(`Ledger error: ${error.message || error}`)
+    }
   }
 
   async function connectTrezorAndGetAccounts() {
@@ -46,7 +87,7 @@ const AddAuthSigner = props => {
       trezorConnectClientApi: TrezorConnect,
     })
     const addresses = await provider.getAccountsAsync(100)
-    setChooseSigners({ addresses, signerName: 'Trezor' })
+    setChooseSigners({addresses, signerName: 'Trezor'})
     setModalToggle(true)
   }
 
@@ -57,7 +98,7 @@ const AddAuthSigner = props => {
       throw new Error('MetaMask not available')
     }
     const ethereum = window.ethereum
-    const web3Accs = await ethereum.request({ method: 'eth_requestAccounts' })
+    const web3Accs = await ethereum.request({method: 'eth_requestAccounts'})
     if (!web3Accs.length) throw new Error('No accounts connected')
     if (web3Accs.length === 1)
       return onSignerAddressClicked({
@@ -65,7 +106,7 @@ const AddAuthSigner = props => {
         index: 0,
       })
 
-    setChooseSigners({ addresses: web3Accs, signerName: 'Web3' })
+    setChooseSigners({addresses: web3Accs, signerName: 'Web3'})
     setModalToggle(true)
   }
 
@@ -109,7 +150,7 @@ const AddAuthSigner = props => {
       >
         <div
           className="icon"
-          style={{ backgroundImage: 'url(./resources/trezor.png)' }}
+          style={{backgroundImage: 'url(./resources/trezor.png)'}}
         />
         Trezor
       </button>
@@ -119,7 +160,7 @@ const AddAuthSigner = props => {
       >
         <div
           className="icon"
-          style={{ backgroundImage: 'url(./resources/ledger.png)' }}
+          style={{backgroundImage: 'url(./resources/ledger.png)'}}
         />
         Ledger
       </button>
@@ -129,7 +170,7 @@ const AddAuthSigner = props => {
       >
         <div
           className="icon"
-          style={{ backgroundImage: 'url(./resources/metamask.png)' }}
+          style={{backgroundImage: 'url(./resources/metamask.png)'}}
         />
         Metamask / Browser
       </button>
@@ -138,7 +179,7 @@ const AddAuthSigner = props => {
 
   const onTextInput = value => {
     if (textInputInfo.length) setTextInputInfo('')
-    setSignerAddress({ ...signerAddress, address: value })
+    setSignerAddress({...signerAddress, address: value})
   }
 
   useEffect(() => {
@@ -163,7 +204,7 @@ const AddAuthSigner = props => {
           onInput={onTextInput}
         />
         <DropDown
-          style={{ height: '60px' }}
+          style={{height: '60px'}}
           title="Connect signer"
           closeOnClick
         >

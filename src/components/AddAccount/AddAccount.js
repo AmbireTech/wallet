@@ -17,8 +17,8 @@ import { useToasts } from '../../hooks/toasts'
 import { SelectSignerAccountModal } from '../Modals'
 import { useModals } from '../../hooks'
 import { Loading } from '../common'
-
 import { ledgerGetAddresses } from '../../lib/ledgerWebHID'
+import { isFirefox } from '../../lib/isFirefox'
 
 
 TrezorConnect.manifest({
@@ -194,6 +194,17 @@ export default function AddAccount ({ relayerURL, onAddAccount }) {
     }
 
     async function connectLedgerAndGetAccounts () {
+        debugger
+        if(isFirefox()){
+            await connectLedgerAndGetAccountsU2F()
+        }else{
+            await connectLedgerAndGetAccountsWebHID()
+        }
+    }
+
+
+    async function connectLedgerAndGetAccountsU2F() {
+        setInProgress(true)
         const provider = new LedgerSubprovider({
             networkId: 0, // @TODO: probably not needed
             ledgerEthereumClientFactoryAsync: ledgerEthereumBrowserClientFactoryAsync,
@@ -206,9 +217,11 @@ export default function AddAccount ({ relayerURL, onAddAccount }) {
         const signerExtra = await provider._initialDerivedKeyInfoAsync().then(info => ({ type: 'ledger', info: JSON.parse(JSON.stringify(info)) }))
 
         setChooseSigners({ addresses, signerName: 'Ledger', signerExtra })
+        setInProgress(false)
     }
 
-    async function connectLedgerWebHIDAndGetAccounts() {
+
+    async function connectLedgerAndGetAccountsWebHID() {
         let error = null
         setInProgress(true)
         try {
@@ -269,7 +282,7 @@ export default function AddAccount ({ relayerURL, onAddAccount }) {
                     description={`Signer address is the ${signersToChoose.signerName} address you will use to sign transactions on Ambire Wallet.
                     А new account will be created using this signer if you don’t have one.`}
                     isCloseBtnShown={false}
-                />, 
+                />,
                 { disableClose: true }
             )
         }
@@ -281,7 +294,6 @@ export default function AddAccount ({ relayerURL, onAddAccount }) {
         <button onClick={() => wrapErr(connectTrezorAndGetAccounts)}><div className="icon" style={{ backgroundImage: 'url(./resources/trezor.png)' }}/>Trezor</button>
         <button onClick={() => wrapErr(connectLedgerAndGetAccounts)}><div className="icon" style={{ backgroundImage: 'url(./resources/ledger.png)' }}/>Ledger</button>
         <button onClick={() => wrapErr(connectWeb3AndGetAccounts)}><div className="icon" style={{ backgroundImage: 'url(./resources/metamask.png)' }}/>Metamask / Browser</button>
-        <button onClick={() => wrapErr(connectLedgerWebHIDAndGetAccounts)}><div className="icon" style={{ backgroundImage: 'url(./resources/ledger.png)' }}/>LedgerWebHID</button>
     </>)
 
   if (!relayerURL) {

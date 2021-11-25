@@ -26,8 +26,7 @@ async function getTransport() {
 }
 
 
-export async function ledgerGetAddresses(page, hdPath) {
-  console.log(`connectLedger`, page, hdPath)
+export async function ledgerGetAddresses() {
   const returnData = {
     error: null,
     addresses: []
