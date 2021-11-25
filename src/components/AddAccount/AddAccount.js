@@ -55,6 +55,7 @@ export default function AddAccount({ relayerURL, onAddAccount }) {
       await fn()
     } catch (e) {
       console.error(e)
+      setInProgress(false)
       setAddAccErr(`Unexpected error: ${e.message || e}`)
     }
   }
