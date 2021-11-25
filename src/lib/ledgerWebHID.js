@@ -109,8 +109,6 @@ async function getAddressInternal(transport, parentKeyDerivationPath) {
 }
 
 export async function ledgerSignTransaction(txn, chainId) {
-  console.log(`signTransaction`, txn)
-
   const transport = await getTransport().catch(err => {
     throw err
   })
