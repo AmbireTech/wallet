@@ -148,6 +148,7 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/t
 * Email/password accounts
 * Ledger support
 * Trezor support
+* Can create an account with a Web3 wallet
 * Multiple accounts
 * Multiple networks: Ethereum, Polygon, Avalanche
 * WalletConnect v1
