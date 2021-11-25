@@ -1,10 +1,10 @@
-import { useEffect } from 'react'
+import { useEffect, useCallback } from 'react'
 import { useToasts} from './toasts'
 import { usePermissions } from './'
 
 let documentTitle = document.title
 let flashingTitleInterval = null
-let stickyId = null
+let stickyIds = []
 
 const showFlashingTitle = () => {
     let count = 0
@@ -23,22 +23,24 @@ const removeFlashingTitle = () => {
 const useAttentionGrabber = ({ eligibleRequests, isSendTxnShowing, onSitckyClick }) => {
     const { addToast, removeToast } = useToasts()
     const { isNoticationsGranted } = usePermissions()
+
+    const removeStickyToasts = useCallback(() => stickyIds.forEach(id => removeToast(id)), [removeToast])
     
     useEffect(() => {
         if (eligibleRequests.length) {
-            if (isSendTxnShowing) removeToast(stickyId)
+            if (isSendTxnShowing) removeStickyToasts()
             else {
-                stickyId = addToast('Transactions waiting to be signed', {
+                stickyIds.push(addToast('Transactions waiting to be signed', {
                     position: 'right',
                     sticky: true,
                     badge: eligibleRequests.length,
                     onClick: () => onSitckyClick()
-                })
+                }))
             }
 
             !isNoticationsGranted ? showFlashingTitle() : removeFlashingTitle()
         } else {
-            removeToast(stickyId)
+            removeStickyToasts()
             removeFlashingTitle()
         }
 
