@@ -1,5 +1,6 @@
 @import '../../../variables.scss';
 
 #swap {
+    padding-top: ($layout-spacing / 2);
     @include flex-full-grow-container
 }
