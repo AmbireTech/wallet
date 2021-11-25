@@ -79,8 +79,8 @@ export default function Dashboard({ portfolio, selectedNetwork, setNetwork }) {
                                         <label>You also have</label>
                                         {
                                             otherBalances.map(({ network, total }, i) => (
-                                                <>
-                                                    <div className="other-balance" key={network} onClick={() => setNetwork(network)}>
+                                                <div className="balance-container" key={network}>
+                                                    <div className="other-balance" onClick={() => setNetwork(network)}>
                                                         <label>
                                                             <span className="purple-highlight">$</span> { total.truncated }
                                                             <span className="purple-highlight">.{total.decimals}</span>
@@ -94,7 +94,7 @@ export default function Dashboard({ portfolio, selectedNetwork, setNetwork }) {
                                                         </div>
                                                     </div>
                                                     { otherBalances.length - 1 !== i ? <label>and</label> : null }
-                                                </>
+                                                </div>
                                             ))
                                         }
                                     </div>
