@@ -26,7 +26,11 @@ export default function Wallet(props) {
   const routes = [
     {
       path: '/dashboard',
-      component: <Dashboard portfolio={props.portfolio} setNetwork={props.setNetwork} />
+      component: <Dashboard
+        portfolio={props.portfolio}
+        selectedNetwork={props.network}
+        setNetwork={props.setNetwork}
+      />
     },
     {
       path: '/deposit',
