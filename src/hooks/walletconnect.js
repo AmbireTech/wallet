@@ -87,7 +87,11 @@ export default function useWalletConnect ({ account, chainId, onCallRequest }) {
         let sessionStart
         let sessionTimeout
         if (!connector.session.peerMeta) sessionTimeout = setTimeout(() => {
-            if (!connector.session.peerMeta) addToast('Unable to get session from dApp - perhaps the link has expired?', { error: true })
+            const suggestion = /https:\/\/bridge.walletconnect.org/g.test(connector.session.bridge)
+                // @TODO: 'or try an alternative connection method' when we implement one
+                ? 'this dApp is using an old version of WalletConnect - please tell them to upgrade!'
+                : 'perhaps the link has expired?'
+            if (!connector.session.peerMeta) addToast(`Unable to get session from dApp - ${suggestion}`, { error: true })
         }, SESSION_TIMEOUT)
 
         connector.on('session_request', (error, payload) => {
