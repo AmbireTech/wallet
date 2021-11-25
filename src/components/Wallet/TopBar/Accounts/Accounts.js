@@ -46,11 +46,13 @@ const Accounts = ({ accounts, selectedAddress, onSelectAcc, onRemoveAccount }) =
                                 <label>{ email ? `Email/Password account (${email})` : `${walletType(signerExtra)} (${shortenedAddress(signer.address)})` }</label>
                             </div>
                         </div>
-                        <div className="button" onClick={() => copyAddress(id)}>
-                            <MdOutlineContentCopy/>
-                        </div>
-                        <div className="button" onClick={() => setAccountWarning(id)}>
-                            <MdLogout/>
+                        <div className="buttons">
+                            <div className="button" onClick={() => copyAddress(id)}>
+                                <MdOutlineContentCopy/>
+                            </div>
+                            <div className="button" onClick={() => setAccountWarning(id)}>
+                                <MdLogout/>
+                            </div>
                         </div>
                     </div>
                     :
@@ -58,11 +60,13 @@ const Accounts = ({ accounts, selectedAddress, onSelectAcc, onRemoveAccount }) =
                         <div className="message">
                             Are you sure you want to log out from this account ?
                         </div>
-                        <div className="button danger" onClick={() => onRemoveAccount(id)}>
-                            <MdOutlineCheck/>
-                        </div>
-                        <div className="button" onClick={() => setAccountWarning(false)}>
-                            <MdOutlineClose/>
+                        <div className="buttons">
+                            <div className="button danger" onClick={() => onRemoveAccount(id)}>
+                                <MdOutlineCheck/>
+                            </div>
+                            <div className="button" onClick={() => setAccountWarning(false)}>
+                                <MdOutlineClose/>
+                            </div>
                         </div>
                     </div>
               )
