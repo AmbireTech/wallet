@@ -7,7 +7,8 @@ import Protocols from './Protocols/Protocols'
 import Collectibles from './Collectibles/Collectibles'
 import networks from '../../../consts/networks'
 
-export default function Dashboard({ portfolio, setNetwork }) {
+export default function Dashboard({ portfolio, selectedNetwork, setNetwork }) {
+
     const [chartTokensData, setChartTokensData] = useState([]);
     const [chartProtocolsData, setChartProtocolsData] = useState([]);
     const [chartType, setChartType] = useState([]);
@@ -32,6 +33,7 @@ export default function Dashboard({ portfolio, setNetwork }) {
     ]
 
     const networkDetails = (network) => networks.find(({ id }) => id === network)
+    const otherBalances = portfolio.otherBalances.filter(({ network, total }) => network !== selectedNetwork.id && total.full > 0)
 
     useLayoutEffect(() => {
         const tokensData = portfolio.tokens
@@ -74,15 +76,25 @@ export default function Dashboard({ portfolio, setNetwork }) {
                                     <span className="green-highlight">$</span> { portfolio.balance.total.truncated }
                                     <span className="green-highlight">.{ portfolio.balance.total.decimals }</span>
                                     <div id="other-balances">
+                                        <label>You also have</label>
                                         {
-                                            portfolio.otherBalances.map(({ network, total }) => (
-                                                total.full > 0 ?
+                                            otherBalances.map(({ network, total }, i) => (
+                                                <>
                                                     <div className="other-balance" key={network} onClick={() => setNetwork(network)}>
-                                                        You also have <span className="purple-highlight">$</span> { total.truncated }
-                                                        <span className="purple-highlight">.{total.decimals}</span> on { networkDetails(network).name }
+                                                        <label>
+                                                            <span className="purple-highlight">$</span> { total.truncated }
+                                                            <span className="purple-highlight">.{total.decimals}</span>
+                                                        </label>
+                                                        on
+                                                        <div className="network">
+                                                            <div className="icon" style={{backgroundImage: `url(${networkDetails(network).icon})`}}></div>
+                                                            <div className="name">
+                                                                { networkDetails(network).name }
+                                                            </div>
+                                                        </div>
                                                     </div>
-                                                    :
-                                                    null
+                                                    { otherBalances.length - 1 !== i ? <label>and</label> : null }
+                                                </>
                                             ))
                                         }
                                     </div>
