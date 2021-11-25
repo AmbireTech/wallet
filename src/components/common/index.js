@@ -1,3 +1,5 @@
+import AddressBook from './AddressBook/AddressBook';
+import AddressWarning from './AddressWarning/AddressWarning';
 import Button from './Button/Button';
 import Chart from './Chart/Chart';
 import Checkbox from './Checkbox/Checkbox';
@@ -12,8 +14,11 @@ import Select from './Select/Select';
 import TextInput from './TextInput/TextInput';
 import NumberInput from './NumberInput/NumberInput';
 import Toggle from './Toggle/Toggle';
+import ToolTip from './ToolTip/ToolTip';
 
 export {
+    AddressBook,
+    AddressWarning,
     Button,
     Chart,
     Checkbox,
@@ -27,5 +32,6 @@ export {
     Select,
     TextInput,
     NumberInput,
-    Toggle
+    Toggle,
+    ToolTip
 };

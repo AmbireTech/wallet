@@ -1,14 +1,17 @@
 import './Security.scss'
 
+import { MdOutlineAdd } from 'react-icons/md'
 import { useState, useEffect } from 'react'
 import { Loading, TextInput, Button } from '../../common'
 import { Interface } from 'ethers/lib/utils'
 import accountPresets from '../../../consts/accountPresets'
 import privilegesOptions from '../../../consts/privilegesOptions'
-import { useRelayerData } from '../../../hooks'
+import { useRelayerData, useModals } from '../../../hooks'
+import { InputModal } from '../../Modals';
+import AddressList from '../../common/AddressBook/AddressList/AddressList'
+import { isValidAddress } from '../../../helpers/address';
 import AddAuthSigner from './AddAuthSigner/AddAuthSigner'
 import { useToasts } from '../../../hooks/toasts'
-import { fetchGet } from '../../../lib/fetch'
 import { useHistory } from 'react-router-dom'
 
 const IDENTITY_INTERFACE = new Interface(
@@ -20,14 +23,18 @@ const Security = ({
   selectedAcc,
   selectedNetwork,
   accounts,
+  addressBook,
   addRequest,
   onAddAccount,
 }) => {
+  const { addresses, addAddress, removeAddress } = addressBook
+
+  const { showModal } = useModals()
   const [ cacheBreak, setCacheBreak ] = useState(() => Date.now())
   
   useEffect(() => {
-    if ((Date.now() - cacheBreak) > 30000) setCacheBreak(Date.now())
-    const intvl = setTimeout(() => setCacheBreak(Date.now()), 350000)
+    if (Date.now() - cacheBreak > 30000) setCacheBreak(Date.now())
+    const intvl = setTimeout(() => setCacheBreak(Date.now()), 35000)
     return () => clearTimeout(intvl)
   }, [cacheBreak])
 
@@ -38,6 +45,7 @@ const Security = ({
   const privileges = data ? data.privileges : {}
   const { addToast } = useToasts()
   const history = useHistory()
+
 
   const craftTransaction = (address, privLevel) => {
     return {
@@ -80,11 +88,7 @@ const Security = ({
 
   const onMakeDefaultBtnClicked = async (account, address, isQuickAccount) => {
     if (isQuickAccount) {
-      const resp = await fetchGet(`${relayerURL}/identity/${selectedAcc}`)
-      const respData = await resp
-      const quickAccSignerData = respData.meta.quickAccSigner
-
-      onAddAccount({ ...account, signer: quickAccSignerData })
+      return addToast((<span>To make this signer default, please <a href='#/email-login'>please login with the email</a></span>), {url: '/#/email-login', error: true})
     } else {
       onAddAccount({ ...account, signer: { address: address } })
       addToast(
@@ -103,7 +107,7 @@ const Security = ({
       if (!privValue) return null
       const isQuickAcc = addr === accountPresets.quickAccManager
       const privText = isQuickAcc
-        ? `Email/passphrase signer (${selectedAccount.email})`
+        ? `Email/passphrase signer (${selectedAccount.email || 'unknown email'})`
         : addr
       const signerAddress = isQuickAcc
         ? selectedAccount.signer.quickAccManager
@@ -140,6 +144,10 @@ const Security = ({
     })
     .filter(x => x)
 
+  const modalInputs = [{ label: 'Name', placeholder: 'My Address' }, { label: 'Address', placeholder: '0x', validate: value => isValidAddress(value) }] 
+  const inputModal = <InputModal title="Add New Address" inputs={modalInputs} onClose={([name, address]) => addAddress(name, address)}></InputModal>
+  const showInputModal = () => showModal(inputModal)
+
   // @TODO relayerless mode: it's not that hard to implement in a primitive form, we need everything as-is
   // but rendering the initial privileges instead; or maybe using the relayerless transactions hook/service
   // and aggregate from that
@@ -167,6 +175,18 @@ const Security = ({
           onAddBtnClicked={onAddBtnClickedHandler}
           selectedNetwork={selectedNetwork}
         />
+      </div>
+  
+      <div id="addresses" className='panel'>
+        <div className='title'>Address Book</div>
+        <div className="content">
+          <AddressList
+            noAccounts={true}
+            addresses={addresses}
+            removeAddress={removeAddress}
+          />
+          <Button small icon={<MdOutlineAdd/>} onClick={showInputModal}>Add Address</Button>
+        </div>
       </div>
     </section>
   )

@@ -63,7 +63,7 @@ const AAVECard = ({ networkId, tokens, protocols, account, addRequest }) => {
             }
         } catch(e) {
             console.error(e)
-            addToast(`Error: ${e.message || e}`, { error: true })
+            addToast(`Aave Approve Error: ${e.message || e}`, { error: true })
         }
     }
 
@@ -81,7 +81,7 @@ const AAVECard = ({ networkId, tokens, protocols, account, addRequest }) => {
                 }, 60000)
             } catch(e) {
                 console.error(e)
-                addToast(`Error: ${e.message || e}`, { error: true })
+                addToast(`Aave Deposit Error: ${e.message || e}`, { error: true })
             }
         }
         else if (type === 'Withdraw') {
@@ -97,7 +97,7 @@ const AAVECard = ({ networkId, tokens, protocols, account, addRequest }) => {
                 }, 60000)
             } catch(e) {
                 console.error(e)
-                addToast(`Error: ${e.message || e}`, { error: true })
+                addToast(`Aave Withdraw Error: ${e.message || e}`, { error: true })
             }
         }
     }
@@ -120,7 +120,7 @@ const AAVECard = ({ networkId, tokens, protocols, account, addRequest }) => {
             const reservesAddresses = reserves.map(reserve => reserve.toLowerCase())
 
             const withdrawTokens = (protocols.find(({ label }) => label === 'Aave V2')?.assets || [])
-                .map(({ tokens }) => tokens.map(({ img, symbol, tokens }) => tokens.map(token => ({
+                .map(({ tokens }) => tokens && tokens.map(({ img, symbol, tokens }) => tokens && tokens.map(token => ({
                     ...token,
                     img,
                     symbol,
@@ -148,23 +148,21 @@ const AAVECard = ({ networkId, tokens, protocols, account, addRequest }) => {
                 return [address, apr]
             })))
 
+            const getEquToken = token => allTokens.find((({ address, type }) => address === token.address && (token.type === 'deposit' ? type === 'withdraw' : type === 'deposit')))
             const tokensItems = allTokens.map(token => ({
                 ...token,
                 apr: tokensAPR[token.address],
                 icon: token.img,
                 label: `${token.symbol} (${tokensAPR[token.address]}% APR)`,
                 value: token.address
-            })).sort((a, b) => {
-                const getEquToken = token => allTokens.find((({ address, type }) => address === token.address && (token.type === 'deposit' ? type === 'withdraw' : type === 'deposit')))
-                return (b.balance + getEquToken(b).balance) - (a.balance + getEquToken(a).balance)
-            })
+            })).sort((a, b) => (b?.balance + getEquToken(b)?.balance) - (a?.balance + getEquToken(a)?.balance))
 
             setTokensItems(tokensItems)
             setLoading(false)
             setUnavailable(false)
         } catch(e) {
             console.error(e);
-            addToast(e.message | e, { error: true })
+            addToast(`Aave load pool error: ${e.message || e}`, { error: true })
         }
     }, [addToast, protocols, tokens, defaultTokens, networkDetails.id, networkDetails.rpc])
 

@@ -10,12 +10,12 @@ import Transfer from "./Transfer/Transfer"
 import Earn from "./Earn/Earn"
 import Security from "./Security/Security"
 import Transactions from './Transactions/Transactions'
-import PluginGnosisSafeApps from "../Plugins/GnosisSafeApps/GnosisSafeApps"
+import PluginGnosisSafeApps from '../Plugins/GnosisSafeApps/GnosisSafeApps'
 import Collectible from "./Collectible/Collectible"
 import { PermissionsModal } from '../Modals'
-import { useModals, usePermissions } from "../../hooks"
-import { useCallback, useEffect, useMemo } from "react"
-import { isFirefox } from '../../helpers/permissions'
+import { useModals, usePermissions } from '../../hooks'
+import { useCallback, useEffect, useMemo } from 'react'
+import { isFirefox } from '../../lib/isFirefox'
 
 export default function Wallet(props) {
   const { showModal } = useModals()
@@ -26,7 +26,11 @@ export default function Wallet(props) {
   const routes = [
     {
       path: '/dashboard',
-      component: <Dashboard portfolio={props.portfolio} setNetwork={props.setNetwork} />
+      component: <Dashboard
+        portfolio={props.portfolio}
+        selectedNetwork={props.network}
+        setNetwork={props.setNetwork}
+      />
     },
     {
       path: '/deposit',
@@ -34,7 +38,14 @@ export default function Wallet(props) {
     },
     {
       path: '/transfer/:tokenAddress?',
-      component: <Transfer portfolio={props.portfolio} selectedAcc={props.selectedAcc} selectedNetwork={{ ...props.network }} accounts={props.accounts} addRequest={props.addRequest} />
+      component: <Transfer
+        portfolio={props.portfolio}
+        selectedAcc={props.selectedAcc}
+        selectedNetwork={{...props.network}}
+        addRequest={props.addRequest}
+        accounts={props.accounts}
+        addressBook={props.addressBook}
+      />
     },
     {
       path: '/earn',
@@ -42,7 +53,15 @@ export default function Wallet(props) {
     },
     {
       path: '/security',
-      component: <Security relayerURL={props.relayerURL} selectedAcc={props.selectedAcc} selectedNetwork={props.network} accounts={props.accounts} addRequest={props.addRequest} onAddAccount={props.onAddAccount} />
+      component: <Security
+        relayerURL={props.relayerURL}
+        selectedAcc={props.selectedAcc}
+        selectedNetwork={props.network}
+        accounts={props.accounts}
+        addressBook={props.addressBook}
+        addRequest={props.addRequest}
+        onAddAccount={props.onAddAccount}
+      />
     },
     {
       path: '/transactions',
@@ -59,7 +78,13 @@ export default function Wallet(props) {
     },
     {
       path: '/nft/:network/:collectionAddr/:tokenId',
-      component: <Collectible selectedAcc={props.selectedAcc} selectedNetwork={{ ...props.network }} addRequest={props.addRequest} />
+      component: <Collectible
+        selectedAcc={props.selectedAcc}
+        selectedNetwork={{...props.network}}
+        addRequest={props.addRequest}
+        accounts={props.accounts}
+        addressBook={props.addressBook}
+      />
     },
     {
       path: '/gnosis/plugins',
@@ -73,7 +98,7 @@ export default function Wallet(props) {
   ]
 
   const handlePermissionsModal = useCallback(async () => {
-    if (!modalHidden && arePermissionsLoaded && ((!isFirefox && !isClipboardGranted) || !isNoticationsGranted)) showModal(<PermissionsModal />)
+    if (!modalHidden && arePermissionsLoaded && ((!isFirefox() && !isClipboardGranted) || !isNoticationsGranted)) showModal(<PermissionsModal />, { disableClose: true })
   }, [showModal, isClipboardGranted, isNoticationsGranted, arePermissionsLoaded, modalHidden])
 
   useEffect(() => handlePermissionsModal(), [handlePermissionsModal])

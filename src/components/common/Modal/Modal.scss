@@ -13,7 +13,7 @@ $modal-width: 530px;
     gap: 10px;
     padding: 25px 0;
     padding-bottom: 30px;
-    background-color: $input-background-color;
+    background-color: $panel-background-color;
     box-shadow: $box-shadow;
     box-sizing: border-box;
 
@@ -58,6 +58,7 @@ $modal-width: 530px;
             background-color: $input-background-color;
 
             button {
+                flex: 0 1 50% !important;
                 height: 100%;
             }
         }

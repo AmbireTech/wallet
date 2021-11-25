@@ -10,11 +10,10 @@ export async function sendNoRelayer ({ finalBundle, account, network, wallet, es
     // currently disabled quickAccManager cause 1) we don't have a means of getting the second sig 2) we still have to sign txes so it's inconvenient
     // if (signer.quickAccManager) await finalBundle.sign(wallet)
     //const [to, data] = signer.quickAccManager ? [signer.quickAccManager, QuickAccManagerInterface.encodeFunctionData('send', [finalBundle.identity, [signer.timelock, signer.one, signer.two], [false, finalBundle.signature, '0x']])] :
-  
+
     // NOTE: just adding values to gasLimit is bad because 1) they're hardcoded estimates
     // and 2) the fee displayed in the UI does not reflect that
     const isDeployed = await provider.getCode(finalBundle.identity).then(code => code !== '0x')
-
     let gasLimit
     let to, data
     if (isDeployed) {
@@ -30,7 +29,7 @@ export async function sendNoRelayer ({ finalBundle, account, network, wallet, es
       data = FactoryInterface.encodeFunctionData('deployAndExecute', [account.bytecode, account.salt, finalBundle.txns, finalBundle.signature])
       gasLimit = (await provider.estimateGas({ to, data, from: signer.address })).toNumber() + 20000
     }
-  
+
     const txn = {
       from: signer.address,
       to, data,
