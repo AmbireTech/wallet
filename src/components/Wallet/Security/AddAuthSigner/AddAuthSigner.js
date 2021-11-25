@@ -41,22 +41,25 @@ const AddAuthSigner = props => {
     // NOTE: do not attempt to do both of these together (await Promise.all)
     // there is a bug in the ledger subprovider (race condition), so it will think we're trying to make two connections simultaniously
     // cause one call won't be aware of the other's attempt to connect
-    const addresses = await provider.getAccountsAsync(100)
-    setChooseSigners({ addresses, signerName: 'Ledger' })
-    setModalToggle(true)
+      const addresses = await provider.getAccountsAsync(100)
+      setChooseSigners({ addresses, signerName: 'Ledger' })
+      setModalToggle(true)
   }
-
 
   async function connectLedgerAndGetAccountsWebHID() {
     let error = null
     try {
       const addrData = await ledgerGetAddresses()
       if (!addrData.error) {
-        setChooseSigners({
-          addresses: addrData.addresses,
-          signerName: 'Ledger'
-        })
-        setModalToggle(true)
+        if (addrData.addresses.length === 1) {
+          return onSignerAddressClicked({
+            address: addrData.addresses[0],
+            index: 0,
+          })
+        } else {
+          setChooseSigners({ address: addrData.addresses, signerName: 'Ledger' })
+          setModalToggle(true)
+        }
       } else {
         error = addrData.error
       }
