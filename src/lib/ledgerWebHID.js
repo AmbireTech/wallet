@@ -84,7 +84,8 @@ async function getAccounts(transport) {
     baseDerivationPath: PARENT_HD_PATH,
   }
 
-  returnData.accounts = calculateDerivedHDKeyInfos(initialDerivedKeyInfo, 10)
+  // currently we can't get addrs to match with what appears in MM/Ledger live so only one is derived
+  returnData.accounts = calculateDerivedHDKeyInfos(initialDerivedKeyInfo, 1)
   return returnData
 }
 
@@ -145,7 +146,6 @@ export async function ledgerSignTransaction(txn, chainId) {
     const signedChainId = Math.floor((intV - EIP_155_CONSTANT) / 2)
 
     if (signedChainId !== chainId) {
-      console.log(rsvResponse)
       throw new Error('Invalid returned V 0x' + rsvResponse.v)
     }
 
@@ -165,8 +165,6 @@ export async function ledgerSignTransaction(txn, chainId) {
 }
 
 export async function ledgerSignMessage(hash, signerAddress) {
-  console.log(`signMessage`, hash)
-
   const transport = await getTransport().catch(err => {
     throw err
   })
