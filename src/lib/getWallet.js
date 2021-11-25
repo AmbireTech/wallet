@@ -1,23 +1,23 @@
-import {TrezorSubprovider} from '@0x/subproviders/lib/src/subproviders/trezor' // https://github.com/0xProject/0x-monorepo/issues/1400
+import { TrezorSubprovider } from '@0x/subproviders/lib/src/subproviders/trezor' // https://github.com/0xProject/0x-monorepo/issues/1400
 import TrezorConnect from 'trezor-connect'
-import {ethers} from 'ethers'
+import { ethers } from 'ethers'
 import HDNode from 'hdkey'
-import {LedgerSubprovider} from '@0x/subproviders/lib/src/subproviders/ledger' // https://github.com/0xProject/0x-monorepo/issues/1400
-import {ledgerEthereumBrowserClientFactoryAsync} from '@0x/subproviders/lib/src' // https://github.com/0xProject/0x-monorepo/issues/1400
-import {ledgerSignMessage, ledgerSignTransaction} from './ledgerWebHID'
+import { LedgerSubprovider } from '@0x/subproviders/lib/src/subproviders/ledger' // https://github.com/0xProject/0x-monorepo/issues/1400
+import { ledgerEthereumBrowserClientFactoryAsync } from '@0x/subproviders/lib/src' // https://github.com/0xProject/0x-monorepo/issues/1400
+import { ledgerSignMessage, ledgerSignTransaction } from './ledgerWebHID'
 
 let wallets = {}
 
 // opts
 // passphrase: string
 // noCache: boolean
-export function getWallet({signer, signerExtra, chainId}, opts = {}) {
+export function getWallet({ signer, signerExtra, chainId }, opts = {}) {
   const id = `${signer.address || signer.one}${chainId}`
   if (wallets[id]) return wallets[id]
-  return wallets[id] = getWalletNew({signer, signerExtra, chainId}, opts)
+  return wallets[id] = getWalletNew({ signer, signerExtra, chainId }, opts)
 }
 
-function getWalletNew({chainId, signer, signerExtra}, opts) {
+function getWalletNew({ chainId, signer, signerExtra }, opts) {
   if (signerExtra && signerExtra.type === 'trezor') {
     const providerTrezor = new TrezorSubprovider({
       trezorConnectClientApi: TrezorConnect,
@@ -27,7 +27,7 @@ function getWalletNew({chainId, signer, signerExtra}, opts) {
     // for Trezor/ledger, alternatively we can shim using https://www.npmjs.com/package/web3-provider-engine and then wrap in Web3Provider
     return {
       signMessage: hash => providerTrezor.signPersonalMessageAsync(ethers.utils.hexlify(hash), signer.address),
-      signTransaction: params => providerTrezor.signTransactionAsync({...params, from: signer.address})
+      signTransaction: params => providerTrezor.signTransactionAsync({ ...params, from: signer.address })
     }
   } else if (signerExtra && signerExtra.type === 'ledger') {
     if (signerExtra.transportProtocol === 'webHID') {
@@ -43,7 +43,7 @@ function getWalletNew({chainId, signer, signerExtra}, opts) {
       })
       return {
         signMessage: hash => provider.signPersonalMessageAsync(ethers.utils.hexlify(hash), signer.address),
-        signTransaction: params => provider.signTransactionAsync({...params, from: signer.address})
+        signTransaction: params => provider.signTransactionAsync({ ...params, from: signer.address })
       }
     }
   } else if (signer.address) {

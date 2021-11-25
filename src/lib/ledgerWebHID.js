@@ -1,6 +1,6 @@
 import TransportWebHID from '@ledgerhq/hw-transport-webhid'
 import AppEth from '@ledgerhq/hw-app-eth'
-import {serialize} from '@ethersproject/transactions'
+import { serialize } from '@ethersproject/transactions'
 
 const EIP_155_CONSTANT = 35
 
@@ -157,6 +157,8 @@ export async function ledgerSignTransaction(txn, chainId) {
       s: '0x' + rsvResponse.s,
       v: intV
     })
+  } else {
+    throw new Error('Incorrect address. Are you using the correct account/ledger?')
   }
 
   transport.close()
@@ -187,6 +189,8 @@ export async function ledgerSignMessage(hash, signerAddress) {
     } catch (e) {
       throw new Error('Signature denied ' + e.message)
     }
+  } else {
+    throw new Error('Incorrect address. Are you using the correct account/ledger?')
   }
   transport.close()
   return signedMsg
