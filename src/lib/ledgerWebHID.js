@@ -9,7 +9,7 @@ const HDNode = require('hdkey')
 
 let connectedDevices = null
 
-const PARENT_HD_PATH = "44'/60'/0'/0"
+export const PARENT_HD_PATH = "44'/60'/0'/0"
 
 async function getTransport() {
   connectedDevices = await TransportWebHID.list()
