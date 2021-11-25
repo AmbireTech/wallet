@@ -9,7 +9,7 @@ import { TrezorSubprovider } from '@0x/subproviders/lib/src/subproviders/trezor'
 import { SelectSignerAccountModal } from '../../../Modals'
 import { useModals } from '../../../../hooks'
 import { isFirefox } from '../../../../lib/isFirefox'
-import { ledgerGetAddresses } from "../../../../lib/ledgerWebHID"
+import { ledgerGetAddresses, PARENT_HD_PATH } from "../../../../lib/ledgerWebHID"
 
 const AddAuthSigner = props => {
   const [signerAddress, setSignerAddress] = useState({
@@ -36,7 +36,7 @@ const AddAuthSigner = props => {
     const provider = new LedgerSubprovider({
       networkId: 0, // @TODO: is this needed?
       ledgerEthereumClientFactoryAsync: ledgerEthereumBrowserClientFactoryAsync,
-      //baseDerivationPath: this.baseDerivationPath
+      baseDerivationPath: PARENT_HD_PATH
     })
     // NOTE: do not attempt to do both of these together (await Promise.all)
     // there is a bug in the ledger subprovider (race condition), so it will think we're trying to make two connections simultaniously
