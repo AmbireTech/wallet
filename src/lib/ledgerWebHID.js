@@ -1,11 +1,11 @@
-import TransportWebHID from "@ledgerhq/hw-transport-webhid"
-import AppEth from "@ledgerhq/hw-app-eth"
+import TransportWebHID from '@ledgerhq/hw-transport-webhid'
+import AppEth from '@ledgerhq/hw-app-eth'
 import {serialize} from '@ethersproject/transactions'
 
 const EIP_155_CONSTANT = 35
 
-const ethUtil = require("ethereumjs-util")
-const HDNode = require("hdkey")
+const ethUtil = require('ethereumjs-util')
+const HDNode = require('hdkey')
 
 let connectedDevices = null
 
@@ -13,14 +13,13 @@ const PARENT_HD_PATH = "44'/60'/0'/0"
 
 async function getTransport() {
   connectedDevices = await TransportWebHID.list()
-  console.log(connectedDevices)
   if (connectedDevices.length && connectedDevices[0].opened) {
     return new TransportWebHID(connectedDevices[0])
   } else {
     try {
       return await TransportWebHID.request()
     } catch (e) {
-      throw new Error("Could not request WebHID ledger")
+      throw new Error('Could not request WebHID ledger')
     }
   }
 }
@@ -126,9 +125,6 @@ export async function ledgerSignTransaction(txn, chainId) {
   delete unsignedTxObj.from
   delete unsignedTxObj.gas
 
-  //console.log("Unsigned TX")
-  //console.log(unsignedTxObj)
-
   let serializedUnsigned = serialize(unsignedTxObj)
   const accountsData = await getAccounts(transport)
   if (accountsData.error) {
@@ -144,7 +140,7 @@ export async function ledgerSignTransaction(txn, chainId) {
     try {
       rsvResponse = await new AppEth(transport).signTransaction(accountsData.accounts[0].derivationPath, serializedUnsigned.substr(2))
     } catch (e) {
-      throw new Error("Could not sign transaction " + e)
+      throw new Error('Could not sign transaction ' + e)
     }
 
     const intV = parseInt(rsvResponse.v, 16)
@@ -152,17 +148,13 @@ export async function ledgerSignTransaction(txn, chainId) {
 
     if (signedChainId !== chainId) {
       console.log(rsvResponse)
-      throw new Error("Invalid returned V 0x" + rsvResponse.v)
+      throw new Error('Invalid returned V 0x' + rsvResponse.v)
     }
 
-    console.log("WTF")
-    console.log(rsvResponse)
-
-    debugger
     delete unsignedTxObj.v
     serializedSigned = serialize(unsignedTxObj, {
-      r: "0x" + rsvResponse.r,
-      s: "0x" + rsvResponse.s,
+      r: '0x' + rsvResponse.r,
+      s: '0x' + rsvResponse.s,
       v: intV
     })
   }
@@ -191,9 +183,9 @@ export async function ledgerSignMessage(hash, signerAddress) {
   if (account.address.toLowerCase() === signerAddress.toLowerCase()) {
     try {
       const rsvReply = await new AppEth(transport).signPersonalMessage(account.derivationPath, hash.substr(2))
-      signedMsg = "0x" + rsvReply.r + rsvReply.s + rsvReply.v.toString(16)
+      signedMsg = '0x' + rsvReply.r + rsvReply.s + rsvReply.v.toString(16)
     } catch (e) {
-      throw new Error("Signature denied " + e.message)
+      throw new Error('Signature denied ' + e.message)
     }
   }
   transport.close()
