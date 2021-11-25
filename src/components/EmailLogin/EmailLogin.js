@@ -2,6 +2,7 @@ import './EmailLogin.scss'
 
 import { useState, useEffect } from 'react'
 import { MdEmail } from 'react-icons/md'
+import { FaMagicWand } from 'react-icons/fa'
 import { Wallet } from 'ethers'
 
 import { fetch, fetchCaught } from '../../lib/fetch'
@@ -16,37 +17,6 @@ export default function EmailLogin({ relayerURL, onAddAccount }) {
     const [inProgress, setInProgress] = useState(false)
   
     const EMAIL_VERIFICATION_RECHECK = 3000
-  
-    const onTryDecrypt = async (identityInfo, passphrase) => {
-      if (!identityInfo.meta.primaryKeyBackup) {
-        setErr('No account key backup: you either disabled email login or you have to import it from JSON')
-        return
-      }
-      // NOTE: fromEncryptedJson can give us the exact progress,
-      // but for now we're handling this simply by showing progress in a different way (button shows 'Logging in...')
-      try {
-        const wallet = await Wallet.fromEncryptedJson(JSON.parse(identityInfo.meta.primaryKeyBackup), passphrase)
-        const { _id, salt, identityFactoryAddr, baseIdentityAddr, bytecode } = identityInfo
-        const { quickAccSigner } = identityInfo.meta
-        if (wallet.address !== quickAccSigner.one) {
-            setErr('Decrypted wallet address does not match quick account')
-            return
-        }
-        onAddAccount({
-          id: _id,
-          email: identityInfo.meta.email,
-          primaryKeyBackup: identityInfo.meta.primaryKeyBackup,
-          salt, identityFactoryAddr, baseIdentityAddr, bytecode,
-          signer: quickAccSigner
-        }, { select: true })
-      } catch (e) {
-        if (e.message.includes('invalid password')) setErr('Invalid password')
-        else {
-          setErr(`Unexpected login error: ${e.message}`)
-          console.error(e)
-        }
-      }
-    }
   
     const attemptLogin = async ({ email, passphrase }, ignoreEmailConfirmationRequired) => {
       // try by-email first: if this returns data we can just move on to decrypting
@@ -75,7 +45,6 @@ export default function EmailLogin({ relayerURL, onAddAccount }) {
         return
       }
       // If we make it beyond this point, it means no email confirmation will be required
-      // however, we're putting `setRequiresConfFor(null)` after onTryDecrypt in order to wait for the decryption period
       if (resp.status === 404 && body.errType === 'DOES_NOT_EXIST') {
         setRequiresConfFor(null)
         setErr('Account does not exist')
@@ -83,7 +52,16 @@ export default function EmailLogin({ relayerURL, onAddAccount }) {
       }
   
       if (resp.status === 200) {
-        await onTryDecrypt(body, passphrase)
+        const identityInfo = body
+        const { _id, salt, identityFactoryAddr, baseIdentityAddr, bytecode } = identityInfo
+        const { quickAccSigner } = identityInfo.meta
+        onAddAccount({
+          id: _id,
+          email: identityInfo.meta.email,
+          primaryKeyBackup: identityInfo.meta.primaryKeyBackup,
+          salt, identityFactoryAddr, baseIdentityAddr, bytecode,
+          signer: quickAccSigner
+        }, { select: true })
       } else {
         setErr(body.message ? `Relayer error: ${body.message}` : `Unknown no-message error: ${resp.status}`)
       }
@@ -128,18 +106,18 @@ export default function EmailLogin({ relayerURL, onAddAccount }) {
     const inner = requiresEmailConfFor ?
       (<div id="loginEmail" className="emailConf">
         <h3><MdEmail size={25} color="white"/>Email confirmation required</h3>
-        <p>This is the first log-in from this browser, email confirmation is required.<br/><br/>
+        <p>This is the first login from this browser, email confirmation is required.<br/><br/>
         We sent an email to {requiresEmailConfFor.email}, please check your inbox and click "Confirm".
         </p>
         {err ? (<p className="error">{err}</p>) : (<></>)}
       </div>)
       : (<div id="loginEmail">
         <LoginOrSignup onAccRequest={onLoginUserAction} inProgress={inProgress}></LoginOrSignup>
+        <div className='magicLink'>A password will not be required, we will send you a magic login link to your email.</div>
   
         {err ? (<p className="error">{err}</p>) : (<></>)}
   
-        <a href="/#/">I forgot my password</a>
-        <a href={importJSONHref}>Import JSON</a>
+        {/*<a href={importJSONHref}>Import JSON</a>*/}
       </div>)
       
     return (
