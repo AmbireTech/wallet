@@ -22,7 +22,7 @@ const AaveMapping = {
   },
   [iface.getSighash('borrow')]: (txn, network) => {
     const [ asset, amount ] = iface.parseTransaction(txn).args
-    return [`Borrow ${token(asset, amount)} from Aave lending pool$`]
+    return [`Borrow ${token(asset, amount)} from Aave lending pool`]
   },
 }
 export default AaveMapping
