@@ -17,7 +17,7 @@ import { useToasts } from '../../hooks/toasts'
 import { SelectSignerAccountModal } from '../Modals'
 import { useModals } from '../../hooks'
 import { Loading } from '../common'
-import { ledgerGetAddresses } from '../../lib/ledgerWebHID'
+import { ledgerGetAddresses, PARENT_HD_PATH } from '../../lib/ledgerWebHID'
 import { isFirefox } from '../../lib/isFirefox'
 
 
@@ -216,7 +216,7 @@ export default function AddAccount({ relayerURL, onAddAccount }) {
     const provider = new LedgerSubprovider({
       networkId: 0, // @TODO: probably not needed
       ledgerEthereumClientFactoryAsync: ledgerEthereumBrowserClientFactoryAsync,
-      //baseDerivationPath: this.baseDerivationPath
+      baseDerivationPath: PARENT_HD_PATH
     })
     // NOTE: do not attempt to do both of these together (await Promise.all)
     // there is a bug in the ledger subprovider (race condition), so it will think we're trying to make two connections simultaniously
