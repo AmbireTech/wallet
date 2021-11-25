@@ -298,7 +298,6 @@ export default function AddAccount({ relayerURL, onAddAccount }) {
   }, [onSignerAddressClicked, showModal, signersToChoose])
 
   // Adding accounts from existing signers
-  // @TODO: progress indicators for those
   const addFromSignerButtons = (<>
     <button onClick={() => wrapErr(connectTrezorAndGetAccounts)}>
       <div className="icon" style={{ backgroundImage: 'url(./resources/trezor.png)' }}/>
