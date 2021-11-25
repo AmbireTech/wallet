@@ -54,9 +54,6 @@ html {
   height: 100%;
 }
 body {
-  height: 100%;
-  min-width: 700px;
-  position: relative;
   color: white;
   font-family: 'Open Sans';
 }
@@ -115,8 +112,9 @@ input:disabled, button:disabled {
 
 #root {
   height: 100%;
+  min-width: 700px;
+  position: relative;
 }
-
 #loginEmail form > *, #loginEmail button, #addAccount form > *, #addAccount button {
   /* TODO */
   display: block;
