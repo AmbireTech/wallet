@@ -42,7 +42,7 @@ export default function Wallet(props) {
     },
     {
       path: '/security',
-      component: <Security relayerURL={props.relayerURL} selectedAcc={props.selectedAcc} selectedNetwork={props.network} accounts={props.accounts} addRequest={props.addRequest} onAddAccount={props.onAddAccount}/>
+      component: <Security relayerURL={props.relayerURL} selectedAcc={props.selectedAcc} selectedNetwork={props.network} accounts={props.accounts} addRequest={props.addRequest} onAddAccount={props.onAddAccount} />
     },
     {
       path: '/transactions',
@@ -86,25 +86,23 @@ export default function Wallet(props) {
 
         <TopBar {...props} />
         <div id="wallet-container">
-          <div id="wallet-container-inner">
-            <Switch>
-              {
-                routes.map(({ path, component }) => (
-                  <Route exact path={props.match.url + path} key={path}>
-                    {
-                      !isLoggedIn ?
-                        <Redirect to="/add-account" />
-                        :
-                        component ? component : null
-                    }
-                  </Route>
-                ))
-              }
-              <Route path={props.match.url + '/*'}>
-                <Redirect to={props.match.url + '/dashboard'} />
-              </Route>
-            </Switch>
-          </div>
+          <Switch>
+            {
+              routes.map(({ path, component }) => (
+                <Route exact path={props.match.url + path} key={path}>
+                  {
+                    !isLoggedIn ?
+                      <Redirect to="/add-account" />
+                      :
+                      component ? component : null
+                  }
+                </Route>
+              ))
+            }
+            <Route path={props.match.url + '/*'}>
+              <Redirect to={props.match.url + '/dashboard'} />
+            </Route>
+          </Switch>
         </div>
       </div>
     </div>
