@@ -153,6 +153,17 @@ const Security = ({
   const inputModal = <InputModal title="Add New Address" inputs={modalInputs} onClose={([name, address]) => addAddress(name, address)}></InputModal>
   const showInputModal = () => showModal(inputModal)
 
+  const onChangeFile = (e) => {
+    const reader = new FileReader()
+    const file = e.target.files[0]
+    reader.readAsText(file,'UTF-8')
+    reader.onload = readerEvent => {
+        const content = readerEvent.target.result
+        const test = JSON.parse(content)
+        console.log(test)
+    }
+  }
+
   // @TODO relayerless mode: it's not that hard to implement in a primitive form, we need everything as-is
   // but rendering the initial privileges instead; or maybe using the relayerless transactions hook/service
   // and aggregate from that
@@ -191,6 +202,30 @@ const Security = ({
             removeAddress={removeAddress}
           />
           <Button small icon={<MdOutlineAdd/>} onClick={showInputModal}>Add Address</Button>
+        </div>
+      </div>
+      <div className="panel">
+        <div className="panel-title">Backups</div>
+        <div className="content">
+          <a
+            type="button"
+            href={`data:text/json;charset=utf-8,${encodeURIComponent(
+              JSON.stringify(selectedAccount)
+            )}`}
+            download={`${selectedAccount.id}.json`}
+          >
+            <Button small>Export</Button>
+          </a>
+          This will download a JSON backup of your current account {selectedAccount.id}, encrypted with
+          your account passphrase.
+          <label htmlFor="import-backup" className="custom-import-backup-btn">Import</label>
+          <input
+            type="file"
+            id="import-backup"
+            name="avatar"
+            accept="json"
+            onChange={onChangeFile}
+          ></input>
         </div>
       </div>
     </section>
