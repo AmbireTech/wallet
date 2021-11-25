@@ -12,7 +12,6 @@ import AddressList from '../../common/AddressBook/AddressList/AddressList'
 import { isValidAddress } from '../../../helpers/address';
 import AddAuthSigner from './AddAuthSigner/AddAuthSigner'
 import { useToasts } from '../../../hooks/toasts'
-import { fetchGet } from '../../../lib/fetch'
 import { useHistory } from 'react-router-dom'
 
 const IDENTITY_INTERFACE = new Interface(
