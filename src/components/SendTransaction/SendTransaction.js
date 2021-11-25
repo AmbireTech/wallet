@@ -217,6 +217,10 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
     if (signingStatus && signingStatus.inProgress) return
     setSigningStatus(signingStatus || { inProgress: true })
 
+    if (account.signerExtra && account.signerExtra.type === 'ledger') {
+      addToast('Please confirm this transaction on your Ledger device.', { timeout: 10000 })
+    }
+
     const requestIds = bundle.requestIds
     const blockExplorerUrl = network.explorerUrl
     const approveTxnPromise = bundle.signer.quickAccManager ?
