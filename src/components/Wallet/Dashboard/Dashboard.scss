@@ -42,6 +42,11 @@
                         opacity: 0.8;
                     }
 
+                    .balance-container {
+                        display: flex;
+                        gap: 7px;
+                    }
+
                     .other-balance {
                         display: flex;
                         flex-direction: row;
