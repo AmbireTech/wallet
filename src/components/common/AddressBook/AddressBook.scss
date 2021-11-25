@@ -4,6 +4,11 @@ $heading-height: 45px;
 
 .address-book {
     height: 60px !important;
+    background-color: rgba(0, 0, 0, 0.1) !important;
+
+    .content {
+        cursor: pointer;
+    }
 
     .menu {
         top: 60px !important;
