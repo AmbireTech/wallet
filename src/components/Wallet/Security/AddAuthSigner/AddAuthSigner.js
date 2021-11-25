@@ -8,6 +8,8 @@ import TrezorConnect from 'trezor-connect'
 import { TrezorSubprovider } from '@0x/subproviders/lib/src/subproviders/trezor' // https://github.com/0xProject/0x-monorepo/issues/1400
 import { SelectSignerAccountModal } from '../../../Modals'
 import { useModals } from '../../../../hooks'
+import { isFirefox } from '../../../../lib/isFirefox'
+import { ledgerGetAddresses, PARENT_HD_PATH } from "../../../../lib/ledgerWebHID"
 
 const AddAuthSigner = props => {
   const [signerAddress, setSignerAddress] = useState({
@@ -21,18 +23,60 @@ const AddAuthSigner = props => {
   const [textInputInfo, setTextInputInfo] = useState('')
   const { showModal } = useModals()
 
+
   async function connectLedgerAndGetAccounts() {
+    if (isFirefox()) {
+      await connectLedgerAndGetAccountsU2F()
+    } else {
+      await connectLedgerAndGetAccountsWebHID()
+    }
+  }
+
+  async function connectLedgerAndGetAccountsU2F() {
     const provider = new LedgerSubprovider({
       networkId: 0, // @TODO: is this needed?
       ledgerEthereumClientFactoryAsync: ledgerEthereumBrowserClientFactoryAsync,
-      //baseDerivationPath: this.baseDerivationPath
+      baseDerivationPath: PARENT_HD_PATH
     })
     // NOTE: do not attempt to do both of these together (await Promise.all)
     // there is a bug in the ledger subprovider (race condition), so it will think we're trying to make two connections simultaniously
     // cause one call won't be aware of the other's attempt to connect
-    const addresses = await provider.getAccountsAsync(100)
-    setChooseSigners({ addresses, signerName: 'Ledger' })
-    setModalToggle(true)
+      const addresses = await provider.getAccountsAsync(100)
+      setChooseSigners({ addresses, signerName: 'Ledger' })
+      setModalToggle(true)
+  }
+
+  async function connectLedgerAndGetAccountsWebHID() {
+    let error = null
+    try {
+      const addrData = await ledgerGetAddresses()
+      if (!addrData.error) {
+        if (addrData.addresses.length === 1) {
+          return onSignerAddressClicked({
+            address: addrData.addresses[0],
+            index: 0,
+          })
+        } else {
+          setChooseSigners({ address: addrData.addresses, signerName: 'Ledger' })
+          setModalToggle(true)
+        }
+      } else {
+        error = addrData.error
+      }
+    } catch (e) {
+      console.log(e)
+      if (e.statusCode && e.id === 'InvalidChannel') {
+        error = "Invalid channel"
+      } else if (e.statusCode && e.statusCode === 25873) {
+        error = "Please make sure your ledger is connected and the ethereum app is open"
+      } else {
+        error = e.message
+      }
+    }
+
+    if (error) {
+      setAddAccErr(`Ledger error: ${error.message || error}`)
+    }
   }
 
   async function connectTrezorAndGetAccounts() {

@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useReducer, useRef } from 'react'
 import { useToasts } from '../hooks/toasts'
+import { isFirefox } from '../lib/isFirefox'
 
 import WalletConnectCore from '@walletconnect/core'
 import * as cryptoLib from '@walletconnect/iso-crypto'
@@ -245,10 +246,9 @@ function runInitEffects(wcConnect, account) {
 
     // @TODO on focus and on user action
     const clipboardError = e => console.log('non-fatal clipboard/walletconnect err:', e.message)
-    const isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1
     const tryReadClipboard = async () => {
         if (!account) return
-        if (isFirefox) return
+        if (isFirefox()) return
         try {
             const clipboard = await navigator.clipboard.readText()
             if (clipboard.startsWith('wc:') && !connectors[clipboard]) wcConnect({ uri: clipboard })
