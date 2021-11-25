@@ -31,19 +31,49 @@
 
                 #other-balances {
                     display: flex;
-                    flex-direction: column;
-                    margin-top: 5px;
+                    flex-direction: row;
+                    flex-wrap: wrap;
+                    align-items: center;
+                    gap: 7px;
+                    margin-top: 20px;
+
+                    label {
+                        font-size: 22px;
+                        opacity: 0.8;
+                    }
 
                     .other-balance {
+                        display: flex;
+                        flex-direction: row;
+                        align-items: center;
+                        gap: 7px;
                         font-weight: 500;
-                        font-size: 18px;
-                        opacity: 0.6;
+                        font-size: 22px;
+                        opacity: 0.8;
                         cursor: pointer;
                         transition: opacity 0.1s ease-in-out;
                         user-select: none;
 
+                        label {
+                            cursor: pointer;
+                        }
+                        
+                        .network {
+                            display: flex;
+                            flex-direction: row;
+                            align-items: center;
+                            gap: 8px;
+
+                            .icon {
+                                height: 20px;
+                                width: 20px;
+                                background-size: contain;
+                                border-radius: 100%;
+                            }
+                        }
+
                         &:hover {
-                            opacity: 0.8;
+                            opacity: 1;
                         }
                     }
                 }
