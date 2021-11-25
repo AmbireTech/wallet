@@ -34,8 +34,8 @@ const Security = ({
   const [ cacheBreak, setCacheBreak ] = useState(() => Date.now())
   
   useEffect(() => {
-    if ((Date.now() - cacheBreak) > 30000) setCacheBreak(Date.now())
-    const intvl = setTimeout(() => setCacheBreak(Date.now()), 350000)
+    if (Date.now() - cacheBreak > 30000) setCacheBreak(Date.now())
+    const intvl = setTimeout(() => setCacheBreak(Date.now()), 35000)
     return () => clearTimeout(intvl)
   }, [cacheBreak])
 

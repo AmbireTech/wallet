@@ -14,6 +14,7 @@ import Select from './Select/Select';
 import TextInput from './TextInput/TextInput';
 import NumberInput from './NumberInput/NumberInput';
 import Toggle from './Toggle/Toggle';
+import ToolTip from './ToolTip/ToolTip';
 
 export {
     AddressBook,
@@ -31,5 +32,6 @@ export {
     Select,
     TextInput,
     NumberInput,
-    Toggle
+    Toggle,
+    ToolTip
 };
