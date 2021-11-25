@@ -8,6 +8,10 @@ $heading-height: 45px;
 
     .content {
         cursor: pointer;
+
+        .title {
+            flex-direction: row !important;
+        }
     }
 
     .menu {
