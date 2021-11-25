@@ -89,11 +89,7 @@ const Security = ({
 
   const onMakeDefaultBtnClicked = async (account, address, isQuickAccount) => {
     if (isQuickAccount) {
-      const resp = await fetchGet(`${relayerURL}/identity/${selectedAcc}`)
-      const respData = await resp
-      const quickAccSignerData = respData.meta.quickAccSigner
-
-      onAddAccount({ ...account, signer: quickAccSignerData })
+      return addToast((<span>To make this signer default, please <a href='#/email-login'>please login with the email</a></span>), {url: '/#/email-login', error: true})
     } else {
       onAddAccount({ ...account, signer: { address: address } })
       addToast(
