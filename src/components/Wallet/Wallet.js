@@ -10,12 +10,12 @@ import Transfer from "./Transfer/Transfer"
 import Earn from "./Earn/Earn"
 import Security from "./Security/Security"
 import Transactions from './Transactions/Transactions'
-import PluginGnosisSafeApps from "../Plugins/GnosisSafeApps/GnosisSafeApps"
+import PluginGnosisSafeApps from '../Plugins/GnosisSafeApps/GnosisSafeApps'
 import Collectible from "./Collectible/Collectible"
 import { PermissionsModal } from '../Modals'
-import { useModals, usePermissions } from "../../hooks"
-import { useCallback, useEffect, useMemo } from "react"
-import { isFirefox } from '../../helpers/permissions'
+import { useModals, usePermissions } from '../../hooks'
+import { useCallback, useEffect, useMemo } from 'react'
+import { isFirefox } from '../../lib/isFirefox'
 
 export default function Wallet(props) {
   const { showModal } = useModals()
@@ -94,7 +94,7 @@ export default function Wallet(props) {
   ]
 
   const handlePermissionsModal = useCallback(async () => {
-    if (!modalHidden && arePermissionsLoaded && ((!isFirefox && !isClipboardGranted) || !isNoticationsGranted)) showModal(<PermissionsModal />)
+    if (!modalHidden && arePermissionsLoaded && ((!isFirefox() && !isClipboardGranted) || !isNoticationsGranted)) showModal(<PermissionsModal />)
   }, [showModal, isClipboardGranted, isNoticationsGranted, arePermissionsLoaded, modalHidden])
 
   useEffect(() => handlePermissionsModal(), [handlePermissionsModal])
