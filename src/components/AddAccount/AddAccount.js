@@ -191,6 +191,7 @@ export default function AddAccount({ relayerURL, onAddAccount }) {
     engine.addProvider(new CacheSubprovider())
     engine.addProvider(new RPCSubprovider(this.url, this.requestTimeoutMs))
     */
+    setInProgress(true)
     const provider = new TrezorSubprovider({ trezorConnectClientApi: TrezorConnect })
     const addresses = await provider.getAccountsAsync(50)
     setChooseSigners({
@@ -198,7 +199,8 @@ export default function AddAccount({ relayerURL, onAddAccount }) {
         type: 'trezor',
         info: JSON.parse(JSON.stringify(provider._initialDerivedKeyInfo))
       }
-    },)
+    })
+    setInProgress(false)
   }
 
   async function connectLedgerAndGetAccounts() {
