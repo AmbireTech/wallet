@@ -4,7 +4,7 @@ import { names, tokens } from '../consts/humanizerInfo'
 import networks from '../consts/networks'
 import humanizers from './humanizers'
 
-export function getTransactionSummary(txn, networkId, accountAddr) {
+export function getTransactionSummary(txn, networkId, accountAddr, opts = {}) {
     const [to, value, data = '0x'] = txn
     const network = networks.find(x => x.id === networkId || x.chainId === networkId)
     if (!network) return 'Unknown network (unable to parse)'
@@ -30,7 +30,7 @@ export function getTransactionSummary(txn, networkId, accountAddr) {
         const humanizer = humanizers[sigHash]
         if (humanizer) {
             try {
-                const actions = humanizer({ to, value, data, from: accountAddr }, network)
+                const actions = humanizer({ to, value, data, from: accountAddr }, network, opts)
                 return actions.join(', ')
             } catch (e) {
                 callSummary += ' (unable to parse)'
