@@ -91,6 +91,56 @@
           gap: 1em;
         }
       }
+
+      #import-backup {
+        opacity: 0;
+        position: absolute;
+        z-index: -1;
+      }
+
+      .custom-import-backup-btn {
+        height: 60px;
+        @include flex-center-center;
+        gap: 10px;
+        padding: 0 20px;
+        font-size: 20px;
+        font-weight: bold;
+        color: black;
+        background-color: $primary-accent-color;
+        text-transform: uppercase;
+        cursor: pointer;
+        opacity: 0.8;
+    
+        .icon-button {
+          @include flex-center-center;
+          color: black !important;
+        }
+    
+        &.small {
+          height: 50px;
+          font-size: 17px;
+        }
+    
+        &.red {
+          background: #da5151;
+        }
+    
+        &.clear {
+          color: white;
+          background-color: transparent;
+    
+          &.icon-button {
+            color: white !important;
+          }
+    
+          &:hover {
+            background-color: rgba(0, 0, 0, 0.2);
+          }
+        }
+      }
+      .custom-import-backup-btn:hover {
+        opacity: 1;
+      }
     }
   }
 
