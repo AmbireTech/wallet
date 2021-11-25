@@ -1,24 +1,17 @@
 @import "../../../variables";
 
-#plugin-gnosis-conainer {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  justify-content: stretch;
+#plugin-gnosis-container {
+  @include flex-full-grow-container;
 
   iframe {
-    // height: 100%;
-    flex: 1;
-    flex-grow: 1;
-    width: 100%;
+    @include flex-full-grow-container;
     overflow: auto;
     box-sizing: border-box;
     border: 0;
   }
 
   .iframe-placeholder {
-    height: 100%;
+    @include flex-full-grow-container;
   }
 
   #dapps-container {

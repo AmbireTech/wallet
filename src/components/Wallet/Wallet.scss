@@ -3,31 +3,25 @@
 #wallet-layout {
     position: absolute;
     top: 0;
-    left: $sidebar-width;
+    left: 0;
+    margin-left: $sidebar-width;
     right: 0;
-    bottom: 0;
     transition: $basic-transition;
-    overflow-x: hidden;
-    overflow-y: auto;
     display: flex;
     flex-direction: column;
     align-items: stretch;
     justify-content: flex-start;
+    min-height: 100vh;
+    background-color: $background-color;
 }
 
 #wallet-container {
     flex-grow: 1;
     padding: $layout-spacing;
     padding-top:  $layout-spacing / 2;
-    // overflow: hidden;
-    // overflow-y: auto;
-    align-items: center;
-
-    #wallet-container-inner {
-        max-width: $max-container-width;
-        margin: auto;
-        height: 100%;
-    }
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
 
     .placeholder-overlay {
         z-index: 49;
@@ -50,6 +44,6 @@
 
 @media screen and (max-width: 1400px) {
     #wallet-layout {
-        left: $sidebar-mobile-width;
+        margin-left: $sidebar-mobile-width;
     }
 }
