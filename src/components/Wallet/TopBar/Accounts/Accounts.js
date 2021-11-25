@@ -3,7 +3,7 @@ import './Accounts.scss'
 import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { AiOutlinePlus } from 'react-icons/ai'
-import { MdOutlineContentCopy, MdOutlineDelete, MdOutlineClose, MdOutlineCheck } from 'react-icons/md'
+import { MdOutlineContentCopy, MdLogout, MdOutlineClose, MdOutlineCheck } from 'react-icons/md'
 import * as blockies from 'blockies-ts';
 import { DropDown, Button } from '../../../common';
 import { useToasts } from '../../../../hooks/toasts';
@@ -50,13 +50,13 @@ const Accounts = ({ accounts, selectedAddress, onSelectAcc, onRemoveAccount }) =
                             <MdOutlineContentCopy/>
                         </div>
                         <div className="button" onClick={() => setAccountWarning(id)}>
-                            <MdOutlineDelete/>
+                            <MdLogout/>
                         </div>
                     </div>
                     :
                     <div id="confirm-delete-account" className={`account ${isActive(id)}`} key={id}>
                         <div className="message">
-                            Are you sure you want to remove this account ?
+                            Are you sure you want to log out from this account ?
                         </div>
                         <div className="button danger" onClick={() => onRemoveAccount(id)}>
                             <MdOutlineCheck/>
