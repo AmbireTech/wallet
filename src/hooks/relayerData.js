@@ -1,6 +1,10 @@
 import { useEffect, useCallback, useState, useRef } from 'react'
 import { fetchCaught } from '../lib/fetch'
 
+// 250ms after we've triggered a load of another URL, we will clear the data
+//  so that the component that uses this hook cann display the loading spinner
+const RESET_DATA_AFTER = 250
+
 export default function useRelayerData(url) {
   const [isLoading, setLoading] = useState(true)
   const [data, setData] = useState(null)
@@ -21,8 +25,13 @@ export default function useRelayerData(url) {
   useEffect(() => {
     if (!url) return
 
+    // Data reset: if some time passes before we load the next piece of data, and the URL is different,
+    // we will reset the data so that the UI knows to display a loading indicator
+    let resetDataTimer = null
     const stripQuery = x => x.split('?')[0]
-    if (stripQuery(prevUrl.current) !== stripQuery(url)) setData(null)
+    if (stripQuery(prevUrl.current) !== stripQuery(url)) {
+      resetDataTimer = setTimeout(() => setData(null), RESET_DATA_AFTER)
+    }
     prevUrl.current = url
 
     let unloaded = false
@@ -31,8 +40,14 @@ export default function useRelayerData(url) {
     updateData()
       .then(data => !unloaded && setData(data))
       .catch(e => !unloaded && setErr(e.message || e))
-      .then(() => !unloaded && setLoading(false))
-    return () => unloaded = true
+      .then(() => {
+        clearTimeout(resetDataTimer)
+        !unloaded && setLoading(false)
+      })
+    return () => {
+      unloaded = true
+      clearTimeout(resetDataTimer)
+    }
   }, [url, updateData])
 
   return { data, isLoading, errMsg: err }
