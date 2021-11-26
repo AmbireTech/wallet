@@ -99,6 +99,8 @@ export default function Wallet(props) {
 
   const handlePermissionsModal = useCallback(async () => {
     const account = props.accounts.find(({ id }) => id === props.selectedAcc)
+    if (!account) return
+
     const relayerIdentityURL = `${props.relayerURL}/identity/${account.id}`
 
     const permissionsModal = <PermissionsModal relayerIdentityURL={relayerIdentityURL} account={account} onAddAccount={props.onAddAccount}/>
