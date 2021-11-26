@@ -10,12 +10,12 @@ import Transfer from "./Transfer/Transfer"
 import Earn from "./Earn/Earn"
 import Security from "./Security/Security"
 import Transactions from './Transactions/Transactions'
-import PluginGnosisSafeApps from "../Plugins/GnosisSafeApps/GnosisSafeApps"
+import PluginGnosisSafeApps from '../Plugins/GnosisSafeApps/GnosisSafeApps'
 import Collectible from "./Collectible/Collectible"
 import { PermissionsModal } from '../Modals'
-import { useModals, usePermissions } from "../../hooks"
-import { useCallback, useEffect, useMemo } from "react"
-import { isFirefox } from '../../helpers/permissions'
+import { useModals, usePermissions } from '../../hooks'
+import { useCallback, useEffect, useMemo } from 'react'
+import { isFirefox } from '../../lib/isFirefox'
 
 export default function Wallet(props) {
   const { showModal } = useModals()
@@ -26,7 +26,11 @@ export default function Wallet(props) {
   const routes = [
     {
       path: '/dashboard',
-      component: <Dashboard portfolio={props.portfolio} setNetwork={props.setNetwork} />
+      component: <Dashboard
+        portfolio={props.portfolio}
+        selectedNetwork={props.network}
+        setNetwork={props.setNetwork}
+      />
     },
     {
       path: '/deposit',
@@ -94,7 +98,7 @@ export default function Wallet(props) {
   ]
 
   const handlePermissionsModal = useCallback(async () => {
-    if (!modalHidden && arePermissionsLoaded && ((!isFirefox && !isClipboardGranted) || !isNoticationsGranted)) showModal(<PermissionsModal />)
+    if (!modalHidden && arePermissionsLoaded && ((!isFirefox() && !isClipboardGranted) || !isNoticationsGranted)) showModal(<PermissionsModal />, { disableClose: true })
   }, [showModal, isClipboardGranted, isNoticationsGranted, arePermissionsLoaded, modalHidden])
 
   useEffect(() => handlePermissionsModal(), [handlePermissionsModal])
@@ -107,25 +111,23 @@ export default function Wallet(props) {
 
         <TopBar {...props} />
         <div id="wallet-container">
-          <div id="wallet-container-inner">
-            <Switch>
-              {
-                routes.map(({ path, component }) => (
-                  <Route exact path={props.match.url + path} key={path}>
-                    {
-                      !isLoggedIn ?
-                        <Redirect to="/add-account" />
-                        :
-                        component ? component : null
-                    }
-                  </Route>
-                ))
-              }
-              <Route path={props.match.url + '/*'}>
-                <Redirect to={props.match.url + '/dashboard'} />
-              </Route>
-            </Switch>
-          </div>
+          <Switch>
+            {
+              routes.map(({ path, component }) => (
+                <Route exact path={props.match.url + path} key={path}>
+                  {
+                    !isLoggedIn ?
+                      <Redirect to="/add-account" />
+                      :
+                      component ? component : null
+                  }
+                </Route>
+              ))
+            }
+            <Route path={props.match.url + '/*'}>
+              <Redirect to={props.match.url + '/dashboard'} />
+            </Route>
+          </Switch>
         </div>
       </div>
     </div>
