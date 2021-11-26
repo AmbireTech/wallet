@@ -114,7 +114,9 @@ export default function AddAccount({ relayerURL, onAddAccount }) {
       email: req.email,
       primaryKeyBackup,
       salt, identityFactoryAddr, baseIdentityAddr, bytecode,
-      signer
+      signer,
+      // This makes the modal appear, and will be removed by the modal which will call onAddAccount to update it
+      emailConfRequired: true
     }, { select: true })
   }
 
