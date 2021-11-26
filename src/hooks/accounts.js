@@ -59,7 +59,7 @@ export default function useAccounts () {
       localStorage.accounts = JSON.stringify(clearedAccounts)
       
       if (!clearedAccounts.length) history.push('/add-account')
-      else onSelectAcc(clearedAccounts[0])
+      else onSelectAcc(clearedAccounts[0].id)
     }, [accounts, history, onSelectAcc])
 
     return { accounts, selectedAcc, onSelectAcc, onAddAccount, onRemoveAccount }
