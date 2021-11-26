@@ -118,6 +118,17 @@ const Security = ({
         <li key={addr}>
           <TextInput className="depositAddress" value={privText} disabled />
           <div className="btns-wrapper">
+            {
+              selectedAccount.email ?
+                <Button
+                  onClick={() => {}}
+                  small
+                >
+                  Reset Password
+                </Button>
+              :
+              null
+            }
             <Button
               disabled={isSelected}
               title={isSelected ? 'Signer is already default' : ''}
