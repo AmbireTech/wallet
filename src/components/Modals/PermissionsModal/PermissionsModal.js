@@ -17,7 +17,9 @@ const PermissionsModal = ({ relayerIdentityURL, account, onAddAccount }) => {
     const { addToast } = useToasts()
     const [isEmailConfirmed, setEmailConfirmed] = useState(false)
     
-    const buttonDisabled = !modalHidden && ((account.emailConfRequired && !isEmailConfirmed) || ((!isFirefox() && !isClipboardGranted) || !isNoticationsGranted))
+    const areBlockedPermissions = (!isFirefox() && !isClipboardGranted) || !isNoticationsGranted
+    const isAccountNotConfirmed = account.emailConfRequired && !isEmailConfirmed
+    const buttonDisabled = !modalHidden && (isAccountNotConfirmed || areBlockedPermissions)
     const showEmailSentToast = () => addToast('Confirmation email already sent', { error: true })
     
     const checkEmailConfirmation = useCallback(async () => {
@@ -47,7 +49,7 @@ const PermissionsModal = ({ relayerIdentityURL, account, onAddAccount }) => {
     }
     
     useEffect(() => {
-        checkEmailConfirmation()
+        !isEmailConfirmed && checkEmailConfirmation()
         const emailConfirmationInterval = setInterval(() => !isEmailConfirmed && checkEmailConfirmation(), 3000)
         return () => clearInterval(emailConfirmationInterval)
     }, [isEmailConfirmed, checkEmailConfirmation])
