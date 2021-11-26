@@ -113,7 +113,7 @@ export default function EmailLogin({ relayerURL, onAddAccount }) {
       </div>)
       : (<div id="loginEmail">
         <LoginOrSignup onAccRequest={onLoginUserAction} inProgress={inProgress}></LoginOrSignup>
-        <div className='magicLink'>A password will not be required, we will send you a magic login link to your email.</div>
+        <div className='magicLink'>A password will not be required, we will send a magic login link to your email.</div>
   
         {err ? (<p className="error">{err}</p>) : (<></>)}
   
