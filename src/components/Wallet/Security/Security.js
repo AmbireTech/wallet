@@ -47,7 +47,6 @@ const Security = ({
   const { addToast } = useToasts()
   const history = useHistory()
 
-
   const craftTransaction = (address, privLevel) => {
     return {
       to: selectedAcc,
@@ -161,6 +160,7 @@ const Security = ({
         </h3>
       </section>
     )
+  const showLoading = isLoading && !data
   return (
     <section id="security">
       <div className="panel">
@@ -177,8 +177,8 @@ const Security = ({
         {errMsg && (
           <h3 className="error">Error getting authorized signers: {errMsg}</h3>
         )}
-        {isLoading && <Loading />}
-        <ul className="content">{!isLoading && privList}</ul>
+        {showLoading && <Loading />}
+        <ul className="content">{!showLoading && privList}</ul>
         <div className="panel-title">Add new signer</div>
         <AddAuthSigner
           onAddBtnClicked={onAddBtnClickedHandler}
