@@ -162,6 +162,9 @@ const Security = ({
   return (
     <section id="security">
       <div className="panel">
+        <div className='help'>
+          <a href='https://help.ambire.com/hc/en-us/articles/4410885684242-Signers' target='_blank' rel='noreferrer'>need help?</a>
+        </div>
         <div className="panel-title">Authorized signers</div>
         {errMsg && (
           <h3 className="error">Error getting authorized signers: {errMsg}</h3>
