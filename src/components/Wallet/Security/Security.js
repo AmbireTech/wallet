@@ -1,7 +1,8 @@
 import './Security.scss'
 
 import { MdOutlineAdd } from 'react-icons/md'
-import { useState, useEffect } from 'react'
+import { RiDragDropLine } from 'react-icons/ri'
+import { useState, useEffect, useCallback } from 'react'
 import { Loading, TextInput, Button } from '../../common'
 import { Interface } from 'ethers/lib/utils'
 import accountPresets from '../../../consts/accountPresets'
@@ -13,6 +14,7 @@ import { isValidAddress } from '../../../helpers/address';
 import AddAuthSigner from './AddAuthSigner/AddAuthSigner'
 import { useToasts } from '../../../hooks/toasts'
 import { useHistory } from 'react-router-dom'
+import { useDropzone } from 'react-dropzone'
 
 const IDENTITY_INTERFACE = new Interface(
   require('adex-protocol-eth/abi/Identity5.2')
@@ -148,17 +150,25 @@ const Security = ({
   const inputModal = <InputModal title="Add New Address" inputs={modalInputs} onClose={([name, address]) => addAddress(name, address)}></InputModal>
   const showInputModal = () => showModal(inputModal)
 
-  const onChangeFile = (e) => {
+  const onDrop = useCallback(acceptedFiles => {
     const reader = new FileReader()
-    const file = e.target.files[0]
+    const file = acceptedFiles[0]
+
     reader.readAsText(file,'UTF-8')
     reader.onload = readerEvent => {
         const content = readerEvent.target.result
-        const test = JSON.parse(content)
-        console.log(test)
-    }
-  }
+        const fileContent = JSON.parse(content)
+        const neededKeys = ['salt', 'identityFactoryAddr', 'baseIdentityAddr', 'bytecode', 'signer']
+        const isFileContainsNeededKeys = neededKeys.every(key => Object.keys(fileContent).includes(key))
 
+        if (isFileContainsNeededKeys) onAddAccount(fileContent)
+        else 
+        addToast('The imported file does not contain needed account data.', { error: true })
+    }
+  }, [addToast, onAddAccount])
+
+  const { getRootProps, getInputProps, open, isDragActive, isDragAccept, isDragReject } = useDropzone({ onDrop, noClick: true, accept: 'application/json', maxFiles: 1 })
+  
   // @TODO relayerless mode: it's not that hard to implement in a primitive form, we need everything as-is
   // but rendering the initial privileges instead; or maybe using the relayerless transactions hook/service
   // and aggregate from that
@@ -171,56 +181,60 @@ const Security = ({
       </section>
     )
   return (
-    <section id="security">
-      <div className="panel">
-        <div className="panel-title">Authorized signers</div>
-        {errMsg && (
-          <h3 className="error">Error getting authorized signers: {errMsg}</h3>
-        )}
-        {isLoading && <Loading />}
-        <ul className="content">{!isLoading && privList}</ul>
-      </div>
-      <div className="panel">
-        <div className="panel-title">Add new signer</div>
-        <AddAuthSigner
-          onAddBtnClicked={onAddBtnClickedHandler}
-          selectedNetwork={selectedNetwork}
-        />
-      </div>
-  
-      <div id="addresses" className='panel'>
-        <div className='title'>Address Book</div>
-        <div className="content">
-          <AddressList
-            noAccounts={true}
-            addresses={addresses}
-            removeAddress={removeAddress}
-          />
-          <Button small icon={<MdOutlineAdd/>} onClick={showInputModal}>Add Address</Button>
+    <section id="security" className={(isDragActive ? 'activeStyle ' : '') + (isDragAccept ? 'acceptStyle ' : '') + (isDragReject ? 'rejectStyle ' : '')}>
+      {(isDragAccept || isDragReject) && (<div className={isDragAccept ? 'acceptStyleIcon' : 'rejectStyleIcon'}><RiDragDropLine size={100}/></div>) }
+      
+      <div {...getRootProps()}>
+        <input {...getInputProps()} />
+        <div className="panel">
+          <div className="panel-title">Authorized signers</div>
+          {errMsg && (
+            <h3 className="error">Error getting authorized signers: {errMsg}</h3>
+          )}
+          {isLoading && <Loading />}
+          <ul className="content">{!isLoading && privList}</ul>
         </div>
-      </div>
-      <div className="panel">
-        <div className="panel-title">Backups</div>
-        <div className="content">
-          <a
-            type="button"
-            href={`data:text/json;charset=utf-8,${encodeURIComponent(
-              JSON.stringify(selectedAccount)
-            )}`}
-            download={`${selectedAccount.id}.json`}
-          >
-            <Button small>Export</Button>
-          </a>
-          This will download a JSON backup of your current account {selectedAccount.id}, encrypted with
-          your account passphrase.
-          <label htmlFor="import-backup" className="custom-import-backup-btn">Import</label>
-          <input
-            type="file"
-            id="import-backup"
-            name="avatar"
-            accept="json"
-            onChange={onChangeFile}
-          ></input>
+        <div className="panel">
+          <div className="panel-title">Add new signer</div>
+          <AddAuthSigner
+            onAddBtnClicked={onAddBtnClickedHandler}
+            selectedNetwork={selectedNetwork}
+          />
+        </div>
+    
+        <div id="addresses" className='panel'>
+          <div className='title'>Address Book</div>
+          <div className="content">
+            <AddressList
+              noAccounts={true}
+              addresses={addresses}
+              removeAddress={removeAddress}
+            />
+            <Button small icon={<MdOutlineAdd/>} onClick={showInputModal}>Add Address</Button>
+          </div>
+        </div>
+        <div className="panel">
+          <div className="panel-title">Backup current account</div>
+          <div className="content">
+            <a
+              type="button"
+              href={`data:text/json;charset=utf-8,${encodeURIComponent(
+                JSON.stringify(selectedAccount)
+              )}`}
+              download={`${selectedAccount.id}.json`}
+            >
+              <Button>Export</Button>
+            </a>
+            This will download a JSON backup of your current account {selectedAccount.id}, encrypted with
+            your account passphrase.
+          </div>
+        </div>
+        <div className="panel">
+          <div className="panel-title">Import account from json file</div>
+          <div className="content">
+            <Button small onClick={open}>Import</Button> 
+            <p>The entire page is drag and drop zone</p>
+          </div>
         </div>
       </div>
     </section>
