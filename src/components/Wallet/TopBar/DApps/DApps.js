@@ -34,7 +34,9 @@ const DApps = ({ connections, connect, disconnect }) => {
                     <button disabled={isClipboardGranted} onClick={readClipboard}>
                         Connect dApp
                     </button>
-                    <FiHelpCircle size={30} />
+                    <a href='https://help.ambire.com/hc/en-us/articles/4410889965842' target='_blank' rel='noreferrer'>
+                        <FiHelpCircle size={30} />
+                    </a>
                 </div>
                 {isClipboardGranted ? (
                     <label>
