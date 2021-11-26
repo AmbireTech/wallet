@@ -53,7 +53,7 @@ export default function LoginOrSignupForm({ action = 'LOGIN', onAccRequest, inPr
           value={state.passphraseConfirm}
           onChange={e => onUpdate({ passphraseConfirm: e.target.value })}></input>
         <Checkbox
-          label={<>I agree to to the <Link href='https://www.ambire.com/Ambire%20ToS%20and%20PP%20(26%20November%202021).pdf' label='Terms of Service and Privacy policy'></Link>.</>}
+          label={<>I agree to the <Link href='https://www.ambire.com/Ambire%20ToS%20and%20PP%20(26%20November%202021).pdf' label='Terms of Service and Privacy policy'></Link>.</>}
           required={true}
         ></Checkbox>
         <Checkbox
