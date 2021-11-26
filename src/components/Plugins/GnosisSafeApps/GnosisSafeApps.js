@@ -39,7 +39,7 @@ export default function GnosisSafeApps({
   const [selectedApp, setSelectedApp] = useState(null)
 
   return (
-    <div id="plugin-gnosis-conainer">
+    <div id="plugin-gnosis-container">
       <ul id="dapps-container" className={selectedApp ? 'small-thumbs' : ''}>
         {dapps.map((dapp, index) => (
           <li

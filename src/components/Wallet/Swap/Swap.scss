@@ -1,8 +1,6 @@
 @import '../../../variables.scss';
 
 #swap {
-    display: flex;
-    flex-direction: column;
-    gap: 30px;
-    height: 100%;
+    padding-top: ($layout-spacing / 2);
+    @include flex-full-grow-container
 }

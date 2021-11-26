@@ -42,7 +42,7 @@ export default function GnosisSafeAppIframe({
     }, [selectedApp, network, selectedAcc, iframeRef, gnosisConnect, gnosisDisconnect])
 
     return (
-        <div id="plugin-gnosis-conainer">
+        <div id="plugin-gnosis-container">
             {loading &&
                 <div className='iframe-placeholder'>
                     <InfiniteProgressBar />
@@ -56,13 +56,14 @@ export default function GnosisSafeAppIframe({
                 </div>
             }
 
-            {url && <iframe
+            { url && <iframe
                 id={hash}
                 key={hash}
                 ref={iframeRef}
                 title={title}
                 src={url}
                 onLoad={() => setLoading(false)}
+                style={loading ? {display: 'none'} : {}}
             />}
         </div>)
 }
