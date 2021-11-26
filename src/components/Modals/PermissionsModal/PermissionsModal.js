@@ -1,36 +1,69 @@
 import './PermissionsModal.scss'
 
+import { useState, useEffect, useCallback } from 'react'
 import { MdCheck, MdClose } from 'react-icons/md'
 import { useModals, usePermissions } from '../../../hooks'
 import { useToasts } from '../../../hooks/toasts'
 import { askForPermission } from '../../../helpers/permissions'
 import { Modal, Toggle, Button, Checkbox } from '../../common'
 import { isFirefox } from '../../../lib/isFirefox'
+import { fetchGet } from '../../../lib/fetch'
 
 const toastErrorMessage = name => `You blocked the ${name} permission. Check your browser permissions tab.`
 
-const PermissionsModal = () => {
+const PermissionsModal = ({ relayerIdentityURL, isEmailConfirmationRequired }) => {
     const { hideModal } = useModals()
     const { isNoticationsGranted, isClipboardGranted, modalHidden, setModalHidden } = usePermissions()
     const { addToast } = useToasts()
-
+    const [isEmailConfirmed, setEmailConfirmed] = useState(false)
+    
+    const buttonDisabled = !modalHidden && ((isEmailConfirmationRequired && !isEmailConfirmed) || ((!isFirefox() && !isClipboardGranted) || !isNoticationsGranted))
+    const showEmailSentToast = () => addToast('Confirmation email already sent', { error: true })
+    
+    const checkEmailConfirmation = useCallback(async () => {
+        const identity = await fetchGet(relayerIdentityURL)
+        if (identity) {
+            const { emailConfirmed } = identity.meta
+            setEmailConfirmed(emailConfirmed && emailConfirmed === 1)
+        }
+    }, [relayerIdentityURL])
+    
     const requestNotificationsPermission = async () => {
         const status = await askForPermission('notifications')
         if (!status) addToast(toastErrorMessage('Notifications'), { error: true })
     }
-
+    
     const requestClipboardPermission = async () => {
         const status = await askForPermission('clipboard-read')
         if (!status) addToast(toastErrorMessage('Clipboard'), { error: true })
     }
-
-    const buttonDisabled = !modalHidden && ((!isFirefox() && !isClipboardGranted) || !isNoticationsGranted)
+    
+    useEffect(() => {
+        checkEmailConfirmation()
+        const emailConfirmationInterval = setInterval(() => !isEmailConfirmed && checkEmailConfirmation(), 3000)
+        return () => clearInterval(emailConfirmationInterval)
+    }, [isEmailConfirmed, checkEmailConfirmation])
 
     return (
-        <Modal id="permissions-modal" title="Permissions">
+        <Modal id="permissions-modal" title="We need a few things 🙏">
             <div className="intro">
                 Ambire Wallet needs you to allow some browser permissions to improve your experience.
             </div>
+            {
+                isEmailConfirmationRequired ? 
+                    <div className="permission">
+                    <div className="details">
+                        <div className="name">Email Confirmation</div>
+                        <div className="description">
+                            Confirming your email is required so that we can make sure your account can be recovered in case access is lost.
+                            We already sent an email, please check your inbox.
+                        </div>
+                    </div>
+                    <Toggle checked={isEmailConfirmed} onChange={() => showEmailSentToast()}/>
+                </div>
+                :
+                null
+            }
             <div className="permission">
                 <div className="details">
                     <div className="name">Notifications</div>
