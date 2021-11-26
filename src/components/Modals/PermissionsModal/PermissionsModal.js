@@ -19,7 +19,7 @@ const PermissionsModal = ({ relayerIdentityURL, account, onAddAccount }) => {
 
     const areBlockedPermissions = (!isFirefox() && !isClipboardGranted) || !isNoticationsGranted
     const isAccountNotConfirmed = account.emailConfRequired && !isEmailConfirmed
-    const buttonDisabled = !modalHidden && (isAccountNotConfirmed || areBlockedPermissions)
+    const buttonDisabled = isAccountNotConfirmed || (!modalHidden && areBlockedPermissions)
     const showEmailSentToast = () => addToast('Confirmation email already sent', { error: true })
     
     const checkEmailConfirmation = useCallback(async () => {
@@ -60,10 +60,10 @@ const PermissionsModal = ({ relayerIdentityURL, account, onAddAccount }) => {
                 account.email ? 
                     <div className="permission">
                     <div className="details">
-                        <div className="name">Email Confirmation</div>
+                        <div className="name">Email Verification</div>
                         <div className="description">
-                            Confirming your email is required so that we can make sure your account can be recovered in case access is lost.
-                            We already sent an email, please check your inbox.
+                            <b>Confirming your email is mandatory so that we can make sure your account can be recovered in case access is lost.</b>
+                            &nbsp;We already sent an email, please check your inbox.
                         </div>
                     </div>
                     <Toggle checked={isEmailConfirmed} onChange={() => showEmailSentToast()}/>
@@ -97,9 +97,16 @@ const PermissionsModal = ({ relayerIdentityURL, account, onAddAccount }) => {
                 </div>
                 <Toggle checked={isClipboardGranted} onChange={() => requestClipboardPermission()}/>
             </div>
-            <Checkbox label="I understand, do not show this again." disabled={isAccountNotConfirmed} checked={modalHidden} onChange={({ target }) => setModalHidden(target.checked)}/>
+            {isAccountNotConfirmed
+                ? (<></>)
+                // Not gonna show this at all if the email is not confirmed
+                : (<Checkbox
+                    label="I understand, do not show this again."
+                    checked={modalHidden}
+                    onChange={({ target }) => setModalHidden(target.checked)}/>)
+            }
             <div className="buttons">
-                <Button clear small icon={<MdClose/>} onClick={hideModal}>Ignore</Button>
+                <Button clear small icon={<MdClose/>} disabled={isAccountNotConfirmed} onClick={hideModal}>Ignore</Button>
                 <Button small icon={<MdCheck/>} disabled={buttonDisabled} onClick={hideModal}>Done</Button>
             </div>
         </Modal>

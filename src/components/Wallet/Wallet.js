@@ -102,8 +102,11 @@ export default function Wallet(props) {
     const relayerIdentityURL = `${props.relayerURL}/identity/${account.id}`
 
     const permissionsModal = <PermissionsModal relayerIdentityURL={relayerIdentityURL} account={account} onAddAccount={props.onAddAccount}/>
-    const areBlockedPermissions = arePermissionsLoaded && ((!isFirefox() && !isClipboardGranted) || !isNoticationsGranted)
-    if (!modalHidden && (account.emailConfRequired || areBlockedPermissions)) showModal(permissionsModal, { disableClose: true })
+    const areBlockedPermissions = arePermissionsLoaded
+      && ((!isFirefox() && !isClipboardGranted) || !isNoticationsGranted)
+    const showCauseOfPermissions = areBlockedPermissions && !modalHidden
+    const showCauseOfEmail = !!account.emailConfRequired
+    if (showCauseOfEmail || showCauseOfPermissions) showModal(permissionsModal, { disableClose: true })
   }, [props.relayerURL, props.accounts, props.selectedAcc, props.onAddAccount, showModal, isClipboardGranted, isNoticationsGranted, arePermissionsLoaded, modalHidden])
 
   useEffect(() => handlePermissionsModal(), [handlePermissionsModal])
