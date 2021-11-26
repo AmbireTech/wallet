@@ -9,9 +9,11 @@ const ResetPassword = ({ selectedNetwork }) => {
     const [oldPassword, setOldPassword] = useState('')
     const [newPassword, setNewPassword] = useState('')
     const [newPasswordConfirm, setNewPasswordConfirm] = useState('')
-    const [passwordsMustMatch, setPasswordsMustMatch] = useState(false)
     const [disabled, setDisabled] = useState(true)
 
+    const [passwordsMustMatch, setPasswordsMustMatch] = useState(false)
+    const [passwordsLength, setPasswordsLength] = useState(false)
+    
     const checkboxes = useMemo(() => [
         {
             label: `I understand I am only changing the password on the ${selectedNetwork.name} network`,
@@ -44,6 +46,7 @@ const ResetPassword = ({ selectedNetwork }) => {
         setNewPassword('')
         setNewPasswordConfirm('')
         setPasswordsMustMatch(false)
+        setPasswordsLength(false)
     }
 
     const validateForm = useCallback(() => {
@@ -52,12 +55,14 @@ const ResetPassword = ({ selectedNetwork }) => {
 
         if (radios[0].value === type) {
             const isLengthValid = oldPassword.length >= 8 && newPassword.length >= 8 && newPasswordConfirm.length >= 8
+            setPasswordsLength(!isLengthValid)
             setDisabled(!isLengthValid || !arePasswordsMatching)
         }
 
         if (radios[1].value === type) {
             const isLengthValid = newPassword.length >= 8 && newPasswordConfirm.length >= 8
             const areCheckboxesChecked = checkboxes.every(({ ref }) => ref.current && ref.current.checked)
+            setPasswordsLength(!isLengthValid)
             setDisabled(!isLengthValid || !arePasswordsMatching || !areCheckboxesChecked)
         }
     }, [radios, checkboxes, type, oldPassword, newPassword, newPasswordConfirm])
@@ -87,10 +92,16 @@ const ResetPassword = ({ selectedNetwork }) => {
                         }
                     </form> : null
             }
-            {
-                passwordsMustMatch ?
-                    <div id="passwords-match-warning">Passwords must match</div> : null
-            }
+            <div id="warnings">
+                {
+                    passwordsMustMatch ?
+                        <div className="warning">Passwords must match</div> : null
+                }
+                {
+                    passwordsLength ?
+                        <div className="warning">Password length must be greater than 8 characters</div> : null
+                }
+            </div>
             <div className="buttons">
                 <Button icon={<MdOutlineClose/>} clear>Cancel</Button>
                 <Button icon={<MdOutlineCheck/>} disabled={disabled}>Confirm</Button>
