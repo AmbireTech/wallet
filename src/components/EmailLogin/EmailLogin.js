@@ -2,8 +2,6 @@ import './EmailLogin.scss'
 
 import { useState, useEffect } from 'react'
 import { MdEmail } from 'react-icons/md'
-import { FaMagicWand } from 'react-icons/fa'
-import { Wallet } from 'ethers'
 
 import { fetch, fetchCaught } from '../../lib/fetch'
 
