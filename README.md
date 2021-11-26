@@ -187,3 +187,4 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/t
 * Ability to deploy smart contracts
 * Address book: ability to save and label addresses
 * Ledger: WebHID support, fixing Ledger with Chrome
+* Email verification is now enforced with a modal, because a valid email is required for account recovery
