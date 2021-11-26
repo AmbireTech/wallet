@@ -11,22 +11,30 @@ import { fetchGet } from '../../../lib/fetch'
 
 const toastErrorMessage = name => `You blocked the ${name} permission. Check your browser permissions tab.`
 
-const PermissionsModal = ({ relayerIdentityURL, isEmailConfirmationRequired }) => {
+const PermissionsModal = ({ relayerIdentityURL, account, onAddAccount }) => {
     const { hideModal } = useModals()
     const { isNoticationsGranted, isClipboardGranted, modalHidden, setModalHidden } = usePermissions()
     const { addToast } = useToasts()
     const [isEmailConfirmed, setEmailConfirmed] = useState(false)
     
-    const buttonDisabled = !modalHidden && ((isEmailConfirmationRequired && !isEmailConfirmed) || ((!isFirefox() && !isClipboardGranted) || !isNoticationsGranted))
+    const buttonDisabled = !modalHidden && ((account.emailConfRequired && !isEmailConfirmed) || ((!isFirefox() && !isClipboardGranted) || !isNoticationsGranted))
     const showEmailSentToast = () => addToast('Confirmation email already sent', { error: true })
     
     const checkEmailConfirmation = useCallback(async () => {
         const identity = await fetchGet(relayerIdentityURL)
         if (identity) {
             const { emailConfirmed } = identity.meta
-            setEmailConfirmed(emailConfirmed && emailConfirmed === 1)
+            const isConfirmed = (emailConfirmed && emailConfirmed === 1)
+            setEmailConfirmed(isConfirmed)
+
+            if (isConfirmed && account.emailConfRequired) {
+                onAddAccount({
+                    ...account,
+                    emailConfRequired: false
+                })
+            }
         }
-    }, [relayerIdentityURL])
+    }, [relayerIdentityURL, account, onAddAccount])
     
     const requestNotificationsPermission = async () => {
         const status = await askForPermission('notifications')
@@ -47,7 +55,7 @@ const PermissionsModal = ({ relayerIdentityURL, isEmailConfirmationRequired }) =
     return (
         <Modal id="permissions-modal" title="We need a few things 🙏">
             {
-                isEmailConfirmationRequired ? 
+                account.email ? 
                     <div className="permission">
                     <div className="details">
                         <div className="name">Email Confirmation</div>

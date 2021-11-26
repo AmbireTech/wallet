@@ -16,7 +16,6 @@ import { PermissionsModal } from '../Modals'
 import { useModals, usePermissions } from '../../hooks'
 import { useCallback, useEffect, useMemo } from 'react'
 import { isFirefox } from '../../lib/isFirefox'
-import { fetchGet } from '../../lib/fetch'
 
 export default function Wallet(props) {
   const { showModal } = useModals()
@@ -100,21 +99,12 @@ export default function Wallet(props) {
 
   const handlePermissionsModal = useCallback(async () => {
     const account = props.accounts.find(({ id }) => id === props.selectedAcc)
-    const isEmailConfirmationRequired = account && account.emailConfRequired
-
     const relayerIdentityURL = `${props.relayerURL}/identity/${account.id}`
 
-    let isEmailConfirmed = false
-    const identity = await fetchGet(relayerIdentityURL)
-    if (identity) {
-      const { emailConfirmed } = identity.meta
-      isEmailConfirmed = emailConfirmed && emailConfirmed === 1
-    }
-  
-    const permissionsModal = <PermissionsModal relayerIdentityURL={relayerIdentityURL} isEmailConfirmationRequired={isEmailConfirmationRequired}/>
+    const permissionsModal = <PermissionsModal relayerIdentityURL={relayerIdentityURL} account={account} onAddAccount={props.onAddAccount}/>
     const areBlockedPermissions = arePermissionsLoaded && ((!isFirefox() && !isClipboardGranted) || !isNoticationsGranted)
-    if (!modalHidden && ((isEmailConfirmationRequired && !isEmailConfirmed) || areBlockedPermissions)) showModal(permissionsModal, { disableClose: true })
-  }, [props.relayerURL, props.accounts, props.selectedAcc, showModal, isClipboardGranted, isNoticationsGranted, arePermissionsLoaded, modalHidden])
+    if (!modalHidden && (account.emailConfRequired || areBlockedPermissions)) showModal(permissionsModal, { disableClose: true })
+  }, [props.relayerURL, props.accounts, props.selectedAcc, props.onAddAccount, showModal, isClipboardGranted, isNoticationsGranted, arePermissionsLoaded, modalHidden])
 
   useEffect(() => handlePermissionsModal(), [handlePermissionsModal])
 
