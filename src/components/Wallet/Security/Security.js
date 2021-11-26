@@ -13,6 +13,7 @@ import { isValidAddress } from '../../../helpers/address';
 import AddAuthSigner from './AddAuthSigner/AddAuthSigner'
 import { useToasts } from '../../../hooks/toasts'
 import { useHistory } from 'react-router-dom'
+import { MdInfoOutline } from 'react-icons/md'
 
 const IDENTITY_INTERFACE = new Interface(
   require('adex-protocol-eth/abi/Identity5.2')
@@ -162,17 +163,18 @@ const Security = ({
   return (
     <section id="security">
       <div className="panel">
-        <div className='help'>
-          <a href='https://help.ambire.com/hc/en-us/articles/4410885684242-Signers' target='_blank' rel='noreferrer'>need help?</a>
+        <div className='network-warning'>
+          <MdInfoOutline size={36}></MdInfoOutline>Please note: signer settings are network-specific. You are currently looking at and modifying the signers on {selectedNetwork.name}.
+          &nbsp;<a href='https://help.ambire.com/hc/en-us/articles/4410885684242-Signers' target='_blank' rel='noreferrer'>Need help? Click here.</a>
         </div>
+
         <div className="panel-title">Authorized signers</div>
+
         {errMsg && (
           <h3 className="error">Error getting authorized signers: {errMsg}</h3>
         )}
         {isLoading && <Loading />}
         <ul className="content">{!isLoading && privList}</ul>
-      </div>
-      <div className="panel">
         <div className="panel-title">Add new signer</div>
         <AddAuthSigner
           onAddBtnClicked={onAddBtnClickedHandler}
