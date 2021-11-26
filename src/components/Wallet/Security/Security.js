@@ -100,7 +100,7 @@ const Security = ({
     history.push('/wallet/security')
   }
 
-  const showResetPasswordModal = () => showModal(<ResetPasswordModal selectedNetwork={selectedNetwork}/>)
+  const showResetPasswordModal = () => showModal(<ResetPasswordModal account={selectedAccount} selectedNetwork={selectedNetwork}/>)
 
   const selectedAccount = accounts.find(x => x.id === selectedAcc)
 
