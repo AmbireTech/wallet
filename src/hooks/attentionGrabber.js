@@ -43,7 +43,7 @@ const useAttentionGrabber = ({ eligibleRequests, isSendTxnShowing, onSitckyClick
         }
 
         return () => clearInterval(flashingTitleInterval)
-    }, [removeStickyToasts, isNoticationsGranted, eligibleRequests, isSendTxnShowing, onSitckyClick, addToast, removeToast])
+    }, [removeStickyToasts, eligibleRequests, isSendTxnShowing, onSitckyClick, addToast, removeToast])
 }
 
 export default useAttentionGrabber
