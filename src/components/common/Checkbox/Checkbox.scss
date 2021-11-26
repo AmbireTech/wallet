@@ -5,7 +5,12 @@
   margin: 1.3em 0px;
   user-select: none;
 
-  &:hover {
+  &.disabled {
+    opacity: 0.5;
+    pointer-events: none;
+  }
+
+  &:not(.disabled):hover {
     input, .checkbox-mark {
       background-color: #7B7597;
     }
