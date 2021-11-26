@@ -16,7 +16,7 @@ const PermissionsModal = ({ relayerIdentityURL, account, onAddAccount }) => {
     const { isNoticationsGranted, isClipboardGranted, modalHidden, setModalHidden } = usePermissions()
     const { addToast } = useToasts()
     const [isEmailConfirmed, setEmailConfirmed] = useState(false)
-    
+
     const areBlockedPermissions = (!isFirefox() && !isClipboardGranted) || !isNoticationsGranted
     const isAccountNotConfirmed = account.emailConfRequired && !isEmailConfirmed
     const buttonDisabled = !modalHidden && (isAccountNotConfirmed || areBlockedPermissions)
@@ -97,7 +97,7 @@ const PermissionsModal = ({ relayerIdentityURL, account, onAddAccount }) => {
                 </div>
                 <Toggle checked={isClipboardGranted} onChange={() => requestClipboardPermission()}/>
             </div>
-            <Checkbox label="I understand, do not show this again." disabled={!isEmailConfirmed} checked={isEmailConfirmed && modalHidden} onChange={({ target }) => isEmailConfirmed && setModalHidden(target.checked)}/>
+            <Checkbox label="I understand, do not show this again." disabled={isAccountNotConfirmed} checked={modalHidden} onChange={({ target }) => setModalHidden(target.checked)}/>
             <div className="buttons">
                 <Button clear small icon={<MdClose/>} onClick={hideModal}>Ignore</Button>
                 <Button small icon={<MdCheck/>} disabled={buttonDisabled} onClick={hideModal}>Done</Button>
