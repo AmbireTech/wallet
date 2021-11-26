@@ -7,7 +7,7 @@ import { Interface } from 'ethers/lib/utils'
 import accountPresets from '../../../consts/accountPresets'
 import privilegesOptions from '../../../consts/privilegesOptions'
 import { useRelayerData, useModals } from '../../../hooks'
-import { InputModal } from '../../Modals';
+import { InputModal, ResetPasswordModal } from '../../Modals';
 import AddressList from '../../common/AddressBook/AddressList/AddressList'
 import { isValidAddress } from '../../../helpers/address';
 import AddAuthSigner from './AddAuthSigner/AddAuthSigner'
@@ -100,6 +100,8 @@ const Security = ({
     history.push('/wallet/security')
   }
 
+  const showResetPasswordModal = () => showModal(<ResetPasswordModal selectedNetwork={selectedNetwork}/>)
+
   const selectedAccount = accounts.find(x => x.id === selectedAcc)
 
   const privList = Object.entries(privileges)
@@ -121,7 +123,7 @@ const Security = ({
             {
               selectedAccount.email ?
                 <Button
-                  onClick={() => {}}
+                  onClick={() => showResetPasswordModal()}
                   small
                 >
                   Reset Password
