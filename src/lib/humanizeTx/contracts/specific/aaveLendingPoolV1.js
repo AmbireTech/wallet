@@ -52,7 +52,7 @@ module.exports = {
         summary: ({network, txn, inputs, humanContract}) => {
           const SF = new SummaryFormatter(network, humanContract.manager).mainAction('redeem')
           return SF.actions([
-            SF.text('Repay')
+            SF.text('Redeem')
               .tokenAmount(inputs._reserve, inputs._amount, null, null, (data) => (data.infinity ? 'maximum' : data.amount))
               .action(),
 
