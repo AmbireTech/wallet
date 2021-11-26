@@ -8,6 +8,7 @@
   .panel {
     flex: 0 1 100%;
     display: flex;
+    position: relative;
     flex-direction: column;
     gap: 2em;
     text-align: center;
@@ -18,10 +19,17 @@
     //  overflow: hidden;
     background-color: $panel-background-color;
 
+    .help {
+      position: absolute;
+      top: 30px;
+      right: 30px;
+    }
+
     .panel-title {
       font-size: 1.5em;
       font-weight: bold;
       text-align: start;
+      padding-right: 60px;
     }
 
     .content {
