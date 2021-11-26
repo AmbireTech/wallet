@@ -22,6 +22,15 @@ const networks = [{
 		name: 'Avalanche',
 		icon: '/resources/networks/avalanche.png',
 		explorerUrl: 'https://snowtrace.io'
+	}, {
+		// to match the zapper ID
+		id: 'binance-smart-chain',
+		chainId: 56,
+		rpc: 'https://bsc-dataseed.binance.org/',
+		nativeAssetSymbol: 'BNB',
+		name: 'Binance Smart Chain',
+		icon: '/resources/networks/bsc.png',
+		explorerUrl: 'https://bscscan.com'
 	}/*, {
 		id: 'arbitrum',
 		chainId: 42161,

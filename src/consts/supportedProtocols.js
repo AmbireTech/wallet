@@ -12,6 +12,10 @@ const suportedProtocols = [
     {
         network: 'avalanche',
         protocols: ['aave-v2']
+    },
+    {
+        network: 'binance-smart-chain',
+        protocols: ['pancakeswap']
     }
 ]
 
