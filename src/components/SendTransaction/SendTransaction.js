@@ -159,6 +159,7 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
       signerExtra: account.signerExtra,
       chainId: network.chainId
     })
+
     if (relayerURL) {
       // Temporary way of debugging the fee cost
       // const initialLimit = finalBundle.gasLimit - getFeePaymentConsequences(estimation.selectedFeeToken, estimation).addedGas
@@ -215,6 +216,10 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
   const approveTxn = ({ quickAccCredentials }) => {
     if (signingStatus && signingStatus.inProgress) return
     setSigningStatus(signingStatus || { inProgress: true })
+
+    if (account.signerExtra && account.signerExtra.type === 'ledger') {
+      addToast('Please confirm this transaction on your Ledger device.', { timeout: 10000 })
+    }
 
     const requestIds = bundle.requestIds
     const blockExplorerUrl = network.explorerUrl
