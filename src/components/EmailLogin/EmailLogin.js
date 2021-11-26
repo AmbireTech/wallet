@@ -52,11 +52,16 @@ export default function EmailLogin({ relayerURL, onAddAccount }) {
       if (resp.status === 200) {
         const identityInfo = body
         const { _id, salt, identityFactoryAddr, baseIdentityAddr, bytecode } = identityInfo
-        const { quickAccSigner } = identityInfo.meta
+        const { quickAccSigner, primaryKeyBackup } = identityInfo.meta
+        if (!primaryKeyBackup) {
+          setErr('Account is not backed up on Ambire Cloud. The only way to login is to import a JSON file.')
+          setRequiresConfFor(null)
+          return
+        }
         onAddAccount({
           id: _id,
           email: identityInfo.meta.email,
-          primaryKeyBackup: identityInfo.meta.primaryKeyBackup,
+          primaryKeyBackup,
           salt, identityFactoryAddr, baseIdentityAddr, bytecode,
           signer: quickAccSigner
         }, { select: true })
@@ -108,7 +113,7 @@ export default function EmailLogin({ relayerURL, onAddAccount }) {
       (<div id="loginEmail" className="emailConf">
         <h3><MdEmail size={25} color="white"/>Email confirmation required</h3>
         <p>
-        We sent an email to {requiresEmailConfFor.email}, please check your inbox and click "Authorize New Device".
+        We sent an email to {requiresEmailConfFor.email}, please check your inbox and click "<b>Authorize New Device</b>".
         </p>
         {err ? (<p className="error">{err}</p>) : (<></>)}
       </div>)
