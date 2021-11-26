@@ -1,0 +1,2 @@
+const SCRYPT_OPTIONS = { N: 131072 / 8 }
+export { SCRYPT_OPTIONS }

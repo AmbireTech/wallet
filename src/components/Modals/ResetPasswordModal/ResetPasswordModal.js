@@ -1,12 +1,16 @@
 import './ResetPasswordModal.scss'
 
+import { Wallet } from 'ethers'
 import { useState, useMemo, createRef, useEffect, useCallback } from 'react'
 import { Modal, Radios, TextInput, Checkbox, Button } from '../../common'
 import { MdOutlineCheck, MdOutlineClose } from 'react-icons/md'
 import { useModals } from '../../../hooks'
+import { useToasts } from '../../../hooks/toasts'
+import { SCRYPT_OPTIONS } from '../../../consts/scryptOptions'
 
-const ResetPassword = ({ selectedNetwork }) => {
+const ResetPassword = ({ account, selectedNetwork }) => {
     const { hideModal } = useModals()
+    const { addToast } = useToasts()
 
     const [type, setType] = useState(null)
     const [oldPassword, setOldPassword] = useState('')
@@ -50,6 +54,17 @@ const ResetPassword = ({ selectedNetwork }) => {
         setNewPasswordConfirm('')
         setPasswordsMustMatch(false)
         setPasswordsLength(false)
+    }
+
+    const changePassword = async () => {
+        try {
+            const wallet = await Wallet.fromEncryptedJson(JSON.parse(account.primaryKeyBackup), oldPassword)
+            await wallet.encrypt(newPassword, { scrypt: SCRYPT_OPTIONS })
+            addToast('You password was successfully updated')
+        } catch(e) {
+            console.error(e)
+            addToast(e.message || e, { error: true })
+        }
     }
 
     const validateForm = useCallback(() => {
@@ -107,7 +122,7 @@ const ResetPassword = ({ selectedNetwork }) => {
             </div>
             <div className="buttons">
                 <Button icon={<MdOutlineClose/>} clear onClick={() => hideModal()}>Cancel</Button>
-                <Button icon={<MdOutlineCheck/>} disabled={disabled}>Confirm</Button>
+                <Button icon={<MdOutlineCheck/>} disabled={disabled} onClick={() => changePassword()}>Confirm</Button>
             </div>
         </Modal>
     )
