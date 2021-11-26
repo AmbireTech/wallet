@@ -99,10 +99,16 @@
     }
 
     #recipient-address {
+        position: relative;
         display: flex;
 
         .text-input {
             width: 100%;
+        }
+
+        .address-book {
+            position: absolute !important;
+            right: 0;
         }
     }
 }
