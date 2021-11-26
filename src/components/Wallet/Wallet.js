@@ -112,7 +112,7 @@ export default function Wallet(props) {
     }
   
     const permissionsModal = <PermissionsModal relayerIdentityURL={relayerIdentityURL} isEmailConfirmationRequired={isEmailConfirmationRequired}/>
-    const areBlockedPermissions = (arePermissionsLoaded && ((!isFirefox() && !isClipboardGranted) || !isNoticationsGranted))
+    const areBlockedPermissions = arePermissionsLoaded && ((!isFirefox() && !isClipboardGranted) || !isNoticationsGranted)
     if (!modalHidden && ((isEmailConfirmationRequired && !isEmailConfirmed) || areBlockedPermissions)) showModal(permissionsModal, { disableClose: true })
   }, [props.relayerURL, props.accounts, props.selectedAcc, showModal, isClipboardGranted, isNoticationsGranted, arePermissionsLoaded, modalHidden])
 
