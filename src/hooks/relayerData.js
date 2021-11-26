@@ -1,10 +1,11 @@
-import { useEffect, useCallback, useState } from 'react'
+import { useEffect, useCallback, useState, useRef } from 'react'
 import { fetchCaught } from '../lib/fetch'
 
 export default function useRelayerData(url) {
   const [isLoading, setLoading] = useState(true)
   const [data, setData] = useState(null)
   const [err, setErr] = useState(null)
+  const prevUrl = useRef('')
 
   const updateData = useCallback(async () => {
     const { resp, body, errMsg } = await fetchCaught(url)
@@ -19,6 +20,11 @@ export default function useRelayerData(url) {
 
   useEffect(() => {
     if (!url) return
+
+    const stripQuery = x => x.split('?')[0]
+    if (stripQuery(prevUrl.current) !== stripQuery(url)) setData(null)
+    prevUrl.current = url
+
     let unloaded = false
     setLoading(true)
     setErr(null)
