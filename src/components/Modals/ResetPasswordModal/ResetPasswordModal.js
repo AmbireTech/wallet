@@ -3,8 +3,11 @@ import './ResetPasswordModal.scss'
 import { useState, useMemo, createRef, useEffect, useCallback } from 'react'
 import { Modal, Radios, TextInput, Checkbox, Button } from '../../common'
 import { MdOutlineCheck, MdOutlineClose } from 'react-icons/md'
+import { useModals } from '../../../hooks'
 
 const ResetPassword = ({ selectedNetwork }) => {
+    const { hideModal } = useModals()
+
     const [type, setType] = useState(null)
     const [oldPassword, setOldPassword] = useState('')
     const [newPassword, setNewPassword] = useState('')
@@ -103,7 +106,7 @@ const ResetPassword = ({ selectedNetwork }) => {
                 }
             </div>
             <div className="buttons">
-                <Button icon={<MdOutlineClose/>} clear>Cancel</Button>
+                <Button icon={<MdOutlineClose/>} clear onClick={() => hideModal()}>Cancel</Button>
                 <Button icon={<MdOutlineCheck/>} disabled={disabled}>Confirm</Button>
             </div>
         </Modal>
