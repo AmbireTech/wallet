@@ -121,6 +121,7 @@ const Security = ({
           <div className="btns-wrapper">
             <Button
               disabled={isSelected}
+              title={isSelected ? 'Signer is already default' : ''}
               onClick={() =>
                 onMakeDefaultBtnClicked(selectedAccount, addr, isQuickAcc)
               }
@@ -164,8 +165,11 @@ const Security = ({
     <section id="security">
       <div className="panel">
         <div className='network-warning'>
-          <MdInfoOutline size={36}></MdInfoOutline>Please note: signer settings are network-specific. You are currently looking at and modifying the signers on {selectedNetwork.name}.
-          &nbsp;<a href='https://help.ambire.com/hc/en-us/articles/4410885684242-Signers' target='_blank' rel='noreferrer'>Need help? Click here.</a>
+          <MdInfoOutline size={36}></MdInfoOutline>
+          <div>
+            Please note: signer settings are network-specific. You are currently looking at and modifying the signers on {selectedNetwork.name}.
+            &nbsp;<a href='https://help.ambire.com/hc/en-us/articles/4410885684242-Signers' target='_blank' rel='noreferrer'>Need help? Click here.</a>
+          </div>
         </div>
 
         <div className="panel-title">Authorized signers</div>
