@@ -22,11 +22,6 @@ export default function useNotifications (requests, onShow, portfolio, selectedA
     onShowRef.current.onShow = onShow
 
     useEffect(() => {
-        if (window.Notification && Notification.permission !== 'denied') {
-            Notification.requestPermission(() => {
-                // @TODO: perhaps warn the user in some way
-            })
-        }
         // hack because for whatever reason it doesn't work when we access the ref directly
         window.onClickNotif = req => onShowRef.current.onShow(req)
     }, [])
