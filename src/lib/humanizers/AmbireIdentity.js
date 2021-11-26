@@ -17,7 +17,7 @@ const IdentityMapping = {
       if (isQuickAccManager) return [`INVALID PROCEDURE - DO NOT SIGN`]
       return [`Authorize signer ${name}`]
     } else {
-      if (isQuickAccManager) return [`Add email/password signer`]
+      if (isQuickAccManager) return [`Add a new email/password signer`]
       return [`Set special authorization for ${name}`]
     }
   }
