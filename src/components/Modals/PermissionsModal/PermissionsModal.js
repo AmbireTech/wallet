@@ -46,9 +46,6 @@ const PermissionsModal = ({ relayerIdentityURL, isEmailConfirmationRequired }) =
 
     return (
         <Modal id="permissions-modal" title="We need a few things 🙏">
-            <div className="intro">
-                Ambire Wallet needs you to allow some browser permissions to improve your experience.
-            </div>
             {
                 isEmailConfirmationRequired ? 
                     <div className="permission">
@@ -66,7 +63,7 @@ const PermissionsModal = ({ relayerIdentityURL, isEmailConfirmationRequired }) =
             }
             <div className="permission">
                 <div className="details">
-                    <div className="name">Notifications</div>
+                    <div className="name">Notifications Permission</div>
                     <div className="description">
                         Needed to draw your attention to Ambire Wallet when there is a transaction signing request.<br/>
                         You can also click the notifications to go directly to the Ambire tab.<br/>
@@ -77,7 +74,7 @@ const PermissionsModal = ({ relayerIdentityURL, isEmailConfirmationRequired }) =
             </div>
             <div className={`permission ${isFirefox() ? 'disabled' : ''}`}>
                 <div className="details">
-                    <div className="name">Clipboard { isFirefox() ? <span className="unavailable">(Unavailable in Firefox)</span> : null }</div>
+                    <div className="name">Clipboard Permission { isFirefox() ? <span className="unavailable">(Unavailable in Firefox)</span> : null }</div>
                     <div className="description">
                         Needed so that dApps can be connected automatically just by copying their WalletConnect URL.
                     </div>
