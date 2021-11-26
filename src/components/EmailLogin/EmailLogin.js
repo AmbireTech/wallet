@@ -60,6 +60,9 @@ export default function EmailLogin({ relayerURL, onAddAccount }) {
           salt, identityFactoryAddr, baseIdentityAddr, bytecode,
           signer: quickAccSigner
         }, { select: true })
+
+        // Delete the key so that it can't be used anymore on this browser
+        delete localStorage.loginSessionKey
       } else {
         setErr(body.message ? `Relayer error: ${body.message}` : `Unknown no-message error: ${resp.status}`)
       }
