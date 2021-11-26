@@ -107,8 +107,8 @@ export default function EmailLogin({ relayerURL, onAddAccount }) {
     const inner = requiresEmailConfFor ?
       (<div id="loginEmail" className="emailConf">
         <h3><MdEmail size={25} color="white"/>Email confirmation required</h3>
-        <p>This is the first login from this browser, email confirmation is required.<br/><br/>
-        We sent an email to {requiresEmailConfFor.email}, please check your inbox and click "Confirm".
+        <p>
+        We sent an email to {requiresEmailConfFor.email}, please check your inbox and click "Authorize New Device".
         </p>
         {err ? (<p className="error">{err}</p>) : (<></>)}
       </div>)
