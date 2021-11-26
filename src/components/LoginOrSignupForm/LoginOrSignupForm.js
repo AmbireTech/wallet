@@ -36,6 +36,14 @@ export default function LoginOrSignupForm({ action = 'LOGIN', onAccRequest, inPr
     const additionalInputs = isSignup ?
       (<>
         <input
+          type="password"
+          required
+          minLength={minPwdLen}
+          placeholder="Password"
+          value={state.passphrase}
+          onChange={e => onUpdate({ passphrase: e.target.value })}
+        ></input>
+        <input
           ref={passConfirmInput}
           required
           minLength={minPwdLen}
@@ -51,7 +59,10 @@ export default function LoginOrSignupForm({ action = 'LOGIN', onAccRequest, inPr
     return (
       <form onSubmit={onSubmit}>
         <input type="email" required placeholder="Email" value={state.email} onChange={e => onUpdate({ email: e.target.value })}></input>
-        <input type="password" required minLength={minPwdLen} placeholder="Password" value={state.passphrase} onChange={e => onUpdate({ passphrase: e.target.value })}></input>
+        {
+          // Trick the password manager into putting in the email
+          !isSignup ? (<input type="password" style={{ display: "none" }}></input>): (<></>)
+        }
         {additionalInputs}
         <input type="submit" disabled={inProgress} value={isSignup ?
           (inProgress ? "Signing up..." : "Sign up")
