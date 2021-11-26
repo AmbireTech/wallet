@@ -90,7 +90,7 @@ const PermissionsModal = ({ relayerIdentityURL, isEmailConfirmationRequired }) =
                 </div>
                 <Toggle checked={isClipboardGranted} onChange={() => requestClipboardPermission()}/>
             </div>
-            <Checkbox label="I understand, do not show this again." checked={modalHidden} onChange={({ target }) => setModalHidden(target.checked)}/>
+            <Checkbox label="I understand, do not show this again." disabled={!isEmailConfirmed} checked={isEmailConfirmed && modalHidden} onChange={({ target }) => isEmailConfirmed && setModalHidden(target.checked)}/>
             <div className="buttons">
                 <Button clear small icon={<MdClose/>} onClick={hideModal}>Ignore</Button>
                 <Button small icon={<MdCheck/>} disabled={buttonDisabled} onClick={hideModal}>Done</Button>
