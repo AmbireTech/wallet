@@ -26,7 +26,7 @@ const PermissionsModal = ({ relayerIdentityURL, account, onAddAccount }) => {
         const identity = await fetchGet(relayerIdentityURL)
         if (identity) {
             const { emailConfirmed } = identity.meta
-            const isConfirmed = (emailConfirmed && emailConfirmed === 1)
+            const isConfirmed = !!emailConfirmed
             setEmailConfirmed(isConfirmed)
 
             if (isConfirmed && account.emailConfRequired) {
