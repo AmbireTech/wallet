@@ -1,5 +1,5 @@
 import { Interface } from 'ethers/lib/utils'
-import { getContractName } from '../humanReadableTransactions'
+import { getName } from '../humanReadableTransactions'
 import accountPresets from '../../consts/accountPresets'
 import privilegesOptions from '../../consts/privilegesOptions'
 
@@ -8,7 +8,7 @@ const iface = new Interface(require('adex-protocol-eth/abi/Identity5.2'))
 const IdentityMapping = {
   [iface.getSighash('setAddrPrivilege')]: (txn, network) => {
     const [ addr, privLevel ] = iface.parseTransaction(txn).args
-    const name = getContractName(addr, network)
+    const name = getName(addr, network)
     const isQuickAccManager = addr.toLowerCase() === accountPresets.quickAccManager.toLowerCase()
     if (privLevel === privilegesOptions.false) {
       if (isQuickAccManager) return [`Revoke email/password access`]
