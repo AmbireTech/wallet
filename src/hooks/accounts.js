@@ -35,8 +35,8 @@ export default function useAccounts () {
       if (existing) {
         addToast(JSON.stringify(existing) === JSON.stringify(acc) ? 'Account already added' : 'Account updated')
       } else if (opts.isNew) {
-        // @TODO consider something  more explanatory such as "using Trezor as a signer", or "this is different from your signer address"
-        addToast(`New Ambire account created: ${acc.id}`, { timeout: 10000 })
+        // @TODO consider something more explanatory such as "using Trezor as a signer", or "this is different from your signer address"
+        addToast(`New Ambire account created: ${acc.id}${acc.signer.address ? '. This is a fresh smart wallet address.' : ''}`, { timeout: acc.signer.address ? 15000 : 10000 })
       }
 
       const existingIdx = accounts.indexOf(existing)
