@@ -18,8 +18,8 @@ const ResetPassword = ({ account, selectedNetwork }) => {
     const [newPasswordConfirm, setNewPasswordConfirm] = useState('')
     const [disabled, setDisabled] = useState(true)
 
-    const [passwordsMustMatch, setPasswordsMustMatch] = useState(false)
-    const [passwordsLength, setPasswordsLength] = useState(false)
+    const [passwordsMustMatchWarning, setPasswordsMustMatchWarning] = useState(false)
+    const [passwordsLengthWarning, setPasswordsLengthWarning] = useState(false)
     
     const checkboxes = useMemo(() => [
         {
@@ -52,8 +52,8 @@ const ResetPassword = ({ account, selectedNetwork }) => {
         setOldPassword('')
         setNewPassword('')
         setNewPasswordConfirm('')
-        setPasswordsMustMatch(false)
-        setPasswordsLength(false)
+        setPasswordsMustMatchWarning(false)
+        setPasswordsLengthWarning(false)
     }
 
     const changePassword = async () => {
@@ -69,19 +69,28 @@ const ResetPassword = ({ account, selectedNetwork }) => {
 
     const validateForm = useCallback(() => {
         const arePasswordsMatching = newPassword === newPasswordConfirm
-        setPasswordsMustMatch(!arePasswordsMatching)
-
+        let areFieldsNotEmpty = false
+        let isLengthValid = false
+        
         if (radios[0].value === type) {
-            const isLengthValid = oldPassword.length >= 8 && newPassword.length >= 8 && newPasswordConfirm.length >= 8
-            setPasswordsLength(!isLengthValid)
+            areFieldsNotEmpty = oldPassword.length && newPassword.length && newPasswordConfirm.length
+            isLengthValid = oldPassword.length >= 8 && newPassword.length >= 8 && newPasswordConfirm.length >= 8
             setDisabled(!isLengthValid || !arePasswordsMatching)
         }
 
         if (radios[1].value === type) {
-            const isLengthValid = newPassword.length >= 8 && newPasswordConfirm.length >= 8
+            areFieldsNotEmpty = newPassword.length && newPasswordConfirm.length
+            isLengthValid = newPassword.length >= 8 && newPasswordConfirm.length >= 8
             const areCheckboxesChecked = checkboxes.every(({ ref }) => ref.current && ref.current.checked)
-            setPasswordsLength(!isLengthValid)
             setDisabled(!isLengthValid || !arePasswordsMatching || !areCheckboxesChecked)
+        }
+
+        if (areFieldsNotEmpty) {
+            setPasswordsLengthWarning(!isLengthValid)
+            setPasswordsMustMatchWarning(!arePasswordsMatching)
+        } else {
+            setPasswordsLengthWarning(false)
+            setPasswordsMustMatchWarning(false)
         }
     }, [radios, checkboxes, type, oldPassword, newPassword, newPasswordConfirm])
 
@@ -112,11 +121,11 @@ const ResetPassword = ({ account, selectedNetwork }) => {
             }
             <div id="warnings">
                 {
-                    passwordsMustMatch ?
+                    passwordsMustMatchWarning ?
                         <div className="warning">Passwords must match</div> : null
                 }
                 {
-                    passwordsLength ?
+                    passwordsLengthWarning ?
                         <div className="warning">Password length must be greater than 8 characters</div> : null
                 }
             </div>
