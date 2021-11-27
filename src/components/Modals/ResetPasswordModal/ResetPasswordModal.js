@@ -93,16 +93,16 @@ const ResetPassword = ({ account, selectedNetwork }) => {
             {
                 radios[0].value === type ?
                     <form>
-                        <TextInput placeholder="Old Password" onInput={value => setOldPassword(value)}/>
-                        <TextInput placeholder="New Password" onInput={value => setNewPassword(value)}/>
-                        <TextInput placeholder="Confirm New Password" onInput={value => setNewPasswordConfirm(value)}/>
+                        <TextInput password placeholder="Old Password" onInput={value => setOldPassword(value)}/>
+                        <TextInput password placeholder="New Password" onInput={value => setNewPassword(value)}/>
+                        <TextInput password placeholder="Confirm New Password" onInput={value => setNewPasswordConfirm(value)}/>
                     </form> : null
             }
             {
                 radios[1].value === type ?
                     <form>
-                        <TextInput placeholder="New Password" onInput={value => setNewPassword(value)}/>
-                        <TextInput placeholder="Confirm New Password" onInput={value => setNewPasswordConfirm(value)}/>
+                        <TextInput password placeholder="New Password" onInput={value => setNewPassword(value)}/>
+                        <TextInput password placeholder="Confirm New Password" onInput={value => setNewPasswordConfirm(value)}/>
                         {
                             checkboxes.map(({ label, ref }, i) => (
                                 <Checkbox key={`checkbox-${i}`} ref={ref} label={label} onChange={() => validateForm()}/>
