@@ -117,7 +117,7 @@ export default function AddAccount({ relayerURL, onAddAccount }) {
       signer,
       // This makes the modal appear, and will be removed by the modal which will call onAddAccount to update it
       emailConfRequired: true
-    }, { select: true })
+    }, { select: true, isNew: true })
   }
 
   // EOA implementations
@@ -267,8 +267,9 @@ export default function AddAccount({ relayerURL, onAddAccount }) {
     if (!relayerURL) return addAccount(await createFromEOA(addr), { select: true })
     // otherwise check which accs we already own and add them
     const owned = await getOwnedByEOAs([addr])
-    if (!owned.length) return addAccount(await createFromEOA(addr), { select: true })
-    else {
+    if (!owned.length) {
+        addAccount(await createFromEOA(addr), { select: true, isNew: true })
+    } else {
       addToast(`Found ${owned.length} existing accounts with signer ${addr}`, { timeout: 15000 })
       owned.forEach((acc, i) => addAccount(acc, { select: i === 0 }))
     }
