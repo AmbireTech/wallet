@@ -6,7 +6,7 @@ import networks from '../consts/networks'
 
 const REQUEST_TITLE_PREFIX = 'Ambire Wallet: '
 const SUPPORTED_TYPES =  ['eth_sendTransaction', 'personal_sign']
-const BALANCE_TRESHOLD = 0.00005 
+const BALANCE_TRESHOLD = 1.00001
 let currentNotifs = []
 let isLastTotalBalanceInit = false
 let lastTokensBalanceRaw = []
@@ -70,10 +70,10 @@ export default function useNotifications (requests, onShow, portfolio, selectedA
                     lastTokensBalanceRaw = portfolio.tokens.map(({ address, balanceRaw }) => ({ address, balanceRaw }))
                 }
 
-                const changedAmounts = portfolio.tokens.filter(({ address, balanceRaw, decimals }) => {
+                const changedAmounts = portfolio.tokens.filter(({ address, balanceRaw }) => {
                     const lastToken = lastTokensBalanceRaw.find(token => token.address === address)
-                    const amountRecieved = getAmountReceived(lastToken, balanceRaw, decimals)
-                    return !lastToken || (lastToken && (balanceRaw > lastToken.balanceRaw) && (amountRecieved > BALANCE_TRESHOLD))
+                    const isSignificantChange = lastToken && ((balanceRaw / lastToken.balanceRaw) > BALANCE_TRESHOLD)
+                    return !lastToken || isSignificantChange
                 })
 
                 changedAmounts.forEach(({ address, symbol, decimals, balanceRaw }) => {
@@ -93,7 +93,7 @@ export default function useNotifications (requests, onShow, portfolio, selectedA
                 })
             }
         } catch(e) {
-            console.error(e);
+            console.error(e)
             addToast(e.message | e, { error: true })
         }
     }, [portfolio, addToast, showNotification])
