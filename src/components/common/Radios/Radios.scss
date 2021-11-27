@@ -26,6 +26,8 @@
         }
 
         &.active {
+            pointer-events: none;
+
             .radio::after {
                 content: "";
                 position: absolute;
