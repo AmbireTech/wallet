@@ -34,6 +34,9 @@ export default function useAccounts () {
       const existing = accounts.find(x => x.id.toLowerCase() === acc.id.toLowerCase())
       if (existing) {
         addToast(JSON.stringify(existing) === JSON.stringify(acc) ? 'Account already added' : 'Account updated')
+      } else if (opts.isNew) {
+        // @TODO consider something  more explanatory such as "using Trezor as a signer", or "this is different from your signer address"
+        addToast(`New Ambire account created: ${acc.id}`, { timeout: 10000 })
       }
 
       const existingIdx = accounts.indexOf(existing)
