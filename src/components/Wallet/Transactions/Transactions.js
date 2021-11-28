@@ -88,7 +88,7 @@ function Transactions ({ relayerURL, selectedAcc, selectedNetwork, showSendTxns 
           {(isLoading && !data) && <Loading />}
           {
               // @TODO respect the limit and implement pagination
-              data && data.txns.filter(x => x.executed && x.executed.mined).map(bundle => BundlePreview({ bundle, mined: true }))
+              data && data.txns.filter(x => x.executed).map(bundle => BundlePreview({ bundle, mined: true }))
           }
         </div>
       </div>
@@ -121,6 +121,14 @@ function BundlePreview({ bundle, mined = false }) {
           </li>
           :
           null
+      }
+      {
+        bundle.executed && !bundle.executed.success && (
+          <li>
+            <label>Error</label>
+            <p>{bundle.executed.message || 'unknown error'}</p>
+          </li>
+        )
       }
       <li>
         <label><BsCalendarWeek/>Submitted on</label>
