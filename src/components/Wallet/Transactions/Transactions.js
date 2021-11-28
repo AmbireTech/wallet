@@ -126,7 +126,7 @@ function BundlePreview({ bundle, mined = false }) {
         bundle.executed && !bundle.executed.success && (
           <li>
             <label>Error</label>
-            <p>{bundle.executed.message || 'unknown error'}</p>
+            <p>{bundle.executed.errorMsg || 'unknown error'}</p>
           </li>
         )
       }
