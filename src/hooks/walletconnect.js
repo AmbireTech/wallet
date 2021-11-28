@@ -140,7 +140,7 @@ export default function useWalletConnect ({ account, chainId, onCallRequest }) {
                 txn: payload.params[0],
                 chainId: connector.session.chainId,
                 account: connector.session.accounts[0],
-                notif: true
+                notification: true
             } })
         })
 
