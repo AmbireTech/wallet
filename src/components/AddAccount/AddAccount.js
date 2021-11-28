@@ -109,7 +109,7 @@ export default function AddAccount({ relayerURL, onAddAccount }) {
       return
     }
 
-    await onAddAccount({
+    onAddAccount({
       id: identityAddr,
       email: req.email,
       primaryKeyBackup,
