@@ -19,6 +19,8 @@ const IDENTITY_INTERFACE = new Interface(
   require('adex-protocol-eth/abi/Identity5.2')
 )
 
+const REFRESH_INTVL = 40000
+
 const Security = ({
   relayerURL,
   selectedAcc,
@@ -35,7 +37,7 @@ const Security = ({
   
   useEffect(() => {
     if (Date.now() - cacheBreak > 30000) setCacheBreak(Date.now())
-    const intvl = setTimeout(() => setCacheBreak(Date.now()), 35000)
+    const intvl = setTimeout(() => setCacheBreak(Date.now()), REFRESH_INTVL)
     return () => clearTimeout(intvl)
   }, [cacheBreak])
 
