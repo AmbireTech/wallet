@@ -10,14 +10,27 @@ import Transfer from "./Transfer/Transfer"
 import Earn from "./Earn/Earn"
 import Security from "./Security/Security"
 import Transactions from './Transactions/Transactions'
-import PluginGnosisSafeApps from "../Plugins/GnosisSafeApps/GnosisSafeApps"
+import PluginGnosisSafeApps from '../Plugins/GnosisSafeApps/GnosisSafeApps'
 import Collectible from "./Collectible/Collectible"
+import { PermissionsModal } from '../Modals'
+import { useModals, usePermissions } from '../../hooks'
+import { useCallback, useEffect, useMemo } from 'react'
+import { isFirefox } from '../../lib/isFirefox'
 
 export default function Wallet(props) {
+  const { showModal } = useModals()
+  const { isClipboardGranted, isNoticationsGranted, arePermissionsLoaded, modalHidden } = usePermissions()
+
+  const isLoggedIn = useMemo(() => props.accounts.length > 0, [props.accounts])
+
   const routes = [
     {
       path: '/dashboard',
-      component: <Dashboard portfolio={props.portfolio} setNetwork={props.setNetwork} />
+      component: <Dashboard
+        portfolio={props.portfolio}
+        selectedNetwork={props.network}
+        setNetwork={props.setNetwork}
+      />
     },
     {
       path: '/deposit',
@@ -25,19 +38,34 @@ export default function Wallet(props) {
     },
     {
       path: '/transfer/:tokenAddress?',
-      component: <Transfer portfolio={props.portfolio} selectedAcc={props.selectedAcc} selectedNetwork={{...props.network}} accounts={props.accounts} addRequest={props.addRequest}/>
+      component: <Transfer
+        portfolio={props.portfolio}
+        selectedAcc={props.selectedAcc}
+        selectedNetwork={{...props.network}}
+        addRequest={props.addRequest}
+        accounts={props.accounts}
+        addressBook={props.addressBook}
+      />
     },
     {
       path: '/earn',
-      component: <Earn portfolio={props.portfolio} selectedNetwork={{...props.network}} selectedAcc={props.selectedAcc} addRequest={props.addRequest}/>
+      component: <Earn portfolio={props.portfolio} selectedNetwork={{ ...props.network }} selectedAcc={props.selectedAcc} addRequest={props.addRequest} />
     },
     {
       path: '/security',
-      component: <Security relayerURL={props.relayerURL} selectedAcc={props.selectedAcc} selectedNetwork={props.network} accounts={props.accounts} addRequest={props.addRequest}/>
+      component: <Security
+        relayerURL={props.relayerURL}
+        selectedAcc={props.selectedAcc}
+        selectedNetwork={props.network}
+        accounts={props.accounts}
+        addressBook={props.addressBook}
+        addRequest={props.addRequest}
+        onAddAccount={props.onAddAccount}
+      />
     },
     {
       path: '/transactions',
-      component: <Transactions relayerURL={props.relayerURL} selectedAcc={props.selectedAcc} selectedNetwork={props.network} addRequest={props.addRequest} eligibleRequests={props.eligibleRequests} showSendTxns={props.showSendTxns}/>
+      component: <Transactions relayerURL={props.relayerURL} selectedAcc={props.selectedAcc} selectedNetwork={props.network} addRequest={props.addRequest} eligibleRequests={props.eligibleRequests} showSendTxns={props.showSendTxns} />
     },
     {
       path: '/swap',
@@ -50,7 +78,13 @@ export default function Wallet(props) {
     },
     {
       path: '/nft/:network/:collectionAddr/:tokenId',
-      component: <Collectible selectedAcc={props.selectedAcc} selectedNetwork={{...props.network}} addRequest={props.addRequest}/>
+      component: <Collectible
+        selectedAcc={props.selectedAcc}
+        selectedNetwork={{...props.network}}
+        addRequest={props.addRequest}
+        accounts={props.accounts}
+        addressBook={props.addressBook}
+      />
     },
     {
       path: '/gnosis/plugins',
@@ -63,23 +97,48 @@ export default function Wallet(props) {
     }
   ]
 
+  const handlePermissionsModal = useCallback(async () => {
+    const account = props.accounts.find(({ id }) => id === props.selectedAcc)
+    if (!account) return
+
+    const relayerIdentityURL = `${props.relayerURL}/identity/${account.id}`
+
+    const permissionsModal = <PermissionsModal relayerIdentityURL={relayerIdentityURL} account={account} onAddAccount={props.onAddAccount}/>
+    const areBlockedPermissions = arePermissionsLoaded
+      && ((!isFirefox() && !isClipboardGranted) || !isNoticationsGranted)
+    const showCauseOfPermissions = areBlockedPermissions && !modalHidden
+    const showCauseOfEmail = !!account.emailConfRequired
+    if (showCauseOfEmail || showCauseOfPermissions) showModal(permissionsModal, { disableClose: true })
+  }, [props.relayerURL, props.accounts, props.selectedAcc, props.onAddAccount, showModal, isClipboardGranted, isNoticationsGranted, arePermissionsLoaded, modalHidden])
+
+  useEffect(() => handlePermissionsModal(), [handlePermissionsModal])
+
   return (
     <div id="wallet">
-      <TopBar {...props} />
-      <SideBar match={props.match} portfolio={props.portfolio}/>
-      <div id="wallet-container">
-        <Switch>
-          {
-            routes.map(({ path, component }) => (
-              <Route path={props.match.url + path} key={path}>
-                { component ? component : null }
-              </Route>
-            ))
-          }
-          <Route path={props.match.url + "/"}>
-            <Redirect to={props.match.url + "/dashboard"} />
-          </Route>
-        </Switch>
+
+      <SideBar match={props.match} portfolio={props.portfolio} />
+      <div id="wallet-layout">
+
+        <TopBar {...props} />
+        <div id="wallet-container">
+          <Switch>
+            {
+              routes.map(({ path, component }) => (
+                <Route exact path={props.match.url + path} key={path}>
+                  {
+                    !isLoggedIn ?
+                      <Redirect to="/add-account" />
+                      :
+                      component ? component : null
+                  }
+                </Route>
+              ))
+            }
+            <Route path={props.match.url + '/*'}>
+              <Redirect to={props.match.url + '/dashboard'} />
+            </Route>
+          </Switch>
+        </div>
       </div>
     </div>
   );

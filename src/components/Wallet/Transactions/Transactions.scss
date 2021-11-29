@@ -9,7 +9,7 @@
         background-color: $panel-background-color;
     }
 
-    .minedBundle {
+    .bundlePreview {
         .details {
             display: flex;
             gap: 50px;
@@ -76,5 +76,9 @@
     .actions button.cancel {
         background-color: #da5151;
         color: white;
+    }
+
+    .txnPreview .summary {
+        max-width: 700px;
     }
 }

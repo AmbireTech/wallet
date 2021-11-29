@@ -1,31 +1,79 @@
-import { getAddress } from 'ethers/lib/utils'
-import { verifiedContracts } from '../consts/verifiedContracts'
+import { formatUnits } from 'ethers/lib/utils'
+import { constants } from 'ethers'
+import { names, tokens } from '../consts/humanizerInfo'
 import networks from '../consts/networks'
+import humanizers from './humanizers'
 
-const getSummary = require('humanizetx/HumanizeSummary')
+// address (lwoercase) => name
+const knownAliases = {}
 
-// @TODO custom parsing for univ2 contracts, exact output, etc.
-export function getTransactionSummary(txn, networkId, accountAddr) {
-  const [, value, data] = txn
-  const to = getAddress(txn[0])
+export function getTransactionSummary(txn, networkId, accountAddr, opts = {}) {
+    const [to, value, data = '0x'] = txn
+    const network = networks.find(x => x.id === networkId || x.chainId === networkId)
+    if (!network) return 'Unknown network (unable to parse)'
 
-  const network = networks.find(x => x.id === networkId || x.chainId === networkId)
-  if (!network) return 'Unknown network (unable to parse)'
+    if (to === '0x' || !to) {
+        return 'Deploy contract'
+    }
 
-  try {
-    const { summaries } = getSummary(network, { to, value, data, from: accountAddr })
-    // ${summaries.action ? summaries.action + ': ' : ''} ${interaction.name}:
-    return `${summaries.actions.map(x => x.plain).join(', ')}`
-  } catch (e) {
-    console.error('parsing error', e)
-    return `Unknown call`
-  }
+    const tokenInfo = tokens[to.toLowerCase()]
+    const name = names[to.toLowerCase()]
+
+    if (data === '0x' && to.toLowerCase() === accountAddr.toLowerCase()) {
+        // Doesn't matter what the value is, this is always a no-op
+        return `Transaction cancellation`
+    }
+
+    let callSummary, sendSummary
+    if (parseInt(value) > 0) sendSummary = `send ${nativeToken(network, value)} to ${name || to}`
+    if (data !== '0x') {
+        callSummary = `Unknown interaction with ${name || (tokenInfo ? tokenInfo[0] : to)}`
+
+        const sigHash = data.slice(0, 10)
+        const humanizer = humanizers[sigHash]
+        if (humanizer) {
+            try {
+                const actions = humanizer({ to, value, data, from: accountAddr }, network, opts)
+                return actions.join(', ')
+            } catch (e) {
+                callSummary += ' (unable to parse)'
+                console.error('internal tx humanization error', e)
+            }
+        }
+    }
+    return [callSummary, sendSummary].filter(x => x).join(', ')
 }
 
-export function getContractName(txn, networkId) {
-  const [to] = txn
-  const network = networks.find(x => x.id === networkId || x.chainId === networkId)
-  const contractKey = network.id + ':' + getAddress(to)
-  const contractInfo = verifiedContracts[contractKey]
-  return contractInfo ? contractInfo.name : null
+// Currently takes network because one day we may be seeing the same addresses used on different networks
+export function getName(addr, network) {
+    const address = addr.toLowerCase()
+    if (knownAliases[address]) return `${knownAliases[address]} (${addr})`
+    return names[address] || (tokens[address] ? tokens[address][0] + ' token' : null) || addr
 }
+
+export function token(addr, amount) {
+    const address = addr.toLowerCase()
+    const assetInfo = tokens[address]
+    if (assetInfo) {
+        if (constants.MaxUint256.eq(amount)) return `maximum ${assetInfo[0]}`
+        return `${formatUnits(amount, assetInfo[1])} ${assetInfo[0]}`
+    } else {
+        return `${formatUnits(amount, 0)} units of unknown token`
+    }
+}
+
+export function nativeToken(network, amount) {
+    // All EVM chains use a 18 decimal native asset
+    if (network) {
+        return `${formatUnits(amount, 18)} ${network.nativeAssetSymbol}`
+    } else {
+        return `${formatUnits(amount, 18)} unknown native token`
+    }
+}
+
+export function setKnownAddresses(addrs) {
+    addrs.forEach(({ address, name }) => knownAliases[address.toLowerCase()] = name)
+}
+
+// @TODO
+// export function getMethodName(txn)

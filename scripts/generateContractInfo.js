@@ -1,118 +1,73 @@
 #!/usr/bin/env node
-const fs = require('fs')
 const fetch = require('node-fetch')
-const {getAddress} = require('ethers').utils
-const timer = ms => new Promise(res => setTimeout(res, ms))
-
-const genericMaps = require('./genericMaps')
-const genericContracts = require('./genericContracts')
-const specificContracts = require('./specificContracts')
+const ERC20 = require('adex-protocol-eth/abi/ERC20')
 
 const etherscans = {
-  ethereum: {host: 'api.etherscan.io', key: 'KJJ4NZ9EQHIFCQY5IJ775PT128YE15AV5S'},
-  polygon: {host: 'api.polygonscan.com', key: 'YE5YYHA7BH6IPBN5T71UKW5MPEFZ5HUGJJ'}
+	ethereum: { host: 'api.etherscan.io', key: 'KJJ4NZ9EQHIFCQY5IJ775PT128YE15AV5S' },
+	polygon: { host: 'api.polygonscan.com', key: 'YE5YYHA7BH6IPBN5T71UKW5MPEFZ5HUGJJ' }
 }
 
-const tokenlists = [
-  {network: 'ethereum', url: 'https://github.com/trustwallet/assets/raw/master/blockchains/ethereum/tokenlist.json', nativeSymbol: "ETH", nativeDecimals: 18},
-  {network: 'polygon', url: 'https://github.com/trustwallet/assets/raw/master/blockchains/polygon/tokenlist.json', nativeSymbol: "MATIC", nativeDecimals: 18},
+const contracts = [
+	{ name: 'Uniswap', network: 'ethereum', addr: '0x7a250d5630b4cf539739df2c5dacb4c659f2488d', abiName: 'UniV2Router' },
+	{ name: 'Uniswap', network: 'ethereum', addr: '0xe592427a0aece92de3edee1f18e0157c05861564', abiName: 'UniV3Router' },
+	{ name: 'SushiSwap', network: 'polygon', addr: '0x1b02da8cb0d097eb8d57a175b88c7d8b47997506' },
+	{ name: 'SushiSwap', network: 'ethereum', addr: '0xd9e1cE17f2641f24aE83637ab66a2cca9C378B9F' },
+	{ name: 'QuickSwap', network: 'polygon', addr: '0xa5e0829caced8ffdd4de3c43696c57f7d7a678ff' },
+	{ name: 'Wrapped ETH', network: 'ethereum', addr: '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2', abiName: 'WETH' },
+	{ name: 'Wrapped MATIC', network: 'polygon', addr: '0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270' },
+	{ name: 'Aave', network: 'ethereum', addr: '0x7d2768de32b0b80b7a3454c06bdac94a69ddc7a9', abiAddr: '0xc6845a5c768bf8d7681249f8927877efda425baf', abiName: 'AaveLendingPoolV2' },
+	{ name: 'Aave', network: 'polygon', addr: '0x8dff5e27ea6b7ac08ebfdf9eb090f32ee9a30fcf' },
+	{ name: 'Bored Ape Yacht Club', network: 'ethereum', addr: '0xbc4ca0eda7647a8ab7c2061c2e118a18a936f13d', abiName: 'ERC721' }
 ]
+const tokenlists = [
+	'https://github.com/trustwallet/assets/raw/master/blockchains/ethereum/tokenlist.json',
+	'https://github.com/trustwallet/assets/raw/master/blockchains/polygon/tokenlist.json',
+	'https://api-polygon-tokens.polygon.technology/tokenlists/allTokens.tokenlist.json'
+]
+async function generate () {
+	let abis = {}
+	for (let contract of contracts) {
+		const { network, addr, abiName, abiAddr } = contract
+		if (!abiName) continue
+		const { host, key } = etherscans[network]
+		// @TODO rate limiting
+		const abiResp = await fetch(`https://${host}/api?module=contract&action=getabi&address=${abiAddr || addr}&apikey=${key}`)
+			.then(r => r.json())
+		if (abiResp.status !== '1') throw abiResp
+		abis[abiName] = JSON.parse(abiResp.result)
+	}
+	abis.ERC20 = ERC20
 
-async function generate() {
-  let output = {}
+	let names = {}
+	contracts.forEach(({ name, addr }) => {
+		const address = addr.toLowerCase()
+		if (names[address] && names[address] !== name) throw new Error(`unexpected name confict: ${addr} ${name}`)
+		names[address] = name
+	})
 
-  let delay = 0
-  await Promise.all(genericContracts.map(async ({name, network, address, replacementABI, implementationAddress}) => {
-    if (replacementABI) {
-      output['_' + name.toLowerCase()] = {name, abi: replacementABI, addresses: []}
-      return
-    }
-    const {host, key} = etherscans[network]
-    await timer(delay++ * 500)
-    const fetchAddr = implementationAddress || address
-    const abiResp = await fetch(`https://${host}/api?module=contract&action=getabi&address=${fetchAddr}&apikey=${key}`)
-      .then(r => r.json())
-    if (abiResp.status !== '1') throw abiResp
-    console.log(Object.values(output).length + '/' + (genericContracts.length + specificContracts.length))
-    output['_' + name.toLowerCase()] = {name, abi: JSON.parse(abiResp.result), addresses: []}
-  }))
+	const tokenLists = await Promise.all(tokenlists.map(
+		async url => await fetch(url).then(r => r.json())
+	))
+	const tokens = tokenLists.reduce((acc, list) => {
+		list.tokens.forEach(t => {
+			const address = t.address.toLowerCase()
+			if (acc[address] && acc[address].decimals !== acc[address].decimals) {
+				throw new Error('unexpected token conflict: same addr token, different decimals')
+			}
+			acc[address] = [t.symbol, t.decimals]
+		})
+		return acc
+	}, {})
 
-  delay = 0
-  await Promise.all(specificContracts.map(async ({name, network, address, implementationAddress}) => {
-    const {host, key} = etherscans[network]
-    await timer(delay++ * 500)
-    const fetchAddr = implementationAddress || address
-    const abiResp = await fetch(`https://${host}/api?module=contract&action=getabi&address=${fetchAddr}&apikey=${key}`)
-      .then(r => r.json())
-    if (abiResp.status !== '1') throw abiResp
-    console.log(Object.values(output).length + '/' + (genericContracts.length + specificContracts.length))
-    output[network + ':' + address.toLowerCase()] = {
-      name, abi: JSON.parse(abiResp.result), addresses: [{
-        name,
-        address: getAddress(address),
-        network
-      }]
-    }
-  }))
-
-  const tokenLists = []
-  await Promise.all(tokenlists.map(
-    async list => {
-      tokenLists.push({
-        network: list.network,
-        tokens: (await fetch(list.url).then(r => r.json())).tokens,
-      })
-    }
-  ))
-
-  const tokens = tokenLists.reduce((acc, list) => {
-    list.tokens.forEach(t => {
-      if (!acc[list.network]) acc[list.network] = {}
-      if (acc[list.network][t.address] && acc[list.network][t.address].decimals !== acc[list.network][t.address].decimals) throw new Error('unexpected token conflict: same addr token, different decimals')
-      acc[list.network][t.address] = [t.symbol, t.decimals]
-    })
-    return acc
-  }, {})
-
-  tokenlists.forEach(a => {
-    tokens[a.network]['native'] = [a.nativeSymbol, a.nativeDecimals]
-  })
-
-  for (let chain in tokens) {
-    for (let addr in tokens[chain]) {
-      output['_erc20'].addresses.push({
-        address: addr,
-        name: tokens[chain][addr][0],
-        network: chain
-      })
-    }
-  }
-
-  genericMaps.forEach(i => {
-    if (!output['_' + i.generic.toLowerCase()]) {
-      throw new Error('Could not find generic contract ' + i.generic)
-    }
-    output['_' + i.generic.toLowerCase()].addresses.push({
-      address: i.address,
-      name: i.name,
-      network: i.network
-    })
-  })
-
-  console.log(JSON.stringify({
-    verifiedContracts: output,
-    tokens
-  }))
-
-  fs.writeFileSync('../src/consts/abi_blob.json', JSON.stringify({verifiedContracts: output, tokens}, '\n', '\t'))
+	console.log(JSON.stringify({ abis, tokens, names }))
 }
 
 generate()
-  .then(() => process.exit(0))
-  .catch(e => {
-    console.error(e)
-    process.exit(1)
-  })
+	.then(() => process.exit(0))
+	.catch(e => {
+		console.error(e)
+		process.exit(1)
+	})
 
 
 

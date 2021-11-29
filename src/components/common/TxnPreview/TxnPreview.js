@@ -3,7 +3,7 @@ import './TxnPreview.scss'
 import { useState } from 'react'
 import { FaTimes, FaChevronDown, FaChevronUp } from 'react-icons/fa'
 
-import { getContractName, getTransactionSummary } from '../../../lib/humanReadableTransactions'
+import { getName, getTransactionSummary } from '../../../lib/humanReadableTransactions'
 import networks from '../../../consts/networks'
 import { formatUnits } from 'ethers/lib/utils'
 
@@ -11,18 +11,18 @@ function getNetworkSymbol(networkId) {
   const network = networks.find(x => x.id === networkId)
   return network ? network.nativeAssetSymbol : 'UNKNW'
 }
-export default function TxnPreview ({ txn, onDismiss, network, account, isFirstFailing }) {
+export default function TxnPreview ({ txn, onDismiss, network, account, isFirstFailing, mined }) {
   const [isExpanded, setExpanded] = useState(false)
-  const contractName = getContractName(txn, network)
+  const contractName = getName(txn[0], network)
   return (
     <div className={isFirstFailing ? 'txnPreview firstFailing' : 'txnPreview'}>
         <div className="heading" onClick={() => setExpanded(e => !e)}>
           <div className="info">
             <div className="summary-container">
               <div className='expandTxn'>
-                {isExpanded ? (<FaChevronUp/>) : (<FaChevronDown/>)}
+                {isExpanded ? (<FaChevronDown/>) : (<FaChevronUp/>)}
               </div>
-              <div className="summary">{getTransactionSummary(txn, network, account)}</div>
+              <div className="summary">{getTransactionSummary(txn, network, account, { mined })}</div>
             </div>
             {isFirstFailing ? (<div className='firstFailingLabel'>This is the first failing transaction.</div>) : (<></>)}
           </div>

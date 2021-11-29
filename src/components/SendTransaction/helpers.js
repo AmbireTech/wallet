@@ -19,7 +19,8 @@ export function getFeePaymentConsequences (token, estimation) {
     ? ADDED_GAS_NATIVE
     : ADDED_GAS_TOKEN
   return {
-    multiplier: (estimation.gasLimit + addedGas) / estimation.gasLimit,
+    // otherwise we get very long floating point numbers with trailing .999999
+    multiplier: parseFloat(((estimation.gasLimit + addedGas) / estimation.gasLimit).toFixed(4)),
     addedGas
   }
 }
@@ -28,7 +29,7 @@ export function mapTxnErrMsg(msg) {
   if (!msg) return
   if (msg.includes('Router: EXPIRED')) return 'Swap expired'
   if (msg.includes('Router: INSUFFICIENT_OUTPUT_AMOUNT')) return 'Swap will suffer slippage higher than your requirements'
-  if (msg.includes('INSUFFICIENT_PRIVILEGE')) return 'Your signer address is no longer authorized.'
+  if (msg.includes('INSUFFICIENT_PRIVILEGE')) return 'Your signer address is not authorized.'
   return msg
 }
 

@@ -1,17 +1,15 @@
 @import '../../../variables.scss';
 
 #topbar {
-    z-index: 50;
-    height: 110px;
-    position: fixed;
+    position: sticky;
     top: 0;
-    left: $sidebar-width;
-    right: 40px;
+    z-index: 50;
+    padding: ($layout-spacing / 2) $layout-spacing;
     display: flex;
     justify-content: flex-end;
     gap: 1em;
     background-color: $background-color;
-    box-shadow: 0 5px 20px 5px $background-color;
+    box-shadow: 0 5px ($layout-spacing / 4) 5px $background-color;
 
     .container {
         display: flex;
@@ -19,6 +17,7 @@
         align-items: center;
         gap: 1em;
         flex-wrap: wrap;
+        max-width: $max-container-width;
       }
 
     select {
@@ -30,85 +29,6 @@
     }
 }
 
-.dapps-item {
-  width: 360px;
-
-  .icon {
-      flex: 0 0 auto;
-      height: 40px;
-      width: 40px;
-      border-radius: 100%;
-      overflow: hidden;
-      background-color: rgba(0, 0, 0, 0.2);
-
-      img {
-          width: 100%;
-      }
-  }
-
-  .name {
-      flex: 0 0 auto;
-      width: 190px;
-      overflow: hidden;
-      white-space: nowrap;
-      text-overflow: ellipsis;
-  }
-
-  button {
-      flex: 0 1 auto;
-      height: 25px;
-      padding: 0 10px;
-      font-size: 11px;
-      font-weight: bold;
-      border: 1px solid white;
-      text-transform: uppercase;
-      color: white;
-      background-color: transparent;
-      opacity: 1;
-      transition: all 0.1s ease-in-out;
-
-      &:hover {
-          background-color: $danger-color;
-          border-color: transparent;
-      }
-  }
-}
-
-#connect-dapp {
-    display: flex;
-    flex-direction: column;
-  gap: 10px;
-  padding: 20px;
-  padding-bottom: 10px;
-  width: 360px;
-
-  .heading {
-      display: flex;
-      align-items: center;
-      gap: 20px;
-
-      button {
-          height: 45px;
-          width: 100%;
-          padding: 0;
-          font-weight: bold;
-          text-transform: uppercase;
-          color: black;
-          background-color: $primary-accent-color;
-          opacity: 1;
-          transition: all 0.1s ease-in-out;
-
-          &:hover {
-              opacity: 0.9;
-          }
-      }
-  }
-
-  label {
-      font-size: 13px;
-  }
-}
-
 #add-account {
     padding: 1em;
 
@@ -117,8 +37,8 @@
     }
 }
 
-@media screen and (max-width: 1400px) {
-    #topbar {
-        left: $sidebar-mobile-width;
-    }
-}
+// @media screen and (max-width: 1400px) {
+//     #topbar {
+//         left: $sidebar-mobile-width;
+//     }
+// }

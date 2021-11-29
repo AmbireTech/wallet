@@ -31,12 +31,16 @@ export default function useAccounts () {
     const onAddAccount = useCallback((acc, opts = {}) => {
       if (!(acc.id && acc.signer)) throw new Error('account: internal err: missing ID or signer')
 
-      const existingIdx = accounts
-        .findIndex(x => x.id.toLowerCase() === acc.id.toLowerCase())
-  
-      if (existingIdx !== -1) addToast('Account already added')
+      const existing = accounts.find(x => x.id.toLowerCase() === acc.id.toLowerCase())
+      if (existing) {
+        addToast(JSON.stringify(existing) === JSON.stringify(acc) ? 'Account already added' : 'Account updated')
+      } else if (opts.isNew) {
+        // @TODO consider something more explanatory such as "using Trezor as a signer", or "this is different from your signer address"
+        addToast(`New Ambire account created: ${acc.id}${acc.signer.address ? '. This is a fresh smart wallet address.' : ''}`, { timeout: acc.signer.address ? 15000 : 10000 })
+      }
 
-      if (existingIdx === -1) accounts.push(acc)
+      const existingIdx = accounts.indexOf(existing)
+        if (existingIdx === -1) accounts.push(acc)
       else accounts[existingIdx] = acc
   
       // need to make a copy, otherwise no rerender
@@ -58,6 +62,8 @@ export default function useAccounts () {
       localStorage.accounts = JSON.stringify(clearedAccounts)
       
       if (!clearedAccounts.length) history.push('/add-account')
-    }, [accounts, history])
+      else onSelectAcc(clearedAccounts[0].id)
+    }, [accounts, history, onSelectAcc])
+
     return { accounts, selectedAcc, onSelectAcc, onAddAccount, onRemoveAccount }
   }

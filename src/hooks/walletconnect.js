@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useReducer, useRef } from 'react'
 import { useToasts } from '../hooks/toasts'
+import { isFirefox } from '../lib/isFirefox'
 
 import WalletConnectCore from '@walletconnect/core'
 import * as cryptoLib from '@walletconnect/iso-crypto'
@@ -86,7 +87,11 @@ export default function useWalletConnect ({ account, chainId, onCallRequest }) {
         let sessionStart
         let sessionTimeout
         if (!connector.session.peerMeta) sessionTimeout = setTimeout(() => {
-            if (!connector.session.peerMeta) addToast('Unable to get session from dApp - perhaps the link has expired?', { error: true })
+            const suggestion = /https:\/\/bridge.walletconnect.org/g.test(connector.session.bridge)
+                // @TODO: 'or try an alternative connection method' when we implement one
+                ? 'this dApp is using an old version of WalletConnect - please tell them to upgrade!'
+                : 'perhaps the link has expired?'
+            if (!connector.session.peerMeta) addToast(`Unable to get session from dApp - ${suggestion}`, { error: true })
         }, SESSION_TIMEOUT)
 
         connector.on('session_request', (error, payload) => {
@@ -115,6 +120,8 @@ export default function useWalletConnect ({ account, chainId, onCallRequest }) {
                 return
             }
             if (!SUPPORTED_METHODS.includes(payload.method)) {
+                // @TODO: if the dapp is in a "allow list" of dApps that have fallbacks, ignore certain messages
+                // eg uni has a fallback for eth_signTypedData_v4
                 addToast(`dApp requested unsupported method: ${payload.method}`, { error: true })
                 connector.rejectRequest({ id: payload.id, error: { message: 'METHOD_NOT_SUPPORTED' }})
                 return
@@ -132,7 +139,8 @@ export default function useWalletConnect ({ account, chainId, onCallRequest }) {
                 wcUri: connectorOpts.uri,
                 txn: payload.params[0],
                 chainId: connector.session.chainId,
-                account: connector.session.accounts[0]
+                account: connector.session.accounts[0],
+                notification: true
             } })
         })
 
@@ -221,7 +229,7 @@ export default function useWalletConnect ({ account, chainId, onCallRequest }) {
     }, [state, account, chainId, connect])
 
     // Initialization effects
-    useEffect(() => runInitEffects(connect), [connect])
+    useEffect(() => runInitEffects(connect, account), [connect, account])
 
     return {
         connections: state.connections,
@@ -233,7 +241,7 @@ export default function useWalletConnect ({ account, chainId, onCallRequest }) {
 
 // Initialization side effects
 // Connect to the URL, read from clipboard, etc.
-function runInitEffects(wcConnect) {
+function runInitEffects(wcConnect, account) {
     const query = new URLSearchParams(window.location.href.split('?').slice(1).join('?'))
     const wcUri = query.get('uri')
     if (wcUri) wcConnect({ uri: wcUri })
@@ -242,18 +250,16 @@ function runInitEffects(wcConnect) {
     window.wcConnect = uri => wcConnect({ uri })
 
     // @TODO on focus and on user action
-    const clipboardError = e => console.log('non-fatal clipboard err', e)
-    const isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1
+    const clipboardError = e => console.log('non-fatal clipboard/walletconnect err:', e.message)
     const tryReadClipboard = async () => {
-        if (isFirefox) return
+        if (!account) return
+        if (isFirefox()) return
         try {
-                const result = await navigator.permissions.query({ name: 'clipboard-read' })
-                if (result.state === 'granted' || result.state === 'prompt') {
-                    const clipboard = await navigator.clipboard.readText()
-                    if (clipboard.startsWith('wc:') && !connectors[clipboard]) wcConnect({ uri: clipboard })
-                }
-        } catch(e) { clipboardError(e)  }
+            const clipboard = await navigator.clipboard.readText()
+            if (clipboard.startsWith('wc:') && !connectors[clipboard]) wcConnect({ uri: clipboard })
+        } catch(e) { clipboardError(e) }
     }
+
     tryReadClipboard()
     window.addEventListener('focus', tryReadClipboard)
     return () => window.removeEventListener('focus', tryReadClipboard)
