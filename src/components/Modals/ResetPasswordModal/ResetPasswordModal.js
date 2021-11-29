@@ -6,7 +6,7 @@ import { Modal, Radios, TextInput, Checkbox, Button, ToolTip } from '../../commo
 import { MdOutlineCheck, MdOutlineClose, MdOutlineHelpOutline } from 'react-icons/md'
 import { useModals } from '../../../hooks'
 import { useToasts } from '../../../hooks/toasts'
-import { SCRYPT_OPTIONS } from '../../../consts/scryptOptions'
+import accountPresets from '../../../consts/accountPresets'
 import { fetchPost } from '../../../lib/fetch'
 
 const ResetPassword = ({ account, selectedNetwork, relayerURL, onAddAccount }) => {
@@ -76,7 +76,7 @@ const ResetPassword = ({ account, selectedNetwork, relayerURL, onAddAccount }) =
     const changePassword = async () => {
         try {
             const wallet = await Wallet.fromEncryptedJson(JSON.parse(account.primaryKeyBackup), oldPassword)
-            const primaryKeyBackup = JSON.stringify(await wallet.encrypt(newPassword, { scrypt: SCRYPT_OPTIONS }))
+            const primaryKeyBackup = JSON.stringify(await wallet.encrypt(newPassword, accountPresets.encryptionOpts))
             const sig = await wallet.signMessage(JSON.stringify({ primaryKeyBackup }))
             const resp = await fetchPost(`${relayerURL}/identity/${account.id}/modify`, { primaryKeyBackup, sig })
 
