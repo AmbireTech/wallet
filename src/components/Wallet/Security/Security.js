@@ -286,7 +286,7 @@ const Security = ({
               </a>
               <div style={{ fontSize: '0.9em' }}>
               This downloads a JSON backup of your current account ({selectedAccount.id.slice(0, 5)}...{selectedAccount.id.slice(-3)}) encrypted with
-              your password. This is safe to store in iCloud/Google Cloud, but you cannot use it to restore your account if you forget the password.
+              your password. This is safe to store in iCloud/Google Drive, but you cannot use it to restore your account if you forget the password.
               </div>
             </div>
           </div>
