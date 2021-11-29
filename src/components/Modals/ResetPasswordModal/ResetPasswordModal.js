@@ -120,7 +120,7 @@ const ResetPassword = ({ account, selectedNetwork, relayerURL, onAddAccount }) =
             setPasswordsLengthWarning(false)
             setPasswordsMustMatchWarning(false)
         }
-    }, [radios, checkboxes, type, oldPassword, newPassword, newPasswordConfirm])
+    }, [checkboxes, type, oldPassword, newPassword, newPasswordConfirm])
 
     useEffect(() => validateForm(), [validateForm, oldPassword, newPassword, newPasswordConfirm])
 
