@@ -104,7 +104,18 @@ const Security = ({
     history.push('/wallet/security')
   }
 
-  const showResetPasswordModal = () => showModal(<ResetPasswordModal account={selectedAccount} selectedNetwork={selectedNetwork} relayerURL={relayerURL} onAddAccount={onAddAccount}/>)
+  const showResetPasswordModal = () => {
+    if (!relayerURL) {
+      addToast('Unsupported without a connection to the relayer', { error: true })
+      return
+    }
+    showModal(<ResetPasswordModal
+      account={selectedAccount}
+      selectedNetwork={selectedNetwork}
+      relayerURL={relayerURL}
+      onAddAccount={onAddAccount}
+    />)
+  }
 
   const selectedAccount = accounts.find(x => x.id === selectedAcc)
 
@@ -173,7 +184,7 @@ const Security = ({
           const neededKeys = ['salt', 'identityFactoryAddr', 'baseIdentityAddr', 'bytecode', 'signer']
           const isFileContainsNeededKeys = neededKeys.every(key => Object.keys(fileContent).includes(key))
 
-          if (isFileContainsNeededKeys) onAddAccount(fileContent)
+          if (isFileContainsNeededKeys) onAddAccount(fileContent, { select: true })
           else 
           addToast('The imported file does not contain needed account data.', { error: true })
       }
@@ -193,7 +204,13 @@ const Security = ({
     return null
   }
 
-  const { getRootProps, getInputProps, open, isDragActive, isDragAccept, isDragReject } = useDropzone({ onDrop, noClick: true, accept: 'application/json', maxFiles: 1, validator: fileSizeValidator })
+  const { getRootProps, getInputProps, open, isDragActive, isDragAccept, isDragReject } = useDropzone({
+    onDrop,
+    noClick: true,
+    accept: 'application/json',
+    maxFiles: 1,
+    validator: fileSizeValidator
+  })
  
   // @TODO relayerless mode: it's not that hard to implement in a primitive form, we need everything as-is
   // but rendering the initial privileges instead; or maybe using the relayerless transactions hook/service
