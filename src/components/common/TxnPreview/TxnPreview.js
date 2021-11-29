@@ -3,7 +3,7 @@ import './TxnPreview.scss'
 import { useState } from 'react'
 import { FaTimes, FaChevronDown, FaChevronUp } from 'react-icons/fa'
 
-import { getContractName, getTransactionSummary } from '../../../lib/humanReadableTransactions'
+import { getName, getTransactionSummary } from '../../../lib/humanReadableTransactions'
 import networks from '../../../consts/networks'
 import { formatUnits } from 'ethers/lib/utils'
 
@@ -13,7 +13,7 @@ function getNetworkSymbol(networkId) {
 }
 export default function TxnPreview ({ txn, onDismiss, network, account, isFirstFailing, mined }) {
   const [isExpanded, setExpanded] = useState(false)
-  const contractName = getContractName(txn[0], network)
+  const contractName = getName(txn[0], network)
   return (
     <div className={isFirstFailing ? 'txnPreview firstFailing' : 'txnPreview'}>
         <div className="heading" onClick={() => setExpanded(e => !e)}>

@@ -20,15 +20,10 @@ import { Loading } from '../common'
 import { ledgerGetAddresses, PARENT_HD_PATH } from '../../lib/ledgerWebHID'
 import { isFirefox } from '../../lib/isFirefox'
 
-
 TrezorConnect.manifest({
   email: 'contactus@ambire.com',
   appUrl: 'https://www.ambire.com'
 })
-
-// NOTE: This is a compromise, but we can afford it cause QuickAccs require a secondary key
-// Consider more
-const SCRYPT_ITERATIONS = 131072 / 8
 
 export default function AddAccount({ relayerURL, onAddAccount }) {
   const [signersToChoose, setChooseSigners] = useState(null)
@@ -88,7 +83,7 @@ export default function AddAccount({ relayerURL, onAddAccount }) {
     const bytecode = getProxyDeployBytecode(baseIdentityAddr, privileges, { privSlot: 0 })
     const identityAddr = getAddress('0x' + generateAddress2(identityFactoryAddr, salt, bytecode).toString('hex'))
     const primaryKeyBackup = JSON.stringify(
-      await firstKeyWallet.encrypt(req.passphrase, { scrypt: { N: SCRYPT_ITERATIONS } })
+      await firstKeyWallet.encrypt(req.passphrase, accountPresets.encryptionOpts)
     )
 
     const createResp = await fetchPost(`${relayerURL}/identity/${identityAddr}`, {
@@ -109,7 +104,7 @@ export default function AddAccount({ relayerURL, onAddAccount }) {
       return
     }
 
-    await onAddAccount({
+    onAddAccount({
       id: identityAddr,
       email: req.email,
       primaryKeyBackup,
@@ -117,7 +112,7 @@ export default function AddAccount({ relayerURL, onAddAccount }) {
       signer,
       // This makes the modal appear, and will be removed by the modal which will call onAddAccount to update it
       emailConfRequired: true
-    }, { select: true })
+    }, { select: true, isNew: true })
   }
 
   // EOA implementations
@@ -267,8 +262,9 @@ export default function AddAccount({ relayerURL, onAddAccount }) {
     if (!relayerURL) return addAccount(await createFromEOA(addr), { select: true })
     // otherwise check which accs we already own and add them
     const owned = await getOwnedByEOAs([addr])
-    if (!owned.length) return addAccount(await createFromEOA(addr), { select: true })
-    else {
+    if (!owned.length) {
+        addAccount(await createFromEOA(addr), { select: true, isNew: true })
+    } else {
       addToast(`Found ${owned.length} existing accounts with signer ${addr}`, { timeout: 15000 })
       owned.forEach((acc, i) => addAccount(acc, { select: i === 0 }))
     }
