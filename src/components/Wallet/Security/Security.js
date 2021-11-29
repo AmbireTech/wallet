@@ -8,9 +8,9 @@ import { Interface } from 'ethers/lib/utils'
 import accountPresets from '../../../consts/accountPresets'
 import privilegesOptions from '../../../consts/privilegesOptions'
 import { useRelayerData, useModals } from '../../../hooks'
-import { InputModal } from '../../Modals';
+import { InputModal } from '../../Modals'
 import AddressList from '../../common/AddressBook/AddressList/AddressList'
-import { isValidAddress } from '../../../helpers/address';
+import { isValidAddress } from '../../../helpers/address'
 import AddAuthSigner from './AddAuthSigner/AddAuthSigner'
 import { useToasts } from '../../../hooks/toasts'
 import { useHistory } from 'react-router-dom'
@@ -150,25 +150,45 @@ const Security = ({
   const inputModal = <InputModal title="Add New Address" inputs={modalInputs} onClose={([name, address]) => addAddress(name, address)}></InputModal>
   const showInputModal = () => showModal(inputModal)
 
-  const onDrop = useCallback(acceptedFiles => {
+  const onDrop = useCallback((acceptedFiles, rejectedFiles) => {
     const reader = new FileReader()
-    const file = acceptedFiles[0]
+    
+    if (rejectedFiles.length) {
+      addToast(`${rejectedFiles[0].file.path} - ${rejectedFiles[0].file.size / 1024} KB. ${rejectedFiles[0].errors[0].message}.`, { error: true })
+    }
 
-    reader.readAsText(file,'UTF-8')
-    reader.onload = readerEvent => {
-        const content = readerEvent.target.result
-        const fileContent = JSON.parse(content)
-        const neededKeys = ['salt', 'identityFactoryAddr', 'baseIdentityAddr', 'bytecode', 'signer']
-        const isFileContainsNeededKeys = neededKeys.every(key => Object.keys(fileContent).includes(key))
+    if (acceptedFiles.length){
+      const file = acceptedFiles[0]
 
-        if (isFileContainsNeededKeys) onAddAccount(fileContent)
-        else 
-        addToast('The imported file does not contain needed account data.', { error: true })
+      reader.readAsText(file,'UTF-8')
+      reader.onload = readerEvent => {
+          const content = readerEvent.target.result
+          const fileContent = JSON.parse(content)
+          const neededKeys = ['salt', 'identityFactoryAddr', 'baseIdentityAddr', 'bytecode', 'signer']
+          const isFileContainsNeededKeys = neededKeys.every(key => Object.keys(fileContent).includes(key))
+
+          if (isFileContainsNeededKeys) onAddAccount(fileContent)
+          else 
+          addToast('The imported file does not contain needed account data.', { error: true })
+      }
     }
   }, [addToast, onAddAccount])
 
-  const { getRootProps, getInputProps, open, isDragActive, isDragAccept, isDragReject } = useDropzone({ onDrop, noClick: true, accept: 'application/json', maxFiles: 1 })
-  
+  const maxFileSize = 3072
+
+  const fileSizeValidator = file => {
+    if (file.size > maxFileSize) {
+      return {
+        code: "file-size-too-large",
+        message: `The file size is larger than ${maxFileSize / 1024} KB.`
+      }
+    }
+
+    return null
+  }
+
+  const { getRootProps, getInputProps, open, isDragActive, isDragAccept, isDragReject } = useDropzone({ onDrop, noClick: true, accept: 'application/json', maxFiles: 1, validator: fileSizeValidator })
+ 
   // @TODO relayerless mode: it's not that hard to implement in a primitive form, we need everything as-is
   // but rendering the initial privileges instead; or maybe using the relayerless transactions hook/service
   // and aggregate from that
@@ -231,9 +251,9 @@ const Security = ({
         </div>
         <div className="panel">
           <div className="panel-title">Import account from json file</div>
-          <div className="content">
+          <div className="content import">
             <Button small onClick={open}>Import</Button> 
-            <p>The entire page is drag and drop zone</p>
+            <p>The entire page is drop zone</p>
           </div>
         </div>
       </div>
