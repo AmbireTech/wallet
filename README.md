@@ -188,3 +188,4 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/t
 * Address book: ability to save and label addresses
 * Ledger: WebHID support, fixing Ledger with Chrome
 * Email verification is now enforced with a modal, because a valid email is required for account recovery
+* Binance Smart Chains upport added

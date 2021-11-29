@@ -42,6 +42,8 @@ export default function useNotifications (requests, onShow, portfolio, selectedA
     }, [])
 
     requests.forEach(request => {
+        // only requests we actually want a notification for
+        if (!request.notification) return
         if (!SUPPORTED_TYPES.includes(request.type)) return
         if (currentNotifs.find(n => n.id === request.id)) return
         if (!request.txn) return
