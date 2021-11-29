@@ -76,3 +76,11 @@ $modal-width: 530px;
         width: 100vw;
     }
 }
+
+// Mobile
+@media screen and (max-width: 800px) {
+    .modal {
+        height: 100% !important;
+        width: 100% !important
+    }
+}
