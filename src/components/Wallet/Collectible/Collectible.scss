@@ -127,7 +127,7 @@
 }
 
 // Mobile
-@media screen and (max-width: 800px) {
+@media screen and (max-width: $mobile-breakpoint-max-width) {
     #collectible {
         #recipient-address {
             flex-direction: column;

@@ -44,7 +44,7 @@
 }
 
 // Mobile
-@media screen and (max-width: 800px) {
+@media screen and (max-width: $mobile-breakpoint-max-width) {
     #wallet-container {
         top: $topbar-mobile-height;
         left: 0 !important;
