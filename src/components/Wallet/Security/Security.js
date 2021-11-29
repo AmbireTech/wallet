@@ -21,6 +21,8 @@ const IDENTITY_INTERFACE = new Interface(
   require('adex-protocol-eth/abi/Identity5.2')
 )
 
+const REFRESH_INTVL = 40000
+
 const Security = ({
   relayerURL,
   selectedAcc,
@@ -37,7 +39,7 @@ const Security = ({
   
   useEffect(() => {
     if (Date.now() - cacheBreak > 30000) setCacheBreak(Date.now())
-    const intvl = setTimeout(() => setCacheBreak(Date.now()), 35000)
+    const intvl = setTimeout(() => setCacheBreak(Date.now()), REFRESH_INTVL)
     return () => clearTimeout(intvl)
   }, [cacheBreak])
 
@@ -102,6 +104,8 @@ const Security = ({
     history.push('/wallet/security')
   }
 
+  const showResetPasswordModal = () => showModal(<ResetPasswordModal account={selectedAccount} selectedNetwork={selectedNetwork} relayerURL={relayerURL} onAddAccount={onAddAccount}/>)
+
   const selectedAccount = accounts.find(x => x.id === selectedAcc)
 
   const privList = Object.entries(privileges)
@@ -120,6 +124,7 @@ const Security = ({
         <li key={addr}>
           <TextInput className="depositAddress" value={privText} disabled />
           <div className="btns-wrapper">
+            {isQuickAcc && (<Button onClick={showResetPasswordModal} small>Change password</Button>)}
             <Button
               disabled={isSelected}
               title={isSelected ? 'Signer is already default' : ''}
