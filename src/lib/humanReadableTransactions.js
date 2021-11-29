@@ -3,45 +3,26 @@ import { constants } from 'ethers'
 import { names, tokens } from '../consts/humanizerInfo'
 import networks from '../consts/networks'
 import humanizers from './humanizers'
+const getSummary = require('humanizetx/HumanizeSummary')
+const BigNumber = require('bignumber.js')
 
 // address (lwoercase) => name
 const knownAliases = {}
 
 export function getTransactionSummary(txn, networkId, accountAddr, opts = {}) {
+
     const [to, value, data = '0x'] = txn
-    const network = networks.find(x => x.id === networkId || x.chainId === networkId)
-    if (!network) return 'Unknown network (unable to parse)'
-
-    if (to === '0x' || !to) {
-        return 'Deploy contract'
+    const summary = getSummary({id:networkId}, {
+        from: accountAddr,
+        value: new BigNumber(value).toFixed(0),
+        data,
+        to
+    })
+    if(summary?.summaries?.actions?.length){
+        console.log(summary.summaries.actions.map(a => a.plain))
+        return summary.summaries.actions.map(a => a.plain).join(', ')
     }
-
-    const tokenInfo = tokens[to.toLowerCase()]
-    const name = names[to.toLowerCase()]
-
-    if (data === '0x' && to.toLowerCase() === accountAddr.toLowerCase()) {
-        // Doesn't matter what the value is, this is always a no-op
-        return `Transaction cancellation`
-    }
-
-    let callSummary, sendSummary
-    if (parseInt(value) > 0) sendSummary = `send ${nativeToken(network, value)} to ${name || to}`
-    if (data !== '0x') {
-        callSummary = `Unknown interaction with ${name || (tokenInfo ? tokenInfo[0] : to)}`
-
-        const sigHash = data.slice(0, 10)
-        const humanizer = humanizers[sigHash]
-        if (humanizer) {
-            try {
-                const actions = humanizer({ to, value, data, from: accountAddr }, network, opts)
-                return actions.join(', ')
-            } catch (e) {
-                callSummary += ' (unable to parse)'
-                console.error('internal tx humanization error', e)
-            }
-        }
-    }
-    return [callSummary, sendSummary].filter(x => x).join(', ')
+    return 'Unable to parse tx'
 }
 
 // Currently takes network because one day we may be seeing the same addresses used on different networks

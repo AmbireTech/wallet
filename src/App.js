@@ -20,7 +20,6 @@ import useNetwork from './hooks/network'
 import useWalletConnect from './hooks/walletconnect'
 import useGnosisSafe from './hooks/useGnosisSafe'
 import useNotifications from './hooks/notifications'
-import { usePortfolio } from './hooks'
 import BLOB from "./consts/abi_blob"
 import { initState, initAddressBook } from 'humanizetx/HumanizeStateLoader'
 import { useAttentionGrabber, usePortfolio, useAddressBook } from './hooks'
