@@ -157,10 +157,10 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
                <div className="placeholder-overlay">
                     Coming Soon...
                </div>
-               <div className="title blurred">
+               <div className="title">
                    Cross-chain
                </div>
-               <div className="form blurred">
+               <div className="form">
                     <label>From</label>
                     <Select searchable items={assetsItems} onChange={() => {}}/>
                     <NumberInput value={0} min="0" onInput={() => {}} button="MAX" onButtonClick={() => setMaxAmount()}/>

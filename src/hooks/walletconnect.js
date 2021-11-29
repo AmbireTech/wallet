@@ -139,7 +139,8 @@ export default function useWalletConnect ({ account, chainId, onCallRequest }) {
                 wcUri: connectorOpts.uri,
                 txn: payload.params[0],
                 chainId: connector.session.chainId,
-                account: connector.session.accounts[0]
+                account: connector.session.accounts[0],
+                notification: true
             } })
         })
 
