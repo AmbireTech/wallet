@@ -35,7 +35,8 @@ const Protocols = ({ protocols }) => {
                                                     <div className="separator"></div>
                                                     <div className="balance">
                                                         <div className="currency">
-                                                            { balance } <span className="symbol">{ symbol }</span>
+                                                            <span className="value">{ balance }</span>
+                                                            <span className="symbol">{ symbol }</span>
                                                         </div>
                                                         <div className="dollar">
                                                             <span className="symbol">$</span> { balanceUSD.toFixed(2) }
