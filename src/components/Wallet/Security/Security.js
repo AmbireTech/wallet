@@ -104,30 +104,9 @@ const Security = ({
     history.push('/wallet/security')
   }
 
-  const showResetPasswordModal = () => showModal(<ResetPasswordModal account={selectedAccount} selectedNetwork={selectedNetwork}/>)
+  const showResetPasswordModal = () => showModal(<ResetPasswordModal account={selectedAccount} selectedNetwork={selectedNetwork} relayerURL={relayerURL} onAddAccount={onAddAccount}/>)
 
   const selectedAccount = accounts.find(x => x.id === selectedAcc)
-
-  const onChangePassword = async () => {
-    try {
-      const currentPwd = prompt('Enter the current password')
-      const wallet = await Wallet.fromEncryptedJson(JSON.parse(selectedAccount.primaryKeyBackup), currentPwd)
-
-      const newPassword = prompt('Enter the new password')
-      // @TODO: common config for the options
-      const primaryKeyBackup = JSON.stringify(await wallet.encrypt(newPassword, accountPresets.encryptionOpts))
-      const sig = await wallet.signMessage(JSON.stringify({ primaryKeyBackup }))
-      const resp = await fetchPost(`${relayerURL}/identity/${selectedAccount.id}/modify`, { primaryKeyBackup, sig })
-      if (resp.success) {
-        onAddAccount({ ...selectedAccount, primaryKeyBackup })
-      } else {
-        throw new Error(`Unable to update account: ${resp.message || 'unknown error'}`)
-      }
-    } catch(err) {
-      console.error(err)
-      addToast(`Error: ${err.message || err}`, { error: true })
-    }
-  }
 
   const privList = Object.entries(privileges)
     .map(([addr, privValue]) => {
@@ -145,7 +124,7 @@ const Security = ({
         <li key={addr}>
           <TextInput className="depositAddress" value={privText} disabled />
           <div className="btns-wrapper">
-            {isQuickAcc && (<Button onClick={onChangePassword} small>Change password</Button>)}
+            {isQuickAcc && (<Button onClick={showResetPasswordModal} small>Change password</Button>)}
             <Button
               disabled={isSelected}
               title={isSelected ? 'Signer is already default' : ''}
