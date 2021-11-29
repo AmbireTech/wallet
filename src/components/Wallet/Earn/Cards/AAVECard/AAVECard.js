@@ -127,11 +127,12 @@ const AAVECard = ({ networkId, tokens, protocols, account, addRequest }) => {
                     type: 'withdraw'
                 }))))
                 .flat(2)
+                .filter(token => token)
 
             const depositTokens = tokens.filter(({ address }) => reservesAddresses.includes(address)).map(token => ({
                 ...token,
                 type: 'deposit'
-            }))
+            })).filter(token => token)
 
             const allTokens = (await Promise.all([
                 ...defaultTokens.filter(({ type, address }) => type === 'deposit' && !depositTokens.map(({ address }) => address).includes(address)),
