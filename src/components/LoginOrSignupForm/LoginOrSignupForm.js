@@ -33,7 +33,7 @@ export default function LoginOrSignupForm({ action = 'LOGIN', onAccRequest, inPr
     const additionalOnSignup = state.backupOptout ? (
       <Checkbox label="I understand that losing this backup means I will have to trigger account recovery." required={true}></Checkbox>
     ) : (<></>)
-    const Link = ({href, label}) => (<a href={href} target='_blank' rel='noreferrer' onClick={e => e.stopPropagation()}>{label}</a>)
+    const Link = ({ href, children }) => (<a href={href} target='_blank' rel='noreferrer' onClick={e => e.stopPropagation()}>{children}</a>)
     const additionalInputs = isSignup ?
       (<>
         <input
@@ -53,11 +53,11 @@ export default function LoginOrSignupForm({ action = 'LOGIN', onAccRequest, inPr
           value={state.passphraseConfirm}
           onChange={e => onUpdate({ passphraseConfirm: e.target.value })}></input>
         <Checkbox
-          label={<>I agree to the <Link href='https://www.ambire.com/Ambire%20ToS%20and%20PP%20(26%20November%202021).pdf' label='Terms of Service and Privacy policy'></Link>.</>}
+          label={<>I agree to the <Link href='https://www.ambire.com/Ambire%20ToS%20and%20PP%20(26%20November%202021).pdf'>Terms of Service and Privacy policy</Link>.</>}
           required={true}
         ></Checkbox>
         <Checkbox
-          label={<>Backup on <Link href='https://help.ambire.com/hc/en-us/articles/4410892186002-What-is-Ambire-Cloud-' label='Ambire Cloud'></Link>.</>}
+          label={<>Backup on <Link href='https://help.ambire.com/hc/en-us/articles/4410892186002-What-is-Ambire-Cloud-'>Ambire Cloud</Link>.</>}
           checked={!state.backupOptout}
           onChange={e => onUpdate({ backupOptout: !e.target.checked })}
         ></Checkbox>
