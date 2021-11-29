@@ -92,3 +92,17 @@
         }
     }
 }
+
+// Mobile
+@media screen and (max-width: 800px) {
+    #transfer {
+        #recipient-field {
+            flex-direction: column;
+            gap: 10px;
+
+            .dropdown {
+                position: relative;
+            }
+        }
+    }
+}
