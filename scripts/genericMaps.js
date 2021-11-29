@@ -1,7 +1,14 @@
 //Mapping Specific to Generic
 module.exports = [
-  { name: 'SushiSwap', network: 'polygon', address: '0x1b02da8cb0d097eb8d57a175b88c7d8b47997506', generic: 'UniswapV2Router' },
   { name: 'SushiSwap', network: 'ethereum', address: '0xd9e1cE17f2641f24aE83637ab66a2cca9C378B9F' , generic: 'UniswapV2Router'},
+  { name: 'SushiSwap', network: 'polygon', address: '0x1b02da8cb0d097eb8d57a175b88c7d8b47997506', generic: 'UniswapV2Router' },
+  { name: 'SushiSwap', network: 'bsc', address: '0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506' , generic: 'UniswapV2Router'},
+  { name: 'SushiSwap', network: 'fantom', address: '0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506' , generic: 'UniswapV2Router'},
+
+  { name: 'AAVELendingPoolV2', network: 'ethereum', address: '0x7d2768de32b0b80b7a3454c06bdac94a69ddc7a9' , generic: 'AAVELendingPoolV2'},
+  { name: 'AAVELendingPoolV2', network: 'polygon', address: '0x8dff5e27ea6b7ac08ebfdf9eb090f32ee9a30fcf' , generic: 'AAVELendingPoolV2'},
+  { name: 'AAVELendingPoolV2', network: 'avalanche', address: '0x4F01AeD16D97E3aB5ab2B501154DC9bb0F1A5A2C' , generic: 'AAVELendingPoolV2'},
+
   { name: 'QuickswapRouter', network: 'polygon', address: '0xa5E0829CaCEd8fFDD4De3c43696c57F7D7A678ff' , generic: 'UniswapV2Router'},
 
   { name: 'UniswapV3Router', network: 'ethereum', address: '0xe592427a0aece92de3edee1f18e0157c05861564' , generic: 'UniswapV3Router'},

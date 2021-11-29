@@ -13,4 +13,5 @@ module.exports = [
 	{name: 'curveGauge', address: '0xBC89cd85491d81C6AD2954E6d0362Ee29fCa8F53', network: 'ethereum'},
 	{name: 'synthetixStakingRewards', address: '0x8302fe9f0c509a996573d3cc5b0d5d51e4fdd5ec', network: 'ethereum'},
 	{name: 'AmbireIdentity', address: '0x900C6A3417631F54d130b9382264C6b3c712CADD', network: 'polygon'},
+	{name: 'AAVELendingPoolV2', address: '0x7d2768de32b0b80b7a3454c06bdac94a69ddc7a9', network: 'ethereum', implementationAddress: '0xc6845a5c768bf8d7681249f8927877efda425baf'},
 ]

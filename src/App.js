@@ -20,8 +20,12 @@ import useWalletConnect from './hooks/walletconnect'
 import useGnosisSafe from './hooks/useGnosisSafe'
 import useNotifications from './hooks/notifications'
 import { usePortfolio } from './hooks'
+import BLOB from "./consts/abi_blob"
+import { initState, initAddressBook } from 'humanizetx/HumanizeStateLoader'
 
 const relayerURL = process.env.hasOwnProperty('REACT_APP_RELAYER_URL') ? process.env.REACT_APP_RELAYER_URL : 'http://localhost:1934'
+
+initState(BLOB)
 
 setTimeout(() => {
   //console.warn('☢️ If you do, malicious code could steal your funds! ☢️')

@@ -19,6 +19,7 @@
     "convert-array-to-csv": "^2.0.0",
     "ethereumjs-util": "^6.1.0",
     "ethers": "^5.4.7",
+    "humanizetx": "git+ssh://git@github.com/AmbireTech/humanize-tx.git",
     "node-fetch": "^2.3.0",
     "node-sass": "^6.0.1",
     "react": "^17.0.2",

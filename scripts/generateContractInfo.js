@@ -14,8 +14,8 @@ const etherscans = {
 }
 
 const tokenlists = [
-  {network: 'ethereum', url: 'https://github.com/trustwallet/assets/raw/master/blockchains/ethereum/tokenlist.json'},
-  {network: 'polygon', url: 'https://github.com/trustwallet/assets/raw/master/blockchains/polygon/tokenlist.json'},
+  {network: 'ethereum', url: 'https://github.com/trustwallet/assets/raw/master/blockchains/ethereum/tokenlist.json', nativeSymbol: "ETH", nativeDecimals: 18},
+  {network: 'polygon', url: 'https://github.com/trustwallet/assets/raw/master/blockchains/polygon/tokenlist.json', nativeSymbol: "MATIC", nativeDecimals: 18},
 ]
 
 async function generate() {
@@ -28,7 +28,7 @@ async function generate() {
       return
     }
     const {host, key} = etherscans[network]
-    await timer(delay++ * 400)
+    await timer(delay++ * 500)
     const fetchAddr = implementationAddress || address
     const abiResp = await fetch(`https://${host}/api?module=contract&action=getabi&address=${fetchAddr}&apikey=${key}`)
       .then(r => r.json())
@@ -40,7 +40,7 @@ async function generate() {
   delay = 0
   await Promise.all(specificContracts.map(async ({name, network, address, implementationAddress}) => {
     const {host, key} = etherscans[network]
-    await timer(delay++ * 400)
+    await timer(delay++ * 500)
     const fetchAddr = implementationAddress || address
     const abiResp = await fetch(`https://${host}/api?module=contract&action=getabi&address=${fetchAddr}&apikey=${key}`)
       .then(r => r.json())
@@ -60,7 +60,7 @@ async function generate() {
     async list => {
       tokenLists.push({
         network: list.network,
-        tokens: (await fetch(list.url).then(r => r.json())).tokens
+        tokens: (await fetch(list.url).then(r => r.json())).tokens,
       })
     }
   ))
@@ -73,6 +73,10 @@ async function generate() {
     })
     return acc
   }, {})
+
+  tokenlists.forEach(a => {
+    tokens[a.network]['native'] = [a.nativeSymbol, a.nativeDecimals]
+  })
 
   for (let chain in tokens) {
     for (let addr in tokens[chain]) {
