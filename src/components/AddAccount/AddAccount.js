@@ -38,8 +38,8 @@ export default function AddAccount({ relayerURL, onAddAccount }) {
   const { addToast } = useToasts()
   const { showModal } = useModals()
 
-  const wrapProgress = async fn => {
-    setInProgress(true)
+  const wrapProgress = async (fn, type = true) => {
+    setInProgress(type)
     try {
       await fn()
     } catch (e) {
@@ -114,8 +114,10 @@ export default function AddAccount({ relayerURL, onAddAccount }) {
       email: req.email,
       primaryKeyBackup,
       salt, identityFactoryAddr, baseIdentityAddr, bytecode,
-      signer
-    }, { select: true })
+      signer,
+      // This makes the modal appear, and will be removed by the modal which will call onAddAccount to update it
+      emailConfRequired: true
+    }, { select: true, isNew: true })
   }
 
   // EOA implementations
@@ -191,7 +193,6 @@ export default function AddAccount({ relayerURL, onAddAccount }) {
     engine.addProvider(new CacheSubprovider())
     engine.addProvider(new RPCSubprovider(this.url, this.requestTimeoutMs))
     */
-    setInProgress(true)
     const provider = new TrezorSubprovider({ trezorConnectClientApi: TrezorConnect })
     const addresses = await provider.getAccountsAsync(50)
     setChooseSigners({
@@ -200,7 +201,6 @@ export default function AddAccount({ relayerURL, onAddAccount }) {
         info: JSON.parse(JSON.stringify(provider._initialDerivedKeyInfo))
       }
     })
-    setInProgress(false)
   }
 
   async function connectLedgerAndGetAccounts() {
@@ -212,7 +212,6 @@ export default function AddAccount({ relayerURL, onAddAccount }) {
   }
 
   async function connectLedgerAndGetAccountsU2F() {
-    setInProgress(true)
     const provider = new LedgerSubprovider({
       networkId: 0, // @TODO: probably not needed
       ledgerEthereumClientFactoryAsync: ledgerEthereumBrowserClientFactoryAsync,
@@ -228,13 +227,10 @@ export default function AddAccount({ relayerURL, onAddAccount }) {
     }))
 
     setChooseSigners({ addresses, signerName: 'Ledger', signerExtra })
-    setInProgress(false)
   }
-
 
   async function connectLedgerAndGetAccountsWebHID() {
     let error = null
-    setInProgress(true)
     try {
       const addrData = await ledgerGetAddresses()
       if (!addrData.error) {
@@ -261,7 +257,6 @@ export default function AddAccount({ relayerURL, onAddAccount }) {
     if (error) {
       setAddAccErr(`Ledger error: ${error.message || error}`)
     }
-    setInProgress(false)
   }
 
   const onEOASelected = useCallback(async (addr, signerExtra) => {
@@ -272,8 +267,9 @@ export default function AddAccount({ relayerURL, onAddAccount }) {
     if (!relayerURL) return addAccount(await createFromEOA(addr), { select: true })
     // otherwise check which accs we already own and add them
     const owned = await getOwnedByEOAs([addr])
-    if (!owned.length) return addAccount(await createFromEOA(addr), { select: true })
-    else {
+    if (!owned.length) {
+        addAccount(await createFromEOA(addr), { select: true, isNew: true })
+    } else {
       addToast(`Found ${owned.length} existing accounts with signer ${addr}`, { timeout: 15000 })
       owned.forEach((acc, i) => addAccount(acc, { select: i === 0 }))
     }
@@ -294,20 +290,19 @@ export default function AddAccount({ relayerURL, onAddAccount }) {
           onSignerAddressClicked={onSignerAddressClicked}
           description={`Signer address is the ${signersToChoose.signerName} address you will use to sign transactions on Ambire Wallet.
                     А new account will be created using this signer if you don’t have one.`}
-          isCloseBtnShown={false}
-        />,
-        { disableClose: true }
+          isCloseBtnShown={true}
+        />
       )
     }
   }, [onSignerAddressClicked, showModal, signersToChoose])
 
   // Adding accounts from existing signers
   const addFromSignerButtons = (<>
-    <button onClick={() => wrapErr(connectTrezorAndGetAccounts)}>
+    <button onClick={() => wrapProgress(connectTrezorAndGetAccounts, 'hwwallet')}>
       <div className="icon" style={{ backgroundImage: 'url(./resources/trezor.png)' }}/>
       Trezor
     </button>
-    <button onClick={() => wrapErr(connectLedgerAndGetAccounts)}>
+    <button onClick={() => wrapProgress(connectLedgerAndGetAccounts, 'hwwallet')}>
       <div className="icon" style={{ backgroundImage: 'url(./resources/ledger.png)' }}/>
       Ledger
     </button>
@@ -336,8 +331,8 @@ export default function AddAccount({ relayerURL, onAddAccount }) {
         <div id="loginEmail">
           <h3>Create a new account</h3>
           <LoginOrSignup
-            inProgress={inProgress}
-            onAccRequest={req => wrapProgress(() => createQuickAcc(req))}
+            inProgress={inProgress === 'email'}
+            onAccRequest={req => wrapProgress(() => createQuickAcc(req), 'email')}
             action="SIGNUP"
           ></LoginOrSignup>
           {err ? (<p className="error">{err}</p>) : (<></>)}
@@ -350,7 +345,7 @@ export default function AddAccount({ relayerURL, onAddAccount }) {
         </div>
         <div id="loginOthers">
           <h3>Add an account</h3>
-          {!inProgress ? (<>
+          {inProgress !== 'hwwallet' ? (<>
             <Link to="/email-login">
               <button>
                 <div className="icon" style={{ backgroundImage: 'url(./resources/envelope.png)' }}/>

@@ -1,6 +1,5 @@
 import { useEffect, useCallback } from 'react'
 import { useToasts} from './toasts'
-import { usePermissions } from './'
 
 let documentTitle = document.title
 let flashingTitleInterval = null
@@ -22,7 +21,6 @@ const removeFlashingTitle = () => {
 
 const useAttentionGrabber = ({ eligibleRequests, isSendTxnShowing, onSitckyClick }) => {
     const { addToast, removeToast } = useToasts()
-    const { isNoticationsGranted } = usePermissions()
 
     const removeStickyToasts = useCallback(() => stickyIds.forEach(id => removeToast(id)), [removeToast])
     
@@ -38,14 +36,14 @@ const useAttentionGrabber = ({ eligibleRequests, isSendTxnShowing, onSitckyClick
                 }))
             }
 
-            !isNoticationsGranted ? showFlashingTitle() : removeFlashingTitle()
+            !(window.Notification && Notification.permission !== 'denied') ? showFlashingTitle() : removeFlashingTitle()
         } else {
             removeStickyToasts()
             removeFlashingTitle()
         }
 
         return () => clearInterval(flashingTitleInterval)
-    }, [removeStickyToasts, isNoticationsGranted, eligibleRequests, isSendTxnShowing, onSitckyClick, addToast, removeToast])
+    }, [removeStickyToasts, eligibleRequests, isSendTxnShowing, onSitckyClick, addToast, removeToast])
 }
 
 export default useAttentionGrabber
