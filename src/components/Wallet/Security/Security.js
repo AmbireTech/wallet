@@ -3,7 +3,6 @@ import './Security.scss'
 import { MdOutlineAdd } from 'react-icons/md'
 import { useState, useEffect } from 'react'
 import { Loading, TextInput, Button } from '../../common'
-import { Wallet } from 'ethers'
 import { Interface } from 'ethers/lib/utils'
 import accountPresets from '../../../consts/accountPresets'
 import privilegesOptions from '../../../consts/privilegesOptions'
@@ -15,7 +14,6 @@ import AddAuthSigner from './AddAuthSigner/AddAuthSigner'
 import { useToasts } from '../../../hooks/toasts'
 import { useHistory } from 'react-router-dom'
 import { MdInfoOutline } from 'react-icons/md'
-import { fetchPost } from '../../../lib/fetch'
 
 const IDENTITY_INTERFACE = new Interface(
   require('adex-protocol-eth/abi/Identity5.2')
