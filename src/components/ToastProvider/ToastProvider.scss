@@ -92,3 +92,10 @@
         }
     }
 }
+
+// Mobile
+@media screen and (max-width: 800px) {
+    #toast-container {
+        bottom: $sidebar-mobile-height;
+    }
+}

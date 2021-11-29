@@ -10,3 +10,18 @@
         filter: blur(20px);
     }
 }
+
+// Mobile
+@media screen and (max-width: 800px) {
+    #collectibles-placeholder {
+        padding: 0;
+
+        #collectibles {
+            @for $child from 2 through 5 {
+                .collectible:nth-child(#{$child}) {
+                    display: none;
+                }
+            }
+        }
+    }
+}

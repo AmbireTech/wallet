@@ -115,30 +115,27 @@ export default function Wallet(props) {
 
   return (
     <div id="wallet">
-
       <SideBar match={props.match} portfolio={props.portfolio} />
-      <div id="wallet-layout">
+      <TopBar {...props} />
 
-        <TopBar {...props} />
-        <div id="wallet-container">
-          <Switch>
-            {
-              routes.map(({ path, component }) => (
-                <Route exact path={props.match.url + path} key={path}>
-                  {
-                    !isLoggedIn ?
-                      <Redirect to="/add-account" />
-                      :
-                      component ? component : null
-                  }
-                </Route>
-              ))
-            }
-            <Route path={props.match.url + '/*'}>
-              <Redirect to={props.match.url + '/dashboard'} />
-            </Route>
-          </Switch>
-        </div>
+      <div id="wallet-container">
+        <Switch>
+          {
+            routes.map(({ path, component }) => (
+              <Route exact path={props.match.url + path} key={path}>
+                {
+                  !isLoggedIn ?
+                    <Redirect to="/add-account" />
+                    :
+                    component ? component : null
+                }
+              </Route>
+            ))
+          }
+          <Route path={props.match.url + '/*'}>
+            <Redirect to={props.match.url + '/dashboard'} />
+          </Route>
+        </Switch>
       </div>
     </div>
   );

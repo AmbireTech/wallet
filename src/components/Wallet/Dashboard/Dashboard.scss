@@ -43,3 +43,21 @@
         flex-direction: column;
     }
 }
+
+@media screen and (max-width: 800px) {
+    #dashboard {
+        gap: 15px;
+
+        #overview {
+            gap: 15px;
+        }
+
+        #chart {
+            .content {
+                .chart {
+                    flex-direction: column;
+                }
+            }
+        }
+    }
+}
