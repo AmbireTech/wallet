@@ -113,7 +113,7 @@ const Security = ({
 
       const newPassword = prompt('Enter the new password')
       // @TODO: common config for the options
-      const primaryKeyBackup = JSON.stringify(await wallet.encrypt(newPassword, { scrypt: { N:  131072 / 8 } }))
+      const primaryKeyBackup = JSON.stringify(await wallet.encrypt(newPassword, accountPresets.encryptionOpts))
       const sig = await wallet.signMessage(JSON.stringify({ primaryKeyBackup }))
       const resp = await fetchPost(`${relayerURL}/identity/${selectedAccount.id}/modify`, { primaryKeyBackup, sig })
       if (resp.success) {
