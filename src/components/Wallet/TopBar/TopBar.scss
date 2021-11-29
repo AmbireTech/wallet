@@ -3,8 +3,9 @@
 #topbar {
     height: $topbar-height;
     position: sticky;
+    margin-left: $sidebar-desktop-width;
     top: 0;
-    z-index: 48;
+    z-index: 49;
     padding: ($layout-spacing / 2) $layout-spacing;
     display: flex;
     justify-content: flex-end;
@@ -38,14 +39,14 @@
     }
 }
 
-// @media screen and (max-width: 1400px) {
-//     #topbar {
-//         left: $sidebar-desktop-small-width;
-//     }
-// }
+@media screen and (max-width:  $sidebar-small-breakpoint) {
+    #topbar {
+        margin-left: $sidebar-desktop-small-width;
+    }
+}
 
 // Mobile
-@media screen and (max-width: 800px) {
+@media screen and (max-width: $mobile-breakpoint-max-width) {
     #topbar {
         height: $topbar-mobile-height;
         padding-left: 15px;
