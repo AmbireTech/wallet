@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useToasts } from './toasts'
-import * as blockies from 'blockies-ts';
-import { isValidAddress, isKnownTokenOrContract } from '../helpers/address';
+import * as blockies from 'blockies-ts'
+import { isValidAddress, isKnownTokenOrContract } from '../helpers/address'
+import { setKnownAddresses } from '../lib/humanReadableTransactions'
 
 const accountType = ({ email, signerExtra }) => {
     const walletType = signerExtra && signerExtra.type === 'ledger' ? 'Ledger' : signerExtra && signerExtra.type === 'trezor' ? 'Trezor' : 'Web3'
@@ -33,6 +34,11 @@ const useAddressBook = ({ accounts, selectedAcc }) => {
             return []
         }
     }, [accounts, selectedAcc])
+
+    // a bit of a 'cheat': update the humanizer with the latest known addresses
+    // this is breaking the react patterns cause the humanizer has a 'global' state, but that's fine since it simply constantly learns new addr aliases,
+    // so there's no 'inconsistent state' there, the more the better
+    setKnownAddresses(addressList)
 
     const [addresses, setAddresses] = useState(() => addressList)
 

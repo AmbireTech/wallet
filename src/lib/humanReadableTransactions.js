@@ -4,6 +4,9 @@ import { names, tokens } from '../consts/humanizerInfo'
 import networks from '../consts/networks'
 import humanizers from './humanizers'
 
+// address (lwoercase) => name
+const knownAliases = {}
+
 export function getTransactionSummary(txn, networkId, accountAddr, opts = {}) {
     const [to, value, data = '0x'] = txn
     const network = networks.find(x => x.id === networkId || x.chainId === networkId)
@@ -42,8 +45,9 @@ export function getTransactionSummary(txn, networkId, accountAddr, opts = {}) {
 }
 
 // Currently takes network because one day we may be seeing the same addresses used on different networks
-export function getContractName(addr, network) {
+export function getName(addr, network) {
     const address = addr.toLowerCase()
+    if (knownAliases[address]) return `${knownAliases[address]} (${addr})`
     return names[address] || (tokens[address] ? tokens[address][0] + ' token' : null) || addr
 }
 
@@ -65,6 +69,10 @@ export function nativeToken(network, amount) {
     } else {
         return `${formatUnits(amount, 18)} unknown native token`
     }
+}
+
+export function setKnownAddresses(addrs) {
+    addrs.forEach(({ address, name }) => knownAliases[address.toLowerCase()] = name)
 }
 
 // @TODO
