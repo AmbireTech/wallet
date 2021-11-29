@@ -64,6 +64,13 @@
         height: 60px;
       }
 
+      &.import {
+        button {
+          max-width: 1800px;
+          background: $secondary-accent-color;
+        }
+      }
+
       .text-input {
         flex-grow: 2.8;
       }
@@ -101,6 +108,14 @@
           display: flex;
           justify-content: center;
           gap: 1em;
+        }
+      }
+
+      a {
+        button {
+          width: 100%;
+          background: orange;
+          max-width: 1800px;
         }
       }
     }
