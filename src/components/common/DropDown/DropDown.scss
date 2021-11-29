@@ -40,6 +40,10 @@
             border-radius: 100%;
         }
 
+        .separator {
+            flex-grow: 1;
+        }
+
         .handle {
             @include flex-center-center;
             margin-left: 15px;

@@ -152,3 +152,12 @@
     flex-direction: column;
   }
 }
+
+// Mobile
+@media screen and (max-width: 800px) {
+  #security {
+    .panel {
+      padding: 20px 20px;
+    }
+  }
+}
