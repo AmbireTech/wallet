@@ -27,10 +27,10 @@ const ResetPassword = ({ account, selectedNetwork, relayerURL, onAddAccount }) =
             label: 'Change the password on this device and Ambire Cloud. Best if you just want to routinely change the password.',
             value: 'change'
         },
-        {
-            label: 'Reset the key and password: takes 3 days. Best if you\'ve forgotten the old password.',
-            value: 'forgot'
-        }
+        // {
+        //     label: 'Reset the key and password: takes 3 days. Best if you\'ve forgotten the old password.',
+        //     value: 'forgot'
+        // }
     ], [])
 
     const checkboxes = useMemo(() => ([
@@ -98,13 +98,13 @@ const ResetPassword = ({ account, selectedNetwork, relayerURL, onAddAccount }) =
         let isLengthValid = false
         let areCheckboxesChecked = false
         
-        if (radios[0].value === type) {
+        if (type === 'change') {
             areFieldsNotEmpty = oldPassword.length && newPassword.length && newPasswordConfirm.length
             isLengthValid = oldPassword.length >= 8 && newPassword.length >= 8 && newPasswordConfirm.length >= 8
             areCheckboxesChecked = checkboxes[0].every(({ ref }) => ref.current && ref.current.checked)
         }
 
-        if (radios[1].value === type) {
+        if (type === 'reset') {
             areFieldsNotEmpty = newPassword.length && newPasswordConfirm.length
             isLengthValid = newPassword.length >= 8 && newPasswordConfirm.length >= 8
             areCheckboxesChecked = checkboxes[1].every(({ ref }) => ref.current && ref.current.checked)
@@ -127,7 +127,7 @@ const ResetPassword = ({ account, selectedNetwork, relayerURL, onAddAccount }) =
         <Modal id="reset-password-modal" title="Reset Password">
             <Radios radios={radios} onChange={onRadioChange}/>
             {
-                radios[0].value === type ?
+                type === 'change' ?
                     <form>
                         <TextInput password placeholder="Old Password" onInput={value => setOldPassword(value)}/>
                         <TextInput password placeholder="New Password" onInput={value => setNewPassword(value)}/>
@@ -140,7 +140,7 @@ const ResetPassword = ({ account, selectedNetwork, relayerURL, onAddAccount }) =
                     </form> : null
             }
             {
-                radios[1].value === type ?
+                type === 'reset' ?
                     <form>
                         <TextInput password placeholder="New Password" onInput={value => setNewPassword(value)}/>
                         <TextInput password placeholder="Confirm New Password" onInput={value => setNewPasswordConfirm(value)}/>
