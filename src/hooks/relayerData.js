@@ -38,7 +38,7 @@ export default function useRelayerData(url) {
     setLoading(true)
     setErr(null)
     updateData()
-      .then(data => !unloaded && setData(data))
+      .then(data => !unloaded && prevUrl.current === url && setData(data))
       .catch(e => !unloaded && setErr(e.message || e))
       .then(() => {
         clearTimeout(resetDataTimer)
