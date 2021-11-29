@@ -26,6 +26,8 @@ const ERC20 = new Interface(require('adex-protocol-eth/abi/ERC20'))
 const DEFAULT_SPEED = 'fast'
 const REESTIMATE_INTERVAL = 15000
 
+const REJECT_MSG = 'Ambire user rejected the request'
+
 function makeBundle(account, networkId, requests) {
   const bundle = new Bundle({
     network: networkId,
@@ -264,7 +266,7 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
   // Not applicable when .requestIds is not defined (replacement bundle)
   const rejectTxn = bundle.requestIds && (() => {
     onDismiss()
-    resolveMany(bundle.requestIds, { message: 'Ambire user rejected the request' })
+    resolveMany(bundle.requestIds, { message: REJECT_MSG })
   })
 
   return (<div id='sendTransaction'>
@@ -306,7 +308,7 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
                       const min = Math.floor(Date.now() / 30000)
                       return (<TxnPreview
                         key={[...txn, i, min].join(':')}
-                        onDismiss={bundle.requestIds && (() => resolveMany([bundle.requestIds[i]], { message: 'rejected' }))}
+                        onDismiss={bundle.requestIds && (() => resolveMany([bundle.requestIds[i]], { message: REJECT_MSG }))}
                         txn={txn} network={bundle.network} account={bundle.identity}
                         isFirstFailing={isFirstFailing}/>
                       )

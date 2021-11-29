@@ -15,6 +15,7 @@ import AddAuthSigner from './AddAuthSigner/AddAuthSigner'
 import { useToasts } from '../../../hooks/toasts'
 import { useHistory } from 'react-router-dom'
 import { useDropzone } from 'react-dropzone'
+import { MdInfoOutline } from 'react-icons/md'
 
 const IDENTITY_INTERFACE = new Interface(
   require('adex-protocol-eth/abi/Identity5.2')
@@ -47,7 +48,6 @@ const Security = ({
   const privileges = data ? data.privileges : {}
   const { addToast } = useToasts()
   const history = useHistory()
-
 
   const craftTransaction = (address, privLevel) => {
     return {
@@ -122,6 +122,7 @@ const Security = ({
           <div className="btns-wrapper">
             <Button
               disabled={isSelected}
+              title={isSelected ? 'Signer is already default' : ''}
               onClick={() =>
                 onMakeDefaultBtnClicked(selectedAccount, addr, isQuickAcc)
               }
@@ -200,6 +201,7 @@ const Security = ({
         </h3>
       </section>
     )
+  const showLoading = isLoading && !data
   return (
     <section id="security" className={(isDragActive ? 'activeStyle ' : '') + (isDragAccept ? 'acceptStyle ' : '') + (isDragReject ? 'rejectStyle ' : '')}>
       {(isDragAccept || isDragReject) && (<div className={isDragAccept ? 'acceptStyleIcon' : 'rejectStyleIcon'}><RiDragDropLine size={100}/></div>) }
@@ -207,12 +209,19 @@ const Security = ({
       <div {...getRootProps()}>
         <input {...getInputProps()} />
         <div className="panel">
+          <div className='network-warning'>
+            <MdInfoOutline size={36}></MdInfoOutline>
+            <div>
+              Please note: signer settings are network-specific. You are currently looking at and modifying the signers on {selectedNetwork.name}.
+              &nbsp;<a href='https://help.ambire.com/hc/en-us/articles/4410885684242-Signers' target='_blank' rel='noreferrer'>Need help? Click here.</a>
+            </div>
+          </div>
           <div className="panel-title">Authorized signers</div>
           {errMsg && (
             <h3 className="error">Error getting authorized signers: {errMsg}</h3>
           )}
-          {isLoading && <Loading />}
-          <ul className="content">{!isLoading && privList}</ul>
+          {showLoading && <Loading />}
+          <ul className="content">{!showLoading && privList}</ul>
         </div>
         <div className="panel">
           <div className="panel-title">Add new signer</div>

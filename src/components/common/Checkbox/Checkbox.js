@@ -6,7 +6,7 @@ function Checkbox(props) {
         <input type="checkbox" checked={props.checked} required={props.required} onChange={props.onChange}/>
     )
 
-    return props.label ? (<label className="checkbox-container">
+    return props.label ? (<label className={`checkbox-container ${props.disabled ? 'disabled': ''}`}>
         {inputElem}
         <div className="checkbox-mark"></div>
         <div className="checkbox-label">{props.label}</div>

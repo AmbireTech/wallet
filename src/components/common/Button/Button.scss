@@ -33,7 +33,7 @@ button.buttonComponent {
             color: white !important;
         }
 
-        &:hover {
+        &:not([disabled]):hover {
             background-color: rgba(0, 0, 0, 0.2);
         }
     }

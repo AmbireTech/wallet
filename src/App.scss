@@ -132,6 +132,12 @@ input:disabled, button:disabled {
   text-transform: uppercase;
   padding: 0.6em;
 }
+#loginEmail input[type=submit]:disabled {
+  opacity: 0.5;
+}
+#loginEmail input[type=submit]:not([disabled]):hover {
+  opacity: 1.0;
+}
 
 #loginEmail { flex: 0.9 }
 
