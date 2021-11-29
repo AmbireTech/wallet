@@ -248,7 +248,7 @@ const Security = ({
           </div>
         </div>
 
-        <div style={{ flexDirection: 'column', display: 'flex', gap: '2em' }}>
+        <div style={{ flexDirection: 'row', display: 'flex', gap: '2em' }}>
           <div className="panel">
             <div className="panel-title">Backup current account</div>
             <div className="content">
