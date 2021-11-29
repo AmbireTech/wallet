@@ -215,44 +215,50 @@ const Security = ({
   // @TODO relayerless mode: it's not that hard to implement in a primitive form, we need everything as-is
   // but rendering the initial privileges instead; or maybe using the relayerless transactions hook/service
   // and aggregate from that
-  if (!relayerURL)
-    return (
-      <section id="security">
-        <h3 className="error">
-          Unsupported: not currently connected to a relayer.
-        </h3>
-      </section>
-    )
+
   const showLoading = isLoading && !data
+  const signersFragment = relayerURL ? (<>
+    <div className="panel">
+      <div className='network-warning'>
+        <MdInfoOutline size={36}></MdInfoOutline>
+        <div>
+          Please note: signer settings are network-specific. You are currently looking at and modifying the signers on {selectedNetwork.name}.
+          &nbsp;<a href='https://help.ambire.com/hc/en-us/articles/4410885684242-Signers' target='_blank' rel='noreferrer'>Need help? Click here.</a>
+        </div>
+      </div>
+      <div className="panel-title">Authorized signers</div>
+      {errMsg && (
+        <h3 className="error">Error getting authorized signers: {errMsg}</h3>
+      )}
+      {showLoading && <Loading />}
+      <ul className="content">{!showLoading && privList}</ul>
+    </div>
+    <div className="panel">
+      <div className="panel-title">Add new signer</div>
+      <AddAuthSigner
+        onAddBtnClicked={onAddBtnClickedHandler}
+        selectedNetwork={selectedNetwork}
+      />
+    </div>
+  </>) : (
+    <div className="panel">
+      <div className="panel-title">Authorized signers</div>
+      <h3 className="error">
+        Unsupported: not connected to a relayer.
+      </h3>
+    </div>
+  )
   return (
     <section id="security" className={(isDragActive ? 'activeStyle ' : '') + (isDragAccept ? 'acceptStyle ' : '') + (isDragReject ? 'rejectStyle ' : '')}>
-      {(isDragAccept || isDragReject) && (<div className={isDragAccept ? 'acceptStyleIcon' : 'rejectStyleIcon'}><RiDragDropLine size={100}/></div>) }
+      {
+        (isDragAccept || isDragReject)
+        && (<div className={isDragAccept ? 'acceptStyleIcon' : 'rejectStyleIcon'}><RiDragDropLine size={100}/></div>)
+      }
       
       <div {...getRootProps()}>
         <input {...getInputProps()} />
-        <div className="panel">
-          <div className='network-warning'>
-            <MdInfoOutline size={36}></MdInfoOutline>
-            <div>
-              Please note: signer settings are network-specific. You are currently looking at and modifying the signers on {selectedNetwork.name}.
-              &nbsp;<a href='https://help.ambire.com/hc/en-us/articles/4410885684242-Signers' target='_blank' rel='noreferrer'>Need help? Click here.</a>
-            </div>
-          </div>
-          <div className="panel-title">Authorized signers</div>
-          {errMsg && (
-            <h3 className="error">Error getting authorized signers: {errMsg}</h3>
-          )}
-          {showLoading && <Loading />}
-          <ul className="content">{!showLoading && privList}</ul>
-        </div>
-        <div className="panel">
-          <div className="panel-title">Add new signer</div>
-          <AddAuthSigner
-            onAddBtnClicked={onAddBtnClickedHandler}
-            selectedNetwork={selectedNetwork}
-          />
-        </div>
-    
+        {signersFragment}
+
         <div id="addresses" className='panel'>
           <div className='title'>Address Book</div>
           <div className="content">
