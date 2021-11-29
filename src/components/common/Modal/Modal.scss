@@ -78,7 +78,7 @@ $modal-width: 530px;
 }
 
 // Mobile
-@media screen and (max-width: 800px) {
+@media screen and (max-width: $mobile-breakpoint-max-width) {
     .modal {
         height: 100% !important;
         width: 100% !important
