@@ -154,7 +154,7 @@
 }
 
 // Mobile
-@media screen and (max-width: 800px) {
+@media screen and (max-width: $mobile-breakpoint-max-width) {
   #security {
     .panel {
       padding: 20px 20px;

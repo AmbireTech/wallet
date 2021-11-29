@@ -94,7 +94,7 @@
 }
 
 // Mobile
-@media screen and (max-width: 800px) {
+@media screen and (max-width: $mobile-breakpoint-max-width) {
     #transfer {
         #recipient-field {
             flex-direction: column;
