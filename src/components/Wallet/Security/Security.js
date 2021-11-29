@@ -3,17 +3,19 @@ import './Security.scss'
 import { MdOutlineAdd } from 'react-icons/md'
 import { useState, useEffect } from 'react'
 import { Loading, TextInput, Button } from '../../common'
+import { Wallet } from 'ethers'
 import { Interface } from 'ethers/lib/utils'
 import accountPresets from '../../../consts/accountPresets'
 import privilegesOptions from '../../../consts/privilegesOptions'
 import { useRelayerData, useModals } from '../../../hooks'
-import { InputModal } from '../../Modals';
+import { InputModal } from '../../Modals'
 import AddressList from '../../common/AddressBook/AddressList/AddressList'
-import { isValidAddress } from '../../../helpers/address';
+import { isValidAddress } from '../../../helpers/address'
 import AddAuthSigner from './AddAuthSigner/AddAuthSigner'
 import { useToasts } from '../../../hooks/toasts'
 import { useHistory } from 'react-router-dom'
 import { MdInfoOutline } from 'react-icons/md'
+import { fetchPost } from '../../../lib/fetch'
 
 const IDENTITY_INTERFACE = new Interface(
   require('adex-protocol-eth/abi/Identity5.2')
@@ -104,6 +106,27 @@ const Security = ({
 
   const selectedAccount = accounts.find(x => x.id === selectedAcc)
 
+  const onChangePassword = async () => {
+    try {
+      const currentPwd = prompt('Enter the current password')
+      const wallet = await Wallet.fromEncryptedJson(JSON.parse(selectedAccount.primaryKeyBackup), currentPwd)
+
+      const newPassword = prompt('Enter the new password')
+      // @TODO: common config for the options
+      const primaryKeyBackup = JSON.stringify(await wallet.encrypt(newPassword, { scrypt: { N:  131072 / 8 } }))
+      const sig = await wallet.signMessage(JSON.stringify({ primaryKeyBackup }))
+      const resp = await fetchPost(`${relayerURL}/identity/${selectedAccount.id}/modify`, { primaryKeyBackup, sig })
+      if (resp.success) {
+        onAddAccount({ ...selectedAccount, primaryKeyBackup })
+      } else {
+        throw new Error(`Unable to update account: ${resp.message || 'unknown error'}`)
+      }
+    } catch(err) {
+      console.error(err)
+      addToast(`Error: ${err.message || err}`, { error: true })
+    }
+  }
+
   const privList = Object.entries(privileges)
     .map(([addr, privValue]) => {
       if (!privValue) return null
@@ -120,6 +143,7 @@ const Security = ({
         <li key={addr}>
           <TextInput className="depositAddress" value={privText} disabled />
           <div className="btns-wrapper">
+            {isQuickAcc && (<Button onClick={onChangePassword} small>Change password</Button>)}
             <Button
               disabled={isSelected}
               title={isSelected ? 'Signer is already default' : ''}
