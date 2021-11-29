@@ -8,7 +8,7 @@ import { Interface } from 'ethers/lib/utils'
 import accountPresets from '../../../consts/accountPresets'
 import privilegesOptions from '../../../consts/privilegesOptions'
 import { useRelayerData, useModals } from '../../../hooks'
-import { InputModal } from '../../Modals'
+import { InputModal, ResetPasswordModal } from '../../Modals'
 import AddressList from '../../common/AddressBook/AddressList/AddressList'
 import { isValidAddress } from '../../../helpers/address'
 import AddAuthSigner from './AddAuthSigner/AddAuthSigner'
@@ -247,27 +247,30 @@ const Security = ({
             <Button small icon={<MdOutlineAdd/>} onClick={showInputModal}>Add Address</Button>
           </div>
         </div>
-        <div className="panel">
-          <div className="panel-title">Backup current account</div>
-          <div className="content">
-            <a
-              type="button"
-              href={`data:text/json;charset=utf-8,${encodeURIComponent(
-                JSON.stringify(selectedAccount)
-              )}`}
-              download={`${selectedAccount.id}.json`}
-            >
-              <Button>Export</Button>
-            </a>
-            This will download a JSON backup of your current account {selectedAccount.id}, encrypted with
-            your account passphrase.
+
+        <div style={{ flexDirection: 'column', display: 'flex', gap: '2em' }}>
+          <div className="panel">
+            <div className="panel-title">Backup current account</div>
+            <div className="content">
+              <a
+                type="button"
+                href={`data:text/json;charset=utf-8,${encodeURIComponent(
+                  JSON.stringify(selectedAccount)
+                )}`}
+                download={`${selectedAccount.id}.json`}
+              >
+                <Button>Export</Button>
+              </a>
+              Click export to download a JSON backup of your current account ({selectedAccount.id.slice(0, 5)}...{selectedAccount.id.slice(-3)}) encrypted with
+              your password.
+            </div>
           </div>
-        </div>
-        <div className="panel">
-          <div className="panel-title">Import account from json file</div>
-          <div className="content import">
-            <Button small onClick={open}>Import</Button> 
-            <p>The entire page is drop zone</p>
+          <div className="panel">
+            <div className="panel-title">Import account from JSON file</div>
+            <div className="content import">
+              <Button small onClick={open}>Import</Button>
+              <p>...or you can drop an account JSON on this page</p>
+            </div>
           </div>
         </div>
       </div>
