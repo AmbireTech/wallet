@@ -104,3 +104,12 @@ $heading-height: 45px;
         }
     }
 }
+
+// Mobile
+@media screen and (max-width: 800px) {
+    .address-book {
+        .menu {
+            width: 100%;
+        }
+    }
+}
