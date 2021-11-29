@@ -82,3 +82,17 @@
         }
     }
 }
+
+.ambire-loading-animation-128 {
+    width: 128px;
+    height: 128px;
+    background: url('../../../resources/ambire-loading-animation-spitesheet-128.png') left center;
+    animation: ambire-128 0.8s steps(15) infinite;
+    filter: drop-shadow(0px 0px 10px $ambire-dark-blue);
+}
+
+@keyframes ambire-128 {
+    100% {
+        background-position: -1920px;
+    }
+}

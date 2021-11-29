@@ -6,6 +6,7 @@ import Checkbox from './Checkbox/Checkbox';
 import DropDown from './DropDown/DropDown';
 import Loading from './Loading/Loading';
 import InfiniteProgressBar from './Loading/InfiniteProgressBar';
+import AmbireLoading from './Loading/AmbireLoading';
 import Dots from './Loading/Dots';
 import Skeleton from './Loading/Skeleton';
 import Modal from './Modal/Modal';
@@ -25,6 +26,7 @@ export {
     DropDown,
     Loading,
     InfiniteProgressBar,
+    AmbireLoading,
     Skeleton,
     Dots,
     Modal,
