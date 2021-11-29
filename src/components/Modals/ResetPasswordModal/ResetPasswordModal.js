@@ -144,9 +144,9 @@ const ResetPassword = ({ account, selectedNetwork, relayerURL, onAddAccount }) =
             {
                 type === 'change' ?
                     <form>
-                        <TextInput password placeholder="Old Password" onInput={value => setOldPassword(value)}/>
-                        <TextInput password placeholder="New Password" onInput={value => setNewPassword(value)}/>
-                        <TextInput password placeholder="Confirm New Password" onInput={value => setNewPasswordConfirm(value)}/>
+                        <TextInput password autocomplete="current-password" placeholder="Old Password" onInput={value => setOldPassword(value)}/>
+                        <TextInput password autocomplete="new-password" placeholder="New Password" onInput={value => setNewPassword(value)}/>
+                        <TextInput password autocomplete="new-password" placeholder="Confirm New Password" onInput={value => setNewPasswordConfirm(value)}/>
                         {
                             checkboxes[0].map(({ label, ref }, i) => (
                                 <Checkbox key={`checkbox-${i}`} ref={ref} label={label} onChange={() => validateForm()}/>
@@ -157,8 +157,8 @@ const ResetPassword = ({ account, selectedNetwork, relayerURL, onAddAccount }) =
             {
                 type === 'reset' ?
                     <form>
-                        <TextInput password placeholder="New Password" onInput={value => setNewPassword(value)}/>
-                        <TextInput password placeholder="Confirm New Password" onInput={value => setNewPasswordConfirm(value)}/>
+                        <TextInput password autocomplete="new-password" placeholder="New Password" onInput={value => setNewPassword(value)}/>
+                        <TextInput password autocomplete="new-password" placeholder="Confirm New Password" onInput={value => setNewPasswordConfirm(value)}/>
                         {
                             checkboxes[1].map(({ label, ref }, i) => (
                                 <Checkbox key={`checkbox-${i}`} ref={ref} label={label} onChange={() => validateForm()}/>
