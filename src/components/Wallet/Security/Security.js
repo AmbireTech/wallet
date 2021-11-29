@@ -285,16 +285,16 @@ const Security = ({
                 <Button>Export</Button>
               </a>
               <div style={{ fontSize: '0.9em' }}>
-              This downloads a JSON backup of your current account ({selectedAccount.id.slice(0, 5)}...{selectedAccount.id.slice(-3)}) encrypted with
+              This downloads a backup of your current account ({selectedAccount.id.slice(0, 5)}...{selectedAccount.id.slice(-3)}) encrypted with
               your password. This is safe to store in iCloud/Google Drive, but you cannot use it to restore your account if you forget the password.
               </div>
             </div>
           </div>
           <div className="panel">
-            <div className="panel-title">Import account from JSON file</div>
+            <div className="panel-title">Import an account from backup</div>
             <div className="content import">
               <Button small onClick={open}>Import</Button>
-              <p>...or you can drop an account JSON on this page</p>
+              <p>...or you can drop an account backup JSON file on this page</p>
             </div>
           </div>
         </div>
