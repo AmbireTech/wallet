@@ -106,7 +106,7 @@ $heading-height: 45px;
 }
 
 // Mobile
-@media screen and (max-width: 800px) {
+@media screen and (max-width: $mobile-breakpoint-max-width) {
     .address-book {
         .menu {
             width: 100%;
