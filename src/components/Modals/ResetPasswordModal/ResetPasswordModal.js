@@ -2,7 +2,7 @@ import './ResetPasswordModal.scss'
 
 import { Wallet } from 'ethers'
 import { useState, useMemo, createRef, useEffect, useCallback } from 'react'
-import { Modal, Radios, TextInput, Checkbox, Button, ToolTip } from '../../common'
+import { Modal, Radios, TextInput, Checkbox, Button, ToolTip, Loading } from '../../common'
 import { MdOutlineCheck, MdOutlineClose, MdOutlineHelpOutline } from 'react-icons/md'
 import { useModals } from '../../../hooks'
 import { useToasts } from '../../../hooks/toasts'
@@ -13,6 +13,7 @@ const ResetPassword = ({ account, selectedNetwork, relayerURL, onAddAccount }) =
     const { hideModal } = useModals()
     const { addToast } = useToasts()
 
+    const [isLoading, setLoading] = useState(false)
     const [type, setType] = useState(null)
     const [oldPassword, setOldPassword] = useState('')
     const [newPassword, setNewPassword] = useState('')
@@ -74,6 +75,9 @@ const ResetPassword = ({ account, selectedNetwork, relayerURL, onAddAccount }) =
     }
 
     const changePassword = async () => {
+        setLoading(true)
+        await new Promise(resolve => setTimeout(resolve))
+
         try {
             const wallet = await Wallet.fromEncryptedJson(JSON.parse(account.primaryKeyBackup), oldPassword)
             const primaryKeyBackup = JSON.stringify(await wallet.encrypt(newPassword, accountPresets.encryptionOpts))
@@ -91,6 +95,8 @@ const ResetPassword = ({ account, selectedNetwork, relayerURL, onAddAccount }) =
             console.error(e)
             addToast(e.message || e, { error: true })
         }
+
+        setLoading(false)
     }
 
     const validateForm = useCallback(() => {
@@ -122,10 +128,18 @@ const ResetPassword = ({ account, selectedNetwork, relayerURL, onAddAccount }) =
         }
     }, [checkboxes, type, oldPassword, newPassword, newPasswordConfirm])
 
-    useEffect(() => validateForm(), [validateForm, oldPassword, newPassword, newPasswordConfirm])
+    useEffect(() => validateForm(), [isLoading, validateForm, oldPassword, newPassword, newPasswordConfirm])
 
     return (
         <Modal id="reset-password-modal" title="Reset Password">
+            {
+                isLoading ?
+                    <div id="loading-overlay">
+                        <Loading/>
+                    </div>
+                    :
+                    null
+            }
             <Radios radios={radios} onChange={onRadioChange}/>
             {
                 type === 'change' ?
