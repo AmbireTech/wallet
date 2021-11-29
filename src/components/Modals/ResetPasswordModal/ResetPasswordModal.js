@@ -7,8 +7,9 @@ import { MdOutlineCheck, MdOutlineClose } from 'react-icons/md'
 import { useModals } from '../../../hooks'
 import { useToasts } from '../../../hooks/toasts'
 import { SCRYPT_OPTIONS } from '../../../consts/scryptOptions'
+import { fetchPost } from '../../../lib/fetch'
 
-const ResetPassword = ({ account, selectedNetwork }) => {
+const ResetPassword = ({ account, selectedNetwork, relayerURL, onAddAccount }) => {
     const { hideModal } = useModals()
     const { addToast } = useToasts()
 
@@ -59,8 +60,16 @@ const ResetPassword = ({ account, selectedNetwork }) => {
     const changePassword = async () => {
         try {
             const wallet = await Wallet.fromEncryptedJson(JSON.parse(account.primaryKeyBackup), oldPassword)
-            await wallet.encrypt(newPassword, { scrypt: SCRYPT_OPTIONS })
-            addToast('You password was successfully updated')
+            const primaryKeyBackup = JSON.stringify(await wallet.encrypt(newPassword, { scrypt: SCRYPT_OPTIONS }))
+            const sig = await wallet.signMessage(JSON.stringify({ primaryKeyBackup }))
+            const resp = await fetchPost(`${relayerURL}/identity/${account.id}/modify`, { primaryKeyBackup, sig })
+
+            if (resp.success) {
+                onAddAccount({ ...account, primaryKeyBackup })
+                addToast('You password was successfully updated')
+            } else {
+                throw new Error(`Unable to update account: ${resp.message || 'unknown error'}`)
+            }
         } catch(e) {
             console.error(e)
             addToast(e.message || e, { error: true })
