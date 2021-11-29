@@ -55,3 +55,16 @@
         opacity: 0.8;
     }
 }
+
+// Mobile
+@media screen and (max-width: 800px) {
+    #providers {
+        .provider {
+            flex-direction: column;
+
+            .details {
+                text-align: left;
+            }
+        }
+    }
+}

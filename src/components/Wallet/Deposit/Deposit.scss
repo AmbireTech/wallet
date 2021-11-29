@@ -91,3 +91,12 @@
         }
     }
 }
+
+// Mobile
+@media screen and (max-width: 800px) {
+    #deposit {
+        .panel {
+            padding: 20px 20px;
+        }
+    }
+}
