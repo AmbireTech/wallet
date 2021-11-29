@@ -10,6 +10,7 @@ import AmbireLoading from './Loading/AmbireLoading';
 import Dots from './Loading/Dots';
 import Skeleton from './Loading/Skeleton';
 import Modal from './Modal/Modal';
+import Radios from './Radios/Radios';
 import Segments from './Segments/Segments';
 import Select from './Select/Select';
 import TextInput from './TextInput/TextInput';
@@ -30,6 +31,7 @@ export {
     Skeleton,
     Dots,
     Modal,
+    Radios,
     Segments,
     Select,
     TextInput,
