@@ -2,8 +2,8 @@ import './ResetPasswordModal.scss'
 
 import { Wallet } from 'ethers'
 import { useState, useMemo, createRef, useEffect, useCallback } from 'react'
-import { Modal, Radios, TextInput, Checkbox, Button } from '../../common'
-import { MdOutlineCheck, MdOutlineClose } from 'react-icons/md'
+import { Modal, Radios, TextInput, Checkbox, Button, ToolTip } from '../../common'
+import { MdOutlineCheck, MdOutlineClose, MdOutlineHelpOutline } from 'react-icons/md'
 import { useModals } from '../../../hooks'
 import { useToasts } from '../../../hooks/toasts'
 import { SCRYPT_OPTIONS } from '../../../consts/scryptOptions'
@@ -22,31 +22,47 @@ const ResetPassword = ({ account, selectedNetwork, relayerURL, onAddAccount }) =
     const [passwordsMustMatchWarning, setPasswordsMustMatchWarning] = useState(false)
     const [passwordsLengthWarning, setPasswordsLengthWarning] = useState(false)
     
-    const checkboxes = useMemo(() => [
-        {
-            label: `I understand I am only changing the password on the ${selectedNetwork.name} network`,
-            ref: createRef()
-        },
-        {
-            label: `I confirm the fee of <...> to apply this change on ${selectedNetwork.name}`,
-            ref: createRef()
-        },
-        {
-            label: 'I understand I need to wait for 3 days for the change to be confirmed',
-            ref: createRef()
-        }
-    ], [selectedNetwork.name])
-
     const radios = useMemo(() => [
         {
-            label: 'I want to change my password',
+            label: 'Change the password on this device and Ambire Cloud. Best if you just want to routinely change the password.',
             value: 'change'
         },
         {
-            label: 'I forgot my old password',
+            label: 'Reset the key and password: takes 3 days. Best if you\'ve forgotten the old password.',
             value: 'forgot'
         }
     ], [])
+
+    const checkboxes = useMemo(() => ([
+        [
+            {
+                label: 
+                    <>
+                        I understand the following: the new password will be required for subsequent logins, but places where you're already logged in will work with the old password until you re-login.
+                        <ToolTip
+                            label="This is because, for security reasons, the encrypted key is retrieved only when logging in, so we have no way of forcing every device to update it.
+                            If you want to disable access for other devices, consider the next option.">
+                            <MdOutlineHelpOutline/>
+                        </ToolTip>
+                    </>,
+                ref: createRef()
+            }
+        ],
+        [
+            {
+                label: `I understand I am only changing the password on the ${selectedNetwork.name} network`,
+                ref: createRef()
+            },
+            {
+                label: `I confirm the fee of <...> to apply this change on ${selectedNetwork.name}`,
+                ref: createRef()
+            },
+            {
+                label: 'I understand I need to wait for 3 days for the change to be confirmed',
+                ref: createRef()
+            }
+        ]
+    ]), [selectedNetwork.name])
 
     const onRadioChange = value => {
         setType(value)
@@ -80,19 +96,21 @@ const ResetPassword = ({ account, selectedNetwork, relayerURL, onAddAccount }) =
         const arePasswordsMatching = newPassword === newPasswordConfirm
         let areFieldsNotEmpty = false
         let isLengthValid = false
+        let areCheckboxesChecked = false
         
         if (radios[0].value === type) {
             areFieldsNotEmpty = oldPassword.length && newPassword.length && newPasswordConfirm.length
             isLengthValid = oldPassword.length >= 8 && newPassword.length >= 8 && newPasswordConfirm.length >= 8
-            setDisabled(!isLengthValid || !arePasswordsMatching)
+            areCheckboxesChecked = checkboxes[0].every(({ ref }) => ref.current && ref.current.checked)
         }
 
         if (radios[1].value === type) {
             areFieldsNotEmpty = newPassword.length && newPasswordConfirm.length
             isLengthValid = newPassword.length >= 8 && newPasswordConfirm.length >= 8
-            const areCheckboxesChecked = checkboxes.every(({ ref }) => ref.current && ref.current.checked)
-            setDisabled(!isLengthValid || !arePasswordsMatching || !areCheckboxesChecked)
+            areCheckboxesChecked = checkboxes[1].every(({ ref }) => ref.current && ref.current.checked)
         }
+
+        setDisabled(!isLengthValid || !arePasswordsMatching || !areCheckboxesChecked)
 
         if (areFieldsNotEmpty) {
             setPasswordsLengthWarning(!isLengthValid)
@@ -114,6 +132,11 @@ const ResetPassword = ({ account, selectedNetwork, relayerURL, onAddAccount }) =
                         <TextInput password placeholder="Old Password" onInput={value => setOldPassword(value)}/>
                         <TextInput password placeholder="New Password" onInput={value => setNewPassword(value)}/>
                         <TextInput password placeholder="Confirm New Password" onInput={value => setNewPasswordConfirm(value)}/>
+                        {
+                            checkboxes[0].map(({ label, ref }, i) => (
+                                <Checkbox key={`checkbox-${i}`} ref={ref} label={label} onChange={() => validateForm()}/>
+                            ))
+                        }
                     </form> : null
             }
             {
@@ -122,7 +145,7 @@ const ResetPassword = ({ account, selectedNetwork, relayerURL, onAddAccount }) =
                         <TextInput password placeholder="New Password" onInput={value => setNewPassword(value)}/>
                         <TextInput password placeholder="Confirm New Password" onInput={value => setNewPasswordConfirm(value)}/>
                         {
-                            checkboxes.map(({ label, ref }, i) => (
+                            checkboxes[1].map(({ label, ref }, i) => (
                                 <Checkbox key={`checkbox-${i}`} ref={ref} label={label} onChange={() => validateForm()}/>
                             ))
                         }
