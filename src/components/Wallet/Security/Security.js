@@ -7,9 +7,9 @@ import { Interface } from 'ethers/lib/utils'
 import accountPresets from '../../../consts/accountPresets'
 import privilegesOptions from '../../../consts/privilegesOptions'
 import { useRelayerData, useModals } from '../../../hooks'
-import { InputModal } from '../../Modals';
+import { InputModal, ResetPasswordModal } from '../../Modals';
 import AddressList from '../../common/AddressBook/AddressList/AddressList'
-import { isValidAddress } from '../../../helpers/address';
+import { isValidAddress } from '../../../helpers/address'
 import AddAuthSigner from './AddAuthSigner/AddAuthSigner'
 import { useToasts } from '../../../hooks/toasts'
 import { useHistory } from 'react-router-dom'
@@ -18,6 +18,8 @@ import { MdInfoOutline } from 'react-icons/md'
 const IDENTITY_INTERFACE = new Interface(
   require('adex-protocol-eth/abi/Identity5.2')
 )
+
+const REFRESH_INTVL = 40000
 
 const Security = ({
   relayerURL,
@@ -35,7 +37,7 @@ const Security = ({
   
   useEffect(() => {
     if (Date.now() - cacheBreak > 30000) setCacheBreak(Date.now())
-    const intvl = setTimeout(() => setCacheBreak(Date.now()), 35000)
+    const intvl = setTimeout(() => setCacheBreak(Date.now()), REFRESH_INTVL)
     return () => clearTimeout(intvl)
   }, [cacheBreak])
 
@@ -100,6 +102,8 @@ const Security = ({
     history.push('/wallet/security')
   }
 
+  const showResetPasswordModal = () => showModal(<ResetPasswordModal account={selectedAccount} selectedNetwork={selectedNetwork} relayerURL={relayerURL} onAddAccount={onAddAccount}/>)
+
   const selectedAccount = accounts.find(x => x.id === selectedAcc)
 
   const privList = Object.entries(privileges)
@@ -118,6 +122,7 @@ const Security = ({
         <li key={addr}>
           <TextInput className="depositAddress" value={privText} disabled />
           <div className="btns-wrapper">
+            {isQuickAcc && (<Button onClick={showResetPasswordModal} small>Change password</Button>)}
             <Button
               disabled={isSelected}
               title={isSelected ? 'Signer is already default' : ''}
