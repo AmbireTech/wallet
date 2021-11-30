@@ -25,6 +25,7 @@ const CrossChain = ({ portfolio, network }) => {
     const [toToken, setToToken] = useState(null)
     
     const fromChain = useMemo(() => network.chainId, [network.chainId])
+    const formDisabled = !(fromToken && toToken && fromChain && toChain && amount > 0)
     const hasNoFunds = !portfolio.balance.total.full
     const getTokenFromPortofolio = tokenAddress => portfolio.tokens
         .map(token => ({
@@ -164,7 +165,7 @@ const CrossChain = ({ portfolio, network }) => {
                                 <label>To</label>
                                 <Select searchable defaultValue={toChain} items={chainsItems} onChange={value => setToChain(value)}/>
                                 <Select searchable defaultValue={toToken} items={toTokenItems} onChange={value => setToToken(value)}/>
-                                <Button onClick={getQuotes}>Get Quotes</Button>
+                                <Button disabled={formDisabled} onClick={getQuotes}>Get Quotes</Button>
                             </div>
             }
         </div>
