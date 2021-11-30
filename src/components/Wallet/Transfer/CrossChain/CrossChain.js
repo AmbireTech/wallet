@@ -29,12 +29,12 @@ const CrossChain = ({ portfolio, network }) => {
     const fromChain = useMemo(() => network.chainId, [network.chainId])
     const formDisabled = !(fromToken && toToken && fromChain && toChain && amount > 0)
     const hasNoFunds = !portfolio.balance.total.full
-    const getTokenFromPortofolio = tokenAddress => portfolio.tokens
+    const getTokenFromPortofolio = useCallback(tokenAddress => portfolio.tokens
         .map(token => ({
             ...token,
             address: token.address === `0x${'0'.repeat(40)}` ? `0x${'e'.repeat(40)}` : token.address
         }))
-        .find(({ address }) => address === tokenAddress)
+        .find(({ address }) => address === tokenAddress), [portfolio.tokens])
 
     const loadChains = useCallback(async () => {
         try {
@@ -113,7 +113,7 @@ const CrossChain = ({ portfolio, network }) => {
             console.error(e);
             addToast(`Error while formating amount: ${e.message || e}`, { error: true })
         }
-    }, [portfolio.tokens, fromToken, addToast])
+    }, [getTokenFromPortofolio, fromToken, addToast])
 
     const getQuotes = async () => {
         try {
