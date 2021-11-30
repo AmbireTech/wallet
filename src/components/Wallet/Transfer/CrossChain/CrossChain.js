@@ -60,6 +60,7 @@ const CrossChain = ({ portfolio, network }) => {
 
             const fromTokensItems = uniqueFromTokenAddresses
                 .map(address => filteredFromTokens.find(token => token.address === address))
+                .filter(token => token)
                 .map(({ icon, name, symbol, address }) => ({
                     icon,
                     label: `${name} (${symbol})`,
@@ -72,6 +73,7 @@ const CrossChain = ({ portfolio, network }) => {
             const uniqueTokenAddresses = [...new Set(toTokens.map(({ address }) => address))]
             const tokenItems = uniqueTokenAddresses
                 .map(address => filteredToTokens.find(token => token.address === address))
+                .filter(token => token)
                 .map(({ icon, name, symbol, address }) => ({
                     icon,
                     label: `${name} (${symbol})`,
