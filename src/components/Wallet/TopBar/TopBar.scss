@@ -3,7 +3,6 @@
 #topbar {
     height: $topbar-height;
     position: sticky;
-    margin-left: $sidebar-desktop-width;
     top: 0;
     z-index: 49;
     padding: ($layout-spacing / 2) $layout-spacing;
@@ -36,12 +35,6 @@
 
     button {
         width: 100%;
-    }
-}
-
-@media screen and (max-width:  $sidebar-small-breakpoint) {
-    #topbar {
-        margin-left: $sidebar-desktop-small-width;
     }
 }
 
