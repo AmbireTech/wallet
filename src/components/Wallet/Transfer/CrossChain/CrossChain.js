@@ -26,6 +26,12 @@ const CrossChain = ({ portfolio, network }) => {
     
     const fromChain = useMemo(() => network.chainId, [network.chainId])
     const hasNoFunds = !portfolio.balance.total.full
+    const getTokenFromPortofolio = tokenAddress => portfolio.tokens
+        .map(token => ({
+            ...token,
+            address: token.address === `0x${'0'.repeat(40)}` ? `0x${'e'.repeat(40)}` : token.address
+        }))
+        .find(({ address }) => address === tokenAddress)
 
     const loadChains = useCallback(async () => {
         try {
@@ -58,7 +64,9 @@ const CrossChain = ({ portfolio, network }) => {
             const filteredFromTokens = fromTokens.filter(({ name }) => name)
             const uniqueFromTokenAddresses = [
                 ...new Set(fromTokens
-                    .filter(({ address }) => portfolio.tokens.map(({ address }) => address).includes(address))
+                    .filter(({ address }) => portfolio.tokens
+                        .map(({ address }) => address)
+                        .map(address => address === `0x${'0'.repeat(40)}` ? `0x${'e'.repeat(40)}` : address).includes(address))
                     .map(({ address }) => address)
                 )
             ]
@@ -94,7 +102,7 @@ const CrossChain = ({ portfolio, network }) => {
 
     const maxAmount = useMemo(() => {
         try {
-            const portfolioToken = portfolio.tokens.find(({ address }) => address === fromToken)
+            const portfolioToken = getTokenFromPortofolio(fromToken)
             if (!portfolioToken) return 0
             const { balanceRaw, decimals } = portfolioToken
             return ethers.utils.formatUnits(balanceRaw, decimals)
@@ -106,7 +114,7 @@ const CrossChain = ({ portfolio, network }) => {
 
     const getQuotes = async () => {
         try {
-            const portfolioToken = portfolio.tokens.find(({ address }) => address === fromToken)
+            const portfolioToken = getTokenFromPortofolio(fromToken)
             if (!portfolioToken) return
             const { decimals } = portfolioToken
             const flatAmount = amount * Math.pow(10, decimals)
