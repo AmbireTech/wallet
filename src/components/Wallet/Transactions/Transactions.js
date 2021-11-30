@@ -68,7 +68,7 @@ function Transactions ({ relayerURL, selectedAcc, selectedNetwork, showSendTxns 
         <div className='title'><MdOutlinePendingActions/>Pending transaction bundle</div>
         <div className="content">
           <div className="bundle">
-            <MinedBundle bundle={firstPending}></MinedBundle>
+            <BundlePreview bundle={firstPending}></BundlePreview>
             <div className='actions'>
               <button className='cancel' onClick={() => cancel(firstPending)}>Cancel</button>
               <button onClick={() => speedup(firstPending)}>Speed up</button>
@@ -88,7 +88,7 @@ function Transactions ({ relayerURL, selectedAcc, selectedNetwork, showSendTxns 
           {(isLoading && !data) && <Loading />}
           {
               // @TODO respect the limit and implement pagination
-              data && data.txns.filter(x => x.executed && x.executed.mined).map(bundle => MinedBundle({ bundle }))
+              data && data.txns.filter(x => x.executed).map(bundle => BundlePreview({ bundle, mined: true }))
           }
         </div>
       </div>
@@ -96,7 +96,7 @@ function Transactions ({ relayerURL, selectedAcc, selectedNetwork, showSendTxns 
   )
 }
 
-function MinedBundle({ bundle }) {
+function BundlePreview({ bundle, mined = false }) {
   const network = networks.find(x => x.id === bundle.network)
   if (!Array.isArray(bundle.txns)) return (<h3 className='error'>Bundle has no transactions (should never happen)</h3>)
   const lastTxn = bundle.txns[bundle.txns.length - 1]
@@ -107,10 +107,10 @@ function MinedBundle({ bundle }) {
   const txns = hasFeeMatch ? bundle.txns.slice(0, -1) : bundle.txns
   const toLocaleDateTime = date => `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`
 
-  return (<div className='minedBundle bundle' key={bundle._id}>
+  return (<div className='bundlePreview bundle' key={bundle._id}>
     {txns.map((txn, i) => (<TxnPreview
       key={i} // safe to do this, individual TxnPreviews won't change within a specific bundle
-      txn={txn} network={bundle.network} account={bundle.identity}/>
+      txn={txn} network={bundle.network} account={bundle.identity} mined={mined} />
     ))}
     <ul className="details">
       {
@@ -121,6 +121,14 @@ function MinedBundle({ bundle }) {
           </li>
           :
           null
+      }
+      {
+        bundle.executed && !bundle.executed.success && (
+          <li>
+            <label>Error</label>
+            <p>{bundle.executed.errorMsg || 'unknown error'}</p>
+          </li>
+        )
       }
       <li>
         <label><BsCalendarWeek/>Submitted on</label>

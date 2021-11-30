@@ -25,29 +25,6 @@
 
         #balance {
             gap: 10px;
-
-            #total {
-                font-size: 40px;
-
-                #other-balances {
-                    display: flex;
-                    flex-direction: column;
-                    margin-top: 5px;
-
-                    .other-balance {
-                        font-weight: 500;
-                        font-size: 18px;
-                        opacity: 0.6;
-                        cursor: pointer;
-                        transition: opacity 0.1s ease-in-out;
-                        user-select: none;
-
-                        &:hover {
-                            opacity: 0.8;
-                        }
-                    }
-                }
-            }
         }
     }
 

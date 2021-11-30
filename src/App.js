@@ -75,7 +75,7 @@ function AppInner () {
     account: selectedAcc
   })
 
-  // Navigate to the send transaction dialog if we have a new txn
+  // Show the send transaction full-screen modal if we have a new txn
   const eligibleRequests = useMemo(() => requests
     .filter(({ type, chainId, account }) =>
       type === 'eth_sendTransaction'
@@ -102,7 +102,7 @@ function AppInner () {
       return false
     }
     if (everythingToSign.length) {
-      resolveMany([everythingToSign[0].id], { message: 'signature rejected' })
+      resolveMany([everythingToSign[0].id], { message: 'Ambire user rejected the signature request' })
       return false
     }
     return true

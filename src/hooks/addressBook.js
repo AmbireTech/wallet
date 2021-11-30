@@ -1,7 +1,8 @@
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useToasts } from './toasts'
-import * as blockies from 'blockies-ts';
-import { isValidAddress, isKnownTokenOrContract } from '../helpers/address';
+import * as blockies from 'blockies-ts'
+import { isValidAddress, isKnownTokenOrContract } from '../helpers/address'
+import { setKnownAddresses } from '../lib/humanReadableTransactions'
 
 const accountType = ({ email, signerExtra }) => {
     const walletType = signerExtra && signerExtra.type === 'ledger' ? 'Ledger' : signerExtra && signerExtra.type === 'trezor' ? 'Trezor' : 'Web3'
@@ -12,7 +13,7 @@ const toIcon = seed => blockies.create({ seed }).toDataURL()
 const useAddressBook = ({ accounts, selectedAcc }) => {
     const { addToast } = useToasts()
 
-    const [addresses, setAddresses] = useState(() => {
+    const addressList = useMemo(() => {
         try {
             const addresses = JSON.parse(localStorage.addresses || '[]')
             if (!Array.isArray(addresses)) throw new Error('Address Book: incorrect format')
@@ -32,7 +33,14 @@ const useAddressBook = ({ accounts, selectedAcc }) => {
             console.error('Address Book parsing failure', e)
             return []
         }
-    })
+    }, [accounts, selectedAcc])
+
+    // a bit of a 'cheat': update the humanizer with the latest known addresses
+    // this is breaking the react patterns cause the humanizer has a 'global' state, but that's fine since it simply constantly learns new addr aliases,
+    // so there's no 'inconsistent state' there, the more the better
+    setKnownAddresses(addressList)
+
+    const [addresses, setAddresses] = useState(() => addressList)
 
     const updateAddresses = addresses => {
         setAddresses(addresses.map(entry => ({
@@ -76,6 +84,8 @@ const useAddressBook = ({ accounts, selectedAcc }) => {
 
         addToast(`${address} removed from your Address Book.`)
     }, [addresses, addToast])
+
+    useEffect(() => setAddresses(addressList), [accounts, selectedAcc, addressList])
 
     return {
         addresses,
