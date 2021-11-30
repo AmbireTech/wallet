@@ -3,7 +3,7 @@ import './Transfer.scss'
 import { useParams, withRouter } from 'react-router'
 import { useEffect, useState } from 'react'
 import { ethers } from 'ethers'
-import SendPlaceholder from './SendPlaceholder/SendPlaceholder'
+import NoFundsPlaceholder from './NoFundsPlaceholder/NoFundsPlaceholder'
 import { Interface } from 'ethers/lib/utils'
 import { useToasts } from '../../../hooks/toasts'
 import { TextInput, NumberInput, Button, Select, Loading, AddressBook, AddressWarning } from '../../common'
@@ -138,7 +138,7 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
                                 <Button disabled={disabled} onClick={sendTx}>Send</Button>
                             </div>
                             :
-                            <SendPlaceholder/>
+                            <NoFundsPlaceholder/>
                }
            </div>
            <CrossChain portfolio={portfolio} network={selectedNetwork}/>

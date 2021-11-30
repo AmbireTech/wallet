@@ -8,6 +8,7 @@ import { NumberInput, Button, Select, Loading } from '../../../common'
 import { fetchChains, fetchFromTokens, fetchQuotes, fetchToTokens } from '../../../../services/movr'
 import networks from '../../../../consts/networks'
 import { useToasts } from '../../../../hooks/toasts'
+import NoFundsPlaceholder from '../NoFundsPlaceholder/NoFundsPlaceholder'
 
 const CrossChain = ({ portfolio, network }) => {
     const { addToast } = useToasts()
@@ -24,6 +25,7 @@ const CrossChain = ({ portfolio, network }) => {
     const [toToken, setToToken] = useState(null)
     
     const fromChain = useMemo(() => network.chainId, [network.chainId])
+    const hasNoFunds = !portfolio.balance.total.full
 
     const loadChains = useCallback(async () => {
         try {
@@ -140,18 +142,21 @@ const CrossChain = ({ portfolio, network }) => {
                     loading || portfolio.isBalanceLoading ? 
                         <Loading/>
                         :
-                        <div className="form">
-                            <label>From</label>
-                            <Select searchable defaultValue={fromToken} items={fromTokensItems} onChange={value => setFromToken(value)}/>
-                            <NumberInput min="0" label={amountLabel} value={amount} onInput={() => {}} button="MAX" onButtonClick={() => setAmount(maxAmount)}/>
-                            <div className="separator">
-                                <BsArrowDown/>
+                        hasNoFunds ?
+                            <NoFundsPlaceholder/>
+                            :
+                            <div className="form">
+                                <label>From</label>
+                                <Select searchable defaultValue={fromToken} items={fromTokensItems} onChange={value => setFromToken(value)}/>
+                                <NumberInput min="0" label={amountLabel} value={amount} onInput={() => {}} button="MAX" onButtonClick={() => setAmount(maxAmount)}/>
+                                <div className="separator">
+                                    <BsArrowDown/>
+                                </div>
+                                <label>To</label>
+                                <Select searchable defaultValue={toChain} items={chainsItems} onChange={value => setToChain(value)}/>
+                                <Select searchable defaultValue={toToken} items={toTokenItems} onChange={value => setToToken(value)}/>
+                                <Button onClick={getQuotes}>Get Quotes</Button>
                             </div>
-                            <label>To</label>
-                            <Select searchable defaultValue={toChain} items={chainsItems} onChange={value => setToChain(value)}/>
-                            <Select searchable defaultValue={toToken} items={toTokenItems} onChange={value => setToToken(value)}/>
-                            <Button onClick={getQuotes}>Get Quotes</Button>
-                        </div>
             }
         </div>
     )
