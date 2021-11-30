@@ -3,12 +3,16 @@ import './Quotes.scss'
 import { MdOutlineArrowForward, MdOutlineCheck, MdOutlineClose } from 'react-icons/md';
 import { Button, Radios } from '../../../../common';
 import { useState } from 'react';
+import networks from '../../../../../consts/networks';
 
 const formatAmount = (amount, asset) => amount / Math.pow(10, asset.decimals)
+const getNetwork = id => networks.find(({ chainId }) => chainId === id)
 
 const Quotes = ({ fromTokensItems, quotes, onCancel }) => {
     const { toAsset } = quotes;
     const fromAsset = fromTokensItems.find(({ value }) => value === quotes.fromAsset.address)
+    const fromNetwork = getNetwork(quotes.fromAsset.chainId)
+    const toNetwork = getNetwork(toAsset.chainId)
     const [selectedRoute, setSelectedRoute] = useState(null)
 
     const routes = quotes.routes.map(({ routePath, fees, middlewareRoute, bridgeRoute }) => ({
@@ -62,14 +66,26 @@ const Quotes = ({ fromTokensItems, quotes, onCancel }) => {
     return (
         <div id="quotes">
             <div id="summary">
-                <div className="token">
-                    <div className="icon" style={{backgroundImage: `url(${fromAsset.icon})`}}></div>
-                    <div className="name">{ fromAsset.label }</div>
+                <div className="path">
+                    <div className="network">
+                        <div className="icon" style={{backgroundImage: `url(${fromNetwork.icon})`}}></div>
+                        <div className="name">{ fromNetwork.name }</div>
+                    </div>
+                    <div className="token">
+                        <div className="icon" style={{backgroundImage: `url(${fromAsset.icon})`}}></div>
+                        <div className="name">{ fromAsset.label }</div>
+                    </div>
                 </div>
                 <MdOutlineArrowForward/>
-                <div className="token">
-                    <div className="icon" style={{backgroundImage: `url(${toAsset.icon})`}}></div>
-                    <div className="name">{ toAsset.name } ({ toAsset.symbol })</div>
+                <div className="path">
+                    <div className="network">
+                        <div className="icon" style={{backgroundImage: `url(${toNetwork.icon})`}}></div>
+                        <div className="name">{ toNetwork.name }</div>
+                    </div>
+                    <div className="token">
+                        <div className="icon" style={{backgroundImage: `url(${toAsset.icon})`}}></div>
+                        <div className="name">{ toAsset.name } ({ toAsset.symbol })</div>
+                    </div>
                 </div>
             </div>
 
