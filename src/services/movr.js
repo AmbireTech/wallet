@@ -26,9 +26,16 @@ const fetchQuotes = async (fromAsset, fromChainId, toAsset, toChainId, amount, s
     return response.result
 }
 
+const buildTx = async (recipient, fromAsset, fromChainId, toAsset, toChainId, amount, output, routePath) => {
+    const response = await fetchGet(`${baseURL}/send/build-tx?recipient=${recipient}&fromAsset=${fromAsset}&fromChainId=${fromChainId}&toAsset=${toAsset}&toChainId=${toChainId}&amount=${amount}&output=${output}&fromAddress=${recipient}&routePath=${routePath}`)
+    if (!response) return null
+    return response.result
+}
+
 export {
     fetchChains,
     fetchToTokens,
     fetchFromTokens,
-    fetchQuotes
+    fetchQuotes,
+    buildTx
 }
