@@ -141,7 +141,7 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
                             <NoFundsPlaceholder/>
                }
            </div>
-           <CrossChain portfolio={portfolio} network={selectedNetwork}/>
+           <CrossChain selectedAccount={selectedAcc} portfolio={portfolio} network={selectedNetwork}/>
         </div>
     )
 }

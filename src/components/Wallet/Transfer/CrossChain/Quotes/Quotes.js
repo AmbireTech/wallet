@@ -4,11 +4,15 @@ import { MdOutlineArrowForward, MdOutlineCheck, MdOutlineClose } from 'react-ico
 import { Button, Radios } from '../../../../common';
 import { useState } from 'react';
 import networks from '../../../../../consts/networks';
+import { buildTx } from '../../../../../services/movr';
+import { useToasts } from '../../../../../hooks/toasts';
 
 const formatAmount = (amount, asset) => amount / Math.pow(10, asset.decimals)
 const getNetwork = id => networks.find(({ chainId }) => chainId === id)
 
-const Quotes = ({ fromTokensItems, quotes, onCancel }) => {
+const Quotes = ({ selectedAccount, fromTokensItems, quotes, onCancel }) => {
+    const { addToast } = useToasts()
+
     const { toAsset } = quotes;
     const fromAsset = fromTokensItems.find(({ value }) => value === quotes.fromAsset.address)
     const fromNetwork = getNetwork(quotes.fromAsset.chainId)
@@ -58,9 +62,17 @@ const Quotes = ({ fromTokensItems, quotes, onCancel }) => {
         value: routePath
     }))
 
-    const onConfirm = () => {
-        const route = routes.find(({ routePath }) => routePath === selectedRoute)
-        console.log(route)
+    const onConfirm = async () => {
+        try {
+        const { middlewareRoute, bridgeRoute, routePath } = routes.find(({ routePath }) => routePath === selectedRoute)
+        const { fromAsset, inputAmount } = middlewareRoute
+        const { toAsset, outputAmount } = bridgeRoute
+        const tx = await buildTx(selectedAccount, fromAsset.address, fromAsset.chainId, toAsset.address, toAsset.chainId, inputAmount, outputAmount, routePath)
+        console.log(tx);
+        } catch(e) {
+            console.error(e);
+            addToast(e.message || e, { error: true })
+        }
     }
 
     return (
