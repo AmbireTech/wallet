@@ -16,6 +16,7 @@ const CrossChain = ({ portfolio, network }) => {
 
     const [disabled, setDisabled] = useState(false)
     const [loading, setLoading] = useState(true)
+    const [loadingToTokens, setLoadingToTokens] = useState(false)
     
     const [fromTokensItems, setFromTokenItems] = useState([])
     const [fromToken, setFromToken] = useState(null)
@@ -51,6 +52,7 @@ const CrossChain = ({ portfolio, network }) => {
                     value: chainId
                 }))
             setChainsItems(chainsItems)
+            setToChain(chainsItems[0].value)
             return true
         } catch(e) {
             console.error(e);
@@ -59,7 +61,7 @@ const CrossChain = ({ portfolio, network }) => {
         }
     }, [fromChain, addToast])
 
-    const loadTokens = useCallback(async () => {
+    const loadFromTokens = useCallback(async () => {
         if (!fromChain || !toChain) return
 
         try {
@@ -83,7 +85,18 @@ const CrossChain = ({ portfolio, network }) => {
                     value: address
                 }))
             setFromTokenItems(fromTokensItems)
-            
+            return true
+        } catch(e) {
+            console.error(e);
+            addToast(`Error while loading from tokens: ${e.message || e}`, { error: true })
+            return false
+        }
+    }, [fromChain, toChain, portfolio.tokens, addToast])
+
+    const loadToTokens = useCallback(async () => {
+        if (!fromChain || !toChain) return
+
+        try {            
             const toTokens = await fetchToTokens(fromChain, toChain)
             const filteredToTokens = toTokens.filter(({ name }) => name)
             const uniqueTokenAddresses = [...new Set(toTokens.map(({ address }) => address))]
@@ -97,11 +110,13 @@ const CrossChain = ({ portfolio, network }) => {
                 }))
                 .sort((a, b) => a.label.localeCompare(b.label))
             setToTokenItems(tokenItems)
+            return true
         } catch(e) {
             console.error(e);
-            addToast(`Error while loading tokens: ${e.message || e}`, { error: true })
+            addToast(`Error while loading to tokens: ${e.message || e}`, { error: true })
+            return false
         }
-    }, [portfolio.tokens, fromChain, toChain, addToast])
+    }, [fromChain, toChain, addToast])
 
     const maxAmount = useMemo(() => {
         try {
@@ -130,8 +145,23 @@ const CrossChain = ({ portfolio, network }) => {
     }
 
     useEffect(() => setAmount(0), [fromToken])
-    useEffect(() => loadTokens(), [toChain, loadTokens])
+
     useEffect(() => {
+        if (!toChain) return
+        const asyncLoad = async () => {
+            setLoadingToTokens(true)
+            const loaded = await loadToTokens()
+            setLoadingToTokens(!loaded)
+        }
+        asyncLoad()
+    }, [toChain, loadToTokens])
+
+    useEffect(() => {
+        if (fromChain) loadFromTokens()
+    }, [fromChain, loadFromTokens])
+
+    useEffect(() => {
+        if (!fromChain) return
         const asyncLoad = async () => {
             setLoading(true)
             const loaded = await loadChains()
@@ -168,8 +198,15 @@ const CrossChain = ({ portfolio, network }) => {
                                         <BsArrowDown/>
                                     </div>
                                     <label>To</label>
-                                    <Select searchable defaultValue={toChain} items={chainsItems} onChange={value => setToChain(value)}/>
-                                    <Select searchable defaultValue={toToken} items={toTokenItems} onChange={value => setToToken(value)}/>
+                                    {
+                                        loadingToTokens ? 
+                                            <Loading/>
+                                            :
+                                            <>
+                                                <Select searchable defaultValue={toChain} items={chainsItems} onChange={value => setToChain(value)}/>
+                                                <Select searchable defaultValue={toToken} items={toTokenItems} onChange={value => setToToken(value)}/>
+                                            </>
+                                    }
                                     <Button disabled={formDisabled} onClick={getQuotes}>Get Quotes</Button>
                                 </div>
             }
