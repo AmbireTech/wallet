@@ -1,6 +1,6 @@
 import { ethers, getDefaultProvider } from 'ethers'
 import { Interface } from 'ethers/lib/utils'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useToasts } from '../../../../../hooks/toasts'
 import ERC20Abi from 'adex-protocol-eth/abi/ERC20.json'
 import AAVELendingPoolAbi from '../../../../../consts/AAVELendingPoolAbi'
@@ -19,6 +19,7 @@ let lendingPoolAddress = null
 const AAVECard = ({ networkId, tokens, protocols, account, addRequest }) => {
     const { addToast } = useToasts()
 
+    const currentNetwork = useRef()
     const [isLoading, setLoading] = useState(true)
     const [unavailable, setUnavailable] = useState(false)
     const [tokensItems, setTokensItems] = useState([])
@@ -120,18 +121,19 @@ const AAVECard = ({ networkId, tokens, protocols, account, addRequest }) => {
             const reservesAddresses = reserves.map(reserve => reserve.toLowerCase())
 
             const withdrawTokens = (protocols.find(({ label }) => label === 'Aave V2')?.assets || [])
-                .map(({ tokens }) => tokens.map(({ img, symbol, tokens }) => tokens.map(token => ({
+                .map(({ tokens }) => tokens && tokens.map(({ img, symbol, tokens }) => tokens && tokens.map(token => ({
                     ...token,
                     img,
                     symbol,
                     type: 'withdraw'
                 }))))
                 .flat(2)
+                .filter(token => token)
 
             const depositTokens = tokens.filter(({ address }) => reservesAddresses.includes(address)).map(token => ({
                 ...token,
                 type: 'deposit'
-            }))
+            })).filter(token => token)
 
             const allTokens = (await Promise.all([
                 ...defaultTokens.filter(({ type, address }) => type === 'deposit' && !depositTokens.map(({ address }) => address).includes(address)),
@@ -148,16 +150,17 @@ const AAVECard = ({ networkId, tokens, protocols, account, addRequest }) => {
                 return [address, apr]
             })))
 
+            const getEquToken = token => allTokens.find((({ address, type }) => address === token.address && (token.type === 'deposit' ? type === 'withdraw' : type === 'deposit')))
             const tokensItems = allTokens.map(token => ({
                 ...token,
                 apr: tokensAPR[token.address],
                 icon: token.img,
                 label: `${token.symbol} (${tokensAPR[token.address]}% APR)`,
                 value: token.address
-            })).sort((a, b) => {
-                const getEquToken = token => allTokens.find((({ address, type }) => address === token.address && (token.type === 'deposit' ? type === 'withdraw' : type === 'deposit')))
-                return (b.balance + getEquToken(b).balance) - (a.balance + getEquToken(a).balance)
-            })
+            })).sort((a, b) => (b?.balance + getEquToken(b)?.balance) - (a?.balance + getEquToken(a)?.balance))
+
+            // Prevent race conditions
+            if (currentNetwork.current !== networkDetails.id) return
 
             setTokensItems(tokensItems)
             setLoading(false)
@@ -166,10 +169,13 @@ const AAVECard = ({ networkId, tokens, protocols, account, addRequest }) => {
             console.error(e);
             addToast(`Aave load pool error: ${e.message || e}`, { error: true })
         }
-    }, [addToast, protocols, tokens, defaultTokens, networkDetails.id, networkDetails.rpc])
+    }, [addToast, protocols, tokens, defaultTokens, networkDetails])
 
     useEffect(() => loadPool(), [loadPool])
-    useEffect(() => setLoading(true), [networkId])
+    useEffect(() => {
+        currentNetwork.current = networkId
+        setLoading(true)
+    }, [networkId])
 
     return (
         <Card loading={isLoading} unavailable={unavailable} icon={AAVE_ICON} details={details} tokensItems={tokensItems} onTokenSelect={onTokenSelect} onValidate={onValidate}/>
