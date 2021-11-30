@@ -6,7 +6,7 @@
 * Smart contract documentation, originally intended for CodeArena: https://github.com/AmbireTech/code4rena
 	* Latest smart contract source code: https://github.com/AmbireTech/adex-protocol-eth/tree/codearena-fixes
 * Security model: https://gist.github.com/Ivshti/fe86f13c3adff3404a1f5ce1e364304c
-* Tokenomics (confidential): https://gist.github.com/Ivshti/c6b93745dd0ba0d9c8256bc39769a601l
+* Tokenomics (confidential): https://gist.github.com/Ivshti/c6b93745dd0ba0d9c8256bc39769a601
 * Deck: https://docsend.com/view/qijz3atn4j43f3za
 * FAQs: https://help.ambire.com/hc/en-us/categories/4404980091538-Ambire-Wallet
 * Front-end (this repo) development plan and estimation: https://docs.google.com/spreadsheets/d/1pqtRPcNRW98D97GL3nrdoipD3sWehz2k7zWclzYk-SM
@@ -148,6 +148,7 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/t
 * Email/password accounts
 * Ledger support
 * Trezor support
+* Can create an account with a Web3 wallet
 * Multiple accounts
 * Multiple networks: Ethereum, Polygon, Avalanche
 * WalletConnect v1
@@ -185,3 +186,8 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/t
 * Attention grabbing: pinned notification in the bottom right if you have requests pending to be signed
 * Ability to deploy smart contracts
 * Address book: ability to save and label addresses
+* Ledger: WebHID support, fixing Ledger with Chrome
+* Email verification is now enforced with a modal, because a valid email is required for account recovery
+* Binance Smart Chains upport added
+* Ability to change your password
+* Ability to export (backup) and import accounts to/from JSON files

@@ -1,7 +1,10 @@
 import './GnosisSafeApps.scss'
 
 import { useEffect, useRef, useState } from 'react'
-import { InfiniteProgressBar, Skeleton, Dots } from '../../common'
+import {
+    Skeleton,
+    AmbireLoading
+} from '../../common'
 
 export default function GnosisSafeAppIframe({
     selectedApp = {},
@@ -42,27 +45,27 @@ export default function GnosisSafeAppIframe({
     }, [selectedApp, network, selectedAcc, iframeRef, gnosisConnect, gnosisDisconnect])
 
     return (
-        <div id="plugin-gnosis-conainer">
-            {loading &&
+        <div id="plugin-gnosis-container">
+            {
+                loading &&
                 <div className='iframe-placeholder'>
-                    <InfiniteProgressBar />
                     <Skeleton >
-
-                        <div>
-                            {'Loading'}
-                            <Dots />
-                        </div>
+                        <AmbireLoading />
                     </Skeleton>
                 </div>
             }
 
-            {url && <iframe
-                id={hash}
-                key={hash}
-                ref={iframeRef}
-                title={title}
-                src={url}
-                onLoad={() => setLoading(false)}
-            />}
+            {
+                url &&
+                <iframe
+                    id={hash}
+                    key={hash}
+                    ref={iframeRef}
+                    title={title}
+                    src={url}
+                    onLoad={() => setLoading(false)}
+                    style={loading ? { display: 'none' } : {}}
+                />
+            }
         </div>)
 }

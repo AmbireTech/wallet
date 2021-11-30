@@ -5,7 +5,12 @@
   margin: 1.3em 0px;
   user-select: none;
 
-  &:hover {
+  &.disabled {
+    opacity: 0.5;
+    pointer-events: none;
+  }
+
+  &:not(.disabled):hover {
     input, .checkbox-mark {
       background-color: #7B7597;
     }
@@ -52,5 +57,11 @@
       border-width: 0 3px 3px 0;
       transform: rotate(45deg);
     }
+  }
+
+  .checkbox-label {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5em;
   }
 }
