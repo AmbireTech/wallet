@@ -9,6 +9,7 @@ import { fetchChains, fetchFromTokens, fetchQuotes, fetchToTokens } from '../../
 import networks from '../../../../consts/networks'
 import { useToasts } from '../../../../hooks/toasts'
 import NoFundsPlaceholder from '../NoFundsPlaceholder/NoFundsPlaceholder'
+import Quotes from './Quotes/Quotes'
 
 const CrossChain = ({ portfolio, network }) => {
     const { addToast } = useToasts()
@@ -23,6 +24,7 @@ const CrossChain = ({ portfolio, network }) => {
     const [toChain, setToChain] = useState(null)
     const [toTokenItems, setToTokenItems] = useState([])
     const [toToken, setToToken] = useState(null)
+    const [quotes, setQuotes] = useState(null)
     
     const fromChain = useMemo(() => network.chainId, [network.chainId])
     const formDisabled = !(fromToken && toToken && fromChain && toChain && amount > 0)
@@ -120,7 +122,7 @@ const CrossChain = ({ portfolio, network }) => {
             const { decimals } = portfolioToken
             const flatAmount = amount * Math.pow(10, decimals)
             const quotes = await fetchQuotes(fromToken, fromChain, toToken, toChain, flatAmount)
-            console.log(quotes);
+            setQuotes(quotes)
         } catch(e) {
             console.error(e);
             addToast(`Error while loading quotes: ${e.message || e}`, { error: true })
@@ -155,18 +157,21 @@ const CrossChain = ({ portfolio, network }) => {
                         hasNoFunds ?
                             <NoFundsPlaceholder/>
                             :
-                            <div className="form">
-                                <label>From</label>
-                                <Select searchable defaultValue={fromToken} items={fromTokensItems} onChange={value => setFromToken(value)}/>
-                                <NumberInput min="0" label={amountLabel} value={amount} onInput={() => {}} button="MAX" onButtonClick={() => setAmount(maxAmount)}/>
-                                <div className="separator">
-                                    <BsArrowDown/>
+                            quotes ?
+                                <Quotes fromTokensItems={fromTokensItems} quotes={quotes} onCancel={() => setQuotes(null)}/>
+                                :
+                                <div className="form">
+                                    <label>From</label>
+                                    <Select searchable defaultValue={fromToken} items={fromTokensItems} onChange={value => setFromToken(value)}/>
+                                    <NumberInput min="0" label={amountLabel} value={amount} onInput={() => {}} button="MAX" onButtonClick={() => setAmount(maxAmount)}/>
+                                    <div className="separator">
+                                        <BsArrowDown/>
+                                    </div>
+                                    <label>To</label>
+                                    <Select searchable defaultValue={toChain} items={chainsItems} onChange={value => setToChain(value)}/>
+                                    <Select searchable defaultValue={toToken} items={toTokenItems} onChange={value => setToToken(value)}/>
+                                    <Button disabled={formDisabled} onClick={getQuotes}>Get Quotes</Button>
                                 </div>
-                                <label>To</label>
-                                <Select searchable defaultValue={toChain} items={chainsItems} onChange={value => setToChain(value)}/>
-                                <Select searchable defaultValue={toToken} items={toTokenItems} onChange={value => setToToken(value)}/>
-                                <Button disabled={formDisabled} onClick={getQuotes}>Get Quotes</Button>
-                            </div>
             }
         </div>
     )
