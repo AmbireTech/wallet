@@ -1,12 +1,12 @@
-import './SendPlaceholder.scss'
+import './NoFundsPlaceholder.scss'
 
 import { GiReceiveMoney } from 'react-icons/gi'
 import { NavLink } from 'react-router-dom'
 import { Button } from '../../../common'
 
-const SendPlaceholder = () => {
+const NoFundsPlaceholder = () => {
     return (
-        <div id="send-placeholder">
+        <div id="no-funds-placeholder">
             <label>You don't have any funds on this account.</label>
             <NavLink to="/wallet/deposit">
                 <Button small icon={<GiReceiveMoney/>}>Deposit</Button>
@@ -15,4 +15,4 @@ const SendPlaceholder = () => {
     )
 }
 
-export default SendPlaceholder
+export default NoFundsPlaceholder
