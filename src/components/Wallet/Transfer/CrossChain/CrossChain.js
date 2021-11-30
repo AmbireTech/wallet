@@ -199,7 +199,7 @@ const CrossChain = ({ selectedAccount, portfolio, network }) => {
                                         <div className="form">
                                             <label>From</label>
                                             <Select searchable defaultValue={fromToken} items={fromTokensItems} onChange={value => setFromToken(value)}/>
-                                            <NumberInput min="0" label={amountLabel} value={amount} onInput={() => {}} button="MAX" onButtonClick={() => setAmount(maxAmount)}/>
+                                            <NumberInput min="0" label={amountLabel} value={amount} onInput={value => setAmount(value)} button="MAX" onButtonClick={() => setAmount(maxAmount)}/>
                                             <div className="separator">
                                                 <BsArrowDown/>
                                             </div>
