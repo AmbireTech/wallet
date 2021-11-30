@@ -1,0 +1,11 @@
+#cross-chain {
+    .amount-label {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+
+        span {
+            opacity: 0.8;
+        }
+    }
+}

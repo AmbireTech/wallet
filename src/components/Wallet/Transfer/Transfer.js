@@ -1,6 +1,5 @@
 import './Transfer.scss'
 
-import { BsArrowDown } from 'react-icons/bs'
 import { useParams, withRouter } from 'react-router'
 import { useEffect, useState } from 'react'
 import { ethers } from 'ethers'
@@ -9,20 +8,9 @@ import { Interface } from 'ethers/lib/utils'
 import { useToasts } from '../../../hooks/toasts'
 import { TextInput, NumberInput, Button, Select, Loading, AddressBook, AddressWarning } from '../../common'
 import { isValidAddress, isKnownTokenOrContract } from '../../../helpers/address';
+import CrossChain from './CrossChain/CrossChain'
 
 const ERC20 = new Interface(require('adex-protocol-eth/abi/ERC20'))
-const crossChainAssets = [
-    {
-        label: 'USD Coin (Polygon)',
-        value: 'USDC-polygon',
-        icon: 'https://raw.githubusercontent.com/sushiswap/assets/master/blockchains/polygon/assets/0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174/logo.png'
-    },
-    {
-        label: 'Tether USD (Polygon)',
-        value: 'USDT-polygon',
-        icon: 'https://raw.githubusercontent.com/sushiswap/assets/master/blockchains/polygon/assets/0xc2132D05D31c914a87C6611C10748AEb04B58e8F/logo.png'
-    }
-]
 
 const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest, addressBook }) => {
     const { addresses, addAddress, removeAddress, isKnownAddress } = addressBook
@@ -153,23 +141,7 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
                             <SendPlaceholder/>
                }
            </div>
-           <div className="panel">
-               <div className="title">
-                   Cross-chain
-               </div>
-               <div className="form">
-                    <label>From</label>
-                    <Select searchable items={assetsItems} onChange={() => {}}/>
-                    <NumberInput value={0} min="0" onInput={() => {}} button="MAX" onButtonClick={() => setMaxAmount()}/>
-                    <div className="separator">
-                        <BsArrowDown/>
-                    </div>
-                    <label>To</label>
-                    <Select searchable items={crossChainAssets} onChange={() => {}}/>
-                    <NumberInput value={0} min="0" onInput={() => {}} button="MAX" onButtonClick={() => {}}/>
-                    <Button>Transfer</Button>
-                </div>
-           </div>
+           <CrossChain portfolio={portfolio} network={selectedNetwork}/>
         </div>
     )
 }
