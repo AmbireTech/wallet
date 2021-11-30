@@ -17,6 +17,7 @@ const CrossChain = ({ portfolio, network }) => {
     const [disabled, setDisabled] = useState(false)
     const [loading, setLoading] = useState(true)
     const [loadingToTokens, setLoadingToTokens] = useState(false)
+    const [loadingQuotes, setLoadingQuotes] = useState(false)
     
     const [fromTokensItems, setFromTokenItems] = useState([])
     const [fromToken, setFromToken] = useState(null)
@@ -134,10 +135,12 @@ const CrossChain = ({ portfolio, network }) => {
         try {
             const portfolioToken = getTokenFromPortofolio(fromToken)
             if (!portfolioToken) return
+            setLoadingQuotes(true)
             const { decimals } = portfolioToken
             const flatAmount = amount * Math.pow(10, decimals)
             const quotes = await fetchQuotes(fromToken, fromChain, toToken, toChain, flatAmount)
             setQuotes(quotes)
+            setLoadingQuotes(false)
         } catch(e) {
             console.error(e);
             addToast(`Error while loading quotes: ${e.message || e}`, { error: true })
@@ -187,28 +190,31 @@ const CrossChain = ({ portfolio, network }) => {
                         hasNoFunds ?
                             <NoFundsPlaceholder/>
                             :
-                            quotes ?
-                                <Quotes fromTokensItems={fromTokensItems} quotes={quotes} onCancel={() => setQuotes(null)}/>
-                                :
-                                <div className="form">
-                                    <label>From</label>
-                                    <Select searchable defaultValue={fromToken} items={fromTokensItems} onChange={value => setFromToken(value)}/>
-                                    <NumberInput min="0" label={amountLabel} value={amount} onInput={() => {}} button="MAX" onButtonClick={() => setAmount(maxAmount)}/>
-                                    <div className="separator">
-                                        <BsArrowDown/>
-                                    </div>
-                                    <label>To</label>
-                                    {
-                                        loadingToTokens ? 
-                                            <Loading/>
-                                            :
-                                            <>
-                                                <Select searchable defaultValue={toChain} items={chainsItems} onChange={value => setToChain(value)}/>
-                                                <Select searchable defaultValue={toToken} items={toTokenItems} onChange={value => setToToken(value)}/>
-                                            </>
-                                    }
-                                    <Button disabled={formDisabled} onClick={getQuotes}>Get Quotes</Button>
-                                </div>
+                            loadingQuotes ?
+                                    <Loading/>
+                                    :
+                                    quotes ?
+                                        <Quotes fromTokensItems={fromTokensItems} quotes={quotes} onCancel={() => setQuotes(null)}/>
+                                        :
+                                        <div className="form">
+                                            <label>From</label>
+                                            <Select searchable defaultValue={fromToken} items={fromTokensItems} onChange={value => setFromToken(value)}/>
+                                            <NumberInput min="0" label={amountLabel} value={amount} onInput={() => {}} button="MAX" onButtonClick={() => setAmount(maxAmount)}/>
+                                            <div className="separator">
+                                                <BsArrowDown/>
+                                            </div>
+                                            <label>To</label>
+                                            {
+                                                loadingToTokens ? 
+                                                    <Loading/>
+                                                    :
+                                                    <>
+                                                        <Select searchable defaultValue={toChain} items={chainsItems} onChange={value => setToChain(value)}/>
+                                                        <Select searchable defaultValue={toToken} items={toTokenItems} onChange={value => setToToken(value)}/>
+                                                    </>
+                                            }
+                                            <Button disabled={formDisabled} onClick={getQuotes}>Get Quotes</Button>
+                                        </div>
             }
         </div>
     )
