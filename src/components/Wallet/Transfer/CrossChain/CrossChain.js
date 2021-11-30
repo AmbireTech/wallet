@@ -118,6 +118,7 @@ const CrossChain = ({ portfolio, network }) => {
         }
     }
 
+    useEffect(() => setAmount(0), [fromToken])
     useEffect(() => loadTokens(), [toChain, loadTokens])
     useEffect(() => {
         const asyncLoad = async () => {
