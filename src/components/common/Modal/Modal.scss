@@ -12,7 +12,7 @@ $modal-width: 530px;
     flex-direction: column;
     gap: 10px;
     padding: 25px 0;
-    padding-bottom: 30px;
+    padding-bottom: 0;
     background-color: $panel-background-color;
     box-shadow: $box-shadow;
     box-sizing: border-box;
@@ -41,6 +41,8 @@ $modal-width: 530px;
     }
     
     .content {
+        height: 100%;
+        position: relative;
         padding: 0 35px;
         padding-bottom: 50px;
         overflow: hidden;
