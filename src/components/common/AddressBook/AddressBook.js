@@ -12,18 +12,24 @@ const AddressBook = ({ addresses, addAddress, removeAddress, newAddress, onClose
     const [isOpen, setOpenMenu] = useState(false)
     const [openAddAddress, setOpenAddAddress] = useState(false)
 
-    const selectAddress = address => onSelectAddress ? onSelectAddress(address) : null
+    const selectAddress = address => {
+        onSelectAddress && onSelectAddress(address)
+        setOpenMenu(false)
+    }
     
     const isAddAddressFormValid = address.length && name.length && /^0x[a-fA-F0-9]{40}$/.test(address)
     const onAddAddress = useCallback(() => {
+        setOpenMenu(false)
         setOpenAddAddress(false)
         addAddress(name, address)
     }, [name, address, addAddress])
 
-    const onMenuClose = useCallback(() => {
-        setName('')
-        setAddress('')
-        setOpenMenu(false)
+    const onDropDownChange = useCallback(state => {
+        setOpenMenu(state)
+        if (!state) {
+            setName('')
+            setAddress('')
+        }
     }, [])
 
     useEffect(() => !isOpen && onClose ? onClose() : null, [isOpen, onClose])
@@ -37,7 +43,7 @@ const AddressBook = ({ addresses, addAddress, removeAddress, newAddress, onClose
     }, [newAddress])
 
     return (
-        <DropDown title={<><FaAddressCard/>Address Book</>} className="address-book" open={isOpen} onClose={onMenuClose}>
+        <DropDown title={<><FaAddressCard/>Address Book</>} className="address-book" open={isOpen} onChange={onDropDownChange}>
             <div className="heading">
                 <div className="title">
                     <FaAddressCard/> Address Book
