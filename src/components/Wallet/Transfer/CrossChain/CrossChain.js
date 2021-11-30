@@ -4,7 +4,7 @@ import { BsArrowDown } from 'react-icons/bs'
 
 import { useEffect, useState, useCallback, useMemo } from 'react'
 import { ethers } from 'ethers'
-import { NumberInput, Button, Select } from '../../../common'
+import { NumberInput, Button, Select, Loading } from '../../../common'
 import { fetchChains, fetchFromTokens, fetchQuotes, fetchToTokens } from '../../../../services/movr'
 import networks from '../../../../consts/networks'
 import { useToasts } from '../../../../hooks/toasts'
@@ -13,6 +13,7 @@ const CrossChain = ({ portfolio, network }) => {
     const { addToast } = useToasts()
 
     const [disabled, setDisabled] = useState(false)
+    const [loading, setLoading] = useState(true)
     
     const [fromTokensItems, setFromTokenItems] = useState([])
     const [fromToken, setFromToken] = useState(null)
@@ -39,9 +40,11 @@ const CrossChain = ({ portfolio, network }) => {
                     value: chainId
                 }))
             setChainsItems(chainsItems)
+            return true
         } catch(e) {
             console.error(e);
             addToast(`Error while loading chains: ${e.message || e}`, { error: true })
+            return false
         }
     }, [fromChain, addToast])
 
@@ -114,7 +117,14 @@ const CrossChain = ({ portfolio, network }) => {
     }
 
     useEffect(() => loadTokens(), [toChain, loadTokens])
-    useEffect(() => loadChains(), [fromChain, loadChains])
+    useEffect(() => {
+        const asyncLoad = async () => {
+            setLoading(true)
+            const loaded = await loadChains()
+            setLoading(!loaded)
+        }
+        asyncLoad()
+    }, [fromChain, loadChains])
 
     const amountLabel = <div className="amount-label">Available Amount: <span>{ maxAmount }</span></div>
 
@@ -127,18 +137,21 @@ const CrossChain = ({ portfolio, network }) => {
                 disabled ? 
                     <div>Not supported on this Network</div>
                     :
-                    <div className="form">
-                        <label>From</label>
-                        <Select searchable defaultValue={fromToken} items={fromTokensItems} onChange={value => setFromToken(value)}/>
-                        <NumberInput min="0" label={amountLabel} value={amount} onInput={() => {}} button="MAX" onButtonClick={() => setAmount(maxAmount)}/>
-                        <div className="separator">
-                            <BsArrowDown/>
+                    loading || portfolio.isBalanceLoading ? 
+                        <Loading/>
+                        :
+                        <div className="form">
+                            <label>From</label>
+                            <Select searchable defaultValue={fromToken} items={fromTokensItems} onChange={value => setFromToken(value)}/>
+                            <NumberInput min="0" label={amountLabel} value={amount} onInput={() => {}} button="MAX" onButtonClick={() => setAmount(maxAmount)}/>
+                            <div className="separator">
+                                <BsArrowDown/>
+                            </div>
+                            <label>To</label>
+                            <Select searchable defaultValue={toChain} items={chainsItems} onChange={value => setToChain(value)}/>
+                            <Select searchable defaultValue={toToken} items={toTokenItems} onChange={value => setToToken(value)}/>
+                            <Button onClick={getQuotes}>Get Quotes</Button>
                         </div>
-                        <label>To</label>
-                        <Select searchable defaultValue={toChain} items={chainsItems} onChange={value => setToChain(value)}/>
-                        <Select searchable defaultValue={toToken} items={toTokenItems} onChange={value => setToToken(value)}/>
-                        <Button onClick={getQuotes}>Get Quotes</Button>
-                    </div>
             }
         </div>
     )
