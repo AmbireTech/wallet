@@ -1,7 +1,7 @@
 @import '../../../variables.scss';
 
 #sidebar {
-  z-index: 49;
+  z-index: 50;
   height: 100%;
   width: $sidebar-desktop-width;
   position: fixed;
@@ -160,12 +160,17 @@
 // Mobile
 @media screen and (max-width: $mobile-breakpoint-max-width) {
   #sidebar {
-    z-index: 50;
     height: $sidebar-mobile-height;
-    width: 70px;
+    width: 170px;
+    padding: 0 10px;
+
+    #logo {
+      opacity: 1;
+      margin: 0;
+    }
 
     #icon {
-      height: 50px;
+      opacity: 0;
     }
 
     .balance {
