@@ -4,33 +4,100 @@ const EMAIL_REGEX = /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-
 const NUMBER_STRING_REGEX = /^([0-9]+\.?[0-9]*)$/
 const HEX_DATA_LENGTH = 32
 const TIME_LOCK_NUMBER_LENGTH = 6
+const NEEDED_KEYS = [
+  'salt',
+  'identityFactoryAddr',
+  'baseIdentityAddr',
+  'bytecode',
+  'signer',
+]
 
 const validateImportedAccountProps = acc => {
-    if (!(acc.id && isValidAddress(acc.id))) return 'Failed to import JSON file: invalid id'
-    if (!(acc.email && isValidEmailAddress(acc.email))) return 'Failed to import JSON file: invalid email'
-    if (!(acc.signer && isValidAddress(acc.signer.address || acc.signer.quickAccManager))) return 'JSON file: invalid signer address'
-    if (acc.signer.quickAccManager) {
-        if (!(acc.signer.timelock && isValidTimeLock(acc.signer.timelock))) return 'Failed to import JSON file: invalid signer timelock'
-        if (!(acc.signer.one && isValidAddress(acc.signer.one))) return 'Failed to import JSON file: invalid signer one'
-        if (!(acc.signer.two && isValidAddress(acc.signer.two))) return 'Failed to import JSON file: invalid signer two'
+  if (!(acc && validateAccountProps(acc))) {
+    return {
+      success: false,
+      message: 'The imported file does not contain needed account data.',
     }
-    
-    if (!(acc.salt && isValidSalt(acc.salt))) return 'JSON file: invalid salt'
-    if (!(acc.identityFactoryAddr && isValidAddress(acc.identityFactoryAddr))) return 'JSON file: invalid identity Factory Address'
-    if (!(acc.baseIdentityAddr && isValidAddress(acc.baseIdentityAddr))) return 'JSON file: invalid base Identity Address'
-    
-    return ''
+  }
+
+  if (!(acc.id && isValidAddress(acc.id))) {
+    return { 
+      success: false, 
+      message: 'Failed to import JSON file: invalid id' 
+    }
+  }
+
+  if (!(acc.email && isValidEmailAddress(acc.email))) {
+    return {
+      success: false,
+      message: 'Failed to import JSON file: invalid email',
+    }
+  }
+
+  if (!(acc.signer && isValidAddress(acc.signer.address || acc.signer.quickAccManager))) {
+    return {
+      success: false,
+      message: 'JSON file: invalid signer address',
+    }
+  }
+
+  if (acc.signer.quickAccManager) {
+    if (!(acc.signer.timelock && isValidTimeLock(acc.signer.timelock))) {
+      return {
+        success: false,
+        message: 'Failed to import JSON file: invalid signer timelock',
+      }
+    }
+
+    if (!(acc.signer.one && isValidAddress(acc.signer.one))) {
+      return {
+        success: false,
+        message: 'Failed to import JSON file: invalid signer one',
+      }
+    }
+
+    if (!(acc.signer.two && isValidAddress(acc.signer.two))) {
+      return {
+        success: false,
+        message: 'Failed to import JSON file: invalid signer two',
+      }
+    }
+  }
+
+  if (!(acc.salt && isValidSalt(acc.salt))) {
+    return { success: false, message: 'JSON file: invalid salt' }
+  }
+
+  if (!(acc.identityFactoryAddr && isValidAddress(acc.identityFactoryAddr))) {
+    return {
+      success: false,
+      message: 'JSON file: invalid identity Factory Address',
+    }
+  }
+
+  if (!(acc.baseIdentityAddr && isValidAddress(acc.baseIdentityAddr))) {
+    return {
+      success: false,
+      message: 'JSON file: invalid base Identity Address',
+    }
+  }
+
+  return { success: true }
 }
 
-const isValidAddress = addr => { 
-    try {
-        return getAddress(addr) === addr
-    } catch(e) {
-        return false
-    }
+const isValidAddress = addr => {
+  try {
+    return getAddress(addr) === addr
+  } catch (e) {
+    return false
+  }
 }
+
+const validateAccountProps = acc => NEEDED_KEYS.every(key => Object.keys(acc).includes(key))
 const isValidEmailAddress = addr => EMAIL_REGEX.test(addr)
-const isValidTimeLock = timelock => NUMBER_STRING_REGEX.test(timelock) && timelock.toString().length === TIME_LOCK_NUMBER_LENGTH
+const isValidTimeLock = timelock => {
+  return NUMBER_STRING_REGEX.test(timelock) && timelock.toString().length === TIME_LOCK_NUMBER_LENGTH
+}
 const isValidSalt = salt => hexDataLength(salt) === HEX_DATA_LENGTH
 
 export default validateImportedAccountProps
