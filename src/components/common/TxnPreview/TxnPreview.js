@@ -25,7 +25,7 @@ export default function TxnPreview ({ txn, onDismiss, network, account, isFirstF
               <div className="summary">{getTransactionSummary(txn, network, account, { mined })}</div>
             </div>
             {isFirstFailing && (<div className='firstFailingLabel'>This is the first failing transaction.</div>)}
-            {!isFirstFailing && txn[2].length > 2 && !isKnown(txn[0]) && (<div className='unknownWarning'>Warning: interacting with an unknown contract.</div>)}
+            {!isFirstFailing && !isKnown(txn[0]) && (<div className='unknownWarning'>Warning: interacting with an unknown contract or address.</div>)}
           </div>
           <div className='actionIcons'>
               {onDismiss ? (<span className='dismissTxn' onClick={onDismiss}><FaTimes/></span>) : (<></>)}
