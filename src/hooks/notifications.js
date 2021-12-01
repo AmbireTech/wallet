@@ -66,7 +66,7 @@ export default function useNotifications (requests, onShow, portfolio, selectedA
 
     useEffect(() => {
         try {
-            if (!portfolio.isBalanceLoading && !portfolio.areProtocolsLoading && portfolio.balance) {
+            if (!portfolio.isBalanceLoading && portfolio.balance) {
                 if (!isLastTotalBalanceInit) {
                     isLastTotalBalanceInit = true
                     lastTokensBalanceRaw = portfolio.tokens.map(({ address, balanceRaw }) => ({ address, balanceRaw }))
