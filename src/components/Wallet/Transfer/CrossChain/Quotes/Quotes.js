@@ -4,7 +4,7 @@ import { MdOutlineArrowForward, MdOutlineCheck, MdOutlineClose } from 'react-ico
 import { Button, Loading, Radios } from '../../../../common';
 import { useState } from 'react';
 import networks from '../../../../../consts/networks';
-import { approvalBuildTx, checkApprovalAllowance, sendBuildTx } from '../../../../../services/movr';
+import { approvalBuildTx, sendBuildTx } from '../../../../../services/movr';
 import { useToasts } from '../../../../../hooks/toasts';
 
 const formatAmount = (amount, asset) => amount / Math.pow(10, asset.decimals)
