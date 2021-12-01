@@ -47,7 +47,7 @@ export function getTransactionSummary(txn, networkId, accountAddr, opts = {}) {
 // Currently takes network because one day we may be seeing the same addresses used on different networks
 export function getName(addr, network) {
     const address = addr.toLowerCase()
-    if (knownAliases[address]) return `${knownAliases[address]} (${addr})`
+    if (knownAliases[address]) return knownAliases[address]
     return names[address] || (tokens[address] ? tokens[address][0] + ' token' : null) || addr
 }
 
@@ -73,6 +73,11 @@ export function nativeToken(network, amount) {
 
 export function setKnownAddresses(addrs) {
     addrs.forEach(({ address, name }) => knownAliases[address.toLowerCase()] = name)
+}
+
+export function isKnown(addr) {
+    const address = addr.toLowerCase()
+    return !!(knownAliases[address] || names[address] || tokens[address])
 }
 
 // @TODO
