@@ -24,18 +24,23 @@ const Quotes = ({ addRequest, selectedAccount, fromTokensItems, quotes, onCancel
         routePath,
         middlewareRoute,
         bridgeRoute,
-        middlewareFee: formatAmount(fees.middlewareFee.amount, middlewareRoute.fromAsset),
-        bridgeFee: formatAmount(fees.bridgeFee.amount, bridgeRoute.fromAsset)
+        middlewareFee: middlewareRoute ? formatAmount(fees.middlewareFee.amount, middlewareRoute.fromAsset) : 0,
+        bridgeFee: bridgeRoute ? formatAmount(fees.bridgeFee.amount, bridgeRoute.toAsset) : 0
     }))
 
     const radios = routes.map(({ routePath, middlewareFee, bridgeFee, middlewareRoute, bridgeRoute }) => ({
         label:
             <div className="route">
                 <div className="info">
-                    <div className="middleware">
-                        <div className="icon" style={{backgroundImage: `url(${middlewareRoute.middlewareInfo.icon})`}}></div>
-                        <div className="name">{ middlewareRoute.middlewareInfo.displayName }</div>
-                    </div>
+                    {
+                        middlewareRoute ?
+                            <div className="middleware">
+                                <div className="icon" style={{backgroundImage: `url(${middlewareRoute.middlewareInfo.icon})`}}></div>
+                                <div className="name">{ middlewareRoute.middlewareInfo.displayName }</div>
+                            </div>
+                            :
+                            null
+                    }
                     <div className="bridge">
                         <div className="icon" style={{backgroundImage: `url(${bridgeRoute.bridgeInfo.icon})`}}></div>
                         <div className="name">{ bridgeRoute.bridgeInfo.displayName }</div>
@@ -43,17 +48,27 @@ const Quotes = ({ addRequest, selectedAccount, fromTokensItems, quotes, onCancel
                 </div>
                 <div className="summary">
                     <div className="amounts">
-                        <div className="amount">
-                            { formatAmount(middlewareRoute.inputAmount, middlewareRoute.fromAsset) } { middlewareRoute.fromAsset.symbol }
-                        </div>
+                        {
+                            middlewareRoute ?
+                                <div className="amount">
+                                    { formatAmount(middlewareRoute.inputAmount, middlewareRoute.fromAsset) } { middlewareRoute.fromAsset.symbol }
+                                </div>
+                                :
+                                null
+                        }   
                         <div className="amount">
                             { formatAmount(bridgeRoute.outputAmount, bridgeRoute.toAsset) } { bridgeRoute.toAsset.symbol }
                         </div>
                     </div>
                     <div className="fees">
-                        <div className="fee">
-                            { middlewareFee ? <>Fee: { middlewareFee } { middlewareRoute.fromAsset.symbol }</> : null }
-                        </div>
+                        {
+                            middlewareRoute ?
+                                <div className="fee">
+                                    { middlewareFee ? <>Fee: { middlewareFee } { middlewareRoute.fromAsset.symbol }</> : null }
+                                </div>
+                                :
+                                null
+                        }
                         <div className="fee">
                             { bridgeFee ? <>Fee: { bridgeFee } { bridgeRoute.toAsset.symbol }</> : null }
                         </div>
@@ -63,7 +78,7 @@ const Quotes = ({ addRequest, selectedAccount, fromTokensItems, quotes, onCancel
         value: routePath
     }))
 
-    const sendTx = (id, chainId, to, data, value = '0') => {
+    const sendTx = (id, chainId, to, data, value = '0x00') => {
         addRequest({
             id,
             chainId,
@@ -82,10 +97,20 @@ const Quotes = ({ addRequest, selectedAccount, fromTokensItems, quotes, onCancel
 
         try {
             const { middlewareRoute, bridgeRoute, routePath } = routes.find(({ routePath }) => routePath === selectedRoute)
-            const { fromAsset, inputAmount } = middlewareRoute
+
+            let fromAsset, inputAmount = null
+            if (middlewareRoute) {
+                fromAsset = middlewareRoute.fromAsset
+                inputAmount = middlewareRoute.inputAmount
+            } else {
+                fromAsset = bridgeRoute.fromAsset
+                inputAmount = bridgeRoute.inputAmount
+            }
+
             const { toAsset, outputAmount } = bridgeRoute
             const { tx } = await sendBuildTx(selectedAccount, fromAsset.address, fromAsset.chainId, toAsset.address, toAsset.chainId, inputAmount, outputAmount, routePath)
             const allowance = await checkApprovalAllowance(fromAsset.chainId, selectedAccount, tx.to, fromAsset.address)
+
             if (inputAmount > allowance.value) {
                 const { to, data } = await approvalBuildTx(fromAsset.chainId, selectedAccount, tx.to, fromAsset.address, inputAmount)
                 sendTx(`transfer_approval_crosschain_${Date.now()}`, fromAsset.chainId, to, data)
