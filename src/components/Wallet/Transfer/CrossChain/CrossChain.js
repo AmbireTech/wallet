@@ -165,6 +165,7 @@ const CrossChain = ({ addRequest, selectedAccount, portfolio, network }) => {
 
     useEffect(() => {
         if (!fromChain) return
+        setQuotes(null)
         const asyncLoad = async () => {
             setLoading(true)
             const loaded = await loadChains()
