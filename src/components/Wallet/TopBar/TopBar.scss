@@ -12,11 +12,26 @@
     background-color: $background-color;
     box-shadow: 0 5px ($layout-spacing / 4) 5px $background-color;
 
-    #mobile-menu-button {
+    #mobile-menu {
         display: none;
+        align-items: center;
+        gap: 1em;
         position: absolute;
-        right: 15px;
-        font-size: 30px;
+        right: 1em;
+
+        .icon {
+            height: 25px;
+            width: 25px;
+            background-size: contain;
+            background-position: center center;
+            background-repeat: no-repeat;
+            border-radius: 100%;
+        }
+
+        #menu-button {
+            @include flex-center-center;
+            font-size: 30px;
+        }
     }
 
     .container {
@@ -45,8 +60,8 @@
         padding-left: 15px;
         padding-right: 15px;
 
-        #mobile-menu-button {
-            display: block;
+        #mobile-menu {
+            display: flex;
         }
 
         .container {
