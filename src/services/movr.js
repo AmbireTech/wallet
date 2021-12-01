@@ -26,7 +26,19 @@ const fetchQuotes = async (fromAsset, fromChainId, toAsset, toChainId, amount, s
     return response.result
 }
 
-const buildTx = async (recipient, fromAsset, fromChainId, toAsset, toChainId, amount, output, routePath) => {
+const checkApprovalAllowance = async (chainID, owner, allowanceTarget, tokenAddress) => {
+    const response = await fetchGet(`${baseURL}/approval/check-allowance?chainID=${chainID}&owner=${owner}&allowanceTarget=${allowanceTarget}&tokenAddress=${tokenAddress}`)
+    if (!response) return null
+    return response.result
+}
+
+const approvalBuildTx = async (chainID, owner, allowanceTarget, tokenAddress, amount) => {
+    const response = await fetchGet(`${baseURL}/approval/build-tx?chainID=${chainID}&owner=${owner}&allowanceTarget=${allowanceTarget}&tokenAddress=${tokenAddress}&amount=${amount}`)
+    if (!response) return null
+    return response.result
+}
+
+const sendBuildTx = async (recipient, fromAsset, fromChainId, toAsset, toChainId, amount, output, routePath) => {
     const response = await fetchGet(`${baseURL}/send/build-tx?recipient=${recipient}&fromAsset=${fromAsset}&fromChainId=${fromChainId}&toAsset=${toAsset}&toChainId=${toChainId}&amount=${amount}&output=${output}&fromAddress=${recipient}&routePath=${routePath}`)
     if (!response) return null
     return response.result
@@ -37,5 +49,7 @@ export {
     fetchToTokens,
     fetchFromTokens,
     fetchQuotes,
-    buildTx
+    checkApprovalAllowance,
+    approvalBuildTx,
+    sendBuildTx
 }
