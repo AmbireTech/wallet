@@ -34,7 +34,7 @@ const CrossChain = ({ addRequest, selectedAccount, portfolio, network }) => {
     const getTokenFromPortofolio = useCallback(tokenAddress => portfolio.tokens
         .map(token => ({
             ...token,
-            address: token.address === `0x${'0'.repeat(40)}` ? `0x${'e'.repeat(40)}` : token.address
+            address: Number(token.address) === 0 ? `0x${'e'.repeat(40)}` : token.address
         }))
         .find(({ address }) => address === tokenAddress), [portfolio.tokens])
 
@@ -72,7 +72,7 @@ const CrossChain = ({ addRequest, selectedAccount, portfolio, network }) => {
                 ...new Set(fromTokens
                     .filter(({ address }) => portfolio.tokens
                         .map(({ address }) => address)
-                        .map(address => address === `0x${'0'.repeat(40)}` ? `0x${'e'.repeat(40)}` : address).includes(address))
+                        .map(address => Number(address) === 0 ? `0x${'e'.repeat(40)}` : address).includes(address))
                     .map(({ address }) => address)
                 )
             ]
