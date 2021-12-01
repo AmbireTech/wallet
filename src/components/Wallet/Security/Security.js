@@ -236,53 +236,51 @@ const Security = ({
     </div>
   )
   return (
-    <section id="security" className={(isDragActive ? 'activeStyle ' : '') + (isDragAccept ? 'acceptStyle ' : '') + (isDragReject ? 'rejectStyle ' : '')}>
+    <section id="security" className={(isDragActive ? 'activeStyle ' : '') + (isDragAccept ? 'acceptStyle ' : '') + (isDragReject ? 'rejectStyle ' : '')} {...getRootProps()}>
       {
         (isDragAccept || isDragReject)
         && (<div className={isDragAccept ? 'acceptStyleIcon' : 'rejectStyleIcon'}><RiDragDropLine size={100}/></div>)
       }
       
-      <div {...getRootProps()}>
-        <input {...getInputProps()} />
-        {signersFragment}
+      <input {...getInputProps()} />
+      {signersFragment}
 
-        <div id="addresses" className='panel'>
-          <div className='title'>Address Book</div>
+      <div id="addresses" className='panel'>
+        <div className='title'>Address Book</div>
+        <div className="content">
+          <AddressList
+            noAccounts={true}
+            addresses={addresses}
+            removeAddress={removeAddress}
+          />
+          <Button small icon={<MdOutlineAdd/>} onClick={showInputModal}>Add Address</Button>
+        </div>
+      </div>
+
+      <div id="backup">
+        <div className="panel">
+          <div className="panel-title">Backup current account</div>
           <div className="content">
-            <AddressList
-              noAccounts={true}
-              addresses={addresses}
-              removeAddress={removeAddress}
-            />
-            <Button small icon={<MdOutlineAdd/>} onClick={showInputModal}>Add Address</Button>
+            <a
+              type="button"
+              href={`data:text/json;charset=utf-8,${encodeURIComponent(
+                JSON.stringify(selectedAccount)
+              )}`}
+              download={`${selectedAccount.id}.json`}
+            >
+              <Button>Export</Button>
+            </a>
+            <div style={{ fontSize: '0.9em' }}>
+            This downloads a backup of your current account ({selectedAccount.id.slice(0, 5)}...{selectedAccount.id.slice(-3)}) encrypted with
+            your password. This is safe to store in iCloud/Google Drive, but you cannot use it to restore your account if you forget the password.
+            </div>
           </div>
         </div>
-
-        <div id="backup">
-          <div className="panel">
-            <div className="panel-title">Backup current account</div>
-            <div className="content">
-              <a
-                type="button"
-                href={`data:text/json;charset=utf-8,${encodeURIComponent(
-                  JSON.stringify(selectedAccount)
-                )}`}
-                download={`${selectedAccount.id}.json`}
-              >
-                <Button>Export</Button>
-              </a>
-              <div style={{ fontSize: '0.9em' }}>
-              This downloads a backup of your current account ({selectedAccount.id.slice(0, 5)}...{selectedAccount.id.slice(-3)}) encrypted with
-              your password. This is safe to store in iCloud/Google Drive, but you cannot use it to restore your account if you forget the password.
-              </div>
-            </div>
-          </div>
-          <div className="panel">
-            <div className="panel-title">Import an account from backup</div>
-            <div className="content import">
-              <Button small onClick={open}>Import</Button>
-              <p>...or you can drop an account backup JSON file on this page</p>
-            </div>
+        <div className="panel">
+          <div className="panel-title">Import an account from backup</div>
+          <div className="content import">
+            <Button small onClick={open}>Import</Button>
+            <p>...or you can drop an account backup JSON file on this page</p>
           </div>
         </div>
       </div>
