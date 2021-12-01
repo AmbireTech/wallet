@@ -75,5 +75,10 @@ export function setKnownAddresses(addrs) {
     addrs.forEach(({ address, name }) => knownAliases[address.toLowerCase()] = name)
 }
 
+export function isKnown(addr) {
+    const address = addr.toLowerCase()
+    return !!(knownAliases[address] || names[address] || tokens[address])
+}
+
 // @TODO
 // export function getMethodName(txn)
