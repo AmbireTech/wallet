@@ -34,7 +34,7 @@ export default function useNotifications (requests, onShow, portfolio, selectedA
         })
         //notification.onclose = 
         notification.onclick = () => {
-            if (request.type === 'eth_sendTransaction') window.onClickNotif(request)
+            if (request && request.type === 'eth_sendTransaction') window.onClickNotif(request)
             window.focus()
             notification.close()
         }
