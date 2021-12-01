@@ -43,9 +43,12 @@
                 }
             }
 
-            .firstFailingLabel {
+            .firstFailingLabel, .unknownWarning {
                 font-weight: bold;
                 color: $danger-color;
+            }
+            .unknownWarning {
+                opacity: 0.6;
             }
         }
 
