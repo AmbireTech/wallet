@@ -11,7 +11,7 @@ import { useToasts } from '../../../../hooks/toasts'
 import NoFundsPlaceholder from '../NoFundsPlaceholder/NoFundsPlaceholder'
 import Quotes from './Quotes/Quotes'
 
-const CrossChain = ({ selectedAccount, portfolio, network }) => {
+const CrossChain = ({ addRequest, selectedAccount, portfolio, network }) => {
     const { addToast } = useToasts()
 
     const [disabled, setDisabled] = useState(false)
@@ -194,7 +194,13 @@ const CrossChain = ({ selectedAccount, portfolio, network }) => {
                                     <Loading/>
                                     :
                                     quotes ?
-                                        <Quotes selectedAccount={selectedAccount} fromTokensItems={fromTokensItems} quotes={quotes} onCancel={() => setQuotes(null)}/>
+                                        <Quotes
+                                            addRequest={addRequest}
+                                            selectedAccount={selectedAccount}
+                                            fromTokensItems={fromTokensItems}
+                                            quotes={quotes}
+                                            onCancel={() => setQuotes(null)}
+                                        />
                                         :
                                         <div className="form">
                                             <label>From</label>
