@@ -20,7 +20,9 @@ const Quotes = ({ addRequest, selectedAccount, fromTokensItems, quotes, onCancel
     const [selectedRoute, setSelectedRoute] = useState(null)
     const [loading, setLoading] = useState(false)
 
-    const routes = quotes.routes.map(({ routePath, fees, middlewareRoute, bridgeRoute }) => ({
+    const routes = quotes.routes.map(({ allowanceTarget, isApprovalRequired, routePath, fees, middlewareRoute, bridgeRoute }) => ({
+        allowanceTarget,
+        isApprovalRequired,
         routePath,
         middlewareRoute,
         bridgeRoute,
@@ -96,7 +98,7 @@ const Quotes = ({ addRequest, selectedAccount, fromTokensItems, quotes, onCancel
         setLoading(true)
 
         try {
-            const { middlewareRoute, bridgeRoute, routePath } = routes.find(({ routePath }) => routePath === selectedRoute)
+            const { allowanceTarget, isApprovalRequired, middlewareRoute, bridgeRoute, routePath } = routes.find(({ routePath }) => routePath === selectedRoute)
 
             let fromAsset, inputAmount = null
             if (middlewareRoute) {
@@ -108,15 +110,14 @@ const Quotes = ({ addRequest, selectedAccount, fromTokensItems, quotes, onCancel
             }
 
             const { toAsset, outputAmount } = bridgeRoute
-            const { tx } = await sendBuildTx(selectedAccount, fromAsset.address, fromAsset.chainId, toAsset.address, toAsset.chainId, inputAmount, outputAmount, routePath)
-            const allowance = await checkApprovalAllowance(fromAsset.chainId, selectedAccount, tx.to, fromAsset.address)
-
-            if (inputAmount > allowance.value) {
-                const { to, data } = await approvalBuildTx(fromAsset.chainId, selectedAccount, tx.to, fromAsset.address, inputAmount)
+            
+            if (isApprovalRequired) {
+                const { to, data } = await approvalBuildTx(fromAsset.chainId, selectedAccount, allowanceTarget, fromAsset.address, inputAmount)
                 sendTx(`transfer_approval_crosschain_${Date.now()}`, fromAsset.chainId, to, data)
-            } else {
-                sendTx(`transfer_send_crosschain_${Date.now()}`, fromAsset.chainId, tx.to, tx.data, tx.value.hex)
             }
+
+            const { tx } = await sendBuildTx(selectedAccount, fromAsset.address, fromAsset.chainId, toAsset.address, toAsset.chainId, inputAmount, outputAmount, routePath)
+            sendTx(`transfer_send_crosschain_${Date.now()}`, fromAsset.chainId, tx.to, tx.data, tx.value.hex)
         } catch(e) {
             console.error(e);
             addToast(e.message || e, { error: true })
