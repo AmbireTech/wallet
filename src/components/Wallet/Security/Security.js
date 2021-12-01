@@ -16,6 +16,7 @@ import { useToasts } from '../../../hooks/toasts'
 import { useHistory } from 'react-router-dom'
 import { useDropzone } from 'react-dropzone'
 import { MdInfoOutline } from 'react-icons/md'
+import { validateImportedAccountProps, fileSizeValidator } from '../../../lib/importedAccountValidations'
 
 const IDENTITY_INTERFACE = new Interface(
   require('adex-protocol-eth/abi/Identity5.2')
@@ -171,7 +172,7 @@ const Security = ({
     const reader = new FileReader()
     
     if (rejectedFiles.length) {
-      addToast(`${rejectedFiles[0].file.path} - ${rejectedFiles[0].file.size / 1024} KB. ${rejectedFiles[0].errors[0].message}.`, { error: true })
+      addToast(`${rejectedFiles[0].file.path} - ${(rejectedFiles[0].file.size / 1024).toFixed(2)} KB. ${rejectedFiles[0].errors[0].message}`, { error: true })
     }
 
     if (acceptedFiles.length){
@@ -179,34 +180,20 @@ const Security = ({
 
       reader.readAsText(file,'UTF-8')
       reader.onload = readerEvent => {
-          const content = readerEvent.target.result
-          const fileContent = JSON.parse(content)
-          const neededKeys = ['salt', 'identityFactoryAddr', 'baseIdentityAddr', 'bytecode', 'signer']
-          const isFileContainsNeededKeys = neededKeys.every(key => Object.keys(fileContent).includes(key))
-
-          if (isFileContainsNeededKeys) onAddAccount(fileContent, { select: true })
-          else 
-          addToast('The imported file does not contain needed account data.', { error: true })
+        const content = readerEvent.target.result
+        const fileContent = JSON.parse(content)
+        const validatedFile = validateImportedAccountProps(fileContent)
+        
+        if (validatedFile.success) onAddAccount(fileContent, { select: true })
+        else addToast(validatedFile.message, { error: true})
       }
     }
   }, [addToast, onAddAccount])
 
-  const maxFileSize = 3072
-
-  const fileSizeValidator = file => {
-    if (file.size > maxFileSize) {
-      return {
-        code: "file-size-too-large",
-        message: `The file size is larger than ${maxFileSize / 1024} KB.`
-      }
-    }
-
-    return null
-  }
-
   const { getRootProps, getInputProps, open, isDragActive, isDragAccept, isDragReject } = useDropzone({
     onDrop,
     noClick: true,
+    noKeyboard: true,
     accept: 'application/json',
     maxFiles: 1,
     validator: fileSizeValidator
