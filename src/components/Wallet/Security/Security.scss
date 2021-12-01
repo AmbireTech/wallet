@@ -5,6 +5,38 @@
   // justify-content: center;
   flex-direction: column;
   gap: 2em;
+  border: 1px dashed transparent;
+
+  .acceptStyleIcon {
+    z-index: 2;
+    position: absolute;
+    color: $primary-accent-color;
+    top: calc(50% - 50px);
+    left: calc(50% - 50px);
+  }
+
+  .rejectStyleIcon {
+    z-index: 2;
+    position: absolute;
+    color: $danger-color;
+    top: calc(50% - 50px);
+    left: calc(50% - 50px);
+  }
+
+  &.activeStyle {
+    border-color: $secondary-accent-color;
+    opacity: 0.7;
+  }
+
+  &.acceptStyle {
+    border-color: $primary-accent-color;
+    opacity: 0.7;
+  }
+
+  &.rejectStyle {
+    border-color: $danger-color;
+    opacity: 0.7;
+  }
 
   .panel {
     flex: 0 1 100%;
@@ -49,25 +81,12 @@
         height: 60px;
       }
 
-      // .button {
-      //   width: 100%;
-      //   box-sizing: border-box;
-      //   text-align: left;
-      //   margin: 1.5em 0px;
-      //   border: 0px;
-      //   color: black;
-      //   background-color: white;
-      //   line-height: 25px;
-      // }
-
-      // .icon {
-      //   margin-right: 10px;
-      //   width: 25px;
-      //   height: 25px;
-      //   background-repeat: no-repeat;
-      //   background-size: contain;
-      //   float: left;
-      // }
+      &.import {
+        button {
+          max-width: 1800px;
+          background: $secondary-accent-color;
+        }
+      }
 
       .text-input {
         flex-grow: 2.8;
@@ -97,6 +116,14 @@
           gap: 1em;
         }
       }
+
+      a {
+        button {
+          width: 100%;
+          background: orange;
+          max-width: 1800px;
+        }
+      }
     }
   }
 
@@ -123,8 +150,14 @@
 
       .details {
         text-align: left;
+
+        label {
+          cursor: default;
+        }
+
         .address {
           word-break: break-all;
+          text-align: left;
         }
       }
 
