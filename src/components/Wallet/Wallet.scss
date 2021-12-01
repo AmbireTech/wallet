@@ -16,6 +16,8 @@
     display: flex;
     flex-direction: column;
     align-items: stretch;
+    overflow: hidden;
+    overflow-y: auto;
 
     .placeholder-overlay {
         z-index: 47;
