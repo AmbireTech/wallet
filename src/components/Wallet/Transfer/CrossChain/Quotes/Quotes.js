@@ -158,7 +158,15 @@ const Quotes = ({ addRequest, selectedAccount, fromTokensItems, quotes, onCancel
                     :
                     <div id="routes">
                         <div className="title">Routes</div>
-                        <Radios radios={radios} onChange={value => setSelectedRoute(value)}/>
+                        {
+                            !radios.length ?
+                                <div id="no-routes-placeholder">
+                                    There is no routes available for this configuration at the moment.<br/>
+                                    Try increasing the amount or switching token.
+                                </div>
+                                :
+                                <Radios radios={radios} onChange={value => setSelectedRoute(value)}/>
+                        }
                     </div>
             }
 
