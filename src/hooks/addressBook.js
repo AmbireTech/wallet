@@ -35,11 +35,6 @@ const useAddressBook = ({ accounts, selectedAcc }) => {
         }
     }, [accounts, selectedAcc])
 
-    // a bit of a 'cheat': update the humanizer with the latest known addresses
-    // this is breaking the react patterns cause the humanizer has a 'global' state, but that's fine since it simply constantly learns new addr aliases,
-    // so there's no 'inconsistent state' there, the more the better
-    setKnownAddresses(addressList)
-
     const [addresses, setAddresses] = useState(() => addressList)
 
     const updateAddresses = addresses => {
@@ -85,7 +80,12 @@ const useAddressBook = ({ accounts, selectedAcc }) => {
         addToast(`${address} removed from your Address Book.`)
     }, [addresses, addToast])
 
-    useEffect(() => setAddresses(addressList), [accounts, selectedAcc, addressList])
+    useEffect(() => { setAddresses(addressList) }, [accounts, selectedAcc, addressList])
+
+    // a bit of a 'cheat': update the humanizer with the latest known addresses
+    // this is breaking the react patterns cause the humanizer has a 'global' state, but that's fine since it simply constantly learns new addr aliases,
+    // so there's no 'inconsistent state' there, the more the better
+    useEffect(() => setKnownAddresses(addresses), [addresses])
 
     return {
         addresses,
