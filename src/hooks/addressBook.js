@@ -10,7 +10,7 @@ const accountType = ({ email, signerExtra }) => {
 }
 const toIcon = seed => blockies.create({ seed }).toDataURL()
 
-const useAddressBook = ({ accounts, selectedAcc }) => {
+const useAddressBook = ({ accounts }) => {
     const { addToast } = useToasts()
 
     const addressList = useMemo(() => {
@@ -18,7 +18,7 @@ const useAddressBook = ({ accounts, selectedAcc }) => {
             const addresses = JSON.parse(localStorage.addresses || '[]')
             if (!Array.isArray(addresses)) throw new Error('Address Book: incorrect format')
             return [
-                ...accounts.filter(({ id }) => id !== selectedAcc).map(account => ({
+                ...accounts.map(account => ({
                     isAccount: true,
                     name: accountType(account),
                     address: account.id,
@@ -33,7 +33,7 @@ const useAddressBook = ({ accounts, selectedAcc }) => {
             console.error('Address Book parsing failure', e)
             return []
         }
-    }, [accounts, selectedAcc])
+    }, [accounts])
 
     const [addresses, setAddresses] = useState(() => addressList)
 
@@ -80,7 +80,7 @@ const useAddressBook = ({ accounts, selectedAcc }) => {
         addToast(`${address} removed from your Address Book.`)
     }, [addresses, addToast])
 
-    useEffect(() => { setAddresses(addressList) }, [accounts, selectedAcc, addressList])
+    useEffect(() => { setAddresses(addressList) }, [accounts, addressList])
 
     // a bit of a 'cheat': update the humanizer with the latest known addresses
     // this is breaking the react patterns cause the humanizer has a 'global' state, but that's fine since it simply constantly learns new addr aliases,
