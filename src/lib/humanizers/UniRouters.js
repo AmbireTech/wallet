@@ -6,6 +6,7 @@ const iface = new Interface(abis.UniV2Router)
 const recipientText = (recipient, txnFrom) => recipient.toLowerCase() === txnFrom.toLowerCase()
   ? `` : ` and send it to ${recipient}`
 const deadlineText = (deadlineSecs, mined) => {
+  if (mined) return ''
   const minute = 60000
   const deadline = deadlineSecs * 1000
   const diff = deadline - Date.now()
@@ -14,8 +15,8 @@ const deadlineText = (deadlineSecs, mined) => {
   // we don't really need it for pending ones, simply because we'll show the big error message instead
   //if (diff < 0) return `, expired ${Math.floor(-diff / minute)} minutes ago`
   if (diff < 0) return ''
-  if (!mined && diff < minute) return `, expires in less than a minute`
-  if (!mined && diff < 10*minute) return `, expires in ${Math.floor(diff / minute)} minutes`
+  if (diff < minute) return `, expires in less than a minute`
+  if (diff < 10*minute) return `, expires in ${Math.floor(diff / minute)} minutes`
   return ''
 }
 
