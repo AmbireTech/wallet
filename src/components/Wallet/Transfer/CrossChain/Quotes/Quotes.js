@@ -4,7 +4,7 @@ import { MdOutlineArrowForward, MdOutlineCheck, MdOutlineClose } from 'react-ico
 import { Button, Loading, Radios } from '../../../../common';
 import { useState } from 'react';
 import networks from '../../../../../consts/networks';
-import { buildTx } from '../../../../../services/movr';
+import { approvalBuildTx, checkApprovalAllowance, sendBuildTx } from '../../../../../services/movr';
 import { useToasts } from '../../../../../hooks/toasts';
 
 const formatAmount = (amount, asset) => amount / Math.pow(10, asset.decimals)
@@ -24,8 +24,8 @@ const Quotes = ({ addRequest, selectedAccount, fromTokensItems, quotes, onCancel
         routePath,
         middlewareRoute,
         bridgeRoute,
-        middlewareFee: formatAmount(fees.middlewareFee.amount, middlewareRoute.toAsset),
-        bridgeFee: formatAmount(fees.bridgeFee.amount, bridgeRoute.toAsset)
+        middlewareFee: formatAmount(fees.middlewareFee.amount, middlewareRoute.fromAsset),
+        bridgeFee: formatAmount(fees.bridgeFee.amount, bridgeRoute.fromAsset)
     }))
 
     const radios = routes.map(({ routePath, middlewareFee, bridgeFee, middlewareRoute, bridgeRoute }) => ({
@@ -63,6 +63,20 @@ const Quotes = ({ addRequest, selectedAccount, fromTokensItems, quotes, onCancel
         value: routePath
     }))
 
+    const sendTx = (id, chainId, to, data, value = '0') => {
+        addRequest({
+            id,
+            chainId,
+            account: selectedAccount,
+            type: 'eth_sendTransaction',
+            txn: {
+                to,
+                data,
+                value
+            }
+        })
+    }
+
     const onConfirm = async () => {
         setLoading(true)
 
@@ -70,18 +84,14 @@ const Quotes = ({ addRequest, selectedAccount, fromTokensItems, quotes, onCancel
             const { middlewareRoute, bridgeRoute, routePath } = routes.find(({ routePath }) => routePath === selectedRoute)
             const { fromAsset, inputAmount } = middlewareRoute
             const { toAsset, outputAmount } = bridgeRoute
-            const { tx } = await buildTx(selectedAccount, fromAsset.address, fromAsset.chainId, toAsset.address, toAsset.chainId, inputAmount, outputAmount, routePath)
-            addRequest({
-                id: `transfer_crosschain_${Date.now()}`,
-                type: 'eth_sendTransaction',
-                chainId: fromAsset.chainId,
-                account: selectedAccount,
-                txn: {
-                    to: tx.to,
-                    value: '0',
-                    data: tx.data
-                }
-            })
+            const { tx } = await sendBuildTx(selectedAccount, fromAsset.address, fromAsset.chainId, toAsset.address, toAsset.chainId, inputAmount, outputAmount, routePath)
+            const allowance = await checkApprovalAllowance(fromAsset.chainId, selectedAccount, tx.to, fromAsset.address)
+            if (inputAmount > allowance.value) {
+                const { to, data } = await approvalBuildTx(fromAsset.chainId, selectedAccount, tx.to, fromAsset.address, inputAmount)
+                sendTx(`transfer_approval_crosschain_${Date.now()}`, fromAsset.chainId, to, data)
+            } else {
+                sendTx(`transfer_send_crosschain_${Date.now()}`, fromAsset.chainId, tx.to, tx.data, tx.value.hex)
+            }
         } catch(e) {
             console.error(e);
             addToast(e.message || e, { error: true })
