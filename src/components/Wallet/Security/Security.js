@@ -183,17 +183,11 @@ const Security = ({
       reader.onload = readerEvent => {
         const content = readerEvent.target.result
         const fileContent = JSON.parse(content)
-        const neededKeys = ['salt', 'identityFactoryAddr', 'baseIdentityAddr', 'bytecode', 'signer']
-        const isFileContainsNeededKeys = neededKeys.every(key => Object.keys(fileContent).includes(key))
-        const validatedMsg = validateImportedAccountProps(fileContent)
+        const validatedFile = validateImportedAccountProps(fileContent)
         
-        if (isFileContainsNeededKeys) {
-          if (!validatedMsg.length) onAddAccount(fileContent, { select: true })
-          else
-          addToast(validatedMsg, { error: true})
-        } else {
-          addToast('The imported file does not contain needed account data.', { error: true })
-        }
+        if (validatedFile.success) onAddAccount(fileContent, { select: true })
+        else
+        addToast(validatedFile.message, { error: true})
       }
     }
   }, [addToast, onAddAccount])
