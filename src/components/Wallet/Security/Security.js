@@ -1,19 +1,22 @@
 import './Security.scss'
 
 import { MdOutlineAdd } from 'react-icons/md'
-import { useState, useEffect } from 'react'
+import { RiDragDropLine } from 'react-icons/ri'
+import { useState, useEffect, useCallback } from 'react'
 import { Loading, TextInput, Button } from '../../common'
 import { Interface } from 'ethers/lib/utils'
 import accountPresets from '../../../consts/accountPresets'
 import privilegesOptions from '../../../consts/privilegesOptions'
 import { useRelayerData, useModals } from '../../../hooks'
-import { InputModal, ResetPasswordModal } from '../../Modals';
+import { InputModal, ResetPasswordModal } from '../../Modals'
 import AddressList from '../../common/AddressBook/AddressList/AddressList'
 import { isValidAddress } from '../../../helpers/address'
 import AddAuthSigner from './AddAuthSigner/AddAuthSigner'
 import { useToasts } from '../../../hooks/toasts'
 import { useHistory } from 'react-router-dom'
+import { useDropzone } from 'react-dropzone'
 import { MdInfoOutline } from 'react-icons/md'
+import { validateImportedAccountProps, fileSizeValidator } from '../../../lib/importedAccountValidations'
 
 const IDENTITY_INTERFACE = new Interface(
   require('adex-protocol-eth/abi/Identity5.2')
@@ -102,7 +105,18 @@ const Security = ({
     history.push('/wallet/security')
   }
 
-  const showResetPasswordModal = () => showModal(<ResetPasswordModal account={selectedAccount} selectedNetwork={selectedNetwork} relayerURL={relayerURL} onAddAccount={onAddAccount}/>)
+  const showResetPasswordModal = () => {
+    if (!relayerURL) {
+      addToast('Unsupported without a connection to the relayer', { error: true })
+      return
+    }
+    showModal(<ResetPasswordModal
+      account={selectedAccount}
+      selectedNetwork={selectedNetwork}
+      relayerURL={relayerURL}
+      onAddAccount={onAddAccount}
+    />)
+  }
 
   const selectedAccount = accounts.find(x => x.id === selectedAcc)
 
@@ -111,7 +125,7 @@ const Security = ({
       if (!privValue) return null
       const isQuickAcc = addr === accountPresets.quickAccManager
       const privText = isQuickAcc
-        ? `Email/passphrase signer (${selectedAccount.email || 'unknown email'})`
+        ? `Email/password signer (${selectedAccount.email || 'unknown email'})`
         : addr
       const signerAddress = isQuickAcc
         ? selectedAccount.signer.quickAccManager
@@ -154,52 +168,122 @@ const Security = ({
   const inputModal = <InputModal title="Add New Address" inputs={modalInputs} onClose={([name, address]) => addAddress(name, address)}></InputModal>
   const showInputModal = () => showModal(inputModal)
 
+  const onDrop = useCallback((acceptedFiles, rejectedFiles) => {
+    const reader = new FileReader()
+    
+    if (rejectedFiles.length) {
+      addToast(`${rejectedFiles[0].file.path} - ${(rejectedFiles[0].file.size / 1024).toFixed(2)} KB. ${rejectedFiles[0].errors[0].message}`, { error: true })
+    }
+
+    if (acceptedFiles.length){
+      const file = acceptedFiles[0]
+
+      reader.readAsText(file,'UTF-8')
+      reader.onload = readerEvent => {
+        const content = readerEvent.target.result
+        const fileContent = JSON.parse(content)
+        const validatedFile = validateImportedAccountProps(fileContent)
+        
+        if (validatedFile.success) onAddAccount(fileContent, { select: true })
+        else addToast(validatedFile.message, { error: true})
+      }
+    }
+  }, [addToast, onAddAccount])
+
+  const { getRootProps, getInputProps, open, isDragActive, isDragAccept, isDragReject } = useDropzone({
+    onDrop,
+    noClick: true,
+    noKeyboard: true,
+    accept: 'application/json',
+    maxFiles: 1,
+    validator: fileSizeValidator
+  })
+ 
   // @TODO relayerless mode: it's not that hard to implement in a primitive form, we need everything as-is
   // but rendering the initial privileges instead; or maybe using the relayerless transactions hook/service
   // and aggregate from that
-  if (!relayerURL)
-    return (
-      <section id="security">
-        <h3 className="error">
-          Unsupported: not currently connected to a relayer.
-        </h3>
-      </section>
-    )
+
   const showLoading = isLoading && !data
+  const signersFragment = relayerURL ? (<>
+    <div className="panel">
+      <div className='network-warning'>
+        <MdInfoOutline size={36}></MdInfoOutline>
+        <div>
+          Please note: signer settings are network-specific. You are currently looking at and modifying the signers on {selectedNetwork.name}.
+          &nbsp;<a href='https://help.ambire.com/hc/en-us/articles/4410885684242-Signers' target='_blank' rel='noreferrer'>Need help? Click here.</a>
+        </div>
+      </div>
+      <div className="panel-title">Authorized signers</div>
+      {errMsg && (
+        <h3 className="error">Error getting authorized signers: {errMsg}</h3>
+      )}
+      {showLoading && <Loading />}
+      <ul className="content">{!showLoading && privList}</ul>
+    </div>
+    <div className="panel">
+      <div className="panel-title">Add new signer</div>
+      <AddAuthSigner
+        onAddBtnClicked={onAddBtnClickedHandler}
+        selectedNetwork={selectedNetwork}
+      />
+    </div>
+  </>) : (
+    <div className="panel">
+      <div className="panel-title">Authorized signers</div>
+      <h3 className="error">
+        Unsupported: not connected to a relayer.
+      </h3>
+    </div>
+  )
   return (
-    <section id="security">
-      <div className="panel">
-        <div className='network-warning'>
-          <MdInfoOutline size={36}></MdInfoOutline>
-          <div>
-            Please note: signer settings are network-specific. You are currently looking at and modifying the signers on {selectedNetwork.name}.
-            &nbsp;<a href='https://help.ambire.com/hc/en-us/articles/4410885684242-Signers' target='_blank' rel='noreferrer'>Need help? Click here.</a>
+    <section id="security" className={(isDragActive ? 'activeStyle ' : '') + (isDragAccept ? 'acceptStyle ' : '') + (isDragReject ? 'rejectStyle ' : '')}>
+      {
+        (isDragAccept || isDragReject)
+        && (<div className={isDragAccept ? 'acceptStyleIcon' : 'rejectStyleIcon'}><RiDragDropLine size={100}/></div>)
+      }
+      
+      <div {...getRootProps()}>
+        <input {...getInputProps()} />
+        {signersFragment}
+
+        <div id="addresses" className='panel'>
+          <div className='title'>Address Book</div>
+          <div className="content">
+            <AddressList
+              noAccounts={true}
+              addresses={addresses}
+              removeAddress={removeAddress}
+            />
+            <Button small icon={<MdOutlineAdd/>} onClick={showInputModal}>Add Address</Button>
           </div>
         </div>
 
-        <div className="panel-title">Authorized signers</div>
-
-        {errMsg && (
-          <h3 className="error">Error getting authorized signers: {errMsg}</h3>
-        )}
-        {showLoading && <Loading />}
-        <ul className="content">{!showLoading && privList}</ul>
-        <div className="panel-title">Add new signer</div>
-        <AddAuthSigner
-          onAddBtnClicked={onAddBtnClickedHandler}
-          selectedNetwork={selectedNetwork}
-        />
-      </div>
-  
-      <div id="addresses" className='panel'>
-        <div className='title'>Address Book</div>
-        <div className="content">
-          <AddressList
-            noAccounts={true}
-            addresses={addresses}
-            removeAddress={removeAddress}
-          />
-          <Button small icon={<MdOutlineAdd/>} onClick={showInputModal}>Add Address</Button>
+        <div style={{ flexDirection: 'row', display: 'flex', gap: '2em' }}>
+          <div className="panel">
+            <div className="panel-title">Backup current account</div>
+            <div className="content">
+              <a
+                type="button"
+                href={`data:text/json;charset=utf-8,${encodeURIComponent(
+                  JSON.stringify(selectedAccount)
+                )}`}
+                download={`${selectedAccount.id}.json`}
+              >
+                <Button>Export</Button>
+              </a>
+              <div style={{ fontSize: '0.9em' }}>
+              This downloads a backup of your current account ({selectedAccount.id.slice(0, 5)}...{selectedAccount.id.slice(-3)}) encrypted with
+              your password. This is safe to store in iCloud/Google Drive, but you cannot use it to restore your account if you forget the password.
+              </div>
+            </div>
+          </div>
+          <div className="panel">
+            <div className="panel-title">Import an account from backup</div>
+            <div className="content import">
+              <Button small onClick={open}>Import</Button>
+              <p>...or you can drop an account backup JSON file on this page</p>
+            </div>
+          </div>
         </div>
       </div>
     </section>
