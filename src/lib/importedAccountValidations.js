@@ -4,6 +4,7 @@ const EMAIL_REGEX = /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-
 const NUMBER_STRING_REGEX = /^([0-9]+\.?[0-9]*)$/
 const HEX_DATA_LENGTH = 32
 const TIME_LOCK_NUMBER_LENGTH = 6
+const MAX_FILE_SIZE = 3072
 const NEEDED_KEYS = [
   'salt',
   'identityFactoryAddr',
@@ -93,11 +94,25 @@ const isValidAddress = addr => {
   }
 }
 
-const validateAccountProps = acc => NEEDED_KEYS.every(key => Object.keys(acc).includes(key))
 const isValidEmailAddress = addr => EMAIL_REGEX.test(addr)
 const isValidTimeLock = timelock => {
   return NUMBER_STRING_REGEX.test(timelock) && timelock.toString().length === TIME_LOCK_NUMBER_LENGTH
 }
 const isValidSalt = salt => hexDataLength(salt) === HEX_DATA_LENGTH
+const validateAccountProps = acc => NEEDED_KEYS.every(key => Object.keys(acc).includes(key))
+const fileSizeValidator = file => {
+  if (file.size > MAX_FILE_SIZE) {
+    return {
+      code: "file-size-too-large",
+      message: `The file size is larger than ${(MAX_FILE_SIZE / 1024).toFixed(2)} KB.`
+    }
+  }
 
-export default validateImportedAccountProps
+  return null
+}
+
+
+export {
+  validateImportedAccountProps,
+  fileSizeValidator
+}

@@ -16,14 +16,13 @@ import { useToasts } from '../../../hooks/toasts'
 import { useHistory } from 'react-router-dom'
 import { useDropzone } from 'react-dropzone'
 import { MdInfoOutline } from 'react-icons/md'
-import validateImportedAccountProps from '../../../lib/importedAccountValidations'
+import { validateImportedAccountProps, fileSizeValidator } from '../../../lib/importedAccountValidations'
 
 const IDENTITY_INTERFACE = new Interface(
   require('adex-protocol-eth/abi/Identity5.2')
 )
 
 const REFRESH_INTVL = 40000
-const MAX_FILE_SIZE = 3072
 
 const Security = ({
   relayerURL,
@@ -173,7 +172,7 @@ const Security = ({
     const reader = new FileReader()
     
     if (rejectedFiles.length) {
-      addToast(`${rejectedFiles[0].file.path} - ${rejectedFiles[0].file.size / 1024} KB. ${rejectedFiles[0].errors[0].message}.`, { error: true })
+      addToast(`${rejectedFiles[0].file.path} - ${(rejectedFiles[0].file.size / 1024).toFixed(2)} KB. ${rejectedFiles[0].errors[0].message}`, { error: true })
     }
 
     if (acceptedFiles.length){
@@ -186,22 +185,10 @@ const Security = ({
         const validatedFile = validateImportedAccountProps(fileContent)
         
         if (validatedFile.success) onAddAccount(fileContent, { select: true })
-        else
-        addToast(validatedFile.message, { error: true})
+        else addToast(validatedFile.message, { error: true})
       }
     }
   }, [addToast, onAddAccount])
-
-  const fileSizeValidator = file => {
-    if (file.size > MAX_FILE_SIZE) {
-      return {
-        code: "file-size-too-large",
-        message: `The file size is larger than ${MAX_FILE_SIZE / 1024} KB.`
-      }
-    }
-
-    return null
-  }
 
   const { getRootProps, getInputProps, open, isDragActive, isDragAccept, isDragReject } = useDropzone({
     onDrop,
