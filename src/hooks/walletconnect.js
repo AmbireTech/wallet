@@ -10,7 +10,7 @@ const noopSessionStorage = { setSession: noop, getSession: noop, removeSession: 
 
 const STORAGE_KEY = 'wc1_state'
 const SUPPORTED_METHODS = ['eth_sendTransaction', 'gs_multi_send', 'personal_sign', 'eth_sign']
-const SESSION_TIMEOUT = 6000
+const SESSION_TIMEOUT = 10000
 
 const getDefaultState = () => ({ connections: [], requests: [] })
 
