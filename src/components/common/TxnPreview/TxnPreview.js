@@ -3,7 +3,7 @@ import './TxnPreview.scss'
 import { useState } from 'react'
 import { FaTimes, FaChevronDown, FaChevronUp } from 'react-icons/fa'
 
-import { getName, getTransactionSummary } from '../../../lib/humanReadableTransactions'
+import { getName, getTransactionSummary, isKnown } from '../../../lib/humanReadableTransactions'
 import networks from '../../../consts/networks'
 import { formatUnits } from 'ethers/lib/utils'
 
@@ -24,7 +24,8 @@ export default function TxnPreview ({ txn, onDismiss, network, account, isFirstF
               </div>
               <div className="summary">{getTransactionSummary(txn, network, account, { mined })}</div>
             </div>
-            {isFirstFailing ? (<div className='firstFailingLabel'>This is the first failing transaction.</div>) : (<></>)}
+            {isFirstFailing && (<div className='firstFailingLabel'>This is the first failing transaction.</div>)}
+            {!isFirstFailing && !isKnown(txn[0]) && (<div className='unknownWarning'>Warning: interacting with an unknown contract or address.</div>)}
           </div>
           <div className='actionIcons'>
               {onDismiss ? (<span className='dismissTxn' onClick={onDismiss}><FaTimes/></span>) : (<></>)}
