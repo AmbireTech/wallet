@@ -167,6 +167,12 @@
       }
     }
   }
+
+  #backup {
+    flex-direction: row;
+    display: flex;
+    gap: 2em;
+  }
 }
 
 @media screen and (max-width: 1200px) {
@@ -188,6 +194,11 @@
       li {
         flex-direction: column;
       }
+    }
+
+    #backup {
+      flex-direction: column;
+      gap: 1em;
     }
   }
 }
