@@ -120,7 +120,7 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
                                         onInput={setAddress}
                                     />
                                     <AddressBook 
-                                        addresses={addresses}
+                                        addresses={addresses.filter(x => x.address !== selectedAcc)}
                                         addAddress={addAddress}
                                         removeAddress={removeAddress}
                                         newAddress={newAddress}
