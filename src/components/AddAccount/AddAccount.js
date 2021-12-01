@@ -21,14 +21,12 @@ import { ledgerGetAddresses, PARENT_HD_PATH } from '../../lib/ledgerWebHID'
 import { isFirefox } from '../../lib/isFirefox'
 import { VscJson } from 'react-icons/vsc'
 import { useDropzone } from 'react-dropzone'
-import validateImportedAccountProps from '../../lib/importedAccountValidations'
+import { validateImportedAccountProps, fileSizeValidator } from '../../lib/importedAccountValidations'
 
 TrezorConnect.manifest({
   email: 'contactus@ambire.com',
   appUrl: 'https://www.ambire.com'
 })
-
-const MAX_FILE_SIZE = 3072
 
 export default function AddAccount({ relayerURL, onAddAccount }) {
   const [signersToChoose, setChooseSigners] = useState(null)
@@ -300,7 +298,7 @@ export default function AddAccount({ relayerURL, onAddAccount }) {
     const reader = new FileReader()
     
     if (rejectedFiles.length) {
-      addToast(`${rejectedFiles[0].file.path} - ${rejectedFiles[0].file.size / 1024} KB. ${rejectedFiles[0].errors[0].message}.`, { error: true })
+      addToast(`${rejectedFiles[0].file.path} - ${(rejectedFiles[0].file.size / 1024).toFixed(2)} KB. ${rejectedFiles[0].errors[0].message}`, { error: true })
     }
 
     if (acceptedFiles.length){
@@ -313,22 +311,10 @@ export default function AddAccount({ relayerURL, onAddAccount }) {
         const validatedFile = validateImportedAccountProps(fileContent)
         
         if (validatedFile.success) onAddAccount(fileContent, { select: true })
-        else
-        addToast(validatedFile.message, { error: true})
+        else addToast(validatedFile.message, { error: true})
       }
     }
   }, [addToast, onAddAccount])
-
-  const fileSizeValidator = file => {
-    if (file.size > MAX_FILE_SIZE) {
-      return {
-        code: "file-size-too-large",
-        message: `The file size is larger than ${MAX_FILE_SIZE / 1024} KB.`
-      }
-    }
-
-    return null
-  }
 
   const { getInputProps, open } = useDropzone({
     onDrop,
