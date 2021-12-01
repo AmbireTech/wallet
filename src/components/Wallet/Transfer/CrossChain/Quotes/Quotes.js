@@ -10,7 +10,7 @@ import { useToasts } from '../../../../../hooks/toasts';
 const formatAmount = (amount, asset) => amount / Math.pow(10, asset.decimals)
 const getNetwork = id => networks.find(({ chainId }) => chainId === id)
 
-const Quotes = ({ selectedAccount, fromTokensItems, quotes, onCancel }) => {
+const Quotes = ({ addRequest, selectedAccount, fromTokensItems, quotes, onCancel }) => {
     const { addToast } = useToasts()
 
     const { toAsset } = quotes;
@@ -64,11 +64,21 @@ const Quotes = ({ selectedAccount, fromTokensItems, quotes, onCancel }) => {
 
     const onConfirm = async () => {
         try {
-        const { middlewareRoute, bridgeRoute, routePath } = routes.find(({ routePath }) => routePath === selectedRoute)
-        const { fromAsset, inputAmount } = middlewareRoute
-        const { toAsset, outputAmount } = bridgeRoute
-        const tx = await buildTx(selectedAccount, fromAsset.address, fromAsset.chainId, toAsset.address, toAsset.chainId, inputAmount, outputAmount, routePath)
-        console.log(tx);
+            const { middlewareRoute, bridgeRoute, routePath } = routes.find(({ routePath }) => routePath === selectedRoute)
+            const { fromAsset, inputAmount } = middlewareRoute
+            const { toAsset, outputAmount } = bridgeRoute
+            const { tx } = await buildTx(selectedAccount, fromAsset.address, fromAsset.chainId, toAsset.address, toAsset.chainId, inputAmount, outputAmount, routePath)
+            addRequest({
+                id: `transfer_crosschain_${Date.now()}`,
+                type: 'eth_sendTransaction',
+                chainId: fromAsset.chainId,
+                account: selectedAccount,
+                txn: {
+                    to: tx.to,
+                    value: '0',
+                    data: tx.data
+                }
+            })
         } catch(e) {
             console.error(e);
             addToast(e.message || e, { error: true })
