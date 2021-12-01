@@ -12,6 +12,9 @@ import { useEffect, useState } from 'react'
 import fetch from 'node-fetch'
 import { useToasts } from '../../../hooks/toasts'
 
+// 10% in geth and most EVM chain RPCs
+const RBF_THRESHOLD = 1.1
+
 function Transactions ({ relayerURL, selectedAcc, selectedNetwork, showSendTxns }) {
   const { addToast } = useToasts()
   const [cacheBreak, setCacheBreak] = useState(() => Date.now())
@@ -39,9 +42,13 @@ function Transactions ({ relayerURL, selectedAcc, selectedNetwork, showSendTxns 
     ...relayerBundle,
     nonce: relayerBundle.nonce.num,
     gasLimit: null,
+    // Instruct the relayer to abide by this minimum fee in USD per gas, to ensure we are truly replacing the txn
+    minFeeInUSDPerGas: relayerBundle.feeInUSDPerGas * RBF_THRESHOLD,
     ...extra
   }))
-  const cancelByReplacing = relayerBundle => showSendTxns(mapToBundle(relayerBundle, { txns: [[selectedAcc, '0x0', '0x']] }))
+  const cancelByReplacing = relayerBundle => showSendTxns(mapToBundle(relayerBundle, {
+    txns: [[selectedAcc, '0x0', '0x']],
+  }))
   const cancel = relayerBundle => {
     // @TODO relayerless
     mapToBundle(relayerBundle).cancel({ relayerURL, fetch })

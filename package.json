@@ -17,7 +17,7 @@
     "@walletconnect/utils": "^1.6.5",
     "@web3-react/abstract-connector": "^6.0.7",
     "@web3-react/types": "^6.0.7",
-    "adex-protocol-eth": "git+https://git@github.com/AdExNetwork/adex-protocol-eth.git#920725cf5bdd04247828057e990761ee4a681f8e",
+    "adex-protocol-eth": "git+https://git@github.com/AdExNetwork/adex-protocol-eth.git#6d439cc3246b55c56c09e4a721ab7b49393ca9a1",
     "blockies-ts": "^1.0.0",
     "eth-keyring-controller": "^6.2.1",
     "ethereumjs-util": "^6.1.0",
@@ -32,7 +32,7 @@
     "react-router-dom": "^5.3.0",
     "react-scripts": "4.0.3",
     "react-transition-group": "^4.4.2",
-    "trezor-connect": "^7.0.5",
+    "trezor-connect": "^8.2.2",
     "url": "^0.11.0",
     "web-vitals": "^1.1.2"
   },
