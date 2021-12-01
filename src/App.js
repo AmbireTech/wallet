@@ -87,6 +87,7 @@ function AppInner () {
     () => setSendTxnState({ showing: !!eligibleRequests.length }),
     [eligibleRequests.length]
   )
+  const showSendTxns = bundle => setSendTxnState({ showing: true, replacementBundle: bundle })
 
   // Network shouldn't matter here
   const everythingToSign = useMemo(() => requests
@@ -184,7 +185,7 @@ function AppInner () {
           relayerURL={relayerURL}
           // required by the transactions page
           eligibleRequests={eligibleRequests}
-          showSendTxns={bundle => setSendTxnState({ showing: true, replacementBundle: bundle })}
+          showSendTxns={showSendTxns}
           onAddAccount={onAddAccount}
         >
         </Wallet>
