@@ -1,6 +1,12 @@
 @import '../../../variables.scss';
 
 .loading {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
     .icon {
         svg {
             animation: spin 1s ease-in-out infinite;
