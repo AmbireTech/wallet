@@ -33,7 +33,7 @@ const Accounts = ({ accounts, selectedAddress, onSelectAcc, onRemoveAccount }) =
     }
 
     return (
-        <DropDown id="accounts" icon={toIcon(selectedAddress)} title={shortenedAddress(selectedAddress)} closed={closed} onOpen={() => setClosed(false)}>
+        <DropDown id="accounts" icon={toIcon(selectedAddress)} title={shortenedAddress(selectedAddress)} open={closed} onOpen={() => setClosed(false)}>
           <div className="list">
             {
               accounts.map(({ id, email, signer, signerExtra }) => 

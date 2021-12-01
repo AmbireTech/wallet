@@ -307,7 +307,9 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
                       // we need to re-render twice per minute cause of DEX deadlines
                       const min = Math.floor(Date.now() / 30000)
                       return (<TxnPreview
-                        key={[...txn, i, min].join(':')}
+                        key={[...txn, i].join(':')}
+                        // pasing an unused property to make it update
+                        minute={min}
                         onDismiss={bundle.requestIds && (() => resolveMany([bundle.requestIds[i]], { message: REJECT_MSG }))}
                         txn={txn} network={bundle.network} account={bundle.identity}
                         isFirstFailing={isFirstFailing}/>
