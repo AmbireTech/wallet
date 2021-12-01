@@ -1,7 +1,7 @@
 import './Quotes.scss'
 
 import { MdOutlineArrowForward, MdOutlineCheck, MdOutlineClose } from 'react-icons/md';
-import { Button, Radios } from '../../../../common';
+import { Button, Loading, Radios } from '../../../../common';
 import { useState } from 'react';
 import networks from '../../../../../consts/networks';
 import { buildTx } from '../../../../../services/movr';
@@ -18,6 +18,7 @@ const Quotes = ({ addRequest, selectedAccount, fromTokensItems, quotes, onCancel
     const fromNetwork = getNetwork(quotes.fromAsset.chainId)
     const toNetwork = getNetwork(toAsset.chainId)
     const [selectedRoute, setSelectedRoute] = useState(null)
+    const [loading, setLoading] = useState(false)
 
     const routes = quotes.routes.map(({ routePath, fees, middlewareRoute, bridgeRoute }) => ({
         routePath,
@@ -63,6 +64,8 @@ const Quotes = ({ addRequest, selectedAccount, fromTokensItems, quotes, onCancel
     }))
 
     const onConfirm = async () => {
+        setLoading(true)
+
         try {
             const { middlewareRoute, bridgeRoute, routePath } = routes.find(({ routePath }) => routePath === selectedRoute)
             const { fromAsset, inputAmount } = middlewareRoute
@@ -79,9 +82,11 @@ const Quotes = ({ addRequest, selectedAccount, fromTokensItems, quotes, onCancel
                     data: tx.data
                 }
             })
+            setLoading(false)
         } catch(e) {
             console.error(e);
             addToast(e.message || e, { error: true })
+            setLoading(false)
         }
     }
 
@@ -111,16 +116,21 @@ const Quotes = ({ addRequest, selectedAccount, fromTokensItems, quotes, onCancel
                 </div>
             </div>
 
-            <div id="routes">
-                <div className="title">Routes</div>
-                <Radios radios={radios} onChange={value => setSelectedRoute(value)}/>
-            </div>
+            {
+                loading ?
+                    <Loading/>
+                    :
+                    <div id="routes">
+                        <div className="title">Routes</div>
+                        <Radios radios={radios} onChange={value => setSelectedRoute(value)}/>
+                    </div>
+            }
 
             <div className="separator"></div>
 
             <div id="buttons">
-                <Button small clear icon={<MdOutlineClose/>} onClick={onCancel}>Cancel</Button>
-                <Button small icon={<MdOutlineCheck/>} disabled={!selectedRoute} onClick={onConfirm}>Confirm</Button>
+                <Button small clear icon={<MdOutlineClose/>} disabled={loading} onClick={onCancel}>Cancel</Button>
+                <Button small icon={<MdOutlineCheck/>} disabled={!selectedRoute || loading} onClick={onConfirm}>Confirm</Button>
             </div>
         </div>
     )
