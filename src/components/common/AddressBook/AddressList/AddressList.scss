@@ -23,7 +23,7 @@
 
         .inner {
             height: 100%;
-            width: 100%;
+            min-width: 0;
             display: flex;
             align-items: center;
             justify-content: flex-start;
@@ -49,13 +49,13 @@
                 overflow: hidden;
 
                 label, .address {
+                    width: 100%;
                     overflow: hidden;
                     white-space: nowrap;
                     text-overflow: ellipsis;
                 }
 
                 label {
-                    width: 100%;
                     cursor: pointer;
                     font-size: 12px;
                     font-weight: 500;
@@ -63,7 +63,6 @@
                 }
 
                 .address {
-                    width: 100%;
                     font-family: monospace;
                     font-size: 15px;
                     font-weight: bold;
@@ -72,6 +71,7 @@
         }
 
         .button {
+            flex: 0 0 auto;
             height: 100%;
             width: 50px;
             @include flex-center-center;
