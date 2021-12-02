@@ -74,6 +74,7 @@ const CrossChain = ({ addRequest, selectedAccount, portfolio, network }) => {
                         .map(({ address }) => address)
                         .map(address => Number(address) === 0 ? `0x${'e'.repeat(40)}` : address).includes(address))
                     .map(({ address }) => address)
+                    .filter(address => address !== `0x${'e'.repeat(40)}`)
                 )
             ]
 
@@ -183,7 +184,7 @@ const CrossChain = ({ addRequest, selectedAccount, portfolio, network }) => {
             </div>
             {
                 disabled ? 
-                    <div>Not supported on this Network</div>
+                    <div className="placeholder">Not supported on this Network</div>
                     :
                     loading || portfolio.isBalanceLoading ? 
                         <Loading/>
@@ -191,37 +192,40 @@ const CrossChain = ({ addRequest, selectedAccount, portfolio, network }) => {
                         hasNoFunds ?
                             <NoFundsPlaceholder/>
                             :
-                            loadingQuotes ?
-                                    <Loading/>
-                                    :
-                                    quotes ?
-                                        <Quotes
-                                            addRequest={addRequest}
-                                            selectedAccount={selectedAccount}
-                                            fromTokensItems={fromTokensItems}
-                                            quotes={quotes}
-                                            onCancel={() => setQuotes(null)}
-                                        />
+                            !fromTokensItems.length ? 
+                                <div className="placeholder">You don't have any available tokens to swap</div>
+                                :
+                                loadingQuotes ?
+                                        <Loading/>
                                         :
-                                        <div className="form">
-                                            <label>From</label>
-                                            <Select searchable defaultValue={fromToken} items={fromTokensItems} onChange={value => setFromToken(value)}/>
-                                            <NumberInput min="0" label={amountLabel} value={amount} onInput={value => setAmount(value)} button="MAX" onButtonClick={() => setAmount(maxAmount)}/>
-                                            <div className="separator">
-                                                <BsArrowDown/>
+                                        quotes ?
+                                            <Quotes
+                                                addRequest={addRequest}
+                                                selectedAccount={selectedAccount}
+                                                fromTokensItems={fromTokensItems}
+                                                quotes={quotes}
+                                                onCancel={() => setQuotes(null)}
+                                            />
+                                            :
+                                            <div className="form">
+                                                <label>From</label>
+                                                <Select searchable defaultValue={fromToken} items={fromTokensItems} onChange={value => setFromToken(value)}/>
+                                                <NumberInput min="0" label={amountLabel} value={amount} onInput={value => setAmount(value)} button="MAX" onButtonClick={() => setAmount(maxAmount)}/>
+                                                <div className="separator">
+                                                    <BsArrowDown/>
+                                                </div>
+                                                <label>To</label>
+                                                {
+                                                    loadingToTokens ? 
+                                                        <Loading/>
+                                                        :
+                                                        <>
+                                                            <Select searchable defaultValue={toChain} items={chainsItems} onChange={value => setToChain(value)}/>
+                                                            <Select searchable defaultValue={toToken} items={toTokenItems} onChange={value => setToToken(value)}/>
+                                                        </>
+                                                }
+                                                <Button disabled={formDisabled} onClick={getQuotes}>Get Quotes</Button>
                                             </div>
-                                            <label>To</label>
-                                            {
-                                                loadingToTokens ? 
-                                                    <Loading/>
-                                                    :
-                                                    <>
-                                                        <Select searchable defaultValue={toChain} items={chainsItems} onChange={value => setToChain(value)}/>
-                                                        <Select searchable defaultValue={toToken} items={toTokenItems} onChange={value => setToToken(value)}/>
-                                                    </>
-                                            }
-                                            <Button disabled={formDisabled} onClick={getQuotes}>Get Quotes</Button>
-                                        </div>
             }
         </div>
     )
