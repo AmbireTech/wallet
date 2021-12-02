@@ -222,28 +222,20 @@ const CrossChain = ({ addRequest, selectedAccount, portfolio, network }) => {
                                             :
                                             <div className="form">
                                                 <label>From</label>
-                                                {
-                                                    loadingFromTokens ? 
-                                                        <Loading/>
-                                                        :
-                                                        <>
-                                                            <Select searchable defaultValue={fromToken} items={fromTokensItems} onChange={value => setFromToken(value)}/>
-                                                            <NumberInput min="0" label={amountLabel} value={amount} onInput={value => setAmount(value)} button="MAX" onButtonClick={() => setAmount(maxAmount)}/>
-                                                        </>
-                                                }
+                                                <div className="inputs">
+                                                    { loadingFromTokens ? <Loading/> : null }
+                                                    <Select searchable defaultValue={fromToken} items={fromTokensItems} onChange={value => setFromToken(value)}/>
+                                                    <NumberInput min="0" label={amountLabel} value={amount} onInput={value => setAmount(value)} button="MAX" onButtonClick={() => setAmount(maxAmount)}/>
+                                                </div>
                                                 <div className="separator">
                                                     <BsArrowDown/>
                                                 </div>
                                                 <label>To</label>
-                                                {
-                                                    loadingToTokens ? 
-                                                        <Loading/>
-                                                        :
-                                                        <>
-                                                            <Select searchable defaultValue={toChain} items={chainsItems} onChange={value => setToChain(value)}/>
-                                                            <Select searchable defaultValue={toToken} items={toTokenItems} onChange={value => setToToken(value)}/>
-                                                        </>
-                                                }
+                                                <div className="inputs">
+                                                    { loadingToTokens ? <Loading/> : null }
+                                                    <Select searchable defaultValue={toChain} items={chainsItems} onChange={value => setToChain(value)}/>
+                                                    <Select searchable defaultValue={toToken} items={toTokenItems} onChange={value => setToToken(value)}/>
+                                                </div>
                                                 <Button disabled={formDisabled} onClick={getQuotes}>Get Quotes</Button>
                                             </div>
             }

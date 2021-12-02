@@ -1,3 +1,5 @@
+@import '../../../../variables.scss';
+
 #cross-chain {
     .amount-label {
         width: 100%;
@@ -16,5 +18,24 @@
     .placeholder {
         font-weight: 500;
         opacity: 0.8;
+    }
+
+    .form {
+        .inputs {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            gap: 1em;
+
+            .loading {
+                z-index: 49;
+                position: absolute;
+                top: 0;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                background-color: $panel-background-color;
+            }
+        }
     }
 }
