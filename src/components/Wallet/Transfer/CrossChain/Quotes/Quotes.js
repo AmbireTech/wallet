@@ -7,7 +7,12 @@ import networks from '../../../../../consts/networks';
 import { approvalBuildTx, sendBuildTx } from '../../../../../services/movr';
 import { useToasts } from '../../../../../hooks/toasts';
 
+
 const formatAmount = (amount, asset) => amount / Math.pow(10, asset.decimals)
+const formatFeeAmount = (fee, route) => {
+    const asset = fee.address === route.toAsset.address ? route.toAsset : route.fromAsset
+    return formatAmount(fee.amount, asset)
+}
 const getNetwork = id => networks.find(({ chainId }) => chainId === id)
 
 const Quotes = ({ addRequest, selectedAccount, fromTokensItems, quotes, onCancel }) => {
@@ -20,15 +25,14 @@ const Quotes = ({ addRequest, selectedAccount, fromTokensItems, quotes, onCancel
     const [selectedRoute, setSelectedRoute] = useState(null)
     const [loading, setLoading] = useState(false)
 
-    const routes = quotes.routes.map(({ allowanceTarget, isApprovalRequired, routePath, fees, middlewareRoute, bridgeRoute }) => ({
-        allowanceTarget,
-        isApprovalRequired,
-        routePath,
-        middlewareRoute,
-        bridgeRoute,
-        middlewareFee: middlewareRoute ? formatAmount(fees.middlewareFee.amount, middlewareRoute.fromAsset) : 0,
-        bridgeFee: bridgeRoute ? formatAmount(fees.bridgeFee.amount, bridgeRoute.toAsset) : 0
-    }))
+    const routes = quotes.routes.map(route => {
+        const { fees, middlewareRoute, bridgeRoute } = route
+        return {
+            ...route,
+            middlewareFee: middlewareRoute ? formatFeeAmount(fees.middlewareFee, middlewareRoute) : 0,
+            bridgeFee: bridgeRoute ? formatFeeAmount(fees.bridgeFee, bridgeRoute) : 0
+        }
+    })
 
     const radios = routes.map(({ routePath, middlewareFee, bridgeFee, middlewareRoute, bridgeRoute }) => ({
         label:
