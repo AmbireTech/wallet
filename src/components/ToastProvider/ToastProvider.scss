@@ -17,6 +17,7 @@
         .toast {
             display: flex;
             align-items: center;
+            justify-content: space-between;
             gap: 15px;
             height: 50px;
             padding: 0 20px;
@@ -61,6 +62,7 @@
                 color: black;
 
                 .badge {
+                    flex: 0 0 auto;
                     height: 23px;
                     width: 23px;
                     @include flex-center-center;
@@ -72,6 +74,7 @@
             }
 
             .close {
+                flex: 0 0 auto;
                 height: 30px;
                 width: 30px;
                 @include flex-center-center;
@@ -97,5 +100,14 @@
 @media screen and (max-width: $mobile-breakpoint-max-width) {
     #toast-container {
         bottom: $sidebar-mobile-height;
+
+        .toast {
+            &.sticky {
+                left: 0;
+                right: 0 !important;
+                bottom: 0 !important;
+                padding: 0 1em;
+            }
+        }
     }
 }
