@@ -87,6 +87,12 @@
 // Mobile
 @media screen and (max-width: $mobile-breakpoint-max-width) {
     #transactions {
+        .panel {
+            .content {
+                gap: 1em;
+            }
+        }
+
         .bundle {
             padding: 1em;
             padding-bottom: 1.5em;

@@ -96,6 +96,8 @@
 // Mobile
 @media screen and (max-width: $mobile-breakpoint-max-width) {
     #transfer {
+        gap: 1em;
+
         #recipient-field {
             flex-direction: column;
             gap: 10px;
