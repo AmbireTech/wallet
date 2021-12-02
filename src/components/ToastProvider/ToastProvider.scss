@@ -9,6 +9,10 @@
     padding-bottom: 20px;
     width: 100%;
 
+    &.hide {
+        display: none;
+    }
+
     .transition-group {
         display: flex;
         flex-direction: column;
