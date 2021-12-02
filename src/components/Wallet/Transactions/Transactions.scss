@@ -83,3 +83,17 @@
         max-width: 700px;
     }
 }
+
+// Mobile
+@media screen and (max-width: $mobile-breakpoint-max-width) {
+    #transactions {
+        .bundle {
+            padding: 1em;
+            padding-bottom: 1.5em;
+        }
+
+        .bundlePreview .details {
+            gap: 1.5em;
+        }
+    }
+}
