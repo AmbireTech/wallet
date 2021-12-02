@@ -90,7 +90,7 @@ export default function useWalletConnect ({ account, chainId, onCallRequest }) {
             const suggestion = /https:\/\/bridge.walletconnect.org/g.test(connector.session.bridge)
                 // @TODO: 'or try an alternative connection method' when we implement one
                 ? 'this dApp is using an old version of WalletConnect - please tell them to upgrade!'
-                : 'perhaps the link has expired?'
+                : 'perhaps the link has expired? Refresh the dApp and try again.'
             if (!connector.session.peerMeta) addToast(`Unable to get session from dApp - ${suggestion}`, { error: true })
         }, SESSION_TIMEOUT)
 
@@ -120,9 +120,12 @@ export default function useWalletConnect ({ account, chainId, onCallRequest }) {
                 return
             }
             if (!SUPPORTED_METHODS.includes(payload.method)) {
+                const isUniIgnorable = payload.method === 'eth_signTypedData_v4'
+                    && connector.session.peerMeta
+                    && connector.session.peerMeta.name.includes('Uniswap')
                 // @TODO: if the dapp is in a "allow list" of dApps that have fallbacks, ignore certain messages
                 // eg uni has a fallback for eth_signTypedData_v4
-                addToast(`dApp requested unsupported method: ${payload.method}`, { error: true })
+                if (!isUniIgnorable) addToast(`dApp requested unsupported method: ${payload.method}`, { error: true })
                 connector.rejectRequest({ id: payload.id, error: { message: 'METHOD_NOT_SUPPORTED' }})
                 return
             }
