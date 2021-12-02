@@ -95,6 +95,8 @@
 // Mobile
 @media screen and (max-width: $mobile-breakpoint-max-width) {
     #deposit {
+        gap: 1em;
+
         .panel {
             padding: 20px 20px;
         }
