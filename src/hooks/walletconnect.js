@@ -75,6 +75,7 @@ export default function useWalletConnect ({ account, chainId, onCallRequest }) {
                 sessionStorage: noopSessionStorage
             })
         } catch(e) {
+            console.error(e)
             addToast(`Unable to connect to ${connectorOpts.uri}: ${e.message}`, { error: true })
             return null
         }
@@ -245,7 +246,7 @@ export default function useWalletConnect ({ account, chainId, onCallRequest }) {
 // Initialization side effects
 // Connect to the URL, read from clipboard, etc.
 function runInitEffects(wcConnect, account) {
-    const query = new URLSearchParams(window.location.href.split('?').slice(1).join('?'))
+    const query = new URLSearchParams(window.location.href.split('?').slice(1).join('?').split('#')[0])
     const wcUri = query.get('uri')
     if (wcUri) wcConnect({ uri: wcUri })
 
