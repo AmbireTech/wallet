@@ -91,7 +91,7 @@ export default function AddAccount({ relayerURL, onAddAccount }) {
 
     const createResp = await fetchPost(`${relayerURL}/identity/${identityAddr}`, {
       email: req.email,
-      primaryKeyBackup: req.backupOptout ? null : primaryKeyBackup,
+      primaryKeyBackup: req.backupOptout ? undefined : primaryKeyBackup,
       secondKeySecret,
       salt, identityFactoryAddr, baseIdentityAddr,
       privileges,
