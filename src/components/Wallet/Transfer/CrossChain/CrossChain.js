@@ -138,7 +138,7 @@ const CrossChain = ({ addRequest, selectedAccount, portfolio, network }) => {
             setLoadingQuotes(true)
             const { decimals } = portfolioToken
             const flatAmount = amount * Math.pow(10, decimals)
-            const quotes = await fetchQuotes(fromToken, fromChain, toToken, toChain, flatAmount)
+            const quotes = await fetchQuotes(fromToken, fromChain, toToken, toChain, flatAmount, ['hyphen', 'anyswap-router-v4'])
             setQuotes(quotes)
             setLoadingQuotes(false)
         } catch(e) {

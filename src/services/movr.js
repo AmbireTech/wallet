@@ -20,8 +20,8 @@ const fetchToTokens = async (from, to) => {
     return response.result.map(({ token }) => token)
 }
 
-const fetchQuotes = async (fromAsset, fromChainId, toAsset, toChainId, amount, sort = 'cheapestRoute') => {
-    const response = await fetchGet(`${baseURL}/quote?fromAsset=${fromAsset}&fromChainId=${fromChainId}&toAsset=${toAsset}&toChainId=${toChainId}&amount=${amount}&sort=${sort}`)
+const fetchQuotes = async (fromAsset, fromChainId, toAsset, toChainId, amount, excludeBridges, sort = 'cheapestRoute') => {
+    const response = await fetchGet(`${baseURL}/quote?fromAsset=${fromAsset}&fromChainId=${fromChainId}&toAsset=${toAsset}&toChainId=${toChainId}&amount=${amount}&excludeBridges=${excludeBridges}&sort=${sort}`)
     if (!response) return null
     return response.result
 }
