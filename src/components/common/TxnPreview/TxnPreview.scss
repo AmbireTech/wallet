@@ -21,11 +21,11 @@
         box-sizing: border-box;
 
         .info {
+            min-width: 0;
             display: flex;
             flex-direction: column;
             align-items: flex-start;
             gap: 10px;
-            padding-right: 40px;
 
             .summary-container {
                 display: flex;
@@ -39,7 +39,9 @@
                 }
 
                 .summary {
+                    width: 100%;
                     max-width: 380px;
+                    word-break: break-word;
                 }
             }
 
