@@ -73,7 +73,7 @@ export default function SendTransaction({ relayerURL, accounts, network, selecte
   />)
 }
 
-function SendTransactionWithBundle ({ bundle, network, account, resolveMany, relayerURL, replacementBundle, onDismiss }) {
+function SendTransactionWithBundle ({ bundle, network, account, resolveMany, relayerURL, onDismiss }) {
   const [estimation, setEstimation] = useState(null)
   const [signingStatus, setSigningStatus] = useState(false)
   const [feeSpeed, setFeeSpeed] = useState(DEFAULT_SPEED)
@@ -91,7 +91,7 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
 
     // get latest estimation
     const reestimate = () => (relayerURL
-      ? bundle.estimate({ relayerURL, fetch })
+      ? bundle.estimate({ relayerURL, fetch, replacing: !!bundle.minFeeInUSDPerGas })
       : bundle.estimateNoRelayer({ provider: getDefaultProvider(network.rpc) })
     )
       .then(estimation => {
