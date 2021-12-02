@@ -1,16 +1,6 @@
 @import '../../../../variables.scss';
 
 #cross-chain {
-    .amount-label {
-        width: 100%;
-        display: flex;
-        justify-content: space-between;
-
-        span {
-            opacity: 0.8;
-        }
-    }
-
     .buttonComponent {
         flex: 0 0 auto;
     }
