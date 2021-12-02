@@ -1,7 +1,7 @@
 import './Transfer.scss'
 
 import { useParams, withRouter } from 'react-router'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { ethers } from 'ethers'
 import NoFundsPlaceholder from './NoFundsPlaceholder/NoFundsPlaceholder'
 import { Interface } from 'ethers/lib/utils'
@@ -34,13 +34,13 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
 
     const selectedAsset = portfolio.tokens.find(({ address }) => address === asset)
 
-    const getMaxAmount = () => {
+    const maxAmount = useMemo(() => {
         if (!selectedAsset) return 0;
         const { balanceRaw, decimals } = selectedAsset
         return ethers.utils.formatUnits(balanceRaw, decimals)
-    }
+    }, [selectedAsset])
 
-    const setMaxAmount = () => onAmountChange(getMaxAmount(amount))
+    const setMaxAmount = () => onAmountChange(maxAmount)
 
     const onAmountChange = value => {
         if (value) {
@@ -91,6 +91,8 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
         setDisabled(isKnownTokenOrContract(address) || !isValidAddress(address) || !(amount > 0) || !(amount <= selectedAsset?.balance) || address === selectedAcc || (!isKnownAddress(address) && !addressConfirmed))
     }, [address, amount, selectedAcc, selectedAsset, addressConfirmed, isKnownAddress])
 
+    const amountLabel = <div className="amount-label">Available Amount: <span>{ maxAmount } { selectedAsset?.symbol }</span></div>
+
     return (
         <div id="transfer">
            <div className="panel">
@@ -105,7 +107,7 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
                             <div className="form">
                                 <Select searchable defaultValue={asset} items={assetsItems} onChange={(value) => setAsset(value)}/>
                                 <NumberInput
-                                    label={`Available Amount: ${getMaxAmount()} ${selectedAsset?.symbol}`}
+                                    label={amountLabel}
                                     value={amount}
                                     precision={selectedAsset?.decimals}
                                     onInput={onAmountChange}
