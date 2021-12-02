@@ -17,7 +17,9 @@ $account-height: 60px;
 
         .list {
             max-height: calc(#{$account-height} * 6.5);
+            overflow-x: hidden;
             overflow-y: auto;
+            scrollbar-width: thin;
 
             .account {
                 position: relative;
