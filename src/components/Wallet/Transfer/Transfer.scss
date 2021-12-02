@@ -4,6 +4,16 @@
     display: flex;
     gap: 30px;
 
+    .amount-label {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+
+        span {
+            opacity: 0.8;
+        }
+    }
+
     #recipient-field {
         position: relative;
         display: flex;
