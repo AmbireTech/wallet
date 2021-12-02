@@ -34,8 +34,8 @@ export default function Dashboard({ portfolio, selectedNetwork, setNetwork }) {
 
     useLayoutEffect(() => {
         const tokensData = portfolio.tokens
-            .map(({ label, balanceUSD }) => ({
-                label,
+            .map(({ label, symbol, balanceUSD }) => ({
+                label: label || symbol,
                 value: Number(((balanceUSD / portfolio.balance.total.full) * 100).toFixed(2))
             }))
             .filter(({ value }) => value > 0);
