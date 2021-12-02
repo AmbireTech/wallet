@@ -19,12 +19,12 @@ const Protocols = ({ protocols }) => {
                                 <div className="list">
                                     {
                                         assets.map(({ type, tokens }) => 
-                                            tokens.map(({ label, collectionName, symbol, img, collectionImg, balance, balanceUSD, address }, i) => (
+                                            tokens.map(({ label, collectionName, symbol, img, collectionImg, tokenImageUrl, balance, balanceUSD, address }, i) => (
                                                 <div className="token" key={`token-${i}`}>
                                                     <div className="icon">
                                                         {
-                                                            img || collectionImg ? 
-                                                                <img src={img || collectionImg} alt="Token Icon"/>
+                                                            img || collectionImg || tokenImageUrl ?
+                                                                <img src={img || collectionImg || tokenImageUrl} alt="Token Icon"/>
                                                                 :
                                                                 <GiToken size={20}/>
                                                         }
