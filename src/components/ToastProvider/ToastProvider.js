@@ -17,7 +17,7 @@ const ToastProvider = ({ children }) => {
 
     const addToast = useCallback((content, options) => {
         const defaultOptions = {
-            timeout: 8000,
+            timeout: 300000,
             error: false,
             position: 'center',
             sticky: false,
@@ -51,7 +51,7 @@ const ToastProvider = ({ children }) => {
                 removeToast
             }}
         >
-            <div id="toast-container">
+            <div id="toast-container" className={!toasts.length ? 'hide' : ''}>
                 <TransitionGroup className="transition-group">
                 {
                     toasts.map(({ id, ref, url, error, sticky, badge, position, content, onClick }) => (
