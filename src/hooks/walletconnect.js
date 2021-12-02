@@ -16,7 +16,7 @@ const getDefaultState = () => ({ connections: [], requests: [] })
 
 let connectors = {}
 
-export default function useWalletConnect ({ account, chainId, onCallRequest }) {
+export default function useWalletConnect ({ account, chainId }) {
     const { addToast } = useToasts()
 
     // This is needed cause of the WalletConnect event handlers
