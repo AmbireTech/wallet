@@ -248,7 +248,7 @@ export default function useWalletConnect ({ account, chainId }) {
 function runInitEffects(wcConnect, account) {
     const query = new URLSearchParams(window.location.href.split('?').slice(1).join('?').split('#')[0])
     const wcUri = query.get('uri')
-    if (wcUri) wcConnect({ uri: wcUri })
+    if (wcUri && account) wcConnect({ uri: wcUri })
 
     // hax
     window.wcConnect = uri => wcConnect({ uri })
