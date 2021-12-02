@@ -110,6 +110,10 @@
 
         .text-input {
             width: 100%;
+
+            input {
+                padding-right: 220px;
+            }
         }
 
         .address-book {
