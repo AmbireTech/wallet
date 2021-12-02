@@ -196,6 +196,16 @@
       }
     }
 
+    #addresses {
+      .item {
+        padding-left: 15px !important;
+
+        .details {
+          padding-right: 5px;
+        }
+      }
+    }
+
     #backup {
       flex-direction: column;
       gap: 1em;
