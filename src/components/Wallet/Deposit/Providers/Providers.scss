@@ -63,9 +63,17 @@
     #providers {
         .provider {
             flex-direction: column;
+            padding: 1.2em;
 
             .details {
+                display: flex;
+                flex-direction: column;
+                gap: 0.15em;
                 text-align: left;
+
+                .type {
+                    margin-bottom: 0.25em;
+                }
             }
         }
     }
