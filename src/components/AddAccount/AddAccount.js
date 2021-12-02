@@ -21,7 +21,7 @@ import { ledgerGetAddresses, PARENT_HD_PATH } from '../../lib/ledgerWebHID'
 import { isFirefox } from '../../lib/isFirefox'
 import { VscJson } from 'react-icons/vsc'
 import { useDropzone } from 'react-dropzone'
-import { validateImportedAccountProps, fileSizeValidator } from '../../lib/importedAccountValidations'
+import { validateImportedAccountProps, fileSizeValidator } from '../../lib/validations/importedAccountValidations'
 
 TrezorConnect.manifest({
   email: 'contactus@ambire.com',

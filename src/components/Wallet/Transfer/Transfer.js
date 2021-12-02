@@ -8,7 +8,7 @@ import SendPlaceholder from './SendPlaceholder/SendPlaceholder'
 import { Interface } from 'ethers/lib/utils'
 import { useToasts } from '../../../hooks/toasts'
 import { TextInput, NumberInput, Button, Select, Loading, AddressBook, AddressWarning } from '../../common'
-import { isValidAddress, isKnownTokenOrContract } from '../../../helpers/address';
+import validateSendTransferForm from '../../../lib/validations/sendTransferFormValidations'
 
 const ERC20 = new Interface(require('adex-protocol-eth/abi/ERC20'))
 const crossChainAssets = [
@@ -37,6 +37,7 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
     const [disabled, setDisabled] = useState(true)
     const [addressConfirmed, setAddressConfirmed] = useState(false)
     const [newAddress, setNewAddress] = useState('')
+    const [validationFormMgs, SetValidationFormMgs] = useState({})
 
     const assetsItems = portfolio.tokens.map(({ label, address, img }) => ({
         label,
@@ -100,8 +101,16 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
     }, [asset, history])
 
     useEffect(() => {
-        setDisabled(isKnownTokenOrContract(address) || !isValidAddress(address) || !(amount > 0) || !(amount <= selectedAsset?.balance) || address === selectedAcc || (!isKnownAddress(address) && !addressConfirmed))
-    }, [address, amount, selectedAcc, selectedAsset, addressConfirmed, isKnownAddress])
+        const isValidRecipientAddress = validateSendTransferForm(address, selectedAcc, addressConfirmed, isKnownAddress, amount, selectedAsset)
+        
+        if (isValidRecipientAddress.success) {
+            setDisabled(false)
+            SetValidationFormMgs(isValidRecipientAddress)
+        }
+        else {
+            SetValidationFormMgs(isValidRecipientAddress)
+        }
+    }, [address, amount, selectedAcc, selectedAsset, addressConfirmed, isKnownAddress, addToast])
 
     return (
         <div id="transfer">
@@ -147,6 +156,7 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
                                     onChange={(value) => setAddressConfirmed(value)}
                                     isKnownAddress={isKnownAddress}
                                 />
+                                <span style={{ color: validationFormMgs.success ? 'green' : 'red' }}>{validationFormMgs.message}</span>
                                 <Button disabled={disabled} onClick={sendTx}>Send</Button>
                             </div>
                             :
