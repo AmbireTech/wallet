@@ -16,7 +16,7 @@ import { useToasts } from '../../../hooks/toasts'
 import { useHistory } from 'react-router-dom'
 import { useDropzone } from 'react-dropzone'
 import { MdInfoOutline } from 'react-icons/md'
-import { validateImportedAccountProps, fileSizeValidator } from '../../../lib/importedAccountValidations'
+import { validateImportedAccountProps, fileSizeValidator } from '../../../lib/validations/importedAccountValidations'
 
 const IDENTITY_INTERFACE = new Interface(
   require('adex-protocol-eth/abi/Identity5.2')
