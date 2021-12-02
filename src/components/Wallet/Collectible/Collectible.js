@@ -169,7 +169,7 @@ const Collectible = ({ selectedAcc, selectedNetwork, addRequest, addressBook }) 
                     <div id="recipient-address">
                         <TextInput placeholder="Recipient Address" value={recipientAddress} onInput={(value) => setRecipientAddress(value)}/>
                         <AddressBook 
-                            addresses={addresses}
+                            addresses={addresses.filter(x => x.address !== selectedAcc)}
                             addAddress={addAddress}
                             removeAddress={removeAddress}
                             newAddress={newAddress}

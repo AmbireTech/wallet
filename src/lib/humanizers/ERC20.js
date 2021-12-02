@@ -16,7 +16,8 @@ const ERC20Mapping = {
   },
   [iface.getSighash('transfer')]: (txn, network) => {
     const [ to, amount ] = iface.parseTransaction(txn).args
-    return [`Send ${token(txn.to, amount)} to ${getName(to, network)}`]
+    const name = getName(to, network)
+    return [`Send ${token(txn.to, amount)} to ${to === name ? to : name+' ('+to+')'}`]
   },
   /*
   // HACK: since this conflicts with ERC721 in terms of sigHash, but ERC721 is more likely to use this function from a user perspective, do not define this one
