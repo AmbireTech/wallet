@@ -2,7 +2,7 @@ import './CrossChain.scss'
 
 import { BsArrowDown } from 'react-icons/bs'
 
-import { useEffect, useState, useCallback, useMemo } from 'react'
+import { useEffect, useState, useCallback, useMemo, useRef } from 'react'
 import { ethers } from 'ethers'
 import { NumberInput, Button, Select, Loading } from '../../../common'
 import { fetchChains, fetchFromTokens, fetchQuotes, fetchToTokens } from '../../../../services/movr'
@@ -16,6 +16,7 @@ const CrossChain = ({ addRequest, selectedAccount, portfolio, network }) => {
 
     const [disabled, setDisabled] = useState(false)
     const [loading, setLoading] = useState(true)
+    const [loadingFromTokens, setLoadingFromTokens] = useState(false)
     const [loadingToTokens, setLoadingToTokens] = useState(false)
     const [loadingQuotes, setLoadingQuotes] = useState(false)
     
@@ -27,6 +28,7 @@ const CrossChain = ({ addRequest, selectedAccount, portfolio, network }) => {
     const [toTokenItems, setToTokenItems] = useState([])
     const [toToken, setToToken] = useState(null)
     const [quotes, setQuotes] = useState(null)
+    const portfolioTokens = useRef([])
     
     const fromChain = useMemo(() => network.chainId, [network.chainId])
     const formDisabled = !(fromToken && toToken && fromChain && toChain && amount > 0)
@@ -70,7 +72,7 @@ const CrossChain = ({ addRequest, selectedAccount, portfolio, network }) => {
             const filteredFromTokens = fromTokens.filter(({ name }) => name)
             const uniqueFromTokenAddresses = [
                 ...new Set(fromTokens
-                    .filter(({ address }) => portfolio.tokens
+                    .filter(({ address }) => portfolioTokens.current
                         .map(({ address }) => address)
                         .map(address => Number(address) === 0 ? `0x${'e'.repeat(40)}` : address).includes(address))
                     .map(({ address }) => address)
@@ -93,7 +95,7 @@ const CrossChain = ({ addRequest, selectedAccount, portfolio, network }) => {
             addToast(`Error while loading from tokens: ${e.message || e}`, { error: true })
             return false
         }
-    }, [fromChain, toChain, portfolio.tokens, addToast])
+    }, [fromChain, toChain, addToast])
 
     const loadToTokens = useCallback(async () => {
         if (!fromChain || !toChain) return
@@ -164,19 +166,27 @@ const CrossChain = ({ addRequest, selectedAccount, portfolio, network }) => {
     }, [toChain, loadToTokens])
 
     useEffect(() => {
-        if (fromChain) loadFromTokens()
-    }, [fromChain, loadFromTokens])
+        if (!toChain) return
+        const asyncLoad = async () => {
+            setLoadingFromTokens(true)
+            const loaded = await loadFromTokens()
+            setLoadingFromTokens(!loaded)
+        }
+        asyncLoad()
+    }, [toChain, loadFromTokens])
 
     useEffect(() => {
         if (!fromChain) return
         setQuotes(null)
         const asyncLoad = async () => {
             setLoading(true)
-            const loaded = await loadChains()
-            setLoading(!loaded)
+            const loadedChains = await loadChains()
+            setLoading(!loadedChains)
         }
         asyncLoad()
     }, [fromChain, loadChains])
+
+    useEffect(() => portfolioTokens.current = portfolio.tokens, [portfolio.tokens])
 
     const amountLabel = <div className="amount-label">Available Amount: <span>{ maxAmount }</span></div>
 
@@ -212,8 +222,15 @@ const CrossChain = ({ addRequest, selectedAccount, portfolio, network }) => {
                                             :
                                             <div className="form">
                                                 <label>From</label>
-                                                <Select searchable defaultValue={fromToken} items={fromTokensItems} onChange={value => setFromToken(value)}/>
-                                                <NumberInput min="0" label={amountLabel} value={amount} onInput={value => setAmount(value)} button="MAX" onButtonClick={() => setAmount(maxAmount)}/>
+                                                {
+                                                    loadingFromTokens ? 
+                                                        <Loading/>
+                                                        :
+                                                        <>
+                                                            <Select searchable defaultValue={fromToken} items={fromTokensItems} onChange={value => setFromToken(value)}/>
+                                                            <NumberInput min="0" label={amountLabel} value={amount} onInput={value => setAmount(value)} button="MAX" onButtonClick={() => setAmount(maxAmount)}/>
+                                                        </>
+                                                }
                                                 <div className="separator">
                                                     <BsArrowDown/>
                                                 </div>
