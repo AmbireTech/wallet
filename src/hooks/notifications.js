@@ -3,6 +3,7 @@ import { getTransactionSummary } from '../lib/humanReadableTransactions'
 import { ethers } from 'ethers'
 import { useToasts } from './toasts'
 import networks from '../consts/networks'
+import AMBIRE_ICON from '../resources/icon.png'
 
 const REQUEST_TITLE_PREFIX = 'Ambire Wallet: '
 const SUPPORTED_TYPES =  ['eth_sendTransaction', 'personal_sign']
@@ -30,7 +31,7 @@ export default function useNotifications (requests, onShow, portfolio, selectedA
         const notification = new Notification(title, {
             requireInteraction: requireInteraction || false,
             body,
-            icon: 'public/logo192.png',
+            icon: AMBIRE_ICON,
         })
         //notification.onclose = 
         notification.onclick = () => {
