@@ -1,12 +1,14 @@
 @import '.././/../../variables.scss';
 
-$modal-height: 660px;
+$modal-height: 730px;
 $modal-width: 530px;
+$buttons-height: 60px;
 
 .modal {
     z-index: 52;
     position: relative;
-    height: $modal-height;
+    min-height: 600px;
+    max-height: $modal-height;
     width: $modal-width;
     display: flex;
     flex-direction: column;
@@ -44,25 +46,25 @@ $modal-width: 530px;
         height: 100%;
         position: relative;
         padding: 0 35px;
-        padding-bottom: 50px;
+        padding-bottom: calc(#{$buttons-height} + 20px);
         overflow: hidden;
         overflow-y: auto;
         scrollbar-width: thin;
+    }
 
-        .buttons {
-            position: absolute;
-            left: 0;
-            bottom: 0;
-            height: 60px;
-            width: 100%;
-            display: flex;
-            box-sizing: border-box;
-            background-color: $input-background-color;
+    .buttons {
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        height: $buttons-height;
+        width: 100%;
+        display: flex;
+        box-sizing: border-box;
+        background-color: $input-background-color;
 
-            button {
-                flex: 0 1 50% !important;
-                height: 100%;
-            }
+        button {
+            flex: 0 1 50% !important;
+            height: 100%;
         }
     }
 }
