@@ -1,6 +1,6 @@
 import './Quotes.scss'
 
-import { MdOutlineArrowForward, MdOutlineCheck, MdOutlineClose } from 'react-icons/md';
+import { MdOutlineArrowBack, MdOutlineArrowForward, MdOutlineCheck, MdOutlineClose } from 'react-icons/md';
 import { Button, Loading, Radios } from '../../../../common';
 import { useState } from 'react';
 import networks from '../../../../../consts/networks';
@@ -177,8 +177,10 @@ const Quotes = ({ addRequest, selectedAccount, fromTokensItems, quotes, onCancel
             <div className="separator"></div>
 
             <div id="buttons">
-                <Button small clear icon={<MdOutlineClose/>} disabled={loading} onClick={onCancel}>Cancel</Button>
-                <Button small icon={<MdOutlineCheck/>} disabled={!selectedRoute || loading} onClick={onConfirm}>Confirm</Button>
+                <Button small clear icon={routes.length ? <MdOutlineClose/> : <MdOutlineArrowBack/>} disabled={loading} onClick={onCancel}>{ routes.length ? 'Cancel' : 'Go Back' }</Button>
+                { routes.length ? 
+                    <Button small icon={<MdOutlineCheck/>} disabled={!selectedRoute || loading} onClick={onConfirm}>Confirm</Button>
+                : null }
             </div>
         </div>
     )
