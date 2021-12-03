@@ -1,31 +1,10 @@
 import { isValidAddress, isKnownTokenOrContract } from "../../helpers/address"
 
-const validateSendTransferForm = (address, selectedAcc, addressConfirmed, isKnownAddress, amount, selectedAsset) => {
-    if (!(amount.length)) {
-        return {
-            success: false,
-            message: `Please, enter an amount.`
-        }
-    }
-    
-    if (!(amount && (amount > 0))) {
-        return {
-            success: false,
-            message: 'The amount must be greater than 0.'
-        }
-    }
-    
-    if (!(amount && selectedAsset && (amount <= selectedAsset?.balance))) {
-        return {
-            success: false,
-            message: `The amount is greater than the asset's balance: ${selectedAsset?.balance} ${selectedAsset?.symbol}.`
-        }
-    }
-
+const validateSendTransferAddress = (address, selectedAcc, addressConfirmed, isKnownAddress, amount, selectedAsset) => {
     if (!(address.length)) {
         return {
             success: false,
-            message: `Please, enter the recipient's address.`
+            message: ``
         }
     }
 
@@ -57,7 +36,35 @@ const validateSendTransferForm = (address, selectedAcc, addressConfirmed, isKnow
         }
     }
 
-    return { success: true, message: 'Done' }
+    return { success: true, message: '' }
 }
 
-export default validateSendTransferForm
+const validateSendTransferAmount = (amount, selectedAsset) => {
+    if (!(amount.length)) {
+        return {
+            success: false,
+            message: ``
+        }
+    }
+    
+    if (!(amount && (amount > 0))) {
+        return {
+            success: false,
+            message: 'The amount must be greater than 0.'
+        }
+    }
+    
+    if (!(amount && selectedAsset && (amount <= selectedAsset?.balance))) {
+        return {
+            success: false,
+            message: `The amount is greater than the asset's balance: ${selectedAsset?.balance} ${selectedAsset?.symbol}.`
+        }
+    }
+
+    return { success: true, message: '' }
+}
+
+export {
+    validateSendTransferAddress,
+    validateSendTransferAmount
+}
