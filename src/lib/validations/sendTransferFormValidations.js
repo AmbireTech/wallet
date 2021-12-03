@@ -36,7 +36,7 @@ const validateSendTransferAddress = (address, selectedAcc, addressConfirmed, isK
         }
     }
 
-    return { success: true, message: '' }
+    return { success: true, message: 'Verified' }
 }
 
 const validateSendTransferAmount = (amount, selectedAsset) => {
@@ -61,7 +61,7 @@ const validateSendTransferAmount = (amount, selectedAsset) => {
         }
     }
 
-    return { success: true, message: '' }
+    return { success: true, message: 'Verified' }
 }
 
 export {

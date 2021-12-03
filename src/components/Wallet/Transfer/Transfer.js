@@ -1,6 +1,6 @@
 import './Transfer.scss'
 
-import { BsArrowDown } from 'react-icons/bs'
+import { BsArrowDown, BsCheckLg, BsXLg } from 'react-icons/bs'
 import { useParams, withRouter } from 'react-router'
 import { useEffect, useState } from 'react'
 import { ethers } from 'ethers'
@@ -37,7 +37,16 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
     const [disabled, setDisabled] = useState(true)
     const [addressConfirmed, setAddressConfirmed] = useState(false)
     const [newAddress, setNewAddress] = useState('')
-    const [validationFormMgs, SetValidationFormMgs] = useState({})
+    const [validationFormMgs, setValidationFormMgs] = useState({ 
+        success: { 
+            amount: false,
+            address: false
+        }, 
+        messages: { 
+            amount: '', 
+            address: ''
+        }
+    })
 
     const assetsItems = portfolio.tokens.map(({ label, address, img }) => ({
         label,
@@ -103,14 +112,19 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
     useEffect(() => {
         const isValidRecipientAddress = validateSendTransferAddress(address, selectedAcc, addressConfirmed, isKnownAddress)
         const isValidSendTransferAmount = validateSendTransferAmount(amount, selectedAsset) 
+       
+        setValidationFormMgs({ 
+            success: { 
+                amount: isValidSendTransferAmount.success, 
+                address: isValidRecipientAddress.success 
+            }, 
+            messages: { 
+                amount: isValidSendTransferAmount.message, 
+                address: isValidRecipientAddress.message
+            }
+        })
 
-        if (isValidRecipientAddress.success && isValidSendTransferAmount.success) {
-            setDisabled(false)
-            SetValidationFormMgs({ success: true, message: ''})
-        } else {
-            setDisabled(true)
-            SetValidationFormMgs({success: false, message: `${isValidSendTransferAmount.message} ${isValidRecipientAddress.message}`})
-        }
+        setDisabled(!(isValidRecipientAddress.success && isValidSendTransferAmount.success))
     }, [address, amount, selectedAcc, selectedAsset, addressConfirmed, isKnownAddress, addToast])
 
     return (
@@ -134,6 +148,7 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
                                     button="MAX"
                                     onButtonClick={() => setMaxAmount()}
                                 />
+                                { validationFormMgs.messages.amount && (<div className={ validationFormMgs.success.amount ? 'success' : 'error' }>{validationFormMgs.success.amount ? <BsCheckLg size={12}/> : <BsXLg size={12}/>} {validationFormMgs.messages.amount}</div>) }
                                 <div id="recipient-field">
                                     <TextInput
                                         placeholder="Recipient"
@@ -150,6 +165,7 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
                                         onSelectAddress={address => setAddress(address)}
                                     />
                                 </div>
+                                { validationFormMgs.messages.address && (<div className={ validationFormMgs.success.address ? 'success' : 'error' }> {validationFormMgs.success.address ? <BsCheckLg size={12}/> : <BsXLg size={12}/>} {validationFormMgs.messages.address}</div>) }
                                 <div className="separator"/>
                                 <AddressWarning
                                     address={address}
@@ -157,7 +173,6 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
                                     onChange={(value) => setAddressConfirmed(value)}
                                     isKnownAddress={isKnownAddress}
                                 />
-                                <span style={{ color: validationFormMgs.success ? 'green' : 'red' }}>{validationFormMgs.message}</span>
                                 <Button disabled={disabled} onClick={sendTx}>Send</Button>
                             </div>
                             :
