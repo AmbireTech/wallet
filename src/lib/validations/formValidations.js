@@ -1,6 +1,6 @@
 import { isValidAddress, isKnownTokenOrContract } from "../../helpers/address"
 
-const validateSendTransferAddress = (address, selectedAcc, addressConfirmed, isKnownAddress, amount, selectedAsset) => {
+const validateAddress = address => {
     if (!(address.length)) {
         return {
             success: false,
@@ -14,6 +14,27 @@ const validateSendTransferAddress = (address, selectedAcc, addressConfirmed, isK
             message: 'Invalid address.'
         }
     }
+
+    return { success: true, message: 'Verified' }
+}
+
+const validateAddAughtSignerAddress = (address, selectedAcc) => {
+    const isValidAddr = validateAddress(address)
+    if (!isValidAddr.success) return isValidAddr
+
+    if (address && selectedAcc && (address === selectedAcc)) {
+        return {
+            success: false,
+            message: 'The entered address should be different than the your own account address.'
+        }
+    }
+    
+    return { success: true, message: 'Verified' }
+}
+
+const validateSendTransferAddress = (address, selectedAcc, addressConfirmed, isKnownAddress) => {
+    const isValidAddr = validateAddress(address)
+    if (!isValidAddr.success) return isValidAddr
 
     if (address && selectedAcc && (address === selectedAcc)) {
         return {
@@ -65,6 +86,7 @@ const validateSendTransferAmount = (amount, selectedAsset) => {
 }
 
 export {
+    validateAddAughtSignerAddress,
     validateSendTransferAddress,
     validateSendTransferAmount
 }
