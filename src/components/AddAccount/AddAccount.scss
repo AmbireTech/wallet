@@ -18,6 +18,44 @@
     padding: 2em 0;
     overflow: hidden;
 
+    button, input {
+        font-size: 1em;
+        border: 0px;
+        background: none; /* #282c34; */
+        padding: 1em;
+        box-sizing: border-box;
+        font-family: 'Open Sans';
+        transition: all 0.1s ease-in-out;
+    }
+
+    button {
+        background-color: white;
+    }
+    button, input[type=submit] {
+        cursor: pointer;
+    }
+
+    button:not([disabled]):active, input[type=submit]:not([disabled]):active {
+        transform: scale(0.95);
+    }
+
+    input:focus {
+        outline: 0px;
+    }
+
+    button {
+        opacity: 0.8;
+    }
+
+    button:not([disabled]):hover {
+        opacity: 1;
+    }
+
+    input:disabled, button:disabled {
+        opacity: 0.5 !important;
+        cursor: default;
+    }
+
     #logo {
         background-image: url('../../resources/logo.png');
         width: 35%;

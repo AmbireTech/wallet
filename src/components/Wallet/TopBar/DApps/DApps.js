@@ -2,7 +2,7 @@ import './DApps.scss'
 
 import React, { useState, useCallback } from 'react'
 import { FiHelpCircle } from 'react-icons/fi'
-import { DropDown, ToolTip } from "../../../common"
+import { DropDown, ToolTip, Button } from "../../../common"
 import { checkClipboardPermission } from '../../../../helpers/permissions'
 import { MdOutlineWarning } from 'react-icons/md'
 
@@ -31,9 +31,9 @@ const DApps = ({ connections, connect, disconnect }) => {
         <DropDown id="dApps" title="dApps" badge={connections.length} onOpen={() => checkPermission()}>
             <div id="connect-dapp">
                 <div className="heading">
-                    <button disabled={isClipboardGranted} onClick={readClipboard}>
+                    <Button small disabled={isClipboardGranted} onClick={readClipboard}>
                         Connect dApp
-                    </button>
+                    </Button>
                     <a href='https://help.ambire.com/hc/en-us/articles/4410889965842' target='_blank' rel='noreferrer'>
                         <FiHelpCircle size={30} />
                     </a>
