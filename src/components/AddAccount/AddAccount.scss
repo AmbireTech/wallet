@@ -148,6 +148,13 @@
                 display: block;
                 margin: 4em auto;
             }
+
+            .error {
+                max-width: 300px;
+                font-size: 1.5em;
+                font-weight: 600;
+                position: relative;
+            }
         }
     }
 
