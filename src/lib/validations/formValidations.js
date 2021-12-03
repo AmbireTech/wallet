@@ -1,10 +1,10 @@
 import { isValidAddress, isKnownTokenOrContract } from "../../helpers/address"
 
 const validateAddress = address => {
-    if (!(address.length)) {
+    if (!(address && address.length)) {
         return {
             success: false,
-            message: ``
+            message: ''
         }
     }
 
@@ -15,10 +15,10 @@ const validateAddress = address => {
         }
     }
 
-    return { success: true, message: 'Verified' }
+    return { success: true }
 }
 
-const validateAddAughtSignerAddress = (address, selectedAcc) => {
+const validateAddAuthSignerAddress = (address, selectedAcc) => {
     const isValidAddr = validateAddress(address)
     if (!isValidAddr.success) return isValidAddr
 
@@ -29,7 +29,7 @@ const validateAddAughtSignerAddress = (address, selectedAcc) => {
         }
     }
     
-    return { success: true, message: 'Verified' }
+    return { success: true }
 }
 
 const validateSendTransferAddress = (address, selectedAcc, addressConfirmed, isKnownAddress) => {
@@ -46,25 +46,25 @@ const validateSendTransferAddress = (address, selectedAcc, addressConfirmed, isK
     if (address && isKnownTokenOrContract(address)) {
         return {
             success: false,
-            message: 'The address is not known Token or Contract.'
+            message: 'You are trying to send tokens to a smart contract. Doing so would burn them.'
         }
     }
 
     if (address && (!isKnownAddress(address) && !addressConfirmed)) {
         return {
             success: false,
-            message: 'The address is unknown and not confirmed. Please confirm it bellow.'
+            message: `You're trying to send to an unknown address. If you're really sure, confirm using the checkbox below.`
         }
     }
 
-    return { success: true, message: 'Verified' }
+    return { success: true }
 }
 
 const validateSendTransferAmount = (amount, selectedAsset) => {
-    if (!(amount.length)) {
+    if (!(amount && amount.length)) {
         return {
             success: false,
-            message: ``
+            message: ''
         }
     }
     
@@ -82,11 +82,11 @@ const validateSendTransferAmount = (amount, selectedAsset) => {
         }
     }
 
-    return { success: true, message: 'Verified' }
+    return { success: true }
 }
 
 export {
-    validateAddAughtSignerAddress,
+    validateAddAuthSignerAddress,
     validateSendTransferAddress,
     validateSendTransferAmount
 }
