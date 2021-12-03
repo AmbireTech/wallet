@@ -105,6 +105,8 @@ const Security = ({
     history.push('/wallet/security')
   }
 
+  const selectedAccount = accounts.find(x => x.id === selectedAcc)
+
   const showResetPasswordModal = () => {
     if (!relayerURL) {
       addToast('Unsupported without a connection to the relayer', { error: true })
@@ -115,10 +117,9 @@ const Security = ({
       selectedNetwork={selectedNetwork}
       relayerURL={relayerURL}
       onAddAccount={onAddAccount}
+      addRequest={addRequest}
     />)
   }
-
-  const selectedAccount = accounts.find(x => x.id === selectedAcc)
 
   const privList = Object.entries(privileges)
     .map(([addr, privValue]) => {

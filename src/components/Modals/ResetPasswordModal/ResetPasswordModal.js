@@ -1,6 +1,9 @@
 import './ResetPasswordModal.scss'
 
 import { Wallet } from 'ethers'
+import { id } from '@ethersproject/hash'
+import { AbiCoder, Interface } from '@ethersproject/abi'
+import { keccak256 } from '@ethersproject/keccak256'
 import { useState, useMemo, createRef, useEffect, useCallback } from 'react'
 import { Modal, Radios, TextInput, Checkbox, Button, ToolTip, Loading } from '../../common'
 import { MdOutlineCheck, MdOutlineClose, MdOutlineHelpOutline } from 'react-icons/md'
@@ -9,7 +12,9 @@ import { useToasts } from '../../../hooks/toasts'
 import accountPresets from '../../../consts/accountPresets'
 import { fetchPost } from '../../../lib/fetch'
 
-const ResetPassword = ({ account, selectedNetwork, relayerURL, onAddAccount }) => {
+const IDENTITY_INTERFACE = new Interface(require('adex-protocol-eth/abi/Identity5.2'))
+
+const ResetPassword = ({ account, selectedNetwork, relayerURL, onAddAccount, addRequest }) => {
     const { hideModal } = useModals()
     const { addToast } = useToasts()
 
@@ -28,10 +33,10 @@ const ResetPassword = ({ account, selectedNetwork, relayerURL, onAddAccount }) =
             label: 'Change the password on this device and Ambire Cloud. Best if you just want to routinely change the password.',
             value: 'change'
         },
-        // {
-        //     label: 'Reset the key and password: takes 3 days. Best if you\'ve forgotten the old password.',
-        //     value: 'forgot'
-        // }
+        {
+            label: 'Reset the key and password: takes 3 days. Best if you\'ve forgotten the old password.',
+            value: 'reset'
+        }
     ], [])
 
     const checkboxes = useMemo(() => ([
@@ -97,6 +102,53 @@ const ResetPassword = ({ account, selectedNetwork, relayerURL, onAddAccount }) =
         }
 
         setLoading(false)
+    }
+
+    const resetPassword = async () => {
+        const extraEntropy = id(account.email + ':' + Date.now() + ':' + Math.random() + ':' + (typeof performance === 'object' && performance.now()))
+        const firstKeyWallet = Wallet.createRandom({ extraEntropy })
+        const secondKeySecret = Wallet.createRandom({ extraEntropy }).mnemonic.phrase.split(' ').slice(0, 6).join(' ') + ' ' + account.email
+
+        const secondKeyResp = await fetchPost(`${relayerURL}/second-key`, { secondKeySecret })
+        if (!secondKeyResp.address) throw new Error(`second-key returned no address, error: ${secondKeyResp.message || secondKeyResp}`)
+
+        const { quickAccManager, quickAccTimelock } = accountPresets
+        const quickAccountTuple = [quickAccTimelock, firstKeyWallet.address, secondKeyResp.address]
+        const signer = {
+            quickAccManager,
+            timelock: quickAccountTuple[0],
+            one: quickAccountTuple[1],
+            two: quickAccountTuple[2]
+        }
+
+        const primaryKeyBackup = JSON.stringify(await firstKeyWallet.encrypt(newPassword, accountPresets.encryptionOpts))
+
+        onAddAccount({
+            ...account,
+            primaryKeyBackup,
+            signer,
+            recoveryMode: true,
+            preRecoverySigner: account.signer,
+            preRecoveryPrimaryKeyBackup: account.primaryKeyBackup
+        }, { select: true })
+
+        const abiCoder = new AbiCoder()
+        const newQuickAccHash = keccak256(abiCoder.encode(['tuple(uint, address, address)'], [quickAccountTuple]))
+
+        addRequest({
+            id: `setAddrPrivilege_${Date.now()}`,
+            type: 'eth_sendTransaction',
+            chainId: selectedNetwork.chainId,
+            account: account.id,
+            txn: {
+                to: account.id,
+                data: IDENTITY_INTERFACE.encodeFunctionData('setAddrPrivilege', [
+                    quickAccManager,
+                    newQuickAccHash,
+                ]),
+                value: '0x00',
+            }
+        })
     }
 
     const validateForm = useCallback(() => {
@@ -178,7 +230,7 @@ const ResetPassword = ({ account, selectedNetwork, relayerURL, onAddAccount }) =
             </div>
             <div className="buttons">
                 <Button icon={<MdOutlineClose/>} clear onClick={() => hideModal()}>Cancel</Button>
-                <Button icon={<MdOutlineCheck/>} disabled={disabled} onClick={() => changePassword()}>Confirm</Button>
+                <Button icon={<MdOutlineCheck/>} disabled={disabled} onClick={() => type === 'change' ? changePassword(): resetPassword()}>Confirm</Button>
             </div>
         </Modal>
     )
