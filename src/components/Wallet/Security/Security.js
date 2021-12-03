@@ -1,6 +1,6 @@
 import './Security.scss'
 
-import { MdOutlineAdd } from 'react-icons/md'
+import { MdOutlineAdd, MdOutlineWarning, MdOutlineWarningAmber } from 'react-icons/md'
 import { RiDragDropLine } from 'react-icons/ri'
 import { useState, useEffect, useCallback } from 'react'
 import { Loading, TextInput, Button } from '../../common'
@@ -49,6 +49,7 @@ const Security = ({
     : null
   const { data, errMsg, isLoading } = useRelayerData(url)
   const privileges = data ? data.privileges : {}
+  const recoveryLock = data && data.recoveryLock ? data.recoveryLock : { status: null, message: null }
   const { addToast } = useToasts()
   const history = useHistory()
 
@@ -206,6 +207,12 @@ const Security = ({
 
   const showLoading = isLoading && !data
   const signersFragment = relayerURL ? (<>
+    { recoveryLock.status ? 
+      <div id="recoveryLock">
+        <MdOutlineWarningAmber/>
+        Account recovery in progress!
+      </div>
+    : null }
     <div className="panel">
       <div className='network-warning'>
         <MdInfoOutline size={36}></MdInfoOutline>
