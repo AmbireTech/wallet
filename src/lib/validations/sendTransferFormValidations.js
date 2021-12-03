@@ -32,7 +32,7 @@ const validateSendTransferAddress = (address, selectedAcc, addressConfirmed, isK
     if (address && (!isKnownAddress(address) && !addressConfirmed)) {
         return {
             success: false,
-            message: 'The address is unknown or not confirmed.'
+            message: 'The address is unknown and not confirmed. Please confirm it bellow.'
         }
     }
 
