@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react'
-import { Loading } from '../common'
+import { Button, Loading, TextInput } from '../common'
 import { isTokenEligible } from './helpers'
 
 export default function Actions({ estimation, feeSpeed, approveTxn, rejectTxn, signingStatus }) {
@@ -7,7 +7,7 @@ export default function Actions({ estimation, feeSpeed, approveTxn, rejectTxn, s
   const form = useRef(null)
 
   const rejectButton = rejectTxn && (
-    <button type='button' className='rejectTxn' onClick={rejectTxn}>Reject</button>
+    <Button small danger className='rejectTxn' onClick={rejectTxn}>Reject</Button>
   )
   const insufficientFee = estimation && estimation.feeInUSD
     && !isTokenEligible(estimation.selectedFeeToken, feeSpeed, estimation)
@@ -29,35 +29,36 @@ export default function Actions({ estimation, feeSpeed, approveTxn, rejectTxn, s
         {signingStatus.confCodeRequired === 'otp' ? (<b>Please enter your OTP code and your password.</b>) : (<></>)}
         {signingStatus.confCodeRequired === 'email' ? (<b>A confirmation code was sent to your email, please enter it along with your password.</b>) : (<></>)}
       </div>
-      <input type='password' required minLength={3} placeholder='Password' value={quickAccCredentials.passphrase} onChange={e => setQuickAccCredentials({ ...quickAccCredentials, passphrase: e.target.value })}></input>
+      <TextInput small password required minLength={3} placeholder='Password' value={quickAccCredentials.passphrase} onChange={value => setQuickAccCredentials({ ...quickAccCredentials, passphrase: value })}></TextInput>
       <form ref={form} className='quickAccSigningForm' onSubmit={e => { e.preventDefault() }}>
         {/* Changing the autoComplete prop to a random string seems to disable it more often */}
-        <input
-          type='text' pattern='[0-9]+'
+        <TextInput
+          small
+          pattern='[0-9]+'
           title='Confirmation code should be 6 digits'
           autoComplete='nope'
           required minLength={6} maxLength={6}
           placeholder='Confirmation code'
           value={quickAccCredentials.code}
-          onChange={e => setQuickAccCredentials({ ...quickAccCredentials, code: e.target.value })}
-        ></input>
+          onChange={value => setQuickAccCredentials({ ...quickAccCredentials, code: value })}
+        ></TextInput>
         {rejectButton}
-        <button className='approveTxn'
+        <Button small className='approveTxn'
           onClick={() => {
             if (!form.current.checkValidity()) return
             approveTxn({ quickAccCredentials })
           }}
         >
           {signButtonLabel}
-        </button>
+        </Button>
       </form>
     </>)
   }
 
   return (<div className='buttons'>
       {rejectButton}
-      <button className='approveTxn' disabled={!estimation || signingStatus} onClick={approveTxn}>
+      <Button small className='approveTxn' disabled={!estimation || signingStatus} onClick={approveTxn}>
         {signButtonLabel}
-      </button>
+      </Button>
   </div>)
 }
