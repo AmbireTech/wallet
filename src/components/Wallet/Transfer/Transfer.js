@@ -1,6 +1,7 @@
 import './Transfer.scss'
 
 import { BsArrowDown } from 'react-icons/bs'
+import { AiOutlineSend } from 'react-icons/ai'
 import { useParams, withRouter } from 'react-router'
 import { useEffect, useState } from 'react'
 import { ethers } from 'ethers'
@@ -147,7 +148,7 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
                                     onChange={(value) => setAddressConfirmed(value)}
                                     isKnownAddress={isKnownAddress}
                                 />
-                                <Button disabled={disabled} onClick={sendTx}>Send</Button>
+                                <Button icon={<AiOutlineSend/>} disabled={disabled} onClick={sendTx}>Send</Button>
                             </div>
                             :
                             <SendPlaceholder/>
