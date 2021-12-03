@@ -8,7 +8,7 @@ import SendPlaceholder from './SendPlaceholder/SendPlaceholder'
 import { Interface } from 'ethers/lib/utils'
 import { useToasts } from '../../../hooks/toasts'
 import { TextInput, NumberInput, Button, Select, Loading, AddressBook, AddressWarning } from '../../common'
-import { validateSendTransferAddress, validateSendTransferAmount } from '../../../lib/validations/sendTransferFormValidations'
+import { validateSendTransferAddress, validateSendTransferAmount } from '../../../lib/validations/formValidations'
 
 const ERC20 = new Interface(require('adex-protocol-eth/abi/ERC20'))
 const crossChainAssets = [
@@ -148,7 +148,12 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
                                     button="MAX"
                                     onButtonClick={() => setMaxAmount()}
                                 />
-                                { validationFormMgs.messages.amount && (<div className={ validationFormMgs.success.amount ? 'success' : 'error' }>{validationFormMgs.success.amount ? <BsCheckLg size={12}/> : <BsXLg size={12}/>} {validationFormMgs.messages.amount}</div>) }
+                                { validationFormMgs.messages.amount && 
+                                    (<div className={ validationFormMgs.success.amount ? 'success' : 'error' }>
+                                        {validationFormMgs.success.amount ? <BsCheckLg size={12}/> : <BsXLg size={12}/>} 
+                                        &nbsp;{validationFormMgs.messages.amount}
+                                    </div>) 
+                                }
                                 <div id="recipient-field">
                                     <TextInput
                                         placeholder="Recipient"
@@ -165,7 +170,12 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
                                         onSelectAddress={address => setAddress(address)}
                                     />
                                 </div>
-                                { validationFormMgs.messages.address && (<div className={ validationFormMgs.success.address ? 'success' : 'error' }> {validationFormMgs.success.address ? <BsCheckLg size={12}/> : <BsXLg size={12}/>} {validationFormMgs.messages.address}</div>) }
+                                { validationFormMgs.messages.address && 
+                                    (<div className={ validationFormMgs.success.address ? 'success' : 'error' }> 
+                                        {validationFormMgs.success.address ? <BsCheckLg size={12}/> : <BsXLg size={12}/>} 
+                                        &nbsp;{validationFormMgs.messages.address}
+                                    </div>) 
+                                }
                                 <div className="separator"/>
                                 <AddressWarning
                                     address={address}
