@@ -5,12 +5,12 @@
   right: 0px;
   bottom: 0px;
   z-index: 999;
+  overflow-y: auto;
   background-color: #282b33;
 
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
   gap: 2em;
 
   #signingAccount {
