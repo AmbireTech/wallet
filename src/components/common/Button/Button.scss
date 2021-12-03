@@ -5,11 +5,15 @@ button.buttonComponent {
     @include flex-center-center;
     gap: 10px;
     padding: 0 20px;
+    border: none;
+    font-family: 'Open Sans';
     font-size: 20px;
     font-weight: bold;
     color: black;
     background-color: $primary-accent-color;
     text-transform: uppercase;
+    outline: none;
+    transition: 0.1s ease-in-out;
     
     .icon-button {
         @include flex-center-center;
@@ -36,5 +40,18 @@ button.buttonComponent {
         &:not([disabled]):hover {
             background-color: rgba(0, 0, 0, 0.2);
         }
+    }
+
+    &:disabled {
+        opacity: 0.2 !important;
+    }
+
+    &:not([disabled]):hover {
+        cursor: pointer;
+        opacity: 0.8;
+    }
+
+    &:active {
+        opacity: 0.6;
     }
 }
