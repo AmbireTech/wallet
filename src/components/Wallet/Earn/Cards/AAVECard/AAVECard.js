@@ -154,7 +154,7 @@ const AAVECard = ({ networkId, tokens, protocols, account, addRequest }) => {
             const tokensItems = allTokens.map(token => ({
                 ...token,
                 apr: tokensAPR[token.address],
-                icon: token.img,
+                icon: token.img || token.tokenImageUrl,
                 label: `${token.symbol} (${tokensAPR[token.address]}% APR)`,
                 value: token.address
             })).sort((a, b) => (b?.balance + getEquToken(b)?.balance) - (a?.balance + getEquToken(a)?.balance))

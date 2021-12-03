@@ -48,10 +48,10 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
         }
     })
 
-    const assetsItems = portfolio.tokens.map(({ label, symbol, address, img }) => ({
+    const assetsItems = portfolio.tokens.map(({ label, symbol, address, img, tokenImageUrl }) => ({
         label: label || symbol,
         value: address,
-        icon: img
+        icon: img || tokenImageUrl
     }))
 
     const selectedAsset = portfolio.tokens.find(({ address }) => address === asset)
