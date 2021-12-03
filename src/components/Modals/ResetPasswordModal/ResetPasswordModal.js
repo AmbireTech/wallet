@@ -105,50 +105,59 @@ const ResetPassword = ({ account, selectedNetwork, relayerURL, onAddAccount, add
     }
 
     const resetPassword = async () => {
-        const extraEntropy = id(account.email + ':' + Date.now() + ':' + Math.random() + ':' + (typeof performance === 'object' && performance.now()))
-        const firstKeyWallet = Wallet.createRandom({ extraEntropy })
-        const secondKeySecret = Wallet.createRandom({ extraEntropy }).mnemonic.phrase.split(' ').slice(0, 6).join(' ') + ' ' + account.email
+        setLoading(true)
 
-        const secondKeyResp = await fetchPost(`${relayerURL}/second-key`, { secondKeySecret })
-        if (!secondKeyResp.address) throw new Error(`second-key returned no address, error: ${secondKeyResp.message || secondKeyResp}`)
+        try {
+            const extraEntropy = id(account.email + ':' + Date.now() + ':' + Math.random() + ':' + (typeof performance === 'object' && performance.now()))
+            const firstKeyWallet = Wallet.createRandom({ extraEntropy })
+            const secondKeySecret = Wallet.createRandom({ extraEntropy }).mnemonic.phrase.split(' ').slice(0, 6).join(' ') + ' ' + account.email
 
-        const { quickAccManager, quickAccTimelock } = accountPresets
-        const quickAccountTuple = [quickAccTimelock, firstKeyWallet.address, secondKeyResp.address]
-        const signer = {
-            quickAccManager,
-            timelock: quickAccountTuple[0],
-            one: quickAccountTuple[1],
-            two: quickAccountTuple[2]
+            const secondKeyResp = await fetchPost(`${relayerURL}/second-key`, { secondKeySecret })
+            if (!secondKeyResp.address) throw new Error(`second-key returned no address, error: ${secondKeyResp.message || secondKeyResp}`)
+
+            const { quickAccManager, quickAccTimelock } = accountPresets
+            const quickAccountTuple = [quickAccTimelock, firstKeyWallet.address, secondKeyResp.address]
+            const signer = {
+                quickAccManager,
+                timelock: quickAccountTuple[0],
+                one: quickAccountTuple[1],
+                two: quickAccountTuple[2]
+            }
+
+            const primaryKeyBackup = JSON.stringify(await firstKeyWallet.encrypt(newPassword, accountPresets.encryptionOpts))
+
+            onAddAccount({
+                ...account,
+                primaryKeyBackup,
+                signer,
+                recoveryMode: true,
+                preRecoverySigner: account.signer,
+                preRecoveryPrimaryKeyBackup: account.primaryKeyBackup
+            }, { select: true })
+
+            const abiCoder = new AbiCoder()
+            const newQuickAccHash = keccak256(abiCoder.encode(['tuple(uint, address, address)'], [quickAccountTuple]))
+
+            addRequest({
+                id: `setAddrPrivilege_${Date.now()}`,
+                type: 'eth_sendTransaction',
+                chainId: selectedNetwork.chainId,
+                account: account.id,
+                txn: {
+                    to: account.id,
+                    data: IDENTITY_INTERFACE.encodeFunctionData('setAddrPrivilege', [
+                        quickAccManager,
+                        newQuickAccHash,
+                    ]),
+                    value: '0x00',
+                }
+            })
+        } catch(e) {
+            console.error(e);
+            addToast(e.message || e, { error: true })
         }
 
-        const primaryKeyBackup = JSON.stringify(await firstKeyWallet.encrypt(newPassword, accountPresets.encryptionOpts))
-
-        onAddAccount({
-            ...account,
-            primaryKeyBackup,
-            signer,
-            recoveryMode: true,
-            preRecoverySigner: account.signer,
-            preRecoveryPrimaryKeyBackup: account.primaryKeyBackup
-        }, { select: true })
-
-        const abiCoder = new AbiCoder()
-        const newQuickAccHash = keccak256(abiCoder.encode(['tuple(uint, address, address)'], [quickAccountTuple]))
-
-        addRequest({
-            id: `setAddrPrivilege_${Date.now()}`,
-            type: 'eth_sendTransaction',
-            chainId: selectedNetwork.chainId,
-            account: account.id,
-            txn: {
-                to: account.id,
-                data: IDENTITY_INTERFACE.encodeFunctionData('setAddrPrivilege', [
-                    quickAccManager,
-                    newQuickAccHash,
-                ]),
-                value: '0x00',
-            }
-        })
+        setLoading(false)
     }
 
     const validateForm = useCallback(() => {
