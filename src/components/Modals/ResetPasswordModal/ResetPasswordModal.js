@@ -182,8 +182,13 @@ const ResetPassword = ({ account, selectedNetwork, relayerURL, onAddAccount, add
 
     useEffect(() => validateForm(), [isLoading, validateForm, oldPassword, newPassword, newPasswordConfirm])
 
+    const modalButtons = <>
+        <Button icon={<MdOutlineClose/>} clear onClick={() => hideModal()}>Cancel</Button>
+        <Button icon={<MdOutlineCheck/>} disabled={disabled} onClick={() => type === 'change' ? changePassword(): resetPassword()}>Confirm</Button>
+    </>
+
     return (
-        <Modal id="reset-password-modal" title="Reset Password">
+        <Modal id="reset-password-modal" title="Reset Password" buttons={modalButtons}>
             {
                 isLoading ?
                     <div id="loading-overlay">
@@ -227,10 +232,6 @@ const ResetPassword = ({ account, selectedNetwork, relayerURL, onAddAccount, add
                     passwordsLengthWarning ?
                         <div className="warning">Password length must be greater than 8 characters</div> : null
                 }
-            </div>
-            <div className="buttons">
-                <Button icon={<MdOutlineClose/>} clear onClick={() => hideModal()}>Cancel</Button>
-                <Button icon={<MdOutlineCheck/>} disabled={disabled} onClick={() => type === 'change' ? changePassword(): resetPassword()}>Confirm</Button>
             </div>
         </Modal>
     )
