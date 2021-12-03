@@ -136,7 +136,7 @@ const Security = ({
         <li key={addr}>
           <TextInput className="depositAddress" value={privText} disabled />
           <div className="btns-wrapper">
-            {isQuickAcc && (<Button onClick={showResetPasswordModal} small>Change password</Button>)}
+            {isQuickAcc && selectedAccount.primaryKeyBackup && (<Button onClick={showResetPasswordModal} small>Change password</Button>)}
             <Button
               disabled={isSelected}
               title={isSelected ? 'Signer is already default' : ''}
