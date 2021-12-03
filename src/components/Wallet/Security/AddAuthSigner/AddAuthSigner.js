@@ -148,8 +148,7 @@ const AddAuthSigner = props => {
 
   const addFromSignerButtons = (
     <div className="wallet-btns-wrapper">
-      <button
-        className="button"
+      <Button
         onClick={() => wrapErr(connectTrezorAndGetAccounts)}
       >
         <div
@@ -157,9 +156,8 @@ const AddAuthSigner = props => {
           style={{ backgroundImage: 'url(./resources/trezor.png)' }}
         />
         Trezor
-      </button>
-      <button
-        className="button"
+      </Button>
+      <Button
         onClick={() => wrapErr(connectLedgerAndGetAccounts)}
       >
         <div
@@ -167,9 +165,8 @@ const AddAuthSigner = props => {
           style={{ backgroundImage: 'url(./resources/ledger.png)' }}
         />
         Ledger
-      </button>
-      <button
-        className="button"
+      </Button>
+      <Button
         onClick={() => wrapErr(connectWeb3AndGetAccounts)}
       >
         <div
@@ -177,7 +174,7 @@ const AddAuthSigner = props => {
           style={{ backgroundImage: 'url(./resources/metamask.png)' }}
         />
         Metamask / Browser
-      </button>
+      </Button>
     </div>
   )
 
