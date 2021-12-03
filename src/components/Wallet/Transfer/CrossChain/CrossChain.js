@@ -205,7 +205,7 @@ const CrossChain = ({ addRequest, selectedAccount, portfolio, network }) => {
                         hasNoFunds ?
                             <NoFundsPlaceholder/>
                             :
-                            !fromTokensItems.length ? 
+                            !loadingFromTokens && !fromTokensItems.length ? 
                                 <div className="placeholder">You don't have any available tokens to swap</div>
                                 :
                                 loadingQuotes ?
