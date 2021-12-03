@@ -1,6 +1,6 @@
 import './Security.scss'
 
-import { MdOutlineAdd, MdOutlineWarning, MdOutlineWarningAmber } from 'react-icons/md'
+import { MdOutlineAdd, MdOutlineWarningAmber } from 'react-icons/md'
 import { RiDragDropLine } from 'react-icons/ri'
 import { useState, useEffect, useCallback } from 'react'
 import { Loading, TextInput, Button } from '../../common'
