@@ -8,7 +8,7 @@ import SendPlaceholder from './SendPlaceholder/SendPlaceholder'
 import { Interface } from 'ethers/lib/utils'
 import { useToasts } from '../../../hooks/toasts'
 import { TextInput, NumberInput, Button, Select, Loading, AddressBook, AddressWarning } from '../../common'
-import validateSendTransferForm from '../../../lib/validations/sendTransferFormValidations'
+import { validateSendTransferAddress, validateSendTransferAmount } from '../../../lib/validations/sendTransferFormValidations'
 
 const ERC20 = new Interface(require('adex-protocol-eth/abi/ERC20'))
 const crossChainAssets = [
@@ -101,14 +101,15 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
     }, [asset, history])
 
     useEffect(() => {
-        const isValidRecipientAddress = validateSendTransferForm(address, selectedAcc, addressConfirmed, isKnownAddress, amount, selectedAsset)
-        
-        if (isValidRecipientAddress.success) {
+        const isValidRecipientAddress = validateSendTransferAddress(address, selectedAcc, addressConfirmed, isKnownAddress)
+        const isValidSendTransferAmount = validateSendTransferAmount(amount, selectedAsset) 
+
+        if (isValidRecipientAddress.success && isValidSendTransferAmount.success) {
             setDisabled(false)
-            SetValidationFormMgs(isValidRecipientAddress)
-        }
-        else {
-            SetValidationFormMgs(isValidRecipientAddress)
+            SetValidationFormMgs({ success: true, message: ''})
+        } else {
+            setDisabled(true)
+            SetValidationFormMgs({success: false, message: `${isValidSendTransferAmount.message} ${isValidRecipientAddress.message}`})
         }
     }, [address, amount, selectedAcc, selectedAsset, addressConfirmed, isKnownAddress, addToast])
 
