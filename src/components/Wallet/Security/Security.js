@@ -1,7 +1,8 @@
 import './Security.scss'
 
-import { MdOutlineAdd } from 'react-icons/md'
+import { MdOutlineAdd, MdOutlineRemove } from 'react-icons/md'
 import { RiDragDropLine } from 'react-icons/ri'
+import { BiExport, BiImport } from 'react-icons/bi'
 import { useState, useEffect, useCallback } from 'react'
 import { Loading, TextInput, Button } from '../../common'
 import { Interface } from 'ethers/lib/utils'
@@ -151,6 +152,7 @@ const Security = ({
               onClick={() => onRemoveBtnClicked(addr)}
               small
               red
+              icon={<MdOutlineRemove/>}
               title={
                 isSelected ? 'Cannot remove the currently used signer' : ''
               }
@@ -268,7 +270,7 @@ const Security = ({
               )}`}
               download={`${selectedAccount.id}.json`}
             >
-              <Button>Export</Button>
+              <Button icon={<BiExport/>}>Export</Button>
             </a>
             <div style={{ fontSize: '0.9em' }}>
             This downloads a backup of your current account ({selectedAccount.id.slice(0, 5)}...{selectedAccount.id.slice(-3)}) encrypted with
@@ -279,7 +281,7 @@ const Security = ({
         <div className="panel">
           <div className="panel-title">Import an account from backup</div>
           <div className="content" id="import">
-            <Button small onClick={open}>Import</Button>
+            <Button icon={<BiImport/>} onClick={open}>Import</Button>
             <p>...or you can drop an account backup JSON file on this page</p>
           </div>
         </div>
