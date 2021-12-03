@@ -48,8 +48,8 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
         }
     })
 
-    const assetsItems = portfolio.tokens.map(({ label, address, img }) => ({
-        label,
+    const assetsItems = portfolio.tokens.map(({ label, symbol, address, img }) => ({
+        label: label || symbol,
         value: address,
         icon: img
     }))
