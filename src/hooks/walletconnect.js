@@ -130,10 +130,14 @@ export default function useWalletConnect ({ account, chainId }) {
                 connector.rejectRequest({ id: payload.id, error: { message: 'METHOD_NOT_SUPPORTED' }})
                 return
             }
-            if (
+            const wrongAcc = (
                 payload.method === 'eth_sendTransaction' && payload.params[0] && payload.params[0].from
                 && payload.params[0].from.toLowerCase() !== connector.session.accounts[0].toLowerCase()
-            ) {
+            ) || (
+                payload.method === 'eth_sign' && payload.params[1]
+                && payload.params[1].toLowerCase() !== connector.session.accounts[0].toLowerCase()
+            )
+            if (wrongAcc) {
                 addToast(`dApp sent a request for the wrong account: ${payload.params[0].from}`, { error: true })
                 return
             }
@@ -141,7 +145,7 @@ export default function useWalletConnect ({ account, chainId }) {
                 id: payload.id,
                 type: payload.method,
                 wcUri: connectorOpts.uri,
-                txn: payload.params[0],
+                txn: payload.method === 'eth_sign' ? payload.params[1] : payload.params[0],
                 chainId: connector.session.chainId,
                 account: connector.session.accounts[0],
                 notification: true
