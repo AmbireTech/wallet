@@ -1,6 +1,6 @@
 import './Transfer.scss'
 
-import { BsArrowDown, BsCheckLg, BsXLg } from 'react-icons/bs'
+import { BsArrowDown, BsXLg } from 'react-icons/bs'
 import { useParams, withRouter } from 'react-router'
 import { useEffect, useState } from 'react'
 import { ethers } from 'ethers'
@@ -119,8 +119,8 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
                 address: isValidRecipientAddress.success 
             }, 
             messages: { 
-                amount: isValidSendTransferAmount.message, 
-                address: isValidRecipientAddress.message
+                amount: isValidSendTransferAmount.message ?  isValidSendTransferAmount.message : '',
+                address: isValidRecipientAddress.message ? isValidRecipientAddress.message : ''
             }
         })
 
@@ -149,11 +149,7 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
                                     onButtonClick={() => setMaxAmount()}
                                 />
                                 { validationFormMgs.messages.amount && 
-                                    (<div className={ validationFormMgs.success.amount ? 'success' : 'error' }>
-                                        {validationFormMgs.success.amount ? <BsCheckLg size={12}/> : <BsXLg size={12}/>} 
-                                        &nbsp;{validationFormMgs.messages.amount}
-                                    </div>) 
-                                }
+                                    (<div className='error'><BsXLg size={12}/>&nbsp;{validationFormMgs.messages.amount}</div>)}
                                 <div id="recipient-field">
                                     <TextInput
                                         placeholder="Recipient"
@@ -171,11 +167,7 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
                                     />
                                 </div>
                                 { validationFormMgs.messages.address && 
-                                    (<div className={ validationFormMgs.success.address ? 'success' : 'error' }> 
-                                        {validationFormMgs.success.address ? <BsCheckLg size={12}/> : <BsXLg size={12}/>} 
-                                        &nbsp;{validationFormMgs.messages.address}
-                                    </div>) 
-                                }
+                                    (<div className='error'><BsXLg size={12}/>&nbsp;{validationFormMgs.messages.address}</div>)}
                                 <div className="separator"/>
                                 <AddressWarning
                                     address={address}
