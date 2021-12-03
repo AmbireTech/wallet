@@ -260,7 +260,7 @@ const Security = ({
       <div id="backup">
         <div className="panel">
           <div className="panel-title">Backup current account</div>
-          <div className="content">
+          <div className="content" id="export">
             <a
               type="button"
               href={`data:text/json;charset=utf-8,${encodeURIComponent(
@@ -278,7 +278,7 @@ const Security = ({
         </div>
         <div className="panel">
           <div className="panel-title">Import an account from backup</div>
-          <div className="content import">
+          <div className="content" id="import">
             <Button small onClick={open}>Import</Button>
             <p>...or you can drop an account backup JSON file on this page</p>
           </div>
