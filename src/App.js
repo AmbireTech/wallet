@@ -91,7 +91,7 @@ function AppInner () {
 
   // Network shouldn't matter here
   const everythingToSign = useMemo(() => requests
-    .filter(({ type, account }) => type === 'personal_sign'
+    .filter(({ type, account }) => type === 'personal_sign' || type === 'eth_sign'
       && account === selectedAcc
     ), [requests, selectedAcc])
 
