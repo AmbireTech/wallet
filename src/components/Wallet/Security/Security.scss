@@ -197,6 +197,17 @@
       }
     }
 
+    #signers {
+      .btns-wrapper {
+        flex-wrap: wrap;
+
+        .buttonComponent {
+          height: 50px;
+          width: 100%;
+        }
+      }
+    }
+
     #addresses {
       .item {
         padding-left: 15px !important;

@@ -205,7 +205,7 @@ const Security = ({
 
   const showLoading = isLoading && !data
   const signersFragment = relayerURL ? (<>
-    <div className="panel">
+    <div className="panel" id="signers">
       <div className='network-warning'>
         <MdInfoOutline size={36}></MdInfoOutline>
         <div>
