@@ -9,8 +9,49 @@
     }
 
     #loginEmail {
+        flex: 0.9;
         max-width: 400px;
         margin: 0px auto;
+
+        input[type=submit] {
+            width: 100%;
+            /*background-color: rgb(255, 209, 0);*/
+            background-color: rgb(128, 255, 219);
+            opacity: 0.8;
+            border: 0px;
+            font-size: 1.5em;
+            color: black;
+            font-weight: 600;
+            text-transform: uppercase;
+            padding: 0.6em;
+
+            &:disabled {
+                opacity: 0.5;
+            }
+
+            &:not([disabled]):hover {
+                opacity: 1.0;
+            }
+        }
+
+        input {
+            margin: 2em 0px;
+            border-bottom: 2px solid #b3c4e6;
+            width: 100%;
+            color: white;
+            font-size: 1.1em;
+
+            &:not([type=submit]):focus {
+                border-bottom: 3px solid #dae6fd;
+            }
+        }
+
+        .error {
+            top: -15px;
+            font-size: 1.5em;
+            font-weight: 600;
+            position: relative;
+        }
     }
 }
 
