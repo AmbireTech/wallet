@@ -25,8 +25,8 @@ button.buttonComponent {
         font-size: 17px;
     }
 
-    &.red {
-        background: #da5151;
+    &.danger {
+        background: $danger-color;
     }
 
     &.clear {
