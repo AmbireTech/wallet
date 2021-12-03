@@ -81,13 +81,6 @@
         height: 60px;
       }
 
-      &.import {
-        button {
-          max-width: 1800px;
-          background: $secondary-accent-color;
-        }
-      }
-
       .text-input {
         flex-grow: 2.8;
       }
@@ -114,14 +107,6 @@
           justify-content: center;
           align-self: flex-end;
           gap: 1em;
-        }
-      }
-
-      a {
-        button {
-          width: 100%;
-          background: orange;
-          max-width: 1800px;
         }
       }
     }
@@ -172,6 +157,22 @@
     flex-direction: row;
     display: flex;
     gap: 2em;
+
+    #export {
+      .buttonComponent {
+        height: 60px;
+        width: 100%;
+        background: orange;
+      }
+    }
+
+    #import {
+      .buttonComponent {
+        height: 60px;
+        width: 100%;
+        background: $secondary-accent-color;
+      }
+    }
   }
 }
 
