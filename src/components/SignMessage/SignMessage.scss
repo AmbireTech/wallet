@@ -1,3 +1,7 @@
+@import '../../variables.scss';
+
+$max-width: 900px;
+
 #signMessage {
   position: fixed;
   top: 0px;
@@ -42,7 +46,7 @@
 
   .panel {
     min-width: 600px;
-    max-width: 900px;
+    max-width: $max-width;
   
     padding: 2em;
     box-sizing: border-box;
@@ -62,6 +66,10 @@
         text-transform: uppercase;
       }
     }
+
+    .content {
+      flex-wrap: wrap;
+    }
   }
 
   .message {
@@ -76,35 +84,53 @@
   }
 
   .actions {
-    button {
-      background-color: rgb(128, 255, 219);
-      margin: 0em 2.5% 0em 2.5%;
-      width: 45%;
-      text-transform: uppercase;
-      font-weight: 800;
-      min-height: 75px;
-      font-size: 1em;
-      vertical-align: middle;
-      position: relative;
-    }
+    form {
+      display: flex;
 
-    input {
-      color: white;
+      button {
+        flex: 1 1 50%;
+        background-color: rgb(128, 255, 219);
+        margin: 0em 2.5% 0em 2.5%;
+        text-transform: uppercase;
+        font-weight: 800;
+        min-height: 75px;
+        font-size: 1em;
+        vertical-align: middle;
+        position: relative;
+      }
+
+      input {
+        color: white;
+        width: 100%;
+        border-bottom: 3px solid rgb(128, 255, 219);
+        margin-bottom: 20px;
+      }
+
+      .reject {
+        border: 3px solid rgb(255, 132, 128);
+        background: transparent;
+        color: rgb(255, 132, 128);
+      }
+
+      .icon {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+      }
+    }
+  }
+}
+
+// Mobile
+@media screen and (max-width: $mobile-breakpoint-max-width) {
+  #signMessage {
+    gap: 1em;
+
+    .panel {
       width: 100%;
-      border-bottom: 3px solid rgb(128, 255, 219);
-      margin-bottom: 20px;
-    }
-
-    .reject {
-      border: 3px solid rgb(255, 132, 128);
-      background: transparent;
-      color: rgb(255, 132, 128);
-    }
-
-    .icon {
-      position: absolute;
-      top: 20px;
-      left: 20px;
+      min-width: auto !important;
+      max-width: 100% !important;
+      padding: 2em 1em !important;
     }
   }
 }
