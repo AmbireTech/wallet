@@ -107,7 +107,7 @@ $titleBar-height: 90px;
 #sendTransaction #topPanel {
     width: 100%;
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
 }
@@ -124,6 +124,7 @@ $titleBar-height: 90px;
     width: 100%;
     display: flex;
     flex-direction: row;
+    justify-content: center;
     gap: 0.5em;
     flex-wrap: wrap;
 }
@@ -331,6 +332,12 @@ $titleBar-height: 90px;
 
         .container {
             gap: 1em;
+
+            #topPanel {
+                .content {
+                    justify-content: flex-start;
+                }
+            }
 
             #panelHolder {
                 gap: 1em;
