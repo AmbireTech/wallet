@@ -205,7 +205,7 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
       setSigningStatus({ quickAcc: true, finalBundle, confCodeRequired })
     } else {
       if (!signature) throw new Error(`QuickAcc internal error: there should be a signature`)
-      if (!account.primaryKeyBackup) throw new Error(`No key backup found: perhaps you need to import the account via JSON?`)
+      if (!account.primaryKeyBackup) throw new Error(`No key backup found: you need to import the account from JSON or login again.`)
       setSigningStatus({ quickAcc: true, inProgress: true })
       // Make sure we let React re-render without blocking (decrypting and signing will block)
       await new Promise(resolve => setTimeout(resolve, 0))
