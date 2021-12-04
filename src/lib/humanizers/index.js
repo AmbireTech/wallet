@@ -5,6 +5,7 @@ import ERC721 from './ERC721'
 import WETH from './WETH'
 import AmbireIdentity from './AmbireIdentity'
 import AmbireFactory from './AmbireFactory'
+import YearnVault from './YearnVault'
 
 const all = {
 	...UniRouters,
@@ -14,5 +15,6 @@ const all = {
 	...WETH,
 	...AmbireIdentity,
 	...AmbireFactory,
+	...YearnVault,
 }
 export default all
