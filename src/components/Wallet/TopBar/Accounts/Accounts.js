@@ -3,14 +3,14 @@ import './Accounts.scss'
 import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { AiOutlinePlus } from 'react-icons/ai'
-import { MdOutlineContentCopy, MdOutlineDelete, MdOutlineClose, MdOutlineCheck } from 'react-icons/md'
+import { MdOutlineContentCopy, MdLogout, MdOutlineClose, MdOutlineCheck } from 'react-icons/md'
 import * as blockies from 'blockies-ts';
 import { DropDown, Button } from '../../../common';
 import { useToasts } from '../../../../hooks/toasts';
 
 const Accounts = ({ accounts, selectedAddress, onSelectAcc, onRemoveAccount }) => {
     const { addToast } = useToasts()
-    const [accountWarning, setAccountWarning] = useState(false)
+    const [logoutWarning, setLogoutWarning] = useState(false)
     const [closed, setClosed] = useState(false)
 
     const shortenedAddress = address => address.slice(0, 5) + '...' + address.slice(-3)
@@ -33,11 +33,11 @@ const Accounts = ({ accounts, selectedAddress, onSelectAcc, onRemoveAccount }) =
     }
 
     return (
-        <DropDown id="accounts" icon={toIcon(selectedAddress)} title={shortenedAddress(selectedAddress)} closed={closed} onOpen={() => setClosed(false)}>
+        <DropDown id="accounts" icon={toIcon(selectedAddress)} title={shortenedAddress(selectedAddress)} open={closed} onOpen={() => setClosed(false)}>
           <div className="list">
             {
               accounts.map(({ id, email, signer, signerExtra }) => 
-                accountWarning !== id ?
+                logoutWarning !== id ?
                     <div className={`account ${isActive(id)}`} key={id}>
                         <div className="inner" onClick={() => onSelectAccount(id)}>
                             <div className="icon" style={toIconBackgroundImage(id)}></div>
@@ -46,23 +46,30 @@ const Accounts = ({ accounts, selectedAddress, onSelectAcc, onRemoveAccount }) =
                                 <label>{ email ? `Email/Password account (${email})` : `${walletType(signerExtra)} (${shortenedAddress(signer.address)})` }</label>
                             </div>
                         </div>
-                        <div className="button" onClick={() => copyAddress(id)}>
-                            <MdOutlineContentCopy/>
-                        </div>
-                        <div className="button" onClick={() => setAccountWarning(id)}>
-                            <MdOutlineDelete/>
+                        <div className="buttons">
+                            <div className="button" onClick={() => copyAddress(id)}>
+                                <MdOutlineContentCopy/>
+                            </div>
+                            <div className="button" onClick={() => setLogoutWarning(id)}>
+                                <MdLogout/>
+                            </div>
                         </div>
                     </div>
                     :
                     <div id="confirm-delete-account" className={`account ${isActive(id)}`} key={id}>
                         <div className="message">
-                            Are you sure you want to remove this account ?
+                            Are you sure you want to log out from this account ?
                         </div>
-                        <div className="button danger" onClick={() => onRemoveAccount(id)}>
-                            <MdOutlineCheck/>
-                        </div>
-                        <div className="button" onClick={() => setAccountWarning(false)}>
-                            <MdOutlineClose/>
+                        <div className="buttons">
+                            <div className="button danger" onClick={() => {
+                                setLogoutWarning(false)
+                                onRemoveAccount(id)
+                            }}>
+                                <MdOutlineCheck/>
+                            </div>
+                            <div className="button" onClick={() => setLogoutWarning(false)}>
+                                <MdOutlineClose/>
+                            </div>
                         </div>
                     </div>
               )

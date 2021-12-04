@@ -1,9 +1,10 @@
 import './TextInput.scss'
 
+import { forwardRef } from 'react';
 import { MdContentCopy } from 'react-icons/md';
 import { useToasts } from '../../../hooks/toasts';
 
-export default function TextInput({ value, placeholder, info, label, disabled, copy, onInput }) {
+const TextInput = forwardRef(({ value, placeholder, info, label, password, disabled, copy, onInput }, ref) => {
     const { addToast } = useToasts();
 
     const onClick = async () => {
@@ -20,7 +21,7 @@ export default function TextInput({ value, placeholder, info, label, disabled, c
                     null
             }
             <div className="text-input-container" onClick={copy ? onClick : null}>
-                <input value={value} type="text" placeholder={placeholder} disabled={copy || disabled} onInput={ev => onInput(ev.target.value)}/>
+                <input value={value} type={password ? 'password' : 'text'} placeholder={placeholder} disabled={copy || disabled} onInput={ev => onInput(ev.target.value)} ref={ref}/>
                 {
                     copy ?
                         <div className="icon">
@@ -40,4 +41,6 @@ export default function TextInput({ value, placeholder, info, label, disabled, c
             }
         </div>
     )
-}
+})
+
+export default TextInput

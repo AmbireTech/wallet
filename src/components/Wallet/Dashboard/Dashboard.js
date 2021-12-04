@@ -3,11 +3,12 @@ import './Dashboard.scss'
 import { useEffect, useLayoutEffect, useState } from 'react'
 
 import { Chart, Loading, Segments } from '../../common'
+import Balances from './Balances/Balances'
 import Protocols from './Protocols/Protocols'
 import Collectibles from './Collectibles/Collectibles'
-import networks from '../../../consts/networks'
 
-export default function Dashboard({ portfolio, setNetwork }) {
+export default function Dashboard({ portfolio, selectedNetwork, setNetwork }) {
+
     const [chartTokensData, setChartTokensData] = useState([]);
     const [chartProtocolsData, setChartProtocolsData] = useState([]);
     const [chartType, setChartType] = useState([]);
@@ -31,12 +32,10 @@ export default function Dashboard({ portfolio, setNetwork }) {
         }
     ]
 
-    const networkDetails = (network) => networks.find(({ id }) => id === network)
-
     useLayoutEffect(() => {
         const tokensData = portfolio.tokens
-            .map(({ label, balanceUSD }) => ({
-                label,
+            .map(({ label, symbol, balanceUSD }) => ({
+                label: label || symbol,
                 value: Number(((balanceUSD / portfolio.balance.total.full) * 100).toFixed(2))
             }))
             .filter(({ value }) => value > 0);
@@ -70,23 +69,11 @@ export default function Dashboard({ portfolio, setNetwork }) {
                             portfolio.isBalanceLoading ? 
                                 <Loading/>
                                 :
-                                <div id="total">
-                                    <span className="green-highlight">$</span> { portfolio.balance.total.truncated }
-                                    <span className="green-highlight">.{ portfolio.balance.total.decimals }</span>
-                                    <div id="other-balances">
-                                        {
-                                            portfolio.otherBalances.map(({ network, total }) => (
-                                                total.full > 0 ?
-                                                    <div className="other-balance" key={network} onClick={() => setNetwork(network)}>
-                                                        You also have <span className="purple-highlight">$</span> { total.truncated }
-                                                        <span className="purple-highlight">.{total.decimals}</span> on { networkDetails(network).name }
-                                                    </div>
-                                                    :
-                                                    null
-                                            ))
-                                        }
-                                    </div>
-                                </div>
+                                <Balances
+                                    portfolio={portfolio}
+                                    selectedNetwork={selectedNetwork}
+                                    setNetwork={setNetwork}
+                                />
                         }
                     </div>
                 </div>

@@ -35,6 +35,12 @@
                     font-size: 15px;
                     opacity: 0.6;
                 }
+
+                .unavailable {
+                    padding-top: 5px;
+                    font-size: 15px !important;
+                    font-weight: bold !important;
+                }
             }
 
             &.disabled {

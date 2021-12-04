@@ -1,10 +1,11 @@
 import "./TopBar.scss";
 
-import React, { useState, useCallback } from "react";
-import { FiHelpCircle } from "react-icons/fi";
-import { DropDown, Select } from "../../common";
+import React, { useState } from "react";
+import { MdOutlineArrowForward, MdOutlineClose, MdOutlineMenu } from "react-icons/md";
+import { Select } from "../../common";
 import Accounts from "./Accounts/Accounts";
-import { checkClipboardPermission } from "../../../helpers/permissions";
+import DApps from "./DApps/DApps";
+import * as blockies from 'blockies-ts';
 
 const TopBar = ({
   connections,
@@ -18,67 +19,30 @@ const TopBar = ({
   setNetwork,
   allNetworks,
 }) => {
-  const [isClipboardGranted, setClipboardGranted] = useState(false);
-
-  const checkPermission = async () => {
-    const status = await checkClipboardPermission()
-    setClipboardGranted(status)
-    return status
-  }
-
-  const readClipboard = useCallback(async () => {
-    if (isClipboardGranted) {
-      const content = await navigator.clipboard.readText();
-      if (content.startsWith('wc:')) connect({ uri: content });
-    } else {
-      const uri = prompt("Enter WalletConnect URI");
-      if (uri) connect({ uri });
-    }
-  }, [connect, isClipboardGranted]);
-
+  const [isMenuOpen, setMenuOpen] = useState(false)
+  
   const networksItems = allNetworks.map(({ id, name, icon }) => ({
     label: name,
     value: id,
     icon
   }))
 
+  const account = accounts.find(({ id }) => id === selectedAcc)
+
   return (
     <div id="topbar">
-      <div className="container">
-        <DropDown title="dApps" badge={connections.length} onOpen={() => checkPermission()}>
-          <div id="connect-dapp">
-            <div className="heading">
-              <button disabled={isClipboardGranted} onClick={readClipboard}>
-                Connect dApp
-              </button>
-              <FiHelpCircle size={30} />
-            </div>
-            {isClipboardGranted ? (
-              <label>
-                Automatic connection enabled, just copy a WalletConnect URL and
-                come back to this tab.
-              </label>
-            ) : null}
-          </div>
-          {connections.map(({ session, uri }) => (
-            <div className="item dapps-item" key={session.peerId}>
-              <div className="icon">
-                <img
-                  src={session.peerMeta.icons.filter(x => !x.endsWith('favicon.ico'))[0]}
-                  alt={session.peerMeta.name}
-                ></img>
-              </div>
-              <a href={session.peerMeta.url} target="_blank" rel="noreferrer">
-                <div className="name">{session.peerMeta.name}</div>
-              </a>
-              <div className="separator"></div>
-              <button onClick={() => disconnect(uri)}>Disconnect</button>
-            </div>
-          ))}
-        </DropDown>
+      <div id="mobile-menu" onClick={() => setMenuOpen(!isMenuOpen)}>
+        <div className="icon" style={{backgroundImage: `url(${blockies.create({ seed: account.id }).toDataURL()})`}}></div>
+        <MdOutlineArrowForward/>
+        <div className="icon" style={{backgroundImage: `url(${network.icon})`}}></div>
+        <div id="menu-button">
+          { isMenuOpen ? <MdOutlineClose/> : <MdOutlineMenu/> }
+        </div>
+      </div>
 
+      <div className={`container ${isMenuOpen ? 'open' : ''}`}>
+        <DApps connections={connections} connect={connect} disconnect={disconnect}/>
         <Accounts accounts={accounts} selectedAddress={selectedAcc} onSelectAcc={onSelectAcc} onRemoveAccount={onRemoveAccount}/>
-
         <Select defaultValue={network.id} items={networksItems} onChange={value => setNetwork(value)}/>
       </div>
     </div>

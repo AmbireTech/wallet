@@ -1,3 +1,5 @@
+@import '../../../../../variables.scss';
+
 #collectibles-placeholder {
     overflow: hidden;
     padding: 40px;
@@ -8,5 +10,20 @@
 
     #collectibles {
         filter: blur(20px);
+    }
+}
+
+// Mobile
+@media screen and (max-width: $mobile-breakpoint-max-width) {
+    #collectibles-placeholder {
+        padding: 0;
+
+        #collectibles {
+            @for $child from 2 through 5 {
+                .collectible:nth-child(#{$child}) {
+                    display: none;
+                }
+            }
+        }
     }
 }

@@ -3,7 +3,7 @@
 import { GiTakeMyMoney, GiSpectacles, GiGorilla } from 'react-icons/gi'
 import { FaSignature, FaChevronLeft } from 'react-icons/fa'
 import { MdOutlineAccountCircle } from 'react-icons/md'
-import './SendTransaction.css'
+import './SendTransaction.scss'
 import { useEffect, useState, useMemo } from 'react'
 import fetch from 'node-fetch'
 import { Bundle } from 'adex-protocol-eth/js'
@@ -19,21 +19,20 @@ import TxnPreview from '../common/TxnPreview/TxnPreview'
 import { sendNoRelayer } from './noRelayer'
 import { isTokenEligible, getFeePaymentConsequences } from './helpers'
 import { fetchPost } from '../../lib/fetch'
+import { toBundleTxn } from '../../lib/requestToBundleTxn'
 
 const ERC20 = new Interface(require('adex-protocol-eth/abi/ERC20'))
 
 const DEFAULT_SPEED = 'fast'
 const REESTIMATE_INTERVAL = 15000
 
-function toBundleTxn({ to, value, data }) {
-  return [to || '0x', value || '0x0', data || '0x']
-}
+const REJECT_MSG = 'Ambire user rejected the request'
 
 function makeBundle(account, networkId, requests) {
   const bundle = new Bundle({
     network: networkId,
     identity: account.id,
-    txns: requests.map(({ txn }) => toBundleTxn(txn)),
+    txns: requests.map(({ txn }) => toBundleTxn(txn, account.id)),
     signer: account.signer
   })
   bundle.extraGas = requests.map(x => x.extraGas || 0).reduce((a, b) => a + b, 0)
@@ -74,7 +73,7 @@ export default function SendTransaction({ relayerURL, accounts, network, selecte
   />)
 }
 
-function SendTransactionWithBundle ({ bundle, network, account, resolveMany, relayerURL, replacementBundle, onDismiss }) {
+function SendTransactionWithBundle ({ bundle, network, account, resolveMany, relayerURL, onDismiss }) {
   const [estimation, setEstimation] = useState(null)
   const [signingStatus, setSigningStatus] = useState(false)
   const [feeSpeed, setFeeSpeed] = useState(DEFAULT_SPEED)
@@ -92,7 +91,7 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
 
     // get latest estimation
     const reestimate = () => (relayerURL
-      ? bundle.estimate({ relayerURL, fetch })
+      ? bundle.estimate({ relayerURL, fetch, replacing: !!bundle.minFeeInUSDPerGas })
       : bundle.estimateNoRelayer({ provider: getDefaultProvider(network.rpc) })
     )
       .then(estimation => {
@@ -162,6 +161,7 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
       signerExtra: account.signerExtra,
       chainId: network.chainId
     })
+
     if (relayerURL) {
       // Temporary way of debugging the fee cost
       // const initialLimit = finalBundle.gasLimit - getFeePaymentConsequences(estimation.selectedFeeToken, estimation).addedGas
@@ -205,8 +205,10 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
       setSigningStatus({ quickAcc: true, finalBundle, confCodeRequired })
     } else {
       if (!signature) throw new Error(`QuickAcc internal error: there should be a signature`)
-      if (!account.primaryKeyBackup) throw new Error(`No key backup found: perhaps you need to import the account via JSON?`)
+      if (!account.primaryKeyBackup) throw new Error(`No key backup found: you need to import the account from JSON or login again.`)
       setSigningStatus({ quickAcc: true, inProgress: true })
+      // Make sure we let React re-render without blocking (decrypting and signing will block)
+      await new Promise(resolve => setTimeout(resolve, 0))
       const pwd = quickAccCredentials.passphrase || alert('Enter password')
       const wallet = await Wallet.fromEncryptedJson(JSON.parse(account.primaryKeyBackup), pwd)
       await finalBundle.sign(wallet)
@@ -218,6 +220,10 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
   const approveTxn = ({ quickAccCredentials }) => {
     if (signingStatus && signingStatus.inProgress) return
     setSigningStatus(signingStatus || { inProgress: true })
+
+    if (account.signerExtra && account.signerExtra.type === 'ledger') {
+      addToast('Please confirm this transaction on your Ledger device.', { timeout: 10000 })
+    }
 
     const requestIds = bundle.requestIds
     const blockExplorerUrl = network.explorerUrl
@@ -262,14 +268,17 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
   // Not applicable when .requestIds is not defined (replacement bundle)
   const rejectTxn = bundle.requestIds && (() => {
     onDismiss()
-    resolveMany(bundle.requestIds, { message: 'user rejected' })
+    resolveMany(bundle.requestIds, { message: REJECT_MSG })
   })
 
   return (<div id='sendTransaction'>
-      <div className='dismiss' onClick={onDismiss}>
-        <FaChevronLeft size={35}/><span>back</span>
+      <div id="titleBar">
+        <div className='dismiss' onClick={onDismiss}>
+          <FaChevronLeft size={35}/><span>back</span>
+        </div>
+        <h2>Pending transactions: {bundle.txns.length}</h2>
+        <div className="separator"></div>
       </div>
-      <h2>Pending transactions: {bundle.txns.length}</h2>
       <div className='container'>
         <div id='topPanel' className='panel'>
           <div className='title'>
@@ -303,8 +312,10 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
                       // we need to re-render twice per minute cause of DEX deadlines
                       const min = Math.floor(Date.now() / 30000)
                       return (<TxnPreview
-                        key={[...txn, i, min].join(':')}
-                        onDismiss={bundle.requestIds && (() => resolveMany([bundle.requestIds[i]], { message: 'rejected' }))}
+                        key={[...txn, i].join(':')}
+                        // pasing an unused property to make it update
+                        minute={min}
+                        onDismiss={bundle.requestIds && (() => resolveMany([bundle.requestIds[i]], { message: REJECT_MSG }))}
                         txn={txn} network={bundle.network} account={bundle.identity}
                         isFirstFailing={isFirstFailing}/>
                       )

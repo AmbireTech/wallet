@@ -5,17 +5,17 @@ const ModalContext = createContext(null)
 
 const ModalProvider = ({ children }) => {
     const [modal, setModal] = useState(null)
-
-    const showModal = useCallback(element => setModal(element), [])
+    
+    const showModal = useCallback((element, opts = { disableClose: false }) => setModal({element, opts}), [])
     const hideModal = useCallback(() => setModal(null), [])
-
+    
     return (
         <ModalContext.Provider value={{ showModal, hideModal }}>
             { 
                 modal ? 
                     <div id="modal-container">
-                        <div className="backdrop" onClick={hideModal}></div>
-                        { modal }
+                        <div className="backdrop" onClick={modal.opts.disableClose ? null : hideModal }></div>
+                        { modal.element }
                     </div>
                     :
                     null

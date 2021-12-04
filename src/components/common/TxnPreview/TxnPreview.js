@@ -3,7 +3,7 @@ import './TxnPreview.scss'
 import { useState } from 'react'
 import { FaTimes, FaChevronDown, FaChevronUp } from 'react-icons/fa'
 
-import { getContractName, getTransactionSummary } from '../../../lib/humanReadableTransactions'
+import { getName, getTransactionSummary, isKnown } from '../../../lib/humanReadableTransactions'
 import networks from '../../../consts/networks'
 import { formatUnits } from 'ethers/lib/utils'
 
@@ -11,9 +11,9 @@ function getNetworkSymbol(networkId) {
   const network = networks.find(x => x.id === networkId)
   return network ? network.nativeAssetSymbol : 'UNKNW'
 }
-export default function TxnPreview ({ txn, onDismiss, network, account, isFirstFailing }) {
+export default function TxnPreview ({ txn, onDismiss, network, account, isFirstFailing, mined }) {
   const [isExpanded, setExpanded] = useState(false)
-  const contractName = getContractName(txn[0], network)
+  const contractName = getName(txn[0], network)
   return (
     <div className={isFirstFailing ? 'txnPreview firstFailing' : 'txnPreview'}>
         <div className="heading" onClick={() => setExpanded(e => !e)}>
@@ -22,9 +22,10 @@ export default function TxnPreview ({ txn, onDismiss, network, account, isFirstF
               <div className='expandTxn'>
                 {isExpanded ? (<FaChevronDown/>) : (<FaChevronUp/>)}
               </div>
-              <div className="summary">{getTransactionSummary(txn, network, account)}</div>
+              <div className="summary">{getTransactionSummary(txn, network, account, { mined })}</div>
             </div>
-            {isFirstFailing ? (<div className='firstFailingLabel'>This is the first failing transaction.</div>) : (<></>)}
+            {isFirstFailing && (<div className='firstFailingLabel'>This is the first failing transaction.</div>)}
+            {!isFirstFailing && !mined && !isKnown(txn, account) && (<div className='unknownWarning'>Warning: interacting with an unknown contract or address.</div>)}
           </div>
           <div className='actionIcons'>
               {onDismiss ? (<span className='dismissTxn' onClick={onDismiss}><FaTimes/></span>) : (<></>)}
