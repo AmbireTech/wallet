@@ -14,6 +14,9 @@ export function FeeSelector ({ disabled, signer, estimation, network, setEstimat
       message={<>The current transaction batch cannot be sent because it will fail: {mapTxnErrMsg(estimation.message)}</>}
       tooltip={getErrHint(estimation.message)}
     />)
+    if (insufficientFee) return (
+      <h3 className='error'>Insufficient balance for the fee. Accepted tokens: {(estimation.remainingFeeTokenBalances || []).map(x => x.symbol).join(', ')}</h3>
+    )
   
     if (!estimation.feeInNative) return (<></>)
     if (estimation && !estimation.feeInUSD && estimation.gasLimit < 40000) {
@@ -65,7 +68,6 @@ export function FeeSelector ({ disabled, signer, estimation, network, setEstimat
     ))
   
     return (<>
-      { insufficientFee ? (<h3 className='error'>Insufficient balance for the fee. Accepted tokens: {(estimation.remainingFeeTokenBalances || []).map(x => x.symbol).join(', ')}</h3>) : null }
       {feeCurrencySelect}
       <div className='feeAmountSelectors'>
         {feeAmountSelectors}
