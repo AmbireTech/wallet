@@ -1,5 +1,5 @@
-const AAVELendingPoolAbi = [
+const YearnVaultABI = [
     "function deposit(uint256 _amount, address recipient)",
 ]
 
-export default AAVELendingPoolAbi
+export default YearnVaultABI
