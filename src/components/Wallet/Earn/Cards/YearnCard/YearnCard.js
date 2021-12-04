@@ -1,7 +1,16 @@
 import Card from '../Card/Card'
 
-import YEARN_ICON from '../../../../../resources/yearn.svg'
 import { useCallback, useEffect, useState } from 'react'
+import { parseUnits } from '@ethersproject/units'
+import { Contract } from '@ethersproject/contracts'
+import { getDefaultProvider } from '@ethersproject/providers'
+import { BigNumber } from '@ethersproject/bignumber'
+import { Interface } from '@ethersproject/abi'
+import ERC20ABI from 'adex-protocol-eth/abi/ERC20.json'
+import YEARN_VAULT_ABI from '../../../../../consts/YearnVaultABI'
+import networks from '../../../../../consts/networks'
+import { useToasts } from '../../../../../hooks/toasts'
+import YEARN_ICON from '../../../../../resources/yearn.svg'
 
 const yearnAPIVaults = 'https://api.yearn.finance/v1/chains/1/vaults/all'
 const v2VaultsAddresses = [
@@ -20,12 +29,19 @@ const v2VaultsAddresses = [
     '0xd9788f3931Ede4D5018184E198699dC6d66C1915',
 ]
 
-const YearnCard = ({ networkId, tokens }) => {
-    const unavailable = networkId !== 'ethereum'
+const ERC20Interface = new Interface(ERC20ABI)
+const YearnVaultInterface = new Interface(YEARN_VAULT_ABI)
+
+const YearnCard = ({ networkId, accountId, tokens, addRequest }) => {
+    const { addToast } = useToasts()
+
     const [tokensItems, setTokensItems] = useState([])
     const [details, setDetails] = useState([])
 
+    const unavailable = networkId !== 'ethereum'
+    const currentNetwork = networks.find(({ id }) => id === networkId)
     const getTokenFromPortfolio = tokenAddress => tokens.find(({ address }) => address.toLowerCase() === tokenAddress.toLowerCase()) || {}
+    const addRequestTxn = (id, txn, extraGas = 0) => addRequest({ id, type: 'eth_sendTransaction', chainId: currentNetwork.chainId, account: accountId, txn, extraGas })
 
     const loadVaults = useCallback(async () => {
         const response = await fetch(yearnAPIVaults)
@@ -33,6 +49,7 @@ const YearnCard = ({ networkId, tokens }) => {
         const v2Vaults = allVaults.filter(({ type, address }) => type === 'v2' && v2VaultsAddresses.includes(address))
 
         const vaults = v2Vaults.map(({ address, apy, symbol, token, decimals }) => ({
+            vaultAddress: address,
             apr: apy.gross_apr.toFixed(2),
             token,
             yToken: {
@@ -42,7 +59,7 @@ const YearnCard = ({ networkId, tokens }) => {
             }
         }))
 
-        const depositTokens = vaults.map(({ apr, token }) => {
+        const depositTokens = vaults.map(({ vaultAddress, apr, token }) => {
             const { address, icon, symbol, decimals } = token
             const { balance, balanceRaw } = getTokenFromPortfolio(address)
             return {
@@ -52,13 +69,14 @@ const YearnCard = ({ networkId, tokens }) => {
                 value: address,
                 symbol,
                 decimals,
+                vaultAddress,
                 apr,
                 balance: balance || 0,
                 balanceRaw: balanceRaw || '0',
             }
         })
 
-        const withdrawTokens = vaults.map(({ apr, yToken, token }) => {
+        const withdrawTokens = vaults.map(({ vaultAddress, apr, yToken, token }) => {
             const { address, symbol, decimals } = yToken
             const { balance, balanceRaw } = getTokenFromPortfolio(address)
             return {
@@ -68,6 +86,7 @@ const YearnCard = ({ networkId, tokens }) => {
                 value: address,
                 symbol,
                 decimals,
+                vaultAddress,
                 apr,
                 balance: balance || 0,
                 balanceRaw: balanceRaw || '0',
@@ -89,6 +108,55 @@ const YearnCard = ({ networkId, tokens }) => {
         ])
     }, [tokensItems])
 
+    const approveToken = async (vaultAddress, tokenAddress, bigNumberHexAmount) => {
+        try {
+            const ZERO = BigNumber.from(0)
+            const provider = getDefaultProvider(currentNetwork.rpc)
+            const tokenContract = new Contract(tokenAddress, ERC20Interface, provider)
+            const allowance = await tokenContract.allowance(accountId, tokenAddress)
+
+            if (allowance.lt(bigNumberHexAmount)) {
+                if (allowance.gt(ZERO)) {
+                    addRequestTxn(`yearn_vault_approve_${Date.now()}`, {
+                        to: vaultAddress,
+                        value: bigNumberHexAmount,
+                        data: '0x'
+                    })
+                }
+                addRequestTxn(`yearn_vault_approve_${Date.now()}`, {
+                    to: tokenAddress,
+                    value: '0x0',
+                    data: ERC20Interface.encodeFunctionData('approve', [vaultAddress, bigNumberHexAmount])
+                })
+            }
+        } catch(e) {
+            console.error(e)
+            addToast(`Yearn Approve Error: ${e.message || e}`, { error: true })
+        }
+    }
+
+    const onValidate = async (type, tokenAddress, amount) => {
+        if (type === 'Deposit') {
+            const token = tokensItems.find(({ value }) => value === tokenAddress)
+            if (!token) return 
+            
+            const { vaultAddress, decimals } = token
+            const bigNumberHexAmount = parseUnits(amount.toString(), decimals).toHexString()
+            await approveToken(vaultAddress, tokenAddress, bigNumberHexAmount)
+
+            try {
+                addRequestTxn(`yearn_vault_deposit_${Date.now()}`, {
+                    to: vaultAddress,
+                    value: '0x0',
+                    data: YearnVaultInterface.encodeFunctionData('deposit', [bigNumberHexAmount, accountId])
+                })
+            } catch(e) {
+                console.error(e)
+                addToast(`Yearn Deposit Error: ${e.message || e}`, { error: true })
+            }
+        }
+    }
+
     useEffect(() => loadVaults(), [loadVaults])
 
     return (
@@ -98,6 +166,7 @@ const YearnCard = ({ networkId, tokens }) => {
             tokensItems={tokensItems}
             details={details}
             onTokenSelect={onTokenSelect}
+            onValidate={onValidate}
         />
     )
 }
