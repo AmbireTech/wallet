@@ -14,6 +14,7 @@ const Earn = ({ portfolio, selectedNetwork, selectedAcc, addRequest }) => {
                         <AAVECard networkId={selectedNetwork.id} tokens={portfolio.tokens} protocols={portfolio.protocols} account={selectedAcc} addRequest={addRequest}/>
                         <YearnCard
                             networkId={selectedNetwork.id}
+                            tokens={portfolio.tokens}
                         />
                     </div>
             }
