@@ -40,7 +40,7 @@ const YearnCard = ({ networkId, accountId, tokens, addRequest }) => {
 
     const unavailable = networkId !== 'ethereum'
     const currentNetwork = networks.find(({ id }) => id === networkId)
-    const getTokenFromPortfolio = tokenAddress => tokens.find(({ address }) => address.toLowerCase() === tokenAddress.toLowerCase()) || {}
+    const getTokenFromPortfolio = useCallback(tokenAddress => tokens.find(({ address }) => address.toLowerCase() === tokenAddress.toLowerCase()) || {}, [tokens])
     const addRequestTxn = (id, txn, extraGas = 0) => addRequest({ id, type: 'eth_sendTransaction', chainId: currentNetwork.chainId, account: accountId, txn, extraGas })
 
     const loadVaults = useCallback(async () => {
@@ -97,7 +97,7 @@ const YearnCard = ({ networkId, accountId, tokens, addRequest }) => {
             ...depositTokens,
             ...withdrawTokens
         ].sort((a, b) => b.apr - a.apr))
-    }, [tokens])
+    }, [getTokenFromPortfolio])
 
     const onTokenSelect = useCallback(address => {
         const selectedToken = tokensItems.find(t => t.value === address)
