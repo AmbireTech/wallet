@@ -25,6 +25,8 @@ const YearnCard = ({ networkId, tokens }) => {
     const [tokensItems, setTokensItems] = useState([])
     const [details, setDetails] = useState([])
 
+    const getTokenFromPortfolio = tokenAddress => tokens.find(({ address }) => address.toLowerCase() === tokenAddress.toLowerCase()) || {}
+
     const loadVaults = useCallback(async () => {
         const response = await fetch(yearnAPIVaults)
         const allVaults = await response.json()
@@ -42,7 +44,7 @@ const YearnCard = ({ networkId, tokens }) => {
 
         const depositTokens = vaults.map(({ apr, token }) => {
             const { address, icon, symbol, decimals } = token
-            const { balance, balanceRaw } = tokens.find(({ address }) => address === token.address) || {}
+            const { balance, balanceRaw } = getTokenFromPortfolio(address)
             return {
                 type: 'deposit',
                 icon,
@@ -58,7 +60,7 @@ const YearnCard = ({ networkId, tokens }) => {
 
         const withdrawTokens = vaults.map(({ apr, yToken, token }) => {
             const { address, symbol, decimals } = yToken
-            const { balance, balanceRaw } = tokens.find(({ address }) => address === yToken.address) || {}
+            const { balance, balanceRaw } = getTokenFromPortfolio(address)
             return {
                 type: 'withdraw',
                 icon: token.icon,
