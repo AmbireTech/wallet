@@ -5,18 +5,20 @@ import { BsChevronDown } from 'react-icons/bs'
 import { CSSTransition } from 'react-transition-group';
 import useOnClickOutside from '../../../helpers/onClickOutside';
 
-export default function DropDown({ children, id, icon, title, badge, closed, onOpen, closeOnClick }) {
+export default function DropDown({ children, id, icon, className, title, badge, open, closeOnClick, onChange, onOpen, onClose, style }) {
     const ref = useRef();
     const transitionRef = useRef();
-    const [isDropDownOpen, setDropDownOpen] = useState(false);
+    const [isMenuOpen, setMenuOpen] = useState(false);
 
-    useEffect(() => closed ? setDropDownOpen(false) : null, [closed])
-    useEffect(() => onOpen && isDropDownOpen ? onOpen(true) : null, [isDropDownOpen, onOpen])
-    useOnClickOutside(ref, () => setDropDownOpen(false));
+    useEffect(() => setMenuOpen(open), [open]);
+    useEffect(() => onChange && onChange(isMenuOpen), [onChange, isMenuOpen]);
+    useEffect(() => !isMenuOpen && onClose && onClose(), [isMenuOpen, onClose]);
+    useEffect(() => isMenuOpen && onOpen && onOpen(), [isMenuOpen, onOpen])
+    useOnClickOutside(ref, () => setMenuOpen(false));
 
     return (
-        <div id={id} className="dropdown" ref={ref}>
-            <div className="content" onClick={() => setDropDownOpen(!isDropDownOpen)}>
+        <div id={id} style={style} className={`dropdown ${className}`} ref={ref}>
+            <div className="content" onClick={() => setMenuOpen(!isMenuOpen)}>
                 {
                     icon ?
                         <div className="icon" style={{backgroundImage: `url(${icon})`}} />
@@ -32,12 +34,13 @@ export default function DropDown({ children, id, icon, title, badge, closed, onO
                         :
                         null
                 }
-                <div className={`handle ${isDropDownOpen ? 'open' : ''}`}>
+                <div className="separator"></div>
+                <div className={`handle ${isMenuOpen ? 'open' : ''}`}>
                     <BsChevronDown size={20}></BsChevronDown>
                 </div>
             </div>
-            <CSSTransition unmountOnExit in={isDropDownOpen} timeout={200} classNames="fade" nodeRef={transitionRef}>
-                <div className="menu" ref={transitionRef} onClick={closeOnClick ? () => setDropDownOpen(false) : null}>
+            <CSSTransition unmountOnExit in={isMenuOpen} timeout={200} classNames="fade" nodeRef={transitionRef}>
+                <div className="menu" ref={transitionRef} onClick={closeOnClick ? () => setMenuOpen(false) : null}>
                     { children }
                 </div>
             </CSSTransition>

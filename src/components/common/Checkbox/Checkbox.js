@@ -1,12 +1,12 @@
-import React from 'react';
+import React, { forwardRef } from 'react';
 import './Checkbox.scss'
 
-function Checkbox(props) {
+const Checkbox = forwardRef((props, ref) => {
     const inputElem =  (
-        <input type="checkbox" checked={props.checked} required={props.required} onChange={props.onChange}/>
+        <input type="checkbox" checked={props.checked} required={props.required} onChange={props.onChange} ref={ref}/>
     )
 
-    return props.label ? (<label className="checkbox-container">
+    return props.label ? (<label className={`checkbox-container ${props.disabled ? 'disabled': ''}`}>
         {inputElem}
         <div className="checkbox-mark"></div>
         <div className="checkbox-label">{props.label}</div>
@@ -14,6 +14,6 @@ function Checkbox(props) {
         {inputElem}
         <div className="checkbox-mark"></div>
     </>)
-}
+})
 
 export { Checkbox as default }

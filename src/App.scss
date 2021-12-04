@@ -1,4 +1,5 @@
 @import './variables.scss';
+@import './transitions.scss';
 
 :root {
   scrollbar-color: #bbb #1c1e24;
@@ -6,6 +7,7 @@
 }
 
 ::-webkit-scrollbar {
+  height: 10px;
   width: 10px;
 }
 
@@ -44,7 +46,7 @@
   src: url('./fonts/OpenSans-Bold.ttf');
 }
 
-* > {
+* {
   box-sizing: border-box;
 }
 
@@ -55,7 +57,6 @@ html {
 }
 body {
   height: 100%;
-  min-width: 700px;
   color: white;
   font-family: 'Open Sans';
 }
@@ -114,8 +115,8 @@ input:disabled, button:disabled {
 
 #root {
   height: 100%;
+  position: relative;
 }
-
 #loginEmail form > *, #loginEmail button, #addAccount form > *, #addAccount button {
   /* TODO */
   display: block;
@@ -132,6 +133,12 @@ input:disabled, button:disabled {
   font-weight: 600;
   text-transform: uppercase;
   padding: 0.6em;
+}
+#loginEmail input[type=submit]:disabled {
+  opacity: 0.5;
+}
+#loginEmail input[type=submit]:not([disabled]):hover {
+  opacity: 1.0;
 }
 
 #loginEmail { flex: 0.9 }
@@ -195,58 +202,11 @@ select {
   }
 }
 
-.slide-fade-enter {
-  opacity: 0;
-  transform: translateY(50px);
-}
-
-.slide-fade-enter.slide-fade-enter-active {
-  opacity: 1;
-  transform: translateY(0px);
-  transition: opacity 0.2s ease-in-out, transform 0.1s ease-in-out;
-}
-
-.slide-fade-enter-done {
-  opacity: 1;
-  transform: translateY(0px);
-}
-
-.slide-fade-exit {
-  opacity: 1;
-  transform: translateY(0px);
-}
-
-.slide-fade-exit.slide-fade-exit-active {
-  opacity: 0;
-  transition: opacity 0.2s ease-in-out, transform 0.1s ease-in-out;
-}
-
-.slide-fade-exit-done {
-  opacity: 0;
-}
-
-.fade-enter {
-  opacity: 0;
-}
-
-.fade-enter.fade-enter-active {
-  opacity: 1;
-  transition: opacity 0.2s ease-in-out;
-}
-
-.fade-enter-done {
-  opacity: 1;
-}
-
-.fade-exit {
-  opacity: 1;
-}
-
-.fade-exit.fade-exit-active {
-  opacity: 0;
-  transition: opacity 0.2s ease-in-out;
-}
-
-.fade-exit-done {
-  opacity: 0;
+// Mobile
+@media screen and (max-width: $mobile-breakpoint-max-width) {
+  .panel {
+    gap: 1em;
+    padding: 20px;
+    padding-top: 20px;
+  }
 }

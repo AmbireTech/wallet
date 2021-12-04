@@ -1,6 +1,6 @@
 @import '.././/../../variables.scss';
 
-$modal-height: 600px;
+$modal-height: 660px;
 $modal-width: 530px;
 
 .modal {
@@ -12,8 +12,8 @@ $modal-width: 530px;
     flex-direction: column;
     gap: 10px;
     padding: 25px 0;
-    padding-bottom: 30px;
-    background-color: $input-background-color;
+    padding-bottom: 0;
+    background-color: $panel-background-color;
     box-shadow: $box-shadow;
     box-sizing: border-box;
 
@@ -41,8 +41,10 @@ $modal-width: 530px;
     }
     
     .content {
+        height: 100%;
+        position: relative;
         padding: 0 35px;
-        padding-bottom: 60px;
+        padding-bottom: 50px;
         overflow: hidden;
         overflow-y: auto;
         scrollbar-width: thin;
@@ -58,6 +60,7 @@ $modal-width: 530px;
             background-color: $input-background-color;
 
             button {
+                flex: 0 1 50% !important;
                 height: 100%;
             }
         }
@@ -73,5 +76,17 @@ $modal-width: 530px;
 @media screen and (max-width: calc(#{$modal-width} + 100px)) {
     .modal {
         width: 100vw;
+    }
+}
+
+// Mobile
+@media screen and (max-width: $mobile-breakpoint-max-width) {
+    .modal {
+        height: 100% !important;
+        width: 100% !important;
+
+        .content {
+            padding: 1.5em;
+        }
     }
 }

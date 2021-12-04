@@ -1,8 +1,12 @@
 @import '../../../variables.scss';
 
 #swap {
-    display: flex;
-    flex-direction: column;
-    gap: 30px;
-    height: 100%;
+    padding-top: ($layout-spacing / 2);
+    @include flex-full-grow-container
+}
+
+@media screen and (max-width: $mobile-breakpoint-max-width) {
+    #swap {
+        padding-top: 0;
+    }
 }

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { ZAPPER_API_KEY } from '../config';
 import { fetchGet } from '../lib/fetch';
@@ -23,6 +23,8 @@ let lastOtherProcolsRefresh = null
 
 export default function usePortfolio({ currentNetwork, account }) {
     const { addToast } = useToasts()
+
+    const currentAccount = useRef();
     const [isBalanceLoading, setBalanceLoading] = useState(true);
     const [areProtocolsLoading, setProtocolsLoading] = useState(true);
 
@@ -66,6 +68,9 @@ export default function usePortfolio({ currentNetwork, account }) {
             }))).filter(data => data)
             const updatedNetworks = updatedTokens.map(({ network }) => network)
 
+            // Prevent race conditions
+            if (currentAccount.current !== account) return
+
             setTokensByNetworks(tokensByNetworks => ([
                 ...tokensByNetworks.filter(({ network }) => !updatedNetworks.includes(network)),
                 ...updatedTokens
@@ -104,6 +109,9 @@ export default function usePortfolio({ currentNetwork, account }) {
             }))).filter(data => data)
             const updatedNetworks = updatedProtocols.map(({ network }) => network)
 
+            // Prevent race conditions
+            if (currentAccount.current !== account) return
+
             setOtherProtocolsByNetworks(protocolsByNetworks => ([
                 ...protocolsByNetworks.filter(({ network }) => !updatedNetworks.includes(network)),
                 ...updatedProtocols
@@ -132,6 +140,8 @@ export default function usePortfolio({ currentNetwork, account }) {
 
     // Fetch balances and protocols on account change
     useEffect(() => {
+        currentAccount.current = account
+
         async function loadBalance() {
             if (!account) return
             setBalanceLoading(true)

@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react'
+import { isFirefox } from '../lib/isFirefox'
 
 const onPermissionChange = async (name, listener) => {
     try {
@@ -18,8 +19,12 @@ const usePermissions = () => {
     const [modalHidden, setModalHidden] = useState(() => localStorage.permissionsModalHidden === 'true')
 
     const checkForPermissions = async () => {
-        const clipboardState = await onPermissionChange('clipboard-read', state => setClipboardGranted(state))
-        setClipboardGranted(clipboardState);
+	if (isFirefox()) {
+		setClipboardGranted(false)
+	} else {
+		const clipboardState = await onPermissionChange('clipboard-read', state => setClipboardGranted(state))
+		setClipboardGranted(clipboardState)
+	}
 
         const notificationsState = await onPermissionChange('notifications', state => setNotificationsGranted(state))
         setNotificationsGranted(notificationsState)

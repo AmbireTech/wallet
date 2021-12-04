@@ -4,7 +4,6 @@
     display: flex;
     flex-direction: column;
     gap: 30px;
-    padding-bottom: 30px;
 
     .green-highlight {
         color: $primary-accent-color;
@@ -25,29 +24,6 @@
 
         #balance {
             gap: 10px;
-
-            #total {
-                font-size: 40px;
-
-                #other-balances {
-                    display: flex;
-                    flex-direction: column;
-                    margin-top: 5px;
-
-                    .other-balance {
-                        font-weight: 500;
-                        font-size: 18px;
-                        opacity: 0.6;
-                        cursor: pointer;
-                        transition: opacity 0.1s ease-in-out;
-                        user-select: none;
-
-                        &:hover {
-                            opacity: 0.8;
-                        }
-                    }
-                }
-            }
         }
     }
 
@@ -64,5 +40,23 @@
 @media screen and (max-width: 1200px) {
     #overview {
         flex-direction: column;
+    }
+}
+
+@media screen and (max-width: $mobile-breakpoint-max-width) {
+    #dashboard {
+        gap: 15px;
+
+        #overview {
+            gap: 15px;
+        }
+
+        #chart {
+            .content {
+                .chart {
+                    flex-direction: column;
+                }
+            }
+        }
     }
 }

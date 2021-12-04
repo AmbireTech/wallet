@@ -1,5 +1,7 @@
 @import '../../../../variables.scss';
 
+$account-height: 60px;
+
 #accounts {
     .content {
         cursor: pointer;
@@ -13,90 +15,102 @@
     .menu {
         padding-top: 10px;
 
-        .account {
-            position: relative;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
+        .list {
+            max-height: calc(#{$account-height} * 6.5);
+            overflow-x: hidden;
+            overflow-y: auto;
+            scrollbar-width: thin;
 
-            .inner {
-                height: 60px;
+            .account {
+                position: relative;
                 display: flex;
                 align-items: center;
-                justify-content: flex-start;
-                gap: 15px;
-                padding: 0 20px;
-                opacity: 0.6;
-                cursor: pointer;
+                justify-content: space-between;
 
-                .icon {
-                    height: 30px;
-                    width: 30px;
-                    @include flex-center-center;
-                    border-radius: 100%;
-                    background-size: cover;
-                }
-
-                .details {
+                .inner {
+                    height: $account-height;
                     display: flex;
-                    flex-direction: column;
-                    gap: 2px;
+                    align-items: center;
+                    justify-content: flex-start;
+                    gap: 15px;
+                    padding: 0 20px;
+                    opacity: 0.6;
+                    cursor: pointer;
 
-                    .address {
-                        font-family: monospace;
-                        font-size: 15px;
-                        font-weight: bold;
+                    .icon {
+                        height: 30px;
+                        width: 30px;
+                        @include flex-center-center;
+                        border-radius: 100%;
+                        background-size: cover;
                     }
 
-                    label {
-                        font-size: 12px;
-                        font-weight: 500;
-                        opacity: 0.5;
-                        cursor: pointer;
+                    .details {
+                        display: flex;
+                        flex-direction: column;
+                        gap: 2px;
+
+                        .address {
+                            font-family: monospace;
+                            font-size: 15px;
+                            font-weight: bold;
+                        }
+
+                        label {
+                            font-size: 12px;
+                            font-weight: 500;
+                            opacity: 0.5;
+                            cursor: pointer;
+                        }
                     }
-                }
 
-                &:hover {
-                    background-color: rgba(0, 0, 0, 0.2);
-
-                    ~ .button {
+                    &:hover {
                         background-color: rgba(0, 0, 0, 0.2);
+
+                        ~.buttons .button {
+                            background-color: rgba(0, 0, 0, 0.2);
+                        }
                     }
                 }
-            }
 
-            .button {
-                flex: 0 0 auto;
-                height: 60px;
-                width: 50px;
-                @include flex-center-center;
-                font-size: 17px;
-                cursor: pointer;
+                .buttons {
+                    display: flex;
+                    flex-direction: row;
 
-                svg {
-                    opacity: 0.3;
+                    .button {
+                        flex: 0 0 auto;
+                        height: 60px;
+                        width: 50px;
+                        @include flex-center-center;
+                        font-size: 17px;
+                        cursor: pointer;
+
+                        svg {
+                            opacity: 0.3;
+                        }
+
+                        &:hover {
+                            background-color: rgba(0, 0, 0, 0.2);
+
+                            svg {
+                                opacity: 1;
+                            }
+                        }
+
+                        &:active {
+                            background-color: rgba(255, 255, 255, 0.05);
+                        }
+                    }
                 }
 
-                &:hover {
-                    background-color: rgba(0, 0, 0, 0.2);
+                &.active {
+                    .icon {
+                        box-shadow: 0 0 0 2px $primary-accent-color;
+                    }
 
-                    svg {
+                    .inner {
                         opacity: 1;
                     }
-                }
-
-                &:active {
-                    background-color: rgba(255, 255, 255, 0.05);
-                }
-            }
-
-            &.active {
-                .icon {
-                    box-shadow: 0 0 0 2px $primary-accent-color;
-                }
-                
-                .inner {
-                    opacity: 1;
                 }
             }
         }
@@ -106,7 +120,7 @@
             white-space: nowrap;
             
             .message {
-                padding-right: 30px;
+                padding-right: 15px;
                 font-size: 15px;
                 font-weight: bold;
             }

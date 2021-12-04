@@ -1,16 +1,14 @@
 import './Transfer.scss'
 
-import { AiOutlineWarning } from 'react-icons/ai'
 import { BsArrowDown } from 'react-icons/bs'
-import { FaAddressCard } from 'react-icons/fa'
 import { useParams, withRouter } from 'react-router'
 import { useEffect, useState } from 'react'
 import { ethers } from 'ethers'
 import SendPlaceholder from './SendPlaceholder/SendPlaceholder'
 import { Interface } from 'ethers/lib/utils'
 import { useToasts } from '../../../hooks/toasts'
-import { TextInput, NumberInput, Button, Select, Loading, DropDown } from '../../common'
-import { names, tokens } from '../../../consts/humanizerInfo'
+import { TextInput, NumberInput, Button, Select, Loading, AddressBook, AddressWarning } from '../../common'
+import { isValidAddress, isKnownTokenOrContract } from '../../../helpers/address';
 
 const ERC20 = new Interface(require('adex-protocol-eth/abi/ERC20'))
 const crossChainAssets = [
@@ -26,25 +24,25 @@ const crossChainAssets = [
     }
 ]
 
-const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, accounts, addRequest }) => {
-    const { addToast } = useToasts()
+const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest, addressBook }) => {
+    const { addresses, addAddress, removeAddress, isKnownAddress } = addressBook
+
     const { tokenAddress } = useParams()
+    const { addToast } = useToasts()
+
     const [asset, setAsset] = useState(tokenAddress)
     const [amount, setAmount] = useState(0)
     const [bigNumberHexAmount, setBigNumberHexAmount] = useState('')
     const [address, setAddress] = useState('')
     const [disabled, setDisabled] = useState(true)
-    const [warning, setWarning] = useState(false)
+    const [addressConfirmed, setAddressConfirmed] = useState(false)
+    const [newAddress, setNewAddress] = useState('')
 
-    const assetsItems = portfolio.tokens.map(({ label, address, img }) => ({
-        label,
+    const assetsItems = portfolio.tokens.map(({ label, symbol, address, img, tokenImageUrl }) => ({
+        label: label || symbol,
         value: address,
-        icon: img
+        icon: img || tokenImageUrl
     }))
-
-    const addressesItems = accounts
-        .filter(({ id }) => id !== selectedAcc)
-        .map(({ id }) => id)
 
     const selectedAsset = portfolio.tokens.find(({ address }) => address === asset)
 
@@ -102,15 +100,8 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, accounts, 
     }, [asset, history])
 
     useEffect(() => {
-        const addressToLowerCase = address.toLowerCase()
-        const tokensAddresses = Object.keys(tokens)
-        const contractsAddresses = Object.keys(names)
-        const isKnowTokenOrContract = tokensAddresses.includes(addressToLowerCase) || contractsAddresses.includes(addressToLowerCase)
-        const isAddressValid = /^0x[a-fA-F0-9]{40}$/.test(address)
-
-        setWarning(isKnowTokenOrContract)
-        setDisabled(isKnowTokenOrContract || !isAddressValid || !(amount > 0) || !(amount <= selectedAsset?.balance) || address === selectedAcc)
-    }, [address, amount, selectedAcc, selectedAsset])
+        setDisabled(isKnownTokenOrContract(address) || !isValidAddress(address) || !(amount > 0) || !(amount <= selectedAsset?.balance) || address === selectedAcc || (!isKnownAddress(address) && !addressConfirmed))
+    }, [address, amount, selectedAcc, selectedAsset, addressConfirmed, isKnownAddress])
 
     return (
         <div id="transfer">
@@ -140,32 +131,22 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, accounts, 
                                         value={address}
                                         onInput={setAddress}
                                     />
-                                    {
-                                        addressesItems.length ? 
-                                            <DropDown title={<FaAddressCard/>} closeOnClick={true}>
-                                                <label>Select from your accounts:</label>
-                                                {
-                                                    addressesItems.map(id => (
-                                                        <div className={`item ${id === address ? 'active' : ''}`} key={id} onClick={() => setAddress(id)}>
-                                                            { id }
-                                                        </div>
-                                                    ))
-                                                }
-                                            </DropDown>
-                                            :
-                                            null
-                                    }
+                                    <AddressBook 
+                                        addresses={addresses.filter(x => x.address !== selectedAcc)}
+                                        addAddress={addAddress}
+                                        removeAddress={removeAddress}
+                                        newAddress={newAddress}
+                                        onClose={() => setNewAddress(null)}
+                                        onSelectAddress={address => setAddress(address)}
+                                    />
                                 </div>
                                 <div className="separator"/>
-                                {
-                                    warning ?
-                                        <div id="address-warning">
-                                            <AiOutlineWarning/>
-                                            You are trying to send tokens to a smart contract. Doing so would burn them.
-                                        </div>
-                                        :
-                                        null
-                                }
+                                <AddressWarning
+                                    address={address}
+                                    onAddNewAddress={() => setNewAddress(address)}
+                                    onChange={(value) => setAddressConfirmed(value)}
+                                    isKnownAddress={isKnownAddress}
+                                />
                                 <Button disabled={disabled} onClick={sendTx}>Send</Button>
                             </div>
                             :
@@ -176,10 +157,10 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, accounts, 
                <div className="placeholder-overlay">
                     Coming Soon...
                </div>
-               <div className="title blurred">
+               <div className="title">
                    Cross-chain
                </div>
-               <div className="form blurred">
+               <div className="form">
                     <label>From</label>
                     <Select searchable items={assetsItems} onChange={() => {}}/>
                     <NumberInput value={0} min="0" onInput={() => {}} button="MAX" onButtonClick={() => setMaxAmount()}/>

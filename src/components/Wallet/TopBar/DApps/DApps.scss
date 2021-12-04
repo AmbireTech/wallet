@@ -1,0 +1,118 @@
+@import '../../../../variables.scss';
+
+#dApps {
+    
+    .menu {
+        width: 400px;
+    }
+
+    .dapps-item {
+        width: 100%;
+        box-sizing: border-box;
+        overflow: hidden;
+
+        .icon {
+            flex: 0 0 auto;
+            height: 40px;
+            width: 40px;
+            border-radius: 100%;
+            overflow: hidden;
+            background-color: rgba(0, 0, 0, 0.2);
+
+            img {
+                width: 100%;
+            }
+        }
+
+        a {
+            flex: 0 1 auto;
+
+            .details {
+                max-width: 200px;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+
+                .name {
+                    overflow: hidden;
+                    white-space: nowrap;
+                    text-overflow: ellipsis;
+                }
+
+                .session-warning {
+                    @include flex-center-center;
+                    color: #fdc835;
+                }
+            }
+        }
+
+        .separator {
+            flex-grow: 1;
+        }
+
+        button {
+            flex: 0 0 auto;
+            height: 25px;
+            padding: 0 10px;
+            font-size: 11px;
+            font-weight: bold;
+            border: 1px solid white;
+            text-transform: uppercase;
+            color: white;
+            background-color: transparent;
+            opacity: 1;
+            transition: all 0.1s ease-in-out;
+
+            &:hover {
+                background-color: $danger-color;
+                border-color: transparent;
+            }
+        }
+    }
+
+    #connect-dapp {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        padding: 20px;
+        padding-bottom: 10px;
+        width: 360px;
+
+        .heading {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+
+            button {
+                height: 45px;
+                width: 100%;
+                padding: 0;
+                font-weight: bold;
+                text-transform: uppercase;
+                color: black;
+                background-color: $primary-accent-color;
+                opacity: 1;
+                transition: all 0.1s ease-in-out;
+
+                &:hover {
+                    opacity: 0.9;
+                }
+            }
+        }
+
+        label {
+            font-size: 13px;
+        }
+    }
+}
+
+// Mobile
+@media screen and (max-width: $mobile-breakpoint-max-width) {
+    #dApps {
+        .dapps-item {
+            .details {
+                max-width: 130px !important;
+            }
+        }
+    }
+}

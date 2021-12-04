@@ -1,14 +1,17 @@
 @import "../../../variables";
 
-#plugin-gnosis-conainer {
-  height: 100%;
+#plugin-gnosis-container {
+  @include flex-full-grow-container;
 
   iframe {
-    height: 100%;
-    width: 100%;
+    @include flex-full-grow-container;
     overflow: auto;
     box-sizing: border-box;
     border: 0;
+  }
+
+  .iframe-placeholder {
+    @include flex-full-grow-container;
   }
 
   #dapps-container {
@@ -18,23 +21,26 @@
     margin: 0px -16px 0px -16px;
 
     li {
-      margin: 0px 16px;
+      margin: 8px 16px;
       flex: 1 0 120px;
       list-style: none;
       background: $panel-background-color;
       padding: 16px;
-      border-radius: 8px;
       cursor: pointer;
+      transition: $basic-transition;
 
       &:hover {
-        background: lighten($panel-background-color, 1%);
+        background: lighten($panel-background-color, 5%);
+      }
+
+      &.selected { 
+        background: lighten($panel-background-color, 50%);
       }
 
       div.logo-container {
         margin: 12px auto 8px auto;
         width: 48px;
         height: 48px;
-        border-radius: 4px;
         background-size: contain;
         background-repeat: no-repeat;
       }
@@ -49,11 +55,40 @@
         min-width: 0;
         overflow: hidden;
         text-align: center;
-        text-overflow-ellipsis: "...";
+        // text-overflow-ellipsis: "...";
+        text-overflow: ellipsis "...";
         font-size: 0.9em;
         line-height: 1.4em;
         color: $text-container-color;
       }
+    }
+
+    &.small-thumbs {
+      margin: 0px -6px 8px -6px;
+
+      li {
+        margin: 0px 6px;
+        padding: 6px;
+
+        div.logo-container {
+          margin: 4px auto 4px auto;
+          width: 24px;
+          height: 24px;
+          border-radius: 4px;
+        }
+  
+        div.dapp-name {
+          text-align: center;
+          font-size: 0.8em;
+          padding-bottom: 6px;
+        }
+  
+        div.dapp-desc {
+          min-width: 0;
+          display: none;
+        }
+      }
+
     }
   }
 }
