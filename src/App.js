@@ -7,7 +7,7 @@ import {
   Redirect,
   Prompt
 } from 'react-router-dom'
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect, useMemo, useCallback } from 'react'
 import EmailLogin from './components/EmailLogin/EmailLogin'
 import AddAccount from './components/AddAccount/AddAccount'
 import Wallet from './components/Wallet/Wallet'
@@ -20,7 +20,7 @@ import useNetwork from './hooks/network'
 import useWalletConnect from './hooks/walletconnect'
 import useGnosisSafe from './hooks/useGnosisSafe'
 import useNotifications from './hooks/notifications'
-import { usePortfolio } from './hooks'
+import { useAttentionGrabber, usePortfolio, useAddressBook } from './hooks'
 
 const relayerURL = process.env.hasOwnProperty('REACT_APP_RELAYER_URL') ? process.env.REACT_APP_RELAYER_URL : 'http://localhost:1934'
 
@@ -39,6 +39,7 @@ setTimeout(() => {
 function AppInner () {
   // basic stuff: currently selected account, all accounts, currently selected network
   const { accounts, selectedAcc, onSelectAcc, onAddAccount, onRemoveAccount } = useAccounts()
+  const addressBook = useAddressBook({ accounts })
   const { network, setNetwork, allNetworks } = useNetwork()
 
   // Signing requests: transactions/signed msgs: all requests are pushed into .requests
@@ -74,7 +75,7 @@ function AppInner () {
     account: selectedAcc
   })
 
-  // Navigate to the send transaction dialog if we have a new txn
+  // Show the send transaction full-screen modal if we have a new txn
   const eligibleRequests = useMemo(() => requests
     .filter(({ type, chainId, account }) =>
       type === 'eth_sendTransaction'
@@ -86,10 +87,11 @@ function AppInner () {
     () => setSendTxnState({ showing: !!eligibleRequests.length }),
     [eligibleRequests.length]
   )
+  const showSendTxns = bundle => setSendTxnState({ showing: true, replacementBundle: bundle })
 
   // Network shouldn't matter here
   const everythingToSign = useMemo(() => requests
-    .filter(({ type, account }) => type === 'personal_sign'
+    .filter(({ type, account }) => (type === 'personal_sign' || type === 'eth_sign')
       && account === selectedAcc
     ), [requests, selectedAcc])
 
@@ -101,7 +103,7 @@ function AppInner () {
       return false
     }
     if (everythingToSign.length) {
-      resolveMany([everythingToSign[0].id], { message: 'signature rejected' })
+      resolveMany([everythingToSign[0].id], { message: 'Ambire user rejected the signature request' })
       return false
     }
     return true
@@ -113,6 +115,12 @@ function AppInner () {
     setNetwork(request.chainId)
     setSendTxnState(state => ({ ...state, showing: true }))
   }, portfolio, selectedAcc, network)
+
+  useAttentionGrabber({
+    eligibleRequests,
+    isSendTxnShowing: sendTxnState.showing,
+    onSitckyClick: useCallback(() => setSendTxnState({ showing: true }), [])
+  })
 
   return (<>
     <Prompt
@@ -158,6 +166,7 @@ function AppInner () {
           match={{ url: "/wallet" }}
           accounts={accounts}
           selectedAcc={selectedAcc}
+          addressBook={addressBook}
           portfolio={portfolio}
           onSelectAcc={onSelectAcc}
           onRemoveAccount={onRemoveAccount}
@@ -176,7 +185,8 @@ function AppInner () {
           relayerURL={relayerURL}
           // required by the transactions page
           eligibleRequests={eligibleRequests}
-          showSendTxns={bundle => setSendTxnState({ showing: true, replacementBundle: bundle })}
+          showSendTxns={showSendTxns}
+          onAddAccount={onAddAccount}
         >
         </Wallet>
       </Route>

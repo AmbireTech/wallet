@@ -1,6 +1,7 @@
 import './GnosisSafeApps.scss'
+import GnosisSafeAppIframe from './GnosisSafeAppIframe'
 
-import {useEffect, useRef, useState} from 'react'
+import { useState } from 'react'
 
 const dapps = [{
   name: 'LocalTest',
@@ -8,64 +9,59 @@ const dapps = [{
   logo: 'http://localhost:3002/logo-test.png',
   desc: 'Local dapp test with some lorem ipsum stuff'
 },
-  {
-    name: 'ParaSwap',
-    url: 'https://paraswap.io',
-    logo: 'https://paraswap.io/paraswap.svg',
-    desc: 'ParaSwap allows dApps and traders to get the best DEX liquidity by aggregating multiple markets and offering the best rates'
-  },
-  {
-    name: '0xPlasma Finance',
-    url: 'https://apy.plasma.finance',
-    logo: 'https://apy.plasma.finance/logo.svg',
-    desc: 'Cross-chain DeFi & DEX aggregator, farming, asset management, fiat on-ramp'
-  },
-  {
-    name: 'MEW',
-    url: 'https://www.myetherwallet.com/wallet/sign',
-    logo: 'https://www.myetherwallet.com/wallet/sign/logo.svg',
-    desc: 'MEW as dapp'
-  },
+{
+  name: 'ParaSwap',
+  url: 'https://paraswap.io',
+  logo: 'https://paraswap.io/paraswap.svg',
+  desc: 'ParaSwap allows dApps and traders to get the best DEX liquidity by aggregating multiple markets and offering the best rates'
+},
+{
+  name: '0xPlasma Finance',
+  url: 'https://apy.plasma.finance',
+  logo: 'https://apy.plasma.finance/logo.svg',
+  desc: 'Cross-chain DeFi & DEX aggregator, farming, asset management, fiat on-ramp'
+},
+{
+  name: 'MEW',
+  url: 'https://www.myetherwallet.com/wallet/sign',
+  logo: 'https://www.myetherwallet.com/wallet/sign/logo.svg',
+  desc: 'MEW as dapp'
+},
 ]
 
-export default function GnosisSafeApps({network, selectedAcc, gnosisConnect, gnosisDisconnect}) {
+export default function GnosisSafeApps({
+  network,
+  selectedAcc,
+  gnosisConnect,
+  gnosisDisconnect
+}) {
 
-  const iframeRef = useRef(null)
   const [selectedApp, setSelectedApp] = useState(null)
 
-  //to refresh iframe
-  const genHash = () => {
-    return selectedApp?.url + network.chainId + selectedAcc
-  }
-
-  useEffect(() => {
-    if (selectedApp) {
-      gnosisConnect({
-        selectedAcc: selectedAcc,
-        iframeRef: iframeRef,
-        app: selectedApp
-      })
-    }
-
-    return () => {
-      gnosisDisconnect()
-    }
-  }, [selectedApp, network, selectedAcc, iframeRef, gnosisConnect, gnosisDisconnect])
-
   return (
-    <div id="plugin-gnosis-conainer">
-      {selectedApp ? (
-        <iframe title='Ambire Plugin' key={genHash()} ref={iframeRef} src={selectedApp.url}/>
-      ) : (
-        <ul id="dapps-container">
-          {dapps.map((dapp, index) => (
-            <li key={index} onClick={() => setSelectedApp(dapp)}>
-              <div className="logo-container" style={{backgroundImage: `url(${dapp.logo})`}}></div>
-              <div className="dapp-name">{dapp.name}</div>
-              <div className="dapp-desc">{dapp.desc}</div>
-            </li>
-          ))}
-        </ul>
-      )}
+    <div id="plugin-gnosis-container">
+      <ul id="dapps-container" className={selectedApp ? 'small-thumbs' : ''}>
+        {dapps.map((dapp, index) => (
+          <li
+            key={index}
+            onClick={() => setSelectedApp(dapp)}
+            className={(selectedApp && dapp.url === selectedApp.url) ? 'selected' : ''}
+          >
+            <div className="logo-container" style={{ backgroundImage: `url(${dapp.logo})` }}></div>
+            <div className="dapp-name">{dapp.name}</div>
+            <div className="dapp-desc">{dapp.desc}</div>
+          </li>
+        ))}
+      </ul>
+      {selectedApp &&
+        <GnosisSafeAppIframe
+          network={network}
+          selectedApp={selectedApp}
+          selectedAcc={selectedAcc}
+          gnosisConnect={gnosisConnect}
+          gnosisDisconnect={gnosisDisconnect}
+
+        />
+      }
     </div>)
 }

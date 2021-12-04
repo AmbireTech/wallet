@@ -79,6 +79,7 @@
         box-shadow: $box-shadow;
         overflow: hidden;
         overflow-y: auto;
+        scrollbar-width: thin;
 
         .option {
             height: 50px;

@@ -77,16 +77,17 @@ let tokens = {
             address: '0x63a72806098bd3d9520cc43356dd78afe5d386d9',
             symbol: 'AAVE.e'
         },
-    ]
+    ],
+    'binance-smart-chain': []
 }
 
 const getDefaultTokensItems = network => {
-    const items = tokens[network].map(token => ({
+    const items = (tokens[network] || []).map(token => ({
         ...token,
         img: `${zapperStorage}/${network}/${token.address}.png`,
         balance: 0,
         balanceRaw: '0',
-    }))
+    })) || []
 
     return [
         ...items.map(token => ({ ...token, type: 'deposit' })),

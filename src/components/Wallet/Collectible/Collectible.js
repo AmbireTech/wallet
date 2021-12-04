@@ -8,9 +8,10 @@ import { AiOutlineSend } from 'react-icons/ai'
 import { BsFillImageFill } from 'react-icons/bs'
 import * as blockies from 'blockies-ts';
 import { useToasts } from '../../../hooks/toasts'
-import { TextInput, Button, Loading } from '../../common'
+import { TextInput, Button, Loading, AddressBook, AddressWarning } from '../../common'
 import ERC721Abi from '../../../consts/ERC721Abi'
 import networks from '../../../consts/networks'
+import { isValidAddress, isKnownTokenOrContract } from '../../../helpers/address';
 
 const ERC721 = new Interface(ERC721Abi)
 
@@ -19,7 +20,9 @@ const handleUri = uri => {
     return uri.startsWith('ipfs://') ? uri.replace(/ipfs:\/\/ipfs\/|ipfs:\/\//g, 'https://ipfs.io/ipfs/') : uri
 }
 
-const Collectible = ({ selectedAcc, selectedNetwork, addRequest }) => {
+const Collectible = ({ selectedAcc, selectedNetwork, addRequest, addressBook }) => {
+    const { addresses, addAddress, removeAddress, isKnownAddress } = addressBook
+
     const { addToast } = useToasts()
     const { network, collectionAddr, tokenId } = useParams()
     const [isLoading, setLoading] = useState(true)
@@ -36,6 +39,8 @@ const Collectible = ({ selectedAcc, selectedNetwork, addRequest }) => {
     })
     const [recipientAddress, setRecipientAddress] = useState('')
     const [isTransferDisabled, setTransferDisabled] = useState(true)
+    const [addressConfirmed, setAddressConfirmed] = useState(false)
+    const [newAddress, setNewAddress] = useState(null)
 
     const sendTransferTx = () => {
         try {
@@ -57,9 +62,8 @@ const Collectible = ({ selectedAcc, selectedNetwork, addRequest }) => {
     }
 
     useEffect(() => {
-        const isAddressValid = /^0x[a-fA-F0-9]{40}$/.test(recipientAddress)
-        setTransferDisabled(!isAddressValid || selectedAcc === recipientAddress || metadata.owner.address !== selectedAcc || selectedNetwork.id !== network)
-    }, [recipientAddress, metadata, selectedNetwork, selectedAcc, network])
+        setTransferDisabled(isKnownTokenOrContract(recipientAddress) || !isValidAddress(recipientAddress) || selectedAcc === recipientAddress || metadata.owner?.address !== selectedAcc || selectedNetwork.id !== network || (!isKnownAddress(recipientAddress) && !addressConfirmed))
+    }, [recipientAddress, metadata, selectedNetwork, selectedAcc, network, addressConfirmed, isKnownAddress])
 
     const fetchMetadata = useCallback(async () => {
         setLoading(true)
@@ -162,8 +166,24 @@ const Collectible = ({ selectedAcc, selectedNetwork, addRequest }) => {
             <div className="panel">
                 <div className="title">Transfer</div>
                 <div className="content">
-                    <TextInput placeholder="Recipient Address" onInput={(value) => setRecipientAddress(value)}/>
+                    <div id="recipient-address">
+                        <TextInput placeholder="Recipient Address" value={recipientAddress} onInput={(value) => setRecipientAddress(value)}/>
+                        <AddressBook 
+                            addresses={addresses.filter(x => x.address !== selectedAcc)}
+                            addAddress={addAddress}
+                            removeAddress={removeAddress}
+                            newAddress={newAddress}
+                            onClose={() => setNewAddress(null)}
+                            onSelectAddress={address => setRecipientAddress(address)}
+                        />
+                    </div>
                     <div className="separator"></div>
+                    <AddressWarning
+                        address={recipientAddress}
+                        onAddNewAddress={() => setNewAddress(recipientAddress)}
+                        onChange={(value) => setAddressConfirmed(value)}
+                        isKnownAddress={isKnownAddress}
+                    />
                     <Button icon={<AiOutlineSend/>} disabled={isTransferDisabled} onClick={sendTransferTx}>Send</Button>
                 </div>
             </div>

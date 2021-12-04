@@ -4,6 +4,7 @@ import AaveLendingPoolV2 from './AaveLendingPoolV2'
 import ERC721 from './ERC721'
 import WETH from './WETH'
 import AmbireIdentity from './AmbireIdentity'
+import AmbireFactory from './AmbireFactory'
 
 const all = {
 	...UniRouters,
@@ -12,5 +13,6 @@ const all = {
 	...ERC721,
 	...WETH,
 	...AmbireIdentity,
+	...AmbireFactory,
 }
 export default all

@@ -28,9 +28,6 @@ jobs:
     - name: Build project
       run: npm run build
     
-    - name: Run tests
-      run: npm run test
-
     - name: Upload production-ready build files
       uses: actions/upload-artifact@v2
       with:
@@ -55,4 +52,4 @@ jobs:
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         publish_dir: ./build
-        cname: amongusthanos.ambire.com
+        cname: wallet.ambire.com

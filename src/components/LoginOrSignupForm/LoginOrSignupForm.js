@@ -33,8 +33,17 @@ export default function LoginOrSignupForm({ action = 'LOGIN', onAccRequest, inPr
     const additionalOnSignup = state.backupOptout ? (
       <Checkbox label="I understand that losing this backup means I will have to trigger account recovery." required={true}></Checkbox>
     ) : (<></>)
+    const Link = ({ href, children }) => (<a href={href} target='_blank' rel='noreferrer' onClick={e => e.stopPropagation()}>{children}</a>)
     const additionalInputs = isSignup ?
       (<>
+        <input
+          type="password"
+          required
+          minLength={minPwdLen}
+          placeholder="Password"
+          value={state.passphrase}
+          onChange={e => onUpdate({ passphrase: e.target.value })}
+        ></input>
         <input
           ref={passConfirmInput}
           required
@@ -43,15 +52,25 @@ export default function LoginOrSignupForm({ action = 'LOGIN', onAccRequest, inPr
           placeholder="Confirm password"
           value={state.passphraseConfirm}
           onChange={e => onUpdate({ passphraseConfirm: e.target.value })}></input>
-        <Checkbox label="I agree to to the Terms of Use and Privacy policy." required={true}></Checkbox>
-        <Checkbox label="Backup on Ambire Cloud." checked={!state.backupOptout} onChange={e => onUpdate({ backupOptout: !e.target.checked })}></Checkbox>
+        <Checkbox
+          label={<>I agree to the <Link href='https://www.ambire.com/Ambire%20ToS%20and%20PP%20(26%20November%202021).pdf'>Terms of Service and Privacy policy</Link>.</>}
+          required={true}
+        ></Checkbox>
+        <Checkbox
+          label={<>Backup on <Link href='https://help.ambire.com/hc/en-us/articles/4410892186002-What-is-Ambire-Cloud-'>Ambire Cloud</Link>.</>}
+          checked={!state.backupOptout}
+          onChange={e => onUpdate({ backupOptout: !e.target.checked })}
+        ></Checkbox>
         {additionalOnSignup}
       </>) : (<></>)
 
     return (
       <form onSubmit={onSubmit}>
         <input type="email" required placeholder="Email" value={state.email} onChange={e => onUpdate({ email: e.target.value })}></input>
-        <input type="password" required minLength={minPwdLen} placeholder="Password" value={state.passphrase} onChange={e => onUpdate({ passphrase: e.target.value })}></input>
+        {
+          // Trick the password manager into putting in the email
+          !isSignup ? (<input type="password" style={{ display: "none" }}></input>): (<></>)
+        }
         {additionalInputs}
         <input type="submit" disabled={inProgress} value={isSignup ?
           (inProgress ? "Signing up..." : "Sign up")

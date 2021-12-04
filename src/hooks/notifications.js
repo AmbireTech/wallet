@@ -6,7 +6,7 @@ import networks from '../consts/networks'
 
 const REQUEST_TITLE_PREFIX = 'Ambire Wallet: '
 const SUPPORTED_TYPES =  ['eth_sendTransaction', 'personal_sign']
-const BALANCE_TRESHOLD = 0.00005 
+const BALANCE_TRESHOLD = 1.00001
 let currentNotifs = []
 let isLastTotalBalanceInit = false
 let lastTokensBalanceRaw = []
@@ -22,11 +22,6 @@ export default function useNotifications (requests, onShow, portfolio, selectedA
     onShowRef.current.onShow = onShow
 
     useEffect(() => {
-        if (window.Notification && Notification.permission !== 'denied') {
-            Notification.requestPermission(() => {
-                // @TODO: perhaps warn the user in some way
-            })
-        }
         // hack because for whatever reason it doesn't work when we access the ref directly
         window.onClickNotif = req => onShowRef.current.onShow(req)
     }, [])
@@ -39,7 +34,7 @@ export default function useNotifications (requests, onShow, portfolio, selectedA
         })
         //notification.onclose = 
         notification.onclick = () => {
-            if (request.type === 'eth_sendTransaction') window.onClickNotif(request)
+            if (request && request.type === 'eth_sendTransaction') window.onClickNotif(request)
             window.focus()
             notification.close()
         }
@@ -47,6 +42,8 @@ export default function useNotifications (requests, onShow, portfolio, selectedA
     }, [])
 
     requests.forEach(request => {
+        // only requests we actually want a notification for
+        if (!request.notification) return
         if (!SUPPORTED_TYPES.includes(request.type)) return
         if (currentNotifs.find(n => n.id === request.id)) return
         if (!request.txn) return
@@ -75,10 +72,10 @@ export default function useNotifications (requests, onShow, portfolio, selectedA
                     lastTokensBalanceRaw = portfolio.tokens.map(({ address, balanceRaw }) => ({ address, balanceRaw }))
                 }
 
-                const changedAmounts = portfolio.tokens.filter(({ address, balanceRaw, decimals }) => {
+                const changedAmounts = portfolio.tokens.filter(({ address, balanceRaw }) => {
                     const lastToken = lastTokensBalanceRaw.find(token => token.address === address)
-                    const amountRecieved = getAmountReceived(lastToken, balanceRaw, decimals)
-                    return !lastToken || (lastToken && (balanceRaw > lastToken.balanceRaw) && (amountRecieved > BALANCE_TRESHOLD))
+                    const isSignificantChange = lastToken && ((balanceRaw / lastToken.balanceRaw) > BALANCE_TRESHOLD)
+                    return !lastToken || isSignificantChange
                 })
 
                 changedAmounts.forEach(({ address, symbol, decimals, balanceRaw }) => {
@@ -98,7 +95,7 @@ export default function useNotifications (requests, onShow, portfolio, selectedA
                 })
             }
         } catch(e) {
-            console.error(e);
+            console.error(e)
             addToast(e.message | e, { error: true })
         }
     }, [portfolio, addToast, showNotification])
