@@ -1,6 +1,6 @@
 import "./Wallet.scss"
 
-import { Switch, Route, Redirect } from "react-router-dom"
+import { Switch, Route, Redirect, useLocation  } from "react-router-dom"
 import Dashboard from "./Dashboard/Dashboard"
 import TopBar from "./TopBar/TopBar"
 import SideBar from "./SideBar/SideBar"
@@ -14,12 +14,14 @@ import PluginGnosisSafeApps from '../Plugins/GnosisSafeApps/GnosisSafeApps'
 import Collectible from "./Collectible/Collectible"
 import { PermissionsModal } from '../Modals'
 import { useModals, usePermissions } from '../../hooks'
-import { useCallback, useEffect, useMemo } from 'react'
+import { useCallback, useEffect, useMemo, useRef } from 'react'
 import { isFirefox } from '../../lib/isFirefox'
 
 export default function Wallet(props) {
   const { showModal } = useModals()
   const { isClipboardGranted, isNoticationsGranted, arePermissionsLoaded, modalHidden } = usePermissions()
+  const { pathname } = useLocation()
+  const walletContainer = useRef()
 
   const isLoggedIn = useMemo(() => props.accounts.length > 0, [props.accounts])
 
@@ -113,32 +115,33 @@ export default function Wallet(props) {
 
   useEffect(() => handlePermissionsModal(), [handlePermissionsModal])
 
+  useEffect(() => {
+    setTimeout(() => walletContainer.current.scrollTo({ top: 0, behavior: 'smooth' }), 0)
+  }, [pathname])
+
   return (
     <div id="wallet">
-
       <SideBar match={props.match} portfolio={props.portfolio} />
-      <div id="wallet-layout">
+      <TopBar {...props} />
 
-        <TopBar {...props} />
-        <div id="wallet-container">
-          <Switch>
-            {
-              routes.map(({ path, component }) => (
-                <Route exact path={props.match.url + path} key={path}>
-                  {
-                    !isLoggedIn ?
-                      <Redirect to="/add-account" />
-                      :
-                      component ? component : null
-                  }
-                </Route>
-              ))
-            }
-            <Route path={props.match.url + '/*'}>
-              <Redirect to={props.match.url + '/dashboard'} />
-            </Route>
-          </Switch>
-        </div>
+      <div id="wallet-container" ref={walletContainer}>
+        <Switch>
+          {
+            routes.map(({ path, component }) => (
+              <Route exact path={props.match.url + path} key={path}>
+                {
+                  !isLoggedIn ?
+                    <Redirect to="/add-account" />
+                    :
+                    component ? component : null
+                }
+              </Route>
+            ))
+          }
+          <Route path={props.match.url + '/*'}>
+            <Redirect to={props.match.url + '/dashboard'} />
+          </Route>
+        </Switch>
       </div>
     </div>
   );

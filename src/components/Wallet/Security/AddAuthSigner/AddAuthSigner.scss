@@ -1,5 +1,36 @@
 @import '../../../../variables.scss';
 
+.signer {
+  display: flex;
+  justify-content: space-between;
+  gap: 1em;
+
+  .signer-address-input {
+    flex: 1 1 auto;
+    display: flex;
+
+    .text-input {
+      flex: 1 1 auto;
+    }
+  
+    .dropdown {
+      flex: 0 0 auto;
+      background-color: $input-background-color-darker;
+    }
+  }
+
+  .btns-wrapper {
+    height: 60px;
+    flex: 0 1 auto;
+    align-self: flex-end;
+
+    button {
+      height: 100%;
+      width: 100%;
+    }
+  }
+}
+
 .wallet-btns-wrapper {
     width: 300px;
     padding: 20px;
@@ -33,5 +64,16 @@
 
   .buttonComponent {
     background: rosybrown;
+  }
+}
+
+// Mobile
+@media screen and (max-width: $mobile-breakpoint-max-width) {
+  .signer {
+    flex-direction: column;
+
+    .signer-address-input {
+      flex-direction: column;
+    }
   }
 }

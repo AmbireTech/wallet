@@ -1,15 +1,38 @@
 @import '../../../variables.scss';
 
 #topbar {
+    height: $topbar-height;
     position: sticky;
     top: 0;
-    z-index: 50;
+    z-index: 49;
     padding: ($layout-spacing / 2) $layout-spacing;
     display: flex;
     justify-content: flex-end;
     gap: 1em;
     background-color: $background-color;
     box-shadow: 0 5px ($layout-spacing / 4) 5px $background-color;
+
+    #mobile-menu {
+        display: none;
+        align-items: center;
+        gap: 1em;
+        position: absolute;
+        right: 1em;
+
+        .icon {
+            height: 25px;
+            width: 25px;
+            background-size: contain;
+            background-position: center center;
+            background-repeat: no-repeat;
+            border-radius: 100%;
+        }
+
+        #menu-button {
+            @include flex-center-center;
+            font-size: 30px;
+        }
+    }
 
     .container {
         display: flex;
@@ -18,14 +41,7 @@
         gap: 1em;
         flex-wrap: wrap;
         max-width: $max-container-width;
-      }
-
-    select {
-        height: 50px;
-    }
-
-    #networkSelector {
-        width: 150px;
+        background-color: $background-color;
     }
 }
 
@@ -37,8 +53,42 @@
     }
 }
 
-// @media screen and (max-width: 1400px) {
-//     #topbar {
-//         left: $sidebar-mobile-width;
-//     }
-// }
+// Mobile
+@media screen and (max-width: $mobile-breakpoint-max-width) {
+    #topbar {
+        height: $topbar-mobile-height;
+        padding-left: 15px;
+        padding-right: 15px;
+
+        #mobile-menu {
+            display: flex;
+        }
+
+        .container {
+            position: absolute;
+            top: $topbar-mobile-height;
+            left: 0;
+            right: 0;
+            gap: 10px;
+            display: none;
+            padding: 10px 10px;
+            box-shadow: $box-shadow;
+
+            .dropdown {
+                width: 100%;
+
+                .menu {
+                    width: 100%;
+                }
+            }
+
+            .select {
+                width: 100%;
+            }
+
+            &.open {
+                display: flex;
+            }
+        }
+    }
+}

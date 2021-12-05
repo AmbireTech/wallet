@@ -1,3 +1,5 @@
+@import '../../variables.scss';
+
 .chooseSigners h3 {
     text-align: center;
     font-size: 1.5em;
@@ -5,18 +7,21 @@
 }
 
 .loginSignupWrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 3em;
     background: url('../../resources/hero-darkened.svg');
     background-size: auto 800px;
     background-position: top center;
     background-repeat: no-repeat;
     min-height: 100%;
+    padding: 2em 0;
     overflow: hidden;
 
     #logo {
         background-image: url('../../resources/logo.png');
         width: 35%;
         max-width: 400px;
-        padding: 3em 0px 2em;
         margin: 0px auto;
         height: 200px;
         background-size: contain;
@@ -110,5 +115,32 @@
 
     .checkbox-label {
         display: block;
+    }
+}
+
+// Mobile
+@media screen and (max-width: $mobile-breakpoint-max-width) {
+    .loginSignupWrapper {
+        gap: 0;
+        padding: 0 1em;
+
+        #logo {
+            width: 75%;
+        }
+
+        #addAccount {
+            flex-direction: column;
+            gap: 2em;
+
+            #loginSeparator {
+                display: flex;
+                align-items: center;
+
+                .verticalLine {
+                    height: 2px;
+                    width: 30%;
+                }
+            }
+        }
     }
 }

@@ -16,7 +16,7 @@ const getDefaultState = () => ({ connections: [], requests: [] })
 
 let connectors = {}
 
-export default function useWalletConnect ({ account, chainId, onCallRequest }) {
+export default function useWalletConnect ({ account, chainId }) {
     const { addToast } = useToasts()
 
     // This is needed cause of the WalletConnect event handlers
@@ -130,10 +130,14 @@ export default function useWalletConnect ({ account, chainId, onCallRequest }) {
                 connector.rejectRequest({ id: payload.id, error: { message: 'METHOD_NOT_SUPPORTED' }})
                 return
             }
-            if (
+            const wrongAcc = (
                 payload.method === 'eth_sendTransaction' && payload.params[0] && payload.params[0].from
                 && payload.params[0].from.toLowerCase() !== connector.session.accounts[0].toLowerCase()
-            ) {
+            ) || (
+                payload.method === 'eth_sign' && payload.params[1]
+                && payload.params[1].toLowerCase() !== connector.session.accounts[0].toLowerCase()
+            )
+            if (wrongAcc) {
                 addToast(`dApp sent a request for the wrong account: ${payload.params[0].from}`, { error: true })
                 return
             }
@@ -141,7 +145,7 @@ export default function useWalletConnect ({ account, chainId, onCallRequest }) {
                 id: payload.id,
                 type: payload.method,
                 wcUri: connectorOpts.uri,
-                txn: payload.params[0],
+                txn: payload.method === 'eth_sign' ? payload.params[1] : payload.params[0],
                 chainId: connector.session.chainId,
                 account: connector.session.accounts[0],
                 notification: true
@@ -248,7 +252,7 @@ export default function useWalletConnect ({ account, chainId, onCallRequest }) {
 function runInitEffects(wcConnect, account) {
     const query = new URLSearchParams(window.location.href.split('?').slice(1).join('?').split('#')[0])
     const wcUri = query.get('uri')
-    if (wcUri) wcConnect({ uri: wcUri })
+    if (wcUri && account) wcConnect({ uri: wcUri })
 
     // hax
     window.wcConnect = uri => wcConnect({ uri })

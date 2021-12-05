@@ -66,6 +66,7 @@ export default function SignMessage ({ toSign, resolve, account, relayerURL, tot
         return
       }
 
+      if (!account.primaryKeyBackup) throw new Error(`No key backup found: you need to import the account from JSON or login again.`)
       const wallet = await Wallet.fromEncryptedJson(JSON.parse(account.primaryKeyBackup), signingState.passphrase)
       const sig = await signMsgHash(wallet, account.id, account.signer, arrayify(hash), signature)
       resolve({ success: true, result: sig })
@@ -140,11 +141,13 @@ export default function SignMessage ({ toSign, resolve, account, relayerURL, tot
               ></input>
             </>)}
 
-            <button type='button' className='reject' onClick={() => resolve({ message: 'signature denied' })}>Reject</button>
-            <button className='approve' onClick={approve} disabled={isLoading}>
-                {isLoading ? (<><Loading/>&nbsp;&nbsp;&nbsp;&nbsp;Signing...</>)
-                : (<>Sign</>)}
-            </button>
+            <div className="buttons">
+              <button type='button' className='reject' onClick={() => resolve({ message: 'signature denied' })}>Reject</button>
+              <button className='approve' onClick={approve} disabled={isLoading}>
+                  {isLoading ? (<><Loading/>&nbsp;&nbsp;&nbsp;&nbsp;Signing...</>)
+                  : (<>Sign</>)}
+              </button>
+            </div>
           </form>
         </div>
     </div>
