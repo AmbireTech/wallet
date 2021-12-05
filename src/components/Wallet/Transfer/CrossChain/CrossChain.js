@@ -86,7 +86,8 @@ const CrossChain = ({ addRequest, selectedAccount, portfolio, network }) => {
                 .map(({ icon, name, symbol, address }) => ({
                     icon,
                     label: `${name} (${symbol})`,
-                    value: address
+                    value: address,
+                    symbol
                 }))
             setFromTokenItems(fromTokensItems)
             return true
@@ -110,7 +111,8 @@ const CrossChain = ({ addRequest, selectedAccount, portfolio, network }) => {
                 .map(({ icon, name, symbol, address }) => ({
                     icon,
                     label: `${name} (${symbol})`,
-                    value: address
+                    value: address,
+                    symbol
                 }))
                 .sort((a, b) => a.label.localeCompare(b.label))
             setToTokenItems(tokenItems)
@@ -154,6 +156,12 @@ const CrossChain = ({ addRequest, selectedAccount, portfolio, network }) => {
     }
 
     useEffect(() => setAmount(0), [fromToken])
+    useEffect(() => {
+        const fromTokenItem = fromTokensItems.find(({ value }) => value === fromToken)
+        if (!fromTokenItem) return
+        const equivalentToken = toTokenItems.find(({ symbol }) => symbol === fromTokenItem.symbol)
+        if (equivalentToken) setToToken(equivalentToken.value)
+    }, [fromTokensItems, toTokenItems, fromToken])
 
     const asyncLoad = async (setStateLoading, loadCallback) => {
         setStateLoading(true)
