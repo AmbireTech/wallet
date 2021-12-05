@@ -96,7 +96,7 @@ const Security = ({
     if (isQuickAccount) {
       return addToast((<span>To make this signer default, please <a href='#/email-login'>please login with the email</a></span>), {url: '/#/email-login', error: true})
     } else {
-      onAddAccount({ ...account, signer: { address: address } })
+      onAddAccount({ ...account, signer: { address: address }, signerExtra: null })
       addToast(
         'This signer is now the default. If it is a hardware wallet, you will have to re-add the account manually to connect it directly, otherwise you will have to add this signer address to your web3 wallet.',
         { timeout: 30000 }
