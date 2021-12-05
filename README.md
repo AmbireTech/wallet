@@ -3,11 +3,12 @@
 
 ### All documentation
 
+* Getting started user guide: https://www.grnewsletters.com/archive/b9fc021c37e5656340e2136f9c4f1153/You-are-invited-to-Ambire-Beta-1043499604.html
 * Smart contract documentation, originally intended for CodeArena: https://github.com/AmbireTech/code4rena
 	* Latest smart contract source code: https://github.com/AmbireTech/adex-protocol-eth/tree/codearena-fixes
 * Security model: https://gist.github.com/Ivshti/fe86f13c3adff3404a1f5ce1e364304c
 * Tokenomics (confidential): https://gist.github.com/Ivshti/c6b93745dd0ba0d9c8256bc39769a601
-* Deck: https://docsend.com/view/qijz3atn4j43f3za
+* Deck: https://docsend.com/view/hqp9xkr2krj6wt8w
 * FAQs: https://help.ambire.com/hc/en-us/categories/4404980091538-Ambire-Wallet
 * Front-end (this repo) development plan and estimation: https://docs.google.com/spreadsheets/d/1pqtRPcNRW98D97GL3nrdoipD3sWehz2k7zWclzYk-SM
 * Original concept: https://github.com/AdExNetwork/aips/issues/69 (note that the feature scope is not up to date)
@@ -191,3 +192,5 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/t
 * Binance Smart Chains upport added
 * Ability to change your password
 * Ability to export (backup) and import accounts to/from JSON files
+* Styling improvements: responsiveness
+* Ability to recover your account in case of losing one of the keys

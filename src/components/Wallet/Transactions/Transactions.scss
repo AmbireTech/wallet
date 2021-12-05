@@ -12,6 +12,7 @@
     .bundlePreview {
         .details {
             display: flex;
+            flex-wrap: wrap;
             gap: 50px;
             padding: 0 10px;
             margin: 0;
@@ -49,7 +50,7 @@
 
         .title {
             height: 75px;
-            z-index: 49;
+            z-index: 47;
             position: sticky;
             top: -40px;
             display: flex;
@@ -80,5 +81,25 @@
 
     .txnPreview .summary {
         max-width: 700px;
+    }
+}
+
+// Mobile
+@media screen and (max-width: $mobile-breakpoint-max-width) {
+    #transactions {
+        .panel {
+            .content {
+                gap: 1em;
+            }
+        }
+
+        .bundle {
+            padding: 1em;
+            padding-bottom: 1.5em;
+        }
+
+        .bundlePreview .details {
+            gap: 1.5em;
+        }
     }
 }

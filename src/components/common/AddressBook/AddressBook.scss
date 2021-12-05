@@ -4,7 +4,7 @@ $heading-height: 45px;
 
 .address-book {
     height: 60px !important;
-    background-color: rgba(0, 0, 0, 0.1) !important;
+    background-color: $input-background-color-darker !important;
 
     .content {
         cursor: pointer;
@@ -101,6 +101,15 @@ $heading-height: 45px;
                 text-transform: uppercase;
                 background-color: rgba(0, 0, 0, 0.1);
             }
+        }
+    }
+}
+
+// Mobile
+@media screen and (max-width: $mobile-breakpoint-max-width) {
+    .address-book {
+        .menu {
+            width: 100%;
         }
     }
 }

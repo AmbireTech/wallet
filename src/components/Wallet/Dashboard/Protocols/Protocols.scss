@@ -66,6 +66,8 @@
                     text-align: right;
 
                     .currency {
+                        display: flex;
+                        gap: 5px;
                         font-size: 18px;
                         font-weight: 500;
 
@@ -101,6 +103,45 @@
                     .actions {
                         width: 125px;
                         opacity: 1;
+                    }
+                }
+            }
+        }
+    }
+}
+
+@media screen and (max-width: $mobile-breakpoint-max-width) {
+    #protocols-table {
+        gap: 20px;
+
+        .token {
+            gap: 7px !important;
+            padding: 10px 15px !important;
+
+            .icon {
+                height: 35px !important;
+                width: 35px !important;
+            }
+
+            .name {
+                display: none;
+            }
+
+            .separator {
+                flex-grow: initial !important;
+            }
+
+            .balance {
+                flex: 1 0 auto;
+                text-align: left !important;
+
+                .currency {
+                    justify-content: space-between;
+
+                    .value {
+                        max-width: 120px;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
                     }
                 }
             }

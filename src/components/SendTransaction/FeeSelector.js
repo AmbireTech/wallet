@@ -42,13 +42,14 @@ export function FeeSelector ({ disabled, signer, estimation, network, setEstimat
       </select>
     </>) : (<></>)
   
+    const areSelectorsDisabled = disabled || insufficientFee
     const { isStable } = estimation.selectedFeeToken
     const { multiplier } = getFeePaymentConsequences(estimation.selectedFeeToken, estimation)
     const feeAmountSelectors = SPEEDS.map(speed => (
       <div 
         key={speed}
-        className={`feeSquare${feeSpeed === speed ? ' selected' : ''}${disabled ? ' disabled' : ''}`}
-        onClick={() => !disabled && setFeeSpeed(speed)}
+        className={`feeSquare${feeSpeed === speed ? ' selected' : ''}${areSelectorsDisabled ? ' disabled' : ''}`}
+        onClick={() => !areSelectorsDisabled && setFeeSpeed(speed)}
       >
         <div className='speed'>{speed}</div>
         <div className='feeEstimation'>
@@ -65,8 +66,10 @@ export function FeeSelector ({ disabled, signer, estimation, network, setEstimat
     ))
   
     return (<>
-      { insufficientFee ? (<h3 className='error'>Insufficient balance for the fee. Accepted tokens: {(estimation.remainingFeeTokenBalances || []).map(x => x.symbol).join(', ')}</h3>) : null }
-      {feeCurrencySelect}
+      {insufficientFee ?
+        (<h3 className='error'>Insufficient balance for the fee. Accepted tokens: {(estimation.remainingFeeTokenBalances || []).map(x => x.symbol).join(', ')}</h3>)
+        : feeCurrencySelect
+      }
       <div className='feeAmountSelectors'>
         {feeAmountSelectors}
       </div>
