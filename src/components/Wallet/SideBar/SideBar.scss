@@ -1,8 +1,9 @@
 @import '../../../variables.scss';
 
 #sidebar {
+  z-index: 50;
   height: 100%;
-  width: $sidebar-width;
+  width: $sidebar-desktop-width;
   position: fixed;
   left: 0px;
   bottom: 0px;
@@ -32,7 +33,7 @@
     position: absolute;
     top: 10px;
     height: 90px;
-    width: $sidebar-mobile-width;
+    width: 100%;
     background-image: url('../../../resources/icon.png');
     background-size: contain;
     background-repeat: no-repeat;
@@ -70,6 +71,7 @@
       transition: all 0.1s ease-in-out;
 
       svg {
+        font-size: 30px;
         color: #bbb;
         transition: color 0.1s ease-in-out;
       }
@@ -115,7 +117,7 @@
   }
 }
 
-@media screen and (min-width: 1400px) {
+@media screen and (min-width: $sidebar-small-breakpoint) {
   #sidebar {
     .balance {
       .balanceDollarAmount {
@@ -125,9 +127,9 @@
   }
 }
 
-@media screen and (max-width: 1400px) {
+@media screen and (max-width: $sidebar-small-breakpoint) {
   #sidebar {
-    width: $sidebar-mobile-width;
+    width: $sidebar-desktop-small-width;
 
     #logo {
       opacity: 0;
@@ -150,7 +152,54 @@
         gap: 5px;
         flex-direction: column;
         justify-content: center;
-        font-size: 15px;
+      }
+    }
+  }
+}
+
+// Mobile
+@media screen and (max-width: $mobile-breakpoint-max-width) {
+  #sidebar {
+    height: $sidebar-mobile-height;
+    width: 170px;
+    padding: 0 10px;
+
+    #logo {
+      opacity: 1;
+      margin: 0;
+    }
+
+    #icon {
+      opacity: 0;
+    }
+
+    .balance {
+      display: none;
+    }
+
+    nav {
+      z-index: 49;
+      height: $sidebar-mobile-height;
+      width: 100%;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+
+      .item {
+        gap: 0;
+        height: 100%;
+        width: 95px;
+        font-size: 13px;
+        font-weight: 500;
+        padding: 0;
+
+        svg {
+          font-size: 25px;
+        }
       }
     }
   }

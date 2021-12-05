@@ -1,3 +1,7 @@
+@import '../../variables.scss';
+
+$titleBar-height: 90px;
+
 #sendTransaction {
     position: fixed;
     top: 0px;
@@ -14,34 +18,51 @@
     background-color: rgba(40, 43, 51, 0.95);
     backdrop-filter: blur(8px);
     */
-}
 
-#sendTransaction .dismiss {
-    position: absolute;
-    top: 30px;
-    left: 30px;
-    cursor: pointer;
-    color: #ccc;
-    text-transform: uppercase;
-    line-height: 35px;
-    height: 35px;
-    font-size: 20px;
-}
-#sendTransaction .dismiss:hover {
-    color: white;
-}
+    #titleBar {
+        z-index: 49;
+        height: $titleBar-height;
+        width: 100%;
+        position: sticky;
+        top: 0;
+        flex: 0 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 1vw;
+        background-color: $background-color;
 
-#sendTransaction .dismiss span {
-    float: right;
-    margin-left: 15px;
-}
+        .dismiss {
+            @include flex-center-center;
+            gap: 1vw;
+            cursor: pointer;
+            color: #ccc;
+            text-transform: uppercase;
+            line-height: 35px;
+            height: 35px;
+            font-size: 20px;
 
-#sendTransaction h2 {
-    margin-top: 30px;
-    text-align: center;
-    text-transform: uppercase;
-    color: #ccc;
-    margin-bottom: 30px;
+            span {
+                float: right;
+            }
+
+            &:hover {
+                color: white;
+            }
+        }
+
+        h2 {
+            margin: 0;
+            font-size: 2vh;
+            text-align: center;
+            text-transform: uppercase;
+            color: #ccc;
+        }
+
+        .separator {
+            flex: 0 1 auto;
+        }
+    }
 }
 
 #sendTransaction .container {
@@ -102,7 +123,9 @@
 #sendTransaction #topPanel .content {
     display: flex;
     flex-direction: row;
+    justify-content: center;
     gap: 0.5em;
+    flex-wrap: wrap;
 }
 
 #sendTransaction #topPanel .content .account,
@@ -116,6 +139,7 @@
     font-family: monospace;
     font-size: 15px;
     font-weight: bold;
+    word-break: break-word;
 }
 
 #sendTransaction #topPanel .content .network {
@@ -216,7 +240,10 @@
 #sendTransaction button.approveTxn .loading {
     position: absolute;
     top: 20px;
-    left: 8px;
+    left: 15px;
+    display: block;
+    width: auto;
+    height: auto;
 }
 
 #sendTransaction .listOfTransactions {
@@ -291,5 +318,43 @@
 @media screen and (max-width: 700px) {
     #sendTransaction .container {
         width: 100%;
+    }
+}
+
+// Mobile
+@media screen and (max-width: $mobile-breakpoint-max-width) {
+    #sendTransaction {
+        .panel {
+            padding: 1.5em 1em;
+
+            .title {
+                text-align: center;
+            }
+        }
+
+        .container {
+            gap: 1em;
+
+            #topPanel {
+                flex-direction: column;
+
+                .content {
+                    width: 100%;
+                    justify-content: flex-start;
+                }
+            }
+
+            #panelHolder {
+                gap: 1em;
+
+                .listOfTransactions {
+                    min-width: 100%;
+                }
+
+                .secondaryPanel {
+                    gap: 1em;
+                }
+            }
+        }
     }
 }

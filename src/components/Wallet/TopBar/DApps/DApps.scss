@@ -105,3 +105,14 @@
         }
     }
 }
+
+// Mobile
+@media screen and (max-width: $mobile-breakpoint-max-width) {
+    #dApps {
+        .dapps-item {
+            .details {
+                max-width: 130px !important;
+            }
+        }
+    }
+}
