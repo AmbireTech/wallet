@@ -122,6 +122,8 @@ const Quotes = ({ addRequest, selectedAccount, fromTokensItems, quotes, onCancel
 
             const { tx } = await sendBuildTx(selectedAccount, fromAsset.address, fromAsset.chainId, toAsset.address, toAsset.chainId, inputAmount, outputAmount, routePath)
             sendTx(`transfer_send_crosschain_${Date.now()}`, fromAsset.chainId, tx.to, tx.data, tx.value.hex)
+
+            onCancel()
         } catch(e) {
             console.error(e);
             addToast(e.message || e, { error: true })
