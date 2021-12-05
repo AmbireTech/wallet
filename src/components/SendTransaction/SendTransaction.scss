@@ -239,7 +239,10 @@ $titleBar-height: 90px;
 #sendTransaction button.approveTxn .loading {
     position: absolute;
     top: 20px;
-    left: 8px;
+    left: 15px;
+    display: block;
+    width: auto;
+    height: auto;
 }
 
 #sendTransaction .listOfTransactions {

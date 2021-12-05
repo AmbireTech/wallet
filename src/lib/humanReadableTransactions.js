@@ -55,6 +55,7 @@ export function token(addr, amount) {
     const address = addr.toLowerCase()
     const assetInfo = tokens[address]
     if (assetInfo) {
+        if (!amount) return assetInfo[0]
         if (constants.MaxUint256.eq(amount)) return `maximum ${assetInfo[0]}`
         return `${formatUnits(amount, assetInfo[1])} ${assetInfo[0]}`
     } else {

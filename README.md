@@ -192,3 +192,5 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/t
 * Binance Smart Chains upport added
 * Ability to change your password
 * Ability to export (backup) and import accounts to/from JSON files
+* Styling improvements: responsiveness
+* Ability to recover your account in case of losing one of the keys
