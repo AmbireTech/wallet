@@ -155,35 +155,26 @@ const CrossChain = ({ addRequest, selectedAccount, portfolio, network }) => {
 
     useEffect(() => setAmount(0), [fromToken])
 
+    const asyncLoad = async (setStateLoading, loadCallback) => {
+        setStateLoading(true)
+        const loaded = await loadCallback()
+        setStateLoading(!loaded)
+    }
+
     useEffect(() => {
         if (!toChain) return
-        const asyncLoad = async () => {
-            setLoadingToTokens(true)
-            const loaded = await loadToTokens()
-            setLoadingToTokens(!loaded)
-        }
-        asyncLoad()
+        asyncLoad(setLoadingToTokens, loadToTokens)
     }, [toChain, loadToTokens])
 
     useEffect(() => {
         if (!toChain) return
-        const asyncLoad = async () => {
-            setLoadingFromTokens(true)
-            const loaded = await loadFromTokens()
-            setLoadingFromTokens(!loaded)
-        }
-        asyncLoad()
+        asyncLoad(setLoadingFromTokens, loadFromTokens)
     }, [toChain, loadFromTokens])
 
     useEffect(() => {
         if (!fromChain) return
         setQuotes(null)
-        const asyncLoad = async () => {
-            setLoading(true)
-            const loadedChains = await loadChains()
-            setLoading(!loadedChains)
-        }
-        asyncLoad()
+        asyncLoad(setLoading, loadChains)
     }, [fromChain, loadChains])
 
     useEffect(() => portfolioTokens.current = portfolio.tokens, [portfolio.tokens])
