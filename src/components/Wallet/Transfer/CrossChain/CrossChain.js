@@ -86,7 +86,8 @@ const CrossChain = ({ addRequest, selectedAccount, portfolio, network }) => {
                 .map(({ icon, name, symbol, address }) => ({
                     icon,
                     label: `${name} (${symbol})`,
-                    value: address
+                    value: address,
+                    symbol
                 }))
             setFromTokenItems(fromTokensItems)
             return true
@@ -110,7 +111,8 @@ const CrossChain = ({ addRequest, selectedAccount, portfolio, network }) => {
                 .map(({ icon, name, symbol, address }) => ({
                     icon,
                     label: `${name} (${symbol})`,
-                    value: address
+                    value: address,
+                    symbol
                 }))
                 .sort((a, b) => a.label.localeCompare(b.label))
             setToTokenItems(tokenItems)
@@ -154,37 +156,34 @@ const CrossChain = ({ addRequest, selectedAccount, portfolio, network }) => {
     }
 
     useEffect(() => setAmount(0), [fromToken])
+    useEffect(() => {
+        const fromTokenItem = fromTokensItems.find(({ value }) => value === fromToken)
+        if (!fromTokenItem) return
+        const equivalentToken = toTokenItems.find(({ symbol }) => symbol === fromTokenItem.symbol)
+        if (equivalentToken) setToToken(equivalentToken.value)
+    }, [fromTokensItems, toTokenItems, fromToken])
+
+    const asyncLoad = async (setStateLoading, loadCallback) => {
+        setStateLoading(true)
+        const loaded = await loadCallback()
+        setStateLoading(!loaded)
+    }
 
     useEffect(() => {
         if (!toChain) return
-        const asyncLoad = async () => {
-            setLoadingToTokens(true)
-            const loaded = await loadToTokens()
-            setLoadingToTokens(!loaded)
-        }
-        asyncLoad()
+        asyncLoad(setLoadingToTokens, loadToTokens)
     }, [toChain, loadToTokens])
 
     useEffect(() => {
         if (!toChain) return
-        const asyncLoad = async () => {
-            setLoadingFromTokens(true)
-            const loaded = await loadFromTokens()
-            setLoadingFromTokens(!loaded)
-        }
-        asyncLoad()
+        asyncLoad(setLoadingFromTokens, loadFromTokens)
     }, [toChain, loadFromTokens])
 
     useEffect(() => {
-        if (!fromChain) return
+        if (!fromChain || portfolio.isBalanceLoading) return
         setQuotes(null)
-        const asyncLoad = async () => {
-            setLoading(true)
-            const loadedChains = await loadChains()
-            setLoading(!loadedChains)
-        }
-        asyncLoad()
-    }, [fromChain, loadChains])
+        asyncLoad(setLoading, loadChains)
+    }, [fromChain, portfolio.isBalanceLoading, loadChains])
 
     useEffect(() => portfolioTokens.current = portfolio.tokens, [portfolio.tokens])
 
@@ -205,7 +204,7 @@ const CrossChain = ({ addRequest, selectedAccount, portfolio, network }) => {
                         hasNoFunds ?
                             <NoFundsPlaceholder/>
                             :
-                            !loadingFromTokens && !fromTokensItems.length ? 
+                            !loadingFromTokens && !loadingToTokens && !fromTokensItems.length ? 
                                 <div className="placeholder">You don't have any available tokens to swap</div>
                                 :
                                 loadingQuotes ?
