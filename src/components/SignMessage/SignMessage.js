@@ -9,7 +9,7 @@ import { getWallet } from '../../lib/getWallet'
 import { useToasts } from '../../hooks/toasts'
 import { fetchPost } from '../../lib/fetch'
 import { useState } from 'react'
-import { Loading } from '../common'
+import { Button, Loading } from '../common'
 
 export default function SignMessage ({ toSign, resolve, account, relayerURL, totalRequests }) {
   const defaultState = () => ({ codeRequired: false, passphrase: '' })
@@ -20,7 +20,7 @@ export default function SignMessage ({ toSign, resolve, account, relayerURL, tot
   if (!toSign || !account) return (<></>)
   if (toSign && !isHexString(toSign.txn)) return (<div id='signMessage'>
     <h3 className='error'>Invalid signing request: .txn has to be a hex string</h3>
-    <button type='button' className='reject' onClick={() => resolve({ message: 'signature denied' })}>Reject</button>
+    <Button className='reject' onClick={() => resolve({ message: 'signature denied' })}>Reject</Button>
   </div>)
 
   const handleSigningErr = e => {
@@ -141,11 +141,11 @@ export default function SignMessage ({ toSign, resolve, account, relayerURL, tot
             </>)}
 
             <div className="buttons">
-              <button type='button' className='reject' onClick={() => resolve({ message: 'signature denied' })}>Reject</button>
-              <button className='approve' onClick={approve} disabled={isLoading}>
+              <Button className='reject' onClick={() => resolve({ message: 'signature denied' })}>Reject</Button>
+              <Button className='approve' onClick={approve} disabled={isLoading}>
                   {isLoading ? (<><Loading/>&nbsp;&nbsp;&nbsp;&nbsp;Signing...</>)
                   : (<>Sign</>)}
-              </button>
+              </Button>
             </div>
           </form>
         </div>
