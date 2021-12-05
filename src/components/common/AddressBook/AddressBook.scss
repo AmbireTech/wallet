@@ -88,18 +88,13 @@ $heading-height: 45px;
                 input[type=text] {
                     height: 40px;
                     width: 300px;
-                    color: white;
+                    font-size: 1em !important;
                     background-color: rgba(0, 0, 0, 0.1);
                 }
             }
 
             button {
-                height: 50px;
                 width: 100%;
-                display: flex;
-                gap: 10px;
-                text-transform: uppercase;
-                background-color: rgba(0, 0, 0, 0.1);
             }
         }
     }
