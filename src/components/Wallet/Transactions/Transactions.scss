@@ -7,6 +7,10 @@
         gap: 10px;
         padding: 1.5em;
         background-color: $panel-background-color;
+
+        .actions {
+            display: flex;
+        }
     }
 
     .bundlePreview {
