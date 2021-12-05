@@ -180,10 +180,10 @@ const CrossChain = ({ addRequest, selectedAccount, portfolio, network }) => {
     }, [toChain, loadFromTokens])
 
     useEffect(() => {
-        if (!fromChain) return
+        if (!fromChain || portfolio.isBalanceLoading) return
         setQuotes(null)
         asyncLoad(setLoading, loadChains)
-    }, [fromChain, loadChains])
+    }, [fromChain, portfolio.isBalanceLoading, loadChains])
 
     useEffect(() => portfolioTokens.current = portfolio.tokens, [portfolio.tokens])
 
@@ -204,7 +204,7 @@ const CrossChain = ({ addRequest, selectedAccount, portfolio, network }) => {
                         hasNoFunds ?
                             <NoFundsPlaceholder/>
                             :
-                            !loadingFromTokens && !fromTokensItems.length ? 
+                            !loadingFromTokens && !loadingToTokens && !fromTokensItems.length ? 
                                 <div className="placeholder">You don't have any available tokens to swap</div>
                                 :
                                 loadingQuotes ?
