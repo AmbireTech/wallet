@@ -9,7 +9,7 @@ import { getWallet } from '../../lib/getWallet'
 import { useToasts } from '../../hooks/toasts'
 import { fetchPost } from '../../lib/fetch'
 import { useState } from 'react'
-import { Button, Loading } from '../common'
+import { Button, Loading, TextInput } from '../common'
 
 export default function SignMessage ({ toSign, resolve, account, relayerURL, totalRequests }) {
   const defaultState = () => ({ codeRequired: false, passphrase: '' })
@@ -132,12 +132,13 @@ export default function SignMessage ({ toSign, resolve, account, relayerURL, tot
         <div className='actions'>
           <form onSubmit={e => { e.preventDefault() }}>
             {account.signer.quickAccManager && (<>
-              <input type='password'
+              <TextInput
+                password
                 required minLength={3}
                 placeholder='Account password'
                 value={signingState.passphrase}
-                onChange={e => setSigningState({ ...signingState, passphrase: e.target.value })}
-              ></input>
+                onChange={value => setSigningState({ ...signingState, passphrase: value })}
+              ></TextInput>
             </>)}
 
             <div className="buttons">
