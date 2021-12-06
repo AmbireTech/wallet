@@ -72,6 +72,11 @@ a {
 }
 
 .error {
+  color: red;
+  text-align: center;
+}
+
+.validation-error {
   font-weight: 500;
   color: $danger-color;
   text-align: left;

@@ -232,7 +232,7 @@ const AddAuthSigner = props => {
         </div>
       </div>
       { validationFormMgs.message && 
-        (<div className='error'><BsXLg size={12}/>&nbsp;{validationFormMgs.message}</div>) 
+        (<div className='validation-error'><BsXLg size={12}/>&nbsp;{validationFormMgs.message}</div>) 
       }
       {addAccErr ? <h3 className="error">{addAccErr}</h3> : <></>}
     </div>
