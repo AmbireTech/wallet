@@ -29,7 +29,15 @@ export default function Actions({ estimation, feeSpeed, approveTxn, rejectTxn, s
         {signingStatus.confCodeRequired === 'otp' ? (<b>Please enter your OTP code and your password.</b>) : (<></>)}
         {signingStatus.confCodeRequired === 'email' ? (<b>A confirmation code was sent to your email, please enter it along with your password.</b>) : (<></>)}
       </div>
-      <TextInput small password required minLength={3} placeholder='Password' value={quickAccCredentials.passphrase} onChange={value => setQuickAccCredentials({ ...quickAccCredentials, passphrase: value })}></TextInput>
+      {!(signingStatus && signingStatus.finalBundle && signingStatus.finalBundle.recoveryMode) && (<TextInput
+        small
+        password
+        required
+        minLength={3}
+        placeholder='Password'
+        value={quickAccCredentials.passphrase}
+        onChange={value => setQuickAccCredentials({ ...quickAccCredentials, passphrase: value })}
+      ></TextInput>)}
       <form ref={form} className='quickAccSigningForm' onSubmit={e => { e.preventDefault() }}>
         {/* Changing the autoComplete prop to a random string seems to disable it more often */}
         <TextInput
