@@ -19,9 +19,12 @@ $input-height: 60px;
             height: $input-height;
             width: 100%;
             color: white;
+            font-family: 'Open Sans';
             font-size: 1.2em;
             padding: 1em;
+            border: none;
             text-overflow: ellipsis;
+            outline: none;
             background-color: $input-background-color;
             transition: all 0.1s ease-in-out;
 
@@ -61,6 +64,12 @@ $input-height: 60px;
             &:disabled {
                 opacity: 1 !important;
             }
+        }
+    }
+
+    &.small {
+        input {
+            height: 50px;
         }
     }
 }

@@ -63,6 +63,7 @@
                 display: flex;
                 justify-content: center;
                 gap: 2em;
+                flex-wrap: wrap;
 
                 img {
                     width: 9em;
@@ -87,6 +88,23 @@
         .text-input {
             input {
                 font-size: 16px !important;
+            }
+        }
+    }
+}
+
+// Mobile
+@media screen and (max-width: $mobile-breakpoint-max-width) {
+    #deposit {
+        gap: 1em;
+
+        .panel {
+            padding: 20px 20px;
+        }
+
+        #networks {
+            .logos {
+                gap: 1em !important;
             }
         }
     }
