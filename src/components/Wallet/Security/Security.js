@@ -32,6 +32,7 @@ const Security = ({
   accounts,
   addressBook,
   addRequest,
+  showSendTxns,
   onAddAccount,
 }) => {
   const { addresses, addAddress, removeAddress } = addressBook
@@ -119,7 +120,7 @@ const Security = ({
       selectedNetwork={selectedNetwork}
       relayerURL={relayerURL}
       onAddAccount={onAddAccount}
-      addRequest={addRequest}
+      showSendTxns={showSendTxns}
     />)
   }
 

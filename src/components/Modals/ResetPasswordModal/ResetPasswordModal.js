@@ -1,9 +1,7 @@
 import './ResetPasswordModal.scss'
 
 import { Wallet } from 'ethers'
-import { id } from '@ethersproject/hash'
-import { AbiCoder, Interface } from '@ethersproject/abi'
-import { keccak256 } from '@ethersproject/keccak256'
+import { Interface, AbiCoder, keccak256, id } from 'ethers/lib/utils'
 import { useState, useMemo, createRef, useEffect, useCallback } from 'react'
 import { Modal, Radios, TextInput, Checkbox, Button, ToolTip, Loading } from '../../common'
 import { MdOutlineCheck, MdOutlineClose, MdOutlineHelpOutline } from 'react-icons/md'
@@ -11,10 +9,11 @@ import { useModals } from '../../../hooks'
 import { useToasts } from '../../../hooks/toasts'
 import accountPresets from '../../../consts/accountPresets'
 import { fetchPost } from '../../../lib/fetch'
+import { Bundle } from 'adex-protocol-eth'
 
 const IDENTITY_INTERFACE = new Interface(require('adex-protocol-eth/abi/Identity5.2'))
 
-const ResetPassword = ({ account, selectedNetwork, relayerURL, onAddAccount, addRequest }) => {
+const ResetPassword = ({ account, selectedNetwork, relayerURL, onAddAccount, showSendTxns }) => {
     const { hideModal } = useModals()
     const { addToast } = useToasts()
 
@@ -126,32 +125,32 @@ const ResetPassword = ({ account, selectedNetwork, relayerURL, onAddAccount, add
 
             const primaryKeyBackup = JSON.stringify(await firstKeyWallet.encrypt(newPassword, accountPresets.encryptionOpts))
 
+            const abiCoder = new AbiCoder()
+            const newQuickAccHash = keccak256(abiCoder.encode(['tuple(uint, address, address)'], [quickAccountTuple]))
+
+            const recoveryBundle = new Bundle({
+                identity: account.id,
+                network: selectedNetwork.id,
+                signer: account.signer,
+                txns: [[
+                    account.id,
+                    '0x00',
+                    IDENTITY_INTERFACE.encodeFunctionData('setAddrPrivilege', [
+                        quickAccManager,
+                        newQuickAccHash,
+                    ]),
+                ]]
+            })
+            recoveryBundle.recoveryMode = true
+            showSendTxns(recoveryBundle)
+
             onAddAccount({
                 ...account,
                 primaryKeyBackup,
                 signer,
-                recoveryMode: true,
                 preRecoverySigner: account.signer,
                 preRecoveryPrimaryKeyBackup: account.primaryKeyBackup
             }, { select: true })
-
-            const abiCoder = new AbiCoder()
-            const newQuickAccHash = keccak256(abiCoder.encode(['tuple(uint, address, address)'], [quickAccountTuple]))
-
-            addRequest({
-                id: `setAddrPrivilege_${Date.now()}`,
-                type: 'eth_sendTransaction',
-                chainId: selectedNetwork.chainId,
-                account: account.id,
-                txn: {
-                    to: account.id,
-                    data: IDENTITY_INTERFACE.encodeFunctionData('setAddrPrivilege', [
-                        quickAccManager,
-                        newQuickAccHash,
-                    ]),
-                    value: '0x00',
-                }
-            })
         } catch(e) {
             console.error(e);
             addToast(e.message || e, { error: true })
