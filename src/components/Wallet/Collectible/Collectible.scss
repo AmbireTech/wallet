@@ -10,12 +10,16 @@
     }
 
     .panel {
+        min-width: 0;
         flex: 0 1 50%;
 
-        .title {
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
+        .heading {
+            .title {
+                display: block;
+                overflow: hidden;
+                white-space: nowrap;
+                text-overflow: ellipsis;
+            }
 
             .contract {
                 font-size: 15px;
