@@ -96,10 +96,11 @@ const Collectible = ({ selectedAcc, selectedNetwork, addRequest, addressBook }) 
                 json = await response.json()
             }
 
+            const image = json ? handleUri(json.image) : null
             setMetadata(metadata => ({
                 ...metadata,
                 ...json,
-                image: json ? handleUri(json.image) : null
+                image
             }))
 
             setMetadata(metadata => ({
