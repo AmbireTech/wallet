@@ -33,15 +33,6 @@ const AddressWarning = ({ address, onChange, onAddNewAddress, isKnownAddress }) 
                     :
                     null
             }
-            {
-                smartContractWarning ? 
-                    <div id="smart-contract-warning">
-                        <AiOutlineWarning/>
-                        You are trying to send tokens to a smart contract. Doing so would burn them.
-                    </div>
-                    :
-                    null
-            }
         </>
     )
 }
