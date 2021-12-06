@@ -4,27 +4,28 @@
     display: flex;
     gap: 30px;
 
+    .amount-label {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+
+        span {
+            opacity: 0.8;
+        }
+    }
+
     #recipient-field {
         position: relative;
         display: flex;
 
+        .text-input {
+            width: 100%;
+        }
+
         .dropdown {
             position: absolute;
             right: 0;
-            height: 60px;
         }
-
-        .text-input {
-            width: 100%;
-
-            input {
-                padding-right: 220px;
-            }
-        }
-    }
-
-    .placeholder-overlay {
-        background-color: rgba(0, 0, 0, 0.8);
     }
 
     .panel {
@@ -52,20 +53,63 @@
     }
 }
 
-@media screen and (min-width: 1550px) and (max-width: 1700px) {
+@media screen and (min-width: 1700px) {
     #transfer {
         .text-input {
             input {
-                font-size: 16px;
+                font-size: 0.9vw !important;
             }
         }
     }
 }
-@media screen and (min-width: 1400px) and (max-width: 1550px) {
+@media screen and (min-width: 1600px) and (max-width: 1700px) {
     #transfer {
         .text-input {
             input {
-                font-size: 13px;
+                font-size: 0.8vw !important;
+            }
+        }
+    }
+}
+@media screen and (min-width: 1400px) and (max-width: 1600px) {
+    #transfer {
+        .text-input {
+            input {
+                font-size: 0.7vw !important;
+            }
+        }
+    }
+}
+@media screen and (min-width: 900px) and (max-width: 1400px) {
+    #transfer {
+        .text-input {
+            input {
+                font-size: 1.5vw !important;
+            }
+        }
+    }
+}
+@media screen and (min-width: 800px) and (max-width: 900px) {
+    #transfer {
+        .text-input {
+            input {
+                font-size: 1.4vw !important;
+            }
+        }
+    }
+}
+
+// Mobile
+@media screen and (max-width: $mobile-breakpoint-max-width) {
+    #transfer {
+        gap: 1em;
+
+        #recipient-field {
+            flex-direction: column;
+            gap: 10px;
+
+            .dropdown {
+                position: relative;
             }
         }
     }

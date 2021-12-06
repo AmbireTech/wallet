@@ -3,7 +3,7 @@
 import { GiTakeMyMoney, GiSpectacles, GiGorilla } from 'react-icons/gi'
 import { FaSignature, FaChevronLeft } from 'react-icons/fa'
 import { MdOutlineAccountCircle } from 'react-icons/md'
-import './SendTransaction.css'
+import './SendTransaction.scss'
 import { useEffect, useState, useMemo } from 'react'
 import fetch from 'node-fetch'
 import { Bundle } from 'adex-protocol-eth/js'
@@ -272,10 +272,13 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
   })
 
   return (<div id='sendTransaction'>
-      <div className='dismiss' onClick={onDismiss}>
-        <FaChevronLeft size={35}/><span>back</span>
+      <div id="titleBar">
+        <div className='dismiss' onClick={onDismiss}>
+          <FaChevronLeft size={35}/><span>back</span>
+        </div>
+        <h2>Pending transactions: {bundle.txns.length}</h2>
+        <div className="separator"></div>
       </div>
-      <h2>Pending transactions: {bundle.txns.length}</h2>
       <div className='container'>
         <div id='topPanel' className='panel'>
           <div className='title'>

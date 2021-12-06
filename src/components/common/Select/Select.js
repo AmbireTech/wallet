@@ -64,7 +64,7 @@ const Select = ({ children, native, monospace, searchable, disabled, label, defa
                                     :
                                     null
                             }
-                            { selectedItem.label || selectedItem.value }
+                            <div className="label">{ selectedItem.label || selectedItem.value }</div>
                             <div className="separator"></div>
                             <div className={`handle ${isOpen ? 'open' : ''}`}>
                                 <BsChevronDown size={20}></BsChevronDown>
@@ -83,7 +83,7 @@ const Select = ({ children, native, monospace, searchable, disabled, label, defa
                                                                 null
                                                         }
                                                     </div>
-                                                    { item.label || item.value }
+                                                    <div className="label">{ item.label || item.value }</div>
                                                 </div>
                                             ))
                                         }

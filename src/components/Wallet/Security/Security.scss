@@ -4,6 +4,7 @@
   display: flex;
   // justify-content: center;
   flex-direction: column;
+  gap: 2em;
   border: 1px dashed transparent;
 
   .acceptStyleIcon {
@@ -47,7 +48,6 @@
     padding: 0 2.5em;
     padding-top: 2.5em;
     padding-bottom: 3em;
-    margin-top: 2em;
     box-sizing: border-box;
     //  overflow: hidden;
     background-color: $panel-background-color;
@@ -73,7 +73,7 @@
       padding-right: 60px;
     }
 
-    .content {
+    ul.content {
       list-style-type: none;
       padding-left: 0 !important;
 
@@ -81,33 +81,13 @@
         height: 60px;
       }
 
-      &.import {
-        button {
-          max-width: 1800px;
-          background: $secondary-accent-color;
-        }
-      }
-
       .text-input {
         flex-grow: 2.8;
       }
 
       &.dropdown {
-        height: 60px;
-
         .list.fade-enter-done {
           width: 220px !important;
-        }
-      }
-
-      .btns-wrapper {
-        display: flex;
-        justify-content: right;
-        gap: 1em;
-        flex-grow: 0.8;
-
-        button {
-          width: 90%;
         }
       }
 
@@ -115,6 +95,7 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
+        gap: 1em;
         margin-bottom: 1em;
 
         .text-input {
@@ -124,15 +105,8 @@
         .btns-wrapper {
           display: flex;
           justify-content: center;
+          align-self: flex-end;
           gap: 1em;
-        }
-      }
-
-      a {
-        button {
-          width: 100%;
-          background: orange;
-          max-width: 1800px;
         }
       }
     }
@@ -174,6 +148,8 @@
       }
 
       .details {
+        text-align: left;
+
         label {
           cursor: default;
         }
@@ -190,10 +166,75 @@
       }
     }
   }
+
+  #backup {
+    flex-direction: row;
+    display: flex;
+    gap: 2em;
+
+    #export {
+      .buttonComponent {
+        height: 60px;
+        width: 100%;
+        background: orange;
+      }
+    }
+
+    #import {
+      .buttonComponent {
+        height: 60px;
+        width: 100%;
+        background: $secondary-accent-color;
+      }
+    }
+  }
 }
 
 @media screen and (max-width: 1200px) {
   #overview {
     flex-direction: column;
+  }
+}
+
+// Mobile
+@media screen and (max-width: $mobile-breakpoint-max-width) {
+  #security {
+    gap: 1em;
+
+    .panel {
+      padding: 20px 20px;
+    }
+
+    .content {
+      li {
+        flex-direction: column;
+      }
+    }
+
+    #signers {
+      .btns-wrapper {
+        flex-wrap: wrap;
+
+        .buttonComponent {
+          height: 50px;
+          width: 100%;
+        }
+      }
+    }
+
+    #addresses {
+      .item {
+        padding-left: 15px !important;
+
+        .details {
+          padding-right: 5px;
+        }
+      }
+    }
+
+    #backup {
+      flex-direction: column;
+      gap: 1em;
+    }
   }
 }
