@@ -12,6 +12,24 @@ import { fetchPost } from '../../../lib/fetch'
 import { Bundle } from 'adex-protocol-eth'
 
 const IDENTITY_INTERFACE = new Interface(require('adex-protocol-eth/abi/Identity5.2'))
+const fees = {
+    ethereum: {
+        amount: 100,
+        tokens: ['USDC', 'USDT']
+    },
+    polygon: {
+        amount: 10,
+        tokens: ['USDC', 'USDT']
+    },
+    avalanche: {
+        amount: 10,
+        tokens: ['AVAX']
+    },
+    'binance-smart-chain': {
+        amount: 10,
+        tokens: ['BNB']
+    }
+}
 
 const ResetPassword = ({ account, selectedNetwork, relayerURL, onAddAccount, showSendTxns }) => {
     const { hideModal } = useModals()
@@ -26,6 +44,8 @@ const ResetPassword = ({ account, selectedNetwork, relayerURL, onAddAccount, sho
 
     const [passwordsMustMatchWarning, setPasswordsMustMatchWarning] = useState(false)
     const [passwordsLengthWarning, setPasswordsLengthWarning] = useState(false)
+
+    const fee = fees[selectedNetwork.id]
     
     const radios = useMemo(() => [
         {
@@ -59,7 +79,7 @@ const ResetPassword = ({ account, selectedNetwork, relayerURL, onAddAccount, sho
                 ref: createRef()
             },
             {
-                label: `I confirm the fee of <...> to apply this change on ${selectedNetwork.name}`,
+                label: `I confirm the fee of ${fee.amount}$ to apply this change on ${selectedNetwork.name}`,
                 ref: createRef()
             },
             {
