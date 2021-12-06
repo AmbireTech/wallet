@@ -18,6 +18,7 @@ import { useHistory } from 'react-router-dom'
 import { useDropzone } from 'react-dropzone'
 import { MdInfoOutline } from 'react-icons/md'
 import { validateImportedAccountProps, fileSizeValidator } from '../../../lib/importedAccountValidations'
+import OtpTwoFAModal from '../../Modals/OtpTwoFAModal/OtpTwoFAModal'
 
 const IDENTITY_INTERFACE = new Interface(
   require('adex-protocol-eth/abi/Identity5.2')
@@ -119,6 +120,14 @@ const Security = ({
     />)
   }
 
+  const showOtpTwoFAModal = () => {
+    if (!relayerURL) {
+      return addToast('Unsupported without a connection to the relayer', { error: true })
+    }
+
+    showModal(<OtpTwoFAModal />)
+  }
+
   const selectedAccount = accounts.find(x => x.id === selectedAcc)
 
   const privList = Object.entries(privileges)
@@ -137,6 +146,8 @@ const Security = ({
         <li key={addr}>
           <TextInput className="depositAddress" value={privText} disabled />
           <div className="btns-wrapper">
+            {/* TODO: check is OTP exist, make it enable/disable */}
+            {isQuickAcc &&  (<Button onClick={showOtpTwoFAModal} small>Enable 2FA</Button>)}
             {isQuickAcc && selectedAccount.primaryKeyBackup && (<Button onClick={showResetPasswordModal} small>Change password</Button>)}
             <Button
               disabled={isSelected}
