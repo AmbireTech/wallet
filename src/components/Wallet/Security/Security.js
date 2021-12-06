@@ -51,7 +51,6 @@ const Security = ({
     : null
   const { data, errMsg, isLoading } = useRelayerData(url)
   const privileges = data ? data.privileges : {}
-  const recoveryLock = data && data.recoveryLock ? data.recoveryLock : { status: null, message: null }
   const { addToast } = useToasts()
   const history = useHistory()
 
