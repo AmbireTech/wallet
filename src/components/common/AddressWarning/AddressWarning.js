@@ -1,7 +1,6 @@
 import './AddressWarning.scss'
 
 import { MdOutlineAdd } from 'react-icons/md'
-import { AiOutlineWarning } from 'react-icons/ai'
 import { Checkbox } from '..'
 import { useEffect, useMemo, useState } from 'react'
 import { isValidAddress, isKnownTokenOrContract } from '../../../helpers/address';
