@@ -193,6 +193,9 @@ const CrossChain = ({ addRequest, selectedAccount, portfolio, network }) => {
         <div id="cross-chain" className="panel">
             <div className="title">
                 Cross-chain
+                <div id="powered">
+                    Powered by Movr
+                </div>
             </div>
             {
                 disabled ? 
