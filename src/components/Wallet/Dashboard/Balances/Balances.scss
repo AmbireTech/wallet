@@ -1,3 +1,5 @@
+@import '../../../../variables.scss';
+
 #balances {
     font-size: 40px;
 
@@ -10,6 +12,7 @@
         margin-top: 20px;
 
         label {
+            flex: 0 0 auto;
             font-size: 22px;
             opacity: 0.8;
         }
@@ -17,6 +20,7 @@
         .balance-container {
             display: flex;
             gap: 7px;
+            flex-wrap: wrap;
         }
 
         .other-balance {
@@ -24,6 +28,7 @@
             flex-direction: row;
             align-items: center;
             gap: 7px;
+            flex-wrap: wrap;
             font-weight: 500;
             font-size: 22px;
             opacity: 0.8;
@@ -42,15 +47,32 @@
                 gap: 8px;
 
                 .icon {
+                    flex: 0 0 auto;
                     height: 20px;
                     width: 20px;
-                    background-size: contain;
+                    background-size: cover;
                     border-radius: 100%;
                 }
             }
 
             &:hover {
                 opacity: 1;
+            }
+        }
+    }
+}
+
+@media screen and (max-width: $mobile-breakpoint-max-width) {
+    #balances {
+        #other-balances {
+            gap: 9px;
+
+            label {
+                font-size: 20px;
+            }
+
+            .other-balance {
+                font-size: 20px;
             }
         }
     }

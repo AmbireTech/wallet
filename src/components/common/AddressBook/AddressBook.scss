@@ -4,7 +4,7 @@ $heading-height: 45px;
 
 .address-book {
     height: 60px !important;
-    background-color: rgba(0, 0, 0, 0.1) !important;
+    background-color: $input-background-color-darker !important;
 
     .content {
         cursor: pointer;
@@ -88,19 +88,23 @@ $heading-height: 45px;
                 input[type=text] {
                     height: 40px;
                     width: 300px;
-                    color: white;
+                    font-size: 1em !important;
                     background-color: rgba(0, 0, 0, 0.1);
                 }
             }
 
             button {
-                height: 50px;
                 width: 100%;
-                display: flex;
-                gap: 10px;
-                text-transform: uppercase;
-                background-color: rgba(0, 0, 0, 0.1);
             }
+        }
+    }
+}
+
+// Mobile
+@media screen and (max-width: $mobile-breakpoint-max-width) {
+    .address-book {
+        .menu {
+            width: 100%;
         }
     }
 }
