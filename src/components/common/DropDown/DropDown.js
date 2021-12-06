@@ -34,6 +34,7 @@ export default function DropDown({ children, id, icon, className, title, badge, 
                         :
                         null
                 }
+                <div className="separator"></div>
                 <div className={`handle ${isMenuOpen ? 'open' : ''}`}>
                     <BsChevronDown size={20}></BsChevronDown>
                 </div>

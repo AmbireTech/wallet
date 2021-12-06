@@ -4,7 +4,6 @@
     display: flex;
     flex-direction: column;
     gap: 30px;
-    padding-bottom: 30px;
 
     .green-highlight {
         color: $primary-accent-color;
@@ -41,5 +40,23 @@
 @media screen and (max-width: 1200px) {
     #overview {
         flex-direction: column;
+    }
+}
+
+@media screen and (max-width: $mobile-breakpoint-max-width) {
+    #dashboard {
+        gap: 15px;
+
+        #overview {
+            gap: 15px;
+        }
+
+        #chart {
+            .content {
+                .chart {
+                    flex-direction: column;
+                }
+            }
+        }
     }
 }

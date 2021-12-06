@@ -1,4 +1,5 @@
 @import './variables.scss';
+@import './transitions.scss';
 
 :root {
   scrollbar-color: #bbb #1c1e24;
@@ -6,6 +7,7 @@
 }
 
 ::-webkit-scrollbar {
+  height: 10px;
   width: 10px;
 }
 
@@ -44,7 +46,7 @@
   src: url('./fonts/OpenSans-Bold.ttf');
 }
 
-* > {
+* {
   box-sizing: border-box;
 }
 
@@ -54,6 +56,7 @@ html {
   height: 100%;
 }
 body {
+  height: 100%;
   color: white;
   font-family: 'Open Sans';
 }
@@ -67,43 +70,6 @@ a {
     color: white;
   }
 }
-button, input {
-  font-size: 1em;
-  border: 0px;
-  background: none; /* #282c34; */
-  padding: 1em;
-  box-sizing: border-box;
-  font-family: 'Open Sans';
-  transition: all 0.1s ease-in-out;
-}
-
-button {
-  background-color: white;
-}
-button, input[type=submit] {
-  cursor: pointer;
-}
-
-button:not([disabled]):active, input[type=submit]:not([disabled]):active {
-  transform: scale(0.95);
-}
-
-input:focus {
-  outline: 0px;
-}
-
-button {
-  opacity: 0.8;
-}
-
-button:not([disabled]):hover {
-  opacity: 1;
-}
-
-input:disabled, button:disabled {
-  opacity: 0.5 !important;
-  cursor: default;
-}
 
 .error {
   color: red;
@@ -111,60 +77,8 @@ input:disabled, button:disabled {
 }
 
 #root {
-  height: 100vh;
-  min-width: 700px;
+  height: 100%;
   position: relative;
-}
-#loginEmail form > *, #loginEmail button, #addAccount form > *, #addAccount button {
-  /* TODO */
-  display: block;
-}
-
-#loginEmail input[type=submit] {
-  width: 100%;
-  /*background-color: rgb(255, 209, 0);*/
-  background-color: rgb(128, 255, 219);
-  opacity: 0.8;
-  border: 0px;
-  font-size: 1.5em;
-  color: black;
-  font-weight: 600;
-  text-transform: uppercase;
-  padding: 0.6em;
-}
-#loginEmail input[type=submit]:disabled {
-  opacity: 0.5;
-}
-#loginEmail input[type=submit]:not([disabled]):hover {
-  opacity: 1.0;
-}
-
-#loginEmail { flex: 0.9 }
-
-#loginEmail input {
-  margin: 2em 0px;
-  border-bottom: 2px solid #b3c4e6;
-  width: 100%;
-  color: white;
-  font-size: 1.1em;
-}
-
-#loginEmail input:not([type=submit]):focus {
-  border-bottom: 3px solid #dae6fd;
-}
-
-#loginEmail .error, #loginOthers .error {
-  font-size: 1.5em;
-  font-weight: 600;
-  position: relative;
-}
-
-#loginOthers .error {
-  max-width: 300px;
-}
-
-#loginEmail .error {
-  top: -15px;
 }
 
 select {
@@ -200,58 +114,11 @@ select {
   }
 }
 
-.slide-fade-enter {
-  opacity: 0;
-  transform: translateY(50px);
-}
-
-.slide-fade-enter.slide-fade-enter-active {
-  opacity: 1;
-  transform: translateY(0px);
-  transition: opacity 0.2s ease-in-out, transform 0.1s ease-in-out;
-}
-
-.slide-fade-enter-done {
-  opacity: 1;
-  transform: translateY(0px);
-}
-
-.slide-fade-exit {
-  opacity: 1;
-  transform: translateY(0px);
-}
-
-.slide-fade-exit.slide-fade-exit-active {
-  opacity: 0;
-  transition: opacity 0.2s ease-in-out, transform 0.1s ease-in-out;
-}
-
-.slide-fade-exit-done {
-  opacity: 0;
-}
-
-.fade-enter {
-  opacity: 0;
-}
-
-.fade-enter.fade-enter-active {
-  opacity: 1;
-  transition: opacity 0.2s ease-in-out;
-}
-
-.fade-enter-done {
-  opacity: 1;
-}
-
-.fade-exit {
-  opacity: 1;
-}
-
-.fade-exit.fade-exit-active {
-  opacity: 0;
-  transition: opacity 0.2s ease-in-out;
-}
-
-.fade-exit-done {
-  opacity: 0;
+// Mobile
+@media screen and (max-width: $mobile-breakpoint-max-width) {
+  .panel {
+    gap: 1em;
+    padding: 20px;
+    padding-top: 20px;
+  }
 }

@@ -1,28 +1,18 @@
 import './Transfer.scss'
 
-import { BsArrowDown, BsXLg } from 'react-icons/bs'
+import { BsXLg } from 'react-icons/bs'
+import { AiOutlineSend } from 'react-icons/ai'
 import { useParams, withRouter } from 'react-router'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { ethers } from 'ethers'
-import SendPlaceholder from './SendPlaceholder/SendPlaceholder'
+import NoFundsPlaceholder from './NoFundsPlaceholder/NoFundsPlaceholder'
 import { Interface } from 'ethers/lib/utils'
 import { useToasts } from '../../../hooks/toasts'
 import { TextInput, NumberInput, Button, Select, Loading, AddressBook, AddressWarning } from '../../common'
 import { validateSendTransferAddress, validateSendTransferAmount } from '../../../lib/validations/formValidations'
+import CrossChain from './CrossChain/CrossChain'
 
 const ERC20 = new Interface(require('adex-protocol-eth/abi/ERC20'))
-const crossChainAssets = [
-    {
-        label: 'USD Coin (Polygon)',
-        value: 'USDC-polygon',
-        icon: 'https://raw.githubusercontent.com/sushiswap/assets/master/blockchains/polygon/assets/0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174/logo.png'
-    },
-    {
-        label: 'Tether USD (Polygon)',
-        value: 'USDT-polygon',
-        icon: 'https://raw.githubusercontent.com/sushiswap/assets/master/blockchains/polygon/assets/0xc2132D05D31c914a87C6611C10748AEb04B58e8F/logo.png'
-    }
-]
 
 const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest, addressBook }) => {
     const { addresses, addAddress, removeAddress, isKnownAddress } = addressBook
@@ -56,13 +46,13 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
 
     const selectedAsset = portfolio.tokens.find(({ address }) => address === asset)
 
-    const getMaxAmount = () => {
+    const maxAmount = useMemo(() => {
         if (!selectedAsset) return 0;
         const { balanceRaw, decimals } = selectedAsset
         return ethers.utils.formatUnits(balanceRaw, decimals)
-    }
+    }, [selectedAsset])
 
-    const setMaxAmount = () => onAmountChange(getMaxAmount(amount))
+    const setMaxAmount = () => onAmountChange(maxAmount)
 
     const onAmountChange = value => {
         if (value) {
@@ -127,6 +117,8 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
         setDisabled(!(isValidRecipientAddress.success && isValidSendTransferAmount.success))
     }, [address, amount, selectedAcc, selectedAsset, addressConfirmed, isKnownAddress, addToast])
 
+    const amountLabel = <div className="amount-label">Available Amount: <span>{ maxAmount } { selectedAsset?.symbol }</span></div>
+
     return (
         <div id="transfer">
            <div className="panel">
@@ -141,7 +133,7 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
                             <div className="form">
                                 <Select searchable defaultValue={asset} items={assetsItems} onChange={(value) => setAsset(value)}/>
                                 <NumberInput
-                                    label={`Available Amount: ${getMaxAmount()} ${selectedAsset?.symbol}`}
+                                    label={amountLabel}
                                     value={amount}
                                     precision={selectedAsset?.decimals}
                                     onInput={onAmountChange}
@@ -175,32 +167,13 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
                                     onChange={(value) => setAddressConfirmed(value)}
                                     isKnownAddress={isKnownAddress}
                                 />
-                                <Button disabled={disabled} onClick={sendTx}>Send</Button>
+                                <Button icon={<AiOutlineSend/>} disabled={disabled} onClick={sendTx}>Send</Button>
                             </div>
                             :
-                            <SendPlaceholder/>
+                            <NoFundsPlaceholder/>
                }
            </div>
-           <div className="panel">
-               <div className="placeholder-overlay">
-                    Coming Soon...
-               </div>
-               <div className="title">
-                   Cross-chain
-               </div>
-               <div className="form">
-                    <label>From</label>
-                    <Select searchable items={assetsItems} onChange={() => {}}/>
-                    <NumberInput value={0} min="0" onInput={() => {}} button="MAX" onButtonClick={() => setMaxAmount()}/>
-                    <div className="separator">
-                        <BsArrowDown/>
-                    </div>
-                    <label>To</label>
-                    <Select searchable items={crossChainAssets} onChange={() => {}}/>
-                    <NumberInput value={0} min="0" onInput={() => {}} button="MAX" onButtonClick={() => {}}/>
-                    <Button>Transfer</Button>
-                </div>
-           </div>
+           <CrossChain addRequest={addRequest} selectedAccount={selectedAcc} portfolio={portfolio} network={selectedNetwork}/>
         </div>
     )
 }

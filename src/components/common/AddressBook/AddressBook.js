@@ -2,7 +2,7 @@ import './AddressBook.scss'
 
 import { FaAddressCard } from 'react-icons/fa'
 import { MdOutlineAdd, MdClose } from 'react-icons/md'
-import { DropDown } from '..'
+import { Button, DropDown, TextInput } from '..'
 import { useCallback, useEffect, useState } from 'react'
 import AddressList from './AddressList/AddressList'
 
@@ -63,12 +63,12 @@ const AddressBook = ({ addresses, addAddress, removeAddress, newAddress, onClose
                 openAddAddress ?
                     <div id="add-address" className="content">
                         <div className="fields">
-                            <input type="text" autoComplete="nope" placeholder="Name" defaultValue={name} onInput={({ target }) => setName(target.value)}/>
-                            <input type="text" autoComplete="nope" placeholder="Address" defaultValue={address} onInput={({ target }) => setAddress(target.value)}/>
+                            <TextInput autoComplete="nope" placeholder="Name" value={name} onInput={value => setName(value)}/>
+                            <TextInput autoComplete="nope" placeholder="Address" value={address} onInput={value => setAddress(value)}/>
                         </div>
-                        <button className="button" disabled={!isAddAddressFormValid} onClick={onAddAddress}>
+                        <Button clear small disabled={!isAddAddressFormValid} onClick={onAddAddress}>
                             <MdOutlineAdd/> Add Address
-                        </button>
+                        </Button>
                     </div>
                     :
                     !addresses.length ?

@@ -1,7 +1,8 @@
 import './Security.scss'
 
-import { MdOutlineAdd } from 'react-icons/md'
+import { MdOutlineAdd, MdOutlineRemove } from 'react-icons/md'
 import { RiDragDropLine } from 'react-icons/ri'
+import { BiExport, BiImport } from 'react-icons/bi'
 import { useState, useEffect, useCallback } from 'react'
 import { Loading, TextInput, Button } from '../../common'
 import { Interface } from 'ethers/lib/utils'
@@ -95,7 +96,7 @@ const Security = ({
     if (isQuickAccount) {
       return addToast((<span>To make this signer default, please <a href='#/email-login'>please login with the email</a></span>), {url: '/#/email-login', error: true})
     } else {
-      onAddAccount({ ...account, signer: { address: address } })
+      onAddAccount({ ...account, signer: { address: address }, signerExtra: null })
       addToast(
         'This signer is now the default. If it is a hardware wallet, you will have to re-add the account manually to connect it directly, otherwise you will have to add this signer address to your web3 wallet.',
         { timeout: 30000 }
@@ -151,6 +152,7 @@ const Security = ({
               onClick={() => onRemoveBtnClicked(addr)}
               small
               red
+              icon={<MdOutlineRemove/>}
               title={
                 isSelected ? 'Cannot remove the currently used signer' : ''
               }
@@ -205,7 +207,7 @@ const Security = ({
 
   const showLoading = isLoading && !data
   const signersFragment = relayerURL ? (<>
-    <div className="panel">
+    <div className="panel" id="signers">
       <div className='network-warning'>
         <MdInfoOutline size={36}></MdInfoOutline>
         <div>
@@ -237,53 +239,51 @@ const Security = ({
     </div>
   )
   return (
-    <section id="security" className={(isDragActive ? 'activeStyle ' : '') + (isDragAccept ? 'acceptStyle ' : '') + (isDragReject ? 'rejectStyle ' : '')}>
+    <section id="security" className={(isDragActive ? 'activeStyle ' : '') + (isDragAccept ? 'acceptStyle ' : '') + (isDragReject ? 'rejectStyle ' : '')} {...getRootProps()}>
       {
         (isDragAccept || isDragReject)
         && (<div className={isDragAccept ? 'acceptStyleIcon' : 'rejectStyleIcon'}><RiDragDropLine size={100}/></div>)
       }
       
-      <div {...getRootProps()}>
-        <input {...getInputProps()} />
-        {signersFragment}
+      <input {...getInputProps()} />
+      {signersFragment}
 
-        <div id="addresses" className='panel'>
-          <div className='title'>Address Book</div>
-          <div className="content">
-            <AddressList
-              noAccounts={true}
-              addresses={addresses}
-              removeAddress={removeAddress}
-            />
-            <Button small icon={<MdOutlineAdd/>} onClick={showInputModal}>Add Address</Button>
+      <div id="addresses" className='panel'>
+        <div className='title'>Address Book</div>
+        <div className="content">
+          <AddressList
+            noAccounts={true}
+            addresses={addresses}
+            removeAddress={removeAddress}
+          />
+          <Button small icon={<MdOutlineAdd/>} onClick={showInputModal}>Add Address</Button>
+        </div>
+      </div>
+
+      <div id="backup">
+        <div className="panel">
+          <div className="panel-title">Backup current account</div>
+          <div className="content" id="export">
+            <a
+              type="button"
+              href={`data:text/json;charset=utf-8,${encodeURIComponent(
+                JSON.stringify(selectedAccount)
+              )}`}
+              download={`${selectedAccount.id}.json`}
+            >
+              <Button icon={<BiExport/>}>Export</Button>
+            </a>
+            <div style={{ fontSize: '0.9em' }}>
+            This downloads a backup of your current account ({selectedAccount.id.slice(0, 5)}...{selectedAccount.id.slice(-3)}) encrypted with
+            your password. This is safe to store in iCloud/Google Drive, but you cannot use it to restore your account if you forget the password.
+            </div>
           </div>
         </div>
-
-        <div style={{ flexDirection: 'row', display: 'flex', gap: '2em' }}>
-          <div className="panel">
-            <div className="panel-title">Backup current account</div>
-            <div className="content">
-              <a
-                type="button"
-                href={`data:text/json;charset=utf-8,${encodeURIComponent(
-                  JSON.stringify(selectedAccount)
-                )}`}
-                download={`${selectedAccount.id}.json`}
-              >
-                <Button>Export</Button>
-              </a>
-              <div style={{ fontSize: '0.9em' }}>
-              This downloads a backup of your current account ({selectedAccount.id.slice(0, 5)}...{selectedAccount.id.slice(-3)}) encrypted with
-              your password. This is safe to store in iCloud/Google Drive, but you cannot use it to restore your account if you forget the password.
-              </div>
-            </div>
-          </div>
-          <div className="panel">
-            <div className="panel-title">Import an account from backup</div>
-            <div className="content import">
-              <Button small onClick={open}>Import</Button>
-              <p>...or you can drop an account backup JSON file on this page</p>
-            </div>
+        <div className="panel">
+          <div className="panel-title">Import an account from backup</div>
+          <div className="content" id="import">
+            <Button icon={<BiImport/>} onClick={open}>Import</Button>
+            <p>...or you can drop an account backup JSON file on this page</p>
           </div>
         </div>
       </div>
