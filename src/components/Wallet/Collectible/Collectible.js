@@ -190,7 +190,7 @@ const Collectible = ({ selectedAcc, selectedNetwork, addRequest, addressBook }) 
                         />
                     </div>
                     { validationFormMgs.message && 
-                        (<div className='error'><BsXLg size={12}/>&nbsp;{validationFormMgs.message}</div>) 
+                        (<div className='validation-error'><BsXLg size={12}/>&nbsp;{validationFormMgs.message}</div>) 
                     }
                     <div className="separator"></div>
                     <AddressWarning
