@@ -77,11 +77,14 @@ const Collectible = ({ selectedAcc, selectedNetwork, addRequest, addressBook }) 
             const provider = getDefaultProvider(rpc)
             const contract = new ethers.Contract(collectionAddr, ERC721Abi, provider)
 
-            const [collection, address, uri] = await Promise.all([
+            const [collection, address, maybeUri1, maybeUri2] = await Promise.all([
                 contract.name(),
                 contract.ownerOf(tokenId),
-                contract.tokenURI(tokenId)
+                contract.tokenURI(tokenId).then(uri => ({ uri })).catch(err => ({ err })),
+                contract.uri(tokenId).then(uri => ({ uri })).catch(err => ({ err }))
             ])
+            const uri = maybeUri1.uri || maybeUri2.uri
+            if (!uri) throw maybeUri1.err || maybeUri2.err
 
             try {
                 let json = {}
