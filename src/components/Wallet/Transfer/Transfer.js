@@ -141,7 +141,7 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
                                     onButtonClick={() => setMaxAmount()}
                                 />
                                 { validationFormMgs.messages.amount && 
-                                    (<div className='error'><BsXLg size={12}/>&nbsp;{validationFormMgs.messages.amount}</div>)}
+                                    (<div className='validation-error'><BsXLg size={12}/>&nbsp;{validationFormMgs.messages.amount}</div>)}
                                 <div id="recipient-field">
                                     <TextInput
                                         placeholder="Recipient"
@@ -159,7 +159,7 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
                                     />
                                 </div>
                                 { validationFormMgs.messages.address && 
-                                    (<div className='error'><BsXLg size={12}/>&nbsp;{validationFormMgs.messages.address}</div>)}
+                                    (<div className='validation-error'><BsXLg size={12}/>&nbsp;{validationFormMgs.messages.address}</div>)}
                                 <div className="separator"/>
                                 <AddressWarning
                                     address={address}
