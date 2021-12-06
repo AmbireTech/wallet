@@ -3,7 +3,7 @@ import { BsCoin, BsCalendarWeek, BsGlobe2, BsCheck2All } from 'react-icons/bs'
 import { MdOutlinePendingActions } from 'react-icons/md'
 import { useRelayerData } from '../../../hooks'
 import TxnPreview from '../../common/TxnPreview/TxnPreview'
-import { Loading } from '../../common'
+import { Loading, Button } from '../../common'
 import accountPresets from '../../../consts/accountPresets'
 import networks from '../../../consts/networks'
 import { getTransactionSummary } from '../../../lib/humanReadableTransactions'
@@ -77,8 +77,8 @@ function Transactions ({ relayerURL, selectedAcc, selectedNetwork, showSendTxns 
           <div className="bundle">
             <BundlePreview bundle={firstPending}></BundlePreview>
             <div className='actions'>
-              <button className='cancel' onClick={() => cancel(firstPending)}>Cancel</button>
-              <button onClick={() => speedup(firstPending)}>Speed up</button>
+              <Button small className='cancel' onClick={() => cancel(firstPending)}>Cancel</Button>
+              <Button small onClick={() => speedup(firstPending)}>Speed up</Button>
             </div>
           </div>
         </div>

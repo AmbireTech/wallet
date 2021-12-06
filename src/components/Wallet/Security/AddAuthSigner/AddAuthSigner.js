@@ -12,6 +12,7 @@ import { isFirefox } from '../../../../lib/isFirefox'
 import { ledgerGetAddresses, PARENT_HD_PATH } from "../../../../lib/ledgerWebHID"
 import { validateAddAuthSignerAddress } from '../../../../lib/validations/formValidations'
 import { BsXLg } from 'react-icons/bs'
+import { MdOutlineAdd } from 'react-icons/md'
 
 const AddAuthSigner = props => {
   const [signerAddress, setSignerAddress] = useState({
@@ -153,8 +154,7 @@ const AddAuthSigner = props => {
 
   const addFromSignerButtons = (
     <div className="wallet-btns-wrapper">
-      <button
-        className="button"
+      <Button
         onClick={() => wrapErr(connectTrezorAndGetAccounts)}
       >
         <div
@@ -162,9 +162,8 @@ const AddAuthSigner = props => {
           style={{ backgroundImage: 'url(./resources/trezor.png)' }}
         />
         Trezor
-      </button>
-      <button
-        className="button"
+      </Button>
+      <Button
         onClick={() => wrapErr(connectLedgerAndGetAccounts)}
       >
         <div
@@ -172,9 +171,8 @@ const AddAuthSigner = props => {
           style={{ backgroundImage: 'url(./resources/ledger.png)' }}
         />
         Ledger
-      </button>
-      <button
-        className="button"
+      </Button>
+      <Button
         onClick={() => wrapErr(connectWeb3AndGetAccounts)}
       >
         <div
@@ -182,7 +180,7 @@ const AddAuthSigner = props => {
           style={{ backgroundImage: 'url(./resources/metamask.png)' }}
         />
         Metamask / Browser
-      </button>
+      </Button>
     </div>
   )
 
@@ -205,30 +203,27 @@ const AddAuthSigner = props => {
 
   return (
     <div className="content">
-      <div
-        style={{
-          display: 'flex',
-          // alignItems: 'center',
-          justifyContent: 'space-between',
-        }}
-      >
-        <TextInput
-          placeholder="Enter signer address"
-          className="depositAddress"
-          value={signerAddress.address}
-          info={textInputInfo}
-          onInput={onTextInput}
-        />
-        <DropDown
-          style={{ height: '60px' }}
-          title="Connect signer"
-          closeOnClick
-        >
-          {addFromSignerButtons}
-        </DropDown>
+      <div className="signer">
+        <div className="signer-address-input">
+          <TextInput
+            placeholder="Enter signer address"
+            className="depositAddress"
+            value={signerAddress.address}
+            info={textInputInfo}
+            onInput={onTextInput}
+          />
+          <DropDown
+            style={{ height: '60px' }}
+            title="Connect signer"
+            closeOnClick
+          >
+            {addFromSignerButtons}
+          </DropDown>
+        </div>
         <div className="btns-wrapper">
           <Button
             disabled={disabled}
+            icon={<MdOutlineAdd/>}
             onClick={() => props.onAddBtnClicked(signerAddress)}
             small
           >

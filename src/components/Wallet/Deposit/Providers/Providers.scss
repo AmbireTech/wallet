@@ -1,3 +1,5 @@
+@import '../../../../variables.scss';
+
 #providers {
     display: flex;
     flex-direction: column;
@@ -53,5 +55,26 @@
         font-size: 15px;
         font-style: italic;
         opacity: 0.8;
+    }
+}
+
+// Mobile
+@media screen and (max-width: $mobile-breakpoint-max-width) {
+    #providers {
+        .provider {
+            flex-direction: column;
+            padding: 1.2em;
+
+            .details {
+                display: flex;
+                flex-direction: column;
+                gap: 0.15em;
+                text-align: left;
+
+                .type {
+                    margin-bottom: 0.25em;
+                }
+            }
+        }
     }
 }
