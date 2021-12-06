@@ -125,8 +125,8 @@ const Collectible = ({ selectedAcc, selectedNetwork, addRequest, addressBook }) 
     return (
         <div id="collectible">
             <div className="panel">
-                <div className="title">
-                    { metadata.collection } #{ tokenId }
+                <div className="heading">
+                    <div className="title">{ metadata.collection } #{ tokenId }</div>
                     <div className="contract">
                         Contract address: <a className="address" href={`${metadata.explorerUrl}/address/${collectionAddr}`} target="_blank" rel="noreferrer">{ collectionAddr }</a>
                     </div>
