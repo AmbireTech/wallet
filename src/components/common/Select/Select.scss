@@ -25,6 +25,7 @@
     }
 
     .icon {
+        flex: 0 0 auto;
         height: 22px;
         width: 22px;
         display: flex;
@@ -37,6 +38,13 @@
         img {
             height: 100%;
         }
+    }
+
+    .label {
+        white-space: pre;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        cursor: pointer;
     }
 
     .input {
@@ -79,6 +87,7 @@
         box-shadow: $box-shadow;
         overflow: hidden;
         overflow-y: auto;
+        scrollbar-width: thin;
 
         .option {
             height: 50px;

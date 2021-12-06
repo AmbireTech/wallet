@@ -1,6 +1,7 @@
 $background-color: #282b33;
 $panel-background-color: #202229;
 $input-background-color: #1c1e24;
+$input-background-color-darker: #191b20;
 
 $primary-accent-color: #80ffdb;
 $secondary-accent-color: #AA6AFF;
@@ -10,11 +11,16 @@ $danger-color: #da5151;
 $ambire-dark-blue: #6000FF;
 $ambire-purple: #AF50FF;
 
-$sidebar-width: 280px;
+$sidebar-desktop-width: 280px;
+$sidebar-small-breakpoint: 1400px;
+$sidebar-desktop-small-width: 120px;
+$sidebar-mobile-height: 80px;
+$topbar-height: 90px;
+$topbar-mobile-height: 70px;
+$mobile-breakpoint-max-width: 800px;
 
 $text-color:#FFF;
 $text-container-color:mix($text-color, $panel-background-color, 60%);
-$sidebar-mobile-width: 120px;
 
 $basic-transition: all 0.1s ease-in-out;
 $box-shadow: 0px 5px 10px 0 rgba(0, 0, 0, 0.25);

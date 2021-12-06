@@ -9,8 +9,16 @@
     }
 
     #loginEmail {
+        flex: 0.9;
         max-width: 400px;
         margin: 0px auto;
+
+        .error {
+            top: -15px;
+            font-size: 1.5em;
+            font-weight: 600;
+            position: relative;
+        }
     }
 }
 

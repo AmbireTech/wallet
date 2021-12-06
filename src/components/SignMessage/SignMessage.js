@@ -9,7 +9,7 @@ import { getWallet } from '../../lib/getWallet'
 import { useToasts } from '../../hooks/toasts'
 import { fetchPost } from '../../lib/fetch'
 import { useState } from 'react'
-import { Loading } from '../common'
+import { Button, Loading, TextInput } from '../common'
 
 export default function SignMessage ({ toSign, resolve, account, relayerURL, totalRequests }) {
   const defaultState = () => ({ codeRequired: false, passphrase: '' })
@@ -20,7 +20,7 @@ export default function SignMessage ({ toSign, resolve, account, relayerURL, tot
   if (!toSign || !account) return (<></>)
   if (toSign && !isHexString(toSign.txn)) return (<div id='signMessage'>
     <h3 className='error'>Invalid signing request: .txn has to be a hex string</h3>
-    <button type='button' className='reject' onClick={() => resolve({ message: 'signature denied' })}>Reject</button>
+    <Button className='reject' onClick={() => resolve({ message: 'signature denied' })}>Reject</Button>
   </div>)
 
   const handleSigningErr = e => {
@@ -66,6 +66,7 @@ export default function SignMessage ({ toSign, resolve, account, relayerURL, tot
         return
       }
 
+      if (!account.primaryKeyBackup) throw new Error(`No key backup found: you need to import the account from JSON or login again.`)
       const wallet = await Wallet.fromEncryptedJson(JSON.parse(account.primaryKeyBackup), signingState.passphrase)
       const sig = await signMsgHash(wallet, account.id, account.signer, arrayify(hash), signature)
       resolve({ success: true, result: sig })
@@ -132,19 +133,22 @@ export default function SignMessage ({ toSign, resolve, account, relayerURL, tot
         <div className='actions'>
           <form onSubmit={e => { e.preventDefault() }}>
             {account.signer.quickAccManager && (<>
-              <input type='password'
+              <TextInput
+                password
                 required minLength={3}
                 placeholder='Account password'
                 value={signingState.passphrase}
-                onChange={e => setSigningState({ ...signingState, passphrase: e.target.value })}
-              ></input>
+                onChange={value => setSigningState({ ...signingState, passphrase: value })}
+              ></TextInput>
             </>)}
 
-            <button type='button' className='reject' onClick={() => resolve({ message: 'signature denied' })}>Reject</button>
-            <button className='approve' onClick={approve} disabled={isLoading}>
-                {isLoading ? (<><Loading/>&nbsp;&nbsp;&nbsp;&nbsp;Signing...</>)
-                : (<>Sign</>)}
-            </button>
+            <div className="buttons">
+              <Button className='reject' onClick={() => resolve({ message: 'signature denied' })}>Reject</Button>
+              <Button className='approve' onClick={approve} disabled={isLoading}>
+                  {isLoading ? (<><Loading/>&nbsp;&nbsp;&nbsp;&nbsp;Signing...</>)
+                  : (<>Sign</>)}
+              </Button>
+            </div>
           </form>
         </div>
     </div>
