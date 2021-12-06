@@ -207,11 +207,17 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
       if (!signature) throw new Error(`QuickAcc internal error: there should be a signature`)
       if (!account.primaryKeyBackup) throw new Error(`No key backup found: you need to import the account from JSON or login again.`)
       setSigningStatus({ quickAcc: true, inProgress: true })
-      // Make sure we let React re-render without blocking (decrypting and signing will block)
-      await new Promise(resolve => setTimeout(resolve, 0))
-      const pwd = quickAccCredentials.passphrase || alert('Enter password')
-      const wallet = await Wallet.fromEncryptedJson(JSON.parse(account.primaryKeyBackup), pwd)
-      await finalBundle.sign(wallet)
+      if (!finalBundle.recoveryMode) {
+        // Make sure we let React re-render without blocking (decrypting and signing will block)
+        await new Promise(resolve => setTimeout(resolve, 0))
+        const pwd = quickAccCredentials.passphrase || alert('Enter password')
+        const wallet = await Wallet.fromEncryptedJson(JSON.parse(account.primaryKeyBackup), pwd)
+        await finalBundle.sign(wallet)
+      } else {
+        // set both .signature and .signatureTwo to the same value: the secondary signature
+        // this will trigger a timelocked txn
+        finalBundle.signature = signature
+      }
       finalBundle.signatureTwo = signature
       return await finalBundle.submit({ relayerURL, fetch })
     }
