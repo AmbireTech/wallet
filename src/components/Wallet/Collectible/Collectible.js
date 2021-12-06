@@ -86,25 +86,21 @@ const Collectible = ({ selectedAcc, selectedNetwork, addRequest, addressBook }) 
             const uri = maybeUri1.uri || maybeUri2.uri
             if (!uri) throw maybeUri1.err || maybeUri2.err
 
-            try {
-                let json = {}
+            let json = {}
 
-                if (uri.startsWith('data:application/json')) {
-                    json = JSON.parse(uri.replace('data:application/json;utf8,', ''))
-                } else {
-                    const jsonUrl = handleUri(uri)
-                    const response = await fetch(jsonUrl)
-                    json = await response.json()
-                }
-
-                setMetadata(metadata => ({
-                    ...metadata,
-                    ...json,
-                    image: json ? handleUri(json.image) : null
-                }))
-            } catch(e) {
-                throw e
+            if (uri.startsWith('data:application/json')) {
+                json = JSON.parse(uri.replace('data:application/json;utf8,', ''))
+            } else {
+                const jsonUrl = handleUri(uri)
+                const response = await fetch(jsonUrl)
+                json = await response.json()
             }
+
+            setMetadata(metadata => ({
+                ...metadata,
+                ...json,
+                image: json ? handleUri(json.image) : null
+            }))
 
             setMetadata(metadata => ({
                 ...metadata,
@@ -119,7 +115,7 @@ const Collectible = ({ selectedAcc, selectedNetwork, addRequest, addressBook }) 
             setLoading(false)
         } catch(e) {
             console.error(e)
-            addToast(`Error: ${e.message || e}`, { error: true })
+            addToast(`Collectible error: ${e.message || e}`, { error: true })
         }
     }, [addToast, tokenId, collectionAddr, network])
 
