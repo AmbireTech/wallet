@@ -146,7 +146,7 @@ const Security = ({
               }
               small
             >
-              {isSelected ? 'Current signer' : 'Make default'}
+              Make default
             </Button>
             <Button
               onClick={() => onRemoveBtnClicked(addr)}
