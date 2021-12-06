@@ -22,24 +22,26 @@ export default function Actions({ estimation, feeSpeed, approveTxn, rejectTxn, s
     (<><Loading/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Signing...</>)
     : (<>Sign and send</>)
 
-  // @TODO make this common
+  const isRecoveryMode = signingStatus && signingStatus.finalBundle && signingStatus.finalBundle.recoveryMode
   if (signingStatus && signingStatus.quickAcc) {
     return (<>
       <div>
         {signingStatus.confCodeRequired === 'otp' ? (<b>Please enter your OTP code and your password.</b>) : (<></>)}
         {signingStatus.confCodeRequired === 'email' ? (<b>A confirmation code was sent to your email, please enter it along with your password.</b>) : (<></>)}
       </div>
-      {!(signingStatus && signingStatus.finalBundle && signingStatus.finalBundle.recoveryMode) && (<TextInput
+      {<TextInput
         small
         password
         required
         minLength={3}
         placeholder='Password'
         value={quickAccCredentials.passphrase}
+        style={isRecoveryMode ? { visibility: 'hidden' } : {} }
+        disabled={isRecoveryMode}
         onChange={value => setQuickAccCredentials({ ...quickAccCredentials, passphrase: value })}
-      ></TextInput>)}
+      ></TextInput>}
       <form ref={form} className='quickAccSigningForm' onSubmit={e => { e.preventDefault() }}>
-        {/* Changing the autoComplete prop to a random string seems to disable it more often */}
+        {/* Changing the autoComplete prop to a random string seems to disable it in more cases */}
         <TextInput
           small
           pattern='[0-9]+'
