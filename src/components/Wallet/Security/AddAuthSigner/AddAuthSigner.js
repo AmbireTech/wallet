@@ -27,7 +27,7 @@ const AddAuthSigner = props => {
   const [validationFormMgs, setValidationFormMgs] = useState({ 
     success: false, 
     message: ''
-})
+  })
 
 
   async function connectLedgerAndGetAccounts() {

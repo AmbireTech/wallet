@@ -11,7 +11,8 @@ import { useToasts } from '../../../hooks/toasts'
 import { TextInput, Button, Loading, AddressBook, AddressWarning } from '../../common'
 import ERC721Abi from '../../../consts/ERC721Abi'
 import networks from '../../../consts/networks'
-import { isValidAddress, isKnownTokenOrContract } from '../../../helpers/address';
+import { validateSendNftAddress } from '../../../lib/validations/formValidations'
+import { BsXLg } from 'react-icons/bs'
 
 const ERC721 = new Interface(ERC721Abi)
 
@@ -41,6 +42,10 @@ const Collectible = ({ selectedAcc, selectedNetwork, addRequest, addressBook }) 
     const [isTransferDisabled, setTransferDisabled] = useState(true)
     const [addressConfirmed, setAddressConfirmed] = useState(false)
     const [newAddress, setNewAddress] = useState(null)
+    const [validationFormMgs, setValidationFormMgs] = useState({ 
+        success: false, 
+        message: ''
+    })
 
     const sendTransferTx = () => {
         try {
@@ -62,7 +67,14 @@ const Collectible = ({ selectedAcc, selectedNetwork, addRequest, addressBook }) 
     }
 
     useEffect(() => {
-        setTransferDisabled(isKnownTokenOrContract(recipientAddress) || !isValidAddress(recipientAddress) || selectedAcc === recipientAddress || metadata.owner?.address !== selectedAcc || selectedNetwork.id !== network || (!isKnownAddress(recipientAddress) && !addressConfirmed))
+        const isAddressValid = validateSendNftAddress(recipientAddress, selectedAcc, addressConfirmed, isKnownAddress, metadata, selectedNetwork, network)
+        
+        setTransferDisabled(!isAddressValid.success)
+        setValidationFormMgs({ 
+            success: isAddressValid.success, 
+            message: isAddressValid.message ? isAddressValid.message : ''
+        })
+
     }, [recipientAddress, metadata, selectedNetwork, selectedAcc, network, addressConfirmed, isKnownAddress])
 
     const fetchMetadata = useCallback(async () => {
@@ -177,6 +189,9 @@ const Collectible = ({ selectedAcc, selectedNetwork, addRequest, addressBook }) 
                             onSelectAddress={address => setRecipientAddress(address)}
                         />
                     </div>
+                    { validationFormMgs.message && 
+                        (<div className='error'><BsXLg size={12}/>&nbsp;{validationFormMgs.message}</div>) 
+                    }
                     <div className="separator"></div>
                     <AddressWarning
                         address={recipientAddress}

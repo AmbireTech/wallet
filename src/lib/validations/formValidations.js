@@ -85,8 +85,30 @@ const validateSendTransferAmount = (amount, selectedAsset) => {
     return { success: true }
 }
 
+const validateSendNftAddress = (address, selectedAcc, addressConfirmed, isKnownAddress, metadata, selectedNetwork, network) => {
+    const isValidAddr = validateSendTransferAddress(address, selectedAcc, addressConfirmed, isKnownAddress)
+    if (!isValidAddr.success) return isValidAddr
+
+    if (metadata && selectedAcc && (metadata.owner?.address !== selectedAcc)) {
+        return {
+            success: false,
+            message: `The NFT you're trying to send is not owned by you!`
+        }
+    }
+
+    if (selectedNetwork && network && (selectedNetwork.id !== network)) {
+        return {
+            success: false,
+            message: 'The selected network is not the correct one.'
+        }
+    }
+
+    return { success: true }
+}
+
 export {
     validateAddAuthSignerAddress,
+    validateSendNftAddress,
     validateSendTransferAddress,
     validateSendTransferAmount
 }
