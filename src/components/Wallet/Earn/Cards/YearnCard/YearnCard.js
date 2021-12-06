@@ -1,6 +1,7 @@
 import Card from '../Card/Card'
 
 import { useCallback, useEffect, useState } from 'react'
+import { ethers } from 'ethers'
 import { parseUnits } from '@ethersproject/units'
 import { Contract } from '@ethersproject/contracts'
 import { getDefaultProvider } from '@ethersproject/providers'
@@ -142,7 +143,7 @@ const YearnCard = ({ networkId, accountId, tokens, addRequest }) => {
             
             const { vaultAddress, decimals } = token
             const bigNumberHexAmount = parseUnits(amount.toString(), decimals).toHexString()
-            await approveToken(vaultAddress, tokenAddress, bigNumberHexAmount)
+            await approveToken(vaultAddress, tokenAddress, ethers.constants.MaxUint256)
 
             try {
                 addRequestTxn(`yearn_vault_deposit_${Date.now()}`, {
