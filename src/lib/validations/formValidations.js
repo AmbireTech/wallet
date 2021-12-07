@@ -1,3 +1,4 @@
+import { parseUnits } from 'ethers/lib/utils'
 import { isValidAddress, isKnownTokenOrContract } from "../../helpers/address"
 
 const validateAddress = address => {
@@ -74,11 +75,14 @@ const validateSendTransferAmount = (amount, selectedAsset) => {
             message: 'The amount must be greater than 0.'
         }
     }
-    
-    if (!(amount && selectedAsset && (amount <= selectedAsset?.balance))) {
-        return {
-            success: false,
-            message: `The amount is greater than the asset's balance: ${selectedAsset?.balance} ${selectedAsset?.symbol}.`
+
+    if (amount && selectedAsset.decimals) {
+        const bigNumberAmount = parseUnits(amount.toString(), selectedAsset.decimals)
+        if (bigNumberAmount && selectedAsset.balanceRaw && bigNumberAmount.gt(selectedAsset.balanceRaw)) {
+            return {
+                success: false,
+                message: `The amount is greater than the asset's balance: ${selectedAsset?.balance} ${selectedAsset?.symbol}.`
+            }
         }
     }
 
