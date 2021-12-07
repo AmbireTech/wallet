@@ -17,7 +17,7 @@ import { useToasts } from '../../../hooks/toasts'
 import { useHistory } from 'react-router-dom'
 import { useDropzone } from 'react-dropzone'
 import { MdInfoOutline } from 'react-icons/md'
-import { validateImportedAccountProps, fileSizeValidator } from '../../../lib/importedAccountValidations'
+import { validateImportedAccountProps, fileSizeValidator } from '../../../lib/validations/importedAccountValidations'
 import OtpTwoFAModal from '../../Modals/OtpTwoFAModal/OtpTwoFAModal'
 
 const IDENTITY_INTERFACE = new Interface(
@@ -51,6 +51,7 @@ const Security = ({
     : null
   const { data, errMsg, isLoading } = useRelayerData(url)
   const privileges = data ? data.privileges : {}
+  const otpEnabled = data ? data.otpEnabled : null
   const { addToast } = useToasts()
   const history = useHistory()
 
@@ -120,12 +121,17 @@ const Security = ({
     />)
   }
 
-  const showOtpTwoFAModal = () => {
+  const handleEnableOtp = () => {
     if (!relayerURL) {
       return addToast('Unsupported without a connection to the relayer', { error: true })
     }
 
-    showModal(<OtpTwoFAModal />)
+    showModal(<OtpTwoFAModal relayerURL={relayerURL} selectedAcc={selectedAccount} />)
+  }
+
+  const handleDisableOtp = () => {
+    //TODO: implement disable otp
+    addToast('coming soon')
   }
 
   const selectedAccount = accounts.find(x => x.id === selectedAcc)
@@ -146,8 +152,9 @@ const Security = ({
         <li key={addr}>
           <TextInput className="depositAddress" value={privText} disabled />
           <div className="btns-wrapper">
-            {/* TODO: check is OTP exist, make it enable/disable */}
-            {isQuickAcc &&  (<Button onClick={showOtpTwoFAModal} small>Enable 2FA</Button>)}
+            {isQuickAcc && (otpEnabled !== null) && (otpEnabled ? 
+              (<Button red onClick={handleDisableOtp} small>Disable 2FA</Button>) : 
+              (<Button onClick={handleEnableOtp} small>Enable 2FA</Button>))}
             {isQuickAcc && selectedAccount.primaryKeyBackup && (<Button onClick={showResetPasswordModal} small>Change password</Button>)}
             <Button
               disabled={isSelected}
