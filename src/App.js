@@ -57,6 +57,17 @@ function AppInner () {
   const [internalRequests, setInternalRequests] = useState([])
   const addRequest = req => setInternalRequests(reqs => [...reqs, req])
 
+  const [sentTxn, setSentTxn] = useState([])
+  const addSentTx = hash => setSentTxn(sentTxn => [...sentTxn, { confirmed: false, hash }])
+  const confirmSentTx = txHash => setSentTxn(sentTxn => {
+    const tx = sentTxn.find(tx => tx.hash === txHash)
+    tx.confirmed = true
+    return [
+      ...sentTxn.filter(tx => tx.hash !== txHash),
+      tx
+    ]
+  })
+
   // Merge all requests
   const requests = useMemo(
     () => [...internalRequests, ...wcRequests, ...gnosisRequests]
@@ -114,7 +125,7 @@ function AppInner () {
     onSelectAcc(request.account)
     setNetwork(request.chainId)
     setSendTxnState(state => ({ ...state, showing: true }))
-  }, portfolio, selectedAcc, network)
+  }, portfolio, selectedAcc, network, sentTxn, confirmSentTx)
 
   useAttentionGrabber({
     eligibleRequests,
@@ -148,6 +159,7 @@ function AppInner () {
           relayerURL={relayerURL}
           onDismiss={() => setSendTxnState({ showing: false })}
           replacementBundle={sendTxnState.replacementBundle}
+          addSentTx={addSentTx}
       ></SendTransaction>
       ) : (<></>)
     }
