@@ -1,6 +1,6 @@
 import { useCallback, useRef, useEffect } from 'react'
 import { getTransactionSummary } from '../lib/humanReadableTransactions'
-import { ethers } from 'ethers'
+import { ethers, getDefaultProvider } from 'ethers'
 import { useToasts } from './toasts'
 import networks from '../consts/networks'
 
@@ -14,29 +14,6 @@ let lastTokensBalanceRaw = []
 const getAmountReceived = (lastToken, newBalanceRaw, decimals) => {
     const amountRecieved = lastToken ? newBalanceRaw - lastToken.balanceRaw : newBalanceRaw
     return ethers.utils.formatUnits(amountRecieved.toString(), decimals)
-}
-
-const getTransactionStatus = async (rpc, txHash) => {
-    try {
-        const response = await fetch(rpc, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                jsonrpc: "2.0",
-                method: "eth_getTransactionByHash",
-                params: [txHash],
-                id: 1
-            })
-        })
-
-        const { result } = await response.json()
-        return result
-    } catch(e) {
-        console.error(e);
-        return null
-    }
 }
 
 export default function useNotifications (requests, onShow, portfolio, selectedAcc, network, sentTxn, confirmSentTx) {
@@ -129,15 +106,20 @@ export default function useNotifications (requests, onShow, portfolio, selectedA
             sentTxn
                 .filter(({ confirmed }) => !confirmed)
                 .forEach(async ({ hash }) => {
-                    const tx = await getTransactionStatus(network.rpc, hash)
-                    if (!tx) return
+                    const provider = getDefaultProvider(network.rpc)
+                    try {
+                        const txReceipt = await provider.getTransactionReceipt(hash)
+                        if (!txReceipt) return
 
-                    confirmSentTx(hash)
-                    showNotification({
-                        id: `confirmed_tx_${Date.now()}`,
-                        title: `Transaction Confirmed`,
-                        body: `Your transaction was successfully confirmed!`
-                    })
+                        confirmSentTx(hash)
+                        showNotification({
+                            id: `confirmed_tx_${Date.now()}`,
+                            title: `Transaction Confirmed`,
+                            body: `Your transaction was successfully confirmed!`
+                        })
+                    } catch(e) {
+                        console.error(e);
+                    }
                 })
         }, interval)
         return () => clearInterval(txStatusInterval)
