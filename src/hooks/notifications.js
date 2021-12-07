@@ -21,7 +21,7 @@ const getTransactionStatus = async (rpc, txHash) => {
         const response = await fetch(rpc, {
             method: 'POST',
             headers: {
-                'ContentType': 'application/json'
+                'Content-Type': 'application/json'
             },
             body: JSON.stringify({
                 jsonrpc: "2.0",
