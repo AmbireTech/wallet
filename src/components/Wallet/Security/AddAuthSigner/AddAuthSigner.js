@@ -10,6 +10,8 @@ import { SelectSignerAccountModal } from '../../../Modals'
 import { useModals } from '../../../../hooks'
 import { isFirefox } from '../../../../lib/isFirefox'
 import { ledgerGetAddresses, PARENT_HD_PATH } from "../../../../lib/ledgerWebHID"
+import { validateAddAuthSignerAddress } from '../../../../lib/validations/formValidations'
+import { BsXLg } from 'react-icons/bs'
 import { MdOutlineAdd } from 'react-icons/md'
 
 const AddAuthSigner = props => {
@@ -23,6 +25,10 @@ const AddAuthSigner = props => {
   const [signersToChoose, setChooseSigners] = useState(null)
   const [textInputInfo, setTextInputInfo] = useState('')
   const { showModal } = useModals()
+  const [validationFormMgs, setValidationFormMgs] = useState({ 
+    success: false, 
+    message: ''
+  })
 
 
   async function connectLedgerAndGetAccounts() {
@@ -184,9 +190,16 @@ const AddAuthSigner = props => {
   }
 
   useEffect(() => {
-    const isAddressValid = /^0x[a-fA-F0-9]{40}$/.test(signerAddress.address)
-    setDisabled(!isAddressValid)
-  }, [signerAddress.address])
+    const isAddressValid = validateAddAuthSignerAddress(signerAddress.address, props.selectedAcc)
+    
+    setDisabled(!isAddressValid.success)
+
+    setValidationFormMgs({ 
+      success: isAddressValid.success, 
+      message: isAddressValid.message ? isAddressValid.message : ''
+    })
+
+  }, [props.selectedAcc, signerAddress.address])
 
   return (
     <div className="content">
@@ -218,6 +231,9 @@ const AddAuthSigner = props => {
           </Button>
         </div>
       </div>
+      { validationFormMgs.message && 
+        (<div className='validation-error'><BsXLg size={12}/>&nbsp;{validationFormMgs.message}</div>) 
+      }
       {addAccErr ? <h3 className="error">{addAccErr}</h3> : <></>}
     </div>
   )

@@ -1,5 +1,6 @@
 import './Transfer.scss'
 
+import { BsXLg } from 'react-icons/bs'
 import { AiOutlineSend } from 'react-icons/ai'
 import { useParams, withRouter } from 'react-router'
 import { useEffect, useMemo, useState } from 'react'
@@ -8,7 +9,7 @@ import NoFundsPlaceholder from './NoFundsPlaceholder/NoFundsPlaceholder'
 import { Interface } from 'ethers/lib/utils'
 import { useToasts } from '../../../hooks/toasts'
 import { TextInput, NumberInput, Button, Select, Loading, AddressBook, AddressWarning } from '../../common'
-import { isValidAddress, isKnownTokenOrContract } from '../../../helpers/address';
+import { validateSendTransferAddress, validateSendTransferAmount } from '../../../lib/validations/formValidations'
 import CrossChain from './CrossChain/CrossChain'
 
 const ERC20 = new Interface(require('adex-protocol-eth/abi/ERC20'))
@@ -26,6 +27,16 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
     const [disabled, setDisabled] = useState(true)
     const [addressConfirmed, setAddressConfirmed] = useState(false)
     const [newAddress, setNewAddress] = useState('')
+    const [validationFormMgs, setValidationFormMgs] = useState({ 
+        success: { 
+            amount: false,
+            address: false
+        }, 
+        messages: { 
+            amount: '', 
+            address: ''
+        }
+    })
 
     const assetsItems = portfolio.tokens.map(({ label, symbol, address, img, tokenImageUrl }) => ({
         label: label || symbol,
@@ -89,8 +100,22 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
     }, [asset, history])
 
     useEffect(() => {
-        setDisabled(isKnownTokenOrContract(address) || !isValidAddress(address) || !(amount > 0) || !(amount <= selectedAsset?.balance) || address === selectedAcc || (!isKnownAddress(address) && !addressConfirmed))
-    }, [address, amount, selectedAcc, selectedAsset, addressConfirmed, isKnownAddress])
+        const isValidRecipientAddress = validateSendTransferAddress(address, selectedAcc, addressConfirmed, isKnownAddress)
+        const isValidSendTransferAmount = validateSendTransferAmount(amount, selectedAsset) 
+       
+        setValidationFormMgs({ 
+            success: { 
+                amount: isValidSendTransferAmount.success, 
+                address: isValidRecipientAddress.success 
+            }, 
+            messages: { 
+                amount: isValidSendTransferAmount.message ?  isValidSendTransferAmount.message : '',
+                address: isValidRecipientAddress.message ? isValidRecipientAddress.message : ''
+            }
+        })
+
+        setDisabled(!(isValidRecipientAddress.success && isValidSendTransferAmount.success))
+    }, [address, amount, selectedAcc, selectedAsset, addressConfirmed, isKnownAddress, addToast])
 
     const amountLabel = <div className="amount-label">Available Amount: <span>{ maxAmount } { selectedAsset?.symbol }</span></div>
 
@@ -115,6 +140,8 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
                                     button="MAX"
                                     onButtonClick={() => setMaxAmount()}
                                 />
+                                { validationFormMgs.messages.amount && 
+                                    (<div className='validation-error'><BsXLg size={12}/>&nbsp;{validationFormMgs.messages.amount}</div>)}
                                 <div id="recipient-field">
                                     <TextInput
                                         placeholder="Recipient"
@@ -131,6 +158,8 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
                                         onSelectAddress={address => setAddress(address)}
                                     />
                                 </div>
+                                { validationFormMgs.messages.address && 
+                                    (<div className='validation-error'><BsXLg size={12}/>&nbsp;{validationFormMgs.messages.address}</div>)}
                                 <div className="separator"/>
                                 <AddressWarning
                                     address={address}
