@@ -76,6 +76,16 @@ a {
   text-align: center;
 }
 
+.validation-error {
+  font-weight: 500;
+  color: $danger-color;
+  text-align: left;
+
+  svg {
+    margin-right: 5px;
+  }
+}
+
 #root {
   height: 100%;
   position: relative;
