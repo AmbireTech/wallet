@@ -141,7 +141,7 @@ export default function useNotifications (requests, onShow, portfolio, selectedA
                 })
         }, interval)
         return () => clearInterval(txStatusInterval)
-    }, [sentTxn, network])
+    }, [sentTxn, network, showNotification, confirmSentTx])
 
     useEffect(() => {
         isLastTotalBalanceInit = false
