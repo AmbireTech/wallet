@@ -18,6 +18,7 @@ const TopBar = ({
   network,
   setNetwork,
   allNetworks,
+  addressBook
 }) => {
   const [isMenuOpen, setMenuOpen] = useState(false)
   
@@ -28,6 +29,8 @@ const TopBar = ({
   }))
 
   const account = accounts.find(({ id }) => id === selectedAcc)
+
+  const { addresses } = addressBook
 
   return (
     <div id="topbar">
@@ -42,7 +45,7 @@ const TopBar = ({
 
       <div className={`container ${isMenuOpen ? 'open' : ''}`}>
         <DApps connections={connections} connect={connect} disconnect={disconnect}/>
-        <Accounts accounts={accounts} selectedAddress={selectedAcc} onSelectAcc={onSelectAcc} onRemoveAccount={onRemoveAccount}/>
+        <Accounts accounts={accounts} addresses={addresses} selectedAddress={selectedAcc} onSelectAcc={onSelectAcc} onRemoveAccount={onRemoveAccount}/>
         <Select defaultValue={network.id} items={networksItems} onChange={value => setNetwork(value)}/>
       </div>
     </div>

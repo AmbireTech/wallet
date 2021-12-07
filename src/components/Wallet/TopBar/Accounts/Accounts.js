@@ -8,7 +8,7 @@ import * as blockies from 'blockies-ts';
 import { DropDown, Button } from '../../../common';
 import { useToasts } from '../../../../hooks/toasts';
 
-const Accounts = ({ accounts, selectedAddress, onSelectAcc, onRemoveAccount }) => {
+const Accounts = ({ accounts, addresses, selectedAddress, onSelectAcc, onRemoveAccount }) => {
     const { addToast } = useToasts()
     const [logoutWarning, setLogoutWarning] = useState(false)
     const [closed, setClosed] = useState(false)
@@ -32,17 +32,23 @@ const Accounts = ({ accounts, selectedAddress, onSelectAcc, onRemoveAccount }) =
         setClosed(true)
     }
 
+    const list = accounts.map(account => {
+        const savedAccount = addresses.find(({ isAccount, address }) => !isAccount && address === account.id)
+        if (savedAccount) account.name = savedAccount.name
+        return account
+    })
+
     return (
         <DropDown id="accounts" icon={toIcon(selectedAddress)} title={shortenedAddress(selectedAddress)} open={closed} onOpen={() => setClosed(false)}>
           <div className="list">
             {
-              accounts.map(({ id, email, signer, signerExtra }) => 
+              list.map(({ id, name, email, signer, signerExtra }) => 
                 logoutWarning !== id ?
                     <div className={`account ${isActive(id)}`} key={id}>
                         <div className="inner" onClick={() => onSelectAccount(id)}>
                             <div className="icon" style={toIconBackgroundImage(id)}></div>
                             <div className="details">
-                                <div className="address">{ id }</div>
+                                { name ? <div className="name">{ name }</div> : <div className="address">{ id }</div>}
                                 <label>{ email ? `Email/Password account (${email})` : `${walletType(signerExtra)} (${shortenedAddress(signer.address)})` }</label>
                             </div>
                         </div>

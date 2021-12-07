@@ -29,6 +29,7 @@ $account-height: 60px;
 
                 .inner {
                     height: $account-height;
+                    width: 100%;
                     display: flex;
                     align-items: center;
                     justify-content: flex-start;
@@ -49,6 +50,11 @@ $account-height: 60px;
                         display: flex;
                         flex-direction: column;
                         gap: 2px;
+
+                        .name {
+                            font-size: 15px;
+                            font-weight: 500;
+                        }
 
                         .address {
                             font-family: monospace;
