@@ -1,8 +1,8 @@
 {
   "files": {
-    "main.css": "/static/css/main.0ec7cd08.chunk.css",
-    "main.js": "/static/js/main.7d246380.chunk.js",
-    "main.js.map": "/static/js/main.7d246380.chunk.js.map",
+    "main.css": "/static/css/main.fdc11706.chunk.css",
+    "main.js": "/static/js/main.41768df6.chunk.js",
+    "main.js.map": "/static/js/main.41768df6.chunk.js.map",
     "runtime-main.js": "/static/js/runtime-main.9d8708c9.js",
     "runtime-main.js.map": "/static/js/runtime-main.9d8708c9.js.map",
     "static/js/2.cc9a1b86.chunk.js": "/static/js/2.cc9a1b86.chunk.js",
@@ -10,7 +10,7 @@
     "static/js/3.25209874.chunk.js": "/static/js/3.25209874.chunk.js",
     "static/js/3.25209874.chunk.js.map": "/static/js/3.25209874.chunk.js.map",
     "index.html": "/index.html",
-    "static/css/main.0ec7cd08.chunk.css.map": "/static/css/main.0ec7cd08.chunk.css.map",
+    "static/css/main.fdc11706.chunk.css.map": "/static/css/main.fdc11706.chunk.css.map",
     "static/js/2.cc9a1b86.chunk.js.LICENSE.txt": "/static/js/2.cc9a1b86.chunk.js.LICENSE.txt",
     "static/media/App.scss": "/static/media/OpenSans-Regular.ca49d2b0.ttf",
     "static/media/aave.58aec338.svg": "/static/media/aave.58aec338.svg",
@@ -18,14 +18,13 @@
     "static/media/AddAccount.scss": "/static/media/hero-darkened.32d9e32c.svg",
     "static/media/SideBar.scss": "/static/media/logo.ab51d124.png",
     "static/media/paytrie.338f7c3b.svg": "/static/media/paytrie.338f7c3b.svg",
-    "static/media/polygon-logo.d08b26bd.svg": "/static/media/polygon-logo.d08b26bd.svg",
     "static/media/ramp.26a99e26.svg": "/static/media/ramp.26a99e26.svg",
     "static/media/transak.e01c0265.svg": "/static/media/transak.e01c0265.svg"
   },
   "entrypoints": [
     "static/js/runtime-main.9d8708c9.js",
     "static/js/2.cc9a1b86.chunk.js",
-    "static/css/main.0ec7cd08.chunk.css",
-    "static/js/main.7d246380.chunk.js"
+    "static/css/main.fdc11706.chunk.css",
+    "static/js/main.41768df6.chunk.js"
   ]
 }
