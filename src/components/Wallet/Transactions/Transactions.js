@@ -12,6 +12,7 @@ import { Bundle } from 'adex-protocol-eth'
 import { useEffect, useState } from 'react'
 import fetch from 'node-fetch'
 import { useToasts } from '../../../hooks/toasts'
+import { toBundleTxn } from '../../../lib/requestToBundleTxn'
 
 // 10% in geth and most EVM chain RPCs
 const RBF_THRESHOLD = 1.1
@@ -83,7 +84,7 @@ function Transactions ({ relayerURL, selectedAcc, selectedNetwork, showSendTxns,
                     network={selectedNetwork.id}
                     account={selectedAcc}
                     disableExpand={true}
-                    txn={[req.txn.to, req.txn.value || '0x0', req.txn.data || '0x' ]}/>
+                    txn={toBundleTxn(req.txn)}/>
               ))}
             </div>
               <div className='actions'>
