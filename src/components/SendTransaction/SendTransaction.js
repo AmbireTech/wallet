@@ -123,11 +123,15 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
   }, [bundle, setEstimation, feeSpeed, addToast, network, relayerURL])
 
   const getFinalBundle = () => {
-    if (!relayerURL) return new Bundle({
-      ...bundle,
-      gasLimit: estimation.gasLimit
-      // set nonce here when we implement "replace current pending transaction"
-    })
+    if (!relayerURL) {
+      const bndl = new Bundle({
+        ...bundle,
+        gasLimit: estimation.gasLimit
+        // set nonce here when we implement "replace current pending transaction"
+      })
+      if (bundle.recoveryMode) bndl.recoveryMode = true
+      return bndl
+    }
 
     const feeToken = estimation.selectedFeeToken
     const { addedGas, multiplier } = getFeePaymentConsequences(feeToken, estimation)
@@ -142,11 +146,13 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
           * Math.pow(10, feeToken.decimals)
         )
     ])]
-    return new Bundle({
+    const bndl = new Bundle({
       ...bundle,
       txns: [...bundle.txns, feeTxn],
       gasLimit: estimation.gasLimit + addedGas + (bundle.extraGas || 0)
     })
+    if (bundle.recoveryMode) bndl.recoveryMode = true
+    return bndl
   }
 
   const approveTxnImpl = async () => {
