@@ -1,4 +1,5 @@
 import './Transactions.scss'
+import { FaSignature } from 'react-icons/fa'
 import { BsCoin, BsCalendarWeek, BsGlobe2, BsCheck2All } from 'react-icons/bs'
 import { MdOutlinePendingActions } from 'react-icons/md'
 import { useRelayerData } from '../../../hooks'
@@ -15,7 +16,7 @@ import { useToasts } from '../../../hooks/toasts'
 // 10% in geth and most EVM chain RPCs
 const RBF_THRESHOLD = 1.1
 
-function Transactions ({ relayerURL, selectedAcc, selectedNetwork, showSendTxns }) {
+function Transactions ({ relayerURL, selectedAcc, selectedNetwork, showSendTxns, eligibleRequests }) {
   const { addToast } = useToasts()
   const [cacheBreak, setCacheBreak] = useState(() => Date.now())
   // @TODO refresh this after we submit a bundle; perhaps with the upcoming transactions service
@@ -71,6 +72,30 @@ function Transactions ({ relayerURL, selectedAcc, selectedNetwork, showSendTxns 
 
   return (
     <section id='transactions'>
+      {!!eligibleRequests.length && (<div className='panel'>
+        <div className='title'><FaSignature size={25}/>Waiting to be signed (current batch)</div>
+        <div className="content">
+          <div className="bundle">
+            <div onClick={() => showSendTxns(null)}>
+              {eligibleRequests.map(req => (
+                <TxnPreview
+                    key={req.id}
+                    network={selectedNetwork.id}
+                    account={selectedAcc}
+                    disableExpand={true}
+                    txn={[req.txn.to, req.txn.value || '0x0', req.txn.data || '0x' ]}/>
+              ))}
+            </div>
+              <div className='actions'>
+                {/*
+                <Button small className='cancel' onClick={
+                  () => resolveMany(eligibleRequests.map(x => x.id), { message: 'Ambire user rejected all requests' })
+                }>Reject all</Button>*/}
+                <Button small onClick={() => showSendTxns(null)}>Sign or reject</Button>
+              </div>
+          </div>
+        </div>
+      </div>)}
       { !!firstPending && (<div className='panel'>
         <div className='title'><MdOutlinePendingActions/>Pending transaction bundle</div>
         <div className="content">
