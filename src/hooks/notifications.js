@@ -17,21 +17,26 @@ const getAmountReceived = (lastToken, newBalanceRaw, decimals) => {
 }
 
 const getTransactionStatus = async (rpc, txHash) => {
-    const response = await fetch(rpc, {
-        method: 'POST',
-        headers: {
-            'ContentType': 'application/json'
-        },
-        body: JSON.stringify({
-            jsonrpc: "2.0",
-            method: "eth_getTransactionByHash",
-            params: [txHash],
-            id: 1
+    try {
+        const response = await fetch(rpc, {
+            method: 'POST',
+            headers: {
+                'ContentType': 'application/json'
+            },
+            body: JSON.stringify({
+                jsonrpc: "2.0",
+                method: "eth_getTransactionByHash",
+                params: [txHash],
+                id: 1
+            })
         })
-    })
 
-    const { result } = await response.json()
-    return result
+        const { result } = await response.json()
+        return result
+    } catch(e) {
+        console.error(e);
+        return null
+    }
 }
 
 export default function useNotifications (requests, onShow, portfolio, selectedAcc, network, sentTxn, confirmSentTx) {
