@@ -11,7 +11,8 @@ import { useToasts } from '../../../hooks/toasts'
 import { TextInput, Button, Loading, AddressBook, AddressWarning } from '../../common'
 import ERC721Abi from '../../../consts/ERC721Abi'
 import networks from '../../../consts/networks'
-import { isValidAddress, isKnownTokenOrContract } from '../../../helpers/address';
+import { validateSendNftAddress } from '../../../lib/validations/formValidations'
+import { BsXLg } from 'react-icons/bs'
 
 const ERC721 = new Interface(ERC721Abi)
 
@@ -41,6 +42,10 @@ const Collectible = ({ selectedAcc, selectedNetwork, addRequest, addressBook }) 
     const [isTransferDisabled, setTransferDisabled] = useState(true)
     const [addressConfirmed, setAddressConfirmed] = useState(false)
     const [newAddress, setNewAddress] = useState(null)
+    const [validationFormMgs, setValidationFormMgs] = useState({ 
+        success: false, 
+        message: ''
+    })
 
     const sendTransferTx = () => {
         try {
@@ -62,7 +67,14 @@ const Collectible = ({ selectedAcc, selectedNetwork, addRequest, addressBook }) 
     }
 
     useEffect(() => {
-        setTransferDisabled(isKnownTokenOrContract(recipientAddress) || !isValidAddress(recipientAddress) || selectedAcc === recipientAddress || metadata.owner?.address !== selectedAcc || selectedNetwork.id !== network || (!isKnownAddress(recipientAddress) && !addressConfirmed))
+        const isAddressValid = validateSendNftAddress(recipientAddress, selectedAcc, addressConfirmed, isKnownAddress, metadata, selectedNetwork, network)
+        
+        setTransferDisabled(!isAddressValid.success)
+        setValidationFormMgs({ 
+            success: isAddressValid.success, 
+            message: isAddressValid.message ? isAddressValid.message : ''
+        })
+
     }, [recipientAddress, metadata, selectedNetwork, selectedAcc, network, addressConfirmed, isKnownAddress])
 
     const fetchMetadata = useCallback(async () => {
@@ -77,31 +89,31 @@ const Collectible = ({ selectedAcc, selectedNetwork, addRequest, addressBook }) 
             const provider = getDefaultProvider(rpc)
             const contract = new ethers.Contract(collectionAddr, ERC721Abi, provider)
 
-            const [collection, address, uri] = await Promise.all([
+            const [collection, address, maybeUri1, maybeUri2] = await Promise.all([
                 contract.name(),
                 contract.ownerOf(tokenId),
-                contract.tokenURI(tokenId)
+                contract.tokenURI(tokenId).then(uri => ({ uri })).catch(err => ({ err })),
+                contract.uri(tokenId).then(uri => ({ uri })).catch(err => ({ err }))
             ])
+            const uri = maybeUri1.uri || maybeUri2.uri
+            if (!uri) throw maybeUri1.err || maybeUri2.err
 
-            try {
-                let json = {}
+            let json = {}
 
-                if (uri.startsWith('data:application/json')) {
-                    json = JSON.parse(uri.replace('data:application/json;utf8,', ''))
-                } else {
-                    const jsonUrl = handleUri(uri)
-                    const response = await fetch(jsonUrl)
-                    json = await response.json()
-                }
-
-                setMetadata(metadata => ({
-                    ...metadata,
-                    ...json,
-                    image: json ? handleUri(json.image) : null
-                }))
-            } catch(e) {
-                throw e
+            if (uri.startsWith('data:application/json')) {
+                json = JSON.parse(uri.replace('data:application/json;utf8,', ''))
+            } else {
+                const jsonUrl = handleUri(uri)
+                const response = await fetch(jsonUrl)
+                json = await response.json()
             }
+
+            const image = json ? handleUri(json.image) : null
+            setMetadata(metadata => ({
+                ...metadata,
+                ...json,
+                image
+            }))
 
             setMetadata(metadata => ({
                 ...metadata,
@@ -116,7 +128,7 @@ const Collectible = ({ selectedAcc, selectedNetwork, addRequest, addressBook }) 
             setLoading(false)
         } catch(e) {
             console.error(e)
-            addToast(`Error: ${e.message || e}`, { error: true })
+            addToast(`Collectible error: ${e.message || e}`, { error: true })
         }
     }, [addToast, tokenId, collectionAddr, network])
 
@@ -125,8 +137,8 @@ const Collectible = ({ selectedAcc, selectedNetwork, addRequest, addressBook }) 
     return (
         <div id="collectible">
             <div className="panel">
-                <div className="title">
-                    { metadata.collection } #{ tokenId }
+                <div className="heading">
+                    <div className="title">{ metadata.collection } #{ tokenId }</div>
                     <div className="contract">
                         Contract address: <a className="address" href={`${metadata.explorerUrl}/address/${collectionAddr}`} target="_blank" rel="noreferrer">{ collectionAddr }</a>
                     </div>
@@ -177,6 +189,9 @@ const Collectible = ({ selectedAcc, selectedNetwork, addRequest, addressBook }) 
                             onSelectAddress={address => setRecipientAddress(address)}
                         />
                     </div>
+                    { validationFormMgs.message && 
+                        (<div className='validation-error'><BsXLg size={12}/>&nbsp;{validationFormMgs.message}</div>) 
+                    }
                     <div className="separator"></div>
                     <AddressWarning
                         address={recipientAddress}
