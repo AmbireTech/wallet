@@ -32,7 +32,7 @@ function Transactions ({ relayerURL, selectedAcc, selectedNetwork, showSendTxns 
 
   // @TODO implement a service that stores sent transactions locally that will be used in relayerless mode
   if (!relayerURL) return (<section id='transactions'>
-    <h3 className='error'>Unsupported: not currently connected to a relayer.</h3>
+    <h3 className='validation-error'>Unsupported: not currently connected to a relayer.</h3>
   </section>)
 
   // @TODO: visualize other pending bundles
@@ -90,8 +90,8 @@ function Transactions ({ relayerURL, selectedAcc, selectedNetwork, showSendTxns 
           {(data && data.txns.length === 0) ? 'No transactions yet.' : 'Confirmed transactions'}
         </div>
         <div className="content">
-          {!relayerURL && (<h3 className='error'>Unsupported: not currently connected to a relayer.</h3>)}
-          {errMsg && (<h3 className='error'>Error getting list of transactions: {errMsg}</h3>)}
+          {!relayerURL && (<h3 className='validation-error'>Unsupported: not currently connected to a relayer.</h3>)}
+          {errMsg && (<h3 className='validation-error'>Error getting list of transactions: {errMsg}</h3>)}
           {(isLoading && !data) && <Loading />}
           {
               // @TODO respect the limit and implement pagination

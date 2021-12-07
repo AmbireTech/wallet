@@ -7,7 +7,9 @@ export default function Actions({ estimation, feeSpeed, approveTxn, rejectTxn, s
   const form = useRef(null)
 
   const rejectButton = rejectTxn && (
-    <Button small danger className='rejectTxn' onClick={rejectTxn}>Reject</Button>
+    // WARNING: DO NOT remove type='button' here, it indicates that this button is not a submit button in the <form>
+    // if it is, pressing Enter will reject the transaction rather than submit it
+    <Button small danger type='button' className='rejectTxn' onClick={rejectTxn}>Reject</Button>
   )
   const insufficientFee = estimation && estimation.feeInUSD
     && !isTokenEligible(estimation.selectedFeeToken, feeSpeed, estimation)
