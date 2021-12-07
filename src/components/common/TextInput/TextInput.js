@@ -1,6 +1,6 @@
 import './TextInput.scss'
 
-import { forwardRef, useEffect, useState } from 'react';
+import { forwardRef, useState } from 'react';
 import { MdContentCopy, MdOutlineRemoveRedEye, MdRemoveRedEye } from 'react-icons/md';
 import { useToasts } from '../../../hooks/toasts';
 
