@@ -16,7 +16,25 @@ const getAmountReceived = (lastToken, newBalanceRaw, decimals) => {
     return ethers.utils.formatUnits(amountRecieved.toString(), decimals)
 }
 
-export default function useNotifications (requests, onShow, portfolio, selectedAcc, network) {
+const getTransactionStatus = async (rpc, txHash) => {
+    const response = await fetch(rpc, {
+        method: 'POST',
+        headers: {
+            'ContentType': 'application/json'
+        },
+        body: JSON.stringify({
+            jsonrpc: "2.0",
+            method: "eth_getTransactionByHash",
+            params: [txHash],
+            id: 1
+        })
+    })
+
+    const { result } = await response.json()
+    return result
+}
+
+export default function useNotifications (requests, onShow, portfolio, selectedAcc, network, sentTxn, confirmSentTx) {
     const { addToast } = useToasts()
     const onShowRef = useRef({})
     onShowRef.current.onShow = onShow
@@ -99,6 +117,26 @@ export default function useNotifications (requests, onShow, portfolio, selectedA
             addToast(e.message | e, { error: true })
         }
     }, [portfolio, addToast, showNotification])
+
+    useEffect(() => {
+        const interval = network.id === 'ethereum' ? 30000 : 10000
+        const txStatusInterval = setInterval(() => {
+            sentTxn
+                .filter(({ confirmed }) => !confirmed)
+                .forEach(async ({ hash }) => {
+                    const tx = await getTransactionStatus(network.rpc, hash)
+                    if (!tx) return
+
+                    confirmSentTx(hash)
+                    showNotification({
+                        id: `confirmed_tx_${Date.now()}`,
+                        title: `Transaction Confirmed`,
+                        body: `Your transaction was successfully confirmed!`
+                    })
+                })
+        }, interval)
+        return () => clearInterval(txStatusInterval)
+    }, [sentTxn, network])
 
     useEffect(() => {
         isLastTotalBalanceInit = false
