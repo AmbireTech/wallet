@@ -54,7 +54,13 @@ const ResetPassword = ({ account, selectedNetwork, relayerURL, onAddAccount, sho
         ],
         [
             {
-                label: `I understand I am only changing the password on the ${selectedNetwork.name} network.`,
+                label: <>
+                    I understand I am only changing the password on the {selectedNetwork.name} network.
+                    <ToolTip
+                        label="You will be able to trigger the change for other networks by switching the network">
+                        <MdOutlineHelpOutline/>
+                    </ToolTip>
+                </>,
                 ref: createRef()
             },
             {

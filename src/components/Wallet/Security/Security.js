@@ -34,6 +34,7 @@ const Security = ({
   addRequest,
   showSendTxns,
   onAddAccount,
+  setSendTxnState
 }) => {
   const { addresses, addAddress, removeAddress } = addressBook
 
@@ -210,12 +211,20 @@ const Security = ({
 
   const showLoading = isLoading && !data
   const signersFragment = relayerURL ? (<>
+    {selectedAccount.preRecoverySigner ?
+      <div className="notice" id="recovery-request-pending" onClick={() => setSendTxnState({ showing: true })}>
+        <MdOutlineWarningAmber/>
+        Password recovery was requested but is not initiated for {selectedNetwork.name}. Click here to do so.
+      </div>
+    : null}
+
     { recoveryLock.status ? 
-      <div id="recoveryLock">
+      <div className="notice">
         <MdOutlineWarningAmber/>
         Account recovery in progress!
       </div>
     : null }
+  
     <div className="panel" id="signers">
       <div className='network-warning'>
         <MdInfoOutline size={36}></MdInfoOutline>

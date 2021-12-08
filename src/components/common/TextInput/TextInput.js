@@ -1,11 +1,13 @@
 import './TextInput.scss'
 
-import { forwardRef } from 'react';
-import { MdContentCopy } from 'react-icons/md';
+import { forwardRef, useState } from 'react';
+import { MdContentCopy, MdOutlineRemoveRedEye, MdRemoveRedEye } from 'react-icons/md';
 import { useToasts } from '../../../hooks/toasts';
 
 const TextInput = forwardRef(({ value, className, title, pattern, autoComplete, required, minLength, maxLength, placeholder, info, label, password, disabled, copy, small, onInput, onChange, style }, ref) => {
     const { addToast } = useToasts();
+
+    const [showPassword, setShowPassword] = useState()
 
     const onClick = async () => {
         await navigator.clipboard.writeText(value);
@@ -29,7 +31,7 @@ const TextInput = forwardRef(({ value, className, title, pattern, autoComplete, 
                     required={required}
                     minLength={minLength}
                     maxLength={maxLength}
-                    type={password ? 'password' : 'text'}
+                    type={password && !showPassword ? 'password' : 'text'}
                     placeholder={placeholder}
                     disabled={copy || disabled}
                     onInput={ev => onInput && onInput(ev.target.value)}
@@ -39,9 +41,22 @@ const TextInput = forwardRef(({ value, className, title, pattern, autoComplete, 
                 />
                 {
                     copy ?
-                        <div className="icon">
+                        <div className="button">
                             <MdContentCopy size={20}/>
                         </div>
+                        :
+                        null
+                }
+                {
+                    password ?
+                        !showPassword ?
+                            <div className="button" onClick={() => setShowPassword(true)}>
+                                <MdOutlineRemoveRedEye size={20}/>
+                            </div>
+                            :
+                            <div className="button" onClick={() => setShowPassword(false)}>
+                                <MdRemoveRedEye size={20}/>
+                            </div>
                         :
                         null
                 }
