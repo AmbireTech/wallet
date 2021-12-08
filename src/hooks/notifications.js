@@ -114,7 +114,7 @@ export default function useNotifications (requests, onShow, portfolio, selectedA
                         confirmSentTx(hash)
                         showNotification({
                             id: `confirmed_tx_${Date.now()}`,
-                            title: `Transaction Confirmed`,
+                            title: `Ambire Transaction Confirmed`,
                             body: `Your transaction was successfully confirmed!`
                         })
                     } catch(e) {
