@@ -1,6 +1,7 @@
 import { MdOutlineWarningAmber } from "react-icons/md"
 import { AbiCoder, keccak256 } from 'ethers/lib/utils'
 import buildRecoveryBundle from '../../../../helpers/recoveryBundle'
+import './PendingRecoveryNotice.scss'
 
 const PendingRecoveryNotice = ({ recoveryLock, privileges, showSendTxns, selectedAccount, selectedNetwork }) => {
     const accHash = signer => {
@@ -15,27 +16,28 @@ const PendingRecoveryNotice = ({ recoveryLock, privileges, showSendTxns, selecte
 
     const hasPendingReset = (recoveryLock && recoveryLock.status)
         || (
-            privileges && selectedAccount.quickAccManager
+            privileges && selectedAccount.signer.quickAccManager
             // is or has been in recovery state
             && selectedAccount.signer.preRecovery
             // but that's not finalized yet
             && accHash(selectedAccount.signer) !== privileges[selectedAccount.signer.quickAccManager]
         )
+    const recoveryLockStatus = recoveryLock ? recoveryLock.status : 'requestedButNotInitiated'
 
     return (
         hasPendingReset ?
             <div className="notice" id="recovery-request-pending" onClick={() => createRecoveryRequest()}>
                 <MdOutlineWarningAmber/>
                 {
-                    recoveryLock.status === 'requestedButNotInitiated' ?
+                    recoveryLockStatus === 'requestedButNotInitiated' ?
                         <>Password reset requested but not initiated for {selectedNetwork.name}. Click here to initiate it.</> :
-                    recoveryLock.status === 'initiationTxnPending' ?
+                    recoveryLockStatus === 'initiationTxnPending' ?
                         <>Initiation transaction is currently pending. Once mined, you will need to wait {recoveryLock.days} days for the reset to be done on {selectedNetwork.name}.</> :
-                    recoveryLock.status === 'waitingTimelock' ?
+                    recoveryLockStatus === 'waitingTimelock' ?
                         <>Password reset on {selectedNetwork.name} is currently pending. {recoveryLock.remainingDays} days remaining.</> :
-                    recoveryLock.status === 'ready' ?
+                    recoveryLockStatus === 'ready' ?
                         <>Password recovery was requested but is not initiated for {selectedNetwork.name}. Click here to do so.</> :
-                    recoveryLock.status === 'failed' ?
+                    recoveryLockStatus === 'failed' ?
                         <>Something went wrong while resetting your password. Please contact support at help.ambire.com</> : null
                 }
             </div>
