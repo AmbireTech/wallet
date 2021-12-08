@@ -2,6 +2,7 @@
 
 $modal-height: 660px;
 $modal-width: 530px;
+$buttons-height: 60px;
 
 .modal {
     z-index: 52;
@@ -11,11 +12,14 @@ $modal-width: 530px;
     display: flex;
     flex-direction: column;
     gap: 10px;
-    padding: 25px 0;
-    padding-bottom: 0;
+    padding-top: 25px;
     background-color: $panel-background-color;
     box-shadow: $box-shadow;
     box-sizing: border-box;
+
+    &.buttons {
+        padding-bottom: $buttons-height;
+    }
 
     .heading {
         .title {
@@ -44,25 +48,25 @@ $modal-width: 530px;
         height: 100%;
         position: relative;
         padding: 0 35px;
-        padding-bottom: 50px;
+        padding-bottom: 2em;
         overflow: hidden;
         overflow-y: auto;
         scrollbar-width: thin;
+    }
 
-        .buttons {
-            position: absolute;
-            left: 0;
-            bottom: 0;
-            height: 60px;
-            width: 100%;
-            display: flex;
-            box-sizing: border-box;
-            background-color: $input-background-color;
+    .buttons {
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        height: 60px;
+        width: 100%;
+        display: flex;
+        box-sizing: border-box;
+        background-color: $input-background-color;
 
-            button {
-                flex: 0 1 50% !important;
-                height: 100%;
-            }
+        button {
+            flex: 0 1 50% !important;
+            height: 100%;
         }
     }
 }
