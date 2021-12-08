@@ -6,7 +6,7 @@ const IDENTITY_INTERFACE = new Interface(require('adex-protocol-eth/abi/Identity
 const { quickAccManager } = accountPresets
 
 const buildRecoveryBundle = (identity, network, signer, newQuickAccHash) => {
-    const recoveryBundle = new Bundle({
+    return new Bundle({
         identity,
         network,
         signer,
@@ -17,11 +17,9 @@ const buildRecoveryBundle = (identity, network, signer, newQuickAccHash) => {
                 quickAccManager,
                 newQuickAccHash,
             ]),
-        ]]
+        ]],
+        recoveryMode: true
     })
-    recoveryBundle.recoveryMode = true
-
-    return recoveryBundle
 }
 
 export default buildRecoveryBundle
