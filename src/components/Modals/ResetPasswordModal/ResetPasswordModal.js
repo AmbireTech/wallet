@@ -32,7 +32,7 @@ const ResetPassword = ({ account, selectedNetwork, relayerURL, onAddAccount, sho
             value: 'change'
         },
         {
-            label: 'Reset the key and password: takes 3 days. Best if you\'ve forgotten the old password.',
+            label: 'Reset the key and password: takes 3 days. Chose this if you\'ve forgotten the old password.',
             value: 'reset'
         }
     ], [])
@@ -54,11 +54,11 @@ const ResetPassword = ({ account, selectedNetwork, relayerURL, onAddAccount, sho
         ],
         [
             {
-                label: `I understand I am only changing the password on the ${selectedNetwork.name} network`,
+                label: `I understand I am only changing the password on the ${selectedNetwork.name} network.`,
                 ref: createRef()
             },
             {
-                label: 'I understand I need to wait for 3 days for the change to be confirmed',
+                label: 'I understand I need to wait for 3 days for the change to be finalized.',
                 ref: createRef()
             }
         ]
