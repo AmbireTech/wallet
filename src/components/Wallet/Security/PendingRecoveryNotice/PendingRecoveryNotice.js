@@ -13,7 +13,10 @@ const PendingRecoveryNotice = ({ recoveryLock, showSendTxns, selectedAccount, se
         showSendTxns(bundle)
     }
     const recoveryLockStatus = recoveryLock ? recoveryLock.status : 'requestedButNotInitiated'
-
+    const remainingTime = seconds => {
+        if (seconds > 86400) return `${Math.ceil(seconds / 86400)} days`
+        else return `${Math.ceil(seconds/1440)} hours`
+    }
     return (
         <div className="notice" id="recovery-request-pending" onClick={() => createRecoveryRequest()}>
             <MdOutlineWarningAmber/>
@@ -21,9 +24,9 @@ const PendingRecoveryNotice = ({ recoveryLock, showSendTxns, selectedAccount, se
                 recoveryLockStatus === 'requestedButNotInitiated' ?
                     <>Password reset requested but not initiated for {selectedNetwork.name}. Click here to initiate it.</> :
                 recoveryLockStatus === 'initiationTxnPending' ?
-                    <>Initiation transaction is currently pending. Once mined, you will need to wait {recoveryLock.days} days for the reset to be done on {selectedNetwork.name}.</> :
+                    <>Initiation transaction is currently pending. Once mined, you will need to wait {remainingTime(recoveryLock.timelock)} for the reset to be done on {selectedNetwork.name}.</> :
                 recoveryLockStatus === 'waitingTimelock' ?
-                    <>Password reset on {selectedNetwork.name} is currently pending. {recoveryLock.remainingDays} days remaining.</> :
+                    <>Password reset on {selectedNetwork.name} is currently pending. {remainingTime(recoveryLock.remaining)} remaining.</> :
                 recoveryLockStatus === 'ready' ?
                     <>Password recovery was requested but is not initiated for {selectedNetwork.name}. Click here to do so.</> :
                 recoveryLockStatus === 'failed' ?
