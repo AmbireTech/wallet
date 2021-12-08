@@ -3,7 +3,7 @@ import './ResetPasswordModal.scss'
 import { Wallet } from 'ethers'
 import { Interface, AbiCoder, keccak256, id } from 'ethers/lib/utils'
 import { useState, useMemo, createRef, useEffect, useCallback } from 'react'
-import { Modal, Radios, TextInput, Checkbox, Button, ToolTip, Loading } from '../../common'
+import { Modal, Radios, TextInput, Checkbox, Button, ToolTip, Loading, PasswordInput } from '../../common'
 import { MdOutlineCheck, MdOutlineClose, MdOutlineHelpOutline } from 'react-icons/md'
 import { useModals } from '../../../hooks'
 import { useToasts } from '../../../hooks/toasts'
@@ -210,9 +210,9 @@ const ResetPassword = ({ account, selectedNetwork, relayerURL, onAddAccount, sho
             {
                 type === 'change' ?
                     <form>
-                        <TextInput password autocomplete="current-password" placeholder="Old Password" onInput={value => setOldPassword(value)}/>
-                        <TextInput password autocomplete="new-password" placeholder="New Password" onInput={value => setNewPassword(value)}/>
-                        <TextInput password autocomplete="new-password" placeholder="Confirm New Password" onInput={value => setNewPasswordConfirm(value)}/>
+                        <PasswordInput autocomplete="current-password" placeholder="Old Password" onInput={value => setOldPassword(value)}/>
+                        <PasswordInput peakPassword autocomplete="new-password" placeholder="New Password" onInput={value => setNewPassword(value)}/>
+                        <PasswordInput autocomplete="new-password" placeholder="Confirm New Password" onInput={value => setNewPasswordConfirm(value)}/>
                         {
                             checkboxes[0].map(({ label, ref }, i) => (
                                 <Checkbox key={`checkbox-${i}`} ref={ref} label={label} onChange={() => validateForm()}/>
@@ -223,8 +223,8 @@ const ResetPassword = ({ account, selectedNetwork, relayerURL, onAddAccount, sho
             {
                 type === 'reset' ?
                     <form>
-                        <TextInput password autocomplete="new-password" placeholder="New Password" onInput={value => setNewPassword(value)}/>
-                        <TextInput password autocomplete="new-password" placeholder="Confirm New Password" onInput={value => setNewPasswordConfirm(value)}/>
+                        <PasswordInput peakPassword autocomplete="new-password" placeholder="New Password" onInput={value => setNewPassword(value)}/>
+                        <PasswordInput autocomplete="new-password" placeholder="Confirm New Password" onInput={value => setNewPasswordConfirm(value)}/>
                         {
                             checkboxes[1].map(({ label, ref }, i) => (
                                 <Checkbox key={`checkbox-${i}`} ref={ref} label={label} onChange={() => validateForm()}/>
