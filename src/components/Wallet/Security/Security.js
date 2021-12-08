@@ -54,7 +54,7 @@ const Security = ({
     : null
   const { data, errMsg, isLoading } = useRelayerData(url)
   const privileges = data ? data.privileges : {}
-  const recoveryLock = data && data.recoveryLock ? data.recoveryLock : { status: null, message: null }
+  const recoveryLock = data && data.recoveryLock ? data.recoveryLock : null
   const { addToast } = useToasts()
   const history = useHistory()
 
@@ -143,7 +143,7 @@ const Security = ({
         <li key={addr}>
           <TextInput className="depositAddress" value={privText} disabled />
           <div className="btns-wrapper">
-            {isQuickAcc && selectedAccount.primaryKeyBackup && !selectedAccount.signer.preRecovery && (<Button onClick={showResetPasswordModal} small>Change password</Button>)}
+            {isQuickAcc && selectedAccount.primaryKeyBackup && !recoveryLock && (<Button onClick={showResetPasswordModal} small>Change password</Button>)}
             <Button
               disabled={isSelected}
               title={isSelected ? 'Signer is already default' : ''}
@@ -231,18 +231,23 @@ const Security = ({
 
   const showLoading = isLoading && !data
   const signersFragment = relayerURL ? (<>
-    { recoveryLock.status ? 
-      <div className="notice">
-        <MdOutlineWarningAmber/>
-        Account recovery in progress!
-      </div>
-    : null }
   
     <div className="panel" id="signers">
-      {selectedAccount.signer.preRecovery ?
+      {recoveryLock && recoveryLock.status ?
         <div className="notice" id="recovery-request-pending" onClick={() => createRecoveryRequest()}>
           <MdOutlineWarningAmber/>
-          Password recovery was requested but is not initiated for {selectedNetwork.name}. Click here to do so.
+          {
+            recoveryLock.status === 'requestedButNotInitiated' ?
+              <>Password reset requested but not initiated for {selectedNetwork.name}. Click here to initiate it.</> :
+            recoveryLock.status === 'initiationTxnPending' ?
+              <>Initiation transaction is currently pending. Once mined, you will need to wait {recoveryLock.days} days for the reset to be done on {selectedNetwork.name}.</> :
+            recoveryLock.status === 'waitingTimelock' ?
+              <>Password reset on {selectedNetwork.name} is currently pending. {recoveryLock.remainingDays} days remaining.</> :
+            recoveryLock.status === 'ready' ?
+              <>Password recovery was requested but is not initiated for {selectedNetwork.name}. Click here to do so.</> :
+            recoveryLock.status === 'failed' ?
+              <>Something went wrong while resetting your password. Please contact support at help.ambire.com</> : null
+          }
         </div>
       : null}
 
