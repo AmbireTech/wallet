@@ -5,7 +5,7 @@ import { RiDragDropLine } from 'react-icons/ri'
 import { BiExport, BiImport } from 'react-icons/bi'
 import { useState, useEffect, useCallback } from 'react'
 import { Loading, TextInput, Button } from '../../common'
-import { Interface, AbiCoder, keccak256, id } from 'ethers/lib/utils'
+import { Interface, AbiCoder, keccak256 } from 'ethers/lib/utils'
 import accountPresets from '../../../consts/accountPresets'
 import privilegesOptions from '../../../consts/privilegesOptions'
 import { useRelayerData, useModals } from '../../../hooks'
@@ -18,8 +18,6 @@ import { useHistory } from 'react-router-dom'
 import { useDropzone } from 'react-dropzone'
 import { MdInfoOutline } from 'react-icons/md'
 import { validateImportedAccountProps, fileSizeValidator } from '../../../lib/validations/importedAccountValidations'
-import { fetchPost } from '../../../lib/fetch'
-import { Wallet } from '@ethersproject/wallet'
 import buildRecoveryBundle from '../../../helpers/recoveryBundle'
 
 const IDENTITY_INTERFACE = new Interface(
@@ -57,6 +55,7 @@ const Security = ({
   const recoveryLock = data && data.recoveryLock ? data.recoveryLock : null
   const { addToast } = useToasts()
   const history = useHistory()
+  const selectedAccount = accounts.find(x => x.id === selectedAcc)
 
   const craftTransaction = (address, privLevel) => {
     return {
@@ -111,8 +110,6 @@ const Security = ({
     history.push('/wallet/security')
   }
 
-  const selectedAccount = accounts.find(x => x.id === selectedAcc)
-
   const showResetPasswordModal = () => {
     if (!relayerURL) {
       addToast('Unsupported without a connection to the relayer', { error: true })
@@ -126,7 +123,57 @@ const Security = ({
       showSendTxns={showSendTxns}
     />)
   }
+  // Address book
+  const modalInputs = [
+    { label: 'Name', placeholder: 'My Address' },
+    { label: 'Address', placeholder: '0x', validate: value => isValidAddress(value) }
+  ]
+  const inputModal = <InputModal title="Add New Address" inputs={modalInputs} onClose={([name, address]) => addAddress(name, address)}></InputModal>
+  const showInputModal = () => showModal(inputModal)
 
+  // JSON import
+  const onDrop = useCallback((acceptedFiles, rejectedFiles) => {
+    const reader = new FileReader()
+    
+    if (rejectedFiles.length) {
+      addToast(`${rejectedFiles[0].file.path} - ${(rejectedFiles[0].file.size / 1024).toFixed(2)} KB. ${rejectedFiles[0].errors[0].message}`, { error: true })
+    }
+
+    if (acceptedFiles.length){
+      const file = acceptedFiles[0]
+
+      reader.readAsText(file,'UTF-8')
+      reader.onload = readerEvent => {
+        const content = readerEvent.target.result
+        const fileContent = JSON.parse(content)
+        const validatedFile = validateImportedAccountProps(fileContent)
+        
+        if (validatedFile.success) onAddAccount(fileContent, { select: true })
+        else addToast(validatedFile.message, { error: true})
+      }
+    }
+  }, [addToast, onAddAccount])
+  const { getRootProps, getInputProps, open, isDragActive, isDragAccept, isDragReject } = useDropzone({
+    onDrop,
+    noClick: true,
+    noKeyboard: true,
+    accept: 'application/json',
+    maxFiles: 1,
+    validator: fileSizeValidator
+  })
+ 
+  const createRecoveryRequest = async () => {
+    const abiCoder = new AbiCoder()
+    const { timelock, one, two } = selectedAccount.signer
+    const quickAccountTuple = [timelock, one, two]
+    const newQuickAccHash = keccak256(abiCoder.encode(['tuple(uint, address, address)'], [quickAccountTuple]))
+    const bundle = buildRecoveryBundle(selectedAccount.id, selectedNetwork.id, selectedAccount.signer.preRecovery, newQuickAccHash)
+    showSendTxns(bundle)
+  }
+
+  // @TODO relayerless mode: it's not that hard to implement in a primitive form, we need everything as-is
+  // but rendering the initial privileges instead; or maybe using the relayerless transactions hook/service
+  // and aggregate from that
   const privList = Object.entries(privileges)
     .map(([addr, privValue]) => {
       if (!privValue) return null
@@ -171,58 +218,6 @@ const Security = ({
       )
     })
     .filter(x => x)
-
-  // Address book
-  const modalInputs = [
-    { label: 'Name', placeholder: 'My Address' },
-    { label: 'Address', placeholder: '0x', validate: value => isValidAddress(value) }
-  ]
-  const inputModal = <InputModal title="Add New Address" inputs={modalInputs} onClose={([name, address]) => addAddress(name, address)}></InputModal>
-  const showInputModal = () => showModal(inputModal)
-
-  // JSON import
-  const onDrop = useCallback((acceptedFiles, rejectedFiles) => {
-    const reader = new FileReader()
-    
-    if (rejectedFiles.length) {
-      addToast(`${rejectedFiles[0].file.path} - ${(rejectedFiles[0].file.size / 1024).toFixed(2)} KB. ${rejectedFiles[0].errors[0].message}`, { error: true })
-    }
-
-    if (acceptedFiles.length){
-      const file = acceptedFiles[0]
-
-      reader.readAsText(file,'UTF-8')
-      reader.onload = readerEvent => {
-        const content = readerEvent.target.result
-        const fileContent = JSON.parse(content)
-        const validatedFile = validateImportedAccountProps(fileContent)
-        
-        if (validatedFile.success) onAddAccount(fileContent, { select: true })
-        else addToast(validatedFile.message, { error: true})
-      }
-    }
-  }, [addToast, onAddAccount])
-  const { getRootProps, getInputProps, open, isDragActive, isDragAccept, isDragReject } = useDropzone({
-    onDrop,
-    noClick: true,
-    noKeyboard: true,
-    accept: 'application/json',
-    maxFiles: 1,
-    validator: fileSizeValidator
-  })
- 
-  // @TODO relayerless mode: it's not that hard to implement in a primitive form, we need everything as-is
-  // but rendering the initial privileges instead; or maybe using the relayerless transactions hook/service
-  // and aggregate from that
-
-  const createRecoveryRequest = async () => {
-    const abiCoder = new AbiCoder()
-    const { timelock, one, two } = selectedAccount.signer
-    const quickAccountTuple = [timelock, one, two]
-    const newQuickAccHash = keccak256(abiCoder.encode(['tuple(uint, address, address)'], [quickAccountTuple]))
-    const bundle = buildRecoveryBundle(selectedAccount.id, selectedNetwork.id, selectedAccount.signer.preRecovery, newQuickAccHash)
-    showSendTxns(bundle)
-  }
 
   const showLoading = isLoading && !data
   const signersFragment = relayerURL ? (<>
