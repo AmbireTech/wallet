@@ -3,7 +3,7 @@
 import { GiTakeMyMoney, GiSpectacles, GiGorilla } from 'react-icons/gi'
 import { FaSignature, FaChevronLeft } from 'react-icons/fa'
 import { MdOutlineAccountCircle } from 'react-icons/md'
-import './SendTransaction.css'
+import './SendTransaction.scss'
 import { useEffect, useState, useMemo } from 'react'
 import fetch from 'node-fetch'
 import { Bundle } from 'adex-protocol-eth/js'
@@ -40,7 +40,7 @@ function makeBundle(account, networkId, requests) {
   return bundle
 }
 
-export default function SendTransaction({ relayerURL, accounts, network, selectedAcc, requests, resolveMany, replacementBundle, onDismiss }) {
+export default function SendTransaction({ relayerURL, accounts, network, selectedAcc, requests, resolveMany, replacementBundle, onBroadcastedTxn, onDismiss }) {
   // NOTE: this can be refactored at a top level to only pass the selected account (full object)
   // keeping it that way right now (selectedAcc, accounts) cause maybe we'll need the others at some point?
   const account = accounts.find(x => x.id === selectedAcc)
@@ -69,11 +69,12 @@ export default function SendTransaction({ relayerURL, accounts, network, selecte
       network={network}
       account={account}
       resolveMany={resolveMany}
+      onBroadcastedTxn={onBroadcastedTxn}
       onDismiss={onDismiss}
   />)
 }
 
-function SendTransactionWithBundle ({ bundle, network, account, resolveMany, relayerURL, onDismiss }) {
+function SendTransactionWithBundle ({ bundle, network, account, resolveMany, relayerURL, onBroadcastedTxn, onDismiss }) {
   const [estimation, setEstimation] = useState(null)
   const [signingStatus, setSigningStatus] = useState(false)
   const [feeSpeed, setFeeSpeed] = useState(DEFAULT_SPEED)
@@ -205,13 +206,19 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
       setSigningStatus({ quickAcc: true, finalBundle, confCodeRequired })
     } else {
       if (!signature) throw new Error(`QuickAcc internal error: there should be a signature`)
-      if (!account.primaryKeyBackup) throw new Error(`No key backup found: perhaps you need to import the account via JSON?`)
+      if (!account.primaryKeyBackup) throw new Error(`No key backup found: you need to import the account from JSON or login again.`)
       setSigningStatus({ quickAcc: true, inProgress: true })
-      // Make sure we let React re-render without blocking (decrypting and signing will block)
-      await new Promise(resolve => setTimeout(resolve, 0))
-      const pwd = quickAccCredentials.passphrase || alert('Enter password')
-      const wallet = await Wallet.fromEncryptedJson(JSON.parse(account.primaryKeyBackup), pwd)
-      await finalBundle.sign(wallet)
+      if (!finalBundle.recoveryMode) {
+        // Make sure we let React re-render without blocking (decrypting and signing will block)
+        await new Promise(resolve => setTimeout(resolve, 0))
+        const pwd = quickAccCredentials.passphrase || alert('Enter password')
+        const wallet = await Wallet.fromEncryptedJson(JSON.parse(account.primaryKeyBackup), pwd)
+        await finalBundle.sign(wallet)
+      } else {
+        // set both .signature and .signatureTwo to the same value: the secondary signature
+        // this will trigger a timelocked txn
+        finalBundle.signature = signature
+      }
       finalBundle.signatureTwo = signature
       return await finalBundle.submit({ relayerURL, fetch })
     }
@@ -226,7 +233,6 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
     }
 
     const requestIds = bundle.requestIds
-    const blockExplorerUrl = network.explorerUrl
     const approveTxnPromise = bundle.signer.quickAccManager ?
       approveTxnImplQuickAcc({ quickAccCredentials })
       : approveTxnImpl()
@@ -242,10 +248,7 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
       if (!skipResolve && requestIds) resolveMany(requestIds, { success: bundleResult.success, result: bundleResult.txId, message: bundleResult.message })
 
       if (bundleResult.success) {
-        addToast((
-          <span>Transaction signed and sent successfully!
-            &nbsp;Click to view on block explorer.
-          </span>), { url: blockExplorerUrl+'/tx/'+bundleResult.txId, timeout: 15000 })
+        onBroadcastedTxn(bundleResult.txId)
         onDismiss()
       } else addToast(`Transaction error: ${bundleResult.message || 'unspecified error'}`, { error: true })
     })
@@ -272,10 +275,13 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
   })
 
   return (<div id='sendTransaction'>
-      <div className='dismiss' onClick={onDismiss}>
-        <FaChevronLeft size={35}/><span>back</span>
+      <div id="titleBar">
+        <div className='dismiss' onClick={onDismiss}>
+          <FaChevronLeft size={35}/><span>back</span>
+        </div>
+        <h2>Pending transactions: {bundle.txns.length}</h2>
+        <div className="separator"></div>
       </div>
-      <h2>Pending transactions: {bundle.txns.length}</h2>
       <div className='container'>
         <div id='topPanel' className='panel'>
           <div className='title'>

@@ -53,11 +53,7 @@ export default function EmailLogin({ relayerURL, onAddAccount }) {
         const identityInfo = body
         const { _id, salt, identityFactoryAddr, baseIdentityAddr, bytecode } = identityInfo
         const { quickAccSigner, primaryKeyBackup } = identityInfo.meta
-        if (!primaryKeyBackup) {
-          setErr('Account is not backed up on Ambire Cloud. The only way to login is to import a JSON file.')
-          setRequiresConfFor(null)
-          return
-        }
+
         onAddAccount({
           id: _id,
           email: identityInfo.meta.email,

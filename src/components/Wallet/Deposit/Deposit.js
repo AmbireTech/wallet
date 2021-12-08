@@ -4,8 +4,6 @@ import { MdAccountBalance, MdAccountBalanceWallet } from 'react-icons/md'
 import TextInput from '../../common/TextInput/TextInput'
 import Providers from './Providers/Providers'
 
-import ETHEREUM_LOGO from '../../../resources/ethereum-logo.png'
-import POLYGON_LOGO from '../../../resources/polygon-logo.svg'
 import networks from '../../../consts/networks'
 
 export default function Deposit({ selectedAcc, selectedNetwork }) {
@@ -28,9 +26,15 @@ export default function Deposit({ selectedAcc, selectedNetwork }) {
                 </div>
                 <div id="networks">
                     Following networks supported:
-                    <div className="logos">
-                        <img src={ETHEREUM_LOGO} alt="Ethereum"/>
-                        <img src={POLYGON_LOGO} alt="Polygon"/>
+                    <div className="list">
+                        {
+                            networks.map(({ id, icon, name }) => (
+                                <div className="network" key={id}>
+                                    <div className="icon" style={{backgroundImage: `url(${icon})`}}></div>
+                                    <div className="name">{ name }</div>
+                                </div>
+                            ))
+                        }
                     </div>
                 </div>
             </div>

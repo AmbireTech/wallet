@@ -1,30 +1,31 @@
 @import '../../variables.scss';
 
-#wallet-layout {
-    position: absolute;
-    top: 0;
-    left: 0;
-    margin-left: $sidebar-width;
-    right: 0;
-    transition: $basic-transition;
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    justify-content: flex-start;
-    min-height: 100vh;
-    background-color: $background-color;
+#wallet {
+    height: 100%;
 }
 
 #wallet-container {
     flex-grow: 1;
+    position: absolute;
+    left: $sidebar-desktop-width;
+    right: 0%;
+    top: $topbar-height;
+    bottom: 0;
     padding: $layout-spacing;
     padding-top:  $layout-spacing / 2;
     display: flex;
     flex-direction: column;
-    align-items: stretch;
+    align-items: center;
+    overflow: hidden;
+    overflow-y: auto;
+
+    #wallet-container-inner {
+        height: 100%;
+        width: 100%;
+    }
 
     .placeholder-overlay {
-        z-index: 49;
+        z-index: 47;
         position: absolute;
         top: 0;
         bottom: 0;
@@ -37,13 +38,36 @@
         justify-content: center;
         font-size: 22px;
         font-weight: bold;
+        text-align: center;
         color: white;
         text-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
     }
 }
 
 @media screen and (max-width: 1400px) {
-    #wallet-layout {
-        margin-left: $sidebar-mobile-width;
+    #wallet-container {
+        left: $sidebar-desktop-small-width !important;
+    }
+}
+
+// Mobile
+@media screen and (max-width: $mobile-breakpoint-max-width) {
+    #wallet-container {
+        top: $topbar-mobile-height;
+        left: 0 !important;
+        bottom: $sidebar-mobile-height !important;
+        padding-left: 10px;
+        padding-right: 10px;
+        padding-bottom: 10px;
+        overflow-y: auto;
+    }
+}
+
+// Wide screen
+@media screen and (min-width: $wide-breakpoint-min-width) {
+    #wallet-container {
+        #wallet-container-inner {
+            max-width: 1500px;
+        }
     }
 }
