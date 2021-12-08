@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
+import { uuid } from 'uuidv4';
 import { useToasts } from './toasts'
 import * as blockies from 'blockies-ts'
 import { isValidAddress, isKnownTokenOrContract } from '../helpers/address'
@@ -58,6 +59,7 @@ const useAddressBook = ({ accounts }) => {
         const newAddresses = [
             ...addresses,
             {
+                id: uuid(),
                 name,
                 address
             }
@@ -68,16 +70,31 @@ const useAddressBook = ({ accounts }) => {
         addToast(`${address} added to your Address Book.`)
     }, [addresses, addToast])
 
-    const removeAddress = useCallback((name, address) => {
-        if (!name || !address) throw new Error('Address Book: invalid arguments supplied')
-        if (!isValidAddress(address)) throw new Error('Address Book: invalid address format')
+    const updateAddress = useCallback((id, fields) => {
+        if (!id) throw new Error('Address Book: invalid arguments supplied')
 
-        const newAddresses = addresses
-            .filter(a => !(a.name === name && a.address === address))
+        const entry = addresses.find(a => a.id === id)
+        if (!entry) throw new Error(`Address Book: address with id ${id} does not exists`)
 
+        const filteredAddresses = addresses.filter(a => !(a.id === id))
+        updateAddresses([
+            ...filteredAddresses,
+            {
+                ...entry,
+                ...fields
+            }
+        ])
+
+        addToast(`${entry.name} (${entry.address}) address updated.`)
+    }, [addresses, addToast])
+
+    const removeAddress = useCallback(id => {
+        if (!id) throw new Error('Address Book: invalid arguments supplied')
+
+        const newAddresses = addresses.filter(a => !(a.id === id))
         updateAddresses(newAddresses)
 
-        addToast(`${address} removed from your Address Book.`)
+        addToast(`Removed from your Address Book.`)
     }, [addresses, addToast])
 
     useEffect(() => { setAddresses(addressList) }, [accounts, addressList])
@@ -90,6 +107,7 @@ const useAddressBook = ({ accounts }) => {
     return {
         addresses,
         addAddress,
+        updateAddress,
         removeAddress,
         isKnownAddress
     }

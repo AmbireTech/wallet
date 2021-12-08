@@ -34,6 +34,7 @@
     "react-transition-group": "^4.4.2",
     "trezor-connect": "^8.2.2",
     "url": "^0.11.0",
+    "uuidv4": "^6.2.12",
     "web-vitals": "^1.1.2"
   },
   "scripts": {
