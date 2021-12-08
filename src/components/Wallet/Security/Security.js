@@ -185,12 +185,17 @@ const Security = ({
         ? selectedAccount.signer.quickAccManager
         : selectedAccount.signer.address
       const isSelected = signerAddress === addr
+      const canChangePassword = isQuickAcc && !recoveryLock
 
       return (
         <li key={addr}>
           <TextInput className="depositAddress" value={privText} disabled />
           <div className="btns-wrapper">
-            {isQuickAcc && selectedAccount.primaryKeyBackup && !recoveryLock && (<Button onClick={showResetPasswordModal} small>Change password</Button>)}
+            {isQuickAcc && (<Button
+              disabled={!canChangePassword}
+              title={recoveryLock ? 'Account recovery already in progress' : ''}
+              onClick={showResetPasswordModal} small>Change password</Button>
+            )}
             <Button
               disabled={isSelected}
               title={isSelected ? 'Signer is already default' : ''}
