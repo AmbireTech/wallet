@@ -81,6 +81,7 @@ const ResetPassword = ({ account, selectedNetwork, relayerURL, onAddAccount, sho
 
     const changePassword = async () => {
         setLoading(true)
+        // let react do one tick of rerendering before we block on .encrypt/.signMessage
         await new Promise(resolve => setTimeout(resolve))
 
         try {
