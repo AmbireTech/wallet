@@ -18,9 +18,9 @@ import { useHistory } from 'react-router-dom'
 import { useDropzone } from 'react-dropzone'
 import { MdInfoOutline } from 'react-icons/md'
 import { validateImportedAccountProps, fileSizeValidator } from '../../../lib/validations/importedAccountValidations'
-import { Bundle } from 'adex-protocol-eth'
 import { fetchPost } from '../../../lib/fetch'
 import { Wallet } from '@ethersproject/wallet'
+import buildRecoveryBundle from '../../../helpers/recoveryBundle'
 
 const IDENTITY_INTERFACE = new Interface(
   require('adex-protocol-eth/abi/Identity5.2')
@@ -143,7 +143,7 @@ const Security = ({
         <li key={addr}>
           <TextInput className="depositAddress" value={privText} disabled />
           <div className="btns-wrapper">
-            {isQuickAcc && selectedAccount.primaryKeyBackup && !selectedAccount.preRecoverySigner && (<Button onClick={showResetPasswordModal} small>Change password</Button>)}
+            {isQuickAcc && selectedAccount.primaryKeyBackup && !selectedAccount.signer.preRecovery && (<Button onClick={showResetPasswordModal} small>Change password</Button>)}
             <Button
               disabled={isSelected}
               title={isSelected ? 'Signer is already default' : ''}
@@ -219,27 +219,14 @@ const Security = ({
     const secondKeyResp = await fetchPost(`${relayerURL}/second-key`, { secondKeySecret })
     if (!secondKeyResp.address) throw new Error(`second-key returned no address, error: ${secondKeyResp.message || secondKeyResp}`)
 
-    const { quickAccManager, quickAccTimelock } = accountPresets
+    const { quickAccTimelock } = accountPresets
     const abiCoder = new AbiCoder()
     const quickAccountTuple = [quickAccTimelock, firstKeyWallet.address, secondKeyResp.address]
 
     const newQuickAccHash = keccak256(abiCoder.encode(['tuple(uint, address, address)'], [quickAccountTuple]))
 
-    const recoveryBundle = new Bundle({
-      identity: selectedAccount.id,
-      network: selectedNetwork.id,
-      signer: selectedAccount.preRecoverySigner,
-      txns: [[
-        selectedAccount.id,
-        '0x00',
-        IDENTITY_INTERFACE.encodeFunctionData('setAddrPrivilege', [
-          quickAccManager,
-          newQuickAccHash,
-        ]),
-      ]]
-    })
-    recoveryBundle.recoveryMode = true
-    showSendTxns(recoveryBundle)
+    const bundle = buildRecoveryBundle(selectedAccount.id, selectedNetwork.id, selectedAccount.signer.preRecovery, newQuickAccHash)
+    showSendTxns(bundle)
   }
 
   const showLoading = isLoading && !data
@@ -252,7 +239,7 @@ const Security = ({
     : null }
   
     <div className="panel" id="signers">
-      {selectedAccount.preRecoverySigner ?
+      {selectedAccount.signer.preRecovery ?
         <div className="notice" id="recovery-request-pending" onClick={() => createRecoveryRequest()}>
           <MdOutlineWarningAmber/>
           Password recovery was requested but is not initiated for {selectedNetwork.name}. Click here to do so.
