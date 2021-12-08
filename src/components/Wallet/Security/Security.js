@@ -221,6 +221,7 @@ const Security = ({
     <div className="panel" id="signers">
       <PendingRecoveryNotice
         recoveryLock={recoveryLock}
+        privileges={privileges}
         showSendTxns={showSendTxns}
         selectedAccount={selectedAccount}
         selectedNetwork={selectedNetwork}
