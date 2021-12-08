@@ -35,7 +35,7 @@ const ResetPassword = ({ account, selectedNetwork, relayerURL, onAddAccount, sho
             label: 'Reset the key and password: takes 3 days. Chose this if you\'ve forgotten the old password.',
             value: 'reset'
         }
-    ], [!account.primaryKeyBackup])
+    ], [account.primaryKeyBackup])
 
     const checkboxes = useMemo(() => ([
         [
@@ -131,8 +131,8 @@ const ResetPassword = ({ account, selectedNetwork, relayerURL, onAddAccount, sho
             const newQuickAccHash = keccak256(abiCoder.encode(['tuple(uint, address, address)'], [quickAccountTuple]))
 
             const bundle = buildRecoveryBundle(account.id, selectedNetwork.id, signer.preRecovery, newQuickAccHash)
+            hideModal()
             showSendTxns(bundle)
-
             onAddAccount({
                 ...account,
                 primaryKeyBackup,
