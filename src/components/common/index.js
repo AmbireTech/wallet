@@ -15,6 +15,7 @@ import Segments from './Segments/Segments';
 import Select from './Select/Select';
 import TextInput from './TextInput/TextInput';
 import NumberInput from './NumberInput/NumberInput';
+import PasswordInput from './PasswordInput/PasswordInput';
 import Toggle from './Toggle/Toggle';
 import ToolTip from './ToolTip/ToolTip';
 
@@ -36,6 +37,7 @@ export {
     Select,
     TextInput,
     NumberInput,
+    PasswordInput,
     Toggle,
     ToolTip
 };
