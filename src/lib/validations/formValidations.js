@@ -78,7 +78,7 @@ const validateSendTransferAmount = (amount, selectedAsset) => {
 
     try {
         if (amount && selectedAsset.decimals) {
-            const parsedAmount = Number(amount).toFixed(selectedAsset.decimals)
+            const parsedAmount = Number(amount).toFixed(selectedAsset.decimals) // Fixed decimals in case amount is bigger than selectedAsset.decimals, otherwise would cause overflow error
             const bigNumberAmount = parseUnits(parsedAmount, selectedAsset.decimals)
             if (bigNumberAmount && selectedAsset.balanceRaw && bigNumberAmount.gt(selectedAsset.balanceRaw)) {
                 return {
