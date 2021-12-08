@@ -115,7 +115,7 @@ const ResetPassword = ({ account, selectedNetwork, relayerURL, onAddAccount, sho
             const secondKeyResp = await fetchPost(`${relayerURL}/second-key`, { secondKeySecret })
             if (!secondKeyResp.address) throw new Error(`second-key returned no address, error: ${secondKeyResp.message || secondKeyResp}`)
 
-            const { quickAccManager, quickAccTimelock } = accountPresets
+            const { quickAccManager, quickAccTimelock, encryptionOpts } = accountPresets
             const quickAccountTuple = [quickAccTimelock, firstKeyWallet.address, secondKeyResp.address]
             const signer = {
                 quickAccManager,
@@ -125,7 +125,7 @@ const ResetPassword = ({ account, selectedNetwork, relayerURL, onAddAccount, sho
                 preRecovery: account.signer
             }
 
-            const primaryKeyBackup = JSON.stringify(await firstKeyWallet.encrypt(newPassword, accountPresets.encryptionOpts))
+            const primaryKeyBackup = JSON.stringify(await firstKeyWallet.encrypt(newPassword, encryptionOpts))
 
             const abiCoder = new AbiCoder()
             const newQuickAccHash = keccak256(abiCoder.encode(['tuple(uint, address, address)'], [quickAccountTuple]))
