@@ -98,7 +98,7 @@ const ResetPassword = ({ account, selectedNetwork, relayerURL, onAddAccount, sho
             }
         } catch(e) {
             console.error(e)
-            addToast(e.message || e, { error: true })
+            addToast('Changing password error: '+(e.message || e), { error: true })
         }
 
         setLoading(false)
@@ -106,17 +106,16 @@ const ResetPassword = ({ account, selectedNetwork, relayerURL, onAddAccount, sho
 
     const resetPassword = async () => {
         setLoading(true)
+        // let react do one tick of rerendering before we block on .encrypt/.signMessage
+        await new Promise(resolve => setTimeout(resolve))
 
         try {
+            // @TODO: move extraEntropy to a util
             const extraEntropy = id(account.email + ':' + Date.now() + ':' + Math.random() + ':' + (typeof performance === 'object' && performance.now()))
             const firstKeyWallet = Wallet.createRandom({ extraEntropy })
-            const secondKeySecret = Wallet.createRandom({ extraEntropy }).mnemonic.phrase.split(' ').slice(0, 6).join(' ') + ' ' + account.email
-
-            const secondKeyResp = await fetchPost(`${relayerURL}/second-key`, { secondKeySecret })
-            if (!secondKeyResp.address) throw new Error(`second-key returned no address, error: ${secondKeyResp.message || secondKeyResp}`)
 
             const { quickAccManager, quickAccTimelock, encryptionOpts } = accountPresets
-            const quickAccountTuple = [quickAccTimelock, firstKeyWallet.address, secondKeyResp.address]
+            const quickAccountTuple = [quickAccTimelock, firstKeyWallet.address, account.signer.two]
             const signer = {
                 quickAccManager,
                 timelock: quickAccountTuple[0],
@@ -130,7 +129,7 @@ const ResetPassword = ({ account, selectedNetwork, relayerURL, onAddAccount, sho
             const abiCoder = new AbiCoder()
             const newQuickAccHash = keccak256(abiCoder.encode(['tuple(uint, address, address)'], [quickAccountTuple]))
 
-            const bundle = buildRecoveryBundle(account.id, selectedNetwork.id, signer, newQuickAccHash)
+            const bundle = buildRecoveryBundle(account.id, selectedNetwork.id, signer.preRecovery, newQuickAccHash)
             showSendTxns(bundle)
 
             onAddAccount({
@@ -141,7 +140,7 @@ const ResetPassword = ({ account, selectedNetwork, relayerURL, onAddAccount, sho
             }, { select: true })
         } catch(e) {
             console.error(e);
-            addToast(e.message || e, { error: true })
+            addToast('Reset password error: ' + (e.message || e), { error: true })
         }
 
         setLoading(false)
