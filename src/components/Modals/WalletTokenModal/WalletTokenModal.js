@@ -1,20 +1,67 @@
 import './WalletTokenModal.scss'
 
-import { Button, Modal, TextInput } from '../../common'
-import { MdOutlineClose } from 'react-icons/md'
+import { Button, Modal } from '../../common'
 
 const WalletTokenModal = () => {
     return (
-        <Modal id="wallet-token-modal" title="$WALLET">
-            <TextInput label="Balance" disabled/>
-            <div className="separator"></div>
+        <Modal id="wallet-token-modal" title="$WALLET token distribution">
+            <div className="item">
+                <div className="details">
+                    <label>Balance in your account</label>
+                    <div className="balance">
+                        <div className="amount">0 <span className="primary-accent">WALLET</span></div>
+                        <div className="amount-dollar"><span className="secondary-accent">$</span> 0</div>
+                    </div>
+                </div>
+            </div>
             <div className="title">Claimable</div>
-            <TextInput label="Early users Incentive" disabled/>
-            <TextInput label="Referral Incentive" disabled/>
-            <TextInput label="ADX Staking Bonus" disabled/>
-            <TextInput label="Gas Rebates" disabled/>
-            <div className="buttons">
-                <Button clear icon={<MdOutlineClose/>}>Close</Button>
+            <div className="item">
+                <div className="details">
+                    <label>Early users Incentive</label>
+                    <div className="balance">
+                        <div className="amount">0 <span className="primary-accent">WALLET</span></div>
+                        <div className="amount-dollar"><span className="secondary-accent">$</span> 0</div>
+                    </div>
+                </div>
+                <div className="actions">
+                    <Button small>CLAIM</Button>
+                </div>
+            </div>
+            <div className="item">
+                <div className="details">
+                    <label>Referral Incentive</label>
+                    <div className="balance">
+                        <div className="amount">0 <span className="primary-accent">WALLET</span></div>
+                        <div className="amount-dollar"><span className="secondary-accent">$</span> 0</div>
+                    </div>
+                </div>
+                <div className="actions">
+                    <Button small>CLAIM</Button>
+                </div>
+            </div>
+            <div className="item">
+                <div className="details">
+                    <label>ADX Staking Bonus</label>
+                    <div className="balance">
+                        <div className="amount">0 <span className="primary-accent">WALLET</span></div>
+                        <div className="amount-dollar"><span className="secondary-accent">$</span> 0</div>
+                    </div>
+                </div>
+                <div className="actions">
+                    <Button small>CLAIM</Button>
+                </div>
+            </div>
+            <div className="item">
+                <div className="details">
+                    <label>Gas Rebates</label>
+                    <div className="balance">
+                        <div className="amount">0 <span className="primary-accent">WALLET</span></div>
+                        <div className="amount-dollar"><span className="secondary-accent">$</span> 0</div>
+                    </div>
+                </div>
+                <div className="actions">
+                    <Button small>CLAIM</Button>
+                </div>
             </div>
         </Modal>
     )
