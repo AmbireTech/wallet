@@ -62,6 +62,7 @@ export default function Wallet(props) {
         accounts={props.accounts}
         addressBook={props.addressBook}
         addRequest={props.addRequest}
+        showSendTxns={props.showSendTxns}
         onAddAccount={props.onAddAccount}
       />
     },
@@ -92,7 +93,7 @@ export default function Wallet(props) {
       path: '/gnosis/plugins',
       component: <PluginGnosisSafeApps
         gnosisConnect={props.gnosisConnect}
-        gnosisDisconnect={props.gnosisDisconnect}
+        gnosisDisconnect={props.showSendTxns}
         selectedAcc={props.selectedAcc}
         network={props.network}
       />
