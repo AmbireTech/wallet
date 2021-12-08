@@ -40,7 +40,7 @@ function makeBundle(account, networkId, requests) {
   return bundle
 }
 
-export default function SendTransaction({ relayerURL, accounts, network, selectedAcc, requests, resolveMany, replacementBundle, onDismiss }) {
+export default function SendTransaction({ relayerURL, accounts, network, selectedAcc, requests, resolveMany, replacementBundle, onBroadcastedTxn, onDismiss }) {
   // NOTE: this can be refactored at a top level to only pass the selected account (full object)
   // keeping it that way right now (selectedAcc, accounts) cause maybe we'll need the others at some point?
   const account = accounts.find(x => x.id === selectedAcc)
@@ -69,11 +69,12 @@ export default function SendTransaction({ relayerURL, accounts, network, selecte
       network={network}
       account={account}
       resolveMany={resolveMany}
+      onBroadcastedTxn={onBroadcastedTxn}
       onDismiss={onDismiss}
   />)
 }
 
-function SendTransactionWithBundle ({ bundle, network, account, resolveMany, relayerURL, onDismiss }) {
+function SendTransactionWithBundle ({ bundle, network, account, resolveMany, relayerURL, onBroadcastedTxn, onDismiss }) {
   const [estimation, setEstimation] = useState(null)
   const [signingStatus, setSigningStatus] = useState(false)
   const [feeSpeed, setFeeSpeed] = useState(DEFAULT_SPEED)
@@ -235,7 +236,6 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
     }
 
     const requestIds = bundle.requestIds
-    const blockExplorerUrl = network.explorerUrl
     const approveTxnPromise = bundle.signer.quickAccManager ?
       approveTxnImplQuickAcc({ quickAccCredentials })
       : approveTxnImpl()
@@ -251,10 +251,7 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
       if (!skipResolve && requestIds) resolveMany(requestIds, { success: bundleResult.success, result: bundleResult.txId, message: bundleResult.message })
 
       if (bundleResult.success) {
-        addToast((
-          <span>Transaction signed and sent successfully!
-            &nbsp;Click to view on block explorer.
-          </span>), { url: blockExplorerUrl+'/tx/'+bundleResult.txId, timeout: 15000 })
+        onBroadcastedTxn(bundleResult.txId)
         onDismiss()
       } else addToast(`Transaction error: ${bundleResult.message || 'unspecified error'}`, { error: true })
     })
