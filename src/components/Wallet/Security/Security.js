@@ -1,11 +1,10 @@
 import './Security.scss'
 
-import { MdOutlineAdd, MdOutlineRemove, MdOutlineWarningAmber } from 'react-icons/md'
+import { MdOutlineAdd, MdOutlineRemove } from 'react-icons/md'
 import { RiDragDropLine } from 'react-icons/ri'
-import { BiExport, BiImport } from 'react-icons/bi'
 import { useState, useEffect, useCallback } from 'react'
 import { Loading, TextInput, Button } from '../../common'
-import { Interface, AbiCoder, keccak256 } from 'ethers/lib/utils'
+import { Interface } from 'ethers/lib/utils'
 import accountPresets from '../../../consts/accountPresets'
 import privilegesOptions from '../../../consts/privilegesOptions'
 import { useRelayerData, useModals } from '../../../hooks'
@@ -18,7 +17,8 @@ import { useHistory } from 'react-router-dom'
 import { useDropzone } from 'react-dropzone'
 import { MdInfoOutline } from 'react-icons/md'
 import { validateImportedAccountProps, fileSizeValidator } from '../../../lib/validations/importedAccountValidations'
-import buildRecoveryBundle from '../../../helpers/recoveryBundle'
+import Backup from './Backup/Backup'
+import PendingRecoveryNotice from './PendingRecoveryNotice/PendingRecoveryNotice'
 
 const IDENTITY_INTERFACE = new Interface(
   require('adex-protocol-eth/abi/Identity5.2')
@@ -161,15 +161,6 @@ const Security = ({
     maxFiles: 1,
     validator: fileSizeValidator
   })
- 
-  const createRecoveryRequest = async () => {
-    const abiCoder = new AbiCoder()
-    const { timelock, one, two } = selectedAccount.signer
-    const quickAccountTuple = [timelock, one, two]
-    const newQuickAccHash = keccak256(abiCoder.encode(['tuple(uint, address, address)'], [quickAccountTuple]))
-    const bundle = buildRecoveryBundle(selectedAccount.id, selectedNetwork.id, selectedAccount.signer.preRecovery, newQuickAccHash)
-    showSendTxns(bundle)
-  }
 
   // @TODO relayerless mode: it's not that hard to implement in a primitive form, we need everything as-is
   // but rendering the initial privileges instead; or maybe using the relayerless transactions hook/service
@@ -227,23 +218,12 @@ const Security = ({
   const showLoading = isLoading && !data
   const signersFragment = relayerURL ? (<>
     <div className="panel" id="signers">
-      {recoveryLock && recoveryLock.status ?
-        <div className="notice" id="recovery-request-pending" onClick={() => createRecoveryRequest()}>
-          <MdOutlineWarningAmber/>
-          {
-            recoveryLock.status === 'requestedButNotInitiated' ?
-              <>Password reset requested but not initiated for {selectedNetwork.name}. Click here to initiate it.</> :
-            recoveryLock.status === 'initiationTxnPending' ?
-              <>Initiation transaction is currently pending. Once mined, you will need to wait {recoveryLock.days} days for the reset to be done on {selectedNetwork.name}.</> :
-            recoveryLock.status === 'waitingTimelock' ?
-              <>Password reset on {selectedNetwork.name} is currently pending. {recoveryLock.remainingDays} days remaining.</> :
-            recoveryLock.status === 'ready' ?
-              <>Password recovery was requested but is not initiated for {selectedNetwork.name}. Click here to do so.</> :
-            recoveryLock.status === 'failed' ?
-              <>Something went wrong while resetting your password. Please contact support at help.ambire.com</> : null
-          }
-        </div>
-      : null}
+      <PendingRecoveryNotice
+        recoveryLock={recoveryLock}
+        showSendTxns={showSendTxns}
+        selectedAccount={selectedAccount}
+        selectedNetwork={selectedNetwork}
+      />
 
       <div className='network-warning'>
         <MdInfoOutline size={36}></MdInfoOutline>
@@ -297,33 +277,7 @@ const Security = ({
         </div>
       </div>
 
-      <div id="backup">
-        <div className="panel">
-          <div className="panel-title">Backup current account</div>
-          <div className="content" id="export">
-            <a
-              type="button"
-              href={`data:text/json;charset=utf-8,${encodeURIComponent(
-                JSON.stringify(selectedAccount)
-              )}`}
-              download={`${selectedAccount.id}.json`}
-            >
-              <Button icon={<BiExport/>}>Export</Button>
-            </a>
-            <div style={{ fontSize: '0.9em' }}>
-            This downloads a backup of your current account ({selectedAccount.id.slice(0, 5)}...{selectedAccount.id.slice(-3)}) encrypted with
-            your password. This is safe to store in iCloud/Google Drive, but you cannot use it to restore your account if you forget the password.
-            </div>
-          </div>
-        </div>
-        <div className="panel">
-          <div className="panel-title">Import an account from backup</div>
-          <div className="content" id="import">
-            <Button icon={<BiImport/>} onClick={open}>Import</Button>
-            <p>...or you can drop an account backup JSON file on this page</p>
-          </div>
-        </div>
-      </div>
+      <Backup selectedAccount={selectedAccount} onOpen={open}/>
     </section>
   )
 }

@@ -109,15 +109,6 @@
           gap: 1em;
         }
       }
-
-      a {
-        button {
-          width: 100%;
-          background: orange;
-          max-width: 1800px;
-          font-size: 17px;
-        }
-      }
     }
   }
 
@@ -133,10 +124,6 @@
     svg {
       font-size: 1.5em;
     }
-  }
-
-  #recovery-request-pending {
-    cursor: pointer;
   }
 
   #addresses {
@@ -176,28 +163,6 @@
       .button {
         flex: 0 0 auto;
         width: 60px;
-      }
-    }
-  }
-
-  #backup {
-    flex-direction: row;
-    display: flex;
-    gap: 2em;
-
-    #export {
-      .buttonComponent {
-        height: 60px;
-        width: 100%;
-        background: orange;
-      }
-    }
-
-    #import {
-      .buttonComponent {
-        height: 60px;
-        width: 100%;
-        background: $secondary-accent-color;
       }
     }
   }
@@ -243,11 +208,6 @@
           padding-right: 5px;
         }
       }
-    }
-
-    #backup {
-      flex-direction: column;
-      gap: 1em;
     }
   }
 }
