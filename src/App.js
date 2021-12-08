@@ -187,7 +187,6 @@ function AppInner () {
           eligibleRequests={eligibleRequests}
           showSendTxns={showSendTxns}
           onAddAccount={onAddAccount}
-          setSendTxnState={setSendTxnState}
         >
         </Wallet>
       </Route>
