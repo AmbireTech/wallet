@@ -244,13 +244,6 @@ const Security = ({
 
   const showLoading = isLoading && !data
   const signersFragment = relayerURL ? (<>
-    {selectedAccount.preRecoverySigner ?
-      <div className="notice" id="recovery-request-pending" onClick={() => createRecoveryRequest()}>
-        <MdOutlineWarningAmber/>
-        Password recovery was requested but is not initiated for {selectedNetwork.name}. Click here to do so.
-      </div>
-    : null}
-
     { recoveryLock.status ? 
       <div className="notice">
         <MdOutlineWarningAmber/>
@@ -259,6 +252,13 @@ const Security = ({
     : null }
   
     <div className="panel" id="signers">
+      {selectedAccount.preRecoverySigner ?
+        <div className="notice" id="recovery-request-pending" onClick={() => createRecoveryRequest()}>
+          <MdOutlineWarningAmber/>
+          Password recovery was requested but is not initiated for {selectedNetwork.name}. Click here to do so.
+        </div>
+      : null}
+
       <div className='network-warning'>
         <MdInfoOutline size={36}></MdInfoOutline>
         <div>
