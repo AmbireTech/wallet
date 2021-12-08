@@ -18,8 +18,11 @@ const PendingRecoveryNotice = ({ recoveryLock, showSendTxns, selectedAccount, se
         if (seconds > 86400) return `${Math.ceil(seconds / 86400)} days`
         else return `${Math.ceil(seconds/1440)} hours`
     }
+    const style = isAlreadyInitiated
+        ? (recoveryLockStatus === 'ready' ? { 'background-color': '#6bad6b' } : {})
+        : { cursor: 'pointer' }
     return (
-        <div className="notice" style={isAlreadyInitiated ? {} : { cursor: 'pointer' }} onClick={() => createRecoveryRequest()}>
+        <div className="notice" style={style} onClick={() => createRecoveryRequest()}>
             <MdOutlineWarningAmber/>
             {
                 recoveryLockStatus === 'requestedButNotInitiated' ?
@@ -29,7 +32,7 @@ const PendingRecoveryNotice = ({ recoveryLock, showSendTxns, selectedAccount, se
                 recoveryLockStatus === 'waitingTimelock' ?
                     <>Password reset on {selectedNetwork.name} is currently pending. {remainingTime(recoveryLock.remaining)} remaining.</> :
                 recoveryLockStatus === 'ready' ?
-                    <>Password recovery was requested but is not initiated for {selectedNetwork.name}. Click here to do so.</> :
+                    <>Password reset on {selectedNetwork.name} is now complete! You can start signing transactions with your new password!</> :
                 recoveryLockStatus === 'failed' ?
                     <>Something went wrong while resetting your password. Please contact support at help.ambire.com</> : null
             }
