@@ -124,13 +124,11 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
 
   const getFinalBundle = () => {
     if (!relayerURL) {
-      const bndl = new Bundle({
+      return new Bundle({
         ...bundle,
         gasLimit: estimation.gasLimit
         // set nonce here when we implement "replace current pending transaction"
       })
-      if (bundle.recoveryMode) bndl.recoveryMode = true
-      return bndl
     }
 
     const feeToken = estimation.selectedFeeToken
@@ -146,13 +144,11 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
           * Math.pow(10, feeToken.decimals)
         )
     ])]
-    const bndl = new Bundle({
+    return new Bundle({
       ...bundle,
       txns: [...bundle.txns, feeTxn],
       gasLimit: estimation.gasLimit + addedGas + (bundle.extraGas || 0)
     })
-    if (bundle.recoveryMode) bndl.recoveryMode = true
-    return bndl
   }
 
   const approveTxnImpl = async () => {
@@ -196,7 +192,8 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
     const { signature, success, message, confCodeRequired } = await fetchPost(
       `${relayerURL}/second-key/${bundle.identity}/${network.id}/sign`, {
         signer, txns: finalBundle.txns, nonce: finalBundle.nonce, gasLimit: finalBundle.gasLimit,
-        code: quickAccCredentials && quickAccCredentials.code
+        code: quickAccCredentials && quickAccCredentials.code,
+        isNotDualSig: finalBundle.recoveryMode
       }
     )
     if (!success) {
