@@ -3,15 +3,20 @@ import './Accounts.scss'
 import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { AiOutlinePlus } from 'react-icons/ai'
-import { MdOutlineContentCopy, MdLogout, MdOutlineClose, MdOutlineCheck } from 'react-icons/md'
+import { MdOutlineContentCopy, MdLogout, MdOutlineClose, MdOutlineCheck, MdOutlineEdit } from 'react-icons/md'
 import * as blockies from 'blockies-ts';
 import { DropDown, Button } from '../../../common';
 import { useToasts } from '../../../../hooks/toasts';
+import { useModals } from '../../../../hooks';
+import { EditAddressModal } from '../../../Modals';
 
-const Accounts = ({ accounts, addresses, selectedAddress, onSelectAcc, onRemoveAccount }) => {
+const Accounts = ({ accounts, addressBook, selectedAddress, onSelectAcc, onRemoveAccount }) => {
     const { addToast } = useToasts()
+    const { showModal } = useModals()
     const [logoutWarning, setLogoutWarning] = useState(false)
     const [closed, setClosed] = useState(false)
+
+    const { addresses, updateAddress, addAddress } = addressBook
 
     const shortenedAddress = address => address.slice(0, 5) + '...' + address.slice(-3)
     const isActive = id => id === selectedAddress ? 'active' : ''
@@ -22,6 +27,9 @@ const Accounts = ({ accounts, addresses, selectedAddress, onSelectAcc, onRemoveA
         else if (signerExtra && signerExtra.type === 'trezor') return 'Trezor'
         else return 'Web3'
     }
+
+    const editAddress = id => showModal(<EditAddressModal id={id} addresses={addresses} updateAddress={updateAddress} addAddress={addAddress}/>)
+
     const copyAddress = async address => {
         await navigator.clipboard.writeText(address)
         addToast('Copied to clipboard!')
@@ -55,6 +63,9 @@ const Accounts = ({ accounts, addresses, selectedAddress, onSelectAcc, onRemoveA
                         <div className="buttons">
                             <div className="button" onClick={() => copyAddress(id)}>
                                 <MdOutlineContentCopy/>
+                            </div>
+                            <div className="button" onClick={() => editAddress(id)}>
+                                <MdOutlineEdit/>
                             </div>
                             <div className="button" onClick={() => setLogoutWarning(id)}>
                                 <MdLogout/>
