@@ -59,24 +59,6 @@ function AppInner () {
   const [internalRequests, setInternalRequests] = useState([])
   const addRequest = req => setInternalRequests(reqs => [...reqs, req])
 
-  const [sentTxn, setSentTxn] = useState([])
-  const onBroadcastedTxn = hash => {
-    setSentTxn(sentTxn => [...sentTxn, { confirmed: false, hash }])
-    addToast((
-      <span>Transaction signed and sent successfully!
-        &nbsp;Click to view on block explorer.
-      </span>
-    ), { url: network.explorerUrl+'/tx/'+hash, timeout: 15000 })
-  }
-  const confirmSentTx = txHash => setSentTxn(sentTxn => {
-    const tx = sentTxn.find(tx => tx.hash === txHash)
-    tx.confirmed = true
-    return [
-      ...sentTxn.filter(tx => tx.hash !== txHash),
-      tx
-    ]
-  })
-
   // Merge all requests
   const requests = useMemo(
     () => [...internalRequests, ...wcRequests, ...gnosisRequests]
@@ -128,6 +110,25 @@ function AppInner () {
     }
     return true
   }
+
+  // Keeping track of transactions
+  const [sentTxn, setSentTxn] = useState([])
+  const onBroadcastedTxn = hash => {
+    setSentTxn(sentTxn => [...sentTxn, { confirmed: false, hash }])
+    addToast((
+      <span>Transaction signed and sent successfully!
+        &nbsp;Click to view on block explorer.
+      </span>
+    ), { url: network.explorerUrl+'/tx/'+hash, timeout: 15000 })
+  }
+  const confirmSentTx = txHash => setSentTxn(sentTxn => {
+    const tx = sentTxn.find(tx => tx.hash === txHash)
+    tx.confirmed = true
+    return [
+      ...sentTxn.filter(tx => tx.hash !== txHash),
+      tx
+    ]
+  })
 
   // Show notifications for all requests
   useNotifications(requests, request => {
