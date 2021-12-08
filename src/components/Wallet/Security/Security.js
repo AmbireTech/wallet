@@ -172,10 +172,15 @@ const Security = ({
     })
     .filter(x => x)
 
-  const modalInputs = [{ label: 'Name', placeholder: 'My Address' }, { label: 'Address', placeholder: '0x', validate: value => isValidAddress(value) }] 
+  // Address book
+  const modalInputs = [
+    { label: 'Name', placeholder: 'My Address' },
+    { label: 'Address', placeholder: '0x', validate: value => isValidAddress(value) }
+  ]
   const inputModal = <InputModal title="Add New Address" inputs={modalInputs} onClose={([name, address]) => addAddress(name, address)}></InputModal>
   const showInputModal = () => showModal(inputModal)
 
+  // JSON import
   const onDrop = useCallback((acceptedFiles, rejectedFiles) => {
     const reader = new FileReader()
     
@@ -197,7 +202,6 @@ const Security = ({
       }
     }
   }, [addToast, onAddAccount])
-
   const { getRootProps, getInputProps, open, isDragActive, isDragAccept, isDragReject } = useDropzone({
     onDrop,
     noClick: true,
@@ -212,26 +216,16 @@ const Security = ({
   // and aggregate from that
 
   const createRecoveryRequest = async () => {
-    const extraEntropy = id(selectedAccount.email + ':' + Date.now() + ':' + Math.random() + ':' + (typeof performance === 'object' && performance.now()))
-    const firstKeyWallet = Wallet.createRandom({ extraEntropy })
-    const secondKeySecret = Wallet.createRandom({ extraEntropy }).mnemonic.phrase.split(' ').slice(0, 6).join(' ') + ' ' + selectedAccount.email
-
-    const secondKeyResp = await fetchPost(`${relayerURL}/second-key`, { secondKeySecret })
-    if (!secondKeyResp.address) throw new Error(`second-key returned no address, error: ${secondKeyResp.message || secondKeyResp}`)
-
-    const { quickAccTimelock } = accountPresets
     const abiCoder = new AbiCoder()
-    const quickAccountTuple = [quickAccTimelock, firstKeyWallet.address, secondKeyResp.address]
-
+    const { timelock, one, two } = selectedAccount.signer
+    const quickAccountTuple = [timelock, one, two]
     const newQuickAccHash = keccak256(abiCoder.encode(['tuple(uint, address, address)'], [quickAccountTuple]))
-
     const bundle = buildRecoveryBundle(selectedAccount.id, selectedNetwork.id, selectedAccount.signer.preRecovery, newQuickAccHash)
     showSendTxns(bundle)
   }
 
   const showLoading = isLoading && !data
   const signersFragment = relayerURL ? (<>
-  
     <div className="panel" id="signers">
       {recoveryLock && recoveryLock.status ?
         <div className="notice" id="recovery-request-pending" onClick={() => createRecoveryRequest()}>
