@@ -55,6 +55,7 @@ export function token(addr, amount) {
     const address = addr.toLowerCase()
     const assetInfo = tokens[address]
     if (assetInfo) {
+        if (!amount) return assetInfo[0]
         if (constants.MaxUint256.eq(amount)) return `maximum ${assetInfo[0]}`
         return `${formatUnits(amount, assetInfo[1])} ${assetInfo[0]}`
     } else {
@@ -75,8 +76,9 @@ export function setKnownAddresses(addrs) {
     addrs.forEach(({ address, name }) => knownAliases[address.toLowerCase()] = name)
 }
 
-export function isKnown(addr) {
-    const address = addr.toLowerCase()
+export function isKnown(txn, from) {
+    if (txn[0] === from) return true
+    const address = txn[0].toLowerCase()
     return !!(knownAliases[address] || names[address] || tokens[address])
 }
 

@@ -10,16 +10,23 @@
     }
 
     .panel {
+        min-width: 0;
         flex: 0 1 50%;
 
-        .title {
-            display: flex;
-            flex-direction: column;
+        .heading {
+            .title {
+                display: block;
+                overflow: hidden;
+                white-space: nowrap;
+                text-overflow: ellipsis;
+            }
 
             .contract {
                 font-size: 15px;
                 font-weight: 500;
                 opacity: 0.6;
+                overflow: hidden;
+                text-overflow: ellipsis;
             }
         }
 
@@ -36,6 +43,7 @@
         display: flex;
         flex-direction: column;
         gap: 10px;
+        overflow: hidden;
 
         .collection {
             font-size: 15px;
@@ -43,7 +51,7 @@
         }
 
         .image {
-            z-index: 48;
+            z-index: 47;
             height: 250px;
             width: 250px;
             @include flex-center-center;
@@ -83,6 +91,8 @@
             font-size: 15px;
             font-weight: 500;
             opacity: 0.6;
+            overflow: hidden;
+            white-space: nowrap;
 
             .address {
                 display: flex;
@@ -113,6 +123,27 @@
         .address-book {
             position: absolute !important;
             right: 0;
+        }
+    }
+}
+
+@media screen and (max-width: 1300px) {
+    #collectible {
+        flex-direction: column;
+        gap: 15px;
+    }
+}
+
+// Mobile
+@media screen and (max-width: $mobile-breakpoint-max-width) {
+    #collectible {
+        #recipient-address {
+            flex-direction: column;
+            gap: 10px;
+
+            .dropdown {
+                position: relative !important;
+            }
         }
     }
 }
