@@ -64,6 +64,7 @@ export default function Wallet(props) {
         addRequest={props.addRequest}
         showSendTxns={props.showSendTxns}
         onAddAccount={props.onAddAccount}
+        setSendTxnState={props.setSendTxnState}
       />
     },
     {
