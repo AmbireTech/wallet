@@ -24,8 +24,11 @@
             height: 100%;
             width: 100%;
             color: white;
+            font-family: 'Open Sans';
             font-size: 1.2em;
             padding: 1em;
+            border: none;
+            outline: none;
             text-overflow: ellipsis;
             background-color: $input-background-color;
             transition: all 0.1s ease-in-out;

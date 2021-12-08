@@ -78,3 +78,15 @@ $modal-width: 530px;
         width: 100vw;
     }
 }
+
+// Mobile
+@media screen and (max-width: $mobile-breakpoint-max-width) {
+    .modal {
+        height: 100% !important;
+        width: 100% !important;
+
+        .content {
+            padding: 1.5em;
+        }
+    }
+}

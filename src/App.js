@@ -21,6 +21,7 @@ import useWalletConnect from './hooks/walletconnect'
 import useGnosisSafe from './hooks/useGnosisSafe'
 import useNotifications from './hooks/notifications'
 import { useAttentionGrabber, usePortfolio, useAddressBook } from './hooks'
+import { useToasts } from './hooks/toasts'
 
 const relayerURL = process.env.hasOwnProperty('REACT_APP_RELAYER_URL') ? process.env.REACT_APP_RELAYER_URL : 'http://localhost:1934'
 
@@ -41,6 +42,7 @@ function AppInner () {
   const { accounts, selectedAcc, onSelectAcc, onAddAccount, onRemoveAccount } = useAccounts()
   const addressBook = useAddressBook({ accounts })
   const { network, setNetwork, allNetworks } = useNetwork()
+  const { addToast } = useToasts()
 
   // Signing requests: transactions/signed msgs: all requests are pushed into .requests
   const { connections, connect, disconnect, requests: wcRequests, resolveMany: wcResolveMany } = useWalletConnect({
@@ -56,6 +58,24 @@ function AppInner () {
   // unlike WalletConnect or SafeSDK requests, those do not need to be persisted
   const [internalRequests, setInternalRequests] = useState([])
   const addRequest = req => setInternalRequests(reqs => [...reqs, req])
+
+  const [sentTxn, setSentTxn] = useState([])
+  const onBroadcastedTxn = hash => {
+    setSentTxn(sentTxn => [...sentTxn, { confirmed: false, hash }])
+    addToast((
+      <span>Transaction signed and sent successfully!
+        &nbsp;Click to view on block explorer.
+      </span>
+    ), { url: network.explorerUrl+'/tx/'+hash, timeout: 15000 })
+  }
+  const confirmSentTx = txHash => setSentTxn(sentTxn => {
+    const tx = sentTxn.find(tx => tx.hash === txHash)
+    tx.confirmed = true
+    return [
+      ...sentTxn.filter(tx => tx.hash !== txHash),
+      tx
+    ]
+  })
 
   // Merge all requests
   const requests = useMemo(
@@ -114,7 +134,7 @@ function AppInner () {
     onSelectAcc(request.account)
     setNetwork(request.chainId)
     setSendTxnState(state => ({ ...state, showing: true }))
-  }, portfolio, selectedAcc, network)
+  }, portfolio, selectedAcc, network, sentTxn, confirmSentTx)
 
   useAttentionGrabber({
     eligibleRequests,
@@ -148,6 +168,7 @@ function AppInner () {
           relayerURL={relayerURL}
           onDismiss={() => setSendTxnState({ showing: false })}
           replacementBundle={sendTxnState.replacementBundle}
+          onBroadcastedTxn={onBroadcastedTxn}
       ></SendTransaction>
       ) : (<></>)
     }
