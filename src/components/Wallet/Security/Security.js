@@ -121,7 +121,6 @@ const Security = ({
       relayerURL={relayerURL}
       onAddAccount={onAddAccount}
       showSendTxns={showSendTxns}
-      recoveryMode={selectedAccount.primaryKeyBackup}
     />)
   }
   // Address book

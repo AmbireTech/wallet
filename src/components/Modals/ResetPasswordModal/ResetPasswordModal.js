@@ -11,7 +11,7 @@ import accountPresets from '../../../consts/accountPresets'
 import { fetchPost } from '../../../lib/fetch'
 import buildRecoveryBundle from '../../../helpers/recoveryBundle'
 
-const ResetPassword = ({ account, selectedNetwork, relayerURL, onAddAccount, showSendTxns, recoveryMode }) => {
+const ResetPassword = ({ account, selectedNetwork, relayerURL, onAddAccount, showSendTxns }) => {
     const { hideModal } = useModals()
     const { addToast } = useToasts()
 
@@ -29,13 +29,13 @@ const ResetPassword = ({ account, selectedNetwork, relayerURL, onAddAccount, sho
         {
             label: 'Change the password on this device and Ambire Cloud. Best if you just want to routinely change the password.',
             value: 'change',
-            disabled: recoveryMode
+            disabled: !account.primaryKeyBackup
         },
         {
             label: 'Reset the key and password: takes 3 days. Chose this if you\'ve forgotten the old password.',
             value: 'reset'
         }
-    ], [recoveryMode])
+    ], [!account.primaryKeyBackup])
 
     const checkboxes = useMemo(() => ([
         [
