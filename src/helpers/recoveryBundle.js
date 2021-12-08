@@ -1,11 +1,15 @@
 import { Bundle } from 'adex-protocol-eth'
-import { Interface } from 'ethers/lib/utils'
+import { Interface, keccak256, AbiCoder } from 'ethers/lib/utils'
 import accountPresets from '../consts/accountPresets'
 
 const IDENTITY_INTERFACE = new Interface(require('adex-protocol-eth/abi/Identity5.2'))
 const { quickAccManager } = accountPresets
 
-const buildRecoveryBundle = (identity, network, signer, newQuickAccHash) => {
+const buildRecoveryBundle = (identity, network, signer, newValues) => {
+    const abiCoder = new AbiCoder()
+    const { timelock, one, two } = newValues.signer
+    const newQuickAccHash = keccak256(abiCoder.encode(['tuple(uint, address, address)'], [[timelock, one, two]]))
+
     return new Bundle({
         identity,
         network,
@@ -18,7 +22,7 @@ const buildRecoveryBundle = (identity, network, signer, newQuickAccHash) => {
                 newQuickAccHash,
             ]),
         ]],
-        recoveryMode: true
+        recoveryMode: newValues
     })
 }
 

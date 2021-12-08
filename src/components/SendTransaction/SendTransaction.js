@@ -194,7 +194,8 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
       `${relayerURL}/second-key/${bundle.identity}/${network.id}/sign`, {
         signer, txns: finalBundle.txns, nonce: finalBundle.nonce, gasLimit: finalBundle.gasLimit,
         code: quickAccCredentials && quickAccCredentials.code,
-        isNotDualSig: finalBundle.recoveryMode
+        // This can be a boolean but it can also contain the new signer/primaryKeyBackup, which instructs /second-key to update acc upon successful signature
+        recoveryMode: finalBundle.recoveryMode
       }
     )
     if (!success) {
