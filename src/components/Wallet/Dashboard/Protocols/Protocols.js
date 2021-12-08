@@ -22,12 +22,8 @@ const Protocols = ({ protocols }) => {
                                             tokens.map(({ label, collectionName, symbol, img, collectionImg, tokenImageUrl, balance, balanceUSD, address }, i) => (
                                                 <div className="token" key={`token-${i}`}>
                                                     <div className="icon">
-                                                        {
-                                                            img || collectionImg || tokenImageUrl ?
-                                                                <img src={img || collectionImg || tokenImageUrl} alt="Token Icon"/>
-                                                                :
-                                                                <GiToken size={20}/>
-                                                        }
+                                                        <div className="icon-overlay" style={{backgroundImage: `url(${img || collectionImg || tokenImageUrl})`}}/>
+                                                        <GiToken size={20}/>
                                                     </div>
                                                     <div className="name">
                                                         { label || collectionName || symbol }
