@@ -1,7 +1,7 @@
 import './ResetPasswordModal.scss'
 
 import { Wallet } from 'ethers'
-import { AbiCoder, keccak256, id } from 'ethers/lib/utils'
+import { id } from 'ethers/lib/utils'
 import { useState, useMemo, createRef, useEffect, useCallback } from 'react'
 import { Modal, Radios, Checkbox, Button, ToolTip, Loading, PasswordInput } from '../../common'
 import { MdOutlineCheck, MdOutlineClose, MdOutlineHelpOutline } from 'react-icons/md'
@@ -116,21 +116,17 @@ const ResetPassword = ({ account, selectedNetwork, relayerURL, onAddAccount, sho
             const firstKeyWallet = Wallet.createRandom({ extraEntropy })
 
             const { quickAccManager, quickAccTimelock, encryptionOpts } = accountPresets
-            const quickAccountTuple = [quickAccTimelock, firstKeyWallet.address, account.signer.two]
             const signer = {
                 quickAccManager,
-                timelock: quickAccountTuple[0],
-                one: quickAccountTuple[1],
-                two: quickAccountTuple[2],
+                timelock: quickAccTimelock,
+                one: firstKeyWallet.address,
+                two: account.signer.two,
                 preRecovery: account.signer
             }
 
             const primaryKeyBackup = JSON.stringify(await firstKeyWallet.encrypt(newPassword, encryptionOpts))
 
-            const abiCoder = new AbiCoder()
-            const newQuickAccHash = keccak256(abiCoder.encode(['tuple(uint, address, address)'], [quickAccountTuple]))
-
-            const bundle = buildRecoveryBundle(account.id, selectedNetwork.id, signer.preRecovery, newQuickAccHash)
+            const bundle = buildRecoveryBundle(account.id, selectedNetwork.id, signer.preRecovery, { signer, primaryKeyBackup })
             hideModal()
             showSendTxns(bundle)
             onAddAccount({

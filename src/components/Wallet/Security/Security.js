@@ -4,7 +4,7 @@ import { MdOutlineAdd, MdOutlineRemove } from 'react-icons/md'
 import { RiDragDropLine } from 'react-icons/ri'
 import { useState, useEffect, useCallback } from 'react'
 import { Loading, TextInput, Button } from '../../common'
-import { Interface } from 'ethers/lib/utils'
+import { Interface, AbiCoder, keccak256 } from 'ethers/lib/utils'
 import accountPresets from '../../../consts/accountPresets'
 import privilegesOptions from '../../../consts/privilegesOptions'
 import { useRelayerData, useModals } from '../../../hooks'
@@ -165,6 +165,19 @@ const Security = ({
   // @TODO relayerless mode: it's not that hard to implement in a primitive form, we need everything as-is
   // but rendering the initial privileges instead; or maybe using the relayerless transactions hook/service
   // and aggregate from that
+  const accHash = signer => {
+      const abiCoder = new AbiCoder()
+      const { timelock, one, two } = signer
+      return keccak256(abiCoder.encode(['tuple(uint, address, address)'], [[timelock, one, two]]))
+  }
+  const hasPendingReset = (recoveryLock && recoveryLock.status)
+      || (
+          privileges && selectedAccount.signer.quickAccManager
+          // is or has been in recovery state
+          && selectedAccount.signer.preRecovery
+          // but that's not finalized yet
+          && accHash(selectedAccount.signer) !== privileges[selectedAccount.signer.quickAccManager]
+      )
   const privList = Object.entries(privileges)
     .map(([addr, privValue]) => {
       if (!privValue) return null
@@ -176,7 +189,7 @@ const Security = ({
         ? selectedAccount.signer.quickAccManager
         : selectedAccount.signer.address
       const isSelected = signerAddress === addr
-      const canChangePassword = isQuickAcc && !recoveryLock
+      const canChangePassword = isQuickAcc && !hasPendingReset
 
       return (
         <li key={addr}>
@@ -184,7 +197,7 @@ const Security = ({
           <div className="btns-wrapper">
             {isQuickAcc && (<Button
               disabled={!canChangePassword}
-              title={recoveryLock ? 'Account recovery already in progress' : ''}
+              title={hasPendingReset ? 'Account recovery already in progress' : ''}
               onClick={showResetPasswordModal} small>Change password</Button>
             )}
             <Button
@@ -218,14 +231,12 @@ const Security = ({
   const showLoading = isLoading && !data
   const signersFragment = relayerURL ? (<>
     <div className="panel" id="signers">
-      <PendingRecoveryNotice
+      {hasPendingReset && (<PendingRecoveryNotice
         recoveryLock={recoveryLock}
-        privileges={privileges}
         showSendTxns={showSendTxns}
         selectedAccount={selectedAccount}
         selectedNetwork={selectedNetwork}
-      />
-
+      />)}
       <div className='network-warning'>
         <MdInfoOutline size={36}></MdInfoOutline>
         <div>
