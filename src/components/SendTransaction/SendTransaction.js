@@ -124,11 +124,13 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
   }, [bundle, setEstimation, feeSpeed, addToast, network, relayerURL])
 
   const getFinalBundle = () => {
-    if (!relayerURL) return new Bundle({
-      ...bundle,
-      gasLimit: estimation.gasLimit
-      // set nonce here when we implement "replace current pending transaction"
-    })
+    if (!relayerURL) {
+      return new Bundle({
+        ...bundle,
+        gasLimit: estimation.gasLimit
+        // set nonce here when we implement "replace current pending transaction"
+      })
+    }
 
     const feeToken = estimation.selectedFeeToken
     const { addedGas, multiplier } = getFeePaymentConsequences(feeToken, estimation)
@@ -191,7 +193,9 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
     const { signature, success, message, confCodeRequired } = await fetchPost(
       `${relayerURL}/second-key/${bundle.identity}/${network.id}/sign`, {
         signer, txns: finalBundle.txns, nonce: finalBundle.nonce, gasLimit: finalBundle.gasLimit,
-        code: quickAccCredentials && quickAccCredentials.code
+        code: quickAccCredentials && quickAccCredentials.code,
+        // This can be a boolean but it can also contain the new signer/primaryKeyBackup, which instructs /second-key to update acc upon successful signature
+        recoveryMode: finalBundle.recoveryMode
       }
     )
     if (!success) {
