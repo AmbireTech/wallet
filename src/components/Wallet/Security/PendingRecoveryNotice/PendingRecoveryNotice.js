@@ -2,18 +2,28 @@ import { MdOutlineWarningAmber } from "react-icons/md"
 import { AbiCoder, keccak256 } from 'ethers/lib/utils'
 import buildRecoveryBundle from '../../../../helpers/recoveryBundle'
 
-const PendingRecoveryNotice = ({ recoveryLock, showSendTxns, selectedAccount, selectedNetwork }) => {
-    const createRecoveryRequest = async () => {
+const PendingRecoveryNotice = ({ recoveryLock, privileges, showSendTxns, selectedAccount, selectedNetwork }) => {
+    const accHash = signer => {
         const abiCoder = new AbiCoder()
-        const { timelock, one, two } = selectedAccount.signer
-        const quickAccountTuple = [timelock, one, two]
-        const newQuickAccHash = keccak256(abiCoder.encode(['tuple(uint, address, address)'], [quickAccountTuple]))
-        const bundle = buildRecoveryBundle(selectedAccount.id, selectedNetwork.id, selectedAccount.signer.preRecovery, newQuickAccHash)
+        const { timelock, one, two } = signer
+        return keccak256(abiCoder.encode(['tuple(uint, address, address)'], [[timelock, one, two]]))
+    }
+    const createRecoveryRequest = async () => {
+        const bundle = buildRecoveryBundle(selectedAccount.id, selectedNetwork.id, selectedAccount.signer.preRecovery, accHash(selectedAccount.signer))
         showSendTxns(bundle)
     }
 
+    const hasPendingReset = (recoveryLock && recoveryLock.status)
+        || (
+            privileges && selectedAccount.quickAccManager
+            // is or has been in recovery state
+            && selectedAccount.signer.preRecovery
+            // but that's not finalized yet
+            && accHash(selectedAccount.signer) !== privileges[selectedAccount.signer.quickAccManager]
+        )
+
     return (
-        recoveryLock && recoveryLock.status ?
+        hasPendingReset ?
             <div className="notice" id="recovery-request-pending" onClick={() => createRecoveryRequest()}>
                 <MdOutlineWarningAmber/>
                 {
