@@ -1,9 +1,10 @@
 import { MdOutlineWarningAmber } from "react-icons/md"
 import buildRecoveryBundle from '../../../../helpers/recoveryBundle'
-import './PendingRecoveryNotice.scss'
 
 const PendingRecoveryNotice = ({ recoveryLock, showSendTxns, selectedAccount, selectedNetwork }) => {
+    const isAlreadyInitiated = recoveryLock && recoveryLock.status !== 'requestedButNotInitiated'
     const createRecoveryRequest = async () => {
+        if (isAlreadyInitiated) return
         const bundle = buildRecoveryBundle(
             selectedAccount.id,
             selectedNetwork.id,
@@ -18,7 +19,7 @@ const PendingRecoveryNotice = ({ recoveryLock, showSendTxns, selectedAccount, se
         else return `${Math.ceil(seconds/1440)} hours`
     }
     return (
-        <div className="notice" id="recovery-request-pending" onClick={() => createRecoveryRequest()}>
+        <div className="notice" style={isAlreadyInitiated ? {} : { cursor: 'pointer' }} onClick={() => createRecoveryRequest()}>
             <MdOutlineWarningAmber/>
             {
                 recoveryLockStatus === 'requestedButNotInitiated' ?
