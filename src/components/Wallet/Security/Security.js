@@ -5,7 +5,7 @@ import { RiDragDropLine } from 'react-icons/ri'
 import { BiExport, BiImport } from 'react-icons/bi'
 import { useState, useEffect, useCallback } from 'react'
 import { Loading, TextInput, Button } from '../../common'
-import { Interface } from 'ethers/lib/utils'
+import { Interface, AbiCoder, keccak256, id } from 'ethers/lib/utils'
 import accountPresets from '../../../consts/accountPresets'
 import privilegesOptions from '../../../consts/privilegesOptions'
 import { useRelayerData, useModals } from '../../../hooks'
@@ -18,6 +18,9 @@ import { useHistory } from 'react-router-dom'
 import { useDropzone } from 'react-dropzone'
 import { MdInfoOutline } from 'react-icons/md'
 import { validateImportedAccountProps, fileSizeValidator } from '../../../lib/validations/importedAccountValidations'
+import { Bundle } from 'adex-protocol-eth'
+import { fetchPost } from '../../../lib/fetch'
+import { Wallet } from '@ethersproject/wallet'
 
 const IDENTITY_INTERFACE = new Interface(
   require('adex-protocol-eth/abi/Identity5.2')
@@ -33,8 +36,7 @@ const Security = ({
   addressBook,
   addRequest,
   showSendTxns,
-  onAddAccount,
-  setSendTxnState
+  onAddAccount
 }) => {
   const { addresses, addAddress, removeAddress } = addressBook
 
@@ -141,7 +143,7 @@ const Security = ({
         <li key={addr}>
           <TextInput className="depositAddress" value={privText} disabled />
           <div className="btns-wrapper">
-            {isQuickAcc && selectedAccount.primaryKeyBackup && (<Button onClick={showResetPasswordModal} small>Change password</Button>)}
+            {isQuickAcc && selectedAccount.primaryKeyBackup && !selectedAccount.preRecoverySigner && (<Button onClick={showResetPasswordModal} small>Change password</Button>)}
             <Button
               disabled={isSelected}
               title={isSelected ? 'Signer is already default' : ''}
@@ -209,15 +211,39 @@ const Security = ({
   // but rendering the initial privileges instead; or maybe using the relayerless transactions hook/service
   // and aggregate from that
 
+  const createRecoveryRequest = async () => {
+    const extraEntropy = id(selectedAccount.email + ':' + Date.now() + ':' + Math.random() + ':' + (typeof performance === 'object' && performance.now()))
+    const firstKeyWallet = Wallet.createRandom({ extraEntropy })
+    const secondKeySecret = Wallet.createRandom({ extraEntropy }).mnemonic.phrase.split(' ').slice(0, 6).join(' ') + ' ' + selectedAccount.email
+
+    const secondKeyResp = await fetchPost(`${relayerURL}/second-key`, { secondKeySecret })
+    if (!secondKeyResp.address) throw new Error(`second-key returned no address, error: ${secondKeyResp.message || secondKeyResp}`)
+
+    const { quickAccManager, quickAccTimelock } = accountPresets
+    const abiCoder = new AbiCoder()
+    const quickAccountTuple = [quickAccTimelock, firstKeyWallet.address, secondKeyResp.address]
+
+    const newQuickAccHash = keccak256(abiCoder.encode(['tuple(uint, address, address)'], [quickAccountTuple]))
+
+    const recoveryBundle = new Bundle({
+      identity: selectedAccount.id,
+      network: selectedNetwork.id,
+      signer: selectedAccount.preRecoverySigner,
+      txns: [[
+        selectedAccount.id,
+        '0x00',
+        IDENTITY_INTERFACE.encodeFunctionData('setAddrPrivilege', [
+          quickAccManager,
+          newQuickAccHash,
+        ]),
+      ]]
+    })
+    recoveryBundle.recoveryMode = true
+    showSendTxns(recoveryBundle)
+  }
+
   const showLoading = isLoading && !data
   const signersFragment = relayerURL ? (<>
-    {selectedAccount.preRecoverySigner ?
-      <div className="notice" id="recovery-request-pending" onClick={() => setSendTxnState({ showing: true })}>
-        <MdOutlineWarningAmber/>
-        Password recovery was requested but is not initiated for {selectedNetwork.name}. Click here to do so.
-      </div>
-    : null}
-
     { recoveryLock.status ? 
       <div className="notice">
         <MdOutlineWarningAmber/>
@@ -226,6 +252,13 @@ const Security = ({
     : null }
   
     <div className="panel" id="signers">
+      {selectedAccount.preRecoverySigner ?
+        <div className="notice" id="recovery-request-pending" onClick={() => createRecoveryRequest()}>
+          <MdOutlineWarningAmber/>
+          Password recovery was requested but is not initiated for {selectedNetwork.name}. Click here to do so.
+        </div>
+      : null}
+
       <div className='network-warning'>
         <MdInfoOutline size={36}></MdInfoOutline>
         <div>
