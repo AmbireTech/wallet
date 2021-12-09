@@ -2,8 +2,9 @@ import './EditAddressModal.scss'
 
 import { MdOutlineClose, MdOutlineSave } from 'react-icons/md'
 import { Button, Modal, TextInput } from '../../common'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useModals } from '../../../hooks'
+import { validateENSDomain } from '../../../lib/validations/formValidations'
 
 const EditAddressModal = ({ id, addresses, updateAddress, addAddress }) => {
     const { hideModal } = useModals()
@@ -11,13 +12,17 @@ const EditAddressModal = ({ id, addresses, updateAddress, addAddress }) => {
 
     const [name, setName] = useState(addressEntry ? addressEntry.name : '')
     const [ens, setEns] = useState(addressEntry ? addressEntry.ens : '')
-
-    const disabled = !(name && name.length)
+    const [disabled, setDisabled] = useState(false)
 
     const onSave = () => {
         addressEntry ? updateAddress(addressEntry.id, { name, ens }) : addAddress(name, id)
         hideModal()
     }
+
+    useEffect(() => {
+        const isENSValid = validateENSDomain(ens)
+        setDisabled(!name.length || (ens.length && !isENSValid.success))
+    }, [name, ens])
 
     return (
         <Modal
@@ -36,7 +41,7 @@ const EditAddressModal = ({ id, addresses, updateAddress, addAddress }) => {
                     onInput={value => setName(value)}
                 />
                 <TextInput
-                    label="ENS"
+                    label="ENS Domain"
                     value={ens}
                     onInput={value => setEns(value)}
                 />

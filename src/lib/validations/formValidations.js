@@ -110,9 +110,23 @@ const validateSendNftAddress = (address, selectedAcc, addressConfirmed, isKnownA
     return { success: true }
 }
 
+const validateENSDomain = (address) => {
+    const regex = /[a-zA-Z0-9][a-zA-Z0-9-]+.eth/g
+
+    if (!address || !regex.test(address)) {
+        return {
+            success: false,
+            message: `This ENS domain is invalid.`
+        }
+    }
+
+    return { success: true }
+}
+
 export {
     validateAddAuthSignerAddress,
     validateSendNftAddress,
     validateSendTransferAddress,
-    validateSendTransferAmount
+    validateSendTransferAmount,
+    validateENSDomain
 }
