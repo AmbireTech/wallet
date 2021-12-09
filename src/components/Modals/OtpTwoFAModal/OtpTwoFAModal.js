@@ -11,7 +11,7 @@ import { useModals } from '../../../hooks'
 
 const otpSecret = authenticator.generateSecret(20)
 
-const OtpTwoFAModal = ({ relayerURL, selectedAcc }) => {
+const OtpTwoFAModal = ({ relayerURL, selectedAcc, setCacheBreak }) => {
     const { hideModal } = useModals()
     const { addToast } = useToasts()
 
@@ -33,14 +33,14 @@ const OtpTwoFAModal = ({ relayerURL, selectedAcc }) => {
         QRCode.toDataURL(otpAuth, (error, url) => {
             if (error) {
                 console.log(error)
-                alert(error.message)
+                addToast(error.message, { error: true })
             } else {
                 setImageURL(url)
             }
         })
     }
 
-    useEffect(generateQR, [imageURL, selectedAcc.email])
+    useEffect(generateQR, [addToast, imageURL, selectedAcc.email])
 
     const handleSubmit = e => {
         e.preventDefault()
@@ -53,24 +53,23 @@ const OtpTwoFAModal = ({ relayerURL, selectedAcc }) => {
 
         if (isValid) {
             setLoading(true)
-            await new Promise(resolve => setTimeout(resolve))
-
+            
             try {
                 const wallet = await Wallet.fromEncryptedJson(
                     JSON.parse(selectedAcc.primaryKeyBackup),
                     currentPassword
                 )
                 const sig = await wallet.signMessage(JSON.stringify({ otp }))
-                const resp = await fetchPost(
-                    `${relayerURL}/identity/${selectedAcc.id}/modify`,
-                    { otp, sig }
-                )
+                const resp = await fetchPost(`${relayerURL}/identity/${selectedAcc.id}/modify`, { otp, sig })
 
                 if (resp.success) {
+                    addToast(`You have successfully enabled two-factor authentication.`)
+                    setCacheBreak()
+                    resetForm()
                     hideModal()
                 } else {
                     throw new Error(
-                        `Unable to update account: ${
+                        `OTP error: ${
                             resp.message || 'unknown error'
                         }`
                     )
@@ -82,9 +81,15 @@ const OtpTwoFAModal = ({ relayerURL, selectedAcc }) => {
 
             setLoading(false)
         } else {
-            addToast('The Code is not valid', { error: true })
+            addToast('OTP ERROR: The Code is not valid', { error: true })
         }
     }
+
+    const resetForm = () => {
+        setCurrentPassword('')
+        setReceivedOTP('')
+    }
+
     return (
         <Modal title="Two Factor Authentication">
             {isLoading ? (
@@ -93,43 +98,39 @@ const OtpTwoFAModal = ({ relayerURL, selectedAcc }) => {
                 </div>
             ) : null}
             <div id="otp-auth">
-                <div>
+                <div className="img-wrapper">
                     <img alt="qr-code" src={imageURL}></img>
-                    <div>
-                        Unable to see?{' '}
-                        <span
-                            onClick={() => {
-                                setShowSecret(prevState => !prevState)
-                            }}
-                        >
-                            Click
-                        </span>
-                    </div>
+                </div>
+                <div className="img-msg" style={{ marginBottom: showSecret ? '0px' : '22px'}}>
+                    Unable to see?{' '}
+                    <span className="click-here" onClick={() => { setShowSecret(prevState => !prevState) }}>
+                        Click here.
+                    </span>
                     {showSecret && <div>{otpSecret}</div>}
                 </div>
                 <form onSubmit={handleSubmit}>
                     <div>
-                        <h4>Enter your account password</h4>
+                        <h4>Account password</h4>
                         <TextInput
                             password
                             required
                             pattern=".{8,}"
                             autocomplete="current-password"
-                            placeholder="Account Password"
+                            placeholder="Enter the account password"
                             onInput={value => setCurrentPassword(value)}
                         />
-                        <h4>Confirm</h4>
+                        <h4>Authenticator app code</h4>
                         <TextInput
-                            placeholder="Enter the code"
+                            placeholder="Enter the code from authenticator app"
                             onInput={setReceivedOTP}
                             value={receivedOtp}
                             pattern="[0-9]{6}"
                             required
                         />
                     </div>
-                    <br />
-
-                    <Button type="submit">OK</Button>
+                    <div className="buttons">
+                        <Button type="submit">OK</Button>
+                    </div>
                 </form>
             </div>
         </Modal>

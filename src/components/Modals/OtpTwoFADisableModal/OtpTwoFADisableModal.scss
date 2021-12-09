@@ -1,0 +1,17 @@
+#disable-otp-modal {
+    form {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        
+        div {
+            width: 100%;
+        }
+        
+        button { 
+            flex: 0 1 100% !important;
+            width: 100%;
+        }
+    }
+}
