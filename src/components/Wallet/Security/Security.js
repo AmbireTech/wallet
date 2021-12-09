@@ -19,6 +19,7 @@ import { useDropzone } from 'react-dropzone'
 import { MdInfoOutline } from 'react-icons/md'
 import { validateImportedAccountProps, fileSizeValidator } from '../../../lib/validations/importedAccountValidations'
 import OtpTwoFAModal from '../../Modals/OtpTwoFAModal/OtpTwoFAModal'
+import OtpTwoFADisableModal from '../../Modals/OtpTwoFADisableModal/OtpTwoFADisableModal'
 
 const IDENTITY_INTERFACE = new Interface(
   require('adex-protocol-eth/abi/Identity5.2')
@@ -126,16 +127,27 @@ const Security = ({
       return addToast('Unsupported without a connection to the relayer', { error: true })
     }
 
-    showModal(<OtpTwoFAModal relayerURL={relayerURL} selectedAcc={selectedAccount} />)
+    showModal(<OtpTwoFAModal 
+      relayerURL={relayerURL} 
+      selectedAcc={selectedAccount} 
+      setCacheBreak={() => { setCacheBreak(Date.now()) }} 
+      />)
   }
 
-  const handleDisableOtp = () => {
-    //TODO: implement disable otp
-    addToast('coming soon')
+  const handleDisableOtp = async() => {
+    if (!relayerURL) {
+      return addToast('Unsupported without a connection to the relayer', { error: true })
+    }
+    
+    showModal(<OtpTwoFADisableModal 
+      relayerURL={relayerURL} 
+      selectedAcc={selectedAccount} 
+      setCacheBreak={() => { setCacheBreak(Date.now()) }} 
+      />)
   }
 
   const selectedAccount = accounts.find(x => x.id === selectedAcc)
-
+  
   const privList = Object.entries(privileges)
     .map(([addr, privValue]) => {
       if (!privValue) return null

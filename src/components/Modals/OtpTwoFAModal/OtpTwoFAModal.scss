@@ -1,13 +1,50 @@
+@import '../../../variables.scss';
+
 #otp-auth {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
+    .img-wrapper {
+        display: flex;
+        justify-content: center;
+        
+        img {
+            width: 180px;
+        }
+    }
+
+    .img-msg {
+        text-align: center;
+        margin-top: 10px;
+
+        div { 
+            color: $primary-accent-color;
+        }
+
+        .click-here {
+            cursor: pointer;
+            color: #cccccc;
+        }
+    
+        .click-here:hover {
+            color: white;
+        }
+    }
 
     form {
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
+        
+        div {
+            width: 100%;
+
+            h4:first-child {
+                margin-top: 10px;
+            }
+        }
+        
+        button { 
+            width: 100%;
+            flex: 0 1 100% !important;
+        }
     }
 }
