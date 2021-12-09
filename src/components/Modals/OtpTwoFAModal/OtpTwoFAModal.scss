@@ -20,11 +20,11 @@
 
         .click-here {
             cursor: pointer;
-            color: #cccccc;
+            opacity: 0.7;
         }
     
         .click-here:hover {
-            color: white;
+            opacity: 1;
         }
     }
 
