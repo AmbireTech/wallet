@@ -1,12 +1,18 @@
 import './Quotes.scss'
 
 import { MdOutlineArrowBack, MdOutlineArrowForward, MdOutlineCheck, MdOutlineClose } from 'react-icons/md';
+import { Interface } from '@ethersproject/abi'
 import { Button, Loading, Radios } from '../../../../common';
 import { useState } from 'react';
 import networks from '../../../../../consts/networks';
 import { approvalBuildTx, sendBuildTx } from '../../../../../services/movr';
 import { useToasts } from '../../../../../hooks/toasts';
+import AmbireBatcherABI from '../../../../../consts/AmbireBatcherABI.json'
+import ERC20ABI from 'adex-protocol-eth/abi/ERC20.json'
 
+const BATCHER_ADDRESS = '0x460fad03099f67391d84c9cc0ea7aa2457969cea'
+const BATCHER_INTERFACE = new Interface(AmbireBatcherABI)
+const ERC20_INTERFACE = new Interface(ERC20ABI)
 
 const formatAmount = (amount, asset) => amount / Math.pow(10, asset.decimals)
 const formatFeeAmount = (fee, route) => {
@@ -84,16 +90,15 @@ const Quotes = ({ addRequest, selectedAccount, fromTokensItems, quotes, onCancel
         value: routePath
     }))
 
-    const sendTx = (id, chainId, to, data, value = '0x00') => {
+    const addTxRequest = (id, chainId, tx) => {
         addRequest({
             id,
             chainId,
             account: selectedAccount,
             type: 'eth_sendTransaction',
             txn: {
-                to,
-                data,
-                value
+                ...tx,
+                value: tx.value || '0'
             }
         })
     }
@@ -102,8 +107,8 @@ const Quotes = ({ addRequest, selectedAccount, fromTokensItems, quotes, onCancel
         setLoading(true)
 
         try {
-            const { allowanceTarget, isApprovalRequired, middlewareRoute, bridgeRoute, routePath } = routes.find(({ routePath }) => routePath === selectedRoute)
-
+            const { allowanceTarget, middlewareRoute, bridgeRoute, routePath } = routes.find(({ routePath }) => routePath === selectedRoute)
+            
             let fromAsset, inputAmount = null
             if (middlewareRoute) {
                 fromAsset = middlewareRoute.fromAsset
@@ -112,16 +117,42 @@ const Quotes = ({ addRequest, selectedAccount, fromTokensItems, quotes, onCancel
                 fromAsset = bridgeRoute.fromAsset
                 inputAmount = bridgeRoute.inputAmount
             }
-
-            const { toAsset, outputAmount } = bridgeRoute
             
-            if (isApprovalRequired) {
-                const { to, data } = await approvalBuildTx(fromAsset.chainId, selectedAccount, allowanceTarget, fromAsset.address, inputAmount)
-                sendTx(`transfer_approval_crosschain_${Date.now()}`, fromAsset.chainId, to, data)
+            const { toAsset, outputAmount } = bridgeRoute
+            let transferTx = {
+                to: fromAsset.address,
+                value: '0',
+                data: ERC20_INTERFACE.encodeFunctionData('transfer', [BATCHER_ADDRESS, inputAmount]),
+            }
+
+            if (Number(fromAsset.address) === 0) {
+                transferTx = {
+                    to: BATCHER_ADDRESS,
+                    value: inputAmount,
+                    data: '0x'
+                }
+            }
+
+            addTxRequest(`batcher_transfer_amount`, fromAsset.chainId, transferTx)
+
+            const { to, data } = await approvalBuildTx(fromAsset.chainId, BATCHER_ADDRESS, allowanceTarget, fromAsset.address, inputAmount)
+            const approveCallTx = {
+                to,
+                data,
+                value: '0x00'
             }
 
             const { tx } = await sendBuildTx(selectedAccount, fromAsset.address, fromAsset.chainId, toAsset.address, toAsset.chainId, inputAmount, outputAmount, routePath)
-            sendTx(`transfer_send_crosschain_${Date.now()}`, fromAsset.chainId, tx.to, tx.data, tx.value.hex)
+            const batchCallTx = {
+                to: tx.to,
+                value: tx.value.hex,
+                data: tx.data,
+            }
+
+            addTxRequest(`batcher_call_crosschain_${Date.now()}`, fromAsset.chainId, {
+                to: BATCHER_ADDRESS,
+                data:BATCHER_INTERFACE.encodeFunctionData('batchCall', [[approveCallTx, batchCallTx]])
+            })
 
             onCancel()
         } catch(e) {
