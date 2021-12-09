@@ -37,11 +37,13 @@ const EditAddressModal = ({ id, addresses, updateAddress, addAddress }) => {
                 />
                 <TextInput
                     label="Name"
+                    placeholder="My Account"
                     value={name}
                     onInput={value => setName(value)}
                 />
                 <TextInput
                     label="ENS Domain"
+                    placeholder="my-domain.eth"
                     value={ens}
                     onInput={value => setEns(value)}
                 />
