@@ -1,15 +1,17 @@
 import './ResetPasswordModal.scss'
 
 import { Wallet } from 'ethers'
+import { id } from 'ethers/lib/utils'
 import { useState, useMemo, createRef, useEffect, useCallback } from 'react'
-import { Modal, Radios, TextInput, Checkbox, Button, ToolTip, Loading } from '../../common'
+import { Modal, Radios, Checkbox, Button, ToolTip, Loading, PasswordInput } from '../../common'
 import { MdOutlineCheck, MdOutlineClose, MdOutlineHelpOutline } from 'react-icons/md'
 import { useModals } from '../../../hooks'
 import { useToasts } from '../../../hooks/toasts'
 import accountPresets from '../../../consts/accountPresets'
 import { fetchPost } from '../../../lib/fetch'
+import buildRecoveryBundle from '../../../helpers/recoveryBundle'
 
-const ResetPassword = ({ account, selectedNetwork, relayerURL, onAddAccount }) => {
+const ResetPassword = ({ account, selectedNetwork, relayerURL, onAddAccount, showSendTxns }) => {
     const { hideModal } = useModals()
     const { addToast } = useToasts()
 
@@ -26,13 +28,14 @@ const ResetPassword = ({ account, selectedNetwork, relayerURL, onAddAccount }) =
     const radios = useMemo(() => [
         {
             label: 'Change the password on this device and Ambire Cloud. Best if you just want to routinely change the password.',
-            value: 'change'
+            value: 'change',
+            disabled: !account.primaryKeyBackup
         },
-        // {
-        //     label: 'Reset the key and password: takes 3 days. Best if you\'ve forgotten the old password.',
-        //     value: 'forgot'
-        // }
-    ], [])
+        {
+            label: 'Reset the key and password: takes 3 days. Chose this if you\'ve forgotten the old password.',
+            value: 'reset'
+        }
+    ], [account.primaryKeyBackup])
 
     const checkboxes = useMemo(() => ([
         [
@@ -51,15 +54,17 @@ const ResetPassword = ({ account, selectedNetwork, relayerURL, onAddAccount }) =
         ],
         [
             {
-                label: `I understand I am only changing the password on the ${selectedNetwork.name} network`,
+                label: <>
+                    I understand I am only changing the password on the {selectedNetwork.name} network.
+                    <ToolTip
+                        label="You will be able to trigger the change for other networks by switching the network">
+                        <MdOutlineHelpOutline/>
+                    </ToolTip>
+                </>,
                 ref: createRef()
             },
             {
-                label: `I confirm the fee of <...> to apply this change on ${selectedNetwork.name}`,
-                ref: createRef()
-            },
-            {
-                label: 'I understand I need to wait for 3 days for the change to be confirmed',
+                label: 'I understand I need to wait for 3 days for the change to be finalized.',
                 ref: createRef()
             }
         ]
@@ -76,6 +81,7 @@ const ResetPassword = ({ account, selectedNetwork, relayerURL, onAddAccount }) =
 
     const changePassword = async () => {
         setLoading(true)
+        // let react do one tick of rerendering before we block on .encrypt/.signMessage
         await new Promise(resolve => setTimeout(resolve))
 
         try {
@@ -93,7 +99,45 @@ const ResetPassword = ({ account, selectedNetwork, relayerURL, onAddAccount }) =
             }
         } catch(e) {
             console.error(e)
-            addToast(e.message || e, { error: true })
+            addToast('Changing password error: '+(e.message || e), { error: true })
+        }
+
+        setLoading(false)
+    }
+
+    const resetPassword = async () => {
+        setLoading(true)
+        // let react do one tick of rerendering before we block on .encrypt/.signMessage
+        await new Promise(resolve => setTimeout(resolve))
+
+        try {
+            // @TODO: move extraEntropy to a util
+            const extraEntropy = id(account.email + ':' + Date.now() + ':' + Math.random() + ':' + (typeof performance === 'object' && performance.now()))
+            const firstKeyWallet = Wallet.createRandom({ extraEntropy })
+
+            const { quickAccManager, quickAccTimelock, encryptionOpts } = accountPresets
+            const signer = {
+                quickAccManager,
+                timelock: quickAccTimelock,
+                one: firstKeyWallet.address,
+                two: account.signer.two,
+                preRecovery: account.signer
+            }
+
+            const primaryKeyBackup = JSON.stringify(await firstKeyWallet.encrypt(newPassword, encryptionOpts))
+
+            const bundle = buildRecoveryBundle(account.id, selectedNetwork.id, signer.preRecovery, { signer, primaryKeyBackup })
+            hideModal()
+            showSendTxns(bundle)
+            onAddAccount({
+                ...account,
+                primaryKeyBackup,
+                signer,
+                preRecoveryPrimaryKeyBackup: account.primaryKeyBackup
+            }, { select: true })
+        } catch(e) {
+            console.error(e);
+            addToast('Reset password error: ' + (e.message || e), { error: true })
         }
 
         setLoading(false)
@@ -130,8 +174,13 @@ const ResetPassword = ({ account, selectedNetwork, relayerURL, onAddAccount }) =
 
     useEffect(() => validateForm(), [isLoading, validateForm, oldPassword, newPassword, newPasswordConfirm])
 
+    const modalButtons = <>
+        <Button icon={<MdOutlineClose/>} clear onClick={() => hideModal()}>Cancel</Button>
+        <Button icon={<MdOutlineCheck/>} disabled={disabled} onClick={() => type === 'change' ? changePassword(): resetPassword()}>Confirm</Button>
+    </>
+
     return (
-        <Modal id="reset-password-modal" title="Reset Password">
+        <Modal id="reset-password-modal" title="Reset Password" buttons={modalButtons}>
             {
                 isLoading ?
                     <div id="loading-overlay">
@@ -144,9 +193,9 @@ const ResetPassword = ({ account, selectedNetwork, relayerURL, onAddAccount }) =
             {
                 type === 'change' ?
                     <form>
-                        <TextInput password autocomplete="current-password" placeholder="Old Password" onInput={value => setOldPassword(value)}/>
-                        <TextInput password autocomplete="new-password" placeholder="New Password" onInput={value => setNewPassword(value)}/>
-                        <TextInput password autocomplete="new-password" placeholder="Confirm New Password" onInput={value => setNewPasswordConfirm(value)}/>
+                        <PasswordInput autocomplete="current-password" placeholder="Old Password" onInput={value => setOldPassword(value)}/>
+                        <PasswordInput peakPassword autocomplete="new-password" placeholder="New Password" onInput={value => setNewPassword(value)}/>
+                        <PasswordInput autocomplete="new-password" placeholder="Confirm New Password" onInput={value => setNewPasswordConfirm(value)}/>
                         {
                             checkboxes[0].map(({ label, ref }, i) => (
                                 <Checkbox key={`checkbox-${i}`} ref={ref} label={label} onChange={() => validateForm()}/>
@@ -157,8 +206,8 @@ const ResetPassword = ({ account, selectedNetwork, relayerURL, onAddAccount }) =
             {
                 type === 'reset' ?
                     <form>
-                        <TextInput password autocomplete="new-password" placeholder="New Password" onInput={value => setNewPassword(value)}/>
-                        <TextInput password autocomplete="new-password" placeholder="Confirm New Password" onInput={value => setNewPasswordConfirm(value)}/>
+                        <PasswordInput peakPassword autocomplete="new-password" placeholder="New Password" onInput={value => setNewPassword(value)}/>
+                        <PasswordInput autocomplete="new-password" placeholder="Confirm New Password" onInput={value => setNewPasswordConfirm(value)}/>
                         {
                             checkboxes[1].map(({ label, ref }, i) => (
                                 <Checkbox key={`checkbox-${i}`} ref={ref} label={label} onChange={() => validateForm()}/>
@@ -175,10 +224,6 @@ const ResetPassword = ({ account, selectedNetwork, relayerURL, onAddAccount }) =
                     passwordsLengthWarning ?
                         <div className="warning">Password length must be greater than 8 characters</div> : null
                 }
-            </div>
-            <div className="buttons">
-                <Button icon={<MdOutlineClose/>} clear onClick={() => hideModal()}>Cancel</Button>
-                <Button icon={<MdOutlineCheck/>} disabled={disabled} onClick={() => changePassword()}>Confirm</Button>
             </div>
         </Modal>
     )

@@ -11,17 +11,17 @@ function getNetworkSymbol(networkId) {
   const network = networks.find(x => x.id === networkId)
   return network ? network.nativeAssetSymbol : 'UNKNW'
 }
-export default function TxnPreview ({ txn, onDismiss, network, account, isFirstFailing, mined }) {
+export default function TxnPreview ({ txn, onDismiss, network, account, isFirstFailing, mined, disableExpand }) {
   const [isExpanded, setExpanded] = useState(false)
   const contractName = getName(txn[0], network)
   return (
     <div className={isFirstFailing ? 'txnPreview firstFailing' : 'txnPreview'}>
-        <div className="heading" onClick={() => setExpanded(e => !e)}>
+        <div className="heading" onClick={() => !disableExpand && setExpanded(e => !e)}>
           <div className="info">
             <div className="summary-container">
-              <div className='expandTxn'>
+              {!disableExpand && (<div className='expandTxn'>
                 {isExpanded ? (<FaChevronDown/>) : (<FaChevronUp/>)}
-              </div>
+              </div>)}
               <div className="summary">{getTransactionSummary(txn, network, account, { mined })}</div>
             </div>
             {isFirstFailing && (<div className='firstFailingLabel'>This is the first failing transaction.</div>)}
