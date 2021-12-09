@@ -27,8 +27,13 @@ const OtpTwoFAModal = ({ relayerURL, selectedAcc, setCacheBreak }) => {
             'Ambire Wallet',
             secret
         )
+
+        const qrCodeOptions = {
+            quality: 1,
+            margin: 1,
+        }
         
-        QRCode.toDataURL(otpAuth, (error, url) => {
+        QRCode.toDataURL(otpAuth, qrCodeOptions, (error, url) => {
             if (error) {
                 console.log(error)
                 addToast(error.message, { error: true })
@@ -42,6 +47,7 @@ const OtpTwoFAModal = ({ relayerURL, selectedAcc, setCacheBreak }) => {
 
     const handleSubmit = e => {
         e.preventDefault()
+        setLoading(true)
         verifyOTP()
     }
 
@@ -51,11 +57,10 @@ const OtpTwoFAModal = ({ relayerURL, selectedAcc, setCacheBreak }) => {
 
         if (!isValid) {
             addToast('Invalid or outdated OTP code entered. If you keep seeing this, please ensure your system clock is synced correctly.', { error: true })
+            setLoading(false)
             return
         }
 
-        setLoading(true)
-        
         try {
             const wallet = await Wallet.fromEncryptedJson(
                 JSON.parse(selectedAcc.primaryKeyBackup),
@@ -87,21 +92,16 @@ const OtpTwoFAModal = ({ relayerURL, selectedAcc, setCacheBreak }) => {
 
     return (
         <Modal title="Two Factor Authentication">
-            {isLoading ? (
-                <div id="loading-overlay">
-                    <Loading />
-                </div>
-            ) : null}
             <div id="otp-auth">
                 <div className="img-wrapper">
                     <img alt="qr-code" src={imageURL}></img>
                 </div>
                 <div className="img-msg" style={{ marginBottom: showSecret ? '0px' : '22px'}}>
-                    Unable to see?{' '}
-                    <span className="click-here" onClick={() => { setShowSecret(prevState => !prevState) }}>
-                        Click here.
-                    </span>
-                    {showSecret && <div>{secret}</div>}
+                    {!showSecret && 
+                    (<span className="click-here" onClick={() => { setShowSecret(prevState => !prevState) }}>
+                        Unable to scan code? Click here.
+                    </span>)}
+                    {showSecret && (<><span>Enter this OTP in your app:</span><div>{secret}</div></>)}
                 </div>
                 <form onSubmit={handleSubmit}>
                     <div>
@@ -124,7 +124,7 @@ const OtpTwoFAModal = ({ relayerURL, selectedAcc, setCacheBreak }) => {
                         />
                     </div>
                     <div className="buttons">
-                        <Button type="submit">OK</Button>
+                        {!isLoading ? (<Button type="submit">Enable 2FA</Button>) : (<Button disabled><Loading /></Button>)}
                     </div>
                 </form>
             </div>
