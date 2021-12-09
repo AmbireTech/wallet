@@ -17,6 +17,8 @@ import { useHistory } from 'react-router-dom'
 import { useDropzone } from 'react-dropzone'
 import { MdInfoOutline } from 'react-icons/md'
 import { validateImportedAccountProps, fileSizeValidator } from '../../../lib/validations/importedAccountValidations'
+import OtpTwoFAModal from '../../Modals/OtpTwoFAModal/OtpTwoFAModal'
+import OtpTwoFADisableModal from '../../Modals/OtpTwoFADisableModal/OtpTwoFADisableModal'
 import Backup from './Backup/Backup'
 import PendingRecoveryNotice from './PendingRecoveryNotice/PendingRecoveryNotice'
 
@@ -52,6 +54,7 @@ const Security = ({
     : null
   const { data, errMsg, isLoading } = useRelayerData(url)
   const privileges = data ? data.privileges : {}
+  const otpEnabled = data ? data.otpEnabled : null
   const recoveryLock = data && data.recoveryLock ? data.recoveryLock : null
   const { addToast } = useToasts()
   const history = useHistory()
@@ -131,6 +134,30 @@ const Security = ({
   const inputModal = <InputModal title="Add New Address" inputs={modalInputs} onClose={([name, address]) => addAddress(name, address)}></InputModal>
   const showInputModal = () => showModal(inputModal)
 
+  const handleEnableOtp = () => {
+    if (!relayerURL) {
+      return addToast('Unsupported without a connection to the relayer', { error: true })
+    }
+
+    showModal(<OtpTwoFAModal 
+      relayerURL={relayerURL} 
+      selectedAcc={selectedAccount} 
+      setCacheBreak={() => { setCacheBreak(Date.now()) }} 
+      />)
+  }
+
+  const handleDisableOtp = async() => {
+    if (!relayerURL) {
+      return addToast('Unsupported without a connection to the relayer', { error: true })
+    }
+    
+    showModal(<OtpTwoFADisableModal 
+      relayerURL={relayerURL} 
+      selectedAcc={selectedAccount} 
+      setCacheBreak={() => { setCacheBreak(Date.now()) }} 
+      />)
+  }
+  
   // JSON import
   const onDrop = useCallback((acceptedFiles, rejectedFiles) => {
     const reader = new FileReader()
@@ -195,6 +222,10 @@ const Security = ({
         <li key={addr}>
           <TextInput className="depositAddress" value={privText} disabled />
           <div className="btns-wrapper">
+            {isQuickAcc && (otpEnabled !== null) && (otpEnabled ? 
+              (<Button red onClick={handleDisableOtp} small>Disable 2FA</Button>) : 
+              (<Button onClick={handleEnableOtp} small>Enable 2FA</Button>)
+            )}
             {isQuickAcc && (<Button
               disabled={!canChangePassword}
               title={hasPendingReset ? 'Account recovery already in progress' : ''}
