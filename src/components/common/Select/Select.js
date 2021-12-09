@@ -56,14 +56,7 @@ const Select = ({ children, native, monospace, searchable, disabled, label, defa
                 {
                     selectedItem ? 
                         <div className="input" onClick={() => setOpen(!isOpen)}>
-                            {
-                                selectedItem.icon ? 
-                                    <div className="icon">
-                                        <img src={selectedItem.icon} alt="Icon" />
-                                    </div>
-                                    :
-                                    null
-                            }
+                            { selectedItem.icon ? <div className="icon" style={{backgroundImage: `url(${selectedItem.icon})`}}/> : null }
                             <div className="label">{ selectedItem.label || selectedItem.value }</div>
                             <div className="separator"></div>
                             <div className={`handle ${isOpen ? 'open' : ''}`}>
@@ -75,14 +68,7 @@ const Select = ({ children, native, monospace, searchable, disabled, label, defa
                                         {
                                             filteredItems.map(item => (
                                                 <div className={`option ${item.value === selectedItem.value ? 'active' : ''}`} key={item.value} onClick={() => selectItem(item)}>
-                                                    <div className="icon">
-                                                        {
-                                                            item.icon ? 
-                                                                <img src={item.icon} alt="Icon" />
-                                                                :
-                                                                null
-                                                        }
-                                                    </div>
+                                                    { item.icon ? <div className="icon" style={{backgroundImage: `url(${item.icon})`}}/> : null }
                                                     <div className="label">{ item.label || item.value }</div>
                                                 </div>
                                             ))
