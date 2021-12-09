@@ -3,31 +3,29 @@ import './OtpTwoFAModal.scss'
 import { Modal, Button, TextInput, Loading } from '../../common'
 import { authenticator } from '@otplib/preset-default'
 import QRCode from 'qrcode'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useToasts } from '../../../hooks/toasts'
 import { Wallet } from 'ethers'
 import { fetchPost } from '../../../lib/fetch'
 import { useModals } from '../../../hooks'
 
-const otpSecret = authenticator.generateSecret(20)
-
 const OtpTwoFAModal = ({ relayerURL, selectedAcc, setCacheBreak }) => {
     const { hideModal } = useModals()
     const { addToast } = useToasts()
 
+    const secret = useMemo(() => authenticator.generateSecret(20), []) 
+    
     const [isLoading, setLoading] = useState(false)
     const [imageURL, setImageURL] = useState(null)
     const [receivedOtp, setReceivedOTP] = useState('')
-    const [secret, setSecret] = useState('')
     const [showSecret, setShowSecret] = useState(false)
     const [currentPassword, setCurrentPassword] = useState('')
 
-    const generateQR = () => {
-        setSecret(otpSecret)
+    const generateQR = useCallback(() => {
         const otpAuth = authenticator.keyuri(
             selectedAcc.email,
             'Ambire Wallet',
-            otpSecret
+            secret
         )
         
         QRCode.toDataURL(otpAuth, (error, url) => {
@@ -38,9 +36,9 @@ const OtpTwoFAModal = ({ relayerURL, selectedAcc, setCacheBreak }) => {
                 setImageURL(url)
             }
         })
-    }
+    }, [addToast, secret, selectedAcc.email])
 
-    useEffect(generateQR, [addToast, imageURL, selectedAcc.email])
+    useEffect(generateQR, [generateQR])
 
     const handleSubmit = e => {
         e.preventDefault()
@@ -51,38 +49,35 @@ const OtpTwoFAModal = ({ relayerURL, selectedAcc, setCacheBreak }) => {
         const isValid = authenticator.verify({ token: receivedOtp, secret })
         const otp = secret
 
-        if (isValid) {
-            setLoading(true)
-            
-            try {
-                const wallet = await Wallet.fromEncryptedJson(
-                    JSON.parse(selectedAcc.primaryKeyBackup),
-                    currentPassword
-                )
-                const sig = await wallet.signMessage(JSON.stringify({ otp }))
-                const resp = await fetchPost(`${relayerURL}/identity/${selectedAcc.id}/modify`, { otp, sig })
-
-                if (resp.success) {
-                    addToast(`You have successfully enabled two-factor authentication.`)
-                    setCacheBreak()
-                    resetForm()
-                    hideModal()
-                } else {
-                    throw new Error(
-                        `OTP error: ${
-                            resp.message || 'unknown error'
-                        }`
-                    )
-                }
-            } catch (e) {
-                console.error(e)
-                addToast(e.message || e, { error: true })
-            }
-
-            setLoading(false)
-        } else {
-            addToast('OTP ERROR: The Code is not valid', { error: true })
+        if (!isValid) {
+            addToast('Invalid or outdated OTP code entered. If you keep seeing this, please ensure your system clock is synced correctly.', { error: true })
+            return
         }
+
+        setLoading(true)
+        
+        try {
+            const wallet = await Wallet.fromEncryptedJson(
+                JSON.parse(selectedAcc.primaryKeyBackup),
+                currentPassword
+            )
+            const sig = await wallet.signMessage(JSON.stringify({ otp }))
+            const resp = await fetchPost(`${relayerURL}/identity/${selectedAcc.id}/modify`, { otp, sig })
+
+            if (resp.success) {
+                addToast(`You have successfully enabled two-factor authentication.`)
+                setCacheBreak()
+                resetForm()
+                hideModal()
+            } else {
+                throw new Error(`${resp.message || 'unknown error'}`)
+            }
+        } catch (e) {
+            console.error(e)
+            addToast('OTP: ' + e.message || e, { error: true })
+        }
+
+        setLoading(false)
     }
 
     const resetForm = () => {
@@ -106,7 +101,7 @@ const OtpTwoFAModal = ({ relayerURL, selectedAcc, setCacheBreak }) => {
                     <span className="click-here" onClick={() => { setShowSecret(prevState => !prevState) }}>
                         Click here.
                     </span>
-                    {showSecret && <div>{otpSecret}</div>}
+                    {showSecret && <div>{secret}</div>}
                 </div>
                 <form onSubmit={handleSubmit}>
                     <div>

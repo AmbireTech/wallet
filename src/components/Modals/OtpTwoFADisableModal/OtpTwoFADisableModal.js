@@ -37,13 +37,11 @@ const OtpTwoFADisableModal = ({ relayerURL, selectedAcc, setCacheBreak }) => {
               resetForm()
               hideModal()
           } else {
-              throw new Error(
-                `OTP error: ${resp.message || 'unknown error'}`
-              )
+              throw new Error(`${resp.message || 'unknown error'}`)
           }
       } catch (e) {
           console.error(e)
-          addToast(e.message || e, { error: true })
+          addToast('OTP: ' + e.message || e, { error: true })
       }
 
       setLoading(false)
