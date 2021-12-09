@@ -27,6 +27,7 @@ const useAddressBook = ({ accounts }) => {
                 })),
                 ...addresses.map(entry => ({
                     ...entry,
+                    id: entry.id || uuid(), // Baisc id migration
                     icon: toIcon(entry.address)
                 }))
             ]
