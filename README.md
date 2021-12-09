@@ -204,4 +204,4 @@ node scripts/generateContractInfo.js > src/consts/humanizerInfo.json
 ### Second sprint (v0.3.0)
 * Ability to recover your account in case of losing one of the keys
 * OTP (Google Authenticator) support in the Security page
-* Notifications for mined transactions
+* Notifications for confirmed (mined) transactions
