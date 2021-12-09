@@ -197,4 +197,4 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/t
 ### Second sprint (v0.3.0)
 * Ability to recover your account in case of losing one of the keys
 * OTP (Google Authenticator) support in the Security page
-* Notifications for mined transactions
+* Notifications for confirmed (mined) transactions
