@@ -16,12 +16,11 @@ const OtpTwoFADisableModal = ({ relayerURL, selectedAcc, setCacheBreak }) => {
 
     const handleSubmit = e => {
       e.preventDefault()
+      setLoading(true)
       disableOTP()
     }
 
     const disableOTP = async() => {
-      setLoading(true)
-
       try {
           const wallet = await Wallet.fromEncryptedJson(
               JSON.parse(selectedAcc.primaryKeyBackup),
@@ -53,27 +52,22 @@ const OtpTwoFADisableModal = ({ relayerURL, selectedAcc, setCacheBreak }) => {
 
     return (
         <Modal id='disable-otp-modal' title="Disable Two Factor Authentication">
-            {isLoading ? (
-              <div id="loading-overlay">
-                  <Loading />
-                </div>
-            ) : null}
-            <form onSubmit={handleSubmit}>
-                <div>
-                    <h4>Enter your account password</h4>
-                    <TextInput
-                        password
-                        required
-                        pattern=".{8,}"
-                        autocomplete="current-password"
-                        placeholder="Account Password"
-                        onInput={value => setCurrentPassword(value)}
-                    />
-                </div>
-                <div className="buttons">
-                  <Button type="submit">OK</Button>
-                </div>
-            </form>
+          <form onSubmit={handleSubmit}>
+            <div>
+                <h4>Enter your account password</h4>
+                <TextInput
+                    password
+                    required
+                    pattern=".{8,}"
+                    autocomplete="current-password"
+                    placeholder="Account Password"
+                    onInput={value => setCurrentPassword(value)}
+                />
+            </div>
+            <div className="buttons">
+              {!isLoading ? (<Button type="submit">Disable 2FA</Button>) : (<Button disabled><Loading /></Button>)}
+            </div>
+          </form>
         </Modal>
     )
 }
