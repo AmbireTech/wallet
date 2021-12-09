@@ -39,7 +39,7 @@ const TextInput = forwardRef(({ value, className, title, pattern, autoComplete, 
                 />
                 {
                     copy ?
-                        <div className="icon">
+                        <div className="button">
                             <MdContentCopy size={20}/>
                         </div>
                         :
