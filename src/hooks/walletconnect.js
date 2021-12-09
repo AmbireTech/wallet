@@ -237,7 +237,7 @@ export default function useWalletConnect ({ account, chainId }) {
     }, [state, account, chainId, connect])
 
     // Initialization effects
-    useEffect(() => runInitEffects(connect, account), [connect, account])
+    useEffect(() => runInitEffects(connect, account, addToast), [connect, account, addToast])
 
     return {
         connections: state.connections,
@@ -249,10 +249,13 @@ export default function useWalletConnect ({ account, chainId }) {
 
 // Initialization side effects
 // Connect to the URL, read from clipboard, etc.
-function runInitEffects(wcConnect, account) {
+function runInitEffects(wcConnect, account, addToast) {
     const query = new URLSearchParams(window.location.href.split('?').slice(1).join('?').split('#')[0])
     const wcUri = query.get('uri')
-    if (wcUri && account) wcConnect({ uri: wcUri })
+    if (wcUri) {
+        if (account) wcConnect({ uri: wcUri })
+        else addToast('WalletConnect dApp connection request detected, please create an account and you will be connected to the dApp.', { timeout: 15000 })
+    }
 
     // hax
     window.wcConnect = uri => wcConnect({ uri })

@@ -219,7 +219,7 @@ export default function usePortfolio({ currentNetwork, account }) {
 
     // Refresh balance every 60s if hidden
     useEffect(() => {
-        const refreshIfHidden = document[hidden] && !isBalanceLoading ? fetchTokens(account, currentNetwork) : null
+        const refreshIfHidden = () => document[hidden] && !isBalanceLoading ? fetchTokens(account, currentNetwork) : null
         const refreshInterval = setInterval(refreshIfHidden, 60000)
         return () => clearInterval(refreshInterval)
     }, [account, currentNetwork, isBalanceLoading, fetchTokens])
