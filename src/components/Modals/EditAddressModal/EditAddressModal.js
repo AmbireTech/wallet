@@ -21,7 +21,7 @@ const EditAddressModal = ({ id, addresses, updateAddress, addAddress }) => {
 
     useEffect(() => {
         const isENSValid = validateENSDomain(ens)
-        setDisabled(!name.length || (ens.length && !isENSValid.success))
+        setDisabled((name && !name.length) || (ens && ens.length && !isENSValid.success))
     }, [name, ens])
 
     return (
