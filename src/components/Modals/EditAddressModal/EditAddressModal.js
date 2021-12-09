@@ -24,10 +24,16 @@ const EditAddressModal = ({ id, addresses, updateAddress, addAddress }) => {
         setDisabled((name && !name.length) || (ens && ens.length && !isENSValid.success))
     }, [name, ens])
 
+    const modalButtons = <>
+        <Button clear icon={<MdOutlineClose/>}>Cancel</Button>
+        <Button disabled={disabled} icon={<MdOutlineSave/>} onClick={onSave}>Save</Button>
+    </>
+
     return (
         <Modal
             id="edit-address-modal"
             title="Edit Address"
+            buttons={modalButtons}
         >
             <form>
                 <TextInput
@@ -48,11 +54,6 @@ const EditAddressModal = ({ id, addresses, updateAddress, addAddress }) => {
                     onInput={value => setEns(value)}
                 />
             </form>
-
-            <div className="buttons">
-                <Button clear icon={<MdOutlineClose/>}>Cancel</Button>
-                <Button disabled={disabled} icon={<MdOutlineSave/>} onClick={onSave}>Save</Button>
-            </div>
         </Modal>
     )
 }
