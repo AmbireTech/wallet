@@ -56,7 +56,7 @@ const Accounts = ({ accounts, addressBook, selectedAddress, onSelectAcc, onRemov
                         <div className="inner" onClick={() => onSelectAccount(id)}>
                             <div className="icon" style={toIconBackgroundImage(id)}></div>
                             <div className="details">
-                                { name ? <div className="name">{ name }</div> : <div className="address">{ id }</div>}
+                                { name ? <div className="name">{ name } <span className="address">({ shortenedAddress(id) })</span></div> : <div className="address">{ id }</div>}
                                 <label>{ email ? `Email/Password account (${email})` : `${walletType(signerExtra)} (${shortenedAddress(signer.address)})` }</label>
                             </div>
                         </div>

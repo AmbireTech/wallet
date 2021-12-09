@@ -54,6 +54,10 @@ $account-height: 60px;
                         .name {
                             font-size: 15px;
                             font-weight: 500;
+
+                            .address {
+                                opacity: 0.6;
+                            }
                         }
 
                         .address {
