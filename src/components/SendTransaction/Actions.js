@@ -1,9 +1,12 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { Button, Loading, TextInput } from '../common'
 import { isTokenEligible } from './helpers'
 
 export default function Actions({ estimation, feeSpeed, approveTxn, rejectTxn, signingStatus }) {
   const [quickAccCredentials, setQuickAccCredentials] = useState({ code: '', passphrase: '' })
+  // reset this every time the signing status changes
+  useEffect(() => !signingStatus && setQuickAccCredentials(prev => ({ ...prev, code: '' })), [signingStatus])
+
   const form = useRef(null)
 
   const rejectButton = rejectTxn && (
