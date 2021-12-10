@@ -24,17 +24,18 @@ const InputModal = ({ title, inputs, onClose }) => {
         hideModal()
     }
 
+    const buttons = <>
+        <Button clear small icon={<MdClose/>} onClick={hideModal}>Cancel</Button>
+        <Button small icon={<MdCheck/>} disabled={isDisabled} onClick={onConfirm}>Confirm</Button>
+    </>
+
     return (
-        <Modal id="input-modal" title={title}>
+        <Modal id="input-modal" title={title} buttons={buttons}>
             {
                 inputsFields.map(({ id, label, placeholder, ref }) => (
                     <TextInput key={id || label} label={label} placeholder={placeholder} onInput={onInput} ref={ref}/>
                 ))
             }
-            <div className="buttons">
-                <Button clear small icon={<MdClose/>} onClick={hideModal}>Cancel</Button>
-                <Button small icon={<MdCheck/>} disabled={isDisabled} onClick={onConfirm}>Confirm</Button>
-            </div>
         </Modal>
     )
 }
