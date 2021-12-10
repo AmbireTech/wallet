@@ -6,8 +6,9 @@ import { ZAPPER_API_ENDPOINT } from '../config'
 import supportedProtocols from '../consts/supportedProtocols';
 import { useToasts } from '../hooks/toasts'
 import { setKnownAddresses, setKnownTokens } from '../lib/humanReadableTransactions';
+import { VELCRO_API_ENDPOINT } from '../config'
 
-const getBalances = (apiKey, network, protocol, address) => fetchGet(`${ZAPPER_API_ENDPOINT}/protocols/${protocol}/balances?addresses[]=${address}&network=${network}&api_key=${apiKey}&newBalances=true`)
+const getBalances = (apiKey, network, protocol, address, provider) => fetchGet(`${provider === 'velcro' ? VELCRO_API_ENDPOINT : ZAPPER_API_ENDPOINT}/protocols/${protocol}/balances?addresses[]=${address}&network=${network}&api_key=${apiKey}&newBalances=true`)
 
 let hidden, visibilityChange;
 if (typeof document.hidden !== 'undefined') {
@@ -47,14 +48,14 @@ export default function usePortfolio({ currentNetwork, account }) {
 
     const fetchTokens = useCallback(async (account, currentNetwork = false) => {
         try {
-            const networks = currentNetwork ? [currentNetwork] : supportedProtocols.map(({ network }) => network)
+            const networks = currentNetwork ? [supportedProtocols.find(({ network }) => network === currentNetwork)] : supportedProtocols
 
             let failedRequests = 0
             const requestsCount = networks.length
 
-            const updatedTokens = (await Promise.all(networks.map(async network => {
+            const updatedTokens = (await Promise.all(networks.map(async ({ network, balancesProvider }) => {
                 try {
-                    const balance = await getBalances(ZAPPER_API_KEY, network, 'tokens', account)
+                    const balance = await getBalances(ZAPPER_API_KEY, network, 'tokens', account, balancesProvider)
                     if (!balance) return null
 
                     const { meta, products } = Object.values(balance)[0]
