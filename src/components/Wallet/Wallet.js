@@ -16,6 +16,7 @@ import { PermissionsModal } from '../Modals'
 import { useModals, usePermissions } from '../../hooks'
 import { useCallback, useEffect, useMemo, useRef } from 'react'
 import { isFirefox } from '../../lib/isFirefox'
+import CrossChain from "./CrossChain/CrossChain"
 
 export default function Wallet(props) {
   const { showModal } = useModals()
@@ -47,6 +48,15 @@ export default function Wallet(props) {
         addRequest={props.addRequest}
         accounts={props.accounts}
         addressBook={props.addressBook}
+      />
+    },
+    {
+      path: '/cross-chain',
+      component: <CrossChain
+        addRequest={props.addRequest}
+        selectedAccount={props.selectedAcc}
+        portfolio={props.portfolio}
+        network={props.network}
       />
     },
     {
