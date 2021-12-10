@@ -70,7 +70,6 @@ export default function Wallet(props) {
         selectedAcc={props.selectedAcc}
         selectedNetwork={props.network}
         accounts={props.accounts}
-        addressBook={props.addressBook}
         addRequest={props.addRequest}
         showSendTxns={props.showSendTxns}
         onAddAccount={props.onAddAccount}
