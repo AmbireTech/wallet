@@ -9,6 +9,7 @@ import { Interface } from 'ethers/lib/utils'
 import { useToasts } from '../../../hooks/toasts'
 import { TextInput, NumberInput, Button, Select, Loading, AddressBook, AddressWarning, NoFundsPlaceholder } from '../../common'
 import { validateSendTransferAddress, validateSendTransferAmount } from '../../../lib/validations/formValidations'
+import Addresses from './Addresses/Addresses'
 
 const ERC20 = new Interface(require('adex-protocol-eth/abi/ERC20'))
 
@@ -171,6 +172,11 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
                             <NoFundsPlaceholder/>
                }
            </div>
+           <Addresses
+                addresses={addresses}
+                addAddress={addAddress}
+                removeAddress={removeAddress}
+            />
         </div>
     )
 }
