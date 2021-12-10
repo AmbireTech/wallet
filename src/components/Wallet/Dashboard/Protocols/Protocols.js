@@ -41,7 +41,7 @@ const Protocols = ({ protocols }) => {
                                                     {
                                                         type === 'wallet' ?
                                                             <div className="actions">
-                                                                <NavLink to={`/wallet/transfer/${address}`}>
+                                                                <NavLink to={`/wallet/transfer/${symbol}`}>
                                                                     <Button small icon={<AiOutlineSend/>}>Send</Button>
                                                                 </NavLink>
                                                             </div>

@@ -17,10 +17,12 @@ const ERC20 = new Interface(require('adex-protocol-eth/abi/ERC20'))
 const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest, addressBook }) => {
     const { addresses, addAddress, removeAddress, isKnownAddress } = addressBook
 
-    const { tokenAddress } = useParams()
+    const { tokenSymbol } = useParams()
     const { addToast } = useToasts()
 
-    const [asset, setAsset] = useState(tokenAddress)
+    const tokenAddressFromSymbol = portfolio.tokens.find(({ symbol }) => symbol === tokenSymbol)?.address || null
+
+    const [asset, setAsset] = useState(tokenAddressFromSymbol)
     const [amount, setAmount] = useState(0)
     const [bigNumberHexAmount, setBigNumberHexAmount] = useState('')
     const [address, setAddress] = useState('')
@@ -67,12 +69,12 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
     const sendTx = () => {
         try {
             const txn = {
-                to: tokenAddress,
+                to: selectedAsset.address,
                 value: '0',
                 data: ERC20.encodeFunctionData('transfer', [address, bigNumberHexAmount])
             }
 
-            if (Number(tokenAddress) === 0) {
+            if (Number(selectedAsset.address) === 0) {
                 txn.to = address
                 txn.value = bigNumberHexAmount
                 txn.data = '0x'
@@ -96,8 +98,8 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
     useEffect(() => {
         setAmount(0)
         setBigNumberHexAmount('')
-        history.replace({ pathname: `/wallet/transfer/${asset}` })
-    }, [asset, history])
+        if (selectedAsset) history.replace({ pathname: `/wallet/transfer/${selectedAsset.symbol}` })
+    }, [asset, history, selectedAsset])
 
     useEffect(() => {
         const isValidRecipientAddress = validateSendTransferAddress(address, selectedAcc, addressConfirmed, isKnownAddress)
