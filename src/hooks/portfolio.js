@@ -5,6 +5,7 @@ import { fetchGet } from '../lib/fetch';
 import { ZAPPER_API_ENDPOINT } from '../config'
 import supportedProtocols from '../consts/supportedProtocols';
 import { useToasts } from '../hooks/toasts'
+import { setKnownAddresses, setKnownTokens } from '../lib/humanReadableTransactions';
 
 const getBalances = (apiKey, network, protocol, address) => fetchGet(`${ZAPPER_API_ENDPOINT}/protocols/${protocol}/balances?addresses[]=${address}&network=${network}&api_key=${apiKey}&newBalances=true`)
 
@@ -138,6 +139,14 @@ export default function usePortfolio({ currentNetwork, account }) {
         if ((Date.now() - lastOtherProcolsRefresh) > 30000 && !areProtocolsLoading) await fetchOtherProtocols(account, currentNetwork)
     }
 
+    // Make humanizer 'learn' about new tokens and aliases
+    const updateHumanizerData = tokensByNetworks => {
+        const tokensList = Object.values(tokensByNetworks).map(({ products }) => products.map(({ assets }) => assets.map(({ tokens }) => tokens.map(token => token)))).flat(3)
+        const knownAliases = tokensList.map(({ address, symbol }) => ({ address, name: symbol}))
+        setKnownAddresses(knownAliases)
+        setKnownTokens(tokensList)
+    }
+
     // Fetch balances and protocols on account change
     useEffect(() => {
         currentAccount.current = account
@@ -188,6 +197,8 @@ export default function usePortfolio({ currentNetwork, account }) {
                 setBalance(balance)
                 setOtherBalances(balanceByNetworks.filter(({ network }) => network !== currentNetwork))
             }
+
+            updateHumanizerData(tokensByNetworks)
 
             const tokens = tokensByNetworks.find(({ network }) => network === currentNetwork)
             if (tokens) setTokens(tokens.products.map(({ assets }) => assets.map(({ tokens }) => tokens)).flat(2))
