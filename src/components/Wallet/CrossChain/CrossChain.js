@@ -192,7 +192,7 @@ const CrossChain = ({ addRequest, selectedAccount, portfolio, network }) => {
         <div id="cross-chain">
             <div className='panel'>
                 <div className="title">
-                    Cross-chain
+                    Cross-chain transfers/swaps
                     <div id="powered">
                         Powered by Movr
                     </div>
