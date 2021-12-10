@@ -6,6 +6,7 @@ import { GiReceiveMoney } from 'react-icons/gi'
 import { BsCurrencyExchange } from 'react-icons/bs'
 import { BsPiggyBank } from 'react-icons/bs'
 import { BiTransfer } from 'react-icons/bi'
+import { CgArrowsExchangeV } from 'react-icons/cg'
 import { Loading } from '../../common'
 import { useCallback, useEffect, useRef, useState } from 'react'
 
@@ -66,6 +67,11 @@ const SideBar = ({ match, portfolio }) => {
         <NavLink to={match.url + "/transfer"} activeClassName="selected">
           <div className="item">
               <BiTransfer/>Transfer
+          </div>
+        </NavLink>
+        <NavLink to={match.url + "/cross-chain"} activeClassName="selected">
+          <div className="item">
+              <CgArrowsExchangeV/>Cross-Chain
           </div>
         </NavLink>
         <NavLink to={match.url + "/swap"} activeClassName="selected">
