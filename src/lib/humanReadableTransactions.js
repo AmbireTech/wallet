@@ -6,6 +6,8 @@ import humanizers from './humanizers'
 
 // address (lwoercase) => name
 const knownAliases = {}
+// address (lowercase) => [symbol, decimals]
+const knownTokens = {}
 
 export function getTransactionSummary(txn, networkId, accountAddr, opts = {}) {
     const [to, value, data = '0x'] = txn
@@ -53,7 +55,7 @@ export function getName(addr, network) {
 
 export function token(addr, amount) {
     const address = addr.toLowerCase()
-    const assetInfo = tokens[address]
+    const assetInfo = tokens[address] || knownTokens[address]
     if (assetInfo) {
         if (!amount) return assetInfo[0]
         if (constants.MaxUint256.eq(amount)) return `maximum ${assetInfo[0]}`
@@ -76,10 +78,14 @@ export function setKnownAddresses(addrs) {
     addrs.forEach(({ address, name }) => knownAliases[address.toLowerCase()] = name)
 }
 
+export function setKnownTokens(tokens) {
+    tokens.forEach(({ address, symbol, decimals }) => knownTokens[address.toLowerCase()] = [symbol, decimals])
+}
+
 export function isKnown(txn, from) {
     if (txn[0] === from) return true
     const address = txn[0].toLowerCase()
-    return !!(knownAliases[address] || names[address] || tokens[address])
+    return !!(knownAliases[address] || names[address] || tokens[address] || knownTokens[address])
 }
 
 // @TODO
