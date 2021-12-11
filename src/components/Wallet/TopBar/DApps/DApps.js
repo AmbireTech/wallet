@@ -48,7 +48,7 @@ const DApps = ({ connections, connect, disconnect }) => {
                 ) : null}
             </div>
             {connections.map(({ session, uri }) => (
-                <div className="item dapps-item" key={session.peerId}>
+                <div className="item dapps-item" key={session.key}>
                     <div className="icon">
                         <div className="icon-overlay" style={{backgroundImage: `url(${session.peerMeta.icons.filter(x => !x.endsWith('favicon.ico'))[0]})`}}/>
                         <MdBrokenImage/>
