@@ -12,12 +12,23 @@
         overflow: hidden;
 
         .icon {
+            position: relative;
             flex: 0 0 auto;
+            @include flex-center-center;
             height: 40px;
             width: 40px;
             border-radius: 100%;
             overflow: hidden;
+            color: rgba(255, 255, 255, 0.2);
             background-color: rgba(0, 0, 0, 0.2);
+
+            .icon-overlay {
+                z-index: 49;
+                @include absolute-full-size;
+                background-size: contain;
+                background-position: center center;
+                background-repeat: no-repeat;
+            }
 
             img {
                 width: 100%;
