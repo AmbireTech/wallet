@@ -120,6 +120,27 @@ export default function useWalletConnect ({ account, chainId }) {
                 onError(error)
                 return
             }
+            // Opensea "unlock currency" hack; they use a stupid MetaTransactions system built into WETH on Polygon
+            // There's no point of this because the user has to sign it separately as a tx anyway; but more importantly,
+            // it breaks Ambire and other smart wallets cause it relies on ecrecover and does not depend on EIP1271
+            if (payload.method === 'eth_signTypedData') {
+                // @TODO: should we check params[0] (from) here?
+                // @TODO: try/catch the JSON parse?
+                const signPayload = JSON.parse(payload.params[1])
+                if (signPayload.primaryType === 'MetaTransaction') {
+                    payload = {
+                        ...payload,
+                        method: 'eth_sendTransaction',
+                        params: [{
+                            to: signPayload.domain.verifyingContract,
+                            from: signPayload.message.from,
+                            data: signPayload.message.functionSignature, // @TODO || data?
+                            value: signPayload.message.value || '0x0'
+                        }]
+                    }
+                }
+            }
+            // @TODO: refactor into wcRequestHandler
             if (!SUPPORTED_METHODS.includes(payload.method)) {
                 const isUniIgnorable = payload.method === 'eth_signTypedData_v4'
                     && connector.session.peerMeta
@@ -139,6 +160,7 @@ export default function useWalletConnect ({ account, chainId }) {
             )
             if (wrongAcc) {
                 addToast(`dApp sent a request for the wrong account: ${payload.params[0].from}`, { error: true })
+                // @TODO: reject the request
                 return
             }
             dispatch({ type: 'requestAdded', request: {
