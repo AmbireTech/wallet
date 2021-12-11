@@ -3,6 +3,7 @@ import './DApps.scss'
 import React, { useState, useCallback } from 'react'
 import { FiHelpCircle } from 'react-icons/fi'
 import { BiTransferAlt } from 'react-icons/bi'
+import { MdBrokenImage } from 'react-icons/md'
 import { DropDown, ToolTip, Button } from "../../../common"
 import { checkClipboardPermission } from '../../../../helpers/permissions'
 import { MdOutlineWarning } from 'react-icons/md'
@@ -49,10 +50,8 @@ const DApps = ({ connections, connect, disconnect }) => {
             {connections.map(({ session, uri }) => (
                 <div className="item dapps-item" key={session.peerId}>
                     <div className="icon">
-                        <img
-                            src={session.peerMeta.icons.filter(x => !x.endsWith('favicon.ico'))[0]}
-                            alt={session.peerMeta.name}
-                        ></img>
+                        <div className="icon-overlay" style={{backgroundImage: `url(${session.peerMeta.icons.filter(x => !x.endsWith('favicon.ico'))[0]})`}}/>
+                        <MdBrokenImage/>
                     </div>
                     <a href={session.peerMeta.url} target="_blank" rel="noreferrer">
                         <div className="details">
