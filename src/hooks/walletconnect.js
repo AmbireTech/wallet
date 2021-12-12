@@ -159,7 +159,7 @@ export default function useWalletConnect ({ account, chainId }) {
             )
             if (wrongAcc) {
                 addToast(`dApp sent a request for the wrong account: ${payload.params[0].from}`, { error: true })
-                // @TODO: reject the request
+                connector.rejectRequest({ id: payload.id, error: { message: 'Sent a request for the wrong account' }})
                 return
             }
             dispatch({ type: 'requestAdded', request: {
