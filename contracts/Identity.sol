@@ -61,6 +61,7 @@ contract Identity {
 		emit LogPrivilegeChanged(addr, priv);
 	}
 
+	// Useful for pre-EIP1559 flashbots
 	function tipMiner(uint amount)
 		external
 	{
@@ -70,6 +71,7 @@ contract Identity {
 		executeCall(block.coinbase, amount, new bytes(0));
 	}
 
+	// Useful when we need to do multiple operations but ignore failures in some of them
 	function tryCatch(address to, uint value, bytes calldata data)
 		external
 	{
@@ -77,7 +79,6 @@ contract Identity {
 		(bool success, bytes memory returnData) = to.call{value: value, gas: gasleft()}(data);
 		if (!success) emit LogErr(to, value, data, returnData);
 	}
-
 
 	// WARNING: if the signature of this is changed, we have to change IdentityFactory
 	function execute(Transaction[] calldata txns, bytes calldata signature)
@@ -144,10 +145,6 @@ contract Identity {
 			}
 			default {}
 		}
-		// A single call consumes around 477 more gas with the pure solidity version, for whatever reason
-		// WARNING: do not use this, it corrupts the returnData string (returns it in a slightly different format)
-		//(bool success, bytes memory returnData) = to.call{value: value, gas: gasleft()}(data);
-		//if (!success) revert(string(data));
 	}
 
 	// EIP 1271 implementation
