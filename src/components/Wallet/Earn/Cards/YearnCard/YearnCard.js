@@ -2,7 +2,7 @@ import Card from '../Card/Card'
 
 import { useCallback, useEffect, useState, useMemo } from 'react'
 import { ethers } from 'ethers'
-import { parseUnits } from '@ethersproject/units'
+import { parseUnits, formatUnits } from '@ethersproject/units'
 import { Contract } from '@ethersproject/contracts'
 import { getDefaultProvider } from '@ethersproject/providers'
 import { BigNumber } from '@ethersproject/bignumber'
@@ -157,11 +157,8 @@ const YearnCard = ({ networkId, accountId, tokens, addRequest }) => {
             try {
                 const vaultContract = new Contract(vaultAddress, YearnVaultInterface, provider)
                 const pricePerShare = await vaultContract.pricePerShare()
-                const sharesAmount = bigNumberAmount.div(pricePerShare).mul(Math.pow(10, decimals))
+                const sharesAmount = parseUnits((bigNumberAmount.toNumber() / pricePerShare.toNumber()).toFixed(decimals), decimals)
 
-                if (sharesAmount.eq(0)) return addToast('Not enough shares to withdraw from this Vault.', { error: true })
-
-                await approveToken(vaultAddress, tokenAddress, ethers.constants.MaxUint256)
                 addRequestTxn(`yearn_vault_withdraw_${Date.now()}`, {
                     to: vaultAddress,
                     value: '0x0',
