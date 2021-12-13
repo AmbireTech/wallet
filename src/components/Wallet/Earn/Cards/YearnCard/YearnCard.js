@@ -2,7 +2,7 @@ import Card from '../Card/Card'
 
 import { useCallback, useEffect, useState } from 'react'
 import { ethers } from 'ethers'
-import { parseUnits } from '@ethersproject/units'
+import { parseUnits, formatUnits } from '@ethersproject/units'
 import { Contract } from '@ethersproject/contracts'
 import { getDefaultProvider } from '@ethersproject/providers'
 import { BigNumber } from '@ethersproject/bignumber'
@@ -42,9 +42,9 @@ const YearnCard = ({ networkId, accountId, tokens, addRequest }) => {
     const currentNetwork = networks.find(({ id }) => id === networkId)
     const getTokenFromPortfolio = useCallback(tokenAddress => tokens.find(({ address }) => address.toLowerCase() === tokenAddress.toLowerCase()) || {}, [tokens])
     const addRequestTxn = (id, txn, extraGas = 0) => addRequest({ id, type: 'eth_sendTransaction', chainId: currentNetwork.chainId, account: accountId, txn, extraGas })
+    const provider = getDefaultProvider(currentNetwork.rpc)
 
     const loadVaults = useCallback(async () => {
-        const provider = getDefaultProvider(currentNetwork.rpc)
         const yearn = new Yearn(currentNetwork.chainId, { provider })
 
         const v2Vaults = await yearn.vaults.get(v2VaultsAddresses)
@@ -118,7 +118,6 @@ const YearnCard = ({ networkId, accountId, tokens, addRequest }) => {
     const approveToken = async (vaultAddress, tokenAddress, bigNumberHexAmount) => {
         try {
             const ZERO = BigNumber.from(0)
-            const provider = getDefaultProvider(currentNetwork.rpc)
             const tokenContract = new Contract(tokenAddress, ERC20Interface, provider)
             const allowance = await tokenContract.allowance(accountId, tokenAddress)
 
@@ -143,24 +142,35 @@ const YearnCard = ({ networkId, accountId, tokens, addRequest }) => {
     }
 
     const onValidate = async (type, tokenAddress, amount) => {
-        if (type === 'Deposit') {
-            const token = tokensItems.find(t => t.tokenAddress === tokenAddress)
-            if (!token) return
+        const token = tokensItems.find(t => t.tokenAddress === tokenAddress)
+        if (!token) return
 
-            const { vaultAddress, decimals } = token
-            const bigNumberHexAmount = parseUnits(amount.toString(), decimals).toHexString()
+        const { vaultAddress, decimals } = token
+        const bigNumberAmount = parseUnits(amount.toString(), decimals)
+
+        if (type === 'Deposit') {
             await approveToken(vaultAddress, tokenAddress, ethers.constants.MaxUint256)
 
             try {
                 addRequestTxn(`yearn_vault_deposit_${Date.now()}`, {
                     to: vaultAddress,
                     value: '0x0',
-                    data: YearnVaultInterface.encodeFunctionData('deposit', [bigNumberHexAmount, accountId])
+                    data: YearnVaultInterface.encodeFunctionData('deposit', [bigNumberAmount.toHexString(), accountId])
                 })
             } catch(e) {
                 console.error(e)
                 addToast(`Yearn Deposit Error: ${e.message || e}`, { error: true })
             }
+        } else if (type === 'Withdraw') {
+            const vaultContract = new Contract(vaultAddress, YearnVaultInterface, provider)
+            const pricePerShare = await vaultContract.pricePerShare()
+            const sharesAmount = bigNumberAmount.div(pricePerShare).mul(Math.pow(10, decimals))
+
+            addRequestTxn(`yearn_vault_withdraw_${Date.now()}`, {
+                to: vaultAddress,
+                value: '0x0',
+                data: YearnVaultInterface.encodeFunctionData('withdraw', [sharesAmount.toHexString(), accountId])
+            })
         }
     }
 
