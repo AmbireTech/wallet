@@ -162,15 +162,22 @@ const YearnCard = ({ networkId, accountId, tokens, addRequest }) => {
                 addToast(`Yearn Deposit Error: ${e.message || e}`, { error: true })
             }
         } else if (type === 'Withdraw') {
-            const vaultContract = new Contract(vaultAddress, YearnVaultInterface, provider)
-            const pricePerShare = await vaultContract.pricePerShare()
-            const sharesAmount = bigNumberAmount.div(pricePerShare).mul(Math.pow(10, decimals))
+            await approveToken(vaultAddress, tokenAddress, ethers.constants.MaxUint256)
 
-            addRequestTxn(`yearn_vault_withdraw_${Date.now()}`, {
-                to: vaultAddress,
-                value: '0x0',
-                data: YearnVaultInterface.encodeFunctionData('withdraw', [sharesAmount.toHexString(), accountId])
-            })
+            try {
+                const vaultContract = new Contract(vaultAddress, YearnVaultInterface, provider)
+                const pricePerShare = await vaultContract.pricePerShare()
+                const sharesAmount = bigNumberAmount.div(pricePerShare).mul(Math.pow(10, decimals))
+
+                addRequestTxn(`yearn_vault_withdraw_${Date.now()}`, {
+                    to: vaultAddress,
+                    value: '0x0',
+                    data: YearnVaultInterface.encodeFunctionData('withdraw', [sharesAmount.toHexString(), accountId])
+                })
+            } catch(e) {
+                console.error(e)
+                addToast(`Yearn Withdraw Error: ${e.message || e}`, { error: true })
+            }
         }
     }
 
