@@ -271,9 +271,6 @@ export default function useWalletConnect ({ account, chainId, initialUri }) {
 // Initialization side effects
 // Connect to the URL, read from clipboard, etc.
 function runInitEffects(wcConnect, account, initialUri, addToast) {
-    // const wcUri = initialUri.get('uri')
-    
-    //console.log('wcUri', initialUri)
     if (initialUri) {
         if (account) wcConnect({ uri: initialUri })
         else addToast('WalletConnect dApp connection request detected, please create an account and you will be connected to the dApp.', { timeout: 15000 })
