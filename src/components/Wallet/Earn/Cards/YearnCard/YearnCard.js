@@ -1,6 +1,6 @@
 import Card from '../Card/Card'
 
-import { useCallback, useEffect, useState, useMemo } from 'react'
+import { useCallback, useEffect, useState, useMemo, useRef } from 'react'
 import { ethers } from 'ethers'
 import { parseUnits } from '@ethersproject/units'
 import { Contract } from '@ethersproject/contracts'
@@ -34,19 +34,21 @@ const YearnVaultInterface = new Interface(YEARN_VAULT_ABI)
 const YearnCard = ({ networkId, accountId, tokens, addRequest }) => {
     const { addToast } = useToasts()
 
+    const currentNetwork = useRef()
+    const [loading, setLoading] = useState([])
     const [tokensItems, setTokensItems] = useState([])
     const [details, setDetails] = useState([])
 
     const unavailable = networkId !== 'ethereum'
-    const currentNetwork = networks.find(({ id }) => id === networkId)
+    const networkDetails = networks.find(({ id }) => id === networkId)
     const getTokenFromPortfolio = useCallback(tokenAddress => tokens.find(({ address }) => address.toLowerCase() === tokenAddress.toLowerCase()) || {}, [tokens])
-    const addRequestTxn = (id, txn, extraGas = 0) => addRequest({ id, type: 'eth_sendTransaction', chainId: currentNetwork.chainId, account: accountId, txn, extraGas })
-    const provider = useMemo(() => getDefaultProvider(currentNetwork.rpc), [currentNetwork.rpc])
+    const addRequestTxn = (id, txn, extraGas = 0) => addRequest({ id, type: 'eth_sendTransaction', chainId: networkDetails.chainId, account: accountId, txn, extraGas })
+    const provider = useMemo(() => getDefaultProvider(networkDetails.rpc), [networkDetails.rpc])
 
     const loadVaults = useCallback(async () => {
         if (unavailable) return
     
-        const yearn = new Yearn(currentNetwork.chainId, { provider })
+        const yearn = new Yearn(networkDetails.chainId, { provider })
 
         const v2Vaults = await yearn.vaults.get(v2VaultsAddresses)
         const vaults = v2Vaults.map(({ address, metadata, symbol, token, decimals }) => ({
@@ -101,11 +103,14 @@ const YearnCard = ({ networkId, accountId, tokens, addRequest }) => {
             }
         })
 
+        // Prevent race conditions
+        if (currentNetwork.current !== networkDetails.id) return
+
         setTokensItems([
             ...depositTokens,
             ...withdrawTokens
         ])
-    }, [getTokenFromPortfolio, provider, currentNetwork.chainId, unavailable])
+    }, [getTokenFromPortfolio, provider, networkDetails, unavailable])
 
     const onTokenSelect = useCallback(address => {
         const selectedToken = tokensItems.find(t => t.value === address)
@@ -172,10 +177,22 @@ const YearnCard = ({ networkId, accountId, tokens, addRequest }) => {
         }
     }
 
-    useEffect(() => loadVaults(), [loadVaults])
+    useEffect(() => {
+        async function load() {
+            await loadVaults()
+            setLoading(false)
+        }
+        load()
+    }, [loadVaults])
+
+    useEffect(() => {
+        currentNetwork.current = networkId
+        setLoading(true)
+    }, [networkId])
 
     return (
         <Card
+            loading={loading}
             icon={YEARN_ICON}
             unavailable={unavailable}
             tokensItems={tokensItems}
