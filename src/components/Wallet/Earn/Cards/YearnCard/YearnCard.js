@@ -162,13 +162,14 @@ const YearnCard = ({ networkId, accountId, tokens, addRequest }) => {
                 addToast(`Yearn Deposit Error: ${e.message || e}`, { error: true })
             }
         } else if (type === 'Withdraw') {
-            await approveToken(vaultAddress, tokenAddress, ethers.constants.MaxUint256)
-
             try {
                 const vaultContract = new Contract(vaultAddress, YearnVaultInterface, provider)
                 const pricePerShare = await vaultContract.pricePerShare()
                 const sharesAmount = bigNumberAmount.div(pricePerShare).mul(Math.pow(10, decimals))
 
+                if (sharesAmount.eq(0)) return addToast('Not enough shares to withdraw from this Vault.', { error: true })
+
+                await approveToken(vaultAddress, tokenAddress, ethers.constants.MaxUint256)
                 addRequestTxn(`yearn_vault_withdraw_${Date.now()}`, {
                     to: vaultAddress,
                     value: '0x0',
