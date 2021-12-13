@@ -1,4 +1,5 @@
 import { useState, useRef } from 'react'
+import accountPresets from '../../consts/accountPresets'
 import { Checkbox } from "../common"
 
 export default function LoginOrSignupForm({ action = 'LOGIN', onAccRequest, inProgress }) {
@@ -30,8 +31,10 @@ export default function LoginOrSignupForm({ action = 'LOGIN', onAccRequest, inPr
     }
     const minPwdLen = 8
     const isSignup = state.action === 'SIGNUP'
+    const days = Math.ceil(accountPresets.quickAccTimelock / 86400)
+    const noBackupDisclaimer = `I understand I will have to manually import/export this account in order to use it on other devices, and if I lose the backup I will have to wait ${days} days to recover the account.`
     const additionalOnSignup = state.backupOptout ? (
-      <Checkbox label="I understand that losing this backup means I will have to trigger account recovery." required={true}></Checkbox>
+      <Checkbox label={noBackupDisclaimer} required={true}></Checkbox>
     ) : (<></>)
     const Link = ({ href, children }) => (<a href={href} target='_blank' rel='noreferrer' onClick={e => e.stopPropagation()}>{children}</a>)
     const additionalInputs = isSignup ?

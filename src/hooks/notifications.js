@@ -1,8 +1,9 @@
 import { useCallback, useRef, useEffect } from 'react'
 import { getTransactionSummary } from '../lib/humanReadableTransactions'
-import { ethers } from 'ethers'
+import { ethers, getDefaultProvider } from 'ethers'
 import { useToasts } from './toasts'
 import networks from '../consts/networks'
+import AMBIRE_ICON from '../resources/icon.png'
 
 const REQUEST_TITLE_PREFIX = 'Ambire Wallet: '
 const SUPPORTED_TYPES =  ['eth_sendTransaction', 'personal_sign']
@@ -16,7 +17,7 @@ const getAmountReceived = (lastToken, newBalanceRaw, decimals) => {
     return ethers.utils.formatUnits(amountRecieved.toString(), decimals)
 }
 
-export default function useNotifications (requests, onShow, portfolio, selectedAcc, network) {
+export default function useNotifications (requests, onShow, portfolio, selectedAcc, network, sentTxn, confirmSentTx) {
     const { addToast } = useToasts()
     const onShowRef = useRef({})
     onShowRef.current.onShow = onShow
@@ -30,7 +31,7 @@ export default function useNotifications (requests, onShow, portfolio, selectedA
         const notification = new Notification(title, {
             requireInteraction: requireInteraction || false,
             body,
-            icon: 'public/logo192.png',
+            icon: AMBIRE_ICON,
         })
         //notification.onclose = 
         notification.onclick = () => {
@@ -99,6 +100,31 @@ export default function useNotifications (requests, onShow, portfolio, selectedA
             addToast(e.message | e, { error: true })
         }
     }, [portfolio, addToast, showNotification])
+
+    useEffect(() => {
+        const interval = network.id === 'ethereum' ? 30000 : 10000
+        const txStatusInterval = setInterval(() => {
+            sentTxn
+                .filter(({ confirmed }) => !confirmed)
+                .forEach(async ({ hash }) => {
+                    const provider = getDefaultProvider(network.rpc)
+                    try {
+                        const txReceipt = await provider.getTransactionReceipt(hash)
+                        if (!txReceipt) return
+
+                        confirmSentTx(hash)
+                        showNotification({
+                            id: `confirmed_tx_${Date.now()}`,
+                            title: `Ambire Transaction Confirmed`,
+                            body: `Your transaction was successfully confirmed!`
+                        })
+                    } catch(e) {
+                        console.error(e);
+                    }
+                })
+        }, interval)
+        return () => clearInterval(txStatusInterval)
+    }, [sentTxn, network, showNotification, confirmSentTx])
 
     useEffect(() => {
         isLastTotalBalanceInit = false

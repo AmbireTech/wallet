@@ -22,8 +22,13 @@
         }
 
         label {
+            width: 100%;
             font-size: 17px;
             font-weight: 500;
+        }
+
+        &.disabled {
+            opacity: 0.5;
         }
 
         &.active {
@@ -41,7 +46,7 @@
             }
         }
 
-        &:hover {
+        &:not(.disabled):hover {
             cursor: pointer;
 
             .radio {

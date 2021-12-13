@@ -216,7 +216,6 @@ $titleBar-height: 90px;
 }
 
 #sendTransaction .actions button {
-    background-color: rgb(128, 255, 219);
     width: 45%;
     margin: 2em 2.5% 0em;
     text-transform: uppercase;
@@ -240,7 +239,10 @@ $titleBar-height: 90px;
 #sendTransaction button.approveTxn .loading {
     position: absolute;
     top: 20px;
-    left: 8px;
+    left: 15px;
+    display: block;
+    width: auto;
+    height: auto;
 }
 
 #sendTransaction .listOfTransactions {
@@ -273,9 +275,14 @@ $titleBar-height: 90px;
 }
 
 #sendTransaction input {
-    border-bottom: 2px solid #b3c4e6;
-    margin: 6px;
+    box-shadow: 0 2px 0 #b3c4e6;
     color: white;
+    background-color: transparent;
+}
+
+#sendTransaction .text-input {
+    margin: 6px;
+    display: inline-block;
     width: 47%;
 }
 
