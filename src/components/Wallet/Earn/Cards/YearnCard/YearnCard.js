@@ -44,6 +44,8 @@ const YearnCard = ({ networkId, accountId, tokens, addRequest }) => {
     const provider = useMemo(() => getDefaultProvider(currentNetwork.rpc), [currentNetwork.rpc])
 
     const loadVaults = useCallback(async () => {
+        if (unavailable) return
+    
         const yearn = new Yearn(currentNetwork.chainId, { provider })
 
         const v2Vaults = await yearn.vaults.get(v2VaultsAddresses)
@@ -103,7 +105,7 @@ const YearnCard = ({ networkId, accountId, tokens, addRequest }) => {
             ...depositTokens,
             ...withdrawTokens
         ])
-    }, [getTokenFromPortfolio, provider, currentNetwork.chainId])
+    }, [getTokenFromPortfolio, provider, currentNetwork.chainId, unavailable])
 
     const onTokenSelect = useCallback(address => {
         const selectedToken = tokensItems.find(t => t.value === address)
