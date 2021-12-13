@@ -8,15 +8,14 @@ const SPEEDS = ['slow', 'medium', 'fast', 'ape']
 export function FeeSelector ({ disabled, signer, estimation, network, setEstimation, feeSpeed, setFeeSpeed }) {
     if (!estimation) return (<Loading/>)
   
+    // Only check for insufficient fee in relayer mode (.feeInUSD is available)
+    // Otherwise we don't care whether the user has enough for fees, their signer wallet will take care of it
     const insufficientFee = estimation && estimation.feeInUSD
       && !isTokenEligible(estimation.selectedFeeToken, feeSpeed, estimation)
-    const willFail = (estimation && !estimation.success) || insufficientFee
-    if (willFail) return insufficientFee ?
-        (<h3 className='error'>Insufficient balance for the fee. Accepted tokens: {(estimation.remainingFeeTokenBalances || []).map(x => x.symbol).join(', ')}</h3>)
-        : (<FailingTxn
-            message={<>The current transaction batch cannot be sent because it will fail: {mapTxnErrMsg(estimation.message)}</>}
-            tooltip={getErrHint(estimation.message)}
-        />)
+    if (estimation && !estimation.success) return (<FailingTxn
+      message={<>The current transaction batch cannot be sent because it will fail: {mapTxnErrMsg(estimation.message)}</>}
+      tooltip={getErrHint(estimation.message)}
+    />)
   
     if (!estimation.feeInNative) return (<></>)
     if (estimation && !estimation.feeInUSD && estimation.gasLimit < 40000) {
@@ -24,9 +23,12 @@ export function FeeSelector ({ disabled, signer, estimation, network, setEstimat
         <b>WARNING:</b> Fee estimation unavailable when you're doing your first account transaction and you are not connected to a relayer. You will pay the fee from <b>{signer.address}</b>, make sure you have {network.nativeAssetSymbol} there.
       </div>)
     }
+    if (estimation && estimation.feeInUSD && !estimation.remainingFeeTokenBalances) {
+      return (<h3 className='error'>Internal error: fee balances not available. This should never happen, please report this on help.ambire.com</h3>)
+    }
   
     const { nativeAssetSymbol } = network
-    const tokens = estimation.remainingFeeTokenBalances || ({ symbol: nativeAssetSymbol, decimals: 18 })
+    const tokens = estimation.remainingFeeTokenBalances || [{ symbol: nativeAssetSymbol, decimals: 18 }]
     const onFeeCurrencyChange = e => {
       const token = tokens.find(({ symbol }) => symbol === e.target.value)
       setEstimation({ ...estimation, selectedFeeToken: token })
@@ -45,13 +47,14 @@ export function FeeSelector ({ disabled, signer, estimation, network, setEstimat
       </select>
     </>) : (<></>)
   
+    const areSelectorsDisabled = disabled || insufficientFee
     const { isStable } = estimation.selectedFeeToken
     const { multiplier } = getFeePaymentConsequences(estimation.selectedFeeToken, estimation)
     const feeAmountSelectors = SPEEDS.map(speed => (
       <div 
         key={speed}
-        className={`feeSquare${feeSpeed === speed ? ' selected' : ''}${disabled ? ' disabled' : ''}`}
-        onClick={() => !disabled && setFeeSpeed(speed)}
+        className={`feeSquare${feeSpeed === speed ? ' selected' : ''}${areSelectorsDisabled ? ' disabled' : ''}`}
+        onClick={() => !areSelectorsDisabled && setFeeSpeed(speed)}
       >
         <div className='speed'>{speed}</div>
         <div className='feeEstimation'>
@@ -68,7 +71,10 @@ export function FeeSelector ({ disabled, signer, estimation, network, setEstimat
     ))
   
     return (<>
-      {feeCurrencySelect}
+      {insufficientFee ?
+        (<h3 className='error'>Insufficient balance for the fee. Accepted tokens: {(estimation.remainingFeeTokenBalances || []).map(x => x.symbol).join(', ')}</h3>)
+        : feeCurrencySelect
+      }
       <div className='feeAmountSelectors'>
         {feeAmountSelectors}
       </div>

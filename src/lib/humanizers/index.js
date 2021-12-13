@@ -6,6 +6,7 @@ import WETH from './WETH'
 import AmbireIdentity from './AmbireIdentity'
 import AmbireFactory from './AmbireFactory'
 import YearnVault from './YearnVault'
+import Movr from './Movr'
 
 const all = {
 	...UniRouters,
@@ -16,5 +17,6 @@ const all = {
 	...AmbireIdentity,
 	...AmbireFactory,
 	...YearnVault,
+	...Movr
 }
 export default all

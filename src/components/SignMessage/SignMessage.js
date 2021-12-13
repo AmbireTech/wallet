@@ -9,7 +9,7 @@ import { getWallet } from '../../lib/getWallet'
 import { useToasts } from '../../hooks/toasts'
 import { fetchPost } from '../../lib/fetch'
 import { useState } from 'react'
-import { Loading } from '../common'
+import { Button, Loading, TextInput } from '../common'
 
 export default function SignMessage ({ toSign, resolve, account, relayerURL, totalRequests }) {
   const defaultState = () => ({ codeRequired: false, passphrase: '' })
@@ -20,13 +20,13 @@ export default function SignMessage ({ toSign, resolve, account, relayerURL, tot
   if (!toSign || !account) return (<></>)
   if (toSign && !isHexString(toSign.txn)) return (<div id='signMessage'>
     <h3 className='error'>Invalid signing request: .txn has to be a hex string</h3>
-    <button type='button' className='reject' onClick={() => resolve({ message: 'signature denied' })}>Reject</button>
+    <Button className='reject' onClick={() => resolve({ message: 'signature denied' })}>Reject</Button>
   </div>)
 
   const handleSigningErr = e => {
     console.error('Signing error', e)
     if (e && e.message.includes('must provide an Ethereum address')) {
-      addToast(`Signing error: not connected with the correct address. Make sure you're connected with ${account.id}.`, { error: true })
+      addToast(`Signing error: not connected with the correct address. Make sure you're connected with ${account.signer.address}.`, { error: true })
     } else {
       addToast(`Signing error: ${e.message || e}`, { error: true })
     }
@@ -133,20 +133,21 @@ export default function SignMessage ({ toSign, resolve, account, relayerURL, tot
         <div className='actions'>
           <form onSubmit={e => { e.preventDefault() }}>
             {account.signer.quickAccManager && (<>
-              <input type='password'
+              <TextInput
+                password
                 required minLength={3}
                 placeholder='Account password'
                 value={signingState.passphrase}
-                onChange={e => setSigningState({ ...signingState, passphrase: e.target.value })}
-              ></input>
+                onChange={value => setSigningState({ ...signingState, passphrase: value })}
+              ></TextInput>
             </>)}
 
             <div className="buttons">
-              <button type='button' className='reject' onClick={() => resolve({ message: 'signature denied' })}>Reject</button>
-              <button className='approve' onClick={approve} disabled={isLoading}>
+              <Button className='reject' onClick={() => resolve({ message: 'signature denied' })}>Reject</Button>
+              <Button className='approve' onClick={approve} disabled={isLoading}>
                   {isLoading ? (<><Loading/>&nbsp;&nbsp;&nbsp;&nbsp;Signing...</>)
                   : (<>Sign</>)}
-              </button>
+              </Button>
             </div>
           </form>
         </div>

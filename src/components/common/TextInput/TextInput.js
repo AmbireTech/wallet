@@ -4,7 +4,7 @@ import { forwardRef } from 'react';
 import { MdContentCopy } from 'react-icons/md';
 import { useToasts } from '../../../hooks/toasts';
 
-const TextInput = forwardRef(({ value, placeholder, info, label, password, disabled, copy, onInput }, ref) => {
+const TextInput = forwardRef(({ value, className, title, pattern, autoComplete, required, minLength, maxLength, placeholder, info, label, password, disabled, copy, small, onInput, onChange, style }, ref) => {
     const { addToast } = useToasts();
 
     const onClick = async () => {
@@ -13,7 +13,7 @@ const TextInput = forwardRef(({ value, placeholder, info, label, password, disab
     };
 
     return (
-        <div className={`text-input ${copy ? 'copy' : ''}`}>
+        <div className={`text-input ${copy ? 'copy' : ''} ${small ? 'small' : ''} ${className}`}>
             {
                 label ?
                     <label>{ label }</label>
@@ -21,10 +21,25 @@ const TextInput = forwardRef(({ value, placeholder, info, label, password, disab
                     null
             }
             <div className="text-input-container" onClick={copy ? onClick : null}>
-                <input value={value} type={password ? 'password' : 'text'} placeholder={placeholder} disabled={copy || disabled} onInput={ev => onInput(ev.target.value)} ref={ref}/>
+                <input
+                    value={value}
+                    title={title}
+                    pattern={pattern}
+                    autoComplete={autoComplete}
+                    required={required}
+                    minLength={minLength}
+                    maxLength={maxLength}
+                    type={password ? 'password' : 'text'}
+                    placeholder={placeholder}
+                    disabled={copy || disabled}
+                    onInput={ev => onInput && onInput(ev.target.value)}
+                    onChange={ev => onChange && onChange(ev.target.value)}
+                    ref={ref}
+                    style={style}
+                />
                 {
                     copy ?
-                        <div className="icon">
+                        <div className="button">
                             <MdContentCopy size={20}/>
                         </div>
                         :
