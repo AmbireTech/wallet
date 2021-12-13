@@ -47,17 +47,23 @@ function AppInner () {
 
   const { queryParamsUrl, deleteUriQueryParams } = useQueryParamsUrl()
   const initialUri = queryParamsUrl.get('uri')
-  // console.log('initialUri', initialUri)
-
+  const [wcUri, setWcUri] = useState('')
+  
   // Signing requests: transactions/signed msgs: all requests are pushed into .requests
   const { connections, connect, disconnect, requests: wcRequests, resolveMany: wcResolveMany } = useWalletConnect({
     account: selectedAcc,
     chainId: network.chainId,
-    initialUri: initialUri
+    initialUri: !initialUri ? wcUri : initialUri
   })
 
   // Deleting the WalletConnect Uri 
-  useEffect(() => deleteUriQueryParams(), [deleteUriQueryParams])
+  useEffect(() => {
+    if (wcUri.length === 0 && initialUri) {
+      setWcUri(e => e = initialUri)
+    }
+    
+    deleteUriQueryParams()
+  }, [deleteUriQueryParams, initialUri, wcUri])
   
   const { requests: gnosisRequests, resolveMany: gnosisResolveMany, connect: gnosisConnect, disconnect: gnosisDisconnect } = useGnosisSafe({
 	  selectedAccount: selectedAcc,
