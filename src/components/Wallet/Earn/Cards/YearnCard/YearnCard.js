@@ -1,8 +1,8 @@
 import Card from '../Card/Card'
 
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useState, useMemo } from 'react'
 import { ethers } from 'ethers'
-import { parseUnits, formatUnits } from '@ethersproject/units'
+import { parseUnits } from '@ethersproject/units'
 import { Contract } from '@ethersproject/contracts'
 import { getDefaultProvider } from '@ethersproject/providers'
 import { BigNumber } from '@ethersproject/bignumber'
@@ -42,7 +42,7 @@ const YearnCard = ({ networkId, accountId, tokens, addRequest }) => {
     const currentNetwork = networks.find(({ id }) => id === networkId)
     const getTokenFromPortfolio = useCallback(tokenAddress => tokens.find(({ address }) => address.toLowerCase() === tokenAddress.toLowerCase()) || {}, [tokens])
     const addRequestTxn = (id, txn, extraGas = 0) => addRequest({ id, type: 'eth_sendTransaction', chainId: currentNetwork.chainId, account: accountId, txn, extraGas })
-    const provider = getDefaultProvider(currentNetwork.rpc)
+    const provider = useMemo(() => getDefaultProvider(currentNetwork.rpc), [currentNetwork.rpc])
 
     const loadVaults = useCallback(async () => {
         const yearn = new Yearn(currentNetwork.chainId, { provider })
@@ -104,7 +104,7 @@ const YearnCard = ({ networkId, accountId, tokens, addRequest }) => {
             ...depositTokens,
             ...withdrawTokens
         ].sort((a, b) => b.apr - a.apr))
-    }, [getTokenFromPortfolio])
+    }, [getTokenFromPortfolio, provider, currentNetwork.chainId])
 
     const onTokenSelect = useCallback(address => {
         const selectedToken = tokensItems.find(t => t.value === address)
