@@ -25,6 +25,7 @@
     }
 
     .icon {
+        flex: 0 0 auto;
         height: 22px;
         width: 22px;
         display: flex;
@@ -32,11 +33,21 @@
         justify-content: center;
         border-radius: 100%;
         background-color: rgba(255, 255, 255, 0.1);
+        background-size: contain;
+        background-position: center center;
+        background-repeat: no-repeat;
         overflow: hidden;
 
         img {
             height: 100%;
         }
+    }
+
+    .label {
+        white-space: pre;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        cursor: pointer;
     }
 
     .input {

@@ -13,8 +13,8 @@ const Radios = ({ radios, defaultValue, onChange }) => {
     return (
         <div className="radios-container">
             {
-                radios.map(({label, value }, i) => (
-                    <div className={`radio-container ${value === currentValue ? 'active' : ''}`} key={`radio-${i}`} onClick={() => onSelect(value)}>
+                radios.map(({label, value, disabled }, i) => (
+                    <div className={`radio-container ${value === currentValue ? 'active' : ''} ${disabled ? 'disabled' : ''}`} key={`radio-${i}`} onClick={() => !disabled && onSelect(value)}>
                         <div className="radio"></div>
                         <label>{ label }</label>
                     </div>

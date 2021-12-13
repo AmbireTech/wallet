@@ -15,9 +15,14 @@
     padding-top:  $layout-spacing / 2;
     display: flex;
     flex-direction: column;
-    align-items: stretch;
+    align-items: center;
     overflow: hidden;
     overflow-y: auto;
+
+    #wallet-container-inner {
+        height: 100%;
+        width: 100%;
+    }
 
     .placeholder-overlay {
         z-index: 47;
@@ -55,5 +60,14 @@
         padding-right: 10px;
         padding-bottom: 10px;
         overflow-y: auto;
+    }
+}
+
+// Wide screen
+@media screen and (min-width: $wide-breakpoint-min-width) {
+    #wallet-container {
+        #wallet-container-inner {
+            max-width: 1500px;
+        }
     }
 }
