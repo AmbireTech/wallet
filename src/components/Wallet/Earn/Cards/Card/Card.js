@@ -16,6 +16,10 @@ const Card = ({ loading, unavailable, tokensItems, icon, details, onTokenSelect,
 
     const currentToken = tokens.find(({ value }) => value === token)
 
+    // Sort tokens items by balance
+    const getEquToken = token => tokensItems.find((({ address, type }) => address === token.address && (token.type === 'deposit' ? type === 'withdraw' : type === 'deposit')))
+    tokensItems = tokensItems.sort((a, b) => (b?.balance + getEquToken(b)?.balance) - (a?.balance + getEquToken(a)?.balance))
+
     const getMaxAmount = () => {
         if (!currentToken) return 0;
         const { balanceRaw, decimals } = currentToken
