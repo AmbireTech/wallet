@@ -1,6 +1,6 @@
 import './Security.scss'
 
-import { MdOutlineAdd, MdOutlineRemove } from 'react-icons/md'
+import { MdOutlineRemove } from 'react-icons/md'
 import { RiDragDropLine } from 'react-icons/ri'
 import { useState, useEffect, useCallback } from 'react'
 import { Loading, TextInput, Button } from '../../common'
@@ -8,9 +8,7 @@ import { Interface, AbiCoder, keccak256 } from 'ethers/lib/utils'
 import accountPresets from '../../../consts/accountPresets'
 import privilegesOptions from '../../../consts/privilegesOptions'
 import { useRelayerData, useModals } from '../../../hooks'
-import { InputModal, ResetPasswordModal } from '../../Modals'
-import AddressList from '../../common/AddressBook/AddressList/AddressList'
-import { isValidAddress } from '../../../helpers/address'
+import { ResetPasswordModal } from '../../Modals'
 import AddAuthSigner from './AddAuthSigner/AddAuthSigner'
 import { useToasts } from '../../../hooks/toasts'
 import { useHistory } from 'react-router-dom'
@@ -33,13 +31,10 @@ const Security = ({
   selectedAcc,
   selectedNetwork,
   accounts,
-  addressBook,
   addRequest,
   showSendTxns,
   onAddAccount
 }) => {
-  const { addresses, addAddress, removeAddress } = addressBook
-
   const { showModal } = useModals()
   const [ cacheBreak, setCacheBreak ] = useState(() => Date.now())
   
@@ -126,13 +121,6 @@ const Security = ({
       showSendTxns={showSendTxns}
     />)
   }
-  // Address book
-  const modalInputs = [
-    { label: 'Name', placeholder: 'My Address' },
-    { label: 'Address', placeholder: '0x', validate: value => isValidAddress(value) }
-  ]
-  const inputModal = <InputModal title="Add New Address" inputs={modalInputs} onClose={([name, address]) => addAddress(name, address)}></InputModal>
-  const showInputModal = () => showModal(inputModal)
 
   const handleEnableOtp = () => {
     if (!relayerURL) {
@@ -307,18 +295,6 @@ const Security = ({
       
       <input {...getInputProps()} />
       {signersFragment}
-
-      <div id="addresses" className='panel'>
-        <div className='title'>Address Book</div>
-        <div className="content">
-          <AddressList
-            noAccounts={true}
-            addresses={addresses}
-            removeAddress={removeAddress}
-          />
-          <Button small icon={<MdOutlineAdd/>} onClick={showInputModal}>Add Address</Button>
-        </div>
-      </div>
 
       <Backup selectedAccount={selectedAccount} onOpen={open}/>
     </section>

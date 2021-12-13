@@ -26,7 +26,7 @@ export default function SignMessage ({ toSign, resolve, account, relayerURL, tot
   const handleSigningErr = e => {
     console.error('Signing error', e)
     if (e && e.message.includes('must provide an Ethereum address')) {
-      addToast(`Signing error: not connected with the correct address. Make sure you're connected with ${account.id}.`, { error: true })
+      addToast(`Signing error: not connected with the correct address. Make sure you're connected with ${account.signer.address}.`, { error: true })
     } else {
       addToast(`Signing error: ${e.message || e}`, { error: true })
     }
