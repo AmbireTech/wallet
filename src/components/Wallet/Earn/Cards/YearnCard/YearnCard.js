@@ -8,22 +8,21 @@ import { getDefaultProvider } from '@ethersproject/providers'
 import { BigNumber } from '@ethersproject/bignumber'
 import { Interface } from '@ethersproject/abi'
 import ERC20ABI from 'adex-protocol-eth/abi/ERC20.json'
+import { Yearn } from '@yfi/sdk'
 import YEARN_VAULT_ABI from '../../../../../consts/YearnVaultABI'
 import networks from '../../../../../consts/networks'
 import { useToasts } from '../../../../../hooks/toasts'
 import YEARN_ICON from '../../../../../resources/yearn.svg'
 
-const yearnAPIVaults = 'https://api.yearn.finance/v1/chains/1/vaults/all'
 const v2VaultsAddresses = [
     '0xdA816459F1AB5631232FE5e97a05BBBb94970c95',
     '0xa354F35829Ae975e850e23e9615b11Da1B3dC4DE',
     '0xdb25cA703181E7484a155DD612b06f57E12Be5F0',
-    '0xdA816459F1AB5631232FE5e97a05BBBb94970c95',
     '0xA696a63cc78DfFa1a63E9E50587C197387FF6C7E',
     '0x7Da96a3891Add058AdA2E826306D812C638D87a7',
     '0xB8C3B7A2A618C552C23B1E4701109a9E756Bab67',
     '0xe11ba472F74869176652C35D30dB89854b5ae84D',
-    '0xa9fE4601811213c340e850ea305481afF02f5b28',
+    '0xa258C4606Ca8206D8aA700cE2143D7db854D168c',
     '0xFBEB78a723b8087fD2ea7Ef1afEc93d35E8Bed42',
     '0x6d765CbE5bC922694afE112C140b8878b9FB0390',
     '0xFD0877d9095789cAF24c98F7CCe092fa8E120775',
@@ -45,14 +44,21 @@ const YearnCard = ({ networkId, accountId, tokens, addRequest }) => {
     const addRequestTxn = (id, txn, extraGas = 0) => addRequest({ id, type: 'eth_sendTransaction', chainId: currentNetwork.chainId, account: accountId, txn, extraGas })
 
     const loadVaults = useCallback(async () => {
-        const response = await fetch(yearnAPIVaults)
-        const allVaults = await response.json()
-        const v2Vaults = allVaults.filter(({ type, address }) => type === 'v2' && v2VaultsAddresses.includes(address))
+        const provider = getDefaultProvider(currentNetwork.rpc)
+        const yearn = new Yearn(currentNetwork.chainId, { provider })
 
-        const vaults = v2Vaults.map(({ address, apy, symbol, token, decimals }) => ({
+        const allVaults = await yearn.vaults.get()
+        const v2Vaults = allVaults.filter(({ address }) => v2VaultsAddresses.includes(address))
+
+        const vaults = v2Vaults.map(({ address, metadata, symbol, token, decimals }) => ({
             vaultAddress: address,
-            apr: apy.gross_apr.toFixed(2),
-            token,
+            apr: metadata.apy.gross_apr.toFixed(2),
+            token: {
+                address: token,
+                icon: metadata.displayIcon,
+                symbol: metadata.displayName,
+                decimals
+            },
             yToken: {
                 address,
                 symbol,
@@ -70,6 +76,7 @@ const YearnCard = ({ networkId, accountId, tokens, addRequest }) => {
                 value: address,
                 symbol,
                 decimals,
+                tokenAddress: address,
                 vaultAddress,
                 apr,
                 balance: balance || 0,
@@ -87,6 +94,7 @@ const YearnCard = ({ networkId, accountId, tokens, addRequest }) => {
                 value: address,
                 symbol,
                 decimals,
+                tokenAddress: address,
                 vaultAddress,
                 apr,
                 balance: balance || 0,
@@ -138,9 +146,9 @@ const YearnCard = ({ networkId, accountId, tokens, addRequest }) => {
 
     const onValidate = async (type, tokenAddress, amount) => {
         if (type === 'Deposit') {
-            const token = tokensItems.find(({ value }) => value === tokenAddress)
-            if (!token) return 
-            
+            const token = tokensItems.find(t => t.tokenAddress === tokenAddress)
+            if (!token) return
+
             const { vaultAddress, decimals } = token
             const bigNumberHexAmount = parseUnits(amount.toString(), decimals).toHexString()
             await approveToken(vaultAddress, tokenAddress, ethers.constants.MaxUint256)
