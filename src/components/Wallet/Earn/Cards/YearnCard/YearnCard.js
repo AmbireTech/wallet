@@ -117,18 +117,10 @@ const YearnCard = ({ networkId, accountId, tokens, addRequest }) => {
 
     const approveToken = async (vaultAddress, tokenAddress, bigNumberHexAmount) => {
         try {
-            const ZERO = BigNumber.from(0)
             const tokenContract = new Contract(tokenAddress, ERC20Interface, provider)
-            const allowance = await tokenContract.allowance(accountId, tokenAddress)
+            const allowance = await tokenContract.allowance(accountId, vaultAddress)
 
             if (allowance.lt(bigNumberHexAmount)) {
-                if (allowance.gt(ZERO)) {
-                    addRequestTxn(`yearn_vault_approve_${Date.now()}`, {
-                        to: vaultAddress,
-                        value: bigNumberHexAmount,
-                        data: '0x'
-                    })
-                }
                 addRequestTxn(`yearn_vault_approve_${Date.now()}`, {
                     to: tokenAddress,
                     value: '0x0',
