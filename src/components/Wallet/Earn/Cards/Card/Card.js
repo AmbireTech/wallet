@@ -36,6 +36,8 @@ const Card = ({ loading, unavailable, tokensItems, icon, details, onTokenSelect,
         setDisabled(!token || !tokens.length)
     }, [token, onTokenSelect, tokens.length])
 
+    const amountLabel = <div className="amount-label">Available Amount: <span>{ !disabled ? `${getMaxAmount()} ${currentToken?.symbol}` : '0' }</span></div>
+
     return (
         <div className="card">
             <div className="title">
@@ -81,7 +83,7 @@ const Card = ({ loading, unavailable, tokensItems, icon, details, onTokenSelect,
                                 min="0"
                                 max={currentToken?.balance}
                                 value={amount}
-                                label={`Available Amount: ${!disabled ? `${getMaxAmount()} ${currentToken?.symbol}` : '0'}`}
+                                label={amountLabel}
                                 onInput={(value) => setAmount(value)}
                                 button="MAX"
                                 onButtonClick={setMaxAmount}
