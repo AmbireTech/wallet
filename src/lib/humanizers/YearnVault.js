@@ -3,7 +3,6 @@ import { Interface } from 'ethers/lib/utils'
 import { token } from '../humanReadableTransactions'
 
 const iface = new Interface(abis.YearnVault)
-console.log(iface);
 
 const YearnMapping = {
   [iface.getSighash('deposit(uint256,address)')]: (txn, network) => {
