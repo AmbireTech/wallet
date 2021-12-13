@@ -100,10 +100,12 @@ const YearnCard = ({ networkId, accountId, tokens, addRequest }) => {
             }
         })
 
-        setTokensItems([
+        const allTokens = [
             ...depositTokens,
             ...withdrawTokens
-        ].sort((a, b) => b.apr - a.apr))
+        ]
+        const getEquToken = token => allTokens.find((({ address, type }) => address === token.address && (token.type === 'deposit' ? type === 'withdraw' : type === 'deposit')))
+        setTokensItems(allTokens.sort((a, b) => (b?.balance + getEquToken(b)?.balance) - (a?.balance + getEquToken(a)?.balance)))
     }, [getTokenFromPortfolio, provider, currentNetwork.chainId])
 
     const onTokenSelect = useCallback(address => {
