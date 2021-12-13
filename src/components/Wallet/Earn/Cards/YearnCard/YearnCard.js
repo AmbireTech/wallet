@@ -47,9 +47,7 @@ const YearnCard = ({ networkId, accountId, tokens, addRequest }) => {
         const provider = getDefaultProvider(currentNetwork.rpc)
         const yearn = new Yearn(currentNetwork.chainId, { provider })
 
-        const allVaults = await yearn.vaults.get()
-        const v2Vaults = allVaults.filter(({ address }) => v2VaultsAddresses.includes(address))
-
+        const v2Vaults = await yearn.vaults.get(v2VaultsAddresses)
         const vaults = v2Vaults.map(({ address, metadata, symbol, token, decimals }) => ({
             vaultAddress: address,
             apr: metadata.apy.gross_apr.toFixed(2),
