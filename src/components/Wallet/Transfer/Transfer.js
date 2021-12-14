@@ -11,18 +11,19 @@ import { useToasts } from '../../../hooks/toasts'
 import { TextInput, NumberInput, Button, Select, Loading, AddressBook, AddressWarning } from '../../common'
 import { validateSendTransferAddress, validateSendTransferAmount } from '../../../lib/validations/formValidations'
 import CrossChain from './CrossChain/CrossChain'
+import { isValidAddress } from '../../../helpers/address'
 
 const ERC20 = new Interface(require('adex-protocol-eth/abi/ERC20'))
 
 const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest, addressBook }) => {
     const { addresses, addAddress, removeAddress, isKnownAddress } = addressBook
 
-    const { tokenSymbol } = useParams()
+    const { tokenAddressOrSymbol } = useParams()
     const { addToast } = useToasts()
 
-    const tokenAddressFromSymbol = portfolio.tokens.find(({ symbol }) => symbol === tokenSymbol)?.address || null
+    const tokenAddress = isValidAddress(tokenAddressOrSymbol) ? tokenAddressOrSymbol : portfolio.tokens.find(({ symbol }) => symbol === tokenAddressOrSymbol)?.address || null
 
-    const [asset, setAsset] = useState(tokenAddressFromSymbol)
+    const [asset, setAsset] = useState(tokenAddress)
     const [amount, setAmount] = useState(0)
     const [bigNumberHexAmount, setBigNumberHexAmount] = useState('')
     const [address, setAddress] = useState('')
@@ -98,7 +99,7 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
     useEffect(() => {
         setAmount(0)
         setBigNumberHexAmount('')
-        if (selectedAsset) history.replace({ pathname: `/wallet/transfer/${selectedAsset.symbol}` })
+        if (selectedAsset) history.replace({ pathname: `/wallet/transfer/${Number(asset) !== 0 ? asset : selectedAsset.symbol}` })
     }, [asset, history, selectedAsset])
 
     useEffect(() => {
