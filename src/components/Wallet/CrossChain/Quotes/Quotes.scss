@@ -1,10 +1,10 @@
-@import '../../../../../variables.scss';
+@import '../../../../variables.scss';
 
 #quotes {
     height: 100%;
     display: flex;
     flex-direction: column;
-    gap: 25px;
+    gap: 3em;
 
     #summary {
         display: flex;
@@ -146,6 +146,20 @@
 
         .buttonComponent {
             flex: 1 1 50%;
+        }
+    }
+}
+
+// Mobile
+@media screen and (max-width: $mobile-breakpoint-max-width) {
+    #quotes {
+        #summary {
+            flex-direction: column;
+            gap: 1.5em;
+
+            svg {
+                transform: rotate(90deg);
+            }
         }
     }
 }
