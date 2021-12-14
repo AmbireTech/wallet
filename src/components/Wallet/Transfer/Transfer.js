@@ -5,13 +5,12 @@ import { AiOutlineSend } from 'react-icons/ai'
 import { useParams, withRouter } from 'react-router'
 import { useEffect, useMemo, useState } from 'react'
 import { ethers } from 'ethers'
-import NoFundsPlaceholder from './NoFundsPlaceholder/NoFundsPlaceholder'
 import { Interface } from 'ethers/lib/utils'
 import { useToasts } from '../../../hooks/toasts'
-import { TextInput, NumberInput, Button, Select, Loading, AddressBook, AddressWarning } from '../../common'
+import { TextInput, NumberInput, Button, Select, Loading, AddressBook, AddressWarning, NoFundsPlaceholder } from '../../common'
 import { validateSendTransferAddress, validateSendTransferAmount } from '../../../lib/validations/formValidations'
-import CrossChain from './CrossChain/CrossChain'
 import { isValidAddress } from '../../../helpers/address'
+import Addresses from './Addresses/Addresses'
 
 const ERC20 = new Interface(require('adex-protocol-eth/abi/ERC20'))
 
@@ -176,7 +175,11 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
                             <NoFundsPlaceholder/>
                }
            </div>
-           <CrossChain addRequest={addRequest} selectedAccount={selectedAcc} portfolio={portfolio} network={selectedNetwork}/>
+           <Addresses
+                addresses={addresses}
+                addAddress={addAddress}
+                removeAddress={removeAddress}
+            />
         </div>
     )
 }

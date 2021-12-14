@@ -4,11 +4,10 @@ import { BsArrowDown } from 'react-icons/bs'
 
 import { useEffect, useState, useCallback, useMemo, useRef } from 'react'
 import { ethers } from 'ethers'
-import { NumberInput, Button, Select, Loading } from '../../../common'
-import { fetchChains, fetchFromTokens, fetchQuotes, fetchToTokens } from '../../../../services/movr'
-import networks from '../../../../consts/networks'
-import { useToasts } from '../../../../hooks/toasts'
-import NoFundsPlaceholder from '../NoFundsPlaceholder/NoFundsPlaceholder'
+import { NumberInput, Button, Select, Loading, NoFundsPlaceholder } from '../../common'
+import { fetchChains, fetchFromTokens, fetchQuotes, fetchToTokens } from '../../../services/movr'
+import networks from '../../../consts/networks'
+import { useToasts } from '../../../hooks/toasts'
 import Quotes from './Quotes/Quotes'
 
 const CrossChain = ({ addRequest, selectedAccount, portfolio, network }) => {
@@ -190,57 +189,59 @@ const CrossChain = ({ addRequest, selectedAccount, portfolio, network }) => {
     const amountLabel = <div className="amount-label">Available Amount: <span>{ maxAmount }</span></div>
 
     return (
-        <div id="cross-chain" className="panel">
-            <div className="title">
-                Cross-chain
-                <div id="powered">
-                    Powered by Movr
+        <div id="cross-chain">
+            <div className='panel'>
+                <div className="title">
+                    Cross-chain transfers/swaps
+                    <div id="powered">
+                        Powered by Movr
+                    </div>
                 </div>
-            </div>
-            {
-                disabled ? 
-                    <div className="placeholder">Not supported on this Network</div>
-                    :
-                    loading || portfolio.isBalanceLoading ? 
-                        <Loading/>
+                {
+                    disabled ? 
+                        <div className="placeholder">Not supported on this Network</div>
                         :
-                        hasNoFunds ?
-                            <NoFundsPlaceholder/>
+                        loading || portfolio.isBalanceLoading ? 
+                            <Loading/>
                             :
-                            !loadingFromTokens && !loadingToTokens && !fromTokensItems.length ? 
-                                <div className="placeholder">You don't have any available tokens to swap</div>
+                            hasNoFunds ?
+                                <NoFundsPlaceholder/>
                                 :
-                                loadingQuotes ?
-                                        <Loading/>
-                                        :
-                                        quotes ?
-                                            <Quotes
-                                                addRequest={addRequest}
-                                                selectedAccount={selectedAccount}
-                                                fromTokensItems={fromTokensItems}
-                                                quotes={quotes}
-                                                onCancel={() => setQuotes(null)}
-                                            />
+                                !loadingFromTokens && !loadingToTokens && !fromTokensItems.length ? 
+                                    <div className="placeholder">You don't have any available tokens to swap</div>
+                                    :
+                                    loadingQuotes ?
+                                            <Loading/>
                                             :
-                                            <div className="form">
-                                                <label>From</label>
-                                                <div className="inputs">
-                                                    { loadingFromTokens ? <Loading/> : null }
-                                                    <Select searchable defaultValue={fromToken} items={fromTokensItems} onChange={value => setFromToken(value)}/>
-                                                    <NumberInput min="0" label={amountLabel} value={amount} onInput={value => setAmount(value)} button="MAX" onButtonClick={() => setAmount(maxAmount)}/>
+                                            quotes ?
+                                                <Quotes
+                                                    addRequest={addRequest}
+                                                    selectedAccount={selectedAccount}
+                                                    fromTokensItems={fromTokensItems}
+                                                    quotes={quotes}
+                                                    onCancel={() => setQuotes(null)}
+                                                />
+                                                :
+                                                <div className="form">
+                                                    <label>From</label>
+                                                    <div className="inputs">
+                                                        { loadingFromTokens ? <Loading/> : null }
+                                                        <Select searchable defaultValue={fromToken} items={fromTokensItems} onChange={value => setFromToken(value)}/>
+                                                        <NumberInput min="0" label={amountLabel} value={amount} onInput={value => setAmount(value)} button="MAX" onButtonClick={() => setAmount(maxAmount)}/>
+                                                    </div>
+                                                    <div className="separator">
+                                                        <BsArrowDown/>
+                                                    </div>
+                                                    <label>To</label>
+                                                    <div className="inputs">
+                                                        { loadingToTokens ? <Loading/> : null }
+                                                        <Select searchable defaultValue={toChain} items={chainsItems} onChange={value => setToChain(value)}/>
+                                                        <Select searchable defaultValue={toToken} items={toTokenItems} onChange={value => setToToken(value)}/>
+                                                    </div>
+                                                    <Button disabled={formDisabled} onClick={getQuotes}>Get Quotes</Button>
                                                 </div>
-                                                <div className="separator">
-                                                    <BsArrowDown/>
-                                                </div>
-                                                <label>To</label>
-                                                <div className="inputs">
-                                                    { loadingToTokens ? <Loading/> : null }
-                                                    <Select searchable defaultValue={toChain} items={chainsItems} onChange={value => setToChain(value)}/>
-                                                    <Select searchable defaultValue={toToken} items={toTokenItems} onChange={value => setToToken(value)}/>
-                                                </div>
-                                                <Button disabled={formDisabled} onClick={getQuotes}>Get Quotes</Button>
-                                            </div>
-            }
+                }
+            </div>
         </div>
     )
 }
