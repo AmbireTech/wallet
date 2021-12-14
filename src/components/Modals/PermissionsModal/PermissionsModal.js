@@ -23,18 +23,23 @@ const PermissionsModal = ({ relayerIdentityURL, account, onAddAccount }) => {
     const showEmailSentToast = () => addToast('Confirmation email already sent', { error: true })
     
     const checkEmailConfirmation = useCallback(async () => {
-        const identity = await fetchGet(relayerIdentityURL)
-        if (identity) {
-            const { emailConfirmed } = identity.meta
-            const isConfirmed = !!emailConfirmed
-            setEmailConfirmed(isConfirmed)
+        try {
+            const identity = await fetchGet(relayerIdentityURL)
+            if (identity) {
+                const { emailConfirmed } = identity.meta
+                const isConfirmed = !!emailConfirmed
+                setEmailConfirmed(isConfirmed)
 
-            if (isConfirmed && account.emailConfRequired) {
-                onAddAccount({
-                    ...account,
-                    emailConfRequired: false
-                })
+                if (isConfirmed && account.emailConfRequired) {
+                    onAddAccount({
+                        ...account,
+                        emailConfRequired: false
+                    })
+                }
             }
+        } catch(e) {
+            console.error(e);
+            addToast('Could not check email confirmation.', { error: true })
         }
     }, [relayerIdentityURL, account, onAddAccount])
     
