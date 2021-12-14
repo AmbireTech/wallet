@@ -102,7 +102,7 @@ export default function Wallet(props) {
       path: '/gnosis/plugins',
       component: <PluginGnosisSafeApps
         gnosisConnect={props.gnosisConnect}
-        gnosisDisconnect={props.showSendTxns}
+        gnosisDisconnect={props.gnosisDisconnect}
         selectedAcc={props.selectedAcc}
         network={props.network}
       />
