@@ -15,9 +15,19 @@
     }
 
     .search-input {
+        width: 100%;
         position: absolute;
-        opacity: 0;
-        pointer-events: none;
+        bottom: 0;
+        z-index: 49;
+
+        input {
+            height: 50px !important;
+        }
+
+        &:not(.visible) {
+            opacity: 0;
+            pointer-events: none;
+        }
     }
 
     label {
