@@ -41,7 +41,7 @@ const PermissionsModal = ({ relayerIdentityURL, account, onAddAccount }) => {
             console.error(e);
             addToast('Could not check email confirmation.', { error: true })
         }
-    }, [relayerIdentityURL, account, onAddAccount])
+    }, [relayerIdentityURL, account, onAddAccount, addToast])
     
     const requestNotificationsPermission = async () => {
         const status = await askForPermission('notifications')
