@@ -18,6 +18,7 @@ import NumberInput from './NumberInput/NumberInput';
 import PasswordInput from './PasswordInput/PasswordInput';
 import Toggle from './Toggle/Toggle';
 import ToolTip from './ToolTip/ToolTip';
+import NoFundsPlaceholder from './NoFundsPlaceholder/NoFundsPlaceholder';
 
 export {
     AddressBook,
@@ -39,5 +40,6 @@ export {
     NumberInput,
     PasswordInput,
     Toggle,
-    ToolTip
+    ToolTip,
+    NoFundsPlaceholder
 };
