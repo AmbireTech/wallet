@@ -59,8 +59,13 @@ const PermissionsModal = ({ relayerIdentityURL, account, onAddAccount }) => {
         return () => clearInterval(emailConfirmationInterval)
     }, [isEmailConfirmed, checkEmailConfirmation])
 
+    const buttons = <>
+        <Button clear small icon={<MdClose/>} disabled={isAccountNotConfirmed} onClick={hideModal}>Ignore</Button>
+        <Button small icon={<MdCheck/>} disabled={buttonDisabled} onClick={hideModal}>Done</Button>
+    </>
+
     return (
-        <Modal id="permissions-modal" title="We need a few things 🙏">
+        <Modal id="permissions-modal" title="We need a few things 🙏" buttons={buttons}>
             {
                 account.email ? 
                     <div className="permission">
@@ -110,10 +115,6 @@ const PermissionsModal = ({ relayerIdentityURL, account, onAddAccount }) => {
                     checked={modalHidden}
                     onChange={({ target }) => setModalHidden(target.checked)}/>)
             }
-            <div className="buttons">
-                <Button clear small icon={<MdClose/>} disabled={isAccountNotConfirmed} onClick={hideModal}>Ignore</Button>
-                <Button small icon={<MdCheck/>} disabled={buttonDisabled} onClick={hideModal}>Done</Button>
-            </div>
         </Modal>
     )
 }
