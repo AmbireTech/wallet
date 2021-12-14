@@ -1,4 +1,5 @@
-import { useEffect, useCallback } from 'react'
+import { useEffect, useCallback, useMemo } from 'react'
+import { useLocation } from "react-router-dom";
 import { useToasts} from './toasts'
 
 let documentTitle = document.title
@@ -20,12 +21,14 @@ const removeFlashingTitle = () => {
 }
 
 const useAttentionGrabber = ({ eligibleRequests, isSendTxnShowing, onSitckyClick }) => {
+    const location = useLocation()
     const { addToast, removeToast } = useToasts()
 
     const removeStickyToasts = useCallback(() => stickyIds.forEach(id => removeToast(id)), [removeToast])
+    const isRouteWallet = useMemo(() => location.pathname.startsWith('/wallet'), [location.pathname])
     
     useEffect(() => {
-        if (eligibleRequests.length) {
+        if (eligibleRequests.length && isRouteWallet) {
             if (isSendTxnShowing) removeStickyToasts()
             else {
                 stickyIds.push(addToast('Transactions waiting to be signed', {
@@ -43,7 +46,7 @@ const useAttentionGrabber = ({ eligibleRequests, isSendTxnShowing, onSitckyClick
         }
 
         return () => clearInterval(flashingTitleInterval)
-    }, [removeStickyToasts, eligibleRequests, isSendTxnShowing, onSitckyClick, addToast, removeToast])
+    }, [removeStickyToasts, eligibleRequests, isSendTxnShowing, onSitckyClick, addToast, removeToast, isRouteWallet])
 }
 
 export default useAttentionGrabber
