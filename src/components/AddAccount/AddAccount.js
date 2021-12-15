@@ -22,6 +22,7 @@ import { isFirefox } from '../../lib/isFirefox'
 import { VscJson } from 'react-icons/vsc'
 import { useDropzone } from 'react-dropzone'
 import { validateImportedAccountProps, fileSizeValidator } from '../../lib/validations/importedAccountValidations'
+import GridPlusModal from '../Modals/GridPlusModal/GridPlusModal'
 
 TrezorConnect.manifest({
   email: 'contactus@ambire.com',
@@ -184,6 +185,10 @@ export default function AddAccount({ relayerURL, onAddAccount }) {
     )
   }, [getAccountByAddr, relayerURL])
 
+  async function connectGridPlusAndGetAccounts() {
+    showModal(<GridPlusModal/>)
+  }
+
   async function connectTrezorAndGetAccounts() {
     /*
     const engine = new Web3ProviderEngine({ pollingInterval: this.pollingInterval })
@@ -338,6 +343,10 @@ export default function AddAccount({ relayerURL, onAddAccount }) {
     <button onClick={() => wrapErr(connectWeb3AndGetAccounts)}>
       <div className="icon" style={{ backgroundImage: 'url(./resources/metamask.png)' }}/>
       Metamask / Browser
+    </button>
+    <button onClick={() => wrapErr(connectGridPlusAndGetAccounts)}>
+      <div className="icon" style={{ backgroundImage: 'url(./resources/metamask.png)' }}/>
+      Grid+
     </button>
     <button onClick={() => wrapErr(open)}>
       <div className="icon"><VscJson size={25}/></div>
