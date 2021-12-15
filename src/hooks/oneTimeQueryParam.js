@@ -22,7 +22,7 @@ export const useOneTimeQueryParam = searchParam => {
         if (urlSearchParams && urlSearchParams.get(searchParam)) setOneTimeQueryParam(urlSearchParams.get(searchParam))
         else if (altParams.get(searchParam)) setOneTimeQueryParam(altParams.get(searchParam))
         deleteOneTimeQueryParam()
-    }, [deleteOneTimeQueryParam, urlSearchParams, searchParam])
+    }, [deleteOneTimeQueryParam, urlSearchParams, altParams, searchParam])
     
     return oneTimeQueryParam
 }
