@@ -11,7 +11,7 @@ const YearnMapping = {
   [iface.getSighash('deposit(uint256,address)')]: (txn, network) => {
     const [ amount ] = iface.parseTransaction(txn).args
     const vaultInfo = yearnVaults.find(x => x.addr === txn.to)
-    if (vaultInfo) return [`Deposit ${addtoken(vaultInfo.baseToken, amount)} to Yearn`]
+    if (vaultInfo) return [`Deposit ${token(vaultInfo.baseToken, amount)} to Yearn`]
     return [`Deposit ${amount} units to Yearn`]
   },
   [iface.getSighash('withdraw(uint256,address)')]: (txn, network) => {
