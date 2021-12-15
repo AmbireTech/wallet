@@ -33,7 +33,8 @@ const Security = ({
   accounts,
   addRequest,
   showSendTxns,
-  onAddAccount
+  onAddAccount,
+  addressBook
 }) => {
   const { showModal } = useModals()
   const [ cacheBreak, setCacheBreak ] = useState(() => Date.now())
@@ -54,6 +55,7 @@ const Security = ({
   const { addToast } = useToasts()
   const history = useHistory()
   const selectedAccount = accounts.find(x => x.id === selectedAcc)
+  const { addresses } = addressBook
 
   const craftTransaction = (address, privLevel) => {
     return {
@@ -196,10 +198,12 @@ const Security = ({
   const privList = Object.entries(privileges)
     .map(([addr, privValue]) => {
       if (!privValue) return null
+  
+      const addressName = addresses.find(({ address }) => address === addr)?.name || null
       const isQuickAcc = addr === accountPresets.quickAccManager
       const privText = isQuickAcc
         ? `Email/password signer (${selectedAccount.email || 'unknown email'})`
-        : addr
+        : `${addr} ${addressName ? `(${addressName})` : ''}`
       const signerAddress = isQuickAcc
         ? selectedAccount.signer.quickAccManager
         : selectedAccount.signer.address
