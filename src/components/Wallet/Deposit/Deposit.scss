@@ -49,6 +49,17 @@
             font-size: 1em;
             color: white;
             user-select: none;
+
+            #qr-code {
+                height: 180px;
+                width: 180px;
+                margin: 0 auto;
+                margin-top: 1.5em;
+            }
+        }
+
+        .separator {
+            flex-grow: 1;
         }
 
         #networks {
