@@ -1,6 +1,8 @@
 import './Deposit.scss'
 
+import { useEffect, useState } from 'react'
 import { MdAccountBalance, MdAccountBalanceWallet } from 'react-icons/md'
+import QRCode from 'qrcode'
 import TextInput from '../../common/TextInput/TextInput'
 import Providers from './Providers/Providers'
 
@@ -8,6 +10,19 @@ import networks from '../../../consts/networks'
 
 export default function Deposit({ selectedAcc, selectedNetwork }) {
     const networkDetails = networks.find(({ id }) => id === selectedNetwork)
+    const [qrCodeUrl, setQrCodeUrl] = useState('')
+
+    const generateQRCode = () => {
+        QRCode.toDataURL(selectedAcc, {
+            quality: 1,
+            margin: 1
+        }, (error, url) => {
+            if (error) return console.error(error)
+            setQrCodeUrl(url)
+        })
+    }
+
+    useEffect(() => generateQRCode(), [])
 
     return (
         <section id="deposit">
@@ -23,7 +38,9 @@ export default function Deposit({ selectedAcc, selectedNetwork }) {
                 </div>
                 <div className="description">
                     <TextInput className="depositAddress" label="Send tokens or collectibles (NFTs) to this address:" value={selectedAcc} copy/>
+                    <img id="qr-code" alt="QR Code" src={qrCodeUrl}></img>
                 </div>
+                <div className="separator"></div>
                 <div id="networks">
                     Following networks supported:
                     <div className="list">
