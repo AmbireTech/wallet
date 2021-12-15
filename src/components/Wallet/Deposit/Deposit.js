@@ -40,7 +40,6 @@ export default function Deposit({ selectedAcc, selectedNetwork }) {
                     <TextInput className="depositAddress" label={`Send ${networkDetails.nativeAssetSymbol}, tokens or collectibles (NFTs) to this address:`} value={selectedAcc} copy/>
                     <img id="qr-code" alt="QR Code" src={qrCodeUrl}></img>
                 </div>
-                <div className="separator"></div>
                 <div id="networks">
                     Following networks supported on this address:
                     <div className="list">
