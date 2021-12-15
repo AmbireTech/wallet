@@ -1,7 +1,7 @@
 import './SideBar.scss'
 
 import { NavLink } from 'react-router-dom'
-import { MdDashboard, MdLock, MdCompareArrows } from 'react-icons/md'
+import { MdDashboard, MdLock, MdCompareArrows, MdHelpCenter } from 'react-icons/md'
 import { GiReceiveMoney } from 'react-icons/gi'
 import { BsCurrencyExchange } from 'react-icons/bs'
 import { BsPiggyBank } from 'react-icons/bs'
@@ -9,6 +9,8 @@ import { BiTransfer } from 'react-icons/bi'
 import { CgArrowsExchangeV } from 'react-icons/cg'
 import { Loading } from '../../common'
 import { useCallback, useEffect, useRef, useState } from 'react'
+
+const helpCenterUrl = 'https://help.ambire.com/hc/en-us/categories/4404980091538-Ambire-Wallet'
 
 const SideBar = ({ match, portfolio }) => {
   const sidebarRef = useRef()
@@ -94,6 +96,12 @@ const SideBar = ({ match, portfolio }) => {
               <MdLock/>Security
           </div>
         </NavLink>
+        <div className="separator"></div>
+        <a href={helpCenterUrl} target="_blank" rel="noreferrer">
+          <div className="item" id="help-center">
+            <MdHelpCenter/>Help Center
+          </div>
+        </a>
       </nav>
     </div>
   )
