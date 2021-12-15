@@ -22,6 +22,7 @@ import useGnosisSafe from './hooks/useGnosisSafe'
 import useNotifications from './hooks/notifications'
 import { useAttentionGrabber, usePortfolio, useAddressBook } from './hooks'
 import { useToasts } from './hooks/toasts'
+import { useOneTimeQueryParam } from './hooks/OneTimeQueryParam'
 
 const relayerURL = process.env.hasOwnProperty('REACT_APP_RELAYER_URL') ? process.env.REACT_APP_RELAYER_URL : 'http://localhost:1934'
 
@@ -43,12 +44,15 @@ function AppInner () {
   const addressBook = useAddressBook({ accounts })
   const { network, setNetwork, allNetworks } = useNetwork()
   const { addToast } = useToasts()
-
+  const wcUri = useOneTimeQueryParam('uri')
+  
   // Signing requests: transactions/signed msgs: all requests are pushed into .requests
   const { connections, connect, disconnect, requests: wcRequests, resolveMany: wcResolveMany } = useWalletConnect({
     account: selectedAcc,
-    chainId: network.chainId
+    chainId: network.chainId,
+    initialUri: wcUri
   })
+  
   const { requests: gnosisRequests, resolveMany: gnosisResolveMany, connect: gnosisConnect, disconnect: gnosisDisconnect } = useGnosisSafe({
 	  selectedAccount: selectedAcc,
 	  network: network
