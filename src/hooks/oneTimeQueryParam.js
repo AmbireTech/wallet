@@ -7,7 +7,7 @@ export const useOneTimeQueryParam = searchParam => {
     const history = useHistory()
     const urlSearchParams = useMemo(() => new URLSearchParams(search), [search])
     const [oneTimeQueryParam, setOneTimeQueryParam] = useState(urlSearchParams.get(searchParam))
-    const altParams = new URLSearchParams(window.location.href.split('?').slice(1).join('?').split('#')[0])
+    const altParams = useMemo(() => new URLSearchParams(window.location.href.split('?').slice(1).join('?').split('#')[0]), [])
 
     const deleteOneTimeQueryParam = useCallback(() => {
         if (urlSearchParams.has(searchParam)) {
