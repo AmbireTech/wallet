@@ -37,12 +37,12 @@ export default function Deposit({ selectedAcc, selectedNetwork }) {
                     </div>
                 </div>
                 <div className="description">
-                    <TextInput className="depositAddress" label="Send tokens or collectibles (NFTs) to this address:" value={selectedAcc} copy/>
+                    <TextInput className="depositAddress" label={`Send ${networkDetails.nativeAssetSymbol}, tokens or collectibles (NFTs) to this address:`} value={selectedAcc} copy/>
                     <img id="qr-code" alt="QR Code" src={qrCodeUrl}></img>
                 </div>
                 <div className="separator"></div>
                 <div id="networks">
-                    Following networks supported:
+                    Following networks supported on this address:
                     <div className="list">
                         {
                             networks.map(({ id, icon, name }) => (
