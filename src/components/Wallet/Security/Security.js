@@ -19,6 +19,7 @@ import OtpTwoFAModal from '../../Modals/OtpTwoFAModal/OtpTwoFAModal'
 import OtpTwoFADisableModal from '../../Modals/OtpTwoFADisableModal/OtpTwoFADisableModal'
 import Backup from './Backup/Backup'
 import PendingRecoveryNotice from './PendingRecoveryNotice/PendingRecoveryNotice'
+import { getName } from '../../../lib/humanReadableTransactions'
 
 const IDENTITY_INTERFACE = new Interface(
   require('adex-protocol-eth/abi/Identity5.2')
@@ -33,8 +34,7 @@ const Security = ({
   accounts,
   addRequest,
   showSendTxns,
-  onAddAccount,
-  addressBook
+  onAddAccount
 }) => {
   const { showModal } = useModals()
   const [ cacheBreak, setCacheBreak ] = useState(() => Date.now())
@@ -55,7 +55,6 @@ const Security = ({
   const { addToast } = useToasts()
   const history = useHistory()
   const selectedAccount = accounts.find(x => x.id === selectedAcc)
-  const { addresses } = addressBook
 
   const craftTransaction = (address, privLevel) => {
     return {
@@ -199,11 +198,11 @@ const Security = ({
     .map(([addr, privValue]) => {
       if (!privValue) return null
   
-      const addressName = addresses.find(({ address }) => address === addr)?.name || null
+      const addressName = getName(addr) || null
       const isQuickAcc = addr === accountPresets.quickAccManager
       const privText = isQuickAcc
         ? `Email/password signer (${selectedAccount.email || 'unknown email'})`
-        : `${addr} ${addressName ? `(${addressName})` : ''}`
+        : `${addr} ${addressName && addressName !== addr ? `(${addressName})` : ''}`
       const signerAddress = isQuickAcc
         ? selectedAccount.signer.quickAccManager
         : selectedAccount.signer.address
