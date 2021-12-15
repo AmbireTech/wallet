@@ -22,7 +22,7 @@ import useGnosisSafe from './hooks/useGnosisSafe'
 import useNotifications from './hooks/notifications'
 import { useAttentionGrabber, usePortfolio, useAddressBook } from './hooks'
 import { useToasts } from './hooks/toasts'
-import { useQueryParamsUrl } from './hooks/queryParamsUrl'
+import { useOneTimeQueryParam } from './hooks/OneTimeQueryParam'
 
 const relayerURL = process.env.hasOwnProperty('REACT_APP_RELAYER_URL') ? process.env.REACT_APP_RELAYER_URL : 'http://localhost:1934'
 
@@ -44,26 +44,14 @@ function AppInner () {
   const addressBook = useAddressBook({ accounts })
   const { network, setNetwork, allNetworks } = useNetwork()
   const { addToast } = useToasts()
-
-  const { queryParamsUrl, deleteUriQueryParams } = useQueryParamsUrl()
-  const initialUri = queryParamsUrl.get('uri')
-  const [wcUri, setWcUri] = useState('')
+  const wcUri = useOneTimeQueryParam('uri')
   
   // Signing requests: transactions/signed msgs: all requests are pushed into .requests
   const { connections, connect, disconnect, requests: wcRequests, resolveMany: wcResolveMany } = useWalletConnect({
     account: selectedAcc,
     chainId: network.chainId,
-    initialUri: !initialUri ? wcUri : initialUri
+    initialUri: wcUri
   })
-
-  // Deleting the WalletConnect Uri 
-  useEffect(() => {
-    if (wcUri.length === 0 && initialUri) {
-      setWcUri(e => e = initialUri)
-    }
-    
-    deleteUriQueryParams()
-  }, [deleteUriQueryParams, initialUri, wcUri])
   
   const { requests: gnosisRequests, resolveMany: gnosisResolveMany, connect: gnosisConnect, disconnect: gnosisDisconnect } = useGnosisSafe({
 	  selectedAccount: selectedAcc,
