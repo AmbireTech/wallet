@@ -41,9 +41,10 @@ const CollectiblesPlaceholder = () => {
 
     return (
         <div id="collectibles-placeholder">
-            <div className="placeholder-overlay">
+            <div className="placeholder-text">
                 You don't have any collectibles (NFTs) yet
             </div>
+            <div className="placeholder-overlay"></div>
             <div id="collectibles">
                 {
                     collectibles.map(({ collectionName, collectionImg, name, image, price}) => (
