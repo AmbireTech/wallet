@@ -51,7 +51,7 @@ const Security = ({
   const { data, errMsg, isLoading } = useRelayerData(url)
   const privileges = data ? data.privileges : {}
   const otpEnabled = data ? data.otpEnabled : null
-  const recoveryLock = data && data.recoveryLock ? data.recoveryLock : null
+  const recoveryLock = data && data.recoveryLock
   const { addToast } = useToasts()
   const history = useHistory()
   const selectedAccount = accounts.find(x => x.id === selectedAcc)
