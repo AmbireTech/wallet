@@ -40,7 +40,7 @@ export default function Wallet(props) {
       component: <Deposit selectedAcc={props.selectedAcc} selectedNetwork={props.network.id} />
     },
     {
-      path: '/transfer/:tokenAddress?',
+      path: '/transfer/:tokenAddressOrSymbol?',
       component: <Transfer
         portfolio={props.portfolio}
         selectedAcc={props.selectedAcc}
@@ -102,7 +102,7 @@ export default function Wallet(props) {
       path: '/gnosis/plugins',
       component: <PluginGnosisSafeApps
         gnosisConnect={props.gnosisConnect}
-        gnosisDisconnect={props.showSendTxns}
+        gnosisDisconnect={props.gnosisDisconnect}
         selectedAcc={props.selectedAcc}
         network={props.network}
       />

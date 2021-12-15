@@ -16,7 +16,7 @@ const suportedProtocols = [
     {
         network: 'binance-smart-chain',
         protocols: ['pancakeswap'],
-       // balancesProvider: 'velcro'
+        balancesProvider: 'velcro'
     }
 ]
 

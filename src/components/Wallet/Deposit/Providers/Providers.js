@@ -15,7 +15,7 @@ export default function Providers({ walletAddress, networkDetails }) {
             fees: '0.49%-2.9%',
             limits: '10,000EUR/m',
             currencies: 'USD, EUR, GBP',
-            networks: ['ethereum', 'polygon', 'avalanche'],
+            networks: ['ethereum', 'polygon', 'avalanche', 'binance-smart-chain'],
             onClick: () => openRampNetwork({walletAddress, selectedNetwork: networkDetails.id})
         },
         {
@@ -25,7 +25,7 @@ export default function Providers({ walletAddress, networkDetails }) {
             fees: '1% (min. $2 CAD)',
             limits: '$2,000CAD/day',
             currencies: 'CAD',
-            networks: ['ethereum', 'polygon'],
+            networks: ['ethereum', 'polygon', 'binance-smart-chain'],
             onClick: () => openPayTrie({walletAddress, selectedNetwork: networkDetails.id})
         },
         {
@@ -35,7 +35,7 @@ export default function Providers({ walletAddress, networkDetails }) {
             fees: 'from 0.5%',
             limits: 'up to 15,000 EUR/day',
             currencies: 'GBP, EUR, USD and many more',
-            networks: ['ethereum', 'polygon', 'avalanche', 'arbitrum'],
+            networks: ['ethereum', 'polygon', 'avalanche', 'arbitrum', 'binance-smart-chain'],
             onClick: () => openTransak({walletAddress, selectedNetwork: networkDetails.id})
         }
     ];
