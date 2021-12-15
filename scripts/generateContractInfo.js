@@ -7,6 +7,11 @@ const etherscans = {
 	polygon: { host: 'api.polygonscan.com', key: 'YE5YYHA7BH6IPBN5T71UKW5MPEFZ5HUGJJ' }
 }
 
+const yearnVaults = [
+	{ name: 'Yearn WETH Vault', network: 'ethereum', addr: '0xa258C4606Ca8206D8aA700cE2143D7db854D168c', abiName: 'YearnVault', baseToken: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2' },
+	{ name: 'Yearn USDC Vault', network: 'ethereum', addr: '0xa354F35829Ae975e850e23e9615b11Da1B3dC4DE', baseToken: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48', decimals: 6 },
+	{ name: 'Yearn USDT Vault', network: 'ethereum', addr: '0x2f08119c6f07c006695e079aafc638b8789faf18', baseToken: '0xdAC17F958D2ee523a2206206994597C13D831ec7', decimals: 6 }
+]
 const contracts = [
 	{ name: 'Uniswap', network: 'ethereum', addr: '0x7a250d5630b4cf539739df2c5dacb4c659f2488d', abiName: 'UniV2Router' },
 	{ name: 'Uniswap', network: 'ethereum', addr: '0xe592427a0aece92de3edee1f18e0157c05861564', abiName: 'UniV3Router' },
@@ -25,8 +30,7 @@ const contracts = [
 	{ name: 'Movr Anyswap', network: 'polygon', addr: '0x3901581b7ff54667a2bf51cb93dba704e60e24f4', abiName: 'MovrAnyswap' },
 	//{ name: 'Movr Anyswap', network: 'polygon', addr: '0x43aa68673e54e95e07e8388bdd8612abe6df6f81' },
 	{ name: 'Bored Ape Yacht Club', network: 'ethereum', addr: '0xbc4ca0eda7647a8ab7c2061c2e118a18a936f13d', abiName: 'ERC721' },
-	{ name: 'Yearn WETH Vault', network: 'ethereum', addr: '0xa258C4606Ca8206D8aA700cE2143D7db854D168c', abiName: 'YearnVault' },
-	{ name: 'Yearn USDC Vault', network: 'ethereum', addr: '0xa354F35829Ae975e850e23e9615b11Da1B3dC4DE' }
+	...yearnVaults
 ]
 const tokenlists = [
 	'https://github.com/trustwallet/assets/raw/master/blockchains/ethereum/tokenlist.json',
@@ -70,7 +74,7 @@ async function generate () {
 		return acc
 	}, {})
 
-	console.log(JSON.stringify({ abis, tokens, names }))
+	console.log(JSON.stringify({ abis, tokens, names, yearnVaults }))
 }
 
 generate()
