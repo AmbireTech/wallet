@@ -10,6 +10,7 @@ export const openRampNetwork = ({ walletAddress, selectedNetwork }) => {
         ethereum: 'ERC20_*,ETH_*',
         polygon: 'MATIC_ERC20_*,MATIC_*',
         avalanche: 'AVAX_*',
+        'binance-smart-chain': 'BSC_*,BSC_ERC20_*',
     }
 
     const widget = new RampInstantSDK({
@@ -24,14 +25,18 @@ export const openRampNetwork = ({ walletAddress, selectedNetwork }) => {
 };
 
 export const openPayTrie = ({ walletAddress, selectedNetwork }) => {
-    const rightSideLabel = selectedNetwork === 'polygon' ? 'USDC-P' : 'USDC'
+    const rightSideLabels = {
+        ethereum: 'USDC',
+        polygon: 'USDC-P',
+        'binance-smart-chain': 'USDT-B',
+    }
 
     const URL = url.parse(PAYTRIE_PARTNER_URL, true)
     URL.search = null
     URL.query = {
         ...URL.query,
         addr: walletAddress,
-        rightSideLabel
+        rightSideLabel: rightSideLabels[selectedNetwork]
     }
 
     popupCenter({
@@ -43,19 +48,24 @@ export const openPayTrie = ({ walletAddress, selectedNetwork }) => {
 };
 
 export const openTransak = ({ walletAddress, selectedNetwork }) => {
-    let networks = selectedNetwork === 'avalanche' ? 'avaxcchain' : selectedNetwork
-    let defaultCurency = {
+    const networksAlias = {
+        'avalanche': 'avaxcchain',
+        'binance-smart-chain': 'bsc'
+    }
+
+    const defaultCurency = {
         'ethereum': 'USDC',
         'polygon': 'USDC',
         'arbitrum': 'ETH',
-        'avaxcchain': 'AVAX'
+        'avalanche': 'AVAX',
+        'binance-smart-chain': 'BNB'
     }
 
     const transak = new transakSDK({
         apiKey: TRANSAK_API_KEY,
         environment: TRANSAK_ENV,
-        networks,
-        defaultCryptoCurrency: defaultCurency[networks],
+        networks: networksAlias[selectedNetwork] || selectedNetwork,
+        defaultCryptoCurrency: defaultCurency[selectedNetwork],
         disableWalletAddressForm: true,
         walletAddress,
         themeColor: '282b33',
