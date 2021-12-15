@@ -1,6 +1,6 @@
 import './Deposit.scss'
 
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { MdAccountBalance, MdAccountBalanceWallet } from 'react-icons/md'
 import QRCode from 'qrcode'
 import TextInput from '../../common/TextInput/TextInput'
@@ -12,7 +12,7 @@ export default function Deposit({ selectedAcc, selectedNetwork }) {
     const networkDetails = networks.find(({ id }) => id === selectedNetwork)
     const [qrCodeUrl, setQrCodeUrl] = useState('')
 
-    const generateQRCode = () => {
+    const generateQRCode = useCallback(() => {
         QRCode.toDataURL(selectedAcc, {
             quality: 1,
             margin: 1
@@ -20,9 +20,9 @@ export default function Deposit({ selectedAcc, selectedNetwork }) {
             if (error) return console.error(error)
             setQrCodeUrl(url)
         })
-    }
+    }, [selectedAcc])
 
-    useEffect(() => generateQRCode(), [])
+    useEffect(() => generateQRCode(), [generateQRCode])
 
     return (
         <section id="deposit">
