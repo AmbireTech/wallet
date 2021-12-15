@@ -1,7 +1,7 @@
 import './Card.scss'
 
 import { Select, Segments, NumberInput, Button, Loading } from '../../../../common'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo, useCallback } from 'react'
 import { BsArrowDownSquare, BsArrowUpSquare } from 'react-icons/bs'
 import { ethers } from 'ethers'
 
@@ -17,8 +17,8 @@ const Card = ({ loading, unavailable, tokensItems, icon, details, onTokenSelect,
     const currentToken = tokens.find(({ value }) => value === token)
 
     // Sort tokens items by balance
-    const getEquToken = token => tokensItems.find((({ address, type }) => address === token.address && (token.type === 'deposit' ? type === 'withdraw' : type === 'deposit')))
-    tokensItems = tokensItems.sort((a, b) => (b?.balance + getEquToken(b)?.balance) - (a?.balance + getEquToken(a)?.balance))
+    const getEquToken = useCallback(token => tokensItems.find((({ address, type }) => address === token.address && (token.type === 'deposit' ? type === 'withdraw' : type === 'deposit'))), [tokensItems])
+    const sortedTokenItems = useMemo(() => [...tokensItems].sort((a, b) => (b?.balance + getEquToken(b)?.balance) - (a?.balance + getEquToken(a)?.balance)), [tokensItems, getEquToken])
 
     const getMaxAmount = () => {
         if (!currentToken) return 0;
@@ -29,9 +29,9 @@ const Card = ({ loading, unavailable, tokensItems, icon, details, onTokenSelect,
     const setMaxAmount = () => setAmount(getMaxAmount(amount))
 
     useEffect(() => {
-        if (segment === segments[0].value) setTokens(tokensItems.filter(({ type }) => type === 'deposit'))
-        if (segment === segments[1].value) setTokens(tokensItems.filter(({ type }) => type === 'withdraw'))
-    }, [segment, tokensItems])
+        if (segment === segments[0].value) setTokens(sortedTokenItems.filter(({ type }) => type === 'deposit'))
+        if (segment === segments[1].value) setTokens(sortedTokenItems.filter(({ type }) => type === 'withdraw'))
+    }, [segment, sortedTokenItems])
 
     useEffect(() => setAmount(0), [segment])
 
