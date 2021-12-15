@@ -51,53 +51,53 @@ const YearnCard = ({ networkId, accountId, tokens, addRequest }) => {
         const yearn = new Yearn(networkDetails.chainId, { provider })
 
         const v2Vaults = await yearn.vaults.get(v2VaultsAddresses)
-        const vaults = v2Vaults.map(({ address, metadata, symbol, token, decimals }) => ({
-            vaultAddress: address,
-            apr: metadata.apy.gross_apr.toFixed(2),
-            token: {
-                address: token,
+        const vaults = v2Vaults.map(({ address, metadata, symbol, token, decimals }) => {
+            const apy = (metadata?.apy?.net_apy * 100).toFixed(2) || 0
+            return {
+                vaultAddress: address,
+                apy,
                 icon: metadata.displayIcon,
-                symbol: metadata.displayName,
-                decimals
-            },
-            yToken: {
-                address,
-                symbol,
-                decimals
+                value: address,
+                token: {
+                    address: token,
+                    symbol: metadata.displayName,
+                    decimals
+                },
+                yToken: {
+                    address,
+                    symbol,
+                    decimals
+                }
             }
-        }))
+        })
 
-        const depositTokens = vaults.map(({ vaultAddress, apr, token }) => {
-            const { address, icon, symbol, decimals } = token
+        const depositTokens = vaults.map(vault => {
+            const { apy, token } = vault
+            const { address, symbol, decimals } = token
             const { balance, balanceRaw } = getTokenFromPortfolio(address)
             return {
+                ...vault,
                 type: 'deposit',
-                icon,
-                label: `${symbol} (${apr}% APR)`,
-                value: address,
+                label: `${symbol} (${apy}% APY)`,
                 symbol,
                 decimals,
-                tokenAddress: address,
-                vaultAddress,
-                apr,
+                tokenAddress: token.address,
                 balance: balance || 0,
                 balanceRaw: balanceRaw || '0',
             }
         })
 
-        const withdrawTokens = vaults.map(({ vaultAddress, apr, yToken, token }) => {
+        const withdrawTokens = vaults.map(vault => {
+            const { apy, yToken } = vault
             const { address, symbol, decimals } = yToken
             const { balance, balanceRaw } = getTokenFromPortfolio(address)
             return {
+                ...vault,
                 type: 'withdraw',
-                icon: token.icon,
-                label: `${symbol} (${apr}% APR)`,
-                value: address,
+                label: `${symbol} (${apy}% APY)`,
                 symbol,
                 decimals,
-                tokenAddress: address,
-                vaultAddress,
-                apr,
+                tokenAddress: yToken.address,
                 balance: balance || 0,
                 balanceRaw: balanceRaw || '0',
             }
@@ -113,9 +113,9 @@ const YearnCard = ({ networkId, accountId, tokens, addRequest }) => {
     }, [getTokenFromPortfolio, provider, networkDetails, unavailable])
 
     const onTokenSelect = useCallback(address => {
-        const selectedToken = tokensItems.find(t => t.value === address)
+        const selectedToken = tokensItems.find(t => t.tokenAddress === address)
         if (selectedToken) setDetails([
-            ['Annual Percentage Rate (APR)', `${selectedToken.apr}%`],
+            ['Annual Percentage Yield (APY)', `${selectedToken.apy}%`],
             ['Lock', 'No Lock'],
             ['Type', 'Variable Rate'],
         ])
@@ -139,15 +139,15 @@ const YearnCard = ({ networkId, accountId, tokens, addRequest }) => {
         }
     }
 
-    const onValidate = async (type, tokenAddress, amount) => {
-        const token = tokensItems.find(t => t.tokenAddress === tokenAddress)
-        if (!token) return
+    const onValidate = async (type, value, amount) => {
+        const item = tokensItems.find(t => t.type === type.toLowerCase() && t.value === value)
+        if (!item) return
 
-        const { vaultAddress, decimals } = token
+        const { vaultAddress, decimals } = item
         const bigNumberAmount = parseUnits(amount.toString(), decimals)
 
         if (type === 'Deposit') {
-            await approveToken(vaultAddress, tokenAddress, ethers.constants.MaxUint256)
+            await approveToken(vaultAddress, item.tokenAddress, ethers.constants.MaxUint256)
 
             try {
                 addRequestTxn(`yearn_vault_deposit_${Date.now()}`, {
@@ -163,7 +163,7 @@ const YearnCard = ({ networkId, accountId, tokens, addRequest }) => {
             try {
                 const vaultContract = new Contract(vaultAddress, YearnVaultInterface, provider)
                 const pricePerShare = await vaultContract.pricePerShare()
-                const sharesAmount = parseUnits((bigNumberAmount.toNumber() / pricePerShare.toNumber()).toFixed(decimals), decimals)
+                const sharesAmount = parseUnits((bigNumberAmount.toString() / pricePerShare.toString()).toFixed(decimals), decimals)
 
                 addRequestTxn(`yearn_vault_withdraw_${Date.now()}`, {
                     to: vaultAddress,
