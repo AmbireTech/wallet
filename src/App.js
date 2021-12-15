@@ -22,7 +22,7 @@ import useGnosisSafe from './hooks/useGnosisSafe'
 import useNotifications from './hooks/notifications'
 import { useAttentionGrabber, usePortfolio, useAddressBook } from './hooks'
 import { useToasts } from './hooks/toasts'
-import { useOneTimeQueryParam } from './hooks/OneTimeQueryParam'
+import { useOneTimeQueryParam } from './hooks/oneTimeQueryParam'
 
 const relayerURL = process.env.hasOwnProperty('REACT_APP_RELAYER_URL') ? process.env.REACT_APP_RELAYER_URL : 'http://localhost:1934'
 
