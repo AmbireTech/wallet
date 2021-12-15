@@ -19,6 +19,7 @@ import OtpTwoFAModal from '../../Modals/OtpTwoFAModal/OtpTwoFAModal'
 import OtpTwoFADisableModal from '../../Modals/OtpTwoFADisableModal/OtpTwoFADisableModal'
 import Backup from './Backup/Backup'
 import PendingRecoveryNotice from './PendingRecoveryNotice/PendingRecoveryNotice'
+import { getName } from '../../../lib/humanReadableTransactions'
 
 const IDENTITY_INTERFACE = new Interface(
   require('adex-protocol-eth/abi/Identity5.2')
@@ -196,10 +197,12 @@ const Security = ({
   const privList = Object.entries(privileges)
     .map(([addr, privValue]) => {
       if (!privValue) return null
+  
+      const addressName = getName(addr) || null
       const isQuickAcc = addr === accountPresets.quickAccManager
       const privText = isQuickAcc
         ? `Email/password signer (${selectedAccount.email || 'unknown email'})`
-        : addr
+        : `${addr} ${addressName && addressName !== addr ? `(${addressName})` : ''}`
       const signerAddress = isQuickAcc
         ? selectedAccount.signer.quickAccManager
         : selectedAccount.signer.address
