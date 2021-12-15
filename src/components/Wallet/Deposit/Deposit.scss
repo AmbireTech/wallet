@@ -58,10 +58,6 @@
             }
         }
 
-        .separator {
-            flex-grow: 1;
-        }
-
         #networks {
             display: flex;
             flex-direction: column;
@@ -69,6 +65,7 @@
             gap: 1em;
             font-size: 1em;
             color: #8c8d91;
+            margin-top: 2em;
 
             .list {
                 display: flex;
