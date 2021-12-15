@@ -186,7 +186,8 @@ const Security = ({
       const { timelock, one, two } = signer
       return keccak256(abiCoder.encode(['tuple(uint, address, address)'], [[timelock, one, two]]))
   }
-  const hasPendingReset = (recoveryLock && recoveryLock.status)
+  const hasPendingReset = privileges[selectedAccount.signer.quickAccManager] && (
+    (recoveryLock && recoveryLock.status && !isLoading)
       || (
           privileges && selectedAccount.signer.quickAccManager
           // is or has been in recovery state
@@ -194,6 +195,8 @@ const Security = ({
           // but that's not finalized yet
           && accHash(selectedAccount.signer) !== privileges[selectedAccount.signer.quickAccManager]
       )
+    )
+
   const privList = Object.entries(privileges)
     .map(([addr, privValue]) => {
       if (!privValue) return null
@@ -253,7 +256,7 @@ const Security = ({
   const showLoading = isLoading && !data
   const signersFragment = relayerURL ? (<>
     <div className="panel" id="signers">
-      {hasPendingReset && !isLoading && (<PendingRecoveryNotice
+      {hasPendingReset && !showLoading && (<PendingRecoveryNotice
         recoveryLock={recoveryLock}
         showSendTxns={showSendTxns}
         selectedAccount={selectedAccount}
