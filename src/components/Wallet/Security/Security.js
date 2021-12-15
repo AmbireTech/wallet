@@ -253,7 +253,7 @@ const Security = ({
   const showLoading = isLoading && !data
   const signersFragment = relayerURL ? (<>
     <div className="panel" id="signers">
-      {hasPendingReset && !showLoading && (<PendingRecoveryNotice
+      {hasPendingReset && !isLoading && (<PendingRecoveryNotice
         recoveryLock={recoveryLock}
         showSendTxns={showSendTxns}
         selectedAccount={selectedAccount}
