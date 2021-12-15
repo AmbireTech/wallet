@@ -97,7 +97,7 @@ function Transactions ({ relayerURL, selectedAcc, selectedNetwork, showSendTxns,
           </div>
         </div>
       </div>)}
-      { !!firstPending && (<div className='panel'>
+      { !!firstPending && (<div className='panel' id="pending">
         <div className='title'><MdOutlinePendingActions/>Pending transaction bundle</div>
         <div className="content">
           <div className="bundle">
