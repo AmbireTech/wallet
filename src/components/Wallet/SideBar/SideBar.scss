@@ -57,6 +57,9 @@
   }
 
   nav {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
     overflow-y: auto;
     scrollbar-width: thin;
 
@@ -95,6 +98,18 @@
         border: 1px solid $danger-color;
         border-radius: 50%;
         background: $danger-color;
+      }
+    }
+
+    .separator {
+      flex-grow: 1;
+    }
+
+    #help-center {
+      color: $primary-accent-color;
+
+      svg {
+        color: $primary-accent-color;
       }
     }
   }
