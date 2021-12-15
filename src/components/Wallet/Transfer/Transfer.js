@@ -98,7 +98,11 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
     useEffect(() => {
         setAmount(0)
         setBigNumberHexAmount('')
-        if (selectedAsset) history.replace({ pathname: `/wallet/transfer/${Number(asset) !== 0 ? asset : selectedAsset.symbol}` })
+    }, [asset])
+
+    useEffect(() => {
+        if (!selectedAsset) return
+        history.replace({ pathname: `/wallet/transfer/${Number(asset) !== 0 ? asset : selectedAsset.symbol}` })
     }, [asset, history, selectedAsset])
 
     useEffect(() => {
