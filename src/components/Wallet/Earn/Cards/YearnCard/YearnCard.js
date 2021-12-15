@@ -51,31 +51,34 @@ const YearnCard = ({ networkId, accountId, tokens, addRequest }) => {
         const yearn = new Yearn(networkDetails.chainId, { provider })
 
         const v2Vaults = await yearn.vaults.get(v2VaultsAddresses)
-        const vaults = v2Vaults.map(({ address, metadata, symbol, token, decimals }) => ({
-            vaultAddress: address,
-            apr: metadata.apy.gross_apr.toFixed(2),
-            icon: metadata.displayIcon,
-            value: address,
-            token: {
-                address: token,
-                symbol: metadata.displayName,
-                decimals
-            },
-            yToken: {
-                address,
-                symbol,
-                decimals
+        const vaults = v2Vaults.map(({ address, metadata, symbol, token, decimals }) => {
+            const apy = (metadata?.apy?.net_apy * 100).toFixed(2) || 0
+            return {
+                vaultAddress: address,
+                apy,
+                icon: metadata.displayIcon,
+                value: address,
+                token: {
+                    address: token,
+                    symbol: metadata.displayName,
+                    decimals
+                },
+                yToken: {
+                    address,
+                    symbol,
+                    decimals
+                }
             }
-        }))
+        })
 
         const depositTokens = vaults.map(vault => {
-            const { apr, token } = vault
+            const { apy, token } = vault
             const { address, symbol, decimals } = token
             const { balance, balanceRaw } = getTokenFromPortfolio(address)
             return {
                 ...vault,
                 type: 'deposit',
-                label: `${symbol} (${apr}% APR)`,
+                label: `${symbol} (${apy}% APY)`,
                 symbol,
                 decimals,
                 tokenAddress: token.address,
@@ -85,13 +88,13 @@ const YearnCard = ({ networkId, accountId, tokens, addRequest }) => {
         })
 
         const withdrawTokens = vaults.map(vault => {
-            const { apr, yToken } = vault
+            const { apy, yToken } = vault
             const { address, symbol, decimals } = yToken
             const { balance, balanceRaw } = getTokenFromPortfolio(address)
             return {
                 ...vault,
                 type: 'withdraw',
-                label: `${symbol} (${apr}% APR)`,
+                label: `${symbol} (${apy}% APY)`,
                 symbol,
                 decimals,
                 tokenAddress: yToken.address,
@@ -112,7 +115,7 @@ const YearnCard = ({ networkId, accountId, tokens, addRequest }) => {
     const onTokenSelect = useCallback(address => {
         const selectedToken = tokensItems.find(t => t.tokenAddress === address)
         if (selectedToken) setDetails([
-            ['Annual Percentage Rate (APR)', `${selectedToken.apr}%`],
+            ['Annual Percentage Yield (APY)', `${selectedToken.apy}%`],
             ['Lock', 'No Lock'],
             ['Type', 'Variable Rate'],
         ])
