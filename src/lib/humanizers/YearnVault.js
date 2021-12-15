@@ -5,7 +5,7 @@ import { token } from '../humanReadableTransactions'
 const iface = new Interface(abis.YearnVault)
 
 // add 'y' prefix, eg '10 USDC' will become '10 yUSDC' to signify vault tokens
-const addY = x => x.split(' ').map((x, i) => i == 1 ? 'y'+x : x).join(' ')
+const addY = x => x.split(' ').map((x, i) => i === 1 ? 'y'+x : x).join(' ')
 
 const YearnMapping = {
   [iface.getSighash('deposit(uint256,address)')]: (txn, network) => {
