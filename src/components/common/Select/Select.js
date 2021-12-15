@@ -4,6 +4,8 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { BsChevronDown } from 'react-icons/bs'
 import { CSSTransition } from 'react-transition-group';
 import useOnClickOutside from '../../../helpers/onClickOutside';
+import { TextInput } from '..';
+import { MdOutlineClose } from 'react-icons/md';
 
 const Select = ({ children, native, monospace, searchable, disabled, label, defaultValue, items, onChange }) => {
     const ref = useRef();
@@ -20,6 +22,7 @@ const Select = ({ children, native, monospace, searchable, disabled, label, defa
     const filteredItems = search.length ? items.filter(({ label }) => label.toLowerCase().includes(search.toLowerCase())) : items
 
     const selectItem = useCallback(item => {
+        setSearch('')
         setSelectedItem(item);
         onChange(item.value);
     }, [onChange])
@@ -43,7 +46,15 @@ const Select = ({ children, native, monospace, searchable, disabled, label, defa
             <div className={`select ${monospace ? 'monospace': ''} ${disabled ? 'disabled' : ''}`} ref={ref}>
                 {
                     searchable ? 
-                        <input type="text" className="search-input" disabled={disabled} value={search} ref={hiddenTextInput} onInput={({ target }) => setSearch(target.value)}/>
+                        <TextInput
+                            className={`search-input ${search.length ? 'visible': ''}`}
+                            disabled={disabled}
+                            value={search}
+                            ref={hiddenTextInput}
+                            buttonLabel={<MdOutlineClose/>}
+                            onInput={value => setSearch(value)}
+                            onButtonClick={() => setSearch('')}
+                        />
                         :
                         null
                 }
