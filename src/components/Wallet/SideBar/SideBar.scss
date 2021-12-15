@@ -82,7 +82,7 @@
       }
 
       &:hover {
-        background-color: rgba(0, 0, 0, 0.3);
+        background-color: rgba(0, 0, 0, 0.3) !important;
         color: #fff;
 
         svg {
@@ -116,6 +116,10 @@
 
   a.selected .item svg {
     color: $secondary-accent-color;
+  }
+  a.selected .item {
+    background-color: rgba(0, 0, 0, 0.15);
+    color: #fff;
   }
 
   .highlight {
