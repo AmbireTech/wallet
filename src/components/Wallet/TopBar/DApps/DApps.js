@@ -9,7 +9,7 @@ import { DropDown, ToolTip, Button } from "../../../common"
 import { checkClipboardPermission } from '../../../../helpers/permissions'
 import { MdOutlineWarning } from 'react-icons/md'
 
-const timePastForConnectionErr = 0.3 * 60 * 1000
+const timePastForConnectionErr = 1 * 60 * 1000
 
 const DApps = ({ connections, connect, disconnect }) => {
     const [isClipboardGranted, setClipboardGranted] = useState(false)
