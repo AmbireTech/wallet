@@ -44,7 +44,7 @@ const TopBar = ({
       const { rewards } = data
       if (!rewards.length) return
 
-      const rewardsDetails = Object.fromEntries(rewards.map(({ _id, rewards }) => [_id, rewards[account.id]]))
+      const rewardsDetails = Object.fromEntries(rewards.map(({ _id, rewards }) => [_id, rewards[account.id] || 0]))
       const rewardsTotal = Object.values(rewardsDetails).reduce((acc, curr) => acc + curr, 0)
 
       setRewardsTotal(rewardsTotal)
