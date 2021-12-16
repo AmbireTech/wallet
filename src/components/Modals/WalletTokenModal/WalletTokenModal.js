@@ -3,7 +3,7 @@ import './WalletTokenModal.scss'
 import { Button, Modal, ToolTip } from '../../common'
 
 const WalletTokenModal = ({ rewards }) => {
-    const { balanceRewards } = rewards
+    const { balanceRewards, adxRewards } = rewards
 
     const claimButton = <>
         <ToolTip label="Claiming will be available after the official token launch">
@@ -51,7 +51,7 @@ const WalletTokenModal = ({ rewards }) => {
                 <div className="details">
                     <label>ADX Staking Bonus</label>
                     <div className="balance">
-                        <div className="amount">0 <span className="primary-accent">WALLET</span></div>
+                        <div className="amount">{ adxRewards } <span className="primary-accent">WALLET</span></div>
                         <div className="amount-dollar"><span className="secondary-accent">$</span> 0</div>
                     </div>
                 </div>
