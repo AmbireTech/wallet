@@ -1,15 +1,23 @@
 import './WalletTokenModal.scss'
 
-import { Button, Modal } from '../../common'
+import { Button, Modal, ToolTip } from '../../common'
 
-const WalletTokenModal = () => {
+const WalletTokenModal = ({ rewards }) => {
+    const { balanceRewards } = rewards
+
+    const claimButton = <>
+        <ToolTip label="Claiming will be available after the official token launch">
+            <Button small disabled>CLAIM</Button>
+        </ToolTip>
+    </>
+
     return (
         <Modal id="wallet-token-modal" title="$WALLET token distribution">
             <div className="item">
                 <div className="details">
                     <label>Balance in your account</label>
                     <div className="balance">
-                        <div className="amount">0 <span className="primary-accent">WALLET</span></div>
+                        <div className="amount">{ balanceRewards.toFixed(6) } <span className="primary-accent">WALLET</span></div>
                         <div className="amount-dollar"><span className="secondary-accent">$</span> 0</div>
                     </div>
                 </div>
@@ -24,7 +32,7 @@ const WalletTokenModal = () => {
                     </div>
                 </div>
                 <div className="actions">
-                    <Button small>CLAIM</Button>
+                    { claimButton }
                 </div>
             </div>
             <div className="item">
@@ -36,7 +44,7 @@ const WalletTokenModal = () => {
                     </div>
                 </div>
                 <div className="actions">
-                    <Button small>CLAIM</Button>
+                    { claimButton }
                 </div>
             </div>
             <div className="item">
@@ -48,7 +56,7 @@ const WalletTokenModal = () => {
                     </div>
                 </div>
                 <div className="actions">
-                    <Button small>CLAIM</Button>
+                    { claimButton }
                 </div>
             </div>
             <div className="item">
@@ -60,7 +68,7 @@ const WalletTokenModal = () => {
                     </div>
                 </div>
                 <div className="actions">
-                    <Button small>CLAIM</Button>
+                    { claimButton }
                 </div>
             </div>
         </Modal>
