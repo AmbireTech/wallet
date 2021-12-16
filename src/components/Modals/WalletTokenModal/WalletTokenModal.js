@@ -25,18 +25,18 @@ const WalletTokenModal = ({ rewards }) => {
                     { claimButton }
                 </div>
             </div>
-            <div className="item">
+            {/* <div className="item">
                 <div className="details">
                     <label>Referral Incentive</label>
                     <div className="balance">
                         <div className="amount"><span className="primary-accent">0</span></div>
-                        {/* <div className="amount-dollar"><span className="secondary-accent">$</span> 0</div> */}
+                        <div className="amount-dollar"><span className="secondary-accent">$</span> 0</div>
                     </div>
                 </div>
                 <div className="actions">
                     { claimButton }
                 </div>
-            </div>
+            </div> */}
             <div className="item">
                 <div className="details">
                     <label>ADX Staking Bonus</label>
@@ -49,18 +49,18 @@ const WalletTokenModal = ({ rewards }) => {
                     { claimButton }
                 </div>
             </div>
-            <div className="item">
+            {/* <div className="item">
                 <div className="details">
                     <label>Gas Rebates</label>
                     <div className="balance">
                         <div className="amount"><span className="primary-accent">0</span></div>
-                        {/* <div className="amount-dollar"><span className="secondary-accent">$</span> 0</div> */}
+                        <div className="amount-dollar"><span className="secondary-accent">$</span> 0</div>
                     </div>
                 </div>
                 <div className="actions">
                     { claimButton }
                 </div>
-            </div>
+            </div> */}
         </Modal>
     )
 }
