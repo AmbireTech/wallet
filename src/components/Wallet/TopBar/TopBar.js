@@ -24,6 +24,7 @@ const TopBar = ({
 }) => {
   const { showModal } = useModals()
   const [isMenuOpen, setMenuOpen] = useState(false)
+  const { total } = rewards
   
   const networksItems = allNetworks.map(({ id, name, icon }) => ({
     label: name,
@@ -47,7 +48,7 @@ const TopBar = ({
       </div>
 
       <div className={`container ${isMenuOpen ? 'open' : ''}`}>
-        <Button small border onClick={showWalletTokenModal}>0 $WALLET</Button>
+        <Button small border onClick={showWalletTokenModal}>{ total.toFixed(6) } $WALLET</Button>
         <DApps connections={connections} connect={connect} disconnect={disconnect}/>
         <Accounts accounts={accounts} selectedAddress={selectedAcc} onSelectAcc={onSelectAcc} onRemoveAccount={onRemoveAccount}/>
         <Select defaultValue={network.id} items={networksItems} onChange={value => setNetwork(value)}/>
