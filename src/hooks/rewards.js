@@ -5,6 +5,7 @@ const useRewards = ({ relayerURL, account }) => {
     const { addToast } = useToasts()
 
     const [balanceRewards, setBalanceRewards] = useState(0)
+    const [adxRewards, setAdxRewards] = useState(0)
 
     const resetRewards = () => {
         setBalanceRewards(0)
@@ -23,6 +24,7 @@ const useRewards = ({ relayerURL, account }) => {
                 const entry = Object.entries(rewards).find(([address]) => address === account)
                 const value = (entry && entry[1]) || 0
                 if (_id === 'balance-rewards') setBalanceRewards(value)
+                if (_id === 'adx-rewards') setAdxRewards(value)
             })
         } catch(e) {
             console.error(e);
@@ -33,7 +35,8 @@ const useRewards = ({ relayerURL, account }) => {
     useEffect(() => getRewards(), [getRewards, account])
 
     return {
-        balanceRewards
+        balanceRewards,
+        adxRewards
     }
 }
 
