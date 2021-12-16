@@ -42,6 +42,20 @@ button.buttonComponent {
         }
     }
 
+    &.border {
+        color: $primary-accent-color;
+        background-color: transparent;
+        border: 1px solid $primary-accent-color;
+
+        .icon-button {
+            color: $primary-accent-color !important;
+        }
+
+        &:not([disabled]):hover {
+            background-color: rgba(0, 0, 0, 0.2);
+        }
+    }
+
     &:disabled, &.disabled{
         opacity: 0.2 !important;
     }
