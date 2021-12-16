@@ -49,7 +49,7 @@ const TopBar = ({
 
       setRewardsTotal(rewardsTotal)
       setRewards(rewardsDetails)
-  }, [data, errMsg])
+  }, [data, errMsg, account.id])
 
   return (
     <div id="topbar">
