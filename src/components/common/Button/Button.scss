@@ -42,11 +42,11 @@ button.buttonComponent {
         }
     }
 
-    &:disabled {
+    &:disabled, &.disabled{
         opacity: 0.2 !important;
     }
 
-    &:not([disabled]) {
+    &:not([disabled]):not(.disabled) {
         &:hover {
             cursor: pointer;
             opacity: 0.8;
