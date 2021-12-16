@@ -49,6 +49,13 @@
             font-size: 1em;
             color: white;
             user-select: none;
+
+            #qr-code {
+                height: 180px;
+                width: 180px;
+                margin: 0 auto;
+                margin-top: 1.5em;
+            }
         }
 
         #networks {
@@ -58,6 +65,7 @@
             gap: 1em;
             font-size: 1em;
             color: #8c8d91;
+            margin-top: 2em;
 
             .list {
                 display: flex;
