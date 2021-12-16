@@ -14,6 +14,7 @@ const useRewards = ({ relayerURL, account }) => {
     }
 
     const getRewards = useCallback(async () => {
+	if (!account) return
         try {
             const response = await fetch(`${relayerURL}/wallet-token/rewards/${account}`)
             const body = await response.json()
