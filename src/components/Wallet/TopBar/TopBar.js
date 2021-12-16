@@ -47,7 +47,7 @@ const TopBar = ({
       </div>
 
       <div className={`container ${isMenuOpen ? 'open' : ''}`}>
-        <Button small onClick={showWalletTokenModal}>0 $WALLET</Button>
+        <Button small border onClick={showWalletTokenModal}>0 $WALLET</Button>
         <DApps connections={connections} connect={connect} disconnect={disconnect}/>
         <Accounts accounts={accounts} selectedAddress={selectedAcc} onSelectAcc={onSelectAcc} onRemoveAccount={onRemoveAccount}/>
         <Select defaultValue={network.id} items={networksItems} onChange={value => setNetwork(value)}/>
