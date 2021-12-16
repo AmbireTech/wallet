@@ -127,7 +127,7 @@ export default function Dashboard({ portfolio, selectedNetwork, selectedAccount,
                             null
                             :
                             <div className="powered">
-                                Powered by Zapper
+                                Powered by Velcro
                             </div>
                     }
                 </div>
