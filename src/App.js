@@ -147,7 +147,13 @@ function AppInner () {
     onSitckyClick: useCallback(() => setSendTxnState({ showing: true }), [])
   })
 
-  const rewardsUrl = relayerURL ? `https://relayer.ambire.com/wallet-token/rewards/${selectedAcc}` : null
+  const [cacheBreak, setCacheBreak] = useState(() => Date.now())
+  useEffect(() => {
+    if ((Date.now() - cacheBreak) > 5000) setCacheBreak(Date.now())
+    const intvl = setTimeout(() => setCacheBreak(Date.now()), 10000)
+    return () => clearTimeout(intvl)
+  }, [cacheBreak])
+  const rewardsUrl = relayerURL ? `https://relayer.ambire.com/wallet-token/rewards/${selectedAcc}?cacheBreak=${cacheBreak}` : null
   const rewardsData = useRelayerData(rewardsUrl)
 
   return (<>
