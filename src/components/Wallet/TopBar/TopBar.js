@@ -2,7 +2,7 @@ import "./TopBar.scss";
 
 import React, { useEffect, useState } from "react";
 import { MdOutlineArrowForward, MdOutlineClose, MdOutlineMenu } from "react-icons/md";
-import { Button, Select } from "../../common";
+import { Button, Select, ToolTip } from "../../common";
 import Accounts from "./Accounts/Accounts";
 import DApps from "./DApps/DApps";
 import * as blockies from 'blockies-ts';
@@ -39,8 +39,7 @@ const TopBar = ({
   const showWalletTokenModal = () => showModal(<WalletTokenModal rewards={rewards}/>)
 
   useEffect(() => {
-      if (errMsg) throw new Error(errMsg)
-      if (!data || !data.success) return
+      if (errMsg || !data || !data.success) return
 
       const { rewards } = data
       if (!rewards.length) return
@@ -64,7 +63,14 @@ const TopBar = ({
       </div>
 
       <div className={`container ${isMenuOpen ? 'open' : ''}`}>
-        <Button small border disabled={isLoading} onClick={showWalletTokenModal}>{ rewardsTotal } WALLET</Button>
+        {
+          !isLoading && (errMsg || !data) ?
+            <ToolTip label="WALLET rewards are not available without a connection to the relayer">
+              <Button small border disabled onClick={showWalletTokenModal}>Unavailable</Button>
+            </ToolTip>
+            :
+            <Button small border disabled={isLoading} onClick={showWalletTokenModal}>{ rewardsTotal } WALLET</Button>
+        }
         <DApps connections={connections} connect={connect} disconnect={disconnect}/>
         <Accounts accounts={accounts} selectedAddress={selectedAcc} onSelectAcc={onSelectAcc} onRemoveAccount={onRemoveAccount}/>
         <Select defaultValue={network.id} items={networksItems} onChange={value => setNetwork(value)}/>
