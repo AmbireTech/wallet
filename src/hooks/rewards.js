@@ -1,8 +1,12 @@
-import { useEffect, useState, useCallback } from "react"
+import { useEffect, useState } from "react"
 import { useToasts } from "./toasts"
+import { useRelayerData } from "./"
 
 const useRewards = ({ relayerURL, account }) => {
     const { addToast } = useToasts()
+
+    const url = relayerURL ? `${relayerURL}/wallet-token/rewards/${account}` : null
+    const { data, errMsg, isLoading } = useRelayerData(url)
 
     const [balanceRewards, setBalanceRewards] = useState(0)
     const [adxRewards, setAdxRewards] = useState(0)
@@ -13,13 +17,12 @@ const useRewards = ({ relayerURL, account }) => {
         setAdxRewards(0)
     }
 
-    const getRewards = useCallback(async () => {
+    useEffect(() => {
         try {
-            const response = await fetch(`${relayerURL}/wallet-token/rewards/${account}`)
-            const body = await response.json()
-            if (!body || !body.success) return resetRewards()
-            
-            const { rewards } = body
+            if (errMsg) throw new Error(errMsg)
+            if (!data || !data.success) return resetRewards()
+
+            const { rewards } = data
             if (!rewards.length) return resetRewards()
 
             rewards.forEach(({ _id, rewards }) => {
@@ -30,18 +33,17 @@ const useRewards = ({ relayerURL, account }) => {
             })
         } catch(e) {
             console.error(e);
-            addToast('Could not fetch rewards.', { error: true })
+            addToast('Rewards: ' + e.message || e, { error: true })
         }
-    }, [relayerURL, account, addToast])
+    }, [data, errMsg, account, addToast])
 
     useEffect(() => {
         const total = balanceRewards + adxRewards
         setTotal(total)
     }, [balanceRewards, adxRewards])
 
-    useEffect(() => getRewards(), [getRewards, account])
-
     return {
+        isLoading,
         balanceRewards,
         adxRewards,
         total
