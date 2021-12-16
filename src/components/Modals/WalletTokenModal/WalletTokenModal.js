@@ -19,7 +19,7 @@ const WalletTokenModal = ({ rewards }) => {
     </>
 
     return (
-        <Modal id="wallet-token-modal" title="$WALLET token distribution" buttons={modalButtons}>
+        <Modal id="wallet-token-modal" title="WALLET token distribution" buttons={modalButtons}>
             <div className="item">
                 <div className="details">
                     <label>Early users Incentive</label>
