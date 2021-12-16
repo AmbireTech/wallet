@@ -10,7 +10,7 @@ const etherscans = {
 const yearnVaults = [
 	{ name: 'Yearn WETH Vault', network: 'ethereum', addr: '0xa258C4606Ca8206D8aA700cE2143D7db854D168c', abiName: 'YearnVault', baseToken: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2' },
 	{ name: 'Yearn USDC Vault', network: 'ethereum', addr: '0xa354F35829Ae975e850e23e9615b11Da1B3dC4DE', baseToken: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48', decimals: 6 },
-	{ name: 'Yearn USDT Vault', network: 'ethereum', addr: '0x2f08119c6f07c006695e079aafc638b8789faf18', baseToken: '0xdAC17F958D2ee523a2206206994597C13D831ec7', decimals: 6 },
+	{ name: 'Yearn USDT Vault', network: 'ethereum', addr: '0x7Da96a3891Add058AdA2E826306D812C638D87a7', baseToken: '0xdAC17F958D2ee523a2206206994597C13D831ec7', decimals: 6 },
 	{ name: 'Yearn DAI Vault', network: 'ethereum', addr: '0xdA816459F1AB5631232FE5e97a05BBBb94970c95', baseToken: '0x6B175474E89094C44Da98b954EedeAC495271d0F', decimals: 18 },
 	{ name: 'Yearn YFI Vault', network: 'ethereum', addr: '0xdb25cA703181E7484a155DD612b06f57E12Be5F0', baseToken: '0x0bc529c00C6401aEF6D220BE8C6Ea1667F6Ad93e', decimals: 18 },
 	{ name: 'Yearn WBTC Vault', network: 'ethereum', addr: '0xA696a63cc78DfFa1a63E9E50587C197387FF6C7E', baseToken: '0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599', decimals: 8 },
