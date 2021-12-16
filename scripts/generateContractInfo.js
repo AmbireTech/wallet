@@ -66,6 +66,8 @@ async function generate () {
 	const tokens = tokenLists.reduce((acc, list) => {
 		list.tokens.forEach(t => {
 			const address = t.address.toLowerCase()
+			// fix fake MATIC
+			if (address === '0x0000000000000000000000000000000000001010') return
 			if (acc[address] && acc[address].decimals !== acc[address].decimals) {
 				throw new Error('unexpected token conflict: same addr token, different decimals')
 			}
