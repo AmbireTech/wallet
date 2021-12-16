@@ -8,6 +8,8 @@ const SPEEDS = ['slow', 'medium', 'fast', 'ape']
 export function FeeSelector ({ disabled, signer, estimation, network, setEstimation, feeSpeed, setFeeSpeed }) {
     if (!estimation) return (<Loading/>)
   
+    // Only check for insufficient fee in relayer mode (.feeInUSD is available)
+    // Otherwise we don't care whether the user has enough for fees, their signer wallet will take care of it
     const insufficientFee = estimation && estimation.feeInUSD
       && !isTokenEligible(estimation.selectedFeeToken, feeSpeed, estimation)
     if (estimation && !estimation.success) return (<FailingTxn
@@ -21,9 +23,12 @@ export function FeeSelector ({ disabled, signer, estimation, network, setEstimat
         <b>WARNING:</b> Fee estimation unavailable when you're doing your first account transaction and you are not connected to a relayer. You will pay the fee from <b>{signer.address}</b>, make sure you have {network.nativeAssetSymbol} there.
       </div>)
     }
+    if (estimation && estimation.feeInUSD && !estimation.remainingFeeTokenBalances) {
+      return (<h3 className='error'>Internal error: fee balances not available. This should never happen, please report this on help.ambire.com</h3>)
+    }
   
     const { nativeAssetSymbol } = network
-    const tokens = estimation.remainingFeeTokenBalances || ({ symbol: nativeAssetSymbol, decimals: 18 })
+    const tokens = estimation.remainingFeeTokenBalances || [{ symbol: nativeAssetSymbol, decimals: 18 }]
     const onFeeCurrencyChange = e => {
       const token = tokens.find(({ symbol }) => symbol === e.target.value)
       setEstimation({ ...estimation, selectedFeeToken: token })

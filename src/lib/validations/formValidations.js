@@ -76,14 +76,19 @@ const validateSendTransferAmount = (amount, selectedAsset) => {
         }
     }
 
-    if (amount && selectedAsset.decimals) {
-        const bigNumberAmount = parseUnits(amount.toString(), selectedAsset.decimals)
-        if (bigNumberAmount && selectedAsset.balanceRaw && bigNumberAmount.gt(selectedAsset.balanceRaw)) {
-            return {
-                success: false,
-                message: `The amount is greater than the asset's balance: ${selectedAsset?.balance} ${selectedAsset?.symbol}.`
+    try {
+        if (amount && selectedAsset && selectedAsset.decimals) {
+            const parsedAmount = amount.slice(0, amount.indexOf('.') + selectedAsset.decimals + 1); // Fixed decimals in case amount is bigger than selectedAsset.decimals, otherwise would cause overflow error
+            const bigNumberAmount = parseUnits(parsedAmount, selectedAsset.decimals)
+            if (bigNumberAmount && selectedAsset.balanceRaw && bigNumberAmount.gt(selectedAsset.balanceRaw)) {
+                return {
+                    success: false,
+                    message: `The amount is greater than the asset's balance: ${selectedAsset?.balance} ${selectedAsset?.symbol}.`
+                }
             }
         }
+    } catch(e) {
+        console.error(e);
     }
 
     return { success: true }

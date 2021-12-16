@@ -86,6 +86,13 @@
     .txnPreview .summary {
         max-width: 700px;
     }
+
+    #pending {
+        .bundlePreview {
+            padding: 0;
+            padding-bottom: 1em;
+        }
+    }
 }
 
 // Mobile

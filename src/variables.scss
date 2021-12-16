@@ -18,6 +18,8 @@ $sidebar-mobile-height: 80px;
 $topbar-height: 90px;
 $topbar-mobile-height: 70px;
 $mobile-breakpoint-max-width: 800px;
+$small-breakpoint-max-width: 1400px;
+$wide-breakpoint-min-width: 1920px;
 
 $text-color:#FFF;
 $text-container-color:mix($text-color, $panel-background-color, 60%);
@@ -36,6 +38,14 @@ $box-shadow: 0px 5px 10px 0 rgba(0, 0, 0, 0.25);
     flex-direction: column;
     flex-grow: 1;
     align-items: stretch;
+}
+
+@mixin absolute-full-size {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
 }
 
 $layout-spacing: 40px;

@@ -33,7 +33,7 @@ $input-height: 60px;
             }
         }
 
-        .icon {
+        .button {
             position: absolute;
             top: 0;
             right: 0;
@@ -41,6 +41,13 @@ $input-height: 60px;
             width: 3.5em;
             @include flex-center-center;
             color: white;
+            cursor: pointer;
+            user-select: none;
+            transition: $basic-transition;
+
+            &:hover {
+                background-color: rgba(0, 0, 0, 0.1);
+            }
         }
     }
 

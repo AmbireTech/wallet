@@ -5,20 +5,22 @@ import { AiOutlineSend } from 'react-icons/ai'
 import { useParams, withRouter } from 'react-router'
 import { useEffect, useMemo, useState } from 'react'
 import { ethers } from 'ethers'
-import NoFundsPlaceholder from './NoFundsPlaceholder/NoFundsPlaceholder'
 import { Interface } from 'ethers/lib/utils'
 import { useToasts } from '../../../hooks/toasts'
-import { TextInput, NumberInput, Button, Select, Loading, AddressBook, AddressWarning } from '../../common'
+import { TextInput, NumberInput, Button, Select, Loading, AddressBook, AddressWarning, NoFundsPlaceholder } from '../../common'
 import { validateSendTransferAddress, validateSendTransferAmount } from '../../../lib/validations/formValidations'
-import CrossChain from './CrossChain/CrossChain'
+import { isValidAddress } from '../../../helpers/address'
+import Addresses from './Addresses/Addresses'
 
 const ERC20 = new Interface(require('adex-protocol-eth/abi/ERC20'))
 
 const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest, addressBook }) => {
     const { addresses, addAddress, removeAddress, isKnownAddress } = addressBook
 
-    const { tokenAddress } = useParams()
+    const { tokenAddressOrSymbol } = useParams()
     const { addToast } = useToasts()
+
+    const tokenAddress = isValidAddress(tokenAddressOrSymbol) ? tokenAddressOrSymbol : portfolio.tokens.find(({ symbol }) => symbol === tokenAddressOrSymbol)?.address || null
 
     const [asset, setAsset] = useState(tokenAddress)
     const [amount, setAmount] = useState(0)
@@ -67,12 +69,12 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
     const sendTx = () => {
         try {
             const txn = {
-                to: tokenAddress,
+                to: selectedAsset.address,
                 value: '0',
                 data: ERC20.encodeFunctionData('transfer', [address, bigNumberHexAmount])
             }
 
-            if (Number(tokenAddress) === 0) {
+            if (Number(selectedAsset.address) === 0) {
                 txn.to = address
                 txn.value = bigNumberHexAmount
                 txn.data = '0x'
@@ -96,8 +98,12 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
     useEffect(() => {
         setAmount(0)
         setBigNumberHexAmount('')
-        history.replace({ pathname: `/wallet/transfer/${asset}` })
-    }, [asset, history])
+    }, [asset])
+
+    useEffect(() => {
+        if (!selectedAsset) return
+        history.replace({ pathname: `/wallet/transfer/${Number(asset) !== 0 ? asset : selectedAsset.symbol}` })
+    }, [asset, history, selectedAsset])
 
     useEffect(() => {
         const isValidRecipientAddress = validateSendTransferAddress(address, selectedAcc, addressConfirmed, isKnownAddress)
@@ -173,7 +179,11 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
                             <NoFundsPlaceholder/>
                }
            </div>
-           <CrossChain addRequest={addRequest} selectedAccount={selectedAcc} portfolio={portfolio} network={selectedNetwork}/>
+           <Addresses
+                addresses={addresses}
+                addAddress={addAddress}
+                removeAddress={removeAddress}
+            />
         </div>
     )
 }
