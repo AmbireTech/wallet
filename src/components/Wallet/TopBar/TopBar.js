@@ -6,6 +6,7 @@ import { Button, Select } from "../../common";
 import Accounts from "./Accounts/Accounts";
 import DApps from "./DApps/DApps";
 import * as blockies from 'blockies-ts';
+import Links from "./Links/Links";
 import { useModals } from "../../../hooks";
 import { WalletTokenModal } from "../../Modals";
 
@@ -52,6 +53,7 @@ const TopBar = ({
         <DApps connections={connections} connect={connect} disconnect={disconnect}/>
         <Accounts accounts={accounts} selectedAddress={selectedAcc} onSelectAcc={onSelectAcc} onRemoveAccount={onRemoveAccount}/>
         <Select defaultValue={network.id} items={networksItems} onChange={value => setNetwork(value)}/>
+        <Links/>
       </div>
     </div>
   );
