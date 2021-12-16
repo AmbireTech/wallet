@@ -6,8 +6,9 @@ import { Chart, Loading, Segments } from '../../common'
 import Balances from './Balances/Balances'
 import Protocols from './Protocols/Protocols'
 import Collectibles from './Collectibles/Collectibles'
+import { MdOutlineInfo } from 'react-icons/md'
 
-export default function Dashboard({ portfolio, selectedNetwork, setNetwork }) {
+export default function Dashboard({ portfolio, selectedNetwork, selectedAccount, setNetwork }) {
 
     const [chartTokensData, setChartTokensData] = useState([]);
     const [chartProtocolsData, setChartProtocolsData] = useState([]);
@@ -114,14 +115,22 @@ export default function Dashboard({ portfolio, selectedNetwork, setNetwork }) {
                                 <Collectibles collectibles={portfolio.collectibles}/>
                     }
                 </div>
-                {
-                    portfolio.areProtocolsLoading || !portfolio.protocols.length ?
-                        null
-                        :
-                        <div className="powered">
-                            Powered by Zapper
-                        </div>
-                }
+                <div className="footer">
+                    <div id="missing-token-notice">
+                        <MdOutlineInfo/>
+                        <span>
+                            If you don't see a specific token that you own, please check the <a href={`${selectedNetwork.explorerUrl}/address/${selectedAccount}`} target="_blank" rel="noreferrer">Block Explorer</a>
+                        </span>
+                    </div>
+                    {
+                        portfolio.areProtocolsLoading || !portfolio.protocols.length ?
+                            null
+                            :
+                            <div className="powered">
+                                Powered by Zapper
+                            </div>
+                    }
+                </div>
             </div>
         </section>
     )
