@@ -2,11 +2,13 @@ import "./TopBar.scss";
 
 import React, { useState } from "react";
 import { MdOutlineArrowForward, MdOutlineClose, MdOutlineMenu } from "react-icons/md";
-import { Select } from "../../common";
+import { Button, Select } from "../../common";
 import Accounts from "./Accounts/Accounts";
 import DApps from "./DApps/DApps";
 import * as blockies from 'blockies-ts';
 import Links from "./Links/Links";
+import { useModals } from "../../../hooks";
+import { WalletTokenModal } from "../../Modals";
 
 const TopBar = ({
   connections,
@@ -19,8 +21,11 @@ const TopBar = ({
   network,
   setNetwork,
   allNetworks,
+  rewards
 }) => {
+  const { showModal } = useModals()
   const [isMenuOpen, setMenuOpen] = useState(false)
+  const { total } = rewards
   
   const networksItems = allNetworks.map(({ id, name, icon }) => ({
     label: name,
@@ -29,6 +34,8 @@ const TopBar = ({
   }))
 
   const account = accounts.find(({ id }) => id === selectedAcc)
+
+  const showWalletTokenModal = () => showModal(<WalletTokenModal rewards={rewards}/>)
 
   return (
     <div id="topbar">
@@ -42,6 +49,7 @@ const TopBar = ({
       </div>
 
       <div className={`container ${isMenuOpen ? 'open' : ''}`}>
+        <Button small border onClick={showWalletTokenModal}>{ total.toFixed(2) } $WALLET</Button>
         <DApps connections={connections} connect={connect} disconnect={disconnect}/>
         <Accounts accounts={accounts} selectedAddress={selectedAcc} onSelectAcc={onSelectAcc} onRemoveAccount={onRemoveAccount}/>
         <Select defaultValue={network.id} items={networksItems} onChange={value => setNetwork(value)}/>
