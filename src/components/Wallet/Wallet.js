@@ -32,6 +32,7 @@ export default function Wallet(props) {
       component: <Dashboard
         portfolio={props.portfolio}
         selectedNetwork={props.network}
+        selectedAccount={props.selectedAcc}
         setNetwork={props.setNetwork}
       />
     },
