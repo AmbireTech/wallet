@@ -209,3 +209,5 @@ node scripts/generateContractInfo.js > src/consts/humanizerInfo.json
 * Improved responsiveness, mobile-friendly UI (not intended as a replacement to the upcoming mobile app)
 * Yearn integration: you can now deposit into Yearn vaults through the Earn page
 * QR Code on Deposit page
+* WALLET token distribution modal
+* Link to the Help Center added
