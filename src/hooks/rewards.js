@@ -6,9 +6,11 @@ const useRewards = ({ relayerURL, account }) => {
 
     const [balanceRewards, setBalanceRewards] = useState(0)
     const [adxRewards, setAdxRewards] = useState(0)
+    const [total, setTotal] = useState(0)
 
     const resetRewards = () => {
         setBalanceRewards(0)
+        setAdxRewards(0)
     }
 
     const getRewards = useCallback(async () => {
@@ -32,11 +34,17 @@ const useRewards = ({ relayerURL, account }) => {
         }
     }, [relayerURL, account, addToast])
 
+    useEffect(() => {
+        const total = balanceRewards + adxRewards
+        setTotal(total)
+    }, [balanceRewards, adxRewards])
+
     useEffect(() => getRewards(), [getRewards, account])
 
     return {
         balanceRewards,
-        adxRewards
+        adxRewards,
+        total
     }
 }
 
