@@ -1,8 +1,11 @@
 import './WalletTokenModal.scss'
 
 import { Button, Modal, ToolTip } from '../../common'
+import { MdOutlineClose } from 'react-icons/md'
+import { useModals } from '../../../hooks'
 
 const WalletTokenModal = ({ rewards }) => {
+    const { hideModal } = useModals()
     const { balanceRewards, adxRewards } = rewards
 
     const claimButton = <>
@@ -11,8 +14,12 @@ const WalletTokenModal = ({ rewards }) => {
         </ToolTip>
     </>
 
+    const modalButtons = <>
+        <Button clear icon={<MdOutlineClose/>} onClick={() => hideModal()}>Close</Button>
+    </>
+
     return (
-        <Modal id="wallet-token-modal" title="$WALLET token distribution">
+        <Modal id="wallet-token-modal" title="$WALLET token distribution" buttons={modalButtons}>
             <div className="item">
                 <div className="details">
                     <label>Early users Incentive</label>
