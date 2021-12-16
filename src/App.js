@@ -153,7 +153,7 @@ function AppInner () {
     const intvl = setTimeout(() => setCacheBreak(Date.now()), 10000)
     return () => clearTimeout(intvl)
   }, [cacheBreak])
-  const rewardsUrl = relayerURL ? `https://relayer.ambire.com/wallet-token/rewards/${selectedAcc}?cacheBreak=${cacheBreak}` : null
+  const rewardsUrl = (relayerURL && selectedAcc) ? `https://relayer.ambire.com/wallet-token/rewards/${selectedAcc}?cacheBreak=${cacheBreak}` : null
   const rewardsData = useRelayerData(rewardsUrl)
 
   return (<>
