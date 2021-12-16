@@ -30,7 +30,7 @@ const DApps = ({ connections, connect, disconnect }) => {
         }
     }, [connect, isClipboardGranted])
 
-    const isLegacyWC = ({ bridge }) => true // /https:\/\/bridge.walletconnect.org/g.test(bridge)
+    const isLegacyWC = ({ bridge }) => /https:\/\/bridge.walletconnect.org/g.test(bridge)
     const isConnectionInterrupted = ({ errors = [] }) =>
         errors.length > 2
         && errors.slice(-3)
