@@ -109,78 +109,20 @@
           gap: 1em;
         }
       }
-
-      a {
-        button {
-          width: 100%;
-          background: orange;
-          max-width: 1800px;
-          font-size: 17px;
-        }
-      }
     }
   }
 
-  #addresses {
-    gap: 15px;
-
-    .content {
-      .buttonComponent {
-        align-self: flex-end;
-      }
-    }
-
-    .item {
-      height: 65px;
-      padding-left: 20px !important;
-      cursor: default;
-
-      &:nth-child(odd) {
-        background-color: rgba(0, 0, 0, 0.025);
-      }
-      &:nth-child(even) {
-        background-color: rgba(0, 0, 0, 0.1);
-      }
-
-      .details {
-        text-align: left;
-
-        label {
-          cursor: default;
-        }
-
-        .address {
-          word-break: break-all;
-          text-align: left;
-        }
-      }
-
-      .button {
-        flex: 0 0 auto;
-        width: 60px;
-      }
-    }
-  }
-
-  #backup {
-    flex-direction: row;
+  .notice {
     display: flex;
-    gap: 2em;
+    align-items: center;
+    gap: 0.75em;
+    padding: 1em;
+    font-weight: bold;
+    color: $background-color;
+    background-color: #f3ac29;
 
-    #export {
-      .buttonComponent {
-        height: 60px;
-        width: 100%;
-        background: orange;
-      }
-    }
-
-    #import {
-      .buttonComponent {
-        height: 60px;
-        width: 100%;
-        background: $secondary-accent-color;
-      }
+    svg {
+      font-size: 1.5em;
     }
   }
 }
@@ -215,21 +157,6 @@
           width: 100%;
         }
       }
-    }
-
-    #addresses {
-      .item {
-        padding-left: 15px !important;
-
-        .details {
-          padding-right: 5px;
-        }
-      }
-    }
-
-    #backup {
-      flex-direction: column;
-      gap: 1em;
     }
   }
 }

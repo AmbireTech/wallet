@@ -40,7 +40,7 @@ function makeBundle(account, networkId, requests) {
   return bundle
 }
 
-export default function SendTransaction({ relayerURL, accounts, network, selectedAcc, requests, resolveMany, replacementBundle, onDismiss }) {
+export default function SendTransaction({ relayerURL, accounts, network, selectedAcc, requests, resolveMany, replacementBundle, onBroadcastedTxn, onDismiss }) {
   // NOTE: this can be refactored at a top level to only pass the selected account (full object)
   // keeping it that way right now (selectedAcc, accounts) cause maybe we'll need the others at some point?
   const account = accounts.find(x => x.id === selectedAcc)
@@ -69,11 +69,12 @@ export default function SendTransaction({ relayerURL, accounts, network, selecte
       network={network}
       account={account}
       resolveMany={resolveMany}
+      onBroadcastedTxn={onBroadcastedTxn}
       onDismiss={onDismiss}
   />)
 }
 
-function SendTransactionWithBundle ({ bundle, network, account, resolveMany, relayerURL, onDismiss }) {
+function SendTransactionWithBundle ({ bundle, network, account, resolveMany, relayerURL, onBroadcastedTxn, onDismiss }) {
   const [estimation, setEstimation] = useState(null)
   const [signingStatus, setSigningStatus] = useState(false)
   const [feeSpeed, setFeeSpeed] = useState(DEFAULT_SPEED)
@@ -100,8 +101,11 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
         setEstimation(prevEstimation => {
           if (estimation.remainingFeeTokenBalances) {
             // If there's no eligible token, set it to the first one cause it looks more user friendly (it's the preferred one, usually a stablecoin)
-            estimation.selectedFeeToken = (prevEstimation && prevEstimation.selectedFeeToken)
-              || estimation.remainingFeeTokenBalances.find(token => isTokenEligible(token, feeSpeed, estimation))
+            estimation.selectedFeeToken = (
+                prevEstimation
+                && isTokenEligible(prevEstimation.selectedFeeToken, feeSpeed, estimation)
+                && prevEstimation.selectedFeeToken
+              ) || estimation.remainingFeeTokenBalances.find(token => isTokenEligible(token, feeSpeed, estimation))
               || estimation.remainingFeeTokenBalances[0]
           }
           return estimation
@@ -123,11 +127,13 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
   }, [bundle, setEstimation, feeSpeed, addToast, network, relayerURL])
 
   const getFinalBundle = () => {
-    if (!relayerURL) return new Bundle({
-      ...bundle,
-      gasLimit: estimation.gasLimit
-      // set nonce here when we implement "replace current pending transaction"
-    })
+    if (!relayerURL) {
+      return new Bundle({
+        ...bundle,
+        gasLimit: estimation.gasLimit
+        // set nonce here when we implement "replace current pending transaction"
+      })
+    }
 
     const feeToken = estimation.selectedFeeToken
     const { addedGas, multiplier } = getFeePaymentConsequences(feeToken, estimation)
@@ -190,7 +196,9 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
     const { signature, success, message, confCodeRequired } = await fetchPost(
       `${relayerURL}/second-key/${bundle.identity}/${network.id}/sign`, {
         signer, txns: finalBundle.txns, nonce: finalBundle.nonce, gasLimit: finalBundle.gasLimit,
-        code: quickAccCredentials && quickAccCredentials.code
+        code: quickAccCredentials && quickAccCredentials.code,
+        // This can be a boolean but it can also contain the new signer/primaryKeyBackup, which instructs /second-key to update acc upon successful signature
+        recoveryMode: finalBundle.recoveryMode
       }
     )
     if (!success) {
@@ -232,7 +240,6 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
     }
 
     const requestIds = bundle.requestIds
-    const blockExplorerUrl = network.explorerUrl
     const approveTxnPromise = bundle.signer.quickAccManager ?
       approveTxnImplQuickAcc({ quickAccCredentials })
       : approveTxnImpl()
@@ -248,10 +255,7 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
       if (!skipResolve && requestIds) resolveMany(requestIds, { success: bundleResult.success, result: bundleResult.txId, message: bundleResult.message })
 
       if (bundleResult.success) {
-        addToast((
-          <span>Transaction signed and sent successfully!
-            &nbsp;Click to view on block explorer.
-          </span>), { url: blockExplorerUrl+'/tx/'+bundleResult.txId, timeout: 15000 })
+        onBroadcastedTxn(bundleResult.txId)
         onDismiss()
       } else addToast(`Transaction error: ${bundleResult.message || 'unspecified error'}`, { error: true })
     })

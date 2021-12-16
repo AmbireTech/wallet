@@ -6,6 +6,7 @@ const ADDED_GAS_TOKEN = 30000
 const ADDED_GAS_NATIVE = 12000
 
 export function isTokenEligible (token, speed, estimation) {
+  if (!token) return false
   const min = token.isStable ? estimation.feeInUSD[speed] : estimation.feeInNative[speed]
   return parseInt(token.balance) / Math.pow(10, token.decimals) > min
 }

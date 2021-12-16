@@ -16,7 +16,7 @@ const getDefaultState = () => ({ connections: [], requests: [] })
 
 let connectors = {}
 
-export default function useWalletConnect ({ account, chainId }) {
+export default function useWalletConnect ({ account, chainId, initialUri }) {
     const { addToast } = useToasts()
 
     // This is needed cause of the WalletConnect event handlers
@@ -120,6 +120,26 @@ export default function useWalletConnect ({ account, chainId }) {
                 onError(error)
                 return
             }
+            // @TODO: refactor into wcRequestHandler
+            // Opensea "unlock currency" hack; they use a stupid MetaTransactions system built into WETH on Polygon
+            // There's no point of this because the user has to sign it separately as a tx anyway; but more importantly,
+            // it breaks Ambire and other smart wallets cause it relies on ecrecover and does not depend on EIP1271
+            if (payload.method === 'eth_signTypedData') {
+                // @TODO: try/catch the JSON parse?
+                const signPayload = JSON.parse(payload.params[1])
+                if (signPayload.primaryType === 'MetaTransaction') {
+                    payload = {
+                        ...payload,
+                        method: 'eth_sendTransaction',
+                        params: [{
+                            to: signPayload.domain.verifyingContract,
+                            from: signPayload.message.from,
+                            data: signPayload.message.functionSignature, // @TODO || data?
+                            value: signPayload.message.value || '0x0'
+                        }]
+                    }
+                }
+            }
             if (!SUPPORTED_METHODS.includes(payload.method)) {
                 const isUniIgnorable = payload.method === 'eth_signTypedData_v4'
                     && connector.session.peerMeta
@@ -139,6 +159,7 @@ export default function useWalletConnect ({ account, chainId }) {
             )
             if (wrongAcc) {
                 addToast(`dApp sent a request for the wrong account: ${payload.params[0].from}`, { error: true })
+                connector.rejectRequest({ id: payload.id, error: { message: 'Sent a request for the wrong account' }})
                 return
             }
             dispatch({ type: 'requestAdded', request: {
@@ -237,7 +258,7 @@ export default function useWalletConnect ({ account, chainId }) {
     }, [state, account, chainId, connect])
 
     // Initialization effects
-    useEffect(() => runInitEffects(connect, account), [connect, account])
+    useEffect(() => runInitEffects(connect, account, initialUri, addToast), [connect, account, initialUri, addToast])
 
     return {
         connections: state.connections,
@@ -249,10 +270,11 @@ export default function useWalletConnect ({ account, chainId }) {
 
 // Initialization side effects
 // Connect to the URL, read from clipboard, etc.
-function runInitEffects(wcConnect, account) {
-    const query = new URLSearchParams(window.location.href.split('?').slice(1).join('?').split('#')[0])
-    const wcUri = query.get('uri')
-    if (wcUri && account) wcConnect({ uri: wcUri })
+function runInitEffects(wcConnect, account, initialUri, addToast) {
+    if (initialUri) {
+        if (account) wcConnect({ uri: initialUri })
+        else addToast('WalletConnect dApp connection request detected, please create an account and you will be connected to the dApp.', { timeout: 15000 })
+    }
 
     // hax
     window.wcConnect = uri => wcConnect({ uri })

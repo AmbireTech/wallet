@@ -15,8 +15,10 @@ import Segments from './Segments/Segments';
 import Select from './Select/Select';
 import TextInput from './TextInput/TextInput';
 import NumberInput from './NumberInput/NumberInput';
+import PasswordInput from './PasswordInput/PasswordInput';
 import Toggle from './Toggle/Toggle';
 import ToolTip from './ToolTip/ToolTip';
+import NoFundsPlaceholder from './NoFundsPlaceholder/NoFundsPlaceholder';
 
 export {
     AddressBook,
@@ -36,6 +38,8 @@ export {
     Select,
     TextInput,
     NumberInput,
+    PasswordInput,
     Toggle,
-    ToolTip
+    ToolTip,
+    NoFundsPlaceholder
 };

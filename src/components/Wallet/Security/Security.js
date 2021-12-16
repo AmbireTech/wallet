@@ -1,23 +1,25 @@
 import './Security.scss'
 
-import { MdOutlineAdd, MdOutlineRemove } from 'react-icons/md'
+import { MdOutlineRemove } from 'react-icons/md'
 import { RiDragDropLine } from 'react-icons/ri'
-import { BiExport, BiImport } from 'react-icons/bi'
 import { useState, useEffect, useCallback } from 'react'
 import { Loading, TextInput, Button } from '../../common'
-import { Interface } from 'ethers/lib/utils'
+import { Interface, AbiCoder, keccak256 } from 'ethers/lib/utils'
 import accountPresets from '../../../consts/accountPresets'
 import privilegesOptions from '../../../consts/privilegesOptions'
 import { useRelayerData, useModals } from '../../../hooks'
-import { InputModal, ResetPasswordModal } from '../../Modals'
-import AddressList from '../../common/AddressBook/AddressList/AddressList'
-import { isValidAddress } from '../../../helpers/address'
+import { ResetPasswordModal } from '../../Modals'
 import AddAuthSigner from './AddAuthSigner/AddAuthSigner'
 import { useToasts } from '../../../hooks/toasts'
 import { useHistory } from 'react-router-dom'
 import { useDropzone } from 'react-dropzone'
 import { MdInfoOutline } from 'react-icons/md'
 import { validateImportedAccountProps, fileSizeValidator } from '../../../lib/validations/importedAccountValidations'
+import OtpTwoFAModal from '../../Modals/OtpTwoFAModal/OtpTwoFAModal'
+import OtpTwoFADisableModal from '../../Modals/OtpTwoFADisableModal/OtpTwoFADisableModal'
+import Backup from './Backup/Backup'
+import PendingRecoveryNotice from './PendingRecoveryNotice/PendingRecoveryNotice'
+import { getName } from '../../../lib/humanReadableTransactions'
 
 const IDENTITY_INTERFACE = new Interface(
   require('adex-protocol-eth/abi/Identity5.2')
@@ -30,12 +32,10 @@ const Security = ({
   selectedAcc,
   selectedNetwork,
   accounts,
-  addressBook,
   addRequest,
-  onAddAccount,
+  showSendTxns,
+  onAddAccount
 }) => {
-  const { addresses, addAddress, removeAddress } = addressBook
-
   const { showModal } = useModals()
   const [ cacheBreak, setCacheBreak ] = useState(() => Date.now())
   
@@ -50,8 +50,11 @@ const Security = ({
     : null
   const { data, errMsg, isLoading } = useRelayerData(url)
   const privileges = data ? data.privileges : {}
+  const otpEnabled = data ? data.otpEnabled : null
+  const recoveryLock = data && data.recoveryLock
   const { addToast } = useToasts()
   const history = useHistory()
+  const selectedAccount = accounts.find(x => x.id === selectedAcc)
 
   const craftTransaction = (address, privLevel) => {
     return {
@@ -116,28 +119,112 @@ const Security = ({
       selectedNetwork={selectedNetwork}
       relayerURL={relayerURL}
       onAddAccount={onAddAccount}
+      showSendTxns={showSendTxns}
     />)
   }
 
-  const selectedAccount = accounts.find(x => x.id === selectedAcc)
+  const handleEnableOtp = () => {
+    if (!relayerURL) {
+      return addToast('Unsupported without a connection to the relayer', { error: true })
+    }
+
+    showModal(<OtpTwoFAModal 
+      relayerURL={relayerURL} 
+      selectedAcc={selectedAccount} 
+      setCacheBreak={() => { setCacheBreak(Date.now()) }} 
+      />)
+  }
+
+  const handleDisableOtp = async() => {
+    if (!relayerURL) {
+      return addToast('Unsupported without a connection to the relayer', { error: true })
+    }
+    
+    showModal(<OtpTwoFADisableModal 
+      relayerURL={relayerURL} 
+      selectedAcc={selectedAccount} 
+      setCacheBreak={() => { setCacheBreak(Date.now()) }} 
+      />)
+  }
+  
+  // JSON import
+  const onDrop = useCallback((acceptedFiles, rejectedFiles) => {
+    const reader = new FileReader()
+    
+    if (rejectedFiles.length) {
+      addToast(`${rejectedFiles[0].file.path} - ${(rejectedFiles[0].file.size / 1024).toFixed(2)} KB. ${rejectedFiles[0].errors[0].message}`, { error: true })
+    }
+
+    if (acceptedFiles.length){
+      const file = acceptedFiles[0]
+
+      reader.readAsText(file,'UTF-8')
+      reader.onload = readerEvent => {
+        const content = readerEvent.target.result
+        const fileContent = JSON.parse(content)
+        const validatedFile = validateImportedAccountProps(fileContent)
+        
+        if (validatedFile.success) onAddAccount(fileContent, { select: true })
+        else addToast(validatedFile.message, { error: true})
+      }
+    }
+  }, [addToast, onAddAccount])
+  const { getRootProps, getInputProps, open, isDragActive, isDragAccept, isDragReject } = useDropzone({
+    onDrop,
+    noClick: true,
+    noKeyboard: true,
+    accept: 'application/json',
+    maxFiles: 1,
+    validator: fileSizeValidator
+  })
+
+  // @TODO relayerless mode: it's not that hard to implement in a primitive form, we need everything as-is
+  // but rendering the initial privileges instead; or maybe using the relayerless transactions hook/service
+  // and aggregate from that
+  const accHash = signer => {
+      const abiCoder = new AbiCoder()
+      const { timelock, one, two } = signer
+      return keccak256(abiCoder.encode(['tuple(uint, address, address)'], [[timelock, one, two]]))
+  }
+  const hasPendingReset = privileges[selectedAccount.signer.quickAccManager] && (
+    (recoveryLock && recoveryLock.status && !isLoading)
+      || (
+          privileges && selectedAccount.signer.quickAccManager
+          // is or has been in recovery state
+          && selectedAccount.signer.preRecovery
+          // but that's not finalized yet
+          && accHash(selectedAccount.signer) !== privileges[selectedAccount.signer.quickAccManager]
+      )
+    )
 
   const privList = Object.entries(privileges)
     .map(([addr, privValue]) => {
       if (!privValue) return null
+  
+      const addressName = getName(addr) || null
       const isQuickAcc = addr === accountPresets.quickAccManager
       const privText = isQuickAcc
         ? `Email/password signer (${selectedAccount.email || 'unknown email'})`
-        : addr
+        : `${addr} ${addressName && addressName !== addr ? `(${addressName})` : ''}`
       const signerAddress = isQuickAcc
         ? selectedAccount.signer.quickAccManager
         : selectedAccount.signer.address
       const isSelected = signerAddress === addr
+      const canChangePassword = isQuickAcc && !hasPendingReset
 
       return (
         <li key={addr}>
           <TextInput className="depositAddress" value={privText} disabled />
           <div className="btns-wrapper">
-            {isQuickAcc && selectedAccount.primaryKeyBackup && (<Button onClick={showResetPasswordModal} small>Change password</Button>)}
+            {isQuickAcc && (otpEnabled !== null) && (otpEnabled ? 
+              (<Button red onClick={handleDisableOtp} small>Disable 2FA</Button>) : 
+              (<Button onClick={handleEnableOtp} small>Enable 2FA</Button>)
+            )}
+            {isQuickAcc && (<Button
+              disabled={!canChangePassword}
+              title={hasPendingReset ? 'Account recovery already in progress' : ''}
+              onClick={showResetPasswordModal} small>Change password</Button>
+            )}
             <Button
               disabled={isSelected}
               title={isSelected ? 'Signer is already default' : ''}
@@ -166,48 +253,15 @@ const Security = ({
     })
     .filter(x => x)
 
-  const modalInputs = [{ label: 'Name', placeholder: 'My Address' }, { label: 'Address', placeholder: '0x', validate: value => isValidAddress(value) }] 
-  const inputModal = <InputModal title="Add New Address" inputs={modalInputs} onClose={([name, address]) => addAddress(name, address)}></InputModal>
-  const showInputModal = () => showModal(inputModal)
-
-  const onDrop = useCallback((acceptedFiles, rejectedFiles) => {
-    const reader = new FileReader()
-    
-    if (rejectedFiles.length) {
-      addToast(`${rejectedFiles[0].file.path} - ${(rejectedFiles[0].file.size / 1024).toFixed(2)} KB. ${rejectedFiles[0].errors[0].message}`, { error: true })
-    }
-
-    if (acceptedFiles.length){
-      const file = acceptedFiles[0]
-
-      reader.readAsText(file,'UTF-8')
-      reader.onload = readerEvent => {
-        const content = readerEvent.target.result
-        const fileContent = JSON.parse(content)
-        const validatedFile = validateImportedAccountProps(fileContent)
-        
-        if (validatedFile.success) onAddAccount(fileContent, { select: true })
-        else addToast(validatedFile.message, { error: true})
-      }
-    }
-  }, [addToast, onAddAccount])
-
-  const { getRootProps, getInputProps, open, isDragActive, isDragAccept, isDragReject } = useDropzone({
-    onDrop,
-    noClick: true,
-    noKeyboard: true,
-    accept: 'application/json',
-    maxFiles: 1,
-    validator: fileSizeValidator
-  })
- 
-  // @TODO relayerless mode: it's not that hard to implement in a primitive form, we need everything as-is
-  // but rendering the initial privileges instead; or maybe using the relayerless transactions hook/service
-  // and aggregate from that
-
   const showLoading = isLoading && !data
   const signersFragment = relayerURL ? (<>
     <div className="panel" id="signers">
+      {hasPendingReset && !showLoading && (<PendingRecoveryNotice
+        recoveryLock={recoveryLock}
+        showSendTxns={showSendTxns}
+        selectedAccount={selectedAccount}
+        selectedNetwork={selectedNetwork}
+      />)}
       <div className='network-warning'>
         <MdInfoOutline size={36}></MdInfoOutline>
         <div>
@@ -248,45 +302,7 @@ const Security = ({
       <input {...getInputProps()} />
       {signersFragment}
 
-      <div id="addresses" className='panel'>
-        <div className='title'>Address Book</div>
-        <div className="content">
-          <AddressList
-            noAccounts={true}
-            addresses={addresses}
-            removeAddress={removeAddress}
-          />
-          <Button small icon={<MdOutlineAdd/>} onClick={showInputModal}>Add Address</Button>
-        </div>
-      </div>
-
-      <div id="backup">
-        <div className="panel">
-          <div className="panel-title">Backup current account</div>
-          <div className="content" id="export">
-            <a
-              type="button"
-              href={`data:text/json;charset=utf-8,${encodeURIComponent(
-                JSON.stringify(selectedAccount)
-              )}`}
-              download={`${selectedAccount.id}.json`}
-            >
-              <Button icon={<BiExport/>}>Export</Button>
-            </a>
-            <div style={{ fontSize: '0.9em' }}>
-            This downloads a backup of your current account ({selectedAccount.id.slice(0, 5)}...{selectedAccount.id.slice(-3)}) encrypted with
-            your password. This is safe to store in iCloud/Google Drive, but you cannot use it to restore your account if you forget the password.
-            </div>
-          </div>
-        </div>
-        <div className="panel">
-          <div className="panel-title">Import an account from backup</div>
-          <div className="content" id="import">
-            <Button icon={<BiImport/>} onClick={open}>Import</Button>
-            <p>...or you can drop an account backup JSON file on this page</p>
-          </div>
-        </div>
-      </div>
+      <Backup selectedAccount={selectedAccount} onOpen={open}/>
     </section>
   )
 }
