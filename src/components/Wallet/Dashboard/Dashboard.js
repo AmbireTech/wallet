@@ -106,13 +106,10 @@ export default function Dashboard({ portfolio, selectedNetwork, selectedAccount,
                 </div>
                 <div className="content">
                     {
-                        portfolio.areProtocolsLoading ?
-                            <Loading/>
+                        tableType === tableSegments[0].value ?
+                            <Protocols portfolio={portfolio}/>
                             :
-                            tableType === tableSegments[0].value ?
-                                <Protocols protocols={portfolio.protocols}/>
-                                :
-                                <Collectibles collectibles={portfolio.collectibles}/>
+                            <Collectibles collectibles={portfolio.collectibles}/>
                     }
                 </div>
                 <div className="footer">
