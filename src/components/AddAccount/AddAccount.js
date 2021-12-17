@@ -185,8 +185,12 @@ export default function AddAccount({ relayerURL, onAddAccount }) {
     )
   }, [getAccountByAddr, relayerURL])
 
+  const getGridPlusAddresses = (addresses) => {
+    console.log('GRID ADRESSES', addresses)
+  }
+
   async function connectGridPlusAndGetAccounts() {
-    showModal(<GridPlusModal/>)
+    showModal(<GridPlusModal addresses={getGridPlusAddresses}/>)
   }
 
   async function connectTrezorAndGetAccounts() {
