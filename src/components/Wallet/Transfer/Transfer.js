@@ -183,6 +183,7 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
                 addresses={addresses}
                 addAddress={addAddress}
                 removeAddress={removeAddress}
+                onSelectAddress={address => setAddress(address)}
             />
         </div>
     )
