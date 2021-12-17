@@ -28,13 +28,6 @@ const validateImportedAccountProps = acc => {
     }
   }
 
-  if (!(acc.email && isValidEmailAddress(acc.email))) {
-    return {
-      success: false,
-      message: 'Failed to import JSON file: invalid email',
-    }
-  }
-
   if (!(acc.signer && isValidAddress(acc.signer.address || acc.signer.quickAccManager))) {
     return {
       success: false,
@@ -94,7 +87,6 @@ const isValidAddress = addr => {
   }
 }
 
-const isValidEmailAddress = addr => EMAIL_REGEX.test(addr)
 const isValidTimeLock = timelock => {
   return NUMBER_STRING_REGEX.test(timelock) && timelock.toString().length === TIME_LOCK_NUMBER_LENGTH
 }
