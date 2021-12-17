@@ -22,7 +22,7 @@ import { isFirefox } from '../../lib/isFirefox'
 import { VscJson } from 'react-icons/vsc'
 import { useDropzone } from 'react-dropzone'
 import { validateImportedAccountProps, fileSizeValidator } from '../../lib/validations/importedAccountValidations'
-import GridPlusModal from '../Modals/GridPlusModal/GridPlusModal'
+import LatticeModal from '../Modals/LatticeModal/LatticeModal'
 
 TrezorConnect.manifest({
   email: 'contactus@ambire.com',
@@ -185,12 +185,16 @@ export default function AddAccount({ relayerURL, onAddAccount }) {
     )
   }, [getAccountByAddr, relayerURL])
 
-  const getGridPlusAddresses = (addresses) => {
-    console.log('GRID ADRESSES', addresses)
+  const getGridPlusAddresses = addresses => {
+    setChooseSigners({
+      addresses, signerName: 'Lattice', signerExtra: {
+        type: 'Lattice'
+      }
+    })
   }
 
   async function connectGridPlusAndGetAccounts() {
-    showModal(<GridPlusModal addresses={getGridPlusAddresses}/>)
+    showModal(<LatticeModal addresses={getGridPlusAddresses} />)
   }
 
   async function connectTrezorAndGetAccounts() {
@@ -344,13 +348,13 @@ export default function AddAccount({ relayerURL, onAddAccount }) {
       <div className="icon" style={{ backgroundImage: 'url(./resources/ledger.png)' }}/>
       Ledger
     </button>
+    <button onClick={() => wrapErr(connectGridPlusAndGetAccounts)}>
+      <div className="icon" style={{ backgroundImage: 'url(./resources/grid-plus.png)' }}/>
+      Grid+ Lattice1
+    </button>
     <button onClick={() => wrapErr(connectWeb3AndGetAccounts)}>
       <div className="icon" style={{ backgroundImage: 'url(./resources/metamask.png)' }}/>
       Metamask / Browser
-    </button>
-    <button onClick={() => wrapErr(connectGridPlusAndGetAccounts)}>
-      <div className="icon" style={{ backgroundImage: 'url(./resources/metamask.png)' }}/>
-      Grid+
     </button>
     <button onClick={() => wrapErr(open)}>
       <div className="icon"><VscJson size={25}/></div>
