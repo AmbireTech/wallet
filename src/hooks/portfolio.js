@@ -78,7 +78,7 @@ export default function usePortfolio({ currentNetwork, account }) {
                 ...updatedTokens
             ]))
 
-            if (failedRequests >= requestsCount) throw new Error('Failed to fetch Tokens from Zapper API')
+            if (failedRequests >= requestsCount) throw new Error('Failed to fetch Tokens from API')
             return true
         } catch (error) {
             console.error(error)
@@ -121,7 +121,7 @@ export default function usePortfolio({ currentNetwork, account }) {
             
             lastOtherProcolsRefresh = Date.now()
 
-            if (failedRequests >= requestsCount) throw new Error('Failed to fetch other Protocols from Zapper API')
+            if (failedRequests >= requestsCount) throw new Error('Failed to fetch other Protocols from API')
             return true
         } catch (error) {
             console.error(error)

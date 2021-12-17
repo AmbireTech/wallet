@@ -4,7 +4,8 @@ const ERC20 = require('adex-protocol-eth/abi/ERC20')
 
 const etherscans = {
 	ethereum: { host: 'api.etherscan.io', key: 'KJJ4NZ9EQHIFCQY5IJ775PT128YE15AV5S' },
-	polygon: { host: 'api.polygonscan.com', key: 'YE5YYHA7BH6IPBN5T71UKW5MPEFZ5HUGJJ' }
+	polygon: { host: 'api.polygonscan.com', key: 'YE5YYHA7BH6IPBN5T71UKW5MPEFZ5HUGJJ' },
+	bsc: { host: 'api.bscscan.com', key: 'YQM54RYW91YSQA4QJZIJT4E6NWGKTZKQG3' }
 }
 
 const yearnVaults = [
@@ -36,6 +37,7 @@ const contracts = [
 	{ name: 'Aave', network: 'polygon', addr: '0x8dff5e27ea6b7ac08ebfdf9eb090f32ee9a30fcf' },
 	{ name: 'Movr 1inch', network: 'ethereum', addr: '0x8f9eaee5c5df888aba3c1ab19689a0660d042c6d' },
 	{ name: 'Movr 1inch', network: 'polygon', addr: '0x2fc9c3bf505b74e59a538fe9d67bc1deb4c03d91' },
+	{ name: 'Movr Router', network: 'bsc', addr: '0xc30141B657f4216252dc59Af2e7CdB9D8792e1B0', abiName: 'MovrRouter' },
 	{ name: 'Movr Anyswap', network: 'polygon', addr: '0x3901581b7ff54667a2bf51cb93dba704e60e24f4', abiName: 'MovrAnyswap' },
 	//{ name: 'Movr Anyswap', network: 'polygon', addr: '0x43aa68673e54e95e07e8388bdd8612abe6df6f81' },
 	{ name: 'Bored Ape Yacht Club', network: 'ethereum', addr: '0xbc4ca0eda7647a8ab7c2061c2e118a18a936f13d', abiName: 'ERC721' },

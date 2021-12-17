@@ -1,0 +1,75 @@
+@import '../../../variables.scss';
+
+#wallet-token-modal {
+    .content {
+        display: flex;
+        flex-direction: column;
+
+        .item {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5em;
+            padding: 1em;
+
+            .details {
+                display: flex;
+                justify-content: space-between;
+
+                label {
+                    font-weight: 500;
+                }
+
+                .balance {
+                    font-weight: 500;
+                    text-align: right;
+
+                    .amount {
+                        font-size: 18px;
+                    }
+
+                    .amount-dollar {
+                        font-size: 14px;
+                    }
+                }
+            }
+
+            .actions {
+                display: flex;
+                justify-content: flex-end;
+                
+                button {
+                    height: 40px;
+                    font-size: 13px;
+                    background-color: rgba(255, 255, 255, 0.1);
+                }
+            }
+
+            .primary-accent {
+                color: $primary-accent-color;
+            }
+
+            .secondary-accent {
+                color: $secondary-accent-color;
+            }
+
+            &:nth-child(odd) {
+                background-color: rgba(255, 255, 255, 0.04);
+            }
+
+            &:nth-child(even) {
+                background-color: rgba(255, 255, 255, 0.02);
+            }
+        }
+
+        #info {
+            margin-top: 1em;
+            opacity: 0.8;
+        }
+    }
+    
+    .buttons {
+        button {
+            flex: 0 1 100% !important;
+        }
+    }
+}
