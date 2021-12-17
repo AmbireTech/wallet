@@ -150,7 +150,7 @@ function AppInner () {
   const [cacheBreak, setCacheBreak] = useState(() => Date.now())
   useEffect(() => {
     if ((Date.now() - cacheBreak) > 5000) setCacheBreak(Date.now())
-    const intvl = setTimeout(() => setCacheBreak(Date.now()), 10000)
+    const intvl = setTimeout(() => setCacheBreak(Date.now()), 30000)
     return () => clearTimeout(intvl)
   }, [cacheBreak])
   const rewardsUrl = (relayerURL && selectedAcc) ? `${relayerURL}/wallet-token/rewards/${selectedAcc}?cacheBreak=${cacheBreak}` : null
