@@ -19,7 +19,10 @@
     }
 
     .placeholder {
-        font-weight: 500;
+        @include absolute-full-size;
+        @include flex-center-center;
+        font-size: 1.5em;
+        font-weight: bold;
         opacity: 0.8;
     }
 
@@ -32,6 +35,7 @@
         display: flex;
         flex-direction: column;
         gap: 20px;
+        filter: blur(10px);
 
         .inputs {
             position: relative;
