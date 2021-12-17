@@ -13,6 +13,7 @@ import { ledgerGetAddresses, PARENT_HD_PATH } from "../../../../lib/ledgerWebHID
 import { validateAddAuthSignerAddress } from '../../../../lib/validations/formValidations'
 import { BsXLg } from 'react-icons/bs'
 import { MdOutlineAdd } from 'react-icons/md'
+import LatticeModal from '../../../Modals/LatticeModal/LatticeModal'
 
 const AddAuthSigner = props => {
   const [signerAddress, setSignerAddress] = useState({
@@ -120,6 +121,18 @@ const AddAuthSigner = props => {
     setModalToggle(true)
   }
 
+  const getGridPlusAddresses = addresses => {
+    setChooseSigners({
+      addresses, signerName: 'Lattice', signerExtra: { type: 'Lattice' }
+    })
+
+    setModalToggle(true)
+  }
+
+  function connectGridPlusAndGetAccounts() {
+    showModal(<LatticeModal addresses={getGridPlusAddresses}/>)
+  }
+
   const modalHandler = () => {
     setModalToggle(prevState => !prevState)
   }
@@ -171,6 +184,15 @@ const AddAuthSigner = props => {
           style={{ backgroundImage: 'url(./resources/ledger.png)' }}
         />
         Ledger
+      </Button>
+      <Button
+        onClick={() => wrapErr(connectGridPlusAndGetAccounts)}
+      >
+        <div
+          className="icon"
+          style={{ backgroundImage: 'url(./resources/grid-plus.png)' }}
+        />
+        Grid+ Lattice1
       </Button>
       <Button
         onClick={() => wrapErr(connectWeb3AndGetAccounts)}

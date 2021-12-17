@@ -1,24 +1,21 @@
-import './GridPlusModal.scss'
+import './LatticeModal.scss'
 
 import { Modal, Button, TextInput, Loading } from '../../common'
 import { useState } from 'react'
 import { useToasts } from '../../../hooks/toasts'
-import { useModals } from '../../../hooks'
 import { Client } from 'gridplus-sdk'
 
 const crypto = require('crypto')
 // const privKey = crypto.randomBytes(32).toString('hex')
 const privKey = '60dd502e869a7d3dac752cc7d5dd7dbe40b1f06293865c1e91f6b8f7ac938c00'
+const HARDENED_OFFSET = 0x80000000
 
-const GridPlusModal = ({addresses}) => {
-    const { hideModal } = useModals()
+const LatticeModal = ({addresses}) => {
     const { addToast } = useToasts()
 
     const [isLoading, setLoading] = useState(false)
     const [deviceId, setDeviceId] = useState('')
-    // const [secret, setSecret] = useState('')
-    // const [hasActiveWallet, setHasActiveWallet] = useState(false)
-
+    
     const clientConfig = {
         name: 'Ambire Wallet',
         crypto: crypto,
@@ -28,13 +25,17 @@ const GridPlusModal = ({addresses}) => {
     const client = new Client(clientConfig)
 
     const connectToDevice = async() => {
-        setLoading(true)
+        setLoading(prevState => !prevState)
         //TODO Try/catch
-        // const serial = 'prMGjf'
         client.connect(deviceId, (err, isPaired) => {
+            const getAddressesReqOpts = {
+                startPath: [HARDENED_OFFSET+44, HARDENED_OFFSET+60, HARDENED_OFFSET, 0, 0],
+                n: 10
+            }
+
             if (err) {
-                setLoading(false)
-                return addToast(`GridPlus: ${err} Or check if the DeviceID is correct.`, { error: true })
+                setLoading(prevState => !prevState)
+                return addToast(`Lattice: ${err} Or check if the DeviceID is correct.`, { error: true })
             }
             
             if (typeof isPaired === 'undefined' || !isPaired) {
@@ -42,38 +43,32 @@ const GridPlusModal = ({addresses}) => {
                
                 client.pair(secret, err => {
                     if (err) {
-                        setLoading(false)
-                        return addToast('GridPlus: ' + err, { error: true })
+                        setLoading(prevState => !prevState)
+                        return addToast('Lattice: ' + err, { error: true })
                     }
 
-                    const HARDENED_OFFSET = 0x80000000;
-                    const req = {
-                        startPath: [HARDENED_OFFSET+44, HARDENED_OFFSET+60, HARDENED_OFFSET, 0, 0],
-                        n: 10
-                    };
-                    client.getAddresses(req, (err, res) => {
-                        // console.log('res', res)
+                    client.getAddresses(getAddressesReqOpts, (err, res) => {
+                        if (err) {
+                            setLoading(prevState => !prevState)
+                            return addToast(`Lattice: ${err}`, { error: true })
+                        }
+                        
+                        setLoading(prevState => !prevState)
                         addresses(res)
-                        setLoading(false)
                     })
                 })
             } else {
-                const HARDENED_OFFSET = 0x80000000;
-                const req = {
-                    startPath: [HARDENED_OFFSET+44, HARDENED_OFFSET+60, HARDENED_OFFSET, 0, 0],
-                    n: 10
-                };
-                client.getAddresses(req, (err, res) => {
-                    // console.log('res', res)
+                client.getAddresses(getAddressesReqOpts, (err, res) => {
+                    if (err) {
+                        setLoading(false)
+                        return addToast(`Lattice: ${err}`, { error: true })
+                    }
+                    console.log("GETADDRESS", res);
+                    setLoading(prevState => !prevState)
                     addresses(res)
-                    setLoading(false)
                 })
             }
         })
-    }
-
-    const resetForm = () => {
-        setDeviceId('')
     }
 
     return (
@@ -97,4 +92,4 @@ const GridPlusModal = ({addresses}) => {
     )
 }
 
-export default GridPlusModal
+export default LatticeModal
