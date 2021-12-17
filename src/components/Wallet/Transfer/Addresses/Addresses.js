@@ -7,7 +7,7 @@ import { isValidAddress } from '../../../../helpers/address'
 import { InputModal } from '../../../Modals'
 import { useModals } from '../../../../hooks'
 
-const Addresses = ({ addresses, addAddress, removeAddress }) => {
+const Addresses = ({ addresses, addAddress, removeAddress, onSelectAddress }) => {
     const { showModal } = useModals()
 
     const modalInputs = [
@@ -26,6 +26,7 @@ const Addresses = ({ addresses, addAddress, removeAddress }) => {
                     noAccounts={true}
                     addresses={addresses}
                     removeAddress={removeAddress}
+                    onSelectAddress={onSelectAddress}
                 />
             </div>
             <div className="separator"></div>
