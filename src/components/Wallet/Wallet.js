@@ -16,6 +16,7 @@ import { PermissionsModal } from '../Modals'
 import { useModals, usePermissions } from '../../hooks'
 import { useCallback, useEffect, useMemo, useRef } from 'react'
 import { isFirefox } from '../../lib/isFirefox'
+import CrossChain from "./CrossChain/CrossChain"
 
 export default function Wallet(props) {
   const { showModal } = useModals()
@@ -31,6 +32,7 @@ export default function Wallet(props) {
       component: <Dashboard
         portfolio={props.portfolio}
         selectedNetwork={props.network}
+        selectedAccount={props.selectedAcc}
         setNetwork={props.setNetwork}
       />
     },
@@ -39,7 +41,7 @@ export default function Wallet(props) {
       component: <Deposit selectedAcc={props.selectedAcc} selectedNetwork={props.network.id} />
     },
     {
-      path: '/transfer/:tokenAddress?',
+      path: '/transfer/:tokenAddressOrSymbol?',
       component: <Transfer
         portfolio={props.portfolio}
         selectedAcc={props.selectedAcc}
@@ -47,6 +49,15 @@ export default function Wallet(props) {
         addRequest={props.addRequest}
         accounts={props.accounts}
         addressBook={props.addressBook}
+      />
+    },
+    {
+      path: '/cross-chain',
+      component: <CrossChain
+        addRequest={props.addRequest}
+        selectedAccount={props.selectedAcc}
+        portfolio={props.portfolio}
+        network={props.network}
       />
     },
     {
@@ -60,7 +71,6 @@ export default function Wallet(props) {
         selectedAcc={props.selectedAcc}
         selectedNetwork={props.network}
         accounts={props.accounts}
-        addressBook={props.addressBook}
         addRequest={props.addRequest}
         showSendTxns={props.showSendTxns}
         onAddAccount={props.onAddAccount}
@@ -93,7 +103,7 @@ export default function Wallet(props) {
       path: '/gnosis/plugins',
       component: <PluginGnosisSafeApps
         gnosisConnect={props.gnosisConnect}
-        gnosisDisconnect={props.showSendTxns}
+        gnosisDisconnect={props.gnosisDisconnect}
         selectedAcc={props.selectedAcc}
         network={props.network}
       />

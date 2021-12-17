@@ -141,6 +141,13 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/d
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
 
+## Maintenance
+
+### Updating contract/token info
+
+```
+node scripts/generateContractInfo.js > src/consts/humanizerInfo.json
+```
 
 ## Change log
 
@@ -197,4 +204,10 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/t
 ### Second sprint (v0.3.0)
 * Ability to recover your account in case of losing one of the keys
 * OTP (Google Authenticator) support in the Security page
-* Notifications for mined transactions
+* Notifications for confirmed (mined) transactions
+* Cross-chain transfer and swap support
+* Improved responsiveness, mobile-friendly UI (not intended as a replacement to the upcoming mobile app)
+* Yearn integration: you can now deposit into Yearn vaults through the Earn page
+* QR Code on Deposit page
+* WALLET token distribution modal
+* Link to the Help Center added

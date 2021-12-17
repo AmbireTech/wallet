@@ -7,7 +7,7 @@ const Modal = ({ children, id, title, buttons, isCloseBtnShown = true }) => {
     const { hideModal } = useModals()
 
     return (
-        <div id={id} className="modal">
+        <div id={id} className={`modal ${buttons ? 'buttons' : ''}`}>
             <div className="heading">
                 <div className="title">{ title }</div>
                 {isCloseBtnShown ? (<div className="close" onClick={hideModal}>

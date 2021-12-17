@@ -1,6 +1,6 @@
 import './Security.scss'
 
-import { MdOutlineAdd, MdOutlineRemove } from 'react-icons/md'
+import { MdOutlineRemove } from 'react-icons/md'
 import { RiDragDropLine } from 'react-icons/ri'
 import { useState, useEffect, useCallback } from 'react'
 import { Loading, TextInput, Button } from '../../common'
@@ -8,17 +8,18 @@ import { Interface, AbiCoder, keccak256 } from 'ethers/lib/utils'
 import accountPresets from '../../../consts/accountPresets'
 import privilegesOptions from '../../../consts/privilegesOptions'
 import { useRelayerData, useModals } from '../../../hooks'
-import { InputModal, ResetPasswordModal } from '../../Modals'
-import AddressList from '../../common/AddressBook/AddressList/AddressList'
-import { isValidAddress } from '../../../helpers/address'
+import { ResetPasswordModal } from '../../Modals'
 import AddAuthSigner from './AddAuthSigner/AddAuthSigner'
 import { useToasts } from '../../../hooks/toasts'
 import { useHistory } from 'react-router-dom'
 import { useDropzone } from 'react-dropzone'
 import { MdInfoOutline } from 'react-icons/md'
 import { validateImportedAccountProps, fileSizeValidator } from '../../../lib/validations/importedAccountValidations'
+import OtpTwoFAModal from '../../Modals/OtpTwoFAModal/OtpTwoFAModal'
+import OtpTwoFADisableModal from '../../Modals/OtpTwoFADisableModal/OtpTwoFADisableModal'
 import Backup from './Backup/Backup'
 import PendingRecoveryNotice from './PendingRecoveryNotice/PendingRecoveryNotice'
+import { getName } from '../../../lib/humanReadableTransactions'
 
 const IDENTITY_INTERFACE = new Interface(
   require('adex-protocol-eth/abi/Identity5.2')
@@ -31,13 +32,10 @@ const Security = ({
   selectedAcc,
   selectedNetwork,
   accounts,
-  addressBook,
   addRequest,
   showSendTxns,
   onAddAccount
 }) => {
-  const { addresses, addAddress, removeAddress } = addressBook
-
   const { showModal } = useModals()
   const [ cacheBreak, setCacheBreak ] = useState(() => Date.now())
   
@@ -52,7 +50,8 @@ const Security = ({
     : null
   const { data, errMsg, isLoading } = useRelayerData(url)
   const privileges = data ? data.privileges : {}
-  const recoveryLock = data && data.recoveryLock ? data.recoveryLock : null
+  const otpEnabled = data ? data.otpEnabled : null
+  const recoveryLock = data && data.recoveryLock
   const { addToast } = useToasts()
   const history = useHistory()
   const selectedAccount = accounts.find(x => x.id === selectedAcc)
@@ -123,14 +122,31 @@ const Security = ({
       showSendTxns={showSendTxns}
     />)
   }
-  // Address book
-  const modalInputs = [
-    { label: 'Name', placeholder: 'My Address' },
-    { label: 'Address', placeholder: '0x', validate: value => isValidAddress(value) }
-  ]
-  const inputModal = <InputModal title="Add New Address" inputs={modalInputs} onClose={([name, address]) => addAddress(name, address)}></InputModal>
-  const showInputModal = () => showModal(inputModal)
 
+  const handleEnableOtp = () => {
+    if (!relayerURL) {
+      return addToast('Unsupported without a connection to the relayer', { error: true })
+    }
+
+    showModal(<OtpTwoFAModal 
+      relayerURL={relayerURL} 
+      selectedAcc={selectedAccount} 
+      setCacheBreak={() => { setCacheBreak(Date.now()) }} 
+      />)
+  }
+
+  const handleDisableOtp = async() => {
+    if (!relayerURL) {
+      return addToast('Unsupported without a connection to the relayer', { error: true })
+    }
+    
+    showModal(<OtpTwoFADisableModal 
+      relayerURL={relayerURL} 
+      selectedAcc={selectedAccount} 
+      setCacheBreak={() => { setCacheBreak(Date.now()) }} 
+      />)
+  }
+  
   // JSON import
   const onDrop = useCallback((acceptedFiles, rejectedFiles) => {
     const reader = new FileReader()
@@ -170,7 +186,8 @@ const Security = ({
       const { timelock, one, two } = signer
       return keccak256(abiCoder.encode(['tuple(uint, address, address)'], [[timelock, one, two]]))
   }
-  const hasPendingReset = (recoveryLock && recoveryLock.status)
+  const hasPendingReset = privileges[selectedAccount.signer.quickAccManager] && (
+    (recoveryLock && recoveryLock.status && !isLoading)
       || (
           privileges && selectedAccount.signer.quickAccManager
           // is or has been in recovery state
@@ -178,13 +195,17 @@ const Security = ({
           // but that's not finalized yet
           && accHash(selectedAccount.signer) !== privileges[selectedAccount.signer.quickAccManager]
       )
+    )
+
   const privList = Object.entries(privileges)
     .map(([addr, privValue]) => {
       if (!privValue) return null
+  
+      const addressName = getName(addr) || null
       const isQuickAcc = addr === accountPresets.quickAccManager
       const privText = isQuickAcc
         ? `Email/password signer (${selectedAccount.email || 'unknown email'})`
-        : addr
+        : `${addr} ${addressName && addressName !== addr ? `(${addressName})` : ''}`
       const signerAddress = isQuickAcc
         ? selectedAccount.signer.quickAccManager
         : selectedAccount.signer.address
@@ -195,6 +216,10 @@ const Security = ({
         <li key={addr}>
           <TextInput className="depositAddress" value={privText} disabled />
           <div className="btns-wrapper">
+            {isQuickAcc && (otpEnabled !== null) && (otpEnabled ? 
+              (<Button red onClick={handleDisableOtp} small>Disable 2FA</Button>) : 
+              (<Button onClick={handleEnableOtp} small>Enable 2FA</Button>)
+            )}
             {isQuickAcc && (<Button
               disabled={!canChangePassword}
               title={hasPendingReset ? 'Account recovery already in progress' : ''}
@@ -276,18 +301,6 @@ const Security = ({
       
       <input {...getInputProps()} />
       {signersFragment}
-
-      <div id="addresses" className='panel'>
-        <div className='title'>Address Book</div>
-        <div className="content">
-          <AddressList
-            noAccounts={true}
-            addresses={addresses}
-            removeAddress={removeAddress}
-          />
-          <Button small icon={<MdOutlineAdd/>} onClick={showInputModal}>Add Address</Button>
-        </div>
-      </div>
 
       <Backup selectedAccount={selectedAccount} onOpen={open}/>
     </section>

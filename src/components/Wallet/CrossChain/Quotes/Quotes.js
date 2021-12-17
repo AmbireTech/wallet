@@ -2,12 +2,12 @@ import './Quotes.scss'
 
 import { MdOutlineArrowBack, MdOutlineArrowForward, MdOutlineCheck, MdOutlineClose } from 'react-icons/md';
 import { Interface } from '@ethersproject/abi'
-import { Button, Loading, Radios } from '../../../../common';
+import { Button, Loading, Radios } from '../../../common';
 import { useState } from 'react';
-import networks from '../../../../../consts/networks';
-import { approvalBuildTx, sendBuildTx } from '../../../../../services/movr';
-import { useToasts } from '../../../../../hooks/toasts';
-import AmbireBatcherABI from '../../../../../consts/AmbireBatcherABI.json'
+import networks from '../../../../consts/networks';
+import { approvalBuildTx, sendBuildTx } from '../../../../services/movr';
+import { useToasts } from '../../../../hooks/toasts';
+import AmbireBatcherABI from '../../../../consts/AmbireBatcherABI.json'
 import ERC20ABI from 'adex-protocol-eth/abi/ERC20.json'
 
 const BATCHER_ADDRESS = '0x460fad03099f67391d84c9cc0ea7aa2457969cea'
