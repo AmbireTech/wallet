@@ -10,7 +10,6 @@
     .item {
         height: 65px;
         padding-left: 20px !important;
-        cursor: default;
 
         &:nth-child(odd) {
             background-color: rgba(0, 0, 0, 0.025);
@@ -23,10 +22,6 @@
         .details {
             text-align: left;
 
-            label {
-                cursor: default;
-            }
-
             .address {
                 word-break: break-all;
                 text-align: left;
@@ -36,6 +31,10 @@
         .button {
             flex: 0 0 auto;
             width: 60px;
+        }
+
+        &:hover {
+            background-color: rgba(0, 0, 0, 0.2);
         }
     }
 }
