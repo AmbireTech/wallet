@@ -1,6 +1,5 @@
 import { getAddress, hexDataLength } from 'ethers/lib/utils'
 
-const EMAIL_REGEX = /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/
 const NUMBER_STRING_REGEX = /^([0-9]+\.?[0-9]*)$/
 const HEX_DATA_LENGTH = 32
 const TIME_LOCK_NUMBER_LENGTH = 6
