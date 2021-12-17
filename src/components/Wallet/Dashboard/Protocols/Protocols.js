@@ -24,39 +24,42 @@ const Protocols = ({ portfolio }) => {
                     isBalanceLoading ?
                         <Loading/>
                         :
-                        <div className="category" key="category-tokens">
-                            <div className="title">Tokens</div>
-                            <div className="list">
-                                {
-                                    tokens.map(({ address, symbol, tokenImageUrl, balance, balanceUSD }, i) => (
-                                        <div className="token" key={`token-${i}`}>
-                                            <div className="icon">
-                                                <div className="icon-overlay" style={{backgroundImage: `url(${tokenImageUrl})`}}/>
-                                                <GiToken size={20}/>
-                                            </div>
-                                            <div className="name">
-                                                { symbol }
-                                            </div>
-                                            <div className="separator"></div>
-                                            <div className="balance">
-                                                <div className="currency">
-                                                    <span className="value">{ balance }</span>
-                                                    <span className="symbol">{ symbol }</span>
+                        !shouldShowPlaceholder && tokens.length ?
+                            <div className="category" key="category-tokens">
+                                <div className="title">Tokens</div>
+                                <div className="list">
+                                    {
+                                        tokens.map(({ address, symbol, tokenImageUrl, balance, balanceUSD }, i) => (
+                                            <div className="token" key={`token-${i}`}>
+                                                <div className="icon">
+                                                    <div className="icon-overlay" style={{backgroundImage: `url(${tokenImageUrl})`}}/>
+                                                    <GiToken size={20}/>
                                                 </div>
-                                                <div className="dollar">
-                                                    <span className="symbol">$</span> { balanceUSD.toFixed(2) }
+                                                <div className="name">
+                                                    { symbol }
+                                                </div>
+                                                <div className="separator"></div>
+                                                <div className="balance">
+                                                    <div className="currency">
+                                                        <span className="value">{ balance }</span>
+                                                        <span className="symbol">{ symbol }</span>
+                                                    </div>
+                                                    <div className="dollar">
+                                                        <span className="symbol">$</span> { balanceUSD.toFixed(2) }
+                                                    </div>
+                                                </div>
+                                                <div className="actions">
+                                                    <NavLink to={`/wallet/transfer/${address}`}>
+                                                        <Button small icon={<AiOutlineSend/>}>Send</Button>
+                                                    </NavLink>
                                                 </div>
                                             </div>
-                                            <div className="actions">
-                                                <NavLink to={`/wallet/transfer/${address}`}>
-                                                    <Button small icon={<AiOutlineSend/>}>Send</Button>
-                                                </NavLink>
-                                            </div>
-                                        </div>
-                                    ))
-                                }
+                                        ))
+                                    }
+                                </div>
                             </div>
-                        </div>
+                        :
+                        null
                 }
                 {
                     areProtocolsLoading ?
