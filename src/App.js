@@ -20,7 +20,7 @@ import useNetwork from './hooks/network'
 import useWalletConnect from './hooks/walletconnect'
 import useGnosisSafe from './hooks/useGnosisSafe'
 import useNotifications from './hooks/notifications'
-import { useAttentionGrabber, usePortfolio, useAddressBook } from './hooks'
+import { useAttentionGrabber, usePortfolio, useAddressBook, useRelayerData } from './hooks'
 import { useToasts } from './hooks/toasts'
 import { useOneTimeQueryParam } from './hooks/oneTimeQueryParam'
 
@@ -147,6 +147,15 @@ function AppInner () {
     onSitckyClick: useCallback(() => setSendTxnState({ showing: true }), [])
   })
 
+  const [cacheBreak, setCacheBreak] = useState(() => Date.now())
+  useEffect(() => {
+    if ((Date.now() - cacheBreak) > 5000) setCacheBreak(Date.now())
+    const intvl = setTimeout(() => setCacheBreak(Date.now()), 10000)
+    return () => clearTimeout(intvl)
+  }, [cacheBreak])
+  const rewardsUrl = (relayerURL && selectedAcc) ? `${relayerURL}/wallet-token/rewards/${selectedAcc}?cacheBreak=${cacheBreak}` : null
+  const rewardsData = useRelayerData(rewardsUrl)
+
   return (<>
     <Prompt
       message={(location, action) => {
@@ -213,6 +222,7 @@ function AppInner () {
           eligibleRequests={eligibleRequests}
           showSendTxns={showSendTxns}
           onAddAccount={onAddAccount}
+          rewardsData={rewardsData}
         >
         </Wallet>
       </Route>

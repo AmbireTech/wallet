@@ -19,8 +19,9 @@ const Backup = ({ selectedAccount, onOpen }) => {
                         <Button icon={<BiExport/>}>Export</Button>
                     </a>
                     <div style={{ fontSize: '0.9em' }}>
-                        This downloads a backup of your current account ({selectedAccount.id.slice(0, 5)}...{selectedAccount.id.slice(-3)}) encrypted with
-                        your password. This is safe to store in iCloud/Google Drive, but you cannot use it to restore your account if you forget the password.
+                        Downloads a backup of your current account ({selectedAccount.id.slice(0, 5)}...{selectedAccount.id.slice(-3)}) encrypted with
+                        your password. It's safe to store in iCloud/Google Drive, but you cannot use it to restore your account if you forget the password.
+                        <b> You can only import this in Ambire</b>, it's not importable in other wallets.
                     </div>
                 </div>
             </div>
