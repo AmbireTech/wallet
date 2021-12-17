@@ -75,7 +75,6 @@ const CrossChain = ({ addRequest, selectedAccount, portfolio, network }) => {
                         .map(({ address }) => address)
                         .map(address => Number(address) === 0 ? `0x${'e'.repeat(40)}` : address).includes(address))
                     .map(({ address }) => address)
-                    .filter(address => address !== `0x${'e'.repeat(40)}`)
                 )
             ]
 
