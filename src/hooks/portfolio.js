@@ -132,12 +132,12 @@ export default function usePortfolio({ currentNetwork, account }) {
 
     const refreshTokensIfVisible = useCallback(() => {
         if (!account) return
-        if (!document[hidden] && !isBalanceLoading) fetchTokens(account)
-    }, [isBalanceLoading, account, fetchTokens])
+        if (!document[hidden] && !isBalanceLoading) fetchTokens(account, currentNetwork)
+    }, [isBalanceLoading, account, fetchTokens, currentNetwork])
 
     const requestOtherProtocolsRefresh = async () => {
         if (!account) return
-        if ((Date.now() - lastOtherProcolsRefresh) > 30000 && !areProtocolsLoading) await fetchOtherProtocols(account)
+        if ((Date.now() - lastOtherProcolsRefresh) > 30000 && !areProtocolsLoading) await fetchOtherProtocols(account, currentNetwork)
     }
 
     // Make humanizer 'learn' about new tokens and aliases
@@ -231,7 +231,7 @@ export default function usePortfolio({ currentNetwork, account }) {
 
     // Refresh balance every 60s if hidden
     useEffect(() => {
-        const refreshIfHidden = () => document[hidden] && !isBalanceLoading ? fetchTokens(account) : null
+        const refreshIfHidden = () => document[hidden] && !isBalanceLoading ? fetchTokens(account, currentNetwork) : null
         const refreshInterval = setInterval(refreshIfHidden, 60000)
         return () => clearInterval(refreshInterval)
     }, [account, currentNetwork, isBalanceLoading, fetchTokens])
