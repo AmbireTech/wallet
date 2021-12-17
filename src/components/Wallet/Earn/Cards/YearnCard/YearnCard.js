@@ -144,7 +144,8 @@ const YearnCard = ({ networkId, accountId, tokens, addRequest }) => {
         if (!item) return
 
         const { vaultAddress, decimals } = item
-        const bigNumberAmount = parseUnits(amount.toString(), decimals)
+        const parsedAmount = amount.slice(0, amount.indexOf('.') + Number(decimals) + 1);
+        const bigNumberAmount = parseUnits(parsedAmount, decimals)
 
         if (type === 'Deposit') {
             await approveToken(vaultAddress, item.tokenAddress, ethers.constants.MaxUint256)
