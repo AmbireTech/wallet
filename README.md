@@ -211,3 +211,4 @@ node scripts/generateContractInfo.js > src/consts/humanizerInfo.json
 * QR Code on Deposit page
 * WALLET token distribution modal
 * Link to the Help Center added
+* Top right dropdown with helpful links
