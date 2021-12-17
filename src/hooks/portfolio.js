@@ -64,7 +64,8 @@ export default function usePortfolio({ currentNetwork, account }) {
                         meta,
                         products
                     }
-                } catch(_) {
+                } catch(e) {
+                    console.error('Balances API error', e)
                     failedRequests++
                 }
             }))).filter(data => data)
