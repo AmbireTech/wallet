@@ -2,6 +2,7 @@
   "name": "ambire-wallet",
   "version": "0.2.0",
   "private": true,
+  "homepage": "./",
   "dependencies": {
     "@0x/subproviders": "^6.6.1",
     "@ethersproject/transactions": "5.4.0",
