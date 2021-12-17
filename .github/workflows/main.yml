@@ -58,7 +58,7 @@ jobs:
     name: Deploy staging
     needs: build
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/staging'
+    if: github.ref == 'refs/heads/development'
     steps:
     - name: Download artifact
       uses: actions/download-artifact@v2
