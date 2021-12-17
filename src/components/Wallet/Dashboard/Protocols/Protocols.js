@@ -5,8 +5,11 @@ import { AiOutlineSend } from 'react-icons/ai'
 import { NavLink } from 'react-router-dom'
 import { Button, Loading } from '../../../common'
 import ProtocolsPlaceholder from './ProtocolsPlaceholder/ProtocolsPlaceholder'
+import { useState } from 'react'
 
 const Protocols = ({ portfolio }) => {
+    const [failedImg, setFailedImg] = useState([])
+
     const { isBalanceLoading, areProtocolsLoading, tokens, protocols } = portfolio
     const otherProtocols = protocols.filter(({ label }) => label !== 'Tokens')
     const shouldShowPlaceholder = (!isBalanceLoading && !tokens.length) && (!areProtocolsLoading && !otherProtocols.length)
@@ -32,8 +35,12 @@ const Protocols = ({ portfolio }) => {
                                         tokens.map(({ address, symbol, tokenImageUrl, balance, balanceUSD }, i) => (
                                             <div className="token" key={`token-${i}`}>
                                                 <div className="icon">
-                                                    <div className="icon-overlay" style={{backgroundImage: `url(${tokenImageUrl})`}}/>
-                                                    <GiToken size={20}/>
+                                                    { 
+                                                        failedImg.includes(tokenImageUrl) ?
+                                                            <GiToken size={20}/>
+                                                            :
+                                                            <img src={tokenImageUrl} draggable="false" alt="Token Icon" onError={() => setFailedImg(failed => [...failed, tokenImageUrl])}/>
+                                                    }
                                                 </div>
                                                 <div className="name">
                                                     { symbol }
