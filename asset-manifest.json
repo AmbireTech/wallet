@@ -1,17 +1,17 @@
 {
   "files": {
     "main.css": "/static/css/main.6e94d487.chunk.css",
-    "main.js": "/static/js/main.9bcf43de.chunk.js",
-    "main.js.map": "/static/js/main.9bcf43de.chunk.js.map",
+    "main.js": "/static/js/main.f15c1749.chunk.js",
+    "main.js.map": "/static/js/main.f15c1749.chunk.js.map",
     "runtime-main.js": "/static/js/runtime-main.d24f92ff.js",
     "runtime-main.js.map": "/static/js/runtime-main.d24f92ff.js.map",
-    "static/js/2.930f96fd.chunk.js": "/static/js/2.930f96fd.chunk.js",
-    "static/js/2.930f96fd.chunk.js.map": "/static/js/2.930f96fd.chunk.js.map",
+    "static/js/2.12ffa87b.chunk.js": "/static/js/2.12ffa87b.chunk.js",
+    "static/js/2.12ffa87b.chunk.js.map": "/static/js/2.12ffa87b.chunk.js.map",
     "static/js/3.05b901c9.chunk.js": "/static/js/3.05b901c9.chunk.js",
     "static/js/3.05b901c9.chunk.js.map": "/static/js/3.05b901c9.chunk.js.map",
     "index.html": "/index.html",
     "static/css/main.6e94d487.chunk.css.map": "/static/css/main.6e94d487.chunk.css.map",
-    "static/js/2.930f96fd.chunk.js.LICENSE.txt": "/static/js/2.930f96fd.chunk.js.LICENSE.txt",
+    "static/js/2.12ffa87b.chunk.js.LICENSE.txt": "/static/js/2.12ffa87b.chunk.js.LICENSE.txt",
     "static/media/App.scss": "/static/media/OpenSans-Regular.ca49d2b0.ttf",
     "static/media/aave.58aec338.svg": "/static/media/aave.58aec338.svg",
     "static/media/Loading.scss": "/static/media/ambire-loader-animation-sprite-160.8b6d7f70.png",
@@ -24,8 +24,8 @@
   },
   "entrypoints": [
     "static/js/runtime-main.d24f92ff.js",
-    "static/js/2.930f96fd.chunk.js",
+    "static/js/2.12ffa87b.chunk.js",
     "static/css/main.6e94d487.chunk.css",
-    "static/js/main.9bcf43de.chunk.js"
+    "static/js/main.f15c1749.chunk.js"
   ]
 }
