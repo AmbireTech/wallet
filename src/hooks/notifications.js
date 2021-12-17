@@ -15,7 +15,9 @@ let lastTokensBalanceRaw = []
 
 const getAmountReceived = (lastToken, newBalanceRaw, decimals) => {
     try {
-        const amountRecieved = lastToken ? BigNumber.from(newBalanceRaw) - BigNumber.from(lastToken.balanceRaw) : newBalanceRaw
+        const amountRecieved = lastToken
+            ? (BigNumber.from(newBalanceRaw.toString(10)).sub(BigNumber.from(lastToken.balanceRaw.toString(10))))
+            : newBalanceRaw
         return formatUnits(amountRecieved, decimals)
     } catch(e) {
         console.error('Notifications: ' + e);
