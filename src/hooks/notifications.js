@@ -1,6 +1,7 @@
 import { useCallback, useRef, useEffect } from 'react'
 import { getTransactionSummary } from '../lib/humanReadableTransactions'
-import { ethers, getDefaultProvider } from 'ethers'
+import { BigNumber, getDefaultProvider } from 'ethers'
+import { formatUnits } from 'ethers/lib/utils'
 import { useToasts } from './toasts'
 import networks from '../consts/networks'
 import AMBIRE_ICON from '../resources/icon.png'
@@ -14,8 +15,8 @@ let lastTokensBalanceRaw = []
 
 const getAmountReceived = (lastToken, newBalanceRaw, decimals) => {
     try {
-        const amountRecieved = lastToken ? newBalanceRaw - lastToken.balanceRaw : newBalanceRaw
-        return ethers.utils.formatUnits(amountRecieved.toString(), decimals)
+        const amountRecieved = lastToken ? BigNumber.from(newBalanceRaw) - BigNumber.from(lastToken.balanceRaw) : newBalanceRaw
+        return formatUnits(amountRecieved, decimals)
     } catch(e) {
         console.error('Notifications: ' + e);
     }
