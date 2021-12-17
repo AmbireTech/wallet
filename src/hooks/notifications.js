@@ -13,8 +13,12 @@ let isLastTotalBalanceInit = false
 let lastTokensBalanceRaw = []
 
 const getAmountReceived = (lastToken, newBalanceRaw, decimals) => {
-    const amountRecieved = lastToken ? newBalanceRaw - lastToken.balanceRaw : newBalanceRaw
-    return ethers.utils.formatUnits(amountRecieved.toString(), decimals)
+    try {
+        const amountRecieved = lastToken ? newBalanceRaw - lastToken.balanceRaw : newBalanceRaw
+        return ethers.utils.formatUnits(amountRecieved.toString(), decimals)
+    } catch(e) {
+        console.error('Notifications: ' + e);
+    }
 }
 
 export default function useNotifications (requests, onShow, portfolio, selectedAcc, network, sentTxn, confirmSentTx) {
