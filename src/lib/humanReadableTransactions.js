@@ -54,7 +54,8 @@ export function getName(addr, network) {
 }
 
 export function token(addr, amount) {
-    const address = addr.toLowerCase()
+    let address = addr.toLowerCase()
+    address = address === `0x${'e'.repeat(40)}` ? `0x${'0'.repeat(40)}` : address // Convert 0xEe.. addresses to 0x00
     const assetInfo = tokens[address] || knownTokens[address]
     if (assetInfo) {
         if (!amount) return assetInfo[0]
