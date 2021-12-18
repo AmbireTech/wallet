@@ -53,7 +53,7 @@ export default function Actions({ estimation, feeSpeed, approveTxn, rejectTxn, s
           title='Confirmation code should be 6 digits'
           autoComplete='nope'
           required minLength={6} maxLength={6}
-          placeholder='Confirmation code'
+          placeholder={signingStatus.confCodeRequired === 'otp' ? 'Authenticator code' : 'Confirmation code'}
           value={quickAccCredentials.code}
           onChange={value => setQuickAccCredentials({ ...quickAccCredentials, code: value })}
         ></TextInput>
