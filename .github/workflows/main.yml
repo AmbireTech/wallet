@@ -55,7 +55,7 @@ jobs:
         cname: wallet.ambire.com
   deploy-staging:
     name: Deploy staging
-    needs: deploy
+    needs: build
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
     steps:
