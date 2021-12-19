@@ -1,0 +1,128 @@
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import Card from '../Card/Card'
+import TESSERACT_ICON from '../../../../../resources/tesseract.svg'
+import { useToasts } from '../../../../../hooks/toasts'
+import TesseractVaultABI from '../../../../../consts/TesseractVaultABI'
+import { Contract, getDefaultProvider } from 'ethers'
+import networks from '../../../../../consts/networks'
+import ERC20ABI from 'adex-protocol-eth/abi/ERC20.json'
+
+const VAULTS = [
+    ['tvUSDC', '0x57bDbb788d0F39aEAbe66774436c19196653C3F2', 'https://polygonscan.com/token/images/centre-usdc_32.png'],
+    ['tvDAI', '0x4c8C6379b7cd039C892ab179846CD30a1A52b125', 'https://polygonscan.com/token/images/mcdDai_32.png'],
+    ['tvWBTC', '0x6962785c731e812073948a1f5E181cf83274D7c6', 'https://polygonscan.com/token/images/wBTC_32.png'],
+    ['tvWETH', '0x3d44F03a04b08863cc8825384f834dfb97466b9B', 'https://polygonscan.com/token/images/wETH_32.png'],
+    ['tvWMATIC', '0xE11678341625cD88Bb25544e39B2c62CeDcC83f1', 'https://polygonscan.com/token/images/wMatic_32.png'],
+]
+
+const TESR_API_ENDPOINT = 'https://prom.tesr.finance/api/v1'
+
+const TesseractCard = ({ networkId, tokens }) => {
+    const { addToast } = useToasts()
+
+    const network = networks.find(({ id }) => id === networkId)
+    const provider = useMemo(() => getDefaultProvider(network.rpc), [network])
+    const disabled = useMemo(() => networkId !== 'polygon', [networkId])
+
+    const [tokensItems, setTokensItems] = useState([])
+    const [details, setDetails] = useState([])
+
+    const onTokenSelect = useCallback(address => {
+        const selectedToken = tokensItems.find(t => t.vaultAddress === address)
+        if (selectedToken) setDetails([
+            ['Annual Percentage Yield (APY)', `${selectedToken.apy}%`],
+            ['Lock', 'No Lock'],
+            ['Type', 'Variable Rate'],
+        ])
+    }, [tokensItems])
+
+    const toTokensItems = useCallback((type, vaults) => {
+        return vaults.map(({ vaultAddress, token, tToken, icon, apy }) => {
+            const { address, symbol, decimals } = type === 'deposit' ? token : tToken
+            const portfolioToken = tokens.find(t => t.address.toLowerCase() === address.toLowerCase())
+            return {
+                type,
+                vaultAddress,
+                address,
+                symbol,
+                decimals,
+                icon,
+                apy,
+                label: `${symbol} (${apy}% APY)`,
+                value: address,
+                balance: portfolioToken ? portfolioToken.balance : 0,
+                balanceRaw: portfolioToken ? portfolioToken.balanceRaw : '0',
+            }
+        })
+    }, [tokens])
+
+    const fetchVaultAPY = useCallback(async ticker => {
+        try {
+            const response = await fetch(`${TESR_API_ENDPOINT}/query?query=rate(price{ticker="${ticker}", version="0.4.3.1"}[24h])*60*60*24*365`)
+            const { data, status } = await response.json()
+            if (!data || status !== 'success' || !data.result.length) return 0
+            return (data.result[0]?.value[1] * 100).toFixed(2)
+        } catch(e) {
+            console.error(e)
+            addToast(`Failed to fetch ${ticker} Vault APY`, { error: true })
+        }
+    }, [addToast])
+
+    const fetchVaults = useCallback(async () => {
+        const vaults = await Promise.all(VAULTS.map(async ([ticker, address, icon]) => {
+            try {
+                const tesseractVaultContract = new Contract(address, TesseractVaultABI, provider)
+                const tokenAddress = await tesseractVaultContract.token()
+                
+                const tokenContract = new Contract(tokenAddress, ERC20ABI, provider)
+                const [symbol, decimals] = await Promise.all([
+                    await tokenContract.symbol(),
+                    await tokenContract.decimals()
+                ])
+
+                const apy = await fetchVaultAPY(ticker)
+
+                return {
+                    vaultAddress: address,
+                    token: {
+                        address: tokenAddress,
+                        decimals,
+                        symbol,
+                    },
+                    tToken: {
+                        address,
+                        decimals,
+                        symbol: `tv${symbol}`,
+                    },
+                    icon,
+                    apy
+                }
+            } catch(e) {
+                console.error(e);
+                addToast('Fetch Tesseract Vaults: ' + e.message || e, { error: true })
+            }
+        }))
+
+        const depositTokenItems = toTokensItems('deposit', vaults)
+        const withdrawTokenItems = toTokensItems('withdraw', vaults)
+
+        setTokensItems([
+            ...depositTokenItems,
+            ...withdrawTokenItems
+        ])
+    }, [fetchVaultAPY, provider, toTokensItems, addToast])
+
+    useEffect(() => !disabled && fetchVaults(), [disabled, fetchVaults])
+
+    return (
+        <Card
+            unavailable={disabled}
+            icon={TESSERACT_ICON}
+            tokensItems={tokensItems}
+            details={details}
+            onTokenSelect={onTokenSelect}
+        />
+    )
+}
+
+export default TesseractCard
