@@ -7,6 +7,7 @@ import supportedProtocols from '../consts/supportedProtocols';
 import { useToasts } from '../hooks/toasts'
 import { setKnownAddresses, setKnownTokens } from '../lib/humanReadableTransactions';
 import { VELCRO_API_ENDPOINT } from '../config'
+import { getTokenListBalance, tokenList, dummyExtraTokens, dummyTokensData, checkTokenList } from '../lib/balanceOracle'
 
 const getBalances = (apiKey, network, protocol, address, provider) => fetchGet(`${provider === 'velcro' ? VELCRO_API_ENDPOINT : ZAPPER_API_ENDPOINT}/protocols/${protocol}/balances?addresses[]=${address}&network=${network}&api_key=${apiKey}&newBalances=true`)
 
@@ -23,6 +24,30 @@ if (typeof document.hidden !== 'undefined') {
 }
 let lastOtherProcolsRefresh = null
 
+//use Balance Oracle
+async function supplementTokensDataFromNetwork({ walletAddr, network, tokensData, extraTokens, updateBalance }) {
+    if (!walletAddr || walletAddr==="" || !network || !network === "" ) return []
+    if (!tokensData || !tokensData[0]) tokensData = checkTokenList(tokensData || dummyTokensData[network] || []) //tokensData check and populate for test if undefind
+    if (!extraTokens || !extraTokens[0]) extraTokens = checkTokenList(extraTokens || dummyExtraTokens[network] || []) //extraTokens check and populate for test if undefind
+  
+    //concat predefind token list with extraTokens list (extraTokens must be ERC20)
+    let tokens = [ ...new Set(tokenList[network] ? tokenList[network].concat(extraTokens) : [].concat(extraTokens))]
+    let from = 0; let calls = []
+      for (let i = 1; i <= Math.ceil(tokens.length / 50); i++) {
+      calls.push(tokens.slice(from, (i * 50)))
+          from += 50
+      }
+    // tokensData separated calls prevent errors from non erc20 tokens
+    tokensData.filter(td => {
+      return (tokens.map(t => t.address)?.indexOf(td.address) === -1)
+    }).map (t => calls.push([t]))
+  
+    const tokenBalances = [].concat(...await Promise.all(calls.map(callTokens => {
+          return getTokenListBalance({walletAddr, tokens: callTokens, network, updateBalance})
+      })))
+    return tokenBalances
+}
+  
 export default function usePortfolio({ currentNetwork, account }) {
     const { addToast } = useToasts()
 
