@@ -61,7 +61,7 @@ const AddTokenModal = ({ network, account, onAddToken }) => {
     }
 
     const buttons = <>
-        <Button clear icon={<MdOutlineClose/>}>Close</Button>
+        <Button clear icon={<MdOutlineClose/>} onClick={() => hideModal()}>Close</Button>
         <Button icon={<MdOutlineAdd/>} disabled={disabled} onClick={onAdd}>Add</Button>
     </>
 
