@@ -1,6 +1,6 @@
 import './Security.scss'
 
-import { MdOutlineRemove } from 'react-icons/md'
+import { MdOutlineRemove, MdOutlineSettingsSuggest } from 'react-icons/md'
 import { RiDragDropLine } from 'react-icons/ri'
 import { useState, useEffect, useCallback } from 'react'
 import { Loading, TextInput, Button } from '../../common'
@@ -34,7 +34,8 @@ const Security = ({
   accounts,
   addRequest,
   showSendTxns,
-  onAddAccount
+  onAddAccount,
+  onOpenPermissions
 }) => {
   const { showModal } = useModals()
   const [ cacheBreak, setCacheBreak ] = useState(() => Date.now())
@@ -303,6 +304,10 @@ const Security = ({
       {signersFragment}
 
       <Backup selectedAccount={selectedAccount} onOpen={open}/>
+
+      <div id="settings">
+        <Button small clear icon={<MdOutlineSettingsSuggest/>} onClick={() => onOpenPermissions()}>Open Permissions</Button>
+      </div>
     </section>
   )
 }
