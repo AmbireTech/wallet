@@ -43,6 +43,24 @@
                 }
             }
 
+            .status {
+                display: flex;
+                flex-direction: column;
+                gap: 1em;
+
+                .check-icon {
+                    svg {
+                        flex: 0 0 auto;
+                        font-size: 2.5em;
+                        color: $primary-accent-color;
+                    }
+                }
+
+                button {
+                    flex: 0 0 auto;
+                }
+            }       
+
             &.disabled {
                 pointer-events: none;
                 opacity: 0.5;
