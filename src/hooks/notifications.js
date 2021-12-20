@@ -1,20 +1,27 @@
 import { useCallback, useRef, useEffect } from 'react'
 import { getTransactionSummary } from '../lib/humanReadableTransactions'
-import { ethers, getDefaultProvider } from 'ethers'
+import { BigNumber, getDefaultProvider } from 'ethers'
+import { formatUnits } from 'ethers/lib/utils'
 import { useToasts } from './toasts'
 import networks from '../consts/networks'
 import AMBIRE_ICON from '../resources/icon.png'
 
 const REQUEST_TITLE_PREFIX = 'Ambire Wallet: '
 const SUPPORTED_TYPES =  ['eth_sendTransaction', 'personal_sign']
-const BALANCE_TRESHOLD = 1.00001
+const BALANCE_TRESHOLD = 1.00002
 let currentNotifs = []
 let isLastTotalBalanceInit = false
 let lastTokensBalanceRaw = []
 
 const getAmountReceived = (lastToken, newBalanceRaw, decimals) => {
-    const amountRecieved = lastToken ? newBalanceRaw - lastToken.balanceRaw : newBalanceRaw
-    return ethers.utils.formatUnits(amountRecieved.toString(), decimals)
+    try {
+        const amountRecieved = lastToken
+            ? (BigNumber.from(newBalanceRaw.toString(10)).sub(BigNumber.from(lastToken.balanceRaw.toString(10))))
+            : newBalanceRaw
+        return formatUnits(amountRecieved, decimals)
+    } catch(e) {
+        console.error('Notifications: ' + e);
+    }
 }
 
 export default function useNotifications (requests, onShow, portfolio, selectedAcc, network, sentTxn, confirmSentTx) {

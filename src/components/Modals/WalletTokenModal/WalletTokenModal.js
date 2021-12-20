@@ -6,7 +6,6 @@ import { useModals } from '../../../hooks'
 
 const WalletTokenModal = ({ rewards }) => {
     const { hideModal } = useModals()
-    const { balanceRewards, adxRewards } = rewards
 
     const claimButton = <>
         <ToolTip label="Claiming will be available after the official token launch">
@@ -19,12 +18,12 @@ const WalletTokenModal = ({ rewards }) => {
     </>
 
     return (
-        <Modal id="wallet-token-modal" title="$WALLET token distribution" buttons={modalButtons}>
+        <Modal id="wallet-token-modal" title="WALLET token distribution" buttons={modalButtons}>
             <div className="item">
                 <div className="details">
                     <label>Early users Incentive</label>
                     <div className="balance">
-                        <div className="amount"><span className="primary-accent">{ balanceRewards }</span></div>
+                        <div className="amount"><span className="primary-accent">{ rewards['balance-rewards'] }</span></div>
                         {/* <div className="amount-dollar"><span className="secondary-accent">$</span> 0</div> */}
                     </div>
                 </div>
@@ -48,7 +47,7 @@ const WalletTokenModal = ({ rewards }) => {
                 <div className="details">
                     <label>ADX Staking Bonus</label>
                     <div className="balance">
-                        <div className="amount"><span className="primary-accent">{ adxRewards }</span></div>
+                        <div className="amount"><span className="primary-accent">{ rewards['adx-rewards'] }</span></div>
                         {/* <div className="amount-dollar"><span className="secondary-accent">$</span> 0</div> */}
                     </div>
                 </div>
@@ -68,6 +67,9 @@ const WalletTokenModal = ({ rewards }) => {
                     { claimButton }
                 </div>
             </div> */}
+            <div id="info">
+                You are receiving $WALLETS for holding funds on your Ambire wallet as an early user. Have in mind that $WALLET has not launched yet. <a href="https://blog.ambire.com/announcing-the-wallet-token-a137aeda9747" target="_blank" rel="noreferrer">Read More</a>
+            </div>
         </Modal>
     )
 }
