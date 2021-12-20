@@ -110,6 +110,10 @@ export default function Wallet(props) {
     }
   ]
 
+  const LoggedInGuard = () => (
+    !isLoggedIn ? <Redirect to="/add-account"/> : null
+  )
+
   const handlePermissionsModal = useCallback(async () => {
     const account = props.accounts.find(({ id }) => id === props.selectedAcc)
     if (!account) return
@@ -142,17 +146,16 @@ export default function Wallet(props) {
             {
               routes.map(({ path, component }) => (
                 <Route exact path={props.match.url + path} key={path}>
-                  {
-                    !isLoggedIn ?
-                      <Redirect to="/add-account" />
-                      :
-                      component ? component : null
-                  }
+                  <LoggedInGuard/>
+                  { component ? component : null }
                 </Route>
               ))
             }
             <Route path={props.match.url + '/*'}>
               <Redirect to={props.match.url + '/dashboard'} />
+            </Route>
+            <Route path={props.match.url}>
+              <LoggedInGuard/>
             </Route>
           </Switch>
         </div>
