@@ -189,6 +189,10 @@ export default function usePortfolio({ currentNetwork, account }) {
     }
 
     const onAddExtraToken = ({ address, name, symbol, decimals }) => {
+        if (extraTokens.map(({ address }) => address).includes(address)) return addToast(`${name} (${symbol}) is already added to your wallet.`)
+        if (Object.values(tokenList).flat(1).map(({ address }) => address).includes(address)) return addToast(`${name} (${symbol}) is already handled by your wallet.`)
+        if (tokens.map(({ address }) => address).includes(address)) return addToast(`You already have ${name} (${symbol}) in your wallet.`)
+
         const updatedExtraTokens = [
             ...extraTokens,
             {
