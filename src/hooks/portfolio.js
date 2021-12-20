@@ -77,6 +77,7 @@ export default function usePortfolio({ currentNetwork, account }) {
     const [tokens, setTokens] = useState([]);
     const [protocols, setProtocols] = useState([]);
     const [collectibles, setCollectibles] = useState([]);
+    const [customTokens, setCustomTokens] = useState([]);
 
     const fetchTokens = useCallback(async (account, currentNetwork = false) => {
         try {
@@ -184,6 +185,18 @@ export default function usePortfolio({ currentNetwork, account }) {
         setKnownTokens(tokensList)
     }
 
+    const onAddCustomToken = ({ address, symbol, decimals }) => {
+        setCustomTokens(customTokens => [
+            ...customTokens,
+            {
+                address,
+                symbol,
+                decimals,
+                coingeckoId: null
+            }
+        ])
+    }
+
     // Fetch balances and protocols on account change
     useEffect(() => {
         currentAccount.current = account
@@ -280,7 +293,7 @@ export default function usePortfolio({ currentNetwork, account }) {
     useEffect(() => {
         const getSupllementTokenData = async () => {
             const currentNetworkTokens = tokensByNetworks.find(({ network }) => network === currentNetwork)
-            const rcpTokenData = await supplementTokensDataFromNetwork({ walletAddr: account, network: currentNetwork, tokensData: currentNetworkTokens.assets })
+            const rcpTokenData = await supplementTokensDataFromNetwork({ walletAddr: account, network: currentNetwork, tokensData: currentNetworkTokens.assets, extraTokens: customTokens })
 
             currentNetworkTokens.assets = rcpTokenData
 
@@ -291,7 +304,7 @@ export default function usePortfolio({ currentNetwork, account }) {
         }
         const refreshInterval = setInterval(getSupllementTokenData, 20000)
         return () => clearInterval(refreshInterval)
-    }, [account, currentNetwork, isBalanceLoading, fetchTokens, tokensByNetworks])
+    }, [account, currentNetwork, isBalanceLoading, fetchTokens, tokensByNetworks, customTokens])
 
     // Refresh balance when window is focused
     useEffect(() => {
@@ -307,7 +320,8 @@ export default function usePortfolio({ currentNetwork, account }) {
         tokens,
         protocols,
         collectibles,
-        requestOtherProtocolsRefresh
+        requestOtherProtocolsRefresh,
+        onAddCustomToken
         //updatePortfolio//TODO find a non dirty way to be able to reply to getSafeBalances from the dapps, after the first refresh
     }
 }
