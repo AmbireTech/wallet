@@ -84,10 +84,12 @@ export default function usePortfolio({ currentNetwork, account }) {
                     if (!balance) return null
 
                     const { meta, products } = Object.values(balance)[0]
+                    const assets = products.map(({ assets }) => assets.map(({ tokens }) => tokens)).flat(2)
+
                     return {
                         network,
                         meta,
-                        products
+                        assets
                     }
                 } catch(_) {
                     failedRequests++
@@ -131,7 +133,7 @@ export default function usePortfolio({ currentNetwork, account }) {
 
                 return all.length ? {
                     network,
-                    protocols: all.map(({ products }) => products).flat(2)
+                    protocols: all.map(({ products }) => products.map(({ label, assets }) => ({ label, assets: assets.map(({ tokens }) => tokens).flat(1) }))).flat(2)
                 } : null
             }))).filter(data => data)
             const updatedNetworks = updatedProtocols.map(({ network }) => network)
@@ -167,7 +169,7 @@ export default function usePortfolio({ currentNetwork, account }) {
 
     // Make humanizer 'learn' about new tokens and aliases
     const updateHumanizerData = tokensByNetworks => {
-        const tokensList = Object.values(tokensByNetworks).map(({ products }) => products.map(({ assets }) => assets.map(({ tokens }) => tokens.map(token => token)))).flat(3)
+        const tokensList = Object.values(tokensByNetworks).map(({ assets }) => assets).flat(1)
         const knownAliases = tokensList.map(({ address, symbol }) => ({ address, name: symbol}))
         setKnownAddresses(knownAliases)
         setKnownTokens(tokensList)
@@ -227,12 +229,15 @@ export default function usePortfolio({ currentNetwork, account }) {
             updateHumanizerData(tokensByNetworks)
 
             const tokens = tokensByNetworks.find(({ network }) => network === currentNetwork)
-            if (tokens) setTokens(tokens.products.map(({ assets }) => assets.map(({ tokens }) => tokens)).flat(2))
+            if (tokens) setTokens(tokens.assets)
 
             const otherProtocols = otherProtocolsByNetworks.find(({ network }) => network === currentNetwork)
             if (tokens && otherProtocols) {
                 setProtocols([
-                    ...tokens.products,
+                    {
+                        label: 'Tokens',
+                        assets: tokens.assets
+                    },
                     ...otherProtocols.protocols.filter(({ label }) => label !== 'NFTs')
                 ])
                 setCollectibles(otherProtocols.protocols.find(({ label }) => label === 'NFTs')?.assets || [])
@@ -260,6 +265,24 @@ export default function usePortfolio({ currentNetwork, account }) {
         const refreshInterval = setInterval(refreshIfHidden, 60000)
         return () => clearInterval(refreshInterval)
     }, [account, currentNetwork, isBalanceLoading, fetchTokens])
+
+    // Get supplement tokens data 
+    useEffect(() => {
+        const getSupllementTokenData = async () => {
+            const velcroTokenData = Object.fromEntries(tokensByNetworks.map(({ network, assets }) => [network, assets]))
+            const rcpTokenData = await supplementTokensDataFromNetwork({ walletAddr: account, network: currentNetwork, tokenData: velcroTokenData })
+
+            const currentNetworkTokens = tokensByNetworks.find(({ network }) => network === currentNetwork)
+            currentNetworkTokens.assets = rcpTokenData
+
+            setTokensByNetworks([
+                ...tokensByNetworks.filter(({ network }) => network !== currentNetwork),
+                currentNetworkTokens
+            ])
+        }
+        const refreshInterval = setInterval(getSupllementTokenData, 20000)
+        return () => clearInterval(refreshInterval)
+    }, [account, currentNetwork, isBalanceLoading, fetchTokens, tokensByNetworks])
 
     // Refresh balance when window is focused
     useEffect(() => {

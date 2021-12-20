@@ -19,13 +19,13 @@ async function getTokenListBalance ({walletAddr, tokens, network, updateBalance}
       return {
         "type": "base",
         "network": network,
-        "address": t.balance,
+        "address": t.address,
         "decimals": t.decimals,
         "symbol": t.symbol,
         "price": t.price || 0,
         "balance": t.balance,
         "balanceRaw": t.balanceRaw,
-        "balanceUSD": parseFloat(t.price * t.balance || 0).toFixed(2),
+        "balanceUSD": Number(parseFloat(t.price * t.balance || 0).toFixed(2)),
         "tokenImageUrl": t.tokenImageUrl || `https://storage.googleapis.com/zapper-fi-assets/tokens/${network}/${t.address}.png`
       }
     })
