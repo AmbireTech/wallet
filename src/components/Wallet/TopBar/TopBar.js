@@ -36,6 +36,7 @@ const TopBar = ({
   }))
 
   const account = accounts.find(({ id }) => id === selectedAcc)
+  const accountIcon = blockies.create({ seed: account ? account.id : null }).toDataURL()
 
   const showWalletTokenModal = () => showModal(<WalletTokenModal rewards={rewards}/>)
 
@@ -50,12 +51,12 @@ const TopBar = ({
 
       setRewardsTotal(rewardsTotal)
       setRewards(rewardsDetails)
-  }, [data, errMsg, account.id])
+  }, [data, errMsg, account])
 
   return (
     <div id="topbar">
       <div id="mobile-menu" onClick={() => setMenuOpen(!isMenuOpen)}>
-        <div className="icon" style={{backgroundImage: `url(${blockies.create({ seed: account.id }).toDataURL()})`}}></div>
+        <div className="icon" style={{backgroundImage: `url(${accountIcon})`}}></div>
         <MdOutlineArrowForward/>
         <div className="icon" style={{backgroundImage: `url(${network.icon})`}}></div>
         <div id="menu-button">
