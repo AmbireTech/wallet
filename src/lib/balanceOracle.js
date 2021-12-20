@@ -1,5 +1,5 @@
 import { ethers, getDefaultProvider } from 'ethers'
-import { networks } from '../consts/networks'
+import networks from '../consts/networks'
 import oracle from 'adex-protocol-eth/abi/RemainingBalancesOracle.json'
 const { Interface, AbiCoder, formatUnits, hexlify, isAddress } = ethers.utils
 const RemainingBalancesOracle = new Interface(oracle)
