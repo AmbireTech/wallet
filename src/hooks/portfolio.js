@@ -255,9 +255,9 @@ export default function usePortfolio({ currentNetwork, account }) {
         refreshTokensIfVisible()
     }, [currentNetwork, refreshTokensIfVisible])
 
-    // Refresh balance every 45s if visible
+    // Refresh balance every 90s if visible
     useEffect(() => {
-        const refreshInterval = setInterval(refreshTokensIfVisible, 45000)
+        const refreshInterval = setInterval(refreshTokensIfVisible, 90000)
         return () => clearInterval(refreshInterval)
     }, [refreshTokensIfVisible])
 
