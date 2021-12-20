@@ -271,10 +271,9 @@ export default function usePortfolio({ currentNetwork, account }) {
     // Get supplement tokens data 
     useEffect(() => {
         const getSupllementTokenData = async () => {
-            const velcroTokenData = Object.fromEntries(tokensByNetworks.map(({ network, assets }) => [network, assets]))
-            const rcpTokenData = await supplementTokensDataFromNetwork({ walletAddr: account, network: currentNetwork, tokenData: velcroTokenData })
-
             const currentNetworkTokens = tokensByNetworks.find(({ network }) => network === currentNetwork)
+            const rcpTokenData = await supplementTokensDataFromNetwork({ walletAddr: account, network: currentNetwork, tokensData: currentNetworkTokens.assets })
+
             currentNetworkTokens.assets = rcpTokenData
 
             setTokensByNetworks([
