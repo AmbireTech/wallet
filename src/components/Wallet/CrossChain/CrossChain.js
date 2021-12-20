@@ -4,6 +4,7 @@ import { BsArrowDown } from 'react-icons/bs'
 
 import { useEffect, useState, useCallback, useMemo, useRef } from 'react'
 import { ethers } from 'ethers'
+import { parseUnits } from 'ethers/lib/utils'
 import { NumberInput, Button, Select, Loading, NoFundsPlaceholder } from '../../common'
 import { fetchChains, fetchFromTokens, fetchQuotes, fetchToTokens } from '../../../services/movr'
 import networks from '../../../consts/networks'
@@ -75,7 +76,6 @@ const CrossChain = ({ addRequest, selectedAccount, portfolio, network }) => {
                         .map(({ address }) => address)
                         .map(address => Number(address) === 0 ? `0x${'e'.repeat(40)}` : address).includes(address))
                     .map(({ address }) => address)
-                    .filter(address => address !== `0x${'e'.repeat(40)}`)
                 )
             ]
 
@@ -142,10 +142,9 @@ const CrossChain = ({ addRequest, selectedAccount, portfolio, network }) => {
             const portfolioToken = getTokenFromPortofolio(fromToken)
             if (!portfolioToken) return
             const { decimals } = portfolioToken
-            const flatAmount = amount * Math.pow(10, decimals)
+            const flatAmount = parseUnits(amount, decimals).toString()
             const quotes = await fetchQuotes(fromToken, fromChain, toToken, toChain, flatAmount, ['hyphen', 'anyswap-router-v4'])
             setQuotes(quotes)
-            
         } catch(e) {
             console.error(e);
             addToast(`Error while loading quotes: ${e.message || e}`, { error: true })

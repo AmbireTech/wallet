@@ -1,8 +1,8 @@
 import "./TopBar.scss";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { MdOutlineArrowForward, MdOutlineClose, MdOutlineMenu } from "react-icons/md";
-import { Button, Select } from "../../common";
+import { Button, Select, ToolTip } from "../../common";
 import Accounts from "./Accounts/Accounts";
 import DApps from "./DApps/DApps";
 import * as blockies from 'blockies-ts';
@@ -21,11 +21,13 @@ const TopBar = ({
   network,
   setNetwork,
   allNetworks,
-  rewards
+  rewardsData
 }) => {
   const { showModal } = useModals()
   const [isMenuOpen, setMenuOpen] = useState(false)
-  const { total } = rewards
+  const [rewards, setRewards] = useState({})
+  const [rewardsTotal, setRewardsTotal] = useState(0)
+  const { isLoading, data, errMsg } = rewardsData
   
   const networksItems = allNetworks.map(({ id, name, icon }) => ({
     label: name,
@@ -36,6 +38,19 @@ const TopBar = ({
   const account = accounts.find(({ id }) => id === selectedAcc)
 
   const showWalletTokenModal = () => showModal(<WalletTokenModal rewards={rewards}/>)
+
+  useEffect(() => {
+      if (errMsg || !data || !data.success) return
+
+      const { rewards } = data
+      if (!rewards.length) return
+
+      const rewardsDetails = Object.fromEntries(rewards.map(({ _id, rewards }) => [_id, rewards[account.id] || 0]))
+      const rewardsTotal = Object.values(rewardsDetails).reduce((acc, curr) => acc + curr, 0)
+
+      setRewardsTotal(rewardsTotal)
+      setRewards(rewardsDetails)
+  }, [data, errMsg, account.id])
 
   return (
     <div id="topbar">
@@ -49,7 +64,14 @@ const TopBar = ({
       </div>
 
       <div className={`container ${isMenuOpen ? 'open' : ''}`}>
-        <Button small border onClick={showWalletTokenModal}>{ total.toFixed(2) } $WALLET</Button>
+        {
+          !isLoading && (errMsg || !data) ?
+            <ToolTip label="WALLET rewards are not available without a connection to the relayer">
+              <Button small border disabled onClick={showWalletTokenModal}>Unavailable</Button>
+            </ToolTip>
+            :
+            <Button small border disabled={isLoading} onClick={showWalletTokenModal}>{ rewardsTotal.toFixed(3) } WALLET</Button>
+        }
         <DApps connections={connections} connect={connect} disconnect={disconnect}/>
         <Accounts accounts={accounts} selectedAddress={selectedAcc} onSelectAcc={onSelectAcc} onRemoveAccount={onRemoveAccount}/>
         <Select defaultValue={network.id} items={networksItems} onChange={value => setNetwork(value)}/>
