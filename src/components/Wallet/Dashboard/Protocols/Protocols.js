@@ -10,7 +10,7 @@ import { MdOutlineAdd } from 'react-icons/md'
 import { AddTokenModal } from '../../../Modals'
 import { useModals } from '../../../../hooks'
 
-const Protocols = ({ portfolio, network }) => {
+const Protocols = ({ portfolio, network, account }) => {
     const { showModal } = useModals()
 
     const [failedImg, setFailedImg] = useState([])
@@ -55,7 +55,7 @@ const Protocols = ({ portfolio, network }) => {
             }
         </div>
 
-    const openAddTokenModal = () => showModal(<AddTokenModal network={network}/>)
+    const openAddTokenModal = () => showModal(<AddTokenModal network={network} account={account} onAddToken={portfolio.onAddCustomToken}/>)
 
     return (
         <div id="protocols-table">
