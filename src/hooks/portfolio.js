@@ -32,6 +32,13 @@ async function supplementTokensDataFromNetwork({ walletAddr, network, tokensData
   
     //concat predefind token list with extraTokens list (extraTokens must be ERC20)
     let tokens = [ ...new Set(tokenList[network] ? tokenList[network].concat(extraTokens) : [].concat(extraTokens))]
+
+    // Pass velcro data (such as usd price) to getTokenListBalance
+    tokens = tokens.map(t => {
+        const tokenData = tokensData.find(({ address }) => address === t.address)
+        return tokenData ? { ...tokenData, ...t } : t
+    })
+
     let from = 0; let calls = []
       for (let i = 1; i <= Math.ceil(tokens.length / 50); i++) {
       calls.push(tokens.slice(from, (i * 50)))
