@@ -127,7 +127,8 @@ export default function usePortfolio({ currentNetwork, account }) {
                     try {
                         const balance = await getBalances(ZAPPER_API_KEY, network, protocol, account)
                         return balance ? Object.values(balance)[0] : null
-                    } catch(_) {
+                    } catch(e) {
+                        console.error('Balances API error', e)
                         failedRequests++
                     }
                 }))).filter(data => data).flat()
