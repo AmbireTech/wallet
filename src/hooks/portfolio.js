@@ -188,7 +188,7 @@ export default function usePortfolio({ currentNetwork, account }) {
         setKnownTokens(tokensList)
     }
 
-    const onAddExtraToken = ({ address, symbol, decimals }) => {
+    const onAddExtraToken = ({ address, name, symbol, decimals }) => {
         const updatedExtraTokens = [
             ...extraTokens,
             {
@@ -201,6 +201,7 @@ export default function usePortfolio({ currentNetwork, account }) {
 
         localStorage.extraTokens = JSON.stringify(updatedExtraTokens)
         setExtraTokens(updatedExtraTokens)
+        addToast(`${name} (${symbol}) token added to your wallet!`)
     }
 
     // Fetch balances and protocols on account change
