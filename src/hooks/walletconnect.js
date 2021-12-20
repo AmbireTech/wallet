@@ -47,6 +47,26 @@ export default function useWalletConnect ({ account, chainId, initialUri }) {
                 requests: state.requests.filter(x => !action.ids.includes(x.id))
             }
         }
+        if (action.type === 'connectionError') {
+            return {
+                ...state,
+                connections: state
+                    .connections
+                    .map(c => c.uri === action.uri ?
+                        {
+                            ...c, session: {
+                                ...c.session,
+                                errors:
+                                    [
+                                        ...(c.session.errors || [])
+                                            .slice(Math.max((c.session.errors || []).length - 420, 0)),
+                                        action.error
+                                    ]
+                            }
+                        }
+                        : c)
+            }
+        }
         return { ...state }
     }, null, () => {
         const json = localStorage[STORAGE_KEY]
@@ -113,6 +133,11 @@ export default function useWalletConnect ({ account, chainId, initialUri }) {
             dispatch({ type: 'connectedNewSession', uri: connectorOpts.uri, session: connector.session })
 
             addToast('Successfully connected to '+connector.session.peerMeta.name)
+        })
+
+        connector.on('transport_error', (error, payload) => {
+            console.error('transport_error', error, payload)
+            dispatch({ type: 'connectionError', uri: connectorOpts.uri, error: { event: payload.event, time: Date.now() } })
         })
 
         connector.on('call_request', (error, payload) => {
@@ -246,7 +271,7 @@ export default function useWalletConnect ({ account, chainId, initialUri }) {
                 }
             }
         })
-        
+
         localStorage[STORAGE_KEY] = JSON.stringify(state)
 
         if (updateConnections) dispatch({
