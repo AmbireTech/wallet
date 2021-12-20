@@ -198,8 +198,9 @@ export default function usePortfolio({ currentNetwork, account }) {
     // Update states on network, tokens and ohterProtocols change
     useEffect(() => {
         try {
-            const balanceByNetworks = tokensByNetworks.map(({ network, meta }) => {
-                const balanceUSD = meta.find(({ label }) => label === 'Total')?.value + meta.find(({ label }) => label === 'Debt')?.value
+            const balanceByNetworks = tokensByNetworks.map(({ network, meta, assets }) => {
+                const totalUSD = assets.reduce((acc, curr) => acc + curr.balanceUSD, 0)
+                const balanceUSD = totalUSD + meta.find(({ label }) => label === 'Debt')?.value
                 if (!balanceUSD) return {
                     network,
                     total: {
