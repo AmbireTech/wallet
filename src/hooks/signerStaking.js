@@ -16,24 +16,16 @@ export default function useSignerStaking({ currentNetwork, accounts, selectedAcc
 
     const [balances, setBalances] = useState([])
     const [hasStaking, setHasStaking] = useState(false)
-
-    console.log({hasStaking})
-    console.log({account})
-
+    
     const provider = useMemo(() => getDefaultProvider(networkRpc), [networkRpc])
     const contracts = useMemo(() => (stakingTokens.map(({ address }) => new Contract(address, ERC20ABI, provider))), [provider])
 
     const getStakingBalances = useCallback(async () => {
-        console.log({signer})
-
-        console.log({provider})
-
         if(!signer || !provider) return
-        const balances = await Promise.all(contracts.map(x => x.balanceOf(signer.address)))
+        const balances = await Promise.all(contracts.map(async  (x, i) => (({...(stakingTokens[i]), balance: await x.balanceOf(signer.address)}))))
 
-        console.log({balances})
         setBalances(balances)
-        setHasStaking(balances.some(x => x.gt(BigNumber.from(0))))
+        setHasStaking(balances.some(x => x.balance.gt(BigNumber.from(0))))
     }, [contracts, provider, signer])
 
     useEffect(() => {
