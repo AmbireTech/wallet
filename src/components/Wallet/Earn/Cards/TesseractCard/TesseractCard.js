@@ -28,7 +28,7 @@ const TesseractCard = ({ networkId, tokens }) => {
     const [details, setDetails] = useState([])
 
     const onTokenSelect = useCallback(address => {
-        const selectedToken = tokensItems.find(t => t.vaultAddress === address)
+        const selectedToken = tokensItems.find(t => t.value === address)
         if (selectedToken) setDetails([
             ['Annual Percentage Yield (APY)', `${selectedToken.apy}%`],
             ['Lock', 'No Lock'],
