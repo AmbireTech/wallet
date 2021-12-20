@@ -8,11 +8,13 @@ import { Button, Loading, Modal, TextInput } from '../../common'
 import { useState } from 'react';
 import { useToasts } from '../../../hooks/toasts';
 import { MdOutlineAdd, MdOutlineClose } from 'react-icons/md';
+import { useModals } from '../../../hooks';
 
 const ERC20Interface = new Interface(ERC20ABI)
 
 const AddTokenModal = ({ network, account, onAddToken }) => {
     const { addToast } = useToasts()
+    const { hideModal } = useModals()
 
     const [loading, setLoading] = useState(false)
     const [tokenDetails, setTokenDetails] = useState(null)
@@ -53,9 +55,14 @@ const AddTokenModal = ({ network, account, onAddToken }) => {
         setLoading(false)
     }
 
+    const onAdd = () => {
+        onAddToken(tokenDetails)
+        hideModal()
+    }
+
     const buttons = <>
         <Button clear icon={<MdOutlineClose/>}>Close</Button>
-        <Button icon={<MdOutlineAdd/>} disabled={disabled} onClick={() => onAddToken(tokenDetails)}>Add</Button>
+        <Button icon={<MdOutlineAdd/>} disabled={disabled} onClick={onAdd}>Add</Button>
     </>
 
     return (
