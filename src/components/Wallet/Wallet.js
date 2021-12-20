@@ -127,7 +127,8 @@ export default function Wallet(props) {
   useEffect(() => handlePermissionsModal(), [handlePermissionsModal])
 
   useEffect(() => {
-    setTimeout(() => walletContainer.current.scrollTo({ top: 0, behavior: 'smooth' }), 0)
+    const scrollTimeout = setTimeout(() => walletContainer.current && walletContainer.current.scrollTo({ top: 0, behavior: 'smooth' }), 0)
+    return () => clearTimeout(scrollTimeout)
   }, [pathname])
 
   return (
