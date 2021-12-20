@@ -86,7 +86,7 @@ const Protocols = ({ portfolio }) => {
                                     <div className="list">
                                         {
                                             assets.map(({ category, symbol, tokenImageUrl, balance, balanceUSD, address }, i) => 
-                                                tokenItem(i, tokenImageUrl, symbol, balance, balanceUSD, address, category === 'wallet'))
+                                                tokenItem(i, tokenImageUrl, symbol, balance, balanceUSD, address, category !== 'claimable'))
                                         }
                                     </div>
                                 </div>
