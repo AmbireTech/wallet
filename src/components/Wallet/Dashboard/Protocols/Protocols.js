@@ -6,8 +6,13 @@ import { NavLink } from 'react-router-dom'
 import { Button, Loading } from '../../../common'
 import ProtocolsPlaceholder from './ProtocolsPlaceholder/ProtocolsPlaceholder'
 import { useState } from 'react'
+import { MdOutlineAdd } from 'react-icons/md'
+import { AddTokenModal } from '../../../Modals'
+import { useModals } from '../../../../hooks'
 
-const Protocols = ({ portfolio }) => {
+const Protocols = ({ portfolio, network }) => {
+    const { showModal } = useModals()
+
     const [failedImg, setFailedImg] = useState([])
 
     const { isBalanceLoading, areProtocolsLoading, tokens, protocols } = portfolio
@@ -50,6 +55,8 @@ const Protocols = ({ portfolio }) => {
             }
         </div>
 
+    const openAddTokenModal = () => showModal(<AddTokenModal network={network}/>)
+
     return (
         <div id="protocols-table">
             {
@@ -65,7 +72,10 @@ const Protocols = ({ portfolio }) => {
                         :
                         !shouldShowPlaceholder && sortedTokens.length ?
                             <div className="category" key="category-tokens">
-                                <div className="title">Tokens</div>
+                                <div className="title">
+                                    Tokens
+                                    <Button mini clear icon={<MdOutlineAdd/>} onClick={() => openAddTokenModal()}>Add Token</Button>
+                                </div>
                                 <div className="list">
                                     { 
                                         sortedTokens.map(({ address, symbol, tokenImageUrl, balance, balanceUSD }, i) =>

@@ -107,7 +107,7 @@ export default function Dashboard({ portfolio, selectedNetwork, selectedAccount,
                 <div className="content">
                     {
                         tableType === tableSegments[0].value ?
-                            <Protocols portfolio={portfolio}/>
+                            <Protocols portfolio={portfolio} network={selectedNetwork}/>
                             :
                             <Collectibles collectibles={portfolio.collectibles}/>
                     }
