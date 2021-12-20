@@ -20,7 +20,7 @@ import useNetwork from './hooks/network'
 import useWalletConnect from './hooks/walletconnect'
 import useGnosisSafe from './hooks/useGnosisSafe'
 import useNotifications from './hooks/notifications'
-import { useAttentionGrabber, usePortfolio, useAddressBook, useRelayerData } from './hooks'
+import { useAttentionGrabber, usePortfolio, useAddressBook, useRelayerData, useSignerStaking } from './hooks'
 import { useToasts } from './hooks/toasts'
 import { useOneTimeQueryParam } from './hooks/oneTimeQueryParam'
 
@@ -79,6 +79,12 @@ function AppInner () {
   const portfolio = usePortfolio({
     currentNetwork: network.id,
     account: selectedAcc
+  })
+
+  const signerStaking = useSignerStaking({
+    currentNetwork: network.id,
+    selectedAcc: selectedAcc,
+    accounts
   })
 
   // Show the send transaction full-screen modal if we have a new txn
@@ -223,6 +229,7 @@ function AppInner () {
           showSendTxns={showSendTxns}
           onAddAccount={onAddAccount}
           rewardsData={rewardsData}
+          signerStaking={signerStaking}
         >
         </Wallet>
       </Route>
