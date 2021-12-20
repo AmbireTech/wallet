@@ -11,6 +11,7 @@ const Protocols = ({ portfolio }) => {
     const [failedImg, setFailedImg] = useState([])
 
     const { isBalanceLoading, areProtocolsLoading, tokens, protocols } = portfolio
+    const sortedTokens = tokens.sort((a, b) => b.balanceUSD - a.balanceUSD)
     const otherProtocols = protocols.filter(({ label }) => label !== 'Tokens')
     const shouldShowPlaceholder = (!isBalanceLoading && !tokens.length) && (!areProtocolsLoading && !otherProtocols.length)
 
@@ -62,12 +63,12 @@ const Protocols = ({ portfolio }) => {
                     isBalanceLoading ?
                         <Loading/>
                         :
-                        !shouldShowPlaceholder && tokens.length ?
+                        !shouldShowPlaceholder && sortedTokens.length ?
                             <div className="category" key="category-tokens">
                                 <div className="title">Tokens</div>
                                 <div className="list">
                                     { 
-                                        tokens.map(({ address, symbol, tokenImageUrl, balance, balanceUSD }, i) =>
+                                        sortedTokens.map(({ address, symbol, tokenImageUrl, balance, balanceUSD }, i) =>
                                             tokenItem(i, tokenImageUrl, symbol, balance, balanceUSD, address, true))
                                     }
                                 </div>
