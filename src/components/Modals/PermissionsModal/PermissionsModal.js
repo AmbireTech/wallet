@@ -12,7 +12,7 @@ import { AiOutlineReload } from 'react-icons/ai'
 
 const toastErrorMessage = name => `You blocked the ${name} permission. Check your browser permissions tab.`
 
-const PermissionsModal = ({ relayerIdentityURL, account, onAddAccount }) => {
+const PermissionsModal = ({ relayerIdentityURL, account, onAddAccount, onClose }) => {
     const { hideModal } = useModals()
     const { isNoticationsGranted, isClipboardGranted, modalHidden, setModalHidden } = usePermissions()
     const { addToast } = useToasts()
@@ -73,13 +73,18 @@ const PermissionsModal = ({ relayerIdentityURL, account, onAddAccount }) => {
         return () => clearInterval(emailConfirmationInterval)
     }, [isEmailConfirmed, checkEmailConfirmation])
 
+    const onCloseModal = () => {
+        hideModal()
+        onClose()
+    }
+
     const buttons = <>
-        <Button clear small icon={<MdClose/>} disabled={isAccountNotConfirmed} onClick={hideModal}>Ignore</Button>
-        <Button small icon={<MdCheck/>} disabled={buttonDisabled} onClick={hideModal}>Done</Button>
+        <Button clear small icon={<MdClose/>} disabled={isAccountNotConfirmed} onClick={onCloseModal}>Ignore</Button>
+        <Button small icon={<MdCheck/>} disabled={buttonDisabled} onClick={onCloseModal}>Done</Button>
     </>
 
     return (
-        <Modal id="permissions-modal" title="We need a few things 🙏" buttons={buttons}>
+        <Modal id="permissions-modal" title="We need a few things 🙏" buttons={buttons} onClose={onClose}>
             {
                 account.email ? 
                     <div className="permission">
