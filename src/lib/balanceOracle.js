@@ -22,10 +22,10 @@ async function getTokenListBalance ({walletAddr, tokens, network, updateBalance}
         "address": t.balance,
         "decimals": t.decimals,
         "symbol": t.symbol,
-        "price": 0,
+        "price": t.price || 0,
         "balance": t.balance,
         "balanceRaw": t.balanceRaw,
-        "balanceUSD": 0,
+        "balanceUSD": parseFloat(t.price * t.balance || 0).toFixed(2),
         "tokenImageUrl": t.tokenImageUrl || `https://storage.googleapis.com/zapper-fi-assets/tokens/${network}/${t.address}.png`
       }
     })
@@ -39,6 +39,7 @@ async function getTokenListBalance ({walletAddr, tokens, network, updateBalance}
 
 //ToDo check for missing data and double check for incompleted returns
 async function call ({ walletAddr, tokens, network }) {
+  if (!isAddress(walletAddr)) return {success: false, data: walletAddr, message:`Wallet address is not valide eth address`}
   const provider = getDefaultProvider(networks.filter(n => n.id===network)[0]?.rpc || null)
   const coder = new AbiCoder()
   const args = [
