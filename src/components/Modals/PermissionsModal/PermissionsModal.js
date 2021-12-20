@@ -1,26 +1,40 @@
 import './PermissionsModal.scss'
 
 import { useState, useEffect, useCallback } from 'react'
-import { MdCheck, MdClose } from 'react-icons/md'
+import { MdCheck, MdClose, MdOutlineCheck } from 'react-icons/md'
 import { useModals, usePermissions } from '../../../hooks'
 import { useToasts } from '../../../hooks/toasts'
 import { askForPermission } from '../../../helpers/permissions'
-import { Modal, Toggle, Button, Checkbox } from '../../common'
+import { Modal, Toggle, Button, Checkbox, Loading } from '../../common'
 import { isFirefox } from '../../../lib/isFirefox'
 import { fetchGet } from '../../../lib/fetch'
+import { AiOutlineReload } from 'react-icons/ai'
 
 const toastErrorMessage = name => `You blocked the ${name} permission. Check your browser permissions tab.`
 
-const PermissionsModal = ({ relayerIdentityURL, account, onAddAccount }) => {
+const PermissionsModal = ({ relayerIdentityURL, account, onAddAccount, onClose }) => {
     const { hideModal } = useModals()
     const { isNoticationsGranted, isClipboardGranted, modalHidden, setModalHidden } = usePermissions()
     const { addToast } = useToasts()
     const [isEmailConfirmed, setEmailConfirmed] = useState(false)
+    const [isEmailResent, setEmailResent] = useState(false)
 
     const areBlockedPermissions = (!isFirefox() && !isClipboardGranted) || !isNoticationsGranted
     const isAccountNotConfirmed = account.emailConfRequired && !isEmailConfirmed
     const buttonDisabled = isAccountNotConfirmed || (!modalHidden && areBlockedPermissions)
-    const showEmailSentToast = () => addToast('Confirmation email already sent', { error: true })
+    const sendConfirmationEmail = async () => {
+        try {
+            const response = await fetchGet(relayerIdentityURL + '/resend-verification-email')
+            if (!response.success) throw new Error('Relayer did not return success.')
+
+            addToast('Verification email sent!')
+            setEmailResent(true)
+        } catch(e) {
+            console.error(e)
+            addToast('Could not resend verification email.' + e.message || e, { error: true })
+            setEmailResent(false)
+        }
+    }
     
     const checkEmailConfirmation = useCallback(async () => {
         try {
@@ -59,13 +73,18 @@ const PermissionsModal = ({ relayerIdentityURL, account, onAddAccount }) => {
         return () => clearInterval(emailConfirmationInterval)
     }, [isEmailConfirmed, checkEmailConfirmation])
 
+    const onCloseModal = () => {
+        hideModal()
+        onClose()
+    }
+
     const buttons = <>
-        <Button clear small icon={<MdClose/>} disabled={isAccountNotConfirmed} onClick={hideModal}>Ignore</Button>
-        <Button small icon={<MdCheck/>} disabled={buttonDisabled} onClick={hideModal}>Done</Button>
+        <Button clear small icon={<MdClose/>} disabled={isAccountNotConfirmed} onClick={onCloseModal}>Ignore</Button>
+        <Button small icon={<MdCheck/>} disabled={buttonDisabled} onClick={onCloseModal}>Done</Button>
     </>
 
     return (
-        <Modal id="permissions-modal" title="We need a few things 🙏" buttons={buttons}>
+        <Modal id="permissions-modal" title="We need a few things 🙏" buttons={buttons} onClose={onClose}>
             {
                 account.email ? 
                     <div className="permission">
@@ -76,7 +95,15 @@ const PermissionsModal = ({ relayerIdentityURL, account, onAddAccount }) => {
                             &nbsp;We already sent an email, please check your inbox.
                         </div>
                     </div>
-                    <Toggle checked={isEmailConfirmed} onChange={() => showEmailSentToast()}/>
+                    <div className="status">
+                        { !isEmailConfirmed ? <Loading/> : <spam className="check-icon"><MdOutlineCheck/></spam> }
+                        { 
+                            !isEmailConfirmed && !isEmailResent ? 
+                                <Button mini clear icon={<AiOutlineReload/>} onClick={sendConfirmationEmail}>Resend</Button>
+                                :
+                                null
+                        }
+                    </div>
                 </div>
                 :
                 null
