@@ -55,7 +55,7 @@ const Protocols = ({ portfolio, network, account }) => {
             }
         </div>
 
-    const openAddTokenModal = () => showModal(<AddTokenModal network={network} account={account} onAddToken={portfolio.onAddCustomToken}/>)
+    const openAddTokenModal = () => showModal(<AddTokenModal network={network} account={account} onAddToken={portfolio.onAddExtraToken}/>)
 
     return (
         <div id="protocols-table">
