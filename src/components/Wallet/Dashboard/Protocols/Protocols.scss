@@ -10,6 +10,8 @@
         overflow: hidden;
 
         .title {
+            display: flex;
+            align-items: center;
             padding: 15px 20px;
             font-size: 20px;
             font-weight: bold;
