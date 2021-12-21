@@ -188,7 +188,7 @@ export default function usePortfolio({ currentNetwork, account }) {
         setKnownTokens(tokensList)
     }
 
-    const onAddExtraToken = ({ address, name, symbol, decimals }) => {
+    const onAddExtraToken = ({ address, network, balance, balanceRaw, icon, name, symbol, decimals }) => {
         if (extraTokens.map(({ address }) => address).includes(address)) return addToast(`${name} (${symbol}) is already added to your wallet.`)
         if (Object.values(tokenList).flat(1).map(({ address }) => address).includes(address)) return addToast(`${name} (${symbol}) is already handled by your wallet.`)
         if (tokens.map(({ address }) => address).includes(address)) return addToast(`You already have ${name} (${symbol}) in your wallet.`)
@@ -197,9 +197,13 @@ export default function usePortfolio({ currentNetwork, account }) {
             ...extraTokens,
             {
                 address,
+                network,
                 symbol,
                 decimals,
-                coingeckoId: null
+                icon,
+                coingeckoId: null,
+                balance,
+                balanceRaw
             }
         ]
 
@@ -231,6 +235,27 @@ export default function usePortfolio({ currentNetwork, account }) {
     // Update states on network, tokens and ohterProtocols change
     useEffect(() => {
         try {
+            const extraTokensAssets = extraTokens
+                .filter(({ network }) => network === currentNetwork)
+                .map(({ address, network, symbol, decimals, icon, balance, balanceRaw }) => ({
+                    type: 'base',
+                    address,
+                    network,
+                    symbol,
+                    decimals,
+                    icon,
+                    price: 0,
+                    balanceUSD: 0,
+                    balance,
+                    balanceRaw
+                }))
+
+            const tokens = tokensByNetworks.find(({ network }) => network === currentNetwork)
+            if (tokens) setTokens([
+                ...tokens.assets,
+                ...extraTokensAssets
+            ])
+
             const balanceByNetworks = tokensByNetworks.map(({ network, meta, assets }) => {
                 const totalUSD = assets.reduce((acc, curr) => acc + curr.balanceUSD, 0)
                 const balanceUSD = totalUSD + meta.find(({ label }) => label === 'Debt')?.value
@@ -262,15 +287,15 @@ export default function usePortfolio({ currentNetwork, account }) {
 
             updateHumanizerData(tokensByNetworks)
 
-            const tokens = tokensByNetworks.find(({ network }) => network === currentNetwork)
-            if (tokens) setTokens(tokens.assets)
-
             const otherProtocols = otherProtocolsByNetworks.find(({ network }) => network === currentNetwork)
             if (tokens && otherProtocols) {
                 setProtocols([
                     {
                         label: 'Tokens',
-                        assets: tokens.assets
+                        assets: [
+                            ...tokens.assets,
+                            ...extraTokensAssets
+                        ]
                     },
                     ...otherProtocols.protocols.filter(({ label }) => label !== 'NFTs')
                 ])
@@ -280,7 +305,7 @@ export default function usePortfolio({ currentNetwork, account }) {
             console.error(e);
             addToast(e.message | e, { error: true })
         }
-    }, [currentNetwork, tokensByNetworks, otherProtocolsByNetworks, addToast])
+    }, [currentNetwork, extraTokens, tokensByNetworks, otherProtocolsByNetworks, addToast])
 
     // Refresh tokens on network change
     useEffect(() => {
