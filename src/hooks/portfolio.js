@@ -33,6 +33,12 @@ async function supplementTokensDataFromNetwork({ walletAddr, network, tokensData
     //concat predefind token list with extraTokens list (extraTokens must be ERC20)
     let tokens = [ ...new Set(tokenList[network] ? tokenList[network].concat(extraTokens) : [].concat(extraTokens))]
 
+    // Pass velcro data (such as usd price) to getTokenListBalance
+    tokens = tokens.map(t => {
+        const tokenData = tokensData.find(({ address }) => address === t.address)
+        return tokenData ? { ...tokenData, ...t } : t
+    })
+
     let from = 0; let calls = []
       for (let i = 1; i <= Math.ceil(tokens.length / 50); i++) {
       calls.push(tokens.slice(from, (i * 50)))
@@ -76,6 +82,23 @@ export default function usePortfolio({ currentNetwork, account }) {
         return storedExtraTokens ? JSON.parse(storedExtraTokens) : []
     });
 
+    const getExtraTokensFromNetwork = useCallback(network => extraTokens
+        .filter(extra => extra.network === network)
+        .map(({ address, network, symbol, decimals, icon, balance, balanceRaw }) => ({
+            type: 'base',
+            address,
+            network,
+            symbol,
+            decimals,
+            icon,
+            price: 0,
+            balanceUSD: 0,
+            balance,
+            balanceRaw,
+            isExtraToken: true
+        }))
+    , [extraTokens])
+
     const fetchTokens = useCallback(async (account, currentNetwork = false) => {
         try {
             const networks = currentNetwork ? [supportedProtocols.find(({ network }) => network === currentNetwork)] : supportedProtocols
@@ -89,7 +112,12 @@ export default function usePortfolio({ currentNetwork, account }) {
                     if (!balance) return null
 
                     const { meta, products } = Object.values(balance)[0]
-                    const assets = products.map(({ assets }) => assets.map(({ tokens }) => tokens)).flat(2)
+
+                    const extraTokensAssets = getExtraTokensFromNetwork(network)
+                    const assets = [
+                        ...products.map(({ assets }) => assets.map(({ tokens }) => tokens)).flat(2),
+                        ...extraTokensAssets
+                    ]
 
                     return {
                         network,
@@ -118,7 +146,7 @@ export default function usePortfolio({ currentNetwork, account }) {
             addToast(error.message, { error: true })
             return false
         }
-    }, [addToast])
+    }, [getExtraTokensFromNetwork, addToast])
 
     const fetchOtherProtocols = useCallback(async (account, currentNetwork = false) => {
         try {
@@ -229,26 +257,8 @@ export default function usePortfolio({ currentNetwork, account }) {
     // Update states on network, tokens and ohterProtocols change
     useEffect(() => {
         try {
-            const extraTokensAssets = extraTokens
-                .filter(({ network }) => network === currentNetwork)
-                .map(({ address, network, symbol, decimals, icon, balance, balanceRaw }) => ({
-                    type: 'base',
-                    address,
-                    network,
-                    symbol,
-                    decimals,
-                    icon,
-                    price: 0,
-                    balanceUSD: 0,
-                    balance,
-                    balanceRaw
-                }))
-
             const tokens = tokensByNetworks.find(({ network }) => network === currentNetwork)
-            if (tokens) setTokens([
-                ...tokens.assets,
-                ...extraTokensAssets
-            ])
+            if (tokens) setTokens(tokens.assets)
 
             const balanceByNetworks = tokensByNetworks.map(({ network, meta, assets }) => {
                 const totalUSD = assets.reduce((acc, curr) => acc + curr.balanceUSD, 0)
@@ -286,10 +296,7 @@ export default function usePortfolio({ currentNetwork, account }) {
                 setProtocols([
                     {
                         label: 'Tokens',
-                        assets: [
-                            ...tokens.assets,
-                            ...extraTokensAssets
-                        ]
+                        assets: tokens.assets
                     },
                     ...otherProtocols.protocols.filter(({ label }) => label !== 'NFTs')
                 ])
@@ -299,7 +306,7 @@ export default function usePortfolio({ currentNetwork, account }) {
             console.error(e);
             addToast(e.message | e, { error: true })
         }
-    }, [currentNetwork, extraTokens, tokensByNetworks, otherProtocolsByNetworks, addToast])
+    }, [currentNetwork, tokensByNetworks, otherProtocolsByNetworks, addToast])
 
     // Refresh tokens on network change
     useEffect(() => {
@@ -323,7 +330,12 @@ export default function usePortfolio({ currentNetwork, account }) {
     useEffect(() => {
         const getSupllementTokenData = async () => {
             const currentNetworkTokens = tokensByNetworks.find(({ network }) => network === currentNetwork)
-            const rcpTokenData = await supplementTokensDataFromNetwork({ walletAddr: account, network: currentNetwork, tokensData: currentNetworkTokens.assets, extraTokens })
+            const rcpTokenData = await supplementTokensDataFromNetwork({
+                walletAddr: account,
+                network: currentNetwork,
+                tokensData: currentNetworkTokens.assets.filter(({ isExtraToken }) => !isExtraToken),
+                extraTokens
+            })
 
             currentNetworkTokens.assets = rcpTokenData
 
