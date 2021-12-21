@@ -73,13 +73,6 @@ async function call ({ walletAddr, tokens, network }) {
     return {success: false, data: tokens, message: `probably one ot following tokens is not ERC20 and missing balanceOf()`}
   }
 }
-
-function hex2a (hexx) {
-	var hex = hexx.toString()
-	var str = ''
-	for (var i = 0; i < hex.length; i += 2) { str += String.fromCharCode(parseInt(hex.substr(i, 2), 16)) }
-	return str
-}
  
 function isErr (hex) {
 	return hex.startsWith(ERROR_SIG) || hex.startsWith(PANIC_SIG)
@@ -487,144 +480,6 @@ const tokenList = {
   ]
 }
 
-const dummyTokensData = {
-  ethereum: [
-    {
-      "type": "base",
-      "network": "ethereum",
-      "address": "0xba100000625a3754423978a60c9317c58a424e3d",
-      "decimals": 18,
-      "symbol": "BAL",
-      "price": 17.74,
-      "balance": 356.8423079750322,
-      "balanceRaw": "356842307975032204643",
-      "balanceUSD": 6330.382543477071,
-      "tokenImageUrl": "https://storage.googleapis.com/zapper-fi-assets/tokens/ethereum/0xba100000625a3754423978a60c9317c58a424e3d.png"
-    },
-    {
-      "type": "base",
-      "network": "ethereum",
-      "address": "0x24a6a37576377f63f194caa5f518a60f4511111", //0x24a6a37576377f63f194caa5f518a60f45b42921 is correct
-      "decimals": 18,
-      "symbol": "BANK",
-      "price": 71.13,
-      "balance": 10.95879253400511,
-      "balanceRaw": "10958792534005109707",
-      "balanceUSD": 779.4989129437834,
-      "tokenImageUrl": "https://storage.googleapis.com/zapper-fi-assets/tokens/ethereum/0x24a6a37576377f63f194caa5f518a60f45b42921.png"
-    },
-    {
-      "type": "base",
-      "network": "ethereum",
-      "address": "0x56d811088235f11c8920698a204a5010a788f4b3",
-      "decimals": 18,
-      "symbol": "BZRX",
-      "price": 0.208666,
-      "balance": 7633.812396440875,
-      "balanceRaw": "7633812396440874978986",
-      "balanceUSD": 1592.9170975157315,
-      "tokenImageUrl": "https://storage.googleapis.com/zapper-fi-assets/tokens/ethereum/0x56d811088235f11c8920698a204a5010a788f4b3.png"
-      }
-  ],
-  polygon: [
-    { address: "0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270", symbol: "WMATIC", coingeckoId: null, decimals: 18 }
-  ],
-  'binance-smart-chain': [
-    {
-      "type": "base",
-      "network": "binance-smart-chain",
-      "address": "0x570a5d26f7765ecb712c0924e4de545b89fd43df",
-      "decimals": 18,
-      "symbol": "SOL",
-      "price": 0,
-      "balance": 2.72627904,
-      "balanceRaw": "2726279040000000000",
-      "balanceUSD": 0,
-      "tokenImageUrl": "https://logos.covalenthq.com/tokens/56/0x570a5d26f7765ecb712c0924e4de545b89fd43df.png"
-    },
-    {
-      "type": "base",
-      "network": "binance-smart-chain",
-      "address": "0x2170ed0880ac9a755fd29b2688956bd959f933f8",
-      "decimals": 18,
-      "symbol": "ETH",
-      "price": 4021.91,
-      "balance": 0.05632541,
-      "balanceRaw": "56325410000000000",
-      "balanceUSD": 226.5357297331,
-      "tokenImageUrl": "https://logos.covalenthq.com/tokens/1/0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2.png"
-    },
-    {
-      "type": "base",
-      "network": "binance-smart-chain",
-      "address": "0xbf5140a22578168fd562dccf235e5d43a02ce9b1",
-      "decimals": 18,
-      "symbol": "UNI",
-      "price": 14.82,
-      "balance": 10.14716105,
-      "balanceRaw": "10147161050000000000",
-      "balanceUSD": 150.38092676099998,
-      "tokenImageUrl": "https://logos.covalenthq.com/tokens/1/0x1f9840a85d5af5bf1d1762f925bdaddc4201f984.png"
-    },
-    {
-      "type": "base",
-      "network": "binance-smart-chain",
-      "address": "0x43c934a845205f0b514417d757d7235b8f53f1b9",
-      "decimals": 18,
-      "symbol": "XLM",
-      "price": 0,
-      "balance": 500.47904793,
-      "balanceRaw": "500479047930000000000",
-      "balanceUSD": 0,
-      "tokenImageUrl": "https://logos.covalenthq.com/tokens/56/0x43c934a845205f0b514417d757d7235b8f53f1b9.png"
-    },
-    {
-      "type": "base",
-      "network": "binance-smart-chain",
-      "address": "0xcc42724c6683b7e57334c4e856f4c9965ed682bd",
-      "decimals": 18,
-      "symbol": "MATIC",
-      "price": 2.31,
-      "balance": 29.57817668,
-      "balanceRaw": "29578176680000000000",
-      "balanceUSD": 68.3255881308,
-      "tokenImageUrl": "https://logos.covalenthq.com/tokens/1/0x7d1afa7b718fb893db30a3abc0cfc608aacfebb0.png"
-    },
-    {
-      "type": "base",
-      "network": "binance-smart-chain",
-      "address": "0x55d398326f99059ff775485246999027b3197956", //real 0x55d398326f99059ff775485246999027b3197955
-      "decimals": 18,
-      "symbol": "USDT",
-      "price": 1,
-      "balance": 111,
-      "balanceRaw": "11100000000000000000",
-      "balanceUSD": 111.00,
-      "tokenImageUrl": "https://logos.covalenthq.com/tokens/1/0xdac17f958d2ee523a2206206994597c13d831ec7.png"
-    },
-    {
-      "type": "base",
-      "network": "binance-smart-chain",
-      "address": "0x8595f9da7b868b1822194faed312235e43007b49",
-      "decimals": 18,
-      "symbol": "BTT",
-      "price": 0.0026883,
-      "balance": 6953.99665713,
-      "balanceRaw": "6953996657130000000000",
-      "balanceUSD": 18.69442921336258,
-      "tokenImageUrl": "https://logos.covalenthq.com/tokens/56/0x8595f9da7b868b1822194faed312235e43007b49.png"
-    }
-  ]
-}
-const dummyExtraTokens = {
-  ethereum: [
-    { address: "0x4CF488387F035FF08c371515562CBa712f9015d4", symbol: "WPR", coingeckoId: null, decimals: 18 }
-  ],
-  polygon: [
-    { address: "0xc2132d05d31c914a87c6611c10748aeb04b58e8f", symbol: "USDT", coingeckoId: null, decimals: 6 }
-  ]
-}
-
 function checkTokenList (list) {
   return list.filter(t => {
     return isAddress(t.address)
@@ -636,8 +491,6 @@ export {
     tokenList,
     isErr,
     getErrMsg,
-    dummyExtraTokens,
-    dummyTokensData,
     checkTokenList,
     getTokenListBalance
 }
