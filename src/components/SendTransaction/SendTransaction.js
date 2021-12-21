@@ -159,7 +159,7 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
     const provider = getDefaultProvider(network.rpc)
     const signer = finalBundle.signer
 
-    const wallet = getWallet({
+    const wallet = await getWallet({
       signer,
       signerExtra: account.signerExtra,
       chainId: network.chainId

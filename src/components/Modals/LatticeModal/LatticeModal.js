@@ -16,7 +16,6 @@ const LatticeModal = ({ addresses }) => {
 
     const [isLoading, setLoading] = useState(false)
     const [deviceId, setDeviceId] = useState('')
-    const [secret, setSecret] = useState('')
     const [isSecretFieldShown, setIsSecretFieldShown] = useState(false)
     const [promiseResolve, setPromiseResolve] = useState(null)
 
@@ -27,7 +26,6 @@ const LatticeModal = ({ addresses }) => {
     }
 
     const client = new Client(clientConfig)
-
 
     const connectToDevice = async () => {
         setLoading(prevState => !prevState)
@@ -84,12 +82,16 @@ const LatticeModal = ({ addresses }) => {
         })
     }
 
-    const handleConfirmSecretClicked = () => {
-        promiseResolve(secret)
+    const handleConfirmSecretClicked = (e) => {
+        const inputSecret = e.toUpperCase()
+        // TODO: add constant for 8 
+        if (inputSecret.length === 8) {
+            promiseResolve(inputSecret)
+        } 
     }
 
     return (
-        <Modal title="Two Factor Authentication">
+        <Modal title="Connect to Lattice Device">
             <div id="grid-plus">
                 <div>
                     <p>
@@ -98,6 +100,7 @@ const LatticeModal = ({ addresses }) => {
                     </p>
                     <h4>Device ID</h4>
                     <TextInput
+                        disabled={isSecretFieldShown}
                         placeholder="Enter the device ID"
                         onInput={value => setDeviceId(value)}
                     />
@@ -106,12 +109,12 @@ const LatticeModal = ({ addresses }) => {
                             <h4>Secret</h4>
                             <TextInput
                                 placeholder="Enter secret"
-                                onInput={value => setSecret(value)}
+                                style={{ textTransform:'uppercase' }}
+                                onInput={value => handleConfirmSecretClicked(value)}
                             />
-                            <Button onClick={handleConfirmSecretClicked}>Pair Wallet</Button>
                         </>
                     )}
-                    {isLoading ? (
+                    {(isLoading && !isSecretFieldShown) ? (
                         <>
                             <h3>It may takes a while.</h3>
                             <h3>Please wait...</h3>
