@@ -71,16 +71,16 @@ const StakingMigrateModal = ({ balances, account, addRequest }) => {
     </>
 
     return (
-        <Modal id="adx-staking-migrate-modal" title="ADX-STAKING Migration" buttons={modalButtons}>
+        <Modal id="adx-staking-migrate-modal" title="Migrate ADX stakings" buttons={modalButtons}>
             {
-                balances.map(({ symbol, address, balance }) =>
+                balances.map(({ symbol, address, balance, decimals }) =>
                     <div className="item" key={address}>
                         <div className="details">
                             <label>{symbol}</label>
                             <div className="balance">
                                 <div className="amount">
                                     <span className="primary-accent">
-                                        {balance.toString()}
+                                        {utils.formatUnits(balance, decimals)}
                                     </span>
                                 </div>
                             </div>
@@ -93,7 +93,9 @@ const StakingMigrateModal = ({ balances, account, addRequest }) => {
             }
 
             <div id="info">
-
+                {`Migrate your ADX stakigs tokens to your Ambire wallet and start earning $WALLET tokens `}
+                <a href="https://blog.ambire.com/announcing-the-wallet-token-a137aeda9747" target="_blank" rel="noreferrer">Read More</a>
+           
             </div>
         </Modal>
     )
