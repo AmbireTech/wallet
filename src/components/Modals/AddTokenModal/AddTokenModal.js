@@ -18,14 +18,16 @@ const AddTokenModal = ({ network, account, onAddToken }) => {
 
     const [loading, setLoading] = useState(false)
     const [tokenDetails, setTokenDetails] = useState(null)
+    const [showError, setShowError] = useState(false)
 
     const disabled = !tokenDetails || !(tokenDetails.symbol && tokenDetails.decimals)
 
     const onInput = async address => {
         setTokenDetails(null)
 
-        if (!isValidAddress(address)) return
+        if (!isValidAddress(address)) return 
         setLoading(true)
+        setShowError(false)
 
         try {
             const provider = getDefaultProvider(network.rpc)
@@ -53,6 +55,7 @@ const AddTokenModal = ({ network, account, onAddToken }) => {
         } catch(e) {
             console.error(e)
             addToast('Failed to load token details: ' + e.message || e, { error: true })
+            setShowError(true)
         }
 
         setLoading(false)
@@ -75,6 +78,14 @@ const AddTokenModal = ({ network, account, onAddToken }) => {
                 placeholder="0x..."
                 onInput={value => onInput(value)}
             />
+            {
+                showError ? 
+                    <div className="validation-error">
+                        The address you entered does not appear to correspond to an ERC20 token on { network.name }.
+                    </div>
+                    :
+                    null
+            }
             {
                 loading ?
                     <Loading/>
