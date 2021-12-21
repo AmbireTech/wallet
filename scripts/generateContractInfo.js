@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 const fetch = require('node-fetch')
 const ERC20 = require('adex-protocol-eth/abi/ERC20')
+const stakingTokens = require('../src/consts/stakingTokens')
 
 const etherscans = {
 	ethereum: { host: 'api.etherscan.io', key: 'KJJ4NZ9EQHIFCQY5IJ775PT128YE15AV5S' },
@@ -65,6 +66,8 @@ async function generate () {
 	const tokenLists = await Promise.all(tokenlists.map(
 		async url => await fetch(url).then(r => r.json())
 	))
+
+	tokenLists.push({ tokens: stakingTokens })
 	const tokens = tokenLists.reduce((acc, list) => {
 		list.tokens.forEach(t => {
 			const address = t.address.toLowerCase()
