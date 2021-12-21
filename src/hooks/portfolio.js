@@ -107,7 +107,7 @@ export default function usePortfolio({ currentNetwork, account }) {
 
                     const { meta, products } = Object.values(balance)[0]
 
-                    const extraTokensAssets = getExtraTokensFromNetwork(network)
+                    const extraTokensAssets = getExtraTokensFromNetwork(network) // Add user added extra token to handle
                     const assets = [
                         ...products.map(({ assets }) => assets.map(({ tokens }) => tokens)).flat(2),
                         ...extraTokensAssets
@@ -315,14 +315,14 @@ export default function usePortfolio({ currentNetwork, account }) {
         return () => clearInterval(refreshInterval)
     }, [account, currentNetwork, isBalanceLoading, fetchTokens])
 
-    // Get supplement tokens data 
+    // Get supplement tokens data every 20s
     useEffect(() => {
         const getSupllementTokenData = async () => {
             const currentNetworkTokens = tokensByNetworks.find(({ network }) => network === currentNetwork)
             const rcpTokenData = await supplementTokensDataFromNetwork({
                 walletAddr: account,
                 network: currentNetwork,
-                tokensData: currentNetworkTokens.assets.filter(({ isExtraToken }) => !isExtraToken),
+                tokensData: currentNetworkTokens.assets.filter(({ isExtraToken }) => !isExtraToken), // Filter out extraTokens
                 extraTokens
             })
 
