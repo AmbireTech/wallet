@@ -1,7 +1,8 @@
 import "./TopBar.scss";
 
 import React, { useEffect, useState } from "react";
-import { MdOutlineArrowForward, MdOutlineClose, MdOutlineMenu, MdInfo } from "react-icons/md";
+import { MdOutlineArrowForward, MdOutlineClose, MdOutlineMenu, MdAirplaneTicket } from "react-icons/md";
+import { GiProfit } from "react-icons/gi"
 import { Button, Select, ToolTip } from "../../common";
 import Accounts from "./Accounts/Accounts";
 import DApps from "./DApps/DApps";
@@ -77,8 +78,10 @@ const TopBar = ({
             <Button small border disabled={isLoading} onClick={showWalletTokenModal}>{ rewardsTotal.toFixed(3) } WALLET</Button>
         }
         { 
-          signerStaking.hasStaking && 
-            <Button small border warn icon={MdInfo} disabled={isLoading} onClick={showStakingMigrationModal}> Migrate</Button> 
+          signerStaking.hasStaking && network.id === 'ethereum'  && 
+          <ToolTip label="You have ADX staking tokes on you connected signer address. Migrate them and start earning WALLET tokens.">
+            <Button small border icon={<GiProfit />} disabled={isLoading} onClick={showStakingMigrationModal}> Migrate</Button> 
+          </ToolTip>
         }
         <DApps connections={connections} connect={connect} disconnect={disconnect}/>
         <Accounts accounts={accounts} selectedAddress={selectedAcc} onSelectAcc={onSelectAcc} onRemoveAccount={onRemoveAccount}/>
