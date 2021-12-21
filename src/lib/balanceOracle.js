@@ -15,25 +15,27 @@ const PANIC_SIG = '0x4e487b71'
 async function getTokenListBalance ({walletAddr, tokens, network, updateBalance}) {
   let result = await call ( {walletAddr, tokens, network} )
   if (result.success) {
-    const newBalance = result.data.map((t) => {
-      return {
+    const newBalance = tokens.map(t => {
+      const newTokenBalance = result.data.filter(r => r.address === t.address && parseFloat(r.balance) > 0)[0]
+      return (newTokenBalance ? {
         "type": "base",
         "network": network,
-        "address": t.address,
-        "decimals": t.decimals,
-        "symbol": t.symbol,
-        "price": t.price || 0,
-        "balance": t.balance,
-        "balanceRaw": t.balanceRaw,
-        "balanceUSD": Number(parseFloat(t.price * t.balance || 0).toFixed(2)),
-        "tokenImageUrl": t.tokenImageUrl || `https://storage.googleapis.com/zapper-fi-assets/tokens/${network}/${t.address}.png`
-      }
-    })
+        "address": newTokenBalance.address,
+        "decimals": newTokenBalance.decimals,
+        "symbol": newTokenBalance.symbol,
+        "price": newTokenBalance.price || 0,
+        "balance": Number(newTokenBalance.balance),
+        "balanceRaw": newTokenBalance.balanceRaw,
+        "updateAt": (new Date()).toString(),
+        "balanceUSD": Number(parseFloat(newTokenBalance.price * newTokenBalance.balance || 0).toFixed(2)),
+        "tokenImageUrl": newTokenBalance.tokenImageUrl || `https://storage.googleapis.com/zapper-fi-assets/tokens/${network}/${newTokenBalance.address}.png`
+      } : t)
+    }).filter (t => t && t.balance && parseFloat(t.balance) > 0)
     if (updateBalance && typeof updateBalance === 'function') updateBalance(newBalance)
     return newBalance
   } else {
     console.error(result.message, result.data)
-    return []
+    return tokens
   }
 }
 
@@ -65,9 +67,7 @@ async function call ({ walletAddr, tokens, network }) {
     // @TODO: would be more appropriate to throw here
     if (isErr(callResult)) return {success: false, data: tokens, message: `probably one ot following tokens is not ERC20 and missing balanceOf()`} //hex2a(callResult)
     const balances = coder.decode(['uint[]'], callResult)[0]
-    const result = tokens.map((x, i) => ({ ...x, balanceRaw: balances[i].toString(), balance: parseFloat(formatUnits(balances[i], x.decimals)).toFixed(10) })).filter(x => {
-      return (parseFloat(x.balance)>0)
-    })
+    const result = tokens.map((x, i) => ({ ...x, balanceRaw: balances[i].toString(), balance: parseFloat(formatUnits(balances[i], x.decimals)).toFixed(10) }))
     return {success: true, data: result}
   } catch(e){
     return {success: false, data: tokens, message: `probably one ot following tokens is not ERC20 and missing balanceOf()`}
@@ -528,16 +528,104 @@ const dummyTokensData = {
   ],
   polygon: [
     { address: "0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270", symbol: "WMATIC", coingeckoId: null, decimals: 18 }
+  ],
+  'binance-smart-chain': [
+    {
+      "type": "base",
+      "network": "binance-smart-chain",
+      "address": "0x570a5d26f7765ecb712c0924e4de545b89fd43df",
+      "decimals": 18,
+      "symbol": "SOL",
+      "price": 0,
+      "balance": 2.72627904,
+      "balanceRaw": "2726279040000000000",
+      "balanceUSD": 0,
+      "tokenImageUrl": "https://logos.covalenthq.com/tokens/56/0x570a5d26f7765ecb712c0924e4de545b89fd43df.png"
+    },
+    {
+      "type": "base",
+      "network": "binance-smart-chain",
+      "address": "0x2170ed0880ac9a755fd29b2688956bd959f933f8",
+      "decimals": 18,
+      "symbol": "ETH",
+      "price": 4021.91,
+      "balance": 0.05632541,
+      "balanceRaw": "56325410000000000",
+      "balanceUSD": 226.5357297331,
+      "tokenImageUrl": "https://logos.covalenthq.com/tokens/1/0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2.png"
+    },
+    {
+      "type": "base",
+      "network": "binance-smart-chain",
+      "address": "0xbf5140a22578168fd562dccf235e5d43a02ce9b1",
+      "decimals": 18,
+      "symbol": "UNI",
+      "price": 14.82,
+      "balance": 10.14716105,
+      "balanceRaw": "10147161050000000000",
+      "balanceUSD": 150.38092676099998,
+      "tokenImageUrl": "https://logos.covalenthq.com/tokens/1/0x1f9840a85d5af5bf1d1762f925bdaddc4201f984.png"
+    },
+    {
+      "type": "base",
+      "network": "binance-smart-chain",
+      "address": "0x43c934a845205f0b514417d757d7235b8f53f1b9",
+      "decimals": 18,
+      "symbol": "XLM",
+      "price": 0,
+      "balance": 500.47904793,
+      "balanceRaw": "500479047930000000000",
+      "balanceUSD": 0,
+      "tokenImageUrl": "https://logos.covalenthq.com/tokens/56/0x43c934a845205f0b514417d757d7235b8f53f1b9.png"
+    },
+    {
+      "type": "base",
+      "network": "binance-smart-chain",
+      "address": "0xcc42724c6683b7e57334c4e856f4c9965ed682bd",
+      "decimals": 18,
+      "symbol": "MATIC",
+      "price": 2.31,
+      "balance": 29.57817668,
+      "balanceRaw": "29578176680000000000",
+      "balanceUSD": 68.3255881308,
+      "tokenImageUrl": "https://logos.covalenthq.com/tokens/1/0x7d1afa7b718fb893db30a3abc0cfc608aacfebb0.png"
+    },
+    {
+      "type": "base",
+      "network": "binance-smart-chain",
+      "address": "0x55d398326f99059ff775485246999027b3197956", //real 0x55d398326f99059ff775485246999027b3197955
+      "decimals": 18,
+      "symbol": "USDT",
+      "price": 1,
+      "balance": 111,
+      "balanceRaw": "11100000000000000000",
+      "balanceUSD": 111.00,
+      "tokenImageUrl": "https://logos.covalenthq.com/tokens/1/0xdac17f958d2ee523a2206206994597c13d831ec7.png"
+    },
+    {
+      "type": "base",
+      "network": "binance-smart-chain",
+      "address": "0x8595f9da7b868b1822194faed312235e43007b49",
+      "decimals": 18,
+      "symbol": "BTT",
+      "price": 0.0026883,
+      "balance": 6953.99665713,
+      "balanceRaw": "6953996657130000000000",
+      "balanceUSD": 18.69442921336258,
+      "tokenImageUrl": "https://logos.covalenthq.com/tokens/56/0x8595f9da7b868b1822194faed312235e43007b49.png"
+    }
   ]
 }
 const dummyExtraTokens = {
+  ethereum: [
+    { address: "0x4CF488387F035FF08c371515562CBa712f9015d4", symbol: "WPR", coingeckoId: null, decimals: 18 }
+  ],
   polygon: [
     { address: "0xc2132d05d31c914a87c6611c10748aeb04b58e8f", symbol: "USDT", coingeckoId: null, decimals: 6 }
   ]
 }
 
 function checkTokenList (list) {
-  
   return list.filter(t => {
     return isAddress(t.address)
   })
