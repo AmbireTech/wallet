@@ -54,7 +54,7 @@ const AddTokenModal = ({ network, account, onAddToken }) => {
             })
         } catch(e) {
             console.error(e)
-            addToast('Failed to load token details: ' + e.message || e, { error: true })
+            addToast('Failed to load token info', { error: true })
             setShowError(true)
         }
 
@@ -90,7 +90,7 @@ const AddTokenModal = ({ network, account, onAddToken }) => {
                 loading ?
                     <Loading/>
                     :
-                        tokenDetails ? 
+                        !showError && tokenDetails ? 
                             <div className="details">
                                 <div className="heading">
                                     <div className="icon" style={{backgroundImage: `url(${tokenDetails.icon})`}}/>
