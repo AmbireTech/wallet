@@ -84,17 +84,11 @@ export default function usePortfolio({ currentNetwork, account }) {
 
     const getExtraTokensFromNetwork = useCallback(network => extraTokens
         .filter(extra => extra.network === network)
-        .map(({ address, network, symbol, decimals, icon, balance, balanceRaw }) => ({
+        .map(extraToken => ({
+            ...extraToken,
             type: 'base',
-            address,
-            network,
-            symbol,
-            decimals,
-            icon,
             price: 0,
             balanceUSD: 0,
-            balance,
-            balanceRaw,
             isExtraToken: true
         }))
     , [extraTokens])
@@ -210,7 +204,8 @@ export default function usePortfolio({ currentNetwork, account }) {
         setKnownTokens(tokensList)
     }
 
-    const onAddExtraToken = ({ address, network, balance, balanceRaw, icon, name, symbol, decimals }) => {
+    const onAddExtraToken = extraToken => {
+        const { address, name, symbol } = extraToken
         if (extraTokens.map(({ address }) => address).includes(address)) return addToast(`${name} (${symbol}) is already added to your wallet.`)
         if (Object.values(tokenList).flat(1).map(({ address }) => address).includes(address)) return addToast(`${name} (${symbol}) is already handled by your wallet.`)
         if (tokens.map(({ address }) => address).includes(address)) return addToast(`You already have ${name} (${symbol}) in your wallet.`)
@@ -218,14 +213,8 @@ export default function usePortfolio({ currentNetwork, account }) {
         const updatedExtraTokens = [
             ...extraTokens,
             {
-                address,
-                network,
-                symbol,
-                decimals,
-                icon,
-                coingeckoId: null,
-                balance,
-                balanceRaw
+                ...extraToken,
+                coingeckoId: null
             }
         ]
 
