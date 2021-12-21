@@ -44,7 +44,7 @@ const AddTokenModal = ({ network, account, onAddToken }) => {
                 network: network.id,
                 balance,
                 balanceRaw: balanceOf.toString(),
-                icon: `https://storage.googleapis.com/zapper-fi-assets/tokens/${network.id}/${address}.png`,
+                tokenImageUrl: `https://storage.googleapis.com/zapper-fi-assets/tokens/${network.id}/${address}.png`,
                 name,
                 symbol,
                 decimals
