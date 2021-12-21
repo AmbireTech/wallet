@@ -16,7 +16,8 @@ const StakingMigrateModal = ({ balances, account, addRequest }) => {
 
     const network = networks.find(({ id }) => id === 'ethereum')
     const accountId = account.id
-    const signer = account.signer
+    const signerAddress = account.signer.address
+
     const { rpc, chainId } = network
     const provider = useMemo(() => getDefaultProvider(rpc), [rpc])
 
@@ -26,13 +27,13 @@ const StakingMigrateModal = ({ balances, account, addRequest }) => {
         [accountId, addRequest, chainId])
 
 
-    const approveToken = useCallback(async (token, tokenAddress, bigNumberHexAmount) => {
+    const approveToken = useCallback(async (symbol, tokenAddress, bigNumberHexAmount) => {
         try {
             const tokenContract = new Contract(tokenAddress, ERC20Interface, provider)
             const allowance = await tokenContract.allowance(accountId, tokenAddress)
 
             if (allowance.lt(bigNumberHexAmount)) {
-                addRequestTxn(`signer_approve_${token}_migration_${Date.now()}`, {
+                addRequestTxn(`signer_approve_${symbol}_migration_${Date.now()}`, {
                     to: tokenAddress,
                     value: '0x0',
                     data: ERC20Interface.encodeFunctionData('approve', [accountId, bigNumberHexAmount])
@@ -40,28 +41,28 @@ const StakingMigrateModal = ({ balances, account, addRequest }) => {
             }
         } catch (e) {
             console.error(e)
-            addToast(`Signer Approve ${token} Error: ${e.message || e}`, { error: true })
+            addToast(`Signer Approve ${symbol} Error: ${e.message || e}`, { error: true })
         }
     }, [accountId, addRequestTxn, addToast, provider])
 
 
-    const onMigrate = useCallback(async ({ token, address, balance }) => {
+    const onMigrate = useCallback(async ({ symbol, address, balance }) => {
         try {
-            approveToken(token, address, balance)
-            addRequestTxn(`signer_transfer_${token}_migration_${Date.now()}`, {
+            await approveToken(symbol, address, balance)
+            addRequestTxn(`signer_transfer_${symbol}_migration_${Date.now()}`, {
                 to: address,
                 value: '0x0',
-                data: ERC20ABI.encodeFunctionData('transferFrom', [signer, accountId, balance.toHexString()])
+                data: ERC20Interface.encodeFunctionData('transferFrom', [signerAddress, accountId, balance.toHexString()])
             })
         } catch (e) {
             console.error(e)
-            addToast(`Signer ${token} migration transfer Error: ${e.message || e}`, { error: true })
+            addToast(`Signer ${symbol} migration transfer Error: ${e.message || e}`, { error: true })
         }
-    }, [accountId, addRequestTxn, addToast, approveToken, signer])
+    }, [accountId, addRequestTxn, addToast, approveToken, signerAddress])
 
-    const migrateButton = ({ token, address, balance }) => <>
+    const migrateButton = ({ symbol, address, balance }) => <>
         <ToolTip label="Migrate current signer balances to Ambire wallet to farm WALLET token">
-            <Button small clear onClick={() => onMigrate({ token, address, balance })}>Migrate {token}</Button>
+            <Button small clear onClick={() => onMigrate({ symbol, address, balance })}>Migrate {symbol}</Button>
         </ToolTip>
     </>
 
@@ -72,10 +73,10 @@ const StakingMigrateModal = ({ balances, account, addRequest }) => {
     return (
         <Modal id="adx-staking-migrate-modal" title="ADX-STAKING Migration" buttons={modalButtons}>
             {
-                balances.map(({ token, address, balance }) =>
+                balances.map(({ symbol, address, balance }) =>
                     <div className="item" key={address}>
                         <div className="details">
-                            <label>{token}</label>
+                            <label>{symbol}</label>
                             <div className="balance">
                                 <div className="amount">
                                     <span className="primary-accent">
@@ -85,7 +86,7 @@ const StakingMigrateModal = ({ balances, account, addRequest }) => {
                             </div>
                         </div>
                         <div className="actions">
-                            {migrateButton({ token, address, balance })}
+                            {migrateButton({ symbol, address, balance })}
                         </div>
                     </div>
                 )
