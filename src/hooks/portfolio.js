@@ -316,6 +316,8 @@ export default function usePortfolio({ currentNetwork, account }) {
     useEffect(() => {
         const getSupllementTokenData = async () => {
             const currentNetworkTokens = tokensByNetworks.find(({ network }) => network === currentNetwork)
+            if (!currentNetworkTokens) return
+
             const extraTokensAssets = getExtraTokensAssets(account, currentNetwork)
             const rcpTokenData = await supplementTokensDataFromNetwork({
                 walletAddr: account,
