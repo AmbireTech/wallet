@@ -7,7 +7,7 @@ import supportedProtocols from '../consts/supportedProtocols';
 import { useToasts } from '../hooks/toasts'
 import { setKnownAddresses, setKnownTokens } from '../lib/humanReadableTransactions';
 import { VELCRO_API_ENDPOINT } from '../config'
-import { getTokenListBalance, tokenList, dummyExtraTokens, dummyTokensData, checkTokenList } from '../lib/balanceOracle'
+import { getTokenListBalance, tokenList, checkTokenList } from '../lib/balanceOracle'
 
 const getBalances = (apiKey, network, protocol, address, provider) => fetchGet(`${provider === 'velcro' ? VELCRO_API_ENDPOINT : ZAPPER_API_ENDPOINT}/protocols/${protocol}/balances?addresses[]=${address}&network=${network}&api_key=${apiKey}&newBalances=true`)
 
@@ -27,8 +27,8 @@ let lastOtherProcolsRefresh = null
 //use Balance Oracle
 async function supplementTokensDataFromNetwork({ walletAddr, network, tokensData, extraTokens, updateBalance }) {
     if (!walletAddr || walletAddr==="" || !network || !network === "" ) return []
-    if (!tokensData || !tokensData[0]) tokensData = checkTokenList(tokensData || dummyTokensData[network] || []) //tokensData check and populate for test if undefind
-    if (!extraTokens || !extraTokens[0]) extraTokens = checkTokenList(extraTokens || dummyExtraTokens[network] || []) //extraTokens check and populate for test if undefind
+    if (!tokensData || !tokensData[0]) tokensData = checkTokenList(tokensData || []) //tokensData check and populate for test if undefind
+    if (!extraTokens || !extraTokens[0]) extraTokens = checkTokenList(extraTokens || []) //extraTokens check and populate for test if undefind
   
     //concat predefind token list with extraTokens list (extraTokens must be ERC20)
     let tokens = [ ...new Set(tokenList[network] ? tokenList[network].concat(extraTokens) : [].concat(extraTokens))]
