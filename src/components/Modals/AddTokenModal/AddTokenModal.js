@@ -40,6 +40,7 @@ const AddTokenModal = ({ network, account, onAddToken }) => {
 
             const balance = formatUnits(balanceOf, decimals)
             setTokenDetails({
+                account,
                 address,
                 network: network.id,
                 balance,
