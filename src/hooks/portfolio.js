@@ -319,14 +319,32 @@ export default function usePortfolio({ currentNetwork, account }) {
     useEffect(() => {
         const getSupllementTokenData = async () => {
             const currentNetworkTokens = tokensByNetworks.find(({ network }) => network === currentNetwork)
+            const extraTokensAssets = getExtraTokensAssets(account, currentNetwork)
             const rcpTokenData = await supplementTokensDataFromNetwork({
                 walletAddr: account,
                 network: currentNetwork,
                 tokensData: currentNetworkTokens.assets.filter(({ isExtraToken }) => !isExtraToken), // Filter out extraTokens
-                extraTokens: getExtraTokensAssets(account, currentNetwork)
+                extraTokens: extraTokensAssets
             })
 
             currentNetworkTokens.assets = rcpTokenData
+
+            // Update stored extraTokens with new rpc data
+            try {
+                const storedExtraTokens = JSON.parse(localStorage.extraTokens) || [] 
+                const updatedExtraTokens = rcpTokenData.map(updated => {
+                    const extraToken = storedExtraTokens.find(extra => extra.address === updated.address && extra.network === updated.network && extra.account === account)
+                    if (!extraToken) return null
+                    return {
+                        ...extraToken,
+                        ...updated
+                    }
+                }).filter(updated => updated)
+
+                localStorage.extraTokens = JSON.stringify(updatedExtraTokens)
+            } catch(e) {
+                console.error(e)
+            }
 
             setTokensByNetworks([
                 ...tokensByNetworks.filter(({ network }) => network !== currentNetwork),
@@ -335,7 +353,7 @@ export default function usePortfolio({ currentNetwork, account }) {
         }
         const refreshInterval = setInterval(getSupllementTokenData, 20000)
         return () => clearInterval(refreshInterval)
-    }, [account, currentNetwork, isBalanceLoading, fetchTokens, tokensByNetworks, getExtraTokensAssets])
+    }, [account, currentNetwork, isBalanceLoading, fetchTokens, tokensByNetworks, extraTokens, getExtraTokensAssets])
 
     // Refresh balance when window is focused
     useEffect(() => {
