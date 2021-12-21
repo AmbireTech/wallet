@@ -24,6 +24,8 @@
                     @include flex-center-center;
                     background-size: cover;
                     background-position: center center;
+                    background-color: rgba(0, 0, 0, 0.2);
+                    border-radius: 100%;
                 }
 
                 .title {
