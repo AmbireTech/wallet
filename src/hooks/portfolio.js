@@ -28,22 +28,18 @@ let lastOtherProcolsRefresh = null
 async function supplementTokensDataFromNetwork({ walletAddr, network, tokensData, extraTokens, updateBalance }) {
     if (!walletAddr || walletAddr==="" || !network || !network === "" ) return []
     if (!tokensData || !tokensData[0]) tokensData = checkTokenList(tokensData || []) //tokensData check and populate for test if undefind
-    if (!extraTokens || !extraTokens[0]) extraTokens = checkTokenList(extraTokens || []) //extraTokens check and populate for test if undefind
+    if (!extraTokens || !extraTokens[0]) extraTokens = checkTokenList(extraTokens || [])  //extraTokens check and populate for test if undefind
   
     //concat predefind token list with extraTokens list (extraTokens must be ERC20)
-    let tokens = [ ...new Set(tokenList[network] ? tokenList[network].concat(extraTokens) : [].concat(extraTokens))]
-
-    // Pass velcro data (such as usd price) to getTokenListBalance
-    tokens = tokens.map(t => {
-        const tokenData = tokensData.find(({ address }) => address === t.address)
-        return tokenData ? { ...tokenData, ...t } : t
+    let tokens = [ ...new Set(tokenList[network] ? tokenList[network].concat(extraTokens) : [].concat(extraTokens))].map (t => {
+      return tokensData.filter(td => td.address === t.address)[0] || t
     })
-
+  
     let from = 0; let calls = []
-      for (let i = 1; i <= Math.ceil(tokens.length / 50); i++) {
-      calls.push(tokens.slice(from, (i * 50)))
-          from += 50
-      }
+    for (let i = 1; i <= Math.ceil(tokens.length / 50); i++) {
+    calls.push(tokens.slice(from, (i * 50)))
+        from += 50
+    }
     // tokensData separated calls prevent errors from non erc20 tokens
     tokensData.filter(td => {
       return (tokens.map(t => t.address)?.indexOf(td.address) === -1)
@@ -53,7 +49,8 @@ async function supplementTokensDataFromNetwork({ walletAddr, network, tokensData
           return getTokenListBalance({walletAddr, tokens: callTokens, network, updateBalance})
       })))
     return tokenBalances
-}
+  }
+  
   
 export default function usePortfolio({ currentNetwork, account }) {
     const { addToast } = useToasts()
