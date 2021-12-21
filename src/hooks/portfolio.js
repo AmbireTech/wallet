@@ -82,8 +82,8 @@ export default function usePortfolio({ currentNetwork, account }) {
         return storedExtraTokens ? JSON.parse(storedExtraTokens) : []
     });
 
-    const getExtraTokensFromNetwork = useCallback(network => extraTokens
-        .filter(extra => extra.network === network)
+    const getExtraTokensAssets = useCallback((account, network) => extraTokens
+        .filter(extra => extra.account === account && extra.network === network)
         .map(extraToken => ({
             ...extraToken,
             type: 'base',
@@ -107,7 +107,7 @@ export default function usePortfolio({ currentNetwork, account }) {
 
                     const { meta, products } = Object.values(balance)[0]
 
-                    const extraTokensAssets = getExtraTokensFromNetwork(network) // Add user added extra token to handle
+                    const extraTokensAssets = getExtraTokensAssets(account, network) // Add user added extra token to handle
                     const assets = [
                         ...products.map(({ assets }) => assets.map(({ tokens }) => tokens)).flat(2),
                         ...extraTokensAssets
@@ -140,7 +140,7 @@ export default function usePortfolio({ currentNetwork, account }) {
             addToast(error.message, { error: true })
             return false
         }
-    }, [getExtraTokensFromNetwork, addToast])
+    }, [getExtraTokensAssets, addToast])
 
     const fetchOtherProtocols = useCallback(async (account, currentNetwork = false) => {
         try {
@@ -323,7 +323,7 @@ export default function usePortfolio({ currentNetwork, account }) {
                 walletAddr: account,
                 network: currentNetwork,
                 tokensData: currentNetworkTokens.assets.filter(({ isExtraToken }) => !isExtraToken), // Filter out extraTokens
-                extraTokens
+                extraTokens: getExtraTokensAssets(account, currentNetwork)
             })
 
             currentNetworkTokens.assets = rcpTokenData
@@ -335,7 +335,7 @@ export default function usePortfolio({ currentNetwork, account }) {
         }
         const refreshInterval = setInterval(getSupllementTokenData, 20000)
         return () => clearInterval(refreshInterval)
-    }, [account, currentNetwork, isBalanceLoading, fetchTokens, tokensByNetworks, extraTokens])
+    }, [account, currentNetwork, isBalanceLoading, fetchTokens, tokensByNetworks, getExtraTokensAssets])
 
     // Refresh balance when window is focused
     useEffect(() => {
