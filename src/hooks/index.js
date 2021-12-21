@@ -8,6 +8,7 @@ import useAttentionGrabber from './attentionGrabber'
 import useModals from './modals'
 import usePermissions from './permissions'
 import useSignerStaking from './signerStaking'
+import { useToasts } from './toasts'
 
 export {
     useAccounts,
@@ -19,5 +20,6 @@ export {
     useAttentionGrabber,
     useModals,
     usePermissions,
-    useSignerStaking
+    useSignerStaking,
+    useToasts
 }
