@@ -22,7 +22,7 @@ const History = ({ network, sentTxn, quotesConfirmed }) => {
                 .filter(sent => sent.network === network.id && sent?.requestIds.some(id => quotesConfirmedRequestIds.includes(id)))
 
             const statuses = await Promise.all(quotesConfirmedSent.map(async ({ hash, requestIds }) => {
-                const { from, to } = quotesConfirmed.find(({ id }) => requestIds.includes(id))
+                const { from, to, serviceTimeMinutes } = quotesConfirmed.find(({ id }) => requestIds.includes(id))
                 const fromNetwork = getNetworkDetails(from.chainId)
                 const toNetwork = getNetworkDetails(to.chainId)
 
@@ -32,6 +32,7 @@ const History = ({ network, sentTxn, quotesConfirmed }) => {
                         ...status,
                         from,
                         to,
+                        serviceTimeMinutes,
                         fromNetwork,
                         toNetwork,
                         isPending: !(status.sourceTxStatus === 'COMPLETED' && status.destinationTxStatus === 'COMPLETED')
@@ -43,6 +44,7 @@ const History = ({ network, sentTxn, quotesConfirmed }) => {
                         sourceTx: hash,
                         from,
                         to,
+                        serviceTimeMinutes,
                         fromNetwork,
                         toNetwork,
                         statusError: true
@@ -65,7 +67,7 @@ const History = ({ network, sentTxn, quotesConfirmed }) => {
                     !txStatuses.length ?
                         <div>No pending transfer/swap on this network.</div>
                         :
-                        txStatuses.map(({ sourceTx, fromNetwork, toNetwork, from, to, isPending, statusError }) => (
+                        txStatuses.map(({ sourceTx, fromNetwork, toNetwork, from, to, serviceTimeMinutes, isPending, statusError }) => (
                             <div className="tx-status" key={sourceTx}>
                                 <div className="summary">
                                     <div className="path">
@@ -110,6 +112,7 @@ const History = ({ network, sentTxn, quotesConfirmed }) => {
                                                 <div className="status pending">
                                                     <Loading/>
                                                     Pending
+                                                    <span>(Usually takes { serviceTimeMinutes || 20 } minutes)</span>
                                                 </div>
                                                 :
                                                 <div className="status confirmed">

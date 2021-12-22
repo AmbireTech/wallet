@@ -104,6 +104,7 @@ const Quotes = ({ addRequest, selectedAccount, fromTokensItems, quotes, onQuotes
         try {
             const { allowanceTarget, isApprovalRequired, middlewareRoute, bridgeRoute, routePath } = routes.find(({ routePath }) => routePath === selectedRoute)
 
+            console.log(middlewareRoute);
             let fromAsset, inputAmount = null
             if (middlewareRoute) {
                 fromAsset = middlewareRoute.fromAsset
@@ -113,7 +114,7 @@ const Quotes = ({ addRequest, selectedAccount, fromTokensItems, quotes, onQuotes
                 inputAmount = bridgeRoute.inputAmount
             }
 
-            const { toAsset, outputAmount } = bridgeRoute
+            const { toAsset, outputAmount, bridgeInfo } = bridgeRoute
             
             if (isApprovalRequired) {
                 const { to, data } = await approvalBuildTx(fromAsset.chainId, selectedAccount, allowanceTarget, fromAsset.address, inputAmount)
@@ -124,8 +125,10 @@ const Quotes = ({ addRequest, selectedAccount, fromTokensItems, quotes, onQuotes
             const { tx } = await sendBuildTx(selectedAccount, fromAsset.address, fromAsset.chainId, toAsset.address, toAsset.chainId, inputAmount, outputAmount, routePath)
             sendTx(transferSendId, fromAsset.chainId, tx.to, tx.data, tx.value.hex)
 
+            const serviceTimeMinutes = new Date((bridgeInfo?.serviceTime || 0) + (middlewareRoute?.serviceTime || 0)).getMinutes()
             onQuotesConfirmed({
                 id: transferSendId,
+                serviceTimeMinutes,
                 from: {
                     chainId: fromAsset.chainId,
                     asset: fromAsset,
