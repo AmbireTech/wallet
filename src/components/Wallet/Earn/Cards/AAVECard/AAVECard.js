@@ -8,7 +8,7 @@ import AAVELendingPoolProviders from '../../../../../consts/AAVELendingPoolProvi
 import networks from '../../../../../consts/networks'
 
 import AAVE_ICON from '../../../../../resources/aave.svg'
-import Card from '../Card/Card'
+import Card from '../../Card/Card'
 import { getDefaultTokensItems } from './defaultTokens'
 
 const ERC20Interface = new Interface(ERC20Abi)

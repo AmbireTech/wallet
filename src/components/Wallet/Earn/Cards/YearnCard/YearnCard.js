@@ -1,4 +1,4 @@
-import Card from '../Card/Card'
+import Card from '../../Card/Card'
 
 import { useCallback, useEffect, useState, useMemo, useRef } from 'react'
 import { ethers } from 'ethers'
