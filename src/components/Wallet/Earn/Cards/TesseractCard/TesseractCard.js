@@ -3,7 +3,8 @@ import Card from '../../Card/Card'
 import TESSERACT_ICON from '../../../../../resources/tesseract.svg'
 import { useToasts } from '../../../../../hooks/toasts'
 import TesseractVaultABI from '../../../../../consts/TesseractVaultABI'
-import { Contract, getDefaultProvider } from 'ethers'
+import { Contract, getDefaultProvider, constants } from 'ethers'
+import { Interface, parseUnits } from 'ethers/lib/utils'
 import networks from '../../../../../consts/networks'
 import ERC20ABI from 'adex-protocol-eth/abi/ERC20.json'
 
@@ -17,12 +18,16 @@ const VAULTS = [
 
 const TESR_API_ENDPOINT = 'https://prom.tesr.finance/api/v1'
 
-const TesseractCard = ({ networkId, tokens }) => {
+const ERC20Interface = new Interface(ERC20ABI)
+const TesseractVaultInterface = new Interface(TesseractVaultABI)
+
+const TesseractCard = ({ networkId, accountId, tokens, addRequest }) => {
     const { addToast } = useToasts()
 
     const network = networks.find(({ id }) => id === networkId)
     const provider = useMemo(() => getDefaultProvider(network.rpc), [network])
     const disabled = useMemo(() => networkId !== 'polygon', [networkId])
+    const addRequestTxn = (id, txn, extraGas = 0) => addRequest({ id, type: 'eth_sendTransaction', chainId: network.chainId, account: accountId, txn, extraGas })
 
     const [tokensItems, setTokensItems] = useState([])
     const [details, setDetails] = useState([])
@@ -112,6 +117,49 @@ const TesseractCard = ({ networkId, tokens }) => {
         ])
     }, [fetchVaultAPY, provider, toTokensItems, addToast])
 
+    const approveToken = async (vaultAddress, tokenAddress, bigNumberHexAmount) => {
+        try {
+            const tokenContract = new Contract(tokenAddress, ERC20Interface, provider)
+            const allowance = await tokenContract.allowance(accountId, vaultAddress)
+
+            if (allowance.lt(bigNumberHexAmount)) {
+                addRequestTxn(`tesseract_vault_approve_${Date.now()}`, {
+                    to: tokenAddress,
+                    value: '0x0',
+                    data: ERC20Interface.encodeFunctionData('approve', [vaultAddress, bigNumberHexAmount])
+                })
+            }
+        } catch(e) {
+            console.error(e)
+            addToast(`Tesseract Approve Error: ${e.message || e}`, { error: true })
+        }
+    }
+
+    const onValidate = async (type, value, amount) => {
+        const item = tokensItems.find(t => t.type === type.toLowerCase() && t.value === value)
+        if (!item) return
+
+        const { vaultAddress, decimals } = item
+        const bigNumberAmount = parseUnits(amount.toString(), decimals)
+
+        if (type === 'Deposit') {
+            await approveToken(vaultAddress, item.value, constants.MaxUint256)
+
+            try {
+                addRequestTxn(`tesseract_vault_deposit_${Date.now()}`, {
+                    to: vaultAddress,
+                    value: '0x0',
+                    data: TesseractVaultInterface.encodeFunctionData('deposit', [bigNumberAmount.toHexString(), accountId])
+                })
+            } catch(e) {
+                console.error(e)
+                addToast(`Tesseract Deposit Error: ${e.message || e}`, { error: true })
+            }
+        } else if (type === 'Withdraw') {
+
+        }
+    }
+
     useEffect(() => !disabled && fetchVaults(), [disabled, fetchVaults])
 
     return (
@@ -121,6 +169,7 @@ const TesseractCard = ({ networkId, tokens }) => {
             tokensItems={tokensItems}
             details={details}
             onTokenSelect={onTokenSelect}
+            onValidate={onValidate}
         />
     )
 }
