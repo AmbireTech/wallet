@@ -96,8 +96,12 @@
                 align-items: center;
                 gap: 0.5em;
 
-                &.pending {
+                &.error {
                     color: $warning-color;
+                }
+
+                &.pending {
+                    color: $tertiary-accent-color;
                 }
 
                 &.confirmed {
