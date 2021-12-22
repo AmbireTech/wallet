@@ -1,10 +1,10 @@
 @import '../../../../variables.scss';
 
 #history {
-    .status {
+    .tx-status {
         display: flex;
-        flex-direction: row;
-        align-items: flex-start;
+        flex-direction: column;
+        align-items: center;
         justify-content: space-between;
         gap: 1.5em;
         padding: 1em 1.5em;
@@ -20,10 +20,10 @@
         .summary {
             width: 100%;
             display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            justify-content: flex-start;
-            gap: 1.5em;
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1em;
 
             .network,
             .asset {
@@ -57,34 +57,67 @@
                 }
             }
 
-            .route {
+            .path {
                 display: flex;
-                align-items: center;
-                gap: 2em;
+                flex-direction: column;
+                align-items: flex-start;
+                justify-content: space-between;
+                gap: 0.5em;
 
-                .path {
+                .amount {
                     display: flex;
-                    flex-direction: column;
-                    align-items: flex-start;
-                    justify-content: flex-start;
                     gap: 0.5em;
-
-                    .amount {
-                        display: flex;
-                        gap: 0.5em;
-                    }
+                    opacity: 0.8;
                 }
+            }
 
-                svg {
-                    flex: 0 0 auto;
-                }
+            svg {
+                font-size: 20px;
+                flex: 0 0 auto;
+                opacity: 0.5;
             }
         }
 
         .details {
-            svg {
-                height: 25px;
-                font-size: 25px;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+
+            a {
+                svg {
+                    display: inline-block;
+                    vertical-align: -2px;
+                }
+            }
+
+            .status {
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                gap: 0.5em;
+
+                &.pending {
+                    color: $warning-color;
+                }
+
+                &.confirmed {
+                    color: $primary-accent-color;
+                }
+
+                .loading {
+                    .icon {
+                        display: flex;
+
+                        svg {
+                            height: 20px;
+                            width: 20px;
+                        }
+                    }
+                }
+
+                svg {
+                    font-size: 20px;
+                }
             }
         }
     }
@@ -92,22 +125,16 @@
 
 @media screen and (max-width: $mobile-breakpoint-max-width) {
     #history {
-        .status {
+        .tx-status {
             flex-direction: column;
 
             .summary {
-                .route {
-                    width: 100%;
-                    flex-direction: column;
-                    gap: 1em;
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1em;
 
-                    .path {
-                        align-items: center;
-                    }
-
-                    svg {
-                        transform: rotate(90deg);
-                    }
+                svg {
+                    transform: rotate(90deg);
                 }
             }
         }
