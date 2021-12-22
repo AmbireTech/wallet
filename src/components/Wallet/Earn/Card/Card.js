@@ -1,6 +1,6 @@
 import './Card.scss'
 
-import { Select, Segments, NumberInput, Button, Loading } from '../../../../common'
+import { Select, Segments, NumberInput, Button, Loading } from '../../../common'
 import { useEffect, useState, useMemo, useCallback } from 'react'
 import { BsArrowDownSquare, BsArrowUpSquare } from 'react-icons/bs'
 import { ethers } from 'ethers'
