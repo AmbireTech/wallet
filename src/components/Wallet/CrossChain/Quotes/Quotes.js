@@ -124,7 +124,19 @@ const Quotes = ({ addRequest, selectedAccount, fromTokensItems, quotes, onQuotes
             const { tx } = await sendBuildTx(selectedAccount, fromAsset.address, fromAsset.chainId, toAsset.address, toAsset.chainId, inputAmount, outputAmount, routePath)
             sendTx(transferSendId, fromAsset.chainId, tx.to, tx.data, tx.value.hex)
 
-            onQuotesConfirmed({ id: transferSendId, fromChainId: fromAsset.chainId, toChainId: toAsset.chainId })
+            onQuotesConfirmed({
+                id: transferSendId,
+                from: {
+                    chainId: fromAsset.chainId,
+                    asset: fromAsset,
+                    amount: inputAmount
+                },
+                to: {
+                    chainId: toAsset.chainId,
+                    asset: toAsset,
+                    amount: outputAmount
+                }
+            })
             onCancel()
         } catch(e) {
             console.error(e);
