@@ -58,6 +58,7 @@ export default function Wallet(props) {
         selectedAccount={props.selectedAcc}
         portfolio={props.portfolio}
         network={props.network}
+        sentTxn={props.sentTxn}
       />
     },
     {
