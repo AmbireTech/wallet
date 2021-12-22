@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import Card from '../Card/Card'
+import Card from '../../Card/Card'
 import TESSERACT_ICON from '../../../../../resources/tesseract.svg'
 import { useToasts } from '../../../../../hooks/toasts'
 import TesseractVaultABI from '../../../../../consts/TesseractVaultABI'
