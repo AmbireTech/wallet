@@ -13,6 +13,13 @@ const yearnVaults = [
 	{ name: 'Yearn USDC Vault', network: 'ethereum', addr: '0xa354F35829Ae975e850e23e9615b11Da1B3dC4DE', baseToken: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48', decimals: 6 },
 	{ name: 'Yearn USDT Vault', network: 'ethereum', addr: '0x2f08119c6f07c006695e079aafc638b8789faf18', baseToken: '0xdAC17F958D2ee523a2206206994597C13D831ec7', decimals: 6 }
 ]
+const tesseractVaults = [
+	{ name: 'Tesseract USDC Vault', network: 'polygon', addr: '0x57bDbb788d0F39aEAbe66774436c19196653C3F2', baseToken: '0x2791bca1f2de4661ed88a30c99a7a9449aa84174', decimals: 6, abiName: 'TesseractVault' },
+	{ name: 'Tesseract DAI Vault', network: 'polygon', addr: '0x4c8C6379b7cd039C892ab179846CD30a1A52b125', baseToken: '0x8f3cf7ad23cd3cadbd9735aff958023239c6a063', decimals: 18 },
+	{ name: 'Tesseract WBTC Vault', network: 'polygon', addr: '0x6962785c731e812073948a1f5E181cf83274D7c6', baseToken: '0x1bfd67037b42cf73acf2047067bd4f2c47d9bfd6', decimals: 8 },
+	{ name: 'Tesseract WETH Vault', network: 'polygon', addr: '0x3d44F03a04b08863cc8825384f834dfb97466b9B', baseToken: '0x7ceb23fd6bc0add59e62ac25578270cff1b9f619', decimals: 18 },
+	{ name: 'Tesseract WMATIC Vault', network: 'polygon', addr: '0xE11678341625cD88Bb25544e39B2c62CeDcC83f1', baseToken: '0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270', decimals: 18 },
+]
 const contracts = [
 	{ name: 'Uniswap', network: 'ethereum', addr: '0x7a250d5630b4cf539739df2c5dacb4c659f2488d', abiName: 'UniV2Router' },
 	{ name: 'Uniswap', network: 'ethereum', addr: '0xe592427a0aece92de3edee1f18e0157c05861564', abiName: 'UniV3Router' },
@@ -32,7 +39,8 @@ const contracts = [
 	{ name: 'Movr Anyswap', network: 'polygon', addr: '0x3901581b7ff54667a2bf51cb93dba704e60e24f4', abiName: 'MovrAnyswap' },
 	//{ name: 'Movr Anyswap', network: 'polygon', addr: '0x43aa68673e54e95e07e8388bdd8612abe6df6f81' },
 	{ name: 'Bored Ape Yacht Club', network: 'ethereum', addr: '0xbc4ca0eda7647a8ab7c2061c2e118a18a936f13d', abiName: 'ERC721' },
-	...yearnVaults
+	...yearnVaults,
+	...tesseractVaults
 ]
 const tokenlists = [
 	'https://github.com/trustwallet/assets/raw/master/blockchains/ethereum/tokenlist.json',
@@ -76,7 +84,7 @@ async function generate () {
 		return acc
 	}, {})
 
-	console.log(JSON.stringify({ abis, tokens, names, yearnVaults }))
+	console.log(JSON.stringify({ abis, tokens, names, yearnVaults, tesseractVaults }))
 }
 
 generate()
