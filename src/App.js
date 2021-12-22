@@ -134,10 +134,14 @@ function AppInner () {
   const confirmSentTx = txHash => setSentTxn(sentTxn => {
     const tx = sentTxn.find(tx => tx.hash === txHash)
     tx.confirmed = true
-    return [
+
+    const updatedSentTxn = [
       ...sentTxn.filter(tx => tx.hash !== txHash),
       tx
     ]
+
+    localStorage.sentTxn = JSON.stringify(updatedSentTxn)
+    return updatedSentTxn
   })
 
   // Show notifications for all requests
