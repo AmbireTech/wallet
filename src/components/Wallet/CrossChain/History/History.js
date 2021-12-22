@@ -58,7 +58,7 @@ const History = ({ network, sentTxn, quotesConfirmed }) => {
     return (
         <div id="history" className="panel">
             <div className="title">
-                Transfer / Swaps History
+               History
             </div>
             <div>
                 {
