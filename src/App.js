@@ -116,9 +116,15 @@ function AppInner () {
   }
 
   // Keeping track of transactions
-  const [sentTxn, setSentTxn] = useState([])
-  const onBroadcastedTxn = hash => {
-    setSentTxn(sentTxn => [...sentTxn, { confirmed: false, hash }])
+  const [sentTxn, setSentTxn] = useState(() => {
+    const storedSentTxn = localStorage.sentTxn
+    return storedSentTxn ? JSON.parse(storedSentTxn) : []
+  })
+  const onBroadcastedTxn = (hash, requestIds, network) => {
+    const updatedSentTxn = [...sentTxn, { confirmed: false, hash, requestIds, network }]
+    setSentTxn(updatedSentTxn)
+    localStorage.sentTxn = JSON.stringify(updatedSentTxn)
+  
     addToast((
       <span>Transaction signed and sent successfully!
         &nbsp;Click to view on block explorer.
@@ -223,6 +229,7 @@ function AppInner () {
           showSendTxns={showSendTxns}
           onAddAccount={onAddAccount}
           rewardsData={rewardsData}
+          sentTxn={sentTxn}
         >
         </Wallet>
       </Route>

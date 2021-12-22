@@ -15,7 +15,7 @@ const formatFeeAmount = (fee, route) => {
 }
 const getNetwork = id => networks.find(({ chainId }) => chainId === id)
 
-const Quotes = ({ addRequest, selectedAccount, fromTokensItems, quotes, onCancel }) => {
+const Quotes = ({ addRequest, selectedAccount, fromTokensItems, quotes, onQuotesConfirmed, onCancel }) => {
     const { addToast } = useToasts()
 
     const { toAsset } = quotes;
@@ -120,9 +120,11 @@ const Quotes = ({ addRequest, selectedAccount, fromTokensItems, quotes, onCancel
                 sendTx(`transfer_approval_crosschain_${Date.now()}`, fromAsset.chainId, to, data)
             }
 
+            const transferSendId = `transfer_send_crosschain_${Date.now()}`
             const { tx } = await sendBuildTx(selectedAccount, fromAsset.address, fromAsset.chainId, toAsset.address, toAsset.chainId, inputAmount, outputAmount, routePath)
-            sendTx(`transfer_send_crosschain_${Date.now()}`, fromAsset.chainId, tx.to, tx.data, tx.value.hex)
+            sendTx(transferSendId, fromAsset.chainId, tx.to, tx.data, tx.value.hex)
 
+            onQuotesConfirmed({ id: transferSendId, fromChainId: fromAsset.chainId, toChainId: toAsset.chainId })
             onCancel()
         } catch(e) {
             console.error(e);
