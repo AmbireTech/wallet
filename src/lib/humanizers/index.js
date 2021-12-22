@@ -6,6 +6,7 @@ import WETH from './WETH'
 import AmbireIdentity from './AmbireIdentity'
 import AmbireFactory from './AmbireFactory'
 import YearnVault from './YearnVault'
+import TesseractVault from './TesseractVault'
 import Movr from './Movr'
 
 const all = {
@@ -17,6 +18,7 @@ const all = {
 	...AmbireIdentity,
 	...AmbireFactory,
 	...YearnVault,
+	...TesseractVault,
 	...Movr
 }
 export default all
