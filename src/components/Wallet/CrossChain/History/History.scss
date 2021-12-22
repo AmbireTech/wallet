@@ -64,6 +64,10 @@
                 justify-content: space-between;
                 gap: 0.5em;
 
+                &:nth-child(2) {
+                    align-items: flex-end;
+                }
+
                 .amount {
                     display: flex;
                     gap: 0.5em;
@@ -82,6 +86,7 @@
             width: 100%;
             display: flex;
             justify-content: space-between;
+            gap: 1em;
 
             a {
                 svg {
@@ -95,6 +100,7 @@
                 flex-direction: row;
                 align-items: center;
                 gap: 0.5em;
+                flex-wrap: wrap;
 
                 &.error {
                     color: $warning-color;
@@ -109,6 +115,8 @@
                 }
 
                 .loading {
+                    width: auto;
+
                     .icon {
                         display: flex;
 
@@ -117,6 +125,10 @@
                             width: 20px;
                         }
                     }
+                }
+                
+                span {
+                    opacity: 0.8;
                 }
 
                 svg {
@@ -140,6 +152,10 @@
                 svg {
                     transform: rotate(90deg);
                 }
+            }
+
+            .details {
+                flex-direction: column-reverse;
             }
         }
     }
