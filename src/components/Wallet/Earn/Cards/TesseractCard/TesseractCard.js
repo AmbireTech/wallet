@@ -156,7 +156,20 @@ const TesseractCard = ({ networkId, accountId, tokens, addRequest }) => {
                 addToast(`Tesseract Deposit Error: ${e.message || e}`, { error: true })
             }
         } else if (type === 'Withdraw') {
+            try {
+                const vaultContract = new Contract(vaultAddress, TesseractVaultInterface, provider)
+                const pricePerShare = await vaultContract.pricePerShare()
+                const sharesAmount = parseUnits((bigNumberAmount.toString() / pricePerShare.toString()).toFixed(decimals), decimals)
 
+                addRequestTxn(`tesseract_vault_withdraw_${Date.now()}`, {
+                    to: vaultAddress,
+                    value: '0x0',
+                    data: TesseractVaultInterface.encodeFunctionData('withdraw', [sharesAmount.toHexString(), accountId])
+                })
+            } catch(e) {
+                console.error(e)
+                addToast(`Tesseract Withdraw Error: ${e.message || e}`, { error: true })
+            }
         }
     }
 
