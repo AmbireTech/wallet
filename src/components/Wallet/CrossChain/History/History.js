@@ -112,7 +112,11 @@ const History = ({ relayerURL, network, account, sentTxn, quotesConfirmed }) => 
         setLoading(isRelayerLoading && !txStatuses.length)
     }, [isRelayerLoading, txStatuses])
 
-    useEffect(() => currentNetwork.current = network.id, [network])
+    useEffect(() => {
+        currentNetwork.current = network.id
+        setTxStatuses([])
+        setCacheBreak(Date.now())
+    }, [network])
 
     return (
         <div id="history" className="panel">
