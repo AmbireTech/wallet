@@ -33,11 +33,6 @@ const SideBar = ({ match, portfolio }) => {
 
   return (
     <div id="sidebar" ref={sidebarRef}>
-      <NavLink to={match.url + '/dashboard'}>
-        <div id="logo" />
-        <div id="icon" />
-      </NavLink>
-
       <div className="balance">
         <label>Balance</label>
         {portfolio.isBalanceLoading ? (
