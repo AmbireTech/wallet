@@ -10,7 +10,7 @@ import { useToasts } from '../../../../hooks/toasts'
 import { useRelayerData } from '../../../../hooks'
 import movrTxParser from './movrTxParser'
 
-const History = ({ relayerURL, network, account, sentTxn, quotesConfirmed }) => {
+const History = ({ relayerURL, network, account, quotesConfirmed }) => {
     const { addToast } = useToasts()
     const [txStatuses, setTxStatuses] = useState([])
     const [loading, setLoading] = useState(false)
@@ -43,29 +43,25 @@ const History = ({ relayerURL, network, account, sentTxn, quotesConfirmed }) => 
             const outboundTransferTo = txns.map(([, value, data]) => {
                 const sigHash = data.slice(0, 10)
                 const parseOutboundTransferTo = movrTxParser[sigHash]
-                if (parseOutboundTransferTo) return parseOutboundTransferTo(value, data, network)
+                if (parseOutboundTransferTo) return {
+                    txData: data,
+                    ...parseOutboundTransferTo(value, data, network)
+                }
                 return null
             }).filter(call => call)
 
             return outboundTransferTo.length ? {
                 hash: txId,
-                outboundTransferTo: outboundTransferTo[0]
+                ...outboundTransferTo[0]
             } : null
         }).filter(tx => tx)
     }, [relayerTransactions, network])
 
     useEffect(() => {
         async function getStatuses() {
-            const quotesConfirmedRequestIds = quotesConfirmed.map(({ id }) => id)
-            const quotesConfirmedSent = [
-                ...sentTxn.filter(sent => sent.network === network.id && sent?.requestIds.some(id => quotesConfirmedRequestIds.includes(id))),
-                ...txTransfers
-            ]
-            const quotesConfirmedSentHashes = [...new Set(quotesConfirmedSent.map(({ hash }) => hash))]
-            const filteredQuotesConfirmedSent = quotesConfirmedSentHashes.map(hash => quotesConfirmedSent.find(q => q.hash === hash))
-
-            const statuses = await Promise.all(filteredQuotesConfirmedSent.map(async ({ hash, requestIds, outboundTransferTo }) => {
-                const { from, to, serviceTimeMinutes } = requestIds ? quotesConfirmed.find(({ id }) => requestIds.includes(id)) : outboundTransferTo
+            const statuses = await Promise.all(txTransfers.map(async ({ hash, txData, from, to }) => {
+                const storedQuote = quotesConfirmed.find(q => q.txData === txData)
+                const serviceTimeMinutes = storedQuote ? storedQuote.serviceTimeMinutes || null : null
                 const fromNetwork = getNetworkDetails(from.chainId)
                 const toNetwork = getNetworkDetails(to.chainId)
 
@@ -74,7 +70,7 @@ const History = ({ relayerURL, network, account, sentTxn, quotesConfirmed }) => 
                     return {
                         ...status,
                         from,
-                        to,
+                        to: storedQuote ? storedQuote.to || null : to,
                         serviceTimeMinutes,
                         fromNetwork,
                         toNetwork,
@@ -100,7 +96,7 @@ const History = ({ relayerURL, network, account, sentTxn, quotesConfirmed }) => 
         }
 
         getStatuses()
-    }, [txTransfers, sentTxn, quotesConfirmed, network, addToast])
+    }, [txTransfers, quotesConfirmed, network, addToast])
 
     useEffect(() => {
         if (!errMsg) return
