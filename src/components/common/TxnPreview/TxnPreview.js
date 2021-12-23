@@ -28,7 +28,7 @@ export default function TxnPreview ({ txn, onDismiss, network, account, isFirstF
             {!isFirstFailing && !mined && !isKnown(txn, account) && (<div className='unknownWarning'>Warning: interacting with an unknown contract or address.</div>)}
           </div>
           <div className='actionIcons'>
-              {onDismiss ? (<span className='dismissTxn' onClick={onDismiss}><FaTimes/></span>) : (<></>)}
+              {onDismiss ? (<span className='dismissTxn' onClick={e => { e.stopPropagation(); onDismiss.apply(this, e) }}><FaTimes/></span>) : (<></>)}
             </div>
         </div>
         {
