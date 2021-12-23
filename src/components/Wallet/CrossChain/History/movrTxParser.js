@@ -17,68 +17,46 @@ const getAssetIcon = (address, chainId) => {
     return network ? `https://storage.googleapis.com/zapper-fi-assets/tokens/${network.id}/${formatNativeTokenAddress(address)}.png` : null
 }
 
+const formatTx = (fromChainId, toChainId, inputToken, outputToken, amount) => {
+    const fromAsset = getAssetInfo(inputToken)
+    const toAsset = getAssetInfo(outputToken)
+    const fromAssetIcon = getAssetIcon(inputToken, fromChainId)
+    const toAssetIcon = getAssetIcon(outputToken, toChainId.toNumber())
+
+    return {
+        from: {
+            chainId: fromChainId,
+            asset: {
+                address: inputToken,
+                symbol: fromAsset[0],
+                decimals: fromAsset[1],
+                icon: fromAssetIcon
+            },
+            amount: amount.toString()
+        },
+        to: {
+            chainId: toChainId.toNumber(),
+            asset: {
+                address: outputToken,
+                symbol: toAsset[0],
+                decimals: toAsset[1],
+                icon: toAssetIcon
+            },
+            amount: null
+        }
+    }
+}
+
 const movrTxParser = {
     [MovrAnyswapInterface.getSighash('outboundTransferTo')]: (value, data, currentNetwork) => {
         const { middlewareInputToken, amount, tokenToBridge, toChainId } = MovrAnyswapInterface.parseTransaction({ data, value }).args[0]
-        const fromAsset = getAssetInfo(middlewareInputToken)
-        const toAsset = getAssetInfo(tokenToBridge)
-        const fromAssetIcon = getAssetIcon(middlewareInputToken, currentNetwork.chainId)
-        const toAssetIcon = getAssetIcon(tokenToBridge, toChainId.toNumber())
-
-        return {
-            from: {
-                chainId: currentNetwork.chainId,
-                asset: {
-                    address: middlewareInputToken,
-                    symbol: fromAsset[0],
-                    decimals: fromAsset[1],
-                    icon: fromAssetIcon
-                },
-                amount: amount.toString()
-            },
-            to: {
-                chainId: toChainId.toNumber(),
-                asset: {
-                    address: tokenToBridge,
-                    symbol: toAsset[0],
-                    decimals: toAsset[1],
-                    icon: toAssetIcon
-                },
-                amount: null
-            }
-        }
+        return formatTx(currentNetwork.chainId, toChainId, middlewareInputToken, tokenToBridge, amount)
     },
     [MovrRouterInterface.getSighash('outboundTransferTo')]: (value, data, currentNetwork) => {
         const { middlewareRequest, amount, bridgeRequest, toChainId } = MovrRouterInterface.parseTransaction({ data, value }).args[0]
         const { inputToken } = middlewareRequest
         const { inputToken: outputToken } = bridgeRequest
-        const fromAsset = getAssetInfo(inputToken)
-        const toAsset = getAssetInfo(outputToken)
-        const fromAssetIcon = getAssetIcon(inputToken, currentNetwork.chainId)
-        const toAssetIcon = getAssetIcon(outputToken, toChainId.toNumber())
-
-        return {
-            from: {
-                chainId: currentNetwork.chainId,
-                asset: {
-                    address: inputToken,
-                    symbol: fromAsset[0],
-                    decimals: fromAsset[1],
-                    icon: fromAssetIcon
-                },
-                amount: amount.toString()
-            },
-            to: {
-                chainId: toChainId.toNumber(),
-                asset: {
-                    address: outputToken,
-                    symbol: toAsset[0],
-                    decimals: toAsset[1],
-                    icon: toAssetIcon
-                },
-                amount: null
-            }
-        }
+        return formatTx(currentNetwork.chainId, toChainId, inputToken, outputToken, amount)
     }
 }
 
