@@ -21,7 +21,7 @@ const formatTx = (fromChainId, toChainId, inputToken, outputToken, amount) => {
     const fromAsset = getAssetInfo(inputToken)
     const toAsset = getAssetInfo(outputToken)
     const fromAssetIcon = getAssetIcon(inputToken, fromChainId)
-    const toAssetIcon = getAssetIcon(outputToken, toChainId.toNumber())
+    const toAssetIcon = getAssetIcon(outputToken, fromChainId)
 
     return {
         from: {
