@@ -20,6 +20,7 @@ import useNetwork from './hooks/network'
 import useWalletConnect from './hooks/walletconnect'
 import useGnosisSafe from './hooks/useGnosisSafe'
 import useNotifications from './hooks/notifications'
+import useAmbireExtension from './hooks/useAmbireExtension'
 import { useAttentionGrabber, usePortfolio, useAddressBook, useRelayerData } from './hooks'
 import { useToasts } from './hooks/toasts'
 import { useOneTimeQueryParam } from './hooks/oneTimeQueryParam'
@@ -45,18 +46,23 @@ function AppInner () {
   const { network, setNetwork, allNetworks } = useNetwork()
   const { addToast } = useToasts()
   const wcUri = useOneTimeQueryParam('uri')
-  
+
   // Signing requests: transactions/signed msgs: all requests are pushed into .requests
   const { connections, connect, disconnect, requests: wcRequests, resolveMany: wcResolveMany } = useWalletConnect({
     account: selectedAcc,
     chainId: network.chainId,
     initialUri: wcUri
   })
-  
+
   const { requests: gnosisRequests, resolveMany: gnosisResolveMany, connect: gnosisConnect, disconnect: gnosisDisconnect } = useGnosisSafe({
-	  selectedAccount: selectedAcc,
-	  network: network
-	}, [selectedAcc, network])
+    selectedAccount: selectedAcc,
+    network: network
+  }, [selectedAcc, network])
+
+  const { requests: extensionRequests, resolveMany: extensionResolveMany, connect: extensionConnect, disconnect: extensionDisconnect } = useAmbireExtension({
+    selectedAccount: selectedAcc,
+    network: network
+  }, [selectedAcc, network])
 
   // Internal requests: eg from the Transfer page, Security page, etc. - requests originating in the wallet UI itself
   // unlike WalletConnect or SafeSDK requests, those do not need to be persisted
@@ -65,13 +71,14 @@ function AppInner () {
 
   // Merge all requests
   const requests = useMemo(
-    () => [...internalRequests, ...wcRequests, ...gnosisRequests]
+    () => [...internalRequests, ...wcRequests, ...gnosisRequests, ...extensionRequests]
       .filter(({ account }) => accounts.find(({ id }) => id === account)),
-    [wcRequests, internalRequests, gnosisRequests, accounts]
+    [wcRequests, internalRequests, gnosisRequests, extensionRequests, accounts]
   )
   const resolveMany = (ids, resolution) => {
     wcResolveMany(ids, resolution)
     gnosisResolveMany(ids, resolution)
+    extensionResolveMany(ids, resolution)
     setInternalRequests(reqs => reqs.filter(x => !ids.includes(x.id)))
   }
 
@@ -161,7 +168,7 @@ function AppInner () {
       message={(location, action) => {
         if (action === 'POP') return onPopHistory()
         return true
-    }}/>
+      }}/>
 
     {!!everythingToSign.length && (<SignMessage
       selectedAcc={selectedAcc}
@@ -174,17 +181,17 @@ function AppInner () {
 
     {sendTxnState.showing ? (
       <SendTransaction
-          accounts={accounts}
-          selectedAcc={selectedAcc}
-          network={network}
-          requests={eligibleRequests}
-          resolveMany={resolveMany}
-          relayerURL={relayerURL}
-          onDismiss={() => setSendTxnState({ showing: false })}
-          replacementBundle={sendTxnState.replacementBundle}
-          onBroadcastedTxn={onBroadcastedTxn}
+        accounts={accounts}
+        selectedAcc={selectedAcc}
+        network={network}
+        requests={eligibleRequests}
+        resolveMany={resolveMany}
+        relayerURL={relayerURL}
+        onDismiss={() => setSendTxnState({ showing: false })}
+        replacementBundle={sendTxnState.replacementBundle}
+        onBroadcastedTxn={onBroadcastedTxn}
       ></SendTransaction>
-      ) : (<></>)
+    ) : (<></>)
     }
 
     <Switch>
