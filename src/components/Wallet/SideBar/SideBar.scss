@@ -1,45 +1,19 @@
 @import '../../../variables.scss';
 
 #sidebar {
-  z-index: 50;
+  z-index: 49;
   height: 100%;
   width: $sidebar-desktop-width;
   position: fixed;
   left: 0px;
   bottom: 0px;
   top: 0px;
+  padding-top: calc(#{$topbar-height} + 50px);
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
   overflow: hidden;
   transition: width 0.1s ease-in-out;
-
-  #logo,
-  #icon {
-    transition: opacity 0.1s ease-in-out;
-  }
-
-  #logo {
-    background-image: url('../../../resources/logo.png');
-    width: 100%;
-    margin: 1em 0em 3em 0.5em;
-    height: 70px;
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center left;
-  }
-
-  #icon {
-    position: absolute;
-    top: 10px;
-    height: 90px;
-    width: 100%;
-    background-image: url('../../../resources/icon.png');
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center center;
-    opacity: 0;
-  }
 
   .balance {
     margin-bottom: 3em;
@@ -152,14 +126,6 @@
   #sidebar {
     width: $sidebar-desktop-small-width;
 
-    #logo {
-      opacity: 0;
-    }
-
-    #icon {
-      opacity: 1;
-    }
-
     .balance {
       font-size: 0.8em !important;
 
@@ -184,15 +150,6 @@
     height: $sidebar-mobile-height;
     width: 170px;
     padding: 0 10px;
-
-    #logo {
-      opacity: 1;
-      margin: 0;
-    }
-
-    #icon {
-      opacity: 0;
-    }
 
     .balance {
       display: none;
