@@ -88,6 +88,7 @@
             display: flex;
             justify-content: space-between;
             gap: 1em;
+            flex-wrap: wrap-reverse;
 
             a {
                 opacity: 0.5;
@@ -137,16 +138,6 @@
                 svg {
                     font-size: 20px;
                 }
-            }
-        }
-    }
-}
-
-@media screen and (max-width: 1650px) {
-    #history {
-        .tx-status {
-            .details {
-                flex-direction: column-reverse;
             }
         }
     }
