@@ -25,13 +25,20 @@ button.buttonComponent {
         font-size: 17px;
     }
 
+    &.mini {
+        gap: 8px;
+        height: 40px;
+        padding: 0 10px;
+        font-size: 15px;
+    }
+
     &.danger {
         background: $danger-color;
     }
 
     &.clear {
         color: white;
-        background-color: transparent;
+        background-color: rgba(0, 0, 0, 0.1);
 
         .icon-button {
             color: white !important;
