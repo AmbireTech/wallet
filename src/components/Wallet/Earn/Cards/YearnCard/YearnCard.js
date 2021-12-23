@@ -174,14 +174,10 @@ const YearnCard = ({ networkId, accountId, tokens, addRequest }) => {
             }
         } else if (type === 'Withdraw') {
             try {
-                const vaultContract = new Contract(vaultAddress, YearnVaultInterface, provider)
-                const pricePerShare = await vaultContract.pricePerShare()
-                const sharesAmount = parseUnits((bigNumberAmount.toString() / pricePerShare.toString()).toFixed(decimals), decimals)
-
                 addRequestTxn(`yearn_vault_withdraw_${Date.now()}`, {
                     to: vaultAddress,
                     value: '0x0',
-                    data: YearnVaultInterface.encodeFunctionData('withdraw', [sharesAmount.toHexString(), accountId])
+                    data: YearnVaultInterface.encodeFunctionData('withdraw', [bigNumberAmount.toHexString(), accountId])
                 })
             } catch(e) {
                 console.error(e)
