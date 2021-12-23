@@ -90,6 +90,8 @@
             gap: 1em;
 
             a {
+                opacity: 0.5;
+
                 svg {
                     display: inline-block;
                     vertical-align: -2px;
@@ -140,6 +142,17 @@
     }
 }
 
+@media screen and (max-width: 1650px) {
+    #history {
+        .tx-status {
+            .details {
+                flex-direction: column-reverse;
+            }
+        }
+    }
+}
+
+// Mobile
 @media screen and (max-width: $mobile-breakpoint-max-width) {
     #history {
         .tx-status {
