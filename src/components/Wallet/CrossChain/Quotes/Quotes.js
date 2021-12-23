@@ -104,7 +104,6 @@ const Quotes = ({ addRequest, selectedAccount, fromTokensItems, quotes, onQuotes
         try {
             const { allowanceTarget, isApprovalRequired, middlewareRoute, bridgeRoute, routePath } = routes.find(({ routePath }) => routePath === selectedRoute)
 
-            console.log(middlewareRoute);
             let fromAsset, inputAmount = null
             if (middlewareRoute) {
                 fromAsset = middlewareRoute.fromAsset
@@ -121,19 +120,13 @@ const Quotes = ({ addRequest, selectedAccount, fromTokensItems, quotes, onQuotes
                 sendTx(`transfer_approval_crosschain_${Date.now()}`, fromAsset.chainId, to, data)
             }
 
-            const transferSendId = `transfer_send_crosschain_${Date.now()}`
             const { tx } = await sendBuildTx(selectedAccount, fromAsset.address, fromAsset.chainId, toAsset.address, toAsset.chainId, inputAmount, outputAmount, routePath)
-            sendTx(transferSendId, fromAsset.chainId, tx.to, tx.data, tx.value.hex)
+            sendTx(`transfer_send_crosschain_${Date.now()}`, fromAsset.chainId, tx.to, tx.data, tx.value.hex)
 
             const serviceTimeMinutes = new Date((bridgeInfo?.serviceTime || 0) + (middlewareRoute?.serviceTime || 0)).getMinutes()
             onQuotesConfirmed({
-                id: transferSendId,
+                txData: tx.data,
                 serviceTimeMinutes,
-                from: {
-                    chainId: fromAsset.chainId,
-                    asset: fromAsset,
-                    amount: inputAmount
-                },
                 to: {
                     chainId: toAsset.chainId,
                     asset: toAsset,

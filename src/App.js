@@ -233,7 +233,6 @@ function AppInner () {
           showSendTxns={showSendTxns}
           onAddAccount={onAddAccount}
           rewardsData={rewardsData}
-          sentTxn={sentTxn}
         >
         </Wallet>
       </Route>
