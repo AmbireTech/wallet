@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import Card from '../../Card/Card'
 import TESSERACT_ICON from '../../../../../resources/tesseract.svg'
 import { useToasts } from '../../../../../hooks/toasts'
@@ -27,6 +27,9 @@ const TesseractCard = ({ networkId, accountId, tokens, addRequest }) => {
     const network = networks.find(({ id }) => id === networkId)
     const provider = useMemo(() => getDefaultProvider(network.rpc), [network])
     const disabled = useMemo(() => networkId !== 'polygon', [networkId])
+    const currentNetwork = useRef(networkId)
+    const [loading, setLoading] = useState(true)
+
     const addRequestTxn = (id, txn, extraGas = 0) => addRequest({ id, type: 'eth_sendTransaction', chainId: network.chainId, account: accountId, txn, extraGas })
 
     const [tokensItems, setTokensItems] = useState([])
@@ -111,11 +114,13 @@ const TesseractCard = ({ networkId, accountId, tokens, addRequest }) => {
         const depositTokenItems = toTokensItems('deposit', vaults)
         const withdrawTokenItems = toTokensItems('withdraw', vaults)
 
+        if (networkId !== currentNetwork.current) return
+
         setTokensItems([
             ...depositTokenItems,
             ...withdrawTokenItems
         ])
-    }, [fetchVaultAPY, provider, toTokensItems, addToast])
+    }, [networkId, fetchVaultAPY, provider, toTokensItems, addToast])
 
     const approveToken = async (vaultAddress, tokenAddress, bigNumberHexAmount) => {
         try {
@@ -169,10 +174,22 @@ const TesseractCard = ({ networkId, accountId, tokens, addRequest }) => {
         }
     }
 
-    useEffect(() => !disabled && fetchVaults(), [disabled, fetchVaults])
+    useEffect(() => {
+        async function loadVaults() {
+            !disabled && await fetchVaults()
+            setLoading(false)
+        }
+        loadVaults()
+    }, [disabled, fetchVaults])
+
+    useEffect(() => {
+        currentNetwork.current = networkId
+        setLoading(true)
+    }, [networkId])
 
     return (
         <Card
+            loading={loading}
             unavailable={disabled}
             icon={TESSERACT_ICON}
             tokensItems={tokensItems}
