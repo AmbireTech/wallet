@@ -26,7 +26,7 @@ const networks = [{
 		// to match the zapper ID
 		id: 'binance-smart-chain',
 		chainId: 56,
-		rpc: 'https://bsc-dataseed.binance.org/',
+		rpc: 'https://bsc-dataseed1.defibit.io',
 		nativeAssetSymbol: 'BNB',
 		name: 'Binance Smart Chain',
 		icon: '/resources/networks/bsc.png',
