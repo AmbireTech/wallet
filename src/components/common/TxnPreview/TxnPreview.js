@@ -1,6 +1,6 @@
 import './TxnPreview.scss'
 
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { FaTimes, FaChevronDown, FaChevronUp } from 'react-icons/fa'
 
 import { getName, getTransactionSummary, isKnown } from '../../../lib/humanReadableTransactions'
