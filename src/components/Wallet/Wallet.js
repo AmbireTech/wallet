@@ -59,6 +59,7 @@ export default function Wallet(props) {
         portfolio={props.portfolio}
         network={props.network}
         sentTxn={props.sentTxn}
+        relayerURL={props.relayerURL}
       />
     },
     {
