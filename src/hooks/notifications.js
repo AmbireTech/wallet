@@ -8,14 +8,16 @@ import AMBIRE_ICON from '../resources/icon.png'
 
 const REQUEST_TITLE_PREFIX = 'Ambire Wallet: '
 const SUPPORTED_TYPES =  ['eth_sendTransaction', 'personal_sign']
-const BALANCE_TRESHOLD = 1.00001
+const BALANCE_TRESHOLD = 1.00002
 let currentNotifs = []
 let isLastTotalBalanceInit = false
 let lastTokensBalanceRaw = []
 
 const getAmountReceived = (lastToken, newBalanceRaw, decimals) => {
     try {
-        const amountRecieved = lastToken ? BigNumber.from(newBalanceRaw) - BigNumber.from(lastToken.balanceRaw) : newBalanceRaw
+        const amountRecieved = lastToken
+            ? (BigNumber.from(newBalanceRaw.toString(10)).sub(BigNumber.from(lastToken.balanceRaw.toString(10))))
+            : newBalanceRaw
         return formatUnits(amountRecieved, decimals)
     } catch(e) {
         console.error('Notifications: ' + e);

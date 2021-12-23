@@ -64,7 +64,8 @@ export default function usePortfolio({ currentNetwork, account }) {
                         meta,
                         products
                     }
-                } catch(_) {
+                } catch(e) {
+                    console.error('Balances API error', e)
                     failedRequests++
                 }
             }))).filter(data => data)
@@ -223,16 +224,16 @@ export default function usePortfolio({ currentNetwork, account }) {
         refreshTokensIfVisible()
     }, [currentNetwork, refreshTokensIfVisible])
 
-    // Refresh balance every 20s if visible
+    // Refresh balance every 45s if visible
     useEffect(() => {
-        const refreshInterval = setInterval(refreshTokensIfVisible, 20000)
+        const refreshInterval = setInterval(refreshTokensIfVisible, 45000)
         return () => clearInterval(refreshInterval)
     }, [refreshTokensIfVisible])
 
-    // Refresh balance every 60s if hidden
+    // Refresh balance every 150s if hidden
     useEffect(() => {
         const refreshIfHidden = () => document[hidden] && !isBalanceLoading ? fetchTokens(account, currentNetwork) : null
-        const refreshInterval = setInterval(refreshIfHidden, 60000)
+        const refreshInterval = setInterval(refreshIfHidden, 150000)
         return () => clearInterval(refreshInterval)
     }, [account, currentNetwork, isBalanceLoading, fetchTokens])
 

@@ -53,7 +53,7 @@ $titleBar-height: 90px;
 
         h2 {
             margin: 0;
-            font-size: 2vh;
+            font-size: 25px;
             text-align: center;
             text-transform: uppercase;
             color: #ccc;
@@ -358,6 +358,12 @@ $titleBar-height: 90px;
                 .secondaryPanel {
                     gap: 1em;
                 }
+            }
+        }
+
+        #titleBar {
+            h2 {
+                font-size: 4vw;
             }
         }
     }
