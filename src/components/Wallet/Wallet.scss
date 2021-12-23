@@ -11,17 +11,18 @@
     right: 0%;
     top: $topbar-height;
     bottom: 0;
-    padding: $layout-spacing;
-    padding-top:  $layout-spacing / 2;
     display: flex;
     flex-direction: column;
     align-items: center;
     overflow: hidden;
-    overflow-y: auto;
 
     #wallet-container-inner {
         height: 100%;
         width: 100%;
+        padding: $layout-spacing;
+        padding-top: $layout-spacing / 2;
+        overflow: hidden;
+        overflow-y: auto;
     }
 
     .placeholder-overlay {
@@ -56,10 +57,13 @@
         top: $topbar-mobile-height;
         left: 0 !important;
         bottom: $sidebar-mobile-height !important;
-        padding-left: 10px;
-        padding-right: 10px;
-        padding-bottom: 10px;
         overflow-y: auto;
+
+        #wallet-container-inner {
+            padding-left: 10px;
+            padding-right: 10px;
+            padding-bottom: 10px;
+        }
     }
 }
 
