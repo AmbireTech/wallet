@@ -1,6 +1,6 @@
 import './History.scss'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { MdOutlineArrowForward, MdOutlineCheck, MdOutlineClose } from 'react-icons/md'
 import { HiOutlineExternalLink } from 'react-icons/hi'
 import { Loading } from '../../../common'
@@ -13,7 +13,11 @@ import movrTxParser from './movrTxParser'
 const History = ({ relayerURL, network, account, sentTxn, quotesConfirmed }) => {
     const { addToast } = useToasts()
     const [txStatuses, setTxStatuses] = useState([])
+    const [loading, setLoading] = useState(false)
     const [cacheBreak, setCacheBreak] = useState(() => Date.now())
+
+    const getNetworkDetails = chainId => networks.find(n => n.chainId === chainId)
+    const formatAmount = (amount, asset) => amount / Math.pow(10, asset.decimals)
 
     // @TODO refresh this after we submit a bundle; perhaps with the upcoming transactions service
     // We want this pretty much on every rerender with a 5 sec debounce
@@ -27,21 +31,12 @@ const History = ({ relayerURL, network, account, sentTxn, quotesConfirmed }) => 
         ? `${relayerURL}/identity/${account}/${network.id}/transactions?cacheBreak=${cacheBreak}`
         : null
 
-    const { data: relayerTransactions, errMsg, isLoading } = useRelayerData(url)
-
-    const getNetworkDetails = chainId => networks.find(n => n.chainId === chainId)
-    const formatAmount = (amount, asset) => amount / Math.pow(10, asset.decimals)
-
-    useEffect(() => {
-        if (errMsg) {
-            console.error(errMsg)
-            addToast(`Cross-Chain History: ${errMsg}`, { error: true })
-        }
-
+    const { data: relayerTransactions, errMsg, isLoading: isRelayerLoading } = useRelayerData(url)
+    
+    // Return relayer txs that contains outboundTransferTo calls to Movr contracts and parse them
+    const txTransfers = useMemo(() => {
         const transactions = relayerTransactions && relayerTransactions.txns ? relayerTransactions.txns : []
-
-        // Return txs that contains outboundTransferTo calls to Movr contracts and parse them
-        const txTransfers = transactions.map(({ txId, txns }) => {
+        return transactions.map(({ txId, txns }) => {
             const outboundTransferTo = txns.map(([, value, data]) => {
                 const sigHash = data.slice(0, 10)
                 const parseOutboundTransferTo = movrTxParser[sigHash]
@@ -54,7 +49,9 @@ const History = ({ relayerURL, network, account, sentTxn, quotesConfirmed }) => 
                 outboundTransferTo: outboundTransferTo[0]
             } : null
         }).filter(tx => tx)
+    }, [relayerTransactions, network])
 
+    useEffect(() => {
         async function getStatuses() {
             const quotesConfirmedRequestIds = quotesConfirmed.map(({ id }) => id)
             const quotesConfirmedSent = [
@@ -99,7 +96,17 @@ const History = ({ relayerURL, network, account, sentTxn, quotesConfirmed }) => 
         }
 
         getStatuses()
-    }, [errMsg, relayerTransactions, sentTxn, quotesConfirmed, network, addToast])
+    }, [txTransfers, sentTxn, quotesConfirmed, network, addToast])
+
+    useEffect(() => {
+        if (!errMsg) return
+        console.error(errMsg)
+        addToast(`Cross-Chain History: ${errMsg}`, { error: true })
+    }, [errMsg, addToast])
+
+    useEffect(() => {
+        setLoading(isRelayerLoading && !txStatuses.length)
+    }, [isRelayerLoading, txStatuses])
 
     return (
         <div id="history" className="panel">
@@ -108,7 +115,7 @@ const History = ({ relayerURL, network, account, sentTxn, quotesConfirmed }) => 
             </div>
             <div>
                 {
-                    isLoading ?
+                    loading ?
                         <Loading/>
                         :
                         !txStatuses.length ?
