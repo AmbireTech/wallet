@@ -12,7 +12,7 @@ import { useToasts } from '../../../hooks/toasts'
 import Quotes from './Quotes/Quotes'
 import History from './History/History'
 
-const CrossChain = ({ addRequest, selectedAccount, portfolio, network, sentTxn }) => {
+const CrossChain = ({ addRequest, selectedAccount, portfolio, network, sentTxn, relayerURL }) => {
     const { addToast } = useToasts()
 
     const [disabled, setDisabled] = useState(false)
@@ -255,8 +255,10 @@ const CrossChain = ({ addRequest, selectedAccount, portfolio, network, sentTxn }
             </div>
             <History
                 network={network}
+                account={selectedAccount}
                 sentTxn={sentTxn}
                 quotesConfirmed={quotesConfirmed}
+                relayerURL={relayerURL}
             />
         </div>
     )

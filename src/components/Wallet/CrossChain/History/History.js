@@ -7,22 +7,65 @@ import { Loading } from '../../../common'
 import { checkTxStatus } from '../../../../services/movr'
 import networks from '../../../../consts/networks'
 import { useToasts } from '../../../../hooks/toasts'
+import { useRelayerData } from '../../../../hooks'
+import movrTxParser from './movrTxParser'
 
-const History = ({ network, sentTxn, quotesConfirmed }) => {
+const History = ({ relayerURL, network, account, sentTxn, quotesConfirmed }) => {
     const { addToast } = useToasts()
     const [txStatuses, setTxStatuses] = useState([])
+    const [cacheBreak, setCacheBreak] = useState(() => Date.now())
+
+    // @TODO refresh this after we submit a bundle; perhaps with the upcoming transactions service
+    // We want this pretty much on every rerender with a 5 sec debounce
+    useEffect(() => {
+        if ((Date.now() - cacheBreak) > 5000) setCacheBreak(Date.now())
+        const intvl = setTimeout(() => setCacheBreak(Date.now()), 10000)
+        return () => clearTimeout(intvl)
+    }, [cacheBreak])
+
+    const url = relayerURL
+        ? `${relayerURL}/identity/${account}/${network.id}/transactions?cacheBreak=${cacheBreak}`
+        : null
+
+    const { data: relayerTransactions, errMsg, isLoading } = useRelayerData(url)
 
     const getNetworkDetails = chainId => networks.find(n => n.chainId === chainId)
     const formatAmount = (amount, asset) => amount / Math.pow(10, asset.decimals)
 
     useEffect(() => {
+        if (errMsg) {
+            console.error(errMsg)
+            addToast(`Cross-Chain History: ${errMsg}`, { error: true })
+        }
+
+        const transactions = relayerTransactions && relayerTransactions.txns ? relayerTransactions.txns : []
+
+        // Return txs that contains outboundTransferTo calls to Movr contracts and parse them
+        const txTransfers = transactions.map(({ txId, txns }) => {
+            const outboundTransferTo = txns.map(([, value, data]) => {
+                const sigHash = data.slice(0, 10)
+                const parseOutboundTransferTo = movrTxParser[sigHash]
+                if (parseOutboundTransferTo) return parseOutboundTransferTo(value, data, network)
+                return null
+            }).filter(call => call)
+
+            return outboundTransferTo.length ? {
+                hash: txId,
+                outboundTransferTo: outboundTransferTo[0]
+            } : null
+        }).filter(tx => tx)
+
         async function getStatuses() {
             const quotesConfirmedRequestIds = quotesConfirmed.map(({ id }) => id)
-            const quotesConfirmedSent = sentTxn
-                .filter(sent => sent.network === network.id && sent?.requestIds.some(id => quotesConfirmedRequestIds.includes(id)))
+            const quotesConfirmedSent = [
+                ...sentTxn.filter(sent => sent.network === network.id && sent?.requestIds.some(id => quotesConfirmedRequestIds.includes(id))),
+                ...txTransfers
+            ]
+            const quotesConfirmedSentHashes = [...new Set(quotesConfirmedSent.map(({ hash }) => hash))]
+            const filteredQuotesConfirmedSent = quotesConfirmedSentHashes.map(hash => quotesConfirmedSent.find(q => q.hash === hash))
 
-            const statuses = await Promise.all(quotesConfirmedSent.map(async ({ hash, requestIds }) => {
-                const { from, to, serviceTimeMinutes } = quotesConfirmed.find(({ id }) => requestIds.includes(id))
+            const statuses = await Promise.all(filteredQuotesConfirmedSent.map(async ({ hash, requestIds, outboundTransferTo }) => {
+                const { from, to, serviceTimeMinutes } = requestIds ? quotesConfirmed.find(({ id }) => requestIds.includes(id)) : outboundTransferTo
                 const fromNetwork = getNetworkDetails(from.chainId)
                 const toNetwork = getNetworkDetails(to.chainId)
 
@@ -54,8 +97,9 @@ const History = ({ network, sentTxn, quotesConfirmed }) => {
 
             setTxStatuses(statuses)
         }
+
         getStatuses()
-    }, [sentTxn, quotesConfirmed, network.id, addToast])
+    }, [errMsg, relayerTransactions, sentTxn, quotesConfirmed, network, addToast])
 
     return (
         <div id="history" className="panel">
@@ -64,65 +108,68 @@ const History = ({ network, sentTxn, quotesConfirmed }) => {
             </div>
             <div>
                 {
-                    !txStatuses.length ?
-                        <div>No pending transfer/swap on this network.</div>
+                    isLoading ?
+                        <Loading/>
                         :
-                        txStatuses.map(({ sourceTx, fromNetwork, toNetwork, from, to, serviceTimeMinutes, isPending, statusError }) => (
-                            <div className="tx-status" key={sourceTx}>
-                                <div className="summary">
-                                    <div className="path">
-                                        <div className="network">
-                                            <div className="icon" style={{backgroundImage: `url(${fromNetwork.icon})`}}></div>
-                                            <div className="name">{ fromNetwork.name }</div>
-                                        </div>
-                                        <div className="amount">
-                                            { formatAmount(from?.amount, from.asset) }
-                                            <div className="asset">
-                                                <div className="icon" style={{backgroundImage: `url(${from?.asset?.icon})`}}></div>
-                                                <div className="name">{ from?.asset?.symbol }</div>
+                        !txStatuses.length ?
+                            <div>No pending transfer/swap on this network.</div>
+                            :
+                            txStatuses.map(({ sourceTx, fromNetwork, toNetwork, from, to, serviceTimeMinutes, isPending, statusError }) => (
+                                <div className="tx-status" key={sourceTx}>
+                                    <div className="summary">
+                                        <div className="path">
+                                            <div className="network">
+                                                <div className="icon" style={{backgroundImage: `url(${fromNetwork.icon})`}}></div>
+                                                <div className="name">{ fromNetwork.name }</div>
+                                            </div>
+                                            <div className="amount">
+                                                { from.amount ? formatAmount(from.amount, from.asset) : '' }
+                                                <div className="asset">
+                                                    <div className="icon" style={{backgroundImage: `url(${from?.asset?.icon})`}}></div>
+                                                    <div className="name">{ from?.asset?.symbol }</div>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                    <MdOutlineArrowForward/>
-                                    <div className="path">
-                                        <div className="network">
-                                            <div className="icon" style={{backgroundImage: `url(${toNetwork.icon})`}}></div>
-                                            <div className="name">{ toNetwork.name }</div>
-                                        </div>
+                                        <MdOutlineArrowForward/>
+                                        <div className="path">
+                                            <div className="network">
+                                                <div className="icon" style={{backgroundImage: `url(${toNetwork.icon})`}}></div>
+                                                <div className="name">{ toNetwork.name }</div>
+                                            </div>
 
-                                        <div className="amount">
-                                            { formatAmount(to?.amount, to.asset) }
-                                            <div className="asset">
-                                                <div className="icon" style={{backgroundImage: `url(${to?.asset?.icon})`}}></div>
-                                                <div className="name">{ to?.asset?.symbol }</div>
+                                            <div className="amount">
+                                                { to.amount ? formatAmount(to.amount, to.asset) : '' }
+                                                <div className="asset">
+                                                    <div className="icon" style={{backgroundImage: `url(${to?.asset?.icon})`}}></div>
+                                                    <div className="name">{ to?.asset?.symbol }</div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                                <div className="details">
-                                    <a href={`${fromNetwork.explorerUrl}/tx/${sourceTx}`} target="_blank" rel="noreferrer">View on Block Explorer <HiOutlineExternalLink/></a>
-                                    {
-                                        statusError ? 
-                                            <div className="status error">
-                                                <MdOutlineClose/>
-                                                Could not fetch status
-                                            </div>
-                                            :
-                                            isPending ? 
-                                                <div className="status pending">
-                                                    <Loading/>
-                                                    Pending
-                                                    <span>(Usually takes { serviceTimeMinutes || 20 } minutes)</span>
+                                    <div className="details">
+                                        <a href={`${fromNetwork.explorerUrl}/tx/${sourceTx}`} target="_blank" rel="noreferrer">View on Block Explorer <HiOutlineExternalLink/></a>
+                                        {
+                                            statusError ? 
+                                                <div className="status error">
+                                                    <MdOutlineClose/>
+                                                    Could not fetch status
                                                 </div>
                                                 :
-                                                <div className="status confirmed">
-                                                    <MdOutlineCheck/>
-                                                    Confirmed
-                                                </div>
-                                    }
+                                                isPending ? 
+                                                    <div className="status pending">
+                                                        <Loading/>
+                                                        Pending
+                                                        <span>(Usually takes { serviceTimeMinutes || 20 } minutes)</span>
+                                                    </div>
+                                                    :
+                                                    <div className="status confirmed">
+                                                        <MdOutlineCheck/>
+                                                        Confirmed
+                                                    </div>
+                                        }
+                                    </div>
                                 </div>
-                            </div>
-                        ))
+                            ))
                 }
             </div>
         </div>
