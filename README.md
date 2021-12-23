@@ -3,7 +3,6 @@
 
 ### All documentation
 
-* Getting started user guide: https://www.grnewsletters.com/archive/b9fc021c37e5656340e2136f9c4f1153/You-are-invited-to-Ambire-Beta-1043499604.html
 * Smart contract documentation, originally intended for CodeArena: https://github.com/AmbireTech/code4rena
 	* Latest smart contract source code: https://github.com/AmbireTech/adex-protocol-eth/tree/codearena-fixes
 * Security model: https://gist.github.com/Ivshti/fe86f13c3adff3404a1f5ce1e364304c
