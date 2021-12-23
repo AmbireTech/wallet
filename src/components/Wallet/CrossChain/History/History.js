@@ -1,6 +1,6 @@
 import './History.scss'
 
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect, useMemo, useRef } from 'react'
 import { MdOutlineArrowForward, MdOutlineCheck, MdOutlineClose } from 'react-icons/md'
 import { HiOutlineExternalLink } from 'react-icons/hi'
 import { Loading } from '../../../common'
@@ -15,6 +15,7 @@ const History = ({ relayerURL, network, account, sentTxn, quotesConfirmed }) => 
     const [txStatuses, setTxStatuses] = useState([])
     const [loading, setLoading] = useState(false)
     const [cacheBreak, setCacheBreak] = useState(() => Date.now())
+    const currentNetwork = useRef(network.id)
 
     const getNetworkDetails = chainId => networks.find(n => n.chainId === chainId)
     const formatAmount = (amount, asset) => amount / Math.pow(10, asset.decimals)
@@ -35,6 +36,8 @@ const History = ({ relayerURL, network, account, sentTxn, quotesConfirmed }) => 
     
     // Return relayer txs that contains outboundTransferTo calls to Movr contracts and parse them
     const txTransfers = useMemo(() => {
+        if (network.id !== currentNetwork.current) return []
+
         const transactions = relayerTransactions && relayerTransactions.txns ? relayerTransactions.txns : []
         return transactions.map(({ txId, txns }) => {
             const outboundTransferTo = txns.map(([, value, data]) => {
@@ -92,6 +95,7 @@ const History = ({ relayerURL, network, account, sentTxn, quotesConfirmed }) => 
                 }
             }))
 
+            if (network.id !== currentNetwork.current) return
             setTxStatuses(statuses)
         }
 
@@ -107,6 +111,8 @@ const History = ({ relayerURL, network, account, sentTxn, quotesConfirmed }) => 
     useEffect(() => {
         setLoading(isRelayerLoading && !txStatuses.length)
     }, [isRelayerLoading, txStatuses])
+
+    useEffect(() => currentNetwork.current = network.id, [network])
 
     return (
         <div id="history" className="panel">
