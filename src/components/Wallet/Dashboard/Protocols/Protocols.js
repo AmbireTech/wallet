@@ -61,7 +61,7 @@ const Protocols = ({ portfolio, network, account }) => {
         <div id="protocols-table">
             {
                 shouldShowPlaceholder ?
-                    <ProtocolsPlaceholder/>
+                    <ProtocolsPlaceholder onClickAddToken={openAddTokenModal}/>
                     :
                     null
             }
