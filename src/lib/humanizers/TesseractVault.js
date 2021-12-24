@@ -7,7 +7,7 @@ const iface = new Interface(abis.TesseractVault)
 // add 'y' prefix, eg '10 USDC' will become '10 yUSDC' to signify vault tokens
 const addY = x => x.split(' ').map((x, i) => i === 1 ? 'tv'+x : x).join(' ')
 
-const YearnMapping = {
+const TesseractMapping = {
   [iface.getSighash('deposit(uint256,address)')]: (txn, network) => {
     const [ amount ] = iface.parseTransaction(txn).args
     const vaultInfo = tesseractVaults.find(x => x.addr === txn.to)
@@ -21,4 +21,4 @@ const YearnMapping = {
     return [`Withdraw ${amount} units from Yearn`]
   },
 }
-export default YearnMapping
+export default TesseractMapping
