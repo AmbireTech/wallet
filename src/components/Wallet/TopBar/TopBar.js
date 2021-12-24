@@ -42,11 +42,12 @@ const TopBar = ({
   useEffect(() => {
       if (errMsg || !data || !data.success) return
 
-      const { rewards } = data
+      const { rewards, multipliers } = data
       if (!rewards.length) return
 
       const rewardsDetails = Object.fromEntries(rewards.map(({ _id, rewards }) => [_id, rewards[account.id] || 0]))
       const rewardsTotal = Object.values(rewardsDetails).reduce((acc, curr) => acc + curr, 0)
+      rewardsDetails.multipliers = multipliers
 
       setRewardsTotal(rewardsTotal)
       setRewards(rewardsDetails)
