@@ -19,6 +19,7 @@ import PasswordInput from './PasswordInput/PasswordInput';
 import Toggle from './Toggle/Toggle';
 import ToolTip from './ToolTip/ToolTip';
 import NoFundsPlaceholder from './NoFundsPlaceholder/NoFundsPlaceholder';
+import Alert from './Alert';
 
 export {
     AddressBook,
@@ -41,5 +42,6 @@ export {
     PasswordInput,
     Toggle,
     ToolTip,
-    NoFundsPlaceholder
+    NoFundsPlaceholder,
+    Alert
 };

@@ -1,0 +1,54 @@
+@import '../../../variables.scss';
+
+.alert {
+    padding: 10px 20px;
+    border-radius: 0;
+    border-width: 2px;
+    border-style: solid;
+    font-size: 1.1rem;
+
+    &.clickable {
+        cursor: pointer;
+    }
+
+    &.warning {
+        color: $warning-color;
+        border-color: $warning-color;
+    }
+
+    &.info {
+        color: $info-color;
+        border-color: $info-color;
+    }
+
+    &.danger {
+        color: $danger-color;
+        border-color: $danger-color;
+    }
+
+    &.success {
+        color: $success-color;
+        border-color: $success-color;
+    }
+
+    .content {
+       display: flex;
+       flex-direction: row;
+       align-items: center;
+    }
+
+    .title {
+        font-size: 1.3rem;
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
+
+    .icon {
+        margin-right: 10px;
+        
+        &.after {
+            margin-right: 0;
+            margin-left: 10px;
+        }
+    }
+}
