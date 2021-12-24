@@ -70,6 +70,20 @@ const StakingMigrateModal = ({ balances, account, addRequest }) => {
         <Button clear icon={<MdOutlineClose />} onClick={() => hideModal()}>Close</Button>
     </>
 
+    const migrateAllButton = ({ balances }) =>
+        <>
+            <ToolTip label="Migrate current signer balances to Ambire wallet to farm WALLET token">
+                <Button
+                    small
+                    onClick={() => {
+                        balances.forEach(
+                            ({ symbol, address, balance }) =>
+                                onMigrate({ symbol, address, balance })
+                        )
+                    }}>Migrate All</Button>
+            </ToolTip>
+        </>
+
     return (
         <Modal id="adx-staking-migrate-modal" title="Migrate ADX stakings" buttons={modalButtons}>
             {
@@ -95,8 +109,13 @@ const StakingMigrateModal = ({ balances, account, addRequest }) => {
             <div id="info">
                 {`Migrate your ADX stakigs tokens to your Ambire wallet and start earning $WALLET tokens `}
                 <a href="https://blog.ambire.com/announcing-the-wallet-token-a137aeda9747" target="_blank" rel="noreferrer">Read More</a>
-           
+
             </div>
+            {balances.length > 1 &&
+                <div id='migrate-all'>
+                    {migrateAllButton({ balances })}
+                </div>
+            }
         </Modal>
     )
 }

@@ -65,6 +65,11 @@
             margin-top: 1em;
             opacity: 0.8;
         }
+        
+        #migrate-all {
+            margin-top: 1rem;
+            @include flex-center-center;
+        }
     }
     
     .buttons {
