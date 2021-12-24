@@ -28,6 +28,13 @@ const v2VaultsAddresses = [
     '0xd9788f3931Ede4D5018184E198699dC6d66C1915',
 ]
 
+const customVaultMetadata = {
+    '0xa258C4606Ca8206D8aA700cE2143D7db854D168c': {
+        displayName: 'WETH',
+        displayIcon: 'https://etherscan.io/token/images/weth_28.png'
+    }
+}
+
 const ERC20Interface = new Interface(ERC20ABI)
 const YearnVaultInterface = new Interface(YEARN_VAULT_ABI)
 
@@ -52,15 +59,20 @@ const YearnCard = ({ networkId, accountId, tokens, addRequest }) => {
 
         const v2Vaults = await yearn.vaults.get(v2VaultsAddresses)
         const vaults = v2Vaults.map(({ address, metadata, symbol, token, decimals }) => {
-            const apy = (metadata?.apy?.net_apy * 100).toFixed(2) || 0
+            const { apy, displayName, displayIcon} = {
+                ...metadata,
+                ...customVaultMetadata[address] || {}
+            }
+            const formattedAPY = (apy?.net_apy * 100).toFixed(2) || 0
+
             return {
                 vaultAddress: address,
-                apy,
-                icon: metadata.displayIcon,
+                apy: formattedAPY,
+                icon: displayIcon,
                 value: address,
                 token: {
                     address: token,
-                    symbol: metadata.displayName,
+                    symbol: displayName,
                     decimals
                 },
                 yToken: {
@@ -144,7 +156,8 @@ const YearnCard = ({ networkId, accountId, tokens, addRequest }) => {
         if (!item) return
 
         const { vaultAddress, decimals } = item
-        const bigNumberAmount = parseUnits(amount.toString(), decimals)
+        const parsedAmount = amount.slice(0, amount.indexOf('.') + Number(decimals) + 1);
+        const bigNumberAmount = parseUnits(parsedAmount, decimals)
 
         if (type === 'Deposit') {
             await approveToken(vaultAddress, item.tokenAddress, ethers.constants.MaxUint256)
@@ -161,14 +174,10 @@ const YearnCard = ({ networkId, accountId, tokens, addRequest }) => {
             }
         } else if (type === 'Withdraw') {
             try {
-                const vaultContract = new Contract(vaultAddress, YearnVaultInterface, provider)
-                const pricePerShare = await vaultContract.pricePerShare()
-                const sharesAmount = parseUnits((bigNumberAmount.toString() / pricePerShare.toString()).toFixed(decimals), decimals)
-
                 addRequestTxn(`yearn_vault_withdraw_${Date.now()}`, {
                     to: vaultAddress,
                     value: '0x0',
-                    data: YearnVaultInterface.encodeFunctionData('withdraw', [sharesAmount.toHexString(), accountId])
+                    data: YearnVaultInterface.encodeFunctionData('withdraw', [bigNumberAmount.toHexString(), accountId])
                 })
             } catch(e) {
                 console.error(e)

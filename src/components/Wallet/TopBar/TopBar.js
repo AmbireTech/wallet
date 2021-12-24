@@ -1,6 +1,7 @@
 import "./TopBar.scss";
 
 import React, { useEffect, useState } from "react";
+import { NavLink } from "react-router-dom";
 import { MdOutlineArrowForward, MdOutlineClose, MdOutlineMenu } from "react-icons/md";
 import { Button, Select, ToolTip } from "../../common";
 import Accounts from "./Accounts/Accounts";
@@ -64,6 +65,10 @@ const TopBar = ({
         </div>
       </div>
 
+      <NavLink to={'/wallet/dashboard'}>
+        <div id="logo" />
+        <div id="icon" />
+      </NavLink>
       <div className={`container ${isMenuOpen ? 'open' : ''}`}>
         {
           !isLoading && (errMsg || !data) ?
