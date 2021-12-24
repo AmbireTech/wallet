@@ -1,8 +1,7 @@
 import "./TopBar.scss";
 
 import React, { useEffect, useState } from "react";
-import { MdOutlineArrowForward, MdOutlineClose, MdOutlineMenu, MdAirplaneTicket } from "react-icons/md";
-import { GiProfit } from "react-icons/gi"
+import { MdOutlineArrowForward, MdOutlineClose, MdOutlineMenu } from "react-icons/md";
 import { Button, Select, ToolTip } from "../../common";
 import Accounts from "./Accounts/Accounts";
 import DApps from "./DApps/DApps";
@@ -10,7 +9,6 @@ import * as blockies from 'blockies-ts';
 import Links from "./Links/Links";
 import { useModals } from "../../../hooks";
 import { WalletTokenModal } from "../../Modals";
-import { StakingMigrateModal } from "../../Modals";
 
 const TopBar = ({
   connections,
@@ -24,8 +22,6 @@ const TopBar = ({
   setNetwork,
   allNetworks,
   rewardsData,
-  signerStaking,
-  addRequest
 }) => {
   const { showModal } = useModals()
   const [isMenuOpen, setMenuOpen] = useState(false)
@@ -42,7 +38,6 @@ const TopBar = ({
   const account = accounts.find(({ id }) => id === selectedAcc)
 
   const showWalletTokenModal = () => showModal(<WalletTokenModal rewards={rewards}/>)
-  const showStakingMigrationModal = () => showModal(<StakingMigrateModal balances={signerStaking.balances} addRequest={addRequest} account={account}/>)
 
   useEffect(() => {
       if (errMsg || !data || !data.success) return
@@ -77,12 +72,6 @@ const TopBar = ({
             </ToolTip>
             :
             <Button small border disabled={isLoading} onClick={showWalletTokenModal}>{ rewardsTotal.toFixed(3) } WALLET</Button>
-        }
-        { 
-          signerStaking.hasStaking && network.id === 'ethereum'  && 
-          <ToolTip label="You have ADX staking tokes on you connected signer address. Migrate them and start earning WALLET tokens.">
-            <Button small border icon={<GiProfit />} disabled={isLoading} onClick={showStakingMigrationModal}> Migrate</Button> 
-          </ToolTip>
         }
         <DApps connections={connections} connect={connect} disconnect={disconnect}/>
         <Accounts accounts={accounts} selectedAddress={selectedAcc} onSelectAcc={onSelectAcc} onRemoveAccount={onRemoveAccount}/>
