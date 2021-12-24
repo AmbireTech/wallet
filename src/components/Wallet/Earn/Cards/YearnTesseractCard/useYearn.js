@@ -1,16 +1,13 @@
-import Card from '../../Card/Card'
-
-import { useCallback, useEffect, useState, useMemo, useRef } from 'react'
+import ERC20ABI from 'adex-protocol-eth/abi/ERC20.json'
+import { useCallback, useState } from 'react'
+import YEARN_VAULT_ABI from '../../../../../consts/YearnVaultABI'
+import { Yearn } from '@yfi/sdk'
 import { ethers } from 'ethers'
 import { parseUnits } from '@ethersproject/units'
 import { Contract } from '@ethersproject/contracts'
-import { getDefaultProvider } from '@ethersproject/providers'
 import { Interface } from '@ethersproject/abi'
-import ERC20ABI from 'adex-protocol-eth/abi/ERC20.json'
-import { Yearn } from '@yfi/sdk'
-import YEARN_VAULT_ABI from '../../../../../consts/YearnVaultABI'
-import networks from '../../../../../consts/networks'
 import { useToasts } from '../../../../../hooks/toasts'
+
 import YEARN_ICON from '../../../../../resources/yearn.svg'
 
 const v2VaultsAddresses = [
@@ -38,23 +35,15 @@ const customVaultMetadata = {
 const ERC20Interface = new Interface(ERC20ABI)
 const YearnVaultInterface = new Interface(YEARN_VAULT_ABI)
 
-const YearnCard = ({ networkId, accountId, tokens, addRequest }) => {
+const useYearn = ({ tokens, networkDetails, accountId, provider, currentNetwork, addRequestTxn }) => {
     const { addToast } = useToasts()
 
-    const currentNetwork = useRef()
-    const [loading, setLoading] = useState([])
     const [tokensItems, setTokensItems] = useState([])
     const [details, setDetails] = useState([])
 
-    const unavailable = networkId !== 'ethereum'
-    const networkDetails = networks.find(({ id }) => id === networkId)
     const getTokenFromPortfolio = useCallback(tokenAddress => tokens.find(({ address }) => address.toLowerCase() === tokenAddress.toLowerCase()) || {}, [tokens])
-    const addRequestTxn = (id, txn, extraGas = 0) => addRequest({ id, type: 'eth_sendTransaction', chainId: networkDetails.chainId, account: accountId, txn, extraGas })
-    const provider = useMemo(() => getDefaultProvider(networkDetails.rpc), [networkDetails.rpc])
 
     const loadVaults = useCallback(async () => {
-        if (unavailable) return
-    
         const yearn = new Yearn(networkDetails.chainId, { provider })
 
         const v2Vaults = await yearn.vaults.get(v2VaultsAddresses)
@@ -122,7 +111,7 @@ const YearnCard = ({ networkId, accountId, tokens, addRequest }) => {
             ...depositTokens,
             ...withdrawTokens
         ])
-    }, [getTokenFromPortfolio, provider, networkDetails, unavailable])
+    }, [getTokenFromPortfolio, provider, networkDetails, currentNetwork])
 
     const onTokenSelect = useCallback(address => {
         const selectedToken = tokensItems.find(t => t.tokenAddress === address)
@@ -186,30 +175,14 @@ const YearnCard = ({ networkId, accountId, tokens, addRequest }) => {
         }
     }
 
-    useEffect(() => {
-        async function load() {
-            await loadVaults()
-            setLoading(false)
-        }
-        load()
-    }, [loadVaults])
-
-    useEffect(() => {
-        currentNetwork.current = networkId
-        setLoading(true)
-    }, [networkId])
-
-    return (
-        <Card
-            loading={loading}
-            icon={YEARN_ICON}
-            unavailable={unavailable}
-            tokensItems={tokensItems}
-            details={details}
-            onTokenSelect={onTokenSelect}
-            onValidate={onValidate}
-        />
-    )
+    return {
+        icon: YEARN_ICON,
+        loadVaults,
+        tokensItems,
+        details,
+        onTokenSelect,
+        onValidate
+    }
 }
 
-export default YearnCard
+export default useYearn
