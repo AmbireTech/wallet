@@ -48,7 +48,7 @@ const StakingMigrateModal = ({ balances, account, addRequest }) => {
 
     const onMigrate = useCallback(async ({ symbol, address, balance }) => {
         try {
-            await approveToken(symbol, address, balance)
+            await approveToken(symbol, address, balance.toHexString())
             addRequestTxn(`signer_transfer_${symbol}_migration_${Date.now()}`, {
                 to: address,
                 value: '0x0',
