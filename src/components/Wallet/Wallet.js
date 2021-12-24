@@ -34,6 +34,10 @@ export default function Wallet(props) {
         selectedNetwork={props.network}
         selectedAccount={props.selectedAcc}
         setNetwork={props.setNetwork}
+        signerStaking={props.signerStaking}
+        accounts={props.accounts}
+        addRequest={props.addRequest}
+        network={props.network}
       />
     },
     {

@@ -2,18 +2,35 @@ import './Dashboard.scss'
 
 import { useEffect, useLayoutEffect, useState } from 'react'
 
-import { Chart, Loading, Segments } from '../../common'
+import { Chart, Loading, Segments, ToolTip, Alert } from '../../common'
 import Balances from './Balances/Balances'
 import Protocols from './Protocols/Protocols'
 import Collectibles from './Collectibles/Collectibles'
 import { MdOutlineInfo } from 'react-icons/md'
+import { GiFarmer } from "react-icons/gi"
+import { StakingMigrateModal } from "../../Modals";
+import { useModals } from "../../../hooks";
 
-export default function Dashboard({ portfolio, selectedNetwork, selectedAccount, setNetwork }) {
 
+export default function Dashboard({ 
+    portfolio, 
+    selectedNetwork, 
+    selectedAccount, 
+    setNetwork,
+    signerStaking,
+    network,
+    addRequest,
+    accounts,
+}) {
+    const { showModal } = useModals()
     const [chartTokensData, setChartTokensData] = useState([]);
     const [chartProtocolsData, setChartProtocolsData] = useState([]);
     const [chartType, setChartType] = useState([]);
     const [tableType, setTableType] = useState([]);
+
+    const account = accounts.find(({ id }) => id === selectedAccount)
+
+    const showStakingMigrationModal = () => showModal(<StakingMigrateModal balances={signerStaking.balances} addRequest={addRequest} account={account}/>)
 
     const chartSegments = [
         {
@@ -62,6 +79,14 @@ export default function Dashboard({ portfolio, selectedNetwork, selectedAccount,
 
     return (
         <section id="dashboard">
+            { 
+                signerStaking.hasStaking && network.id === 'ethereum'  && 
+                <ToolTip label="You have ADX staking tokes on you connected signer address. Migrate them and start earning WALLET tokens.">
+                    <Alert variant='warning' icon={<GiFarmer />} onClick={showStakingMigrationModal}>
+                        ADX staking tokens are detected on your signer address. Click here to migrate them to this Ambire wallet and start earning WALLET tokens
+                    </Alert> 
+                </ToolTip>
+            }
             <div id="overview">
                 <div id="balance" className="panel">
                     <div className="title">Balance</div>
