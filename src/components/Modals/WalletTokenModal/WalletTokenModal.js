@@ -67,6 +67,11 @@ const WalletTokenModal = ({ rewards }) => {
                     { claimButton }
                 </div>
             </div> */}
+            { rewards.multipliers && (<div className='multipliers'>
+                {rewards.multipliers.map(({ mul, name }) => (
+                    <Button small border disabled key={name}>{mul}x {name} multiplier</Button>
+                ))}
+            </div>)}
             <div id="info">
                 You are receiving $WALLETS for holding funds on your Ambire wallet as an early user. Have in mind that $WALLET has not launched yet. <a href="https://blog.ambire.com/announcing-the-wallet-token-a137aeda9747" target="_blank" rel="noreferrer">Read More</a>
             </div>
