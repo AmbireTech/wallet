@@ -1,12 +1,11 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import Card from '../../Card/Card'
-import TESSERACT_ICON from '../../../../../resources/tesseract.svg'
-import { useToasts } from '../../../../../hooks/toasts'
-import TesseractVaultABI from '../../../../../consts/TesseractVaultABI'
-import { Contract, getDefaultProvider, constants } from 'ethers'
+import { useCallback, useState } from 'react'
+import { constants, Contract } from 'ethers'
 import { Interface, parseUnits } from 'ethers/lib/utils'
-import networks from '../../../../../consts/networks'
 import ERC20ABI from 'adex-protocol-eth/abi/ERC20.json'
+import TesseractVaultABI from '../../../../../consts/TesseractVaultABI'
+import { useToasts } from '../../../../../hooks/toasts'
+
+import TESSERACT_ICON from '../../../../../resources/tesseract.svg'
 
 const VAULTS = [
     ['tvUSDC', '0x57bDbb788d0F39aEAbe66774436c19196653C3F2', 'https://polygonscan.com/token/images/centre-usdc_32.png'],
@@ -21,28 +20,11 @@ const TESR_API_ENDPOINT = 'https://prom.tesr.finance/api/v1'
 const ERC20Interface = new Interface(ERC20ABI)
 const TesseractVaultInterface = new Interface(TesseractVaultABI)
 
-const TesseractCard = ({ networkId, accountId, tokens, addRequest }) => {
+const useTesseract = ({ tokens, provider, networkId, currentNetwork, accountId, addRequestTxn }) => {
     const { addToast } = useToasts()
-
-    const network = networks.find(({ id }) => id === networkId)
-    const provider = useMemo(() => getDefaultProvider(network.rpc), [network])
-    const disabled = useMemo(() => networkId !== 'polygon', [networkId])
-    const currentNetwork = useRef(networkId)
-    const [loading, setLoading] = useState(true)
-
-    const addRequestTxn = (id, txn, extraGas = 0) => addRequest({ id, type: 'eth_sendTransaction', chainId: network.chainId, account: accountId, txn, extraGas })
 
     const [tokensItems, setTokensItems] = useState([])
     const [details, setDetails] = useState([])
-
-    const onTokenSelect = useCallback(address => {
-        const selectedToken = tokensItems.find(t => t.value === address)
-        if (selectedToken) setDetails([
-            ['Annual Percentage Yield (APY)', `${selectedToken.apy}%`],
-            ['Lock', 'No Lock'],
-            ['Type', 'Variable Rate'],
-        ])
-    }, [tokensItems])
 
     const toTokensItems = useCallback((type, vaults) => {
         return vaults.map(({ vaultAddress, token, tToken, icon, apy }) => {
@@ -76,7 +58,7 @@ const TesseractCard = ({ networkId, accountId, tokens, addRequest }) => {
         }
     }, [addToast])
 
-    const fetchVaults = useCallback(async () => {
+    const loadVaults = useCallback(async () => {
         const vaults = await Promise.all(VAULTS.map(async ([ticker, address, icon]) => {
             try {
                 const tesseractVaultContract = new Contract(address, TesseractVaultABI, provider)
@@ -120,7 +102,16 @@ const TesseractCard = ({ networkId, accountId, tokens, addRequest }) => {
             ...depositTokenItems,
             ...withdrawTokenItems
         ])
-    }, [networkId, fetchVaultAPY, provider, toTokensItems, addToast])
+    }, [networkId, fetchVaultAPY, provider, toTokensItems, addToast, currentNetwork])
+
+    const onTokenSelect = useCallback(address => {
+        const selectedToken = tokensItems.find(t => t.value === address)
+        if (selectedToken) setDetails([
+            ['Annual Percentage Yield (APY)', `${selectedToken.apy}%`],
+            ['Lock', 'No Lock'],
+            ['Type', 'Variable Rate'],
+        ])
+    }, [tokensItems])
 
     const approveToken = async (vaultAddress, tokenAddress, bigNumberHexAmount) => {
         try {
@@ -174,30 +165,14 @@ const TesseractCard = ({ networkId, accountId, tokens, addRequest }) => {
         }
     }
 
-    useEffect(() => {
-        async function loadVaults() {
-            !disabled && await fetchVaults()
-            setLoading(false)
-        }
-        loadVaults()
-    }, [disabled, fetchVaults])
-
-    useEffect(() => {
-        currentNetwork.current = networkId
-        setLoading(true)
-    }, [networkId])
-
-    return (
-        <Card
-            loading={loading}
-            unavailable={disabled}
-            icon={TESSERACT_ICON}
-            tokensItems={tokensItems}
-            details={details}
-            onTokenSelect={onTokenSelect}
-            onValidate={onValidate}
-        />
-    )
+    return {
+        icon: TESSERACT_ICON,
+        loadVaults,
+        tokensItems,
+        details,
+        onTokenSelect,
+        onValidate
+    }
 }
 
-export default TesseractCard
+export default useTesseract
