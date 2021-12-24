@@ -11,7 +11,16 @@ const etherscans = {
 const yearnVaults = [
 	{ name: 'Yearn WETH Vault', network: 'ethereum', addr: '0xa258C4606Ca8206D8aA700cE2143D7db854D168c', abiName: 'YearnVault', baseToken: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2' },
 	{ name: 'Yearn USDC Vault', network: 'ethereum', addr: '0xa354F35829Ae975e850e23e9615b11Da1B3dC4DE', baseToken: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48', decimals: 6 },
-	{ name: 'Yearn USDT Vault', network: 'ethereum', addr: '0x2f08119c6f07c006695e079aafc638b8789faf18', baseToken: '0xdAC17F958D2ee523a2206206994597C13D831ec7', decimals: 6 }
+	{ name: 'Yearn USDT Vault', network: 'ethereum', addr: '0x7Da96a3891Add058AdA2E826306D812C638D87a7', baseToken: '0xdAC17F958D2ee523a2206206994597C13D831ec7', decimals: 6 },
+	{ name: 'Yearn DAI Vault', network: 'ethereum', addr: '0xdA816459F1AB5631232FE5e97a05BBBb94970c95', baseToken: '0x6B175474E89094C44Da98b954EedeAC495271d0F', decimals: 18 },
+	{ name: 'Yearn YFI Vault', network: 'ethereum', addr: '0xdb25cA703181E7484a155DD612b06f57E12Be5F0', baseToken: '0x0bc529c00C6401aEF6D220BE8C6Ea1667F6Ad93e', decimals: 18 },
+	{ name: 'Yearn WBTC Vault', network: 'ethereum', addr: '0xA696a63cc78DfFa1a63E9E50587C197387FF6C7E', baseToken: '0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599', decimals: 8 },
+	{ name: 'Yearn 1INCH Vault', network: 'ethereum', addr: '0xB8C3B7A2A618C552C23B1E4701109a9E756Bab67', baseToken: '0x111111111117dC0aa78b770fA6A738034120C302', decimals: 18 },
+	{ name: 'Yearn HEGIC Vault', network: 'ethereum', addr: '0xe11ba472F74869176652C35D30dB89854b5ae84D', baseToken: '0x584bC13c7D411c00c01A62e8019472dE68768430', decimals: 18 },
+	{ name: 'Yearn UNI Vault', network: 'ethereum', addr: '0xFBEB78a723b8087fD2ea7Ef1afEc93d35E8Bed42', baseToken: '0x1f9840a85d5aF5bf1D1762F925BDADdC4201F984', decimals: 18 },
+	{ name: 'Yearn SUSHI Vault', network: 'ethereum', addr: '0x6d765CbE5bC922694afE112C140b8878b9FB0390', baseToken: '0x6B3595068778DD592e39A122f4f5a5cF09C90fE2', decimals: 18 },
+	{ name: 'Yearn TUSD Vault', network: 'ethereum', addr: '0xFD0877d9095789cAF24c98F7CCe092fa8E120775', baseToken: '0x0000000000085d4780B73119b644AE5ecd22b376', decimals: 18 },
+	{ name: 'Yearn AAVE Vault', network: 'ethereum', addr: '0xd9788f3931Ede4D5018184E198699dC6d66C1915', baseToken: '0x7Fc66500c84A76Ad7e9c93437bFc5Ac33E2DDaE9', decimals: 18 },
 ]
 const tesseractVaults = [
 	{ name: 'Tesseract USDC Vault', network: 'polygon', addr: '0x57bDbb788d0F39aEAbe66774436c19196653C3F2', baseToken: '0x2791bca1f2de4661ed88a30c99a7a9449aa84174', decimals: 6, abiName: 'TesseractVault' },

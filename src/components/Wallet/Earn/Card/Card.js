@@ -33,7 +33,7 @@ const Card = ({ loading, unavailable, tokensItems, icon, details, onTokenSelect,
         if (segment === segments[1].value) setTokens(sortedTokenItems.filter(({ type }) => type === 'withdraw'))
     }, [segment, sortedTokenItems])
 
-    useEffect(() => setAmount(0), [segment])
+    useEffect(() => setAmount(0), [token, segment])
 
     useEffect(() => {
         onTokenSelect(token)
