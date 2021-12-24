@@ -149,6 +149,14 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/t
 node scripts/generateContractInfo.js > src/consts/humanizerInfo.json
 ```
 
+## Audits
+
+The contracts used by Ambire Wallet have been audited by:
+* [CodeArena](https://code423n4.com/reports/2021-10-ambire/)
+* [G0 group](https://github.com/g0-group/Audits/blob/master/AdExNetwork.md): audited AdEx Network but the used Identity.sol was carried over to Ambire
+
+Additionally, there's an ongoing [Immunefi bug bounty](https://immunefi.com/bounty/ambire/).
+
 ## Change log
 
 ### First private beta (v0.1.0)
