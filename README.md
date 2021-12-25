@@ -219,3 +219,4 @@ Additionally, there's an ongoing [Immunefi bug bounty](https://immunefi.com/boun
 * WALLET token distribution modal
 * Link to the Help Center added
 * Top right dropdown with helpful links
+* Improved parsing of Uniswap V3 transactions following their updated router
