@@ -75,7 +75,6 @@ const uniV2Mapping = {
 }
 
 const ifaceV3 = new Interface(abis.UniV3Router)
-const ifaceV32 = new Interface(abis.UniV3Router2)
 const parsePath = pathBytes => {
     // some decodePacked fun
     // can we do this with Ethers AbiCoder? probably not
@@ -86,22 +85,20 @@ const parsePath = pathBytes => {
     }
     return path
 }
-const handleMulticall = (txn, network) => {
-  const args = ifaceV32.parseTransaction(txn).args
-  const calls = args[args.length - 1]
-  // @TODO: Multicall that outputs ETH should be detected as such and displayed as one action
-  // the current verbosity of "Swap ..., unwrap WETH to ETH" will be a nice pedantic quirk
-  const parsed = calls.map(data => {
-    const sigHash = data.slice(0, 10)
-    const humanizer = uniV3Mapping[sigHash]
-    return humanizer ? humanizer({ ...txn, data }, network) : null
-  }).flat().filter(x => x)
-  return parsed.length ? parsed : [`Unknown Uni V3 interaction`]
-}
+
 const uniV3Mapping = {
-  [ifaceV32.getSighash('multicall(bytes32,bytes[])')]: handleMulticall,
-  [ifaceV32.getSighash('multicall(uint256,bytes[])')]: handleMulticall,
-  [ifaceV32.getSighash('multicall(bytes[])')]: handleMulticall,
+  [ifaceV3.getSighash('multicall')]: (txn, network) => {
+    const args = ifaceV3.parseTransaction(txn).args
+    const calls = args[args.length - 1]
+    // @TODO: Multicall that outputs ETH should be detected as such and displayed as one action
+    // the current verbosity of "Swap ..., unwrap WETH to ETH" will be a nice pedantic quirk
+    const parsed = calls.map(data => {
+      const sigHash = data.slice(0, 10)
+      const humanizer = uniV3Mapping[sigHash]
+      return humanizer ? humanizer({ ...txn, data }, network) : null
+    }).flat().filter(x => x)
+    return parsed.length ? parsed : [`Unknown Uni V3 interaction`]
+  },
   // NOTE: selfPermit is not supported cause it requires an ecrecover signature
   [ifaceV3.getSighash('exactInputSingle')]: (txn, network) => {
     const [ params ] = ifaceV3.parseTransaction(txn).args
@@ -128,5 +125,60 @@ const uniV3Mapping = {
   },
 }
 
-const mapping = { ...uniV2Mapping, ...uniV3Mapping }
+const ifaceV32 = new Interface(abis.UniV3Router2)
+const uniV32Mapping = {
+  [ifaceV32.getSighash('multicall(uint256,bytes[])')]: (txn, network) => {
+    const [deadline, calls] = ifaceV32.parseTransaction(txn).args
+    // @TODO: Multicall that outputs ETH should be detected as such and displayed as one action
+    // the current verbosity of "Swap ..., unwrap WETH to ETH" will be a nice pedantic quirk
+    const parsed = calls.map(data => {
+      const sigHash = data.slice(0, 10)
+      const humanizer = uniV32Mapping[sigHash]
+      return humanizer ? humanizer({ ...txn, data }, network) : null
+    }).flat().filter(x => x)
+    return (parsed.length ? parsed : [`Unknown Uni V3 interaction`])
+      .concat([deadlineText(deadline)]).filter(x => x)
+  },
+  // NOTE: selfPermit is not supported cause it requires an ecrecover signature
+  [ifaceV32.getSighash('exactInputSingle')]: (txn, network) => {
+    const [ params ] = ifaceV32.parseTransaction(txn).args
+    // @TODO: consider fees
+    return [`Swap ${token(params.tokenIn, params.amountIn)} for at least ${token(params.tokenOut, params.amountOutMinimum)}${recipientText(params.recipient, txn.from)}`]
+  },
+  [ifaceV32.getSighash('exactInput')]: (txn, network) => {
+    const [ params ] = ifaceV32.parseTransaction(txn).args
+    const path = parsePath(params.path)
+    return [`Swap ${token(path[0], params.amountIn)} for at least ${token(path[path.length - 1], params.amountOutMinimum)}${recipientText(params.recipient, txn.from)}`]
+  },
+  [ifaceV32.getSighash('exactOutputSingle')]: (txn, network) => {
+    const [ params ] = ifaceV32.parseTransaction(txn).args
+    return [`Swap up to ${token(params.tokenIn, params.amountInMaximum)} for ${token(params.tokenOut, params.amountOut)}${recipientText(params.recipient, txn.from)}`]
+  },
+  [ifaceV32.getSighash('exactOutput')]: (txn, network) => {
+    const [ params ] = ifaceV32.parseTransaction(txn).args
+    const path = parsePath(params.path)
+    return [`Swap up to ${token(path[0], params.amountInMaximum)} for ${token(path[path.length - 1], params.amountOut)}${recipientText(params.recipient, txn.from)}}`]
+  },
+  [ifaceV32.getSighash('swapTokensForExactTokens')]: (txn, network) => {
+    // NOTE: is amountInMax set when dealing with ETH? it should be... cause value and max are not the same thing
+    const { amountOut, amountInMax, path, to } = ifaceV32.parseTransaction(txn).args
+    return [`Swap up to ${token(path[0], amountInMax)} for ${token(path[path.length - 1], amountOut)}${recipientText(to, txn.from)}}`]
+  },
+  [ifaceV32.getSighash('swapExactTokensForTokens')]: (txn, network) => {
+    // NOTE: is amountIn set when dealing with ETH?
+    const { amountIn, amountOutMin, path, to } = ifaceV32.parseTransaction(txn).args
+    return [`Swap ${token(path[0], amountIn)} for at least ${token(path[path.length - 1], amountOutMin)}${recipientText(to, txn.from)}`]
+  },
+  [ifaceV32.getSighash('unwrapWETH9(uint256)')]: (txn, network) => {
+    const [ amountMin ] = ifaceV32.parseTransaction(txn).args
+    return [`Unwrap at least ${nativeToken(network, amountMin)}`]
+  },
+  [ifaceV32.getSighash('unwrapWETH9(uint256,address)')]: (txn, network) => {
+    const [ amountMin, recipient ] = ifaceV32.parseTransaction(txn).args
+    return [`Unwrap at least ${nativeToken(network, amountMin)}${recipientText(recipient, txn.from)}`]
+  },
+}
+
+
+const mapping = { ...uniV2Mapping, ...uniV3Mapping, ...uniV32Mapping }
 export default mapping
