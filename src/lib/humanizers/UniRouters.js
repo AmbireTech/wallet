@@ -75,6 +75,7 @@ const uniV2Mapping = {
 }
 
 const ifaceV3 = new Interface(abis.UniV3Router)
+const ifaceV32 = new Interface(abis.UniV3Router2)
 const parsePath = pathBytes => {
     // some decodePacked fun
     // can we do this with Ethers AbiCoder? probably not
@@ -85,16 +86,22 @@ const parsePath = pathBytes => {
     }
     return path
 }
+const handleMulticall = (txn, network) => {
+  const args = ifaceV32.parseTransaction(txn).args
+  const calls = args[args.length - 1]
+  // @TODO: Multicall that outputs ETH should be detected as such and displayed as one action
+  // the current verbosity of "Swap ..., unwrap WETH to ETH" will be a nice pedantic quirk
+  const parsed = calls.map(data => {
+    const sigHash = data.slice(0, 10)
+    const humanizer = uniV3Mapping[sigHash]
+    return humanizer ? humanizer({ ...txn, data }, network) : null
+  }).flat().filter(x => x)
+  return parsed.length ? parsed : [`Unknown Uni V3 interaction`]
+}
 const uniV3Mapping = {
-  [ifaceV3.getSighash('multicall')]: (txn, network) => {
-    const [ calls ] = ifaceV3.parseTransaction(txn).args
-    // @TODO: Multicall that outputs ETH should be detected as such and displayed as one action
-    // the current verbosity of "Swap ..., unwrap WETH to ETH" will be a nice pedantic quirk
-    return calls.map(data => {
-      const humanizer = uniV3Mapping[data.slice(0, 10)]
-      return humanizer ? humanizer({ ...txn, data }, network) : null
-    }).flat().filter(x => x)
-  },
+  [ifaceV32.getSighash('multicall(bytes32,bytes[])')]: handleMulticall,
+  [ifaceV32.getSighash('multicall(uint256,bytes[])')]: handleMulticall,
+  [ifaceV32.getSighash('multicall(bytes[])')]: handleMulticall,
   // NOTE: selfPermit is not supported cause it requires an ecrecover signature
   [ifaceV3.getSighash('exactInputSingle')]: (txn, network) => {
     const [ params ] = ifaceV3.parseTransaction(txn).args
