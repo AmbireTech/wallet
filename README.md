@@ -3,11 +3,9 @@
 
 ### All documentation
 
-* Getting started user guide: https://www.grnewsletters.com/archive/b9fc021c37e5656340e2136f9c4f1153/You-are-invited-to-Ambire-Beta-1043499604.html
 * Smart contract documentation, originally intended for CodeArena: https://github.com/AmbireTech/code4rena
 	* Latest smart contract source code: https://github.com/AmbireTech/adex-protocol-eth/tree/codearena-fixes
 * Security model: https://gist.github.com/Ivshti/fe86f13c3adff3404a1f5ce1e364304c
-* Tokenomics (confidential): https://gist.github.com/Ivshti/c6b93745dd0ba0d9c8256bc39769a601
 * Deck: https://docsend.com/view/hqp9xkr2krj6wt8w
 * FAQs: https://help.ambire.com/hc/en-us/categories/4404980091538-Ambire-Wallet
 * Front-end (this repo) development plan and estimation: https://docs.google.com/spreadsheets/d/1pqtRPcNRW98D97GL3nrdoipD3sWehz2k7zWclzYk-SM
@@ -149,6 +147,14 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/t
 node scripts/generateContractInfo.js > src/consts/humanizerInfo.json
 ```
 
+## Audits
+
+The contracts used by Ambire Wallet have been audited by:
+* [CodeArena](https://code423n4.com/reports/2021-10-ambire/)
+* [G0 group](https://github.com/g0-group/Audits/blob/master/AdExNetwork.md): audited AdEx Network but the used Identity.sol was carried over to Ambire
+
+Additionally, there's an ongoing [Immunefi bug bounty](https://immunefi.com/bounty/ambire/).
+
 ## Change log
 
 ### First private beta (v0.1.0)
@@ -212,3 +218,4 @@ node scripts/generateContractInfo.js > src/consts/humanizerInfo.json
 * WALLET token distribution modal
 * Link to the Help Center added
 * Top right dropdown with helpful links
+* Improved parsing of Uniswap V3 transactions following their updated router
