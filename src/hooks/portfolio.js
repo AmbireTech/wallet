@@ -35,19 +35,24 @@ async function supplementTokensDataFromNetwork({ walletAddr, network, tokensData
       return tokensData.filter(td => td.address === t.address)[0] || t
     })
   
+    const limit = 100
     let from = 0; let calls = []
-    for (let i = 1; i <= Math.ceil(tokens.length / 50); i++) {
-    calls.push(tokens.slice(from, (i * 50)))
-        from += 50
+    for (let i = 1; i <= Math.ceil(tokens.length / limit); i++) {
+        calls.push(tokens.slice(from, i * limit))
+        from += limit
     }
     // tokensData separated calls prevent errors from non erc20 tokens
+    // @TODO: separate calls lack pagination like the other ones
+    // NOTE about err handling: errors are caught for each call in balanceOracle, and we retain the original token entry, which contains the balance
     tokensData.filter(td => {
       return !tokens.some(t => t.address === td.address)
     }).forEach(t => calls.push([t]))
   
+    // console.log(calls)
     const tokenBalances = [].concat(...await Promise.all(calls.map(callTokens => {
-          return getTokenListBalance({walletAddr, tokens: callTokens, network, updateBalance})
+          return getTokenListBalance({ walletAddr, tokens: callTokens, network, updateBalance })
       })))
+    // console.log(tokenBalances)
     return tokenBalances
   }
   
