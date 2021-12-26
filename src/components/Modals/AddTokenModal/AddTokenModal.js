@@ -70,6 +70,11 @@ const AddTokenModal = ({ network, account, onAddToken }) => {
         <Button clear icon={<MdOutlineClose/>} onClick={() => hideModal()}>Close</Button>
         <Button icon={<MdOutlineAdd/>} disabled={disabled} onClick={onAdd}>Add</Button>
     </>
+    const tokenStandard = network.id === 'binance-smart-chain' ? 'a BEP20' : (
+        network.id === 'ethereum'
+            ? 'an ERC20'
+            : 'a valid'
+    )
 
     return (
         <Modal id="add-token-modal" title="Add Token" buttons={buttons}>
@@ -81,7 +86,7 @@ const AddTokenModal = ({ network, account, onAddToken }) => {
             {
                 showError ? 
                     <div className="validation-error">
-                        The address you entered does not appear to correspond to an ERC20 token on { network.name }.
+                        The address you entered does not appear to correspond to {tokenStandard} token on { network.name }.
                     </div>
                     :
                     null
