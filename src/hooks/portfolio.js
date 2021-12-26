@@ -24,35 +24,36 @@ if (typeof document.hidden !== 'undefined') {
 }
 let lastOtherProcolsRefresh = null
 
-//use Balance Oracle
+// use Balance Oracle
+function paginateArray(input, limit) {
+    let pages = []
+    let from = 0
+    for (let i = 1; i <= Math.ceil(input.length / limit); i++) {
+        pages.push(input.slice(from, i * limit))
+        from += limit
+    }
+    return pages
+}
 async function supplementTokensDataFromNetwork({ walletAddr, network, tokensData, extraTokens, updateBalance }) {
     if (!walletAddr || walletAddr==="" || !network || !network === "" ) return []
     if (!tokensData || !tokensData[0]) tokensData = checkTokenList(tokensData || []) //tokensData check and populate for test if undefind
     if (!extraTokens || !extraTokens[0]) extraTokens = checkTokenList(extraTokens || [])  //extraTokens check and populate for test if undefind
   
-    //concat predefind token list with extraTokens list (extraTokens must be ERC20)
+    // concat predefined token list with extraTokens list (extraTokens are certainly ERC20)
     let tokens = [ ...new Set(tokenList[network] ? tokenList[network].concat(extraTokens) : [].concat(extraTokens))].map (t => {
       return tokensData.filter(td => td.address === t.address)[0] || t
     })
-  
-    const limit = 100
-    let from = 0; let calls = []
-    for (let i = 1; i <= Math.ceil(tokens.length / limit); i++) {
-        calls.push(tokens.slice(from, i * limit))
-        from += limit
-    }
-    // tokensData separated calls prevent errors from non erc20 tokens
-    // @TODO: separate calls lack pagination like the other ones
-    // NOTE about err handling: errors are caught for each call in balanceOracle, and we retain the original token entry, which contains the balance
-    tokensData.filter(td => {
+    const tokensNotInList = tokensData.filter(td => {
       return !tokens.some(t => t.address === td.address)
-    }).forEach(t => calls.push([t]))
+    })
   
-    // console.log(calls)
-    const tokenBalances = [].concat(...await Promise.all(calls.map(callTokens => {
-          return getTokenListBalance({ walletAddr, tokens: callTokens, network, updateBalance })
-      })))
-    // console.log(tokenBalances)
+    // tokensNotInList: call separately to prevent errors from non-erc20 tokens
+    // NOTE about err handling: errors are caught for each call in balanceOracle, and we retain the original token entry, which contains the balance
+    const calls = paginateArray(tokens, 100).concat(paginateArray(tokensNotInList, 100))
+
+    const tokenBalances = (await Promise.all(calls.map(callTokens => {
+        return getTokenListBalance({ walletAddr, tokens: callTokens, network, updateBalance })
+    }))).flat()
     return tokenBalances
   }
   
@@ -304,7 +305,8 @@ export default function usePortfolio({ currentNetwork, account }) {
         refreshTokensIfVisible()
     }, [currentNetwork, refreshTokensIfVisible])
 
-    // Refresh balance every 90s if visible
+    // Refresh balance every 80s if visible
+    // NOTE: this must be synced (a multiple of) supplementing, otherwise we can end up with weird inconsistencies
     useEffect(() => {
         const refreshInterval = setInterval(refreshTokensIfVisible, 90000)
         return () => clearInterval(refreshInterval)
@@ -312,7 +314,9 @@ export default function usePortfolio({ currentNetwork, account }) {
 
     // Refresh balance every 150s if hidden
     useEffect(() => {
-        const refreshIfHidden = () => document[hidden] && !isBalanceLoading ? fetchTokens(account, currentNetwork) : null
+        const refreshIfHidden = () => document[hidden] && !isBalanceLoading
+            ? fetchTokens(account, currentNetwork)
+            : null
         const refreshInterval = setInterval(refreshIfHidden, 150000)
         return () => clearInterval(refreshInterval)
     }, [account, currentNetwork, isBalanceLoading, fetchTokens])
@@ -334,6 +338,7 @@ export default function usePortfolio({ currentNetwork, account }) {
             currentNetworkTokens.assets = rcpTokenData
 
             // Update stored extraTokens with new rpc data
+            // @TODO this seems unnecessary but we'll have to analyze it again
             try {
                 const storedExtraTokens = JSON.parse(localStorage.extraTokens || '[]') || []
                 const updatedExtraTokens = rcpTokenData.map(updated => {
