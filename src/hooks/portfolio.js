@@ -42,8 +42,8 @@ async function supplementTokensDataFromNetwork({ walletAddr, network, tokensData
     }
     // tokensData separated calls prevent errors from non erc20 tokens
     tokensData.filter(td => {
-      return (tokens.map(t => t.address)?.indexOf(td.address) === -1)
-    }).map (t => calls.push([t]))
+      return !tokens.some(t => t.address === td.address)
+    }).forEach(t => calls.push([t]))
   
     const tokenBalances = [].concat(...await Promise.all(calls.map(callTokens => {
           return getTokenListBalance({walletAddr, tokens: callTokens, network, updateBalance})
