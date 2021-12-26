@@ -14,7 +14,7 @@ import PluginGnosisSafeApps from '../Plugins/GnosisSafeApps/GnosisSafeApps'
 import Collectible from "./Collectible/Collectible"
 import { PermissionsModal } from '../Modals'
 import { useModals, usePermissions } from '../../hooks'
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef } from 'react'
 import { isFirefox } from '../../lib/isFirefox'
 import CrossChain from "./CrossChain/CrossChain"
 
@@ -25,8 +25,6 @@ export default function Wallet(props) {
   const walletContainer = useRef()
 
   const isLoggedIn = useMemo(() => props.accounts.length > 0, [props.accounts])
-
-  const [permissionsOpen, setPermissionsOpen] = useState(false)
 
   const routes = [
     {
@@ -76,7 +74,6 @@ export default function Wallet(props) {
         addRequest={props.addRequest}
         showSendTxns={props.showSendTxns}
         onAddAccount={props.onAddAccount}
-        onOpenPermissions={() => setPermissionsOpen(true)}
       />
     },
     {
@@ -123,13 +120,13 @@ export default function Wallet(props) {
 
     const relayerIdentityURL = `${props.relayerURL}/identity/${account.id}`
 
-    const permissionsModal = <PermissionsModal relayerIdentityURL={relayerIdentityURL} account={account} onAddAccount={props.onAddAccount} onClose={() => setPermissionsOpen(false)}/>
+    const permissionsModal = <PermissionsModal relayerIdentityURL={relayerIdentityURL} account={account} onAddAccount={props.onAddAccount}/>
     const areBlockedPermissions = arePermissionsLoaded
       && ((!isFirefox() && !isClipboardGranted) || !isNoticationsGranted)
     const showCauseOfPermissions = areBlockedPermissions && !modalHidden
     const showCauseOfEmail = !!account.emailConfRequired
-    if (showCauseOfEmail || showCauseOfPermissions || permissionsOpen) showModal(permissionsModal, { disableClose: true })
-  }, [props.relayerURL, props.accounts, props.selectedAcc, props.onAddAccount, showModal, isClipboardGranted, isNoticationsGranted, arePermissionsLoaded, modalHidden, permissionsOpen])
+    if (showCauseOfEmail || showCauseOfPermissions) showModal(permissionsModal, { disableClose: true })
+  }, [props.relayerURL, props.accounts, props.selectedAcc, props.onAddAccount, showModal, isClipboardGranted, isNoticationsGranted, arePermissionsLoaded, modalHidden])
 
   useEffect(() => handlePermissionsModal(), [handlePermissionsModal])
 
