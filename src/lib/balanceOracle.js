@@ -9,28 +9,23 @@ const SPOOFER = '0x0000000000000000000000000000000000000001'
 const blockTag = 'pending'
 const remainingBalancesOracleAddr = '0xF1628de74193Dde3Eed716aB0Ef31Ca2b6347eB1'
 
-// Signature of Error(string)
-const ERROR_SIG = '0x08c379a0'
-// Signature of Panic(uint256)
-const PANIC_SIG = '0x4e487b71'
-
 async function getTokenListBalance ({walletAddr, tokens, network, updateBalance}) {
-  let result = await call ( {walletAddr, tokens, network} )
+  let result = await call({ walletAddr, tokens, network })
   if (result.success) {
     const newBalance = tokens.map(t => {
       const newTokenBalance = result.data.filter(r => r.address === t.address && parseFloat(r.balance) > 0)[0]
       return (newTokenBalance ? {
-        "type": "base",
-        "network": network,
-        "address": newTokenBalance.address,
-        "decimals": newTokenBalance.decimals,
-        "symbol": newTokenBalance.symbol,
-        "price": newTokenBalance.price || 0,
-        "balance": Number(newTokenBalance.balance),
-        "balanceRaw": newTokenBalance.balanceRaw,
-        "updateAt": (new Date()).toString(),
-        "balanceUSD": Number(parseFloat(newTokenBalance.price * newTokenBalance.balance || 0).toFixed(2)),
-        "tokenImageUrl": newTokenBalance.tokenImageUrl || `https://storage.googleapis.com/zapper-fi-assets/tokens/${network}/${newTokenBalance.address}.png`
+        type: "base",
+        network: network,
+        address: newTokenBalance.address,
+        decimals: newTokenBalance.decimals,
+        symbol: newTokenBalance.symbol,
+        price: newTokenBalance.price || 0,
+        balance: Number(newTokenBalance.balance),
+        balanceRaw: newTokenBalance.balanceRaw,
+        updateAt: (new Date()).toString(),
+        balanceUSD: Number(parseFloat(newTokenBalance.price * newTokenBalance.balance || 0).toFixed(2)),
+        tokenImageUrl: newTokenBalance.tokenImageUrl || `https://storage.googleapis.com/zapper-fi-assets/tokens/${network}/${newTokenBalance.address}.png`
       } : t)
     }).filter (t => t && t.balance && parseFloat(t.balance) > 0)
     if (updateBalance && typeof updateBalance === 'function') updateBalance(newBalance)
@@ -66,16 +61,20 @@ async function call ({ walletAddr, tokens, network }) {
   }
   try {
     const callResult = await provider.call(txParams, blockTag)
-    // @TODO: would be more appropriate to throw here
-    if (isErr(callResult)) return {success: false, data: tokens, message: `probably one ot following tokens is not ERC20 and missing balanceOf()`} //hex2a(callResult)
+    if (isErr(callResult)) return { success: false, data: tokens, message: `probably one ot following tokens is not ERC20 and missing balanceOf()` } //hex2a(callResult)
     const balances = coder.decode(['uint[]'], callResult)[0]
     const result = tokens.map((x, i) => ({ ...x, balanceRaw: balances[i].toString(), balance: parseFloat(formatUnits(balances[i], x.decimals)).toFixed(10) }))
-    return {success: true, data: result}
+    return { success: true, data: result }
   } catch(e){
-    return {success: false, data: tokens, message: `probably one ot following tokens is not ERC20 and missing balanceOf()`}
+    return { success: false, data: tokens, message: `probably one ot following tokens is not ERC20 and missing balanceOf()` }
   }
 }
- 
+
+// Signature of Error(string)
+const ERROR_SIG = '0x08c379a0'
+// Signature of Panic(uint256)
+const PANIC_SIG = '0x4e487b71'
+
 function isErr (hex) {
 	return hex.startsWith(ERROR_SIG) || hex.startsWith(PANIC_SIG)
 }
