@@ -314,7 +314,7 @@ export default function usePortfolio({ currentNetwork, account }) {
 
     // Get supplement tokens data every 20s
     useEffect(() => {
-        const getSupllementTokenData = async () => {
+        const getSupplementTokenData = async () => {
             const currentNetworkTokens = tokensByNetworks.find(({ network }) => network === currentNetwork)
             if (!currentNetworkTokens) return
 
@@ -330,7 +330,7 @@ export default function usePortfolio({ currentNetwork, account }) {
 
             // Update stored extraTokens with new rpc data
             try {
-                const storedExtraTokens = JSON.parse(localStorage.extraTokens) || [] 
+                const storedExtraTokens = JSON.parse(localStorage.extraTokens || '[]') || []
                 const updatedExtraTokens = rcpTokenData.map(updated => {
                     const extraToken = storedExtraTokens.find(extra => extra.address === updated.address && extra.network === updated.network && extra.account === account)
                     if (!extraToken) return null
@@ -350,7 +350,7 @@ export default function usePortfolio({ currentNetwork, account }) {
                 currentNetworkTokens
             ])
         }
-        const refreshInterval = setInterval(getSupllementTokenData, 20000)
+        const refreshInterval = setInterval(getSupplementTokenData, 20000)
         return () => clearInterval(refreshInterval)
     }, [account, currentNetwork, isBalanceLoading, fetchTokens, tokensByNetworks, extraTokens, getExtraTokensAssets])
 
