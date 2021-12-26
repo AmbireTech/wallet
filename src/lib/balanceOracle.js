@@ -84,7 +84,8 @@ async function getErrMsg (provider, txParams, blockTag) {
 		// uncomment if you need HEVM debugging
 		// console.log(`hevm exec --caller ${txParams.from} --address ${txParams.to} --calldata ${txParams.data} --gas 1000000 --debug --rpc ${provider.connection.rpc} ${!isNaN(blockTag) && blockTag ? '--block '+blockTag : ''}`)
 		const returnData = await provider.call(txParams, blockTag)
-		return isErr(returnData)
+    if (returnData.startsWith(PANIC_SIG)) return returnData.slice(10)
+		return returnData.startsWith(ERROR_SIG)
 			? (new AbiCoder()).decode(['string'], '0x' + returnData.slice(10))[0]
 			: returnData
 	} catch (e) {
@@ -477,7 +478,6 @@ function checkTokenList (list) {
 export {
     call,
     tokenList,
-    isErr,
     getErrMsg,
     checkTokenList,
     getTokenListBalance
