@@ -59,15 +59,11 @@ async function call ({ walletAddr, tokens, network }) {
     to: remainingBalancesOracleAddr,
     data: RemainingBalancesOracle.encodeFunctionData('getRemainingBalances', args)
   }
-  try {
-    const callResult = await provider.call(txParams, blockTag)
-    if (isErr(callResult)) return { success: false, data: tokens, message: `probably one ot following tokens is not ERC20 and missing balanceOf()` } //hex2a(callResult)
-    const balances = coder.decode(['uint[]'], callResult)[0]
-    const result = tokens.map((x, i) => ({ ...x, balanceRaw: balances[i].toString(), balance: parseFloat(formatUnits(balances[i], x.decimals)).toFixed(10) }))
-    return { success: true, data: result }
-  } catch(e){
-    return { success: false, data: tokens, message: `probably one ot following tokens is not ERC20 and missing balanceOf()` }
-  }
+  const callResult = await provider.call(txParams, blockTag)
+  if (isErr(callResult)) throw new Error(`probably one ot following tokens is not ERC20 and missing balanceOf()`)
+  const balances = coder.decode(['uint[]'], callResult)[0]
+  const result = tokens.map((x, i) => ({ ...x, balanceRaw: balances[i].toString(), balance: parseFloat(formatUnits(balances[i], x.decimals)).toFixed(10) }))
+  return { success: true, data: result }
 }
 
 // Signature of Error(string)
