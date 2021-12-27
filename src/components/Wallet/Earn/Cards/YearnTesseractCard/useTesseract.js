@@ -1,6 +1,5 @@
 import { useCallback, useState } from 'react'
-import { constants, Contract } from 'ethers'
-import { Interface, parseUnits } from 'ethers/lib/utils'
+import { Contract } from 'ethers'
 import ERC20ABI from 'adex-protocol-eth/abi/ERC20.json'
 import TesseractVaultABI from '../../../../../consts/TesseractVaultABI'
 import { useToasts } from '../../../../../hooks/toasts'
@@ -17,10 +16,7 @@ const VAULTS = [
 
 const TESR_API_ENDPOINT = 'https://prom.tesr.finance/api/v1'
 
-const ERC20Interface = new Interface(ERC20ABI)
-const TesseractVaultInterface = new Interface(TesseractVaultABI)
-
-const useTesseract = ({ tokens, provider, networkId, currentNetwork, accountId, addRequestTxn }) => {
+const useTesseract = ({ tokens, provider, networkId, currentNetwork }) => {
     const { addToast } = useToasts()
 
     const [tokensItems, setTokensItems] = useState([])
@@ -33,13 +29,13 @@ const useTesseract = ({ tokens, provider, networkId, currentNetwork, accountId, 
             return {
                 type,
                 vaultAddress,
-                address,
+                tokenAddress: address,
                 symbol,
                 decimals,
                 icon,
                 apy,
                 label: `${symbol} (${apy}% APY)`,
-                value: address,
+                value: vaultAddress,
                 balance: portfolioToken ? portfolioToken.balance : 0,
                 balanceRaw: portfolioToken ? portfolioToken.balanceRaw : '0',
             }
@@ -105,7 +101,7 @@ const useTesseract = ({ tokens, provider, networkId, currentNetwork, accountId, 
     }, [networkId, fetchVaultAPY, provider, toTokensItems, addToast, currentNetwork])
 
     const onTokenSelect = useCallback(address => {
-        const selectedToken = tokensItems.find(t => t.value === address)
+        const selectedToken = tokensItems.find(t => t.tokenAddress === address)
         if (selectedToken) setDetails([
             ['Annual Percentage Yield (APY)', `${selectedToken.apy}%`],
             ['Lock', 'No Lock'],
@@ -113,65 +109,12 @@ const useTesseract = ({ tokens, provider, networkId, currentNetwork, accountId, 
         ])
     }, [tokensItems])
 
-    const approveToken = async (vaultAddress, tokenAddress, bigNumberHexAmount) => {
-        try {
-            const tokenContract = new Contract(tokenAddress, ERC20Interface, provider)
-            const allowance = await tokenContract.allowance(accountId, vaultAddress)
-
-            if (allowance.lt(bigNumberHexAmount)) {
-                addRequestTxn(`tesseract_vault_approve_${Date.now()}`, {
-                    to: tokenAddress,
-                    value: '0x0',
-                    data: ERC20Interface.encodeFunctionData('approve', [vaultAddress, bigNumberHexAmount])
-                })
-            }
-        } catch(e) {
-            console.error(e)
-            addToast(`Tesseract Approve Error: ${e.message || e}`, { error: true })
-        }
-    }
-
-    const onValidate = async (type, value, amount) => {
-        const item = tokensItems.find(t => t.type === type.toLowerCase() && t.value === value)
-        if (!item) return
-
-        const { vaultAddress, decimals } = item
-        const bigNumberAmount = parseUnits(amount.toString(), decimals)
-
-        if (type === 'Deposit') {
-            await approveToken(vaultAddress, item.value, constants.MaxUint256)
-
-            try {
-                addRequestTxn(`tesseract_vault_deposit_${Date.now()}`, {
-                    to: vaultAddress,
-                    value: '0x0',
-                    data: TesseractVaultInterface.encodeFunctionData('deposit', [bigNumberAmount.toHexString(), accountId])
-                })
-            } catch(e) {
-                console.error(e)
-                addToast(`Tesseract Deposit Error: ${e.message || e}`, { error: true })
-            }
-        } else if (type === 'Withdraw') {
-            try {
-                addRequestTxn(`tesseract_vault_withdraw_${Date.now()}`, {
-                    to: vaultAddress,
-                    value: '0x0',
-                    data: TesseractVaultInterface.encodeFunctionData('withdraw', [bigNumberAmount, accountId])
-                })
-            } catch(e) {
-                console.error(e)
-                addToast(`Tesseract Withdraw Error: ${e.message || e}`, { error: true })
-            }
-        }
-    }
-
     return {
         icon: TESSERACT_ICON,
         loadVaults,
         tokensItems,
         details,
-        onTokenSelect,
-        onValidate
+        onTokenSelect
     }
 }
 
