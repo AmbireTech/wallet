@@ -328,18 +328,17 @@ export default function usePortfolio({ currentNetwork, account }) {
             if (!currentNetworkTokens) return
 
             const extraTokensAssets = getExtraTokensAssets(account, currentNetwork)
-            const rcpTokenData = await supplementTokensDataFromNetwork({
-                walletAddr: account,
-                network: currentNetwork,
-                tokensData: currentNetworkTokens.assets.filter(({ isExtraToken }) => !isExtraToken), // Filter out extraTokens
-                extraTokens: extraTokensAssets
-            })
-
-            currentNetworkTokens.assets = rcpTokenData
-
-            // Update stored extraTokens with new rpc data
-            // @TODO this seems unnecessary but we'll have to analyze it again
             try {
+                const rcpTokenData = await supplementTokensDataFromNetwork({
+                    walletAddr: account,
+                    network: currentNetwork,
+                    tokensData: currentNetworkTokens.assets.filter(({ isExtraToken }) => !isExtraToken), // Filter out extraTokens
+                    extraTokens: extraTokensAssets
+                })
+                currentNetworkTokens.assets = rcpTokenData
+
+                // Update stored extraTokens with new rpc data
+                // @TODO this seems unnecessary but we'll have to analyze it again
                 const storedExtraTokens = JSON.parse(localStorage.extraTokens || '[]') || []
                 const updatedExtraTokens = rcpTokenData.map(updated => {
                     const extraToken = storedExtraTokens.find(extra => extra.address === updated.address && extra.network === updated.network && extra.account === account)
@@ -351,14 +350,14 @@ export default function usePortfolio({ currentNetwork, account }) {
                 }).filter(updated => updated)
 
                 localStorage.extraTokens = JSON.stringify(updatedExtraTokens)
-            } catch(e) {
-                console.error(e)
-            }
 
-            setTokensByNetworks([
-                ...tokensByNetworks.filter(({ network }) => network !== currentNetwork),
-                currentNetworkTokens
-            ])
+                setTokensByNetworks([
+                    ...tokensByNetworks.filter(({ network }) => network !== currentNetwork),
+                    currentNetworkTokens
+                ])
+            } catch(e) {
+                console.error('supplementTokensDataFromNetwork failed', e)
+            }
         }
         const refreshInterval = setInterval(getSupplementTokenData, 20000)
         return () => clearInterval(refreshInterval)
