@@ -15,6 +15,15 @@ const SESSION_TIMEOUT = 10000
 const getDefaultState = () => ({ connections: [], requests: [] })
 
 let connectors = {}
+let connectionErrors = []
+
+// Offline check: if it errored 3 times recently
+const timePastForConnectionErr = 1 * 60 * 1000
+const checkIsOffline = uri => {
+    const errors = connectionErrors.filter(x => x.uri === uri)
+    return errors.length > 2 && errors.slice(-3)
+        .every(({ time } = {}) => time > (Date.now() - timePastForConnectionErr))
+}
 
 export default function useWalletConnect ({ account, chainId, initialUri }) {
     const { addToast } = useToasts()
@@ -28,7 +37,7 @@ export default function useWalletConnect ({ account, chainId, initialUri }) {
         if (action.type === 'connectedNewSession') {
             return {
                 ...state,
-                connections: [...state.connections, { uri: action.uri, session: action.session }]
+                connections: [...state.connections, { uri: action.uri, session: action.session, isOffline: false }]
             }
         }
         if (action.type === 'disconnected') {
@@ -47,26 +56,6 @@ export default function useWalletConnect ({ account, chainId, initialUri }) {
                 requests: state.requests.filter(x => !action.ids.includes(x.id))
             }
         }
-        if (action.type === 'connectionError') {
-            return {
-                ...state,
-                connections: state
-                    .connections
-                    .map(c => c.uri === action.uri ?
-                        {
-                            ...c, session: {
-                                ...c.session,
-                                errors:
-                                    [
-                                        ...(c.session.errors || [])
-                                            .slice(Math.max((c.session.errors || []).length - 420, 0)),
-                                        action.error
-                                    ]
-                            }
-                        }
-                        : c)
-            }
-        }
         return { ...state }
     }, null, () => {
         const json = localStorage[STORAGE_KEY]
@@ -82,6 +71,34 @@ export default function useWalletConnect ({ account, chainId, initialUri }) {
         }
     })
 
+    // Side effects that will run on every state change/rerender
+    const maybeUpdateSessions = useCallback(() => {
+        // restore connectors and update the ones that are stale
+        let updateConnections = false
+        state.connections.forEach(({ uri, session, isOffline }) => {
+            if (connectors[uri]) {
+                const connector = connectors[uri]
+                const session = connector.session
+                if (session.accounts[0] !== account || session.chainId !== chainId || checkIsOffline(uri) !== isOffline) {
+                    // NOTE: in case isOffline is different, we do not need to do this, but we're gonna leave that just in case the session is outdated anyway
+                    connector.updateSession({ accounts: [account], chainId })
+                    updateConnections = true
+                }
+            }
+        })
+
+        localStorage[STORAGE_KEY] = JSON.stringify(state)
+
+        if (updateConnections) dispatch({
+            type: 'updateConnections',
+            connections: state.connections
+                .filter(({ uri }) => connectors[uri])
+                .map(({ uri }) => ({ uri, session: connectors[uri].session, isOffline: checkIsOffline(uri) }))
+        })
+    }, [state, account, chainId])
+    useEffect(maybeUpdateSessions, [maybeUpdateSessions])
+
+    // New connections
     const connect = useCallback(connectorOpts => {
         if (connectors[connectorOpts.uri]) {
             addToast('dApp already connected')
@@ -136,8 +153,11 @@ export default function useWalletConnect ({ account, chainId, initialUri }) {
         })
 
         connector.on('transport_error', (error, payload) => {
-            console.error('transport_error', error, payload)
-            dispatch({ type: 'connectionError', uri: connectorOpts.uri, error: { event: payload.event, time: Date.now() } })
+            console.error('WalletConnect transport error', payload)
+            connectionErrors.push({ uri: connectorOpts.uri, event: payload.event, time: Date.now() })
+            // Keep the last 690 only
+            connectionErrors = connectionErrors.slice(-690)
+            maybeUpdateSessions()
         })
 
         connector.on('call_request', (error, payload) => {
@@ -224,7 +244,7 @@ export default function useWalletConnect ({ account, chainId, initialUri }) {
         connector.on('error', onError)
 
         return connector
-    }, [addToast])
+    }, [addToast, maybeUpdateSessions])
 
     const disconnect = useCallback(uri => {
         // connector might not be there, either cause we disconnected before,
@@ -256,31 +276,6 @@ export default function useWalletConnect ({ account, chainId, initialUri }) {
     // we specifically want to run this only once despite depending on state
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [connect])
-
-    // Side effects that will run on every state change/rerender
-    useEffect(() => {
-        // restore connectors and update the ones that are stale
-        let updateConnections = false
-        state.connections.forEach(({ uri, session }) => {
-            if (connectors[uri]) {
-                const connector = connectors[uri]
-                const session = connector.session
-                if (session.accounts[0] !== account || session.chainId !== chainId) {
-                    connector.updateSession({ accounts: [account], chainId })
-                    updateConnections = true
-                }
-            }
-        })
-
-        localStorage[STORAGE_KEY] = JSON.stringify(state)
-
-        if (updateConnections) dispatch({
-            type: 'updateConnections',
-            connections: state.connections
-                .filter(({ uri }) => connectors[uri])
-                .map(({ uri }) => ({ uri, session: connectors[uri].session }))
-        })
-    }, [state, account, chainId, connect])
 
     // Initialization effects
     useEffect(() => runInitEffects(connect, account, initialUri, addToast), [connect, account, initialUri, addToast])
