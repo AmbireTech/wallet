@@ -6,11 +6,17 @@ import { NavLink } from 'react-router-dom'
 import { Button, Loading } from '../../../common'
 import ProtocolsPlaceholder from './ProtocolsPlaceholder/ProtocolsPlaceholder'
 import { useState } from 'react'
+import { MdOutlineAdd } from 'react-icons/md'
+import { AddTokenModal } from '../../../Modals'
+import { useModals } from '../../../../hooks'
 
-const Protocols = ({ portfolio }) => {
+const Protocols = ({ portfolio, network, account }) => {
+    const { showModal } = useModals()
+
     const [failedImg, setFailedImg] = useState([])
 
     const { isBalanceLoading, areProtocolsLoading, tokens, protocols } = portfolio
+    const sortedTokens = tokens.sort((a, b) => b.balanceUSD - a.balanceUSD)
     const otherProtocols = protocols.filter(({ label }) => label !== 'Tokens')
     const shouldShowPlaceholder = (!isBalanceLoading && !tokens.length) && (!areProtocolsLoading && !otherProtocols.length)
 
@@ -49,11 +55,13 @@ const Protocols = ({ portfolio }) => {
             }
         </div>
 
+    const openAddTokenModal = () => showModal(<AddTokenModal network={network} account={account} onAddToken={portfolio.onAddExtraToken}/>)
+
     return (
         <div id="protocols-table">
             {
                 shouldShowPlaceholder ?
-                    <ProtocolsPlaceholder/>
+                    <ProtocolsPlaceholder onClickAddToken={openAddTokenModal}/>
                     :
                     null
             }
@@ -62,12 +70,15 @@ const Protocols = ({ portfolio }) => {
                     isBalanceLoading ?
                         <Loading/>
                         :
-                        !shouldShowPlaceholder && tokens.length ?
+                        !shouldShowPlaceholder && sortedTokens.length ?
                             <div className="category" key="category-tokens">
-                                <div className="title">Tokens</div>
+                                <div className="title">
+                                    Tokens
+                                    <Button mini clear icon={<MdOutlineAdd/>} onClick={() => openAddTokenModal()}>Add Token</Button>
+                                </div>
                                 <div className="list">
                                     { 
-                                        tokens.map(({ address, symbol, tokenImageUrl, balance, balanceUSD }, i) =>
+                                        sortedTokens.map(({ address, symbol, tokenImageUrl, balance, balanceUSD }, i) =>
                                             tokenItem(i, tokenImageUrl, symbol, balance, balanceUSD, address, true))
                                     }
                                 </div>
@@ -84,10 +95,8 @@ const Protocols = ({ portfolio }) => {
                                     <div className="title">{ label }</div>
                                     <div className="list">
                                         {
-                                            assets.map(({ type, tokens }) => 
-                                                tokens.map(({ symbol, tokenImageUrl, balance, balanceUSD, address }, i) => 
-                                                    tokenItem(i, tokenImageUrl, symbol, balance, balanceUSD, address, type === 'wallet'))
-                                            )
+                                            assets.map(({ category, symbol, tokenImageUrl, balance, balanceUSD, address }, i) => 
+                                                tokenItem(i, tokenImageUrl, symbol, balance, balanceUSD, address, category !== 'claimable'))
                                         }
                                     </div>
                                 </div>
