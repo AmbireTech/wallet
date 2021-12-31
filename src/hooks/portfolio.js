@@ -40,8 +40,11 @@ async function supplementTokensDataFromNetwork({ walletAddr, network, tokensData
     if (!extraTokens || !extraTokens[0]) extraTokens = checkTokenList(extraTokens || [])  //extraTokens check and populate for test if undefind
   
     // concat predefined token list with extraTokens list (extraTokens are certainly ERC20)
-    let tokens = [ ...new Set(tokenList[network] ? tokenList[network].concat(extraTokens) : [].concat(extraTokens))].map (t => {
-      return tokensData.filter(td => td.address === t.address)[0] || t
+    const fullTokenList = [ ...new Set(
+        tokenList[network] ? tokenList[network].concat(extraTokens) : [...extraTokens]
+    )]
+    const tokens = fullTokenList.map(t => {
+      return tokensData.find(td => td.address === t.address) || t
     })
     const tokensNotInList = tokensData.filter(td => {
       return !tokens.some(t => t.address === td.address)
