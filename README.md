@@ -6,7 +6,6 @@
 * Smart contract documentation, originally intended for CodeArena: https://github.com/AmbireTech/code4rena
 	* Latest smart contract source code: https://github.com/AmbireTech/adex-protocol-eth/tree/codearena-fixes
 * Security model: https://gist.github.com/Ivshti/fe86f13c3adff3404a1f5ce1e364304c
-* Tokenomics (confidential): https://gist.github.com/Ivshti/c6b93745dd0ba0d9c8256bc39769a601
 * Deck: https://docsend.com/view/hqp9xkr2krj6wt8w
 * FAQs: https://help.ambire.com/hc/en-us/categories/4404980091538-Ambire-Wallet
 * Front-end (this repo) development plan and estimation: https://docs.google.com/spreadsheets/d/1pqtRPcNRW98D97GL3nrdoipD3sWehz2k7zWclzYk-SM
@@ -219,3 +218,11 @@ Additionally, there's an ongoing [Immunefi bug bounty](https://immunefi.com/boun
 * WALLET token distribution modal
 * Link to the Help Center added
 * Top right dropdown with helpful links
+* Improved parsing of Uniswap V3 transactions following their updated router
+
+### Third sprint (v0.4.0)
+* Ability to add custom tokens
+* More frequent updating of balances
+* Ability to ask for your confirmation email to be resent
+* Warn when a WalletConnect connection may be offline
+

@@ -118,6 +118,10 @@ function AppInner () {
   // Keeping track of transactions
   const [sentTxn, setSentTxn] = useState([])
   const onBroadcastedTxn = hash => {
+    if (!hash) {
+      addToast('Transaction signed but not broadcasted to the network!', { timeout: 15000 })
+      return
+    }
     setSentTxn(sentTxn => [...sentTxn, { confirmed: false, hash }])
     addToast((
       <span>Transaction signed and sent successfully!
