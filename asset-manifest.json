@@ -1,31 +1,31 @@
 {
   "files": {
-    "main.css": "./static/css/main.01403881.chunk.css",
-    "main.js": "./static/js/main.d71f9458.chunk.js",
-    "main.js.map": "./static/js/main.d71f9458.chunk.js.map",
-    "runtime-main.js": "./static/js/runtime-main.1b9c5ac6.js",
-    "runtime-main.js.map": "./static/js/runtime-main.1b9c5ac6.js.map",
-    "static/js/2.dae3b748.chunk.js": "./static/js/2.dae3b748.chunk.js",
-    "static/js/2.dae3b748.chunk.js.map": "./static/js/2.dae3b748.chunk.js.map",
-    "static/js/3.05b901c9.chunk.js": "./static/js/3.05b901c9.chunk.js",
-    "static/js/3.05b901c9.chunk.js.map": "./static/js/3.05b901c9.chunk.js.map",
+    "main.css": "./static/css/main.902f1941.chunk.css",
+    "main.js": "./static/js/main.d15bb2b8.chunk.js",
+    "main.js.map": "./static/js/main.d15bb2b8.chunk.js.map",
+    "runtime-main.js": "./static/js/runtime-main.3d75ac46.js",
+    "runtime-main.js.map": "./static/js/runtime-main.3d75ac46.js.map",
+    "static/js/2.cfbc1e70.chunk.js": "./static/js/2.cfbc1e70.chunk.js",
+    "static/js/2.cfbc1e70.chunk.js.map": "./static/js/2.cfbc1e70.chunk.js.map",
+    "static/js/3.d9e90157.chunk.js": "./static/js/3.d9e90157.chunk.js",
+    "static/js/3.d9e90157.chunk.js.map": "./static/js/3.d9e90157.chunk.js.map",
     "index.html": "./index.html",
-    "static/css/main.01403881.chunk.css.map": "./static/css/main.01403881.chunk.css.map",
-    "static/js/2.dae3b748.chunk.js.LICENSE.txt": "./static/js/2.dae3b748.chunk.js.LICENSE.txt",
+    "static/css/main.902f1941.chunk.css.map": "./static/css/main.902f1941.chunk.css.map",
+    "static/js/2.cfbc1e70.chunk.js.LICENSE.txt": "./static/js/2.cfbc1e70.chunk.js.LICENSE.txt",
     "static/media/App.scss": "./static/media/OpenSans-Regular.ca49d2b0.ttf",
     "static/media/aave.58aec338.svg": "./static/media/aave.58aec338.svg",
     "static/media/Loading.scss": "./static/media/ambire-loader-animation-sprite-160.8b6d7f70.png",
     "static/media/AddAccount.scss": "./static/media/hero-darkened.32d9e32c.svg",
-    "static/media/SideBar.scss": "./static/media/logo.ab51d124.png",
+    "static/media/TopBar.scss": "./static/media/logo.ab51d124.png",
     "static/media/paytrie.338f7c3b.svg": "./static/media/paytrie.338f7c3b.svg",
     "static/media/ramp.26a99e26.svg": "./static/media/ramp.26a99e26.svg",
     "static/media/transak.e01c0265.svg": "./static/media/transak.e01c0265.svg",
     "static/media/yearn.ac5ab573.svg": "./static/media/yearn.ac5ab573.svg"
   },
   "entrypoints": [
-    "static/js/runtime-main.1b9c5ac6.js",
-    "static/js/2.dae3b748.chunk.js",
-    "static/css/main.01403881.chunk.css",
-    "static/js/main.d71f9458.chunk.js"
+    "static/js/runtime-main.3d75ac46.js",
+    "static/js/2.cfbc1e70.chunk.js",
+    "static/css/main.902f1941.chunk.css",
+    "static/js/main.d15bb2b8.chunk.js"
   ]
 }
