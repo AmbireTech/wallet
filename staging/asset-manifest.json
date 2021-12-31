@@ -1,8 +1,8 @@
 {
   "files": {
-    "main.css": "./static/css/main.902f1941.chunk.css",
-    "main.js": "./static/js/main.d15bb2b8.chunk.js",
-    "main.js.map": "./static/js/main.d15bb2b8.chunk.js.map",
+    "main.css": "./static/css/main.7ed434fd.chunk.css",
+    "main.js": "./static/js/main.9f517c13.chunk.js",
+    "main.js.map": "./static/js/main.9f517c13.chunk.js.map",
     "runtime-main.js": "./static/js/runtime-main.3d75ac46.js",
     "runtime-main.js.map": "./static/js/runtime-main.3d75ac46.js.map",
     "static/js/2.cfbc1e70.chunk.js": "./static/js/2.cfbc1e70.chunk.js",
@@ -10,7 +10,7 @@
     "static/js/3.d9e90157.chunk.js": "./static/js/3.d9e90157.chunk.js",
     "static/js/3.d9e90157.chunk.js.map": "./static/js/3.d9e90157.chunk.js.map",
     "index.html": "./index.html",
-    "static/css/main.902f1941.chunk.css.map": "./static/css/main.902f1941.chunk.css.map",
+    "static/css/main.7ed434fd.chunk.css.map": "./static/css/main.7ed434fd.chunk.css.map",
     "static/js/2.cfbc1e70.chunk.js.LICENSE.txt": "./static/js/2.cfbc1e70.chunk.js.LICENSE.txt",
     "static/media/App.scss": "./static/media/OpenSans-Regular.ca49d2b0.ttf",
     "static/media/aave.58aec338.svg": "./static/media/aave.58aec338.svg",
@@ -25,7 +25,7 @@
   "entrypoints": [
     "static/js/runtime-main.3d75ac46.js",
     "static/js/2.cfbc1e70.chunk.js",
-    "static/css/main.902f1941.chunk.css",
-    "static/js/main.d15bb2b8.chunk.js"
+    "static/css/main.7ed434fd.chunk.css",
+    "static/js/main.9f517c13.chunk.js"
   ]
 }
