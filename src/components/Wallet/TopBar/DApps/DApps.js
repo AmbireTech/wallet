@@ -9,8 +9,6 @@ import { DropDown, ToolTip, Button } from "../../../common"
 import { checkClipboardPermission } from '../../../../helpers/permissions'
 import { MdOutlineWarning } from 'react-icons/md'
 
-const timePastForConnectionErr = 1 * 60 * 1000
-
 const DApps = ({ connections, connect, disconnect }) => {
     const [isClipboardGranted, setClipboardGranted] = useState(false)
 
@@ -31,10 +29,6 @@ const DApps = ({ connections, connect, disconnect }) => {
     }, [connect, isClipboardGranted])
 
     const isLegacyWC = ({ bridge }) => /https:\/\/bridge.walletconnect.org/g.test(bridge)
-    const isConnectionInterrupted = ({ errors = [] }) =>
-        errors.length > 2
-        && errors.slice(-3)
-            .every(({ time } = {}) => time > (Date.now() - timePastForConnectionErr))
 
     return (
         <DropDown id="dApps" title="dApps" badge={connections.length} onOpen={() => checkPermission()}>
@@ -54,7 +48,7 @@ const DApps = ({ connections, connect, disconnect }) => {
                     </label>
                 ) : null}
             </div>
-            {connections.map(({ session, uri }) => (
+            {connections.map(({ session, uri, isOffline }) => (
                 <div className="item dapps-item" key={session.key}>
                     <div className="icon">
                         <div className="icon-overlay" style={{backgroundImage: `url(${session.peerMeta.icons.filter(x => !x.endsWith('favicon.ico'))[0]})`}}/>
@@ -63,7 +57,7 @@ const DApps = ({ connections, connect, disconnect }) => {
                     <a href={session.peerMeta.url} target="_blank" rel="noreferrer">
                         <div className="details">
                             { 
-                                isLegacyWC(session) ? 
+                                false && isLegacyWC(session) ? 
                                     <ToolTip className="session-warning" label="dApp uses legacy WalletConnect bridge which is unreliable and often doesn't work. Please tell the dApp to update to the latest WalletConnect version.">
                                         <MdOutlineWarning/>
                                     </ToolTip>
@@ -71,7 +65,7 @@ const DApps = ({ connections, connect, disconnect }) => {
                                     null
                             }
                             {
-                                isConnectionInterrupted(session) ?
+                                isOffline ?
                                     <ToolTip className="session-error" label="WalletConnect connection is offline. Check again later. If this warning persist try to disconnect and connect WalletConnect.">
                                         <AiOutlineDisconnect />
                                     </ToolTip>
