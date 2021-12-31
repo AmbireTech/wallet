@@ -219,3 +219,9 @@ Additionally, there's an ongoing [Immunefi bug bounty](https://immunefi.com/boun
 * Link to the Help Center added
 * Top right dropdown with helpful links
 * Improved parsing of Uniswap V3 transactions following their updated router
+
+### Third sprint (v0.4.0)
+* Ability to add custom tokens
+* More frequent updating of balances
+* Ability to ask for your confirmation email to be resent
+
