@@ -17,12 +17,13 @@ const getDefaultState = () => ({ connections: [], requests: [] })
 let connectors = {}
 let connectionErrors = []
 
-// Offline check: if it errored 3 times recently
-const timePastForConnectionErr = 1 * 60 * 1000
+// Offline check: if it errored recently
+const timePastForConnectionErr = 90 * 1000
 const checkIsOffline = uri => {
     const errors = connectionErrors.filter(x => x.uri === uri)
-    return errors.length > 2 && errors.slice(-3)
-        .every(({ time } = {}) => time > (Date.now() - timePastForConnectionErr))
+    return errors.find(({ time } = {}) => time > (Date.now() - timePastForConnectionErr))
+    //return errors.length > 1 && errors.slice(-2)
+    //    .every(({ time } = {}) => time > (Date.now() - timePastForConnectionErr))
 }
 
 export default function useWalletConnect ({ account, chainId, initialUri }) {
