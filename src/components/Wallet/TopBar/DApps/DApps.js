@@ -57,7 +57,7 @@ const DApps = ({ connections, connect, disconnect }) => {
                     <a href={session.peerMeta.url} target="_blank" rel="noreferrer">
                         <div className="details">
                             { 
-                                false && isLegacyWC(session) ? 
+                                isLegacyWC(session) ?
                                     <ToolTip className="session-warning" label="dApp uses legacy WalletConnect bridge which is unreliable and often doesn't work. Please tell the dApp to update to the latest WalletConnect version.">
                                         <MdOutlineWarning/>
                                     </ToolTip>
@@ -66,7 +66,7 @@ const DApps = ({ connections, connect, disconnect }) => {
                             }
                             {
                                 isOffline ?
-                                    <ToolTip className="session-error" label="WalletConnect connection is offline. Check again later. If this warning persist try to disconnect and connect WalletConnect.">
+                                    <ToolTip className="session-error" label="WalletConnect connection may be offline. Check again later. If this warning persist try to disconnect and connect WalletConnect.">
                                         <AiOutlineDisconnect />
                                     </ToolTip>
                                     :
