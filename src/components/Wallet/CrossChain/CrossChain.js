@@ -196,6 +196,9 @@ const CrossChain = ({ addRequest, selectedAccount, portfolio, network }) => {
                         Powered by Movr
                     </div>
                 </div>
+                <div className="placeholder">
+                    Coming Soon...
+                </div>
                 {
                     disabled ? 
                         <div className="placeholder">Not supported on this Network</div>
