@@ -1,7 +1,8 @@
 const networks = [{
 		id: 'ethereum',
 		chainId: 1,
-		rpc: 'https://mainnet.infura.io/v3/3d22938fd7dd41b7af4197752f83e8a1',
+		//rpc: 'https://mainnet.infura.io/v3/3d22938fd7dd41b7af4197752f83e8a1',
+		rpc: 'https://morning-wild-water.quiknode.pro/66011d2c6bdebc583cade5365086c8304c13366c/',
 		nativeAssetSymbol: 'ETH',
 		name: 'Ethereum',
 		icon: '/resources/networks/ethereum.png',
