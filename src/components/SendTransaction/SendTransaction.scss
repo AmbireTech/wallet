@@ -78,6 +78,7 @@ $titleBar-height: 90px;
     box-sizing: border-box;
     background-color: rgba(0, 0, 0, 0.2);
     display: block;
+    box-shadow: rgb(0, 0, 0) 0px 0px 20px 0px;
 }
 
 #sendTransaction .panel .heading {
