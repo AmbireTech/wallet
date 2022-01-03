@@ -55,7 +55,7 @@ const useTesseract = ({ tokens, provider, networkId, currentNetwork }) => {
     }, [addToast])
 
     const loadVaults = useCallback(async () => {
-        const vaults = await Promise.all(VAULTS.map(async ([ticker, address, icon]) => {
+        const vaults = (await Promise.all(VAULTS.map(async ([ticker, address, icon]) => {
             try {
                 const tesseractVaultContract = new Contract(address, TesseractVaultABI, provider)
                 const tokenAddress = await tesseractVaultContract.token()
@@ -86,8 +86,9 @@ const useTesseract = ({ tokens, provider, networkId, currentNetwork }) => {
             } catch(e) {
                 console.error(e);
                 addToast('Fetch Tesseract Vaults: ' + e.message || e, { error: true })
+                return null
             }
-        }))
+        }))).filter(v => v)
 
         const depositTokenItems = toTokensItems('deposit', vaults)
         const withdrawTokenItems = toTokensItems('withdraw', vaults)
