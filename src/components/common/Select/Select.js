@@ -28,10 +28,13 @@ const Select = ({ children, native, monospace, searchable, disabled, label, defa
     }, [onChange])
 
     useEffect(() => {
-        if (!items.length) setSelectedItem({})
         const item = items.find(item => item.value === defaultValue) || items[0]
-        if (selectedItem.value !== item.value) selectItem(item)
-    }, [defaultValue, items, selectedItem, selectItem]);
+        if (item && (selectedItem.value !== item.value)) selectItem(item)
+    }, [items, defaultValue, selectedItem, selectItem])
+
+    useEffect(() => {
+        if (!items.length) return setSelectedItem({})
+    }, [items])
 
     useEffect(() => {
         if (isOpen && searchable) {
