@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { Contract } from 'ethers'
 import ERC20ABI from 'adex-protocol-eth/abi/ERC20.json'
 import TesseractVaultABI from '../../../../../consts/TesseractVaultABI'
@@ -20,6 +20,7 @@ const TESR_API_ENDPOINT = 'https://prom.tesr.finance/api/v1'
 const useTesseract = ({ tokens, provider, networkId, currentNetwork }) => {
     const { addToast } = useToasts()
 
+    const [vaults, setVaults] = useState([])
     const [tokensItems, setTokensItems] = useState([])
     const [details, setDetails] = useState([])
 
@@ -91,16 +92,9 @@ const useTesseract = ({ tokens, provider, networkId, currentNetwork }) => {
             }
         }))).filter(v => v)
 
-        const depositTokenItems = toTokensItems('deposit', vaults)
-        const withdrawTokenItems = toTokensItems('withdraw', vaults)
-
         if (networkId !== currentNetwork.current) return
-
-        setTokensItems([
-            ...depositTokenItems,
-            ...withdrawTokenItems
-        ])
-    }, [networkId, fetchVaultAPY, provider, toTokensItems, addToast, currentNetwork])
+        setVaults(vaults);
+    }, [networkId, currentNetwork, fetchVaultAPY, provider, addToast])
 
     const onTokenSelect = useCallback(address => {
         const selectedToken = tokensItems.find(t => t.tokenAddress === address)
@@ -110,6 +104,16 @@ const useTesseract = ({ tokens, provider, networkId, currentNetwork }) => {
             ['Type', 'Variable Rate'],
         ])
     }, [tokensItems])
+
+    useEffect(() => {
+        const depositTokenItems = toTokensItems('deposit', vaults)
+        const withdrawTokenItems = toTokensItems('withdraw', vaults)
+
+        setTokensItems([
+            ...depositTokenItems,
+            ...withdrawTokenItems
+        ])
+    }, [vaults, toTokensItems])
 
     return {
         icon: TESSERACT_ICON,
