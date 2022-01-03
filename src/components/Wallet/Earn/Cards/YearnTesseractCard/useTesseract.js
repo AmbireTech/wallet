@@ -6,12 +6,13 @@ import { useToasts } from '../../../../../hooks/toasts'
 
 import TESSERACT_ICON from '../../../../../resources/tesseract.svg'
 
+const POLYGON_SCAN_IMAGES = 'https://polygonscan.com/token/images'
 const VAULTS = [
-    ['tvUSDC', '0x57bDbb788d0F39aEAbe66774436c19196653C3F2', 'https://polygonscan.com/token/images/centre-usdc_32.png'],
-    ['tvDAI', '0x4c8C6379b7cd039C892ab179846CD30a1A52b125', 'https://polygonscan.com/token/images/mcdDai_32.png'],
-    ['tvWBTC', '0x6962785c731e812073948a1f5E181cf83274D7c6', 'https://polygonscan.com/token/images/wBTC_32.png'],
-    ['tvWETH', '0x3d44F03a04b08863cc8825384f834dfb97466b9B', 'https://polygonscan.com/token/images/wETH_32.png'],
-    ['tvWMATIC', '0xE11678341625cD88Bb25544e39B2c62CeDcC83f1', 'https://polygonscan.com/token/images/wMatic_32.png'],
+    ['tvUSDC', '0x57bDbb788d0F39aEAbe66774436c19196653C3F2', `${POLYGON_SCAN_IMAGES}/centre-usdc_32.png`],
+    ['tvDAI', '0x4c8C6379b7cd039C892ab179846CD30a1A52b125', `${POLYGON_SCAN_IMAGES}/mcdDai_32.png`],
+    ['tvWBTC', '0x6962785c731e812073948a1f5E181cf83274D7c6', `${POLYGON_SCAN_IMAGES}/wBTC_32.png`],
+    ['tvWETH', '0x3d44F03a04b08863cc8825384f834dfb97466b9B', `${POLYGON_SCAN_IMAGES}/wETH_32.png`],
+    ['tvWMATIC', '0xE11678341625cD88Bb25544e39B2c62CeDcC83f1', `${POLYGON_SCAN_IMAGES}/wMatic_32.png`],
 ]
 
 const TESR_API_ENDPOINT = 'https://prom.tesr.finance/api/v1'
