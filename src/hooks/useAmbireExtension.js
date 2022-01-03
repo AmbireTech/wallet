@@ -250,7 +250,6 @@ export default function useAmbireExtension({ selectedAccount, network, verbose =
         })
       }
     } else if (msg.data && msg.data.type === "pingAmbireWallet") {
-      debugger
       window.postMessage({ type: "pongFromAmbireWallet", id: msg.data.id })
     }
   }
