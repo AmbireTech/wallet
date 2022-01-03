@@ -22,7 +22,7 @@ export default function Wallet(props) {
   const { showModal } = useModals()
   const { isClipboardGranted, isNoticationsGranted, arePermissionsLoaded, modalHidden } = usePermissions()
   const { pathname } = useLocation()
-  const walletContainer = useRef()
+  const walletContainerInner = useRef()
 
   const isLoggedIn = useMemo(() => props.accounts.length > 0, [props.accounts])
 
@@ -131,7 +131,7 @@ export default function Wallet(props) {
   useEffect(() => handlePermissionsModal(), [handlePermissionsModal])
 
   useEffect(() => {
-    const scrollTimeout = setTimeout(() => walletContainer.current && walletContainer.current.scrollTo({ top: 0, behavior: 'smooth' }), 0)
+    const scrollTimeout = setTimeout(() => walletContainerInner.current && walletContainerInner.current.scrollTo({ top: 0, behavior: 'smooth' }), 0)
     return () => clearTimeout(scrollTimeout)
   }, [pathname])
 
@@ -140,8 +140,8 @@ export default function Wallet(props) {
       <SideBar match={props.match} portfolio={props.portfolio} />
       <TopBar {...props} />
 
-      <div id="wallet-container" ref={walletContainer}>
-        <div id="wallet-container-inner">
+      <div id="wallet-container">
+        <div id="wallet-container-inner" ref={walletContainerInner}>
           <Switch>
             {
               routes.map(({ path, component }) => (
