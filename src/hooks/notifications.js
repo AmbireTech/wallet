@@ -8,7 +8,7 @@ import AMBIRE_ICON from '../resources/icon.png'
 
 const REQUEST_TITLE_PREFIX = 'Ambire Wallet: '
 const SUPPORTED_TYPES =  ['eth_sendTransaction', 'personal_sign']
-const BALANCE_TRESHOLD = 1.00001
+const BALANCE_TRESHOLD = 1.00002
 let currentNotifs = []
 let isLastTotalBalanceInit = false
 let lastTokensBalanceRaw = []

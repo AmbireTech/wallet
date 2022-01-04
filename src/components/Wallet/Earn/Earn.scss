@@ -10,3 +10,14 @@
         gap: 30px;
     }
 }
+
+// Mobile
+@media screen and (max-width: $mobile-breakpoint-max-width) {
+    #earn {
+        .cards {
+            width: 100%;
+            flex-direction: column;
+            gap: 1em;
+        }
+    }
+}

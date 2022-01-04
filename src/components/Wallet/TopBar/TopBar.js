@@ -1,6 +1,7 @@
 import "./TopBar.scss";
 
 import React, { useEffect, useState } from "react";
+import { NavLink } from "react-router-dom";
 import { MdOutlineArrowForward, MdOutlineClose, MdOutlineMenu } from "react-icons/md";
 import { Button, Select, ToolTip } from "../../common";
 import Accounts from "./Accounts/Accounts";
@@ -36,26 +37,28 @@ const TopBar = ({
   }))
 
   const account = accounts.find(({ id }) => id === selectedAcc)
+  const accountIcon = blockies.create({ seed: account ? account.id : null }).toDataURL()
 
   const showWalletTokenModal = () => showModal(<WalletTokenModal rewards={rewards}/>)
 
   useEffect(() => {
       if (errMsg || !data || !data.success) return
 
-      const { rewards } = data
+      const { rewards, multipliers } = data
       if (!rewards.length) return
 
       const rewardsDetails = Object.fromEntries(rewards.map(({ _id, rewards }) => [_id, rewards[account.id] || 0]))
       const rewardsTotal = Object.values(rewardsDetails).reduce((acc, curr) => acc + curr, 0)
+      rewardsDetails.multipliers = multipliers
 
       setRewardsTotal(rewardsTotal)
       setRewards(rewardsDetails)
-  }, [data, errMsg, account.id])
+  }, [data, errMsg, account])
 
   return (
     <div id="topbar">
       <div id="mobile-menu" onClick={() => setMenuOpen(!isMenuOpen)}>
-        <div className="icon" style={{backgroundImage: `url(${blockies.create({ seed: account.id }).toDataURL()})`}}></div>
+        <div className="icon" style={{backgroundImage: `url(${accountIcon})`}}></div>
         <MdOutlineArrowForward/>
         <div className="icon" style={{backgroundImage: `url(${network.icon})`}}></div>
         <div id="menu-button">
@@ -63,6 +66,10 @@ const TopBar = ({
         </div>
       </div>
 
+      <NavLink to={'/wallet/dashboard'}>
+        <div id="logo" />
+        <div id="icon" />
+      </NavLink>
       <div className={`container ${isMenuOpen ? 'open' : ''}`}>
         {
           !isLoading && (errMsg || !data) ?

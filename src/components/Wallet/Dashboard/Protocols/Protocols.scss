@@ -10,6 +10,8 @@
         overflow: hidden;
 
         .title {
+            display: flex;
+            align-items: center;
             padding: 15px 20px;
             font-size: 20px;
             font-weight: bold;
@@ -51,18 +53,9 @@
                     background-color: rgba(255, 255, 255, 0.1);
                     overflow: hidden;
 
-                    .icon-overlay {
-                        position: absolute;
-                        top: 0;
-                        bottom: 0;
-                        left: 0;
-                        right: 0;
-                        background-size: cover;
-                        background-position: center center;
-                    }
-
                     img {
                         height: 100%;
+                        user-select: none;
                     }
                 }
 
