@@ -1,7 +1,7 @@
 import './AddAuthSigner.scss'
 import { useState, useEffect, useCallback } from 'react'
 
-import { TextInput, Button, DropDown } from '../../../common'
+import { TextInput, Button, DropDown, Loading } from '../../../common'
 import { LedgerSubprovider } from '@0x/subproviders/lib/src/subproviders/ledger' // https://github.com/0xProject/0x-monorepo/issues/1400
 import { ledgerEthereumBrowserClientFactoryAsync } from '@0x/subproviders/lib/src' // https://github.com/0xProject/0x-monorepo/issues/1400
 import TrezorConnect from 'trezor-connect'
@@ -14,8 +14,13 @@ import { validateAddAuthSignerAddress } from '../../../../lib/validations/formVa
 import { BsXLg } from 'react-icons/bs'
 import { MdOutlineAdd } from 'react-icons/md'
 import LatticeModal from '../../../Modals/LatticeModal/LatticeModal'
+import { Client } from 'gridplus-sdk'
+import { useToasts } from '../../../../hooks/toasts'
 
-const AddAuthSigner = props => {
+const HARDENED_OFFSET = 0x80000000
+const crypto = require('crypto')
+
+const AddAuthSigner = ({ selectedNetwork, selectedAcc, onAddBtnClicked }) => {
   const [signerAddress, setSignerAddress] = useState({
     address: '',
     index: 0,
@@ -24,14 +29,15 @@ const AddAuthSigner = props => {
   const [disabled, setDisabled] = useState(true)
   const [modalToggle, setModalToggle] = useState(true)
   const [signersToChoose, setChooseSigners] = useState(null)
+  const [showLoading, setShowLoading] = useState(false)
   const [textInputInfo, setTextInputInfo] = useState('')
   const { showModal } = useModals()
   const [validationFormMgs, setValidationFormMgs] = useState({ 
     success: false, 
     message: ''
   })
-
-
+  const { addToast } = useToasts()
+  
   async function connectLedgerAndGetAccounts() {
     if (isFirefox()) {
       await connectLedgerAndGetAccountsU2F()
@@ -121,16 +127,63 @@ const AddAuthSigner = props => {
     setModalToggle(true)
   }
 
-  const getGridPlusAddresses = addresses => {
+  const getLatticeAddresses = ({ addresses, deviceId, privKey, isPaired }) => {
     setChooseSigners({
-      addresses, signerName: 'Lattice', signerExtra: { type: 'Lattice' }
+      addresses, signerName: 'Lattice', signerExtra: {
+        type: 'Lattice',
+        deviceId: deviceId,
+        privKey: privKey,
+        isPaired: isPaired
+      }
     })
 
     setModalToggle(true)
   }
-
+  
   function connectGridPlusAndGetAccounts() {
-    showModal(<LatticeModal addresses={getGridPlusAddresses}/>)
+    if (selectedAcc.signerExtra && 
+      selectedAcc.signerExtra.type === 'Lattice' && 
+      selectedAcc.signerExtra.isPaired) {
+        const { privKey, deviceId } = selectedAcc.signerExtra
+        const clientConfig = {
+            name: 'Ambire Wallet',
+            crypto: crypto,
+            privKey: privKey,
+        }
+        const client = new Client(clientConfig)
+        const getAddressesReqOpts = {
+            startPath: [HARDENED_OFFSET+44, HARDENED_OFFSET+60, HARDENED_OFFSET, 0, 0],
+            n: 10
+        }
+
+        setShowLoading(true)
+
+        client.connect(deviceId, (err, isPaired) => {
+          if (!isPaired) {
+            setShowLoading(false)
+            return addToast(`The Lattice device is not paired!`, { error: true })
+          }
+          if (err) {
+              setShowLoading(false)
+              addToast(`Lattice: ${err} Or check if the DeviceID is correct.`, { error: true })
+              return 
+          }
+
+          client.getAddresses(getAddressesReqOpts, (err, res) => {
+              if (err) {
+                  setShowLoading(false)
+                  addToast(`Lattice: ${err}`, { error: true })
+                  return
+              }
+              
+              setShowLoading(false)
+              getLatticeAddresses({ addresses: res, deviceId: deviceId, privKey: privKey, isPaired: true })
+          })
+            
+        })
+      } else {
+        showModal(<LatticeModal addresses={getLatticeAddresses} />)
+      }
   }
 
   const modalHandler = () => {
@@ -158,12 +211,12 @@ const AddAuthSigner = props => {
       showModal(
         <SelectSignerAccountModal
           signersToChoose={signersToChoose.addresses}
-          selectedNetwork={props.selectedNetwork}
+          selectedNetwork={selectedNetwork}
           onSignerAddressClicked={onSignerAddressClicked}
           description={`You will authorize the selected ${signersToChoose.signerName} address to sign transactions for your account.`}
         />
       )
-  }, [modalToggle, onSignerAddressClicked, props.selectedNetwork, showModal, signersToChoose])
+  }, [modalToggle, onSignerAddressClicked, selectedNetwork, showModal, signersToChoose])
 
   const addFromSignerButtons = (
     <div className="wallet-btns-wrapper">
@@ -212,7 +265,7 @@ const AddAuthSigner = props => {
   }
 
   useEffect(() => {
-    const isAddressValid = validateAddAuthSignerAddress(signerAddress.address, props.selectedAcc)
+    const isAddressValid = validateAddAuthSignerAddress(signerAddress.address, selectedAcc.id)
     
     setDisabled(!isAddressValid.success)
 
@@ -221,11 +274,17 @@ const AddAuthSigner = props => {
       message: isAddressValid.message ? isAddressValid.message : ''
     })
 
-  }, [props.selectedAcc, signerAddress.address])
+  }, [selectedAcc, signerAddress.address])
 
   return (
     <div className="content">
-      <div className="signer">
+      {showLoading && 
+      (<>
+        <h3>It may takes a while.</h3>
+        <h3>Please wait...</h3>
+        <Loading />
+      </>)}
+      {!showLoading && (<div className="signer">
         <div className="signer-address-input">
           <TextInput
             placeholder="Enter signer address"
@@ -246,13 +305,13 @@ const AddAuthSigner = props => {
           <Button
             disabled={disabled}
             icon={<MdOutlineAdd/>}
-            onClick={() => props.onAddBtnClicked(signerAddress)}
+            onClick={() => onAddBtnClicked(signerAddress)}
             small
           >
             Add
           </Button>
         </div>
-      </div>
+      </div>)}
       { validationFormMgs.message && 
         (<div className='validation-error'><BsXLg size={12}/>&nbsp;{validationFormMgs.message}</div>) 
       }
