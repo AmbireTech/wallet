@@ -185,10 +185,13 @@ export default function AddAccount({ relayerURL, onAddAccount }) {
     )
   }, [getAccountByAddr, relayerURL])
 
-  const getGridPlusAddresses = addresses => {
+  const getGridPlusAddresses = ({ addresses, deviceId, privKey, isPaired }) => {
     setChooseSigners({
       addresses, signerName: 'Lattice', signerExtra: {
-        type: 'Lattice'
+        type: 'Lattice',
+        deviceId: deviceId,
+        privKey: privKey,
+        isPaired: isPaired
       }
     })
   }

@@ -86,10 +86,8 @@ async function getWalletNew({ chainId, signer, signerExtra }, opts) {
         data: dataMsf,
     }
 
-    const deviceId = 'prMGjf'
-    
     return {
-      signMessage: async() => await client.connect(deviceId, async(err, isPaired) => {  
+      signMessage: async() => await client.connect(signerExtra.deviceId, async(err, isPaired) => {  
         if (typeof isPaired === 'undefined' || !isPaired) {
           throw new Error('The Lattice device is not paired.')
         }
