@@ -80,7 +80,7 @@ export default function useAmbireExtension({ selectedAccount, network, verbose =
 
     console.log(`ambireExtension msg`, msg)
     const provider = getDefaultProvider(network.rpc)
-    if (msg.data && msg.data.type === "ambireCSToAmbirePCRequest") {
+    if (msg.data && msg.data.type === "ambireCSRequest") {
       const payload = msg.data.payload
       const method = payload.method
 
@@ -244,13 +244,18 @@ export default function useAmbireExtension({ selectedAccount, network, verbose =
         console.log(rpcResult)
 
         window.postMessage({
-          type: "ambirePCToAmbireCSResponse",
+          type: "ambirePCResponse",
           internalId: msg.data.internalId,
           payload: rpcResult
         })
       }
-    } else if (msg.data && msg.data.type === "pingAmbireWallet") {
-      window.postMessage({ type: "pongFromAmbireWallet", id: msg.data.id })
+    } else if (msg.data && msg.data.type === "ambireCSSetTabId") { // content script injected, checking if ambire page replies, triggering connect event
+      window.postMessage({
+        type: "ambirePCTabIdSet",
+        tabId: msg.data.tabId,
+        chainId: network.chainId,
+        account: selectedAccount
+      })
     }
   }
 
@@ -271,10 +276,10 @@ export default function useAmbireExtension({ selectedAccount, network, verbose =
       }
 
       if (!resolution) {
-        rpcResult.error = {message: 'Nothing to resolve'}
+        rpcResult.error = { message: 'Nothing to resolve' }
         rpcResult.success = false
       } else if (!resolution.success) {
-        rpcResult.error = {message: resolution.message}
+        rpcResult.error = { message: resolution.message }
         rpcResult.success = false
       } else { //onSuccess
         rpcResult.success = true
@@ -284,7 +289,7 @@ export default function useAmbireExtension({ selectedAccount, network, verbose =
       }
 
       window.postMessage({
-        type: "ambirePCToAmbireCSResponse",
+        type: "ambirePCResponse",
         internalId: req.upstreamInternalId,
         payload: rpcResult
       })
@@ -302,7 +307,7 @@ export default function useAmbireExtension({ selectedAccount, network, verbose =
     const eventListenerWrapper = (msg) => {
       eventListener(selectedAccount, network, msg).catch(err => {
         window.postMessage({
-          type: "ambirePCToAmbireCSResponse",
+          type: "ambirePCResponse",
           internalId: msg.data.internalId,
           payload: {
             jsonrpc: "2.0",
@@ -314,12 +319,12 @@ export default function useAmbireExtension({ selectedAccount, network, verbose =
     }
 
     window.postMessage({
-      type: "chainChanged",
+      type: "ambirePCChainChanged",
       chainId: network.chainId
     })
 
     window.postMessage({
-      type: "accountsChanged",
+      type: "ambirePCAccountsChanged",
       account: selectedAccount
     })
 
