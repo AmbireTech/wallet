@@ -24,8 +24,8 @@ export default function Actions({ estimation, feeSpeed, approveTxn, rejectTxn, s
   }
 
   const signButtonLabel = signingStatus && signingStatus.inProgress ?
-    (<><Loading/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Signing...</>)
-    : (<>Sign and send</>)
+    (<span><Loading/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Signing...</span>)
+    : (<span>Sign and send</span>)
 
   const isRecoveryMode = signingStatus && signingStatus.finalBundle && signingStatus.finalBundle.recoveryMode
   if (signingStatus && signingStatus.quickAcc) {
