@@ -4,7 +4,7 @@ import { GiTakeMyMoney, GiSpectacles, GiGorilla } from 'react-icons/gi'
 import { FaSignature, FaChevronLeft } from 'react-icons/fa'
 import { MdOutlineAccountCircle } from 'react-icons/md'
 import './SendTransaction.scss'
-import { useEffect, useState, useMemo } from 'react'
+import { useEffect, useState, useMemo, useRef } from 'react'
 import fetch from 'node-fetch'
 import { Bundle } from 'adex-protocol-eth/js'
 import { getDefaultProvider, Wallet } from 'ethers'
@@ -85,6 +85,8 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
   }, [bundle, setEstimation])
 
   // Estimate the bundle & reestimate periodically
+  const currentBundle = useRef(null)
+  currentBundle.current = bundle
   useEffect(() => {    // eslint-disable-next-line react-hooks/exhaustive-deps
     if (!bundle.txns.length) return
 
@@ -96,7 +98,7 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
       : bundle.estimateNoRelayer({ provider: getDefaultProvider(network.rpc) })
     )
       .then(estimation => {
-        if (unmounted) return
+        if (unmounted || bundle !== currentBundle.current) return
         estimation.selectedFeeToken = { symbol: network.nativeAssetSymbol }
         setEstimation(prevEstimation => {
           if (estimation.remainingFeeTokenBalances) {
