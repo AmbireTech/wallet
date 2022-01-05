@@ -10,7 +10,7 @@ const Collectibles = ({ collectibles }) => {
             :
             <div id="collectibles">
                 {
-                    collectibles.map(({ tokens }) => (tokens || []).map(({ network, address, collectionName, collectionImg, assets }) => assets.map(({ tokenId, assetName, assetImg, balanceUSD }) => (
+                    collectibles.map(({ network, address, collectionName, collectionImg, assets }) => (assets || []).map(({ tokenId, assetName, assetImg, balanceUSD }) => (
                         <div className="collectible" key={tokenId}>
                             <NavLink to={`/wallet/nft/${network}/${address}/${tokenId}`}>
                                 <div className="artwork" style={{backgroundImage: `url(${assetImg})`}}/>
@@ -26,7 +26,7 @@ const Collectibles = ({ collectibles }) => {
                                 </div>
                             </NavLink>
                         </div>
-                    ))))
+                    )))
                 }
             </div>
     )
