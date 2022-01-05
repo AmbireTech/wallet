@@ -113,7 +113,7 @@ export default function Dashboard({ portfolio, selectedNetwork, selectedAccount,
                                 account={selectedAccount}
                             />
                             :
-                            <Collectibles collectibles={portfolio.collectibles}/>
+                            <Collectibles portfolio={portfolio}/>
                     }
                 </div>
                 <div className="footer">
