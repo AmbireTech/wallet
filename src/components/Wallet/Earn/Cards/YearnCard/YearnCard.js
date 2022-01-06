@@ -1,17 +1,15 @@
 import Card from '../Card/Card'
 
 import { useCallback, useEffect, useState, useMemo, useRef } from 'react'
-import { ethers } from 'ethers'
 import { parseUnits } from '@ethersproject/units'
-import { Contract } from '@ethersproject/contracts'
 import { getDefaultProvider } from '@ethersproject/providers'
 import { Interface } from '@ethersproject/abi'
-import ERC20ABI from 'adex-protocol-eth/abi/ERC20.json'
 import { Yearn } from '@yfi/sdk'
 import YEARN_VAULT_ABI from '../../../../../consts/YearnVaultABI'
 import networks from '../../../../../consts/networks'
 import { useToasts } from '../../../../../hooks/toasts'
 import YEARN_ICON from '../../../../../resources/yearn.svg'
+import approveToken from '../../../../../helpers/approveToken'
 
 const v2VaultsAddresses = [
     '0xdA816459F1AB5631232FE5e97a05BBBb94970c95',
@@ -35,7 +33,6 @@ const customVaultMetadata = {
     }
 }
 
-const ERC20Interface = new Interface(ERC20ABI)
 const YearnVaultInterface = new Interface(YEARN_VAULT_ABI)
 
 const YearnCard = ({ networkId, accountId, tokens, addRequest }) => {
@@ -133,24 +130,6 @@ const YearnCard = ({ networkId, accountId, tokens, addRequest }) => {
         ])
     }, [tokensItems])
 
-    const approveToken = async (vaultAddress, tokenAddress, bigNumberHexAmount) => {
-        try {
-            const tokenContract = new Contract(tokenAddress, ERC20Interface, provider)
-            const allowance = await tokenContract.allowance(accountId, vaultAddress)
-
-            if (allowance.lt(bigNumberHexAmount)) {
-                addRequestTxn(`yearn_vault_approve_${Date.now()}`, {
-                    to: tokenAddress,
-                    value: '0x0',
-                    data: ERC20Interface.encodeFunctionData('approve', [vaultAddress, bigNumberHexAmount])
-                })
-            }
-        } catch(e) {
-            console.error(e)
-            addToast(`Yearn Approve Error: ${e.message || e}`, { error: true })
-        }
-    }
-
     const onValidate = async (type, value, amount) => {
         const item = tokensItems.find(t => t.type === type.toLowerCase() && t.value === value)
         if (!item) return
@@ -160,7 +139,7 @@ const YearnCard = ({ networkId, accountId, tokens, addRequest }) => {
         const bigNumberAmount = parseUnits(parsedAmount, decimals)
 
         if (type === 'Deposit') {
-            await approveToken(vaultAddress, item.tokenAddress, ethers.constants.MaxUint256)
+            await approveToken('Yearn Vault', networkId, accountId, vaultAddress, item.tokenAddress, addRequestTxn, addToast)
 
             try {
                 addRequestTxn(`yearn_vault_deposit_${Date.now()}`, {

@@ -2,7 +2,6 @@ import { ethers, getDefaultProvider } from 'ethers'
 import { Interface } from 'ethers/lib/utils'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useToasts } from '../../../../../hooks/toasts'
-import ERC20Abi from 'adex-protocol-eth/abi/ERC20.json'
 import AAVELendingPoolAbi from '../../../../../consts/AAVELendingPoolAbi'
 import AAVELendingPoolProviders from '../../../../../consts/AAVELendingPoolProviders'
 import networks from '../../../../../consts/networks'
@@ -10,8 +9,8 @@ import networks from '../../../../../consts/networks'
 import AAVE_ICON from '../../../../../resources/aave.svg'
 import Card from '../Card/Card'
 import { getDefaultTokensItems } from './defaultTokens'
+import approveToken from '../../../../../helpers/approveToken'
 
-const ERC20Interface = new Interface(ERC20Abi)
 const AAVELendingPool = new Interface(AAVELendingPoolAbi)
 const RAY = 10**27
 let lendingPoolAddress = null
@@ -41,38 +40,11 @@ const AAVECard = ({ networkId, tokens, protocols, account, addRequest }) => {
     const getToken = (type, address) => tokensItems.filter(token => token.type === type).find(token => token.address === address)
     const addRequestTxn = (id, txn, extraGas = 0) => addRequest({ id, type: 'eth_sendTransaction', chainId: networkDetails.chainId, account, txn, extraGas })
 
-    const approveToken = async (tokenAddress, bigNumberHexAmount) => {
-        try {
-            const ZERO = ethers.BigNumber.from(0)
-            const provider = getDefaultProvider(networkDetails.rpc)
-            const tokenContract = new ethers.Contract(tokenAddress, ERC20Interface, provider)
-            const allowance = await tokenContract.allowance(account, tokenAddress)
-
-            if (allowance.lt(bigNumberHexAmount)) {
-                if (allowance.gt(ZERO)) {
-                    addRequestTxn(`aave_pool_approve_${Date.now()}`, {
-                        to: lendingPoolAddress,
-                        value: bigNumberHexAmount,
-                        data: '0x'
-                    })
-                }
-                addRequestTxn(`aave_pool_approve_${Date.now()}`, {
-                    to: tokenAddress,
-                    value: '0x0',
-                    data: ERC20Interface.encodeFunctionData('approve', [lendingPoolAddress, bigNumberHexAmount])
-                })
-            }
-        } catch(e) {
-            console.error(e)
-            addToast(`Aave Approve Error: ${e.message || e}`, { error: true })
-        }
-    }
-
     const onValidate = async (type, tokenAddress, amount) => {
         if (type === 'Deposit') {
             const token = getToken('deposit', tokenAddress)
             const bigNumberHexAmount = ethers.utils.parseUnits(amount.toString(), token.decimals).toHexString()
-            await approveToken(tokenAddress, bigNumberHexAmount)
+            await approveToken('Aave Pool', networkDetails.id, account, lendingPoolAddress, tokenAddress, addRequestTxn, addToast)
 
             try {
                 addRequestTxn(`aave_pool_deposit_${Date.now()}`, {
@@ -88,7 +60,7 @@ const AAVECard = ({ networkId, tokens, protocols, account, addRequest }) => {
         else if (type === 'Withdraw') {
             const token = getToken('withdraw', tokenAddress)
             const bigNumberHexAmount = ethers.utils.parseUnits(amount.toString(), token.decimals).toHexString()
-            await approveToken(tokenAddress, bigNumberHexAmount)
+            await approveToken('Aave Pool', networkDetails.id, account, lendingPoolAddress, tokenAddress, addRequestTxn, addToast)
 
             try {
                 addRequestTxn(`aave_pool_withdraw_${Date.now()}`, {
