@@ -255,7 +255,7 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
       if (!skipResolve && requestIds) resolveMany(requestIds, { success: bundleResult.success, result: bundleResult.txId, message: bundleResult.message })
 
       if (bundleResult.success) {
-        onBroadcastedTxn(bundleResult.txId, requestIds, bundle.network)
+        onBroadcastedTxn(bundleResult.txId)
         onDismiss()
       } else addToast(`Transaction error: ${bundleResult.message || 'unspecified error'}`, { error: true })
     })
