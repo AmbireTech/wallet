@@ -302,7 +302,11 @@ const Security = ({
       <input {...getInputProps()} />
       {signersFragment}
 
-      <Backup selectedAccount={selectedAccount} onOpen={open}/>
+      <Backup 
+        selectedAccount={selectedAccount}
+        onOpen={open}
+        onAddAccount={onAddAccount}
+      />
     </section>
   )
 }
