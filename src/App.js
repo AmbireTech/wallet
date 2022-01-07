@@ -115,16 +115,14 @@ function AppInner () {
     return true
   }
 
-  // Keeping track of transactions
-  const [sentTxn, setSentTxn] = useState(() => {
-    const storedSentTxn = localStorage.sentTxn
-    return storedSentTxn ? JSON.parse(storedSentTxn) : []
-  })
-  const onBroadcastedTxn = (hash, requestIds, network) => {
-    const updatedSentTxn = [...sentTxn, { confirmed: false, hash, requestIds, network }]
-    setSentTxn(updatedSentTxn)
-    localStorage.sentTxn = JSON.stringify(updatedSentTxn)
-  
+   // Keeping track of transactions
+  const [sentTxn, setSentTxn] = useState([])
+  const onBroadcastedTxn = hash => {
+    if (!hash) {
+      addToast('Transaction signed but not broadcasted to the network!', { timeout: 15000 })
+      return
+    }
+    setSentTxn(sentTxn => [...sentTxn, { confirmed: false, hash }])
     addToast((
       <span>Transaction signed and sent successfully!
         &nbsp;Click to view on block explorer.
@@ -134,14 +132,10 @@ function AppInner () {
   const confirmSentTx = txHash => setSentTxn(sentTxn => {
     const tx = sentTxn.find(tx => tx.hash === txHash)
     tx.confirmed = true
-
-    const updatedSentTxn = [
+    return [
       ...sentTxn.filter(tx => tx.hash !== txHash),
       tx
     ]
-
-    localStorage.sentTxn = JSON.stringify(updatedSentTxn)
-    return updatedSentTxn
   })
 
   // Show notifications for all requests
