@@ -3,7 +3,14 @@ import './Backup.scss'
 import { BiExport, BiImport } from "react-icons/bi"
 import { Button } from "../../../common"
 
-const Backup = ({ selectedAccount, onOpen }) => {
+const Backup = ({ selectedAccount, onOpen, onAddAccount }) => {
+    const onBackupDownloaded = () => {
+        onAddAccount({
+            ...selectedAccount,
+            downloadedBackup: true
+        })
+    }
+
     return (
         <div id="backup">
             <div className="panel">
@@ -16,7 +23,7 @@ const Backup = ({ selectedAccount, onOpen }) => {
                         )}`}
                         download={`${selectedAccount.id}.json`}
                     >
-                        <Button icon={<BiExport/>}>Export</Button>
+                        <Button icon={<BiExport/>} onClick={onBackupDownloaded}>Export</Button>
                     </a>
                     <div style={{ fontSize: '0.9em' }}>
                         Downloads a backup of your current account ({selectedAccount.id.slice(0, 5)}...{selectedAccount.id.slice(-3)}) encrypted with
