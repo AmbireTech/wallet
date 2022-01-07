@@ -113,6 +113,7 @@ export default function AddAccount({ relayerURL, onAddAccount }) {
       primaryKeyBackup,
       salt, identityFactoryAddr, baseIdentityAddr, bytecode,
       signer,
+      cloudBackupOptout: !!req.backupOptout,
       // This makes the modal appear, and will be removed by the modal which will call onAddAccount to update it
       emailConfRequired: true
     }, { select: true, isNew: true })
