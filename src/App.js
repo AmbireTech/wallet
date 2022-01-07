@@ -115,7 +115,7 @@ function AppInner () {
     return true
   }
 
-  // Keeping track of transactions
+   // Keeping track of transactions
   const [sentTxn, setSentTxn] = useState([])
   const onBroadcastedTxn = hash => {
     if (!hash) {
