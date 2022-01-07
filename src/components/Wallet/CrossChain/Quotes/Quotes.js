@@ -15,7 +15,7 @@ const formatFeeAmount = (fee, route) => {
 }
 const getNetwork = id => networks.find(({ chainId }) => chainId === id)
 
-const Quotes = ({ addRequest, selectedAccount, fromTokensItems, quotes, onCancel }) => {
+const Quotes = ({ addRequest, selectedAccount, fromTokensItems, quotes, onQuotesConfirmed, onCancel }) => {
     const { addToast } = useToasts()
 
     const { toAsset } = quotes;
@@ -113,7 +113,7 @@ const Quotes = ({ addRequest, selectedAccount, fromTokensItems, quotes, onCancel
                 inputAmount = bridgeRoute.inputAmount
             }
 
-            const { toAsset, outputAmount } = bridgeRoute
+            const { toAsset, outputAmount, bridgeInfo } = bridgeRoute
             
             if (isApprovalRequired) {
                 const { to, data } = await approvalBuildTx(fromAsset.chainId, selectedAccount, allowanceTarget, fromAsset.address, inputAmount)
@@ -123,6 +123,16 @@ const Quotes = ({ addRequest, selectedAccount, fromTokensItems, quotes, onCancel
             const { tx } = await sendBuildTx(selectedAccount, fromAsset.address, fromAsset.chainId, toAsset.address, toAsset.chainId, inputAmount, outputAmount, routePath)
             sendTx(`transfer_send_crosschain_${Date.now()}`, fromAsset.chainId, tx.to, tx.data, tx.value.hex)
 
+            const serviceTimeMinutes = new Date((bridgeInfo?.serviceTime || 0) + (middlewareRoute?.serviceTime || 0)).getMinutes()
+            onQuotesConfirmed({
+                txData: tx.data,
+                serviceTimeMinutes,
+                to: {
+                    chainId: toAsset.chainId,
+                    asset: toAsset,
+                    amount: outputAmount
+                }
+            })
             onCancel()
         } catch(e) {
             console.error(e);
