@@ -242,12 +242,12 @@ function AppInner () {
 // handles all the providers so that we can use provider hooks inside of AppInner
 export default function App() {
   return (
-    <ToastProvider>
-      <ModalProvider>
-        <Router>
+    <Router>
+      <ToastProvider>
+        <ModalProvider>
           <AppInner/>
-        </Router>
-      </ModalProvider>
-    </ToastProvider>
+        </ModalProvider>
+      </ToastProvider>
+    </Router>
   )
 }
