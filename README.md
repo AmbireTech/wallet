@@ -225,4 +225,5 @@ Additionally, there's an ongoing [Immunefi bug bounty](https://immunefi.com/boun
 * More frequent updating of balances
 * Ability to ask for your confirmation email to be resent
 * Warn when a WalletConnect connection may be offline
+* Cross-chain transfers are now tracked
 
