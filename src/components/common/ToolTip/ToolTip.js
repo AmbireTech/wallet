@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import './ToolTip.scss'
 
-const ToolTip = ({ children, label, className }) => {
+const ToolTip = ({ children, label, disabled, className }) => {
     const [isMouseOver, setIsMouseOver] = useState(false)
     const [mousePosition, setMousePosition] = useState({ x: 0, y: 0})
 
@@ -17,7 +17,7 @@ const ToolTip = ({ children, label, className }) => {
         >
             { children }
             {
-                isMouseOver ? 
+                isMouseOver && !disabled ? 
                     <label style={{top: mousePosition.y, left: mousePosition.x}}>{ label }</label>
                     :
                     null
