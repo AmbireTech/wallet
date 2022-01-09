@@ -2,7 +2,6 @@ import Card from '../Card/Card'
 
 import { useCallback, useEffect, useState, useMemo, useRef } from 'react'
 import { parseUnits } from '@ethersproject/units'
-import { getDefaultProvider } from '@ethersproject/providers'
 import { Interface } from '@ethersproject/abi'
 import { Yearn } from '@yfi/sdk'
 import YEARN_VAULT_ABI from '../../../../../consts/YearnVaultABI'
@@ -10,6 +9,7 @@ import networks from '../../../../../consts/networks'
 import { useToasts } from '../../../../../hooks/toasts'
 import YEARN_ICON from '../../../../../resources/yearn.svg'
 import approveToken from '../../../../../helpers/approveToken'
+import { getProvider } from '../../../../../lib/provider'
 
 const v2VaultsAddresses = [
     '0xdA816459F1AB5631232FE5e97a05BBBb94970c95',
@@ -47,7 +47,7 @@ const YearnCard = ({ networkId, accountId, tokens, addRequest }) => {
     const networkDetails = networks.find(({ id }) => id === networkId)
     const getTokenFromPortfolio = useCallback(tokenAddress => tokens.find(({ address }) => address.toLowerCase() === tokenAddress.toLowerCase()) || {}, [tokens])
     const addRequestTxn = (id, txn, extraGas = 0) => addRequest({ id, type: 'eth_sendTransaction', chainId: networkDetails.chainId, account: accountId, txn, extraGas })
-    const provider = useMemo(() => getDefaultProvider(networkDetails.rpc), [networkDetails.rpc])
+    const provider = useMemo(() => getProvider(networkDetails.id), [networkDetails.id])
 
     const loadVaults = useCallback(async () => {
         if (unavailable) return
