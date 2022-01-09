@@ -96,7 +96,12 @@ const PermissionsModal = ({ relayerIdentityURL, account, onAddAccount, onClose }
                         </div>
                     </div>
                     <div className="status">
-                        { !isEmailConfirmed ? <Loading/> : <spam className="check-icon"><MdOutlineCheck/></spam> }
+                        { 
+                            !isEmailConfirmed ?
+                                <label>Waiting for<br/>your confirmation</label>
+                                : 
+                                <spam className="check-icon"><MdOutlineCheck/></spam>
+                        }
                         { 
                             !isEmailConfirmed && !isEmailResent ? 
                                 <Button mini clear icon={<AiOutlineReload/>} onClick={sendConfirmationEmail}>Resend</Button>
