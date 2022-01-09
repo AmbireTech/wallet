@@ -75,7 +75,7 @@ const PermissionsModal = ({ relayerIdentityURL, account, onAddAccount, onClose }
     }, [isEmailConfirmed, checkEmailConfirmation])
 
     useEffect(() => {
-        const resendInterval = setInterval(() => resendTimeLeft > 0 ? setResendTimeLeft(resendTimeLeft => resendTimeLeft - 1000) : null, 1000)
+        const resendInterval = setInterval(() => setResendTimeLeft(resendTimeLeft => resendTimeLeft > 0 ? resendTimeLeft - 1000 : 0), 1000)
         return () => clearTimeout(resendInterval)
     }, [])
 
