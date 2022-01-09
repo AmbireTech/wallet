@@ -1,10 +1,11 @@
-import { ethers, getDefaultProvider } from 'ethers'
+import { ethers } from 'ethers'
 import { Interface } from 'ethers/lib/utils'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useToasts } from '../../../../../hooks/toasts'
 import AAVELendingPoolAbi from '../../../../../consts/AAVELendingPoolAbi'
 import AAVELendingPoolProviders from '../../../../../consts/AAVELendingPoolProviders'
 import networks from '../../../../../consts/networks'
+import { getProvider } from '../../../../../lib/provider'
 
 import AAVE_ICON from '../../../../../resources/aave.svg'
 import Card from '../Card/Card'
@@ -84,7 +85,7 @@ const AAVECard = ({ networkId, tokens, protocols, account, addRequest }) => {
         }
 
         try {
-            const provider = getDefaultProvider(networkDetails.rpc)
+            const provider = getProvider(networkDetails.id)
             const lendingPoolProviderContract = new ethers.Contract(providerAddress, AAVELendingPool, provider)
             lendingPoolAddress = await lendingPoolProviderContract.getLendingPool()
         
