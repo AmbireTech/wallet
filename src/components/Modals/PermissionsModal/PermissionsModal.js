@@ -110,7 +110,7 @@ const PermissionsModal = ({ relayerIdentityURL, account, onAddAccount, onClose }
                         }
                         { 
                             !isEmailConfirmed && !isEmailResent ? 
-                                <ToolTip label={`Will be available in ${resendTimeLeft / 1000} seconds`}>
+                                <ToolTip label={`Will be available in ${resendTimeLeft / 1000} seconds`} disabled={resendTimeLeft === 0}>
                                     <Button mini clear icon={<AiOutlineReload/>} disabled={resendTimeLeft !== 0} onClick={sendConfirmationEmail}>Resend</Button>
                                 </ToolTip>
                                 :
