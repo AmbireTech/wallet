@@ -334,7 +334,6 @@ export default function usePortfolio({ currentNetwork, account }) {
     useEffect(() => {
         const getSupplementTokenData = async () => {
             const currentNetworkTokens = tokensByNetworks.find(({ network }) => network === currentNetwork)
-            console.log(currentNetworkTokens)
             if (!currentNetworkTokens) return
 
             const extraTokensAssets = getExtraTokensAssets(account, currentNetwork)
