@@ -1,6 +1,6 @@
 import { RampInstantSDK } from '@ramp-network/ramp-instant-sdk'
 import transakSDK from '@transak/transak-sdk'
-import { popupCenter } from '../helpers/popupHelper'
+import { popupCenter } from '../lib/popupHelper'
 import url from 'url'
 
 import { RAMP_HOST_API_KEY, PAYTRIE_PARTNER_URL, TRANSAK_API_KEY, TRANSAK_ENV } from '../config'

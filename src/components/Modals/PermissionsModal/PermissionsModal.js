@@ -4,8 +4,8 @@ import { useState, useEffect, useCallback } from 'react'
 import { MdCheck, MdClose, MdOutlineCheck } from 'react-icons/md'
 import { useModals, usePermissions } from '../../../hooks'
 import { useToasts } from '../../../hooks/toasts'
-import { askForPermission } from '../../../helpers/permissions'
-import { Modal, Toggle, Button, Checkbox, Loading } from '../../common'
+import { askForPermission } from '../../../lib/permissions'
+import { Modal, Toggle, Button, Checkbox, ToolTip } from '../../common'
 import { isFirefox } from '../../../lib/isFirefox'
 import { fetchGet } from '../../../lib/fetch'
 import { AiOutlineReload } from 'react-icons/ai'
@@ -18,6 +18,7 @@ const PermissionsModal = ({ relayerIdentityURL, account, onAddAccount, onClose }
     const { addToast } = useToasts()
     const [isEmailConfirmed, setEmailConfirmed] = useState(false)
     const [isEmailResent, setEmailResent] = useState(false)
+    const [resendTimeLeft, setResendTimeLeft] = useState(60000)
 
     const areBlockedPermissions = (!isFirefox() && !isClipboardGranted) || !isNoticationsGranted
     const isAccountNotConfirmed = account.emailConfRequired && !isEmailConfirmed
@@ -73,6 +74,11 @@ const PermissionsModal = ({ relayerIdentityURL, account, onAddAccount, onClose }
         return () => clearInterval(emailConfirmationInterval)
     }, [isEmailConfirmed, checkEmailConfirmation])
 
+    useEffect(() => {
+        const resendInterval = setInterval(() => setResendTimeLeft(resendTimeLeft => resendTimeLeft > 0 ? resendTimeLeft - 1000 : 0), 1000)
+        return () => clearTimeout(resendInterval)
+    }, [])
+
     const onCloseModal = () => {
         hideModal()
         onClose()
@@ -96,10 +102,17 @@ const PermissionsModal = ({ relayerIdentityURL, account, onAddAccount, onClose }
                         </div>
                     </div>
                     <div className="status">
-                        { !isEmailConfirmed ? <Loading/> : <spam className="check-icon"><MdOutlineCheck/></spam> }
+                        { 
+                            !isEmailConfirmed ?
+                                <label>Waiting for<br/>your confirmation</label>
+                                : 
+                                <spam className="check-icon"><MdOutlineCheck/></spam>
+                        }
                         { 
                             !isEmailConfirmed && !isEmailResent ? 
-                                <Button mini clear icon={<AiOutlineReload/>} onClick={sendConfirmationEmail}>Resend</Button>
+                                <ToolTip label={`Will be available in ${resendTimeLeft / 1000} seconds`} disabled={resendTimeLeft === 0}>
+                                    <Button mini clear icon={<AiOutlineReload/>} disabled={resendTimeLeft !== 0} onClick={sendConfirmationEmail}>Resend</Button>
+                                </ToolTip>
                                 :
                                 null
                         }
