@@ -9,7 +9,7 @@ import { Interface } from 'ethers/lib/utils'
 import { useToasts } from '../../../hooks/toasts'
 import { TextInput, NumberInput, Button, Select, Loading, AddressBook, AddressWarning, NoFundsPlaceholder } from '../../common'
 import { validateSendTransferAddress, validateSendTransferAmount } from '../../../lib/validations/formValidations'
-import { isValidAddress } from '../../../helpers/address'
+import { isValidAddress } from '../../../lib/address'
 import Addresses from './Addresses/Addresses'
 
 const ERC20 = new Interface(require('adex-protocol-eth/abi/ERC20'))

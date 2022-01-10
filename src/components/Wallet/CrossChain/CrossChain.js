@@ -10,8 +10,9 @@ import { fetchChains, fetchFromTokens, fetchQuotes, fetchToTokens } from '../../
 import networks from '../../../consts/networks'
 import { useToasts } from '../../../hooks/toasts'
 import Quotes from './Quotes/Quotes'
+import History from './History/History'
 
-const CrossChain = ({ addRequest, selectedAccount, portfolio, network }) => {
+const CrossChain = ({ addRequest, selectedAccount, portfolio, network, relayerURL }) => {
     const { addToast } = useToasts()
 
     const [disabled, setDisabled] = useState(false)
@@ -29,6 +30,10 @@ const CrossChain = ({ addRequest, selectedAccount, portfolio, network }) => {
     const [toToken, setToToken] = useState(null)
     const [quotes, setQuotes] = useState(null)
     const portfolioTokens = useRef([])
+    const [quotesConfirmed, setQuotesConfirmed] = useState(() => {
+        const storedQuotesConfirmed = localStorage.quotesConfirmed
+        return storedQuotesConfirmed ? JSON.parse(storedQuotesConfirmed) : []
+    })
     
     const fromChain = useMemo(() => network.chainId, [network.chainId])
     const formDisabled = !(fromToken && toToken && fromChain && toChain && amount > 0)
@@ -153,6 +158,12 @@ const CrossChain = ({ addRequest, selectedAccount, portfolio, network }) => {
         setLoadingQuotes(false)
     }
 
+    const onQuotesConfirmed = quoteRequest => {
+        const updatedQuotesConfirmed = [...quotesConfirmed, quoteRequest]
+        setQuotesConfirmed(updatedQuotesConfirmed)
+        localStorage.quotesConfirmed = JSON.stringify(updatedQuotesConfirmed)
+    }
+
     useEffect(() => setAmount(0), [fromToken])
     useEffect(() => {
         const fromTokenItem = fromTokensItems.find(({ value }) => value === fromToken)
@@ -218,6 +229,7 @@ const CrossChain = ({ addRequest, selectedAccount, portfolio, network }) => {
                                                     selectedAccount={selectedAccount}
                                                     fromTokensItems={fromTokensItems}
                                                     quotes={quotes}
+                                                    onQuotesConfirmed={onQuotesConfirmed}
                                                     onCancel={() => setQuotes(null)}
                                                 />
                                                 :
@@ -241,6 +253,12 @@ const CrossChain = ({ addRequest, selectedAccount, portfolio, network }) => {
                                                 </div>
                 }
             </div>
+            <History
+                network={network}
+                account={selectedAccount}
+                quotesConfirmed={quotesConfirmed}
+                relayerURL={relayerURL}
+            />
         </div>
     )
 }

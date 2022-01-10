@@ -44,6 +44,7 @@
             }
 
             .status {
+                flex: 0 0 auto;
                 display: flex;
                 flex-direction: column;
                 gap: 1em;
@@ -54,6 +55,12 @@
                         font-size: 2.5em;
                         color: $primary-accent-color;
                     }
+                }
+
+                label {
+                    font-size: 0.8em;
+                    text-align: center;
+                    opacity: 0.8;
                 }
 
                 button {
