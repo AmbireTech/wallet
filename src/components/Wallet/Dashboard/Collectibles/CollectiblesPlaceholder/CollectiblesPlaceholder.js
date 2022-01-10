@@ -1,6 +1,6 @@
 import './CollectiblesPlaceholder.scss'
 
-const CollectiblesPlaceholder = ({ isPrivateMode, collectiblesLength }) => {
+const CollectiblesPlaceholder = () => {
     const collectibles = [
         {
             collectionName: 'Party Bone',
@@ -42,7 +42,7 @@ const CollectiblesPlaceholder = ({ isPrivateMode, collectiblesLength }) => {
     return (
         <div id="collectibles-placeholder">
             <div className="placeholder-text">
-                {isPrivateMode && collectiblesLength ? 'You can\'t see collectibles in private mode' : 'You don\'t have any collectibles (NFTs) yet'}
+                You don't have any collectibles (NFTs) yet
             </div>
             <div className="placeholder-overlay"></div>
             <div id="collectibles">
