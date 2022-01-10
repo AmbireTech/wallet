@@ -22,7 +22,7 @@ const TopBar = ({
   setNetwork,
   allNetworks,
   rewardsData,
-  privateMode
+  privateMode: { isPrivateMode, togglePrivateMode }
 }) => {
   const [isMenuOpen, setMenuOpen] = useState(false)
   
@@ -34,8 +34,6 @@ const TopBar = ({
 
   const account = accounts.find(({ id }) => id === selectedAcc)
   const accountIcon = blockies.create({ seed: account ? account.id : null }).toDataURL()
-
-  const togglePrivateMode = () => privateMode.setIsPrivateMode(!privateMode.isPrivateMode)
 
   return (
     <div id="topbar">
@@ -53,7 +51,7 @@ const TopBar = ({
         <div id="icon" />
       </NavLink>
       <div className={`container ${isMenuOpen ? 'open' : ''}`}>
-        {privateMode.isPrivateMode ? <MdVisibilityOff onClick={togglePrivateMode} /> : <MdRemoveRedEye onClick={togglePrivateMode} />}
+        {isPrivateMode ? <MdVisibilityOff size={20} onClick={togglePrivateMode} /> : <MdRemoveRedEye size={20} onClick={togglePrivateMode} />}
         <Rewards
           rewardsData={rewardsData}
           account={account}
