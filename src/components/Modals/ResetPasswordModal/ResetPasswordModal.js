@@ -9,7 +9,7 @@ import { useModals } from '../../../hooks'
 import { useToasts } from '../../../hooks/toasts'
 import accountPresets from '../../../consts/accountPresets'
 import { fetchPost } from '../../../lib/fetch'
-import buildRecoveryBundle from '../../../helpers/recoveryBundle'
+import buildRecoveryBundle from '../../../lib/recoveryBundle'
 
 const ResetPassword = ({ account, selectedNetwork, relayerURL, onAddAccount, showSendTxns }) => {
     const { hideModal } = useModals()
