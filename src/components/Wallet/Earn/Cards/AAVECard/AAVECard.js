@@ -10,7 +10,7 @@ import { getProvider } from '../../../../../lib/provider'
 import AAVE_ICON from '../../../../../resources/aave.svg'
 import Card from '../Card/Card'
 import { getDefaultTokensItems } from './defaultTokens'
-import approveToken from '../../../../../helpers/approveToken'
+import approveToken from '../../../../../lib/approveToken'
 
 const AAVELendingPool = new Interface(AAVELendingPoolAbi)
 const RAY = 10**27
