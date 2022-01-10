@@ -1,17 +1,15 @@
 import Card from '../../Card/Card'
 
 import { useEffect, useState, useMemo, useRef } from 'react'
-import { constants, Contract } from 'ethers'
 import { Interface, parseUnits } from 'ethers/lib/utils'
 import { getDefaultProvider } from '@ethersproject/providers'
 import networks from '../../../../../consts/networks'
-import ERC20ABI from 'adex-protocol-eth/abi/ERC20.json'
 import YEARN_TESSERACT_VAULT_ABI from '../../../../../consts/YearnTesseractVaultABI'
 import useYearn from './useYearn'
 import useTesseract from './useTesseract'
 import { useToasts } from '../../../../../hooks/toasts'
+import approveToken from '../../../../../lib/approveToken'
 
-const ERC20Interface = new Interface(ERC20ABI)
 const VaultInterface = new Interface(YEARN_TESSERACT_VAULT_ABI)
 
 const YearnTesseractCard = ({ networkId, accountId, tokens, addRequest }) => {
@@ -42,24 +40,6 @@ const YearnTesseractCard = ({ networkId, accountId, tokens, addRequest }) => {
 
     const { icon, loadVaults, tokensItems, details, onTokenSelect } = useMemo(() => networkId === 'ethereum' ? yearn : tesseract, [networkId, yearn, tesseract])
 
-    const approveToken = async (vaultAddress, tokenAddress, bigNumberHexAmount) => {
-        try {
-            const tokenContract = new Contract(tokenAddress, ERC20Interface, provider)
-            const allowance = await tokenContract.allowance(accountId, vaultAddress)
-
-            if (allowance.lt(bigNumberHexAmount)) {
-                addRequestTxn(`${name.toLowerCase()}_vault_approve_${Date.now()}`, {
-                    to: tokenAddress,
-                    value: '0x0',
-                    data: ERC20Interface.encodeFunctionData('approve', [vaultAddress, bigNumberHexAmount])
-                })
-            }
-        } catch(e) {
-            console.error(e)
-            addToast(`${name} Approve Error: ${e.message || e}`, { error: true })
-        }
-    }
-
     const onValidate = async (type, value, amount) => {
         const item = tokensItems.find(t => t.type === type.toLowerCase() && t.value === value)
         if (!item) return
@@ -69,7 +49,7 @@ const YearnTesseractCard = ({ networkId, accountId, tokens, addRequest }) => {
         const bigNumberAmount = parseUnits(parsedAmount, decimals)
 
         if (type === 'Deposit') {
-            await approveToken(vaultAddress, item.tokenAddress, constants.MaxUint256)
+            await approveToken(name, networkId, accountId, vaultAddress, item.tokenAddress, addRequestTxn, addToast)
 
             try {
                 addRequestTxn(`${name.toLowerCase()}_vault_deposit_${Date.now()}`, {
