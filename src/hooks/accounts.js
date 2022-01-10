@@ -57,13 +57,17 @@ export default function useAccounts () {
     const onRemoveAccount = useCallback(id => {
       if (!id) throw new Error('account: internal err: missing ID/Address')
 
+      const account = accounts.find(account => account.id === id)
+      if (account && account.email && account.cloudBackupOptout && !account.downloadedBackup) 
+        return addToast('You have opted out of Ambire Cloud Backup. Please backup your account before logging out.', { error: true, route: '/wallet/security' })
+
       const clearedAccounts = accounts.filter(account => account.id !== id)
       setAccounts([...clearedAccounts])
       localStorage.accounts = JSON.stringify(clearedAccounts)
       
       if (!clearedAccounts.length) history.push('/add-account')
       else onSelectAcc(clearedAccounts[0].id)
-    }, [accounts, history, onSelectAcc])
+    }, [accounts, history, onSelectAcc, addToast])
 
     return { accounts, selectedAcc, onSelectAcc, onAddAccount, onRemoveAccount }
   }
