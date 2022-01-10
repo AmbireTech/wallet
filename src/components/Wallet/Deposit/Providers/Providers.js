@@ -4,9 +4,11 @@ import RAMP_LOGO from '../../../../resources/ramp.svg';
 import PAYTRIE_LOGO from '../../../../resources/paytrie.svg';
 import TRANSAK_LOGO from '../../../../resources/transak.svg';
 
-import { openRampNetwork, openPayTrie, openTransak } from '../../../../services/providers'
+import useProviders from './useProviders'
 
 export default function Providers({ walletAddress, networkDetails }) {
+    const { openRampNetwork, openPayTrie, openTransak } = useProviders({ walletAddress, selectedNetwork: networkDetails.id })
+
     const providers = [
         {
             logo: RAMP_LOGO,
@@ -16,7 +18,7 @@ export default function Providers({ walletAddress, networkDetails }) {
             limits: '10,000EUR/m',
             currencies: 'USD, EUR, GBP',
             networks: ['ethereum', 'polygon', 'avalanche', 'binance-smart-chain'],
-            onClick: () => openRampNetwork({walletAddress, selectedNetwork: networkDetails.id})
+            onClick: () => openRampNetwork()
         },
         {
             logo: PAYTRIE_LOGO,
@@ -26,7 +28,7 @@ export default function Providers({ walletAddress, networkDetails }) {
             limits: '$2,000CAD/day',
             currencies: 'CAD',
             networks: ['ethereum', 'polygon', 'binance-smart-chain'],
-            onClick: () => openPayTrie({walletAddress, selectedNetwork: networkDetails.id})
+            onClick: () => openPayTrie()
         },
         {
             logo: TRANSAK_LOGO,
@@ -36,7 +38,7 @@ export default function Providers({ walletAddress, networkDetails }) {
             limits: 'up to 15,000 EUR/day',
             currencies: 'GBP, EUR, USD and many more',
             networks: ['ethereum', 'polygon', 'avalanche', 'arbitrum', 'binance-smart-chain'],
-            onClick: () => openTransak({walletAddress, selectedNetwork: networkDetails.id})
+            onClick: () => openTransak()
         }
     ];
 
