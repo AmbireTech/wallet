@@ -81,7 +81,6 @@ function AppInner () {
     account: selectedAcc
   })
   const privateMode = usePrivateMode()
-  console.log(privateMode)
 
   // Show the send transaction full-screen modal if we have a new txn
   const eligibleRequests = useMemo(() => requests
