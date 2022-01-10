@@ -34,6 +34,7 @@ export default function Wallet(props) {
         selectedNetwork={props.network}
         selectedAccount={props.selectedAcc}
         setNetwork={props.setNetwork}
+        privateMode={props.privateMode}
       />
     },
     {
@@ -137,7 +138,7 @@ export default function Wallet(props) {
 
   return (
     <div id="wallet">
-      <SideBar match={props.match} portfolio={props.portfolio} />
+      <SideBar match={props.match} portfolio={props.portfolio} privateMode={props.privateMode} />
       <TopBar {...props} />
 
       <div id="wallet-container" ref={walletContainer}>
