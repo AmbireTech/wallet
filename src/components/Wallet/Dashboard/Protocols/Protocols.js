@@ -10,7 +10,7 @@ import { MdOutlineAdd } from 'react-icons/md'
 import { AddTokenModal } from '../../../Modals'
 import { useModals } from '../../../../hooks'
 
-const Protocols = ({ portfolio, network, account }) => {
+const Protocols = ({ portfolio, network, account, formatPrivateMode }) => {
     const { showModal } = useModals()
 
     const [failedImg, setFailedImg] = useState([])
@@ -36,11 +36,11 @@ const Protocols = ({ portfolio, network, account }) => {
             <div className="separator"></div>
             <div className="balance">
                 <div className="currency">
-                    <span className="value">{ balance }</span>
+                    <span className="value">{ formatPrivateMode(balance) }</span>
                     <span className="symbol">{ symbol }</span>
                 </div>
                 <div className="dollar">
-                    <span className="symbol">$</span> { balanceUSD.toFixed(2) }
+                    <span className="symbol">$</span> { formatPrivateMode(balanceUSD.toFixed(2)) }
                 </div>
             </div>
             {

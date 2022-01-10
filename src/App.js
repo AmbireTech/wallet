@@ -20,7 +20,7 @@ import useNetwork from './hooks/network'
 import useWalletConnect from './hooks/walletconnect'
 import useGnosisSafe from './hooks/useGnosisSafe'
 import useNotifications from './hooks/notifications'
-import { useAttentionGrabber, usePortfolio, useAddressBook, useRelayerData } from './hooks'
+import { useAttentionGrabber, usePortfolio, useAddressBook, useRelayerData, usePrivateMode } from './hooks'
 import { useToasts } from './hooks/toasts'
 import { useOneTimeQueryParam } from './hooks/oneTimeQueryParam'
 
@@ -80,6 +80,8 @@ function AppInner () {
     currentNetwork: network.id,
     account: selectedAcc
   })
+  const privateMode = usePrivateMode()
+  console.log(privateMode)
 
   // Show the send transaction full-screen modal if we have a new txn
   const eligibleRequests = useMemo(() => requests
@@ -227,6 +229,7 @@ function AppInner () {
           showSendTxns={showSendTxns}
           onAddAccount={onAddAccount}
           rewardsData={rewardsData}
+          privateMode={privateMode}
         >
         </Wallet>
       </Route>

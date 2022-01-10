@@ -2,7 +2,7 @@ import "./TopBar.scss";
 
 import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
-import { MdOutlineArrowForward, MdOutlineClose, MdOutlineMenu } from "react-icons/md";
+import { MdOutlineArrowForward, MdOutlineClose, MdOutlineMenu, MdRemoveRedEye, MdVisibilityOff } from "react-icons/md";
 import { Select } from "../../common";
 import Accounts from "./Accounts/Accounts";
 import DApps from "./DApps/DApps";
@@ -21,7 +21,8 @@ const TopBar = ({
   network,
   setNetwork,
   allNetworks,
-  rewardsData
+  rewardsData,
+  privateMode
 }) => {
   const [isMenuOpen, setMenuOpen] = useState(false)
   
@@ -33,6 +34,8 @@ const TopBar = ({
 
   const account = accounts.find(({ id }) => id === selectedAcc)
   const accountIcon = blockies.create({ seed: account ? account.id : null }).toDataURL()
+
+  const togglePrivateMode = () => privateMode.setIsPrivateMode(!privateMode.isPrivateMode)
 
   return (
     <div id="topbar">
@@ -50,6 +53,7 @@ const TopBar = ({
         <div id="icon" />
       </NavLink>
       <div className={`container ${isMenuOpen ? 'open' : ''}`}>
+        {privateMode.isPrivateMode ? <MdVisibilityOff onClick={togglePrivateMode} /> : <MdRemoveRedEye onClick={togglePrivateMode} />}
         <Rewards
           rewardsData={rewardsData}
           account={account}
