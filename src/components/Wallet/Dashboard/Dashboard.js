@@ -115,7 +115,7 @@ export default function Dashboard({ portfolio, selectedNetwork, selectedAccount,
                                 formatPrivateMode={privateMode.formatPrivateMode}
                             />
                             :
-                            <Collectibles portfolio={portfolio} formatPrivateMode={privateMode.formatPrivateMode} />
+                            <Collectibles portfolio={portfolio} isPrivateMode={privateMode.isPrivateMode} />
                     }
                 </div>
                 <div className="footer">
