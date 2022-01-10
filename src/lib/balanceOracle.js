@@ -1,7 +1,7 @@
-import { ethers, getDefaultProvider } from 'ethers'
-import networks from '../consts/networks'
+import { ethers } from 'ethers'
 import oracle from 'adex-protocol-eth/abi/RemainingBalancesOracle.json'
 import tokenList from '../consts/tokenList.json'
+import { getProvider } from '../lib/provider'
 
 const { Interface, AbiCoder, formatUnits, hexlify, isAddress } = ethers.utils
 const RemainingBalancesOracle = new Interface(oracle)
@@ -39,7 +39,7 @@ async function getTokenListBalance ({walletAddr, tokens, network, updateBalance}
 //ToDo check for missing data and double check for incompleted returns
 async function call ({ walletAddr, tokens, network }) {
   if (!isAddress(walletAddr)) return {success: false, data: walletAddr, message:`Wallet address is not valide eth address`}
-  const provider = getDefaultProvider(networks.filter(n => n.id===network)[0]?.rpc || null)
+  const provider = getProvider(network)
   const coder = new AbiCoder()
   const args = [
     // identityFactoryAddr

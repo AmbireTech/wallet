@@ -1,7 +1,7 @@
 import './Collectible.scss'
 
 import { useParams } from 'react-router-dom'
-import { ethers, getDefaultProvider } from 'ethers'
+import { ethers } from 'ethers'
 import { Interface } from 'ethers/lib/utils'
 import { useCallback, useEffect, useState } from 'react'
 import { AiOutlineSend } from 'react-icons/ai'
@@ -13,6 +13,7 @@ import ERC721Abi from '../../../consts/ERC721Abi'
 import networks from '../../../consts/networks'
 import { validateSendNftAddress } from '../../../lib/validations/formValidations'
 import { BsXLg } from 'react-icons/bs'
+import { getProvider } from '../../../lib/provider'
 
 const ERC721 = new Interface(ERC721Abi)
 
@@ -85,8 +86,8 @@ const Collectible = ({ selectedAcc, selectedNetwork, addRequest, addressBook }) 
             const networkDetails = networks.find(({ id }) => id === network)
             if (!networkDetails) throw new Error('This network is not supported')
 
-            const { rpc, explorerUrl } = networkDetails
-            const provider = getDefaultProvider(rpc)
+            const { explorerUrl } = networkDetails
+            const provider = getProvider(networkDetails.id)
             const contract = new ethers.Contract(collectionAddr, ERC721Abi, provider)
 
             const [collection, address, maybeUri1, maybeUri2] = await Promise.all([

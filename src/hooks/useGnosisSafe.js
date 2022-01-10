@@ -3,7 +3,7 @@ import {useToasts} from '../hooks/toasts'
 
 import {Methods} from '@gnosis.pm/safe-apps-sdk'
 import {GnosisConnector} from '../lib/GnosisConnector'
-import {getDefaultProvider} from 'ethers'
+import { getProvider } from '../lib/provider'
 
 const STORAGE_KEY = 'gnosis_safe_state'
 
@@ -99,7 +99,7 @@ export default function useGnosisSafe({selectedAccount, network, verbose = 0}) {
       const method = msg.data.params.call//0 == tx, 1 == blockNum
       const callTx = msg.data.params.params//0 == tx, 1 == blockNum
 
-      const provider = getDefaultProvider(stateRef.current.network.rpc)
+      const provider = getProvider(stateRef.current.network.id)
       let result
       if (method === "eth_call") {
         result = await provider.call(callTx[0], callTx[1]).catch(err => {
@@ -217,7 +217,7 @@ export default function useGnosisSafe({selectedAccount, network, verbose = 0}) {
 
     connector.current.on(Methods.getTxBySafeTxHash, async (msg) => {
       const {safeTxHash} = msg.data.params
-      const provider = getDefaultProvider(stateRef.current.network.rpc)
+      const provider = getProvider(stateRef.current.network.id)
       try {
         const res = await provider.getTransaction(safeTxHash)
 
