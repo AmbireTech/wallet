@@ -11,10 +11,7 @@ export default function usePrivateMode() {
         localStorage.setItem('isPrivateMode', !isPrivateMode)
     }
 
-    const formatPrivateMode = (value) => {
-        if (isPrivateMode) return '**'
-        return value
-    }
+    const formatPrivateMode = (value) => isPrivateMode ? '**' : value;
 
     return {
         isPrivateMode,
