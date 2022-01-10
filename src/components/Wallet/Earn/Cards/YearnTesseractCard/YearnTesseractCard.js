@@ -6,15 +6,13 @@ import { Interface, parseUnits } from 'ethers/lib/utils'
 import { getDefaultProvider } from '@ethersproject/providers'
 import networks from '../../../../../consts/networks'
 import ERC20ABI from 'adex-protocol-eth/abi/ERC20.json'
-import YEARN_VAULT_ABI from '../../../../../consts/YearnVaultABI'
-import TESSERACT_VAULT_ABI from '../../../../../consts/TesseractVaultABI'
+import YEARN_TESSERACT_VAULT_ABI from '../../../../../consts/YearnTesseractVaultABI'
 import useYearn from './useYearn'
 import useTesseract from './useTesseract'
 import { useToasts } from '../../../../../hooks/toasts'
 
 const ERC20Interface = new Interface(ERC20ABI)
-const YearnVaultInterface = new Interface(YEARN_VAULT_ABI)
-const TesseractVaultInterface = new Interface(TESSERACT_VAULT_ABI)
+const VaultInterface = new Interface(YEARN_TESSERACT_VAULT_ABI)
 
 const YearnTesseractCard = ({ networkId, accountId, tokens, addRequest }) => {
     const { addToast } = useToasts()
@@ -70,8 +68,6 @@ const YearnTesseractCard = ({ networkId, accountId, tokens, addRequest }) => {
         const parsedAmount = amount.slice(0, amount.indexOf('.') + Number(decimals) + 1);
         const bigNumberAmount = parseUnits(parsedAmount, decimals)
 
-        const vaultInterface = networkId === 'ethereum' ? YearnVaultInterface : TesseractVaultInterface
-
         if (type === 'Deposit') {
             await approveToken(vaultAddress, item.tokenAddress, constants.MaxUint256)
 
@@ -79,7 +75,7 @@ const YearnTesseractCard = ({ networkId, accountId, tokens, addRequest }) => {
                 addRequestTxn(`${name.toLowerCase()}_vault_deposit_${Date.now()}`, {
                     to: vaultAddress,
                     value: '0x0',
-                    data: vaultInterface.encodeFunctionData('deposit', [bigNumberAmount.toHexString(), accountId])
+                    data: VaultInterface.encodeFunctionData('deposit', [bigNumberAmount.toHexString(), accountId])
                 })
             } catch(e) {
                 console.error(e)
@@ -90,7 +86,7 @@ const YearnTesseractCard = ({ networkId, accountId, tokens, addRequest }) => {
                 addRequestTxn(`${name.toLowerCase()}_vault_withdraw_${Date.now()}`, {
                     to: vaultAddress,
                     value: '0x0',
-                    data: vaultInterface.encodeFunctionData('withdraw', [bigNumberAmount.toHexString(), accountId])
+                    data: VaultInterface.encodeFunctionData('withdraw', [bigNumberAmount.toHexString(), accountId])
                 })
             } catch(e) {
                 console.error(e)
