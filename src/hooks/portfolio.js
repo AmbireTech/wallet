@@ -168,7 +168,13 @@ export default function usePortfolio({ currentNetwork, account }) {
 
                 return all.length ? {
                     network,
-                    protocols: all.map(({ products }) => products.map(({ label, assets }) => ({ label, assets: assets.map(({ tokens }) => tokens).flat(1) }))).flat(2)
+                    protocols: all
+                        .map(({ products }) =>
+                            products.map(({ label, assets }) =>
+                                ({ label, assets: assets.map(({ tokens }) => tokens).flat(1) })
+                            )
+                        )
+                        .flat(2)
                 } : null
             }))).filter(data => data)
             const updatedNetworks = updatedProtocols.map(({ network }) => network)

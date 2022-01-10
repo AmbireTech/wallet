@@ -9,6 +9,8 @@ const knownAliases = {}
 // address (lowercase) => [symbol, decimals]
 const knownTokens = {}
 
+export const formatNativeTokenAddress = address => address.toLowerCase() === `0x${'e'.repeat(40)}` ? `0x${'0'.repeat(40)}` : address.toLowerCase()
+
 export function getTransactionSummary(txn, networkId, accountAddr, opts = {}) {
     const [to, value, data = '0x'] = txn
     const network = networks.find(x => x.id === networkId || x.chainId === networkId)
@@ -86,6 +88,11 @@ export function isKnown(txn, from) {
     if (txn[0] === from) return true
     const address = txn[0].toLowerCase()
     return !!(knownAliases[address] || names[address] || tokens[address] || knownTokens[address])
+}
+
+export {
+    knownAliases,
+    knownTokens
 }
 
 // @TODO

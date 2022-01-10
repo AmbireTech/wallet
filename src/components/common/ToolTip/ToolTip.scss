@@ -2,8 +2,9 @@
 
 .tooltip {
     position: relative;
+    display: contents;
 
-    label {
+    .tooltip-label {
         z-index: 50;
         position: fixed;
         top: 0;
@@ -22,7 +23,7 @@
     }
 
     &:hover {
-        label {
+        .tooltip-label {
             opacity: 1;
         }
     }

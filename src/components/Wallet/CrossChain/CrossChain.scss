@@ -3,6 +3,7 @@
 #cross-chain {
     display: flex;
     flex-direction: row;
+    gap: 2em;
 
     .buttonComponent {
         flex: 0 0 auto;
@@ -65,6 +66,8 @@
         font-weight: normal;
         opacity: 0.5;
     }
+
+    
 }
 
 // Small screen
