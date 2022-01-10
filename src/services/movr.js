@@ -1,6 +1,7 @@
 import { fetchGet } from "../lib/fetch";
 
 const baseURL = 'https://backend.movr.network/v1'
+const watcherBaseURL = 'https://watcherapi.fund.movr.network/api/v1'
 
 const fetchChains = async () => {
     const response = await fetchGet(`${baseURL}/supported/chains`)
@@ -44,6 +45,12 @@ const sendBuildTx = async (recipient, fromAsset, fromChainId, toAsset, toChainId
     return response.result
 }
 
+const checkTxStatus = async (transactionHash, fromChainId, toChainId) => {
+    const response = await fetchGet(`${watcherBaseURL}/transaction-status?transactionHash=${transactionHash}&fromChainId=${fromChainId}&toChainId=${toChainId}`)
+    if (!response) return null
+    return response.result
+}
+
 export {
     fetchChains,
     fetchToTokens,
@@ -51,5 +58,6 @@ export {
     fetchQuotes,
     checkApprovalAllowance,
     approvalBuildTx,
-    sendBuildTx
+    sendBuildTx,
+    checkTxStatus
 }
