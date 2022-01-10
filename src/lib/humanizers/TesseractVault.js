@@ -12,13 +12,13 @@ const TesseractMapping = {
     const [ amount ] = iface.parseTransaction(txn).args
     const vaultInfo = tesseractVaults.find(x => x.addr === txn.to)
     if (vaultInfo) return [`Deposit ${token(vaultInfo.baseToken, amount)} to ${vaultInfo.name}`]
-    return [`Deposit ${amount} units to Yearn`]
+    return [`Deposit ${amount} units to Tesseract`]
   },
   [iface.getSighash('withdraw(uint256,address)')]: (txn, network) => {
     const [ amount ] = iface.parseTransaction(txn).args
     const vaultInfo = tesseractVaults.find(x => x.addr === txn.to)
     if (vaultInfo) return [`Withdraw ${addY(token(vaultInfo.baseToken, amount))} from ${vaultInfo.name}`]
-    return [`Withdraw ${amount} units from Yearn`]
+    return [`Withdraw ${amount} units from Tesseract`]
   },
 }
 export default TesseractMapping
