@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { Contract } from 'ethers'
 import ERC20ABI from 'adex-protocol-eth/abi/ERC20.json'
-import TesseractVaultABI from '../../../../../consts/TesseractVaultABI'
+import TesseractVaultABI from '../../../../../consts/YearnTesseractVaultABI'
 import { useToasts } from '../../../../../hooks/toasts'
 
 import TESSERACT_ICON from '../../../../../resources/tesseract.svg'
