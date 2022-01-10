@@ -4,7 +4,7 @@ import { NavLink } from 'react-router-dom'
 import CollectiblesPlaceholder from './CollectiblesPlaceholder/CollectiblesPlaceholder'
 import { Loading } from '../../../common'
 
-const Collectibles = ({ portfolio }) => {
+const Collectibles = ({ portfolio, formatPrivateMode }) => {
     return (
         portfolio.areProtocolsLoading ?
             <Loading/>
@@ -25,7 +25,7 @@ const Collectibles = ({ portfolio }) => {
                                         </div>
                                         <div className="details">
                                             <div className="name">{ assetName }</div>
-                                            <div className="value"><span className="purple-highlight">$</span> { balanceUSD.toFixed(2) }</div>
+                                            <div className="value"><span className="purple-highlight">$</span> { formatPrivateMode(balanceUSD.toFixed(2)) }</div>
                                         </div>
                                     </div>
                                 </NavLink>

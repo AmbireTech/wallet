@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import './Segments.scss'
 
-const Segments = ({ small, defaultValue, segments, onChange }) => {
+const Segments = ({ small, defaultValue, segments, onChange, formatPrivateMode }) => {
     const [value, setValue] = useState(defaultValue);
 
     const setSegment = useCallback(value => {

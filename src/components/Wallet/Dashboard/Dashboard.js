@@ -8,7 +8,7 @@ import Protocols from './Protocols/Protocols'
 import Collectibles from './Collectibles/Collectibles'
 import { MdOutlineInfo } from 'react-icons/md'
 
-export default function Dashboard({ portfolio, selectedNetwork, selectedAccount, setNetwork }) {
+export default function Dashboard({ portfolio, selectedNetwork, selectedAccount, setNetwork, privateMode }) {
 
     const [chartTokensData, setChartTokensData] = useState([]);
     const [chartProtocolsData, setChartProtocolsData] = useState([]);
@@ -74,6 +74,7 @@ export default function Dashboard({ portfolio, selectedNetwork, selectedAccount,
                                     portfolio={portfolio}
                                     selectedNetwork={selectedNetwork}
                                     setNetwork={setNetwork}
+                                    formatPrivateMode={privateMode.formatPrivateMode}
                                 />
                         }
                     </div>
@@ -111,9 +112,10 @@ export default function Dashboard({ portfolio, selectedNetwork, selectedAccount,
                                 portfolio={portfolio}
                                 network={selectedNetwork}
                                 account={selectedAccount}
+                                formatPrivateMode={privateMode.formatPrivateMode}
                             />
                             :
-                            <Collectibles portfolio={portfolio}/>
+                            <Collectibles portfolio={portfolio} formatPrivateMode={privateMode.formatPrivateMode} />
                     }
                 </div>
                 <div className="footer">
