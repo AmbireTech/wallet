@@ -12,7 +12,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 
 const helpCenterUrl = 'https://help.ambire.com/hc/en-us/categories/4404980091538-Ambire-Wallet'
 
-const SideBar = ({ match, portfolio, privateMode }) => {
+const SideBar = ({ match, portfolio, formatPrivateMode }) => {
   const sidebarRef = useRef()
   const [balanceFontSize, setBalanceFontSize] = useState(0)
     const resizeBalance = useCallback(() => {
@@ -43,9 +43,9 @@ const SideBar = ({ match, portfolio, privateMode }) => {
             style={{ fontSize: balanceFontSize }}
           >
             <span className="dollarSign highlight">$</span>
-            {privateMode.formatPrivateMode(portfolio.balance.total.truncated)}
+            {formatPrivateMode(portfolio.balance.total.truncated)}
             <span className="highlight">
-              .{privateMode.formatPrivateMode(portfolio.balance.total.decimals)}
+              .{formatPrivateMode(portfolio.balance.total.decimals)}
             </span>
           </div>
         )}
