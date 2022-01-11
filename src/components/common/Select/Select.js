@@ -48,7 +48,7 @@ const Select = ({ children, native, monospace, searchable, disabled, label, defa
 
     return (
         !native ? 
-            <div className={`select ${monospace ? 'monospace': ''} ${disabled ? 'disabled' : ''}`} ref={ref}>
+            <div className={`select ${monospace ? 'monospace': ''} ${disabled ? 'disabled' : ''} ${searchable ? 'searchable' : ''}`} ref={ref}>
                 {
                     label ? 
                         <label>{ label }</label>
