@@ -1,6 +1,6 @@
-import { abis, yearnVaults } from '../../consts/humanizerInfo'
+import { abis, yearnVaults } from 'consts/humanizerInfo'
 import { Interface } from 'ethers/lib/utils'
-import { token } from '../humanReadableTransactions'
+import { token } from 'lib/humanReadableTransactions'
 
 const iface = new Interface(abis.YearnVault)
 
