@@ -99,6 +99,43 @@ export default function usePortfolio({ currentNetwork, account }) {
         }))
     , [extraTokens])
 
+    const fetchSupplementTokenData = useCallback(async (updatedTokens) => {
+        const currentNetworkTokens = updatedTokens.find(({ network }) => network === currentNetwork)
+        if (!currentNetworkTokens) return
+
+        const extraTokensAssets = getExtraTokensAssets(account, currentNetwork)
+        try {
+            const rcpTokenData = await supplementTokensDataFromNetwork({
+                walletAddr: account,
+                network: currentNetwork,
+                tokensData: currentNetworkTokens.assets.filter(({ isExtraToken }) => !isExtraToken), // Filter out extraTokens
+                extraTokens: extraTokensAssets
+            })
+            currentNetworkTokens.assets = rcpTokenData
+
+            // Update stored extraTokens with new rpc data
+            // @TODO this seems unnecessary but we'll have to analyze it again
+            const storedExtraTokens = JSON.parse(localStorage.extraTokens || '[]') || []
+            const updatedExtraTokens = rcpTokenData.map(updated => {
+                const extraToken = storedExtraTokens.find(extra => extra.address === updated.address && extra.network === updated.network && extra.account === account)
+                if (!extraToken) return null
+                return {
+                    ...extraToken,
+                    ...updated
+                }
+            }).filter(updated => updated)
+
+            localStorage.extraTokens = JSON.stringify(updatedExtraTokens)
+
+            setTokensByNetworks(tokensByNetworks => [
+                ...tokensByNetworks.filter(({ network }) => network !== currentNetwork),
+                currentNetworkTokens
+            ])
+        } catch(e) {
+            console.error('supplementTokensDataFromNetwork failed', e)
+        }
+    }, [getExtraTokensAssets, account, currentNetwork])
+
     const fetchTokens = useCallback(async (account, currentNetwork = false) => {
         try {
             const networks = currentNetwork ? [supportedProtocols.find(({ network }) => network === currentNetwork)] : supportedProtocols
@@ -139,6 +176,8 @@ export default function usePortfolio({ currentNetwork, account }) {
                 ...updatedTokens
             ]))
 
+            if (!currentNetwork) fetchSupplementTokenData(updatedTokens)
+
             if (failedRequests >= requestsCount) throw new Error('Failed to fetch Tokens from API')
             return true
         } catch (error) {
@@ -146,7 +185,7 @@ export default function usePortfolio({ currentNetwork, account }) {
             addToast(error.message, { error: true })
             return false
         }
-    }, [getExtraTokensAssets, addToast])
+    }, [getExtraTokensAssets, fetchSupplementTokenData, addToast])
 
     const fetchOtherProtocols = useCallback(async (account, currentNetwork = false) => {
         try {
@@ -332,45 +371,9 @@ export default function usePortfolio({ currentNetwork, account }) {
 
     // Get supplement tokens data every 20s
     useEffect(() => {
-        const getSupplementTokenData = async () => {
-            const currentNetworkTokens = tokensByNetworks.find(({ network }) => network === currentNetwork)
-            if (!currentNetworkTokens) return
-
-            const extraTokensAssets = getExtraTokensAssets(account, currentNetwork)
-            try {
-                const rcpTokenData = await supplementTokensDataFromNetwork({
-                    walletAddr: account,
-                    network: currentNetwork,
-                    tokensData: currentNetworkTokens.assets.filter(({ isExtraToken }) => !isExtraToken), // Filter out extraTokens
-                    extraTokens: extraTokensAssets
-                })
-                currentNetworkTokens.assets = rcpTokenData
-
-                // Update stored extraTokens with new rpc data
-                // @TODO this seems unnecessary but we'll have to analyze it again
-                const storedExtraTokens = JSON.parse(localStorage.extraTokens || '[]') || []
-                const updatedExtraTokens = rcpTokenData.map(updated => {
-                    const extraToken = storedExtraTokens.find(extra => extra.address === updated.address && extra.network === updated.network && extra.account === account)
-                    if (!extraToken) return null
-                    return {
-                        ...extraToken,
-                        ...updated
-                    }
-                }).filter(updated => updated)
-
-                localStorage.extraTokens = JSON.stringify(updatedExtraTokens)
-
-                setTokensByNetworks([
-                    ...tokensByNetworks.filter(({ network }) => network !== currentNetwork),
-                    currentNetworkTokens
-                ])
-            } catch(e) {
-                console.error('supplementTokensDataFromNetwork failed', e)
-            }
-        }
-        const refreshInterval = setInterval(getSupplementTokenData, 20000)
+        const refreshInterval = setInterval(() => fetchSupplementTokenData(tokensByNetworks), 20000)
         return () => clearInterval(refreshInterval)
-    }, [account, currentNetwork, isBalanceLoading, fetchTokens, tokensByNetworks, extraTokens, getExtraTokensAssets])
+    }, [fetchSupplementTokenData, tokensByNetworks])
 
     // Refresh balance when window is focused
     useEffect(() => {
