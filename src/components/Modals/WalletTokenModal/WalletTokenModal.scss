@@ -66,10 +66,57 @@
             opacity: 0.8;
         }
 
-        .multipliers button {
-            opacity: 1 !important;
-            margin-top: 0.5em;
-            padding: 0.5em;
+        .badges {
+            display: flex;
+            gap: 1em;
+            padding-top: 1.5em;
+
+            a {
+                color: initial !important;
+            }
+
+            .badge {
+                position: relative;
+                height: 50px;
+                width: 50px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                border: 1px solid;
+                margin-bottom: 10px;
+                user-select: none;
+                opacity: 0.5;
+                transition: transform 0.1s ease-out;
+
+                &.active {
+                    opacity: 1;
+
+                    &:hover {
+                        transform: scale(1.05);
+                    }
+                }
+
+                .icon {
+                    font-size: 1.5em;
+                    filter: grayscale(1);
+                }
+
+                .multiplier {
+                    font-size: 0.7em;
+                    color: white;
+                }
+
+                &:after {
+                    content: "";
+                    position: absolute;
+                    bottom: -11px;
+                    border-left: 25px solid transparent !important;
+                    border-right: 25px solid transparent !important;
+                    border-top: 10px solid;
+                    border-color: inherit;
+                }
+            }
         }
     }
     
