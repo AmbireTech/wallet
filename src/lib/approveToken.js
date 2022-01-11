@@ -1,7 +1,7 @@
 import ERC20ABI from 'adex-protocol-eth/abi/ERC20.json'
 import { constants, Contract } from 'ethers'
 import { Interface } from 'ethers/lib/utils'
-import { getProvider } from '../lib/provider'
+import { getProvider } from './provider'
 
 const ERC20Interface = new Interface(ERC20ABI)
 

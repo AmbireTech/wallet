@@ -4,7 +4,7 @@ import { MdOutlineArrowBack, MdOutlineArrowForward, MdOutlineCheck, MdOutlineClo
 import { Button, Loading, Radios } from '../../../common';
 import { useState } from 'react';
 import networks from '../../../../consts/networks';
-import { approvalBuildTx, sendBuildTx } from '../../../../services/movr';
+import useMovr from '../useMovr';
 import { useToasts } from '../../../../hooks/toasts';
 
 
@@ -17,6 +17,7 @@ const getNetwork = id => networks.find(({ chainId }) => chainId === id)
 
 const Quotes = ({ addRequest, selectedAccount, fromTokensItems, quotes, onQuotesConfirmed, onCancel }) => {
     const { addToast } = useToasts()
+    const { approvalBuildTx, sendBuildTx } = useMovr()
 
     const { toAsset } = quotes;
     const fromAsset = fromTokensItems.find(({ value }) => value === quotes.fromAsset.address)
