@@ -311,7 +311,7 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
           </div>
         </div>
         <div id='panelHolder'>
-          <div className='panel'>
+          <div className='panel summaryPanel'>
               <div className='heading'>
                       <div className='title'>
                           <GiSpectacles size={35}/>
