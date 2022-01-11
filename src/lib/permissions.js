@@ -1,4 +1,4 @@
-import { isFirefox } from '../lib/isFirefox'
+import { isFirefox } from 'lib/isFirefox'
 
 const checkPermissions = async (name, onPrompt) => {
     let status = false;
