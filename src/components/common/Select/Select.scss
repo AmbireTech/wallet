@@ -137,6 +137,14 @@
         }
     }
 
+    &.searchable {
+        .select-container {
+            .select-menu {
+                max-height: 300px;
+            }
+        }
+    }
+
     &.monospace {
         .value, .option {
             font-family: monospace;
