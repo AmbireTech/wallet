@@ -1,11 +1,11 @@
 import { useCallback, useRef, useEffect } from 'react'
-import { getTransactionSummary } from '../lib/humanReadableTransactions'
+import { getTransactionSummary } from 'lib/humanReadableTransactions'
 import { BigNumber } from 'ethers'
 import { formatUnits } from 'ethers/lib/utils'
 import { useToasts } from './toasts'
-import networks from '../consts/networks'
-import AMBIRE_ICON from '../resources/icon.png'
-import { getProvider } from '../lib/provider'
+import networks from 'consts/networks'
+import AMBIRE_ICON from 'resources/icon.png'
+import { getProvider } from 'lib/provider'
 
 const REQUEST_TITLE_PREFIX = 'Ambire Wallet: '
 const SUPPORTED_TYPES =  ['eth_sendTransaction', 'personal_sign']

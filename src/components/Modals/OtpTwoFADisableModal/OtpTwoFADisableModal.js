@@ -1,10 +1,10 @@
 import './OtpTwoFADisableModal.scss'
-import { useModals } from '../../../hooks'
-import { fetchPost } from '../../../lib/fetch'
-import { Modal, Button, TextInput, Loading } from '../../common'
+import { useModals } from 'hooks'
+import { fetchPost } from 'lib/fetch'
+import { Modal, Button, TextInput, Loading } from 'components/common'
 import { useState } from 'react'
 import { Wallet } from '@ethersproject/wallet'
-import { useToasts } from '../../../hooks/toasts'
+import { useToasts } from 'hooks/toasts'
 
 const OtpTwoFADisableModal = ({ relayerURL, selectedAcc, setCacheBreak }) => {
     const { hideModal } = useModals()
