@@ -3,6 +3,14 @@ import { useToasts } from '../hooks/toasts'
 
 import { getDefaultProvider, BigNumber } from 'ethers'
 
+import {
+  setupAmbexMessenger,
+  sendMessage,
+  addMessageHandler,
+  clear,
+  sendReply
+} from "../lib/ambexMessenger"
+
 const STORAGE_KEY = 'ambire_extension_state'
 
 export default function useAmbireExtension({ selectedAccount, network, verbose = 1 }) {
@@ -42,33 +50,34 @@ export default function useAmbireExtension({ selectedAccount, network, verbose =
     }
   }
 
-  const handlePersonalSign = async (msg) => {
-    verbose > 0 && console.log("AmbEx requested signMessage", msg)
+  const handlePersonalSign = async (message) => {
+    const payload = message.data;
+    verbose > 0 && console.log("AmbEx requested signMessage", payload)
 
-    const payload = msg?.data?.payload
     if (!payload) {
-      console.error('AmbExHook: no payload')
+      console.error('AmbExHook: no payload', message)
       return
     }
 
     const id = 'ambex_' + payload.id
-    let message = payload?.params?.message || payload?.params[0]
+    let messageToSign = payload?.params?.message || payload?.params[0]
     if (payload.method === "eth_sign") {
-      message = payload?.params[1]
+      messageToSign = payload?.params[1]
     }
-    if (!message) {
+    if (!messageToSign) {
       console.error('AmbExHook: no message in received payload')
       return
     }
 
     const request = {
       id,
-      upstreamInternalId: msg.data.internalId,
+      upstreamInternalId: payload.internalId,
       originalPayloadId: payload.id,
       type: payload.method,
-      txn: message,
+      txn: messageToSign,
       chainId: stateRef.current.network.chainId,
-      account: stateRef.current.selectedAccount
+      account: stateRef.current.selectedAccount,
+      originalMessage: message
     }
 
     console.log("sending personal sign to queue", request)
@@ -76,17 +85,93 @@ export default function useAmbireExtension({ selectedAccount, network, verbose =
     setRequests(prevRequests => prevRequests.find(x => x.id === request.id) ? prevRequests : [...prevRequests, request])
   }
 
-  const eventListener = async function (selectedAccount, network, msg) {
+  const resolveMany = (ids, resolution) => {
+    for (let req of requests.filter(x => ids.includes(x.id))) {
 
-    console.log(`ambireExtension msg`, msg)
-    const provider = getDefaultProvider(network.rpc)
-    if (msg.data && msg.data.type === "ambireCSRequest") {
-      const payload = msg.data.payload
-      const method = payload.method
+      //console.log('ambireEx hook resolution', resolution)
+      //console.log('request of resol', req)
 
-      if (method === "personal_sign") {
-        debugger
+      let rpcResult = {
+        jsonrpc: "2.0",
+        id: req.originalPayloadId,
+        txId: null,
+        hash: null,
+        result: null,
+        success: null,
+        error: null
       }
+
+      if (!resolution) {
+        rpcResult.error = { message: 'Nothing to resolve' }
+        rpcResult.success = false
+      } else if (!resolution.success) {
+        rpcResult.error = { message: resolution.message }
+        rpcResult.success = false
+      } else { //onSuccess
+        rpcResult.success = true
+        rpcResult.txId = resolution.result
+        rpcResult.hash = resolution.result
+        rpcResult.result = resolution.result
+      }
+
+      sendReply(req.originalMessage, {
+        data: rpcResult
+      })
+    }
+
+    setRequests(prevRequests => prevRequests.filter(x => !ids.includes(x.id)))
+  }
+
+  // Side effects that will run on every state change/rerender
+  useEffect(() => {
+    localStorage[STORAGE_KEY] = JSON.stringify(requests)
+  }, [requests])
+
+  useEffect(() => {
+
+    sendMessage({
+      to: "background",
+      type: "ambireWalletAccountChanged",
+      data: {
+        account: selectedAccount
+      }
+    })
+
+    sendMessage({
+      to: "background",
+      type: "ambireWalletChainChanged",
+      data: {
+        chainId: network.chainId
+      }
+    })
+
+    console.log("listening to msgs")
+    setupAmbexMessenger("ambirePageContext")
+
+    addMessageHandler({ type: "ping" }, (message) => {
+      sendReply(message, {
+        data: selectedAccount + " PONG!!!"
+      })
+    })
+
+    addMessageHandler({ type: "ambireContentScriptInjected" }, (message) => {
+      sendMessage({
+        to: "background",
+        type: "ambirePageContextInjected",
+        data: {
+          account: selectedAccount,
+          chainId: network.chainId
+        }
+      })
+    })
+
+    addMessageHandler({ type: "web3Call" }, async (message) => {
+
+      console.log(`web3CallRequest`, message)
+      const provider = getDefaultProvider(network.rpc)
+
+      const payload = message.data
+      const method = payload.method
 
       const callTx = payload.params//0 == tx, 1 == blockNum
       let result
@@ -184,14 +269,14 @@ export default function useAmbireExtension({ selectedAccount, network, verbose =
           result._difficulty = number2hex(result._difficulty)
         }
       } else if (method === "personal_sign") {
-        handlePersonalSign(msg).catch(err => {
+        handlePersonalSign(message).catch(err => {
           console.log("personal sign error ", err)
           error = err
         })
         result = null
         debugger
       } else if (method === "eth_sign") {
-        handlePersonalSign(msg).catch(err => {
+        handlePersonalSign(message).catch(err => {
           console.log("personal sign error ", err)
           error = err
         })
@@ -205,18 +290,19 @@ export default function useAmbireExtension({ selectedAccount, network, verbose =
             if (!txs[i].from) txs[i].from = selectedAccount
           }
         } else {
-          console.error('AmbEx: no txs in received payload')
-          return
+          error = "No txs in received payload"
         }
 
+        debugger;
         const request = {
           id: internalHookId,
-          upstreamInternalId: msg.data.internalId,
+          upstreamInternalId: message.data.internalId,
           originalPayloadId: payload.id,
           type: 'eth_sendTransaction',
           txn: txs[0], //if anyone finds a dapp that sends a bundle, please reach me out
           chainId: network.chainId,
-          account: selectedAccount
+          account: selectedAccount,
+          originalMessage: message
         }
 
         result = null
@@ -228,110 +314,28 @@ export default function useAmbireExtension({ selectedAccount, network, verbose =
       if (result) {
         let rpcResult = {
           jsonrpc: "2.0",
-          id: msg.data.payload.id,
+          id: payload.id,
           result: result,
         }
         if (error) {
-          console.error("throwing error with ", msg)
+          console.error("throwing error with ", message)
           rpcResult = {
             jsonrpc: "2.0",
-            id: msg.data.payload.id,
+            id: payload.id,
             error: error,
           }
         }
 
-        console.log(`Replying to CS`)
-        console.log(rpcResult)
+        console.log(`Replying to request with`, rpcResult)
 
-        window.postMessage({
-          type: "ambirePCResponse",
-          internalId: msg.data.internalId,
-          payload: rpcResult
+        sendReply(message, {
+          data: rpcResult
         })
       }
-    } else if (msg.data && msg.data.type === "ambireCSSetTabId") { // content script injected, checking if ambire page replies, triggering connect event
-      window.postMessage({
-        type: "ambirePCTabIdSet",
-        tabId: msg.data.tabId,
-        chainId: network.chainId,
-        account: selectedAccount
-      })
-    }
-  }
-
-  const resolveMany = (ids, resolution) => {
-    for (let req of requests.filter(x => ids.includes(x.id))) {
-
-      //console.log('ambireEx hook resolution', resolution)
-      //console.log('request of resol', req)
-
-      let rpcResult = {
-        jsonrpc: "2.0",
-        id: req.originalPayloadId,
-        txId: null,
-        hash: null,
-        result: null,
-        success: null,
-        error: null
-      }
-
-      if (!resolution) {
-        rpcResult.error = { message: 'Nothing to resolve' }
-        rpcResult.success = false
-      } else if (!resolution.success) {
-        rpcResult.error = { message: resolution.message }
-        rpcResult.success = false
-      } else { //onSuccess
-        rpcResult.success = true
-        rpcResult.txId = resolution.result
-        rpcResult.hash = resolution.result
-        rpcResult.result = resolution.result
-      }
-
-      window.postMessage({
-        type: "ambirePCResponse",
-        internalId: req.upstreamInternalId,
-        payload: rpcResult
-      })
-    }
-
-    setRequests(prevRequests => prevRequests.filter(x => !ids.includes(x.id)))
-  }
-
-  // Side effects that will run on every state change/rerender
-  useEffect(() => {
-    localStorage[STORAGE_KEY] = JSON.stringify(requests)
-  }, [requests])
-
-  useEffect(() => {
-    const eventListenerWrapper = (msg) => {
-      eventListener(selectedAccount, network, msg).catch(err => {
-        window.postMessage({
-          type: "ambirePCResponse",
-          internalId: msg.data.internalId,
-          payload: {
-            jsonrpc: "2.0",
-            id: msg.data.payload.id,
-            error: err,
-          }
-        })
-      })
-    }
-
-    window.postMessage({
-      type: "ambirePCChainChanged",
-      chainId: network.chainId
     })
 
-    window.postMessage({
-      type: "ambirePCAccountsChanged",
-      account: selectedAccount
-    })
-
-    console.log("listening to msgs")
-    window.addEventListener("message", eventListenerWrapper)
     return () => {
-      window.removeEventListener("message", eventListenerWrapper)
+      clear()
     }
   }, [selectedAccount, network])
 
