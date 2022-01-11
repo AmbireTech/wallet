@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
-import { useModals } from "../../../../hooks";
-import { Button, ToolTip } from "../../../common";
-import { WalletTokenModal } from "../../../Modals";
+import { useModals } from "hooks";
+import { Button, ToolTip } from "components/common";
+import { WalletTokenModal } from "components/Modals";
 
 const Rewards = ({ rewardsData, account }) => {
     const { showModal } = useModals()

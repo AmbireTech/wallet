@@ -1,7 +1,7 @@
 import { Interface } from 'ethers/lib/utils'
-import { getName } from '../humanReadableTransactions'
-import accountPresets from '../../consts/accountPresets'
-import privilegesOptions from '../../consts/privilegesOptions'
+import { getName } from 'lib/humanReadableTransactions'
+import accountPresets from 'consts/accountPresets'
+import privilegesOptions from 'consts/privilegesOptions'
 
 const iface = new Interface(require('adex-protocol-eth/abi/Identity5.2'))
 

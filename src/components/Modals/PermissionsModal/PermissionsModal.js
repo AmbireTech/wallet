@@ -2,12 +2,12 @@ import './PermissionsModal.scss'
 
 import { useState, useEffect, useCallback } from 'react'
 import { MdCheck, MdClose, MdOutlineCheck } from 'react-icons/md'
-import { useModals, usePermissions } from '../../../hooks'
-import { useToasts } from '../../../hooks/toasts'
-import { askForPermission } from '../../../lib/permissions'
-import { Modal, Toggle, Button, Checkbox, ToolTip } from '../../common'
-import { isFirefox } from '../../../lib/isFirefox'
-import { fetchGet } from '../../../lib/fetch'
+import { useModals, usePermissions } from 'hooks'
+import { useToasts } from 'hooks/toasts'
+import { askForPermission } from 'lib/permissions'
+import { Modal, Toggle, Button, Checkbox, ToolTip } from 'components/common'
+import { isFirefox } from 'lib/isFirefox'
+import { fetchGet } from 'lib/fetch'
 import { AiOutlineReload } from 'react-icons/ai'
 
 const toastErrorMessage = name => `You blocked the ${name} permission. Check your browser permissions tab.`
