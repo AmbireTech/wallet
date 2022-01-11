@@ -84,7 +84,7 @@ function Transactions ({ relayerURL, selectedAcc, selectedNetwork, showSendTxns,
                     network={selectedNetwork.id}
                     account={selectedAcc}
                     disableExpand={true}
-                    txn={toBundleTxn(req.txn)}/>
+                    txn={toBundleTxn(req.txn, selectedAcc)}/>
               ))}
             </div>
               <div className='actions'>
