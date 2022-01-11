@@ -145,20 +145,24 @@ $titleBar-height: 90px;
             align-items: normal;
             gap: 2em;
 
-            .listOfTransactions {
-                display: flex;
-                flex-direction: column;
-                gap: 10px;
-                min-height: 300px;
-                min-width: 350px;
+            .summaryPanel {
+                flex: 0 1 55%;
 
-                &.frozen {
-                    opacity: 0.5;
+                .listOfTransactions {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 10px;
+                    min-height: 300px;
+                    min-width: 350px;
+
+                    &.frozen {
+                        opacity: 0.5;
+                    }
                 }
             }
 
             .secondaryPanel {
-                flex: 0 0 45%;
+                flex: 0 1 45%;
                 display: flex;
                 flex-direction: column;
                 gap: 2em;
