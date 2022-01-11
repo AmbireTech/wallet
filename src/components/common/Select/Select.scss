@@ -44,90 +44,94 @@
         cursor: pointer;
     }
 
-    .select-input {
+    .select-container {
         position: relative;
-        height: 50px;
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        padding: 0 20px;
-        font-size: 16px;
-        font-weight: bold;
-        background-color: $input-background-color;
 
-        .separator {
-            flex-grow: 1;
-        }
-
-        .handle {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-left: 10px;
-            transition: all 0.1s ease-in-out;
-
-            &.open {
-                transform: scaleY(-1);
-            }
-        }
-    }
-
-    .select-menu {
-        z-index: 97;
-        position: absolute;
-        top: 50px;
-        left: 0;
-        min-height: 50px;
-        max-height: 250px;
-        width: 100%;
-        background-color: $input-background-color;
-        box-shadow: $box-shadow;
-        overflow: hidden;
-        overflow-y: auto;
-        scrollbar-width: thin;
-
-        .select-search-input {
-            width: 100%;
-            position: sticky;
-            top: 0;
-            z-index: 49;
-
-            input {
-                height: 50px !important;
-                font-size: 15px;
-                padding-left: 20px;
-                box-shadow: none !important;
-            }
-        }
-
-        .option {
+        .select-input {
+            position: relative;
             height: 50px;
             display: flex;
             align-items: center;
-            justify-content: flex-start;
             gap: 12px;
             padding: 0 20px;
-            padding-right: 40px;
             font-size: 16px;
-            font-weight: 500;
-            opacity: 0.8;
+            font-weight: bold;
+            background-color: $input-background-color;
 
-            &:hover {
-                background-color: rgba(0, 0, 0, 0.2);
+            .separator {
+                flex-grow: 1;
             }
 
-            &.active {
-                font-weight: bold;
-                opacity: 1;
+            .handle {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin-left: 10px;
+                transition: all 0.1s ease-in-out;
 
-                &::after {
-                    content: "";
-                    position: absolute;
-                    right: 15px;
-                    height: 8px;
-                    width: 8px;
-                    background-color: $primary-accent-color;
-                    border-radius: 100%;
+                &.open {
+                    transform: scaleY(-1);
+                }
+            }
+        }
+
+        .select-menu {
+            z-index: 97;
+            position: absolute;
+            top: 50px;
+            left: 0;
+            min-height: 50px;
+            max-height: 250px;
+            width: 100%;
+            background-color: $input-background-color;
+            box-shadow: $box-shadow;
+            overflow: hidden;
+            overflow-y: auto;
+            scrollbar-width: thin;
+
+            .select-search-input {
+                width: 100%;
+                position: sticky;
+                top: 0;
+                z-index: 49;
+
+                input {
+                    height: 50px !important;
+                    font-size: 15px;
+                    padding-left: 20px;
+                    box-shadow: none !important;
+                }
+            }
+
+            .option {
+                height: 50px;
+                display: flex;
+                align-items: center;
+                justify-content: flex-start;
+                gap: 12px;
+                padding: 0 20px;
+                padding-right: 40px;
+                font-size: 16px;
+                font-weight: 500;
+                opacity: 0.8;
+
+                &:hover {
+                    background-color: rgba(0, 0, 0, 0.2);
+                }
+
+                &.active {
+                    font-weight: bold;
+                    opacity: 1;
+
+                    &::after {
+                        content: "";
+                        position: absolute;
+                        right: 15px;
+                        height: 8px;
+                        width: 8px;
+                        background-color: $primary-accent-color;
+                        border-radius: 100%;
+                    }
                 }
             }
         }
