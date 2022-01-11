@@ -3,6 +3,7 @@
 #cross-chain {
     display: flex;
     flex-direction: row;
+    gap: 2em;
 
     .buttonComponent {
         flex: 0 0 auto;
@@ -19,10 +20,7 @@
     }
 
     .placeholder {
-        @include absolute-full-size;
-        @include flex-center-center;
-        font-size: 1.5em;
-        font-weight: bold;
+        font-weight: 500;
         opacity: 0.8;
     }
 
@@ -35,7 +33,6 @@
         display: flex;
         flex-direction: column;
         gap: 20px;
-        filter: blur(10px);
 
         .inputs {
             position: relative;
@@ -69,6 +66,8 @@
         font-weight: normal;
         opacity: 0.5;
     }
+
+    
 }
 
 // Small screen

@@ -4,10 +4,10 @@ import { GiTakeMyMoney, GiSpectacles, GiGorilla } from 'react-icons/gi'
 import { FaSignature, FaChevronLeft } from 'react-icons/fa'
 import { MdOutlineAccountCircle } from 'react-icons/md'
 import './SendTransaction.scss'
-import { useEffect, useState, useMemo } from 'react'
+import { useEffect, useState, useMemo, useRef } from 'react'
 import fetch from 'node-fetch'
 import { Bundle } from 'adex-protocol-eth/js'
-import { getDefaultProvider, Wallet } from 'ethers'
+import { Wallet } from 'ethers'
 import { Interface } from 'ethers/lib/utils'
 import * as blockies from 'blockies-ts';
 import { useToasts } from '../../hooks/toasts'
@@ -20,6 +20,7 @@ import { sendNoRelayer } from './noRelayer'
 import { isTokenEligible, getFeePaymentConsequences } from './helpers'
 import { fetchPost } from '../../lib/fetch'
 import { toBundleTxn } from '../../lib/requestToBundleTxn'
+import { getProvider } from '../../lib/provider'
 
 const ERC20 = new Interface(require('adex-protocol-eth/abi/ERC20'))
 
@@ -85,6 +86,8 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
   }, [bundle, setEstimation])
 
   // Estimate the bundle & reestimate periodically
+  const currentBundle = useRef(null)
+  currentBundle.current = bundle
   useEffect(() => {    // eslint-disable-next-line react-hooks/exhaustive-deps
     if (!bundle.txns.length) return
 
@@ -93,10 +96,10 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
     // get latest estimation
     const reestimate = () => (relayerURL
       ? bundle.estimate({ relayerURL, fetch, replacing: !!bundle.minFeeInUSDPerGas })
-      : bundle.estimateNoRelayer({ provider: getDefaultProvider(network.rpc) })
+      : bundle.estimateNoRelayer({ provider: getProvider(network.id) })
     )
       .then(estimation => {
-        if (unmounted) return
+        if (unmounted || bundle !== currentBundle.current) return
         estimation.selectedFeeToken = { symbol: network.nativeAssetSymbol }
         setEstimation(prevEstimation => {
           if (estimation.remainingFeeTokenBalances) {
@@ -159,7 +162,7 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
     if (!estimation) throw new Error('no estimation: should never happen')
 
     const finalBundle = getFinalBundle()
-    const provider = getDefaultProvider(network.rpc)
+    const provider = getProvider(network.id)
     const signer = finalBundle.signer
 
     const wallet = getWallet({
@@ -190,7 +193,7 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
     const signer = finalBundle.signer
 
     if (typeof finalBundle.nonce !== 'number') {
-      await finalBundle.getNonce(getDefaultProvider(network.rpc))
+      await finalBundle.getNonce(getProvider(network.id))
     }
 
     const { signature, success, message, confCodeRequired } = await fetchPost(
