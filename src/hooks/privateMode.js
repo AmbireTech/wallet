@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 export default function usePrivateMode() {
-    const [isPrivateMode, setIsPrivateMode] = useState(JSON.parse(localStorage.getItem('isPrivateMode')) || false);
+    const [isPrivateMode, setIsPrivateMode] = useState(!!JSON.parse(localStorage.getItem('isPrivateMode')));
 
     const togglePrivateMode = () => {
         setIsPrivateMode(!isPrivateMode)
