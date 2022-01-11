@@ -14,22 +14,6 @@
         opacity: 0.5;
     }
 
-    .search-input {
-        width: 100%;
-        position: absolute;
-        bottom: 0;
-        z-index: 49;
-
-        input {
-            height: 50px !important;
-        }
-
-        &:not(.visible) {
-            opacity: 0;
-            pointer-events: none;
-        }
-    }
-
     label {
         font-weight: 500;
     }
@@ -60,7 +44,7 @@
         cursor: pointer;
     }
 
-    .input {
+    .select-input {
         position: relative;
         height: 50px;
         display: flex;
@@ -88,7 +72,7 @@
         }
     }
 
-    .list {
+    .select-menu {
         z-index: 97;
         position: absolute;
         top: 50px;
@@ -101,6 +85,20 @@
         overflow: hidden;
         overflow-y: auto;
         scrollbar-width: thin;
+
+        .select-search-input {
+            width: 100%;
+            position: sticky;
+            top: 0;
+            z-index: 49;
+
+            input {
+                height: 50px !important;
+                font-size: 15px;
+                padding-left: 20px;
+                box-shadow: none !important;
+            }
+        }
 
         .option {
             height: 50px;
