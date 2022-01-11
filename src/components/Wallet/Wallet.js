@@ -139,7 +139,7 @@ export default function Wallet(props) {
 
   return (
     <div id="wallet">
-      <SideBar match={props.match} portfolio={props.portfolio} formatPrivateMode={props.privateMode.formatPrivateMode} />
+      <SideBar match={props.match} portfolio={props.portfolio} hidePrivateValue={props.privateMode.hidePrivateValue} />
       <TopBar {...props} />
 
       <div id="wallet-container" ref={walletContainer}>

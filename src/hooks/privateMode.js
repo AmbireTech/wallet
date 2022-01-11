@@ -1,21 +1,18 @@
 import { useState } from 'react';
 
 export default function usePrivateMode() {
-    const [isPrivateMode, setIsPrivateMode] = useState(() => {
-        const privateModeSelected = localStorage.getItem('isPrivateMode')
-        return privateModeSelected ? JSON.parse(privateModeSelected) : false
-    });
+    const [isPrivateMode, setIsPrivateMode] = useState(JSON.parse(localStorage.getItem('isPrivateMode')) || false);
 
     const togglePrivateMode = () => {
         setIsPrivateMode(!isPrivateMode)
         localStorage.setItem('isPrivateMode', !isPrivateMode)
     }
 
-    const formatPrivateMode = (value) => isPrivateMode ? '**' : value;
+    const hidePrivateValue = (value) => isPrivateMode ? '**' : value;
 
     return {
         isPrivateMode,
-        formatPrivateMode,
+        hidePrivateValue,
         togglePrivateMode
     }
 }
