@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react'
-import { useToasts } from '../hooks/toasts'
+import { useToasts } from 'hooks/toasts'
 import { useHistory } from 'react-router-dom'
 
 export default function useAccounts () {

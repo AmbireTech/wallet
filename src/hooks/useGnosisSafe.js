@@ -1,9 +1,9 @@
 import {useCallback, useEffect, useState, useRef, useMemo} from 'react'
-import {useToasts} from '../hooks/toasts'
+import {useToasts} from 'hooks/toasts'
 
 import {Methods} from '@gnosis.pm/safe-apps-sdk'
-import {GnosisConnector} from '../lib/GnosisConnector'
-import { getProvider } from '../lib/provider'
+import {GnosisConnector} from 'lib/GnosisConnector'
+import { getProvider } from 'lib/provider'
 
 const STORAGE_KEY = 'gnosis_safe_state'
 

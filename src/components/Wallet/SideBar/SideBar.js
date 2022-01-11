@@ -7,7 +7,7 @@ import { BsCurrencyExchange } from 'react-icons/bs'
 import { BsPiggyBank } from 'react-icons/bs'
 import { BiTransfer } from 'react-icons/bi'
 import { CgArrowsExchangeV } from 'react-icons/cg'
-import { Loading } from '../../common'
+import { Loading } from 'components/common'
 import { useCallback, useEffect, useRef, useState } from 'react'
 
 const helpCenterUrl = 'https://help.ambire.com/hc/en-us/categories/4404980091538-Ambire-Wallet'
