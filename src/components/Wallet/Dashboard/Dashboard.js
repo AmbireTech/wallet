@@ -74,7 +74,7 @@ export default function Dashboard({ portfolio, selectedNetwork, selectedAccount,
                                     portfolio={portfolio}
                                     selectedNetwork={selectedNetwork}
                                     setNetwork={setNetwork}
-                                    formatPrivateMode={privateMode.formatPrivateMode}
+                                    hidePrivateValue={privateMode.hidePrivateValue}
                                 />
                         }
                     </div>
@@ -112,7 +112,7 @@ export default function Dashboard({ portfolio, selectedNetwork, selectedAccount,
                                 portfolio={portfolio}
                                 network={selectedNetwork}
                                 account={selectedAccount}
-                                formatPrivateMode={privateMode.formatPrivateMode}
+                                hidePrivateValue={privateMode.hidePrivateValue}
                             />
                             :
                             <Collectibles portfolio={portfolio} isPrivateMode={privateMode.isPrivateMode} />
