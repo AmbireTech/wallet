@@ -17,7 +17,6 @@
         justify-content: space-between;
         gap: 1rem !important;
         margin: 0 !important;
-        padding: 20px 25px;
         cursor: pointer;
         box-sizing: border-box;
 
@@ -27,6 +26,8 @@
             flex-direction: column;
             align-items: flex-start;
             gap: 10px;
+            padding: 20px 0;
+            padding-left: 25px;
 
             .summary-container {
                 display: flex;
@@ -41,7 +42,6 @@
 
                 .summary {
                     width: 100%;
-                    max-width: 380px;
                     word-break: break-word;
                 }
             }
@@ -56,6 +56,8 @@
         }
 
         .actionIcons {
+            padding: 20px 25px;
+
             svg {
                 float: left;
                 margin: 5px;
