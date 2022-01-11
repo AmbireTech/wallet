@@ -8,7 +8,7 @@ import YEARN_VAULT_ABI from '../../../../../consts/YearnVaultABI'
 import networks from '../../../../../consts/networks'
 import { useToasts } from '../../../../../hooks/toasts'
 import YEARN_ICON from '../../../../../resources/yearn.svg'
-import approveToken from '../../../../../helpers/approveToken'
+import approveToken from '../../../../../lib/approveToken'
 import { getProvider } from '../../../../../lib/provider'
 
 const v2VaultsAddresses = [

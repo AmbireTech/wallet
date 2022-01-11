@@ -8,6 +8,7 @@ import useAttentionGrabber from './attentionGrabber'
 import useModals from './modals'
 import usePermissions from './permissions'
 import usePrivateMode from './privateMode'
+import useOnClickOutside from './onClickOutside'
 
 export {
     useAccounts,
@@ -19,5 +20,6 @@ export {
     useAttentionGrabber,
     useModals,
     usePermissions,
-    usePrivateMode
+    usePrivateMode,
+    useOnClickOutside
 }
