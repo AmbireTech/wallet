@@ -155,10 +155,10 @@ export default function usePortfolio({ currentNetwork, account }) {
             let failedRequests = 0
             const requestsCount = protocols.reduce((acc, curr) => curr.protocols.length + acc, 0)
 
-            const updatedProtocols = (await Promise.all(protocols.map(async ({ network, protocols }) => {
+            const updatedProtocols = (await Promise.all(protocols.map(async ({ network, protocols, nftsProvider }) => {
                 const all = (await Promise.all(protocols.map(async protocol => {
                     try {
-                        const balance = await getBalances(ZAPPER_API_KEY, network, protocol, account)
+                        const balance = await getBalances(ZAPPER_API_KEY, network, protocol, account, protocol === 'nft' ? nftsProvider : null)
                         return balance ? Object.values(balance)[0] : null
                     } catch(e) {
                         console.error('Balances API error', e)
