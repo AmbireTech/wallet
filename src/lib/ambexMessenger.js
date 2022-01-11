@@ -1,5 +1,7 @@
 const PATH = ["pageContext", "contentScript", "background", "ambireContentScript", "ambirePageContext"];
 
+const VERBOSE = parseInt(process.env.VERBOSE);
+
 const AMBIRE_DOMAINS = process.env.AMBIRE_WALLET_URLS?process.env.AMBIRE_WALLET_URLS.split(" ").map(a => new URL(a).host):[];
 
 let RELAYER;
@@ -44,24 +46,24 @@ const setupAmbexMessenger = (relayer) => {
 		chromeObject.runtime.onMessage.addListener((request, sender, sendResponse) => {
 			handleMessage(request);
 		});
-		console.log(`${RELAYER_VERBOSE_TAG[RELAYER]} ambexMessenger[${RELAYER}] Add EVENT LISTENER`);
+		if (VERBOSE) console.log(`${RELAYER_VERBOSE_TAG[RELAYER]} ambexMessenger[${RELAYER}] Add EVENT LISTENER`);
 		window.addEventListener("message", WINDOWLISTENER);
 	} else if (RELAYER === "pageContext" || RELAYER === "ambirePageContext") {
-		console.log(`${RELAYER_VERBOSE_TAG[RELAYER]} ambexMessenger[${RELAYER}] Add EVENT LISTENER`);
+		if (VERBOSE) console.log(`${RELAYER_VERBOSE_TAG[RELAYER]} ambexMessenger[${RELAYER}] Add EVENT LISTENER`);
 		window.addEventListener("message", WINDOWLISTENER);
 	}
 };
 
 const handleMessage = function (message, sender = null) {
 	if (!RELAYER) debugger;
-	console.log(`${RELAYER_VERBOSE_TAG[RELAYER]} ambexMessenger[${RELAYER}] Handling message`, message);
+	if (VERBOSE) console.log(`${RELAYER_VERBOSE_TAG[RELAYER]} ambexMessenger[${RELAYER}] Handling message`, message);
 	if (message.to === RELAYER) {//IF FINAL DESTINATION
 
 
 		//SPECIAL CASE
 		if (RELAYER === "background" && message.type === "setAmbireTabId") {
 			AMBIRE_TABID = sender.tab.id;
-			console.log(`${RELAYER_VERBOSE_TAG[RELAYER]} ambexMessenger[${RELAYER}] AMBIRE TAB ID set to  ${sender.tab.id}`, message);
+			if (VERBOSE) console.log(`${RELAYER_VERBOSE_TAG[RELAYER]} ambexMessenger[${RELAYER}] AMBIRE TAB ID set to  ${sender.tab.id}`, message);
 			return;
 		}
 
@@ -94,13 +96,13 @@ const handleMessage = function (message, sender = null) {
 		});
 
 		if (handlerIndex !== -1) {
-			console.log(`${RELAYER_VERBOSE_TAG[RELAYER]} ambexMessenger[${RELAYER}] Handler #${handlerIndex} found`);
+			if (VERBOSE) console.log(`${RELAYER_VERBOSE_TAG[RELAYER]} ambexMessenger[${RELAYER}] Handler #${handlerIndex} found`);
 			HANDLERS[handlerIndex].callback(message, message.error);
 			if (message.isReply) {
 				HANDLERS.splice(handlerIndex, 1);
 			}
 		} else {
-			console.log(`${RELAYER_VERBOSE_TAG[RELAYER]} ambexMessenger[${RELAYER}] nothing to handle the message`, message);
+			if (VERBOSE) console.log(`${RELAYER_VERBOSE_TAG[RELAYER]} ambexMessenger[${RELAYER}] nothing to handle the message`, message);
 		}
 	} else if (message.to) {
 		//ACT AS FORWARDER
@@ -119,9 +121,9 @@ const handleMessage = function (message, sender = null) {
 					message.forwarders = [];
 				}
 				if (message.forwarders.indexOf(RELAYER) !== -1) {
-					console.log(`${RELAYER_VERBOSE_TAG[RELAYER]} ambexMessenger[${RELAYER}] : Already forwarded message. Ignoring`, message);
+					if (VERBOSE) console.log(`${RELAYER_VERBOSE_TAG[RELAYER]} ambexMessenger[${RELAYER}] : Already forwarded message. Ignoring`, message);
 				} else if (message.from !== RELAYER) {
-					console.log(`${RELAYER_VERBOSE_TAG[RELAYER]} ambexMessenger[${RELAYER}] : Forwarding message`, message);
+					if (VERBOSE) console.log(`${RELAYER_VERBOSE_TAG[RELAYER]} ambexMessenger[${RELAYER}] : Forwarding message`, message);
 					/*if (RELAYER.endsWith("contentScript")) {
 						message.fromTabId = PCTABID;
 					}*/
@@ -133,14 +135,14 @@ const handleMessage = function (message, sender = null) {
 						sendReply(message, {error: err.toString()});
 					}
 				} else {
-					console.log(`${RELAYER_VERBOSE_TAG[RELAYER]} ambexMessenger[${RELAYER}] : Ignoring self message`, message);
+					if (VERBOSE) console.log(`${RELAYER_VERBOSE_TAG[RELAYER]} ambexMessenger[${RELAYER}] : Ignoring self message`, message);
 				}
 			} else {
 				sendReply(message, {error: "permissions not granted"});
 			}
 		});
 	} else {
-		console.log(`${RELAYER_VERBOSE_TAG[RELAYER]} ambexMessenger[${RELAYER}] : ambexMessenger ignoring message`, message);
+		if (VERBOSE) console.log(`${RELAYER_VERBOSE_TAG[RELAYER]} ambexMessenger[${RELAYER}] : ambexMessenger ignoring message`, message);
 	}
 };
 
@@ -153,14 +155,14 @@ const checkForwardPermission = (message, sender, callback) => {
 			//VERIFY origin
 			let url = sender.origin || sender.url;
 			if (!sender.origin) {
-				console.warn("sender origin could not be found. Consider using chrome version 80+");
+				if (VERBOSE) console.warn("sender origin could not be found. Consider using chrome version 80+");
 			}
 
 			if (AMBIRE_DOMAINS.indexOf(new URL(url).host) !== -1) {
 				callback(true);
 			} else {
-				console.log(AMBIRE_DOMAINS);
-				console.warn(`${RELAYER_VERBOSE_TAG[RELAYER]} ambexMessenger[${RELAYER}] : sending message to dApp not from trusted source`, url);
+				if (VERBOSE) console.log(AMBIRE_DOMAINS);
+				if (VERBOSE) console.warn(`${RELAYER_VERBOSE_TAG[RELAYER]} ambexMessenger[${RELAYER}] : sending message to dApp not from trusted source`, url);
 				callback(false);
 			}
 		} else { //FROM DAPP
@@ -191,13 +193,13 @@ const clear = function () {
 	if (RELAYER === "ambirePageContext") {
 		HANDLERS = [];
 		window.removeEventListener("message", WINDOWLISTENER);
-		console.log(`${RELAYER_VERBOSE_TAG[RELAYER]} ambexMessenger[${RELAYER}] Add listeners cleared`);
+		if (VERBOSE) console.log(`${RELAYER_VERBOSE_TAG[RELAYER]} ambexMessenger[${RELAYER}] Add listeners cleared`);
 	}
 };
 
 const sendMessageInternal = (message) => {
 	message.sender = RELAYER;
-	console.log(`${RELAYER_VERBOSE_TAG[RELAYER]} ambexMessenger[${RELAYER}] try sendMessageInternal`, message);
+	if (VERBOSE) console.log(`${RELAYER_VERBOSE_TAG[RELAYER]} ambexMessenger[${RELAYER}] try sendMessageInternal`, message);
 	if (RELAYER === "background") {
 
 		if (["ambireContentScript", "ambirePageContext"].indexOf(message.to) !== -1) {
@@ -213,7 +215,7 @@ const sendMessageInternal = (message) => {
 			});
 			//check if exists
 		} else if (!message.toTabId) {
-			console.error(`${RELAYER_VERBOSE_TAG[RELAYER]} ambexMessenger[${RELAYER}] toTabId must be specified for worker communication`, message);
+			if (VERBOSE) console.error(`${RELAYER_VERBOSE_TAG[RELAYER]} ambexMessenger[${RELAYER}] toTabId must be specified for worker communication`, message);
 			return false;
 		} else {
 			// extension windows have no tabId
@@ -232,10 +234,10 @@ const sendMessageInternal = (message) => {
 		//console.log(forwardPath);
 		//console.warn("path " + message.to, forwardPath);
 		if (forwardPath.indexOf(message.to) !== -1) {//BG, ACS, APC
-			console.log(`${RELAYER_VERBOSE_TAG[RELAYER]} ambexMessenger[${RELAYER}] sending message as CS -> BG:`);
+			if (VERBOSE) console.log(`${RELAYER_VERBOSE_TAG[RELAYER]} ambexMessenger[${RELAYER}] sending message as CS -> BG:`);
 			chromeObject.runtime.sendMessage(message);
 		} else {
-			console.log(`${RELAYER_VERBOSE_TAG[RELAYER]} ambexMessenger[${RELAYER}] sending message CS -> PC:`);
+			if (VERBOSE) console.log(`${RELAYER_VERBOSE_TAG[RELAYER]} ambexMessenger[${RELAYER}] sending message CS -> PC:`);
 			window.postMessage(message);
 		}
 	} else if (RELAYER === "pageContext" || RELAYER === "ambirePageContext") {
@@ -270,7 +272,7 @@ const sendMessage = (message, callback, options = {}) => new Promise((res, rej) 
 				id: message.id,
 				isReply: true
 			}, (reply, error) => {
-				console.log(`${RELAYER_VERBOSE_TAG[RELAYER]} ambexMessenger[${RELAYER}] CLEARING TIMEOUT`, message);
+				if (VERBOSE) console.log(`${RELAYER_VERBOSE_TAG[RELAYER]} ambexMessenger[${RELAYER}] CLEARING TIMEOUT`, message);
 				clearTimeout(timeoutHandler);
 				if (error) {
 					return rej(error);
@@ -280,7 +282,7 @@ const sendMessage = (message, callback, options = {}) => new Promise((res, rej) 
 			});
 		}
 
-		console.log(`${RELAYER_VERBOSE_TAG[RELAYER]} ambexMessenger[${RELAYER}] sendMessage`, message);
+		if (VERBOSE) console.log(`${RELAYER_VERBOSE_TAG[RELAYER]} ambexMessenger[${RELAYER}] sendMessage`, message);
 		try {
 			sendMessageInternal(message);
 		} catch (err) {
@@ -341,7 +343,7 @@ const removeMessageHandler = (filter) => {
 
 	if (handlerIndex !== -1) {
 		HANDLERS.splice(handlerIndex, 1);
-		console.log(`${RELAYER_VERBOSE_TAG[RELAYER]} ambexMessenger[${RELAYER}] handler removed`, filter);
+		if (VERBOSE) console.log(`${RELAYER_VERBOSE_TAG[RELAYER]} ambexMessenger[${RELAYER}] handler removed`, filter);
 	}
 }
 
@@ -350,7 +352,7 @@ const addMessageHandler = (filter, callback) => {
 		requestFilter: {...filter, isFilter: true},
 		callback: callback
 	});
-	console.log(`${RELAYER_VERBOSE_TAG[RELAYER]} ambexMessenger[${RELAYER}] handler added`, HANDLERS);
+	if (VERBOSE) console.log(`${RELAYER_VERBOSE_TAG[RELAYER]} ambexMessenger[${RELAYER}] handler added`, HANDLERS);
 };
 
 module.exports = {
