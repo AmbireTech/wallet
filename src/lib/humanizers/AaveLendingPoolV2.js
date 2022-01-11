@@ -1,6 +1,6 @@
-import { abis } from '../../consts/humanizerInfo'
+import { abis } from 'consts/humanizerInfo'
 import { Interface } from 'ethers/lib/utils'
-import { token } from '../humanReadableTransactions'
+import { token } from 'lib/humanReadableTransactions'
 
 const iface = new Interface(abis.AaveLendingPoolV2)
 const onBehalfText = (onBehalf, txnFrom) => onBehalf.toLowerCase() !== txnFrom.toLowerCase()

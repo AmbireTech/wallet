@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react'
-import networks from '../consts/networks'
+import networks from 'consts/networks'
 
 export default function useNetwork ({ defaultNetwork = 'ethereum' } = {}) {
     const [networkId, setNetworkId] = useState(() =>

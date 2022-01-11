@@ -1,9 +1,9 @@
 import './WalletTokenModal.scss'
 
 import { useMemo } from 'react'
-import { Button, Modal, ToolTip } from '../../common'
+import { Button, Modal, ToolTip } from 'components/common'
 import { MdOutlineClose } from 'react-icons/md'
-import { useModals } from '../../../hooks'
+import { useModals } from 'hooks'
 
 const multiplierBadges = [
     {
@@ -34,7 +34,7 @@ const WalletTokenModal = ({ rewards }) => {
             active: isUnlocked
         }
     }), [rewards])
-    
+
     const claimButton = <>
         <ToolTip label="Claiming will be available after the official token launch">
             <Button small clear disabled>CLAIM</Button>
