@@ -115,7 +115,7 @@ This is used by the WalletConnect and Gnosis Safe Apps hooks for the queue of si
 {
 	id, // numeric unique ID of the request
 	type, // type of the signing request, currently set to the RPC method (eg eth_sendTransaction)
-	txn, // only set when it's eth_sendTransaction, contains to/data/value/gas
+	txn, // only set when it's eth_sendTransaction, contains to/data/value/gas/from
 	chainId, // chainId the request is for
 	account, // account address the request is for
 }
