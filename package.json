@@ -53,14 +53,14 @@
       "react-app/jest"
     ],
     "rules": {
-      "no-extra-semi": "warn",
-      "camelcase": "warn",
+      "no-extra-semi": "off",
+      "camelcase": "off",
       "indent": [
-        "warn",
+        "off",
         2
       ],
       "quotes": [
-        "warn",
+        "off",
         "single"
       ],
       "import/no-relative-parent-imports": "error"
