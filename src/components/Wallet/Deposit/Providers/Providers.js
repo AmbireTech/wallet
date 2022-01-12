@@ -1,8 +1,8 @@
 import './Providers.scss'
 
-import RAMP_LOGO from '../../../../resources/ramp.svg';
-import PAYTRIE_LOGO from '../../../../resources/paytrie.svg';
-import TRANSAK_LOGO from '../../../../resources/transak.svg';
+import RAMP_LOGO from 'resources/ramp.svg';
+import PAYTRIE_LOGO from 'resources/paytrie.svg';
+import TRANSAK_LOGO from 'resources/transak.svg';
 
 import useProviders from './useProviders'
 
