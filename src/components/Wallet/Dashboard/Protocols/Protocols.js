@@ -3,12 +3,12 @@ import './Protocols.scss'
 import { GiToken } from 'react-icons/gi'
 import { AiOutlineSend } from 'react-icons/ai'
 import { NavLink } from 'react-router-dom'
-import { Button, Loading } from '../../../common'
+import { Button, Loading } from 'components/common'
 import ProtocolsPlaceholder from './ProtocolsPlaceholder/ProtocolsPlaceholder'
 import { useState } from 'react'
 import { MdOutlineAdd } from 'react-icons/md'
-import { AddTokenModal } from '../../../Modals'
-import { useModals } from '../../../../hooks'
+import { AddTokenModal } from 'components/Modals'
+import { useModals } from 'hooks'
 
 const Protocols = ({ portfolio, network, account }) => {
     const { showModal } = useModals()

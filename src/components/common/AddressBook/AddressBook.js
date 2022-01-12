@@ -2,7 +2,7 @@ import './AddressBook.scss'
 
 import { FaAddressCard } from 'react-icons/fa'
 import { MdOutlineAdd, MdClose } from 'react-icons/md'
-import { Button, DropDown, TextInput } from '..'
+import { Button, DropDown, TextInput } from 'components/common'
 import { useCallback, useEffect, useState } from 'react'
 import AddressList from './AddressList/AddressList'
 
