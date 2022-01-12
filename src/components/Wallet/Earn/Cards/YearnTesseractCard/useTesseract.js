@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useState } from 'react'
 import { Contract } from 'ethers'
 import ERC20ABI from 'adex-protocol-eth/abi/ERC20.json'
-import TesseractVaultABI from '../../../../../consts/YearnTesseractVaultABI'
-import { useToasts } from '../../../../../hooks/toasts'
+import TesseractVaultABI from 'consts/YearnTesseractVaultABI'
+import { useToasts } from 'hooks/toasts'
 
-import TESSERACT_ICON from '../../../../../resources/tesseract.svg'
+import TESSERACT_ICON from 'resources/tesseract.svg'
 
 const POLYGON_SCAN_IMAGES = 'https://polygonscan.com/token/images'
 const VAULTS = [
