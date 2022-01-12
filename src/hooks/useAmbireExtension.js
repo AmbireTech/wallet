@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState, useRef } from 'react'
-import { useToasts } from '../hooks/toasts'
+import { useToasts } from 'hooks/toasts'
 
 import { getDefaultProvider, BigNumber } from 'ethers'
 
@@ -9,7 +9,7 @@ import {
   addMessageHandler,
   clear,
   sendReply
-} from "../lib/ambexMessenger"
+} from "lib/ambexMessenger"
 
 const STORAGE_KEY = 'ambire_extension_state'
 
