@@ -3,7 +3,7 @@ import "./TopBar.scss";
 import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
 import { MdOutlineArrowForward, MdOutlineClose, MdOutlineMenu, MdRemoveRedEye, MdVisibilityOff } from "react-icons/md";
-import { Select } from "../../common";
+import { Select } from "components/common";
 import Accounts from "./Accounts/Accounts";
 import DApps from "./DApps/DApps";
 import * as blockies from 'blockies-ts';

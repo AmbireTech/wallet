@@ -1,15 +1,15 @@
-import Card from '../Card/Card'
+import Card from 'components/Wallet/Earn/Cards/Card/Card'
 
 import { useCallback, useEffect, useState, useMemo, useRef } from 'react'
 import { parseUnits } from '@ethersproject/units'
 import { Interface } from '@ethersproject/abi'
 import { Yearn } from '@yfi/sdk'
-import YEARN_VAULT_ABI from '../../../../../consts/YearnVaultABI'
-import networks from '../../../../../consts/networks'
-import { useToasts } from '../../../../../hooks/toasts'
-import YEARN_ICON from '../../../../../resources/yearn.svg'
-import approveToken from '../../../../../lib/approveToken'
-import { getProvider } from '../../../../../lib/provider'
+import YEARN_VAULT_ABI from 'consts/YearnVaultABI'
+import networks from 'consts/networks'
+import { useToasts } from 'hooks/toasts'
+import YEARN_ICON from 'resources/yearn.svg'
+import approveToken from 'lib/approveToken'
+import { getProvider } from 'lib/provider'
 
 const v2VaultsAddresses = [
     '0xdA816459F1AB5631232FE5e97a05BBBb94970c95',

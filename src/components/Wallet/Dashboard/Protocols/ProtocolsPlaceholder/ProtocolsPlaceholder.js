@@ -2,7 +2,7 @@ import './ProtocolsPlaceholder.scss'
 
 import { NavLink } from 'react-router-dom'
 import { GiReceiveMoney } from 'react-icons/gi'
-import { Button } from '../../../../common'
+import { Button } from 'components/common'
 import { MdOutlineAdd } from 'react-icons/md'
 
 const ProtocolsPlaceholder = ({ onClickAddToken }) => {
