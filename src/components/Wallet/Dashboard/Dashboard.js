@@ -2,7 +2,7 @@ import './Dashboard.scss'
 
 import { useEffect, useLayoutEffect, useState } from 'react'
 
-import { Chart, Loading, Segments } from '../../common'
+import { Chart, Loading, Segments } from 'components/common'
 import Balances from './Balances/Balances'
 import Protocols from './Protocols/Protocols'
 import Collectibles from './Collectibles/Collectibles'
