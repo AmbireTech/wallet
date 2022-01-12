@@ -1,14 +1,14 @@
-import Card from '../../Card/Card'
+import Card from 'components/Wallet/Earn/Card/Card'
 
 import { useEffect, useState, useMemo, useRef } from 'react'
 import { Interface, parseUnits } from 'ethers/lib/utils'
 import { getDefaultProvider } from '@ethersproject/providers'
-import networks from '../../../../../consts/networks'
-import YEARN_TESSERACT_VAULT_ABI from '../../../../../consts/YearnTesseractVaultABI'
+import networks from 'consts/networks'
+import YEARN_TESSERACT_VAULT_ABI from 'consts/YearnTesseractVaultABI'
 import useYearn from './useYearn'
 import useTesseract from './useTesseract'
-import { useToasts } from '../../../../../hooks/toasts'
-import approveToken from '../../../../../lib/approveToken'
+import { useToasts } from 'hooks/toasts'
+import approveToken from 'lib/approveToken'
 
 const VaultInterface = new Interface(YEARN_TESSERACT_VAULT_ABI)
 
