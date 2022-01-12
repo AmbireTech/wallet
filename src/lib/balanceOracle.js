@@ -1,7 +1,7 @@
 import { ethers } from 'ethers'
 import oracle from 'adex-protocol-eth/abi/RemainingBalancesOracle.json'
-import tokenList from '../consts/tokenList.json'
-import { getProvider } from '../lib/provider'
+import tokenList from 'consts/tokenList.json'
+import { getProvider } from 'lib/provider'
 
 const { Interface, AbiCoder, formatUnits, hexlify, isAddress } = ethers.utils
 const RemainingBalancesOracle = new Interface(oracle)

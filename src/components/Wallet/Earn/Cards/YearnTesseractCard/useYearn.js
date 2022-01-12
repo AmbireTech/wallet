@@ -1,7 +1,7 @@
 import { useCallback, useState } from 'react'
 import { Yearn } from '@yfi/sdk'
 
-import YEARN_ICON from '../../../../../resources/yearn.svg'
+import YEARN_ICON from 'resources/yearn.svg'
 
 const v2VaultsAddresses = [
     '0xdA816459F1AB5631232FE5e97a05BBBb94970c95',
