@@ -1,4 +1,4 @@
-import networks from '../consts/networks'
+import networks from 'consts/networks'
 import { providers } from 'ethers'
 
 export function getProvider (networkId) {

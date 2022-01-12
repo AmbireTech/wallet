@@ -2,17 +2,17 @@ import './PermissionsModal.scss'
 
 import { useState, useEffect, useCallback } from 'react'
 import { MdCheck, MdClose, MdOutlineCheck } from 'react-icons/md'
-import { useModals, usePermissions } from '../../../hooks'
-import { useToasts } from '../../../hooks/toasts'
-import { askForPermission } from '../../../lib/permissions'
-import { Modal, Toggle, Button, Checkbox, ToolTip } from '../../common'
-import { isFirefox } from '../../../lib/isFirefox'
-import { fetchGet } from '../../../lib/fetch'
+import { useModals, usePermissions } from 'hooks'
+import { useToasts } from 'hooks/toasts'
+import { askForPermission } from 'lib/permissions'
+import { Modal, Toggle, Button, Checkbox, ToolTip } from 'components/common'
+import { isFirefox } from 'lib/isFirefox'
+import { fetchGet } from 'lib/fetch'
 import { AiOutlineReload } from 'react-icons/ai'
 
 const toastErrorMessage = name => `You blocked the ${name} permission. Check your browser permissions tab.`
 
-const PermissionsModal = ({ relayerIdentityURL, account, onAddAccount, onClose }) => {
+const PermissionsModal = ({ relayerIdentityURL, account, onAddAccount }) => {
     const { hideModal } = useModals()
     const { isNoticationsGranted, isClipboardGranted, modalHidden, setModalHidden } = usePermissions()
     const { addToast } = useToasts()
@@ -79,18 +79,13 @@ const PermissionsModal = ({ relayerIdentityURL, account, onAddAccount, onClose }
         return () => clearTimeout(resendInterval)
     }, [])
 
-    const onCloseModal = () => {
-        hideModal()
-        onClose()
-    }
-
     const buttons = <>
-        <Button clear small icon={<MdClose/>} disabled={isAccountNotConfirmed} onClick={onCloseModal}>Ignore</Button>
-        <Button small icon={<MdCheck/>} disabled={buttonDisabled} onClick={onCloseModal}>Done</Button>
+        <Button clear small icon={<MdClose/>} disabled={isAccountNotConfirmed} onClick={hideModal}>Ignore</Button>
+        <Button small icon={<MdCheck/>} disabled={buttonDisabled} onClick={hideModal}>Done</Button>
     </>
 
     return (
-        <Modal id="permissions-modal" title="We need a few things 🙏" buttons={buttons} onClose={onClose}>
+        <Modal id="permissions-modal" title="We need a few things 🙏" buttons={buttons}>
             {
                 account.email ? 
                     <div className="permission">

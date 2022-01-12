@@ -1,11 +1,11 @@
 import './Quotes.scss'
 
 import { MdOutlineArrowBack, MdOutlineArrowForward, MdOutlineCheck, MdOutlineClose } from 'react-icons/md';
-import { Button, Loading, Radios } from '../../../common';
+import { Button, Loading, Radios } from 'components/common';
 import { useState } from 'react';
-import networks from '../../../../consts/networks';
-import useMovr from '../useMovr';
-import { useToasts } from '../../../../hooks/toasts';
+import networks from 'consts/networks';
+import useMovr from 'components/Wallet/CrossChain/useMovr';
+import { useToasts } from 'hooks/toasts';
 
 
 const formatAmount = (amount, asset) => amount / Math.pow(10, asset.decimals)

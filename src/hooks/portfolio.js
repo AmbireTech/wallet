@@ -1,13 +1,13 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-import { ZAPPER_API_KEY } from '../config';
-import { fetchGet } from '../lib/fetch';
-import { ZAPPER_API_ENDPOINT } from '../config'
-import supportedProtocols from '../consts/supportedProtocols';
-import { useToasts } from '../hooks/toasts'
-import { setKnownAddresses, setKnownTokens } from '../lib/humanReadableTransactions';
-import { VELCRO_API_ENDPOINT } from '../config'
-import { getTokenListBalance, tokenList, checkTokenList } from '../lib/balanceOracle'
+import { ZAPPER_API_KEY } from 'config';
+import { fetchGet } from 'lib/fetch';
+import { ZAPPER_API_ENDPOINT } from 'config'
+import supportedProtocols from 'consts/supportedProtocols';
+import { useToasts } from 'hooks/toasts'
+import { setKnownAddresses, setKnownTokens } from 'lib/humanReadableTransactions';
+import { VELCRO_API_ENDPOINT } from 'config'
+import { getTokenListBalance, tokenList, checkTokenList } from 'lib/balanceOracle'
 
 const getBalances = (apiKey, network, protocol, address, provider) => fetchGet(`${provider === 'velcro' ? VELCRO_API_ENDPOINT : ZAPPER_API_ENDPOINT}/protocols/${protocol}/balances?addresses[]=${address}&network=${network}&api_key=${apiKey}&newBalances=true`)
 
@@ -155,10 +155,10 @@ export default function usePortfolio({ currentNetwork, account }) {
             let failedRequests = 0
             const requestsCount = protocols.reduce((acc, curr) => curr.protocols.length + acc, 0)
 
-            const updatedProtocols = (await Promise.all(protocols.map(async ({ network, protocols }) => {
+            const updatedProtocols = (await Promise.all(protocols.map(async ({ network, protocols, nftsProvider }) => {
                 const all = (await Promise.all(protocols.map(async protocol => {
                     try {
-                        const balance = await getBalances(ZAPPER_API_KEY, network, protocol, account)
+                        const balance = await getBalances(ZAPPER_API_KEY, network, protocol, account, protocol === 'nft' ? nftsProvider : null)
                         return balance ? Object.values(balance)[0] : null
                     } catch(e) {
                         console.error('Balances API error', e)

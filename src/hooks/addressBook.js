@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useToasts } from './toasts'
 import * as blockies from 'blockies-ts'
-import { isValidAddress, isKnownTokenOrContract } from '../lib/address'
-import { setKnownAddresses } from '../lib/humanReadableTransactions'
+import { isValidAddress, isKnownTokenOrContract } from 'lib/address'
+import { setKnownAddresses } from 'lib/humanReadableTransactions'
 
 const accountType = ({ email, signerExtra }) => {
     const walletType = signerExtra && signerExtra.type === 'ledger' ? 'Ledger' : signerExtra && signerExtra.type === 'trezor' ? 'Trezor' : 'Web3'
