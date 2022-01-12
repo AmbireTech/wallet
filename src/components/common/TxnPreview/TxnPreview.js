@@ -3,8 +3,8 @@ import './TxnPreview.scss'
 import { useState } from 'react'
 import { FaTimes, FaChevronDown, FaChevronUp } from 'react-icons/fa'
 
-import { getName, getTransactionSummary, isKnown } from '../../../lib/humanReadableTransactions'
-import networks from '../../../consts/networks'
+import { getName, getTransactionSummary, isKnown } from 'lib/humanReadableTransactions'
+import networks from 'consts/networks'
 import { formatUnits } from 'ethers/lib/utils'
 
 function getNetworkSymbol(networkId) {

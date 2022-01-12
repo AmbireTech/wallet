@@ -1,7 +1,7 @@
 import './Earn.scss'
 import AAVECard from './Cards/AAVECard/AAVECard'
 import YearnTesseractCard from './Cards/YearnTesseractCard/YearnTesseractCard'
-import { Loading } from '../../common'
+import { Loading } from 'components/common'
 
 const Earn = ({ portfolio, selectedNetwork, selectedAcc, addRequest }) => {
     return (

@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
-import { Button, Loading, TextInput } from '../common'
+import { Button, Loading, TextInput } from 'components/common'
 import { isTokenEligible } from './helpers'
 
 export default function Actions({ estimation, feeSpeed, approveTxn, rejectTxn, signingStatus }) {

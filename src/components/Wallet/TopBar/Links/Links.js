@@ -1,6 +1,6 @@
 import './Links.scss'
 
-import { DropDown } from "../../../common"
+import { DropDown } from "components/common"
 import { MdChatBubbleOutline, MdMenuBook, MdOutlineHelpOutline, MdOutlineLightbulb } from "react-icons/md";
 import { BsDiscord, BsTelegram, BsTwitter } from "react-icons/bs";
 import { useState } from 'react';
