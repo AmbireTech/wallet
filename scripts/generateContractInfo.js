@@ -23,7 +23,7 @@ const yearnVaults = [
 	{ name: 'Yearn AAVE Vault', network: 'ethereum', addr: '0xd9788f3931Ede4D5018184E198699dC6d66C1915', baseToken: '0x7Fc66500c84A76Ad7e9c93437bFc5Ac33E2DDaE9', decimals: 18 },
 ]
 const tesseractVaults = [
-	{ name: 'Tesseract USDC Vault', network: 'polygon', addr: '0x57bDbb788d0F39aEAbe66774436c19196653C3F2', baseToken: '0x2791bca1f2de4661ed88a30c99a7a9449aa84174', decimals: 6, abiName: 'TesseractVault' },
+	{ name: 'Tesseract USDC Vault', network: 'polygon', addr: '0x57bDbb788d0F39aEAbe66774436c19196653C3F2', baseToken: '0x2791bca1f2de4661ed88a30c99a7a9449aa84174', decimals: 6 },
 	{ name: 'Tesseract DAI Vault', network: 'polygon', addr: '0x4c8C6379b7cd039C892ab179846CD30a1A52b125', baseToken: '0x8f3cf7ad23cd3cadbd9735aff958023239c6a063', decimals: 18 },
 	{ name: 'Tesseract WBTC Vault', network: 'polygon', addr: '0x6962785c731e812073948a1f5E181cf83274D7c6', baseToken: '0x1bfd67037b42cf73acf2047067bd4f2c47d9bfd6', decimals: 8 },
 	{ name: 'Tesseract WETH Vault', network: 'polygon', addr: '0x3d44F03a04b08863cc8825384f834dfb97466b9B', baseToken: '0x7ceb23fd6bc0add59e62ac25578270cff1b9f619', decimals: 18 },
