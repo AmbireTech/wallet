@@ -22,9 +22,12 @@
 
         .info {
             min-width: 0;
+            height: 100%;
+            width: 100%;
             display: flex;
             flex-direction: column;
             align-items: flex-start;
+            justify-content: center;
             gap: 10px;
             padding: 20px 0;
             padding-left: 25px;
