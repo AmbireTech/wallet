@@ -5,13 +5,13 @@
     "main.js.map": "./static/js/main.4caf13aa.chunk.js.map",
     "runtime-main.js": "./static/js/runtime-main.1f085b10.js",
     "runtime-main.js.map": "./static/js/runtime-main.1f085b10.js.map",
-    "static/js/2.9d6be683.chunk.js": "./static/js/2.9d6be683.chunk.js",
-    "static/js/2.9d6be683.chunk.js.map": "./static/js/2.9d6be683.chunk.js.map",
+    "static/js/2.2cc03f5a.chunk.js": "./static/js/2.2cc03f5a.chunk.js",
+    "static/js/2.2cc03f5a.chunk.js.map": "./static/js/2.2cc03f5a.chunk.js.map",
     "static/js/3.46e76146.chunk.js": "./static/js/3.46e76146.chunk.js",
     "static/js/3.46e76146.chunk.js.map": "./static/js/3.46e76146.chunk.js.map",
     "index.html": "./index.html",
     "static/css/main.3d0cbd91.chunk.css.map": "./static/css/main.3d0cbd91.chunk.css.map",
-    "static/js/2.9d6be683.chunk.js.LICENSE.txt": "./static/js/2.9d6be683.chunk.js.LICENSE.txt",
+    "static/js/2.2cc03f5a.chunk.js.LICENSE.txt": "./static/js/2.2cc03f5a.chunk.js.LICENSE.txt",
     "static/media/App.scss": "./static/media/OpenSans-Regular.ca49d2b0.ttf",
     "static/media/aave.58aec338.svg": "./static/media/aave.58aec338.svg",
     "static/media/Loading.scss": "./static/media/ambire-loader-animation-sprite-160.8b6d7f70.png",
@@ -24,7 +24,7 @@
   },
   "entrypoints": [
     "static/js/runtime-main.1f085b10.js",
-    "static/js/2.9d6be683.chunk.js",
+    "static/js/2.2cc03f5a.chunk.js",
     "static/css/main.3d0cbd91.chunk.css",
     "static/js/main.4caf13aa.chunk.js"
   ]
