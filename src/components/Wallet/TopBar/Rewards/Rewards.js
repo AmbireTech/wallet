@@ -3,7 +3,7 @@ import { useModals } from "hooks";
 import { Button, ToolTip } from "components/common";
 import { WalletTokenModal } from "components/Modals";
 
-const Rewards = ({ rewardsData, account }) => {
+const Rewards = ({ rewardsData, account, hidePrivateValue }) => {
     const { showModal } = useModals()
 
     const [rewards, setRewards] = useState({})
@@ -32,7 +32,7 @@ const Rewards = ({ rewardsData, account }) => {
                 <Button small border disabled onClick={showWalletTokenModal}>Unavailable</Button>
             </ToolTip>
             :
-            <Button small border disabled={isLoading} onClick={showWalletTokenModal}>{ rewardsTotal.toFixed(3) } WALLET</Button>
+            <Button small border disabled={isLoading} onClick={showWalletTokenModal}>{ hidePrivateValue(rewardsTotal.toFixed(3), true) } WALLET</Button>
     )
 }
 
