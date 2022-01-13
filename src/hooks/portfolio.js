@@ -116,20 +116,6 @@ export default function usePortfolio({ currentNetwork, account }) {
             })
             currentNetworkTokens.assets = rcpTokenData
 
-            // Update stored extraTokens with new rpc data
-            // @TODO this seems unnecessary but we'll have to analyze it again
-            const storedExtraTokens = JSON.parse(localStorage.extraTokens || '[]') || []
-            const updatedExtraTokens = rcpTokenData.map(updated => {
-                const extraToken = storedExtraTokens.find(extra => extra.address === updated.address && extra.network === updated.network && extra.account === account)
-                if (!extraToken) return null
-                return {
-                    ...extraToken,
-                    ...updated
-                }
-            }).filter(updated => updated)
-
-            localStorage.extraTokens = JSON.stringify(updatedExtraTokens)
-
             setTokensByNetworks(tokensByNetworks => [
                 ...tokensByNetworks.filter(({ network }) => network !== currentNetwork),
                 currentNetworkTokens
