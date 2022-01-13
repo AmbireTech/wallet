@@ -22,6 +22,7 @@ const Select = ({ children, native, monospace, searchable, disabled, label, defa
     const filteredItems = search.length ? items.filter(({ label }) => label.toLowerCase().includes(search.toLowerCase())) : items
 
     const selectItem = useCallback(item => {
+        setOpen(false)
         setSearch('')
         setSelectedItem(item);
         onChange(item.value);
@@ -47,21 +48,7 @@ const Select = ({ children, native, monospace, searchable, disabled, label, defa
 
     return (
         !native ? 
-            <div className={`select ${monospace ? 'monospace': ''} ${disabled ? 'disabled' : ''}`} ref={ref}>
-                {
-                    searchable ? 
-                        <TextInput
-                            className={`search-input ${search.length ? 'visible': ''}`}
-                            disabled={disabled}
-                            value={search}
-                            ref={hiddenTextInput}
-                            buttonLabel={<MdOutlineClose/>}
-                            onInput={value => setSearch(value)}
-                            onButtonClick={() => setSearch('')}
-                        />
-                        :
-                        null
-                }
+            <div className={`select ${monospace ? 'monospace': ''} ${disabled ? 'disabled' : ''} ${searchable ? 'searchable' : ''}`} ref={ref}>
                 {
                     label ? 
                         <label>{ label }</label>
@@ -70,16 +57,33 @@ const Select = ({ children, native, monospace, searchable, disabled, label, defa
                 }
                 {
                     selectedItem ? 
-                        <div className="input" onClick={() => setOpen(!isOpen)}>
-                            { selectedItem.icon ? <div className="icon" style={{backgroundImage: `url(${selectedItem.icon})`}}/> : null }
-                            <div className="label">{ selectedItem.label || selectedItem.value }</div>
-                            <div className="separator"></div>
-                            <div className={`handle ${isOpen ? 'open' : ''}`}>
-                                <BsChevronDown size={20}></BsChevronDown>
+                        <div className="select-container">
+                            <div className="select-input" onClick={() => setOpen(!isOpen)}>
+                                { selectedItem.icon ? <div className="icon" style={{backgroundImage: `url(${selectedItem.icon})`}}/> : null }
+                                <div className="label">{ selectedItem.label || selectedItem.value }</div>
+                                <div className="separator"></div>
+                                <div className={`handle ${isOpen ? 'open' : ''}`}>
+                                    <BsChevronDown size={20}></BsChevronDown>
+                                </div>
                             </div>
                             {
                                 <CSSTransition unmountOnExit in={isOpen} timeout={200} classNames="fade" nodeRef={transitionRef}>
-                                    <div className="list" ref={transitionRef}>
+                                    <div className="select-menu" ref={transitionRef}>
+                                        {
+                                            searchable ? 
+                                                <TextInput
+                                                    className="select-search-input"
+                                                    disabled={disabled}
+                                                    placeholder="Search"
+                                                    value={search}
+                                                    ref={hiddenTextInput}
+                                                    buttonLabel={search.length ? <MdOutlineClose/> : null}
+                                                    onInput={value => setSearch(value)}
+                                                    onButtonClick={() => setSearch('')}
+                                                />
+                                                :
+                                                null
+                                        }
                                         {
                                             filteredItems.map(item => (
                                                 <div className={`option ${item.value === selectedItem.value ? 'active' : ''}`} key={item.value} onClick={() => selectItem(item)}>
