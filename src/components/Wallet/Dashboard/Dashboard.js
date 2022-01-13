@@ -90,12 +90,12 @@ export default function Dashboard({ portfolio, selectedNetwork, selectedAccount,
                                 portfolio.isBalanceLoading ?
                                     <Loading/>
                                     :
-                                    <Chart data={chartTokensData} size={200}/>
+                                    privateMode.hidePrivateContent(<Chart data={chartTokensData} size={200}/>)
                                 :
                                 portfolio.areProtocolsLoading ?
                                     <Loading/>
                                     :
-                                    <Chart data={chartProtocolsData} size={200}/>
+                                    privateMode.hidePrivateContent(<Chart data={chartProtocolsData} size={200}/>)
                         }
                     </div>
                 </div>
