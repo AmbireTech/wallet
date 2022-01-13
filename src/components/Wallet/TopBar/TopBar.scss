@@ -1,4 +1,4 @@
-@import '../../../variables.scss';
+@import 'variables.scss';
 
 #topbar {
     height: $topbar-height;
@@ -26,7 +26,7 @@
         left: 10px;
         height: 70px;
         width: 235px;
-        background-image: url('../../../resources/logo.png');
+        background-image: url('/resources/logo.png');
     }
 
     #icon {
@@ -34,7 +34,7 @@
         left: 15px;
         height: 100%;
         width: 90px;
-        background-image: url('../../../resources/icon.png');
+        background-image: url('/resources/icon.png');
         opacity: 0;
     }
 

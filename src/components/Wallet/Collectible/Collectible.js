@@ -7,13 +7,13 @@ import { useCallback, useEffect, useState } from 'react'
 import { AiOutlineSend } from 'react-icons/ai'
 import { BsFillImageFill } from 'react-icons/bs'
 import * as blockies from 'blockies-ts';
-import { useToasts } from '../../../hooks/toasts'
-import { TextInput, Button, Loading, AddressBook, AddressWarning } from '../../common'
-import ERC721Abi from '../../../consts/ERC721Abi'
-import networks from '../../../consts/networks'
-import { validateSendNftAddress } from '../../../lib/validations/formValidations'
+import { useToasts } from 'hooks/toasts'
+import { TextInput, Button, Loading, AddressBook, AddressWarning } from 'components/common'
+import ERC721Abi from 'consts/ERC721Abi'
+import networks from 'consts/networks'
+import { validateSendNftAddress } from 'lib/validations/formValidations'
 import { BsXLg } from 'react-icons/bs'
-import { getProvider } from '../../../lib/provider'
+import { getProvider } from 'lib/provider'
 
 const ERC721 = new Interface(ERC721Abi)
 
