@@ -13,11 +13,36 @@ $titleBar-height: 90px;
     flex-direction: column;
     align-items: center;
     overflow-y: auto;
-    background-color: #282b33;
+    background-color: $background-color;
     /*
     background-color: rgba(40, 43, 51, 0.95);
     backdrop-filter: blur(8px);
     */
+
+    .panel {
+        min-width: 0;
+        padding: 2em;
+        box-sizing: border-box;
+        box-shadow: rgb(0, 0, 0) 0px 0px 20px 0px;
+
+        .title {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            font-size: 1.5em;
+            font-weight: bold;
+            color: $primary-accent-color;
+            text-transform: uppercase;
+        }
+
+        .heading {
+            display: flex;
+            flex-direction: column;
+            gap: 0.2rem;
+            margin-bottom: 1.5em;
+        }
+    }
 
     #titleBar {
         z-index: 49;
@@ -63,242 +88,220 @@ $titleBar-height: 90px;
             flex: 0 1 auto;
         }
     }
-}
 
-#sendTransaction .container {
-    width: 75em;
-    display: flex;
-    flex-direction: column;
-    align-items: normal;
-    gap: 2em;
-}
+    .container {
+        width: 75em;
+        display: flex;
+        flex-direction: column;
+        align-items: normal;
+        gap: 2em;
+        padding-bottom: 2em;
 
-#sendTransaction .panel {
-    padding: 2em;
-    box-sizing: border-box;
-    background-color: rgba(0, 0, 0, 0.2);
-    display: block;
-    box-shadow: rgb(0, 0, 0) 0px 0px 20px 0px;
-}
+        #topPanel {
+            width: 100%;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+            margin-top: 1em;
 
-#sendTransaction .panel .heading {
-    display: flex;
-    flex-direction: column;
-    gap: 0.2rem;
-    margin-bottom: 1.5em;
-}
+            .content {
+                display: flex;
+                flex-direction: row;
+                justify-content: center;
+                gap: 0.5em;
+                flex-wrap: wrap;
 
-#sendTransaction .panel .heading .title {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-    font-size: 1.5em;
-    font-weight: bold;
-    color: rgb(128, 255, 219);
-    text-transform: uppercase;
-}
+                .account,
+                .network {
+                    display: flex;
+                    align-items: center;
 
-#sendTransaction #panelHolder {
-    display: flex;
-    align-items: normal;
-    gap: 2em;
-}
+                    .icon {
+                        height: 20px;
+                        width: 20px;
+                        border-radius: 100%;
+                    }
+                }
 
-#sendTransaction #topPanel {
-    width: 100%;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    margin-top: 1em;
-}
+                .account {
+                    gap: 10px;
+                    font-family: monospace;
+                    font-size: 15px;
+                    font-weight: bold;
+                    word-break: break-word;
+                }
 
-#sendTransaction .title {
-    align-items: center;
-    justify-content: flex-start;
-    gap: 10px;
-    color: rgb(128, 255, 219);
-    text-transform: uppercase;
-}
+                .network {
+                    gap: 7px;
+                    font-size: 17px;
+                    font-weight: bold;
+                }
+            }
+        }
 
-#sendTransaction #topPanel .content {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    gap: 0.5em;
-    flex-wrap: wrap;
-}
+        #panelHolder {
+            display: flex;
+            align-items: normal;
+            gap: 2em;
 
-#sendTransaction #topPanel .content .account,
-#sendTransaction #topPanel .content .network {
-    display: flex;
-    align-items: center;
-}
+            .summaryPanel {
+                flex: 0 1 55%;
 
-#sendTransaction #topPanel .content .account {
-    gap: 10px;
-    font-family: monospace;
-    font-size: 15px;
-    font-weight: bold;
-    word-break: break-word;
-}
+                .listOfTransactions {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 10px;
+                    min-height: 300px;
+                    min-width: 350px;
 
-#sendTransaction #topPanel .content .network {
-    gap: 7px;
-    font-size: 17px;
-    font-weight: bold;
-}
+                    &.frozen {
+                        opacity: 0.5;
+                    }
+                }
+            }
 
-#sendTransaction #topPanel .content .account .icon,
-#sendTransaction #topPanel .content .network .icon {
-    height: 20px;
-    width: 20px;
-    border-radius: 100%;
-}
+            .secondaryPanel {
+                flex: 0 1 45%;
+                display: flex;
+                flex-direction: column;
+                gap: 2em;
 
-#sendTransaction .secondaryPanel {
-    flex: 0 0 45%;
-    display: flex;
-    flex-direction: column;
-    gap: 2em;
-}
+                .feePanel {
+                    justify-content: center;
+                    display: flex;
 
-#sendTransaction .feePanel {
-    justify-content: center;
-    display: flex;
-}
-#sendTransaction .feePanel .loading {
-    margin: 1em auto;
-}
+                    .loading {
+                        margin: 1em auto;
+                    }
 
-#sendTransaction .feeAmountSelectors {
-    overflow: hidden;
-    margin: 1em 0px;
-    min-width: 360px;
-    display: flex;
-    justify-content: center;
-}
+                    .feeAmountSelectors {
+                        overflow: hidden;
+                        margin: 1em 0px;
+                        min-width: 360px;
+                        display: flex;
+                        justify-content: center;
 
-#sendTransaction .feeSquare {
-    box-sizing: border-box;
-    background-color: #ccc;
-    color: black;
-    text-align: center;
-    min-height: 80px;
-    width: 90px;
-    float: left;
-    margin-right: 10px;
-    padding: 10px;
-    box-sizing: border-box;
-    border: 5px solid transparent;
-    overflow: hidden;
-    cursor: pointer;
-    user-select: none;
-}
-#sendTransaction .feeSquare.disabled {
-    opacity: 0.5;
-    cursor: default;
-}
-#sendTransaction .feeSquare.selected {
-    border: 5px solid rgb(128, 255, 219);
-}
-#sendTransaction .feeSquare .speed {
-    text-transform: uppercase;
-    font-size: 0.8em;
-    font-weight: bold;
-    margin-bottom: 5px;
-}
-#sendTransaction .feeEstimation {
-    width: 80px;
-    margin: auto;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
+                        .feeSquare {
+                            box-sizing: border-box;
+                            background-color: #ccc;
+                            color: black;
+                            text-align: center;
+                            min-height: 80px;
+                            width: 90px;
+                            float: left;
+                            margin-right: 10px;
+                            padding: 10px;
+                            box-sizing: border-box;
+                            border: 5px solid transparent;
+                            overflow: hidden;
+                            cursor: pointer;
+                            user-select: none;
 
-#sendTransaction .actions button {
-    width: 45%;
-    margin: 2em 2.5% 0em;
-    text-transform: uppercase;
-    font-weight: 800;
-    display: inline-block;
-    min-height: 75px;
-    font-size: 1em;
-    vertical-align: middle;
-    position: relative;
-}
+                            &.disabled {
+                                opacity: 0.5;
+                                cursor: default;
+                            }
 
-#sendTransaction .buttons {
-    justify-content: center;
-    display: flex;
-}
+                            &.selected {
+                                border: 5px solid $primary-accent-color;
+                            }
 
-#sendTransaction button.rejectTxn {
-    background-color: rgb(255, 132, 128);
-}
+                            .speed {
+                                text-transform: uppercase;
+                                font-size: 0.8em;
+                                font-weight: bold;
+                                margin-bottom: 5px;
+                            }
 
-#sendTransaction button.approveTxn .loading {
-    position: absolute;
-    top: 20px;
-    left: 15px;
-    display: block;
-    width: auto;
-    height: auto;
-}
+                            .feeEstimation {
+                                width: 80px;
+                                margin: auto;
+                                overflow: hidden;
+                                text-overflow: ellipsis;
+                                white-space: nowrap;
+                            }
+                        }
+                    }
 
-#sendTransaction .listOfTransactions {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    min-height: 300px;
-    min-width: 350px;
-}
+                    .failingTxn {
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
 
-#sendTransaction .listOfTransactions.frozen {
-    opacity: 0.5;
-}
+                        svg {
+                            width: 50px;
+                            height: 50px;
 
-#sendTransaction .failingTxn {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
+                            &:first-child {
+                                color: red;
+                                width: 90px;
+                                height: 90px;
+                            }
+                        }
+                    }
+                }
 
-#sendTransaction .failingTxn svg {
-    width: 50px;
-    height: 50px;
-}
+                .actions {
+                    .buttons {
+                        justify-content: center;
+                        display: flex;
+                    }
 
-#sendTransaction .failingTxn svg:first-child {
-    color: red;
-    width: 90px;
-    height: 90px;
-}
+                    .text-input {
+                        margin: 6px;
+                        display: inline-block;
+                        width: 47%;
+                    }
 
-#sendTransaction input {
-    box-shadow: 0 2px 0 #b3c4e6;
-    color: white;
-    background-color: transparent;
-}
+                    button {
+                        width: 45%;
+                        margin: 2em 2.5% 0em;
+                        text-transform: uppercase;
+                        font-weight: 800;
+                        display: inline-block;
+                        min-height: 75px;
+                        font-size: 1em;
+                        vertical-align: middle;
+                        position: relative;
 
-#sendTransaction .text-input {
-    margin: 6px;
-    display: inline-block;
-    width: 47%;
-}
+                        &.rejectTxn {
+                            background-color: rgb(255, 132, 128);
+                        }
 
+                        &.approveTxn {
+                            .loading {
+                                position: absolute;
+                                top: 20px;
+                                left: 15px;
+                                display: block;
+                                width: auto;
+                                height: auto;
+                            }
+                        }
+                    }
 
-#sendTransaction .quickAccSigningForm {
-    display: inline;
-}
+                    input {
+                        box-shadow: 0 2px 0 #b3c4e6;
+                        color: white;
+                        background-color: transparent;
+                    }
 
-#sendTransaction .quickAccSigningForm button {
-    min-height: 50px;
-}
+                    .quickAccSigningForm {
+                        display: inline;
 
-#sendTransaction .quickAccSigningForm button .loading {
-    top: 10px;
+                        button {
+                            min-height: 50px;
+
+                            .loading {
+                                top: 10px;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
 
 @media screen and (max-width: 1200px) {
