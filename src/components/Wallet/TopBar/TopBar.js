@@ -22,7 +22,7 @@ const TopBar = ({
   setNetwork,
   allNetworks,
   rewardsData,
-  privateMode: { isPrivateMode, togglePrivateMode }
+  privateMode: { isPrivateMode, togglePrivateMode, hidePrivateValue }
 }) => {
   const [isMenuOpen, setMenuOpen] = useState(false)
   
@@ -55,6 +55,7 @@ const TopBar = ({
         <Rewards
           rewardsData={rewardsData}
           account={account}
+          hidePrivateValue={hidePrivateValue}
         />
         <DApps connections={connections} connect={connect} disconnect={disconnect}/>
         <Accounts accounts={accounts} selectedAddress={selectedAcc} onSelectAcc={onSelectAcc} onRemoveAccount={onRemoveAccount}/>
