@@ -5,8 +5,8 @@ import { NavLink } from 'react-router-dom';
 import { AiOutlinePlus } from 'react-icons/ai'
 import { MdOutlineContentCopy, MdLogout, MdOutlineClose, MdOutlineCheck } from 'react-icons/md'
 import * as blockies from 'blockies-ts';
-import { DropDown, Button } from '../../../common';
-import { useToasts } from '../../../../hooks/toasts';
+import { DropDown, Button } from 'components/common';
+import { useToasts } from 'hooks/toasts';
 
 const Accounts = ({ accounts, selectedAddress, onSelectAcc, onRemoveAccount }) => {
     const { addToast } = useToasts()

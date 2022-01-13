@@ -1,9 +1,9 @@
 import './AddressWarning.scss'
 
 import { MdOutlineAdd } from 'react-icons/md'
-import { Checkbox } from '..'
+import { Checkbox } from 'components/common'
 import { useEffect, useMemo, useState } from 'react'
-import { isValidAddress, isKnownTokenOrContract } from '../../../lib/address';
+import { isValidAddress, isKnownTokenOrContract } from 'lib/address';
 
 const AddressWarning = ({ address, onChange, onAddNewAddress, isKnownAddress }) => {
     const [confirmed, setConfirmed] = useState(false)
