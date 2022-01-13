@@ -10,12 +10,12 @@ import Transfer from "./Transfer/Transfer"
 import Earn from "./Earn/Earn"
 import Security from "./Security/Security"
 import Transactions from './Transactions/Transactions'
-import PluginGnosisSafeApps from '../Plugins/GnosisSafeApps/GnosisSafeApps'
+import PluginGnosisSafeApps from 'components/Plugins/GnosisSafeApps/GnosisSafeApps'
 import Collectible from "./Collectible/Collectible"
-import { PermissionsModal } from '../Modals'
-import { useModals, usePermissions } from '../../hooks'
+import { PermissionsModal } from 'components/Modals'
+import { useModals, usePermissions } from 'hooks'
 import { useCallback, useEffect, useMemo, useRef } from 'react'
-import { isFirefox } from '../../lib/isFirefox'
+import { isFirefox } from 'lib/isFirefox'
 import CrossChain from "./CrossChain/CrossChain"
 
 export default function Wallet(props) {

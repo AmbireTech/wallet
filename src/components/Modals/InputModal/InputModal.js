@@ -2,8 +2,8 @@ import './InputModal.scss'
 
 import { createRef, useState } from 'react'
 import { MdCheck, MdClose } from 'react-icons/md'
-import { useModals } from '../../../hooks'
-import { Modal, TextInput, Button } from "../../common"
+import { useModals } from 'hooks'
+import { Modal, TextInput, Button } from "components/common"
 
 const InputModal = ({ title, inputs, onClose }) => {
     const { hideModal } = useModals()

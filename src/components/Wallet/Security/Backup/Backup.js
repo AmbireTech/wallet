@@ -1,7 +1,7 @@
 import './Backup.scss'
 
 import { BiExport, BiImport } from "react-icons/bi"
-import { Button } from "../../../common"
+import { Button } from "components/common"
 
 const Backup = ({ selectedAccount, onOpen, onAddAccount }) => {
     const onBackupDownloaded = () => {

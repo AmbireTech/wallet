@@ -1,8 +1,8 @@
-import { abis } from '../../../../consts/humanizerInfo'
-import { tokens } from '../../../../consts/humanizerInfo'
-import { formatNativeTokenAddress, knownTokens } from '../../../../lib/humanReadableTransactions'
+import { abis } from 'consts/humanizerInfo'
+import { tokens } from 'consts/humanizerInfo'
+import { formatNativeTokenAddress, knownTokens } from 'lib/humanReadableTransactions'
 import { Interface } from 'ethers/lib/utils'
-import networks from '../../../../consts/networks'
+import networks from 'consts/networks'
 
 const MovrAnyswapInterface = new Interface(abis.MovrAnyswap)
 const MovrRouterInterface = new Interface(abis.MovrRouter)

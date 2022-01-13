@@ -2,7 +2,7 @@ import './Collectibles.scss'
 
 import { NavLink } from 'react-router-dom'
 import CollectiblesPlaceholder from './CollectiblesPlaceholder/CollectiblesPlaceholder'
-import { Loading } from '../../../common'
+import { Loading } from 'components/common'
 
 const Collectibles = ({ portfolio }) => {
     return (
