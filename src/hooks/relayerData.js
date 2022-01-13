@@ -1,5 +1,5 @@
 import { useEffect, useCallback, useState, useRef } from 'react'
-import { fetchCaught } from '../lib/fetch'
+import { fetchCaught } from 'lib/fetch'
 
 // 250ms after we've triggered a load of another URL, we will clear the data
 //  so that the component that uses this hook cann display the loading spinner

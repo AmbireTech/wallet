@@ -1,5 +1,5 @@
 import { Interface } from 'ethers/lib/utils'
-import accountPresets from '../consts/accountPresets'
+import accountPresets from 'consts/accountPresets'
 
 const IdentityFactory = new Interface(require('adex-protocol-eth/abi/IdentityFactory'))
 

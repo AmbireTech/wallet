@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import { fetchGet } from "../../../lib/fetch";
+import { fetchGet } from "lib/fetch";
 
 const baseURL = 'https://backend.movr.network/v1'
 const watcherBaseURL = 'https://watcherapi.fund.movr.network/api/v1'

@@ -1,5 +1,5 @@
-import { SUSHI_SWAP_FRAME } from '../../../config'
-import GnosisSafeAppIframe from '../../Plugins/GnosisSafeApps/GnosisSafeAppIframe'
+import { SUSHI_SWAP_FRAME } from 'config'
+import GnosisSafeAppIframe from 'components/Plugins/GnosisSafeApps/GnosisSafeAppIframe'
 
 const ambireSushi = {
     name: "Ambire swap",

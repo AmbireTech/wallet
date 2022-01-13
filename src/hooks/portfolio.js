@@ -1,13 +1,13 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-import { ZAPPER_API_KEY } from '../config';
-import { fetchGet } from '../lib/fetch';
-import { ZAPPER_API_ENDPOINT } from '../config'
-import supportedProtocols from '../consts/supportedProtocols';
-import { useToasts } from '../hooks/toasts'
-import { setKnownAddresses, setKnownTokens } from '../lib/humanReadableTransactions';
-import { VELCRO_API_ENDPOINT } from '../config'
-import { getTokenListBalance, tokenList, checkTokenList } from '../lib/balanceOracle'
+import { ZAPPER_API_KEY } from 'config';
+import { fetchGet } from 'lib/fetch';
+import { ZAPPER_API_ENDPOINT } from 'config'
+import supportedProtocols from 'consts/supportedProtocols';
+import { useToasts } from 'hooks/toasts'
+import { setKnownAddresses, setKnownTokens } from 'lib/humanReadableTransactions';
+import { VELCRO_API_ENDPOINT } from 'config'
+import { getTokenListBalance, tokenList, checkTokenList } from 'lib/balanceOracle'
 
 const getBalances = (apiKey, network, protocol, address, provider) => fetchGet(`${provider === 'velcro' ? VELCRO_API_ENDPOINT : ZAPPER_API_ENDPOINT}/protocols/${protocol}/balances?addresses[]=${address}&network=${network}&api_key=${apiKey}&newBalances=true`)
 
