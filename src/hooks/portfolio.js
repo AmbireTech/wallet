@@ -59,7 +59,6 @@ async function supplementTokensDataFromNetwork({ walletAddr, network, tokensData
     }))).flat().filter(t => {
         return extraTokens.some(et => t.address === et.address) ? true : (parseFloat(t.balance) > 0)
     })
-console.log('tokenBalances', tokenBalances)
     return tokenBalances
   }
   
