@@ -32,7 +32,7 @@ const Rewards = ({ rewardsData, account, hidePrivateValue }) => {
                 <Button small border disabled onClick={showWalletTokenModal}>Unavailable</Button>
             </ToolTip>
             :
-            <Button small border disabled={isLoading} onClick={showWalletTokenModal}>{ hidePrivateValue(rewardsTotal.toFixed(3), true) } WALLET</Button>
+            <Button small border disabled={isLoading} onClick={showWalletTokenModal}>{ hidePrivateValue(rewardsTotal.toFixed(3)) } WALLET</Button>
     )
 }
 
