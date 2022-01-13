@@ -8,7 +8,7 @@ export default function usePrivateMode() {
         localStorage.setItem('isPrivateMode', !isPrivateMode)
     }
 
-    const hidePrivateValue = (value, showValueLength) => isPrivateMode ? (showValueLength ? [...Array(value.length).keys()].map(e => '*') : '**' ) : value;
+    const hidePrivateValue = (value) => isPrivateMode ? '**' : value;
 
     const hidePrivateContent = (content) => isPrivateMode ? <div className='private-content'>{content}</div> : content;
     
