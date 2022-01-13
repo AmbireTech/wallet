@@ -165,6 +165,8 @@ const checkForwardPermission = (message, sender, callback) => {
 				if (VERBOSE) console.warn(`${RELAYER_VERBOSE_TAG[RELAYER]} ambexMessenger[${RELAYER}] : sending message to dApp not from trusted source`, url);
 				callback(false);
 			}
+		} else if(message.from === "contentScript" && message.to === "contentScript") {//from extension to extension
+			callback(true);
 		} else { //FROM DAPP
 			PERMISSION_MIDDLEWARE(message, sender, callback);
 		}
@@ -236,6 +238,9 @@ const sendMessageInternal = (message) => {
 		if (forwardPath.indexOf(message.to) !== -1) {//BG, ACS, APC
 			if (VERBOSE) console.log(`${RELAYER_VERBOSE_TAG[RELAYER]} ambexMessenger[${RELAYER}] sending message as CS -> BG:`);
 			chromeObject.runtime.sendMessage(message);
+		} else if (message.to === "contentScript") {//other extension pages
+			if (VERBOSE) console.log(`${RELAYER_VERBOSE_TAG[RELAYER]} ambexMessenger[${RELAYER}] sending message as CS -> CS:`);
+			chromeObject.runtime.sendMessage(message);
 		} else {
 			if (VERBOSE) console.log(`${RELAYER_VERBOSE_TAG[RELAYER]} ambexMessenger[${RELAYER}] sending message CS -> PC:`);
 			window.postMessage(message);
@@ -259,8 +264,8 @@ const sendMessage = (message, callback, options = {}) => new Promise((res, rej) 
 				id: message.id,
 				isReply: true
 			})
-			//rej(`${RELAYER_VERBOSE_TAG[RELAYER]} ambexMessenger[${RELAYER}] timeout : ${JSON.stringify(message)}`);
-			rej(`${RELAYER_VERBOSE_TAG[RELAYER]} ambexMessenger[${RELAYER}] Ambire wallet timeout`);
+			rej(`${RELAYER_VERBOSE_TAG[RELAYER]} ambexMessenger[${RELAYER}] timeout : ${JSON.stringify(message)}`);
+			//rej(`${RELAYER_VERBOSE_TAG[RELAYER]} ambexMessenger[${RELAYER}] Ambire wallet timeout`);
 		}, options.replyTimeout);
 
 		message.id = `${RELAYER}_${MSGCOUNT}_${Math.random()}`;
@@ -355,6 +360,15 @@ const addMessageHandler = (filter, callback) => {
 	if (VERBOSE) console.log(`${RELAYER_VERBOSE_TAG[RELAYER]} ambexMessenger[${RELAYER}] handler added`, HANDLERS);
 };
 
+const makeRPCError = (requestPayload, error, errorCode=-1) => {
+	return {
+		id: requestPayload.id,
+		version: requestPayload.version,
+		error: {code:errorCode, message: error},
+		jsonrpc: requestPayload.jsonrpc
+	}
+}
+
 module.exports = {
 	setupAmbexMessenger,
 	sendMessage,
@@ -363,5 +377,6 @@ module.exports = {
 	addMessageHandler,
 	setAmbireTabId,
 	setPermissionMiddleware,
-	clear
+	clear,
+	makeRPCError
 };

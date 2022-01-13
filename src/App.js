@@ -60,6 +60,8 @@ function AppInner () {
   }, [selectedAcc, network])
 
   const { requests: extensionRequests, resolveMany: extensionResolveMany, connect: extensionConnect, disconnect: extensionDisconnect } = useAmbireExtension({
+    allNetworks,
+    setNetwork,
     selectedAccount: selectedAcc,
     network: network
   }, [selectedAcc, network])

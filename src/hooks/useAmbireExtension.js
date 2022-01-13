@@ -13,7 +13,7 @@ import {
 
 const STORAGE_KEY = 'ambire_extension_state'
 
-export default function useAmbireExtension({ selectedAccount, network, verbose = 0 }) {
+export default function useAmbireExtension({ allNetworks, setNetwork, selectedAccount, network, verbose = 1 }) {
   // One connector at a time
   const connector = useRef(null)
 
@@ -51,7 +51,7 @@ export default function useAmbireExtension({ selectedAccount, network, verbose =
   }
 
   const handlePersonalSign = async (message) => {
-    const payload = message.data;
+    const payload = message.data
     verbose > 0 && console.log("AmbEx requested signMessage", payload)
 
     if (!payload) {
@@ -173,6 +173,8 @@ export default function useAmbireExtension({ selectedAccount, network, verbose =
       const payload = message.data
       const method = payload.method
 
+      let deferredReply = false
+
       const callTx = payload.params//0 == tx, 1 == blockNum
       let result
       let error
@@ -184,6 +186,19 @@ export default function useAmbireExtension({ selectedAccount, network, verbose =
         result = [{ parentCapability: "eth_accounts" }]
       } else if (method === "wallet_getPermissions") {
         result = [{ parentCapability: "eth_accounts" }]
+      } else if (method === "wallet_switchEthereumChain") {
+      debugger;
+        const existingNetwork = allNetworks.find(a => {
+          return number2hex(a.chainId) === callTx[0]?.chainId
+        })
+        if (existingNetwork) {
+          setNetwork(existingNetwork.chainId)
+          result = null
+        } else {
+          error = `chainId ${callTx[0]?.chainId} not supported by ambire wallet`
+        }
+      } else if (method === "eth_coinbase") {
+        result = selectedAccount
       } else if (method === "eth_call") {
         result = await provider.call(callTx[0], callTx[1]).catch(err => {
           error = err
@@ -263,19 +278,23 @@ export default function useAmbireExtension({ selectedAccount, network, verbose =
           result.gasUsed = number2hex(result.gasUsed)
           result._difficulty = number2hex(result._difficulty)
         }
+      } else if (method === "eth_getTransactionCount") {
+        result = await provider.getTransactionCount(callTx[0]).catch(err => {
+          error = err
+        })
+        if (result) result = number2hex(result)
       } else if (method === "personal_sign") {
         handlePersonalSign(message).catch(err => {
           verbose > 0 && console.log("personal sign error ", err)
           error = err
         })
-        result = null
-        debugger
+        deferredReply = true
       } else if (method === "eth_sign") {
         handlePersonalSign(message).catch(err => {
           verbose > 0 && console.log("personal sign error ", err)
           error = err
         })
-        result = null
+        deferredReply = true
       } else if (method === "eth_sendTransaction") {
 
         const internalHookId = 'ambex_tx_' + payload.id
@@ -288,7 +307,6 @@ export default function useAmbireExtension({ selectedAccount, network, verbose =
           error = "No txs in received payload"
         }
 
-        debugger;
         const request = {
           id: internalHookId,
           upstreamInternalId: message.data.internalId,
@@ -300,25 +318,26 @@ export default function useAmbireExtension({ selectedAccount, network, verbose =
           originalMessage: message
         }
 
-        result = null
+        deferredReply = true
         setRequests(prevRequests => prevRequests.find(x => x.id === request.id) ? prevRequests : [...prevRequests, request])
       } else {
         error = "Method not supported by extension hook: " + method
       }
 
-      if (result) {
-        let rpcResult = {
-          jsonrpc: "2.0",
-          id: payload.id,
-          result: result,
-        }
-        if (error) {
-          console.error("throwing error with ", message)
-          rpcResult = {
+      if (error) {
+        console.error("throwing error with ", message)
+        sendReply(message, {
+          data: {
             jsonrpc: "2.0",
             id: payload.id,
             error: error,
           }
+        })
+      } else if (!deferredReply) {
+        let rpcResult = {
+          jsonrpc: "2.0",
+          id: payload.id,
+          result: result,
         }
 
         verbose > 0 && console.log(`Replying to request with`, rpcResult)
