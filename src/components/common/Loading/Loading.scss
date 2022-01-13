@@ -1,4 +1,4 @@
-@import '../../../variables.scss';
+@import 'variables.scss';
 
 .loading {
     height: 100%;
@@ -92,7 +92,7 @@
 .ambire-loading-animation-128 {
     width: 128px;
     height: 128px;
-    background: url('../../../resources/ambire-loader-animation-sprite-160.png') left center;
+    background: url('/resources/ambire-loader-animation-sprite-160.png') left center;
     animation: ambire-160 1s steps(29) infinite;
     filter: drop-shadow(0px 0px 10px $ambire-dark-blue);
 }
