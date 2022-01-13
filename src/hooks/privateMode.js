@@ -10,9 +10,12 @@ export default function usePrivateMode() {
 
     const hidePrivateValue = (value) => isPrivateMode ? '**' : value;
 
+    const hidePrivateContent = (content) => isPrivateMode ? <div className='private-content'>{content}</div> : content;
+    
     return {
         isPrivateMode,
         hidePrivateValue,
+        hidePrivateContent,
         togglePrivateMode
     }
 }
