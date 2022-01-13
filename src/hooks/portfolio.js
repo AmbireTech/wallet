@@ -263,6 +263,17 @@ export default function usePortfolio({ currentNetwork, account }) {
         addToast(`${name} (${symbol}) token added to your wallet!`)
     }
 
+    const onRemoveExtraToken = address => {
+        const token = extraTokens.find(t => t.address === address)
+        if (!token) return addToast(`${address} is not present in your wallet.`)
+
+        const updatedExtraTokens = extraTokens.filter(t => t.address !== address)
+
+        localStorage.extraTokens = JSON.stringify(updatedExtraTokens)
+        setExtraTokens(updatedExtraTokens)
+        addToast(`${token.name} (${token.symbol}) was removed from your wallet.`)
+    }
+
     // Fetch balances and protocols on account change
     useEffect(() => {
         currentAccount.current = account
@@ -376,10 +387,12 @@ export default function usePortfolio({ currentNetwork, account }) {
         balance,
         otherBalances,
         tokens,
+        extraTokens,
         protocols,
         collectibles,
         requestOtherProtocolsRefresh,
-        onAddExtraToken
+        onAddExtraToken,
+        onRemoveExtraToken
         //updatePortfolio//TODO find a non dirty way to be able to reply to getSafeBalances from the dapps, after the first refresh
     }
 }
