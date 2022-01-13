@@ -1,6 +1,6 @@
-import { abis } from '../../consts/humanizerInfo'
+import { abis } from 'consts/humanizerInfo'
 import { Interface } from 'ethers/lib/utils'
-import { nativeToken, token } from '../humanReadableTransactions'
+import { nativeToken, token } from 'lib/humanReadableTransactions'
 
 const iface = new Interface(abis.UniV2Router)
 const recipientText = (recipient, txnFrom) => recipient.toLowerCase() === txnFrom.toLowerCase()

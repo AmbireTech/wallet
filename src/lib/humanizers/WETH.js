@@ -1,6 +1,6 @@
-import { abis } from '../../consts/humanizerInfo'
+import { abis } from 'consts/humanizerInfo'
 import { Interface } from 'ethers/lib/utils'
-import { nativeToken } from '../humanReadableTransactions'
+import { nativeToken } from 'lib/humanReadableTransactions'
 
 const iface = new Interface(abis.WETH)
 const WETHMapping = {

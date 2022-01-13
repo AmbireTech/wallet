@@ -3,8 +3,8 @@ import './Select.scss';
 import { useCallback, useEffect, useRef, useState } from "react";
 import { BsChevronDown } from 'react-icons/bs'
 import { CSSTransition } from 'react-transition-group';
-import useOnClickOutside from '../../../hooks/onClickOutside';
-import { TextInput } from '..';
+import useOnClickOutside from 'hooks/onClickOutside';
+import { TextInput } from 'components/common';
 import { MdOutlineClose } from 'react-icons/md';
 
 const Select = ({ children, native, monospace, searchable, disabled, label, defaultValue, items, onChange }) => {

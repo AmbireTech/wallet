@@ -1,6 +1,6 @@
 import './Balances.scss'
 
-import networks from '../../../../consts/networks'
+import networks from 'consts/networks'
 
 const Balances = ({ portfolio, selectedNetwork, setNetwork }) => {
     const networkDetails = (network) => networks.find(({ id }) => id === network)

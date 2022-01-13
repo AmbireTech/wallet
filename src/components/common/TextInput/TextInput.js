@@ -2,7 +2,7 @@ import './TextInput.scss'
 
 import { forwardRef } from 'react';
 import { MdContentCopy } from 'react-icons/md';
-import { useToasts } from '../../../hooks/toasts';
+import { useToasts } from 'hooks/toasts';
 
 const TextInput = forwardRef(({ value, className, title, pattern, autoComplete, required, minLength, maxLength, placeholder, info, label, buttonLabel, password, disabled, copy, small, onInput, onChange, onButtonClick, style }, ref) => {
     const { addToast } = useToasts();
