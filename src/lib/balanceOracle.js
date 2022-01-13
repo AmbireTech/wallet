@@ -27,7 +27,7 @@ async function getTokenListBalance ({walletAddr, tokens, network, updateBalance}
         balanceUSD: Number(parseFloat(newTokenBalance.price * newTokenBalance.balance || 0).toFixed(2)),
         tokenImageUrl: newTokenBalance.tokenImageUrl || `https://storage.googleapis.com/zapper-fi-assets/tokens/${network}/${newTokenBalance.address}.png`
       } : t)
-    }).filter (t => t && t.balance && parseFloat(t.balance) > 0)
+    }).filter (t => t && t.balance) //&& parseFloat(t.balance) > 0
     if (updateBalance && typeof updateBalance === 'function') updateBalance(newBalance)
     return newBalance
   } else {
