@@ -16,7 +16,11 @@ const Protocols = ({ portfolio, network, account }) => {
     const [failedImg, setFailedImg] = useState([])
 
     const { isBalanceLoading, areProtocolsLoading, tokens, protocols } = portfolio
-    const sortedTokens = tokens.sort((a, b) => b.balanceUSD - a.balanceUSD)
+    const sortedTokens = tokens.sort((a, b) => {
+        const decreasing = b.balanceUSD - a.balanceUSD
+        if (decreasing === 0) return a.symbol.localeCompare(b.symbol)
+        return decreasing
+    })
     const otherProtocols = protocols.filter(({ label }) => label !== 'Tokens')
     const shouldShowPlaceholder = (!isBalanceLoading && !tokens.length) && (!areProtocolsLoading && !otherProtocols.length)
 
