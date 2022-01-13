@@ -8,7 +8,7 @@ import networks from 'consts/networks'
 import { getProvider } from 'lib/provider'
 
 import AAVE_ICON from 'resources/aave.svg'
-import Card from 'components/Wallet/Earn/Cards/Card/Card'
+import Card from 'components/Wallet/Earn/Card/Card'
 import { getDefaultTokensItems } from './defaultTokens'
 import approveToken from 'lib/approveToken'
 
