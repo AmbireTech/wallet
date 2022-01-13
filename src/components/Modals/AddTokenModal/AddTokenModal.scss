@@ -4,36 +4,45 @@
     .content {
         display: flex;
         flex-direction: column;
-        gap: 1em;
+        gap: 2em;
 
-        .details {
+        .info {
+            display: flex;
+            gap: 0.5em;
+
+            .icon {
+                height: 22px;
+                width: 22px;
+                @include flex-center-center;
+                background-size: cover;
+                background-position: center center;
+                background-color: rgba(0, 0, 0, 0.2);
+                border-radius: 100%;
+            }
+
+            .name {
+                height: inherit;
+                font-size: 1em;
+                font-weight: 500;
+
+                span {
+                    opacity: 0.6;
+                }
+            }
+        }
+
+        .token-details {
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
+            gap: 0.5em;
 
             .heading {
                 height: 50px;
                 display: flex;
                 align-items: center;
                 gap: 0.5em;
-
-                .icon {
-                    height: 22px;
-                    width: 22px;
-                    @include flex-center-center;
-                    background-size: cover;
-                    background-position: center center;
-                    background-color: rgba(0, 0, 0, 0.2);
-                    border-radius: 100%;
-                }
-
-                .title {
-                    display: flex;
-                    align-items: center;
-                    height: inherit;
-                    font-size: 1em;
-                }
             }
 
             .balance {
@@ -41,6 +50,35 @@
 
                 span {
                     color: $primary-accent-color;
+                }
+            }
+        }
+
+        .extra-tokens-list {
+            max-height: 300px;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+
+            .title {
+                margin-bottom: 0.5em;
+                font-size: 18px;
+                font-weight: bold;
+            }
+
+            .extra-token {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                padding: 0.5em;
+                padding-left: 1em;
+
+                &:nth-child(even) {
+                    background-color: rgba(0, 0, 0, 0.2);
+                }
+
+                &:nth-child(odd) {
+                    background-color: rgba(0, 0, 0, 0.1);
                 }
             }
         }

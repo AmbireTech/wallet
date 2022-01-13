@@ -7,15 +7,17 @@ import { isValidAddress } from '../../../lib/address';
 import { Button, Loading, Modal, TextInput } from '../../common'
 import { useState } from 'react';
 import { useToasts } from '../../../hooks/toasts';
-import { MdOutlineAdd, MdOutlineClose } from 'react-icons/md';
+import { MdOutlineAdd, MdOutlineClose, MdOutlineRemove } from 'react-icons/md';
 import { useModals } from '../../../hooks';
 import { getProvider } from '../../../lib/provider'
 
 const ERC20Interface = new Interface(ERC20ABI)
 
-const AddTokenModal = ({ network, account, onAddToken }) => {
+const AddTokenModal = ({ network, account, portfolio }) => {
     const { addToast } = useToasts()
     const { hideModal } = useModals()
+
+    const { extraTokens, onAddExtraToken, onRemoveExtraToken } = portfolio
 
     const [loading, setLoading] = useState(false)
     const [tokenDetails, setTokenDetails] = useState(null)
@@ -62,14 +64,19 @@ const AddTokenModal = ({ network, account, onAddToken }) => {
         setLoading(false)
     }
 
-    const onAdd = () => {
-        onAddToken(tokenDetails)
+    const addToken = () => {
+        onAddExtraToken(tokenDetails)
+        hideModal()
+    }
+
+    const removeToken = address => {
+        onRemoveExtraToken(address)
         hideModal()
     }
 
     const buttons = <>
         <Button clear icon={<MdOutlineClose/>} onClick={() => hideModal()}>Close</Button>
-        <Button icon={<MdOutlineAdd/>} disabled={disabled} onClick={onAdd}>Add</Button>
+        <Button icon={<MdOutlineAdd/>} disabled={disabled} onClick={addToken}>Add</Button>
     </>
     const tokenStandard = network.id === 'binance-smart-chain' ? 'a BEP20' : (
         network.id === 'ethereum'
@@ -97,10 +104,12 @@ const AddTokenModal = ({ network, account, onAddToken }) => {
                     <Loading/>
                     :
                         !showError && tokenDetails ? 
-                            <div className="details">
-                                <div className="heading">
+                            <div className="token-details">
+                                <div className="info">
                                     <div className="icon" style={{backgroundImage: `url(${tokenDetails.icon})`}}/>
-                                    <div className="title">{ tokenDetails.name } ({ tokenDetails.symbol })</div>
+                                    <div className="name">
+                                        { tokenDetails.name } <span>({ tokenDetails.symbol })</span>
+                                    </div>
                                 </div>
                                 <div className="balance">
                                     Balance: <span>{ tokenDetails.balance }</span> <b>{ tokenDetails.symbol }</b>
@@ -109,6 +118,23 @@ const AddTokenModal = ({ network, account, onAddToken }) => {
                             :
                             null
             }
+            <div className="extra-tokens-list">
+                {
+                    extraTokens.map(({ address, name, symbol, tokenImageUrl }) => (
+                        <div className="extra-token" key={address}>
+                            <div className="info">
+                                <div className="icon" style={{ backgroundImage: `url(${tokenImageUrl})` }}/>
+                                <div className="name">{ name } <span>({ symbol })</span></div>
+                            </div>
+                            <div className="actions">
+                                <Button mini clear onClick={() => removeToken(address)}>
+                                    <MdOutlineRemove/>
+                                </Button>
+                            </div>
+                        </div>
+                    ))
+                }
+            </div>
         </Modal>
     )
 }
