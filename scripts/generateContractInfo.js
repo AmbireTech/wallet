@@ -42,7 +42,8 @@ const contracts = [
 	{ name: 'Movr Anyswap', network: 'polygon', addr: '0x3901581b7ff54667a2bf51cb93dba704e60e24f4', abiName: 'MovrAnyswap' },
 	//{ name: 'Movr Anyswap', network: 'polygon', addr: '0x43aa68673e54e95e07e8388bdd8612abe6df6f81' },
 	{ name: 'Bored Ape Yacht Club', network: 'ethereum', addr: '0xbc4ca0eda7647a8ab7c2061c2e118a18a936f13d', abiName: 'ERC721' },
-	...yearnVaults
+	...yearnVaults,
+	{ name: 'Ambire Factory', network: 'ethereum', addr: '0xBf07a0Df119Ca234634588fbDb5625594E2a5BCA', abiName: 'IdentityFactory' }
 ]
 const tokenlists = [
 	'https://github.com/trustwallet/assets/raw/master/blockchains/ethereum/tokenlist.json',

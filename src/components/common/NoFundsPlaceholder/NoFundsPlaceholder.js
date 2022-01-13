@@ -2,7 +2,7 @@ import './NoFundsPlaceholder.scss'
 
 import { GiReceiveMoney } from 'react-icons/gi'
 import { NavLink } from 'react-router-dom'
-import { Button } from '..'
+import { Button } from 'components/common'
 
 const NoFundsPlaceholder = () => {
     return (

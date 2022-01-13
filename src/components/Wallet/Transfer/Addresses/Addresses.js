@@ -1,11 +1,11 @@
 import './Addresses.scss'
 
 import { MdOutlineAdd } from 'react-icons/md'
-import AddressList from '../../../common/AddressBook/AddressList/AddressList'
-import { Button } from '../../../common'
-import { isValidAddress } from '../../../../lib/address'
-import { InputModal } from '../../../Modals'
-import { useModals } from '../../../../hooks'
+import AddressList from 'components/common/AddressBook/AddressList/AddressList'
+import { Button } from 'components/common'
+import { isValidAddress } from 'lib/address'
+import { InputModal } from 'components/Modals'
+import { useModals } from 'hooks'
 
 const Addresses = ({ addresses, addAddress, removeAddress, onSelectAddress }) => {
     const { showModal } = useModals()

@@ -5,8 +5,8 @@ import { FiHelpCircle } from 'react-icons/fi'
 import { BiTransferAlt } from 'react-icons/bi'
 import { MdBrokenImage } from 'react-icons/md'
 import { AiOutlineDisconnect } from 'react-icons/ai'
-import { DropDown, ToolTip, Button } from "../../../common"
-import { checkClipboardPermission } from '../../../../lib/permissions'
+import { DropDown, ToolTip, Button } from "components/common"
+import { checkClipboardPermission } from 'lib/permissions'
 import { MdOutlineWarning } from 'react-icons/md'
 
 const DApps = ({ connections, connect, disconnect }) => {
