@@ -1,6 +1,6 @@
 @import 'variables.scss';
 
-$badge-size: 60px;
+$badge-size: 65px;
 
 #wallet-token-modal {
     .content {
@@ -69,7 +69,9 @@ $badge-size: 60px;
         }
 
         .badges {
+            width: 100%;
             display: flex;
+            justify-content: center;
             gap: 1em;
             padding-top: 1.5em;
 
@@ -88,13 +90,14 @@ $badge-size: 60px;
                 border: 1px solid;
                 margin-bottom: 10px;
                 user-select: none;
-                opacity: 0.5;
+                opacity: 0.3;
                 transition: transform 0.1s ease-out;
 
                 &.active {
                     opacity: 1;
 
                     &:hover {
+                        filter: drop-shadow(0 0 5px rgba(0, 0, 0, 0.3));
                         transform: scale(1.05);
                     }
                 }
@@ -105,7 +108,8 @@ $badge-size: 60px;
                 }
 
                 .multiplier {
-                    font-size: 0.7em;
+                    font-size: 0.8em;
+                    font-weight: bold;
                     color: white;
                 }
 
