@@ -1,6 +1,7 @@
 import './Dashboard.scss'
 
 import { useEffect, useLayoutEffect, useState } from 'react'
+import { useHistory, useParams } from 'react-router-dom'
 
 import { Chart, Loading, Segments } from 'components/common'
 import Balances from './Balances/Balances'
@@ -8,30 +9,37 @@ import Protocols from './Protocols/Protocols'
 import Collectibles from './Collectibles/Collectibles'
 import { MdOutlineInfo } from 'react-icons/md'
 
+const chartSegments = [
+    {
+        value: 'Tokens'
+    },
+    {
+        value: 'Protocols'
+    }
+]
+
+const tabSegments = [
+    {
+        value: 'tokens'
+    },
+    {
+        value: 'collectibles'
+    }
+]
+
 export default function Dashboard({ portfolio, selectedNetwork, selectedAccount, setNetwork, privateMode }) {
+    const history = useHistory()
+    const { tabId } = useParams()
 
     const [chartTokensData, setChartTokensData] = useState([]);
     const [chartProtocolsData, setChartProtocolsData] = useState([]);
     const [chartType, setChartType] = useState([]);
-    const [tableType, setTableType] = useState([]);
+    const [tab, setTab] = useState(tabId || tabSegments[0].value);
 
-    const chartSegments = [
-        {
-            value: 'Tokens'
-        },
-        {
-            value: 'Protocols'
-        }
-    ]
-
-    const tableSegments = [
-        {
-            value: 'Tokens'
-        },
-        {
-            value: 'Collectibles'
-        }
-    ]
+    useEffect(() => {
+        if (!tab || tab === tabSegments[0].value) return history.replace(`/wallet/dashboard`)
+        history.replace(`/wallet/dashboard/${tab}`)
+    }, [tab, history])
 
     useLayoutEffect(() => {
         const tokensData = portfolio.tokens
@@ -103,11 +111,11 @@ export default function Dashboard({ portfolio, selectedNetwork, selectedAccount,
             <div id="table" className="panel">
                 <div className="title">
                     Assets
-                    <Segments small defaultValue={tableSegments[0].value} segments={tableSegments} onChange={setTableType}></Segments>
+                    <Segments small defaultValue={tab} segments={tabSegments} onChange={setTab}></Segments>
                 </div>
                 <div className="content">
                     {
-                        tableType === tableSegments[0].value ?
+                        tab === tabSegments[0].value ?
                             <Protocols
                                 portfolio={portfolio}
                                 network={selectedNetwork}
