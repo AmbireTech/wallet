@@ -8,7 +8,7 @@ import Protocols from './Protocols/Protocols'
 import Collectibles from './Collectibles/Collectibles'
 import { MdOutlineInfo } from 'react-icons/md'
 
-export default function Dashboard({ portfolio, selectedNetwork, selectedAccount, setNetwork }) {
+export default function Dashboard({ portfolio, selectedNetwork, selectedAccount, setNetwork, privateMode }) {
 
     const [chartTokensData, setChartTokensData] = useState([]);
     const [chartProtocolsData, setChartProtocolsData] = useState([]);
@@ -74,6 +74,7 @@ export default function Dashboard({ portfolio, selectedNetwork, selectedAccount,
                                     portfolio={portfolio}
                                     selectedNetwork={selectedNetwork}
                                     setNetwork={setNetwork}
+                                    hidePrivateValue={privateMode.hidePrivateValue}
                                 />
                         }
                     </div>
@@ -89,12 +90,12 @@ export default function Dashboard({ portfolio, selectedNetwork, selectedAccount,
                                 portfolio.isBalanceLoading ?
                                     <Loading/>
                                     :
-                                    <Chart data={chartTokensData} size={200}/>
+                                    privateMode.hidePrivateContent(<Chart data={chartTokensData} size={200}/>)
                                 :
                                 portfolio.areProtocolsLoading ?
                                     <Loading/>
                                     :
-                                    <Chart data={chartProtocolsData} size={200}/>
+                                    privateMode.hidePrivateContent(<Chart data={chartProtocolsData} size={200}/>)
                         }
                     </div>
                 </div>
@@ -111,9 +112,10 @@ export default function Dashboard({ portfolio, selectedNetwork, selectedAccount,
                                 portfolio={portfolio}
                                 network={selectedNetwork}
                                 account={selectedAccount}
+                                hidePrivateValue={privateMode.hidePrivateValue}
                             />
                             :
-                            <Collectibles portfolio={portfolio}/>
+                            <Collectibles portfolio={portfolio} isPrivateMode={privateMode.isPrivateMode} />
                     }
                 </div>
                 <div className="footer">
