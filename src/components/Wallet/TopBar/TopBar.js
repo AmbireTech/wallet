@@ -2,7 +2,7 @@ import "./TopBar.scss";
 
 import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
-import { MdOutlineArrowForward, MdOutlineClose, MdOutlineMenu } from "react-icons/md";
+import { MdOutlineArrowForward, MdOutlineClose, MdOutlineMenu, MdRemoveRedEye, MdVisibilityOff } from "react-icons/md";
 import { Select } from "components/common";
 import Accounts from "./Accounts/Accounts";
 import DApps from "./DApps/DApps";
@@ -21,7 +21,8 @@ const TopBar = ({
   network,
   setNetwork,
   allNetworks,
-  rewardsData
+  rewardsData,
+  privateMode: { isPrivateMode, togglePrivateMode, hidePrivateValue }
 }) => {
   const [isMenuOpen, setMenuOpen] = useState(false)
   
@@ -50,9 +51,11 @@ const TopBar = ({
         <div id="icon" />
       </NavLink>
       <div className={`container ${isMenuOpen ? 'open' : ''}`}>
+        {isPrivateMode ? <MdVisibilityOff cursor="pointer" size={20} onClick={togglePrivateMode} /> : <MdRemoveRedEye cursor="pointer" size={20} onClick={togglePrivateMode} />}
         <Rewards
           rewardsData={rewardsData}
           account={account}
+          hidePrivateValue={hidePrivateValue}
         />
         <DApps connections={connections} connect={connect} disconnect={disconnect}/>
         <Accounts accounts={accounts} selectedAddress={selectedAcc} onSelectAcc={onSelectAcc} onRemoveAccount={onRemoveAccount}/>
