@@ -42,6 +42,10 @@
         color: white;
         text-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
     }
+
+    .private-content {
+        filter: blur(20px);
+    }
 }
 
 @media screen and (max-width: 1400px) {
