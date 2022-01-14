@@ -28,7 +28,7 @@ export default function Wallet(props) {
 
   const routes = [
     {
-      path: '/dashboard',
+      path: '/dashboard/:tabId?',
       component: <Dashboard
         portfolio={props.portfolio}
         selectedNetwork={props.network}
