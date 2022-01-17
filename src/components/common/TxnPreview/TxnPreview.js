@@ -34,7 +34,7 @@ export default function TxnPreview ({ txn, onDismiss, network, account, isFirstF
         {
           isExpanded ? (<div className='advanced'>
             <div><b>Interacting with (<i>to</i>):</b> {txn[0]}{contractName ? ` (${contractName})` : ''}</div>
-            <div><b>{getNetworkSymbol(network)} to be sent (<i>value</i>):</b> {formatUnits(txn[1] || '0x0', 18)}</div>
+            <div><b>Value to be sent (<i>value</i>):</b> {formatUnits(txn[1] || '0x0', 18)} {getNetworkSymbol(network)}</div>
             <div><b>Data:</b> {txn[2]}</div>
           </div>) : (<></>)
         }
