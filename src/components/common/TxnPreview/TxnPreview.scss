@@ -45,7 +45,51 @@
 
                 .summary {
                     width: 100%;
+                    display: flex;
+                    align-items: center;
+                    gap: 0.8em;
                     word-break: break-word;
+
+                    .action {
+                        font-weight: bold;
+                        text-transform: uppercase;
+                        padding: 0.25em 0.75em;
+                        background-color: $ambire-dark-blue;
+                    }
+
+                    .word {
+                        font-size: 16px;
+                        font-weight: 500;
+                        opacity: 0.5;
+                    }
+
+                    .token, .address {
+                        font-size: 18px;
+                        font-weight: bold;
+
+                        .icon {
+                            height: 20px;
+                            width: 20px;
+                            border-radius: 100%;
+                            background-size: contain;
+                            background-position: center center;
+                            background-color: rgba(255, 255, 255, 0.1);
+                        }
+                    }
+
+                    .token {
+                        display: flex;
+                        align-items: center;
+                        gap: 0.5em;
+                    }
+
+                    .address {
+                        span {
+                            font-family: monospace;
+                            font-weight: 500;
+                            opacity: 0.7;
+                        }
+                    }
                 }
             }
 

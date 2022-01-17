@@ -14,9 +14,24 @@ const ERC20Mapping = {
     if (amount.eq(constants.MaxUint256)) return [`Approve ${name} to use your ${tokenName}`]
     return [`Approve ${name} to use ${token(txn.to, amount)}`]
   },
-  [iface.getSighash('transfer')]: (txn, network) => {
+  [iface.getSighash('transfer')]: (txn, network, { extended }) => {
     const [ to, amount ] = iface.parseTransaction(txn).args
     const name = getName(to, network)
+    
+    if (extended) return [
+      'Send',
+      {
+        type: 'token',
+        ...token(txn.to, amount, true)
+      },
+      'to',
+      {
+        type: 'address',
+        address: to,
+        name
+      }
+    ]
+  
     return [`Send ${token(txn.to, amount)} to ${to === name ? to : name+' ('+to+')'}`]
   },
   /*
