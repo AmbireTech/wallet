@@ -27,7 +27,13 @@ export default function TxnPreview ({ txn, onDismiss, network, account, isFirstF
     return extendedSummary.map((item, i) => {
       if (i === 0) return (<div className='action'>{ item }</div>)
       if (!item.type) return (<div className='word'>{ item }</div>)
-      if (item.type === 'token') return (<div className='token'>{ item.amount } <div className='icon' style={{ backgroundImage: `url(${getTokenIcon(network, item.address)})` }}></div> { item.symbol }</div>)
+      if (item.type === 'token') return (
+        <div className='token'>
+          { item.amount > 0 ? item.amount : null }
+          <div className='icon' style={{ backgroundImage: `url(${getTokenIcon(network, item.address)})` }}></div>
+          { item.symbol }
+        </div>
+      )
       if (item.type === 'address') return (
         <div className='address'>
           { item.name ? <>{ item.name } <span>({ item.address })</span></> : item.address }

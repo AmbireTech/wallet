@@ -6,11 +6,37 @@ import { constants } from 'ethers'
 const iface = new Interface(abis.ERC20)
 
 const ERC20Mapping = {
-  [iface.getSighash('approve')]: (txn, network) => {
+  [iface.getSighash('approve')]: (txn, network, { extended = false }) => {
     const [ approvedAddress, amount ] = iface.parseTransaction(txn).args
     const name = getName(approvedAddress, network)
     const tokenName = getName(txn.to, network)
-    if (amount.eq(0)) return [`Revoke approval for ${name} to use ${tokenName}`]
+    if (amount.eq(0)) return !extended ? [`Revoke approval for ${name} to use ${tokenName}`] : [
+      'Revoke',
+      'approval for',
+      {
+        type: 'address',
+        name
+      },
+      'to use',
+      {
+        type: 'token',
+        ...token(txn.to, amount, true)
+      }
+    ]
+
+    if (extended) return [
+      'Approve',
+      {
+        type: 'address',
+        name
+      },
+      `to use${amount.eq(constants.MaxUint256) ? ' your' : ''}`,
+      {
+        type: 'token',
+        ...token(txn.to, amount, true)
+      }
+    ]
+
     if (amount.eq(constants.MaxUint256)) return [`Approve ${name} to use your ${tokenName}`]
     return [`Approve ${name} to use ${token(txn.to, amount)}`]
   },
