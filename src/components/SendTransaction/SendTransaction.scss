@@ -12,37 +12,7 @@ $titleBar-height: 90px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    overflow-y: auto;
     background-color: $background-color;
-    /*
-    background-color: rgba(40, 43, 51, 0.95);
-    backdrop-filter: blur(8px);
-    */
-
-    .panel {
-        min-width: 0;
-        padding: 2em;
-        box-sizing: border-box;
-        box-shadow: rgb(0, 0, 0) 0px 0px 20px 0px;
-
-        .title {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-            font-size: 1.5em;
-            font-weight: bold;
-            color: $primary-accent-color;
-            text-transform: uppercase;
-        }
-
-        .heading {
-            display: flex;
-            flex-direction: column;
-            gap: 0.2rem;
-            margin-bottom: 1.5em;
-        }
-    }
 
     #titleBar {
         z-index: 49;
@@ -90,211 +60,133 @@ $titleBar-height: 90px;
     }
 
     .container {
-        width: 75em;
+        height: 100%;
+        width: 100%;
+        max-width: $wide-breakpoint-min-width;
         display: flex;
-        flex-direction: column;
+        flex-direction: row;
         align-items: normal;
-        gap: 2em;
-        padding-bottom: 2em;
+        gap: 2.5em;
+        padding: 2em 5em;
+        padding-bottom: 4em;
+        overflow-y: auto;
 
-        #topPanel {
-            width: 100%;
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-            justify-content: center;
-            margin-top: 1em;
+        .separator {
+            flex-grow: 1;
+        }
+
+        #transactionPanel {
+            min-width: 0;
+            flex: 0 1 70%;
 
             .content {
-                display: flex;
-                flex-direction: row;
-                justify-content: center;
-                gap: 0.5em;
-                flex-wrap: wrap;
+                height: 100%;
 
-                .account,
-                .network {
-                    display: flex;
-                    align-items: center;
-
-                    .icon {
-                        height: 20px;
-                        width: 20px;
-                        border-radius: 100%;
-                    }
-                }
-
-                .account {
-                    gap: 10px;
-                    font-family: monospace;
-                    font-size: 15px;
-                    font-weight: bold;
-                    word-break: break-word;
-                }
-
-                .network {
-                    gap: 7px;
-                    font-size: 17px;
-                    font-weight: bold;
-                }
-            }
-        }
-
-        #panelHolder {
-            display: flex;
-            align-items: normal;
-            gap: 2em;
-
-            .summaryPanel {
-                flex: 0 1 55%;
-
-                .listOfTransactions {
+                .transactionsNote {
                     display: flex;
                     flex-direction: column;
-                    gap: 10px;
-                    min-height: 300px;
-                    min-width: 350px;
+                    gap: 0.5em;
+                    padding: 1em 1.5em;
+                    background-color: $input-background-color;
 
-                    &.frozen {
-                        opacity: 0.5;
+                    b {
+                        display: flex;
+                        align-items: center;
+                        gap: 0.75em;
+                    }
+
+                    span {
+                        font-weight: 500;
+                        opacity: 0.6;
+                    }
+                }
+            }
+        }
+
+        #detailsPanel {
+            flex: 0 1 30%;
+
+            .section {
+                display: flex;
+                flex-direction: column;
+                gap: 1em;
+
+                .section-title {
+                    font-size: 16px;
+                    font-weight: 500;
+                }
+
+                .section-content {
+                    display: flex;
+                    flex-direction: column;
+                }
+            }
+
+            .icon {
+                flex: 0 0 auto;
+                border-radius: 100%;
+                background-size: contain;
+                background-position: center center;
+            }
+
+            #signing-details {
+                .section-content {
+                    gap: 0.5em;
+
+                    .account, .network {
+                        display: flex;
+                        align-items: center;
+                    }
+
+                    .account {
+                        gap: 0.75em;
+
+                        .icon {
+                            height: 25px;
+                            width: 25px;
+                        }
+
+                        .address {
+                            font-size: 17px;
+                            font-weight: bold;
+                        }
+                    }
+
+                    .network {
+                        justify-content: flex-end;
+                        gap: 0.5em;
+                        opacity: 0.8;
+
+                        .icon {
+                            height: 20px;
+                            width: 20px;
+                        }
+
+                        .address {
+                            font-size: 15px;
+                            font-weight: 500;
+                        }
                     }
                 }
             }
 
-            .secondaryPanel {
-                flex: 0 1 45%;
-                display: flex;
-                flex-direction: column;
-                gap: 2em;
-
-                .feePanel {
-                    justify-content: center;
+            #actions {
+                .buttons {
                     display: flex;
+                    flex-direction: row;
+                    gap: 1.5em;
 
-                    .loading {
-                        margin: 1em auto;
-                    }
+                    .buttonComponent {
+                        height: 75px;
+                        flex: 0 1 50%;
 
-                    .feeAmountSelectors {
-                        overflow: hidden;
-                        margin: 1em 0px;
-                        min-width: 360px;
-                        display: flex;
-                        justify-content: center;
+                        &.danger {
+                            color: white;
 
-                        .feeSquare {
-                            box-sizing: border-box;
-                            background-color: #ccc;
-                            color: black;
-                            text-align: center;
-                            min-height: 80px;
-                            width: 90px;
-                            float: left;
-                            margin-right: 10px;
-                            padding: 10px;
-                            box-sizing: border-box;
-                            border: 5px solid transparent;
-                            overflow: hidden;
-                            cursor: pointer;
-                            user-select: none;
-
-                            &.disabled {
-                                opacity: 0.5;
-                                cursor: default;
-                            }
-
-                            &.selected {
-                                border: 5px solid $primary-accent-color;
-                            }
-
-                            .speed {
-                                text-transform: uppercase;
-                                font-size: 0.8em;
-                                font-weight: bold;
-                                margin-bottom: 5px;
-                            }
-
-                            .feeEstimation {
-                                width: 80px;
-                                margin: auto;
-                                overflow: hidden;
-                                text-overflow: ellipsis;
-                                white-space: nowrap;
-                            }
-                        }
-                    }
-
-                    .failingTxn {
-                        display: flex;
-                        justify-content: center;
-                        align-items: center;
-
-                        svg {
-                            width: 50px;
-                            height: 50px;
-
-                            &:first-child {
-                                color: red;
-                                width: 90px;
-                                height: 90px;
-                            }
-                        }
-                    }
-                }
-
-                .actions {
-                    .buttons {
-                        justify-content: center;
-                        display: flex;
-                    }
-
-                    .text-input {
-                        margin: 6px;
-                        display: inline-block;
-                        width: 47%;
-                    }
-
-                    button {
-                        width: 45%;
-                        margin: 2em 2.5% 0em;
-                        text-transform: uppercase;
-                        font-weight: 800;
-                        display: inline-block;
-                        min-height: 75px;
-                        font-size: 1em;
-                        vertical-align: middle;
-                        position: relative;
-
-                        &.rejectTxn {
-                            background-color: rgb(255, 132, 128);
-                        }
-
-                        &.approveTxn {
-                            .loading {
-                                position: absolute;
-                                top: 20px;
-                                left: 15px;
-                                display: block;
-                                width: auto;
-                                height: auto;
-                            }
-                        }
-                    }
-
-                    input {
-                        box-shadow: 0 2px 0 #b3c4e6;
-                        color: white;
-                        background-color: transparent;
-                    }
-
-                    .quickAccSigningForm {
-                        display: inline;
-
-                        button {
-                            min-height: 50px;
-
-                            .loading {
-                                top: 10px;
+                            .icon-button {
+                                svg {
+                                    color: white;
+                                }
                             }
                         }
                     }
@@ -304,71 +196,35 @@ $titleBar-height: 90px;
     }
 }
 
-@media screen and (max-width: 1200px) {
-    #sendTransaction .container {
-        width: 60em;
-    }
-}
+@media screen and (max-width: $small-breakpoint-max-width) {
+    #sendTransaction {
+        .container {
+            gap: 1em;
+            flex-direction: column;
 
-@media screen and (max-width: 1000px) {
-    #sendTransaction .container {
-        width: 40em;
-    }
+            #signing-details {
+                .section-content {
+                    flex-direction: row !important;
+                }
+            }
 
-    #sendTransaction #panelHolder {
-        flex-direction: column;
-    }
-
-    #sendTransaction #topPanel {
-        flex-direction: column;
-    }
-}
-
-@media screen and (max-width: 700px) {
-    #sendTransaction .container {
-        width: 100%;
+            #fee-selector {
+                justify-content: start;
+            }
+        }
     }
 }
 
 // Mobile
 @media screen and (max-width: $mobile-breakpoint-max-width) {
     #sendTransaction {
-        .panel {
-            padding: 1.5em 1em;
-
-            .title {
-                text-align: center;
-            }
-        }
-
         .container {
-            gap: 1em;
+            padding: 1em;
 
-            #topPanel {
-                flex-direction: column;
-
-                .content {
-                    width: 100%;
-                    justify-content: flex-start;
+            #signing-details {
+                .section-content {
+                    flex-direction: column !important;
                 }
-            }
-
-            #panelHolder {
-                gap: 1em;
-
-                .listOfTransactions {
-                    min-width: 100%;
-                }
-
-                .secondaryPanel {
-                    gap: 1em;
-                }
-            }
-        }
-
-        #titleBar {
-            h2 {
-                font-size: 4vw;
             }
         }
     }
