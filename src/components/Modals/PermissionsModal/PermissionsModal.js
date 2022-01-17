@@ -9,16 +9,20 @@ import { Modal, Toggle, Button, Checkbox, Loading } from '../../common'
 import { isFirefox } from '../../../lib/isFirefox'
 import { fetchGet } from '../../../lib/fetch'
 import { AiOutlineReload } from 'react-icons/ai'
+import { BiExport } from "react-icons/bi"
+import accountPresets from '../../../consts/accountPresets'
 
 const toastErrorMessage = name => `You blocked the ${name} permission. Check your browser permissions tab.`
 
-const PermissionsModal = ({ relayerIdentityURL, account, onAddAccount, onClose }) => {
+const PermissionsModal = ({ relayerIdentityURL, account, onAddAccount, onClose, isCloseBtnShown, isBackupOptout }) => {
     const { hideModal } = useModals()
     const { isNoticationsGranted, isClipboardGranted, modalHidden, setModalHidden } = usePermissions()
     const { addToast } = useToasts()
     const [isEmailConfirmed, setEmailConfirmed] = useState(false)
     const [isEmailResent, setEmailResent] = useState(false)
+    const [isJsonBackupDownloaded, setIsJsonBackupDownloaded] = useState(isBackupOptout ? true : false)
 
+    const days = Math.ceil(accountPresets.quickAccTimelock / 86400)
     const areBlockedPermissions = (!isFirefox() && !isClipboardGranted) || !isNoticationsGranted
     const isAccountNotConfirmed = account.emailConfRequired && !isEmailConfirmed
     const buttonDisabled = isAccountNotConfirmed || (!modalHidden && areBlockedPermissions)
@@ -56,7 +60,7 @@ const PermissionsModal = ({ relayerIdentityURL, account, onAddAccount, onClose }
             addToast('Could not check email confirmation.', { error: true })
         }
     }, [relayerIdentityURL, account, onAddAccount, addToast])
-    
+
     const requestNotificationsPermission = async () => {
         const status = await askForPermission('notifications')
         if (!status) addToast(toastErrorMessage('Notifications'), { error: true })
@@ -75,16 +79,54 @@ const PermissionsModal = ({ relayerIdentityURL, account, onAddAccount, onClose }
 
     const onCloseModal = () => {
         hideModal()
-        onClose()
+        // onClose()
     }
 
-    const buttons = <>
+    const buttons = isJsonBackupDownloaded ? (<>
         <Button clear small icon={<MdClose/>} disabled={isAccountNotConfirmed} onClick={onCloseModal}>Ignore</Button>
         <Button small icon={<MdCheck/>} disabled={buttonDisabled} onClick={onCloseModal}>Done</Button>
-    </>
+    </>) : (<>
+        <Button clear small icon={<MdClose/>} disabled={true} onClick={onCloseModal}>Ignore</Button>
+        <Button small icon={<MdCheck/>} disabled={true} onClick={onCloseModal}>Done</Button>
+    </>)
+
+    const downloadFile = ({ data, fileName, fileType }) => {
+        const blob = new Blob([data], { type: fileType })
+    
+        const a = document.createElement('a')
+        a.download = fileName
+        a.href = window.URL.createObjectURL(blob)
+        const clickEvt = new MouseEvent('click', {
+        view: window,
+        bubbles: true,
+        cancelable: true,
+        })
+        a.dispatchEvent(clickEvt)
+        a.remove()
+    }
+
+    const test = () => {
+        setIsJsonBackupDownloaded(true)
+        let copiedAcc = {...account}
+        if (copiedAcc.emailConfRequired) delete copiedAcc.emailConfRequired
+        if (copiedAcc.backupOptout) delete copiedAcc.backupOptout
+        
+        downloadFile({
+            data: JSON.stringify(copiedAcc),
+            fileName: `${copiedAcc.id}.json`,
+            fileType: 'text/json',
+        })
+        
+        if (account.backupOptout) {
+            onAddAccount({
+                ...account,
+                backupOptout: false
+            })
+        }
+    }
 
     return (
-        <Modal id="permissions-modal" title="We need a few things 🙏" buttons={buttons} onClose={onClose}>
+        <Modal id="permissions-modal" title="We need a few things 🙏" buttons={buttons} onClose={onClose} isCloseBtnShown={isCloseBtnShown}>
             {
                 account.email ? 
                     <div className="permission">
@@ -96,7 +138,7 @@ const PermissionsModal = ({ relayerIdentityURL, account, onAddAccount, onClose }
                         </div>
                     </div>
                     <div className="status">
-                        { !isEmailConfirmed ? <Loading/> : <spam className="check-icon"><MdOutlineCheck/></spam> }
+                        { !isEmailConfirmed ? <Loading/> : <span className="check-icon"><MdOutlineCheck/></span> }
                         { 
                             !isEmailConfirmed && !isEmailResent ? 
                                 <Button mini clear icon={<AiOutlineReload/>} onClick={sendConfirmationEmail}>Resend</Button>
@@ -134,6 +176,21 @@ const PermissionsModal = ({ relayerIdentityURL, account, onAddAccount, onClose }
                 </div>
                 <Toggle checked={isClipboardGranted} onChange={() => requestClipboardPermission()}/>
             </div>
+            {!isBackupOptout && <div className="permission">
+                <div className="details">
+                    <div className="name">Download a backup</div>
+                    <div className="description">
+                        In case you forget your password or lose your backup, <br/>
+                        you will have to wait {days} days and pay the recovery fee to restore access to your account.
+                    </div>
+                </div>
+                <div className="status">
+                    {isJsonBackupDownloaded ? 
+                        (<span className="check-icon"><MdOutlineCheck/></span>) : 
+                        (<Button onClick={test} icon={<BiExport/>}>Export</Button>)
+                    }
+                </div>
+            </div>}
             {isAccountNotConfirmed
                 ? (<></>)
                 // Not gonna show this at all if the email is not confirmed
