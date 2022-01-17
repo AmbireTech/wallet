@@ -7,9 +7,10 @@ import { isTokenEligible, getFeePaymentConsequences, mapTxnErrMsg, getErrHint } 
 
 const SPEEDS = ['slow', 'medium', 'fast', 'ape']
 
+const zapperStorageTokenIcons = 'https://storage.googleapis.com/zapper-fi-assets/tokens'
+
 export function FeeSelector ({ disabled, signer, estimation, network, setEstimation, feeSpeed, setFeeSpeed }) {
     if (!estimation) return (<Loading/>)
-  
     // Only check for insufficient fee in relayer mode (.feeInUSD is available)
     // Otherwise we don't care whether the user has enough for fees, their signer wallet will take care of it
     const insufficientFee = estimation && estimation.feeInUSD
@@ -32,16 +33,16 @@ export function FeeSelector ({ disabled, signer, estimation, network, setEstimat
     const { nativeAssetSymbol } = network
     const tokens = estimation.remainingFeeTokenBalances || [{ symbol: nativeAssetSymbol, decimals: 18 }]
     const onFeeCurrencyChange = value => {
-      const token = tokens.find(({ symbol }) => symbol === value)
+      const token = tokens.find(({ address, symbol }) => address === value || symbol === value)
       setEstimation({ ...estimation, selectedFeeToken: token })
     }
 
     const currenciesItems = tokens
       .filter(token => isTokenEligible(token, feeSpeed, estimation))
-      .map(({ icon, symbol }) => ({
-        icon,
+      .map(({ address, symbol }) => ({
+        icon: address ? `${zapperStorageTokenIcons}/${network.id}/${address.toLowerCase()}.png` : null,
         label: symbol,
-        value: symbol
+        value: address || symbol
       }))
 
     const feeCurrencySelect = estimation.feeInUSD ? (<>
@@ -49,7 +50,7 @@ export function FeeSelector ({ disabled, signer, estimation, network, setEstimat
         <div className='section-title'>Fee Currency</div>
         <Select
           disabled={disabled}
-          defaultValue={estimation?.selectedFeeToken?.symbol}
+          defaultValue={estimation.selectedFeeToken?.address || estimation.selectedFeeToken?.symbol}
           items={currenciesItems}
           onChange={onFeeCurrencyChange}
         />
