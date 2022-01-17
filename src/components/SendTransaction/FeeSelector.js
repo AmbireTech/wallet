@@ -1,6 +1,8 @@
+import './FeeSelector.scss'
+
 import { AiOutlineWarning } from 'react-icons/ai'
 import { FiHelpCircle } from 'react-icons/fi'
-import { Loading } from 'components/common'
+import { Loading, Select } from 'components/common'
 import { isTokenEligible, getFeePaymentConsequences, mapTxnErrMsg, getErrHint } from './helpers'
 
 const SPEEDS = ['slow', 'medium', 'fast', 'ape']
@@ -29,22 +31,29 @@ export function FeeSelector ({ disabled, signer, estimation, network, setEstimat
   
     const { nativeAssetSymbol } = network
     const tokens = estimation.remainingFeeTokenBalances || [{ symbol: nativeAssetSymbol, decimals: 18 }]
-    const onFeeCurrencyChange = e => {
-      const token = tokens.find(({ symbol }) => symbol === e.target.value)
+    const onFeeCurrencyChange = value => {
+      const token = tokens.find(({ symbol }) => symbol === value)
       setEstimation({ ...estimation, selectedFeeToken: token })
     }
+
+    const currenciesItems = tokens
+      .filter(token => isTokenEligible(token, feeSpeed, estimation))
+      .map(({ icon, symbol }) => ({
+        icon,
+        label: symbol,
+        value: symbol
+      }))
+
     const feeCurrencySelect = estimation.feeInUSD ? (<>
-      <span style={{ marginTop: '1em' }}>Fee currency</span>
-      <select disabled={disabled} value={estimation.selectedFeeToken.symbol} onChange={onFeeCurrencyChange}>
-        {tokens.map(token => 
-          (<option
-            disabled={!isTokenEligible(token, feeSpeed, estimation)}
-            key={token.symbol}>
-              {token.symbol}
-            </option>
-          )
-        )}
-      </select>
+      <div className='section'>
+        <div className='section-title'>Fee Currency</div>
+        <Select
+          disabled={disabled}
+          defaultValue={estimation?.selectedFeeToken?.symbol}
+          items={currenciesItems}
+          onChange={onFeeCurrencyChange}
+        />
+      </div>
     </>) : (<></>)
   
     const areSelectorsDisabled = disabled || insufficientFee
@@ -75,11 +84,12 @@ export function FeeSelector ({ disabled, signer, estimation, network, setEstimat
         (<h3 className='error'>Insufficient balance for the fee. Accepted tokens: {(estimation.remainingFeeTokenBalances || []).map(x => x.symbol).join(', ')}</h3>)
         : feeCurrencySelect
       }
-      <div className='feeAmountSelectors'>
-        {feeAmountSelectors}
+      <div className='section'>
+        <div className='section-title'>Transaction Speed</div>
+        <div id='fee-selector'>{feeAmountSelectors}</div>
       </div>
       { // Visualize the fee once again with a USD estimation if in native currency
-      !isStable && (<div>
+      !isStable && (<div className='native-fee-estimation'>
         Fee: {(estimation.feeInNative[feeSpeed] * multiplier)+' '+nativeAssetSymbol}
         &nbsp;(~ ${(estimation.feeInNative[feeSpeed] * multiplier * estimation.nativeAssetPriceInUSD).toFixed(2)})
       </div>)}

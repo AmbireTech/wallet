@@ -1,0 +1,54 @@
+@import 'variables.scss';
+
+.native-fee-estimation {
+    font-weight: 500;
+}
+
+#fee-selector {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    gap: 1em;
+
+    .feeSquare {
+        height: 90px;
+        width: 100px;
+        @include flex-center-center;
+        flex-direction: column;
+        padding: 0 1em;
+        background: $background-color;
+        cursor: default;
+        transition: all 0.1s ease-in-out;
+
+        .speed, .feeEstimation {
+            font-size: 15px;
+            font-weight: 500;
+        }
+
+        .speed {
+            text-transform: uppercase;
+        }
+
+        .feeEstimation {
+            width: 100%;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            opacity: 0.5;
+        }
+
+        &.disabled {
+            opacity: 0.4;
+        }
+
+        &:not(.disabled):hover {
+            cursor: pointer;
+            background-color: $input-background-color;
+        }
+
+        &.selected {
+            box-shadow: 0 0 0 3px $ambire-dark-blue inset;
+            background-color: $input-background-color;
+        }
+    }
+}

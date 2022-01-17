@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { Button, Loading, TextInput } from 'components/common'
 import { isTokenEligible } from './helpers'
+import { MdOutlineCheck, MdOutlineClose } from 'react-icons/md'
 
 export default function Actions({ estimation, feeSpeed, approveTxn, rejectTxn, signingStatus }) {
   const [quickAccCredentials, setQuickAccCredentials] = useState({ code: '', passphrase: '' })
@@ -12,7 +13,7 @@ export default function Actions({ estimation, feeSpeed, approveTxn, rejectTxn, s
   const rejectButton = rejectTxn && (
     // WARNING: DO NOT remove type='button' here, it indicates that this button is not a submit button in the <form>
     // if it is, pressing Enter will reject the transaction rather than submit it
-    <Button small danger type='button' className='rejectTxn' onClick={rejectTxn}>Reject</Button>
+    <Button danger icon={<MdOutlineClose/>} type='button' className='rejectTxn' onClick={rejectTxn}>Reject</Button>
   )
   const insufficientFee = estimation && estimation.feeInUSD
     && !isTokenEligible(estimation.selectedFeeToken, feeSpeed, estimation)
@@ -72,7 +73,7 @@ export default function Actions({ estimation, feeSpeed, approveTxn, rejectTxn, s
 
   return (<div className='buttons'>
       {rejectButton}
-      <Button small className='approveTxn' disabled={!estimation || signingStatus} onClick={approveTxn}>
+      <Button className='approveTxn' icon={<MdOutlineCheck/>} disabled={!estimation || signingStatus} onClick={approveTxn}>
         {signButtonLabel}
       </Button>
   </div>)
