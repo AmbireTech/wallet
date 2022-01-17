@@ -36,7 +36,7 @@ export default function TxnPreview ({ txn, onDismiss, network, account, isFirstF
       )
       if (item.type === 'address') return (
         <div className='address'>
-          { item.name ? <>{ item.name } <span>({ item.address })</span></> : item.address }
+          { item.name ? <>{ item.name } { item.address ? <span>({ item.address })</span> : null }</> : item.address }
         </div>
       )
     })
