@@ -30,8 +30,8 @@ export default function TxnPreview ({ txn, onDismiss, network, account, isFirstF
       if (!item.type) return (<div className='word'>{ item }</div>)
       if (item.type === 'token') return (
         <div className='token'>
-          { item.amount > 0 ? item.amount : null }
-          <div className='icon' style={{ backgroundImage: `url(${getTokenIcon(network, item.address)})` }}></div>
+          { item.amount > 0 ? <span>{ item.amount }</span> : null }
+          { item.address ? <div className='icon' style={{ backgroundImage: `url(${getTokenIcon(network, item.address)})` }}></div> : null }
           { item.symbol }
         </div>
       )
