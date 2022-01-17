@@ -38,7 +38,7 @@ export function getTransactionSummary(txn, networkId, accountAddr, opts = {}) {
         if (humanizer) {
             try {
                 const actions = humanizer({ to, value, data, from: accountAddr }, network, opts)
-                return actions.join(', ')
+                return opts.extended === true ? actions : actions.join(', ')
             } catch (e) {
                 callSummary += ' (unable to parse)'
                 console.error('internal tx humanization error', e)
@@ -55,15 +55,36 @@ export function getName(addr, network) {
     return names[address] || (tokens[address] ? tokens[address][0] + ' token' : null) || addr
 }
 
-export function token(addr, amount) {
+export function token(addr, amount, extended = false) {
     const address = addr.toLowerCase()
     const assetInfo = tokens[address] || knownTokens[address]
+
     if (assetInfo) {
-        if (!amount) return assetInfo[0]
-        if (constants.MaxUint256.eq(amount)) return `maximum ${assetInfo[0]}`
-        return `${formatUnits(amount, assetInfo[1])} ${assetInfo[0]}`
+        const extendedToken = {
+            address,
+            symbol: assetInfo[0],
+            decimals: assetInfo[1],
+            amount: null
+        }
+
+        if (!amount) return !extended ? assetInfo[0] : extendedToken
+
+        if (constants.MaxUint256.eq(amount)) return !extended ? `maximum ${assetInfo[0]}` : {
+            ...extendedToken,
+            amount: 'Maximum'
+        }
+    
+        return !extended ? `${formatUnits(amount, assetInfo[1])} ${assetInfo[0]}` : {
+            ...extendedToken,
+            amount: formatUnits(amount, assetInfo[1])
+        }
     } else {
-        return `${formatUnits(amount, 0)} units of unknown token`
+        return !extended ? `${formatUnits(amount, 0)} units of unknown token` : {
+            address,
+            symbol: null,
+            decimals: null,
+            amount: formatUnits(amount, 0)
+        }
     }
 }
 

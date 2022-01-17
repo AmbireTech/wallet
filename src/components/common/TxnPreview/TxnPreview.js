@@ -7,6 +7,12 @@ import { getName, getTransactionSummary, isKnown } from 'lib/humanReadableTransa
 import networks from 'consts/networks'
 import { formatUnits } from 'ethers/lib/utils'
 
+const zapperStorageTokenIcons = 'https://storage.googleapis.com/zapper-fi-assets/tokens'
+
+function getTokenIcon(network, address) {
+  return `${zapperStorageTokenIcons}/${network}/${address}.png`
+}
+
 function getNetworkSymbol(networkId) {
   const network = networks.find(x => x.id === networkId)
   return network ? network.nativeAssetSymbol : 'UNKNW'
@@ -14,6 +20,22 @@ function getNetworkSymbol(networkId) {
 export default function TxnPreview ({ txn, onDismiss, network, account, isFirstFailing, mined, disableExpand }) {
   const [isExpanded, setExpanded] = useState(false)
   const contractName = getName(txn[0], network)
+
+  const summary = () => {
+    const extendedSummary = getTransactionSummary(txn, network, account, { mined, extended: true })
+
+    return extendedSummary.map((item, i) => {
+      if (i === 0) return (<div className='action'>{ item }</div>)
+      if (!item.type) return (<div className='word'>{ item }</div>)
+      if (item.type === 'token') return (<div className='token'>{ item.amount } <div className='icon' style={{ backgroundImage: `url(${getTokenIcon(network, item.address)})` }}></div> { item.symbol }</div>)
+      if (item.type === 'address') return (
+        <div className='address'>
+          { item.name ? <>{ item.name } <span>({ item.address })</span></> : item.address }
+        </div>
+      )
+    })
+  }
+
   return (
     <div className={isFirstFailing ? 'txnPreview firstFailing' : 'txnPreview'}>
         <div className="heading">
@@ -22,7 +44,7 @@ export default function TxnPreview ({ txn, onDismiss, network, account, isFirstF
               {!disableExpand && (<div className='expandTxn'>
                 {isExpanded ? (<FaChevronDown/>) : (<FaChevronUp/>)}
               </div>)}
-              <div className="summary">{getTransactionSummary(txn, network, account, { mined })}</div>
+              <div className="summary">{summary()}</div>
             </div>
             {isFirstFailing && (<div className='firstFailingLabel'>This is the first failing transaction.</div>)}
             {!isFirstFailing && !mined && !isKnown(txn, account) && (<div className='unknownWarning'>Warning: interacting with an unknown contract or address.</div>)}
