@@ -25,6 +25,7 @@ export default function TxnPreview ({ txn, onDismiss, network, account, isFirstF
     const extendedSummary = getTransactionSummary(txn, network, account, { mined, extended: true })
 
     return extendedSummary.map((item, i) => {
+      if (extendedSummary.length === 1) return item
       if (i === 0) return (<div className='action'>{ item }</div>)
       if (!item.type) return (<div className='word'>{ item }</div>)
       if (item.type === 'token') return (
