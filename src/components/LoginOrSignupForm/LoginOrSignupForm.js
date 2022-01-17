@@ -32,7 +32,7 @@ export default function LoginOrSignupForm({ action = 'LOGIN', onAccRequest, inPr
     const minPwdLen = 8
     const isSignup = state.action === 'SIGNUP'
     const days = Math.ceil(accountPresets.quickAccTimelock / 86400)
-    const noBackupDisclaimer = `I understand I will have to manually import/export this account in order to use it on other devices, and if I lose the backup I will have to wait ${days} days to recover the account.`
+    const noBackupDisclaimer = `In case you forget your password or lose your backup, you will have to wait ${days} days and pay the recovery fee to restore access to your account.`
     const additionalOnSignup = state.backupOptout ? (
       <Checkbox label={noBackupDisclaimer} required={true}></Checkbox>
     ) : (<></>)

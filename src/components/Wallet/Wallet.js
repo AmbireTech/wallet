@@ -120,13 +120,22 @@ export default function Wallet(props) {
 
     const relayerIdentityURL = `${props.relayerURL}/identity/${account.id}`
 
-    const permissionsModal = <PermissionsModal relayerIdentityURL={relayerIdentityURL} account={account} onAddAccount={props.onAddAccount}/>
     const areBlockedPermissions = arePermissionsLoaded
       && ((!isFirefox() && !isClipboardGranted) || !isNoticationsGranted)
     const showCauseOfPermissions = areBlockedPermissions && !modalHidden
     const showCauseOfEmail = !!account.emailConfRequired
-    if (showCauseOfEmail || showCauseOfPermissions) showModal(permissionsModal, { disableClose: true })
-  }, [props.relayerURL, props.accounts, props.selectedAcc, props.onAddAccount, showModal, isClipboardGranted, isNoticationsGranted, arePermissionsLoaded, modalHidden])
+    const showCauseOfBackupOptout = !account.backupOptout ? true : account.backupOptout
+    
+    const permissionsModal = <PermissionsModal
+      relayerIdentityURL={relayerIdentityURL} 
+      account={account} 
+      onAddAccount={props.onAddAccount} 
+      isCloseBtnShown={!showCauseOfBackupOptout} 
+      isBackupOptout={!showCauseOfBackupOptout} 
+    />
+
+    if (showCauseOfEmail || showCauseOfPermissions || !showCauseOfBackupOptout) showModal(permissionsModal, { disableClose: true })
+  }, [props.accounts, props.relayerURL, props.onAddAccount, props.selectedAcc, arePermissionsLoaded, isClipboardGranted, isNoticationsGranted, modalHidden, showModal])
 
   useEffect(() => handlePermissionsModal(), [handlePermissionsModal])
 
