@@ -47,7 +47,9 @@
                     width: 100%;
                     display: flex;
                     align-items: center;
-                    gap: 0.8em;
+                    column-gap: 0.8em;
+                    row-gap: 0.5em;
+                    flex-wrap: wrap;
                     word-break: break-word;
 
                     .action {
@@ -64,6 +66,9 @@
                     }
 
                     .token, .address {
+                        display: flex;
+                        align-items: center;
+                        gap: 0.5em;
                         font-size: 18px;
                         font-weight: bold;
 
@@ -75,12 +80,6 @@
                             background-position: center center;
                             background-color: rgba(255, 255, 255, 0.1);
                         }
-                    }
-
-                    .token {
-                        display: flex;
-                        align-items: center;
-                        gap: 0.5em;
                     }
 
                     .address {
