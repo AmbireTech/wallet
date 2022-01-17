@@ -71,7 +71,7 @@ export function token(addr, amount, extended = false) {
 
         if (constants.MaxUint256.eq(amount)) return !extended ? `maximum ${assetInfo[0]}` : {
             ...extendedToken,
-            amount: 'Maximum'
+            amount: -1
         }
     
         return !extended ? `${formatUnits(amount, assetInfo[1])} ${assetInfo[0]}` : {
