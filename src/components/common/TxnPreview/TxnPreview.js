@@ -1,13 +1,14 @@
 import './TxnPreview.scss'
 
 import { useState } from 'react'
-import { FaTimes, FaChevronDown, FaChevronUp } from 'react-icons/fa'
 
 import { getName, getTransactionSummary, isKnown } from 'lib/humanReadableTransactions'
 import networks from 'consts/networks'
 import { formatUnits } from 'ethers/lib/utils'
 import { ToolTip } from 'components/common'
 import { HiOutlineExternalLink } from 'react-icons/hi'
+import { MdOutlineClose } from 'react-icons/md'
+import { BsChevronDown, BsChevronUp } from 'react-icons/bs'
 
 const zapperStorageTokenIcons = 'https://storage.googleapis.com/zapper-fi-assets/tokens'
 
@@ -62,7 +63,7 @@ export default function TxnPreview ({ txn, onDismiss, network, account, isFirstF
           <div className="info" onClick={() => !disableExpand && setExpanded(e => !e)}>
             <div className="summary-container">
               {!disableExpand && (<div className='expandTxn'>
-                {isExpanded ? (<FaChevronDown/>) : (<FaChevronUp/>)}
+                {isExpanded ? (<BsChevronUp/>) : (<BsChevronDown/>)}
               </div>)}
               <div className="summary">{summary()}</div>
               <div className='separator'></div>
@@ -71,8 +72,8 @@ export default function TxnPreview ({ txn, onDismiss, network, account, isFirstF
             </div>
           </div>
           <div className='actionIcons'>
-              {onDismiss ? (<span className='dismissTxn' onClick={e => { e.stopPropagation(); onDismiss.apply(this, e) }}><FaTimes/></span>) : (<></>)}
-            </div>
+            {onDismiss ? (<div className='dismissTxn' onClick={e => { e.stopPropagation(); onDismiss.apply(this, e) }}><MdOutlineClose/></div>) : (<></>)}
+          </div>
         </div>
         {
           isExpanded ? (<div className='advanced'>
