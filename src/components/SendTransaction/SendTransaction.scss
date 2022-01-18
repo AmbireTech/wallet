@@ -149,6 +149,9 @@ $titleBar-height: 90px;
                         .address {
                             font-size: 17px;
                             font-weight: bold;
+                            overflow: hidden;
+                            white-space: nowrap;
+                            text-overflow: ellipsis;
                         }
                     }
 
