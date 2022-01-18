@@ -13,7 +13,7 @@ import { ledgerGetAddresses, PARENT_HD_PATH } from "lib/ledgerWebHID"
 import { validateAddAuthSignerAddress } from 'lib/validations/formValidations'
 import { BsXLg } from 'react-icons/bs'
 import { MdOutlineAdd } from 'react-icons/md'
-import LatticeModal from 'Modals/LatticeModal/LatticeModal'
+import { LatticeModal } from 'components/Modals'
 import { Client } from 'gridplus-sdk'
 import { useToasts } from 'hooks/toasts'
 

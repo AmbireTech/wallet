@@ -4,6 +4,7 @@ import SelectSignerAccountModal from './SelectSignerAccountModal/SelectSignerAcc
 import ResetPasswordModal from './ResetPasswordModal/ResetPasswordModal'
 import WalletTokenModal from './WalletTokenModal/WalletTokenModal'
 import AddTokenModal from './AddTokenModal/AddTokenModal'
+import LatticeModal from './LatticeModal/LatticeModal'
 
 export {
     PermissionsModal,
@@ -11,5 +12,6 @@ export {
     SelectSignerAccountModal,
     ResetPasswordModal,
     WalletTokenModal,
-    AddTokenModal
+    AddTokenModal,
+    LatticeModal
 }

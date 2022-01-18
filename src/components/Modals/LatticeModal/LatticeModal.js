@@ -1,8 +1,8 @@
 import './LatticeModal.scss'
 
-import { Modal, Button, TextInput, Loading } from '../../common'
+import { Modal, Button, TextInput, Loading } from 'components/common'
 import { useState } from 'react'
-import { useToasts } from '../../../hooks/toasts'
+import { useToasts } from 'hooks/toasts'
 import { Client } from 'gridplus-sdk'
 
 const crypto = require('crypto')
