@@ -25,39 +25,51 @@ export default function TxnPreview ({ txn, onDismiss, network, account, isFirstF
   const contractName = getName(txn[0], network)
 
   const networkDetails = networks.find(({ id }) => id === network)
+  const extendedSummary = getTransactionSummary(txn, network, account, { mined, extended: true })
 
-  const summary = () => {
-    const extendedSummary = getTransactionSummary(txn, network, account, { mined, extended: true })
+  const summary = (
+    Array.isArray(extendedSummary) ? 
+      extendedSummary.map((item, i) => {
+        if (extendedSummary.length === 1) return item
+        if (i === 0) return (<div className='action' key={`item-${i}`}>{ item }</div>)
+        if (!item.type) return (<div className='word' key={`item-${i}`}>{ item }</div>)
 
-    return Array.isArray(extendedSummary) ? extendedSummary.map((item, i) => {
-      if (extendedSummary.length === 1) return item
-      if (i === 0) return (<div className='action' key={`item-${i}`}>{ item }</div>)
-      if (!item.type) return (<div className='word' key={`item-${i}`}>{ item }</div>)
-      if (item.type === 'token') return (
-        <div className='token' key={`item-${i}`}>
-          { item.amount > 0 ? <span>{ item.amount }</span> : null }
-          { item.address ? <div className='icon' style={{ backgroundImage: `url(${getTokenIcon(network, item.address)})` }}></div> : null }
-          { item.symbol }
-        </div>
-      )
-      if (item.type === 'address') return (
-        <a
-          className='address'
-          key={`item-${i}`}
-          href={item.address ? `${networkDetails.explorerUrl}/address/${item.address}` : null}
-          target="_blank"
-          rel="noreferrer"
-          onClick={e => e.stopPropagation()}
-        >
-          <ToolTip disabled={!item.address} label={item.address}>
-            { item.name ? item.name : item.address }
-            { item.address ? <HiOutlineExternalLink/> : null }
-          </ToolTip>
-        </a>
-      )
-      return <></>
-    }) : extendedSummary
-  }
+        if (item.type === 'token') return (
+          <div className='token' key={`item-${i}`}>
+            { item.amount > 0 ? <span>{ item.amount }</span> : null }
+            { item.address ? <div className='icon' style={{ backgroundImage: `url(${getTokenIcon(network, item.address)})` }}></div> : null }
+            { item.symbol }
+          </div>
+        )
+
+        if (item.type === 'address') return (
+          <a
+            className='address'
+            key={`item-${i}`}
+            href={item.address ? `${networkDetails.explorerUrl}/address/${item.address}` : null}
+            target="_blank"
+            rel="noreferrer"
+            onClick={e => e.stopPropagation()}
+          >
+            <ToolTip disabled={!item.address} label={item.address}>
+              { item.name ? item.name : item.address }
+              { item.address ? <HiOutlineExternalLink/> : null }
+            </ToolTip>
+          </a>
+        )
+
+        if (item.type === 'network') return (
+          <div className='network' key={`item-${i}`}>
+            { item.icon ? <div className='icon' style={{ backgroundImage: `url(${item.icon})` }}></div> : null }
+            { item.name }
+          </div>
+        )
+
+        return <></>
+      })
+      :
+      extendedSummary
+  )
 
   return (
     <div className={isFirstFailing ? 'txnPreview firstFailing' : 'txnPreview'}>
@@ -67,7 +79,7 @@ export default function TxnPreview ({ txn, onDismiss, network, account, isFirstF
               {!disableExpand && (<div className='expandTxn'>
                 {isExpanded ? (<BsChevronUp/>) : (<BsChevronDown/>)}
               </div>)}
-              <div className="summary">{summary()}</div>
+              <div className="summary">{ summary }</div>
               <div className='separator'></div>
               {isFirstFailing && (<div className='firstFailingLabel'>This is the first failing transaction.</div>)}
               {!isFirstFailing && !mined && !isKnown(txn, account) && (<div className='unknownWarning'>Warning: interacting with an unknown contract or address.</div>)}
