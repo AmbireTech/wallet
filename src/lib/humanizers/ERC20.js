@@ -15,6 +15,7 @@ const ERC20Mapping = {
       'approval for',
       {
         type: 'address',
+        address: approvedAddress,
         name
       },
       'to use',
@@ -28,6 +29,7 @@ const ERC20Mapping = {
       'Approve',
       {
         type: 'address',
+        address: approvedAddress,
         name
       },
       `to use${amount.eq(constants.MaxUint256) ? ' your' : ''}`,
