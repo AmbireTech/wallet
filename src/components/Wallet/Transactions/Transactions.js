@@ -13,6 +13,7 @@ import { useEffect, useState } from 'react'
 import fetch from 'node-fetch'
 import { useToasts } from 'hooks/toasts'
 import { toBundleTxn } from 'lib/requestToBundleTxn'
+import { HiOutlineChevronLeft, HiOutlineChevronRight } from 'react-icons/hi'
 
 // 10% in geth and most EVM chain RPCs
 const RBF_THRESHOLD = 1.1
@@ -20,6 +21,8 @@ const RBF_THRESHOLD = 1.1
 function Transactions ({ relayerURL, selectedAcc, selectedNetwork, showSendTxns, eligibleRequests }) {
   const { addToast } = useToasts()
   const [cacheBreak, setCacheBreak] = useState(() => Date.now())
+  const [page, setPage] = useState(1)
+
   // @TODO refresh this after we submit a bundle; perhaps with the upcoming transactions service
   // We want this pretty much on every rerender with a 5 sec debounce
   useEffect(() => {
@@ -71,6 +74,20 @@ function Transactions ({ relayerURL, selectedAcc, selectedNetwork, showSendTxns,
   // @TODO: we are currently assuming the last txn is a fee; change that (detect it)
   const speedup = relayerBundle => showSendTxns(mapToBundle(relayerBundle, { txns: relayerBundle.txns.slice(0, -1) }))
 
+  const maxBundlePerPage = 10
+  const executedTransactions = data ? data.txns.filter(x => x.executed) : []
+  const bundlesList = executedTransactions.slice((page - 1) * maxBundlePerPage, page * maxBundlePerPage).map(bundle => BundlePreview({ bundle, mined: true }))
+  const maxPages = Math.ceil(executedTransactions.length / maxBundlePerPage)
+
+  const paginationControls = (
+    <div className='pagination-controls'>
+      <div className='pagination-title'>Page</div>
+      <Button clear mini onClick={() => page > 1 && setPage(page => page - 1)}><HiOutlineChevronLeft/></Button>
+      <div className='pagination-current'>{ page } <span>/ { maxPages }</span></div>
+      <Button clear mini onClick={() => page < maxPages && setPage(page => page + 1)}><HiOutlineChevronRight/></Button>
+    </div>
+  )
+
   return (
     <section id='transactions'>
       {!!eligibleRequests.length && (<div className='panel'>
@@ -116,13 +133,12 @@ function Transactions ({ relayerURL, selectedAcc, selectedNetwork, showSendTxns,
           {(data && data.txns.length === 0) ? 'No transactions yet.' : 'Confirmed transactions'}
         </div>
         <div className="content">
+          { paginationControls }
           {!relayerURL && (<h3 className='validation-error'>Unsupported: not currently connected to a relayer.</h3>)}
           {errMsg && (<h3 className='validation-error'>Error getting list of transactions: {errMsg}</h3>)}
           {(isLoading && !data) && <Loading />}
-          {
-              // @TODO respect the limit and implement pagination
-              data && data.txns.filter(x => x.executed).map(bundle => BundlePreview({ bundle, mined: true }))
-          }
+          { bundlesList }
+          { paginationControls }
         </div>
       </div>
     </section>
