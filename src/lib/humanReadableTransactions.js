@@ -25,7 +25,10 @@ export function getTransactionSummary(txn, networkId, accountAddr, opts = {}) {
 
     if (data === '0x' && to.toLowerCase() === accountAddr.toLowerCase()) {
         // Doesn't matter what the value is, this is always a no-op
-        return `Transaction cancellation`
+        return !opts.extended ? `Transaction cancellation` : [
+            'Cancel',
+            'transaction'
+        ]
     }
 
     let callSummary, sendSummary
