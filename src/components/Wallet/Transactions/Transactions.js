@@ -88,6 +88,7 @@ function Transactions ({ relayerURL, selectedAcc, selectedNetwork, showSendTxns,
     </div>
   )
 
+
   return (
     <section id='transactions'>
       {!!eligibleRequests.length && (<div className='panel'>
@@ -133,12 +134,17 @@ function Transactions ({ relayerURL, selectedAcc, selectedNetwork, showSendTxns,
           {(data && data.txns.length === 0) ? 'No transactions yet.' : 'Confirmed transactions'}
         </div>
         <div className="content">
-          { paginationControls }
           {!relayerURL && (<h3 className='validation-error'>Unsupported: not currently connected to a relayer.</h3>)}
           {errMsg && (<h3 className='validation-error'>Error getting list of transactions: {errMsg}</h3>)}
-          {(isLoading && !data) && <Loading />}
-          { bundlesList }
-          { paginationControls }
+          {
+            isLoading && !data ? <Loading /> :
+              !bundlesList.length ? null :
+                <>
+                  { paginationControls }
+                  { bundlesList }
+                  { paginationControls }
+                </>
+          }
         </div>
       </div>
     </section>
