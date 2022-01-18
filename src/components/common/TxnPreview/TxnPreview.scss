@@ -33,6 +33,7 @@
             padding-left: 25px;
 
             .summary-container {
+                width: 100%;
                 display: flex;
                 align-items: center;
                 gap: 20px;
@@ -71,6 +72,7 @@
                         gap: 0.5em;
                         font-size: 18px;
                         font-weight: bold;
+                        flex-wrap: wrap;
 
                         .icon {
                             height: 20px;
@@ -90,14 +92,14 @@
                         }
                     }
                 }
-            }
 
-            .firstFailingLabel, .unknownWarning {
-                font-weight: bold;
-                color: $danger-color;
-            }
-            .unknownWarning {
-                opacity: 0.6;
+                .firstFailingLabel, .unknownWarning {
+                    font-size: 12px;
+                    font-weight: bold;
+                    padding: 0.5em 1em;
+                    white-space: nowrap;
+                    background-color: $danger-color;
+                }
             }
         }
 
