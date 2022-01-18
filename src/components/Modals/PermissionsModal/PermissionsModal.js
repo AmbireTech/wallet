@@ -106,6 +106,7 @@ const PermissionsModal = ({ relayerIdentityURL, account, onAddAccount, isCloseBt
         let copiedAcc = {...account}
         if (copiedAcc.emailConfRequired) delete copiedAcc.emailConfRequired
         if (copiedAcc.backupOptout) delete copiedAcc.backupOptout
+        if (copiedAcc.cloudBackupOptout) delete copiedAcc.cloudBackupOptout
         
         downloadFile({
             data: JSON.stringify(copiedAcc),
