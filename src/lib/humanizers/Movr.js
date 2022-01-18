@@ -1,13 +1,12 @@
-import { abis } from '../../consts/humanizerInfo'
+import { abis } from 'consts/humanizerInfo'
 import { Interface } from 'ethers/lib/utils'
-import { token } from '../humanReadableTransactions'
-import networks from '../../consts/networks'
+import { formatNativeTokenAddress, token } from 'lib/humanReadableTransactions'
+import networks from 'consts/networks'
 
 const MovrAnyswapInterface = new Interface(abis.MovrAnyswap)
 const MovrRouterInterface = new Interface(abis.MovrRouter)
 
 const getNetwork = chainId => networks.find(n => n.chainId === Number(chainId)).name
-const formatNativeTokenAddress = address => address.toLowerCase() === `0x${'e'.repeat(40)}` ? `0x${'0'.repeat(40)}` : address.toLowerCase()
 
 const MovrMapping = {
   [MovrAnyswapInterface.getSighash('outboundTransferTo')]: (txn, network) => {

@@ -155,6 +155,13 @@ The contracts used by Ambire Wallet have been audited by:
 
 Additionally, there's an ongoing [Immunefi bug bounty](https://immunefi.com/bounty/ambire/).
 
+## Deployed contracts
+* Factory: 0xBf07a0Df119Ca234634588fbDb5625594E2a5BCA
+* Base identity: 0x2A2b85EB1054d6f0c6c2E37dA05eD3E5feA684EF
+* QuickAccManager: 0xfF3f6D14DF43c112aB98834Ee1F82083E07c26BF
+* Batcher: 0x460fad03099f67391d84c9cc0ea7aa2457969cea
+
+
 ## Change log
 
 ### First private beta (v0.1.0)
@@ -225,4 +232,5 @@ Additionally, there's an ongoing [Immunefi bug bounty](https://immunefi.com/boun
 * More frequent updating of balances
 * Ability to ask for your confirmation email to be resent
 * Warn when a WalletConnect connection may be offline
+* Cross-chain transfers are now tracked
 

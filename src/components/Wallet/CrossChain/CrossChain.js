@@ -5,14 +5,16 @@ import { BsArrowDown } from 'react-icons/bs'
 import { useEffect, useState, useCallback, useMemo, useRef } from 'react'
 import { ethers } from 'ethers'
 import { parseUnits } from 'ethers/lib/utils'
-import { NumberInput, Button, Select, Loading, NoFundsPlaceholder } from '../../common'
-import { fetchChains, fetchFromTokens, fetchQuotes, fetchToTokens } from '../../../services/movr'
-import networks from '../../../consts/networks'
-import { useToasts } from '../../../hooks/toasts'
+import { NumberInput, Button, Select, Loading, NoFundsPlaceholder } from 'components/common'
+import useMovr from './useMovr'
+import networks from 'consts/networks'
+import { useToasts } from 'hooks/toasts'
 import Quotes from './Quotes/Quotes'
+import History from './History/History'
 
-const CrossChain = ({ addRequest, selectedAccount, portfolio, network }) => {
+const CrossChain = ({ addRequest, selectedAccount, portfolio, network, relayerURL }) => {
     const { addToast } = useToasts()
+    const { fetchChains, fetchFromTokens, fetchQuotes, fetchToTokens } = useMovr()
 
     const [disabled, setDisabled] = useState(false)
     const [loading, setLoading] = useState(true)
@@ -29,6 +31,10 @@ const CrossChain = ({ addRequest, selectedAccount, portfolio, network }) => {
     const [toToken, setToToken] = useState(null)
     const [quotes, setQuotes] = useState(null)
     const portfolioTokens = useRef([])
+    const [quotesConfirmed, setQuotesConfirmed] = useState(() => {
+        const storedQuotesConfirmed = localStorage.quotesConfirmed
+        return storedQuotesConfirmed ? JSON.parse(storedQuotesConfirmed) : []
+    })
     
     const fromChain = useMemo(() => network.chainId, [network.chainId])
     const formDisabled = !(fromToken && toToken && fromChain && toChain && amount > 0)
@@ -62,7 +68,7 @@ const CrossChain = ({ addRequest, selectedAccount, portfolio, network }) => {
             addToast(`Error while loading chains: ${e.message || e}`, { error: true })
             return false
         }
-    }, [fromChain, addToast])
+    }, [fromChain, fetchChains, addToast])
 
     const loadFromTokens = useCallback(async () => {
         if (!fromChain || !toChain) return
@@ -95,7 +101,7 @@ const CrossChain = ({ addRequest, selectedAccount, portfolio, network }) => {
             addToast(`Error while loading from tokens: ${e.message || e}`, { error: true })
             return false
         }
-    }, [fromChain, toChain, addToast])
+    }, [fromChain, toChain, fetchFromTokens, addToast])
 
     const loadToTokens = useCallback(async () => {
         if (!fromChain || !toChain) return
@@ -121,7 +127,7 @@ const CrossChain = ({ addRequest, selectedAccount, portfolio, network }) => {
             addToast(`Error while loading to tokens: ${e.message || e}`, { error: true })
             return false
         }
-    }, [fromChain, toChain, addToast])
+    }, [fromChain, toChain, fetchToTokens, addToast])
 
     const maxAmount = useMemo(() => {
         try {
@@ -151,6 +157,12 @@ const CrossChain = ({ addRequest, selectedAccount, portfolio, network }) => {
         }
 
         setLoadingQuotes(false)
+    }
+
+    const onQuotesConfirmed = quoteRequest => {
+        const updatedQuotesConfirmed = [...quotesConfirmed, quoteRequest]
+        setQuotesConfirmed(updatedQuotesConfirmed)
+        localStorage.quotesConfirmed = JSON.stringify(updatedQuotesConfirmed)
     }
 
     useEffect(() => setAmount(0), [fromToken])
@@ -218,6 +230,7 @@ const CrossChain = ({ addRequest, selectedAccount, portfolio, network }) => {
                                                     selectedAccount={selectedAccount}
                                                     fromTokensItems={fromTokensItems}
                                                     quotes={quotes}
+                                                    onQuotesConfirmed={onQuotesConfirmed}
                                                     onCancel={() => setQuotes(null)}
                                                 />
                                                 :
@@ -241,6 +254,12 @@ const CrossChain = ({ addRequest, selectedAccount, portfolio, network }) => {
                                                 </div>
                 }
             </div>
+            <History
+                network={network}
+                account={selectedAccount}
+                quotesConfirmed={quotesConfirmed}
+                relayerURL={relayerURL}
+            />
         </div>
     )
 }

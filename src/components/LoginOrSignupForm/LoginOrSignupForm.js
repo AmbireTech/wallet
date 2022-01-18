@@ -1,6 +1,6 @@
 import { useState, useRef } from 'react'
-import accountPresets from '../../consts/accountPresets'
-import { Checkbox } from "../common"
+import accountPresets from 'consts/accountPresets'
+import { Checkbox } from "components/common"
 
 export default function LoginOrSignupForm({ action = 'LOGIN', onAccRequest, inProgress }) {
     const passConfirmInput = useRef(null)

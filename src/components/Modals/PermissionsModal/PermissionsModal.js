@@ -2,25 +2,26 @@ import './PermissionsModal.scss'
 
 import { useState, useEffect, useCallback } from 'react'
 import { MdCheck, MdClose, MdOutlineCheck } from 'react-icons/md'
-import { useModals, usePermissions } from '../../../hooks'
-import { useToasts } from '../../../hooks/toasts'
-import { askForPermission } from '../../../helpers/permissions'
-import { Modal, Toggle, Button, Checkbox, Loading } from '../../common'
-import { isFirefox } from '../../../lib/isFirefox'
-import { fetchGet } from '../../../lib/fetch'
+import { useModals, usePermissions } from 'hooks'
+import { useToasts } from 'hooks/toasts'
+import { askForPermission } from 'lib/permissions'
+import { Modal, Toggle, Button, Checkbox, ToolTip } from 'components/common'
+import { isFirefox } from 'lib/isFirefox'
+import { fetchGet } from 'lib/fetch'
 import { AiOutlineReload } from 'react-icons/ai'
-import { BiExport } from "react-icons/bi"
-import accountPresets from '../../../consts/accountPresets'
+import { BiExport } from 'react-icons/bi'
+import accountPresets from 'consts/accountPresets'
 
 const toastErrorMessage = name => `You blocked the ${name} permission. Check your browser permissions tab.`
 
-const PermissionsModal = ({ relayerIdentityURL, account, onAddAccount, onClose, isCloseBtnShown, isBackupOptout }) => {
+const PermissionsModal = ({ relayerIdentityURL, account, onAddAccount, isCloseBtnShown, isBackupOptout }) => {
     const { hideModal } = useModals()
     const { isNoticationsGranted, isClipboardGranted, modalHidden, setModalHidden } = usePermissions()
     const { addToast } = useToasts()
     const [isEmailConfirmed, setEmailConfirmed] = useState(false)
     const [isEmailResent, setEmailResent] = useState(false)
     const [isJsonBackupDownloaded, setIsJsonBackupDownloaded] = useState(isBackupOptout ? true : false)
+    const [resendTimeLeft, setResendTimeLeft] = useState(60000)
 
     const days = Math.ceil(accountPresets.quickAccTimelock / 86400)
     const areBlockedPermissions = (!isFirefox() && !isClipboardGranted) || !isNoticationsGranted
@@ -77,17 +78,12 @@ const PermissionsModal = ({ relayerIdentityURL, account, onAddAccount, onClose, 
         return () => clearInterval(emailConfirmationInterval)
     }, [isEmailConfirmed, checkEmailConfirmation])
 
-    const onCloseModal = () => {
-        hideModal()
-        // onClose()
-    }
-
     const buttons = isJsonBackupDownloaded ? (<>
-        <Button clear small icon={<MdClose/>} disabled={isAccountNotConfirmed} onClick={onCloseModal}>Ignore</Button>
-        <Button small icon={<MdCheck/>} disabled={buttonDisabled} onClick={onCloseModal}>Done</Button>
+        <Button clear small icon={<MdClose/>} disabled={isAccountNotConfirmed} onClick={hideModal}>Ignore</Button>
+        <Button small icon={<MdCheck/>} disabled={buttonDisabled} onClick={hideModal}>Done</Button>
     </>) : (<>
-        <Button clear small icon={<MdClose/>} disabled={true} onClick={onCloseModal}>Ignore</Button>
-        <Button small icon={<MdCheck/>} disabled={true} onClick={onCloseModal}>Done</Button>
+        <Button clear small icon={<MdClose/>} disabled={true} onClick={hideModal}>Ignore</Button>
+        <Button small icon={<MdCheck/>} disabled={true} onClick={hideModal}>Done</Button>
     </>)
 
     const downloadFile = ({ data, fileName, fileType }) => {
@@ -105,7 +101,7 @@ const PermissionsModal = ({ relayerIdentityURL, account, onAddAccount, onClose, 
         a.remove()
     }
 
-    const test = () => {
+    const handleExportClicked = () => {
         setIsJsonBackupDownloaded(true)
         let copiedAcc = {...account}
         if (copiedAcc.emailConfRequired) delete copiedAcc.emailConfRequired
@@ -125,8 +121,13 @@ const PermissionsModal = ({ relayerIdentityURL, account, onAddAccount, onClose, 
         }
     }
 
+    useEffect(() => {
+        const resendInterval = setInterval(() => setResendTimeLeft(resendTimeLeft => resendTimeLeft > 0 ? resendTimeLeft - 1000 : 0), 1000)
+        return () => clearTimeout(resendInterval)
+    }, [])
+
     return (
-        <Modal id="permissions-modal" title="We need a few things 🙏" buttons={buttons} onClose={onClose} isCloseBtnShown={isCloseBtnShown}>
+        <Modal id="permissions-modal" title="We need a few things 🙏" buttons={buttons} isCloseBtnShown={isCloseBtnShown}>
             {
                 account.email ? 
                     <div className="permission">
@@ -138,10 +139,17 @@ const PermissionsModal = ({ relayerIdentityURL, account, onAddAccount, onClose, 
                         </div>
                     </div>
                     <div className="status">
-                        { !isEmailConfirmed ? <Loading/> : <span className="check-icon"><MdOutlineCheck/></span> }
+                        { 
+                            !isEmailConfirmed ?
+                                <label>Waiting for<br/>your confirmation</label>
+                                : 
+                                <span className="check-icon"><MdOutlineCheck/></span>
+                        }
                         { 
                             !isEmailConfirmed && !isEmailResent ? 
-                                <Button mini clear icon={<AiOutlineReload/>} onClick={sendConfirmationEmail}>Resend</Button>
+                                <ToolTip label={`Will be available in ${resendTimeLeft / 1000} seconds`} disabled={resendTimeLeft === 0}>
+                                    <Button mini clear icon={<AiOutlineReload/>} disabled={resendTimeLeft !== 0} onClick={sendConfirmationEmail}>Resend</Button>
+                                </ToolTip>
                                 :
                                 null
                         }
@@ -187,7 +195,7 @@ const PermissionsModal = ({ relayerIdentityURL, account, onAddAccount, onClose, 
                 <div className="status">
                     {isJsonBackupDownloaded ? 
                         (<span className="check-icon"><MdOutlineCheck/></span>) : 
-                        (<Button onClick={test} icon={<BiExport/>}>Export</Button>)
+                        (<Button onClick={handleExportClicked} icon={<BiExport/>}>Export</Button>)
                     }
                 </div>
             </div>}

@@ -1,8 +1,8 @@
 import './SelectSignerAccountModal.scss'
 
 import { useState } from 'react'
-import { useModals } from '../../../hooks'
-import { Modal, Button } from '../../common'
+import { useModals } from 'hooks'
+import { Modal, Button } from 'components/common'
 import { HiOutlineExternalLink } from 'react-icons/hi'
 import { MdKeyboardArrowLeft, MdKeyboardArrowRight } from 'react-icons/md'
 

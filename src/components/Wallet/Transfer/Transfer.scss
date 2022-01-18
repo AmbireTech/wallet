@@ -1,4 +1,4 @@
-@import '../../../variables.scss';
+@import 'variables.scss';
 
 #transfer {
     display: flex;
@@ -53,49 +53,43 @@
     }
 }
 
+@mixin recipient-field-font-size($size) {
+    #recipient-field {
+        .text-input {
+            input {
+                font-size: #{$size} !important;
+            }
+        }
+    }
+}
+
 @media screen and (min-width: 1700px) {
     #transfer {
-        .text-input {
-            input {
-                font-size: 0.9vw !important;
-            }
-        }
+        @include recipient-field-font-size(0.9vw)
     }
 }
+
 @media screen and (min-width: 1600px) and (max-width: 1700px) {
     #transfer {
-        .text-input {
-            input {
-                font-size: 0.8vw !important;
-            }
-        }
+        @include recipient-field-font-size(0.8vw)
     }
 }
+
 @media screen and (min-width: 1400px) and (max-width: 1600px) {
     #transfer {
-        .text-input {
-            input {
-                font-size: 0.7vw !important;
-            }
-        }
+        @include recipient-field-font-size(0.7vw)
     }
 }
+
 @media screen and (min-width: 900px) and (max-width: 1400px) {
     #transfer {
-        .text-input {
-            input {
-                font-size: 1.5vw !important;
-            }
-        }
+        @include recipient-field-font-size(1.5vw)
     }
 }
+
 @media screen and (min-width: 800px) and (max-width: 900px) {
     #transfer {
-        .text-input {
-            input {
-                font-size: 1.4vw !important;
-            }
-        }
+        @include recipient-field-font-size(1.4vw)
     }
 }
 

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { isFirefox } from '../lib/isFirefox'
+import { isFirefox } from 'lib/isFirefox'
 
 const onPermissionChange = async (name, listener) => {
     try {

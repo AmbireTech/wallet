@@ -1,10 +1,11 @@
 import { useCallback, useRef, useEffect } from 'react'
-import { getTransactionSummary } from '../lib/humanReadableTransactions'
-import { BigNumber, getDefaultProvider } from 'ethers'
+import { getTransactionSummary } from 'lib/humanReadableTransactions'
+import { BigNumber } from 'ethers'
 import { formatUnits } from 'ethers/lib/utils'
 import { useToasts } from './toasts'
-import networks from '../consts/networks'
-import AMBIRE_ICON from '../resources/icon.png'
+import networks from 'consts/networks'
+import AMBIRE_ICON from 'resources/icon.png'
+import { getProvider } from 'lib/provider'
 
 const REQUEST_TITLE_PREFIX = 'Ambire Wallet: '
 const SUPPORTED_TYPES =  ['eth_sendTransaction', 'personal_sign']
@@ -34,6 +35,7 @@ export default function useNotifications (requests, onShow, portfolio, selectedA
         window.onClickNotif = req => onShowRef.current.onShow(req)
     }, [])
     
+    // Shared code for all notifications
     const showNotification = useCallback(({ id, title, body, requireInteraction, request }) => {
         const notification = new Notification(title, {
             requireInteraction: requireInteraction || false,
@@ -49,6 +51,7 @@ export default function useNotifications (requests, onShow, portfolio, selectedA
         currentNotifs.push({ id, notification })
     }, [])
 
+    // Signing request notifications
     requests.forEach(request => {
         // only requests we actually want a notification for
         if (!request.notification) return
@@ -72,6 +75,7 @@ export default function useNotifications (requests, onShow, portfolio, selectedA
         })
     })
 
+    // Balance notifications
     useEffect(() => {
         try {
             if (!portfolio.isBalanceLoading && portfolio.balance) {
@@ -108,13 +112,14 @@ export default function useNotifications (requests, onShow, portfolio, selectedA
         }
     }, [portfolio, addToast, showNotification])
 
+    // Tx mined notifications
     useEffect(() => {
         const interval = network.id === 'ethereum' ? 30000 : 10000
         const txStatusInterval = setInterval(() => {
             sentTxn
                 .filter(({ confirmed }) => !confirmed)
                 .forEach(async ({ hash }) => {
-                    const provider = getDefaultProvider(network.rpc)
+                    const provider = getProvider(network.id)
                     try {
                         const txReceipt = await provider.getTransactionReceipt(hash)
                         if (!txReceipt) return
