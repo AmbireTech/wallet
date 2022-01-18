@@ -10,12 +10,12 @@ import Transfer from "./Transfer/Transfer"
 import Earn from "./Earn/Earn"
 import Security from "./Security/Security"
 import Transactions from './Transactions/Transactions'
-import PluginGnosisSafeApps from '../Plugins/GnosisSafeApps/GnosisSafeApps'
+import PluginGnosisSafeApps from 'components/Plugins/GnosisSafeApps/GnosisSafeApps'
 import Collectible from "./Collectible/Collectible"
-import { PermissionsModal } from '../Modals'
-import { useModals, usePermissions } from '../../hooks'
+import { PermissionsModal } from 'components/Modals'
+import { useModals, usePermissions } from 'hooks'
 import { useCallback, useEffect, useMemo, useRef } from 'react'
-import { isFirefox } from '../../lib/isFirefox'
+import { isFirefox } from 'lib/isFirefox'
 import CrossChain from "./CrossChain/CrossChain"
 
 export default function Wallet(props) {
@@ -28,11 +28,13 @@ export default function Wallet(props) {
 
   const routes = [
     {
-      path: '/dashboard',
+      path: '/dashboard/:tabId?',
       component: <Dashboard
         portfolio={props.portfolio}
         selectedNetwork={props.network}
+        selectedAccount={props.selectedAcc}
         setNetwork={props.setNetwork}
+        privateMode={props.privateMode}
       />
     },
     {
@@ -57,6 +59,7 @@ export default function Wallet(props) {
         selectedAccount={props.selectedAcc}
         portfolio={props.portfolio}
         network={props.network}
+        relayerURL={props.relayerURL}
       />
     },
     {
@@ -109,6 +112,10 @@ export default function Wallet(props) {
     }
   ]
 
+  const LoggedInGuard = () => (
+    !isLoggedIn ? <Redirect to="/add-account"/> : null
+  )
+
   const handlePermissionsModal = useCallback(async () => {
     const account = props.accounts.find(({ id }) => id === props.selectedAcc)
     if (!account) return
@@ -126,12 +133,13 @@ export default function Wallet(props) {
   useEffect(() => handlePermissionsModal(), [handlePermissionsModal])
 
   useEffect(() => {
-    setTimeout(() => walletContainer.current.scrollTo({ top: 0, behavior: 'smooth' }), 0)
+    const scrollTimeout = setTimeout(() => walletContainer.current && walletContainer.current.scrollTo({ top: 0, behavior: 'smooth' }), 0)
+    return () => clearTimeout(scrollTimeout)
   }, [pathname])
 
   return (
     <div id="wallet">
-      <SideBar match={props.match} portfolio={props.portfolio} />
+      <SideBar match={props.match} portfolio={props.portfolio} hidePrivateValue={props.privateMode.hidePrivateValue} />
       <TopBar {...props} />
 
       <div id="wallet-container" ref={walletContainer}>
@@ -140,17 +148,16 @@ export default function Wallet(props) {
             {
               routes.map(({ path, component }) => (
                 <Route exact path={props.match.url + path} key={path}>
-                  {
-                    !isLoggedIn ?
-                      <Redirect to="/add-account" />
-                      :
-                      component ? component : null
-                  }
+                  <LoggedInGuard/>
+                  { component ? component : null }
                 </Route>
               ))
             }
             <Route path={props.match.url + '/*'}>
               <Redirect to={props.match.url + '/dashboard'} />
+            </Route>
+            <Route path={props.match.url}>
+              <LoggedInGuard/>
             </Route>
           </Switch>
         </div>

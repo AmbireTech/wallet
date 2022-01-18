@@ -20,8 +20,9 @@ import useNetwork from './hooks/network'
 import useWalletConnect from './hooks/walletconnect'
 import useGnosisSafe from './hooks/useGnosisSafe'
 import useNotifications from './hooks/notifications'
-import { useAttentionGrabber, usePortfolio, useAddressBook } from './hooks'
+import { useAttentionGrabber, usePortfolio, useAddressBook, useRelayerData, usePrivateMode } from './hooks'
 import { useToasts } from './hooks/toasts'
+import { useOneTimeQueryParam } from './hooks/oneTimeQueryParam'
 
 const relayerURL = process.env.hasOwnProperty('REACT_APP_RELAYER_URL') ? process.env.REACT_APP_RELAYER_URL : 'http://localhost:1934'
 
@@ -43,12 +44,15 @@ function AppInner () {
   const addressBook = useAddressBook({ accounts })
   const { network, setNetwork, allNetworks } = useNetwork()
   const { addToast } = useToasts()
-
+  const wcUri = useOneTimeQueryParam('uri')
+  
   // Signing requests: transactions/signed msgs: all requests are pushed into .requests
   const { connections, connect, disconnect, requests: wcRequests, resolveMany: wcResolveMany } = useWalletConnect({
     account: selectedAcc,
-    chainId: network.chainId
+    chainId: network.chainId,
+    initialUri: wcUri
   })
+  
   const { requests: gnosisRequests, resolveMany: gnosisResolveMany, connect: gnosisConnect, disconnect: gnosisDisconnect } = useGnosisSafe({
 	  selectedAccount: selectedAcc,
 	  network: network
@@ -76,6 +80,7 @@ function AppInner () {
     currentNetwork: network.id,
     account: selectedAcc
   })
+  const privateMode = usePrivateMode()
 
   // Show the send transaction full-screen modal if we have a new txn
   const eligibleRequests = useMemo(() => requests
@@ -111,9 +116,13 @@ function AppInner () {
     return true
   }
 
-  // Keeping track of transactions
+   // Keeping track of transactions
   const [sentTxn, setSentTxn] = useState([])
   const onBroadcastedTxn = hash => {
+    if (!hash) {
+      addToast('Transaction signed but not broadcasted to the network!', { timeout: 15000 })
+      return
+    }
     setSentTxn(sentTxn => [...sentTxn, { confirmed: false, hash }])
     addToast((
       <span>Transaction signed and sent successfully!
@@ -142,6 +151,15 @@ function AppInner () {
     isSendTxnShowing: sendTxnState.showing,
     onSitckyClick: useCallback(() => setSendTxnState({ showing: true }), [])
   })
+
+  const [cacheBreak, setCacheBreak] = useState(() => Date.now())
+  useEffect(() => {
+    if ((Date.now() - cacheBreak) > 5000) setCacheBreak(Date.now())
+    const intvl = setTimeout(() => setCacheBreak(Date.now()), 30000)
+    return () => clearTimeout(intvl)
+  }, [cacheBreak])
+  const rewardsUrl = (relayerURL && selectedAcc) ? `${relayerURL}/wallet-token/rewards/${selectedAcc}?cacheBreak=${cacheBreak}` : null
+  const rewardsData = useRelayerData(rewardsUrl)
 
   return (<>
     <Prompt
@@ -209,6 +227,8 @@ function AppInner () {
           eligibleRequests={eligibleRequests}
           showSendTxns={showSendTxns}
           onAddAccount={onAddAccount}
+          rewardsData={rewardsData}
+          privateMode={privateMode}
         >
         </Wallet>
       </Route>
@@ -224,12 +244,12 @@ function AppInner () {
 // handles all the providers so that we can use provider hooks inside of AppInner
 export default function App() {
   return (
-    <ToastProvider>
-      <ModalProvider>
-        <Router>
+    <Router>
+      <ToastProvider>
+        <ModalProvider>
           <AppInner/>
-        </Router>
-      </ModalProvider>
-    </ToastProvider>
+        </ModalProvider>
+      </ToastProvider>
+    </Router>
   )
 }

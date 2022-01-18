@@ -1,15 +1,16 @@
 import './Balances.scss'
 
-import networks from '../../../../consts/networks'
+import networks from 'consts/networks'
 
-const Balances = ({ portfolio, selectedNetwork, setNetwork }) => {
+const Balances = ({ portfolio, selectedNetwork, setNetwork, hidePrivateValue }) => {
     const networkDetails = (network) => networks.find(({ id }) => id === network)
     const otherBalances = portfolio.otherBalances.filter(({ network, total }) => network !== selectedNetwork.id && total.full > 0)
 
     return (
         <div id="balances">
-            <span className="green-highlight">$</span> { portfolio.balance.total.truncated }
-            <span className="green-highlight">.{ portfolio.balance.total.decimals }</span>
+            <span className="green-highlight">$</span> { hidePrivateValue(portfolio.balance.total.truncated) }
+            <span className="green-highlight">.{ hidePrivateValue(portfolio.balance.total.decimals) }</span>
+        
             <div id="other-balances">
                 { otherBalances.length ? <label>You also have</label> : null }
                 {
@@ -17,8 +18,8 @@ const Balances = ({ portfolio, selectedNetwork, setNetwork }) => {
                         <div className="balance-container" key={network}>
                             <div className="other-balance" onClick={() => setNetwork(network)}>
                                 <label>
-                                    <span className="purple-highlight">$</span> { total.truncated }
-                                    <span className="purple-highlight">.{total.decimals}</span>
+                                    <span className="purple-highlight">$</span> { hidePrivateValue(total.truncated) }
+                                    <span className="purple-highlight">.{hidePrivateValue(total.decimals)}</span>
                                 </label>
                                 on
                                 <div className="network">

@@ -1,5 +1,5 @@
 import { MdOutlineWarningAmber } from "react-icons/md"
-import buildRecoveryBundle from '../../../../helpers/recoveryBundle'
+import buildRecoveryBundle from 'lib/recoveryBundle'
 
 const PendingRecoveryNotice = ({ recoveryLock, showSendTxns, selectedAccount, selectedNetwork }) => {
     const isAlreadyInitiated = recoveryLock && recoveryLock.status !== 'requestedButNotInitiated'

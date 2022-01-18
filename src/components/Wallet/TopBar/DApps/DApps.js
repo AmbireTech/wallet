@@ -4,8 +4,9 @@ import React, { useState, useCallback } from 'react'
 import { FiHelpCircle } from 'react-icons/fi'
 import { BiTransferAlt } from 'react-icons/bi'
 import { MdBrokenImage } from 'react-icons/md'
-import { DropDown, ToolTip, Button } from "../../../common"
-import { checkClipboardPermission } from '../../../../helpers/permissions'
+import { AiOutlineDisconnect } from 'react-icons/ai'
+import { DropDown, ToolTip, Button } from "components/common"
+import { checkClipboardPermission } from 'lib/permissions'
 import { MdOutlineWarning } from 'react-icons/md'
 
 const DApps = ({ connections, connect, disconnect }) => {
@@ -33,7 +34,7 @@ const DApps = ({ connections, connect, disconnect }) => {
         <DropDown id="dApps" title="dApps" badge={connections.length} onOpen={() => checkPermission()}>
             <div id="connect-dapp">
                 <div className="heading">
-                    <Button small icon={<BiTransferAlt/>} disabled={isClipboardGranted} onClick={readClipboard}>
+                    <Button small icon={<BiTransferAlt />} disabled={isClipboardGranted} onClick={readClipboard}>
                         Connect dApp
                     </Button>
                     <a href='https://help.ambire.com/hc/en-us/articles/4410889965842' target='_blank' rel='noreferrer'>
@@ -47,7 +48,7 @@ const DApps = ({ connections, connect, disconnect }) => {
                     </label>
                 ) : null}
             </div>
-            {connections.map(({ session, uri }) => (
+            {connections.map(({ session, uri, isOffline }) => (
                 <div className="item dapps-item" key={session.key}>
                     <div className="icon">
                         <div className="icon-overlay" style={{backgroundImage: `url(${session.peerMeta.icons.filter(x => !x.endsWith('favicon.ico'))[0]})`}}/>
@@ -56,9 +57,17 @@ const DApps = ({ connections, connect, disconnect }) => {
                     <a href={session.peerMeta.url} target="_blank" rel="noreferrer">
                         <div className="details">
                             { 
-                                isLegacyWC(session) ? 
+                                isLegacyWC(session) ?
                                     <ToolTip className="session-warning" label="dApp uses legacy WalletConnect bridge which is unreliable and often doesn't work. Please tell the dApp to update to the latest WalletConnect version.">
                                         <MdOutlineWarning/>
+                                    </ToolTip>
+                                    :
+                                    null
+                            }
+                            {
+                                isOffline ?
+                                    <ToolTip className="session-error" label="WalletConnect connection may be offline. Check again later. If this warning persist try to disconnect and connect WalletConnect.">
+                                        <AiOutlineDisconnect />
                                     </ToolTip>
                                     :
                                     null

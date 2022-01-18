@@ -3,7 +3,7 @@ import './DropDown.scss'
 import { useEffect, useRef, useState } from 'react';
 import { BsChevronDown } from 'react-icons/bs'
 import { CSSTransition } from 'react-transition-group';
-import useOnClickOutside from '../../../helpers/onClickOutside';
+import useOnClickOutside from 'hooks/onClickOutside';
 
 export default function DropDown({ children, id, icon, className, title, badge, open, closeOnClick, onChange, onOpen, onClose, style }) {
     const ref = useRef();

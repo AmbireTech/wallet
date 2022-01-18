@@ -6,10 +6,10 @@ import { useParams, withRouter } from 'react-router'
 import { useEffect, useMemo, useState } from 'react'
 import { ethers } from 'ethers'
 import { Interface } from 'ethers/lib/utils'
-import { useToasts } from '../../../hooks/toasts'
-import { TextInput, NumberInput, Button, Select, Loading, AddressBook, AddressWarning, NoFundsPlaceholder } from '../../common'
-import { validateSendTransferAddress, validateSendTransferAmount } from '../../../lib/validations/formValidations'
-import { isValidAddress } from '../../../helpers/address'
+import { useToasts } from 'hooks/toasts'
+import { TextInput, NumberInput, Button, Select, Loading, AddressBook, AddressWarning, NoFundsPlaceholder } from 'components/common'
+import { validateSendTransferAddress, validateSendTransferAmount } from 'lib/validations/formValidations'
+import { isValidAddress } from 'lib/address'
 import Addresses from './Addresses/Addresses'
 
 const ERC20 = new Interface(require('adex-protocol-eth/abi/ERC20'))
@@ -98,7 +98,11 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
     useEffect(() => {
         setAmount(0)
         setBigNumberHexAmount('')
-        if (selectedAsset) history.replace({ pathname: `/wallet/transfer/${Number(asset) !== 0 ? asset : selectedAsset.symbol}` })
+    }, [asset])
+
+    useEffect(() => {
+        if (!selectedAsset) return
+        history.replace({ pathname: `/wallet/transfer/${Number(asset) !== 0 ? asset : selectedAsset.symbol}` })
     }, [asset, history, selectedAsset])
 
     useEffect(() => {
@@ -179,6 +183,7 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
                 addresses={addresses}
                 addAddress={addAddress}
                 removeAddress={removeAddress}
+                onSelectAddress={address => setAddress(address)}
             />
         </div>
     )

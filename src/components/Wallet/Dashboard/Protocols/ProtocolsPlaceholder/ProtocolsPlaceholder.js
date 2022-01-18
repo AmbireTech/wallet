@@ -2,9 +2,10 @@ import './ProtocolsPlaceholder.scss'
 
 import { NavLink } from 'react-router-dom'
 import { GiReceiveMoney } from 'react-icons/gi'
-import { Button } from '../../../../common'
+import { Button } from 'components/common'
+import { MdOutlineAdd } from 'react-icons/md'
 
-const ProtocolsPlaceholder = () => {
+const ProtocolsPlaceholder = ({ onClickAddToken }) => {
     const tokens = [
         {
             icon: 'https://storage.googleapis.com/zapper-fi-assets/tokens/ethereum/0xade00c28244d5ce17d72e40330b1c318cd12b7c3.png',
@@ -35,6 +36,10 @@ const ProtocolsPlaceholder = () => {
                 <NavLink to="/wallet/deposit">
                     <Button small icon={<GiReceiveMoney/>}>Deposit</Button>
                 </NavLink>
+                <div className="add-token">
+                    <label>You have a token that's not displayed?</label>
+                    <Button mini clear icon={<MdOutlineAdd/>} onClick={onClickAddToken}>Click here to add it</Button>
+                </div>
             </div>
             <div className="category">
                 <div className="title">Tokens</div>

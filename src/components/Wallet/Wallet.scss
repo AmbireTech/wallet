@@ -1,4 +1,4 @@
-@import '../../variables.scss';
+@import 'variables.scss';
 
 #wallet {
     height: 100%;
@@ -41,6 +41,10 @@
         text-align: center;
         color: white;
         text-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    }
+
+    .private-content {
+        filter: blur(20px);
     }
 }
 

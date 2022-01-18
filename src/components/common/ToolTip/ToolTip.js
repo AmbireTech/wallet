@@ -1,15 +1,24 @@
 import { useState } from 'react';
 import './ToolTip.scss'
 
-const ToolTip = ({ children, label, className }) => {
+const ToolTip = ({ children, label, disabled, className }) => {
     const [mousePosition, setMousePosition] = useState({ x: 0, y: 0})
 
-    const onMouseMove = ({ clientY, clientX }) => setMousePosition({ x: clientX + 15, y: clientY + 15 })
+    const margin = 15
+    const onMouseMove = ({ clientY, clientX }) => setMousePosition({ x: clientX + margin, y: clientY + margin })
 
     return (
-        <div className={`tooltip ${className}`} onMouseMove={onMouseMove}>
+        <div
+            className={`tooltip ${className ? className : ''}`}
+            onMouseMove={onMouseMove}
+        >
             { children }
-            <label style={{top: mousePosition.y, left: mousePosition.x}}>{ label }</label>
+            {
+                !disabled ? 
+                    <div class="tooltip-label" style={{top: mousePosition.y, left: mousePosition.x}}>{ label }</div>
+                    :
+                    null
+            }
         </div>
     )
 }
