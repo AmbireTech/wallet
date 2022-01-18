@@ -23,6 +23,8 @@ function Transactions ({ relayerURL, selectedAcc, selectedNetwork, showSendTxns,
   const [cacheBreak, setCacheBreak] = useState(() => Date.now())
   const [page, setPage] = useState(1)
 
+  useEffect(() => setPage(1), [selectedAcc, selectedNetwork])
+
   // @TODO refresh this after we submit a bundle; perhaps with the upcoming transactions service
   // We want this pretty much on every rerender with a 5 sec debounce
   useEffect(() => {
