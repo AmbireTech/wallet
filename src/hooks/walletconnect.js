@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useReducer, useRef } from 'react'
-import { useToasts } from '../hooks/toasts'
-import { isFirefox } from '../lib/isFirefox'
+import { useToasts } from 'hooks/toasts'
+import { isFirefox } from 'lib/isFirefox'
 
 import WalletConnectCore from '@walletconnect/core'
 import * as cryptoLib from '@walletconnect/iso-crypto'
@@ -15,8 +15,18 @@ const SESSION_TIMEOUT = 10000
 const getDefaultState = () => ({ connections: [], requests: [] })
 
 let connectors = {}
+let connectionErrors = []
 
-export default function useWalletConnect ({ account, chainId }) {
+// Offline check: if it errored recently
+const timePastForConnectionErr = 90 * 1000
+const checkIsOffline = uri => {
+    const errors = connectionErrors.filter(x => x.uri === uri)
+    return errors.find(({ time } = {}) => time > (Date.now() - timePastForConnectionErr))
+    //return errors.length > 1 && errors.slice(-2)
+    //    .every(({ time } = {}) => time > (Date.now() - timePastForConnectionErr))
+}
+
+export default function useWalletConnect ({ account, chainId, initialUri }) {
     const { addToast } = useToasts()
 
     // This is needed cause of the WalletConnect event handlers
@@ -28,7 +38,7 @@ export default function useWalletConnect ({ account, chainId }) {
         if (action.type === 'connectedNewSession') {
             return {
                 ...state,
-                connections: [...state.connections, { uri: action.uri, session: action.session }]
+                connections: [...state.connections, { uri: action.uri, session: action.session, isOffline: false }]
             }
         }
         if (action.type === 'disconnected') {
@@ -62,6 +72,36 @@ export default function useWalletConnect ({ account, chainId }) {
         }
     })
 
+    // Side effects that will run on every state change/rerender
+    const maybeUpdateSessions = () => {
+        // restore connectors and update the ones that are stale
+        let updateConnections = false
+        state.connections.forEach(({ uri, session, isOffline }) => {
+            if (connectors[uri]) {
+                const connector = connectors[uri]
+                const session = connector.session
+                if (session.accounts[0] !== account || session.chainId !== chainId || checkIsOffline(uri) !== isOffline) {
+                    // NOTE: in case isOffline is different, we do not need to do this, but we're gonna leave that just in case the session is outdated anyway
+                    connector.updateSession({ accounts: [account], chainId })
+                    updateConnections = true
+                }
+            }
+        })
+
+        localStorage[STORAGE_KEY] = JSON.stringify(state)
+
+        if (updateConnections) dispatch({
+            type: 'updateConnections',
+            connections: state.connections
+                .filter(({ uri }) => connectors[uri])
+                .map(({ uri }) => ({ uri, session: connectors[uri].session, isOffline: checkIsOffline(uri) }))
+        })
+    }
+    useEffect(maybeUpdateSessions, [account, chainId, state])
+    // we need this so we can invoke the latest version from any event handler
+    stateRef.current.maybeUpdateSessions = maybeUpdateSessions
+
+    // New connections
     const connect = useCallback(connectorOpts => {
         if (connectors[connectorOpts.uri]) {
             addToast('dApp already connected')
@@ -113,6 +153,14 @@ export default function useWalletConnect ({ account, chainId }) {
             dispatch({ type: 'connectedNewSession', uri: connectorOpts.uri, session: connector.session })
 
             addToast('Successfully connected to '+connector.session.peerMeta.name)
+        })
+
+        connector.on('transport_error', (error, payload) => {
+            console.error('WalletConnect transport error', payload)
+            connectionErrors.push({ uri: connectorOpts.uri, event: payload.event, time: Date.now() })
+            // Keep the last 690 only
+            connectionErrors = connectionErrors.slice(-690)
+            stateRef.current.maybeUpdateSessions()
         })
 
         connector.on('call_request', (error, payload) => {
@@ -232,33 +280,8 @@ export default function useWalletConnect ({ account, chainId }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [connect])
 
-    // Side effects that will run on every state change/rerender
-    useEffect(() => {
-        // restore connectors and update the ones that are stale
-        let updateConnections = false
-        state.connections.forEach(({ uri, session }) => {
-            if (connectors[uri]) {
-                const connector = connectors[uri]
-                const session = connector.session
-                if (session.accounts[0] !== account || session.chainId !== chainId) {
-                    connector.updateSession({ accounts: [account], chainId })
-                    updateConnections = true
-                }
-            }
-        })
-        
-        localStorage[STORAGE_KEY] = JSON.stringify(state)
-
-        if (updateConnections) dispatch({
-            type: 'updateConnections',
-            connections: state.connections
-                .filter(({ uri }) => connectors[uri])
-                .map(({ uri }) => ({ uri, session: connectors[uri].session }))
-        })
-    }, [state, account, chainId, connect])
-
     // Initialization effects
-    useEffect(() => runInitEffects(connect, account, addToast), [connect, account, addToast])
+    useEffect(() => runInitEffects(connect, account, initialUri, addToast), [connect, account, initialUri, addToast])
 
     return {
         connections: state.connections,
@@ -270,11 +293,9 @@ export default function useWalletConnect ({ account, chainId }) {
 
 // Initialization side effects
 // Connect to the URL, read from clipboard, etc.
-function runInitEffects(wcConnect, account, addToast) {
-    const query = new URLSearchParams(window.location.href.split('?').slice(1).join('?').split('#')[0])
-    const wcUri = query.get('uri')
-    if (wcUri) {
-        if (account) wcConnect({ uri: wcUri })
+function runInitEffects(wcConnect, account, initialUri, addToast) {
+    if (initialUri) {
+        if (account) wcConnect({ uri: initialUri })
         else addToast('WalletConnect dApp connection request detected, please create an account and you will be connected to the dApp.', { timeout: 15000 })
     }
 

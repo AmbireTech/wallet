@@ -2,17 +2,17 @@ import './Transactions.scss'
 import { FaSignature } from 'react-icons/fa'
 import { BsCoin, BsCalendarWeek, BsGlobe2, BsCheck2All } from 'react-icons/bs'
 import { MdOutlinePendingActions } from 'react-icons/md'
-import { useRelayerData } from '../../../hooks'
-import TxnPreview from '../../common/TxnPreview/TxnPreview'
-import { Loading, Button } from '../../common'
-import accountPresets from '../../../consts/accountPresets'
-import networks from '../../../consts/networks'
-import { getTransactionSummary } from '../../../lib/humanReadableTransactions'
+import { useRelayerData } from 'hooks'
+import TxnPreview from 'components/common/TxnPreview/TxnPreview'
+import { Loading, Button } from 'components/common'
+import accountPresets from 'consts/accountPresets'
+import networks from 'consts/networks'
+import { getTransactionSummary } from 'lib/humanReadableTransactions'
 import { Bundle } from 'adex-protocol-eth'
 import { useEffect, useState } from 'react'
 import fetch from 'node-fetch'
-import { useToasts } from '../../../hooks/toasts'
-import { toBundleTxn } from '../../../lib/requestToBundleTxn'
+import { useToasts } from 'hooks/toasts'
+import { toBundleTxn } from 'lib/requestToBundleTxn'
 
 // 10% in geth and most EVM chain RPCs
 const RBF_THRESHOLD = 1.1
@@ -84,7 +84,7 @@ function Transactions ({ relayerURL, selectedAcc, selectedNetwork, showSendTxns,
                     network={selectedNetwork.id}
                     account={selectedAcc}
                     disableExpand={true}
-                    txn={toBundleTxn(req.txn)}/>
+                    txn={toBundleTxn(req.txn, selectedAcc)}/>
               ))}
             </div>
               <div className='actions'>
@@ -97,7 +97,7 @@ function Transactions ({ relayerURL, selectedAcc, selectedNetwork, showSendTxns,
           </div>
         </div>
       </div>)}
-      { !!firstPending && (<div className='panel'>
+      { !!firstPending && (<div className='panel' id="pending">
         <div className='title'><MdOutlinePendingActions/>Pending transaction bundle</div>
         <div className="content">
           <div className="bundle">

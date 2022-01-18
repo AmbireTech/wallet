@@ -3,8 +3,8 @@ import './TxnPreview.scss'
 import { useState } from 'react'
 import { FaTimes, FaChevronDown, FaChevronUp } from 'react-icons/fa'
 
-import { getName, getTransactionSummary, isKnown } from '../../../lib/humanReadableTransactions'
-import networks from '../../../consts/networks'
+import { getName, getTransactionSummary, isKnown } from 'lib/humanReadableTransactions'
+import networks from 'consts/networks'
 import { formatUnits } from 'ethers/lib/utils'
 
 function getNetworkSymbol(networkId) {
@@ -16,8 +16,8 @@ export default function TxnPreview ({ txn, onDismiss, network, account, isFirstF
   const contractName = getName(txn[0], network)
   return (
     <div className={isFirstFailing ? 'txnPreview firstFailing' : 'txnPreview'}>
-        <div className="heading" onClick={() => !disableExpand && setExpanded(e => !e)}>
-          <div className="info">
+        <div className="heading">
+          <div className="info" onClick={() => !disableExpand && setExpanded(e => !e)}>
             <div className="summary-container">
               {!disableExpand && (<div className='expandTxn'>
                 {isExpanded ? (<FaChevronDown/>) : (<FaChevronUp/>)}
@@ -28,7 +28,7 @@ export default function TxnPreview ({ txn, onDismiss, network, account, isFirstF
             {!isFirstFailing && !mined && !isKnown(txn, account) && (<div className='unknownWarning'>Warning: interacting with an unknown contract or address.</div>)}
           </div>
           <div className='actionIcons'>
-              {onDismiss ? (<span className='dismissTxn' onClick={onDismiss}><FaTimes/></span>) : (<></>)}
+              {onDismiss ? (<span className='dismissTxn' onClick={e => { e.stopPropagation(); onDismiss.apply(this, e) }}><FaTimes/></span>) : (<></>)}
             </div>
         </div>
         {

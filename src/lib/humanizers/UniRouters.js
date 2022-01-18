@@ -1,6 +1,6 @@
-import { abis } from '../../consts/humanizerInfo'
+import { abis } from 'consts/humanizerInfo'
 import { Interface } from 'ethers/lib/utils'
-import { nativeToken, token } from '../humanReadableTransactions'
+import { nativeToken, token } from 'lib/humanReadableTransactions'
 
 const iface = new Interface(abis.UniV2Router)
 const recipientText = (recipient, txnFrom) => recipient.toLowerCase() === txnFrom.toLowerCase()
@@ -85,35 +85,39 @@ const parsePath = pathBytes => {
     }
     return path
 }
+
 const uniV3Mapping = {
   [ifaceV3.getSighash('multicall')]: (txn, network) => {
-    const [ calls ] = ifaceV3.parseTransaction(txn).args
+    const args = ifaceV3.parseTransaction(txn).args
+    const calls = args[args.length - 1]
     // @TODO: Multicall that outputs ETH should be detected as such and displayed as one action
     // the current verbosity of "Swap ..., unwrap WETH to ETH" will be a nice pedantic quirk
-    return calls.map(data => {
-      const humanizer = uniV3Mapping[data.slice(0, 10)]
+    const parsed = calls.map(data => {
+      const sigHash = data.slice(0, 10)
+      const humanizer = uniV3Mapping[sigHash]
       return humanizer ? humanizer({ ...txn, data }, network) : null
     }).flat().filter(x => x)
+    return parsed.length ? parsed : [`Unknown Uni V3 interaction`]
   },
   // NOTE: selfPermit is not supported cause it requires an ecrecover signature
-  [ifaceV3.getSighash('exactInputSingle')]: (txn, network) => {
+  [ifaceV3.getSighash('exactInputSingle')]: (txn, network, opts = {}) => {
     const [ params ] = ifaceV3.parseTransaction(txn).args
     // @TODO: consider fees
-    return [`Swap ${token(params.tokenIn, params.amountIn)} for at least ${token(params.tokenOut, params.amountOutMinimum)}${recipientText(params.recipient, txn.from)}${deadlineText(params.deadline)}`]
+    return [`Swap ${token(params.tokenIn, params.amountIn)} for at least ${token(params.tokenOut, params.amountOutMinimum)}${recipientText(params.recipient, txn.from)}${deadlineText(params.deadline, opts.mined)}`]
   },
-  [ifaceV3.getSighash('exactInput')]: (txn, network) => {
+  [ifaceV3.getSighash('exactInput')]: (txn, network, opts = {}) => {
     const [ params ] = ifaceV3.parseTransaction(txn).args
     const path = parsePath(params.path)
-    return [`Swap ${token(path[0], params.amountIn)} for at least ${token(path[path.length - 1], params.amountOutMinimum)}${recipientText(params.recipient, txn.from)}${deadlineText(params.deadline)}`]
+    return [`Swap ${token(path[0], params.amountIn)} for at least ${token(path[path.length - 1], params.amountOutMinimum)}${recipientText(params.recipient, txn.from)}${deadlineText(params.deadline, opts.mined)}`]
   },
-  [ifaceV3.getSighash('exactOutputSingle')]: (txn, network) => {
+  [ifaceV3.getSighash('exactOutputSingle')]: (txn, network, opts = {}) => {
     const [ params ] = ifaceV3.parseTransaction(txn).args
-    return [`Swap up to ${token(params.tokenIn, params.amountInMaximum)} for ${token(params.tokenOut, params.amountOut)}${recipientText(params.recipient, txn.from)}${deadlineText(params.deadline)}`]
+    return [`Swap up to ${token(params.tokenIn, params.amountInMaximum)} for ${token(params.tokenOut, params.amountOut)}${recipientText(params.recipient, txn.from)}${deadlineText(params.deadline, opts.mined)}`]
   },
-  [ifaceV3.getSighash('exactOutput')]: (txn, network) => {
+  [ifaceV3.getSighash('exactOutput')]: (txn, network, opts = {}) => {
     const [ params ] = ifaceV3.parseTransaction(txn).args
     const path = parsePath(params.path)
-    return [`Swap up to ${token(path[0], params.amountInMaximum)} for ${token(path[path.length - 1], params.amountOut)}${recipientText(params.recipient, txn.from)}${deadlineText(params.deadline)}`]
+    return [`Swap up to ${token(path[0], params.amountInMaximum)} for ${token(path[path.length - 1], params.amountOut)}${recipientText(params.recipient, txn.from)}${deadlineText(params.deadline, opts.mined)}`]
   },
   [ifaceV3.getSighash('unwrapWETH9')]: (txn, network) => {
     const [ amountMin, recipient ] = ifaceV3.parseTransaction(txn).args
@@ -121,5 +125,61 @@ const uniV3Mapping = {
   },
 }
 
-const mapping = { ...uniV2Mapping, ...uniV3Mapping }
+const ifaceV32 = new Interface(abis.UniV3Router2)
+const uniV32Mapping = {
+  [ifaceV32.getSighash('multicall(uint256,bytes[])')]: (txn, network, opts = {}) => {
+    const [deadline, calls] = ifaceV32.parseTransaction(txn).args
+    // @TODO: Multicall that outputs ETH should be detected as such and displayed as one action
+    // the current verbosity of "Swap ..., unwrap WETH to ETH" will be a nice pedantic quirk
+    const parsed = calls.map(data => {
+      const sigHash = data.slice(0, 10)
+      const humanizer = uniV32Mapping[sigHash]
+      return humanizer ? humanizer({ ...txn, data }, network) : null
+    }).flat().filter(x => x)
+    return (parsed.length ? parsed : [`Unknown Uni V3 interaction`])
+      // the .slice(2) is needed cause usuall this returns something like ", expires"... and we concat all actions with ", " anyway
+      .concat([deadlineText(deadline.toNumber(), opts.mined).slice(2)]).filter(x => x)
+  },
+  // NOTE: selfPermit is not supported cause it requires an ecrecover signature
+  [ifaceV32.getSighash('exactInputSingle')]: (txn, network) => {
+    const [ params ] = ifaceV32.parseTransaction(txn).args
+    // @TODO: consider fees
+    return [`Swap ${token(params.tokenIn, params.amountIn)} for at least ${token(params.tokenOut, params.amountOutMinimum)}${recipientText(params.recipient, txn.from)}`]
+  },
+  [ifaceV32.getSighash('exactInput')]: (txn, network) => {
+    const [ params ] = ifaceV32.parseTransaction(txn).args
+    const path = parsePath(params.path)
+    return [`Swap ${token(path[0], params.amountIn)} for at least ${token(path[path.length - 1], params.amountOutMinimum)}${recipientText(params.recipient, txn.from)}`]
+  },
+  [ifaceV32.getSighash('exactOutputSingle')]: (txn, network) => {
+    const [ params ] = ifaceV32.parseTransaction(txn).args
+    return [`Swap up to ${token(params.tokenIn, params.amountInMaximum)} for ${token(params.tokenOut, params.amountOut)}${recipientText(params.recipient, txn.from)}`]
+  },
+  [ifaceV32.getSighash('exactOutput')]: (txn, network) => {
+    const [ params ] = ifaceV32.parseTransaction(txn).args
+    const path = parsePath(params.path)
+    return [`Swap up to ${token(path[0], params.amountInMaximum)} for ${token(path[path.length - 1], params.amountOut)}${recipientText(params.recipient, txn.from)}}`]
+  },
+  [ifaceV32.getSighash('swapTokensForExactTokens')]: (txn, network) => {
+    // NOTE: is amountInMax set when dealing with ETH? it should be... cause value and max are not the same thing
+    const { amountOut, amountInMax, path, to } = ifaceV32.parseTransaction(txn).args
+    return [`Swap up to ${token(path[0], amountInMax)} for ${token(path[path.length - 1], amountOut)}${recipientText(to, txn.from)}}`]
+  },
+  [ifaceV32.getSighash('swapExactTokensForTokens')]: (txn, network) => {
+    // NOTE: is amountIn set when dealing with ETH?
+    const { amountIn, amountOutMin, path, to } = ifaceV32.parseTransaction(txn).args
+    return [`Swap ${token(path[0], amountIn)} for at least ${token(path[path.length - 1], amountOutMin)}${recipientText(to, txn.from)}`]
+  },
+  [ifaceV32.getSighash('unwrapWETH9(uint256)')]: (txn, network) => {
+    const [ amountMin ] = ifaceV32.parseTransaction(txn).args
+    return [`Unwrap at least ${nativeToken(network, amountMin)}`]
+  },
+  [ifaceV32.getSighash('unwrapWETH9(uint256,address)')]: (txn, network) => {
+    const [ amountMin, recipient ] = ifaceV32.parseTransaction(txn).args
+    return [`Unwrap at least ${nativeToken(network, amountMin)}${recipientText(recipient, txn.from)}`]
+  },
+}
+
+
+const mapping = { ...uniV2Mapping, ...uniV3Mapping, ...uniV32Mapping }
 export default mapping

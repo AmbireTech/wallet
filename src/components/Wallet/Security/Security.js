@@ -3,22 +3,23 @@ import './Security.scss'
 import { MdOutlineRemove } from 'react-icons/md'
 import { RiDragDropLine } from 'react-icons/ri'
 import { useState, useEffect, useCallback } from 'react'
-import { Loading, TextInput, Button } from '../../common'
+import { Loading, TextInput, Button } from 'components/common'
 import { Interface, AbiCoder, keccak256 } from 'ethers/lib/utils'
-import accountPresets from '../../../consts/accountPresets'
-import privilegesOptions from '../../../consts/privilegesOptions'
-import { useRelayerData, useModals } from '../../../hooks'
-import { ResetPasswordModal } from '../../Modals'
+import accountPresets from 'consts/accountPresets'
+import privilegesOptions from 'consts/privilegesOptions'
+import { useRelayerData, useModals } from 'hooks'
+import { ResetPasswordModal } from 'components/Modals'
 import AddAuthSigner from './AddAuthSigner/AddAuthSigner'
-import { useToasts } from '../../../hooks/toasts'
+import { useToasts } from 'hooks/toasts'
 import { useHistory } from 'react-router-dom'
 import { useDropzone } from 'react-dropzone'
 import { MdInfoOutline } from 'react-icons/md'
-import { validateImportedAccountProps, fileSizeValidator } from '../../../lib/validations/importedAccountValidations'
-import OtpTwoFAModal from '../../Modals/OtpTwoFAModal/OtpTwoFAModal'
-import OtpTwoFADisableModal from '../../Modals/OtpTwoFADisableModal/OtpTwoFADisableModal'
+import { validateImportedAccountProps, fileSizeValidator } from 'lib/validations/importedAccountValidations'
+import OtpTwoFAModal from 'components/Modals/OtpTwoFAModal/OtpTwoFAModal'
+import OtpTwoFADisableModal from 'components/Modals/OtpTwoFADisableModal/OtpTwoFADisableModal'
 import Backup from './Backup/Backup'
 import PendingRecoveryNotice from './PendingRecoveryNotice/PendingRecoveryNotice'
+import { getName } from 'lib/humanReadableTransactions'
 
 const IDENTITY_INTERFACE = new Interface(
   require('adex-protocol-eth/abi/Identity5.2')
@@ -50,7 +51,7 @@ const Security = ({
   const { data, errMsg, isLoading } = useRelayerData(url)
   const privileges = data ? data.privileges : {}
   const otpEnabled = data ? data.otpEnabled : null
-  const recoveryLock = data && data.recoveryLock ? data.recoveryLock : null
+  const recoveryLock = data && data.recoveryLock
   const { addToast } = useToasts()
   const history = useHistory()
   const selectedAccount = accounts.find(x => x.id === selectedAcc)
@@ -185,7 +186,8 @@ const Security = ({
       const { timelock, one, two } = signer
       return keccak256(abiCoder.encode(['tuple(uint, address, address)'], [[timelock, one, two]]))
   }
-  const hasPendingReset = (recoveryLock && recoveryLock.status)
+  const hasPendingReset = privileges[selectedAccount.signer.quickAccManager] && (
+    (recoveryLock && recoveryLock.status && !isLoading)
       || (
           privileges && selectedAccount.signer.quickAccManager
           // is or has been in recovery state
@@ -193,13 +195,17 @@ const Security = ({
           // but that's not finalized yet
           && accHash(selectedAccount.signer) !== privileges[selectedAccount.signer.quickAccManager]
       )
+    )
+
   const privList = Object.entries(privileges)
     .map(([addr, privValue]) => {
       if (!privValue) return null
+  
+      const addressName = getName(addr) || null
       const isQuickAcc = addr === accountPresets.quickAccManager
       const privText = isQuickAcc
         ? `Email/password signer (${selectedAccount.email || 'unknown email'})`
-        : addr
+        : `${addr} ${addressName && addressName !== addr ? `(${addressName})` : ''}`
       const signerAddress = isQuickAcc
         ? selectedAccount.signer.quickAccManager
         : selectedAccount.signer.address
@@ -296,7 +302,11 @@ const Security = ({
       <input {...getInputProps()} />
       {signersFragment}
 
-      <Backup selectedAccount={selectedAccount} onOpen={open}/>
+      <Backup 
+        selectedAccount={selectedAccount}
+        onOpen={open}
+        onAddAccount={onAddAccount}
+      />
     </section>
   )
 }

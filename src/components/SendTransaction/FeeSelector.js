@@ -1,6 +1,6 @@
 import { AiOutlineWarning } from 'react-icons/ai'
 import { FiHelpCircle } from 'react-icons/fi'
-import { Loading } from '../common'
+import { Loading } from 'components/common'
 import { isTokenEligible, getFeePaymentConsequences, mapTxnErrMsg, getErrHint } from './helpers'
 
 const SPEEDS = ['slow', 'medium', 'fast', 'ape']

@@ -4,22 +4,23 @@ import { GiTakeMyMoney, GiSpectacles, GiGorilla } from 'react-icons/gi'
 import { FaSignature, FaChevronLeft } from 'react-icons/fa'
 import { MdOutlineAccountCircle } from 'react-icons/md'
 import './SendTransaction.scss'
-import { useEffect, useState, useMemo } from 'react'
+import { useEffect, useState, useMemo, useRef } from 'react'
 import fetch from 'node-fetch'
 import { Bundle } from 'adex-protocol-eth/js'
-import { getDefaultProvider, Wallet } from 'ethers'
+import { Wallet } from 'ethers'
 import { Interface } from 'ethers/lib/utils'
 import * as blockies from 'blockies-ts';
-import { useToasts } from '../../hooks/toasts'
-import { getWallet } from '../../lib/getWallet'
-import accountPresets from '../../consts/accountPresets'
+import { useToasts } from 'hooks/toasts'
+import { getWallet } from 'lib/getWallet'
+import accountPresets from 'consts/accountPresets'
 import { FeeSelector, FailingTxn } from './FeeSelector'
 import Actions from './Actions'
-import TxnPreview from '../common/TxnPreview/TxnPreview'
+import TxnPreview from 'components/common/TxnPreview/TxnPreview'
 import { sendNoRelayer } from './noRelayer'
 import { isTokenEligible, getFeePaymentConsequences } from './helpers'
-import { fetchPost } from '../../lib/fetch'
-import { toBundleTxn } from '../../lib/requestToBundleTxn'
+import { fetchPost } from 'lib/fetch'
+import { toBundleTxn } from 'lib/requestToBundleTxn'
+import { getProvider } from 'lib/provider'
 
 const ERC20 = new Interface(require('adex-protocol-eth/abi/ERC20'))
 
@@ -38,6 +39,18 @@ function makeBundle(account, networkId, requests) {
   bundle.extraGas = requests.map(x => x.extraGas || 0).reduce((a, b) => a + b, 0)
   bundle.requestIds = requests.map(x => x.id)
   return bundle
+}
+
+function getErrorMessage(e){
+  if (e && e.message === 'NOT_TIME') {
+    return "Your 72 hour recovery waiting period still hasn't ended. You will be able to use your account after this lock period."
+  } else if (e && e.message === 'WRONG_ACC_OR_NO_PRIV' ) {
+    return "Unable to sign with this email/password account. Please contact support."
+  } else if (e && e.message === 'INVALID_SIGNATURE') {
+    return "Invalid signature. This may happen if you used password/derivation path on your hardware wallet."
+  } else {
+    return e.message || e 
+  }
 }
 
 export default function SendTransaction({ relayerURL, accounts, network, selectedAcc, requests, resolveMany, replacementBundle, onBroadcastedTxn, onDismiss }) {
@@ -85,6 +98,8 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
   }, [bundle, setEstimation])
 
   // Estimate the bundle & reestimate periodically
+  const currentBundle = useRef(null)
+  currentBundle.current = bundle
   useEffect(() => {    // eslint-disable-next-line react-hooks/exhaustive-deps
     if (!bundle.txns.length) return
 
@@ -93,16 +108,19 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
     // get latest estimation
     const reestimate = () => (relayerURL
       ? bundle.estimate({ relayerURL, fetch, replacing: !!bundle.minFeeInUSDPerGas })
-      : bundle.estimateNoRelayer({ provider: getDefaultProvider(network.rpc) })
+      : bundle.estimateNoRelayer({ provider: getProvider(network.id) })
     )
       .then(estimation => {
-        if (unmounted) return
+        if (unmounted || bundle !== currentBundle.current) return
         estimation.selectedFeeToken = { symbol: network.nativeAssetSymbol }
         setEstimation(prevEstimation => {
           if (estimation.remainingFeeTokenBalances) {
             // If there's no eligible token, set it to the first one cause it looks more user friendly (it's the preferred one, usually a stablecoin)
-            estimation.selectedFeeToken = (prevEstimation && prevEstimation.selectedFeeToken)
-              || estimation.remainingFeeTokenBalances.find(token => isTokenEligible(token, feeSpeed, estimation))
+            estimation.selectedFeeToken = (
+                prevEstimation
+                && isTokenEligible(prevEstimation.selectedFeeToken, feeSpeed, estimation)
+                && prevEstimation.selectedFeeToken
+              ) || estimation.remainingFeeTokenBalances.find(token => isTokenEligible(token, feeSpeed, estimation))
               || estimation.remainingFeeTokenBalances[0]
           }
           return estimation
@@ -156,7 +174,7 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
     if (!estimation) throw new Error('no estimation: should never happen')
 
     const finalBundle = getFinalBundle()
-    const provider = getDefaultProvider(network.rpc)
+    const provider = getProvider(network.id)
     const signer = finalBundle.signer
 
     const wallet = await getWallet({
@@ -187,7 +205,7 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
     const signer = finalBundle.signer
 
     if (typeof finalBundle.nonce !== 'number') {
-      await finalBundle.getNonce(getDefaultProvider(network.rpc))
+      await finalBundle.getNonce(getProvider(network.id))
     }
 
     const { signature, success, message, confCodeRequired } = await fetchPost(
@@ -254,7 +272,9 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
       if (bundleResult.success) {
         onBroadcastedTxn(bundleResult.txId)
         onDismiss()
-      } else addToast(`Transaction error: ${bundleResult.message || 'unspecified error'}`, { error: true })
+      } else {
+        addToast(`Transaction error: ${getErrorMessage(bundleResult)}`, { error: true })  //'unspecified error'
+      }
     })
     .catch(e => {
       setSigningStatus(null)
@@ -266,8 +286,7 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
         // however, it stopped appearing after that even if the device is locked, so I'm not sure it's related...
         addToast(`Ledger: unknown error (0x6b0c): is your Ledger unlocked and in the Ethereum application?`, { error: true })
       } else {
-        console.log(e.message)
-        addToast(`Signing error: ${e.message || e}`, { error: true })
+        addToast(`Signing error: ${getErrorMessage(e)}`, { error: true })
       }
     })
   }
@@ -305,7 +324,7 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
           </div>
         </div>
         <div id='panelHolder'>
-          <div className='panel'>
+          <div className='panel summaryPanel'>
               <div className='heading'>
                       <div className='title'>
                           <GiSpectacles size={35}/>

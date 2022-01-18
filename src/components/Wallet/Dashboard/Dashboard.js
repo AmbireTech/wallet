@@ -1,36 +1,45 @@
 import './Dashboard.scss'
 
 import { useEffect, useLayoutEffect, useState } from 'react'
+import { useHistory, useParams } from 'react-router-dom'
 
-import { Chart, Loading, Segments } from '../../common'
+import { Chart, Loading, Segments } from 'components/common'
 import Balances from './Balances/Balances'
 import Protocols from './Protocols/Protocols'
 import Collectibles from './Collectibles/Collectibles'
+import { MdOutlineInfo } from 'react-icons/md'
 
-export default function Dashboard({ portfolio, selectedNetwork, setNetwork }) {
+const chartSegments = [
+    {
+        value: 'Tokens'
+    },
+    {
+        value: 'Protocols'
+    }
+]
+
+const tabSegments = [
+    {
+        value: 'tokens'
+    },
+    {
+        value: 'collectibles'
+    }
+]
+
+export default function Dashboard({ portfolio, selectedNetwork, selectedAccount, setNetwork, privateMode }) {
+    const history = useHistory()
+    const { tabId } = useParams()
 
     const [chartTokensData, setChartTokensData] = useState([]);
     const [chartProtocolsData, setChartProtocolsData] = useState([]);
     const [chartType, setChartType] = useState([]);
-    const [tableType, setTableType] = useState([]);
+    const [tab, setTab] = useState(tabId || tabSegments[0].value);
 
-    const chartSegments = [
-        {
-            value: 'Tokens'
-        },
-        {
-            value: 'Protocols'
-        }
-    ]
-
-    const tableSegments = [
-        {
-            value: 'Tokens'
-        },
-        {
-            value: 'Collectibles'
-        }
-    ]
+    useEffect(() => {
+        if (!tab || tab === tabSegments[0].value) return history.replace(`/wallet/dashboard`)
+        history.replace(`/wallet/dashboard/${tab}`)
+    }, [tab, history])
 
     useLayoutEffect(() => {
         const tokensData = portfolio.tokens
@@ -73,6 +82,7 @@ export default function Dashboard({ portfolio, selectedNetwork, setNetwork }) {
                                     portfolio={portfolio}
                                     selectedNetwork={selectedNetwork}
                                     setNetwork={setNetwork}
+                                    hidePrivateValue={privateMode.hidePrivateValue}
                                 />
                         }
                     </div>
@@ -88,12 +98,12 @@ export default function Dashboard({ portfolio, selectedNetwork, setNetwork }) {
                                 portfolio.isBalanceLoading ?
                                     <Loading/>
                                     :
-                                    <Chart data={chartTokensData} size={200}/>
+                                    privateMode.hidePrivateContent(<Chart data={chartTokensData} size={200}/>)
                                 :
                                 portfolio.areProtocolsLoading ?
                                     <Loading/>
                                     :
-                                    <Chart data={chartProtocolsData} size={200}/>
+                                    privateMode.hidePrivateContent(<Chart data={chartProtocolsData} size={200}/>)
                         }
                     </div>
                 </div>
@@ -101,27 +111,37 @@ export default function Dashboard({ portfolio, selectedNetwork, setNetwork }) {
             <div id="table" className="panel">
                 <div className="title">
                     Assets
-                    <Segments small defaultValue={tableSegments[0].value} segments={tableSegments} onChange={setTableType}></Segments>
+                    <Segments small defaultValue={tab} segments={tabSegments} onChange={setTab}></Segments>
                 </div>
                 <div className="content">
                     {
-                        portfolio.areProtocolsLoading ?
-                            <Loading/>
+                        tab === tabSegments[0].value ?
+                            <Protocols
+                                portfolio={portfolio}
+                                network={selectedNetwork}
+                                account={selectedAccount}
+                                hidePrivateValue={privateMode.hidePrivateValue}
+                            />
                             :
-                            tableType === tableSegments[0].value ?
-                                <Protocols protocols={portfolio.protocols}/>
-                                :
-                                <Collectibles collectibles={portfolio.collectibles}/>
+                            <Collectibles portfolio={portfolio} isPrivateMode={privateMode.isPrivateMode} />
                     }
                 </div>
-                {
-                    portfolio.areProtocolsLoading || !portfolio.protocols.length ?
-                        null
-                        :
-                        <div className="powered">
-                            Powered by Zapper
-                        </div>
-                }
+                <div className="footer">
+                    <div id="missing-token-notice">
+                        <MdOutlineInfo/>
+                        <span>
+                            If you don't see a specific token that you own, please check the <a href={`${selectedNetwork.explorerUrl}/address/${selectedAccount}`} target="_blank" rel="noreferrer">Block Explorer</a>
+                        </span>
+                    </div>
+                    {
+                        portfolio.areProtocolsLoading || !portfolio.protocols.length ?
+                            null
+                            :
+                            <div className="powered">
+                                Powered by Velcro
+                            </div>
+                    }
+                </div>
             </div>
         </section>
     )
