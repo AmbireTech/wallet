@@ -80,3 +80,10 @@
         opacity: 0.9;
     }
 }
+
+// Mobile
+@media screen and (max-width: $mobile-breakpoint-max-width) {
+    #fee-selector {
+        overflow-x: auto;
+    }
+}
