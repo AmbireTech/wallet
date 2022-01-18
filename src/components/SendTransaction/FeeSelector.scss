@@ -52,3 +52,31 @@
         }
     }
 }
+
+.failingTxn {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5em;
+    cursor: default;
+
+    .error-title {
+        display: flex;
+        align-items: center;
+        gap: 0.5em;
+        font-size: 18px;
+        font-weight: bold;
+        text-transform: uppercase;
+        color: $danger-color;
+
+        svg {
+            font-size: 20px;
+        }
+    }
+
+    .error-message {
+        font-size: 18px;
+        font-weight: 500;
+        color: $danger-color;
+        opacity: 0.9;
+    }
+}

@@ -1,8 +1,7 @@
 import './FeeSelector.scss'
 
 import { AiOutlineWarning } from 'react-icons/ai'
-import { FiHelpCircle } from 'react-icons/fi'
-import { Loading, Select } from 'components/common'
+import { Loading, Select, ToolTip } from 'components/common'
 import { isTokenEligible, getFeePaymentConsequences, mapTxnErrMsg, getErrHint } from './helpers'
 
 const SPEEDS = ['slow', 'medium', 'fast', 'ape']
@@ -102,8 +101,9 @@ export function FeeSelector ({ disabled, signer, estimation, network, setEstimat
 
 export function FailingTxn ({ message, tooltip = '' }) {
     return (<div className='failingTxn'>
-        <AiOutlineWarning></AiOutlineWarning>
-        <h3 className='error'>{message}</h3>
-        <FiHelpCircle title={tooltip}></FiHelpCircle>
+      <ToolTip label={tooltip}>
+        <div className='error-title'><AiOutlineWarning></AiOutlineWarning> Warning</div>
+        <div className='error-message'>{message}</div>
+      </ToolTip>
     </div>)
 }
