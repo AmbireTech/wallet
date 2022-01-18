@@ -41,6 +41,18 @@ function makeBundle(account, networkId, requests) {
   return bundle
 }
 
+function getErrorMessage(e){
+  if (e && e.message === 'NOT_TIME') {
+    return "Your 72 hour recovery waiting period still hasn't ended. You will be able to use your account after this lock period."
+  } else if (e && e.message === 'WRONG_ACC_OR_NO_PRIV' ) {
+    return "Unable to sign with this email/password account. Please contact support."
+  } else if (e && e.message === 'INVALID_SIGNATURE') {
+    return "Invalid signature. This may happen if you used password/derivation path on your hardware wallet."
+  } else {
+    return e.message || e 
+  }
+}
+
 export default function SendTransaction({ relayerURL, accounts, network, selectedAcc, requests, resolveMany, replacementBundle, onBroadcastedTxn, onDismiss }) {
   // NOTE: this can be refactored at a top level to only pass the selected account (full object)
   // keeping it that way right now (selectedAcc, accounts) cause maybe we'll need the others at some point?
@@ -260,7 +272,9 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
       if (bundleResult.success) {
         onBroadcastedTxn(bundleResult.txId)
         onDismiss()
-      } else addToast(`Transaction error: ${bundleResult.message || 'unspecified error'}`, { error: true })
+      } else {
+        addToast(`Transaction error: ${getErrorMessage(bundleResult)}`, { error: true })  //'unspecified error'
+      }
     })
     .catch(e => {
       setSigningStatus(null)
@@ -272,8 +286,7 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
         // however, it stopped appearing after that even if the device is locked, so I'm not sure it's related...
         addToast(`Ledger: unknown error (0x6b0c): is your Ledger unlocked and in the Ethereum application?`, { error: true })
       } else {
-        console.log(e.message)
-        addToast(`Signing error: ${e.message || e}`, { error: true })
+        addToast(`Signing error: ${getErrorMessage(e)}`, { error: true })
       }
     })
   }
