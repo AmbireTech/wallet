@@ -1,4 +1,4 @@
-@import '.././/../../variables.scss';
+@import 'variables.scss';
 
 $modal-height: 730px;
 $modal-width: 530px;
@@ -13,11 +13,14 @@ $buttons-height: 60px;
     display: flex;
     flex-direction: column;
     gap: 10px;
-    padding: 25px 0;
-    padding-bottom: 0;
+    padding-top: 25px;
     background-color: $panel-background-color;
     box-shadow: $box-shadow;
     box-sizing: border-box;
+
+    &.buttons {
+        padding-bottom: $buttons-height;
+    }
 
     .heading {
         .title {
@@ -60,7 +63,6 @@ $buttons-height: 60px;
         width: 100%;
         display: flex;
         box-sizing: border-box;
-        background-color: $input-background-color;
 
         button {
             flex: 0 1 50% !important;

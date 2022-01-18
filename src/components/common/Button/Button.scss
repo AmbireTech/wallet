@@ -1,4 +1,4 @@
-@import '../../../variables.scss';
+@import 'variables.scss';
 
 button.buttonComponent {
     height: 60px;
@@ -25,13 +25,20 @@ button.buttonComponent {
         font-size: 17px;
     }
 
+    &.mini {
+        gap: 5px;
+        height: 40px;
+        padding: 0 10px;
+        font-size: 14px;
+    }
+
     &.danger {
         background: $danger-color;
     }
 
     &.clear {
         color: white;
-        background-color: transparent;
+        background-color: rgba(0, 0, 0, 0.1);
 
         .icon-button {
             color: white !important;
@@ -42,11 +49,25 @@ button.buttonComponent {
         }
     }
 
-    &:disabled {
+    &.border {
+        color: $primary-accent-color;
+        background-color: transparent;
+        border: 1px solid $primary-accent-color;
+
+        .icon-button {
+            color: $primary-accent-color !important;
+        }
+
+        &:not([disabled]):hover {
+            background-color: rgba(0, 0, 0, 0.2);
+        }
+    }
+
+    &:disabled, &.disabled{
         opacity: 0.2 !important;
     }
 
-    &:not([disabled]) {
+    &:not([disabled]):not(.disabled) {
         &:hover {
             cursor: pointer;
             opacity: 0.8;

@@ -1,0 +1,38 @@
+@import 'variables.scss';
+
+#help-dropdown {
+    .content {
+        gap: 0.25em;
+
+        .title {
+            position: relative;
+            font-size: 22px;
+        }
+    }
+
+    .item {
+        height: 50px;
+        font-weight: 500;
+        white-space: nowrap;
+
+        &:hover {
+            background-color: rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+        }
+    }
+
+    &:not(.viewed) {
+        .title {
+            &::after {
+                content: "";
+                position: absolute;
+                top: -4px;
+                right: -12px;
+                height: 8px;
+                width: 8px;
+                border-radius: 100%;
+                background-color: $primary-accent-color;
+            }
+        }
+    }
+}

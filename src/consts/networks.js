@@ -1,7 +1,9 @@
 const networks = [{
 		id: 'ethereum',
 		chainId: 1,
-		rpc: 'https://mainnet.infura.io/v3/3d22938fd7dd41b7af4197752f83e8a1',
+		//rpc: 'https://mainnet.infura.io/v3/3d22938fd7dd41b7af4197752f83e8a1',
+		//rpc: 'https://morning-wild-water.quiknode.pro/66011d2c6bdebc583cade5365086c8304c13366c/',
+		rpc: 'https://mainnet.infura.io/v3/d4319c39c4df452286d8bf6d10de28ae',
 		nativeAssetSymbol: 'ETH',
 		name: 'Ethereum',
 		icon: '/resources/networks/ethereum.png',
@@ -26,7 +28,7 @@ const networks = [{
 		// to match the zapper ID
 		id: 'binance-smart-chain',
 		chainId: 56,
-		rpc: 'https://bsc-dataseed.binance.org/',
+		rpc: 'https://bsc-dataseed1.defibit.io',
 		nativeAssetSymbol: 'BNB',
 		name: 'Binance Smart Chain',
 		icon: '/resources/networks/bsc.png',

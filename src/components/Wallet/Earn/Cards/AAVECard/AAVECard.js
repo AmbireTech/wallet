@@ -1,17 +1,17 @@
-import { ethers, getDefaultProvider } from 'ethers'
+import { ethers } from 'ethers'
 import { Interface } from 'ethers/lib/utils'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { useToasts } from '../../../../../hooks/toasts'
-import ERC20Abi from 'adex-protocol-eth/abi/ERC20.json'
-import AAVELendingPoolAbi from '../../../../../consts/AAVELendingPoolAbi'
-import AAVELendingPoolProviders from '../../../../../consts/AAVELendingPoolProviders'
-import networks from '../../../../../consts/networks'
+import { useToasts } from 'hooks/toasts'
+import AAVELendingPoolAbi from 'consts/AAVELendingPoolAbi'
+import AAVELendingPoolProviders from 'consts/AAVELendingPoolProviders'
+import networks from 'consts/networks'
+import { getProvider } from 'lib/provider'
 
-import AAVE_ICON from '../../../../../resources/aave.svg'
-import Card from '../Card/Card'
+import AAVE_ICON from 'resources/aave.svg'
+import Card from 'components/Wallet/Earn/Card/Card'
 import { getDefaultTokensItems } from './defaultTokens'
+import approveToken from 'lib/approveToken'
 
-const ERC20Interface = new Interface(ERC20Abi)
 const AAVELendingPool = new Interface(AAVELendingPoolAbi)
 const RAY = 10**27
 let lendingPoolAddress = null
@@ -41,38 +41,11 @@ const AAVECard = ({ networkId, tokens, protocols, account, addRequest }) => {
     const getToken = (type, address) => tokensItems.filter(token => token.type === type).find(token => token.address === address)
     const addRequestTxn = (id, txn, extraGas = 0) => addRequest({ id, type: 'eth_sendTransaction', chainId: networkDetails.chainId, account, txn, extraGas })
 
-    const approveToken = async (tokenAddress, bigNumberHexAmount) => {
-        try {
-            const ZERO = ethers.BigNumber.from(0)
-            const provider = getDefaultProvider(networkDetails.rpc)
-            const tokenContract = new ethers.Contract(tokenAddress, ERC20Interface, provider)
-            const allowance = await tokenContract.allowance(account, tokenAddress)
-
-            if (allowance.lt(bigNumberHexAmount)) {
-                if (allowance.gt(ZERO)) {
-                    addRequestTxn(`aave_pool_approve_${Date.now()}`, {
-                        to: lendingPoolAddress,
-                        value: bigNumberHexAmount,
-                        data: '0x'
-                    })
-                }
-                addRequestTxn(`aave_pool_approve_${Date.now()}`, {
-                    to: tokenAddress,
-                    value: '0x0',
-                    data: ERC20Interface.encodeFunctionData('approve', [lendingPoolAddress, bigNumberHexAmount])
-                })
-            }
-        } catch(e) {
-            console.error(e)
-            addToast(`Aave Approve Error: ${e.message || e}`, { error: true })
-        }
-    }
-
     const onValidate = async (type, tokenAddress, amount) => {
         if (type === 'Deposit') {
             const token = getToken('deposit', tokenAddress)
             const bigNumberHexAmount = ethers.utils.parseUnits(amount.toString(), token.decimals).toHexString()
-            await approveToken(tokenAddress, bigNumberHexAmount)
+            await approveToken('Aave Pool', networkDetails.id, account, lendingPoolAddress, tokenAddress, addRequestTxn, addToast)
 
             try {
                 addRequestTxn(`aave_pool_deposit_${Date.now()}`, {
@@ -88,7 +61,7 @@ const AAVECard = ({ networkId, tokens, protocols, account, addRequest }) => {
         else if (type === 'Withdraw') {
             const token = getToken('withdraw', tokenAddress)
             const bigNumberHexAmount = ethers.utils.parseUnits(amount.toString(), token.decimals).toHexString()
-            await approveToken(tokenAddress, bigNumberHexAmount)
+            await approveToken('Aave Pool', networkDetails.id, account, lendingPoolAddress, tokenAddress, addRequestTxn, addToast)
 
             try {
                 addRequestTxn(`aave_pool_withdraw_${Date.now()}`, {
@@ -112,7 +85,7 @@ const AAVECard = ({ networkId, tokens, protocols, account, addRequest }) => {
         }
 
         try {
-            const provider = getDefaultProvider(networkDetails.rpc)
+            const provider = getProvider(networkDetails.id)
             const lendingPoolProviderContract = new ethers.Contract(providerAddress, AAVELendingPool, provider)
             lendingPoolAddress = await lendingPoolProviderContract.getLendingPool()
         
@@ -121,13 +94,12 @@ const AAVECard = ({ networkId, tokens, protocols, account, addRequest }) => {
             const reservesAddresses = reserves.map(reserve => reserve.toLowerCase())
 
             const withdrawTokens = (protocols.find(({ label }) => label === 'Aave V2')?.assets || [])
-                .map(({ tokens }) => tokens && tokens.map(({ img, symbol, tokens }) => tokens && tokens.map(token => ({
+                .map(({ symbol, tokens }) => tokens && tokens.map(token => ({
                     ...token,
-                    img,
                     symbol,
                     type: 'withdraw'
-                }))))
-                .flat(2)
+                })))
+                .flat(1)
                 .filter(token => token)
 
             const depositTokens = tokens.filter(({ address }) => reservesAddresses.includes(address)).map(token => ({
@@ -150,14 +122,13 @@ const AAVECard = ({ networkId, tokens, protocols, account, addRequest }) => {
                 return [address, apr]
             })))
 
-            const getEquToken = token => allTokens.find((({ address, type }) => address === token.address && (token.type === 'deposit' ? type === 'withdraw' : type === 'deposit')))
             const tokensItems = allTokens.map(token => ({
                 ...token,
                 apr: tokensAPR[token.address],
                 icon: token.img || token.tokenImageUrl,
                 label: `${token.symbol} (${tokensAPR[token.address]}% APR)`,
                 value: token.address
-            })).sort((a, b) => (b?.balance + getEquToken(b)?.balance) - (a?.balance + getEquToken(a)?.balance))
+            }))
 
             // Prevent race conditions
             if (currentNetwork.current !== networkDetails.id) return

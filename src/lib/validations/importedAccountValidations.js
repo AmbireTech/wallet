@@ -1,6 +1,5 @@
 import { getAddress, hexDataLength } from 'ethers/lib/utils'
 
-const EMAIL_REGEX = /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/
 const NUMBER_STRING_REGEX = /^([0-9]+\.?[0-9]*)$/
 const HEX_DATA_LENGTH = 32
 const TIME_LOCK_NUMBER_LENGTH = 6
@@ -25,13 +24,6 @@ const validateImportedAccountProps = acc => {
     return { 
       success: false, 
       message: 'Failed to import JSON file: invalid id' 
-    }
-  }
-
-  if (!(acc.email && isValidEmailAddress(acc.email))) {
-    return {
-      success: false,
-      message: 'Failed to import JSON file: invalid email',
     }
   }
 
@@ -94,7 +86,6 @@ const isValidAddress = addr => {
   }
 }
 
-const isValidEmailAddress = addr => EMAIL_REGEX.test(addr)
 const isValidTimeLock = timelock => {
   return NUMBER_STRING_REGEX.test(timelock) && timelock.toString().length === TIME_LOCK_NUMBER_LENGTH
 }

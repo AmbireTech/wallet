@@ -1,4 +1,4 @@
-@import '../../../variables.scss';
+@import 'variables.scss';
 
 .txnPreview {
     display: flex;
@@ -17,16 +17,20 @@
         justify-content: space-between;
         gap: 1rem !important;
         margin: 0 !important;
-        padding: 20px 25px;
         cursor: pointer;
         box-sizing: border-box;
 
         .info {
             min-width: 0;
+            height: 100%;
+            width: 100%;
             display: flex;
             flex-direction: column;
             align-items: flex-start;
+            justify-content: center;
             gap: 10px;
+            padding: 20px 0;
+            padding-left: 25px;
 
             .summary-container {
                 display: flex;
@@ -41,7 +45,6 @@
 
                 .summary {
                     width: 100%;
-                    max-width: 380px;
                     word-break: break-word;
                 }
             }
@@ -56,6 +59,8 @@
         }
 
         .actionIcons {
+            padding: 20px 25px;
+
             svg {
                 float: left;
                 margin: 5px;
@@ -82,7 +87,6 @@
         padding: 10px 25px;
         padding-bottom: 20px;
         word-wrap: break-word;
-        max-width: 400px;
         font-family: monospace;
         opacity: 0.7;
 

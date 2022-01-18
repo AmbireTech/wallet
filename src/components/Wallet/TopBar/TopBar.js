@@ -1,11 +1,14 @@
 import "./TopBar.scss";
 
 import React, { useState } from "react";
-import { MdOutlineArrowForward, MdOutlineClose, MdOutlineMenu } from "react-icons/md";
-import { Select } from "../../common";
+import { NavLink } from "react-router-dom";
+import { MdOutlineArrowForward, MdOutlineClose, MdOutlineMenu, MdRemoveRedEye, MdVisibilityOff } from "react-icons/md";
+import { Select } from "components/common";
 import Accounts from "./Accounts/Accounts";
 import DApps from "./DApps/DApps";
 import * as blockies from 'blockies-ts';
+import Links from "./Links/Links";
+import Rewards from "./Rewards/Rewards";
 
 const TopBar = ({
   connections,
@@ -18,6 +21,8 @@ const TopBar = ({
   network,
   setNetwork,
   allNetworks,
+  rewardsData,
+  privateMode: { isPrivateMode, togglePrivateMode, hidePrivateValue }
 }) => {
   const [isMenuOpen, setMenuOpen] = useState(false)
   
@@ -28,11 +33,12 @@ const TopBar = ({
   }))
 
   const account = accounts.find(({ id }) => id === selectedAcc)
+  const accountIcon = blockies.create({ seed: account ? account.id : null }).toDataURL()
 
   return (
     <div id="topbar">
       <div id="mobile-menu" onClick={() => setMenuOpen(!isMenuOpen)}>
-        <div className="icon" style={{backgroundImage: `url(${blockies.create({ seed: account.id }).toDataURL()})`}}></div>
+        <div className="icon" style={{backgroundImage: `url(${accountIcon})`}}></div>
         <MdOutlineArrowForward/>
         <div className="icon" style={{backgroundImage: `url(${network.icon})`}}></div>
         <div id="menu-button">
@@ -40,10 +46,21 @@ const TopBar = ({
         </div>
       </div>
 
+      <NavLink to={'/wallet/dashboard'}>
+        <div id="logo" />
+        <div id="icon" />
+      </NavLink>
       <div className={`container ${isMenuOpen ? 'open' : ''}`}>
+        <Rewards
+          rewardsData={rewardsData}
+          account={account}
+          hidePrivateValue={hidePrivateValue}
+        />
+        {isPrivateMode ? <MdVisibilityOff cursor="pointer" size={28} onClick={togglePrivateMode} /> : <MdRemoveRedEye cursor="pointer" size={28} onClick={togglePrivateMode} />}
         <DApps connections={connections} connect={connect} disconnect={disconnect}/>
         <Accounts accounts={accounts} selectedAddress={selectedAcc} onSelectAcc={onSelectAcc} onRemoveAccount={onRemoveAccount}/>
         <Select defaultValue={network.id} items={networksItems} onChange={value => setNetwork(value)}/>
+        <Links/>
       </div>
     </div>
   );

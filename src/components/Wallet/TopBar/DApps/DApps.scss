@@ -1,4 +1,4 @@
-@import '../../../../variables.scss';
+@import 'variables.scss';
 
 #dApps {
     
@@ -50,10 +50,14 @@
                     text-overflow: ellipsis;
                 }
 
-                .session-warning {
+                .session-warning, .session-error {
                     @include flex-center-center;
                     color: #fdc835;
                 }
+
+                .session-error {
+                    color: $danger-color ;
+                }                
             }
         }
 

@@ -1,7 +1,24 @@
-@import '../.././../variables.scss';
+@import 'variables.scss';
 
 #earn {
     display: flex;
     flex-direction: row;
     gap: 30px;
+
+    .cards {
+        display: flex;
+        gap: 30px;
+        flex-wrap: wrap;
+    }
+}
+
+// Mobile
+@media screen and (max-width: $mobile-breakpoint-max-width) {
+    #earn {
+        .cards {
+            width: 100%;
+            flex-direction: column;
+            gap: 1em;
+        }
+    }
 }

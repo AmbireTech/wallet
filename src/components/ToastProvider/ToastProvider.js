@@ -3,12 +3,14 @@ import './ToastProvider.scss';
 import React, { createRef, useState, useCallback, useEffect } from "react";
 import { MdOutlineClose } from 'react-icons/md';
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
+import { useHistory } from 'react-router-dom'
 
 const ToastContext = React.createContext(null);
 
 let id = 0
 
 const ToastProvider = ({ children }) => {
+    const history = useHistory()
     const [toasts, setToasts] = useState([]);
 
     const removeToast = useCallback(id => {
@@ -24,6 +26,7 @@ const ToastProvider = ({ children }) => {
             badge: null,
             onClick: null,
             url: null,
+            route: null,
         }
 
         const toast = {
@@ -72,6 +75,12 @@ const ToastProvider = ({ children }) => {
         window.addEventListener('resize', onResize, false);
         return () => window.removeEventListener('resize', onResize, false);
     }, [updateToastsPositions])
+
+    const onToastClick = (id, onClick, url, route) => {
+        if (url) window.open(url, '_blank')
+        else if (route) history.push(route)
+        onClick ? onClick() : removeToast(id)
+    }
     
     return (
         <ToastContext.Provider
@@ -83,24 +92,22 @@ const ToastProvider = ({ children }) => {
             <div id="toast-container" className={!toasts.length ? 'hide' : ''}>
                 <TransitionGroup className="transition-group">
                 {
-                    toasts.map(({ id, ref, url, error, sticky, badge, position, content, onClick }) => (
+                    toasts.map(({ id, ref, url, route, error, sticky, badge, position, content, onClick }) => (
                         <CSSTransition timeout={200} classNames="slide-fade" key={id} nodeRef={ref}>
-                            <a href={url} target="_blank" rel="noreferrer">
-                                <div className={`toast ${error ? 'error' : ''} ${sticky ? 'sticky' : ''} ${position ? position : ''}`} ref={ref}>
-                                    <div className="inner" onClick={() => onClick ? onClick() : removeToast(id)}>
-                                        { badge ? <div className="badge">{ badge }</div> : null }
-                                        { content }
-                                    </div>
-                                    {
-                                        sticky ? 
-                                            <div className="close" onClick={() => removeToast(id)}>
-                                                <MdOutlineClose/>
-                                            </div>
-                                            :
-                                            null
-                                    }
+                            <div className={`toast ${error ? 'error' : ''} ${sticky ? 'sticky' : ''} ${position ? position : ''}`} ref={ref}>
+                                <div className="inner" onClick={() => onToastClick(id, onClick, url, route)}>
+                                    { badge ? <div className="badge">{ badge }</div> : null }
+                                    { content }
                                 </div>
-                            </a>
+                                {
+                                    sticky ? 
+                                        <div className="close" onClick={() => removeToast(id)}>
+                                            <MdOutlineClose/>
+                                        </div>
+                                        :
+                                        null
+                                }
+                            </div>
                         </CSSTransition>
                     ))
                 }
