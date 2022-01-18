@@ -94,7 +94,9 @@ function Transactions ({ relayerURL, selectedAcc, selectedNetwork, showSendTxns,
   return (
     <section id='transactions'>
       {!!eligibleRequests.length && (<div className='panel'>
-        <div className='title'><FaSignature size={25}/>Waiting to be signed (current batch)</div>
+        <div className='panel-heading'>
+          <div className='title'><FaSignature size={25}/>Waiting to be signed (current batch)</div>
+        </div>
         <div className="content">
           <div className="bundle">
             <div onClick={() => showSendTxns(null)}>
@@ -118,7 +120,9 @@ function Transactions ({ relayerURL, selectedAcc, selectedNetwork, showSendTxns,
         </div>
       </div>)}
       { !!firstPending && (<div className='panel' id="pending">
-        <div className='title'><MdOutlinePendingActions/>Pending transaction bundle</div>
+        <div className='panel-heading'>
+          <div className='title'><MdOutlinePendingActions/>Pending transaction bundle</div>
+        </div>
         <div className="content">
           <div className="bundle">
             <BundlePreview bundle={firstPending}></BundlePreview>
@@ -131,9 +135,12 @@ function Transactions ({ relayerURL, selectedAcc, selectedNetwork, showSendTxns,
       </div>) }
 
       <div id="confirmed" className="panel">
-        <div className="title">
-          <BsCheck2All/>
-          {(data && data.txns.length === 0) ? 'No transactions yet.' : 'Confirmed transactions'}
+        <div className="panel-heading">
+          <div className='title'>
+            <BsCheck2All/>
+            {(data && data.txns.length === 0) ? 'No transactions yet.' : 'Confirmed transactions'}
+          </div>
+          { paginationControls }
         </div>
         <div className="content">
           {!relayerURL && (<h3 className='validation-error'>Unsupported: not currently connected to a relayer.</h3>)}
@@ -142,7 +149,6 @@ function Transactions ({ relayerURL, selectedAcc, selectedNetwork, showSendTxns,
             isLoading && !data ? <Loading /> :
               !bundlesList.length ? null :
                 <>
-                  { paginationControls }
                   { bundlesList }
                   { paginationControls }
                 </>
