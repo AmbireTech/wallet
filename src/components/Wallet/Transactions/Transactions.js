@@ -1,7 +1,7 @@
 import './Transactions.scss'
 import { FaSignature } from 'react-icons/fa'
 import { BsCoin, BsCalendarWeek, BsGlobe2, BsCheck2All } from 'react-icons/bs'
-import { MdOutlinePendingActions } from 'react-icons/md'
+import { MdOutlinePendingActions, MdShuffle } from 'react-icons/md'
 import { useRelayerData } from 'hooks'
 import TxnPreview from 'components/common/TxnPreview/TxnPreview'
 import { Loading, Button } from 'components/common'
@@ -200,7 +200,7 @@ function BundlePreview({ bundle, mined = false }) {
       {
         bundle.replacesTxId ?
           <li>
-            <label>Replaces transaction</label>
+            <label><MdShuffle/>Replaces transaction</label>
             <p>{bundle.replacesTxId}</p>
           </li>
           :
