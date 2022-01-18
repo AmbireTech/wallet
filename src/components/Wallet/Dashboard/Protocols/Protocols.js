@@ -3,14 +3,14 @@ import './Protocols.scss'
 import { GiToken } from 'react-icons/gi'
 import { AiOutlineSend } from 'react-icons/ai'
 import { NavLink } from 'react-router-dom'
-import { Button, Loading } from '../../../common'
+import { Button, Loading } from 'components/common'
 import ProtocolsPlaceholder from './ProtocolsPlaceholder/ProtocolsPlaceholder'
 import { useState } from 'react'
 import { MdOutlineAdd } from 'react-icons/md'
-import { AddTokenModal } from '../../../Modals'
-import { useModals } from '../../../../hooks'
+import { AddTokenModal } from 'components/Modals'
+import { useModals } from 'hooks'
 
-const Protocols = ({ portfolio, network, account }) => {
+const Protocols = ({ portfolio, network, account, hidePrivateValue }) => {
     const { showModal } = useModals()
 
     const [failedImg, setFailedImg] = useState([])
@@ -36,11 +36,11 @@ const Protocols = ({ portfolio, network, account }) => {
             <div className="separator"></div>
             <div className="balance">
                 <div className="currency">
-                    <span className="value">{ balance }</span>
+                    <span className="value">{ hidePrivateValue(balance) }</span>
                     <span className="symbol">{ symbol }</span>
                 </div>
                 <div className="dollar">
-                    <span className="symbol">$</span> { balanceUSD.toFixed(2) }
+                    <span className="symbol">$</span> { hidePrivateValue(balanceUSD.toFixed(2)) }
                 </div>
             </div>
             {

@@ -1,7 +1,7 @@
 import './Modal.scss'
 
 import { MdClose } from 'react-icons/md'
-import { useModals } from '../../../hooks'
+import { useModals } from 'hooks'
 
 const Modal = ({ children, id, title, buttons, isCloseBtnShown = true, onClose }) => {
     const { hideModal } = useModals()

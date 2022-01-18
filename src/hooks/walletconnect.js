@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useReducer, useRef } from 'react'
-import { useToasts } from '../hooks/toasts'
-import { isFirefox } from '../lib/isFirefox'
+import { useToasts } from 'hooks/toasts'
+import { isFirefox } from 'lib/isFirefox'
 
 import WalletConnectCore from '@walletconnect/core'
 import * as cryptoLib from '@walletconnect/iso-crypto'
@@ -73,7 +73,7 @@ export default function useWalletConnect ({ account, chainId, initialUri }) {
     })
 
     // Side effects that will run on every state change/rerender
-    const maybeUpdateSessions = useCallback(() => {
+    const maybeUpdateSessions = () => {
         // restore connectors and update the ones that are stale
         let updateConnections = false
         state.connections.forEach(({ uri, session, isOffline }) => {
@@ -96,8 +96,10 @@ export default function useWalletConnect ({ account, chainId, initialUri }) {
                 .filter(({ uri }) => connectors[uri])
                 .map(({ uri }) => ({ uri, session: connectors[uri].session, isOffline: checkIsOffline(uri) }))
         })
-    }, [state, account, chainId])
-    useEffect(maybeUpdateSessions, [maybeUpdateSessions])
+    }
+    useEffect(maybeUpdateSessions, [account, chainId, state])
+    // we need this so we can invoke the latest version from any event handler
+    stateRef.current.maybeUpdateSessions = maybeUpdateSessions
 
     // New connections
     const connect = useCallback(connectorOpts => {
@@ -158,7 +160,7 @@ export default function useWalletConnect ({ account, chainId, initialUri }) {
             connectionErrors.push({ uri: connectorOpts.uri, event: payload.event, time: Date.now() })
             // Keep the last 690 only
             connectionErrors = connectionErrors.slice(-690)
-            maybeUpdateSessions()
+            stateRef.current.maybeUpdateSessions()
         })
 
         connector.on('call_request', (error, payload) => {
@@ -245,7 +247,7 @@ export default function useWalletConnect ({ account, chainId, initialUri }) {
         connector.on('error', onError)
 
         return connector
-    }, [addToast, maybeUpdateSessions])
+    }, [addToast])
 
     const disconnect = useCallback(uri => {
         // connector might not be there, either cause we disconnected before,

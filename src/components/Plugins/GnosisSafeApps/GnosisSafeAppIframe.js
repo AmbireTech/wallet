@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react'
 import {
     Skeleton,
     AmbireLoading
-} from '../../common'
+} from 'components/common'
 
 export default function GnosisSafeAppIframe({
     selectedApp = {},
