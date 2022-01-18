@@ -6,6 +6,8 @@ import { FaTimes, FaChevronDown, FaChevronUp } from 'react-icons/fa'
 import { getName, getTransactionSummary, isKnown } from 'lib/humanReadableTransactions'
 import networks from 'consts/networks'
 import { formatUnits } from 'ethers/lib/utils'
+import { ToolTip } from 'components/common'
+import { HiOutlineExternalLink } from 'react-icons/hi'
 
 const zapperStorageTokenIcons = 'https://storage.googleapis.com/zapper-fi-assets/tokens'
 
@@ -20,6 +22,8 @@ function getNetworkSymbol(networkId) {
 export default function TxnPreview ({ txn, onDismiss, network, account, isFirstFailing, mined, disableExpand }) {
   const [isExpanded, setExpanded] = useState(false)
   const contractName = getName(txn[0], network)
+
+  const networkDetails = networks.find(({ id }) => id === network)
 
   const summary = () => {
     const extendedSummary = getTransactionSummary(txn, network, account, { mined, extended: true })
@@ -36,9 +40,18 @@ export default function TxnPreview ({ txn, onDismiss, network, account, isFirstF
         </div>
       )
       if (item.type === 'address') return (
-        <div className='address'>
-          { item.name ? <>{ item.name } { item.address ? <span>({ item.address })</span> : null }</> : item.address }
-        </div>
+        <a
+          className='address'
+          href={item.address ? `${networkDetails.explorerUrl}/address/${item.address}` : null}
+          target="_blank"
+          rel="noreferrer"
+          onClick={e => e.stopPropagation()}
+        >
+          <ToolTip disabled={!item.address} label={item.address}>
+            { item.name ? item.name : item.address }
+            { item.address ? <HiOutlineExternalLink/> : null }
+          </ToolTip>
+        </a>
       )
     })
   }
