@@ -22,7 +22,7 @@ import { isFirefox } from 'lib/isFirefox'
 import { VscJson } from 'react-icons/vsc'
 import { useDropzone } from 'react-dropzone'
 import { validateImportedAccountProps, fileSizeValidator } from 'lib/validations/importedAccountValidations'
-import LatticeModal from 'Modals/LatticeModal/LatticeModal'
+import { LatticeModal } from 'components/Modals'
 
 TrezorConnect.manifest({
   email: 'contactus@ambire.com',
