@@ -29,12 +29,12 @@ export default function TxnPreview ({ txn, onDismiss, network, account, isFirstF
   const summary = () => {
     const extendedSummary = getTransactionSummary(txn, network, account, { mined, extended: true })
 
-    return extendedSummary.map((item, i) => {
+    return Array.isArray(extendedSummary) ? extendedSummary.map((item, i) => {
       if (extendedSummary.length === 1) return item
-      if (i === 0) return (<div className='action'>{ item }</div>)
-      if (!item.type) return (<div className='word'>{ item }</div>)
+      if (i === 0) return (<div className='action' key={`item-${i}`}>{ item }</div>)
+      if (!item.type) return (<div className='word' key={`item-${i}`}>{ item }</div>)
       if (item.type === 'token') return (
-        <div className='token'>
+        <div className='token' key={`item-${i}`}>
           { item.amount > 0 ? <span>{ item.amount }</span> : null }
           { item.address ? <div className='icon' style={{ backgroundImage: `url(${getTokenIcon(network, item.address)})` }}></div> : null }
           { item.symbol }
@@ -43,6 +43,7 @@ export default function TxnPreview ({ txn, onDismiss, network, account, isFirstF
       if (item.type === 'address') return (
         <a
           className='address'
+          key={`item-${i}`}
           href={item.address ? `${networkDetails.explorerUrl}/address/${item.address}` : null}
           target="_blank"
           rel="noreferrer"
@@ -54,7 +55,8 @@ export default function TxnPreview ({ txn, onDismiss, network, account, isFirstF
           </ToolTip>
         </a>
       )
-    })
+      return <></>
+    }) : extendedSummary
   }
 
   return (
