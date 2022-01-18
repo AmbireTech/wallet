@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
-import { Button, Loading, TextInput } from '../common'
+import { Button, Loading, TextInput } from 'components/common'
 import { isTokenEligible } from './helpers'
 
 export default function Actions({ estimation, feeSpeed, approveTxn, rejectTxn, signingStatus }) {
@@ -53,7 +53,7 @@ export default function Actions({ estimation, feeSpeed, approveTxn, rejectTxn, s
           title='Confirmation code should be 6 digits'
           autoComplete='nope'
           required minLength={6} maxLength={6}
-          placeholder={signingStatus.confCodeRequired === 'otp' ? 'Authenticator code' : 'Confirmation code'}
+          placeholder={signingStatus.confCodeRequired === 'otp' ? 'Authenticator OTP code' : 'Confirmation code'}
           value={quickAccCredentials.code}
           onChange={value => setQuickAccCredentials({ ...quickAccCredentials, code: value })}
         ></TextInput>

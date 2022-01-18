@@ -1,14 +1,15 @@
 import './AddTokenModal.scss'
 
-import { Contract, getDefaultProvider } from 'ethers';
+import { Contract } from 'ethers';
 import { formatUnits, Interface } from 'ethers/lib/utils';
 import ERC20ABI from 'adex-protocol-eth/abi/ERC20'
-import { isValidAddress } from '../../../helpers/address';
-import { Button, Loading, Modal, TextInput } from '../../common'
+import { isValidAddress } from 'lib/address';
+import { Button, Loading, Modal, TextInput } from 'components/common'
 import { useState } from 'react';
-import { useToasts } from '../../../hooks/toasts';
+import { useToasts } from 'hooks/toasts';
 import { MdOutlineAdd, MdOutlineClose } from 'react-icons/md';
-import { useModals } from '../../../hooks';
+import { useModals } from 'hooks';
+import { getProvider } from 'lib/provider'
 
 const ERC20Interface = new Interface(ERC20ABI)
 
@@ -30,7 +31,7 @@ const AddTokenModal = ({ network, account, onAddToken }) => {
         setShowError(false)
 
         try {
-            const provider = getDefaultProvider(network.rpc)
+            const provider = getProvider(network.id)
             const tokenContract = new Contract(address, ERC20Interface, provider)
             
             const [balanceOf, name, symbol, decimals] = await Promise.all([

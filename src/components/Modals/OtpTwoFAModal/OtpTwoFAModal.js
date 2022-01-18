@@ -1,13 +1,13 @@
 import './OtpTwoFAModal.scss'
 
-import { Modal, Button, TextInput, Loading } from '../../common'
+import { Modal, Button, TextInput, Loading } from 'components/common'
 import { authenticator } from '@otplib/preset-default'
 import QRCode from 'qrcode'
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { useToasts } from '../../../hooks/toasts'
+import { useToasts } from 'hooks/toasts'
 import { Wallet } from 'ethers'
-import { fetchPost } from '../../../lib/fetch'
-import { useModals } from '../../../hooks'
+import { fetchPost } from 'lib/fetch'
+import { useModals } from 'hooks'
 
 const OtpTwoFAModal = ({ relayerURL, selectedAcc, setCacheBreak }) => {
     const { hideModal } = useModals()

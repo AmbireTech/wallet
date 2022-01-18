@@ -1,13 +1,15 @@
 import { formatUnits } from 'ethers/lib/utils'
 import { constants } from 'ethers'
-import { names, tokens } from '../consts/humanizerInfo'
-import networks from '../consts/networks'
+import { names, tokens } from 'consts/humanizerInfo'
+import networks from 'consts/networks'
 import humanizers from './humanizers'
 
 // address (lwoercase) => name
 const knownAliases = {}
 // address (lowercase) => [symbol, decimals]
 const knownTokens = {}
+
+export const formatNativeTokenAddress = address => address.toLowerCase() === `0x${'e'.repeat(40)}` ? `0x${'0'.repeat(40)}` : address.toLowerCase()
 
 export function getTransactionSummary(txn, networkId, accountAddr, opts = {}) {
     const [to, value, data = '0x'] = txn
@@ -86,6 +88,11 @@ export function isKnown(txn, from) {
     if (txn[0] === from) return true
     const address = txn[0].toLowerCase()
     return !!(knownAliases[address] || names[address] || tokens[address] || knownTokens[address])
+}
+
+export {
+    knownAliases,
+    knownTokens
 }
 
 // @TODO
