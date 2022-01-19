@@ -25,16 +25,37 @@ export function getTransactionSummary(txn, networkId, accountAddr, opts = {}) {
 
     if (data === '0x' && to.toLowerCase() === accountAddr.toLowerCase()) {
         // Doesn't matter what the value is, this is always a no-op
-        return !opts.extended ? `Transaction cancellation` : [
+        return !opts.extended ? `Transaction cancellation` : [[
             'Cancel',
             'transaction'
-        ]
+        ]]
     }
 
     let callSummary, sendSummary
-    if (parseInt(value) > 0) sendSummary = `send ${nativeToken(network, value)} to ${name || to}`
+    if (parseInt(value) > 0) sendSummary = !opts.extended ? `send ${nativeToken(network, value)} to ${name || to}` : [
+        'Send',
+        {
+            type: 'token',
+            ...nativeToken(network, value, true),
+        },
+        'to',
+        {
+            type: 'address',
+            address: to,
+            name
+        }
+    ]
+
     if (data !== '0x') {
-        callSummary = `Unknown interaction with ${name || (tokenInfo ? tokenInfo[0] : to)}`
+        callSummary = !opts.extended ? `Unknown interaction with ${name || (tokenInfo ? tokenInfo[0] : to)}` : [
+            'unknown',
+            'interaction with',
+            {
+                type: 'address',
+                address: to,
+                name: name || tokenInfo && tokenInfo[0]
+            }
+        ]
 
         const sigHash = data.slice(0, 10)
         const humanizer = humanizers[sigHash]
@@ -48,7 +69,9 @@ export function getTransactionSummary(txn, networkId, accountAddr, opts = {}) {
             }
         }
     }
-    return [callSummary, sendSummary].filter(x => x).join(', ')
+
+    const filteredSummary = [callSummary, sendSummary].filter(x => x)
+    return !opts.extended ? filteredSummary.join(', ') : filteredSummary
 }
 
 // Currently takes network because one day we may be seeing the same addresses used on different networks

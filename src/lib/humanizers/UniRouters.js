@@ -23,7 +23,7 @@ const deadlineText = (deadlineSecs, mined) => {
 
 const toExtended = (fromToken, toToken, recipient, expires, atLeast = true) => {
   const upTo = !atLeast ? ['up to'] : []
-  return [
+  return [[
     'Swap',
     ...upTo,
     {
@@ -37,7 +37,7 @@ const toExtended = (fromToken, toToken, recipient, expires, atLeast = true) => {
     },
     ...recipient,
     expires
-  ]
+  ]]
 }
 
 const uniV2Mapping = {

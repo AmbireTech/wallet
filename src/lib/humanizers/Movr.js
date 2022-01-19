@@ -12,7 +12,7 @@ const getNetwork = (chainId, extended = false) => {
 }
 
 const toExtended = (fromToken, network, toToken) => {
-  return [
+  return [[
     'Transfer',
     {
       type: 'token',
@@ -28,7 +28,7 @@ const toExtended = (fromToken, network, toToken) => {
       type: 'token',
       ...toToken
     }
-  ]
+  ]]
 }
 
 const MovrMapping = {

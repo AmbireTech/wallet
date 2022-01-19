@@ -10,7 +10,7 @@ const tokenPrefixes = { ethereum: 'y', polygon: 'tv' }
 const addTokenPrefix = (token, network) => token.split(' ').map((x, i) => i === 1 ? tokenPrefixes[network]+x : x).join(' ')
 const getVaultInfo = ({ to }) => yearnVaults.find(x => x.addr === to) || tesseractVaults.find(x => x.addr === to)
 
-const toExtendedRich = (action, word, vaultInfo, amount) => [
+const toExtendedRich = (action, word, vaultInfo, amount) => [[
   action,
   {
     type: 'token',
@@ -22,9 +22,9 @@ const toExtendedRich = (action, word, vaultInfo, amount) => [
     name: vaultInfo.name,
     address: vaultInfo.addr
   }
-]
+]]
 
-const toExtended = (action, word, network, amount) => [
+const toExtended = (action, word, network, amount) => [[
   action,
   {
     type: 'token',
@@ -36,7 +36,7 @@ const toExtended = (action, word, network, amount) => [
     type: 'address',
     name: vaultNames[network.id]
   }
-]
+]]
 
 const YearnTesseractMapping = {
   [iface.getSighash('deposit(uint256,address)')]: (txn, network, { extended = false }) => {
