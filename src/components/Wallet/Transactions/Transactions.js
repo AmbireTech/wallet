@@ -9,22 +9,23 @@ import accountPresets from 'consts/accountPresets'
 import networks from 'consts/networks'
 import { getTransactionSummary } from 'lib/humanReadableTransactions'
 import { Bundle } from 'adex-protocol-eth'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import fetch from 'node-fetch'
 import { useToasts } from 'hooks/toasts'
 import { toBundleTxn } from 'lib/requestToBundleTxn'
 import { HiOutlineChevronLeft, HiOutlineChevronRight } from 'react-icons/hi'
+import { useHistory, useParams } from 'react-router-dom/cjs/react-router-dom.min'
 
 // 10% in geth and most EVM chain RPCs
 const RBF_THRESHOLD = 1.1
 
 function Transactions ({ relayerURL, selectedAcc, selectedNetwork, showSendTxns, eligibleRequests }) {
   const { addToast } = useToasts()
+  const history = useHistory()
+  const params = useParams()
+
   const [cacheBreak, setCacheBreak] = useState(() => Date.now())
-  const [page, setPage] = useState(1)
-
-  useEffect(() => setPage(1), [selectedAcc, selectedNetwork])
-
+  
   // @TODO refresh this after we submit a bundle; perhaps with the upcoming transactions service
   // We want this pretty much on every rerender with a 5 sec debounce
   useEffect(() => {
@@ -36,6 +37,18 @@ function Transactions ({ relayerURL, selectedAcc, selectedNetwork, showSendTxns,
     ? `${relayerURL}/identity/${selectedAcc}/${selectedNetwork.id}/transactions?cacheBreak=${cacheBreak}`
     : null
   const { data, errMsg, isLoading } = useRelayerData(url)
+
+  const maxBundlePerPage = 10
+  const executedTransactions = data ? data.txns.filter(x => x.executed) : []
+  const maxPages = Math.ceil(executedTransactions.length / maxBundlePerPage)
+
+  const defaultPage = useMemo(() => Math.min(Math.max(Number(params.page), 1), maxPages) || 1, [params.page, maxPages])
+  const [page, setPage] = useState(defaultPage)
+
+  const bundlesList = executedTransactions.slice((page - 1) * maxBundlePerPage, page * maxBundlePerPage).map(bundle => BundlePreview({ bundle, mined: true }))
+  
+  useEffect(() => !isLoading && history.replace(`/wallet/transactions/${page}`), [page, history, isLoading])
+  useEffect(() => setPage(defaultPage), [selectedAcc, selectedNetwork, defaultPage])
 
   // @TODO implement a service that stores sent transactions locally that will be used in relayerless mode
   if (!relayerURL) return (<section id='transactions'>
@@ -76,11 +89,6 @@ function Transactions ({ relayerURL, selectedAcc, selectedNetwork, showSendTxns,
   // @TODO: we are currently assuming the last txn is a fee; change that (detect it)
   const speedup = relayerBundle => showSendTxns(mapToBundle(relayerBundle, { txns: relayerBundle.txns.slice(0, -1) }))
 
-  const maxBundlePerPage = 10
-  const executedTransactions = data ? data.txns.filter(x => x.executed) : []
-  const bundlesList = executedTransactions.slice((page - 1) * maxBundlePerPage, page * maxBundlePerPage).map(bundle => BundlePreview({ bundle, mined: true }))
-  const maxPages = Math.ceil(executedTransactions.length / maxBundlePerPage)
-
   const paginationControls = (
     <div className='pagination-controls'>
       <div className='pagination-title'>Page</div>
@@ -89,7 +97,6 @@ function Transactions ({ relayerURL, selectedAcc, selectedNetwork, showSendTxns,
       <Button clear mini onClick={() => page < maxPages && setPage(page => page + 1)}><HiOutlineChevronRight/></Button>
     </div>
   )
-
 
   return (
     <section id='transactions'>
