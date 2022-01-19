@@ -67,6 +67,23 @@ export default function TxnPreview ({ txn, onDismiss, network, account, isFirstF
           </div>
         )
 
+        if (item.type === 'erc721') {
+          const canShowLink = item.network && item.address && item.id
+          return (
+            <a
+              className='erc721'
+              key={`item-${i}`}
+              href={canShowLink ? `#/wallet/nft/${item.network}/${item.address}/${item.id}` : null}
+              target="_blank"
+              rel="noreferrer"
+              onClick={e => e.stopPropagation()}
+            >
+              { item.name }
+              { canShowLink ? <HiOutlineExternalLink/> : null }
+            </a>
+          )
+        }
+
         return <></>
       })
       :
