@@ -31,7 +31,9 @@ export default function TxnPreview ({ txn, onDismiss, network, account, isFirstF
     return Array.isArray(entry) ? // If entry is extended summary
       entry.map((item, i) => {
         if (item.length === 1) return item
-        if (i === 0) return (<div className='action' key={`item-${i}`}>{ item }</div>)
+
+        if (i === 0) return (<div className={`action ${item.toLowerCase()}`} key={`item-${i}`}>{ item }</div>)
+
         if (!item.type) return (<div className='word' key={`item-${i}`}>{ item }</div>)
 
         if (item.type === 'token') return (
