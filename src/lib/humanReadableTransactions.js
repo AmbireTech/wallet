@@ -53,7 +53,7 @@ export function getTransactionSummary(txn, networkId, accountAddr, opts = {}) {
             {
                 type: 'address',
                 address: to,
-                name: name || tokenInfo && tokenInfo[0]
+                name: name || (tokenInfo && tokenInfo[0])
             }
         ]
 
