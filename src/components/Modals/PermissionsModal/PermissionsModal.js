@@ -20,7 +20,7 @@ const PermissionsModal = ({ relayerIdentityURL, account, onAddAccount, isCloseBt
     const { addToast } = useToasts()
     const [isEmailConfirmed, setEmailConfirmed] = useState(false)
     const [isEmailResent, setEmailResent] = useState(false)
-    const [isJsonBackupDownloaded, setIsJsonBackupDownloaded] = useState(isBackupOptout ? true : false)
+    const [isJsonBackupDownloaded, setIsJsonBackupDownloaded] = useState(isBackupOptout)
     const [resendTimeLeft, setResendTimeLeft] = useState(60000)
 
     const days = Math.ceil(accountPresets.quickAccTimelock / 86400)
@@ -103,10 +103,11 @@ const PermissionsModal = ({ relayerIdentityURL, account, onAddAccount, isCloseBt
 
     const handleExportClicked = () => {
         setIsJsonBackupDownloaded(true)
-        let copiedAcc = {...account}
-        if (copiedAcc.emailConfRequired) delete copiedAcc.emailConfRequired
-        if (copiedAcc.backupOptout) delete copiedAcc.backupOptout
-        if (copiedAcc.cloudBackupOptout) delete copiedAcc.cloudBackupOptout
+        let copiedAcc = { ...account }
+        console.log('copiedAcc',copiedAcc)
+        if (typeof copiedAcc.emailConfRequired !== 'undefined') delete copiedAcc.emailConfRequired
+        if (typeof copiedAcc.backupOptout !== 'undefined') delete copiedAcc.backupOptout
+        if (typeof copiedAcc.cloudBackupOptout !== 'undefined') delete copiedAcc.cloudBackupOptout
         
         downloadFile({
             data: JSON.stringify(copiedAcc),
@@ -114,12 +115,10 @@ const PermissionsModal = ({ relayerIdentityURL, account, onAddAccount, isCloseBt
             fileType: 'text/json',
         })
         
-        if (account.backupOptout) {
-            onAddAccount({
-                ...account,
-                backupOptout: false
-            })
-        }
+        onAddAccount({
+            ...account,
+            backupOptout: false
+        })
     }
 
     useEffect(() => {
