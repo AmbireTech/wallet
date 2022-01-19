@@ -17,6 +17,7 @@ import { useModals, usePermissions } from 'hooks'
 import { useCallback, useEffect, useMemo, useRef } from 'react'
 import { isFirefox } from 'lib/isFirefox'
 import CrossChain from "./CrossChain/CrossChain"
+import OpenSea from "./OpenSea/OpenSea"
 
 export default function Wallet(props) {
   const { showModal } = useModals()
@@ -90,6 +91,10 @@ export default function Wallet(props) {
         selectedAcc={props.selectedAcc}
         network={props.network}
       />
+    },
+    {
+      path: '/opensea',
+      component: <OpenSea/>
     },
     {
       path: '/nft/:network/:collectionAddr/:tokenId',
