@@ -25,6 +25,20 @@
 
         .actions {
             display: flex;
+            justify-content: flex-end;
+            gap: 1em;
+
+            button {
+                background-color: #80ffdb;
+                padding: 1em;
+                font-weight: bold;
+                text-transform: uppercase;
+
+                &.cancel {
+                    background-color: #da5151;
+                    color: white;
+                }
+            }
         }
     }
 
@@ -93,18 +107,16 @@
         }
     }
 
+    #waiting-transactions {
+        .bundle {
+            gap: 1.5em;
 
-    .actions button {
-        background-color: #80ffdb;
-        margin-right: 1em;
-        padding: 1em;
-        font-weight: bold;
-        text-transform: uppercase;
-    }
-
-    .actions button.cancel {
-        background-color: #da5151;
-        color: white;
+            .bundle-list {
+                display: flex;
+                flex-direction: column;
+                gap: 0.5em;
+            }
+        }
     }
 
     #pending {

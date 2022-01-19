@@ -1,7 +1,7 @@
 import './Transactions.scss'
 import { FaSignature } from 'react-icons/fa'
 import { BsCoin, BsCalendarWeek, BsGlobe2, BsCheck2All } from 'react-icons/bs'
-import { MdOutlinePendingActions, MdShuffle } from 'react-icons/md'
+import { MdOutlinePendingActions, MdShuffle, MdCheck } from 'react-icons/md'
 import { useRelayerData } from 'hooks'
 import TxnPreview from 'components/common/TxnPreview/TxnPreview'
 import { Loading, Button } from 'components/common'
@@ -93,13 +93,13 @@ function Transactions ({ relayerURL, selectedAcc, selectedNetwork, showSendTxns,
 
   return (
     <section id='transactions'>
-      {!!eligibleRequests.length && (<div className='panel'>
+      {!!eligibleRequests.length && (<div className='panel' id="waiting-transactions">
         <div className='panel-heading'>
           <div className='title'><FaSignature size={25}/>Waiting to be signed (current batch)</div>
         </div>
         <div className="content">
           <div className="bundle">
-            <div onClick={() => showSendTxns(null)}>
+            <div className="bundle-list" onClick={() => showSendTxns(null)}>
               {eligibleRequests.map(req => (
                 <TxnPreview
                     key={req.id}
@@ -114,7 +114,7 @@ function Transactions ({ relayerURL, selectedAcc, selectedNetwork, showSendTxns,
                 <Button small className='cancel' onClick={
                   () => resolveMany(eligibleRequests.map(x => x.id), { message: 'Ambire user rejected all requests' })
                 }>Reject all</Button>*/}
-                <Button small onClick={() => showSendTxns(null)}>Sign or reject</Button>
+                <Button small icon={<MdCheck/>} onClick={() => showSendTxns(null)}>Sign or reject</Button>
               </div>
           </div>
         </div>
