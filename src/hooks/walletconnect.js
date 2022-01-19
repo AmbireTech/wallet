@@ -141,9 +141,18 @@ export default function useWalletConnect ({ account, chainId, initialUri }) {
                 return
             }
 
-            sessionStart = Date.now()
+            // Clear the "dApp tool too long to connect" timeout
             clearTimeout(sessionTimeout)
 
+            if (connector.session.peerMeta.url.includes('bridge.avax.network')) {
+                const message = 'Avalanche Bridge does not currently support smart wallets.'
+                connector.rejectSession({ message })
+                addToast(message, { error: true })
+                return
+            }
+
+            // sessionStart is used to check if dApp disconnected immediately
+            sessionStart = Date.now()
             connector.approveSession({
                 accounts: [stateRef.current.account],
                 chainId: stateRef.current.chainId,
