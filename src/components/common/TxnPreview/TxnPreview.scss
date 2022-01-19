@@ -67,6 +67,14 @@ $extended-summary-height: 31px;
                         text-transform: uppercase;
                         padding: 0 0.75em;
                         background-color: $ambire-dark-blue;
+
+                        &.unknown {
+                            background-color: #d06f1b;
+                        }
+
+                        &.cancel {
+                            background-color: #c33a3a;
+                        }
                     }
 
                     .word {
