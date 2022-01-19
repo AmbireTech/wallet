@@ -140,7 +140,7 @@ function Transactions ({ relayerURL, selectedAcc, selectedNetwork, showSendTxns,
             <BsCheck2All/>
             {(data && data.txns.length === 0) ? 'No transactions yet.' : 'Confirmed transactions'}
           </div>
-          { paginationControls }
+          { !bundlesList.length ? null : paginationControls }
         </div>
         <div className="content">
           {!relayerURL && (<h3 className='validation-error'>Unsupported: not currently connected to a relayer.</h3>)}
