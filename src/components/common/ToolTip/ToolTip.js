@@ -15,7 +15,7 @@ const ToolTip = ({ children, label, disabled, className }) => {
             { children }
             {
                 !disabled ? 
-                    <div class="tooltip-label" style={{top: mousePosition.y, left: mousePosition.x}}>{ label }</div>
+                    <div className="tooltip-label" style={{top: mousePosition.y, left: mousePosition.x}}>{ label }</div>
                     :
                     null
             }
