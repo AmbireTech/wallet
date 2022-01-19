@@ -126,7 +126,7 @@ export default function Wallet(props) {
       && ((!isFirefox() && !isClipboardGranted) || !isNoticationsGranted)
     const showCauseOfPermissions = areBlockedPermissions && !modalHidden
     const showCauseOfEmail = !!account.emailConfRequired
-    const showCauseOfBackupOptout = !account.backupOptout ? true : account.backupOptout
+    const showCauseOfBackupOptout = account.backupOptout
     
     const permissionsModal = <PermissionsModal
       relayerIdentityURL={relayerIdentityURL} 
@@ -136,7 +136,7 @@ export default function Wallet(props) {
       isBackupOptout={!showCauseOfBackupOptout} 
     />
 
-    if (showCauseOfEmail || showCauseOfPermissions || !showCauseOfBackupOptout) showModal(permissionsModal, { disableClose: true })
+    if (showCauseOfEmail || showCauseOfPermissions || showCauseOfBackupOptout) showModal(permissionsModal, { disableClose: true })
   }, [props.accounts, props.relayerURL, props.onAddAccount, props.selectedAcc, arePermissionsLoaded, isClipboardGranted, isNoticationsGranted, modalHidden, showModal])
 
   useEffect(() => handlePermissionsModal(), [handlePermissionsModal])
