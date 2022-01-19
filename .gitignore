@@ -22,3 +22,6 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .idea
+public/bookmarklet/webpackedAmbexBookmarkletMessenger.js
+public/bookmarklet/bookmarkletSnippet.js
+public/bookmarklet/webpackedBookmarkletInjection.js

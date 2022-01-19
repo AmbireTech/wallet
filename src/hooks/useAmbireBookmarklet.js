@@ -1,19 +1,20 @@
 import { useCallback, useEffect, useState, useRef } from 'react'
+import { useToasts } from 'hooks/toasts'
 
 import { getDefaultProvider, BigNumber } from 'ethers'
 
 import {
-  setupAmbexMessenger,
+  setupAmbexBMLMessenger,
   sendMessage,
   addMessageHandler,
   clear,
   sendReply
-} from "lib/ambexMessenger"
+} from "lib/bookmarklet/ambexBookmarkletMessenger.js"
 
-const STORAGE_KEY = 'ambire_extension_state'
+const STORAGE_KEY = 'ambire_bml_state'
 
-export default function useAmbireExtension({ allNetworks, setNetwork, selectedAccount, network, verbose = 1 }) {
-  // One connector at a time
+export default function useAmbireBookmarklet({ allNetworks, setNetwork, selectedAccount, network, verbose = 1 }) {
+  const { addToast } = useToasts()
 
   // This is needed cause of the Gnosis Safe event handlers (listeners)
   const stateRef = useRef()
@@ -84,6 +85,9 @@ export default function useAmbireExtension({ allNetworks, setNetwork, selectedAc
   const resolveMany = (ids, resolution) => {
     for (let req of requests.filter(x => ids.includes(x.id))) {
 
+      //console.log('ambireEx hook resolution', resolution)
+      //console.log('request of resol', req)
+
       let rpcResult = {
         jsonrpc: "2.0",
         id: req.originalPayloadId,
@@ -123,7 +127,8 @@ export default function useAmbireExtension({ allNetworks, setNetwork, selectedAc
   useEffect(() => {
 
     sendMessage({
-      to: "background",
+      to: "pageContext",
+      toFrameId: "broadcast",
       type: "ambireWalletAccountChanged",
       data: {
         account: selectedAccount
@@ -131,7 +136,8 @@ export default function useAmbireExtension({ allNetworks, setNetwork, selectedAc
     })
 
     sendMessage({
-      to: "background",
+      to: "pageContext",
+      toFrameId: "broadcast",
       type: "ambireWalletChainChanged",
       data: {
         chainId: network.chainId
@@ -139,22 +145,13 @@ export default function useAmbireExtension({ allNetworks, setNetwork, selectedAc
     })
 
     verbose > 0 && console.log("listening to msgs")
-    setupAmbexMessenger("ambirePageContext")
+    setupAmbexBMLMessenger("ambirePageContext")
 
     addMessageHandler({ type: "ping" }, (message) => {
+      //console.log("GOT PING");
+      addToast("Ambire bookmarklet connected from " + message.data.host)
       sendReply(message, {
-        data: selectedAccount + " Ambex PONG!!!"
-      })
-    })
-
-    addMessageHandler({ type: "ambireContentScriptInjected" }, (message) => {
-      sendMessage({
-        to: "background",
-        type: "ambirePageContextInjected",
-        data: {
-          account: selectedAccount,
-          chainId: network.chainId
-        }
+        data: selectedAccount + " PONG!!!"
       })
     })
 
@@ -344,7 +341,7 @@ export default function useAmbireExtension({ allNetworks, setNetwork, selectedAc
     return () => {
       clear()
     }
-  }, [selectedAccount, network, number2hex, allNetworks, setNetwork, handlePersonalSign, verbose])
+  }, [selectedAccount, network, handlePersonalSign, number2hex, verbose, setNetwork, allNetworks, addToast])
 
   return {
     requests,

@@ -21,6 +21,7 @@ import useWalletConnect from './hooks/walletconnect'
 import useGnosisSafe from './hooks/useGnosisSafe'
 import useNotifications from './hooks/notifications'
 import useAmbireExtension from './hooks/useAmbireExtension'
+import useAmbireBookmarklet from './hooks/useAmbireBookmarklet'
 import { useAttentionGrabber, usePortfolio, useAddressBook, useRelayerData } from './hooks'
 import { useToasts } from './hooks/toasts'
 import { useOneTimeQueryParam } from './hooks/oneTimeQueryParam'
@@ -59,7 +60,14 @@ function AppInner () {
     network: network
   }, [selectedAcc, network])
 
-  const { requests: extensionRequests, resolveMany: extensionResolveMany, connect: extensionConnect, disconnect: extensionDisconnect } = useAmbireExtension({
+  const { requests: extensionRequests, resolveMany: extensionResolveMany } = useAmbireExtension({
+    allNetworks,
+    setNetwork,
+    selectedAccount: selectedAcc,
+    network: network
+  }, [selectedAcc, network])
+
+  const { requests: bmlRequests, resolveMany: bmlResolveMany} = useAmbireBookmarklet({
     allNetworks,
     setNetwork,
     selectedAccount: selectedAcc,
@@ -73,14 +81,15 @@ function AppInner () {
 
   // Merge all requests
   const requests = useMemo(
-    () => [...internalRequests, ...wcRequests, ...gnosisRequests, ...extensionRequests]
+    () => [...internalRequests, ...wcRequests, ...gnosisRequests, ...extensionRequests, ...bmlRequests]
       .filter(({ account }) => accounts.find(({ id }) => id === account)),
-    [wcRequests, internalRequests, gnosisRequests, extensionRequests, accounts]
+    [wcRequests, internalRequests, gnosisRequests, extensionRequests, bmlRequests, accounts]
   )
   const resolveMany = (ids, resolution) => {
     wcResolveMany(ids, resolution)
     gnosisResolveMany(ids, resolution)
     extensionResolveMany(ids, resolution)
+    bmlResolveMany(ids, resolution)
     setInternalRequests(reqs => reqs.filter(x => !ids.includes(x.id)))
   }
 

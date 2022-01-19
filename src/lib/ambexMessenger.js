@@ -31,7 +31,7 @@ if (typeof chrome !== "undefined") {
 	chromeObject = chrome;
 }
 
-const setupAmbexMessenger = (relayer) => {
+export const setupAmbexMessenger = (relayer) => {
 	RELAYER = relayer;
 
 	WINDOWLISTENER = (windowMessage) => {
@@ -75,20 +75,16 @@ const handleMessage = function (message, sender = null) {
 			}
 		}
 
-		if (message.data && message.data == "done") {
-			debugger;
-		}
-
 		const handlerIndex = HANDLERS.findIndex(a => {
 			let handle = true;
 			if (
 				//REPLIES
-				a.requestFilter.isReply && (message.isReply && a.requestFilter.id !== message.id)
+				(a.requestFilter.isReply && (message.isReply && a.requestFilter.id !== message.id))
 				//CALLS
 				|| (
 					a.requestFilter.type !== message.type
-					|| a.requestFilter.from && a.requestFilter.from !== message.from
-					|| a.requestFilter.to && a.requestFilter.to !== message.to
+					|| (a.requestFilter.from && a.requestFilter.from !== message.from)
+					|| (a.requestFilter.to && a.requestFilter.to !== message.to)
 				)
 			) handle = false;
 
@@ -175,11 +171,11 @@ const checkForwardPermission = (message, sender, callback) => {
 	}
 };
 
-const setPermissionMiddleware = (callback) => {
+export const setPermissionMiddleware = (callback) => {
 	PERMISSION_MIDDLEWARE = callback;
 };
 
-const setAmbireTabId = () => {
+export const setAmbireTabId = () => {
 	if (RELAYER === "ambireContentScript") {
 		sendMessageInternal({
 			to: "background",
@@ -190,7 +186,7 @@ const setAmbireTabId = () => {
 	}
 };
 
-const clear = function () {
+export const clear = function () {
 	//ONLY FOR REACT AMBIRE WALLET
 	if (RELAYER === "ambirePageContext") {
 		HANDLERS = [];
@@ -251,7 +247,7 @@ const sendMessageInternal = (message) => {
 };
 
 //expecting to, type, optional DATA
-const sendMessage = (message, callback, options = {}) => new Promise((res, rej) => {
+export const sendMessage = (message, callback, options = {}) => new Promise((res, rej) => {
 
 		options = {
 			replyTimeout: 5000,
@@ -301,7 +297,7 @@ const sendMessage = (message, callback, options = {}) => new Promise((res, rej) 
 	}
 );
 
-const sendReply = (fromMessage, message) => {
+export const sendReply = (fromMessage, message) => {
 
 	if (!fromMessage){
 		debugger;
@@ -317,7 +313,7 @@ const sendReply = (fromMessage, message) => {
 	sendMessageInternal(message);
 };
 
-const sendAck = (fromMessage) => {
+export const sendAck = (fromMessage) => {
 	sendMessageInternal({
 		from : RELAYER,
 		to : fromMessage.from,
@@ -334,12 +330,12 @@ const removeMessageHandler = (filter) => {
 		let handle = true;
 		if (
 			//REPLIES
-			a.requestFilter.isReply && (filter.isReply && a.requestFilter.id !== filter.id)
+			(a.requestFilter.isReply && (filter.isReply && a.requestFilter.id !== filter.id))
 			//CALLS
 			|| (
 				a.requestFilter.type !== filter.type
-				|| a.requestFilter.from && a.requestFilter.from !== filter.from
-				|| a.requestFilter.to && a.requestFilter.to !== filter.to
+				|| (a.requestFilter.from && a.requestFilter.from !== filter.from)
+				|| (a.requestFilter.to && a.requestFilter.to !== filter.to)
 			)
 		) handle = false;
 
@@ -352,7 +348,7 @@ const removeMessageHandler = (filter) => {
 	}
 }
 
-const addMessageHandler = (filter, callback) => {
+export const addMessageHandler = (filter, callback) => {
 	HANDLERS.push({
 		requestFilter: {...filter, isFilter: true},
 		callback: callback
@@ -360,7 +356,7 @@ const addMessageHandler = (filter, callback) => {
 	if (VERBOSE) console.log(`${RELAYER_VERBOSE_TAG[RELAYER]} ambexMessenger[${RELAYER}] handler added`, HANDLERS);
 };
 
-const makeRPCError = (requestPayload, error, errorCode=-1) => {
+export const makeRPCError = (requestPayload, error, errorCode=-1) => {
 	return {
 		id: requestPayload.id,
 		version: requestPayload.version,
@@ -368,15 +364,3 @@ const makeRPCError = (requestPayload, error, errorCode=-1) => {
 		jsonrpc: requestPayload.jsonrpc
 	}
 }
-
-module.exports = {
-	setupAmbexMessenger,
-	sendMessage,
-	sendReply,
-	sendAck,
-	addMessageHandler,
-	setAmbireTabId,
-	setPermissionMiddleware,
-	clear,
-	makeRPCError
-};
