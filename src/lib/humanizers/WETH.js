@@ -3,13 +3,13 @@ import { Interface } from 'ethers/lib/utils'
 import { nativeToken } from 'lib/humanReadableTransactions'
 
 const toExtended = (action, network, amount) => {
-  return [
+  return [[
       action,
       {
         type: 'token',
         ...nativeToken(network, amount, true)
       }
-    ]
+    ]]
 }
 
 const iface = new Interface(abis.WETH)

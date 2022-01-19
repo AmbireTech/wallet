@@ -10,7 +10,7 @@ const ERC20Mapping = {
     const [ approvedAddress, amount ] = iface.parseTransaction(txn).args
     const name = getName(approvedAddress, network)
     const tokenName = getName(txn.to, network)
-    if (amount.eq(0)) return !extended ? [`Revoke approval for ${name} to use ${tokenName}`] : [
+    if (amount.eq(0)) return !extended ? [`Revoke approval for ${name} to use ${tokenName}`] : [[
       'Revoke',
       'approval for',
       {
@@ -23,9 +23,9 @@ const ERC20Mapping = {
         type: 'token',
         ...token(txn.to, amount, true)
       }
-    ]
+    ]]
 
-    if (extended) return [
+    if (extended) return [[
       'Approve',
       {
         type: 'address',
@@ -37,7 +37,7 @@ const ERC20Mapping = {
         type: 'token',
         ...token(txn.to, amount, true)
       }
-    ]
+    ]]
 
     if (amount.eq(constants.MaxUint256)) return [`Approve ${name} to use your ${tokenName}`]
     return [`Approve ${name} to use ${token(txn.to, amount)}`]
@@ -46,7 +46,7 @@ const ERC20Mapping = {
     const [ to, amount ] = iface.parseTransaction(txn).args
     const name = getName(to, network)
     
-    if (extended) return [
+    if (extended) return [[
       'Send',
       {
         type: 'token',
@@ -58,7 +58,7 @@ const ERC20Mapping = {
         address: to,
         name
       }
-    ]
+    ]]
   
     return [`Send ${token(txn.to, amount)} to ${to === name ? to : name+' ('+to+')'}`]
   },

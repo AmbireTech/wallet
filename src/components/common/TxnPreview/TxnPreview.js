@@ -27,10 +27,10 @@ export default function TxnPreview ({ txn, onDismiss, network, account, isFirstF
   const networkDetails = networks.find(({ id }) => id === network)
   const extendedSummary = getTransactionSummary(txn, network, account, { mined, extended: true })
 
-  const summary = (
-    Array.isArray(extendedSummary) ? 
-      extendedSummary.map((item, i) => {
-        if (extendedSummary.length === 1) return item
+  const summary = (extendedSummary.map(entry => {
+    return Array.isArray(entry) ? // If entry is extended summary
+      entry.map((item, i) => {
+        if (item.length === 1) return item
         if (i === 0) return (<div className='action' key={`item-${i}`}>{ item }</div>)
         if (!item.type) return (<div className='word' key={`item-${i}`}>{ item }</div>)
 
@@ -68,8 +68,8 @@ export default function TxnPreview ({ txn, onDismiss, network, account, isFirstF
         return <></>
       })
       :
-      extendedSummary
-  )
+      (entry)
+  }))
 
   return (
     <div className={isFirstFailing ? 'txnPreview firstFailing' : 'txnPreview'}>
