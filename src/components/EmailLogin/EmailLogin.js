@@ -100,7 +100,7 @@ export default function EmailLogin({ relayerURL, onAddAccount }) {
     if (!relayerURL) {
         return (<section className="loginSignupWrapper" id="emailLoginSection">
             <div id="logo"/>
-            <h3 class="error">Email login not supported without the relayer.</h3>
+            <h3 className="error">Email login not supported without the relayer.</h3>
             <a href={importJSONHref}><button>Import JSON</button></a>
         </section>)
     }
