@@ -8,7 +8,7 @@ const onBehalfText = (onBehalf, txnFrom) => onBehalf.toLowerCase() !== txnFrom.t
   : ''
 
 const toExtended = (action, word, token, txn, onBehalf) => {
-  return [
+  return [[
     action,
     {
       type: 'token',
@@ -21,7 +21,7 @@ const toExtended = (action, word, token, txn, onBehalf) => {
       name: 'Aave Lending Pool'
     },
     onBehalf ? onBehalfText(onBehalf, txn.from) : ''
-  ]
+  ]]
 }
 
 const AaveMapping = {
