@@ -384,6 +384,7 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
                   estimation={estimation}
                   approveTxn={approveTxn}
                   rejectTxn={rejectTxn}
+                  cancelSigning={() => setSigningStatus(null)}
                   signingStatus={signingStatus}
                   feeSpeed={feeSpeed}
                 />

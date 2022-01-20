@@ -190,6 +190,7 @@ $titleBar-height: 90px;
 
                     .buttonComponent {
                         height: 75px;
+                        flex: 0 1 50%;
 
                         &.danger {
                             color: white;
@@ -201,12 +202,12 @@ $titleBar-height: 90px;
                             }
                         }
 
-                        &.rejectTxn {
-                            flex: 0 1 50%;
-                        }
-
                         &.approveTxn {
                             flex: 1 0 auto;
+
+                            .loading {
+                                width: auto;
+                            }
                         }
                     }
                 }
