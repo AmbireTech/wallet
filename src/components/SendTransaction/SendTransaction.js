@@ -348,48 +348,50 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
         </div>
 
         <div id='detailsPanel' className='panel'>
-          <div className='section' id="signing-details">
-            <div className='section-title'>Signing With</div>
-            <div className='section-content'>
-              <div className='account'>
-                <div className='icon' style={{ backgroundImage: `url(${accountAvatar})` }}/>
-                <div className='address'>{ account.id }</div>
-              </div>
-              <div className='network'>
-                on
-                <div className='icon' style={{ backgroundImage: `url(${network.icon})` }}/>
-                <div className='address'>{ network.name }</div>
+          <div id="options-container">
+            <div className='section' id="signing-details">
+              <div className='section-title'>Signing With</div>
+              <div className='section-content'>
+                <div className='account'>
+                  <div className='icon' style={{ backgroundImage: `url(${accountAvatar})` }}/>
+                  <div className='address'>{ account.id }</div>
+                </div>
+                <div className='network'>
+                  on
+                  <div className='icon' style={{ backgroundImage: `url(${network.icon})` }}/>
+                  <div className='address'>{ network.name }</div>
+                </div>
               </div>
             </div>
+
+            <FeeSelector
+              disabled={signingStatus && signingStatus.finalBundle && !(estimation && !estimation.success)}
+              signer={bundle.signer}
+              estimation={estimation}
+              setEstimation={setEstimation}
+              network={network}
+              feeSpeed={feeSpeed}
+              setFeeSpeed={setFeeSpeed}
+            ></FeeSelector>
           </div>
 
-          <FeeSelector
-            disabled={signingStatus && signingStatus.finalBundle && !(estimation && !estimation.success)}
-            signer={bundle.signer}
-            estimation={estimation}
-            setEstimation={setEstimation}
-            network={network}
-            feeSpeed={feeSpeed}
-            setFeeSpeed={setFeeSpeed}
-          ></FeeSelector>
-
-          <div className='separator'></div>
-
-          {
-            bundle.signer.quickAccManager && !relayerURL ? 
-              <FailingTxn message='Signing transactions with an email/password account without being connected to the relayer is unsupported.'></FailingTxn>
-              :
-              <div className='section' id="actions">
-                <Actions
-                  estimation={estimation}
-                  approveTxn={approveTxn}
-                  rejectTxn={rejectTxn}
-                  cancelSigning={() => setSigningStatus(null)}
-                  signingStatus={signingStatus}
-                  feeSpeed={feeSpeed}
-                />
-              </div>
-          }
+          <div id="actions-container">
+            {
+              bundle.signer.quickAccManager && !relayerURL ? 
+                <FailingTxn message='Signing transactions with an email/password account without being connected to the relayer is unsupported.'></FailingTxn>
+                :
+                <div className='section' id="actions">
+                  <Actions
+                    estimation={estimation}
+                    approveTxn={approveTxn}
+                    rejectTxn={rejectTxn}
+                    cancelSigning={() => setSigningStatus(null)}
+                    signingStatus={signingStatus}
+                    feeSpeed={feeSpeed}
+                  />
+                </div>
+            }
+          </div>
         </div>
       </div>
     </div>
