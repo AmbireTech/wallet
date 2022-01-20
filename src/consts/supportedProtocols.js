@@ -27,6 +27,11 @@ const suportedProtocols = [
         network: 'arbitrum',
         protocols: [],
         balancesProvider: 'velcro'
+    },
+    {
+        network: 'fantom',
+        protocols: [],
+	balancesProvider: 'velcro'
     }
 ]
 
