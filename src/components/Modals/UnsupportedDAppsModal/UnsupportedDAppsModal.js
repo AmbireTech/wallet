@@ -40,7 +40,7 @@ const UnsupportedDAppsModal = ({ connections, disconnect, advancedModeList }) =>
             <div className='dapps-list'>
                 {
                     connections.map(({ session }, i) => (
-                        <a className='dapp' key={`dapp-${i}`} href={session.peerMeta.url} target="_blank" rel="norefferer">
+                        <a className='dapp' key={`dapp-${i}`} href={session.peerMeta.url} target="_blank" rel="noreferrer">
                             <div className='icon' style={{ backgroundImage: `url(${session.peerMeta.icons[0]})` }}>
                                 <MdBrokenImage/>
                             </div>
