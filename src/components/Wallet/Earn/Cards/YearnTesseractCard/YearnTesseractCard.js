@@ -44,7 +44,7 @@ const YearnTesseractCard = ({ networkId, accountId, tokens, addRequest }) => {
         tokensItems,
         details,
         onTokenSelect
-    } = useMemo(() => networkId === 'ethereum' ? yearn : tesseract, [networkId, yearn, tesseract])
+    } = useMemo(() => networkId === 'polygon' ? tesseract : yearn, [networkId, yearn, tesseract])
 
     const onValidate = async (type, value, amount) => {
         const item = tokensItems.find(t => t.type === type.toLowerCase() && t.value === value)
@@ -82,7 +82,7 @@ const YearnTesseractCard = ({ networkId, accountId, tokens, addRequest }) => {
     }
 
     useEffect(() => {
-        if (unavailable) return setLoading(false)
+        if (unavailable) return
         async function load() {
             await loadVaults()
             setLoading(false)
@@ -92,8 +92,8 @@ const YearnTesseractCard = ({ networkId, accountId, tokens, addRequest }) => {
 
     useEffect(() => {
         currentNetwork.current = networkId
-        setLoading(true)
-    }, [networkId])
+        if (!unavailable) setLoading(true)
+    }, [networkId, unavailable])
 
     return (
         <Card
