@@ -238,3 +238,4 @@ Additionally, there's an ongoing [Immunefi bug bounty](https://immunefi.com/boun
 * Cross-chain: select box can now be easily searched
 * Private mode (hide the numbers on the dashboard)
 * Earn: add Tesseract, a yield aggregator on Polygon
+* NFTs now show up on Polygon
