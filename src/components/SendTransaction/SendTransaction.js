@@ -323,7 +323,10 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
                   minute={min}
                   onDismiss={bundle.requestIds && (() => resolveMany([bundle.requestIds[i]], { message: REJECT_MSG }))}
                   txn={txn} network={bundle.network} account={bundle.identity}
-                  isFirstFailing={isFirstFailing}/>
+                  isFirstFailing={isFirstFailing}
+                  disableDismiss={!!signingStatus}
+                  disableDismissLabel={"Cannot modify transaction bundle while a signing procedure is pending"}
+                  />
                 )
               })}
             </div>
