@@ -129,6 +129,7 @@ $titleBar-height: 90px;
                 display: flex;
                 flex-direction: column;
                 gap: 1em;
+                flex: 1 1 auto;
                 overflow: hidden;
                 overflow-y: auto;
 
