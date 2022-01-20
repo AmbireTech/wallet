@@ -79,7 +79,7 @@ function parseExtendedSummaryItem(item, i, networkDetails) {
   return <></>
 }
 
-export default function TxnPreview ({ txn, onDismiss, network, account, isFirstFailing, mined, disableExpand }) {
+export default function TxnPreview ({ txn, onDismiss, network, account, isFirstFailing, mined, disableExpand, disableDismiss, disableDismissLabel }) {
   const [isExpanded, setExpanded] = useState(false)
   const contractName = getName(txn[0], network)
 
@@ -103,7 +103,11 @@ export default function TxnPreview ({ txn, onDismiss, network, account, isFirstF
             </div>
           </div>
           <div className='actionIcons'>
-            {onDismiss ? (<div className='dismissTxn' onClick={e => { e.stopPropagation(); onDismiss.apply(this, e) }}><MdOutlineClose/></div>) : (<></>)}
+            {onDismiss ? (
+              <ToolTip disabled={!disableDismiss || !disableDismissLabel} label={disableDismissLabel}>
+                <div className={`dismissTxn ${disableDismiss ? 'disabled' : ''}`} onClick={e => { e.stopPropagation(); !disableDismiss && onDismiss.apply(this, e) }}><MdOutlineClose/></div>
+              </ToolTip>
+            ) : (<></>)}
           </div>
         </div>
         {
