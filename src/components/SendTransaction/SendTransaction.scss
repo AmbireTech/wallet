@@ -81,6 +81,7 @@ $titleBar-height: 90px;
                     flex-direction: column;
                     gap: 0.5em;
                     padding: 1em 1.5em;
+                    border-bottom: 3px solid $ambire-dark-blue;
                     background-color: $input-background-color;
 
                     b {
