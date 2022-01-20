@@ -135,7 +135,11 @@ $extended-summary-height: 31px;
                 opacity: 0.5;
                 transition: all 0.1s ease-in-out;
 
-                &:hover {
+                &.disabled {
+                    opacity: 0.2;
+                }
+
+                &:not(.disabled):hover {
                     opacity: 1;
                     background-color: rgba(0, 0, 0, 0.1);
                 }

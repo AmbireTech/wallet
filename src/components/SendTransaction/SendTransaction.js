@@ -2,7 +2,6 @@
 // GiObservatory is also interesting
 import { GiGorilla } from 'react-icons/gi'
 import { FaChevronLeft } from 'react-icons/fa'
-import { MdOutlineArrowForward } from 'react-icons/md'
 import './SendTransaction.scss'
 import { useEffect, useState, useMemo, useRef } from 'react'
 import fetch from 'node-fetch'
@@ -305,14 +304,12 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
         <div className='dismiss' onClick={onDismiss}>
           <FaChevronLeft size={35}/><span>back</span>
         </div>
-        <h2>Pending transactions: {bundle.txns.length}</h2>
-        <div className="separator"></div>
       </div>
 
       <div className='container'>
         <div id='transactionPanel' className='panel'>
           <div className='heading'>
-            <div className='title'>{ bundle.txns.length } Transactions</div>
+            <div className='title'>{ bundle.txns.length } Transaction{ bundle.txns.length > 1 ? 's' : '' } Waiting</div>
           </div>
           <div className='content'>
             <div className={`listOfTransactions${bundle.requestIds ? '' : ' frozen'}`}>
@@ -326,7 +323,10 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
                   minute={min}
                   onDismiss={bundle.requestIds && (() => resolveMany([bundle.requestIds[i]], { message: REJECT_MSG }))}
                   txn={txn} network={bundle.network} account={bundle.identity}
-                  isFirstFailing={isFirstFailing}/>
+                  isFirstFailing={isFirstFailing}
+                  disableDismiss={!!signingStatus}
+                  disableDismissLabel={"Cannot modify transaction bundle while a signing procedure is pending"}
+                  />
                 )
               })}
             </div>
@@ -351,47 +351,50 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
         </div>
 
         <div id='detailsPanel' className='panel'>
-          <div className='section' id="signing-details">
-            <div className='section-title'>Signing With</div>
-            <div className='section-content'>
-              <div className='account'>
-                <div className='icon' style={{ backgroundImage: `url(${accountAvatar})` }}/>
-                <div className='address'>{ account.id }</div>
-              </div>
-              <div className='network'>
-                <MdOutlineArrowForward/>
-                <div className='icon' style={{ backgroundImage: `url(${network.icon})` }}/>
-                <div className='address'>{ network.name }</div>
+          <div id="options-container">
+            <div className='section' id="signing-details">
+              <div className='section-title'>Signing With</div>
+              <div className='section-content'>
+                <div className='account'>
+                  <div className='icon' style={{ backgroundImage: `url(${accountAvatar})` }}/>
+                  <div className='address'>{ account.id }</div>
+                </div>
+                <div className='network'>
+                  on
+                  <div className='icon' style={{ backgroundImage: `url(${network.icon})` }}/>
+                  <div className='address'>{ network.name }</div>
+                </div>
               </div>
             </div>
+
+            <FeeSelector
+              disabled={signingStatus && signingStatus.finalBundle && !(estimation && !estimation.success)}
+              signer={bundle.signer}
+              estimation={estimation}
+              setEstimation={setEstimation}
+              network={network}
+              feeSpeed={feeSpeed}
+              setFeeSpeed={setFeeSpeed}
+            ></FeeSelector>
           </div>
 
-          <FeeSelector
-            disabled={signingStatus && signingStatus.finalBundle && !(estimation && !estimation.success)}
-            signer={bundle.signer}
-            estimation={estimation}
-            setEstimation={setEstimation}
-            network={network}
-            feeSpeed={feeSpeed}
-            setFeeSpeed={setFeeSpeed}
-          ></FeeSelector>
-
-          <div className='separator'></div>
-
-          {
-            bundle.signer.quickAccManager && !relayerURL ? 
-              <FailingTxn message='Signing transactions with an email/password account without being connected to the relayer is unsupported.'></FailingTxn>
-              :
-              <div className='section' id="actions">
-                <Actions
-                  estimation={estimation}
-                  approveTxn={approveTxn}
-                  rejectTxn={rejectTxn}
-                  signingStatus={signingStatus}
-                  feeSpeed={feeSpeed}
-                />
-              </div>
-          }
+          <div id="actions-container">
+            {
+              bundle.signer.quickAccManager && !relayerURL ? 
+                <FailingTxn message='Signing transactions with an email/password account without being connected to the relayer is unsupported.'></FailingTxn>
+                :
+                <div className='section' id="actions">
+                  <Actions
+                    estimation={estimation}
+                    approveTxn={approveTxn}
+                    rejectTxn={rejectTxn}
+                    cancelSigning={() => setSigningStatus(null)}
+                    signingStatus={signingStatus}
+                    feeSpeed={feeSpeed}
+                  />
+                </div>
+            }
+          </div>
         </div>
       </div>
     </div>
