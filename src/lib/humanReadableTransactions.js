@@ -25,27 +25,53 @@ export function getTransactionSummary(txn, networkId, accountAddr, opts = {}) {
 
     if (data === '0x' && to.toLowerCase() === accountAddr.toLowerCase()) {
         // Doesn't matter what the value is, this is always a no-op
-        return `Transaction cancellation`
+        return !opts.extended ? `Transaction cancellation` : [[
+            'Cancel',
+            'transaction'
+        ]]
     }
 
     let callSummary, sendSummary
-    if (parseInt(value) > 0) sendSummary = `send ${nativeToken(network, value)} to ${name || to}`
+    if (parseInt(value) > 0) sendSummary = !opts.extended ? `send ${nativeToken(network, value)} to ${name || to}` : [
+        'Send',
+        {
+            type: 'token',
+            ...nativeToken(network, value, true),
+        },
+        'to',
+        {
+            type: 'address',
+            address: to,
+            name
+        }
+    ]
+
     if (data !== '0x') {
-        callSummary = `Unknown interaction with ${name || (tokenInfo ? tokenInfo[0] : to)}`
+        callSummary = !opts.extended ? `Unknown interaction with ${name || (tokenInfo ? tokenInfo[0] : to)}` : [
+            'unknown',
+            'interaction with',
+            {
+                type: 'address',
+                address: to,
+                name: name || (tokenInfo && tokenInfo[0])
+            }
+        ]
 
         const sigHash = data.slice(0, 10)
         const humanizer = humanizers[sigHash]
         if (humanizer) {
             try {
                 const actions = humanizer({ to, value, data, from: accountAddr }, network, opts)
-                return actions.join(', ')
+                return opts.extended === true ? actions : actions.join(', ')
             } catch (e) {
                 callSummary += ' (unable to parse)'
                 console.error('internal tx humanization error', e)
             }
         }
     }
-    return [callSummary, sendSummary].filter(x => x).join(', ')
+
+    const filteredSummary = [callSummary, sendSummary].filter(x => x)
+    return !opts.extended ? filteredSummary.join(', ') : filteredSummary
 }
 
 // Currently takes network because one day we may be seeing the same addresses used on different networks
@@ -55,24 +81,58 @@ export function getName(addr, network) {
     return names[address] || (tokens[address] ? tokens[address][0] + ' token' : null) || addr
 }
 
-export function token(addr, amount) {
+export function token(addr, amount, extended = false) {
     const address = addr.toLowerCase()
     const assetInfo = tokens[address] || knownTokens[address]
+
     if (assetInfo) {
-        if (!amount) return assetInfo[0]
-        if (constants.MaxUint256.eq(amount)) return `maximum ${assetInfo[0]}`
-        return `${formatUnits(amount, assetInfo[1])} ${assetInfo[0]}`
+        const extendedToken = {
+            address,
+            symbol: assetInfo[0],
+            decimals: assetInfo[1],
+            amount: null
+        }
+
+        if (!amount) return !extended ? assetInfo[0] : extendedToken
+
+        if (constants.MaxUint256.eq(amount)) return !extended ? `maximum ${assetInfo[0]}` : {
+            ...extendedToken,
+            amount: -1
+        }
+    
+        return !extended ? `${formatUnits(amount, assetInfo[1])} ${assetInfo[0]}` : {
+            ...extendedToken,
+            amount: formatUnits(amount, assetInfo[1])
+        }
     } else {
-        return `${formatUnits(amount, 0)} units of unknown token`
+        return !extended ? `${formatUnits(amount, 0)} units of unknown token` : {
+            address,
+            symbol: null,
+            decimals: null,
+            amount: formatUnits(amount, 0)
+        }
     }
 }
 
-export function nativeToken(network, amount) {
+export function nativeToken(network, amount, extended = false) {
+    const extendedNativeToken = {
+        address: `0x` + '0'.repeat(40),
+        symbol: 'unknown native token',
+        decimals: 18,
+    }
+
     // All EVM chains use a 18 decimal native asset
     if (network) {
-        return `${formatUnits(amount, 18)} ${network.nativeAssetSymbol}`
+        return !extended ? `${formatUnits(amount, 18)} ${network.nativeAssetSymbol}` : {
+            ...extendedNativeToken,
+            symbol: network.nativeAssetSymbol,
+            amount: formatUnits(amount, 18)
+        }
     } else {
-        return `${formatUnits(amount, 18)} unknown native token`
+        return !extended ? `${formatUnits(amount, 18)} unknown native token` : {
+            ...extendedNativeToken,
+            amount: formatUnits(amount, 18)
+        }
     }
 }
 
