@@ -14,8 +14,8 @@ import fetch from 'node-fetch'
 import { useToasts } from 'hooks/toasts'
 import { toBundleTxn } from 'lib/requestToBundleTxn'
 
-// 10% in geth and most EVM chain RPCs
-const RBF_THRESHOLD = 1.1
+// 10% in geth and most EVM chain RPCs; relayer wants 12%
+const RBF_THRESHOLD = 1.14
 
 function Transactions ({ relayerURL, selectedAcc, selectedNetwork, showSendTxns, eligibleRequests }) {
   const { addToast } = useToasts()
