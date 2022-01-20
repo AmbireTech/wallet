@@ -2,7 +2,6 @@
 // GiObservatory is also interesting
 import { GiGorilla } from 'react-icons/gi'
 import { FaChevronLeft } from 'react-icons/fa'
-import { MdOutlineArrowForward } from 'react-icons/md'
 import './SendTransaction.scss'
 import { useEffect, useState, useMemo, useRef } from 'react'
 import fetch from 'node-fetch'
@@ -359,7 +358,7 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
                 <div className='address'>{ account.id }</div>
               </div>
               <div className='network'>
-                <MdOutlineArrowForward/>
+                on
                 <div className='icon' style={{ backgroundImage: `url(${network.icon})` }}/>
                 <div className='address'>{ network.name }</div>
               </div>
