@@ -1,9 +1,9 @@
 import { useState, useRef, useEffect } from 'react'
 import { Button, Loading, TextInput } from 'components/common'
 import { isTokenEligible } from './helpers'
-import { MdOutlineCheck, MdOutlineClose } from 'react-icons/md'
+import { MdCheck, MdOutlineCheck, MdOutlineClose } from 'react-icons/md'
 
-export default function Actions({ estimation, feeSpeed, approveTxn, rejectTxn, signingStatus }) {
+export default function Actions({ estimation, feeSpeed, approveTxn, rejectTxn, cancelSigning, signingStatus }) {
   const [quickAccCredentials, setQuickAccCredentials] = useState({ code: '', passphrase: '' })
   // reset this every time the signing status changes
   useEffect(() => !signingStatus && setQuickAccCredentials(prev => ({ ...prev, code: '' })), [signingStatus])
@@ -59,14 +59,16 @@ export default function Actions({ estimation, feeSpeed, approveTxn, rejectTxn, s
           onChange={value => setQuickAccCredentials({ ...quickAccCredentials, code: value })}
         ></TextInput>
         <div className='buttons'>
-          {rejectButton}
-          <Button className='approveTxn'
+          <Button clear icon={<MdOutlineClose/>} type='button' className='cancelSigning' onClick={cancelSigning}>Cancel</Button>
+          <Button 
+            className='confirmSigning'
+            icon={<MdCheck/>}
             onClick={() => {
               if (!form.current.checkValidity()) return
               approveTxn({ quickAccCredentials })
             }}
           >
-            {signButtonLabel}
+            { signingStatus && signingStatus.inProgress ? <Loading/> : 'Confirm'}
           </Button>
         </div>
       </form>
