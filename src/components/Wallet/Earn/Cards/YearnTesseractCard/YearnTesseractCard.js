@@ -44,7 +44,7 @@ const YearnTesseractCard = ({ networkId, accountId, tokens, addRequest }) => {
         tokensItems,
         details,
         onTokenSelect
-    } = useMemo(() => networkId === 'ethereum' ? yearn : tesseract, [networkId, yearn, tesseract])
+    } = useMemo(() => networkId === 'polygon' ? tesseract : yearn, [networkId, yearn, tesseract])
 
     const onValidate = async (type, value, amount) => {
         const item = tokensItems.find(t => t.type === type.toLowerCase() && t.value === value)
