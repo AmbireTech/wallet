@@ -100,6 +100,7 @@ $titleBar-height: 90px;
 
         #detailsPanel {
             flex: 0 1 30%;
+            justify-content: space-between;
 
             .section {
                 display: flex;
@@ -124,89 +125,100 @@ $titleBar-height: 90px;
                 background-position: center center;
             }
 
-            #signing-details {
-                .section-content {
-                    gap: 0.5em;
+            #options-container {
+                display: flex;
+                flex-direction: column;
+                gap: 1em;
+                overflow: hidden;
+                overflow-y: auto;
 
-                    .account, .network {
-                        display: flex;
-                        align-items: center;
-                    }
-
-                    .account {
-                        gap: 0.75em;
-
-                        .icon {
-                            height: 25px;
-                            width: 25px;
-                        }
-
-                        .address {
-                            font-size: 17px;
-                            font-weight: bold;
-                            overflow: hidden;
-                            white-space: nowrap;
-                            text-overflow: ellipsis;
-                        }
-                    }
-
-                    .network {
-                        justify-content: flex-end;
+                #signing-details {
+                    .section-content {
                         gap: 0.5em;
-                        opacity: 0.8;
 
-                        .icon {
-                            height: 20px;
-                            width: 20px;
+                        .account,
+                        .network {
+                            display: flex;
+                            align-items: center;
                         }
 
-                        .address {
-                            font-size: 15px;
-                            font-weight: 500;
+                        .account {
+                            gap: 0.75em;
+
+                            .icon {
+                                height: 25px;
+                                width: 25px;
+                            }
+
+                            .address {
+                                font-size: 17px;
+                                font-weight: bold;
+                                overflow: hidden;
+                                white-space: nowrap;
+                                text-overflow: ellipsis;
+                            }
+                        }
+
+                        .network {
+                            justify-content: flex-end;
+                            gap: 0.5em;
+                            opacity: 0.8;
+
+                            .icon {
+                                height: 20px;
+                                width: 20px;
+                            }
+
+                            .address {
+                                font-size: 15px;
+                                font-weight: 500;
+                            }
                         }
                     }
                 }
             }
 
-            #actions {
-                .confirmation-code-info {
-                    font-weight: 500;
-                }
+            #actions-container {
+                #actions {
+                    .confirmation-code-info {
+                        font-weight: 500;
+                    }
 
-                form {
-                    display: flex;
-                    flex-direction: column;
-                    gap: 1em;
+                    form {
+                        display: flex;
+                        flex-direction: column;
+                        gap: 1em;
+
+                        .buttons {
+                            margin-top: 1em;
+                        }
+                    }
 
                     .buttons {
-                        margin-top: 1em;
-                    }
-                }
+                        display: flex;
+                        flex-direction: row;
+                        gap: 1.5em;
 
-                .buttons {
-                    display: flex;
-                    flex-direction: row;
-                    gap: 1.5em;
+                        .buttonComponent {
+                            height: 75px;
+                            flex: 0 1 50%;
 
-                    .buttonComponent {
-                        height: 75px;
-                        flex: 0 1 50%;
+                            &.danger {
+                                color: white;
 
-                        &.danger {
-                            color: white;
-
-                            .icon-button {
-                                svg {
-                                    color: white;
+                                .icon-button {
+                                    svg {
+                                        color: white;
+                                    }
                                 }
                             }
-                        }
 
-                        &.approveTxn {
-                            flex: 1 0 auto;
+                            &.approveTxn {
+                                flex: 1 0 auto;
 
-                            .loading {
-                                width: auto;
+                                .loading {
+                                    width: auto;
+                                }
                             }
                         }
                     }
