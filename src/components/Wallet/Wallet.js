@@ -94,7 +94,12 @@ export default function Wallet(props) {
     },
     {
       path: '/opensea',
-      component: <OpenSea/>
+      component: <OpenSea
+        gnosisConnect={props.gnosisConnect}
+        gnosisDisconnect={props.gnosisDisconnect}
+        selectedAcc={props.selectedAcc}
+        network={props.network}
+      />
     },
     {
       path: '/nft/:network/:collectionAddr/:tokenId',
