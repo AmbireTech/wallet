@@ -33,7 +33,7 @@ const networks = [{
 		name: 'Binance Smart Chain',
 		icon: '/resources/networks/bsc.png',
 		explorerUrl: 'https://bscscan.com'
-	}, {
+	}/*, {
 		id: 'arbitrum',
 		chainId: 42161,
 		rpc: 'https://arb1.arbitrum.io/rpc',
@@ -41,6 +41,6 @@ const networks = [{
 		name: 'Arbitrum',
 		icon: '/resources/networks/arbitrum.svg',
 		explorerUrl: 'https://arbiscan.io'
-}]
+}*/]
 
 export default networks
