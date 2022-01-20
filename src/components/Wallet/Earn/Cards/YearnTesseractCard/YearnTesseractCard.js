@@ -82,7 +82,7 @@ const YearnTesseractCard = ({ networkId, accountId, tokens, addRequest }) => {
     }
 
     useEffect(() => {
-        if (unavailable) return setLoading(false)
+        if (unavailable) return
         async function load() {
             await loadVaults()
             setLoading(false)
@@ -92,8 +92,8 @@ const YearnTesseractCard = ({ networkId, accountId, tokens, addRequest }) => {
 
     useEffect(() => {
         currentNetwork.current = networkId
-        setLoading(true)
-    }, [networkId])
+        if (!unavailable) setLoading(true)
+    }, [networkId, unavailable])
 
     return (
         <Card
