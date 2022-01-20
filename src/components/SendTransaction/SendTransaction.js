@@ -304,14 +304,12 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
         <div className='dismiss' onClick={onDismiss}>
           <FaChevronLeft size={35}/><span>back</span>
         </div>
-        <h2>Pending transactions: {bundle.txns.length}</h2>
-        <div className="separator"></div>
       </div>
 
       <div className='container'>
         <div id='transactionPanel' className='panel'>
           <div className='heading'>
-            <div className='title'>{ bundle.txns.length } Transactions</div>
+            <div className='title'>{ bundle.txns.length } Transaction{ bundle.txns.length > 1 ? 's' : '' } Waiting</div>
           </div>
           <div className='content'>
             <div className={`listOfTransactions${bundle.requestIds ? '' : ' frozen'}`}>
