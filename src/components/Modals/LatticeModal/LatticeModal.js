@@ -8,6 +8,8 @@ import { Client } from 'gridplus-sdk'
 const crypto = require('crypto')
 
 const HARDENED_OFFSET = 0x80000000
+// const privKey = crypto.randomBytes(32).toString('hex')
+const privKey = 'ef903967c21ec517d2df66eae824856f6dd8c99694bd2d8ee9fc85e329a51341'
 
 const LatticeModal = ({ addresses }) => {
     const { addToast } = useToasts()
@@ -17,7 +19,8 @@ const LatticeModal = ({ addresses }) => {
     const [isSecretFieldShown, setIsSecretFieldShown] = useState(false)
     const [promiseResolve, setPromiseResolve] = useState(null)
 
-    const privKey = crypto.randomBytes(32).toString('hex')
+    // const privKey = crypto.randomBytes(32).toString('hex')
+    
     const clientConfig = {
         name: 'Ambire Wallet',
         crypto: crypto,
@@ -48,49 +51,51 @@ const LatticeModal = ({ addresses }) => {
                 enteringSecret.then((res, rej) => {
                     setIsSecretFieldShown(prevState => !prevState)
                     
-                    // client.pair(res, err => {
-                    //     if (err) {
-                    //         setLoading(prevState => !prevState)
-                    //         return addToast('Lattice: ' + err, { error: true })
-                    //     }
-                    
                     pairWithDevice(res, isOK => {
-                        if (!isOK) return addToast('failed to pair', {error: true})
+                        if (!isOK) return addToast('Failed to pair', {error: true})
                         getAddressesFromDevice(getAddressesReqOpts, (res) => {
-                            // if (err) {
-                            //     setLoading(prevState => !prevState)
-                            //     return addToast(`Lattice: ${err}`, {
-                            //         error: true,
-                            //     })
-                            // }
-                            if (!res) return addToast('failed to get addresses', {error: true})
+                            if (!res) return addToast('Failed to get addresses', {error: true})
                             setLoading(prevState => !prevState)
                             
-                            addresses({
-                                addresses: res,
-                                deviceId: deviceId,
-                                privKey: privKey,
-                                isPaired: true
-                            })
+                            if (!!res) {
+                                addresses({
+                                    addresses: res,
+                                    deviceId: deviceId,
+                                    privKey: privKey,
+                                    isPaired: true
+                                })
+                            } else {
+                                setLoading(false)
+                            }
                         })
                     })
                 })
             } else {
-                client.getAddresses(getAddressesReqOpts, (err, res) => {
+                getAddressesFromDevice(getAddressesReqOpts, (res) => {
                     if (err) {
                         setLoading(false)
                         return addToast(`Lattice: ${err}`, { error: true })
                     }
                     
                     setLoading(prevState => !prevState)
-                    addresses({ addresses: res })
+                    
+                    if (!!res) {
+                        addresses({
+                            addresses: res,
+                            deviceId: deviceId,
+                            privKey: privKey,
+                            isPaired: true
+                        })
+                    } else {
+                        setLoading(false)
+                    }
                 })
             }
         })
     }
 
     const pairWithDevice = (res, fn) => {
-       return client.pair(res, err => {
+       return client.pair(res, (err, hasActiveWallet) => {
             if (err) {
                 setLoading(prevState => !prevState)
                 addToast('Lattice: ' + err, { error: true })
@@ -98,6 +103,12 @@ const LatticeModal = ({ addresses }) => {
                 return
             }
 
+            if (!hasActiveWallet)  {
+                addToast('Lattice has no active wallet!')
+                fn(false)
+                return
+            }
+            
             fn(true)
         })
     }
@@ -114,23 +125,22 @@ const LatticeModal = ({ addresses }) => {
             }
             
             fn(res)
-            // setLoading(prevState => !prevState)
-            
-            // addresses({
-            //     addresses: res,
-            //     deviceId: deviceId,
-            //     privKey: privKey,
-            //     isPaired: true
-            // })
         })
     }
 
-    const handleConfirmSecretClicked = (e) => {
+    const handleInputSecret = e => {
         const inputSecret = e.toUpperCase()
         // TODO: add constant for 8 
         if (inputSecret.length === 8) {
             promiseResolve(inputSecret)
         } 
+    }
+
+    const handleInputDeviceId = e => {
+        // TODO: add constant for 6
+        if (e.length === 6) {
+            setDeviceId(e)
+        }
     }
 
     return (
@@ -145,7 +155,7 @@ const LatticeModal = ({ addresses }) => {
                     <TextInput
                         disabled={isSecretFieldShown}
                         placeholder="Enter the device ID"
-                        onInput={value => setDeviceId(value)}
+                        onInput={value => handleInputDeviceId(value)}
                     />
                     {isSecretFieldShown && (
                         <>
@@ -153,7 +163,7 @@ const LatticeModal = ({ addresses }) => {
                             <TextInput
                                 placeholder="Enter secret"
                                 style={{ textTransform:'uppercase' }}
-                                onInput={value => handleConfirmSecretClicked(value)}
+                                onInput={value => handleInputSecret(value)}
                             />
                         </>
                     )}

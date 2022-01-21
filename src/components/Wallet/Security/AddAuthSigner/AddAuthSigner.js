@@ -36,6 +36,7 @@ const AddAuthSigner = ({ selectedNetwork, selectedAcc, onAddBtnClicked }) => {
     success: false, 
     message: ''
   })
+  const [isLatticePaired, setIsLatticePaired] = useState(true)
   const { addToast } = useToasts()
   
   async function connectLedgerAndGetAccounts() {
@@ -143,7 +144,7 @@ const AddAuthSigner = ({ selectedNetwork, selectedAcc, onAddBtnClicked }) => {
   function connectGridPlusAndGetAccounts() {
     if (selectedAcc.signerExtra && 
       selectedAcc.signerExtra.type === 'Lattice' && 
-      selectedAcc.signerExtra.isPaired) {
+      selectedAcc.signerExtra.isPaired && isLatticePaired) {
         const { privKey, deviceId } = selectedAcc.signerExtra
         const clientConfig = {
             name: 'Ambire Wallet',
@@ -161,8 +162,11 @@ const AddAuthSigner = ({ selectedNetwork, selectedAcc, onAddBtnClicked }) => {
         client.connect(deviceId, (err, isPaired) => {
           if (!isPaired) {
             setShowLoading(false)
-            return addToast(`The Lattice device is not paired!`, { error: true })
+            setIsLatticePaired(false)
+            addToast(`The Lattice device is not paired!`, { error: true })
+            return 
           }
+
           if (err) {
               setShowLoading(false)
               addToast(`Lattice: ${err} Or check if the DeviceID is correct.`, { error: true })
@@ -183,6 +187,7 @@ const AddAuthSigner = ({ selectedNetwork, selectedAcc, onAddBtnClicked }) => {
         })
       } else {
         showModal(<LatticeModal addresses={getLatticeAddresses} />)
+        setIsLatticePaired(true)
       }
   }
 
