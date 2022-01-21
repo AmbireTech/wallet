@@ -79,7 +79,7 @@ export default function Wallet(props) {
     },
     {
       path: '/transactions',
-      component: <Transactions relayerURL={props.relayerURL} selectedAcc={props.selectedAcc} selectedNetwork={props.network} addRequest={props.addRequest} eligibleRequests={props.eligibleRequests} showSendTxns={props.showSendTxns} />
+      component: <Transactions relayerURL={props.relayerURL} selectedAcc={props.selectedAcc} selectedNetwork={props.network} addRequest={props.addRequest} eligibleRequests={props.eligibleRequests} showSendTxns={props.showSendTxns} showSendTxnsForReplacement={props.showSendTxnsForReplacement} />
     },
     {
       path: '/swap',
