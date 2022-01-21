@@ -1,6 +1,6 @@
 @import 'variables.scss';
 
-$max-width: 900px;
+$max-width: 650px;
 
 #signMessage {
   position: fixed;
@@ -18,8 +18,7 @@ $max-width: 900px;
   gap: 2em;
 
   .panel {
-    min-width: 600px;
-    max-width: $max-width;
+    width: $max-width;
     box-sizing: border-box;
     background-color: rgba(0, 0, 0, 0.2);
 
@@ -56,8 +55,37 @@ $max-width: 900px;
   .request-message {
     display: flex;
     flex-direction: column;
-    gap: 0.5em;
+    gap: 1em;
     font-weight: 500;
+
+    .dapp-message {
+      display: flex;
+      flex-direction: row;
+      gap: 0.5em;
+      row-gap: 0.2em;
+      align-items: center;
+      flex-wrap: wrap;
+
+      .dapp {
+        display: flex;
+        flex-direction: row;
+        gap: 0.5em;
+
+        .icon {
+          height: 22px;
+          width: 22px;
+          border-radius: 100%;
+          @include flex-center-center;
+          background-size: contain;
+          background-color: rgba(0, 0, 0, 0.2);
+
+          svg {
+            font-size: 12px;
+            opacity: 0.2;
+          }
+        }
+      }
+    }
 
     span {
       opacity: 0.5;
