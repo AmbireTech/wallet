@@ -205,7 +205,8 @@ export default function useWalletConnect ({ account, chainId, initialUri, allNet
                     setNetwork(supportedNetwork.chainId)
                     connector.approveRequest({ id: payload.id, result: { chainId: supportedNetwork.chainId }})
                 } else {
-                    addToast(`dApp asked to switch to an unsupported chain: ${payload.params[0]}`, { error: true })
+                    //Graceful error for user
+                    addToast(`dApp asked to switch to an unsupported chain: ${payload.params[0]?.chainId}`, { error: true })
                     connector.rejectRequest({ id: payload.id, error: { message: 'Unsupported chain' }})
                 }
                 return
@@ -217,7 +218,7 @@ export default function useWalletConnect ({ account, chainId, initialUri, allNet
                 // @TODO: if the dapp is in a "allow list" of dApps that have fallbacks, ignore certain messages
                 // eg uni has a fallback for eth_signTypedData_v4
                 if (!isUniIgnorable) addToast(`dApp requested unsupported method: ${payload.method}`, { error: true })
-                connector.rejectRequest({ id: payload.id, error: { message: 'METHOD_NOT_SUPPORTED' }})
+                connector.rejectRequest({ id: payload.id, error: { message: 'METHOD_NOT_SUPPORTED: ' + payload.method }})
                 return
             }
             const wrongAcc = (
