@@ -22,7 +22,7 @@ const suportedProtocols = [
         network: 'binance-smart-chain',
         protocols: ['pancakeswap'],
         balancesProvider: 'velcro'
-    },
+    }/*,
     {
         network: 'arbitrum',
         protocols: [],
@@ -32,7 +32,7 @@ const suportedProtocols = [
         network: 'fantom',
         protocols: [],
 	balancesProvider: 'velcro'
-    }
+    }*/
 ]
 
 export default suportedProtocols
