@@ -199,10 +199,10 @@ export default function useWalletConnect ({ account, chainId, initialUri, allNet
             }
             //FutureProof? WC does not implement it yet
             if (payload.method === 'wallet_switchEthereumChain') {
-                const supportedNetwork = allNetworks.find(a => a.chainId === payload.params[0])
+                const supportedNetwork = allNetworks.find(a => a.chainId === parseInt(payload.params[0].chainId, 16))
 
                 if (supportedNetwork) {
-                    setNetwork(supportedNetwork.chainId);
+                    setNetwork(supportedNetwork.chainId)
                     connector.approveRequest({ id: payload.id, result: { chainId: supportedNetwork.chainId }})
                 } else {
                     addToast(`dApp asked to switch to an unsupported chain: ${payload.params[0]}`, { error: true })
