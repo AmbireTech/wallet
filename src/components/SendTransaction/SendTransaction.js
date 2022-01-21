@@ -100,8 +100,12 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
   const currentBundle = useRef(null)
   currentBundle.current = bundle
   useEffect(() => {    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // We don't need to reestimate the fee when a signing process is in progress
+    if (signingStatus) return
+    // nor when there are no txns in the bundle, if this is even possible
     if (!bundle.txns.length) return
 
+    // track whether the effect has been unmounted
     let unmounted = false
 
     // get latest estimation
@@ -138,7 +142,7 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
       unmounted = true
       clearInterval(intvl)
     }
-  }, [bundle, setEstimation, feeSpeed, addToast, network, relayerURL])
+  }, [bundle, setEstimation, feeSpeed, addToast, network, relayerURL, signingStatus])
 
   const getFinalBundle = () => {
     if (!relayerURL) {
