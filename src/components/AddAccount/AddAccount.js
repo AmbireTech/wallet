@@ -2,7 +2,7 @@ import './AddAccount.scss'
 
 import { useState, useEffect, useCallback } from 'react'
 import { Link } from 'react-router-dom'
-import LoginOrSignup from '../LoginOrSignupForm/LoginOrSignupForm'
+import LoginOrSignup from 'components/LoginOrSignupForm/LoginOrSignupForm'
 import TrezorConnect from 'trezor-connect'
 import { TrezorSubprovider } from '@0x/subproviders/lib/src/subproviders/trezor' // https://github.com/0xProject/0x-monorepo/issues/1400
 import { LedgerSubprovider } from '@0x/subproviders/lib/src/subproviders/ledger' // https://github.com/0xProject/0x-monorepo/issues/1400
@@ -11,17 +11,17 @@ import { hexZeroPad, AbiCoder, keccak256, id, getAddress } from 'ethers/lib/util
 import { Wallet } from 'ethers'
 import { generateAddress2 } from 'ethereumjs-util'
 import { getProxyDeployBytecode } from 'adex-protocol-eth/js/IdentityProxyDeploy'
-import { fetch, fetchPost } from '../../lib/fetch'
-import accountPresets from '../../consts/accountPresets'
-import { useToasts } from '../../hooks/toasts'
-import { SelectSignerAccountModal } from '../Modals'
-import { useModals } from '../../hooks'
-import { Loading } from '../common'
-import { ledgerGetAddresses, PARENT_HD_PATH } from '../../lib/ledgerWebHID'
-import { isFirefox } from '../../lib/isFirefox'
+import { fetch, fetchPost } from 'lib/fetch'
+import accountPresets from 'consts/accountPresets'
+import { useToasts } from 'hooks/toasts'
+import { SelectSignerAccountModal } from 'components/Modals'
+import { useModals } from 'hooks'
+import { Loading } from 'components/common'
+import { ledgerGetAddresses, PARENT_HD_PATH } from 'lib/ledgerWebHID'
+import { isFirefox } from 'lib/isFirefox'
 import { VscJson } from 'react-icons/vsc'
 import { useDropzone } from 'react-dropzone'
-import { validateImportedAccountProps, fileSizeValidator } from '../../lib/validations/importedAccountValidations'
+import { validateImportedAccountProps, fileSizeValidator } from 'lib/validations/importedAccountValidations'
 
 TrezorConnect.manifest({
   email: 'contactus@ambire.com',
@@ -114,6 +114,8 @@ export default function AddAccount({ relayerURL, onAddAccount }) {
       salt, identityFactoryAddr, baseIdentityAddr, bytecode,
       signer,
       cloudBackupOptout: !!req.backupOptout,
+      // This makes the modal appear, and will be removed by the modal which will call onAddAccount to update it
+      backupOptout: !!req.backupOptout,
       // This makes the modal appear, and will be removed by the modal which will call onAddAccount to update it
       emailConfRequired: true
     }, { select: true, isNew: true })

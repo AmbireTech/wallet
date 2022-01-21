@@ -10,17 +10,17 @@ import { Bundle } from 'adex-protocol-eth/js'
 import { Wallet } from 'ethers'
 import { Interface } from 'ethers/lib/utils'
 import * as blockies from 'blockies-ts';
-import { useToasts } from '../../hooks/toasts'
-import { getWallet } from '../../lib/getWallet'
-import accountPresets from '../../consts/accountPresets'
+import { useToasts } from 'hooks/toasts'
+import { getWallet } from 'lib/getWallet'
+import accountPresets from 'consts/accountPresets'
 import { FeeSelector, FailingTxn } from './FeeSelector'
 import Actions from './Actions'
-import TxnPreview from '../common/TxnPreview/TxnPreview'
+import TxnPreview from 'components/common/TxnPreview/TxnPreview'
 import { sendNoRelayer } from './noRelayer'
 import { isTokenEligible, getFeePaymentConsequences } from './helpers'
-import { fetchPost } from '../../lib/fetch'
-import { toBundleTxn } from '../../lib/requestToBundleTxn'
-import { getProvider } from '../../lib/provider'
+import { fetchPost } from 'lib/fetch'
+import { toBundleTxn } from 'lib/requestToBundleTxn'
+import { getProvider } from 'lib/provider'
 
 const ERC20 = new Interface(require('adex-protocol-eth/abi/ERC20'))
 
@@ -39,6 +39,18 @@ function makeBundle(account, networkId, requests) {
   bundle.extraGas = requests.map(x => x.extraGas || 0).reduce((a, b) => a + b, 0)
   bundle.requestIds = requests.map(x => x.id)
   return bundle
+}
+
+function getErrorMessage(e){
+  if (e && e.message === 'NOT_TIME') {
+    return "Your 72 hour recovery waiting period still hasn't ended. You will be able to use your account after this lock period."
+  } else if (e && e.message === 'WRONG_ACC_OR_NO_PRIV' ) {
+    return "Unable to sign with this email/password account. Please contact support."
+  } else if (e && e.message === 'INVALID_SIGNATURE') {
+    return "Invalid signature. This may happen if you used password/derivation path on your hardware wallet."
+  } else {
+    return e.message || e
+  }
 }
 
 export default function SendTransaction({ relayerURL, accounts, network, selectedAcc, requests, resolveMany, replacementBundle, replace, onBroadcastedTxn, onDismiss }) {
@@ -311,7 +323,9 @@ function SendTransactionWithBundle ({ bundle, replace, network, account, resolve
       if (bundleResult.success) {
         onBroadcastedTxn(bundleResult.txId)
         onDismiss()
-      } else addToast(`Transaction error: ${bundleResult.message || 'unspecified error'}`, { error: true })
+      } else {
+        addToast(`Transaction error: ${getErrorMessage(bundleResult)}`, { error: true })  //'unspecified error'
+      }
     })
     .catch(e => {
       setSigningStatus(null)
@@ -323,8 +337,7 @@ function SendTransactionWithBundle ({ bundle, replace, network, account, resolve
         // however, it stopped appearing after that even if the device is locked, so I'm not sure it's related...
         addToast(`Ledger: unknown error (0x6b0c): is your Ledger unlocked and in the Ethereum application?`, { error: true })
       } else {
-        console.log(e.message)
-        addToast(`Signing error: ${e.message || e}`, { error: true })
+        addToast(`Signing error: ${getErrorMessage(e)}`, { error: true })
       }
     })
   }
@@ -362,7 +375,7 @@ function SendTransactionWithBundle ({ bundle, replace, network, account, resolve
           </div>
         </div>
         <div id='panelHolder'>
-          <div className='panel'>
+          <div className='panel summaryPanel'>
               <div className='heading'>
                       <div className='title'>
                           <GiSpectacles size={35}/>

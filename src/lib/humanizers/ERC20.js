@@ -1,6 +1,6 @@
-import { abis } from '../../consts/humanizerInfo'
+import { abis } from 'consts/humanizerInfo'
 import { Interface } from 'ethers/lib/utils'
-import { token, getName } from '../humanReadableTransactions'
+import { token, getName } from 'lib/humanReadableTransactions'
 import { constants } from 'ethers'
 
 const iface = new Interface(abis.ERC20)

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useReducer, useRef } from 'react'
-import { useToasts } from '../hooks/toasts'
-import { isFirefox } from '../lib/isFirefox'
+import { useToasts } from 'hooks/toasts'
+import { isFirefox } from 'lib/isFirefox'
 
 import WalletConnectCore from '@walletconnect/core'
 import * as cryptoLib from '@walletconnect/iso-crypto'

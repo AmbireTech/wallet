@@ -5,11 +5,11 @@ import { Wallet } from 'ethers'
 import { toUtf8String, keccak256, arrayify, isHexString } from 'ethers/lib/utils'
 import { signMsgHash } from 'adex-protocol-eth/js/Bundle'
 import * as blockies from 'blockies-ts';
-import { getWallet } from '../../lib/getWallet'
-import { useToasts } from '../../hooks/toasts'
-import { fetchPost } from '../../lib/fetch'
+import { getWallet } from 'lib/getWallet'
+import { useToasts } from 'hooks/toasts'
+import { fetchPost } from 'lib/fetch'
 import { useState } from 'react'
-import { Button, Loading, TextInput } from '../common'
+import { Button, Loading, TextInput } from 'components/common'
 
 export default function SignMessage ({ toSign, resolve, account, relayerURL, totalRequests }) {
   const defaultState = () => ({ codeRequired: false, passphrase: '' })

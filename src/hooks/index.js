@@ -7,6 +7,8 @@ import useAddressBook from "./addressBook"
 import useAttentionGrabber from './attentionGrabber'
 import useModals from './modals'
 import usePermissions from './permissions'
+import usePrivateMode from './privateMode'
+import useOnClickOutside from './onClickOutside'
 
 export {
     useAccounts,
@@ -17,5 +19,7 @@ export {
     useAddressBook,
     useAttentionGrabber,
     useModals,
-    usePermissions
+    usePermissions,
+    usePrivateMode,
+    useOnClickOutside
 }
