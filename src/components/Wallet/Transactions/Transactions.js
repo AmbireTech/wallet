@@ -2,20 +2,20 @@ import './Transactions.scss'
 import { FaSignature } from 'react-icons/fa'
 import { BsCoin, BsCalendarWeek, BsGlobe2, BsCheck2All } from 'react-icons/bs'
 import { MdOutlinePendingActions } from 'react-icons/md'
-import { useRelayerData } from '../../../hooks'
-import TxnPreview from '../../common/TxnPreview/TxnPreview'
-import { Loading, Button } from '../../common'
-import accountPresets from '../../../consts/accountPresets'
-import networks from '../../../consts/networks'
-import { getTransactionSummary } from '../../../lib/humanReadableTransactions'
+import { useRelayerData } from 'hooks'
+import TxnPreview from 'components/common/TxnPreview/TxnPreview'
+import { Loading, Button } from 'components/common'
+import accountPresets from 'consts/accountPresets'
+import networks from 'consts/networks'
+import { getTransactionSummary } from 'lib/humanReadableTransactions'
 import { Bundle } from 'adex-protocol-eth'
 import { useEffect, useState } from 'react'
 import fetch from 'node-fetch'
-import { useToasts } from '../../../hooks/toasts'
-import { toBundleTxn } from '../../../lib/requestToBundleTxn'
+import { useToasts } from 'hooks/toasts'
+import { toBundleTxn } from 'lib/requestToBundleTxn'
 
-// 10% in geth and most EVM chain RPCs
-const RBF_THRESHOLD = 1.1
+// 10% in geth and most EVM chain RPCs; relayer wants 12%
+const RBF_THRESHOLD = 1.14
 
 function Transactions ({ relayerURL, selectedAcc, selectedNetwork, showSendTxns, showSendTxnsForReplacement, eligibleRequests }) {
   const { addToast } = useToasts()

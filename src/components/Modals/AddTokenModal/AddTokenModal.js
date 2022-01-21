@@ -3,13 +3,13 @@ import './AddTokenModal.scss'
 import { Contract } from 'ethers';
 import { formatUnits, Interface } from 'ethers/lib/utils';
 import ERC20ABI from 'adex-protocol-eth/abi/ERC20'
-import { isValidAddress } from '../../../helpers/address';
-import { Button, Loading, Modal, TextInput } from '../../common'
+import { isValidAddress } from 'lib/address';
+import { Button, Loading, Modal, TextInput } from 'components/common'
 import { useState } from 'react';
-import { useToasts } from '../../../hooks/toasts';
+import { useToasts } from 'hooks/toasts';
 import { MdOutlineAdd, MdOutlineClose } from 'react-icons/md';
-import { useModals } from '../../../hooks';
-import { getProvider } from '../../../lib/provider'
+import { useModals } from 'hooks';
+import { getProvider } from 'lib/provider'
 
 const ERC20Interface = new Interface(ERC20ABI)
 

@@ -1,16 +1,16 @@
 import { ethers } from 'ethers'
 import { Interface } from 'ethers/lib/utils'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { useToasts } from '../../../../../hooks/toasts'
-import AAVELendingPoolAbi from '../../../../../consts/AAVELendingPoolAbi'
-import AAVELendingPoolProviders from '../../../../../consts/AAVELendingPoolProviders'
-import networks from '../../../../../consts/networks'
-import { getProvider } from '../../../../../lib/provider'
+import { useToasts } from 'hooks/toasts'
+import AAVELendingPoolAbi from 'consts/AAVELendingPoolAbi'
+import AAVELendingPoolProviders from 'consts/AAVELendingPoolProviders'
+import networks from 'consts/networks'
+import { getProvider } from 'lib/provider'
 
-import AAVE_ICON from '../../../../../resources/aave.svg'
-import Card from '../Card/Card'
+import AAVE_ICON from 'resources/aave.svg'
+import Card from 'components/Wallet/Earn/Card/Card'
 import { getDefaultTokensItems } from './defaultTokens'
-import approveToken from '../../../../../helpers/approveToken'
+import approveToken from 'lib/approveToken'
 
 const AAVELendingPool = new Interface(AAVELendingPoolAbi)
 const RAY = 10**27

@@ -1,7 +1,7 @@
 import './Earn.scss'
 import AAVECard from './Cards/AAVECard/AAVECard'
-import YearnCard from './Cards/YearnCard/YearnCard'
-import { Loading } from '../../common'
+import YearnTesseractCard from './Cards/YearnTesseractCard/YearnTesseractCard'
+import { Loading } from 'components/common'
 
 const Earn = ({ portfolio, selectedNetwork, selectedAcc, addRequest }) => {
     return (
@@ -12,7 +12,7 @@ const Earn = ({ portfolio, selectedNetwork, selectedAcc, addRequest }) => {
                     :
                     <div className="cards">
                         <AAVECard networkId={selectedNetwork.id} tokens={portfolio.tokens} protocols={portfolio.protocols} account={selectedAcc} addRequest={addRequest}/>
-                        <YearnCard
+                        <YearnTesseractCard
                             networkId={selectedNetwork.id}
                             accountId={selectedAcc}
                             tokens={portfolio.tokens}
