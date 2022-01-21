@@ -50,6 +50,9 @@ const UnsupportedDAppsModal = ({ connections, disconnect, advancedModeList }) =>
                 }
             </div>
 
+            <div className='message'>
+                For more information on why these dApps do not support Ambire, please read <a href='https://help.ambire.com/hc/en-us/articles/4415496135698-Which-dApps-are-supported-by-Ambire-Wallet-' target='_blank' rel='noreferrer'>this article</a>.
+	    </div>
             <div className='separator'/>
 
             <div className='advanced-mode'>
