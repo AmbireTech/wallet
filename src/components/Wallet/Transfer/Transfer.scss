@@ -45,6 +45,15 @@
             opacity: 0.5;
         }
     }
+
+    #addresses {
+        .content {
+            .address-list {
+                max-height: 390px;
+                overflow-y: auto;
+            }
+        }
+    }
 }
 
 @media screen and (max-width: 1400px) {
