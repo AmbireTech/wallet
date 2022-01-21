@@ -100,25 +100,6 @@ function AppInner() {
     [eligibleRequests.length]
   )
   const showSendTxns = bundle => setSendTxnState({ showing: true, replacementBundle: bundle })
-  const showSendTxnsForReplacement = bundle => {
-
-    bundle.txns.filter((f, index) => index < bundle.txns.length-1)
-      .forEach((txn, index) => {
-        addRequest({
-          id:index,
-          chainId: network.chainId,
-          account: selectedAcc,
-          type: 'eth_sendTransaction',
-          txn: {
-            to: txn[0].toLowerCase(),
-            value: txn[1] === "0x"?"0x0":txn[1],
-            data: txn[2]
-          }
-        })
-      })
-    //Redundant? but needs replace
-    setSendTxnState({ showing: true, replace: true })
-  }
 
   // Network shouldn't matter here
   const everythingToSign = useMemo(() => requests
@@ -211,7 +192,7 @@ function AppInner() {
         relayerURL={relayerURL}
         onDismiss={() => setSendTxnState({ showing: false })}
         replacementBundle={sendTxnState.replacementBundle}
-        replace={sendTxnState.replace}
+        replaceByDefault={sendTxnState.replaceByDefault}
         onBroadcastedTxn={onBroadcastedTxn}
       ></SendTransaction>
     ) : (<></>)
@@ -251,7 +232,7 @@ function AppInner() {
           // required by the transactions page
           eligibleRequests={eligibleRequests}
           showSendTxns={showSendTxns}
-          showSendTxnsForReplacement={showSendTxnsForReplacement}
+          setSendTxnState={setSendTxnState}
           onAddAccount={onAddAccount}
           rewardsData={rewardsData}
           privateMode={privateMode}
