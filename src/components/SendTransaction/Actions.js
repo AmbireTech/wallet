@@ -36,28 +36,30 @@ export default function Actions({ estimation, feeSpeed, approveTxn, rejectTxn, c
         {signingStatus.confCodeRequired === 'email' ? <>A confirmation code was sent to your email, please enter it along with your password.</> : null}
       </div>
       <form ref={form} className='quickAccSigningForm' onSubmit={e => { e.preventDefault() }}>
-        <TextInput
-          small
-          password
-          required
-          minLength={3}
-          placeholder='Password'
-          value={quickAccCredentials.passphrase}
-          style={isRecoveryMode ? { visibility: 'hidden' } : {} }
-          disabled={isRecoveryMode}
-          onChange={value => setQuickAccCredentials({ ...quickAccCredentials, passphrase: value })}
-        ></TextInput>
-        {/* Changing the autoComplete prop to a random string seems to disable it in more cases */}
-        <TextInput
-          small
-          pattern='[0-9]+'
-          title='Confirmation code should be 6 digits'
-          autoComplete='nope'
-          required minLength={6} maxLength={6}
-          placeholder={signingStatus.confCodeRequired === 'otp' ? 'Authenticator OTP code' : 'Confirmation code'}
-          value={quickAccCredentials.code}
-          onChange={value => setQuickAccCredentials({ ...quickAccCredentials, code: value })}
-        ></TextInput>
+        <div className='inputs-container'>
+          <TextInput
+            small
+            password
+            required
+            minLength={3}
+            placeholder='Password'
+            value={quickAccCredentials.passphrase}
+            style={isRecoveryMode ? { visibility: 'hidden' } : {} }
+            disabled={isRecoveryMode}
+            onChange={value => setQuickAccCredentials({ ...quickAccCredentials, passphrase: value })}
+          ></TextInput>
+          {/* Changing the autoComplete prop to a random string seems to disable it in more cases */}
+          <TextInput
+            small
+            pattern='[0-9]+'
+            title='Confirmation code should be 6 digits'
+            autoComplete='nope'
+            required minLength={6} maxLength={6}
+            placeholder={signingStatus.confCodeRequired === 'otp' ? 'Authenticator OTP code' : 'Confirmation code'}
+            value={quickAccCredentials.code}
+            onChange={value => setQuickAccCredentials({ ...quickAccCredentials, code: value })}
+          ></TextInput>
+        </div>
         <div className='buttons'>
           <Button clear icon={<MdOutlineClose/>} type='button' className='cancelSigning' onClick={cancelSigning}>Cancel</Button>
           <Button 
