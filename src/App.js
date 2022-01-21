@@ -36,27 +36,32 @@ setTimeout(() => {
   console.error('|_|        | |) || - || .  || (_ || _| |   /       |_|')
   console.error('(_)        |___/ |_|_||_|\\_| \\___||___||_|_\\       (_)')
   console.log('At Ambire, we care about our users 💜. Safety is our top priority! DO NOT PASTE ANYTHING HERE or it could result in the LOSS OF YOUR FUNDS!')
-}, 4000);
+}, 4000)
 
-function AppInner () {
+function AppInner() {
   // basic stuff: currently selected account, all accounts, currently selected network
   const { accounts, selectedAcc, onSelectAcc, onAddAccount, onRemoveAccount } = useAccounts()
   const addressBook = useAddressBook({ accounts })
   const { network, setNetwork, allNetworks } = useNetwork()
   const { addToast } = useToasts()
   const wcUri = useOneTimeQueryParam('uri')
-  
+
   // Signing requests: transactions/signed msgs: all requests are pushed into .requests
   const { connections, connect, disconnect, requests: wcRequests, resolveMany: wcResolveMany } = useWalletConnect({
     account: selectedAcc,
     chainId: network.chainId,
     initialUri: wcUri
   })
-  
-  const { requests: gnosisRequests, resolveMany: gnosisResolveMany, connect: gnosisConnect, disconnect: gnosisDisconnect } = useGnosisSafe({
-	  selectedAccount: selectedAcc,
-	  network: network
-	}, [selectedAcc, network])
+
+  const {
+    requests: gnosisRequests,
+    resolveMany: gnosisResolveMany,
+    connect: gnosisConnect,
+    disconnect: gnosisDisconnect
+  } = useGnosisSafe({
+    selectedAccount: selectedAcc,
+    network: network
+  }, [selectedAcc, network])
 
   // Internal requests: eg from the Transfer page, Security page, etc. - requests originating in the wallet UI itself
   // unlike WalletConnect or SafeSDK requests, those do not need to be persisted
@@ -94,6 +99,25 @@ function AppInner () {
     [eligibleRequests.length]
   )
   const showSendTxns = bundle => setSendTxnState({ showing: true, replacementBundle: bundle })
+  const showSendTxnsForReplacement = bundle => {
+
+    bundle.txns.filter((f, index) => index < bundle.txns.length-1)
+      .forEach((txn, index) => {
+        addRequest({
+          id:index,
+          chainId: network.chainId,
+          account: selectedAcc,
+          type: 'eth_sendTransaction',
+          txn: {
+            to: txn[0].toLowerCase(),
+            value: txn[1] === "0x"?"0x0":txn[1],
+            data: txn[2]
+          }
+        })
+      })
+    //Redundant? but needs replace
+    setSendTxnState({ showing: true, replace: true })
+  }
 
   // Network shouldn't matter here
   const everythingToSign = useMemo(() => requests
@@ -115,7 +139,7 @@ function AppInner () {
     return true
   }
 
-   // Keeping track of transactions
+  // Keeping track of transactions
   const [sentTxn, setSentTxn] = useState([])
   const onBroadcastedTxn = hash => {
     if (!hash) {
@@ -127,7 +151,7 @@ function AppInner () {
       <span>Transaction signed and sent successfully!
         &nbsp;Click to view on block explorer.
       </span>
-    ), { url: network.explorerUrl+'/tx/'+hash, timeout: 15000 })
+    ), { url: network.explorerUrl + '/tx/' + hash, timeout: 15000 })
   }
   const confirmSentTx = txHash => setSentTxn(sentTxn => {
     const tx = sentTxn.find(tx => tx.hash === txHash)
@@ -165,7 +189,7 @@ function AppInner () {
       message={(location, action) => {
         if (action === 'POP') return onPopHistory()
         return true
-    }}/>
+      }}/>
 
     {!!everythingToSign.length && (<SignMessage
       selectedAcc={selectedAcc}
@@ -178,17 +202,18 @@ function AppInner () {
 
     {sendTxnState.showing ? (
       <SendTransaction
-          accounts={accounts}
-          selectedAcc={selectedAcc}
-          network={network}
-          requests={eligibleRequests}
-          resolveMany={resolveMany}
-          relayerURL={relayerURL}
-          onDismiss={() => setSendTxnState({ showing: false })}
-          replacementBundle={sendTxnState.replacementBundle}
-          onBroadcastedTxn={onBroadcastedTxn}
+        accounts={accounts}
+        selectedAcc={selectedAcc}
+        network={network}
+        requests={eligibleRequests}
+        resolveMany={resolveMany}
+        relayerURL={relayerURL}
+        onDismiss={() => setSendTxnState({ showing: false })}
+        replacementBundle={sendTxnState.replacementBundle}
+        replace={sendTxnState.replace}
+        onBroadcastedTxn={onBroadcastedTxn}
       ></SendTransaction>
-      ) : (<></>)
+    ) : (<></>)
     }
 
     <Switch>
@@ -225,6 +250,7 @@ function AppInner () {
           // required by the transactions page
           eligibleRequests={eligibleRequests}
           showSendTxns={showSendTxns}
+          showSendTxnsForReplacement={showSendTxnsForReplacement}
           onAddAccount={onAddAccount}
           rewardsData={rewardsData}
         >
@@ -232,7 +258,7 @@ function AppInner () {
       </Route>
 
       <Route path="/">
-        <Redirect to={selectedAcc ? "/wallet/dashboard" : "/add-account" }/>
+        <Redirect to={selectedAcc ? "/wallet/dashboard" : "/add-account"}/>
       </Route>
 
     </Switch>

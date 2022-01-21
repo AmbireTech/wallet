@@ -17,7 +17,7 @@ import { toBundleTxn } from '../../../lib/requestToBundleTxn'
 // 10% in geth and most EVM chain RPCs
 const RBF_THRESHOLD = 1.1
 
-function Transactions ({ relayerURL, selectedAcc, selectedNetwork, showSendTxns, eligibleRequests }) {
+function Transactions ({ relayerURL, selectedAcc, selectedNetwork, showSendTxns, showSendTxnsForReplacement, eligibleRequests }) {
   const { addToast } = useToasts()
   const [cacheBreak, setCacheBreak] = useState(() => Date.now())
   // @TODO refresh this after we submit a bundle; perhaps with the upcoming transactions service
@@ -71,6 +71,8 @@ function Transactions ({ relayerURL, selectedAcc, selectedNetwork, showSendTxns,
   // @TODO: we are currently assuming the last txn is a fee; change that (detect it)
   const speedup = relayerBundle => showSendTxns(mapToBundle(relayerBundle, { txns: relayerBundle.txns.slice(0, -1) }))
 
+  const replace = relayerBundle => showSendTxnsForReplacement(mapToBundle(relayerBundle))
+
   return (
     <section id='transactions'>
       {!!eligibleRequests.length && (<div className='panel'>
@@ -103,6 +105,7 @@ function Transactions ({ relayerURL, selectedAcc, selectedNetwork, showSendTxns,
           <div className="bundle">
             <BundlePreview bundle={firstPending}></BundlePreview>
             <div className='actions'>
+              <Button small onClick={() => replace(firstPending)}>Replace or modify</Button>
               <Button small className='cancel' onClick={() => cancel(firstPending)}>Cancel</Button>
               <Button small onClick={() => speedup(firstPending)}>Speed up</Button>
             </div>

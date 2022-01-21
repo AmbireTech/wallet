@@ -41,10 +41,11 @@ function makeBundle(account, networkId, requests) {
   return bundle
 }
 
-export default function SendTransaction({ relayerURL, accounts, network, selectedAcc, requests, resolveMany, replacementBundle, onBroadcastedTxn, onDismiss }) {
+export default function SendTransaction({ relayerURL, accounts, network, selectedAcc, requests, resolveMany, replacementBundle, replace, onBroadcastedTxn, onDismiss }) {
   // NOTE: this can be refactored at a top level to only pass the selected account (full object)
   // keeping it that way right now (selectedAcc, accounts) cause maybe we'll need the others at some point?
   const account = accounts.find(x => x.id === selectedAcc)
+  //console.log("REPLACE", replace);
 
   // Also filtered in App.js, but better safe than sorry here
   const eligibleRequests = useMemo(() => requests
@@ -67,6 +68,7 @@ export default function SendTransaction({ relayerURL, accounts, network, selecte
   return (<SendTransactionWithBundle
       relayerURL={relayerURL}
       bundle={bundle}
+      replace={replace}
       network={network}
       account={account}
       resolveMany={resolveMany}
@@ -75,8 +77,12 @@ export default function SendTransaction({ relayerURL, accounts, network, selecte
   />)
 }
 
-function SendTransactionWithBundle ({ bundle, network, account, resolveMany, relayerURL, onBroadcastedTxn, onDismiss }) {
+function SendTransactionWithBundle ({ bundle, replace, network, account, resolveMany, relayerURL, onBroadcastedTxn, onDismiss }) {
   const [estimation, setEstimation] = useState(null)
+  const [nonces, setNonces] = useState({ nextNonMinedNonce:null, nextFreeNonce:null })
+
+  const [replaceTx, setReplaceTx] = useState(!!replace)
+
   const [signingStatus, setSigningStatus] = useState(false)
   const [feeSpeed, setFeeSpeed] = useState(DEFAULT_SPEED)
   const { addToast } = useToasts()
@@ -94,34 +100,76 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
     let unmounted = false
 
     // get latest estimation
-    const reestimate = () => (relayerURL
-      ? bundle.estimate({ relayerURL, fetch, replacing: !!bundle.minFeeInUSDPerGas })
-      : bundle.estimateNoRelayer({ provider: getProvider(network.id) })
-    )
-      .then(estimation => {
-        if (unmounted || bundle !== currentBundle.current) return
-        estimation.selectedFeeToken = { symbol: network.nativeAssetSymbol }
-        setEstimation(prevEstimation => {
-          if (estimation.remainingFeeTokenBalances) {
-            // If there's no eligible token, set it to the first one cause it looks more user friendly (it's the preferred one, usually a stablecoin)
-            estimation.selectedFeeToken = (
-                prevEstimation
-                && isTokenEligible(prevEstimation.selectedFeeToken, feeSpeed, estimation)
-                && prevEstimation.selectedFeeToken
-              ) || estimation.remainingFeeTokenBalances.find(token => isTokenEligible(token, feeSpeed, estimation))
-              || estimation.remainingFeeTokenBalances[0]
-          }
-          return estimation
-        })
-      })
-      .catch(e => {
-        if (unmounted) return
-        console.log('estimation error', e)
-        addToast(`Estimation error: ${e.message || e}`, { error: true })
-      })
+    const reestimateAndGetNonces = () => {
 
-    reestimate()
-    const intvl = setInterval(reestimate, REESTIMATE_INTERVAL)
+      (relayerURL
+          ? bundle.estimate({ relayerURL, fetch, replacing: !!bundle.minFeeInUSDPerGas })
+          : bundle.estimateNoRelayer({ provider: getProvider(network.id) })
+      )
+        .then(estimation => {
+          if (unmounted || bundle !== currentBundle.current) return
+          estimation.selectedFeeToken = { symbol: network.nativeAssetSymbol }
+          setEstimation(prevEstimation => {
+            if (estimation.remainingFeeTokenBalances) {
+              // If there's no eligible token, set it to the first one cause it looks more user friendly (it's the preferred one, usually a stablecoin)
+              estimation.selectedFeeToken = (
+                  prevEstimation
+                  && isTokenEligible(prevEstimation.selectedFeeToken, feeSpeed, estimation)
+                  && prevEstimation.selectedFeeToken
+                ) || estimation.remainingFeeTokenBalances.find(token => isTokenEligible(token, feeSpeed, estimation))
+                || estimation.remainingFeeTokenBalances[0]
+            }
+            return estimation
+          })
+        })
+        .catch(e => {
+          if (unmounted) return
+          console.log('estimation error', e)
+          addToast(`Estimation error: ${e.message || e}`, { error: true })
+        })
+
+      if (relayerURL) {
+        fetch(`${relayerURL}/identity/${bundle.identity}/${bundle.network}/next-nonce${bundle.quickAccManager?'?quickAccManager='+bundle.quickAccManager:""}`).then(res => {
+          if (res.ok) {
+            res.json().then((data) => {
+              if ((data.pendingBundle?.nonce?.num || data.nonce) === data.nonce){
+                setReplaceTx(false);
+              }
+              setNonces({
+                nextNonMinedNonce: data.pendingBundle?.nonce?.num || data.nonce,
+                nextFreeNonce: data.nonce
+              })
+            });
+          } else {
+            throw new Error('Could not get relayer nonces');
+          }
+        }).catch(e=> {
+          if (unmounted) return
+          console.log('nonce request error', e)
+          addToast(`Nonce request error: ${e.message || e}`, { error: true })
+        })
+      }/* else {
+        const p = getProvider(network.id);
+
+        Promise.all([
+          p.getTransactionCount(account.signer.address),
+          p.getTransactionCount(account.signer.address, "pending")
+        ]).then(res => {
+          console.log("got RL nonces", res);
+          setNonces({
+            nextNonMinedNonce: res[0],
+            nextFreeNonce: res[0]+res[1]
+          })
+        }).catch(e=> {
+          if (unmounted) return
+          console.log('relayerless nonce request error', e)
+          addToast(`Nonce request error: ${e.message || e}`, { error: true })
+        })
+      }*/
+    }
+
+    reestimateAndGetNonces()
+    const intvl = setInterval(reestimateAndGetNonces, REESTIMATE_INTERVAL)
 
     return () => {
       unmounted = true
@@ -133,8 +181,8 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
     if (!relayerURL) {
       return new Bundle({
         ...bundle,
-        gasLimit: estimation.gasLimit
-        // set nonce here when we implement "replace current pending transaction"
+        gasLimit: estimation.gasLimit,
+        //nonce: (replaceTx && ( nonces.nextNonMinedNonce !== nonces.nextFreeNonce ))?nonces.nextNonMinedNonce:nonces.nextFreeNonce
       })
     }
 
@@ -151,10 +199,13 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
           * Math.pow(10, feeToken.decimals)
         )
     ])]
+
     return new Bundle({
       ...bundle,
       txns: [...bundle.txns, feeTxn],
-      gasLimit: estimation.gasLimit + addedGas + (bundle.extraGas || 0)
+      gasLimit: estimation.gasLimit + addedGas + (bundle.extraGas || 0),
+      //override nonce from passed bundle?
+      nonce: (replaceTx && ( nonces.nextNonMinedNonce !== nonces.nextFreeNonce ))?nonces.nextNonMinedNonce:nonces.nextFreeNonce
     })
   }
 
@@ -359,6 +410,17 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
                           ></FeeSelector>
                   </div>
               </div>
+              {
+                nonces.nextFreeNonce !== nonces.nextNonMinedNonce &&
+                (
+                  <div className='panel noncePanel'>
+                    <div>NextFreeNonce {nonces.nextFreeNonce}</div>
+                    <div>NextNonMinedNonce {nonces.nextNonMinedNonce}</div>
+                    Replace Tx?
+                    <input type='checkbox' checked={replaceTx} onChange={() => setReplaceTx(!replaceTx)} />
+                  </div>
+                )
+              }
               <div className='panel actions'>
                   <div className='heading'>
                       <div className='title'>
