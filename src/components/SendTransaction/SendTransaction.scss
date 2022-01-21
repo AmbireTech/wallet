@@ -188,7 +188,17 @@ $titleBar-height: 90px;
                     form {
                         display: flex;
                         flex-direction: column;
-                        gap: 1em;
+                        gap: 0.5em;
+
+                        .inputs-container {
+                            display: flex;
+                            flex-direction: row;
+                            gap: 1em;
+
+                            .text-input {
+                                flex: 0 1 50%;
+                            }
+                        }
 
                         .buttons {
                             margin-top: 1em;
@@ -257,6 +267,16 @@ $titleBar-height: 90px;
             #signing-details {
                 .section-content {
                     flex-direction: column !important;
+                }
+            }
+
+            #actions-container {
+                #actions {
+                    form {
+                        .inputs-container {
+                            flex-direction: column !important;
+                        }
+                    }
                 }
             }
         }
