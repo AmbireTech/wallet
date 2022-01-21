@@ -1,6 +1,5 @@
 const unsupportedDApps = [
     'https://opensea.io',
-    'https://www.myetherwallet.com',
     'https://curve.fi',
     'https://loopring.io',
     'https://dydx.exchange',
