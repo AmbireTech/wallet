@@ -1,5 +1,5 @@
 import './SignMessage.scss'
-import { MdCheck, MdClose } from 'react-icons/md'
+import { MdBrokenImage, MdCheck, MdClose } from 'react-icons/md'
 import { Wallet } from 'ethers'
 import { toUtf8String, keccak256, arrayify, isHexString } from 'ethers/lib/utils'
 import { signMsgHash } from 'adex-protocol-eth/js/Bundle'
@@ -10,11 +10,14 @@ import { fetchPost } from 'lib/fetch'
 import { useState } from 'react'
 import { Button, Loading, TextInput } from 'components/common'
 
-export default function SignMessage ({ toSign, resolve, account, relayerURL, totalRequests }) {
+export default function SignMessage ({ toSign, resolve, account, connections, relayerURL, totalRequests }) {
   const defaultState = () => ({ codeRequired: false, passphrase: '' })
   const { addToast } = useToasts()
   const [signingState, setSigningState] = useState(defaultState())
   const [isLoading, setLoading] = useState(false)
+
+  const connection = connections.find(({ uri }) => uri === toSign.wcUri)
+  const dApp = connection ? connection?.session?.peerMeta || null : null
 
   if (!toSign || !account) return (<></>)
   if (toSign && !isHexString(toSign.txn)) return (<div id='signMessage'>
@@ -116,7 +119,20 @@ export default function SignMessage ({ toSign, resolve, account, relayerURL, tot
       </div>
 
       <div className='request-message'>
-        A dApp is requesting your signature.
+        <div className='dapp-message'>
+          { 
+            dApp ?
+              <a className='dapp' href={dApp.url} target="_blank" rel="noreferrer">
+                <div className='icon' style={{ backgroundImage: `url(${dApp.icons[0]})` }}>
+                 <MdBrokenImage/> 
+                </div>
+                { dApp.name }
+              </a>
+              :
+              'A dApp '
+          }
+          is requesting your signature.
+        </div>
         <span>{totalRequests > 1 ? `You have ${totalRequests - 1} more pending requests.` : ''}</span>
       </div>
       
