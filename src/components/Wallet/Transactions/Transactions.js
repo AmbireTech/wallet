@@ -9,7 +9,7 @@ import accountPresets from 'consts/accountPresets'
 import networks from 'consts/networks'
 import { getTransactionSummary } from 'lib/humanReadableTransactions'
 import { Bundle } from 'adex-protocol-eth'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import fetch from 'node-fetch'
 import { useToasts } from 'hooks/toasts'
 import { toBundleTxn } from 'lib/requestToBundleTxn'
@@ -17,7 +17,8 @@ import { toBundleTxn } from 'lib/requestToBundleTxn'
 // 10% in geth and most EVM chain RPCs; relayer wants 12%
 const RBF_THRESHOLD = 1.14
 
-function Transactions ({ relayerURL, selectedAcc, selectedNetwork, showSendTxns, showSendTxnsForReplacement, eligibleRequests }) {
+
+function Transactions ({ relayerURL, selectedAcc, selectedNetwork, showSendTxns, addRequest, eligibleRequests, setSendTxnState }) {
   const { addToast } = useToasts()
   const [cacheBreak, setCacheBreak] = useState(() => Date.now())
   // @TODO refresh this after we submit a bundle; perhaps with the upcoming transactions service
@@ -32,10 +33,30 @@ function Transactions ({ relayerURL, selectedAcc, selectedNetwork, showSendTxns,
     : null
   const { data, errMsg, isLoading } = useRelayerData(url)
 
+  const showSendTxnsForReplacement = useCallback(bundle => {
+    bundle.txns.slice(0, -1)
+      .forEach((txn, index) => {
+        addRequest({
+          id: index,
+          chainId: selectedNetwork.chainId,
+          account: selectedAcc,
+          type: 'eth_sendTransaction',
+          txn: {
+            to: txn[0].toLowerCase(),
+            value: txn[1] === "0x" ? "0x0" : txn[1],
+            data: txn[2]
+          }
+        })
+      })
+    //Redundant? but needs replace
+    setSendTxnState({ showing: true, replaceByDefault: true })
+  }, [addRequest, selectedNetwork, selectedAcc, setSendTxnState])
+
   // @TODO implement a service that stores sent transactions locally that will be used in relayerless mode
   if (!relayerURL) return (<section id='transactions'>
     <h3 className='validation-error'>Unsupported: not currently connected to a relayer.</h3>
   </section>)
+
 
   // @TODO: visualize other pending bundles
   const firstPending = data && data.txns.find(x => !x.executed && !x.replaced)
