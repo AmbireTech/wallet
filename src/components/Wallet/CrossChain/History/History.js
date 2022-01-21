@@ -3,15 +3,17 @@ import './History.scss'
 import { useState, useEffect, useMemo, useRef } from 'react'
 import { MdOutlineArrowForward, MdOutlineCheck, MdOutlineClose } from 'react-icons/md'
 import { HiOutlineExternalLink } from 'react-icons/hi'
-import { Loading } from '../../../common'
-import { checkTxStatus } from '../../../../services/movr'
-import networks from '../../../../consts/networks'
-import { useToasts } from '../../../../hooks/toasts'
-import { useRelayerData } from '../../../../hooks'
+import { Loading } from 'components/common'
+import useMovr from 'components/Wallet/CrossChain/useMovr'
+import networks from 'consts/networks'
+import { useToasts } from 'hooks/toasts'
+import { useRelayerData } from 'hooks'
 import movrTxParser from './movrTxParser'
 
 const History = ({ relayerURL, network, account, quotesConfirmed }) => {
     const { addToast } = useToasts()
+    const { checkTxStatus } = useMovr()
+
     const [txStatuses, setTxStatuses] = useState([])
     const [loading, setLoading] = useState(false)
     const [cacheBreak, setCacheBreak] = useState(() => Date.now())
@@ -96,7 +98,7 @@ const History = ({ relayerURL, network, account, quotesConfirmed }) => {
         }
 
         getStatuses()
-    }, [txTransfers, quotesConfirmed, network, addToast])
+    }, [txTransfers, quotesConfirmed, network, checkTxStatus, addToast])
 
     useEffect(() => {
         if (!errMsg) return

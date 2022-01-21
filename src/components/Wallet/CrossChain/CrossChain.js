@@ -5,15 +5,16 @@ import { BsArrowDown } from 'react-icons/bs'
 import { useEffect, useState, useCallback, useMemo, useRef } from 'react'
 import { ethers } from 'ethers'
 import { parseUnits } from 'ethers/lib/utils'
-import { NumberInput, Button, Select, Loading, NoFundsPlaceholder } from '../../common'
-import { fetchChains, fetchFromTokens, fetchQuotes, fetchToTokens } from '../../../services/movr'
-import networks from '../../../consts/networks'
-import { useToasts } from '../../../hooks/toasts'
+import { NumberInput, Button, Select, Loading, NoFundsPlaceholder } from 'components/common'
+import useMovr from './useMovr'
+import networks from 'consts/networks'
+import { useToasts } from 'hooks/toasts'
 import Quotes from './Quotes/Quotes'
 import History from './History/History'
 
 const CrossChain = ({ addRequest, selectedAccount, portfolio, network, relayerURL }) => {
     const { addToast } = useToasts()
+    const { fetchChains, fetchFromTokens, fetchQuotes, fetchToTokens } = useMovr()
 
     const [disabled, setDisabled] = useState(false)
     const [loading, setLoading] = useState(true)
@@ -67,7 +68,7 @@ const CrossChain = ({ addRequest, selectedAccount, portfolio, network, relayerUR
             addToast(`Error while loading chains: ${e.message || e}`, { error: true })
             return false
         }
-    }, [fromChain, addToast])
+    }, [fromChain, fetchChains, addToast])
 
     const loadFromTokens = useCallback(async () => {
         if (!fromChain || !toChain) return
@@ -100,7 +101,7 @@ const CrossChain = ({ addRequest, selectedAccount, portfolio, network, relayerUR
             addToast(`Error while loading from tokens: ${e.message || e}`, { error: true })
             return false
         }
-    }, [fromChain, toChain, addToast])
+    }, [fromChain, toChain, fetchFromTokens, addToast])
 
     const loadToTokens = useCallback(async () => {
         if (!fromChain || !toChain) return
@@ -126,7 +127,7 @@ const CrossChain = ({ addRequest, selectedAccount, portfolio, network, relayerUR
             addToast(`Error while loading to tokens: ${e.message || e}`, { error: true })
             return false
         }
-    }, [fromChain, toChain, addToast])
+    }, [fromChain, toChain, fetchToTokens, addToast])
 
     const maxAmount = useMemo(() => {
         try {

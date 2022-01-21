@@ -10,12 +10,12 @@ import Transfer from "./Transfer/Transfer"
 import Earn from "./Earn/Earn"
 import Security from "./Security/Security"
 import Transactions from './Transactions/Transactions'
-import PluginGnosisSafeApps from '../Plugins/GnosisSafeApps/GnosisSafeApps'
+import PluginGnosisSafeApps from 'components/Plugins/GnosisSafeApps/GnosisSafeApps'
 import Collectible from "./Collectible/Collectible"
-import { PermissionsModal } from '../Modals'
-import { useModals, usePermissions } from '../../hooks'
+import { PermissionsModal } from 'components/Modals'
+import { useModals, usePermissions } from 'hooks'
 import { useCallback, useEffect, useMemo, useRef } from 'react'
-import { isFirefox } from '../../lib/isFirefox'
+import { isFirefox } from 'lib/isFirefox'
 import CrossChain from "./CrossChain/CrossChain"
 
 export default function Wallet(props) {
@@ -28,12 +28,13 @@ export default function Wallet(props) {
 
   const routes = [
     {
-      path: '/dashboard',
+      path: '/dashboard/:tabId?',
       component: <Dashboard
         portfolio={props.portfolio}
         selectedNetwork={props.network}
         selectedAccount={props.selectedAcc}
         setNetwork={props.setNetwork}
+        privateMode={props.privateMode}
       />
     },
     {
@@ -121,13 +122,22 @@ export default function Wallet(props) {
 
     const relayerIdentityURL = `${props.relayerURL}/identity/${account.id}`
 
-    const permissionsModal = <PermissionsModal relayerIdentityURL={relayerIdentityURL} account={account} onAddAccount={props.onAddAccount}/>
     const areBlockedPermissions = arePermissionsLoaded
       && ((!isFirefox() && !isClipboardGranted) || !isNoticationsGranted)
     const showCauseOfPermissions = areBlockedPermissions && !modalHidden
     const showCauseOfEmail = !!account.emailConfRequired
-    if (showCauseOfEmail || showCauseOfPermissions) showModal(permissionsModal, { disableClose: true })
-  }, [props.relayerURL, props.accounts, props.selectedAcc, props.onAddAccount, showModal, isClipboardGranted, isNoticationsGranted, arePermissionsLoaded, modalHidden])
+    const showCauseOfBackupOptout = account.backupOptout
+    
+    const permissionsModal = <PermissionsModal
+      relayerIdentityURL={relayerIdentityURL} 
+      account={account} 
+      onAddAccount={props.onAddAccount} 
+      isCloseBtnShown={!showCauseOfBackupOptout} 
+      isBackupOptout={!showCauseOfBackupOptout} 
+    />
+
+    if (showCauseOfEmail || showCauseOfPermissions || showCauseOfBackupOptout) showModal(permissionsModal, { disableClose: true })
+  }, [props.accounts, props.relayerURL, props.onAddAccount, props.selectedAcc, arePermissionsLoaded, isClipboardGranted, isNoticationsGranted, modalHidden, showModal])
 
   useEffect(() => handlePermissionsModal(), [handlePermissionsModal])
 
@@ -138,7 +148,7 @@ export default function Wallet(props) {
 
   return (
     <div id="wallet">
-      <SideBar match={props.match} portfolio={props.portfolio} />
+      <SideBar match={props.match} portfolio={props.portfolio} hidePrivateValue={props.privateMode.hidePrivateValue} />
       <TopBar {...props} />
 
       <div id="wallet-container" ref={walletContainer}>

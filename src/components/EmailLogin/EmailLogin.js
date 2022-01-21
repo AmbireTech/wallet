@@ -3,9 +3,9 @@ import './EmailLogin.scss'
 import { useState, useEffect } from 'react'
 import { MdEmail } from 'react-icons/md'
 
-import { fetch, fetchCaught } from '../../lib/fetch'
+import { fetch, fetchCaught } from 'lib/fetch'
 
-import LoginOrSignup from '../LoginOrSignupForm/LoginOrSignupForm'
+import LoginOrSignup from 'components/LoginOrSignupForm/LoginOrSignupForm'
 
 // NOTE: the same polling that we do here with the setEffect should be used for txns
 // that require email confirmation

@@ -1,5 +1,5 @@
 import { parseUnits } from 'ethers/lib/utils'
-import { isValidAddress, isKnownTokenOrContract } from "../../helpers/address"
+import { isValidAddress, isKnownTokenOrContract } from "lib/address"
 
 const validateAddress = address => {
     if (!(address && address.length)) {
