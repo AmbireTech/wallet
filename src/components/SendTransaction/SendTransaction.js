@@ -5,11 +5,10 @@ import { FaSignature, FaChevronLeft } from 'react-icons/fa'
 import { MdOutlineAccountCircle } from 'react-icons/md'
 import './SendTransaction.scss'
 import { useEffect, useState, useMemo, useRef } from 'react'
-import fetch from 'node-fetch'
 import { Bundle } from 'adex-protocol-eth/js'
 import { Wallet } from 'ethers'
 import { Interface } from 'ethers/lib/utils'
-import * as blockies from 'blockies-ts';
+import * as blockies from 'blockies-ts'
 import { useToasts } from 'hooks/toasts'
 import { getWallet } from 'lib/getWallet'
 import accountPresets from 'consts/accountPresets'
@@ -18,7 +17,7 @@ import Actions from './Actions'
 import TxnPreview from 'components/common/TxnPreview/TxnPreview'
 import { sendNoRelayer } from './noRelayer'
 import { isTokenEligible, getFeePaymentConsequences } from './helpers'
-import { fetchPost } from 'lib/fetch'
+import { fetchGet, fetchPost } from 'lib/fetch'
 import { toBundleTxn } from 'lib/requestToBundleTxn'
 import { getProvider } from 'lib/provider'
 
@@ -41,23 +40,22 @@ function makeBundle(account, networkId, requests) {
   return bundle
 }
 
-function getErrorMessage(e){
+function getErrorMessage(e) {
   if (e && e.message === 'NOT_TIME') {
-    return "Your 72 hour recovery waiting period still hasn't ended. You will be able to use your account after this lock period."
-  } else if (e && e.message === 'WRONG_ACC_OR_NO_PRIV' ) {
-    return "Unable to sign with this email/password account. Please contact support."
+    return 'Your 72 hour recovery waiting period still hasn\'t ended. You will be able to use your account after this lock period.'
+  } else if (e && e.message === 'WRONG_ACC_OR_NO_PRIV') {
+    return 'Unable to sign with this email/password account. Please contact support.'
   } else if (e && e.message === 'INVALID_SIGNATURE') {
-    return "Invalid signature. This may happen if you used password/derivation path on your hardware wallet."
+    return 'Invalid signature. This may happen if you used password/derivation path on your hardware wallet.'
   } else {
     return e.message || e
   }
 }
 
-export default function SendTransaction({ relayerURL, accounts, network, selectedAcc, requests, resolveMany, replacementBundle, replace, onBroadcastedTxn, onDismiss }) {
+export default function SendTransaction({ relayerURL, accounts, network, selectedAcc, requests, resolveMany, replacementBundle, replaceByDefault, onBroadcastedTxn, onDismiss }) {
   // NOTE: this can be refactored at a top level to only pass the selected account (full object)
   // keeping it that way right now (selectedAcc, accounts) cause maybe we'll need the others at some point?
   const account = accounts.find(x => x.id === selectedAcc)
-  //console.log("REPLACE", replace);
 
   // Also filtered in App.js, but better safe than sorry here
   const eligibleRequests = useMemo(() => requests
@@ -75,25 +73,26 @@ export default function SendTransaction({ relayerURL, accounts, network, selecte
   )
 
   if (!account || !bundle.txns.length) return (<div id='sendTransaction'>
-      <h3 className='error'>SendTransactions: No account or no requests: should never happen.</h3>
+    <h3 className='error'>SendTransactions: No account or no requests: should never happen.</h3>
   </div>)
   return (<SendTransactionWithBundle
-      relayerURL={relayerURL}
-      bundle={bundle}
-      replace={replace}
-      network={network}
-      account={account}
-      resolveMany={resolveMany}
-      onBroadcastedTxn={onBroadcastedTxn}
-      onDismiss={onDismiss}
+    relayerURL={relayerURL}
+    bundle={bundle}
+    replaceByDefault={replaceByDefault}
+    network={network}
+    account={account}
+    resolveMany={resolveMany}
+    onBroadcastedTxn={onBroadcastedTxn}
+    onDismiss={onDismiss}
   />)
 }
 
-function SendTransactionWithBundle ({ bundle, replace, network, account, resolveMany, relayerURL, onBroadcastedTxn, onDismiss }) {
-  const [estimation, setEstimation] = useState(null)
-  const [nonces, setNonces] = useState({ nextNonMinedNonce:null, nextFreeNonce:null })
+function SendTransactionWithBundle({ bundle, replaceByDefault, network, account, resolveMany, relayerURL, onBroadcastedTxn, onDismiss }) {
 
-  const [replaceTx, setReplaceTx] = useState(!!replace)
+  const [estimation, setEstimation] = useState(null)
+  const [nonces, setNonces] = useState({ nextNonMinedNonce: null, nextFreeNonce: null })
+
+  const [replaceTx, setReplaceTx] = useState(!!replaceByDefault)
 
   const [signingStatus, setSigningStatus] = useState(false)
   const [feeSpeed, setFeeSpeed] = useState(DEFAULT_SPEED)
@@ -141,43 +140,21 @@ function SendTransactionWithBundle ({ bundle, replace, network, account, resolve
         })
 
       if (relayerURL) {
-        fetch(`${relayerURL}/identity/${bundle.identity}/${bundle.network}/next-nonce${bundle.quickAccManager?'?quickAccManager='+bundle.quickAccManager:""}`).then(res => {
-          if (res.ok) {
-            res.json().then((data) => {
-              if ((data.pendingBundle?.nonce?.num || data.nonce) === data.nonce){
-                setReplaceTx(false);
-              }
-              setNonces({
-                nextNonMinedNonce: data.pendingBundle?.nonce?.num || data.nonce,
-                nextFreeNonce: data.nonce
-              })
-            });
-          } else {
-            throw new Error('Could not get relayer nonces');
+        fetchGet(`${relayerURL}/identity/${bundle.identity}/${bundle.network}/next-nonce${bundle.quickAccManager ? '?quickAccManager=' + bundle.quickAccManager : ''}`).then(jsonRes => {
+          const nextNonMinedNonce = jsonRes.pendingBundle?.nonce?.num || jsonRes.nonce
+          if (nextNonMinedNonce === jsonRes.nonce) {
+            setReplaceTx(false)
           }
-        }).catch(e=> {
-          if (unmounted) return
-          console.log('nonce request error', e)
-          addToast(`Nonce request error: ${e.message || e}`, { error: true })
-        })
-      }/* else {
-        const p = getProvider(network.id);
-
-        Promise.all([
-          p.getTransactionCount(account.signer.address),
-          p.getTransactionCount(account.signer.address, "pending")
-        ]).then(res => {
-          console.log("got RL nonces", res);
           setNonces({
-            nextNonMinedNonce: res[0],
-            nextFreeNonce: res[0]+res[1]
+            nextNonMinedNonce,
+            nextFreeNonce: jsonRes.nonce
           })
-        }).catch(e=> {
+        }).catch(e => {
           if (unmounted) return
-          console.log('relayerless nonce request error', e)
+          console.error('nonce request error', e)
           addToast(`Nonce request error: ${e.message || e}`, { error: true })
         })
-      }*/
+      }
     }
 
     reestimateAndGetNonces()
@@ -194,15 +171,14 @@ function SendTransactionWithBundle ({ bundle, replace, network, account, resolve
       return new Bundle({
         ...bundle,
         gasLimit: estimation.gasLimit,
-        //nonce: (replaceTx && ( nonces.nextNonMinedNonce !== nonces.nextFreeNonce ))?nonces.nextNonMinedNonce:nonces.nextFreeNonce
       })
     }
 
     const feeToken = estimation.selectedFeeToken
     const { addedGas, multiplier } = getFeePaymentConsequences(feeToken, estimation)
-    const toHexAmount = amnt => '0x'+Math.round(amnt).toString(16)
+    const toHexAmount = amnt => '0x' + Math.round(amnt).toString(16)
     const feeTxn = feeToken.symbol === network.nativeAssetSymbol
-      ? [accountPresets.feeCollector, toHexAmount(estimation.feeInNative[feeSpeed]*multiplier*1e18), '0x']
+      ? [accountPresets.feeCollector, toHexAmount(estimation.feeInNative[feeSpeed] * multiplier * 1e18), '0x']
       : [feeToken.address, '0x0', ERC20.encodeFunctionData('transfer', [
         accountPresets.feeCollector,
         toHexAmount(
@@ -210,14 +186,13 @@ function SendTransactionWithBundle ({ bundle, replace, network, account, resolve
           * multiplier
           * Math.pow(10, feeToken.decimals)
         )
-    ])]
+      ])]
 
     return new Bundle({
       ...bundle,
       txns: [...bundle.txns, feeTxn],
       gasLimit: estimation.gasLimit + addedGas + (bundle.extraGas || 0),
-      //override nonce from passed bundle?
-      nonce: (replaceTx && ( nonces.nextNonMinedNonce !== nonces.nextFreeNonce ))?nonces.nextNonMinedNonce:nonces.nextFreeNonce
+      nonce: (replaceTx && (nonces.nextNonMinedNonce !== nonces.nextFreeNonce)) ? nonces.nextNonMinedNonce : nonces.nextFreeNonce
     })
   }
 
@@ -427,9 +402,7 @@ function SendTransactionWithBundle ({ bundle, replace, network, account, resolve
                 nonces.nextFreeNonce !== nonces.nextNonMinedNonce &&
                 (
                   <div className='panel noncePanel'>
-                    <div>NextFreeNonce {nonces.nextFreeNonce}</div>
-                    <div>NextNonMinedNonce {nonces.nextNonMinedNonce}</div>
-                    Replace Tx?
+                    Replace Transaction?
                     <input type='checkbox' checked={replaceTx} onChange={() => setReplaceTx(!replaceTx)} />
                   </div>
                 )
