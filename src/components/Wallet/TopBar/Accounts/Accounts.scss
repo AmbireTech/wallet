@@ -43,6 +43,7 @@ $account-height: 60px;
                         @include flex-center-center;
                         border-radius: 100%;
                         background-size: cover;
+                        flex-shrink: 0;
                     }
 
                     .details {
