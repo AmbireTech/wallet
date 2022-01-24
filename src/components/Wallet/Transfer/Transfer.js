@@ -103,7 +103,7 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
         setAmount(0)
         setBigNumberHexAmount('')
         setBinanceAddressConfirmed(false)
-    }, [asset])
+    }, [asset, selectedNetwork.id])
 
     useEffect(() => {
         if (!selectedAsset) return
