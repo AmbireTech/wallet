@@ -72,34 +72,32 @@ contract WALLETToken {
 }
 
 contract WALLETSupplyController {
-	enum GovernanceLevel { None, Mint, All }
-
 	uint public constant CAP = 1_000_000_000 * 1e18;
 	WALLETToken public immutable WALLET;
 
-	mapping (address => uint8) public governance;
+	mapping (address => bool) public hasGovernance;
 	// Some addresses (eg StakingPools) are incentivized with a certain allowance of WALLET per year
 	mapping (address => uint) public incentivePerSecond;
 	// Keep track of when incentive tokens were last minted for a given addr
 	mapping (address => uint) public incentiveLastMint;
 
 	constructor(WALLETToken token) {
-		governance[msg.sender] = uint8(GovernanceLevel.All);
+		hasGovernance[msg.sender] = true;
 		WALLET = token;
 	}
 
 	function changeSupplyController(address newSupplyController) external {
-		require(governance[msg.sender] >= uint8(GovernanceLevel.All), "NOT_GOVERNANCE");
+		require(hasGovernance[msg.sender], "NOT_GOVERNANCE");
 		WALLET.changeSupplyController(newSupplyController);
 	}
 
-	function setGovernance(address addr, uint8 level) external {
-		require(governance[msg.sender] >= uint8(GovernanceLevel.All), "NOT_GOVERNANCE");
-		governance[addr] = level;
+	function setGovernance(address addr, bool level) external {
+		require(hasGovernance[msg.sender], "NOT_GOVERNANCE");
+		hasGovernance[addr] = level;
 	}
 
 	function setIncentive(address addr, uint amountPerSecond) external {
-		require(governance[msg.sender] >= uint8(GovernanceLevel.All), "NOT_GOVERNANCE");
+		require(hasGovernance[msg.sender], "NOT_GOVERNANCE");
 		// no more than 10 WALLET per second
 		require(amountPerSecond <= 10e18, "AMOUNT_TOO_LARGE");
 		incentiveLastMint[addr] = block.timestamp;
