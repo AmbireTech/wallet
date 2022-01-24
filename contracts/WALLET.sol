@@ -15,6 +15,8 @@ contract WALLETToken {
 	event Approval(address indexed owner, address indexed spender, uint amount);
 	event Transfer(address indexed from, address indexed to, uint amount);
 
+	event SupplyControllerChanged(address indexed prev, address indexed current);
+
 	address public supplyController;
 	address public immutable PREV_TOKEN;
 
@@ -67,6 +69,8 @@ contract WALLETToken {
 
 	function changeSupplyController(address newSupplyController) external {
 		require(msg.sender == supplyController, 'NOT_SUPPLYCONTROLLER');
+		// Emitting here does not follow checks-effects-interactions-logs, but it's safe anyway cause there are no external calls
+		emit SupplyControllerChanged(supplyController, newSupplyController);
 		supplyController = newSupplyController;
 	}
 }
