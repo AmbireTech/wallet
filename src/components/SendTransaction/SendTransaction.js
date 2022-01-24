@@ -20,6 +20,8 @@ import { isTokenEligible, getFeePaymentConsequences } from './helpers'
 import { fetchPost } from 'lib/fetch'
 import { toBundleTxn } from 'lib/requestToBundleTxn'
 import { getProvider } from 'lib/provider'
+import { MdInfo } from 'react-icons/md'
+import { useCallback } from 'react'
 
 const ERC20 = new Interface(require('adex-protocol-eth/abi/ERC20'))
 
@@ -90,6 +92,7 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
   const [estimation, setEstimation] = useState(null)
   const [signingStatus, setSigningStatus] = useState(false)
   const [feeSpeed, setFeeSpeed] = useState(DEFAULT_SPEED)
+  const [isDeployed, setIsDeployed] = useState(null)
   const { addToast } = useToasts()
   useEffect(() => {
     if (!bundle.txns.length) return
@@ -144,7 +147,7 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
     }
   }, [bundle, setEstimation, feeSpeed, addToast, network, relayerURL, signingStatus])
 
-  const getFinalBundle = () => {
+  const getFinalBundle = useCallback(() => {
     if (!relayerURL) {
       return new Bundle({
         ...bundle,
@@ -171,7 +174,7 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
       txns: [...bundle.txns, feeTxn],
       gasLimit: estimation.gasLimit + addedGas + (bundle.extraGas || 0)
     })
-  }
+  }, [relayerURL, bundle, estimation, feeSpeed, network.nativeAssetSymbol])
 
   const approveTxnImpl = async () => {
     if (!estimation) throw new Error('no estimation: should never happen')
@@ -302,6 +305,20 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
 
   const accountAvatar = blockies.create({ seed: account.id }).toDataURL()
 
+  // Check if account is deployed
+  useEffect(() => {
+    const provider = getProvider(network.id)
+    if (!estimation || !estimation.selectedFeeToken) return setIsDeployed(null)
+    
+    const finalBundle = getFinalBundle()
+    async function getStatus() {
+      const code = await provider.getCode(finalBundle.identity)
+      setIsDeployed(code !== '0x')
+    }
+
+    getStatus()
+  }, [estimation, network.id, getFinalBundle])
+
   return (
     <div id='sendTransaction'>
       <div id="titleBar">
@@ -381,6 +398,19 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
               setFeeSpeed={setFeeSpeed}
             ></FeeSelector>
           </div>
+
+          {
+            isDeployed === false && bundle.gasLimit ?
+              <div className='first-tx-note'>
+                <div className='first-tx-note-title'><MdInfo/>Note</div>
+                <div className='first-tx-note-message'>
+                  Because this is your first Ambire transaction, this fee is {(60000 / bundle.gasLimit * 100).toFixed()}% higher than usual because we have to deploy your smart wallet.
+                  Subsequent transactions will be cheaper
+                </div>
+              </div>
+              :
+              null
+          }
 
           <div id="actions-container">
             {
