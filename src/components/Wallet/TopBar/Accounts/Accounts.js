@@ -8,7 +8,7 @@ import * as blockies from 'blockies-ts';
 import { DropDown, Button } from 'components/common';
 import { useToasts } from 'hooks/toasts';
 
-const Accounts = ({ accounts, selectedAddress, onSelectAcc, onRemoveAccount }) => {
+const Accounts = ({ accounts, selectedAddress, onSelectAcc, onRemoveAccount, hidePrivateValue }) => {
     const { addToast } = useToasts()
     const [logoutWarning, setLogoutWarning] = useState(false)
     const [closed, setClosed] = useState(false)
@@ -33,7 +33,7 @@ const Accounts = ({ accounts, selectedAddress, onSelectAcc, onRemoveAccount }) =
     }
 
     return (
-        <DropDown id="accounts" icon={toIcon(selectedAddress)} title={shortenedAddress(selectedAddress)} open={closed} onOpen={() => setClosed(false)}>
+        <DropDown id="accounts" icon={toIcon(selectedAddress)} title={hidePrivateValue(shortenedAddress(selectedAddress))} open={closed} onOpen={() => setClosed(false)}>
           <div className="list">
             {
               accounts.map(({ id, email, signer, signerExtra }) => 
