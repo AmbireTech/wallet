@@ -308,7 +308,7 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
   // Check if account is deployed
   useEffect(() => {
     const provider = getProvider(network.id)
-    if (!estimation || !estimation.selectedFeeToken) return setIsDeployed(null)
+    if (!estimation || !estimation.selectedFeeToken || (!estimation.feeInNative || !estimation.feeInUSD)) return setIsDeployed(null)
     
     const finalBundle = getFinalBundle()
     async function getStatus() {
