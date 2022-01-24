@@ -102,23 +102,25 @@ export default function usePortfolio({ currentNetwork, account }) {
     , [extraTokens])
 
     const fetchSupplementTokenData = useCallback(async (updatedTokens) => {
-        const currentNetworkTokens = updatedTokens.find(({ network }) => network === currentNetwork)
-        if (!currentNetworkTokens) return
+        const currentNetworkTokens = updatedTokens.find(({ network }) => network === currentNetwork) || { network: currentNetwork, meta: [], assets: [] }
 
         const extraTokensAssets = getExtraTokensAssets(account, currentNetwork)
         try {
             const rcpTokenData = await supplementTokensDataFromNetwork({
                 walletAddr: account,
                 network: currentNetwork,
-                tokensData: currentNetworkTokens.assets.filter(({ isExtraToken }) => !isExtraToken), // Filter out extraTokens
+                tokensData: currentNetworkTokens ? currentNetworkTokens.assets.filter(({ isExtraToken }) => !isExtraToken) : [], // Filter out extraTokens
                 extraTokens: extraTokensAssets
             })
+
             currentNetworkTokens.assets = rcpTokenData
 
             setTokensByNetworks(tokensByNetworks => [
                 ...tokensByNetworks.filter(({ network }) => network !== currentNetwork),
                 currentNetworkTokens
             ])
+
+            setBalanceLoading(false)
         } catch(e) {
             console.error('supplementTokensDataFromNetwork failed', e)
         }
