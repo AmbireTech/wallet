@@ -42,8 +42,8 @@ const Accounts = ({ accounts, selectedAddress, onSelectAcc, onRemoveAccount, hid
                         <div className="inner" onClick={() => onSelectAccount(id)}>
                             <div className="icon" style={toIconBackgroundImage(id)}></div>
                             <div className="details">
-                                <div className="address">{ hidePrivateValue(id) }</div>
-                                <label>{ email ? `Email/Password account (${email})` : `${walletType(signerExtra)} (${hidePrivateValue(shortenedAddress(signer.address))})` }</label>
+                                <div className="address">{ id }</div>
+                                <label>{ email ? `Email/Password account (${email})` : `${walletType(signerExtra)} (${shortenedAddress(signer.address)})` }</label>
                             </div>
                         </div>
                         <div className="buttons">
