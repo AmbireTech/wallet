@@ -110,35 +110,33 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, network, account,
 
     let unmounted = false
 
-    // get latest estimation
-    const reestimateAndGetNonces = () => {
-
-      (relayerURL
-          ? bundle.estimate({ relayerURL, fetch, replacing: !!bundle.minFeeInUSDPerGas })
-          : bundle.estimateNoRelayer({ provider: getProvider(network.id) })
-      )
-        .then(estimation => {
-          if (unmounted || bundle !== currentBundle.current) return
-          estimation.selectedFeeToken = { symbol: network.nativeAssetSymbol }
-          setEstimation(prevEstimation => {
-            if (estimation.remainingFeeTokenBalances) {
-              // If there's no eligible token, set it to the first one cause it looks more user friendly (it's the preferred one, usually a stablecoin)
-              estimation.selectedFeeToken = (
-                  prevEstimation
-                  && isTokenEligible(prevEstimation.selectedFeeToken, feeSpeed, estimation)
-                  && prevEstimation.selectedFeeToken
-                ) || estimation.remainingFeeTokenBalances.find(token => isTokenEligible(token, feeSpeed, estimation))
-                || estimation.remainingFeeTokenBalances[0]
-            }
-            return estimation
-          })
+    const reestimate = () => (relayerURL
+        ? bundle.estimate({ relayerURL, fetch, replacing: !!bundle.minFeeInUSDPerGas })
+        : bundle.estimateNoRelayer({ provider: getProvider(network.id) })
+    )
+      .then(estimation => {
+        if (unmounted || bundle !== currentBundle.current) return
+        estimation.selectedFeeToken = { symbol: network.nativeAssetSymbol }
+        setEstimation(prevEstimation => {
+          if (estimation.remainingFeeTokenBalances) {
+            // If there's no eligible token, set it to the first one cause it looks more user friendly (it's the preferred one, usually a stablecoin)
+            estimation.selectedFeeToken = (
+                prevEstimation
+                && isTokenEligible(prevEstimation.selectedFeeToken, feeSpeed, estimation)
+                && prevEstimation.selectedFeeToken
+              ) || estimation.remainingFeeTokenBalances.find(token => isTokenEligible(token, feeSpeed, estimation))
+              || estimation.remainingFeeTokenBalances[0]
+          }
+          return estimation
         })
-        .catch(e => {
-          if (unmounted) return
-          console.log('estimation error', e)
-          addToast(`Estimation error: ${e.message || e}`, { error: true })
-        })
+      })
+      .catch(e => {
+        if (unmounted) return
+        console.log('estimation error', e)
+        addToast(`Estimation error: ${e.message || e}`, { error: true })
+      })
 
+    const updateNonce = () => {
       if (relayerURL) {
         fetchGet(`${relayerURL}/identity/${bundle.identity}/${bundle.network}/next-nonce${bundle.quickAccManager ? '?quickAccManager=' + bundle.quickAccManager : ''}`).then(jsonRes => {
           const nextNonMinedNonce = jsonRes.pendingBundle?.nonce?.num || jsonRes.nonce
@@ -157,8 +155,13 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, network, account,
       }
     }
 
-    reestimateAndGetNonces()
-    const intvl = setInterval(reestimateAndGetNonces, REESTIMATE_INTERVAL)
+    const reestimateAndGetNonce = () => {
+      reestimate()
+      updateNonce()
+    }
+
+    reestimateAndGetNonce()
+    const intvl = setInterval(reestimateAndGetNonce, REESTIMATE_INTERVAL)
 
     return () => {
       unmounted = true
