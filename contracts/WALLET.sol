@@ -110,4 +110,15 @@ contract WALLETSupplyController {
 		require(totalSupplyAfter <= CAP, "MINT_TOO_LARGE");
 		token.mint(owner, amount);
 	}
+
+	// Incentive mechanism
+	function mintableIncentive(address addr) public view returns (uint) {
+		return (block.timestamp - incentiveLastMint[addr]) * incentivePerSecond[addr];
+	}
+
+	function mintIncentive(address addr) external {
+		uint amount = mintableIncentive(addr);
+		incentiveLastMint[addr] = block.timestamp;
+		innerMint(WALLET, addr, amount);
+	}
 }
