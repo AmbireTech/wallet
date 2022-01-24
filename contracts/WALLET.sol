@@ -101,7 +101,7 @@ contract WALLETSupplyController {
 	function setIncentive(address addr, uint amountPerSecond) external {
 		require(governance[msg.sender] >= uint8(GovernanceLevel.All), "NOT_GOVERNANCE");
 		// no more than 10 WALLET per second
-		require(amountPerSecond < 10e18, "AMOUNT_TOO_LARGE");
+		require(amountPerSecond <= 10e18, "AMOUNT_TOO_LARGE");
 		incentiveLastMint[addr] = block.timestamp;
 		incentivePerSecond[addr] = amountPerSecond;
 		// AUDIT: pending incentive lost here
