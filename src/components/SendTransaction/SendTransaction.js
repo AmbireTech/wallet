@@ -92,7 +92,7 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
   const [estimation, setEstimation] = useState(null)
   const [signingStatus, setSigningStatus] = useState(false)
   const [feeSpeed, setFeeSpeed] = useState(DEFAULT_SPEED)
-  const [isDeployed, setIsDeployed] = useState(null)
+  const isDeployed = useMemo(() => estimation && estimation.success && estimation.isDeployed === true, [estimation])
   const { addToast } = useToasts()
   useEffect(() => {
     if (!bundle.txns.length) return
@@ -304,20 +304,6 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
   })
 
   const accountAvatar = blockies.create({ seed: account.id }).toDataURL()
-
-  // Check if account is deployed
-  useEffect(() => {
-    const provider = getProvider(network.id)
-    if (!estimation || !estimation.selectedFeeToken || (!estimation.feeInNative || !estimation.feeInUSD)) return setIsDeployed(null)
-    
-    const finalBundle = getFinalBundle()
-    async function getStatus() {
-      const code = await provider.getCode(finalBundle.identity)
-      setIsDeployed(code !== '0x')
-    }
-
-    getStatus()
-  }, [estimation, network.id, getFinalBundle])
 
   return (
     <div id='sendTransaction'>
