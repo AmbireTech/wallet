@@ -234,3 +234,15 @@ Additionally, there's an ongoing [Immunefi bug bounty](https://immunefi.com/boun
 * Warn when a WalletConnect connection may be offline
 * Cross-chain transfers are now tracked
 
+### v0.4.1
+* Cross-chain: select box can now be easily searched
+* Private mode (hide the numbers on the dashboard)
+* Earn: add Tesseract, a yield aggregator on Polygon
+* NFTs now show up on Polygon
+
+### v0.4.2
+* Ability to remove custom tokens
+* Redesigned UI for sending transactions
+* Warn users when there's extra transaction costs for deploying their wallet
+* Private mode: hide addresses as well
+

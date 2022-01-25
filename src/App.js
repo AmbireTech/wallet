@@ -22,7 +22,7 @@ import useGnosisSafe from './hooks/useGnosisSafe'
 import useNotifications from './hooks/notifications'
 import useAmbireExtension from './hooks/useAmbireExtension'
 import useAmbireBookmarklet from './hooks/useAmbireBookmarklet'
-import { useAttentionGrabber, usePortfolio, useAddressBook, useRelayerData } from './hooks'
+import { useAttentionGrabber, usePortfolio, useAddressBook, useRelayerData, usePrivateMode } from './hooks'
 import { useToasts } from './hooks/toasts'
 import { useOneTimeQueryParam } from './hooks/oneTimeQueryParam'
 
@@ -52,7 +52,9 @@ function AppInner () {
   const { connections, connect, disconnect, requests: wcRequests, resolveMany: wcResolveMany } = useWalletConnect({
     account: selectedAcc,
     chainId: network.chainId,
-    initialUri: wcUri
+    initialUri: wcUri,
+    allNetworks,
+    setNetwork
   })
 
   const { requests: gnosisRequests, resolveMany: gnosisResolveMany, connect: gnosisConnect, disconnect: gnosisDisconnect } = useGnosisSafe({
@@ -98,6 +100,7 @@ function AppInner () {
     currentNetwork: network.id,
     account: selectedAcc
   })
+  const privateMode = usePrivateMode()
 
   // Show the send transaction full-screen modal if we have a new txn
   const eligibleRequests = useMemo(() => requests
@@ -190,6 +193,7 @@ function AppInner () {
       account={accounts.find(x => x.id === selectedAcc)}
       toSign={everythingToSign[0]}
       totalRequests={everythingToSign.length}
+      connections={connections}
       relayerURL={relayerURL}
       resolve={outcome => resolveMany([everythingToSign[0].id], outcome)}
     ></SignMessage>)}
@@ -245,6 +249,7 @@ function AppInner () {
           showSendTxns={showSendTxns}
           onAddAccount={onAddAccount}
           rewardsData={rewardsData}
+          privateMode={privateMode}
         >
         </Wallet>
       </Route>

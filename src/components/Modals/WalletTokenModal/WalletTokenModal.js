@@ -99,7 +99,7 @@ const WalletTokenModal = ({ rewards }) => {
                 {
                     badges.map(({ id, name, icon, color, multiplier, link, active }) => (
                         <a href={link} target="_blank" rel="noreferrer" key={id}>
-                            <ToolTip label={`${name} x${multiplier} Multiplier`}>
+                            <ToolTip label={`You ${active ? 'are receiving' : 'do not have'} the ${name} x${multiplier} multiplier`}>
                                 <div className={`badge ${active ? 'active' : ''}`} style={{ backgroundColor: color, borderColor: color }}>
                                     <div className="icon">{ icon }</div>
                                     <div className="multiplier">x { multiplier }</div>

@@ -12,12 +12,7 @@ $titleBar-height: 90px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    overflow-y: auto;
-    background-color: #282b33;
-    /*
-    background-color: rgba(40, 43, 51, 0.95);
-    backdrop-filter: blur(8px);
-    */
+    background-color: $background-color;
 
     #titleBar {
         z-index: 49;
@@ -50,322 +45,278 @@ $titleBar-height: 90px;
                 color: white;
             }
         }
+    }
 
-        h2 {
-            margin: 0;
-            font-size: 25px;
-            text-align: center;
-            text-transform: uppercase;
-            color: #ccc;
-        }
+    .container {
+        height: 100%;
+        width: 100%;
+        max-width: $wide-breakpoint-min-width;
+        display: flex;
+        flex-direction: row;
+        align-items: normal;
+        gap: 2.5em;
+        padding: 2em 5em;
+        padding-bottom: 4em;
+        overflow-y: auto;
 
         .separator {
-            flex: 0 1 auto;
+            flex-grow: 1;
+        }
+
+        #transactionPanel {
+            min-width: 0;
+            flex: 0 1 70%;
+
+            .content {
+                height: 100%;
+
+                .listOfTransactions {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 0.5em;
+                }
+
+                .transactionsNote {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 0.5em;
+                    padding: 1em 1.5em;
+                    border-bottom: 3px solid $ambire-dark-blue;
+                    background-color: $input-background-color;
+
+                    b {
+                        display: flex;
+                        align-items: center;
+                        gap: 0.75em;
+                    }
+
+                    span {
+                        font-weight: 500;
+                        opacity: 0.6;
+                    }
+                }
+            }
+        }
+
+        #detailsPanel {
+            flex: 0 1 30%;
+            justify-content: space-between;
+
+            .section {
+                display: flex;
+                flex-direction: column;
+                gap: 1em;
+
+                .section-title {
+                    font-size: 16px;
+                    font-weight: 500;
+                }
+
+                .section-content {
+                    display: flex;
+                    flex-direction: column;
+                }
+            }
+
+            .icon {
+                flex: 0 0 auto;
+                border-radius: 100%;
+                background-size: contain;
+                background-position: center center;
+            }
+
+            #options-container {
+                display: flex;
+                flex-direction: column;
+                gap: 1em;
+                flex: 1 1 auto;
+                overflow: hidden;
+                overflow-y: auto;
+
+                #signing-details {
+                    .section-content {
+                        gap: 0.5em;
+
+                        .account,
+                        .network {
+                            display: flex;
+                            align-items: center;
+                        }
+
+                        .account {
+                            gap: 0.75em;
+
+                            .icon {
+                                height: 25px;
+                                width: 25px;
+                            }
+
+                            .address {
+                                font-size: 17px;
+                                font-weight: bold;
+                                overflow: hidden;
+                                white-space: nowrap;
+                                text-overflow: ellipsis;
+                            }
+                        }
+
+                        .network {
+                            justify-content: flex-end;
+                            gap: 0.5em;
+                            opacity: 0.8;
+
+                            .icon {
+                                height: 20px;
+                                width: 20px;
+                            }
+
+                            .address {
+                                font-size: 15px;
+                                font-weight: 500;
+                            }
+                        }
+                    }
+                }
+            }
+
+            .first-tx-note {
+                display: flex;
+                flex-direction: column;
+                gap: 0.25em;
+
+                .first-tx-note-title {
+                    display: flex;
+                    flex-direction: row;
+                    align-items: center;
+                    gap: 0.5em;
+                    font-size: 18px;
+                    font-weight: bold;
+                    text-transform: uppercase;
+                }
+
+                .first-tx-note-message {
+                    font-size: 17px;
+                    font-weight: 500;
+                    opacity: 0.9;
+                }
+            }
+
+            #actions-container {
+                #actions {
+                    .confirmation-code-info {
+                        font-weight: 500;
+                    }
+
+                    form {
+                        display: flex;
+                        flex-direction: column;
+                        gap: 0.5em;
+
+                        .inputs-container {
+                            display: flex;
+                            flex-direction: row;
+                            gap: 1em;
+
+                            .text-input {
+                                flex: 0 1 50%;
+                            }
+                        }
+
+                        .buttons {
+                            margin-top: 1em;
+                        }
+                    }
+
+                    .buttons {
+                        display: flex;
+                        flex-direction: row;
+                        gap: 1.5em;
+
+                        .buttonComponent {
+                            height: 75px;
+                            flex: 0 1 50%;
+
+                            &.danger {
+                                color: white;
+
+                                .icon-button {
+                                    svg {
+                                        color: white;
+                                    }
+                                }
+                            }
+
+                            &.approveTxn {
+                                flex: 1 0 auto;
+
+                                .loading {
+                                    width: auto;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 }
 
-#sendTransaction .container {
-    width: 75em;
-    display: flex;
-    flex-direction: column;
-    align-items: normal;
-    gap: 2em;
-}
-
-#sendTransaction .panel {
-    padding: 2em;
-    box-sizing: border-box;
-    background-color: rgba(0, 0, 0, 0.2);
-    display: block;
-    box-shadow: rgb(0, 0, 0) 0px 0px 20px 0px;
-}
-
-#sendTransaction .panel .heading {
-    display: flex;
-    flex-direction: column;
-    gap: 0.2rem;
-    margin-bottom: 1.5em;
-}
-
-#sendTransaction .panel .heading .title {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-    font-size: 1.5em;
-    font-weight: bold;
-    color: rgb(128, 255, 219);
-    text-transform: uppercase;
-}
-
-#sendTransaction #panelHolder {
-    display: flex;
-    align-items: normal;
-    gap: 2em;
-}
-
-#sendTransaction #topPanel {
-    width: 100%;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    margin-top: 1em;
-}
-
-#sendTransaction .title {
-    align-items: center;
-    justify-content: flex-start;
-    gap: 10px;
-    color: rgb(128, 255, 219);
-    text-transform: uppercase;
-}
-
-#sendTransaction #topPanel .content {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    gap: 0.5em;
-    flex-wrap: wrap;
-}
-
-#sendTransaction #topPanel .content .account,
-#sendTransaction #topPanel .content .network {
-    display: flex;
-    align-items: center;
-}
-
-#sendTransaction #topPanel .content .account {
-    gap: 10px;
-    font-family: monospace;
-    font-size: 15px;
-    font-weight: bold;
-    word-break: break-word;
-}
-
-#sendTransaction #topPanel .content .network {
-    gap: 7px;
-    font-size: 17px;
-    font-weight: bold;
-}
-
-#sendTransaction #topPanel .content .account .icon,
-#sendTransaction #topPanel .content .network .icon {
-    height: 20px;
-    width: 20px;
-    border-radius: 100%;
-}
-
-#sendTransaction .secondaryPanel {
-    flex: 0 0 45%;
-    display: flex;
-    flex-direction: column;
-    gap: 2em;
-}
-
-#sendTransaction .feePanel {
-    justify-content: center;
-    display: flex;
-}
-#sendTransaction .feePanel .loading {
-    margin: 1em auto;
-}
-
-#sendTransaction .feeAmountSelectors {
-    overflow: hidden;
-    margin: 1em 0px;
-    min-width: 360px;
-    display: flex;
-    justify-content: center;
-}
-
-#sendTransaction .feeSquare {
-    box-sizing: border-box;
-    background-color: #ccc;
-    color: black;
-    text-align: center;
-    min-height: 80px;
-    width: 90px;
-    float: left;
-    margin-right: 10px;
-    padding: 10px;
-    box-sizing: border-box;
-    border: 5px solid transparent;
-    overflow: hidden;
-    cursor: pointer;
-    user-select: none;
-}
-#sendTransaction .feeSquare.disabled {
-    opacity: 0.5;
-    cursor: default;
-}
-#sendTransaction .feeSquare.selected {
-    border: 5px solid rgb(128, 255, 219);
-}
-#sendTransaction .feeSquare .speed {
-    text-transform: uppercase;
-    font-size: 0.8em;
-    font-weight: bold;
-    margin-bottom: 5px;
-}
-#sendTransaction .feeEstimation {
-    width: 80px;
-    margin: auto;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
-
-#sendTransaction .actions button {
-    width: 45%;
-    margin: 2em 2.5% 0em;
-    text-transform: uppercase;
-    font-weight: 800;
-    display: inline-block;
-    min-height: 75px;
-    font-size: 1em;
-    vertical-align: middle;
-    position: relative;
-}
-
-#sendTransaction .buttons {
-    justify-content: center;
-    display: flex;
-}
-
-#sendTransaction button.rejectTxn {
-    background-color: rgb(255, 132, 128);
-}
-
-#sendTransaction button.approveTxn .loading {
-    position: absolute;
-    top: 20px;
-    left: 15px;
-    display: block;
-    width: auto;
-    height: auto;
-}
-
-#sendTransaction .listOfTransactions {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    min-height: 300px;
-    min-width: 350px;
-}
-
-#sendTransaction .listOfTransactions.frozen {
-    opacity: 0.5;
-}
-
-#sendTransaction .failingTxn {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-#sendTransaction .failingTxn svg {
-    width: 50px;
-    height: 50px;
-}
-
-#sendTransaction .failingTxn svg:first-child {
-    color: red;
-    width: 90px;
-    height: 90px;
-}
-
-#sendTransaction input {
-    box-shadow: 0 2px 0 #b3c4e6;
-    color: white;
-    background-color: transparent;
-}
-
-#sendTransaction .text-input {
-    margin: 6px;
-    display: inline-block;
-    width: 47%;
-}
-
-
-#sendTransaction .quickAccSigningForm {
-    display: inline;
-}
-
-#sendTransaction .quickAccSigningForm button {
-    min-height: 50px;
-}
-
-#sendTransaction .quickAccSigningForm button .loading {
-    top: 10px;
-}
-
-@media screen and (max-width: 1200px) {
-    #sendTransaction .container {
-        width: 60em;
+// Wide
+@media screen and (min-width: $wide-breakpoint-min-width) {
+    #sendTransaction {
+        .container {
+            #actions-container {
+                #actions {
+                    form {
+                        .inputs-container {
+                            flex-direction: column !important;
+                        }
+                    }
+                }
+            }
+        }
     }
 }
 
-@media screen and (max-width: 1000px) {
-    #sendTransaction .container {
-        width: 40em;
-    }
+@media screen and (max-width: $small-breakpoint-max-width) {
+    #sendTransaction {
+        .container {
+            gap: 1em;
+            flex-direction: column;
 
-    #sendTransaction #panelHolder {
-        flex-direction: column;
-    }
+            #signing-details {
+                .section-content {
+                    flex-direction: row !important;
+                }
+            }
 
-    #sendTransaction #topPanel {
-        flex-direction: column;
-    }
-}
-
-@media screen and (max-width: 700px) {
-    #sendTransaction .container {
-        width: 100%;
+            #fee-selector {
+                justify-content: start;
+            }
+        }
     }
 }
 
 // Mobile
 @media screen and (max-width: $mobile-breakpoint-max-width) {
     #sendTransaction {
-        .panel {
-            padding: 1.5em 1em;
-
-            .title {
-                text-align: center;
-            }
-        }
-
         .container {
-            gap: 1em;
+            padding: 1em;
 
-            #topPanel {
-                flex-direction: column;
-
-                .content {
-                    width: 100%;
-                    justify-content: flex-start;
+            #signing-details {
+                .section-content {
+                    flex-direction: column !important;
                 }
             }
 
-            #panelHolder {
-                gap: 1em;
-
-                .listOfTransactions {
-                    min-width: 100%;
+            #actions-container {
+                #actions {
+                    form {
+                        .inputs-container {
+                            flex-direction: column !important;
+                        }
+                    }
                 }
-
-                .secondaryPanel {
-                    gap: 1em;
-                }
-            }
-        }
-
-        #titleBar {
-            h2 {
-                font-size: 4vw;
             }
         }
     }
