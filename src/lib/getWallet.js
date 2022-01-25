@@ -8,7 +8,7 @@ import { ledgerSignMessage, ledgerSignTransaction } from './ledgerWebHID'
 import { Client } from 'gridplus-sdk'
 
 const crypto = require('crypto')
-const privKey = '60dd502e869a7d3dac752cc7d5dd7dbe40b1f06293865c1e91f6b8f7ac938c00'
+const privKey = 'ef903967c21ec517d2df66eae824856f6dd8c99694bd2d8ee9fc85e329a51341'
 const HARDENED_OFFSET = 0x80000000
 const clientConfig = {
   name: 'Ambire Wallet',
@@ -76,23 +76,41 @@ async function getWalletNew({ chainId, signer, signerExtra }, opts) {
     //     data: data,
     // }
 
-    const dataMsf = {
-      protocol: 'signPersonal',
-      payload: '0xdeadbeef',
-      signerPath: [HARDENED_OFFSET+44, HARDENED_OFFSET+60, HARDENED_OFFSET, 0, 0],
-  }
-    const signOptsMsg = {
-        currency: 'ETH_MSG',
-        data: dataMsf,
-    }
-
+   
     return {
-      signMessage: async() => await client.connect(signerExtra.deviceId, async(err, isPaired) => {  
-        if (typeof isPaired === 'undefined' || !isPaired) {
-          throw new Error('The Lattice device is not paired.')
-        }
-        await client.sign(signOptsMsg)
-      }),
+      signMessage: async(hash) => {
+        return await new Promise((resolve, reject) => { 
+          client.connect(signerExtra.deviceId, async(err, isPaired) => {  
+            if (typeof isPaired === 'undefined' || !isPaired) {
+              throw new Error('The Lattice device is not paired.')
+            }
+
+            const dataMsg = {
+              protocol: 'signPersonal',
+              payload: ethers.utils.hexlify(hash),
+              signerPath: [HARDENED_OFFSET+44, HARDENED_OFFSET+60, HARDENED_OFFSET, 0, 0],
+            }
+
+            const signOptsMsg = {
+                currency: 'ETH_MSG',
+                data: dataMsg,
+            }
+             
+            client.sign(signOptsMsg, (err, signedTx) => {
+              if (err) {
+                //TODO: add a toast here
+              }
+              let signedMsg = ''
+              if (signedTx) {
+                signedMsg = '0x' + signedTx.sig.r + signedTx.sig.s + signedTx.sig.v[0].toString(16)
+                resolve(signedMsg)
+              } else {
+                reject(err)
+              }
+            })
+          })
+        }) 
+    },
       // signTransaction: async params => await client.connect(deviceId, async(err, isPaired) => { 
       //   if (typeof isPaired === 'undefined' || !isPaired) {
       //     throw new Error('The Lattice device is not paired.')
@@ -100,7 +118,7 @@ async function getWalletNew({ chainId, signer, signerExtra }, opts) {
         
       //   await client.sign({...params, signerPath : signer.address})
       // })
-    }
+  }
    
     
   } else if (signer.address) {
