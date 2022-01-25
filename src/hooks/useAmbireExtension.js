@@ -8,7 +8,7 @@ import {
   addMessageHandler,
   clear,
   sendReply
-} from "lib/ambexMessenger"
+} from 'lib/ambexMessenger'
 
 const STORAGE_KEY = 'ambire_extension_state'
 
@@ -35,7 +35,7 @@ export default function useAmbireExtension({ allNetworks, setNetwork, selectedAc
   })
 
   const number2hex = useCallback((any) => {
-    if (verbose) console.warn(`instanceof of any is ${any instanceof BigNumber}`)
+    if (verbose > 2) console.warn(`instanceof of any is ${any instanceof BigNumber}`)
     if (any instanceof BigNumber) {
       return any.toHexString()
     } else {
@@ -48,7 +48,7 @@ export default function useAmbireExtension({ allNetworks, setNetwork, selectedAc
 
   const handlePersonalSign = useCallback(async (message) => {
     const payload = message.data
-    verbose > 0 && console.log("AmbEx requested signMessage", payload)
+    verbose > 0 && console.log('AmbEx requested signMessage', payload)
 
     if (!payload) {
       console.error('AmbExHook: no payload', message)
@@ -57,7 +57,7 @@ export default function useAmbireExtension({ allNetworks, setNetwork, selectedAc
 
     const id = 'ambex_' + payload.id
     let messageToSign = payload?.params?.message || payload?.params[0]
-    if (payload.method === "eth_sign") {
+    if (payload.method === 'eth_sign') {
       messageToSign = payload?.params[1]
     }
     if (!messageToSign) {
@@ -76,7 +76,7 @@ export default function useAmbireExtension({ allNetworks, setNetwork, selectedAc
       originalMessage: message
     }
 
-    verbose > 0 && console.log("sending personal sign to queue", request)
+    verbose > 0 && console.log('sending personal sign to queue', request)
 
     setRequests(prevRequests => prevRequests.find(x => x.id === request.id) ? prevRequests : [...prevRequests, request])
   }, [verbose])
@@ -85,7 +85,7 @@ export default function useAmbireExtension({ allNetworks, setNetwork, selectedAc
     for (let req of requests.filter(x => ids.includes(x.id))) {
 
       let rpcResult = {
-        jsonrpc: "2.0",
+        jsonrpc: '2.0',
         id: req.originalPayloadId,
         txId: null,
         hash: null,
@@ -123,34 +123,34 @@ export default function useAmbireExtension({ allNetworks, setNetwork, selectedAc
   useEffect(() => {
 
     sendMessage({
-      to: "background",
-      type: "ambireWalletAccountChanged",
+      to: 'background',
+      type: 'ambireWalletAccountChanged',
       data: {
         account: selectedAccount
       }
     })
 
     sendMessage({
-      to: "background",
-      type: "ambireWalletChainChanged",
+      to: 'background',
+      type: 'ambireWalletChainChanged',
       data: {
         chainId: network.chainId
       }
     })
 
-    verbose > 0 && console.log("listening to msgs")
-    setupAmbexMessenger("ambirePageContext")
+    verbose > 2 && console.log('listening to msgs')
+    setupAmbexMessenger('ambirePageContext')
 
-    addMessageHandler({ type: "ping" }, (message) => {
+    addMessageHandler({ type: 'ping' }, (message) => {
       sendReply(message, {
-        data: selectedAccount + " Ambex PONG!!!"
+        data: selectedAccount + ' Ambex PONG!!!'
       })
     })
 
-    addMessageHandler({ type: "ambireContentScriptInjected" }, (message) => {
+    addMessageHandler({ type: 'ambireContentScriptInjected' }, (message) => {
       sendMessage({
-        to: "background",
-        type: "ambirePageContextInjected",
+        to: 'background',
+        type: 'ambirePageContextInjected',
         data: {
           account: selectedAccount,
           chainId: network.chainId
@@ -158,7 +158,17 @@ export default function useAmbireExtension({ allNetworks, setNetwork, selectedAc
       })
     })
 
-    addMessageHandler({ type: "web3Call" }, async (message) => {
+    addMessageHandler({ type: 'keepalive' }, (message) => {
+      sendReply(message, {
+        type: 'keepalive_reply',//only case where reply with type required (for now)
+        data: {
+          account: selectedAccount,
+          chainId: network.chainId
+        }
+      })
+    })
+
+    addMessageHandler({ type: 'web3Call' }, async (message) => {
 
       verbose > 0 && console.log(`web3CallRequest`, message)
       const provider = getDefaultProvider(network.rpc)
@@ -171,16 +181,15 @@ export default function useAmbireExtension({ allNetworks, setNetwork, selectedAc
       const callTx = payload.params//0 == tx, 1 == blockNum
       let result
       let error
-      if (method === "eth_accounts" || method === "eth_requestAccounts") {
+      if (method === 'eth_accounts' || method === 'eth_requestAccounts') {
         result = [selectedAccount]
-      } else if (method === "eth_chainId" || method === "net_version") {
+      } else if (method === 'eth_chainId' || method === 'net_version') {
         result = network.chainId
-      } else if (method === "wallet_requestPermissions") {
-        result = [{ parentCapability: "eth_accounts" }]
-      } else if (method === "wallet_getPermissions") {
-        result = [{ parentCapability: "eth_accounts" }]
-      } else if (method === "wallet_switchEthereumChain") {
-      debugger;
+      } else if (method === 'wallet_requestPermissions') {
+        result = [{ parentCapability: 'eth_accounts' }]
+      } else if (method === 'wallet_getPermissions') {
+        result = [{ parentCapability: 'eth_accounts' }]
+      } else if (method === 'wallet_switchEthereumChain') {
         const existingNetwork = allNetworks.find(a => {
           return number2hex(a.chainId) === callTx[0]?.chainId
         })
@@ -190,25 +199,25 @@ export default function useAmbireExtension({ allNetworks, setNetwork, selectedAc
         } else {
           error = `chainId ${callTx[0]?.chainId} not supported by ambire wallet`
         }
-      } else if (method === "eth_coinbase") {
+      } else if (method === 'eth_coinbase') {
         result = selectedAccount
-      } else if (method === "eth_call") {
+      } else if (method === 'eth_call') {
         result = await provider.call(callTx[0], callTx[1]).catch(err => {
           error = err
         })
-      } else if (method === "eth_getBalance") {
+      } else if (method === 'eth_getBalance') {
         result = await provider.getBalance(callTx[0], callTx[1]).catch(err => {
           error = err
         })
         if (result) {
           result = number2hex(result)
         }
-      } else if (method === "eth_blockNumber") {
+      } else if (method === 'eth_blockNumber') {
         result = await provider.getBlockNumber().catch(err => {
           error = err
         })
         if (result) result = number2hex(result)
-      } else if (method === "eth_getBlockByHash") {
+      } else if (method === 'eth_getBlockByHash') {
         if (callTx[1]) {
           result = await provider.getBlockWithTransactions(callTx[0]).catch(err => {
             error = err
@@ -224,9 +233,9 @@ export default function useAmbireExtension({ allNetworks, setNetwork, selectedAc
             error = err
           })
         }
-      } else if (method === "eth_getTransactionByHash") {
+      } else if (method === 'eth_getTransactionByHash') {
         result = await provider.getTransaction(callTx[0]).catch(err => {
-          console.error("getTxByHash err...", err)
+          console.error('getTxByHash err...', err)
           error = err
         })
         if (result) {
@@ -235,23 +244,23 @@ export default function useAmbireExtension({ allNetworks, setNetwork, selectedAc
           result.value = number2hex(result.value)
           result.wait = null
         }
-      } else if (method === "eth_getCode") {
+      } else if (method === 'eth_getCode') {
         result = await provider.getCode(callTx[0], callTx[1]).catch(err => {
           error = err
         })
-      } else if (method === "eth_gasPrice") {
+      } else if (method === 'eth_gasPrice') {
         result = await provider.getGasPrice().catch(err => {
           error = err
         })
         if (result) result = number2hex(result)
-      } else if (method === "eth_estimateGas") {
+      } else if (method === 'eth_estimateGas') {
         result = await provider.estimateGas(callTx[0]).catch(err => {
           error = err
         })
         if (result) result = number2hex(result)
-      } else if (method === "eth_getBlockByNumber") {
+      } else if (method === 'eth_getBlockByNumber') {
         result = await provider.getBlock(callTx[0], callTx[1]).catch(err => {
-          console.log("get block by number err ", err)
+          console.error('get block by number err ', err)
           error = err
         })
         if (result) {
@@ -260,8 +269,8 @@ export default function useAmbireExtension({ allNetworks, setNetwork, selectedAc
           result.gasUsed = number2hex(result.gasUsed)
           result._difficulty = number2hex(result._difficulty)
         }
-        verbose > 0 && console.log("RES", result, error)
-      } else if (method === "eth_getTransactionReceipt") {
+        verbose > 2 && console.log('Result', result, error)
+      } else if (method === 'eth_getTransactionReceipt') {
         result = await provider.getTransactionReceipt(callTx[0]).catch(err => {
           error = err
         })
@@ -271,24 +280,24 @@ export default function useAmbireExtension({ allNetworks, setNetwork, selectedAc
           result.gasUsed = number2hex(result.gasUsed)
           result._difficulty = number2hex(result._difficulty)
         }
-      } else if (method === "eth_getTransactionCount") {
+      } else if (method === 'eth_getTransactionCount') {
         result = await provider.getTransactionCount(callTx[0]).catch(err => {
           error = err
         })
         if (result) result = number2hex(result)
-      } else if (method === "personal_sign") {
+      } else if (method === 'personal_sign') {
         handlePersonalSign(message).catch(err => {
-          verbose > 0 && console.log("personal sign error ", err)
+          verbose > 0 && console.log('personal sign error ', err)
           error = err
         })
         deferredReply = true
-      } else if (method === "eth_sign") {
+      } else if (method === 'eth_sign') {
         handlePersonalSign(message).catch(err => {
-          verbose > 0 && console.log("personal sign error ", err)
+          verbose > 0 && console.log('personal sign error ', err)
           error = err
         })
         deferredReply = true
-      } else if (method === "eth_sendTransaction") {
+      } else if (method === 'eth_sendTransaction') {
 
         const internalHookId = 'ambex_tx_' + payload.id
         const txs = payload.params
@@ -297,7 +306,7 @@ export default function useAmbireExtension({ allNetworks, setNetwork, selectedAc
             if (!txs[i].from) txs[i].from = selectedAccount
           }
         } else {
-          error = "No txs in received payload"
+          error = 'No txs in received payload'
         }
 
         const request = {
@@ -314,21 +323,21 @@ export default function useAmbireExtension({ allNetworks, setNetwork, selectedAc
         deferredReply = true
         setRequests(prevRequests => prevRequests.find(x => x.id === request.id) ? prevRequests : [...prevRequests, request])
       } else {
-        error = "Method not supported by extension hook: " + method
+        error = 'Method not supported by extension hook: ' + method
       }
 
       if (error) {
-        console.error("throwing error with ", message)
+        console.error('throwing error with ', message)
         sendReply(message, {
           data: {
-            jsonrpc: "2.0",
+            jsonrpc: '2.0',
             id: payload.id,
             error: error,
           }
         })
       } else if (!deferredReply) {
         let rpcResult = {
-          jsonrpc: "2.0",
+          jsonrpc: '2.0',
           id: payload.id,
           result: result,
         }
