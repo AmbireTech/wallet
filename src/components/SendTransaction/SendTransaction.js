@@ -92,7 +92,6 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
   const [estimation, setEstimation] = useState(null)
   const [signingStatus, setSigningStatus] = useState(false)
   const [feeSpeed, setFeeSpeed] = useState(DEFAULT_SPEED)
-  const isDeployed = useMemo(() => estimation && estimation.success && estimation.isDeployed === true, [estimation])
   const { addToast } = useToasts()
   useEffect(() => {
     if (!bundle.txns.length) return
@@ -386,7 +385,7 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
           </div>
 
           {
-            isDeployed === false && bundle.gasLimit ?
+            estimation && estimation.success && estimation.isDeployed === false && bundle.gasLimit ?
               <div className='first-tx-note'>
                 <div className='first-tx-note-title'><MdInfo/>Note</div>
                 <div className='first-tx-note-message'>
