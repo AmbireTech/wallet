@@ -179,6 +179,28 @@ $titleBar-height: 90px;
                 }
             }
 
+            .first-tx-note {
+                display: flex;
+                flex-direction: column;
+                gap: 0.25em;
+
+                .first-tx-note-title {
+                    display: flex;
+                    flex-direction: row;
+                    align-items: center;
+                    gap: 0.5em;
+                    font-size: 18px;
+                    font-weight: bold;
+                    text-transform: uppercase;
+                }
+
+                .first-tx-note-message {
+                    font-size: 17px;
+                    font-weight: 500;
+                    opacity: 0.9;
+                }
+            }
+
             #actions-container {
                 #actions {
                     .confirmation-code-info {
