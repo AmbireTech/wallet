@@ -8,7 +8,6 @@ let FRAME_ID
 
 let MSGCOUNT = 0
 
-//let BROADCASTER;
 let RECV_LOCALSTORAGE_CHANNEL
 let POST_LOCALSTORAGE_CHANNEL
 
@@ -23,9 +22,6 @@ const RELAYER_VERBOSE_TAG = {
   'ambirePageContext': '🔥️',
 }
 
-// eslint-disable-next-line
-//haxx eslint react ambire wallet
-
 const clearLocalStorageMessage = (message) => {
   try {
     let allMessages = JSON.parse(localStorage.getItem(RECV_LOCALSTORAGE_CHANNEL))
@@ -33,7 +29,7 @@ const clearLocalStorageMessage = (message) => {
       return a.lsId !== message.lsId
     })
 
-    //discardTimeout
+    //discardTimeout (discarding too old msgs stuck in localstorage)
     localStorage.setItem(RECV_LOCALSTORAGE_CHANNEL, JSON.stringify(allMessages))
   } catch (e) {
     console.error('error clearing localStorage', e)
@@ -65,7 +61,6 @@ export const setupAmbexBMLMessenger = (relayer, iframe) => {
   const LS_MSG_HANDLER = event => {
     if (event.storageArea !== localStorage) return
     if (event.key === RECV_LOCALSTORAGE_CHANNEL) {
-      //const msgs = getLocalStorageMessages();
       let msgs
       try {
         msgs = JSON.parse(event.newValue)

@@ -13,9 +13,7 @@ import {
 const STORAGE_KEY = 'ambire_extension_state'
 
 export default function useAmbireExtension({ allNetworks, setNetwork, selectedAccount, network, verbose = 1 }) {
-  // One connector at a time
 
-  // This is needed cause of the Gnosis Safe event handlers (listeners)
   const stateRef = useRef()
   stateRef.current = {
     selectedAccount,
