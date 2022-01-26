@@ -58,9 +58,9 @@ function AppInner () {
   })
 
   const { requests: gnosisRequests, resolveMany: gnosisResolveMany, connect: gnosisConnect, disconnect: gnosisDisconnect } = useGnosisSafe({
-    selectedAccount: selectedAcc,
-    network: network
-  }, [selectedAcc, network])
+          selectedAccount: selectedAcc,
+          network: network
+        }, [selectedAcc, network])
 
   const { requests: extensionRequests, resolveMany: extensionResolveMany } = useAmbireExtension({
     allNetworks,
@@ -186,7 +186,7 @@ function AppInner () {
       message={(location, action) => {
         if (action === 'POP') return onPopHistory()
         return true
-      }}/>
+    }}/>
 
     {!!everythingToSign.length && (<SignMessage
       selectedAcc={selectedAcc}
@@ -200,17 +200,17 @@ function AppInner () {
 
     {sendTxnState.showing ? (
       <SendTransaction
-        accounts={accounts}
-        selectedAcc={selectedAcc}
-        network={network}
-        requests={eligibleRequests}
-        resolveMany={resolveMany}
-        relayerURL={relayerURL}
-        onDismiss={() => setSendTxnState({ showing: false })}
-        replacementBundle={sendTxnState.replacementBundle}
-        onBroadcastedTxn={onBroadcastedTxn}
+          accounts={accounts}
+          selectedAcc={selectedAcc}
+          network={network}
+          requests={eligibleRequests}
+          resolveMany={resolveMany}
+          relayerURL={relayerURL}
+          onDismiss={() => setSendTxnState({ showing: false })}
+          replacementBundle={sendTxnState.replacementBundle}
+          onBroadcastedTxn={onBroadcastedTxn}
       ></SendTransaction>
-    ) : (<></>)
+      ) : (<></>)
     }
 
     <Switch>
