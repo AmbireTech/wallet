@@ -12,12 +12,13 @@ import Security from "./Security/Security"
 import Transactions from './Transactions/Transactions'
 import PluginGnosisSafeApps from 'components/Plugins/GnosisSafeApps/GnosisSafeApps'
 import Collectible from "./Collectible/Collectible"
-import { PermissionsModal } from 'components/Modals'
+import { PermissionsModal, UnsupportedDAppsModal } from 'components/Modals'
 import { useModals, usePermissions } from 'hooks'
 import { useCallback, useEffect, useMemo, useRef } from 'react'
 import { isFirefox } from 'lib/isFirefox'
 import CrossChain from "./CrossChain/CrossChain"
 import OpenSea from "./OpenSea/OpenSea"
+import unsupportedDApps from 'consts/unsupportedDApps'
 
 export default function Wallet(props) {
   const { showModal } = useModals()
@@ -80,7 +81,7 @@ export default function Wallet(props) {
       />
     },
     {
-      path: '/transactions',
+      path: '/transactions/:page?',
       component: <Transactions relayerURL={props.relayerURL} selectedAcc={props.selectedAcc} selectedNetwork={props.network} addRequest={props.addRequest} eligibleRequests={props.eligibleRequests} showSendTxns={props.showSendTxns} />
     },
     {
@@ -155,6 +156,14 @@ export default function Wallet(props) {
     const scrollTimeout = setTimeout(() => walletContainer.current && walletContainer.current.scrollTo({ top: 0, behavior: 'smooth' }), 0)
     return () => clearTimeout(scrollTimeout)
   }, [pathname])
+
+  useEffect(() => {
+    const advancedModeList = JSON.parse(localStorage.dAppsAdvancedMode || '[]')
+    const unsupported = props.connections
+      .filter(({ session }) => session && session.peerMeta && unsupportedDApps.includes(session.peerMeta.url) && !advancedModeList.includes(session.peerMeta.url))
+
+    if (unsupported.length) showModal(<UnsupportedDAppsModal connections={unsupported} disconnect={props.disconnect} advancedModeList={advancedModeList}/>)
+  }, [props.connections, props.disconnect, showModal])
 
   return (
     <div id="wallet">
