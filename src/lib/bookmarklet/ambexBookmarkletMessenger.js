@@ -1,27 +1,43 @@
 const VERBOSE = typeof process.env.VERBOSE == 'undefined' ? 0 : (parseInt(process.env.VERBOSE) || 0)
 
+//The name of the current process handling the msg (itself). can be pageContext (dapp page), iframe in dapp page, or ambirePageContext(ambire page). Sometimes "I, me" is mentioned, it refers to RELAYER (the relayer is talking)
 let RELAYER
 
+//callbacks for listeners from addMessageHandler
 let HANDLERS = []
+
+//iframe DOM ref
 let IFRAME
+
+//Generated iframe id
 let FRAME_ID
 
+//to be part of the JSON RPC generated ids
 let MSGCOUNT = 0
 
+//receiving localstorage channel to listen
 let RECV_LOCALSTORAGE_CHANNEL
+
+//localstorage channel to write
 let POST_LOCALSTORAGE_CHANNEL
 
+//when receiving msg for multiple recipients(kind of catchall), once handled by RELAYER, ignore it (in case of new msgs, if this one was not cleared from the queue yet)
 let BROADCAST_MSG_TO_IGNORE = []
+
+//same as above, avoid to reHandle same msg
 let HANDLED_MSG_TO_IGNORE = []
 
+//window listener handler
 let WINDOWLISTENER
 
+//FOR VERBOSITY
 const RELAYER_VERBOSE_TAG = {
   'pageContext': '🖲️️',
   'iframe': '🧬',
   'ambirePageContext': '🔥️',
 }
 
+//clear specific msg from the receiving queue
 const clearLocalStorageMessage = (message) => {
   try {
     let allMessages = JSON.parse(localStorage.getItem(RECV_LOCALSTORAGE_CHANNEL))
@@ -36,9 +52,10 @@ const clearLocalStorageMessage = (message) => {
   }
 }
 
+//add message to the local storage writing queue
 const pushLocalStorageMessage = (message) => {
   try {
-    message.lsId = `${RELAYER}_${Math.random()}`
+    message.lsId = `${RELAYER}_${new Date().getTime()}_${Math.random()}`
     let allMessages = JSON.parse(localStorage.getItem(POST_LOCALSTORAGE_CHANNEL))
     if (!allMessages || !allMessages.length) {
       allMessages = []
@@ -50,6 +67,12 @@ const pushLocalStorageMessage = (message) => {
   }
 }
 
+
+/**
+ * first function to be called from "processes" using the messaging protocol
+ * @param relayer == whoami
+ * @param iframe reference (if relayer is iframe)
+ */
 export const setupAmbexBMLMessenger = (relayer, iframe) => {
   RELAYER = relayer
   IFRAME = iframe
@@ -58,6 +81,7 @@ export const setupAmbexBMLMessenger = (relayer, iframe) => {
     handleMessage(windowMessage.data)
   }
 
+  //LocalStorage RECV handler
   const LS_MSG_HANDLER = event => {
     if (event.storageArea !== localStorage) return
     if (event.key === RECV_LOCALSTORAGE_CHANNEL) {
@@ -74,58 +98,69 @@ export const setupAmbexBMLMessenger = (relayer, iframe) => {
       if (msgs && msgs.length) {
         for (let msg of msgs) {
 
-          if (HANDLED_MSG_TO_IGNORE.indexOf(msg.id) !== -1) {
+          //skip is already handled by me
+          if (HANDLED_MSG_TO_IGNORE.indexOf(msg.lsId) !== -1) {
             if (VERBOSE > 1) console.log(`${RELAYER_VERBOSE_TAG[RELAYER]} ambexBMLMessenger[${RELAYER}] Ignoring already handled msg `, msg)
             continue
           }
 
+          //skip AND remove from queue if too old
           if (!msg.discardTimeout || (msg.discardTimeout && msg.discardTimeout < new Date().getTime())) {
             if (VERBOSE > 1) console.log(`${RELAYER_VERBOSE_TAG[RELAYER]} ambexBMLMessenger[${RELAYER}] discarding old msg`, msg)
             clearLocalStorageMessage(msg)
             continue
           }
 
+          //If I am the iframe
           if (RELAYER === 'iframe') {
             if (msg.toFrameId === FRAME_ID) {
               if (VERBOSE > 1) console.log(`${RELAYER_VERBOSE_TAG[RELAYER]} ambexBMLMessenger[${RELAYER}] CLEARING targetted msg `, msg)
+              //final destination, clearing msg from queue
               clearLocalStorageMessage(msg)
             } else if (msg.toFrameId === 'broadcast') {
-              if (BROADCAST_MSG_TO_IGNORE.indexOf(msg.id) !== -1) {
+              //skip this msg if already handled
+              if (BROADCAST_MSG_TO_IGNORE.indexOf(msg.lsId) !== -1) {
                 if (VERBOSE > 1) console.log(`${RELAYER_VERBOSE_TAG[RELAYER]} ambexBMLMessenger[${RELAYER}] Ignoring broadcast msg `, msg)
                 continue
               }
 
-              BROADCAST_MSG_TO_IGNORE.push(msg.id)
+              //will handle the msg further but ignoring the same message to handle later
+              BROADCAST_MSG_TO_IGNORE.push(msg.lsId)
+              //clearing msg from queue after some time (to be sure every other process could read it)
               setTimeout(() => {
-                //if (VERBOSE) console.log(`${RELAYER_VERBOSE_TAG[RELAYER]} ambexBMLMessenger[${RELAYER}] CLEARING broadcast msg `, msg);
-                const ignoreIndex = BROADCAST_MSG_TO_IGNORE.indexOf(msg.id)
+                const ignoreIndex = BROADCAST_MSG_TO_IGNORE.indexOf(msg.lsId)
                 if (ignoreIndex !== -1) {
                   BROADCAST_MSG_TO_IGNORE.splice(ignoreIndex, 1)
                 }
-
                 clearLocalStorageMessage(msg)
               }, 1500)
             } else {
+              //Message not for me, skip
               if (VERBOSE > 1) console.log(`${RELAYER_VERBOSE_TAG[RELAYER]} ambexBMLMessenger[${RELAYER}] skipping msg, not relevant Frame destination`, msg)
               continue
             }
           } else {
+            //if I am ambireWalletPageContext, clear from queue before processing it
             clearLocalStorageMessage(msg)
           }
+
           //avoiding reHandling messages when n msgs concurrency happen
-          HANDLED_MSG_TO_IGNORE.push(msg.id)
+          HANDLED_MSG_TO_IGNORE.push(msg.lsId)
+          //consider after some time we can remove it from the ids to ignore
           setTimeout(() => {
-            const ignoreIndex = HANDLED_MSG_TO_IGNORE.indexOf(msg.id)
+            const ignoreIndex = HANDLED_MSG_TO_IGNORE.indexOf(msg.lsId)
             if (ignoreIndex !== -1) {
               HANDLED_MSG_TO_IGNORE.splice(ignoreIndex, 1)
             }
           }, 1500)
+          //handle msg by process
           handleMessage(msg)
         }
       }
     }
   }
 
+  //if setup is for iframe, define localstorage channels
   if (RELAYER === 'iframe') {
     RECV_LOCALSTORAGE_CHANNEL = 'LS_WALLET2IFRAME'
     POST_LOCALSTORAGE_CHANNEL = 'LS_IFRAME2WALLET'
@@ -134,29 +169,31 @@ export const setupAmbexBMLMessenger = (relayer, iframe) => {
     RECV_LOCALSTORAGE_CHANNEL = 'LS_IFRAME2WALLET'
     POST_LOCALSTORAGE_CHANNEL = 'LS_WALLET2IFRAME'
   }
+  //no localstorage for pageContext(only postMessage communication)
 
   if (VERBOSE) console.log(`${RELAYER_VERBOSE_TAG[RELAYER]} ambexBMLMessenger[${RELAYER}] Add EVENT LISTENER`)
   if (RELAYER === 'iframe') {
-    //FROM WALLET
+    //listen FROM WALLET
     window.addEventListener('storage', LS_MSG_HANDLER)
-    //FROM DAPP
+    //listen FROM DAPP
     window.addEventListener('message', WINDOWLISTENER)
   } else if (RELAYER === 'ambirePageContext') {
+    //listen storage from iframe with
     window.addEventListener('storage', LS_MSG_HANDLER)
   } else {
+    //listen postMessage from iframe
     window.addEventListener('message', WINDOWLISTENER)
   }
 }
 
 const handleMessage = function (message, sender = null) {
-  if (!RELAYER) debugger;
+  if (!RELAYER) console.log(`${RELAYER_VERBOSE_TAG[RELAYER]} ambexBMLMessenger Could not handle message, RELAYER not set`, message)
   if (VERBOSE) console.log(`${RELAYER_VERBOSE_TAG[RELAYER]} ambexBMLMessenger[${RELAYER}] Handling message`, message)
-  if (message.to === RELAYER) {//IF FINAL DESTINATION
 
-    if (message.data && message.data === 'done') {
-      debugger;
-    }
+  //if I am the final message destination
+  if (message.to === RELAYER) {
 
+    //get appropriate callback to handle message
     const handlerIndex = HANDLERS.findIndex(h =>
         //REPLIES
         (h.requestFilter.isReply && (message.isReply && h.requestFilter.id === message.id))
@@ -175,11 +212,14 @@ const handleMessage = function (message, sender = null) {
     } else {
       if (VERBOSE > 2) console.debug(`${RELAYER_VERBOSE_TAG[RELAYER]} ambexBMLMessenger[${RELAYER}] nothing to handle the message`, message)
     }
+    //message not for me, but has destination
   } else if (message.to) {
-    //ACT AS FORWARDER
+    //init previous forwarders if not existing
     if (!message.forwarders) {
       message.forwarders = []
     }
+
+    //If I already forwarded the message
     if (message.forwarders.indexOf(RELAYER) !== -1) {
       if (VERBOSE > 1) console.log(`${RELAYER_VERBOSE_TAG[RELAYER]} ambexBMLMessenger[${RELAYER}] : Already forwarded message. Ignoring`, message)
     } else if (message.from !== RELAYER) {
@@ -197,6 +237,7 @@ const handleMessage = function (message, sender = null) {
   }
 }
 
+//removing listeners and handlers, only for ambirePageContext / hooks reloading stuff
 export const clear = function () {
   //ONLY FOR REACT AMBIRE WALLET
   if (RELAYER === 'ambirePageContext') {
@@ -206,32 +247,36 @@ export const clear = function () {
   }
 }
 
+//updating and sending message
 const sendMessageInternal = async (message) => {
   message.sender = RELAYER
   if (VERBOSE > 2) console.log(`${RELAYER_VERBOSE_TAG[RELAYER]} ambexBMLMessenger[${RELAYER}] try sendMessageInternal`, message)
+  //If I am iframe
   if (RELAYER === 'iframe') {
     if (message.to === 'ambirePageContext') {
-      //to wallet
+      //sending to wallet
       if (VERBOSE) console.log(`${RELAYER_VERBOSE_TAG[RELAYER]} ambexBMLMessenger[${RELAYER}] sending message as IFRAME -> WALLET:`)
-      //BROADCASTER.postMessage(message);
       message.fromFrameId = FRAME_ID
       pushLocalStorageMessage(message)
     } else {
-      //to parent
+      //sending message to iframe parent
       if (VERBOSE) console.log(`${RELAYER_VERBOSE_TAG[RELAYER]} ambexBMLMessenger[${RELAYER}] sending message as IFRAME -> DAPP:`)
       window.parent.postMessage(message, '*')
     }
+    //If I am wallet
   } else if (RELAYER === 'ambirePageContext') {
     if (VERBOSE) console.log(`${RELAYER_VERBOSE_TAG[RELAYER]} ambexBMLMessenger[${RELAYER}] sending message as WALLET -> IFRAME:`)
-    message.lsId = `${RELAYER}_${Math.random()}`
-    //BROADCASTER.postMessage(message);
+    //push message to writing queue
     pushLocalStorageMessage(message)
+    //If I am dapp
   } else if (RELAYER === 'pageContext') {
     if (VERBOSE) console.log(`${RELAYER_VERBOSE_TAG[RELAYER]} ambexBMLMessenger[${RELAYER}] sending message as DAPP -> IFRAME:`)
+    //send to child iframe
     IFRAME.contentWindow.postMessage(message, '*')
   }
 }
 
+//add handlers (can be filtered by type/dst/sender/reply)
 export const addMessageHandler = (filter, callback) => {
   HANDLERS.push({
     requestFilter: { ...filter, isFilter: true },
@@ -240,7 +285,13 @@ export const addMessageHandler = (filter, callback) => {
   if (VERBOSE > 2) console.debug(`${RELAYER_VERBOSE_TAG[RELAYER]} ambexBMLMessenger[${RELAYER}] handler added`, HANDLERS)
 }
 
-//expecting to, type, optional DATA
+
+/**
+ * used by processes to send messages
+ * @param message == {to, type, [data]}
+ * @param callback optional reply callback
+ * @param options for now only replyTimeout
+ */
 export const sendMessage = (message, callback, options = {}) => new Promise((resolve, reject) => {
 
     options = {
@@ -248,10 +299,12 @@ export const sendMessage = (message, callback, options = {}) => new Promise((res
       ...options
     }
 
+    //incrementing global var to compose msg id
     MSGCOUNT++
-
     message.id = `${RELAYER}_${MSGCOUNT}_${new Date().getTime()}_${Math.random()}`
     message.from = RELAYER
+
+    //when can be the message clerared from queue
     message.discardTimeout = new Date().getTime() + options.replyTimeout
 
     const handlerFilter = {
@@ -259,20 +312,23 @@ export const sendMessage = (message, callback, options = {}) => new Promise((res
       isReply: true
     }
 
+    //handler when reply is requested and none is given
     const timeoutHandler = setTimeout(() => {
       removeMessageHandler({
         id: message.id,
         isReply: true
       })
-      reject(`${RELAYER_VERBOSE_TAG[RELAYER]} ambexBMLMessenger[${RELAYER}] timeout : ${JSON.stringify(message)}`)
+      reject(new Error(`Timeout: no reply for message`))
+      if (VERBOSE > 2) console.log(`${RELAYER_VERBOSE_TAG[RELAYER]} ambexBMLMessenger[${RELAYER}] timeout : ${JSON.stringify(message)}`)
     }, options.replyTimeout)
 
     if (callback) {
+      //add a handler for the reply if there is a callback specified
       addMessageHandler({
         id: message.id,
         isReply: true
       }, (reply, error) => {
-        if (VERBOSE > 2) console.log(`${RELAYER_VERBOSE_TAG[RELAYER]} ambexBMLMessenger[${RELAYER}] CLEARING TIMEOUT`, message)
+        if (VERBOSE > 2) console.log(`${RELAYER_VERBOSE_TAG[RELAYER]} ambexBMLMessenger[${RELAYER}] Clearing Timeout`, message)
         clearTimeout(timeoutHandler)
         removeMessageHandler(handlerFilter)
         if (error) {
@@ -285,23 +341,28 @@ export const sendMessage = (message, callback, options = {}) => new Promise((res
 
     if (VERBOSE) console.log(`${RELAYER_VERBOSE_TAG[RELAYER]} ambexBMLMessenger[${RELAYER}] sendMessage`, message)
 
-    sendMessageInternal(message).catch(err => {
-      console.log('sendMsgInternal err', err)
-      //if (VERBOSE) console.log(`${RELAYER_VERBOSE_TAG[RELAYER]} ambexMessenger[${RELAYER}] clearing timeout listener`, message)
-      clearTimeout(timeoutHandler)
-      removeMessageHandler(handlerFilter)
-      reject(err.message)
-    }).then(res => {
-      if (!callback) {
-        resolve(null)
-      }
-    })
+    sendMessageInternal(message)
+      .catch(err => {
+        console.log('sendMsgInternal err', err)
+        clearTimeout(timeoutHandler)
+        removeMessageHandler(handlerFilter)
+        reject(err.message)
+      })
+      .then(res => {
+        if (!callback) {
+          resolve(null)
+        }//else resolved in the handler above
+      })
   }
 )
 
+/**
+ * reply to request, meant to be used by sendMessage processes callbacks
+ * @param fromMessage the original request message
+ * @param message message to reply with (in most of the cases only data should be passed {[data]}). from / to will be specified here
+ */
 export const sendReply = (fromMessage, message) => {
   if (!fromMessage) {
-    debugger;
     return false
   }
 
@@ -310,6 +371,7 @@ export const sendReply = (fromMessage, message) => {
   message.to = fromMessage.from
   message.isReply = true
   message.toFrameId = fromMessage.fromFrameId
+  //clear from queues if still there, after that time passed
   message.discardTimeout = new Date().getTime() + 1000
 
   sendMessageInternal(message).catch(err => {
@@ -317,6 +379,7 @@ export const sendReply = (fromMessage, message) => {
   })
 }
 
+//sendReply shortcut, to be used by dApps
 export const sendAck = (fromMessage) => {
   sendMessageInternal({
     from: RELAYER,
@@ -328,7 +391,6 @@ export const sendAck = (fromMessage) => {
     if (VERBOSE) console.error('Send ack failed', err)
   })
 }
-
 
 export const removeMessageHandler = (filter) => {
   const handlerIndex = HANDLERS.findIndex(h =>
@@ -350,7 +412,7 @@ export const removeMessageHandler = (filter) => {
   }
 }
 
-
+//rpc error helper
 export const makeRPCError = (requestPayload, error, errorCode = -1) => {
   return {
     id: requestPayload.id,

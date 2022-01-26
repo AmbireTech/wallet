@@ -136,13 +136,13 @@ const handleMessage = function (message, sender = null) {
 
           message.forwarders.push(RELAYER)
           sendMessageInternal(message).catch(err => {
-            sendReply(message, {error: err.message})
+            sendReply(message, { error: err.message })
           })
         } else {
           if (VERBOSE > 1) console.log(`${RELAYER_VERBOSE_TAG[RELAYER]} ambexMessenger[${RELAYER}] : Ignoring self message`, message)
         }
       } else {
-        sendReply(message, {error: 'permissions not granted'})
+        sendReply(message, { error: 'permissions not granted' })
       }
     })
   } else {
@@ -165,7 +165,7 @@ const checkForwardPermission = (message, sender, callback) => {
       if (AMBIRE_DOMAINS.indexOf(new URL(url).host) !== -1) {
         callback(true)
       } else {
-        if (VERBOSE) console.warn(`${RELAYER_VERBOSE_TAG[RELAYER]} ambexMessenger[${RELAYER}] : sending message to dApp not from trusted source`, {url, AMBIRE_DOMAINS})
+        if (VERBOSE) console.warn(`${RELAYER_VERBOSE_TAG[RELAYER]} ambexMessenger[${RELAYER}] : sending message to dApp not from trusted source`, { url, AMBIRE_DOMAINS })
         callback(false)
       }
     } else if (message.from === 'contentScript' && message.to === 'contentScript') {//from extension to extension
@@ -304,7 +304,8 @@ export const sendMessage = (message, callback, options = {}) => new Promise((res
 
     const timeoutHandler = setTimeout(() => {
       removeMessageHandler(handlerFilter)
-      reject(`${RELAYER_VERBOSE_TAG[RELAYER]} ambexMessenger[${RELAYER}] timeout : ${JSON.stringify(message)}`)
+      //reject(new Error(`${RELAYER_VERBOSE_TAG[RELAYER]} ambexMessenger[${RELAYER}] timeout : ${JSON.stringify(message)}`))
+      reject(new Error(`Timeout: no reply for message`))
       //rej(`${RELAYER_VERBOSE_TAG[RELAYER]} ambexMessenger[${RELAYER}] Ambire wallet timeout`);
     }, options.replyTimeout)
 
@@ -368,7 +369,7 @@ export const sendAck = (fromMessage) => {
     toTabId: fromMessage.fromTabId,
     isReply: true,
     id: fromMessage.id,
-    data: {ack: true},
+    data: { ack: true },
   }).catch(err => {
     if (VERBOSE) console.error('Send ack failed', err)
   })
@@ -396,7 +397,7 @@ const removeMessageHandler = (filter) => {
 
 export const addMessageHandler = (filter, callback) => {
   HANDLERS.push({
-    requestFilter: {...filter, isFilter: true},
+    requestFilter: { ...filter, isFilter: true },
     callback: callback
   })
   if (VERBOSE > 2) console.debug(`${RELAYER_VERBOSE_TAG[RELAYER]} ambexMessenger[${RELAYER}] handler added`, HANDLERS)
@@ -406,7 +407,7 @@ export const makeRPCError = (requestPayload, error, errorCode = -1) => {
   return {
     id: requestPayload.id,
     version: requestPayload.version,
-    error: {code: errorCode, message: error},
+    error: { code: errorCode, message: error },
     jsonrpc: requestPayload.jsonrpc
   }
 }

@@ -3,11 +3,12 @@ import {
   sendMessage,
   addMessageHandler,
   makeRPCError,
-  BROADCASTER
 } from './ambexBookmarkletMessenger';
 
-window.bmlInjected = true;
+//avoid double injections (check is in the snippet)
+window.ambireBmlInjected = true;
 
+//appending child iFrame
 const iframe = document.createElement('iframe');
 iframe.src = process.env.AMBIRE_URL + '/bookmarklet/frame.html';
 iframe.style.width = '1px'
@@ -18,33 +19,30 @@ iframe.style.opacity = '0'
 iframe.style.position = 'absolute'
 iframe.style.left = '-9999'
 iframe.style.top = '-9999'
-/*iframe.sandbox.add("allow-top-navigation");
-iframe.sandbox.add("allow-top-navigation-by-user-activation");
-iframe.sandbox.add("allow-scripts");
-iframe.sandbox.add("allow-same-origin");*/
 
 document.body.appendChild(iframe);
 
-// This script runs in page context and registers a listener.
-// Note that the page may override/hook things like addEventListener...
 const VERBOSE = parseInt(process.env.VERBOSE) || 0;
-console.log('verbose', VERBOSE)
 
 const Web3 = require('web3');
+
+//methods that allow a longer timeout for replies
 const USER_INTERVENTION_METHODS = [
   'eth_sendTransaction',
   'personal_sign',
   'eth_sign',
-  'personal_sign'
+  'personal_sign',
+  'gs_multi_send',
+  'ambire_sendBatchTransaction',
 ];
 
 //wrapped promise for ethereum.request
-const ethRequest = (requestPayload) => new Promise((res, rej) => {
+const ethRequest = (requestPayload) => new Promise((resolve, reject) => {
 
   let replyTimeout = 5 * 1000;
   if (requestPayload && requestPayload.method && USER_INTERVENTION_METHODS.indexOf(requestPayload.method) !== -1) {
     replyTimeout = 5 * 60 * 1000;
-    //NOTIFY?
+    //should also notify?
   }
 
   sendMessage({
@@ -55,20 +53,20 @@ const ethRequest = (requestPayload) => new Promise((res, rej) => {
     const data = reply.data;
     if (data) {
       if (data.error) {
-        rej(data.error)
+        reject(data.error)
       } else {
         const result = reply.data ? reply.data.result : null;
         if (reply.error) {
-          return rej(data.error)
+          return reject(data.error)
         }
-        return res(result)
+        return resolve(result)
       }
     } else {
-      return rej('empty reply')
+      return reject({ message: 'empty reply' })
     }
   }, { replyTimeout }).catch(err => {
     console.error('error request', err);
-    return rej(err)
+    return reject({ message: err })
   })
 });
 
