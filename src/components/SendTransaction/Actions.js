@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { Button, Loading, TextInput } from 'components/common'
 import { isTokenEligible } from './helpers'
-import { MdCheck, MdCheckCircle, MdInfo, MdOutlineCheck, MdOutlineCheckCircle, MdOutlineClose } from 'react-icons/md'
+import { MdCheck, MdCheckCircle, MdOutlineCheck, MdOutlineClose } from 'react-icons/md'
 
 export default function Actions({ estimation, feeSpeed, approveTxn, rejectTxn, cancelSigning, signingStatus }) {
   const [quickAccCredentials, setQuickAccCredentials] = useState({ code: '', passphrase: '' })
