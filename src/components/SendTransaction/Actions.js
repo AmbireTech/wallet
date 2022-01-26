@@ -61,7 +61,16 @@ export default function Actions({ estimation, feeSpeed, approveTxn, rejectTxn, c
           ></TextInput>
         </div>
         <div className='buttons'>
-          <Button clear icon={<MdOutlineClose/>} type='button' className='cancelSigning' onClick={cancelSigning}>Cancel</Button>
+          <Button
+            clear
+            disabled={signingStatus && signingStatus.inProgress}
+            icon={<MdOutlineClose/>}
+            type='button'
+            className='cancelSigning'
+            onClick={cancelSigning}
+          >
+            Cancel
+          </Button>
           <Button 
             className='confirmSigning'
             onClick={() => {
