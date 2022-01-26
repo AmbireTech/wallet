@@ -15,6 +15,8 @@ contract WALLETToken {
 	event Approval(address indexed owner, address indexed spender, uint amount);
 	event Transfer(address indexed from, address indexed to, uint amount);
 
+	event SupplyControllerChanged(address indexed prev, address indexed current);
+
 	address public supplyController;
 	address public immutable PREV_TOKEN;
 
@@ -67,41 +69,41 @@ contract WALLETToken {
 
 	function changeSupplyController(address newSupplyController) external {
 		require(msg.sender == supplyController, 'NOT_SUPPLYCONTROLLER');
+		// Emitting here does not follow checks-effects-interactions-logs, but it's safe anyway cause there are no external calls
+		emit SupplyControllerChanged(supplyController, newSupplyController);
 		supplyController = newSupplyController;
 	}
 }
 
 contract WALLETSupplyController {
-	enum GovernanceLevel { None, Mint, All }
-
 	uint public constant CAP = 1_000_000_000 * 1e18;
 	WALLETToken public immutable WALLET;
 
-	mapping (address => uint8) public governance;
+	mapping (address => bool) public hasGovernance;
 	// Some addresses (eg StakingPools) are incentivized with a certain allowance of WALLET per year
 	mapping (address => uint) public incentivePerSecond;
 	// Keep track of when incentive tokens were last minted for a given addr
 	mapping (address => uint) public incentiveLastMint;
 
 	constructor(WALLETToken token) {
-		governance[msg.sender] = uint8(GovernanceLevel.All);
+		hasGovernance[msg.sender] = true;
 		WALLET = token;
 	}
 
 	function changeSupplyController(address newSupplyController) external {
-		require(governance[msg.sender] >= uint8(GovernanceLevel.All), "NOT_GOVERNANCE");
+		require(hasGovernance[msg.sender], "NOT_GOVERNANCE");
 		WALLET.changeSupplyController(newSupplyController);
 	}
 
-	function setGovernance(address addr, uint8 level) external {
-		require(governance[msg.sender] >= uint8(GovernanceLevel.All), "NOT_GOVERNANCE");
-		governance[addr] = level;
+	function setGovernance(address addr, bool level) external {
+		require(hasGovernance[msg.sender], "NOT_GOVERNANCE");
+		hasGovernance[addr] = level;
 	}
 
 	function setIncentive(address addr, uint amountPerSecond) external {
-		require(governance[msg.sender] >= uint8(GovernanceLevel.All), "NOT_GOVERNANCE");
+		require(hasGovernance[msg.sender], "NOT_GOVERNANCE");
 		// no more than 10 WALLET per second
-		require(amountPerSecond < 10e18, "AMOUNT_TOO_LARGE");
+		require(amountPerSecond <= 10e18, "AMOUNT_TOO_LARGE");
 		incentiveLastMint[addr] = block.timestamp;
 		incentivePerSecond[addr] = amountPerSecond;
 		// AUDIT: pending incentive lost here
@@ -111,5 +113,16 @@ contract WALLETSupplyController {
 		uint totalSupplyAfter = token.totalSupply() + amount;
 		require(totalSupplyAfter <= CAP, "MINT_TOO_LARGE");
 		token.mint(owner, amount);
+	}
+
+	// Incentive mechanism
+	function mintableIncentive(address addr) public view returns (uint) {
+		return (block.timestamp - incentiveLastMint[addr]) * incentivePerSecond[addr];
+	}
+
+	function mintIncentive(address addr) external {
+		uint amount = mintableIncentive(addr);
+		incentiveLastMint[addr] = block.timestamp;
+		innerMint(WALLET, addr, amount);
 	}
 }

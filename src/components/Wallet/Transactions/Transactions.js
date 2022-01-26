@@ -1,7 +1,7 @@
 import './Transactions.scss'
 import { FaSignature } from 'react-icons/fa'
 import { BsCoin, BsCalendarWeek, BsGlobe2, BsCheck2All } from 'react-icons/bs'
-import { MdOutlinePendingActions } from 'react-icons/md'
+import { MdOutlinePendingActions, MdShuffle, MdCheck } from 'react-icons/md'
 import { useRelayerData } from 'hooks'
 import TxnPreview from 'components/common/TxnPreview/TxnPreview'
 import { Loading, Button } from 'components/common'
@@ -9,17 +9,23 @@ import accountPresets from 'consts/accountPresets'
 import networks from 'consts/networks'
 import { getTransactionSummary } from 'lib/humanReadableTransactions'
 import { Bundle } from 'adex-protocol-eth'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import fetch from 'node-fetch'
 import { useToasts } from 'hooks/toasts'
 import { toBundleTxn } from 'lib/requestToBundleTxn'
+import { HiOutlineChevronLeft, HiOutlineChevronRight } from 'react-icons/hi'
+import { useHistory, useParams } from 'react-router-dom/cjs/react-router-dom.min'
 
-// 10% in geth and most EVM chain RPCs
-const RBF_THRESHOLD = 1.1
+// 10% in geth and most EVM chain RPCs; relayer wants 12%
+const RBF_THRESHOLD = 1.14
 
 function Transactions ({ relayerURL, selectedAcc, selectedNetwork, showSendTxns, eligibleRequests }) {
   const { addToast } = useToasts()
+  const history = useHistory()
+  const params = useParams()
+
   const [cacheBreak, setCacheBreak] = useState(() => Date.now())
+  
   // @TODO refresh this after we submit a bundle; perhaps with the upcoming transactions service
   // We want this pretty much on every rerender with a 5 sec debounce
   useEffect(() => {
@@ -31,6 +37,18 @@ function Transactions ({ relayerURL, selectedAcc, selectedNetwork, showSendTxns,
     ? `${relayerURL}/identity/${selectedAcc}/${selectedNetwork.id}/transactions?cacheBreak=${cacheBreak}`
     : null
   const { data, errMsg, isLoading } = useRelayerData(url)
+
+  const maxBundlePerPage = 10
+  const executedTransactions = data ? data.txns.filter(x => x.executed) : []
+  const maxPages = Math.ceil(executedTransactions.length / maxBundlePerPage)
+
+  const defaultPage = useMemo(() => Math.min(Math.max(Number(params.page), 1), maxPages) || 1, [params.page, maxPages])
+  const [page, setPage] = useState(defaultPage)
+
+  const bundlesList = executedTransactions.slice((page - 1) * maxBundlePerPage, page * maxBundlePerPage).map(bundle => BundlePreview({ bundle, mined: true }))
+  
+  useEffect(() => !isLoading && history.replace(`/wallet/transactions/${page}`), [page, history, isLoading])
+  useEffect(() => setPage(defaultPage), [selectedAcc, selectedNetwork, defaultPage])
 
   // @TODO implement a service that stores sent transactions locally that will be used in relayerless mode
   if (!relayerURL) return (<section id='transactions'>
@@ -71,13 +89,24 @@ function Transactions ({ relayerURL, selectedAcc, selectedNetwork, showSendTxns,
   // @TODO: we are currently assuming the last txn is a fee; change that (detect it)
   const speedup = relayerBundle => showSendTxns(mapToBundle(relayerBundle, { txns: relayerBundle.txns.slice(0, -1) }))
 
+  const paginationControls = (
+    <div className='pagination-controls'>
+      <div className='pagination-title'>Page</div>
+      <Button clear mini onClick={() => page > 1 && setPage(page => page - 1)}><HiOutlineChevronLeft/></Button>
+      <div className='pagination-current'>{ page } <span>/ { maxPages }</span></div>
+      <Button clear mini onClick={() => page < maxPages && setPage(page => page + 1)}><HiOutlineChevronRight/></Button>
+    </div>
+  )
+
   return (
     <section id='transactions'>
-      {!!eligibleRequests.length && (<div className='panel'>
-        <div className='title'><FaSignature size={25}/>Waiting to be signed (current batch)</div>
+      {!!eligibleRequests.length && (<div className='panel' id="waiting-transactions">
+        <div className='panel-heading'>
+          <div className='title'><FaSignature size={25}/>Waiting to be signed (current batch)</div>
+        </div>
         <div className="content">
           <div className="bundle">
-            <div onClick={() => showSendTxns(null)}>
+            <div className="bundle-list" onClick={() => showSendTxns(null)}>
               {eligibleRequests.map(req => (
                 <TxnPreview
                     key={req.id}
@@ -92,13 +121,15 @@ function Transactions ({ relayerURL, selectedAcc, selectedNetwork, showSendTxns,
                 <Button small className='cancel' onClick={
                   () => resolveMany(eligibleRequests.map(x => x.id), { message: 'Ambire user rejected all requests' })
                 }>Reject all</Button>*/}
-                <Button small onClick={() => showSendTxns(null)}>Sign or reject</Button>
+                <Button small icon={<MdCheck/>} onClick={() => showSendTxns(null)}>Sign or reject</Button>
               </div>
           </div>
         </div>
       </div>)}
       { !!firstPending && (<div className='panel' id="pending">
-        <div className='title'><MdOutlinePendingActions/>Pending transaction bundle</div>
+        <div className='panel-heading'>
+          <div className='title'><MdOutlinePendingActions/>Pending transaction bundle</div>
+        </div>
         <div className="content">
           <div className="bundle">
             <BundlePreview bundle={firstPending}></BundlePreview>
@@ -111,17 +142,23 @@ function Transactions ({ relayerURL, selectedAcc, selectedNetwork, showSendTxns,
       </div>) }
 
       <div id="confirmed" className="panel">
-        <div className="title">
-          <BsCheck2All/>
-          {(data && data.txns.length === 0) ? 'No transactions yet.' : 'Confirmed transactions'}
+        <div className="panel-heading">
+          <div className='title'>
+            <BsCheck2All/>
+            {(data && data.txns.length === 0) ? 'No transactions yet.' : 'Confirmed transactions'}
+          </div>
+          { !bundlesList.length ? null : paginationControls }
         </div>
         <div className="content">
           {!relayerURL && (<h3 className='validation-error'>Unsupported: not currently connected to a relayer.</h3>)}
           {errMsg && (<h3 className='validation-error'>Error getting list of transactions: {errMsg}</h3>)}
-          {(isLoading && !data) && <Loading />}
           {
-              // @TODO respect the limit and implement pagination
-              data && data.txns.filter(x => x.executed).map(bundle => BundlePreview({ bundle, mined: true }))
+            isLoading && !data ? <Loading /> :
+              !bundlesList.length ? null :
+                <>
+                  { bundlesList }
+                  { paginationControls }
+                </>
           }
         </div>
       </div>
@@ -170,7 +207,7 @@ function BundlePreview({ bundle, mined = false }) {
       {
         bundle.replacesTxId ?
           <li>
-            <label>Replaces transaction</label>
+            <label><MdShuffle/>Replaces transaction</label>
             <p>{bundle.replacesTxId}</p>
           </li>
           :

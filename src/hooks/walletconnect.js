@@ -26,7 +26,7 @@ const checkIsOffline = uri => {
     //    .every(({ time } = {}) => time > (Date.now() - timePastForConnectionErr))
 }
 
-export default function useWalletConnect ({ account, chainId, initialUri }) {
+export default function useWalletConnect ({ account, chainId, initialUri, allNetworks, setNetwork }) {
     const { addToast } = useToasts()
 
     // This is needed cause of the WalletConnect event handlers
@@ -197,6 +197,20 @@ export default function useWalletConnect ({ account, chainId, initialUri }) {
                     }
                 }
             }
+            //FutureProof? WC does not implement it yet
+            if (payload.method === 'wallet_switchEthereumChain') {
+                const supportedNetwork = allNetworks.find(a => a.chainId === parseInt(payload.params[0].chainId, 16))
+
+                if (supportedNetwork) {
+                    setNetwork(supportedNetwork.chainId)
+                    connector.approveRequest({ id: payload.id, result: { chainId: supportedNetwork.chainId }})
+                } else {
+                    //Graceful error for user
+                    addToast(`dApp asked to switch to an unsupported chain: ${payload.params[0]?.chainId}`, { error: true })
+                    connector.rejectRequest({ id: payload.id, error: { message: 'Unsupported chain' }})
+                }
+                return
+            }
             if (!SUPPORTED_METHODS.includes(payload.method)) {
                 const isUniIgnorable = payload.method === 'eth_signTypedData_v4'
                     && connector.session.peerMeta
@@ -204,7 +218,7 @@ export default function useWalletConnect ({ account, chainId, initialUri }) {
                 // @TODO: if the dapp is in a "allow list" of dApps that have fallbacks, ignore certain messages
                 // eg uni has a fallback for eth_signTypedData_v4
                 if (!isUniIgnorable) addToast(`dApp requested unsupported method: ${payload.method}`, { error: true })
-                connector.rejectRequest({ id: payload.id, error: { message: 'METHOD_NOT_SUPPORTED' }})
+                connector.rejectRequest({ id: payload.id, error: { message: 'METHOD_NOT_SUPPORTED: ' + payload.method }})
                 return
             }
             const wrongAcc = (
@@ -256,7 +270,7 @@ export default function useWalletConnect ({ account, chainId, initialUri }) {
         connector.on('error', onError)
 
         return connector
-    }, [addToast])
+    }, [addToast, allNetworks, setNetwork])
 
     const disconnect = useCallback(uri => {
         // connector might not be there, either cause we disconnected before,

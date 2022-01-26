@@ -34,6 +34,14 @@ const networks = [{
 		icon: '/resources/networks/bsc.png',
 		explorerUrl: 'https://bscscan.com'
 	}, {
+		id: 'fantom',
+		chainId: 250,
+		rpc: 'https://rpc.ftm.tools',
+		nativeAssetSymbol: 'FTM',
+		name: 'Fantom Opera',
+		icon: '/resources/networks/fantom.png',
+		explorerUrl: 'https://ftmscan.com'
+	}, {
 		id: 'arbitrum',
 		chainId: 42161,
 		rpc: 'https://arb1.arbitrum.io/rpc',
