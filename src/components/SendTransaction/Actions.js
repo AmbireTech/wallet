@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { Button, Loading, TextInput } from 'components/common'
 import { isTokenEligible } from './helpers'
-import { MdCheck, MdOutlineCheck, MdOutlineClose } from 'react-icons/md'
+import { MdCheck, MdCheckCircle, MdInfo, MdOutlineCheck, MdOutlineCheckCircle, MdOutlineClose } from 'react-icons/md'
 
 export default function Actions({ estimation, feeSpeed, approveTxn, rejectTxn, cancelSigning, signingStatus }) {
   const [quickAccCredentials, setQuickAccCredentials] = useState({ code: '', passphrase: '' })
@@ -31,10 +31,19 @@ export default function Actions({ estimation, feeSpeed, approveTxn, rejectTxn, c
   const isRecoveryMode = signingStatus && signingStatus.finalBundle && signingStatus.finalBundle.recoveryMode
   if (signingStatus && signingStatus.quickAcc) {
     return (<>
-      <div className='confirmation-code-info'>
-        {signingStatus.confCodeRequired === 'otp' ? <>Please enter your OTP code and your password.</> : null}
-        {signingStatus.confCodeRequired === 'email' ? <>A confirmation code was sent to your email, please enter it along with your password.</> : null}
-      </div>
+      {
+        signingStatus.confCodeRequired ?
+          <div className='confirmation-code-info'>
+            <div className='confirmation-code-info-title'><MdCheckCircle/>Confirmation</div>
+            <div className='confirmation-code-info-message'>
+              {signingStatus.confCodeRequired === 'otp' ? <>Please enter your OTP code and your password.</> : null}
+              {signingStatus.confCodeRequired === 'email' ? <>A confirmation code was sent to your email, please enter it along with your password.</> : null}
+            </div>
+          </div>
+          :
+          null
+      }
+  
       <form ref={form} className='quickAccSigningForm' onSubmit={e => { e.preventDefault() }}>
         <div className='inputs-container'>
           <TextInput
