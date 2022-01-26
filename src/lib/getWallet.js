@@ -97,15 +97,16 @@ async function getWalletNew({ chainId, signer, signerExtra }, opts) {
             }
              
             client.sign(signOptsMsg, (err, signedTx) => {
+              let signedMsg
+              
               if (err) {
-                //TODO: add a toast here
+                reject(signedMsg)
+                throw new Error(`Lattice: ${err}`)
               }
-              let signedMsg = ''
+
               if (signedTx) {
                 signedMsg = '0x' + signedTx.sig.r + signedTx.sig.s + signedTx.sig.v[0].toString(16)
                 resolve(signedMsg)
-              } else {
-                reject(err)
               }
             })
           })
