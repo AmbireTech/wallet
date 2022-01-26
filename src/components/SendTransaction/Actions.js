@@ -64,13 +64,12 @@ export default function Actions({ estimation, feeSpeed, approveTxn, rejectTxn, c
           <Button clear icon={<MdOutlineClose/>} type='button' className='cancelSigning' onClick={cancelSigning}>Cancel</Button>
           <Button 
             className='confirmSigning'
-            icon={<MdCheck/>}
             onClick={() => {
               if (!form.current.checkValidity()) return
               approveTxn({ quickAccCredentials })
             }}
           >
-            { signingStatus && signingStatus.inProgress ? <Loading/> : 'Confirm'}
+            { signingStatus && signingStatus.inProgress ? <Loading/> : <><MdCheck/> Confirm</>}
           </Button>
         </div>
       </form>
