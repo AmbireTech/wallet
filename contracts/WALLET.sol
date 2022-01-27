@@ -19,11 +19,9 @@ contract WALLETToken {
 	event SupplyControllerChanged(address indexed prev, address indexed current);
 
 	address public supplyController;
-	address public immutable PREV_TOKEN;
-
-	constructor(address supplyControllerAddr, address prevTokenAddr) {
-		supplyController = supplyControllerAddr;
-		PREV_TOKEN = prevTokenAddr;
+	constructor() {
+		supplyController = msg.sender;
+		emit SupplyControllerChanged(address(0), msg.sender);
 	}
 
 	function balanceOf(address owner) external view returns (uint balance) {
