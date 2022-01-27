@@ -36,6 +36,18 @@ const USER_INTERVENTION_METHODS = [
   'ambire_sendBatchTransaction',
 ];
 
+//unify error formatting
+const formatErr = (err) => {
+  if (typeof err === 'string'){
+    return Error(err)
+  } else if (err instanceof Error){
+    return err
+  } else if (err.message){
+    return Error(err.message)
+  }
+  return err
+}
+
 //wrapped promise for ethereum.request
 const ethRequest = (requestPayload) => new Promise((resolve, reject) => {
 
@@ -52,21 +64,23 @@ const ethRequest = (requestPayload) => new Promise((resolve, reject) => {
   }, reply => {
     const data = reply.data;
     if (data) {
+      console.log('here')
       if (data.error) {
-        reject(data.error)
+        reject(formatErr(data.error))
       } else {
+        console.log('there')
         const result = reply.data ? reply.data.result : null;
         if (reply.error) {
-          return reject(data.error)
+          return reject(formatErr(data.error))
         }
         return resolve(result)
       }
     } else {
-      return reject({ message: 'empty reply' })
+      return reject(formatErr('Empty reply'))
     }
   }, { replyTimeout }).catch(err => {
     console.error('error request', err);
-    return reject({ message: err })
+    return reject(formatErr(err))
   })
 });
 
@@ -87,8 +101,6 @@ const sendRequest = (requestPayload, callback) => new Promise((res, rej) => {
     if (data) {
       if (data.error) {
         //avoid to break web3calls dapps with rej...
-        console.error('err here');
-        //rej({message:data.error})
         callback({ code: -1, message: data.error, stack: '' }, makeRPCError(requestPayload, data.error));
         res(new Error(data.error));
       } else {
