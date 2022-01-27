@@ -96,8 +96,8 @@ export default function useGnosisSafe({selectedAccount, network, verbose = 0}) {
       if (!msg?.data?.params) {
         throw new Error("invalid call object")
       }
-      const method = msg.data.params.call//0 == tx, 1 == blockNum
-      const callTx = msg.data.params.params//0 == tx, 1 == blockNum
+      const method = msg.data.params.call
+      const callTx = msg.data.params.params
 
       const provider = getProvider(stateRef.current.network.id)
       let result
@@ -139,7 +139,14 @@ export default function useGnosisSafe({selectedAccount, network, verbose = 0}) {
         result = await provider.getTransactionReceipt(callTx[0]).catch(err => {
           throw err
         })
-      } else if (method === "personal_sign") {
+      //requires custom from calls from SDK but are not implemented in gnosis SDK
+      } else if (method === 'gs_multi_send' || method === 'ambire_sendBatchTransaction') {
+        //As future proof as possible (tested with a tweaked eth_call)
+        msg.data.params.txs = callTx[0]
+        await handleSendTransactions(msg).catch(err => {
+          throw err
+        })
+      } else if (method === 'personal_sign') {
         result = await handlePersonalSign(msg).catch(err => {
           throw err
         })
@@ -150,7 +157,11 @@ export default function useGnosisSafe({selectedAccount, network, verbose = 0}) {
     })
 
     connector.current.on(Methods.sendTransactions, (msg) => {
-      verbose > 0 && console.log("DApp requested sendTx") && console.log(msg)
+      handleSendTransactions(msg)
+    })
+
+    const handleSendTransactions = (msg) => {
+      verbose > 0 && console.log("DApp requested sendTx", msg)
 
       const data = msg?.data
       if (!data) {
@@ -158,7 +169,6 @@ export default function useGnosisSafe({selectedAccount, network, verbose = 0}) {
         return
       }
 
-      const id = 'gs_' + data.id
       const txs = data?.params?.txs
       if (txs?.length) {
         for (let i in txs) {
@@ -169,22 +179,24 @@ export default function useGnosisSafe({selectedAccount, network, verbose = 0}) {
         return
       }
 
-      const request = {
-        id,
-        forwardId: msg.data.id,
-        type: 'eth_sendTransaction',
-        txn: txs[0], //if anyone finds a dapp that sends a bundle, please reach me out
-        chainId: stateRef.current.network.chainId,
-        account: stateRef.current.selectedAccount
+      for (let ix in txs) {
+        const id = 'gs_' + data.id + '_' + ix
+        const request = {
+          id,
+          forwardId: msg.data.id,
+          type: 'eth_sendTransaction',
+          isBatch: txs.length > 1,
+          txn: txs[ix], //if anyone finds a dapp that sends a bundle, please reach me out
+          chainId: stateRef.current.network.chainId,
+          account: stateRef.current.selectedAccount
+        }
+        //is reducer really needed here?
+        setRequests(prevRequests => prevRequests.find(x => x.id === request.id) ? prevRequests : [...prevRequests, request])
       }
-
-      setRequests(prevRequests => prevRequests.find(x => x.id === request.id) ? prevRequests : [...prevRequests, request])
-    })
+    }
 
     const handlePersonalSign = (msg) => {
-      verbose > 0 && console.log("DApp requested signMessage") && console.log(msg)
-
-      console.log(msg);
+      verbose > 0 && console.log('DApp requested signMessage', msg)
 
       const data = msg?.data
       if (!data) {
@@ -211,9 +223,7 @@ export default function useGnosisSafe({selectedAccount, network, verbose = 0}) {
       setRequests(prevRequests => prevRequests.find(x => x.id === request.id) ? prevRequests : [...prevRequests, request])
     }
 
-    connector.current.on(Methods.signMessage, (msg) => {
-        return handlePersonalSign(msg)
-    })
+    connector.current.on(Methods.signMessage, (msg) => handlePersonalSign(msg))
 
     connector.current.on(Methods.getTxBySafeTxHash, async (msg) => {
       const {safeTxHash} = msg.data.params
