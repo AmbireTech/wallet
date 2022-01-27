@@ -18,7 +18,7 @@ const YearnTesseractCard = ({ networkId, accountId, tokens, addRequest }) => {
     const currentNetwork = useRef()
     const [loading, setLoading] = useState([])
 
-    const unavailable = !(networkId === 'ethereum' || networkId === 'polygon')
+    const unavailable = !(networkId === 'ethereum' || networkId === 'polygon' || networkId === 'fantom')
     const name = networkId === 'ethereum' ? 'Yearn' : 'Tesseract'
     const networkDetails = networks.find(({ id }) => id === networkId)
     const addRequestTxn = (id, txn, extraGas = 0) => addRequest({ id, type: 'eth_sendTransaction', chainId: networkDetails.chainId, account: accountId, txn, extraGas })
