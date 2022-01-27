@@ -6,6 +6,7 @@ contract WALLETToken {
 	string public constant name = "Ambire Wallet";
 	string public constant symbol = "WALLET";
 	uint8 public constant decimals = 18;
+	uint public constant MAX_SUPPLY = 1_000_000_000 * 1e18;
 
 	// Mutable variables
 	uint public totalSupply;
@@ -18,11 +19,9 @@ contract WALLETToken {
 	event SupplyControllerChanged(address indexed prev, address indexed current);
 
 	address public supplyController;
-	address public immutable PREV_TOKEN;
-
-	constructor(address supplyControllerAddr, address prevTokenAddr) {
-		supplyController = supplyControllerAddr;
-		PREV_TOKEN = prevTokenAddr;
+	constructor() {
+		supplyController = msg.sender;
+		emit SupplyControllerChanged(address(0), msg.sender);
 	}
 
 	function balanceOf(address owner) external view returns (uint balance) {
@@ -57,6 +56,7 @@ contract WALLETToken {
 	// Supply control
 	function innerMint(address owner, uint amount) internal {
 		totalSupply = totalSupply + amount;
+		require(totalSupply < MAX_SUPPLY, 'MAX_SUPPLY');
 		balances[owner] = balances[owner] + amount;
 		// Because of https://github.com/ethereum/EIPs/blob/master/EIPS/eip-20.md#transfer-1
 		emit Transfer(address(0), owner, amount);
