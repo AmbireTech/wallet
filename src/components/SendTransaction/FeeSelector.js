@@ -26,7 +26,7 @@ export function FeeSelector ({ disabled, signer, estimation, network, setEstimat
       </div>)
     }
     if (estimation && estimation.feeInUSD && !estimation.remainingFeeTokenBalances) {
-      return (<h3 className='error'>Internal error: fee balances not available. This should never happen, please report this on help.ambire.com</h3>)
+      return (<div className='balance-error'>Internal error: fee balances not available. This should never happen, please report this on help.ambire.com</div>)
     }
   
     const { nativeAssetSymbol } = network
@@ -81,7 +81,7 @@ export function FeeSelector ({ disabled, signer, estimation, network, setEstimat
   
     return (<>
       {insufficientFee ?
-        (<h3 className='error'>Insufficient balance for the fee. Accepted tokens: {(estimation.remainingFeeTokenBalances || []).map(x => x.symbol).join(', ')}</h3>)
+        (<div className='balance-error'>Insufficient balance for the fee.<br/>Accepted tokens: {(estimation.remainingFeeTokenBalances || []).map(x => x.symbol).join(', ')}</div>)
         : feeCurrencySelect
       }
       <div className='section'>
