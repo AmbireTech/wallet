@@ -3,7 +3,7 @@ import { Yearn } from '@yfi/sdk'
 
 import YEARN_ICON from 'resources/yearn.svg'
 
-const v2VaultsAddresses = [
+const v2VaultsAddresses = { ethereum: [
     '0xdA816459F1AB5631232FE5e97a05BBBb94970c95',
     '0xa354F35829Ae975e850e23e9615b11Da1B3dC4DE',
     '0xdb25cA703181E7484a155DD612b06f57E12Be5F0',
@@ -16,7 +16,16 @@ const v2VaultsAddresses = [
     '0x6d765CbE5bC922694afE112C140b8878b9FB0390',
     '0xFD0877d9095789cAF24c98F7CCe092fa8E120775',
     '0xd9788f3931Ede4D5018184E198699dC6d66C1915',
-]
+], fantom: [
+    '0x148c05caf1Bb09B5670f00D511718f733C54bC4c',
+    '0xCe2Fc0bDc18BD6a4d9A725791A3DEe33F3a23BB7',
+    '0x0DEC85e74A92c52b7F708c4B10207D9560CEFaf0',
+    '0xEF0210eB96c7EB36AF8ed1c20306462764935607',
+    '0x2C850cceD00ce2b14AA9D658b7Cad5dF659493Db',
+    '0xd817A100AB8A29fE3DBd925c2EB489D67F758DA9',
+    '0x0446acaB3e0242fCf33Aa526f1c95a88068d5042',
+    '0xD3c19eB022CAC706c898D60d756bf1535d605e1d'	
+] }
 
 const customVaultMetadata = {
     '0xa258C4606Ca8206D8aA700cE2143D7db854D168c': {
@@ -34,7 +43,7 @@ const useYearn = ({ tokens, networkDetails, provider, currentNetwork }) => {
     const loadVaults = useCallback(async () => {
         const yearn = new Yearn(networkDetails.chainId, { provider })
 
-        const v2Vaults = await yearn.vaults.get(v2VaultsAddresses)
+        const v2Vaults = await yearn.vaults.get(v2VaultsAddresses[networkDetails.id])
         const vaults = v2Vaults.map(({ address, metadata, symbol, token, decimals }) => {
             const { apy, displayName, displayIcon} = {
                 ...metadata,
