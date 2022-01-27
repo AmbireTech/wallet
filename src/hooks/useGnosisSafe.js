@@ -180,7 +180,7 @@ export default function useGnosisSafe({selectedAccount, network, verbose = 0}) {
       }
 
       for (let ix in txs) {
-        const id = 'gs_' + data.id + '_' + ix
+        const id = 'gs_' + data.id + ':' + ix
         const request = {
           id,
           forwardId: msg.data.id,
@@ -246,31 +246,35 @@ export default function useGnosisSafe({selectedAccount, network, verbose = 0}) {
     connector.current?.clear()
   }, [verbose])
 
+
   const resolveMany = (ids, resolution) => {
     for (let req of requests.filter(x => ids.includes(x.id))) {
-      const replyData = {
-        id: req.forwardId,
-        success: null,
-        txId: null,
-        error: null
-      }
-      if (!resolution) {
-        replyData.error = 'Nothing to resolve'
-        replyData.success = false
-      } else if (!resolution.success) {
-        replyData.error = resolution.message
-        replyData.success = false
-      } else { //onSuccess
-        replyData.success = true
-        replyData.txId = resolution.result
-        replyData.safeTxHash = resolution.result
-      }
-      if (!connector.current) {
-        //soft error handling: sendTransaction has issues
-        //throw new Error("gnosis safe connector not set")
-        console.error('gnosis safe connector not set')
-      } else {
-        connector.current.send(replyData, req.forwardId, replyData.error)
+      if (!req.isBatch || req.id.endsWith(":0")) {
+        const replyData = {
+          id: req.forwardId,
+          success: null,
+          txId: null,
+          error: null
+        }
+        if (!resolution) {
+          replyData.error = 'Nothing to resolve'
+          replyData.success = false
+        } else if (!resolution.success) {
+          replyData.error = resolution.message
+          replyData.success = false
+        } else { //onSuccess
+          replyData.success = true
+          replyData.txId = resolution.result
+          replyData.safeTxHash = resolution.result
+        }
+        if (!connector.current) {
+          //soft error handling: sendTransaction has issues
+          //throw new Error("gnosis safe connector not set")
+          console.error('gnosis safe connector not set')
+        } else {
+          console.log('gnosis reply', replyData)
+          connector.current.send(replyData, req.forwardId, replyData.error)
+        }
       }
     }
 
