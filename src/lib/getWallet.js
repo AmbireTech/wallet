@@ -76,7 +76,6 @@ async function getWalletNew({ chainId, signer, signerExtra }, opts) {
     //     data: data,
     // }
 
-   
     return {
       signMessage: async(hash) => {
         return await new Promise((resolve, reject) => { 
@@ -98,7 +97,7 @@ async function getWalletNew({ chainId, signer, signerExtra }, opts) {
              
             client.sign(signOptsMsg, (err, signedTx) => {
               let signedMsg
-              
+
               if (err) {
                 reject(signedMsg)
                 throw new Error(`Lattice: ${err}`)
