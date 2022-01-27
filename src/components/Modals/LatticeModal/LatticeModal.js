@@ -4,6 +4,7 @@ import { Modal, Button, TextInput, Loading } from 'components/common'
 import { useState } from 'react'
 import { useToasts } from 'hooks/toasts'
 import { Client } from 'gridplus-sdk'
+import Lattice from 'lib/lattice'
 
 const crypto = require('crypto')
 
@@ -37,7 +38,7 @@ const LatticeModal = ({ addresses }) => {
     const connectToDevice = async () => {
         setLoading(prevState => !prevState)
         
-        client.connect(deviceId, (err, isPaired) => {
+        connectDevice(deviceId, ({err, isPaired}) => {
             if (err) {
                 setLoading(prevState => !prevState)
                 return addToast(`Lattice: ${err} Or check if the DeviceID is correct.`, { error: true })
@@ -51,8 +52,17 @@ const LatticeModal = ({ addresses }) => {
                 enteringSecret.then((res, rej) => {
                     setIsSecretFieldShown(prevState => !prevState)
                     
-                    pairWithDevice(res, isOK => {
-                        if (!isOK) return addToast('Failed to pair', {error: true})
+                    pairWithDevice(res, ({err, hasActiveWallet}) => {
+                        if (err) {
+                            setLoading(prevState => !prevState)
+                            addToast('Lattice: ' + err, { error: true })
+                            return
+                        }
+            
+                        if (!hasActiveWallet)  {
+                            addToast('Lattice has no active wallet!')
+                            return
+                        }
                         getAddressesFromDevice(getAddressesReqOpts, (res) => {
                             if (!res) return addToast('Failed to get addresses', {error: true})
                             setLoading(prevState => !prevState)
@@ -71,7 +81,7 @@ const LatticeModal = ({ addresses }) => {
                     })
                 })
             } else {
-                getAddressesFromDevice(getAddressesReqOpts, (res) => {
+                getAddressesFromDevice(getAddressesReqOpts, (err,res) => {
                     if (err) {
                         setLoading(false)
                         return addToast(`Lattice: ${err}`, { error: true })
@@ -94,22 +104,16 @@ const LatticeModal = ({ addresses }) => {
         })
     }
 
+    const connectDevice = (deviceId, fn) => {
+        return client.connect(deviceId, (err, isPaired) => {
+            fn({ error: err, isPaired: isPaired})
+        })
+    }
+
+
     const pairWithDevice = (res, fn) => {
        return client.pair(res, (err, hasActiveWallet) => {
-            if (err) {
-                setLoading(prevState => !prevState)
-                addToast('Lattice: ' + err, { error: true })
-                fn(false)
-                return
-            }
-
-            if (!hasActiveWallet)  {
-                addToast('Lattice has no active wallet!')
-                fn(false)
-                return
-            }
-            
-            fn(true)
+            fn({err: err, hasActiveWallet: hasActiveWallet})
         })
     }
 
