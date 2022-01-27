@@ -82,7 +82,10 @@ const YearnTesseractCard = ({ networkId, accountId, tokens, addRequest }) => {
     }
 
     useEffect(() => {
-        if (unavailable) return
+        if (unavailable) {
+		setLoading(false)
+		return
+	}
         async function load() {
             await loadVaults()
             setLoading(false)
