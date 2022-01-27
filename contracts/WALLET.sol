@@ -19,9 +19,9 @@ contract WALLETToken {
 	event SupplyControllerChanged(address indexed prev, address indexed current);
 
 	address public supplyController;
-	constructor() {
-		supplyController = msg.sender;
-		emit SupplyControllerChanged(address(0), msg.sender);
+	constructor(address _supplyController) {
+		supplyController = _supplyController;
+		emit SupplyControllerChanged(address(0), _supplyController);
 	}
 
 	function balanceOf(address owner) external view returns (uint balance) {
