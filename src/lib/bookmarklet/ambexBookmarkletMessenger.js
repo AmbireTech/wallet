@@ -12,7 +12,7 @@ let IFRAME
 //Generated iframe id
 let FRAME_ID
 
-//to be part of the JSON RPC generated ids
+//to be part of the JSON RPC generated ids when sendingMessage
 let MSGCOUNT = 0
 
 //receiving localstorage channel to listen
@@ -77,9 +77,7 @@ export const setupAmbexBMLMessenger = (relayer, iframe) => {
   RELAYER = relayer
   IFRAME = iframe
 
-  WINDOWLISTENER = (windowMessage) => {
-    handleMessage(windowMessage.data)
-  }
+  WINDOWLISTENER = (windowMessage) => handleMessage(windowMessage.data)
 
   //LocalStorage RECV handler
   const LS_MSG_HANDLER = event => {
@@ -212,9 +210,8 @@ const handleMessage = function (message, sender = null) {
     } else {
       if (VERBOSE > 2) console.debug(`${RELAYER_VERBOSE_TAG[RELAYER]} ambexBMLMessenger[${RELAYER}] nothing to handle the message`, message)
     }
-    //message not for me, but has destination
-  } else if (message.to) {
-    //init previous forwarders if not existing
+  } else if (message.to) { //message not for me, but has a destination, act as a forwarder
+    //init previous forwarders if not existing (should I name it previousForwarders instead of forwarders?)
     if (!message.forwarders) {
       message.forwarders = []
     }
@@ -222,7 +219,7 @@ const handleMessage = function (message, sender = null) {
     //If I already forwarded the message
     if (message.forwarders.indexOf(RELAYER) !== -1) {
       if (VERBOSE > 1) console.log(`${RELAYER_VERBOSE_TAG[RELAYER]} ambexBMLMessenger[${RELAYER}] : Already forwarded message. Ignoring`, message)
-    } else if (message.from !== RELAYER) {
+    } else if (message.from !== RELAYER) {//If I did not forward this message and this message is NOT from me
       if (VERBOSE > 0) console.log(`${RELAYER_VERBOSE_TAG[RELAYER]} ambexBMLMessenger[${RELAYER}] : Forwarding message`, message)
 
       message.forwarders.push(RELAYER)
@@ -247,7 +244,7 @@ export const clear = function () {
   }
 }
 
-//updating and sending message
+//updating and sending message, not exposed
 const sendMessageInternal = async (message) => {
   message.sender = RELAYER
   if (VERBOSE > 2) console.log(`${RELAYER_VERBOSE_TAG[RELAYER]} ambexBMLMessenger[${RELAYER}] try sendMessageInternal`, message)
@@ -299,7 +296,7 @@ export const sendMessage = (message, callback, options = {}) => new Promise((res
       ...options
     }
 
-    //incrementing global var to compose msg id
+    //incrementing global var of sender to compose msg id
     MSGCOUNT++
     message.id = `${RELAYER}_${MSGCOUNT}_${new Date().getTime()}_${Math.random()}`
     message.from = RELAYER
@@ -351,7 +348,7 @@ export const sendMessage = (message, callback, options = {}) => new Promise((res
       .then(res => {
         if (!callback) {
           resolve(null)
-        }//else resolved in the handler above
+        }//else : resolved in the handler above
       })
   }
 )
@@ -375,7 +372,7 @@ export const sendReply = (fromMessage, message) => {
   message.discardTimeout = new Date().getTime() + 1000
 
   sendMessageInternal(message).catch(err => {
-    if (VERBOSE) console.error('sendReply failed', err)
+    if (VERBOSE) console.error(`${RELAYER_VERBOSE_TAG[RELAYER]} ambexMessenger[${RELAYER}] sendReply failed`, err)
   })
 }
 
@@ -388,7 +385,7 @@ export const sendAck = (fromMessage) => {
     id: fromMessage.id,
     data: { ack: true },
   }).catch(err => {
-    if (VERBOSE) console.error('Send ack failed', err)
+    if (VERBOSE) console.error(`${RELAYER_VERBOSE_TAG[RELAYER]} ambexMessenger[${RELAYER}] sendAck failed`, err)
   })
 }
 
