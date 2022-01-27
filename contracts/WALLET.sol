@@ -6,6 +6,7 @@ contract WALLETToken {
 	string public constant name = "Ambire Wallet";
 	string public constant symbol = "WALLET";
 	uint8 public constant decimals = 18;
+	uint public constant MAX_SUPPLY = 1_000_000_000 * 1e18;
 
 	// Mutable variables
 	uint public totalSupply;
@@ -57,6 +58,7 @@ contract WALLETToken {
 	// Supply control
 	function innerMint(address owner, uint amount) internal {
 		totalSupply = totalSupply + amount;
+		require(totalSupply < MAX_SUPPLY, 'MAX_SUPPLY');
 		balances[owner] = balances[owner] + amount;
 		// Because of https://github.com/ethereum/EIPs/blob/master/EIPS/eip-20.md#transfer-1
 		emit Transfer(address(0), owner, amount);
