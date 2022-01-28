@@ -41,6 +41,13 @@
                 margin-top: 10px;
             }
         }
+
+        .input-wrapper {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            column-gap: 20px; 
+        }
         
         button { 
             width: 100%;
