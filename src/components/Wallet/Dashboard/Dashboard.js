@@ -70,6 +70,9 @@ export default function Dashboard({ portfolio, selectedNetwork, selectedAccount,
 
     return (
         <section id="dashboard">
+	    <div className="notice" style={{ fontWeight: 'bold', backgroundColor: 'rgb(4, 73, 54)', padding: '15px 30px', fontSize: '1.1em' }}>
+		<a target="_blank" href="https://blog.ambire.com/wallet-to-get-listed-for-trading-after-primelist-event-on-huobi-91c1acec0a7e" rel="noopener noreferrer">$WALLET listing on Huobi is around the corner! Click to more about the TGE.</a>
+	    </div>
             <div id="overview">
                 <div id="balance" className="panel">
                     <div className="title">Balance</div>
