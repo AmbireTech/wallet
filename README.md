@@ -32,6 +32,13 @@ npm i
 npm start
 ```
 
+### Relayerless mode
+
+In order to enable Relayerless mode (_ability to function without being connected to the relayer_), you need to set `REACT_APP_RELAYER_URL` env variable to null as follows:
+```dotenv
+REACT_APP_RELAYER_URL=
+```
+
 ### Testing Ledger
 
 **Important:** to make the Ledger integration work, you need to be accessing Ambire Wallet through HTTPS. The easiest way to do this in a development environment is to [use localtunnel](https://github.com/localtunnel/localtunnel): for example, `lt --port 3000`
