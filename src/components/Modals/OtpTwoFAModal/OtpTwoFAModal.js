@@ -19,7 +19,7 @@ const OtpTwoFAModal = ({ relayerURL, selectedAcc, setCacheBreak }) => {
     const [imageURL, setImageURL] = useState(null)
     const [receivedOtp, setReceivedOTP] = useState('')
     const [showSecret, setShowSecret] = useState(false)
-    const [currentPassword, setCurrentPassword] = useState('')
+    const [emailConfirmCode, setEmailConfirmCode] = useState('')
 
     const generateQR = useCallback(() => {
         const otpAuth = authenticator.keyuri(
@@ -51,6 +51,16 @@ const OtpTwoFAModal = ({ relayerURL, selectedAcc, setCacheBreak }) => {
         verifyOTP()
     }
 
+    const sendEmail = async() => {
+        if (!relayerURL) {
+            addToast('Email/pass accounts not supported without a relayer connection', { error: true })
+            return
+        }
+        
+        //TODO: Create a request that sends an email
+        const { signature } = await fetchPost(`${relayerURL}/second-key/${selectedAcc.id}/ethereum/sign`, {})
+    }
+
     const verifyOTP = async () => {
         const isValid = authenticator.verify({ token: receivedOtp, secret })
         const otp = secret
@@ -67,6 +77,10 @@ const OtpTwoFAModal = ({ relayerURL, selectedAcc, setCacheBreak }) => {
                 currentPassword
             )
             const sig = await wallet.signMessage(JSON.stringify({ otp }))
+
+            //TODO: Remove the code above, create a request to get the signiture from the BE
+            
+            
             const resp = await fetchPost(`${relayerURL}/identity/${selectedAcc.id}/modify`, { otp, sig })
 
             if (resp.success) {
@@ -86,7 +100,7 @@ const OtpTwoFAModal = ({ relayerURL, selectedAcc, setCacheBreak }) => {
     }
 
     const resetForm = () => {
-        setCurrentPassword('')
+        setEmailConfirmCode('')
         setReceivedOTP('')
     }
 
@@ -105,15 +119,21 @@ const OtpTwoFAModal = ({ relayerURL, selectedAcc, setCacheBreak }) => {
                 </div>
                 <form onSubmit={handleSubmit}>
                     <div>
-                        <h4>Account password</h4>
-                        <TextInput
-                            password
-                            required
-                            pattern=".{8,}"
-                            autocomplete="current-password"
-                            placeholder="Enter the account password"
-                            onInput={value => setCurrentPassword(value)}
-                        />
+                        <h4>Confirmation code sended via Email</h4>
+                        <div className='input-wrapper'>
+                            <TextInput
+                                small
+                                pattern='[0-9]+'
+                                title='Confirmation code should be 6 digits'
+                                autoComplete='nope'
+                                required minLength={6} maxLength={6}
+                                placeholder='Confirmation code'
+                                value={emailConfirmCode}
+                                onInput={value => setEmailConfirmCode(value)}
+                            ></TextInput>
+                            
+                            <Button type="button" small onClick={sendEmail}>Send Email</Button>
+                        </div>
                         <h4>Authenticator app code</h4>
                         <TextInput
                             placeholder="Enter the code from authenticator app"
