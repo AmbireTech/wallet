@@ -167,7 +167,7 @@ Additionally, there's an ongoing [Immunefi bug bounty](https://immunefi.com/boun
 * Base identity: 0x2A2b85EB1054d6f0c6c2E37dA05eD3E5feA684EF
 * QuickAccManager: 0xfF3f6D14DF43c112aB98834Ee1F82083E07c26BF
 * Batcher: 0x460fad03099f67391d84c9cc0ea7aa2457969cea
-
+* WALLET token: 0x88800092ff476844f74dc2fc427974bbee2794ae
 
 ## Change log
 
