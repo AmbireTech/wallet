@@ -71,7 +71,7 @@ export default function Dashboard({ portfolio, selectedNetwork, selectedAccount,
     return (
         <section id="dashboard">
 	    <div className="notice" style={{ fontWeight: 'bold', backgroundColor: 'rgb(4, 73, 54)', padding: '15px 30px', fontSize: '1.1em' }}>
-		<a target="_blank" href="https://www.huobi.com/en-us/exchange/wallet_usdt/" rel="noopener noreferrer">$WALLET/USDT live on Huobi!</a>
+		<a target="_blank" href="https://www.huobi.com/en-us/exchange/wallet_usdt/" rel="noopener noreferrer">$WALLET/USDT is live on Huobi!</a>
 	    </div>
             <div id="overview">
                 <div id="balance" className="panel">
