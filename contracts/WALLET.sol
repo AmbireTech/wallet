@@ -97,15 +97,16 @@ contract WALLETSupplyController {
 
 	// Vesting
 	// Some addresses (eg StakingPools) are incentivized with a certain allowance of WALLET per year
-	mapping (address => uint) public vestingPerSecond;
+	// mapping of addr => end => rate
+	mapping (address => mapping (uint => uint)) public vestingPerSecond;
 	// Keep track of when vesting tokens were last minted for a given addr
 	mapping (address => uint) public vestingLastMint;
-	function setVesting(address addr, uint amountPerSecond) external {
+	function setVesting(address addr, uint start, uint end, uint amountPerSecond) external {
 		require(hasGovernance[msg.sender], "NOT_GOVERNANCE");
 		// no more than 10 WALLET per second
 		require(amountPerSecond <= 10e18, "AMOUNT_TOO_LARGE");
-		vestingLastMint[addr] = block.timestamp;
-		vestingPerSecond[addr] = amountPerSecond;
+		vestingLastMint[addr] = start;
+		vestingPerSecond[addr][end] = amountPerSecond;
 		// AUDIT: pending vesting lost here; that's on purpose
 	}
 
@@ -116,12 +117,13 @@ contract WALLETSupplyController {
 	}
 
 	// vesting mechanism
-	function mintableVesting(address addr) public view returns (uint) {
-		return (block.timestamp - vestingLastMint[addr]) * vestingPerSecond[addr];
+	function mintableVesting(address addr, uint end) public view returns (uint) {
+		if (block.timestamp > end) return (end - vestingLastMint[addr]) * vestingPerSecond[addr][end];
+		return (block.timestamp - vestingLastMint[addr]) * vestingPerSecond[addr][end];
 	}
 
-	function mintVesting(address addr) external {
-		uint amount = mintableVesting(addr);
+	function mintVesting(address addr, uint end) external {
+		uint amount = mintableVesting(addr, end);
 		vestingLastMint[addr] = block.timestamp;
 		innerMint(WALLET, addr, amount);
 	}
