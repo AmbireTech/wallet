@@ -80,8 +80,8 @@ contract WALLETSupplyController {
 	WALLETToken public immutable WALLET;
 
 	mapping (address => bool) public hasGovernance;
-	constructor(WALLETToken token) {
-		hasGovernance[msg.sender] = true;
+	constructor(WALLETToken token, address initialGovernance) {
+		hasGovernance[initialGovernance] = true;
 		WALLET = token;
 	}
 
