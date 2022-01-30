@@ -80,11 +80,6 @@ contract WALLETSupplyController {
 	WALLETToken public immutable WALLET;
 
 	mapping (address => bool) public hasGovernance;
-	// Some addresses (eg StakingPools) are incentivized with a certain allowance of WALLET per year
-	mapping (address => uint) public incentivePerSecond;
-	// Keep track of when incentive tokens were last minted for a given addr
-	mapping (address => uint) public incentiveLastMint;
-
 	constructor(WALLETToken token) {
 		hasGovernance[msg.sender] = true;
 		WALLET = token;
@@ -100,13 +95,18 @@ contract WALLETSupplyController {
 		hasGovernance[addr] = level;
 	}
 
-	function setIncentive(address addr, uint amountPerSecond) external {
+	// Vesting
+	// Some addresses (eg StakingPools) are incentivized with a certain allowance of WALLET per year
+	mapping (address => uint) public vestingPerSecond;
+	// Keep track of when vesting tokens were last minted for a given addr
+	mapping (address => uint) public vestingLastMint;
+	function setVesting(address addr, uint amountPerSecond) external {
 		require(hasGovernance[msg.sender], "NOT_GOVERNANCE");
 		// no more than 10 WALLET per second
 		require(amountPerSecond <= 10e18, "AMOUNT_TOO_LARGE");
-		incentiveLastMint[addr] = block.timestamp;
-		incentivePerSecond[addr] = amountPerSecond;
-		// AUDIT: pending incentive lost here
+		vestingLastMint[addr] = block.timestamp;
+		vestingPerSecond[addr] = amountPerSecond;
+		// AUDIT: pending vesting lost here; that's on purpose
 	}
 
 	function innerMint(WALLETToken token, address owner, uint amount) internal {
@@ -115,14 +115,14 @@ contract WALLETSupplyController {
 		token.mint(owner, amount);
 	}
 
-	// Incentive mechanism
-	function mintableIncentive(address addr) public view returns (uint) {
-		return (block.timestamp - incentiveLastMint[addr]) * incentivePerSecond[addr];
+	// vesting mechanism
+	function mintableVesting(address addr) public view returns (uint) {
+		return (block.timestamp - vestingLastMint[addr]) * vestingPerSecond[addr];
 	}
 
-	function mintIncentive(address addr) external {
-		uint amount = mintableIncentive(addr);
-		incentiveLastMint[addr] = block.timestamp;
+	function mintVesting(address addr) external {
+		uint amount = mintableVesting(addr);
+		vestingLastMint[addr] = block.timestamp;
 		innerMint(WALLET, addr, amount);
 	}
 }
