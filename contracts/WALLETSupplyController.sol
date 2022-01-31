@@ -73,6 +73,7 @@ contract WALLETSupplyController {
 
   function setPenaltyBps(uint _penaltyBps) external {
 		require(hasGovernance[msg.sender], "NOT_GOVERNANCE");
+    require(penaltyBps <= 10000, "BPS_IN_RANGE");
     penaltyBps = _penaltyBps;
     // @TODO logs
   }
