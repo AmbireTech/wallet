@@ -117,6 +117,7 @@ contract WALLETSupplyController {
 	// vesting mechanism
 	function mintableVesting(address addr, uint end, uint amountPerSecond) public view returns (uint) {
 		uint lastMinted = vestingLastMint[addr][end][amountPerSecond];
+		if (lastMinted == 0) return 0;
 		if (block.timestamp > end) {
 			require(end > lastMinted, "VESTING_OVER");
 			return (end - lastMinted) * amountPerSecond;
