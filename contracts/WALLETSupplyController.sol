@@ -70,7 +70,12 @@ contract WALLETSupplyController {
 		WALLET.mint(addr, amount);
 	}
 
+  //
 	// Rewards distribution
+  //
+  event LogClaimStaked(address recipient, uint claimed);
+  event LogClaimWithPenalty(address recipient, uint received, uint burned);
+
 	bytes32 public lastRoot;
 	mapping (address => uint) public claimed;
 	uint public penaltyBps = 0;
@@ -120,14 +125,14 @@ contract WALLETSupplyController {
 			uint toReceive = toClaim - toBurn;
 			WALLET.mint(recipient, toReceive);
 			WALLET.mint(address(0), toBurn);
+      emit LogClaimWithPenalty(recipient, toReceive, toBurn);
 		} else if (toBurnBps == 0) {
 			WALLET.mint(address(this), toClaim);
 			stakingPool.enterTo(recipient, toClaim);
+      emit LogClaimStaked(recipient, toClaim);
 		} else {
 			revert("INVALID_TOBURNBPS");
 		}
-
-		// @TODO: special logs here?
 	}
 
 	// In case funds get stuck
