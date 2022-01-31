@@ -131,8 +131,11 @@ contract WALLETSupplyController {
       emit LogClaimWithPenalty(recipient, toReceive, toBurn);
 		} else if (toBurnBps == 0) {
 			WALLET.mint(address(this), toClaim);
+			if (WALLET.allowance(address(this), address(stakingPool)) < toClaim) {
+				WALLET.approve(address(stakingPool), type(uint256).max);
+			}
 			stakingPool.enterTo(recipient, toClaim);
-      emit LogClaimStaked(recipient, toClaim);
+			emit LogClaimStaked(recipient, toClaim);
 		} else {
 			revert("INVALID_TOBURNBPS");
 		}
