@@ -9,12 +9,14 @@ import { fetchPost } from 'lib/fetch'
 import { useModals } from 'hooks'
 import { ethers } from 'ethers'
 
+const dateNow = new Date().getTime()
+
 const OtpTwoFAModal = ({ relayerURL, selectedAcc, setCacheBreak }) => {
     const { hideModal } = useModals()
     const { addToast } = useToasts()
 
     const secret = useMemo(() => authenticator.generateSecret(20), []) 
-    const hexSecret = ethers.utils.hexlify(ethers.utils.toUtf8Bytes(JSON.stringify({ otp: secret, timestamp: new Date().getTime() })))
+    const hexSecret = ethers.utils.hexlify(ethers.utils.toUtf8Bytes(JSON.stringify({ otp: secret, timestamp: dateNow })))
     
     const [isLoading, setLoading] = useState(false)
     const [imageURL, setImageURL] = useState(null)
@@ -57,7 +59,6 @@ const OtpTwoFAModal = ({ relayerURL, selectedAcc, setCacheBreak }) => {
             addToast('Email/pass accounts not supported without a relayer connection', { error: true })
             return
         }
-
         
         const { success, confCodeRequired } = await fetchPost(
             // network doesn't matter when signing

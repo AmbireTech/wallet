@@ -6,11 +6,13 @@ import { useState } from 'react'
 import { useToasts } from 'hooks/toasts'
 import { ethers } from 'ethers'
 
+const dateNow = new Date().getTime()
+
 const OtpTwoFADisableModal = ({ relayerURL, selectedAcc, setCacheBreak }) => {
     const { hideModal } = useModals()
     const { addToast } = useToasts()
     const [isLoading, setLoading] = useState(false)
-    const hexSecret = ethers.utils.hexlify(ethers.utils.toUtf8Bytes(JSON.stringify({ otp: null, timestamp: new Date().getTime() })))
+    const hexSecret = ethers.utils.hexlify(ethers.utils.toUtf8Bytes(JSON.stringify({ otp: null, timestamp: dateNow })))
 
     const [receivedOtp, setReceivedOTP] = useState('')
 
