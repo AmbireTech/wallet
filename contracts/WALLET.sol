@@ -93,6 +93,7 @@ contract WALLETSupplyController {
 
 	function setGovernance(address addr, bool level) external {
 		require(hasGovernance[msg.sender], "NOT_GOVERNANCE");
+		require(msg.sender != addr, "CANNOT_MODIFY_SELF");
 		hasGovernance[addr] = level;
 	}
 
