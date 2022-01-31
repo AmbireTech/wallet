@@ -111,7 +111,7 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, network, account,
     let unmounted = false
 
     const reestimate = () => (relayerURL
-        ? bundle.estimate({ relayerURL, fetch, replacing: !!bundle.minFeeInUSDPerGas })
+        ? bundle.estimate({ relayerURL, fetch, replacing: !!bundle.minFeeInUSDPerGas, getNextNonce: true })
         : bundle.estimateNoRelayer({ provider: getProvider(network.id) })
     )
       .then(estimation => {
@@ -129,6 +129,14 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, network, account,
           }
           return estimation
         })
+        const nextNonMinedNonce = estimation.pendingBundle?.nonce?.num || estimation.nonce
+        if (nextNonMinedNonce === estimation.nonce) {
+          setReplaceTx(false)
+        }
+        setNonces({
+          nextNonMinedNonce,
+          nextFreeNonce: estimation.nonce
+        })
       })
       .catch(e => {
         if (unmounted) return
@@ -136,32 +144,8 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, network, account,
         addToast(`Estimation error: ${e.message || e}`, { error: true })
       })
 
-    const updateNonce = () => {
-      if (relayerURL) {
-        fetchGet(`${relayerURL}/identity/${bundle.identity}/${bundle.network}/next-nonce${bundle.quickAccManager ? '?quickAccManager=' + bundle.quickAccManager : ''}`).then(jsonRes => {
-          const nextNonMinedNonce = jsonRes.pendingBundle?.nonce?.num || jsonRes.nonce
-          if (nextNonMinedNonce === jsonRes.nonce) {
-            setReplaceTx(false)
-          }
-          setNonces({
-            nextNonMinedNonce,
-            nextFreeNonce: jsonRes.nonce
-          })
-        }).catch(e => {
-          if (unmounted) return
-          console.error('nonce request error', e)
-          addToast(`Nonce request error: ${e.message || e}`, { error: true })
-        })
-      }
-    }
-
-    const reestimateAndGetNonce = () => {
-      reestimate()
-      updateNonce()
-    }
-
-    reestimateAndGetNonce()
-    const intvl = setInterval(reestimateAndGetNonce, REESTIMATE_INTERVAL)
+    reestimate()
+    const intvl = setInterval(reestimate, REESTIMATE_INTERVAL)
 
     return () => {
       unmounted = true
