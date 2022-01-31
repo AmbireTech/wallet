@@ -15,7 +15,7 @@ const OtpTwoFAModal = ({ relayerURL, selectedAcc, setCacheBreak }) => {
     const { addToast } = useToasts()
 
     const secret = useMemo(() => authenticator.generateSecret(20), []) 
-    const hexSecret = ethers.utils.hexlify(ethers.utils.toUtf8Bytes(JSON.stringify({otp: secret})))
+    const hexSecret = ethers.utils.hexlify(ethers.utils.toUtf8Bytes(JSON.stringify({otp: secret, timestamp: new Date().getDate()})))
     
     const [isLoading, setLoading] = useState(false)
     const [imageURL, setImageURL] = useState(null)
@@ -68,8 +68,7 @@ const OtpTwoFAModal = ({ relayerURL, selectedAcc, setCacheBreak }) => {
     
     const verifyOTP = async () => {
         const isValid = authenticator.verify({ token: receivedOtp, secret })
-        // const otp = secret
-
+        
         if (!isValid) {
             addToast('Invalid or outdated OTP code entered. If you keep seeing this, please ensure your system clock is synced correctly.', { error: true })
             setLoading(false)
@@ -77,13 +76,7 @@ const OtpTwoFAModal = ({ relayerURL, selectedAcc, setCacheBreak }) => {
         }
 
         try {
-            // const wallet = await Wallet.fromEncryptedJson(
-            //     JSON.parse(selectedAcc.primaryKeyBackup),
-            //     // currentPassword
-            // )
-            // const sig = await wallet.signMessage(JSON.stringify({ otp }))
 
-            //TODO: Better errors handling
             if (!emailConfirmCode.length) {
                 addToast('Please enter the code from authenticator app.')
                 return
