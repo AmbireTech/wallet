@@ -76,29 +76,25 @@ contract WALLETSupplyController {
 		lastRoot = newRoot;
 		// @TODO: logs?
 	}
-  /*
 
-  function claimWithRootUpdate(address recipient, TreeNode node, bytes32 newRoot, bytes signature) external {
+  function claimWithRootUpdate(address recipient, uint totalRewardInTree, bytes32[] calldata proof, bytes32 newRoot, bytes calldata signature) external {
 		address signer = SignatureValidator.recoverAddrImpl(newRoot, signature, false);
 		require(hasGovernance[signer], "NOT_GOVERNANCE");
     lastRoot = newRoot;
-
+    claim(recipient, totalRewardInTree, proof);
   }
 
-  function claim(address recipient, TreeNode node) external {
+  function claim(address recipient, uint totalRewardInTree, bytes32[] memory proof) public {
 		// Check the merkle proof
-		bytes32 balanceLeaf = keccak256(abi.encode(earner, node.balanceTreeAmount));
-		require(MerkleProof.isContained(balanceLeaf, withdrawal.proof, withdrawal.stateRoot), 'BALANCERLEAF_NOT_FOUND');
+		bytes32 leaf = keccak256(abi.encode(recipient, totalRewardInTree));
+		require(MerkleProof.isContained(leaf, proof, lastRoot), "LEAF_NOT_FOUND");
 
-		uint toWithdraw = withdrawal.balanceTreeAmount - withdrawnPerUser[channelId][earner];
+		uint toClaim = totalRewardInTree - claimed[recipient];
+		claimed[recipient] = totalRewardInTree;
 
-		// Update storage
-		withdrawnPerUser[channelId][earner] = withdrawal.balanceTreeAmount;
-
-  	WALLET.mint(addr, amount);
-
+    // @TODO: special logs here?
+  	WALLET.mint(recipient, toClaim);
   }
-  */
 
 	// In case funds get stuck
 	function withdraw(IERC20 token, address to, uint256 tokenAmount) external {
