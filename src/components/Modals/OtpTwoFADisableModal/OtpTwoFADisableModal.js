@@ -14,24 +14,26 @@ const OtpTwoFADisableModal = ({ relayerURL, selectedAcc, setCacheBreak }) => {
 
     const [receivedOtp, setReceivedOTP] = useState('')
 
-    const handleSubmit = e => {
+    const handleSubmit = async e => {
       e.preventDefault()
       setLoading(true)
-      disableOTP()
+      await disableOTP()
     }
 
     const disableOTP = async() => {
       try {
           const { success, signature, message } = await fetchPost(`${relayerURL}/second-key/${selectedAcc.id}/ethereum/sign`, { otp: hexSecret, code: receivedOtp })
           if (!success) {
-              return addToast(message, { error: true })
+              throw new Error(message || 'unknown error')
           }
+
           const resp = await fetchPost(`${relayerURL}/identity/${selectedAcc.id}/modify`, { otp: hexSecret, sig: signature })
 
           if (resp.success) {
               addToast(`You have successfully disabled two-factor authentication.`)
               setCacheBreak() 
               resetForm()
+              setLoading(false)
               hideModal()
           } else {
               throw new Error(`${resp.message || 'unknown error'}`)
@@ -39,9 +41,8 @@ const OtpTwoFADisableModal = ({ relayerURL, selectedAcc, setCacheBreak }) => {
       } catch (e) {
           console.error(e)
           addToast('OTP: ' + e.message || e, { error: true })
+          setLoading(false)
       }
-
-      setLoading(false)
     }
 
     const resetForm = () => {
