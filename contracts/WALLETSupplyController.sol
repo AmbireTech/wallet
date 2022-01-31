@@ -11,6 +11,8 @@ interface IStakingPool {
 }
 
 contract WALLETSupplyController {
+	event LogMintVesting(address recipient, uint amount);
+
 	WALLETToken public immutable WALLET;
 	mapping (address => bool) public hasGovernance;
 
@@ -64,17 +66,18 @@ contract WALLETSupplyController {
 		}
 	}
 
-	function mintVesting(address addr, uint end, uint amountPerSecond) external {
-		uint amount = mintableVesting(addr, end, amountPerSecond);
-		vestingLastMint[addr][end][amountPerSecond] = block.timestamp;
-		WALLET.mint(addr, amount);
+	function mintVesting(address recipient, uint end, uint amountPerSecond) external {
+		uint amount = mintableVesting(recipient, end, amountPerSecond);
+		vestingLastMint[recipient][end][amountPerSecond] = block.timestamp;
+		WALLET.mint(recipient, amount);
+		emit LogMintVesting(recipient, amount);
 	}
 
-  //
+	//
 	// Rewards distribution
-  //
-  event LogClaimStaked(address recipient, uint claimed);
-  event LogClaimWithPenalty(address recipient, uint received, uint burned);
+	//
+	event LogClaimStaked(address recipient, uint claimed);
+	event LogClaimWithPenalty(address recipient, uint received, uint burned);
 
 	bytes32 public lastRoot;
 	mapping (address => uint) public claimed;
