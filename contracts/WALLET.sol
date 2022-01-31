@@ -85,6 +85,7 @@ contract WALLETSupplyController {
 		WALLET = token;
 	}
 
+	// Governance and supply controller
 	function changeSupplyController(address newSupplyController) external {
 		require(hasGovernance[msg.sender], "NOT_GOVERNANCE");
 		WALLET.changeSupplyController(newSupplyController);
@@ -113,12 +114,6 @@ contract WALLETSupplyController {
 		// @TODO logs
 	}
 
-	function innerMint(WALLETToken token, address owner, uint amount) internal {
-		uint totalSupplyAfter = token.totalSupply() + amount;
-		require(totalSupplyAfter <= CAP, "MINT_TOO_LARGE");
-		token.mint(owner, amount);
-	}
-
 	// vesting mechanism
 	function mintableVesting(address addr, uint end, uint amountPerSecond) public view returns (uint) {
 		uint lastMinted = vestingLastMint[addr][end][amountPerSecond];
@@ -134,6 +129,6 @@ contract WALLETSupplyController {
 	function mintVesting(address addr, uint end, uint amountPerSecond) external {
 		uint amount = mintableVesting(addr, end, amountPerSecond);
 		vestingLastMint[addr][end][amountPerSecond] = block.timestamp;
-		innerMint(WALLET, addr, amount);
+		WALLET.mint(addr, amount);
 	}
 }
