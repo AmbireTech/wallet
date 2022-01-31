@@ -75,6 +75,17 @@ contract WALLETToken {
 	}
 }
 
+interface IERC20 {
+    function totalSupply() external view returns (uint256);
+    function balanceOf(address account) external view returns (uint256);
+    function transfer(address recipient, uint256 amount) external returns (bool);
+    function allowance(address owner, address spender) external view returns (uint256);
+    function approve(address spender, uint256 amount) external returns (bool);
+    function transferFrom(address sender, address recipient, uint256 amount) external returns (bool);
+    event Transfer(address indexed from, address indexed to, uint256 value);
+    event Approval(address indexed owner, address indexed spender, uint256 value);
+}
+
 contract WALLETSupplyController {
 	WALLETToken public immutable WALLET;
 
@@ -136,4 +147,12 @@ contract WALLETSupplyController {
 	}
 
 	// Rewards distribution
+
+	// In case funds get stuck
+	function withdraw(IERC20 token, address to, uint256 tokenAmount) external {
+		require(hasGovernance[msg.sender], "NOT_GOVERNANCE");
+		// AUDIT: SafeERC20 or similar not needed; this is a trusted (governance only) method that doesn't modify internal accounting
+		// so sucess/fail does not matter
+		token.transfer(to, tokenAmount);
+	}
 }
