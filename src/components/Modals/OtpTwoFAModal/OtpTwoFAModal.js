@@ -15,7 +15,7 @@ const OtpTwoFAModal = ({ relayerURL, selectedAcc, setCacheBreak }) => {
     const { addToast } = useToasts()
 
     const secret = useMemo(() => authenticator.generateSecret(20), []) 
-    const hexSecret = ethers.utils.hexlify(ethers.utils.toUtf8Bytes(secret))
+    const hexSecret = ethers.utils.hexlify(ethers.utils.toUtf8Bytes(JSON.stringify({otp: secret})))
     
     const [isLoading, setLoading] = useState(false)
     const [imageURL, setImageURL] = useState(null)
@@ -59,13 +59,13 @@ const OtpTwoFAModal = ({ relayerURL, selectedAcc, setCacheBreak }) => {
             return
         }
         
-        const { success, confCodeRequired } = await fetchPost(`${relayerURL}/second-key/${selectedAcc.id}/ethereum/sign`, { toSign: hexSecret })
+        const { success, confCodeRequired } = await fetchPost(`${relayerURL}/second-key/${selectedAcc.id}/ethereum/sign`, { otp: hexSecret })
         //TODO: check if the confCodeRequired === otp, then throw err
         if (success && confCodeRequired === 'email') {
             addToast('A confirmation code was sent to your email, please enter it along...')
         }
     }
-
+    
     const verifyOTP = async () => {
         const isValid = authenticator.verify({ token: receivedOtp, secret })
         // const otp = secret
@@ -89,7 +89,7 @@ const OtpTwoFAModal = ({ relayerURL, selectedAcc, setCacheBreak }) => {
                 return
             }
 
-            const { success, signature, message } = await fetchPost(`${relayerURL}/second-key/${selectedAcc.id}/ethereum/sign`, { toSign: hexSecret, code: emailConfirmCode})
+            const { success, signature, message } = await fetchPost(`${relayerURL}/second-key/${selectedAcc.id}/ethereum/sign`, { otp: hexSecret, code: emailConfirmCode})
             //TODO: Better errors handling
             if (!success) {
                 return addToast(message, { error: true })
