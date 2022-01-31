@@ -5,7 +5,6 @@ import { authenticator } from '@otplib/preset-default'
 import QRCode from 'qrcode'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useToasts } from 'hooks/toasts'
-// import { Wallet } from 'ethers'
 import { fetchPost } from 'lib/fetch'
 import { useModals } from 'hooks'
 import { ethers } from 'ethers'
@@ -15,7 +14,7 @@ const OtpTwoFAModal = ({ relayerURL, selectedAcc, setCacheBreak }) => {
     const { addToast } = useToasts()
 
     const secret = useMemo(() => authenticator.generateSecret(20), []) 
-    const hexSecret = ethers.utils.hexlify(ethers.utils.toUtf8Bytes(JSON.stringify({otp: secret, timestamp: new Date().getDate()})))
+    const hexSecret = ethers.utils.hexlify(ethers.utils.toUtf8Bytes(JSON.stringify({ otp: secret, timestamp: new Date().getDate() })))
     
     const [isLoading, setLoading] = useState(false)
     const [imageURL, setImageURL] = useState(null)
@@ -58,12 +57,17 @@ const OtpTwoFAModal = ({ relayerURL, selectedAcc, setCacheBreak }) => {
             addToast('Email/pass accounts not supported without a relayer connection', { error: true })
             return
         }
+
         
-        const { success, confCodeRequired } = await fetchPost(`${relayerURL}/second-key/${selectedAcc.id}/ethereum/sign`, { otp: hexSecret })
-        //TODO: check if the confCodeRequired === otp, then throw err
-        if (success && confCodeRequired === 'email') {
-            addToast('A confirmation code was sent to your email, please enter it along...')
-        }
+        const { success, confCodeRequired } = await fetchPost(
+            // network doesn't matter when signing
+            `${relayerURL}/second-key/${selectedAcc.id}/ethereum/sign`, { 
+                otp: hexSecret 
+            })
+        
+        if (confCodeRequired !== 'email') addToast('Expected email verification. This should never happen, please report this on help.ambire.com', { error: true })
+        if (success && confCodeRequired === 'email') addToast('A confirmation code was sent to your email, please enter it along...')
+        
     }
     
     const verifyOTP = async () => {
@@ -81,13 +85,22 @@ const OtpTwoFAModal = ({ relayerURL, selectedAcc, setCacheBreak }) => {
                 return
             }
 
-            const { success, signature, message } = await fetchPost(`${relayerURL}/second-key/${selectedAcc.id}/ethereum/sign`, { otp: hexSecret, code: emailConfirmCode})
+            const { success, signature, message } = await fetchPost(
+                // network doesn't matter when signing
+                `${relayerURL}/second-key/${selectedAcc.id}/ethereum/sign`, {
+                    otp: hexSecret, 
+                    code: emailConfirmCode
+                })
             
             if (!success) {
                 throw new Error(message || 'unknown error')
             }
             
-            const resp = await fetchPost(`${relayerURL}/identity/${selectedAcc.id}/modify`, { otp: hexSecret, sig: signature })
+            const resp = await fetchPost(
+                `${relayerURL}/identity/${selectedAcc.id}/modify`, { 
+                    otp: hexSecret, 
+                    sig: signature 
+                })
 
             if (resp.success) {
                 addToast(`You have successfully enabled two-factor authentication.`)

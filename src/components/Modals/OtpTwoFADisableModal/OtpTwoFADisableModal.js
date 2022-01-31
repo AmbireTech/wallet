@@ -10,7 +10,7 @@ const OtpTwoFADisableModal = ({ relayerURL, selectedAcc, setCacheBreak }) => {
     const { hideModal } = useModals()
     const { addToast } = useToasts()
     const [isLoading, setLoading] = useState(false)
-    const hexSecret = ethers.utils.hexlify(ethers.utils.toUtf8Bytes(JSON.stringify({otp: null, timestamp: new Date().getDate()})))
+    const hexSecret = ethers.utils.hexlify(ethers.utils.toUtf8Bytes(JSON.stringify({ otp: null, timestamp: new Date().getDate() })))
 
     const [receivedOtp, setReceivedOTP] = useState('')
 
@@ -22,12 +22,21 @@ const OtpTwoFADisableModal = ({ relayerURL, selectedAcc, setCacheBreak }) => {
 
     const disableOTP = async() => {
       try {
-          const { success, signature, message } = await fetchPost(`${relayerURL}/second-key/${selectedAcc.id}/ethereum/sign`, { otp: hexSecret, code: receivedOtp })
+          const { success, signature, message } = await fetchPost(
+            // network doesn't matter when signing
+            `${relayerURL}/second-key/${selectedAcc.id}/ethereum/sign`, { 
+              otp: hexSecret, 
+              code: receivedOtp 
+            })
           if (!success) {
               throw new Error(message || 'unknown error')
           }
 
-          const resp = await fetchPost(`${relayerURL}/identity/${selectedAcc.id}/modify`, { otp: hexSecret, sig: signature })
+          const resp = await fetchPost(
+            `${relayerURL}/identity/${selectedAcc.id}/modify`, { 
+              otp: hexSecret, 
+              sig: signature 
+            })
 
           if (resp.success) {
               addToast(`You have successfully disabled two-factor authentication.`)
