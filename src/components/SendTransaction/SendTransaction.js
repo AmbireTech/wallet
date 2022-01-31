@@ -129,8 +129,8 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, network, account,
           }
           return estimation
         })
-        const nextNonMinedNonce = estimation.pendingBundle?.nonce?.num || estimation.nonce
-        if (nextNonMinedNonce === estimation.nonce) {
+        const nextNonMinedNonce = estimation.nextNonce?.pendingBundle?.nonce?.num || estimation.nextNonce?.nonce
+        if (nextNonMinedNonce === estimation.nextNonce?.nonce) {
           setReplaceTx(false)
         }
         setNonces({
