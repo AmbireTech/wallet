@@ -190,7 +190,8 @@ contract StakingPool {
 			uint256 newShares = (amount * totalSupply) / totalWALLET;
 			innerMint(recipient, newShares);
 		}
-		require(WALLET.transferFrom(msg.sender, address(this), amount));
+		// AUDIT: no need to check return value cause WALLET throws
+		WALLET.transferFrom(msg.sender, address(this), amount);
 		// no events, as innerMint already emits enough to know the shares amount and price
 	}
 
@@ -242,7 +243,8 @@ contract StakingPool {
 		lockedShares[msg.sender] -= shares;
 
 		innerBurn(msg.sender, shares);
-		require(WALLET.transfer(msg.sender, receivedTokens));
+		// AUDIT: no need to check return value cause WALLET throws
+		WALLET.transfer(msg.sender, receivedTokens);
 
 		emit LogWithdraw(msg.sender, shares, unlocksAt, maxTokens, receivedTokens);
 	}
@@ -254,7 +256,8 @@ contract StakingPool {
 		uint walletAmount = (shares * totalWALLET) / totalSupply;
 		uint receivedTokens = (walletAmount * rageReceivedPromilles) / 1000;
 		innerBurn(msg.sender, shares);
-		require(WALLET.transfer(msg.sender, receivedTokens));
+		// AUDIT: no need to check return value cause WALLET throws
+		WALLET.transfer(msg.sender, receivedTokens);
 
 		emit LogRageLeave(msg.sender, shares, walletAmount, receivedTokens);
 	}
