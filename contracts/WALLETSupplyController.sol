@@ -13,10 +13,11 @@ interface IStakingPool {
 contract WALLETSupplyController {
 	event LogMintVesting(address recipient, uint amount);
 
+	// solhint-disable-next-line var-name-mixedcase
 	WALLETToken public immutable WALLET;
 	mapping (address => bool) public hasGovernance;
 
-	constructor(WALLETToken token, address initialGovernance) {
+	constructor(WALLETToken token, address initialGovernance) public {
 		hasGovernance[initialGovernance] = true;
 		WALLET = token;
 	}
@@ -58,16 +59,19 @@ contract WALLETSupplyController {
 	function mintableVesting(address addr, uint end, uint amountPerSecond) public view returns (uint) {
 		uint lastMinted = vestingLastMint[addr][end][amountPerSecond];
 		if (lastMinted == 0) return 0;
+		// solhint-disable-next-line not-rely-on-time
 		if (block.timestamp > end) {
 			require(end > lastMinted, "VESTING_OVER");
 			return (end - lastMinted) * amountPerSecond;
 		} else {
+			// solhint-disable-next-line not-rely-on-time
 			return (block.timestamp - lastMinted) * amountPerSecond;
 		}
 	}
 
 	function mintVesting(address recipient, uint end, uint amountPerSecond) external {
 		uint amount = mintableVesting(recipient, end, amountPerSecond);
+		// solhint-disable-next-line not-rely-on-time
 		vestingLastMint[recipient][end][amountPerSecond] = block.timestamp;
 		WALLET.mint(recipient, amount);
 		emit LogMintVesting(recipient, amount);
