@@ -47,10 +47,10 @@ const OtpTwoFAModal = ({ relayerURL, selectedAcc, setCacheBreak }) => {
 
     useEffect(generateQR, [generateQR])
 
-    const handleSubmit = e => {
+    const handleSubmit = async e => {
         e.preventDefault()
         setLoading(true)
-        verifyOTP()
+        await verifyOTP()
     }
 
     const sendEmail = async() => {
@@ -76,16 +76,15 @@ const OtpTwoFAModal = ({ relayerURL, selectedAcc, setCacheBreak }) => {
         }
 
         try {
-
             if (!emailConfirmCode.length) {
                 addToast('Please enter the code from authenticator app.')
                 return
             }
 
             const { success, signature, message } = await fetchPost(`${relayerURL}/second-key/${selectedAcc.id}/ethereum/sign`, { otp: hexSecret, code: emailConfirmCode})
-            //TODO: Better errors handling
+            
             if (!success) {
-                return addToast(message, { error: true })
+                throw new Error(message || 'unknown error')
             }
             
             const resp = await fetchPost(`${relayerURL}/identity/${selectedAcc.id}/modify`, { otp: hexSecret, sig: signature })
@@ -94,6 +93,7 @@ const OtpTwoFAModal = ({ relayerURL, selectedAcc, setCacheBreak }) => {
                 addToast(`You have successfully enabled two-factor authentication.`)
                 setCacheBreak()
                 resetForm()
+                setLoading(false)
                 hideModal()
             } else {
                 throw new Error(`${resp.message || 'unknown error'}`)
@@ -101,9 +101,8 @@ const OtpTwoFAModal = ({ relayerURL, selectedAcc, setCacheBreak }) => {
         } catch (e) {
             console.error(e)
             addToast('OTP: ' + e.message || e, { error: true })
+            setLoading(false)
         }
-
-        setLoading(false)
     }
 
     const resetForm = () => {
