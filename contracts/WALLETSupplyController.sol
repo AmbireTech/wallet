@@ -6,6 +6,10 @@ import "./libs/MerkleProof.sol";
 import "./libs/IERC20.sol";
 import "./WALLET.sol";
 
+interface IStakingPool {
+	function enterTo(address recipient, uint amount) external;
+}
+
 contract WALLETSupplyController {
 	WALLETToken public immutable WALLET;
 	mapping (address => bool) public hasGovernance;
@@ -86,14 +90,14 @@ contract WALLETSupplyController {
 
 	function claimWithRootUpdate(
 		// claim() args
-		address recipient, uint totalRewardInTree, bytes32[] calldata proof, uint toBurnBps,
+		address recipient, uint totalRewardInTree, bytes32[] calldata proof, uint toBurnBps, IStakingPool stakingPool,
 		// args for updating the root
 		bytes32 newRoot, bytes calldata signature
 	) external {
 		address signer = SignatureValidator.recoverAddrImpl(newRoot, signature, false);
 		require(hasGovernance[signer], "NOT_GOVERNANCE");
 		lastRoot = newRoot;
-		claim(recipient, totalRewardInTree, proof, toBurnBps);
+		claim(recipient, totalRewardInTree, proof, toBurnBps, stakingPool);
 	}
 
 	// claim() has two modes, either receive the full amount as xWALLET (staked WALLET) or burn some (penaltyBps) and receive the rest immediately in $WALLET
@@ -102,7 +106,7 @@ contract WALLETSupplyController {
 	// 2) ensures that the sender really does have the intention to burn some of their tokens but receive the rest immediatey
 	// set toBurnBps to 0 to receive the tokens as xWALLET, set it to the current penaltyBps to receive immediately
 	// There is an edge case: when penaltyBps is set to 0, you pass 0 to receive everything immediately; this is intended
-	function claim(address recipient, uint totalRewardInTree, bytes32[] memory proof, uint toBurnBps) public {
+	function claim(address recipient, uint totalRewardInTree, bytes32[] memory proof, uint toBurnBps, IStakingPool stakingPool) public {
 		// Check the merkle proof
 		bytes32 leaf = keccak256(abi.encode(recipient, totalRewardInTree));
 		require(MerkleProof.isContained(leaf, proof, lastRoot), "LEAF_NOT_FOUND");
@@ -112,11 +116,13 @@ contract WALLETSupplyController {
 
 		if (toBurnBps == penaltyBps) {
 			// Claiming in $WALLET directly: some tokens get burned immediately, but the rest go to you
-			// @TODO penalty
-			WALLET.mint(recipient, toClaim);
+			uint toBurn = (toClaim * penaltyBps) / 10000;
+			uint toReceive = toClaim - toBurn;
+			WALLET.mint(recipient, toReceive);
+			WALLET.mint(address(0), toBurn);
 		} else if (toBurnBps == 0) {
-			// @TODO stake
-			WALLET.mint(recipient, toClaim);
+			WALLET.mint(address(this), toClaim);
+			stakingPool.enterTo(recipient, toClaim);
 		} else {
 			revert("INVALID_TOBURNBPS");
 		}
