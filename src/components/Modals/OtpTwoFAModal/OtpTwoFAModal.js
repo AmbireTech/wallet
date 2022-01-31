@@ -5,15 +5,17 @@ import { authenticator } from '@otplib/preset-default'
 import QRCode from 'qrcode'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useToasts } from 'hooks/toasts'
-import { Wallet } from 'ethers'
+// import { Wallet } from 'ethers'
 import { fetchPost } from 'lib/fetch'
 import { useModals } from 'hooks'
+import { ethers } from 'ethers'
 
 const OtpTwoFAModal = ({ relayerURL, selectedAcc, setCacheBreak }) => {
     const { hideModal } = useModals()
     const { addToast } = useToasts()
 
     const secret = useMemo(() => authenticator.generateSecret(20), []) 
+    const hexSecret = ethers.utils.hexlify(ethers.utils.toUtf8Bytes(secret))
     
     const [isLoading, setLoading] = useState(false)
     const [imageURL, setImageURL] = useState(null)
@@ -57,13 +59,16 @@ const OtpTwoFAModal = ({ relayerURL, selectedAcc, setCacheBreak }) => {
             return
         }
         
-        //TODO: Create a request that sends an email
-        const { signature } = await fetchPost(`${relayerURL}/second-key/${selectedAcc.id}/ethereum/sign`, {})
+        const { success, confCodeRequired } = await fetchPost(`${relayerURL}/second-key/${selectedAcc.id}/ethereum/sign`, { toSign: hexSecret })
+        //TODO: check if the confCodeRequired === otp, then throw err
+        if (success && confCodeRequired === 'email') {
+            addToast('A confirmation code was sent to your email, please enter it along...')
+        }
     }
 
     const verifyOTP = async () => {
         const isValid = authenticator.verify({ token: receivedOtp, secret })
-        const otp = secret
+        // const otp = secret
 
         if (!isValid) {
             addToast('Invalid or outdated OTP code entered. If you keep seeing this, please ensure your system clock is synced correctly.', { error: true })
@@ -72,16 +77,25 @@ const OtpTwoFAModal = ({ relayerURL, selectedAcc, setCacheBreak }) => {
         }
 
         try {
-            const wallet = await Wallet.fromEncryptedJson(
-                JSON.parse(selectedAcc.primaryKeyBackup),
-                currentPassword
-            )
-            const sig = await wallet.signMessage(JSON.stringify({ otp }))
+            // const wallet = await Wallet.fromEncryptedJson(
+            //     JSON.parse(selectedAcc.primaryKeyBackup),
+            //     // currentPassword
+            // )
+            // const sig = await wallet.signMessage(JSON.stringify({ otp }))
 
-            //TODO: Remove the code above, create a request to get the signiture from the BE
+            //TODO: Better errors handling
+            if (!emailConfirmCode.length) {
+                addToast('Please enter the code from authenticator app.')
+                return
+            }
+
+            const { success, signature, message } = await fetchPost(`${relayerURL}/second-key/${selectedAcc.id}/ethereum/sign`, { toSign: hexSecret, code: emailConfirmCode})
+            //TODO: Better errors handling
+            if (!success) {
+                return addToast(message, { error: true })
+            }
             
-            
-            const resp = await fetchPost(`${relayerURL}/identity/${selectedAcc.id}/modify`, { otp, sig })
+            const resp = await fetchPost(`${relayerURL}/identity/${selectedAcc.id}/modify`, { otp: hexSecret, sig: signature })
 
             if (resp.success) {
                 addToast(`You have successfully enabled two-factor authentication.`)
