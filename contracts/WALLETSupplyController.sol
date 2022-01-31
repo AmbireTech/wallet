@@ -17,7 +17,7 @@ contract WALLETSupplyController {
 	WALLETToken public immutable WALLET;
 	mapping (address => bool) public hasGovernance;
 
-	constructor(WALLETToken token, address initialGovernance) public {
+	constructor(WALLETToken token, address initialGovernance) {
 		hasGovernance[initialGovernance] = true;
 		WALLET = token;
 	}
@@ -83,6 +83,8 @@ contract WALLETSupplyController {
 	event LogClaimStaked(address recipient, uint claimed);
 	event LogClaimWithPenalty(address recipient, uint received, uint burned);
 
+	uint public immutable MAX_CLAIM_NODE = 80_000_000e18;
+
 	bytes32 public lastRoot;
 	mapping (address => uint) public claimed;
 	uint public penaltyBps = 0;
@@ -119,6 +121,8 @@ contract WALLETSupplyController {
 	// set toBurnBps to 0 to receive the tokens as xWALLET, set it to the current penaltyBps to receive immediately
 	// There is an edge case: when penaltyBps is set to 0, you pass 0 to receive everything immediately; this is intended
 	function claim(address recipient, uint totalRewardInTree, bytes32[] memory proof, uint toBurnBps, IStakingPool stakingPool) public {
+		require(totalRewardInTree <= MAX_CLAIM_NODE, "MAX_CLAIM_NODE");
+
 		// Check the merkle proof
 		bytes32 leaf = keccak256(abi.encode(recipient, totalRewardInTree));
 		require(MerkleProof.isContained(leaf, proof, lastRoot), "LEAF_NOT_FOUND");
