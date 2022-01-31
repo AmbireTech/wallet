@@ -76,7 +76,6 @@ contract WALLETToken {
 }
 
 contract WALLETSupplyController {
-	uint public constant CAP = 1_000_000_000 * 1e18;
 	WALLETToken public immutable WALLET;
 
 	mapping (address => bool) public hasGovernance;
@@ -93,6 +92,9 @@ contract WALLETSupplyController {
 
 	function setGovernance(address addr, bool level) external {
 		require(hasGovernance[msg.sender], "NOT_GOVERNANCE");
+		// Sometimes we need to get someone to de-auth themselves, but 
+		// it's better to protect against bricking rather than have this functionality
+		// we can burn conrtol by transferring control over to a contract that can't mint or by ypgrading the supply controller
 		require(msg.sender != addr, "CANNOT_MODIFY_SELF");
 		hasGovernance[addr] = level;
 	}
@@ -132,4 +134,6 @@ contract WALLETSupplyController {
 		vestingLastMint[addr][end][amountPerSecond] = block.timestamp;
 		WALLET.mint(addr, amount);
 	}
+
+	// Rewards distribution
 }
