@@ -107,6 +107,11 @@ contract WALLETSupplyController {
 		vestingLastMint[recipient][end][amountPerSecond] = start;
 		// AUDIT: pending vesting lost here; that's on purpose
 	}
+	function unsetVesting(address recipient, uint end, uint amountPerSecond) external {
+		require(hasGovernance[msg.sender], "NOT_GOVERNANCE");
+		vestingLastMint[recipient][end][amountPerSecond] = 0;
+		// @TODO logs
+	}
 
 	function innerMint(WALLETToken token, address owner, uint amount) internal {
 		uint totalSupplyAfter = token.totalSupply() + amount;
