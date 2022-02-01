@@ -23,6 +23,9 @@ $buttons-height: 60px;
     }
 
     .heading {
+        display: flex;
+        justify-content: center;
+
         .title {
             height: 60px;
             font-size: 25px;
@@ -42,6 +45,17 @@ $buttons-height: 60px;
             &:hover {
                 background-color: rgba(0, 0, 0, 0.1);
             }
+        }
+
+        .top-left {
+            height: 50px;
+            width: 75px;
+            position: absolute;
+            top: 17px;
+            left: 15px;
+            @include flex-center-center;
+            font-size: 20px;   
+            color: $primary-accent-color;
         }
     }
     
