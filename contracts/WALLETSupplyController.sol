@@ -48,12 +48,14 @@ contract WALLETSupplyController {
 		require(hasGovernance[msg.sender], "NOT_GOVERNANCE");
 		// no more than 10 WALLET per second; theoretical emission max should be ~8 WALLET
 		require(amountPerSecond <= 10e18, "AMOUNT_TOO_LARGE");
+		require(start >= 1643695200, "START_TOO_LOW");
+		require(vestingLastMint[recipient][end][amountPerSecond] == 0, "VESTING_ALREADY_SET");
 		vestingLastMint[recipient][end][amountPerSecond] = start;
 		emit LogNewVesting(recipient, start, end, amountPerSecond);
-		// AUDIT: pending vesting lost here if we set over a previous (recepient, end, rate) vesting; that's on purpose
 	}
 	function unsetVesting(address recipient, uint end, uint amountPerSecond) external {
 		require(hasGovernance[msg.sender], "NOT_GOVERNANCE");
+		// AUDIT: Pending (unclaimed) vesting is lost here - this is intentional
 		vestingLastMint[recipient][end][amountPerSecond] = 0;
 		emit LogVestingUnset(recipient, end, amountPerSecond);
 	}
