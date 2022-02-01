@@ -8,6 +8,7 @@ import AmbireFactory from './AmbireFactory'
 import YearnTesseractVault from './YearnTesseractVault'
 import Movr from './Movr'
 import OpenSea from './OpenSea'
+import WALLETSupplyController from './WALLETSupplyController'
 
 const all = {
 	...UniRouters,
@@ -19,6 +20,7 @@ const all = {
 	...AmbireFactory,
 	...YearnTesseractVault,
 	...Movr,
-	...OpenSea
+	...OpenSea,
+	...WALLETSupplyController
 }
 export default all
