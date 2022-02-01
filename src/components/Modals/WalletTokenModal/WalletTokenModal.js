@@ -204,7 +204,7 @@ const WalletTokenModal = ({ rewards, account, network, addRequest }) => {
 
             <MultiplierBadges rewards={rewards}/>
             <div id="info">
-                You are receiving $WALLETS for holding funds on your Ambire wallet as an early user. Have in mind that $WALLET has not launched yet. <a href="https://blog.ambire.com/announcing-the-wallet-token-a137aeda9747" target="_blank" rel="noreferrer">Read More</a>
+                You are receiving $WALLETS for holding funds on your Ambire wallet as an early user. <a href="https://blog.ambire.com/announcing-the-wallet-token-a137aeda9747" target="_blank" rel="noreferrer">Read More</a>
             </div>
         </Modal>
     )
