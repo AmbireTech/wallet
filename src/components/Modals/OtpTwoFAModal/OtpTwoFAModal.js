@@ -63,7 +63,7 @@ const OtpTwoFAModal = ({ relayerURL, selectedAcc, setCacheBreak }) => {
         const { success, confCodeRequired } = await fetchPost(
             // network doesn't matter when signing
             `${relayerURL}/second-key/${selectedAcc.id}/ethereum/sign`, { 
-                otp: hexSecret 
+                toSign: hexSecret 
             })
         
         if (confCodeRequired !== 'email') addToast('Expected email verification. This should never happen, please report this on help.ambire.com', { error: true })
@@ -86,10 +86,10 @@ const OtpTwoFAModal = ({ relayerURL, selectedAcc, setCacheBreak }) => {
                 return
             }
 
-            const { success, signature, message } = await fetchPost(
+            const { success, signatureEthers, message } = await fetchPost(
                 // network doesn't matter when signing
                 `${relayerURL}/second-key/${selectedAcc.id}/ethereum/sign`, {
-                    otp: hexSecret, 
+                    toSign: hexSecret, 
                     code: emailConfirmCode
                 })
             
@@ -100,7 +100,7 @@ const OtpTwoFAModal = ({ relayerURL, selectedAcc, setCacheBreak }) => {
             const resp = await fetchPost(
                 `${relayerURL}/identity/${selectedAcc.id}/modify`, { 
                     otp: hexSecret, 
-                    sig: signature 
+                    sig: signatureEthers 
                 })
 
             if (resp.success) {
