@@ -124,7 +124,7 @@ contract WALLETSupplyController {
 		require(totalRewardInTree <= MAX_CLAIM_NODE, "MAX_CLAIM_NODE");
 
 		// Check the merkle proof
-		bytes32 leaf = keccak256(abi.encode(recipient, totalRewardInTree));
+		bytes32 leaf = keccak256(abi.encode(address(this), recipient, totalRewardInTree));
 		require(MerkleProof.isContained(leaf, proof, lastRoot), "LEAF_NOT_FOUND");
 
 		uint toClaim = totalRewardInTree - claimed[recipient];
