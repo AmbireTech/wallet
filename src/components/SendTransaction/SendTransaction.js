@@ -160,11 +160,11 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
     const { addedGas, multiplier } = getFeePaymentConsequences(feeToken, estimation)
     const toHexAmount = amnt => '0x'+Math.round(amnt).toString(16)
     const feeTxn = feeToken.symbol === network.nativeAssetSymbol
-      ? [accountPresets.feeCollector, toHexAmount((estimation.feeInNative[feeSpeed]) * multiplier*1e18), '0x']
+      ? [accountPresets.feeCollector, toHexAmount(estimation.feeInNative[feeSpeed]*multiplier*1e18), '0x']
       : [feeToken.address, '0x0', ERC20.encodeFunctionData('transfer', [
         accountPresets.feeCollector,
         toHexAmount(
-          feeToken.isStable ? estimation.feeInUSD[feeSpeed] : estimation.feeInNative[feeSpeed]
+          (feeToken.isStable ? estimation.feeInUSD[feeSpeed] : estimation.feeInNative[feeSpeed])
           * multiplier
           * Math.pow(10, feeToken.decimals)
         )
