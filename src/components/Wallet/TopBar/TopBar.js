@@ -54,6 +54,7 @@ const TopBar = ({
         <Rewards
           rewardsData={rewardsData}
           account={account}
+          network={network}
           hidePrivateValue={hidePrivateValue}
         />
         {isPrivateMode ? <MdVisibilityOff cursor="pointer" size={28} onClick={togglePrivateMode} /> : <MdRemoveRedEye cursor="pointer" size={28} onClick={togglePrivateMode} />}
