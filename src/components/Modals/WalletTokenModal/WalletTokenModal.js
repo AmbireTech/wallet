@@ -4,6 +4,12 @@ import { useMemo } from 'react'
 import { Button, Modal, ToolTip } from 'components/common'
 import { MdOutlineClose } from 'react-icons/md'
 import { useModals } from 'hooks'
+import { Contract } from 'ethers'
+import { getProvider } from 'lib/provider'
+
+import WALLETVestings from 'consts/WALLETVestings'
+import WALLETInitialClaimableRewards from 'consts/WALLETInitialClaimableRewards'
+import WALLETSupplyControllerABI from 'consts/WALLETSupplyControllerABI'
 
 const multiplierBadges = [
     {
@@ -24,9 +30,10 @@ const multiplierBadges = [
     }
 ]
 
-const WalletTokenModal = ({ rewards, network }) => {
+const WalletTokenModal = ({ rewards, account, network }) => {
     const { hideModal } = useModals()
 
+    // Multiplier badges
     const badges = useMemo(() => multiplierBadges.map(badge => {
         const isUnlocked = rewards.multipliers && rewards.multipliers.map(({ name }) => name).includes(badge.id)
         return {
@@ -35,16 +42,23 @@ const WalletTokenModal = ({ rewards, network }) => {
         }
     }), [rewards])
 
-    const claimButton = <>
-        <ToolTip label={network.id != 'ethereum' ? 'Switch to Ethereum to claim' : 'Claimable amount is 20% of the snapshot on 01 Feb 2022'}>
-            <Button small clear disabled={network.id != 'ethereum'}>CLAIM</Button>
+    // Claiming
+    const claimButtonOrLoading = (disabledReason, action) => (<>
+        <ToolTip label={
+                disabledReason ||
+                    (network.id != 'ethereum' ? 'Switch to Ethereum to claim' : 'Claimable amount is 20% of the snapshot on 01 Feb 2022')
+            }>
+            <Button small clear onClick={action} disabled={!!disabledReason || network.id != 'ethereum'}>CLAIM</Button>
         </ToolTip>
-    </>
+    </>)
+    const provider = useMemo(() => getProvider(network.id), [network.id])
+    const supplyController = useMemo(() => new Contract('0x94b668337ce8299272ca3cb0c70f3d786a5b6ce5', WALLETSupplyControllerABI, provider), [provider])
+    const initialClaimableEntry = WALLETInitialClaimableRewards.find(x => x.addr === account.id)
+    const initialClaimable = initialClaimableEntry ? initialClaimableEntry.totalClaimable : 0
 
     const modalButtons = <>
         <Button clear icon={<MdOutlineClose/>} onClick={() => hideModal()}>Close</Button>
     </>
-
     return (
         <Modal id="wallet-token-modal" title="WALLET token distribution" buttons={modalButtons}>
             <div className="item">
@@ -85,28 +99,15 @@ const WalletTokenModal = ({ rewards, network }) => {
             </div>
             <div className="item">
                 <div className="details">
-                    <label>Claimable now</label>
+                    <label>Claimable now: early users + ADX Staking bonus</label>
                     <div className="balance">
-                        <div className="amount"><span className="primary-accent">{ rewards['adx-rewards'] }</span></div>
-                        {/* <div className="amount-dollar"><span className="secondary-accent">$</span> 0</div> */}
+                        <div className="amount"><span className="primary-accent">{ initialClaimable }</span></div>
                     </div>
                 </div>
                 <div className="actions">
-                    { claimButton }
+                    { claimButtonOrLoading(initialClaimable == 0, () => {}) }
                 </div>
             </div>
-            {/* <div className="item">
-                <div className="details">
-                    <label>Gas Rebates</label>
-                    <div className="balance">
-                        <div className="amount"><span className="primary-accent">0</span></div>
-                        <div className="amount-dollar"><span className="secondary-accent">$</span> 0</div>
-                    </div>
-                </div>
-                <div className="actions">
-                    { claimButton }
-                </div>
-            </div> */}
             <div className="badges">
                 {
                     badges.map(({ id, name, icon, color, multiplier, link, active }) => (
