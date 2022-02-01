@@ -3,14 +3,14 @@ import { useModals } from "hooks";
 import { Button, ToolTip } from "components/common";
 import { WalletTokenModal } from "components/Modals";
 
-const Rewards = ({ rewardsData, account, network, hidePrivateValue }) => {
+const Rewards = ({ rewardsData, account, network, hidePrivateValue, addRequest }) => {
     const { showModal } = useModals()
 
     const [rewards, setRewards] = useState({})
     const [rewardsTotal, setRewardsTotal] = useState(0)
     const { isLoading, data, errMsg } = rewardsData
 
-    const showWalletTokenModal = () => showModal(<WalletTokenModal rewards={rewards} network={network} account={account}/>)
+    const showWalletTokenModal = () => showModal(<WalletTokenModal rewards={rewards} network={network} account={account} addRequest={addRequest}/>)
 
     useEffect(() => {
         if (errMsg || !data || !data.success) return
