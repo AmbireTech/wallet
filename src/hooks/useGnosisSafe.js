@@ -161,7 +161,7 @@ export default function useGnosisSafe({selectedAccount, network, verbose = 0}) {
     })
 
     const handleSendTransactions = (msg) => {
-      verbose > 0 && console.log("DApp requested sendTx", msg)
+      verbose > 0 && console.log('DApp requested sendTx', msg)
 
       const data = msg?.data
       if (!data) {
@@ -249,7 +249,7 @@ export default function useGnosisSafe({selectedAccount, network, verbose = 0}) {
 
   const resolveMany = (ids, resolution) => {
     for (let req of requests.filter(x => ids.includes(x.id))) {
-      if (!req.isBatch || req.id.endsWith(":0")) {
+      if (!req.isBatch || req.id.endsWith(':0')) {
         const replyData = {
           id: req.forwardId,
           success: null,
