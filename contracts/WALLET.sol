@@ -19,9 +19,9 @@ contract WALLETToken {
 	event SupplyControllerChanged(address indexed prev, address indexed current);
 
 	address public supplyController;
-	constructor() {
-		supplyController = msg.sender;
-		emit SupplyControllerChanged(address(0), msg.sender);
+	constructor(address _supplyController) {
+		supplyController = _supplyController;
+		emit SupplyControllerChanged(address(0), _supplyController);
 	}
 
 	function balanceOf(address owner) external view returns (uint balance) {
@@ -72,57 +72,5 @@ contract WALLETToken {
 		// Emitting here does not follow checks-effects-interactions-logs, but it's safe anyway cause there are no external calls
 		emit SupplyControllerChanged(supplyController, newSupplyController);
 		supplyController = newSupplyController;
-	}
-}
-
-contract WALLETSupplyController {
-	uint public constant CAP = 1_000_000_000 * 1e18;
-	WALLETToken public immutable WALLET;
-
-	mapping (address => bool) public hasGovernance;
-	// Some addresses (eg StakingPools) are incentivized with a certain allowance of WALLET per year
-	mapping (address => uint) public incentivePerSecond;
-	// Keep track of when incentive tokens were last minted for a given addr
-	mapping (address => uint) public incentiveLastMint;
-
-	constructor(WALLETToken token) {
-		hasGovernance[msg.sender] = true;
-		WALLET = token;
-	}
-
-	function changeSupplyController(address newSupplyController) external {
-		require(hasGovernance[msg.sender], "NOT_GOVERNANCE");
-		WALLET.changeSupplyController(newSupplyController);
-	}
-
-	function setGovernance(address addr, bool level) external {
-		require(hasGovernance[msg.sender], "NOT_GOVERNANCE");
-		hasGovernance[addr] = level;
-	}
-
-	function setIncentive(address addr, uint amountPerSecond) external {
-		require(hasGovernance[msg.sender], "NOT_GOVERNANCE");
-		// no more than 10 WALLET per second
-		require(amountPerSecond <= 10e18, "AMOUNT_TOO_LARGE");
-		incentiveLastMint[addr] = block.timestamp;
-		incentivePerSecond[addr] = amountPerSecond;
-		// AUDIT: pending incentive lost here
-	}
-
-	function innerMint(WALLETToken token, address owner, uint amount) internal {
-		uint totalSupplyAfter = token.totalSupply() + amount;
-		require(totalSupplyAfter <= CAP, "MINT_TOO_LARGE");
-		token.mint(owner, amount);
-	}
-
-	// Incentive mechanism
-	function mintableIncentive(address addr) public view returns (uint) {
-		return (block.timestamp - incentiveLastMint[addr]) * incentivePerSecond[addr];
-	}
-
-	function mintIncentive(address addr) external {
-		uint amount = mintableIncentive(addr);
-		incentiveLastMint[addr] = block.timestamp;
-		innerMint(WALLET, addr, amount);
 	}
 }
