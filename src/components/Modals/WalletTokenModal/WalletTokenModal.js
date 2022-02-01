@@ -1,10 +1,11 @@
 import './WalletTokenModal.scss'
 
-import { useEffect, useMemo } from 'react'
+import { useEffect, useMemo, useState, useCallback } from 'react'
 import { Button, Modal, ToolTip } from 'components/common'
 import { MdOutlineClose } from 'react-icons/md'
 import { useModals } from 'hooks'
 import { Contract } from 'ethers'
+import { Interface } from 'ethers/lib/utils'
 import { getProvider } from 'lib/provider'
 
 import WALLETVestings from 'consts/WALLETVestings'
@@ -55,22 +56,39 @@ const MultiplierBadges = ({ rewards }) => {
     </div>)
 }
 
+const supplyControllerInterface = new Interface(WALLETSupplyControllerABI)
 const WalletTokenModal = ({ rewards, account, network, addRequest }) => {
     const { hideModal } = useModals()
 
-    // Claiming
-    const claimButtonOrLoading = (disabledReason, action) => (<>
-        <ToolTip label={
-                disabledReason ||
-                    (network.id !== 'ethereum' ? 'Switch to Ethereum to claim' : 'Claimable amount is 20% of the snapshot on 01 Feb 2022')
-            }>
-            <Button small clear onClick={action} disabled={!!disabledReason || network.id !== 'ethereum'}>CLAIM</Button>
-        </ToolTip>
-    </>)
     const provider = useMemo(() => getProvider(network.id), [network.id])
     const supplyController = useMemo(() => new Contract('0x94b668337ce8299272ca3cb0c70f3d786a5b6ce5', WALLETSupplyControllerABI, provider), [provider])
     const initialClaimableEntry = WALLETInitialClaimableRewards.find(x => x.addr === account.id)
     const initialClaimable = initialClaimableEntry ? initialClaimableEntry.totalClaimable : 0
+    const vestingEntry = WALLETVestings.find(x => x.addr === account.id)
+
+    const [currentClaimStatus, setCurrentClaimStatus] = useState({ claimed: 0, mintableVesting: 0, error: null })
+    useEffect(() => {
+        (async () => {
+            const [mintableVesting, claimed] = await Promise.all([
+                vestingEntry ? await supplyController.mintableVesting(vestingEntry.addr, vestingEntry.end, vestingEntry.rate) : null,
+                initialClaimableEntry ? await supplyController.claimed(initialClaimableEntry.addr) : null
+            ])
+            return { mintableVesting, claimed }
+        })()
+            .then(status => setCurrentClaimStatus(status))
+            .catch(e => {
+                console.error('getting claim status', e)
+                setCurrentClaimStatus({ error: e.message || e })
+            })
+    }, [supplyController, vestingEntry, initialClaimableEntry])
+
+    const disabledReason = network.id !== 'ethereum' ? 'Switch to Ethereum to claim' : (
+        currentClaimStatus.error ? `Claim status error: ${currentClaimStatus.error}` : null
+    )
+    const claimDisabledReason = initialClaimable === 0 ? 'No rewards are claimable' : null
+    const claimEarlyRewards = useCallback(() => {
+    
+    }, [initialClaimableEntry])
 
     const modalButtons = <>
         <Button clear icon={<MdOutlineClose/>} onClick={() => hideModal()}>Close</Button>
@@ -121,7 +139,11 @@ const WalletTokenModal = ({ rewards, account, network, addRequest }) => {
                     </div>
                 </div>
                 <div className="actions">
-                    { claimButtonOrLoading(initialClaimable === 0, () => {}) }
+                    <ToolTip label={
+                            claimDisabledReason || disabledReason || 'Claimable amount is 20% of the snapshot on 01 Feb 2022'
+                        }>
+                        <Button small clear onClick={claimEarlyRewards} disabled={!!(claimDisabledReason || disabledReason)}>CLAIM</Button>
+                    </ToolTip>
                 </div>
             </div>
             <MultiplierBadges rewards={rewards}/>
