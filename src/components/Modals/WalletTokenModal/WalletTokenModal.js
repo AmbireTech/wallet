@@ -84,12 +84,12 @@ const WalletTokenModal = ({ rewards, account, network, addRequest }) => {
             })
     }, [supplyController, vestingEntry, initialClaimableEntry])
 
+    const claimableNow = initialClaimable - currentClaimStatus.claimed
     const disabledReason = network.id !== 'ethereum' ? 'Switch to Ethereum to claim' : (
         currentClaimStatus.error ? `Claim status error: ${currentClaimStatus.error}` : null
     )
-    const claimDisabledReason = initialClaimable === 0 ? 'No rewards are claimable' : null
+    const claimDisabledReason = claimableNow === 0 ? 'No rewards are claimable' : null
     const claimEarlyRewards = useCallback(() => {
-    console.log('adding req')
         addRequest({
             id: 'claim_'+Date.now(),
             chainId: network.chainId,
@@ -169,7 +169,7 @@ const WalletTokenModal = ({ rewards, account, network, addRequest }) => {
                     <label>Claimable now: early users + ADX Staking bonus</label>
                     <div className="balance">
                         <div className="amount"><span className="primary-accent">{
-                            currentClaimStatus.loading ? '...' : (initialClaimable - currentClaimStatus.claimed)
+                            currentClaimStatus.loading ? '...' : claimableNow
                         }</span></div>
                     </div>
                 </div>
