@@ -1,6 +1,6 @@
 import './WalletTokenModal.scss'
 
-import { useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 import { Button, Modal, ToolTip } from 'components/common'
 import { MdOutlineClose } from 'react-icons/md'
 import { useModals } from 'hooks'
@@ -29,10 +29,7 @@ const multiplierBadges = [
         link: 'https://blog.ambire.com/ambire-wallet-to-partner-with-lobsterdao-10b57e6da0-53c59c88726b'
     }
 ]
-
-const WalletTokenModal = ({ rewards, account, network }) => {
-    const { hideModal } = useModals()
-
+const MultiplierBadges = ({ rewards }) => {
     // Multiplier badges
     const badges = useMemo(() => multiplierBadges.map(badge => {
         const isUnlocked = rewards.multipliers && rewards.multipliers.map(({ name }) => name).includes(badge.id)
@@ -42,13 +39,32 @@ const WalletTokenModal = ({ rewards, account, network }) => {
         }
     }), [rewards])
 
+    return (<div className="badges">
+        {
+            badges.map(({ id, name, icon, color, multiplier, link, active }) => (
+                <a href={link} target="_blank" rel="noreferrer" key={id}>
+                    <ToolTip label={`You ${active ? 'are receiving' : 'do not have'} the ${name} x${multiplier} multiplier`}>
+                        <div className={`badge ${active ? 'active' : ''}`} style={{ backgroundColor: color, borderColor: color }}>
+                            <div className="icon">{ icon }</div>
+                            <div className="multiplier">x { multiplier }</div>
+                        </div>
+                    </ToolTip>
+                </a>
+            ))
+        }
+    </div>)
+}
+
+const WalletTokenModal = ({ rewards, account, network, addRequest }) => {
+    const { hideModal } = useModals()
+
     // Claiming
     const claimButtonOrLoading = (disabledReason, action) => (<>
         <ToolTip label={
                 disabledReason ||
-                    (network.id != 'ethereum' ? 'Switch to Ethereum to claim' : 'Claimable amount is 20% of the snapshot on 01 Feb 2022')
+                    (network.id !== 'ethereum' ? 'Switch to Ethereum to claim' : 'Claimable amount is 20% of the snapshot on 01 Feb 2022')
             }>
-            <Button small clear onClick={action} disabled={!!disabledReason || network.id != 'ethereum'}>CLAIM</Button>
+            <Button small clear onClick={action} disabled={!!disabledReason || network.id !== 'ethereum'}>CLAIM</Button>
         </ToolTip>
     </>)
     const provider = useMemo(() => getProvider(network.id), [network.id])
@@ -105,23 +121,10 @@ const WalletTokenModal = ({ rewards, account, network }) => {
                     </div>
                 </div>
                 <div className="actions">
-                    { claimButtonOrLoading(initialClaimable == 0, () => {}) }
+                    { claimButtonOrLoading(initialClaimable === 0, () => {}) }
                 </div>
             </div>
-            <div className="badges">
-                {
-                    badges.map(({ id, name, icon, color, multiplier, link, active }) => (
-                        <a href={link} target="_blank" rel="noreferrer" key={id}>
-                            <ToolTip label={`You ${active ? 'are receiving' : 'do not have'} the ${name} x${multiplier} multiplier`}>
-                                <div className={`badge ${active ? 'active' : ''}`} style={{ backgroundColor: color, borderColor: color }}>
-                                    <div className="icon">{ icon }</div>
-                                    <div className="multiplier">x { multiplier }</div>
-                                </div>
-                            </ToolTip>
-                        </a>
-                    ))
-                }
-            </div>
+            <MultiplierBadges rewards={rewards}/>
             <div id="info">
                 You are receiving $WALLETS for holding funds on your Ambire wallet as an early user. Have in mind that $WALLET has not launched yet. <a href="https://blog.ambire.com/announcing-the-wallet-token-a137aeda9747" target="_blank" rel="noreferrer">Read More</a>
             </div>
