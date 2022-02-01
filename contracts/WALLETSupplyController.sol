@@ -122,6 +122,7 @@ contract WALLETSupplyController {
 	// There is an edge case: when penaltyBps is set to 0, you pass 0 to receive everything immediately; this is intended
 	function claim(address recipient, uint totalRewardInTree, bytes32[] memory proof, uint toBurnBps, IStakingPool stakingPool) public {
 		require(totalRewardInTree <= MAX_CLAIM_NODE, "MAX_CLAIM_NODE");
+		require(lastRoot != bytes32(0), "EMPTY_ROOT");
 
 		// Check the merkle proof
 		bytes32 leaf = keccak256(abi.encode(address(this), recipient, totalRewardInTree));
