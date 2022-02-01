@@ -24,7 +24,7 @@ const multiplierBadges = [
     }
 ]
 
-const WalletTokenModal = ({ rewards }) => {
+const WalletTokenModal = ({ rewards, network }) => {
     const { hideModal } = useModals()
 
     const badges = useMemo(() => multiplierBadges.map(badge => {
@@ -36,8 +36,8 @@ const WalletTokenModal = ({ rewards }) => {
     }), [rewards])
 
     const claimButton = <>
-        <ToolTip label="Claiming will be available after the official token launch">
-            <Button small clear disabled>CLAIM</Button>
+        <ToolTip label={network.id != 'ethereum' ? 'Switch to Ethereum to claim' : 'Claimable amount is 20% of the snapshot on 01 Feb 2022'}>
+            <Button small clear disabled={network.id != 'ethereum'}>CLAIM</Button>
         </ToolTip>
     </>
 
@@ -49,14 +49,14 @@ const WalletTokenModal = ({ rewards }) => {
         <Modal id="wallet-token-modal" title="WALLET token distribution" buttons={modalButtons}>
             <div className="item">
                 <div className="details">
-                    <label>Early users Incentive</label>
+                    <label>Early users Incentive: Total</label>
                     <div className="balance">
                         <div className="amount"><span className="primary-accent">{ rewards['balance-rewards'] }</span></div>
                         {/* <div className="amount-dollar"><span className="secondary-accent">$</span> 0</div> */}
                     </div>
                 </div>
                 <div className="actions">
-                    { claimButton }
+                    { /* claimButton */ }
                 </div>
             </div>
             {/* <div className="item">
@@ -73,7 +73,19 @@ const WalletTokenModal = ({ rewards }) => {
             </div> */}
             <div className="item">
                 <div className="details">
-                    <label>ADX Staking Bonus</label>
+                    <label>ADX Staking Bonus: Total</label>
+                    <div className="balance">
+                        <div className="amount"><span className="primary-accent">{ rewards['adx-rewards'] }</span></div>
+                        {/* <div className="amount-dollar"><span className="secondary-accent">$</span> 0</div> */}
+                    </div>
+                </div>
+                <div className="actions">
+                    { /* claimButton */ }
+                </div>
+            </div>
+            <div className="item">
+                <div className="details">
+                    <label>Claimable now</label>
                     <div className="balance">
                         <div className="amount"><span className="primary-accent">{ rewards['adx-rewards'] }</span></div>
                         {/* <div className="amount-dollar"><span className="secondary-accent">$</span> 0</div> */}
