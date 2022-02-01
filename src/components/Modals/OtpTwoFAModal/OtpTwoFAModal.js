@@ -8,7 +8,7 @@ import { useToasts } from 'hooks/toasts'
 import { fetchPost } from 'lib/fetch'
 import { useModals } from 'hooks'
 import { ethers } from 'ethers'
-import { MdOutlineAvTimer } from 'react-icons/md'
+import { CountdownTimer } from 'components/common'
 
 const TIMER_IN_SECONDS = 300
 
@@ -23,28 +23,12 @@ const OtpTwoFAModal = ({ relayerURL, selectedAcc, setCacheBreak }) => {
     const [receivedOtp, setReceivedOTP] = useState('')
     const [showSecret, setShowSecret] = useState(false)
     const [emailConfirmCode, setEmailConfirmCode] = useState('')
-    const [counter, setCounter] = useState(TIMER_IN_SECONDS)
-    const [timerFormatted, setTimerFormatted] = useState('')
-    const isTimeIsUp = timerFormatted === '0:00'
-
+    const [isTimeIsUp, setIsTimeIsUp] = useState(false)
     const [hexSecret, setHexSecret] = useState()
     
     useEffect(() => {
       setHexSecret(ethers.utils.hexlify(ethers.utils.toUtf8Bytes(JSON.stringify({ otp: secret, timestamp: new Date().getTime() }))))
     }, [secret])
-
-    useEffect(() => {
-        const timer = counter > 0 && setInterval(() => setCounter(counter - 1), 1000)
-        const minutes = Math.floor(counter / 60)
-        let seconds = counter - minutes * 60
-        if (seconds < 10) {
-            seconds = `0${seconds}`
-        }
-        console.log('hexSecret', hexSecret)
-        setTimerFormatted(`${minutes}:${seconds}`)
-
-        return () => clearInterval(timer)
-    }, [counter, hexSecret])
 
     const generateQR = useCallback(() => {
         const otpAuth = authenticator.keyuri(
@@ -146,10 +130,15 @@ const OtpTwoFAModal = ({ relayerURL, selectedAcc, setCacheBreak }) => {
         setReceivedOTP('')
     }
 
-    const timerEl = (<div className='wrapper-timer' style={isTimeIsUp ? { color: 'red'} : {}}><MdOutlineAvTimer /> {timerFormatted}</div>)
+    const handleTimeIsUp = (val) => {
+        setIsTimeIsUp(val)
+    }
 
     return (
-        <Modal title="Two Factor Authentication" topLeft={timerEl}>
+        <Modal
+            title="Two Factor Authentication" 
+            topLeft={(<CountdownTimer seconds={TIMER_IN_SECONDS} setTimeIsUp={handleTimeIsUp}/>)}
+        >
             <div id="otp-auth">
                 {isTimeIsUp && <div className='timer-reset-msg'>Please reopen the modal to reset the session.</div>}
                 <div className="img-wrapper">

@@ -9,7 +9,7 @@
 
     form {
         display: flex;
-        justify-content: center;
+        flex-direction: column;
         height: 425px;
         
         div {
