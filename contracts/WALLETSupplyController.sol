@@ -11,7 +11,9 @@ interface IStakingPool {
 }
 
 contract WALLETSupplyController {
-	event LogMintVesting(address recipient, uint amount);
+	event LogNewVesting(address indexed recipient, uint start, uint end, uint amountPerSec);
+	event LogVestingUnset(address indexed recipient, uint end, uint amountPerSec);
+	event LogMintVesting(address indexed recipient, uint amount);
 
 	// solhint-disable-next-line var-name-mixedcase
 	WALLETToken public immutable WALLET;
@@ -47,12 +49,13 @@ contract WALLETSupplyController {
 		// no more than 10 WALLET per second; theoretical emission max should be ~8 WALLET
 		require(amountPerSecond <= 10e18, "AMOUNT_TOO_LARGE");
 		vestingLastMint[recipient][end][amountPerSecond] = start;
-		// AUDIT: pending vesting lost here; that's on purpose
+		emit LogNewVesting(recipient, start, end, amountPerSecond);
+		// AUDIT: pending vesting lost here if we set over a previous (recepient, end, rate) vesting; that's on purpose
 	}
 	function unsetVesting(address recipient, uint end, uint amountPerSecond) external {
 		require(hasGovernance[msg.sender], "NOT_GOVERNANCE");
 		vestingLastMint[recipient][end][amountPerSecond] = 0;
-		// @TODO logs
+		emit LogVestingUnset(recipient, end, amountPerSecond);
 	}
 
 	// vesting mechanism
@@ -64,6 +67,9 @@ contract WALLETSupplyController {
 			require(end > lastMinted, "VESTING_OVER");
 			return (end - lastMinted) * amountPerSecond;
 		} else {
+			// this means we have not started yet
+			// solhint-disable-next-line not-rely-on-time
+			if (lastMinted > block.timestamp) return 0;
 			// solhint-disable-next-line not-rely-on-time
 			return (block.timestamp - lastMinted) * amountPerSecond;
 		}
@@ -80,8 +86,9 @@ contract WALLETSupplyController {
 	//
 	// Rewards distribution
 	//
-	event LogClaimStaked(address recipient, uint claimed);
-	event LogClaimWithPenalty(address recipient, uint received, uint burned);
+	event LogUpdatePenaltyBps(uint newPenaltyBps);
+	event LogClaimStaked(address indexed recipient, uint claimed);
+	event LogClaimWithPenalty(address indexed recipient, uint received, uint burned);
 
 	uint public immutable MAX_CLAIM_NODE = 80_000_000e18;
 
@@ -93,13 +100,12 @@ contract WALLETSupplyController {
 		require(hasGovernance[msg.sender], "NOT_GOVERNANCE");
 		require(penaltyBps <= 10000, "BPS_IN_RANGE");
 		penaltyBps = _penaltyBps;
-		// @TODO logs
+		emit LogUpdatePenaltyBps(_penaltyBps);
 	}
 
 	function setRoot(bytes32 newRoot) external {
 		require(hasGovernance[msg.sender], "NOT_GOVERNANCE");
 		lastRoot = newRoot;
-		// @TODO: logs?
 	}
 
 	function claimWithRootUpdate(
