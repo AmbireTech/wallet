@@ -24,10 +24,10 @@ const OtpTwoFADisableModal = ({ relayerURL, selectedAcc, setCacheBreak }) => {
 
     const disableOTP = async() => {
       try {
-          const { success, signature, message } = await fetchPost(
+          const { success, signatureEthers, message } = await fetchPost(
             // network doesn't matter when signing
             `${relayerURL}/second-key/${selectedAcc.id}/ethereum/sign`, { 
-              otp: hexSecret, 
+              toSign: hexSecret, 
               code: receivedOtp 
             })
           if (!success) {
@@ -37,7 +37,7 @@ const OtpTwoFADisableModal = ({ relayerURL, selectedAcc, setCacheBreak }) => {
           const resp = await fetchPost(
             `${relayerURL}/identity/${selectedAcc.id}/modify`, { 
               otp: hexSecret, 
-              sig: signature 
+              sig: signatureEthers 
             })
 
           if (resp.success) {
