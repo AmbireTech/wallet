@@ -144,5 +144,22 @@
         .bundlePreview .details {
             gap: 1.5em;
         }
+
+        .panel-heading {
+            top: -20px !important;
+            height: auto !important;
+            flex-direction: column;
+            justify-content: center !important;
+            gap: 0.5em;
+            padding: 1em 0;
+
+            .title {
+                align-self: flex-start;
+            }
+
+            .pagination-controls {
+                align-self: flex-end !important;
+            }
+        }
     }
 }
