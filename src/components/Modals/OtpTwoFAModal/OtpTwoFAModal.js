@@ -8,21 +8,43 @@ import { useToasts } from 'hooks/toasts'
 import { fetchPost } from 'lib/fetch'
 import { useModals } from 'hooks'
 import { ethers } from 'ethers'
+import { MdOutlineAvTimer } from 'react-icons/md'
 
-const dateNow = new Date().getTime()
+const TIMER_IN_SECONDS = 300
 
 const OtpTwoFAModal = ({ relayerURL, selectedAcc, setCacheBreak }) => {
     const { hideModal } = useModals()
     const { addToast } = useToasts()
 
     const secret = useMemo(() => authenticator.generateSecret(20), []) 
-    const hexSecret = ethers.utils.hexlify(ethers.utils.toUtf8Bytes(JSON.stringify({ otp: secret, timestamp: dateNow })))
     
     const [isLoading, setLoading] = useState(false)
     const [imageURL, setImageURL] = useState(null)
     const [receivedOtp, setReceivedOTP] = useState('')
     const [showSecret, setShowSecret] = useState(false)
     const [emailConfirmCode, setEmailConfirmCode] = useState('')
+    const [counter, setCounter] = useState(TIMER_IN_SECONDS)
+    const [timerFormatted, setTimerFormatted] = useState('')
+    const isTimeIsUp = timerFormatted === '0:00'
+
+    const [hexSecret, setHexSecret] = useState()
+    
+    useEffect(() => {
+      setHexSecret(ethers.utils.hexlify(ethers.utils.toUtf8Bytes(JSON.stringify({ otp: secret, timestamp: new Date().getTime() }))))
+    }, [secret])
+
+    useEffect(() => {
+        const timer = counter > 0 && setInterval(() => setCounter(counter - 1), 1000)
+        const minutes = Math.floor(counter / 60)
+        let seconds = counter - minutes * 60
+        if (seconds < 10) {
+            seconds = `0${seconds}`
+        }
+        console.log('hexSecret', hexSecret)
+        setTimerFormatted(`${minutes}:${seconds}`)
+
+        return () => clearInterval(timer)
+    }, [counter, hexSecret])
 
     const generateQR = useCallback(() => {
         const otpAuth = authenticator.keyuri(
@@ -124,9 +146,12 @@ const OtpTwoFAModal = ({ relayerURL, selectedAcc, setCacheBreak }) => {
         setReceivedOTP('')
     }
 
+    const timerEl = (<div className='wrapper-timer' style={isTimeIsUp ? { color: 'red'} : {}}><MdOutlineAvTimer /> {timerFormatted}</div>)
+
     return (
-        <Modal title="Two Factor Authentication">
+        <Modal title="Two Factor Authentication" topLeft={timerEl}>
             <div id="otp-auth">
+                {isTimeIsUp && <div className='timer-reset-msg'>Please reopen the modal to reset the session.</div>}
                 <div className="img-wrapper">
                     <img alt="qr-code" src={imageURL}></img>
                 </div>
@@ -139,7 +164,7 @@ const OtpTwoFAModal = ({ relayerURL, selectedAcc, setCacheBreak }) => {
                 </div>
                 <form onSubmit={handleSubmit}>
                     <div>
-                        <h4>Confirmation code sended via Email</h4>
+                        <h4>Confirmation code sent via Email</h4>
                         <div className='input-wrapper'>
                             <TextInput
                                 small
@@ -152,7 +177,7 @@ const OtpTwoFAModal = ({ relayerURL, selectedAcc, setCacheBreak }) => {
                                 onInput={value => setEmailConfirmCode(value)}
                             ></TextInput>
                             
-                            <Button type="button" small onClick={sendEmail}>Send Email</Button>
+                            <Button type="button" small disabled={isTimeIsUp} onClick={sendEmail}>Send Email</Button>
                         </div>
                         <h4>Authenticator app code</h4>
                         <TextInput
@@ -164,7 +189,7 @@ const OtpTwoFAModal = ({ relayerURL, selectedAcc, setCacheBreak }) => {
                         />
                     </div>
                     <div className="buttons">
-                        {!isLoading ? (<Button type="submit">Enable 2FA</Button>) : (<Button disabled><Loading /></Button>)}
+                        {!isLoading ? (<Button type="submit" disabled={isTimeIsUp}>Enable 2FA</Button>) : (<Button disabled><Loading /></Button>)}
                     </div>
                 </form>
             </div>

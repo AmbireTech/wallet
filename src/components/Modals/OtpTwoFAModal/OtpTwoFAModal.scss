@@ -1,6 +1,20 @@
 @import 'variables.scss';
 
+
+.wrapper-timer {
+    display: flex;
+    align-items: center;
+}
+
 #otp-auth {
+    .timer-reset-msg {
+        text-align: center;
+        margin-bottom: 35px;
+        font-size: 20px;
+        color: red;
+        font-weight: bold;
+    }
+
     .img-wrapper {
         display: flex;
         justify-content: center;
