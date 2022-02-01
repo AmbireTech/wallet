@@ -196,7 +196,7 @@ const WalletTokenModal = ({ rewards, account, network, addRequest }) => {
                     <ToolTip label={
                             disabledReason || `Linearly vested over approximately ${Math.ceil((vestingEntry.end - vestingEntry.start) / 86400)} days`
                         }>
-                        <Button small clear onClick={claimVesting} disabled={!!(claimDisabledReason || disabledReason)}>CLAIM</Button>
+                        <Button small clear onClick={claimVesting} disabled={!!disabledReason}>CLAIM</Button>
                     </ToolTip>
                 </div>
             </div>
