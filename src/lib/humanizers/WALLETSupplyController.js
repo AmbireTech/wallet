@@ -1,4 +1,3 @@
-import { abis } from 'consts/humanizerInfo'
 import { Interface } from 'ethers/lib/utils'
 import WALLETSupplyControllerABI from 'consts/WALLETSupplyControllerABI'
 
