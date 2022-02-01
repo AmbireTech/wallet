@@ -92,6 +92,7 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
   const [estimation, setEstimation] = useState(null)
   const [signingStatus, setSigningStatus] = useState(false)
   const [feeSpeed, setFeeSpeed] = useState(DEFAULT_SPEED)
+  const [customFee, setCustomFee] = useState(null)
   const { addToast } = useToasts()
   useEffect(() => {
     if (!bundle.txns.length) return
@@ -159,11 +160,11 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
     const { addedGas, multiplier } = getFeePaymentConsequences(feeToken, estimation)
     const toHexAmount = amnt => '0x'+Math.round(amnt).toString(16)
     const feeTxn = feeToken.symbol === network.nativeAssetSymbol
-      ? [accountPresets.feeCollector, toHexAmount(estimation.feeInNative[feeSpeed]*multiplier*1e18), '0x']
+      ? [accountPresets.feeCollector, toHexAmount((customFee || estimation.feeInNative[feeSpeed]) * multiplier*1e18), '0x']
       : [feeToken.address, '0x0', ERC20.encodeFunctionData('transfer', [
         accountPresets.feeCollector,
         toHexAmount(
-          (feeToken.isStable ? estimation.feeInUSD[feeSpeed] : estimation.feeInNative[feeSpeed])
+          customFee || (feeToken.isStable ? estimation.feeInUSD[feeSpeed] : estimation.feeInNative[feeSpeed])
           * multiplier
           * Math.pow(10, feeToken.decimals)
         )
@@ -173,7 +174,7 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
       txns: [...bundle.txns, feeTxn],
       gasLimit: estimation.gasLimit + addedGas + (bundle.extraGas || 0)
     })
-  }, [relayerURL, bundle, estimation, feeSpeed, network.nativeAssetSymbol])
+  }, [relayerURL, bundle, estimation, feeSpeed, customFee, network.nativeAssetSymbol])
 
   const approveTxnImpl = async () => {
     if (!estimation) throw new Error('no estimation: should never happen')
@@ -381,6 +382,8 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
               network={network}
               feeSpeed={feeSpeed}
               setFeeSpeed={setFeeSpeed}
+              customFee={customFee}
+              setCustomFee={setCustomFee}
             ></FeeSelector>
           </div>
 
