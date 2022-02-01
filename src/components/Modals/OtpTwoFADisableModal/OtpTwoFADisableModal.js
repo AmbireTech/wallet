@@ -5,7 +5,7 @@ import { Modal, Button, TextInput, Loading } from 'components/common'
 import { useState, useEffect } from 'react'
 import { useToasts } from 'hooks/toasts'
 import { ethers } from 'ethers'
-import { MdOutlineAvTimer } from 'react-icons/md'
+import { CountdownTimer } from 'components/common'
 
 const TIMER_IN_SECONDS = 300
 
@@ -15,27 +15,12 @@ const OtpTwoFADisableModal = ({ relayerURL, selectedAcc, setCacheBreak }) => {
     const [isLoading, setLoading] = useState(false)
 
     const [receivedOtp, setReceivedOTP] = useState('')
-    const [counter, setCounter] = useState(TIMER_IN_SECONDS)
-    const [timerFormatted, setTimerFormatted] = useState('')
-    const isTimeIsUp = timerFormatted === '0:00'
+    const [isTimeIsUp, setIsTimeIsUp] = useState(false)
     const [hexSecret, setHexSecret] = useState()
     
     useEffect(() => {
       setHexSecret(ethers.utils.hexlify(ethers.utils.toUtf8Bytes(JSON.stringify({ otp: null, timestamp: new Date().getTime() }))))
     }, [])
-
-    useEffect(() => {
-        const timer = counter > 0 && setInterval(() => setCounter(counter - 1), 1000)
-        const minutes = Math.floor(counter / 60)
-        let seconds = counter - minutes * 60
-        if (seconds < 10) {
-            seconds = `0${seconds}`
-        }
-        
-        setTimerFormatted(`${minutes}:${seconds}`)
-
-        return () => clearInterval(timer)
-    }, [counter])
 
     const handleSubmit = async e => {
       e.preventDefault()
@@ -81,12 +66,17 @@ const OtpTwoFADisableModal = ({ relayerURL, selectedAcc, setCacheBreak }) => {
       setReceivedOTP('')
     }
 
-    const timerEl = (<div className='wrapper-timer' style={isTimeIsUp ? { color: 'red'} : {}}><MdOutlineAvTimer /> {timerFormatted}</div>)
+    const handleTimeIsUp = (val) => {
+        setIsTimeIsUp(val)
+    }
 
     return (
-        <Modal id='disable-otp-modal' title="Disable Two Factor Authentication" topLeft={timerEl}>
-          {isTimeIsUp && <div className='timer-reset-msg'>Please reopen the modal to reset the session.</div>}
+        <Modal id='disable-otp-modal' 
+          title="Disable Two Factor Authentication" 
+          topLeft={(<CountdownTimer seconds={TIMER_IN_SECONDS} setTimeIsUp={handleTimeIsUp}/>)}
+        >
           <form onSubmit={handleSubmit}>
+            {isTimeIsUp && <div className='timer-reset-msg'>Please reopen the modal to reset the session.</div>}
             <div>
               <h4>Authenticator app code</h4>
                 <TextInput
