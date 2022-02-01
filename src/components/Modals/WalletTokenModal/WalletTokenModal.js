@@ -56,22 +56,24 @@ const MultiplierBadges = ({ rewards }) => {
     </div>)
 }
 
+const supplyControllerAddress = '0x94b668337ce8299272ca3cb0c70f3d786a5b6ce5'
 const supplyControllerInterface = new Interface(WALLETSupplyControllerABI)
 const WalletTokenModal = ({ rewards, account, network, addRequest }) => {
     const { hideModal } = useModals()
 
     const provider = useMemo(() => getProvider(network.id), [network.id])
-    const supplyController = useMemo(() => new Contract('0x94b668337ce8299272ca3cb0c70f3d786a5b6ce5', WALLETSupplyControllerABI, provider), [provider])
+    const supplyController = useMemo(() => new Contract(supplyControllerAddress, WALLETSupplyControllerABI, provider), [provider])
     const initialClaimableEntry = WALLETInitialClaimableRewards.find(x => x.addr === account.id)
     const initialClaimable = initialClaimableEntry ? initialClaimableEntry.totalClaimable : 0
     const vestingEntry = WALLETVestings.find(x => x.addr === account.id)
 
-    const [currentClaimStatus, setCurrentClaimStatus] = useState({ claimed: 0, mintableVesting: 0, error: null })
+    const [currentClaimStatus, setCurrentClaimStatus] = useState({ loading: true, claimed: 0, mintableVesting: 0, error: null })
     useEffect(() => {
         (async () => {
+            const toNum = x => parseInt(x.toString()) / 1e18
             const [mintableVesting, claimed] = await Promise.all([
-                vestingEntry ? await supplyController.mintableVesting(vestingEntry.addr, vestingEntry.end, vestingEntry.rate) : null,
-                initialClaimableEntry ? await supplyController.claimed(initialClaimableEntry.addr) : null
+                vestingEntry ? await supplyController.mintableVesting(vestingEntry.addr, vestingEntry.end, vestingEntry.rate).then(toNum) : null,
+                initialClaimableEntry ? await supplyController.claimed(initialClaimableEntry.addr).then(toNum) : null
             ])
             return { mintableVesting, claimed }
         })()
@@ -87,8 +89,38 @@ const WalletTokenModal = ({ rewards, account, network, addRequest }) => {
     )
     const claimDisabledReason = initialClaimable === 0 ? 'No rewards are claimable' : null
     const claimEarlyRewards = useCallback(() => {
-    
-    }, [initialClaimableEntry])
+    console.log('adding req')
+        addRequest({
+            id: 'claim_'+Date.now(),
+            chainId: network.chainId,
+            type: 'eth_sendTransaction',
+            account: account.id,
+            txn: {
+                to: supplyControllerAddress,
+                value: '0x0',
+                data: supplyControllerInterface.encodeFunctionData('claim', [
+                    initialClaimableEntry.addr,
+                    initialClaimableEntry.totalClaimableBN,
+                    initialClaimableEntry.proof,
+                    0, // penalty bps, at the moment we run with 0; it's a safety feature to hardcode it
+                    '0x0000000000000000000000000000000000000000' // staking addr, no need to pass this
+                ])
+            }
+        })    
+    }, [initialClaimableEntry, network.chainId, account.id, addRequest])
+    const claimVesting = useCallback(() => {
+        addRequest({
+            id: 'claimVesting_'+Date.now(),
+            chainId: network.chainId,
+            account: account.id,
+            type: 'eth_sendTransaction',
+            txn: {
+                to: supplyControllerAddress,
+                value: '0x0',
+                data: supplyControllerInterface.encodeFunctionData('mintVesting', [vestingEntry.addr, vestingEntry.end, vestingEntry.rate])
+            }
+        })    
+    }, [vestingEntry, network.chainId, account.id, addRequest])
 
     const modalButtons = <>
         <Button clear icon={<MdOutlineClose/>} onClick={() => hideModal()}>Close</Button>
@@ -131,11 +163,14 @@ const WalletTokenModal = ({ rewards, account, network, addRequest }) => {
                     { /* claimButton */ }
                 </div>
             </div>
+
             <div className="item">
                 <div className="details">
                     <label>Claimable now: early users + ADX Staking bonus</label>
                     <div className="balance">
-                        <div className="amount"><span className="primary-accent">{ initialClaimable }</span></div>
+                        <div className="amount"><span className="primary-accent">{
+                            currentClaimStatus.loading ? '...' : (initialClaimable - currentClaimStatus.claimed)
+                        }</span></div>
                     </div>
                 </div>
                 <div className="actions">
@@ -146,6 +181,27 @@ const WalletTokenModal = ({ rewards, account, network, addRequest }) => {
                     </ToolTip>
                 </div>
             </div>
+
+            {!!currentClaimStatus.mintableVesting && !!vestingEntry && (
+            <div className="item">
+                <div className="details">
+                    <label>Claimable early supporters vesting</label>
+                    <div className="balance">
+                        <div className="amount"><span className="primary-accent">{
+                            currentClaimStatus.mintableVesting
+                        }</span></div>
+                    </div>
+                </div>
+                <div className="actions">
+                    <ToolTip label={
+                            disabledReason || `Linearly vested over approximately ${Math.ceil((vestingEntry.end - vestingEntry.start) / 86400)} days`
+                        }>
+                        <Button small clear onClick={claimVesting} disabled={!!(claimDisabledReason || disabledReason)}>CLAIM</Button>
+                    </ToolTip>
+                </div>
+            </div>
+            )}
+
             <MultiplierBadges rewards={rewards}/>
             <div id="info">
                 You are receiving $WALLETS for holding funds on your Ambire wallet as an early user. Have in mind that $WALLET has not launched yet. <a href="https://blog.ambire.com/announcing-the-wallet-token-a137aeda9747" target="_blank" rel="noreferrer">Read More</a>
