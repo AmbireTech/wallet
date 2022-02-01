@@ -143,6 +143,7 @@ contract WALLETSupplyController {
 			// Claiming in $WALLET directly: some tokens get burned immediately, but the rest go to you
 			uint toBurn = (toClaim * penaltyBps) / 10000;
 			uint toReceive = toClaim - toBurn;
+			// AUDIT: We can check toReceive > 0 or toBurn > 0, but there's no point since in the most common path both will be non-zero
 			WALLET.mint(recipient, toReceive);
 			WALLET.mint(address(0), toBurn);
       emit LogClaimWithPenalty(recipient, toReceive, toBurn);
