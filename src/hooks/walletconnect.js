@@ -318,8 +318,8 @@ export default function useWalletConnect ({ account, chainId, initialUri, allNet
             if (ids.includes(id)) {
                 const connector = connectors[wcUri]
                 if (!connector) return
-                if (!isBatch || id.endsWith(":0")) {
-                    let realId = isBatch ? id.substr(0, id.lastIndexOf(":")) : id
+                if (!isBatch || id.endsWith(':0')) {
+                    let realId = isBatch ? id.substr(0, id.lastIndexOf(':')) : id
                     if (resolution.success) connector.approveRequest({ id: realId, result: resolution.result })
                     else connector.rejectRequest({ id: realId, error: { message: resolution.message } })
                 }
