@@ -72,9 +72,13 @@ function Transactions ({ relayerURL, selectedAcc, selectedNetwork, showSendTxns,
   const cancel = relayerBundle => {
     // @TODO relayerless
     mapToBundle(relayerBundle).cancel({ relayerURL, fetch })
-      .then(({ success }) => {
+      .then(({ success, message }) => {
         if (!success) {
-          addToast('Transaction already picked up by the network, you will need to pay a fee to replace it with a cancellation transaction.')
+          if (message.includes('not possible to cancel')) {
+            addToast('Transaction already picked up by the network, you will need to pay a fee to replace it with a cancellation transaction.')
+          } else {
+            addToast(`Not possible to cancel: ${message}, you will need to pay a fee to replace it with a cancellation transaction.`)
+          }
           cancelByReplacing(relayerBundle)
         } else {
           addToast('Transaction cancelled successfully')

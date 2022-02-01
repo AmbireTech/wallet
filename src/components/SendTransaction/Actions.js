@@ -37,7 +37,12 @@ export default function Actions({ estimation, feeSpeed, approveTxn, rejectTxn, c
             <div className='confirmation-code-info-title'><MdCheckCircle/>Confirmation</div>
             <div className='confirmation-code-info-message'>
               {signingStatus.confCodeRequired === 'otp' ? <>Please enter your OTP code and your password.</> : null}
-              {signingStatus.confCodeRequired === 'email' ? <>A confirmation code was sent to your email, please enter it along with your password.</> : null}
+              {signingStatus.confCodeRequired === 'email' ?
+                (isRecoveryMode
+                  ? <>A confirmation code was sent to your email, please enter it to initiate the recovery.</>
+                  : <>A confirmation code was sent to your email, please enter it along with your password.</>)
+                      : null
+	      }
             </div>
           </div>
           :
