@@ -61,7 +61,7 @@ const supplyControllerInterface = new Interface(WALLETSupplyControllerABI)
 const WalletTokenModal = ({ rewards, account, network, addRequest }) => {
     const { hideModal } = useModals()
 
-    const provider = useMemo(() => getProvider(network.id), [network.id])
+    const provider = useMemo(() => getProvider('ethereum'), [])
     const supplyController = useMemo(() => new Contract(supplyControllerAddress, WALLETSupplyControllerABI, provider), [provider])
     const initialClaimableEntry = WALLETInitialClaimableRewards.find(x => x.addr === account.id)
     const initialClaimable = initialClaimableEntry ? initialClaimableEntry.totalClaimable : 0
