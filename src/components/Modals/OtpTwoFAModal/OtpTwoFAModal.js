@@ -54,10 +54,10 @@ const OtpTwoFAModal = ({ relayerURL, selectedAcc, setCacheBreak }) => {
 
     useEffect(generateQR, [generateQR])
 
-    const handleSubmit = async e => {
+    const handleSubmit = e => {
         e.preventDefault()
         setLoading(true)
-        await verifyOTP()
+        verifyOTP()
     }
 
     const sendEmail = async() => {
