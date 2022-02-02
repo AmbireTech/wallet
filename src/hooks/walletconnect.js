@@ -47,6 +47,26 @@ export default function useWalletConnect ({ account, chainId, initialUri, allNet
                 connections: state.connections.filter(x => x.uri !== action.uri)
             }
         }
+        if (action.type === 'batchRequestsAdded') {
+            if (state.requests.find(({ id }) => id === action.batchRequest.id + ':0')) return { ...state }
+
+            const newRequests = []
+            for (let ix in action.batchRequest.txns) {
+                newRequests.push({
+                    ...action.batchRequest,
+                    type: 'eth_sendTransaction',
+                    isBatch: true,
+                    id: action.batchRequest.id + ':' + ix,
+                    account,
+                    txn: {
+                        ...action.batchRequest.txns[ix],
+                        from: account
+                    }
+                })
+            }
+
+            return { ...state, requests: [...state.requests, ...newRequests] }
+        }
         if (action.type === 'requestAdded') {
             if (state.requests.find(({ id }) => id === action.request.id)) return { ...state }
             return { ...state, requests: [...state.requests, action.request] }
@@ -197,6 +217,18 @@ export default function useWalletConnect ({ account, chainId, initialUri, allNet
                     }
                 }
             }
+            if (payload.method === 'gs_multi_send' || payload.method === 'ambire_sendBatchTransaction') {
+                dispatch({ type: 'batchRequestsAdded', batchRequest: {
+                        id: payload.id,
+                        type: payload.method,
+                        wcUri: connectorOpts.uri,
+                        txns: payload.params,
+                        chainId: connector.session.chainId,
+                        account: connector.session.accounts[0],
+                        notification: true
+                    } })
+                return
+            }
             //FutureProof? WC does not implement it yet
             if (payload.method === 'wallet_switchEthereumChain') {
                 const supportedNetwork = allNetworks.find(a => a.chainId === parseInt(payload.params[0].chainId, 16))
@@ -209,7 +241,6 @@ export default function useWalletConnect ({ account, chainId, initialUri, allNet
                     addToast(`dApp asked to switch to an unsupported chain: ${payload.params[0]?.chainId}`, { error: true })
                     connector.rejectRequest({ id: payload.id, error: { message: 'Unsupported chain' }})
                 }
-                return
             }
             if (!SUPPORTED_METHODS.includes(payload.method)) {
                 const isUniIgnorable = payload.method === 'eth_signTypedData_v4'
@@ -283,12 +314,15 @@ export default function useWalletConnect ({ account, chainId, initialUri, allNet
     }, [])
 
     const resolveMany = (ids, resolution) => {
-        state.requests.forEach(({ id, wcUri }) => {
+        state.requests.forEach(({ id, wcUri, isBatch }) => {
             if (ids.includes(id)) {
                 const connector = connectors[wcUri]
                 if (!connector) return
-                if (resolution.success) connector.approveRequest({ id, result: resolution.result })
-                else connector.rejectRequest({ id, error: { message: resolution.message } })
+                if (!isBatch || id.endsWith(':0')) {
+                    let realId = isBatch ? id.substr(0, id.lastIndexOf(':')) : id
+                    if (resolution.success) connector.approveRequest({ id: realId, result: resolution.result })
+                    else connector.rejectRequest({ id: realId, error: { message: resolution.message } })
+                }
             }
         })
         dispatch({ type: 'requestsResolved', ids })
