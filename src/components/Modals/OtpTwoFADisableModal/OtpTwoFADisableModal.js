@@ -22,10 +22,10 @@ const OtpTwoFADisableModal = ({ relayerURL, selectedAcc, setCacheBreak }) => {
       setHexSecret(ethers.utils.hexlify(ethers.utils.toUtf8Bytes(JSON.stringify({ otp: null, timestamp: new Date().getTime() }))))
     }, [])
 
-    const handleSubmit = async e => {
+    const handleSubmit = e => {
       e.preventDefault()
       setLoading(true)
-      await disableOTP()
+      disableOTP()
     }
 
     const disableOTP = async() => {
