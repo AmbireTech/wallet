@@ -38,11 +38,11 @@ const USER_INTERVENTION_METHODS = [
 
 //unify error formatting
 const formatErr = (err) => {
-  if (typeof err === 'string'){
+  if (typeof err === 'string') {
     return Error(err)
-  } else if (err instanceof Error){
+  } else if (err instanceof Error) {
     return err
-  } else if (err.message){
+  } else if (err.message) {
     return Error(err.message)
   }
   return err
@@ -101,7 +101,9 @@ const sendRequest = (requestPayload, callback) => new Promise((res, rej) => {
     if (data) {
       if (data.error) {
         //avoid to break web3calls dapps with rej...
-        callback({ code: -1, message: data.error, stack: '' }, makeRPCError(requestPayload, data.error));
+        if (callback) {
+          callback({ code: -1, message: data.error, stack: '' }, makeRPCError(requestPayload, data.error));
+        }
         res(new Error(data.error));
       } else {
         const result = reply.data ? reply.data.result : null;
@@ -111,13 +113,17 @@ const sendRequest = (requestPayload, callback) => new Promise((res, rej) => {
         res(result)
       }
     } else {
-      callback('empty reply', makeRPCError(requestPayload, 'empty reply'));
+      if (callback) {
+        callback('empty reply', makeRPCError(requestPayload, 'empty reply'));
+      }
       res(new Error('empty reply'))//avoid to break web3calls dapps with rej...
     }
   }, { replyTimeout }).catch(err => {
     const formattedErr = formatErr(err)
     console.error('error send', err);
-    callback({ code: -1, message: formattedErr.message, stack: '' }, makeRPCError(requestPayload, err));
+    if (callback) {
+      callback({ code: -1, message: formattedErr.message, stack: '' }, makeRPCError(requestPayload, err));
+    }
     res(new Error(formattedErr.message))//avoid to break web3calls dapps with rej...
   })
 });
