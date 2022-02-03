@@ -3,7 +3,7 @@ import './Modal.scss'
 import { MdClose } from 'react-icons/md'
 import { useModals } from 'hooks'
 
-const Modal = ({ children, id, title, buttons, isCloseBtnShown = true, onClose }) => {
+const Modal = ({ children, id, title, buttons, isCloseBtnShown = true, onClose, topLeft }) => {
     const { hideModal } = useModals()
 
     const onCloseModal = () => {
@@ -14,7 +14,8 @@ const Modal = ({ children, id, title, buttons, isCloseBtnShown = true, onClose }
     return (
         <div id={id} className={`modal ${buttons ? 'buttons' : ''}`}>
             <div className="heading">
-                <div className="title">{ title }</div>
+                <div className="title"  style={topLeft ? { maxWidth: '360px' } : {}}>{ title }</div>
+                {topLeft && <div className="top-left">{ topLeft }</div>}
                 {isCloseBtnShown ? (<div className="close" onClick={onCloseModal}>
                     <MdClose/>
                 </div>) : <></>}

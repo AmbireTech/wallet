@@ -1,6 +1,6 @@
 @import 'variables.scss';
 
-$max-width: 900px;
+$max-width: 650px;
 
 #signMessage {
   position: fixed;
@@ -17,20 +17,28 @@ $max-width: 900px;
   align-items: center;
   gap: 2em;
 
-  #signingAccount {
+  .panel {
+    width: $max-width;
+    box-sizing: border-box;
+    background-color: rgba(0, 0, 0, 0.2);
+
     .title {
       align-items: center;
-      justify-content: center;
-      gap: 10px;
-      color: rgb(128, 255, 219);
-      text-transform: uppercase;
+      justify-content: flex-start;
+      gap: 0.5em;
     }
 
+    .content {
+      flex-wrap: wrap;
+    }
+  }
+
+  #signingAccount {
     .content {
       display: flex;
       flex-direction: row;
       align-items: center;
-      justify-content: center;
+      justify-content: flex-start;
       gap: 10px;
       font-family: monospace;
       font-size: 15px;
@@ -44,42 +52,53 @@ $max-width: 900px;
     }
   }
 
-  .panel {
-    min-width: 600px;
-    max-width: $max-width;
-  
-    padding: 2em;
-    box-sizing: border-box;
-    background-color: rgba(0, 0, 0, 0.2);
-    .heading {
+  .request-message {
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+    font-weight: 500;
+
+    .dapp-message {
       display: flex;
-      flex-direction: column;
-      gap: 0.2rem;
-      .title {
+      flex-direction: row;
+      gap: 0.5em;
+      row-gap: 0.2em;
+      align-items: center;
+      flex-wrap: wrap;
+
+      .dapp {
         display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 0.5rem;
-        font-size: 1.5em;
-        font-weight: bold;
-        color: rgb(128, 255, 219);
-        text-transform: uppercase;
+        flex-direction: row;
+        gap: 0.5em;
+
+        .icon {
+          height: 22px;
+          width: 22px;
+          border-radius: 100%;
+          @include flex-center-center;
+          background-size: contain;
+          background-color: rgba(0, 0, 0, 0.2);
+
+          svg {
+            font-size: 12px;
+            opacity: 0.2;
+          }
+        }
       }
     }
 
-    .content {
-      flex-wrap: wrap;
+    span {
+      opacity: 0.5;
     }
   }
 
-  .message {
+  .sign-message {
     width: auto;
     padding: 2em;
     color: #ccc;
     min-height: 300px;
     background-color: rgba(0,0,0,0.4);
     border: 0px;
-    margin: 2em 0px;
     resize: none;
   }
 
@@ -87,38 +106,33 @@ $max-width: 900px;
     form {
       display: flex;
       flex-direction: column;
+      gap: 1.5em;
 
       .buttons {
         display: flex;
+        gap: 1.5em;
 
         button {
           flex: 1 1 50%;
-          background-color: rgb(128, 255, 219);
-          margin: 0em 2.5% 0em 2.5%;
           text-transform: uppercase;
           font-weight: 800;
           min-height: 75px;
-          font-size: 1em;
           vertical-align: middle;
           position: relative;
 
+          .loading {
+            width: auto;
+          }
+
           &.reject {
-            border: 3px solid rgb(255, 132, 128);
-            background: transparent;
-            color: rgb(255, 132, 128);
+            color: white;
+
+            svg {
+              color: white;
+            }
           }
         }
       }
-
-      input {
-        color: white;
-        width: 100%;
-        box-shadow: 0 3px 0 0 $primary-accent-color;
-        margin-bottom: 20px;
-        background-color: transparent;
-      }
-
-      
 
       .icon {
         position: absolute;

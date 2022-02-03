@@ -7,6 +7,8 @@ import AmbireIdentity from './AmbireIdentity'
 import AmbireFactory from './AmbireFactory'
 import YearnTesseractVault from './YearnTesseractVault'
 import Movr from './Movr'
+import WALLETSupplyController from './WALLETSupplyController'
+import AmbireBatcher from './AmbireBatcher'
 
 const all = {
 	...UniRouters,
@@ -17,6 +19,8 @@ const all = {
 	...AmbireIdentity,
 	...AmbireFactory,
 	...YearnTesseractVault,
-	...Movr
+	...Movr,
+	...WALLETSupplyController,
+	...AmbireBatcher
 }
 export default all

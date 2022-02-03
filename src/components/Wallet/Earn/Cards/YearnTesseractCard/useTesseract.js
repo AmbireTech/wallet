@@ -46,7 +46,7 @@ const useTesseract = ({ tokens, provider, networkId, currentNetwork }) => {
 
     const fetchVaultAPY = useCallback(async ticker => {
         try {
-            const response = await fetch(`${TESR_API_ENDPOINT}/query?query=rate(price{ticker="${ticker}", version="0.4.3.1"}[24h])*60*60*24*365`)
+            const response = await fetch(`${TESR_API_ENDPOINT}/query?query=deriv(price{network="matic",ticker="${ticker}",version="0.4.3.1"}[10d])*60*60*24*365`)
             const { data, status } = await response.json()
             if (!data || status !== 'success' || !data.result.length) return 0
             return (data.result[0]?.value[1] * 100).toFixed(2)

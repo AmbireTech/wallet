@@ -26,7 +26,7 @@ const checkIsOffline = uri => {
     //    .every(({ time } = {}) => time > (Date.now() - timePastForConnectionErr))
 }
 
-export default function useWalletConnect ({ account, chainId, initialUri }) {
+export default function useWalletConnect ({ account, chainId, initialUri, allNetworks, setNetwork }) {
     const { addToast } = useToasts()
 
     // This is needed cause of the WalletConnect event handlers
@@ -46,6 +46,26 @@ export default function useWalletConnect ({ account, chainId, initialUri }) {
                 ...state,
                 connections: state.connections.filter(x => x.uri !== action.uri)
             }
+        }
+        if (action.type === 'batchRequestsAdded') {
+            if (state.requests.find(({ id }) => id === action.batchRequest.id + ':0')) return { ...state }
+
+            const newRequests = []
+            for (let ix in action.batchRequest.txns) {
+                newRequests.push({
+                    ...action.batchRequest,
+                    type: 'eth_sendTransaction',
+                    isBatch: true,
+                    id: action.batchRequest.id + ':' + ix,
+                    account,
+                    txn: {
+                        ...action.batchRequest.txns[ix],
+                        from: account
+                    }
+                })
+            }
+
+            return { ...state, requests: [...state.requests, ...newRequests] }
         }
         if (action.type === 'requestAdded') {
             if (state.requests.find(({ id }) => id === action.request.id)) return { ...state }
@@ -141,9 +161,18 @@ export default function useWalletConnect ({ account, chainId, initialUri }) {
                 return
             }
 
-            sessionStart = Date.now()
+            // Clear the "dApp tool too long to connect" timeout
             clearTimeout(sessionTimeout)
 
+            if (connector.session.peerMeta.url.includes('bridge.avax.network')) {
+                const message = 'Avalanche Bridge does not currently support smart wallets.'
+                connector.rejectSession({ message })
+                addToast(message, { error: true })
+                return
+            }
+
+            // sessionStart is used to check if dApp disconnected immediately
+            sessionStart = Date.now()
             connector.approveSession({
                 accounts: [stateRef.current.account],
                 chainId: stateRef.current.chainId,
@@ -188,6 +217,31 @@ export default function useWalletConnect ({ account, chainId, initialUri }) {
                     }
                 }
             }
+            if (payload.method === 'gs_multi_send' || payload.method === 'ambire_sendBatchTransaction') {
+                dispatch({ type: 'batchRequestsAdded', batchRequest: {
+                        id: payload.id,
+                        type: payload.method,
+                        wcUri: connectorOpts.uri,
+                        txns: payload.params,
+                        chainId: connector.session.chainId,
+                        account: connector.session.accounts[0],
+                        notification: true
+                    } })
+                return
+            }
+            //FutureProof? WC does not implement it yet
+            if (payload.method === 'wallet_switchEthereumChain') {
+                const supportedNetwork = allNetworks.find(a => a.chainId === parseInt(payload.params[0].chainId, 16))
+
+                if (supportedNetwork) {
+                    setNetwork(supportedNetwork.chainId)
+                    connector.approveRequest({ id: payload.id, result: { chainId: supportedNetwork.chainId }})
+                } else {
+                    //Graceful error for user
+                    addToast(`dApp asked to switch to an unsupported chain: ${payload.params[0]?.chainId}`, { error: true })
+                    connector.rejectRequest({ id: payload.id, error: { message: 'Unsupported chain' }})
+                }
+            }
             if (!SUPPORTED_METHODS.includes(payload.method)) {
                 const isUniIgnorable = payload.method === 'eth_signTypedData_v4'
                     && connector.session.peerMeta
@@ -195,7 +249,7 @@ export default function useWalletConnect ({ account, chainId, initialUri }) {
                 // @TODO: if the dapp is in a "allow list" of dApps that have fallbacks, ignore certain messages
                 // eg uni has a fallback for eth_signTypedData_v4
                 if (!isUniIgnorable) addToast(`dApp requested unsupported method: ${payload.method}`, { error: true })
-                connector.rejectRequest({ id: payload.id, error: { message: 'METHOD_NOT_SUPPORTED' }})
+                connector.rejectRequest({ id: payload.id, error: { message: 'METHOD_NOT_SUPPORTED: ' + payload.method }})
                 return
             }
             const wrongAcc = (
@@ -247,7 +301,7 @@ export default function useWalletConnect ({ account, chainId, initialUri }) {
         connector.on('error', onError)
 
         return connector
-    }, [addToast])
+    }, [addToast, allNetworks, setNetwork])
 
     const disconnect = useCallback(uri => {
         // connector might not be there, either cause we disconnected before,
@@ -260,12 +314,15 @@ export default function useWalletConnect ({ account, chainId, initialUri }) {
     }, [])
 
     const resolveMany = (ids, resolution) => {
-        state.requests.forEach(({ id, wcUri }) => {
+        state.requests.forEach(({ id, wcUri, isBatch }) => {
             if (ids.includes(id)) {
                 const connector = connectors[wcUri]
                 if (!connector) return
-                if (resolution.success) connector.approveRequest({ id, result: resolution.result })
-                else connector.rejectRequest({ id, error: { message: resolution.message } })
+                if (!isBatch || id.endsWith(':0')) {
+                    let realId = isBatch ? id.substr(0, id.lastIndexOf(':')) : id
+                    if (resolution.success) connector.approveRequest({ id: realId, result: resolution.result })
+                    else connector.rejectRequest({ id: realId, error: { message: resolution.message } })
+                }
             }
         })
         dispatch({ type: 'requestsResolved', ids })
