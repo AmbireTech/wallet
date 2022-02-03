@@ -86,7 +86,7 @@ export default function useAmbireBookmarklet({ allNetworks, setNetwork, selected
     for (let req of requests.filter(x => ids.includes(x.id))) {
 
       //only process non batch or first batch req
-      if (!req.isBatch || req.id.endsWith(":0")) {
+      if (!req.isBatch || req.id.endsWith(':0')) {
 
         let rpcResult = {
           jsonrpc: '2.0',
