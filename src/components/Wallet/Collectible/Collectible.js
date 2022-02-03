@@ -21,11 +21,10 @@ const ERC721 = new Interface(ERC721Abi)
 
 const handleUri = uri => {
     uri = uri.startsWith('data:application/json') ? uri.replace('data:application/json;utf8,', '') : uri
-    return uri.startsWith('ipfs://') 
-        ? uri.replace(/ipfs:\/\/ipfs\/|ipfs:\/\//g, 'https://ipfs.io/ipfs/') 
-        : uri.startsWith('https://chargedpunks.mypinata.cloud/ipfs/') 
-            ? uri.replace(/https:\/\/chargedpunks.mypinata.cloud\/ipfs\//g, 'https://ipfs.io/ipfs/')
-            : uri 
+
+    if (uri.split('/')[2].endsWith('mypinata.cloud')) return 'https://ipfs.io/ipfs/' + uri.split('/').slice(4).join('/')
+        
+    return uri
 }
 
 const Collectible = ({ selectedAcc, selectedNetwork, addRequest, addressBook }) => {
