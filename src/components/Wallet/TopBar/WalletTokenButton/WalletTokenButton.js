@@ -9,7 +9,6 @@ const WalletTokenButton = ({ relayerURL, rewardsData, account, network, hidePriv
     const claimableWalletToken = useClaimableWalletToken({ account, network, addRequest, relayerURL })
 
     const [rewards, setRewards] = useState({})
-    const [rewardsTotal, setRewardsTotal] = useState(0)
     const { isLoading, data, errMsg } = rewardsData
 
     const showWalletTokenModal = () => showModal(<WalletTokenModal claimableWalletToken={claimableWalletToken} rewards={rewards} />)
@@ -21,10 +20,8 @@ const WalletTokenButton = ({ relayerURL, rewardsData, account, network, hidePriv
         if (!rewards.length) return
 
         const rewardsDetails = Object.fromEntries(rewards.map(({ _id, rewards }) => [_id, rewards[account.id] || 0]))
-        const rewardsTotal = Object.values(rewardsDetails).reduce((acc, curr) => acc + curr, 0)
         rewardsDetails.multipliers = multipliers
 
-        setRewardsTotal(rewardsTotal)
         setRewards(rewardsDetails)
     }, [data, errMsg, account])
 
