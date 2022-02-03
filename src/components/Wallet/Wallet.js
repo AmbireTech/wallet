@@ -17,6 +17,8 @@ import { useModals, usePermissions } from 'hooks'
 import { useCallback, useEffect, useMemo, useRef } from 'react'
 import { isFirefox } from 'lib/isFirefox'
 import CrossChain from "./CrossChain/CrossChain"
+import Bookmarklet from "./Security/Bookmarklet/Bookmarklet"
+
 import unsupportedDApps from 'consts/unsupportedDApps'
 
 export default function Wallet(props) {
@@ -78,6 +80,10 @@ export default function Wallet(props) {
         showSendTxns={props.showSendTxns}
         onAddAccount={props.onAddAccount}
       />
+    },
+    {
+      path: '/security/bookmarklet',
+      component: <Bookmarklet />
     },
     {
       path: '/transactions/:page?',

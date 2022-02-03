@@ -1,3 +1,5 @@
+import { isPermitted } from './bookmarkletPermissions'
+
 const VERBOSE = typeof process.env.VERBOSE == 'undefined' ? 0 : (parseInt(process.env.VERBOSE) || 0)
 
 //The name of the current process handling the msg (itself). can be pageContext (dapp page), iframe in dapp page, or ambirePageContext(ambire page). Sometimes "I, me" is mentioned, it refers to RELAYER (the relayer is talking)
@@ -77,7 +79,7 @@ export const setupAmbexBMLMessenger = (relayer, iframe) => {
   RELAYER = relayer
   IFRAME = iframe
 
-  WINDOWLISTENER = (windowMessage) => handleMessage(windowMessage.data)
+  WINDOWLISTENER = (windowMessage) => handleMessage(windowMessage.data, windowMessage)
 
   //LocalStorage RECV handler
   const LS_MSG_HANDLER = event => {
@@ -221,6 +223,25 @@ const handleMessage = function (message, sender = null) {
       if (VERBOSE > 1) console.log(`${RELAYER_VERBOSE_TAG[RELAYER]} ambexBMLMessenger[${RELAYER}] : Already forwarded message. Ignoring`, message)
     } else if (message.from !== RELAYER) {//If I did not forward this message and this message is NOT from me
       if (VERBOSE > 0) console.log(`${RELAYER_VERBOSE_TAG[RELAYER]} ambexBMLMessenger[${RELAYER}] : Forwarding message`, message)
+
+      //Should we check localstorage for every message or keep in in ram (but would become inconsistent if dapp is still open and in the meantime the user revokes/add) ?
+      if (RELAYER === 'iframe') {
+        if (message.to === 'ambirePageContext') {
+          const senderHost = new URL(sender.origin).host
+          if (!isPermitted(senderHost)) {
+            sendReply(message, { error: 'host not whitelisted' })
+            return
+          }
+        } else if (message.to === 'pageContext') { // prevent sending chainChanged/accountsChanged for non permitted domains
+          //could not find short notation for webpack in webpack
+          const ancestorOrigin = (window.location.ancestorOrigins ? (window.location.ancestorOrigins.length ? window.location.ancestorOrigins[0] : null) : null)
+          const senderHost = ancestorOrigin ? new URL(ancestorOrigin).host : null
+          if (senderHost && !isPermitted(senderHost)) {
+            sendReply(message, { error: 'host not whitelisted' })
+            return
+          }
+        }
+      }
 
       message.forwarders.push(RELAYER)
       sendMessageInternal(message).catch(err => {

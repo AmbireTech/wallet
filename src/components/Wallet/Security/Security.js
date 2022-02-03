@@ -11,15 +11,16 @@ import { useRelayerData, useModals } from 'hooks'
 import { ResetPasswordModal } from 'components/Modals'
 import AddAuthSigner from './AddAuthSigner/AddAuthSigner'
 import { useToasts } from 'hooks/toasts'
-import { useHistory } from 'react-router-dom'
+import { NavLink, useHistory } from 'react-router-dom'
 import { useDropzone } from 'react-dropzone'
-import { MdInfoOutline } from 'react-icons/md'
+import { MdInfoOutline, MdOutlineChecklist } from 'react-icons/md'
 import { validateImportedAccountProps, fileSizeValidator } from 'lib/validations/importedAccountValidations'
 import OtpTwoFAModal from 'components/Modals/OtpTwoFAModal/OtpTwoFAModal'
 import OtpTwoFADisableModal from 'components/Modals/OtpTwoFADisableModal/OtpTwoFADisableModal'
 import Backup from './Backup/Backup'
 import PendingRecoveryNotice from './PendingRecoveryNotice/PendingRecoveryNotice'
 import { getName } from 'lib/humanReadableTransactions'
+import { CgArrowsExchangeV } from 'react-icons/cg'
 
 const IDENTITY_INTERFACE = new Interface(
   require('adex-protocol-eth/abi/Identity5.2')
@@ -307,6 +308,19 @@ const Security = ({
         onOpen={open}
         onAddAccount={onAddAccount}
       />
+
+      <div className="panel">
+        <div className="panel-title">Bookmarklet</div>
+        <NavLink to={'/wallet/security/bookmarklet'} activeClassName="selected">
+          <Button
+            small
+            icon={<MdOutlineChecklist/>}
+          >
+            Manage whitelist
+          </Button>
+        </NavLink>
+
+      </div>
     </section>
   )
 }
