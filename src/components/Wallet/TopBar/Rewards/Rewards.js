@@ -2,15 +2,17 @@ import { useEffect, useState } from "react"
 import { useModals } from "hooks";
 import { Button, ToolTip } from "components/common";
 import { WalletTokenModal } from "components/Modals";
+import useClaimableWalletToken from "./useClaimableWalletToken";
 
 const Rewards = ({ relayerURL, rewardsData, account, network, hidePrivateValue, addRequest }) => {
     const { showModal } = useModals()
+    const claimableWalletToken = useClaimableWalletToken({ account, network, addRequest, relayerURL })
 
     const [rewards, setRewards] = useState({})
     const [rewardsTotal, setRewardsTotal] = useState(0)
     const { isLoading, data, errMsg } = rewardsData
 
-    const showWalletTokenModal = () => showModal(<WalletTokenModal relayerURL={relayerURL} rewards={rewards} network={network} account={account} addRequest={addRequest}/>)
+    const showWalletTokenModal = () => showModal(<WalletTokenModal claimableWalletToken={claimableWalletToken} rewards={rewards} />)
 
     useEffect(() => {
         if (errMsg || !data || !data.success) return
@@ -32,7 +34,7 @@ const Rewards = ({ relayerURL, rewardsData, account, network, hidePrivateValue, 
                 <Button small border disabled onClick={showWalletTokenModal}>Unavailable</Button>
             </ToolTip>
             :
-            <Button small border disabled={isLoading} onClick={showWalletTokenModal}>{ hidePrivateValue(rewardsTotal.toFixed(3)) } WALLET</Button>
+            <Button small border disabled={isLoading} onClick={showWalletTokenModal}>{ hidePrivateValue(claimableWalletToken.claimableNow.toFixed(3)) } WALLET</Button>
     )
 }
 
