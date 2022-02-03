@@ -22,6 +22,7 @@ const ERC721 = new Interface(ERC721Abi)
 const handleUri = uri => {
     uri = uri.startsWith('data:application/json') ? uri.replace('data:application/json;utf8,', '') : uri
 
+    if (uri.startsWith('ipfs://')) return uri.replace(/ipfs:\/\/ipfs\/|ipfs:\/\//g, 'https://ipfs.io/ipfs/')
     if (uri.split('/')[2].endsWith('mypinata.cloud')) return 'https://ipfs.io/ipfs/' + uri.split('/').slice(4).join('/')
         
     return uri
