@@ -62,8 +62,6 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
         Number(tokenAddress) === 0 && networks.map(({ id }) => id).filter(id => id !== 'ethereum').includes(selectedNetwork.id)
     , [tokenAddress, selectedNetwork])
 
-    console.log(showSWAddressWarning);
-
     const setMaxAmount = () => onAmountChange(maxAmount)
 
     const onAmountChange = value => {
