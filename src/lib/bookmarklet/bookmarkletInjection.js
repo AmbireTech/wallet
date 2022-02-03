@@ -115,9 +115,10 @@ const sendRequest = (requestPayload, callback) => new Promise((res, rej) => {
       res(new Error('empty reply'))//avoid to break web3calls dapps with rej...
     }
   }, { replyTimeout }).catch(err => {
+    const formattedErr = formatErr(err)
     console.error('error send', err);
-    callback({ code: -1, message: data.error, stack: '' }, makeRPCError(requestPayload, err));
-    res(new Error(data.error))//avoid to break web3calls dapps with rej...
+    callback({ code: -1, message: formattedErr.message, stack: '' }, makeRPCError(requestPayload, err));
+    res(new Error(formattedErr.message))//avoid to break web3calls dapps with rej...
   })
 });
 
