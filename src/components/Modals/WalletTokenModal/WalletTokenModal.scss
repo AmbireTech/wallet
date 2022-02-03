@@ -33,8 +33,24 @@ $badge-size: 65px;
                         gap: 7px;
                         font-size: 18px;
 
-                        &.usd {
+                        span {
+                            color: $primary-accent-color;
+                        }
+
+                        &.usd, &.apy {
                             font-size: 16px;
+                        }
+
+                        &.usd {
+                            span {
+                                color: $secondary-accent-color;
+                            }
+                        }
+
+                        &.apy {
+                            span {
+                                color: $tertiary-accent-color;
+                            }
                         }
                     }
                 }
@@ -49,14 +65,6 @@ $badge-size: 65px;
                     font-size: 13px;
                     background-color: rgba(255, 255, 255, 0.1);
                 }
-            }
-
-            .primary-accent {
-                color: $primary-accent-color;
-            }
-
-            .secondary-accent {
-                color: $secondary-accent-color;
             }
 
             &:nth-child(odd) {
