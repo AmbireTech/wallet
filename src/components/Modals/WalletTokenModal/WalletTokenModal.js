@@ -49,19 +49,21 @@ const MultiplierBadges = ({ rewards }) => {
     </div>)
 }
 
-const WalletTokenModal = ({ claimableWalletToken, rewards }) => {
+const WalletTokenModal = ({ claimableWalletToken, rewards, walletTokenInfoData }) => {
     const { hideModal } = useModals()
 
     const {
         vestingEntry,
         currentClaimStatus,
         claimableNow,
-        claimableNowUsd,
         disabledReason,
         claimDisabledReason,
         claimEarlyRewards,
         claimVesting
     } = claimableWalletToken
+
+    const walletTokenAPY = !walletTokenInfoData.isLoading && walletTokenInfoData.data ? (walletTokenInfoData.data?.apy).toFixed(2) : '...'
+    const claimableNowUsd = !walletTokenInfoData.isLoading && !currentClaimStatus.loading && claimableNow ? (walletTokenInfoData.data?.usdPrice * claimableNow).toFixed(2) : '...'
 
     const modalButtons = <>
         <Button clear icon={<MdOutlineClose/>} onClick={() => hideModal()}>Close</Button>
@@ -73,7 +75,7 @@ const WalletTokenModal = ({ claimableWalletToken, rewards }) => {
                     <label>Early users Incentive: Total</label>
                     <div className="balance">
                         <div className="amount"><span className="primary-accent">{ rewards['balance-rewards'] }</span></div>
-                        {/* <div className="amount-dollar"><span className="secondary-accent">$</span> 0</div> */}
+                        <div className="amount apy">{ walletTokenAPY } % <span>APY</span></div>
                     </div>
                 </div>
                 <div className="actions">

@@ -6,12 +6,12 @@ import useClaimableWalletToken from "./useClaimableWalletToken";
 
 const WalletTokenButton = ({ rewardsData, walletTokenInfoData, account, network, hidePrivateValue, addRequest }) => {
     const { showModal } = useModals()
-    const claimableWalletToken = useClaimableWalletToken({ account, network, addRequest, walletTokenInfoData })
+    const claimableWalletToken = useClaimableWalletToken({ account, network, addRequest })
 
     const [rewards, setRewards] = useState({})
     const { isLoading, data, errMsg } = rewardsData
 
-    const showWalletTokenModal = () => showModal(<WalletTokenModal claimableWalletToken={claimableWalletToken} rewards={rewards} />)
+    const showWalletTokenModal = () => showModal(<WalletTokenModal claimableWalletToken={claimableWalletToken} rewards={rewards} walletTokenInfoData={walletTokenInfoData} />)
 
     useEffect(() => {
         if (errMsg || !data || !data.success) return
