@@ -21,8 +21,8 @@ const TopBar = ({
   network,
   setNetwork,
   allNetworks,
-  relayerURL,
   rewardsData,
+  walletTokenInfoData,
   privateMode: { isPrivateMode, togglePrivateMode, hidePrivateValue },
   addRequest
 }) => {
@@ -54,8 +54,8 @@ const TopBar = ({
       </NavLink>
       <div className={`container ${isMenuOpen ? 'open' : ''}`}>
         <WalletTokenButton
-          relayerURL={relayerURL}
           rewardsData={rewardsData}
+          walletTokenInfoData={walletTokenInfoData}
           account={account}
           network={network}
           hidePrivateValue={hidePrivateValue}

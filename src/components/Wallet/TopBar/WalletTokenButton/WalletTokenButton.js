@@ -4,9 +4,9 @@ import { Button, ToolTip } from "components/common";
 import { WalletTokenModal } from "components/Modals";
 import useClaimableWalletToken from "./useClaimableWalletToken";
 
-const WalletTokenButton = ({ relayerURL, rewardsData, account, network, hidePrivateValue, addRequest }) => {
+const WalletTokenButton = ({ rewardsData, walletTokenInfoData, account, network, hidePrivateValue, addRequest }) => {
     const { showModal } = useModals()
-    const claimableWalletToken = useClaimableWalletToken({ account, network, addRequest, relayerURL })
+    const claimableWalletToken = useClaimableWalletToken({ account, network, addRequest, walletTokenInfoData })
 
     const [rewards, setRewards] = useState({})
     const { isLoading, data, errMsg } = rewardsData
