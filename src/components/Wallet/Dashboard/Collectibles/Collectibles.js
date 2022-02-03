@@ -5,6 +5,14 @@ import CollectiblesPlaceholder from './CollectiblesPlaceholder/CollectiblesPlace
 import { Loading } from 'components/common'
 
 const Collectibles = ({ portfolio, isPrivateMode }) => {
+    const handleUri = uri => {
+        uri = uri.startsWith('data:application/json') ? uri.replace('data:application/json;utf8,', '') : uri
+        return uri.startsWith('ipfs://') 
+            ? uri.replace(/ipfs:\/\/ipfs\/|ipfs:\/\//g, 'https://ipfs.io/ipfs/') 
+            : uri.startsWith('https://chargedpunks.mypinata.cloud/ipfs/') 
+                ? uri.replace(/https:\/\/chargedpunks.mypinata.cloud\/ipfs\//g, 'https://ipfs.io/ipfs/')
+                : uri 
+    }
 
     if (portfolio.areProtocolsLoading) return <Loading />;
 
@@ -23,7 +31,7 @@ const Collectibles = ({ portfolio, isPrivateMode }) => {
                 portfolio.collectibles.map(({ network, address, collectionName, collectionImg, assets }) => (assets || []).map(({ tokenId, assetName, assetImg, balanceUSD }) => (
                     <div className="collectible" key={tokenId}>
                         <NavLink to={`/wallet/nft/${network}/${address}/${tokenId}`}>
-                            <div className="artwork" style={{backgroundImage: `url(${assetImg})`}}/>
+                            <div className="artwork" style={{backgroundImage: `url(${handleUri(assetImg)})`}}/>
                             <div className="info">
                                 <div className="collection">
                                     <div className="collection-icon" style={{backgroundImage: `url(${collectionImg})`}}></div>
