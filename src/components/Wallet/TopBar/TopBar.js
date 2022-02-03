@@ -23,6 +23,7 @@ const TopBar = ({
   allNetworks,
   rewardsData,
   walletTokenInfoData,
+  adxTokenInfoData,
   privateMode: { isPrivateMode, togglePrivateMode, hidePrivateValue },
   addRequest
 }) => {
@@ -56,6 +57,7 @@ const TopBar = ({
         <WalletTokenButton
           rewardsData={rewardsData}
           walletTokenInfoData={walletTokenInfoData}
+          adxTokenInfoData={adxTokenInfoData}
           account={account}
           network={network}
           hidePrivateValue={hidePrivateValue}
