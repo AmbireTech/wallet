@@ -24,7 +24,7 @@ const handleUri = uri => {
     return uri.startsWith('ipfs://') 
         ? uri.replace(/ipfs:\/\/ipfs\/|ipfs:\/\//g, 'https://ipfs.io/ipfs/') 
         : uri.startsWith('https://chargedpunks.mypinata.cloud/ipfs/') 
-            ? uri.replace(/https\:\/\/chargedpunks.mypinata.cloud\/ipfs\//g, 'https://ipfs.io/ipfs/')
+            ? uri.replace(/https:\/\/chargedpunks.mypinata.cloud\/ipfs\//g, 'https://ipfs.io/ipfs/')
             : uri 
 }
 
@@ -140,7 +140,6 @@ const Collectible = ({ selectedAcc, selectedNetwork, addRequest, addressBook }) 
                     )                
                 if (!success) throw new Error(message)
 
-                const imageUri = image ? handleUri(image) : null
                 const networkDetails = networks.find(({ id }) => id === network)
                 if (!networkDetails) throw new Error('This network is not supported')
                 
@@ -149,7 +148,7 @@ const Collectible = ({ selectedAcc, selectedNetwork, addRequest, addressBook }) 
                     ...metadata,
                     collection,
                     description,
-                    image: imageUri,
+                    image,
                     name,
                     owner: {
                         address: owner,
@@ -182,7 +181,7 @@ const Collectible = ({ selectedAcc, selectedNetwork, addRequest, addressBook }) 
                         <Loading/>
                         :
                         <div className="metadata">
-                            <div className="image" style={{backgroundImage: `url(${metadata.image})`}}>
+                            <div className="image" style={{backgroundImage: `url(${handleUri(metadata.image)})`}}>
                                 { !metadata.image ? <BsFillImageFill/> : null }
                             </div>
                             <div className="info">
