@@ -2,7 +2,6 @@ import { useMemo, useState, useEffect, useCallback } from 'react'
 import { Contract } from 'ethers'
 import { Interface } from 'ethers/lib/utils'
 import { getProvider } from 'lib/provider'
-import { useRelayerData } from 'hooks'
 
 import WALLETVestings from 'consts/WALLETVestings'
 import WALLETInitialClaimableRewards from 'consts/WALLETInitialClaimableRewards'
@@ -11,26 +10,12 @@ import WALLETSupplyControllerABI from 'consts/WALLETSupplyControllerABI'
 const supplyControllerAddress = '0x94b668337ce8299272ca3cb0c70f3d786a5b6ce5'
 const supplyControllerInterface = new Interface(WALLETSupplyControllerABI)
 
-const useWalletTokenInfo = relayerURL => {
-    const [cacheBreak, setCacheBreak] = useState(() => Date.now())
-    useEffect(() => {
-        if ((Date.now() - cacheBreak) > 5000) setCacheBreak(Date.now())
-        const intvl = setTimeout(() => setCacheBreak(Date.now()), 30000)
-        return () => clearTimeout(intvl)
-    }, [cacheBreak])
-
-    const tokenInfoUrl = (relayerURL) ? `${relayerURL}/wallet-token/info?cacheBreak=${cacheBreak}` : null
-    return useRelayerData(tokenInfoUrl)
-}
-
-const useClaimableWalletToken = ({ account, network, addRequest, relayerURL }) => {
+const useClaimableWalletToken = ({ account, network, addRequest, walletTokenInfoData }) => {
     const provider = useMemo(() => getProvider('ethereum'), [])
     const supplyController = useMemo(() => new Contract(supplyControllerAddress, WALLETSupplyControllerABI, provider), [provider])
     const initialClaimableEntry = WALLETInitialClaimableRewards.find(x => x.addr === account.id)
     const initialClaimable = initialClaimableEntry ? initialClaimableEntry.totalClaimable : 0
     const vestingEntry = WALLETVestings.find(x => x.addr === account.id)
-
-    const walletTokenInfo = useWalletTokenInfo(relayerURL)
 
     const [currentClaimStatus, setCurrentClaimStatus] = useState({ loading: true, claimed: 0, mintableVesting: 0, error: null })
     useEffect(() => {
@@ -50,7 +35,7 @@ const useClaimableWalletToken = ({ account, network, addRequest, relayerURL }) =
     }, [supplyController, vestingEntry, initialClaimableEntry])
 
     const claimableNow = initialClaimable - currentClaimStatus.claimed
-    const claimableNowUsd = !walletTokenInfo.isLoading && !currentClaimStatus.loading && claimableNow ? (walletTokenInfo.data?.usdPrice * claimableNow).toFixed(2) : '...'
+    const claimableNowUsd = !walletTokenInfoData.isLoading && !currentClaimStatus.loading && claimableNow ? (walletTokenInfoData.data?.usdPrice * claimableNow).toFixed(2) : '...'
 
     const disabledReason = network.id !== 'ethereum' ? 'Switch to Ethereum to claim' : (
         currentClaimStatus.error ? `Claim status error: ${currentClaimStatus.error}` : null
