@@ -3,7 +3,7 @@ import './WalletTokenModal.scss'
 import { useEffect, useMemo, useState, useCallback } from 'react'
 import { Button, Modal, ToolTip } from 'components/common'
 import { MdOutlineClose } from 'react-icons/md'
-import { useModals } from 'hooks'
+import { useModals, useRelayerData } from 'hooks'
 import { Contract } from 'ethers'
 import { Interface } from 'ethers/lib/utils'
 import { getProvider } from 'lib/provider'
@@ -56,10 +56,24 @@ const MultiplierBadges = ({ rewards }) => {
     </div>)
 }
 
+const useWalletTokenInfo = (relayerURL) => {
+    const [cacheBreak, setCacheBreak] = useState(() => Date.now())
+    useEffect(() => {
+        if ((Date.now() - cacheBreak) > 5000) setCacheBreak(Date.now())
+        const intvl = setTimeout(() => setCacheBreak(Date.now()), 30000)
+        return () => clearTimeout(intvl)
+    }, [cacheBreak])
+
+    const tokenInfoUrl = (relayerURL) ? `${relayerURL}/wallet-token/info?cacheBreak=${cacheBreak}` : null
+    return useRelayerData(tokenInfoUrl)
+}
+
 const supplyControllerAddress = '0x94b668337ce8299272ca3cb0c70f3d786a5b6ce5'
 const supplyControllerInterface = new Interface(WALLETSupplyControllerABI)
-const WalletTokenModal = ({ rewards, account, network, addRequest }) => {
+const WalletTokenModal = ({ relayerURL, rewards, account, network, addRequest }) => {
     const { hideModal } = useModals()
+
+    const walletTokenInfo = useWalletTokenInfo(relayerURL)
 
     const provider = useMemo(() => getProvider('ethereum'), [])
     const supplyController = useMemo(() => new Contract(supplyControllerAddress, WALLETSupplyControllerABI, provider), [provider])
@@ -122,6 +136,8 @@ const WalletTokenModal = ({ rewards, account, network, addRequest }) => {
         })    
     }, [vestingEntry, network.chainId, account.id, addRequest])
 
+    const claimableWalletTokenUsd = !walletTokenInfo.isLoading && !currentClaimStatus.loading && claimableNow ? (walletTokenInfo.data?.usdPrice * claimableNow).toFixed(2) : '...'
+
     const modalButtons = <>
         <Button clear icon={<MdOutlineClose/>} onClick={() => hideModal()}>Close</Button>
     </>
@@ -171,6 +187,10 @@ const WalletTokenModal = ({ rewards, account, network, addRequest }) => {
                         <div className="amount"><span className="primary-accent">{
                             currentClaimStatus.loading ? '...' : claimableNow
                         }</span></div>
+                        <div className="amount usd">
+                            <span className="secondary-accent">$</span>
+                            { claimableWalletTokenUsd }
+                        </div>
                     </div>
                 </div>
                 <div className="actions">
