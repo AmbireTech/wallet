@@ -36,18 +36,18 @@ export default function useNotifications (requests, onShow, portfolio, selectedA
     }, [])
     
     // Shared code for all notifications
-    const showNotification = useCallback(({ id, title, body, requireInteraction, request }) => {
+    const showNotification = useCallback(({ id, title, body, requireInteraction, request, onClick }) => {
         const notification = new Notification(title, {
             requireInteraction: requireInteraction || false,
             body,
             icon: AMBIRE_ICON,
         })
         //notification.onclose = 
-        notification.onclick = () => {
+        notification.onclick = onClick || (() => {
             if (request && request.type === 'eth_sendTransaction') window.onClickNotif(request)
             window.focus()
             notification.close()
-        }
+        })
         currentNotifs.push({ id, notification })
     }, [])
 
@@ -128,7 +128,8 @@ export default function useNotifications (requests, onShow, portfolio, selectedA
                         showNotification({
                             id: `confirmed_tx_${Date.now()}`,
                             title: `Ambire Transaction Confirmed`,
-                            body: `Your transaction was successfully confirmed!`
+                            body: `Your transaction was successfully confirmed!`,
+                            onClick: () => window.open(network.explorerUrl+'/tx/'+hash, '_blank')
                         })
                     } catch(e) {
                         console.error(e);

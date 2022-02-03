@@ -45,14 +45,16 @@ function AppInner () {
   const { network, setNetwork, allNetworks } = useNetwork()
   const { addToast } = useToasts()
   const wcUri = useOneTimeQueryParam('uri')
-  
+
   // Signing requests: transactions/signed msgs: all requests are pushed into .requests
   const { connections, connect, disconnect, requests: wcRequests, resolveMany: wcResolveMany } = useWalletConnect({
     account: selectedAcc,
     chainId: network.chainId,
-    initialUri: wcUri
+    initialUri: wcUri,
+    allNetworks,
+    setNetwork
   })
-  
+
   const { requests: gnosisRequests, resolveMany: gnosisResolveMany, connect: gnosisConnect, disconnect: gnosisDisconnect } = useGnosisSafe({
 	  selectedAccount: selectedAcc,
 	  network: network
@@ -173,6 +175,7 @@ function AppInner () {
       account={accounts.find(x => x.id === selectedAcc)}
       toSign={everythingToSign[0]}
       totalRequests={everythingToSign.length}
+      connections={connections}
       relayerURL={relayerURL}
       resolve={outcome => resolveMany([everythingToSign[0].id], outcome)}
     ></SignMessage>)}
