@@ -49,7 +49,7 @@ const MultiplierBadges = ({ rewards }) => {
     </div>)
 }
 
-const WalletTokenModal = ({ claimableWalletToken, rewards, walletTokenInfoData }) => {
+const WalletTokenModal = ({ claimableWalletToken, rewards, walletTokenInfoData, adxTokenInfoData }) => {
     const { hideModal } = useModals()
 
     const {
@@ -63,6 +63,7 @@ const WalletTokenModal = ({ claimableWalletToken, rewards, walletTokenInfoData }
     } = claimableWalletToken
 
     const walletTokenAPY = !walletTokenInfoData.isLoading && walletTokenInfoData.data ? (walletTokenInfoData.data?.apy).toFixed(2) : '...'
+    const adxTokenAPY = !adxTokenInfoData.isLoading && adxTokenInfoData.data ? (adxTokenInfoData.data?.apy).toFixed(2) : '...'
     const claimableNowUsd = !walletTokenInfoData.isLoading && !currentClaimStatus.loading && claimableNow ? (walletTokenInfoData.data?.usdPrice * claimableNow).toFixed(2) : '...'
 
     const modalButtons = <>
@@ -99,7 +100,7 @@ const WalletTokenModal = ({ claimableWalletToken, rewards, walletTokenInfoData }
                     <label>ADX Staking Bonus: Total</label>
                     <div className="balance">
                         <div className="amount"><span className="primary-accent">{ rewards['adx-rewards'] }</span></div>
-                        {/* <div className="amount-dollar"><span className="secondary-accent">$</span> 0</div> */}
+                        <div className="amount apy">{ adxTokenAPY } % <span>APY</span></div>
                     </div>
                 </div>
                 <div className="actions">
