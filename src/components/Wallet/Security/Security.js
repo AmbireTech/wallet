@@ -20,7 +20,6 @@ import OtpTwoFADisableModal from 'components/Modals/OtpTwoFADisableModal/OtpTwoF
 import Backup from './Backup/Backup'
 import PendingRecoveryNotice from './PendingRecoveryNotice/PendingRecoveryNotice'
 import { getName } from 'lib/humanReadableTransactions'
-import { CgArrowsExchangeV } from 'react-icons/cg'
 
 const IDENTITY_INTERFACE = new Interface(
   require('adex-protocol-eth/abi/Identity5.2')
