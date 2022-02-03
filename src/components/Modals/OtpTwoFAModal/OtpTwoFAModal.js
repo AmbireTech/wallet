@@ -5,9 +5,12 @@ import { authenticator } from '@otplib/preset-default'
 import QRCode from 'qrcode'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useToasts } from 'hooks/toasts'
-import { Wallet } from 'ethers'
 import { fetchPost } from 'lib/fetch'
 import { useModals } from 'hooks'
+import { ethers } from 'ethers'
+import { CountdownTimer } from 'components/common'
+
+const TIMER_IN_SECONDS = 300
 
 const OtpTwoFAModal = ({ relayerURL, selectedAcc, setCacheBreak }) => {
     const { hideModal } = useModals()
@@ -19,7 +22,13 @@ const OtpTwoFAModal = ({ relayerURL, selectedAcc, setCacheBreak }) => {
     const [imageURL, setImageURL] = useState(null)
     const [receivedOtp, setReceivedOTP] = useState('')
     const [showSecret, setShowSecret] = useState(false)
-    const [currentPassword, setCurrentPassword] = useState('')
+    const [emailConfirmCode, setEmailConfirmCode] = useState('')
+    const [isTimeIsUp, setIsTimeIsUp] = useState(false)
+    const [hexSecret, setHexSecret] = useState()
+    
+    useEffect(() => {
+      setHexSecret(ethers.utils.hexlify(ethers.utils.toUtf8Bytes(JSON.stringify({ otp: secret, timestamp: new Date().getTime() }))))
+    }, [secret])
 
     const generateQR = useCallback(() => {
         const otpAuth = authenticator.keyuri(
@@ -51,10 +60,26 @@ const OtpTwoFAModal = ({ relayerURL, selectedAcc, setCacheBreak }) => {
         verifyOTP()
     }
 
+    const sendEmail = async() => {
+        if (!relayerURL) {
+            addToast('Email/pass accounts not supported without a relayer connection', { error: true })
+            return
+        }
+        
+        const { success, confCodeRequired } = await fetchPost(
+            // network doesn't matter when signing
+            `${relayerURL}/second-key/${selectedAcc.id}/ethereum/sign`, { 
+                toSign: hexSecret 
+            })
+        
+        if (confCodeRequired !== 'email') addToast('Expected email verification. This should never happen, please report this on help.ambire.com', { error: true })
+        if (success && confCodeRequired === 'email') addToast('A confirmation code was sent to your email, please enter it along...')
+        
+    }
+    
     const verifyOTP = async () => {
         const isValid = authenticator.verify({ token: receivedOtp, secret })
-        const otp = secret
-
+        
         if (!isValid) {
             addToast('Invalid or outdated OTP code entered. If you keep seeing this, please ensure your system clock is synced correctly.', { error: true })
             setLoading(false)
@@ -62,17 +87,33 @@ const OtpTwoFAModal = ({ relayerURL, selectedAcc, setCacheBreak }) => {
         }
 
         try {
-            const wallet = await Wallet.fromEncryptedJson(
-                JSON.parse(selectedAcc.primaryKeyBackup),
-                currentPassword
-            )
-            const sig = await wallet.signMessage(JSON.stringify({ otp }))
-            const resp = await fetchPost(`${relayerURL}/identity/${selectedAcc.id}/modify`, { otp, sig })
+            if (!emailConfirmCode.length) {
+                addToast('Please enter the code from authenticator app.')
+                return
+            }
+
+            const { success, signatureEthers, message } = await fetchPost(
+                // network doesn't matter when signing
+                `${relayerURL}/second-key/${selectedAcc.id}/ethereum/sign`, {
+                    toSign: hexSecret, 
+                    code: emailConfirmCode
+                })
+            
+            if (!success) {
+                throw new Error(message || 'unknown error')
+            }
+            
+            const resp = await fetchPost(
+                `${relayerURL}/identity/${selectedAcc.id}/modify`, { 
+                    otp: hexSecret, 
+                    sig: signatureEthers 
+                })
 
             if (resp.success) {
                 addToast(`You have successfully enabled two-factor authentication.`)
                 setCacheBreak()
                 resetForm()
+                setLoading(false)
                 hideModal()
             } else {
                 throw new Error(`${resp.message || 'unknown error'}`)
@@ -80,19 +121,26 @@ const OtpTwoFAModal = ({ relayerURL, selectedAcc, setCacheBreak }) => {
         } catch (e) {
             console.error(e)
             addToast('OTP: ' + e.message || e, { error: true })
+            setLoading(false)
         }
-
-        setLoading(false)
     }
 
     const resetForm = () => {
-        setCurrentPassword('')
+        setEmailConfirmCode('')
         setReceivedOTP('')
     }
 
+    const handleTimeIsUp = (val) => {
+        setIsTimeIsUp(val)
+    }
+
     return (
-        <Modal title="Two Factor Authentication">
+        <Modal
+            title="Two Factor Authentication" 
+            topLeft={(<CountdownTimer seconds={TIMER_IN_SECONDS} setTimeIsUp={handleTimeIsUp}/>)}
+        >
             <div id="otp-auth">
+                {isTimeIsUp && <div className='timer-reset-msg'>Please reopen the modal to reset the session.</div>}
                 <div className="img-wrapper">
                     <img alt="qr-code" src={imageURL}></img>
                 </div>
@@ -105,15 +153,21 @@ const OtpTwoFAModal = ({ relayerURL, selectedAcc, setCacheBreak }) => {
                 </div>
                 <form onSubmit={handleSubmit}>
                     <div>
-                        <h4>Account password</h4>
-                        <TextInput
-                            password
-                            required
-                            pattern=".{8,}"
-                            autocomplete="current-password"
-                            placeholder="Enter the account password"
-                            onInput={value => setCurrentPassword(value)}
-                        />
+                        <h4>Confirmation code sent via Email</h4>
+                        <div className='input-wrapper'>
+                            <TextInput
+                                small
+                                pattern='[0-9]+'
+                                title='Confirmation code should be 6 digits'
+                                autoComplete='nope'
+                                required minLength={6} maxLength={6}
+                                placeholder='Confirmation code'
+                                value={emailConfirmCode}
+                                onInput={value => setEmailConfirmCode(value)}
+                            ></TextInput>
+                            
+                            <Button type="button" small disabled={isTimeIsUp} onClick={sendEmail}>Send Email</Button>
+                        </div>
                         <h4>Authenticator app code</h4>
                         <TextInput
                             placeholder="Enter the code from authenticator app"
@@ -124,7 +178,7 @@ const OtpTwoFAModal = ({ relayerURL, selectedAcc, setCacheBreak }) => {
                         />
                     </div>
                     <div className="buttons">
-                        {!isLoading ? (<Button type="submit">Enable 2FA</Button>) : (<Button disabled><Loading /></Button>)}
+                        {!isLoading ? (<Button type="submit" disabled={isTimeIsUp}>Enable 2FA</Button>) : (<Button disabled><Loading /></Button>)}
                     </div>
                 </form>
             </div>
