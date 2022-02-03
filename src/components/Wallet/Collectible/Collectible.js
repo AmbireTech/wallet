@@ -14,12 +14,18 @@ import networks from 'consts/networks'
 import { validateSendNftAddress } from 'lib/validations/formValidations'
 import { BsXLg } from 'react-icons/bs'
 import { getProvider } from 'lib/provider'
+import { VELCRO_API_ENDPOINT } from 'config'
+import { fetchGet } from 'lib/fetch'
 
 const ERC721 = new Interface(ERC721Abi)
 
 const handleUri = uri => {
     uri = uri.startsWith('data:application/json') ? uri.replace('data:application/json;utf8,', '') : uri
-    return uri.startsWith('ipfs://') ? uri.replace(/ipfs:\/\/ipfs\/|ipfs:\/\//g, 'https://ipfs.io/ipfs/') : uri
+
+    if (uri.startsWith('ipfs://')) return uri.replace(/ipfs:\/\/ipfs\/|ipfs:\/\//g, 'https://ipfs.io/ipfs/')
+    if (uri.split('/')[2].endsWith('mypinata.cloud')) return 'https://ipfs.io/ipfs/' + uri.split('/').slice(4).join('/')
+        
+    return uri
 }
 
 const Collectible = ({ selectedAcc, selectedNetwork, addRequest, addressBook }) => {
@@ -128,8 +134,34 @@ const Collectible = ({ selectedAcc, selectedNetwork, addRequest, addressBook }) 
 
             setLoading(false)
         } catch(e) {
-            console.error(e)
-            addToast(`Collectible error: ${e.message || e}`, { error: true })
+            try {
+                const { success, collection, description, image, name, owner, message } = await fetchGet(
+                    `${VELCRO_API_ENDPOINT}/nftmeta/${collectionAddr}/${tokenId}?network=${network}`
+                    )                
+                if (!success) throw new Error(message)
+
+                const networkDetails = networks.find(({ id }) => id === network)
+                if (!networkDetails) throw new Error('This network is not supported')
+                
+                const { explorerUrl } = networkDetails
+                setMetadata(metadata => ({
+                    ...metadata,
+                    collection,
+                    description,
+                    image,
+                    name,
+                    owner: {
+                        address: owner,
+                        icon: blockies.create({ seed: owner }).toDataURL()
+                    },
+                    explorerUrl
+                })) 
+                
+                setLoading(false)
+            } catch(e) {
+                console.error(e)
+                addToast(`Collectible error: ${e.message || e}`, { error: true })
+            }
         }
     }, [addToast, tokenId, collectionAddr, network])
 
@@ -149,7 +181,7 @@ const Collectible = ({ selectedAcc, selectedNetwork, addRequest, addressBook }) 
                         <Loading/>
                         :
                         <div className="metadata">
-                            <div className="image" style={{backgroundImage: `url(${metadata.image})`}}>
+                            <div className="image" style={{backgroundImage: `url(${handleUri(metadata.image)})`}}>
                                 { !metadata.image ? <BsFillImageFill/> : null }
                             </div>
                             <div className="info">

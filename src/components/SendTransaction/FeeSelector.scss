@@ -1,0 +1,96 @@
+@import 'variables.scss';
+
+.native-fee-estimation {
+    font-weight: 500;
+}
+
+.balance-error {
+    padding: 1em 0;
+    font-size: 18px;
+    font-weight: bold;
+    color: $danger-color;
+}
+
+#fee-selector {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    gap: 1em;
+
+    .feeSquare {
+        height: 90px;
+        width: 100px;
+        @include flex-center-center;
+        flex-direction: column;
+        padding: 0 1em;
+        background: $background-color;
+        cursor: default;
+        transition: all 0.1s ease-in-out;
+
+        .speed, .feeEstimation {
+            font-size: 15px;
+            font-weight: 500;
+        }
+
+        .speed {
+            text-transform: uppercase;
+        }
+
+        .feeEstimation {
+            width: 100%;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            opacity: 0.5;
+        }
+
+        &.disabled {
+            opacity: 0.4;
+        }
+
+        &:not(.disabled):hover {
+            cursor: pointer;
+            background-color: $input-background-color;
+        }
+
+        &.selected {
+            box-shadow: 0 0 0 3px $ambire-dark-blue inset;
+            background-color: $input-background-color;
+        }
+    }
+}
+
+.failingTxn {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5em;
+    cursor: default;
+
+    .error-title {
+        display: flex;
+        align-items: center;
+        gap: 0.5em;
+        font-size: 18px;
+        font-weight: bold;
+        text-transform: uppercase;
+        color: $danger-color;
+
+        svg {
+            font-size: 20px;
+        }
+    }
+
+    .error-message {
+        font-size: 18px;
+        font-weight: 500;
+        color: $danger-color;
+        opacity: 0.9;
+    }
+}
+
+// Mobile
+@media screen and (max-width: $mobile-breakpoint-max-width) {
+    #fee-selector {
+        overflow-x: auto;
+    }
+}
