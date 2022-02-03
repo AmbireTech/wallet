@@ -3,6 +3,7 @@ import { useToasts } from './toasts'
 import * as blockies from 'blockies-ts'
 import { isValidAddress, isKnownTokenOrContract } from 'lib/address'
 import { setKnownAddresses } from 'lib/humanReadableTransactions'
+import { sha256 } from 'ethers/lib/utils'
 
 const accountType = ({ email, signerExtra }) => {
     const walletType = signerExtra && signerExtra.type === 'ledger' ? 'Ledger' : signerExtra && signerExtra.type === 'trezor' ? 'Trezor' : 'Web3'
@@ -46,9 +47,9 @@ const useAddressBook = ({ accounts }) => {
     }
 
     const isKnownAddress = useCallback(address => [
-        ...addresses.map(({ address }) => address),
-        ...accounts.map(({ id }) => id)
-    ].includes(address), [addresses, accounts])
+        ...addresses.map(({ address }) => sha256(address)),
+        ...accounts.map(({ id }) => sha256(id))
+    ].includes(sha256(address)), [addresses, accounts])
 
     const addAddress = useCallback((name, address) => {
         if (!name || !address) throw new Error('Address Book: invalid arguments supplied')

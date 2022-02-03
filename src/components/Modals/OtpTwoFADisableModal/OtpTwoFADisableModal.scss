@@ -1,7 +1,15 @@
 #disable-otp-modal {
+    .timer-reset-msg {
+        text-align: center;
+        margin: 35px 0;
+        font-size: 20px;
+        color: red;
+        font-weight: bold;
+    }
+
     form {
         display: flex;
-        justify-content: center;
+        flex-direction: column;
         height: 425px;
         
         div {
