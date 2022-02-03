@@ -12,9 +12,10 @@ import { validateSendTransferAddress, validateSendTransferAmount } from 'lib/val
 import { isValidAddress } from 'lib/address'
 import Addresses from './Addresses/Addresses'
 import { MdInfo } from 'react-icons/md'
+import networks from 'consts/networks'
 
 const ERC20 = new Interface(require('adex-protocol-eth/abi/ERC20'))
-const unsupportedSWPlatforms = ['Binance', 'Huobi']
+const unsupportedSWPlatforms = ['Binance', 'Huobi', 'KuCoin', 'Gate.io', 'FTX']
 
 const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest, addressBook }) => {
     const { addresses, addAddress, removeAddress, isKnownAddress } = addressBook
@@ -57,7 +58,11 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
         return ethers.utils.formatUnits(balanceRaw, decimals)
     }, [selectedAsset])
 
-    const showSWAddressWarning = useMemo(() => Number(tokenAddress) === 0 && ['polygon', 'binance-smart-chain'].includes(selectedNetwork.id), [tokenAddress, selectedNetwork])
+    const showSWAddressWarning = useMemo(() => 
+        Number(tokenAddress) === 0 && networks.map(({ id }) => id).filter(id => id !== 'ethereum').includes(selectedNetwork.id)
+    , [tokenAddress, selectedNetwork])
+
+    console.log(showSWAddressWarning);
 
     const setMaxAmount = () => onAmountChange(maxAmount)
 
@@ -185,7 +190,7 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
                                             id="binance-address-warning"
                                             label={<span id="binance-address-warning-label">
                                                 I confirm this address is not a { unsupportedSWPlatforms.join(' / ') } address: <br/>
-                                                { unsupportedSWPlatforms.join(' / ') } does not support ${selectedAsset?.symbol} deposits from smart wallets
+                                                These platforms does not support ${selectedAsset?.symbol} deposits from smart wallets
                                                 <a href='https://help.ambire.com/hc/en-us/articles/4415473743506-Statement-on-MATIC-BNB-deposits-to-Binance' target='_blank' rel='noreferrer'><MdInfo size={20}/></a>
                                             </span>}
                                             checked={sWAddressConfirmed}
