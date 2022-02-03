@@ -21,6 +21,7 @@ const TopBar = ({
   network,
   setNetwork,
   allNetworks,
+  relayerURL,
   rewardsData,
   privateMode: { isPrivateMode, togglePrivateMode, hidePrivateValue },
   addRequest
@@ -53,6 +54,7 @@ const TopBar = ({
       </NavLink>
       <div className={`container ${isMenuOpen ? 'open' : ''}`}>
         <Rewards
+          relayerURL={relayerURL}
           rewardsData={rewardsData}
           account={account}
           network={network}
