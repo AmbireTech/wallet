@@ -40,7 +40,7 @@ export default function useAmbireBookmarklet({ allNetworks, setNetwork, selected
     if (any instanceof BigNumber) {
       return any.toHexString()
     } else {
-      if (any === undefined) {
+      if (any === undefined || any === null) {
         return any
       }
       return BigNumber.from(any).toHexString()
@@ -185,7 +185,7 @@ export default function useAmbireBookmarklet({ allNetworks, setNetwork, selected
         result = [{ parentCapability: 'eth_accounts' }]
       } else if (method === 'wallet_switchEthereumChain') {
         const existingNetwork = allNetworks.find(a => {
-          return sanitize2hex(a.chainId) === callTx[0]?.chainId
+          return sanitize2hex(a.chainId) === sanitize2hex(callTx[0]?.chainId)
         })
         if (existingNetwork) {
           setNetwork(existingNetwork.chainId)

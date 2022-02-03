@@ -37,7 +37,7 @@ export default function useAmbireExtension({ allNetworks, setNetwork, selectedAc
     if (any instanceof BigNumber) {
       return any.toHexString()
     } else {
-      if (any === undefined) {
+      if (any === undefined || any === null) {
         return any
       }
       return BigNumber.from(any).toHexString()
@@ -199,7 +199,7 @@ export default function useAmbireExtension({ allNetworks, setNetwork, selectedAc
         result = [{ parentCapability: 'eth_accounts' }]
       } else if (method === 'wallet_switchEthereumChain') {
         const existingNetwork = allNetworks.find(a => {
-          return sanitize2hex(a.chainId) === callTx[0]?.chainId
+          return sanitize2hex(a.chainId) === sanitize2hex(callTx[0]?.chainId)//ethers BN ouputs 1 to 0x01 while some dapps ask for 0x1
         })
         if (existingNetwork) {
           setNetwork(existingNetwork.chainId)
