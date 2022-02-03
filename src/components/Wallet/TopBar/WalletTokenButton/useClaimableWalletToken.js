@@ -10,7 +10,7 @@ import WALLETSupplyControllerABI from 'consts/WALLETSupplyControllerABI'
 const supplyControllerAddress = '0x94b668337ce8299272ca3cb0c70f3d786a5b6ce5'
 const supplyControllerInterface = new Interface(WALLETSupplyControllerABI)
 
-const useClaimableWalletToken = ({ account, network, addRequest, walletTokenInfoData }) => {
+const useClaimableWalletToken = ({ account, network, addRequest }) => {
     const provider = useMemo(() => getProvider('ethereum'), [])
     const supplyController = useMemo(() => new Contract(supplyControllerAddress, WALLETSupplyControllerABI, provider), [provider])
     const initialClaimableEntry = WALLETInitialClaimableRewards.find(x => x.addr === account.id)
@@ -35,7 +35,6 @@ const useClaimableWalletToken = ({ account, network, addRequest, walletTokenInfo
     }, [supplyController, vestingEntry, initialClaimableEntry])
 
     const claimableNow = initialClaimable - currentClaimStatus.claimed
-    const claimableNowUsd = !walletTokenInfoData.isLoading && !currentClaimStatus.loading && claimableNow ? (walletTokenInfoData.data?.usdPrice * claimableNow).toFixed(2) : '...'
 
     const disabledReason = network.id !== 'ethereum' ? 'Switch to Ethereum to claim' : (
         currentClaimStatus.error ? `Claim status error: ${currentClaimStatus.error}` : null
@@ -78,7 +77,6 @@ const useClaimableWalletToken = ({ account, network, addRequest, walletTokenInfo
         vestingEntry,
         currentClaimStatus,
         claimableNow,
-        claimableNowUsd,
         disabledReason,
         claimDisabledReason,
         claimEarlyRewards,
