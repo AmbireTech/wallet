@@ -4,6 +4,10 @@
     font-weight: 500;
 }
 
+.discount-label {
+    color: $ambire-purple;
+}
+
 .balance-error {
     padding: 1em 0;
     font-size: 18px;
@@ -26,6 +30,7 @@
         background: $background-color;
         cursor: default;
         transition: all 0.1s ease-in-out;
+        position: relative;
 
         .speed, .feeEstimation {
             font-size: 15px;
@@ -57,14 +62,22 @@
             box-shadow: 0 0 0 3px $ambire-dark-blue inset;
             background-color: $input-background-color;
         }
+
+        .discount-badge {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            color: $ambire-purple;
+        }
     }
 }
 
 .fee-select {
     .discount {
         @include flex-center-center;
-        color: $secondary-accent-color;
+        color: $ambire-purple;
         font-size: 1.2rem;
+        font-weight: bold;
     }
 }
 

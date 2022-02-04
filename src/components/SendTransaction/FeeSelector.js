@@ -63,22 +63,24 @@ export function FeeSelector ({ disabled, signer, estimation, network, setEstimat
     </>) : (<></>)
   
     const areSelectorsDisabled = disabled || insufficientFee
-    const { isStable } = estimation.selectedFeeToken
+    const { isStable, discount = 0 } = estimation.selectedFeeToken
     const { multiplier } = getFeePaymentConsequences(estimation.selectedFeeToken, estimation)
+    const discountMultiplier = 1 - discount
     const feeAmountSelectors = SPEEDS.map(speed => (
       <div 
         key={speed}
         className={`feeSquare${feeSpeed === speed ? ' selected' : ''}${areSelectorsDisabled ? ' disabled' : ''}`}
         onClick={() => !areSelectorsDisabled && setFeeSpeed(speed)}
       >
+        {discount && <FaPercentage  className='discount-badge'/>}
         <div className='speed'>{speed}</div>
         <div className='feeEstimation'>
           {isStable
-            ? '$'+(estimation.feeInUSD[speed] * multiplier)
+            ? '$'+(estimation.feeInUSD[speed] * multiplier * discountMultiplier)
             : (
               nativeAssetSymbol === 'ETH' ?
-                'Ξ '+(estimation.feeInNative[speed] * multiplier)
-                : (estimation.feeInNative[speed] * multiplier)+' '+nativeAssetSymbol
+                'Ξ '+(estimation.feeInNative[speed] * multiplier * discountMultiplier)
+                : (estimation.feeInNative[speed] * multiplier * discountMultiplier)+' '+nativeAssetSymbol
             )
           }
         </div>
@@ -96,9 +98,16 @@ export function FeeSelector ({ disabled, signer, estimation, network, setEstimat
       </div>
       { // Visualize the fee once again with a USD estimation if in native currency
       !isStable && (<div className='native-fee-estimation'>
-        Fee: {(estimation.feeInNative[feeSpeed] * multiplier)+' '+nativeAssetSymbol}
-        &nbsp;(~ ${(estimation.feeInNative[feeSpeed] * multiplier * estimation.nativeAssetPriceInUSD).toFixed(2)})
+        Fee: {(estimation.feeInNative[feeSpeed] * multiplier*discountMultiplier)+' '+nativeAssetSymbol}
+        &nbsp;(~ ${(estimation.feeInNative[feeSpeed] * multiplier * discountMultiplier * estimation.nativeAssetPriceInUSD).toFixed(2)})
+        &nbsp;{discount && <span className='discount-label'>*</span>}
       </div>)}
+
+      { !!discount && (<div className='native-fee-estimation discount-label'>
+        * Discount applied: {(estimation.feeInNative[feeSpeed] * multiplier*discount)+' '+nativeAssetSymbol}
+        &nbsp;(~ ${(estimation.feeInNative[feeSpeed] * multiplier * discount * estimation.nativeAssetPriceInUSD).toFixed(4)})
+      </div>)}
+
       {!estimation.feeInUSD ?
         (<span><b>WARNING:</b> Paying fees in tokens other than {nativeAssetSymbol} is unavailable because you are not connected to a relayer. You will pay the fee from <b>{signer.address}</b>.</span>)
         : (<></>)}
