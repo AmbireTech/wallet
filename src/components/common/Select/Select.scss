@@ -42,6 +42,7 @@
         text-overflow: ellipsis;
         overflow: hidden;
         cursor: pointer;
+        flex-grow: 1;
     }
 
     .select-container {
@@ -132,6 +133,11 @@
                         background-color: $primary-accent-color;
                         border-radius: 100%;
                     }
+                }
+
+                &.disabled {
+                    opacity: 0.6;
+                    cursor: no-drop;
                 }
             }
         }
