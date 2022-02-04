@@ -86,7 +86,9 @@ export function FeeSelector ({ disabled, signer, estimation, network, setEstimat
         </div>
       </div>
     ))
-  
+
+    const feeInNative = estimation.feeInNative[feeSpeed] * multiplier * discountMultiplier
+    const feeInUSD =  feeInNative * estimation.nativeAssetPriceInUSD
     return (<>
       {insufficientFee ?
         (<div className='balance-error'>Insufficient balance for the fee.<br/>Accepted tokens: {(estimation.remainingFeeTokenBalances || []).map(x => x.symbol).join(', ')}</div>)
@@ -98,14 +100,14 @@ export function FeeSelector ({ disabled, signer, estimation, network, setEstimat
       </div>
       { // Visualize the fee once again with a USD estimation if in native currency
       !isStable && (<div className='native-fee-estimation'>
-        Fee: {(estimation.feeInNative[feeSpeed] * multiplier*discountMultiplier)+' '+nativeAssetSymbol}
-        &nbsp;(~ ${(estimation.feeInNative[feeSpeed] * multiplier * discountMultiplier * estimation.nativeAssetPriceInUSD).toFixed(2)})
-        &nbsp;{discount && <span className='discount-label'>*</span>}
+        Fee: {feeInNative+' '+nativeAssetSymbol}
+        &nbsp;(~${(feeInUSD).toFixed(feeInUSD < 0.01 ? 4 : 2)})
+        &nbsp;{!!discount && <span className='discount-label'>*</span>}
       </div>)}
 
       { !!discount && (<div className='native-fee-estimation discount-label'>
-        * Discount applied: {(estimation.feeInNative[feeSpeed] * multiplier*discount)+' '+nativeAssetSymbol}
-        &nbsp;(~ ${(estimation.feeInNative[feeSpeed] * multiplier * discount * estimation.nativeAssetPriceInUSD).toFixed(4)})
+        * Discount applied ({discount * 100}%):  {feeInNative * discount  +' '+nativeAssetSymbol}
+        &nbsp;(~${(feeInUSD * discount).toFixed(feeInUSD * discount < 0.01 ? 4 : 2)})
       </div>)}
 
       {!estimation.feeInUSD ?
