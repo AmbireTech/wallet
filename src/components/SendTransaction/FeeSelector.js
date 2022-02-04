@@ -3,6 +3,7 @@ import './FeeSelector.scss'
 import { AiOutlineWarning } from 'react-icons/ai'
 import { Loading, Select, ToolTip } from 'components/common'
 import { isTokenEligible, getFeePaymentConsequences, mapTxnErrMsg, getErrHint } from './helpers'
+import { FaPercentage } from 'react-icons/fa'
 
 const SPEEDS = ['slow', 'medium', 'fast', 'ape']
 
@@ -38,16 +39,21 @@ export function FeeSelector ({ disabled, signer, estimation, network, setEstimat
 
     const currenciesItems = tokens
       .filter(token => isTokenEligible(token, feeSpeed, estimation))
-      .map(({ address, symbol }) => ({
+      .sort((a, b) => (b.discount || 0) - (a.discount || 0))
+      .map(({ address, symbol, discount }) => ({
         icon: address ? `${zapperStorageTokenIcons}/${network.id}/${address.toLowerCase()}.png` : null,
         label: symbol,
-        value: address || symbol
+        value: address || symbol,
+        ...(discount ? { 
+          extra: <div className='discount'> - {discount * 100} <FaPercentage /> </div>
+        } : {})
       }))
 
     const feeCurrencySelect = estimation.feeInUSD ? (<>
       <div className='section'>
         <div className='section-title'>Fee Currency</div>
         <Select
+          className="fee-select"
           disabled={disabled}
           defaultValue={estimation.selectedFeeToken?.address || estimation.selectedFeeToken?.symbol}
           items={currenciesItems}
@@ -99,7 +105,7 @@ export function FeeSelector ({ disabled, signer, estimation, network, setEstimat
     </>)
 }
 
-export function FailingTxn ({ message, tooltip = '' }) {
+export function FailingTxn({ message, tooltip = '' }) {
     return (<div className='failingTxn'>
       <ToolTip label={tooltip}>
         <div className='error-title'><AiOutlineWarning></AiOutlineWarning> Warning</div>

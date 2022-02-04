@@ -60,6 +60,14 @@
     }
 }
 
+.fee-select {
+    .discount {
+        @include flex-center-center;
+        color: $secondary-accent-color;
+        font-size: 1.2rem;
+    }
+}
+
 .failingTxn {
     display: flex;
     flex-direction: column;
