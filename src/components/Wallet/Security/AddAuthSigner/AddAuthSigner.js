@@ -14,11 +14,7 @@ import { validateAddAuthSignerAddress } from 'lib/validations/formValidations'
 import { BsXLg } from 'react-icons/bs'
 import { MdOutlineAdd } from 'react-icons/md'
 import { LatticeModal } from 'components/Modals'
-import { Client } from 'gridplus-sdk'
-import { useToasts } from 'hooks/toasts'
-
-const HARDENED_OFFSET = 0x80000000
-const crypto = require('crypto')
+import { latticeInit, latticeConnect, latticeGetAddresses } from 'lib/lattice'
 
 const AddAuthSigner = ({ selectedNetwork, selectedAcc, onAddBtnClicked }) => {
   const [signerAddress, setSignerAddress] = useState({
@@ -36,8 +32,8 @@ const AddAuthSigner = ({ selectedNetwork, selectedAcc, onAddBtnClicked }) => {
     success: false, 
     message: ''
   })
+  //TODO: Remove the isLatticePaired
   const [isLatticePaired, setIsLatticePaired] = useState(true)
-  const { addToast } = useToasts()
   
   async function connectLedgerAndGetAccounts() {
     if (isFirefox()) {
@@ -128,7 +124,7 @@ const AddAuthSigner = ({ selectedNetwork, selectedAcc, onAddBtnClicked }) => {
     setModalToggle(true)
   }
 
-  const getLatticeAddresses = ({ addresses, deviceId, privKey, isPaired }) => {
+  const setLatticeAddresses = ({ addresses, deviceId, privKey, isPaired }) => {
     setChooseSigners({
       addresses, signerName: 'Lattice', signerExtra: {
         type: 'Lattice',
@@ -141,52 +137,48 @@ const AddAuthSigner = ({ selectedNetwork, selectedAcc, onAddBtnClicked }) => {
     setModalToggle(true)
   }
   
-  function connectGridPlusAndGetAccounts() {
+  async function connectGridPlusAndGetAccounts() {
     if (selectedAcc.signerExtra && 
       selectedAcc.signerExtra.type === 'Lattice' && 
       selectedAcc.signerExtra.isPaired && isLatticePaired) {
+        //TODO: rename privKey into commKey in signerExtra
         const { privKey, deviceId } = selectedAcc.signerExtra
-        const clientConfig = {
-            name: 'Ambire Wallet',
-            crypto: crypto,
-            privKey: privKey,
-        }
-        const client = new Client(clientConfig)
-        const getAddressesReqOpts = {
-            startPath: [HARDENED_OFFSET+44, HARDENED_OFFSET+60, HARDENED_OFFSET, 0, 0],
-            n: 10
-        }
+        const client = latticeInit(privKey)
 
         setShowLoading(true)
 
-        client.connect(deviceId, (err, isPaired) => {
-          if (!isPaired) {
+        const { isPaired, err } = await latticeConnect(client, deviceId)
+        if (err) {
+          setShowLoading(false)
+          setAddAccErr(err.message || err)
+
+          return
+        }
+
+        if (!isPaired) {
+          setShowLoading(false)
+          setIsLatticePaired(false)
+          //TODO: Call pair request here and popup the modal the enter the secretr!
+          client.pair('')
+          setAddAccErr(`The Lattice device is not paired!`, { error: true })
+          
+          return 
+        }
+
+        const { res, errGetAddresses } = await latticeGetAddresses(client)
+        if (errGetAddresses) {
             setShowLoading(false)
-            setIsLatticePaired(false)
-            addToast(`The Lattice device is not paired!`, { error: true })
-            return 
-          }
+            setAddAccErr(`Lattice: ${err}`, { error: true })
 
-          if (err) {
-              setShowLoading(false)
-              addToast(`Lattice: ${err} Or check if the DeviceID is correct.`, { error: true })
-              return 
-          }
-
-          client.getAddresses(getAddressesReqOpts, (err, res) => {
-              if (err) {
-                  setShowLoading(false)
-                  addToast(`Lattice: ${err}`, { error: true })
-                  return
-              }
-              
-              setShowLoading(false)
-              getLatticeAddresses({ addresses: res, deviceId: deviceId, privKey: privKey, isPaired: true })
-          })
-            
-        })
+            return
+        }
+        
+        if (res) {
+          setShowLoading(false)
+          setLatticeAddresses({ addresses: res, deviceId: deviceId, privKey: privKey, isPaired: true })
+        }
       } else {
-        showModal(<LatticeModal addresses={getLatticeAddresses} />)
+        showModal(<LatticeModal addresses={setLatticeAddresses} />)
         setIsLatticePaired(true)
       }
   }
