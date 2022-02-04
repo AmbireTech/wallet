@@ -52,7 +52,9 @@ const uniV2Mapping = {
   [iface.getSighash('swapTokensForExactTokens')]: (txn, network, opts = {}) => {
     const [ amountOut, amountInMax, path, to, deadline ] = iface.parseTransaction(txn).args
     const outputAsset = path[path.length - 1]
-    return [`Swap up to ${token(path[0], amountInMax)} for ${token(outputAsset, amountOut)}${recipientText(to, txn.from)}${deadlineText(deadline, opts.mined)}`]
+    return !opts.extended ?
+      [`Swap up to ${token(path[0], amountInMax)} for ${token(outputAsset, amountOut)}${recipientText(to, txn.from)}${deadlineText(deadline, opts.mined)}`]
+      : toExtended(token(path[0], amountInMax, true), token(outputAsset, amountOut, true), recipientText(to, txn.from, true), deadlineText(deadline, opts.mined), false)
   },
   [iface.getSighash('swapExactETHForTokens')]: (txn, network, opts = {}) => {
     const { args, value } = iface.parseTransaction(txn)
@@ -64,11 +66,15 @@ const uniV2Mapping = {
   },
   [iface.getSighash('swapTokensForExactETH')]: (txn, network, opts = {}) => {
     const [ amountOut, amountInMax, path, to, deadline ] = iface.parseTransaction(txn).args
-    return [`Swap up to ${token(path[0], amountInMax)} for ${nativeToken(network, amountOut)}${recipientText(to, txn.from)}${deadlineText(deadline, opts.mined)}`]
+    return !opts.extended ? 
+      [`Swap up to ${token(path[0], amountInMax)} for ${nativeToken(network, amountOut)}${recipientText(to, txn.from)}${deadlineText(deadline, opts.mined)}`]
+      : toExtended(token(path[0], amountInMax, true), nativeToken(network, amountOut, true), recipientText(to, txn.from, true), deadlineText(deadline, opts.mined), false)
   },
   [iface.getSighash('swapExactTokensForETH')]: (txn, network, opts = {}) => {
     const [ amountIn, amountOutMin, path, to, deadline ] = iface.parseTransaction(txn).args
-    return [`Swap ${token(path[0], amountIn)} for at least ${nativeToken(network, amountOutMin)}${recipientText(to, txn.from)}${deadlineText(deadline, opts.mined)}`]
+    return !opts.extended ?
+      [`Swap ${token(path[0], amountIn)} for at least ${nativeToken(network, amountOutMin)}${recipientText(to, txn.from)}${deadlineText(deadline, opts.mined)}`]
+      : toExtended(token(path[0], amountIn, true), nativeToken(network, amountOutMin, true), recipientText(to, txn.from, true), deadlineText(deadline, opts.mined))
   },
   [iface.getSighash('swapETHForExactTokens')]: (txn, network, opts = {}) => {
     const { args, value } = iface.parseTransaction(txn)
