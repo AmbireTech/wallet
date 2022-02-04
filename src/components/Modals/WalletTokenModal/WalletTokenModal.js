@@ -62,9 +62,9 @@ const WalletTokenModal = ({ claimableWalletToken, rewards, walletTokenInfoData, 
         claimVesting
     } = claimableWalletToken
 
-    const walletTokenAPY = !walletTokenInfoData.isLoading && walletTokenInfoData.data ? (walletTokenInfoData.data?.apy).toFixed(2) : '...'
-    const adxTokenAPY = !adxTokenInfoData.isLoading && adxTokenInfoData.data ? (adxTokenInfoData.data?.apy).toFixed(2) : '...'
-    const claimableNowUsd = !walletTokenInfoData.isLoading && !currentClaimStatus.loading && claimableNow ? (walletTokenInfoData.data?.usdPrice * claimableNow).toFixed(2) : '...'
+    const walletTokenAPY = walletTokenInfoData && !walletTokenInfoData.isLoading && walletTokenInfoData.data ? (walletTokenInfoData.data?.apy).toFixed(2) : '...'
+    const adxTokenAPY = adxTokenInfoData && !adxTokenInfoData.isLoading && adxTokenInfoData.data ? (adxTokenInfoData.data?.apy).toFixed(2) : '...'
+    const claimableNowUsd = walletTokenInfoData && !walletTokenInfoData.isLoading && !currentClaimStatus.loading && claimableNow ? (walletTokenInfoData.data?.usdPrice * claimableNow).toFixed(2) : '...'
 
     const modalButtons = <>
         <Button clear icon={<MdOutlineClose/>} onClick={() => hideModal()}>Close</Button>
