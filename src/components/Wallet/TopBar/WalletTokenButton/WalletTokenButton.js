@@ -5,13 +5,14 @@ import { WalletTokenModal } from "components/Modals";
 import useClaimableWalletToken from "./useClaimableWalletToken";
 
 const WalletTokenButton = ({ rewardsData, walletTokenInfoData, adxTokenInfoData, account, network, hidePrivateValue, addRequest }) => {
-    const { showModal } = useModals()
+    const { showDynamicModal, updateModal } = useModals()
     const claimableWalletToken = useClaimableWalletToken({ account, network, addRequest })
 
     const [rewards, setRewards] = useState({})
     const { isLoading, data, errMsg } = rewardsData
 
-    const showWalletTokenModal = () => showModal(<WalletTokenModal claimableWalletToken={claimableWalletToken} rewards={rewards} walletTokenInfoData={walletTokenInfoData} adxTokenInfoData={adxTokenInfoData} />)
+    const showWalletTokenModal = () => showDynamicModal(WalletTokenModal, { claimableWalletToken, rewards, walletTokenInfoData, adxTokenInfoData })
+    useEffect(() => updateModal({ rewards, walletTokenInfoData, adxTokenInfoData }), [updateModal, rewards, walletTokenInfoData, adxTokenInfoData])
 
     useEffect(() => {
         if (errMsg || !data || !data.success) return
