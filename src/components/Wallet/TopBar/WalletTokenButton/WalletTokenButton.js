@@ -1,18 +1,16 @@
 import { useEffect, useState } from "react"
-import { useModals } from "hooks";
+import useDynamicModal from "hooks/useDynamicModals";
 import { Button, ToolTip } from "components/common";
 import { WalletTokenModal } from "components/Modals";
 import useClaimableWalletToken from "./useClaimableWalletToken";
 
 const WalletTokenButton = ({ rewardsData, walletTokenInfoData, adxTokenInfoData, account, network, hidePrivateValue, addRequest }) => {
-    const { showDynamicModal, updateModal } = useModals()
     const claimableWalletToken = useClaimableWalletToken({ account, network, addRequest })
-
+    
     const [rewards, setRewards] = useState({})
     const { isLoading, data, errMsg } = rewardsData
-
-    const showWalletTokenModal = () => showDynamicModal(WalletTokenModal, { claimableWalletToken, rewards, walletTokenInfoData, adxTokenInfoData })
-    useEffect(() => updateModal({ rewards, walletTokenInfoData, adxTokenInfoData }), [updateModal, rewards, walletTokenInfoData, adxTokenInfoData])
+    
+    const showWalletTokenModal = useDynamicModal(WalletTokenModal, { claimableWalletToken }, { rewards, walletTokenInfoData, adxTokenInfoData })
 
     useEffect(() => {
         if (errMsg || !data || !data.success) return
