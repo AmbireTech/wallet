@@ -9,6 +9,7 @@ import YearnTesseractVault from './YearnTesseractVault'
 import Movr from './Movr'
 import OpenSea from './OpenSea'
 import WALLETSupplyController from './WALLETSupplyController'
+import AmbireBatcher from './AmbireBatcher'
 
 const all = {
 	...UniRouters,
@@ -21,6 +22,7 @@ const all = {
 	...YearnTesseractVault,
 	...Movr,
 	...OpenSea,
-	...WALLETSupplyController
+	...WALLETSupplyController,
+	...AmbireBatcher
 }
 export default all
