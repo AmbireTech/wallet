@@ -41,7 +41,7 @@ const WalletTokenCard = ({ networkId, accountId, tokens, walletTokenInfoData, ad
             ['Lock', 'No Lock'],
             ['Type', 'Variable Rate'],
         ])
-    }, [])
+    }, [walletTokenAPY])
 
     const onValidate = () => {
 
