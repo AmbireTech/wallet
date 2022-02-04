@@ -53,6 +53,7 @@ const contracts = [
 	...yearnVaults,
 	...tesseractVaults,
 	{ name: 'Ambire Factory', network: 'ethereum', addr: '0xBf07a0Df119Ca234634588fbDb5625594E2a5BCA', abiName: 'IdentityFactory' },
+	{ name: 'Ambire Batcher', network: 'ethereum', addr: '0x460fad03099f67391d84c9cc0ea7aa2457969cea', abiName: 'Batcher' },
 	{ name: 'OpenSea', network: 'ethereum', addr: '0x7Be8076f4EA4A4AD08075C2508e481d6C946D12b', abiName: 'WyvernExchange' }
 ]
 const tokenlists = [
