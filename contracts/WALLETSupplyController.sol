@@ -148,7 +148,7 @@ contract WALLETSupplyController {
 			// AUDIT: We can check toReceive > 0 or toBurn > 0, but there's no point since in the most common path both will be non-zero
 			WALLET.mint(recipient, toReceive);
 			WALLET.mint(address(0), toBurn);
-      emit LogClaimWithPenalty(recipient, toReceive, toBurn);
+			emit LogClaimWithPenalty(recipient, toReceive, toBurn);
 		} else if (toBurnBps == 0) {
 			WALLET.mint(address(this), toClaim);
 			if (WALLET.allowance(address(this), address(stakingPool)) < toClaim) {
