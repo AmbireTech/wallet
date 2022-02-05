@@ -56,7 +56,7 @@ const MultiplierBadges = ({ rewards }) => {
     </div>)
 }
 
-const supplyControllerAddress = '0x94b668337ce8299272ca3cb0c70f3d786a5b6ce5'
+const supplyControllerAddress = '0xc53af25f831f31ad6256a742b3f0905bc214a430'
 const supplyControllerInterface = new Interface(WALLETSupplyControllerABI)
 const WalletTokenModal = ({ rewards, account, network, addRequest }) => {
     const { hideModal } = useModals()
