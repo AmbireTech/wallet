@@ -99,7 +99,6 @@ const WalletTokenModal = ({ rewards, account, network, addRequest }) => {
                 to: supplyControllerAddress,
                 value: '0x0',
                 data: supplyControllerInterface.encodeFunctionData('claim', [
-                    initialClaimableEntry.addr,
                     initialClaimableEntry.totalClaimableBN,
                     initialClaimableEntry.proof,
                     0, // penalty bps, at the moment we run with 0; it's a safety feature to hardcode it
