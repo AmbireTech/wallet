@@ -158,7 +158,7 @@ const AddAuthSigner = ({ selectedNetwork, selectedAcc, onAddBtnClicked }) => {
         if (!isPaired) {
           setShowLoading(false)
           setIsLatticePaired(false)
-          //TODO: Call pair request here and popup the modal the enter the secretr!
+          //TODO: Call pair request here and popup the modal to enter the secret!
           client.pair('')
           setAddAccErr(`The Lattice device is not paired!`, { error: true })
           
