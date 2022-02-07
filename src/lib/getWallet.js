@@ -51,9 +51,8 @@ async function getWalletNew({ chainId, signer, signerExtra }, opts) {
     return {
       signMessage: async hash => {
         try {
-          //TODO: privKey should be commKey
-          const { privKey, deviceId } = signerExtra
-          const client = latticeInit(privKey)
+          const { commKey, deviceId } = signerExtra
+          const client = latticeInit(commKey)
           const {isPaired, err } = await latticeConnect(client, deviceId)
 
           if (err) throw new Error(err.message || err)
