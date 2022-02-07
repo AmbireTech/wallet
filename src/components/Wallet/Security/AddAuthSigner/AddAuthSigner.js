@@ -124,12 +124,12 @@ const AddAuthSigner = ({ selectedNetwork, selectedAcc, onAddBtnClicked }) => {
     setModalToggle(true)
   }
 
-  const setLatticeAddresses = ({ addresses, deviceId, privKey, isPaired }) => {
+  const setLatticeAddresses = ({ addresses, deviceId, commKey, isPaired }) => {
     setChooseSigners({
       addresses, signerName: 'Lattice', signerExtra: {
         type: 'Lattice',
         deviceId: deviceId,
-        privKey: privKey,
+        commKey: commKey,
         isPaired: isPaired
       }
     })
@@ -138,12 +138,12 @@ const AddAuthSigner = ({ selectedNetwork, selectedAcc, onAddBtnClicked }) => {
   }
   
   async function connectGridPlusAndGetAccounts() {
+    debugger
     if (selectedAcc.signerExtra && 
       selectedAcc.signerExtra.type === 'Lattice' && 
       selectedAcc.signerExtra.isPaired && isLatticePaired) {
-        //TODO: rename privKey into commKey in signerExtra
-        const { privKey, deviceId } = selectedAcc.signerExtra
-        const client = latticeInit(privKey)
+        const { commKey, deviceId } = selectedAcc.signerExtra
+        const client = latticeInit(commKey)
 
         setShowLoading(true)
 
@@ -160,7 +160,7 @@ const AddAuthSigner = ({ selectedNetwork, selectedAcc, onAddBtnClicked }) => {
           setIsLatticePaired(false)
           //TODO: Call pair request here and popup the modal to enter the secret!
           client.pair('')
-          setAddAccErr(`The Lattice device is not paired!`, { error: true })
+          setAddAccErr(`The Lattice device is not paired! Try again to pair the device.`, { error: true })
           
           return 
         }
@@ -175,7 +175,8 @@ const AddAuthSigner = ({ selectedNetwork, selectedAcc, onAddBtnClicked }) => {
         
         if (res) {
           setShowLoading(false)
-          setLatticeAddresses({ addresses: res, deviceId: deviceId, privKey: privKey, isPaired: true })
+          debugger
+          setLatticeAddresses({ addresses: res, deviceId: deviceId, commKey: commKey, isPaired: true })
         }
       } else {
         showModal(<LatticeModal addresses={setLatticeAddresses} />)

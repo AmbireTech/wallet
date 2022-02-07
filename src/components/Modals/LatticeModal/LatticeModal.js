@@ -64,7 +64,7 @@ const LatticeModal = ({ addresses }) => {
                     addresses({
                         addresses: res,
                         deviceId: deviceId,
-                        privKey: commKey,
+                        commKey: commKey,
                         isPaired: true
                     })
                     setLoading(false)
@@ -83,8 +83,7 @@ const LatticeModal = ({ addresses }) => {
                 addresses({
                     addresses: res,
                     deviceId: deviceId,
-                    //TODO: Rename prop: privKey into commKey
-                    privKey: commKey,
+                    commKey: commKey,
                     isPaired: true
                 })
                 setLoading(false)
