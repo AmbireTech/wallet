@@ -1,4 +1,5 @@
 import { Client } from 'gridplus-sdk'
+import { ethers } from 'ethers'
 
 const crypto = require('crypto')
 const HARDENED_OFFSET = 0x80000000
@@ -82,25 +83,41 @@ const latticeGetAddresses = async client => {
     }
 }
 
-const latticeSignMessage = async client => {
-    try {
-        const res = await new Promise((resolve, reject) => {
-            client.getAddresses(getAddressesReqOpts, (err, res) => {
-                if (err) reject(`Lattice get addresses: ${err}`)
+const latticeSignMessage = async(client, hash) => {
+    const dataMsg = {
+        protocol: 'signPersonal',
+        payload: ethers.utils.hexlify(hash),
+        signerPath: [HARDENED_OFFSET+44, HARDENED_OFFSET+60, HARDENED_OFFSET, 0, 0],
+      }
 
-                resolve({res, errGetAddresses: false })
+    const signOptsMsg = {
+        currency: 'ETH_MSG',
+        data: dataMsg,
+    }
+
+    try {
+        const sign = await new Promise((resolve, reject) => {
+            client.sign(signOptsMsg, (err, signedTx) => {
+                let signedMsg
+
+                if (err) reject(err)
+
+                if (signedTx) {
+                    signedMsg = '0x' + signedTx.sig.r + signedTx.sig.s + signedTx.sig.v[0].toString(16)
+                    resolve({ signedMsg, errSignMessage: false })
+                }
             })
         })
 
-        return res
+        return sign
     } catch (err) {
         console.error(err)
 
-        return { res: null, errGetAddresses: err }
+        return { signedMsg: null, errSignMessage: err }
     }
 }
 
-//TODO: SignMessage
+//TODO: add SignTransaction func
 
 export { 
     latticeInit,

@@ -5,18 +5,7 @@ import HDNode from 'hdkey'
 import { LedgerSubprovider } from '@0x/subproviders/lib/src/subproviders/ledger' // https://github.com/0xProject/0x-monorepo/issues/1400
 import { ledgerEthereumBrowserClientFactoryAsync } from '@0x/subproviders/lib/src' // https://github.com/0xProject/0x-monorepo/issues/1400
 import { ledgerSignMessage, ledgerSignTransaction } from './ledgerWebHID'
-import { Client } from 'gridplus-sdk'
-
-const crypto = require('crypto')
-const privKey = 'ef903967c21ec517d2df66eae824856f6dd8c99694bd2d8ee9fc85e329a51341'
-const HARDENED_OFFSET = 0x80000000
-const clientConfig = {
-  name: 'Ambire Wallet',
-  crypto: crypto,
-  privKey: privKey,
-}
-
-const client = new Client(clientConfig)
+import { latticeInit, latticeConnect, latticeSignMessage } from 'lib/lattice'
 
 let wallets = {}
 
@@ -59,68 +48,32 @@ async function getWalletNew({ chainId, signer, signerExtra }, opts) {
       }
     }
   } else if (signerExtra && signerExtra.type === 'Lattice') {
-    // const data = {
-    //   nonce: '0x01',
-    //   gasLimit: '0x61a8',
-    //   gasPrice: '0x2540be400',
-    //   to: '0xe242e54155b1abc71fc118065270cecaaf8b7768',
-    //   value: 0,
-    //   data: '0x12345678',
-    //   // -- m/44'/60'/0'/0/0
-    //   signerPath: [HARDENED_OFFSET+44, HARDENED_OFFSET+60, HARDENED_OFFSET, 0, 0],
-    //   chainId: chainId,
-    //   useEIP155: false,
-    // }
-    // const signOpts = {
-    //     currency: 'ETH',
-    //     data: data,
-    // }
-
     return {
-      signMessage: async(hash) => {
-        return await new Promise((resolve, reject) => { 
-          client.connect(signerExtra.deviceId, async(err, isPaired) => {  
-            if (typeof isPaired === 'undefined' || !isPaired) {
-              throw new Error('The Lattice device is not paired.')
-            }
+      signMessage: async hash => {
+        try {
+          //TODO: privKey should be commKey
+          const { privKey, deviceId } = signerExtra
+          const client = latticeInit(privKey)
+          const {isPaired, err } = await latticeConnect(client, deviceId)
 
-            const dataMsg = {
-              protocol: 'signPersonal',
-              payload: ethers.utils.hexlify(hash),
-              signerPath: [HARDENED_OFFSET+44, HARDENED_OFFSET+60, HARDENED_OFFSET, 0, 0],
-            }
+          if (err) throw new Error(err.message || err)
 
-            const signOptsMsg = {
-                currency: 'ETH_MSG',
-                data: dataMsg,
-            }
-             
-            client.sign(signOptsMsg, (err, signedTx) => {
-              let signedMsg
+          if (!isPaired) {
+            client.pair('')
+            //TODO: Call pair request here and popup the modal to enter the secret!
+            throw new Error('The Lattice device is not paired!')
+          }
 
-              if (err) {
-                reject(signedMsg)
-                throw new Error(`Lattice: ${err}`)
-              }
+          const { signedMsg, errSignMessage } = await latticeSignMessage(client, hash)
+          if (errSignMessage) throw new Error(errSignMessage)
 
-              if (signedTx) {
-                signedMsg = '0x' + signedTx.sig.r + signedTx.sig.s + signedTx.sig.v[0].toString(16)
-                resolve(signedMsg)
-              }
-            })
-          })
-        }) 
-    },
-      // signTransaction: async params => await client.connect(deviceId, async(err, isPaired) => { 
-      //   if (typeof isPaired === 'undefined' || !isPaired) {
-      //     throw new Error('The Lattice device is not paired.')
-      //   }
-        
-      //   await client.sign({...params, signerPath : signer.address})
-      // })
-  }
-   
-    
+          return signedMsg
+        } catch(e) {
+          console.log(e)
+          throw new Error(`Lattice: ${e}`)
+        }
+      }
+    }
   } else if (signer.address) {
     if (!window.ethereum) throw new Error('No web3 support detected in your browser: if you created this account through MetaMask, please install it.')
     // NOTE: for metamask, use `const provider = new ethers.providers.Web3Provider(window.ethereum)`
