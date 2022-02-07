@@ -26,11 +26,14 @@ export function getFeePaymentConsequences (token, estimation) {
   }
 }
 
+const contractErrors = ['caller is a contract', 'contract not allowed', 'contract not supported', 'No contractz allowed', /*no */'contracts allowed', /* c or C*/'ontract is not allowed']
+
 export function mapTxnErrMsg(msg) {
   if (!msg) return
   if (msg.includes('Router: EXPIRED')) return 'Swap expired'
   if (msg.includes('Router: INSUFFICIENT_OUTPUT_AMOUNT')) return 'Swap will suffer slippage higher than your requirements'
   if (msg.includes('INSUFFICIENT_PRIVILEGE')) return 'Your signer address is not authorized.'
+  if (contractErrors.find(contractMsg => msg.includes(contractMsg))) return 'This dApp does not support smart wallets.'
   return msg
 }
 
@@ -39,5 +42,6 @@ export function getErrHint(msg) {
   if (msg.includes('Router: EXPIRED')) return 'Try performing the swap again'
   if (msg.includes('Router: INSUFFICIENT_OUTPUT_AMOUNT')) return 'Try performing the swap again or increase your slippage requirements'
   if (msg.includes('INSUFFICIENT_PRIVILEGE')) return 'If you set a new signer for this account, try re-adding the account.'
-  return 'Sending this transaction batch will result in an error.'
+  if (contractErrors.find(contractMsg => msg.includes(contractMsg))) return 'Contact the dApp developers to tell them to implement smart wallet support by not blocking contract interactions and/or implementing EIP1271.'
+  return 'Sending this transaction batch would have resulted in an error, so we prevented it.'
 }
