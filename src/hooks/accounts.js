@@ -1,31 +1,37 @@
-import { useState, useCallback } from 'react'
+import { useCallback } from 'react'
 import { useToasts } from 'hooks/toasts'
 import { useHistory } from 'react-router-dom'
 
-export default function useAccounts () {
+export default function useAccounts (useStorage) {
     const { addToast } = useToasts()
     const history = useHistory()
 
-    const [accounts, setAccounts] = useState(() => {
-      try {
-        const accs = JSON.parse(localStorage.accounts || '[]')
-        if (!Array.isArray(accs)) throw new Error('accounts: incorrect format')
-        return accs
-      } catch (e) {
-        console.error('accounts parsing failure', e)
-        return []
-      }
-    })
-    const [selectedAcc, setSelectedAcc] = useState(() => {
-      const initialSelectedAcc = localStorage.selectedAcc
-      if (!initialSelectedAcc || !accounts.find(x => x.id === initialSelectedAcc)) {
-        return accounts[0] ? accounts[0].id : ''
-      }
-      return initialSelectedAcc
-    })
-  
+    const [accounts, setAccounts] = useStorage({
+      key: 'accounts',
+      defaultValue: [],
+      setInit: initialAccounts => {
+        if (!Array.isArray(initialAccounts)) {
+          console.error('accounts: incorrect format')
+
+          return []
+        }
+
+        return initialAccounts
+      }}
+    )
+    const [selectedAcc, setSelectedAcc] = useStorage({
+      key: 'selectedAcc',
+      defaultValue: '',
+      isStringStorage: true,
+      setInit: initialSelectedAcc => {
+        if (!initialSelectedAcc || !accounts.find(x => x.id === initialSelectedAcc)) {
+          return accounts[0] ? accounts[0].id : ''
+        }
+
+        return initialSelectedAcc
+    }})
+
     const onSelectAcc = useCallback(selected => {
-      localStorage.selectedAcc = selected
       setSelectedAcc(selected)
     }, [setSelectedAcc])
     const onAddAccount = useCallback((acc, opts = {}) => {
@@ -42,32 +48,29 @@ export default function useAccounts () {
       const existingIdx = accounts.indexOf(existing)
         if (existingIdx === -1) accounts.push(acc)
       else accounts[existingIdx] = acc
-  
+
       // need to make a copy, otherwise no rerender
       setAccounts([ ...accounts ])
-  
-      localStorage.accounts = JSON.stringify(accounts)
-  
+
       if (opts.select) onSelectAcc(acc.id)
       if (Object.keys(accounts).length) {
         history.push('/wallet/dashboard')
       }
-    }, [accounts, addToast, onSelectAcc, history])
-  
+    }, [accounts, addToast, onSelectAcc, history, setAccounts])
+
     const onRemoveAccount = useCallback(id => {
       if (!id) throw new Error('account: internal err: missing ID/Address')
 
       const account = accounts.find(account => account.id === id)
-      if (account && account.email && account.cloudBackupOptout && !account.downloadedBackup) 
+      if (account && account.email && account.cloudBackupOptout && !account.downloadedBackup)
         return addToast('You have opted out of Ambire Cloud Backup. Please backup your account before logging out.', { error: true, route: '/wallet/security' })
 
       const clearedAccounts = accounts.filter(account => account.id !== id)
       setAccounts([...clearedAccounts])
-      localStorage.accounts = JSON.stringify(clearedAccounts)
-      
+
       if (!clearedAccounts.length) history.push('/add-account')
       else onSelectAcc(clearedAccounts[0].id)
-    }, [accounts, history, onSelectAcc, addToast])
+    }, [accounts, history, onSelectAcc, addToast, setAccounts])
 
     return { accounts, selectedAcc, onSelectAcc, onAddAccount, onRemoveAccount }
   }

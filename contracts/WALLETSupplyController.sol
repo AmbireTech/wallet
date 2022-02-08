@@ -112,14 +112,14 @@ contract WALLETSupplyController {
 
 	function claimWithRootUpdate(
 		// claim() args
-		address recipient, uint totalRewardInTree, bytes32[] calldata proof, uint toBurnBps, IStakingPool stakingPool,
+		uint totalRewardInTree, bytes32[] calldata proof, uint toBurnBps, IStakingPool stakingPool,
 		// args for updating the root
 		bytes32 newRoot, bytes calldata signature
 	) external {
 		address signer = SignatureValidator.recoverAddrImpl(newRoot, signature, false);
 		require(hasGovernance[signer], "NOT_GOVERNANCE");
 		lastRoot = newRoot;
-		claim(recipient, totalRewardInTree, proof, toBurnBps, stakingPool);
+		claim(totalRewardInTree, proof, toBurnBps, stakingPool);
 	}
 
 	// claim() has two modes, either receive the full amount as xWALLET (staked WALLET) or burn some (penaltyBps) and receive the rest immediately in $WALLET
@@ -128,7 +128,9 @@ contract WALLETSupplyController {
 	// 2) ensures that the sender really does have the intention to burn some of their tokens but receive the rest immediatey
 	// set toBurnBps to 0 to receive the tokens as xWALLET, set it to the current penaltyBps to receive immediately
 	// There is an edge case: when penaltyBps is set to 0, you pass 0 to receive everything immediately; this is intended
-	function claim(address recipient, uint totalRewardInTree, bytes32[] memory proof, uint toBurnBps, IStakingPool stakingPool) public {
+	function claim(uint totalRewardInTree, bytes32[] memory proof, uint toBurnBps, IStakingPool stakingPool) public {
+		address recipient = msg.sender;
+
 		require(totalRewardInTree <= MAX_CLAIM_NODE, "MAX_CLAIM_NODE");
 		require(lastRoot != bytes32(0), "EMPTY_ROOT");
 
@@ -146,7 +148,7 @@ contract WALLETSupplyController {
 			// AUDIT: We can check toReceive > 0 or toBurn > 0, but there's no point since in the most common path both will be non-zero
 			WALLET.mint(recipient, toReceive);
 			WALLET.mint(address(0), toBurn);
-      emit LogClaimWithPenalty(recipient, toReceive, toBurn);
+			emit LogClaimWithPenalty(recipient, toReceive, toBurn);
 		} else if (toBurnBps == 0) {
 			WALLET.mint(address(this), toClaim);
 			if (WALLET.allowance(address(this), address(stakingPool)) < toClaim) {
