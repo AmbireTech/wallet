@@ -1,4 +1,4 @@
-import {useCallback, useEffect, useState, useRef, useMemo} from 'react'
+import {useCallback, useRef, useMemo} from 'react'
 import {useToasts} from 'hooks/toasts'
 
 import {Methods} from '@gnosis.pm/safe-apps-sdk'
@@ -7,7 +7,7 @@ import { getProvider } from 'lib/provider'
 
 const STORAGE_KEY = 'gnosis_safe_state'
 
-export default function useGnosisSafe({selectedAccount, network, verbose = 0}) {
+export default function useGnosisSafe({selectedAccount, network, verbose = 0, useStorage}) {
   // One connector at a time
   const connector = useRef(null)
 
@@ -22,16 +22,10 @@ export default function useGnosisSafe({selectedAccount, network, verbose = 0}) {
     network
   }
 
-  const [requests, setRequests] = useState(() => {
-    const json = localStorage[STORAGE_KEY]
-    if (!json) return []
-    try {
-      const parsed = JSON.parse(json)
-      return Array.isArray(parsed) ? parsed : []
-    } catch (e) {
-      console.error(e)
-      return []
-    }
+  const [requests, setRequests] = useStorage({
+    key: STORAGE_KEY,
+    defaultValue: [],
+    setInit: initialRequests => !Array.isArray(initialRequests) ? [] : initialRequests
   })
 
   const connect = useCallback(connectorOpts => {
@@ -238,7 +232,7 @@ export default function useGnosisSafe({selectedAccount, network, verbose = 0}) {
         return {}
       }
     })
-  }, [uniqueId, addToast, verbose])
+  }, [uniqueId, addToast, verbose, setRequests])
 
 
   const disconnect = useCallback(() => {
@@ -280,11 +274,6 @@ export default function useGnosisSafe({selectedAccount, network, verbose = 0}) {
 
     setRequests(prevRequests => prevRequests.filter(x => !ids.includes(x.id)))
   }
-
-  // Side effects that will run on every state change/rerender
-  useEffect(() => {
-    localStorage[STORAGE_KEY] = JSON.stringify(requests)
-  }, [requests, selectedAccount, network])
 
   return {
     requests,
