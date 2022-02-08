@@ -27,12 +27,12 @@ const suportedProtocols = [
         network: 'fantom',
         protocols: [],
 	balancesProvider: 'velcro'
-    },
+    }/*,
     {
         network: 'arbitrum',
         protocols: [],
         balancesProvider: 'velcro'
-    }
+    }*/
 ]
 
 export default suportedProtocols
