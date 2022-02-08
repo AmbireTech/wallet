@@ -1,7 +1,7 @@
 import './LatticeModal.scss'
 
 import { Modal, Button, TextInput, Loading } from 'components/common'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useToasts } from 'hooks/toasts'
 import { latticeInit, 
     latticeConnect, 
@@ -9,15 +9,20 @@ import { latticeInit,
     latticeGetAddresses 
 } from 'lib/lattice'
 
-const LatticeModal = ({ addresses }) => {
-    //TODO: remove hardcoded commKey
-    const commKey = 'ef903967c21ec517d2df66eae824856f6dd8c99694bd2d8ee9fc85e329a51341'
+const crypto = require('crypto')
 
+const LatticeModal = ({ addresses }) => {
     const { addToast } = useToasts()
     const [isLoading, setLoading] = useState(false)
     const [deviceId, setDeviceId] = useState('')
     const [isSecretFieldShown, setIsSecretFieldShown] = useState(false)
     const [promiseResolve, setPromiseResolve] = useState(null)
+    const [commKey, setCommKey] = useState()
+    
+    useEffect(() => {
+      setCommKey(crypto.randomBytes(32).toString('hex'))
+    }, [])
+    
     const client = latticeInit(commKey)
 
     const connectToDevice = async () => {
