@@ -26,12 +26,14 @@ const checkIsOffline = uri => {
     //    .every(({ time } = {}) => time > (Date.now() - timePastForConnectionErr))
 }
 
-export default function useWalletConnect ({ account, chainId, initialUri, allNetworks, setNetwork }) {
+export default function useWalletConnect ({ account, chainId, initialUri, allNetworks, setNetwork, useStorage }) {
     const { addToast } = useToasts()
 
     // This is needed cause of the WalletConnect event handlers
     const stateRef = useRef()
     stateRef.current = { account, chainId }
+
+    const [stateStorage, setStateStorage] = useStorage({ key: STORAGE_KEY })
 
     const [state, dispatch] = useReducer((state, action) => {
         if (action.type === 'updateConnections') return { ...state, connections: action.connections }
@@ -79,12 +81,11 @@ export default function useWalletConnect ({ account, chainId, initialUri, allNet
         }
         return { ...state }
     }, null, () => {
-        const json = localStorage[STORAGE_KEY]
-        if (!json) return getDefaultState()
+        if (!stateStorage) return getDefaultState()
         try {
             return {
                 ...getDefaultState(),
-                ...JSON.parse(json)
+                ...stateStorage
             }
         } catch(e) {
             console.error(e)
@@ -108,7 +109,7 @@ export default function useWalletConnect ({ account, chainId, initialUri, allNet
             }
         })
 
-        localStorage[STORAGE_KEY] = JSON.stringify(state)
+        setStateStorage(state)
 
         if (updateConnections) dispatch({
             type: 'updateConnections',
@@ -117,7 +118,7 @@ export default function useWalletConnect ({ account, chainId, initialUri, allNet
                 .map(({ uri }) => ({ uri, session: connectors[uri].session, isOffline: checkIsOffline(uri) }))
         })
     }
-    useEffect(maybeUpdateSessions, [account, chainId, state])
+    useEffect(maybeUpdateSessions, [account, chainId, state, setStateStorage])
     // we need this so we can invoke the latest version from any event handler
     stateRef.current.maybeUpdateSessions = maybeUpdateSessions
 
