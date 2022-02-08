@@ -6,7 +6,7 @@ import {
   isTokenEligible,
   mapTxnErrMsg,
   getErrHint,
-  getFeeInTokenValueData,
+  getFeesData,
   getDiscountApplied
 } from './helpers'
 import { FaPercentage } from 'react-icons/fa'
@@ -75,7 +75,7 @@ export function FeeSelector({ disabled, signer, estimation, network, setEstimati
     const {
       feeInFeeToken,
       feeInUSD,
-    } = getFeeInTokenValueData(estimation.selectedFeeToken, estimation, speed)
+    } = getFeesData(estimation.selectedFeeToken, estimation, speed)
     return (
       <div
         key={speed}
@@ -100,7 +100,7 @@ export function FeeSelector({ disabled, signer, estimation, network, setEstimati
   const {
     feeInFeeToken,
     feeInUSD,
-  } = getFeeInTokenValueData(estimation.selectedFeeToken, estimation, feeSpeed)
+  } = getFeesData(estimation.selectedFeeToken, estimation, feeSpeed)
 
   const discountInFeeToken = getDiscountApplied(feeInFeeToken, discount)
   const discountInUSD = getDiscountApplied(feeInUSD, discount)
