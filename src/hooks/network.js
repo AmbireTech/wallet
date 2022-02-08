@@ -1,14 +1,18 @@
-import { useState, useCallback } from 'react'
+import { useCallback } from 'react'
 import networks from 'consts/networks'
 
-export default function useNetwork ({ defaultNetwork = 'ethereum' } = {}) {
-    const [networkId, setNetworkId] = useState(() =>
-        networks.find(n => n.id === localStorage.network) ? localStorage.network : defaultNetwork
-    )
+export default function useNetwork ({ defaultNetwork = 'ethereum', useStorage } = {}) {
+    const [networkId, setNetworkId] = useStorage({
+        key: 'network',
+        defaultValue: defaultNetwork,
+        isStringStorage: true,
+        setInit: networkId => networks.find(n => n.id === networkId) ? networkId : defaultNetwork
+    })
+
     const setNetwork = useCallback(networkIdentifier => {
         const network = networks.find(n => n.id === networkIdentifier || n.name === networkIdentifier || n.chainId === networkIdentifier)
         if (!network) throw new Error(`no network found: ${networkIdentifier}`)
-        localStorage.network = network.id
+
         setNetworkId(network.id)
     }, [setNetworkId])
 

@@ -4,26 +4,26 @@ import { useState } from 'react'
 import { MdBrokenImage, MdClose } from 'react-icons/md'
 import './UnsupportedDAppsModal.scss'
 
-const UnsupportedDAppsModal = ({ connections, disconnect, advancedModeList }) => {
+const UnsupportedDAppsModal = ({ connections, disconnect, advancedModeList, onContinue }) => {
     const { hideModal } = useModals()
     const [advancedMode, setAdvancedMode] = useState(false)
 
-    const onCancel = () => {
+    const handleCancel = () => {
         connections.map(({ uri }) => disconnect(uri))
         hideModal()
     }
 
-    const onContinue = () => {
-       localStorage.dAppsAdvancedMode = JSON.stringify([
-           ...advancedModeList,
-           ...connections.map(({ session }) => session.peerMeta.url)
-       ])
-       hideModal()
+    const handleContinue = () => {
+        onContinue([
+            ...advancedModeList,
+            ...connections.map(({ session }) => session.peerMeta.url)
+        ])
+        hideModal()
     }
 
     const buttons = <>
-        <Button clear icon={<MdClose/>} onClick={onCancel}>Cancel</Button>
-        <Button disabled={!advancedMode} onClick={onContinue}>Continue</Button>
+        <Button clear icon={<MdClose/>} onClick={handleCancel}>Cancel</Button>
+        <Button disabled={!advancedMode} onClick={handleContinue}>Continue</Button>
     </>
 
     return (
