@@ -65,6 +65,7 @@ const WalletTokenModal = ({ claimableWalletToken, rewards, walletTokenInfoData, 
     const walletTokenAPY = walletTokenInfoData && !walletTokenInfoData.isLoading && walletTokenInfoData.data ? (walletTokenInfoData.data?.apy).toFixed(2) : '...'
     const adxTokenAPY = adxTokenInfoData && !adxTokenInfoData.isLoading && adxTokenInfoData.data ? (adxTokenInfoData.data?.apy).toFixed(2) : '...'
     const claimableNowUsd = walletTokenInfoData && !walletTokenInfoData.isLoading && !currentClaimStatus.loading && claimableNow ? (walletTokenInfoData.data?.usdPrice * claimableNow).toFixed(2) : '...'
+    const mintableVestingUsd = walletTokenInfoData && !walletTokenInfoData.isLoading && !currentClaimStatus.loading && currentClaimStatus.mintableVesting ? (walletTokenInfoData.data?.usdPrice * currentClaimStatus.mintableVesting).toFixed(2) : '...'
 
     const modalButtons = <>
         <Button clear icon={<MdOutlineClose/>} onClick={() => hideModal()}>Close</Button>
@@ -138,6 +139,10 @@ const WalletTokenModal = ({ claimableWalletToken, rewards, walletTokenInfoData, 
                         <div className="amount"><span className="primary-accent">{
                             currentClaimStatus.mintableVesting
                         }</span></div>
+                        <div className="amount usd">
+                            <span className="secondary-accent">$</span>
+                            { mintableVestingUsd }
+                        </div>
                     </div>
                 </div>
                 <div className="actions">
