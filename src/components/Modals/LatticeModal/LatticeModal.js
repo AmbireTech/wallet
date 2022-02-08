@@ -10,6 +10,8 @@ import { latticeInit,
 } from 'lib/lattice'
 
 const crypto = require('crypto')
+const SECRET_LENGTH = 8
+const DEVICE_ID_LENGTH = 6
 
 const LatticeModal = ({ addresses }) => {
     const { addToast } = useToasts()
@@ -98,15 +100,14 @@ const LatticeModal = ({ addresses }) => {
 
     const handleInputSecret = e => {
         const inputSecret = e.toUpperCase()
-        // TODO: add constant for 8 
-        if (inputSecret.length === 8) {
+        
+        if (inputSecret.length === SECRET_LENGTH) {
             promiseResolve(inputSecret)
         } 
     }
 
     const handleInputDeviceId = e => {
-        // TODO: add constant for 6
-        if (e.length === 6) {
+        if (e.length === DEVICE_ID_LENGTH) {
             setDeviceId(e)
         }
     }
