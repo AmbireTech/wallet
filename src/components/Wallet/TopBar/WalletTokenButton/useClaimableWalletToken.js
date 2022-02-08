@@ -7,7 +7,7 @@ import WALLETVestings from 'consts/WALLETVestings'
 import WALLETInitialClaimableRewards from 'consts/WALLETInitialClaimableRewards'
 import WALLETSupplyControllerABI from 'consts/WALLETSupplyControllerABI'
 
-const supplyControllerAddress = '0x94b668337ce8299272ca3cb0c70f3d786a5b6ce5'
+const supplyControllerAddress = '0xc53af25f831f31ad6256a742b3f0905bc214a430'
 const supplyControllerInterface = new Interface(WALLETSupplyControllerABI)
 
 const useClaimableWalletToken = ({ account, network, addRequest }) => {
@@ -35,7 +35,6 @@ const useClaimableWalletToken = ({ account, network, addRequest }) => {
     }, [supplyController, vestingEntry, initialClaimableEntry])
 
     const claimableNow = initialClaimable - currentClaimStatus.claimed
-
     const disabledReason = network.id !== 'ethereum' ? 'Switch to Ethereum to claim' : (
         currentClaimStatus.error ? `Claim status error: ${currentClaimStatus.error}` : null
     )
@@ -50,7 +49,6 @@ const useClaimableWalletToken = ({ account, network, addRequest }) => {
                 to: supplyControllerAddress,
                 value: '0x0',
                 data: supplyControllerInterface.encodeFunctionData('claim', [
-                    initialClaimableEntry.addr,
                     initialClaimableEntry.totalClaimableBN,
                     initialClaimableEntry.proof,
                     0, // penalty bps, at the moment we run with 0; it's a safety feature to hardcode it
