@@ -3,13 +3,12 @@ import './Links.scss'
 import { DropDown } from "components/common"
 import { MdChatBubbleOutline, MdMenuBook, MdOutlineHelpOutline, MdOutlineLightbulb } from "react-icons/md";
 import { BsDiscord, BsTelegram, BsTwitter } from "react-icons/bs";
-import { useState } from 'react';
+import useLocalStorage from "hooks/useLocalStorage";
 
 const Links = () => {
-    const [linksViewed, setLinksViewed] = useState(() => localStorage.linksViewed ? JSON.parse(localStorage.linksViewed) : false) 
+    const [linksViewed, setLinksViewed] = useLocalStorage({ key: 'linksViewed', defaultValue: false })
 
     const onOpen = () => {
-        localStorage.linksViewed = true
         setLinksViewed(true)
     }
 
