@@ -19,7 +19,7 @@ import { sendNoRelayer } from './noRelayer'
 import { 
   isTokenEligible, 
   // getFeePaymentConsequences, 
-  getFeeInTokenValueData,
+  getFeesData,
   toHexAmount
  } from './helpers'
 import { fetchPost } from 'lib/fetch'
@@ -167,7 +167,7 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
       // Also it can be stable but not in USD
       feeInFeeToken,
       addedGas
-    } = getFeeInTokenValueData(feeToken, estimation, feeSpeed)
+    } = getFeesData(feeToken, estimation, feeSpeed)
     const feeTxn = feeToken.symbol === network.nativeAssetSymbol
       // TODO: check native decimals 
       ? [accountPresets.feeCollector, toHexAmount(feeInNative, 18), '0x']
