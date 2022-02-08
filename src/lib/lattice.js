@@ -16,10 +16,6 @@ const getAddressesReqOpts = {
 }
 
 const latticeInit = commKey => {
-    //TODO: Remove hardcoded commKey
-    // commKey = 'ef903967c21ec517d2df66eae824856f6dd8c99694bd2d8ee9fc85e329a51341'
-    // commKey = commKey || useMemo(() => crypto.randomBytes(32).toString('hex'), [])
-
     const clientConfig = {
         name: 'Ambire Wallet',
         crypto: crypto,

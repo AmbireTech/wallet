@@ -138,7 +138,6 @@ const AddAuthSigner = ({ selectedNetwork, selectedAcc, onAddBtnClicked }) => {
   }
   
   async function connectGridPlusAndGetAccounts() {
-    debugger
     if (selectedAcc.signerExtra && 
       selectedAcc.signerExtra.type === 'Lattice' && 
       selectedAcc.signerExtra.isPaired && isLatticePaired) {
@@ -158,7 +157,6 @@ const AddAuthSigner = ({ selectedNetwork, selectedAcc, onAddBtnClicked }) => {
         if (!isPaired) {
           setShowLoading(false)
           setIsLatticePaired(false)
-          //TODO: Call pair request here and popup the modal to enter the secret!
           client.pair('')
           setAddAccErr(`The Lattice device is not paired! Try again to pair the device.`, { error: true })
           
@@ -175,7 +173,6 @@ const AddAuthSigner = ({ selectedNetwork, selectedAcc, onAddBtnClicked }) => {
         
         if (res) {
           setShowLoading(false)
-          debugger
           setLatticeAddresses({ addresses: res, deviceId: deviceId, commKey: commKey, isPaired: true })
         }
       } else {

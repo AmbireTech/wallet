@@ -59,8 +59,7 @@ async function getWalletNew({ chainId, signer, signerExtra }, opts) {
 
           if (!isPaired) {
             client.pair('')
-            //TODO: Call pair request here and popup the modal to enter the secret!
-            throw new Error('The Lattice device is not paired!')
+            throw new Error('The Lattice device is not paired! Please re-add your account!')
           }
 
           const { signedMsg, errSignMessage } = await latticeSignMessage(client, hash)
