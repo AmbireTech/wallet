@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { isFirefox } from 'lib/isFirefox'
+import { useLocalStorage } from 'hooks'
 
 const onPermissionChange = async (name, listener) => {
     try {
@@ -16,7 +17,7 @@ const usePermissions = () => {
     const [arePermissionsLoaded, setPermissionsLoaded] = useState(false)
     const [isClipboardGranted, setClipboardGranted] = useState(false)
     const [isNoticationsGranted, setNotificationsGranted] = useState(false)
-    const [modalHidden, setModalHidden] = useState(() => localStorage.permissionsModalHidden === 'true')
+    const [modalHidden, setModalHidden] = useLocalStorage({ key: 'permissionsModalHidden' })
 
     const checkForPermissions = async () => {
 	if (isFirefox()) {
@@ -32,7 +33,6 @@ const usePermissions = () => {
         setPermissionsLoaded(true)
     }
 
-    useEffect(() => localStorage.permissionsModalHidden = modalHidden, [modalHidden])
     useEffect(() => checkForPermissions(), [])
 
     return {
