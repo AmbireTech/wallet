@@ -16,7 +16,12 @@ import { FeeSelector, FailingTxn } from './FeeSelector'
 import Actions from './Actions'
 import TxnPreview from 'components/common/TxnPreview/TxnPreview'
 import { sendNoRelayer } from './noRelayer'
-import { isTokenEligible, getFeePaymentConsequences } from './helpers'
+import { 
+  isTokenEligible, 
+  // getFeePaymentConsequences, 
+  getFeeInTokenValueData,
+  toHexAmount
+ } from './helpers'
 import { fetchPost } from 'lib/fetch'
 import { toBundleTxn } from 'lib/requestToBundleTxn'
 import { getProvider } from 'lib/provider'
@@ -156,19 +161,19 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
     }
 
     const feeToken = estimation.selectedFeeToken
-    const { addedGas, multiplier } = getFeePaymentConsequences(feeToken, estimation)
-    const toHexAmount = amnt => '0x'+Math.round(amnt).toString(16)
-    const discountMultiplier =  1 - (feeToken.discount || 0)
+    const {
+      feeInNative,
+      // feeInUSD, // don't need fee in USD for stables as it will work with feeInFeeToken
+      // Also it can be stable but not in USD
+      feeInFeeToken,
+      addedGas
+    } = getFeeInTokenValueData(feeToken, estimation, feeSpeed)
     const feeTxn = feeToken.symbol === network.nativeAssetSymbol
-      ? [accountPresets.feeCollector, toHexAmount(estimation.feeInNative[feeSpeed]*multiplier*discountMultiplier*1e18), '0x']
+      // TODO: check native decimals 
+      ? [accountPresets.feeCollector, toHexAmount(feeInNative, 18), '0x']
       : [feeToken.address, '0x0', ERC20.encodeFunctionData('transfer', [
         accountPresets.feeCollector,
-        toHexAmount(
-          (feeToken.isStable ? estimation.feeInUSD[feeSpeed] : estimation.feeInNative[feeSpeed])
-          * multiplier
-          * discountMultiplier
-          * Math.pow(10, feeToken.decimals)
-        )
+        toHexAmount(feeInFeeToken, feeToken.decimals)
     ])]
     return new Bundle({
       ...bundle,
