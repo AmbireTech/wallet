@@ -20,7 +20,7 @@ import useNetwork from './hooks/network'
 import useWalletConnect from './hooks/walletconnect'
 import useGnosisSafe from './hooks/useGnosisSafe'
 import useNotifications from './hooks/notifications'
-import { useAttentionGrabber, usePortfolio, useAddressBook, useRelayerData, usePrivateMode } from './hooks'
+import { useAttentionGrabber, usePortfolio, useAddressBook, useRelayerData, usePrivateMode, useLocalStorage } from './hooks'
 import { useToasts } from './hooks/toasts'
 import { useOneTimeQueryParam } from './hooks/oneTimeQueryParam'
 
@@ -40,9 +40,9 @@ setTimeout(() => {
 
 function AppInner () {
   // basic stuff: currently selected account, all accounts, currently selected network
-  const { accounts, selectedAcc, onSelectAcc, onAddAccount, onRemoveAccount } = useAccounts()
-  const addressBook = useAddressBook({ accounts })
-  const { network, setNetwork, allNetworks } = useNetwork()
+  const { accounts, selectedAcc, onSelectAcc, onAddAccount, onRemoveAccount } = useAccounts(useLocalStorage)
+  const addressBook = useAddressBook({ accounts, useStorage: useLocalStorage })
+  const { network, setNetwork, allNetworks } = useNetwork({ useStorage: useLocalStorage })
   const { addToast } = useToasts()
   const wcUri = useOneTimeQueryParam('uri')
 
@@ -52,12 +52,14 @@ function AppInner () {
     chainId: network.chainId,
     initialUri: wcUri,
     allNetworks,
-    setNetwork
+    setNetwork,
+    useStorage: useLocalStorage
   })
 
   const { requests: gnosisRequests, resolveMany: gnosisResolveMany, connect: gnosisConnect, disconnect: gnosisDisconnect } = useGnosisSafe({
-	  selectedAccount: selectedAcc,
-	  network: network
+    selectedAccount: selectedAcc,
+    network: network,
+    useStorage: useLocalStorage
 	}, [selectedAcc, network])
 
   // Internal requests: eg from the Transfer page, Security page, etc. - requests originating in the wallet UI itself
@@ -80,9 +82,11 @@ function AppInner () {
   // Portfolio: this hook actively updates the balances/assets of the currently selected user
   const portfolio = usePortfolio({
     currentNetwork: network.id,
-    account: selectedAcc
+    account: selectedAcc,
+    useStorage: useLocalStorage
   })
-  const privateMode = usePrivateMode()
+
+  const privateMode = usePrivateMode(useLocalStorage)
 
   // Show the send transaction full-screen modal if we have a new txn
   const eligibleRequests = useMemo(() => requests
