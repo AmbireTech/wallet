@@ -62,10 +62,13 @@ const WalletTokenModal = ({ claimableWalletToken, rewards, walletTokenInfoData, 
         claimVesting
     } = claimableWalletToken
 
-    const walletTokenAPY = walletTokenInfoData && !walletTokenInfoData.isLoading && walletTokenInfoData.data ? (walletTokenInfoData.data?.apy).toFixed(2) : '...'
-    const adxTokenAPY = adxTokenInfoData && !adxTokenInfoData.isLoading && adxTokenInfoData.data ? (adxTokenInfoData.data?.apy).toFixed(2) : '...'
-    const claimableNowUsd = walletTokenInfoData && !walletTokenInfoData.isLoading && !currentClaimStatus.loading && claimableNow ? (walletTokenInfoData.data?.usdPrice * claimableNow).toFixed(2) : '...'
-    const mintableVestingUsd = walletTokenInfoData && !walletTokenInfoData.isLoading && !currentClaimStatus.loading && currentClaimStatus.mintableVesting ? (walletTokenInfoData.data?.usdPrice * currentClaimStatus.mintableVesting).toFixed(2) : '...'
+    const walletTokenAPY = walletTokenInfoData && !walletTokenInfoData.isLoading && walletTokenInfoData.data && walletTokenInfoData.data.apy ? (walletTokenInfoData.data.apy).toFixed(2) : '...'
+    const walletTokenUSDPrice = walletTokenInfoData && !walletTokenInfoData.isLoading && walletTokenInfoData.data && walletTokenInfoData.data.usdPrice ? walletTokenInfoData.data.usdPrice : 0
+
+    const adxTokenAPY = adxTokenInfoData && !adxTokenInfoData.isLoading && adxTokenInfoData.data && adxTokenInfoData.data.apy ? (adxTokenInfoData.data.apy).toFixed(2) : '...'
+
+    const claimableNowUsd = walletTokenUSDPrice && !currentClaimStatus.loading && claimableNow ? (walletTokenUSDPrice * claimableNow).toFixed(2) : '...'
+    const mintableVestingUsd = walletTokenUSDPrice && !currentClaimStatus.loading && currentClaimStatus.mintableVesting ? (walletTokenUSDPrice * currentClaimStatus.mintableVesting).toFixed(2) : '...'
 
     const modalButtons = <>
         <Button clear icon={<MdOutlineClose/>} onClick={() => hideModal()}>Close</Button>
