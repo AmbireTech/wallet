@@ -207,9 +207,9 @@ export function FeeSelector({ disabled, signer, estimation, network, setEstimati
             <div>
               ~${(discountInUSD).toFixed(discountInUSD < 1 ? 4 : 2)}
             </div>
-            <div>
+            {/* <div>
               {discountInFeeToken + ' ' + estimation.selectedFeeToken.symbol}
-            </div>
+            </div> */}
           </div>
         </div>)}
 
@@ -221,9 +221,9 @@ export function FeeSelector({ disabled, signer, estimation, network, setEstimati
             <div>
               ~${(feeInUSD).toFixed(feeInUSD < 1 ? 4 : 2)}
             </div>
-            <div>
+            {/* <div>
               {feeInFeeToken + ' ' + estimation.selectedFeeToken.symbol}              
-            </div>
+            </div> */}
           </div>
         </div>)}
       </div>
