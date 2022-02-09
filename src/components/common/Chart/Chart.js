@@ -64,7 +64,7 @@ const Chart = ({ data, size }) => {
                             <label>{ item.label }</label>
                             <div className="separator"></div>
                             <div className="percent">
-                                { item.value }%
+                                { parseFloat(item.value).toFixed(2) }%
                             </div>
                         </div>
                     ))
