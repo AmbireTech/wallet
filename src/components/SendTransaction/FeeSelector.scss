@@ -85,6 +85,41 @@
     }
 }
 
+.fee-selector {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: stretch;
+    flex-wrap: wrap;
+    gap: 1em;
+
+    .fee-row {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.5em;
+        gap: 1em;
+        &:nth-of-type(odd) {
+            background-color: $background-color;
+        }
+    }
+
+    .fee-amounts {
+        text-align: right;
+        div {
+            &:nth-child(2) {
+                font-size: 0.69rem;
+                opacity: 0.69;
+            }
+        }       
+    }
+
+    .section, .fees-breakdown {
+        flex-grow: 1;
+    }   
+}
+
 .failingTxn {
     display: flex;
     flex-direction: column;
@@ -121,11 +156,12 @@
 }
 
 .wallet-discount-banner {
-    font-size: 23px;
+    font-size: 1.23em;
     font-weight: 500;
-    padding: 0.5em;
+    padding: 0.69em;
     background-color: $ambire-purple;
     justify-content: space-between;
+    gap: 0.69em;
     
     .buttonComponent {
         margin-left: 0.25em;
