@@ -47,6 +47,10 @@
             white-space: nowrap;
             text-overflow: ellipsis;
             opacity: 0.5;
+            &.symbol {
+                font-size: 12px;
+                text-align: center;
+            }
         }
 
         &.disabled {
