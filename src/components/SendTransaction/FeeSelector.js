@@ -46,7 +46,7 @@ const WalletDiscountBanner = ({ currenciesItems, tokens, estimation, onFeeCurren
           className="address row"
           href={walletDiscountBlogpost}
           target="_blank"
-          rel="noreferrer">
+          rel="noreferrer noopener">
           <MdInfoOutline />
         </a>
       </div>
