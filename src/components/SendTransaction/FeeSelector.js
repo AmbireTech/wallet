@@ -169,7 +169,14 @@ export function FeeSelector({ disabled, signer, estimation, network, setEstimati
       {!!discount && <span className='discount-label'>*</span>}
       : ~${(feeInUSD + discountInUSD).toFixed(feeInUSD + discountInUSD < 1 ? 4 : 2)}
       &nbsp;/ {feeInFeeToken + discountInFeeToken + ' ' + estimation.selectedFeeToken.symbol}
-
+      {!!discount && estimation.selectedFeeToken?.symbol === 'WALLET' &&
+          <a
+          className="address row discount-label"
+          href={walletDiscountBlogpost}
+          target="_blank"
+          rel="noreferrer">
+          &nbsp;<MdInfoOutline />
+        </a>}
     </div>)}
 
     {!!discount && (<div className='native-fee-estimation discount-label'>
