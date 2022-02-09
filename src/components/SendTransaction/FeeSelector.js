@@ -169,36 +169,65 @@ export function FeeSelector({ disabled, signer, estimation, network, setEstimati
     })
     }
 
-    <div className='section'>
-      <div className='section-title'>Transaction Speed</div>
-      <div id='fee-selector'>{feeAmountSelectors}</div>
+    <div className='section-title'>Transaction Speed</div>
+    <div className='fee-selector'>
+      <div className='section'>
+        
+        <div id='fee-selector'>{feeAmountSelectors}</div>
+      </div>
+
+      <div className='fees-breakdown'>    
+        {(<div className='fee-row native-fee-estimation'>
+          <div>
+            Fee {!!discount && <span className='discount-label'>*</span>}
+            {!!discount && estimation.selectedFeeToken?.symbol === 'WALLET' &&
+                <a
+                className="address row discount-label"
+                href={walletDiscountBlogpost}
+                target="_blank"
+                rel="noreferrer">
+                &nbsp;<MdInfoOutline />
+              </a>}:
+          </div>
+          <div className='fee-amounts'>
+            <div>
+            ~${(feeInUSD + discountInUSD).toFixed(feeInUSD + discountInUSD < 1 ? 4 : 2)}
+            </div>
+            <div>
+              {feeInFeeToken + discountInFeeToken + ' ' + estimation.selectedFeeToken.symbol}  
+            </div>
+          </div>
+        </div>)}
+
+        {!!discount && (<div className='fee-row native-fee-estimation discount-label'>
+          <div>
+            You save ({discount * 100}%):
+          </div>
+          <div className='fee-amounts'>
+            <div>
+              ~${(discountInUSD).toFixed(discountInUSD < 1 ? 4 : 2)}
+            </div>
+            <div>
+              {discountInFeeToken + ' ' + estimation.selectedFeeToken.symbol}
+            </div>
+          </div>
+        </div>)}
+
+        {!!discount && (<div className='fee-row native-fee-estimation discount-label'>
+          <div>
+            You pay:
+          </div>
+          <div className='fee-amounts'>
+            <div>
+              ~${(feeInUSD).toFixed(feeInUSD < 1 ? 4 : 2)}
+            </div>
+            <div>
+              {feeInFeeToken + ' ' + estimation.selectedFeeToken.symbol}              
+            </div>
+          </div>
+        </div>)}
+      </div>
     </div>
-    {(<div className='native-fee-estimation'>
-      Fee
-      {!!discount && <span className='discount-label'>*</span>}
-      : ~${(feeInUSD + discountInUSD).toFixed(feeInUSD + discountInUSD < 1 ? 4 : 2)}
-      &nbsp;/ {feeInFeeToken + discountInFeeToken + ' ' + estimation.selectedFeeToken.symbol}
-      {!!discount && estimation.selectedFeeToken?.symbol === 'WALLET' &&
-          <a
-          className="address row discount-label"
-          href={walletDiscountBlogpost}
-          target="_blank"
-          rel="noreferrer">
-          &nbsp;<MdInfoOutline />
-        </a>}
-    </div>)}
-
-    {!!discount && (<div className='native-fee-estimation discount-label'>
-      * You save ({discount * 100}%): ~${(discountInUSD).toFixed(discountInUSD < 1 ? 4 : 2)}
-      &nbsp;/ {discountInFeeToken + ' ' + estimation.selectedFeeToken.symbol}
-    </div>)}
-
-    {!!discount && (<div className='native-fee-estimation discount-label'>
-      * You pay:
-      : ~${(feeInUSD).toFixed(feeInUSD < 1 ? 4 : 2)}
-      &nbsp;/ {feeInFeeToken + ' ' + estimation.selectedFeeToken.symbol}
-
-    </div>)}
 
     {!estimation.feeInUSD ?
       (<span><b>WARNING:</b> Paying fees in tokens other than {nativeAssetSymbol} is unavailable because you are not connected to a relayer. You will pay the fee from <b>{signer.address}</b>.</span>)
