@@ -130,7 +130,9 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
                 prevEstimation
                 && isTokenEligible(prevEstimation.selectedFeeToken, feeSpeed, estimation)
                 && prevEstimation.selectedFeeToken
-              ) || estimation.remainingFeeTokenBalances.find(token => isTokenEligible(token, feeSpeed, estimation))
+              ) || estimation.remainingFeeTokenBalances
+              .sort((a, b) => (b.discount || 0) - (a.discount || 0))
+              .find(token => isTokenEligible(token, feeSpeed, estimation))
               || estimation.remainingFeeTokenBalances[0]
           }
           return estimation
