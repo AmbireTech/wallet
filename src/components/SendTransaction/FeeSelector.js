@@ -1,7 +1,7 @@
 import './FeeSelector.scss'
 
 import { AiOutlineWarning } from 'react-icons/ai'
-import { Loading, Select, ToolTip } from 'components/common'
+import { Loading, Select, ToolTip, Button } from 'components/common'
 import {
   isTokenEligible,
   mapTxnErrMsg,
@@ -14,6 +14,36 @@ import { FaPercentage } from 'react-icons/fa'
 const SPEEDS = ['slow', 'medium', 'fast', 'ape']
 
 const zapperStorageTokenIcons = 'https://storage.googleapis.com/zapper-fi-assets/tokens'
+
+const WalletDiscountBanner = ({ currenciesItems, tokens, estimation, onFeeCurrencyChange }) => {
+  const walletDiscountToken = tokens.find(x => x.symbol === 'WALLET' && x.discount)
+
+  if (!walletDiscountToken) return null
+
+  const alreadySelected =
+    estimation.selectedFeeToken?.address === walletDiscountToken.address
+    || estimation.selectedFeeToken?.symbol === walletDiscountToken.symbol
+
+  if (!!alreadySelected) return null
+
+  const { discount } = walletDiscountToken
+  const eligibleWalletToken = currenciesItems.find(x => x.value && (x.value === 'WALLET' || x.value === walletDiscountToken.address))
+  const action = !!eligibleWalletToken 
+    ? () => onFeeCurrencyChange(eligibleWalletToken.value) 
+    : () => {/* TODO: go to swap */ }
+  const actionTxt = !!eligibleWalletToken ? 'USE WALLET' : 'BUY WALLET'
+
+  return (
+    <div className='wallet-discount-banner'>
+      <div>
+      Get {discount * 100} <FaPercentage /> fees discount with WALLET
+      </div>
+      <Button onClick={action} >
+        {actionTxt}
+      </Button>
+    </div>
+  )
+}
 
 export function FeeSelector({ disabled, signer, estimation, network, setEstimation, feeSpeed, setFeeSpeed }) {
   if (!estimation) return (<Loading />)
@@ -110,6 +140,16 @@ export function FeeSelector({ disabled, signer, estimation, network, setEstimati
       (<div className='balance-error'>Insufficient balance for the fee.<br />Accepted tokens: {(estimation.remainingFeeTokenBalances || []).map(x => x.symbol).join(', ')}</div>)
       : feeCurrencySelect
     }
+
+
+    {WalletDiscountBanner({
+      currenciesItems,
+      tokens,
+      estimation,
+      onFeeCurrencyChange
+    })
+    }
+
     <div className='section'>
       <div className='section-title'>Transaction Speed</div>
       <div id='fee-selector'>{feeAmountSelectors}</div>
