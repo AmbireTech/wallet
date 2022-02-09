@@ -130,6 +130,13 @@
     .buttonComponent {
         margin-left: 0.25em;
     }
+
+    .swap-info {
+        font-size: 18px;
+        .link {
+            color: $primary-accent-color;
+        }
+    }
 }
 
 // Mobile
