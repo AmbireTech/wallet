@@ -69,30 +69,30 @@ export function FeeSelector({ disabled, signer, estimation, network, setEstimati
   </>) : (<></>)
 
   const areSelectorsDisabled = disabled || insufficientFee
-  const { isStable, discount = 0, symbol } = estimation.selectedFeeToken
+  const { discount = 0, symbol } = estimation.selectedFeeToken
   const feeAmountSelectors = SPEEDS.map(speed => {
     const isETH = symbol === 'ETH' && nativeAssetSymbol === 'ETH'
     const {
       feeInFeeToken,
-      feeInUSD,
     } = getFeesData(estimation.selectedFeeToken, estimation, speed)
+    const discountInFeeToken = getDiscountApplied(feeInFeeToken, discount)
     return (
       <div
         key={speed}
         className={`feeSquare${feeSpeed === speed ? ' selected' : ''}${areSelectorsDisabled ? ' disabled' : ''}`}
         onClick={() => !areSelectorsDisabled && setFeeSpeed(speed)}
       >
-        {discount && <FaPercentage className='discount-badge' />}
+        {!!discount && <FaPercentage className='discount-badge' />}
         <div className='speed'>{speed}</div>
         <div className='feeEstimation'>
-          {isStable
-            ? '$' + feeInUSD
-            :
-            (isETH ? 'Ξ ' : '')
-            + feeInFeeToken
+          {(isETH ? 'Ξ ' : '')
+            + (feeInFeeToken + discountInFeeToken)
             + (!isETH ? ` ${estimation.selectedFeeToken.symbol}` : '')
           }
         </div>
+        {!isETH && <div className='feeEstimation symbol'>
+          {estimation.selectedFeeToken.symbol}
+        </div>}
       </div>
     )
   })
@@ -114,16 +114,24 @@ export function FeeSelector({ disabled, signer, estimation, network, setEstimati
       <div className='section-title'>Transaction Speed</div>
       <div id='fee-selector'>{feeAmountSelectors}</div>
     </div>
-    { // Visualize the fee once again with a USD estimation if in native currency
-      !isStable && (<div className='native-fee-estimation'>
-        Fee: {feeInFeeToken + ' ' + estimation.selectedFeeToken.symbol}
-        &nbsp;(~${(feeInUSD).toFixed(feeInUSD < 0.02 ? 4 : 2)})
-        &nbsp;{!!discount && <span className='discount-label'>*</span>}
-      </div>)}
+    {(<div className='native-fee-estimation'>
+      Fee
+      {!!discount && <span className='discount-label'>*</span>}
+      : ~${(feeInUSD + discountInUSD).toFixed(feeInUSD + discountInUSD < 1 ? 4 : 2)}
+      &nbsp;/ {feeInFeeToken + discountInFeeToken + ' ' + estimation.selectedFeeToken.symbol}
+
+    </div>)}
 
     {!!discount && (<div className='native-fee-estimation discount-label'>
-      * Discount applied ({discount * 100}%):  {discountInFeeToken + ' ' + estimation.selectedFeeToken.symbol}
-      &nbsp;(~${(discountInUSD).toFixed(discountInUSD < 0.02 ? 4 : 2)})
+      * You save ({discount * 100}%): ~${(discountInUSD).toFixed(discountInUSD < 1 ? 4 : 2)}
+      &nbsp;/ {discountInFeeToken + ' ' + estimation.selectedFeeToken.symbol}
+    </div>)}
+
+    {!!discount && (<div className='native-fee-estimation discount-label'>
+      * You pay:
+      : ~${(feeInUSD).toFixed(feeInUSD < 1 ? 4 : 2)}
+      &nbsp;/ {feeInFeeToken + ' ' + estimation.selectedFeeToken.symbol}
+
     </div>)}
 
     {!estimation.feeInUSD ?
