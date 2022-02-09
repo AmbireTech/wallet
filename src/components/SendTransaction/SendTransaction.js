@@ -390,6 +390,7 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
               network={network}
               feeSpeed={feeSpeed}
               setFeeSpeed={setFeeSpeed}
+              onDismiss={onDismiss}
             ></FeeSelector>
           </div>
 
