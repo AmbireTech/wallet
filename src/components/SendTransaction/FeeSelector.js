@@ -10,10 +10,12 @@ import {
   getDiscountApplied
 } from './helpers'
 import { FaPercentage } from 'react-icons/fa'
+import { MdInfoOutline } from 'react-icons/md'
 
 const SPEEDS = ['slow', 'medium', 'fast', 'ape']
 
 const zapperStorageTokenIcons = 'https://storage.googleapis.com/zapper-fi-assets/tokens'
+const walletDiscountBlogpost = 'https://medium.com/@marialuiza.cluve/start-moving-crypto-with-ambire-pay-gas-with-wallet-and-jump-on-the-exclusive-promo-7c605a181294'
 
 const WalletDiscountBanner = ({ currenciesItems, tokens, estimation, onFeeCurrencyChange }) => {
   const walletDiscountToken = tokens.find(x => x.symbol === 'WALLET' && x.discount)
@@ -28,19 +30,27 @@ const WalletDiscountBanner = ({ currenciesItems, tokens, estimation, onFeeCurren
 
   const { discount } = walletDiscountToken
   const eligibleWalletToken = currenciesItems.find(x => x.value && (x.value === 'WALLET' || x.value === walletDiscountToken.address))
-  const action = !!eligibleWalletToken 
-    ? () => onFeeCurrencyChange(eligibleWalletToken.value) 
-    : () => {/* TODO: go to swap */ }
+  const action = !!eligibleWalletToken
+    ? () => onFeeCurrencyChange(eligibleWalletToken.value)
+    : null
+  //TODO: go to swap 
   const actionTxt = !!eligibleWalletToken ? 'USE WALLET' : 'BUY WALLET'
 
   return (
-    <div className='wallet-discount-banner'>
-      <div>
-      Get {discount * 100} <FaPercentage /> fees discount with WALLET
+    <div className='wallet-discount-banner row'>
+      <div className='row'>
+        Get {discount * 100} <FaPercentage /> fees discount with &nbsp;<strong>WALLET</strong> &nbsp;
+        <a
+          className="address row"
+          href={walletDiscountBlogpost}
+          target="_blank"
+          rel="noreferrer">
+          <MdInfoOutline />
+        </a>
       </div>
-      <Button onClick={action} >
+      {!!action && <Button onClick={action} mini>
         {actionTxt}
-      </Button>
+      </Button>}
     </div>
   )
 }
