@@ -113,6 +113,20 @@
     }
 }
 
+.wallet-discount-banner {
+    font-size: 18px;
+    font-weight: 500;
+    padding: 0.25em 0.5em;
+    background-color: $ambire-purple;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    .buttonComponent {
+        margin: 0.25em;
+    }
+}
+
 // Mobile
 @media screen and (max-width: $mobile-breakpoint-max-width) {
     #fee-selector {
