@@ -11,13 +11,14 @@ import {
 } from './helpers'
 import { FaPercentage } from 'react-icons/fa'
 import { MdInfoOutline } from 'react-icons/md'
+import { NavLink } from 'react-router-dom'
 
 const SPEEDS = ['slow', 'medium', 'fast', 'ape']
 
 const zapperStorageTokenIcons = 'https://storage.googleapis.com/zapper-fi-assets/tokens'
 const walletDiscountBlogpost = 'https://medium.com/@marialuiza.cluve/start-moving-crypto-with-ambire-pay-gas-with-wallet-and-jump-on-the-exclusive-promo-7c605a181294'
 
-const WalletDiscountBanner = ({ currenciesItems, tokens, estimation, onFeeCurrencyChange }) => {
+const WalletDiscountBanner = ({ currenciesItems, tokens, estimation, onFeeCurrencyChange, onDismiss }) => {
   const walletDiscountToken = tokens.find(x => x.symbol === 'WALLET' && x.discount)
 
   if (!walletDiscountToken) return null
@@ -34,12 +35,13 @@ const WalletDiscountBanner = ({ currenciesItems, tokens, estimation, onFeeCurren
     ? () => onFeeCurrencyChange(eligibleWalletToken.value)
     : null
   //TODO: go to swap 
-  const actionTxt = !!eligibleWalletToken ? 'USE WALLET' : 'BUY WALLET'
+  const actionTxt = !!eligibleWalletToken ? 'USE $WALLET' : 'BUY WALLET'
+  const showSwap = !action
 
   return (
     <div className='wallet-discount-banner row'>
       <div className='row'>
-        Get {discount * 100} <FaPercentage /> fees discount with &nbsp;<strong>WALLET</strong> &nbsp;
+        Get {discount * 100} <FaPercentage /> fees discount with &nbsp;<strong>$WALLET</strong> &nbsp;
         <a
           className="address row"
           href={walletDiscountBlogpost}
@@ -51,11 +53,17 @@ const WalletDiscountBanner = ({ currenciesItems, tokens, estimation, onFeeCurren
       {!!action && <Button onClick={action} mini>
         {actionTxt}
       </Button>}
+      {showSwap && <div className='swap-info'>
+        You can get $WALLET, just use the &nbsp;
+        <NavLink className='link' to={'/wallet/swap'} onClick={onDismiss}>
+          Swap
+        </NavLink> menu on the left!
+        </div>}
     </div>
   )
 }
 
-export function FeeSelector({ disabled, signer, estimation, network, setEstimation, feeSpeed, setFeeSpeed }) {
+export function FeeSelector({ disabled, signer, estimation, network, setEstimation, feeSpeed, setFeeSpeed, onDismiss }) {
   if (!estimation) return (<Loading />)
   // Only check for insufficient fee in relayer mode (.feeInUSD is available)
   // Otherwise we don't care whether the user has enough for fees, their signer wallet will take care of it
@@ -156,7 +164,8 @@ export function FeeSelector({ disabled, signer, estimation, network, setEstimati
       currenciesItems,
       tokens,
       estimation,
-      onFeeCurrencyChange
+      onFeeCurrencyChange,
+      onDismiss
     })
     }
 
