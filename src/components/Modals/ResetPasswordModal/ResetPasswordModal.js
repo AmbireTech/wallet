@@ -93,6 +93,7 @@ const ResetPassword = ({ account, selectedNetwork, relayerURL, onAddAccount, sho
             if (resp.success) {
                 onAddAccount({ ...account, primaryKeyBackup })
                 addToast('You password was successfully updated')
+                setLoading(false)
                 hideModal()
             } else {
                 throw new Error(`Unable to update account: ${resp.message || 'unknown error'}`)
