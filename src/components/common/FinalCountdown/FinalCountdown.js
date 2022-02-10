@@ -7,8 +7,16 @@ function toTwoDigits(num) {
     return `${num}`
 }
 
-function getTimeDiff(now, end) {
-    const diff = new Date(end).getTime() - new Date(now).getTime()
+function getTimeDiff(diff) {
+    if (diff < 0) {
+        return {
+            days: '00',
+            hours: '00',
+            minutes: '00',
+            seconds: '00'
+        }
+    }
+
     return {
         days: toTwoDigits(Math.floor(diff / (1000 * 60 * 60 * 24))),
         hours: toTwoDigits(Math.floor((diff / (1000 * 60 * 60)) % 24)),
@@ -18,19 +26,29 @@ function getTimeDiff(now, end) {
 }
 
 export default function Countdown({ endDateTime, label }) {
-    const [timeLeft, setTimeLef] = useState(null)
+
+    const [timeLeft, setTimeLeft] = useState(null)
 
     useLayoutEffect(() => {
         if (endDateTime) {
-            const interval = setInterval(
-                () => setTimeLef(getTimeDiff(new Date(), endDateTime)),
+
+            let interval = setInterval(
+                () => {
+                    const diff = new Date(endDateTime).getTime() - new Date().getTime()
+                    setTimeLeft(getTimeDiff(diff))
+                    if (diff < 0) {
+                        clearInterval(interval)
+                        interval = null
+                    }
+                },
                 1000
             )
             return () => {
                 clearInterval(interval)
+                interval = null
             }
         } else {
-            setTimeLef(null)
+            setTimeLeft(null)
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [endDateTime])
