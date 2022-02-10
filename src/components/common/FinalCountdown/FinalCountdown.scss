@@ -1,0 +1,20 @@
+.final-countdown {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 5px;
+    .timer-icon {
+        font-size: 2rem;
+        align-self: center;
+        margin-right: 0.5rem;
+    }
+    .unit-box {
+        text-align: center;
+        .value {
+            font-size: 1.1rem;
+        }
+        .unit {
+            font-size: 0.69rem;
+        }
+    }
+}
