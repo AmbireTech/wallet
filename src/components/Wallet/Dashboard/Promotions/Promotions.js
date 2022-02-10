@@ -1,11 +1,15 @@
 import './Promotions.scss'
 import {
-    // useEffect,
+    useEffect,
     useState
 } from 'react'
-import { useRelayerData } from 'hooks'
 
-function getPromotion({ period, text, title, resources = {} } = {}) {
+function Promo({
+    // period,
+    text,
+    title,
+    resources = {}
+} = {}) {
 
     if (!text) return null
 
@@ -39,20 +43,15 @@ function getPromotion({ period, text, title, resources = {} } = {}) {
     )
 }
 
-export default function Promotions({ relayerURL }) {
+export default function Promotions({ rewardsData }) {
+    const [promo, setPromo] = useState(null)
 
-    const [cacheBreak, _setCacheBreak] = useState(() => Date.now())
+    useEffect(() => {
+        if (!promo && !!rewardsData?.data?.promo) {
+            setPromo(rewardsData?.data?.promo)
+        }
+    }, [promo, rewardsData?.data?.promo])
 
-    const url = relayerURL
-        ? `${relayerURL}/promotions?cacheBreak=${cacheBreak}`
-        : null
-
-    const { data, errMsg, isLoading } = useRelayerData(url)
-
-    if (!data || errMsg || isLoading) return null
-    return (
-        <div>
-            {getPromotion(data?.promo)}
-        </div>
-    )
+    if (!promo) return null
+    return Promo(rewardsData.data.promo)
 }
