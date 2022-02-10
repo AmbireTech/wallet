@@ -41,36 +41,36 @@ export default function Countdown({ endDateTime, label }) {
         <div>
             {label && <span>{label}</span>}
             <div className='final-countdown'>
-                <RiTimerFlashLine className='timer-icon'/>
+                <RiTimerFlashLine className='timer-icon' />
                 <div className='unit-box'>
-                    <div className='vale'>
+                    <div className='value'>
                         {timeLeft.days}
                     </div>
                     <div className='unit'>
-                        Days
+                        days
                     </div>
                 </div>
-                :
+                <div className='value'>:</div>
                 <div className='unit-box'>
-                    <div className='vale'>
+                    <div className='value'>
                         {timeLeft.hours}
                     </div>
                     <div className='unit'>
                         hours
                     </div>
                 </div>
-                :
+                <div className='value'>:</div>
                 <div className='unit-box'>
-                    <div className='vale'>
+                    <div className='value'>
                         {timeLeft.minutes}
                     </div>
                     <div className='unit'>
                         minutes
                     </div>
                 </div>
-                :
+                <div className='value'>:</div>
                 <div className='unit-box'>
-                    <div className='vale'>
+                    <div className='value'>
                         {timeLeft.seconds}
                     </div>
                     <div className='unit'>
