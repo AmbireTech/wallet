@@ -5,7 +5,7 @@
 }
 
 .discount-label {
-    color: $ambire-purple;
+    color: $primary-accent-color;
 }
 
 .balance-error {
@@ -71,7 +71,7 @@
             position: absolute;
             top: 4px;
             right: 4px;
-            color: $ambire-purple;
+            color: $primary-accent-color;
         }
     }
 }
@@ -79,7 +79,7 @@
 .fee-select {
     .discount {
         @include flex-center-center;
-        color: $ambire-purple;
+        color: $primary-accent-color;
         font-size: 1.2rem;
         font-weight: bold;
     }
