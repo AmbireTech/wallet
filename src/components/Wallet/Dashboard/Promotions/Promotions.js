@@ -3,9 +3,10 @@ import {
     useEffect,
     useState
 } from 'react'
+import FinalCountdown from 'components/common/FinalCountdown/FinalCountdown'
 
 function Promo({
-    // period,
+    period,
     text,
     title,
     resources = {}
@@ -38,7 +39,15 @@ function Promo({
                     {title}
                 </div>
             }
-            {split.map(x => links[x] || x)}
+            <div>
+                {split.map(x => links[x] || x)}
+            </div>
+            {
+                period?.to && period?.timer &&
+                <div className='timer'>
+                    <FinalCountdown endDateTime={period.to} />
+                </div>
+            }
         </div>
     )
 }
@@ -53,5 +62,7 @@ export default function Promotions({ rewardsData }) {
     }, [promo, rewardsData?.data?.promo])
 
     if (!promo) return null
-    return Promo(rewardsData.data.promo)
+    return (
+        <Promo {...promo} />
+    )
 }
