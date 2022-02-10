@@ -1,0 +1,18 @@
+
+    @import 'variables.scss';
+
+    .notice {
+        font-weight: bold;
+        background-color: $warning-color;
+        padding: 0.9rem 1.2rem;
+        color: $text-dark;
+        font-size: 1rem;
+        .title {
+            font-size: 1.2rem;
+            margin-bottom: 0.2rem;;
+        }
+        .link {
+            color: $text-dark;
+            text-decoration: underline;
+        }
+    }

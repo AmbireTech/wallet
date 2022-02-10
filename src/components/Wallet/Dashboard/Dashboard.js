@@ -8,6 +8,7 @@ import Balances from './Balances/Balances'
 import Protocols from './Protocols/Protocols'
 import Collectibles from './Collectibles/Collectibles'
 import { MdOutlineInfo } from 'react-icons/md'
+import Promotions from './Promotions/Promotions'
 
 const chartSegments = [
     {
@@ -27,7 +28,7 @@ const tabSegments = [
     }
 ]
 
-export default function Dashboard({ portfolio, selectedNetwork, selectedAccount, setNetwork, privateMode }) {
+export default function Dashboard({ portfolio, selectedNetwork, selectedAccount, setNetwork, privateMode, relayerURL }) {
     const history = useHistory()
     const { tabId } = useParams()
 
@@ -70,13 +71,9 @@ export default function Dashboard({ portfolio, selectedNetwork, selectedAccount,
 
     return (
         <section id="dashboard">
-            <div className="notice">
-                Save up to 30% on gas fees when you pay them in $WALLET!
-                <a className='link' target="_blank" 
-                    href='https://medium.com/@marialuiza.cluve/start-moving-crypto-with-ambire-pay-gas-with-wallet-and-jump-on-the-exclusive-promo-7c605a181294' 
-                    rel="noopener noreferrer"
-                > Learn more.</a>
-            </div>
+            {
+                Promotions({relayerURL})
+            }
             <div id="overview">
                 <div id="balance" className="panel">
                     <div className="title">Balance</div>
