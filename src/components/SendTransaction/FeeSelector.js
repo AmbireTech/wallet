@@ -14,10 +14,9 @@ import { MdInfoOutline } from 'react-icons/md'
 import { NavLink } from 'react-router-dom'
 import { MdEdit } from 'react-icons/md'
 import { useState } from 'react'
+import { getTokenIcon } from 'lib/icons'
 
 const SPEEDS = ['slow', 'medium', 'fast', 'ape']
-
-const zapperStorageTokenIcons = 'https://storage.googleapis.com/zapper-fi-assets/tokens'
 const walletDiscountBlogpost = 'https://medium.com/@marialuiza.cluve/start-moving-crypto-with-ambire-pay-gas-with-wallet-and-jump-on-the-exclusive-promo-7c605a181294'
 
 const WalletDiscountBanner = ({ currenciesItems, tokens, estimation, onFeeCurrencyChange, onDismiss }) => {
@@ -99,7 +98,7 @@ export function FeeSelector({ disabled, signer, estimation, network, setEstimati
     .filter(token => isTokenEligible(token, feeSpeed, estimation))
     .sort((a, b) => (b.discount || 0) - (a.discount || 0))
     .map(({ address, symbol, discount }) => ({
-      icon: address ? `${zapperStorageTokenIcons}/${network.id}/${address.toLowerCase()}.png` : null,
+      icon: address ? getTokenIcon(network.id, address) : null,
       label: symbol,
       value: address || symbol,
       ...(discount ? {
