@@ -136,8 +136,6 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, network, account,
         })
         if (estimation.nextNonce) {
           setReplaceTx((estimation.nextNonce.pendingBundle.nonce?.num || estimation.nextNonce.nonce) === estimation.nextNonce.nonce)
-        } else {
-          console.error('No nextNonce found. did the estimation revert?', estimation)
         }
       })
       .catch(e => {
