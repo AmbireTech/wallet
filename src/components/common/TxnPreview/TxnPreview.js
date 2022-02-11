@@ -9,12 +9,7 @@ import { ToolTip } from 'components/common'
 import { HiOutlineExternalLink } from 'react-icons/hi'
 import { MdOutlineClose } from 'react-icons/md'
 import { BsChevronDown, BsChevronUp } from 'react-icons/bs'
-
-const zapperStorageTokenIcons = 'https://storage.googleapis.com/zapper-fi-assets/tokens'
-
-function getTokenIcon(network, address) {
-  return `${zapperStorageTokenIcons}/${network}/${address}.png`
-}
+import { getTokenIcon } from 'lib/icons'
 
 function getNetworkSymbol(networkId) {
   const network = networks.find(x => x.id === networkId)
