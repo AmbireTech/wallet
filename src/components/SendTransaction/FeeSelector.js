@@ -170,20 +170,23 @@ export function FeeSelector({ disabled, signer, estimation, network, setEstimati
 
   const {
     feeInFeeToken: minFee,
+    feeInUSD: minFeeUSD,
   } = getFeesData({ ...estimation.selectedFeeToken }, { ...estimation, customFee: null }, 'slow')
   const discountMin = getDiscountApplied(minFee, discount)
 
   const discountInFeeToken = getDiscountApplied(feeInFeeToken, discount)
   const discountInUSD = getDiscountApplied(feeInUSD, discount)
+  const discountBaseMinInUSD = getDiscountApplied(feeInUSD, discount)
 
   // Fees with no discounts applied
   const baseFeeInFeeToken = feeInFeeToken + discountInFeeToken
   const baseFeeInUSD = feeInUSD + discountInUSD
   const baseMinFee = minFee + discountMin
+  const baseMinFeeUSD = minFeeUSD + discountBaseMinInUSD
 
   const isUnderpriced = !!estimation.customFee
     && !isNaN(parseFloat(estimation.customFee))
-    && (feeInFeeToken < baseMinFee)
+    && (baseFeeInFeeToken < baseMinFee)
 
   return (<>
     {insufficientFee ?
@@ -225,8 +228,9 @@ export function FeeSelector({ disabled, signer, estimation, network, setEstimati
                     {<Button textOnly
                       onClick={() => setCustomFee(baseMinFee)}
                     >
-                      {baseMinFee} {symbol}
+                      {baseMinFee} {symbol} 
                     </Button>}
+                    &nbsp; (~${(baseMinFeeUSD).toFixed(baseMinFeeUSD < 1 ? 4 : 2)})
                   </div>
                 </div>
               }
