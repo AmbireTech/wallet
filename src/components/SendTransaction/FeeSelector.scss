@@ -20,6 +20,7 @@
     flex-direction: row;
     justify-content: space-evenly;
     gap: 1em;
+    flex-wrap: wrap;
 
     .feeSquare {
         height: 90px;
