@@ -152,6 +152,11 @@
             }
         }
     }
+    
+    .underpriced-warning {
+        color: $warning-color;
+        font-size: 14.20px;
+    }
 }
 
 .failingTxn {

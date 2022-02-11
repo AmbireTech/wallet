@@ -139,7 +139,7 @@ export function FeeSelector({ disabled, signer, estimation, network, setEstimati
     const {
       feeInFeeToken,
       // NOTE: get the estimation res data w/o custom fee for the speeds
-    } = getFeesData({...estimation.selectedFeeToken}, {...estimation, customFee: null}, speed)
+    } = getFeesData({ ...estimation.selectedFeeToken }, { ...estimation, customFee: null }, speed)
     const discountInFeeToken = getDiscountApplied(feeInFeeToken, discount)
 
     return (
@@ -168,15 +168,28 @@ export function FeeSelector({ disabled, signer, estimation, network, setEstimati
     feeInUSD,
   } = getFeesData(estimation.selectedFeeToken, estimation, feeSpeed)
 
+  const {
+    feeInFeeToken: minFee,
+  } = getFeesData({ ...estimation.selectedFeeToken }, { ...estimation, customFee: null }, 'slow')
+  const discountMin = getDiscountApplied(minFee, discount)
+
   const discountInFeeToken = getDiscountApplied(feeInFeeToken, discount)
   const discountInUSD = getDiscountApplied(feeInUSD, discount)
+
+  // Fees with no discounts applied
+  const baseFeeInFeeToken = feeInFeeToken + discountInFeeToken
+  const baseFeeInUSD = feeInUSD + discountInUSD
+  const baseMinFee = minFee + discountMin
+
+  const isUnderpriced = !!estimation.customFee
+    && !isNaN(parseFloat(estimation.customFee))
+    && (feeInFeeToken < baseMinFee)
 
   return (<>
     {insufficientFee ?
       (<div className='balance-error'>Insufficient balance for the fee.<br />Accepted tokens: {(estimation.remainingFeeTokenBalances || []).map(x => x.symbol).join(', ')}</div>)
       : feeCurrencySelect
     }
-
 
     {WalletDiscountBanner({
       currenciesItems,
@@ -197,13 +210,26 @@ export function FeeSelector({ disabled, signer, estimation, network, setEstimati
             </div>
             :
             <div id='custom-fee-selector'>
-              <div className='title'>Custom Fee</div>
+              <div className='title'>Custom Fee ({symbol})</div>
               <TextInput
                 small
                 placeholder='Enter amount'
                 className={`${estimation.customFee ? 'selected' : ''}`}
                 onChange={value => setCustomFee(value)}
+                value={estimation.customFee}
               />
+              {isUnderpriced &&
+                <div className='underpriced-warning'>
+                  <div>Custom Fee too low. You can try to "sign and send" the transaction but most probably it will fail.</div>
+                  <div>Min estimated fee: &nbsp;
+                    {<Button textOnly
+                      onClick={() => setCustomFee(baseMinFee)}
+                    >
+                      {baseMinFee} {symbol}
+                    </Button>}
+                  </div>
+                </div>
+              }
             </div>
         }
       </div>
@@ -223,10 +249,10 @@ export function FeeSelector({ disabled, signer, estimation, network, setEstimati
           </div>
           <div className='fee-amounts'>
             <div>
-              ~${(feeInUSD + discountInUSD).toFixed(feeInUSD + discountInUSD < 1 ? 4 : 2)}
+              ~${(baseFeeInUSD).toFixed(baseFeeInUSD < 1 ? 4 : 2)}
             </div>
             <div>
-              {(feeInFeeToken + discountInFeeToken) + ' ' + estimation.selectedFeeToken.symbol}
+              {(baseFeeInFeeToken) + ' ' + estimation.selectedFeeToken.symbol}
             </div>
           </div>
         </div>)}
