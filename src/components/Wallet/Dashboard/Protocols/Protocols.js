@@ -16,7 +16,11 @@ const Protocols = ({ portfolio, network, account, hidePrivateValue }) => {
     const [failedImg, setFailedImg] = useState([])
 
     const { isBalanceLoading, areProtocolsLoading, tokens, protocols } = portfolio
-    const sortedTokens = tokens.sort((a, b) => b.balanceUSD - a.balanceUSD)
+    const sortedTokens = tokens.sort((a, b) => {
+        const decreasing = b.balanceUSD - a.balanceUSD
+        if (decreasing === 0) return a.symbol.localeCompare(b.symbol)
+        return decreasing
+    })
     const otherProtocols = protocols.filter(({ label }) => label !== 'Tokens')
     const shouldShowPlaceholder = (!isBalanceLoading && !tokens.length) && (!areProtocolsLoading && !otherProtocols.length)
 
@@ -55,7 +59,7 @@ const Protocols = ({ portfolio, network, account, hidePrivateValue }) => {
             }
         </div>
 
-    const openAddTokenModal = () => showModal(<AddTokenModal network={network} account={account} onAddToken={portfolio.onAddExtraToken}/>)
+    const openAddTokenModal = () => showModal(<AddTokenModal network={network} account={account} portfolio={portfolio} />)
 
     return (
         <div id="protocols-table">

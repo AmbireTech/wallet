@@ -38,7 +38,7 @@ async function supplementTokensDataFromNetwork({ walletAddr, network, tokensData
     if (!walletAddr || walletAddr==="" || !network || !network === "" ) return []
     if (!tokensData || !tokensData[0]) tokensData = checkTokenList(tokensData || []) //tokensData check and populate for test if undefind
     if (!extraTokens || !extraTokens[0]) extraTokens = checkTokenList(extraTokens || [])  //extraTokens check and populate for test if undefind
-  
+
     // concat predefined token list with extraTokens list (extraTokens are certainly ERC20)
     const fullTokenList = [ ...new Set(
         tokenList[network] ? tokenList[network].concat(extraTokens) : [...extraTokens]
@@ -49,19 +49,21 @@ async function supplementTokensDataFromNetwork({ walletAddr, network, tokensData
     const tokensNotInList = tokensData.filter(td => {
       return !tokens.some(t => t.address === td.address)
     })
-  
+
     // tokensNotInList: call separately to prevent errors from non-erc20 tokens
     // NOTE about err handling: errors are caught for each call in balanceOracle, and we retain the original token entry, which contains the balance
     const calls = paginateArray(tokens, 100).concat(paginateArray(tokensNotInList, 100))
 
     const tokenBalances = (await Promise.all(calls.map(callTokens => {
         return getTokenListBalance({ walletAddr, tokens: callTokens, network, updateBalance })
-    }))).flat()
+    }))).flat().filter(t => {
+        return extraTokens.some(et => t.address === et.address) ? true : (parseFloat(t.balance) > 0)
+    })
     return tokenBalances
   }
-  
-  
-export default function usePortfolio({ currentNetwork, account }) {
+
+
+export default function usePortfolio({ currentNetwork, account, useStorage }) {
     const { addToast } = useToasts()
 
     const currentAccount = useRef();
@@ -83,10 +85,7 @@ export default function usePortfolio({ currentNetwork, account }) {
     const [tokens, setTokens] = useState([]);
     const [protocols, setProtocols] = useState([]);
     const [collectibles, setCollectibles] = useState([]);
-    const [extraTokens, setExtraTokens] = useState(() => {
-        const storedExtraTokens = localStorage.extraTokens
-        return storedExtraTokens ? JSON.parse(storedExtraTokens) : []
-    });
+    const [extraTokens, setExtraTokens] = useStorage({ key: 'extraTokens', defaultValue: [] });
 
     const getExtraTokensAssets = useCallback((account, network) => extraTokens
         .filter(extra => extra.account === account && extra.network === network)
@@ -98,6 +97,31 @@ export default function usePortfolio({ currentNetwork, account }) {
             isExtraToken: true
         }))
     , [extraTokens])
+
+    const fetchSupplementTokenData = useCallback(async (updatedTokens) => {
+        const currentNetworkTokens = updatedTokens.find(({ network }) => network === currentNetwork) || { network: currentNetwork, meta: [], assets: [] }
+
+        const extraTokensAssets = getExtraTokensAssets(account, currentNetwork)
+        try {
+            const rcpTokenData = await supplementTokensDataFromNetwork({
+                walletAddr: account,
+                network: currentNetwork,
+                tokensData: currentNetworkTokens ? currentNetworkTokens.assets.filter(({ isExtraToken }) => !isExtraToken) : [], // Filter out extraTokens
+                extraTokens: extraTokensAssets
+            })
+
+            currentNetworkTokens.assets = rcpTokenData
+
+            setTokensByNetworks(tokensByNetworks => [
+                ...tokensByNetworks.filter(({ network }) => network !== currentNetwork),
+                currentNetworkTokens
+            ])
+
+            setBalanceLoading(false)
+        } catch(e) {
+            console.error('supplementTokensDataFromNetwork failed', e)
+        }
+    }, [getExtraTokensAssets, account, currentNetwork])
 
     const fetchTokens = useCallback(async (account, currentNetwork = false) => {
         try {
@@ -139,6 +163,8 @@ export default function usePortfolio({ currentNetwork, account }) {
                 ...updatedTokens
             ]))
 
+            if (!currentNetwork) fetchSupplementTokenData(updatedTokens)
+
             if (failedRequests >= requestsCount) throw new Error('Failed to fetch Tokens from API')
             return true
         } catch (error) {
@@ -146,7 +172,7 @@ export default function usePortfolio({ currentNetwork, account }) {
             addToast(error.message, { error: true })
             return false
         }
-    }, [getExtraTokensAssets, addToast])
+    }, [getExtraTokensAssets, fetchSupplementTokenData, addToast])
 
     const fetchOtherProtocols = useCallback(async (account, currentNetwork = false) => {
         try {
@@ -154,7 +180,7 @@ export default function usePortfolio({ currentNetwork, account }) {
 
             let failedRequests = 0
             const requestsCount = protocols.reduce((acc, curr) => curr.protocols.length + acc, 0)
-
+            if (requestsCount === 0) return true
             const updatedProtocols = (await Promise.all(protocols.map(async ({ network, protocols, nftsProvider }) => {
                 const all = (await Promise.all(protocols.map(async protocol => {
                     try {
@@ -186,9 +212,8 @@ export default function usePortfolio({ currentNetwork, account }) {
                 ...protocolsByNetworks.filter(({ network }) => !updatedNetworks.includes(network)),
                 ...updatedProtocols
             ]))
-            
-            lastOtherProcolsRefresh = Date.now()
 
+            lastOtherProcolsRefresh = Date.now()
             if (failedRequests >= requestsCount) throw new Error('Failed to fetch other Protocols from API')
             return true
         } catch (error) {
@@ -230,9 +255,18 @@ export default function usePortfolio({ currentNetwork, account }) {
             }
         ]
 
-        localStorage.extraTokens = JSON.stringify(updatedExtraTokens)
         setExtraTokens(updatedExtraTokens)
         addToast(`${name} (${symbol}) token added to your wallet!`)
+    }
+
+    const onRemoveExtraToken = address => {
+        const token = extraTokens.find(t => t.address === address)
+        if (!token) return addToast(`${address} is not present in your wallet.`)
+
+        const updatedExtraTokens = extraTokens.filter(t => t.address !== address)
+
+        setExtraTokens(updatedExtraTokens)
+        addToast(`${token.name} (${token.symbol}) was removed from your wallet.`)
     }
 
     // Fetch balances and protocols on account change
@@ -332,45 +366,9 @@ export default function usePortfolio({ currentNetwork, account }) {
 
     // Get supplement tokens data every 20s
     useEffect(() => {
-        const getSupplementTokenData = async () => {
-            const currentNetworkTokens = tokensByNetworks.find(({ network }) => network === currentNetwork)
-            if (!currentNetworkTokens) return
-
-            const extraTokensAssets = getExtraTokensAssets(account, currentNetwork)
-            try {
-                const rcpTokenData = await supplementTokensDataFromNetwork({
-                    walletAddr: account,
-                    network: currentNetwork,
-                    tokensData: currentNetworkTokens.assets.filter(({ isExtraToken }) => !isExtraToken), // Filter out extraTokens
-                    extraTokens: extraTokensAssets
-                })
-                currentNetworkTokens.assets = rcpTokenData
-
-                // Update stored extraTokens with new rpc data
-                // @TODO this seems unnecessary but we'll have to analyze it again
-                const storedExtraTokens = JSON.parse(localStorage.extraTokens || '[]') || []
-                const updatedExtraTokens = rcpTokenData.map(updated => {
-                    const extraToken = storedExtraTokens.find(extra => extra.address === updated.address && extra.network === updated.network && extra.account === account)
-                    if (!extraToken) return null
-                    return {
-                        ...extraToken,
-                        ...updated
-                    }
-                }).filter(updated => updated)
-
-                localStorage.extraTokens = JSON.stringify(updatedExtraTokens)
-
-                setTokensByNetworks([
-                    ...tokensByNetworks.filter(({ network }) => network !== currentNetwork),
-                    currentNetworkTokens
-                ])
-            } catch(e) {
-                console.error('supplementTokensDataFromNetwork failed', e)
-            }
-        }
-        const refreshInterval = setInterval(getSupplementTokenData, 20000)
+        const refreshInterval = setInterval(() => fetchSupplementTokenData(tokensByNetworks), 20000)
         return () => clearInterval(refreshInterval)
-    }, [account, currentNetwork, isBalanceLoading, fetchTokens, tokensByNetworks, extraTokens, getExtraTokensAssets])
+    }, [fetchSupplementTokenData, tokensByNetworks])
 
     // Refresh balance when window is focused
     useEffect(() => {
@@ -384,10 +382,12 @@ export default function usePortfolio({ currentNetwork, account }) {
         balance,
         otherBalances,
         tokens,
+        extraTokens,
         protocols,
         collectibles,
         requestOtherProtocolsRefresh,
-        onAddExtraToken
+        onAddExtraToken,
+        onRemoveExtraToken
         //updatePortfolio//TODO find a non dirty way to be able to reply to getSafeBalances from the dapps, after the first refresh
     }
 }

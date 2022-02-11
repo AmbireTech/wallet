@@ -1,4 +1,4 @@
-import {useCallback, useEffect, useState, useRef, useMemo} from 'react'
+import {useCallback, useRef, useMemo} from 'react'
 import {useToasts} from 'hooks/toasts'
 
 import {Methods} from '@gnosis.pm/safe-apps-sdk'
@@ -7,7 +7,7 @@ import { getProvider } from 'lib/provider'
 
 const STORAGE_KEY = 'gnosis_safe_state'
 
-export default function useGnosisSafe({selectedAccount, network, verbose = 0}) {
+export default function useGnosisSafe({selectedAccount, network, verbose = 0, useStorage}) {
   // One connector at a time
   const connector = useRef(null)
 
@@ -22,16 +22,10 @@ export default function useGnosisSafe({selectedAccount, network, verbose = 0}) {
     network
   }
 
-  const [requests, setRequests] = useState(() => {
-    const json = localStorage[STORAGE_KEY]
-    if (!json) return []
-    try {
-      const parsed = JSON.parse(json)
-      return Array.isArray(parsed) ? parsed : []
-    } catch (e) {
-      console.error(e)
-      return []
-    }
+  const [requests, setRequests] = useStorage({
+    key: STORAGE_KEY,
+    defaultValue: [],
+    setInit: initialRequests => !Array.isArray(initialRequests) ? [] : initialRequests
   })
 
   const connect = useCallback(connectorOpts => {
@@ -96,8 +90,8 @@ export default function useGnosisSafe({selectedAccount, network, verbose = 0}) {
       if (!msg?.data?.params) {
         throw new Error("invalid call object")
       }
-      const method = msg.data.params.call//0 == tx, 1 == blockNum
-      const callTx = msg.data.params.params//0 == tx, 1 == blockNum
+      const method = msg.data.params.call
+      const callTx = msg.data.params.params
 
       const provider = getProvider(stateRef.current.network.id)
       let result
@@ -139,7 +133,14 @@ export default function useGnosisSafe({selectedAccount, network, verbose = 0}) {
         result = await provider.getTransactionReceipt(callTx[0]).catch(err => {
           throw err
         })
-      } else if (method === "personal_sign") {
+      //requires custom from calls from SDK but are not implemented in gnosis SDK
+      } else if (method === 'gs_multi_send' || method === 'ambire_sendBatchTransaction') {
+        //As future proof as possible (tested with a tweaked eth_call)
+        msg.data.params.txs = callTx[0]
+        await handleSendTransactions(msg).catch(err => {
+          throw err
+        })
+      } else if (method === 'personal_sign') {
         result = await handlePersonalSign(msg).catch(err => {
           throw err
         })
@@ -150,7 +151,11 @@ export default function useGnosisSafe({selectedAccount, network, verbose = 0}) {
     })
 
     connector.current.on(Methods.sendTransactions, (msg) => {
-      verbose > 0 && console.log("DApp requested sendTx") && console.log(msg)
+      handleSendTransactions(msg)
+    })
+
+    const handleSendTransactions = (msg) => {
+      verbose > 0 && console.log('DApp requested sendTx', msg)
 
       const data = msg?.data
       if (!data) {
@@ -158,7 +163,6 @@ export default function useGnosisSafe({selectedAccount, network, verbose = 0}) {
         return
       }
 
-      const id = 'gs_' + data.id
       const txs = data?.params?.txs
       if (txs?.length) {
         for (let i in txs) {
@@ -169,22 +173,24 @@ export default function useGnosisSafe({selectedAccount, network, verbose = 0}) {
         return
       }
 
-      const request = {
-        id,
-        forwardId: msg.data.id,
-        type: 'eth_sendTransaction',
-        txn: txs[0], //if anyone finds a dapp that sends a bundle, please reach me out
-        chainId: stateRef.current.network.chainId,
-        account: stateRef.current.selectedAccount
+      for (let ix in txs) {
+        const id = 'gs_' + data.id + ':' + ix
+        const request = {
+          id,
+          forwardId: msg.data.id,
+          type: 'eth_sendTransaction',
+          isBatch: txs.length > 1,
+          txn: txs[ix], //if anyone finds a dapp that sends a bundle, please reach me out
+          chainId: stateRef.current.network.chainId,
+          account: stateRef.current.selectedAccount
+        }
+        //is reducer really needed here?
+        setRequests(prevRequests => prevRequests.find(x => x.id === request.id) ? prevRequests : [...prevRequests, request])
       }
-
-      setRequests(prevRequests => prevRequests.find(x => x.id === request.id) ? prevRequests : [...prevRequests, request])
-    })
+    }
 
     const handlePersonalSign = (msg) => {
-      verbose > 0 && console.log("DApp requested signMessage") && console.log(msg)
-
-      console.log(msg);
+      verbose > 0 && console.log('DApp requested signMessage', msg)
 
       const data = msg?.data
       if (!data) {
@@ -211,9 +217,7 @@ export default function useGnosisSafe({selectedAccount, network, verbose = 0}) {
       setRequests(prevRequests => prevRequests.find(x => x.id === request.id) ? prevRequests : [...prevRequests, request])
     }
 
-    connector.current.on(Methods.signMessage, (msg) => {
-        return handlePersonalSign(msg)
-    })
+    connector.current.on(Methods.signMessage, (msg) => handlePersonalSign(msg))
 
     connector.current.on(Methods.getTxBySafeTxHash, async (msg) => {
       const {safeTxHash} = msg.data.params
@@ -228,7 +232,7 @@ export default function useGnosisSafe({selectedAccount, network, verbose = 0}) {
         return {}
       }
     })
-  }, [uniqueId, addToast, verbose])
+  }, [uniqueId, addToast, verbose, setRequests])
 
 
   const disconnect = useCallback(() => {
@@ -236,41 +240,40 @@ export default function useGnosisSafe({selectedAccount, network, verbose = 0}) {
     connector.current?.clear()
   }, [verbose])
 
+
   const resolveMany = (ids, resolution) => {
     for (let req of requests.filter(x => ids.includes(x.id))) {
-      const replyData = {
-        id: req.forwardId,
-        success: null,
-        txId: null,
-        error: null
-      }
-      if (!resolution) {
-        replyData.error = 'Nothing to resolve'
-        replyData.success = false
-      } else if (!resolution.success) {
-        replyData.error = resolution.message
-        replyData.success = false
-      } else { //onSuccess
-        replyData.success = true
-        replyData.txId = resolution.result
-        replyData.safeTxHash = resolution.result
-      }
-      if (!connector.current) {
-        //soft error handling: sendTransaction has issues
-        //throw new Error("gnosis safe connector not set")
-        console.error('gnosis safe connector not set')
-      } else {
-        connector.current.send(replyData, req.forwardId, replyData.error)
+      if (!req.isBatch || req.id.endsWith(':0')) {
+        const replyData = {
+          id: req.forwardId,
+          success: null,
+          txId: null,
+          error: null
+        }
+        if (!resolution) {
+          replyData.error = 'Nothing to resolve'
+          replyData.success = false
+        } else if (!resolution.success) {
+          replyData.error = resolution.message
+          replyData.success = false
+        } else { //onSuccess
+          replyData.success = true
+          replyData.txId = resolution.result
+          replyData.safeTxHash = resolution.result
+        }
+        if (!connector.current) {
+          //soft error handling: sendTransaction has issues
+          //throw new Error("gnosis safe connector not set")
+          console.error('gnosis safe connector not set')
+        } else {
+          console.log('gnosis reply', replyData)
+          connector.current.send(replyData, req.forwardId, replyData.error)
+        }
       }
     }
 
     setRequests(prevRequests => prevRequests.filter(x => !ids.includes(x.id)))
   }
-
-  // Side effects that will run on every state change/rerender
-  useEffect(() => {
-    localStorage[STORAGE_KEY] = JSON.stringify(requests)
-  }, [requests, selectedAccount, network])
 
   return {
     requests,

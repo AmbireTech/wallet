@@ -6,6 +6,7 @@ contract WALLETToken {
 	string public constant name = "Ambire Wallet";
 	string public constant symbol = "WALLET";
 	uint8 public constant decimals = 18;
+	uint public constant MAX_SUPPLY = 1_000_000_000 * 1e18;
 
 	// Mutable variables
 	uint public totalSupply;
@@ -15,12 +16,12 @@ contract WALLETToken {
 	event Approval(address indexed owner, address indexed spender, uint amount);
 	event Transfer(address indexed from, address indexed to, uint amount);
 
-	address public supplyController;
-	address public immutable PREV_TOKEN;
+	event SupplyControllerChanged(address indexed prev, address indexed current);
 
-	constructor(address supplyControllerAddr, address prevTokenAddr) {
-		supplyController = supplyControllerAddr;
-		PREV_TOKEN = prevTokenAddr;
+	address public supplyController;
+	constructor(address _supplyController) {
+		supplyController = _supplyController;
+		emit SupplyControllerChanged(address(0), _supplyController);
 	}
 
 	function balanceOf(address owner) external view returns (uint balance) {
@@ -55,6 +56,7 @@ contract WALLETToken {
 	// Supply control
 	function innerMint(address owner, uint amount) internal {
 		totalSupply = totalSupply + amount;
+		require(totalSupply < MAX_SUPPLY, 'MAX_SUPPLY');
 		balances[owner] = balances[owner] + amount;
 		// Because of https://github.com/ethereum/EIPs/blob/master/EIPS/eip-20.md#transfer-1
 		emit Transfer(address(0), owner, amount);
@@ -67,49 +69,8 @@ contract WALLETToken {
 
 	function changeSupplyController(address newSupplyController) external {
 		require(msg.sender == supplyController, 'NOT_SUPPLYCONTROLLER');
+		// Emitting here does not follow checks-effects-interactions-logs, but it's safe anyway cause there are no external calls
+		emit SupplyControllerChanged(supplyController, newSupplyController);
 		supplyController = newSupplyController;
-	}
-}
-
-contract WALLETSupplyController {
-	enum GovernanceLevel { None, Mint, All }
-
-	uint public constant CAP = 1_000_000_000 * 1e18;
-	WALLETToken public immutable WALLET;
-
-	mapping (address => uint8) public governance;
-	// Some addresses (eg StakingPools) are incentivized with a certain allowance of WALLET per year
-	mapping (address => uint) public incentivePerSecond;
-	// Keep track of when incentive tokens were last minted for a given addr
-	mapping (address => uint) public incentiveLastMint;
-
-	constructor(WALLETToken token) {
-		governance[msg.sender] = uint8(GovernanceLevel.All);
-		WALLET = token;
-	}
-
-	function changeSupplyController(address newSupplyController) external {
-		require(governance[msg.sender] >= uint8(GovernanceLevel.All), "NOT_GOVERNANCE");
-		WALLET.changeSupplyController(newSupplyController);
-	}
-
-	function setGovernance(address addr, uint8 level) external {
-		require(governance[msg.sender] >= uint8(GovernanceLevel.All), "NOT_GOVERNANCE");
-		governance[addr] = level;
-	}
-
-	function setIncentive(address addr, uint amountPerSecond) external {
-		require(governance[msg.sender] >= uint8(GovernanceLevel.All), "NOT_GOVERNANCE");
-		// no more than 10 WALLET per second
-		require(amountPerSecond < 10e18, "AMOUNT_TOO_LARGE");
-		incentiveLastMint[addr] = block.timestamp;
-		incentivePerSecond[addr] = amountPerSecond;
-		// AUDIT: pending incentive lost here
-	}
-
-	function innerMint(WALLETToken token, address owner, uint amount) internal {
-		uint totalSupplyAfter = token.totalSupply() + amount;
-		require(totalSupplyAfter <= CAP, "MINT_TOO_LARGE");
-		token.mint(owner, amount);
 	}
 }

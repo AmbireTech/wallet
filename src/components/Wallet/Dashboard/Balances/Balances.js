@@ -14,7 +14,7 @@ const Balances = ({ portfolio, selectedNetwork, setNetwork, hidePrivateValue }) 
             <div id="other-balances">
                 { otherBalances.length ? <label>You also have</label> : null }
                 {
-                    otherBalances.map(({ network, total }, i) => (
+                    otherBalances.filter(({ network }) => networkDetails(network)).map(({ network, total }, i) => (
                         <div className="balance-container" key={network}>
                             <div className="other-balance" onClick={() => setNetwork(network)}>
                                 <label>

@@ -10,6 +10,12 @@ const dapps = [{
   desc: 'Local dapp test with some lorem ipsum stuff'
 },
 {
+  name: 'TxBuilder',
+  url: 'https://safe-apps.dev.gnosisdev.com/tx-builder/',
+  logo: 'https://safe-apps.dev.gnosisdev.com/tx-builder/logo.svg',
+  desc: 'Local dapp test with some lorem ipsum stuff'
+},
+{
   name: 'ParaSwap',
   url: 'https://paraswap.io',
   logo: 'https://paraswap.io/paraswap.svg',
