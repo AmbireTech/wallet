@@ -1,6 +1,5 @@
 import './SignMessage.scss'
-import { FaSignature } from 'react-icons/fa'
-import { MdOutlineAccountCircle } from 'react-icons/md'
+import { MdBrokenImage, MdCheck, MdClose } from 'react-icons/md'
 import { Wallet } from 'ethers'
 import { toUtf8String, keccak256, arrayify, isHexString } from 'ethers/lib/utils'
 import { signMsgHash } from 'adex-protocol-eth/js/Bundle'
@@ -11,11 +10,14 @@ import { fetchPost } from 'lib/fetch'
 import { useState } from 'react'
 import { Button, Loading, TextInput } from 'components/common'
 
-export default function SignMessage ({ toSign, resolve, account, relayerURL, totalRequests }) {
+export default function SignMessage ({ toSign, resolve, account, connections, relayerURL, totalRequests }) {
   const defaultState = () => ({ codeRequired: false, passphrase: '' })
   const { addToast } = useToasts()
   const [signingState, setSigningState] = useState(defaultState())
   const [isLoading, setLoading] = useState(false)
+
+  const connection = connections.find(({ uri }) => uri === toSign.wcUri)
+  const dApp = connection ? connection?.session?.peerMeta || null : null
 
   if (!toSign || !account) return (<></>)
   if (toSign && !isHexString(toSign.txn)) return (<div id='signMessage'>
@@ -104,7 +106,6 @@ export default function SignMessage ({ toSign, resolve, account, relayerURL, tot
   return (<div id='signMessage'>
     <div id='signingAccount' className='panel'>
       <div className='title'>
-        <MdOutlineAccountCircle/>
         Signing with account
       </div>
       <div className="content">
@@ -113,44 +114,61 @@ export default function SignMessage ({ toSign, resolve, account, relayerURL, tot
       </div>
     </div>
     <div className='panel'>
-        <div className='heading'>
-            <div className='title'>
-                <FaSignature size={35}/>
-                Sign message
-            </div>
-            <div style={{ marginTop: 20 }}>
-              <b>A dApp is requesting your signature.</b>{totalRequests > 1 ? ` You have ${totalRequests - 1} more pending requests.` : ''}
-            </div>
+      <div className='title'>
+        Sign message
+      </div>
+
+      <div className='request-message'>
+        <div className='dapp-message'>
+          { 
+            dApp ?
+              <a className='dapp' href={dApp.url} target="_blank" rel="noreferrer">
+                <div className='icon' style={{ backgroundImage: `url(${dApp.icons[0]})` }}>
+                 <MdBrokenImage/> 
+                </div>
+                { dApp.name }
+              </a>
+              :
+              'A dApp '
+          }
+          is requesting your signature.
         </div>
+        <span>{totalRequests > 1 ? `You have ${totalRequests - 1} more pending requests.` : ''}</span>
+      </div>
+      
+      <textarea
+        className='sign-message'
+        type='text'
+        value={getMessageAsText(toSign.txn)}
+        readOnly={true}
+      />
 
-        <textarea
-          className='message'
-          type='text'
-          value={getMessageAsText(toSign.txn)}
-          readOnly={true}
-        />
+      <div className='actions'>
+        <form onSubmit={e => { e.preventDefault() }}>
+          {account.signer.quickAccManager && (<>
+            <TextInput
+              password
+              required minLength={3}
+              placeholder='Account password'
+              value={signingState.passphrase}
+              onChange={value => setSigningState({ ...signingState, passphrase: value })}
+            ></TextInput>
+          </>)}
 
-        <div className='actions'>
-          <form onSubmit={e => { e.preventDefault() }}>
-            {account.signer.quickAccManager && (<>
-              <TextInput
-                password
-                required minLength={3}
-                placeholder='Account password'
-                value={signingState.passphrase}
-                onChange={value => setSigningState({ ...signingState, passphrase: value })}
-              ></TextInput>
-            </>)}
-
-            <div className="buttons">
-              <Button className='reject' onClick={() => resolve({ message: 'signature denied' })}>Reject</Button>
-              <Button className='approve' onClick={approve} disabled={isLoading}>
-                  {isLoading ? (<><Loading/>&nbsp;&nbsp;&nbsp;&nbsp;Signing...</>)
-                  : (<>Sign</>)}
-              </Button>
-            </div>
-          </form>
-        </div>
+          <div className="buttons">
+            <Button
+              danger
+              icon={<MdClose/>}
+              className='reject'
+              onClick={() => resolve({ message: 'signature denied' })}
+            >Reject</Button>
+            <Button className='approve' onClick={approve} disabled={isLoading}>
+              {isLoading ? (<><Loading/>Signing...</>)
+              : (<><MdCheck/> Sign</>)}
+            </Button>
+          </div>
+        </form>
+      </div>
     </div>
   </div>)
 }

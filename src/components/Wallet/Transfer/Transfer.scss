@@ -45,6 +45,22 @@
             opacity: 0.5;
         }
     }
+
+    #addresses {
+        .content {
+            .address-list {
+                max-height: 390px;
+                overflow-y: auto;
+            }
+        }
+    }
+
+    #binance-address-warning-label {
+        a {
+            vertical-align: middle;
+            margin-left: 0.5em;
+        }
+    }
 }
 
 @media screen and (max-width: 1400px) {
@@ -63,9 +79,9 @@
     }
 }
 
-@media screen and (min-width: 1700px) {
+@media screen and (min-width: $wide-breakpoint-min-width){
     #transfer {
-        @include recipient-field-font-size(0.9vw)
+        @include recipient-field-font-size(1em)
     }
 }
 

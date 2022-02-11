@@ -8,7 +8,7 @@ $account-height: 60px;
     }
 
     .title {
-        font-family: monospace;
+        font-family: 'monospace';
         font-weight: bold;
     }
 
@@ -28,6 +28,7 @@ $account-height: 60px;
                 justify-content: space-between;
 
                 .inner {
+                    min-width: 0;
                     height: $account-height;
                     display: flex;
                     align-items: center;
@@ -38,6 +39,7 @@ $account-height: 60px;
                     cursor: pointer;
 
                     .icon {
+                        flex: 0 0 auto;
                         height: 30px;
                         width: 30px;
                         @include flex-center-center;
@@ -49,9 +51,16 @@ $account-height: 60px;
                         display: flex;
                         flex-direction: column;
                         gap: 2px;
+                        overflow: hidden;
+
+                        .address, label {
+                            overflow: hidden;
+                            white-space: nowrap;
+                            text-overflow: ellipsis;
+                        }
 
                         .address {
-                            font-family: monospace;
+                            font-family: 'monospace';
                             font-size: 15px;
                             font-weight: bold;
                         }

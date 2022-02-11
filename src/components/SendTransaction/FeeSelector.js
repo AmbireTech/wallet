@@ -1,13 +1,20 @@
+import './FeeSelector.scss'
+
 import { AiOutlineWarning } from 'react-icons/ai'
-import { FiHelpCircle } from 'react-icons/fi'
-import { Loading } from 'components/common'
+import { Loading, Select, TextInput, ToolTip } from 'components/common'
 import { isTokenEligible, getFeePaymentConsequences, mapTxnErrMsg, getErrHint } from './helpers'
+import { MdEdit } from 'react-icons/md'
+import { useState } from 'react'
 
 const SPEEDS = ['slow', 'medium', 'fast', 'ape']
 
+const zapperStorageTokenIcons = 'https://storage.googleapis.com/zapper-fi-assets/tokens'
+
 export function FeeSelector ({ disabled, signer, estimation, network, setEstimation, feeSpeed, setFeeSpeed }) {
+    const [editCustomFee, setEditCustomFee] = useState(false)
+
     if (!estimation) return (<Loading/>)
-  
+
     // Only check for insufficient fee in relayer mode (.feeInUSD is available)
     // Otherwise we don't care whether the user has enough for fees, their signer wallet will take care of it
     const insufficientFee = estimation && estimation.feeInUSD
@@ -24,37 +31,56 @@ export function FeeSelector ({ disabled, signer, estimation, network, setEstimat
       </div>)
     }
     if (estimation && estimation.feeInUSD && !estimation.remainingFeeTokenBalances) {
-      return (<h3 className='error'>Internal error: fee balances not available. This should never happen, please report this on help.ambire.com</h3>)
+      return (<div className='balance-error'>Internal error: fee balances not available. This should never happen, please report this on help.ambire.com</div>)
     }
   
     const { nativeAssetSymbol } = network
     const tokens = estimation.remainingFeeTokenBalances || [{ symbol: nativeAssetSymbol, decimals: 18 }]
-    const onFeeCurrencyChange = e => {
-      const token = tokens.find(({ symbol }) => symbol === e.target.value)
+    const onFeeCurrencyChange = value => {
+      const token = tokens.find(({ address, symbol }) => address === value || symbol === value)
       setEstimation({ ...estimation, selectedFeeToken: token })
     }
+
+    const currenciesItems = tokens
+      .filter(token => isTokenEligible(token, feeSpeed, estimation))
+      .map(({ address, symbol }) => ({
+        icon: address ? `${zapperStorageTokenIcons}/${network.id}/${address.toLowerCase()}.png` : null,
+        label: symbol,
+        value: address || symbol
+      }))
+
     const feeCurrencySelect = estimation.feeInUSD ? (<>
-      <span style={{ marginTop: '1em' }}>Fee currency</span>
-      <select disabled={disabled} value={estimation.selectedFeeToken.symbol} onChange={onFeeCurrencyChange}>
-        {tokens.map(token => 
-          (<option
-            disabled={!isTokenEligible(token, feeSpeed, estimation)}
-            key={token.symbol}>
-              {token.symbol}
-            </option>
-          )
-        )}
-      </select>
+      <div className='section'>
+        <div className='section-title'>Fee Currency</div>
+        <Select
+          disabled={disabled}
+          defaultValue={estimation.selectedFeeToken?.address || estimation.selectedFeeToken?.symbol}
+          items={currenciesItems}
+          onChange={onFeeCurrencyChange}
+        />
+      </div>
     </>) : (<></>)
   
     const areSelectorsDisabled = disabled || insufficientFee
     const { isStable } = estimation.selectedFeeToken
     const { multiplier } = getFeePaymentConsequences(estimation.selectedFeeToken, estimation)
+
+    const setCustomFee = value => setEstimation(prevEstimation => ({
+      ...prevEstimation,
+      customFee: value
+    }))
+
+    const selectFeeSpeed = speed => {
+      setFeeSpeed(speed)
+      setCustomFee(null)
+      setEditCustomFee(false)
+    }
+
     const feeAmountSelectors = SPEEDS.map(speed => (
       <div 
         key={speed}
-        className={`feeSquare${feeSpeed === speed ? ' selected' : ''}${areSelectorsDisabled ? ' disabled' : ''}`}
-        onClick={() => !areSelectorsDisabled && setFeeSpeed(speed)}
+        className={`feeSquare${!estimation.customFee && feeSpeed === speed ? ' selected' : ''}${areSelectorsDisabled ? ' disabled' : ''}`}
+        onClick={() => !areSelectorsDisabled && selectFeeSpeed(speed)}
       >
         <div className='speed'>{speed}</div>
         <div className='feeEstimation'>
@@ -72,16 +98,33 @@ export function FeeSelector ({ disabled, signer, estimation, network, setEstimat
   
     return (<>
       {insufficientFee ?
-        (<h3 className='error'>Insufficient balance for the fee. Accepted tokens: {(estimation.remainingFeeTokenBalances || []).map(x => x.symbol).join(', ')}</h3>)
+        (<div className='balance-error'>Insufficient balance for the fee.<br/>Accepted tokens: {(estimation.remainingFeeTokenBalances || []).map(x => x.symbol).join(', ')}</div>)
         : feeCurrencySelect
       }
-      <div className='feeAmountSelectors'>
-        {feeAmountSelectors}
+      <div className='section'>
+        <div className='section-title'>Transaction Speed</div>
+        <div id='fee-selector'>{feeAmountSelectors}</div>
+        {
+          !editCustomFee ?
+            <div id='edit-custom-fee' onClick={() => setEditCustomFee(true)}>
+              <MdEdit/>Edit fee
+            </div>
+            :
+            <div id='custom-fee-selector'>
+              <div className='title'>Custom Fee</div>
+              <TextInput
+                small
+                placeholder='Enter amount'
+                className={`${estimation.customFee ? 'selected' : ''}`}
+                onChange={value => setCustomFee(value)}
+              />
+            </div>
+        }
       </div>
       { // Visualize the fee once again with a USD estimation if in native currency
-      !isStable && (<div>
-        Fee: {(estimation.feeInNative[feeSpeed] * multiplier)+' '+nativeAssetSymbol}
-        &nbsp;(~ ${(estimation.feeInNative[feeSpeed] * multiplier * estimation.nativeAssetPriceInUSD).toFixed(2)})
+      !isStable && (<div className='native-fee-estimation'>
+        Fee: {((estimation.customFee || estimation.feeInNative[feeSpeed]) * multiplier)+' '+nativeAssetSymbol}
+        &nbsp;(~ ${((estimation.customFee || estimation.feeInNative[feeSpeed]) * multiplier * estimation.nativeAssetPriceInUSD).toFixed(2)})
       </div>)}
       {!estimation.feeInUSD ?
         (<span><b>WARNING:</b> Paying fees in tokens other than {nativeAssetSymbol} is unavailable because you are not connected to a relayer. You will pay the fee from <b>{signer.address}</b>.</span>)
@@ -91,8 +134,9 @@ export function FeeSelector ({ disabled, signer, estimation, network, setEstimat
 
 export function FailingTxn ({ message, tooltip = '' }) {
     return (<div className='failingTxn'>
-        <AiOutlineWarning></AiOutlineWarning>
-        <h3 className='error'>{message}</h3>
-        <FiHelpCircle title={tooltip}></FiHelpCircle>
+      <ToolTip label={tooltip}>
+        <div className='error-title'><AiOutlineWarning></AiOutlineWarning> Warning</div>
+        <div className='error-message'>{message}</div>
+      </ToolTip>
     </div>)
 }

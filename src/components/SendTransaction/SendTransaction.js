@@ -1,8 +1,7 @@
 //import { GrInspect } from 'react-icons/gr'
 // GiObservatory is also interesting
-import { GiTakeMyMoney, GiSpectacles, GiGorilla } from 'react-icons/gi'
-import { FaSignature, FaChevronLeft } from 'react-icons/fa'
-import { MdOutlineAccountCircle } from 'react-icons/md'
+import { GiGorilla } from 'react-icons/gi'
+import { FaChevronLeft } from 'react-icons/fa'
 import './SendTransaction.scss'
 import { useEffect, useState, useMemo, useRef } from 'react'
 import { Bundle } from 'adex-protocol-eth/js'
@@ -20,6 +19,8 @@ import { isTokenEligible, getFeePaymentConsequences } from './helpers'
 import { fetchPost } from 'lib/fetch'
 import { toBundleTxn } from 'lib/requestToBundleTxn'
 import { getProvider } from 'lib/provider'
+import { MdInfo } from 'react-icons/md'
+import { useCallback } from 'react'
 
 const ERC20 = new Interface(require('adex-protocol-eth/abi/ERC20'))
 
@@ -105,8 +106,12 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, network, account,
   const currentBundle = useRef(null)
   currentBundle.current = bundle
   useEffect(() => {    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // We don't need to reestimate the fee when a signing process is in progress
+    if (signingStatus) return
+    // nor when there are no txns in the bundle, if this is even possible
     if (!bundle.txns.length) return
 
+    // track whether the effect has been unmounted
     let unmounted = false
 
     const reestimate = () => (relayerURL
@@ -117,6 +122,7 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, network, account,
         if (unmounted || bundle !== currentBundle.current) return
         estimation.selectedFeeToken = { symbol: network.nativeAssetSymbol }
         setEstimation(prevEstimation => {
+          if (prevEstimation && prevEstimation.customFee) return prevEstimation
           if (estimation.remainingFeeTokenBalances) {
             // If there's no eligible token, set it to the first one cause it looks more user friendly (it's the preferred one, usually a stablecoin)
             estimation.selectedFeeToken = (
@@ -147,9 +153,9 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, network, account,
       unmounted = true
       clearInterval(intvl)
     }
-  }, [bundle, setEstimation, feeSpeed, addToast, network, relayerURL])
+  }, [bundle, setEstimation, feeSpeed, addToast, network, relayerURL, signingStatus])
 
-  const getFinalBundle = () => {
+  const getFinalBundle = useCallback(() => {
     if (!relayerURL) {
       return new Bundle({
         ...bundle,
@@ -180,7 +186,7 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, network, account,
       gasLimit: estimation.gasLimit + addedGas + (bundle.extraGas || 0),
       nonce: (replaceTx && (nextNonMinedNonce !== nextFreeNonce)) ? nextNonMinedNonce : nextFreeNonce
     })
-  }
+  }, [relayerURL, bundle, estimation, feeSpeed, network.nativeAssetSymbol])
 
   const approveTxnImpl = async () => {
     if (!estimation) throw new Error('no estimation: should never happen')
@@ -309,111 +315,130 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, network, account,
     resolveMany(bundle.requestIds, { message: REJECT_MSG })
   })
 
-  return (<div id='sendTransaction'>
+  const accountAvatar = blockies.create({ seed: account.id }).toDataURL()
+
+  return (
+    <div id='sendTransaction'>
       <div id="titleBar">
         <div className='dismiss' onClick={onDismiss}>
           <FaChevronLeft size={35}/><span>back</span>
         </div>
-        <h2>Pending transactions: {bundle.txns.length}</h2>
-        <div className="separator"></div>
       </div>
+
       <div className='container'>
-        <div id='topPanel' className='panel'>
-          <div className='title'>
-            <MdOutlineAccountCircle/>
-            Signing with account:
+        <div id='transactionPanel' className='panel'>
+          <div className='heading'>
+            <div className='title'>{ bundle.txns.length } Transaction{ bundle.txns.length > 1 ? 's' : '' } Waiting</div>
           </div>
-          <div className="content">
-            <div className='account'>
-              <img className='icon' src={blockies.create({ seed: account.id }).toDataURL()} alt='Account Icon'/>
-              { account.id }
+          <div className='content'>
+            <div className={`listOfTransactions${bundle.requestIds ? '' : ' frozen'}`}>
+              {bundle.txns.map((txn, i) => {
+                const isFirstFailing = estimation && !estimation.success && estimation.firstFailing === i
+                // we need to re-render twice per minute cause of DEX deadlines
+                const min = Math.floor(Date.now() / 30000)
+                return (<TxnPreview
+                  key={[...txn, i].join(':')}
+                  // pasing an unused property to make it update
+                  minute={min}
+                  onDismiss={bundle.requestIds && (() => resolveMany([bundle.requestIds[i]], { message: REJECT_MSG }))}
+                  txn={txn} network={bundle.network} account={bundle.identity}
+                  isFirstFailing={isFirstFailing}
+                  disableDismiss={!!signingStatus}
+                  disableDismissLabel={"Cannot modify transaction bundle while a signing procedure is pending"}
+                  />
+                )
+              })}
             </div>
-            on
-            <div className='network'>
-              <img className='icon' src={network.icon} alt='Network Icon'/>
-              { network.name }
+
+            <div className='separator'></div>
+
+            <div className='transactionsNote'>
+              {
+                bundle.requestIds ?
+                  <>
+                    <b><GiGorilla size={16}/> DEGEN TIP</b>
+                    <span>You can sign multiple transactions at once. Add more transactions to this batch by interacting with a connected dApp right now.</span>
+                  </>
+                  :
+                  <>
+                    <b>NOTE:</b>
+                    <span>You are currently replacing a pending transaction.</span>
+                  </>
+              }
             </div>
           </div>
         </div>
-        <div id='panelHolder'>
-          <div className='panel summaryPanel'>
-              <div className='heading'>
-                      <div className='title'>
-                          <GiSpectacles size={35}/>
-                          Transaction summary
-                      </div>
-              </div>
-              <div className="content">
-                <div className={`listOfTransactions${bundle.requestIds ? '' : ' frozen'}`}>
-                    {bundle.txns.map((txn, i) => {
-                      const isFirstFailing = estimation && !estimation.success && estimation.firstFailing === i
-                      // we need to re-render twice per minute cause of DEX deadlines
-                      const min = Math.floor(Date.now() / 30000)
-                      return (<TxnPreview
-                        key={[...txn, i].join(':')}
-                        // pasing an unused property to make it update
-                        minute={min}
-                        onDismiss={bundle.requestIds && (() => resolveMany([bundle.requestIds[i]], { message: REJECT_MSG }))}
-                        txn={txn} network={bundle.network} account={bundle.identity}
-                        isFirstFailing={isFirstFailing}/>
-                      )
-                    })}
+
+        <div id='detailsPanel' className='panel'>
+          <div id="options-container">
+            <div className='section' id="signing-details">
+              <div className='section-title'>Signing With</div>
+              <div className='section-content'>
+                <div className='account'>
+                  <div className='icon' style={{ backgroundImage: `url(${accountAvatar})` }}/>
+                  <div className='address'>{ account.id }</div>
                 </div>
-                <div className='transactionsNote'>
-                  {bundle.requestIds ? (<>
-                    <b><GiGorilla size={16}/> DEGEN TIP:</b> You can sign multiple transactions at once. Add more transactions to this batch by interacting with a connected dApp right now.
-                  </>) : (<><b>NOTE:</b> You are currently replacing a pending transaction.</>)}
+                <div className='network'>
+                  on
+                  <div className='icon' style={{ backgroundImage: `url(${network.icon})` }}/>
+                  <div className='address'>{ network.name }</div>
                 </div>
               </div>
+            </div>
+
+            <FeeSelector
+              disabled={signingStatus && signingStatus.finalBundle && !(estimation && !estimation.success)}
+              signer={bundle.signer}
+              estimation={estimation}
+              setEstimation={setEstimation}
+              network={network}
+              feeSpeed={feeSpeed}
+              setFeeSpeed={setFeeSpeed}
+            ></FeeSelector>
           </div>
-          <div className='secondaryPanel'>
-              <div className='panel feePanel'>
-                  <div className='heading'>
-                          <div className='title'>
-                              <GiTakeMyMoney size={35}/>
-                              Fee
-                          </div>
-                          <FeeSelector
-                            disabled={signingStatus && signingStatus.finalBundle && !(estimation && !estimation.success)}
-                            signer={bundle.signer}
-                            estimation={estimation}
-                            setEstimation={setEstimation}
-                            network={network}
-                            feeSpeed={feeSpeed}
-                            setFeeSpeed={setFeeSpeed}
-                          ></FeeSelector>
-                  </div>
+
+          {
+            (estimation?.nextNonce?.pendingBundle?.nonce?.num || estimation?.nextNonce?.nonce) !== estimation?.nextNonce?.nonce &&
+            (
+              <div>
+                Replace Transaction?
+                <input type='checkbox' checked={replaceTx} onChange={() => setReplaceTx(!replaceTx)} />
               </div>
-              {
-                (estimation?.nextNonce?.pendingBundle?.nonce?.num || estimation?.nextNonce?.nonce) !== estimation?.nextNonce?.nonce &&
-                (
-                  <div className='panel noncePanel'>
-                    Replace Transaction?
-                    <input type='checkbox' checked={replaceTx} onChange={() => setReplaceTx(!replaceTx)} />
-                  </div>
-                )
-              }
-              <div className='panel actions'>
-                  <div className='heading'>
-                      <div className='title'>
-                          <FaSignature size={35}/>
-                          Sign
-                      </div>
-                  </div>
-                  {(bundle.signer.quickAccManager && !relayerURL) ? (
-                    <FailingTxn message='Signing transactions with an email/password account without being connected to the relayer is unsupported.'></FailingTxn>
-                  ) : (
-                      <Actions
-                        estimation={estimation}
-                        approveTxn={approveTxn}
-                        rejectTxn={rejectTxn}
-                        signingStatus={signingStatus}
-                        feeSpeed={feeSpeed}
-                      />
-                  )}
+            )
+          }
+
+          {
+            estimation && estimation.success && estimation.isDeployed === false && bundle.gasLimit ?
+              <div className='first-tx-note'>
+                <div className='first-tx-note-title'><MdInfo/>Note</div>
+                <div className='first-tx-note-message'>
+                  Because this is your first Ambire transaction, this fee is {(60000 / bundle.gasLimit * 100).toFixed()}% higher than usual because we have to deploy your smart wallet.
+                  Subsequent transactions will be cheaper
+                </div>
               </div>
+              :
+              null
+          }
+
+          <div id="actions-container">
+            {
+              bundle.signer.quickAccManager && !relayerURL ? 
+                <FailingTxn message='Signing transactions with an email/password account without being connected to the relayer is unsupported.'></FailingTxn>
+                :
+                <div className='section' id="actions">
+                  <Actions
+                    estimation={estimation}
+                    approveTxn={approveTxn}
+                    rejectTxn={rejectTxn}
+                    cancelSigning={() => setSigningStatus(null)}
+                    signingStatus={signingStatus}
+                    feeSpeed={feeSpeed}
+                  />
+                </div>
+            }
           </div>
         </div>
       </div>
-  </div>)
+    </div>
+  )
 }
