@@ -186,7 +186,7 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, network, account,
       gasLimit: estimation.gasLimit + addedGas + (bundle.extraGas || 0),
       nonce: (replaceTx && (nextNonMinedNonce !== nextFreeNonce)) ? nextNonMinedNonce : nextFreeNonce
     })
-  }, [relayerURL, bundle, estimation, feeSpeed, network.nativeAssetSymbol])
+  }, [relayerURL, bundle, estimation, feeSpeed, network.nativeAssetSymbol, replaceTx])
 
   const approveTxnImpl = async () => {
     if (!estimation) throw new Error('no estimation: should never happen')
