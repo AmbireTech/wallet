@@ -9,7 +9,7 @@ import accountPresets from 'consts/accountPresets'
 import networks from 'consts/networks'
 import { getTransactionSummary } from 'lib/humanReadableTransactions'
 import { Bundle } from 'adex-protocol-eth'
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import fetch from 'node-fetch'
 import { useToasts } from 'hooks/toasts'
 import { toBundleTxn } from 'lib/requestToBundleTxn'
@@ -19,7 +19,8 @@ import { useHistory, useParams } from 'react-router-dom/cjs/react-router-dom.min
 // 10% in geth and most EVM chain RPCs; relayer wants 12%
 const RBF_THRESHOLD = 1.14
 
-function Transactions ({ relayerURL, selectedAcc, selectedNetwork, showSendTxns, eligibleRequests }) {
+
+function Transactions ({ relayerURL, selectedAcc, selectedNetwork, showSendTxns, addRequest, eligibleRequests, setSendTxnState }) {
   const { addToast } = useToasts()
   const history = useHistory()
   const params = useParams()
@@ -38,6 +39,25 @@ function Transactions ({ relayerURL, selectedAcc, selectedNetwork, showSendTxns,
     : null
   const { data, errMsg, isLoading } = useRelayerData(url)
 
+  const showSendTxnsForReplacement = useCallback(bundle => {
+    bundle.txns.slice(0, -1)
+      .forEach((txn, index) => {
+        addRequest({
+          id: index,
+          chainId: selectedNetwork.chainId,
+          account: selectedAcc,
+          type: 'eth_sendTransaction',
+          txn: {
+            to: txn[0].toLowerCase(),
+            value: txn[1] === "0x" ? "0x0" : txn[1],
+            data: txn[2]
+          }
+        })
+      })
+    //Redundant? but needs replace
+    setSendTxnState({ showing: true, replaceByDefault: true })
+  }, [addRequest, selectedNetwork, selectedAcc, setSendTxnState])
+
   const maxBundlePerPage = 10
   const executedTransactions = data ? data.txns.filter(x => x.executed) : []
   const maxPages = Math.ceil(executedTransactions.length / maxBundlePerPage)
@@ -50,10 +70,12 @@ function Transactions ({ relayerURL, selectedAcc, selectedNetwork, showSendTxns,
   useEffect(() => !isLoading && history.replace(`/wallet/transactions/${page}`), [page, history, isLoading])
   useEffect(() => setPage(defaultPage), [selectedAcc, selectedNetwork, defaultPage])
 
+
   // @TODO implement a service that stores sent transactions locally that will be used in relayerless mode
   if (!relayerURL) return (<section id='transactions'>
     <h3 className='validation-error'>Unsupported: not currently connected to a relayer.</h3>
   </section>)
+
 
   // @TODO: visualize other pending bundles
   const firstPending = data && data.txns.find(x => !x.executed && !x.replaced)
@@ -92,6 +114,7 @@ function Transactions ({ relayerURL, selectedAcc, selectedNetwork, showSendTxns,
 
   // @TODO: we are currently assuming the last txn is a fee; change that (detect it)
   const speedup = relayerBundle => showSendTxns(mapToBundle(relayerBundle, { txns: relayerBundle.txns.slice(0, -1) }))
+  const replace = relayerBundle => showSendTxnsForReplacement(mapToBundle(relayerBundle))
 
   const paginationControls = (
     <div className='pagination-controls'>
@@ -138,6 +161,7 @@ function Transactions ({ relayerURL, selectedAcc, selectedNetwork, showSendTxns,
           <div className="bundle">
             <BundlePreview bundle={firstPending}></BundlePreview>
             <div className='actions'>
+              <Button small onClick={() => replace(firstPending)}>Replace or modify</Button>
               <Button small className='cancel' onClick={() => cancel(firstPending)}>Cancel</Button>
               <Button small onClick={() => speedup(firstPending)}>Speed up</Button>
             </div>
