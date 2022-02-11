@@ -4,13 +4,13 @@ import { Button, ToolTip } from "components/common";
 import { WalletTokenModal } from "components/Modals";
 import useClaimableWalletToken from "./useClaimableWalletToken";
 
-const WalletTokenButton = ({ rewardsData, walletTokenInfoData, adxTokenInfoData, account, network, hidePrivateValue, addRequest }) => {
+const WalletTokenButton = ({ rewardsData, walletTokenInfoData, account, network, hidePrivateValue, addRequest }) => {
     const claimableWalletToken = useClaimableWalletToken({ account, network, addRequest })
     
     const [rewards, setRewards] = useState({})
     const { isLoading, data, errMsg } = rewardsData
     
-    const showWalletTokenModal = useDynamicModal(WalletTokenModal, { claimableWalletToken }, { rewards, walletTokenInfoData, adxTokenInfoData })
+    const showWalletTokenModal = useDynamicModal(WalletTokenModal, { claimableWalletToken }, { rewards, walletTokenInfoData })
 
     useEffect(() => {
         if (errMsg || !data || !data.success) return

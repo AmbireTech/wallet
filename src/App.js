@@ -170,9 +170,6 @@ function AppInner () {
   const walletTokenInfoUrl = (relayerURL) ? `${relayerURL}/wallet-token/info?cacheBreak=${cacheBreak}` : null
   const walletTokenInfoData = useRelayerData(walletTokenInfoUrl)
 
-  const adxTokenInfoUrl = (relayerURL) ? `${relayerURL}/relayer/token?cacheBreak=${cacheBreak}` : null
-  const adxTokenInfoData = useRelayerData(adxTokenInfoUrl)
-
   return (<>
     <Prompt
       message={(location, action) => {
@@ -242,7 +239,6 @@ function AppInner () {
           onAddAccount={onAddAccount}
           rewardsData={rewardsData}
           walletTokenInfoData={walletTokenInfoData}
-          adxTokenInfoData={adxTokenInfoData}
           privateMode={privateMode}
         >
         </Wallet>

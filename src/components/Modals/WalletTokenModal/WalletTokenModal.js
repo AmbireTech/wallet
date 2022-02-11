@@ -49,7 +49,7 @@ const MultiplierBadges = ({ rewards }) => {
     </div>)
 }
 
-const WalletTokenModal = ({ claimableWalletToken, rewards, walletTokenInfoData, adxTokenInfoData }) => {
+const WalletTokenModal = ({ claimableWalletToken, rewards, walletTokenInfoData }) => {
     const { hideModal } = useModals()
 
     const {
@@ -62,10 +62,9 @@ const WalletTokenModal = ({ claimableWalletToken, rewards, walletTokenInfoData, 
         claimVesting
     } = claimableWalletToken
 
-    const walletTokenAPY = walletTokenInfoData && !walletTokenInfoData.isLoading && walletTokenInfoData.data && walletTokenInfoData.data.apy ? (walletTokenInfoData.data.apy).toFixed(2) : '...'
+    const walletTokenAPY = walletTokenInfoData && !walletTokenInfoData.isLoading && walletTokenInfoData.data && walletTokenInfoData.data.walletTokenAPY ? (walletTokenInfoData.data.walletTokenAPY).toFixed(2) : '...'
+    const adxTokenAPY = walletTokenInfoData && !walletTokenInfoData.isLoading && walletTokenInfoData.data && walletTokenInfoData.data.adxTokenAPY ? (walletTokenInfoData.data.adxTokenAPY).toFixed(2) : '...'
     const walletTokenUSDPrice = walletTokenInfoData && !walletTokenInfoData.isLoading && walletTokenInfoData.data && walletTokenInfoData.data.usdPrice ? walletTokenInfoData.data.usdPrice : 0
-
-    const adxTokenAPY = adxTokenInfoData && !adxTokenInfoData.isLoading && adxTokenInfoData.data && adxTokenInfoData.data.apy ? (adxTokenInfoData.data.apy).toFixed(2) : '...'
 
     const claimableNowUsd = walletTokenUSDPrice && !currentClaimStatus.loading && claimableNow ? (walletTokenUSDPrice * claimableNow).toFixed(2) : '...'
     const mintableVestingUsd = walletTokenUSDPrice && !currentClaimStatus.loading && currentClaimStatus.mintableVesting ? (walletTokenUSDPrice * currentClaimStatus.mintableVesting).toFixed(2) : '...'
