@@ -13,6 +13,7 @@ import { isValidAddress } from 'lib/address'
 import Addresses from './Addresses/Addresses'
 import { MdInfo } from 'react-icons/md'
 import networks from 'consts/networks'
+import { getTokenIcon } from 'lib/icons'
 
 const ERC20 = new Interface(require('adex-protocol-eth/abi/ERC20'))
 const unsupportedSWPlatforms = ['Binance', 'Huobi', 'KuCoin', 'Gate.io', 'FTX']
@@ -44,10 +45,11 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
         }
     })
 
-    const assetsItems = portfolio.tokens.map(({ label, symbol, address, img, tokenImageUrl }) => ({
+    const assetsItems = portfolio.tokens.map(({ label, symbol, address, img, tokenImageUrl, network }) => ({
         label: label || symbol,
         value: address,
-        icon: img || tokenImageUrl
+        icon: img || tokenImageUrl,
+        fallbackIcon: getTokenIcon(network, address)
     }))
 
     const selectedAsset = portfolio.tokens.find(({ address }) => address === asset)
