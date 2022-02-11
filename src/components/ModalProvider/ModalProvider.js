@@ -7,8 +7,15 @@ const ModalProvider = ({ children }) => {
     const [modal, setModal] = useState(null)
     const [dynamicModal, setDynamicModal] = useState(null)
     
-    const showModal = useCallback((element, opts = { disableClose: false }) => setModal({element, opts}), [])
-    const showDynamicModal = useCallback((component, props, opts = { disableClose: false }) => setDynamicModal({ component, props, opts }), [])
+    const showModal = useCallback((element, opts = { disableClose: false }) => {
+        setDynamicModal(null)
+        setModal({element, opts})
+    }, [])
+
+    const showDynamicModal = useCallback((component, props, opts = { disableClose: false }) => {
+        setModal(null)
+        setDynamicModal({ component, props, opts })
+    }, [])
 
     const hideModal = useCallback(() => {
         setModal(null)
