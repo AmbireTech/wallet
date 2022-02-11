@@ -38,7 +38,7 @@ async function supplementTokensDataFromNetwork({ walletAddr, network, tokensData
     if (!walletAddr || walletAddr==="" || !network || !network === "" ) return []
     if (!tokensData || !tokensData[0]) tokensData = checkTokenList(tokensData || []) //tokensData check and populate for test if undefind
     if (!extraTokens || !extraTokens[0]) extraTokens = checkTokenList(extraTokens || [])  //extraTokens check and populate for test if undefind
-  
+
     // concat predefined token list with extraTokens list (extraTokens are certainly ERC20)
     const fullTokenList = [ ...new Set(
         tokenList[network] ? tokenList[network].concat(extraTokens) : [...extraTokens]
@@ -49,7 +49,7 @@ async function supplementTokensDataFromNetwork({ walletAddr, network, tokensData
     const tokensNotInList = tokensData.filter(td => {
       return !tokens.some(t => t.address === td.address)
     })
-  
+
     // tokensNotInList: call separately to prevent errors from non-erc20 tokens
     // NOTE about err handling: errors are caught for each call in balanceOracle, and we retain the original token entry, which contains the balance
     const calls = paginateArray(tokens, 100).concat(paginateArray(tokensNotInList, 100))
@@ -61,9 +61,9 @@ async function supplementTokensDataFromNetwork({ walletAddr, network, tokensData
     })
     return tokenBalances
   }
-  
-  
-export default function usePortfolio({ currentNetwork, account }) {
+
+
+export default function usePortfolio({ currentNetwork, account, useStorage }) {
     const { addToast } = useToasts()
 
     const currentAccount = useRef();
@@ -85,10 +85,7 @@ export default function usePortfolio({ currentNetwork, account }) {
     const [tokens, setTokens] = useState([]);
     const [protocols, setProtocols] = useState([]);
     const [collectibles, setCollectibles] = useState([]);
-    const [extraTokens, setExtraTokens] = useState(() => {
-        const storedExtraTokens = localStorage.extraTokens
-        return storedExtraTokens ? JSON.parse(storedExtraTokens) : []
-    });
+    const [extraTokens, setExtraTokens] = useStorage({ key: 'extraTokens', defaultValue: [] });
 
     const getExtraTokensAssets = useCallback((account, network) => extraTokens
         .filter(extra => extra.account === account && extra.network === network)
@@ -183,7 +180,7 @@ export default function usePortfolio({ currentNetwork, account }) {
 
             let failedRequests = 0
             const requestsCount = protocols.reduce((acc, curr) => curr.protocols.length + acc, 0)
-
+            if (requestsCount === 0) return true
             const updatedProtocols = (await Promise.all(protocols.map(async ({ network, protocols, nftsProvider }) => {
                 const all = (await Promise.all(protocols.map(async protocol => {
                     try {
@@ -215,9 +212,8 @@ export default function usePortfolio({ currentNetwork, account }) {
                 ...protocolsByNetworks.filter(({ network }) => !updatedNetworks.includes(network)),
                 ...updatedProtocols
             ]))
-            
-            lastOtherProcolsRefresh = Date.now()
 
+            lastOtherProcolsRefresh = Date.now()
             if (failedRequests >= requestsCount) throw new Error('Failed to fetch other Protocols from API')
             return true
         } catch (error) {
@@ -259,7 +255,6 @@ export default function usePortfolio({ currentNetwork, account }) {
             }
         ]
 
-        localStorage.extraTokens = JSON.stringify(updatedExtraTokens)
         setExtraTokens(updatedExtraTokens)
         addToast(`${name} (${symbol}) token added to your wallet!`)
     }
@@ -270,7 +265,6 @@ export default function usePortfolio({ currentNetwork, account }) {
 
         const updatedExtraTokens = extraTokens.filter(t => t.address !== address)
 
-        localStorage.extraTokens = JSON.stringify(updatedExtraTokens)
         setExtraTokens(updatedExtraTokens)
         addToast(`${token.name} (${token.symbol}) was removed from your wallet.`)
     }

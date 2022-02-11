@@ -9,6 +9,7 @@ import { NumberInput, Button, Select, Loading, NoFundsPlaceholder } from 'compon
 import useMovr from './useMovr'
 import networks from 'consts/networks'
 import { useToasts } from 'hooks/toasts'
+import { useLocalStorage } from 'hooks'
 import Quotes from './Quotes/Quotes'
 import History from './History/History'
 
@@ -21,7 +22,7 @@ const CrossChain = ({ addRequest, selectedAccount, portfolio, network, relayerUR
     const [loadingFromTokens, setLoadingFromTokens] = useState(false)
     const [loadingToTokens, setLoadingToTokens] = useState(false)
     const [loadingQuotes, setLoadingQuotes] = useState(false)
-    
+
     const [fromTokensItems, setFromTokenItems] = useState([])
     const [fromToken, setFromToken] = useState(null)
     const [amount, setAmount] = useState(0)
@@ -31,11 +32,8 @@ const CrossChain = ({ addRequest, selectedAccount, portfolio, network, relayerUR
     const [toToken, setToToken] = useState(null)
     const [quotes, setQuotes] = useState(null)
     const portfolioTokens = useRef([])
-    const [quotesConfirmed, setQuotesConfirmed] = useState(() => {
-        const storedQuotesConfirmed = localStorage.quotesConfirmed
-        return storedQuotesConfirmed ? JSON.parse(storedQuotesConfirmed) : []
-    })
-    
+    const [quotesConfirmed, setQuotesConfirmed] = useLocalStorage({ key: 'quotesConfirmed', defaultValue: [] })
+
     const fromChain = useMemo(() => network.chainId, [network.chainId])
     const formDisabled = !(fromToken && toToken && fromChain && toChain && amount > 0)
     const hasNoFunds = !portfolio.balance.total.full
@@ -51,7 +49,7 @@ const CrossChain = ({ addRequest, selectedAccount, portfolio, network, relayerUR
             const chains = await fetchChains()
             const isSupported = chains.find(({ chainId }) => chainId === fromChain)
             setDisabled(!isSupported)
-            if (!isSupported) return 
+            if (!isSupported) return
 
             const chainsItems = chains
                 .filter(({ chainId }) => chainId !== fromChain && networks.map(({ chainId }) => chainId).includes(chainId))
@@ -106,7 +104,7 @@ const CrossChain = ({ addRequest, selectedAccount, portfolio, network, relayerUR
     const loadToTokens = useCallback(async () => {
         if (!fromChain || !toChain) return
 
-        try {            
+        try {
             const toTokens = await fetchToTokens(fromChain, toChain)
             const filteredToTokens = toTokens.filter(({ name }) => name)
             const uniqueTokenAddresses = [...new Set(toTokens.map(({ address }) => address))]
@@ -162,7 +160,6 @@ const CrossChain = ({ addRequest, selectedAccount, portfolio, network, relayerUR
     const onQuotesConfirmed = quoteRequest => {
         const updatedQuotesConfirmed = [...quotesConfirmed, quoteRequest]
         setQuotesConfirmed(updatedQuotesConfirmed)
-        localStorage.quotesConfirmed = JSON.stringify(updatedQuotesConfirmed)
     }
 
     useEffect(() => setAmount(0), [fromToken])
@@ -209,16 +206,16 @@ const CrossChain = ({ addRequest, selectedAccount, portfolio, network, relayerUR
                     </div>
                 </div>
                 {
-                    disabled ? 
+                    disabled ?
                         <div className="placeholder">Not supported on this Network</div>
                         :
-                        loading || portfolio.isBalanceLoading ? 
+                        loading || portfolio.isBalanceLoading ?
                             <Loading/>
                             :
                             hasNoFunds ?
                                 <NoFundsPlaceholder/>
                                 :
-                                !loadingFromTokens && !loadingToTokens && !fromTokensItems.length ? 
+                                !loadingFromTokens && !loadingToTokens && !fromTokensItems.length ?
                                     <div className="placeholder">You don't have any available tokens to swap</div>
                                     :
                                     loadingQuotes ?
