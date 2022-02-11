@@ -8,7 +8,6 @@ import {
   getErrHint,
   getFeesData,
   getDiscountApplied,
-  getFeePaymentConsequences
 } from './helpers'
 import { FaPercentage } from 'react-icons/fa'
 import { MdInfoOutline } from 'react-icons/md'
@@ -68,7 +67,7 @@ const WalletDiscountBanner = ({ currenciesItems, tokens, estimation, onFeeCurren
 
 export function FeeSelector({ disabled, signer, estimation, network, setEstimation, feeSpeed, setFeeSpeed, onDismiss }) {
   const [editCustomFee, setEditCustomFee] = useState(false)
-  
+
   if (!estimation) return (<Loading />)
   // Only check for insufficient fee in relayer mode (.feeInUSD is available)
   // Otherwise we don't care whether the user has enough for fees, their signer wallet will take care of it
@@ -139,7 +138,8 @@ export function FeeSelector({ disabled, signer, estimation, network, setEstimati
     const isETH = symbol === 'ETH' && nativeAssetSymbol === 'ETH'
     const {
       feeInFeeToken,
-    } = getFeesData(estimation.selectedFeeToken, estimation, speed)
+      // NOTE: get the estimation res data w/o custom fee for the speeds
+    } = getFeesData({...estimation.selectedFeeToken}, {...estimation, customFee: null}, speed)
     const discountInFeeToken = getDiscountApplied(feeInFeeToken, discount)
 
     return (
@@ -184,8 +184,7 @@ export function FeeSelector({ disabled, signer, estimation, network, setEstimati
       estimation,
       onFeeCurrencyChange,
       onDismiss
-    })
-    }
+    })}
 
     <div className='section-title'>Transaction Speed</div>
     <div className='fee-selector'>
@@ -227,7 +226,7 @@ export function FeeSelector({ disabled, signer, estimation, network, setEstimati
               ~${(feeInUSD + discountInUSD).toFixed(feeInUSD + discountInUSD < 1 ? 4 : 2)}
             </div>
             <div>
-              {feeInFeeToken + discountInFeeToken + ' ' + estimation.selectedFeeToken.symbol}
+              {(feeInFeeToken + discountInFeeToken) + ' ' + estimation.selectedFeeToken.symbol}
             </div>
           </div>
         </div>)}

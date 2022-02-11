@@ -20,7 +20,7 @@ import {
   isTokenEligible, 
   // getFeePaymentConsequences, 
   getFeesData,
-  toHexAmount
+  toHexAmount,
  } from './helpers'
 import { fetchPost } from 'lib/fetch'
 import { toBundleTxn } from 'lib/requestToBundleTxn'

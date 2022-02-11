@@ -51,9 +51,9 @@ export function toHexAmount(amnt, decimals) {
 }
 
 export function getDiscountApplied(amnt, discount = 0) {
-  if(!discount) return 0
-  if(discount === 1) return amnt
-  return amnt / (1 - discount)  * discount
+  if (!discount) return 0
+  if (discount === 1) return amnt
+  return amnt / (1 - discount) * discount
 }
 
 // Returns feeToken data with all multipliers applied
@@ -61,13 +61,17 @@ export function getFeesData(feeToken, estimation, speed) {
   const { addedGas, multiplier } = getFeePaymentConsequences(feeToken, estimation)
   const discountMultiplier = 1 - (feeToken.discount || 0)
   const totalMultiplier = multiplier * discountMultiplier
-  const feeInNative = estimation.feeInNative[speed] * totalMultiplier
-  const feeInUSD = !!estimation.feeInUSD
-    ? estimation.feeInUSD[speed] * totalMultiplier
-    : feeInNative * estimation.nativeAssetPriceInUSD
+  const nativeRate = feeToken.nativeRate || 1
 
-  const feeInFeeToken = feeInNative * (feeToken.nativeRate || 1)
-  
+  const feeInNative = estimation.customFee
+    ? ((estimation.customFee * discountMultiplier) / nativeRate)
+    : estimation.feeInNative[speed] * totalMultiplier
+    
+
+  const feeInUSD = feeInNative * estimation.nativeAssetPriceInUSD
+
+  const feeInFeeToken = feeInNative * nativeRate
+
   return {
     feeInNative,
     feeInUSD,
