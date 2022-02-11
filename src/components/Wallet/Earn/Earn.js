@@ -2,9 +2,8 @@ import './Earn.scss'
 import AAVECard from './Cards/AAVECard/AAVECard'
 import YearnTesseractCard from './Cards/YearnTesseractCard/YearnTesseractCard'
 import { Loading } from 'components/common'
-import WalletTokenCard from './Cards/WalletTokenCard/WalletTokenCard'
 
-const Earn = ({ portfolio, selectedNetwork, selectedAcc, walletTokenInfoData, addRequest }) => {
+const Earn = ({ portfolio, selectedNetwork, selectedAcc, addRequest }) => {
     return (
         <div id="earn">
             {
@@ -17,13 +16,6 @@ const Earn = ({ portfolio, selectedNetwork, selectedAcc, walletTokenInfoData, ad
                             networkId={selectedNetwork.id}
                             accountId={selectedAcc}
                             tokens={portfolio.tokens}
-                            addRequest={addRequest}
-                        />
-                        <WalletTokenCard
-                            networkId={selectedNetwork.id}
-                            accountId={selectedAcc}
-                            tokens={portfolio.tokens}
-                            walletTokenInfoData={walletTokenInfoData}
                             addRequest={addRequest}
                         />
                     </div>
