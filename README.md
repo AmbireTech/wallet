@@ -157,7 +157,7 @@ node scripts/generateContractInfo.js > src/consts/humanizerInfo.json
 ## Audits
 
 The contracts used by Ambire Wallet have been audited by:
-* [CertiK](./contracts/audits/CertiK.pdf)
+* [CertiK](./contracts/audits/Certik.pdf)
 * [CodeArena](https://code423n4.com/reports/2021-10-ambire/)
 * [G0 group](https://github.com/g0-group/Audits/blob/master/AdExNetwork.md): audited AdEx Network but the used Identity.sol was carried over to Ambire
 
