@@ -90,7 +90,6 @@ export default function SendTransaction({ relayerURL, accounts, network, selecte
 function SendTransactionWithBundle({ bundle, replaceByDefault, network, account, resolveMany, relayerURL, onBroadcastedTxn, onDismiss }) {
 
   const [estimation, setEstimation] = useState(null)
-  const [nonces, setNonces] = useState({ nextNonMinedNonce: null, nextFreeNonce: null })
 
   const [replaceTx, setReplaceTx] = useState(!!replaceByDefault)
 
@@ -129,14 +128,11 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, network, account,
           }
           return estimation
         })
-        const nextNonMinedNonce = estimation.nextNonce.pendingBundle?.nonce?.num || estimation.nextNonce.nonce
-        if (nextNonMinedNonce === estimation.nextNonce.nonce) {
-          setReplaceTx(false)
+        if (estimation.nextNonce) {
+          setReplaceTx((estimation.nextNonce.pendingBundle.nonce?.num || estimation.nextNonce.nonce) === estimation.nextNonce.nonce)
+        } else {
+          console.error('No nextNonce found. did the estimation revert?', estimation)
         }
-        setNonces({
-          nextNonMinedNonce,
-          nextFreeNonce: estimation.nextNonce.nonce
-        })
       })
       .catch(e => {
         if (unmounted) return
@@ -175,11 +171,14 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, network, account,
         )
       ])]
 
+    const nextNonMinedNonce = (estimation?.nextNonce.pendingBundle?.nonce?.num || estimation?.nextNonce.nonce)
+    const nextFreeNonce = estimation?.nextNonce.nonce
+
     return new Bundle({
       ...bundle,
       txns: [...bundle.txns, feeTxn],
       gasLimit: estimation.gasLimit + addedGas + (bundle.extraGas || 0),
-      nonce: (replaceTx && (nonces.nextNonMinedNonce !== nonces.nextFreeNonce)) ? nonces.nextNonMinedNonce : nonces.nextFreeNonce
+      nonce: (replaceTx && (nextNonMinedNonce !== nextFreeNonce)) ? nextNonMinedNonce : nextFreeNonce
     })
   }
 
@@ -386,7 +385,7 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, network, account,
                   </div>
               </div>
               {
-                nonces.nextFreeNonce !== nonces.nextNonMinedNonce &&
+                (estimation?.nextNonce?.pendingBundle?.nonce?.num || estimation?.nextNonce?.nonce) !== estimation?.nextNonce?.nonce &&
                 (
                   <div className='panel noncePanel'>
                     Replace Transaction?
