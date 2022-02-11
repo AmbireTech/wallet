@@ -57,7 +57,6 @@ const TopBar = ({
         <WalletTokenButton
           rewardsData={rewardsData}
           walletTokenInfoData={walletTokenInfoData}
-          adxTokenInfoData={adxTokenInfoData}
           account={account}
           network={network}
           hidePrivateValue={hidePrivateValue}
