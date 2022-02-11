@@ -180,7 +180,7 @@ export default function usePortfolio({ currentNetwork, account, useStorage }) {
 
             let failedRequests = 0
             const requestsCount = protocols.reduce((acc, curr) => curr.protocols.length + acc, 0)
-
+            if (requestsCount === 0) return true
             const updatedProtocols = (await Promise.all(protocols.map(async ({ network, protocols, nftsProvider }) => {
                 const all = (await Promise.all(protocols.map(async protocol => {
                     try {
@@ -214,7 +214,6 @@ export default function usePortfolio({ currentNetwork, account, useStorage }) {
             ]))
 
             lastOtherProcolsRefresh = Date.now()
-
             if (failedRequests >= requestsCount) throw new Error('Failed to fetch other Protocols from API')
             return true
         } catch (error) {
