@@ -30,6 +30,7 @@ const tesseractVaults = [
 	{ name: 'Tesseract WMATIC Vault', network: 'polygon', addr: '0xE11678341625cD88Bb25544e39B2c62CeDcC83f1', baseToken: '0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270', decimals: 18 },
 ]
 const contracts = [
+	{ name: '$WALLET distributor', network: 'ethereum', addr: '0xc53af25f831f31ad6256a742b3f0905bc214a430' },
 	{ name: 'Uniswap', network: 'ethereum', addr: '0x7a250d5630b4cf539739df2c5dacb4c659f2488d', abiName: 'UniV2Router' },
 	{ name: 'Uniswap', network: 'ethereum', addr: '0xe592427a0aece92de3edee1f18e0157c05861564', abiName: 'UniV3Router' },
 	{ name: 'Uniswap', network: 'ethereum', addr: '0x68b3465833fb72a70ecdf485e0e4c7bd8665fc45', abiName: 'UniV3Router2' },
@@ -51,7 +52,8 @@ const contracts = [
 	{ name: 'Bored Ape Yacht Club', network: 'ethereum', addr: '0xbc4ca0eda7647a8ab7c2061c2e118a18a936f13d', abiName: 'ERC721' },
 	...yearnVaults,
 	...tesseractVaults,
-	{ name: 'Ambire Factory', network: 'ethereum', addr: '0xBf07a0Df119Ca234634588fbDb5625594E2a5BCA', abiName: 'IdentityFactory' }
+	{ name: 'Ambire Factory', network: 'ethereum', addr: '0xBf07a0Df119Ca234634588fbDb5625594E2a5BCA', abiName: 'IdentityFactory' },
+	{ name: 'Ambire Batcher', network: 'ethereum', addr: '0x460fad03099f67391d84c9cc0ea7aa2457969cea', abiName: 'Batcher' },
 ]
 const tokenlists = [
 	'https://github.com/trustwallet/assets/raw/master/blockchains/ethereum/tokenlist.json',
@@ -60,6 +62,15 @@ const tokenlists = [
 	'https://github.com/trustwallet/assets/raw/master/blockchains/polygon/tokenlist.json',
 	'https://api-polygon-tokens.polygon.technology/tokenlists/allTokens.tokenlist.json'
 ]
+
+const customTokens = [
+	{
+		address: '0x88800092ff476844f74dc2fc427974bbee2794ae',
+		symbol: 'WALLET',
+		decimals: 18
+	}
+]
+
 async function generate () {
 	let abis = {}
 	for (let contract of contracts) {
@@ -81,9 +92,10 @@ async function generate () {
 		names[address] = name
 	})
 
-	const tokenLists = await Promise.all(tokenlists.map(
+	const tokenLists = (await Promise.all(tokenlists.map(
 		async url => await fetch(url).then(r => r.json())
-	))
+	))).concat({tokens: customTokens})
+
 	const tokens = tokenLists.reduce((acc, list) => {
 		list.tokens.forEach(t => {
 			const address = t.address.toLowerCase()
@@ -94,7 +106,6 @@ async function generate () {
 		})
 		return acc
 	}, {})
-
 	console.log(JSON.stringify({ abis, tokens, names, yearnVaults, tesseractVaults }))
 }
 

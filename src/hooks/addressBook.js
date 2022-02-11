@@ -3,6 +3,7 @@ import { useToasts } from './toasts'
 import * as blockies from 'blockies-ts'
 import { isValidAddress, isKnownTokenOrContract } from 'lib/address'
 import { setKnownAddresses } from 'lib/humanReadableTransactions'
+import { sha256 } from 'ethers/lib/utils'
 
 const accountType = ({ email, signerExtra }) => {
     const walletType = signerExtra && signerExtra.type === 'ledger' ? 'Ledger' : signerExtra && signerExtra.type === 'trezor' ? 'Trezor' : 'Web3'
@@ -10,12 +11,13 @@ const accountType = ({ email, signerExtra }) => {
 }
 const toIcon = seed => blockies.create({ seed }).toDataURL()
 
-const useAddressBook = ({ accounts }) => {
+const useAddressBook = ({ accounts, useStorage }) => {
     const { addToast } = useToasts()
+    const [storageAddresses, setStorageAddresses] = useStorage({ key: 'addresses', defaultValue: [] })
 
     const addressList = useMemo(() => {
         try {
-            const addresses = JSON.parse(localStorage.addresses || '[]')
+            const addresses = storageAddresses
             if (!Array.isArray(addresses)) throw new Error('Address Book: incorrect format')
             return [
                 ...accounts.map(account => ({
@@ -33,22 +35,22 @@ const useAddressBook = ({ accounts }) => {
             console.error('Address Book parsing failure', e)
             return []
         }
-    }, [accounts])
+    }, [accounts, storageAddresses])
 
     const [addresses, setAddresses] = useState(() => addressList)
 
-    const updateAddresses = addresses => {
+    const updateAddresses = useCallback(addresses => {
         setAddresses(addresses.map(entry => ({
             ...entry,
             icon: toIcon(entry.address)
         })))
-        localStorage.addresses = JSON.stringify(addresses.filter(({ isAccount }) => !isAccount))
-    }
+        setStorageAddresses(addresses.filter(({ isAccount }) => !isAccount))
+    }, [setAddresses, setStorageAddresses])
 
     const isKnownAddress = useCallback(address => [
-        ...addresses.map(({ address }) => address),
-        ...accounts.map(({ id }) => id)
-    ].includes(address), [addresses, accounts])
+        ...addresses.map(({ address }) => sha256(address)),
+        ...accounts.map(({ id }) => sha256(id))
+    ].includes(sha256(address)), [addresses, accounts])
 
     const addAddress = useCallback((name, address) => {
         if (!name || !address) throw new Error('Address Book: invalid arguments supplied')
@@ -66,7 +68,7 @@ const useAddressBook = ({ accounts }) => {
         updateAddresses(newAddresses)
 
         addToast(`${address} added to your Address Book.`)
-    }, [addresses, addToast])
+    }, [addresses, addToast, updateAddresses])
 
     const removeAddress = useCallback((name, address) => {
         if (!name || !address) throw new Error('Address Book: invalid arguments supplied')
@@ -78,7 +80,7 @@ const useAddressBook = ({ accounts }) => {
         updateAddresses(newAddresses)
 
         addToast(`${address} removed from your Address Book.`)
-    }, [addresses, addToast])
+    }, [addresses, addToast, updateAddresses])
 
     useEffect(() => { setAddresses(addressList) }, [accounts, addressList])
 

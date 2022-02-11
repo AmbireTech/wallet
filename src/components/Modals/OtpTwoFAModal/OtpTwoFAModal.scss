@@ -1,6 +1,14 @@
 @import 'variables.scss';
 
 #otp-auth {
+    .timer-reset-msg {
+        text-align: center;
+        margin-bottom: 35px;
+        font-size: 20px;
+        color: red;
+        font-weight: bold;
+    }
+
     .img-wrapper {
         display: flex;
         justify-content: center;
@@ -40,6 +48,13 @@
             h4:first-child {
                 margin-top: 10px;
             }
+        }
+
+        .input-wrapper {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            column-gap: 20px; 
         }
         
         button { 
