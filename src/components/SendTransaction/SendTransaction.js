@@ -2,6 +2,7 @@
 // GiObservatory is also interesting
 import { GiGorilla } from 'react-icons/gi'
 import { FaChevronLeft } from 'react-icons/fa'
+import { MdOutlineInfo } from 'react-icons/md'
 import './SendTransaction.scss'
 import { useEffect, useState, useMemo, useRef } from 'react'
 import { Bundle } from 'adex-protocol-eth/js'
@@ -26,6 +27,7 @@ import { toBundleTxn } from 'lib/requestToBundleTxn'
 import { getProvider } from 'lib/provider'
 import { MdInfo } from 'react-icons/md'
 import { useCallback } from 'react'
+import { ToolTip } from "components/common";
 
 const ERC20 = new Interface(require('adex-protocol-eth/abi/ERC20'))
 
@@ -331,7 +333,11 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, network, account,
     <div id='sendTransaction'>
       <div id="titleBar">
         <div className='dismiss' onClick={onDismiss}>
-          <FaChevronLeft size={35}/><span>back</span>
+          <FaChevronLeft size={35}/>
+          back
+          <ToolTip label="You can go back to the main dashboard and add more transactions to this bundle in order to sign & send them all at once.">
+            <MdOutlineInfo size={25}/>
+          </ToolTip>
         </div>
       </div>
 
