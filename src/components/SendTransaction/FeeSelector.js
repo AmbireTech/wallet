@@ -1,17 +1,20 @@
 import './FeeSelector.scss'
 
 import { AiOutlineWarning } from 'react-icons/ai'
-import { Loading, Select, ToolTip, Button } from 'components/common'
+import { Loading, Select, ToolTip, Button, TextInput } from 'components/common'
 import {
   isTokenEligible,
   mapTxnErrMsg,
   getErrHint,
   getFeesData,
-  getDiscountApplied
+  getDiscountApplied,
+  getFeePaymentConsequences
 } from './helpers'
 import { FaPercentage } from 'react-icons/fa'
 import { MdInfoOutline } from 'react-icons/md'
 import { NavLink } from 'react-router-dom'
+import { MdEdit } from 'react-icons/md'
+import { useState } from 'react'
 
 const SPEEDS = ['slow', 'medium', 'fast', 'ape']
 
@@ -58,12 +61,14 @@ const WalletDiscountBanner = ({ currenciesItems, tokens, estimation, onFeeCurren
         <NavLink className='link' to={'/wallet/swap'} onClick={onDismiss}>
           Swap
         </NavLink> menu on the left!
-        </div>}
+      </div>}
     </div>
   )
 }
 
 export function FeeSelector({ disabled, signer, estimation, network, setEstimation, feeSpeed, setFeeSpeed, onDismiss }) {
+  const [editCustomFee, setEditCustomFee] = useState(false)
+  
   if (!estimation) return (<Loading />)
   // Only check for insufficient fee in relayer mode (.feeInUSD is available)
   // Otherwise we don't care whether the user has enough for fees, their signer wallet will take care of it
@@ -118,17 +123,30 @@ export function FeeSelector({ disabled, signer, estimation, network, setEstimati
 
   const areSelectorsDisabled = disabled || insufficientFee
   const { discount = 0, symbol } = estimation.selectedFeeToken
+
+  const setCustomFee = value => setEstimation(prevEstimation => ({
+    ...prevEstimation,
+    customFee: value
+  }))
+
+  const selectFeeSpeed = speed => {
+    setFeeSpeed(speed)
+    setCustomFee(null)
+    setEditCustomFee(false)
+  }
+
   const feeAmountSelectors = SPEEDS.map(speed => {
     const isETH = symbol === 'ETH' && nativeAssetSymbol === 'ETH'
     const {
       feeInFeeToken,
     } = getFeesData(estimation.selectedFeeToken, estimation, speed)
     const discountInFeeToken = getDiscountApplied(feeInFeeToken, discount)
+
     return (
       <div
         key={speed}
-        className={`feeSquare${feeSpeed === speed ? ' selected' : ''}${areSelectorsDisabled ? ' disabled' : ''}`}
-        onClick={() => !areSelectorsDisabled && setFeeSpeed(speed)}
+        className={`feeSquare${!estimation.customFee && feeSpeed === speed ? ' selected' : ''}${areSelectorsDisabled ? ' disabled' : ''}`}
+        onClick={() => !areSelectorsDisabled && selectFeeSpeed(speed)}
       >
         {!!discount && <FaPercentage className='discount-badge' />}
         <div className='speed'>{speed}</div>
@@ -172,16 +190,31 @@ export function FeeSelector({ disabled, signer, estimation, network, setEstimati
     <div className='section-title'>Transaction Speed</div>
     <div className='fee-selector'>
       <div className='section'>
-        
         <div id='fee-selector'>{feeAmountSelectors}</div>
+        {
+          !editCustomFee ?
+            <div id='edit-custom-fee' onClick={() => setEditCustomFee(true)}>
+              <MdEdit />Edit fee
+            </div>
+            :
+            <div id='custom-fee-selector'>
+              <div className='title'>Custom Fee</div>
+              <TextInput
+                small
+                placeholder='Enter amount'
+                className={`${estimation.customFee ? 'selected' : ''}`}
+                onChange={value => setCustomFee(value)}
+              />
+            </div>
+        }
       </div>
 
-      <div className='fees-breakdown'>    
+      <div className='fees-breakdown'>
         {(<div className='fee-row native-fee-estimation'>
           <div>
             Fee {!!discount && <span className='discount-label'>*</span>}
             {!!discount && estimation.selectedFeeToken?.symbol === 'WALLET' &&
-                <a
+              <a
                 className="address row discount-label"
                 href={walletDiscountBlogpost}
                 target="_blank"
@@ -191,10 +224,10 @@ export function FeeSelector({ disabled, signer, estimation, network, setEstimati
           </div>
           <div className='fee-amounts'>
             <div>
-            ~${(feeInUSD + discountInUSD).toFixed(feeInUSD + discountInUSD < 1 ? 4 : 2)}
+              ~${(feeInUSD + discountInUSD).toFixed(feeInUSD + discountInUSD < 1 ? 4 : 2)}
             </div>
             <div>
-              {feeInFeeToken + discountInFeeToken + ' ' + estimation.selectedFeeToken.symbol}  
+              {feeInFeeToken + discountInFeeToken + ' ' + estimation.selectedFeeToken.symbol}
             </div>
           </div>
         </div>)}

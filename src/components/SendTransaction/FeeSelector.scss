@@ -120,6 +120,40 @@
     }   
 }
 
+#edit-custom-fee {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.25em;
+    font-weight: 500;
+    opacity: 0.8;
+
+    &:hover {
+        opacity: 1;
+        cursor: pointer;
+    }
+}
+
+#custom-fee-selector {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5em;
+
+    .title {
+        font-size: 15px;
+        font-weight: 500;
+    }
+
+    .text-input {
+        &.selected {
+            input {
+                box-shadow: 0 0 0 3px $ambire-dark-blue inset;
+                background-color: $input-background-color;
+            }
+        }
+    }
+}
+
 .failingTxn {
     display: flex;
     flex-direction: column;

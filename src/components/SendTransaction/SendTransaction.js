@@ -124,6 +124,7 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
         if (unmounted || bundle !== currentBundle.current) return
         estimation.selectedFeeToken = { symbol: network.nativeAssetSymbol }
         setEstimation(prevEstimation => {
+          if (prevEstimation && prevEstimation.customFee) return prevEstimation
           if (estimation.remainingFeeTokenBalances) {
             // If there's no eligible token, set it to the first one cause it looks more user friendly (it's the preferred one, usually a stablecoin)
             estimation.selectedFeeToken = (
