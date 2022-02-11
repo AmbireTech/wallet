@@ -79,9 +79,9 @@
     }
 }
 
-@media screen and (min-width: 1700px) {
+@media screen and (min-width: $wide-breakpoint-min-width){
     #transfer {
-        @include recipient-field-font-size(0.9vw)
+        @include recipient-field-font-size(1em)
     }
 }
 

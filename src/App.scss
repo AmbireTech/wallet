@@ -46,6 +46,17 @@
   src: url('./fonts/OpenSans-Bold.ttf');
 }
 
+@font-face {
+  font-family: 'monospace';
+  src: url('./fonts/UbuntuMono/UbuntuMono-Regular.ttf');
+}
+
+@font-face {
+  font-family: 'monospace';
+  font-weight: bold;
+  src: url('./fonts/UbuntuMono/UbuntuMono-Bold.ttf');
+}
+
 * {
   box-sizing: border-box;
 }

@@ -13,7 +13,7 @@ import Transactions from './Transactions/Transactions'
 import PluginGnosisSafeApps from 'components/Plugins/GnosisSafeApps/GnosisSafeApps'
 import Collectible from "./Collectible/Collectible"
 import { PermissionsModal, UnsupportedDAppsModal } from 'components/Modals'
-import { useModals, usePermissions } from 'hooks'
+import { useModals, usePermissions, useLocalStorage } from 'hooks'
 import { useCallback, useEffect, useMemo, useRef } from 'react'
 import { isFirefox } from 'lib/isFirefox'
 import CrossChain from "./CrossChain/CrossChain"
@@ -27,6 +27,7 @@ export default function Wallet(props) {
   const walletContainer = useRef()
 
   const isLoggedIn = useMemo(() => props.accounts.length > 0, [props.accounts])
+  const [advancedModeList, setAdvancedModeList] = useLocalStorage({ key: 'dAppsAdvancedMode', defaultValue: [] })
 
   const routes = [
     {
@@ -138,13 +139,13 @@ export default function Wallet(props) {
     const showCauseOfPermissions = areBlockedPermissions && !modalHidden
     const showCauseOfEmail = !!account.emailConfRequired
     const showCauseOfBackupOptout = account.backupOptout
-    
+
     const permissionsModal = <PermissionsModal
-      relayerIdentityURL={relayerIdentityURL} 
-      account={account} 
-      onAddAccount={props.onAddAccount} 
-      isCloseBtnShown={!showCauseOfBackupOptout} 
-      isBackupOptout={!showCauseOfBackupOptout} 
+      relayerIdentityURL={relayerIdentityURL}
+      account={account}
+      onAddAccount={props.onAddAccount}
+      isCloseBtnShown={!showCauseOfBackupOptout}
+      isBackupOptout={!showCauseOfBackupOptout}
     />
 
     if (showCauseOfEmail || showCauseOfPermissions || showCauseOfBackupOptout) showModal(permissionsModal, { disableClose: true })
@@ -158,12 +159,11 @@ export default function Wallet(props) {
   }, [pathname])
 
   useEffect(() => {
-    const advancedModeList = JSON.parse(localStorage.dAppsAdvancedMode || '[]')
     const unsupported = props.connections
       .filter(({ session }) => session && session.peerMeta && unsupportedDApps.includes(session.peerMeta.url) && !advancedModeList.includes(session.peerMeta.url))
 
-    if (unsupported.length) showModal(<UnsupportedDAppsModal connections={unsupported} disconnect={props.disconnect} advancedModeList={advancedModeList}/>)
-  }, [props.connections, props.disconnect, showModal])
+    if (unsupported.length) showModal(<UnsupportedDAppsModal connections={unsupported} disconnect={props.disconnect} advancedModeList={advancedModeList} onContinue={setAdvancedModeList} />)
+  }, [props.connections, props.disconnect, showModal, advancedModeList, setAdvancedModeList])
 
   return (
     <div id="wallet">
