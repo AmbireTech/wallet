@@ -233,10 +233,12 @@ $titleBar-height: 90px;
                         display: flex;
                         flex-direction: row;
                         gap: 1.5em;
+                        flex-wrap: wrap;
 
                         .buttonComponent {
                             height: 75px;
-                            flex: 0 1 50%;
+                            // flex: 0 1 50%;
+                            flex-grow: 1;
 
                             &.danger {
                                 color: white;
@@ -249,7 +251,7 @@ $titleBar-height: 90px;
                             }
 
                             &.approveTxn {
-                                flex: 1 0 auto;
+                                // flex: 1 0 auto;
 
                                 .loading {
                                     width: auto;
