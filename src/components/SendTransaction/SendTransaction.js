@@ -151,7 +151,7 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, network, account,
       unmounted = true
       clearInterval(intvl)
     }
-  }, [bundle, setEstimation, feeSpeed, addToast, network, relayerURL, signingStatus])
+  }, [bundle, setEstimation, feeSpeed, addToast, network, relayerURL, signingStatus, replaceTx, setReplaceTx])
 
   const getFinalBundle = useCallback(() => {
     if (!relayerURL) {
