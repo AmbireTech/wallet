@@ -134,8 +134,8 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, network, account,
           }
           return estimation
         })
-        if (estimation.nextNonce) {
-          setReplaceTx((estimation.nextNonce.pendingBundle.nonce?.num || estimation.nextNonce.nonce) === estimation.nextNonce.nonce)
+        if (estimation.nextNonce && replaceTx && !!estimation.nextNonce?.pendingBundle) {
+          setReplaceTx(false)
         }
       })
       .catch(e => {
@@ -175,14 +175,15 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, network, account,
         )
       ])]
 
-    const nextNonMinedNonce = (estimation?.nextNonce.pendingBundle?.nonce?.num || estimation?.nextNonce.nonce)
-    const nextFreeNonce = estimation?.nextNonce.nonce
+    const nonceDiff = !!estimation?.nextNonce?.pendingBundle
+    const nextFreeNonce = estimation?.nextNonce?.nonce
+    const nextNonMinedNonce = (estimation?.nextNonce.pendingBundle?.nonce?.num || nextFreeNonce)
 
     return new Bundle({
       ...bundle,
       txns: [...bundle.txns, feeTxn],
       gasLimit: estimation.gasLimit + addedGas + (bundle.extraGas || 0),
-      nonce: (replaceTx && (nextNonMinedNonce !== nextFreeNonce)) ? nextNonMinedNonce : nextFreeNonce
+      nonce: (replaceTx && nonceDiff) ? nextNonMinedNonce : nextFreeNonce
     })
   }, [relayerURL, bundle, estimation, feeSpeed, network.nativeAssetSymbol, replaceTx])
 
@@ -396,7 +397,7 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, network, account,
           </div>
 
           {
-            (estimation?.nextNonce?.pendingBundle?.nonce?.num || estimation?.nextNonce?.nonce) !== estimation?.nextNonce?.nonce &&
+            !!estimation?.nextNonce?.pendingBundle &&
             (
               <div>
                 Replace Transaction?
