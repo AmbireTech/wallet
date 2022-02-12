@@ -143,10 +143,8 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, network, account,
           }
           return estimation
         })
-        if (estimation.nextNonce) {
-          setReplaceTx((estimation.nextNonce.pendingBundle?.nonce?.num || estimation.nextNonce.nonce) === estimation.nextNonce.nonce)
-        } else {
-          console.error('No nextNonce found. did the estimation revert?', estimation)
+        if (estimation.nextNonce && !estimation.nextNonce.pendingBundle) {
+          setReplaceTx(false)
         }
       })
       .catch(e => {
@@ -162,8 +160,10 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, network, account,
       unmounted = true
       clearInterval(intvl)
     }
-  }, [bundle, setEstimation, feeSpeed, addToast, network, relayerURL, signingStatus])
+  }, [bundle, setEstimation, feeSpeed, addToast, network, relayerURL, signingStatus, replaceTx, setReplaceTx])
 
+  // The final bundle is used when signing + sending it
+  // the bundle before that is used for estimating
   const getFinalBundle = useCallback(() => {
     if (!relayerURL) {
       return new Bundle({
@@ -189,14 +189,15 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, network, account,
         toHexAmount(feeInFeeToken, feeToken.decimals)
     ])]
 
-    const nextNonMinedNonce = (estimation?.nextNonce.pendingBundle?.nonce?.num || estimation?.nextNonce.nonce)
-    const nextFreeNonce = estimation?.nextNonce.nonce
+    const pendingBundle = estimation.nextNonce?.pendingBundle
+    const nextFreeNonce = estimation.nextNonce?.nonce
+    const nextNonMinedNonce = estimation.nextNonce?.nextNonMinedNonce
 
     return new Bundle({
       ...bundle,
       txns: [...bundle.txns, feeTxn],
       gasLimit: estimation.gasLimit + addedGas + (bundle.extraGas || 0),
-      nonce: (replaceTx && (nextNonMinedNonce !== nextFreeNonce)) ? nextNonMinedNonce : nextFreeNonce
+      nonce: (replaceTx && pendingBundle) ? nextNonMinedNonce : nextFreeNonce
     })
   }, [relayerURL, bundle, estimation, feeSpeed, network.nativeAssetSymbol, replaceTx])
 
@@ -217,7 +218,6 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, network, account,
       // Temporary way of debugging the fee cost
       // const initialLimit = finalBundle.gasLimit - getFeePaymentConsequences(estimation.selectedFeeToken, estimation).addedGas
       // finalBundle.estimate({ relayerURL, fetch }).then(estimation => console.log('fee costs: ', estimation.gasLimit - initialLimit), estimation.selectedFeeToken).catch(console.error)
-      if (typeof finalBundle.nonce !== 'number') await finalBundle.getNonce(provider)
       await finalBundle.sign(wallet)
       return await finalBundle.submit({ relayerURL, fetch })
     } else {
@@ -233,10 +233,6 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, network, account,
 
     const finalBundle = (signingStatus && signingStatus.finalBundle) || getFinalBundle()
     const signer = finalBundle.signer
-
-    if (typeof finalBundle.nonce !== 'number') {
-      await finalBundle.getNonce(getProvider(network.id))
-    }
 
     const { signature, success, message, confCodeRequired } = await fetchPost(
       `${relayerURL}/second-key/${bundle.identity}/${network.id}/sign`, {
@@ -415,7 +411,7 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, network, account,
           </div>
 
           {
-            (estimation?.nextNonce?.pendingBundle?.nonce?.num || estimation?.nextNonce?.nonce) !== estimation?.nextNonce?.nonce &&
+            !!estimation?.nextNonce?.pendingBundle &&
             (
               <div>
                 Replace Transaction?
