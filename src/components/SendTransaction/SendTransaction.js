@@ -136,7 +136,7 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, network, account,
           }
           return estimation
         })
-        if (estimation.nextNonce && !!estimation.nextNonce?.pendingBundle) {
+        if (estimation.nextNonce && !estimation.nextNonce.pendingBundle) {
           setReplaceTx(false)
         }
       })
