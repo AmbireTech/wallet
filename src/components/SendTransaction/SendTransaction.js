@@ -207,7 +207,6 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, network, account,
       // Temporary way of debugging the fee cost
       // const initialLimit = finalBundle.gasLimit - getFeePaymentConsequences(estimation.selectedFeeToken, estimation).addedGas
       // finalBundle.estimate({ relayerURL, fetch }).then(estimation => console.log('fee costs: ', estimation.gasLimit - initialLimit), estimation.selectedFeeToken).catch(console.error)
-      if (typeof finalBundle.nonce !== 'number') await finalBundle.getNonce(provider)
       await finalBundle.sign(wallet)
       return await finalBundle.submit({ relayerURL, fetch })
     } else {
@@ -223,10 +222,6 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, network, account,
 
     const finalBundle = (signingStatus && signingStatus.finalBundle) || getFinalBundle()
     const signer = finalBundle.signer
-
-    if (typeof finalBundle.nonce !== 'number') {
-      await finalBundle.getNonce(getProvider(network.id))
-    }
 
     const { signature, success, message, confCodeRequired } = await fetchPost(
       `${relayerURL}/second-key/${bundle.identity}/${network.id}/sign`, {
