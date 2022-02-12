@@ -136,7 +136,7 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, network, account,
           }
           return estimation
         })
-        if (estimation.nextNonce && replaceTx && !!estimation.nextNonce?.pendingBundle) {
+        if (estimation.nextNonce && !!estimation.nextNonce?.pendingBundle) {
           setReplaceTx(false)
         }
       })
@@ -155,6 +155,8 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, network, account,
     }
   }, [bundle, setEstimation, feeSpeed, addToast, network, relayerURL, signingStatus, replaceTx, setReplaceTx])
 
+  // The final bundle is used when signing + sending it
+  // the bundle before that is used for estimating
   const getFinalBundle = useCallback(() => {
     if (!relayerURL) {
       return new Bundle({
@@ -177,9 +179,9 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, network, account,
         )
       ])]
 
-    const nonceDiff = !!estimation?.nextNonce?.pendingBundle
-    const nextFreeNonce = estimation?.nextNonce?.nonce
-    const nextNonMinedNonce = (estimation?.nextNonce.pendingBundle?.nonce?.num || nextFreeNonce)
+    const nonceDiff = !!estimation.nextNonce?.pendingBundle
+    const nextFreeNonce = estimation.nextNonce?.nonce
+    const nextNonMinedNonce = (estimation.nextNonce?.pendingBundle?.nonce?.num || nextFreeNonce)
 
     return new Bundle({
       ...bundle,
