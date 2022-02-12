@@ -179,15 +179,15 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, network, account,
         )
       ])]
 
-    const nonceDiff = !!estimation.nextNonce?.pendingBundle
+    const pendingBundle = estimation.nextNonce?.pendingBundle
     const nextFreeNonce = estimation.nextNonce?.nonce
-    const nextNonMinedNonce = (estimation.nextNonce?.pendingBundle?.nonce?.num || nextFreeNonce)
+    const nextNonMinedNonce = estimation.nextNonce?.nextNonMinedNonce
 
     return new Bundle({
       ...bundle,
       txns: [...bundle.txns, feeTxn],
       gasLimit: estimation.gasLimit + addedGas + (bundle.extraGas || 0),
-      nonce: (replaceTx && nonceDiff) ? nextNonMinedNonce : nextFreeNonce
+      nonce: (replaceTx && pendingBundle) ? nextNonMinedNonce : nextFreeNonce
     })
   }, [relayerURL, bundle, estimation, feeSpeed, network.nativeAssetSymbol, replaceTx])
 
