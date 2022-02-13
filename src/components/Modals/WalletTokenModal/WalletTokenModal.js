@@ -62,8 +62,8 @@ const WalletTokenModal = ({ claimableWalletToken, rewards }) => {
         claimVesting
     } = claimableWalletToken
 
-    const walletTokenAPY = rewards.walletTokenAPY ? (rewards.walletTokenAPY).toFixed(2) : '...'
-    const adxTokenAPY = rewards.adxTokenAPY ? (rewards.adxTokenAPY).toFixed(2) : '...'
+    const walletTokenAPY = rewards.walletTokenAPY ? (rewards.walletTokenAPY * 100).toFixed(2) : '...'
+    const adxTokenAPY = rewards.adxTokenAPY ? (rewards.adxTokenAPY * 100).toFixed(2) : '...'
     const walletTokenUSDPrice = rewards.walletUsdPrice || 0
 
     const claimableNowUsd = walletTokenUSDPrice && !currentClaimStatus.loading && claimableNow ? (walletTokenUSDPrice * claimableNow).toFixed(2) : '...'
@@ -79,7 +79,7 @@ const WalletTokenModal = ({ claimableWalletToken, rewards }) => {
                     <label>Early users Incentive: Total</label>
                     <div className="balance">
                         <div className="amount"><span className="primary-accent">{ rewards['balance-rewards'] }</span></div>
-                        <div className="amount apy">{ (walletTokenAPY * 100).toFixed(2) } % <span>APY</span></div>
+                        <div className="amount apy">{ walletTokenAPY } % <span>APY</span></div>
                     </div>
                 </div>
                 <div className="actions">
@@ -103,7 +103,7 @@ const WalletTokenModal = ({ claimableWalletToken, rewards }) => {
                     <label>ADX Staking Bonus: Total</label>
                     <div className="balance">
                         <div className="amount"><span className="primary-accent">{ rewards['adx-rewards'] }</span></div>
-                        <div className="amount apy">{ (adxTokenAPY * 100).toFixed(2) } % <span>APY</span></div>
+                        <div className="amount apy">{ adxTokenAPY } % <span>APY</span></div>
                     </div>
                 </div>
                 <div className="actions">
