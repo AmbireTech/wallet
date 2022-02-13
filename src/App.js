@@ -24,7 +24,7 @@ import { useAttentionGrabber, usePortfolio, useAddressBook, useRelayerData, useP
 import { useToasts } from './hooks/toasts'
 import { useOneTimeQueryParam } from './hooks/oneTimeQueryParam'
 
-const relayerURL = 'https://relayer.ambire.com' //process.env.hasOwnProperty('REACT_APP_RELAYER_URL') ? process.env.REACT_APP_RELAYER_URL : 'http://localhost:1934'
+const relayerURL = process.env.hasOwnProperty('REACT_APP_RELAYER_URL') ? process.env.REACT_APP_RELAYER_URL : 'http://localhost:1934'
 
 setTimeout(() => {
   //console.warn('☢️ If you do, malicious code could steal your funds! ☢️')
