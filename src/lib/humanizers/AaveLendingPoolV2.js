@@ -36,7 +36,7 @@ const AaveMapping = {
     return [`Withdraw ${token(asset, amount)} from Aave lending pool${onBehalfText(onBehalf, txn.from)}`]
   },
   [iface.getSighash('repay')]: (txn, network, { extended }) => {
-    const [ asset, amount, onBehalf ] = iface.parseTransaction(txn).args
+    const [ asset, amount, rateMode, onBehalf ] = iface.parseTransaction(txn).args
     if (extended) return toExtended('Repay', 'to', token(asset, amount, true), txn, onBehalf)
     return [`Repay ${token(asset, amount)} to Aave lending pool${onBehalfText(onBehalf, txn.from)}`]
   },
