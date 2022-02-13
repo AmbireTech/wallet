@@ -79,7 +79,7 @@ const WalletTokenModal = ({ claimableWalletToken, rewards, walletTokenInfoData }
                     <label>Early users Incentive: Total</label>
                     <div className="balance">
                         <div className="amount"><span className="primary-accent">{ rewards['balance-rewards'] }</span></div>
-                        <div className="amount apy">{ walletTokenAPY } % <span>APY</span></div>
+                        <div className="amount apy">{ (walletTokenAPY * 100).toFixed(2) } % <span>APY</span></div>
                     </div>
                 </div>
                 <div className="actions">
@@ -103,7 +103,7 @@ const WalletTokenModal = ({ claimableWalletToken, rewards, walletTokenInfoData }
                     <label>ADX Staking Bonus: Total</label>
                     <div className="balance">
                         <div className="amount"><span className="primary-accent">{ rewards['adx-rewards'] }</span></div>
-                        <div className="amount apy">{ adxTokenAPY } % <span>APY</span></div>
+                        <div className="amount apy">{ (adxTokenAPY * 100).toFixed(2) } % <span>APY</span></div>
                     </div>
                 </div>
                 <div className="actions">
