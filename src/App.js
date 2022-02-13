@@ -167,9 +167,6 @@ function AppInner() {
   const rewardsUrl = (relayerURL && selectedAcc) ? `${relayerURL}/wallet-token/rewards/${selectedAcc}?cacheBreak=${cacheBreak}` : null
   const rewardsData = useRelayerData(rewardsUrl)
 
-  const walletTokenInfoUrl = (relayerURL) ? `${relayerURL}/wallet-token/info?cacheBreak=${cacheBreak}` : null
-  const walletTokenInfoData = useRelayerData(walletTokenInfoUrl)
-
   return (<>
     <Prompt
       message={(location, action) => {
@@ -240,7 +237,6 @@ function AppInner() {
           setSendTxnState={setSendTxnState}
           onAddAccount={onAddAccount}
           rewardsData={rewardsData}
-          walletTokenInfoData={walletTokenInfoData}
           privateMode={privateMode}
         >
         </Wallet>

@@ -22,8 +22,6 @@ const TopBar = ({
   setNetwork,
   allNetworks,
   rewardsData,
-  walletTokenInfoData,
-  adxTokenInfoData,
   privateMode: { isPrivateMode, togglePrivateMode, hidePrivateValue },
   addRequest
 }) => {
@@ -56,7 +54,6 @@ const TopBar = ({
       <div className={`container ${isMenuOpen ? 'open' : ''}`}>
         <WalletTokenButton
           rewardsData={rewardsData}
-          walletTokenInfoData={walletTokenInfoData}
           account={account}
           network={network}
           hidePrivateValue={hidePrivateValue}
