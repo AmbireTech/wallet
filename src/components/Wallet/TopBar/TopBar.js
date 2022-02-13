@@ -8,7 +8,7 @@ import Accounts from "./Accounts/Accounts";
 import DApps from "./DApps/DApps";
 import * as blockies from 'blockies-ts';
 import Links from "./Links/Links";
-import Rewards from "./Rewards/Rewards";
+import WalletTokenButton from "./WalletTokenButton/WalletTokenButton";
 
 const TopBar = ({
   connections,
@@ -22,6 +22,8 @@ const TopBar = ({
   setNetwork,
   allNetworks,
   rewardsData,
+  walletTokenInfoData,
+  adxTokenInfoData,
   privateMode: { isPrivateMode, togglePrivateMode, hidePrivateValue },
   addRequest
 }) => {
@@ -52,8 +54,9 @@ const TopBar = ({
         <div id="icon" />
       </NavLink>
       <div className={`container ${isMenuOpen ? 'open' : ''}`}>
-        <Rewards
+        <WalletTokenButton
           rewardsData={rewardsData}
+          walletTokenInfoData={walletTokenInfoData}
           account={account}
           network={network}
           hidePrivateValue={hidePrivateValue}

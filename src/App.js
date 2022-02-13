@@ -24,7 +24,7 @@ import { useAttentionGrabber, usePortfolio, useAddressBook, useRelayerData, useP
 import { useToasts } from './hooks/toasts'
 import { useOneTimeQueryParam } from './hooks/oneTimeQueryParam'
 
-const relayerURL = process.env.hasOwnProperty('REACT_APP_RELAYER_URL') ? process.env.REACT_APP_RELAYER_URL : 'http://localhost:1934'
+const relayerURL = 'https://relayer.ambire.com' //process.env.hasOwnProperty('REACT_APP_RELAYER_URL') ? process.env.REACT_APP_RELAYER_URL : 'http://localhost:1934'
 
 setTimeout(() => {
   //console.warn('☢️ If you do, malicious code could steal your funds! ☢️')
@@ -167,6 +167,9 @@ function AppInner() {
   const rewardsUrl = (relayerURL && selectedAcc) ? `${relayerURL}/wallet-token/rewards/${selectedAcc}?cacheBreak=${cacheBreak}` : null
   const rewardsData = useRelayerData(rewardsUrl)
 
+  const walletTokenInfoUrl = (relayerURL) ? `${relayerURL}/wallet-token/info?cacheBreak=${cacheBreak}` : null
+  const walletTokenInfoData = useRelayerData(walletTokenInfoUrl)
+
   return (<>
     <Prompt
       message={(location, action) => {
@@ -237,6 +240,7 @@ function AppInner() {
           setSendTxnState={setSendTxnState}
           onAddAccount={onAddAccount}
           rewardsData={rewardsData}
+          walletTokenInfoData={walletTokenInfoData}
           privateMode={privateMode}
         >
         </Wallet>
