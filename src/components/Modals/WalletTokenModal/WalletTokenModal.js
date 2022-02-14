@@ -126,9 +126,15 @@ const WalletTokenModal = ({ claimableWalletToken, rewards }) => {
                 </div>
                 <div className="actions">
                     <ToolTip label={
-                            claimDisabledReason || disabledReason || 'Claimable amount is 20% of the snapshot on 01 Feb 2022'
+                            claimDisabledReason || disabledReason || 'Claim all of your outstanding rewards as staked $WALLET (xWALLET)'
                         }>
-                        <Button small clear onClick={claimEarlyRewards} disabled={!!(claimDisabledReason || disabledReason)}>CLAIM</Button>
+                        <Button small clear onClick={claimEarlyRewards} disabled={!!(claimDisabledReason || disabledReason)}>Claim in xWALLET</Button>
+                    </ToolTip>
+
+                    <ToolTip label={
+                            claimDisabledReason || disabledReason || 'Claim 70% of your outstanding rewards as $WALLET, and permanently burn the other 30%'
+                        }>
+                        <Button small clear onClick={claimEarlyRewards} disabled={!!(claimDisabledReason || disabledReason)}>Claim with burn</Button>
                     </ToolTip>
                 </div>
             </div>
