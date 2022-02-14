@@ -8,13 +8,13 @@ import { ToolTip } from "components/common"
 
 const WALLET_TOKEN_ADDRESS = '0x88800092ff476844f74dc2fc427974bbee2794ae'
 
-const WalletTokenCard = ({ networkId, accountId, tokens, walletTokenInfoData, addRequest }) => {
+const WalletTokenCard = ({ networkId, accountId, tokens, rewardsData, addRequest }) => {
     const [loading, setLoading] = useState(true)
     const [details, setDetails] = useState([])
 
     const unavailable = networkId !== 'ethereum'
-    const walletTokenAPY = !walletTokenInfoData.isLoading && walletTokenInfoData.data ? (walletTokenInfoData.data?.apy).toFixed(2) : 0
 
+    const walletTokenAPY = !rewardsData.isLoading && rewardsData.data ? (rewardsData.data?.walletTokenAPY * 100).toFixed(2) : 0
     const tokensItems = tokens
         .filter(({ address }) => address === WALLET_TOKEN_ADDRESS)
         .map(({ address, symbol, tokenImageUrl, balance, balanceRaw }) => ({
