@@ -6,9 +6,10 @@ import { NavLink } from 'react-router-dom'
 import { Button, Loading } from 'components/common'
 import ProtocolsPlaceholder from './ProtocolsPlaceholder/ProtocolsPlaceholder'
 import { useState } from 'react'
-import { MdOutlineAdd } from 'react-icons/md'
+import { MdOutlineAdd, MdVisibilityOff } from 'react-icons/md'
 import { AddTokenModal } from 'components/Modals'
 import { useModals } from 'hooks'
+import { HideTokenModel } from 'components/Modals'
 
 const Protocols = ({ portfolio, network, account, hidePrivateValue }) => {
     const { showModal } = useModals()
@@ -60,6 +61,7 @@ const Protocols = ({ portfolio, network, account, hidePrivateValue }) => {
         </div>
 
     const openAddTokenModal = () => showModal(<AddTokenModal network={network} account={account} portfolio={portfolio} />)
+    const openHideTokenModal = () => showModal(<HideTokenModel network={network} account={account} portfolio={portfolio} />)
 
     return (
         <div id="protocols-table">
@@ -78,7 +80,10 @@ const Protocols = ({ portfolio, network, account, hidePrivateValue }) => {
                             <div className="category" key="category-tokens">
                                 <div className="title">
                                     Tokens
-                                    <Button mini clear icon={<MdOutlineAdd/>} onClick={() => openAddTokenModal()}>Add Token</Button>
+                                    <div style={ { display: 'flex',  }}>
+                                        <Button mini clear icon={<MdVisibilityOff/>} onClick={() => openHideTokenModal()}>Hide Token</Button>
+                                        <Button mini clear icon={<MdOutlineAdd/>} onClick={() => openAddTokenModal()}>Add Token</Button>
+                                    </div>
                                 </div>
                                 <div className="list">
                                     { 
