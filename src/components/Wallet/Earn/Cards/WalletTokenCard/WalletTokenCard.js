@@ -29,29 +29,29 @@ const WalletTokenCard = ({ networkId, accountId, tokens, rewardsData, addRequest
     const addRequestTxn = (id, txn, extraGas = 0) => addRequest({ id, type: 'eth_sendTransaction', chainId: networkDetails.chainId, account: accountId, txn, extraGas })
 
     const walletTokenAPY = !rewardsData.isLoading && rewardsData.data ? (rewardsData.data?.walletTokenAPY * 100).toFixed(2) : 0
-    const depositItems = tokens
-        .filter(({ address }) => address === WALLET_TOKEN_ADDRESS)
-        .map(({ address, symbol, tokenImageUrl, balance, balanceRaw }) => ({
-            type: 'deposit',
-            icon: tokenImageUrl,
-            label: symbol,
-            value: address,
-            symbol,
-            balance,
-            balanceRaw
-        }))
-    
-    const withdrawItems = tokens
-        .filter(({ address }) => address === WALLET_STAKING_ADDRESS)
-        .map(({ address, symbol, tokenImageUrl, balance, balanceRaw }) => ({
-            type: 'withdraw',
-            icon: tokenImageUrl,
-            label: symbol,
-            value: address,
-            symbol,
-            balance,
-            balanceRaw
-        }))
+
+    const walletToken = tokens.find(({ address }) => address === WALLET_TOKEN_ADDRESS)
+    const xWalletToken = tokens.find(({ address }) => address === WALLET_STAKING_ADDRESS)
+
+    const depositItems = [{
+        type: 'deposit',
+        icon: 'https://assets.coingecko.com/coins/images/23154/small/wallet.PNG?1643352408',
+        label: 'WALLET',
+        value: WALLET_TOKEN_ADDRESS,
+        symbol: 'WALLET',
+        balance: walletToken?.balance || 0,
+        balanceRaw: walletToken?.balanceRaw || 0,
+    }]
+
+    const withdrawItems = [{
+        type: 'withdraw',
+        icon: 'https://assets.coingecko.com/coins/images/23154/small/wallet.PNG?1643352408',
+        label: 'WALLET-STAKING',
+        value: WALLET_STAKING_ADDRESS,
+        symbol: 'WALLET-STAKING',
+        balance: xWalletToken?.balance || 0,
+        balanceRaw: xWalletToken?.balanceRaw || 0,
+    }]
 
     const tokensItems = [
         ...depositItems,
