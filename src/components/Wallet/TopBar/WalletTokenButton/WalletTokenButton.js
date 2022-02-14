@@ -30,7 +30,7 @@ const WalletTokenButton = ({ rewardsData, account, network, hidePrivateValue, ad
     }, [data, errMsg, account])
 
     return (
-        !isLoading && (errMsg || !data) ?
+        !isLoading && (errMsg || !data || currentClaimStatus.error) ?
             <ToolTip label="WALLET rewards are not available without a connection to the relayer">
                 <Button small border disabled onClick={showWalletTokenModal}>Unavailable</Button>
             </ToolTip>
