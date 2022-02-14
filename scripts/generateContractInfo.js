@@ -54,6 +54,7 @@ const contracts = [
 	...tesseractVaults,
 	{ name: 'Ambire Factory', network: 'ethereum', addr: '0xBf07a0Df119Ca234634588fbDb5625594E2a5BCA', abiName: 'IdentityFactory' },
 	{ name: 'Ambire Batcher', network: 'ethereum', addr: '0x460fad03099f67391d84c9cc0ea7aa2457969cea', abiName: 'Batcher' },
+	{ name: 'WALLET Staking Pool', network: 'ethereum', addr: '0x4d3348aa74ba11a2722ea9adec6bc10e92fe3d58', abiName: 'StakingPool' },
 ]
 const tokenlists = [
 	'https://github.com/trustwallet/assets/raw/master/blockchains/ethereum/tokenlist.json',
