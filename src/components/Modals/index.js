@@ -5,6 +5,7 @@ import ResetPasswordModal from './ResetPasswordModal/ResetPasswordModal'
 import WalletTokenModal from './WalletTokenModal/WalletTokenModal'
 import AddTokenModal from './AddTokenModal/AddTokenModal'
 import UnsupportedDAppsModal from './UnsupportedDAppsModal/UnsupportedDAppsModal'
+import HideTokenModel from './HideTokenModal/HideTokenModal'
 
 export {
     PermissionsModal,
@@ -13,5 +14,6 @@ export {
     ResetPasswordModal,
     WalletTokenModal,
     AddTokenModal,
-    UnsupportedDAppsModal
+    UnsupportedDAppsModal,
+    HideTokenModel
 }
