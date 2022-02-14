@@ -6,7 +6,7 @@ import useClaimableWalletToken from "./useClaimableWalletToken";
 
 const WalletTokenButton = ({ rewardsData, account, network, hidePrivateValue, addRequest }) => {
     const claimableWalletToken = useClaimableWalletToken({ account, network, addRequest })
-    const { claimableNow, currentClaimStatus } = claimableWalletToken
+    const { claimableNow, currentClaimStatus, currentClaimStatus } = claimableWalletToken
     const claimableTokensTotal = currentClaimStatus ?
         (claimableNow + (currentClaimStatus.mintableVesting || 0)).toFixed(3) : '...'
     
@@ -30,7 +30,7 @@ const WalletTokenButton = ({ rewardsData, account, network, hidePrivateValue, ad
     }, [data, errMsg, account])
 
     return (
-        !isLoading && (errMsg || !data) ?
+        !isLoading && (errMsg || !data || currentClaimStatus.error) ?
             <ToolTip label="WALLET rewards are not available without a connection to the relayer">
                 <Button small border disabled onClick={showWalletTokenModal}>Unavailable</Button>
             </ToolTip>
