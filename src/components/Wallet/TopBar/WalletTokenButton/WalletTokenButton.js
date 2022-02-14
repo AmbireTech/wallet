@@ -6,7 +6,7 @@ import useClaimableWalletToken from "./useClaimableWalletToken";
 
 const WalletTokenButton = ({ rewardsData, account, network, hidePrivateValue, addRequest }) => {
     const claimableWalletToken = useClaimableWalletToken({ account, network, addRequest })
-    const { claimableNow, currentClaimStatus, currentClaimStatus } = claimableWalletToken
+    const { claimableNow, currentClaimStatus } = claimableWalletToken
     const claimableTokensTotal = currentClaimStatus ?
         (claimableNow + (currentClaimStatus.mintableVesting || 0)).toFixed(3) : '...'
     
