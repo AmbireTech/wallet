@@ -5,17 +5,31 @@ import AMBIRE_ICON from 'resources/logo.png'
 import { useEffect } from "react"
 import { MdInfo } from "react-icons/md"
 import { ToolTip } from "components/common"
+import { constants, Contract } from "ethers"
+import WalletStakingPoolABI from 'consts/WalletStakingPoolABI'
+import { Interface, parseUnits } from "ethers/lib/utils"
+import { getProvider } from 'lib/provider'
+import ERC20ABI from 'adex-protocol-eth/abi/ERC20.json'
+import networks from 'consts/networks'
 
 const WALLET_TOKEN_ADDRESS = '0x88800092ff476844f74dc2fc427974bbee2794ae'
+const WALLET_STAKING_ADDRESS = '0x4d3348aa74ba11a2722ea9adec6bc10e92fe3d58'
+const WALLET_STAKING_POOL_INTERFACE = new Interface(WalletStakingPoolABI)
+const ERC20_INTERFACE = new Interface(ERC20ABI)
 
 const WalletTokenCard = ({ networkId, accountId, tokens, rewardsData, addRequest }) => {
     const [loading, setLoading] = useState(true)
     const [details, setDetails] = useState([])
 
+    const provider = getProvider(networkId)
+    const stakingWalletContract = new Contract(WALLET_STAKING_ADDRESS, WALLET_STAKING_POOL_INTERFACE, provider)
+
     const unavailable = networkId !== 'ethereum'
+    const networkDetails = networks.find(({ id }) => id === networkId)
+    const addRequestTxn = (id, txn, extraGas = 0) => addRequest({ id, type: 'eth_sendTransaction', chainId: networkDetails.chainId, account: accountId, txn, extraGas })
 
     const walletTokenAPY = !rewardsData.isLoading && rewardsData.data ? (rewardsData.data?.walletTokenAPY * 100).toFixed(2) : 0
-    const tokensItems = tokens
+    const depositItems = tokens
         .filter(({ address }) => address === WALLET_TOKEN_ADDRESS)
         .map(({ address, symbol, tokenImageUrl, balance, balanceRaw }) => ({
             type: 'deposit',
@@ -26,6 +40,23 @@ const WalletTokenCard = ({ networkId, accountId, tokens, rewardsData, addRequest
             balance,
             balanceRaw
         }))
+    
+    const withdrawItems = tokens
+        .filter(({ address }) => address === WALLET_STAKING_ADDRESS)
+        .map(({ address, symbol, tokenImageUrl, balance, balanceRaw }) => ({
+            type: 'withdraw',
+            icon: tokenImageUrl,
+            label: symbol,
+            value: address,
+            symbol,
+            balance,
+            balanceRaw
+        }))
+
+    const tokensItems = [
+        ...depositItems,
+        ...withdrawItems
+    ]
 
     const onTokenSelect = useCallback(() => {
         setDetails([
@@ -43,8 +74,34 @@ const WalletTokenCard = ({ networkId, accountId, tokens, rewardsData, addRequest
         ])
     }, [walletTokenAPY])
 
-    const onValidate = () => {
+    const onValidate = async (type, value, amount) => {
+        const bigNumberAmount = parseUnits(amount, 18)
 
+        if (type === 'Deposit') {
+            const allowance = await stakingWalletContract.allowance(accountId, WALLET_STAKING_ADDRESS)
+
+            if (allowance.lt(constants.MaxUint256)) {
+                addRequestTxn(`approve_staking_pool_${Date.now()}`, {
+                    to: WALLET_TOKEN_ADDRESS,
+                    value: '0x0',
+                    data: ERC20_INTERFACE.encodeFunctionData('approve', [WALLET_STAKING_ADDRESS, constants.MaxUint256])
+                })
+            }
+
+            addRequestTxn(`enter_staking_pool_${Date.now()}`, {
+                to: WALLET_STAKING_ADDRESS,
+                value: '0x0',
+                data: WALLET_STAKING_POOL_INTERFACE.encodeFunctionData('enter', [bigNumberAmount.toHexString()])
+            })
+        }
+
+        if (type === 'Withdraw') {
+            addRequestTxn(`leave_staking_pool_${Date.now()}`, {
+                to: WALLET_STAKING_ADDRESS,
+                value: '0x0',
+                data: WALLET_STAKING_POOL_INTERFACE.encodeFunctionData('leave', [bigNumberAmount.toHexString(), false])
+            })
+        }
     }
 
     useEffect(() => setLoading(false), [])
