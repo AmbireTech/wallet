@@ -41,6 +41,14 @@ const networks = [{
 		name: 'Fantom Opera',
 		icon: '/resources/networks/fantom.png',
 		explorerUrl: 'https://ftmscan.com'
+	}, {
+		id: 'andromeda',
+		chainId: 1088,
+		rpc: 'https://andromeda.metis.io/?owner=1088',
+		nativeAssetSymbol: 'METIS',
+		name: 'Andromeda',
+		icon: '/resources/networks/metis.png',
+		explorerUrl: 'https://andromeda-explorer.metis.io/'
 	}/*, {
 		id: 'arbitrum',
 		chainId: 42161,
