@@ -166,3 +166,10 @@ $extended-summary-height: 31px;
         }
     }
 }
+
+// Mobile
+@media screen and (max-width: $mobile-breakpoint-max-width) {
+    .summary-container {
+        flex-direction: column;
+    }
+}
