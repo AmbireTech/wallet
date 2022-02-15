@@ -70,17 +70,17 @@ const WalletTokenCard = ({ networkId, accountId, tokens, rewardsData, addRequest
 
         const token = tokensItems.find(({ value }) => value === tokenAddress)
         if (lockedShares.gt(0) && shareValue.gt(0)) {
-            const lockedWalletAmount = lockedShares.div(shareValue).mul(100)
+            const lockedWalletAmount = (lockedShares.toString() / shareValue.toString()) * 100
 
-            if (token && token.type === 'withdraw' && lockedWalletAmount.gt(0)) {
+            if (token && token.type === 'withdraw' && lockedWalletAmount > 0) {
                 setInfo(
                     <>
                         <NumberInput
-                            value={lockedWalletAmount.toString()}
+                            value={lockedWalletAmount}
                             label="Pending to be unlocked:"
                         />
                         <div className="info-message">
-                            <b>{ msToDaysHours(lockedRemainingTime) }</b> until { lockedWalletAmount.toString() } WALLET becomes available for withdraw.
+                            <b>{ msToDaysHours(lockedRemainingTime) }</b> until { lockedWalletAmount } WALLET becomes available for withdraw.
                         </div>
                     </>
                 )
