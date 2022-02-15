@@ -6,6 +6,7 @@ $extended-summary-height: 31px;
 .txnPreview {
     display: flex;
     flex-direction: column;
+    flex: 0 0 auto;
     background-color: $input-background-color;
     min-height: $txn-height;
     position: relative;
