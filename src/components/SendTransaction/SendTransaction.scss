@@ -69,6 +69,7 @@ $titleBar-height: 90px;
 
             .content {
                 height: 100%;
+                overflow-y: auto;
 
                 .listOfTransactions {
                     display: flex;
