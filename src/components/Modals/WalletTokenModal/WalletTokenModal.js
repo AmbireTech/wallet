@@ -69,6 +69,12 @@ const WalletTokenModal = ({ claimableWalletToken, rewards }) => {
     const claimableNowUsd = walletTokenUSDPrice && !currentClaimStatus.loading && claimableNow ? (walletTokenUSDPrice * claimableNow).toFixed(2) : '...'
     const mintableVestingUsd = walletTokenUSDPrice && !currentClaimStatus.loading && currentClaimStatus.mintableVesting ? (walletTokenUSDPrice * currentClaimStatus.mintableVesting).toFixed(2) : '...'
 
+    const claimeWithBurnNotice = 'This procedure will claim 70% of your outstanding rewards as $WALLET, and permanently burn the other 30%'
+    const claimWithBurn = () => {
+        const confirmed = window.confirm(`${claimeWithBurnNotice}. Are you sure?`)
+        if (confirmed) claimEarlyRewards(false)
+    }
+
     const modalButtons = <>
         <Button clear icon={<MdOutlineClose/>} onClick={() => hideModal()}>Close</Button>
     </>
@@ -128,13 +134,13 @@ const WalletTokenModal = ({ claimableWalletToken, rewards }) => {
                     <ToolTip label={
                             claimDisabledReason || disabledReason || 'Claim all of your outstanding rewards as staked $WALLET (xWALLET)'
                         }>
-                        <Button small clear onClick={claimEarlyRewards} disabled={!!(claimDisabledReason || disabledReason)}>Claim in xWALLET</Button>
+                        <Button className="claim-rewards-x-wallet" small clear onClick={claimEarlyRewards} disabled={!!(claimDisabledReason || disabledReason)}>CLAIM IN xWALLET</Button>
                     </ToolTip>
 
                     <ToolTip label={
-                            claimDisabledReason || disabledReason || 'Claim 70% of your outstanding rewards as $WALLET, and permanently burn the other 30%'
+                            claimDisabledReason || disabledReason || claimeWithBurnNotice
                         }>
-                        <Button small clear onClick={claimEarlyRewards} disabled={!!(claimDisabledReason || disabledReason)}>Claim with burn</Button>
+                        <Button className="claim-rewards-with-burn" small clear onClick={() => claimWithBurn()} disabled={!!(claimDisabledReason || disabledReason)}>Claim with burn</Button>
                     </ToolTip>
                 </div>
             </div>
