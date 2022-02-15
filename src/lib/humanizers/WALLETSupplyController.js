@@ -10,7 +10,7 @@ const toExtended = (isExtended, action, details) => {
 const WALLETSupplyControllerMapping = {
   [iface.getSighash('claim')]: (txn, network, { extended = false }) => {
     const { toBurnBps } = iface.parseTransaction(txn).args
-    const burnPercentage = toBurnBps.toString() / 10
+    const burnPercentage = toBurnBps.toString() / 100
     return toExtended(extended, 'claim rewards', burnPercentage > 0 ? `with ${burnPercentage}% burn` : '')
   },
   [iface.getSighash('mintVesting')]: (txn, network, { extended = false }) => {
