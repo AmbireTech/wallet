@@ -34,5 +34,10 @@ const WALLETStakingPool = {
     if (extended) return toExtended('Withdraw', 'from', token(WALLET_STAKING_ADDRESS, shares, true), txn)
     return [`Withdraw ${token(WALLET_STAKING_ADDRESS, shares)} to WALLET Staking Pool`]
   },
+  [iface.getSighash('rageLeave')]: (txn, network, { extended = false }) => {
+    const { shares } = iface.parseTransaction(txn).args
+    if (extended) return toExtended('Rage Leave', 'from', token(WALLET_STAKING_ADDRESS, shares, true), txn)
+    return [`Rage Leave ${token(WALLET_STAKING_ADDRESS, shares)} to WALLET Staking Pool`]
+  },
 }
 export default WALLETStakingPool
