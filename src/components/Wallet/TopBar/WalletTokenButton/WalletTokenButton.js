@@ -35,7 +35,7 @@ const WalletTokenButton = ({ rewardsData, account, network, hidePrivateValue, ad
                 <Button small border disabled onClick={showWalletTokenModal}>Unavailable</Button>
             </ToolTip>
             :
-            <Button small border disabled={isLoading} onClick={showWalletTokenModal}>{ hidePrivateValue(claimableTokensTotal) } WALLET</Button>
+            <Button small border disabled={isLoading} onClick={showWalletTokenModal}>{ isLoading ? '...' : hidePrivateValue(claimableTokensTotal) } WALLET</Button>
     )
 }
 
