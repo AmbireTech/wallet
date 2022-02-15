@@ -36,9 +36,9 @@ setTimeout(() => {
   console.error('|_|        | |) || - || .  || (_ || _| |   /       |_|')
   console.error('(_)        |___/ |_|_||_|\\_| \\___||___||_|_\\       (_)')
   console.log('At Ambire, we care about our users 💜. Safety is our top priority! DO NOT PASTE ANYTHING HERE or it could result in the LOSS OF YOUR FUNDS!')
-}, 4000);
+}, 4000)
 
-function AppInner () {
+function AppInner() {
   // basic stuff: currently selected account, all accounts, currently selected network
   const { accounts, selectedAcc, onSelectAcc, onAddAccount, onRemoveAccount } = useAccounts(useLocalStorage)
   const addressBook = useAddressBook({ accounts, useStorage: useLocalStorage })
@@ -122,7 +122,7 @@ function AppInner () {
     return true
   }
 
-   // Keeping track of transactions
+  // Keeping track of transactions
   const [sentTxn, setSentTxn] = useState([])
   const onBroadcastedTxn = hash => {
     if (!hash) {
@@ -134,7 +134,7 @@ function AppInner () {
       <span>Transaction signed and sent successfully!
         &nbsp;Click to view on block explorer.
       </span>
-    ), { url: network.explorerUrl+'/tx/'+hash, timeout: 15000 })
+    ), { url: network.explorerUrl + '/tx/' + hash, timeout: 15000 })
   }
   const confirmSentTx = txHash => setSentTxn(sentTxn => {
     const tx = sentTxn.find(tx => tx.hash === txHash)
@@ -172,7 +172,7 @@ function AppInner () {
       message={(location, action) => {
         if (action === 'POP') return onPopHistory()
         return true
-    }}/>
+      }}/>
 
     {!!everythingToSign.length && (<SignMessage
       selectedAcc={selectedAcc}
@@ -186,17 +186,18 @@ function AppInner () {
 
     {sendTxnState.showing ? (
       <SendTransaction
-          accounts={accounts}
-          selectedAcc={selectedAcc}
-          network={network}
-          requests={eligibleRequests}
-          resolveMany={resolveMany}
-          relayerURL={relayerURL}
-          onDismiss={() => setSendTxnState({ showing: false })}
-          replacementBundle={sendTxnState.replacementBundle}
-          onBroadcastedTxn={onBroadcastedTxn}
+        accounts={accounts}
+        selectedAcc={selectedAcc}
+        network={network}
+        requests={eligibleRequests}
+        resolveMany={resolveMany}
+        relayerURL={relayerURL}
+        onDismiss={() => setSendTxnState({ showing: false })}
+        replacementBundle={sendTxnState.replacementBundle}
+        replaceByDefault={sendTxnState.replaceByDefault}
+        onBroadcastedTxn={onBroadcastedTxn}
       ></SendTransaction>
-      ) : (<></>)
+    ) : (<></>)
     }
 
     <Switch>
@@ -233,6 +234,7 @@ function AppInner () {
           // required by the transactions page
           eligibleRequests={eligibleRequests}
           showSendTxns={showSendTxns}
+          setSendTxnState={setSendTxnState}
           onAddAccount={onAddAccount}
           rewardsData={rewardsData}
           privateMode={privateMode}
@@ -241,7 +243,7 @@ function AppInner () {
       </Route>
 
       <Route path="/">
-        <Redirect to={selectedAcc ? "/wallet/dashboard" : "/add-account" }/>
+        <Redirect to={selectedAcc ? "/wallet/dashboard" : "/add-account"}/>
       </Route>
 
     </Switch>

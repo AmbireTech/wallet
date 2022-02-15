@@ -66,7 +66,13 @@ export default function Wallet(props) {
     },
     {
       path: '/earn',
-      component: <Earn portfolio={props.portfolio} selectedNetwork={{ ...props.network }} selectedAcc={props.selectedAcc} addRequest={props.addRequest} />
+      component: <Earn
+        portfolio={props.portfolio}
+        selectedNetwork={{ ...props.network }}
+        selectedAcc={props.selectedAcc}
+        rewardsData={props.rewardsData}
+        addRequest={props.addRequest}
+      />
     },
     {
       path: '/security',
@@ -82,7 +88,15 @@ export default function Wallet(props) {
     },
     {
       path: '/transactions/:page?',
-      component: <Transactions relayerURL={props.relayerURL} selectedAcc={props.selectedAcc} selectedNetwork={props.network} addRequest={props.addRequest} eligibleRequests={props.eligibleRequests} showSendTxns={props.showSendTxns} />
+      component: <Transactions
+        relayerURL={props.relayerURL}
+        selectedAcc={props.selectedAcc}
+        selectedNetwork={props.network}
+        addRequest={props.addRequest}
+        eligibleRequests={props.eligibleRequests}
+        showSendTxns={props.showSendTxns}
+        setSendTxnState={props.setSendTxnState}
+      />
     },
     {
       path: '/swap',
