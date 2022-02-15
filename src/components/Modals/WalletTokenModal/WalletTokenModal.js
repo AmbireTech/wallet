@@ -69,7 +69,7 @@ const WalletTokenModal = ({ claimableWalletToken, rewards }) => {
     const claimableNowUsd = walletTokenUSDPrice && !currentClaimStatus.loading && claimableNow ? (walletTokenUSDPrice * claimableNow).toFixed(2) : '...'
     const mintableVestingUsd = walletTokenUSDPrice && !currentClaimStatus.loading && currentClaimStatus.mintableVesting ? (walletTokenUSDPrice * currentClaimStatus.mintableVesting).toFixed(2) : '...'
 
-    const claimeWithBurnNotice = 'Claim 70% of your outstanding rewards as $WALLET, and permanently burn the other 30%'
+    const claimeWithBurnNotice = 'This procedure will claim 70% of your outstanding rewards as $WALLET, and permanently burn the other 30%. Are you sure?'
     const claimWithBurn = () => {
         const confirmed = window.confirm(`${claimeWithBurnNotice}?`)
         if (confirmed) claimEarlyRewards(false)
