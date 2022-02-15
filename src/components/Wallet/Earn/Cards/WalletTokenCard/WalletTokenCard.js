@@ -69,7 +69,7 @@ const WalletTokenCard = ({ networkId, accountId, tokens, rewardsData, addRequest
                 </>,
                 rewardsData.isLoading ? `...` : `${walletTokenAPY}%`
             ],
-            ['Lock', 'No Lock'],
+            ['Lock', '20 day unbond period'],
             ['Type', 'Variable Rate'],
         ])
     }, [walletTokenAPY])
