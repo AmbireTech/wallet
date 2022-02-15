@@ -5,7 +5,7 @@ import HDNode from 'hdkey'
 import { LedgerSubprovider } from '@0x/subproviders/lib/src/subproviders/ledger' // https://github.com/0xProject/0x-monorepo/issues/1400
 import { ledgerEthereumBrowserClientFactoryAsync } from '@0x/subproviders/lib/src' // https://github.com/0xProject/0x-monorepo/issues/1400
 import { ledgerSignMessage, ledgerSignTransaction } from './ledgerWebHID'
-import { latticeInit, latticeConnect, latticeSignMessage } from 'lib/lattice'
+import { latticeInit, latticeConnect, latticeSignMessage, latticeSignTransaction } from 'lib/lattice'
 
 let wallets = {}
 
@@ -18,7 +18,7 @@ export function getWallet({ signer, signerExtra, chainId }, opts = {}) {
   return wallets[id] = getWalletNew({ signer, signerExtra, chainId }, opts)
 }
 
-async function getWalletNew({ chainId, signer, signerExtra }, opts) {
+function getWalletNew({ chainId, signer, signerExtra }, opts) {
   if (signerExtra && signerExtra.type === 'trezor') {
     const providerTrezor = new TrezorSubprovider({
       trezorConnectClientApi: TrezorConnect,
@@ -53,9 +53,9 @@ async function getWalletNew({ chainId, signer, signerExtra }, opts) {
         try {
           const { commKey, deviceId } = signerExtra
           const client = latticeInit(commKey)
-          const {isPaired, err } = await latticeConnect(client, deviceId)
+          const {isPaired, errConnect } = await latticeConnect(client, deviceId)
 
-          if (err) throw new Error(err.message || err)
+          if (errConnect) throw new Error(errConnect.message || errConnect)
 
           if (!isPaired) {
             client.pair('')
@@ -66,6 +66,28 @@ async function getWalletNew({ chainId, signer, signerExtra }, opts) {
           if (errSignMessage) throw new Error(errSignMessage)
 
           return signedMsg
+        } catch(e) {
+          console.log(e)
+          throw new Error(`Lattice: ${e}`)
+        }
+      },
+      signTransaction: async params => {
+        try {
+          const { commKey, deviceId } = signerExtra
+          const client = latticeInit(commKey)
+          const {isPaired, errConnect } = await latticeConnect(client, deviceId)
+
+          if (errConnect) throw new Error(errConnect.message || errConnect)
+
+          if (!isPaired) {
+            client.pair('')
+            throw new Error('The Lattice device is not paired! Please re-add your account!')
+          }
+
+          const { serializedSigned, errSignTxn } = await latticeSignTransaction(client, params, chainId)
+          if (errSignTxn) throw new Error(errSignTxn)
+
+          return serializedSigned
         } catch(e) {
           console.log(e)
           throw new Error(`Lattice: ${e}`)
