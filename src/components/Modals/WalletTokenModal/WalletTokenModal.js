@@ -134,7 +134,7 @@ const WalletTokenModal = ({ claimableWalletToken, rewards }) => {
                     <ToolTip label={
                             claimDisabledReason || disabledReason || 'Claim all of your outstanding rewards as staked $WALLET (xWALLET)'
                         }>
-                        <Button small clear onClick={claimEarlyRewards} disabled={!!(claimDisabledReason || disabledReason)}>Claim in xWALLET</Button>
+                        <Button className="claim-rewards-x-wallet" small clear onClick={claimEarlyRewards} disabled={!!(claimDisabledReason || disabledReason)}>CLAIM IN xWALLET</Button>
                     </ToolTip>
 
                     <ToolTip label={
