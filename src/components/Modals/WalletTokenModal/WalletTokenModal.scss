@@ -38,7 +38,7 @@ $badge-size: 65px;
                         }
 
                         &.usd, &.apy {
-                            font-size: 16px;
+                            font-size: 15px;
                         }
 
                         &.usd {
@@ -59,11 +59,16 @@ $badge-size: 65px;
             .actions {
                 display: flex;
                 justify-content: flex-end;
+                gap: 1em;
                 
                 button {
                     height: 40px;
                     font-size: 13px;
                     background-color: rgba(255, 255, 255, 0.1);
+                }
+
+                .claim-rewards-with-burn {
+                    background-color: $danger-color;
                 }
             }
 
