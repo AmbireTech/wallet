@@ -34,7 +34,7 @@ const WalletTokenCard = ({ networkId, accountId, tokens, rewardsData, addRequest
         addRequest({ id, type: 'eth_sendTransaction', chainId: networkDetails.chainId, account: accountId, txn, extraGas })
     , [networkDetails.chainId, accountId, addRequest])
 
-    const walletTokenAPY = !rewardsData.isLoading && rewardsData.data ? (rewardsData.data?.walletTokenAPY * 100).toFixed(2) : 0
+    const walletTokenAPY = !rewardsData.isLoading && rewardsData.data ? (rewardsData.data?.xWALLETAPY * 100).toFixed(2) : 0
 
     const walletToken = useMemo(() => tokens.find(({ address }) => address === WALLET_TOKEN_ADDRESS), [tokens])
     const xWalletToken = useMemo(() => tokens.find(({ address }) => address === WALLET_STAKING_ADDRESS), [tokens])
@@ -90,12 +90,12 @@ const WalletTokenCard = ({ networkId, accountId, tokens, rewardsData, addRequest
                         <MdInfo/>
                     </ToolTip>
                 </>,
-                `${walletTokenAPY}%`
+                rewardsData.isLoading ? `...` : `${walletTokenAPY}%`
             ],
-            ['Lock', '20 days'],
+            ['Lock', '20 day unbond period'],
             ['Type', 'Variable Rate'],
         ])
-    }, [lockedShares, shareValue, walletTokenAPY, lockedRemainingTime, tokensItems])
+    }, [lockedShares, shareValue, walletTokenAPY, rewardsData.isLoading, lockedRemainingTime, tokensItems])
 
     const onValidate = async (type, value, amount) => {
         const bigNumberAmount = parseUnits(amount, 18)
