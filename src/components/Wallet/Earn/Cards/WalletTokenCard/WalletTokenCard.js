@@ -7,7 +7,7 @@ import { MdInfo } from "react-icons/md"
 import { ToolTip, NumberInput, Button } from "components/common"
 import { BigNumber, constants, Contract } from "ethers"
 import WalletStakingPoolABI from 'consts/WalletStakingPoolABI'
-import { Interface, parseUnits } from "ethers/lib/utils"
+import { formatUnits, Interface, parseUnits } from "ethers/lib/utils"
 import { getProvider } from 'lib/provider'
 import ERC20ABI from 'adex-protocol-eth/abi/ERC20.json'
 import networks from 'consts/networks'
@@ -67,12 +67,21 @@ const WalletTokenCard = ({ networkId, accountId, tokens, rewardsData, addRequest
         }
     ], [walletToken, xWalletToken])
 
+    const onWithdraw = useCallback(() => {
+        const { shares, unlocksAt } = leaveLog
+        addRequestTxn(`withdraw_staking_pool_${Date.now()}`, {
+            to: WALLET_STAKING_ADDRESS,
+            value: '0x0',
+            data: WALLET_STAKING_POOL_INTERFACE.encodeFunctionData('withdraw', [shares.toHexString(), unlocksAt.toHexString(), false])
+        })
+    }, [leaveLog, addRequestTxn])
+
     const onTokenSelect = useCallback(tokenAddress => {
         setCustomInfo(null)
 
         const token = tokensItems.find(({ value }) => value === tokenAddress)
         if (token && token.type === 'withdraw' && leaveLog && lockedShares.gt(0) && shareValue.gt(0)) {
-            const lockedWalletAmount = (lockedShares.toString() / shareValue.toString()) * 100
+            const lockedWalletAmount = formatUnits(lockedShares.toString(), 18).toString() * formatUnits(shareValue, 18).toString()
 
             setCustomInfo(
                 <>
@@ -108,16 +117,7 @@ const WalletTokenCard = ({ networkId, accountId, tokens, rewardsData, addRequest
             ['Lock', '20 day unbond period'],
             ['Type', 'Variable Rate'],
         ])
-    }, [lockedShares, shareValue, walletTokenAPY, rewardsData.isLoading, lockedRemainingTime, tokensItems])
-
-    const onWithdraw = () => {
-        const { shares, unlocksAt } = leaveLog
-        addRequestTxn(`withdraw_staking_pool_${Date.now()}`, {
-            to: WALLET_STAKING_ADDRESS,
-            value: '0x0',
-            data: WALLET_STAKING_POOL_INTERFACE.encodeFunctionData('withdraw', [shares.toHexString(), unlocksAt.toHexString(), false])
-        })
-    }
+    }, [lockedShares, shareValue, walletTokenAPY, rewardsData.isLoading, lockedRemainingTime, tokensItems, leaveLog, onWithdraw])
 
     const onValidate = async (type, value, amount) => {
         const bigNumberAmount = parseUnits(amount, 18)
