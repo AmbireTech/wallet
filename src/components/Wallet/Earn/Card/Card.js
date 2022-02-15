@@ -82,23 +82,22 @@ const Card = ({ loading, unavailable, tokensItems, icon, details, info, onTokenS
                                     </div>
                             }
                             <Segments small defaultValue={segment} segments={segments} onChange={(value) => setSegment(value)}></Segments>
-                            <NumberInput
-                                disabled={!currentToken?.balance}
-                                min="0"
-                                max={currentToken?.balance}
-                                value={amount}
-                                label={amountLabel}
-                                onInput={(value) => setAmount(value)}
-                                button="MAX"
-                                onButtonClick={setMaxAmount}
-                            />
                             {
                                 info ? 
                                     <div className="info">
                                         { info }
                                     </div>
                                     :
-                                    null
+                                    <NumberInput
+                                        disabled={!currentToken?.balance}
+                                        min="0"
+                                        max={currentToken?.balance}
+                                        value={amount}
+                                        label={amountLabel}
+                                        onInput={(value) => setAmount(value)}
+                                        button="MAX"
+                                        onButtonClick={setMaxAmount}
+                                    />
                             }
                             <div className="separator"></div>
                             <Button 
