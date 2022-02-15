@@ -89,13 +89,12 @@ const WalletTokenModal = ({ accountId, claimableWalletToken, rewards }) => {
 
     const fetchStakedWalletData = useCallback(async () => {
         try {
-            const [balanceOf, shareValue, decimals] = await Promise.all([
+            const [balanceOf, shareValue] = await Promise.all([
                 stakingWalletContract.balanceOf(accountId),
                 stakingWalletContract.shareValue(),
-                stakingWalletContract.decimals(),
             ])
 
-            const stakedAmount = formatUnits(balanceOf.toString(), decimals).toString() * formatUnits(shareValue, decimals).toString()
+            const stakedAmount = formatUnits(balanceOf.toString(), 18).toString() * formatUnits(shareValue, 18).toString()
             setStakedAmount(stakedAmount)
         } catch(e) {
             console.error(e)
