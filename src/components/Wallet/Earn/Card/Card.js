@@ -88,24 +88,26 @@ const Card = ({ loading, unavailable, tokensItems, icon, details, info, onTokenS
                                         { info }
                                     </div>
                                     :
-                                    <NumberInput
-                                        disabled={!currentToken?.balance}
-                                        min="0"
-                                        max={currentToken?.balance}
-                                        value={amount}
-                                        label={amountLabel}
-                                        onInput={(value) => setAmount(value)}
-                                        button="MAX"
-                                        onButtonClick={setMaxAmount}
-                                    />
+                                    <>
+                                        <NumberInput
+                                            disabled={!currentToken?.balance}
+                                            min="0"
+                                            max={currentToken?.balance}
+                                            value={amount}
+                                            label={amountLabel}
+                                            onInput={(value) => setAmount(value)}
+                                            button="MAX"
+                                            onButtonClick={setMaxAmount}
+                                        />
+                                        <div className="separator"></div>
+                                        <Button 
+                                            disabled={disabled || amount <= 0 || amount > currentToken?.balance}
+                                            icon={segment === segments[0].value ? <BsArrowDownSquare/> : <BsArrowUpSquare/>}
+                                            onClick={() => onValidate(segment, token, amount)}>
+                                                { segment }
+                                        </Button>
+                                    </>
                             }
-                            <div className="separator"></div>
-                            <Button 
-                                disabled={disabled || amount <= 0 || amount > currentToken?.balance}
-                                icon={segment === segments[0].value ? <BsArrowDownSquare/> : <BsArrowUpSquare/>}
-                                onClick={() => onValidate(segment, token, amount)}>
-                                    { segment }
-                            </Button>
                         </div>
             }
         </div>
