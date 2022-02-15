@@ -146,10 +146,10 @@ const AddAuthSigner = ({ selectedNetwork, selectedAcc, onAddBtnClicked }) => {
 
         setShowLoading(true)
 
-        const { isPaired, err } = await latticeConnect(client, deviceId)
-        if (err) {
+        const { isPaired, errConnect } = await latticeConnect(client, deviceId)
+        if (errConnect) {
           setShowLoading(false)
-          setAddAccErr(err.message || err)
+          setAddAccErr(errConnect.message || errConnect)
 
           return
         }
@@ -166,14 +166,14 @@ const AddAuthSigner = ({ selectedNetwork, selectedAcc, onAddBtnClicked }) => {
         const { res, errGetAddresses } = await latticeGetAddresses(client)
         if (errGetAddresses) {
             setShowLoading(false)
-            setAddAccErr(`Lattice: ${err}`, { error: true })
+            setAddAccErr(`Lattice: ${errGetAddresses}`, { error: true })
 
             return
         }
         
         if (res) {
           setShowLoading(false)
-          setLatticeAddresses({ addresses: res, deviceId: deviceId, commKey: commKey, isPaired: true })
+          setLatticeAddresses({ addresses: res, deviceId, commKey, isPaired: true })
         }
       } else {
         showModal(<LatticeModal addresses={setLatticeAddresses} />)
