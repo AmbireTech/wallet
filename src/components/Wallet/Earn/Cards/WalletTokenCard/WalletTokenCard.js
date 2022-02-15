@@ -4,13 +4,14 @@ import Card from 'components/Wallet/Earn/Card/Card'
 import AMBIRE_ICON from 'resources/logo.png'
 import { useEffect } from "react"
 import { MdInfo } from "react-icons/md"
-import { ToolTip, NumberInput } from "components/common"
+import { ToolTip, NumberInput, Button } from "components/common"
 import { BigNumber, constants, Contract } from "ethers"
 import WalletStakingPoolABI from 'consts/WalletStakingPoolABI'
 import { Interface, parseUnits } from "ethers/lib/utils"
 import { getProvider } from 'lib/provider'
 import ERC20ABI from 'adex-protocol-eth/abi/ERC20.json'
 import networks from 'consts/networks'
+import { BsArrowUpSquare } from "react-icons/bs"
 
 const WALLET_TOKEN_ADDRESS = '0x88800092ff476844f74dc2fc427974bbee2794ae'
 const WALLET_STAKING_ADDRESS = '0x47cd7e91c3cbaaf266369fe8518345fc4fc12935'
@@ -32,6 +33,7 @@ const WalletTokenCard = ({ networkId, accountId, tokens, rewardsData, addRequest
     const [lockedShares, setLockedShares] = useState(BigNumber.from(0))
     const [shareValue, setShareValue] = useState(BigNumber.from(0))
     const [lockedRemainingTime, setLockedRemainingTime] = useState(0)
+    const [leaveLog, setLeaveLog] = useState(null)
 
     const unavailable = networkId !== 'ethereum'
     const networkDetails = networks.find(({ id }) => id === networkId)
@@ -61,7 +63,7 @@ const WalletTokenCard = ({ networkId, accountId, tokens, rewardsData, addRequest
             value: WALLET_STAKING_ADDRESS,
             symbol: 'xWALLET',
             balance: xWalletToken?.balance || 0,
-            balanceRaw: xWalletToken?.balanceRaw ? BigNumber.from(xWalletToken?.balanceRaw) : 0,
+            balanceRaw: xWalletToken?.balanceRaw || 0,
         }
     ], [walletToken, xWalletToken])
 
@@ -69,7 +71,7 @@ const WalletTokenCard = ({ networkId, accountId, tokens, rewardsData, addRequest
         setInfo(null)
 
         const token = tokensItems.find(({ value }) => value === tokenAddress)
-        if (lockedShares.gt(0) && shareValue.gt(0)) {
+        if (leaveLog && lockedShares.gt(0) && shareValue.gt(0)) {
             const lockedWalletAmount = (lockedShares.toString() / shareValue.toString()) * 100
 
             if (token && token.type === 'withdraw' && lockedWalletAmount > 0) {
@@ -82,6 +84,14 @@ const WalletTokenCard = ({ networkId, accountId, tokens, rewardsData, addRequest
                         <div className="info-message">
                             <b>{ msToDaysHours(lockedRemainingTime) }</b> until { lockedWalletAmount } WALLET becomes available for withdraw.
                         </div>
+                        <div className="separator"></div>
+                        <Button 
+                            disabled={lockedRemainingTime > 0}
+                            icon={<BsArrowUpSquare/>}
+                            onClick={() => onWithdraw()}
+                        >
+                            Withdraw    
+                        </Button>
                     </>
                 )
             }
@@ -101,6 +111,15 @@ const WalletTokenCard = ({ networkId, accountId, tokens, rewardsData, addRequest
             ['Type', 'Variable Rate'],
         ])
     }, [lockedShares, shareValue, walletTokenAPY, rewardsData.isLoading, lockedRemainingTime, tokensItems])
+
+    const onWithdraw = () => {
+        const { shares, unlocksAt } = leaveLog
+        addRequestTxn(`withdraw_staking_pool_${Date.now()}`, {
+            to: WALLET_STAKING_ADDRESS,
+            value: '0x0',
+            data: WALLET_STAKING_POOL_INTERFACE.encodeFunctionData('withdraw', [shares.toHexString(), unlocksAt.toHexString(), false])
+        })
+    }
 
     const onValidate = async (type, value, amount) => {
         const bigNumberAmount = parseUnits(amount, 18)
@@ -150,10 +169,17 @@ const WalletTokenCard = ({ networkId, accountId, tokens, rewardsData, addRequest
 
                 const [log] = await provider.getLogs({
                     fromBlock: 0,
-                    ...stakingWalletContract.filters.LogLeave(accountId, null, null, null)
+                    ...stakingWalletContract.filters.LogLeave()
                 })
 
                 if (log) {
+                    const { maxTokens, shares, unlocksAt } = stakingWalletContract.interface.parseLog(log).args
+                    setLeaveLog({
+                        tokens: maxTokens,
+                        shares,
+                        unlocksAt
+                    })
+    
                     const { timestamp } = await provider.getBlock(log.blockNumber)
                     const remainingTime = (timeToUnbond.toString() * 1000) - (Date.now() - (timestamp * 1000))
                     setLockedRemainingTime(remainingTime)
