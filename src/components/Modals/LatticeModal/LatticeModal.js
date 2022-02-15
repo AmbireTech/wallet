@@ -1,7 +1,7 @@
 import './LatticeModal.scss'
 
 import { Modal, Button, TextInput, Loading } from 'components/common'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useToasts } from 'hooks/toasts'
 import { latticeInit, 
     latticeConnect, 
@@ -12,6 +12,8 @@ import { latticeInit,
 const crypto = require('crypto')
 const SECRET_LENGTH = 8
 const DEVICE_ID_LENGTH = 6
+const commKey = crypto.randomBytes(32).toString('hex')
+console.log('commKey init', commKey)
 
 const LatticeModal = ({ addresses }) => {
     const { addToast } = useToasts()
@@ -19,22 +21,21 @@ const LatticeModal = ({ addresses }) => {
     const [deviceId, setDeviceId] = useState('')
     const [isSecretFieldShown, setIsSecretFieldShown] = useState(false)
     const [promiseResolve, setPromiseResolve] = useState(null)
-    const [commKey, setCommKey] = useState()
+    const inputSecretRef = useRef(null)
     
-    useEffect(() => {
-      setCommKey(crypto.randomBytes(32).toString('hex'))
-    }, [])
-    
+    useEffect(()=> {
+        if (isSecretFieldShown) inputSecretRef.current.focus()
+    }, [isSecretFieldShown])
+
     const client = latticeInit(commKey)
 
     const connectToDevice = async () => {
         setLoading(prevState => !prevState)
 
-        const { isPaired, err } = await latticeConnect(client, deviceId)
-        if (err) {
+        const { isPaired, errConnect } = await latticeConnect(client, deviceId)
+        if (errConnect) {
             setLoading(prevState => !prevState)
-            addToast(`Lattice: ${err} Or check if the DeviceID is correct.`, { error: true })
-            
+            addToast(`Lattice: ${errConnect} Or check if the DeviceID is correct.`, { error: true })
             return
         }
 
@@ -55,7 +56,6 @@ const LatticeModal = ({ addresses }) => {
 
                 if (!hasActiveWallet)  {
                     addToast('Lattice has no active wallet!')
-
                     return
                 }
 
@@ -63,17 +63,11 @@ const LatticeModal = ({ addresses }) => {
                 if (errGetAddresses) {
                     setLoading(prevState => !prevState)
                     addToast(errGetAddresses, {error: true})
-                    
                     return
                 }
 
                 if (!!res) {
-                    addresses({
-                        addresses: res,
-                        deviceId: deviceId,
-                        commKey: commKey,
-                        isPaired: true
-                    })
+                    addresses({ addresses: res, deviceId, commKey, isPaired: true })
                     setLoading(false)
                 } 
             })
@@ -81,18 +75,13 @@ const LatticeModal = ({ addresses }) => {
             const { res, errGetAddresses } = await latticeGetAddresses(client)
             if (errGetAddresses) {
                 setLoading(false)
-                addToast(`Lattice: ${err}`, { error: true })
+                addToast(`Lattice: ${errGetAddresses}`, { error: true })
 
                 return 
             }
 
             if (!!res) {
-                addresses({
-                    addresses: res,
-                    deviceId: deviceId,
-                    commKey: commKey,
-                    isPaired: true
-                })
+                addresses({ addresses: res, deviceId, commKey, isPaired: true })
                 setLoading(false)
             }
         }
@@ -130,6 +119,7 @@ const LatticeModal = ({ addresses }) => {
                         <>
                             <h4>Secret</h4>
                             <TextInput
+                                ref={inputSecretRef}
                                 placeholder="Enter secret"
                                 style={{ textTransform:'uppercase' }}
                                 onInput={value => handleInputSecret(value)}
