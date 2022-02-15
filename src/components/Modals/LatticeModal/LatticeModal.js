@@ -42,15 +42,14 @@ const LatticeModal = ({ addresses }) => {
         if (!isPaired) {
             setIsSecretFieldShown(prevState => !prevState)
 
-            const enteringSecret = new Promise((resolve, reject) => { setPromiseResolve(() => resolve) })
-            enteringSecret.then(async(resolve, reject) => { 
+            const enteredSecret = await new Promise((resolve, reject) => { setPromiseResolve(() => resolve) })
+            if (enteredSecret !== '') { 
                 setIsSecretFieldShown(prevState => !prevState)
 
-                const { hasActiveWallet, errPair } = await latticePair(client, resolve)
+                const { hasActiveWallet, errPair } = await latticePair(client, enteredSecret)
                 if (errPair) {
                     setLoading(prevState => !prevState)
                     addToast(errPair, { error: true })
-
                     return
                 }
 
@@ -70,13 +69,12 @@ const LatticeModal = ({ addresses }) => {
                     addresses({ addresses: res, deviceId, commKey, isPaired: true })
                     setLoading(false)
                 } 
-            })
+            }
         } else {
             const { res, errGetAddresses } = await latticeGetAddresses(client)
             if (errGetAddresses) {
                 setLoading(false)
                 addToast(`Lattice: ${errGetAddresses}`, { error: true })
-
                 return 
             }
 
