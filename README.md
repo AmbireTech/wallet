@@ -157,7 +157,7 @@ node scripts/generateContractInfo.js > src/consts/humanizerInfo.json
 ## Audits
 
 The contracts used by Ambire Wallet have been audited by:
-* [CertiK](./contracts/audits/CertiK.pdf)
+* [CertiK](./contracts/audits/Certik.pdf)
 * [CodeArena](https://code423n4.com/reports/2021-10-ambire/)
 * [G0 group](https://github.com/g0-group/Audits/blob/master/AdExNetwork.md): audited AdEx Network but the used Identity.sol was carried over to Ambire
 
@@ -254,4 +254,11 @@ Additionally, there's an ongoing [Immunefi bug bounty](https://immunefi.com/boun
 * Redesigned UI for sending transactions
 * Warn users when there's extra transaction costs for deploying their wallet
 * Private mode: hide addresses as well
+
+### v0.4.3
+* Ability to send transactions while you already have pending ones
+* Ability to modify a currently pending transaction bundle
+* Ability to customize the transaction fee
+* $WALLET claiming: can now claim early investor tokens
+* Bugfix: fixed parsing Aave repay transactions
 

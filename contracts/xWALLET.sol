@@ -20,9 +20,9 @@ interface IWALLETToken {
 contract StakingPool {
 	// ERC20 stuff
 	// Constants
-	string public constant name = "Ambire Staking Token";
+	string public constant name = "Ambire Wallet Staking Token";
 	uint8 public constant decimals = 18;
-	string public constant symbol = "WALLET-STAKING";
+	string public constant symbol = "xWALLET";
 
 	// Mutable variables
 	uint public totalSupply;
