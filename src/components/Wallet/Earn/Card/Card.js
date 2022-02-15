@@ -7,7 +7,7 @@ import { ethers } from 'ethers'
 
 const segments = [{ value: 'Deposit' }, { value: 'Withdraw' }]
 
-const Card = ({ loading, unavailable, tokensItems, icon, details, onTokenSelect, onValidate }) => {    
+const Card = ({ loading, unavailable, tokensItems, icon, details, info, onTokenSelect, onValidate }) => {    
     const [segment, setSegment] = useState(segments[0].value)
     const [tokens, setTokens] = useState([])
     const [token, setToken] = useState()
@@ -92,6 +92,14 @@ const Card = ({ loading, unavailable, tokensItems, icon, details, onTokenSelect,
                                 button="MAX"
                                 onButtonClick={setMaxAmount}
                             />
+                            {
+                                info ? 
+                                    <div className="info">
+                                        { info }
+                                    </div>
+                                    :
+                                    null
+                            }
                             <div className="separator"></div>
                             <Button 
                                 disabled={disabled || amount <= 0 || amount > currentToken?.balance}
