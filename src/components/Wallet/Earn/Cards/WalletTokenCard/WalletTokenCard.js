@@ -13,7 +13,7 @@ import ERC20ABI from 'adex-protocol-eth/abi/ERC20.json'
 import networks from 'consts/networks'
 
 const WALLET_TOKEN_ADDRESS = '0x88800092ff476844f74dc2fc427974bbee2794ae'
-const WALLET_STAKING_ADDRESS = '0x4d3348aa74ba11a2722ea9adec6bc10e92fe3d58'
+const WALLET_STAKING_ADDRESS = '0x47cd7e91c3cbaaf266369fe8518345fc4fc12935'
 const WALLET_STAKING_POOL_INTERFACE = new Interface(WalletStakingPoolABI)
 const ERC20_INTERFACE = new Interface(ERC20ABI)
 
