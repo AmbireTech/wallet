@@ -7,7 +7,7 @@ import { MdInfo } from "react-icons/md"
 import { ToolTip, NumberInput } from "components/common"
 import { BigNumber, constants, Contract } from "ethers"
 import WalletStakingPoolABI from 'consts/WalletStakingPoolABI'
-import { formatUnits, Interface, parseUnits } from "ethers/lib/utils"
+import { Interface, parseUnits } from "ethers/lib/utils"
 import { getProvider } from 'lib/provider'
 import ERC20ABI from 'adex-protocol-eth/abi/ERC20.json'
 import networks from 'consts/networks'
@@ -67,7 +67,7 @@ const WalletTokenCard = ({ networkId, accountId, tokens, rewardsData, addRequest
         if (lockedShares.gt(0) && shareValue.gt(0)) {
             const lockedWalletAmount = lockedShares.div(shareValue).mul(100)
 
-            if (token && token.type === 'withdraw' && shareValue && lockedWalletAmount.gt(0)) {
+            if (token && token.type === 'withdraw' && lockedWalletAmount.gt(0)) {
                 setInfo(
                     <>
                         <NumberInput
@@ -95,7 +95,7 @@ const WalletTokenCard = ({ networkId, accountId, tokens, rewardsData, addRequest
             ['Lock', '20 days'],
             ['Type', 'Variable Rate'],
         ])
-    }, [lockedShares, walletTokenAPY, lockedRemainingTime, tokensItems])
+    }, [lockedShares, shareValue, walletTokenAPY, lockedRemainingTime, tokensItems])
 
     const onValidate = async (type, value, amount) => {
         const bigNumberAmount = parseUnits(amount, 18)
