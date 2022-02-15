@@ -28,7 +28,7 @@ const msToDaysHours = ms => {
 const WalletTokenCard = ({ networkId, accountId, tokens, rewardsData, addRequest }) => {
     const [loading, setLoading] = useState(true)
     const [details, setDetails] = useState([])
-    const [info, setInfo] = useState(null)
+    const [customInfo, setCustomInfo] = useState(null)
     const [stakingWalletContract, setStakingWalletContract] = useState(null)
     const [lockedShares, setLockedShares] = useState(BigNumber.from(0))
     const [shareValue, setShareValue] = useState(BigNumber.from(0))
@@ -49,7 +49,7 @@ const WalletTokenCard = ({ networkId, accountId, tokens, rewardsData, addRequest
     const tokensItems = useMemo(() => [
         {
             type: 'deposit',
-            icon: 'https://assets.coingecko.com/coins/images/23154/small/wallet.PNG?1643352408',
+            icon: 'https://raw.githubusercontent.com/AmbireTech/ambire-brand/main/logos/Ambire_logo_250x250.png',
             label: 'WALLET',
             value: WALLET_TOKEN_ADDRESS,
             symbol: 'WALLET',
@@ -58,7 +58,7 @@ const WalletTokenCard = ({ networkId, accountId, tokens, rewardsData, addRequest
         },
         {
             type: 'withdraw',
-            icon: 'https://assets.coingecko.com/coins/images/23154/small/wallet.PNG?1643352408',
+            icon: 'https://raw.githubusercontent.com/AmbireTech/ambire-brand/main/logos/xwallet_250x250.png',
             label: 'xWALLET',
             value: WALLET_STAKING_ADDRESS,
             symbol: 'xWALLET',
@@ -68,33 +68,31 @@ const WalletTokenCard = ({ networkId, accountId, tokens, rewardsData, addRequest
     ], [walletToken, xWalletToken])
 
     const onTokenSelect = useCallback(tokenAddress => {
-        setInfo(null)
+        setCustomInfo(null)
 
         const token = tokensItems.find(({ value }) => value === tokenAddress)
-        if (leaveLog && lockedShares.gt(0) && shareValue.gt(0)) {
+        if (token && token.type === 'withdraw' && leaveLog && lockedShares.gt(0) && shareValue.gt(0)) {
             const lockedWalletAmount = (lockedShares.toString() / shareValue.toString()) * 100
 
-            if (token && token.type === 'withdraw' && lockedWalletAmount > 0) {
-                setInfo(
-                    <>
-                        <NumberInput
-                            value={lockedWalletAmount}
-                            label="Pending to be unlocked:"
-                        />
-                        <div className="info-message">
-                            <b>{ msToDaysHours(lockedRemainingTime) }</b> until { lockedWalletAmount } WALLET becomes available for withdraw.
-                        </div>
-                        <div className="separator"></div>
-                        <Button 
-                            disabled={lockedRemainingTime > 0}
-                            icon={<BsArrowUpSquare/>}
-                            onClick={() => onWithdraw()}
-                        >
-                            Withdraw    
-                        </Button>
-                    </>
-                )
-            }
+            setCustomInfo(
+                <>
+                    <NumberInput
+                        value={lockedWalletAmount}
+                        label="Pending to be unlocked:"
+                    />
+                    <div className="info-message">
+                        <b>{ msToDaysHours(lockedRemainingTime) }</b> until { lockedWalletAmount } WALLET becomes available for withdraw.
+                    </div>
+                    <div className="separator"></div>
+                    <Button 
+                        disabled={lockedRemainingTime > 0}
+                        icon={<BsArrowUpSquare/>}
+                        onClick={() => onWithdraw()}
+                    >
+                        Withdraw    
+                    </Button>
+                </>
+            )
         }
 
         setDetails([
@@ -200,7 +198,7 @@ const WalletTokenCard = ({ networkId, accountId, tokens, rewardsData, addRequest
             unavailable={unavailable}
             tokensItems={tokensItems}
             details={details}
-            info={info}
+            customInfo={customInfo}
             onTokenSelect={onTokenSelect}
             onValidate={onValidate}
         />
