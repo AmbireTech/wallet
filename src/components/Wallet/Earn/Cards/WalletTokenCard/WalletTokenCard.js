@@ -46,9 +46,9 @@ const WalletTokenCard = ({ networkId, accountId, tokens, rewardsData, addRequest
     const withdrawItems = [{
         type: 'withdraw',
         icon: 'https://assets.coingecko.com/coins/images/23154/small/wallet.PNG?1643352408',
-        label: 'WALLET-STAKING',
+        label: 'xWALLET',
         value: WALLET_STAKING_ADDRESS,
-        symbol: 'WALLET-STAKING',
+        symbol: 'xWALLET',
         balance: xWalletToken?.balance || 0,
         balanceRaw: xWalletToken?.balanceRaw || 0,
     }]
