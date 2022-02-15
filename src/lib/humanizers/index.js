@@ -9,6 +9,7 @@ import YearnTesseractVault from './YearnTesseractVault'
 import Movr from './Movr'
 import WALLETSupplyController from './WALLETSupplyController'
 import AmbireBatcher from './AmbireBatcher'
+import WALLETStakingPool from './WALLETStakingPool'
 
 const all = {
 	...UniRouters,
@@ -21,6 +22,7 @@ const all = {
 	...YearnTesseractVault,
 	...Movr,
 	...WALLETSupplyController,
-	...AmbireBatcher
+	...AmbireBatcher,
+	...WALLETStakingPool,
 }
 export default all

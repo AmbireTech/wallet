@@ -188,7 +188,7 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
                                             id="binance-address-warning"
                                             label={<span id="binance-address-warning-label">
                                                 I confirm this address is not a { unsupportedSWPlatforms.join(' / ') } address: <br/>
-                                                These platforms does not support ${selectedAsset?.symbol} deposits from smart wallets
+                                                These platforms do not support ${selectedAsset?.symbol} deposits from smart wallets
                                                 <a href='https://help.ambire.com/hc/en-us/articles/4415473743506-Statement-on-MATIC-BNB-deposits-to-Binance' target='_blank' rel='noreferrer'><MdInfo size={20}/></a>
                                             </span>}
                                             checked={sWAddressConfirmed}

@@ -52,7 +52,7 @@ async function supplementTokensDataFromNetwork({ walletAddr, network, tokensData
 
     // tokensNotInList: call separately to prevent errors from non-erc20 tokens
     // NOTE about err handling: errors are caught for each call in balanceOracle, and we retain the original token entry, which contains the balance
-    const calls = paginateArray(tokens, 100).concat(paginateArray(tokensNotInList, 100))
+    const calls = paginateArray([...new Set(tokens)], 100).concat(paginateArray(tokensNotInList, 100))
 
     const tokenBalances = (await Promise.all(calls.map(callTokens => {
         return getTokenListBalance({ walletAddr, tokens: callTokens, network, updateBalance })
@@ -180,7 +180,7 @@ export default function usePortfolio({ currentNetwork, account, useStorage }) {
 
             let failedRequests = 0
             const requestsCount = protocols.reduce((acc, curr) => curr.protocols.length + acc, 0)
-
+            if (requestsCount === 0) return true
             const updatedProtocols = (await Promise.all(protocols.map(async ({ network, protocols, nftsProvider }) => {
                 const all = (await Promise.all(protocols.map(async protocol => {
                     try {
@@ -214,7 +214,6 @@ export default function usePortfolio({ currentNetwork, account, useStorage }) {
             ]))
 
             lastOtherProcolsRefresh = Date.now()
-
             if (failedRequests >= requestsCount) throw new Error('Failed to fetch other Protocols from API')
             return true
         } catch (error) {
@@ -270,6 +269,18 @@ export default function usePortfolio({ currentNetwork, account, useStorage }) {
         addToast(`${token.name} (${token.symbol}) was removed from your wallet.`)
     }
 
+    const removeDuplicatedAssets = tokens => {
+        const lookup = tokens.reduce((a, e) => {
+            a[e.address] = ++a[e.address] || 0
+            return a
+        }, {})
+        
+        // filters by non duplicated objects or takes the one of dup but with a price greater than 0
+        tokens = tokens.filter(e => !lookup[e.address] || (lookup[e.address] && e.price))
+        
+        return tokens
+    }
+
     // Fetch balances and protocols on account change
     useEffect(() => {
         currentAccount.current = account
@@ -294,7 +305,11 @@ export default function usePortfolio({ currentNetwork, account, useStorage }) {
     useEffect(() => {
         try {
             const tokens = tokensByNetworks.find(({ network }) => network === currentNetwork)
-            if (tokens) setTokens(tokens.assets)
+            
+            if (tokens) {
+                tokens.assets = removeDuplicatedAssets(tokens.assets)
+                setTokens(tokens.assets) 
+            }
 
             const balanceByNetworks = tokensByNetworks.map(({ network, meta, assets }) => {
                 const totalUSD = assets.reduce((acc, curr) => acc + curr.balanceUSD, 0)

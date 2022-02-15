@@ -22,15 +22,36 @@ $badge-size: 65px;
                 }
 
                 .balance {
+                    display: flex;
+                    flex-direction: column;
+                    align-items: flex-end;
                     font-weight: 500;
                     text-align: right;
 
                     .amount {
+                        display: flex;
+                        gap: 7px;
                         font-size: 18px;
-                    }
 
-                    .amount-dollar {
-                        font-size: 14px;
+                        span {
+                            color: $primary-accent-color;
+                        }
+
+                        &.usd, &.apy {
+                            font-size: 15px;
+                        }
+
+                        &.usd {
+                            span {
+                                color: $secondary-accent-color;
+                            }
+                        }
+
+                        &.apy {
+                            span {
+                                color: $tertiary-accent-color;
+                            }
+                        }
                     }
                 }
             }
@@ -38,20 +59,21 @@ $badge-size: 65px;
             .actions {
                 display: flex;
                 justify-content: flex-end;
+                gap: 1em;
                 
                 button {
                     height: 40px;
                     font-size: 13px;
                     background-color: rgba(255, 255, 255, 0.1);
                 }
-            }
 
-            .primary-accent {
-                color: $primary-accent-color;
-            }
+                .claim-rewards-x-wallet {
+                    text-transform: inherit !important;
+                }
 
-            .secondary-accent {
-                color: $secondary-accent-color;
+                .claim-rewards-with-burn {
+                    background-color: $danger-color;
+                }
             }
 
             &:nth-child(odd) {
