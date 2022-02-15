@@ -3,7 +3,7 @@ import WALLETSupplyControllerABI from 'consts/WALLETSupplyControllerABI'
 
 const iface = new Interface(WALLETSupplyControllerABI)
 
-const toExtended = (isExtended, action, details) => {
+const toExtended = (isExtended, action, details = '') => {
   return isExtended ? [[ action, details ]] : [action, details]
 }
 
