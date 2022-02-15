@@ -5,27 +5,58 @@ import AMBIRE_ICON from 'resources/logo.png'
 import { useEffect } from "react"
 import { MdInfo } from "react-icons/md"
 import { ToolTip } from "components/common"
+import { constants, Contract } from "ethers"
+import WalletStakingPoolABI from 'consts/WalletStakingPoolABI'
+import { Interface, parseUnits } from "ethers/lib/utils"
+import { getProvider } from 'lib/provider'
+import ERC20ABI from 'adex-protocol-eth/abi/ERC20.json'
+import networks from 'consts/networks'
 
 const WALLET_TOKEN_ADDRESS = '0x88800092ff476844f74dc2fc427974bbee2794ae'
+const WALLET_STAKING_ADDRESS = '0x47cd7e91c3cbaaf266369fe8518345fc4fc12935'
+const WALLET_STAKING_POOL_INTERFACE = new Interface(WalletStakingPoolABI)
+const ERC20_INTERFACE = new Interface(ERC20ABI)
 
-const WalletTokenCard = ({ networkId, accountId, tokens, walletTokenInfoData, addRequest }) => {
+const WalletTokenCard = ({ networkId, accountId, tokens, rewardsData, addRequest }) => {
     const [loading, setLoading] = useState(true)
     const [details, setDetails] = useState([])
 
-    const unavailable = networkId !== 'ethereum'
-    const walletTokenAPY = !walletTokenInfoData.isLoading && walletTokenInfoData.data ? (walletTokenInfoData.data?.apy).toFixed(2) : 0
+    const provider = getProvider(networkId)
+    const stakingWalletContract = new Contract(WALLET_STAKING_ADDRESS, WALLET_STAKING_POOL_INTERFACE, provider)
 
-    const tokensItems = tokens
-        .filter(({ address }) => address === WALLET_TOKEN_ADDRESS)
-        .map(({ address, symbol, tokenImageUrl, balance, balanceRaw }) => ({
-            type: 'deposit',
-            icon: tokenImageUrl,
-            label: symbol,
-            value: address,
-            symbol,
-            balance,
-            balanceRaw
-        }))
+    const unavailable = networkId !== 'ethereum'
+    const networkDetails = networks.find(({ id }) => id === networkId)
+    const addRequestTxn = (id, txn, extraGas = 0) => addRequest({ id, type: 'eth_sendTransaction', chainId: networkDetails.chainId, account: accountId, txn, extraGas })
+
+    const walletTokenAPY = !rewardsData.isLoading && rewardsData.data ? (rewardsData.data?.walletTokenAPY * 100).toFixed(2) : 0
+
+    const walletToken = tokens.find(({ address }) => address === WALLET_TOKEN_ADDRESS)
+    const xWalletToken = tokens.find(({ address }) => address === WALLET_STAKING_ADDRESS)
+
+    const depositItems = [{
+        type: 'deposit',
+        icon: 'https://assets.coingecko.com/coins/images/23154/small/wallet.PNG?1643352408',
+        label: 'WALLET',
+        value: WALLET_TOKEN_ADDRESS,
+        symbol: 'WALLET',
+        balance: walletToken?.balance || 0,
+        balanceRaw: walletToken?.balanceRaw || 0,
+    }]
+
+    const withdrawItems = [{
+        type: 'withdraw',
+        icon: 'https://assets.coingecko.com/coins/images/23154/small/wallet.PNG?1643352408',
+        label: 'WALLET-STAKING',
+        value: WALLET_STAKING_ADDRESS,
+        symbol: 'WALLET-STAKING',
+        balance: xWalletToken?.balance || 0,
+        balanceRaw: xWalletToken?.balanceRaw || 0,
+    }]
+
+    const tokensItems = [
+        ...depositItems,
+        ...withdrawItems
+    ]
 
     const onTokenSelect = useCallback(() => {
         setDetails([
@@ -43,8 +74,34 @@ const WalletTokenCard = ({ networkId, accountId, tokens, walletTokenInfoData, ad
         ])
     }, [walletTokenAPY])
 
-    const onValidate = () => {
+    const onValidate = async (type, value, amount) => {
+        const bigNumberAmount = parseUnits(amount, 18)
 
+        if (type === 'Deposit') {
+            const allowance = await stakingWalletContract.allowance(accountId, WALLET_STAKING_ADDRESS)
+
+            if (allowance.lt(constants.MaxUint256)) {
+                addRequestTxn(`approve_staking_pool_${Date.now()}`, {
+                    to: WALLET_TOKEN_ADDRESS,
+                    value: '0x0',
+                    data: ERC20_INTERFACE.encodeFunctionData('approve', [WALLET_STAKING_ADDRESS, constants.MaxUint256])
+                })
+            }
+
+            addRequestTxn(`enter_staking_pool_${Date.now()}`, {
+                to: WALLET_STAKING_ADDRESS,
+                value: '0x0',
+                data: WALLET_STAKING_POOL_INTERFACE.encodeFunctionData('enter', [bigNumberAmount.toHexString()])
+            })
+        }
+
+        if (type === 'Withdraw') {
+            addRequestTxn(`leave_staking_pool_${Date.now()}`, {
+                to: WALLET_STAKING_ADDRESS,
+                value: '0x0',
+                data: WALLET_STAKING_POOL_INTERFACE.encodeFunctionData('leave', [bigNumberAmount.toHexString(), false])
+            })
+        }
     }
 
     useEffect(() => setLoading(false), [])
