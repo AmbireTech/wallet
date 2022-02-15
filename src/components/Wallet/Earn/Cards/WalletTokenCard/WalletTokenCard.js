@@ -28,7 +28,7 @@ const WalletTokenCard = ({ networkId, accountId, tokens, rewardsData, addRequest
     const networkDetails = networks.find(({ id }) => id === networkId)
     const addRequestTxn = (id, txn, extraGas = 0) => addRequest({ id, type: 'eth_sendTransaction', chainId: networkDetails.chainId, account: accountId, txn, extraGas })
 
-    const walletTokenAPY = !rewardsData.isLoading && rewardsData.data ? (rewardsData.data?.walletTokenAPY * 100).toFixed(2) : 0
+    const walletTokenAPY = !rewardsData.isLoading && rewardsData.data ? (rewardsData.data?.xWALLETAPY * 100).toFixed(2) : 0
 
     const walletToken = tokens.find(({ address }) => address === WALLET_TOKEN_ADDRESS)
     const xWalletToken = tokens.find(({ address }) => address === WALLET_STAKING_ADDRESS)
@@ -67,7 +67,7 @@ const WalletTokenCard = ({ networkId, accountId, tokens, rewardsData, addRequest
                         <MdInfo/>
                     </ToolTip>
                 </>,
-                `${walletTokenAPY}%`
+                rewardsData.isLoading ? `...` : `${walletTokenAPY}%`
             ],
             ['Lock', 'No Lock'],
             ['Type', 'Variable Rate'],
