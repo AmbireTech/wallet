@@ -14,7 +14,7 @@ const useClaimableWalletToken = ({ account, network, addRequest }) => {
     const provider = useMemo(() => getProvider('ethereum'), [])
     const supplyController = useMemo(() => new Contract(supplyControllerAddress, WALLETSupplyControllerABI, provider), [provider])
     const initialClaimableEntry = WALLETInitialClaimableRewards.find(x => x.addr === account.id)
-    const initialClaimable = initialClaimableEntry ? initialClaimableEntry.totalClaimable : 0
+    const initialClaimable = initialClaimableEntry ? initialClaimableEntry.totalClaimable / 1e18 : 0
     const vestingEntry = WALLETVestings.find(x => x.addr === account.id)
 
     const [currentClaimStatus, setCurrentClaimStatus] = useState({ loading: true, claimed: 0, mintableVesting: 0, error: null })
@@ -49,10 +49,10 @@ const useClaimableWalletToken = ({ account, network, addRequest }) => {
                 to: supplyControllerAddress,
                 value: '0x0',
                 data: supplyControllerInterface.encodeFunctionData('claim', [
-                    initialClaimableEntry.totalClaimableBN,
+                    initialClaimableEntry.totalClaimable,
                     initialClaimableEntry.proof,
                     withoutBurn ? 0 : 300, // penalty bps, at the moment we run with 0; it's a safety feature to hardcode it
-                    '0x0000000000000000000000000000000000000000' // staking addr, no need to pass this
+                    '0x47cd7e91c3cbaaf266369fe8518345fc4fc12935' // staking pool addr
                 ])
             }
         })    
