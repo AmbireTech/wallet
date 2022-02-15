@@ -7,7 +7,7 @@ import { ethers } from 'ethers'
 
 const segments = [{ value: 'Deposit' }, { value: 'Withdraw' }]
 
-const Card = ({ loading, unavailable, tokensItems, icon, details, info, onTokenSelect, onValidate }) => {    
+const Card = ({ loading, unavailable, tokensItems, icon, details, customInfo, onTokenSelect, onValidate }) => {    
     const [segment, setSegment] = useState(segments[0].value)
     const [tokens, setTokens] = useState([])
     const [token, setToken] = useState()
@@ -83,9 +83,9 @@ const Card = ({ loading, unavailable, tokensItems, icon, details, info, onTokenS
                             }
                             <Segments small defaultValue={segment} segments={segments} onChange={(value) => setSegment(value)}></Segments>
                             {
-                                info ? 
+                                customInfo ? 
                                     <div className="info">
-                                        { info }
+                                        { customInfo }
                                     </div>
                                     :
                                     <>
