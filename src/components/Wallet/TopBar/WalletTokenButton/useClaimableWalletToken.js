@@ -39,7 +39,7 @@ const useClaimableWalletToken = ({ account, network, addRequest }) => {
         currentClaimStatus.error ? `Claim status error: ${currentClaimStatus.error}` : null
     )
     const claimDisabledReason = claimableNow === 0 ? 'No rewards are claimable' : null
-    const claimEarlyRewards = useCallback(() => {
+    const claimEarlyRewards = useCallback((withoutBurn = true) => {
         addRequest({
             id: 'claim_'+Date.now(),
             chainId: network.chainId,
@@ -51,7 +51,7 @@ const useClaimableWalletToken = ({ account, network, addRequest }) => {
                 data: supplyControllerInterface.encodeFunctionData('claim', [
                     initialClaimableEntry.totalClaimableBN,
                     initialClaimableEntry.proof,
-                    0, // penalty bps, at the moment we run with 0; it's a safety feature to hardcode it
+                    withoutBurn ? 0 : 300, // penalty bps, at the moment we run with 0; it's a safety feature to hardcode it
                     '0x0000000000000000000000000000000000000000' // staking addr, no need to pass this
                 ])
             }
