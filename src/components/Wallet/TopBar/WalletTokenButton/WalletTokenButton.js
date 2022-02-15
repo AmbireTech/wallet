@@ -13,7 +13,7 @@ const WalletTokenButton = ({ rewardsData, account, network, hidePrivateValue, ad
     const [rewards, setRewards] = useState({})
     const { isLoading, data, errMsg } = rewardsData
     
-    const showWalletTokenModal = useDynamicModal(WalletTokenModal, { claimableWalletToken }, { rewards })
+    const showWalletTokenModal = useDynamicModal(WalletTokenModal, { claimableWalletToken, accountId: account.id }, { rewards })
 
     useEffect(() => {
         if (errMsg || !data || !data.success) return
