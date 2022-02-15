@@ -72,7 +72,7 @@ const WalletTokenCard = ({ networkId, accountId, tokens, rewardsData, addRequest
             ['Lock', '20 day unbond period'],
             ['Type', 'Variable Rate'],
         ])
-    }, [walletTokenAPY])
+    }, [walletTokenAPY, rewardsData.isLoading])
 
     const onValidate = async (type, value, amount) => {
         const bigNumberAmount = parseUnits(amount, 18)
