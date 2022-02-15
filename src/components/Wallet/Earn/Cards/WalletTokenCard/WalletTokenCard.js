@@ -17,7 +17,12 @@ const WALLET_STAKING_ADDRESS = '0x47cd7e91c3cbaaf266369fe8518345fc4fc12935'
 const WALLET_STAKING_POOL_INTERFACE = new Interface(WalletStakingPoolABI)
 const ERC20_INTERFACE = new Interface(ERC20ABI)
 
-const msToDays = ms => Math.floor(ms / (24 * 60 * 60 * 1000));
+const msToDaysHours = ms => {
+    const day = 24 * 60 * 60 * 1000
+    const days = Math.floor(ms / day)
+    const hours = Math.floor((ms % day) / (60 * 60 * 1000))
+    return days < 1 ? `${hours} hours` : `${days} days`
+};
 
 const WalletTokenCard = ({ networkId, accountId, tokens, rewardsData, addRequest }) => {
     const [loading, setLoading] = useState(true)
@@ -75,7 +80,7 @@ const WalletTokenCard = ({ networkId, accountId, tokens, rewardsData, addRequest
                             label="Pending to be unlocked:"
                         />
                         <div className="info-message">
-                            <b>{ msToDays(lockedRemainingTime) } days</b> until { lockedWalletAmount.toString() } WALLET becomes available for withdraw.
+                            <b>{ msToDaysHours(lockedRemainingTime) }</b> until { lockedWalletAmount.toString() } WALLET becomes available for withdraw.
                         </div>
                     </>
                 )
