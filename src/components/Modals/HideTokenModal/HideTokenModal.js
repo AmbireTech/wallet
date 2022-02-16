@@ -4,14 +4,14 @@ import { isValidAddress } from 'lib/address'
 import { Button, Loading, Modal, TextInput } from 'components/common'
 import { useState } from 'react'
 import { useToasts } from 'hooks/toasts'
-import { MdOutlineAdd, MdOutlineClose, MdOutlineRemove } from 'react-icons/md'
+import { MdVisibilityOff, MdOutlineClose, MdOutlineRemove } from 'react-icons/md'
 import { useModals } from 'hooks'
 
 const HideTokenModel = ({ network, account, portfolio }) => {
     const { addToast } = useToasts()
     const { hideModal } = useModals()
 
-    const { extraTokens, onAddExtraToken, onRemoveExtraToken, tokens } = portfolio
+    const { hiddenTokens, onAddHiddenToken, onRemoveHiddenToken, tokens } = portfolio
 
     const [loading, setLoading] = useState(false)
     const [tokenDetails, setTokenDetails] = useState(null)
@@ -38,18 +38,18 @@ const HideTokenModel = ({ network, account, portfolio }) => {
     }
 
     const addToken = () => {
-        onAddExtraToken(tokenDetails)
+        onAddHiddenToken(tokenDetails)
         hideModal()
     }
 
     const removeToken = address => {
-        onRemoveExtraToken(address)
+        onRemoveHiddenToken(address)
         hideModal()
     }
 
     const buttons = <>
         <Button clear icon={<MdOutlineClose/>} onClick={() => hideModal()}>Close</Button>
-        <Button icon={<MdOutlineAdd/>} disabled={disabled} onClick={addToken}>Add</Button>
+        <Button icon={<MdVisibilityOff/>} disabled={disabled} onClick={addToken}>Hide</Button>
     </>
     const tokenStandard = network.id === 'binance-smart-chain' ? 'a BEP20' : (
         network.id === 'ethereum'
@@ -93,11 +93,11 @@ const HideTokenModel = ({ network, account, portfolio }) => {
             }
             <div className="extra-tokens-list">
                 {
-                    extraTokens.map(({ address, name, symbol, tokenImageUrl }) => (
+                    hiddenTokens.map(({ address, symbol, tokenImageUrl }) => (
                         <div className="extra-token" key={address}>
                             <div className="info">
                                 <div className="icon" style={{ backgroundImage: `url(${tokenImageUrl})` }}/>
-                                <div className="name">{ name } <span>({ symbol })</span></div>
+                                <div className="name"><span>{ symbol }</span></div>
                             </div>
                             <div className="actions">
                                 <Button mini clear onClick={() => removeToken(address)}>

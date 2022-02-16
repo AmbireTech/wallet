@@ -34,7 +34,7 @@ function paginateArray(input, limit) {
     }
     return pages
 }
-async function supplementTokensDataFromNetwork({ walletAddr, network, tokensData, extraTokens, updateBalance }) {
+async function supplementTokensDataFromNetwork({ walletAddr, network, tokensData, extraTokens, updateBalance, hiddenTokens }) {
     if (!walletAddr || walletAddr==="" || !network || !network === "" ) return []
     if (!tokensData || !tokensData[0]) tokensData = checkTokenList(tokensData || []) //tokensData check and populate for test if undefind
     if (!extraTokens || !extraTokens[0]) extraTokens = checkTokenList(extraTokens || [])  //extraTokens check and populate for test if undefind
@@ -50,9 +50,19 @@ async function supplementTokensDataFromNetwork({ walletAddr, network, tokensData
       return !tokens.some(t => t.address === td.address)
     })
 
+    const test = tokens.map(t => {
+        return hiddenTokens.find(ht => t.address === ht.address) || { ...t, isHidden: false }
+    }).filter(t => !t.isHidden)
+
+
+    const test1 = tokensNotInList.map(t => {
+        return hiddenTokens.find(ht => t.address === ht.address) || { ...t, isHidden: false }
+    }).filter(t => !t.isHidden)
+    
+
     // tokensNotInList: call separately to prevent errors from non-erc20 tokens
     // NOTE about err handling: errors are caught for each call in balanceOracle, and we retain the original token entry, which contains the balance
-    const calls = paginateArray([...new Set(tokens)], 100).concat(paginateArray(tokensNotInList, 100))
+    const calls = paginateArray([...new Set(test)], 100).concat(paginateArray(test1, 100))
 
     const tokenBalances = (await Promise.all(calls.map(callTokens => {
         return getTokenListBalance({ walletAddr, tokens: callTokens, network, updateBalance })
@@ -86,6 +96,7 @@ export default function usePortfolio({ currentNetwork, account, useStorage }) {
     const [protocols, setProtocols] = useState([]);
     const [collectibles, setCollectibles] = useState([]);
     const [extraTokens, setExtraTokens] = useStorage({ key: 'extraTokens', defaultValue: [] });
+    const [hiddenTokens, setHiddenTokens] = useStorage({ key: 'hiddenTokens', defaultValue: [] })
 
     const getExtraTokensAssets = useCallback((account, network) => extraTokens
         .filter(extra => extra.account === account && extra.network === network)
@@ -107,7 +118,8 @@ export default function usePortfolio({ currentNetwork, account, useStorage }) {
                 walletAddr: account,
                 network: currentNetwork,
                 tokensData: currentNetworkTokens ? currentNetworkTokens.assets.filter(({ isExtraToken }) => !isExtraToken) : [], // Filter out extraTokens
-                extraTokens: extraTokensAssets
+                extraTokens: extraTokensAssets,
+                hiddenTokens
             })
 
             currentNetworkTokens.assets = rcpTokenData
@@ -121,7 +133,7 @@ export default function usePortfolio({ currentNetwork, account, useStorage }) {
         } catch(e) {
             console.error('supplementTokensDataFromNetwork failed', e)
         }
-    }, [getExtraTokensAssets, account, currentNetwork])
+    }, [currentNetwork, getExtraTokensAssets, account, hiddenTokens])
 
     const fetchTokens = useCallback(async (account, currentNetwork = false) => {
         try {
@@ -142,7 +154,7 @@ export default function usePortfolio({ currentNetwork, account, useStorage }) {
                         ...products.map(({ assets }) => assets.map(({ tokens }) => tokens)).flat(2),
                         ...extraTokensAssets
                     ]
-
+                    
                     return {
                         network,
                         meta,
@@ -257,6 +269,34 @@ export default function usePortfolio({ currentNetwork, account, useStorage }) {
 
         setExtraTokens(updatedExtraTokens)
         addToast(`${name} (${symbol}) token added to your wallet!`)
+    }
+
+    const onAddHiddenToken = hiddenToken => {
+        const { symbol } = hiddenToken
+        // if (extraTokens.map(({ address }) => address).includes(address)) return addToast(`${name} (${symbol}) is already added to your wallet.`)
+        // if (Object.values(tokenList).flat(1).map(({ address }) => address).includes(address)) return addToast(`${name} (${symbol}) is already handled by your wallet.`)
+        // if (tokens.map(({ address }) => address).includes(address)) return addToast(`You already have ${name} (${symbol}) in your wallet.`)
+
+        const updatedHiddenTokens = [
+            ...hiddenTokens,
+            {
+                ...hiddenToken,
+                isHidden: true
+            }
+        ]
+
+        setHiddenTokens(updatedHiddenTokens)
+        addToast(`${symbol} token is hidden from your assets list!`)
+    }
+
+    const onRemoveHiddenToken = address => {
+        const token = hiddenTokens.find(t => t.address === address)
+        if (!token) return addToast(`${address} is not present in your assets list.`)
+
+        const updatedHiddenTokens = hiddenTokens.filter(t => t.address !== address)
+
+        setHiddenTokens(updatedHiddenTokens)
+        addToast(`${token.symbol} is shown to your assets list.`)
     }
 
     const onRemoveExtraToken = address => {
@@ -399,11 +439,14 @@ export default function usePortfolio({ currentNetwork, account, useStorage }) {
         otherBalances,
         tokens,
         extraTokens,
+        hiddenTokens,
         protocols,
         collectibles,
         requestOtherProtocolsRefresh,
         onAddExtraToken,
-        onRemoveExtraToken
+        onRemoveExtraToken,
+        onAddHiddenToken,
+        onRemoveHiddenToken
         //updatePortfolio//TODO find a non dirty way to be able to reply to getSafeBalances from the dapps, after the first refresh
     }
 }
