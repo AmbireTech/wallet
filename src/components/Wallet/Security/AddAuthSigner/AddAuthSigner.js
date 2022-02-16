@@ -157,6 +157,7 @@ const AddAuthSigner = ({ selectedNetwork, selectedAcc, onAddBtnClicked }) => {
         if (!isPaired) {
           setShowLoading(false)
           setIsLatticePaired(false)
+          // Canceling the visualization of the secret code on the device's screen.
           client.pair('')
           setAddAccErr(`The Lattice device is not paired! Try again to pair the device.`, { error: true })
           

@@ -58,6 +58,7 @@ function getWalletNew({ chainId, signer, signerExtra }, opts) {
           if (errConnect) throw new Error(errConnect.message || errConnect)
 
           if (!isPaired) {
+            // Canceling the visualization of the secret code on the device's screen.
             client.pair('')
             throw new Error('The Lattice device is not paired! Please re-add your account!')
           }
@@ -80,6 +81,7 @@ function getWalletNew({ chainId, signer, signerExtra }, opts) {
           if (errConnect) throw new Error(errConnect.message || errConnect)
 
           if (!isPaired) {
+            // Canceling the visualization of the secret code on the device's screen.
             client.pair('')
             throw new Error('The Lattice device is not paired! Please re-add your account!')
           }
