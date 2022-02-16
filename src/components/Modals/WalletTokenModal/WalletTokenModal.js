@@ -74,6 +74,7 @@ const WalletTokenModal = ({ accountId, claimableWalletToken, rewards }) => {
 
     const walletTokenAPY = rewards.walletTokenAPY ? (rewards.walletTokenAPY * 100).toFixed(2) : '...'
     const adxTokenAPY = rewards.adxTokenAPY ? (rewards.adxTokenAPY * 100).toFixed(2) : '...'
+    const xWALLETAPY = rewards.xWALLETAPY ? (rewards.xWALLETAPY * 100).toFixed(2) : '...'
     const walletTokenUSDPrice = rewards.walletUsdPrice || 0
 
     const claimableNowUsd = walletTokenUSDPrice && !currentClaimStatus.loading && claimableNow ? (walletTokenUSDPrice * claimableNow).toFixed(2) : '...'
@@ -205,7 +206,7 @@ const WalletTokenModal = ({ accountId, claimableWalletToken, rewards }) => {
                             <div className="amount"><span className="primary-accent">
                                 { stakedAmount }
                             </span></div>
-                            <div className="amount apy">{ walletTokenAPY } % <span>APY</span></div>
+                            <div className="amount apy">{ xWALLETAPY } % <span>APY</span></div>
                         </div>
                     </div>
                 </div>
