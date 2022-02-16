@@ -76,6 +76,8 @@ const latticeGetAddresses = async client => {
                     return
                 }
 
+                if (!res) throw new Error('Lattice could not get the addresses.')
+
                 resolve({res, errGetAddresses: false })
             })
         })
@@ -107,9 +109,9 @@ const latticeSignMessage = async(client, hash) => {
                     return
                 }
 
-                if (signedTx) {
-                    resolve({ signedMsg: '0x' + signedTx.sig.r + signedTx.sig.s + signedTx.sig.v[0].toString(16), errSignMessage: false })
-                }
+                if (!signedTx) throw new Error('Lattice could not sign the message.')
+                
+                resolve({ signedMsg: '0x' + signedTx.sig.r + signedTx.sig.s + signedTx.sig.v[0].toString(16), errSignMessage: false })  
             })
         })
 
@@ -155,17 +157,17 @@ const latticeSignTransaction = async(client, txn, chainId) => {
                     reject(err)
                     return
                 }
+
+                if (!signedTx) throw new Error('Lattice could not sign the message.')
                 
-                if (signedTx) {
-                    delete unsignedTxObj.v
-                    const serializedSigned = serialize(unsignedTxObj, {
-                        r: '0x' + signedTx.sig.r,
-                        s: '0x' + signedTx.sig.s,
-                        v: signedTx.sig.v[0].toString(16)
-                    })
-                    
-                    resolve({ serializedSigned, errSignTxn: false })
-                }
+                delete unsignedTxObj.v
+                const serializedSigned = serialize(unsignedTxObj, {
+                    r: '0x' + signedTx.sig.r,
+                    s: '0x' + signedTx.sig.s,
+                    v: signedTx.sig.v[0].toString(16)
+                })
+                
+                resolve({ serializedSigned, errSignTxn: false })
             })
         })
 
