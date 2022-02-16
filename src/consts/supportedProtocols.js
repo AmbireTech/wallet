@@ -26,7 +26,12 @@ const suportedProtocols = [
     {
         network: 'fantom',
         protocols: [],
-	balancesProvider: 'velcro'
+	    balancesProvider: 'velcro'
+    },
+    {
+        network: 'moonbeam',
+        protocols: [],
+	    balancesProvider: 'velcro'
     }/*,
     {
         network: 'arbitrum',
