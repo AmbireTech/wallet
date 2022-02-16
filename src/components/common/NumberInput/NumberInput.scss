@@ -19,6 +19,8 @@
     .input {
         position: relative;
         height: 60px;
+        display: flex;
+        align-items: center;
 
         input[type=text] {
             height: 100%;
@@ -40,15 +42,12 @@
                 margin: 0;
             }
 
-            &:focus {
+            &:focus, &:focus ~ .button {
                 box-shadow: 0 2px 0 0 $tertiary-accent-color;
             }
         }
 
         .button {
-            position: absolute;
-            top: 0;
-            right: 0;
             height: 100%;
             @include flex-center-center;
             padding: 0 1.5rem;
@@ -57,7 +56,7 @@
             font-weight: bold;
             color: white;
             transition: all 0.1s ease-in-out;
-            background-color: rgba(0, 0, 0, 0.1);
+            background-color: $input-background-color-darker;
             user-select: none;
 
             &:hover {
