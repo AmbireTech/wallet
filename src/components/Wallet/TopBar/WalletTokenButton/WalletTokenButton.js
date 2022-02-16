@@ -26,6 +26,7 @@ const WalletTokenButton = ({ rewardsData, account, network, hidePrivateValue, ad
         rewardsDetails.walletTokenAPY = data.walletTokenAPY
         rewardsDetails.adxTokenAPY = data.adxTokenAPY
         rewardsDetails.walletUsdPrice = data.usdPrice
+        rewardsDetails.xWALLETAPY = data.xWALLETAPY
         setRewards(rewardsDetails)
     }, [data, errMsg, account])
 
