@@ -8,12 +8,11 @@ import { latticeInit,
     latticePair, 
     latticeGetAddresses 
 } from 'lib/lattice'
+import crypto from 'crypto'
 
-const crypto = require('crypto')
 const SECRET_LENGTH = 8
 const DEVICE_ID_LENGTH = 6
 const commKey = crypto.randomBytes(32).toString('hex')
-console.log('commKey init', commKey)
 
 const LatticeModal = ({ addresses }) => {
     const { addToast } = useToasts()
@@ -35,7 +34,7 @@ const LatticeModal = ({ addresses }) => {
         const { isPaired, errConnect } = await latticeConnect(client, deviceId)
         if (errConnect) {
             setLoading(prevState => !prevState)
-            addToast(`Lattice: ${errConnect} Or check if the DeviceID is correct.`, { error: true })
+            addToast(`Lattice: ${errConnect} Or check if the Device ID is correct.`, { error: true })
             return
         }
 
@@ -104,7 +103,7 @@ const LatticeModal = ({ addresses }) => {
             <div id="grid-plus">
                 <div>
                     <p>
-                        The deviceId is listed on your Lattice under{' '}
+                        The device ID is listed on your Lattice under{' '}
                         <strong>Settings</strong>.
                     </p>
                     <h4>Device ID</h4>
