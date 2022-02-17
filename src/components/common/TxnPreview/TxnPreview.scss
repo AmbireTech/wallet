@@ -6,6 +6,7 @@ $extended-summary-height: 31px;
 .txnPreview {
     display: flex;
     flex-direction: column;
+    flex: 0 0 auto;
     background-color: $input-background-color;
     min-height: $txn-height;
     position: relative;
@@ -31,7 +32,7 @@ $extended-summary-height: 31px;
             flex-direction: column;
             align-items: flex-start;
             justify-content: center;
-            gap: 10px;
+            gap: 1.5em;
             padding: 1em 0;
             padding-left: 25px;
 
@@ -109,18 +110,19 @@ $extended-summary-height: 31px;
                         }
                     }
                 }
+            }
 
-                .firstFailingLabel, .unknownWarning {
-                    height: $extended-summary-height;
-                    display: flex;
-                    align-items: center;
-                    align-self: flex-start;
-                    font-size: 12px;
-                    font-weight: bold;
-                    padding: 0 1em;
-                    white-space: nowrap;
-                    background-color: $danger-color;
-                }
+            .firstFailingLabel,
+            .unknownWarning {
+                height: $extended-summary-height;
+                display: flex;
+                align-items: center;
+                align-self: flex-start;
+                font-size: 12px;
+                font-weight: bold;
+                padding: 0 1em;
+                white-space: nowrap;
+                background-color: $danger-color;
             }
         }
 
@@ -164,5 +166,12 @@ $extended-summary-height: 31px;
         div {
             user-select: text;
         }
+    }
+}
+
+// Mobile
+@media screen and (max-width: $mobile-breakpoint-max-width) {
+    .summary-container {
+        flex-direction: column;
     }
 }

@@ -69,11 +69,14 @@ $titleBar-height: 90px;
 
             .content {
                 height: 100%;
+                gap: 15px;
+                overflow: hidden;
 
                 .listOfTransactions {
                     display: flex;
                     flex-direction: column;
                     gap: 0.5em;
+                    overflow-y: auto;
                 }
 
                 .transactionsNote {
