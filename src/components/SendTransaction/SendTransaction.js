@@ -270,6 +270,10 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, network, account,
       addToast('Please confirm this transaction on your Ledger device.', { timeout: 10000 })
     }
 
+    if (account.signerExtra && account.signerExtra.type === 'Lattice') {
+      addToast('Please confirm this transaction on your Lattice device.', { timeout: 10000 })
+    }
+
     const requestIds = bundle.requestIds
     const approveTxnPromise = bundle.signer.quickAccManager ?
       approveTxnImplQuickAcc({ quickAccCredentials })
