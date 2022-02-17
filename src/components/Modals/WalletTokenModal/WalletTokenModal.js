@@ -1,9 +1,19 @@
 import './WalletTokenModal.scss'
 
-import { useMemo } from 'react'
+import { useEffect, useMemo, useState, useCallback } from 'react'
 import { Button, Modal, ToolTip } from 'components/common'
 import { MdOutlineClose } from 'react-icons/md'
 import { useModals } from 'hooks'
+import WalletStakingPoolABI from 'consts/WalletStakingPoolABI'
+import { getProvider } from 'lib/provider'
+import { formatUnits, Interface } from 'ethers/lib/utils'
+import { Contract } from 'ethers'
+
+const WALLET_STAKING_ADDRESS = '0x47cd7e91c3cbaaf266369fe8518345fc4fc12935'
+const WALLET_STAKING_POOL_INTERFACE = new Interface(WalletStakingPoolABI)
+
+const provider = getProvider('ethereum')
+const stakingWalletContract = new Contract(WALLET_STAKING_ADDRESS, WALLET_STAKING_POOL_INTERFACE, provider)
 
 const multiplierBadges = [
     {
@@ -49,7 +59,7 @@ const MultiplierBadges = ({ rewards }) => {
     </div>)
 }
 
-const WalletTokenModal = ({ claimableWalletToken, rewards }) => {
+const WalletTokenModal = ({ accountId, claimableWalletToken, rewards }) => {
     const { hideModal } = useModals()
 
     const {
@@ -64,10 +74,35 @@ const WalletTokenModal = ({ claimableWalletToken, rewards }) => {
 
     const walletTokenAPY = rewards.walletTokenAPY ? (rewards.walletTokenAPY * 100).toFixed(2) : '...'
     const adxTokenAPY = rewards.adxTokenAPY ? (rewards.adxTokenAPY * 100).toFixed(2) : '...'
+    const xWALLETAPY = rewards.xWALLETAPY ? (rewards.xWALLETAPY * 100).toFixed(2) : '...'
     const walletTokenUSDPrice = rewards.walletUsdPrice || 0
 
     const claimableNowUsd = walletTokenUSDPrice && !currentClaimStatus.loading && claimableNow ? (walletTokenUSDPrice * claimableNow).toFixed(2) : '...'
     const mintableVestingUsd = walletTokenUSDPrice && !currentClaimStatus.loading && currentClaimStatus.mintableVesting ? (walletTokenUSDPrice * currentClaimStatus.mintableVesting).toFixed(2) : '...'
+
+    const claimeWithBurnNotice = 'This procedure will claim 70% of your outstanding rewards as $WALLET, and permanently burn the other 30%'
+    const claimWithBurn = () => {
+        const confirmed = window.confirm(`${claimeWithBurnNotice}. Are you sure?`)
+        if (confirmed) claimEarlyRewards(false)
+    }
+
+    const [stakedAmount, setStakedAmount] = useState(0)
+
+    const fetchStakedWalletData = useCallback(async () => {
+        try {
+            const [balanceOf, shareValue] = await Promise.all([
+                stakingWalletContract.balanceOf(accountId),
+                stakingWalletContract.shareValue(),
+            ])
+
+            const stakedAmount = formatUnits(balanceOf.toString(), 18).toString() * formatUnits(shareValue, 18).toString()
+            setStakedAmount(stakedAmount)
+        } catch(e) {
+            console.error(e)
+        }
+    }, [accountId])
+
+    useEffect(() => fetchStakedWalletData(), [fetchStakedWalletData])
 
     const modalButtons = <>
         <Button clear icon={<MdOutlineClose/>} onClick={() => hideModal()}>Close</Button>
@@ -126,9 +161,15 @@ const WalletTokenModal = ({ claimableWalletToken, rewards }) => {
                 </div>
                 <div className="actions">
                     <ToolTip label={
-                            claimDisabledReason || disabledReason || 'Claimable amount is 20% of the snapshot on 01 Feb 2022'
+                            claimDisabledReason || disabledReason || claimeWithBurnNotice
                         }>
-                        <Button small clear onClick={claimEarlyRewards} disabled={!!(claimDisabledReason || disabledReason)}>CLAIM</Button>
+                        <Button className="claim-rewards-with-burn" small clear onClick={() => claimWithBurn()} disabled={!!(claimDisabledReason || disabledReason)}>Claim with burn</Button>
+                    </ToolTip>
+
+                    <ToolTip label={
+                            claimDisabledReason || disabledReason || 'Claim all of your outstanding rewards as staked $WALLET (xWALLET)'
+                        }>
+                        <Button className="claim-rewards-x-wallet" small clear onClick={claimEarlyRewards} disabled={!!(claimDisabledReason || disabledReason)}>CLAIM IN xWALLET</Button>
                     </ToolTip>
                 </div>
             </div>
@@ -155,6 +196,20 @@ const WalletTokenModal = ({ claimableWalletToken, rewards }) => {
                     </ToolTip>
                 </div>
             </div>
+            )}
+
+            {!!stakedAmount && (
+                <div className="item">
+                    <div className="details">
+                        <label>Staked WALLET</label>
+                        <div className="balance">
+                            <div className="amount"><span className="primary-accent">
+                                { stakedAmount }
+                            </span></div>
+                            <div className="amount apy">{ xWALLETAPY } % <span>APY</span></div>
+                        </div>
+                    </div>
+                </div>
             )}
 
             <MultiplierBadges rewards={rewards}/>
