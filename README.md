@@ -255,3 +255,10 @@ Additionally, there's an ongoing [Immunefi bug bounty](https://immunefi.com/boun
 * Warn users when there's extra transaction costs for deploying their wallet
 * Private mode: hide addresses as well
 
+### v0.4.3
+* Ability to send transactions while you already have pending ones
+* Ability to modify a currently pending transaction bundle
+* Ability to customize the transaction fee
+* $WALLET claiming: can now claim early investor tokens
+* Bugfix: fixed parsing Aave repay transactions
+
