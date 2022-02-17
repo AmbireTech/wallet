@@ -68,7 +68,7 @@ const HideTokenModel = ({ network, account, portfolio }) => {
                             <div className="token-details">
                                 <div className="info">
                                     <div className="icon" style={{backgroundImage: `url(${tokenDetails.tokenImageUrl})`}}/>
-                                    <div className="name"><span>{ tokenDetails.symbol }</span>
+                                    <div className="name"><span>{tokenDetails.symbol} ({tokenDetails.network.toUpperCase()})</span>
                                     </div>
                                 </div>
                                 <div className="balance">
@@ -80,11 +80,11 @@ const HideTokenModel = ({ network, account, portfolio }) => {
             }
             <div className="extra-tokens-list">
                 {
-                    hiddenTokens.map(({ address, symbol, tokenImageUrl }) => (
+                    hiddenTokens.map(({ address, symbol, tokenImageUrl, network }) => (
                         <div className="extra-token" key={address}>
                             <div className="info">
                                 <div className="icon" style={{ backgroundImage: `url(${tokenImageUrl})` }}/>
-                                <div className="name"><span>{ symbol }</span></div>
+                                <div className="name"><span>{ symbol } ({network.toUpperCase()})</span></div>
                             </div>
                             <div className="actions">
                                 <Button mini clear onClick={() => removeToken(address)}>
