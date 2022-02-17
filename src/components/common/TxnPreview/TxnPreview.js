@@ -92,10 +92,9 @@ export default function TxnPreview ({ txn, onDismiss, network, account, isFirstF
                 {isExpanded ? (<BsChevronUp/>) : (<BsChevronDown/>)}
               </div>)}
               <div className="summary">{ summary }</div>
-              <div className='separator'></div>
-              {isFirstFailing && (<div className='firstFailingLabel'>This is the first failing transaction.</div>)}
-              {!isFirstFailing && !mined && !isKnown(txn, account) && (<div className='unknownWarning'>Warning: interacting with an unknown contract or address.</div>)}
             </div>
+            {isFirstFailing && (<div className='firstFailingLabel'>This is the first failing transaction.</div>)}
+              {!isFirstFailing && !mined && !isKnown(txn, account) && (<div className='unknownWarning'>Warning: interacting with an unknown contract or address.</div>)}
           </div>
           <div className='actionIcons'>
             {onDismiss ? (

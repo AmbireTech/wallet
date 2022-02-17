@@ -4,13 +4,16 @@ import { useEffect, useMemo, useState, useCallback } from 'react'
 import { Button, Modal, ToolTip } from 'components/common'
 import { MdOutlineClose } from 'react-icons/md'
 import { useModals } from 'hooks'
-import { Contract } from 'ethers'
-import { Interface } from 'ethers/lib/utils'
+import WalletStakingPoolABI from 'consts/WalletStakingPoolABI'
 import { getProvider } from 'lib/provider'
+import { formatUnits, Interface } from 'ethers/lib/utils'
+import { Contract } from 'ethers'
 
-import WALLETVestings from 'consts/WALLETVestings'
-import WALLETInitialClaimableRewards from 'consts/WALLETInitialClaimableRewards'
-import WALLETSupplyControllerABI from 'consts/WALLETSupplyControllerABI'
+const WALLET_STAKING_ADDRESS = '0x47cd7e91c3cbaaf266369fe8518345fc4fc12935'
+const WALLET_STAKING_POOL_INTERFACE = new Interface(WalletStakingPoolABI)
+
+const provider = getProvider('ethereum')
+const stakingWalletContract = new Contract(WALLET_STAKING_ADDRESS, WALLET_STAKING_POOL_INTERFACE, provider)
 
 const multiplierBadges = [
     {
@@ -56,70 +59,50 @@ const MultiplierBadges = ({ rewards }) => {
     </div>)
 }
 
-const supplyControllerAddress = '0xc53af25f831f31ad6256a742b3f0905bc214a430'
-const supplyControllerInterface = new Interface(WALLETSupplyControllerABI)
-const WalletTokenModal = ({ rewards, account, network, addRequest }) => {
+const WalletTokenModal = ({ accountId, claimableWalletToken, rewards }) => {
     const { hideModal } = useModals()
 
-    const provider = useMemo(() => getProvider('ethereum'), [])
-    const supplyController = useMemo(() => new Contract(supplyControllerAddress, WALLETSupplyControllerABI, provider), [provider])
-    const initialClaimableEntry = WALLETInitialClaimableRewards.find(x => x.addr === account.id)
-    const initialClaimable = initialClaimableEntry ? initialClaimableEntry.totalClaimable : 0
-    const vestingEntry = WALLETVestings.find(x => x.addr === account.id)
+    const {
+        vestingEntry,
+        currentClaimStatus,
+        claimableNow,
+        disabledReason,
+        claimDisabledReason,
+        claimEarlyRewards,
+        claimVesting
+    } = claimableWalletToken
 
-    const [currentClaimStatus, setCurrentClaimStatus] = useState({ loading: true, claimed: 0, mintableVesting: 0, error: null })
-    useEffect(() => {
-        (async () => {
-            const toNum = x => parseInt(x.toString()) / 1e18
-            const [mintableVesting, claimed] = await Promise.all([
-                vestingEntry ? await supplyController.mintableVesting(vestingEntry.addr, vestingEntry.end, vestingEntry.rate).then(toNum) : null,
-                initialClaimableEntry ? await supplyController.claimed(initialClaimableEntry.addr).then(toNum) : null
+    const walletTokenAPY = rewards.walletTokenAPY ? (rewards.walletTokenAPY * 100).toFixed(2) : '...'
+    const adxTokenAPY = rewards.adxTokenAPY ? (rewards.adxTokenAPY * 100).toFixed(2) : '...'
+    const xWALLETAPY = rewards.xWALLETAPY ? (rewards.xWALLETAPY * 100).toFixed(2) : '...'
+    const walletTokenUSDPrice = rewards.walletUsdPrice || 0
+
+    const claimableNowUsd = walletTokenUSDPrice && !currentClaimStatus.loading && claimableNow ? (walletTokenUSDPrice * claimableNow).toFixed(2) : '...'
+    const mintableVestingUsd = walletTokenUSDPrice && !currentClaimStatus.loading && currentClaimStatus.mintableVesting ? (walletTokenUSDPrice * currentClaimStatus.mintableVesting).toFixed(2) : '...'
+
+    const claimeWithBurnNotice = 'This procedure will claim 70% of your outstanding rewards as $WALLET, and permanently burn the other 30%'
+    const claimWithBurn = () => {
+        const confirmed = window.confirm(`${claimeWithBurnNotice}. Are you sure?`)
+        if (confirmed) claimEarlyRewards(false)
+    }
+
+    const [stakedAmount, setStakedAmount] = useState(0)
+
+    const fetchStakedWalletData = useCallback(async () => {
+        try {
+            const [balanceOf, shareValue] = await Promise.all([
+                stakingWalletContract.balanceOf(accountId),
+                stakingWalletContract.shareValue(),
             ])
-            return { mintableVesting, claimed }
-        })()
-            .then(status => setCurrentClaimStatus(status))
-            .catch(e => {
-                console.error('getting claim status', e)
-                setCurrentClaimStatus({ error: e.message || e })
-            })
-    }, [supplyController, vestingEntry, initialClaimableEntry])
 
-    const claimableNow = initialClaimable - currentClaimStatus.claimed
-    const disabledReason = network.id !== 'ethereum' ? 'Switch to Ethereum to claim' : (
-        currentClaimStatus.error ? `Claim status error: ${currentClaimStatus.error}` : null
-    )
-    const claimDisabledReason = claimableNow === 0 ? 'No rewards are claimable' : null
-    const claimEarlyRewards = useCallback(() => {
-        addRequest({
-            id: 'claim_'+Date.now(),
-            chainId: network.chainId,
-            type: 'eth_sendTransaction',
-            account: account.id,
-            txn: {
-                to: supplyControllerAddress,
-                value: '0x0',
-                data: supplyControllerInterface.encodeFunctionData('claim', [
-                    initialClaimableEntry.totalClaimableBN,
-                    initialClaimableEntry.proof,
-                    0, // penalty bps, at the moment we run with 0; it's a safety feature to hardcode it
-                    '0x0000000000000000000000000000000000000000' // staking addr, no need to pass this
-                ])
-            }
-        })    
-    }, [initialClaimableEntry, network.chainId, account.id, addRequest])
-    const claimVesting = useCallback(() => {
-        addRequest({
-            id: 'claimVesting_'+Date.now(),
-            chainId: network.chainId,
-            account: account.id,
-            type: 'eth_sendTransaction',
-            txn: {
-                to: supplyControllerAddress,
-                value: '0x0',
-                data: supplyControllerInterface.encodeFunctionData('mintVesting', [vestingEntry.addr, vestingEntry.end, vestingEntry.rate])
-            }
-        })    
-    }, [vestingEntry, network.chainId, account.id, addRequest])
+            const stakedAmount = formatUnits(balanceOf.toString(), 18).toString() * formatUnits(shareValue, 18).toString()
+            setStakedAmount(stakedAmount)
+        } catch(e) {
+            console.error(e)
+        }
+    }, [accountId])
+
+    useEffect(() => fetchStakedWalletData(), [fetchStakedWalletData])
 
     const modalButtons = <>
         <Button clear icon={<MdOutlineClose/>} onClick={() => hideModal()}>Close</Button>
@@ -131,7 +114,7 @@ const WalletTokenModal = ({ rewards, account, network, addRequest }) => {
                     <label>Early users Incentive: Total</label>
                     <div className="balance">
                         <div className="amount"><span className="primary-accent">{ rewards['balance-rewards'] }</span></div>
-                        {/* <div className="amount-dollar"><span className="secondary-accent">$</span> 0</div> */}
+                        <div className="amount apy">{ walletTokenAPY } % <span>APY</span></div>
                     </div>
                 </div>
                 <div className="actions">
@@ -155,7 +138,7 @@ const WalletTokenModal = ({ rewards, account, network, addRequest }) => {
                     <label>ADX Staking Bonus: Total</label>
                     <div className="balance">
                         <div className="amount"><span className="primary-accent">{ rewards['adx-rewards'] }</span></div>
-                        {/* <div className="amount-dollar"><span className="secondary-accent">$</span> 0</div> */}
+                        <div className="amount apy">{ adxTokenAPY } % <span>APY</span></div>
                     </div>
                 </div>
                 <div className="actions">
@@ -170,13 +153,23 @@ const WalletTokenModal = ({ rewards, account, network, addRequest }) => {
                         <div className="amount"><span className="primary-accent">{
                             currentClaimStatus.loading ? '...' : claimableNow
                         }</span></div>
+                        <div className="amount usd">
+                            <span className="secondary-accent">$</span>
+                            { claimableNowUsd }
+                        </div>
                     </div>
                 </div>
                 <div className="actions">
                     <ToolTip label={
-                            claimDisabledReason || disabledReason || 'Claimable amount is 20% of the snapshot on 01 Feb 2022'
+                            claimDisabledReason || disabledReason || claimeWithBurnNotice
                         }>
-                        <Button small clear onClick={claimEarlyRewards} disabled={!!(claimDisabledReason || disabledReason)}>CLAIM</Button>
+                        <Button className="claim-rewards-with-burn" small clear onClick={() => claimWithBurn()} disabled={!!(claimDisabledReason || disabledReason)}>Claim with burn</Button>
+                    </ToolTip>
+
+                    <ToolTip label={
+                            claimDisabledReason || disabledReason || 'Claim all of your outstanding rewards as staked $WALLET (xWALLET)'
+                        }>
+                        <Button className="claim-rewards-x-wallet" small clear onClick={claimEarlyRewards} disabled={!!(claimDisabledReason || disabledReason)}>CLAIM IN xWALLET</Button>
                     </ToolTip>
                 </div>
             </div>
@@ -189,6 +182,10 @@ const WalletTokenModal = ({ rewards, account, network, addRequest }) => {
                         <div className="amount"><span className="primary-accent">{
                             currentClaimStatus.mintableVesting
                         }</span></div>
+                        <div className="amount usd">
+                            <span className="secondary-accent">$</span>
+                            { mintableVestingUsd }
+                        </div>
                     </div>
                 </div>
                 <div className="actions">
@@ -199,6 +196,20 @@ const WalletTokenModal = ({ rewards, account, network, addRequest }) => {
                     </ToolTip>
                 </div>
             </div>
+            )}
+
+            {!!stakedAmount && (
+                <div className="item">
+                    <div className="details">
+                        <label>Staked WALLET</label>
+                        <div className="balance">
+                            <div className="amount"><span className="primary-accent">
+                                { stakedAmount }
+                            </span></div>
+                            <div className="amount apy">{ xWALLETAPY } % <span>APY</span></div>
+                        </div>
+                    </div>
+                </div>
             )}
 
             <MultiplierBadges rewards={rewards}/>
