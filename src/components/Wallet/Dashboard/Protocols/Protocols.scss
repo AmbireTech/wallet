@@ -16,6 +16,11 @@
             font-size: 20px;
             font-weight: bold;
             background-color: rgba(255, 255, 255, 0.1);
+
+            .wrapper-btns {
+                display: flex;
+                gap: 10px;
+            }
         }
 
         .list {

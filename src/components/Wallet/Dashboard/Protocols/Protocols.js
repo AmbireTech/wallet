@@ -67,7 +67,7 @@ const Protocols = ({ portfolio, network, account, hidePrivateValue }) => {
         <div id="protocols-table">
             {
                 shouldShowPlaceholder ?
-                    <ProtocolsPlaceholder onClickAddToken={openAddTokenModal}/>
+                    <ProtocolsPlaceholder onClickAddToken={openAddTokenModal} onClickShowToken={openHideTokenModal}/>
                     :
                     null
             }
@@ -80,7 +80,7 @@ const Protocols = ({ portfolio, network, account, hidePrivateValue }) => {
                             <div className="category" key="category-tokens">
                                 <div className="title">
                                     Tokens
-                                    <div style={ { display: 'flex',  }}>
+                                    <div className="wrapper-btns">
                                         <Button mini clear icon={<MdVisibilityOff/>} onClick={() => openHideTokenModal()}>Hide Token</Button>
                                         <Button mini clear icon={<MdOutlineAdd/>} onClick={() => openAddTokenModal()}>Add Token</Button>
                                     </div>

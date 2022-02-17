@@ -3,37 +3,35 @@ import './HideTokenModal.scss'
 import { isValidAddress } from 'lib/address'
 import { Button, Loading, Modal, TextInput } from 'components/common'
 import { useState } from 'react'
-import { useToasts } from 'hooks/toasts'
 import { MdVisibilityOff, MdOutlineClose, MdOutlineRemove } from 'react-icons/md'
 import { useModals } from 'hooks'
+import { useToasts } from 'hooks/toasts'
+
+const ADDRESS_LENGTH = 42
+const TOKEN_SYMBOL_MIN_LENGTH = 3
 
 const HideTokenModel = ({ network, account, portfolio }) => {
-    const { addToast } = useToasts()
     const { hideModal } = useModals()
-
+    const { addToast } = useToasts()
     const { hiddenTokens, onAddHiddenToken, onRemoveHiddenToken, tokens } = portfolio
-
     const [loading, setLoading] = useState(false)
     const [tokenDetails, setTokenDetails] = useState(null)
     const [showError, setShowError] = useState(false)
 
     const disabled = !tokenDetails || !(tokenDetails.symbol && tokenDetails.decimals)
 
-    const onInput = async addressOrName => {
+    const onInput = addressOrSymbol => {
         setTokenDetails(null)
         setLoading(true)
         setShowError(false)
-        
-        if (!isValidAddress(addressOrName)) {
-            const test = tokens.filter(i => i.symbol.toLowerCase() === addressOrName.toLowerCase())
-            
-            if (test !== -1) setTokenDetails(test[0])
-        } else {
-            const test = tokens.filter(i => i.address.toLowerCase() === addressOrName.toLowerCase())
-            
-            if (test !== -1) setTokenDetails(test[0])
-        }
-        
+
+        if (addressOrSymbol.length === ADDRESS_LENGTH && !isValidAddress(addressOrSymbol)) addToast(`Invalid address: ${addressOrSymbol}`, {error: true})
+        const foundByAddressOrSymbol = tokens.find(i => (i.symbol.toLowerCase() === addressOrSymbol.toLowerCase()) ||
+            (i.address.toLowerCase() === addressOrSymbol.toLowerCase()))
+
+        if (!!foundByAddressOrSymbol) setTokenDetails(foundByAddressOrSymbol)
+        else if (addressOrSymbol.length >= TOKEN_SYMBOL_MIN_LENGTH) setShowError(true) 
+ 
         setLoading(false)
     }
 
@@ -51,26 +49,16 @@ const HideTokenModel = ({ network, account, portfolio }) => {
         <Button clear icon={<MdOutlineClose/>} onClick={() => hideModal()}>Close</Button>
         <Button icon={<MdVisibilityOff/>} disabled={disabled} onClick={addToken}>Hide</Button>
     </>
-    const tokenStandard = network.id === 'binance-smart-chain' ? 'a BEP20' : (
-        network.id === 'ethereum'
-            ? 'an ERC20'
-            : 'a valid'
-    )
 
     return (
         <Modal id="hide-token-modal" title="Hide Token" buttons={buttons}>
             <TextInput
-                label="Token Address/Name"
-                placeholder="Input token address or name"
+                label="Token Address or Symbol"
+                placeholder="Input token address or symbol"
                 onInput={value => onInput(value)}
             />
-            {
-                showError ? 
-                    <div className="validation-error">
-                        The address you entered does not appear to correspond to {tokenStandard} token on { network.name }.
-                    </div>
-                    :
-                    null
+            {showError && 
+                (<div className="validation-error">The address/symbol you entered does not appear to correspond to you assets list or it's already hidden.</div>)
             }
             {
                 loading ?
@@ -79,9 +67,8 @@ const HideTokenModel = ({ network, account, portfolio }) => {
                         !showError && tokenDetails ? 
                             <div className="token-details">
                                 <div className="info">
-                                    <div className="icon" style={{backgroundImage: `url(${tokenDetails.icon})`}}/>
-                                    <div className="name">
-                                        { tokenDetails.name } <span>({ tokenDetails.symbol })</span>
+                                    <div className="icon" style={{backgroundImage: `url(${tokenDetails.tokenImageUrl})`}}/>
+                                    <div className="name"><span>{ tokenDetails.symbol }</span>
                                     </div>
                                 </div>
                                 <div className="balance">
