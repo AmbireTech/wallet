@@ -20,7 +20,7 @@ import useNetwork from './hooks/network'
 import useWalletConnect from './hooks/walletconnect'
 import useGnosisSafe from './hooks/useGnosisSafe'
 import useNotifications from './hooks/notifications'
-import { useAttentionGrabber, usePortfolio, useAddressBook, useRelayerData, usePrivateMode, useLocalStorage } from './hooks'
+import { useAttentionGrabber, useWebPortfolio, useAddressBook, useRelayerData, usePrivateMode, useLocalStorage } from './hooks'
 import { useToasts } from './hooks/toasts'
 import { useOneTimeQueryParam } from './hooks/oneTimeQueryParam'
 
@@ -80,7 +80,7 @@ function AppInner() {
   }
 
   // Portfolio: this hook actively updates the balances/assets of the currently selected user
-  const portfolio = usePortfolio({
+  const portfolio = useWebPortfolio({
     currentNetwork: network.id,
     account: selectedAcc,
     useStorage: useLocalStorage

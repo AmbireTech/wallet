@@ -11,17 +11,6 @@ import { getTokenListBalance, tokenList, checkTokenList } from 'lib/balanceOracl
 
 const getBalances = (apiKey, network, protocol, address, provider) => fetchGet(`${provider === 'velcro' ? VELCRO_API_ENDPOINT : ZAPPER_API_ENDPOINT}/protocols/${protocol}/balances?addresses[]=${address}&network=${network}&api_key=${apiKey}&newBalances=true`)
 
-let hidden, visibilityChange;
-if (typeof document.hidden !== 'undefined') {
-    hidden = 'hidden';
-    visibilityChange = 'visibilitychange';
-} else if (typeof document.msHidden !== 'undefined') {
-    hidden = 'msHidden';
-    visibilityChange = 'msvisibilitychange';
-} else if (typeof document.webkitHidden !== 'undefined') {
-    hidden = 'webkitHidden';
-    visibilityChange = 'webkitvisibilitychange';
-}
 let lastOtherProcolsRefresh = null
 
 // use Balance Oracle
@@ -63,7 +52,7 @@ async function supplementTokensDataFromNetwork({ walletAddr, network, tokensData
   }
 
 
-export default function usePortfolio({ currentNetwork, account, useStorage }) {
+export default function usePortfolio({ currentNetwork, account, useStorage, isVisible }) {
     const { addToast } = useToasts()
 
     const currentAccount = useRef();
@@ -225,8 +214,8 @@ export default function usePortfolio({ currentNetwork, account, useStorage }) {
 
     const refreshTokensIfVisible = useCallback(() => {
         if (!account) return
-        if (!document[hidden] && !isBalanceLoading) fetchTokens(account, currentNetwork)
-    }, [isBalanceLoading, account, fetchTokens, currentNetwork])
+        if (isVisible && !isBalanceLoading) fetchTokens(account, currentNetwork)
+    }, [isBalanceLoading, account, fetchTokens, currentNetwork, isVisible])
 
     const requestOtherProtocolsRefresh = async () => {
         if (!account) return
@@ -274,10 +263,10 @@ export default function usePortfolio({ currentNetwork, account, useStorage }) {
             a[e.address] = ++a[e.address] || 0
             return a
         }, {})
-        
+
         // filters by non duplicated objects or takes the one of dup but with a price greater than 0
         tokens = tokens.filter(e => !lookup[e.address] || (lookup[e.address] && e.price))
-        
+
         return tokens
     }
 
@@ -305,10 +294,10 @@ export default function usePortfolio({ currentNetwork, account, useStorage }) {
     useEffect(() => {
         try {
             const tokens = tokensByNetworks.find(({ network }) => network === currentNetwork)
-            
+
             if (tokens) {
                 tokens.assets = removeDuplicatedAssets(tokens.assets)
-                setTokens(tokens.assets) 
+                setTokens(tokens.assets)
             }
 
             const balanceByNetworks = tokensByNetworks.map(({ network, meta, assets }) => {
@@ -359,10 +348,10 @@ export default function usePortfolio({ currentNetwork, account, useStorage }) {
         }
     }, [currentNetwork, tokensByNetworks, otherProtocolsByNetworks, addToast])
 
-    // Refresh tokens on network change
+    // Refresh tokens on network change and when window is focused
     useEffect(() => {
         refreshTokensIfVisible()
-    }, [currentNetwork, refreshTokensIfVisible])
+    }, [currentNetwork, isVisible, refreshTokensIfVisible])
 
     // Refresh balance every 80s if visible
     // NOTE: this must be synced (a multiple of) supplementing, otherwise we can end up with weird inconsistencies
@@ -373,7 +362,7 @@ export default function usePortfolio({ currentNetwork, account, useStorage }) {
 
     // Refresh balance every 150s if hidden
     useEffect(() => {
-        const refreshIfHidden = () => document[hidden] && !isBalanceLoading
+        const refreshIfHidden = () => !isVisible && !isBalanceLoading
             ? fetchTokens(account, currentNetwork)
             : null
         const refreshInterval = setInterval(refreshIfHidden, 150000)
@@ -385,12 +374,6 @@ export default function usePortfolio({ currentNetwork, account, useStorage }) {
         const refreshInterval = setInterval(() => fetchSupplementTokenData(tokensByNetworks), 20000)
         return () => clearInterval(refreshInterval)
     }, [fetchSupplementTokenData, tokensByNetworks])
-
-    // Refresh balance when window is focused
-    useEffect(() => {
-        document.addEventListener(visibilityChange, refreshTokensIfVisible, false);
-        return () => document.removeEventListener(visibilityChange, refreshTokensIfVisible, false);
-    }, [refreshTokensIfVisible])
 
     return {
         isBalanceLoading,
