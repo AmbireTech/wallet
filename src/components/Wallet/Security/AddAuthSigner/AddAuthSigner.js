@@ -1,7 +1,7 @@
 import './AddAuthSigner.scss'
 import { useState, useEffect, useCallback } from 'react'
 
-import { TextInput, Button, DropDown } from 'components/common'
+import { TextInput, Button, DropDown, Loading } from 'components/common'
 import { LedgerSubprovider } from '@0x/subproviders/lib/src/subproviders/ledger' // https://github.com/0xProject/0x-monorepo/issues/1400
 import { ledgerEthereumBrowserClientFactoryAsync } from '@0x/subproviders/lib/src' // https://github.com/0xProject/0x-monorepo/issues/1400
 import TrezorConnect from 'trezor-connect'
@@ -13,8 +13,10 @@ import { ledgerGetAddresses, PARENT_HD_PATH } from "lib/ledgerWebHID"
 import { validateAddAuthSignerAddress } from 'lib/validations/formValidations'
 import { BsXLg } from 'react-icons/bs'
 import { MdOutlineAdd } from 'react-icons/md'
+import { LatticeModal } from 'components/Modals'
+import { latticeInit, latticeConnect, latticeGetAddresses } from 'lib/lattice'
 
-const AddAuthSigner = props => {
+const AddAuthSigner = ({ selectedNetwork, selectedAcc, onAddBtnClicked }) => {
   const [signerAddress, setSignerAddress] = useState({
     address: '',
     index: 0,
@@ -23,14 +25,16 @@ const AddAuthSigner = props => {
   const [disabled, setDisabled] = useState(true)
   const [modalToggle, setModalToggle] = useState(true)
   const [signersToChoose, setChooseSigners] = useState(null)
+  const [showLoading, setShowLoading] = useState(false)
   const [textInputInfo, setTextInputInfo] = useState('')
   const { showModal } = useModals()
   const [validationFormMgs, setValidationFormMgs] = useState({ 
     success: false, 
     message: ''
   })
-
-
+  //TODO: Remove the isLatticePaired
+  const [isLatticePaired, setIsLatticePaired] = useState(true)
+  
   async function connectLedgerAndGetAccounts() {
     if (isFirefox()) {
       await connectLedgerAndGetAccountsU2F()
@@ -120,6 +124,64 @@ const AddAuthSigner = props => {
     setModalToggle(true)
   }
 
+  const setLatticeAddresses = ({ addresses, deviceId, commKey, isPaired }) => {
+    setChooseSigners({
+      addresses, signerName: 'Lattice', signerExtra: {
+        type: 'Lattice',
+        deviceId: deviceId,
+        commKey: commKey,
+        isPaired: isPaired
+      }
+    })
+
+    setModalToggle(true)
+  }
+  
+  async function connectGridPlusAndGetAccounts() {
+    if (selectedAcc.signerExtra && 
+      selectedAcc.signerExtra.type === 'Lattice' && 
+      selectedAcc.signerExtra.isPaired && isLatticePaired) {
+        const { commKey, deviceId } = selectedAcc.signerExtra
+        const client = latticeInit(commKey)
+
+        setShowLoading(true)
+
+        const { isPaired, errConnect } = await latticeConnect(client, deviceId)
+        if (errConnect) {
+          setShowLoading(false)
+          setAddAccErr(errConnect.message || errConnect)
+
+          return
+        }
+
+        if (!isPaired) {
+          setShowLoading(false)
+          setIsLatticePaired(false)
+          // Canceling the visualization of the secret code on the device's screen.
+          client.pair('')
+          setAddAccErr(`The Lattice device is not paired! Try again to pair the device.`, { error: true })
+          
+          return 
+        }
+
+        const { res, errGetAddresses } = await latticeGetAddresses(client)
+        if (errGetAddresses) {
+            setShowLoading(false)
+            setAddAccErr(`Lattice: ${errGetAddresses}`, { error: true })
+
+            return
+        }
+        
+        if (res) {
+          setShowLoading(false)
+          setLatticeAddresses({ addresses: res, deviceId, commKey, isPaired: true })
+        }
+      } else {
+        showModal(<LatticeModal addresses={setLatticeAddresses} />)
+        setIsLatticePaired(true)
+      }
+  }
+
   const modalHandler = () => {
     setModalToggle(prevState => !prevState)
   }
@@ -145,12 +207,12 @@ const AddAuthSigner = props => {
       showModal(
         <SelectSignerAccountModal
           signersToChoose={signersToChoose.addresses}
-          selectedNetwork={props.selectedNetwork}
+          selectedNetwork={selectedNetwork}
           onSignerAddressClicked={onSignerAddressClicked}
           description={`You will authorize the selected ${signersToChoose.signerName} address to sign transactions for your account.`}
         />
       )
-  }, [modalToggle, onSignerAddressClicked, props.selectedNetwork, showModal, signersToChoose])
+  }, [modalToggle, onSignerAddressClicked, selectedNetwork, showModal, signersToChoose])
 
   const addFromSignerButtons = (
     <div className="wallet-btns-wrapper">
@@ -173,6 +235,15 @@ const AddAuthSigner = props => {
         Ledger
       </Button>
       <Button
+        onClick={() => wrapErr(connectGridPlusAndGetAccounts)}
+      >
+        <div
+          className="icon"
+          style={{ backgroundImage: 'url(./resources/grid-plus.png)' }}
+        />
+        Grid+ Lattice1
+      </Button>
+      <Button
         onClick={() => wrapErr(connectWeb3AndGetAccounts)}
       >
         <div
@@ -190,7 +261,7 @@ const AddAuthSigner = props => {
   }
 
   useEffect(() => {
-    const isAddressValid = validateAddAuthSignerAddress(signerAddress.address, props.selectedAcc)
+    const isAddressValid = validateAddAuthSignerAddress(signerAddress.address, selectedAcc.id)
     
     setDisabled(!isAddressValid.success)
 
@@ -199,11 +270,17 @@ const AddAuthSigner = props => {
       message: isAddressValid.message ? isAddressValid.message : ''
     })
 
-  }, [props.selectedAcc, signerAddress.address])
+  }, [selectedAcc, signerAddress.address])
 
   return (
     <div className="content">
-      <div className="signer">
+      {showLoading && 
+      (<>
+        <h3>It may takes a while.</h3>
+        <h3>Please wait...</h3>
+        <Loading />
+      </>)}
+      {!showLoading && (<div className="signer">
         <div className="signer-address-input">
           <TextInput
             placeholder="Enter signer address"
@@ -224,13 +301,13 @@ const AddAuthSigner = props => {
           <Button
             disabled={disabled}
             icon={<MdOutlineAdd/>}
-            onClick={() => props.onAddBtnClicked(signerAddress)}
+            onClick={() => onAddBtnClicked(signerAddress)}
             small
           >
             Add
           </Button>
         </div>
-      </div>
+      </div>)}
       { validationFormMgs.message && 
         (<div className='validation-error'><BsXLg size={12}/>&nbsp;{validationFormMgs.message}</div>) 
       }
