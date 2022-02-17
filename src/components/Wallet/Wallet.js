@@ -70,7 +70,7 @@ export default function Wallet(props) {
         portfolio={props.portfolio}
         selectedNetwork={{ ...props.network }}
         selectedAcc={props.selectedAcc}
-        walletTokenInfoData={props.walletTokenInfoData}
+        rewardsData={props.rewardsData}
         addRequest={props.addRequest}
       />
     },
