@@ -13,7 +13,7 @@ const WalletTokenButton = ({ rewardsData, account, network, hidePrivateValue, ad
     const [rewards, setRewards] = useState({})
     const { isLoading, data, errMsg } = rewardsData
     
-    const showWalletTokenModal = useDynamicModal(WalletTokenModal, { claimableWalletToken }, { rewards })
+    const showWalletTokenModal = useDynamicModal(WalletTokenModal, { claimableWalletToken, accountId: account.id }, { rewards })
 
     useEffect(() => {
         if (errMsg || !data || !data.success) return
@@ -26,16 +26,17 @@ const WalletTokenButton = ({ rewardsData, account, network, hidePrivateValue, ad
         rewardsDetails.walletTokenAPY = data.walletTokenAPY
         rewardsDetails.adxTokenAPY = data.adxTokenAPY
         rewardsDetails.walletUsdPrice = data.usdPrice
+        rewardsDetails.xWALLETAPY = data.xWALLETAPY
         setRewards(rewardsDetails)
     }, [data, errMsg, account])
 
     return (
-        !isLoading && (errMsg || !data) ?
+        !isLoading && (errMsg || !data || currentClaimStatus.error) ?
             <ToolTip label="WALLET rewards are not available without a connection to the relayer">
                 <Button small border disabled onClick={showWalletTokenModal}>Unavailable</Button>
             </ToolTip>
             :
-            <Button small border disabled={isLoading} onClick={showWalletTokenModal}>{ hidePrivateValue(claimableTokensTotal) } WALLET</Button>
+            <Button small border disabled={isLoading} onClick={showWalletTokenModal}>{ isLoading ? '...' : hidePrivateValue(claimableTokensTotal) } WALLET</Button>
     )
 }
 

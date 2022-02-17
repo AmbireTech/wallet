@@ -7,7 +7,7 @@ import { ethers } from 'ethers'
 
 const segments = [{ value: 'Deposit' }, { value: 'Withdraw' }]
 
-const Card = ({ loading, unavailable, tokensItems, icon, details, onTokenSelect, onValidate }) => {    
+const Card = ({ loading, unavailable, tokensItems, icon, details, info, onTokenSelect, onValidate }) => {    
     const [segment, setSegment] = useState(segments[0].value)
     const [tokens, setTokens] = useState([])
     const [token, setToken] = useState()
@@ -82,16 +82,23 @@ const Card = ({ loading, unavailable, tokensItems, icon, details, onTokenSelect,
                                     </div>
                             }
                             <Segments small defaultValue={segment} segments={segments} onChange={(value) => setSegment(value)}></Segments>
-                            <NumberInput
-                                disabled={!currentToken?.balance}
-                                min="0"
-                                max={currentToken?.balance}
-                                value={amount}
-                                label={amountLabel}
-                                onInput={(value) => setAmount(value)}
-                                button="MAX"
-                                onButtonClick={setMaxAmount}
-                            />
+                            {
+                                info ? 
+                                    <div className="info">
+                                        { info }
+                                    </div>
+                                    :
+                                    <NumberInput
+                                        disabled={!currentToken?.balance}
+                                        min="0"
+                                        max={currentToken?.balance}
+                                        value={amount}
+                                        label={amountLabel}
+                                        onInput={(value) => setAmount(value)}
+                                        button="MAX"
+                                        onButtonClick={setMaxAmount}
+                                    />
+                            }
                             <div className="separator"></div>
                             <Button 
                                 disabled={disabled || amount <= 0 || amount > currentToken?.balance}
