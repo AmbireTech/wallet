@@ -1,4 +1,5 @@
-let zapperStorage = 'https://storage.googleapis.com/zapper-fi-assets/tokens'
+import { getTokenIcon } from 'lib/icons'
+
 let tokens = {
     ethereum: [
         {
@@ -84,7 +85,7 @@ let tokens = {
 const getDefaultTokensItems = network => {
     const items = (tokens[network] || []).map(token => ({
         ...token,
-        img: `${zapperStorage}/${network}/${token.address}.png`,
+        img: getTokenIcon(network, token.address),
         balance: 0,
         balanceRaw: '0',
     })) || []

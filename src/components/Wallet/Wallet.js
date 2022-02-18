@@ -37,6 +37,7 @@ export default function Wallet(props) {
         selectedAccount={props.selectedAcc}
         setNetwork={props.setNetwork}
         privateMode={props.privateMode}
+        rewardsData={props.rewardsData}
       />
     },
     {
