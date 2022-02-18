@@ -4,7 +4,6 @@ import { ZAPPER_API_KEY } from 'config';
 import { fetchGet } from 'lib/fetch';
 import { ZAPPER_API_ENDPOINT } from 'config'
 import supportedProtocols from 'consts/supportedProtocols';
-import { useToasts } from 'hooks/toasts'
 import { setKnownAddresses, setKnownTokens } from 'lib/humanReadableTransactions';
 import { VELCRO_API_ENDPOINT } from 'config'
 import { getTokenListBalance, tokenList, checkTokenList } from 'lib/balanceOracle'
@@ -52,9 +51,7 @@ async function supplementTokensDataFromNetwork({ walletAddr, network, tokensData
   }
 
 
-export default function usePortfolio({ currentNetwork, account, useStorage, isVisible }) {
-    const { addToast } = useToasts()
-
+export default function usePortfolio({ currentNetwork, account, useStorage, isVisible, onMessage }) {
     const currentAccount = useRef();
     const [isBalanceLoading, setBalanceLoading] = useState(true);
     const [areProtocolsLoading, setProtocolsLoading] = useState(true);
@@ -158,10 +155,10 @@ export default function usePortfolio({ currentNetwork, account, useStorage, isVi
             return true
         } catch (error) {
             console.error(error)
-            addToast(error.message, { error: true })
+            onMessage(error.message, { error: true })
             return false
         }
-    }, [getExtraTokensAssets, fetchSupplementTokenData, addToast])
+    }, [getExtraTokensAssets, fetchSupplementTokenData, onMessage])
 
     const fetchOtherProtocols = useCallback(async (account, currentNetwork = false) => {
         try {
@@ -207,10 +204,10 @@ export default function usePortfolio({ currentNetwork, account, useStorage, isVi
             return true
         } catch (error) {
             console.error(error)
-            addToast(error.message, { error: true })
+            onMessage(error.message, { error: true })
             return false
         }
-    }, [addToast])
+    }, [onMessage])
 
     const refreshTokensIfVisible = useCallback(() => {
         if (!account) return
@@ -232,9 +229,9 @@ export default function usePortfolio({ currentNetwork, account, useStorage, isVi
 
     const onAddExtraToken = extraToken => {
         const { address, name, symbol } = extraToken
-        if (extraTokens.map(({ address }) => address).includes(address)) return addToast(`${name} (${symbol}) is already added to your wallet.`)
-        if (Object.values(tokenList).flat(1).map(({ address }) => address).includes(address)) return addToast(`${name} (${symbol}) is already handled by your wallet.`)
-        if (tokens.map(({ address }) => address).includes(address)) return addToast(`You already have ${name} (${symbol}) in your wallet.`)
+        if (extraTokens.map(({ address }) => address).includes(address)) return onMessage(`${name} (${symbol}) is already added to your wallet.`)
+        if (Object.values(tokenList).flat(1).map(({ address }) => address).includes(address)) return onMessage(`${name} (${symbol}) is already handled by your wallet.`)
+        if (tokens.map(({ address }) => address).includes(address)) return onMessage(`You already have ${name} (${symbol}) in your wallet.`)
 
         const updatedExtraTokens = [
             ...extraTokens,
@@ -245,17 +242,17 @@ export default function usePortfolio({ currentNetwork, account, useStorage, isVi
         ]
 
         setExtraTokens(updatedExtraTokens)
-        addToast(`${name} (${symbol}) token added to your wallet!`)
+        onMessage(`${name} (${symbol}) token added to your wallet!`)
     }
 
     const onRemoveExtraToken = address => {
         const token = extraTokens.find(t => t.address === address)
-        if (!token) return addToast(`${address} is not present in your wallet.`)
+        if (!token) return onMessage(`${address} is not present in your wallet.`)
 
         const updatedExtraTokens = extraTokens.filter(t => t.address !== address)
 
         setExtraTokens(updatedExtraTokens)
-        addToast(`${token.name} (${token.symbol}) was removed from your wallet.`)
+        onMessage(`${token.name} (${token.symbol}) was removed from your wallet.`)
     }
 
     const removeDuplicatedAssets = tokens => {
@@ -344,9 +341,9 @@ export default function usePortfolio({ currentNetwork, account, useStorage, isVi
             }
         } catch(e) {
             console.error(e);
-            addToast(e.message | e, { error: true })
+            onMessage(e.message | e, { error: true })
         }
-    }, [currentNetwork, tokensByNetworks, otherProtocolsByNetworks, addToast])
+    }, [currentNetwork, tokensByNetworks, otherProtocolsByNetworks, onMessage])
 
     // Refresh tokens on network change and when window is focused
     useEffect(() => {
@@ -367,7 +364,7 @@ export default function usePortfolio({ currentNetwork, account, useStorage, isVi
             : null
         const refreshInterval = setInterval(refreshIfHidden, 150000)
         return () => clearInterval(refreshInterval)
-    }, [account, currentNetwork, isBalanceLoading, fetchTokens])
+    }, [account, currentNetwork, isVisible, isBalanceLoading, fetchTokens])
 
     // Get supplement tokens data every 20s
     useEffect(() => {
