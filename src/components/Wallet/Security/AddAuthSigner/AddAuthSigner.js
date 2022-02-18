@@ -156,7 +156,7 @@ const AddAuthSigner = ({ selectedNetwork, selectedAcc, onAddBtnClicked }) => {
           setShowLoading(false)
           // Canceling the visualization of the secret code on the device's screen.
           client.pair('')
-          setAddAccErr(`The Lattice device is not paired! Please re-add your account!.`, { error: true, timeout: 10000 })
+          setAddAccErr(`The Lattice device is not paired! Please re-add your account!.`, { timeout: 30000 })
           
           return 
         }
