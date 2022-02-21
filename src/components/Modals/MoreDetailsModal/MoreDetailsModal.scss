@@ -1,0 +1,29 @@
+@import 'variables.scss';
+
+#wallet-more-details-modal {
+    .content {
+        display: flex;
+        flex-direction: column;
+        padding-bottom: 60px;
+
+        .wrapper {
+            display: flex;
+            justify-content: space-between;
+            padding: 20px;
+            background: $input-background-color;
+
+            div {
+                flex: 0 1 50% !important;
+            }
+        }
+
+        .odd-rows-bg {
+            background: $background-color;
+        }
+    }
+    
+    .buttons button {
+        flex: 0 1 100% !important;
+        height: 100%;
+    }
+}
