@@ -4,15 +4,18 @@ import { Select, Segments, NumberInput, Button, Loading } from 'components/commo
 import { useEffect, useState, useMemo, useCallback } from 'react'
 import { BsArrowDownSquare, BsArrowUpSquare } from 'react-icons/bs'
 import { ethers } from 'ethers'
+import { useModals } from 'hooks'
+import { MdOutlineInfo } from 'react-icons/md'
 
 const segments = [{ value: 'Deposit' }, { value: 'Withdraw' }]
 
-const Card = ({ loading, unavailable, tokensItems, icon, details, info, onTokenSelect, onValidate }) => {    
+const Card = ({ loading, unavailable, tokensItems, icon, details, info, onTokenSelect, onValidate, moreDetails }) => {    
     const [segment, setSegment] = useState(segments[0].value)
     const [tokens, setTokens] = useState([])
     const [token, setToken] = useState()
     const [amount, setAmount] = useState(0)
     const [disabled, setDisabled] = useState(true)
+    const { showModal } = useModals()
 
     const currentToken = tokens.find(({ value }) => value === token)
 
@@ -41,6 +44,10 @@ const Card = ({ loading, unavailable, tokensItems, icon, details, info, onTokenS
     }, [token, onTokenSelect, tokens.length])
 
     const amountLabel = <div className="amount-label">Available Amount: <span>{ !disabled ? `${getMaxAmount()} ${currentToken?.symbol}` : '0' }</span></div>
+
+    const showMoreDetails = () => {
+        if (!!moreDetails) showModal(moreDetails)
+    }
 
     return (
         <div className="card">
@@ -106,6 +113,11 @@ const Card = ({ loading, unavailable, tokensItems, icon, details, info, onTokenS
                                 onClick={() => onValidate(segment, token, amount)}>
                                     { segment }
                             </Button>
+                           {!!moreDetails && <Button clear
+                                icon={ <MdOutlineInfo/> }
+                                onClick={() => showMoreDetails()}>
+                                    See more details
+                            </Button>}
                         </div>
             }
         </div>
