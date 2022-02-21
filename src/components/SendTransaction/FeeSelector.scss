@@ -121,6 +121,10 @@
     }   
 }
 
+.no-relayer-msg {
+    color: $warning-color
+}
+
 #edit-custom-fee {
     display: flex;
     align-items: center;
