@@ -227,7 +227,7 @@ export function FeeSelector({ disabled, signer, estimation, network, setEstimati
                     {<Button textOnly
                       onClick={() => setCustomFee(baseMinFee)}
                     >
-                      {baseMinFee} {symbol} 
+                      {baseMinFee} {symbol}
                     </Button>}
                     &nbsp; (~${(baseMinFeeUSD).toFixed(baseMinFeeUSD < 1 ? 4 : 2)})
                   </div>
@@ -251,9 +251,11 @@ export function FeeSelector({ disabled, signer, estimation, network, setEstimati
               </a>}:
           </div>
           <div className='fee-amounts'>
-            <div>
-              ~${(baseFeeInUSD).toFixed(baseFeeInUSD < 1 ? 4 : 2)}
-            </div>
+            {!isNaN(feeInUSD) &&
+              <div>
+                ~${(baseFeeInUSD).toFixed(baseFeeInUSD < 1 ? 4 : 2)}
+              </div>
+            }
             <div>
               {(baseFeeInFeeToken) + ' ' + estimation.selectedFeeToken.symbol}
             </div>
@@ -291,7 +293,7 @@ export function FeeSelector({ disabled, signer, estimation, network, setEstimati
     </div>
 
     {!estimation.feeInUSD ?
-      (<span><b>WARNING:</b> Paying fees in tokens other than {nativeAssetSymbol} is unavailable because you are not connected to a relayer. You will pay the fee from <b>{signer.address}</b>.</span>)
+      (<span className='no-relayer-msg'><b>WARNING:</b> Paying fees in tokens other than {nativeAssetSymbol} is unavailable because you are not connected to a relayer. You will pay the fee from <b>{signer.address}</b>.</span>)
       : (<></>)}
   </>)
 }
