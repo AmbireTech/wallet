@@ -11,6 +11,7 @@ import AAVE_ICON from 'resources/aave.svg'
 import Card from 'components/Wallet/Earn/Card/Card'
 import { getDefaultTokensItems } from './defaultTokens'
 import approveToken from 'lib/approveToken'
+import { MoreDetailsModal } from 'components/Modals'
 
 const AAVELendingPool = new Interface(AAVELendingPoolAbi)
 const RAY = 10**27
@@ -149,7 +150,15 @@ const AAVECard = ({ networkId, tokens, protocols, account, addRequest }) => {
     }, [networkId])
 
     return (
-        <Card loading={isLoading} unavailable={unavailable} icon={AAVE_ICON} details={details} tokensItems={tokensItems} onTokenSelect={onTokenSelect} onValidate={onValidate}/>
+        <Card 
+            loading={isLoading} 
+            unavailable={unavailable} 
+            icon={AAVE_ICON} details={details} 
+            tokensItems={tokensItems} 
+            onTokenSelect={onTokenSelect} 
+            onValidate={onValidate}
+            moreDetails={<MoreDetailsModal isWalletMoreDetails={false}/>}
+            />
     )
 }
 

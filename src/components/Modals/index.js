@@ -6,6 +6,7 @@ import WalletTokenModal from './WalletTokenModal/WalletTokenModal'
 import AddTokenModal from './AddTokenModal/AddTokenModal'
 import LatticeModal from './LatticeModal/LatticeModal'
 import UnsupportedDAppsModal from './UnsupportedDAppsModal/UnsupportedDAppsModal'
+import MoreDetailsModal from './MoreDetailsModal/MoreDetailsModal'
 
 export {
     PermissionsModal,
@@ -15,5 +16,6 @@ export {
     WalletTokenModal,
     AddTokenModal,
     LatticeModal,
-    UnsupportedDAppsModal
+    UnsupportedDAppsModal,
+    MoreDetailsModal
 }
