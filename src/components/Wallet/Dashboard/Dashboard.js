@@ -71,9 +71,7 @@ export default function Dashboard({ portfolio, selectedNetwork, selectedAccount,
 
     return (
         <section id="dashboard">
-            {
-                Promotions({rewardsData})
-            }
+            <Promotions rewardsData={rewardsData} />
             <div id="overview">
                 <div id="balance" className="panel">
                     <div className="title">Balance</div>
