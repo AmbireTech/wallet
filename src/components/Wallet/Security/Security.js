@@ -281,7 +281,7 @@ const Security = ({
       <AddAuthSigner
         onAddBtnClicked={onAddBtnClickedHandler}
         selectedNetwork={selectedNetwork}
-        selectedAcc={selectedAcc}
+        selectedAcc={selectedAccount}
       />
     </div>
   </>) : (

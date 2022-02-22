@@ -42,7 +42,7 @@ export function getTransactionSummary(txn, networkId, accountAddr, opts = {}) {
         {
             type: 'address',
             address: to,
-            name
+            name: getName(to, network)
         }
     ]
 
