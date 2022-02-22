@@ -29,7 +29,7 @@ const WalletDiscountBanner = ({ currenciesItems, tokens, estimation, onFeeCurren
   const walletDiscountTokens = [...tokens]
     .filter(x => DISCOUNT_TOKENS_SYMBOLS.includes(x.symbol) && x.discount)
     .sort((a, b) =>
-      a.discount - b.discount ||
+      b.discount - a.discount ||
       DISCOUNT_TOKENS_SYMBOLS.indexOf(a.symbol) - DISCOUNT_TOKENS_SYMBOLS.indexOf(b.symbol)
     )
 
