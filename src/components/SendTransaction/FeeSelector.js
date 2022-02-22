@@ -315,7 +315,10 @@ export function FeeSelector({ disabled, signer, estimation, network, setEstimati
               </div>
             }
             <div>
-              {(baseFeeInFeeToken) + ' ' + estimation.selectedFeeToken.symbol}
+              {
+                baseFeeInFeeToken.toLocaleString('fullwide', { useGrouping: true, maximumSignificantDigits: 6 })
+                + ' ' + estimation.selectedFeeToken.symbol
+              }
             </div>
           </div>
         </div>)}
