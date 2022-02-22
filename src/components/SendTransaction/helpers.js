@@ -52,6 +52,7 @@ export function toHexAmount(amnt, decimals) {
 
 export function getDiscountApplied(amnt, discount = 0) {
   if (!discount) return 0
+  if(!amnt) return 0
   if (discount === 1) return amnt
   return amnt / (1 - discount) * discount
 }
@@ -68,7 +69,7 @@ export function getFeesData(feeToken, estimation, speed) {
     : estimation.feeInNative[speed] * totalMultiplier
     
 
-  const feeInUSD = feeInNative * estimation.nativeAssetPriceInUSD
+  const feeInUSD =  !isNaN(estimation.nativeAssetPriceInUSD) ? feeInNative * estimation.nativeAssetPriceInUSD : undefined
 
   const feeInFeeToken = feeInNative * nativeRate
 
