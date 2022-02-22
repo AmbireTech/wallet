@@ -7,7 +7,7 @@ import useOnClickOutside from 'hooks/onClickOutside';
 import { TextInput } from 'components/common';
 import { MdOutlineClose } from 'react-icons/md';
 
-const Select = ({ children, native, monospace, searchable, disabled, label, defaultValue, items, onChange }) => {
+const Select = ({ children, native, monospace, searchable, disabled, label, defaultValue, items, onChange, className }) => {
     const ref = useRef();
     const hiddenTextInput = useRef();
     const transitionRef = useRef();
@@ -18,6 +18,7 @@ const Select = ({ children, native, monospace, searchable, disabled, label, defa
         value: null,
         icon: null,
     });
+    const [failedImg, setFailedImg] = useState([])
 
     const filteredItems = search.length ? items.filter(({ label }) => label.toLowerCase().includes(search.toLowerCase())) : items
 
@@ -46,22 +47,39 @@ const Select = ({ children, native, monospace, searchable, disabled, label, defa
 
     useOnClickOutside(ref, () => setOpen(false));
 
+    const getIcon = ({ icon, fallbackIcon, label }) => {
+        if (!icon) return null
+        const url = failedImg.includes(icon) && fallbackIcon ? fallbackIcon : icon
+        return (
+            failedImg.includes(url)
+                ? < div className="icon" />
+                : <img
+                    className="icon"
+                    src={url}
+                    draggable="false"
+                    alt={label}
+                    onError={() => setFailedImg(failed => [...failed, url])}
+                />
+        )
+    }
+
     return (
-        !native ? 
-            <div className={`select ${monospace ? 'monospace': ''} ${disabled ? 'disabled' : ''} ${searchable ? 'searchable' : ''}`} ref={ref}>
+        !native ?
+            <div className={`select ${monospace ? 'monospace' : ''} ${disabled ? 'disabled' : ''} ${searchable ? 'searchable' : ''} ${className || ''}`} ref={ref}>
                 {
-                    label ? 
-                        <label>{ label }</label>
+                    label ?
+                        <label>{label}</label>
                         :
                         null
                 }
                 {
-                    selectedItem ? 
+                    selectedItem ?
                         <div className="select-container">
                             <div className="select-input" onClick={() => setOpen(!isOpen)}>
-                                { selectedItem.icon ? <div className="icon" style={{backgroundImage: `url(${selectedItem.icon})`}}/> : null }
-                                <div className="label">{ selectedItem.label || selectedItem.value }</div>
-                                <div className="separator"></div>
+                                {getIcon(selectedItem)}
+                                <div className="label">{selectedItem.label || selectedItem.value}</div>
+                                {selectedItem.extra && <div className="extra">{selectedItem.extra}</div>}
+                                {/* <div className="separator"></div> */}
                                 <div className={`handle ${isOpen ? 'open' : ''}`}>
                                     <BsChevronDown size={20}></BsChevronDown>
                                 </div>
@@ -70,14 +88,14 @@ const Select = ({ children, native, monospace, searchable, disabled, label, defa
                                 <CSSTransition unmountOnExit in={isOpen} timeout={200} classNames="fade" nodeRef={transitionRef}>
                                     <div className="select-menu" ref={transitionRef}>
                                         {
-                                            searchable ? 
+                                            searchable ?
                                                 <TextInput
                                                     className="select-search-input"
                                                     disabled={disabled}
                                                     placeholder="Search"
                                                     value={search}
                                                     ref={hiddenTextInput}
-                                                    buttonLabel={search.length ? <MdOutlineClose/> : null}
+                                                    buttonLabel={search.length ? <MdOutlineClose /> : null}
                                                     onInput={value => setSearch(value)}
                                                     onButtonClick={() => setSearch('')}
                                                 />
@@ -86,13 +104,18 @@ const Select = ({ children, native, monospace, searchable, disabled, label, defa
                                         }
                                         {
                                             filteredItems.map(item => (
-                                                <div className={`option ${item.value === selectedItem.value ? 'active' : ''}`} key={item.value} onClick={() => selectItem(item)}>
-                                                    { item.icon ? <div className="icon" style={{backgroundImage: `url(${item.icon})`}}/> : null }
-                                                    <div className="label">{ item.label || item.value }</div>
+                                                <div
+                                                    className={`option ${item.value === selectedItem.value ? 'active' : ''} ${item.disabled ? disabled : ''}`}
+                                                    key={item.value}
+                                                    onClick={() => !item.disabled && selectItem(item)}
+                                                >
+                                                    {getIcon(item)}
+                                                    <div className="label">{item.label || item.value}</div>
+                                                    {item.extra && <div className="extra">{item.extra}</div>}
                                                 </div>
                                             ))
                                         }
-                                        { children }
+                                        {children}
                                     </div>
                                 </CSSTransition>
                             }
@@ -106,7 +129,7 @@ const Select = ({ children, native, monospace, searchable, disabled, label, defa
                 {
                     items.map(item => (
                         <option key={item.value} value={item.value}>
-                            { item.label || item.value }
+                            {item.label || item.value}
                         </option>
                     ))
                 }

@@ -4,6 +4,7 @@ import SelectSignerAccountModal from './SelectSignerAccountModal/SelectSignerAcc
 import ResetPasswordModal from './ResetPasswordModal/ResetPasswordModal'
 import WalletTokenModal from './WalletTokenModal/WalletTokenModal'
 import AddTokenModal from './AddTokenModal/AddTokenModal'
+import LatticeModal from './LatticeModal/LatticeModal'
 import UnsupportedDAppsModal from './UnsupportedDAppsModal/UnsupportedDAppsModal'
 import HideTokenModel from './HideTokenModal/HideTokenModal'
 
@@ -14,6 +15,7 @@ export {
     ResetPasswordModal,
     WalletTokenModal,
     AddTokenModal,
+    LatticeModal,
     UnsupportedDAppsModal,
     HideTokenModel
 }
