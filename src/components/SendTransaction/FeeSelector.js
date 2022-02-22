@@ -17,26 +17,33 @@ import { useState } from 'react'
 import { getTokenIcon } from 'lib/icons'
 
 const SPEEDS = ['slow', 'medium', 'fast', 'ape']
-const walletDiscountBlogpost = 'https://medium.com/@marialuiza.cluve/start-moving-crypto-with-ambire-pay-gas-with-wallet-and-jump-on-the-exclusive-promo-7c605a181294'
+const walletDiscountBlogpost = 'https://blog.ambire.com/move-crypto-with-ambire-pay-gas-with-wallet-and-save-30-on-fees-35dca1002697'
+
+// NOTE: Order matters for for secondary fort after the one by discount
+const DISCOUNT_TOKENS_SYMBOLS = ['WALLET', 'WALLET-STAKING', 'xWALLET']
 
 const WalletDiscountBanner = ({ currenciesItems, tokens, estimation, onFeeCurrencyChange, onDismiss }) => {
-  const walletDiscountToken = tokens.find(x => x.symbol === 'WALLET' && x.discount)
+  if (estimation.selectedFeeToken?.symbol && DISCOUNT_TOKENS_SYMBOLS.includes(estimation.selectedFeeToken?.symbol)) {
+    return null
+  }
+  const walletDiscountTokens = [...tokens]
+    .filter(x => DISCOUNT_TOKENS_SYMBOLS.includes(x.symbol) && x.discount)
+    .sort((a, b) =>
+      a.discount - b.discount ||
+      DISCOUNT_TOKENS_SYMBOLS.indexOf(a.symbol) - DISCOUNT_TOKENS_SYMBOLS.indexOf(b.symbol)
+    )
 
-  if (!walletDiscountToken) return null
+  if (!walletDiscountTokens.length) return null
 
-  const alreadySelected =
-    estimation.selectedFeeToken?.address === walletDiscountToken.address
-    || estimation.selectedFeeToken?.symbol === walletDiscountToken.symbol
+  const discountToken = walletDiscountTokens[0]
 
-  if (!!alreadySelected) return null
-
-  const { discount } = walletDiscountToken
-  const eligibleWalletToken = currenciesItems.find(x => x.value && (x.value === 'WALLET' || x.value === walletDiscountToken.address))
+  const { discount } = discountToken
+  const eligibleWalletToken = currenciesItems.find(x => x.value && (x.value === 'WALLET' || x.value === discountToken.address))
   const action = !!eligibleWalletToken
     ? () => onFeeCurrencyChange(eligibleWalletToken.value)
     : null
   //TODO: go to swap 
-  const actionTxt = !!eligibleWalletToken ? 'USE $WALLET' : 'BUY WALLET'
+  const actionTxt = !!eligibleWalletToken ? `USE ${discountToken.symbol}` : `BUY ${discountToken.symbol}`
   const showSwap = !action
 
   return (
@@ -133,26 +140,32 @@ export function FeeSelector({ disabled, signer, estimation, network, setEstimati
   }
 
   if (insufficientFee) {
-    const sufficientSpeeds = SPEEDS.filter((speed, i ) =>  isTokenEligible(estimation.selectedFeeToken, speed, estimation))
-    const highestSufficientSpeed = sufficientSpeeds[sufficientSpeeds.length - 1] 
+    const sufficientSpeeds = SPEEDS.filter((speed, i) => isTokenEligible(estimation.selectedFeeToken, speed, estimation))
+    const highestSufficientSpeed = sufficientSpeeds[sufficientSpeeds.length - 1]
     setFeeSpeed(highestSufficientSpeed)
   }
 
   const checkIsSelectorDisabled = speed => {
     const insufficientFee = estimation && estimation.feeInUSD
-    && !isTokenEligible(estimation.selectedFeeToken, speed, estimation)
-    
-    return disabled || insufficientFee
-  } 
+      && !isTokenEligible(estimation.selectedFeeToken, speed, estimation)
 
+    return disabled || insufficientFee
+  }
 
   const feeAmountSelectors = SPEEDS.map(speed => {
     const isETH = symbol === 'ETH' && nativeAssetSymbol === 'ETH'
     const {
       feeInFeeToken,
+      feeInUSD
       // NOTE: get the estimation res data w/o custom fee for the speeds
     } = getFeesData({ ...estimation.selectedFeeToken }, { ...estimation, customFee: null }, speed)
     const discountInFeeToken = getDiscountApplied(feeInFeeToken, discount)
+    const discountInFeeInUSD = getDiscountApplied(feeInUSD, discount)
+
+    const baseFeeInFeeToken = feeInFeeToken + discountInFeeToken
+    const baseFeeInFeeUSD = feeInUSD ? feeInUSD + discountInFeeInUSD : null
+
+    const showInUSD = (baseFeeInFeeToken < 0.0001) && baseFeeInFeeUSD
 
     return (
       <div
@@ -164,11 +177,11 @@ export function FeeSelector({ disabled, signer, estimation, network, setEstimati
         <div className='speed'>{speed}</div>
         <div className='feeEstimation'>
           {(isETH ? 'Ξ ' : '')
-            + (feeInFeeToken + discountInFeeToken)
-            + (!isETH ? ` ${estimation.selectedFeeToken.symbol}` : '')
+            + (showInUSD ? `$${baseFeeInFeeUSD}` : baseFeeInFeeToken)
+            + (!isETH && !showInUSD ? ` ${estimation.selectedFeeToken.symbol}` : '')
           }
         </div>
-        {!isETH && <div className='feeEstimation symbol'>
+        {!isETH && !showInUSD && <div className='feeEstimation symbol'>
           {estimation.selectedFeeToken.symbol}
         </div>}
       </div>
@@ -221,6 +234,7 @@ export function FeeSelector({ disabled, signer, estimation, network, setEstimati
     }
 
     {WalletDiscountBanner({
+      selectedFeeToken: estimation.selectedFeeToken,
       currenciesItems,
       tokens,
       estimation,
