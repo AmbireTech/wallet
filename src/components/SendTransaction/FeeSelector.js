@@ -119,7 +119,6 @@ export function FeeSelector({ disabled, signer, estimation, network, setEstimati
     </div>
   </>) : (<></>)
 
-  const areSelectorsDisabled = disabled || insufficientFee
   const { discount = 0, symbol } = estimation.selectedFeeToken
 
   const setCustomFee = value => setEstimation(prevEstimation => ({
@@ -133,6 +132,20 @@ export function FeeSelector({ disabled, signer, estimation, network, setEstimati
     setEditCustomFee(false)
   }
 
+  if (insufficientFee) {
+    const sufficientSpeeds = SPEEDS.filter((speed, i ) =>  isTokenEligible(estimation.selectedFeeToken, speed, estimation))
+    const highestSufficientSpeed = sufficientSpeeds[sufficientSpeeds.length - 1] 
+    setFeeSpeed(highestSufficientSpeed)
+  }
+
+  const checkIsSelectorDisabled = speed => {
+    const insufficientFee = estimation && estimation.feeInUSD
+    && !isTokenEligible(estimation.selectedFeeToken, speed, estimation)
+    
+    return disabled || insufficientFee
+  } 
+
+
   const feeAmountSelectors = SPEEDS.map(speed => {
     const isETH = symbol === 'ETH' && nativeAssetSymbol === 'ETH'
     const {
@@ -144,8 +157,8 @@ export function FeeSelector({ disabled, signer, estimation, network, setEstimati
     return (
       <div
         key={speed}
-        className={`feeSquare${!estimation.customFee && feeSpeed === speed ? ' selected' : ''}${areSelectorsDisabled ? ' disabled' : ''}`}
-        onClick={() => !areSelectorsDisabled && selectFeeSpeed(speed)}
+        className={`feeSquare${!estimation.customFee && feeSpeed === speed ? ' selected' : ''}${checkIsSelectorDisabled(speed) ? ' disabled' : ''}`}
+        onClick={() => !checkIsSelectorDisabled(speed) && selectFeeSpeed(speed)}
       >
         {!!discount && <FaPercentage className='discount-badge' />}
         <div className='speed'>{speed}</div>
