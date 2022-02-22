@@ -351,7 +351,7 @@ export default function AddAccount({ relayerURL, onAddAccount }) {
       <div className="icon" style={{ backgroundImage: 'url(./resources/ledger.png)' }}/>
       Ledger
     </button>
-    <button onClick={() => wrapErr(connectGridPlusAndGetAccounts)}>
+    <button onClick={() => wrapProgress(connectGridPlusAndGetAccounts, 'hwwallet')}>
       <div className="icon" style={{ backgroundImage: 'url(./resources/grid-plus.png)' }}/>
       Grid+ Lattice1
     </button>
@@ -374,6 +374,7 @@ export default function AddAccount({ relayerURL, onAddAccount }) {
           <h3>Add an account</h3>
           {addFromSignerButtons}
           <h3>NOTE: You can enable email/password login by connecting to a relayer.</h3>
+          {addAccErr ? (<p className="error" style={{maxWidth: '800px'}}>{addAccErr}</p>) : (<></>)}
         </div>
       </section>
     </div>)
