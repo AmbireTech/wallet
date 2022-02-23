@@ -11,7 +11,7 @@ const networks = [{
 	},  {
 		id: 'polygon',
 		chainId: 137,
-		rpc: 'https://rpc-mainnet.maticvigil.com/v1/06814f257d827f1312121b86e8b052d39b9f7ac0',
+		rpc: 'https://polygon-rpc.com/rpc',
 		nativeAssetSymbol: 'MATIC',
 		name: 'Polygon',
 		icon: '/resources/networks/polygon.png',
