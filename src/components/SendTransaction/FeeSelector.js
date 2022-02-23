@@ -22,15 +22,24 @@ const walletDiscountBlogpost = 'https://blog.ambire.com/move-crypto-with-ambire-
 // NOTE: Order matters for for secondary fort after the one by discount
 const DISCOUNT_TOKENS_SYMBOLS = ['WALLET', 'WALLET-STAKING', 'xWALLET']
 
+function getBalance(token) {
+  const { balance, decimals, priceInUSD } = token
+  return balance / decimals * priceInUSD
+}
+
 const WalletDiscountBanner = ({ currenciesItems, tokens, estimation, onFeeCurrencyChange, onDismiss }) => {
-  if (estimation.selectedFeeToken?.symbol && DISCOUNT_TOKENS_SYMBOLS.includes(estimation.selectedFeeToken?.symbol)) {
+  if (estimation.selectedFeeToken?.symbol
+    && (DISCOUNT_TOKENS_SYMBOLS.includes(estimation.selectedFeeToken?.symbol)
+      || estimation.selectedFeeToken.discount)
+  ) {
     return null
   }
   const walletDiscountTokens = [...tokens]
     .filter(x => DISCOUNT_TOKENS_SYMBOLS.includes(x.symbol) && x.discount)
     .sort((a, b) =>
-      b.discount - a.discount ||
-      DISCOUNT_TOKENS_SYMBOLS.indexOf(a.symbol) - DISCOUNT_TOKENS_SYMBOLS.indexOf(b.symbol)
+      b.discount - a.discount
+      || ((!parseInt(a.balance) || !parseInt(b.balance)) ? getBalance(b) - getBalance(a) : 0)
+      || DISCOUNT_TOKENS_SYMBOLS.indexOf(a.symbol) - DISCOUNT_TOKENS_SYMBOLS.indexOf(b.symbol)
     )
 
   if (!walletDiscountTokens.length) return null
