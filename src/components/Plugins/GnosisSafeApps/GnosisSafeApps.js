@@ -1,7 +1,12 @@
+import { MdOutlineAdd, MdRemove } from 'react-icons/md'
 import './GnosisSafeApps.scss'
 import GnosisSafeAppIframe from './GnosisSafeAppIframe'
+import { useLocalStorage } from 'hooks'
+import { InputModal } from 'components/Modals'
+import { Button } from 'components/common'
 
-import { useState } from 'react'
+import { useModals } from 'hooks'
+import { useCallback, useState } from 'react'
 
 const dapps = [{
   name: 'LocalTest',
@@ -41,18 +46,49 @@ export default function GnosisSafeApps({
   gnosisConnect,
   gnosisDisconnect
 }) {
-
+  const { showModal } = useModals()
   const [selectedApp, setSelectedApp] = useState(null)
+  const [customPlugins, setCustomPlugins] = useLocalStorage({ key: 'gnosisCustomApps', defaultValue: [] })
+
+  const modalInputs = [
+    { label: 'Name', placeholder: 'Plugin name', validate: value => !!value },
+    { label: 'URL', placeholder: 'https://plugyourpluginifyouwantplug', validate: value => !!value }
+  ]
+
+  const addPlugin = useCallback((name, url) => {
+    const newDapp = { name, url, customId: Date.now()  }
+    const newPlugins = [...customPlugins, newDapp]
+    setCustomPlugins(newPlugins)
+    setSelectedApp(newDapp)
+  }, [customPlugins, setCustomPlugins])
+
+  const removeCustomPlugin = useCallback((customId) => {
+    const newPlugins = [...customPlugins.filter(x => x.customId !== customId)]
+    setCustomPlugins(newPlugins)
+  }, [customPlugins, setCustomPlugins])
+
+  const inputModal =
+    <InputModal
+      title="Add New Address"
+      inputs={modalInputs}
+      onClose={([name, url]) => addPlugin(name, url)}>
+    </InputModal>
+
+  const showInputModal = () => showModal(inputModal)
 
   return (
     <div id="plugin-gnosis-container">
       <ul id="dapps-container" className={selectedApp ? 'small-thumbs' : ''}>
-        {dapps.map((dapp, index) => (
+        <li className='add-plugin'>
+          <Button mini icon={<MdOutlineAdd />} onClick={showInputModal}>Add plugin</Button>
+        </li>
+        {[...dapps, ...customPlugins].map((dapp, index) => (
           <li
             key={index}
             onClick={() => setSelectedApp(dapp)}
             className={(selectedApp && dapp.url === selectedApp.url) ? 'selected' : ''}
           >
+            {dapp.customId && <Button className='remove-btn' mini red icon={<MdRemove />} onClick={() => removeCustomPlugin(dapp.customId)} />}
             <div className="logo-container" style={{ backgroundImage: `url(${dapp.logo})` }}></div>
             <div className="dapp-name">{dapp.name}</div>
             <div className="dapp-desc">{dapp.desc}</div>
@@ -64,10 +100,12 @@ export default function GnosisSafeApps({
           network={network}
           selectedApp={selectedApp}
           selectedAcc={selectedAcc}
+          removeApp={removeCustomPlugin}
           gnosisConnect={gnosisConnect}
           gnosisDisconnect={gnosisDisconnect}
 
         />
       }
-    </div>)
+    </div>
+  )
 }
