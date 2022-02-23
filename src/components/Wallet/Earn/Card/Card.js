@@ -28,6 +28,10 @@ const Card = ({ loading, unavailable, tokensItems, icon, details, info, onTokenS
 
     const setMaxAmount = () => setAmount(getMaxAmount(amount))
 
+    const isMaxAmount = () => {
+        return amount === getMaxAmount()
+    }
+
     useEffect(() => {
         if (segment === segments[0].value) setTokens(sortedTokenItems.filter(({ type }) => type === 'deposit'))
         if (segment === segments[1].value) setTokens(sortedTokenItems.filter(({ type }) => type === 'withdraw'))
@@ -104,7 +108,7 @@ const Card = ({ loading, unavailable, tokensItems, icon, details, info, onTokenS
                             <Button
                                 disabled={disabled || amount <= 0 || amount > currentToken?.balance}
                                 icon={segment === segments[0].value ? <BsArrowDownSquare/> : <BsArrowUpSquare/>}
-                                onClick={() => onValidate(segment, token, amount)}>
+                                onClick={() => onValidate(segment, token, amount, isMaxAmount())}>
                                     { segment }
                             </Button>
                         </div>
