@@ -7,7 +7,7 @@ import { ethers } from 'ethers'
 
 const segments = [{ value: 'Deposit' }, { value: 'Withdraw' }]
 
-const Card = ({ loading, unavailable, tokensItems, icon, details, onTokenSelect, onValidate }) => {    
+const Card = ({ loading, unavailable, tokensItems, icon, details, info, onTokenSelect, onValidate }) => {
     const [segment, setSegment] = useState(segments[0].value)
     const [tokens, setTokens] = useState([])
     const [token, setToken] = useState()
@@ -28,6 +28,10 @@ const Card = ({ loading, unavailable, tokensItems, icon, details, onTokenSelect,
 
     const setMaxAmount = () => setAmount(getMaxAmount(amount))
 
+    const isMaxAmount = () => {
+        return amount === getMaxAmount()
+    }
+
     useEffect(() => {
         if (segment === segments[0].value) setTokens(sortedTokenItems.filter(({ type }) => type === 'deposit'))
         if (segment === segments[1].value) setTokens(sortedTokenItems.filter(({ type }) => type === 'withdraw'))
@@ -40,7 +44,8 @@ const Card = ({ loading, unavailable, tokensItems, icon, details, onTokenSelect,
         setDisabled(!token || !tokens.length)
     }, [token, onTokenSelect, tokens.length])
 
-    const amountLabel = <div className="amount-label">Available Amount: <span>{ !disabled ? `${getMaxAmount()} ${currentToken?.symbol}` : '0' }</span></div>
+    const availableAmount = !disabled ? `${getMaxAmount()} ${currentToken?.symbol}` : '0'
+    const amountLabel = <div className="amount-label">Available Amount: <span title={availableAmount}>{availableAmount}</span></div>
 
     return (
         <div className="card">
@@ -66,7 +71,7 @@ const Card = ({ loading, unavailable, tokensItems, icon, details, onTokenSelect,
                                 onChange={(value) => setToken(value)}
                             />
                             {
-                                !disabled ? 
+                                !disabled ?
                                     <ul className="details">
                                         {
                                             details.map(([type, value]) => (
@@ -82,21 +87,28 @@ const Card = ({ loading, unavailable, tokensItems, icon, details, onTokenSelect,
                                     </div>
                             }
                             <Segments small defaultValue={segment} segments={segments} onChange={(value) => setSegment(value)}></Segments>
-                            <NumberInput
-                                disabled={!currentToken?.balance}
-                                min="0"
-                                max={currentToken?.balance}
-                                value={amount}
-                                label={amountLabel}
-                                onInput={(value) => setAmount(value)}
-                                button="MAX"
-                                onButtonClick={setMaxAmount}
-                            />
+                            {
+                                info ?
+                                    <div className="info">
+                                        { info }
+                                    </div>
+                                    :
+                                    <NumberInput
+                                        disabled={!currentToken?.balance}
+                                        min="0"
+                                        max={currentToken?.balance}
+                                        value={amount}
+                                        label={amountLabel}
+                                        onInput={(value) => setAmount(value)}
+                                        button="MAX"
+                                        onButtonClick={setMaxAmount}
+                                    />
+                            }
                             <div className="separator"></div>
-                            <Button 
+                            <Button
                                 disabled={disabled || amount <= 0 || amount > currentToken?.balance}
                                 icon={segment === segments[0].value ? <BsArrowDownSquare/> : <BsArrowUpSquare/>}
-                                onClick={() => onValidate(segment, token, amount)}>
+                                onClick={() => onValidate(segment, token, amount, isMaxAmount())}>
                                     { segment }
                             </Button>
                         </div>

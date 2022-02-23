@@ -8,7 +8,7 @@ import Accounts from "./Accounts/Accounts";
 import DApps from "./DApps/DApps";
 import * as blockies from 'blockies-ts';
 import Links from "./Links/Links";
-import Rewards from "./Rewards/Rewards";
+import WalletTokenButton from "./WalletTokenButton/WalletTokenButton";
 
 const TopBar = ({
   connections,
@@ -52,7 +52,7 @@ const TopBar = ({
         <div id="icon" />
       </NavLink>
       <div className={`container ${isMenuOpen ? 'open' : ''}`}>
-        <Rewards
+        <WalletTokenButton
           rewardsData={rewardsData}
           account={account}
           network={network}

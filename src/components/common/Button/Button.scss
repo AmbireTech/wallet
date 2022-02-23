@@ -49,6 +49,16 @@ button.buttonComponent {
         }
     }
 
+    &.text-only {
+        padding: 0;
+        margin: 0;
+        height: auto;
+        background: 0;
+        color: $text-color;
+        font-size: 1em;
+        display: inline-flex;
+    }
+
     &.border {
         color: $primary-accent-color;
         background-color: transparent;
