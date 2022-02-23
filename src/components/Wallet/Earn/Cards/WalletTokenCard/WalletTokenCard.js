@@ -59,7 +59,7 @@ const WalletTokenCard = ({ networkId, accountId, tokens, rewardsData, addRequest
             balance: xWalletToken?.balance || 0,
             balanceRaw: xWalletToken?.balanceRaw ? BigNumber.from(xWalletToken?.balanceRaw) : 0,
         }
-    ], [walletToken, xWalletToken])
+    ], [walletToken, xWalletToken, networkId])
 
     const onTokenSelect = useCallback(tokenAddress => {
         setInfo(null)
