@@ -309,7 +309,7 @@ export function FeeSelector({ disabled, signer, estimation, network, setEstimati
         {(<div className='fee-row native-fee-estimation'>
           <div>
             Fee {!!discount && <span className='discount-label'>*</span>}
-            {!!discount && estimation.selectedFeeToken?.symbol === 'WALLET' &&
+            {!!(discount && DISCOUNT_TOKENS_SYMBOLS.includes(estimation.selectedFeeToken?.symbol)) &&
               <a
                 className="address row discount-label"
                 href={walletDiscountBlogpost}
