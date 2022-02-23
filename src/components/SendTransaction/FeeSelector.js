@@ -112,7 +112,9 @@ export function FeeSelector({ disabled, signer, estimation, network, setEstimati
   }
 
   const currenciesItems = tokens
-    .filter(token => isTokenEligible(token, feeSpeed, estimation))
+    // NOTE: filter by min and then will disable the higher fees speeds otherwise 
+    // it will just hide the token from the select
+    .filter(token => isTokenEligible(token, 'slow', estimation))
     .sort((a, b) => (b.discount || 0) - (a.discount || 0))
     .map(({ address, symbol, discount }) => ({
       icon: address ? getTokenIcon(network.id, address) : null,
@@ -156,9 +158,7 @@ export function FeeSelector({ disabled, signer, estimation, network, setEstimati
   }
 
   const checkIsSelectorDisabled = speed => {
-    const insufficientFee = estimation && estimation.feeInUSD
-      && !isTokenEligible(estimation.selectedFeeToken, speed, estimation)
-
+    const insufficientFee = !isTokenEligible(estimation.selectedFeeToken, speed, estimation)
     return disabled || insufficientFee
   }
 
