@@ -102,7 +102,7 @@ const WalletTokenCard = ({ networkId, accountId, tokens, rewardsData, addRequest
         ])
     }, [lockedShares, shareValue, walletTokenAPY, rewardsData.isLoading, lockedRemainingTime, tokensItems])
 
-    const onValidate = async (type, value, amount) => {
+    const onValidate = async (type, value, amount, isMaxAmount) => {
         const bigNumberAmount = parseUnits(amount, 18)
 
         if (type === 'Deposit') {
@@ -124,7 +124,15 @@ const WalletTokenCard = ({ networkId, accountId, tokens, rewardsData, addRequest
         }
 
         if (type === 'Withdraw') {
-            const xWalletAmount = bigNumberAmount.mul(BigNumber.from((1e18).toString())).div(shareValue)
+            let xWalletAmount
+
+            // In case of withdrawing the max amount of xWallet tokens, get the latest balance of xWallet.
+            // Otherwise, `xWalletBalanceRaw` may be outdated.
+            if (isMaxAmount) {
+                xWalletAmount = await stakingWalletContract.balanceOf(accountId)
+            } else {
+                xWalletAmount = bigNumberAmount.mul(BigNumber.from((1e18).toString())).div(shareValue)
+            }
 
             addRequestTxn(`leave_staking_pool_${Date.now()}`, {
                 to: WALLET_STAKING_ADDRESS,
