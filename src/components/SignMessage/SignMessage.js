@@ -117,7 +117,7 @@ export default function SignMessage ({ toSign, resolve, account, connections, re
     if (e.length === CONF_CODE_LENGTH) {
         promiseResolve(e)
     } 
-}
+  }
 
   const handleSubmit = e => {
     e.preventDefault() 
