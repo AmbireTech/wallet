@@ -14,6 +14,7 @@ import Addresses from './Addresses/Addresses'
 import { MdInfo } from 'react-icons/md'
 import networks from 'consts/networks'
 import { getTokenIcon } from 'lib/icons'
+import { formatFloatTokenAmount } from 'lib/formatters'
 
 const ERC20 = new Interface(require('adex-protocol-eth/abi/ERC20'))
 const unsupportedSWPlatforms = ['Binance', 'Huobi', 'KuCoin', 'Gate.io', 'FTX']
@@ -54,10 +55,13 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
 
     const selectedAsset = portfolio.tokens.find(({ address }) => address === asset)
 
-    const maxAmount = useMemo(() => {
-        if (!selectedAsset) return 0;
-        const { balanceRaw, decimals } = selectedAsset
-        return ethers.utils.formatUnits(balanceRaw, decimals)
+    const { maxAmount, maxAmountFormatted } = useMemo(() => {
+        if (!selectedAsset) return {maxAmount: '0', maxAmountFormatted: '0.00'};
+        const { balanceRaw, decimals, balance } = selectedAsset
+        return {
+            maxAmount: ethers.utils.formatUnits(balanceRaw, decimals),
+            maxAmountFormatted:  formatFloatTokenAmount(balance, true, decimals)
+        }
     }, [selectedAsset])
 
     const showSWAddressWarning = useMemo(() => 
@@ -134,7 +138,7 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
         setDisabled(!isValidRecipientAddress.success || !isValidSendTransferAmount.success || (showSWAddressWarning && !sWAddressConfirmed))
     }, [address, amount, selectedAcc, selectedAsset, addressConfirmed, showSWAddressWarning, sWAddressConfirmed, isKnownAddress, addToast])
 
-    const amountLabel = <div className="amount-label">Available Amount: <span>{ maxAmount } { selectedAsset?.symbol }</span></div>
+    const amountLabel = <div className="amount-label">Available Amount: <span>{ maxAmountFormatted } { selectedAsset?.symbol }</span></div>
 
     return (
         <div id="transfer">

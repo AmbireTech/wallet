@@ -10,6 +10,7 @@ import { MdOutlineAdd } from 'react-icons/md'
 import { AddTokenModal } from 'components/Modals'
 import { useModals } from 'hooks'
 import { getTokenIcon } from 'lib/icons'
+import { formatFloatTokenAmount } from 'lib/formatters'
 
 const Protocols = ({ portfolio, network, account, hidePrivateValue }) => {
     const { showModal } = useModals()
@@ -44,7 +45,7 @@ const Protocols = ({ portfolio, network, account, hidePrivateValue }) => {
             <div className="separator"></div>
             <div className="balance">
                 <div className="currency">
-                    <span className="value">{ hidePrivateValue(balance) }</span>
+                    <span className="value">{ hidePrivateValue(formatFloatTokenAmount(balance, true, 2)) }</span>
                     <span className="symbol">{ symbol }</span>
                 </div>
                 <div className="dollar">
