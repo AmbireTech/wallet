@@ -8,7 +8,8 @@ const ADDED_GAS_NATIVE = 12000
 export function isTokenEligible(token, speed, estimation) {
   if (!token) return false
   const min = token.isStable ? estimation.feeInUSD[speed] : estimation.feeInNative[speed]
-  return parseInt(token.balance) / Math.pow(10, token.decimals) > min
+  const balance = (parseInt(token.balance) / Math.pow(10, token.decimals)) / (token.nativeRate || 1)
+  return balance > min
 }
 
 // can't think of a less funny name for that
