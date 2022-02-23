@@ -112,9 +112,9 @@ export function FeeSelector({ disabled, signer, estimation, network, setEstimati
   }
 
   const currenciesItems = tokens
-    // NOTE: filter by min and then will disable the higher fees speeds otherwise 
+    // NOTE: filter by slowest and then will disable the higher fees speeds otherwise 
     // it will just hide the token from the select
-    .filter(token => isTokenEligible(token, 'slow', estimation))
+    .filter(token => isTokenEligible(token, SPEEDS[0], estimation))
     .sort((a, b) => (b.discount || 0) - (a.discount || 0))
     .map(({ address, symbol, discount }) => ({
       icon: address ? getTokenIcon(network.id, address) : null,
@@ -138,7 +138,7 @@ export function FeeSelector({ disabled, signer, estimation, network, setEstimati
     </div>
   </>) : (<></>)
 
-  const { discount = 0, symbol, nativeRate } = estimation.selectedFeeToken
+  const { discount = 0, symbol, nativeRate, decimals } = estimation.selectedFeeToken
 
   const setCustomFee = value => setEstimation(prevEstimation => ({
     ...prevEstimation,
@@ -187,7 +187,7 @@ export function FeeSelector({ disabled, signer, estimation, network, setEstimati
         <div className='speed'>{speed}</div>
         <div className='feeEstimation'>
           {(isETH ? 'Ξ ' : '')
-            + (showInUSD ? `$${baseFeeInFeeUSD}` : baseFeeInFeeToken)
+            + (showInUSD ? `$${formatFloatTokenAmount(baseFeeInFeeUSD, true, 4)}` : formatFloatTokenAmount(baseFeeInFeeToken, true, decimals))
             + (!isETH && !showInUSD ? ` ${estimation.selectedFeeToken.symbol}` : '')
           }
         </div>
@@ -281,7 +281,7 @@ export function FeeSelector({ disabled, signer, estimation, network, setEstimati
                       {baseMinFee} {symbol}
                     </Button>}
                     {!isNaN(baseMinFeeUSD) &&
-                      <span>&nbsp; (~${(baseMinFeeUSD).toFixed(baseMinFeeUSD < 1 ? 4 : 2)}) </span>
+                      <span>&nbsp; (~${formatFloatTokenAmount(baseMinFeeUSD, true, 4)}) </span>
                     }
                   </div>
                 </div>
@@ -296,7 +296,7 @@ export function FeeSelector({ disabled, signer, estimation, network, setEstimati
                       {baseMaxFee} {symbol}
                     </Button>}
                     {!isNaN(baseMaxFeeUSD) &&
-                      <span>&nbsp; (~${(baseMaxFeeUSD).toFixed(baseMaxFeeUSD < 1 ? 4 : 2)}) </span>
+                      <span>&nbsp; (~${formatFloatTokenAmount(baseMaxFeeUSD, true, 4)}) </span>
                     }
                   </div>
                 </div>
@@ -321,11 +321,11 @@ export function FeeSelector({ disabled, signer, estimation, network, setEstimati
           <div className='fee-amounts'>
             {!isNaN(feeInUSD) &&
               <div>
-                ~${(baseFeeInUSD).toFixed(baseFeeInUSD < 1 ? 4 : 2)}
+                ~${formatFloatTokenAmount(baseFeeInUSD, true, 4)}
               </div>
             }
             <div>
-              {formatFloatTokenAmount(baseFeeInFeeToken, true, 8) + ' ' + estimation.selectedFeeToken.symbol}
+              {formatFloatTokenAmount(baseFeeInFeeToken, true, decimals) + ' ' + estimation.selectedFeeToken.symbol}
             </div>
           </div>
         </div>)}
@@ -336,7 +336,7 @@ export function FeeSelector({ disabled, signer, estimation, network, setEstimati
           </div>
           <div className='fee-amounts'>
             <div>
-              ~${(discountInUSD).toFixed(discountInUSD < 1 ? 4 : 2)}
+              ~${formatFloatTokenAmount(discountInUSD, true, 4)}
             </div>
             {/* <div>
               {discountInFeeToken + ' ' + estimation.selectedFeeToken.symbol}
@@ -350,7 +350,7 @@ export function FeeSelector({ disabled, signer, estimation, network, setEstimati
           </div>
           <div className='fee-amounts'>
             <div>
-              ~${(feeInUSD).toFixed(feeInUSD < 1 ? 4 : 2)}
+              ~${formatFloatTokenAmount(feeInUSD, true, 4)}
             </div>
             {/* <div>
               {feeInFeeToken + ' ' + estimation.selectedFeeToken.symbol}              
