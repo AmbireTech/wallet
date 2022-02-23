@@ -119,7 +119,6 @@ export function FeeSelector({ disabled, signer, estimation, network, setEstimati
     </div>
   </>) : (<></>)
 
-  const areSelectorsDisabled = disabled || insufficientFee
   const { discount = 0, symbol } = estimation.selectedFeeToken
 
   const setCustomFee = value => setEstimation(prevEstimation => ({
@@ -133,6 +132,20 @@ export function FeeSelector({ disabled, signer, estimation, network, setEstimati
     setEditCustomFee(false)
   }
 
+  if (insufficientFee) {
+    const sufficientSpeeds = SPEEDS.filter((speed, i ) =>  isTokenEligible(estimation.selectedFeeToken, speed, estimation))
+    const highestSufficientSpeed = sufficientSpeeds[sufficientSpeeds.length - 1] 
+    setFeeSpeed(highestSufficientSpeed)
+  }
+
+  const checkIsSelectorDisabled = speed => {
+    const insufficientFee = estimation && estimation.feeInUSD
+    && !isTokenEligible(estimation.selectedFeeToken, speed, estimation)
+    
+    return disabled || insufficientFee
+  } 
+
+
   const feeAmountSelectors = SPEEDS.map(speed => {
     const isETH = symbol === 'ETH' && nativeAssetSymbol === 'ETH'
     const {
@@ -144,8 +157,8 @@ export function FeeSelector({ disabled, signer, estimation, network, setEstimati
     return (
       <div
         key={speed}
-        className={`feeSquare${!estimation.customFee && feeSpeed === speed ? ' selected' : ''}${areSelectorsDisabled ? ' disabled' : ''}`}
-        onClick={() => !areSelectorsDisabled && selectFeeSpeed(speed)}
+        className={`feeSquare${!estimation.customFee && feeSpeed === speed ? ' selected' : ''}${checkIsSelectorDisabled(speed) ? ' disabled' : ''}`}
+        onClick={() => !checkIsSelectorDisabled(speed) && selectFeeSpeed(speed)}
       >
         {!!discount && <FaPercentage className='discount-badge' />}
         <div className='speed'>{speed}</div>
@@ -171,21 +184,35 @@ export function FeeSelector({ disabled, signer, estimation, network, setEstimati
     feeInFeeToken: minFee,
     feeInUSD: minFeeUSD,
   } = getFeesData({ ...estimation.selectedFeeToken }, { ...estimation, customFee: null }, 'slow')
+
+  const {
+    feeInFeeToken: maxFee,
+    feeInUSD: maxFeeUSD,
+  } = getFeesData({ ...estimation.selectedFeeToken }, { ...estimation, customFee: null }, 'ape')
+
   const discountMin = getDiscountApplied(minFee, discount)
+  const discountMax = getDiscountApplied(maxFee, discount)
 
   const discountInFeeToken = getDiscountApplied(feeInFeeToken, discount)
   const discountInUSD = getDiscountApplied(feeInUSD, discount)
-  const discountBaseMinInUSD = getDiscountApplied(feeInUSD, discount)
+  const discountBaseMinInUSD = getDiscountApplied(minFeeUSD, discount)
+  const discountBaseMaxInUSD = getDiscountApplied(maxFeeUSD, discount)
 
   // Fees with no discounts applied
   const baseFeeInFeeToken = feeInFeeToken + discountInFeeToken
   const baseFeeInUSD = feeInUSD + discountInUSD
   const baseMinFee = minFee + discountMin
+  const baseMaxFee = maxFee + discountMax
   const baseMinFeeUSD = minFeeUSD + discountBaseMinInUSD
+  const baseMaxFeeUSD = maxFeeUSD + discountBaseMaxInUSD
 
   const isUnderpriced = !!estimation.customFee
     && !isNaN(parseFloat(estimation.customFee))
     && (baseFeeInFeeToken < baseMinFee)
+
+  const isOverpriced = !!estimation.customFee
+    && !isNaN(parseFloat(estimation.customFee))
+    && (baseFeeInFeeToken > baseMaxFee)
 
   return (<>
     {insufficientFee ?
@@ -221,15 +248,32 @@ export function FeeSelector({ disabled, signer, estimation, network, setEstimati
                 value={estimation.customFee}
               />
               {isUnderpriced &&
-                <div className='underpriced-warning'>
+                <div className='price-warning'>
                   <div>Custom Fee too low. You can try to "sign and send" the transaction but most probably it will fail.</div>
                   <div>Min estimated fee: &nbsp;
                     {<Button textOnly
                       onClick={() => setCustomFee(baseMinFee)}
                     >
-                      {baseMinFee} {symbol} 
+                      {baseMinFee} {symbol}
                     </Button>}
-                    &nbsp; (~${(baseMinFeeUSD).toFixed(baseMinFeeUSD < 1 ? 4 : 2)})
+                    {!isNaN(baseMinFeeUSD) &&
+                      <span>&nbsp; (~${(baseMinFeeUSD).toFixed(baseMinFeeUSD < 1 ? 4 : 2)}) </span>
+                    }
+                  </div>
+                </div>
+              }
+              {isOverpriced &&
+                <div className='price-warning'>
+                  <div>Custom Fee is higher than the APE speed. You will pay more than probably needed. Make sure you know what are you doing!</div>
+                  <div>Max estimated fee: &nbsp;
+                    {<Button textOnly
+                      onClick={() => setCustomFee(baseMaxFee)}
+                    >
+                      {baseMaxFee} {symbol}
+                    </Button>}
+                    {!isNaN(baseMaxFeeUSD) &&
+                      <span>&nbsp; (~${(baseMaxFeeUSD).toFixed(baseMaxFeeUSD < 1 ? 4 : 2)}) </span>
+                    }
                   </div>
                 </div>
               }
@@ -251,9 +295,11 @@ export function FeeSelector({ disabled, signer, estimation, network, setEstimati
               </a>}:
           </div>
           <div className='fee-amounts'>
-            <div>
-              ~${(baseFeeInUSD).toFixed(baseFeeInUSD < 1 ? 4 : 2)}
-            </div>
+            {!isNaN(feeInUSD) &&
+              <div>
+                ~${(baseFeeInUSD).toFixed(baseFeeInUSD < 1 ? 4 : 2)}
+              </div>
+            }
             <div>
               {(baseFeeInFeeToken) + ' ' + estimation.selectedFeeToken.symbol}
             </div>
@@ -291,7 +337,7 @@ export function FeeSelector({ disabled, signer, estimation, network, setEstimati
     </div>
 
     {!estimation.feeInUSD ?
-      (<span><b>WARNING:</b> Paying fees in tokens other than {nativeAssetSymbol} is unavailable because you are not connected to a relayer. You will pay the fee from <b>{signer.address}</b>.</span>)
+      (<span className='no-relayer-msg'><b>WARNING:</b> Paying fees in tokens other than {nativeAssetSymbol} is unavailable because you are not connected to a relayer. You will pay the fee from <b>{signer.address}</b>.</span>)
       : (<></>)}
   </>)
 }

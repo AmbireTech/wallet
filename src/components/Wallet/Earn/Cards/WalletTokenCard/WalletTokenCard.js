@@ -11,6 +11,7 @@ import { Interface, parseUnits } from "ethers/lib/utils"
 import { getProvider } from 'lib/provider'
 import ERC20ABI from 'adex-protocol-eth/abi/ERC20.json'
 import networks from 'consts/networks'
+import { getTokenIcon } from 'lib/icons'
 
 const WALLET_TOKEN_ADDRESS = '0x88800092ff476844f74dc2fc427974bbee2794ae'
 const WALLET_STAKING_ADDRESS = '0x47cd7e91c3cbaaf266369fe8518345fc4fc12935'
@@ -42,7 +43,7 @@ const WalletTokenCard = ({ networkId, accountId, tokens, rewardsData, addRequest
     const tokensItems = useMemo(() => [
         {
             type: 'deposit',
-            icon: 'https://assets.coingecko.com/coins/images/23154/small/wallet.PNG?1643352408',
+            icon: getTokenIcon(networkId, WALLET_TOKEN_ADDRESS),
             label: 'WALLET',
             value: WALLET_TOKEN_ADDRESS,
             symbol: 'WALLET',
@@ -51,7 +52,7 @@ const WalletTokenCard = ({ networkId, accountId, tokens, rewardsData, addRequest
         },
         {
             type: 'withdraw',
-            icon: 'https://assets.coingecko.com/coins/images/23154/small/wallet.PNG?1643352408',
+            icon: getTokenIcon(networkId, WALLET_STAKING_ADDRESS),
             label: 'xWALLET',
             value: WALLET_STAKING_ADDRESS,
             symbol: 'xWALLET',
