@@ -319,14 +319,15 @@ export function FeeSelector({ disabled, signer, estimation, network, setEstimati
               </a>}:
           </div>
           <div className='fee-amounts'>
-            {!isNaN(feeInUSD) &&
+            {!isNaN(baseFeeInUSD) &&
               <div>
                 ~${formatFloatTokenAmount(baseFeeInUSD, true, 4)}
               </div>
             }
-            <div>
+            {!isNaN(baseFeeInFeeToken) && <div>
               {formatFloatTokenAmount(baseFeeInFeeToken, true, decimals) + ' ' + estimation.selectedFeeToken.symbol}
             </div>
+            }
           </div>
         </div>)}
 
