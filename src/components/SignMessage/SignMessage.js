@@ -103,6 +103,11 @@ export default function SignMessage ({ toSign, resolve, account, connections, re
     setLoading(false)
   }
 
+  const handleSubmit = e => {
+    e.preventDefault() 
+    approve()
+  }
+
   return (<div id='signMessage'>
     <div id='signingAccount' className='panel'>
       <div className='title'>
@@ -144,7 +149,7 @@ export default function SignMessage ({ toSign, resolve, account, connections, re
       />
 
       <div className='actions'>
-        <form onSubmit={e => { e.preventDefault() }}>
+        <form onSubmit={handleSubmit}>
           {account.signer.quickAccManager && (<>
             <TextInput
               password
@@ -153,8 +158,9 @@ export default function SignMessage ({ toSign, resolve, account, connections, re
               value={signingState.passphrase}
               onChange={value => setSigningState({ ...signingState, passphrase: value })}
             ></TextInput>
+            <input type="submit" hidden />
           </>)}
-
+          
           <div className="buttons">
             <Button
               danger
@@ -162,7 +168,7 @@ export default function SignMessage ({ toSign, resolve, account, connections, re
               className='reject'
               onClick={() => resolve({ message: 'signature denied' })}
             >Reject</Button>
-            <Button className='approve' onClick={approve} disabled={isLoading}>
+            <Button type="submit" className='approve' disabled={isLoading}>
               {isLoading ? (<><Loading/>Signing...</>)
               : (<><MdCheck/> Sign</>)}
             </Button>
