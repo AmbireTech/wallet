@@ -1,14 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-import { ZAPPER_API_KEY } from 'config';
-import { fetchGet } from 'lib/fetch';
-import { ZAPPER_API_ENDPOINT } from 'config'
 import supportedProtocols from 'consts/supportedProtocols';
 import { setKnownAddresses, setKnownTokens } from 'lib/humanReadableTransactions';
-import { VELCRO_API_ENDPOINT } from 'config'
 import { getTokenListBalance, tokenList, checkTokenList } from 'lib/balanceOracle'
-
-const getBalances = (apiKey, network, protocol, address, provider) => fetchGet(`${provider === 'velcro' ? VELCRO_API_ENDPOINT : ZAPPER_API_ENDPOINT}/protocols/${protocol}/balances?addresses[]=${address}&network=${network}&api_key=${apiKey}&newBalances=true`)
 
 let lastOtherProcolsRefresh = null
 
@@ -51,7 +45,7 @@ async function supplementTokensDataFromNetwork({ walletAddr, network, tokensData
   }
 
 
-export default function usePortfolio({ currentNetwork, account, useStorage, isVisible, onMessage }) {
+export default function usePortfolio({ currentNetwork, account, useStorage, isVisible, onMessage, getBalances }) {
     const currentAccount = useRef();
     const [isBalanceLoading, setBalanceLoading] = useState(true);
     const [areProtocolsLoading, setProtocolsLoading] = useState(true);
@@ -118,7 +112,7 @@ export default function usePortfolio({ currentNetwork, account, useStorage, isVi
 
             const updatedTokens = (await Promise.all(networks.map(async ({ network, balancesProvider }) => {
                 try {
-                    const balance = await getBalances(ZAPPER_API_KEY, network, 'tokens', account, balancesProvider)
+                    const balance = await getBalances(network, 'tokens', account, balancesProvider)
                     if (!balance) return null
 
                     const { meta, products } = Object.values(balance)[0]
@@ -158,7 +152,7 @@ export default function usePortfolio({ currentNetwork, account, useStorage, isVi
             onMessage(error.message, { error: true })
             return false
         }
-    }, [getExtraTokensAssets, fetchSupplementTokenData, onMessage])
+    }, [getExtraTokensAssets, fetchSupplementTokenData, onMessage, getBalances])
 
     const fetchOtherProtocols = useCallback(async (account, currentNetwork = false) => {
         try {
@@ -170,7 +164,7 @@ export default function usePortfolio({ currentNetwork, account, useStorage, isVi
             const updatedProtocols = (await Promise.all(protocols.map(async ({ network, protocols, nftsProvider }) => {
                 const all = (await Promise.all(protocols.map(async protocol => {
                     try {
-                        const balance = await getBalances(ZAPPER_API_KEY, network, protocol, account, protocol === 'nft' ? nftsProvider : null)
+                        const balance = await getBalances(network, protocol, account, protocol === 'nft' ? nftsProvider : null)
                         return balance ? Object.values(balance)[0] : null
                     } catch(e) {
                         console.error('Balances API error', e)
@@ -207,7 +201,7 @@ export default function usePortfolio({ currentNetwork, account, useStorage, isVi
             onMessage(error.message, { error: true })
             return false
         }
-    }, [onMessage])
+    }, [onMessage, getBalances])
 
     const refreshTokensIfVisible = useCallback(() => {
         if (!account) return
