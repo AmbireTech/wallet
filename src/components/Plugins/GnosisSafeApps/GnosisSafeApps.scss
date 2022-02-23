@@ -38,6 +38,14 @@
         background: lighten($panel-background-color, 50%);
       }
 
+      &.add-plugin {
+        align-self: center;
+        justify-content: center;
+        text-align: center;
+        background: 0;
+        cursor: default;
+      }
+
       div.logo-container {
         margin: 12px auto 8px auto;
         width: 48px;
@@ -65,11 +73,18 @@
     }
 
     &.small-thumbs {
-      margin: 0px -6px 8px -6px;
+      margin: 0px -3px 6px -3px;
 
       li {
-        margin: 0px 6px;
+        margin: 3px 3px;
         padding: 6px;
+        position: relative;
+
+        .remove-btn {
+          position: absolute;
+          top: 0;
+          right: 0;
+        }
 
         div.logo-container {
           margin: 4px auto 4px auto;
