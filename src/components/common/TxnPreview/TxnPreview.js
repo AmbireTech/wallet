@@ -10,6 +10,7 @@ import { HiOutlineExternalLink } from 'react-icons/hi'
 import { MdOutlineClose } from 'react-icons/md'
 import { BsChevronDown, BsChevronUp } from 'react-icons/bs'
 import { getTokenIcon } from 'lib/icons'
+import { formatFloatTokenAmount } from 'lib/formatters'
 
 function getNetworkSymbol(networkId) {
   const network = networks.find(x => x.id === networkId)
@@ -25,7 +26,7 @@ function parseExtendedSummaryItem(item, i, networkDetails) {
 
   if (item.type === 'token') return (
     <div className='token' key={`item-${i}`}>
-      { item.amount > 0 ? <span>{ item.amount }</span> : null }
+      { item.amount > 0 ? <span>{ formatFloatTokenAmount(item.amount, true, item.decimals) }</span> : null }
       { item.address ? <div className='icon' style={{ backgroundImage: `url(${getTokenIcon(networkDetails.id, item.address)})` }}></div> : null }
       { item.symbol }
     </div>
