@@ -42,7 +42,7 @@ export function getTransactionSummary(txn, networkId, accountAddr, opts = {}) {
         {
             type: 'address',
             address: to,
-            name
+            name: getName(to, network)
         }
     ]
 
@@ -64,7 +64,7 @@ export function getTransactionSummary(txn, networkId, accountAddr, opts = {}) {
                 const actions = humanizer({ to, value, data, from: accountAddr }, network, opts)
                 return opts.extended === true ? actions : actions.join(', ')
             } catch (e) {
-                callSummary += ' (unable to parse)'
+                callSummary = opts.extended ? callSummary.concat(['(unable to parse)']) :  callSummary + ' (unable to parse)'
                 console.error('internal tx humanization error', e)
             }
         }

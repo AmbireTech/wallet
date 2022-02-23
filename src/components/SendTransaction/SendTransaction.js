@@ -16,7 +16,12 @@ import { FeeSelector, FailingTxn } from './FeeSelector'
 import Actions from './Actions'
 import TxnPreview from 'components/common/TxnPreview/TxnPreview'
 import { sendNoRelayer } from './noRelayer'
-import { isTokenEligible, getFeePaymentConsequences } from './helpers'
+import { 
+  isTokenEligible, 
+  // getFeePaymentConsequences, 
+  getFeesData,
+  toHexAmount,
+ } from './helpers'
 import { fetchPost } from 'lib/fetch'
 import { toBundleTxn } from 'lib/requestToBundleTxn'
 import { getProvider } from 'lib/provider'
@@ -131,15 +136,15 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, network, account,
                 prevEstimation
                 && isTokenEligible(prevEstimation.selectedFeeToken, feeSpeed, estimation)
                 && prevEstimation.selectedFeeToken
-              ) || estimation.remainingFeeTokenBalances.find(token => isTokenEligible(token, feeSpeed, estimation))
+              ) || estimation.remainingFeeTokenBalances
+              // .sort((a, b) => (b.discount || 0) - (a.discount || 0))
+              .find(token => isTokenEligible(token, feeSpeed, estimation))
               || estimation.remainingFeeTokenBalances[0]
           }
           return estimation
         })
-        if (estimation.nextNonce) {
-          setReplaceTx((estimation.nextNonce.pendingBundle.nonce?.num || estimation.nextNonce.nonce) === estimation.nextNonce.nonce)
-        } else {
-          console.error('No nextNonce found. did the estimation revert?', estimation)
+        if (estimation.nextNonce && !estimation.nextNonce.pendingBundle) {
+          setReplaceTx(false)
         }
       })
       .catch(e => {
@@ -155,8 +160,10 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, network, account,
       unmounted = true
       clearInterval(intvl)
     }
-  }, [bundle, setEstimation, feeSpeed, addToast, network, relayerURL, signingStatus])
+  }, [bundle, setEstimation, feeSpeed, addToast, network, relayerURL, signingStatus, replaceTx, setReplaceTx])
 
+  // The final bundle is used when signing + sending it
+  // the bundle before that is used for estimating
   const getFinalBundle = useCallback(() => {
     if (!relayerURL) {
       return new Bundle({
@@ -166,27 +173,31 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, network, account,
     }
 
     const feeToken = estimation.selectedFeeToken
-    const { addedGas, multiplier } = getFeePaymentConsequences(feeToken, estimation)
-    const toHexAmount = amnt => '0x' + Math.round(amnt).toString(16)
+
+    const {
+      feeInNative,
+      // feeInUSD, // don't need fee in USD for stables as it will work with feeInFeeToken
+      // Also it can be stable but not in USD
+      feeInFeeToken,
+      addedGas
+    } = getFeesData(feeToken, estimation, feeSpeed)
     const feeTxn = feeToken.symbol === network.nativeAssetSymbol
-      ? [accountPresets.feeCollector, toHexAmount(estimation.feeInNative[feeSpeed] * multiplier * 1e18), '0x']
+      // TODO: check native decimals 
+      ? [accountPresets.feeCollector, toHexAmount(feeInNative, 18), '0x']
       : [feeToken.address, '0x0', ERC20.encodeFunctionData('transfer', [
         accountPresets.feeCollector,
-        toHexAmount(
-          (feeToken.isStable ? estimation.feeInUSD[feeSpeed] : estimation.feeInNative[feeSpeed])
-          * multiplier
-          * Math.pow(10, feeToken.decimals)
-        )
-      ])]
+        toHexAmount(feeInFeeToken, feeToken.decimals)
+    ])]
 
-    const nextNonMinedNonce = (estimation?.nextNonce.pendingBundle?.nonce?.num || estimation?.nextNonce.nonce)
-    const nextFreeNonce = estimation?.nextNonce.nonce
+    const pendingBundle = estimation.nextNonce?.pendingBundle
+    const nextFreeNonce = estimation.nextNonce?.nonce
+    const nextNonMinedNonce = estimation.nextNonce?.nextNonMinedNonce
 
     return new Bundle({
       ...bundle,
       txns: [...bundle.txns, feeTxn],
       gasLimit: estimation.gasLimit + addedGas + (bundle.extraGas || 0),
-      nonce: (replaceTx && (nextNonMinedNonce !== nextFreeNonce)) ? nextNonMinedNonce : nextFreeNonce
+      nonce: (replaceTx && pendingBundle) ? nextNonMinedNonce : nextFreeNonce
     })
   }, [relayerURL, bundle, estimation, feeSpeed, network.nativeAssetSymbol, replaceTx])
 
@@ -207,7 +218,6 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, network, account,
       // Temporary way of debugging the fee cost
       // const initialLimit = finalBundle.gasLimit - getFeePaymentConsequences(estimation.selectedFeeToken, estimation).addedGas
       // finalBundle.estimate({ relayerURL, fetch }).then(estimation => console.log('fee costs: ', estimation.gasLimit - initialLimit), estimation.selectedFeeToken).catch(console.error)
-      if (typeof finalBundle.nonce !== 'number') await finalBundle.getNonce(provider)
       await finalBundle.sign(wallet)
       return await finalBundle.submit({ relayerURL, fetch })
     } else {
@@ -223,10 +233,6 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, network, account,
 
     const finalBundle = (signingStatus && signingStatus.finalBundle) || getFinalBundle()
     const signer = finalBundle.signer
-
-    if (typeof finalBundle.nonce !== 'number') {
-      await finalBundle.getNonce(getProvider(network.id))
-    }
 
     const { signature, success, message, confCodeRequired } = await fetchPost(
       `${relayerURL}/second-key/${bundle.identity}/${network.id}/sign`, {
@@ -272,6 +278,10 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, network, account,
 
     if (account.signerExtra && account.signerExtra.type === 'ledger') {
       addToast('Please confirm this transaction on your Ledger device.', { timeout: 10000 })
+    }
+
+    if (account.signerExtra && account.signerExtra.type === 'Lattice') {
+      addToast('Please confirm this transaction on your Lattice device.', { timeout: 10000 })
     }
 
     const requestIds = bundle.requestIds
@@ -400,11 +410,12 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, network, account,
               network={network}
               feeSpeed={feeSpeed}
               setFeeSpeed={setFeeSpeed}
+              onDismiss={onDismiss}
             ></FeeSelector>
           </div>
 
           {
-            (estimation?.nextNonce?.pendingBundle?.nonce?.num || estimation?.nextNonce?.nonce) !== estimation?.nextNonce?.nonce &&
+            !!estimation?.nextNonce?.pendingBundle &&
             (
               <div>
                 Replace Transaction?

@@ -10,6 +10,7 @@ import Movr from './Movr'
 import OpenSea from './OpenSea'
 import WALLETSupplyController from './WALLETSupplyController'
 import AmbireBatcher from './AmbireBatcher'
+import WALLETStakingPool from './WALLETStakingPool'
 
 const all = {
 	...UniRouters,
@@ -23,6 +24,7 @@ const all = {
 	...Movr,
 	...OpenSea,
 	...WALLETSupplyController,
-	...AmbireBatcher
+	...AmbireBatcher,
+	...WALLETStakingPool,
 }
 export default all

@@ -9,12 +9,8 @@ import { ToolTip } from 'components/common'
 import { HiOutlineExternalLink } from 'react-icons/hi'
 import { MdOutlineClose } from 'react-icons/md'
 import { BsChevronDown, BsChevronUp } from 'react-icons/bs'
-
-const zapperStorageTokenIcons = 'https://storage.googleapis.com/zapper-fi-assets/tokens'
-
-function getTokenIcon(network, address) {
-  return `${zapperStorageTokenIcons}/${network}/${address}.png`
-}
+import { getTokenIcon } from 'lib/icons'
+import { formatFloatTokenAmount } from 'lib/formatters'
 
 function getNetworkSymbol(networkId) {
   const network = networks.find(x => x.id === networkId)
@@ -30,7 +26,7 @@ function parseExtendedSummaryItem(item, i, networkDetails) {
 
   if (item.type === 'token') return (
     <div className='token' key={`item-${i}`}>
-      { item.amount > 0 ? <span>{ item.amount }</span> : null }
+      { item.amount > 0 ? <span>{ formatFloatTokenAmount(item.amount, true, item.decimals) }</span> : null }
       { item.address ? <div className='icon' style={{ backgroundImage: `url(${getTokenIcon(networkDetails.id, item.address)})` }}></div> : null }
       { item.symbol }
     </div>
@@ -97,10 +93,9 @@ export default function TxnPreview ({ txn, onDismiss, network, account, isFirstF
                 {isExpanded ? (<BsChevronUp/>) : (<BsChevronDown/>)}
               </div>)}
               <div className="summary">{ summary }</div>
-              <div className='separator'></div>
-              {isFirstFailing && (<div className='firstFailingLabel'>This is the first failing transaction.</div>)}
-              {!isFirstFailing && !mined && !isKnown(txn, account) && (<div className='unknownWarning'>Warning: interacting with an unknown contract or address.</div>)}
             </div>
+            {isFirstFailing && (<div className='firstFailingLabel'>This is the first failing transaction.</div>)}
+              {!isFirstFailing && !mined && !isKnown(txn, account) && (<div className='unknownWarning'>Warning: interacting with an unknown contract or address.</div>)}
           </div>
           <div className='actionIcons'>
             {onDismiss ? (
