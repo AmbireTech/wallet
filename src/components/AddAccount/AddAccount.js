@@ -22,6 +22,7 @@ import { isFirefox } from 'lib/isFirefox'
 import { VscJson } from 'react-icons/vsc'
 import { useDropzone } from 'react-dropzone'
 import { validateImportedAccountProps, fileSizeValidator } from 'lib/validations/importedAccountValidations'
+import { LatticeModal } from 'components/Modals'
 
 TrezorConnect.manifest({
   email: 'contactus@ambire.com',
@@ -187,6 +188,18 @@ export default function AddAccount({ relayerURL, onAddAccount }) {
     )
   }, [getAccountByAddr, relayerURL])
 
+  const getGridPlusAddresses = ({ addresses, deviceId, commKey, isPaired }) => {
+    setChooseSigners({
+      addresses, signerName: 'Lattice', signerExtra: {
+        type: 'Lattice', deviceId, commKey, isPaired
+      }
+    })
+  }
+
+  async function connectGridPlusAndGetAccounts() {
+    showModal(<LatticeModal addresses={getGridPlusAddresses} />)
+  }
+
   async function connectTrezorAndGetAccounts() {
     /*
     const engine = new Web3ProviderEngine({ pollingInterval: this.pollingInterval })
@@ -338,6 +351,10 @@ export default function AddAccount({ relayerURL, onAddAccount }) {
       <div className="icon" style={{ backgroundImage: 'url(./resources/ledger.png)' }}/>
       Ledger
     </button>
+    <button onClick={() => wrapProgress(connectGridPlusAndGetAccounts, 'hwwallet')}>
+      <div className="icon" style={{ backgroundImage: 'url(./resources/grid-plus.png)' }}/>
+      Grid+ Lattice1
+    </button>
     <button onClick={() => wrapErr(connectWeb3AndGetAccounts)}>
       <div className="icon" style={{ backgroundImage: 'url(./resources/metamask.png)' }}/>
       Metamask / Browser
@@ -357,6 +374,7 @@ export default function AddAccount({ relayerURL, onAddAccount }) {
           <h3>Add an account</h3>
           {addFromSignerButtons}
           <h3>NOTE: You can enable email/password login by connecting to a relayer.</h3>
+          {addAccErr ? (<p className="error" style={{maxWidth: '800px'}}>{addAccErr}</p>) : (<></>)}
         </div>
       </section>
     </div>)

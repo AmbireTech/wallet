@@ -5,6 +5,7 @@ import HDNode from 'hdkey'
 import { LedgerSubprovider } from '@0x/subproviders/lib/src/subproviders/ledger' // https://github.com/0xProject/0x-monorepo/issues/1400
 import { ledgerEthereumBrowserClientFactoryAsync } from '@0x/subproviders/lib/src' // https://github.com/0xProject/0x-monorepo/issues/1400
 import { ledgerSignMessage, ledgerSignTransaction } from './ledgerWebHID'
+import { latticeInit, latticeConnect, latticeSignMessage, latticeSignTransaction } from 'lib/lattice'
 
 let wallets = {}
 
@@ -44,6 +45,55 @@ function getWalletNew({ chainId, signer, signerExtra }, opts) {
       return {
         signMessage: hash => provider.signPersonalMessageAsync(ethers.utils.hexlify(hash), signer.address),
         signTransaction: params => provider.signTransactionAsync({ ...params, from: signer.address })
+      }
+    }
+  } else if (signerExtra && signerExtra.type === 'Lattice') {
+    return {
+      signMessage: async hash => {
+        try {
+          const { commKey, deviceId } = signerExtra
+          const client = latticeInit(commKey)
+          const {isPaired, errConnect } = await latticeConnect(client, deviceId)
+
+          if (errConnect) throw new Error(errConnect.message || errConnect)
+
+          if (!isPaired) {
+            // Canceling the visualization of the secret code on the device's screen.
+            client.pair('')
+            throw new Error('The Lattice device is not paired! Please re-add your account!')
+          }
+
+          const { signedMsg, errSignMessage } = await latticeSignMessage(client, hash)
+          if (errSignMessage) throw new Error(errSignMessage)
+
+          return signedMsg
+        } catch(e) {
+          console.log(e)
+          throw new Error(`Lattice: ${e}`)
+        }
+      },
+      signTransaction: async params => {
+        try {
+          const { commKey, deviceId } = signerExtra
+          const client = latticeInit(commKey)
+          const {isPaired, errConnect } = await latticeConnect(client, deviceId)
+
+          if (errConnect) throw new Error(errConnect.message || errConnect)
+
+          if (!isPaired) {
+            // Canceling the visualization of the secret code on the device's screen.
+            client.pair('')
+            throw new Error('The Lattice device is not paired! Please re-add your account!')
+          }
+
+          const { serializedSigned, errSignTxn } = await latticeSignTransaction(client, params, chainId)
+          if (errSignTxn) throw new Error(errSignTxn)
+
+          return serializedSigned
+        } catch(e) {
+          console.log(e)
+          throw new Error(`Lattice: ${e}`)
+        }
       }
     }
   } else if (signer.address) {
