@@ -136,7 +136,7 @@ export function FeeSelector({ disabled, signer, estimation, network, setEstimati
     </div>
   </>) : (<></>)
 
-  const { discount = 0, symbol } = estimation.selectedFeeToken
+  const { discount = 0, symbol, nativeRate } = estimation.selectedFeeToken
 
   const setCustomFee = value => setEstimation(prevEstimation => ({
     ...prevEstimation,
@@ -175,7 +175,7 @@ export function FeeSelector({ disabled, signer, estimation, network, setEstimati
     const baseFeeInFeeToken = feeInFeeToken + discountInFeeToken
     const baseFeeInFeeUSD = feeInUSD ? feeInUSD + discountInFeeInUSD : null
 
-    const showInUSD = (baseFeeInFeeToken < 0.0001) && baseFeeInFeeUSD
+    const showInUSD = (nativeRate !== null) && baseFeeInFeeUSD
 
     return (
       <div
