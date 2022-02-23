@@ -15,6 +15,7 @@ import { NavLink } from 'react-router-dom'
 import { MdEdit } from 'react-icons/md'
 import { useState } from 'react'
 import { getTokenIcon } from 'lib/icons'
+import { formatFloatTokenAmount } from 'lib/formatters'
 
 const SPEEDS = ['slow', 'medium', 'fast', 'ape']
 const walletDiscountBlogpost = 'https://blog.ambire.com/move-crypto-with-ambire-pay-gas-with-wallet-and-save-30-on-fees-35dca1002697'
@@ -324,10 +325,7 @@ export function FeeSelector({ disabled, signer, estimation, network, setEstimati
               </div>
             }
             <div>
-              {
-                baseFeeInFeeToken.toLocaleString('fullwide', { useGrouping: true, maximumSignificantDigits: 6 })
-                + ' ' + estimation.selectedFeeToken.symbol
-              }
+              {formatFloatTokenAmount(baseFeeInFeeToken, true, 8) + ' ' + estimation.selectedFeeToken.symbol}
             </div>
           </div>
         </div>)}
