@@ -7,8 +7,9 @@ const ADDED_GAS_NATIVE = 12000
 
 export function isTokenEligible(token, speed, estimation) {
   if (!token) return false
-  const min = token.isStable ? estimation.feeInUSD[speed] : estimation.feeInNative[speed]
-  return parseInt(token.balance) / Math.pow(10, token.decimals) > min
+  const { feeInFeeToken } = getFeesData(token, estimation, speed )
+  const balanceInFeeToken = (parseInt(token.balance) / Math.pow(10, token.decimals))
+  return balanceInFeeToken > feeInFeeToken
 }
 
 // can't think of a less funny name for that
@@ -52,6 +53,7 @@ export function toHexAmount(amnt, decimals) {
 
 export function getDiscountApplied(amnt, discount = 0) {
   if (!discount) return 0
+  if (!amnt) return 0
   if (discount === 1) return amnt
   return amnt / (1 - discount) * discount
 }
@@ -66,9 +68,8 @@ export function getFeesData(feeToken, estimation, speed) {
   const feeInNative = estimation.customFee
     ? ((estimation.customFee * discountMultiplier) / nativeRate)
     : estimation.feeInNative[speed] * totalMultiplier
-    
 
-  const feeInUSD = feeInNative * estimation.nativeAssetPriceInUSD
+  const feeInUSD = !isNaN(estimation.nativeAssetPriceInUSD) ? feeInNative * estimation.nativeAssetPriceInUSD : undefined
 
   const feeInFeeToken = feeInNative * nativeRate
 

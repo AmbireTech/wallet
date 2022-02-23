@@ -15,28 +15,45 @@ import { NavLink } from 'react-router-dom'
 import { MdEdit } from 'react-icons/md'
 import { useState } from 'react'
 import { getTokenIcon } from 'lib/icons'
+import { formatFloatTokenAmount } from 'lib/formatters'
 
 const SPEEDS = ['slow', 'medium', 'fast', 'ape']
-const walletDiscountBlogpost = 'https://medium.com/@marialuiza.cluve/start-moving-crypto-with-ambire-pay-gas-with-wallet-and-jump-on-the-exclusive-promo-7c605a181294'
+const walletDiscountBlogpost = 'https://blog.ambire.com/move-crypto-with-ambire-pay-gas-with-wallet-and-save-30-on-fees-35dca1002697'
+
+// NOTE: Order matters for for secondary fort after the one by discount
+const DISCOUNT_TOKENS_SYMBOLS = ['WALLET', 'WALLET-STAKING', 'xWALLET']
+
+function getBalance(token) {
+  const { balance, decimals, priceInUSD } = token
+  return balance / decimals * priceInUSD
+}
 
 const WalletDiscountBanner = ({ currenciesItems, tokens, estimation, onFeeCurrencyChange, onDismiss }) => {
-  const walletDiscountToken = tokens.find(x => x.symbol === 'WALLET' && x.discount)
+  if (estimation.selectedFeeToken?.symbol
+    && (DISCOUNT_TOKENS_SYMBOLS.includes(estimation.selectedFeeToken?.symbol)
+      || estimation.selectedFeeToken.discount)
+  ) {
+    return null
+  }
+  const walletDiscountTokens = [...tokens]
+    .filter(x => DISCOUNT_TOKENS_SYMBOLS.includes(x.symbol) && x.discount)
+    .sort((a, b) =>
+      b.discount - a.discount
+      || ((!parseInt(a.balance) || !parseInt(b.balance)) ? getBalance(b) - getBalance(a) : 0)
+      || DISCOUNT_TOKENS_SYMBOLS.indexOf(a.symbol) - DISCOUNT_TOKENS_SYMBOLS.indexOf(b.symbol)
+    )
 
-  if (!walletDiscountToken) return null
+  if (!walletDiscountTokens.length) return null
 
-  const alreadySelected =
-    estimation.selectedFeeToken?.address === walletDiscountToken.address
-    || estimation.selectedFeeToken?.symbol === walletDiscountToken.symbol
+  const discountToken = walletDiscountTokens[0]
 
-  if (!!alreadySelected) return null
-
-  const { discount } = walletDiscountToken
-  const eligibleWalletToken = currenciesItems.find(x => x.value && (x.value === 'WALLET' || x.value === walletDiscountToken.address))
+  const { discount } = discountToken
+  const eligibleWalletToken = currenciesItems.find(x => x.value && (x.value === 'WALLET' || x.value === discountToken.address))
   const action = !!eligibleWalletToken
     ? () => onFeeCurrencyChange(eligibleWalletToken.value)
     : null
   //TODO: go to swap 
-  const actionTxt = !!eligibleWalletToken ? 'USE $WALLET' : 'BUY WALLET'
+  const actionTxt = !!eligibleWalletToken ? `USE ${discountToken.symbol}` : `BUY ${discountToken.symbol}`
   const showSwap = !action
 
   return (
@@ -95,7 +112,9 @@ export function FeeSelector({ disabled, signer, estimation, network, setEstimati
   }
 
   const currenciesItems = tokens
-    .filter(token => isTokenEligible(token, feeSpeed, estimation))
+    // NOTE: filter by slowest and then will disable the higher fees speeds otherwise 
+    // it will just hide the token from the select
+    .filter(token => isTokenEligible(token, SPEEDS[0], estimation))
     .sort((a, b) => (b.discount || 0) - (a.discount || 0))
     .map(({ address, symbol, discount }) => ({
       icon: address ? getTokenIcon(network.id, address) : null,
@@ -119,8 +138,7 @@ export function FeeSelector({ disabled, signer, estimation, network, setEstimati
     </div>
   </>) : (<></>)
 
-  const areSelectorsDisabled = disabled || insufficientFee
-  const { discount = 0, symbol } = estimation.selectedFeeToken
+  const { discount = 0, symbol, nativeRate, decimals } = estimation.selectedFeeToken
 
   const setCustomFee = value => setEstimation(prevEstimation => ({
     ...prevEstimation,
@@ -133,29 +151,47 @@ export function FeeSelector({ disabled, signer, estimation, network, setEstimati
     setEditCustomFee(false)
   }
 
+  if (insufficientFee) {
+    const sufficientSpeeds = SPEEDS.filter((speed, i) => isTokenEligible(estimation.selectedFeeToken, speed, estimation))
+    const highestSufficientSpeed = sufficientSpeeds[sufficientSpeeds.length - 1]
+    setFeeSpeed(highestSufficientSpeed)
+  }
+
+  const checkIsSelectorDisabled = speed => {
+    const insufficientFee = !isTokenEligible(estimation.selectedFeeToken, speed, estimation)
+    return disabled || insufficientFee
+  }
+
   const feeAmountSelectors = SPEEDS.map(speed => {
     const isETH = symbol === 'ETH' && nativeAssetSymbol === 'ETH'
     const {
       feeInFeeToken,
+      feeInUSD
       // NOTE: get the estimation res data w/o custom fee for the speeds
     } = getFeesData({ ...estimation.selectedFeeToken }, { ...estimation, customFee: null }, speed)
     const discountInFeeToken = getDiscountApplied(feeInFeeToken, discount)
+    const discountInFeeInUSD = getDiscountApplied(feeInUSD, discount)
+
+    const baseFeeInFeeToken = feeInFeeToken + discountInFeeToken
+    const baseFeeInFeeUSD = feeInUSD ? feeInUSD + discountInFeeInUSD : null
+
+    const showInUSD = (nativeRate !== null) && baseFeeInFeeUSD
 
     return (
       <div
         key={speed}
-        className={`feeSquare${!estimation.customFee && feeSpeed === speed ? ' selected' : ''}${areSelectorsDisabled ? ' disabled' : ''}`}
-        onClick={() => !areSelectorsDisabled && selectFeeSpeed(speed)}
+        className={`feeSquare${!estimation.customFee && feeSpeed === speed ? ' selected' : ''}${checkIsSelectorDisabled(speed) ? ' disabled' : ''}`}
+        onClick={() => !checkIsSelectorDisabled(speed) && selectFeeSpeed(speed)}
       >
         {!!discount && <FaPercentage className='discount-badge' />}
         <div className='speed'>{speed}</div>
         <div className='feeEstimation'>
           {(isETH ? 'Ξ ' : '')
-            + (feeInFeeToken + discountInFeeToken)
-            + (!isETH ? ` ${estimation.selectedFeeToken.symbol}` : '')
+            + (showInUSD ? `$${formatFloatTokenAmount(baseFeeInFeeUSD, true, 4)}` : formatFloatTokenAmount(baseFeeInFeeToken, true, decimals))
+            + (!isETH && !showInUSD ? ` ${estimation.selectedFeeToken.symbol}` : '')
           }
         </div>
-        {!isETH && <div className='feeEstimation symbol'>
+        {!isETH && !showInUSD && <div className='feeEstimation symbol'>
           {estimation.selectedFeeToken.symbol}
         </div>}
       </div>
@@ -171,21 +207,35 @@ export function FeeSelector({ disabled, signer, estimation, network, setEstimati
     feeInFeeToken: minFee,
     feeInUSD: minFeeUSD,
   } = getFeesData({ ...estimation.selectedFeeToken }, { ...estimation, customFee: null }, 'slow')
+
+  const {
+    feeInFeeToken: maxFee,
+    feeInUSD: maxFeeUSD,
+  } = getFeesData({ ...estimation.selectedFeeToken }, { ...estimation, customFee: null }, 'ape')
+
   const discountMin = getDiscountApplied(minFee, discount)
+  const discountMax = getDiscountApplied(maxFee, discount)
 
   const discountInFeeToken = getDiscountApplied(feeInFeeToken, discount)
   const discountInUSD = getDiscountApplied(feeInUSD, discount)
-  const discountBaseMinInUSD = getDiscountApplied(feeInUSD, discount)
+  const discountBaseMinInUSD = getDiscountApplied(minFeeUSD, discount)
+  const discountBaseMaxInUSD = getDiscountApplied(maxFeeUSD, discount)
 
   // Fees with no discounts applied
   const baseFeeInFeeToken = feeInFeeToken + discountInFeeToken
   const baseFeeInUSD = feeInUSD + discountInUSD
   const baseMinFee = minFee + discountMin
+  const baseMaxFee = maxFee + discountMax
   const baseMinFeeUSD = minFeeUSD + discountBaseMinInUSD
+  const baseMaxFeeUSD = maxFeeUSD + discountBaseMaxInUSD
 
   const isUnderpriced = !!estimation.customFee
     && !isNaN(parseFloat(estimation.customFee))
     && (baseFeeInFeeToken < baseMinFee)
+
+  const isOverpriced = !!estimation.customFee
+    && !isNaN(parseFloat(estimation.customFee))
+    && (baseFeeInFeeToken > baseMaxFee)
 
   return (<>
     {insufficientFee ?
@@ -194,6 +244,7 @@ export function FeeSelector({ disabled, signer, estimation, network, setEstimati
     }
 
     {WalletDiscountBanner({
+      selectedFeeToken: estimation.selectedFeeToken,
       currenciesItems,
       tokens,
       estimation,
@@ -221,15 +272,32 @@ export function FeeSelector({ disabled, signer, estimation, network, setEstimati
                 value={estimation.customFee}
               />
               {isUnderpriced &&
-                <div className='underpriced-warning'>
+                <div className='price-warning'>
                   <div>Custom Fee too low. You can try to "sign and send" the transaction but most probably it will fail.</div>
                   <div>Min estimated fee: &nbsp;
                     {<Button textOnly
                       onClick={() => setCustomFee(baseMinFee)}
                     >
-                      {baseMinFee} {symbol} 
+                      {baseMinFee} {symbol}
                     </Button>}
-                    &nbsp; (~${(baseMinFeeUSD).toFixed(baseMinFeeUSD < 1 ? 4 : 2)})
+                    {!isNaN(baseMinFeeUSD) &&
+                      <span>&nbsp; (~${formatFloatTokenAmount(baseMinFeeUSD, true, 4)}) </span>
+                    }
+                  </div>
+                </div>
+              }
+              {isOverpriced &&
+                <div className='price-warning'>
+                  <div>Custom Fee is higher than the APE speed. You will pay more than probably needed. Make sure you know what are you doing!</div>
+                  <div>Max estimated fee: &nbsp;
+                    {<Button textOnly
+                      onClick={() => setCustomFee(baseMaxFee)}
+                    >
+                      {baseMaxFee} {symbol}
+                    </Button>}
+                    {!isNaN(baseMaxFeeUSD) &&
+                      <span>&nbsp; (~${formatFloatTokenAmount(baseMaxFeeUSD, true, 4)}) </span>
+                    }
                   </div>
                 </div>
               }
@@ -241,7 +309,7 @@ export function FeeSelector({ disabled, signer, estimation, network, setEstimati
         {(<div className='fee-row native-fee-estimation'>
           <div>
             Fee {!!discount && <span className='discount-label'>*</span>}
-            {!!discount && estimation.selectedFeeToken?.symbol === 'WALLET' &&
+            {!!(discount && DISCOUNT_TOKENS_SYMBOLS.includes(estimation.selectedFeeToken?.symbol)) &&
               <a
                 className="address row discount-label"
                 href={walletDiscountBlogpost}
@@ -251,12 +319,15 @@ export function FeeSelector({ disabled, signer, estimation, network, setEstimati
               </a>}:
           </div>
           <div className='fee-amounts'>
-            <div>
-              ~${(baseFeeInUSD).toFixed(baseFeeInUSD < 1 ? 4 : 2)}
+            {!isNaN(baseFeeInUSD) &&
+              <div>
+                ~${formatFloatTokenAmount(baseFeeInUSD, true, 4)}
+              </div>
+            }
+            {!isNaN(baseFeeInFeeToken) && <div>
+              {formatFloatTokenAmount(baseFeeInFeeToken, true, decimals) + ' ' + estimation.selectedFeeToken.symbol}
             </div>
-            <div>
-              {(baseFeeInFeeToken) + ' ' + estimation.selectedFeeToken.symbol}
-            </div>
+            }
           </div>
         </div>)}
 
@@ -266,7 +337,7 @@ export function FeeSelector({ disabled, signer, estimation, network, setEstimati
           </div>
           <div className='fee-amounts'>
             <div>
-              ~${(discountInUSD).toFixed(discountInUSD < 1 ? 4 : 2)}
+              ~${formatFloatTokenAmount(discountInUSD, true, 4)}
             </div>
             {/* <div>
               {discountInFeeToken + ' ' + estimation.selectedFeeToken.symbol}
@@ -280,7 +351,7 @@ export function FeeSelector({ disabled, signer, estimation, network, setEstimati
           </div>
           <div className='fee-amounts'>
             <div>
-              ~${(feeInUSD).toFixed(feeInUSD < 1 ? 4 : 2)}
+              ~${formatFloatTokenAmount(feeInUSD, true, 4)}
             </div>
             {/* <div>
               {feeInFeeToken + ' ' + estimation.selectedFeeToken.symbol}              
@@ -291,7 +362,7 @@ export function FeeSelector({ disabled, signer, estimation, network, setEstimati
     </div>
 
     {!estimation.feeInUSD ?
-      (<span><b>WARNING:</b> Paying fees in tokens other than {nativeAssetSymbol} is unavailable because you are not connected to a relayer. You will pay the fee from <b>{signer.address}</b>.</span>)
+      (<span className='no-relayer-msg'><b>WARNING:</b> Paying fees in tokens other than {nativeAssetSymbol} is unavailable because you are not connected to a relayer. You will pay the fee from <b>{signer.address}</b>.</span>)
       : (<></>)}
   </>)
 }
