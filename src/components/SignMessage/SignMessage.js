@@ -68,6 +68,8 @@ export default function SignMessage ({ toSign, resolve, account, connections, re
           addToast('Unable to sign: wrong confirmation code', { error: true })
         }
         addToast(`Second signature error: ${message}`, { error: true })
+        setConfFieldState({ isShown: false, confCodeRequired: null })
+        setLoading(false)
         return
       }
       if (confCodeRequired) {
@@ -75,6 +77,7 @@ export default function SignMessage ({ toSign, resolve, account, connections, re
         const confCode = await new Promise((resolve, reject) => { setPromiseResolve(() => resolve) })
         if (!confCode) throw new Error('You must enter a confirmation code')
         await approveQuickAcc(confCode)
+        setLoading(false)
         return
       }
 
@@ -114,9 +117,7 @@ export default function SignMessage ({ toSign, resolve, account, connections, re
   }
 
   const handleInputConfCode = e => {
-    if (e.length === CONF_CODE_LENGTH) {
-        promiseResolve(e)
-    } 
+    if (e.length === CONF_CODE_LENGTH) promiseResolve(e)
   }
 
   const handleSubmit = e => {
@@ -184,9 +185,9 @@ export default function SignMessage ({ toSign, resolve, account, connections, re
               {confFieldState.confCodeRequired === 'otp' && (<span>Please enter your OTP code</span>)}
               <TextInput
                 title="Test"
-                  ref={inputSecretRef}
-                  placeholder="Confirmation code"
-                  onInput={value => handleInputConfCode(value)}
+                ref={inputSecretRef}
+                placeholder={confFieldState.confCodeRequired === 'otp' ? 'Authenticator OTP code' : 'Confirmation code'}
+                onInput={value => handleInputConfCode(value)}
               />
             </>
             )}
