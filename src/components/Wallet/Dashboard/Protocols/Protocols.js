@@ -10,6 +10,7 @@ import { MdOutlineAdd } from 'react-icons/md'
 import { AddTokenModal } from 'components/Modals'
 import { useModals } from 'hooks'
 import { getTokenIcon } from 'lib/icons'
+import { formatFloatTokenAmount } from 'lib/formatters'
 
 const Protocols = ({ portfolio, network, account, hidePrivateValue }) => {
     const { showModal } = useModals()
@@ -25,7 +26,7 @@ const Protocols = ({ portfolio, network, account, hidePrivateValue }) => {
     const otherProtocols = protocols.filter(({ label }) => label !== 'Tokens')
     const shouldShowPlaceholder = (!isBalanceLoading && !tokens.length) && (!areProtocolsLoading && !otherProtocols.length)
 
-    const tokenItem = (index, img, symbol, balance, balanceUSD, address, send = false, network) => 
+    const tokenItem = (index, img, symbol, balance, balanceUSD, address, send = false, network, decimals) => 
         {
             const logo = failedImg.includes(img) ? getTokenIcon(network, address) : img
 
@@ -44,7 +45,7 @@ const Protocols = ({ portfolio, network, account, hidePrivateValue }) => {
             <div className="separator"></div>
             <div className="balance">
                 <div className="currency">
-                    <span className="value">{ hidePrivateValue(balance) }</span>
+                    <span className="value">{ hidePrivateValue(formatFloatTokenAmount(balance, true, decimals)) }</span>
                     <span className="symbol">{ symbol }</span>
                 </div>
                 <div className="dollar">
@@ -86,8 +87,8 @@ const Protocols = ({ portfolio, network, account, hidePrivateValue }) => {
                                 </div>
                                 <div className="list">
                                     { 
-                                        sortedTokens.map(({ address, symbol, tokenImageUrl, balance, balanceUSD, network }, i) =>
-                                            tokenItem(i, tokenImageUrl, symbol, balance, balanceUSD, address, true, network))
+                                        sortedTokens.map(({ address, symbol, tokenImageUrl, balance, balanceUSD, network, decimals }, i) =>
+                                            tokenItem(i, tokenImageUrl, symbol, balance, balanceUSD, address, true, network, decimals))
                                     }
                                 </div>
                             </div>
