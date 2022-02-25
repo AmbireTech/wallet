@@ -32,8 +32,6 @@ const AddAuthSigner = ({ selectedNetwork, selectedAcc, onAddBtnClicked }) => {
     success: false, 
     message: ''
   })
-  //TODO: Remove the isLatticePaired
-  const [isLatticePaired, setIsLatticePaired] = useState(true)
   
   async function connectLedgerAndGetAccounts() {
     if (isFirefox()) {
@@ -140,7 +138,7 @@ const AddAuthSigner = ({ selectedNetwork, selectedAcc, onAddBtnClicked }) => {
   async function connectGridPlusAndGetAccounts() {
     if (selectedAcc.signerExtra && 
       selectedAcc.signerExtra.type === 'Lattice' && 
-      selectedAcc.signerExtra.isPaired && isLatticePaired) {
+      selectedAcc.signerExtra.isPaired) {
         const { commKey, deviceId } = selectedAcc.signerExtra
         const client = latticeInit(commKey)
 
@@ -156,10 +154,9 @@ const AddAuthSigner = ({ selectedNetwork, selectedAcc, onAddBtnClicked }) => {
 
         if (!isPaired) {
           setShowLoading(false)
-          setIsLatticePaired(false)
           // Canceling the visualization of the secret code on the device's screen.
           client.pair('')
-          setAddAccErr(`The Lattice device is not paired! Try again to pair the device.`, { error: true })
+          setAddAccErr(`The Lattice device is not paired! Please re-add your account!.`, { timeout: 30000 })
           
           return 
         }
@@ -178,7 +175,6 @@ const AddAuthSigner = ({ selectedNetwork, selectedAcc, onAddBtnClicked }) => {
         }
       } else {
         showModal(<LatticeModal addresses={setLatticeAddresses} />)
-        setIsLatticePaired(true)
       }
   }
 

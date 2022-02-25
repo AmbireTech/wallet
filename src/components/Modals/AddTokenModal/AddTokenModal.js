@@ -47,7 +47,7 @@ const AddTokenModal = ({ network, account, portfolio }) => {
             const balance = formatUnits(balanceOf, decimals)
             setTokenDetails({
                 account,
-                address,
+                address: address.toLowerCase(),
                 network: network.id,
                 balance,
                 balanceRaw: balanceOf.toString(),
