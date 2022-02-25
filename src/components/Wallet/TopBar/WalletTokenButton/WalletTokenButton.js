@@ -4,7 +4,7 @@ import { Button, ToolTip } from "components/common";
 import { WalletTokenModal } from "components/Modals";
 import useClaimableWalletToken from "./useClaimableWalletToken";
 
-const WalletTokenButton = ({ rewardsData, account, network, hidePrivateValue, addRequest }) => {
+const WalletTokenButton = ({ rewardsData, account = {}, network, hidePrivateValue, addRequest }) => {
     const claimableWalletToken = useClaimableWalletToken({ account, network, addRequest })
     const { claimableNow, currentClaimStatus } = claimableWalletToken
     const claimableTokensTotal = currentClaimStatus && !currentClaimStatus.loading ?
