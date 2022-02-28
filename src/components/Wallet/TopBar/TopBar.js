@@ -52,13 +52,13 @@ const TopBar = ({
         <div id="icon" />
       </NavLink>
       <div className={`container ${isMenuOpen ? 'open' : ''}`}>
-        <WalletTokenButton
+        {selectedAcc && <WalletTokenButton
           rewardsData={rewardsData}
           account={account}
           network={network}
           hidePrivateValue={hidePrivateValue}
           addRequest={addRequest}
-        />
+        />}
         {isPrivateMode ? <MdVisibilityOff cursor="pointer" size={28} onClick={togglePrivateMode} /> : <MdRemoveRedEye cursor="pointer" size={28} onClick={togglePrivateMode} />}
         <DApps connections={connections} connect={connect} disconnect={disconnect}/>
         <Accounts accounts={accounts} selectedAddress={selectedAcc} onSelectAcc={onSelectAcc} onRemoveAccount={onRemoveAccount} hidePrivateValue={hidePrivateValue}/>
