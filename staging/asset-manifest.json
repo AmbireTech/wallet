@@ -1,22 +1,23 @@
 {
   "files": {
-    "main.css": "./static/css/main.98c924f6.chunk.css",
-    "main.js": "./static/js/main.f76467ba.chunk.js",
-    "main.js.map": "./static/js/main.f76467ba.chunk.js.map",
-    "runtime-main.js": "./static/js/runtime-main.4921c8fc.js",
-    "runtime-main.js.map": "./static/js/runtime-main.4921c8fc.js.map",
-    "static/js/2.c0fe77d9.chunk.js": "./static/js/2.c0fe77d9.chunk.js",
-    "static/js/2.c0fe77d9.chunk.js.map": "./static/js/2.c0fe77d9.chunk.js.map",
-    "static/js/3.d3e8844d.chunk.js": "./static/js/3.d3e8844d.chunk.js",
-    "static/js/3.d3e8844d.chunk.js.map": "./static/js/3.d3e8844d.chunk.js.map",
+    "main.css": "./static/css/main.687fd2fd.chunk.css",
+    "main.js": "./static/js/main.af849ad6.chunk.js",
+    "main.js.map": "./static/js/main.af849ad6.chunk.js.map",
+    "runtime-main.js": "./static/js/runtime-main.c3f13d45.js",
+    "runtime-main.js.map": "./static/js/runtime-main.c3f13d45.js.map",
+    "static/js/2.df1eef0b.chunk.js": "./static/js/2.df1eef0b.chunk.js",
+    "static/js/2.df1eef0b.chunk.js.map": "./static/js/2.df1eef0b.chunk.js.map",
+    "static/js/3.ef790e72.chunk.js": "./static/js/3.ef790e72.chunk.js",
+    "static/js/3.ef790e72.chunk.js.map": "./static/js/3.ef790e72.chunk.js.map",
     "index.html": "./index.html",
-    "static/css/main.98c924f6.chunk.css.map": "./static/css/main.98c924f6.chunk.css.map",
-    "static/js/2.c0fe77d9.chunk.js.LICENSE.txt": "./static/js/2.c0fe77d9.chunk.js.LICENSE.txt",
+    "static/css/main.687fd2fd.chunk.css.map": "./static/css/main.687fd2fd.chunk.css.map",
+    "static/js/2.df1eef0b.chunk.js.LICENSE.txt": "./static/js/2.df1eef0b.chunk.js.LICENSE.txt",
     "static/media/App.scss": "./static/media/UbuntuMono-Regular.9fa7d55c.ttf",
     "static/media/aave.58aec338.svg": "./static/media/aave.58aec338.svg",
     "static/media/Loading.scss": "./static/media/ambire-loader-animation-sprite-160.8b6d7f70.png",
     "static/media/AddAccount.scss": "./static/media/hero-darkened.32d9e32c.svg",
     "static/media/TopBar.scss": "./static/media/logo.ab51d124.png",
+    "static/media/SideBar.scss": "./static/media/opensea.6706f228.svg",
     "static/media/paytrie.338f7c3b.svg": "./static/media/paytrie.338f7c3b.svg",
     "static/media/ramp.26a99e26.svg": "./static/media/ramp.26a99e26.svg",
     "static/media/tesseract.3da02a6d.svg": "./static/media/tesseract.3da02a6d.svg",
@@ -24,9 +25,9 @@
     "static/media/yearn.ac5ab573.svg": "./static/media/yearn.ac5ab573.svg"
   },
   "entrypoints": [
-    "static/js/runtime-main.4921c8fc.js",
-    "static/js/2.c0fe77d9.chunk.js",
-    "static/css/main.98c924f6.chunk.css",
-    "static/js/main.f76467ba.chunk.js"
+    "static/js/runtime-main.c3f13d45.js",
+    "static/js/2.df1eef0b.chunk.js",
+    "static/css/main.687fd2fd.chunk.css",
+    "static/js/main.af849ad6.chunk.js"
   ]
 }
