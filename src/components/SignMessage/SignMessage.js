@@ -184,7 +184,6 @@ export default function SignMessage ({ toSign, resolve, account, connections, re
               (<span>A confirmation code has been sent to your email, it is valid for 3 minutes.</span>)} 
               {confFieldState.confCodeRequired === 'otp' && (<span>Please enter your OTP code</span>)}
               <TextInput
-                title="Test"
                 ref={inputSecretRef}
                 placeholder={confFieldState.confCodeRequired === 'otp' ? 'Authenticator OTP code' : 'Confirmation code'}
                 onInput={value => handleInputConfCode(value)}
