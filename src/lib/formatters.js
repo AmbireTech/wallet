@@ -2,7 +2,7 @@ export function formatFloatTokenAmount(amount, useGrouping = true, maximumFracti
     if (isNaN(amount) || isNaN(parseFloat(amount)) || !(typeof amount === 'number' || typeof amount === 'string')) return amount
 
     try {
-        const minimumFractionDigits = 2
+        const minimumFractionDigits = Math.min(2, maximumFractionDigits || 0)
         return ((typeof amount === 'number') ? amount : parseFloat(amount))
             .toLocaleString(undefined,
                 {
