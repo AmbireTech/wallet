@@ -190,7 +190,10 @@ const WalletTokenCard = ({ networkId, accountId, tokens, rewardsData, addRequest
             info={info}
             onTokenSelect={onTokenSelect}
             onValidate={onValidate}
-            moreDetails={<MoreDetailsModal/>}
+            moreDetails={<MoreDetailsModal 
+                isWalletMoreDetails={true} 
+                accountId={accountId}
+                apy={walletTokenAPY}/>}
         />
     )
 }
