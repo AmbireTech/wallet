@@ -11,7 +11,7 @@ import { getProvider } from 'lib/provider'
 import AmbireBatcherABI from 'consts/AmbireBatcherABI.json'
 import ERC20ABI from 'adex-protocol-eth/abi/ERC20.json'
 import { constants, Contract } from 'ethers'
-import { MoreDetailsModal } from 'components/Modals'
+import { EarnDetailsModal } from 'components/Modals'
 
 const BATCHER_ADDRESS = '0x460fad03099f67391d84c9cc0ea7aa2457969cea'
 const BATCHER_INTERFACE = new Interface(AmbireBatcherABI)
@@ -51,6 +51,11 @@ const YearnTesseractCard = ({ networkId, accountId, tokens, addRequest }) => {
         details,
         onTokenSelect
     } = useMemo(() => networkId === 'polygon' ? tesseract : yearn, [networkId, yearn, tesseract])
+
+    const moreDetails = {
+        title: networkId === 'polygon' ? 'tesseract' : 'What is Yearn.finance',
+        description: networkId === 'polygon' ? 'tesseract' : 'Yearn.finance is a suite of products in DeFi that provides yield generation, lending aggregation, and more on the blockchain. The protocol is maintained by various independent developers and is governed by YFI holders.',
+    }
 
     const onValidate = async (type, value, amount) => {
         const item = tokensItems.find(t => t.type === type.toLowerCase() && t.value === value)
@@ -155,7 +160,10 @@ const YearnTesseractCard = ({ networkId, accountId, tokens, addRequest }) => {
             details={details}
             onTokenSelect={onTokenSelect}
             onValidate={onValidate}
-            moreDetails={<MoreDetailsModal isWalletMoreDetails={false}/>}
+            moreDetails={<EarnDetailsModal 
+                title={moreDetails.title}
+                description={moreDetails.description}
+            />}
         />
     )
 }

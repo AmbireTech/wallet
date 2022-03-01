@@ -11,7 +11,7 @@ import AAVE_ICON from 'resources/aave.svg'
 import Card from 'components/Wallet/Earn/Card/Card'
 import { getDefaultTokensItems } from './defaultTokens'
 import approveToken from 'lib/approveToken'
-import { MoreDetailsModal } from 'components/Modals'
+import { EarnDetailsModal } from 'components/Modals'
 
 const AAVELendingPool = new Interface(AAVELendingPoolAbi)
 const RAY = 10**27
@@ -157,7 +157,9 @@ const AAVECard = ({ networkId, tokens, protocols, account, addRequest }) => {
             tokensItems={tokensItems} 
             onTokenSelect={onTokenSelect} 
             onValidate={onValidate}
-            moreDetails={<MoreDetailsModal isWalletMoreDetails={false}/>}
+            moreDetails={<EarnDetailsModal 
+                title={'What is Aave'}
+                description={'Aave is an open source and non-custodial DeFi protocol for earning interest on deposits and borrowing assets. Depositors provide liquidity to the market to earn a passive income, while borrowers are able to borrow in an overcollateralized (perpetually) or undercollateralized (one-block liquidity) fashion.'}/>}
             />
     )
 }
