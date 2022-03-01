@@ -256,9 +256,16 @@ Additionally, there's an ongoing [Immunefi bug bounty](https://immunefi.com/boun
 * Private mode: hide addresses as well
 
 ### v0.4.3
-* Ability to send transactions while you already have pending ones
-* Ability to modify a currently pending transaction bundle
-* Ability to customize the transaction fee
+* Fee improvements: ability to set a custom fee
+* Fee improvements: ability to select a lower fee if you don't have sufficient funds for the higher settings
+* Ability to replace the current transaction
+* Ability to queue a new transaction when you have one pending
 * $WALLET claiming: can now claim early investor tokens
 * Bugfix: fixed parsing Aave repay transactions
 
+### v0.4.4
+* $WALLET: Ability to stake (xWALLET)
+* $WALLET: Ability to pay transaction fees in $WALLET
+* Grid+ Lattice hardware wallet support
+* $WALLET claiming: show APYs
+* More token icons

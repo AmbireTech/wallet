@@ -73,6 +73,14 @@
         border-radius: 50%;
         background: $danger-color;
       }
+
+      .opensea-icon {
+        height: 30px;
+        width: 30px;
+        background-size: contain;
+        background-image: url('../../../resources/opensea.svg');
+        filter: grayscale(1);
+      }
     }
 
     .separator {
@@ -94,6 +102,10 @@
   a.selected .item {
     background-color: rgba(0, 0, 0, 0.15);
     color: #fff;
+
+    .opensea-icon {
+      filter: grayscale(0);
+    }
   }
 
   .highlight {
