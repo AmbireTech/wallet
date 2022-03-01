@@ -75,6 +75,11 @@ const customTokens = [
 		address: '0x55d398326f99059ff775485246999027b3197955',
 		symbol: 'USDT',
 		decimal: 6
+	},
+	{
+		address: '0x47cd7e91c3cbaaf266369fe8518345fc4fc12935',
+		symbol: 'xWALLET',
+		decimals: 18
 	}
 ]
 
