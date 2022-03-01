@@ -11,7 +11,7 @@ import { Interface, parseUnits, formatUnits } from "ethers/lib/utils"
 import { getProvider } from 'lib/provider'
 import ERC20ABI from 'adex-protocol-eth/abi/ERC20.json'
 import networks from 'consts/networks'
-import { MoreDetailsModal } from 'components/Modals'
+import { WalletEarnDetailsModal } from 'components/Modals'
 import { getTokenIcon } from 'lib/icons'
 
 const WALLET_TOKEN_ADDRESS = '0x88800092ff476844f74dc2fc427974bbee2794ae'
@@ -190,8 +190,7 @@ const WalletTokenCard = ({ networkId, accountId, tokens, rewardsData, addRequest
             info={info}
             onTokenSelect={onTokenSelect}
             onValidate={onValidate}
-            moreDetails={<MoreDetailsModal 
-                isWalletMoreDetails={true} 
+            moreDetails={!unavailable && <WalletEarnDetailsModal 
                 accountId={accountId}
                 apy={walletTokenAPY}/>}
         />
