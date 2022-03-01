@@ -592,12 +592,16 @@ const useWalletEarnDetails = ({accountId}) => {
 
     useEffect(() => {
         const getData = async () => {
-            const data = await getStats()
-            setDetails(data)
+            try {
+                const data = await getStats()
+                setDetails(data)
+            } catch(e) {
+                console.err(e)
+            }
         }
-
+        if (!accountId) return
         getData()
-    }, [getStats, setDetails])
+    }, [accountId, getStats, setDetails])
 
     return details || {}
 }
