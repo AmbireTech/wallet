@@ -1,5 +1,5 @@
 import { Interface } from 'ethers/lib/utils'
-import { token, getName } from 'lib/humanReadableTransactions'
+import { token } from 'lib/humanReadableTransactions'
 import WalletStakingPoolABI from 'consts/WalletStakingPoolABI'
 
 const STAKING_POOLS = {
