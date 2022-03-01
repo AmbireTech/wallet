@@ -1,9 +1,22 @@
 import { Interface } from 'ethers/lib/utils'
-import { token } from 'lib/humanReadableTransactions'
+import { token, getName } from 'lib/humanReadableTransactions'
 import WalletStakingPoolABI from 'consts/WalletStakingPoolABI'
 
-const WALLET_TOKEN_ADDRESS = '0x88800092ff476844f74dc2fc427974bbee2794ae'
-const WALLET_STAKING_ADDRESS = '0x4d3348aa74ba11a2722ea9adec6bc10e92fe3d58'
+const STAKING_POOLS = {
+  '0x47cd7e91c3cbaaf266369fe8518345fc4fc12935': {
+    baseToken: '0x88800092ff476844f74dc2fc427974bbee2794ae',
+    name: 'WALLET Staking Pool'
+  },
+  '0xb6456b57f03352be48bf101b46c1752a0813491a': {
+    baseToken: '0xade00c28244d5ce17d72e40330b1c318cd12b7c3',
+    name: 'ADX Staking Pool'
+  },
+  //this is on polygon for tests
+  '0xec3b10ce9cabab5dbf49f946a623e294963fbb4e': {
+    baseToken: '0xe9415e904143e42007865e6864f7f632bd054a08',
+    name: 'WALLET Staking Pool (Test)'
+  }
+}
 
 const iface = new Interface(WalletStakingPoolABI)
 
@@ -18,7 +31,7 @@ const toExtended = (action, word, token, txn) => {
     {
       type: 'address',
       address: txn.to,
-      name: 'WALLET Staking Pool'
+      name: STAKING_POOLS[txn.to].name
     }
   ]]
 }
@@ -26,18 +39,18 @@ const toExtended = (action, word, token, txn) => {
 const WALLETStakingPool = {
   [iface.getSighash('enter')]: (txn, network, { extended = false }) => {
     const { amount } = iface.parseTransaction(txn).args
-    if (extended) return toExtended('Deposit', 'to', token(WALLET_TOKEN_ADDRESS, amount, true), txn)
-    return [`Deposit ${token(WALLET_TOKEN_ADDRESS, amount)} to WALLET Staking Pool`]
+    if (extended) return toExtended('Deposit', 'to', token(STAKING_POOLS[txn.to].baseToken, amount, true), txn)
+    return [`Deposit ${token(STAKING_POOLS[txn.to].baseToken, amount)} to WALLET Staking Pool`]
   },
   [iface.getSighash('leave')]: (txn, network, { extended = false }) => {
     const { shares } = iface.parseTransaction(txn).args
-    if (extended) return toExtended('Withdraw', 'from', token(WALLET_STAKING_ADDRESS, shares, true), txn)
-    return [`Withdraw ${token(WALLET_STAKING_ADDRESS, shares)} to WALLET Staking Pool`]
+    if (extended) return toExtended('Withdraw', 'from', token(txn.to, shares, true), txn)
+    return [`Withdraw ${token(txn.to, shares)} to WALLET Staking Pool`]
   },
   [iface.getSighash('rageLeave')]: (txn, network, { extended = false }) => {
     const { shares } = iface.parseTransaction(txn).args
-    if (extended) return toExtended('Rage Leave', 'from', token(WALLET_STAKING_ADDRESS, shares, true), txn)
-    return [`Rage Leave ${token(WALLET_STAKING_ADDRESS, shares)} to WALLET Staking Pool`]
+    if (extended) return toExtended('Rage Leave', 'from', token(txn.to, shares, true), txn)
+    return [`Rage Leave ${token(txn.to, shares)} to WALLET Staking Pool`]
   },
 }
 export default WALLETStakingPool
