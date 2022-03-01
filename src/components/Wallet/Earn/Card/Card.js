@@ -9,7 +9,7 @@ import { MdOutlineInfo } from 'react-icons/md'
 
 const segments = [{ value: 'Deposit' }, { value: 'Withdraw' }]
 
-const Card = ({ loading, unavailable, tokensItems, icon, details, info, onTokenSelect, onValidate, moreDetails }) => {    
+const Card = ({ loading, unavailable, tokensItems, icon, details, customInfo, onTokenSelect, onValidate, moreDetails }) => {    
     const [segment, setSegment] = useState(segments[0].value)
     const [tokens, setTokens] = useState([])
     const [token, setToken] = useState()
@@ -95,21 +95,30 @@ const Card = ({ loading, unavailable, tokensItems, icon, details, info, onTokenS
                             }
                             <Segments small defaultValue={segment} segments={segments} onChange={(value) => setSegment(value)}></Segments>
                             {
-                                info ?
+                                customInfo ? 
                                     <div className="info">
-                                        { info }
+                                        { customInfo }
                                     </div>
                                     :
-                                    <NumberInput
-                                        disabled={!currentToken?.balance}
-                                        min="0"
-                                        max={currentToken?.balance}
-                                        value={amount}
-                                        label={amountLabel}
-                                        onInput={(value) => setAmount(value)}
-                                        button="MAX"
-                                        onButtonClick={setMaxAmount}
-                                    />
+                                    <>
+                                        <NumberInput
+                                            disabled={!currentToken?.balance}
+                                            min="0"
+                                            max={currentToken?.balance}
+                                            value={amount}
+                                            label={amountLabel}
+                                            onInput={(value) => setAmount(value)}
+                                            button="MAX"
+                                            onButtonClick={setMaxAmount}
+                                        />
+                                        <div className="separator"></div>
+                                        <Button 
+                                            disabled={disabled || amount <= 0 || amount > currentToken?.balance}
+                                            icon={segment === segments[0].value ? <BsArrowDownSquare/> : <BsArrowUpSquare/>}
+                                            onClick={() => onValidate(segment, token, amount)}>
+                                                { segment }
+                                        </Button>
+                                    </>
                             }
                             <div className="separator"></div>
                             <Button
