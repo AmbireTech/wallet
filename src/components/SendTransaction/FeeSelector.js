@@ -19,7 +19,7 @@ import { formatFloatTokenAmount } from 'lib/formatters'
 
 const SPEEDS = ['slow', 'medium', 'fast', 'ape']
 const walletDiscountBlogpost = 'https://blog.ambire.com/move-crypto-with-ambire-pay-gas-with-wallet-and-save-30-on-fees-35dca1002697'
-
+const OVERPRICED_MULTIPLIER = 1.2
 // NOTE: Order matters for for secondary fort after the one by discount
 const DISCOUNT_TOKENS_SYMBOLS = ['WALLET', 'WALLET-STAKING', 'xWALLET']
 
@@ -225,9 +225,9 @@ export function FeeSelector({ disabled, signer, estimation, network, setEstimati
   const baseFeeInFeeToken = feeInFeeToken + discountInFeeToken
   const baseFeeInUSD = feeInUSD + discountInUSD
   const baseMinFee = minFee + discountMin
-  const baseMaxFee = maxFee + discountMax
+  const baseMaxFee = (maxFee + discountMax) * OVERPRICED_MULTIPLIER
   const baseMinFeeUSD = minFeeUSD + discountBaseMinInUSD
-  const baseMaxFeeUSD = maxFeeUSD + discountBaseMaxInUSD
+  const baseMaxFeeUSD = (maxFeeUSD + discountBaseMaxInUSD) * OVERPRICED_MULTIPLIER
 
   const isUnderpriced = !!estimation.customFee
     && !isNaN(parseFloat(estimation.customFee))
@@ -289,7 +289,7 @@ export function FeeSelector({ disabled, signer, estimation, network, setEstimati
               {isOverpriced &&
                 <div className='price-warning'>
                   <div>Custom Fee is higher than the APE speed. You will pay more than probably needed. Make sure you know what are you doing!</div>
-                  <div>Max estimated fee: &nbsp;
+                  <div>Recommended max fee: &nbsp;
                     {<Button textOnly
                       onClick={() => setCustomFee(baseMaxFee)}
                     >
