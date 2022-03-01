@@ -56,6 +56,7 @@ const contracts = [
 	{ name: 'Ambire Batcher', network: 'ethereum', addr: '0x460fad03099f67391d84c9cc0ea7aa2457969cea', abiName: 'Batcher' },
 	{ name: 'WALLET Staking Pool', network: 'ethereum', addr: '0x47cd7e91c3cbaaf266369fe8518345fc4fc12935', abiName: 'StakingPool' },
 	{ name: 'ADX Staking Pool', network: 'ethereum', addr: '0xb6456b57f03352be48bf101b46c1752a0813491a', abiName: 'StakingPool' },
+	{ name: 'OpenSea', network: 'ethereum', addr: '0x7Be8076f4EA4A4AD08075C2508e481d6C946D12b', abiName: 'WyvernExchange' }
 ]
 const tokenlists = [
 	'https://github.com/trustwallet/assets/raw/master/blockchains/ethereum/tokenlist.json',

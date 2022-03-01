@@ -10,7 +10,7 @@ import WALLETSupplyControllerABI from 'consts/WALLETSupplyControllerABI'
 const supplyControllerAddress = '0xc53af25f831f31ad6256a742b3f0905bc214a430'
 const supplyControllerInterface = new Interface(WALLETSupplyControllerABI)
 
-const useClaimableWalletToken = ({ account, network, addRequest }) => {
+const useClaimableWalletToken = ({ account = {}, network, addRequest }) => {
     const provider = useMemo(() => getProvider('ethereum'), [])
     const supplyController = useMemo(() => new Contract(supplyControllerAddress, WALLETSupplyControllerABI, provider), [provider])
     const initialClaimableEntry = WALLETInitialClaimableRewards.find(x => x.addr === account.id)
