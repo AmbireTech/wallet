@@ -60,7 +60,7 @@ function AppInner() {
     selectedAccount: selectedAcc,
     network: network,
     useStorage: useLocalStorage
-	}, [selectedAcc, network])
+  }, [selectedAcc, network])
 
   // Internal requests: eg from the Transfer page, Security page, etc. - requests originating in the wallet UI itself
   // unlike WalletConnect or SafeSDK requests, those do not need to be persisted
@@ -208,39 +208,42 @@ function AppInner() {
       <Route path="/email-login">
         <EmailLogin relayerURL={relayerURL} onAddAccount={onAddAccount}></EmailLogin>
       </Route>
-
-      <Route path="/wallet">
-        <Wallet
-          match={{ url: "/wallet" }}
-          accounts={accounts}
-          selectedAcc={selectedAcc}
-          addressBook={addressBook}
-          portfolio={portfolio}
-          onSelectAcc={onSelectAcc}
-          onRemoveAccount={onRemoveAccount}
-          allNetworks={allNetworks}
-          network={network}
-          setNetwork={setNetwork}
-          addRequest={addRequest}
-          connections={connections}
-          // needed by the top bar to disconnect/connect dapps
-          connect={connect}
-          disconnect={disconnect}
-          // needed by the gnosis plugins
-          gnosisConnect={gnosisConnect}
-          gnosisDisconnect={gnosisDisconnect}
-          // required for the security and transactions pages
-          relayerURL={relayerURL}
-          // required by the transactions page
-          eligibleRequests={eligibleRequests}
-          showSendTxns={showSendTxns}
-          setSendTxnState={setSendTxnState}
-          onAddAccount={onAddAccount}
-          rewardsData={rewardsData}
-          privateMode={privateMode}
-        >
-        </Wallet>
-      </Route>
+      
+      {selectedAcc ?
+        <Route path="/wallet">
+          <Wallet
+            match={{ url: "/wallet" }}
+            accounts={accounts}
+            selectedAcc={selectedAcc}
+            addressBook={addressBook}
+            portfolio={portfolio}
+            onSelectAcc={onSelectAcc}
+            onRemoveAccount={onRemoveAccount}
+            allNetworks={allNetworks}
+            network={network}
+            setNetwork={setNetwork}
+            addRequest={addRequest}
+            connections={connections}
+            // needed by the top bar to disconnect/connect dapps
+            connect={connect}
+            disconnect={disconnect}
+            // needed by the gnosis plugins
+            gnosisConnect={gnosisConnect}
+            gnosisDisconnect={gnosisDisconnect}
+            // required for the security and transactions pages
+            relayerURL={relayerURL}
+            // required by the transactions page
+            eligibleRequests={eligibleRequests}
+            showSendTxns={showSendTxns}
+            setSendTxnState={setSendTxnState}
+            onAddAccount={onAddAccount}
+            rewardsData={rewardsData}
+            privateMode={privateMode}
+          >
+          </Wallet>
+        </Route> :
+        <Redirect to={"/add-account"} />
+      }
 
       <Route path="/">
         <Redirect to={selectedAcc ? "/wallet/dashboard" : "/add-account"}/>
