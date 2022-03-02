@@ -13,6 +13,7 @@ import ERC20ABI from 'adex-protocol-eth/abi/ERC20.json'
 import networks from 'consts/networks'
 import { WalletEarnDetailsModal } from 'components/Modals'
 import { getTokenIcon } from 'lib/icons'
+import { BsArrowUpSquare } from "react-icons/bs"
 
 const WALLET_TOKEN_ADDRESS = '0x88800092ff476844f74dc2fc427974bbee2794ae'
 const WALLET_STAKING_ADDRESS = '0x47cd7e91c3cbaaf266369fe8518345fc4fc12935'
@@ -47,10 +48,6 @@ const WalletTokenCard = ({ networkId, accountId, tokens, rewardsData, addRequest
 
     const walletToken = useMemo(() => tokens.find(({ address }) => address === WALLET_TOKEN_ADDRESS), [tokens])
     const xWalletToken = useMemo(() => tokens.find(({ address }) => address === WALLET_STAKING_ADDRESS), [tokens])
-
-    const balanceRaw = useMemo(() => xWalletBalanceRaw ? (BigNumber.from(xWalletBalanceRaw).mul(shareValue)).div(BigNumber.from((1e18).toString())).toString() : 0,
-      [xWalletBalanceRaw, shareValue])
-
     const tokensItems = useMemo(() => [
         {
             type: 'deposit',

@@ -31,10 +31,6 @@ const Card = ({ loading, unavailable, tokensItems, icon, details, customInfo, on
 
     const setMaxAmount = () => setAmount(getMaxAmount(amount))
 
-    const isMaxAmount = () => {
-        return amount === getMaxAmount()
-    }
-
     useEffect(() => {
         if (segment === segments[0].value) setTokens(sortedTokenItems.filter(({ type }) => type === 'deposit'))
         if (segment === segments[1].value) setTokens(sortedTokenItems.filter(({ type }) => type === 'withdraw'))
@@ -47,8 +43,7 @@ const Card = ({ loading, unavailable, tokensItems, icon, details, customInfo, on
         setDisabled(!token || !tokens.length)
     }, [token, onTokenSelect, tokens.length])
 
-    const availableAmount = !disabled ? `${getMaxAmount()} ${currentToken?.symbol}` : '0'
-    const amountLabel = <div className="amount-label">Available Amount: <span title={availableAmount}>{availableAmount}</span></div>
+    const amountLabel = <div className="amount-label">Available Amount: <span>{ !disabled ? `${getMaxAmount()} ${currentToken?.symbol}` : '0' }</span></div>
 
     const showMoreDetails = () => {
         if (!!moreDetails) showModal(moreDetails)
@@ -121,12 +116,6 @@ const Card = ({ loading, unavailable, tokensItems, icon, details, customInfo, on
                                     </>
                             }
                             <div className="separator"></div>
-                            <Button
-                                disabled={disabled || amount <= 0 || amount > currentToken?.balance}
-                                icon={segment === segments[0].value ? <BsArrowDownSquare/> : <BsArrowUpSquare/>}
-                                onClick={() => onValidate(segment, token, amount, isMaxAmount())}>
-                                    { segment }
-                            </Button>
                            {!!moreDetails && <Button clear
                                 icon={ <MdOutlineInfo/> }
                                 onClick={() => showMoreDetails()}>
