@@ -48,6 +48,10 @@ const WalletTokenCard = ({ networkId, accountId, tokens, rewardsData, addRequest
 
     const walletToken = useMemo(() => tokens.find(({ address }) => address === WALLET_TOKEN_ADDRESS), [tokens])
     const xWalletToken = useMemo(() => tokens.find(({ address }) => address === WALLET_STAKING_ADDRESS), [tokens])
+
+    const balanceRaw = useMemo(() => xWalletBalanceRaw ? (BigNumber.from(xWalletBalanceRaw).mul(shareValue)).div(BigNumber.from((1e18).toString())).toString() : 0,
+    [xWalletBalanceRaw, shareValue])
+
     const tokensItems = useMemo(() => [
         {
             type: 'deposit',
@@ -60,14 +64,14 @@ const WalletTokenCard = ({ networkId, accountId, tokens, rewardsData, addRequest
         },
         {
             type: 'withdraw',
-            icon: getTokenIcon(networkId, WALLET_STAKING_ADDRESS),
-            label: 'xWALLET',
+            icon: getTokenIcon(networkId, WALLET_TOKEN_ADDRESS),
+            label: 'WALLET',
             value: WALLET_STAKING_ADDRESS,
-            symbol: 'xWALLET',
-            balance: xWalletToken?.balance || 0,
-            balanceRaw: xWalletToken?.balanceRaw || 0,
+            symbol: 'WALLET',
+            balance: formatUnits(balanceRaw, xWalletToken?.decimals),
+            balanceRaw,
         }
-    ], [walletToken, xWalletToken, networkId])
+    ], [networkId, walletToken?.balance, walletToken?.balanceRaw, balanceRaw, xWalletToken?.decimals])
 
     const onWithdraw = useCallback(() => {
         const { shares, unlocksAt } = leaveLog
