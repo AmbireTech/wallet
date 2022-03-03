@@ -3,24 +3,34 @@
 const suportedProtocols = [
     {
         network: 'ethereum',
-        protocols: ['1inch', 'aave-v2', 'alchemix', 'badger', 'balancer-v2', 'compound', 'cream', 'curve', 'sushiswap', 'uniswap-v2', 'uniswap-v3', 'nft'],
+        protocols: [
+		//'1inch', 'aave-v2', 'alchemix', 'badger', 'balancer-v2', 'compound', 'cream', 'curve', 'sushiswap', 'uniswap-v2', 'uniswap-v3',
+		'nft'
+	],
         balancesProvider: 'velcro',
         nftsProvider: 'velcro'
     },
     {
         network: 'polygon',
-        protocols: ['aave-v2', 'quickswap', 'sushiswap', 'nft'],
+        protocols: [
+		//'aave-v2', 'quickswap', 'sushiswap',
+		'nft'
+	],
         balancesProvider: 'velcro',
         nftsProvider: 'velcro'
     },
     {
         network: 'avalanche',
-        protocols: ['aave-v2'],
+        protocols: [
+		//'aave-v2'
+	],
         balancesProvider: 'velcro'
     },
     {
         network: 'binance-smart-chain',
-        protocols: ['pancakeswap'],
+        protocols: [
+		//'pancakeswap'
+	],
         balancesProvider: 'velcro'
     },
     {
