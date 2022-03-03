@@ -1,17 +1,17 @@
 {
   "files": {
     "main.css": "./static/css/main.98c924f6.chunk.css",
-    "main.js": "./static/js/main.f76467ba.chunk.js",
-    "main.js.map": "./static/js/main.f76467ba.chunk.js.map",
+    "main.js": "./static/js/main.adffae0a.chunk.js",
+    "main.js.map": "./static/js/main.adffae0a.chunk.js.map",
     "runtime-main.js": "./static/js/runtime-main.4921c8fc.js",
     "runtime-main.js.map": "./static/js/runtime-main.4921c8fc.js.map",
-    "static/js/2.c0fe77d9.chunk.js": "./static/js/2.c0fe77d9.chunk.js",
-    "static/js/2.c0fe77d9.chunk.js.map": "./static/js/2.c0fe77d9.chunk.js.map",
+    "static/js/2.7b5691f6.chunk.js": "./static/js/2.7b5691f6.chunk.js",
+    "static/js/2.7b5691f6.chunk.js.map": "./static/js/2.7b5691f6.chunk.js.map",
     "static/js/3.d3e8844d.chunk.js": "./static/js/3.d3e8844d.chunk.js",
     "static/js/3.d3e8844d.chunk.js.map": "./static/js/3.d3e8844d.chunk.js.map",
     "index.html": "./index.html",
     "static/css/main.98c924f6.chunk.css.map": "./static/css/main.98c924f6.chunk.css.map",
-    "static/js/2.c0fe77d9.chunk.js.LICENSE.txt": "./static/js/2.c0fe77d9.chunk.js.LICENSE.txt",
+    "static/js/2.7b5691f6.chunk.js.LICENSE.txt": "./static/js/2.7b5691f6.chunk.js.LICENSE.txt",
     "static/media/App.scss": "./static/media/UbuntuMono-Regular.9fa7d55c.ttf",
     "static/media/aave.58aec338.svg": "./static/media/aave.58aec338.svg",
     "static/media/Loading.scss": "./static/media/ambire-loader-animation-sprite-160.8b6d7f70.png",
@@ -25,8 +25,8 @@
   },
   "entrypoints": [
     "static/js/runtime-main.4921c8fc.js",
-    "static/js/2.c0fe77d9.chunk.js",
+    "static/js/2.7b5691f6.chunk.js",
     "static/css/main.98c924f6.chunk.css",
-    "static/js/main.f76467ba.chunk.js"
+    "static/js/main.adffae0a.chunk.js"
   ]
 }
