@@ -13,8 +13,13 @@ const ZERO_ADDR = '0x0000000000000000000000000000000000000000'
 const PRECISION = 1_000_000_000_000
 const POOL_SHARES_TOKEN_DECIMALS_MUL = '1000000000000000000'
 
-const XWALLET_ADDR = '0x47cd7e91c3cbaaf266369fe8518345fc4fc12935'
-const WALLET_ADDR = '0x88800092fF476844f74dC2FC427974BBee2794Ae'
+// const XWALLET_ADDR = '0x47cd7e91c3cbaaf266369fe8518345fc4fc12935'
+// const WALLET_ADDR = '0x88800092fF476844f74dC2FC427974BBee2794Ae'
+
+//TODO: To remove polygon related code
+const XWALLET_ADDR = '0xec3b10ce9cabab5dbf49f946a623e294963fbb4e'
+const WALLET_ADDR = '0xe9415e904143e42007865e6864f7f632bd054a08'
+
 
 const STAKING_POOL_EVENT_TYPES = {
     enter: 'enter',
@@ -26,15 +31,20 @@ const STAKING_POOL_EVENT_TYPES = {
     shareTokensTransferOut: 'shareTokensTransferOut',
 }
 
-const ethProvider = getProvider('ethereum')
+//TODO: To remove polygon related code
+// const ethProvider = getProvider('ethereum')
+const ethProvider = getProvider('polygon')
 const xWalletContract = new Contract(XWALLET_ADDR, xWalletABI, ethProvider)
 const walletContract = new Contract(WALLET_ADDR, walletABI, ethProvider)
 
 const useWalletEarnDetails = ({accountId}) => {
     const [details, setDetails] = useState({})
     const getStats = useCallback(async () => {
-        const fromBlock = 0
+        //TODO: To remove 'fromBlock' and 'toBlock' it's only for testing on polygon
+        const fromBlock = 25497176 - 2
+        const toBlock = fromBlock + 3400
         const [
+            timeToUnbond,
             shareValue,
             sharesTotalSupply,
             balanceShares,
@@ -46,20 +56,27 @@ const useWalletEarnDetails = ({accountId}) => {
             sharesTokensTransfersInLogs,
             sharesTokensTransfersOutLogs,
         ] = await Promise.all([
+            xWalletContract.timeToUnbond(),
             xWalletContract.shareValue(),
             xWalletContract.totalSupply(),
             xWalletContract.balanceOf(accountId),
             xWalletContract.lockedShares(accountId),
             ethProvider.getLogs({
                 fromBlock,
+                //TODO: To remove 'toBlock'
+                toBlock,
                 ...walletContract.filters.Transfer(null, XWALLET_ADDR, null),
             }),
             ethProvider.getLogs({
                 fromBlock,
+                //TODO: To remove 'toBlock'
+                toBlock,
                 ...xWalletContract.filters.LogLeave(accountId, null, null, null),
             }),
             ethProvider.getLogs({
                 fromBlock,
+                //TODO: To remove 'toBlock'
+                toBlock,
                 ...xWalletContract.filters.LogWithdraw(
                     accountId,
                     null,
@@ -70,6 +87,8 @@ const useWalletEarnDetails = ({accountId}) => {
             }),
             ethProvider.getLogs({
                 fromBlock,
+                //TODO: To remove 'toBlock'
+                toBlock,
                 ...xWalletContract.filters.LogRageLeave(
                     accountId,
                     null,
@@ -79,14 +98,22 @@ const useWalletEarnDetails = ({accountId}) => {
             }),
             ethProvider.getLogs({
                 fromBlock,
+                //TODO: To remove 'toBlock'
+                toBlock,
                 ...xWalletContract.filters.Transfer(null, accountId, null),
             }),
             ethProvider.getLogs({
                 fromBlock,
+                //TODO: To remove 'toBlock'
+                toBlock,
                 ...xWalletContract.filters.Transfer(accountId, null, null),
             }),
         ])
 
+        //TODO: not sure if the code for 'remainingTime' should be here
+        const { timestamp } = await ethProvider.getBlock(leaveLogs.blockNumber)
+        const remainingTime = (timeToUnbond.toString() * 1000) - (Date.now() - (timestamp * 1000))
+         
         const userShare = sharesTotalSupply.isZero()
             ? ZERO
             : balanceShares.mul(PRECISION).div(sharesTotalSupply).toNumber() /
@@ -263,10 +290,12 @@ const useWalletEarnDetails = ({accountId}) => {
                 }
             })
         )
-
+        console.log('userLeaves', userLeaves)
         const leavesPendingToUnlock = [...userLeaves].filter(
             event => event.unlocksAt > now
         )
+
+        console.log('leavesPendingToUnlock', leavesPendingToUnlock)
 
         const leavesReadyToWithdraw = [...userLeaves].filter(
             event => event.unlocksAt < now && !event.withdrawTx
@@ -313,10 +342,14 @@ const useWalletEarnDetails = ({accountId}) => {
             ] = await Promise.all([
                 ethProvider.getLogs({
                     fromBlock,
+                    //TODO: To remove 'toBlock'
+                    toBlock,
                     ...xWalletContract.filters.LogLeave(null, null, null, null),
                 }),
                 ethProvider.getLogs({
                     fromBlock,
+                    //TODO: To remove 'toBlock'
+                    toBlock,
                     ...xWalletContract.filters.LogWithdraw(
                         null,
                         null,
@@ -327,6 +360,8 @@ const useWalletEarnDetails = ({accountId}) => {
                 }),
                 ethProvider.getLogs({
                     fromBlock,
+                    //TODO: To remove 'toBlock'
+                    toBlock,
                     ...xWalletContract.filters.LogRageLeave(
                         null,
                         null,
@@ -336,6 +371,8 @@ const useWalletEarnDetails = ({accountId}) => {
                 }),
                 ethProvider.getLogs({
                     fromBlock,
+                    //TODO: To remove 'toBlock'
+                    toBlock,
                     ...xWalletContract.filters.Transfer(ZERO_ADDR, null, null),
                 }),
             ])
@@ -559,6 +596,7 @@ const useWalletEarnDetails = ({accountId}) => {
             loaded: true,
             userDataLoaded: true,
             userShare,
+            remainingTime,
         }
 
         return {
@@ -587,6 +625,7 @@ const useWalletEarnDetails = ({accountId}) => {
                 stats.leavesReadyToWithdrawTotalWallet.toString(),
                 18
             ),
+            remainingTime: stats.remainingTime,
         }
     }, [accountId])
 
@@ -596,7 +635,7 @@ const useWalletEarnDetails = ({accountId}) => {
                 const data = await getStats()
                 setDetails(data)
             } catch(e) {
-                console.err(e)
+                console.error(e)
             }
         }
         if (!accountId) return
