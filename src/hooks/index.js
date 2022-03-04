@@ -10,6 +10,7 @@ import usePermissions from './permissions'
 import usePrivateMode from './privateMode'
 import useOnClickOutside from './onClickOutside'
 import useLocalStorage from './useLocalStorage'
+import useWalletEarnDetails from './walletEarnDetails'
 
 export {
     useAccounts,
@@ -23,5 +24,6 @@ export {
     usePermissions,
     usePrivateMode,
     useOnClickOutside,
-    useLocalStorage
+    useLocalStorage,
+    useWalletEarnDetails
 }
