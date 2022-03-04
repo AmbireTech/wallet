@@ -1,12 +1,12 @@
 import { getProvider } from 'lib/provider'
 import { BigNumber, utils, Contract } from 'ethers'
-import WalletStakingPoolABI from 'consts/WalletStakingPoolABI'
-import walletTokenABI from 'consts/walletTokenABI'
+import xWalletABI from 'consts/WalletStakingPoolABI'
+import walletABI from 'consts/walletTokenABI'
 
 import { useEffect, useState, useCallback } from 'react'
 
-const xWalletABI = WalletStakingPoolABI
-const walletABI = walletTokenABI
+// const xWalletABI = WalletStakingPoolABI
+// const walletABI = walletTokenABI
 
 const ZERO = BigNumber.from(0)
 const ZERO_ADDR = '0x0000000000000000000000000000000000000000'
@@ -91,8 +91,14 @@ const useWalletEarnDetails = ({accountId}) => {
             }),
         ])
 
-        const { timestamp } = await ethProvider.getBlock(leaveLogs[0].blockNumber)
-        const remainingTime = (timeToUnbond.toString() * 1000) - (Date.now() - (timestamp * 1000))
+        let remainingTime
+        if (leaveLogs[0]) {
+            const { timestamp } = await ethProvider.getBlock(leaveLogs[0].blockNumber)
+            remainingTime = (timeToUnbond.toString() * 1000) - (Date.now() - (timestamp * 1000))
+        } else {
+            remainingTime = null
+        }
+       
         const userShare = sharesTotalSupply.isZero()
             ? ZERO
             : balanceShares.mul(PRECISION).div(sharesTotalSupply).toNumber() /
