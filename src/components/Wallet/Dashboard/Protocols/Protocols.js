@@ -9,6 +9,8 @@ import { useState } from 'react'
 import { MdOutlineAdd } from 'react-icons/md'
 import { AddTokenModal } from 'components/Modals'
 import { useModals } from 'hooks'
+import { getTokenIcon } from 'lib/icons'
+import { formatFloatTokenAmount } from 'lib/formatters'
 
 const Protocols = ({ portfolio, network, account, hidePrivateValue }) => {
     const { showModal } = useModals()
@@ -24,14 +26,17 @@ const Protocols = ({ portfolio, network, account, hidePrivateValue }) => {
     const otherProtocols = protocols.filter(({ label }) => label !== 'Tokens')
     const shouldShowPlaceholder = (!isBalanceLoading && !tokens.length) && (!areProtocolsLoading && !otherProtocols.length)
 
-    const tokenItem = (index, img, symbol, balance, balanceUSD, address, send = false) => 
-        <div className="token" key={`token-${address}-${index}`}>
+    const tokenItem = (index, img, symbol, balance, balanceUSD, address, send = false, network, decimals) => 
+        {
+            const logo = failedImg.includes(img) ? getTokenIcon(network, address) : img
+
+            return (<div className="token" key={`token-${address}-${index}`}>
             <div className="icon">
                 { 
-                    failedImg.includes(img) ?
+                    failedImg.includes(logo) ?
                         <GiToken size={20}/>
                         :
-                        <img src={img} draggable="false" alt="Token Icon" onError={() => setFailedImg(failed => [...failed, img])}/>
+                        <img src={logo} draggable="false" alt="Token Icon" onError={() => setFailedImg(failed => [...failed, logo])}/>
                 }
             </div>
             <div className="name">
@@ -40,7 +45,7 @@ const Protocols = ({ portfolio, network, account, hidePrivateValue }) => {
             <div className="separator"></div>
             <div className="balance">
                 <div className="currency">
-                    <span className="value">{ hidePrivateValue(balance) }</span>
+                    <span className="value">{ hidePrivateValue(formatFloatTokenAmount(balance, true, decimals)) }</span>
                     <span className="symbol">{ symbol }</span>
                 </div>
                 <div className="dollar">
@@ -57,7 +62,7 @@ const Protocols = ({ portfolio, network, account, hidePrivateValue }) => {
                     :
                     null
             }
-        </div>
+        </div>)}
 
     const openAddTokenModal = () => showModal(<AddTokenModal network={network} account={account} portfolio={portfolio} />)
 
@@ -82,8 +87,8 @@ const Protocols = ({ portfolio, network, account, hidePrivateValue }) => {
                                 </div>
                                 <div className="list">
                                     { 
-                                        sortedTokens.map(({ address, symbol, tokenImageUrl, balance, balanceUSD }, i) =>
-                                            tokenItem(i, tokenImageUrl, symbol, balance, balanceUSD, address, true))
+                                        sortedTokens.map(({ address, symbol, tokenImageUrl, balance, balanceUSD, network, decimals }, i) =>
+                                            tokenItem(i, tokenImageUrl, symbol, balance, balanceUSD, address, true, network, decimals))
                                     }
                                 </div>
                             </div>

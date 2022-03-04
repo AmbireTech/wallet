@@ -3,6 +3,7 @@ import { tokens } from 'consts/humanizerInfo'
 import { formatNativeTokenAddress, knownTokens } from 'lib/humanReadableTransactions'
 import { Interface } from 'ethers/lib/utils'
 import networks from 'consts/networks'
+import { getTokenIcon } from 'lib/icons'
 
 const MovrAnyswapInterface = new Interface(abis.MovrAnyswap)
 const MovrRouterInterface = new Interface(abis.MovrRouter)
@@ -14,7 +15,7 @@ const getAssetInfo = address => {
 
 const getAssetIcon = (address, chainId) => {
     const network = networks.find(n => n.chainId === chainId)
-    return network ? `https://storage.googleapis.com/zapper-fi-assets/tokens/${network.id}/${formatNativeTokenAddress(address)}.png` : null
+    return network ? getTokenIcon(network.id, formatNativeTokenAddress(address)) : null
 }
 
 const formatTx = (fromChainId, toChainId, inputToken, outputToken, amount) => {

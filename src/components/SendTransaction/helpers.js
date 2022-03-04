@@ -5,14 +5,15 @@
 const ADDED_GAS_TOKEN = 30000
 const ADDED_GAS_NATIVE = 12000
 
-export function isTokenEligible (token, speed, estimation) {
+export function isTokenEligible(token, speed, estimation) {
   if (!token) return false
-  const min = token.isStable ? estimation.feeInUSD[speed] : estimation.feeInNative[speed]
-  return parseInt(token.balance) / Math.pow(10, token.decimals) > min
+  const { feeInFeeToken } = getFeesData(token, estimation, speed )
+  const balanceInFeeToken = (parseInt(token.balance) / Math.pow(10, token.decimals))
+  return balanceInFeeToken > feeInFeeToken
 }
 
 // can't think of a less funny name for that
-export function getFeePaymentConsequences (token, estimation) {
+export function getFeePaymentConsequences(token, estimation) {
   // Relayerless mode
   if (!estimation.feeInUSD) return { multiplier: 1, addedGas: 0 }
   // Relayer mode
@@ -44,4 +45,38 @@ export function getErrHint(msg) {
   if (msg.includes('INSUFFICIENT_PRIVILEGE')) return 'If you set a new signer for this account, try re-adding the account.'
   if (contractErrors.find(contractMsg => msg.includes(contractMsg))) return 'Contact the dApp developers to tell them to implement smart wallet support by not blocking contract interactions and/or implementing EIP1271.'
   return 'Sending this transaction batch would have resulted in an error, so we prevented it.'
+}
+
+export function toHexAmount(amnt, decimals) {
+  return '0x' + Math.round(amnt * Math.pow(10, decimals)).toString(16)
+}
+
+export function getDiscountApplied(amnt, discount = 0) {
+  if (!discount) return 0
+  if (!amnt) return 0
+  if (discount === 1) return amnt
+  return amnt / (1 - discount) * discount
+}
+
+// Returns feeToken data with all multipliers applied
+export function getFeesData(feeToken, estimation, speed) {
+  const { addedGas, multiplier } = getFeePaymentConsequences(feeToken, estimation)
+  const discountMultiplier = 1 - (feeToken.discount || 0)
+  const totalMultiplier = multiplier * discountMultiplier
+  const nativeRate = feeToken.nativeRate || 1
+
+  const feeInNative = estimation.customFee
+    ? ((estimation.customFee * discountMultiplier) / nativeRate)
+    : estimation.feeInNative[speed] * totalMultiplier
+
+  const feeInUSD = !isNaN(estimation.nativeAssetPriceInUSD) ? feeInNative * estimation.nativeAssetPriceInUSD : undefined
+
+  const feeInFeeToken = feeInNative * nativeRate
+
+  return {
+    feeInNative,
+    feeInUSD,
+    feeInFeeToken,
+    addedGas, // use it bundle data
+  }
 }
