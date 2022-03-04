@@ -29,7 +29,7 @@ const WalletEarnDetailsModal = ({
             <div className="wrapper odd-rows-bg">
                 <div>Balance</div>
                 <div>
-                    <ToolTip label="* Warning: Because you have sent/received staking share token, the reward shown may be less than your actual reward.">
+                    <ToolTip label="* Warning: Because you have sent/received staking share token (xWallet pool), the reward shown may be less than your actual reward.">
                         {parseFloat(balance).toFixed(4)} WALLET* (Pool share: {(poolShare * 100).toFixed(2)}%)
                     </ToolTip>
                 </div>
