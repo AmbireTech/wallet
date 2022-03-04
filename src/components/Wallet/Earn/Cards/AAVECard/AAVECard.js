@@ -6,12 +6,13 @@ import AAVELendingPoolAbi from 'consts/AAVELendingPoolAbi'
 import AAVELendingPoolProviders from 'consts/AAVELendingPoolProviders'
 import networks from 'consts/networks'
 import { getProvider } from 'lib/provider'
-
+import { ToolTip } from "components/common"
 import AAVE_ICON from 'resources/aave.svg'
 import Card from 'components/Wallet/Earn/Card/Card'
 import { getDefaultTokensItems } from './defaultTokens'
 import approveToken from 'lib/approveToken'
 import { EarnDetailsModal } from 'components/Modals'
+import { MdInfo } from "react-icons/md"
 
 const AAVELendingPool = new Interface(AAVELendingPoolAbi)
 const RAY = 10**27
@@ -30,7 +31,14 @@ const AAVECard = ({ networkId, tokens, protocols, account, addRequest }) => {
         const token = tokensItems.find(({ address }) => address === value)
         if (token) {
             setDetails([
-                ['Annual Percentage Rate (APR)', `${token.apr}%`],
+                [
+                    <>
+                        <ToolTip label="Annual Percentage Rate">
+                            <div>APR&nbsp;<MdInfo/></div>
+                        </ToolTip>
+                    </>, 
+                    `${token.apr}%`
+                ],
                 ['Lock', 'No Lock'],
                 ['Type', 'Variable Rate'],
             ])

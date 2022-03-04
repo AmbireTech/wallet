@@ -269,12 +269,10 @@ const useWalletEarnDetails = ({accountId}) => {
                 }
             })
         )
-        console.log('userLeaves', userLeaves)
+        
         const leavesPendingToUnlock = [...userLeaves].filter(
             event => event.unlocksAt > now
         )
-
-        console.log('leavesPendingToUnlock', leavesPendingToUnlock)
 
         const leavesReadyToWithdraw = [...userLeaves].filter(
             event => event.unlocksAt < now && !event.withdrawTx
