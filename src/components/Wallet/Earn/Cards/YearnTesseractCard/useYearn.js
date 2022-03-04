@@ -1,5 +1,7 @@
 import { useCallback, useState } from 'react'
 import { Yearn } from '@yfi/sdk'
+import { MdInfo } from "react-icons/md"
+import { ToolTip } from "components/common"
 
 import YEARN_ICON from 'resources/yearn.svg'
 
@@ -146,7 +148,13 @@ const useYearn = ({ tokens, networkDetails, provider, currentNetwork }) => {
     const onTokenSelect = useCallback(address => {
         const selectedToken = tokensItems.find(t => t.tokenAddress === address)
         if (selectedToken) setDetails([
-            ['Annual Percentage Yield (APY)', `${selectedToken.apy}%`],
+            [
+                <>
+                    <ToolTip label="Annual Percentage Yield">
+                        <div>APY&nbsp;<MdInfo/></div>
+                    </ToolTip>
+                </>,
+             `${selectedToken.apy}%`],
             ['Lock', 'No Lock'],
             ['Type', 'Variable Rate'],
         ])

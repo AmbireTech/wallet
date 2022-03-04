@@ -43,6 +43,14 @@ const WALLETStakingPool = {
     return [`Deposit ${token(STAKING_POOLS[txn.to].baseToken, amount)} to ${STAKING_POOLS[txn.to].name}`]
   },
   [iface.getSighash('leave')]: (txn, network, { extended = false }) => {
+    if (extended) return [['Leave', 'from', {
+      type: 'address',
+      address: txn.to,
+      name: 'WALLET Staking Pool'
+    }]]
+    return [`Leave the WALLET Staking Pool`]
+  },
+  [iface.getSighash('withdraw')]: (txn, network, { extended = false }) => {
     const { shares } = iface.parseTransaction(txn).args
     if (extended) return toExtended('Withdraw', 'from', token(txn.to, shares, true), txn)
     return [`Withdraw ${token(txn.to, shares)} to ${STAKING_POOLS[txn.to].name}`]
