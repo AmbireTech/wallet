@@ -98,8 +98,9 @@ const WalletTokenCard = ({ networkId, accountId, tokens, rewardsData, addRequest
             setCustomInfo(
                 <>
                     <div className="info-message">
-                        <b>{ msToDaysHours(remainingTime) }</b> until { parseInt(pendingToUnlock).toString() } WALLET becomes available for withdraw.
-                        <div><b>* Because of pending to withdraw, you are not able to unstaking more WALLET.</b></div>
+                        <ToolTip label='* Because of pending to withdraw, you are not able to unstaking more WALLET.'>
+                            <span><b>{ msToDaysHours(remainingTime) }</b> until { parseInt(pendingToUnlock).toString() } WALLET becomes available for withdraw.&nbsp;<MdInfo/></span>
+                        </ToolTip>
                     </div>
                     <div className="separator"></div>
                     <Button 
