@@ -4,16 +4,16 @@ import { Button, ToolTip } from "components/common";
 import { WalletTokenModal } from "components/Modals";
 import useClaimableWalletToken from "./useClaimableWalletToken";
 
-const WalletTokenButton = ({ rewardsData, account, network, hidePrivateValue, addRequest }) => {
+const WalletTokenButton = ({ rewardsData, account = {}, network, hidePrivateValue, addRequest }) => {
     const claimableWalletToken = useClaimableWalletToken({ account, network, addRequest })
     const { claimableNow, currentClaimStatus } = claimableWalletToken
-    const claimableTokensTotal = currentClaimStatus ?
+    const claimableTokensTotal = currentClaimStatus && !currentClaimStatus.loading ?
         (claimableNow + (currentClaimStatus.mintableVesting || 0)).toFixed(3) : '...'
     
     const [rewards, setRewards] = useState({})
     const { isLoading, data, errMsg } = rewardsData
     
-    const showWalletTokenModal = useDynamicModal(WalletTokenModal, { claimableWalletToken }, { rewards })
+    const showWalletTokenModal = useDynamicModal(WalletTokenModal, { claimableWalletToken, accountId: account.id }, { rewards })
 
     useEffect(() => {
         if (errMsg || !data || !data.success) return
@@ -26,6 +26,7 @@ const WalletTokenButton = ({ rewardsData, account, network, hidePrivateValue, ad
         rewardsDetails.walletTokenAPY = data.walletTokenAPY
         rewardsDetails.adxTokenAPY = data.adxTokenAPY
         rewardsDetails.walletUsdPrice = data.usdPrice
+        rewardsDetails.xWALLETAPY = data.xWALLETAPY
         setRewards(rewardsDetails)
     }, [data, errMsg, account])
 
