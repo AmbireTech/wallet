@@ -4,7 +4,7 @@ import Card from 'components/Wallet/Earn/Card/Card'
 import AMBIRE_ICON from 'resources/logo.png'
 import { useEffect } from "react"
 import { MdInfo } from "react-icons/md"
-import { ToolTip, NumberInput, Button } from "components/common"
+import { ToolTip, Button } from "components/common"
 import { BigNumber, constants, Contract } from "ethers"
 import WalletStakingPoolABI from 'consts/WalletStakingPoolABI'
 import { Interface, parseUnits, formatUnits } from "ethers/lib/utils"
@@ -14,30 +14,36 @@ import networks from 'consts/networks'
 import { WalletEarnDetailsModal } from 'components/Modals'
 import { getTokenIcon } from 'lib/icons'
 import { BsArrowUpSquare } from "react-icons/bs"
+import { useWalletEarnDetails } from 'hooks'
 
-// const WALLET_TOKEN_ADDRESS = '0x88800092ff476844f74dc2fc427974bbee2794ae'
-// const WALLET_STAKING_ADDRESS = '0x47cd7e91c3cbaaf266369fe8518345fc4fc12935'
-const WALLET_STAKING_ADDRESS = '0xec3b10ce9cabab5dbf49f946a623e294963fbb4e'
-const WALLET_TOKEN_ADDRESS = '0xe9415e904143e42007865e6864f7f632bd054a08'
+const WALLET_TOKEN_ADDRESS = '0x88800092ff476844f74dc2fc427974bbee2794ae'
+const WALLET_STAKING_ADDRESS = '0x47cd7e91c3cbaaf266369fe8518345fc4fc12935'
 const WALLET_STAKING_POOL_INTERFACE = new Interface(WalletStakingPoolABI)
 const ERC20_INTERFACE = new Interface(ERC20ABI)
 
-// const msToDaysHours = ms => {
-//     const day = 24 * 60 * 60 * 1000
-//     const days = Math.floor(ms / day)
-//     const hours = Math.floor((ms % day) / (60 * 60 * 1000))
-//     return days < 1 ? `${hours} hours` : `${days} days`
-// };
+const msToDaysHours = ms => {
+    const day = 24 * 60 * 60 * 1000
+    const days = Math.floor(ms / day)
+    const hours = Math.floor((ms % day) / (60 * 60 * 1000))
+    return days < 1 ? `${hours} hours` : `${days} days`
+}
 
 const WalletTokenCard = ({ networkId, accountId, tokens, rewardsData, addRequest }) => {
+    const { 
+        balance, 
+        poolShare, 
+        allTimeRewards, 
+        totalDeposit, 
+        totalWithdraws, 
+        pendingToUnlock, 
+        readyToWithdraw, 
+        remainingTime } = useWalletEarnDetails({accountId})
     const [loading, setLoading] = useState(true)
     const [details, setDetails] = useState([])
     const [customInfo, setCustomInfo] = useState(null)
     const [stakingWalletContract, setStakingWalletContract] = useState(null)
-    const [lockedShares, setLockedShares] = useState(BigNumber.from(0))
     const [shareValue, setShareValue] = useState(BigNumber.from(0))
     const [xWalletBalanceRaw, setXWalletBalanceRaw] = useState(null)
-    const [lockedRemainingTime, setLockedRemainingTime] = useState(0)
     const [leaveLog, setLeaveLog] = useState(null)
 
     //TODO: To remove
@@ -90,23 +96,16 @@ const WalletTokenCard = ({ networkId, accountId, tokens, rewardsData, addRequest
         setCustomInfo(null)
 
         const token = tokensItems.find(({ value }) => value === tokenAddress)
-        if (token && token.type === 'withdraw' && leaveLog && lockedShares.gt(0) && shareValue.gt(0)) {
-            //TODO: To remove 
-            // const lockedWalletAmount = formatUnits(lockedShares.toString(), 18).toString() * formatUnits(shareValue, 18).toString()
-            const lockedWalletAmount = lockedShares.div(shareValue).mul(100)
-
+        if (token && token.type === 'withdraw' && pendingToUnlock && pendingToUnlock > 0) {
             setCustomInfo(
                 <>
-                    <NumberInput
-                        value={lockedWalletAmount}
-                        label="Pending to be unlocked:"
-                    />
-                    {/* <div className="info-message">
-                        <b>{ msToDaysHours(lockedRemainingTime) }</b> until { lockedWalletAmount } WALLET becomes available for withdraw.
-                    </div> */}
+                    <div className="info-message">
+                        <b>{ msToDaysHours(remainingTime) }</b> until { parseInt(pendingToUnlock).toString() } WALLET becomes available for withdraw.
+                        <div><b>* Because of pending to withdraw, you are not able to unstaking more WALLET.</b></div>
+                    </div>
                     <div className="separator"></div>
                     <Button 
-                        disabled={lockedRemainingTime > 0}
+                        disabled={remainingTime > 0}
                         icon={<BsArrowUpSquare/>}
                         onClick={() => onWithdraw()}
                     >
@@ -129,7 +128,7 @@ const WalletTokenCard = ({ networkId, accountId, tokens, rewardsData, addRequest
             ['Lock', '20 day unbond period'],
             ['Type', 'Variable Rate'],
         ])
-    }, [lockedShares, shareValue, walletTokenAPY, rewardsData.isLoading, lockedRemainingTime, tokensItems, leaveLog, onWithdraw])
+    }, [tokensItems, pendingToUnlock, rewardsData.isLoading, walletTokenAPY, remainingTime, onWithdraw])
 
     const onValidate = async (type, value, amount, isMaxAmount) => {
         const bigNumberAmount = parseUnits(amount, 18)
@@ -178,23 +177,16 @@ const WalletTokenCard = ({ networkId, accountId, tokens, rewardsData, addRequest
                 const stakingWalletContract = new Contract(WALLET_STAKING_ADDRESS, WALLET_STAKING_POOL_INTERFACE, provider)
                 setStakingWalletContract(stakingWalletContract)
 
-                const [timeToUnbond, lockedShares, shareValue, xWalletBalanceRaw] = await Promise.all([
-                    stakingWalletContract.timeToUnbond(),
-                    stakingWalletContract.lockedShares(accountId),
+                const [shareValue, xWalletBalanceRaw] = await Promise.all([
                     stakingWalletContract.shareValue(),
                     stakingWalletContract.balanceOf(accountId),
                 ])
 
-                setLockedShares(lockedShares)
                 setShareValue(shareValue)
                 setXWalletBalanceRaw(xWalletBalanceRaw)
-                //TODO: To remove 'toBlock' and 'fromBlock'
-                const fromBlock = 25497176 - 2
-                const toBlock = fromBlock + 3400
 
                 const [log] = await provider.getLogs({
-                    fromBlock,
-                    toBlock,
+                    fromBlock: 0,
                     ...stakingWalletContract.filters.LogLeave()
                 })
 
@@ -205,17 +197,13 @@ const WalletTokenCard = ({ networkId, accountId, tokens, rewardsData, addRequest
                         shares,
                         unlocksAt
                     })
-    
-                    const { timestamp } = await provider.getBlock(log.blockNumber)
-                    const remainingTime = (timeToUnbond.toString() * 1000) - (Date.now() - (timestamp * 1000))
-                    setLockedRemainingTime(remainingTime)
                 }
             } catch(e) {
                 console.error(e)
             }
         }
         init()
-    }, [networkId, accountId])
+    }, [networkId, accountId, shareValue])
 
     useEffect(() => setLoading(false), [])
 
@@ -230,8 +218,15 @@ const WalletTokenCard = ({ networkId, accountId, tokens, rewardsData, addRequest
             onTokenSelect={onTokenSelect}
             onValidate={onValidate}
             moreDetails={!unavailable && <WalletEarnDetailsModal 
-                accountId={accountId}
                 apy={walletTokenAPY}
+                balance={balance} 
+                poolShare={poolShare} 
+                allTimeRewards={allTimeRewards}
+                totalDeposit={totalDeposit}
+                totalWithdraws={totalWithdraws}
+                pendingToUnlock={pendingToUnlock} 
+                readyToWithdraw={readyToWithdraw}
+                remainingTime={msToDaysHours(remainingTime)}
             />}
         />
     )
