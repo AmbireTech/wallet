@@ -122,7 +122,7 @@ const Card = ({ loading, unavailable, tokensItems, icon, details, customInfo, on
                                     </>
                             }
                             <div className="separator"></div>
-                           {!!moreDetails && <Button clear
+                            {!!moreDetails && <Button clear
                                 icon={ <MdOutlineInfo/> }
                                 onClick={() => showMoreDetails()}>
                                     See more details

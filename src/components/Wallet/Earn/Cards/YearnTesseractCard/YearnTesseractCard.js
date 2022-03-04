@@ -17,6 +17,15 @@ const BATCHER_ADDRESS = '0x460fad03099f67391d84c9cc0ea7aa2457969cea'
 const BATCHER_INTERFACE = new Interface(AmbireBatcherABI)
 const ERC20_INTERFACE = new Interface(ERC20ABI)
 const VaultInterface = new Interface(YEARN_TESSERACT_VAULT_ABI)
+const TESSERACT_DETAILS = {
+    title: 'What is Tesseract Finance',
+    description: 'Tesseract Finance is a DeFi yield farming protocol that brings yearn.finance to selected EVM compatible chains. Tesseract Finance enables lending and borrowing opportunities on the Polygon network.'
+}
+
+const YEARN_DETAILS = {
+    title: 'What is Yearn.finance',
+    description: 'Yearn.finance is a suite of products in DeFi that provides yield generation, lending aggregation, and more on the blockchain. The protocol is maintained by various independent developers and is governed by YFI holders.'
+}
 
 const YearnTesseractCard = ({ networkId, accountId, tokens, addRequest }) => {
     const { addToast } = useToasts()
@@ -53,8 +62,8 @@ const YearnTesseractCard = ({ networkId, accountId, tokens, addRequest }) => {
     } = useMemo(() => networkId === 'polygon' ? tesseract : yearn, [networkId, yearn, tesseract])
 
     const moreDetails = {
-        title: networkId === 'polygon' ? 'tesseract' : 'What is Yearn.finance',
-        description: networkId === 'polygon' ? 'tesseract' : 'Yearn.finance is a suite of products in DeFi that provides yield generation, lending aggregation, and more on the blockchain. The protocol is maintained by various independent developers and is governed by YFI holders.',
+        title: networkId === 'polygon' ? TESSERACT_DETAILS.title: YEARN_DETAILS.title,
+        description: networkId === 'polygon' ? TESSERACT_DETAILS.description: YEARN_DETAILS.description
     }
 
     const onValidate = async (type, value, amount) => {

@@ -6,10 +6,17 @@ import { Modal, Button } from 'components/common'
 import { ToolTip } from 'components/common' 
 import { useWalletEarnDetails } from 'hooks'
 
-const WalletEarnDetailsModal = ({ apy, accountId = null, title = 'Details', description = '' }) => {
+const WalletEarnDetailsModal = ({ apy, accountId = null, title = 'Details' }) => {
     const { hideModal } = useModals()
+
+    const msToDaysHours = ms => {
+        const day = 24 * 60 * 60 * 1000
+        const days = Math.floor(ms / day)
+        const hours = Math.floor((ms % day) / (60 * 60 * 1000))
+        return days < 1 ? `${hours} hours` : `${days} days`
+    }
     
-    const { balance, poolShare, allTimeRewards, totalDeposit, totalWithdraws, pendingToUnlock, readyToWithdraw } = useWalletEarnDetails({accountId})
+    const { balance, poolShare, allTimeRewards, totalDeposit, totalWithdraws, pendingToUnlock, readyToWithdraw, remainingTime } = useWalletEarnDetails({accountId})
     const buttons = (<Button clear small icon={<MdClose />} onClick={hideModal}>Close</Button>)
    
     return (
@@ -35,7 +42,7 @@ const WalletEarnDetailsModal = ({ apy, accountId = null, title = 'Details', desc
                 <div>Total withdraws</div><div>{totalWithdraws} WALLET</div>
             </div>
             <div className="wrapper odd-rows-bg">
-                <div>Pending to unlock</div><div>{pendingToUnlock} WALLET</div>
+                <div>Pending to unlock</div><div>{remainingTime ? `${msToDaysHours(remainingTime)} until ${pendingToUnlock} WALLET becomes available for withdraw.` : 'N/A'}</div>
             </div>
             <div className="wrapper">
                 <div>Ready to withdraw</div><div>{readyToWithdraw} WALLET</div>
