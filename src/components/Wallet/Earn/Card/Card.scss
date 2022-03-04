@@ -17,6 +17,9 @@
         span {
             text-align: right;
             opacity: 0.8;
+            max-width: 150px;
+            text-overflow: ellipsis;
+            overflow: hidden;
         }
     }
 
@@ -24,7 +27,7 @@
         display: flex;
         justify-content: center;
         padding: 15px 0;
-    
+
         img {
             height: 35px;
         }
