@@ -46,9 +46,7 @@ const WalletTokenCard = ({ networkId, accountId, tokens, rewardsData, addRequest
     const [xWalletBalanceRaw, setXWalletBalanceRaw] = useState(null)
     const [leaveLog, setLeaveLog] = useState(null)
 
-    //TODO: To remove
-    // const unavailable = networkId !== 'ethereum'
-    const unavailable = false
+    const unavailable = networkId !== 'ethereum'
     const networkDetails = networks.find(({ id }) => id === networkId)
     const addRequestTxn = useCallback((id, txn, extraGas = 0) =>
         addRequest({ id, type: 'eth_sendTransaction', chainId: networkDetails.chainId, account: accountId, txn, extraGas })
@@ -118,9 +116,8 @@ const WalletTokenCard = ({ networkId, accountId, tokens, rewardsData, addRequest
         setDetails([
             [
                 <>
-                    Annual Percentage Yield (APY)
-                    <ToolTip label="IN ADDITION to what you earn in $WALLETs">
-                        <MdInfo/>
+                    <ToolTip label="Annual Percentage Yield: IN ADDITION to what you earn in $WALLETs">
+                        <div>APY&nbsp;<MdInfo/></div>
                     </ToolTip>
                 </>,
                 rewardsData.isLoading ? `...` : `${walletTokenAPY}%`

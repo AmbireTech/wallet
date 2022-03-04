@@ -57,6 +57,11 @@
                 display: flex;
                 justify-content: space-between;
                 color: #e8e8e9;
+
+                div {
+                    display: flex;
+                    align-items: center;
+                }
             }
         }
 
