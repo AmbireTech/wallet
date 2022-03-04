@@ -6,11 +6,13 @@ import AAVELendingPoolAbi from 'consts/AAVELendingPoolAbi'
 import AAVELendingPoolProviders from 'consts/AAVELendingPoolProviders'
 import networks from 'consts/networks'
 import { getProvider } from 'lib/provider'
-
+import { ToolTip } from "components/common"
 import AAVE_ICON from 'resources/aave.svg'
 import Card from 'components/Wallet/Earn/Card/Card'
 import { getDefaultTokensItems } from './defaultTokens'
 import approveToken from 'lib/approveToken'
+import { EarnDetailsModal } from 'components/Modals'
+import { MdInfo } from "react-icons/md"
 
 const AAVELendingPool = new Interface(AAVELendingPoolAbi)
 const RAY = 10**27
@@ -29,7 +31,14 @@ const AAVECard = ({ networkId, tokens, protocols, account, addRequest }) => {
         const token = tokensItems.find(({ address }) => address === value)
         if (token) {
             setDetails([
-                ['Annual Percentage Rate (APR)', `${token.apr}%`],
+                [
+                    <>
+                        <ToolTip label="Annual Percentage Rate">
+                            <div>APR&nbsp;<MdInfo/></div>
+                        </ToolTip>
+                    </>, 
+                    `${token.apr}%`
+                ],
                 ['Lock', 'No Lock'],
                 ['Type', 'Variable Rate'],
             ])
@@ -149,7 +158,17 @@ const AAVECard = ({ networkId, tokens, protocols, account, addRequest }) => {
     }, [networkId])
 
     return (
-        <Card loading={isLoading} unavailable={unavailable} icon={AAVE_ICON} details={details} tokensItems={tokensItems} onTokenSelect={onTokenSelect} onValidate={onValidate}/>
+        <Card 
+            loading={isLoading} 
+            unavailable={unavailable} 
+            icon={AAVE_ICON} details={details} 
+            tokensItems={tokensItems} 
+            onTokenSelect={onTokenSelect} 
+            onValidate={onValidate}
+            moreDetails={<EarnDetailsModal 
+                title={'What is Aave'}
+                description={'Aave is an open source and non-custodial DeFi protocol for earning interest on deposits and borrowing assets. Depositors provide liquidity to the market to earn a passive income, while borrowers are able to borrow in an overcollateralized (perpetually) or undercollateralized (one-block liquidity) fashion.'}/>}
+            />
     )
 }
 
