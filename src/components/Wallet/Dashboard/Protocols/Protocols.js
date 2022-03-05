@@ -6,9 +6,10 @@ import { NavLink } from 'react-router-dom'
 import { Button, Loading } from 'components/common'
 import ProtocolsPlaceholder from './ProtocolsPlaceholder/ProtocolsPlaceholder'
 import { useState } from 'react'
-import { MdOutlineAdd } from 'react-icons/md'
+import { MdOutlineAdd, MdVisibilityOff } from 'react-icons/md'
 import { AddTokenModal } from 'components/Modals'
 import { useModals } from 'hooks'
+import { HideTokenModel } from 'components/Modals'
 import { getTokenIcon } from 'lib/icons'
 import { formatFloatTokenAmount } from 'lib/formatters'
 
@@ -65,12 +66,13 @@ const Protocols = ({ portfolio, network, account, hidePrivateValue }) => {
         </div>)}
 
     const openAddTokenModal = () => showModal(<AddTokenModal network={network} account={account} portfolio={portfolio} />)
+    const openHideTokenModal = () => showModal(<HideTokenModel network={network} account={account} portfolio={portfolio} />)
 
     return (
         <div id="protocols-table">
             {
                 shouldShowPlaceholder ?
-                    <ProtocolsPlaceholder onClickAddToken={openAddTokenModal}/>
+                    <ProtocolsPlaceholder onClickAddToken={openAddTokenModal} onClickShowToken={openHideTokenModal}/>
                     :
                     null
             }
@@ -83,7 +85,10 @@ const Protocols = ({ portfolio, network, account, hidePrivateValue }) => {
                             <div className="category" key="category-tokens">
                                 <div className="title">
                                     Tokens
-                                    <Button mini clear icon={<MdOutlineAdd/>} onClick={() => openAddTokenModal()}>Add Token</Button>
+                                    <div className="wrapper-btns">
+                                        <Button mini clear icon={<MdVisibilityOff/>} onClick={() => openHideTokenModal()}>Hide Token</Button>
+                                        <Button mini clear icon={<MdOutlineAdd/>} onClick={() => openAddTokenModal()}>Add Token</Button>
+                                    </div>
                                 </div>
                                 <div className="list">
                                     { 

@@ -109,7 +109,7 @@ const AddTokenModal = ({ network, account, portfolio }) => {
                                 <div className="info">
                                     <div className="icon" style={{backgroundImage: `url(${tokenDetails.icon})`}}/>
                                     <div className="name">
-                                        { tokenDetails.name } <span>({ tokenDetails.symbol })</span>
+                                        { tokenDetails.name } <span>({ tokenDetails.symbol }) {tokenDetails.network.toUpperCase()}</span>
                                     </div>
                                 </div>
                                 <div className="balance">
@@ -121,11 +121,11 @@ const AddTokenModal = ({ network, account, portfolio }) => {
             }
             <div className="extra-tokens-list">
                 {
-                    extraTokens.map(({ address, name, symbol, tokenImageUrl }) => (
+                    extraTokens.map(({ address, name, symbol, tokenImageUrl, network }) => (
                         <div className="extra-token" key={address}>
                             <div className="info">
                                 <div className="icon" style={{ backgroundImage: `url(${tokenImageUrl})` }}/>
-                                <div className="name">{ name } <span>({ symbol })</span></div>
+                                <div className="name">{ name } <span>({ symbol }) {network.toUpperCase()}</span></div>
                             </div>
                             <div className="actions">
                                 <Button mini clear onClick={() => removeToken(address)}>
