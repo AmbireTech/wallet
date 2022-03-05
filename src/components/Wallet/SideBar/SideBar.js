@@ -86,6 +86,12 @@ const SideBar = ({ match, portfolio, hidePrivateValue }) => {
                 <MdCompareArrows/>Transactions
           </div>
         </NavLink>
+        {/* Temporarily commented OpenSea tab. */}
+        {/* <NavLink to={match.url + "/opensea"} activeClassName="selected">
+          <div className="item">
+            <div className='opensea-icon'/>OpenSea
+          </div>
+        </NavLink> */}
         <NavLink to={match.url + "/security"} activeClassName="selected">
           <div className="item">
               <MdLock/>Security

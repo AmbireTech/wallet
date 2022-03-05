@@ -17,6 +17,7 @@ import { useModals, usePermissions, useLocalStorage } from 'hooks'
 import { useCallback, useEffect, useMemo, useRef } from 'react'
 import { isFirefox } from 'lib/isFirefox'
 import CrossChain from "./CrossChain/CrossChain"
+import OpenSea from "./OpenSea/OpenSea"
 import unsupportedDApps from 'consts/unsupportedDApps'
 
 export default function Wallet(props) {
@@ -102,6 +103,15 @@ export default function Wallet(props) {
     {
       path: '/swap',
       component: <Swap
+        gnosisConnect={props.gnosisConnect}
+        gnosisDisconnect={props.gnosisDisconnect}
+        selectedAcc={props.selectedAcc}
+        network={props.network}
+      />
+    },
+    {
+      path: '/opensea',
+      component: <OpenSea
         gnosisConnect={props.gnosisConnect}
         gnosisDisconnect={props.gnosisDisconnect}
         selectedAcc={props.selectedAcc}

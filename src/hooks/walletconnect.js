@@ -54,17 +54,21 @@ export default function useWalletConnect ({ account, chainId, initialUri, allNet
 
             const newRequests = []
             for (let ix in action.batchRequest.txns) {
-                newRequests.push({
-                    ...action.batchRequest,
-                    type: 'eth_sendTransaction',
-                    isBatch: true,
-                    id: action.batchRequest.id + ':' + ix,
-                    account,
-                    txn: {
-                        ...action.batchRequest.txns[ix],
-                        from: account
-                    }
-                })
+                if(action.batchRequest.txns[ix].to || action.batchRequest.txns[ix].data) {
+                    newRequests.push({
+                        ...action.batchRequest,
+                        type: 'eth_sendTransaction',
+                        isBatch: true,
+                        id: action.batchRequest.id + ':' + ix,
+                        account,
+                        txn: {
+                            ...action.batchRequest.txns[ix],
+                            from: account
+                        }
+                    })
+                } else {
+                    return { ...state }
+                }
             }
 
             return { ...state, requests: [...state.requests, ...newRequests] }

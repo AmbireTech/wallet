@@ -7,6 +7,8 @@ import AddTokenModal from './AddTokenModal/AddTokenModal'
 import LatticeModal from './LatticeModal/LatticeModal'
 import UnsupportedDAppsModal from './UnsupportedDAppsModal/UnsupportedDAppsModal'
 import HideTokenModel from './HideTokenModal/HideTokenModal'
+import WalletEarnDetailsModal from './WalletEarnDetailsModal/WalletEarnDetailsModal'
+import EarnDetailsModal from './EarnDetailsModal/EarnDetailsModal'
 
 export {
     PermissionsModal,
@@ -17,5 +19,7 @@ export {
     AddTokenModal,
     LatticeModal,
     UnsupportedDAppsModal,
-    HideTokenModel
+    HideTokenModel,
+    WalletEarnDetailsModal,
+    EarnDetailsModal
 }

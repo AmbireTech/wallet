@@ -15,6 +15,7 @@ import { useToasts } from 'hooks/toasts'
 import { toBundleTxn } from 'lib/requestToBundleTxn'
 import { HiOutlineChevronLeft, HiOutlineChevronRight } from 'react-icons/hi'
 import { useHistory, useParams } from 'react-router-dom/cjs/react-router-dom.min'
+import { formatFloatTokenAmount } from 'lib/formatters'
 
 // 10% in geth and most EVM chain RPCs; relayer wants 12%
 const RBF_THRESHOLD = 1.14
@@ -215,7 +216,12 @@ function BundlePreview({ bundle, mined = false }) {
         hasFeeMatch ?
           <li>
             <label><BsCoin/>Fee</label>
-            <p>{lastTxnSummary.slice(5, -hasFeeMatch[0].length)}</p>
+            <p>{
+            lastTxnSummary
+              .slice(5, -hasFeeMatch[0].length).split(' ')
+              .map((x, i) => i === 0 ? formatFloatTokenAmount(x, true, 8) : x)
+              .join(' ') 
+            }</p>
           </li>
           :
           null
