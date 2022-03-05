@@ -4,15 +4,18 @@ import { Select, Segments, NumberInput, Button, Loading } from 'components/commo
 import { useEffect, useState, useMemo, useCallback } from 'react'
 import { BsArrowDownSquare, BsArrowUpSquare } from 'react-icons/bs'
 import { ethers } from 'ethers'
+import { useModals } from 'hooks'
+import { MdOutlineInfo } from 'react-icons/md'
 
 const segments = [{ value: 'Deposit' }, { value: 'Withdraw' }]
 
-const Card = ({ loading, unavailable, tokensItems, icon, details, info, onTokenSelect, onValidate }) => {    
+const Card = ({ loading, unavailable, tokensItems, icon, details, customInfo, onTokenSelect, onValidate, moreDetails }) => {    
     const [segment, setSegment] = useState(segments[0].value)
     const [tokens, setTokens] = useState([])
     const [token, setToken] = useState()
     const [amount, setAmount] = useState(0)
     const [disabled, setDisabled] = useState(true)
+    const { showModal } = useModals()
 
     const currentToken = tokens.find(({ value }) => value === token)
 
@@ -28,6 +31,10 @@ const Card = ({ loading, unavailable, tokensItems, icon, details, info, onTokenS
 
     const setMaxAmount = () => setAmount(getMaxAmount(amount))
 
+    const isMaxAmount = () => {
+        return amount === getMaxAmount()
+    }
+
     useEffect(() => {
         if (segment === segments[0].value) setTokens(sortedTokenItems.filter(({ type }) => type === 'deposit'))
         if (segment === segments[1].value) setTokens(sortedTokenItems.filter(({ type }) => type === 'withdraw'))
@@ -40,7 +47,13 @@ const Card = ({ loading, unavailable, tokensItems, icon, details, info, onTokenS
         setDisabled(!token || !tokens.length)
     }, [token, onTokenSelect, tokens.length])
 
-    const amountLabel = <div className="amount-label">Available Amount: <span>{ !disabled ? `${getMaxAmount()} ${currentToken?.symbol}` : '0' }</span></div>
+    const availableAmount = !disabled ? `${getMaxAmount()} ${currentToken?.symbol}` : '0'
+
+    const amountLabel = <div className="amount-label">Available Amount: <span title={availableAmount}>{availableAmount}</span></div>
+
+    const showMoreDetails = () => {
+        if (!!moreDetails) showModal(moreDetails)
+    }
 
     return (
         <div className="card">
@@ -66,7 +79,7 @@ const Card = ({ loading, unavailable, tokensItems, icon, details, info, onTokenS
                                 onChange={(value) => setToken(value)}
                             />
                             {
-                                !disabled ? 
+                                !disabled ?
                                     <ul className="details">
                                         {
                                             details.map(([type, value]) => (
@@ -83,29 +96,37 @@ const Card = ({ loading, unavailable, tokensItems, icon, details, info, onTokenS
                             }
                             <Segments small defaultValue={segment} segments={segments} onChange={(value) => setSegment(value)}></Segments>
                             {
-                                info ? 
+                                customInfo ? 
                                     <div className="info">
-                                        { info }
+                                        { customInfo }
                                     </div>
                                     :
-                                    <NumberInput
-                                        disabled={!currentToken?.balance}
-                                        min="0"
-                                        max={currentToken?.balance}
-                                        value={amount}
-                                        label={amountLabel}
-                                        onInput={(value) => setAmount(value)}
-                                        button="MAX"
-                                        onButtonClick={setMaxAmount}
-                                    />
+                                    <>
+                                        <NumberInput
+                                            disabled={!currentToken?.balance}
+                                            min="0"
+                                            max={currentToken?.balance}
+                                            value={amount}
+                                            label={amountLabel}
+                                            onInput={(value) => setAmount(value)}
+                                            button="MAX"
+                                            onButtonClick={setMaxAmount}
+                                        />
+                                        <div className="separator"></div>
+                                        <Button 
+                                            disabled={disabled || amount <= 0 || amount > currentToken?.balance}
+                                            icon={segment === segments[0].value ? <BsArrowDownSquare/> : <BsArrowUpSquare/>}
+                                            onClick={() => onValidate(segment, token, amount, isMaxAmount())}>
+                                                { segment }
+                                        </Button>
+                                    </>
                             }
                             <div className="separator"></div>
-                            <Button 
-                                disabled={disabled || amount <= 0 || amount > currentToken?.balance}
-                                icon={segment === segments[0].value ? <BsArrowDownSquare/> : <BsArrowUpSquare/>}
-                                onClick={() => onValidate(segment, token, amount)}>
-                                    { segment }
-                            </Button>
+                            {!!moreDetails && <Button clear
+                                icon={ <MdOutlineInfo/> }
+                                onClick={() => showMoreDetails()}>
+                                    See more details
+                            </Button>}
                         </div>
             }
         </div>

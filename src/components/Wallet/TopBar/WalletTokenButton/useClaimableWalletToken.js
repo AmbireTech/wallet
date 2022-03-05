@@ -10,7 +10,7 @@ import WALLETSupplyControllerABI from 'consts/WALLETSupplyControllerABI'
 const supplyControllerAddress = '0xc53af25f831f31ad6256a742b3f0905bc214a430'
 const supplyControllerInterface = new Interface(WALLETSupplyControllerABI)
 
-const useClaimableWalletToken = ({ account, network, addRequest }) => {
+const useClaimableWalletToken = ({ account = {}, network, addRequest }) => {
     const provider = useMemo(() => getProvider('ethereum'), [])
     const supplyController = useMemo(() => new Contract(supplyControllerAddress, WALLETSupplyControllerABI, provider), [provider])
     const initialClaimableEntry = WALLETInitialClaimableRewards.find(x => x.addr === account.id)
@@ -18,7 +18,11 @@ const useClaimableWalletToken = ({ account, network, addRequest }) => {
     const vestingEntry = WALLETVestings.find(x => x.addr === account.id)
 
     const [currentClaimStatus, setCurrentClaimStatus] = useState({ loading: true, claimed: 0, mintableVesting: 0, error: null })
+    // by adding this to the deps, we make it refresh every 10 mins
+    const refreshSlot = Math.floor(Date.now() / 60000)
     useEffect(() => {
+        setCurrentClaimStatus({ loading: true, claimed: 0, mintableVesting: 0, error: null });
+
         (async () => {
             const toNum = x => parseInt(x.toString()) / 1e18
             const [mintableVesting, claimed] = await Promise.all([
@@ -32,7 +36,7 @@ const useClaimableWalletToken = ({ account, network, addRequest }) => {
                 console.error('getting claim status', e)
                 setCurrentClaimStatus({ error: e.message || e })
             })
-    }, [supplyController, vestingEntry, initialClaimableEntry])
+    }, [supplyController, vestingEntry, initialClaimableEntry, refreshSlot])
 
     const claimableNow = initialClaimable - (currentClaimStatus.claimed || 0)
     const disabledReason = network.id !== 'ethereum' ? 'Switch to Ethereum to claim' : (

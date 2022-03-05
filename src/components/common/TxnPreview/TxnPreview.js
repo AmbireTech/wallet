@@ -1,6 +1,6 @@
 import './TxnPreview.scss'
 
-import { useState } from 'react'
+import { useState, Fragment  } from 'react'
 
 import { getName, getTransactionSummary, isKnown } from 'lib/humanReadableTransactions'
 import networks from 'consts/networks'
@@ -10,6 +10,7 @@ import { HiOutlineExternalLink } from 'react-icons/hi'
 import { MdOutlineClose } from 'react-icons/md'
 import { BsChevronDown, BsChevronUp } from 'react-icons/bs'
 import { getTokenIcon } from 'lib/icons'
+import { formatFloatTokenAmount } from 'lib/formatters'
 
 function getNetworkSymbol(networkId) {
   const network = networks.find(x => x.id === networkId)
@@ -22,14 +23,22 @@ function parseExtendedSummaryItem(item, i, networkDetails) {
   if (i === 0) return (<div className={`action ${item.toLowerCase()}`} key={`item-${i}`}>{ item }</div>)
 
   if (!item.type) return (<div className='word' key={`item-${i}`}>{ item }</div>)
-
-  if (item.type === 'token') return (
+  if (item.type === 'token') {
+    return (
     <div className='token' key={`item-${i}`}>
-      { item.amount > 0 ? <span>{ item.amount }</span> : null }
-      { item.address ? <div className='icon' style={{ backgroundImage: `url(${getTokenIcon(networkDetails.id, item.address)})` }}></div> : null }
-      { item.symbol }
+      { item.amount > 0 && <span>{ formatFloatTokenAmount(item.amount, true, item.decimals) }</span> }
+      { item.decimals !== null && item.symbol ? 
+        <Fragment>
+          {item.address &&
+            <div className='icon' 
+              style={{ backgroundImage: `url(${getTokenIcon(networkDetails.id, item.address)})` }}>
+            </div>}
+          {item.symbol}
+        </Fragment>
+        : (item.amount > 0) ? 'units of unknown token' : null 
+      }
     </div>
-  )
+  )}
 
   if (item.type === 'address') return (
     <a
