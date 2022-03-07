@@ -4,7 +4,7 @@
     .content {
         display: flex;
         flex-direction: column;
-        padding-bottom: 60px;
+        padding-bottom: 50px;
 
         .wrapper {
             display: flex;
@@ -19,6 +19,10 @@
 
         .odd-rows-bg {
             background: $background-color;
+        }
+
+        .loading-wrapper {
+            min-height: 560px;
         }
     }
     
