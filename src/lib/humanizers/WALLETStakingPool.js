@@ -46,7 +46,7 @@ const WALLETStakingPool = {
     if (extended) return [['Leave', 'from', {
       type: 'address',
       address: txn.to,
-      name: 'WALLET Staking Pool'
+      name: STAKING_POOLS[txn.to].name
     }]]
     return [`Leave the WALLET Staking Pool`]
   },
