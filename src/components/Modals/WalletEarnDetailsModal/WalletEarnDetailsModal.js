@@ -3,7 +3,7 @@ import './WalletEarnDetailsModal.scss'
 import { MdClose } from 'react-icons/md'
 import { useModals } from 'hooks'
 import { Modal, Button } from 'components/common'
-import { ToolTip } from 'components/common' 
+// import { ToolTip } from 'components/common' 
 import { useWalletEarnDetails } from 'hooks'
 import { Loading } from 'components/common'
 
@@ -35,9 +35,10 @@ const WalletEarnDetailsModal = ({ title = 'Details', apy, accountId, msToDaysHou
                 <div className="wrapper odd-rows-bg">
                     <div>Balance</div>
                     <div>
-                        <ToolTip label="* Warning: Because you have sent/received staking share token (xWallet pool), the reward shown may be less than your actual reward.">
-                            {parseFloat(balance).toFixed(4)} WALLET* (Pool share: {(poolShare * 100).toFixed(2)}%)
-                        </ToolTip>
+                        {/* The tool tip will be activated after improvements of handling transactions */}
+                        {/* <ToolTip label="* Warning: Because you have sent/received staking share token (xWallet pool), the reward shown may be less than your actual reward."> */}
+                            {parseFloat(balance).toFixed(4)} WALLET (Pool share: {(poolShare * 100).toFixed(2)}%)
+                        {/* </ToolTip> */}
                     </div>
                 </div>
                 <div className="wrapper">
