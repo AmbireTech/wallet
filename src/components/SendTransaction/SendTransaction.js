@@ -27,7 +27,8 @@ import { toBundleTxn } from 'lib/requestToBundleTxn'
 import { getProvider } from 'lib/provider'
 import { MdInfo } from 'react-icons/md'
 import { useCallback } from 'react'
-import { ToolTip } from "components/common";
+import { ToolTip } from 'components/common'
+import { Checkbox } from 'components/common'
 
 const ERC20 = new Interface(require('adex-protocol-eth/abi/ERC20'))
 
@@ -418,8 +419,11 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, network, account,
             !!estimation?.nextNonce?.pendingBundle &&
             (
               <div>
-                Replace Transaction?
-                <input type='checkbox' checked={replaceTx} onChange={() => setReplaceTx(!replaceTx)} />
+               <Checkbox
+                    label='Replace currently pending transaction'
+                    checked={replaceTx}
+                    onChange={({ target }) => setReplaceTx(target.checked)}
+                />
               </div>
             )
           }
