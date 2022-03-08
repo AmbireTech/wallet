@@ -4,6 +4,7 @@ import { NavLink } from 'react-router-dom'
 import { GiReceiveMoney } from 'react-icons/gi'
 import { Button } from 'components/common'
 import { MdOutlineAdd } from 'react-icons/md'
+import { useLocalStorage } from 'hooks'
 
 const ProtocolsPlaceholder = ({ onClickAddToken, onClickShowToken }) => {
     const tokens = [
@@ -27,6 +28,13 @@ const ProtocolsPlaceholder = ({ onClickAddToken, onClickShowToken }) => {
         },
     ]
 
+    const listHiddenTokens = useLocalStorage({ key: 'hiddenTokens'})
+    let hiddenTokensCount = 0
+    
+    if (listHiddenTokens && listHiddenTokens[0] !== null) {
+        hiddenTokensCount = listHiddenTokens[0].length
+    }
+    
     return (
         <div id="protocols-placeholder" >
             <div className="placeholder-overlay">
@@ -39,7 +47,7 @@ const ProtocolsPlaceholder = ({ onClickAddToken, onClickShowToken }) => {
                 <div className="add-token">
                     <label>You have a token that's not displayed?</label>
                     <Button mini clear icon={<MdOutlineAdd/>} onClick={onClickAddToken}>Click here to add it</Button>
-                    <Button mini clear icon={<MdOutlineAdd/>} onClick={onClickShowToken}>Click here to show it</Button>
+                    {hiddenTokensCount > 0 && (<label style={{ cursor: 'pointer'}} onClick={onClickShowToken}>There are also {hiddenTokensCount} hidden tokens. Click to configure</label>)}
                 </div>
             </div>
             <div className="category">
