@@ -59,7 +59,12 @@ const WalletEarnDetailsModal = ({ title = 'Details', apy, accountId, msToDaysHou
                     </div>
                 </div>
                 <div className="wrapper">
-                    <div>Ready to withdraw</div><div>{parseFloat(readyToWithdraw).toFixed(4)} WALLET</div>
+                    <div>Ready to withdraw</div>
+                    <div>
+                        {parseFloat(readyToWithdraw) > 0 
+                        ? `${parseFloat(readyToWithdraw).toFixed(4)} WALLET`
+                        : 'No amount for withdrawing'}
+                    </div>
                 </div>
             </>): <div className='loading-wrapper'><Loading/></div>}
         </Modal>
