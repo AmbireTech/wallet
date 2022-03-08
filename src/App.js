@@ -61,7 +61,7 @@ function AppInner() {
   const { requests: gnosisRequests, resolveMany: gnosisResolveMany, connect: gnosisConnect, disconnect: gnosisDisconnect } = useGnosisSafe({
     selectedAccount: selectedAcc,
     network: network,
-    useStorage: useLocalStorage,
+    useStorage: useLocalStorage
   }, [selectedAcc, network])
 
   const { requests: extensionRequests, resolveMany: extensionResolveMany } = useAmbireExtension({
