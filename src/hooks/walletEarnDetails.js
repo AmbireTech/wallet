@@ -90,6 +90,7 @@ const useWalletEarnDetails = ({accountId}) => {
         if (leaveLogs[0]) {
             const { timestamp } = await ethProvider.getBlock(leaveLogs[0].blockNumber)
             remainingTime = (timeToUnbond.toString() * 1000) - (Date.now() - (timestamp * 1000))
+            if (remainingTime <= 0) remainingTime = 0
         } else {
             remainingTime = null
         }
