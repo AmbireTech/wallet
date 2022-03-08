@@ -12,8 +12,12 @@ import { validateSendTransferAddress, validateSendTransferAmount } from 'lib/val
 import { isValidAddress } from 'lib/address'
 import Addresses from './Addresses/Addresses'
 import { MdInfo } from 'react-icons/md'
+import networks from 'consts/networks'
+import { getTokenIcon } from 'lib/icons'
+import { formatFloatTokenAmount } from 'lib/formatters'
 
 const ERC20 = new Interface(require('adex-protocol-eth/abi/ERC20'))
+const unsupportedSWPlatforms = ['Binance', 'Huobi', 'KuCoin', 'Gate.io', 'FTX']
 
 const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest, addressBook }) => {
     const { addresses, addAddress, removeAddress, isKnownAddress } = addressBook
@@ -29,7 +33,7 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
     const [address, setAddress] = useState('')
     const [disabled, setDisabled] = useState(true)
     const [addressConfirmed, setAddressConfirmed] = useState(false)
-    const [binanceAddressConfirmed, setBinanceAddressConfirmed] = useState(false)
+    const [sWAddressConfirmed, setSWAddressConfirmed] = useState(false)
     const [newAddress, setNewAddress] = useState('')
     const [validationFormMgs, setValidationFormMgs] = useState({ 
         success: { 
@@ -42,21 +46,27 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
         }
     })
 
-    const assetsItems = portfolio.tokens.map(({ label, symbol, address, img, tokenImageUrl }) => ({
+    const assetsItems = portfolio.tokens.map(({ label, symbol, address, img, tokenImageUrl, network }) => ({
         label: label || symbol,
         value: address,
-        icon: img || tokenImageUrl
+        icon: img || tokenImageUrl,
+        fallbackIcon: getTokenIcon(network, address)
     }))
 
     const selectedAsset = portfolio.tokens.find(({ address }) => address === asset)
 
-    const maxAmount = useMemo(() => {
-        if (!selectedAsset) return 0;
-        const { balanceRaw, decimals } = selectedAsset
-        return ethers.utils.formatUnits(balanceRaw, decimals)
+    const { maxAmount, maxAmountFormatted } = useMemo(() => {
+        if (!selectedAsset) return {maxAmount: '0', maxAmountFormatted: '0.00'};
+        const { balanceRaw, decimals, balance } = selectedAsset
+        return {
+            maxAmount: ethers.utils.formatUnits(balanceRaw, decimals),
+            maxAmountFormatted:  formatFloatTokenAmount(balance, true, decimals)
+        }
     }, [selectedAsset])
 
-    const showBinanceAddressWarning = useMemo(() => Number(tokenAddress) === 0 && ['polygon', 'binance-smart-chain'].includes(selectedNetwork.id), [tokenAddress, selectedNetwork])
+    const showSWAddressWarning = useMemo(() => 
+        Number(tokenAddress) === 0 && networks.map(({ id }) => id).filter(id => id !== 'ethereum').includes(selectedNetwork.id)
+    , [tokenAddress, selectedNetwork])
 
     const setMaxAmount = () => onAmountChange(maxAmount)
 
@@ -102,7 +112,7 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
     useEffect(() => {
         setAmount(0)
         setBigNumberHexAmount('')
-        setBinanceAddressConfirmed(false)
+        setSWAddressConfirmed(false)
     }, [asset, selectedNetwork.id])
 
     useEffect(() => {
@@ -125,10 +135,10 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
             }
         })
 
-        setDisabled(!isValidRecipientAddress.success || !isValidSendTransferAmount.success || (showBinanceAddressWarning && !binanceAddressConfirmed))
-    }, [address, amount, selectedAcc, selectedAsset, addressConfirmed, showBinanceAddressWarning, binanceAddressConfirmed, isKnownAddress, addToast])
+        setDisabled(!isValidRecipientAddress.success || !isValidSendTransferAmount.success || (showSWAddressWarning && !sWAddressConfirmed))
+    }, [address, amount, selectedAcc, selectedAsset, addressConfirmed, showSWAddressWarning, sWAddressConfirmed, isKnownAddress, addToast])
 
-    const amountLabel = <div className="amount-label">Available Amount: <span>{ maxAmount } { selectedAsset?.symbol }</span></div>
+    const amountLabel = <div className="amount-label">Available Amount: <span>{ maxAmountFormatted } { selectedAsset?.symbol }</span></div>
 
     return (
         <div id="transfer">
@@ -179,15 +189,16 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
                                     isKnownAddress={isKnownAddress}
                                 />
                                 {
-                                    showBinanceAddressWarning ? 
+                                    showSWAddressWarning ? 
                                         <Checkbox 
                                             id="binance-address-warning"
                                             label={<span id="binance-address-warning-label">
-                                                I confirm this address is not a Binance address: <br/>Binance does not support ${selectedAsset?.symbol} deposits from smart wallets
+                                                I confirm this address is not a { unsupportedSWPlatforms.join(' / ') } address: <br/>
+                                                These platforms do not support ${selectedAsset?.symbol} deposits from smart wallets
                                                 <a href='https://help.ambire.com/hc/en-us/articles/4415473743506-Statement-on-MATIC-BNB-deposits-to-Binance' target='_blank' rel='noreferrer'><MdInfo size={20}/></a>
                                             </span>}
-                                            checked={binanceAddressConfirmed}
-                                            onChange={({ target }) => setBinanceAddressConfirmed(target.checked)}
+                                            checked={sWAddressConfirmed}
+                                            onChange={({ target }) => setSWAddressConfirmed(target.checked)}
                                         />
                                         :
                                         null

@@ -7,17 +7,26 @@ import * as blockies from 'blockies-ts';
 import { getWallet } from 'lib/getWallet'
 import { useToasts } from 'hooks/toasts'
 import { fetchPost } from 'lib/fetch'
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Button, Loading, TextInput } from 'components/common'
+
+const CONF_CODE_LENGTH = 6
 
 export default function SignMessage ({ toSign, resolve, account, connections, relayerURL, totalRequests }) {
   const defaultState = () => ({ codeRequired: false, passphrase: '' })
   const { addToast } = useToasts()
   const [signingState, setSigningState] = useState(defaultState())
   const [isLoading, setLoading] = useState(false)
+  const [confFieldState, setConfFieldState] = useState({isShown: false,  confCodeRequired: ''})
+  const [promiseResolve, setPromiseResolve] = useState(null)
+  const inputSecretRef = useRef(null)
 
   const connection = connections.find(({ uri }) => uri === toSign.wcUri)
   const dApp = connection ? connection?.session?.peerMeta || null : null
+
+  useEffect(()=> {
+    if (confFieldState.isShown) inputSecretRef.current.focus()
+  }, [confFieldState])
 
   if (!toSign || !account) return (<></>)
   if (toSign && !isHexString(toSign.txn)) return (<div id='signMessage'>
@@ -59,12 +68,16 @@ export default function SignMessage ({ toSign, resolve, account, connections, re
           addToast('Unable to sign: wrong confirmation code', { error: true })
         }
         addToast(`Second signature error: ${message}`, { error: true })
+        setConfFieldState({ isShown: false, confCodeRequired: null })
+        setLoading(false)
         return
       }
       if (confCodeRequired) {
-        const confCode = prompt('A confirmation code has been sent to your email, it is valid for 3 minutes. Please enter it here:')
+        setConfFieldState({ isShown: true, confCodeRequired })
+        const confCode = await new Promise((resolve, reject) => { setPromiseResolve(() => resolve) })
         if (!confCode) throw new Error('You must enter a confirmation code')
         await approveQuickAcc(confCode)
+        setLoading(false)
         return
       }
 
@@ -101,6 +114,15 @@ export default function SignMessage ({ toSign, resolve, account, connections, re
       addToast(`Successfully signed!`)
     } catch(e) { handleSigningErr(e) }
     setLoading(false)
+  }
+
+  const handleInputConfCode = e => {
+    if (e.length === CONF_CODE_LENGTH) promiseResolve(e)
+  }
+
+  const handleSubmit = e => {
+    e.preventDefault() 
+    approve()
   }
 
   return (<div id='signMessage'>
@@ -144,7 +166,7 @@ export default function SignMessage ({ toSign, resolve, account, connections, re
       />
 
       <div className='actions'>
-        <form onSubmit={e => { e.preventDefault() }}>
+        <form onSubmit={handleSubmit}>
           {account.signer.quickAccManager && (<>
             <TextInput
               password
@@ -153,16 +175,31 @@ export default function SignMessage ({ toSign, resolve, account, connections, re
               value={signingState.passphrase}
               onChange={value => setSigningState({ ...signingState, passphrase: value })}
             ></TextInput>
+            <input type="submit" hidden />
           </>)}
 
+          {confFieldState.isShown && (    
+            <>
+              {confFieldState.confCodeRequired === 'email' &&
+              (<span>A confirmation code has been sent to your email, it is valid for 3 minutes.</span>)} 
+              {confFieldState.confCodeRequired === 'otp' && (<span>Please enter your OTP code</span>)}
+              <TextInput
+                ref={inputSecretRef}
+                placeholder={confFieldState.confCodeRequired === 'otp' ? 'Authenticator OTP code' : 'Confirmation code'}
+                onInput={value => handleInputConfCode(value)}
+              />
+            </>
+            )}
+          
           <div className="buttons">
             <Button
+              type='button'
               danger
               icon={<MdClose/>}
               className='reject'
               onClick={() => resolve({ message: 'signature denied' })}
             >Reject</Button>
-            <Button className='approve' onClick={approve} disabled={isLoading}>
+            <Button type='submit' className='approve' disabled={isLoading}>
               {isLoading ? (<><Loading/>Signing...</>)
               : (<><MdCheck/> Sign</>)}
             </Button>

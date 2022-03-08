@@ -1,6 +1,6 @@
 {
   "name": "ambire-wallet",
-  "version": "0.4.2",
+  "version": "0.4.4",
   "private": true,
   "homepage": "./",
   "dependencies": {
@@ -19,11 +19,12 @@
     "@web3-react/abstract-connector": "^6.0.7",
     "@web3-react/types": "^6.0.7",
     "@yfi/sdk": "^1.0.11",
-    "adex-protocol-eth": "git+https://git@github.com/AdExNetwork/adex-protocol-eth.git#4b4bfe380ae696b241513d8e1cdfb10cc12df332",
+    "adex-protocol-eth": "git+https://git@github.com/AmbireTech/adex-protocol-eth.git#5a930c222a536908ac8544bda279ac6d47913cd4",
     "blockies-ts": "^1.0.0",
     "eth-keyring-controller": "^6.2.1",
     "ethereumjs-util": "^6.1.0",
     "ethers": "^5.4.7",
+    "gridplus-sdk": "^0.9.2",
     "node-fetch": "^2.3.0",
     "node-sass": "^6.0.1",
     "otplib": "^12.0.1",
@@ -37,6 +38,7 @@
     "react-scripts": "^4.0.3",
     "react-transition-group": "^4.4.2",
     "trezor-connect": "^8.2.2",
+    "typescript": "^4.5.4",
     "url": "^0.11.0",
     "web-vitals": "^1.1.2"
   },

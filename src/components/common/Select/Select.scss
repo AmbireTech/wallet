@@ -42,6 +42,7 @@
         text-overflow: ellipsis;
         overflow: hidden;
         cursor: pointer;
+        flex-grow: 1;
     }
 
     .select-container {
@@ -133,6 +134,11 @@
                         border-radius: 100%;
                     }
                 }
+
+                &.disabled {
+                    opacity: 0.6;
+                    cursor: no-drop;
+                }
             }
         }
     }
@@ -147,7 +153,7 @@
 
     &.monospace {
         .value, .option {
-            font-family: monospace;
+            font-family: 'monospace';
             font-size: 17px;
         }
     }

@@ -16,6 +16,11 @@
             font-size: 20px;
             font-weight: bold;
             background-color: rgba(255, 255, 255, 0.1);
+
+            .wrapper-btns {
+                display: flex;
+                gap: 10px;
+            }
         }
 
         .list {
@@ -119,16 +124,12 @@
         gap: 20px;
 
         .token {
-            gap: 7px !important;
             padding: 10px 15px !important;
+            padding-right: 5px !important;
 
             .icon {
                 height: 35px !important;
                 width: 35px !important;
-            }
-
-            .name {
-                display: none;
             }
 
             .separator {
@@ -137,10 +138,13 @@
 
             .balance {
                 flex: 1 0 auto;
-                text-align: left !important;
 
                 .currency {
-                    justify-content: space-between;
+                    justify-content: flex-end;
+
+                    .symbol {
+                        display: none;
+                    }
 
                     .value {
                         max-width: 120px;

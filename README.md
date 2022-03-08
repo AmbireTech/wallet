@@ -32,6 +32,13 @@ npm i
 npm start
 ```
 
+### Relayerless mode
+
+In order to enable Relayerless mode (_ability to function without being connected to the relayer_), you need to set `REACT_APP_RELAYER_URL` env variable to null as follows:
+```dotenv
+REACT_APP_RELAYER_URL=
+```
+
 ### Testing Ledger
 
 **Important:** to make the Ledger integration work, you need to be accessing Ambire Wallet through HTTPS. The easiest way to do this in a development environment is to [use localtunnel](https://github.com/localtunnel/localtunnel): for example, `lt --port 3000`
@@ -150,6 +157,7 @@ node scripts/generateContractInfo.js > src/consts/humanizerInfo.json
 ## Audits
 
 The contracts used by Ambire Wallet have been audited by:
+* [CertiK](./contracts/audits/Certik.pdf)
 * [CodeArena](https://code423n4.com/reports/2021-10-ambire/)
 * [G0 group](https://github.com/g0-group/Audits/blob/master/AdExNetwork.md): audited AdEx Network but the used Identity.sol was carried over to Ambire
 
@@ -160,7 +168,8 @@ Additionally, there's an ongoing [Immunefi bug bounty](https://immunefi.com/boun
 * Base identity: 0x2A2b85EB1054d6f0c6c2E37dA05eD3E5feA684EF
 * QuickAccManager: 0xfF3f6D14DF43c112aB98834Ee1F82083E07c26BF
 * Batcher: 0x460fad03099f67391d84c9cc0ea7aa2457969cea
-
+* WALLET token: 0x88800092ff476844f74dc2fc427974bbee2794ae
+* SupplyController: 0xc53af25f831f31ad6256a742b3f0905bc214a430
 
 ## Change log
 
@@ -246,3 +255,22 @@ Additionally, there's an ongoing [Immunefi bug bounty](https://immunefi.com/boun
 * Warn users when there's extra transaction costs for deploying their wallet
 * Private mode: hide addresses as well
 
+### v0.4.3
+* Fee improvements: ability to set a custom fee
+* Fee improvements: ability to select a lower fee if you don't have sufficient funds for the higher settings
+* Ability to replace the current transaction
+* Ability to queue a new transaction when you have one pending
+* $WALLET claiming: can now claim early investor tokens
+* Bugfix: fixed parsing Aave repay transactions
+* Support for Fantom
+
+### v0.4.4
+* $WALLET: Ability to stake (xWALLET)
+* $WALLET: Ability to pay transaction fees in $WALLET
+* Grid+ Lattice hardware wallet support
+* $WALLET claiming: show APYs
+* More token icons
+
+### v0.4.5
+* Improvements to $WALLET staking: better stats
+* Ability to hide tokens in the dashboard

@@ -11,7 +11,8 @@ const networks = [{
 	},  {
 		id: 'polygon',
 		chainId: 137,
-		rpc: 'https://polygon-rpc.com/rpc',
+		// rpc: 'https://polygon-rpc.com/rpc',
+		rpc: 'https://polygon-mainnet.infura.io/v3/d4319c39c4df452286d8bf6d10de28ae',
 		nativeAssetSymbol: 'MATIC',
 		name: 'Polygon',
 		icon: '/resources/networks/polygon.png',
@@ -41,6 +42,14 @@ const networks = [{
 		name: 'Fantom Opera',
 		icon: '/resources/networks/fantom.png',
 		explorerUrl: 'https://ftmscan.com'
+	}/*, {
+		id: 'moonbeam',
+		chainId: 1284,
+		rpc: 'https://rpc.api.moonbeam.network',
+		nativeAssetSymbol: 'GLMR',
+		name: 'Moonbeam',
+		icon: '/resources/networks/moonbeam.png',
+		explorerUrl: 'https://moonscan.io/'
 	}, {
 		id: 'arbitrum',
 		chainId: 42161,
@@ -49,6 +58,6 @@ const networks = [{
 		name: 'Arbitrum',
 		icon: '/resources/networks/arbitrum.svg',
 		explorerUrl: 'https://arbiscan.io'
-}]
+}*/]
 
 export default networks

@@ -10,6 +10,7 @@ import { useToasts } from 'hooks/toasts';
 import { MdOutlineAdd, MdOutlineClose, MdOutlineRemove } from 'react-icons/md';
 import { useModals } from 'hooks';
 import { getProvider } from 'lib/provider'
+import { getTokenIcon } from 'lib/icons'
 
 const ERC20Interface = new Interface(ERC20ABI)
 
@@ -46,11 +47,11 @@ const AddTokenModal = ({ network, account, portfolio }) => {
             const balance = formatUnits(balanceOf, decimals)
             setTokenDetails({
                 account,
-                address,
+                address: address.toLowerCase(),
                 network: network.id,
                 balance,
                 balanceRaw: balanceOf.toString(),
-                tokenImageUrl: `https://storage.googleapis.com/zapper-fi-assets/tokens/${network.id}/${address}.png`,
+                tokenImageUrl: getTokenIcon(network.id, address),
                 name,
                 symbol,
                 decimals
@@ -108,7 +109,7 @@ const AddTokenModal = ({ network, account, portfolio }) => {
                                 <div className="info">
                                     <div className="icon" style={{backgroundImage: `url(${tokenDetails.icon})`}}/>
                                     <div className="name">
-                                        { tokenDetails.name } <span>({ tokenDetails.symbol })</span>
+                                        { tokenDetails.name } <span>({ tokenDetails.symbol }) {tokenDetails.network.toUpperCase()}</span>
                                     </div>
                                 </div>
                                 <div className="balance">
@@ -120,11 +121,11 @@ const AddTokenModal = ({ network, account, portfolio }) => {
             }
             <div className="extra-tokens-list">
                 {
-                    extraTokens.map(({ address, name, symbol, tokenImageUrl }) => (
+                    extraTokens.map(({ address, name, symbol, tokenImageUrl, network }) => (
                         <div className="extra-token" key={address}>
                             <div className="info">
                                 <div className="icon" style={{ backgroundImage: `url(${tokenImageUrl})` }}/>
-                                <div className="name">{ name } <span>({ symbol })</span></div>
+                                <div className="name">{ name } <span>({ symbol }) {network.toUpperCase()}</span></div>
                             </div>
                             <div className="actions">
                                 <Button mini clear onClick={() => removeToken(address)}>

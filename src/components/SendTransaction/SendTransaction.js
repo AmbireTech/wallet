@@ -2,13 +2,13 @@
 // GiObservatory is also interesting
 import { GiGorilla } from 'react-icons/gi'
 import { FaChevronLeft } from 'react-icons/fa'
+import { MdOutlineInfo } from 'react-icons/md'
 import './SendTransaction.scss'
 import { useEffect, useState, useMemo, useRef } from 'react'
-import fetch from 'node-fetch'
 import { Bundle } from 'adex-protocol-eth/js'
 import { Wallet } from 'ethers'
 import { Interface } from 'ethers/lib/utils'
-import * as blockies from 'blockies-ts';
+import * as blockies from 'blockies-ts'
 import { useToasts } from 'hooks/toasts'
 import { getWallet } from 'lib/getWallet'
 import accountPresets from 'consts/accountPresets'
@@ -16,12 +16,19 @@ import { FeeSelector, FailingTxn } from './FeeSelector'
 import Actions from './Actions'
 import TxnPreview from 'components/common/TxnPreview/TxnPreview'
 import { sendNoRelayer } from './noRelayer'
-import { isTokenEligible, getFeePaymentConsequences } from './helpers'
+import { 
+  isTokenEligible, 
+  // getFeePaymentConsequences, 
+  getFeesData,
+  toHexAmount,
+ } from './helpers'
 import { fetchPost } from 'lib/fetch'
 import { toBundleTxn } from 'lib/requestToBundleTxn'
 import { getProvider } from 'lib/provider'
 import { MdInfo } from 'react-icons/md'
 import { useCallback } from 'react'
+import { ToolTip } from 'components/common'
+import { Checkbox } from 'components/common'
 
 const ERC20 = new Interface(require('adex-protocol-eth/abi/ERC20'))
 
@@ -42,19 +49,19 @@ function makeBundle(account, networkId, requests) {
   return bundle
 }
 
-function getErrorMessage(e){
+function getErrorMessage(e) {
   if (e && e.message === 'NOT_TIME') {
-    return "Your 72 hour recovery waiting period still hasn't ended. You will be able to use your account after this lock period."
-  } else if (e && e.message === 'WRONG_ACC_OR_NO_PRIV' ) {
-    return "Unable to sign with this email/password account. Please contact support."
+    return 'Your 72 hour recovery waiting period still hasn\'t ended. You will be able to use your account after this lock period.'
+  } else if (e && e.message === 'WRONG_ACC_OR_NO_PRIV') {
+    return 'Unable to sign with this email/password account. Please contact support.'
   } else if (e && e.message === 'INVALID_SIGNATURE') {
-    return "Invalid signature. This may happen if you used password/derivation path on your hardware wallet."
+    return 'Invalid signature. This may happen if you used password/derivation path on your hardware wallet.'
   } else {
-    return e.message || e 
+    return e.message || e
   }
 }
 
-export default function SendTransaction({ relayerURL, accounts, network, selectedAcc, requests, resolveMany, replacementBundle, onBroadcastedTxn, onDismiss }) {
+export default function SendTransaction({ relayerURL, accounts, network, selectedAcc, requests, resolveMany, replacementBundle, replaceByDefault, onBroadcastedTxn, onDismiss }) {
   // NOTE: this can be refactored at a top level to only pass the selected account (full object)
   // keeping it that way right now (selectedAcc, accounts) cause maybe we'll need the others at some point?
   const account = accounts.find(x => x.id === selectedAcc)
@@ -75,21 +82,26 @@ export default function SendTransaction({ relayerURL, accounts, network, selecte
   )
 
   if (!account || !bundle.txns.length) return (<div id='sendTransaction'>
-      <h3 className='error'>SendTransactions: No account or no requests: should never happen.</h3>
+    <h3 className='error'>SendTransactions: No account or no requests: should never happen.</h3>
   </div>)
   return (<SendTransactionWithBundle
-      relayerURL={relayerURL}
-      bundle={bundle}
-      network={network}
-      account={account}
-      resolveMany={resolveMany}
-      onBroadcastedTxn={onBroadcastedTxn}
-      onDismiss={onDismiss}
+    relayerURL={relayerURL}
+    bundle={bundle}
+    replaceByDefault={replaceByDefault}
+    network={network}
+    account={account}
+    resolveMany={resolveMany}
+    onBroadcastedTxn={onBroadcastedTxn}
+    onDismiss={onDismiss}
   />)
 }
 
-function SendTransactionWithBundle ({ bundle, network, account, resolveMany, relayerURL, onBroadcastedTxn, onDismiss }) {
+function SendTransactionWithBundle({ bundle, replaceByDefault, network, account, resolveMany, relayerURL, onBroadcastedTxn, onDismiss }) {
+
   const [estimation, setEstimation] = useState(null)
+
+  const [replaceTx, setReplaceTx] = useState(!!replaceByDefault)
+
   const [signingStatus, setSigningStatus] = useState(false)
   const [feeSpeed, setFeeSpeed] = useState(DEFAULT_SPEED)
   const { addToast } = useToasts()
@@ -110,26 +122,31 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
     // track whether the effect has been unmounted
     let unmounted = false
 
-    // get latest estimation
     const reestimate = () => (relayerURL
-      ? bundle.estimate({ relayerURL, fetch, replacing: !!bundle.minFeeInUSDPerGas })
-      : bundle.estimateNoRelayer({ provider: getProvider(network.id) })
+        ? bundle.estimate({ relayerURL, fetch, replacing: !!bundle.minFeeInUSDPerGas, getNextNonce: true })
+        : bundle.estimateNoRelayer({ provider: getProvider(network.id) })
     )
       .then(estimation => {
         if (unmounted || bundle !== currentBundle.current) return
         estimation.selectedFeeToken = { symbol: network.nativeAssetSymbol }
         setEstimation(prevEstimation => {
+          if (prevEstimation && prevEstimation.customFee) return prevEstimation
           if (estimation.remainingFeeTokenBalances) {
             // If there's no eligible token, set it to the first one cause it looks more user friendly (it's the preferred one, usually a stablecoin)
             estimation.selectedFeeToken = (
                 prevEstimation
                 && isTokenEligible(prevEstimation.selectedFeeToken, feeSpeed, estimation)
                 && prevEstimation.selectedFeeToken
-              ) || estimation.remainingFeeTokenBalances.find(token => isTokenEligible(token, feeSpeed, estimation))
+              ) || estimation.remainingFeeTokenBalances
+              // .sort((a, b) => (b.discount || 0) - (a.discount || 0))
+              .find(token => isTokenEligible(token, feeSpeed, estimation))
               || estimation.remainingFeeTokenBalances[0]
           }
           return estimation
         })
+        if (estimation.nextNonce && !estimation.nextNonce.pendingBundle) {
+          setReplaceTx(false)
+        }
       })
       .catch(e => {
         if (unmounted) return
@@ -144,36 +161,46 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
       unmounted = true
       clearInterval(intvl)
     }
-  }, [bundle, setEstimation, feeSpeed, addToast, network, relayerURL, signingStatus])
+  }, [bundle, setEstimation, feeSpeed, addToast, network, relayerURL, signingStatus, replaceTx, setReplaceTx])
 
+  // The final bundle is used when signing + sending it
+  // the bundle before that is used for estimating
   const getFinalBundle = useCallback(() => {
     if (!relayerURL) {
       return new Bundle({
         ...bundle,
-        gasLimit: estimation.gasLimit
-        // set nonce here when we implement "replace current pending transaction"
+        gasLimit: estimation.gasLimit,
       })
     }
 
     const feeToken = estimation.selectedFeeToken
-    const { addedGas, multiplier } = getFeePaymentConsequences(feeToken, estimation)
-    const toHexAmount = amnt => '0x'+Math.round(amnt).toString(16)
+
+    const {
+      feeInNative,
+      // feeInUSD, // don't need fee in USD for stables as it will work with feeInFeeToken
+      // Also it can be stable but not in USD
+      feeInFeeToken,
+      addedGas
+    } = getFeesData(feeToken, estimation, feeSpeed)
     const feeTxn = feeToken.symbol === network.nativeAssetSymbol
-      ? [accountPresets.feeCollector, toHexAmount(estimation.feeInNative[feeSpeed]*multiplier*1e18), '0x']
+      // TODO: check native decimals 
+      ? [accountPresets.feeCollector, toHexAmount(feeInNative, 18), '0x']
       : [feeToken.address, '0x0', ERC20.encodeFunctionData('transfer', [
         accountPresets.feeCollector,
-        toHexAmount(
-          (feeToken.isStable ? estimation.feeInUSD[feeSpeed] : estimation.feeInNative[feeSpeed])
-          * multiplier
-          * Math.pow(10, feeToken.decimals)
-        )
+        toHexAmount(feeInFeeToken, feeToken.decimals)
     ])]
+
+    const pendingBundle = estimation.nextNonce?.pendingBundle
+    const nextFreeNonce = estimation.nextNonce?.nonce
+    const nextNonMinedNonce = estimation.nextNonce?.nextNonMinedNonce
+
     return new Bundle({
       ...bundle,
       txns: [...bundle.txns, feeTxn],
-      gasLimit: estimation.gasLimit + addedGas + (bundle.extraGas || 0)
+      gasLimit: estimation.gasLimit + addedGas + (bundle.extraGas || 0),
+      nonce: (replaceTx && pendingBundle) ? nextNonMinedNonce : nextFreeNonce
     })
-  }, [relayerURL, bundle, estimation, feeSpeed, network.nativeAssetSymbol])
+  }, [relayerURL, bundle, estimation, feeSpeed, network.nativeAssetSymbol, replaceTx])
 
   const approveTxnImpl = async () => {
     if (!estimation) throw new Error('no estimation: should never happen')
@@ -192,7 +219,6 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
       // Temporary way of debugging the fee cost
       // const initialLimit = finalBundle.gasLimit - getFeePaymentConsequences(estimation.selectedFeeToken, estimation).addedGas
       // finalBundle.estimate({ relayerURL, fetch }).then(estimation => console.log('fee costs: ', estimation.gasLimit - initialLimit), estimation.selectedFeeToken).catch(console.error)
-      if (typeof finalBundle.nonce !== 'number') await finalBundle.getNonce(provider)
       await finalBundle.sign(wallet)
       return await finalBundle.submit({ relayerURL, fetch })
     } else {
@@ -208,10 +234,6 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
 
     const finalBundle = (signingStatus && signingStatus.finalBundle) || getFinalBundle()
     const signer = finalBundle.signer
-
-    if (typeof finalBundle.nonce !== 'number') {
-      await finalBundle.getNonce(getProvider(network.id))
-    }
 
     const { signature, success, message, confCodeRequired } = await fetchPost(
       `${relayerURL}/second-key/${bundle.identity}/${network.id}/sign`, {
@@ -257,6 +279,10 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
 
     if (account.signerExtra && account.signerExtra.type === 'ledger') {
       addToast('Please confirm this transaction on your Ledger device.', { timeout: 10000 })
+    }
+
+    if (account.signerExtra && account.signerExtra.type === 'Lattice') {
+      addToast('Please confirm this transaction on your Lattice device.', { timeout: 10000 })
     }
 
     const requestIds = bundle.requestIds
@@ -308,7 +334,11 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
     <div id='sendTransaction'>
       <div id="titleBar">
         <div className='dismiss' onClick={onDismiss}>
-          <FaChevronLeft size={35}/><span>back</span>
+          <FaChevronLeft size={35}/>
+          back
+          <ToolTip label="You can go back to the main dashboard and add more transactions to this bundle in order to sign & send them all at once.">
+            <MdOutlineInfo size={25}/>
+          </ToolTip>
         </div>
       </div>
 
@@ -381,8 +411,22 @@ function SendTransactionWithBundle ({ bundle, network, account, resolveMany, rel
               network={network}
               feeSpeed={feeSpeed}
               setFeeSpeed={setFeeSpeed}
+              onDismiss={onDismiss}
             ></FeeSelector>
           </div>
+
+          {
+            !!estimation?.nextNonce?.pendingBundle &&
+            (
+              <div>
+               <Checkbox
+                    label='Replace currently pending transaction'
+                    checked={replaceTx}
+                    onChange={({ target }) => setReplaceTx(target.checked)}
+                />
+              </div>
+            )
+          }
 
           {
             estimation && estimation.success && estimation.isDeployed === false && bundle.gasLimit ?

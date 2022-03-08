@@ -8,7 +8,7 @@ import Accounts from "./Accounts/Accounts";
 import DApps from "./DApps/DApps";
 import * as blockies from 'blockies-ts';
 import Links from "./Links/Links";
-import Rewards from "./Rewards/Rewards";
+import WalletTokenButton from "./WalletTokenButton/WalletTokenButton";
 
 const TopBar = ({
   connections,
@@ -22,7 +22,8 @@ const TopBar = ({
   setNetwork,
   allNetworks,
   rewardsData,
-  privateMode: { isPrivateMode, togglePrivateMode, hidePrivateValue }
+  privateMode: { isPrivateMode, togglePrivateMode, hidePrivateValue },
+  addRequest
 }) => {
   const [isMenuOpen, setMenuOpen] = useState(false)
   
@@ -51,11 +52,13 @@ const TopBar = ({
         <div id="icon" />
       </NavLink>
       <div className={`container ${isMenuOpen ? 'open' : ''}`}>
-        <Rewards
+        {selectedAcc && <WalletTokenButton
           rewardsData={rewardsData}
           account={account}
+          network={network}
           hidePrivateValue={hidePrivateValue}
-        />
+          addRequest={addRequest}
+        />}
         {isPrivateMode ? <MdVisibilityOff cursor="pointer" size={28} onClick={togglePrivateMode} /> : <MdRemoveRedEye cursor="pointer" size={28} onClick={togglePrivateMode} />}
         <DApps connections={connections} connect={connect} disconnect={disconnect}/>
         <Accounts accounts={accounts} selectedAddress={selectedAcc} onSelectAcc={onSelectAcc} onRemoveAccount={onRemoveAccount} hidePrivateValue={hidePrivateValue}/>

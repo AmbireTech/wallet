@@ -69,11 +69,14 @@ $titleBar-height: 90px;
 
             .content {
                 height: 100%;
+                gap: 15px;
+                overflow: hidden;
 
                 .listOfTransactions {
                     display: flex;
                     flex-direction: column;
                     gap: 0.5em;
+                    overflow-y: auto;
                 }
 
                 .transactionsNote {
@@ -101,6 +104,7 @@ $titleBar-height: 90px;
         #detailsPanel {
             flex: 0 1 30%;
             justify-content: space-between;
+            gap: 2em;
 
             .section {
                 display: flex;
@@ -132,6 +136,7 @@ $titleBar-height: 90px;
                 flex: 1 1 auto;
                 overflow: hidden;
                 overflow-y: auto;
+                padding-bottom: 10px;
 
                 #signing-details {
                     .section-content {
@@ -179,12 +184,14 @@ $titleBar-height: 90px;
                 }
             }
 
-            .first-tx-note {
+            .first-tx-note,
+            .confirmation-code-info {
                 display: flex;
                 flex-direction: column;
                 gap: 0.25em;
 
-                .first-tx-note-title {
+                .first-tx-note-title,
+                .confirmation-code-info-title {
                     display: flex;
                     flex-direction: row;
                     align-items: center;
@@ -194,18 +201,17 @@ $titleBar-height: 90px;
                     text-transform: uppercase;
                 }
 
-                .first-tx-note-message {
+                .first-tx-note-message,
+                .confirmation-code-info-message {
                     font-size: 17px;
                     font-weight: 500;
-                    opacity: 0.9;
+                    opacity: 0.8;
                 }
             }
 
             #actions-container {
                 #actions {
-                    .confirmation-code-info {
-                        font-weight: 500;
-                    }
+                    gap: 1.5em;
 
                     form {
                         display: flex;
@@ -231,10 +237,12 @@ $titleBar-height: 90px;
                         display: flex;
                         flex-direction: row;
                         gap: 1.5em;
+                        flex-wrap: wrap;
 
                         .buttonComponent {
                             height: 75px;
-                            flex: 0 1 50%;
+                            // flex: 0 1 50%;
+                            flex-grow: 1;
 
                             &.danger {
                                 color: white;
@@ -247,7 +255,7 @@ $titleBar-height: 90px;
                             }
 
                             &.approveTxn {
-                                flex: 1 0 auto;
+                                // flex: 1 0 auto;
 
                                 .loading {
                                     width: auto;

@@ -26,12 +26,14 @@ const checkIsOffline = uri => {
     //    .every(({ time } = {}) => time > (Date.now() - timePastForConnectionErr))
 }
 
-export default function useWalletConnect ({ account, chainId, initialUri, allNetworks, setNetwork }) {
+export default function useWalletConnect ({ account, chainId, initialUri, allNetworks, setNetwork, useStorage }) {
     const { addToast } = useToasts()
 
     // This is needed cause of the WalletConnect event handlers
     const stateRef = useRef()
     stateRef.current = { account, chainId }
+
+    const [stateStorage, setStateStorage] = useStorage({ key: STORAGE_KEY })
 
     const [state, dispatch] = useReducer((state, action) => {
         if (action.type === 'updateConnections') return { ...state, connections: action.connections }
@@ -47,6 +49,30 @@ export default function useWalletConnect ({ account, chainId, initialUri, allNet
                 connections: state.connections.filter(x => x.uri !== action.uri)
             }
         }
+        if (action.type === 'batchRequestsAdded') {
+            if (state.requests.find(({ id }) => id === action.batchRequest.id + ':0')) return { ...state }
+
+            const newRequests = []
+            for (let ix in action.batchRequest.txns) {
+                if(action.batchRequest.txns[ix].to || action.batchRequest.txns[ix].data) {
+                    newRequests.push({
+                        ...action.batchRequest,
+                        type: 'eth_sendTransaction',
+                        isBatch: true,
+                        id: action.batchRequest.id + ':' + ix,
+                        account,
+                        txn: {
+                            ...action.batchRequest.txns[ix],
+                            from: account
+                        }
+                    })
+                } else {
+                    return { ...state }
+                }
+            }
+
+            return { ...state, requests: [...state.requests, ...newRequests] }
+        }
         if (action.type === 'requestAdded') {
             if (state.requests.find(({ id }) => id === action.request.id)) return { ...state }
             return { ...state, requests: [...state.requests, action.request] }
@@ -59,12 +85,11 @@ export default function useWalletConnect ({ account, chainId, initialUri, allNet
         }
         return { ...state }
     }, null, () => {
-        const json = localStorage[STORAGE_KEY]
-        if (!json) return getDefaultState()
+        if (!stateStorage) return getDefaultState()
         try {
             return {
                 ...getDefaultState(),
-                ...JSON.parse(json)
+                ...stateStorage
             }
         } catch(e) {
             console.error(e)
@@ -88,7 +113,7 @@ export default function useWalletConnect ({ account, chainId, initialUri, allNet
             }
         })
 
-        localStorage[STORAGE_KEY] = JSON.stringify(state)
+        setStateStorage(state)
 
         if (updateConnections) dispatch({
             type: 'updateConnections',
@@ -97,7 +122,7 @@ export default function useWalletConnect ({ account, chainId, initialUri, allNet
                 .map(({ uri }) => ({ uri, session: connectors[uri].session, isOffline: checkIsOffline(uri) }))
         })
     }
-    useEffect(maybeUpdateSessions, [account, chainId, state])
+    useEffect(maybeUpdateSessions, [account, chainId, state, setStateStorage])
     // we need this so we can invoke the latest version from any event handler
     stateRef.current.maybeUpdateSessions = maybeUpdateSessions
 
@@ -197,6 +222,18 @@ export default function useWalletConnect ({ account, chainId, initialUri, allNet
                     }
                 }
             }
+            if (payload.method === 'gs_multi_send' || payload.method === 'ambire_sendBatchTransaction') {
+                dispatch({ type: 'batchRequestsAdded', batchRequest: {
+                        id: payload.id,
+                        type: payload.method,
+                        wcUri: connectorOpts.uri,
+                        txns: payload.params,
+                        chainId: connector.session.chainId,
+                        account: connector.session.accounts[0],
+                        notification: true
+                    } })
+                return
+            }
             //FutureProof? WC does not implement it yet
             if (payload.method === 'wallet_switchEthereumChain') {
                 const supportedNetwork = allNetworks.find(a => a.chainId === parseInt(payload.params[0].chainId, 16))
@@ -209,7 +246,6 @@ export default function useWalletConnect ({ account, chainId, initialUri, allNet
                     addToast(`dApp asked to switch to an unsupported chain: ${payload.params[0]?.chainId}`, { error: true })
                     connector.rejectRequest({ id: payload.id, error: { message: 'Unsupported chain' }})
                 }
-                return
             }
             if (!SUPPORTED_METHODS.includes(payload.method)) {
                 const isUniIgnorable = payload.method === 'eth_signTypedData_v4'
@@ -283,12 +319,15 @@ export default function useWalletConnect ({ account, chainId, initialUri, allNet
     }, [])
 
     const resolveMany = (ids, resolution) => {
-        state.requests.forEach(({ id, wcUri }) => {
+        state.requests.forEach(({ id, wcUri, isBatch }) => {
             if (ids.includes(id)) {
                 const connector = connectors[wcUri]
                 if (!connector) return
-                if (resolution.success) connector.approveRequest({ id, result: resolution.result })
-                else connector.rejectRequest({ id, error: { message: resolution.message } })
+                if (!isBatch || id.endsWith(':0')) {
+                    let realId = isBatch ? id.substr(0, id.lastIndexOf(':')) : id
+                    if (resolution.success) connector.approveRequest({ id: realId, result: resolution.result })
+                    else connector.rejectRequest({ id: realId, error: { message: resolution.message } })
+                }
             }
         })
         dispatch({ type: 'requestsResolved', ids })

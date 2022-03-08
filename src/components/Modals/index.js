@@ -4,7 +4,11 @@ import SelectSignerAccountModal from './SelectSignerAccountModal/SelectSignerAcc
 import ResetPasswordModal from './ResetPasswordModal/ResetPasswordModal'
 import WalletTokenModal from './WalletTokenModal/WalletTokenModal'
 import AddTokenModal from './AddTokenModal/AddTokenModal'
+import LatticeModal from './LatticeModal/LatticeModal'
 import UnsupportedDAppsModal from './UnsupportedDAppsModal/UnsupportedDAppsModal'
+import HideTokenModel from './HideTokenModal/HideTokenModal'
+import WalletEarnDetailsModal from './WalletEarnDetailsModal/WalletEarnDetailsModal'
+import EarnDetailsModal from './EarnDetailsModal/EarnDetailsModal'
 
 export {
     PermissionsModal,
@@ -13,5 +17,9 @@ export {
     ResetPasswordModal,
     WalletTokenModal,
     AddTokenModal,
-    UnsupportedDAppsModal
+    LatticeModal,
+    UnsupportedDAppsModal,
+    HideTokenModel,
+    WalletEarnDetailsModal,
+    EarnDetailsModal
 }

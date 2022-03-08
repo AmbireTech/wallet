@@ -13,12 +13,12 @@ import Transactions from './Transactions/Transactions'
 import PluginGnosisSafeApps from 'components/Plugins/GnosisSafeApps/GnosisSafeApps'
 import Collectible from "./Collectible/Collectible"
 import { PermissionsModal, UnsupportedDAppsModal } from 'components/Modals'
-import { useModals, usePermissions } from 'hooks'
+import { useModals, usePermissions, useLocalStorage } from 'hooks'
 import { useCallback, useEffect, useMemo, useRef } from 'react'
 import { isFirefox } from 'lib/isFirefox'
 import CrossChain from "./CrossChain/CrossChain"
-import Bookmarklet from "./Security/Bookmarklet/Bookmarklet"
-
+import Bookmarklet from './Security/Bookmarklet/Bookmarklet'
+import OpenSea from "./OpenSea/OpenSea"
 import unsupportedDApps from 'consts/unsupportedDApps'
 
 export default function Wallet(props) {
@@ -28,6 +28,7 @@ export default function Wallet(props) {
   const walletContainer = useRef()
 
   const isLoggedIn = useMemo(() => props.accounts.length > 0, [props.accounts])
+  const [advancedModeList, setAdvancedModeList] = useLocalStorage({ key: 'dAppsAdvancedMode', defaultValue: [] })
 
   const routes = [
     {
@@ -38,6 +39,7 @@ export default function Wallet(props) {
         selectedAccount={props.selectedAcc}
         setNetwork={props.setNetwork}
         privateMode={props.privateMode}
+        rewardsData={props.rewardsData}
       />
     },
     {
@@ -67,7 +69,13 @@ export default function Wallet(props) {
     },
     {
       path: '/earn',
-      component: <Earn portfolio={props.portfolio} selectedNetwork={{ ...props.network }} selectedAcc={props.selectedAcc} addRequest={props.addRequest} />
+      component: <Earn
+        portfolio={props.portfolio}
+        selectedNetwork={{ ...props.network }}
+        selectedAcc={props.selectedAcc}
+        rewardsData={props.rewardsData}
+        addRequest={props.addRequest}
+      />
     },
     {
       path: '/security',
@@ -87,11 +95,28 @@ export default function Wallet(props) {
     },
     {
       path: '/transactions/:page?',
-      component: <Transactions relayerURL={props.relayerURL} selectedAcc={props.selectedAcc} selectedNetwork={props.network} addRequest={props.addRequest} eligibleRequests={props.eligibleRequests} showSendTxns={props.showSendTxns} />
+      component: <Transactions
+        relayerURL={props.relayerURL}
+        selectedAcc={props.selectedAcc}
+        selectedNetwork={props.network}
+        addRequest={props.addRequest}
+        eligibleRequests={props.eligibleRequests}
+        showSendTxns={props.showSendTxns}
+        setSendTxnState={props.setSendTxnState}
+      />
     },
     {
       path: '/swap',
       component: <Swap
+        gnosisConnect={props.gnosisConnect}
+        gnosisDisconnect={props.gnosisDisconnect}
+        selectedAcc={props.selectedAcc}
+        network={props.network}
+      />
+    },
+    {
+      path: '/opensea',
+      component: <OpenSea
         gnosisConnect={props.gnosisConnect}
         gnosisDisconnect={props.gnosisDisconnect}
         selectedAcc={props.selectedAcc}
@@ -134,13 +159,13 @@ export default function Wallet(props) {
     const showCauseOfPermissions = areBlockedPermissions && !modalHidden
     const showCauseOfEmail = !!account.emailConfRequired
     const showCauseOfBackupOptout = account.backupOptout
-    
+
     const permissionsModal = <PermissionsModal
-      relayerIdentityURL={relayerIdentityURL} 
-      account={account} 
-      onAddAccount={props.onAddAccount} 
-      isCloseBtnShown={!showCauseOfBackupOptout} 
-      isBackupOptout={!showCauseOfBackupOptout} 
+      relayerIdentityURL={relayerIdentityURL}
+      account={account}
+      onAddAccount={props.onAddAccount}
+      isCloseBtnShown={!showCauseOfBackupOptout}
+      isBackupOptout={!showCauseOfBackupOptout}
     />
 
     if (showCauseOfEmail || showCauseOfPermissions || showCauseOfBackupOptout) showModal(permissionsModal, { disableClose: true })
@@ -154,12 +179,11 @@ export default function Wallet(props) {
   }, [pathname])
 
   useEffect(() => {
-    const advancedModeList = JSON.parse(localStorage.dAppsAdvancedMode || '[]')
     const unsupported = props.connections
       .filter(({ session }) => session && session.peerMeta && unsupportedDApps.includes(session.peerMeta.url) && !advancedModeList.includes(session.peerMeta.url))
 
-    if (unsupported.length) showModal(<UnsupportedDAppsModal connections={unsupported} disconnect={props.disconnect} advancedModeList={advancedModeList}/>)
-  }, [props.connections, props.disconnect, showModal])
+    if (unsupported.length) showModal(<UnsupportedDAppsModal connections={unsupported} disconnect={props.disconnect} advancedModeList={advancedModeList} onContinue={setAdvancedModeList} />)
+  }, [props.connections, props.disconnect, showModal, advancedModeList, setAdvancedModeList])
 
   return (
     <div id="wallet">

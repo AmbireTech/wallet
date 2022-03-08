@@ -2,6 +2,7 @@ import { ethers } from 'ethers'
 import oracle from 'adex-protocol-eth/abi/RemainingBalancesOracle.json'
 import tokenList from 'consts/tokenList.json'
 import { getProvider } from 'lib/provider'
+import { getTokenIcon } from 'lib/icons'
 
 const { Interface, AbiCoder, formatUnits, hexlify, isAddress } = ethers.utils
 const RemainingBalancesOracle = new Interface(oracle)
@@ -25,7 +26,8 @@ async function getTokenListBalance ({walletAddr, tokens, network, updateBalance}
         balanceRaw: newTokenBalance.balanceRaw,
         updateAt: (new Date()).toString(),
         balanceUSD: Number(parseFloat(newTokenBalance.price * newTokenBalance.balance || 0).toFixed(2)),
-        tokenImageUrl: newTokenBalance.tokenImageUrl || `https://storage.googleapis.com/zapper-fi-assets/tokens/${network}/${newTokenBalance.address}.png`
+        tokenImageUrl: newTokenBalance.tokenImageUrl || getTokenIcon(network, newTokenBalance.address),
+        isHidden: t.isHidden
       } : t)
     }).filter (t => t && t.balance) //&& parseFloat(t.balance) > 0
     if (updateBalance && typeof updateBalance === 'function') updateBalance(newBalance)

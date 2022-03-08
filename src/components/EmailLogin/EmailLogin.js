@@ -6,6 +6,7 @@ import { MdEmail } from 'react-icons/md'
 import { fetch, fetchCaught } from 'lib/fetch'
 
 import LoginOrSignup from 'components/LoginOrSignupForm/LoginOrSignupForm'
+import { useLocalStorage } from 'hooks'
 
 // NOTE: the same polling that we do here with the setEffect should be used for txns
 // that require email confirmation
@@ -13,20 +14,21 @@ export default function EmailLogin({ relayerURL, onAddAccount }) {
     const [requiresEmailConfFor, setRequiresConfFor] = useState(null)
     const [err, setErr] = useState('')
     const [inProgress, setInProgress] = useState(false)
-  
+    const [loginSessionKey, setLoginSessionKey, removeLoginSessionKey] = useLocalStorage({ key: 'loginSessionKey', isStringStorage: true })
+
     const EMAIL_VERIFICATION_RECHECK = 3000
-  
+
     const attemptLogin = async ({ email, passphrase }, ignoreEmailConfirmationRequired) => {
       // try by-email first: if this returns data we can just move on to decrypting
       // does not matter which network we request
       const { resp, body, errMsg } = await fetchCaught(`${relayerURL}/identity/by-email/${encodeURIComponent(email)}`, { headers: {
-          authorization: localStorage.loginSessionKey ? `Bearer ${localStorage.loginSessionKey}` : null
+          authorization: loginSessionKey ? `Bearer ${loginSessionKey}` : null
       } })
       if (errMsg) {
         setErr(errMsg)
         return
       }
-    
+
       if (resp.status === 401 && body.errType === 'UNAUTHORIZED') {
         if (ignoreEmailConfirmationRequired) {
           // we still have to call this to make sure the state is consistent and to force a re-render (to trigger the effect again)
@@ -38,7 +40,8 @@ export default function EmailLogin({ relayerURL, onAddAccount }) {
           setErr(`Email confirmation needed but unable to request: ${requestAuthResp.status}`)
           return
         }
-        localStorage.loginSessionKey = (await requestAuthResp.json()).sessionKey
+        const loginSessionKey = (await requestAuthResp.json()).sessionKey
+        setLoginSessionKey(loginSessionKey)
         setRequiresConfFor({ email, passphrase })
         return
       }
@@ -48,7 +51,7 @@ export default function EmailLogin({ relayerURL, onAddAccount }) {
         setErr('Account does not exist')
         return
       }
-  
+
       if (resp.status === 200) {
         const identityInfo = body
         const { _id, salt, identityFactoryAddr, baseIdentityAddr, bytecode } = identityInfo
@@ -62,14 +65,14 @@ export default function EmailLogin({ relayerURL, onAddAccount }) {
           signer: quickAccSigner
         }, { select: true })
 
-        // Delete the key so that it can't be used anymore on this browser
-        delete localStorage.loginSessionKey
+        // Remove the key value so that it can't be used anymore on this browser
+        removeLoginSessionKey()
       } else {
         setErr(body.message ? `Relayer error: ${body.message}` : `Unknown no-message error: ${resp.status}`)
       }
       setRequiresConfFor(null)
     }
-  
+
     const onLoginUserAction = async ({ email, passphrase }) => {
       setErr('')
       setRequiresConfFor(null)
@@ -81,7 +84,7 @@ export default function EmailLogin({ relayerURL, onAddAccount }) {
       }
       setInProgress(false)
     }
-  
+
     // try logging in once after EMAIL_VERIFICATION_RECHECK
     useEffect(() => {
       if (requiresEmailConfFor) {
@@ -116,12 +119,12 @@ export default function EmailLogin({ relayerURL, onAddAccount }) {
       : (<div id="loginEmail">
         <LoginOrSignup onAccRequest={onLoginUserAction} inProgress={inProgress}></LoginOrSignup>
         <div className='magicLink'>A password will not be required, we will send a magic login link to your email.</div>
-  
+
         {err ? (<p className="error">{err}</p>) : (<></>)}
-  
+
         {/*<a href={importJSONHref}>Import JSON</a>*/}
       </div>)
-      
+
     return (
       <section className="loginSignupWrapper" id="emailLoginSection">
       <div id="logo"/>
