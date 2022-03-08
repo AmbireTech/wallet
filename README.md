@@ -262,6 +262,7 @@ Additionally, there's an ongoing [Immunefi bug bounty](https://immunefi.com/boun
 * Ability to queue a new transaction when you have one pending
 * $WALLET claiming: can now claim early investor tokens
 * Bugfix: fixed parsing Aave repay transactions
+* Support for Fantom
 
 ### v0.4.4
 * $WALLET: Ability to stake (xWALLET)
