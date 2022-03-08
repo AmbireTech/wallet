@@ -269,3 +269,7 @@ Additionally, there's an ongoing [Immunefi bug bounty](https://immunefi.com/boun
 * Grid+ Lattice hardware wallet support
 * $WALLET claiming: show APYs
 * More token icons
+
+### v0.4.5
+* Improvements to $WALLET staking: better stats
+* Ability to hide tokens in the dashboard
