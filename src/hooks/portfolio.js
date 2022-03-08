@@ -78,10 +78,7 @@ export default function usePortfolio({ currentNetwork, account, useStorage }) {
 
     const [tokensByNetworks, setTokensByNetworks] = useState([])
     // Added unsupported networks (fantom and moonbeam) as default values with empty arrays to prevent crashes
-    const [otherProtocolsByNetworks, setOtherProtocolsByNetworks] = useState([
-            { network: 'fantom', protocols: [] }, 
-            { network: 'moonbeam', protocols: [] }
-        ])
+    const [otherProtocolsByNetworks, setOtherProtocolsByNetworks] = useState(supportedProtocols.filter(item => !item.protocols.length))
 
     const [balance, setBalance] = useState({
         total: {
