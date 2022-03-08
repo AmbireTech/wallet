@@ -203,8 +203,8 @@ const WalletTokenCard = ({ networkId, accountId, tokens, rewardsData, addRequest
                     })
                 
                     const { timestamp } = await provider.getBlock(log.blockNumber)
-                    const remainingTime = (timeToUnbond.toString() * 1000) - (Date.now() - (timestamp * 1000))
-                
+                    let remainingTime = (timeToUnbond.toString() * 1000) - (Date.now() - (timestamp * 1000))
+                    if (remainingTime <= 0) remainingTime = 0
                     setLockedRemainingTime(remainingTime)    
                 }
             } catch(e) {
