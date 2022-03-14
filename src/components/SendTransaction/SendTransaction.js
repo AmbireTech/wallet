@@ -54,8 +54,11 @@ function getErrorMessage(e) {
     return 'Your 72 hour recovery waiting period still hasn\'t ended. You will be able to use your account after this lock period.'
   } else if (e && e.message === 'WRONG_ACC_OR_NO_PRIV') {
     return 'Unable to sign with this email/password account. Please contact support.'
+  // NOTE: is INVALID_SIGNATURE even a real error?
   } else if (e && e.message === 'INVALID_SIGNATURE') {
     return 'Invalid signature. This may happen if you used password/derivation path on your hardware wallet.'
+  } else if (e && e.message === 'INSUFFICIENT_PRIVILEGE') {
+    return 'Wrong signature. This may happen if you used password/derivation path on your hardware wallet.'
   } else {
     return e.message || e
   }
