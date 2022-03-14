@@ -1,12 +1,12 @@
-import { useState, useCallback, useMemo } from "react"
+import { useState, useCallback, useMemo, useEffect, useRef } from "react"
 import Card from 'components/Wallet/Earn/Card/Card'
 
 import AMBIRE_ICON from 'resources/logo.png'
-import { useEffect } from "react"
 import { MdInfo } from "react-icons/md"
 import { ToolTip, Button } from "components/common"
 import { BigNumber, constants, Contract, utils } from "ethers"
 import WalletStakingPoolABI from 'consts/WalletStakingPoolABI'
+import AdexStakingPool from 'consts/AdexStakingPool.json'
 import { Interface, parseUnits, formatUnits } from "ethers/lib/utils"
 import { getProvider } from 'lib/provider'
 import ERC20ABI from 'adex-protocol-eth/abi/ERC20.json'
@@ -15,6 +15,9 @@ import { WalletEarnDetailsModal } from 'components/Modals'
 import { getTokenIcon } from 'lib/icons'
 import { BsArrowUpSquare } from "react-icons/bs"
 
+const ADX_TOKEN_ADDRESS = '0xADE00C28244d5CE17D72E40330B1c318cD12B7c3'
+const ADX_STAKING_TOKEN_ADDRESS = '0xB6456b57f03352bE48Bf101B46c1752a0813491a'
+const ADX_STAKING_POOL_INTERFACE = new Interface(AdexStakingPool)
 
 const WALLET_TOKEN_ADDRESS = '0x88800092fF476844f74dC2FC427974BBee2794Ae'
 const WALLET_STAKING_ADDRESS = '0x47cd7e91c3cbaaf266369fe8518345fc4fc12935'
@@ -38,22 +41,44 @@ const WalletTokenCard = ({ networkId, accountId, tokens, rewardsData, addRequest
     const [xWalletBalanceRaw, setXWalletBalanceRaw] = useState(null)
     const [leaveLog, setLeaveLog] = useState(null)
     const [lockedRemainingTime, setLockedRemainingTime] = useState(0)
+    const selectedToken = useRef()
 
     const unavailable = networkId !== 'ethereum'
     const networkDetails = networks.find(({ id }) => id === networkId)
     const addRequestTxn = useCallback((id, txn, extraGas = 0) =>
         addRequest({ id, type: 'eth_sendTransaction', chainId: networkDetails.chainId, account: accountId, txn, extraGas })
     , [networkDetails.chainId, accountId, addRequest])
-
+    
+    //TODO: add adexStakingAPY
     const walletTokenAPY = !rewardsData.isLoading && rewardsData.data ? (rewardsData.data?.xWALLETAPY * 100).toFixed(2) : 0
 
     const walletToken = useMemo(() => tokens.find(({ address }) => address === WALLET_TOKEN_ADDRESS), [tokens])
     const xWalletToken = useMemo(() => tokens.find(({ address }) => address === WALLET_STAKING_ADDRESS), [tokens])
+    const adexToken = useMemo(() => tokens.find(({address}) => address === ADX_TOKEN_ADDRESS), [tokens])
+    const adexStakingToken = useMemo(() => tokens.find(({address}) => address === ADX_STAKING_TOKEN_ADDRESS), [tokens])
 
     const balanceRaw = useMemo(() => xWalletBalanceRaw ? (BigNumber.from(xWalletBalanceRaw).mul(shareValue)).div(BigNumber.from((1e18).toString())).toString() : 0,
     [xWalletBalanceRaw, shareValue])
 
     const tokensItems = useMemo(() => [
+        {
+            type: 'deposit',
+            icon: getTokenIcon(networkId, ADX_TOKEN_ADDRESS),
+            label: 'ADEX',
+            value: ADX_TOKEN_ADDRESS,
+            symbol: 'ADX',
+            balance: adexToken?.balance || 0,
+            balanceRaw: adexToken?.balanceRaw || 0,
+        },
+        {
+            type: 'withdraw',
+            icon: getTokenIcon(networkId, ADX_STAKING_TOKEN_ADDRESS),
+            label: 'ADEX-STAKING',
+            value: ADX_STAKING_TOKEN_ADDRESS,
+            symbol: 'ADX-STAKING',
+            balance: formatUnits(balanceRaw, adexStakingToken?.decimals),
+            balanceRaw,
+        },
         {
             type: 'deposit',
             icon: getTokenIcon(networkId, WALLET_TOKEN_ADDRESS),
@@ -72,7 +97,9 @@ const WalletTokenCard = ({ networkId, accountId, tokens, rewardsData, addRequest
             balance: formatUnits(balanceRaw, xWalletToken?.decimals),
             balanceRaw,
         }
-    ], [networkId, walletToken?.balance, walletToken?.balanceRaw, balanceRaw, xWalletToken?.decimals])
+    ], [networkId, adexToken?.balance, adexToken?.balanceRaw, balanceRaw, adexStakingToken?.decimals, walletToken?.balance, walletToken?.balanceRaw, xWalletToken?.decimals])
+    
+    const getToken = (type, address) => tokensItems.filter(token => token.type === type).find(token => token.value === address)
 
     const onWithdraw = useCallback(() => {
         const { shares, unlocksAt } = leaveLog
@@ -87,6 +114,7 @@ const WalletTokenCard = ({ networkId, accountId, tokens, rewardsData, addRequest
         setCustomInfo(null)
 
         const token = tokensItems.find(({ value }) => value === tokenAddress)
+        selectedToken.current = token
         if (token && token.type === 'withdraw' && leaveLog) {
             setCustomInfo(
                 <>
@@ -121,10 +149,14 @@ const WalletTokenCard = ({ networkId, accountId, tokens, rewardsData, addRequest
         ])
     }, [leaveLog, lockedRemainingTime, onWithdraw, rewardsData.isLoading, tokensItems, walletTokenAPY])
 
-    const onValidate = async (type, value, amount, isMaxAmount) => {
+    const onValidate = async (type, tokenAddress, amount, isMaxAmount) => {
+        console.log('tokenAddress', tokenAddress)
+        
         const bigNumberAmount = parseUnits(amount, 18)
 
         if (type === 'Deposit') {
+            const token = getToken('deposit', tokenAddress)
+            console.log('token deposit', token)
             const allowance = await stakingWalletContract.allowance(accountId, WALLET_STAKING_ADDRESS)
 
             if (allowance.lt(constants.MaxUint256)) {
@@ -144,7 +176,8 @@ const WalletTokenCard = ({ networkId, accountId, tokens, rewardsData, addRequest
 
         if (type === 'Withdraw') {
             let xWalletAmount
-
+            const token = getToken('withdraw', tokenAddress)
+            console.log('token Withdraw', token)
             // In case of withdrawing the max amount of xWallet tokens, get the latest balance of xWallet.
             // Otherwise, `xWalletBalanceRaw` may be outdated.
             if (isMaxAmount) {
@@ -165,7 +198,9 @@ const WalletTokenCard = ({ networkId, accountId, tokens, rewardsData, addRequest
         async function init() {
             try {
                 const provider = getProvider(networkId)
-                const stakingWalletContract = new Contract(WALLET_STAKING_ADDRESS, WALLET_STAKING_POOL_INTERFACE, provider)
+                console.log('selectedToken.current', selectedToken.current)
+                // const stakingWalletContract = new Contract(WALLET_STAKING_ADDRESS, WALLET_STAKING_POOL_INTERFACE, provider)
+                const stakingWalletContract = new Contract(ADX_STAKING_TOKEN_ADDRESS, ADX_STAKING_POOL_INTERFACE, provider)
                 setStakingWalletContract(stakingWalletContract)
 
                 const [timeToUnbond, shareValue, sharesTotalSupply, xWalletBalanceRaw] = await Promise.all([
