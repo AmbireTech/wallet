@@ -9,6 +9,7 @@ import { Interface } from 'ethers/lib/utils'
 import { useToasts } from 'hooks/toasts'
 import { TextInput, NumberInput, Button, Select, Loading, AddressBook, AddressWarning, NoFundsPlaceholder, Checkbox } from 'components/common'
 import { validateSendTransferAddress, validateSendTransferAmount } from 'lib/validations/formValidations'
+import { resolveAddress, resolveAddressMultiChain } from 'lib/unstoppabledomains'
 import { isValidAddress } from 'lib/address'
 import Addresses from './Addresses/Addresses'
 import { MdInfo } from 'react-icons/md'
@@ -120,18 +121,30 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
         history.replace({ pathname: `/wallet/transfer/${Number(asset) !== 0 ? asset : selectedAsset.symbol}` })
     }, [asset, history, selectedAsset])
 
-    useEffect(() => {
+    useEffect(async () => {
+        const [nativeUDAddress, customeUDAddress] = await Promise.all([
+            resolveAddress(address),
+            resolveAddressMultiChain(address, selectedAsset ? selectedAsset.symbol: null, selectedNetwork.unstoppableDomainsChain)
+        ])
+        let UDAddress
+        if (customeUDAddress.success) UDAddress = customeUDAddress.address
+        else if (nativeUDAddress.success) UDAddress = nativeUDAddress.address
+
+// this is for tests only
+if (UDAddress) console.log(UDAddress);
+else console.log(nativeUDAddress.message)
+// to here
         const isValidRecipientAddress = validateSendTransferAddress(address, selectedAcc, addressConfirmed, isKnownAddress)
         const isValidSendTransferAmount = validateSendTransferAmount(amount, selectedAsset) 
        
         setValidationFormMgs({ 
             success: { 
                 amount: isValidSendTransferAmount.success, 
-                address: isValidRecipientAddress.success 
+                address: UDAddress ? true : isValidRecipientAddress.success 
             }, 
             messages: { 
                 amount: isValidSendTransferAmount.message ?  isValidSendTransferAmount.message : '',
-                address: isValidRecipientAddress.message ? isValidRecipientAddress.message : ''
+                address: UDAddress ? '' : isValidRecipientAddress.message ? isValidRecipientAddress.message : ''
             }
         })
 
