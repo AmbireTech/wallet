@@ -93,10 +93,10 @@ const useWalletEarnDetails = ({accountId}) => {
                 ...xWalletContract.filters.Transfer(accountId, null, null),
             }),
         ])
-
+        const [latestLog] = leaveLogs.sort((a, b) => b.blockNumber - a.blockNumber)
         let remainingTime
-        if (leaveLogs[0]) {
-            const { timestamp } = await ethProvider.getBlock(leaveLogs[0].blockNumber)
+        if (latestLog) {
+            const { timestamp } = await ethProvider.getBlock(latestLog.blockNumber)
             remainingTime = (timeToUnbond.toString() * 1000) - (Date.now() - (timestamp * 1000))
             if (remainingTime <= 0) remainingTime = 0
         } else {
