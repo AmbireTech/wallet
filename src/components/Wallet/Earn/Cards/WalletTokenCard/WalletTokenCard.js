@@ -15,8 +15,7 @@ import { WalletEarnDetailsModal } from 'components/Modals'
 import { getTokenIcon } from 'lib/icons'
 import { BsArrowUpSquare } from "react-icons/bs"
 
-
-const WALLET_TOKEN_ADDRESS = '0x88800092fF476844f74dC2FC427974BBee2794Ae'
+const WALLET_TOKEN_ADDRESS = '0x88800092ff476844f74dc2fc427974bbee2794ae'
 const WALLET_STAKING_ADDRESS = '0x47cd7e91c3cbaaf266369fe8518345fc4fc12935'
 const WALLET_STAKING_POOL_INTERFACE = new Interface(WalletStakingPoolABI)
 const ERC20_INTERFACE = new Interface(ERC20ABI)
@@ -87,15 +86,14 @@ const WalletTokenCard = ({ networkId, accountId, tokens, rewardsData, addRequest
         setCustomInfo(null)
 
         const token = tokensItems.find(({ value }) => value === tokenAddress)
-        if (token && token.type === 'withdraw' && leaveLog) {
+        if (token && token.type === 'withdraw' && leaveLog && (parseFloat(leaveLog.walletValue) > 0)) {
             setCustomInfo(
                 <>
                     <div className="info-message">
                         <ToolTip label='* Because of pending to withdraw, you are not able to unstaking more WALLET until unbond period is end.'>
-                            <span><b>{ msToDaysHours(lockedRemainingTime) }</b> until { parseInt(leaveLog.walletValue).toFixed(4) } WALLET becomes available for withdraw.&nbsp;<MdInfo/></span>
+                            <span><b>{ msToDaysHours(lockedRemainingTime) }</b> until { parseFloat(leaveLog.walletValue).toFixed(4) } WALLET becomes available for withdraw.&nbsp;<MdInfo/></span>
                         </ToolTip>
                     </div>
-                    <div className="separator"></div>
                     <Button 
                         disabled={lockedRemainingTime > 0}
                         icon={<BsArrowUpSquare/>}
@@ -178,11 +176,13 @@ const WalletTokenCard = ({ networkId, accountId, tokens, rewardsData, addRequest
                 setShareValue(shareValue)
                 setXWalletBalanceRaw(xWalletBalanceRaw)
 
-                const [log] = await provider.getLogs({
+                const leaveLogs = await provider.getLogs({
                     fromBlock: 0,
-                    ...stakingWalletContract.filters.LogLeave(accountId)
+                    ...stakingWalletContract.filters.LogLeave(accountId, null, null, null)
                 })
 
+                const [log]= leaveLogs.sort((a, b) => b.blockNumber - a.blockNumber)
+                
                 if (log) {
                     const userLeaves = stakingWalletContract.interface.parseLog(log)
                     const { maxTokens, shares, unlocksAt } = userLeaves.args

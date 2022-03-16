@@ -51,7 +51,7 @@ const WalletEarnDetailsModal = ({ title = 'Details', apy, accountId, msToDaysHou
                     <div>Total withdraws</div><div>{parseFloat(totalWithdraws).toFixed(4)} WALLET</div>
                 </div>
                 <div className="wrapper odd-rows-bg">
-                    <div>Pending to unlock</div>
+                    <div>Total pending to unlock</div>
                     <div>
                         {remainingTime > 0 
                             ? `${msToDaysHours(remainingTime)} until ${parseFloat(pendingToUnlock).toFixed(4)} WALLET becomes available for withdraw.` 
