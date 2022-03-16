@@ -32,7 +32,13 @@ const suportedProtocols = [
         network: 'moonbeam',
         protocols: [],
 	    balancesProvider: 'velcro'
-    }/*,
+    },
+    {
+        network: 'moonriver',
+        protocols: [],
+	    balancesProvider: 'velcro'
+    }
+    /*,
     {
         network: 'arbitrum',
         protocols: [],

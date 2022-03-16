@@ -38,7 +38,7 @@ const useClaimableWalletToken = ({ account = {}, network, addRequest }) => {
             })
     }, [supplyController, vestingEntry, initialClaimableEntry, refreshSlot])
 
-    const claimableNow = initialClaimable - (currentClaimStatus.claimed || 0)
+    const claimableNow = (initialClaimable - (currentClaimStatus.claimed || 0) < 0) ? 0 : (initialClaimable - (currentClaimStatus.claimed || 0))
     const disabledReason = network.id !== 'ethereum' ? 'Switch to Ethereum to claim' : (
         currentClaimStatus.error ? `Claim status error: ${currentClaimStatus.error}` : null
     )

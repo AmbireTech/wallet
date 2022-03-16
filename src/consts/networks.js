@@ -12,8 +12,8 @@ const networks = [{
 	},  {
 		id: 'polygon',
 		chainId: 137,
-		// rpc: 'https://polygon-rpc.com/rpc',
-		rpc: 'https://polygon-mainnet.infura.io/v3/d4319c39c4df452286d8bf6d10de28ae',
+		rpc: 'https://polygon-rpc.com/rpc',
+		// rpc: 'https://polygon-mainnet.infura.io/v3/d4319c39c4df452286d8bf6d10de28ae',
 		nativeAssetSymbol: 'MATIC',
 		name: 'Polygon',
 		icon: '/resources/networks/polygon.png',
@@ -47,7 +47,7 @@ const networks = [{
 		icon: '/resources/networks/fantom.png',
 		explorerUrl: 'https://ftmscan.com',
 		unstoppableDomainsChain: 'ERC20'
-	}/*, {
+	}, {
 		id: 'moonbeam',
 		chainId: 1284,
 		rpc: 'https://rpc.api.moonbeam.network',
@@ -55,8 +55,17 @@ const networks = [{
 		name: 'Moonbeam',
 		icon: '/resources/networks/moonbeam.png',
 		explorerUrl: 'https://moonscan.io/',
-		unstoppableDomainsChain: 'ERC20
+		unstoppableDomainsChain: 'ERC20'
 	}, {
+		id: 'moonriver',
+		chainId: 1285,
+		rpc: 'https://rpc.api.moonriver.moonbeam.network',
+		nativeAssetSymbol: 'MOVR',
+		name: 'Moonriver',
+		icon: '/resources/networks/moonriver.png',
+		explorerUrl: 'https://moonriver.moonscan.io/',
+		unstoppableDomainsChain: 'ERC20'
+	}/*, {
 		id: 'arbitrum',
 		chainId: 42161,
 		rpc: 'https://arb1.arbitrum.io/rpc',
