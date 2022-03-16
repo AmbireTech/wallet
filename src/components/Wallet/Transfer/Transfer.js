@@ -9,7 +9,7 @@ import { Interface } from 'ethers/lib/utils'
 import { useToasts } from 'hooks/toasts'
 import { TextInput, NumberInput, Button, Select, Loading, AddressBook, AddressWarning, NoFundsPlaceholder, Checkbox } from 'components/common'
 import { validateSendTransferAddress, validateSendTransferAmount } from 'lib/validations/formValidations'
-import { resolveAddress, resolveAddressMultiChain } from 'lib/unstoppabledomains'
+import { resolveUDomain } from 'hooks/unstoppabledomains'
 import { isValidAddress } from 'lib/address'
 import Addresses from './Addresses/Addresses'
 import { MdInfo } from 'react-icons/md'
@@ -122,17 +122,10 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
     }, [asset, history, selectedAsset])
 
     useEffect(async () => {
-        const [nativeUDAddress, customeUDAddress] = await Promise.all([
-            resolveAddress(address),
-            resolveAddressMultiChain(address, selectedAsset ? selectedAsset.symbol: null, selectedNetwork.unstoppableDomainsChain)
-        ])
-        let UDAddress
-        if (customeUDAddress.success) UDAddress = customeUDAddress.address
-        else if (nativeUDAddress.success) UDAddress = nativeUDAddress.address
+        const UDAddress = await resolveUDomain(address, selectedAsset ? selectedAsset.symbol: null, selectedNetwork.unstoppableDomainsChain)
 
 // this is for tests only
 if (UDAddress) console.log(UDAddress);
-else console.log(nativeUDAddress.message)
 // to here
         const isValidRecipientAddress = validateSendTransferAddress(address, selectedAcc, addressConfirmed, isKnownAddress)
         const isValidSendTransferAmount = validateSendTransferAmount(amount, selectedAsset) 
@@ -149,7 +142,7 @@ else console.log(nativeUDAddress.message)
         })
 
         setDisabled(!isValidRecipientAddress.success || !isValidSendTransferAmount.success || (showSWAddressWarning && !sWAddressConfirmed))
-    }, [address, amount, selectedAcc, selectedAsset, addressConfirmed, showSWAddressWarning, sWAddressConfirmed, isKnownAddress, addToast])
+    }, [address, amount, selectedAcc, selectedAsset, addressConfirmed, showSWAddressWarning, sWAddressConfirmed, isKnownAddress, addToast, selectedNetwork])
 
     const amountLabel = <div className="amount-label">Available Amount: <span>{ maxAmountFormatted } { selectedAsset?.symbol }</span></div>
 
