@@ -135,14 +135,6 @@ export default function Dashboard({ portfolio, selectedNetwork, selectedAccount,
                             If you don't see a specific token that you own, please check the <a href={`${selectedNetwork.explorerUrl}/address/${selectedAccount}`} target="_blank" rel="noreferrer">Block Explorer</a>
                         </span>
                     </div>
-                    {
-                        portfolio.areProtocolsLoading || !portfolio.protocols.length ?
-                            null
-                            :
-                            <div className="powered">
-                                Powered by Velcro
-                            </div>
-                    }
                 </div>
             </div>
         </section>
