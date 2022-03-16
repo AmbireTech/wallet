@@ -91,7 +91,7 @@ const WalletTokenCard = ({ networkId, accountId, tokens, rewardsData, addRequest
                 <>
                     <div className="info-message">
                         <ToolTip label='* Because of pending to withdraw, you are not able to unstaking more WALLET until unbond period is end.'>
-                            <span><b>{ msToDaysHours(lockedRemainingTime) }</b> until { parseInt(leaveLog.walletValue).toFixed(4) } WALLET becomes available for withdraw.&nbsp;<MdInfo/></span>
+                            <span><b>{ msToDaysHours(lockedRemainingTime) }</b> until { parseFloat(leaveLog.walletValue).toFixed(4) } WALLET becomes available for withdraw.&nbsp;<MdInfo/></span>
                         </ToolTip>
                     </div>
                     <Button 
@@ -176,11 +176,13 @@ const WalletTokenCard = ({ networkId, accountId, tokens, rewardsData, addRequest
                 setShareValue(shareValue)
                 setXWalletBalanceRaw(xWalletBalanceRaw)
 
-                const [log] = await provider.getLogs({
+                const leaveLogs = await provider.getLogs({
                     fromBlock: 0,
-                    ...stakingWalletContract.filters.LogLeave(accountId)
+                    ...stakingWalletContract.filters.LogLeave(accountId, null, null, null)
                 })
 
+                const [log]= leaveLogs.sort((a, b) => b.blockNumber - a.blockNumber)
+                
                 if (log) {
                     const userLeaves = stakingWalletContract.interface.parseLog(log)
                     const { maxTokens, shares, unlocksAt } = userLeaves.args
