@@ -7,13 +7,13 @@ import { Modal, Button } from 'components/common'
 import { useWalletEarnDetails } from 'hooks'
 import { Loading } from 'components/common'
 
-const WalletEarnDetailsModal = ({ title = 'Details', apy, accountId, msToDaysHours }) => {
+const WalletEarnDetailsModal = ({ title = 'Details', apy, accountId, msToDaysHours, addresses }) => {
     const { hideModal } = useModals()
     
     const { 
         details,
         isLoading
-        } = useWalletEarnDetails({accountId})
+        } = useWalletEarnDetails({accountId, addresses})
 
     const { balance, 
         poolShare, 
