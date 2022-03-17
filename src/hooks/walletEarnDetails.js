@@ -1,14 +1,11 @@
 import { getProvider } from 'lib/provider'
 import { BigNumber, utils, Contract } from 'ethers'
-
 import { useEffect, useState, useCallback } from 'react'
 
 const ZERO = BigNumber.from(0)
 const ZERO_ADDR = '0x0000000000000000000000000000000000000000'
 const PRECISION = 1_000_000_000_000
 const POOL_SHARES_TOKEN_DECIMALS_MUL = '1000000000000000000'
-
-
 const STAKING_POOL_EVENT_TYPES = {
     enter: 'enter',
     leave: 'leave',
@@ -22,13 +19,13 @@ const STAKING_POOL_EVENT_TYPES = {
 const ethProvider = getProvider('ethereum')
 
 const useWalletEarnDetails = ({accountId, addresses}) => {
-    const xWalletContract = useCallback(() => new Contract(addresses.stakingTokenAddress, addresses.stakingPoolInterface, ethProvider), [addresses.stakingPoolInterface, addresses.stakingTokenAddress])
-    const walletContract = new Contract(addresses.tokenAddress, addresses.tokenAbi, ethProvider)
     const XWALLET_ADDR = addresses.stakingTokenAddress
     const [details, setDetails] = useState({})
     const [isLoading, setIsLoading] = useState(true)
 
     const getStats = useCallback(async () => {
+        const xWalletContract = new Contract(addresses.stakingTokenAddress, addresses.stakingPoolAbi, ethProvider)
+        const walletContract = new Contract(addresses.tokenAddress, addresses.tokenAbi, ethProvider)
         const fromBlock = 0
         const [
             timeToUnbond,
@@ -597,7 +594,7 @@ const useWalletEarnDetails = ({accountId, addresses}) => {
             ),
             remainingTime: stats.remainingTime,
         }
-    }, [XWALLET_ADDR, accountId, walletContract.filters, walletContract.interface, xWalletContract])
+    }, [XWALLET_ADDR, accountId, addresses.stakingPoolAbi, addresses.stakingTokenAddress, addresses.tokenAbi, addresses.tokenAddress])
 
     useEffect(() => {
         const getData = async () => {

@@ -46,6 +46,7 @@ const WalletTokenCard = ({ networkId, accountId, tokens, rewardsData, addRequest
         tokenAddress: '',
         stakingTokenAddress: '',
         stakingPoolInterface: '',
+        stakingPoolAbi: '',
         tokenAbi: ''
     })
     const [selectedToken, setSelectedToken] = useState({ label: ''})
@@ -67,7 +68,7 @@ const WalletTokenCard = ({ networkId, accountId, tokens, rewardsData, addRequest
     const balanceRaw = useMemo(() => xWalletBalanceRaw ? (BigNumber.from(xWalletBalanceRaw).mul(shareValue)).div(BigNumber.from((1e18).toString())).toString() : 0,
     [xWalletBalanceRaw, shareValue])
 
-    const tokensItems = useMemo(() => [
+    const depositTokenItems = useMemo(() => [
         {
             type: 'deposit',
             icon: getTokenIcon(networkId, WALLET_TOKEN_ADDRESS),
@@ -86,6 +87,9 @@ const WalletTokenCard = ({ networkId, accountId, tokens, rewardsData, addRequest
             balance: adexToken?.balance || 0,
             balanceRaw: adexToken?.balanceRaw || 0,
         },
+    ], [adexToken?.balance, adexToken?.balanceRaw, networkId, walletToken?.balance, walletToken?.balanceRaw])
+
+    const withdrawTokenItems = useMemo(() => [   
         {
             type: 'withdraw',
             icon: getTokenIcon(networkId, WALLET_TOKEN_ADDRESS),
@@ -104,8 +108,12 @@ const WalletTokenCard = ({ networkId, accountId, tokens, rewardsData, addRequest
             balance: formatUnits(balanceRaw, adexStakingToken?.decimals),
             balanceRaw,
         },
-    ], [networkId, adexToken?.balance, adexToken?.balanceRaw, balanceRaw, adexStakingToken?.decimals, walletToken?.balance, walletToken?.balanceRaw, xWalletToken?.decimals])
+    ], [adexStakingToken?.decimals, balanceRaw, networkId, xWalletToken?.decimals])
     
+    const tokensItems = useMemo(() => [
+        ...depositTokenItems.sort((x,y) => x.value === addresses.tokenAddress ? -1 : y.value === addresses.tokenAddress ? 1 : 0),
+        ...withdrawTokenItems.sort((x,y) => x.value === addresses.stakingTokenAddress ? -1 : y.value === addresses.stakingTokenAddress ? 1 : 0)
+    ], [addresses.stakingTokenAddress, addresses.tokenAddress, depositTokenItems, withdrawTokenItems])
 
     const onWithdraw = useCallback(() => {
         const { shares, unlocksAt } = leaveLog
@@ -202,8 +210,8 @@ const WalletTokenCard = ({ networkId, accountId, tokens, rewardsData, addRequest
                 const tokenAddress = selectedToken.label === 'ADX' ? ADX_TOKEN_ADDRESS : WALLET_TOKEN_ADDRESS
                 const stakingTokenAddress = selectedToken.label === 'ADX' ? ADX_STAKING_TOKEN_ADDRESS : WALLET_STAKING_ADDRESS
                 const stakingPoolInterface = selectedToken.label === 'ADX' ? ADX_STAKING_POOL_INTERFACE : WALLET_STAKING_POOL_INTERFACE
+                const stakingPoolAbi = selectedToken.label === 'ADX' ? AdexStakingPool : WalletStakingPoolABI
                 const tokenAbi = selectedToken.label === 'ADX' ? ERC20ABI : walletABI
-                
                 const stakingTokenContract = new Contract(stakingTokenAddress, stakingPoolInterface, provider)
                 setStakingTokenContract(stakingTokenContract)
                 
@@ -211,6 +219,7 @@ const WalletTokenCard = ({ networkId, accountId, tokens, rewardsData, addRequest
                     tokenAddress,
                     stakingTokenAddress,
                     stakingPoolInterface,
+                    stakingPoolAbi,
                     tokenAbi
                 })
                 
