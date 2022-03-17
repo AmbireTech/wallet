@@ -1,9 +1,5 @@
 import { getProvider } from 'lib/provider'
 import { BigNumber, utils, Contract } from 'ethers'
-import xWalletABI from 'consts/WalletStakingPoolABI'
-import walletABI from 'consts/walletTokenABI'
-import AdexStakingPool from 'consts/AdexStakingPool.json'
-import ERC20ABI from 'adex-protocol-eth/abi/ERC20.json'
 
 import { useEffect, useState, useCallback } from 'react'
 
@@ -11,11 +7,7 @@ const ZERO = BigNumber.from(0)
 const ZERO_ADDR = '0x0000000000000000000000000000000000000000'
 const PRECISION = 1_000_000_000_000
 const POOL_SHARES_TOKEN_DECIMALS_MUL = '1000000000000000000'
-const XWALLET_ADDR = '0x47cd7e91c3cbaaf266369fe8518345fc4fc12935'
-const WALLET_ADDR = '0x88800092fF476844f74dC2FC427974BBee2794Ae'
 
-const ADX_TOKEN_ADDRESS = '0xADE00C28244d5CE17D72E40330B1c318cD12B7c3'
-const ADX_STAKING_TOKEN_ADDRESS = '0xB6456b57f03352bE48Bf101B46c1752a0813491a'
 
 const STAKING_POOL_EVENT_TYPES = {
     enter: 'enter',
@@ -28,12 +20,11 @@ const STAKING_POOL_EVENT_TYPES = {
 }
 
 const ethProvider = getProvider('ethereum')
-// const xWalletContract = new Contract(XWALLET_ADDR, xWalletABI, ethProvider)
-// const walletContract = new Contract(WALLET_ADDR, walletABI, ethProvider)
-const xWalletContract = new Contract(ADX_STAKING_TOKEN_ADDRESS, AdexStakingPool, ethProvider)
-const walletContract = new Contract(ADX_TOKEN_ADDRESS, ERC20ABI, ethProvider)
 
-const useWalletEarnDetails = ({accountId}) => {
+const useWalletEarnDetails = ({accountId, addresses}) => {
+    const xWalletContract = useCallback(() => new Contract(addresses.stakingTokenAddress, addresses.stakingPoolInterface, ethProvider), [addresses.stakingPoolInterface, addresses.stakingTokenAddress])
+    const walletContract = new Contract(addresses.tokenAddress, addresses.tokenAbi, ethProvider)
+    const XWALLET_ADDR = addresses.stakingTokenAddress
     const [details, setDetails] = useState({})
     const [isLoading, setIsLoading] = useState(true)
 
@@ -364,7 +355,7 @@ const useWalletEarnDetails = ({accountId}) => {
                         ]
 
                     if (walletTokenTransfersLog) {
-                        const { amount } = walletContract.interface.parseLog(
+                        const { value } = walletContract.interface.parseLog(
                             walletTokenTransfersLog
                         ).args
                         const { amount: shares } =
@@ -376,7 +367,7 @@ const useWalletEarnDetails = ({accountId}) => {
                             blockNumber: sharesMintEvent.blockNumber,
                             shareValue: shares.isZero()
                                 ? ZERO
-                                : amount
+                                : value
                                       .mul(POOL_SHARES_TOKEN_DECIMALS_MUL)
                                       .div(shares),
                         }
@@ -606,7 +597,7 @@ const useWalletEarnDetails = ({accountId}) => {
             ),
             remainingTime: stats.remainingTime,
         }
-    }, [accountId])
+    }, [XWALLET_ADDR, accountId, walletContract.filters, walletContract.interface, xWalletContract])
 
     useEffect(() => {
         const getData = async () => {
