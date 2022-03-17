@@ -167,20 +167,20 @@ const WalletTokenCard = ({ networkId, accountId, tokens, rewardsData, addRequest
         const bigNumberAmount = parseUnits(amount, 18)
 
         if (type === 'Deposit') {
-            const allowance = await stakingTokenContract.allowance(accountId, WALLET_STAKING_ADDRESS)
+            const allowance = await stakingTokenContract.allowance(accountId, addresses.stakingTokenAddress)
 
             if (allowance.lt(constants.MaxUint256)) {
                 addRequestTxn(`approve_staking_pool_${Date.now()}`, {
-                    to: WALLET_TOKEN_ADDRESS,
+                    to: addresses.tokenAddress,
                     value: '0x0',
-                    data: ERC20_INTERFACE.encodeFunctionData('approve', [WALLET_STAKING_ADDRESS, constants.MaxUint256])
+                    data: ERC20_INTERFACE.encodeFunctionData('approve', [addresses.stakingTokenAddress, constants.MaxUint256])
                 })
             }
 
             addRequestTxn(`enter_staking_pool_${Date.now()}`, {
-                to: WALLET_STAKING_ADDRESS,
+                to: addresses.stakingTokenAddress,
                 value: '0x0',
-                data: WALLET_STAKING_POOL_INTERFACE.encodeFunctionData('enter', [bigNumberAmount.toHexString()])
+                data: addresses.stakingPoolInterface.encodeFunctionData('enter', [bigNumberAmount.toHexString()])
             })
         }
 
@@ -195,9 +195,9 @@ const WalletTokenCard = ({ networkId, accountId, tokens, rewardsData, addRequest
             }
 
             addRequestTxn(`leave_staking_pool_${Date.now()}`, {
-                to: WALLET_STAKING_ADDRESS,
+                to: addresses.stakingTokenAddress,
                 value: '0x0',
-                data: WALLET_STAKING_POOL_INTERFACE.encodeFunctionData('leave', [xWalletAmount.toHexString(), false])
+                data: addresses.stakingPoolInterface.encodeFunctionData('leave', [xWalletAmount.toHexString(), false])
             })
         }
     }
