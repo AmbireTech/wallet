@@ -7,6 +7,7 @@ import { ToolTip, Button } from "components/common"
 import { BigNumber, constants, Contract, utils } from "ethers"
 import WalletStakingPoolABI from 'consts/WalletStakingPoolABI'
 import AdexStakingPool from 'consts/AdexStakingPool.json'
+import supplyControllerABI from 'consts/ADXSupplyController.json'
 import { Interface, parseUnits, formatUnits } from "ethers/lib/utils"
 import { getProvider } from 'lib/provider'
 import ERC20ABI from 'adex-protocol-eth/abi/ERC20.json'
@@ -19,6 +20,7 @@ import walletABI from 'consts/walletTokenABI'
 const ADX_TOKEN_ADDRESS = '0xade00c28244d5ce17d72e40330b1c318cd12b7c3'
 const ADX_STAKING_TOKEN_ADDRESS = '0xb6456b57f03352be48bf101b46c1752a0813491a'
 const ADX_STAKING_POOL_INTERFACE = new Interface(AdexStakingPool)
+const ADDR_ADX_SUPPLY_CONTROLLER = '0x9d47f1c6ba4d66d8aa5e19226191a8968bc9094e'
 
 const WALLET_TOKEN_ADDRESS = '0x88800092ff476844f74dc2fc427974bbee2794ae'
 const WALLET_STAKING_ADDRESS = '0x47cd7e91c3cbaaf266369fe8518345fc4fc12935'
@@ -50,6 +52,7 @@ const WalletTokenCard = ({ networkId, accountId, tokens, rewardsData, addRequest
         tokenAbi: ''
     })
     const [selectedToken, setSelectedToken] = useState({ label: ''})
+    const [adxCurrentAPY, setAdxCurrentAPY] = useState('')
 
     const unavailable = networkId !== 'ethereum'
     const networkDetails = networks.find(({ id }) => id === networkId)
@@ -156,12 +159,12 @@ const WalletTokenCard = ({ networkId, accountId, tokens, rewardsData, addRequest
                         <div>APY&nbsp;<MdInfo/></div>
                     </ToolTip>
                 </>,
-                rewardsData.isLoading ? `...` : `${walletTokenAPY}%`
+                selectedToken.label === 'ADX' ? `${adxCurrentAPY.toFixed(2)}%` : rewardsData.isLoading ? `...` : `${walletTokenAPY}%`
             ],
             ['Lock', '20 day unbond period'],
             ['Type', 'Variable Rate'],
         ])
-    }, [leaveLog, lockedRemainingTime, onWithdraw, rewardsData.isLoading, tokensItems, walletTokenAPY])
+    }, [adxCurrentAPY, leaveLog, lockedRemainingTime, onWithdraw, rewardsData.isLoading, selectedToken.label, tokensItems, walletTokenAPY])
 
     const onValidate = async (type, tokenAddress, amount, isMaxAmount) => {
         const bigNumberAmount = parseUnits(amount, 18)
@@ -213,6 +216,12 @@ const WalletTokenCard = ({ networkId, accountId, tokens, rewardsData, addRequest
                 const stakingPoolAbi = selectedToken.label === 'ADX' ? AdexStakingPool : WalletStakingPoolABI
                 const tokenAbi = selectedToken.label === 'ADX' ? ERC20ABI : walletABI
                 const stakingTokenContract = new Contract(stakingTokenAddress, stakingPoolInterface, provider)
+                const tokenContract = new Contract(tokenAddress, tokenAbi, provider)
+                const supplyController = new Contract(
+                    ADDR_ADX_SUPPLY_CONTROLLER,
+                    supplyControllerABI,
+                    provider
+                )
                 setStakingTokenContract(stakingTokenContract)
                 
                 setAddresses({
@@ -229,7 +238,25 @@ const WalletTokenCard = ({ networkId, accountId, tokens, rewardsData, addRequest
                     stakingTokenContract.totalSupply(),
                     stakingTokenContract.balanceOf(accountId),
                 ])
-                
+
+                if (selectedToken.label === 'ADX') {
+                    const [incentivePerSecond, poolTotalStaked] = await Promise.all([
+                        supplyController.incentivePerSecond(ADX_STAKING_TOKEN_ADDRESS),
+                        tokenContract.balanceOf(stakingTokenAddress),
+                    ])
+
+                    const secondsInYear = 60 * 60 * 24 * 365
+                    const PRECISION = 1_000_000_000_000
+                    
+                    const currentAPY = incentivePerSecond
+                        .mul(PRECISION)
+                        .mul(secondsInYear)
+                        .div(poolTotalStaked)
+                        .toNumber() / PRECISION
+                    
+                    setAdxCurrentAPY(currentAPY * 100)
+                }
+
                 setShareValue(shareValue)
                 setXWalletBalanceRaw(xWalletBalanceRaw)
 
