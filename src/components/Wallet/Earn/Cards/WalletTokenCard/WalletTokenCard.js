@@ -28,6 +28,9 @@ const WALLET_STAKING_POOL_INTERFACE = new Interface(WalletStakingPoolABI)
 const ERC20_INTERFACE = new Interface(ERC20ABI)
 const ZERO = BigNumber.from(0)
 
+const secondsInYear = 60 * 60 * 24 * 365
+const PRECISION = 1_000_000_000_000
+
 const msToDaysHours = ms => {
     const day = 24 * 60 * 60 * 1000
     const days = Math.floor(ms / day)
@@ -41,7 +44,7 @@ const WalletTokenCard = ({ networkId, accountId, tokens, rewardsData, addRequest
     const [customInfo, setCustomInfo] = useState(null)
     const [stakingTokenContract, setStakingTokenContract] = useState(null)
     const [shareValue, setShareValue] = useState(ZERO)
-    const [xWalletBalanceRaw, setXWalletBalanceRaw] = useState(null)
+    const [stakingTokenBalanceRaw, SetStakingTokenBalanceRaw] = useState(null)
     const [leaveLog, setLeaveLog] = useState(null)
     const [lockedRemainingTime, setLockedRemainingTime] = useState(0)
     const [addresses, setAddresses] = useState({
@@ -52,7 +55,7 @@ const WalletTokenCard = ({ networkId, accountId, tokens, rewardsData, addRequest
         tokenAbi: ''
     })
     const [selectedToken, setSelectedToken] = useState({ label: ''})
-    const [adxCurrentAPY, setAdxCurrentAPY] = useState('')
+    const [adxCurrentAPY, setAdxCurrentAPY] = useState(0.00)
 
     const unavailable = networkId !== 'ethereum'
     const networkDetails = networks.find(({ id }) => id === networkId)
@@ -68,8 +71,8 @@ const WalletTokenCard = ({ networkId, accountId, tokens, rewardsData, addRequest
     const adexToken = useMemo(() => tokens.find(({address}) => address === ADX_TOKEN_ADDRESS), [tokens])
     const adexStakingToken = useMemo(() => tokens.find(({address}) => address === ADX_STAKING_TOKEN_ADDRESS), [tokens])
 
-    const balanceRaw = useMemo(() => xWalletBalanceRaw ? (BigNumber.from(xWalletBalanceRaw).mul(shareValue)).div(BigNumber.from((1e18).toString())).toString() : 0,
-    [xWalletBalanceRaw, shareValue])
+    const balanceRaw = useMemo(() => stakingTokenBalanceRaw ? (BigNumber.from(stakingTokenBalanceRaw).mul(shareValue)).div(BigNumber.from((1e18).toString())).toString() : 0,
+    [stakingTokenBalanceRaw, shareValue])
 
     const depositTokenItems = useMemo(() => [
         {
@@ -190,7 +193,7 @@ const WalletTokenCard = ({ networkId, accountId, tokens, rewardsData, addRequest
         if (type === 'Withdraw') {
             let xWalletAmount
             // In case of withdrawing the max amount of xWallet tokens, get the latest balance of xWallet.
-            // Otherwise, `xWalletBalanceRaw` may be outdated.
+            // Otherwise, `stakingTokenBalanceRaw` may be outdated.
             if (isMaxAmount) {
                 xWalletAmount = await stakingTokenContract.balanceOf(accountId)
             } else {
@@ -232,7 +235,7 @@ const WalletTokenCard = ({ networkId, accountId, tokens, rewardsData, addRequest
                     tokenAbi
                 })
                 
-                const [timeToUnbond, shareValue, sharesTotalSupply, xWalletBalanceRaw] = await Promise.all([
+                const [timeToUnbond, shareValue, sharesTotalSupply, stakingTokenBalanceRaw] = await Promise.all([
                     stakingTokenContract.timeToUnbond(),
                     stakingTokenContract.shareValue(),
                     stakingTokenContract.totalSupply(),
@@ -244,9 +247,6 @@ const WalletTokenCard = ({ networkId, accountId, tokens, rewardsData, addRequest
                         supplyController.incentivePerSecond(ADX_STAKING_TOKEN_ADDRESS),
                         tokenContract.balanceOf(stakingTokenAddress),
                     ])
-
-                    const secondsInYear = 60 * 60 * 24 * 365
-                    const PRECISION = 1_000_000_000_000
                     
                     const currentAPY = incentivePerSecond
                         .mul(PRECISION)
@@ -258,7 +258,7 @@ const WalletTokenCard = ({ networkId, accountId, tokens, rewardsData, addRequest
                 }
 
                 setShareValue(shareValue)
-                setXWalletBalanceRaw(xWalletBalanceRaw)
+                SetStakingTokenBalanceRaw(stakingTokenBalanceRaw)
 
                 const leaveLogs = await provider.getLogs({
                     fromBlock: 0,
@@ -305,7 +305,7 @@ const WalletTokenCard = ({ networkId, accountId, tokens, rewardsData, addRequest
 
     return (
         <Card
-            loading={loading || (!xWalletBalanceRaw && !unavailable)}
+            loading={loading || (!stakingTokenBalanceRaw && !unavailable)}
             icon={AMBIRE_ICON}
             unavailable={unavailable}
             tokensItems={tokensItems}
@@ -314,10 +314,11 @@ const WalletTokenCard = ({ networkId, accountId, tokens, rewardsData, addRequest
             onTokenSelect={onTokenSelect}
             onValidate={onValidate}
             moreDetails={!unavailable && <WalletEarnDetailsModal 
-                apy={walletTokenAPY}
+                apy={selectedToken.label === 'ADX'? adxCurrentAPY.toFixed(2) : walletTokenAPY}
                 accountId={accountId}
                 msToDaysHours={msToDaysHours}
                 addresses={addresses}
+                tokenLabel={selectedToken.label}
             />}
         />
     )
