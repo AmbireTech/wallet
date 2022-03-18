@@ -121,27 +121,30 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
         history.replace({ pathname: `/wallet/transfer/${Number(asset) !== 0 ? asset : selectedAsset.symbol}` })
     }, [asset, history, selectedAsset])
 
-    useEffect(async () => {
-        const UDAddress = await resolveUDomain(address, selectedAsset ? selectedAsset.symbol: null, selectedNetwork.unstoppableDomainsChain)
+    useEffect(() => {
+        const resUDomain = async() => {
+            const UDAddress =  await resolveUDomain(address, selectedAsset ? selectedAsset.symbol: null, selectedNetwork.unstoppableDomainsChain)
+            // this is for tests only
+            if (UDAddress) console.log(UDAddress);
+            // to here
+            const isValidRecipientAddress = validateSendTransferAddress(address, selectedAcc, addressConfirmed, isKnownAddress)
+            const isValidSendTransferAmount = validateSendTransferAmount(amount, selectedAsset) 
+        
+            setValidationFormMgs({ 
+                success: { 
+                    amount: isValidSendTransferAmount.success, 
+                    address: UDAddress ? true : isValidRecipientAddress.success 
+                }, 
+                messages: { 
+                    amount: isValidSendTransferAmount.message ?  isValidSendTransferAmount.message : '',
+                    address: UDAddress ? '' : isValidRecipientAddress.message ? isValidRecipientAddress.message : ''
+                }
+            })
 
-// this is for tests only
-if (UDAddress) console.log(UDAddress);
-// to here
-        const isValidRecipientAddress = validateSendTransferAddress(address, selectedAcc, addressConfirmed, isKnownAddress)
-        const isValidSendTransferAmount = validateSendTransferAmount(amount, selectedAsset) 
-       
-        setValidationFormMgs({ 
-            success: { 
-                amount: isValidSendTransferAmount.success, 
-                address: UDAddress ? true : isValidRecipientAddress.success 
-            }, 
-            messages: { 
-                amount: isValidSendTransferAmount.message ?  isValidSendTransferAmount.message : '',
-                address: UDAddress ? '' : isValidRecipientAddress.message ? isValidRecipientAddress.message : ''
-            }
-        })
-
-        setDisabled(!isValidRecipientAddress.success || !isValidSendTransferAmount.success || (showSWAddressWarning && !sWAddressConfirmed))
+            setDisabled(!isValidRecipientAddress.success || !isValidSendTransferAmount.success || (showSWAddressWarning && !sWAddressConfirmed))
+        }
+        
+        resUDomain().catch(console.error)
     }, [address, amount, selectedAcc, selectedAsset, addressConfirmed, showSWAddressWarning, sWAddressConfirmed, isKnownAddress, addToast, selectedNetwork])
 
     const amountLabel = <div className="amount-label">Available Amount: <span>{ maxAmountFormatted } { selectedAsset?.symbol }</span></div>
@@ -176,6 +179,7 @@ if (UDAddress) console.log(UDAddress);
                                         value={address}
                                         onInput={setAddress}
                                     />
+                                    <div id="udomains-logo" />
                                     <AddressBook 
                                         addresses={addresses.filter(x => x.address !== selectedAcc)}
                                         addAddress={addAddress}
