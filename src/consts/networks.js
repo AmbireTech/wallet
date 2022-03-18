@@ -51,6 +51,14 @@ const networks = [{
 		icon: '/resources/networks/moonbeam.png',
 		explorerUrl: 'https://moonscan.io/'
 	}, {
+		id: 'moonriver',
+		chainId: 1285,
+		rpc: 'https://rpc.api.moonriver.moonbeam.network',
+		nativeAssetSymbol: 'MOVR',
+		name: 'Moonriver',
+		icon: '/resources/networks/moonriver.png',
+		explorerUrl: 'https://moonriver.moonscan.io/'
+	}, {
 		id: 'arbitrum',
 		chainId: 42161,
 		rpc: 'https://arb1.arbitrum.io/rpc',

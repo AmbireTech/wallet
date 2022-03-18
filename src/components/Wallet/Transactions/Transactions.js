@@ -55,7 +55,7 @@ function Transactions ({ relayerURL, selectedAcc, selectedNetwork, showSendTxns,
           }
         })
       })
-    //Redundant? but needs replace
+    // Wouldn't need to be called cause it will happen autoamtically, except we need `replaceByDefault`
     setSendTxnState({ showing: true, replaceByDefault: true })
   }, [addRequest, selectedNetwork, selectedAcc, setSendTxnState])
 

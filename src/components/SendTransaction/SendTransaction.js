@@ -125,8 +125,10 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, network, account,
     // track whether the effect has been unmounted
     let unmounted = false
 
+    // Note: currently, there's no point of getting the nonce if the bundle already has a nonce
+    // We may want to change this if we make a check if the currently replaced txn was already mined
     const reestimate = () => (relayerURL
-        ? bundle.estimate({ relayerURL, fetch, replacing: !!bundle.minFeeInUSDPerGas, getNextNonce: true })
+        ? bundle.estimate({ relayerURL, fetch, replacing: !!bundle.minFeeInUSDPerGas, getNextNonce: isNaN(bundle.nonce) })
         : bundle.estimateNoRelayer({ provider: getProvider(network.id) })
     )
       .then(estimation => {
@@ -201,7 +203,7 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, network, account,
       ...bundle,
       txns: [...bundle.txns, feeTxn],
       gasLimit: estimation.gasLimit + addedGas + (bundle.extraGas || 0),
-      nonce: (replaceTx && pendingBundle) ? nextNonMinedNonce : nextFreeNonce
+      nonce: bundle.nonce || ((replaceTx && pendingBundle) ? nextNonMinedNonce : nextFreeNonce)
     })
   }, [relayerURL, bundle, estimation, feeSpeed, network.nativeAssetSymbol, replaceTx])
 
@@ -419,6 +421,7 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, network, account,
           </div>
 
           {
+            // If there's `replacementBundle`, it means we're cancelling or speeding up, so this shouldn't even be visible
             !!estimation?.nextNonce?.pendingBundle &&
             (
               <div>
