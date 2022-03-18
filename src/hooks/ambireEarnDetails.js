@@ -18,7 +18,7 @@ const STAKING_POOL_EVENT_TYPES = {
 
 const ethProvider = getProvider('ethereum')
 
-const useWalletEarnDetails = ({accountId, addresses}) => {
+const useAmbireEarnDetails = ({accountId, addresses}) => {
     const XWALLET_ADDR = addresses.stakingTokenAddress
     const [details, setDetails] = useState({})
     const [isLoading, setIsLoading] = useState(true)
@@ -615,4 +615,4 @@ const useWalletEarnDetails = ({accountId, addresses}) => {
     return { details, isLoading } || {}
 }
 
-export default useWalletEarnDetails
+export default useAmbireEarnDetails

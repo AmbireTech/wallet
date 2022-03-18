@@ -1,19 +1,19 @@
-import './WalletEarnDetailsModal.scss'
+import './AmbireEarnDetailsModal.scss'
 
 import { MdClose } from 'react-icons/md'
 import { useModals } from 'hooks'
 import { Modal, Button } from 'components/common'
 // import { ToolTip } from 'components/common' 
-import { useWalletEarnDetails } from 'hooks'
+import { useAmbireEarnDetails } from 'hooks'
 import { Loading } from 'components/common'
 
-const WalletEarnDetailsModal = ({ title = 'Details', apy, accountId, msToDaysHours, addresses, tokenLabel }) => {
+const AmbireEarnDetailsModal = ({ title = 'Details', apy, accountId, msToDaysHours, addresses, tokenLabel }) => {
     const { hideModal } = useModals()
     
     const { 
         details,
         isLoading
-        } = useWalletEarnDetails({accountId, addresses})
+        } = useAmbireEarnDetails({accountId, addresses})
 
     const { balance, 
         poolShare, 
@@ -71,4 +71,4 @@ const WalletEarnDetailsModal = ({ title = 'Details', apy, accountId, msToDaysHou
     )
 }
 
-export default WalletEarnDetailsModal
+export default AmbireEarnDetailsModal
