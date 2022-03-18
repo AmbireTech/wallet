@@ -12,7 +12,7 @@ import { Interface, parseUnits, formatUnits } from "ethers/lib/utils"
 import { getProvider } from 'lib/provider'
 import ERC20ABI from 'adex-protocol-eth/abi/ERC20.json'
 import networks from 'consts/networks'
-import { WalletEarnDetailsModal } from 'components/Modals'
+import { AmbireEarnDetailsModal } from 'components/Modals'
 import { getTokenIcon } from 'lib/icons'
 import { BsArrowUpSquare } from "react-icons/bs"
 import walletABI from 'consts/walletTokenABI'
@@ -38,7 +38,7 @@ const msToDaysHours = ms => {
     return days < 1 ? `${hours} hours` : `${days} days`
 }
 
-const WalletTokenCard = ({ networkId, accountId, tokens, rewardsData, addRequest }) => {
+const AbmireTokensCard = ({ networkId, accountId, tokens, rewardsData, addRequest }) => {
     const [loading, setLoading] = useState(true)
     const [details, setDetails] = useState([])
     const [customInfo, setCustomInfo] = useState(null)
@@ -313,7 +313,7 @@ const WalletTokenCard = ({ networkId, accountId, tokens, rewardsData, addRequest
             customInfo={customInfo}
             onTokenSelect={onTokenSelect}
             onValidate={onValidate}
-            moreDetails={!unavailable && <WalletEarnDetailsModal 
+            moreDetails={!unavailable && <AmbireEarnDetailsModal 
                 apy={selectedToken.label === 'ADX'? adxCurrentAPY.toFixed(2) : walletTokenAPY}
                 accountId={accountId}
                 msToDaysHours={msToDaysHours}
@@ -324,4 +324,4 @@ const WalletTokenCard = ({ networkId, accountId, tokens, rewardsData, addRequest
     )
 }
 
-export default WalletTokenCard
+export default AbmireTokensCard
