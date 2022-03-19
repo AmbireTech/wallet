@@ -14,7 +14,7 @@
     "@testing-library/react": "^11.2.7",
     "@testing-library/user-event": "^12.8.3",
     "@transak/transak-sdk": "^1.0.31",
-    "@walletconnect/client": "^1.7.1",
+    "@walletconnect/client": "^1.7.5",
     "@walletconnect/utils": "^1.7.1",
     "@web3-react/abstract-connector": "^6.0.7",
     "@web3-react/types": "^6.0.7",
