@@ -42,7 +42,7 @@ const networks = [{
 		name: 'Fantom Opera',
 		icon: '/resources/networks/fantom.png',
 		explorerUrl: 'https://ftmscan.com'
-	}/*, {
+	}, {
 		id: 'moonbeam',
 		chainId: 1284,
 		rpc: 'https://rpc.api.moonbeam.network',
@@ -50,7 +50,7 @@ const networks = [{
 		name: 'Moonbeam',
 		icon: '/resources/networks/moonbeam.png',
 		explorerUrl: 'https://moonscan.io/'
-	}, {
+	}/*, {
 		id: 'moonriver',
 		chainId: 1285,
 		rpc: 'https://rpc.api.moonriver.moonbeam.network',
