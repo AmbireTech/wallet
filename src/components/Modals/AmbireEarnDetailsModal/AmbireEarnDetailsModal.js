@@ -13,7 +13,7 @@ const AmbireEarnDetailsModal = ({ title = 'Details', apy, accountId, msToDaysHou
     const { 
         details,
         isLoading
-        } = useAmbireEarnDetails({accountId, addresses})
+        } = useAmbireEarnDetails({accountId, addresses, tokenLabel})
 
     const { balance, 
         poolShare, 
