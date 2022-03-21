@@ -38,7 +38,7 @@ const msToDaysHours = ms => {
     return days < 1 ? `${hours} hours` : `${days} days`
 }
 
-const AbmireTokensCard = ({ networkId, accountId, tokens, rewardsData, addRequest }) => {
+const AmbireTokensCard = ({ networkId, accountId, tokens, rewardsData, addRequest }) => {
     const [loading, setLoading] = useState(true)
     const [details, setDetails] = useState([])
     const [customInfo, setCustomInfo] = useState(null)
@@ -324,4 +324,4 @@ const AbmireTokensCard = ({ networkId, accountId, tokens, rewardsData, addReques
     )
 }
 
-export default AbmireTokensCard
+export default AmbireTokensCard
