@@ -1,16 +1,11 @@
 import { getProvider } from 'lib/provider'
 import { BigNumber, utils, Contract } from 'ethers'
-import xWalletABI from 'consts/WalletStakingPoolABI'
-import walletABI from 'consts/walletTokenABI'
-
 import { useEffect, useState, useCallback } from 'react'
 
 const ZERO = BigNumber.from(0)
 const ZERO_ADDR = '0x0000000000000000000000000000000000000000'
 const PRECISION = 1_000_000_000_000
 const POOL_SHARES_TOKEN_DECIMALS_MUL = '1000000000000000000'
-const XWALLET_ADDR = '0x47cd7e91c3cbaaf266369fe8518345fc4fc12935'
-const WALLET_ADDR = '0x88800092fF476844f74dC2FC427974BBee2794Ae'
 const STAKING_POOL_EVENT_TYPES = {
     enter: 'enter',
     leave: 'leave',
@@ -22,14 +17,15 @@ const STAKING_POOL_EVENT_TYPES = {
 }
 
 const ethProvider = getProvider('ethereum')
-const xWalletContract = new Contract(XWALLET_ADDR, xWalletABI, ethProvider)
-const walletContract = new Contract(WALLET_ADDR, walletABI, ethProvider)
 
-const useWalletEarnDetails = ({accountId}) => {
+const useAmbireEarnDetails = ({accountId, addresses, tokenLabel}) => {
+    const WALLET_ADDR = addresses.stakingTokenAddress
     const [details, setDetails] = useState({})
     const [isLoading, setIsLoading] = useState(true)
 
-    const getStats = useCallback(async () => {
+    const getStats = useCallback(async (addresses, tokenLabel) => {
+        const xWalletContract = new Contract(addresses.stakingTokenAddress, addresses.stakingPoolAbi, ethProvider)
+        const walletContract = new Contract(addresses.tokenAddress, addresses.tokenAbi, ethProvider)
         const fromBlock = 0
         const [
             timeToUnbond,
@@ -51,7 +47,7 @@ const useWalletEarnDetails = ({accountId}) => {
             xWalletContract.lockedShares(accountId),
             ethProvider.getLogs({
                 fromBlock,
-                ...walletContract.filters.Transfer(null, XWALLET_ADDR, null),
+                ...walletContract.filters.Transfer(null, WALLET_ADDR, null),
             }),
             ethProvider.getLogs({
                 fromBlock,
@@ -192,7 +188,7 @@ const useWalletEarnDetails = ({accountId}) => {
                         transactionHash: sharesMintEvent.transactionHash,
                         type: STAKING_POOL_EVENT_TYPES.enter,
                         shares: sharesMintEvent.shares,
-                        walletAmount: parsedWalletLog.args.amount, // [2]
+                        walletAmount: tokenLabel === 'ADX' ? parsedWalletLog.args.value : parsedWalletLog.args.amount, // [2]
                         from: parsedWalletLog.args.from,
                         blockNumber: sharesMintEvent.blockNumber,
                     }
@@ -356,9 +352,10 @@ const useWalletEarnDetails = ({accountId}) => {
                         ]
 
                     if (walletTokenTransfersLog) {
-                        const { amount } = walletContract.interface.parseLog(
+                        const parsedLog = walletContract.interface.parseLog(
                             walletTokenTransfersLog
-                        ).args
+                        )
+                        const amount = tokenLabel === 'ADX' ? parsedLog.args.value : parsedLog.args.amount 
                         const { amount: shares } =
                             xWalletContract.interface.parseLog(
                                 sharesMintEvent
@@ -598,13 +595,13 @@ const useWalletEarnDetails = ({accountId}) => {
             ),
             remainingTime: stats.remainingTime,
         }
-    }, [accountId])
+    }, [WALLET_ADDR, accountId])
 
     useEffect(() => {
-        const getData = async () => {
+        const getData = async (addresses, tokenLabel) => {
             setIsLoading(prevState => !prevState)
             try {
-                const data = await getStats()
+                const data = await getStats(addresses, tokenLabel)
                 setDetails(data)
                 setIsLoading(prevState => !prevState)
             } catch(e) {
@@ -613,10 +610,10 @@ const useWalletEarnDetails = ({accountId}) => {
             }
         }
         if (!accountId) return
-        getData()
-    }, [accountId, getStats, setDetails, setIsLoading])
+        getData(addresses, tokenLabel)
+    }, [accountId, addresses, getStats, setDetails, setIsLoading, tokenLabel])
 
     return { details, isLoading } || {}
 }
 
-export default useWalletEarnDetails
+export default useAmbireEarnDetails
