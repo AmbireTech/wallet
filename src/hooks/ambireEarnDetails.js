@@ -18,12 +18,12 @@ const STAKING_POOL_EVENT_TYPES = {
 
 const ethProvider = getProvider('ethereum')
 
-const useAmbireEarnDetails = ({accountId, addresses}) => {
-    const XWALLET_ADDR = addresses.stakingTokenAddress
+const useAmbireEarnDetails = ({accountId, addresses, tokenLabel}) => {
+    const WALLET_ADDR = addresses.stakingTokenAddress
     const [details, setDetails] = useState({})
     const [isLoading, setIsLoading] = useState(true)
 
-    const getStats = useCallback(async () => {
+    const getStats = useCallback(async (addresses, tokenLabel) => {
         const xWalletContract = new Contract(addresses.stakingTokenAddress, addresses.stakingPoolAbi, ethProvider)
         const walletContract = new Contract(addresses.tokenAddress, addresses.tokenAbi, ethProvider)
         const fromBlock = 0
@@ -47,7 +47,7 @@ const useAmbireEarnDetails = ({accountId, addresses}) => {
             xWalletContract.lockedShares(accountId),
             ethProvider.getLogs({
                 fromBlock,
-                ...walletContract.filters.Transfer(null, XWALLET_ADDR, null),
+                ...walletContract.filters.Transfer(null, WALLET_ADDR, null),
             }),
             ethProvider.getLogs({
                 fromBlock,
@@ -188,7 +188,7 @@ const useAmbireEarnDetails = ({accountId, addresses}) => {
                         transactionHash: sharesMintEvent.transactionHash,
                         type: STAKING_POOL_EVENT_TYPES.enter,
                         shares: sharesMintEvent.shares,
-                        walletAmount: parsedWalletLog.args.amount, // [2]
+                        walletAmount: tokenLabel === 'ADX' ? parsedWalletLog.args.value : parsedWalletLog.args.amount, // [2]
                         from: parsedWalletLog.args.from,
                         blockNumber: sharesMintEvent.blockNumber,
                     }
@@ -352,9 +352,10 @@ const useAmbireEarnDetails = ({accountId, addresses}) => {
                         ]
 
                     if (walletTokenTransfersLog) {
-                        const { value } = walletContract.interface.parseLog(
+                        const parsedLog = walletContract.interface.parseLog(
                             walletTokenTransfersLog
-                        ).args
+                        )
+                        const amount = tokenLabel === 'ADX' ? parsedLog.args.value : parsedLog.args.amount 
                         const { amount: shares } =
                             xWalletContract.interface.parseLog(
                                 sharesMintEvent
@@ -364,7 +365,7 @@ const useAmbireEarnDetails = ({accountId, addresses}) => {
                             blockNumber: sharesMintEvent.blockNumber,
                             shareValue: shares.isZero()
                                 ? ZERO
-                                : value
+                                : amount
                                       .mul(POOL_SHARES_TOKEN_DECIMALS_MUL)
                                       .div(shares),
                         }
@@ -594,13 +595,13 @@ const useAmbireEarnDetails = ({accountId, addresses}) => {
             ),
             remainingTime: stats.remainingTime,
         }
-    }, [XWALLET_ADDR, accountId, addresses.stakingPoolAbi, addresses.stakingTokenAddress, addresses.tokenAbi, addresses.tokenAddress])
+    }, [WALLET_ADDR, accountId])
 
     useEffect(() => {
-        const getData = async () => {
+        const getData = async (addresses, tokenLabel) => {
             setIsLoading(prevState => !prevState)
             try {
-                const data = await getStats()
+                const data = await getStats(addresses, tokenLabel)
                 setDetails(data)
                 setIsLoading(prevState => !prevState)
             } catch(e) {
@@ -609,8 +610,8 @@ const useAmbireEarnDetails = ({accountId, addresses}) => {
             }
         }
         if (!accountId) return
-        getData()
-    }, [accountId, getStats, setDetails, setIsLoading])
+        getData(addresses, tokenLabel)
+    }, [accountId, addresses, getStats, setDetails, setIsLoading, tokenLabel])
 
     return { details, isLoading } || {}
 }
