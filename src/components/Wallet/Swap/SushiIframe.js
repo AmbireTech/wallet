@@ -10,7 +10,8 @@ const ambireSushi = {
 
 export default function SushiSwap({ network, selectedAcc, gnosisConnect, gnosisDisconnect }) {
     let ambireSushiCurrent = ambireSushi
-    if (SUSHI_SWAP_FRAME_EXCEPTIONS[network.id]) ambireSushiCurrent.url = SUSHI_SWAP_FRAME_EXCEPTIONS[network.id]
+    if (!!SUSHI_SWAP_FRAME_EXCEPTIONS[network.id]) ambireSushiCurrent.url = SUSHI_SWAP_FRAME_EXCEPTIONS[network.id]
+    else ambireSushiCurrent.url = SUSHI_SWAP_FRAME
     return (
         <GnosisSafeAppIframe
             network={network}
