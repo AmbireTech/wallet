@@ -211,6 +211,9 @@ const AmbireTokensCard = ({ networkId, accountId, tokens, rewardsData, addReques
     useEffect(() => {
         async function init() {
             try {
+                // Prevent init if the card is unavailable for current network
+                if (networkId !== 'ethereum') return
+
                 const provider = getProvider(networkId)
                 
                 const tokenAddress = selectedToken.label === 'ADX' ? ADX_TOKEN_ADDRESS : WALLET_TOKEN_ADDRESS

@@ -482,10 +482,6 @@ const useAmbireEarnDetails = ({accountId, addresses, tokenLabel}) => {
             ZERO
         )
 
-        // const lockedSharesWalletValue = [...userLeaves]
-        //     .filter(x => !x.withdrawTx)
-        //     .reduce((a, b) => a.add(b.walletValue), ZERO)
-
         const totalLockedSharesCheck = [...userLeaves]
             .filter(x => !x.withdrawTx)
             .reduce((a, b) => a.add(b.shares), ZERO)
@@ -526,7 +522,6 @@ const useAmbireEarnDetails = ({accountId, addresses, tokenLabel}) => {
                 : ZERO
 
         // NOTE: Used for rage leave because shareValue is can be different than in unbondCommitments
-        
         const currentBalanceWalletAtCurrentShareValue =
             currentBalanceWalletAvailable
         
