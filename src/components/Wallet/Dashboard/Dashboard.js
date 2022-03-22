@@ -75,18 +75,13 @@ export default function Dashboard({ portfolio, selectedNetwork, selectedAccount,
             <div id="overview">
                 <div id="balance" className="panel">
                     <div className="title">Balance</div>
-                    <div className="content">
-                        {
-                            portfolio.isBalanceLoading ? 
-                                <Loading/>
-                                :
-                                <Balances
-                                    portfolio={portfolio}
-                                    selectedNetwork={selectedNetwork}
-                                    setNetwork={setNetwork}
-                                    hidePrivateValue={privateMode.hidePrivateValue}
-                                />
-                        }
+                    <div className="content"> 
+                        <Balances
+                            portfolio={portfolio}
+                            selectedNetwork={selectedNetwork}
+                            setNetwork={setNetwork}
+                            hidePrivateValue={privateMode.hidePrivateValue}
+                        />
                     </div>
                 </div>
                 <div id="chart" className="panel">
@@ -97,7 +92,7 @@ export default function Dashboard({ portfolio, selectedNetwork, selectedAccount,
                     <div className="content">
                         {
                             chartType === chartSegments[0].value ?
-                                portfolio.isBalanceLoading ?
+                                portfolio.isCurrNetworkBalanceLoading ?
                                     <Loading/>
                                     :
                                     privateMode.hidePrivateContent(<Chart data={chartTokensData} size={200}/>)
