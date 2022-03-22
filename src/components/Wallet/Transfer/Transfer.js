@@ -123,7 +123,6 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
 
     useEffect(() => {
         const resUDomain = async() => {
-            //TODO: to add setTimeout
             const UDAddress =  await resolveUDomain(address, selectedAsset ? selectedAsset.symbol: null, selectedNetwork.unstoppableDomainsChain)
             // this is for tests only
             if (UDAddress) console.log(UDAddress)
@@ -144,8 +143,8 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
 
             setDisabled(!isValidRecipientAddress.success || !isValidSendTransferAmount.success || (showSWAddressWarning && !sWAddressConfirmed))
         }
-        
-        resUDomain().catch(console.error)
+        const timer = setTimeout(() => resUDomain().catch(console.error), 500)
+        return () => clearTimeout(timer)
     }, [address, amount, selectedAcc, selectedAsset, addressConfirmed, showSWAddressWarning, sWAddressConfirmed, isKnownAddress, addToast, selectedNetwork, addAddress])
 
     const amountLabel = <div className="amount-label">Available Amount: <span>{ maxAmountFormatted } { selectedAsset?.symbol }</span></div>
