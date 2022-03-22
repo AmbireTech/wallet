@@ -7,7 +7,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { ethers } from 'ethers'
 import { Interface } from 'ethers/lib/utils'
 import { useToasts } from 'hooks/toasts'
-import { TextInput, NumberInput, Button, Select, Loading, AddressBook, AddressWarning, NoFundsPlaceholder, Checkbox } from 'components/common'
+import { TextInput, NumberInput, Button, Select, Loading, AddressBook, AddressWarning, NoFundsPlaceholder, Checkbox, ToolTip } from 'components/common'
 import { validateSendTransferAddress, validateSendTransferAmount } from 'lib/validations/formValidations'
 import { resolveUDomain } from 'hooks/unstoppabledomains'
 import { isValidAddress } from 'lib/address'
@@ -123,9 +123,10 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
 
     useEffect(() => {
         const resUDomain = async() => {
+            //TODO: to add setTimeout
             const UDAddress =  await resolveUDomain(address, selectedAsset ? selectedAsset.symbol: null, selectedNetwork.unstoppableDomainsChain)
             // this is for tests only
-            if (UDAddress) console.log(UDAddress);
+            if (UDAddress) console.log(UDAddress)
             // to here
             const isValidRecipientAddress = validateSendTransferAddress(address, selectedAcc, addressConfirmed, isKnownAddress)
             const isValidSendTransferAmount = validateSendTransferAmount(amount, selectedAsset) 
@@ -145,7 +146,7 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
         }
         
         resUDomain().catch(console.error)
-    }, [address, amount, selectedAcc, selectedAsset, addressConfirmed, showSWAddressWarning, sWAddressConfirmed, isKnownAddress, addToast, selectedNetwork])
+    }, [address, amount, selectedAcc, selectedAsset, addressConfirmed, showSWAddressWarning, sWAddressConfirmed, isKnownAddress, addToast, selectedNetwork, addAddress])
 
     const amountLabel = <div className="amount-label">Available Amount: <span>{ maxAmountFormatted } { selectedAsset?.symbol }</span></div>
 
@@ -179,7 +180,9 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
                                         value={address}
                                         onInput={setAddress}
                                     />
-                                    <div id="udomains-logo" />
+                                    <ToolTip label={'It can be used with unstoppable domains.'}>
+                                        <div id="udomains-logo" />
+                                    </ToolTip>
                                     <AddressBook 
                                         addresses={addresses.filter(x => x.address !== selectedAcc)}
                                         addAddress={addAddress}
