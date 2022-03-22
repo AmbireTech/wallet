@@ -38,7 +38,7 @@ const msToDaysHours = ms => {
     return days < 1 ? `${hours} hours` : `${days} days`
 }
 
-const AbmireTokensCard = ({ networkId, accountId, tokens, rewardsData, addRequest }) => {
+const AmbireTokensCard = ({ networkId, accountId, tokens, rewardsData, addRequest }) => {
     const [loading, setLoading] = useState(true)
     const [details, setDetails] = useState([])
     const [customInfo, setCustomInfo] = useState(null)
@@ -211,6 +211,9 @@ const AbmireTokensCard = ({ networkId, accountId, tokens, rewardsData, addReques
     useEffect(() => {
         async function init() {
             try {
+                // Prevent init if the card is unavailable for current network
+                if (networkId !== 'ethereum') return
+
                 const provider = getProvider(networkId)
                 
                 const tokenAddress = selectedToken.label === 'ADX' ? ADX_TOKEN_ADDRESS : WALLET_TOKEN_ADDRESS
@@ -324,4 +327,4 @@ const AbmireTokensCard = ({ networkId, accountId, tokens, rewardsData, addReques
     )
 }
 
-export default AbmireTokensCard
+export default AmbireTokensCard

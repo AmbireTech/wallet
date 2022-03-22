@@ -439,11 +439,21 @@ const useAmbireEarnDetails = ({accountId, addresses, tokenLabel}) => {
             withWalletAmount(sharesTokensTransfersInFromExternal)
         }
 
+        const totalSharesOutTransfers = sharesTokensTransfersOut.reduce(
+            (a, b) => a.add(b.shares),
+            ZERO
+        )
+
         const totalSharesOutTransfersWalletValue =
             sharesTokensTransfersOut.reduce(
                 (a, b) => a.add(b.walletAmount),
                 ZERO
             )
+
+        const totalSharesInTransfers = sharesTokensTransfersInFromExternal.reduce(
+            (a, b) => a.add(b.shares),
+            ZERO
+        )
 
         const totalSharesInTransfersWalletValue =
             sharesTokensTransfersInFromExternal.reduce(
@@ -453,17 +463,24 @@ const useAmbireEarnDetails = ({accountId, addresses, tokenLabel}) => {
 
         const depositsWalletTotal = userEnters.reduce(
             (a, b) => a.add(b.walletAmount),
-            totalSharesInTransfersWalletValue
+            ZERO
+        )
+
+        // Incl received + distributed to other staker. Used for calc reward because the were actually earned
+        const rageLeavesWithdrawnWalletTotal = userRageLeaves.reduce(
+            (a, b) => a.add(b.maxTokens),
+            ZERO
+        )
+
+        const rageLeavesReceivedWalletTotal = userRageLeaves.reduce(
+            (a, b) => a.add(b.receivedTokens),
+            ZERO
         )
 
         const withdrawsWalletTotal = userWithdraws.reduce(
             (a, b) => a.add(b.receivedTokens),
-            totalSharesOutTransfersWalletValue
+            ZERO
         )
-
-        const lockedSharesWalletValue = [...userLeaves]
-            .filter(x => !x.withdrawTx)
-            .reduce((a, b) => a.add(b.walletValue), ZERO)
 
         const totalLockedSharesCheck = [...userLeaves]
             .filter(x => !x.withdrawTx)
@@ -479,41 +496,47 @@ const useAmbireEarnDetails = ({accountId, addresses, tokenLabel}) => {
             )
         }
 
-        const balanceSharesAvailable = balanceShares.sub(lockedShares)
+        const balanceSharesAvailable = balanceShares.sub(lockedShares).lt(ZERO)
+            ? ZERO 
+            : balanceShares.sub(lockedShares)
 
         const currentBalanceWalletAvailable = balanceSharesAvailable
             .mul(shareValue)
             .div(POOL_SHARES_TOKEN_DECIMALS_MUL)
 
         // NOTE: used to calc actual balance in Wallet + rewards
-        const currentBalanceWallet = currentBalanceWalletAvailable.add(
-            lockedSharesWalletValue
-        )
+        const currentBalanceWallet = balanceShares
+            .mul(shareValue)
+            .div(POOL_SHARES_TOKEN_DECIMALS_MUL)
 
         const currentBalanceSharesWalletValue = balanceShares
             .mul(shareValue)
             .div(POOL_SHARES_TOKEN_DECIMALS_MUL)
 
-        const hasInsufficentBalanceForUnbondCommitments =
-            currentBalanceWalletAvailable.lt(currentBalanceSharesWalletValue)
+        const hasInsufficentBalanceForUnbondCommitments = balanceShares.lt(
+            lockedShares
+        ) 
         const insufficientSharesAmoutForCurrentUnbonds =
             hasInsufficentBalanceForUnbondCommitments
-                ? balanceSharesAvailable
+                ? lockedShares.sub(balanceShares)
                 : ZERO
 
         // NOTE: Used for rage leave because shareValue is can be different than in unbondCommitments
-        const lockedSharesWalletAtCurrentShareValue = lockedShares
-            .mul(shareValue)
-            .div(POOL_SHARES_TOKEN_DECIMALS_MUL)
-
         const currentBalanceWalletAtCurrentShareValue =
-            currentBalanceWalletAvailable.add(
-                lockedSharesWalletAtCurrentShareValue
-            )
+            currentBalanceWalletAvailable
+        
+        // Enter, transfers in
+	    const totalInTokenValue = depositsWalletTotal.add(totalSharesInTransfersWalletValue)
+        
+        // Withdraws, Transfers out, rage leaves
+        const totalOutTokenValue = withdrawsWalletTotal
+            .add(totalSharesOutTransfersWalletValue)
+            .add(rageLeavesWithdrawnWalletTotal)
 
-        const totalRewards = currentBalanceWallet // includes leavesPendingToUnlockTotalWallet and  leavesReadyToWithdrawTotalWallet
-            .add(withdrawsWalletTotal)
-            .sub(depositsWalletTotal)
+        const totalRewards = currentBalanceWallet
+            .add(totalOutTokenValue)
+            .sub(totalInTokenValue)
+
 
         const hasActiveUnbondCommitments = !![...userLeaves].filter(
             x => !x.withdrawTx
@@ -565,6 +588,10 @@ const useAmbireEarnDetails = ({accountId, addresses, tokenLabel}) => {
             userDataLoaded: true,
             userShare,
             remainingTime,
+            totalSharesOutTransfers,
+            totalSharesInTransfers,
+            rageLeavesReceivedWalletTotal,
+            rageLeavesWithdrawnWalletTotal
         }
 
         return {
