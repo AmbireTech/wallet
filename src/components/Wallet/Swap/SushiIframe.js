@@ -1,4 +1,4 @@
-import { SUSHI_SWAP_FRAME } from 'config'
+import { SUSHI_SWAP_FRAME, SUSHI_SWAP_FRAME_EXCEPTIONS } from 'config'
 import GnosisSafeAppIframe from 'components/Plugins/GnosisSafeApps/GnosisSafeAppIframe'
 
 const ambireSushi = {
@@ -9,13 +9,15 @@ const ambireSushi = {
 }
 
 export default function SushiSwap({ network, selectedAcc, gnosisConnect, gnosisDisconnect }) {
+    let ambireSushiCurrent = ambireSushi
+    if (SUSHI_SWAP_FRAME_EXCEPTIONS[network.id]) ambireSushiCurrent.url = SUSHI_SWAP_FRAME_EXCEPTIONS[network.id]
     return (
         <GnosisSafeAppIframe
             network={network}
             selectedAcc={selectedAcc}
             gnosisConnect={gnosisConnect}
             gnosisDisconnect={gnosisDisconnect}
-            selectedApp={ambireSushi}
+            selectedApp={ambireSushiCurrent}
             title={'Ambire swap'}
         />
     )
