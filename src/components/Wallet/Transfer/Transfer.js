@@ -32,6 +32,7 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
     const [amount, setAmount] = useState(0)
     const [bigNumberHexAmount, setBigNumberHexAmount] = useState('')
     const [address, setAddress] = useState('')
+    const [uDAddress, setUDAddress] = useState('')
     const [disabled, setDisabled] = useState(true)
     const [addressConfirmed, setAddressConfirmed] = useState(false)
     const [sWAddressConfirmed, setSWAddressConfirmed] = useState(false)
@@ -82,15 +83,16 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
     }
 
     const sendTx = () => {
+        const recipientAddress = uDAddress ? uDAddress : address
         try {
             const txn = {
                 to: selectedAsset.address,
                 value: '0',
-                data: ERC20.encodeFunctionData('transfer', [address, bigNumberHexAmount])
+                data: ERC20.encodeFunctionData('transfer', [recipientAddress, bigNumberHexAmount])
             }
 
             if (Number(selectedAsset.address) === 0) {
-                txn.to = address
+                txn.to = recipientAddress
                 txn.value = bigNumberHexAmount
                 txn.data = '0x'
             }
@@ -122,28 +124,33 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
     }, [asset, history, selectedAsset])
 
     useEffect(() => {
-        const resUDomain = async() => {
+        const validateForm = async() => {
             const UDAddress =  await resolveUDomain(address, selectedAsset ? selectedAsset.symbol: null, selectedNetwork.unstoppableDomainsChain)
-            // this is for tests only
-            if (UDAddress) console.log(UDAddress)
-            // to here
-            const isValidRecipientAddress = validateSendTransferAddress(address, selectedAcc, addressConfirmed, isKnownAddress)
+            
+            let isValidRecipientAddress
+            if (UDAddress) {
+                isValidRecipientAddress = validateSendTransferAddress(UDAddress, selectedAcc, addressConfirmed, isKnownAddress)
+                setUDAddress(UDAddress)
+            } else {
+                isValidRecipientAddress = validateSendTransferAddress(address, selectedAcc, addressConfirmed, isKnownAddress)
+                setUDAddress('')
+            }
             const isValidSendTransferAmount = validateSendTransferAmount(amount, selectedAsset) 
         
             setValidationFormMgs({ 
                 success: { 
                     amount: isValidSendTransferAmount.success, 
-                    address: UDAddress ? true : isValidRecipientAddress.success 
+                    address: isValidRecipientAddress.success 
                 }, 
                 messages: { 
                     amount: isValidSendTransferAmount.message ?  isValidSendTransferAmount.message : '',
-                    address: UDAddress ? '' : isValidRecipientAddress.message ? isValidRecipientAddress.message : ''
+                    address: isValidRecipientAddress.message ? isValidRecipientAddress.message : ''
                 }
             })
 
             setDisabled(!isValidRecipientAddress.success || !isValidSendTransferAmount.success || (showSWAddressWarning && !sWAddressConfirmed))
         }
-        const timer = setTimeout(() => resUDomain().catch(console.error), 500)
+        const timer = setTimeout(() => validateForm().catch(console.error), 500)
         return () => clearTimeout(timer)
     }, [address, amount, selectedAcc, selectedAsset, addressConfirmed, showSWAddressWarning, sWAddressConfirmed, isKnownAddress, addToast, selectedNetwork, addAddress])
 
