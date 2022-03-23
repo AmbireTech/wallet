@@ -8,7 +8,9 @@ import Balances from './Balances/Balances'
 import Protocols from './Protocols/Protocols'
 import Collectibles from './Collectibles/Collectibles'
 import { MdOutlineInfo } from 'react-icons/md'
+
 import Promotions from './Promotions/Promotions'
+import AssetsMigrationBanner from 'components/Wallet/AssetsMigration/AssetsMigrationBanner'
 
 const chartSegments = [
     {
@@ -28,7 +30,8 @@ const tabSegments = [
     }
 ]
 
-export default function Dashboard({ portfolio, selectedNetwork, selectedAccount, setNetwork, privateMode, rewardsData }) {
+
+export default function Dashboard({ portfolio, selectedNetwork, selectedAccount, setNetwork, privateMode, rewardsData, accounts, addRequest }) {
     const history = useHistory()
     const { tabId } = useParams()
 
@@ -72,6 +75,15 @@ export default function Dashboard({ portfolio, selectedNetwork, selectedAccount,
     return (
         <section id="dashboard">
             <Promotions rewardsData={rewardsData} />
+            {
+              <AssetsMigrationBanner
+                selectedNetwork={selectedNetwork}
+                selectedAccount={selectedAccount}
+                accounts={accounts}
+                addRequest={addRequest}
+                closeable={true}
+              />
+            }
             <div id="overview">
                 <div id="balance" className="panel">
                     <div className="title">Balance</div>
