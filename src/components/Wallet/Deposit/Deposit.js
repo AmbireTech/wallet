@@ -8,8 +8,10 @@ import Providers from './Providers/Providers'
 
 import networks from 'consts/networks'
 
-export default function Deposit({ selectedAcc, selectedNetwork }) {
-    const networkDetails = networks.find(({ id }) => id === selectedNetwork)
+import AssetsMigrationBanner from 'components/Wallet/AssetsMigration/AssetsMigrationBanner'
+
+export default function Deposit({ selectedAcc, selectedNetwork, accounts, addRequest }) {
+    const networkDetails = networks.find(({ id }) => id === selectedNetwork.id)
     const [qrCodeUrl, setQrCodeUrl] = useState('')
 
     const generateQRCode = useCallback(() => {
@@ -53,6 +55,13 @@ export default function Deposit({ selectedAcc, selectedNetwork }) {
                         }
                     </div>
                 </div>
+                <AssetsMigrationBanner
+                    selectedNetwork={selectedNetwork}
+                    selectedAccount={selectedAcc}
+                    accounts={accounts}
+                    addRequest={addRequest}
+                    linkMargin={true}
+                />
             </div>
             <div className="panel">
                 <div className="heading">

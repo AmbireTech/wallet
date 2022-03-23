@@ -1,0 +1,176 @@
+@import 'variables.scss';
+
+.header-inline-flex {
+  display: inline-flex;
+}
+
+.header-accent {
+  display: inline;
+  padding-bottom: 8px;
+  border-bottom: 2px solid $primary-accent-color;
+}
+
+.migration-asset-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  border-bottom: 1px solid $input-background-color-darker;
+  padding: 8px 4px;
+  height: 50px;
+
+  &:hover {
+    background: mix($background-color, $panel-background-color, 30%);
+  }
+
+  .checkbox-container {
+    padding-top: 12px;
+    height: 50px;
+  }
+
+  .migration-asset-select {
+
+    flex-grow: 1;
+    cursor: pointer;
+    padding-left: 8px;
+
+    .checkbox-label {
+      height: 25px;
+    }
+
+    &:hover {
+      svg {
+        color: $secondary-accent-color;
+      }
+    }
+
+    &.checked {
+      svg {
+        color: $primary-accent-color;
+      }
+    }
+  }
+
+  .separator {
+    flex-grow: 1;
+  }
+
+  .migrate-amount-input input {
+    height: 40px;
+    padding: 10px;
+  }
+}
+
+.migration-asset-status {
+  color: $primary-accent-color;
+
+  .required {
+    color: $warning-color;
+  }
+}
+
+.migration-banner {
+  display: flex;
+  flex-direction: row;
+  padding: 16px;
+  background: mix($primary-accent-color, $panel-background-color, 5%);
+  border: 1px solid $primary-accent-color;
+
+  .migration-banner-message {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+  }
+
+  .migration-banner-close {
+    cursor: pointer;
+  }
+
+  span.link {
+    cursor: pointer;
+    display: block;
+    color: $primary-accent-color;
+    text-decoration: underline;
+
+    &.link-margin {
+      margin-top: 8px;
+    }
+  }
+}
+
+.tokens-left-info {
+
+  span {
+    padding: 8px;
+    display: block;
+
+    &.warning {
+      background: mix($warning-color, $panel-background-color, 10%);
+      color: $warning-color;
+    }
+
+    &.success {
+      background: mix($primary-accent-color, $panel-background-color, 5%);
+      color: $primary-accent-color;
+    }
+  }
+}
+
+.error {
+  background: $danger-color;
+  color: $text-color;
+  padding: 8px;
+  margin-bottom: 12px;
+}
+
+
+.content-center {
+  text-align: center;
+
+  div {
+    margin: auto;
+  }
+}
+
+button.secondary {
+  background: $secondary-accent-color;
+}
+
+button.buttonComponent.buttonHollow {
+  background: transparent;
+  border: 2px solid $text-color;
+  color: $text-color;
+
+  &.danger {
+    background: transparent;
+    border-color: $danger-color;
+    color: $danger-color;
+  }
+
+  &.secondary {
+    border: 2px solid $secondary-accent-color;
+    color: $secondary-accent-color;
+    background: transparent;
+  }
+}
+
+
+button.button-small {
+  padding: 8px;
+  font-size: 0.8em;
+  height: auto;
+}
+
+.migration-permitted {
+  padding: 8px;
+  font-size: 0.8em;
+  background: mix($primary-accent-color, $panel-background-color, 5%);
+  color: $primary-accent-color;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+
+  &.warning {
+    background: mix($warning-color, $panel-background-color, 5%);
+    color: $warning-color;
+  }
+}
