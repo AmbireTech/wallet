@@ -63,7 +63,6 @@ const AmbireTokensCard = ({ networkId, accountId, tokens, rewardsData, addReques
         addRequest({ id, type: 'eth_sendTransaction', chainId: networkDetails.chainId, account: accountId, txn, extraGas })
     , [networkDetails.chainId, accountId, addRequest])
     
-    //TODO: add adexStakingAPY
     const walletTokenAPY = !rewardsData.isLoading && rewardsData.data ? (rewardsData.data?.xWALLETAPY * 100).toFixed(2) : 0
 
     const walletToken = useMemo(() => tokens.find(({ address }) => address === WALLET_TOKEN_ADDRESS), [tokens])
@@ -81,7 +80,7 @@ const AmbireTokensCard = ({ networkId, accountId, tokens, rewardsData, addReques
             label: 'WALLET',
             value: WALLET_TOKEN_ADDRESS,
             symbol: 'WALLET',
-            balance: walletToken?.balance || 0,
+            balance: (walletToken?.balanceRaw && walletToken?.decimals) ? formatUnits(walletToken?.balanceRaw, walletToken?.decimals) : 0,
             balanceRaw: walletToken?.balanceRaw || 0,
         },
         {
@@ -90,10 +89,10 @@ const AmbireTokensCard = ({ networkId, accountId, tokens, rewardsData, addReques
             label: 'ADX',
             value: ADX_TOKEN_ADDRESS,
             symbol: 'ADX',
-            balance: adexToken?.balance || 0,
+            balance: (adexToken?.balanceRaw && adexToken?.decimals) ? formatUnits(adexToken?.balanceRaw, adexToken?.decimals) : 0,
             balanceRaw: adexToken?.balanceRaw || 0,
         },
-    ], [adexToken?.balance, adexToken?.balanceRaw, networkId, walletToken?.balance, walletToken?.balanceRaw])
+    ], [adexToken?.balanceRaw, adexToken?.decimals, networkId, walletToken?.balanceRaw, walletToken?.decimals])
 
     const withdrawTokenItems = useMemo(() => [   
         {
