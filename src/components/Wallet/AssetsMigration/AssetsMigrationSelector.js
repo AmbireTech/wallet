@@ -1,5 +1,6 @@
 import './AssetsMigration.scss'
 
+import BigNumber from 'bignumber.js'
 import { useCallback, useEffect, useState } from 'react'
 import assetMigrationDetector from 'lib/assetMigrationDetector'
 import { PERMITTABLE_COINS } from 'consts/PermittableCoins'
@@ -73,6 +74,7 @@ const AssetsMigrationSelector = ({ signerAccount, network, setSelectedTokens, se
             ...t,
             selectedAmount: 0,
             amount: t.availableBalance,
+            humanAmount: t.availableBalance / 10 ** t.decimals,
             selected: false
           }
         })
@@ -114,15 +116,37 @@ const AssetsMigrationSelector = ({ signerAccount, network, setSelectedTokens, se
                             onChange={() => toggleTokenSelection(item.address)}
                           />
                         </div>
+                        <div className='migration-asset-usd'>
+                          ${((item.amount) * item.rate).toFixed(2)}
+                        </div>
                         <div className='migration-asset-amount'>
                           <TextInput
                             className={'migrate-amount-input'}
-                            value={item.amount / 10 ** item.decimals}
+                            value={item.humanAmount}
                             onChange={(val) => updateSelectableToken(item.address, (old) => {
-                              if (!isNaN(val)) {
+
+                              if (
+                                (val.endsWith('.') && val.split('.').length === 2)
+                                || (val.split('.').length === 2 && val.endsWith('0'))
+                              ) {
                                 return {
                                   ...old,
-                                  amount: Math.min(old.availableBalance, val * 10 ** item.decimals)
+                                  humanAmount: val,
+                                }
+                              }
+
+                              if (!isNaN(val)) {
+                                let newHumanAmount = new BigNumber(val).toFixed(item.decimals)
+                                if (new BigNumber(newHumanAmount).multipliedBy(10 ** item.decimals).comparedTo(item.availableBalance) === 1) {
+                                  newHumanAmount = new BigNumber(item.availableBalance).dividedBy(10 ** item.decimals).toFixed(item.decimals)
+                                }
+                                //trim trailing . or 0
+                                newHumanAmount = newHumanAmount.replace(/\.?0+$/g, '')
+
+                                return {
+                                  ...old,
+                                  humanAmount: newHumanAmount,
+                                  amount: new BigNumber(newHumanAmount).multipliedBy(10 ** item.decimals).toFixed(0)
                                 }
                               }
                               return old

@@ -6,7 +6,7 @@ import AssetsMigration from 'components/Wallet/AssetsMigration/AssetsMigration'
 
 const AssetsMigrationModal = ({ addRequest, selectedAccount, selectedNetwork, accounts }) => {
   const { hideModal } = useModals()
-  const buttons = (<Button clear small icon={<MdClose/>} onClick={hideModal}>Close</Button>)
+  const buttons = (<Button clear small icon={<MdClose/>} onClick={hideModal} className={'full'}>Close</Button>)
 
   return (
     <Modal id='asset-migration-modal' title={'Migrate Assets'} buttons={buttons}>

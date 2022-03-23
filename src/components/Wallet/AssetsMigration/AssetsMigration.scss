@@ -58,6 +58,15 @@
     height: 40px;
     padding: 10px;
   }
+
+  .migration-asset-usd {
+    color: $text-container-color;
+    padding-right: 8px;
+  }
+
+  .migration-asset-amount {
+    flex-shrink: 1;
+  }
 }
 
 .migration-asset-status {
@@ -158,6 +167,10 @@ button.button-small {
   padding: 8px;
   font-size: 0.8em;
   height: auto;
+}
+
+.modal button.full{
+  flex: 0 1 100% !important;
 }
 
 .migration-permitted {
