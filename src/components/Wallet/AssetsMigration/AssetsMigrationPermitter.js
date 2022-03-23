@@ -8,6 +8,7 @@ import { FaCheck, FaHourglass } from 'react-icons/fa'
 import Button from 'components/common/Button/Button'
 
 import { PERMITTABLE_COINS, PERMIT_TYPE_DAI, ERC20PermittableInterface } from 'consts/PermittableCoins'
+import { GiToken } from 'react-icons/gi'
 
 const MAX_INT = '0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff';
 
@@ -33,6 +34,7 @@ const AssetsMigrationPermitter = ({
   const [tokensPendingStatus, setTokensPendingStatus] = useState({})
   //error display logic if a user has rejected one or more MM popup
   const [hasRefusedOnce, setHasRefusedOnce] = useState(false)
+  const [failedImg, setFailedImg] = useState([])
 
   const wallet = getWallet({
     signer: signer,
@@ -413,7 +415,16 @@ const AssetsMigrationPermitter = ({
       </div>
       {getConsolidatedTokensPure(selectedTokensWithAllowance, tokensPermissions, tokensAllowances, tokensPendingStatus).map((item, index) => (
         <div className='migration-asset-row' key={index}>
-
+          <span className='migration-asset-select-icon migration-asset-select-icon-permit'>
+            {
+              failedImg.includes(item.icon) ?
+                <GiToken size={18}/>
+                :
+                <img src={item.icon} draggable="false" alt="Token Icon" onError={(err) => {
+                  setFailedImg(failed => [...failed, item.icon])
+                }}/>
+            }
+          </span>
           <div className='migration-asset-name'>
             {item.name}
           </div>

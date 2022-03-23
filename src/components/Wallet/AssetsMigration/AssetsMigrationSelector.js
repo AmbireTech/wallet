@@ -6,11 +6,13 @@ import assetMigrationDetector from 'lib/assetMigrationDetector'
 import { PERMITTABLE_COINS } from 'consts/PermittableCoins'
 import AmbireLoading from 'components/common/Loading/AmbireLoading'
 import { Checkbox, TextInput, Button } from 'components/common'
+import { GiToken } from 'react-icons/gi'
 
 const AssetsMigrationSelector = ({ signerAccount, network, setSelectedTokens, setIsSelectionConfirmed }) => {
 
   const [selectableTokens, setSelectableTokens] = useState([])
   const [isLoading, setIsLoading] = useState(true)
+  const [failedImg, setFailedImg] = useState([])
 
   //update signerTokens state helper
   const updateSelectableToken = useCallback((address, callback) => {
@@ -108,10 +110,22 @@ const AssetsMigrationSelector = ({ signerAccount, network, setSelectedTokens, se
                     .sort((a, b) => a.name < b.name ? -1 : 1)
                     .map((item, index) => (
                       <div className='migration-asset-row' key={index}>
-                        <div className={`migration-asset-select ${item.selected ? 'checked' : ''}`} onClick={() => false}>
+                        <div className={`migration-asset-select${item.selected ? ' checked' : ''}`} onClick={() => false}>
                           <Checkbox
                             id={`check-${item.address}`}
-                            label={<span>{item.name}</span>}
+                            label={<span className={'migration-asset-select-label'}>
+                                <span className='migration-asset-select-icon'>
+                                  {
+                                    failedImg.includes(item.icon) ?
+                                      <GiToken size={18}/>
+                                      :
+                                      <img src={item.icon} draggable="false" alt="Token Icon" onError={(err) => {
+                                        setFailedImg(failed => [...failed, item.icon])
+                                      }}/>
+                                  }
+                              </span>
+                              <span className='migration-asset-select-name'>{item.name}</span>
+                            </span>}
                             checked={item.selected}
                             onChange={() => toggleTokenSelection(item.address)}
                           />
