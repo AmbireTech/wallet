@@ -97,7 +97,7 @@ export default function Dashboard({ portfolio, selectedNetwork, selectedAccount,
                                     :
                                     privateMode.hidePrivateContent(<Chart data={chartTokensData} size={200}/>)
                                 :
-                                portfolio.areProtocolsLoading ?
+                                portfolio.isCurrNetworkProtocolsLoading ?
                                     <Loading/>
                                     :
                                     privateMode.hidePrivateContent(<Chart data={chartProtocolsData} size={200}/>)

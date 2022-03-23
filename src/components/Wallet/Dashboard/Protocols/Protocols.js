@@ -18,14 +18,14 @@ const Protocols = ({ portfolio, network, account, hidePrivateValue }) => {
 
     const [failedImg, setFailedImg] = useState([])
 
-    const { isCurrNetworkBalanceLoading, areProtocolsLoading, tokens, protocols } = portfolio
+    const { isCurrNetworkBalanceLoading, isCurrNetworkProtocolsLoading, tokens, protocols } = portfolio
     const sortedTokens = tokens.sort((a, b) => {
         const decreasing = b.balanceUSD - a.balanceUSD
         if (decreasing === 0) return a.symbol.localeCompare(b.symbol)
         return decreasing
     })
     const otherProtocols = protocols.filter(({ label }) => label !== 'Tokens')
-    const shouldShowPlaceholder = (!isCurrNetworkBalanceLoading && !tokens.length) && (!areProtocolsLoading && !otherProtocols.length)
+    const shouldShowPlaceholder = (!isCurrNetworkBalanceLoading && !tokens.length) && (!isCurrNetworkProtocolsLoading && !otherProtocols.length)
 
     const tokenItem = (index, img, symbol, balance, balanceUSD, address, send = false, network, decimals) => 
         {
@@ -101,7 +101,7 @@ const Protocols = ({ portfolio, network, account, hidePrivateValue }) => {
                         null
                 }
                 {
-                    areProtocolsLoading ?
+                    isCurrNetworkProtocolsLoading ?
                         <Loading/>
                         :
                             otherProtocols.map(({ label, assets }, i) => (
