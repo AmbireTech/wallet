@@ -20,6 +20,10 @@
 
         .text-input {
             width: 100%;
+
+            input {
+                padding-right: 280px;
+            }
         }
 
         .dropdown {
@@ -130,6 +134,14 @@
             .dropdown {
                 position: relative;
             }
+            
+            .text-input {
+                width: 100%;
+    
+                input {
+                    padding-right: 50px;
+                }
+            }
 
             #udomains-logo {
                 position: absolute;
@@ -137,7 +149,7 @@
                 right: 15px;
                 height: 25px;
                 width: 25px;
-                background-image: url('/resources/unstoppable-domains.png');
+                background-image: url('/resources/unstoppable-domains.png');  
             }
         }
     }

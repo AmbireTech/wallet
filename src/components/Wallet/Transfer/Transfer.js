@@ -198,6 +198,7 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
                                         onSelectAddress={address => setAddress(address)}
                                     />
                                 </div>
+                                { uDAddress && (<div>Unstoppable domain was used! The address is: {uDAddress}</div>)}
                                 { validationFormMgs.messages.address && 
                                     (<div className='validation-error'><BsXLg size={12}/>&nbsp;{validationFormMgs.messages.address}</div>)}
                                 <div className="separator"/>
