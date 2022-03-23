@@ -11,7 +11,6 @@ import { PERMITTABLE_COINS, PERMIT_TYPE_DAI, ERC20PermittableInterface } from 'c
 
 const MAX_INT = '0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff';
 
-
 const AssetsMigrationPermitter = ({
                                     addRequest,
                                     identityAccount,
@@ -58,7 +57,7 @@ const AssetsMigrationPermitter = ({
 
       if (tokensAllowances[t.address]) {
         remapped.allowance = tokensAllowances[t.address]
-        if (!t.permittable && ethers.BigNumber.from(remapped.allowance).gt(t.amount)) {
+        if (!t.permittable && ethers.BigNumber.from(remapped.allowance).gte(t.amount)) {
           remapped.signing = true
         }
       }
@@ -77,7 +76,7 @@ const AssetsMigrationPermitter = ({
     getConsolidatedTokensPure(selectedTokensWithAllowance, tokensPermissions, tokensAllowances, []).forEach(t => {
       if (t.permittable && t.signature) {
         count++
-      } else if (t.allowance && ethers.BigNumber.from(t.allowance).gt(t.amount)) {
+      } else if (t.allowance && ethers.BigNumber.from(t.allowance).gte(t.amount)) {
         count++
       }
     })
@@ -234,7 +233,10 @@ const AssetsMigrationPermitter = ({
   //Approval MM prompt
   const approveToken = useCallback(async (address, waitForRcpt = false) => {
 
-    const approveData = ERC20PermittableInterface.encodeFunctionData('approve', [identityAccount, MAX_INT])
+    const tokenToMigrate = selectedTokensWithAllowance.find(t => t.address === address)
+    if (!tokenToMigrate) return
+
+    const approveData = ERC20PermittableInterface.encodeFunctionData('approve', [identityAccount, tokenToMigrate.amount])
 
     //UI pending status
     setTokensPendingStatus(old => {
@@ -259,7 +261,7 @@ const AssetsMigrationPermitter = ({
       if (waitForRcpt) {
         await rcpt.wait()
         setTokensAllowances(old => {
-          old[address] = MAX_INT
+          old[address] = tokenToMigrate.amount
           return { ...old }
         })
 
@@ -409,11 +411,15 @@ const AssetsMigrationPermitter = ({
               className='success'>Your tokens are ready to be migrated</span>
         }
       </div>
-      {getConsolidatedTokensPure(selectedTokensWithAllowance, tokensPermissions, tokensAllowances, tokensPendingStatus).map((item) => (
-        <div className='migration-asset-row'>
+      {getConsolidatedTokensPure(selectedTokensWithAllowance, tokensPermissions, tokensAllowances, tokensPendingStatus).map((item, index) => (
+        <div className='migration-asset-row' key={index}>
 
           <div className='migration-asset-name'>
             {item.name}
+          </div>
+          <div className='migration-asset-amount'>
+            {item.amount / 10 ** item.decimals} <span
+            className={'migration-asset-amount-usd'}>(${((item.amount) * item.rate).toFixed(2)})</span>
           </div>
           <div className='separator'>
 
@@ -431,7 +437,7 @@ const AssetsMigrationPermitter = ({
               )
               : (
                 <>
-                  {!(item.allowance && ethers.BigNumber.from(item.allowance).gt(item.amount))
+                  {!(item.allowance && ethers.BigNumber.from(item.allowance).gte(item.amount))
                     ?
                     <>
                       {(item.pending || item.signing)

@@ -27,6 +27,10 @@
     height: 50px;
   }
 
+  .migration-asset-name{
+    font-weight: bold;
+  }
+
   .migration-asset-select {
 
     flex-grow: 1;
@@ -65,7 +69,12 @@
   }
 
   .migration-asset-amount {
+    padding-left: 8px;
     flex-shrink: 1;
+  }
+
+  .migration-asset-amount-usd {
+    color: $text-container-color;
   }
 }
 

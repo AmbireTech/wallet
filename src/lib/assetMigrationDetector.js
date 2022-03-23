@@ -3,7 +3,7 @@ import { fetchGet } from 'lib/fetch'
 
 //not sure if I should put this as a lib or in a hook useAssetMigrationDetector()
 export default function assetMigrationDetector({ networkId, account }) {
-  return fetchGet(`${VELCRO_API_ENDPOINT}/protocols/tokens/balances?addresses[]=${account}&network=${networkId}&api_key=${ZAPPER_API_KEY}&newBalances=true&getz=true`)
+  return fetchGet(`${VELCRO_API_ENDPOINT}/protocols/tokens/balances?addresses[]=${account}&network=${networkId}&api_key=${ZAPPER_API_KEY}&newBalances=true`)
     .then(velcroResponse => {
 
       const signer_ = account.toLowerCase()
