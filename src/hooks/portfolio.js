@@ -74,7 +74,8 @@ export default function usePortfolio({ currentNetwork, account, useStorage }) {
 
     const currentAccount = useRef();
     const [balancesByNetworksLoading, setBalancesByNetworksLoading] = useState({});    
-    const [areProtocolsLoading, setProtocolsLoading] = useState(true);
+    const [protocolsByNetworksLoading, setProtocolsByNetworksLoading] = useState({});    
+
     const [tokensByNetworks, setTokensByNetworks] = useState([])
     // Added unsupported networks (fantom and moonbeam) as default values with empty arrays to prevent crashes
     const [otherProtocolsByNetworks, setOtherProtocolsByNetworks] = useState(supportedProtocols.filter(item => !item.protocols || !item.protocols.length))
@@ -128,6 +129,7 @@ export default function usePortfolio({ currentNetwork, account, useStorage }) {
                 ...tokensByNetworks.filter(({ network }) => network !== currentNetwork),
                 currentNetworkTokens
             ])
+
             setBalancesByNetworksLoading(prev => ({ ...prev, [currentNetwork]: false }))
 
         } catch(e) {
@@ -138,6 +140,9 @@ export default function usePortfolio({ currentNetwork, account, useStorage }) {
     }, [currentNetwork, getExtraTokensAssets, account, hiddenTokens])
 
     const fetchTokens = useCallback(async (account, currentNetwork = false) => {
+        // Prevent race conditions
+        if (currentAccount.current !== account) return
+
         try {
             const networks = currentNetwork ? [supportedProtocols.find(({ network }) => network === currentNetwork)] : supportedProtocols
 
@@ -160,6 +165,7 @@ export default function usePortfolio({ currentNetwork, account, useStorage }) {
                     
                     assets = filterByHiddenTokens(assets, hiddenTokens)
                     const updatedNetwork = network
+
                     setTokensByNetworks(tokensByNetworks => ([
                         ...tokensByNetworks.filter(({ network }) => network !== updatedNetwork),
                         { network, meta, assets }
@@ -178,9 +184,6 @@ export default function usePortfolio({ currentNetwork, account, useStorage }) {
                 }
             }))).filter(data => data)
 
-            // Prevent race conditions
-            if (currentAccount.current !== account) return
-
             if (!currentNetwork) fetchSupplementTokenData(updatedTokens)
             
             if (failedRequests >= requestsCount) throw new Error('Failed to fetch Tokens from API')
@@ -195,16 +198,39 @@ export default function usePortfolio({ currentNetwork, account, useStorage }) {
     }, [fetchSupplementTokenData, getExtraTokensAssets, hiddenTokens, addToast])
 
     const fetchOtherProtocols = useCallback(async (account, currentNetwork = false) => {
+        // Prevent race conditions
+        if (currentAccount.current !== account) return
+
         try {
             const protocols = currentNetwork ? [supportedProtocols.find(({ network }) => network === currentNetwork)] : supportedProtocols
 
             let failedRequests = 0
             const requestsCount = protocols.reduce((acc, curr) => curr.protocols.length + acc, 0)
             if (requestsCount === 0) return true
-            const updatedProtocols = (await Promise.all(protocols.map(async ({ network, protocols, nftsProvider }) => {
+
+            await Promise.all(protocols.map(async ({ network, protocols, nftsProvider }) => {
                 const all = (await Promise.all(protocols.map(async protocol => {
+
+                    setProtocolsByNetworksLoading(prev => ({ ...prev, [network]: true }))
                     try {
                         const balance = await getBalances(ZAPPER_API_KEY, network, protocol, account, protocol === 'nft' ? nftsProvider : null)
+                        let response = Object.values(balance).map(({ products }) => {
+                            return products.map(({ label, assets }) =>
+                                ({ label, assets: assets.map(({ tokens }) => tokens).flat(1) })
+                            )
+                        }).flat(2)
+                        response = {
+                            network,
+                            protocols: [...response]
+                        }
+                        const updatedNetwork = network
+
+                        setOtherProtocolsByNetworks(protocolsByNetworks => ([
+                            ...protocolsByNetworks.filter(({ network }) => network !== updatedNetwork),
+                            response
+                        ]))
+                        setProtocolsByNetworksLoading(prev => ({ ...prev, [network]: false }))
+
                         return balance ? Object.values(balance)[0] : null
                     } catch(e) {
                         console.error('Balances API error', e)
@@ -222,23 +248,17 @@ export default function usePortfolio({ currentNetwork, account, useStorage }) {
                         )
                         .flat(2)
                 } : null
-            }))).filter(data => data)
-            const updatedNetworks = updatedProtocols.map(({ network }) => network)
-
-            // Prevent race conditions
-            if (currentAccount.current !== account) return
-
-            setOtherProtocolsByNetworks(protocolsByNetworks => ([
-                ...protocolsByNetworks.filter(({ network }) => !updatedNetworks.includes(network)),
-                ...updatedProtocols
-            ]))
+            }))
 
             lastOtherProcolsRefresh = Date.now()
             if (failedRequests >= requestsCount) throw new Error('Failed to fetch other Protocols from API')
             return true
         } catch (error) {
             console.error(error)
+            // In case of error set all loading indicators to false
+            supportedProtocols.map(async network => await setProtocolsByNetworksLoading(prev => ({ ...prev, [network]: false })))
             addToast(error.message, { error: true })
+
             return false
         }
     }, [addToast])
@@ -251,7 +271,7 @@ export default function usePortfolio({ currentNetwork, account, useStorage }) {
 
     const requestOtherProtocolsRefresh = async () => {
         if (!account) return
-        if ((Date.now() - lastOtherProcolsRefresh) > 30000 && !areProtocolsLoading) await fetchOtherProtocols(account, currentNetwork)
+        if ((Date.now() - lastOtherProcolsRefresh) > 30000 && !protocolsByNetworksLoading[currentNetwork]) await fetchOtherProtocols(account, currentNetwork)
     }
 
     // Make humanizer 'learn' about new tokens and aliases
@@ -337,8 +357,7 @@ export default function usePortfolio({ currentNetwork, account, useStorage }) {
 
         async function loadProtocols() {
             if (!account) return
-            setProtocolsLoading(true)
-            if (await fetchOtherProtocols(account)) setProtocolsLoading(false)
+            await fetchOtherProtocols(account)
         }
 
         loadBalance()
@@ -438,7 +457,6 @@ export default function usePortfolio({ currentNetwork, account, useStorage }) {
     }, [refreshTokensIfVisible])
 
     return {
-        areProtocolsLoading,
         balance,
         otherBalances,
         tokens,
@@ -453,7 +471,9 @@ export default function usePortfolio({ currentNetwork, account, useStorage }) {
         onRemoveHiddenToken,
         balancesByNetworksLoading,
         isCurrNetworkBalanceLoading: balancesByNetworksLoading[currentNetwork],
-        areAllNetworksBalancesLoading
+        areAllNetworksBalancesLoading,
+        protocolsByNetworksLoading,
+        isCurrNetworkProtocolsLoading: protocolsByNetworksLoading[currentNetwork],
         //updatePortfolio//TODO find a non dirty way to be able to reply to getSafeBalances from the dapps, after the first refresh
     }
 }
