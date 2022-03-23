@@ -136,10 +136,12 @@ const AmbireTokensCard = ({ networkId, accountId, tokens, rewardsData, addReques
 
         setSelectedToken({label: token?.label}) 
         if (token && token.type === 'withdraw' && leaveLog && (parseFloat(leaveLog.walletValue) > 0)) {
+            const unbondToolTipLabelMdg = `* Because of pending to withdraw, you are not able to unstaking more ${selectedToken.label} until unbond period is end.`
+            
             setCustomInfo(
                 <>
                     <div className="info-message">
-                        <ToolTip label='* Because of pending to withdraw, you are not able to unstaking more WALLET until unbond period is end.'>
+                        <ToolTip label={unbondToolTipLabelMdg}>
                             <span><b>{ msToDaysHours(lockedRemainingTime) }</b> until { parseFloat(leaveLog.walletValue).toFixed(4) } WALLET becomes available for withdraw.&nbsp;<MdInfo/></span>
                         </ToolTip>
                     </div>
@@ -153,11 +155,11 @@ const AmbireTokensCard = ({ networkId, accountId, tokens, rewardsData, addReques
                 </>
             )
         }
-
+        const apyTooltipMsg = `Annual Percentage Yield: IN ADDITION to what you earn in ${selectedToken.label}s`
         setDetails([
             [
                 <>
-                    <ToolTip label="Annual Percentage Yield: IN ADDITION to what you earn in $WALLETs">
+                    <ToolTip label={apyTooltipMsg}>
                         <div>APY&nbsp;<MdInfo/></div>
                     </ToolTip>
                 </>,
