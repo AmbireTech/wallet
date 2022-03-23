@@ -19,7 +19,8 @@ export default function assetMigrationDetector({ networkId, account }) {
           address: a.tokens[0].address.toLowerCase(),
           decimals: a.tokens[0].decimals,
           availableBalance: a.tokens[0].balanceRaw,
-          balanceUSD: a.tokens[0].balanceUSD
+          balanceUSD: a.tokens[0].balanceUSD,
+          rate: a.tokens[0].balanceUSD / a.tokens[0].balanceRaw
         }
       })
     })
