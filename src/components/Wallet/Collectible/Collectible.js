@@ -8,7 +8,7 @@ import { AiOutlineSend } from 'react-icons/ai'
 import { BsFillImageFill } from 'react-icons/bs'
 import * as blockies from 'blockies-ts';
 import { useToasts } from 'hooks/toasts'
-import { TextInput, Button, Loading, AddressBook, AddressWarning } from 'components/common'
+import { TextInput, Button, Loading, AddressBook, AddressWarning, ToolTip } from 'components/common'
 import ERC721Abi from 'consts/ERC721Abi'
 import networks from 'consts/networks'
 import { validateSendNftAddress } from 'lib/validations/formValidations'
@@ -16,6 +16,7 @@ import { BsXLg } from 'react-icons/bs'
 import { getProvider } from 'lib/provider'
 import { VELCRO_API_ENDPOINT } from 'config'
 import { fetchGet } from 'lib/fetch'
+import { resolveUDomain } from 'hooks/unstoppabledomains'
 
 const ERC721 = new Interface(ERC721Abi)
 
@@ -46,6 +47,7 @@ const Collectible = ({ selectedAcc, selectedNetwork, addRequest, addressBook }) 
         explorerUrl: ''
     })
     const [recipientAddress, setRecipientAddress] = useState('')
+    const [uDAddress, setUDAddress] = useState('')
     const [isTransferDisabled, setTransferDisabled] = useState(true)
     const [addressConfirmed, setAddressConfirmed] = useState(false)
     const [newAddress, setNewAddress] = useState(null)
@@ -55,6 +57,7 @@ const Collectible = ({ selectedAcc, selectedNetwork, addRequest, addressBook }) 
     })
 
     const sendTransferTx = () => {
+        const recipAddress = uDAddress ? uDAddress : recipientAddress
         try {
             addRequest({
                 id: `transfer_nft_${Date.now()}`,
@@ -64,7 +67,7 @@ const Collectible = ({ selectedAcc, selectedNetwork, addRequest, addressBook }) 
                 txn: {
                     to: collectionAddr,
                     value: '0',
-                    data: ERC721.encodeFunctionData('transferFrom', [metadata.owner.address, recipientAddress, tokenId])
+                    data: ERC721.encodeFunctionData('transferFrom', [metadata.owner.address, recipAddress, tokenId])
                 }
             })
         } catch(e) {
@@ -74,14 +77,26 @@ const Collectible = ({ selectedAcc, selectedNetwork, addRequest, addressBook }) 
     }
 
     useEffect(() => {
-        const isAddressValid = validateSendNftAddress(recipientAddress, selectedAcc, addressConfirmed, isKnownAddress, metadata, selectedNetwork, network)
-        
-        setTransferDisabled(!isAddressValid.success)
-        setValidationFormMgs({ 
-            success: isAddressValid.success, 
-            message: isAddressValid.message ? isAddressValid.message : ''
-        })
+        const validateForm = async() => {
+            const UDAddress =  await resolveUDomain(recipientAddress, null, selectedNetwork.unstoppableDomainsChain)
+            
+            let isAddressValid
+            if (UDAddress) {
+                isAddressValid = validateSendNftAddress(UDAddress, selectedAcc, addressConfirmed, isKnownAddress, metadata, selectedNetwork, network)
+                setUDAddress(UDAddress)
+            } else {
+                isAddressValid = validateSendNftAddress(recipientAddress, selectedAcc, addressConfirmed, isKnownAddress, metadata, selectedNetwork, network)
+                setUDAddress('')
+            }
 
+            setTransferDisabled(!isAddressValid.success)
+            setValidationFormMgs({ 
+                success: isAddressValid.success, 
+                message: isAddressValid.message ? isAddressValid.message : ''
+            })
+        }
+        const timer = setTimeout(() => validateForm().catch(console.error), 500)
+        return () => clearTimeout(timer)
     }, [recipientAddress, metadata, selectedNetwork, selectedAcc, network, addressConfirmed, isKnownAddress])
 
     const fetchMetadata = useCallback(async () => {
@@ -213,6 +228,9 @@ const Collectible = ({ selectedAcc, selectedNetwork, addRequest, addressBook }) 
                 <div className="content">
                     <div id="recipient-address">
                         <TextInput placeholder="Recipient Address" value={recipientAddress} onInput={(value) => setRecipientAddress(value)}/>
+                        <ToolTip label={'It can be used with unstoppable domains.'}>
+                            <div id="udomains-logo" />
+                        </ToolTip>
                         <AddressBook 
                             addresses={addresses.filter(x => x.address !== selectedAcc)}
                             addAddress={addAddress}
@@ -222,6 +240,7 @@ const Collectible = ({ selectedAcc, selectedNetwork, addRequest, addressBook }) 
                             onSelectAddress={address => setRecipientAddress(address)}
                         />
                     </div>
+                    { uDAddress && (<div>Unstoppable domain was used! The address is: {uDAddress}</div>)}
                     { validationFormMgs.message && 
                         (<div className='validation-error'><BsXLg size={12}/>&nbsp;{validationFormMgs.message}</div>) 
                     }
