@@ -16,6 +16,7 @@ export default function assetMigrationDetector({ networkId, account }) {
       return assets.map(a => {
         return {
           name: a.tokens[0].symbol,
+          icon: a.tokens[0].tokenImageUrl,
           address: a.tokens[0].address.toLowerCase(),
           decimals: a.tokens[0].decimals,
           availableBalance: a.tokens[0].balanceRaw,
