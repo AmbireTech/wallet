@@ -92,7 +92,7 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
                 addAddress(address, uDAddress)
             }
         }
-        
+
         try {
             const txn = {
                 to: selectedAsset.address,
@@ -195,8 +195,8 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
                                         value={address}
                                         onInput={setAddress}
                                     />
-                                    <ToolTip label={'It can be used with unstoppable domains.'}>
-                                        <div id="udomains-logo" />
+                                    <ToolTip label={!uDAddress ? 'It can be used with unstoppable domains.' : 'Valid unstoppable domain.'}>
+                                        <div id="udomains-logo" className={uDAddress ? 'ud-logo-active ' : ''} />
                                     </ToolTip>
                                     <AddressBook 
                                         addresses={addresses.filter(x => x.address !== selectedAcc)}
@@ -207,7 +207,6 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
                                         onSelectAddress={address => setAddress(address)}
                                     />
                                 </div>
-                                { uDAddress && (<div>Unstoppable domain was used! The address is: {uDAddress}</div>)}
                                 { validationFormMgs.messages.address && 
                                     (<div className='validation-error'><BsXLg size={12}/>&nbsp;{validationFormMgs.messages.address}</div>)}
                                 <div className="separator"/>
