@@ -379,7 +379,7 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, network, account,
                 bundle.requestIds ?
                   <>
                     <b><GiGorilla size={16}/> DEGEN TIP</b>
-                    <span>You can sign multiple transactions at once. Add more transactions to this batch by interacting with a connected dApp right now.</span>
+                    <span>You can sign multiple transactions at once. Add more transactions to this batch by interacting with a connected dApp right now. Alternatively, you may click "Back" to add more transactions.</span>
                   </>
                   :
                   <>
