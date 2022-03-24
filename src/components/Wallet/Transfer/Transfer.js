@@ -84,6 +84,15 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
 
     const sendTx = () => {
         const recipientAddress = uDAddress ? uDAddress : address
+
+        if (uDAddress) {
+            const isAlreadyAdded = addresses.find(i => i.address === uDAddress)
+
+            if (!isAlreadyAdded) {
+                addAddress(address, uDAddress)
+            }
+        }
+        
         try {
             const txn = {
                 to: selectedAsset.address,
@@ -203,8 +212,8 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
                                     (<div className='validation-error'><BsXLg size={12}/>&nbsp;{validationFormMgs.messages.address}</div>)}
                                 <div className="separator"/>
                                 <AddressWarning
-                                    address={address}
-                                    onAddNewAddress={() => setNewAddress(address)}
+                                    address={uDAddress ? uDAddress : address}
+                                    onAddNewAddress={() => setNewAddress(uDAddress ? uDAddress : address)}
                                     onChange={(value) => setAddressConfirmed(value)}
                                     isKnownAddress={isKnownAddress}
                                 />

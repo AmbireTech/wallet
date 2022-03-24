@@ -58,6 +58,15 @@ const Collectible = ({ selectedAcc, selectedNetwork, addRequest, addressBook }) 
 
     const sendTransferTx = () => {
         const recipAddress = uDAddress ? uDAddress : recipientAddress
+
+        if (uDAddress) {
+            const isAlreadyAdded = addresses.find(i => i.address === uDAddress)
+
+            if (!isAlreadyAdded) {
+                addAddress(recipientAddress, uDAddress)
+            }
+        }
+
         try {
             addRequest({
                 id: `transfer_nft_${Date.now()}`,
@@ -246,8 +255,8 @@ const Collectible = ({ selectedAcc, selectedNetwork, addRequest, addressBook }) 
                     }
                     <div className="separator"></div>
                     <AddressWarning
-                        address={recipientAddress}
-                        onAddNewAddress={() => setNewAddress(recipientAddress)}
+                        address={uDAddress ? uDAddress : recipientAddress}
+                        onAddNewAddress={() => setNewAddress(uDAddress ? uDAddress : recipientAddress)}
                         onChange={(value) => setAddressConfirmed(value)}
                         isKnownAddress={isKnownAddress}
                     />
