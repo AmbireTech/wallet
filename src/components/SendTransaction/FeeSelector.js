@@ -138,7 +138,7 @@ export function FeeSelector({ disabled, signer, estimation, network, setEstimati
     </div>
   </>) : (<></>)
 
-  const { discount = 0, symbol, nativeRate, decimals } = estimation.selectedFeeToken
+  const { discount = 0, symbol, nativeRate, decimals } = estimation.selectedFeeToken || {}
 
   const setCustomFee = value => setEstimation(prevEstimation => ({
     ...prevEstimation,
@@ -325,7 +325,7 @@ export function FeeSelector({ disabled, signer, estimation, network, setEstimati
               </div>
             }
             {!isNaN(baseFeeInFeeToken) && <div>
-              {formatFloatTokenAmount(baseFeeInFeeToken, true, decimals) + ' ' + estimation.selectedFeeToken.symbol}
+              {formatFloatTokenAmount(baseFeeInFeeToken, true, decimals) + ' ' + estimation?.selectedFeeToken?.symbol}
             </div>
             }
           </div>
