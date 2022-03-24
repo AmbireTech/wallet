@@ -16,7 +16,7 @@ import { BsXLg } from 'react-icons/bs'
 import { getProvider } from 'lib/provider'
 import { VELCRO_API_ENDPOINT } from 'config'
 import { fetchGet } from 'lib/fetch'
-import { resolveUDomain } from 'hooks/unstoppabledomains'
+import { resolveUDomain } from 'lib/unstoppableDomains'
 
 const ERC721 = new Interface(ERC721Abi)
 
