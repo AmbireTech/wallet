@@ -126,7 +126,11 @@
             right: 240px;
             height: 25px;
             width: 25px;
-            background-image: url('/resources/unstoppable-domains.png');
+            background-image: url('/resources/ud-logo-inactive.png');
+        }
+
+        .ud-logo-active {
+            background-image: url('/resources/ud-logo-active.png') !important;  
         }
         
         .address-book {
@@ -163,8 +167,7 @@
                 top: 18px;
                 right: 15px;
                 height: 25px;
-                width: 25px;
-                background-image: url('/resources/unstoppable-domains.png');  
+                width: 25px; 
             }
 
             .dropdown {

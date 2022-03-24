@@ -237,8 +237,8 @@ const Collectible = ({ selectedAcc, selectedNetwork, addRequest, addressBook }) 
                 <div className="content">
                     <div id="recipient-address">
                         <TextInput placeholder="Recipient Address" value={recipientAddress} onInput={(value) => setRecipientAddress(value)}/>
-                        <ToolTip label={'It can be used with unstoppable domains.'}>
-                            <div id="udomains-logo" />
+                        <ToolTip label={!uDAddress ? 'It can be used with unstoppable domains.' : 'Valid unstoppable domain.'}>
+                            <div id="udomains-logo" className={uDAddress ? 'ud-logo-active ' : ''} />
                         </ToolTip>
                         <AddressBook 
                             addresses={addresses.filter(x => x.address !== selectedAcc)}
@@ -249,7 +249,6 @@ const Collectible = ({ selectedAcc, selectedNetwork, addRequest, addressBook }) 
                             onSelectAddress={address => setRecipientAddress(address)}
                         />
                     </div>
-                    { uDAddress && (<div>Unstoppable domain was used! The address is: {uDAddress}</div>)}
                     { validationFormMgs.message && 
                         (<div className='validation-error'><BsXLg size={12}/>&nbsp;{validationFormMgs.message}</div>) 
                     }
