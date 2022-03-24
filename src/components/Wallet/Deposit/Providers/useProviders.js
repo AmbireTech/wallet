@@ -1,11 +1,17 @@
 import { RampInstantSDK } from '@ramp-network/ramp-instant-sdk'
 import transakSDK from '@transak/transak-sdk'
 import { popupCenter } from 'lib/popupHelper'
+import { fetchGet } from 'lib/fetch'
+import { useState } from 'react';
+
 import url from 'url'
 
 import { RAMP_HOST_API_KEY, PAYTRIE_PARTNER_URL, TRANSAK_API_KEY, TRANSAK_ENV } from 'config'
 
 const useProviders = ({ walletAddress, selectedNetwork }) => {
+
+    const [isLoading, setLoading] = useState([])
+
     const openRampNetwork = () => {
         const assetsList = {
             ethereum: 'ERC20_*,ETH_*',
@@ -24,8 +30,9 @@ const useProviders = ({ walletAddress, selectedNetwork }) => {
         })
         widget.show()
     };
-
-    const openPayTrie = () => {
+    
+    const openPayTrie = async() => {
+        setLoading(prevState => ['PayTrie', ...prevState])
         const rightSideLabels = {
             ethereum: 'USDC',
             polygon: 'USDC-P',
@@ -46,6 +53,7 @@ const useProviders = ({ walletAddress, selectedNetwork }) => {
             w: 450,
             h: 700,
         })
+        setLoading(prevState => prevState.filter(n => n != 'PayTrie'))
     };
 
     const openTransak = () => {
@@ -89,10 +97,26 @@ const useProviders = ({ walletAddress, selectedNetwork }) => {
         })
     }
 
+
+    const openKriptomat = async () => {
+        setLoading(prevState => ['Kriptomat', ...prevState])
+        const kriptomatUrl = await fetchGet(`http://localhost:1934/kriptomat/${walletAddress}`)
+        if (kriptomatUrl.success && kriptomatUrl.data && kriptomatUrl.data.url) popupCenter({
+            url: url.format(kriptomatUrl.data.url),
+            title: 'Kriptomat Deposit',
+            w: 515,
+            h: 600
+        })
+        setLoading(prevState => prevState.filter(n => n != 'Kriptomat'))
+    }
+
+
     return {
         openRampNetwork,
         openPayTrie,
-        openTransak
+        openTransak,
+        openKriptomat,
+        isLoading
     }
 }
 
