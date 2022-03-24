@@ -15,9 +15,9 @@ export function isTokenEligible(token, speed, estimation) {
 // can't think of a less funny name for that
 export function getFeePaymentConsequences(token, estimation) {
   // Relayerless mode
-  if (!estimation.feeInUSD) return { multiplier: 1, addedGas: 0 }
+  if (!estimation?.feeInUSD || !token) return { multiplier: 1, addedGas: 0 }
   // Relayer mode
-  const addedGas = !token.address || token.address === '0x0000000000000000000000000000000000000000'
+  const addedGas = !token?.address || token?.address === '0x0000000000000000000000000000000000000000'
     ? ADDED_GAS_NATIVE
     : ADDED_GAS_TOKEN
   return {
@@ -61,9 +61,9 @@ export function getDiscountApplied(amnt, discount = 0) {
 // Returns feeToken data with all multipliers applied
 export function getFeesData(feeToken, estimation, speed) {
   const { addedGas, multiplier } = getFeePaymentConsequences(feeToken, estimation)
-  const discountMultiplier = 1 - (feeToken.discount || 0)
+  const discountMultiplier = 1 - (feeToken?.discount || 0)
   const totalMultiplier = multiplier * discountMultiplier
-  const nativeRate = feeToken.nativeRate || 1
+  const nativeRate = feeToken?.nativeRate || 1
 
   const feeInNative = estimation.customFee
     ? ((estimation.customFee * discountMultiplier) / nativeRate)

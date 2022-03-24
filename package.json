@@ -6,7 +6,7 @@
   "dependencies": {
     "@0x/subproviders": "^6.6.1",
     "@ethersproject/transactions": "5.4.0",
-    "@gnosis.pm/safe-apps-sdk": "^6.0.0",
+    "@gnosis.pm/safe-apps-sdk": "^6.2.0",
     "@ledgerhq/hw-app-eth": "6.6.0",
     "@ledgerhq/hw-transport-webhid": "^6.11.2",
     "@ramp-network/ramp-instant-sdk": "^2.5.0",
@@ -15,7 +15,7 @@
     "@testing-library/user-event": "^12.8.3",
     "@transak/transak-sdk": "^1.0.31",
     "@unstoppabledomains/resolution": "^7.1.4",
-    "@walletconnect/client": "^1.7.1",
+    "@walletconnect/client": "^1.7.5",
     "@walletconnect/utils": "^1.7.1",
     "@web3-react/abstract-connector": "^6.0.7",
     "@web3-react/types": "^6.0.7",
