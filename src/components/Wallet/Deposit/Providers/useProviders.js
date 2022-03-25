@@ -102,14 +102,14 @@ const useProviders = ({ walletAddress, selectedNetwork }) => {
 
     const openKriptomat = async () => {
         setLoading(prevState => ['Kriptomat', ...prevState])
-        const kriptomatUrl = await fetchGet(`http://localhost:1934/kriptomat/${walletAddress}/${selectedNetwork}`)
-        if (kriptomatUrl.success && kriptomatUrl.data && kriptomatUrl.data.url) popupCenter({
-            url: url.format(kriptomatUrl.data.url),
+        const kriptomatResponse = await fetchGet(`http://localhost:1934/kriptomat/${walletAddress}/${selectedNetwork}`)
+        if (kriptomatResponse.success && kriptomatResponse.data && kriptomatResponse.data.url) popupCenter({
+            url: url.format(kriptomatResponse.data.url),
             title: 'Kriptomat Deposit',
             w: 515,
             h: 600
         })
-        else addToast(`Error: ${kriptomatUrl.data}`, { error: true })
+        else addToast(`Error: ${kriptomatResponse.data ? kriptomatResponse.data : 'unexpected error'}`, { error: true })
         setLoading(prevState => prevState.filter(n => n !== 'Kriptomat'))
     }
 
