@@ -3,7 +3,7 @@ import './Transfer.scss'
 import { BsXLg } from 'react-icons/bs'
 import { AiOutlineSend } from 'react-icons/ai'
 import { useParams, withRouter } from 'react-router'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState, useRef } from 'react'
 import { ethers } from 'ethers'
 import { Interface } from 'ethers/lib/utils'
 import { useToasts } from 'hooks/toasts'
@@ -47,7 +47,7 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
             address: ''
         }
     })
-
+    const timer = useRef(null)
     const assetsItems = portfolio.tokens.map(({ label, symbol, address, img, tokenImageUrl, network }) => ({
         label: label || symbol,
         value: address,
@@ -133,9 +133,13 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
     }, [asset, history, selectedAsset])
 
     useEffect(() => {
+        if (timer.current) {
+            clearTimeout(timer.current)
+        }
+
         const validateForm = async() => {
             const UDAddress =  await resolveUDomain(address, selectedAsset ? selectedAsset.symbol: null, selectedNetwork.unstoppableDomainsChain)
-            
+            timer.current = null
             let isValidRecipientAddress
             if (UDAddress) {
                 isValidRecipientAddress = validateSendTransferAddress(UDAddress, selectedAcc, addressConfirmed, isKnownAddress)
@@ -159,8 +163,10 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
 
             setDisabled(!isValidRecipientAddress.success || !isValidSendTransferAmount.success || (showSWAddressWarning && !sWAddressConfirmed))
         }
-        const timer = setTimeout(() => validateForm().catch(console.error), 500)
-        return () => clearTimeout(timer)
+        timer.current = setTimeout(async() => {
+            return validateForm().catch(console.error)
+        }, 500)
+        return () => clearTimeout(timer.current)
     }, [address, amount, selectedAcc, selectedAsset, addressConfirmed, showSWAddressWarning, sWAddressConfirmed, isKnownAddress, addToast, selectedNetwork, addAddress])
 
     const amountLabel = <div className="amount-label">Available Amount: <span>{ maxAmountFormatted } { selectedAsset?.symbol }</span></div>
@@ -195,7 +201,7 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
                                         value={address}
                                         onInput={setAddress}
                                     />
-                                    <ToolTip label={!uDAddress ? 'It can be used with unstoppable domains.' : 'Valid unstoppable domain.'}>
+                                    <ToolTip label={!uDAddress ? 'Unstoppable domains can be used.' : 'Valid unstoppable domain.'}>
                                         <div id="udomains-logo" className={uDAddress ? 'ud-logo-active ' : ''} />
                                     </ToolTip>
                                     <AddressBook 
