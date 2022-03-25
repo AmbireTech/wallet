@@ -3,7 +3,7 @@ import './Collectible.scss'
 import { useParams } from 'react-router-dom'
 import { ethers } from 'ethers'
 import { Interface } from 'ethers/lib/utils'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useState, useRef } from 'react'
 import { AiOutlineSend } from 'react-icons/ai'
 import { BsFillImageFill } from 'react-icons/bs'
 import * as blockies from 'blockies-ts';
@@ -55,6 +55,7 @@ const Collectible = ({ selectedAcc, selectedNetwork, addRequest, addressBook }) 
         success: false, 
         message: ''
     })
+    const timer = useRef(null)
 
     const sendTransferTx = () => {
         const recipAddress = uDAddress ? uDAddress : recipientAddress
@@ -86,9 +87,13 @@ const Collectible = ({ selectedAcc, selectedNetwork, addRequest, addressBook }) 
     }
 
     useEffect(() => {
+        if (timer.current) {
+            clearTimeout(timer.current)
+        }
+
         const validateForm = async() => {
             const UDAddress =  await resolveUDomain(recipientAddress, null, selectedNetwork.unstoppableDomainsChain)
-            
+            timer.current = null
             let isAddressValid
             if (UDAddress) {
                 isAddressValid = validateSendNftAddress(UDAddress, selectedAcc, addressConfirmed, isKnownAddress, metadata, selectedNetwork, network)
@@ -104,8 +109,8 @@ const Collectible = ({ selectedAcc, selectedNetwork, addRequest, addressBook }) 
                 message: isAddressValid.message ? isAddressValid.message : ''
             })
         }
-        const timer = setTimeout(() => validateForm().catch(console.error), 500)
-        return () => clearTimeout(timer)
+        timer.current = setTimeout(async() => validateForm().catch(console.error), 500)
+        return () => clearTimeout(timer.current)
     }, [recipientAddress, metadata, selectedNetwork, selectedAcc, network, addressConfirmed, isKnownAddress])
 
     const fetchMetadata = useCallback(async () => {
@@ -237,7 +242,7 @@ const Collectible = ({ selectedAcc, selectedNetwork, addRequest, addressBook }) 
                 <div className="content">
                     <div id="recipient-address">
                         <TextInput placeholder="Recipient Address" value={recipientAddress} onInput={(value) => setRecipientAddress(value)}/>
-                        <ToolTip label={!uDAddress ? 'It can be used with unstoppable domains.' : 'Valid unstoppable domain.'}>
+                        <ToolTip label={!uDAddress ? 'Unstoppable domains can be used.' : 'Valid unstoppable domain.'}>
                             <div id="udomains-logo" className={uDAddress ? 'ud-logo-active ' : ''} />
                         </ToolTip>
                         <AddressBook 
