@@ -15,10 +15,10 @@ export default function Providers({ walletAddress, networkDetails }) {
         {
             logo: KRIPTOMAT_LOGO,
             name: 'Kriptomat',
-            type: 'Bank Transfer, Credit/Debit Card',
+            type: 'Credit Card',
             fees: '2.45%',
-            limits: 'up to 500 EUR/day',
-            currencies: 'USD, EUR, GBP',
+            limits: 'up to 450 EUR/day',
+            currencies: 'EUR',
             networks: ['ethereum', 'binance-smart-chain'],
             onClick: () => openKriptomat()
         },
