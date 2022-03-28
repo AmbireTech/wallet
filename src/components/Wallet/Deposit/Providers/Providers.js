@@ -8,8 +8,8 @@ import KRIPTOMAT_LOGO from 'resources/kriptomat.svg';
 import { Loading } from 'components/common'
 import useProviders from './useProviders'
 
-export default function Providers({ walletAddress, networkDetails }) {
-    const { openRampNetwork, openPayTrie, openTransak, openKriptomat, isLoading } = useProviders({ walletAddress, selectedNetwork: networkDetails.id })
+export default function Providers({ walletAddress, networkDetails, relayerURL }) {
+    const { openRampNetwork, openPayTrie, openTransak, openKriptomat, isLoading } = useProviders({ walletAddress, selectedNetwork: networkDetails.id, relayerURL })
     
     const providers = [
         {
