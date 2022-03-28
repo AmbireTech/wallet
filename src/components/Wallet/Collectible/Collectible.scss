@@ -116,10 +116,23 @@
             width: 100%;
 
             input {
-                padding-right: 220px;
+                padding-right: 280px;
             }
         }
 
+        #udomains-logo {
+            position: absolute;
+            top: 18px;
+            right: 240px;
+            height: 25px;
+            width: 25px;
+            background-image: url('/resources/ud-logo-inactive.png');
+        }
+
+        .ud-logo-active {
+            background-image: url('/resources/ud-logo-active.png') !important;  
+        }
+        
         .address-book {
             position: absolute !important;
             right: 0;
@@ -140,6 +153,22 @@
         #recipient-address {
             flex-direction: column;
             gap: 10px;
+
+            .text-input {
+                width: 100%;
+    
+                input {
+                    padding-right: 50px;
+                }
+            }
+            
+            #udomains-logo {
+                position: absolute;
+                top: 18px;
+                right: 15px;
+                height: 25px;
+                width: 25px; 
+            }
 
             .dropdown {
                 position: relative !important;
