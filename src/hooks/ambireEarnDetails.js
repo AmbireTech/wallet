@@ -591,7 +591,9 @@ const useAmbireEarnDetails = ({accountId, addresses, tokenLabel}) => {
             totalSharesOutTransfers,
             totalSharesInTransfers,
             rageLeavesReceivedWalletTotal,
-            rageLeavesWithdrawnWalletTotal
+            rageLeavesWithdrawnWalletTotal,
+            totalInTokenValue,
+            totalOutTokenValue
         }
 
         return {
@@ -618,6 +620,30 @@ const useAmbireEarnDetails = ({accountId, addresses, tokenLabel}) => {
             ),
             readyToWithdraw: utils.formatUnits(
                 stats.leavesReadyToWithdrawTotalWallet.toString(),
+                18
+            ),
+            totalInTokenValue: utils.formatUnits(
+                stats.totalInTokenValue.toString(),
+                18
+            ),
+            totalOutTokenValue: utils.formatUnits(
+                stats.totalOutTokenValue.toString(),
+                18
+            ),
+            rageLeavesReceivedWalletTotal: utils.formatUnits(
+                stats.rageLeavesReceivedWalletTotal.toString(),
+                18
+            ),
+            rageLeavesWithdrawnWalletTotal: utils.formatUnits(
+                stats.rageLeavesWithdrawnWalletTotal.toString(),
+                18
+            ),
+            totalSharesInTransfersWalletValue: utils.formatUnits(
+                stats.totalSharesInTransfersWalletValue.toString(),
+                18
+            ),
+            totalSharesOutTransfersWalletValue: utils.formatUnits(
+                stats.totalSharesOutTransfersWalletValue.toString(),
                 18
             ),
             remainingTime: stats.remainingTime,

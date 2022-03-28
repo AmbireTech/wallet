@@ -3,7 +3,7 @@ import './AmbireEarnDetailsModal.scss'
 import { MdClose } from 'react-icons/md'
 import { useModals } from 'hooks'
 import { Modal, Button } from 'components/common'
-// import { ToolTip } from 'components/common' 
+import { ToolTip } from 'components/common' 
 import { useAmbireEarnDetails } from 'hooks'
 import { Loading } from 'components/common'
 
@@ -22,6 +22,12 @@ const AmbireEarnDetailsModal = ({ title = 'Details', apy, accountId, msToDaysHou
         totalWithdraws, 
         pendingToUnlock, 
         readyToWithdraw, 
+        totalOutTokenValue,
+        totalInTokenValue,
+        rageLeavesReceivedWalletTotal,
+        rageLeavesWithdrawnWalletTotal,
+        totalSharesInTransfersWalletValue,
+        totalSharesOutTransfersWalletValue,
         remainingTime } = details
     const buttons = (<Button clear small icon={<MdClose />} onClick={hideModal}>Close</Button>)
    
@@ -45,10 +51,19 @@ const AmbireEarnDetailsModal = ({ title = 'Details', apy, accountId, msToDaysHou
                     <div>All time rewards</div><div>{parseFloat(allTimeRewards).toFixed(4)} {tokenLabel}</div>
                 </div>
                 <div className="wrapper odd-rows-bg">
-                    <div>Total deposit</div><div>{parseFloat(totalDeposit).toFixed(4)} {tokenLabel}</div>
+                    <ToolTip label={`Deposits: ${parseFloat(totalDeposit).toFixed(4)} ${tokenLabel} 
+                                    \nTransfers in: ${parseFloat(totalSharesInTransfersWalletValue).toFixed(4)} ${tokenLabel}`}>
+                        <div>Total deposit</div><div>{parseFloat(totalInTokenValue).toFixed(4)} {tokenLabel}</div>
+                    </ToolTip>
                 </div>
                 <div className="wrapper">
-                    <div>Total withdraws</div><div>{parseFloat(totalWithdraws).toFixed(4)} {tokenLabel}</div>
+                <ToolTip label={`Withdraws: ${parseFloat(totalWithdraws).toFixed(4)} ${tokenLabel}
+                                \nTransfers out: ${parseFloat(totalSharesOutTransfersWalletValue).toFixed(4)} ${tokenLabel} 
+                                \nRage leaves: 
+                                \nReceived ${parseFloat(rageLeavesReceivedWalletTotal).toFixed(4)} ${tokenLabel} 
+                                \nWithdrawn ${parseFloat(rageLeavesWithdrawnWalletTotal).toFixed(4)} ${tokenLabel}`}>
+                    <div>Total withdraws</div><div>{parseFloat(totalOutTokenValue).toFixed(4)} {tokenLabel}</div>
+                </ToolTip>
                 </div>
                 <div className="wrapper odd-rows-bg">
                     <div>Total pending to unlock</div>
