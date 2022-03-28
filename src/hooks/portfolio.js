@@ -79,7 +79,6 @@ export default function usePortfolio({ currentNetwork, account, useStorage }) {
     const [tokensByNetworks, setTokensByNetworks] = useState([])
     // Added unsupported networks (fantom and moonbeam) as default values with empty arrays to prevent crashes
     const [otherProtocolsByNetworks, setOtherProtocolsByNetworks] = useState(supportedProtocols.filter(item => !item.protocols || !item.protocols.length))
-
     const [balance, setBalance] = useState({
         total: {
             full: 0,
@@ -112,7 +111,10 @@ export default function usePortfolio({ currentNetwork, account, useStorage }) {
     const fetchSupplementTokenData = useCallback(async (updatedTokens) => {
         const currentNetworkTokens = updatedTokens.find(({ network }) => network === currentNetwork) || { network: currentNetwork, meta: [], assets: [] }
 
-        setBalancesByNetworksLoading(prev => ({ ...prev, [currentNetwork]: true }))
+        if (!updatedTokens.length) {
+            setBalancesByNetworksLoading(prev => ({ ...prev, [currentNetwork]: true }))
+        }
+
         const extraTokensAssets = getExtraTokensAssets(account, currentNetwork)
         try {
             const rcpTokenData = await supplementTokensDataFromNetwork({
@@ -124,13 +126,15 @@ export default function usePortfolio({ currentNetwork, account, useStorage }) {
             })
 
             currentNetworkTokens.assets = rcpTokenData
-            
+
             setTokensByNetworks(tokensByNetworks => [
                 ...tokensByNetworks.filter(({ network }) => network !== currentNetwork),
                 currentNetworkTokens
             ])
-
-            setBalancesByNetworksLoading(prev => ({ ...prev, [currentNetwork]: false }))
+            
+            if (!updatedTokens.length) {
+                setBalancesByNetworksLoading(prev => ({ ...prev, [currentNetwork]: false }))
+            }
 
         } catch(e) {
             console.error('supplementTokensDataFromNetwork failed', e)
@@ -139,7 +143,7 @@ export default function usePortfolio({ currentNetwork, account, useStorage }) {
         }
     }, [currentNetwork, getExtraTokensAssets, account, hiddenTokens])
 
-    const fetchTokens = useCallback(async (account, currentNetwork = false) => {
+    const fetchTokens = useCallback(async (account, currentNetwork = false, tokensByNetworks) => {
         // Prevent race conditions
         if (currentAccount.current !== account) return
 
@@ -149,14 +153,17 @@ export default function usePortfolio({ currentNetwork, account, useStorage }) {
             let failedRequests = 0
             const requestsCount = networks.length
             const updatedTokens = (await Promise.all(networks.map(async ({ network, balancesProvider }) => {
+
+            if (!tokensByNetworks.length) {
                 setBalancesByNetworksLoading(prev => ({ ...prev, [network]: true }))
-                
+            }
+
                 try {
                     const balance = await getBalances(ZAPPER_API_KEY, network, 'tokens', account, balancesProvider)
                     if (!balance) return null
 
                     const { meta, products } = Object.values(balance)[0]
-
+                    
                     const extraTokensAssets = getExtraTokensAssets(account, network) // Add user added extra token to handle
                     let assets = [
                         ...products.map(({ assets }) => assets.map(({ tokens }) => tokens)).flat(2),
@@ -171,7 +178,10 @@ export default function usePortfolio({ currentNetwork, account, useStorage }) {
                         { network, meta, assets }
                     ]))
 
-                    setBalancesByNetworksLoading(prev => ({ ...prev, [network]: false }))
+                    if (!tokensByNetworks.length) {
+                        setBalancesByNetworksLoading(prev => ({ ...prev, [network]: false }))
+                    }
+                    
 
                     return {
                         network,
@@ -197,7 +207,7 @@ export default function usePortfolio({ currentNetwork, account, useStorage }) {
         }
     }, [fetchSupplementTokenData, getExtraTokensAssets, hiddenTokens, addToast])
 
-    const fetchOtherProtocols = useCallback(async (account, currentNetwork = false) => {
+    const fetchOtherProtocols = useCallback(async (account, currentNetwork = false, otherProtocolsByNetworks) => {
         // Prevent race conditions
         if (currentAccount.current !== account) return
 
@@ -210,8 +220,10 @@ export default function usePortfolio({ currentNetwork, account, useStorage }) {
 
             await Promise.all(protocols.map(async ({ network, protocols, nftsProvider }) => {
                 const all = (await Promise.all(protocols.map(async protocol => {
+                    if (!otherProtocolsByNetworks.length) {
+                        setProtocolsByNetworksLoading(prev => ({ ...prev, [network]: true }))
+                    }
 
-                    setProtocolsByNetworksLoading(prev => ({ ...prev, [network]: true }))
                     try {
                         const balance = await getBalances(ZAPPER_API_KEY, network, protocol, account, protocol === 'nft' ? nftsProvider : null)
                         let response = Object.values(balance).map(({ products }) => {
@@ -229,7 +241,10 @@ export default function usePortfolio({ currentNetwork, account, useStorage }) {
                             ...protocolsByNetworks.filter(({ network }) => network !== updatedNetwork),
                             response
                         ]))
-                        setProtocolsByNetworksLoading(prev => ({ ...prev, [network]: false }))
+
+                        if (!otherProtocolsByNetworks.length) {
+                            setProtocolsByNetworksLoading(prev => ({ ...prev, [network]: false }))
+                        }
 
                         return balance ? Object.values(balance)[0] : null
                     } catch(e) {
@@ -265,13 +280,13 @@ export default function usePortfolio({ currentNetwork, account, useStorage }) {
 
     const refreshTokensIfVisible = useCallback(() => {
         if (!account) return
-        if (!document[hidden] && !areAllNetworksBalancesLoading()) fetchTokens(account, currentNetwork)
+        if (!document[hidden] && !areAllNetworksBalancesLoading()) fetchTokens(account, currentNetwork, tokensByNetworks)
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [account, fetchTokens, currentNetwork])
 
     const requestOtherProtocolsRefresh = async () => {
         if (!account) return
-        if ((Date.now() - lastOtherProcolsRefresh) > 30000 && !protocolsByNetworksLoading[currentNetwork]) await fetchOtherProtocols(account, currentNetwork)
+        if ((Date.now() - lastOtherProcolsRefresh) > 30000 && !protocolsByNetworksLoading[currentNetwork]) await fetchOtherProtocols(account, currentNetwork, otherProtocolsByNetworks)
     }
 
     // Make humanizer 'learn' about new tokens and aliases
@@ -352,16 +367,17 @@ export default function usePortfolio({ currentNetwork, account, useStorage }) {
 
         async function loadBalance() {
             if (!account) return
-            await fetchTokens(account)
+            await fetchTokens(account, false, tokensByNetworks)
         }
 
         async function loadProtocols() {
             if (!account) return
-            await fetchOtherProtocols(account)
+            await fetchOtherProtocols(account, false, otherProtocolsByNetworks)
         }
 
         loadBalance()
         loadProtocols()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [account, fetchTokens, fetchOtherProtocols])
 
     // Update states on network, tokens and ohterProtocols change
@@ -437,7 +453,7 @@ export default function usePortfolio({ currentNetwork, account, useStorage }) {
     // Refresh balance every 150s if hidden
     useEffect(() => {
         const refreshIfHidden = () => document[hidden] && !areAllNetworksBalancesLoading()
-            ? fetchTokens(account, currentNetwork)
+            ? fetchTokens(account, currentNetwork, tokensByNetworks)
             : null
         const refreshInterval = setInterval(refreshIfHidden, 150000)
         return () => clearInterval(refreshInterval)
