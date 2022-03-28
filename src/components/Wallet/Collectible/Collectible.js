@@ -242,7 +242,7 @@ const Collectible = ({ selectedAcc, selectedNetwork, addRequest, addressBook }) 
                 <div className="content">
                     <div id="recipient-address">
                         <TextInput placeholder="Recipient Address" value={recipientAddress} onInput={(value) => setRecipientAddress(value)}/>
-                        <ToolTip label={!uDAddress ? 'Unstoppable domains can be used.' : 'Valid unstoppable domain.'}>
+                        <ToolTip label={!uDAddress ? 'You can use Unstoppable domainsⓇ' : 'Valid Unstoppable domainsⓇ domain'}>
                             <div id="udomains-logo" className={uDAddress ? 'ud-logo-active ' : ''} />
                         </ToolTip>
                         <AddressBook 
