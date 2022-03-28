@@ -201,7 +201,7 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
                                         value={address}
                                         onInput={setAddress}
                                     />
-                                    <ToolTip label={!uDAddress ? 'Unstoppable domains can be used.' : 'Valid unstoppable domain.'}>
+                                    <ToolTip label={!uDAddress ? 'You can use Unstoppable domainsⓇ' : 'Valid Unstoppable domainsⓇ domain'}>
                                         <div id="udomains-logo" className={uDAddress ? 'ud-logo-active ' : ''} />
                                     </ToolTip>
                                     <AddressBook 
