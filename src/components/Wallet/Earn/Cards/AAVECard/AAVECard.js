@@ -18,7 +18,7 @@ const AAVELendingPool = new Interface(AAVELendingPoolAbi)
 const RAY = 10**27
 let lendingPoolAddress = null
 
-const AAVECard = ({ networkId, tokens, protocols, account, addRequest }) => {
+const AAVECard = ({ networkId, tokens, account, addRequest }) => {
     const { addToast } = useToasts()
 
     const currentNetwork = useRef()
@@ -102,14 +102,11 @@ const AAVECard = ({ networkId, tokens, protocols, account, addRequest }) => {
             const reserves = await lendingPoolContract.getReservesList()
             const reservesAddresses = reserves.map(reserve => reserve.toLowerCase())
 
-            const withdrawTokens = (protocols.find(({ label }) => label === 'Aave V2')?.assets || [])
-                .map(({ symbol, tokens }) => tokens && tokens.map(token => ({
-                    ...token,
-                    symbol,
-                    type: 'withdraw'
-                })))
-                .flat(1)
-                .filter(token => token)
+            const withdrawTokens = tokens.filter(({ address }) => defaultTokens.filter(t => t.type === 'withdraw' && t.address === address)[0]).map(token => ({
+                ...token,
+                baseTokenAddress: defaultTokens.filter(t => t.type === 'withdraw' && t.address === token.address)[0].baseTokenAddress,
+                type: 'withdraw'
+            })).filter(token => token)
 
             const depositTokens = tokens.filter(({ address }) => reservesAddresses.includes(address)).map(token => ({
                 ...token,
@@ -117,10 +114,10 @@ const AAVECard = ({ networkId, tokens, protocols, account, addRequest }) => {
             })).filter(token => token)
 
             const allTokens = (await Promise.all([
-                ...defaultTokens.filter(({ type, address }) => type === 'deposit' && !depositTokens.map(({ address }) => address).includes(address)),
-                ...defaultTokens.filter(({ type, address }) => type === 'withdraw' && !withdrawTokens.map(({ address }) => address).includes(address)),
                 ...withdrawTokens,
-                ...depositTokens
+                ...depositTokens,
+                ...defaultTokens.filter(({ type, address }) => type === 'deposit' && !depositTokens.map(({ address }) => address).includes(address)),
+                ...defaultTokens.filter(({ type, address }) => type === 'withdraw' && !withdrawTokens.map(({ address }) => address).includes(address))
             ]))
             
             const uniqueTokenAddresses = [...new Set(allTokens.map(({ address }) => address))]
@@ -131,14 +128,19 @@ const AAVECard = ({ networkId, tokens, protocols, account, addRequest }) => {
                 return [address, apr]
             })))
 
-            const tokensItems = allTokens.map(token => ({
-                ...token,
-                apr: tokensAPR[token.address],
-                icon: token.img || token.tokenImageUrl,
-                label: `${token.symbol} (${tokensAPR[token.address]}% APR)`,
-                value: token.address
-            }))
 
+            const tokensItems = allTokens.map(token => {
+                const arp = tokensAPR[token.address] === '0.00' 
+                ? tokensAPR[token.baseTokenAddress]
+                : tokensAPR[token.address]
+                return {
+                    ...token,
+                    apr: arp,
+                    icon: token.img || token.tokenImageUrl,
+                    label: `${token.symbol} (${arp}% APR)`,
+                    value: token.address
+                }
+            })
             // Prevent race conditions
             if (currentNetwork.current !== networkDetails.id) return
 
@@ -149,7 +151,7 @@ const AAVECard = ({ networkId, tokens, protocols, account, addRequest }) => {
             console.error(e);
             addToast(`Aave load pool error: ${e.message || e}`, { error: true })
         }
-    }, [addToast, protocols, tokens, defaultTokens, networkDetails])
+    }, [addToast, tokens, defaultTokens, networkDetails])
 
     useEffect(() => loadPool(), [loadPool])
     useEffect(() => {
