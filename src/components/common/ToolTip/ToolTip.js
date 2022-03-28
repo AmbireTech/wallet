@@ -11,6 +11,10 @@ const ToolTip = ({ children, label, disabled, className }) => {
         setMousePosition({ x: clientX + margin, y: clientY + margin })
     }
 
+    const newLineText = text => {
+        return text.split('\n').map(str => <div>{str}</div>)
+    }
+
     return (
         <div
             className={`tooltip ${className ? className : ''}`}
@@ -19,7 +23,7 @@ const ToolTip = ({ children, label, disabled, className }) => {
             { children }
             {
                 !disabled ? 
-                    <div className="tooltip-label" style={{top: mousePosition.y, left: mousePosition.x}}>{ label }</div>
+                    <div className="tooltip-label" style={{top: mousePosition.y, left: mousePosition.x}}>{ newLineText(label) }</div>
                     :
                     null
             }
