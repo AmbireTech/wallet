@@ -20,11 +20,28 @@
 
         .text-input {
             width: 100%;
+
+            input {
+                padding-right: 280px;
+            }
         }
 
         .dropdown {
             position: absolute;
             right: 0;
+        }
+
+        #udomains-logo {
+            position: absolute;
+            top: 18px;
+            right: 240px;
+            height: 25px;
+            width: 25px;
+            background-image: url('/resources/ud-logo-inactive.png');
+        }
+
+        .ud-logo-active {
+            background-image: url('/resources/ud-logo-active.png') !important;  
         }
     }
 
@@ -120,6 +137,22 @@
 
             .dropdown {
                 position: relative;
+            }
+            
+            .text-input {
+                width: 100%;
+    
+                input {
+                    padding-right: 50px;
+                }
+            }
+
+            #udomains-logo {
+                position: absolute;
+                top: 18px;
+                right: 15px;
+                height: 25px;
+                width: 25px;
             }
         }
     }
