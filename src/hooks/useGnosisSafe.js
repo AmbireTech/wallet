@@ -91,7 +91,8 @@ export default function useGnosisSafe({selectedAccount, network, verbose = 0, us
         throw new Error("invalid call object")
       }
       const method = msg.data.params.call
-      const callTx = msg.data.params.params
+      // NOTE: when Gnosis provider from web3-js is used to connect at the dapp
+      const callTx = Array.isArray(msg.data.params.params) ? msg.data.params.params : [msg.data.params.params, 'latest']
 
       const provider = getProvider(stateRef.current.network.id)
       let result
