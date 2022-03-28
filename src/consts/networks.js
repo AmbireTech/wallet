@@ -7,7 +7,8 @@ const networks = [{
 		nativeAssetSymbol: 'ETH',
 		name: 'Ethereum',
 		icon: '/resources/networks/ethereum.png',
-		explorerUrl: 'https://etherscan.io'
+		explorerUrl: 'https://etherscan.io',
+		unstoppableDomainsChain: 'ERC20'
 	},  {
 		id: 'polygon',
 		chainId: 137,
@@ -16,7 +17,8 @@ const networks = [{
 		nativeAssetSymbol: 'MATIC',
 		name: 'Polygon',
 		icon: '/resources/networks/polygon.png',
-		explorerUrl: 'https://polygonscan.com'
+		explorerUrl: 'https://polygonscan.com',
+		unstoppableDomainsChain: 'MATIC'
 	}, {
 		id: 'avalanche',
 		chainId: 43114,
@@ -24,7 +26,8 @@ const networks = [{
 		nativeAssetSymbol: 'AVAX',
 		name: 'Avalanche',
 		icon: '/resources/networks/avalanche.png',
-		explorerUrl: 'https://snowtrace.io'
+		explorerUrl: 'https://snowtrace.io',
+		unstoppableDomainsChain: 'ERC20'
 	}, {
 		// to match the zapper ID
 		id: 'binance-smart-chain',
@@ -33,7 +36,8 @@ const networks = [{
 		nativeAssetSymbol: 'BNB',
 		name: 'Binance Smart Chain',
 		icon: '/resources/networks/bsc.png',
-		explorerUrl: 'https://bscscan.com'
+		explorerUrl: 'https://bscscan.com',
+		unstoppableDomainsChain: 'BEP20'
 	}, {
 		id: 'fantom',
 		chainId: 250,
@@ -41,7 +45,8 @@ const networks = [{
 		nativeAssetSymbol: 'FTM',
 		name: 'Fantom Opera',
 		icon: '/resources/networks/fantom.png',
-		explorerUrl: 'https://ftmscan.com'
+		explorerUrl: 'https://ftmscan.com',
+		unstoppableDomainsChain: 'ERC20'
 	}, {
 		id: 'moonbeam',
 		chainId: 1284,
@@ -49,7 +54,8 @@ const networks = [{
 		nativeAssetSymbol: 'GLMR',
 		name: 'Moonbeam',
 		icon: '/resources/networks/moonbeam.png',
-		explorerUrl: 'https://moonscan.io/'
+		explorerUrl: 'https://moonscan.io/',
+		unstoppableDomainsChain: 'ERC20'
 	}, {
 		id: 'moonriver',
 		chainId: 1285,
@@ -57,7 +63,8 @@ const networks = [{
 		nativeAssetSymbol: 'MOVR',
 		name: 'Moonriver',
 		icon: '/resources/networks/moonriver.png',
-		explorerUrl: 'https://moonriver.moonscan.io/'
+		explorerUrl: 'https://moonriver.moonscan.io/',
+		unstoppableDomainsChain: 'ERC20'
 	}/*, {
 		id: 'arbitrum',
 		chainId: 42161,
@@ -65,7 +72,8 @@ const networks = [{
 		nativeAssetSymbol: 'AETH',
 		name: 'Arbitrum',
 		icon: '/resources/networks/arbitrum.svg',
-		explorerUrl: 'https://arbiscan.io'
+		explorerUrl: 'https://arbiscan.io',
+		unstoppableDomainsChain: 'ERC20
 }*/]
 
 export default networks

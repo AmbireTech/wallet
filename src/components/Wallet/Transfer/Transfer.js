@@ -3,12 +3,13 @@ import './Transfer.scss'
 import { BsXLg } from 'react-icons/bs'
 import { AiOutlineSend } from 'react-icons/ai'
 import { useParams, withRouter } from 'react-router'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState, useRef } from 'react'
 import { ethers } from 'ethers'
 import { Interface } from 'ethers/lib/utils'
 import { useToasts } from 'hooks/toasts'
-import { TextInput, NumberInput, Button, Select, Loading, AddressBook, AddressWarning, NoFundsPlaceholder, Checkbox } from 'components/common'
+import { TextInput, NumberInput, Button, Select, Loading, AddressBook, AddressWarning, NoFundsPlaceholder, Checkbox, ToolTip } from 'components/common'
 import { validateSendTransferAddress, validateSendTransferAmount } from 'lib/validations/formValidations'
+import { resolveUDomain } from 'lib/unstoppableDomains'
 import { isValidAddress } from 'lib/address'
 import Addresses from './Addresses/Addresses'
 import { MdInfo } from 'react-icons/md'
@@ -31,6 +32,7 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
     const [amount, setAmount] = useState(0)
     const [bigNumberHexAmount, setBigNumberHexAmount] = useState('')
     const [address, setAddress] = useState('')
+    const [uDAddress, setUDAddress] = useState('')
     const [disabled, setDisabled] = useState(true)
     const [addressConfirmed, setAddressConfirmed] = useState(false)
     const [sWAddressConfirmed, setSWAddressConfirmed] = useState(false)
@@ -45,7 +47,7 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
             address: ''
         }
     })
-
+    const timer = useRef(null)
     const assetsItems = portfolio.tokens.map(({ label, symbol, address, img, tokenImageUrl, network }) => ({
         label: label || symbol,
         value: address,
@@ -81,15 +83,25 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
     }
 
     const sendTx = () => {
+        const recipientAddress = uDAddress ? uDAddress : address
+
+        if (uDAddress) {
+            const isAlreadyAdded = addresses.find(i => i.address === uDAddress)
+
+            if (!isAlreadyAdded) {
+                addAddress(address, uDAddress)
+            }
+        }
+
         try {
             const txn = {
                 to: selectedAsset.address,
                 value: '0',
-                data: ERC20.encodeFunctionData('transfer', [address, bigNumberHexAmount])
+                data: ERC20.encodeFunctionData('transfer', [recipientAddress, bigNumberHexAmount])
             }
 
             if (Number(selectedAsset.address) === 0) {
-                txn.to = address
+                txn.to = recipientAddress
                 txn.value = bigNumberHexAmount
                 txn.data = '0x'
             }
@@ -121,22 +133,41 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
     }, [asset, history, selectedAsset])
 
     useEffect(() => {
-        const isValidRecipientAddress = validateSendTransferAddress(address, selectedAcc, addressConfirmed, isKnownAddress)
-        const isValidSendTransferAmount = validateSendTransferAmount(amount, selectedAsset) 
-       
-        setValidationFormMgs({ 
-            success: { 
-                amount: isValidSendTransferAmount.success, 
-                address: isValidRecipientAddress.success 
-            }, 
-            messages: { 
-                amount: isValidSendTransferAmount.message ?  isValidSendTransferAmount.message : '',
-                address: isValidRecipientAddress.message ? isValidRecipientAddress.message : ''
-            }
-        })
+        if (timer.current) {
+            clearTimeout(timer.current)
+        }
 
-        setDisabled(!isValidRecipientAddress.success || !isValidSendTransferAmount.success || (showSWAddressWarning && !sWAddressConfirmed))
-    }, [address, amount, selectedAcc, selectedAsset, addressConfirmed, showSWAddressWarning, sWAddressConfirmed, isKnownAddress, addToast])
+        const validateForm = async() => {
+            const UDAddress =  await resolveUDomain(address, selectedAsset ? selectedAsset.symbol: null, selectedNetwork.unstoppableDomainsChain)
+            timer.current = null
+            let isValidRecipientAddress
+            if (UDAddress) {
+                isValidRecipientAddress = validateSendTransferAddress(UDAddress, selectedAcc, addressConfirmed, isKnownAddress)
+                setUDAddress(UDAddress)
+            } else {
+                isValidRecipientAddress = validateSendTransferAddress(address, selectedAcc, addressConfirmed, isKnownAddress)
+                setUDAddress('')
+            }
+            const isValidSendTransferAmount = validateSendTransferAmount(amount, selectedAsset) 
+        
+            setValidationFormMgs({ 
+                success: { 
+                    amount: isValidSendTransferAmount.success, 
+                    address: isValidRecipientAddress.success 
+                }, 
+                messages: { 
+                    amount: isValidSendTransferAmount.message ?  isValidSendTransferAmount.message : '',
+                    address: isValidRecipientAddress.message ? isValidRecipientAddress.message : ''
+                }
+            })
+
+            setDisabled(!isValidRecipientAddress.success || !isValidSendTransferAmount.success || (showSWAddressWarning && !sWAddressConfirmed))
+        }
+        timer.current = setTimeout(async() => {
+            return validateForm().catch(console.error)
+        }, 500)
+        return () => clearTimeout(timer.current)
+    }, [address, amount, selectedAcc, selectedAsset, addressConfirmed, showSWAddressWarning, sWAddressConfirmed, isKnownAddress, addToast, selectedNetwork, addAddress])
 
     const amountLabel = <div className="amount-label">Available Amount: <span>{ maxAmountFormatted } { selectedAsset?.symbol }</span></div>
 
@@ -170,6 +201,9 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
                                         value={address}
                                         onInput={setAddress}
                                     />
+                                    <ToolTip label={!uDAddress ? 'Unstoppable domains can be used.' : 'Valid unstoppable domain.'}>
+                                        <div id="udomains-logo" className={uDAddress ? 'ud-logo-active ' : ''} />
+                                    </ToolTip>
                                     <AddressBook 
                                         addresses={addresses.filter(x => x.address !== selectedAcc)}
                                         addAddress={addAddress}
@@ -183,8 +217,8 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
                                     (<div className='validation-error'><BsXLg size={12}/>&nbsp;{validationFormMgs.messages.address}</div>)}
                                 <div className="separator"/>
                                 <AddressWarning
-                                    address={address}
-                                    onAddNewAddress={() => setNewAddress(address)}
+                                    address={uDAddress ? uDAddress : address}
+                                    onAddNewAddress={() => setNewAddress(uDAddress ? uDAddress : address)}
                                     onChange={(value) => setAddressConfirmed(value)}
                                     isKnownAddress={isKnownAddress}
                                 />
