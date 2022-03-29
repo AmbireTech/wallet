@@ -104,7 +104,7 @@ const AAVECard = ({ networkId, tokens, account, addRequest }) => {
 
             const withdrawTokens = tokens.filter(({ address }) => defaultTokens.filter(t => t.type === 'withdraw' && t.address === address)[0]).map(token => ({
                 ...token,
-                baseTokenAddress: defaultTokens.filter(t => t.type === 'withdraw' && t.address === token.address)[0].baseTokenAddress,
+                address: defaultTokens.filter(t => t.type === 'withdraw' && t.address === token.address)[0].baseTokenAddress,
                 type: 'withdraw'
             })).filter(token => token)
 
