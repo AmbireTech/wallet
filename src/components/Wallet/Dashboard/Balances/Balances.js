@@ -7,7 +7,7 @@ import networks from 'consts/networks'
 const Balances = ({ portfolio, selectedNetwork, setNetwork, hidePrivateValue }) => {
     const networkDetails = (network) => networks.find(({ id }) => id === network)
     const otherBalances = portfolio.otherBalances.filter(({ network, total }) => network !== selectedNetwork.id && total.full > 0)
-    const otherBalancesLoading = Object.entries(portfolio.balancesByNetworksLoading).filter(key=> !key.includes(selectedNetwork.id)).every(ntw => ntw[1])
+    const otherBalancesLoading = Object.entries(portfolio.balancesByNetworksLoading).find(ntw => ntw[0] !== selectedNetwork.id && ntw[1])
 
     return (
         <div id="balances">

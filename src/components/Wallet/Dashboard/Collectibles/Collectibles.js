@@ -16,7 +16,7 @@ const Collectibles = ({ portfolio, isPrivateMode }) => {
     }
 
     if (portfolio.isCurrNetworkProtocolsLoading) return <Loading />;
-    console.log(portfolio.collectibles)
+
     if (!portfolio.collectibles.length || isPrivateMode) {
         return (
             <CollectiblesPlaceholder
