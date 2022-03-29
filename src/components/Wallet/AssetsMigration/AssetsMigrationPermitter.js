@@ -7,8 +7,9 @@ import { Contract } from 'ethers'
 import { FaCheck, FaHourglass } from 'react-icons/fa'
 import Button from 'components/common/Button/Button'
 
-import { PERMITTABLE_COINS, PERMIT_TYPE_DAI, ERC20PermittableInterface } from 'consts/PermittableCoins'
+import { PERMITTABLE_COINS, PERMIT_TYPE_DAI, ERC20PermittableInterface } from 'consts/permittableCoins'
 import { GiToken } from 'react-icons/gi'
+import { MdOutlineNavigateBefore, MdOutlineNavigateNext } from 'react-icons/md'
 
 const MAX_INT = '0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff';
 
@@ -21,7 +22,9 @@ const AssetsMigrationPermitter = ({
                                     selectedTokensWithAllowance,
                                     setSelectedTokens,
                                     setError,
-                                    hideModal
+                                    hideModal,
+                                    setStep,
+                                    setModalButtons,
                                   }) => {
 
   //storing user sign/approve or rejection
@@ -59,7 +62,7 @@ const AssetsMigrationPermitter = ({
 
       if (tokensAllowances[t.address]) {
         remapped.allowance = tokensAllowances[t.address]
-        if (!t.permittable && ethers.BigNumber.from(remapped.allowance).gte(t.amount)) {
+        if (ethers.BigNumber.from(remapped.allowance).gte(t.amount)) {
           remapped.signing = true
         }
       }
@@ -297,14 +300,23 @@ const AssetsMigrationPermitter = ({
 
     return !!approveResult
 
-  }, [wallet, identityAccount, tokensPermissions])
+  }, [wallet, identityAccount, tokensPermissions, selectedTokensWithAllowance])
+
+  //going to assets selection
+  const cancelMigration = useCallback(() => {
+    setError(null)
+    setTokensAllowances([])
+    setTokensPermissions([])
+    setHasRefusedOnce(false)
+    setStep(0)
+  }, [setError, setTokensPermissions, setTokensAllowances, setStep]);
 
   //batch transactions
-  const completeMigration = () => {
+  const completeMigration = useCallback(() => {
 
     getConsolidatedTokensPure(selectedTokensWithAllowance, tokensPermissions, tokensAllowances, tokensPendingStatus).forEach(t => {
 
-      if (t.permittable) {
+      if (!(t.allowance && ethers.BigNumber.from(t.allowance).gte(t.amount)) && t.permittable) {
         addRequest({
           id: 'req-' + Math.random(),
           chainId: network.chainId,
@@ -340,16 +352,7 @@ const AssetsMigrationPermitter = ({
     //reset assets migration status
     cancelMigration()
     hideModal()
-  }
-
-  //going to assets selection
-  const cancelMigration = useCallback(() => {
-    setError(null)
-    setTokensAllowances([])
-    setTokensPermissions([])
-    setSelectedTokens([])
-    setHasRefusedOnce(false)
-  }, [setSelectedTokens, setError, setTokensPermissions, setTokensAllowances])
+  }, [addRequest, cancelMigration, hideModal, identityAccount, network, selectedTokensWithAllowance, signer, tokensAllowances, tokensPendingStatus, tokensPermissions])
 
   //Automatic permit ask chain
   useEffect(() => {
@@ -402,25 +405,48 @@ const AssetsMigrationPermitter = ({
     }
   }, [readyTokensCount, selectedTokensWithAllowance, setError])
 
+  useEffect(() => {
+    setModalButtons(
+      <>
+        <Button
+          className={'clear'}
+          icon={<MdOutlineNavigateBefore/>}
+          onClick={() => cancelMigration()}
+        >Back</Button>
+        {
+          readyTokensCount() === selectedTokensWithAllowance.length
+            ?
+            <Button
+              className={'primary'}
+              icon={<MdOutlineNavigateNext/>}
+              onClick={() => completeMigration()}
+            >Complete migration</Button>
+            :
+            <Button
+              className={'primary disabled'}
+              icon={<MdOutlineNavigateNext/>}
+            >Complete migration</Button>
+        }
+      </>
+    )
+  }, [cancelMigration, completeMigration, readyTokensCount, selectedTokensWithAllowance, setModalButtons])
+
   return (
     <div>
-      <div className={'tokens-left-info mb-3'}>
-        {
-          readyTokensCount() < selectedTokensWithAllowance.length
-            ? <span
-              className='warning'>{`${selectedTokensWithAllowance.length - readyTokensCount()} token left to sign/approve to complete the migration`}</span>
-            : <span
-              className='success'>Your tokens are ready to be migrated</span>
-        }
-      </div>
+      {
+        readyTokensCount() < selectedTokensWithAllowance.length
+          ? <div
+            className='small-asset-notification mb-3 warning'>{`${selectedTokensWithAllowance.length - readyTokensCount()} token left to sign/approve to complete the migration`}</div>
+          : <div className='small-asset-notification mb-3 success'>Your tokens are ready to be migrated</div>
+      }
       {getConsolidatedTokensPure(selectedTokensWithAllowance, tokensPermissions, tokensAllowances, tokensPendingStatus).map((item, index) => (
         <div className='migration-asset-row' key={index}>
           <span className='migration-asset-select-icon migration-asset-select-icon-permit'>
             {
-              failedImg.includes(item.icon) ?
+              (!item.icon || failedImg.includes(item.icon)) ?
                 <GiToken size={18}/>
                 :
-                <img src={item.icon} draggable="false" alt="Token Icon" onError={(err) => {
+                <img src={item.icon} draggable='false' alt='Token Icon' onError={(err) => {
                   setFailedImg(failed => [...failed, item.icon])
                 }}/>
             }
@@ -436,20 +462,20 @@ const AssetsMigrationPermitter = ({
 
           </div>
           <div>
-            {item.permittable
-              ? (
-                <>
-                  {!item.signature && !item.pending && <button className={'buttonComponent button-small secondary'}
-                                                               onClick={() => permitToken(item.address)}>Permit</button>}
-                  {!item.signature && item.pending &&
-                    <div className={'migration-permitted warning'}><FaHourglass/> Permitting...</div>}
-                  {item.signature && <div className={'migration-permitted'}><FaCheck/> Permitted</div>}
-                </>
-              )
-              : (
-                <>
-                  {!(item.allowance && ethers.BigNumber.from(item.allowance).gte(item.amount))
-                    ?
+            {!(item.allowance && ethers.BigNumber.from(item.allowance).gte(item.amount))
+              ?
+              <>
+                {item.permittable
+                  ? (
+                    <>
+                      {!item.signature && !item.pending && <button className={'buttonComponent button-small secondary'}
+                                                                   onClick={() => permitToken(item.address)}>Permit</button>}
+                      {!item.signature && item.pending &&
+                        <div className={'migration-permitted warning'}><FaHourglass/> Permitting...</div>}
+                      {item.signature && <div className={'migration-permitted'}><FaCheck/> Permitted</div>}
+                    </>
+                  )
+                  : (
                     <>
                       {(item.pending || item.signing)
                         ? <div className={'migration-permitted warning'}><FaHourglass/> Approving...</div>
@@ -460,29 +486,16 @@ const AssetsMigrationPermitter = ({
                         </Button>
                       }
                     </>
-                    :
-                    <div className={'migration-permitted'}><FaCheck/> Approved</div>
-                  }
-                </>
-              )
+                  )
+                }
+              </>
+              :
+              <div className={'migration-permitted'} onClick={() => approveToken(item.address)}><FaCheck/> Approved
+              </div>
             }
           </div>
         </div>
       ))}
-
-      <div className='flex-row mt-5'>
-        <Button
-          className={'align-right mt-2 buttonHollow danger'}
-          onClick={() => cancelMigration()}
-        >Back</Button>
-        {
-          readyTokensCount() === selectedTokensWithAllowance.length &&
-          <Button
-            className={'ms-2 mt-2 primary'}
-            onClick={() => completeMigration()}
-          >Complete migration</Button>
-        }
-      </div>
     </div>
   )
 }

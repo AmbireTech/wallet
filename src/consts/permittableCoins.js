@@ -38,13 +38,17 @@ export const PERMITTABLE_COINS = {
   ],
   137: [
     //Not working, only to test UX behavior on polygon
-    //{ address: '0x2791bca1f2de4661ed88a30c99a7a9449aa84174', name: 'USD Coin', version: '2', domainType: EIP712DomainWithVersion, permitType: PERMIT_TYPE_2612 },
+    { address: '0x2791bca1f2de4661ed88a30c99a7a9449aa84174', name: 'USD Coin', version: '2', domainType: EIP712DomainWithVersion, permitType: PERMIT_TYPE_2612 },
   ]
 }
 
 export const ERC20PermittableInterface = new Interface([
   "function nonces(address owner) external view returns (uint256)",
   "function name() external view returns (string)",
+  "function symbol() external view returns (string)",
+  "function decimals() external view returns (uint)",
+  "function balanceOf(address) external view returns (uint)",
+
   //2612 permit
   "function permit(address owner, address spender, uint256 value, uint256 deadline, uint8 v, bytes32 r, bytes32 s)",
   //Dai permit

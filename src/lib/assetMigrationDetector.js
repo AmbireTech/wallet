@@ -1,5 +1,7 @@
 import { VELCRO_API_ENDPOINT, ZAPPER_API_KEY } from 'config'
 import { fetchGet } from 'lib/fetch'
+import TokenList from 'consts/tokenList'
+import {ZERO_ADDRESS} from 'consts/specialAddresses'
 
 //not sure if I should put this as a lib or in a hook useAssetMigrationDetector()
 export default function assetMigrationDetector({ networkId, account }) {
@@ -11,13 +13,19 @@ export default function assetMigrationDetector({ networkId, account }) {
       if (!velcroResponse[signer_].products[0]) return []
 
       //SKIP NATIVE
-      const assets = velcroResponse[signer_].products[0].assets.filter(a => a.tokens[0].address !== '0x0000000000000000000000000000000000000000')
+      const assets = velcroResponse[signer_].products[0].assets
+        //.filter(a => a.tokens[0].address !== '0x0000000000000000000000000000000000000000')
+        .filter(a => a.tokens[0].address.toLowerCase() !== '0x1f9840a85d5aF5bf1D1762F925BDADdC4201F984'.toLowerCase())//debug only TODO remove
+        .filter(a => {
+          return TokenList[networkId].find(t => t.address.toLowerCase() === a.tokens[0].address.toLowerCase())
+        })
 
       return assets.map(a => {
         return {
           name: a.tokens[0].symbol,
           icon: a.tokens[0].tokenImageUrl,
           address: a.tokens[0].address.toLowerCase(),
+          native: a.tokens[0].address === ZERO_ADDRESS,
           decimals: a.tokens[0].decimals,
           availableBalance: a.tokens[0].balanceRaw,
           balanceUSD: a.tokens[0].balanceUSD,
@@ -26,6 +34,6 @@ export default function assetMigrationDetector({ networkId, account }) {
       })
     })
     .catch(err => {
-      throw Error('Could not get assets from velcro')
+      throw Error('Could not get assets from velcro', err)
     })
 }
