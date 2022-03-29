@@ -7,15 +7,15 @@ import { isValidAddress } from 'lib/address'
 import { InputModal } from 'components/Modals'
 import { useModals } from 'hooks'
 
-const Addresses = ({ addresses, addAddress, removeAddress, onSelectAddress }) => {
+const Addresses = ({ addresses, addAddress, removeAddress, onSelectAddress, selectedNetwork }) => {
     const { showModal } = useModals()
 
     const modalInputs = [
-        { label: 'Name', placeholder: 'My Address' },
-        { label: 'Address', placeholder: '0x', validate: value => isValidAddress(value) }
+        { label: 'Name/Unstoppable domainsⓇ', placeholder: 'My Address' },
+        { label: 'Address', placeholder: '0x', validate: value => isValidAddress(value) } 
     ]
 
-    const inputModal = <InputModal title="Add New Address" inputs={modalInputs} onClose={([name, address]) => addAddress(name, address)}></InputModal>
+    const inputModal = <InputModal title="Add New Address" selectedNetwork={selectedNetwork} inputs={modalInputs} onClose={([name, address]) => addAddress(name, address)}></InputModal>
     const showInputModal = () => showModal(inputModal)
 
     return (

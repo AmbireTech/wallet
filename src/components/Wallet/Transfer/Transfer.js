@@ -244,6 +244,8 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
                }
            </div>
            <Addresses
+                selectedAsset={selectedAsset}
+                selectedNetwork={selectedNetwork}
                 addresses={addresses}
                 addAddress={addAddress}
                 removeAddress={removeAddress}
