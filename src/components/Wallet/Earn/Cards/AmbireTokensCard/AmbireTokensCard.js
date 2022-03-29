@@ -294,6 +294,8 @@ const AmbireTokensCard = ({ networkId, accountId, tokens, rewardsData, addReques
                     let remainingTime = (timeToUnbond.toString() * 1000) - (Date.now() - (timestamp * 1000))
                     if (remainingTime <= 0) remainingTime = 0
                     setLockedRemainingTime(remainingTime)    
+                } else {
+                    setLeaveLog(null)
                 }
             } catch(e) {
                 console.error(e)
