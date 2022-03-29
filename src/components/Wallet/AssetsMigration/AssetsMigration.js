@@ -1,16 +1,18 @@
 import './AssetsMigration.scss'
 import { useEffect, useState } from 'react'
-import { getProvider } from 'lib/provider'
-import { Contract } from 'ethers'
 import AssetsMigrationSelector from './AssetsMigrationSelector'
 import AssetsMigrationPermitter from './AssetsMigrationPermitter'
-import { PERMITTABLE_COINS, ERC20PermittableInterface } from 'consts/PermittableCoins'
+import AssetsMigrationNative from './AssetsMigrationNative'
+import { PERMITTABLE_COINS } from 'consts/permittableCoins'
 
-const AssetsMigration = ({ addRequest, selectedAccount, accounts, network, hideModal }) => {
+const AssetsMigration = ({ addRequest, selectedAccount, accounts, network, hideModal, relayerURL, portfolio, setModalButtons }) => {
 
-  const [selectedTokens, setSelectedTokens] = useState([])
   const [selectedTokensWithAllowance, setSelectedTokensWithAllowance] = useState([])
+  const [nativeTokenData, setNativeTokenData] = useState(null)
+  const [hasERC20Tokens, setHasERC20Tokens] = useState(false)
+
   const [isSelectionConfirmed, setIsSelectionConfirmed] = useState(false)
+  const [step, setStep] = useState(0)
   const [error, setError] = useState(null)
 
   //to get signer
@@ -18,64 +20,23 @@ const AssetsMigration = ({ addRequest, selectedAccount, accounts, network, hideM
 
   //clear error and reset tokens
   useEffect(() => {
-    setError(null)
-    setSelectedTokens([])
-    setSelectedTokensWithAllowance([])
-  }, [network, selectedAccount, setSelectedTokens, setSelectedTokensWithAllowance])
-
-  //reset tokensWithAllowance whenever selectedTokens is reset to 0
-  useEffect(() => {
-    if (!selectedTokens.length) {
+    if (step === 0) {
+      setError(null)
       setSelectedTokensWithAllowance([])
+      setNativeTokenData(null)
+      setHasERC20Tokens(false)
     }
-  }, [selectedTokens, setSelectedTokensWithAllowance])
+  }, [network, selectedAccount, step])
 
   useEffect(() => {
     if (isSelectionConfirmed) {
       setIsSelectionConfirmed(false)
 
       //the non permittable, promise wait all
-      const promises = []
-
-      selectedTokens.forEach(t => {
-        const provider = getProvider(network.id)
-        const tokenContract = new Contract(t.address, ERC20PermittableInterface, provider)
-
-        if (!t.permittable) {
-          promises.push(
-            tokenContract.allowance(currentAccount.signer.address, selectedAccount)
-              .then((allowance) => {
-                return {
-                  address: t.address,
-                  allowance: allowance.toString()
-                }
-              }).catch(err => {
-              console.log('err getting allowance', err)
-            })
-          )
-        }
-      })
-
-      Promise.all(promises).then(allowanceResults => {
-        const tokensWithAllowances = [...selectedTokens.map(t => {
-          const allowance = allowanceResults.find(a => a && a.address === t.address)//if a === undefined
-          if (allowance) {
-            return {
-              ...t,
-              allowance: allowance.allowance || 0
-            }
-          }
-          return {
-            ...t,
-            allowance: 0
-          }
-        })]
-        if (selectedTokens.length) {
-          setSelectedTokensWithAllowance(tokensWithAllowances)
-        }
-      })
+      setNativeTokenData(selectedTokensWithAllowance.find(t => t.native))
+      setHasERC20Tokens(!!selectedTokensWithAllowance.find(t => !t.native))
     }
-  }, [isSelectionConfirmed, currentAccount, selectedTokens, network, selectedAccount])
+  }, [isSelectionConfirmed, currentAccount, selectedTokensWithAllowance, network, selectedAccount])
 
   return (
     <div>
@@ -84,16 +45,39 @@ const AssetsMigration = ({ addRequest, selectedAccount, accounts, network, hideM
       }
       <div id='assets-migration'>
         {
-          !selectedTokens.length && <AssetsMigrationSelector
+          step === 0 && /*!selectedTokens.length*/ <AssetsMigrationSelector
             signerAccount={currentAccount.signer.address}
             identityAccount={selectedAccount}
-            setSelectedTokens={setSelectedTokens}
             network={network}
             PERMITTABLE_COINS={PERMITTABLE_COINS}
             setIsSelectionConfirmed={setIsSelectionConfirmed}
+            setStep={setStep}
+            portfolio={portfolio}
+            relayerURL={relayerURL}
+            setModalButtons={setModalButtons}
+            hideModal={hideModal}
+            setError={setError}
+            setSelectedTokensWithAllowance={setSelectedTokensWithAllowance}
           />
         }
-        {!!selectedTokensWithAllowance.length &&
+        {step === 1 && nativeTokenData &&
+          <AssetsMigrationNative
+            signer={currentAccount.signer}
+            identityAccount={selectedAccount}
+            network={network}
+            addRequest={addRequest}
+            signerExtra={currentAccount.signerExtra}
+            setError={setError}
+            nativeTokenData={nativeTokenData}
+            hideModal={hideModal}
+            setStep={setStep}
+            relayerURL={relayerURL}
+            hasERC20Tokens={hasERC20Tokens}
+            setModalButtons={setModalButtons}
+            setSelectedTokensWithAllowance={setSelectedTokensWithAllowance}
+          />
+        }
+        {step === 2 &&
           <AssetsMigrationPermitter
             signer={currentAccount.signer}
             identityAccount={selectedAccount}
@@ -102,9 +86,10 @@ const AssetsMigration = ({ addRequest, selectedAccount, accounts, network, hideM
             PERMITTABLE_COINS={PERMITTABLE_COINS}
             signerExtra={currentAccount.signerExtra}
             setError={setError}
-            setSelectedTokens={setSelectedTokens}
             selectedTokensWithAllowance={selectedTokensWithAllowance}
             hideModal={hideModal}
+            setStep={setStep}
+            setModalButtons={setModalButtons}
           />
         }
       </div>

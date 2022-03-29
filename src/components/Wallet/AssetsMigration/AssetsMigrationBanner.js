@@ -5,7 +5,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { useModals } from 'hooks'
 import { FaTimes } from 'react-icons/fa'
 
-const AssetsMigrationBanner = ({ addRequest, selectedAccount, accounts, selectedNetwork, closeable = false, linkMargin = false }) => {
+const AssetsMigrationBanner = ({ addRequest, selectedAccount, accounts, selectedNetwork, relayerURL, portfolio, closeable = false, linkMargin = false }) => {
 
   const [hasSignerAssets, setHasSignerAssets] = useState(false)
   const [migrationMessageSeen, setMigrationMessageSeen] = useState(false)
@@ -50,6 +50,8 @@ const AssetsMigrationBanner = ({ addRequest, selectedAccount, accounts, selected
             selectedNetwork={selectedNetwork}
             selectedAccount={selectedAccount}
             accounts={accounts}
+            relayerURL={relayerURL}
+            portfolio={portfolio}
           />)
         }}>Click here to migrate those tokens</span>
       </div>

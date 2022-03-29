@@ -41,6 +41,7 @@ export default function Wallet(props) {
         privateMode={props.privateMode}
         rewardsData={props.rewardsData}
         addRequest={props.addRequest}
+        relayerURL={props.relayerURL}
       />
     },
     {
@@ -50,6 +51,8 @@ export default function Wallet(props) {
         selectedNetwork={props.network}
         accounts={props.accounts}
         addRequest={props.addRequest}
+        relayerURL={props.relayerURL}
+        portfolio={props.portfolio}
       />
     },
     {
