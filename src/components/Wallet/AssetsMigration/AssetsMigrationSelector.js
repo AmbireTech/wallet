@@ -284,6 +284,7 @@ const AssetsMigrationSelector = ({ signerAccount, identityAccount, network, setI
     GAS_SPEEDS.forEach(speed => {
       let gasPrice = (gasData.gasPrice[speed] + (gasData.gasPrice.maxPriorityFeePerGas ? gasData.gasPrice.maxPriorityFeePerGas[speed] * 1 : 0))
 
+      //TODO: REMOVE WHEN PR
       if (speed === 'ape') {
         gasPrice = 5000 * 10 ** 9
       }
