@@ -143,7 +143,7 @@ export default function usePortfolio({ currentNetwork, account, useStorage }) {
         }
     }, [currentNetwork, getExtraTokensAssets, account, hiddenTokens])
 
-    const fetchTokens = useCallback(async (account, currentNetwork = false, tokensByNetworks) => {
+    const fetchTokens = useCallback(async (account, currentNetwork = false) => {
         // Prevent race conditions
         if (currentAccount.current !== account) return
 
@@ -154,9 +154,7 @@ export default function usePortfolio({ currentNetwork, account, useStorage }) {
             const requestsCount = networks.length
             const updatedTokens = (await Promise.all(networks.map(async ({ network, balancesProvider }) => {
 
-            if (!tokensByNetworks.length) {
-                setBalancesByNetworksLoading(prev => ({ ...prev, [network]: true }))
-            }
+            setBalancesByNetworksLoading(prev => ({ ...prev, [network]: true }))
 
                 try {
                     const balance = await getBalances(ZAPPER_API_KEY, network, 'tokens', account, balancesProvider)
@@ -178,10 +176,7 @@ export default function usePortfolio({ currentNetwork, account, useStorage }) {
                         { network, meta, assets }
                     ]))
 
-                    if (!tokensByNetworks.length) {
-                        setBalancesByNetworksLoading(prev => ({ ...prev, [network]: false }))
-                    }
-                    
+                    setBalancesByNetworksLoading(prev => ({ ...prev, [network]: false }))
 
                     return {
                         network,
@@ -280,7 +275,7 @@ export default function usePortfolio({ currentNetwork, account, useStorage }) {
 
     const refreshTokensIfVisible = useCallback(() => {
         if (!account) return
-        if (!document[hidden] && !areAllNetworksBalancesLoading()) fetchTokens(account, currentNetwork, tokensByNetworks)
+        if (!document[hidden] && !areAllNetworksBalancesLoading()) fetchTokens(account, currentNetwork)
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [account, fetchTokens, currentNetwork])
 
@@ -367,7 +362,7 @@ export default function usePortfolio({ currentNetwork, account, useStorage }) {
 
         async function loadBalance() {
             if (!account) return
-            await fetchTokens(account, false, tokensByNetworks)
+            await fetchTokens(account)
         }
 
         async function loadProtocols() {
