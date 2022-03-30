@@ -4,6 +4,7 @@ import {useToasts} from 'hooks/toasts'
 import {Methods} from '@gnosis.pm/safe-apps-sdk'
 import {GnosisConnector} from 'lib/GnosisConnector'
 import { getProvider } from 'lib/provider'
+import { BigNumber } from 'ethers'
 
 const STORAGE_KEY = 'gnosis_safe_state'
 
@@ -92,7 +93,9 @@ export default function useGnosisSafe({selectedAccount, network, verbose = 0, us
       }
       const method = msg.data.params.call
       // NOTE: when Gnosis provider from web3-js is used to connect at the dapp
-      const callTx = Array.isArray(msg.data.params.params) ? msg.data.params.params : [msg.data.params.params, 'latest']
+      const callTx = (Array.isArray(msg.data.params.params) || typeof msg.data.params.params === 'object')
+        ? msg.data.params.params 
+        : [msg.data.params.params, 'latest']
 
       const provider = getProvider(stateRef.current.network.id)
       let result
@@ -149,11 +152,23 @@ export default function useGnosisSafe({selectedAccount, network, verbose = 0, us
         result = await provider.estimateGas(callTx).catch(err => {
           throw err
         })
+      } else if (method === 'eth_gasPrice') {
+        result = await provider.getGasPrice().catch(err => {
+          throw err
+        })
       } 
       else {
         throw new Error("method not supported " + method)
       }
-      return result
+
+      const resultCompatibilityMode = !BigNumber.isBigNumber(result) && typeof result === 'object'    
+      ? Object.fromEntries(Object.entries(result)
+        .map(([key, val]) => [key, BigNumber.isBigNumber(val) ? val.toHexString() : val]))
+      : BigNumber.isBigNumber(result)  
+        ? result.toHexString()
+        : result
+
+      return resultCompatibilityMode
     })
 
     connector.current.on(Methods.sendTransactions, (msg) => {
