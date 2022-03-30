@@ -58,7 +58,7 @@ export default function Dashboard({ portfolio, selectedNetwork, selectedAccount,
             }))
             .filter(({ value }) => value > 0);
 
-        const totalProtocols = portfolio.protocols.map(({ assets }) => 
+        const totalProtocols = portfolio.protocols.map(({ assets }) =>
             assets
                 .map(({ balanceUSD }) => balanceUSD)
                 .reduce((acc, curr) => acc + curr, 0))
@@ -100,20 +100,19 @@ export default function Dashboard({ portfolio, selectedNetwork, selectedAccount,
                                 minimumFractionDigits: 2
                              })}
                             </span>
-                            <span className={'gas-price'} onClick={() => {
-                                showModal(<GasDetailsModal
-                                    gasData={gasData}
-                                />)
-                            }
-                            }>
-                                <FaGasPump /> {Math.round(gasData.gasPrice['medium'] / 10**9)} Gwei
+                            <span className={'gas-price'}
+                                  onClick={() => {
+                                    showModal(<GasDetailsModal gasData={gasData} />)
+                                    }
+                                  }>
+                                <FaGasPump /> {Math.round(gasData.gasPrice['medium'] / 10 ** 9)} Gwei
                             </span>
                         </div>
                     }
                     <div className="title">Balance</div>
                     <div className="content">
                         {
-                            portfolio.isBalanceLoading ? 
+                            portfolio.isBalanceLoading ?
                                 <Loading/>
                                 :
                                 <Balances

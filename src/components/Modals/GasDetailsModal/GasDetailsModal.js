@@ -26,8 +26,7 @@ const GasDetailsModal = ({ gasData }) => {
   return (
     <Modal id='gas-details-modal' title={'Gas information'} buttons={buttons}>
       <div className={'gas-details-date'}>
-        Last updated : { moment.utc(gasData.gasPrice.updated * 1 ).format('ddd, DD MMM YYYY HH:mm:ss UTC')
-      }
+        Last updated : {moment.utc(gasData.gasPrice.updated * 1 ).format('ddd, DD MMM YYYY HH:mm:ss UTC')}
       </div>
       <div className={'gas-speed-row'}>
         {

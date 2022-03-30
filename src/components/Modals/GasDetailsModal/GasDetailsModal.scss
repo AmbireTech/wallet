@@ -16,14 +16,10 @@ $thead-background-color: darken($panel-background-color, 2%);
   .gas-speed-row {
     margin-top: 18px;
     display: flex;
-    /*flex-grow: 0;
-    flex-shrink: 1;
-    flex-basis: auto;*/
     gap: 16px;
   }
 
   .gas-speed-block {
-
     text-align: center;
     flex: 1;
     color: $modal-text-color;
@@ -58,9 +54,11 @@ $thead-background-color: darken($panel-background-color, 2%);
     width: 100%;
     border-spacing: 0;
     color: $modal-text-color;
+
     thead {
       background: $thead-background-color;
       font-weight: normal;
+
       th {
         text-transform: capitalize;
         padding: 12px;
