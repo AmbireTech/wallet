@@ -1,4 +1,7 @@
 export const ACTION_GAS_COSTS = [
+
+	{name: 'Ambire Wallet: Claim and burn', gas: 163327},
+	{name: 'Ambire Wallet: Claim and stake', gas: 213230},
 	{name: 'Opensea: Sale', gas: 201953},
 	{name: 'Uniswap V3: Swap', gas: 184206},
 	{name: 'USDT: Transfer', gas: 54000},
