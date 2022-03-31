@@ -3,12 +3,13 @@ import './InputModal.scss'
 import { createRef, useRef, useState } from 'react'
 import { MdCheck, MdClose } from 'react-icons/md'
 import { useModals } from 'hooks'
-import { Modal, TextInput, Button } from "components/common"
+import { Modal, TextInput, Button, ToolTip } from "components/common"
 import { resolveUDomain } from 'lib/unstoppableDomains'
 
 const InputModal = ({ title, inputs, selectedNetwork, onClose }) => {
     const { hideModal } = useModals()
     const [isDisabled, setDisabled] = useState(true)
+    const [uDAddress, setUDAddress] = useState('')
     const timer = useRef(null)
 
     const inputsFields = inputs.map(input => ({ ...input, ref: createRef() }))
@@ -26,12 +27,13 @@ const InputModal = ({ title, inputs, selectedNetwork, onClose }) => {
             const isFound = inputsFields.find(item => item.label === 'Name/Unstoppable domainsⓇ')
             
             if (isFound) {
-                const uDAddress = await getUDomain(isFound.ref.current.value) 
+                const uDAddr = await getUDomain(isFound.ref.current.value) 
                 timer.current = null
 
-                if (uDAddress) {
-                    inputsFields.map(({ label, ref }) => (label === 'Address') ? ref.current.value = uDAddress : '')
+                if (uDAddr) {
+                    inputsFields.map(({ label, ref }) => (label === 'Address') ? ref.current.value = uDAddr : '')
                 }
+                setUDAddress(uDAddr)
             }
             
             const isFormValid = inputsFields
@@ -60,7 +62,13 @@ const InputModal = ({ title, inputs, selectedNetwork, onClose }) => {
         <Modal id="input-modal" title={title} buttons={buttons}>
             {
                 inputsFields.map(({ id, label, placeholder, ref }) => (
-                    <TextInput key={id || label} label={label} placeholder={placeholder} onInput={onInput} ref={ref}/>
+                    <>
+                        <TextInput key={id || label} label={label} placeholder={placeholder} onInput={onInput} ref={ref}/>
+                        {(label === 'Name/Unstoppable domainsⓇ') && 
+                            <ToolTip label={!uDAddress ? 'You can use Unstoppable domainsⓇ' : 'Valid Unstoppable domainsⓇ domain'}>
+                                <div id="udomains-logo" className={uDAddress ? 'ud-logo-active ' : ''} />
+                            </ToolTip>}
+                    </>
                 ))
             }
         </Modal>
