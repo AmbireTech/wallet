@@ -23,14 +23,12 @@ const AssetsMigrationNative = ({
                                  setModalButtons,
                                }) => {
 
-  //error display logic if a user has rejected one or more MM popup
   const [failedImg, setFailedImg] = useState([])
   const [hasMigratedNative, setHasMigratedNative] = useState(false)
   const [isMigrationPending, setIsMigrationPending] = useState(false)
   const [nativeAmount, setNativeAmount] = useState('0')
   const [maxRecommendedAmount, setMaxRecommendedAmount] = useState('0')
   const [transactionEstimationCost, setTransactionEstimationCost] = useState('0')
-  //const [currentGasPrice, setCurrentGasPrice] = useState(0)
   const [nativeHumanAmount, setNativeHumanAmount] = useState('0')
 
   const wallet = getWallet({
@@ -39,7 +37,7 @@ const AssetsMigrationNative = ({
     chainId: network.chainId
   })
 
-  //going to assets selection
+  //going back to assets selection
   const cancelMigration = useCallback(() => {
     setStep(0)
     setSelectedTokensWithAllowance([])
@@ -49,8 +47,8 @@ const AssetsMigrationNative = ({
     setStep(2)
   }, [setStep])
 
+  //Pops MM modal to send native to Identity
   const migrateNative = useCallback(() => {
-
     setError(null)
     setIsMigrationPending(true)
     wallet.sendTransaction({
@@ -59,12 +57,9 @@ const AssetsMigrationNative = ({
       gasLimit: 25000,
       value: '0x' + new BigNumber(nativeAmount).toString(16),
     }).then(async rcpt => {
-
         await rcpt.wait()
-
         setHasMigratedNative(true)
         setIsMigrationPending(false)
-
       return true
     }).catch(err => {
       setHasMigratedNative(false)
@@ -106,51 +101,47 @@ const AssetsMigrationNative = ({
   }, [nativeTokenData])
 
   useEffect( () => {
-    setModalButtons(
-      <>
-        {
-          !hasMigratedNative &&
-          <Button
-            icon={<MdOutlineNavigateBefore/>}
-            className={'clear'}
-            onClick={() => cancelMigration()}
-          >Back</Button>
-        }
 
-        {
-          !hasMigratedNative && !isMigrationPending &&
-          <Button
-            icon={<MdOutlineNavigateNext/>}
-            className={'primary'}
-            onClick={() => migrateNative()}
-          >Migrate</Button>
-        }
-        {
-          !hasMigratedNative && isMigrationPending &&
-          <Button
-            icon={<MdOutlineNavigateNext/>}
-            className={'primary disabled'}
-          >Migrating...</Button>
-        }
-
-        {
-          hasMigratedNative && !hasERC20Tokens &&
-          <Button
-            icon={MdClose}
-            className={'primary'}
-            onClick={() => hideModal()}
-          >Close</Button>
-        }
-        {
-          hasMigratedNative && hasERC20Tokens &&
-          <Button
+    const getDisplayedButtons = () => {
+      let buttons = []
+      if (hasMigratedNative) {
+        if (hasERC20Tokens) {
+          buttons.push(<Button
             icon={<MdOutlineNavigateNext/>}
             className={'primary'}
             onClick={() => continueMigration()}
-          >Next</Button>
+          >Next</Button>)
+        } else {
+          buttons.push(<Button
+            icon={MdClose}
+            className={'primary'}
+            onClick={() => hideModal()}
+          >Close</Button>)
         }
-      </>
-    )
+      } else {
+        buttons.push(<Button
+          icon={<MdOutlineNavigateBefore/>}
+          className={'clear'}
+          onClick={() => cancelMigration()}
+        >Back</Button>)
+
+        if (isMigrationPending) {
+          buttons.push(<Button
+            icon={<MdOutlineNavigateNext/>}
+            className={'primary disabled'}
+          >Migrating...</Button>)
+        } else {
+          buttons.push(<Button
+            icon={<MdOutlineNavigateNext/>}
+            className={'primary'}
+            onClick={() => migrateNative()}
+          >Migrate</Button>)
+        }
+      }
+      return buttons
+    }
+
+    setModalButtons(getDisplayedButtons())
   }, [hasMigratedNative, hasERC20Tokens, setModalButtons, hideModal, isMigrationPending, cancelMigration, migrateNative, continueMigration])
 
   return (
@@ -192,7 +183,6 @@ const AssetsMigrationNative = ({
                 className={'migrate-amount-input'}
                 value={nativeHumanAmount}
                 onChange={(val) => {
-
                   if (
                     (val.endsWith('.') && val.split('.').length === 2)
                     || (val.split('.').length === 2 && val.endsWith('0'))
@@ -228,8 +218,8 @@ const AssetsMigrationNative = ({
                   <span>According to the current gas prices, the maximum recommended to migrate is </span>
                   <span className={'migration-native-selection'}
                         onClick={() => updateAmount(maxRecommendedAmount)}>
-              {new BigNumber(maxRecommendedAmount).dividedBy(10 ** nativeTokenData.decimals).toFixed(6)} {nativeTokenData.name}
-            </span>
+                          {new BigNumber(maxRecommendedAmount).dividedBy(10 ** nativeTokenData.decimals).toFixed(6)} {nativeTokenData.name}
+                  </span>
                 </div>
                 <div>Sending more might not cover the gas fees</div>
               </div>

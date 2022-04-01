@@ -58,7 +58,7 @@ const AssetsMigrationSelector = ({ signerAccount, identityAccount, network, setI
   }, [selectableTokensUserInputs])
 
   //Include/Exclude token in migration
-  const toggleTokenSelection = useCallback( (address, minHumanAmount=null) => {
+  const toggleTokenSelection = useCallback((address, minHumanAmount = null) => {
     updateSelectableTokenUserInputs(address, old => {
       let updated = {
         ...old,
@@ -96,14 +96,10 @@ const AssetsMigrationSelector = ({ signerAccount, identityAccount, network, setI
 
     const tokenContract = new Contract(customTokenAddress, ERC20PermittableInterface, provider)
 
-    //UX : scroll up or put error msg somewhere else?
     const symbolPromise = tokenContract.symbol().catch(() => setCustomTokenError('Could not get symbol of token ' + customTokenAddress))
     const decimalsPromise = tokenContract.decimals().catch(() => setCustomTokenError('Could not get decimals of token ' + customTokenAddress))
     const allowancePromise = tokenContract.allowance(signerAccount, identityAccount).catch(() => setCustomTokenError('Could not get allowance for token ' + customTokenAddress))
     const availableSignerBalancePromise = tokenContract.balanceOf(signerAccount).catch(() => setCustomTokenError('Could not get balance for token ' + customTokenAddress))
-    //for gasTokens
-    //if gasToken, should be taken for granted that it is avail in portfolio
-    //const availableIdentityBalancePromise = tokenContract.allowance(identityAccount).catch(() => setError('Could not get balance for token ' + customTokenAddress))
 
     setIsCustomTokenPending(true)
     setCustomTokenError(null)
@@ -122,12 +118,6 @@ const AssetsMigrationSelector = ({ signerAccount, identityAccount, network, setI
       if (symbol && decimals && allowance !== null && signerBalance !== null) {
         setCustomTokenAddress('')
         setIsAddCustomTokenFormShown(false)
-        //If not in velcro API, most probably not a permittable coin ?
-        /*
-        let permittableData = false
-        if (PERMITTABLE_COINS[network.chainId]) {
-          permittableData = PERMITTABLE_COINS[network.chainId].find(p => p.address.toLowerCase() === t.address.toLowerCase()) || false
-        }*/
 
         setSelectableTokens(old => {
           return [
@@ -182,7 +172,7 @@ const AssetsMigrationSelector = ({ signerAccount, identityAccount, network, setI
   const getSuggestedGasTokensOfSpeed = (suggestedGasTokens, speed) => {
     return suggestedGasTokens
       .filter(gt => gt.isEnoughToCoverFees[speed].ifSelected)
-      .map( gt => {
+      .map(gt => {
         return {
           ...gt,
           minimumSelectionAmount: gt.isEnoughToCoverFees[speed].minimumSelectionAmount
@@ -235,10 +225,6 @@ const AssetsMigrationSelector = ({ signerAccount, identityAccount, network, setI
         assets.map(t => {
           return {
             ...t,
-            //selectedAmount: 0,
-            //amount: t.availableBalance,
-            //humanAmount: t.availableBalance / 10 ** t.decimals,
-            //selected: false
           }
         })
       )
@@ -284,10 +270,6 @@ const AssetsMigrationSelector = ({ signerAccount, identityAccount, network, setI
     GAS_SPEEDS.forEach(speed => {
       let gasPrice = (gasData.gasPrice[speed] + (gasData.gasPrice.maxPriorityFeePerGas ? gasData.gasPrice.maxPriorityFeePerGas[speed] * 1 : 0))
 
-      //TODO: REMOVE WHEN PR
-      if (speed === 'ape') {
-        gasPrice = 5000 * 10 ** 9
-      }
       const migrationTransactionsCost = migrationTransactionsConsumption * gasPrice
       const migrationTransactionsCostUSD = migrationTransactionsCost * nativeRate
 
@@ -313,9 +295,7 @@ const AssetsMigrationSelector = ({ signerAccount, identityAccount, network, setI
 
     const possibleFeeTokens = [
       ZERO_ADDRESS,
-      '0x8f3cf7ad23cd3cadbd9735aff958023239c6a063',
-      '0x2791bca1f2de4661ed88a30c99a7a9449aa84174',
-      '0x6b175474e89094c44da98b954eedeac495271d0f',
+      [...gasData.gasFeeAssets.feeTokens.map(ft => ft.address)]
     ]
 
     let usableTokens = consolidatedTokens.filter(t => {
@@ -365,22 +345,15 @@ const AssetsMigrationSelector = ({ signerAccount, identityAccount, network, setI
           isEnoughToCoverFees,
         }
       })
-    //.filter(t => t !== false)
 
-    console.log('selectedFeeTokens', usableFeeTokens)
     setSuggestedGasTokens(usableFeeTokens)
-
-    /*setHasEnoughIdentityFees(!!usableFeeTokens.filter(t => {
-      return payable >= gasFees[selectedGasSpeed].migrationTransactionsCostUSD
-    }).length)*/
 
   }, [selectableTokens, selectableTokensUserInputs, portfolio, gasData, selectedGasSpeed, tokensAllowances])
 
 
+  //getting gasPrice data from relayer
   useEffect(() => {
-    const url = `${relayerURL}/gasPrice/${network.id}`
-
-    fetchGet(url).then(gasData => {
+    fetchGet(`${relayerURL}/gasPrice/${network.id}`).then(gasData => {
       setGasData(gasData.data)
     }).catch(err => {
       console.log('fetch error', err)
@@ -388,8 +361,8 @@ const AssetsMigrationSelector = ({ signerAccount, identityAccount, network, setI
   }, [relayerURL, network])
 
 
+  //getting erc20 token allowances
   useEffect(() => {
-
     const promises = selectableTokens.map(t => {
       const provider = getProvider(network.id)
       const tokenContract = new Contract(t.address, ERC20PermittableInterface, provider)
@@ -493,7 +466,7 @@ const AssetsMigrationSelector = ({ signerAccount, identityAccount, network, setI
                               className={'migrate-amount-input'}
                               value={item.humanAmount}
                               onChange={(val) => updateSelectableTokenUserInputs(item.address, (old) => {
-                                if( old === ''){
+                                if (old === '') {
                                   return {
                                     ...old,
                                     humanAmount: 0,
@@ -511,7 +484,6 @@ const AssetsMigrationSelector = ({ signerAccount, identityAccount, network, setI
                                 }
 
                                 if (!isNaN(val)) {
-                                  debugger
                                   let newHumanAmount = new BigNumber(val).toFixed(item.decimals)
                                   if (new BigNumber(newHumanAmount).multipliedBy(10 ** item.decimals).comparedTo(item.availableBalance) === 1) {
                                     newHumanAmount = new BigNumber(item.availableBalance).dividedBy(10 ** item.decimals).toFixed(item.decimals)
@@ -535,42 +507,43 @@ const AssetsMigrationSelector = ({ signerAccount, identityAccount, network, setI
                   <div className={'custom-token-row mt-2'}>
                     {
                       isAddCustomTokenFormShown
-                      ? <div>
+                        ? <div>
                           {
                             isCustomTokenPending
-                            ? <div className={'custom-token-message-fetching'}>
-                              <Loading />
+                              ? <div className={'custom-token-message-fetching'}>
+                                <Loading/>
                                 Fetching custom token data...
-                            </div>
-                            : <>
-                              {
-                                customTokenError && <div className={'error'}>{customTokenError}</div>
-                              }
-                              <div>
-                                <TextInput
-                                  className={'custom-token-input'}
-                                  placeholder={'Enter custom token address'}
-                                  value={customTokenAddress}
-                                  onChange={(val) => {
-                                    setCustomTokenAddress(val)
-                                  }}
-                                  ref={customTokenInput}
-                                />
                               </div>
-                              <div className={'flex-row mt-2'}>
-                                <Button small icon={<MdCancel/>} className={'buttonHollow danger align-right'}
-                                        onClick={() => {
-                                          setIsAddCustomTokenFormShown(false)
-                                          setCustomTokenAddress('')
-                                          setCustomTokenError(null)
-                                        }}>Cancel</Button>
-                                <Button small icon={<MdOutlineAddCircleOutline/>} className={'primary ms-4'} onClick={() => addCustomToken()}>Add</Button>
-                              </div>
+                              : <>
+                                {
+                                  customTokenError && <div className={'error'}>{customTokenError}</div>
+                                }
+                                <div>
+                                  <TextInput
+                                    className={'custom-token-input'}
+                                    placeholder={'Enter custom token address'}
+                                    value={customTokenAddress}
+                                    onChange={(val) => {
+                                      setCustomTokenAddress(val)
+                                    }}
+                                    ref={customTokenInput}
+                                  />
+                                </div>
+                                <div className={'flex-row mt-2'}>
+                                  <Button small icon={<MdCancel/>} className={'buttonHollow danger align-right'}
+                                          onClick={() => {
+                                            setIsAddCustomTokenFormShown(false)
+                                            setCustomTokenAddress('')
+                                            setCustomTokenError(null)
+                                          }}>Cancel</Button>
+                                  <Button small icon={<MdOutlineAddCircleOutline/>} className={'primary ms-4'}
+                                          onClick={() => addCustomToken()}>Add</Button>
+                                </div>
                               </>
                           }
                         </div>
-                      : <Button small icon={<MdOutlineAddCircleOutline/>} className={'clear align-right'}
-                                onClick={() => setIsAddCustomTokenFormShown(true)}
+                        : <Button small icon={<MdOutlineAddCircleOutline/>} className={'clear align-right'}
+                                  onClick={() => setIsAddCustomTokenFormShown(true)}
                         >Add custom token</Button>
                     }
                   </div>
@@ -581,13 +554,15 @@ const AssetsMigrationSelector = ({ signerAccount, identityAccount, network, setI
                       {
                         !!getSuggestedGasTokensOfSpeed(suggestedGasTokens, selectedGasSpeed).length &&
                         <div className={'mt-3'}>
-                          You shoud remove ERC20 tokens from the selection or add one of the following gas tokens :
+                          You should remove ERC20 tokens from the selection or add one of the following gas tokens :
                           <ul class={'notification-gas-tokens'}>
                             {getSuggestedGasTokensOfSpeed(suggestedGasTokens, selectedGasSpeed).map((t, index) => {
                               return <li key={index}>
-                                <span className={'gas-token-suggestion'} onClick={() => toggleTokenSelection(t.address, t.minimumSelectionAmount)}>
+                                <span className={'gas-token-suggestion'}
+                                      onClick={() => toggleTokenSelection(t.address, t.minimumSelectionAmount)}>
                                   {t.name}
-                                  <span className={'gas-token-amount'}> (min {t.minimumSelectionAmount.toFixed(6)})</span>
+                                  <span
+                                    className={'gas-token-amount'}> (min {t.minimumSelectionAmount.toFixed(6)})</span>
                                 </span>
                               </li>
                             })}
@@ -618,50 +593,50 @@ const AssetsMigrationSelector = ({ signerAccount, identityAccount, network, setI
                       </ul>
                       <table className={'gas-estimation-details'}>
                         <tbody>
-                          <tr>
-                            <td>
-                              Migration fee
-                              {
-                                (!!estimatedGasFees.transfersCount || !!estimatedGasFees.permitsCount) &&
-                                <span className={'migration-actions'}>
+                        <tr>
+                          <td>
+                            Migration fee
+                            {
+                              (!!estimatedGasFees.transfersCount || !!estimatedGasFees.permitsCount) &&
+                              <span className={'migration-actions'}>
                                   (
-                                  {
-                                    !!estimatedGasFees.transfersCount &&
-                                    <span>{estimatedGasFees.transfersCount} transfer{estimatedGasFees.transfersCount > 1 && 's'}{!!estimatedGasFees.permitsCount && ', '}</span>
-                                  }
-                                  {
-                                    !!estimatedGasFees.permitsCount &&
-                                    <span>{estimatedGasFees.permitsCount} permit{estimatedGasFees.permitsCount > 1 && 's'}</span>
-                                  }
-                                  )
+                                {
+                                  !!estimatedGasFees.transfersCount &&
+                                  <span>{estimatedGasFees.transfersCount} transfer{estimatedGasFees.transfersCount > 1 && 's'}{!!estimatedGasFees.permitsCount && ', '}</span>
+                                }
+                                {
+                                  !!estimatedGasFees.permitsCount &&
+                                  <span>{estimatedGasFees.permitsCount} permit{estimatedGasFees.permitsCount > 1 && 's'}</span>
+                                }
+                                )
                                 </span>
-                              }
-                            </td>
-                            <td
-                              className={'gas-estimation-details-amount'}>${estimatedGasFees.gasFees[selectedGasSpeed].migrationTransactionsCostUSD.toFixed(2)}</td>
-                          </tr>
-                          <tr>
-                            <td>
-                              Signer fee
-                              {
-                                (!!!!estimatedGasFees.nativeTransfersCount || !!estimatedGasFees.approvalCounts) &&
-                                <span className={'migration-actions'}>
+                            }
+                          </td>
+                          <td
+                            className={'gas-estimation-details-amount'}>${estimatedGasFees.gasFees[selectedGasSpeed].migrationTransactionsCostUSD.toFixed(2)}</td>
+                        </tr>
+                        <tr>
+                          <td>
+                            Signer fee
+                            {
+                              (!!!!estimatedGasFees.nativeTransfersCount || !!estimatedGasFees.approvalCounts) &&
+                              <span className={'migration-actions'}>
                                   (
-                                  {
-                                    !!estimatedGasFees.nativeTransfersCount &&
-                                    <span>{estimatedGasFees.nativeTransfersCount} transfer{!!estimatedGasFees.approvalCounts && ', '}</span>
-                                  }
-                                  {
-                                    !!estimatedGasFees.approvalCounts &&
-                                    <span>{estimatedGasFees.approvalCounts} approvals</span>
-                                  }
-                                  )
+                                {
+                                  !!estimatedGasFees.nativeTransfersCount &&
+                                  <span>{estimatedGasFees.nativeTransfersCount} transfer{!!estimatedGasFees.approvalCounts && ', '}</span>
+                                }
+                                {
+                                  !!estimatedGasFees.approvalCounts &&
+                                  <span>{estimatedGasFees.approvalCounts} approvals</span>
+                                }
+                                )
                                 </span>
-                              }
-                            </td>
-                            <td
-                              className={'gas-estimation-details-amount'}>${estimatedGasFees.gasFees[selectedGasSpeed].signerTransactionsCostUSD.toFixed(2)}</td>
-                          </tr>
+                            }
+                          </td>
+                          <td
+                            className={'gas-estimation-details-amount'}>${estimatedGasFees.gasFees[selectedGasSpeed].signerTransactionsCostUSD.toFixed(2)}</td>
+                        </tr>
                         </tbody>
                       </table>
                     </div>
@@ -672,7 +647,6 @@ const AssetsMigrationSelector = ({ signerAccount, identityAccount, network, setI
       }
     </div>
   )
-
 }
 
 export default AssetsMigrationSelector
