@@ -125,6 +125,7 @@ let tokens = {
 }
 
 const getDefaultTokensItems = network => {
+    if (!tokens[network]) return []
     return [
         ...tokens[network].map(t => ({
             address: t.baseTokenAddress,
