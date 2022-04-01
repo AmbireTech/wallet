@@ -45,7 +45,7 @@ const AssetsMigration = ({ addRequest, selectedAccount, accounts, network, hideM
       }
       <div id='assets-migration'>
         {
-          step === 0 && /*!selectedTokens.length*/ <AssetsMigrationSelector
+          step === 0 && <AssetsMigrationSelector
             signerAccount={currentAccount.signer.address}
             identityAccount={selectedAccount}
             network={network}

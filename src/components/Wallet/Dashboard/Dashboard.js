@@ -53,7 +53,7 @@ export default function Dashboard({ portfolio, selectedNetwork, selectedAccount,
             }))
             .filter(({ value }) => value > 0);
 
-        const totalProtocols = portfolio.protocols.map(({ assets }) =>
+        const totalProtocols = portfolio.protocols.map(({ assets }) => 
             assets
                 .map(({ balanceUSD }) => balanceUSD)
                 .reduce((acc, curr) => acc + curr, 0))
@@ -90,7 +90,7 @@ export default function Dashboard({ portfolio, selectedNetwork, selectedAccount,
                     <div className="title">Balance</div>
                     <div className="content">
                         {
-                            portfolio.isBalanceLoading ?
+                            portfolio.isBalanceLoading ? 
                                 <Loading/>
                                 :
                                 <Balances

@@ -3,8 +3,8 @@ import { fetchGet } from 'lib/fetch'
 import TokenList from 'consts/tokenList'
 import {ZERO_ADDRESS} from 'consts/specialAddresses'
 
-//not sure if I should put this as a lib or in a hook useAssetMigrationDetector()
 export default function assetMigrationDetector({ networkId, account }) {
+  //First pass
   return fetchGet(`${VELCRO_API_ENDPOINT}/protocols/tokens/balances?addresses[]=${account}&network=${networkId}&api_key=${ZAPPER_API_KEY}&newBalances=true`)
     .then(velcroResponse => {
 
@@ -12,28 +12,43 @@ export default function assetMigrationDetector({ networkId, account }) {
       if (!velcroResponse[signer_]) return []
       if (!velcroResponse[signer_].products[0]) return []
 
-      //SKIP NATIVE
-      const assets = velcroResponse[signer_].products[0].assets
-        //.filter(a => a.tokens[0].address !== '0x0000000000000000000000000000000000000000')
-        .filter(a => a.tokens[0].address.toLowerCase() !== '0x1f9840a85d5aF5bf1D1762F925BDADdC4201F984'.toLowerCase())//debug only TODO remove
+      //FILTER with TokenList
+      const filteredAssets = velcroResponse[signer_].products[0].assets
         .filter(a => {
           return TokenList[networkId].find(t => t.address.toLowerCase() === a.tokens[0].address.toLowerCase())
         })
 
-      return assets.map(a => {
-        return {
-          name: a.tokens[0].symbol,
-          icon: a.tokens[0].tokenImageUrl,
-          address: a.tokens[0].address.toLowerCase(),
-          native: a.tokens[0].address === ZERO_ADDRESS,
-          decimals: a.tokens[0].decimals,
-          availableBalance: a.tokens[0].balanceRaw,
-          balanceUSD: a.tokens[0].balanceUSD,
-          rate: a.tokens[0].balanceUSD / a.tokens[0].balanceRaw
-        }
-      })
+      //Second pass to get real time data
+      const customTokens = filteredAssets.map(a => ({
+        address: a.tokens[0].address,
+        symbol: a.tokens[0].symbol,
+        decimals: a.tokens[0].decimals,
+      }))
+      const urlCustomTokens = `${VELCRO_API_ENDPOINT}/protocols/tokens/balances?addresses[]=${account}&network=${networkId}&api_key=${ZAPPER_API_KEY}&customTokens=${JSON.stringify(customTokens)}`
+      return fetchGet(urlCustomTokens)
+        .then(finalResponse => {
+          const filteredAssets = finalResponse[signer_]?.products[0]?.assets.filter(a => {
+            return TokenList[networkId].find(t => t.address.toLowerCase() === a.tokens[0].address.toLowerCase())
+          })
+
+          return filteredAssets.map(a => {
+            return {
+              name: a.tokens[0].symbol,
+              icon: a.tokens[0].tokenImageUrl,
+              address: a.tokens[0].address.toLowerCase(),
+              native: a.tokens[0].address === ZERO_ADDRESS,
+              decimals: a.tokens[0].decimals,
+              availableBalance: a.tokens[0].balanceRaw,
+              balanceUSD: a.tokens[0].balanceUSD,
+              rate: a.tokens[0].balanceUSD / a.tokens[0].balanceRaw
+            }
+          })
+        })
+        .catch(err => {
+          throw Error('Could not get customToken assets from velcro')
+        })
     })
     .catch(err => {
-      throw Error('Could not get assets from velcro', err)
+      throw Error('Could not get assets from velcro')
     })
 }
