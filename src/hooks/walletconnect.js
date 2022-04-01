@@ -127,7 +127,7 @@ export default function useWalletConnect ({ account, chainId, initialUri, allNet
     stateRef.current.maybeUpdateSessions = maybeUpdateSessions
 
     // New connections
-    const connect = useCallback(connectorOpts => {
+    const connect = useCallback(async connectorOpts => {
         if (connectors[connectorOpts.uri]) {
             addToast('dApp already connected')
             return connectors[connectorOpts.uri]
@@ -139,6 +139,10 @@ export default function useWalletConnect ({ account, chainId, initialUri, allNet
                 cryptoLib,
                 sessionStorage: noopSessionStorage
             })
+
+            if (!connector.connected) {
+                await connector.createSession();
+            }
         } catch(e) {
             console.error(e)
             addToast(`Unable to connect to ${connectorOpts.uri}: ${e.message}`, { error: true })
