@@ -183,8 +183,8 @@ export default function useWalletConnect ({ account, chainId, initialUri, allNet
                 return
             }
 
-            await wait(600)
-            
+            await wait(1000)
+
             // sessionStart is used to check if dApp disconnected immediately
             sessionStart = Date.now()
             connector.approveSession({
@@ -192,7 +192,7 @@ export default function useWalletConnect ({ account, chainId, initialUri, allNet
                 chainId: stateRef.current.chainId,
             })
 
-            await wait(600)
+            await wait(1000)
             
             // It's safe to read .session right after approveSession because 1) approveSession itself normally stores the session itself
             // 2) connector.session is a getter that re-reads private properties of the connector; those properties are updated immediately at approveSession
