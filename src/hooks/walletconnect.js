@@ -183,6 +183,8 @@ export default function useWalletConnect ({ account, chainId, initialUri, allNet
                 return
             }
 
+            await wait(600)
+            
             // sessionStart is used to check if dApp disconnected immediately
             sessionStart = Date.now()
             connector.approveSession({
