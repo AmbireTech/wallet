@@ -169,6 +169,7 @@ Additionally, there's an ongoing [Immunefi bug bounty](https://immunefi.com/boun
 * QuickAccManager: 0xfF3f6D14DF43c112aB98834Ee1F82083E07c26BF
 * Batcher: 0x460fad03099f67391d84c9cc0ea7aa2457969cea
 * WALLET token: 0x88800092ff476844f74dc2fc427974bbee2794ae
+* xWALLET staking: 0x47Cd7E91C3CBaAF266369fe8518345fc4FC12935
 * SupplyController: 0xc53af25f831f31ad6256a742b3f0905bc214a430
 
 ## Change log
@@ -274,3 +275,10 @@ Additionally, there's an ongoing [Immunefi bug bounty](https://immunefi.com/boun
 ### v0.4.5
 * Improvements to $WALLET staking: better stats
 * Ability to hide tokens in the dashboard
+
+### v0.5.0
+* Support UnstoppableDomains as a transaction address
+* ADX staking card improvements
+* Kriptomat as new on-ramp provider
+* Added Hop.exchange LP tokens for wallet rewards
+* Provided token prices for moonbeam network
