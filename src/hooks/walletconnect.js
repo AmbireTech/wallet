@@ -136,7 +136,6 @@ export default function useWalletConnect ({ account, chainId, initialUri, allNet
         }
         let connector
         try {
-            console.log(connectorOpts.uri)
             connector = connectors[connectorOpts.uri] = new WalletConnectCore({
                 connectorOpts,
                 cryptoLib,
