@@ -18,7 +18,7 @@ const HideTokenModel = ({ network, account, portfolio }) => {
     const [tokenDetails, setTokenDetails] = useState(null)
     const [showError, setShowError] = useState(false)
 
-    const disabled = !tokenDetails || !(tokenDetails.symbol && tokenDetails.decimals)
+    const disabled = !tokenDetails
 
     const onInput = addressOrSymbol => {
         setTokenDetails(null)
