@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { ZAPPER_API_KEY } from 'config';
 import { fetchGet } from 'lib/fetch';
+import { roundFloatingNumber } from 'lib/formatters';
 import { ZAPPER_API_ENDPOINT } from 'config'
 import supportedProtocols from 'consts/supportedProtocols';
 import { useToasts } from 'hooks/toasts'
@@ -72,6 +73,7 @@ const filterByHiddenTokens = (tokens, hiddenTokens) => {
 export default function usePortfolio({ currentNetwork, account, useStorage }) {
     const { addToast } = useToasts()
 
+    const rpcTokensLastUpdated = useRef();
     const currentAccount = useRef();
     const [balancesByNetworksLoading, setBalancesByNetworksLoading] = useState({});    
     const [otherProtocolsByNetworksLoading, setOtherProtocolsByNetworksLoading] = useState({});    
@@ -136,6 +138,8 @@ export default function usePortfolio({ currentNetwork, account, useStorage }) {
                 setBalancesByNetworksLoading(prev => ({ ...prev, [currentNetwork]: false }))
             }
 
+            rpcTokensLastUpdated.current = Date.now()
+
         } catch(e) {
             console.error('supplementTokensDataFromNetwork failed', e)
             // In case of error set loading indicator to false
@@ -163,11 +167,23 @@ export default function usePortfolio({ currentNetwork, account, useStorage }) {
                     const balance = await getBalances(ZAPPER_API_KEY, network, 'tokens', account, balancesProvider)
                     if (!balance) return null
 
-                    const { meta, products } = Object.values(balance)[0]
+                    const { meta, products, systemInfo } = Object.values(balance)[0]
+                    
+                    // We should skip the tokens update, in the case Velcro returns a cached data, which is more outdated than the already fetched RPC data.
+                    // source 1 means Zapper, 2 means Covalent, 2.1 means Covalent from Velcro cache.
+                    const shouldSkipUpdate = systemInfo.source > 2 && systemInfo.updateAt < rpcTokensLastUpdated.current
+
+                    if (shouldSkipUpdate) return null
                     
                     const extraTokensAssets = getExtraTokensAssets(account, network) // Add user added extra token to handle
                     let assets = [
-                        ...products.map(({ assets }) => assets.map(({ tokens }) => tokens)).flat(2),
+                        ...products.map(({ assets }) => assets.map(({ tokens }) => tokens.map(token => ({
+                            ...token,
+                            // balanceOracle fixes the number to the 10 decimal places, so here we should also fix it
+                            balance: token.balance.toFixed(10),
+                            // balanceOracle rounds to the second decimal places, so here we should also round it
+                            balanceUSD: roundFloatingNumber(token.balanceUSD),
+                        })))).flat(2),
                         ...extraTokensAssets
                     ]
                     
@@ -186,13 +202,28 @@ export default function usePortfolio({ currentNetwork, account, useStorage }) {
                     return {
                         network,
                         meta,
-                        assets
+                        assets,
+                        systemInfo,
                     }
                 } catch(e) {
                     console.error('Balances API error', e)
                     failedRequests++
                 }
             }))).filter(data => data)
+
+            updatedTokens.map(networkTokens => {
+                return networkTokens.assets = filterByHiddenTokens(networkTokens.assets, hiddenTokens)
+            })
+
+            const updatedNetworks = updatedTokens.map(({ network }) => network)
+
+            // Prevent race conditions
+            if (currentAccount.current !== account) return
+
+            setTokensByNetworks(tokensByNetworks => ([
+                ...tokensByNetworks.filter(({ network }) => !updatedNetworks.includes(network)),
+                ...updatedTokens
+            ]))
 
             if (!currentNetwork) fetchSupplementTokenData(updatedTokens)
             
@@ -354,10 +385,10 @@ export default function usePortfolio({ currentNetwork, account, useStorage }) {
             a[e.address] = ++a[e.address] || 0
             return a
         }, {})
-        
+
         // filters by non duplicated objects or takes the one of dup but with a price greater than 0
         tokens = tokens.filter(e => !lookup[e.address] || (lookup[e.address] && e.price))
-        
+
         return tokens
     }
 
@@ -384,10 +415,10 @@ export default function usePortfolio({ currentNetwork, account, useStorage }) {
     useEffect(() => {
         try {
             const tokens = tokensByNetworks.find(({ network }) => network === currentNetwork)
-            
+
             if (tokens) {
                 tokens.assets = removeDuplicatedAssets(tokens.assets)
-                setTokens(tokens.assets) 
+                setTokens(tokens.assets)
             }
 
             const balanceByNetworks = tokensByNetworks.map(({ network, meta, assets }) => {

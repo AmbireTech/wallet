@@ -8,7 +8,7 @@ import Providers from './Providers/Providers'
 
 import networks from 'consts/networks'
 
-export default function Deposit({ selectedAcc, selectedNetwork }) {
+export default function Deposit({ selectedAcc, selectedNetwork, relayerURL }) {
     const networkDetails = networks.find(({ id }) => id === selectedNetwork)
     const [qrCodeUrl, setQrCodeUrl] = useState('')
 
@@ -67,7 +67,7 @@ export default function Deposit({ selectedAcc, selectedNetwork }) {
                 <div className="description">
                     Deposit with credit card to your account directly using one of our partners
                 </div>
-                <Providers walletAddress={selectedAcc} networkDetails={networkDetails}/>
+                <Providers walletAddress={selectedAcc} networkDetails={networkDetails} relayerURL={relayerURL}/>
             </div>
         </section>
     )
