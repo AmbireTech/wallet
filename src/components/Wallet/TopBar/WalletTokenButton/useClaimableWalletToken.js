@@ -27,11 +27,16 @@ const useClaimableWalletToken = ({ account = {}, network, addRequest }) => {
 
         (async () => {
             const toNum = x => parseInt(x.toString()) / 1e18
-            const [mintableVesting, claimed, claimedInitial] = await Promise.all([
+            const [mintableVesting, claimed] = await Promise.all([
                 vestingEntry ? await supplyController.mintableVesting(vestingEntry.addr, vestingEntry.end, vestingEntry.rate).then(toNum) : null,
                 initialClaimableEntry ? await supplyController.claimed(initialClaimableEntry.addr).then(toNum) : null,
-                initialClaimableEntry ? await supplyControllerOld.claimed(initialClaimableEntry.addr).then(toNum) : null,
             ])
+
+            const claimedInitial = initialClaimableEntry 
+                ? (initialClaimableEntry.fromBalanceClaimable || 0) 
+                    + (initialClaimableEntry.fromADXClaimable || 0) 
+                    - toNum(initialClaimableEntry.totalClaimable || 0)
+                : null
 
             return { mintableVesting, claimed, claimedInitial  }
         })()
