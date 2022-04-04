@@ -43,7 +43,7 @@ export default function Wallet(props) {
     },
     {
       path: '/deposit',
-      component: <Deposit selectedAcc={props.selectedAcc} selectedNetwork={props.network.id} />
+      component: <Deposit selectedAcc={props.selectedAcc} selectedNetwork={props.network.id} relayerURL={props.relayerURL} />
     },
     {
       path: '/transfer/:tokenAddressOrSymbol?',
