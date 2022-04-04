@@ -13,7 +13,6 @@ const InputModal = ({ title, inputs, selectedNetwork, onClose }) => {
     const timer = useRef(null)
 
     const inputsFields = inputs.map(input => ({ ...input, ref: createRef() }))
-
     const getUDomain = async(value) => {    
         return await resolveUDomain(value, null, selectedNetwork.unstoppableDomainsChain) 
     }
@@ -24,20 +23,17 @@ const InputModal = ({ title, inputs, selectedNetwork, onClose }) => {
         }
 
         const validateForm = async() => {
-            const isFound = inputsFields.find(item => item.label === 'Name/Unstoppable domainsⓇ')
-            
+            const isFound = inputsFields.find(item => item.label === 'Address / Unstoppable domainsⓇ')
+            let uDAddr = ''
             if (isFound) {
-                const uDAddr = await getUDomain(isFound.ref.current.value) 
+                if (!isFound.ref) return
+                uDAddr = await getUDomain(isFound.ref.current.value) 
                 timer.current = null
-
-                if (uDAddr) {
-                    inputsFields.map(({ label, ref }) => (label === 'Address') ? ref.current.value = uDAddr : '')
-                }
                 setUDAddress(uDAddr)
             }
             
             const isFormValid = inputsFields
-                .map(({ ref, validate }) => ref.current.value && (validate ? validate(ref.current.value) : true))
+                .map(({ ref, validate }) => ref && (validate ? validate(uDAddr !== '' ? uDAddr : ref.current.value) : true))
                 .every(v => v === true)
             setDisabled(!isFormValid)
         }
@@ -48,7 +44,8 @@ const InputModal = ({ title, inputs, selectedNetwork, onClose }) => {
     }
 
     const onConfirm = () => {
-        const values = inputsFields.map(({ ref }) => ref.current.value)
+        let values = inputsFields.map(({ ref }) => ref.current.value)
+        if (uDAddress) values.push(uDAddress ? true : false)
         onClose && onClose(values)
         hideModal()
     }
@@ -62,13 +59,13 @@ const InputModal = ({ title, inputs, selectedNetwork, onClose }) => {
         <Modal id="input-modal" title={title} buttons={buttons}>
             {
                 inputsFields.map(({ id, label, placeholder, ref }) => (
-                    <>
-                        <TextInput key={id || label} label={label} placeholder={placeholder} onInput={onInput} ref={ref}/>
-                        {(label === 'Name/Unstoppable domainsⓇ') && 
+                    <div key={id + label}>
+                        <TextInput label={label} placeholder={placeholder} onInput={onInput} ref={ref}/>
+                        {(label === 'Address / Unstoppable domainsⓇ') && 
                             <ToolTip label={!uDAddress ? 'You can use Unstoppable domainsⓇ' : 'Valid Unstoppable domainsⓇ domain'}>
-                                <div id="udomains-logo" className={uDAddress ? 'ud-logo-active ' : ''} />
+                                <span id="udomains-logo" className={uDAddress ? 'ud-logo-active ' : ''} />
                             </ToolTip>}
-                    </>
+                    </div>
                 ))
             }
         </Modal>

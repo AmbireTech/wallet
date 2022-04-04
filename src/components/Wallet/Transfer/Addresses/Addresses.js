@@ -11,11 +11,11 @@ const Addresses = ({ addresses, addAddress, removeAddress, onSelectAddress, sele
     const { showModal } = useModals()
 
     const modalInputs = [
-        { label: 'Name/Unstoppable domainsⓇ', placeholder: 'My Address' },
-        { label: 'Address', placeholder: '0x', validate: value => isValidAddress(value) } 
+        { label: 'Name', placeholder: 'My Address' },
+        { label: 'Address / Unstoppable domainsⓇ', placeholder: '0x / example.example', validate: value => isValidAddress(value) } 
     ]
 
-    const inputModal = <InputModal title="Add New Address" selectedNetwork={selectedNetwork} inputs={modalInputs} onClose={([name, address]) => addAddress(name, address)}></InputModal>
+    const inputModal = <InputModal title="Add New Address" selectedNetwork={selectedNetwork} inputs={modalInputs} onClose={([name, address, isUd]) => addAddress(name, address, isUd)}></InputModal>
     const showInputModal = () => showModal(inputModal)
 
     return (

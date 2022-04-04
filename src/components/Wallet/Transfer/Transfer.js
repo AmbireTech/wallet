@@ -211,6 +211,7 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
                                         newAddress={newAddress}
                                         onClose={() => setNewAddress(null)}
                                         onSelectAddress={address => setAddress(address)}
+                                        selectedNetwork={selectedNetwork}
                                     />
                                 </div>
                                 { validationFormMgs.messages.address && 
