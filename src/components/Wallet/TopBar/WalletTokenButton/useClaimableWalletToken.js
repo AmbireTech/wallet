@@ -7,12 +7,14 @@ import WALLETVestings from 'consts/WALLETVestings'
 import WALLETInitialClaimableRewards from 'consts/WALLETInitialClaimableRewards'
 import WALLETSupplyControllerABI from 'consts/WALLETSupplyControllerABI'
 
+const supplyControllerOldAddress = '0x94b668337cE8299272Ca3CB0c70F3d786A5b6CE5'
 const supplyControllerAddress = '0xc53af25f831f31ad6256a742b3f0905bc214a430'
 const supplyControllerInterface = new Interface(WALLETSupplyControllerABI)
 
 const useClaimableWalletToken = ({ account = {}, network, addRequest }) => {
     const provider = useMemo(() => getProvider('ethereum'), [])
     const supplyController = useMemo(() => new Contract(supplyControllerAddress, WALLETSupplyControllerABI, provider), [provider])
+    const supplyControllerOld = useMemo(() => new Contract(supplyControllerOldAddress, WALLETSupplyControllerABI, provider), [provider])
     const initialClaimableEntry = WALLETInitialClaimableRewards.find(x => x.addr === account.id)
     const initialClaimable = initialClaimableEntry ? initialClaimableEntry.totalClaimable / 1e18 : 0
     const vestingEntry = WALLETVestings.find(x => x.addr === account.id)
@@ -25,18 +27,20 @@ const useClaimableWalletToken = ({ account = {}, network, addRequest }) => {
 
         (async () => {
             const toNum = x => parseInt(x.toString()) / 1e18
-            const [mintableVesting, claimed] = await Promise.all([
+            const [mintableVesting, claimed, claimedInitial] = await Promise.all([
                 vestingEntry ? await supplyController.mintableVesting(vestingEntry.addr, vestingEntry.end, vestingEntry.rate).then(toNum) : null,
-                initialClaimableEntry ? await supplyController.claimed(initialClaimableEntry.addr).then(toNum) : null
+                initialClaimableEntry ? await supplyController.claimed(initialClaimableEntry.addr).then(toNum) : null,
+                initialClaimableEntry ? await supplyControllerOld.claimed(initialClaimableEntry.addr).then(toNum) : null,
             ])
-            return { mintableVesting, claimed }
+
+            return { mintableVesting, claimed, claimedInitial  }
         })()
             .then(status => setCurrentClaimStatus(status))
             .catch(e => {
                 console.error('getting claim status', e)
                 setCurrentClaimStatus({ error: e.message || e })
             })
-    }, [supplyController, vestingEntry, initialClaimableEntry, refreshSlot])
+    }, [supplyController, vestingEntry, initialClaimableEntry, refreshSlot, supplyControllerOld])
 
     const claimableNow = (initialClaimable - (currentClaimStatus.claimed || 0) < 0) ? 0 : (initialClaimable - (currentClaimStatus.claimed || 0))
     const disabledReason = network.id !== 'ethereum' ? 'Switch to Ethereum to claim' : (
