@@ -339,8 +339,8 @@ const AmbireTokensCard = ({ networkId, accountId, tokens, rewardsData, addReques
                 )
 
                 let leavePendingToUnlockOrReadyToWithdraw = null 
-                if (leavesPendingToUnlock.length) leavePendingToUnlockOrReadyToWithdraw = leavesPendingToUnlock[0]
-                else if (leavesReadyToWithdraw.length) leavePendingToUnlockOrReadyToWithdraw = leavesReadyToWithdraw[0]
+                if (leavesReadyToWithdraw.length) leavePendingToUnlockOrReadyToWithdraw = leavesReadyToWithdraw[0]
+                else if (leavesPendingToUnlock.length) leavePendingToUnlockOrReadyToWithdraw = leavesPendingToUnlock[0]
                 
                 if (leavePendingToUnlockOrReadyToWithdraw) {
                     const {
