@@ -59,7 +59,7 @@ async function supplementTokensDataFromNetwork({ walletAddr, network, tokensData
     const tokenBalances = (await Promise.all(calls.map(callTokens => {
         return getTokenListBalance({ walletAddr, tokens: callTokens, network, updateBalance })
     }))).flat().filter(t => {
-        return extraTokens.some(et => t.address === et.address) ? true : (parseFloat(t.balance) > 0)
+        return extraTokens.some(et => t.address === et.address) ? true : t.balanceRaw > 0
     })
     return tokenBalances
 }
@@ -429,7 +429,7 @@ export default function usePortfolio({ currentNetwork, account, useStorage }) {
         refreshTokensIfVisible()
     }, [currentNetwork, refreshTokensIfVisible])
 
-    // Refresh balance every 80s if visible
+    // Refresh balance every 90s if visible
     // NOTE: this must be synced (a multiple of) supplementing, otherwise we can end up with weird inconsistencies
     useEffect(() => {
         const refreshInterval = setInterval(refreshTokensIfVisible, 90000)
