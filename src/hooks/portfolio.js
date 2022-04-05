@@ -416,6 +416,12 @@ export default function usePortfolio({ currentNetwork, account, useStorage }) {
         }
     }, [currentNetwork, tokensByNetworks, otherProtocolsByNetworks, addToast])
 
+    // Reset `rpcTokensLastUpdated` on a network change, because its value is regarding the previous network,
+    // and it's not useful for the current network.
+    useEffect(() => {
+        rpcTokensLastUpdated.current = null
+    }, [currentNetwork])
+
     // Refresh tokens on network change
     useEffect(() => {
         refreshTokensIfVisible()
