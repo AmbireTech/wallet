@@ -151,9 +151,11 @@ export default function usePortfolio({ currentNetwork, account, useStorage }) {
 
                     const { meta, products, systemInfo } = Object.values(balance)[0]
 
-                    // We should skip the tokens update, in the case Velcro returns a cached data, which is more outdated than the already fetched RPC data.
+                    // We should skip the tokens update for the current network,
+                    // in the case Velcro returns a cached data, which is more outdated than the already fetched RPC data.
                     // source 1 means Zapper, 2 means Covalent, 2.1 means Covalent from Velcro cache.
-                    const shouldSkipUpdate = systemInfo.source > 2 && systemInfo.updateAt < rpcTokensLastUpdated.current
+                    const isCurrentNetwork = network === currentNetwork
+                    const shouldSkipUpdate = isCurrentNetwork && (systemInfo.source > 2 && systemInfo.updateAt < rpcTokensLastUpdated.current)
 
                     if (shouldSkipUpdate) return null
 
