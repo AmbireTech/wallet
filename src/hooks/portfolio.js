@@ -165,7 +165,7 @@ export default function usePortfolio({ currentNetwork, account, useStorage }) {
                         ...products.map(({ assets }) => assets.map(({ tokens }) => tokens.map(token => ({
                             ...token,
                             // balanceOracle fixes the number to the 10 decimal places, so here we should also fix it
-                            balance: token.balance.toFixed(10),
+                            balance: Number(token.balance.toFixed(10)),
                             // balanceOracle rounds to the second decimal places, so here we should also round it
                             balanceUSD: roundFloatingNumber(token.balanceUSD),
                         })))).flat(2),
