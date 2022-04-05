@@ -29,7 +29,7 @@ async function getTokenListBalance ({walletAddr, tokens, network, updateBalance}
         tokenImageUrl: newTokenBalance.tokenImageUrl || getTokenIcon(network, newTokenBalance.address),
         isHidden: t.isHidden
       } : t)
-    }).filter (t => t && t.balance) //&& parseFloat(t.balance) > 0
+    }).filter (t => t && t.balanceRaw > 0) //&& parseFloat(t.balance) > 0
     if (updateBalance && typeof updateBalance === 'function') updateBalance(newBalance)
     return newBalance
   } else {

@@ -59,7 +59,7 @@ async function supplementTokensDataFromNetwork({ walletAddr, network, tokensData
     const tokenBalances = (await Promise.all(calls.map(callTokens => {
         return getTokenListBalance({ walletAddr, tokens: callTokens, network, updateBalance })
     }))).flat().filter(t => {
-        return extraTokens.some(et => t.address === et.address) ? true : (parseFloat(t.balance) > 0)
+        return extraTokens.some(et => t.address === et.address) ? true : t.balanceRaw > 0
     })
     return tokenBalances
 }
