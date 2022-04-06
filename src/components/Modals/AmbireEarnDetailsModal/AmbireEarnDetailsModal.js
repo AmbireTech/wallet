@@ -15,7 +15,7 @@ const AmbireEarnDetailsModal = ({ title = 'Details', apy, accountId, msToDaysHou
         isLoading
         } = useAmbireEarnDetails({accountId, addresses, tokenLabel})
 
-    const { balance, 
+    const { 
         poolShare, 
         allTimeRewards, 
         totalDeposit, 
@@ -28,7 +28,9 @@ const AmbireEarnDetailsModal = ({ title = 'Details', apy, accountId, msToDaysHou
         rageLeavesWithdrawnWalletTotal,
         totalSharesInTransfersWalletValue,
         totalSharesOutTransfersWalletValue,
-        remainingTime } = details
+        remainingTime, 
+        currentBalanceWalletAtCurrentShareValue
+    } = details
     const buttons = (<Button clear small icon={<MdClose />} onClick={hideModal}>Close</Button>)
    
     return (
@@ -39,12 +41,11 @@ const AmbireEarnDetailsModal = ({ title = 'Details', apy, accountId, msToDaysHou
                     <div>Annual Percentage Yield (APY)</div><div>{apy}%</div>
                 </div>
                 <div className="wrapper odd-rows-bg">
-                    <div>Balance</div>
+                    <div>Current Available Balance</div>
                     <div>
-                        {/* The tool tip will be activated after improvements of handling transactions */}
-                        {/* <ToolTip label="* Warning: Because you have sent/received staking share token (xWallet pool), the reward shown may be less than your actual reward."> */}
-                            {parseFloat(balance).toFixed(4)} {tokenLabel} (Pool share: {(poolShare * 100).toFixed(2)}%)
-                        {/* </ToolTip> */}
+                        <ToolTip label="* Warning: The pool share value may includes your pending to unlock tokens.">
+                            {parseFloat(currentBalanceWalletAtCurrentShareValue).toFixed(4)} {tokenLabel} (Pool share*: {(poolShare * 100).toFixed(2)}%)
+                        </ToolTip>
                     </div>
                 </div>
                 <div className="wrapper">
