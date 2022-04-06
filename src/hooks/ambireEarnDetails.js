@@ -597,6 +597,10 @@ const useAmbireEarnDetails = ({accountId, addresses, tokenLabel}) => {
         }
 
         return {
+            currentBalanceWalletAtCurrentShareValue: utils.formatUnits(
+                stats.currentBalanceWalletAtCurrentShareValue.toString(),
+                18
+            ),
             balance: utils.formatUnits(
                 stats.currentBalanceWallet.toString(),
                 18
