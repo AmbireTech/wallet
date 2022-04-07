@@ -128,6 +128,14 @@ export default function useWalletConnect ({ account, chainId, initialUri, allNet
     // we need this so we can invoke the latest version from any event handler
     stateRef.current.maybeUpdateSessions = maybeUpdateSessions
 
+    const clearWcClipboard = async () => {
+        const clipboard = await getClipboardText()
+
+        if (clipboard && isWcUri(clipboard)) {
+            navigator.clipboard.writeText('')
+        }
+    }
+
     // New connections
     const connect = useCallback(async connectorOpts => {
         if (connectors[connectorOpts.uri]) {
@@ -192,12 +200,17 @@ export default function useWalletConnect ({ account, chainId, initialUri, allNet
             })
 
             await wait(1000)
-            
+
             // It's safe to read .session right after approveSession because 1) approveSession itself normally stores the session itself
             // 2) connector.session is a getter that re-reads private properties of the connector; those properties are updated immediately at approveSession
             dispatch({ type: 'connectedNewSession', uri: connectorOpts.uri, session: connector.session })
 
             addToast('Successfully connected to '+connector.session.peerMeta.name)
+
+            // On a successful connection, remove WC uri from the clipboard.
+            // Otherwise, in the case the user disconnects himself from the dApp, but still having the previous WC uri in the clipboard,
+            // then the app will try to connect him with the already invalidated WC uri.
+            clearWcClipboard()
         })
 
         connector.on('transport_error', (error, payload) => {
@@ -376,17 +389,27 @@ function runInitEffects(wcConnect, account, initialUri, addToast) {
     window.wcConnect = uri => wcConnect({ uri })
 
     // @TODO on focus and on user action
-    const clipboardError = e => console.log('non-fatal clipboard/walletconnect err:', e.message)
     const tryReadClipboard = async () => {
         if (!account) return
-        if (isFirefox()) return
-        try {
-            const clipboard = await navigator.clipboard.readText()
-            if (clipboard.startsWith('wc:') && !connectors[clipboard]) wcConnect({ uri: clipboard })
-        } catch(e) { clipboardError(e) }
+
+        const clipboard = await getClipboardText()
+        if (clipboard && isWcUri(clipboard) && !connectors[clipboard]) wcConnect({ uri: clipboard })
     }
 
     tryReadClipboard()
     window.addEventListener('focus', tryReadClipboard)
     return () => window.removeEventListener('focus', tryReadClipboard)
 }
+
+const clipboardError = e => console.log('non-fatal clipboard/walletconnect err:', e.message)
+const getClipboardText = async () => {
+    if (isFirefox()) return false
+
+    try {
+       return await navigator.clipboard.readText()
+    } catch(e) { clipboardError(e) }
+
+    return false
+}
+
+const isWcUri = text => text.startsWith('wc:')
