@@ -12,7 +12,7 @@ const ToolTip = ({ children, label, disabled, className }) => {
     }
 
     const newLineText = text => {
-        return text.split('\n').map(str => <div>{str}</div>)
+        return text.split('\n').map((str, key) => <div key={key}>{str}</div>)
     }
 
     return (
