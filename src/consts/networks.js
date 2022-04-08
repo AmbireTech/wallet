@@ -65,7 +65,7 @@ const networks = [{
 		icon: '/resources/networks/moonriver.png',
 		explorerUrl: 'https://moonriver.moonscan.io/',
 		unstoppableDomainsChain: 'ERC20'
-	}/*, {
+	}, {
 		id: 'arbitrum',
 		chainId: 42161,
 		rpc: 'https://arb1.arbitrum.io/rpc',
@@ -73,7 +73,7 @@ const networks = [{
 		name: 'Arbitrum',
 		icon: '/resources/networks/arbitrum.svg',
 		explorerUrl: 'https://arbiscan.io',
-		unstoppableDomainsChain: 'ERC20
-}*/]
+		unstoppableDomainsChain: 'ERC20'
+}]
 
 export default networks
