@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useReducer, useRef } from 'react'
+import { useCallback, useEffect, useReducer, useRef, useState } from 'react'
 import { useToasts } from 'hooks/toasts'
 import { isFirefox } from 'lib/isFirefox'
 
@@ -34,6 +34,8 @@ export default function useWalletConnect ({ account, chainId, initialUri, allNet
     // This is needed cause of the WalletConnect event handlers
     const stateRef = useRef()
     stateRef.current = { account, chainId }
+
+    const [isConnecting, setIsConnecting] = useState(false)
 
     const [stateStorage, setStateStorage] = useStorage({ key: STORAGE_KEY })
 
@@ -180,6 +182,8 @@ export default function useWalletConnect ({ account, chainId, initialUri, allNet
                 return
             }
 
+            setIsConnecting(true)
+
             // Clear the "dApp tool too long to connect" timeout
             clearTimeout(sessionTimeout)
 
@@ -206,6 +210,8 @@ export default function useWalletConnect ({ account, chainId, initialUri, allNet
             dispatch({ type: 'connectedNewSession', uri: connectorOpts.uri, session: connector.session })
 
             addToast('Successfully connected to '+connector.session.peerMeta.name)
+
+            setIsConnecting(false)
 
             // On a successful connection, remove WC uri from the clipboard.
             // Otherwise, in the case the user disconnects himself from the dApp, but still having the previous WC uri in the clipboard,
@@ -373,7 +379,7 @@ export default function useWalletConnect ({ account, chainId, initialUri, allNet
         connections: state.connections,
         requests: state.requests,
         resolveMany,
-        connect, disconnect
+        connect, disconnect, isConnecting
     }
 }
 
