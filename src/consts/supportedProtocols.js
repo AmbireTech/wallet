@@ -41,13 +41,13 @@ const suportedProtocols = [
         network: 'moonriver',
         protocols: [],
 	    balancesProvider: 'velcro'
-    }
-    /*,
+    },
     {
         network: 'arbitrum',
-        protocols: [],
-        balancesProvider: 'velcro'
-    }*/
+        protocols: ['nft'],
+        balancesProvider: 'velcro',
+        nftsProvider: 'velcro'
+    }
 ]
 
 export default suportedProtocols
