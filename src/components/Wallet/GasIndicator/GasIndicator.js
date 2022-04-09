@@ -23,7 +23,7 @@ const GasIndicator = ({ selectedNetwork, relayerURL }) => {
 
 
   if (gasData) {
-    return (<div className={`gas-info`}>
+    return (<div className={'gas-info'}>
             <span className={'native-price'}>
                 {networks.find(n => n.id === selectedNetwork.id)?.nativeAssetSymbol}: {(Number(gasData.gasFeeAssets.native)).toLocaleString('en-US', {
               minimumFractionDigits: 2
