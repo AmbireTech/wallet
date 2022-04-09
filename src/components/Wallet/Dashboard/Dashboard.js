@@ -8,13 +8,9 @@ import Balances from './Balances/Balances'
 import Protocols from './Protocols/Protocols'
 import Collectibles from './Collectibles/Collectibles'
 import { MdOutlineInfo } from 'react-icons/md'
-import { FaGasPump } from 'react-icons/fa'
 import Promotions from './Promotions/Promotions'
-import { fetchGet } from 'lib/fetch'
-import networks from 'consts/networks'
-import { useModals } from 'hooks'
-import GasDetailsModal from 'components/Modals/GasDetailsModal/GasDetailsModal'
-
+import { useIsWindowMobile } from 'hooks'
+import GasIndicator from 'components/Wallet/GasIndicator/GasIndicator'
 
 const chartSegments = [
     {
@@ -37,13 +33,11 @@ const tabSegments = [
 export default function Dashboard({ portfolio, selectedNetwork, selectedAccount, setNetwork, privateMode, rewardsData, relayerURL }) {
     const history = useHistory()
     const { tabId } = useParams()
-    const { showModal } = useModals()
 
     const [chartTokensData, setChartTokensData] = useState([]);
     const [chartProtocolsData, setChartProtocolsData] = useState([]);
     const [chartType, setChartType] = useState([]);
     const [tab, setTab] = useState(tabId || tabSegments[0].value);
-    const [gasData, setGasData] = useState(null)
 
     useEffect(() => {
         if (!tab || tab === tabSegments[0].value) return history.replace(`/wallet/dashboard`)
@@ -58,7 +52,7 @@ export default function Dashboard({ portfolio, selectedNetwork, selectedAccount,
             }))
             .filter(({ value }) => value > 0);
 
-        const totalProtocols = portfolio.protocols.map(({ assets }) => 
+        const totalProtocols = portfolio.protocols.map(({ assets }) =>
             assets
                 .map(({ balanceUSD }) => balanceUSD)
                 .reduce((acc, curr) => acc + curr, 0))
@@ -77,15 +71,7 @@ export default function Dashboard({ portfolio, selectedNetwork, selectedAccount,
 
     useEffect(() => portfolio.requestOtherProtocolsRefresh(), [portfolio])
 
-    useEffect(() => {
-        const url = `${relayerURL}/gasPrice/${selectedNetwork.id}`
-
-        fetchGet(url).then(gasData => {
-            setGasData(gasData.data)
-        }).catch(err => {
-            console.log('fetch error', err)
-        })
-    }, [relayerURL, selectedNetwork])
+    const isWindowMobile = useIsWindowMobile()
 
     return (
         <section id="dashboard">
@@ -93,26 +79,13 @@ export default function Dashboard({ portfolio, selectedNetwork, selectedAccount,
             <div id="overview">
                 <div id="balance" className="panel">
                     {
-                        gasData &&
-                        <div className={'gas-info'}>
-                            <span className={'native-price'}>
-                                {networks.find(n => n.id === selectedNetwork.id)?.nativeAssetSymbol}: {(Number(gasData.gasFeeAssets.native)).toLocaleString('en-US', {
-                                minimumFractionDigits: 2
-                             })}
-                            </span>
-                            <span className={'gas-price'}
-                                  onClick={() => {
-                                    showModal(<GasDetailsModal gasData={gasData} />)
-                                    }
-                                  }>
-                                <FaGasPump /> {Math.round(gasData.gasPrice['medium'] / 10 ** 9)} Gwei
-                            </span>
-                        </div>
+                        isWindowMobile &&
+                        <GasIndicator selectedNetwork={selectedNetwork} relayerURL={relayerURL} />
                     }
                     <div className="title">Balance</div>
                     <div className="content">
                         {
-                            portfolio.isBalanceLoading ? 
+                            portfolio.isBalanceLoading ?
                                 <Loading/>
                                 :
                                 <Balances

@@ -23,7 +23,6 @@
         gap: 30px;
 
         #balance {
-            position: relative;
             gap: 10px;
         }
     }
@@ -54,30 +53,6 @@
                 padding: 0 10px;
                 opacity: 0.5;
             }
-        }
-    }
-
-    .gas-info {
-        font-size: 0.9em;
-        position: absolute;
-        right: 20px;
-        top: 12px;
-        display: flex;
-        margin-left: auto;
-        gap: 12px;
-        color: $text-container-color;
-
-        .gas-price {
-            cursor: pointer;
-        }
-
-        .native-price {
-            padding-right: 12px;
-            border-right: 1px solid $secondary-accent-color;
-        }
-
-        span svg {
-            color: $secondary-accent-color;
         }
     }
 }
@@ -114,10 +89,5 @@
                 }
             }
         }
-
-      .gas-info {
-        top: 30px;
-        right: 16px;
-      }
     }
 }
