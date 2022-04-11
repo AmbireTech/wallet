@@ -47,6 +47,8 @@ const contracts = [
 	{ name: 'Aave', network: 'ethereum', addr: '0xcc9a0b7c43dc2a5f023bb9b738e45b0ef6b06e04', abiName: 'AaveWethGatewayV2' },
 	{ name: 'Aave', network: 'polygon', addr: '0xbEadf48d62aCC944a06EEaE0A9054A90E5A7dc97' },
 	{ name: 'Aave', network: 'fantom', addr: '0x17d013c19fe25cf4d911ce85ed5f40fe8880f46f' },
+	{ name: 'Aave', network: 'arbitrum', addr: '0xc09e69e79106861df5d289da88349f10e2dc6b5c' },
+	{ name: 'Aave', network: 'avalanche', addr: '0xa938d8536aeed1bd48f548380394ab30aa11b00e' },
 	{ name: 'Movr 1inch', network: 'ethereum', addr: '0x8f9eaee5c5df888aba3c1ab19689a0660d042c6d' },
 	{ name: 'Movr 1inch', network: 'polygon', addr: '0x2fc9c3bf505b74e59a538fe9d67bc1deb4c03d91' },
 	{ name: 'Movr Router', network: 'bsc', addr: '0xc30141B657f4216252dc59Af2e7CdB9D8792e1B0', abiName: 'MovrRouter' },
