@@ -5,8 +5,6 @@ import './GasDetailsModal.scss'
 import { MdClose } from 'react-icons/md'
 import { GAS_SPEEDS } from 'consts/gasSpeeds'
 
-import moment from 'moment'
-
 import { ACTION_GAS_COSTS } from 'consts/actionGasCosts'
 
 const GasDetailsModal = ({ gasData }) => {
@@ -26,13 +24,13 @@ const GasDetailsModal = ({ gasData }) => {
   return (
     <Modal id='gas-details-modal' title={'Gas information'} buttons={buttons}>
       <div className={'gas-details-date'}>
-        Last updated : {moment.utc(gasData.gasPrice.updated * 1 ).format('ddd, DD MMM YYYY HH:mm:ss UTC')}
+        Last updated : { new Date(gasData.gasPrice.updated).toDateString() + ' ' + new Date(gasData.gasPrice.updated).toTimeString().substr(0, 8) }
       </div>
       <div className={'gas-speed-row'}>
         {
-          GAS_SPEEDS.map(speed => {
+          GAS_SPEEDS.map((speed, index) => {
             return (
-              <div className={'gas-speed-block'}>
+              <div className={'gas-speed-block'} key={index}>
                 <div className={'gas-speed-name'}>{speed}</div>
                 <div className={'gas-speed-price'}>
                   {GWEI_SPEEDS[speed]} Gwei
@@ -47,14 +45,14 @@ const GasDetailsModal = ({ gasData }) => {
         <thead>
         <tr>
           <th>Action</th>
-          {GAS_SPEEDS.map(speed => <th>{speed}</th>)}
+          {GAS_SPEEDS.map((speed, index) => <th key={index}>{speed}</th>)}
         </tr>
         </thead>
         <tbody>
         {
-          ACTION_GAS_COSTS.map(a => <tr>
+          ACTION_GAS_COSTS.map((a, index) => <tr key={index}>
             <td>{a.name}</td>
-            {GAS_SPEEDS.map(speed => <td>${(GWEI_SPEEDS[speed] * a.gas / 10 ** 9 * gasData.gasFeeAssets.native).toFixed(2)}</td>)}
+            {GAS_SPEEDS.map((speed, rowIndex) => <td key={rowIndex}>${(GWEI_SPEEDS[speed] * a.gas / 10 ** 9 * gasData.gasFeeAssets.native).toFixed(2)}</td>)}
           </tr>)
         }
         </tbody>

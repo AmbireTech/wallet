@@ -12,6 +12,9 @@
 
   .gas-price {
     cursor: pointer;
+    &:hover {
+      color: $text-color;
+    }
   }
 
   .native-price {
