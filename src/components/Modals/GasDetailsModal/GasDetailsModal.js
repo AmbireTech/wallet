@@ -5,7 +5,7 @@ import './GasDetailsModal.scss'
 import { MdClose } from 'react-icons/md'
 import { GAS_SPEEDS } from 'consts/gasSpeeds'
 
-import { ACTION_GAS_COSTS } from 'consts/actionGasCosts'
+import { ACTION_GAS_COSTS, AMBIRE_OVERHEAD_COST } from 'consts/actionGasCosts'
 
 const GasDetailsModal = ({ gasData }) => {
 
@@ -52,7 +52,7 @@ const GasDetailsModal = ({ gasData }) => {
         {
           ACTION_GAS_COSTS.map((a, index) => <tr key={index}>
             <td>{a.name}</td>
-            {GAS_SPEEDS.map((speed, rowIndex) => <td key={rowIndex}>${(GWEI_SPEEDS[speed] * a.gas / 10 ** 9 * gasData.gasFeeAssets.native).toFixed(2)}</td>)}
+            {GAS_SPEEDS.map((speed, rowIndex) => <td key={rowIndex}>${(GWEI_SPEEDS[speed] * (a.gas + AMBIRE_OVERHEAD_COST) / 10 ** 9 * gasData.gasFeeAssets.native).toFixed(2)}</td>)}
           </tr>)
         }
         </tbody>
