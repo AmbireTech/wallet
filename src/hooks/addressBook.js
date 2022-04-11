@@ -47,17 +47,20 @@ const useAddressBook = ({ accounts, useStorage }) => {
         setStorageAddresses(addresses.filter(({ isAccount }) => !isAccount))
     }, [setAddresses, setStorageAddresses])
 
-    const isKnownAddress = useCallback(address => {
-        if (!address.startsWith('0x')) return true
-        return [
-            ...addresses.map(({ address }) => sha256(address)),
-            ...accounts.map(({ id }) => sha256(id))
-        ].includes(sha256(address))
-    }, [addresses, accounts])
+    const isKnownAddress = useCallback(address => [
+        ...addresses.map(({ address }) => sha256(address)),
+        ...accounts.map(({ id }) => sha256(id))
+    ].includes(sha256(address)), [addresses, accounts])
 
     const addAddress = useCallback((name, address, isUd = false) => {
         if (!name || !address) throw new Error('Address Book: invalid arguments supplied')
-        if (!isUd) {
+        if (isUd) {
+            const isFound = addresses.find(item => item.address === address)
+            if (isFound) {
+                addToast('Address Book: The UD is already added to the Address book', { error: true })
+                return
+            }
+        } else {
             if (!isValidAddress(address)) throw new Error('Address Book: invalid address format')
             if (isKnownTokenOrContract(address)) return addToast('The address you\'re trying to add is a smart contract.', { error: true })
         }
@@ -76,10 +79,12 @@ const useAddressBook = ({ accounts, useStorage }) => {
         addToast(`${address} added to your Address Book.`)
     }, [addresses, addToast, updateAddresses])
 
-    const removeAddress = useCallback((name, address) => {
+    const removeAddress = useCallback((name, address, isUd = false) => {
         if (!name || !address) throw new Error('Address Book: invalid arguments supplied')
-        if (!isValidAddress(address)) throw new Error('Address Book: invalid address format')
-
+        if (!isUd) {
+            if (!isValidAddress(address)) throw new Error('Address Book: invalid address format')
+        }
+        
         const newAddresses = addresses
             .filter(a => !(a.name === name && a.address === address))
 
