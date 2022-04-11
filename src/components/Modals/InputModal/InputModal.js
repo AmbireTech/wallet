@@ -24,7 +24,7 @@ const InputModal = ({ title, inputs, selectedNetwork, onClose }) => {
 
         const validateForm = async() => {
             const isFound = inputsFields.find(item => item.label === 'Address / Unstoppable domainsⓇ')
-            let uDAddr = ''
+            let uDAddr = null
             if (isFound) {
                 if (!isFound.ref) return
                 uDAddr = await getUDomain(isFound.ref.current.value) 
@@ -33,7 +33,7 @@ const InputModal = ({ title, inputs, selectedNetwork, onClose }) => {
             }
             
             const isFormValid = inputsFields
-                .map(({ ref, validate }) => ref && (validate ? validate(uDAddr !== '' ? uDAddr : ref.current.value) : true))
+                .map(({ ref, validate }) => ref && (validate ? validate(uDAddr ? uDAddr : ref.current.value) : true))
                 .every(v => v === true)
             setDisabled(!isFormValid)
         }
