@@ -51,3 +51,5 @@ export const ACTION_GAS_COSTS = [
 	{name: 'Synapse: Bridge', gas: 107664},
 	{name: 'Lido: Stake', gas: 87477 }
 ]
+
+export const AMBIRE_OVERHEAD_COST = 5000
