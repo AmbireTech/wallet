@@ -17,6 +17,14 @@
             font-weight: bold;
             background-color: rgba(255, 255, 255, 0.1);
 
+            .sort-holder {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                .sort-buttons {
+                    display: flex;
+                }
+            }
             .wrapper-btns {
                 display: flex;
                 gap: 10px;
@@ -34,6 +42,18 @@
                 padding: 15px 20px;
                 font-size: 15px;
                 color: white;
+                
+                &[draggable="true"] {
+                    cursor: grab;
+                    cursor: -moz-grab;
+                    cursor: -webkit-grab;
+                }
+
+                &[draggable="true"]:active {
+                    cursor: grabbing;
+                    cursor: -moz-grabbing;
+                    cursor: -webkit-grabbing;
+                }
 
                 &:nth-child(odd) {
                     background-color: rgba(255, 255, 255, 0.04);
@@ -123,6 +143,11 @@
     #protocols-table {
         gap: 20px;
 
+        .title {
+            .sort-holder {
+                flex-direction: column;
+            }
+        }
         .token {
             padding: 10px 15px !important;
             padding-right: 5px !important;
