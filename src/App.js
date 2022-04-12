@@ -47,7 +47,7 @@ function AppInner() {
   const wcUri = useOneTimeQueryParam('uri')
 
   // Signing requests: transactions/signed msgs: all requests are pushed into .requests
-  const { connections, connect, disconnect, requests: wcRequests, resolveMany: wcResolveMany } = useWalletConnect({
+  const { connections, connect, disconnect, isConnecting, requests: wcRequests, resolveMany: wcResolveMany } = useWalletConnect({
     account: selectedAcc,
     chainId: network.chainId,
     initialUri: wcUri,
@@ -208,7 +208,7 @@ function AppInner() {
       <Route path="/email-login">
         <EmailLogin relayerURL={relayerURL} onAddAccount={onAddAccount}></EmailLogin>
       </Route>
-      
+
       {selectedAcc ?
         <Route path="/wallet">
           <Wallet
@@ -227,6 +227,7 @@ function AppInner() {
             // needed by the top bar to disconnect/connect dapps
             connect={connect}
             disconnect={disconnect}
+            isWcConnecting={isConnecting}
             // needed by the gnosis plugins
             gnosisConnect={gnosisConnect}
             gnosisDisconnect={gnosisDisconnect}
