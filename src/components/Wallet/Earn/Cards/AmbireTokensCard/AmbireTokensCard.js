@@ -142,7 +142,7 @@ const AmbireTokensCard = ({ networkId, accountId, tokens, rewardsData, addReques
                 <>
                     <div className="info-message">
                         <ToolTip label={unbondToolTipLabelMdg}>
-                            <span><b>{ msToDaysHours(lockedRemainingTime) }</b> until { parseFloat(leaveLog.walletValue).toFixed(4) } WALLET becomes available for withdraw.&nbsp;<MdInfo/></span>
+                            <span><b>{ msToDaysHours(lockedRemainingTime) }</b> until { parseFloat(leaveLog.walletValue).toFixed(4) } {selectedToken.label} becomes available for withdraw.&nbsp;<MdInfo/></span>
                         </ToolTip>
                     </div>
                     <Button 
