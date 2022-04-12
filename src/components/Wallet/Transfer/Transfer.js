@@ -16,6 +16,8 @@ import { MdInfo } from 'react-icons/md'
 import networks from 'consts/networks'
 import { getTokenIcon } from 'lib/icons'
 import { formatFloatTokenAmount } from 'lib/formatters'
+import { useLocalStorage } from 'hooks'
+import { setKnownUDomains } from 'lib/humanReadableTransactions'
 
 const ERC20 = new Interface(require('adex-protocol-eth/abi/ERC20'))
 const unsupportedSWPlatforms = ['Binance', 'Huobi', 'KuCoin', 'Gate.io', 'FTX']
@@ -37,6 +39,7 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
     const [addressConfirmed, setAddressConfirmed] = useState(false)
     const [sWAddressConfirmed, setSWAddressConfirmed] = useState(false)
     const [newAddress, setNewAddress] = useState('')
+    const [storageUDomains, setStorageUDomains] = useLocalStorage({ key: 'uDomains', defaultValue: [] })
     const [validationFormMgs, setValidationFormMgs] = useState({ 
         success: { 
             amount: false,
@@ -85,13 +88,6 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
     const sendTx = () => {
         const recipientAddress = uDAddress ? uDAddress : address
 
-        if (uDAddress) {
-            const isAlreadyAdded = addresses.find(i => i.address === uDAddress)
-
-            if (!isAlreadyAdded) {
-                addAddress(address, uDAddress)
-            }
-        }
 
         try {
             const txn = {
@@ -114,12 +110,20 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
                 txn
             })
 
+            if (uDAddress) {
+                //TODO: to add txn id in storageUdDomains
+                //Check if the entries are duplicated
+                setStorageUDomains( [...storageUDomains, { name: address, address: uDAddress }])
+            }
+
             setAmount(0)
         } catch(e) {
             console.error(e)
             addToast(`Error: ${e.message || e}`, { error: true })
         }
     }
+
+    useEffect(() => setKnownUDomains(storageUDomains), [storageUDomains])
 
     useEffect(() => {
         setAmount(0)
