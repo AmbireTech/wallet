@@ -136,6 +136,7 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
         const isValidSendTransferAmount = validateSendTransferAmount(amount, selectedAsset)
 
         if (address.startsWith('0x') && (address.indexOf('.') === -1)) {
+            if (uDAddress !== '') setUDAddress('')
             const isValidRecipientAddress = validateSendTransferAddress(address, selectedAcc, addressConfirmed, isKnownAddress)
             
             setValidationFormMgs({ 
@@ -180,7 +181,7 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
             }, 300)
         }
         return () => clearTimeout(timer.current)
-    }, [address, amount, selectedAcc, selectedAsset, addressConfirmed, showSWAddressWarning, sWAddressConfirmed, isKnownAddress, addToast, selectedNetwork, addAddress])
+    }, [address, amount, selectedAcc, selectedAsset, addressConfirmed, showSWAddressWarning, sWAddressConfirmed, isKnownAddress, addToast, selectedNetwork, addAddress, uDAddress])
 
     const amountLabel = <div className="amount-label">Available Amount: <span>{ maxAmountFormatted } { selectedAsset?.symbol }</span></div>
 

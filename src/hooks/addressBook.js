@@ -47,10 +47,14 @@ const useAddressBook = ({ accounts, useStorage }) => {
         setStorageAddresses(addresses.filter(({ isAccount }) => !isAccount))
     }, [setAddresses, setStorageAddresses])
 
-    const isKnownAddress = useCallback(address => [
-        ...addresses.map(({ address }) => sha256(address)),
-        ...accounts.map(({ id }) => sha256(id))
-    ].includes(sha256(address)), [addresses, accounts])
+    const isKnownAddress = useCallback(address => { 
+        return [
+            ...addresses.map(({ address }) => {
+                return (address.startsWith('0x') && (address.indexOf('.') === -1)) ? sha256(address) : address
+            }),
+            ...accounts.map(({ id }) => sha256(id))
+        ].includes(sha256(address))
+    }, [addresses, accounts])
 
     const addAddress = useCallback((name, address, isUd = false) => {
         if (!name || !address) throw new Error('Address Book: invalid arguments supplied')
