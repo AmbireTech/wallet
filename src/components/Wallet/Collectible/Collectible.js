@@ -259,6 +259,7 @@ const Collectible = ({ selectedAcc, selectedNetwork, addRequest, addressBook }) 
                             newAddress={newAddress}
                             onClose={() => setNewAddress(null)}
                             onSelectAddress={address => setRecipientAddress(address)}
+                            selectedNetwork={selectedNetwork}
                         />
                     </div>
                     { validationFormMgs.message && 
