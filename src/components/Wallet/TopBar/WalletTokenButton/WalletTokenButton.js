@@ -8,7 +8,7 @@ const WalletTokenButton = ({ rewardsData, account = {}, network, hidePrivateValu
     const claimableWalletToken = useClaimableWalletToken({ account, network, addRequest })
     const { currentClaimStatus } = claimableWalletToken
     const totalLifetimeRewards = rewardsData.data?.rewards?.map(x => x.rewards[account.id] || 0).reduce((a, b) => a + b, 0)
-    const pendingTokensTotal = currentClaimStatus && !currentClaimStatus.loading 
+    const pendingTokensTotal = (currentClaimStatus && !currentClaimStatus.loading && totalLifetimeRewards > 0)
         ?
             ((totalLifetimeRewards || 0) 
             - (currentClaimStatus.claimed || 0) 
