@@ -23,7 +23,7 @@ const GasDetailsModal = ({ gasData }) => {
   return (
     <Modal id='gas-details-modal' title={'Gas information'} buttons={buttons}>
       <div className={'gas-details-date'}>
-        Last updated : { new Date(gasData.gasPrice.updated).toDateString() + ' ' + new Date(gasData.gasPrice.updated).toTimeString().substr(0, 8) }
+        Last updated: { new Date(gasData.gasPrice.updated).toDateString() + ' ' + new Date(gasData.gasPrice.updated).toTimeString().substr(0, 8) }
       </div>
       <div className={'gas-speed-row'}>
         {
