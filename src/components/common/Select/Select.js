@@ -105,7 +105,7 @@ const Select = ({ children, native, monospace, searchable, disabled, label, defa
                                         {
                                             filteredItems.map(item => (
                                                 <div
-                                                    className={`option ${item.value === selectedItem.value ? 'active' : ''} ${item.disabled ? disabled : ''}`}
+                                                    className={`option ${item.value === selectedItem.value ? 'active' : ''} ${item.disabled ? 'disabled' : ''}`}
                                                     key={item.value}
                                                     onClick={() => !item.disabled && selectItem(item)}
                                                 >
@@ -128,7 +128,7 @@ const Select = ({ children, native, monospace, searchable, disabled, label, defa
             <select className="select" disabled={disabled} onChange={ev => onChange(ev.target.value)} defaultValue={defaultValue}>
                 {
                     items.map(item => (
-                        <option key={item.value} value={item.value}>
+                        <option key={item.value} value={item.value} disabled={item.disabled ? 'disabled' : undefined}>
                             {item.label || item.value}
                         </option>
                     ))
