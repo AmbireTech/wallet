@@ -302,6 +302,7 @@ export default function usePortfolio({ currentNetwork, account, useStorage }) {
             if (failedRequests >= requestsCount) throw new Error('Failed to fetch other Protocols from API')
             return true
         } catch (error) {
+            lastOtherProcolsRefresh = Date.now()
             console.error(error)
             // In case of error set all loading indicators to false
             supportedProtocols.map(async network => await setOtherProtocolsByNetworksLoading(prev => ({ ...prev, [network]: false })))

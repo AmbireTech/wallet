@@ -87,29 +87,36 @@ const Collectible = ({ selectedAcc, selectedNetwork, addRequest, addressBook }) 
     }
 
     useEffect(() => {
-        if (timer.current) {
-            clearTimeout(timer.current)
-        }
-
-        const validateForm = async() => {
-            const UDAddress =  await resolveUDomain(recipientAddress, null, selectedNetwork.unstoppableDomainsChain)
-            timer.current = null
-            let isAddressValid
-            if (UDAddress) {
-                isAddressValid = validateSendNftAddress(UDAddress, selectedAcc, addressConfirmed, isKnownAddress, metadata, selectedNetwork, network)
-                setUDAddress(UDAddress)
-            } else {
-                isAddressValid = validateSendNftAddress(recipientAddress, selectedAcc, addressConfirmed, isKnownAddress, metadata, selectedNetwork, network)
-                setUDAddress('')
-            }
+        if (recipientAddress.startsWith('0x') && (recipientAddress.indexOf('.') === -1)) { 
+            const isAddressValid = validateSendNftAddress(recipientAddress, selectedAcc, addressConfirmed, isKnownAddress, metadata, selectedNetwork, network)
 
             setTransferDisabled(!isAddressValid.success)
             setValidationFormMgs({ 
                 success: isAddressValid.success, 
                 message: isAddressValid.message ? isAddressValid.message : ''
             })
-        }
-        timer.current = setTimeout(async() => validateForm().catch(console.error), 500)
+        } else {
+            if (timer.current) {
+                clearTimeout(timer.current)
+            }
+    
+            const validateForm = async() => {
+                const UDAddress =  await resolveUDomain(recipientAddress, null, selectedNetwork.unstoppableDomainsChain)
+                timer.current = null
+                
+                const isAddressValid = validateSendNftAddress(UDAddress ? UDAddress : recipientAddress, selectedAcc, addressConfirmed, isKnownAddress, metadata, selectedNetwork, network)
+                setUDAddress(UDAddress)
+                
+                setTransferDisabled(!isAddressValid.success)
+                setValidationFormMgs({ 
+                    success: isAddressValid.success, 
+                    message: isAddressValid.message ? isAddressValid.message : ''
+                })
+            }
+
+            timer.current = setTimeout(async() => validateForm().catch(console.error), 300)
+        } 
+
         return () => clearTimeout(timer.current)
     }, [recipientAddress, metadata, selectedNetwork, selectedAcc, network, addressConfirmed, isKnownAddress])
 

@@ -133,23 +133,11 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
     }, [asset, history, selectedAsset])
 
     useEffect(() => {
-        if (timer.current) {
-            clearTimeout(timer.current)
-        }
+        const isValidSendTransferAmount = validateSendTransferAmount(amount, selectedAsset)
 
-        const validateForm = async() => {
-            const UDAddress =  await resolveUDomain(address, selectedAsset ? selectedAsset.symbol: null, selectedNetwork.unstoppableDomainsChain)
-            timer.current = null
-            let isValidRecipientAddress
-            if (UDAddress) {
-                isValidRecipientAddress = validateSendTransferAddress(UDAddress, selectedAcc, addressConfirmed, isKnownAddress)
-                setUDAddress(UDAddress)
-            } else {
-                isValidRecipientAddress = validateSendTransferAddress(address, selectedAcc, addressConfirmed, isKnownAddress)
-                setUDAddress('')
-            }
-            const isValidSendTransferAmount = validateSendTransferAmount(amount, selectedAsset) 
-        
+        if (address.startsWith('0x') && (address.indexOf('.') === -1)) {
+            const isValidRecipientAddress = validateSendTransferAddress(address, selectedAcc, addressConfirmed, isKnownAddress)
+            
             setValidationFormMgs({ 
                 success: { 
                     amount: isValidSendTransferAmount.success, 
@@ -162,10 +150,35 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
             })
 
             setDisabled(!isValidRecipientAddress.success || !isValidSendTransferAmount.success || (showSWAddressWarning && !sWAddressConfirmed))
+        } else {
+            if (timer.current) {
+                clearTimeout(timer.current)
+            }
+
+            const validateForm = async() => {
+                const UDAddress =  await resolveUDomain(address, selectedAsset ? selectedAsset.symbol: null, selectedNetwork.unstoppableDomainsChain)
+                timer.current = null
+                const isValidRecipientAddress = validateSendTransferAddress(UDAddress ? UDAddress : address, selectedAcc, addressConfirmed, isKnownAddress)
+                
+                setUDAddress(UDAddress)
+                setValidationFormMgs({ 
+                    success: { 
+                        amount: isValidSendTransferAmount.success, 
+                        address: isValidRecipientAddress.success 
+                    }, 
+                    messages: { 
+                        amount: isValidSendTransferAmount.message ?  isValidSendTransferAmount.message : '',
+                        address: isValidRecipientAddress.message ? isValidRecipientAddress.message : ''
+                    }
+                })
+    
+                setDisabled(!isValidRecipientAddress.success || !isValidSendTransferAmount.success || (showSWAddressWarning && !sWAddressConfirmed))
+            }
+
+            timer.current = setTimeout(async() => {
+                return validateForm().catch(console.error)
+            }, 300)
         }
-        timer.current = setTimeout(async() => {
-            return validateForm().catch(console.error)
-        }, 500)
         return () => clearTimeout(timer.current)
     }, [address, amount, selectedAcc, selectedAsset, addressConfirmed, showSWAddressWarning, sWAddressConfirmed, isKnownAddress, addToast, selectedNetwork, addAddress])
 
