@@ -9,12 +9,14 @@ import { BiTransfer } from 'react-icons/bi'
 import { CgArrowsExchangeV } from 'react-icons/cg'
 import { Loading } from 'components/common'
 import { useCallback, useEffect, useRef, useState } from 'react'
+import GasIndicator from 'components/Wallet/GasIndicator/GasIndicator'
 
 const helpCenterUrl = 'https://help.ambire.com/hc/en-us/categories/4404980091538-Ambire-Wallet'
 
-const SideBar = ({ match, portfolio, hidePrivateValue }) => {
+const SideBar = ({ match, portfolio, hidePrivateValue, relayerURL, selectedNetwork }) => {
   const sidebarRef = useRef()
   const [balanceFontSize, setBalanceFontSize] = useState(0)
+
     const resizeBalance = useCallback(() => {
         const balanceFontSizes = {
             3: '2em',
@@ -36,7 +38,9 @@ const SideBar = ({ match, portfolio, hidePrivateValue }) => {
       <div className="balance">
         <label>Balance</label>
         {portfolio.isBalanceLoading ? (
-          <Loading />
+          <div className={'loaderContainer'}>
+            <Loading />
+          </div>
         ) : (
           <div
             className="balanceDollarAmount"
@@ -49,6 +53,9 @@ const SideBar = ({ match, portfolio, hidePrivateValue }) => {
             </span>
           </div>
         )}
+        <div>
+          <GasIndicator relayerURL={relayerURL} selectedNetwork={selectedNetwork}/>
+        </div>
       </div>
       <nav>
         <NavLink to={match.url + "/dashboard"} activeClassName="selected">

@@ -59,7 +59,7 @@ async function supplementTokensDataFromNetwork({ walletAddr, network, tokensData
     const tokenBalances = (await Promise.all(calls.map(callTokens => {
         return getTokenListBalance({ walletAddr, tokens: callTokens, network, updateBalance })
     }))).flat().filter(t => {
-        return extraTokens.some(et => t.address === et.address) ? true : (parseFloat(t.balance) > 0)
+        return extraTokens.some(et => t.address === et.address) ? true : t.balanceRaw > 0
     })
     return tokenBalances
 }
@@ -151,9 +151,11 @@ export default function usePortfolio({ currentNetwork, account, useStorage }) {
 
                     const { meta, products, systemInfo } = Object.values(balance)[0]
 
-                    // We should skip the tokens update, in the case Velcro returns a cached data, which is more outdated than the already fetched RPC data.
+                    // We should skip the tokens update for the current network,
+                    // in the case Velcro returns a cached data, which is more outdated than the already fetched RPC data.
                     // source 1 means Zapper, 2 means Covalent, 2.1 means Covalent from Velcro cache.
-                    const shouldSkipUpdate = systemInfo.source > 2 && systemInfo.updateAt < rpcTokensLastUpdated.current
+                    const isCurrentNetwork = network === currentNetwork
+                    const shouldSkipUpdate = isCurrentNetwork && (systemInfo.source > 2 && systemInfo.updateAt < rpcTokensLastUpdated.current)
 
                     if (shouldSkipUpdate) return null
 
@@ -163,7 +165,7 @@ export default function usePortfolio({ currentNetwork, account, useStorage }) {
                         ...products.map(({ assets }) => assets.map(({ tokens }) => tokens.map(token => ({
                             ...token,
                             // balanceOracle fixes the number to the 10 decimal places, so here we should also fix it
-                            balance: token.balance.toFixed(10),
+                            balance: Number(token.balance.toFixed(10)),
                             // balanceOracle rounds to the second decimal places, so here we should also round it
                             balanceUSD: roundFloatingNumber(token.balanceUSD),
                         })))).flat(2),
@@ -250,6 +252,7 @@ export default function usePortfolio({ currentNetwork, account, useStorage }) {
             if (failedRequests >= requestsCount) throw new Error('Failed to fetch other Protocols from API')
             return true
         } catch (error) {
+            lastOtherProcolsRefresh = Date.now()
             console.error(error)
             addToast(error.message, { error: true })
             return false
@@ -427,7 +430,7 @@ export default function usePortfolio({ currentNetwork, account, useStorage }) {
         refreshTokensIfVisible()
     }, [currentNetwork, refreshTokensIfVisible])
 
-    // Refresh balance every 80s if visible
+    // Refresh balance every 90s if visible
     // NOTE: this must be synced (a multiple of) supplementing, otherwise we can end up with weird inconsistencies
     useEffect(() => {
         const refreshInterval = setInterval(refreshTokensIfVisible, 90000)

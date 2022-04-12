@@ -8,6 +8,7 @@ import Loading from './Loading/Loading';
 import InfiniteProgressBar from './Loading/InfiniteProgressBar';
 import AmbireLoading from './Loading/AmbireLoading';
 import Dots from './Loading/Dots';
+import Borders from './Loading/Borders';
 import Skeleton from './Loading/Skeleton';
 import Modal from './Modal/Modal';
 import Radios from './Radios/Radios';
@@ -33,6 +34,7 @@ export {
     AmbireLoading,
     Skeleton,
     Dots,
+    Borders,
     Modal,
     Radios,
     Segments,

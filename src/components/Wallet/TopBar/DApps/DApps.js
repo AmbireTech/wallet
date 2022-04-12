@@ -9,7 +9,7 @@ import { DropDown, ToolTip, Button } from "components/common"
 import { checkClipboardPermission } from 'lib/permissions'
 import { MdOutlineWarning } from 'react-icons/md'
 
-const DApps = ({ connections, connect, disconnect }) => {
+const DApps = ({ connections, connect, disconnect, isWcConnecting }) => {
     const [isClipboardGranted, setClipboardGranted] = useState(false)
 
     const checkPermission = async () => {
@@ -31,7 +31,7 @@ const DApps = ({ connections, connect, disconnect }) => {
     const isLegacyWC = ({ bridge }) => /https:\/\/bridge.walletconnect.org/g.test(bridge)
 
     return (
-        <DropDown id="dApps" title="dApps" badge={connections.length} onOpen={() => checkPermission()}>
+        <DropDown id="dApps" title="dApps" badge={connections.length} onOpen={() => checkPermission()} isLoading={isClipboardGranted && isWcConnecting}>
             <div id="connect-dapp">
                 <div className="heading">
                     <Button small icon={<BiTransferAlt />} disabled={isClipboardGranted} onClick={readClipboard}>
@@ -56,7 +56,7 @@ const DApps = ({ connections, connect, disconnect }) => {
                     </div>
                     <a href={session.peerMeta.url} target="_blank" rel="noreferrer">
                         <div className="details">
-                            { 
+                            {
                                 isLegacyWC(session) ?
                                     <ToolTip className="session-warning" label="dApp uses legacy WalletConnect bridge which is unreliable and often doesn't work. Please tell the dApp to update to the latest WalletConnect version.">
                                         <MdOutlineWarning/>
