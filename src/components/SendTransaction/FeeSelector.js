@@ -21,7 +21,7 @@ const SPEEDS = ['slow', 'medium', 'fast', 'ape']
 const walletDiscountBlogpost = 'https://blog.ambire.com/move-crypto-with-ambire-pay-gas-with-wallet-and-save-30-on-fees-35dca1002697'
 const OVERPRICED_MULTIPLIER = 1.2
 // NOTE: Order matters for for secondary fort after the one by discount
-const DISCOUNT_TOKENS_SYMBOLS = ['WALLET', 'WALLET-STAKING', 'xWALLET']
+const DISCOUNT_TOKENS_SYMBOLS = ['xWALLET', 'WALLET-STAKING', 'WALLET']
 
 function getBalance(token) {
   const { balance, decimals, priceInUSD } = token
@@ -105,7 +105,7 @@ export function FeeSelector({ disabled, signer, estimation, network, setEstimati
   }
 
   const { nativeAssetSymbol } = network
-  const tokens = estimation.remainingFeeTokenBalances || [{ symbol: nativeAssetSymbol, decimals: 18 }]
+  const tokens = estimation.remainingFeeTokenBalances || [] //[{ symbol: nativeAssetSymbol, decimals: 18 }]
   const onFeeCurrencyChange = value => {
     const token = tokens.find(({ address, symbol }) => address === value || symbol === value)
     setEstimation({ ...estimation, selectedFeeToken: token })
@@ -114,9 +114,14 @@ export function FeeSelector({ disabled, signer, estimation, network, setEstimati
   const currenciesItems = tokens
     // NOTE: filter by slowest and then will disable the higher fees speeds otherwise 
     // it will just hide the token from the select
-    .filter(token => isTokenEligible(token, SPEEDS[0], estimation))
-    .sort((a, b) => (b.discount || 0) - (a.discount || 0))
-    .map(({ address, symbol, discount }) => ({
+    .sort((a, b) =>
+    (isTokenEligible(b, SPEEDS[0], estimation) - isTokenEligible(a, SPEEDS[0], estimation))
+    || (DISCOUNT_TOKENS_SYMBOLS.indexOf(b.symbol) - DISCOUNT_TOKENS_SYMBOLS.indexOf(a.symbol))
+    || ((b.discount || 0) - (a.discount || 0))
+    || a?.symbol.toUpperCase().localeCompare(b?.symbol.toUpperCase())
+  )
+    .map(({ address, symbol, discount, ...rest }) => ({
+      disabled: !isTokenEligible({address, symbol, discount, ...rest }, SPEEDS[0], estimation),
       icon: address ? getTokenIcon(network.id, address) : null,
       label: symbol,
       value: address || symbol,

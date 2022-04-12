@@ -37,6 +37,23 @@ const REESTIMATE_INTERVAL = 15000
 
 const REJECT_MSG = 'Ambire user rejected the request'
 
+const WALLET_TOKEN_SYMBOLS = ['xWALLET', 'WALLET']
+
+const getDefaultFeeToken = (remainingFeeTokenBalances, network, feeSpeed, estimation) => {
+  if(!remainingFeeTokenBalances?.length) {
+    return { symbol: network.nativeAssetSymbol, decimals: 18 }
+  }
+
+  return remainingFeeTokenBalances
+  .sort((a, b) =>
+    (WALLET_TOKEN_SYMBOLS.indexOf(b?.symbol) - WALLET_TOKEN_SYMBOLS.indexOf(a?.symbol))
+    || ((b?.discount || 0) - (a?.discount || 0))
+    || a?.symbol.toUpperCase().localeCompare(b?.symbol.toUpperCase()) 
+  )
+  .find(token => isTokenEligible(token, feeSpeed, estimation))
+  || remainingFeeTokenBalances[0]
+} 
+
 function makeBundle(account, networkId, requests) {
   const bundle = new Bundle({
     network: networkId,
@@ -133,7 +150,7 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, network, account,
     )
       .then(estimation => {
         if (unmounted || bundle !== currentBundle.current) return
-        estimation.selectedFeeToken = { symbol: network.nativeAssetSymbol }
+        estimation.selectedFeeToken = getDefaultFeeToken(estimation.remainingFeeTokenBalances, network, feeSpeed, estimation)
         setEstimation(prevEstimation => {
           if (prevEstimation && prevEstimation.customFee) return prevEstimation
           if (estimation.remainingFeeTokenBalances) {
@@ -142,10 +159,8 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, network, account,
                 prevEstimation
                 && isTokenEligible(prevEstimation.selectedFeeToken, feeSpeed, estimation)
                 && prevEstimation.selectedFeeToken
-              ) || estimation.remainingFeeTokenBalances
-              // .sort((a, b) => (b.discount || 0) - (a.discount || 0))
-              .find(token => isTokenEligible(token, feeSpeed, estimation))
-              || estimation.remainingFeeTokenBalances[0]
+              ) 
+              || getDefaultFeeToken(estimation.remainingFeeTokenBalances, network, feeSpeed, estimation)              
           }
           return estimation
         })
