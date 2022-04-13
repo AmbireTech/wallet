@@ -4,7 +4,7 @@ import { MdOutlineAdd } from 'react-icons/md'
 import AddressList from 'components/common/AddressBook/AddressList/AddressList'
 import { Button } from 'components/common'
 import { isValidAddress } from 'lib/address'
-import { InputModal } from 'components/Modals'
+import { AddAddressModal } from 'components/Modals'
 import { useModals } from 'hooks'
 
 const Addresses = ({ addresses, addAddress, removeAddress, onSelectAddress, selectedNetwork }) => {
@@ -15,13 +15,13 @@ const Addresses = ({ addresses, addAddress, removeAddress, onSelectAddress, sele
         { label: 'Address / Unstoppable domainsⓇ', placeholder: '0x / example.example', validate: value => isValidAddress(value) } 
     ]
 
-    const inputModal = <InputModal 
+    const addAddressModal = <AddAddressModal 
             title="Add New Address" 
             selectedNetwork={selectedNetwork} 
             inputs={modalInputs} 
             onClose={([name, address, isUd]) => addAddress(name, address, isUd)}
-        ></InputModal>
-    const showInputModal = () => showModal(inputModal)
+        ></AddAddressModal>
+    const showInputModal = () => showModal(addAddressModal)
 
     return (
         <div id="addresses" className='panel'>

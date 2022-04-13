@@ -62,11 +62,6 @@ const Collectible = ({ selectedAcc, selectedNetwork, addRequest, addressBook }) 
     const sendTransferTx = () => {
         const recipAddress = uDAddress ? uDAddress : recipientAddress
 
-        if (uDAddress) {
-            const isFound = storageUDomains.find(item => item.name === recipientAddress && item.address === uDAddress)
-            if (!isFound) setStorageUDomains( [...storageUDomains, { name: recipientAddress, address: uDAddress }])
-        }
-
         try {
             addRequest({
                 id: `transfer_nft_${Date.now()}`,
@@ -79,6 +74,11 @@ const Collectible = ({ selectedAcc, selectedNetwork, addRequest, addressBook }) 
                     data: ERC721.encodeFunctionData('transferFrom', [metadata.owner.address, recipAddress, tokenId])
                 }
             })
+
+            if (uDAddress) {
+                const isFound = storageUDomains.find(item => item.name === recipientAddress && item.address === uDAddress)
+                if (!isFound) setStorageUDomains( [...storageUDomains, { name: recipientAddress, address: uDAddress }])
+            }    
         } catch(e) {
             console.error(e)
             addToast(`Error: ${e.message || e}`, { error: true })
