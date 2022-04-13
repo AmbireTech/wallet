@@ -1,6 +1,6 @@
 import './TxnPreview.scss'
 
-import { useState, Fragment  } from 'react'
+import { useState, Fragment, useEffect  } from 'react'
 
 import { getName, getTransactionSummary, isKnown } from 'lib/humanReadableTransactions'
 import networks from 'consts/networks'
@@ -11,6 +11,8 @@ import { MdOutlineClose } from 'react-icons/md'
 import { BsChevronDown, BsChevronUp } from 'react-icons/bs'
 import { getTokenIcon } from 'lib/icons'
 import { formatFloatTokenAmount } from 'lib/formatters'
+import { setKnownUDomains } from 'lib/humanReadableTransactions'
+import { useLocalStorage } from 'hooks'
 
 function getNetworkSymbol(networkId) {
   const network = networks.find(x => x.id === networkId)
@@ -91,7 +93,10 @@ export default function TxnPreview ({ txn, onDismiss, network, account, isFirstF
   const extendedSummary = getTransactionSummary(txn, network, account, { mined, extended: true })
 
   const summary = (extendedSummary.map(entry => Array.isArray(entry) ? entry.map((item, i) => parseExtendedSummaryItem(item, i, networkDetails)) : (entry))) // If entry is extended summary parse it
-
+  const [storageUDomains] = useLocalStorage({ key: 'uDomains', defaultValue: [] })
+  
+  useEffect(() => setKnownUDomains(storageUDomains), [storageUDomains])
+  
   return (
     <div className={isFirstFailing ? 'txnPreview firstFailing' : 'txnPreview'}>
         <div className="heading">

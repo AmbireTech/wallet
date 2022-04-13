@@ -17,6 +17,7 @@ import { getProvider } from 'lib/provider'
 import { VELCRO_API_ENDPOINT } from 'config'
 import { fetchGet } from 'lib/fetch'
 import { resolveUDomain } from 'lib/unstoppableDomains'
+import { useLocalStorage } from 'hooks'
 
 const ERC721 = new Interface(ERC721Abi)
 
@@ -56,16 +57,14 @@ const Collectible = ({ selectedAcc, selectedNetwork, addRequest, addressBook }) 
         message: ''
     })
     const timer = useRef(null)
+    const [storageUDomains, setStorageUDomains] = useLocalStorage({ key: 'uDomains', defaultValue: [] })
 
     const sendTransferTx = () => {
         const recipAddress = uDAddress ? uDAddress : recipientAddress
 
         if (uDAddress) {
-            const isAlreadyAdded = addresses.find(i => i.address === uDAddress)
-
-            if (!isAlreadyAdded) {
-                addAddress(recipientAddress, uDAddress)
-            }
+            const isFound = storageUDomains.find(item => item.name === recipientAddress && item.address === uDAddress)
+            if (!isFound) setStorageUDomains( [...storageUDomains, { name: recipientAddress, address: uDAddress }])
         }
 
         try {
