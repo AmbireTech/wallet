@@ -17,7 +17,6 @@ import networks from 'consts/networks'
 import { getTokenIcon } from 'lib/icons'
 import { formatFloatTokenAmount } from 'lib/formatters'
 import { useLocalStorage } from 'hooks'
-import { setKnownUDomains } from 'lib/humanReadableTransactions'
 
 const ERC20 = new Interface(require('adex-protocol-eth/abi/ERC20'))
 const unsupportedSWPlatforms = ['Binance', 'Huobi', 'KuCoin', 'Gate.io', 'FTX']
@@ -111,9 +110,8 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
             })
 
             if (uDAddress) {
-                //TODO: to add txn id in storageUdDomains
-                //Check if the entries are duplicated
-                setStorageUDomains( [...storageUDomains, { name: address, address: uDAddress }])
+                const isFound = storageUDomains.find(item => item.name === address && item.address === uDAddress)
+                if (!isFound) setStorageUDomains( [...storageUDomains, { name: address, address: uDAddress }])
             }
 
             setAmount(0)
@@ -122,8 +120,6 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
             addToast(`Error: ${e.message || e}`, { error: true })
         }
     }
-
-    useEffect(() => setKnownUDomains(storageUDomains), [storageUDomains])
 
     useEffect(() => {
         setAmount(0)
