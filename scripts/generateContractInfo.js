@@ -44,6 +44,8 @@ const contracts = [
 	{ name: 'Wrapped MATIC', network: 'polygon', addr: '0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270' },
 	{ name: 'Aave', network: 'ethereum', addr: '0x7d2768de32b0b80b7a3454c06bdac94a69ddc7a9', abiAddr: '0xc6845a5c768bf8d7681249f8927877efda425baf', abiName: 'AaveLendingPoolV2' },
 	{ name: 'Aave', network: 'polygon', addr: '0x8dff5e27ea6b7ac08ebfdf9eb090f32ee9a30fcf' },
+	{ name: 'Aave', network: 'ethereum', addr: '0xcc9a0b7c43dc2a5f023bb9b738e45b0ef6b06e04', abiName: 'AaveWethGatewayV2' },
+	{ name: 'Aave', network: 'polygon', addr: '0xbEadf48d62aCC944a06EEaE0A9054A90E5A7dc97' },
 	{ name: 'Movr 1inch', network: 'ethereum', addr: '0x8f9eaee5c5df888aba3c1ab19689a0660d042c6d' },
 	{ name: 'Movr 1inch', network: 'polygon', addr: '0x2fc9c3bf505b74e59a538fe9d67bc1deb4c03d91' },
 	{ name: 'Movr Router', network: 'bsc', addr: '0xc30141B657f4216252dc59Af2e7CdB9D8792e1B0', abiName: 'MovrRouter' },

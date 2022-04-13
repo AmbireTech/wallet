@@ -142,7 +142,7 @@ const AmbireTokensCard = ({ networkId, accountId, tokens, rewardsData, addReques
                 <>
                     <div className="info-message">
                         <ToolTip label={unbondToolTipLabelMdg}>
-                            <span><b>{ msToDaysHours(lockedRemainingTime) }</b> until { parseFloat(leaveLog.walletValue).toFixed(4) } WALLET becomes available for withdraw.&nbsp;<MdInfo/></span>
+                            <span><b>{ msToDaysHours(lockedRemainingTime) }</b> until { parseFloat(leaveLog.walletValue).toFixed(4) } {selectedToken.label} becomes available for withdraw.&nbsp;<MdInfo/></span>
                         </ToolTip>
                     </div>
                     <Button 
@@ -264,18 +264,53 @@ const AmbireTokensCard = ({ networkId, accountId, tokens, rewardsData, addReques
                 setShareValue(shareValue)
                 SetStakingTokenBalanceRaw(stakingTokenBalanceRaw)
 
-                const leaveLogs = await provider.getLogs({
-                    fromBlock: 0,
-                    ...stakingTokenContract.filters.LogLeave(accountId, null, null, null)
-                })
+                const [leaveLogs, withdrawLogs] = await Promise.all([
+                    provider.getLogs({
+                        fromBlock: 0,
+                        ...stakingTokenContract.filters.LogLeave(accountId, null, null, null)
+                    }),
+                    provider.getLogs({
+                        fromBlock: 0,
+                        ...stakingTokenContract.filters.LogWithdraw(
+                            accountId,
+                            null,
+                            null,
+                            null,
+                            null
+                        ),
+                    })
+                ])
 
-                const [log]= leaveLogs.sort((a, b) => b.blockNumber - a.blockNumber)
+                const userWithdraws = withdrawLogs.map(log => {
+                    const parsedWithdrawLog = stakingTokenContract.interface.parseLog(log)
+                    const { shares, unlocksAt, maxTokens, receivedTokens } =
+                        parsedWithdrawLog.args
+        
+                    return {
+                        transactionHash: log.transactionHash,
+                        type: 'withdraw',
+                        shares,
+                        unlocksAt, 
+                        maxTokens, 
+                        receivedTokens,
+                        blockNumber: log.blockNumber,
+                    }
+                })
                 
-                if (log) {
-                    const userLeaves = stakingTokenContract.interface.parseLog(log)
-                    const { maxTokens, shares, unlocksAt } = userLeaves.args
-                    
-                    const walletValue = sharesTotalSupply.isZero()
+                const now = new Date() / 1000
+                const userLeaves = await Promise.all(
+                    leaveLogs.map(async log => {
+                        const parsedLog = stakingTokenContract.interface.parseLog(log)
+                        const { maxTokens, shares, unlocksAt } = parsedLog.args
+
+                        const withdrawTx = userWithdraws.find(
+                            event =>
+                                event.unlocksAt.toString() === unlocksAt.toString() &&
+                                event.shares.toString() === shares.toString() &&
+                                event.maxTokens.toString() === maxTokens.toString()
+                        )
+
+                        const walletValue = sharesTotalSupply.isZero()
                         ? ZERO
                         : await stakingTokenContract.unbondingCommitmentWorth(
                             accountId,
@@ -283,6 +318,38 @@ const AmbireTokensCard = ({ networkId, accountId, tokens, rewardsData, addReques
                             unlocksAt
                         )
 
+                        return {
+                            transactionHash: log.transactionHash,
+                            type: 'leave',
+                            maxTokens,
+                            shares,
+                            unlocksAt,
+                            blockNumber: log.blockNumber,
+                            walletValue,
+                            withdrawTx
+                        }
+                    })
+                )
+                const leavesPendingToUnlock = [...userLeaves].filter(
+                    event => event.unlocksAt > now
+                )
+        
+                const leavesReadyToWithdraw = [...userLeaves].filter(
+                    event => event.unlocksAt < now && !event.withdrawTx
+                )
+
+                let leavePendingToUnlockOrReadyToWithdraw = null 
+                if (leavesReadyToWithdraw.length) leavePendingToUnlockOrReadyToWithdraw = leavesReadyToWithdraw[0]
+                else if (leavesPendingToUnlock.length) leavePendingToUnlockOrReadyToWithdraw = leavesPendingToUnlock[0]
+                
+                if (leavePendingToUnlockOrReadyToWithdraw) {
+                    const {
+                        maxTokens, 
+                        shares, 
+                        unlocksAt, 
+                        blockNumber, 
+                        walletValue } = leavePendingToUnlockOrReadyToWithdraw
+                
                     setLeaveLog({
                         tokens: maxTokens,
                         shares,
@@ -290,7 +357,7 @@ const AmbireTokensCard = ({ networkId, accountId, tokens, rewardsData, addReques
                         walletValue: utils.formatUnits(walletValue.toString(), 18)
                     })
                 
-                    const { timestamp } = await provider.getBlock(log.blockNumber)
+                    const { timestamp } = await provider.getBlock(blockNumber)
                     let remainingTime = (timeToUnbond.toString() * 1000) - (Date.now() - (timestamp * 1000))
                     if (remainingTime <= 0) remainingTime = 0
                     setLockedRemainingTime(remainingTime)    
