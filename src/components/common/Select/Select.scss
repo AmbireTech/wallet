@@ -41,7 +41,6 @@
         white-space: pre;
         text-overflow: ellipsis;
         overflow: hidden;
-        cursor: pointer;
         flex-grow: 1;
     }
 
@@ -115,6 +114,7 @@
                 font-size: 16px;
                 font-weight: 500;
                 opacity: 0.8;
+                cursor: pointer;
 
                 &:hover {
                     background-color: rgba(0, 0, 0, 0.2);
