@@ -87,7 +87,6 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
     const sendTx = () => {
         const recipientAddress = uDAddress ? uDAddress : address
 
-
         try {
             const txn = {
                 to: selectedAsset.address,
