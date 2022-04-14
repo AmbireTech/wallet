@@ -105,7 +105,7 @@ export function FeeSelector({ disabled, signer, estimation, network, setEstimati
   }
 
   const { nativeAssetSymbol } = network
-  const tokens = estimation.remainingFeeTokenBalances || [] //[{ symbol: nativeAssetSymbol, decimals: 18 }]
+  const tokens = estimation.remainingFeeTokenBalances || [{ symbol: nativeAssetSymbol, decimals: 18 }]
   const onFeeCurrencyChange = value => {
     const token = tokens.find(({ address, symbol }) => address === value || symbol === value)
     setEstimation({ ...estimation, selectedFeeToken: token })
