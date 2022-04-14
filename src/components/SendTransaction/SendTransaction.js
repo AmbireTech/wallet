@@ -39,9 +39,9 @@ const REJECT_MSG = 'Ambire user rejected the request'
 
 const WALLET_TOKEN_SYMBOLS = ['xWALLET', 'WALLET']
 
-const getDefaultFeeToken = (remainingFeeTokenBalances, network, feeSpeed, estimation) => {
+const getDefaultFeeToken = (remainingFeeTokenBalances, network, feeSpeed, estimation, signerBalance) => {
   if(!remainingFeeTokenBalances?.length) {
-    return { symbol: network.nativeAssetSymbol, decimals: 18 }
+    return { symbol: network.nativeAssetSymbol, decimals: 18, balance: signerBalance?.toString() }
   }
 
   return remainingFeeTokenBalances
@@ -145,12 +145,12 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, network, account,
     // Note: currently, there's no point of getting the nonce if the bundle already has a nonce
     // We may want to change this if we make a check if the currently replaced txn was already mined
     const reestimate = () => (relayerURL
-        ? bundle.estimate({ relayerURL, fetch, replacing: !!bundle.minFeeInUSDPerGas, getNextNonce: isNaN(bundle.nonce) })
-        : bundle.estimateNoRelayer({ provider: getProvider(network.id) })
+        ? Promise.all([bundle.estimate({ relayerURL, fetch, replacing: !!bundle.minFeeInUSDPerGas, getNextNonce: isNaN(bundle.nonce) })])
+        : Promise.all([bundle.estimateNoRelayer({ provider: getProvider(network.id) }), getProvider(network.id).getBalance(account?.signer?.address)])
     )
-      .then(estimation => {
+      .then(([estimation, signerBalance]) => {
         if (unmounted || bundle !== currentBundle.current) return
-        estimation.selectedFeeToken = getDefaultFeeToken(estimation.remainingFeeTokenBalances, network, feeSpeed, estimation)
+        estimation.selectedFeeToken = getDefaultFeeToken(estimation.remainingFeeTokenBalances, network, feeSpeed, estimation, signerBalance)
         setEstimation(prevEstimation => {
           if (prevEstimation && prevEstimation.customFee) return prevEstimation
           if (estimation.remainingFeeTokenBalances) {
@@ -160,7 +160,7 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, network, account,
                 && isTokenEligible(prevEstimation.selectedFeeToken, feeSpeed, estimation)
                 && prevEstimation.selectedFeeToken
               ) 
-              || getDefaultFeeToken(estimation.remainingFeeTokenBalances, network, feeSpeed, estimation)              
+              || getDefaultFeeToken(estimation.remainingFeeTokenBalances, network, feeSpeed, estimation, signerBalance)              
           }
           return estimation
         })
@@ -181,7 +181,7 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, network, account,
       unmounted = true
       clearInterval(intvl)
     }
-  }, [bundle, setEstimation, feeSpeed, addToast, network, relayerURL, signingStatus, replaceTx, setReplaceTx])
+  }, [bundle, setEstimation, feeSpeed, addToast, network, relayerURL, signingStatus, replaceTx, setReplaceTx, account?.signer?.address])
 
   // The final bundle is used when signing + sending it
   // the bundle before that is used for estimating
