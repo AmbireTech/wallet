@@ -12,7 +12,7 @@ import Security from "./Security/Security"
 import Transactions from './Transactions/Transactions'
 import PluginGnosisSafeApps from 'components/Plugins/GnosisSafeApps/GnosisSafeApps'
 import Collectible from "./Collectible/Collectible"
-import { PermissionsModal, UnsupportedDAppsModal } from 'components/Modals'
+import { PermissionsModal, PollModal, UnsupportedDAppsModal } from 'components/Modals'
 import { useModals, usePermissions, useLocalStorage } from 'hooks'
 import { useCallback, useEffect, useMemo, useRef } from 'react'
 import { isFirefox } from 'lib/isFirefox'
@@ -167,7 +167,13 @@ export default function Wallet(props) {
     if (showCauseOfEmail || showCauseOfPermissions || showCauseOfBackupOptout) showModal(permissionsModal, { disableClose: true })
   }, [props.accounts, props.relayerURL, props.onAddAccount, props.selectedAcc, arePermissionsLoaded, isClipboardGranted, isNoticationsGranted, modalHidden, showModal])
 
+  const handlePollModal = useCallback(() => {
+    if (true) showModal(<PollModal/>)
+  }, [showModal])
+  
   useEffect(() => handlePermissionsModal(), [handlePermissionsModal])
+
+  useEffect(() => handlePollModal(), [handlePollModal])
 
   useEffect(() => {
     const scrollTimeout = setTimeout(() => walletContainer.current && walletContainer.current.scrollTo({ top: 0, behavior: 'smooth' }), 0)

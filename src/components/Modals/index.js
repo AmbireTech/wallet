@@ -9,6 +9,7 @@ import UnsupportedDAppsModal from './UnsupportedDAppsModal/UnsupportedDAppsModal
 import HideTokenModel from './HideTokenModal/HideTokenModal'
 import AmbireEarnDetailsModal from './AmbireEarnDetailsModal/AmbireEarnDetailsModal'
 import EarnDetailsModal from './EarnDetailsModal/EarnDetailsModal'
+import PollModal from './PollModal/PollModal'
 
 export {
     PermissionsModal,
@@ -21,5 +22,6 @@ export {
     UnsupportedDAppsModal,
     HideTokenModel,
     AmbireEarnDetailsModal,
-    EarnDetailsModal
+    EarnDetailsModal,
+    PollModal
 }
