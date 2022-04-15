@@ -45,12 +45,12 @@ const Protocols = ({ portfolio, network, account, hidePrivateValue }) => {
         dragEnter,
         drop
     } = useDragAndDrop(
-        userSortedItems.tokens && userSortedItems.tokens[`${account}-${network.chainId}`] && userSortedItems.tokens[`${account}-${network.chainId}`].length ? 'custom' : 'decreasing',
+        userSortedItems.tokens?.[`${account}-${network.chainId}`]?.length ? 'custom' : 'decreasing',
         'address',
         onDropEnd)
  
     const sortedTokens = tokens.sort((a, b) => {
-        if (chosenSort === 'custom' && userSortedItems.tokens && userSortedItems.tokens[`${account}-${network.chainId}`] && userSortedItems.tokens[`${account}-${network.chainId}`].length) {
+        if (chosenSort === 'custom' && userSortedItems.tokens?.[`${account}-${network.chainId}`]?.length) {
             const sorted = userSortedItems.tokens[`${account}-${network.chainId}`].indexOf(a.address) - userSortedItems.tokens[`${account}-${network.chainId}`].indexOf(b.address)
             return sorted
         } else {
@@ -115,7 +115,7 @@ const Protocols = ({ portfolio, network, account, hidePrivateValue }) => {
 
 
     useEffect(() => {
-        if (userSortedItems.tokens && userSortedItems.tokens[`${account}-${network.chainId}`] && userSortedItems.tokens[`${account}-${network.chainId}`].length) {
+        if (userSortedItems.tokens?.[`${account}-${network.chainId}`]?.length) {
             setChosenSort('custom')
         } else {
             setChosenSort('decreasing')
