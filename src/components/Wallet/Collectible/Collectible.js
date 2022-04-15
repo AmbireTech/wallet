@@ -17,7 +17,6 @@ import { getProvider } from 'lib/provider'
 import { VELCRO_API_ENDPOINT } from 'config'
 import { fetchGet } from 'lib/fetch'
 import { resolveUDomain } from 'lib/unstoppableDomains'
-import { useLocalStorage } from 'hooks'
 
 const ERC721 = new Interface(ERC721Abi)
 
@@ -57,13 +56,12 @@ const Collectible = ({ selectedAcc, selectedNetwork, addRequest, addressBook }) 
         message: ''
     })
     const timer = useRef(null)
-    const [storageUDomains, setStorageUDomains] = useLocalStorage({ key: 'uDomains', defaultValue: [] })
-
+    
     const sendTransferTx = () => {
         const recipAddress = uDAddress ? uDAddress : recipientAddress
 
         try {
-            addRequest({
+            let req = {
                 id: `transfer_nft_${Date.now()}`,
                 type: 'eth_sendTransaction',
                 chainId: selectedNetwork.chainId,
@@ -73,12 +71,18 @@ const Collectible = ({ selectedAcc, selectedNetwork, addRequest, addressBook }) 
                     value: '0',
                     data: ERC721.encodeFunctionData('transferFrom', [metadata.owner.address, recipAddress, tokenId])
                 }
-            })
+            }
 
             if (uDAddress) {
-                const isFound = storageUDomains.find(item => item.name === recipientAddress && item.address === uDAddress)
-                if (!isFound) setStorageUDomains( [...storageUDomains, { name: recipientAddress, address: uDAddress }])
-            }    
+                req.meta ={ 
+                    addressLabel: { 
+                        addressLabel: recipientAddress,
+                        address: uDAddress
+                    }
+                }
+            }
+
+            addRequest(req) 
         } catch(e) {
             console.error(e)
             addToast(`Error: ${e.message || e}`, { error: true })
