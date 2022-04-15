@@ -58,7 +58,7 @@ const Protocols = ({ portfolio, network, account, hidePrivateValue }) => {
                 onDragEnd={() => drop(sortedTokens)}
                 onDragOver={(e) => e.preventDefault()}
             >
-            {sortedTokensLength > 1 && <MdDragIndicator />}
+            {sortedTokensLength > 1 && <MdDragIndicator size={20} />}
             <div className="icon">
                 { 
                     failedImg.includes(logo) ?
@@ -102,7 +102,7 @@ const Protocols = ({ portfolio, network, account, hidePrivateValue }) => {
         } else {
             setChosenSort('decreasing')
         }
-    }, [account, userSortedItems, network])
+    }, [account, userSortedItems, network, setChosenSort])
 
     return (
         <div id="protocols-table">
