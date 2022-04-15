@@ -119,6 +119,18 @@
                 opacity: 0.8;
                 cursor: pointer;
 
+                &[draggable="true"] {
+                    cursor: grab;
+                    cursor: -moz-grab;
+                    cursor: -webkit-grab;
+                }
+
+                &[draggable="true"]:active {
+                    cursor: grabbing;
+                    cursor: -moz-grabbing;
+                    cursor: -webkit-grabbing;
+                }
+
                 &:hover {
                     background-color: rgba(0, 0, 0, 0.2);
                 }
