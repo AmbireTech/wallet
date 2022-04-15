@@ -90,6 +90,9 @@
             overflow-y: auto;
             scrollbar-width: thin;
 
+            .sort-buttons {
+                padding: 0 20px;
+            }
             .select-search-input {
                 width: 100%;
                 position: sticky;
