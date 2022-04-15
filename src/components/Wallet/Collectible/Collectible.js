@@ -70,11 +70,12 @@ const Collectible = ({ selectedAcc, selectedNetwork, addRequest, addressBook }) 
                     to: collectionAddr,
                     value: '0',
                     data: ERC721.encodeFunctionData('transferFrom', [metadata.owner.address, recipAddress, tokenId])
-                }
+                },
+                meta: null
             }
 
             if (uDAddress) {
-                req.meta ={ 
+                req.meta = { 
                     addressLabel: { 
                         addressLabel: recipientAddress,
                         address: uDAddress

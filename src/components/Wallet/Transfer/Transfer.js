@@ -103,11 +103,12 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
                 type: 'eth_sendTransaction',
                 chainId: selectedNetwork.chainId,
                 account: selectedAcc,
-                txn
+                txn,
+                meta: null
             }
 
             if (uDAddress) {
-                req.meta ={ 
+                req.meta = { 
                     addressLabel: { 
                         addressLabel: address,
                         address: uDAddress
