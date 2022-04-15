@@ -46,6 +46,8 @@ function makeBundle(account, networkId, requests) {
   })
   bundle.extraGas = requests.map(x => x.extraGas || 0).reduce((a, b) => a + b, 0)
   bundle.requestIds = requests.map(x => x.id)
+  if (requests.some(item => item.meta)) bundle.meta = { addressLabel: requests.map(x => x.meta.addressLabel) }
+
   return bundle
 }
 
@@ -367,6 +369,7 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, network, account,
                   isFirstFailing={isFirstFailing}
                   disableDismiss={!!signingStatus}
                   disableDismissLabel={"Cannot modify transaction bundle while a signing procedure is pending"}
+                  addressLabel={!!bundle.meta && bundle.meta.addressLabel}
                   />
                 )
               })}

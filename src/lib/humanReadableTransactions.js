@@ -142,7 +142,7 @@ export function nativeToken(network, amount, extended = false) {
 }
 
 export function setKnownUDomains(uDomains) {
-    uDomains.forEach(({ address, name}) => knownUDomains[address.toLowerCase()] = name)
+    uDomains.forEach(({ address, addressLabel }) => knownUDomains[address.toLowerCase()] = addressLabel)
 }
 
 export function setKnownAddresses(addrs) {
