@@ -31,6 +31,18 @@ $account-height: 60px;
                 align-items: center;
                 justify-content: space-between;
 
+                &[draggable="true"] {
+                    cursor: grab;
+                    cursor: -moz-grab;
+                    cursor: -webkit-grab;
+                }
+
+                &[draggable="true"]:active {
+                    cursor: grabbing;
+                    cursor: -moz-grabbing;
+                    cursor: -webkit-grabbing;
+                }
+
                 .inner {
                     min-width: 0;
                     height: $account-height;
