@@ -16,7 +16,6 @@ import { MdInfo } from 'react-icons/md'
 import networks from 'consts/networks'
 import { getTokenIcon } from 'lib/icons'
 import { formatFloatTokenAmount } from 'lib/formatters'
-import { useLocalStorage } from 'hooks'
 
 const ERC20 = new Interface(require('adex-protocol-eth/abi/ERC20'))
 const unsupportedSWPlatforms = ['Binance', 'Huobi', 'KuCoin', 'Gate.io', 'FTX']
@@ -38,7 +37,6 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
     const [addressConfirmed, setAddressConfirmed] = useState(false)
     const [sWAddressConfirmed, setSWAddressConfirmed] = useState(false)
     const [newAddress, setNewAddress] = useState('')
-    const [storageUDomains, setStorageUDomains] = useLocalStorage({ key: 'uDomains', defaultValue: [] })
     const [validationFormMgs, setValidationFormMgs] = useState({ 
         success: { 
             amount: false,

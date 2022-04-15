@@ -12,7 +12,6 @@ import { BsChevronDown, BsChevronUp } from 'react-icons/bs'
 import { getTokenIcon } from 'lib/icons'
 import { formatFloatTokenAmount } from 'lib/formatters'
 import { setKnownUDomains } from 'lib/humanReadableTransactions'
-import { useLocalStorage } from 'hooks'
 
 function getNetworkSymbol(networkId) {
   const network = networks.find(x => x.id === networkId)
