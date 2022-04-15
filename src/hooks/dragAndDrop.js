@@ -1,6 +1,6 @@
 import { useState, useRef } from 'react'
 
-const useDragAndDrop = (defaultValue, setSortedItems, key, storageKey) => {
+const useDragAndDrop = (defaultValue, sortingKey, onDropEnd) => {
     const [chosenSort, setChosenSort] = useState(defaultValue)
     
     const dragItem = useRef();
@@ -19,22 +19,10 @@ const useDragAndDrop = (defaultValue, setSortedItems, key, storageKey) => {
 
         dragItem.current = null;
         dragOverItem.current = null;
-        const list = copyListItems.map(item => key === 'tokens' ? item.address : item.id)
 
-        if (chosenSort !== 'custom') setChosenSort('custom')
-        
-        setSortedItems(
-            prev => ({
-            ...prev,
-            [key]: key === 'tokens' ?
-                {
-                    ...prev.tokens,
-                    [storageKey]: list
-                }
-                : list
-            })
-        )
-       
+        const list = copyListItems.map(item => item[sortingKey])
+
+        onDropEnd(list)
     };
 
     return {

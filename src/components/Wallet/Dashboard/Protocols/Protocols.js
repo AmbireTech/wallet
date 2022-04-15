@@ -24,13 +24,30 @@ const Protocols = ({ portfolio, network, account, hidePrivateValue }) => {
         defaultValue: {}
     })
 
+
+    const onDropEnd = (list) => {
+        if (chosenSort !== 'custom') setChosenSort('custom')
+        
+        setSortedItems(
+            prev => ({
+                ...prev,
+                tokens: {
+                    ...prev.tokens,
+                    [`${account}-${network.chainId}`]: list
+                }
+            })
+        )
+    }
+
     const { chosenSort,
         setChosenSort,
         dragStart,
         dragEnter,
         drop
     } = useDragAndDrop(
-        userSortedItems.tokens && userSortedItems.tokens[`${account}-${network.chainId}`] && userSortedItems.tokens[`${account}-${network.chainId}`].length ? 'custom' : 'decreasing', setSortedItems, 'tokens', `${account}-${network.chainId}`)
+        userSortedItems.tokens && userSortedItems.tokens[`${account}-${network.chainId}`] && userSortedItems.tokens[`${account}-${network.chainId}`].length ? 'custom' : 'decreasing',
+        'address',
+        onDropEnd)
  
     const sortedTokens = tokens.sort((a, b) => {
         if (chosenSort === 'custom' && userSortedItems.tokens && userSortedItems.tokens[`${account}-${network.chainId}`] && userSortedItems.tokens[`${account}-${network.chainId}`].length) {
@@ -42,6 +59,7 @@ const Protocols = ({ portfolio, network, account, hidePrivateValue }) => {
             return decreasing
         }
     })
+
 
     const otherProtocols = protocols.filter(({ label }) => label !== 'Tokens')
     
