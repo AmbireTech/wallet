@@ -85,7 +85,7 @@ function parseExtendedSummaryItem(item, i, networkDetails) {
   return <></>
 }
 
-export default function TxnPreview ({ txn, onDismiss, network, account, isFirstFailing, mined, disableExpand, disableDismiss, disableDismissLabel }) {
+export default function TxnPreview ({ txn, onDismiss, network, account, isFirstFailing, mined, disableExpand, disableDismiss, disableDismissLabel, addressLabel = null }) {
   const [isExpanded, setExpanded] = useState(false)
   const contractName = getName(txn[0], network)
 
@@ -93,9 +93,8 @@ export default function TxnPreview ({ txn, onDismiss, network, account, isFirstF
   const extendedSummary = getTransactionSummary(txn, network, account, { mined, extended: true })
 
   const summary = (extendedSummary.map(entry => Array.isArray(entry) ? entry.map((item, i) => parseExtendedSummaryItem(item, i, networkDetails)) : (entry))) // If entry is extended summary parse it
-  const [storageUDomains] = useLocalStorage({ key: 'uDomains', defaultValue: [] })
   
-  useEffect(() => setKnownUDomains(storageUDomains), [storageUDomains])
+  useEffect(() => !!addressLabel && setKnownUDomains(addressLabel), [addressLabel])
   
   return (
     <div className={isFirstFailing ? 'txnPreview firstFailing' : 'txnPreview'}>

@@ -100,18 +100,24 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
                 txn.data = '0x'
             }
 
-            addRequest({
+            let req = {
                 id: `transfer_${Date.now()}`,
                 type: 'eth_sendTransaction',
                 chainId: selectedNetwork.chainId,
                 account: selectedAcc,
                 txn
-            })
+            }
 
             if (uDAddress) {
-                const isFound = storageUDomains.find(item => item.name === address && item.address === uDAddress)
-                if (!isFound) setStorageUDomains( [...storageUDomains, { name: address, address: uDAddress }])
+                req.meta ={ 
+                    addressLabel: { 
+                        addressLabel: address,
+                        address: uDAddress
+                    }
+                }
             }
+             
+            addRequest(req)
 
             setAmount(0)
         } catch(e) {
