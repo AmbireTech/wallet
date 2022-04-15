@@ -30,10 +30,10 @@ const Networks = ({
         dragStart,
         dragEnter,
         drop
-    } = useDragAndDrop(userSortedItems.networks && userSortedItems.networks.length ? 'custom' : 'default', 'value', onDropEnd)
+    } = useDragAndDrop(userSortedItems?.networks?.length ? 'custom' : 'default', 'value', onDropEnd)
 
     const sortedNetworks = [...allNetworks].sort((a, b) => {
-        if (chosenSort === 'custom' && userSortedItems.networks && userSortedItems.networks.length) {
+        if (chosenSort === 'custom' && userSortedItems?.networks?.length) {
             const sorted = userSortedItems.networks.indexOf(a.id) - userSortedItems.networks.indexOf(b.id)
             return sorted
         } else {

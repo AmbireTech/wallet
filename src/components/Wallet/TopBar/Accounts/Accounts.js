@@ -38,10 +38,10 @@ const Accounts = ({ accounts, selectedAddress, onSelectAcc, onRemoveAccount, hid
         dragStart,
         dragEnter,
         drop
-    } = useDragAndDrop(userSortedItems.accounts && userSortedItems.accounts.length ? 'custom' : 'default', 'id', onDropEnd)
+    } = useDragAndDrop(userSortedItems.accounts?.length ? 'custom' : 'default', 'id', onDropEnd)
 
     const sortedAccounts = [...accounts].sort((a, b) => {
-        if (chosenSort === 'custom' && userSortedItems.accounts && userSortedItems.accounts.length) {
+        if (chosenSort === 'custom' && userSortedItems.accounts?.length) {
             const sorted = userSortedItems.accounts.indexOf(a.id) - userSortedItems.accounts.indexOf(b.id)
             return sorted
         } else {
