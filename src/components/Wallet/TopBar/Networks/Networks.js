@@ -14,12 +14,23 @@ const Networks = ({
         defaultValue: {}
     })
 
+    const onDropEnd = (list) => {
+        if (chosenSort !== 'custom') setChosenSort('custom')
+        
+        setSortedItems(
+            prev => ({
+                ...prev,
+                networks: list
+            })
+        )
+    }
+
     const { chosenSort,
         setChosenSort,
         dragStart,
         dragEnter,
         drop
-    } = useDragAndDrop(userSortedItems.networks && userSortedItems.networks.length ? 'custom' : 'default', setSortedItems, 'networks')
+    } = useDragAndDrop(userSortedItems.networks && userSortedItems.networks.length ? 'custom' : 'default', 'value', onDropEnd)
 
     const sortedNetworks = [...allNetworks].sort((a, b) => {
         if (chosenSort === 'custom' && userSortedItems.networks && userSortedItems.networks.length) {

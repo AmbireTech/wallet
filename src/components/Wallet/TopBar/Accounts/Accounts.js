@@ -21,13 +21,24 @@ const Accounts = ({ accounts, selectedAddress, onSelectAcc, onRemoveAccount, hid
         key: 'userSortedItems',
         defaultValue: {}
     })
+
+    const onDropEnd = (list) => {
+        if (chosenSort !== 'custom') setChosenSort('custom')
+        
+        setSortedItems(
+            prev => ({
+                ...prev,
+                accounts: list
+            })
+        )
+    }
     
     const { chosenSort,
         setChosenSort,
         dragStart,
         dragEnter,
         drop
-    } = useDragAndDrop(userSortedItems.accounts && userSortedItems.accounts.length ? 'custom' : 'default', setSortedItems, 'accounts')
+    } = useDragAndDrop(userSortedItems.accounts && userSortedItems.accounts.length ? 'custom' : 'default', 'id', onDropEnd)
 
     const sortedAccounts = [...accounts].sort((a, b) => {
         if (chosenSort === 'custom' && userSortedItems.accounts && userSortedItems.accounts.length) {
