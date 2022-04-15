@@ -5,11 +5,10 @@ import { AiOutlineSend } from 'react-icons/ai'
 import { NavLink } from 'react-router-dom'
 import { Button, Loading } from 'components/common'
 import ProtocolsPlaceholder from './ProtocolsPlaceholder/ProtocolsPlaceholder'
-import { useState, useRef, useEffect } from 'react'
-import { MdOutlineAdd, MdVisibilityOff, MdDragIndicator } from 'react-icons/md'
-import { BsSortNumericDownAlt } from 'react-icons/bs'
+import { useState, useEffect } from 'react'
+import { MdOutlineAdd, MdVisibilityOff, MdDragIndicator, MdOutlineSort } from 'react-icons/md'
 import { AddTokenModal } from 'components/Modals'
-import { useModals, useLocalStorage } from 'hooks'
+import { useModals, useLocalStorage, useDragAndDrop } from 'hooks'
 import { HideTokenModel } from 'components/Modals'
 import { getTokenIcon } from 'lib/icons'
 import { formatFloatTokenAmount } from 'lib/formatters'
@@ -20,16 +19,22 @@ const Protocols = ({ portfolio, network, account, hidePrivateValue }) => {
 
     const [failedImg, setFailedImg] = useState([])
     const { isBalanceLoading, areProtocolsLoading, tokens, protocols } = portfolio
-    const [userSortedTokens, setSortedTokens] = useLocalStorage({
-        key: 'userSortedTokens',
+    const [userSortedItems, setSortedItems] = useLocalStorage({
+        key: 'userSortedItems',
         defaultValue: {}
     })
 
-    const [chosenSort, setChosenSort] = useState(userSortedTokens[`${account}-${network.chainId}`] && userSortedTokens[`${account}-${network.chainId}`].length ? 'custom' : 'decreasing')
-
+    const { chosenSort,
+        setChosenSort,
+        dragStart,
+        dragEnter,
+        drop
+    } = useDragAndDrop(
+        userSortedItems.tokens && userSortedItems.tokens[`${account}-${network.chainId}`] && userSortedItems.tokens[`${account}-${network.chainId}`].length ? 'custom' : 'decreasing', setSortedItems, 'tokens', `${account}-${network.chainId}`)
+ 
     const sortedTokens = tokens.sort((a, b) => {
-        if (chosenSort === 'custom' && userSortedTokens[`${account}-${network.chainId}`] && userSortedTokens[`${account}-${network.chainId}`].length) {
-            const sorted = userSortedTokens[`${account}-${network.chainId}`].indexOf(a.address) - userSortedTokens[`${account}-${network.chainId}`].indexOf(b.address)
+        if (chosenSort === 'custom' && userSortedItems.tokens && userSortedItems.tokens[`${account}-${network.chainId}`] && userSortedItems.tokens[`${account}-${network.chainId}`].length) {
+            const sorted = userSortedItems.tokens[`${account}-${network.chainId}`].indexOf(a.address) - userSortedItems.tokens[`${account}-${network.chainId}`].indexOf(b.address)
             return sorted
         } else {
             const decreasing = b.balanceUSD - a.balanceUSD
@@ -41,30 +46,6 @@ const Protocols = ({ portfolio, network, account, hidePrivateValue }) => {
     const otherProtocols = protocols.filter(({ label }) => label !== 'Tokens')
     
     const shouldShowPlaceholder = (!isBalanceLoading && !tokens.length) && (!areProtocolsLoading && !otherProtocols.length)
-    const dragItem = useRef();
-    const dragOverItem = useRef();
-
-    const dragStart = (e, position) => dragItem.current = position;
-
-    const dragEnter = (e, position) => dragOverItem.current = position;
-
-    const drop = () => {
-        const copyListItems = [...sortedTokens];
-        const dragItemContent = copyListItems[dragItem.current];
-
-        copyListItems.splice(dragItem.current, 1);
-        copyListItems.splice(dragOverItem.current, 0, dragItemContent);
-
-        dragItem.current = null;
-        dragOverItem.current = null;
-
-        const list = copyListItems.map(item => item.address)
-        setChosenSort('custom')
-        setSortedTokens({
-            ...userSortedTokens,
-            [`${account}-${network.chainId}`]: list
-        })
-    };
 
     const tokenItem = (index, img, symbol, balance, balanceUSD, address, send = false, network, decimals, category, sortedTokensLength) => 
         {
@@ -74,9 +55,10 @@ const Protocols = ({ portfolio, network, account, hidePrivateValue }) => {
                 draggable={category === 'tokens' && sortedTokensLength > 1}
                 onDragStart={(e) => dragStart(e, index)}
                 onDragEnter={(e) => dragEnter(e, index)}
-                onDragEnd={drop}
+                onDragEnd={() => drop(sortedTokens)}
                 onDragOver={(e) => e.preventDefault()}
             >
+            {sortedTokensLength > 1 && <MdDragIndicator />}
             <div className="icon">
                 { 
                     failedImg.includes(logo) ?
@@ -115,12 +97,12 @@ const Protocols = ({ portfolio, network, account, hidePrivateValue }) => {
 
 
     useEffect(() => {
-        if (userSortedTokens[`${account}-${network.chainId}`] && userSortedTokens[`${account}-${network.chainId}`].length) {
+        if (userSortedItems.tokens && userSortedItems.tokens[`${account}-${network.chainId}`] && userSortedItems.tokens[`${account}-${network.chainId}`].length) {
             setChosenSort('custom')
         } else {
             setChosenSort('decreasing')
         }
-    }, [account, userSortedTokens, network])
+    }, [account, userSortedItems, network])
 
     return (
         <div id="protocols-table">
@@ -146,7 +128,7 @@ const Protocols = ({ portfolio, network, account, hidePrivateValue }) => {
                                                     <MdDragIndicator color={chosenSort === "custom" ? "#80ffdb" : ""} cursor="pointer" onClick={() => setChosenSort('custom')} />
                                                 </ToolTip>
                                                 <ToolTip label='Sorted tokens by DESC balance'>
-                                                    <BsSortNumericDownAlt color={chosenSort === "decreasing" ? "#80ffdb" : ""} cursor="pointer" onClick={() => setChosenSort('decreasing')} />
+                                                    <MdOutlineSort color={chosenSort === "decreasing" ? "#80ffdb" : ""} cursor="pointer" onClick={() => setChosenSort('decreasing')} />
                                                 </ToolTip>
                                             </div>
                                         )}

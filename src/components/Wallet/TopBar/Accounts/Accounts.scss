@@ -21,6 +21,10 @@ $account-height: 60px;
             overflow-y: auto;
             scrollbar-width: thin;
 
+            .sort-buttons {
+                padding: 0 20px;
+            }
+
             .account {
                 position: relative;
                 display: flex;

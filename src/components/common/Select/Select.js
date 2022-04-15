@@ -7,7 +7,8 @@ import useOnClickOutside from 'hooks/onClickOutside';
 import { TextInput } from 'components/common';
 import { MdOutlineClose } from 'react-icons/md';
 
-const Select = ({ children, native, monospace, searchable, disabled, label, defaultValue, items, onChange, className }) => {
+
+const Select = ({ children, native, monospace, searchable, disabled, label, defaultValue, items, onChange, className, draggable, dragStart, dragEnter, drop, draggableHeader }) => {
     const ref = useRef();
     const hiddenTextInput = useRef();
     const transitionRef = useRef();
@@ -75,7 +76,8 @@ const Select = ({ children, native, monospace, searchable, disabled, label, defa
                 {
                     selectedItem ?
                         <div className="select-container">
-                            <div className="select-input" onClick={() => setOpen(!isOpen)}>
+                            <div className="select-input" onClick={() => setOpen(!isOpen)}
+                                >
                                 {getIcon(selectedItem)}
                                 <div className="label">{selectedItem.label || selectedItem.value}</div>
                                 {selectedItem.extra && <div className="extra">{selectedItem.extra}</div>}
@@ -87,6 +89,7 @@ const Select = ({ children, native, monospace, searchable, disabled, label, defa
                             {
                                 <CSSTransition unmountOnExit in={isOpen} timeout={200} classNames="fade" nodeRef={transitionRef}>
                                     <div className="select-menu" ref={transitionRef}>
+                                        {draggable && draggableHeader}
                                         {
                                             searchable ?
                                                 <TextInput
@@ -103,11 +106,16 @@ const Select = ({ children, native, monospace, searchable, disabled, label, defa
                                                 null
                                         }
                                         {
-                                            filteredItems.map(item => (
+                                            filteredItems.map((item, i) => (
                                                 <div
                                                     className={`option ${item.value === selectedItem.value ? 'active' : ''} ${item.disabled ? disabled : ''}`}
                                                     key={item.value}
                                                     onClick={() => !item.disabled && selectItem(item)}
+                                                    draggable={draggable}
+                                                    onDragStart={(e) => dragStart(e, i)}
+                                                    onDragEnter={(e) => dragEnter(e, i)}
+                                                    onDragEnd={() => drop(filteredItems)}
+                                                    onDragOver={(e) => e.preventDefault()}
                                                 >
                                                     {getIcon(item)}
                                                     <div className="label">{item.label || item.value}</div>
