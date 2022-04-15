@@ -14,6 +14,7 @@ const TopBar = ({
   connections,
   connect,
   disconnect,
+  isWcConnecting,
   onSelectAcc,
   onRemoveAccount,
   selectedAcc,
@@ -54,7 +55,7 @@ const TopBar = ({
           addRequest={addRequest}
         />}
         {isPrivateMode ? <MdVisibilityOff cursor="pointer" size={28} onClick={togglePrivateMode} /> : <MdRemoveRedEye cursor="pointer" size={28} onClick={togglePrivateMode} />}
-        <DApps connections={connections} connect={connect} disconnect={disconnect}/>
+        <DApps connections={connections} connect={connect} disconnect={disconnect} isWcConnecting={isWcConnecting}/>
         <Accounts accounts={accounts} selectedAddress={selectedAcc} onSelectAcc={onSelectAcc} onRemoveAccount={onRemoveAccount} hidePrivateValue={hidePrivateValue}/>        
         <Networks setNetwork={setNetwork} network={network} allNetworks={allNetworks} />
         <Links/>
