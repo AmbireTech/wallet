@@ -8,6 +8,7 @@
     user-select: none;
     font-weight: bold;
     cursor: pointer;
+    min-width: 240px;
 
     &.disabled {
         pointer-events: none;
@@ -124,21 +125,21 @@
                     cursor: -moz-grab;
                     cursor: -webkit-grab;
                 }
-
+                
                 &[draggable="true"]:active {
                     cursor: grabbing;
                     cursor: -moz-grabbing;
                     cursor: -webkit-grabbing;
                 }
-
+                
                 &:hover {
                     background-color: rgba(0, 0, 0, 0.2);
                 }
-
+                
                 &.active {
                     font-weight: bold;
                     opacity: 1;
-
+                    
                     &::after {
                         content: "";
                         position: absolute;
@@ -149,10 +150,13 @@
                         border-radius: 100%;
                     }
                 }
-
+                
                 &.disabled {
                     opacity: 0.6;
                     cursor: no-drop;
+                }
+                .drag-indicator {
+                    min-width: 14px;
                 }
             }
         }

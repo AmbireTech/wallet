@@ -5,8 +5,7 @@ import { BsChevronDown } from 'react-icons/bs'
 import { CSSTransition } from 'react-transition-group';
 import useOnClickOutside from 'hooks/onClickOutside';
 import { TextInput } from 'components/common';
-import { MdOutlineClose } from 'react-icons/md';
-
+import { MdOutlineClose, MdDragIndicator } from 'react-icons/md';
 
 const Select = ({ children, native, monospace, searchable, disabled, label, defaultValue, items, onChange, className, draggable, dragStart, dragEnter, drop, draggableHeader }) => {
     const ref = useRef();
@@ -117,6 +116,7 @@ const Select = ({ children, native, monospace, searchable, disabled, label, defa
                                                     onDragEnd={() => drop(filteredItems)}
                                                     onDragOver={(e) => e.preventDefault()}
                                                 >
+                                                    {draggable && <MdDragIndicator className="drag-indicator" />}
                                                     {getIcon(item)}
                                                     <div className="label">{item.label || item.value}</div>
                                                     {item.extra && <div className="extra">{item.extra}</div>}
