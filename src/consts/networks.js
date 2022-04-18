@@ -93,46 +93,46 @@ const networks = [
 		explorerUrl: 'https://blockscout.com',
 		unstoppableDomainsChain: 'ERC20'
 	},
-	{
-		id: 'kucoin',
-		chainId: 321,
-		rpc: 'https://rpc-mainnet.kcc.network',
-		nativeAssetSymbol: 'KCS',
-		name: 'KCC',
-		icon: '/resources/networks/kucoin.svg',
-		explorerUrl: 'https://explorer.kcc.io',
-		unstoppableDomainsChain: 'ERC20'
-	},
-	{
-		id: 'andromeda',
-		chainId: 1088,
-		rpc: 'https://andromeda.metis.io/?owner=1088',
-		nativeAssetSymbol: 'METIS',
-		name: 'Andromeda',
-		icon: '/resources/networks/andromeda.svg',
-		explorerUrl: 'https://andromeda-explorer.metis.io',
-		unstoppableDomainsChain: 'ERC20'
-	},
-	{
-		id: 'cronos',
-		chainId: 25,
-		rpc: 'https://evm-cronos.crypto.org',
-		nativeAssetSymbol: 'CRO',
-		name: 'Cronos',
-		icon: '/resources/networks/cronos.png',
-		explorerUrl: 'https://cronoscan.com',
-		unstoppableDomainsChain: 'ERC20'
-	},
-	{
-		id: 'aurora',
-		chainId: 1313161554,
-		rpc: 'https://mainnet.aurora.dev',
-		nativeAssetSymbol: 'ETH',
-		name: 'NEAR Aurora',
-		icon: '/resources/networks/aurora.png',
-		explorerUrl: 'https://aurorascan.dev',
-		unstoppableDomainsChain: 'ERC20'
-	}
+	// {
+	// 	id: 'kucoin',
+	// 	chainId: 321,
+	// 	rpc: 'https://rpc-mainnet.kcc.network',
+	// 	nativeAssetSymbol: 'KCS',
+	// 	name: 'KCC',
+	// 	icon: '/resources/networks/kucoin.svg',
+	// 	explorerUrl: 'https://explorer.kcc.io',
+	// 	unstoppableDomainsChain: 'ERC20'
+	// },
+	// {
+	// 	id: 'andromeda',
+	// 	chainId: 1088,
+	// 	rpc: 'https://andromeda.metis.io/?owner=1088',
+	// 	nativeAssetSymbol: 'METIS',
+	// 	name: 'Andromeda',
+	// 	icon: '/resources/networks/andromeda.svg',
+	// 	explorerUrl: 'https://andromeda-explorer.metis.io',
+	// 	unstoppableDomainsChain: 'ERC20'
+	// },
+	// {
+	// 	id: 'cronos',
+	// 	chainId: 25,
+	// 	rpc: 'https://evm-cronos.crypto.org',
+	// 	nativeAssetSymbol: 'CRO',
+	// 	name: 'Cronos',
+	// 	icon: '/resources/networks/cronos.png',
+	// 	explorerUrl: 'https://cronoscan.com',
+	// 	unstoppableDomainsChain: 'ERC20'
+	// },
+	// {
+	// 	id: 'aurora',
+	// 	chainId: 1313161554,
+	// 	rpc: 'https://mainnet.aurora.dev',
+	// 	nativeAssetSymbol: 'ETH',
+	// 	name: 'NEAR Aurora',
+	// 	icon: '/resources/networks/aurora.png',
+	// 	explorerUrl: 'https://aurorascan.dev',
+	// 	unstoppableDomainsChain: 'ERC20'
+	// }
 ]
 
 export default networks
