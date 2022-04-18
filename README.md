@@ -284,3 +284,10 @@ Those contracts (except Ethereum-specific WALLET, xWALLET and SupplyController) 
 * Kriptomat as new on-ramp provider
 * Added Hop.exchange LP tokens for wallet rewards
 * Provided token prices for moonbeam network
+
+### v0.5.1
+* Gas prices modal: you can now see the current gas price
+* Fee selector: now shows all fee tokens, not only the ones you have
+* UX improvement: top button for wALLET rewards now shows pending to be received, instead of claimable
+* Critical WalletConnect fix
+* Portfolio balances bugfixes
