@@ -111,10 +111,10 @@ const Select = ({ children, native, monospace, searchable, disabled, label, defa
                                                     key={item.value}
                                                     onClick={() => !item.disabled && selectItem(item)}
                                                     draggable={draggable}
-                                                    onDragStart={(e) => dragStart(e, i)}
-                                                    onMouseDown={(e) => dragTarget(e, i)}
-                                                    onDragEnter={(e) => dragEnter(e, i)}
-                                                    onDragEnd={() => drop(filteredItems)}
+                                                    onDragStart={(e) => draggable && dragStart(e, i)}
+                                                    onMouseDown={(e) => draggable && dragTarget(e, i)}
+                                                    onDragEnter={(e) => draggable && dragEnter(e, i)}
+                                                    onDragEnd={() => draggable && drop(filteredItems)}
                                                     onDragOver={(e) => e.preventDefault()}
                                                 >
                                                     {draggable && <MdDragIndicator className='drag-handle' id={`${i}-handle`} />}
