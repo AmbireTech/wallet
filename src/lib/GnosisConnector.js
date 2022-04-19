@@ -25,14 +25,20 @@ function GnosisConnector(_iframeRef, _app) {
   }
 
   this.canHandleMessage = (msg) => {
-    return Boolean(this.handlers[msg.data.method])
+    return Boolean(this.handlers[msg?.data?.method])
   }
 
   this.send = (data, requestId, error) => {
     const sdkVersion = getSDKVersion()
-    const msg = error
+    let msg = null    
+    try {
+      msg = error
       ? MessageFormatter.makeErrorResponse(requestId, error, sdkVersion)
       : MessageFormatter.makeResponse(requestId, data, sdkVersion)
+    } catch (err) {
+      console.log({'GS send': err})
+      msg = MessageFormatter.makeErrorResponse(requestId, err, sdkVersion)
+    }
 
     if (this.iframeRef) {
       //console.log("Posting to child")
