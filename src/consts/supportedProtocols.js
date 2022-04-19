@@ -54,30 +54,30 @@ const suportedProtocols = [
         balancesProvider: 'velcro',
         nftsProvider: 'velcro'
     },
-    {
-        network: 'kucoin',
-        protocols: [],
-        balancesProvider: 'velcro',
-        nftsProvider: 'velcro'
-    },
-    {
-        network: 'andromeda',
-        protocols: [],
-        balancesProvider: 'velcro',
-        nftsProvider: 'velcro'
-    },
-    {
-        network: 'cronos',
-        protocols: [],
-        balancesProvider: 'velcro',
-        nftsProvider: 'velcro'
-    },
-    {
-        network: 'aurora',
-        protocols: [],
-        balancesProvider: 'velcro',
-        nftsProvider: 'velcro'
-    }
+    // {
+    //     network: 'kucoin',
+    //     protocols: [],
+    //     balancesProvider: 'velcro',
+    //     nftsProvider: 'velcro'
+    // },
+    // {
+    //     network: 'andromeda',
+    //     protocols: [],
+    //     balancesProvider: 'velcro',
+    //     nftsProvider: 'velcro'
+    // },
+    // {
+    //     network: 'cronos',
+    //     protocols: [],
+    //     balancesProvider: 'velcro',
+    //     nftsProvider: 'velcro'
+    // },
+    // {
+    //     network: 'aurora',
+    //     protocols: [],
+    //     balancesProvider: 'velcro',
+    //     nftsProvider: 'velcro'
+    // }
 ]
 
 export default suportedProtocols
