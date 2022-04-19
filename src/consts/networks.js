@@ -73,16 +73,16 @@ const networks = [
 		explorerUrl: 'https://moonriver.moonscan.io/',
 		unstoppableDomainsChain: 'ERC20'
 	},
-	{
-		id: 'arbitrum',
-		chainId: 42161,
-		rpc: 'https://arb1.arbitrum.io/rpc',
-		nativeAssetSymbol: 'AETH',
-		name: 'Arbitrum',
-		icon: '/resources/networks/arbitrum.svg',
-		explorerUrl: 'https://arbiscan.io',
-		unstoppableDomainsChain: 'ERC20'
-	},
+	// {
+	// 	id: 'arbitrum',
+	// 	chainId: 42161,
+	// 	rpc: 'https://arb1.arbitrum.io/rpc',
+	// 	nativeAssetSymbol: 'AETH',
+	// 	name: 'Arbitrum',
+	// 	icon: '/resources/networks/arbitrum.svg',
+	// 	explorerUrl: 'https://arbiscan.io',
+	// 	unstoppableDomainsChain: 'ERC20'
+	// },
 	{
 		id: 'gnosis',
 		chainId: 100,
