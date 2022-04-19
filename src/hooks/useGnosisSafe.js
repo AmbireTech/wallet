@@ -161,10 +161,10 @@ export default function useGnosisSafe({selectedAccount, network, verbose = 0, us
         throw new Error("method not supported " + method)
       }
 
-      const resultCompatibilityMode = !BigNumber.isBigNumber(result) && typeof result === 'object'    
+      const resultCompatibilityMode = (!!result && !BigNumber.isBigNumber(result) && typeof result === 'object')    
       ? Object.fromEntries(Object.entries(result)
         .map(([key, val]) => [key, BigNumber.isBigNumber(val) ? val.toHexString() : val]))
-      : BigNumber.isBigNumber(result)  
+      : (!!result && !!BigNumber.isBigNumber(result))  
         ? result.toHexString()
         : result
 
@@ -245,8 +245,13 @@ export default function useGnosisSafe({selectedAccount, network, verbose = 0, us
       const provider = getProvider(stateRef.current.network.id)
       try {
         const res = await provider.getTransaction(safeTxHash)
-
-        return res
+        const txInfo = {
+          transactionHash: res.hash,
+          blockHash: res.blockHash,
+          blockNumber: res.blockNumber,
+          from: res.from,
+      }
+        return txInfo
       } catch (e) {
         console.error("GS: Err getting transaction " + safeTxHash)
         console.log(e)
