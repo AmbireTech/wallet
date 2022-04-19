@@ -14,6 +14,7 @@ const TopBar = ({
   connections,
   connect,
   disconnect,
+  isWcConnecting,
   onSelectAcc,
   onRemoveAccount,
   selectedAcc,
@@ -26,7 +27,7 @@ const TopBar = ({
   addRequest
 }) => {
   const [isMenuOpen, setMenuOpen] = useState(false)
-  
+
   const networksItems = allNetworks.map(({ id, name, icon }) => ({
     label: name,
     value: id,
@@ -60,7 +61,7 @@ const TopBar = ({
           addRequest={addRequest}
         />}
         {isPrivateMode ? <MdVisibilityOff cursor="pointer" size={28} onClick={togglePrivateMode} /> : <MdRemoveRedEye cursor="pointer" size={28} onClick={togglePrivateMode} />}
-        <DApps connections={connections} connect={connect} disconnect={disconnect}/>
+        <DApps connections={connections} connect={connect} disconnect={disconnect} isWcConnecting={isWcConnecting}/>
         <Accounts accounts={accounts} selectedAddress={selectedAcc} onSelectAcc={onSelectAcc} onRemoveAccount={onRemoveAccount} hidePrivateValue={hidePrivateValue}/>
         <Select defaultValue={network.id} items={networksItems} onChange={value => setNetwork(value)}/>
         <Links/>

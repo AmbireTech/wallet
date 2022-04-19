@@ -172,6 +172,8 @@ Additionally, there's an ongoing [Immunefi bug bounty](https://immunefi.com/boun
 * xWALLET staking: 0x47Cd7E91C3CBaAF266369fe8518345fc4FC12935
 * SupplyController: 0xc53af25f831f31ad6256a742b3f0905bc214a430
 
+Those contracts (except Ethereum-specific WALLET, xWALLET and SupplyController) are deployed cross-chain on the same addresses across Ethereum, Polygon, BSC, Fantom, Avalanche, Arbitrum, Moonbeam, Moonriver, Cronos, Metis, Gnosis Chain (formerly xDAI), NEAR Aurora
+
 ## Change log
 
 ### First private beta (v0.1.0)
