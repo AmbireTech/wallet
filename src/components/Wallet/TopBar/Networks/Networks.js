@@ -58,7 +58,7 @@ const Networks = ({
             dragEnter={dragEnter}
             drop={drop}
             dragStart={(e, index) => {                
-                if (handle.current === target.current) dragStart(e, index)
+                if (handle.current === target.current || handle.current.contains(target.current)) dragStart(e, index)
                 else e.preventDefault();
              }}
             dragTarget={dragTarget}

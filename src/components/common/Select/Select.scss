@@ -119,7 +119,9 @@
                 font-weight: 500;
                 opacity: 0.8;
                 cursor: pointer;
-
+                .drag-handle {
+                    min-width: 14px;
+                }
                 &[draggable="true"] .drag-handle {
                     cursor: grab;
                     cursor: -moz-grab;
@@ -154,9 +156,6 @@
                 &.disabled {
                     opacity: 0.6;
                     cursor: no-drop;
-                }
-                .drag-indicator {
-                    min-width: 14px;
                 }
             }
         }
