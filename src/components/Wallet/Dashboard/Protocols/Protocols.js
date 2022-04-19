@@ -43,6 +43,9 @@ const Protocols = ({ portfolio, network, account, hidePrivateValue }) => {
         setChosenSort,
         dragStart,
         dragEnter,
+        target,
+        handle,
+        dragTarget,
         drop
     } = useDragAndDrop(
         userSortedItems.tokens?.[`${account}-${network.chainId}`]?.length ? 'custom' : 'decreasing',
@@ -70,13 +73,19 @@ const Protocols = ({ portfolio, network, account, hidePrivateValue }) => {
             const logo = failedImg.includes(img) ? getTokenIcon(network, address) : img
                 
             return (<div className="token" key={`token-${address}-${index}`}
-                draggable={category === 'tokens' && sortedTokensLength > 1}
-                onDragStart={(e) => dragStart(e, index)}
-                onDragEnter={(e) => dragEnter(e, index)}
-                onDragEnd={() => drop(sortedTokens)}
-                onDragOver={(e) => e.preventDefault()}
+             draggable={category === 'tokens' && sortedTokensLength > 1}
+             onDragStart={(e) => {                
+                if (handle.current === target.current) dragStart(e, index)
+                else e.preventDefault();
+             }}
+             onMouseDown={(e) => dragTarget(e, index)}
+             onDragEnter={(e) => dragEnter(e, index)}
+             onDragEnd={() => drop(sortedTokens)}
+             onDragOver={(e) => e.preventDefault()}
             >
-            {sortedTokensLength > 1 && <MdDragIndicator size={20} />}
+            {sortedTokensLength > 1 && <div className='drag-handle'>
+                <MdDragIndicator size={20} onClick={(e) => dragStart(e, index)} id={`${index}-handle`} />
+            </div>}
             <div className="icon">
                 { 
                     failedImg.includes(logo) ?
