@@ -117,9 +117,7 @@ const Select = ({ children, native, monospace, searchable, disabled, label, defa
                                                     onDragEnd={() => drop(filteredItems)}
                                                     onDragOver={(e) => e.preventDefault()}
                                                 >
-                                                    {draggable && <div className='drag-handle'>
-                                                        <MdDragIndicator className="drag-indicator" id={`${i}-handle`} />
-                                                    </div>}
+                                                    {draggable && <MdDragIndicator className='drag-handle' id={`${i}-handle`} />}
                                                     {getIcon(item)}
                                                     <div className="label">{item.label || item.value}</div>
                                                     {item.extra && <div className="extra">{item.extra}</div>}
