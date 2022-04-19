@@ -4,14 +4,54 @@ import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { AiOutlinePlus } from 'react-icons/ai'
 import { MdOutlineContentCopy, MdLogout, MdOutlineClose, MdOutlineCheck } from 'react-icons/md'
+import { MdDragIndicator, MdOutlineSort } from 'react-icons/md'
+
 import * as blockies from 'blockies-ts';
 import { DropDown, Button } from 'components/common';
 import { useToasts } from 'hooks/toasts';
+import { useLocalStorage, useDragAndDrop } from 'hooks'
+import { ToolTip } from 'components/common'
 
 const Accounts = ({ accounts, selectedAddress, onSelectAcc, onRemoveAccount, hidePrivateValue }) => {
     const { addToast } = useToasts()
     const [logoutWarning, setLogoutWarning] = useState(false)
     const [closed, setClosed] = useState(false)
+
+    const [userSortedItems, setSortedItems] = useLocalStorage({
+        key: 'userSortedItems',
+        defaultValue: {}
+    })
+
+    const onDropEnd = (list) => {
+        if (chosenSort !== 'custom') setChosenSort('custom')
+        
+        setSortedItems(
+            prev => ({
+                ...prev,
+                accounts: list
+            })
+        )
+    }
+    
+    const { chosenSort,
+        setChosenSort,
+        dragStart,
+        dragEnter,
+        dragTarget,
+        target,
+        handle,
+        drop
+    } = useDragAndDrop(userSortedItems.accounts?.length ? 'custom' : 'default', 'id', onDropEnd)
+
+    const sortedAccounts = [...accounts].sort((a, b) => {
+        if (chosenSort === 'custom' && userSortedItems.accounts?.length) {
+            const sorted = userSortedItems.accounts.indexOf(a.id) - userSortedItems.accounts.indexOf(b.id)
+            return sorted
+        } else {
+            const sorted = accounts.indexOf(a.id) - accounts.indexOf(b.id)
+            return sorted
+        }
+    })
 
     const shortenedAddress = address => address.slice(0, 5) + '...' + address.slice(-3)
     const isActive = id => id === selectedAddress ? 'active' : ''
@@ -35,11 +75,32 @@ const Accounts = ({ accounts, selectedAddress, onSelectAcc, onRemoveAccount, hid
     return (
         <DropDown id="accounts" icon={toIcon(selectedAddress)} title={hidePrivateValue(shortenedAddress(selectedAddress))} open={closed} onOpen={() => setClosed(false)}>
           <div className="list">
+            <div className="sort-buttons">
+                <ToolTip label='Sorted accounts by drag and drop'>
+                    <MdDragIndicator color={chosenSort === "custom" ? "#80ffdb" : ""} cursor="pointer" onClick={() => setChosenSort('custom')} />
+                </ToolTip>
+                <ToolTip label='Sorted accounts by default'>
+                    <MdOutlineSort color={chosenSort === "default" ? "#80ffdb" : ""} cursor="pointer" onClick={() => setChosenSort('default')} />
+                </ToolTip>
+            </div>
             {
-              accounts.map(({ id, email, signer, signerExtra }) => 
+              sortedAccounts.map(({ id, email, signer, signerExtra }, i) => 
                 logoutWarning !== id ?
-                    <div className={`account ${isActive(id)}`} key={id}>
+                    <div
+                        className={`account ${isActive(id)}`}
+                        key={id}
+                        draggable={sortedAccounts.length > 1}
+                        onDragStart={(e) => {                
+                            if (handle.current === target.current || handle.current.contains(target.current)) dragStart(e, i)
+                            else e.preventDefault();
+                         }}
+                        onMouseDown={(e) => dragTarget(e, i)}
+                        onDragEnter={(e) => dragEnter(e, i)}
+                        onDragEnd={(e) => drop(sortedAccounts)}
+                        onDragOver={(e) => e.preventDefault()}
+                    >
                         <div className="inner" onClick={() => onSelectAccount(id)}>
+                            {sortedAccounts.length > 1 && <MdDragIndicator className='drag-handle' id={`${i}-handle`} />}
                             <div className="icon" style={toIconBackgroundImage(id)}></div>
                             <div className="details">
                                 <div className="address">{ id }</div>

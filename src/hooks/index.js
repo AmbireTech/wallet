@@ -11,6 +11,7 @@ import usePrivateMode from './privateMode'
 import useOnClickOutside from './onClickOutside'
 import useLocalStorage from './useLocalStorage'
 import useAmbireEarnDetails from './ambireEarnDetails'
+import useDragAndDrop from './dragAndDrop'
 
 export {
     useAccounts,
@@ -25,5 +26,6 @@ export {
     usePrivateMode,
     useOnClickOutside,
     useLocalStorage,
-    useAmbireEarnDetails
+    useAmbireEarnDetails,
+    useDragAndDrop
 }
