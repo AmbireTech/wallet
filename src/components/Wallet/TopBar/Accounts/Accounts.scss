@@ -21,11 +21,27 @@ $account-height: 60px;
             overflow-y: auto;
             scrollbar-width: thin;
 
+            .sort-buttons {
+                padding: 0 20px;
+            }
+
             .account {
                 position: relative;
                 display: flex;
                 align-items: center;
                 justify-content: space-between;
+
+                &[draggable="true"] .drag-handle {
+                    cursor: grab;
+                    cursor: -moz-grab;
+                    cursor: -webkit-grab;
+                }
+
+                &[draggable="true"]:active .drag-handle {
+                    cursor: grabbing;
+                    cursor: -moz-grabbing;
+                    cursor: -webkit-grabbing;
+                }
 
                 .inner {
                     min-width: 0;
