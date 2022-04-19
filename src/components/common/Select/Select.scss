@@ -120,13 +120,13 @@
                 opacity: 0.8;
                 cursor: pointer;
 
-                &[draggable="true"] {
+                &[draggable="true"] .drag-handle {
                     cursor: grab;
                     cursor: -moz-grab;
                     cursor: -webkit-grab;
                 }
                 
-                &[draggable="true"]:active {
+                &[draggable="true"]:active .drag-handle {
                     cursor: grabbing;
                     cursor: -moz-grabbing;
                     cursor: -webkit-grabbing;

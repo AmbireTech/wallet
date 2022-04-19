@@ -37,6 +37,9 @@ const Accounts = ({ accounts, selectedAddress, onSelectAcc, onRemoveAccount, hid
         setChosenSort,
         dragStart,
         dragEnter,
+        dragTarget,
+        target,
+        handle,
         drop
     } = useDragAndDrop(userSortedItems.accounts?.length ? 'custom' : 'default', 'id', onDropEnd)
 
@@ -87,13 +90,19 @@ const Accounts = ({ accounts, selectedAddress, onSelectAcc, onRemoveAccount, hid
                         className={`account ${isActive(id)}`}
                         key={id}
                         draggable={sortedAccounts.length > 1}
-                        onDragStart={(e) => dragStart(e, i)}
+                        onDragStart={(e) => {                
+                            if (handle.current === target.current) dragStart(e, i)
+                            else e.preventDefault();
+                         }}
+                        onMouseDown={(e) => dragTarget(e, i)}
                         onDragEnter={(e) => dragEnter(e, i)}
                         onDragEnd={(e) => drop(sortedAccounts)}
                         onDragOver={(e) => e.preventDefault()}
                     >
                         <div className="inner" onClick={() => onSelectAccount(id)}>
-                        {sortedAccounts.length > 1 && <MdDragIndicator />}
+                            {sortedAccounts.length > 1 && <div className='drag-handle'>
+                                <MdDragIndicator id={`${i}-handle`} />
+                            </div>}
                             <div className="icon" style={toIconBackgroundImage(id)}></div>
                             <div className="details">
                                 <div className="address">{ id }</div>

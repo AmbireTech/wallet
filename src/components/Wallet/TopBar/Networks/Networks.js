@@ -29,6 +29,9 @@ const Networks = ({
         setChosenSort,
         dragStart,
         dragEnter,
+        dragTarget,
+        handle,
+        target,
         drop
     } = useDragAndDrop(userSortedItems?.networks?.length ? 'custom' : 'default', 'value', onDropEnd)
 
@@ -52,9 +55,13 @@ const Networks = ({
         <Select
             defaultValue={network.id}
             draggable={true}
-            dragStart={dragStart}
             dragEnter={dragEnter}
             drop={drop}
+            dragStart={(e, index) => {                
+                if (handle.current === target.current) dragStart(e, index)
+                else e.preventDefault();
+             }}
+            dragTarget={dragTarget}
             items={networksItems}
             onChange={value => setNetwork(value)}
             draggableHeader={<div className='sort-buttons'>

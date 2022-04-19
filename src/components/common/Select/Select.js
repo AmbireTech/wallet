@@ -7,7 +7,7 @@ import useOnClickOutside from 'hooks/onClickOutside';
 import { TextInput } from 'components/common';
 import { MdOutlineClose, MdDragIndicator } from 'react-icons/md';
 
-const Select = ({ children, native, monospace, searchable, disabled, label, defaultValue, items, onChange, className, draggable, dragStart, dragEnter, drop, draggableHeader }) => {
+const Select = ({ children, native, monospace, searchable, disabled, label, defaultValue, items, onChange, className, draggable, dragStart, dragEnter, dragTarget, drop, draggableHeader }) => {
     const ref = useRef();
     const hiddenTextInput = useRef();
     const transitionRef = useRef();
@@ -112,11 +112,14 @@ const Select = ({ children, native, monospace, searchable, disabled, label, defa
                                                     onClick={() => !item.disabled && selectItem(item)}
                                                     draggable={draggable}
                                                     onDragStart={(e) => dragStart(e, i)}
+                                                    onMouseDown={(e) => dragTarget(e, i)}
                                                     onDragEnter={(e) => dragEnter(e, i)}
                                                     onDragEnd={() => drop(filteredItems)}
                                                     onDragOver={(e) => e.preventDefault()}
                                                 >
-                                                    {draggable && <MdDragIndicator className="drag-indicator" />}
+                                                    {draggable && <div className='drag-handle'>
+                                                        <MdDragIndicator className="drag-indicator" id={`${i}-handle`} />
+                                                    </div>}
                                                     {getIcon(item)}
                                                     <div className="label">{item.label || item.value}</div>
                                                     {item.extra && <div className="extra">{item.extra}</div>}
