@@ -89,7 +89,7 @@ const Accounts = ({ accounts, selectedAddress, onSelectAcc, onRemoveAccount, hid
                     <div
                         className={`account ${isActive(id)}`}
                         key={id}
-                        draggable={sortedAccounts.length > 1}
+                        draggable={sortedAccounts.length > 1 && chosenSort === 'custom'}
                         onDragStart={(e) => {                
                             if (handle.current === target.current || handle.current.contains(target.current)) dragStart(e, i)
                             else e.preventDefault();
@@ -100,7 +100,7 @@ const Accounts = ({ accounts, selectedAddress, onSelectAcc, onRemoveAccount, hid
                         onDragOver={(e) => e.preventDefault()}
                     >
                         <div className="inner" onClick={() => onSelectAccount(id)}>
-                            {sortedAccounts.length > 1 && <MdDragIndicator className='drag-handle' id={`${i}-handle`} />}
+                            {sortedAccounts.length > 1 && chosenSort === 'custom' && <MdDragIndicator className='drag-handle' id={`${i}-handle`} />}
                             <div className="icon" style={toIconBackgroundImage(id)}></div>
                             <div className="details">
                                 <div className="address">{ id }</div>
