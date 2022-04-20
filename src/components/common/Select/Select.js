@@ -7,7 +7,7 @@ import useOnClickOutside from 'hooks/onClickOutside';
 import { TextInput } from 'components/common';
 import { MdOutlineClose, MdDragIndicator } from 'react-icons/md';
 
-const Select = ({ children, native, monospace, searchable, disabled, label, defaultValue, items, onChange, className, draggable, dragStart, dragEnter, dragTarget, drop, draggableHeader }) => {
+const Select = ({ children, native, monospace, searchable, disabled, label, defaultValue, items, onChange, className, draggable, dragStart, dragEnter, dragTarget, drop, draggableHeader, displayDraggableHeader }) => {
     const ref = useRef();
     const hiddenTextInput = useRef();
     const transitionRef = useRef();
@@ -88,7 +88,7 @@ const Select = ({ children, native, monospace, searchable, disabled, label, defa
                             {
                                 <CSSTransition unmountOnExit in={isOpen} timeout={200} classNames="fade" nodeRef={transitionRef}>
                                     <div className="select-menu" ref={transitionRef}>
-                                        {draggable && draggableHeader}
+                                        {displayDraggableHeader && draggableHeader}
                                         {
                                             searchable ?
                                                 <TextInput
