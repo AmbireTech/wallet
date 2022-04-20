@@ -14,6 +14,10 @@
         p {
             margin: 0;
         }
+
+        .error-boundary-content-refresh-btn {
+            font-weight: bold;
+        }
     }
 
     .logo {
@@ -30,12 +34,8 @@
     .error-boundary-buttons {
         display: flex;
         flex-direction: row;
-        align-items: center;
+        justify-content: center;
         margin-top: 20px;
-
-        > a:first-child {
-            margin-right: 10px;
-        }
 
         > a {
             width: 50%;
