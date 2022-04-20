@@ -1,5 +1,5 @@
 import { Select } from 'components/common';
-import { useLocalStorage, useDragAndDrop } from 'hooks';
+import { useLocalStorage, useDragAndDrop, useCheckMobileScreen } from 'hooks';
 import { ToolTip } from 'components/common';
 import { MdDragIndicator, MdOutlineSort } from 'react-icons/md';
 
@@ -25,6 +25,7 @@ const Networks = ({
         )
     }
 
+    const isMobileScreen = useCheckMobileScreen()
     const { chosenSort,
         setChosenSort,
         dragStart,
@@ -54,7 +55,7 @@ const Networks = ({
     return (
         <Select
             defaultValue={network.id}
-            draggable={chosenSort === 'custom' ? true : false}
+            draggable={chosenSort === 'custom' && !isMobileScreen ? true : false}
             dragEnter={dragEnter}
             drop={drop}
             dragStart={(e, index) => {                
@@ -63,6 +64,7 @@ const Networks = ({
              }}
             dragTarget={dragTarget}
             items={networksItems}
+            displayDraggableHeader={!isMobileScreen}
             onChange={value => setNetwork(value)}
             draggableHeader={<div className='sort-buttons'>
                 <ToolTip label='Sorted networks by drag and drop'>

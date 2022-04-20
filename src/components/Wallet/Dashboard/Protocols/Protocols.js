@@ -8,7 +8,7 @@ import ProtocolsPlaceholder from './ProtocolsPlaceholder/ProtocolsPlaceholder'
 import { useState, useEffect } from 'react'
 import { MdOutlineAdd, MdVisibilityOff, MdDragIndicator, MdOutlineSort } from 'react-icons/md'
 import { AddTokenModal } from 'components/Modals'
-import { useModals, useLocalStorage, useDragAndDrop } from 'hooks'
+import { useModals, useLocalStorage, useDragAndDrop, useCheckMobileScreen } from 'hooks'
 import { HideTokenModel } from 'components/Modals'
 import { getTokenIcon } from 'lib/icons'
 import { formatFloatTokenAmount } from 'lib/formatters'
@@ -24,6 +24,7 @@ const Protocols = ({ portfolio, network, account, hidePrivateValue }) => {
         defaultValue: {}
     })
 
+    const isMobileScreen = useCheckMobileScreen()
 
     const onDropEnd = (list) => {
         if (chosenSort !== 'custom') setChosenSort('custom')
@@ -73,7 +74,7 @@ const Protocols = ({ portfolio, network, account, hidePrivateValue }) => {
             const logo = failedImg.includes(img) ? getTokenIcon(network, address) : img
                 
             return (<div className="token" key={`token-${address}-${index}`}
-             draggable={category === 'tokens' && sortedTokensLength > 1 && chosenSort === 'custom'}
+             draggable={category === 'tokens' && sortedTokensLength > 1 && chosenSort === 'custom' && !isMobileScreen}
              onDragStart={(e) => { 
                 if (handle.current === target.current || handle.current.contains(target.current)) dragStart(e, index)
                 else e.preventDefault();
@@ -83,7 +84,7 @@ const Protocols = ({ portfolio, network, account, hidePrivateValue }) => {
              onDragEnd={() => drop(sortedTokens)}
              onDragOver={(e) => e.preventDefault()}
             >
-            {sortedTokensLength > 1 && chosenSort === 'custom' && <MdDragIndicator size={20} className='drag-handle' onClick={(e) => dragStart(e, index)} id={`${index}-handle`} />}
+            {sortedTokensLength > 1 && chosenSort === 'custom' && !isMobileScreen && <MdDragIndicator size={20} className='drag-handle' onClick={(e) => dragStart(e, index)} id={`${index}-handle`} />}
             <div className="icon">
                 { 
                     failedImg.includes(logo) ?
@@ -147,7 +148,7 @@ const Protocols = ({ portfolio, network, account, hidePrivateValue }) => {
                                 <div className="title">
                                     <div className="sort-holder">
                                         Tokens
-                                        {sortedTokens.length > 1 && (
+                                        {sortedTokens.length > 1 && !isMobileScreen &&  (
                                             <div className="sort-buttons">
                                                 <ToolTip label='Sorted tokens by drag and drop'>
                                                     <MdDragIndicator color={chosenSort === "custom" ? "#80ffdb" : ""} cursor="pointer" onClick={() => setChosenSort('custom')} />
