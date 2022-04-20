@@ -1,5 +1,5 @@
 import { Select } from 'components/common';
-import { useLocalStorage, useDragAndDrop, useCheckMobileScreen } from 'hooks';
+import { useDragAndDrop, useCheckMobileScreen } from 'hooks';
 import { ToolTip } from 'components/common';
 import { MdDragIndicator, MdOutlineSort } from 'react-icons/md';
 
@@ -7,38 +7,37 @@ const Networks = ({
     network,
     setNetwork,
     allNetworks,
+    userSorting,
+    setUserSorting
   }) => {
 
-    const [userSortedItems, setSortedItems] = useLocalStorage({
-        key: 'userSortedItems',
-        defaultValue: {}
-    })
+    const sortType = userSorting.networks?.sortType || 'default'
 
-    const onDropEnd = (list) => {
-        if (chosenSort !== 'custom') setChosenSort('custom')
-        
-        setSortedItems(
+    const onDropEnd = (list) => {        
+        setUserSorting(
             prev => ({
                 ...prev,
-                networks: list
+                networks: {
+                    sortType: 'custom',
+                    items: list
+                }
             })
         )
     }
 
     const isMobileScreen = useCheckMobileScreen()
-    const { chosenSort,
-        setChosenSort,
+    const {
         dragStart,
         dragEnter,
         dragTarget,
         handle,
         target,
         drop
-    } = useDragAndDrop(userSortedItems?.networks?.length ? 'custom' : 'default', 'value', onDropEnd)
+    } = useDragAndDrop('value', onDropEnd)
 
     const sortedNetworks = [...allNetworks].sort((a, b) => {
-        if (chosenSort === 'custom' && userSortedItems?.networks?.length) {
-            const sorted = userSortedItems.networks.indexOf(a.id) - userSortedItems.networks.indexOf(b.id)
+        if (sortType === 'custom' && userSorting?.networks?.items?.length) {
+            const sorted = userSorting.networks.items.indexOf(a.id) - userSorting.networks.items.indexOf(b.id)
             return sorted
         } else {
             const sorted = allNetworks.indexOf(a.id) - allNetworks.indexOf(b.id)
@@ -55,7 +54,7 @@ const Networks = ({
     return (
         <Select
             defaultValue={network.id}
-            draggable={chosenSort === 'custom' && !isMobileScreen ? true : false}
+            draggable={sortType === 'custom' && !isMobileScreen ? true : false}
             dragEnter={dragEnter}
             drop={drop}
             dragStart={(e, index) => {                
@@ -68,10 +67,24 @@ const Networks = ({
             onChange={value => setNetwork(value)}
             draggableHeader={<div className='sort-buttons'>
                 <ToolTip label='Sorted networks by drag and drop'>
-                    <MdDragIndicator color={chosenSort === "custom" ? "#80ffdb" : ""} cursor="pointer" onClick={() => setChosenSort('custom')} />
+                    <MdDragIndicator color={sortType === "custom" ? "#80ffdb" : ""} cursor="pointer" 
+                    onClick={() => setUserSorting(prev => ({
+                        ...prev,
+                        networks: {
+                            ...prev.networks,
+                            sortType: 'custom'
+                        }
+                    }))} />
                 </ToolTip>
                 <ToolTip label='Sorted networks by default'>
-                    <MdOutlineSort color={chosenSort === "default" ? "#80ffdb" : ""} cursor="pointer" onClick={() => setChosenSort('default')} />
+                    <MdOutlineSort color={sortType === "default" ? "#80ffdb" : ""} cursor="pointer" 
+                    onClick={() => setUserSorting(prev => ({
+                        ...prev,
+                        networks: {
+                            ...prev.networks,
+                            sortType: 'default'
+                        }
+                    }))} />
                 </ToolTip>
             </div>}
         />
