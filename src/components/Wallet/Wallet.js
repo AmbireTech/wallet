@@ -40,6 +40,8 @@ export default function Wallet(props) {
         privateMode={props.privateMode}
         rewardsData={props.rewardsData}
         relayerURL={props.relayerURL}
+        userSorting={props.userSorting}
+        setUserSorting={props.setUserSorting}
       />
     },
     {

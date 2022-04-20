@@ -1,8 +1,6 @@
-import { useState, useRef } from 'react'
+import { useRef } from 'react'
 
-const useDragAndDrop = (defaultValue, sortingKey, onDropEnd) => {
-    const [chosenSort, setChosenSort] = useState(defaultValue)
-    
+const useDragAndDrop = (sortingKey, onDropEnd) => {    
     const dragItem = useRef();
     const dragOverItem = useRef();
     const target = useRef();
@@ -33,8 +31,6 @@ const useDragAndDrop = (defaultValue, sortingKey, onDropEnd) => {
     };
 
     return {
-        chosenSort,
-        setChosenSort,
         dragStart,
         dragEnter,
         dragTarget,
