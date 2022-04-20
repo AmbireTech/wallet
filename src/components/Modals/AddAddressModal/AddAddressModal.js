@@ -33,7 +33,7 @@ const AddAddressModal = ({ title, inputs, selectedNetwork, onClose }) => {
             }
             
             const isFormValid = inputsFields
-                .map(({ ref, validate }) => ref && (validate ? validate(uDAddr ? uDAddr : ref.current.value) : true))
+                .map(({ ref, validate }) => ref && !!ref.current.value && (validate ? validate(uDAddr ? uDAddr : ref.current.value) : true))
                 .every(v => v === true)
             setDisabled(!isFormValid)
         }
