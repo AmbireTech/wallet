@@ -24,7 +24,9 @@ const TopBar = ({
   allNetworks,
   rewardsData,
   privateMode: { isPrivateMode, togglePrivateMode, hidePrivateValue },
-  addRequest
+  addRequest,
+  userSorting,
+  setUserSorting
 }) => {
   const [isMenuOpen, setMenuOpen] = useState(false)
 
@@ -56,8 +58,9 @@ const TopBar = ({
         />}
         {isPrivateMode ? <MdVisibilityOff cursor="pointer" size={28} onClick={togglePrivateMode} /> : <MdRemoveRedEye cursor="pointer" size={28} onClick={togglePrivateMode} />}
         <DApps connections={connections} connect={connect} disconnect={disconnect} isWcConnecting={isWcConnecting}/>
-        <Accounts accounts={accounts} selectedAddress={selectedAcc} onSelectAcc={onSelectAcc} onRemoveAccount={onRemoveAccount} hidePrivateValue={hidePrivateValue}/>        
-        <Networks setNetwork={setNetwork} network={network} allNetworks={allNetworks} />
+        <Accounts accounts={accounts} selectedAddress={selectedAcc} onSelectAcc={onSelectAcc} onRemoveAccount={onRemoveAccount} hidePrivateValue={hidePrivateValue}  userSorting={userSorting} setUserSorting={setUserSorting}/>        
+        <Networks setNetwork={setNetwork} network={network} allNetworks={allNetworks}  userSorting={userSorting}
+        setUserSorting={setUserSorting}/>
         <Links/>
       </div>
     </div>

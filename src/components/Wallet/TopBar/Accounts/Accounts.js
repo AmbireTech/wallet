@@ -9,43 +9,42 @@ import { MdDragIndicator, MdOutlineSort } from 'react-icons/md'
 import * as blockies from 'blockies-ts';
 import { DropDown, Button } from 'components/common';
 import { useToasts } from 'hooks/toasts';
-import { useLocalStorage, useDragAndDrop } from 'hooks'
+import { useDragAndDrop, useCheckMobileScreen } from 'hooks'
 import { ToolTip } from 'components/common'
 
-const Accounts = ({ accounts, selectedAddress, onSelectAcc, onRemoveAccount, hidePrivateValue }) => {
+const Accounts = ({ accounts, selectedAddress, onSelectAcc, onRemoveAccount, hidePrivateValue, userSorting, setUserSorting }) => {
     const { addToast } = useToasts()
     const [logoutWarning, setLogoutWarning] = useState(false)
     const [closed, setClosed] = useState(false)
 
-    const [userSortedItems, setSortedItems] = useLocalStorage({
-        key: 'userSortedItems',
-        defaultValue: {}
-    })
+    const isMobileScreen = useCheckMobileScreen()
 
-    const onDropEnd = (list) => {
-        if (chosenSort !== 'custom') setChosenSort('custom')
-        
-        setSortedItems(
+    const sortType = userSorting.accounts?.sortType || 'default'
+
+    const onDropEnd = (list) => {        
+        setUserSorting(
             prev => ({
                 ...prev,
-                accounts: list
+                accounts: {
+                    sortType: 'custom',
+                    items: list
+                }
             })
         )
     }
     
-    const { chosenSort,
-        setChosenSort,
+    const {
         dragStart,
         dragEnter,
         dragTarget,
         target,
         handle,
         drop
-    } = useDragAndDrop(userSortedItems.accounts?.length ? 'custom' : 'default', 'id', onDropEnd)
+    } = useDragAndDrop('id', onDropEnd)
 
     const sortedAccounts = [...accounts].sort((a, b) => {
-        if (chosenSort === 'custom' && userSortedItems.accounts?.length) {
-            const sorted = userSortedItems.accounts.indexOf(a.id) - userSortedItems.accounts.indexOf(b.id)
+        if (sortType === 'custom' && userSorting.accounts?.items?.length) {
+            const sorted = userSorting.accounts.items.indexOf(a.id) - userSorting.accounts.items.indexOf(b.id)
             return sorted
         } else {
             const sorted = accounts.indexOf(a.id) - accounts.indexOf(b.id)
@@ -75,21 +74,35 @@ const Accounts = ({ accounts, selectedAddress, onSelectAcc, onRemoveAccount, hid
     return (
         <DropDown id="accounts" icon={toIcon(selectedAddress)} title={hidePrivateValue(shortenedAddress(selectedAddress))} open={closed} onOpen={() => setClosed(false)}>
           <div className="list">
-            <div className="sort-buttons">
+            {!isMobileScreen && <div className="sort-buttons">
                 <ToolTip label='Sorted accounts by drag and drop'>
-                    <MdDragIndicator color={chosenSort === "custom" ? "#80ffdb" : ""} cursor="pointer" onClick={() => setChosenSort('custom')} />
+                    <MdDragIndicator color={sortType === "custom" ? "#80ffdb" : ""} cursor="pointer"
+                    onClick={() => setUserSorting(prev => ({
+                        ...prev,
+                        accounts: {
+                            ...prev.accounts,
+                            sortType: 'custom'
+                        }
+                    }))} />
                 </ToolTip>
                 <ToolTip label='Sorted accounts by default'>
-                    <MdOutlineSort color={chosenSort === "default" ? "#80ffdb" : ""} cursor="pointer" onClick={() => setChosenSort('default')} />
+                    <MdOutlineSort color={sortType === "default" ? "#80ffdb" : ""} cursor="pointer"
+                    onClick={() => setUserSorting(prev => ({
+                        ...prev,
+                        accounts: {
+                            ...prev.accounts,
+                            sortType: 'default'
+                        }
+                    }))} />
                 </ToolTip>
-            </div>
+            </div>}
             {
               sortedAccounts.map(({ id, email, signer, signerExtra }, i) => 
                 logoutWarning !== id ?
                     <div
                         className={`account ${isActive(id)}`}
                         key={id}
-                        draggable={sortedAccounts.length > 1}
+                        draggable={sortedAccounts.length > 1 && sortType === 'custom' && !isMobileScreen}
                         onDragStart={(e) => {                
                             if (handle.current === target.current || handle.current.contains(target.current)) dragStart(e, i)
                             else e.preventDefault();
@@ -100,7 +113,7 @@ const Accounts = ({ accounts, selectedAddress, onSelectAcc, onRemoveAccount, hid
                         onDragOver={(e) => e.preventDefault()}
                     >
                         <div className="inner" onClick={() => onSelectAccount(id)}>
-                            {sortedAccounts.length > 1 && <MdDragIndicator className='drag-handle' id={`${i}-handle`} />}
+                            {sortedAccounts.length > 1 && sortType === 'custom' && !isMobileScreen && <MdDragIndicator className='drag-handle' id={`${i}-handle`} />}
                             <div className="icon" style={toIconBackgroundImage(id)}></div>
                             <div className="details">
                                 <div className="address">{ id }</div>

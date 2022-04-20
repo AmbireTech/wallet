@@ -12,6 +12,7 @@ import useOnClickOutside from './onClickOutside'
 import useLocalStorage from './useLocalStorage'
 import useAmbireEarnDetails from './ambireEarnDetails'
 import useDragAndDrop from './dragAndDrop'
+import useCheckMobileScreen from './checkMobileScreen'
 
 export {
     useAccounts,
@@ -27,5 +28,6 @@ export {
     useOnClickOutside,
     useLocalStorage,
     useAmbireEarnDetails,
-    useDragAndDrop
+    useDragAndDrop,
+    useCheckMobileScreen
 }
