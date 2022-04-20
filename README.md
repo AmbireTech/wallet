@@ -299,3 +299,4 @@ Those contracts (except Ethereum-specific WALLET, xWALLET and SupplyController) 
 * Error screen in case of an unexpected crash
 * Fix bug when sending NFTs
 * Can display balances on networks not supported by our providers
+* Support NFT on Binance Smart Chain
