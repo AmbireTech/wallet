@@ -6,6 +6,7 @@ const ADDED_GAS_TOKEN = 30000
 const ADDED_GAS_NATIVE = 12000
 
 export function isTokenEligible(token, speed, estimation) {
+  if (estimation?.relayerless && token?.address === '0x0000000000000000000000000000000000000000') return true
   if (!token) return false
   const { feeInFeeToken } = getFeesData(token, estimation, speed )
   const balanceInFeeToken = (parseInt(token.balance) / Math.pow(10, token.decimals))

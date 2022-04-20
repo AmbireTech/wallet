@@ -283,4 +283,20 @@ Those contracts (except Ethereum-specific WALLET, xWALLET and SupplyController) 
 * ADX staking card improvements
 * Kriptomat as new on-ramp provider
 * Added Hop.exchange LP tokens for wallet rewards
-* Provided token prices for moonbeam network
+* Provided token prices for Moonbeam network
+
+### v0.5.1
+* Gas prices modal: you can now see the current gas price
+* Fee selector: now shows all fee tokens, not only the ones you have
+* UX improvement: top button for WALLET rewards now shows pending to be received, instead of claimable
+* Critical WalletConnect fix
+* Portfolio balances bugfixes
+
+### v0.5.2
+* Added Gnosis Chain
+* Drag & Drop ordering for tokens addresses and networks
+* Unstoppable Domains support in the Address book
+* Error screen in case of an unexpected crash
+* Fix bug when sending NFTs
+* Can display balances on networks not supported by our providers
+* Support NFT on Binance Smart Chain

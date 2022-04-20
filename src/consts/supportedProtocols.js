@@ -24,8 +24,9 @@ const suportedProtocols = [
     {
         network: 'binance-smart-chain',
         // protocols: ['pancakeswap'],
-        protocols: [],
-        balancesProvider: 'velcro'
+        protocols: ['nft'],
+        balancesProvider: 'velcro',
+        nftsProvider: 'velcro'
     },
     {
         network: 'fantom',
@@ -41,13 +42,43 @@ const suportedProtocols = [
         network: 'moonriver',
         protocols: [],
 	    balancesProvider: 'velcro'
-    }
-    /*,
+    },
     {
         network: 'arbitrum',
+        protocols: ['nft'],
+        balancesProvider: 'velcro',
+        nftsProvider: 'velcro'
+    },
+    {
+        network: 'gnosis',
         protocols: [],
-        balancesProvider: 'velcro'
-    }*/
+        balancesProvider: 'velcro',
+        nftsProvider: 'velcro'
+    },
+    // {
+    //     network: 'kucoin',
+    //     protocols: [],
+    //     balancesProvider: 'velcro',
+    //     nftsProvider: 'velcro'
+    // },
+    // {
+    //     network: 'andromeda',
+    //     protocols: [],
+    //     balancesProvider: 'velcro',
+    //     nftsProvider: 'velcro'
+    // },
+    // {
+    //     network: 'cronos',
+    //     protocols: [],
+    //     balancesProvider: 'velcro',
+    //     nftsProvider: 'velcro'
+    // },
+    // {
+    //     network: 'aurora',
+    //     protocols: [],
+    //     balancesProvider: 'velcro',
+    //     nftsProvider: 'velcro'
+    // }
 ]
 
 export default suportedProtocols
