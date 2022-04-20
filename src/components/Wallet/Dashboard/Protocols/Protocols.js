@@ -5,43 +5,41 @@ import { AiOutlineSend } from 'react-icons/ai'
 import { NavLink } from 'react-router-dom'
 import { Button, Loading } from 'components/common'
 import ProtocolsPlaceholder from './ProtocolsPlaceholder/ProtocolsPlaceholder'
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { MdOutlineAdd, MdVisibilityOff, MdDragIndicator, MdOutlineSort } from 'react-icons/md'
 import { AddTokenModal } from 'components/Modals'
-import { useModals, useLocalStorage, useDragAndDrop, useCheckMobileScreen } from 'hooks'
+import { useModals, useDragAndDrop, useCheckMobileScreen } from 'hooks'
 import { HideTokenModel } from 'components/Modals'
 import { getTokenIcon } from 'lib/icons'
 import { formatFloatTokenAmount } from 'lib/formatters'
 import { ToolTip } from 'components/common'
 
-const Protocols = ({ portfolio, network, account, hidePrivateValue }) => {
+const Protocols = ({ portfolio, network, account, hidePrivateValue, userSorting, setUserSorting }) => {
     const { showModal } = useModals()
 
     const [failedImg, setFailedImg] = useState([])
     const { isBalanceLoading, areProtocolsLoading, tokens, protocols } = portfolio
-    const [userSortedItems, setSortedItems] = useLocalStorage({
-        key: 'userSortedItems',
-        defaultValue: {}
-    })
+
+    const sortType = userSorting.tokens?.sortType || 'decreasing'
 
     const isMobileScreen = useCheckMobileScreen()
 
-    const onDropEnd = (list) => {
-        if (chosenSort !== 'custom') setChosenSort('custom')
-        
-        setSortedItems(
+    const onDropEnd = (list) => {        
+        setUserSorting(
             prev => ({
                 ...prev,
                 tokens: {
-                    ...prev.tokens,
-                    [`${account}-${network.chainId}`]: list
+                    sortType: 'custom',
+                    items: {
+                        ...prev.tokens?.items,
+                        [`${account}-${network.chainId}`]: list
+                    }
                 }
             })
         )
     }
 
-    const { chosenSort,
-        setChosenSort,
+    const {
         dragStart,
         dragEnter,
         target,
@@ -49,13 +47,12 @@ const Protocols = ({ portfolio, network, account, hidePrivateValue }) => {
         dragTarget,
         drop
     } = useDragAndDrop(
-        userSortedItems.tokens?.[`${account}-${network.chainId}`]?.length ? 'custom' : 'decreasing',
         'address',
         onDropEnd)
  
     const sortedTokens = tokens.sort((a, b) => {
-        if (chosenSort === 'custom' && userSortedItems.tokens?.[`${account}-${network.chainId}`]?.length) {
-            const sorted = userSortedItems.tokens[`${account}-${network.chainId}`].indexOf(a.address) - userSortedItems.tokens[`${account}-${network.chainId}`].indexOf(b.address)
+        if (sortType === 'custom' && userSorting.tokens?.items?.[`${account}-${network.chainId}`]?.length) {
+            const sorted = userSorting.tokens.items[`${account}-${network.chainId}`].indexOf(a.address) - userSorting.tokens.items[`${account}-${network.chainId}`].indexOf(b.address)
             return sorted
         } else {
             const decreasing = b.balanceUSD - a.balanceUSD
@@ -74,7 +71,7 @@ const Protocols = ({ portfolio, network, account, hidePrivateValue }) => {
             const logo = failedImg.includes(img) ? getTokenIcon(network, address) : img
                 
             return (<div className="token" key={`token-${address}-${index}`}
-             draggable={category === 'tokens' && sortedTokensLength > 1 && chosenSort === 'custom' && !isMobileScreen}
+             draggable={category === 'tokens' && sortedTokensLength > 1 && sortType === 'custom' && !isMobileScreen}
              onDragStart={(e) => { 
                 if (handle.current === target.current || handle.current.contains(target.current)) dragStart(e, index)
                 else e.preventDefault();
@@ -84,7 +81,7 @@ const Protocols = ({ portfolio, network, account, hidePrivateValue }) => {
              onDragEnd={() => drop(sortedTokens)}
              onDragOver={(e) => e.preventDefault()}
             >
-            {sortedTokensLength > 1 && chosenSort === 'custom' && !isMobileScreen && <MdDragIndicator size={20} className='drag-handle' onClick={(e) => dragStart(e, index)} id={`${index}-handle`} />}
+            {sortedTokensLength > 1 && sortType === 'custom' && !isMobileScreen && <MdDragIndicator size={20} className='drag-handle' onClick={(e) => dragStart(e, index)} id={`${index}-handle`} />}
             <div className="icon">
                 { 
                     failedImg.includes(logo) ?
@@ -122,14 +119,6 @@ const Protocols = ({ portfolio, network, account, hidePrivateValue }) => {
     const openHideTokenModal = () => showModal(<HideTokenModel network={network} account={account} portfolio={portfolio} />)
 
 
-    useEffect(() => {
-        if (userSortedItems.tokens?.[`${account}-${network.chainId}`]?.length) {
-            setChosenSort('custom')
-        } else {
-            setChosenSort('decreasing')
-        }
-    }, [account, userSortedItems, network, setChosenSort])
-
     return (
         <div id="protocols-table">
             {
@@ -151,10 +140,22 @@ const Protocols = ({ portfolio, network, account, hidePrivateValue }) => {
                                         {sortedTokens.length > 1 && !isMobileScreen &&  (
                                             <div className="sort-buttons">
                                                 <ToolTip label='Sorted tokens by drag and drop'>
-                                                    <MdDragIndicator color={chosenSort === "custom" ? "#80ffdb" : ""} cursor="pointer" onClick={() => setChosenSort('custom')} />
+                                                    <MdDragIndicator color={sortType === "custom" ? "#80ffdb" : ""} cursor="pointer" onClick={() => setUserSorting(prev => ({
+                                                        ...prev,
+                                                        tokens: {
+                                                            ...prev.tokens,
+                                                            sortType: 'custom'
+                                                        }
+                                                    }))} />
                                                 </ToolTip>
                                                 <ToolTip label='Sorted tokens by DESC balance'>
-                                                    <MdOutlineSort color={chosenSort === "decreasing" ? "#80ffdb" : ""} cursor="pointer" onClick={() => setChosenSort('decreasing')} />
+                                                    <MdOutlineSort color={sortType === "decreasing" ? "#80ffdb" : ""} cursor="pointer" onClick={() => setUserSorting(prev => ({
+                                                        ...prev,
+                                                        tokens: {
+                                                            ...prev.tokens,
+                                                            sortType: 'decreasing'
+                                                        }
+                                                    }))} />
                                                 </ToolTip>
                                             </div>
                                         )}
