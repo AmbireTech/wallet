@@ -2,7 +2,7 @@ import './SignMessage.scss'
 import { MdBrokenImage, MdCheck, MdClose } from 'react-icons/md'
 import { Wallet } from 'ethers'
 import { toUtf8String, arrayify, isHexString, toUtf8Bytes, _TypedDataEncoder } from 'ethers/lib/utils'
-import { signMsgHashEIP712, signMsgStandard } from 'adex-protocol-eth/js/Bundle'
+import { signMessage712, signMessage } from 'adex-protocol-eth/js/Bundle'
 import * as blockies from 'blockies-ts';
 import { getWallet } from 'lib/getWallet'
 import { useToasts } from 'hooks/toasts'
@@ -105,9 +105,9 @@ export default function SignMessage ({ toSign, resolve, account, connections, re
 
       let sig
       if (isTypedData) {
-        sig = await signMsgHashEIP712(wallet, account.id, account.signer, dataV4.domain, dataV4.types, dataV4.message, signature)
+        sig = await signMessage712(wallet, account.id, account.signer, dataV4.domain, dataV4.types, dataV4.message, signature)
       } else {
-        sig = await signMsgStandard(wallet, account.id, account.signer, getMessageAsBytes(toSign.txn), signature)
+        sig = await signMessage(wallet, account.id, account.signer, getMessageAsBytes(toSign.txn), signature)
       }
 
       resolve({ success: true, result: sig })
@@ -125,7 +125,7 @@ export default function SignMessage ({ toSign, resolve, account, connections, re
     setLoading(true)
     try {
       // if quick account, wallet = await fromEncryptedBackup
-      // and just pass the signature as secondSig to signMsgHash
+      // and just pass the signature as secondSig to signMessage
       const wallet = getWallet({
         signer: account.signer,
         signerExtra: account.signerExtra,
@@ -137,9 +137,9 @@ export default function SignMessage ({ toSign, resolve, account, connections, re
 
       let sig
       if (toSign.type === 'eth_signTypedData_v4') {
-        sig = await signMsgHashEIP712(wallet, account.id, account.signer, dataV4.domain, dataV4.types, dataV4.message)
+        sig = await signMessage712(wallet, account.id, account.signer, dataV4.domain, dataV4.types, dataV4.message)
       } else {
-        sig = await signMsgStandard(wallet, account.id, account.signer, getMessageAsBytes(toSign.txn))
+        sig = await signMessage(wallet, account.id, account.signer, getMessageAsBytes(toSign.txn))
       }
 
 
