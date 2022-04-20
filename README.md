@@ -293,9 +293,9 @@ Those contracts (except Ethereum-specific WALLET, xWALLET and SupplyController) 
 * Portfolio balances bugfixes
 
 ### v0.5.2
-* Added Gnosis chain
+* Added Gnosis Chain
 * Drag & Drop ordering for tokens addresses and networks
-* UnstoppableDomains in address book
-* Balance support direct from networks
-* Global fallback in case of anunexpected crash
-* fix sending NFT bug
+* Unstoppable Domains support in the Address book
+* Error screen in case of an unexpected crash
+* Fix bug when sending NFTs
+* Can display balances on networks not supported by our providers
