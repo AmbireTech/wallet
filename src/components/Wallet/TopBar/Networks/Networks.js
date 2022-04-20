@@ -54,7 +54,7 @@ const Networks = ({
     return (
         <Select
             defaultValue={network.id}
-            draggable={true}
+            draggable={chosenSort === 'custom' ? true : false}
             dragEnter={dragEnter}
             drop={drop}
             dragStart={(e, index) => {                

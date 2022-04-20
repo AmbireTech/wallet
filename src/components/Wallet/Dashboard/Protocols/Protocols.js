@@ -73,7 +73,7 @@ const Protocols = ({ portfolio, network, account, hidePrivateValue }) => {
             const logo = failedImg.includes(img) ? getTokenIcon(network, address) : img
                 
             return (<div className="token" key={`token-${address}-${index}`}
-             draggable={category === 'tokens' && sortedTokensLength > 1}
+             draggable={category === 'tokens' && sortedTokensLength > 1 && chosenSort === 'custom'}
              onDragStart={(e) => { 
                 if (handle.current === target.current || handle.current.contains(target.current)) dragStart(e, index)
                 else e.preventDefault();
@@ -83,7 +83,7 @@ const Protocols = ({ portfolio, network, account, hidePrivateValue }) => {
              onDragEnd={() => drop(sortedTokens)}
              onDragOver={(e) => e.preventDefault()}
             >
-            {sortedTokensLength > 1 && <MdDragIndicator size={20} className='drag-handle' onClick={(e) => dragStart(e, index)} id={`${index}-handle`} />}
+            {sortedTokensLength > 1 && chosenSort === 'custom' && <MdDragIndicator size={20} className='drag-handle' onClick={(e) => dragStart(e, index)} id={`${index}-handle`} />}
             <div className="icon">
                 { 
                     failedImg.includes(logo) ?
