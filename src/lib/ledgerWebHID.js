@@ -192,6 +192,35 @@ export async function ledgerSignMessage(hash, signerAddress) {
   return signedMsg
 }
 
+export async function ledgerSignMessage712(domainSeparator, hashStructMessage, signerAddress) {
+  const transport = await getTransport().catch(err => {
+    throw err
+  })
+
+  const accountsData = await getAccounts(transport)
+  if (accountsData.error) {
+    throw new Error(accountsData.error)
+  }
+
+  //TODO for multiple accs?
+  const account = accountsData.accounts[0]
+
+  let signedMsg
+  debugger
+  if (account.address.toLowerCase() === signerAddress.toLowerCase()) {
+    try {
+      const rsvReply = await new AppEth(transport).signEIP712HashedMessage(account.derivationPath, domainSeparator, hashStructMessage)
+      signedMsg = '0x' + rsvReply.r + rsvReply.s + rsvReply.v.toString(16)
+    } catch (e) {
+      throw new Error('Signature denied ' + e.message)
+    }
+  } else {
+    throw new Error('Incorrect address. Are you using the correct account/ledger?')
+  }
+  transport.close()
+  return signedMsg
+}
+
 function calculateDerivedHDKeyInfos(initialDerivedKeyInfo, count) {
   const derivedKeys = []
   for (let i = 0; i < count; i++) {

@@ -1,14 +1,15 @@
 import './SignMessage.scss'
 import { MdBrokenImage, MdCheck, MdClose } from 'react-icons/md'
 import { Wallet } from 'ethers'
-import { toUtf8String, keccak256, arrayify, isHexString } from 'ethers/lib/utils'
-import { signMsgHash } from 'adex-protocol-eth/js/Bundle'
+import { toUtf8String, arrayify, isHexString, toUtf8Bytes, _TypedDataEncoder } from 'ethers/lib/utils'
+import { signMsgHashEIP712, signMsgStandard } from 'adex-protocol-eth/js/Bundle'
 import * as blockies from 'blockies-ts';
 import { getWallet } from 'lib/getWallet'
 import { useToasts } from 'hooks/toasts'
 import { fetchPost } from 'lib/fetch'
 import { useState, useEffect, useRef } from 'react'
 import { Button, Loading, TextInput } from 'components/common'
+import { isObject } from 'url/util'
 
 const CONF_CODE_LENGTH = 6
 
@@ -29,10 +30,27 @@ export default function SignMessage ({ toSign, resolve, account, connections, re
   }, [confFieldState])
 
   if (!toSign || !account) return (<></>)
-  if (toSign && !isHexString(toSign.txn)) return (<div id='signMessage'>
-    <h3 className='error'>Invalid signing request: .txn has to be a hex string</h3>
-    <Button className='reject' onClick={() => resolve({ message: 'signature denied' })}>Reject</Button>
-  </div>)
+
+  let dataV4
+  if (toSign.type === 'eth_signTypedData_v4') {
+    dataV4 = toSign.txn
+    let typeDataErr
+
+    if (isObject(dataV4)) {
+      try {
+        _TypedDataEncoder.hash(dataV4.domain, dataV4.types, dataV4.message)
+      } catch {
+        typeDataErr = '.txn has Invalid TypedData object. Should be {domain, types, message}'
+      }
+    } else {
+      typeDataErr = '.txn should be a TypedData object'
+    }
+
+    if (typeDataErr) return (<div id='signMessage'>
+      <h3 className='error'>Invalid signing request: {{ typeDataErr }}</h3>
+      <Button className='reject' onClick={() => resolve({ message: 'signature denied' })}>Reject</Button>
+    </div>)
+  }
 
   const handleSigningErr = e => {
     console.error('Signing error', e)
@@ -53,12 +71,13 @@ export default function SignMessage ({ toSign, resolve, account, connections, re
     }
     setLoading(true)
     try {
-      const hash = keccak256(arrayify(toSign.txn))
+
+      const isTypedData = toSign.type === 'eth_signTypedData_v4'
 
       const { signature, success, message, confCodeRequired } = await fetchPost(
         // network doesn't matter when signing
-        `${relayerURL}/second-key/${account.id}/ethereum/sign`, {
-          toSign: hash,
+        `${relayerURL}/second-key/${account.id}/ethereum/sign?typedData=${isTypedData}`, {
+          toSign: toSign.txn,
           code: confirmationCode
         }
       )
@@ -83,7 +102,14 @@ export default function SignMessage ({ toSign, resolve, account, connections, re
 
       if (!account.primaryKeyBackup) throw new Error(`No key backup found: you need to import the account from JSON or login again.`)
       const wallet = await Wallet.fromEncryptedJson(JSON.parse(account.primaryKeyBackup), signingState.passphrase)
-      const sig = await signMsgHash(wallet, account.id, account.signer, arrayify(hash), signature)
+
+      let sig
+      if (isTypedData) {
+        sig = await signMsgHashEIP712(wallet, account.id, account.signer, dataV4.domain, dataV4.types, dataV4.message, signature)
+      } else {
+        sig = await signMsgStandard(wallet, account.id, account.signer, getMessageAsBytes(toSign.txn), signature)
+      }
+
       resolve({ success: true, result: sig })
       addToast(`Successfully signed!`)
     } catch(e) { handleSigningErr(e) }
@@ -108,8 +134,15 @@ export default function SignMessage ({ toSign, resolve, account, connections, re
       // It would be great if we could pass the full data cause then web3 wallets/hw wallets can display the full text
       // Unfortunately that isn't possible, because isValidSignature only takes a bytes32 hash; so to sign this with
       // a personal message, we need to be signing the hash itself as binary data such that we match 'Ethereum signed message:\n32<hash binary data>' on the contract
-      const hash = keccak256(arrayify(toSign.txn)) // hacky equivalent is: id(toUtf8String(toSign.txn)) 
-      const sig = await signMsgHash(wallet, account.id, account.signer, arrayify(hash))
+
+      let sig
+      if (toSign.type === 'eth_signTypedData_v4') {
+        sig = await signMsgHashEIP712(wallet, account.id, account.signer, dataV4.domain, dataV4.types, dataV4.message)
+      } else {
+        sig = await signMsgStandard(wallet, account.id, account.signer, getMessageAsBytes(toSign.txn))
+      }
+
+
       resolve({ success: true, result: sig })
       addToast(`Successfully signed!`)
     } catch(e) { handleSigningErr(e) }
@@ -161,7 +194,7 @@ export default function SignMessage ({ toSign, resolve, account, connections, re
       <textarea
         className='sign-message'
         type='text'
-        value={getMessageAsText(toSign.txn)}
+        value={dataV4 ? JSON.stringify(dataV4, '\n', ' ') : getMessageAsText(toSign.txn)}
         readOnly={true}
       />
 
@@ -210,7 +243,19 @@ export default function SignMessage ({ toSign, resolve, account, connections, re
   </div>)
 }
 
+function getMessageAsBytes(msg) {
+  // Transforming human message / hex string to bytes
+  if (!isHexString(msg)) {
+    return toUtf8Bytes(msg)
+  } else {
+    return arrayify(msg)
+  }
+}
+
 function getMessageAsText(msg) {
-  try { return toUtf8String(msg) }
-  catch(_) { return msg }
+  if (isHexString(msg)) {
+    try { return toUtf8String(msg) }
+    catch(_) { return msg }
+  }
+  return msg + ''//what if dapp sends it as object? force string to avoid app crashing
 }
