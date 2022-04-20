@@ -56,20 +56,12 @@ const Collectible = ({ selectedAcc, selectedNetwork, addRequest, addressBook }) 
         message: ''
     })
     const timer = useRef(null)
-
+    
     const sendTransferTx = () => {
         const recipAddress = uDAddress ? uDAddress : recipientAddress
 
-        if (uDAddress) {
-            const isAlreadyAdded = addresses.find(i => i.address === uDAddress)
-
-            if (!isAlreadyAdded) {
-                addAddress(recipientAddress, uDAddress)
-            }
-        }
-
         try {
-            addRequest({
+            let req = {
                 id: `transfer_nft_${Date.now()}`,
                 type: 'eth_sendTransaction',
                 chainId: selectedNetwork.chainId,
@@ -78,8 +70,20 @@ const Collectible = ({ selectedAcc, selectedNetwork, addRequest, addressBook }) 
                     to: collectionAddr,
                     value: '0',
                     data: ERC721.encodeFunctionData('transferFrom', [metadata.owner.address, recipAddress, tokenId])
+                },
+                meta: null
+            }
+
+            if (uDAddress) {
+                req.meta = { 
+                    addressLabel: { 
+                        addressLabel: recipientAddress,
+                        address: uDAddress
+                    }
                 }
-            })
+            }
+
+            addRequest(req) 
         } catch(e) {
             console.error(e)
             addToast(`Error: ${e.message || e}`, { error: true })
@@ -259,6 +263,7 @@ const Collectible = ({ selectedAcc, selectedNetwork, addRequest, addressBook }) 
                             newAddress={newAddress}
                             onClose={() => setNewAddress(null)}
                             onSelectAddress={address => setRecipientAddress(address)}
+                            selectedNetwork={selectedNetwork}
                         />
                     </div>
                     { validationFormMgs.message && 
