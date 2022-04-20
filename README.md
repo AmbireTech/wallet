@@ -291,3 +291,11 @@ Those contracts (except Ethereum-specific WALLET, xWALLET and SupplyController) 
 * UX improvement: top button for WALLET rewards now shows pending to be received, instead of claimable
 * Critical WalletConnect fix
 * Portfolio balances bugfixes
+
+### v0.5.2
+* Added Gnosis chain
+* Drag & Drop ordering for tokens addresses and networks
+* UnstoppableDomains in address book
+* Balance support direct from networks
+* Global fallback in case of anunexpected crash
+* fix sending NFT bug
