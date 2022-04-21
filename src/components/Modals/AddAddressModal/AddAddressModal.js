@@ -1,6 +1,6 @@
 import './AddAddressModal.scss'
 
-import { createRef, useRef, useState } from 'react'
+import { createRef, useRef, useState, useMemo } from 'react'
 import { MdCheck, MdClose } from 'react-icons/md'
 import { useModals } from 'hooks'
 import { Modal, TextInput, Button, ToolTip } from "components/common"
@@ -12,9 +12,9 @@ const AddAddressModal = ({ title, inputs, selectedNetwork, onClose }) => {
     const [uDAddress, setUDAddress] = useState('')
     const timer = useRef(null)
 
-    const inputsFields = inputs.map(input => ({ ...input, ref: createRef() }))
-    const getUDomain = async(value) => {    
-        return await resolveUDomain(value, null, selectedNetwork.unstoppableDomainsChain) 
+    const inputsFields = useMemo(() => inputs.map(input => ({ ...input, ref: createRef() })), [inputs])
+    const getUDomain = async(value) => {
+        return await resolveUDomain(value, null, selectedNetwork.unstoppableDomainsChain)
     }
 
     const onInput = () => {
@@ -27,17 +27,25 @@ const AddAddressModal = ({ title, inputs, selectedNetwork, onClose }) => {
             let uDAddr = null
             if (isFound) {
                 if (!isFound.ref) return
-                uDAddr = await getUDomain(isFound.ref.current.value) 
+                uDAddr = await getUDomain(isFound.ref.current.value)
                 timer.current = null
                 setUDAddress(uDAddr)
             }
-            
+
             const isFormValid = inputsFields
-                .map(({ ref, validate }) => ref && !!ref.current.value && (validate ? validate(uDAddr ? uDAddr : ref.current.value) : true))
+                .map(({ ref, validate, label }) => {
+                    const isUDField = label === 'Address / Unstoppable domainsⓇ'
+                    const value = isUDField && uDAddr ? uDAddr : ref.current.value
+
+                    if (!validate) return !!value
+
+                    return validate(value)
+                })
                 .every(v => v === true)
+
             setDisabled(!isFormValid)
         }
-        
+
         timer.current = setTimeout(async() => {
             return validateForm().catch(console.error)
         }, 500)
@@ -61,7 +69,7 @@ const AddAddressModal = ({ title, inputs, selectedNetwork, onClose }) => {
                 inputsFields.map(({ id, label, placeholder, ref }) => (
                     <div key={id + label}>
                         <TextInput label={label} placeholder={placeholder} onInput={onInput} ref={ref}/>
-                        {(label === 'Address / Unstoppable domainsⓇ') && 
+                        {(label === 'Address / Unstoppable domainsⓇ') &&
                             <ToolTip label={!uDAddress ? 'You can use Unstoppable domainsⓇ' : 'Valid Unstoppable domainsⓇ domain'}>
                                 <span id="udomains-logo" className={uDAddress ? 'ud-logo-active ' : ''} />
                             </ToolTip>}
@@ -72,4 +80,4 @@ const AddAddressModal = ({ title, inputs, selectedNetwork, onClose }) => {
     )
 }
 
-export default AddAddressModal 
+export default AddAddressModal
