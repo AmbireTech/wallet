@@ -301,7 +301,8 @@ const AssetsMigrationSelector = ({ signerAccount, identityAccount, network, setI
     let usableTokens = consolidatedTokens.filter(t => {
       return possibleFeeTokens.find(ft => ft.toLowerCase() === t.address.toLowerCase())
     })
-    portfolio.tokens.forEach(pt => {
+
+    portfolio?.tokens?.forEach(pt => {
       if (
         possibleFeeTokens.find(ft => ft.toLowerCase() === pt.address.toLowerCase()) &&
         !usableTokens.find(t => t.address.toLowerCase() === pt.address.toLowerCase())) {
@@ -317,11 +318,13 @@ const AssetsMigrationSelector = ({ signerAccount, identityAccount, network, setI
         if (t.fromPortfolio) {
           identityBalanceUSD = t.balanceUSD
         } else {
-          const identityAssets = portfolio.tokens
-          const identityFeeAsset = identityAssets.find(it => it.address.toLowerCase() === t.address.toLowerCase())
-          identityBalanceUSD = identityFeeAsset?.balanceUSD || 0
+          const identityAssets = portfolio?.tokens
+          if (identityAssets) {
+            const identityFeeAsset = identityAssets.find(it => it.address.toLowerCase() === t.address.toLowerCase())
+            identityBalanceUSD = identityFeeAsset?.balanceUSD || 0
 
-          selectedAmountUSD = new BigNumber(t.amount).multipliedBy(t.rate).toNumber()
+            selectedAmountUSD = new BigNumber(t.amount).multipliedBy(t.rate).toNumber()
+          }
         }
 
         let isEnoughToCoverFees = {}
