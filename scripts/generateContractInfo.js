@@ -31,6 +31,7 @@ const tesseractVaults = [
 ]
 const contracts = [
 	{ name: '$WALLET distributor', network: 'ethereum', addr: '0xc53af25f831f31ad6256a742b3f0905bc214a430' },
+	{ name: 'PancakeSwap', network: 'bsc', addr: '0x10ED43C718714eb63d5aA57B78B54704E256024E', abiName: 'PancakeRouter'},
 	{ name: 'Uniswap', network: 'ethereum', addr: '0x7a250d5630b4cf539739df2c5dacb4c659f2488d', abiName: 'UniV2Router' },
 	{ name: 'Uniswap', network: 'ethereum', addr: '0xe592427a0aece92de3edee1f18e0157c05861564', abiName: 'UniV3Router' },
 	{ name: 'Uniswap', network: 'ethereum', addr: '0x68b3465833fb72a70ecdf485e0e4c7bd8665fc45', abiName: 'UniV3Router2' },
