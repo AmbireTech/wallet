@@ -91,7 +91,7 @@ You don’t have to ever use `eject`. The curated feature set is suitable for sm
 ## UX decisions
 
 ### Terms
-* Signer: the signer is an address used for authentication, normally an EOA (externally owned address) such as a Trezor address, Ledger address, Metamask address, a double-keypair representing an email/passphrase authentication, or even another smart wallet address (eg Gnosis Safe). We use this term to distinct it from "account", which is the actual smart wallet account, which can have one or more signers.
+* Signer: the signer is an address used to sign transactions and messages. It's normally an EOA (externally owned address) such as a Trezor address, Ledger address, Metamask address, a double-keypair representing an email/passphrase authentication, or even another smart wallet address (eg Gnosis Safe). We use this term to distinct it from "account", which is the actual smart wallet account, which can have one or more signers.
 
 
 ### Multi-account behavior
