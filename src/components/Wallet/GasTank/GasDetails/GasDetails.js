@@ -1,9 +1,9 @@
-import './GasDetailsModal.scss'
+import './GasDetails.scss'
 
 import { GAS_SPEEDS } from 'consts/gasSpeeds'
 import { ACTION_GAS_COSTS, AMBIRE_OVERHEAD_COST } from 'consts/actionGasCosts'
 
-const GasDetailsModal = ({ gasData }) => {
+const GasDetails = ({ gasData }) => {
   const GAS_PRICES = GAS_SPEEDS.reduce((acc, speed) => {
     acc[speed] =
         gasData.gasPrice.maxPriorityFeePerGas
@@ -52,4 +52,4 @@ const GasDetailsModal = ({ gasData }) => {
   )
 }
 
-export default GasDetailsModal
+export default GasDetails

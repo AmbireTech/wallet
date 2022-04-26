@@ -1,6 +1,6 @@
 import './GasTank.scss'
 
-import GasDetailsModal from 'components/Modals/GasDetailsModal/GasDetailsModal'
+import GasDetails from 'components/Wallet/GasTank/GasDetails/GasDetails'
 import { useState, useEffect } from 'react'
 import { useRelayerData } from 'hooks'
 
@@ -26,7 +26,7 @@ const GasTank = ({ selectedNetwork, relayerURL }) => {
                     <div className="title">Gas Information</div>
                 </div>
                 <div className="description">
-                    {gasData && <GasDetailsModal gasData={gasData} />}
+                    {gasData && <GasDetails gasData={gasData} />}
                 </div>
             </div>
             <div className="panel">
