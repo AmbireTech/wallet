@@ -1,19 +1,23 @@
 import './SignMessage.scss'
 import { MdBrokenImage, MdCheck, MdClose } from 'react-icons/md'
-import { Wallet } from 'ethers'
+import { ethers, Wallet } from 'ethers'
 import { toUtf8String, arrayify, isHexString, toUtf8Bytes, _TypedDataEncoder } from 'ethers/lib/utils'
 import { signMessage712, signMessage } from 'adex-protocol-eth/js/Bundle'
 import * as blockies from 'blockies-ts';
 import { getWallet } from 'lib/getWallet'
 import { useToasts } from 'hooks/toasts'
 import { fetchPost } from 'lib/fetch'
+import { verifyMessage } from 'lib/signatureVerifier'
 import { useState, useEffect, useRef } from 'react'
 import { Button, Loading, TextInput } from 'components/common'
 import { isObject } from 'url/util'
 
+import { SIGNATURE_VERIFIER_DEBUGGER } from 'config'
+import { getProvider } from 'lib/provider'
+
 const CONF_CODE_LENGTH = 6
 
-export default function SignMessage ({ toSign, resolve, account, connections, relayerURL, totalRequests }) {
+export default function SignMessage ({ toSign, resolve, account, connections, relayerURL, totalRequests, network }) {
   const defaultState = () => ({ codeRequired: false, passphrase: '' })
   const { addToast } = useToasts()
   const [signingState, setSigningState] = useState(defaultState())
@@ -60,6 +64,92 @@ export default function SignMessage ({ toSign, resolve, account, connections, re
       addToast(`Signing error: ${e.message || e}`, { error: true })
     }
   }
+
+
+  //Undeployed signature verification implemenatation
+  const ambireUndeployedValidationCallback = (signer, hash, sig) => {
+
+    //override signer var as the signer is actually the signer, not identity
+    if (!account) return false
+    if (account.signer.address) {
+      signer = account.signer.address
+    } else {
+      signer = account.signer.two
+    }
+
+    const ambireUndeployedQuickAccCheck = (signer, hash, sig) => {
+      const decoded = ethers.utils.defaultAbiCoder.decode([
+        'uint',
+        'bytes',
+        'bytes'
+      ], sig)
+
+      const sig1 = decoded[1]
+      const sig2 = decoded[2]
+
+      const b1 = Buffer.from(sig1.substr(2), 'hex')
+      const subMode1 = b1[b1.length - 1]
+
+      const b2 = Buffer.from(sig2.substr(2), 'hex')
+      const subMode2 = b2[b2.length - 1]
+
+      return ambireUndeployedStandardCheck(signer, hash, sig1, subMode1 === 1) || ambireUndeployedStandardCheck(signer, hash, sig2, subMode2 === 1)
+    }
+
+    const ambireUndeployedStandardCheck = (signer, message, sig, isMessage) => {
+      const b = Buffer.from(sig.substr(2), 'hex')
+      const v = b[64]
+
+      if (v !== 27 && v !== 28) return false
+
+      if (isMessage) {
+        hash = ethers.utils.keccak256(ethers.utils.solidityPack(['string', 'bytes32'], ['\x19Ethereum Signed Message:\n32', hash]))
+      }
+
+      const recoveredSigner = ethers.utils.recoverAddress(hash, '0x' + b.slice(0, 65).toString('hex'))
+
+      if (!recoveredSigner) {
+        return false
+      }
+      return recoveredSigner.toLowerCase() === signer.toLowerCase();
+    }
+
+    const b = Buffer.from(sig.substr(2), 'hex')
+    const mode = b[b.length - 1]
+
+    if (mode === 0 || mode === 1) {
+      return ambireUndeployedStandardCheck(signer, hash, '0x' + b.slice(0, 65).toString('hex'), mode === 1)
+    } else if (mode === 2) {
+      //need deployed contract as privileges are checked, but we can still check one of the signer
+      return ambireUndeployedQuickAccCheck(signer, hash, sig)
+    } else {
+      return false
+    }
+  }
+
+
+  const verifySignatureDebug = (toSign, sig) => {
+    if (SIGNATURE_VERIFIER_DEBUGGER) {
+      const provider = getProvider(network.id)
+      verifyMessage({
+        provider,
+        signer: account.id,
+        message: toSign.type === 'eth_signTypedData_v4' ? null : getMessageAsBytes(toSign.txn),
+        typedData: toSign.type === 'eth_signTypedData_v4' ? dataV4 : null,
+        signature: sig,
+        undeployedCallback: ambireUndeployedValidationCallback
+      }).then(verificationResult => {
+        if (verificationResult.success) {
+          addToast('SIGNATURE VALID: ' + verificationResult.type)
+        } else {
+          addToast('SIGNATURE INVALID', { error: true })
+        }
+      }).catch(e => {
+        addToast('SIGNATURE INVALID: ' + e.message, { error: true })
+      })
+    }
+  }
+
   const approveQuickAcc = async confirmationCode => {
     if (!relayerURL) {
       addToast('Email/pass accounts not supported without a relayer connection', { error: true })
@@ -110,6 +200,8 @@ export default function SignMessage ({ toSign, resolve, account, connections, re
         sig = await signMessage(wallet, account.id, account.signer, getMessageAsBytes(toSign.txn), signature)
       }
 
+      verifySignatureDebug(toSign, sig)
+
       resolve({ success: true, result: sig })
       addToast(`Successfully signed!`)
     } catch(e) { handleSigningErr(e) }
@@ -142,6 +234,7 @@ export default function SignMessage ({ toSign, resolve, account, connections, re
         sig = await signMessage(wallet, account.id, account.signer, getMessageAsBytes(toSign.txn))
       }
 
+      verifySignatureDebug(toSign, sig)
 
       resolve({ success: true, result: sig })
       addToast(`Successfully signed!`)
@@ -154,7 +247,7 @@ export default function SignMessage ({ toSign, resolve, account, connections, re
   }
 
   const handleSubmit = e => {
-    e.preventDefault() 
+    e.preventDefault()
     approve()
   }
 
@@ -175,11 +268,11 @@ export default function SignMessage ({ toSign, resolve, account, connections, re
 
       <div className='request-message'>
         <div className='dapp-message'>
-          { 
+          {
             dApp ?
               <a className='dapp' href={dApp.url} target="_blank" rel="noreferrer">
                 <div className='icon' style={{ backgroundImage: `url(${dApp.icons[0]})` }}>
-                 <MdBrokenImage/> 
+                 <MdBrokenImage/>
                 </div>
                 { dApp.name }
               </a>
@@ -190,7 +283,7 @@ export default function SignMessage ({ toSign, resolve, account, connections, re
         </div>
         <span>{totalRequests > 1 ? `You have ${totalRequests - 1} more pending requests.` : ''}</span>
       </div>
-      
+
       <textarea
         className='sign-message'
         type='text'
@@ -211,10 +304,10 @@ export default function SignMessage ({ toSign, resolve, account, connections, re
             <input type="submit" hidden />
           </>)}
 
-          {confFieldState.isShown && (    
+          {confFieldState.isShown && (
             <>
               {confFieldState.confCodeRequired === 'email' &&
-              (<span>A confirmation code has been sent to your email, it is valid for 3 minutes.</span>)} 
+              (<span>A confirmation code has been sent to your email, it is valid for 3 minutes.</span>)}
               {confFieldState.confCodeRequired === 'otp' && (<span>Please enter your OTP code</span>)}
               <TextInput
                 ref={inputSecretRef}
@@ -223,7 +316,7 @@ export default function SignMessage ({ toSign, resolve, account, connections, re
               />
             </>
             )}
-          
+
           <div className="buttons">
             <Button
               type='button'
