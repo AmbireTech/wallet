@@ -182,6 +182,7 @@ function AppInner() {
       connections={connections}
       relayerURL={relayerURL}
       resolve={outcome => resolveMany([everythingToSign[0].id], outcome)}
+      network={network}
     ></SignMessage>)}
 
     {sendTxnState.showing ? (
