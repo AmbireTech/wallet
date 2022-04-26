@@ -91,7 +91,8 @@ You don’t have to ever use `eject`. The curated feature set is suitable for sm
 ## UX decisions
 
 ### Terms
-* Signer: the signer is an actual keypair used for authentication. Also called an "EOA" (externally owned address). For example, a signer could be a Trezor address, Ledger address, Metamask address, or a double-keypair representing an email/passphrase authentication. We use this term to distinct it from "account", which is the actual smart wallet account.
+* Signer: the signer is an address used to sign transactions and messages. It's normally an EOA (externally owned address) such as a Trezor address, Ledger address, Metamask address, a double-keypair representing an email/passphrase authentication, or even another smart wallet address (eg Gnosis Safe). We use this term to distinct it from "account", which is the actual smart wallet account, which can have one or more signers.
+
 
 ### Multi-account behavior
 * When adding an account with Trezor, Ledger or a web3 wallet, we create one automatically if it doesn't exist; if we control multiple, we add all those accounts and show a toast notification "this key controls N accounts"
@@ -283,4 +284,20 @@ Those contracts (except Ethereum-specific WALLET, xWALLET and SupplyController) 
 * ADX staking card improvements
 * Kriptomat as new on-ramp provider
 * Added Hop.exchange LP tokens for wallet rewards
-* Provided token prices for moonbeam network
+* Provided token prices for Moonbeam network
+
+### v0.5.1
+* Gas prices modal: you can now see the current gas price
+* Fee selector: now shows all fee tokens, not only the ones you have
+* UX improvement: top button for WALLET rewards now shows pending to be received, instead of claimable
+* Critical WalletConnect fix
+* Portfolio balances bugfixes
+
+### v0.5.2
+* Added Gnosis Chain
+* Drag & Drop ordering for tokens addresses and networks
+* Unstoppable Domains support in the Address book
+* Error screen in case of an unexpected crash
+* Fix bug when sending NFTs
+* Can display balances on networks not supported by our providers
+* Support NFT on Binance Smart Chain

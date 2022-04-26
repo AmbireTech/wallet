@@ -5,9 +5,9 @@ import { BsChevronDown } from 'react-icons/bs'
 import { CSSTransition } from 'react-transition-group';
 import useOnClickOutside from 'hooks/onClickOutside';
 import { TextInput } from 'components/common';
-import { MdOutlineClose } from 'react-icons/md';
+import { MdOutlineClose, MdDragIndicator } from 'react-icons/md';
 
-const Select = ({ children, native, monospace, searchable, disabled, label, defaultValue, items, onChange, className }) => {
+const Select = ({ children, native, monospace, searchable, disabled, label, defaultValue, items, onChange, className, draggable, dragStart, dragEnter, dragTarget, drop, draggableHeader, displayDraggableHeader }) => {
     const ref = useRef();
     const hiddenTextInput = useRef();
     const transitionRef = useRef();
@@ -75,7 +75,8 @@ const Select = ({ children, native, monospace, searchable, disabled, label, defa
                 {
                     selectedItem ?
                         <div className="select-container">
-                            <div className="select-input" onClick={() => setOpen(!isOpen)}>
+                            <div className="select-input" onClick={() => setOpen(!isOpen)}
+                                >
                                 {getIcon(selectedItem)}
                                 <div className="label">{selectedItem.label || selectedItem.value}</div>
                                 {selectedItem.extra && <div className="extra">{selectedItem.extra}</div>}
@@ -87,6 +88,7 @@ const Select = ({ children, native, monospace, searchable, disabled, label, defa
                             {
                                 <CSSTransition unmountOnExit in={isOpen} timeout={200} classNames="fade" nodeRef={transitionRef}>
                                     <div className="select-menu" ref={transitionRef}>
+                                        {displayDraggableHeader && draggableHeader}
                                         {
                                             searchable ?
                                                 <TextInput
@@ -103,12 +105,19 @@ const Select = ({ children, native, monospace, searchable, disabled, label, defa
                                                 null
                                         }
                                         {
-                                            filteredItems.map(item => (
+                                            filteredItems.map((item, i) => (
                                                 <div
                                                     className={`option ${item.value === selectedItem.value ? 'active' : ''} ${item.disabled ? 'disabled' : ''}`}
                                                     key={item.value}
                                                     onClick={() => !item.disabled && selectItem(item)}
+                                                    draggable={draggable}
+                                                    onDragStart={(e) => draggable && dragStart(e, i)}
+                                                    onMouseDown={(e) => draggable && dragTarget(e, i)}
+                                                    onDragEnter={(e) => draggable && dragEnter(e, i)}
+                                                    onDragEnd={() => draggable && drop(filteredItems)}
+                                                    onDragOver={(e) => e.preventDefault()}
                                                 >
+                                                    {draggable && <MdDragIndicator className='drag-handle' id={`${i}-handle`} />}
                                                     {getIcon(item)}
                                                     <div className="label">{item.label || item.value}</div>
                                                     {item.extra && <div className="extra">{item.extra}</div>}
