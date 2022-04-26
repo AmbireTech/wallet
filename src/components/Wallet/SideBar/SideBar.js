@@ -54,7 +54,8 @@ const SideBar = ({ match, portfolio, hidePrivateValue, relayerURL, selectedNetwo
           </div>
         )}
         <div>
-          <GasIndicator relayerURL={relayerURL} selectedNetwork={selectedNetwork}/>
+          <GasIndicator 
+            relayerURL={relayerURL} selectedNetwork={selectedNetwork} match={match}/>
         </div>
       </div>
       <nav>

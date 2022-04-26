@@ -26,7 +26,6 @@ $thead-background-color: darken($panel-background-color, 2%);
     background: $background-color;
     padding: 12px;
     border: 2px solid transparent;
-    cursor: pointer;
 
     &.selected {
       border-color: $secondary-accent-color;
@@ -71,9 +70,14 @@ $thead-background-color: darken($panel-background-color, 2%);
       background: $background-color;
     }
 
+    td:first-child { 
+      text-align: left;
+    }
+
     td {
       padding: 12px;
       font-size: 0.8em;
+      text-align: center;
     }
   }
 }
