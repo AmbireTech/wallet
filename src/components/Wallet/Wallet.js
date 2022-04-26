@@ -6,6 +6,7 @@ import TopBar from "./TopBar/TopBar"
 import SideBar from "./SideBar/SideBar"
 import Deposit from "./Deposit/Deposit"
 import Swap from "./Swap/Swap"
+import Allowances from "./Allowances/Allowances"
 import Transfer from "./Transfer/Transfer"
 import Earn from "./Earn/Earn"
 import Security from "./Security/Security"
@@ -103,6 +104,15 @@ export default function Wallet(props) {
     {
       path: '/swap',
       component: <Swap
+        gnosisConnect={props.gnosisConnect}
+        gnosisDisconnect={props.gnosisDisconnect}
+        selectedAcc={props.selectedAcc}
+        network={props.network}
+      />
+    },
+    {
+      path: '/allowances',
+      component: <Allowances
         gnosisConnect={props.gnosisConnect}
         gnosisDisconnect={props.gnosisDisconnect}
         selectedAcc={props.selectedAcc}
