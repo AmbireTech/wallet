@@ -53,18 +53,17 @@ const useAddressBook = ({ accounts, useStorage }) => {
                 return (address.startsWith('0x') && (address.indexOf('.') === -1)) ? sha256(address) : address
             }),
             ...accounts.map(({ id }) => sha256(id))
-        ].includes(sha256(address))
+        ].includes((address.startsWith('0x') && (address.indexOf('.') === -1)) ? sha256(address) : address)
     }, [addresses, accounts])
 
     const addAddress = useCallback((name, address, isUd = false) => {
         if (!name || !address) throw new Error('Address Book: invalid arguments supplied')
         if (isUd) {
-            const isFound = addresses.find(item => item.address === address)
-            if (isFound) {
-                addToast('Address Book: The UD is already added to the Address book', { error: true })
-                return
-            }
+            const isFound = addresses.find(item => item.address.toLowerCase() === address.toLowerCase())
+            if (isFound) return addToast('Address Book: The UD is already added to the Address book', { error: true })
         } else {
+            const isFound = addresses.find(item => item.address.toLowerCase() === address.toLowerCase())
+            if (isFound) return addToast('Address Book: The address is already added to the Address book', { error: true })
             if (!isValidAddress(address)) throw new Error('Address Book: invalid address format')
             if (isKnownTokenOrContract(address)) return addToast('The address you\'re trying to add is a smart contract.', { error: true })
         }
