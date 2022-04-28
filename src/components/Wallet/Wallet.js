@@ -19,7 +19,7 @@ import { isFirefox } from 'lib/isFirefox'
 import CrossChain from "./CrossChain/CrossChain"
 import OpenSea from "./OpenSea/OpenSea"
 import unsupportedDApps from 'consts/unsupportedDApps'
-import GasTank from "./GasTank/GasTank"
+import Gas from "./Gas/Gas"
 
 export default function Wallet(props) {
   const { showModal } = useModals()
@@ -143,7 +143,7 @@ export default function Wallet(props) {
     },
     {
       path: '/gas-tank',
-      component: <GasTank 
+      component: <Gas
         selectedNetwork={{...props.network}}
         relayerURL={props.relayerURL}
       />

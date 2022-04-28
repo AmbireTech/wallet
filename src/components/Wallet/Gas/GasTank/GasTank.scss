@@ -1,0 +1,188 @@
+@import 'variables.scss';
+
+#gas-tank {
+    .heading-wrapper {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        
+        .switch-wrapper {
+            width: 200px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: stretch;
+
+            div {
+                width: 50%;
+                height: 100%;
+                text-align: center;
+                border-radius: 5px;
+                background-color: green;
+            }
+        }
+
+        .balance-wrapper {
+            display: flex;
+            flex-direction: column;
+            border: 1px dashed;
+            padding: 10px 15px;
+            width: 185px;
+            align-items: center;
+            color: gray;
+    
+    
+            div {
+                font-size: 35px;
+                color: white;
+    
+                span {
+                    font-size: 25px;
+                    color: $secondary-accent-color;
+                    font-weight: bold;
+                }
+            }
+    
+            span {
+                font-size: 12px;
+            }
+    
+            span svg {
+                color: $secondary-accent-color;
+              }
+        }
+
+        .total-save {
+            border: none;
+            align-items: flex-end;
+        }
+    }
+
+    .list {
+        display: flex;
+        flex-direction: column;
+
+        .token {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 15px 20px;
+            font-size: 15px;
+            color: white;
+            
+            &[draggable="true"] .drag-handle {
+                cursor: grab;
+                cursor: -moz-grab;
+                cursor: -webkit-grab;
+        
+            }
+
+            &[draggable="true"]:active .drag-handle {
+                cursor: grabbing;
+                cursor: -moz-grabbing;
+                cursor: -webkit-grabbing;
+            }
+
+            &:nth-child(odd) {
+                background-color: rgba(255, 255, 255, 0.04);
+            }
+
+            &:nth-child(even) {
+                background-color: rgba(255, 255, 255, 0.02);
+            }
+
+            .separator {
+                flex-grow: 1;
+            }
+
+            .icon {
+                position: relative;
+                flex: 0 0 auto;
+                @include flex-center-center;
+                height: 40px;
+                width: 40px;
+                border-radius: 100%;
+                color: rgba(255, 255, 255, 0.5);
+                background-color: rgba(255, 255, 255, 0.1);
+                overflow: hidden;
+
+                img {
+                    height: 100%;
+                    user-select: none;
+                }
+            }
+
+            .name {
+                font-size: 17px;
+                font-weight: bold;
+            }
+
+            .balance {
+                display: flex;
+                flex-direction: column;
+                text-align: right;
+
+                .currency {
+                    display: flex;
+                    gap: 5px;
+                    font-size: 18px;
+                    font-weight: 500;
+
+                    .symbol {
+                        font-weight: bold;
+                        color: $primary-accent-color;
+                    }
+                }
+
+                .dollar {
+                    font-size: 14px;
+                    font-weight: 500;
+                    color: #bbb;
+
+                    .symbol {
+                        font-weight: bold;
+                        color: $secondary-accent-color;
+                    }
+                }
+            }
+
+            .actions {
+                width: 0;
+                display: flex;
+                align-items: center;
+                justify-content: flex-end;
+                opacity: 0;
+                transition: all 0.1s ease-in-out;
+                transition-delay: 0.25s;
+            }
+
+            &:hover {
+                .actions {
+                    width: 125px;
+                    opacity: 1;
+                }
+            }
+        }
+    }
+
+    .deposit-button {
+        width: 100%;
+        margin: 20px 0;
+    }
+
+    .txns-wapper {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        height: 50px;
+        background-color: $background-color;
+        margin-bottom: 1px;
+        font-size: 12px;
+    }
+}
+
+@media screen and (max-width: $mobile-breakpoint-max-width) {
+    .heading-wrapper {
+        flex-direction: column;
+    }
+}

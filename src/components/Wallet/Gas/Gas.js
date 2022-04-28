@@ -1,10 +1,11 @@
-import './GasTank.scss'
+import './Gas.scss'
 
-import GasDetails from 'components/Wallet/GasTank/GasDetails/GasDetails'
+import GasDetails from './GasDetails/GasDetails'
+import GasTank from './GasTank/GasTank'
 import { useState, useEffect } from 'react'
 import { useRelayerData } from 'hooks'
 
-const GasTank = ({ selectedNetwork, relayerURL }) => {
+const Gas = ({ selectedNetwork, relayerURL }) => {
     const [cacheBreak, setCacheBreak] = useState(() => Date.now())
 
     useEffect(() => {
@@ -20,7 +21,7 @@ const GasTank = ({ selectedNetwork, relayerURL }) => {
     const gasData = data ? data.data : null
     
     return (
-        <section id="gas-tank">
+        <section id="gas">
             <div className="panel">
                 <div className="heading">
                     <div className="title">Gas Information</div>
@@ -34,11 +35,11 @@ const GasTank = ({ selectedNetwork, relayerURL }) => {
                     <div className="title">Gas Tank</div>
                 </div>
                 <div className="description">
-
+                    <GasTank></GasTank>
                 </div>
             </div>
         </section>
     )
 }
 
-export default GasTank
+export default Gas

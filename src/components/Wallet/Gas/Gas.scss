@@ -1,13 +1,13 @@
 @import 'variables.scss';
 
-#gas-tank {
+#gas {
     display: flex;
     justify-content: center;
     gap: 2em;
 
     .panel {
         gap: 2em;
-        width: 36em;
+        width: 46em;
         text-align: center;
         padding: 0 2.5em;
         padding-top: 2.5em;
@@ -54,7 +54,7 @@
 }
 
 @media screen and (max-width: 1200px) {
-   #gas-tank {
+   #gas {
        flex-direction: column;
 
         .panel {
@@ -64,7 +64,7 @@
 }
 
 @media screen and (min-width: 1000px) and (max-width: 1450px) {
-    #gas-tank {
+    #gas {
         .text-input {
             input {
                 font-size: 16px !important;
@@ -75,7 +75,7 @@
 
 // Mobile
 @media screen and (max-width: $mobile-breakpoint-max-width) {
-    #gas-tank {
+    #gas {
         gap: 1em;
 
         .panel {
