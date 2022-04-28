@@ -63,7 +63,8 @@ function makeBundle(account, networkId, requests) {
   })
   bundle.extraGas = requests.map(x => x.extraGas || 0).reduce((a, b) => a + b, 0)
   bundle.requestIds = requests.map(x => x.id)
-  if (requests.some(item => item.meta)) bundle.meta = { addressLabel: requests.map(x => x.meta.addressLabel) }
+  if (requests.some(item => item.meta)) bundle.meta = { addressLabel: requests.map(x => !!x.meta?.addressLabel ? x.meta.addressLabel : { addressLabel: '', address: ''}) }
+  else bundle.meta = null
 
   return bundle
 }
