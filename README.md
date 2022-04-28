@@ -43,6 +43,10 @@ REACT_APP_RELAYER_URL=
 
 **Important:** to make the Ledger integration work, you need to be accessing Ambire Wallet through HTTPS. The easiest way to do this in a development environment is to [use localtunnel](https://github.com/localtunnel/localtunnel): for example, `lt --port 3000`
 
+## Building plugins
+
+To see how to build plugins for Ambire, please [read our plugin docs](/how-to-create-a-plugin.md).
+
 ## Code style and recommendations
 
 * No semicolons
