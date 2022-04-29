@@ -43,6 +43,10 @@ REACT_APP_RELAYER_URL=
 
 **Important:** to make the Ledger integration work, you need to be accessing Ambire Wallet through HTTPS. The easiest way to do this in a development environment is to [use localtunnel](https://github.com/localtunnel/localtunnel): for example, `lt --port 3000`
 
+## Building plugins
+
+To see how to build plugins for Ambire, please [read our plugin docs](/how-to-create-a-plugin.md).
+
 ## Code style and recommendations
 
 * No semicolons
@@ -91,7 +95,8 @@ You don’t have to ever use `eject`. The curated feature set is suitable for sm
 ## UX decisions
 
 ### Terms
-* Signer: the signer is an actual keypair used for authentication. Also called an "EOA" (externally owned address). For example, a signer could be a Trezor address, Ledger address, Metamask address, or a double-keypair representing an email/passphrase authentication. We use this term to distinct it from "account", which is the actual smart wallet account.
+* Signer: the signer is an address used to sign transactions and messages. It's normally an EOA (externally owned address) such as a Trezor address, Ledger address, Metamask address, a double-keypair representing an email/passphrase authentication, or even another smart wallet address (eg Gnosis Safe). We use this term to distinct it from "account", which is the actual smart wallet account, which can have one or more signers.
+
 
 ### Multi-account behavior
 * When adding an account with Trezor, Ledger or a web3 wallet, we create one automatically if it doesn't exist; if we control multiple, we add all those accounts and show a toast notification "this key controls N accounts"
