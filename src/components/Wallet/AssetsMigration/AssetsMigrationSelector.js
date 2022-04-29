@@ -295,7 +295,7 @@ const AssetsMigrationSelector = ({ signerAccount, identityAccount, network, setI
 
     const possibleFeeTokens = [
       ZERO_ADDRESS,
-      [...gasData.gasFeeAssets.feeTokens.map(ft => ft.address)]
+      ...gasData.gasFeeAssets.feeTokens.map(ft => ft.address)
     ]
 
     let usableTokens = consolidatedTokens.filter(t => {
@@ -312,10 +312,9 @@ const AssetsMigrationSelector = ({ signerAccount, identityAccount, network, setI
 
     const usableFeeTokens = usableTokens
       .map(t => {
-
         let identityBalanceUSD = 0
         let selectedAmountUSD = 0
-        if (t.fromPortfolio) {
+        if (t.balanceUSD) {
           identityBalanceUSD = t.balanceUSD
         } else {
           const identityAssets = portfolio?.tokens
@@ -348,7 +347,6 @@ const AssetsMigrationSelector = ({ signerAccount, identityAccount, network, setI
           isEnoughToCoverFees,
         }
       })
-
     setSuggestedGasTokens(usableFeeTokens)
 
   }, [selectableTokens, selectableTokensUserInputs, portfolio, gasData, selectedGasSpeed, tokensAllowances])
