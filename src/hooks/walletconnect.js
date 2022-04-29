@@ -205,6 +205,22 @@ export default function useWalletConnect ({ account, chainId, initialUri, allNet
 
             await wait(1000)
 
+            // On a session request, remove WC uri from the clipboard.
+            // Otherwise, in the case the user disconnects himself from the dApp, but still having the previous WC uri in the clipboard,
+            // then the app will try to connect him with the already invalidated WC uri.
+            clearWcClipboard()
+
+            // We need to make sure that we are connected to the dApp successfully,
+            // before keeping the session as connected via `connectedNewSession` dispatch.
+            // We had a case with www.chargedefi.fi, where we were immediately disconnected on a session_request,
+            // because of unsupported network selected on our end,
+            // but still storing the session in the state as a successful connection, which resulted in app crashes.
+            if (!connector.connected) {
+                setIsConnecting(false)
+
+                return
+            }
+
             // It's safe to read .session right after approveSession because 1) approveSession itself normally stores the session itself
             // 2) connector.session is a getter that re-reads private properties of the connector; those properties are updated immediately at approveSession
             dispatch({ type: 'connectedNewSession', uri: connectorOpts.uri, session: connector.session })
@@ -212,11 +228,6 @@ export default function useWalletConnect ({ account, chainId, initialUri, allNet
             addToast('Successfully connected to '+connector.session.peerMeta.name)
 
             setIsConnecting(false)
-
-            // On a successful connection, remove WC uri from the clipboard.
-            // Otherwise, in the case the user disconnects himself from the dApp, but still having the previous WC uri in the clipboard,
-            // then the app will try to connect him with the already invalidated WC uri.
-            clearWcClipboard()
         })
 
         connector.on('transport_error', (error, payload) => {

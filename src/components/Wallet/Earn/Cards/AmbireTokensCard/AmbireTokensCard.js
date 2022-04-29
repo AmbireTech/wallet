@@ -123,11 +123,11 @@ const AmbireTokensCard = ({ networkId, accountId, tokens, rewardsData, addReques
     const onWithdraw = useCallback(() => {
         const { shares, unlocksAt } = leaveLog
         addRequestTxn(`withdraw_staking_pool_${Date.now()}`, {
-            to: WALLET_STAKING_ADDRESS,
+            to: addresses.stakingTokenAddress,
             value: '0x0',
-            data: WALLET_STAKING_POOL_INTERFACE.encodeFunctionData('withdraw', [shares.toHexString(), unlocksAt.toHexString(), false])
+            data: addresses.stakingPoolInterface.encodeFunctionData('withdraw', [shares.toHexString(), unlocksAt.toHexString(), false])
         })
-    }, [leaveLog, addRequestTxn])
+    }, [addresses, leaveLog, addRequestTxn])
 
     const onTokenSelect = useCallback(tokenAddress => {
         setCustomInfo(null)
@@ -142,7 +142,7 @@ const AmbireTokensCard = ({ networkId, accountId, tokens, rewardsData, addReques
                 <>
                     <div className="info-message">
                         <ToolTip label={unbondToolTipLabelMdg}>
-                            <span><b>{ msToDaysHours(lockedRemainingTime) }</b> until { parseFloat(leaveLog.walletValue).toFixed(4) } WALLET becomes available for withdraw.&nbsp;<MdInfo/></span>
+                            <span><b>{ msToDaysHours(lockedRemainingTime) }</b> until { parseFloat(leaveLog.walletValue).toFixed(4) } {selectedToken.label} becomes available for withdraw.&nbsp;<MdInfo/></span>
                         </ToolTip>
                     </div>
                     <Button 

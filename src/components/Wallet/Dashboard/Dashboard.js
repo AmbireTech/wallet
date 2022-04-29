@@ -28,7 +28,7 @@ const tabSegments = [
     }
 ]
 
-export default function Dashboard({ portfolio, selectedNetwork, selectedAccount, setNetwork, privateMode, rewardsData }) {
+export default function Dashboard({ portfolio, selectedNetwork, selectedAccount, setNetwork, privateMode, rewardsData,  userSorting, setUserSorting }) {
     const history = useHistory()
     const { tabId } = useParams()
 
@@ -123,6 +123,8 @@ export default function Dashboard({ portfolio, selectedNetwork, selectedAccount,
                                 network={selectedNetwork}
                                 account={selectedAccount}
                                 hidePrivateValue={privateMode.hidePrivateValue}
+                                userSorting={userSorting}
+                                setUserSorting={setUserSorting}
                             />
                             :
                             <Collectibles portfolio={portfolio} isPrivateMode={privateMode.isPrivateMode} />

@@ -98,7 +98,7 @@ const validateSendNftAddress = (address, selectedAcc, addressConfirmed, isKnownA
     const isValidAddr = validateSendTransferAddress(address, selectedAcc, addressConfirmed, isKnownAddress)
     if (!isValidAddr.success) return isValidAddr
 
-    if (metadata && selectedAcc && (metadata.owner?.address !== selectedAcc)) {
+    if (metadata && selectedAcc && (metadata.owner?.address.toLowerCase() !== selectedAcc.toLowerCase())) {
         return {
             success: false,
             message: `The NFT you're trying to send is not owned by you!`

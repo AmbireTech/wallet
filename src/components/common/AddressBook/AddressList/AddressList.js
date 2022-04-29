@@ -11,7 +11,7 @@ const AddressList = ({ noAccounts, addresses, onSelectAddress, removeAddress }) 
                 !items.length ?
                     <div className="placeholder">Your Address Book is empty</div>
                     :
-                    items.map(({ isAccount, icon, name, address }) => (
+                    items.map(({ isAccount, icon, name, address, isUd = false }) => (
                         <div className="item" key={address + name}>
                             <div className="inner" onClick={() => onSelectAddress && onSelectAddress(address)}>
                                 <div className="icon" style={{ backgroundImage: `url(${icon})`}}></div>
@@ -22,7 +22,7 @@ const AddressList = ({ noAccounts, addresses, onSelectAddress, removeAddress }) 
                             </div>
                             {
                                 !isAccount ? 
-                                    <div className="button" onClick={() => removeAddress(name, address)}>
+                                    <div className="button" onClick={() => removeAddress(name, address, isUd)}>
                                         <MdOutlineDelete/>
                                     </div>
                                     :
