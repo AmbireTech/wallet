@@ -88,21 +88,21 @@ const networks = [
 		chainId: 100,
 		rpc: 'https://rpc.xdaichain.com',
 		nativeAssetSymbol: 'XDAI',
-		name: 'Gnosis',
+		name: 'Gnosis Chain',
 		icon: '/resources/networks/gnosis.png',
 		explorerUrl: 'https://blockscout.com',
 		unstoppableDomainsChain: 'ERC20'
 	},
-	// {
-	// 	id: 'kucoin',
-	// 	chainId: 321,
-	// 	rpc: 'https://rpc-mainnet.kcc.network',
-	// 	nativeAssetSymbol: 'KCS',
-	// 	name: 'KCC',
-	// 	icon: '/resources/networks/kucoin.svg',
-	// 	explorerUrl: 'https://explorer.kcc.io',
-	// 	unstoppableDomainsChain: 'ERC20'
-	// },
+	{
+		id: 'kucoin',
+		chainId: 321,
+		rpc: 'https://rpc-mainnet.kcc.network',
+		nativeAssetSymbol: 'KCS',
+		name: 'KCC KuCoin',
+		icon: '/resources/networks/kucoin.svg',
+		explorerUrl: 'https://explorer.kcc.io',
+		unstoppableDomainsChain: 'ERC20'
+	},
 	// {
 	// 	id: 'andromeda',
 	// 	chainId: 1088,
