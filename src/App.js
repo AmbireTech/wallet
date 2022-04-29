@@ -23,6 +23,9 @@ import useNotifications from './hooks/notifications'
 import { useAttentionGrabber, usePortfolio, useAddressBook, useRelayerData, usePrivateMode, useLocalStorage } from './hooks'
 import { useToasts } from './hooks/toasts'
 import { useOneTimeQueryParam } from './hooks/oneTimeQueryParam'
+import WalletStakingPoolABI from './consts/WalletStakingPoolABI.json'
+import { Contract, utils } from 'ethers'
+import { getProvider } from './lib/provider'
 
 const relayerURL = process.env.hasOwnProperty('REACT_APP_RELAYER_URL') ? process.env.REACT_APP_RELAYER_URL : 'http://localhost:1934'
 
@@ -62,10 +65,43 @@ function AppInner() {
     useStorage: useLocalStorage
   }, [selectedAcc, network])
 
+  // Attach meta data to req, if needed
+  const attachMeta = async req => {
+    let meta
+
+    const WALLET_TOKEN_ADDRESS = '0x88800092ff476844f74dc2fc427974bbee2794ae'
+    const WALLET_STAKING_ADDRESS = '0x47cd7e91c3cbaaf266369fe8518345fc4fc12935'
+    const shouldAttachMeta =  [WALLET_TOKEN_ADDRESS, WALLET_STAKING_ADDRESS].includes(req.txn.to.toLowerCase())
+
+    if (shouldAttachMeta) {
+      const WALLET_STAKING_POOL_INTERFACE = new utils.Interface(WalletStakingPoolABI)
+      const provider = getProvider(network.id)
+      const stakingTokenContract = new Contract(WALLET_STAKING_ADDRESS, WALLET_STAKING_POOL_INTERFACE, provider)
+      const shareValue = await stakingTokenContract.shareValue()
+      const { usdPrice: walletTokenUsdPrice, xWALLETAPY: APY } = rewardsData.data
+
+      meta = {
+        xWallet: {
+          APY,
+          shareValue,
+          walletTokenUsdPrice,
+        },
+      }
+    }
+
+    if (!meta) return req
+
+    return { ...req, meta: { ...req.meta && req.meta, ...meta }}
+  }
+
   // Internal requests: eg from the Transfer page, Security page, etc. - requests originating in the wallet UI itself
   // unlike WalletConnect or SafeSDK requests, those do not need to be persisted
   const [internalRequests, setInternalRequests] = useState([])
-  const addRequest = req => setInternalRequests(reqs => [...reqs, req])
+  const addRequest = async req => {
+    const request = await attachMeta(req)
+
+    return setInternalRequests(reqs => [...reqs, request])
+  }
 
   // Merge all requests
   const requests = useMemo(
