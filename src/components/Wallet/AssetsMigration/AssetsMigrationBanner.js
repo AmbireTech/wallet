@@ -24,7 +24,7 @@ const AssetsMigrationBanner = ({ addRequest, selectedAccount, accounts, selected
       if (!currentAccount.signer) return
 
       assetMigrationDetector({ networkId: networkId, account: currentAccount.signer.address }).then(assets => {
-        const relevantAssets = assets.filter(a => a.balanceUSD > 0.5)
+        const relevantAssets = assets.filter(a => a.balanceUSD > 0.001)
         setHasSignerAssets(!!relevantAssets.length)
       }).catch(err => {
         console.error(err)

@@ -202,6 +202,12 @@ select {
     border: 1px solid $warning-color;
     color: $warning-color
   }
+
+  &.info {
+    background: mix($tertiary-accent-color, $panel-background-color, 5%);
+    border: 1px solid $tertiary-accent-color;
+    color: $tertiary-accent-color
+  }
 }
 
 // Mobile

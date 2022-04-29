@@ -10,6 +10,7 @@ import Button from 'components/common/Button/Button'
 import { PERMITTABLE_COINS, PERMIT_TYPE_DAI, ERC20PermittableInterface } from 'consts/permittableCoins'
 import { GiToken } from 'react-icons/gi'
 import { MdOutlineNavigateBefore, MdOutlineNavigateNext } from 'react-icons/md'
+import { ZERO_ADDRESS } from 'consts/specialAddresses'
 
 const MAX_INT = '0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff';
 
@@ -20,7 +21,6 @@ const AssetsMigrationPermitter = ({
                                     signerExtra,
                                     network,
                                     selectedTokensWithAllowance,
-                                    setSelectedTokens,
                                     setError,
                                     hideModal,
                                     setStep,
@@ -47,7 +47,7 @@ const AssetsMigrationPermitter = ({
 
   //using a callback would return not up to date data + would trigger useEffect prompt loop while we do not want that
   const getConsolidatedTokensPure = (selected, tokensPermissions, tokensAllowances, tokensPendingStatus) => {
-    return selected.map(t => {
+    return selected.filter(t => t.address !== ZERO_ADDRESS).map(t => {
       let remapped = {
         ...t,
         signing: null,
@@ -414,7 +414,7 @@ const AssetsMigrationPermitter = ({
           onClick={() => cancelMigration()}
         >Back</Button>
         {
-          readyTokensCount() === selectedTokensWithAllowance.length
+          readyTokensCount() === getConsolidatedTokensPure(selectedTokensWithAllowance).length
             ?
             <Button
               className={'primary'}
@@ -434,9 +434,9 @@ const AssetsMigrationPermitter = ({
   return (
     <div>
       {
-        readyTokensCount() < selectedTokensWithAllowance.length
+        readyTokensCount() < getConsolidatedTokensPure(selectedTokensWithAllowance).length
           ? <div
-            className='small-asset-notification mb-3 warning'>{`${selectedTokensWithAllowance.length - readyTokensCount()} token left to sign/approve to complete the migration`}</div>
+            className='small-asset-notification mb-3 warning'>{`${getConsolidatedTokensPure(selectedTokensWithAllowance).length - readyTokensCount()} token left to sign/approve to complete the migration`}</div>
           : <div className='small-asset-notification mb-3 success'>Your tokens are ready to be migrated</div>
       }
       {getConsolidatedTokensPure(selectedTokensWithAllowance, tokensPermissions, tokensAllowances, tokensPendingStatus).map((item, index) => (
