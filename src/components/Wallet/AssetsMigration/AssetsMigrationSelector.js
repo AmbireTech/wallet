@@ -298,23 +298,30 @@ const AssetsMigrationSelector = ({ signerAccount, identityAccount, network, setI
       ...gasData.gasFeeAssets.feeTokens.map(ft => ft.address)
     ]
 
+    // includes existing tokens in identity portfolio + selected signer tokens, then filters by feeTokens
     let usableTokens = consolidatedTokens.filter(t => {
       return possibleFeeTokens.find(ft => ft.toLowerCase() === t.address.toLowerCase())
     })
 
+    console.log('usableTokens', usableTokens)
+
     portfolio?.tokens?.forEach(pt => {
       if (
+        //add to usableTokens, if token is present in the existing portfolio
         possibleFeeTokens.find(ft => ft.toLowerCase() === pt.address.toLowerCase()) &&
+        //and if portfolio token is not already present
         !usableTokens.find(t => t.address.toLowerCase() === pt.address.toLowerCase())) {
-        usableTokens.push({ ...pt, fromPortfolio: true })
+        usableTokens.push({ ...pt, fromPortfolio: true }) //fromPortfolio = exists in portfolio but NOT in signer tokens
       }
     })
+
+    console.log('portfolioTokens', portfolio?.tokens)
 
     const usableFeeTokens = usableTokens
       .map(t => {
         let identityBalanceUSD = 0
         let selectedAmountUSD = 0
-        if (t.balanceUSD) {
+        if (t.fromPortfolio) {// if exists in portfolio only
           identityBalanceUSD = t.balanceUSD
         } else {
           const identityAssets = portfolio?.tokens
@@ -323,6 +330,8 @@ const AssetsMigrationSelector = ({ signerAccount, identityAccount, network, setI
             identityBalanceUSD = identityFeeAsset?.balanceUSD || 0
 
             selectedAmountUSD = new BigNumber(t.amount).multipliedBy(t.rate).toNumber()
+          } else {
+            console.warn('no identity assets!')
           }
         }
 
@@ -347,6 +356,7 @@ const AssetsMigrationSelector = ({ signerAccount, identityAccount, network, setI
           isEnoughToCoverFees,
         }
       })
+    console.log('usableFeeTokens', usableFeeTokens)
     setSuggestedGasTokens(usableFeeTokens)
 
   }, [selectableTokens, selectableTokensUserInputs, portfolio, gasData, selectedGasSpeed, tokensAllowances])
@@ -467,7 +477,7 @@ const AssetsMigrationSelector = ({ signerAccount, identityAccount, network, setI
                               className={'migrate-amount-input'}
                               value={item.humanAmount}
                               onChange={(val) => updateSelectableTokenUserInputs(item.address, (old) => {
-                                if (old === '') {
+                                if (val === '') {
                                   return {
                                     ...old,
                                     humanAmount: 0,

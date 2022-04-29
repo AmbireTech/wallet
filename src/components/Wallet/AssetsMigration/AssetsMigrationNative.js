@@ -31,6 +31,8 @@ const AssetsMigrationNative = ({
   const [transactionEstimationCost, setTransactionEstimationCost] = useState('0')
   const [nativeHumanAmount, setNativeHumanAmount] = useState('0')
 
+  const [hasModifiedAmount, setHasModifiedAmount] = useState(false)
+
   const wallet = getWallet({
     signer: signer,
     signerExtra: signerExtra,
@@ -74,6 +76,7 @@ const AssetsMigrationNative = ({
 
     setNativeHumanAmount(newHumanAmount)
     setNativeAmount(amount)
+    setHasModifiedAmount(true)
   }, [nativeTokenData])
 
   useEffect(() => {
@@ -108,13 +111,13 @@ const AssetsMigrationNative = ({
         if (hasERC20Tokens) {
           buttons.push(<Button
             icon={<MdOutlineNavigateNext/>}
-            className={'primary'}
+            className={'primary full'}
             onClick={() => continueMigration()}
           >Next</Button>)
         } else {
           buttons.push(<Button
             icon={MdClose}
-            className={'primary'}
+            className={'primary full'}
             onClick={() => hideModal()}
           >Close</Button>)
         }
@@ -179,31 +182,43 @@ const AssetsMigrationNative = ({
 
             <div className={'migration-native-row'}>
               <span className={'migration-native-row-key'}>Amount to migrate</span>
-              <TextInput
-                className={'migrate-amount-input'}
-                value={nativeHumanAmount}
-                onChange={(val) => {
-                  if (
-                    (val.endsWith('.') && val.split('.').length === 2)
-                    || (val.split('.').length === 2 && val.endsWith('0'))
-                  ) {
-                    setNativeHumanAmount(val)
-                    return
-                  }
+              {
+                (hasModifiedAmount || nativeAmount > maxRecommendedAmount)
+                ?
+                  <TextInput
+                    className={'migrate-amount-input'}
+                    value={nativeHumanAmount}
+                    onChange={(val) => {
+                      setHasModifiedAmount(true)
+                      if (val === '') {
+                        setNativeHumanAmount(0)
+                        setNativeAmount(0)
+                        return
+                      }
+                      if (
+                        (val.endsWith('.') && val.split('.').length === 2)
+                        || (val.split('.').length === 2 && val.endsWith('0'))
+                      ) {
+                        setNativeHumanAmount(val)
+                        return
+                      }
 
-                  if (!isNaN(val)) {
-                    let newHumanAmount = new BigNumber(val).toFixed(nativeTokenData.decimals)
-                    if (new BigNumber(newHumanAmount).multipliedBy(10 ** nativeTokenData.decimals).comparedTo(nativeTokenData.availableBalance) === 1) {
-                      newHumanAmount = new BigNumber(nativeTokenData.availableBalance).dividedBy(10 ** nativeTokenData.decimals).toFixed(nativeTokenData.decimals)
-                    }
-                    //trim trailing . or 0
-                    newHumanAmount = newHumanAmount.replace(/\.?0+$/g, '')
+                      if (!isNaN(val)) {
+                        let newHumanAmount = new BigNumber(val).toFixed(nativeTokenData.decimals)
+                        if (new BigNumber(newHumanAmount).multipliedBy(10 ** nativeTokenData.decimals).comparedTo(nativeTokenData.availableBalance) === 1) {
+                          newHumanAmount = new BigNumber(nativeTokenData.availableBalance).dividedBy(10 ** nativeTokenData.decimals).toFixed(nativeTokenData.decimals)
+                        }
+                        //trim trailing . or 0
+                        newHumanAmount = newHumanAmount.replace(/\.?0+$/g, '')
 
-                    setNativeHumanAmount(newHumanAmount)
-                    setNativeAmount(new BigNumber(newHumanAmount).multipliedBy(10 ** nativeTokenData.decimals).toFixed(0))
-                  }
-                }}
-              />
+                        setNativeHumanAmount(newHumanAmount)
+                        setNativeAmount(new BigNumber(newHumanAmount).multipliedBy(10 ** nativeTokenData.decimals).toFixed(0))
+                      }
+                    }}
+                  />
+                :
+                  <div>{ nativeHumanAmount }</div>
+              }
             </div>
 
             {
@@ -224,6 +239,21 @@ const AssetsMigrationNative = ({
                 <div>Sending more might not cover the gas fees</div>
               </div>
             }
+
+            {
+              (isMigrationPending && !hasERC20Tokens) &&
+              <div className={'notification-hollow info mt-4'}>
+                Waiting for the transaction to be mined before completing migration...
+              </div>
+            }
+            {
+              (isMigrationPending && hasERC20Tokens) &&
+              <div className={'notification-hollow info mt-4'}>
+                The amount of {nativeTokenData.name} will be updated in your wallet, once the transaction has been confirmed and mined.
+                If you confirmed your transaction, you can already close this window
+              </div>
+            }
+
           </>
       }
     </div>
