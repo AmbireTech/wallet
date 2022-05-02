@@ -88,6 +88,11 @@ function AppInner() {
 
   const privateMode = usePrivateMode(useLocalStorage)
 
+  const [userSorting, setUserSorting] = useLocalStorage({
+    key: 'userSorting',
+    defaultValue: {}
+})
+
   // Show the send transaction full-screen modal if we have a new txn
   const eligibleRequests = useMemo(() => requests
     .filter(({ type, chainId, account }) =>
@@ -241,6 +246,8 @@ function AppInner() {
             onAddAccount={onAddAccount}
             rewardsData={rewardsData}
             privateMode={privateMode}
+            userSorting={userSorting}
+            setUserSorting={setUserSorting}
           >
           </Wallet>
         </Route> :

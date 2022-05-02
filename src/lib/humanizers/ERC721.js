@@ -37,19 +37,19 @@ const ERC721Mapping = {
     const [ operator, approved ] = iface.parseTransaction(txn).args
     const name = getName(operator, network)
     if (approved) {
-      return extended ? [
+      return extended ? [[
         `Approve`,
         { type: 'address', name, address: operator },
         `to use/spend any NFT from collection`,
         { type: 'address', name: getName(txn.to), address: txn.to }
-      ] : `Approve ${name} to spend NFT collection ${getName(txn.to)}`
+      ]] : [`Approve ${name} to spend NFT collection ${getName(txn.to)}`]
     } else {
-      return extended ? [
+      return extended ? [[
         `Revoke approval for`,
         { type: 'address', name, address: operator },
         `to use/spend any NFT from collection`,
         { type: 'address', name: getName(txn.to), address: txn.to }
-      ] : `Revoke approval for ${name} to spend NFT collection ${getName(txn.to)}`
+      ]] : [`Revoke approval for ${name} to spend NFT collection ${getName(txn.to)}`]
     }
   }
 }
