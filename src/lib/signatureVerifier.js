@@ -3,7 +3,7 @@ import { ethers } from 'ethers'
 const VALIDATOR_1271_ABI = ['function isValidSignature(bytes32 hash, bytes signature) view returns (bytes4)']
 
 /**
- * @param provider Ethers provider to call deployed 1271 smart contracts
+ * @param provider Web3 Compatible provider to call deployed 1271 smart contracts (window.ethereum, web3.currentProvider, ethers provider... )
  * @param signer The signer address to verify the signature against
  * @param message To verify eth_sign type of signatures. Human message to verify. Message should be a human string or the hex version of the human string encoded as Uint8Bytes. If a hex string is passed, it will be considered as a regular string
  * @param typedData To verify a 712 signature type. The {domain, type, message} 712 message object
@@ -56,10 +56,11 @@ const addrMatching = (recoveredAddr, targetAddr) => {
 }
 
 //EIP 1271 check
-const eip1271Check = async (provider, signer, hash, signature) => {
-  const code = await provider.getCode(signer).catch()
+const eip1271Check = async (web3CompatibleProvider, signer, hash, signature) => {
+  const ethersProvider = new ethers.providers.Web3Provider(web3CompatibleProvider);
+  const code = await ethersProvider.getCode(signer).catch()
   if (code && code !== '0x') {
-    const contract = new ethers.Contract(signer, VALIDATOR_1271_ABI, provider)
+    const contract = new ethers.Contract(signer, VALIDATOR_1271_ABI, ethersProvider)
 
     return await contract.isValidSignature(hash, signature)
       .catch(e => {
