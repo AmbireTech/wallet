@@ -42,7 +42,7 @@ const AssetsMigrationSelector = ({ signerAccount, identityAccount, network, setI
     }
   }, [isAddCustomTokenFormShown])
 
-  //update signerTokens state helper
+  // update signerTokens state helper
   const updateSelectableTokenUserInputs = useCallback((address, callback) => {
     const index = selectableTokensUserInputs.findIndex(a => a.address === address)
 
@@ -57,7 +57,7 @@ const AssetsMigrationSelector = ({ signerAccount, identityAccount, network, setI
     }
   }, [selectableTokensUserInputs])
 
-  //Include/Exclude token in migration
+  // Include/Exclude token in migration
   const toggleTokenSelection = useCallback((address, minHumanAmount = null) => {
     updateSelectableTokenUserInputs(address, old => {
       let updated = {
@@ -66,7 +66,7 @@ const AssetsMigrationSelector = ({ signerAccount, identityAccount, network, setI
       }
       if (minHumanAmount) {
 
-        //let newHumanAmount = humanAmount.replace(/\.?0+$/g, '')
+        // let newHumanAmount = humanAmount.replace(/\.?0+$/g, '')
         const currentHumanAmount = selectableTokensUserInputs.find(t => t.address === address)?.humanAmount
         if (minHumanAmount > currentHumanAmount) {
           const decimals = selectableTokens.find(t => t.address === address)?.decimals
@@ -194,7 +194,7 @@ const AssetsMigrationSelector = ({ signerAccount, identityAccount, network, setI
     })
   }
 
-  //select tokens to migrate
+  // select tokens to migrate
   const confirmTokenSelection = useCallback(async () => {
 
     const tokensToMigrate = consolidatedSelectableTokens(selectableTokens, selectableTokensUserInputs, tokensAllowances).filter(a => a.selected)
@@ -214,7 +214,7 @@ const AssetsMigrationSelector = ({ signerAccount, identityAccount, network, setI
     }
   }, [selectableTokens, selectableTokensUserInputs, tokensAllowances, setSelectedTokensWithAllowance, setIsSelectionConfirmed, setStep])
 
-  //fetch selectable tokens
+  // fetch selectable tokens
   useEffect(() => {
 
     setIsLoading(true)
@@ -245,7 +245,7 @@ const AssetsMigrationSelector = ({ signerAccount, identityAccount, network, setI
     })
   }, [signerAccount, setIsLoading, setSelectableTokens, network])
 
-  //check Identity gas fees
+  // check Identity gas fees
   useEffect(() => {
 
     if (!gasData) return
@@ -303,19 +303,15 @@ const AssetsMigrationSelector = ({ signerAccount, identityAccount, network, setI
       return possibleFeeTokens.find(ft => ft.toLowerCase() === t.address.toLowerCase())
     })
 
-    console.log('usableTokens', usableTokens)
-
-    portfolio?.tokens?.forEach(pt => {
+    portfolio.tokens.forEach(pt => {
       if (
-        //add to usableTokens, if token is present in the existing portfolio
+        // add to usableTokens, if token is present in the existing portfolio
         possibleFeeTokens.find(ft => ft.toLowerCase() === pt.address.toLowerCase()) &&
-        //and if portfolio token is not already present
+        // and if portfolio token is not already present
         !usableTokens.find(t => t.address.toLowerCase() === pt.address.toLowerCase())) {
-        usableTokens.push({ ...pt, fromPortfolio: true }) //fromPortfolio = exists in portfolio but NOT in signer tokens
+        usableTokens.push({ ...pt, fromPortfolio: true }) // fromPortfolio = exists in portfolio but NOT in signer tokens
       }
     })
-
-    console.log('portfolioTokens', portfolio?.tokens)
 
     const usableFeeTokens = usableTokens
       .map(t => {
@@ -328,11 +324,10 @@ const AssetsMigrationSelector = ({ signerAccount, identityAccount, network, setI
           if (identityAssets) {
             const identityFeeAsset = identityAssets.find(it => it.address.toLowerCase() === t.address.toLowerCase())
             identityBalanceUSD = identityFeeAsset?.balanceUSD || 0
-
-            selectedAmountUSD = new BigNumber(t.amount).multipliedBy(t.rate).toNumber()
           } else {
             console.warn('no identity assets!')
           }
+          selectedAmountUSD = new BigNumber(t.amount).multipliedBy(t.rate).toNumber()
         }
 
         let isEnoughToCoverFees = {}
@@ -356,13 +351,12 @@ const AssetsMigrationSelector = ({ signerAccount, identityAccount, network, setI
           isEnoughToCoverFees,
         }
       })
-    console.log('usableFeeTokens', usableFeeTokens)
     setSuggestedGasTokens(usableFeeTokens)
 
   }, [selectableTokens, selectableTokensUserInputs, portfolio, gasData, selectedGasSpeed, tokensAllowances])
 
 
-  //getting gasPrice data from relayer
+  // getting gasPrice data from relayer
   useEffect(() => {
     fetchGet(`${relayerURL}/gasPrice/${network.id}`).then(gasData => {
       setGasData(gasData.data)
@@ -372,7 +366,7 @@ const AssetsMigrationSelector = ({ signerAccount, identityAccount, network, setI
   }, [relayerURL, network])
 
 
-  //getting erc20 token allowances
+  // getting erc20 token allowances
   useEffect(() => {
     const promises = selectableTokens.map(t => {
       const provider = getProvider(network.id)
@@ -499,7 +493,7 @@ const AssetsMigrationSelector = ({ signerAccount, identityAccount, network, setI
                                   if (new BigNumber(newHumanAmount).multipliedBy(10 ** item.decimals).comparedTo(item.availableBalance) === 1) {
                                     newHumanAmount = new BigNumber(item.availableBalance).dividedBy(10 ** item.decimals).toFixed(item.decimals)
                                   }
-                                  //trim trailing . or 0
+                                  // trim trailing . or 0
                                   newHumanAmount = newHumanAmount.replace(/\.?0+$/g, '')
 
                                   return {

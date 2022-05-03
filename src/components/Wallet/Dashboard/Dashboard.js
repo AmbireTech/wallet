@@ -83,6 +83,7 @@ export default function Dashboard({ portfolio, selectedNetwork, selectedAccount,
                 addRequest={addRequest}
                 closeable={true}
                 relayerURL={relayerURL}
+                portfolio={portfolio}
               />
             }
             <div id="overview">
