@@ -69,6 +69,11 @@
             padding: 15px 20px;
             font-size: 15px;
             color: white;
+
+            &[disabled] {
+                pointer-events: none;
+                opacity: 0.5;
+            }
             
             &[draggable="true"] .drag-handle {
                 cursor: grab;

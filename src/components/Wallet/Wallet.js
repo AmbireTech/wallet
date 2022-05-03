@@ -146,6 +146,10 @@ export default function Wallet(props) {
       component: <Gas
         selectedNetwork={{...props.network}}
         relayerURL={props.relayerURL}
+        portfolio={props.portfolio}
+        selectedAccount={props.selectedAcc}
+        userSorting={props.userSorting}
+        setUserSorting={props.setUserSorting}
       />
     }
   ]

@@ -1,7 +1,7 @@
 import './GasTank.scss'
 import { FaGasPump } from 'react-icons/fa'
 import { Toggle } from 'components/common'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 
 import { GiToken } from 'react-icons/gi'
@@ -12,55 +12,34 @@ import { useDragAndDrop, useCheckMobileScreen } from 'hooks'
 import { getTokenIcon } from 'lib/icons'
 import { formatFloatTokenAmount } from 'lib/formatters'
 import { ToolTip } from 'components/common'
+import { useRelayerData } from 'hooks'
 
-const GasTank = () => {
+const GasTank = ({ network, relayerURL, portfolio, account, userSorting, setUserSorting }) => {
+    const [cacheBreak, setCacheBreak] = useState(() => Date.now())
+
+    useEffect(() => {
+        if (Date.now() - cacheBreak > 5 * 1000) setCacheBreak(Date.now())
+        const intvl = setTimeout(() => setCacheBreak(Date.now()), 60 * 1000)
+        return () => clearTimeout(intvl)
+    }, [cacheBreak])
+
+    const urlGetBalance = relayerURL ? `${relayerURL}/gas-tank/${account}/getBalance` : null
+    const urlGetFeeAssets = relayerURL ? `${relayerURL}/gas-tank/assets` : null
+    const { data, errMsg, isLoading } = useRelayerData(urlGetBalance)
+    const gasTankBalance = data?.map(({balanceInUSD}) => balanceInUSD).reduce((a, b) => a + b, 0).toFixed(2)
+    const feeAssetsRes = useRelayerData(urlGetFeeAssets)
+    const feeAssetsPerNetwork = feeAssetsRes.data?.filter(item => item.network === network.id)
+    const { isBalanceLoading, tokens } = portfolio
+    const sortType = userSorting.tokens?.sortType || 'decreasing'
+    const isMobileScreen = useCheckMobileScreen()
+    const availableFeeAssets = feeAssetsPerNetwork?.map(item => {
+        const isFound = tokens?.find(x => x.address.toLowerCase() === item.address.toLowerCase()) 
+        if (isFound) return isFound
+        return { ...item, balance: 0, balanceUSD: 0, decimals: 0 }
+    })
     const [failedImg, setFailedImg] = useState([])
-    const account = '0x1243e32...'
-
-    const mockedData = [
-        {
-            address: "0xc2132d05d31c914a87c6611c10748aeb04b58e8f",
-            balance: 6.639823,
-            balanceRaw: "6639823",
-            balanceUSD: 6.63,
-            decimals: 6,
-            isHidden: false,
-            network: "polygon",
-            price: 0.999077,
-            symbol: "USDT",
-            tokenImageUrl: "https://assets.coingecko.com/coins/images/325/large/Tether-logo.png?1598003707",
-            type: "base",
-            updateAt: "Wed Apr 27 2022 11:35:29 GMT+0300 (Eastern European Summer Time)"
-        },
-        {
-            address: "0xb468a1e5596cfbcdf561f21a10490d99b4bb7b68",
-            balance: 1000,
-            balanceRaw: "1000000000000000000000",
-            balanceUSD: 0,
-            decimals: 18,
-            isHidden: false,
-            network: "polygon",
-            price: 0,
-            symbol: "ELMO",
-            tokenImageUrl: "https://logos.covalenthq.com/tokens/137/0xb468a1e5596cfbcdf561f21a10490d99b4bb7b68.png",
-            type: "base",
-            updateAt: "Wed Apr 27 2022 11:35:29 GMT+0300 (Eastern European Summer Time)"
-        },
-        {
-            address: "0xe9415e904143e42007865e6864f7f632bd054a08",
-            balance: 15,
-            balanceRaw: "15000000000000000000",
-            balanceUSD: 0,
-            decimals: 18,
-            isHidden: false,
-            network: "polygon",
-            price: 0,
-            symbol: "WALLET",
-            tokenImageUrl: "https://logos.covalenthq.com/tokens/137/0xe9415e904143e42007865e6864f7f632bd054a08.png",
-            type: "base",
-            updateAt: "Wed Apr 27 2022 11:35:29 GMT+0300 (Eastern European Summer Time)"
-        }
-    ]
+    
+    // ================= TO REMOVE =================
     const mockedTxns = [
         {
             dateTime: '2022-03-01 12:32',
@@ -81,10 +60,17 @@ const GasTank = () => {
             chargeBack: '0.66'
         }
     ]
-    const [userSorting, setUserSorting] = useState({tokens: {sortType: 'custom'}})
-    const sortType = userSorting.tokens?.sortType || 'decreasing'
-
-    const isMobileScreen = useCheckMobileScreen()
+    // =============================================
+    const sortedTokens = availableFeeAssets?.sort((a, b) => {
+        if (sortType === 'custom' && userSorting.tokens?.items?.[`${account}-${network.chainId}`]?.length) {
+            const sorted = userSorting.tokens.items[`${account}-${network.chainId}`].indexOf(a.address) - userSorting.tokens.items[`${account}-${network.chainId}`].indexOf(b.address)
+            return sorted
+        } else {
+            const decreasing = b.balanceUSD - a.balanceUSD
+            if (decreasing === 0) return a.symbol.localeCompare(b.symbol)
+            return decreasing
+        }
+    })
 
     const onDropEnd = (list) => {        
         setUserSorting(
@@ -94,7 +80,7 @@ const GasTank = () => {
                     sortType: 'custom',
                     items: {
                         ...prev.tokens?.items,
-                        [`${account}`]: list
+                        [`${account}-${network.chainId}`]: list
                     }
                 }
             })
@@ -117,63 +103,64 @@ const GasTank = () => {
         setIsGasTankEnabled(prevState => !prevState)
     }
 
-  
     const tokenItem = (index, img, symbol, balance, balanceUSD, address, send = false, network, decimals, category, sortedTokensLength) => 
         {
             const logo = failedImg.includes(img) ? getTokenIcon(network, address) : img
                 
             return (<div className="token" key={`token-${address}-${index}`}
-             draggable={category === 'tokens' && sortedTokensLength > 1 && sortType === 'custom' && !isMobileScreen}
-             onDragStart={(e) => { 
-                if (handle.current === target.current || handle.current.contains(target.current)) dragStart(e, index)
-                else e.preventDefault();
-             }}
-             onMouseDown={(e) => dragTarget(e, index)}
-             onDragEnter={(e) => dragEnter(e, index)}
-             onDragEnd={() => drop(mockedData)}
-             onDragOver={(e) => e.preventDefault()}
-            >
-            {sortedTokensLength > 1 && sortType === 'custom' && !isMobileScreen && <MdDragIndicator size={20} className='drag-handle' onClick={(e) => dragStart(e, index)} id={`${index}-handle`} />}
-            <div className="icon">
-                { 
-                    failedImg.includes(logo) ?
-                        <GiToken size={20}/>
-                        :
-                        <img src={logo} draggable="false" alt="Token Icon" onError={() => setFailedImg(failed => [...failed, logo])}/>
-                }
-            </div>
-            <div className="name">
-                { symbol }
-            </div>
-            <div className="separator"></div>
-            <div className="balance">
-                <div className="currency">
-                    <span className="value">{ formatFloatTokenAmount(balance, true, decimals) }</span>
-                    <span className="symbol">{ symbol }</span>
+                disabled={balanceUSD === 0}
+                draggable={category === 'tokens' && sortedTokensLength > 1 && sortType === 'custom' && !isMobileScreen}
+                onDragStart={(e) => {
+                    if (handle.current === target.current || handle.current.contains(target.current)) dragStart(e, index)
+                    else e.preventDefault();
+                }}
+                onMouseDown={(e) => dragTarget(e, index)}
+                onDragEnter={(e) => dragEnter(e, index)}
+                onDragEnd={() => drop(sortedTokens)}
+                onDragOver={(e) => e.preventDefault()}
+                >
+                {sortedTokensLength > 1 && sortType === 'custom' && !isMobileScreen && <MdDragIndicator size={20} className='drag-handle' onClick={(e) => dragStart(e, index)} id={`${index}-handle`} />}
+                <div className="icon">
+                    { 
+                        failedImg.includes(logo) ?
+                            <GiToken size={20}/>
+                            :
+                            <img src={logo} draggable="false" alt="Token Icon" onError={() => setFailedImg(failed => [...failed, logo])}/>
+                    }
                 </div>
-                <div className="dollar">
-                    <span className="symbol">$</span> { balanceUSD.toFixed(2) }
+                <div className="name">
+                    { symbol.toUpperCase() }
                 </div>
-            </div>
-            {
-                send ? 
-                    <div className="actions">
-                        {/* TODO: Should opens GasTankDepositModal */}
-                        <NavLink to={`/wallet/transfer/${address}`}>
-                            <Button small>Deposit</Button>
-                        </NavLink>
+                <div className="separator"></div>
+                <div className="balance">
+                    <div className="currency">
+                        <span className="value">{ formatFloatTokenAmount(balance, true, decimals) }</span>
+                        <span className="symbol">{ symbol.toUpperCase() }</span>
                     </div>
-                    :
-                    null
-            }
-        </div>)}
+                    <div className="dollar">
+                        <span className="symbol">$</span> { balanceUSD.toFixed(2) }
+                    </div>
+                </div>
+                {
+                    send ? 
+                        <div className="actions">
+                            {/* TODO: Should opens GasTankDepositModal */}
+                            <NavLink to={`/wallet/transfer/${address}`}>
+                                <Button small>Deposit</Button>
+                            </NavLink>
+                        </div>
+                        :
+                        null
+                }
+            </div>)
+        }
 
     return (
         <div id="gas-tank">
             <div className='heading-wrapper'>
                 <div className="balance-wrapper">
                     <span><FaGasPump/> Gas Tank Balance</span>
-                    <div><span>$</span>250.23</div>
+                    <div><span>$</span>{gasTankBalance}</div>
                     <span>Drag and drop tokens here</span>
                 </div>
                 <div className='switch-wrapper'>
@@ -191,7 +178,7 @@ const GasTank = () => {
             </div>
             <div className="sort-holder">
                 Balance by tokens
-                {mockedData.length > 1 && !isMobileScreen &&  (
+                {sortedTokens && !isMobileScreen &&  (
                     <div className="sort-buttons">
                         <ToolTip label='Sorted tokens by drag and drop'>
                             <MdDragIndicator color={sortType === "custom" ? "#80ffdb" : ""} cursor="pointer" onClick={() => setUserSorting(prev => ({
@@ -216,8 +203,8 @@ const GasTank = () => {
             </div>
             <div className="list">
                 { 
-                    mockedData.map(({ address, symbol, tokenImageUrl, balance, balanceUSD, network, decimals }, i) =>
-                        tokenItem(i, tokenImageUrl, symbol, balance, balanceUSD, address, true, network, decimals, 'tokens', mockedData.length))
+                   sortedTokens && sortedTokens?.map(({ address, symbol, tokenImageUrl, balance, balanceUSD, network, decimals }, i) =>
+                        tokenItem(i, tokenImageUrl, symbol, balance, balanceUSD, address, true, network, decimals, 'tokens', sortedTokens.length))
                 }
             </div>
             {/* Transactions here */}
