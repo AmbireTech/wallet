@@ -197,7 +197,7 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
                    Send
                </div>
                {
-                    portfolio.isBalanceLoading ?
+                    portfolio.isCurrNetworkBalanceLoading ?
                         <Loading/>
                         :
                         assetsItems.length ? 
