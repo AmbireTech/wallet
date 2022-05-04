@@ -210,7 +210,10 @@ export default function SignMessage ({ toSign, resolve, account, connections, re
             )}
          
           {!isDeployed && (<div>
-              <h3 className='error'>Because you haven't made any Ambire transactions and your smart wallet is not deployed, you can't sign this message yet.</h3>
+              <h3 className='error'>You can't sign this message yet.</h3>
+              <h3 className='error'>
+              You need to complete your first transaction from you ambire wallet and your smart wallet will be deployed cross-chain on the same addresses.
+              </h3>
             </div>
           )}
 
