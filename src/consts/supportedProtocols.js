@@ -55,12 +55,12 @@ const suportedProtocols = [
         balancesProvider: 'velcro',
         nftsProvider: 'velcro'
     },
-    // {
-    //     network: 'kucoin',
-    //     protocols: [],
-    //     balancesProvider: 'velcro',
-    //     nftsProvider: 'velcro'
-    // },
+    {
+        network: 'kucoin',
+        protocols: [],
+        balancesProvider: 'velcro',
+        nftsProvider: 'velcro'
+    },
     // {
     //     network: 'andromeda',
     //     protocols: [],
