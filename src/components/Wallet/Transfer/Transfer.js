@@ -85,14 +85,6 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
     const sendTx = () => {
         const recipientAddress = uDAddress ? uDAddress : address
 
-        if (uDAddress) {
-            const isAlreadyAdded = addresses.find(i => i.address === uDAddress)
-
-            if (!isAlreadyAdded) {
-                addAddress(address, uDAddress)
-            }
-        }
-
         try {
             const txn = {
                 to: selectedAsset.address,
@@ -106,13 +98,25 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
                 txn.data = '0x'
             }
 
-            addRequest({
+            let req = {
                 id: `transfer_${Date.now()}`,
                 type: 'eth_sendTransaction',
                 chainId: selectedNetwork.chainId,
                 account: selectedAcc,
-                txn
-            })
+                txn,
+                meta: null
+            }
+
+            if (uDAddress) {
+                req.meta = { 
+                    addressLabel: { 
+                        addressLabel: address,
+                        address: uDAddress
+                    }
+                }
+            }
+             
+            addRequest(req)
 
             setAmount(0)
         } catch(e) {
@@ -136,6 +140,7 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
         const isValidSendTransferAmount = validateSendTransferAmount(amount, selectedAsset)
 
         if (address.startsWith('0x') && (address.indexOf('.') === -1)) {
+            if (uDAddress !== '') setUDAddress('')
             const isValidRecipientAddress = validateSendTransferAddress(address, selectedAcc, addressConfirmed, isKnownAddress)
             
             setValidationFormMgs({ 
@@ -180,7 +185,7 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
             }, 300)
         }
         return () => clearTimeout(timer.current)
-    }, [address, amount, selectedAcc, selectedAsset, addressConfirmed, showSWAddressWarning, sWAddressConfirmed, isKnownAddress, addToast, selectedNetwork, addAddress])
+    }, [address, amount, selectedAcc, selectedAsset, addressConfirmed, showSWAddressWarning, sWAddressConfirmed, isKnownAddress, addToast, selectedNetwork, addAddress, uDAddress])
 
     const amountLabel = <div className="amount-label">Available Amount: <span>{ maxAmountFormatted } { selectedAsset?.symbol }</span></div>
 
@@ -224,6 +229,7 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
                                         newAddress={newAddress}
                                         onClose={() => setNewAddress(null)}
                                         onSelectAddress={address => setAddress(address)}
+                                        selectedNetwork={selectedNetwork}
                                     />
                                 </div>
                                 { validationFormMgs.messages.address && 
@@ -257,6 +263,8 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
                }
            </div>
            <Addresses
+                selectedAsset={selectedAsset}
+                selectedNetwork={selectedNetwork}
                 addresses={addresses}
                 addAddress={addAddress}
                 removeAddress={removeAddress}
