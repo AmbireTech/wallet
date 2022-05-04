@@ -47,6 +47,7 @@ $account-height: 60px;
                     min-width: 0;
                     height: $account-height;
                     display: flex;
+                    flex: 1;
                     align-items: center;
                     justify-content: flex-start;
                     gap: 15px;
