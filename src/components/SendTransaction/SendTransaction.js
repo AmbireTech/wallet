@@ -69,7 +69,7 @@ function makeBundle(account, networkId, requests) {
     bundle.meta = {}
 
     if (requests.some(item => item.meta?.addressLabel)) {
-      bundle.meta.addressLabel = requests.filter(x => x.meta?.addressLabel).map(x => x.meta.addressLabel)
+      bundle.meta.addressLabel = requests.map(x => !!x.meta?.addressLabel ? x.meta.addressLabel : { addressLabel: '', address: ''})
     }
 
     const xWalletReq = requests.find(x => x.meta?.xWallet)
