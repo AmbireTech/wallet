@@ -2,10 +2,10 @@ export const ACTION_GAS_COSTS = [
 
 	{name: 'Ambire: Claim and burn', gas: 163327},
 	{name: 'Ambire: Claim and stake', gas: 213230},
+	{name: 'SushiSwap: Swap', gas: 140972},
 	{name: 'Opensea: Sale', gas: 201953},
 	{name: 'Uniswap V3: Swap', gas: 184206},
 	{name: 'USDT: Transfer', gas: 54000},
-	{name: 'SushiSwap: Swap', gas: 140972},
 	{name: 'Curve: Swap', gas: 749187},
 	{name: 'Balancer: Swap', gas: 196234},
 	{name: 'Bancor: Swap', gas: 182860},

@@ -4,19 +4,24 @@ import { MdOutlineAdd } from 'react-icons/md'
 import AddressList from 'components/common/AddressBook/AddressList/AddressList'
 import { Button } from 'components/common'
 import { isValidAddress } from 'lib/address'
-import { InputModal } from 'components/Modals'
+import { AddAddressModal } from 'components/Modals'
 import { useModals } from 'hooks'
 
-const Addresses = ({ addresses, addAddress, removeAddress, onSelectAddress }) => {
+const Addresses = ({ addresses, addAddress, removeAddress, onSelectAddress, selectedNetwork }) => {
     const { showModal } = useModals()
 
     const modalInputs = [
-        { label: 'Name', placeholder: 'My Address' },
-        { label: 'Address', placeholder: '0x', validate: value => isValidAddress(value) }
+        { label: 'Name', placeholder: 'Address title' },
+        { label: 'Address / Unstoppable domainsⓇ', placeholder: 'Address or Unstoppable.Domains', validate: value => isValidAddress(value) } 
     ]
 
-    const inputModal = <InputModal title="Add New Address" inputs={modalInputs} onClose={([name, address]) => addAddress(name, address)}></InputModal>
-    const showInputModal = () => showModal(inputModal)
+    const addAddressModal = <AddAddressModal 
+            title="Add New Address" 
+            selectedNetwork={selectedNetwork} 
+            inputs={modalInputs} 
+            onClose={([name, address, isUd]) => addAddress(name, address, isUd)}
+        ></AddAddressModal>
+    const showInputModal = () => showModal(addAddressModal)
 
     return (
         <div id="addresses" className='panel'>

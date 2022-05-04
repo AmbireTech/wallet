@@ -209,7 +209,9 @@ function BundlePreview({ bundle, mined = false }) {
   return (<div className='bundlePreview bundle' key={bundle._id}>
     {txns.map((txn, i) => (<TxnPreview
       key={i} // safe to do this, individual TxnPreviews won't change within a specific bundle
-      txn={txn} network={bundle.network} account={bundle.identity} mined={mined} />
+      txn={txn} network={bundle.network} account={bundle.identity} mined={mined} 
+      addressLabel={!!bundle.meta && bundle.meta.addressLabel}
+      />
     ))}
     <ul className="details">
       {

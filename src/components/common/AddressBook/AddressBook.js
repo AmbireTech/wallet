@@ -3,26 +3,29 @@ import './AddressBook.scss'
 import { FaAddressCard } from 'react-icons/fa'
 import { MdOutlineAdd, MdClose } from 'react-icons/md'
 import { Button, DropDown, TextInput } from 'components/common'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import AddressList from './AddressList/AddressList'
+import { resolveUDomain } from 'lib/unstoppableDomains'
 
-const AddressBook = ({ addresses, addAddress, removeAddress, newAddress, onClose, onSelectAddress }) => {
+const AddressBook = ({ addresses, addAddress, removeAddress, newAddress, onClose, onSelectAddress, selectedNetwork}) => {
     const [address, setAddress] = useState('')
     const [name, setName] = useState('')
     const [isOpen, setOpenMenu] = useState(false)
     const [openAddAddress, setOpenAddAddress] = useState(false)
+    const timer = useRef(null)
+    const [uDAddress, setUDAddress] = useState('')
 
     const selectAddress = address => {
-        onSelectAddress && onSelectAddress(address)
+        onSelectAddress && onSelectAddress(uDAddress ? uDAddress : address)
         setOpenMenu(false)
     }
     
-    const isAddAddressFormValid = address.length && name.length && /^0x[a-fA-F0-9]{40}$/.test(address)
+    const isAddAddressFormValid = address.length && name.length && /^0x[a-fA-F0-9]{40}$/.test(uDAddress ? uDAddress : address)
     const onAddAddress = useCallback(() => {
         setOpenMenu(false)
         setOpenAddAddress(false)
-        addAddress(name, address)
-    }, [name, address, addAddress])
+        addAddress(name, address, uDAddress ? true : false)
+    }, [addAddress, name, address, uDAddress])
 
     const onDropDownChange = useCallback(state => {
         setOpenMenu(state)
@@ -41,6 +44,26 @@ const AddressBook = ({ addresses, addAddress, removeAddress, newAddress, onClose
             setOpenAddAddress(true)
         }
     }, [newAddress])
+
+    useEffect(() => { 
+        if (timer.current) {
+            clearTimeout(timer.current)
+        }
+
+        const validateForm = async() => {
+            const UDAddress =  await resolveUDomain(address, null, selectedNetwork.unstoppableDomainsChain)
+            timer.current = null
+            if (UDAddress) {
+                setUDAddress(UDAddress)
+            } else {
+                setUDAddress('')
+            }
+        }
+
+        timer.current = setTimeout(async() => {
+            return validateForm().catch(console.error)
+        }, 500)
+    }, [address, selectedNetwork.unstoppableDomainsChain])
 
     return (
         <DropDown title={<><FaAddressCard/>Address Book</>} className="address-book" open={isOpen} onChange={onDropDownChange}>
