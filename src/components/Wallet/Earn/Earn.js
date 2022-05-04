@@ -8,7 +8,7 @@ const Earn = ({ portfolio, selectedNetwork, rewardsData, selectedAcc, addRequest
     return (
         <div id="earn">
             {
-                portfolio.isBalanceLoading ?
+                portfolio.isCurrNetworkBalanceLoading ?
                     <Loading/>
                     :
                     <div className="cards">
