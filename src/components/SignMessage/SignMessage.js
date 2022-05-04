@@ -2,31 +2,49 @@ import './SignMessage.scss'
 import { MdBrokenImage, MdCheck, MdClose } from 'react-icons/md'
 import { Wallet } from 'ethers'
 import { toUtf8String, keccak256, arrayify, isHexString } from 'ethers/lib/utils'
-import { signMsgHash } from 'adex-protocol-eth/js/Bundle'
+import { signMsgHash, Bundle } from 'adex-protocol-eth/js/Bundle'
 import * as blockies from 'blockies-ts';
 import { getWallet } from 'lib/getWallet'
 import { useToasts } from 'hooks/toasts'
 import { fetchPost } from 'lib/fetch'
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
+import { getProvider } from 'lib/provider'
 import { Button, Loading, TextInput } from 'components/common'
 
 const CONF_CODE_LENGTH = 6
 
-export default function SignMessage ({ toSign, resolve, account, connections, relayerURL, totalRequests }) {
+export default function SignMessage ({ toSign, resolve, account, connections, relayerURL, totalRequests, network }) {
   const defaultState = () => ({ codeRequired: false, passphrase: '' })
   const { addToast } = useToasts()
   const [signingState, setSigningState] = useState(defaultState())
   const [isLoading, setLoading] = useState(false)
+  const [isDeployed, setIsDeployed] = useState(null)
   const [confFieldState, setConfFieldState] = useState({isShown: false,  confCodeRequired: ''})
   const [promiseResolve, setPromiseResolve] = useState(null)
   const inputSecretRef = useRef(null)
-
+  
   const connection = connections.find(({ uri }) => uri === toSign.wcUri)
   const dApp = connection ? connection?.session?.peerMeta || null : null
-
+  
   useEffect(()=> {
     if (confFieldState.isShown) inputSecretRef.current.focus()
   }, [confFieldState])
+  
+  const checkIsDeployed = useCallback(async () => {
+    const bundle = new Bundle({
+      network: network.id,
+      identity: account.id,
+      signer: account.signer
+    })
+
+    const provider = await getProvider(network.id)
+    const isDeployed = await provider.getCode(bundle.identity).then(code => code !== '0x')
+    setIsDeployed(isDeployed)
+  }, [account, network])
+
+  useEffect(() => {
+    checkIsDeployed()
+  }, [checkIsDeployed])
 
   if (!toSign || !account) return (<></>)
   if (toSign && !isHexString(toSign.txn)) return (<div id='signMessage'>
@@ -167,7 +185,7 @@ export default function SignMessage ({ toSign, resolve, account, connections, re
 
       <div className='actions'>
         <form onSubmit={handleSubmit}>
-          {account.signer.quickAccManager && (<>
+          {account.signer.quickAccManager && isDeployed && (<>
             <TextInput
               password
               required minLength={3}
@@ -190,7 +208,12 @@ export default function SignMessage ({ toSign, resolve, account, connections, re
               />
             </>
             )}
-          
+         
+          {!isDeployed && (<div>
+              <h3 className='error'>Because you haven't made any Ambire transactions and your smart wallet is not deployed, you can't sign this message yet.</h3>
+            </div>
+          )}
+
           <div className="buttons">
             <Button
               type='button'
@@ -199,10 +222,12 @@ export default function SignMessage ({ toSign, resolve, account, connections, re
               className='reject'
               onClick={() => resolve({ message: 'signature denied' })}
             >Reject</Button>
-            <Button type='submit' className='approve' disabled={isLoading}>
+            {isDeployed !== null && isDeployed && (
+              <Button type='submit' className='approve' disabled={isLoading}>
               {isLoading ? (<><Loading/>Signing...</>)
               : (<><MdCheck/> Sign</>)}
             </Button>
+            )}
           </div>
         </form>
       </div>
