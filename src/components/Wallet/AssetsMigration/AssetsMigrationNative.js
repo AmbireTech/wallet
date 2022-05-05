@@ -21,6 +21,7 @@ const AssetsMigrationNative = ({
                                  hideModal,
                                  relayerURL,
                                  setModalButtons,
+                                 setBeforeCloseModalHandler
                                }) => {
 
   const [failedImg, setFailedImg] = useState([])
@@ -60,15 +61,20 @@ const AssetsMigrationNative = ({
     if (!wallet) return
     setError(null)
     setIsMigrationPending(true)
+
+    if (!hasERC20Tokens) {
+      setBeforeCloseModalHandler(null)
+    }
+
     wallet.sendTransaction({
       from: signer.address,
       to: identityAccount,
       gasLimit: 25000,
       value: '0x' + new BigNumber(nativeAmount).toString(16),
     }).then(async rcpt => {
-        await rcpt.wait()
-        setHasMigratedNative(true)
-        setIsMigrationPending(false)
+      await rcpt.wait()
+      setHasMigratedNative(true)
+      setIsMigrationPending(false)
       return true
     }).catch(err => {
       setHasMigratedNative(false)
@@ -82,7 +88,7 @@ const AssetsMigrationNative = ({
 
       return false
     })
-  }, [identityAccount, nativeAmount, setError, signer, wallet])
+  }, [wallet, setError, hasERC20Tokens, signer, identityAccount, nativeAmount, setBeforeCloseModalHandler])
 
   const updateAmount = useCallback((amount) => {
     let newHumanAmount = new BigNumber(amount).dividedBy(10 ** nativeTokenData.decimals).toFixed(nativeTokenData.decimals).replace(/\.?0+$/g, '')
@@ -93,20 +99,20 @@ const AssetsMigrationNative = ({
   }, [nativeTokenData])
 
   useEffect(() => {
-      const url = `${relayerURL}/gasPrice/${network.id}`
+    const url = `${relayerURL}/gasPrice/${network.id}`
 
-      fetchGet(url).then(gasData => {
-        let gasPrice = gasData.data.gasPrice.fast
-        if (gasData.data.gasPrice.maxPriorityFeePerGas) {
-          gasPrice += gasData.data.gasPrice.maxPriorityFeePerGas.fast
-        }
-        const estimatedTransactionCost = gasPrice * 25000
-        //setCurrentGasPrice(gasPrice)
-        setTransactionEstimationCost(new BigNumber(estimatedTransactionCost.toFixed(0)).toFixed(0))
-        setMaxRecommendedAmount(new BigNumber(nativeTokenData.availableBalance).minus(estimatedTransactionCost).toFixed(0))
-      }).catch(err => {
-        setError(err.message + ' ' + url)
-      })
+    fetchGet(url).then(gasData => {
+      let gasPrice = gasData.data.gasPrice.fast
+      if (gasData.data.gasPrice.maxPriorityFeePerGas) {
+        gasPrice += gasData.data.gasPrice.maxPriorityFeePerGas.fast
+      }
+      const estimatedTransactionCost = gasPrice * 25000
+      //setCurrentGasPrice(gasPrice)
+      setTransactionEstimationCost(new BigNumber(estimatedTransactionCost.toFixed(0)).toFixed(0))
+      setMaxRecommendedAmount(new BigNumber(nativeTokenData.availableBalance).minus(estimatedTransactionCost).toFixed(0))
+    }).catch(err => {
+      setError(err.message + ' ' + url)
+    })
 
   }, [setTransactionEstimationCost, setMaxRecommendedAmount, nativeTokenData, network, relayerURL, setError])
 
@@ -116,7 +122,7 @@ const AssetsMigrationNative = ({
     setNativeAmount(nativeTokenData.amount)
   }, [nativeTokenData])
 
-  useEffect( () => {
+  useEffect(() => {
 
     const getDisplayedButtons = () => {
       let buttons = []
@@ -149,7 +155,7 @@ const AssetsMigrationNative = ({
 
         if (isMigrationPending) {
           buttons.push(<Button
-            icon={<Loading />}
+            icon={<Loading/>}
             className={'primary disabled'}
           >Moving {nativeTokenData.name}...</Button>)
         } else {
@@ -178,7 +184,7 @@ const AssetsMigrationNative = ({
                 failedImg.includes(nativeTokenData.icon) ?
                   <GiToken size={64}/>
                   :
-                  <img src={nativeTokenData.icon} draggable="false" alt="Token Icon" onError={(err) => {
+                  <img src={nativeTokenData.icon} draggable='false' alt='Token Icon' onError={(err) => {
                     setFailedImg(failed => [...failed, nativeTokenData.icon])
                   }}/>
               }
@@ -190,7 +196,9 @@ const AssetsMigrationNative = ({
             hasMigratedNative
               ?
               <>
-                <div className={'small-asset-notification success'}>Migration of your {nativeTokenData.name} was successful</div>
+                <div className={'small-asset-notification success'}>Migration of your {nativeTokenData.name} was
+                  successful
+                </div>
               </>
               :
               <>
@@ -198,58 +206,61 @@ const AssetsMigrationNative = ({
                   <span className={'migration-native-row-key'}>
                     Current balance
                   </span>
-                  <span className={'migration-native-selection'} onClick={() => updateAmount(nativeTokenData.availableBalance)} >
+                  <span className={'migration-native-selection'}
+                        onClick={() => updateAmount(nativeTokenData.availableBalance)}>
                     {new BigNumber(nativeTokenData.availableBalance).dividedBy(10 ** nativeTokenData.decimals).toFixed(6)} {nativeTokenData.name}
                   </span>
                 </div>
 
                 <div className={'migration-native-row'}>
                   <span className={'migration-native-row-key'}>Amount to migrate</span>
-                    {
-                      (hasModifiedAmount || nativeAmount > maxRecommendedAmount)
-                        ?
-                        <TextInput
-                          className={'migrate-amount-input'}
-                          value={nativeHumanAmount}
-                          onChange={(val) => {
-                            setHasModifiedAmount(true)
-                            if (val === '') {
-                              setNativeHumanAmount(0)
-                              setNativeAmount(0)
-                              return
-                            }
-                            if (
-                              (val.endsWith('.') && val.split('.').length === 2)
-                              || (val.split('.').length === 2 && val.endsWith('0'))
-                            ) {
-                              setNativeHumanAmount(val)
-                              return
-                            }
+                  {
+                    (hasModifiedAmount || nativeAmount > maxRecommendedAmount)
+                      ?
+                      <TextInput
+                        className={'migrate-amount-input'}
+                        value={nativeHumanAmount}
+                        onChange={(val) => {
+                          setHasModifiedAmount(true)
+                          if (val === '') {
+                            setNativeHumanAmount(0)
+                            setNativeAmount(0)
+                            return
+                          }
+                          if (
+                            (val.endsWith('.') && val.split('.').length === 2)
+                            || (val.split('.').length === 2 && val.endsWith('0'))
+                          ) {
+                            setNativeHumanAmount(val)
+                            return
+                          }
 
-                            if (!isNaN(val)) {
-                              let newHumanAmount = new BigNumber(val).toFixed(nativeTokenData.decimals)
-                              if (new BigNumber(newHumanAmount).multipliedBy(10 ** nativeTokenData.decimals).comparedTo(nativeTokenData.availableBalance) === 1) {
-                                newHumanAmount = new BigNumber(nativeTokenData.availableBalance).dividedBy(10 ** nativeTokenData.decimals).toFixed(nativeTokenData.decimals)
-                              }
-                              //trim trailing . or 0
-                              newHumanAmount = newHumanAmount.replace(/\.?0+$/g, '')
-
-                              setNativeHumanAmount(newHumanAmount)
-                              setNativeAmount(new BigNumber(newHumanAmount).multipliedBy(10 ** nativeTokenData.decimals).toFixed(0))
+                          if (!isNaN(val)) {
+                            let newHumanAmount = new BigNumber(val).toFixed(nativeTokenData.decimals)
+                            if (new BigNumber(newHumanAmount).multipliedBy(10 ** nativeTokenData.decimals).comparedTo(nativeTokenData.availableBalance) === 1) {
+                              newHumanAmount = new BigNumber(nativeTokenData.availableBalance).dividedBy(10 ** nativeTokenData.decimals).toFixed(nativeTokenData.decimals)
                             }
-                          }}
-                        />
-                        :
-                        <div>{ nativeHumanAmount }</div>
-                    }
+                            //trim trailing . or 0
+                            newHumanAmount = newHumanAmount.replace(/\.?0+$/g, '')
+
+                            setNativeHumanAmount(newHumanAmount)
+                            setNativeAmount(new BigNumber(newHumanAmount).multipliedBy(10 ** nativeTokenData.decimals).toFixed(0))
+                          }
+                        }}
+                      />
+                      :
+                      <div>{nativeHumanAmount}</div>
+                  }
                 </div>
 
                 {
                   nativeAmount > maxRecommendedAmount &&
                   <div className={'notification-hollow warning mt-4'}>
                     <div>
-                      Current Transaction cost : ~{new BigNumber(transactionEstimationCost).dividedBy(10 ** nativeTokenData.decimals).toFixed(6)} {nativeTokenData.name}
-                      <span className={'migration-native-usd'}> (${new BigNumber(transactionEstimationCost).multipliedBy(nativeTokenData.rate).toFixed(2)})</span>
+                      Current Transaction cost :
+                      ~{new BigNumber(transactionEstimationCost).dividedBy(10 ** nativeTokenData.decimals).toFixed(6)} {nativeTokenData.name}
+                      <span
+                        className={'migration-native-usd'}> (${new BigNumber(transactionEstimationCost).multipliedBy(nativeTokenData.rate).toFixed(2)})</span>
                     </div>
 
                     <div className={'mt-3 mb-3'}>
@@ -271,7 +282,8 @@ const AssetsMigrationNative = ({
                 {
                   (isMigrationPending && !hasERC20Tokens) &&
                   <div className={'notification-hollow info mt-4'}>
-                    The amount of {nativeTokenData.name} will be updated in your wallet, once the transaction has been confirmed and mined.
+                    The amount of {nativeTokenData.name} will be updated in your wallet, once the transaction has been
+                    confirmed and mined.
                     If you confirmed your transaction, you can already close this window
                   </div>
                 }
