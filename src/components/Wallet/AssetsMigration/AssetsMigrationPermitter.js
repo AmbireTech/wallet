@@ -46,7 +46,7 @@ const AssetsMigrationPermitter = ({
   })
 
   //using a callback would return not up to date data + would trigger useEffect prompt loop while we do not want that
-  const getConsolidatedTokensPure = (selected, tokensPermissions, tokensAllowances, tokensPendingStatus) => {
+  const getConsolidatedTokensPure = (selected, tokensPermissions=[], tokensAllowances=[], tokensPendingStatus=[]) => {
     return selected.filter(t => t.address !== ZERO_ADDRESS).map(t => {
       let remapped = {
         ...t,
@@ -420,12 +420,12 @@ const AssetsMigrationPermitter = ({
               className={'primary'}
               icon={<MdOutlineNavigateNext/>}
               onClick={() => completeMigration()}
-            >Complete migration</Button>
+            >Move tokens</Button>
             :
             <Button
               className={'primary disabled'}
               icon={<MdOutlineNavigateNext/>}
-            >Complete migration</Button>
+            >Move tokens</Button>
         }
       </>
     )
