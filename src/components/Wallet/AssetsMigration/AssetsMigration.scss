@@ -31,12 +31,12 @@
 
 #asset-migration-modal {
 
-  .title{
-    width: 100%;
+  >.content{
+   padding-top: 32px;
   }
 
-  #assets-migration {
-    padding-top: 32px;
+  .title{
+    width: 100%;
   }
 
   .migration-asset-row {

@@ -4,8 +4,10 @@ import AssetsMigrationSelector from './AssetsMigrationSelector'
 import AssetsMigrationPermitter from './AssetsMigrationPermitter'
 import AssetsMigrationNative from './AssetsMigrationNative'
 import { PERMITTABLE_COINS } from 'consts/permittableCoins'
+import { MdClose, MdOutlineNavigateBefore } from 'react-icons/md'
+import { Button } from 'components/common'
 
-const AssetsMigration = ({ addRequest, selectedAccount, accounts, network, hideModal, relayerURL, portfolio, setModalButtons, setModalSteps }) => {
+const AssetsMigration = ({ addRequest, selectedAccount, accounts, network, hideModal, relayerURL, portfolio, setModalButtons, setModalSteps, setBeforeCloseModalHandler }) => {
 
   const [selectedTokensWithAllowance, setSelectedTokensWithAllowance] = useState([])
   const [nativeTokenData, setNativeTokenData] = useState(null)
@@ -15,6 +17,8 @@ const AssetsMigration = ({ addRequest, selectedAccount, accounts, network, hideM
   const [step, setStep] = useState(0)
   const [stepperSteps, setStepperSteps] = useState([])
   const [error, setError] = useState(null)
+
+  const [showCloseConfirmation, setShowCloseConfirmation] = useState(false)
 
   //to get signer
   const currentAccount = accounts.find(a => a.id === selectedAccount)
@@ -26,8 +30,9 @@ const AssetsMigration = ({ addRequest, selectedAccount, accounts, network, hideM
       setSelectedTokensWithAllowance([])
       setNativeTokenData(null)
       setHasERC20Tokens(false)
+      setBeforeCloseModalHandler(null)
     }
-  }, [network, selectedAccount, step])
+  }, [network, selectedAccount, step, setBeforeCloseModalHandler])
 
   useEffect(() => {
     if (isSelectionConfirmed) {
@@ -40,11 +45,39 @@ const AssetsMigration = ({ addRequest, selectedAccount, accounts, network, hideM
   }, [isSelectionConfirmed, currentAccount, selectedTokensWithAllowance, network, selectedAccount])
 
   useEffect(() => {
+    let stepIndex = step
+
+    if (step > 0 && !nativeTokenData) {
+      stepIndex -= 1
+    }
+
     setModalSteps({
       steps: stepperSteps.map(s => ({ name: s })),
-      stepIndex: step
+      stepIndex
     })
-  }, [setModalSteps, step, stepperSteps])
+  }, [nativeTokenData, setModalSteps, step, stepperSteps])
+
+  useEffect(() => {
+    const beforeCloseHandle = () => {
+      setShowCloseConfirmation(true)
+      setModalButtons([
+        (<Button
+          icon={<MdOutlineNavigateBefore/>}
+          className={'clear'}
+          onClick={() => setShowCloseConfirmation(false)}
+        >Back</Button>),
+        (<Button
+          icon={<MdClose/>}
+          className={'danger'}
+          onClick={() => hideModal()}
+        >Close</Button>)
+      ])
+    }
+
+    if (step > 0) {
+      setBeforeCloseModalHandler(() => beforeCloseHandle)
+    }
+  }, [step, setBeforeCloseModalHandler, setModalButtons, hideModal, showCloseConfirmation])
 
   return (
     <div>
@@ -53,54 +86,67 @@ const AssetsMigration = ({ addRequest, selectedAccount, accounts, network, hideM
       }
       <div id='assets-migration'>
         {
-          step === 0 && <AssetsMigrationSelector
-            signerAccount={currentAccount.signer.address}
-            identityAccount={selectedAccount}
-            network={network}
-            PERMITTABLE_COINS={PERMITTABLE_COINS}
-            setIsSelectionConfirmed={setIsSelectionConfirmed}
-            setStep={setStep}
-            portfolio={portfolio}
-            relayerURL={relayerURL}
-            setModalButtons={setModalButtons}
-            hideModal={hideModal}
-            setError={setError}
-            setSelectedTokensWithAllowance={setSelectedTokensWithAllowance}
-            setStepperSteps={setStepperSteps}
-          />
+          showCloseConfirmation
+            ?
+              <div className='notification-hollow warning mt-4'>
+                By closing this window, your progress will be lost. Are you sure you want to close this window?
+              </div>
+            :
+          <>
+            {
+              step === 0 && <AssetsMigrationSelector
+                signerAccount={currentAccount.signer.address}
+                identityAccount={selectedAccount}
+                network={network}
+                PERMITTABLE_COINS={PERMITTABLE_COINS}
+                setIsSelectionConfirmed={setIsSelectionConfirmed}
+                setStep={setStep}
+                portfolio={portfolio}
+                relayerURL={relayerURL}
+                setModalButtons={setModalButtons}
+                hideModal={hideModal}
+                setError={setError}
+                setSelectedTokensWithAllowance={setSelectedTokensWithAllowance}
+                setStepperSteps={setStepperSteps}
+              />
+            }
+            {step === 1 && nativeTokenData &&
+              <AssetsMigrationNative
+                signer={currentAccount.signer}
+                identityAccount={selectedAccount}
+                network={network}
+                addRequest={addRequest}
+                signerExtra={currentAccount.signerExtra}
+                setError={setError}
+                nativeTokenData={nativeTokenData}
+                hideModal={hideModal}
+                setStep={setStep}
+                relayerURL={relayerURL}
+                hasERC20Tokens={hasERC20Tokens}
+                setModalButtons={setModalButtons}
+                setSelectedTokensWithAllowance={setSelectedTokensWithAllowance}
+                setBeforeCloseModalHandler={setBeforeCloseModalHandler}
+              />
+            }
+            {step === 2 &&
+              <AssetsMigrationPermitter
+                signer={currentAccount.signer}
+                identityAccount={selectedAccount}
+                network={network}
+                addRequest={addRequest}
+                PERMITTABLE_COINS={PERMITTABLE_COINS}
+                signerExtra={currentAccount.signerExtra}
+                setError={setError}
+                selectedTokensWithAllowance={selectedTokensWithAllowance}
+                hideModal={hideModal}
+                setStep={setStep}
+                setModalButtons={setModalButtons}
+              />
+            }
+          </>
+
         }
-        {step === 1 && nativeTokenData &&
-          <AssetsMigrationNative
-            signer={currentAccount.signer}
-            identityAccount={selectedAccount}
-            network={network}
-            addRequest={addRequest}
-            signerExtra={currentAccount.signerExtra}
-            setError={setError}
-            nativeTokenData={nativeTokenData}
-            hideModal={hideModal}
-            setStep={setStep}
-            relayerURL={relayerURL}
-            hasERC20Tokens={hasERC20Tokens}
-            setModalButtons={setModalButtons}
-            setSelectedTokensWithAllowance={setSelectedTokensWithAllowance}
-          />
-        }
-        {step === 2 &&
-          <AssetsMigrationPermitter
-            signer={currentAccount.signer}
-            identityAccount={selectedAccount}
-            network={network}
-            addRequest={addRequest}
-            PERMITTABLE_COINS={PERMITTABLE_COINS}
-            signerExtra={currentAccount.signerExtra}
-            setError={setError}
-            selectedTokensWithAllowance={selectedTokensWithAllowance}
-            hideModal={hideModal}
-            setStep={setStep}
-            setModalButtons={setModalButtons}
-          />
-        }
+
       </div>
     </div>
   )

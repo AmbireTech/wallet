@@ -5,7 +5,7 @@ import AssetsMigration from 'components/Wallet/AssetsMigration/AssetsMigration'
 import { useEffect, useState } from 'react'
 
 const AssetsMigrationModal = ({ addRequest, selectedAccount, selectedNetwork, accounts, relayerURL, portfolio }) => {
-  const { hideModal } = useModals()
+  const { hideModal, setBeforeCloseModalHandler } = useModals()
 
   const [modalButtons, setModalButtons] = useState(null)
   const [modalSteps, setModalSteps] = useState({ steps: [], stepIndex: 0})
@@ -21,7 +21,7 @@ const AssetsMigrationModal = ({ addRequest, selectedAccount, selectedNetwork, ac
   }, [modalSteps])
 
   return (
-    <Modal id='asset-migration-modal' title={modalTitle} buttons={modalButtons}>
+    <Modal id='asset-migration-modal' title={modalTitle} buttons={modalButtons} >
       <AssetsMigration
         addRequest={addRequest}
         selectedAccount={selectedAccount}
@@ -32,6 +32,7 @@ const AssetsMigrationModal = ({ addRequest, selectedAccount, selectedNetwork, ac
         portfolio={portfolio}
         setModalButtons={setModalButtons}
         setModalSteps={setModalSteps}
+        setBeforeCloseModalHandler={setBeforeCloseModalHandler}
       />
     </Modal>
   )
