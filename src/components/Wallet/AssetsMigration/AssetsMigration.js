@@ -5,7 +5,7 @@ import AssetsMigrationPermitter from './AssetsMigrationPermitter'
 import AssetsMigrationNative from './AssetsMigrationNative'
 import { PERMITTABLE_COINS } from 'consts/permittableCoins'
 
-const AssetsMigration = ({ addRequest, selectedAccount, accounts, network, hideModal, relayerURL, portfolio, setModalButtons }) => {
+const AssetsMigration = ({ addRequest, selectedAccount, accounts, network, hideModal, relayerURL, portfolio, setModalButtons, setModalSteps }) => {
 
   const [selectedTokensWithAllowance, setSelectedTokensWithAllowance] = useState([])
   const [nativeTokenData, setNativeTokenData] = useState(null)
@@ -13,6 +13,7 @@ const AssetsMigration = ({ addRequest, selectedAccount, accounts, network, hideM
 
   const [isSelectionConfirmed, setIsSelectionConfirmed] = useState(false)
   const [step, setStep] = useState(0)
+  const [stepperSteps, setStepperSteps] = useState([])
   const [error, setError] = useState(null)
 
   //to get signer
@@ -38,6 +39,13 @@ const AssetsMigration = ({ addRequest, selectedAccount, accounts, network, hideM
     }
   }, [isSelectionConfirmed, currentAccount, selectedTokensWithAllowance, network, selectedAccount])
 
+  useEffect(() => {
+    setModalSteps({
+      steps: stepperSteps.map(s => ({ name: s })),
+      stepIndex: step
+    })
+  }, [setModalSteps, step, stepperSteps])
+
   return (
     <div>
       {
@@ -58,6 +66,7 @@ const AssetsMigration = ({ addRequest, selectedAccount, accounts, network, hideM
             hideModal={hideModal}
             setError={setError}
             setSelectedTokensWithAllowance={setSelectedTokensWithAllowance}
+            setStepperSteps={setStepperSteps}
           />
         }
         {step === 1 && nativeTokenData &&

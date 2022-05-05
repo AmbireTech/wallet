@@ -16,7 +16,7 @@ import { getProvider } from 'lib/provider'
 
 const GAS_SPEEDS = ['slow', 'medium', 'fast', 'ape']
 
-const AssetsMigrationSelector = ({ signerAccount, identityAccount, network, setIsSelectionConfirmed, setStep, portfolio, relayerURL, setModalButtons, hideModal, setSelectedTokensWithAllowance }) => {
+const AssetsMigrationSelector = ({ signerAccount, identityAccount, network, setIsSelectionConfirmed, setStep, portfolio, relayerURL, setModalButtons, hideModal, setSelectedTokensWithAllowance, setStepperSteps }) => {
 
   const [selectableTokens, setSelectableTokens] = useState([])
   const [selectableTokensUserInputs, setSelectableTokensUserInputs] = useState([])
@@ -411,15 +411,37 @@ const AssetsMigrationSelector = ({ signerAccount, identityAccount, network, setI
         {
           (selectableTokensUserInputs.filter(a => a.selected).length > 0 && canCoverGasFees(suggestedGasTokens, selectedGasSpeed))
             ? <Button small icon={<MdOutlineNavigateNext/>} className={'primary'}
-                      onClick={() => confirmTokenSelection()}>Migrate {selectableTokensUserInputs.filter(a => a.selected).length} assets</Button>
-            : <Button small icon={<MdOutlineNavigateNext/>} className={'primary disabled'}>Migrate</Button>
+                      onClick={() => confirmTokenSelection()}>Move {selectableTokensUserInputs.filter(a => a.selected).length} assets</Button>
+            : <Button small icon={<MdOutlineNavigateNext/>} className={'primary disabled'}>Move assets</Button>
         }
       </>
     )
   }, [selectableTokensUserInputs, suggestedGasTokens, selectedGasSpeed, setModalButtons, hideModal, confirmTokenSelection])
 
+  // Stepper
+  useEffect(() => {
+
+    const steps = ['Selection']
+
+    const native = selectableTokensUserInputs.find(a => a.address.toLowerCase() === ZERO_ADDRESS && a.selected)
+    if (native) {
+      steps.push(`Move ${selectableTokens.find(t => t.address === native.address).name}`)
+    }
+
+    if (selectableTokensUserInputs.find(a => a.address.toLowerCase() !== ZERO_ADDRESS && a.selected)) {
+      steps.push('Approve Tokens')
+      steps.push('Move tokens')
+    }
+
+    if (steps.length === 1) {
+      steps.push('Move tokens')
+    }
+
+    setStepperSteps(steps)
+  }, [selectableTokens, selectableTokensUserInputs, setStepperSteps])
+
   return (
-    <div id='assets-migration'>
+    <div>
       {
         isLoading
           ?

@@ -20,6 +20,7 @@ import Toggle from './Toggle/Toggle';
 import ToolTip from './ToolTip/ToolTip';
 import NoFundsPlaceholder from './NoFundsPlaceholder/NoFundsPlaceholder';
 import CountdownTimer from './CountdownTimer/CountdownTimer';
+import Stepper from './Stepper/Stepper.tsx';
 
 export {
     AddressBook,
@@ -43,5 +44,6 @@ export {
     Toggle,
     ToolTip,
     NoFundsPlaceholder,
-    CountdownTimer
+    CountdownTimer,
+    Stepper
 };
