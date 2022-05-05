@@ -7,7 +7,7 @@ import * as blockies from 'blockies-ts';
 import { getWallet } from 'lib/getWallet'
 import { useToasts } from 'hooks/toasts'
 import { fetchPost } from 'lib/fetch'
-import { verifyMessage } from 'lib/signatureVerifier'
+import { verifyMessage } from '@ambire/signature-validator'
 import { useState, useEffect, useRef } from 'react'
 import { Button, Loading, TextInput } from 'components/common'
 import { isObject } from 'url/util'
