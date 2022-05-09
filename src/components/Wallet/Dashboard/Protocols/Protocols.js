@@ -18,7 +18,7 @@ const Protocols = ({ portfolio, network, account, hidePrivateValue, userSorting,
     const { showModal } = useModals()
 
     const [failedImg, setFailedImg] = useState([])
-    const { isBalanceLoading, areProtocolsLoading, tokens, protocols } = portfolio
+    const { isCurrNetworkBalanceLoading, isCurrNetworkProtocolsLoading, tokens, protocols } = portfolio
 
     const sortType = userSorting.tokens?.sortType || 'decreasing'
 
@@ -63,8 +63,7 @@ const Protocols = ({ portfolio, network, account, hidePrivateValue, userSorting,
 
 
     const otherProtocols = protocols.filter(({ label }) => label !== 'Tokens')
-    
-    const shouldShowPlaceholder = (!isBalanceLoading && !tokens.length) && (!areProtocolsLoading && !otherProtocols.length)
+    const shouldShowPlaceholder = (!isCurrNetworkBalanceLoading && !tokens.length) && (!isCurrNetworkProtocolsLoading && !otherProtocols.length)
 
     const tokenItem = (index, img, symbol, balance, balanceUSD, address, send = false, network, decimals, category, sortedTokensLength) => 
         {
@@ -129,7 +128,7 @@ const Protocols = ({ portfolio, network, account, hidePrivateValue, userSorting,
             }
             <>
                 {
-                    isBalanceLoading ?
+                    isCurrNetworkBalanceLoading ?
                         <Loading/>
                         :
                         !shouldShowPlaceholder && sortedTokens.length ?
@@ -176,7 +175,7 @@ const Protocols = ({ portfolio, network, account, hidePrivateValue, userSorting,
                         null
                 }
                 {
-                    areProtocolsLoading ?
+                    isCurrNetworkProtocolsLoading ?
                         <Loading/>
                         :
                             otherProtocols.map(({ label, assets }, i) => (

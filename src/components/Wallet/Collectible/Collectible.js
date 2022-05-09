@@ -107,8 +107,8 @@ const Collectible = ({ selectedAcc, selectedNetwork, addRequest, addressBook }) 
             const validateForm = async() => {
                 const UDAddress =  await resolveUDomain(recipientAddress, null, selectedNetwork.unstoppableDomainsChain)
                 timer.current = null
-                
-                const isAddressValid = validateSendNftAddress(UDAddress ? UDAddress : recipientAddress, selectedAcc, addressConfirmed, isKnownAddress, metadata, selectedNetwork, network)
+                const isUDAddress = UDAddress ? true : false
+                const isAddressValid = validateSendNftAddress(UDAddress ? UDAddress : recipientAddress, selectedAcc, addressConfirmed, isKnownAddress, metadata, selectedNetwork, network, isUDAddress)
                 setUDAddress(UDAddress)
                 
                 setTransferDisabled(!isAddressValid.success)
