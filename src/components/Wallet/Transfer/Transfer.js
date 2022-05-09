@@ -16,6 +16,8 @@ import { MdInfo } from 'react-icons/md'
 import networks from 'consts/networks'
 import { getTokenIcon } from 'lib/icons'
 import { formatFloatTokenAmount } from 'lib/formatters'
+import { useLocation } from 'react-router-dom'
+import accountPresets from 'consts/accountPresets'
 
 const ERC20 = new Interface(require('adex-protocol-eth/abi/ERC20'))
 const unsupportedSWPlatforms = ['Binance', 'Huobi', 'KuCoin', 'Gate.io', 'FTX']
@@ -25,13 +27,14 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
 
     const { tokenAddressOrSymbol } = useParams()
     const { addToast } = useToasts()
-
+    const { state } = useLocation()
+    const [gasTankDetails, setGasTankDetails] = useState(state ? state : null)
     const tokenAddress = isValidAddress(tokenAddressOrSymbol) ? tokenAddressOrSymbol : portfolio.tokens.find(({ symbol }) => symbol === tokenAddressOrSymbol)?.address || null
 
     const [asset, setAsset] = useState(tokenAddress)
     const [amount, setAmount] = useState(0)
     const [bigNumberHexAmount, setBigNumberHexAmount] = useState('')
-    const [address, setAddress] = useState('')
+    const [address, setAddress] = useState(gasTankDetails ? accountPresets.feeCollector : '')
     const [uDAddress, setUDAddress] = useState('')
     const [disabled, setDisabled] = useState(true)
     const [addressConfirmed, setAddressConfirmed] = useState(false)
@@ -48,7 +51,12 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
         }
     })
     const timer = useRef(null)
-    const assetsItems = portfolio.tokens.map(({ label, symbol, address, img, tokenImageUrl, network }) => ({
+    let eligibleFeeTokens = null
+    if (test?.feeAssetsPerNetwork) {
+        eligibleFeeTokens = portfolio.tokens.filter(item => gasTankDetails?.feeAssetsPerNetwork.some(i => i.address.toLowerCase() === item.address.toLowerCase()))
+    } else eligibleFeeTokens = portfolio.tokens
+    
+    const assetsItems = eligibleFeeTokens.map(({ label, symbol, address, img, tokenImageUrl, network }) => ({
         label: label || symbol,
         value: address,
         icon: img || tokenImageUrl,
@@ -212,7 +220,7 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
                                 />
                                 { validationFormMgs.messages.amount && 
                                     (<div className='validation-error'><BsXLg size={12}/>&nbsp;{validationFormMgs.messages.amount}</div>)}
-                                <div id="recipient-field">
+                               { gasTankDetails ? <p>{gasTankDetails?.gasTankMsg}</p> : (<div id="recipient-field">
                                     <TextInput
                                         placeholder="Recipient"
                                         info="Please double-check the recipient address, blockchain transactions are not reversible."
@@ -231,7 +239,7 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
                                         onSelectAddress={address => setAddress(address)}
                                         selectedNetwork={selectedNetwork}
                                     />
-                                </div>
+                                </div>)}
                                 { validationFormMgs.messages.address && 
                                     (<div className='validation-error'><BsXLg size={12}/>&nbsp;{validationFormMgs.messages.address}</div>)}
                                 <div className="separator"/>

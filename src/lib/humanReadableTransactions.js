@@ -3,6 +3,7 @@ import { constants } from 'ethers'
 import { names, tokens } from 'consts/humanizerInfo'
 import networks from 'consts/networks'
 import humanizers from './humanizers'
+import accountPresets from 'consts/accountPresets'
 
 // address (lowercase) => name
 const knownAliases = {}
@@ -83,6 +84,8 @@ export function getName(addr, network) {
         || (tokens[address] ? tokens[address][0] + ' token' : null) 
         || knownAliases[address] 
         || knownUDomains[address] 
+        // TODO: "Gas Tank" should be constant"
+        || (address === accountPresets.feeCollector.toLowerCase() ? 'Gas Tank' : null)
         || addr
 }
 

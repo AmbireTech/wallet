@@ -1,5 +1,6 @@
 import { parseUnits } from 'ethers/lib/utils'
 import { isValidAddress, isKnownTokenOrContract } from "lib/address"
+import accountPresets from 'consts/accountPresets'
 
 const validateAddress = address => {
     if (!(address && address.length)) {
@@ -36,6 +37,12 @@ const validateAddAuthSignerAddress = (address, selectedAcc) => {
 const validateSendTransferAddress = (address, selectedAcc, addressConfirmed, isKnownAddress) => {
     const isValidAddr = validateAddress(address)
     if (!isValidAddr.success) return isValidAddr
+
+    if (address && address === accountPresets.feeCollector) {
+        return {
+            success: true
+        }
+    }
 
     if (address && selectedAcc && (address === selectedAcc)) {
         return {

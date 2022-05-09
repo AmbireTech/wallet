@@ -144,8 +144,13 @@ const GasTank = ({ network, relayerURL, portfolio, account, userSorting, setUser
                 {
                     send ? 
                         <div className="actions">
-                            {/* TODO: Should opens GasTankDepositModal */}
-                            <NavLink to={`/wallet/transfer/${address}`}>
+                            <NavLink to={{
+                                pathname: `/wallet/transfer/${address}`,
+                                state: {
+                                    gasTankMsg: "Filling the Gas Tank",
+                                    feeAssetsPerNetwork
+                                }
+                            }}>
                                 <Button small>Deposit</Button>
                             </NavLink>
                         </div>
