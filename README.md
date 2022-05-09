@@ -305,3 +305,13 @@ Those contracts (except Ethereum-specific WALLET, xWALLET and SupplyController) 
 * Fix bug when sending NFTs
 * Can display balances on networks not supported by our providers
 * Support NFT on Binance Smart Chain
+
+### v0.5.3
+* Added KCC (KuCoin) Chain
+* Attach xWallet metadata in transactions (current APY, shared value, price in USD)
+* Added warning notifycation on signing message form when wallet contract still not deployded
+* Cached asset prices in memory
+* Implement EIP 712
+* Fix non clickable address area
+* Fix bug when using UD in batch transactions
+* Added Avalanche AAVE for wallets rewards
