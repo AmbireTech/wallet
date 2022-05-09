@@ -52,7 +52,7 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
     })
     const timer = useRef(null)
     let eligibleFeeTokens = null
-    if (test?.feeAssetsPerNetwork) {
+    if (gasTankDetails?.feeAssetsPerNetwork) {
         eligibleFeeTokens = portfolio.tokens.filter(item => gasTankDetails?.feeAssetsPerNetwork.some(i => i.address.toLowerCase() === item.address.toLowerCase()))
     } else eligibleFeeTokens = portfolio.tokens
     

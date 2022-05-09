@@ -212,7 +212,6 @@ const GasTank = ({ network, relayerURL, portfolio, account, userSorting, setUser
                         tokenItem(i, tokenImageUrl, symbol, balance, balanceUSD, address, true, network, decimals, 'tokens', sortedTokens.length))
                 }
             </div>
-            {/* Transactions here */}
             <div>
                 {
                     mockedTxns.map((item, key) => {
@@ -226,7 +225,15 @@ const GasTank = ({ network, relayerURL, portfolio, account, userSorting, setUser
                 }
             </div>
             <div>
-                <Button className='deposit-button' small>Deposit to gas tank</Button>
+                <NavLink to={{
+                    pathname: `/wallet/transfer/`,
+                    state: {
+                        gasTankMsg: "Filling the Gas Tank",
+                        feeAssetsPerNetwork
+                    }
+                }}>
+                    <Button className='deposit-button' small>Deposit to gas tank</Button>
+                </NavLink>
             </div>
         </div>
     )
