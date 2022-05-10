@@ -28,7 +28,7 @@ function Promo({
     const links = Object.entries(linksRes).reduce((anchors, [key, { label, href } = {}]) => {
         const anc =
             <a
-                key={label}
+                key={key}
                 className="link"
                 href={href}
                 target="_blank"
@@ -41,7 +41,7 @@ function Promo({
     }, {})
 
     const elmojies = Object.entries({ ...emojies }).reduce((elmos, [key, { text, size } = {}]) => {
-        const elmo = <span className='emoji' style={{ fontSize: size }}>
+        const elmo = <span key={key} className='emoji' style={{ fontSize: size }}>
             {text}
         </span >
 
