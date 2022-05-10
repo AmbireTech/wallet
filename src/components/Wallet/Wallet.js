@@ -51,7 +51,7 @@ export default function Wallet(props) {
       path: '/deposit',
       component: <Deposit
         selectedAcc={props.selectedAcc}
-        selectedNetwork={props.network.id}
+        selectedNetwork={props.network}
         accounts={props.accounts}
         addRequest={props.addRequest}
         relayerURL={props.relayerURL}
