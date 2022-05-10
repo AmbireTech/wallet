@@ -6,8 +6,7 @@ import {
 } from 'react'
 import FinalCountdown from 'components/common/FinalCountdown/FinalCountdown'
 import useLocalStorage from "hooks/useLocalStorage"
-import { MdOutlineClose } from 'react-icons/md'
-import { ToolTip } from 'components/common'
+import { FiMaximize2, FiMinimize2 } from 'react-icons/fi'
 
 function Promo({
     id,
@@ -15,7 +14,8 @@ function Promo({
     text,
     title,
     resources = {},
-    closePromo
+    togglePromo,
+    minimized
 } = {}) {
 
     if (!text) return null
@@ -40,7 +40,7 @@ function Promo({
     }, {})
 
     const elmojies = Object.entries({ ...emojies }).reduce((elmos, [key, { text, size } = {}]) => {
-        const elmo = <span style={{ fontSize: size }}>
+        const elmo = <span className='emoji' style={{ fontSize: size }}>
             {text}
         </span >
 
@@ -49,11 +49,11 @@ function Promo({
     }, {})
 
     return (
-        <div className="notice" style={{
+        <div className={`notice ${minimized ? 'minimized' : ''}`} style={{
             ...(background ? { backgroundColor: background } : {}),
             ...(color ? { color } : {})
         }}>
-            <div>
+            {!minimized && <div>
                 {title &&
                     <div className='title'>
                         {title}
@@ -69,11 +69,25 @@ function Promo({
                     </div>
                 }
             </div>
+            }
+            {!!minimized && <div className='minimized'>
+                {title ?
+                    <div className='title'>
+                        {title}
+                    </div>
+                    : <div>
+                        {split.map(x => links[x] || elmojies[x] || x)}
+                    </div>
+                }
+
+            </div>}
             {
                 !!id &&
-                <ToolTip label="* Warning: Once closed you will not see this promo again!">
-                    <MdOutlineClose className='close-btn' onClick={() => closePromo(id)} />
-                </ToolTip>
+                <div>
+                    {minimized
+                        ? <FiMaximize2 className='close-btn' onClick={() => togglePromo(id)} />
+                        : <FiMinimize2 className='close-btn' onClick={() => togglePromo(id)} />}
+                </div>
             }
         </div>
     )
@@ -83,14 +97,18 @@ export default function Promotions({ rewardsData }) {
     const [promo, setPromo] = useState(null)
     const [closedPromos, setClosedPromos] = useLocalStorage({ key: 'closedPromos', defaultValue: [] })
 
-    const closePromo = useCallback(promoId => {
-        setClosedPromos(prevClosed => {
-            const deduped = prevClosed.filter(x => x !== promoId)
-            deduped.push(promoId)
+    const togglePromo = useCallback(promoId => {
+        const prevClosed = [...closedPromos]
+        const index = prevClosed.indexOf(promoId)
 
-            return prevClosed
-        })
-    }, [setClosedPromos])
+        if (index > -1) {
+            prevClosed.splice(index, 1)
+        } else {
+            prevClosed.push(promoId)
+        }
+
+        setClosedPromos(prevClosed)
+    }, [closedPromos, setClosedPromos])
 
     useEffect(() => {
         if (!promo && !!rewardsData?.data?.promo) {
@@ -98,8 +116,8 @@ export default function Promotions({ rewardsData }) {
         }
     }, [closedPromos, promo, rewardsData?.data?.promo])
 
-    if (!promo || closedPromos.includes(promo?.id)) return null
+    if (!promo) return null
     return (
-        <Promo {...promo} closePromo={closePromo} />
+        <Promo {...promo} togglePromo={togglePromo} minimized={closedPromos.includes(promo?.id)} />
     )
 }

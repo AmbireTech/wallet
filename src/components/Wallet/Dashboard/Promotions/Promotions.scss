@@ -10,6 +10,14 @@
         display: flex;
         flex-direction: row;
         align-items: flex-start;
+        justify-content: space-between;
+        gap: 0.8rem;
+        &.minimized {
+            gap: 0.5rem; 
+            padding: 0.4rem 0.52rem;
+            font-size:0.81rem;
+            align-items: center;
+        }
         .title {
             font-size: 1.2rem;
             margin-bottom: 0.2rem;;
@@ -19,11 +27,25 @@
             text-decoration: underline;
         }
         .close-btn {
-            font-size: 1rem;
+            font-size: 18px;
             font-weight: bold;
             cursor: pointer;
         }
         .timer {
             margin-top: 0.5rem;
+        }
+        .minimized {
+            font-size: 0.8rem;
+            flex: 1;  
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            .title {
+                font-size: 0.8rem;
+                margin: 0;
+            }
+            .emoji {
+                font-size: 0.8rem!important;
+            }
         }
     }
