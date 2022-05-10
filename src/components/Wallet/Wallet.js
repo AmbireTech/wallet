@@ -42,7 +42,6 @@ export default function Wallet(props) {
         rewardsData={props.rewardsData}
         addRequest={props.addRequest}
         relayerURL={props.relayerURL}
-        relayerURL={props.relayerURL}
         userSorting={props.userSorting}
         setUserSorting={props.setUserSorting}
       />
