@@ -7,6 +7,9 @@
         padding: 0.9rem 1.2rem;
         color: $text-dark;
         font-size: 1rem;
+        display: flex;
+        flex-direction: row;
+        align-items: flex-start;
         .title {
             font-size: 1.2rem;
             margin-bottom: 0.2rem;;
@@ -14,6 +17,11 @@
         .link {
             color: $text-dark;
             text-decoration: underline;
+        }
+        .close-btn {
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
         }
         .timer {
             margin-top: 0.5rem;
