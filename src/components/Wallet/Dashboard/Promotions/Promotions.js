@@ -6,7 +6,8 @@ import {
 } from 'react'
 import FinalCountdown from 'components/common/FinalCountdown/FinalCountdown'
 import useLocalStorage from "hooks/useLocalStorage"
-import { FiMaximize2, FiMinimize2 } from 'react-icons/fi'
+import { AiOutlineRight } from 'react-icons/ai'
+import { MdOutlineMarkEmailUnread } from 'react-icons/md'
 
 function Promo({
     id,
@@ -70,24 +71,11 @@ function Promo({
                 }
             </div>
             }
-            {!!minimized && <div className='minimized'>
-                {title ?
-                    <div className='title'>
-                        {title}
-                    </div>
-                    : <div>
-                        {split.map(x => links[x] || elmojies[x] || x)}
-                    </div>
-                }
-
-            </div>}
             {
-                !!id &&
-                <div>
-                    {minimized
-                        ? <FiMaximize2 className='close-btn' onClick={() => togglePromo(id)} />
-                        : <FiMinimize2 className='close-btn' onClick={() => togglePromo(id)} />}
-                </div>
+                !!id && minimized
+                    ? <MdOutlineMarkEmailUnread className='close-btn' onClick={() => togglePromo(id)} />
+                    : <div><AiOutlineRight className='close-btn' onClick={() => togglePromo(id)} /></div>
+
             }
         </div>
     )
