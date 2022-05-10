@@ -124,7 +124,7 @@ export default function AddAccount({ relayerURL, onAddAccount }) {
 
   // EOA implementations
   // Add or create accounts from Trezor/Ledger/Metamask/etc.
-  const createFromEOA = useCallback(async (addr) => {
+  const createFromEOA = useCallback(async (addr, signerType) => {
     const privileges = [[getAddress(addr), hexZeroPad('0x01', 32)]]
     const { salt, baseIdentityAddr, identityFactoryAddr } = accountPresets
     const bytecode = getProxyDeployBytecode(baseIdentityAddr, privileges, { privSlot: 0 })
@@ -133,7 +133,8 @@ export default function AddAccount({ relayerURL, onAddAccount }) {
     if (relayerURL) {
       const createResp = await fetchPost(`${relayerURL}/identity/${identityAddr}`, {
         salt, identityFactoryAddr, baseIdentityAddr,
-        privileges
+        privileges,
+        signerType
       })
       if (!createResp.success && !(createResp.message && createResp.message.includes('already exists'))) throw createResp
     }
@@ -152,7 +153,7 @@ export default function AddAccount({ relayerURL, onAddAccount }) {
     const ethereum = window.ethereum
     const web3Accs = await ethereum.request({ method: 'eth_requestAccounts' })
     if (!web3Accs.length) throw new Error('No accounts connected')
-    if (web3Accs.length === 1) return onEOASelected(web3Accs[0])
+    if (web3Accs.length === 1) return onEOASelected(web3Accs[0], {type: 'Web3'})
 
     setChooseSigners({ addresses: web3Accs, signerName: 'Web3' })
   }
@@ -278,11 +279,11 @@ export default function AddAccount({ relayerURL, onAddAccount }) {
     // when there is no relayer, we can only add the 'default' account created from that EOA
     // @TODO in the future, it would be nice to do getLogs from the provider here to find out which other addrs we control
     //   ... maybe we can isolate the code for that in lib/relayerless or something like that to not clutter this code
-    if (!relayerURL) return addAccount(await createFromEOA(addr), { select: true })
+    if (!relayerURL) return addAccount(await createFromEOA(addr, signerExtra.type), { select: true })
     // otherwise check which accs we already own and add them
     const owned = await getOwnedByEOAs([addr])
     if (!owned.length) {
-        addAccount(await createFromEOA(addr), { select: true, isNew: true })
+        addAccount(await createFromEOA(addr, signerExtra.type), { select: true, isNew: true })
     } else {
       addToast(`Found ${owned.length} existing accounts with signer ${addr}`, { timeout: 15000 })
       owned.forEach((acc, i) => addAccount(acc, { select: i === 0 }))

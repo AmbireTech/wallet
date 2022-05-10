@@ -1,16 +1,11 @@
 import { getProvider } from 'lib/provider'
 import { BigNumber, utils, Contract } from 'ethers'
-import xWalletABI from 'consts/WalletStakingPoolABI'
-import walletABI from 'consts/walletTokenABI'
-
 import { useEffect, useState, useCallback } from 'react'
 
 const ZERO = BigNumber.from(0)
 const ZERO_ADDR = '0x0000000000000000000000000000000000000000'
 const PRECISION = 1_000_000_000_000
 const POOL_SHARES_TOKEN_DECIMALS_MUL = '1000000000000000000'
-const XWALLET_ADDR = '0x47cd7e91c3cbaaf266369fe8518345fc4fc12935'
-const WALLET_ADDR = '0x88800092fF476844f74dC2FC427974BBee2794Ae'
 const STAKING_POOL_EVENT_TYPES = {
     enter: 'enter',
     leave: 'leave',
@@ -22,14 +17,15 @@ const STAKING_POOL_EVENT_TYPES = {
 }
 
 const ethProvider = getProvider('ethereum')
-const xWalletContract = new Contract(XWALLET_ADDR, xWalletABI, ethProvider)
-const walletContract = new Contract(WALLET_ADDR, walletABI, ethProvider)
 
-const useWalletEarnDetails = ({accountId}) => {
+const useAmbireEarnDetails = ({accountId, addresses, tokenLabel}) => {
+    const WALLET_ADDR = addresses.stakingTokenAddress
     const [details, setDetails] = useState({})
     const [isLoading, setIsLoading] = useState(true)
 
-    const getStats = useCallback(async () => {
+    const getStats = useCallback(async (addresses, tokenLabel) => {
+        const xWalletContract = new Contract(addresses.stakingTokenAddress, addresses.stakingPoolAbi, ethProvider)
+        const walletContract = new Contract(addresses.tokenAddress, addresses.tokenAbi, ethProvider)
         const fromBlock = 0
         const [
             timeToUnbond,
@@ -51,7 +47,7 @@ const useWalletEarnDetails = ({accountId}) => {
             xWalletContract.lockedShares(accountId),
             ethProvider.getLogs({
                 fromBlock,
-                ...walletContract.filters.Transfer(null, XWALLET_ADDR, null),
+                ...walletContract.filters.Transfer(null, WALLET_ADDR, null),
             }),
             ethProvider.getLogs({
                 fromBlock,
@@ -192,7 +188,7 @@ const useWalletEarnDetails = ({accountId}) => {
                         transactionHash: sharesMintEvent.transactionHash,
                         type: STAKING_POOL_EVENT_TYPES.enter,
                         shares: sharesMintEvent.shares,
-                        walletAmount: parsedWalletLog.args.amount, // [2]
+                        walletAmount: tokenLabel === 'ADX' ? parsedWalletLog.args.value : parsedWalletLog.args.amount, // [2]
                         from: parsedWalletLog.args.from,
                         blockNumber: sharesMintEvent.blockNumber,
                     }
@@ -356,9 +352,10 @@ const useWalletEarnDetails = ({accountId}) => {
                         ]
 
                     if (walletTokenTransfersLog) {
-                        const { amount } = walletContract.interface.parseLog(
+                        const parsedLog = walletContract.interface.parseLog(
                             walletTokenTransfersLog
-                        ).args
+                        )
+                        const amount = tokenLabel === 'ADX' ? parsedLog.args.value : parsedLog.args.amount 
                         const { amount: shares } =
                             xWalletContract.interface.parseLog(
                                 sharesMintEvent
@@ -442,11 +439,21 @@ const useWalletEarnDetails = ({accountId}) => {
             withWalletAmount(sharesTokensTransfersInFromExternal)
         }
 
+        const totalSharesOutTransfers = sharesTokensTransfersOut.reduce(
+            (a, b) => a.add(b.shares),
+            ZERO
+        )
+
         const totalSharesOutTransfersWalletValue =
             sharesTokensTransfersOut.reduce(
                 (a, b) => a.add(b.walletAmount),
                 ZERO
             )
+
+        const totalSharesInTransfers = sharesTokensTransfersInFromExternal.reduce(
+            (a, b) => a.add(b.shares),
+            ZERO
+        )
 
         const totalSharesInTransfersWalletValue =
             sharesTokensTransfersInFromExternal.reduce(
@@ -456,17 +463,24 @@ const useWalletEarnDetails = ({accountId}) => {
 
         const depositsWalletTotal = userEnters.reduce(
             (a, b) => a.add(b.walletAmount),
-            totalSharesInTransfersWalletValue
+            ZERO
+        )
+
+        // Incl received + distributed to other staker. Used for calc reward because the were actually earned
+        const rageLeavesWithdrawnWalletTotal = userRageLeaves.reduce(
+            (a, b) => a.add(b.maxTokens),
+            ZERO
+        )
+
+        const rageLeavesReceivedWalletTotal = userRageLeaves.reduce(
+            (a, b) => a.add(b.receivedTokens),
+            ZERO
         )
 
         const withdrawsWalletTotal = userWithdraws.reduce(
             (a, b) => a.add(b.receivedTokens),
-            totalSharesOutTransfersWalletValue
+            ZERO
         )
-
-        const lockedSharesWalletValue = [...userLeaves]
-            .filter(x => !x.withdrawTx)
-            .reduce((a, b) => a.add(b.walletValue), ZERO)
 
         const totalLockedSharesCheck = [...userLeaves]
             .filter(x => !x.withdrawTx)
@@ -482,41 +496,47 @@ const useWalletEarnDetails = ({accountId}) => {
             )
         }
 
-        const balanceSharesAvailable = balanceShares.sub(lockedShares)
+        const balanceSharesAvailable = balanceShares.sub(lockedShares).lt(ZERO)
+            ? ZERO 
+            : balanceShares.sub(lockedShares)
 
         const currentBalanceWalletAvailable = balanceSharesAvailable
             .mul(shareValue)
             .div(POOL_SHARES_TOKEN_DECIMALS_MUL)
 
         // NOTE: used to calc actual balance in Wallet + rewards
-        const currentBalanceWallet = currentBalanceWalletAvailable.add(
-            lockedSharesWalletValue
-        )
+        const currentBalanceWallet = balanceShares
+            .mul(shareValue)
+            .div(POOL_SHARES_TOKEN_DECIMALS_MUL)
 
         const currentBalanceSharesWalletValue = balanceShares
             .mul(shareValue)
             .div(POOL_SHARES_TOKEN_DECIMALS_MUL)
 
-        const hasInsufficentBalanceForUnbondCommitments =
-            currentBalanceWalletAvailable.lt(currentBalanceSharesWalletValue)
+        const hasInsufficentBalanceForUnbondCommitments = balanceShares.lt(
+            lockedShares
+        ) 
         const insufficientSharesAmoutForCurrentUnbonds =
             hasInsufficentBalanceForUnbondCommitments
-                ? balanceSharesAvailable
+                ? lockedShares.sub(balanceShares)
                 : ZERO
 
         // NOTE: Used for rage leave because shareValue is can be different than in unbondCommitments
-        const lockedSharesWalletAtCurrentShareValue = lockedShares
-            .mul(shareValue)
-            .div(POOL_SHARES_TOKEN_DECIMALS_MUL)
-
         const currentBalanceWalletAtCurrentShareValue =
-            currentBalanceWalletAvailable.add(
-                lockedSharesWalletAtCurrentShareValue
-            )
+            currentBalanceWalletAvailable
+        
+        // Enter, transfers in
+	    const totalInTokenValue = depositsWalletTotal.add(totalSharesInTransfersWalletValue)
+        
+        // Withdraws, Transfers out, rage leaves
+        const totalOutTokenValue = withdrawsWalletTotal
+            .add(totalSharesOutTransfersWalletValue)
+            .add(rageLeavesWithdrawnWalletTotal)
 
-        const totalRewards = currentBalanceWallet // includes leavesPendingToUnlockTotalWallet and  leavesReadyToWithdrawTotalWallet
-            .add(withdrawsWalletTotal)
-            .sub(depositsWalletTotal)
+        const totalRewards = currentBalanceWallet
+            .add(totalOutTokenValue)
+            .sub(totalInTokenValue)
+
 
         const hasActiveUnbondCommitments = !![...userLeaves].filter(
             x => !x.withdrawTx
@@ -568,9 +588,19 @@ const useWalletEarnDetails = ({accountId}) => {
             userDataLoaded: true,
             userShare,
             remainingTime,
+            totalSharesOutTransfers,
+            totalSharesInTransfers,
+            rageLeavesReceivedWalletTotal,
+            rageLeavesWithdrawnWalletTotal,
+            totalInTokenValue,
+            totalOutTokenValue
         }
 
         return {
+            currentBalanceWalletAtCurrentShareValue: utils.formatUnits(
+                stats.currentBalanceWalletAtCurrentShareValue.toString(),
+                18
+            ),
             balance: utils.formatUnits(
                 stats.currentBalanceWallet.toString(),
                 18
@@ -596,15 +626,39 @@ const useWalletEarnDetails = ({accountId}) => {
                 stats.leavesReadyToWithdrawTotalWallet.toString(),
                 18
             ),
+            totalInTokenValue: utils.formatUnits(
+                stats.totalInTokenValue.toString(),
+                18
+            ),
+            totalOutTokenValue: utils.formatUnits(
+                stats.totalOutTokenValue.toString(),
+                18
+            ),
+            rageLeavesReceivedWalletTotal: utils.formatUnits(
+                stats.rageLeavesReceivedWalletTotal.toString(),
+                18
+            ),
+            rageLeavesWithdrawnWalletTotal: utils.formatUnits(
+                stats.rageLeavesWithdrawnWalletTotal.toString(),
+                18
+            ),
+            totalSharesInTransfersWalletValue: utils.formatUnits(
+                stats.totalSharesInTransfersWalletValue.toString(),
+                18
+            ),
+            totalSharesOutTransfersWalletValue: utils.formatUnits(
+                stats.totalSharesOutTransfersWalletValue.toString(),
+                18
+            ),
             remainingTime: stats.remainingTime,
         }
-    }, [accountId])
+    }, [WALLET_ADDR, accountId])
 
     useEffect(() => {
-        const getData = async () => {
+        const getData = async (addresses, tokenLabel) => {
             setIsLoading(prevState => !prevState)
             try {
-                const data = await getStats()
+                const data = await getStats(addresses, tokenLabel)
                 setDetails(data)
                 setIsLoading(prevState => !prevState)
             } catch(e) {
@@ -613,10 +667,10 @@ const useWalletEarnDetails = ({accountId}) => {
             }
         }
         if (!accountId) return
-        getData()
-    }, [accountId, getStats, setDetails, setIsLoading])
+        getData(addresses, tokenLabel)
+    }, [accountId, addresses, getStats, setDetails, setIsLoading, tokenLabel])
 
     return { details, isLoading } || {}
 }
 
-export default useWalletEarnDetails
+export default useAmbireEarnDetails

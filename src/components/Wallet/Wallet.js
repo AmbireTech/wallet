@@ -42,13 +42,16 @@ export default function Wallet(props) {
         rewardsData={props.rewardsData}
         addRequest={props.addRequest}
         relayerURL={props.relayerURL}
+        relayerURL={props.relayerURL}
+        userSorting={props.userSorting}
+        setUserSorting={props.setUserSorting}
       />
     },
     {
       path: '/deposit',
       component: <Deposit
         selectedAcc={props.selectedAcc}
-        selectedNetwork={props.network}
+        selectedNetwork={props.network.id}
         accounts={props.accounts}
         addRequest={props.addRequest}
         relayerURL={props.relayerURL}
@@ -192,7 +195,7 @@ export default function Wallet(props) {
 
   return (
     <div id="wallet">
-      <SideBar match={props.match} portfolio={props.portfolio} hidePrivateValue={props.privateMode.hidePrivateValue} />
+      <SideBar match={props.match} portfolio={props.portfolio} hidePrivateValue={props.privateMode.hidePrivateValue} relayerURL={props.relayerURL} selectedNetwork={props.network} />
       <TopBar {...props} />
 
       <div id="wallet-container" ref={walletContainer}>

@@ -3,8 +3,8 @@ import "./TopBar.scss";
 import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
 import { MdOutlineArrowForward, MdOutlineClose, MdOutlineMenu, MdRemoveRedEye, MdVisibilityOff } from "react-icons/md";
-import { Select } from "components/common";
 import Accounts from "./Accounts/Accounts";
+import Networks from "./Networks/Networks";
 import DApps from "./DApps/DApps";
 import * as blockies from 'blockies-ts';
 import Links from "./Links/Links";
@@ -14,6 +14,7 @@ const TopBar = ({
   connections,
   connect,
   disconnect,
+  isWcConnecting,
   onSelectAcc,
   onRemoveAccount,
   selectedAcc,
@@ -23,15 +24,11 @@ const TopBar = ({
   allNetworks,
   rewardsData,
   privateMode: { isPrivateMode, togglePrivateMode, hidePrivateValue },
-  addRequest
+  addRequest,
+  userSorting,
+  setUserSorting
 }) => {
   const [isMenuOpen, setMenuOpen] = useState(false)
-  
-  const networksItems = allNetworks.map(({ id, name, icon }) => ({
-    label: name,
-    value: id,
-    icon
-  }))
 
   const account = accounts.find(({ id }) => id === selectedAcc)
   const accountIcon = blockies.create({ seed: account ? account.id : null }).toDataURL()
@@ -60,9 +57,10 @@ const TopBar = ({
           addRequest={addRequest}
         />}
         {isPrivateMode ? <MdVisibilityOff cursor="pointer" size={28} onClick={togglePrivateMode} /> : <MdRemoveRedEye cursor="pointer" size={28} onClick={togglePrivateMode} />}
-        <DApps connections={connections} connect={connect} disconnect={disconnect}/>
-        <Accounts accounts={accounts} selectedAddress={selectedAcc} onSelectAcc={onSelectAcc} onRemoveAccount={onRemoveAccount} hidePrivateValue={hidePrivateValue}/>
-        <Select defaultValue={network.id} items={networksItems} onChange={value => setNetwork(value)}/>
+        <DApps connections={connections} connect={connect} disconnect={disconnect} isWcConnecting={isWcConnecting}/>
+        <Accounts accounts={accounts} selectedAddress={selectedAcc} onSelectAcc={onSelectAcc} onRemoveAccount={onRemoveAccount} hidePrivateValue={hidePrivateValue}  userSorting={userSorting} setUserSorting={setUserSorting}/>        
+        <Networks setNetwork={setNetwork} network={network} allNetworks={allNetworks}  userSorting={userSorting}
+        setUserSorting={setUserSorting}/>
         <Links/>
       </div>
     </div>
