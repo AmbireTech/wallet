@@ -3,12 +3,12 @@ import './Collectible.scss'
 import { useParams } from 'react-router-dom'
 import { ethers } from 'ethers'
 import { Interface } from 'ethers/lib/utils'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useState, useRef } from 'react'
 import { AiOutlineSend } from 'react-icons/ai'
 import { BsFillImageFill } from 'react-icons/bs'
 import * as blockies from 'blockies-ts';
 import { useToasts } from 'hooks/toasts'
-import { TextInput, Button, Loading, AddressBook, AddressWarning } from 'components/common'
+import { TextInput, Button, Loading, AddressBook, AddressWarning, ToolTip } from 'components/common'
 import ERC721Abi from 'consts/ERC721Abi'
 import networks from 'consts/networks'
 import { validateSendNftAddress } from 'lib/validations/formValidations'
@@ -16,6 +16,7 @@ import { BsXLg } from 'react-icons/bs'
 import { getProvider } from 'lib/provider'
 import { VELCRO_API_ENDPOINT } from 'config'
 import { fetchGet } from 'lib/fetch'
+import { resolveUDomain } from 'lib/unstoppableDomains'
 
 const ERC721 = new Interface(ERC721Abi)
 
@@ -46,6 +47,7 @@ const Collectible = ({ selectedAcc, selectedNetwork, addRequest, addressBook }) 
         explorerUrl: ''
     })
     const [recipientAddress, setRecipientAddress] = useState('')
+    const [uDAddress, setUDAddress] = useState('')
     const [isTransferDisabled, setTransferDisabled] = useState(true)
     const [addressConfirmed, setAddressConfirmed] = useState(false)
     const [newAddress, setNewAddress] = useState(null)
@@ -53,10 +55,13 @@ const Collectible = ({ selectedAcc, selectedNetwork, addRequest, addressBook }) 
         success: false, 
         message: ''
     })
-
+    const timer = useRef(null)
+    
     const sendTransferTx = () => {
+        const recipAddress = uDAddress ? uDAddress : recipientAddress
+
         try {
-            addRequest({
+            let req = {
                 id: `transfer_nft_${Date.now()}`,
                 type: 'eth_sendTransaction',
                 chainId: selectedNetwork.chainId,
@@ -64,9 +69,21 @@ const Collectible = ({ selectedAcc, selectedNetwork, addRequest, addressBook }) 
                 txn: {
                     to: collectionAddr,
                     value: '0',
-                    data: ERC721.encodeFunctionData('transferFrom', [metadata.owner.address, recipientAddress, tokenId])
+                    data: ERC721.encodeFunctionData('transferFrom', [metadata.owner.address, recipAddress, tokenId])
+                },
+                meta: null
+            }
+
+            if (uDAddress) {
+                req.meta = { 
+                    addressLabel: { 
+                        addressLabel: recipientAddress,
+                        address: uDAddress
+                    }
                 }
-            })
+            }
+
+            addRequest(req) 
         } catch(e) {
             console.error(e)
             addToast(`Error: ${e.message || e}`, { error: true })
@@ -74,14 +91,37 @@ const Collectible = ({ selectedAcc, selectedNetwork, addRequest, addressBook }) 
     }
 
     useEffect(() => {
-        const isAddressValid = validateSendNftAddress(recipientAddress, selectedAcc, addressConfirmed, isKnownAddress, metadata, selectedNetwork, network)
-        
-        setTransferDisabled(!isAddressValid.success)
-        setValidationFormMgs({ 
-            success: isAddressValid.success, 
-            message: isAddressValid.message ? isAddressValid.message : ''
-        })
+        if (recipientAddress.startsWith('0x') && (recipientAddress.indexOf('.') === -1)) { 
+            const isAddressValid = validateSendNftAddress(recipientAddress, selectedAcc, addressConfirmed, isKnownAddress, metadata, selectedNetwork, network)
 
+            setTransferDisabled(!isAddressValid.success)
+            setValidationFormMgs({ 
+                success: isAddressValid.success, 
+                message: isAddressValid.message ? isAddressValid.message : ''
+            })
+        } else {
+            if (timer.current) {
+                clearTimeout(timer.current)
+            }
+    
+            const validateForm = async() => {
+                const UDAddress =  await resolveUDomain(recipientAddress, null, selectedNetwork.unstoppableDomainsChain)
+                timer.current = null
+                const isUDAddress = UDAddress ? true : false
+                const isAddressValid = validateSendNftAddress(UDAddress ? UDAddress : recipientAddress, selectedAcc, addressConfirmed, isKnownAddress, metadata, selectedNetwork, network, isUDAddress)
+                setUDAddress(UDAddress)
+                
+                setTransferDisabled(!isAddressValid.success)
+                setValidationFormMgs({ 
+                    success: isAddressValid.success, 
+                    message: isAddressValid.message ? isAddressValid.message : ''
+                })
+            }
+
+            timer.current = setTimeout(async() => validateForm().catch(console.error), 300)
+        } 
+
+        return () => clearTimeout(timer.current)
     }, [recipientAddress, metadata, selectedNetwork, selectedAcc, network, addressConfirmed, isKnownAddress])
 
     const fetchMetadata = useCallback(async () => {
@@ -213,6 +253,9 @@ const Collectible = ({ selectedAcc, selectedNetwork, addRequest, addressBook }) 
                 <div className="content">
                     <div id="recipient-address">
                         <TextInput placeholder="Recipient Address" value={recipientAddress} onInput={(value) => setRecipientAddress(value)}/>
+                        <ToolTip label={!uDAddress ? 'You can use Unstoppable domainsⓇ' : 'Valid Unstoppable domainsⓇ domain'}>
+                            <div id="udomains-logo" className={uDAddress ? 'ud-logo-active ' : ''} />
+                        </ToolTip>
                         <AddressBook 
                             addresses={addresses.filter(x => x.address !== selectedAcc)}
                             addAddress={addAddress}
@@ -220,6 +263,7 @@ const Collectible = ({ selectedAcc, selectedNetwork, addRequest, addressBook }) 
                             newAddress={newAddress}
                             onClose={() => setNewAddress(null)}
                             onSelectAddress={address => setRecipientAddress(address)}
+                            selectedNetwork={selectedNetwork}
                         />
                     </div>
                     { validationFormMgs.message && 
@@ -227,8 +271,8 @@ const Collectible = ({ selectedAcc, selectedNetwork, addRequest, addressBook }) 
                     }
                     <div className="separator"></div>
                     <AddressWarning
-                        address={recipientAddress}
-                        onAddNewAddress={() => setNewAddress(recipientAddress)}
+                        address={uDAddress ? uDAddress : recipientAddress}
+                        onAddNewAddress={() => setNewAddress(uDAddress ? uDAddress : recipientAddress)}
                         onChange={(value) => setAddressConfirmed(value)}
                         isKnownAddress={isKnownAddress}
                     />

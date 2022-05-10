@@ -2,10 +2,11 @@ import './DropDown.scss'
 
 import { useEffect, useRef, useState } from 'react';
 import { BsChevronDown } from 'react-icons/bs'
+import { Borders as LoadingBorders } from 'components/common'
 import { CSSTransition } from 'react-transition-group';
 import useOnClickOutside from 'hooks/onClickOutside';
 
-export default function DropDown({ children, id, icon, className, title, badge, open, closeOnClick, onChange, onOpen, onClose, style }) {
+export default function DropDown({ children, id, icon, className, title, badge, open, closeOnClick, onChange, onOpen, onClose, style, isLoading }) {
     const ref = useRef();
     const transitionRef = useRef();
     const [isMenuOpen, setMenuOpen] = useState(false);
@@ -27,7 +28,7 @@ export default function DropDown({ children, id, icon, className, title, badge, 
                 }
                 <div className="title">{ title }</div>
                 {
-                    badge ? 
+                    badge ?
                         <div className="badge">
                             { badge > 9 ? '9+' : badge }
                         </div>
@@ -38,6 +39,8 @@ export default function DropDown({ children, id, icon, className, title, badge, 
                 <div className={`handle ${isMenuOpen ? 'open' : ''}`}>
                     <BsChevronDown size={20}></BsChevronDown>
                 </div>
+
+                { isLoading && <LoadingBorders /> }
             </div>
             <CSSTransition unmountOnExit in={isMenuOpen} timeout={200} classNames="fade" nodeRef={transitionRef}>
                 <div className="menu" ref={transitionRef} onClick={closeOnClick ? () => setMenuOpen(false) : null}>

@@ -8,13 +8,14 @@ const Collectibles = ({ portfolio, isPrivateMode }) => {
     const handleUri = uri => {
         uri = uri.startsWith('data:application/json') ? uri.replace('data:application/json;utf8,', '') : uri
 
+        if (uri.split('/')[0] === 'data:image') return uri
         if (uri.startsWith('ipfs://')) return uri.replace(/ipfs:\/\/ipfs\/|ipfs:\/\//g, 'https://ipfs.io/ipfs/')
         if (uri.split('/')[2].endsWith('mypinata.cloud')) return 'https://ipfs.io/ipfs/' + uri.split('/').slice(4).join('/')
         
         return uri
     }
 
-    if (portfolio.areProtocolsLoading) return <Loading />;
+    if (portfolio.isCurrNetworkProtocolsLoading) return <Loading />;
 
     if (!portfolio.collectibles.length || isPrivateMode) {
         return (

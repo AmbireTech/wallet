@@ -32,6 +32,25 @@ const ERC721Mapping = {
     const [ from, to, tokenId ] = iface.parseTransaction(txn).args
     return !extended ? [`Send token #${tokenId.toString(10)}${fromText(from, txn.from)} to ${getName(to, network)}`]
     : toExtended(tokenId, from, to, txn, network)
+  },
+  [iface.getSighash('setApprovalForAll')]: (txn, network, { extended = false }) => {
+    const [ operator, approved ] = iface.parseTransaction(txn).args
+    const name = getName(operator, network)
+    if (approved) {
+      return extended ? [[
+        `Approve`,
+        { type: 'address', name, address: operator },
+        `to use/spend any NFT from collection`,
+        { type: 'address', name: getName(txn.to), address: txn.to }
+      ]] : [`Approve ${name} to spend NFT collection ${getName(txn.to)}`]
+    } else {
+      return extended ? [[
+        `Revoke approval for`,
+        { type: 'address', name, address: operator },
+        `to use/spend any NFT from collection`,
+        { type: 'address', name: getName(txn.to), address: txn.to }
+      ]] : [`Revoke approval for ${name} to spend NFT collection ${getName(txn.to)}`]
+    }
   }
 }
 export default ERC721Mapping

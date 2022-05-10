@@ -8,6 +8,7 @@
     user-select: none;
     font-weight: bold;
     cursor: pointer;
+    min-width: 240px;
 
     &.disabled {
         pointer-events: none;
@@ -41,7 +42,6 @@
         white-space: pre;
         text-overflow: ellipsis;
         overflow: hidden;
-        cursor: pointer;
         flex-grow: 1;
     }
 
@@ -90,6 +90,9 @@
             overflow-y: auto;
             scrollbar-width: thin;
 
+            .sort-buttons {
+                padding: 0 20px;
+            }
             .select-search-input {
                 width: 100%;
                 position: sticky;
@@ -115,15 +118,30 @@
                 font-size: 16px;
                 font-weight: 500;
                 opacity: 0.8;
-
+                cursor: pointer;
+                .drag-handle {
+                    min-width: 14px;
+                }
+                &[draggable="true"] .drag-handle {
+                    cursor: grab;
+                    cursor: -moz-grab;
+                    cursor: -webkit-grab;
+                }
+                
+                &[draggable="true"]:active .drag-handle {
+                    cursor: grabbing;
+                    cursor: -moz-grabbing;
+                    cursor: -webkit-grabbing;
+                }
+                
                 &:hover {
                     background-color: rgba(0, 0, 0, 0.2);
                 }
-
+                
                 &.active {
                     font-weight: bold;
                     opacity: 1;
-
+                    
                     &::after {
                         content: "";
                         position: absolute;
@@ -134,7 +152,7 @@
                         border-radius: 100%;
                     }
                 }
-
+                
                 &.disabled {
                     opacity: 0.6;
                     cursor: no-drop;

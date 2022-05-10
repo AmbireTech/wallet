@@ -3,25 +3,30 @@
 const suportedProtocols = [
     {
         network: 'ethereum',
-        protocols: ['1inch', 'aave-v2', 'alchemix', 'badger', 'balancer-v2', 'compound', 'cream', 'curve', 'sushiswap', 'uniswap-v2', 'uniswap-v3', 'nft'],
+        // protocols: ['1inch', 'aave-v2', 'alchemix', 'badger', 'balancer-v2', 'compound', 'cream', 'curve', 'sushiswap', 'uniswap-v2', 'uniswap-v3', 'nft'],
+        protocols: ['nft'],
         balancesProvider: 'velcro',
         nftsProvider: 'velcro'
     },
     {
         network: 'polygon',
-        protocols: ['aave-v2', 'quickswap', 'sushiswap', 'nft'],
+        // protocols: ['aave-v2', 'quickswap', 'sushiswap', 'nft'],
+        protocols: ['nft'],
         balancesProvider: 'velcro',
         nftsProvider: 'velcro'
     },
     {
         network: 'avalanche',
-        protocols: ['aave-v2'],
+        // protocols: ['aave-v2'],
+        protocols: [],
         balancesProvider: 'velcro'
     },
     {
         network: 'binance-smart-chain',
-        protocols: ['pancakeswap'],
-        balancesProvider: 'velcro'
+        // protocols: ['pancakeswap'],
+        protocols: ['nft'],
+        balancesProvider: 'velcro',
+        nftsProvider: 'velcro'
     },
     {
         network: 'fantom',
@@ -37,13 +42,43 @@ const suportedProtocols = [
         network: 'moonriver',
         protocols: [],
 	    balancesProvider: 'velcro'
-    }
-    /*,
+    },
     {
         network: 'arbitrum',
+        protocols: ['nft'],
+        balancesProvider: 'velcro',
+        nftsProvider: 'velcro'
+    },
+    {
+        network: 'gnosis',
         protocols: [],
-        balancesProvider: 'velcro'
-    }*/
+        balancesProvider: 'velcro',
+        nftsProvider: 'velcro'
+    },
+    {
+        network: 'kucoin',
+        protocols: [],
+        balancesProvider: 'velcro',
+        nftsProvider: 'velcro'
+    },
+    // {
+    //     network: 'andromeda',
+    //     protocols: [],
+    //     balancesProvider: 'velcro',
+    //     nftsProvider: 'velcro'
+    // },
+    // {
+    //     network: 'cronos',
+    //     protocols: [],
+    //     balancesProvider: 'velcro',
+    //     nftsProvider: 'velcro'
+    // },
+    // {
+    //     network: 'aurora',
+    //     protocols: [],
+    //     balancesProvider: 'velcro',
+    //     nftsProvider: 'velcro'
+    // }
 ]
 
 export default suportedProtocols
