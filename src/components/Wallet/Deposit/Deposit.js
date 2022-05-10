@@ -11,7 +11,7 @@ import networks from 'consts/networks'
 import AssetsMigrationBanner from 'components/Wallet/AssetsMigration/AssetsMigrationBanner'
 
 export default function Deposit({ selectedAcc, selectedNetwork, accounts, addRequest, relayerURL, portfolio }) {
-    const networkDetails = networks.find(({ id }) => id === selectedNetwork)
+    const networkDetails = networks.find(({ id }) => id === selectedNetwork.id)
     const [qrCodeUrl, setQrCodeUrl] = useState('')
 
     const generateQRCode = useCallback(() => {
