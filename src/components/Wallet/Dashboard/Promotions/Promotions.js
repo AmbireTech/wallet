@@ -72,9 +72,11 @@ function Promo({
             </div>
             }
             {
-                !!id && minimized
-                    ? <MdOutlineMarkEmailUnread className='close-btn' onClick={() => togglePromo(id)} />
-                    : <div><AiOutlineRight className='close-btn' onClick={() => togglePromo(id)} /></div>
+                !!id
+                    ? minimized
+                        ? <MdOutlineMarkEmailUnread className='close-btn' onClick={() => togglePromo(id)} />
+                        : <div><AiOutlineRight className='close-btn' onClick={() => togglePromo(id)} /></div>
+                    : null
 
             }
         </div>
