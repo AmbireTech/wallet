@@ -239,6 +239,7 @@ function AppInner() {
             onAddAccount={onAddAccount}
             rewardsData={rewardsData}
             privateMode={privateMode}
+            useStorage={useLocalStorage}
           >
           </Wallet>
         </Route> :

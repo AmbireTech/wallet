@@ -5,16 +5,20 @@ import { useCallback, useEffect, useState } from 'react'
 import { useModals } from 'hooks'
 import { FaTimes } from 'react-icons/fa'
 
-const AssetsMigrationBanner = ({ addRequest, selectedAccount, accounts, selectedNetwork, relayerURL, portfolio, closeable = false, linkMargin = false }) => {
+const AssetsMigrationBanner = ({ addRequest, selectedAccount, accounts, selectedNetwork, relayerURL, portfolio, closeable = false, linkMargin = false, useStorage }) => {
 
   const [hasSignerAssets, setHasSignerAssets] = useState(false)
   const [migrationMessageSeen, setMigrationMessageSeen] = useState(false)
   const { showModal } = useModals()
+  const [migrationMessageSeenStorage, setMigrationMessageSeenStorage] = useStorage({key: 'migrationSeen', defaultValue:{}})
 
   const closeMigrationMessage = useCallback(() => {
     setMigrationMessageSeen(true)
-    localStorage.setItem('migrationMessageSeen_' + selectedAccount + selectedNetwork.id, "1")
-  }, [selectedAccount, selectedNetwork])
+    setMigrationMessageSeenStorage((old) => {
+      old[selectedAccount + selectedNetwork.id] = true
+      return old
+    })
+  }, [selectedAccount, selectedNetwork, setMigrationMessageSeenStorage])
 
   //fetching relevant assets
   useEffect(() => {
@@ -36,8 +40,8 @@ const AssetsMigrationBanner = ({ addRequest, selectedAccount, accounts, selected
 
   //checking if closable message has been seen(closed) or not
   useEffect(() => {
-    setMigrationMessageSeen(closeable && !!localStorage.getItem('migrationMessageSeen_' + selectedAccount + selectedNetwork.id))
-  }, [closeable, selectedAccount, selectedNetwork])
+    setMigrationMessageSeen(closeable && !!migrationMessageSeenStorage[selectedAccount + selectedNetwork.id])
+  }, [closeable, selectedAccount, selectedNetwork, migrationMessageSeenStorage])
 
   return (
     (hasSignerAssets && !migrationMessageSeen) &&
