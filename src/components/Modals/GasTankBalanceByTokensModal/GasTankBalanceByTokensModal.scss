@@ -1,0 +1,14 @@
+@import 'variables.scss';
+
+#gas-tank-balance-by-tokens-modal {
+    .content {
+        display: flex;
+        flex-direction: column;
+        gap: 2em;
+
+        div {
+            display: flex;
+            justify-content: space-between;
+        }
+    }
+}

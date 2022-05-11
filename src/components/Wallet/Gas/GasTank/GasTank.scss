@@ -11,7 +11,7 @@
             height: 40px;
             display: flex;
             align-items: center;
-            justify-content: stretch;
+            justify-content: center;
 
             div {
                 width: 50%;
@@ -176,13 +176,22 @@
     }
 
     .txns-wapper {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        height: 50px;
-        background-color: $background-color;
-        margin-bottom: 1px;
-        font-size: 12px;
+        margin-top: 20px;
+
+        .txns-item-wapper {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            height: 50px;
+            background-color: $background-color;
+            margin-bottom: 1px;
+            font-size: 12px;
+    
+            svg {
+                height: 15px;
+                width: 15px;
+            }
+        }
     }
 }
 

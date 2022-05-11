@@ -61,6 +61,15 @@
             font-size: 40px;
             opacity: 0.5;
         }
+
+        .gas-tank-msg {
+            border: 1px solid black;
+            color: black;
+            font-weight: bold;
+            background-color: $warning-color;
+            padding: 20px;
+            text-align: center;
+        }
     }
 
     #addresses {

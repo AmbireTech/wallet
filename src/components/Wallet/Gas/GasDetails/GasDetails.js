@@ -32,22 +32,24 @@ const GasDetails = ({ gasData }) => {
         }
       </div>
       <h4>Estimated Cost of Transaction Actions</h4>
+     <div className='table-wrapper'>
       <table className='gas-action-costs'>
-        <thead>
-        <tr>
-          <th>Action</th>
-          {GAS_SPEEDS.map((speed, index) => <th key={index}>{speed}</th>)}
-        </tr>
-        </thead>
-        <tbody>
-        {
-          ACTION_GAS_COSTS.map((a, index) => <tr key={index}>
-            <td>{a.name}</td>
-            {GAS_SPEEDS.map((speed, rowIndex) => <td key={rowIndex}>${(GAS_PRICES[speed] * (a.gas + AMBIRE_OVERHEAD_COST) / 10 ** 18 * gasData.gasFeeAssets.native).toFixed(2)}</td>)}
-          </tr>)
-        }
-        </tbody>
-      </table>
+          <thead>
+          <tr>
+            <th>Action</th>
+            {GAS_SPEEDS.map((speed, index) => <th key={index}>{speed}</th>)}
+          </tr>
+          </thead>
+          <tbody>
+          {
+            ACTION_GAS_COSTS.map((a, index) => <tr key={index}>
+              <td>{a.name}</td>
+              {GAS_SPEEDS.map((speed, rowIndex) => <td key={rowIndex}>${(GAS_PRICES[speed] * (a.gas + AMBIRE_OVERHEAD_COST) / 10 ** 18 * gasData.gasFeeAssets.native).toFixed(2)}</td>)}
+            </tr>)
+          }
+          </tbody>
+        </table>
+      </div>
     </div>
   )
 }

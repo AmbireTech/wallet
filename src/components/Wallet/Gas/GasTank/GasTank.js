@@ -2,8 +2,7 @@ import './GasTank.scss'
 import { FaGasPump } from 'react-icons/fa'
 import { Toggle } from 'components/common'
 import { useState, useEffect } from 'react'
-
-
+import { BiTransferAlt } from 'react-icons/bi'
 import { GiToken } from 'react-icons/gi'
 import { NavLink } from 'react-router-dom'
 import { Button, Loading } from 'components/common'
@@ -12,10 +11,14 @@ import { useDragAndDrop, useCheckMobileScreen } from 'hooks'
 import { getTokenIcon } from 'lib/icons'
 import { formatFloatTokenAmount } from 'lib/formatters'
 import { ToolTip } from 'components/common'
-import { useRelayerData } from 'hooks'
+import { useRelayerData, useLocalStorage } from 'hooks'
+import { useModals } from 'hooks'
+import { GasTankBalanceByTokensModal } from 'components/Modals'
+import { HiOutlineExternalLink } from 'react-icons/hi'
 
 const GasTank = ({ network, relayerURL, portfolio, account, userSorting, setUserSorting }) => {
     const [cacheBreak, setCacheBreak] = useState(() => Date.now())
+    const { showModal } = useModals()
 
     useEffect(() => {
         if (Date.now() - cacheBreak > 5 * 1000) setCacheBreak(Date.now())
@@ -45,19 +48,22 @@ const GasTank = ({ network, relayerURL, portfolio, account, userSorting, setUser
             dateTime: '2022-03-01 12:32',
             gasPayed: '11.32',
             saved: '1.23',
-            chargeBack: '0.23'
+            chargeBack: '0.23',
+            address: '0x9394584921923894912394e'
         },
         {
             dateTime: '2022-02-21 10:11',
             gasPayed: '10.00',
             saved: '0.91',
-            chargeBack: '0.13'
+            chargeBack: '0.13',
+            address: '0x9394584921923894912394e'
         },
         {
             dateTime: '2022-01-01 02:32',
             gasPayed: '15.32',
             saved: '2.23',
-            chargeBack: '0.66'
+            chargeBack: '0.66',
+            address: '0x9394584921923894912394e'
         }
     ]
     // =============================================
@@ -98,9 +104,13 @@ const GasTank = ({ network, relayerURL, portfolio, account, userSorting, setUser
         'address',
         onDropEnd)
 
-    const [isGasTankEnabled, setIsGasTankEnabled] = useState(false)
+    const [isGasTankEnabled, setIsGasTankEnabled] = useLocalStorage({ key: 'isGasTankEnabled', defaultValue: false })
     const toggleGasTank = () => {
-        setIsGasTankEnabled(prevState => !prevState)
+        setIsGasTankEnabled(!isGasTankEnabled)
+    }
+
+    const openGasTankBalanceByTokensModal = () => {
+        showModal(<GasTankBalanceByTokensModal data={ data && data }/>)
     }
 
     const tokenItem = (index, img, symbol, balance, balanceUSD, address, send = false, network, decimals, category, sortedTokensLength) => 
@@ -147,7 +157,7 @@ const GasTank = ({ network, relayerURL, portfolio, account, userSorting, setUser
                             <NavLink to={{
                                 pathname: `/wallet/transfer/${address}`,
                                 state: {
-                                    gasTankMsg: "Filling the Gas Tank",
+                                    gasTankMsg: "Warning: Deposits to the Gas Tank",
                                     feeAssetsPerNetwork
                                 }
                             }}>
@@ -163,7 +173,7 @@ const GasTank = ({ network, relayerURL, portfolio, account, userSorting, setUser
     return (
         <div id="gas-tank">
             <div className='heading-wrapper'>
-                <div className="balance-wrapper">
+                <div className="balance-wrapper" style={{ cursor: 'pointer' }} onClick={openGasTankBalanceByTokensModal}>
                     <span><FaGasPump/> Gas Tank Balance</span>
                     <div><span>$</span>{gasTankBalance}</div>
                     <span>Drag and drop tokens here</span>
@@ -182,7 +192,7 @@ const GasTank = ({ network, relayerURL, portfolio, account, userSorting, setUser
                 <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</p> 
             </div>
             <div className="sort-holder">
-                Balance by tokens
+                Available fee tokens
                 {sortedTokens && !isMobileScreen &&  (
                     <div className="sort-buttons">
                         <ToolTip label='Sorted tokens by drag and drop'>
@@ -212,14 +222,25 @@ const GasTank = ({ network, relayerURL, portfolio, account, userSorting, setUser
                         tokenItem(i, tokenImageUrl, symbol, balance, balanceUSD, address, true, network, decimals, 'tokens', sortedTokens.length))
                 }
             </div>
-            <div>
+            <div className="txns-wapper">
                 {
-                    mockedTxns.map((item, key) => {
-                        return (<div key={key} className="txns-wapper">
+                    mockedTxns && mockedTxns.map((item, key) => {
+                        // TODO: Fix the styles
+                        return (<div key={key} className="txns-item-wapper">
+                            <BiTransferAlt />
                             <span>{item.dateTime}</span>
                             <span>Gas payed: {item.gasPayed}</span>
                             <span>Saved: {item.saved}</span>
                             <span>Chargeback: {item.chargeBack}</span>
+                                <a
+                                    href={network.explorerUrl + '/address/' + item.address}
+                                    target='_blank'
+                                    rel='noreferrer'
+                                    onClick={e => e.stopPropagation()}
+                                >
+                                    <HiOutlineExternalLink size={25} />
+                                </a>
+                            
                         </div>)
                     })
                 }
@@ -228,7 +249,7 @@ const GasTank = ({ network, relayerURL, portfolio, account, userSorting, setUser
                 <NavLink to={{
                     pathname: `/wallet/transfer/`,
                     state: {
-                        gasTankMsg: "Filling the Gas Tank",
+                        gasTankMsg: "Warning: Deposits to the Gas Tank",
                         feeAssetsPerNetwork
                     }
                 }}>
