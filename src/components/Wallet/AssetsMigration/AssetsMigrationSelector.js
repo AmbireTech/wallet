@@ -16,7 +16,7 @@ import { getProvider } from 'lib/provider'
 
 const GAS_SPEEDS = ['slow', 'medium', 'fast', 'ape']
 
-const AssetsMigrationSelector = ({ signerAccount, identityAccount, network, setIsSelectionConfirmed, setStep, portfolio, relayerURL, setModalButtons, hideModal, setSelectedTokensWithAllowance, setStepperSteps }) => {
+const AssetsMigrationSelector = ({ signerAccount, identityAccount, network, setIsSelectionConfirmed, setStep, portfolio, relayerURL, setModalButtons, hideModal, setSelectedTokensWithAllowance, setStepperSteps, hidden }) => {
 
   const [selectableTokens, setSelectableTokens] = useState([])
   const [selectableTokensUserInputs, setSelectableTokensUserInputs] = useState([])
@@ -405,6 +405,7 @@ const AssetsMigrationSelector = ({ signerAccount, identityAccount, network, setI
 
 
   useEffect(() => {
+    if (hidden) return
     setModalButtons(
       <>
         <Button clear small icon={<MdClose/>} onClick={hideModal}>Close</Button>
@@ -416,7 +417,42 @@ const AssetsMigrationSelector = ({ signerAccount, identityAccount, network, setI
         }
       </>
     )
-  }, [selectableTokensUserInputs, suggestedGasTokens, selectedGasSpeed, setModalButtons, hideModal, confirmTokenSelection])
+  }, [selectableTokensUserInputs, suggestedGasTokens, selectedGasSpeed, setModalButtons, hideModal, confirmTokenSelection, hidden])
+
+  const onAssetAmountChange = useCallback((val, item) => updateSelectableTokenUserInputs(item.address, (old) => {
+    if (val === '') {
+      return {
+        ...old,
+        humanAmount: 0,
+        amount: 0
+      }
+    }
+    if (
+      (val.endsWith('.') && val.split('.').length === 2)
+      || (val.split('.').length === 2 && val.endsWith('0'))
+    ) {
+      return {
+        ...old,
+        humanAmount: val,
+      }
+    }
+
+    if (!isNaN(val)) {
+      let newHumanAmount = new BigNumber(val).toFixed(item.decimals)
+      if (new BigNumber(newHumanAmount).multipliedBy(10 ** item.decimals).comparedTo(item.availableBalance) === 1) {
+        newHumanAmount = new BigNumber(item.availableBalance).dividedBy(10 ** item.decimals).toFixed(item.decimals)
+      }
+      // trim trailing . or 0
+      newHumanAmount = newHumanAmount.replace(/\.?0+$/g, '')
+
+      return {
+        ...old,
+        humanAmount: newHumanAmount,
+        amount: new BigNumber(newHumanAmount).multipliedBy(10 ** item.decimals).toFixed(0)
+      }
+    }
+    return old
+  }), [updateSelectableTokenUserInputs])
 
   // Stepper
   useEffect(() => {
@@ -439,6 +475,8 @@ const AssetsMigrationSelector = ({ signerAccount, identityAccount, network, setI
 
     setStepperSteps(steps)
   }, [selectableTokens, selectableTokensUserInputs, setStepperSteps])
+
+  if (hidden) return <></>
 
   return (
     <div>
@@ -492,40 +530,7 @@ const AssetsMigrationSelector = ({ signerAccount, identityAccount, network, setI
                             <TextInput
                               className={'migrate-amount-input'}
                               value={item.humanAmount}
-                              onChange={(val) => updateSelectableTokenUserInputs(item.address, (old) => {
-                                if (val === '') {
-                                  return {
-                                    ...old,
-                                    humanAmount: 0,
-                                    amount: 0
-                                  }
-                                }
-                                if (
-                                  (val.endsWith('.') && val.split('.').length === 2)
-                                  || (val.split('.').length === 2 && val.endsWith('0'))
-                                ) {
-                                  return {
-                                    ...old,
-                                    humanAmount: val,
-                                  }
-                                }
-
-                                if (!isNaN(val)) {
-                                  let newHumanAmount = new BigNumber(val).toFixed(item.decimals)
-                                  if (new BigNumber(newHumanAmount).multipliedBy(10 ** item.decimals).comparedTo(item.availableBalance) === 1) {
-                                    newHumanAmount = new BigNumber(item.availableBalance).dividedBy(10 ** item.decimals).toFixed(item.decimals)
-                                  }
-                                  // trim trailing . or 0
-                                  newHumanAmount = newHumanAmount.replace(/\.?0+$/g, '')
-
-                                  return {
-                                    ...old,
-                                    humanAmount: newHumanAmount,
-                                    amount: new BigNumber(newHumanAmount).multipliedBy(10 ** item.decimals).toFixed(0)
-                                  }
-                                }
-                                return old
-                              })}
+                              onChange={(val) => onAssetAmountChange(val, item)}
                             />
                           </div>
                         </div>
@@ -646,7 +651,7 @@ const AssetsMigrationSelector = ({ signerAccount, identityAccount, network, setI
                           <td>
                             Signer fee
                             {
-                              (!!!!estimatedGasFees.nativeTransfersCount || !!estimatedGasFees.approvalCounts) &&
+                              (!!estimatedGasFees.nativeTransfersCount || !!estimatedGasFees.approvalCounts) &&
                               <span className={'migration-actions'}>
                                   (
                                 {

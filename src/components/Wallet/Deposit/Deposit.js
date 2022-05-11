@@ -10,7 +10,7 @@ import networks from 'consts/networks'
 
 import AssetsMigrationBanner from 'components/Wallet/AssetsMigration/AssetsMigrationBanner'
 
-export default function Deposit({ selectedAcc, selectedNetwork, accounts, addRequest, relayerURL, portfolio }) {
+export default function Deposit({ selectedAcc, selectedNetwork, accounts, addRequest, relayerURL, portfolio, useStorage }) {
     const networkDetails = networks.find(({ id }) => id === selectedNetwork.id)
     const [qrCodeUrl, setQrCodeUrl] = useState('')
 
@@ -63,6 +63,7 @@ export default function Deposit({ selectedAcc, selectedNetwork, accounts, addReq
                     linkMargin={true}
                     relayerURL={relayerURL}
                     portfolio={portfolio}
+                    useStorage={useStorage}
                 />
             </div>
             <div className="panel">

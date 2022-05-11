@@ -9,30 +9,34 @@ import { fetchGet } from 'lib/fetch'
 import { MdOutlineNavigateNext, MdClose, MdOutlineNavigateBefore } from 'react-icons/md'
 
 const AssetsMigrationNative = ({
-                                 identityAccount,
-                                 signer,
-                                 signerExtra,
-                                 network,
-                                 nativeTokenData,
-                                 setSelectedTokensWithAllowance,
-                                 setError,
-                                 setStep,
-                                 hasERC20Tokens,
-                                 hideModal,
-                                 relayerURL,
-                                 setModalButtons,
-                                 setBeforeCloseModalHandler
+                                identityAccount,
+                                signer,
+                                signerExtra,
+                                network,
+                                nativeTokenData,
+                                setSelectedTokensWithAllowance,
+                                setError,
+                                setStep,
+                                hasERC20Tokens,
+                                hideModal,
+                                relayerURL,
+                                setModalButtons,
+                                setBeforeCloseModalHandler,
+                                hidden,
                                }) => {
 
   const [failedImg, setFailedImg] = useState([])
   const [hasMigratedNative, setHasMigratedNative] = useState(false)
   const [isMigrationPending, setIsMigrationPending] = useState(false)
   const [nativeAmount, setNativeAmount] = useState('0')
-  const [maxRecommendedAmount, setMaxRecommendedAmount] = useState('0')
+  const [maxRecommendedAmount, setMaxRecommendedAmount] = useState(null)
   const [transactionEstimationCost, setTransactionEstimationCost] = useState('0')
   const [nativeHumanAmount, setNativeHumanAmount] = useState('0')
 
   const [hasModifiedAmount, setHasModifiedAmount] = useState(false)
+
+  //TODO: decide whether we use the signer wallet detection feature
+  const [hasCorrectNetwork, setHasCorrectNetwork] = useState(null)
 
   let wallet
   try {
@@ -107,14 +111,43 @@ const AssetsMigrationNative = ({
         gasPrice += gasData.data.gasPrice.maxPriorityFeePerGas.fast
       }
       const estimatedTransactionCost = gasPrice * 25000
-      //setCurrentGasPrice(gasPrice)
+
       setTransactionEstimationCost(new BigNumber(estimatedTransactionCost.toFixed(0)).toFixed(0))
-      setMaxRecommendedAmount(new BigNumber(nativeTokenData.availableBalance).minus(estimatedTransactionCost).toFixed(0))
+      const recommendedBN = new BigNumber(nativeTokenData.availableBalance).minus(estimatedTransactionCost)
+      setMaxRecommendedAmount(recommendedBN.gte(0) ? recommendedBN.toFixed(0) : 0)
     }).catch(err => {
       setError(err.message + ' ' + url)
     })
 
   }, [setTransactionEstimationCost, setMaxRecommendedAmount, nativeTokenData, network, relayerURL, setError])
+
+  const onAmountChange = useCallback(() => (val) => {
+    setHasModifiedAmount(true)
+    if (val === '') {
+      setNativeHumanAmount(0)
+      setNativeAmount(0)
+      return
+    }
+    if (
+      (val.endsWith('.') && val.split('.').length === 2)
+      || (val.split('.').length === 2 && val.endsWith('0'))
+    ) {
+      setNativeHumanAmount(val)
+      return
+    }
+
+    if (!isNaN(val)) {
+      let newHumanAmount = new BigNumber(val).toFixed(nativeTokenData.decimals)
+      if (new BigNumber(newHumanAmount).multipliedBy(10 ** nativeTokenData.decimals).comparedTo(nativeTokenData.availableBalance) === 1) {
+        newHumanAmount = new BigNumber(nativeTokenData.availableBalance).dividedBy(10 ** nativeTokenData.decimals).toFixed(nativeTokenData.decimals)
+      }
+      //trim trailing . or 0
+      newHumanAmount = newHumanAmount.replace(/\.?0+$/g, '')
+
+      setNativeHumanAmount(newHumanAmount)
+      setNativeAmount(new BigNumber(newHumanAmount).multipliedBy(10 ** nativeTokenData.decimals).toFixed(0))
+    }
+  }, [nativeTokenData])
 
   useEffect(() => {
     const initialHumanAmount = new BigNumber(nativeTokenData.amount).dividedBy(10 ** nativeTokenData.decimals).toFixed(nativeTokenData.decimals).replace(/\.?0+$/g, '')
@@ -123,7 +156,7 @@ const AssetsMigrationNative = ({
   }, [nativeTokenData])
 
   useEffect(() => {
-
+    if (hidden) return
     const getDisplayedButtons = () => {
       let buttons = []
       if (hasMigratedNative) {
@@ -151,18 +184,21 @@ const AssetsMigrationNative = ({
           icon={<MdOutlineNavigateBefore/>}
           className={'clear'}
           onClick={() => cancelMigration()}
+          key='0'
         >Back</Button>)
 
         if (isMigrationPending) {
           buttons.push(<Button
             icon={<Loading/>}
             className={'primary disabled'}
+            key='1'
           >Moving {nativeTokenData.name}...</Button>)
         } else {
           buttons.push(<Button
             icon={<MdOutlineNavigateNext/>}
             className={'primary'}
             onClick={() => migrateNative()}
+            key='1'
           >Move {nativeTokenData.name}</Button>)
         }
       }
@@ -170,7 +206,9 @@ const AssetsMigrationNative = ({
     }
 
     setModalButtons(getDisplayedButtons())
-  }, [hasMigratedNative, hasERC20Tokens, setModalButtons, hideModal, isMigrationPending, cancelMigration, migrateNative, continueMigration, wallet, nativeTokenData])
+  }, [hasMigratedNative, hasERC20Tokens, setModalButtons, hideModal, isMigrationPending, cancelMigration, migrateNative, continueMigration, wallet, nativeTokenData, hidden])
+
+  if (hidden) return <></>
 
   return (
     <div>
@@ -191,6 +229,13 @@ const AssetsMigrationNative = ({
             </div>
             <div className='migration-native-title-asset-name'>Migrate native asset <b>{nativeTokenData.name}</b></div>
           </div>
+          {
+            hasCorrectNetwork === false &&
+            <div className={'notification-hollow warning mt-4'}>
+              Your signer wallet is connected to the wrong network.<br />
+              Please connect to {network.id}
+            </div>
+          }
 
           {
             hasMigratedNative
@@ -215,38 +260,12 @@ const AssetsMigrationNative = ({
                 <div className={'migration-native-row'}>
                   <span className={'migration-native-row-key'}>Amount to migrate</span>
                   {
-                    (hasModifiedAmount || nativeAmount > maxRecommendedAmount)
+                    (hasModifiedAmount || (maxRecommendedAmount !== null && nativeAmount > maxRecommendedAmount))
                       ?
                       <TextInput
                         className={'migrate-amount-input'}
                         value={nativeHumanAmount}
-                        onChange={(val) => {
-                          setHasModifiedAmount(true)
-                          if (val === '') {
-                            setNativeHumanAmount(0)
-                            setNativeAmount(0)
-                            return
-                          }
-                          if (
-                            (val.endsWith('.') && val.split('.').length === 2)
-                            || (val.split('.').length === 2 && val.endsWith('0'))
-                          ) {
-                            setNativeHumanAmount(val)
-                            return
-                          }
-
-                          if (!isNaN(val)) {
-                            let newHumanAmount = new BigNumber(val).toFixed(nativeTokenData.decimals)
-                            if (new BigNumber(newHumanAmount).multipliedBy(10 ** nativeTokenData.decimals).comparedTo(nativeTokenData.availableBalance) === 1) {
-                              newHumanAmount = new BigNumber(nativeTokenData.availableBalance).dividedBy(10 ** nativeTokenData.decimals).toFixed(nativeTokenData.decimals)
-                            }
-                            //trim trailing . or 0
-                            newHumanAmount = newHumanAmount.replace(/\.?0+$/g, '')
-
-                            setNativeHumanAmount(newHumanAmount)
-                            setNativeAmount(new BigNumber(newHumanAmount).multipliedBy(10 ** nativeTokenData.decimals).toFixed(0))
-                          }
-                        }}
+                        onChange={onAmountChange}
                       />
                       :
                       <div>{nativeHumanAmount}</div>
@@ -254,7 +273,7 @@ const AssetsMigrationNative = ({
                 </div>
 
                 {
-                  nativeAmount > maxRecommendedAmount &&
+                  maxRecommendedAmount !== null && nativeAmount > maxRecommendedAmount &&
                   <div className={'notification-hollow warning mt-4'}>
                     <div>
                       Current Transaction cost :
@@ -264,12 +283,20 @@ const AssetsMigrationNative = ({
                     </div>
 
                     <div className={'mt-3 mb-3'}>
-                      <span>According to the current gas prices, the maximum recommended to migrate is </span>
-                      <span className={'migration-native-selection'} onClick={() => updateAmount(maxRecommendedAmount)}>
-                        {new BigNumber(maxRecommendedAmount).dividedBy(10 ** nativeTokenData.decimals).toFixed(6)} {nativeTokenData.name}
-                      </span>
+                      {
+                        maxRecommendedAmount > 0
+                          ?
+                          <>
+                            <span>According to the current gas prices, the maximum recommended to migrate is </span>
+                            <span className={'migration-native-selection'} onClick={() => updateAmount(maxRecommendedAmount)}>
+                              {new BigNumber(maxRecommendedAmount).dividedBy(10 ** nativeTokenData.decimals).toFixed(6)} {nativeTokenData.name}
+                            </span>
+                            <div>Sending more might not cover the gas fees</div>
+                          </>
+                          :
+                          <span>According to the current gas prices, the signer does not have enough funds to cover the transaction fee</span>
+                      }
                     </div>
-                    <div>Sending more might not cover the gas fees</div>
                   </div>
                 }
 

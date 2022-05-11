@@ -25,6 +25,7 @@ const AssetsMigrationPermitter = ({
                                     hideModal,
                                     setStep,
                                     setModalButtons,
+                                    hidden,
                                   }) => {
 
   //storing user sign/approve or rejection
@@ -274,7 +275,6 @@ const AssetsMigrationPermitter = ({
           old[address] = false
           return { ...old }
         })
-
       }
 
       return true
@@ -406,6 +406,7 @@ const AssetsMigrationPermitter = ({
   }, [readyTokensCount, selectedTokensWithAllowance, setError])
 
   useEffect(() => {
+    if (hidden) return
     setModalButtons(
       <>
         <Button
@@ -429,7 +430,9 @@ const AssetsMigrationPermitter = ({
         }
       </>
     )
-  }, [cancelMigration, completeMigration, readyTokensCount, selectedTokensWithAllowance, setModalButtons])
+  }, [cancelMigration, completeMigration, readyTokensCount, selectedTokensWithAllowance, setModalButtons, hidden])
+
+  if (hidden) return <></>
 
   return (
     <div>

@@ -31,7 +31,7 @@ const tabSegments = [
 ]
 
 
-export default function Dashboard({ portfolio, selectedNetwork, selectedAccount, setNetwork, privateMode, rewardsData, accounts, addRequest, relayerURL }) {
+export default function Dashboard({ portfolio, selectedNetwork, selectedAccount, setNetwork, privateMode, rewardsData, accounts, addRequest, relayerURL, useStorage }) {
     const history = useHistory()
     const { tabId } = useParams()
 
@@ -84,6 +84,7 @@ export default function Dashboard({ portfolio, selectedNetwork, selectedAccount,
                 closeable={true}
                 relayerURL={relayerURL}
                 portfolio={portfolio}
+                useStorage={useStorage}
               />
             }
             <div id="overview">

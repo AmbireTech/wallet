@@ -19,7 +19,7 @@ const Stepper: FC<props> = ({steps, currentStep, noLabels = false}) => {
       {
         steps.map((s, index) => {
           return (
-            <div className={`step step${currentStep > index ? 'Prev' : (currentStep === index ? 'Current' : 'Next')}`}>
+            <div className={`step step${currentStep > index ? 'Prev' : (currentStep === index ? 'Current' : 'Next')}`} key={index}>
               <span className='stepStatus'></span>
               {
                 !noLabels &&

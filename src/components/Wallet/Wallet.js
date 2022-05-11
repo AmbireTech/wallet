@@ -42,6 +42,7 @@ export default function Wallet(props) {
         rewardsData={props.rewardsData}
         addRequest={props.addRequest}
         relayerURL={props.relayerURL}
+        useStorage={props.useStorage}
       />
     },
     {
@@ -53,6 +54,7 @@ export default function Wallet(props) {
         addRequest={props.addRequest}
         relayerURL={props.relayerURL}
         portfolio={props.portfolio}
+        useStorage={props.useStorage}
       />
     },
     {
