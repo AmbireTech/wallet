@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useReducer, useRef } from 'react'
+import { useCallback, useEffect, useReducer, useRef, useState } from 'react'
 import { useToasts } from 'hooks/toasts'
 import { isFirefox } from 'lib/isFirefox'
 
@@ -17,6 +17,8 @@ const getDefaultState = () => ({ connections: [], requests: [] })
 let connectors = {}
 let connectionErrors = []
 
+async function wait (ms) { return new Promise(resolve => setTimeout(resolve, ms)) }
+
 // Offline check: if it errored recently
 const timePastForConnectionErr = 90 * 1000
 const checkIsOffline = uri => {
@@ -32,6 +34,8 @@ export default function useWalletConnect ({ account, chainId, initialUri, allNet
     // This is needed cause of the WalletConnect event handlers
     const stateRef = useRef()
     stateRef.current = { account, chainId }
+
+    const [isConnecting, setIsConnecting] = useState(false)
 
     const [stateStorage, setStateStorage] = useStorage({ key: STORAGE_KEY })
 
@@ -126,8 +130,16 @@ export default function useWalletConnect ({ account, chainId, initialUri, allNet
     // we need this so we can invoke the latest version from any event handler
     stateRef.current.maybeUpdateSessions = maybeUpdateSessions
 
+    const clearWcClipboard = async () => {
+        const clipboard = await getClipboardText()
+
+        if (clipboard && isWcUri(clipboard)) {
+            navigator.clipboard.writeText('')
+        }
+    }
+
     // New connections
-    const connect = useCallback(connectorOpts => {
+    const connect = useCallback(async connectorOpts => {
         if (connectors[connectorOpts.uri]) {
             addToast('dApp already connected')
             return connectors[connectorOpts.uri]
@@ -139,6 +151,10 @@ export default function useWalletConnect ({ account, chainId, initialUri, allNet
                 cryptoLib,
                 sessionStorage: noopSessionStorage
             })
+
+            if (!connector.connected) {
+                await connector.createSession();
+            }
         } catch(e) {
             console.error(e)
             addToast(`Unable to connect to ${connectorOpts.uri}: ${e.message}`, { error: true })
@@ -160,11 +176,13 @@ export default function useWalletConnect ({ account, chainId, initialUri, allNet
             if (!connector.session.peerMeta) addToast(`Unable to get session from dApp - ${suggestion}`, { error: true })
         }, SESSION_TIMEOUT)
 
-        connector.on('session_request', (error, payload) => {
+        connector.on('session_request', async (error, payload) => {
             if (error) {
                 onError(error)
                 return
             }
+
+            setIsConnecting(true)
 
             // Clear the "dApp tool too long to connect" timeout
             clearTimeout(sessionTimeout)
@@ -176,17 +194,40 @@ export default function useWalletConnect ({ account, chainId, initialUri, allNet
                 return
             }
 
+            await wait(1000)
+
             // sessionStart is used to check if dApp disconnected immediately
             sessionStart = Date.now()
             connector.approveSession({
                 accounts: [stateRef.current.account],
                 chainId: stateRef.current.chainId,
             })
+
+            await wait(1000)
+
+            // On a session request, remove WC uri from the clipboard.
+            // Otherwise, in the case the user disconnects himself from the dApp, but still having the previous WC uri in the clipboard,
+            // then the app will try to connect him with the already invalidated WC uri.
+            clearWcClipboard()
+
+            // We need to make sure that we are connected to the dApp successfully,
+            // before keeping the session as connected via `connectedNewSession` dispatch.
+            // We had a case with www.chargedefi.fi, where we were immediately disconnected on a session_request,
+            // because of unsupported network selected on our end,
+            // but still storing the session in the state as a successful connection, which resulted in app crashes.
+            if (!connector.connected) {
+                setIsConnecting(false)
+
+                return
+            }
+
             // It's safe to read .session right after approveSession because 1) approveSession itself normally stores the session itself
             // 2) connector.session is a getter that re-reads private properties of the connector; those properties are updated immediately at approveSession
             dispatch({ type: 'connectedNewSession', uri: connectorOpts.uri, session: connector.session })
 
             addToast('Successfully connected to '+connector.session.peerMeta.name)
+
+            setIsConnecting(false)
         })
 
         connector.on('transport_error', (error, payload) => {
@@ -349,7 +390,7 @@ export default function useWalletConnect ({ account, chainId, initialUri, allNet
         connections: state.connections,
         requests: state.requests,
         resolveMany,
-        connect, disconnect
+        connect, disconnect, isConnecting
     }
 }
 
@@ -365,17 +406,27 @@ function runInitEffects(wcConnect, account, initialUri, addToast) {
     window.wcConnect = uri => wcConnect({ uri })
 
     // @TODO on focus and on user action
-    const clipboardError = e => console.log('non-fatal clipboard/walletconnect err:', e.message)
     const tryReadClipboard = async () => {
         if (!account) return
-        if (isFirefox()) return
-        try {
-            const clipboard = await navigator.clipboard.readText()
-            if (clipboard.startsWith('wc:') && !connectors[clipboard]) wcConnect({ uri: clipboard })
-        } catch(e) { clipboardError(e) }
+
+        const clipboard = await getClipboardText()
+        if (clipboard && isWcUri(clipboard) && !connectors[clipboard]) wcConnect({ uri: clipboard })
     }
 
     tryReadClipboard()
     window.addEventListener('focus', tryReadClipboard)
     return () => window.removeEventListener('focus', tryReadClipboard)
 }
+
+const clipboardError = e => console.log('non-fatal clipboard/walletconnect err:', e.message)
+const getClipboardText = async () => {
+    if (isFirefox()) return false
+
+    try {
+       return await navigator.clipboard.readText()
+    } catch(e) { clipboardError(e) }
+
+    return false
+}
+
+const isWcUri = text => text.startsWith('wc:')

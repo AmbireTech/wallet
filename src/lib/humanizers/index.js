@@ -11,10 +11,12 @@ import OpenSea from './OpenSea'
 import WALLETSupplyController from './WALLETSupplyController'
 import AmbireBatcher from './AmbireBatcher'
 import WALLETStakingPool from './WALLETStakingPool'
+import AaveWethGatewayV2 from './AaveWethGatewayV2'
 
 const all = {
 	...UniRouters,
 	...AaveLendingPoolV2,
+	...AaveWethGatewayV2,
 	...ERC20,
 	...ERC721,
 	...WETH,

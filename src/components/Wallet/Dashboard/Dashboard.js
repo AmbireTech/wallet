@@ -30,8 +30,7 @@ const tabSegments = [
     }
 ]
 
-
-export default function Dashboard({ portfolio, selectedNetwork, selectedAccount, setNetwork, privateMode, rewardsData, accounts, addRequest, relayerURL, useStorage }) {
+export default function Dashboard({ portfolio, selectedNetwork, selectedAccount, setNetwork, privateMode, rewardsData,  userSorting, setUserSorting, accounts, addRequest, relayerURL, useStorage }) {
     const history = useHistory()
     const { tabId } = useParams()
 
@@ -53,7 +52,7 @@ export default function Dashboard({ portfolio, selectedNetwork, selectedAccount,
             }))
             .filter(({ value }) => value > 0);
 
-        const totalProtocols = portfolio.protocols.map(({ assets }) => 
+        const totalProtocols = portfolio.protocols.map(({ assets }) =>
             assets
                 .map(({ balanceUSD }) => balanceUSD)
                 .reduce((acc, curr) => acc + curr, 0))
@@ -91,17 +90,12 @@ export default function Dashboard({ portfolio, selectedNetwork, selectedAccount,
                 <div id="balance" className="panel">
                     <div className="title">Balance</div>
                     <div className="content">
-                        {
-                            portfolio.isBalanceLoading ? 
-                                <Loading/>
-                                :
-                                <Balances
-                                    portfolio={portfolio}
-                                    selectedNetwork={selectedNetwork}
-                                    setNetwork={setNetwork}
-                                    hidePrivateValue={privateMode.hidePrivateValue}
-                                />
-                        }
+                        <Balances
+                            portfolio={portfolio}
+                            selectedNetwork={selectedNetwork}
+                            setNetwork={setNetwork}
+                            hidePrivateValue={privateMode.hidePrivateValue}
+                        />
                     </div>
                 </div>
                 <div id="chart" className="panel">
@@ -112,12 +106,12 @@ export default function Dashboard({ portfolio, selectedNetwork, selectedAccount,
                     <div className="content">
                         {
                             chartType === chartSegments[0].value ?
-                                portfolio.isBalanceLoading ?
+                                portfolio.isCurrNetworkBalanceLoading ?
                                     <Loading/>
                                     :
                                     privateMode.hidePrivateContent(<Chart data={chartTokensData} size={200}/>)
                                 :
-                                portfolio.areProtocolsLoading ?
+                                portfolio.isCurrNetworkProtocolsLoading ?
                                     <Loading/>
                                     :
                                     privateMode.hidePrivateContent(<Chart data={chartProtocolsData} size={200}/>)
@@ -138,6 +132,8 @@ export default function Dashboard({ portfolio, selectedNetwork, selectedAccount,
                                 network={selectedNetwork}
                                 account={selectedAccount}
                                 hidePrivateValue={privateMode.hidePrivateValue}
+                                userSorting={userSorting}
+                                setUserSorting={setUserSorting}
                             />
                             :
                             <Collectibles portfolio={portfolio} isPrivateMode={privateMode.isPrivateMode} />
@@ -150,14 +146,6 @@ export default function Dashboard({ portfolio, selectedNetwork, selectedAccount,
                             If you don't see a specific token that you own, please check the <a href={`${selectedNetwork.explorerUrl}/address/${selectedAccount}`} target="_blank" rel="noreferrer">Block Explorer</a>
                         </span>
                     </div>
-                    {
-                        portfolio.areProtocolsLoading || !portfolio.protocols.length ?
-                            null
-                            :
-                            <div className="powered">
-                                Powered by Velcro
-                            </div>
-                    }
                 </div>
             </div>
         </section>

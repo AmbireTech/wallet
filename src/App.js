@@ -23,6 +23,9 @@ import useNotifications from './hooks/notifications'
 import { useAttentionGrabber, usePortfolio, useAddressBook, useRelayerData, usePrivateMode, useLocalStorage } from './hooks'
 import { useToasts } from './hooks/toasts'
 import { useOneTimeQueryParam } from './hooks/oneTimeQueryParam'
+import WalletStakingPoolABI from './consts/WalletStakingPoolABI.json'
+import { Contract, utils } from 'ethers'
+import { getProvider } from './lib/provider'
 
 const relayerURL = process.env.hasOwnProperty('REACT_APP_RELAYER_URL') ? process.env.REACT_APP_RELAYER_URL : 'http://localhost:1934'
 
@@ -47,7 +50,7 @@ function AppInner() {
   const wcUri = useOneTimeQueryParam('uri')
 
   // Signing requests: transactions/signed msgs: all requests are pushed into .requests
-  const { connections, connect, disconnect, requests: wcRequests, resolveMany: wcResolveMany } = useWalletConnect({
+  const { connections, connect, disconnect, isConnecting, requests: wcRequests, resolveMany: wcResolveMany } = useWalletConnect({
     account: selectedAcc,
     chainId: network.chainId,
     initialUri: wcUri,
@@ -62,10 +65,48 @@ function AppInner() {
     useStorage: useLocalStorage
   }, [selectedAcc, network])
 
+  // Attach meta data to req, if needed
+  const attachMeta = async req => {
+    let meta
+
+    const WALLET_TOKEN_ADDRESS = '0x88800092ff476844f74dc2fc427974bbee2794ae'
+    const WALLET_STAKING_ADDRESS = '0x47cd7e91c3cbaaf266369fe8518345fc4fc12935'
+
+    //polygon tests
+    // const WALLET_TOKEN_ADDRESS = '0xe9415e904143e42007865e6864f7f632bd054a08'
+    // const WALLET_STAKING_ADDRESS = '0xec3b10ce9cabab5dbf49f946a623e294963fbb4e'
+
+    const shouldAttachMeta =  [WALLET_TOKEN_ADDRESS, WALLET_STAKING_ADDRESS].includes(req.txn.to.toLowerCase())
+
+    if (shouldAttachMeta) {
+      const WALLET_STAKING_POOL_INTERFACE = new utils.Interface(WalletStakingPoolABI)
+      const provider = getProvider(network.id)
+      const stakingTokenContract = new Contract(WALLET_STAKING_ADDRESS, WALLET_STAKING_POOL_INTERFACE, provider)
+      const shareValue = await stakingTokenContract.shareValue()
+      const { usdPrice: walletTokenUsdPrice, xWALLETAPY: APY } = rewardsData.data
+
+      meta = {
+        xWallet: {
+          APY,
+          shareValue,
+          walletTokenUsdPrice,
+        },
+      }
+    }
+
+    if (!meta) return req
+
+    return { ...req, meta: { ...req.meta && req.meta, ...meta }}
+  }
+
   // Internal requests: eg from the Transfer page, Security page, etc. - requests originating in the wallet UI itself
   // unlike WalletConnect or SafeSDK requests, those do not need to be persisted
   const [internalRequests, setInternalRequests] = useState([])
-  const addRequest = req => setInternalRequests(reqs => [...reqs, req])
+  const addRequest = async req => {
+    const request = await attachMeta(req)
+
+    return setInternalRequests(reqs => [...reqs, request])
+  }
 
   // Merge all requests
   const requests = useMemo(
@@ -87,6 +128,11 @@ function AppInner() {
   })
 
   const privateMode = usePrivateMode(useLocalStorage)
+
+  const [userSorting, setUserSorting] = useLocalStorage({
+    key: 'userSorting',
+    defaultValue: {}
+})
 
   // Show the send transaction full-screen modal if we have a new txn
   const eligibleRequests = useMemo(() => requests
@@ -181,6 +227,7 @@ function AppInner() {
       totalRequests={everythingToSign.length}
       connections={connections}
       relayerURL={relayerURL}
+      network={network}
       resolve={outcome => resolveMany([everythingToSign[0].id], outcome)}
     ></SignMessage>)}
 
@@ -208,7 +255,7 @@ function AppInner() {
       <Route path="/email-login">
         <EmailLogin relayerURL={relayerURL} onAddAccount={onAddAccount}></EmailLogin>
       </Route>
-      
+
       {selectedAcc ?
         <Route path="/wallet">
           <Wallet
@@ -227,6 +274,7 @@ function AppInner() {
             // needed by the top bar to disconnect/connect dapps
             connect={connect}
             disconnect={disconnect}
+            isWcConnecting={isConnecting}
             // needed by the gnosis plugins
             gnosisConnect={gnosisConnect}
             gnosisDisconnect={gnosisDisconnect}
@@ -240,6 +288,8 @@ function AppInner() {
             rewardsData={rewardsData}
             privateMode={privateMode}
             useStorage={useLocalStorage}
+            userSorting={userSorting}
+            setUserSorting={setUserSorting}
           >
           </Wallet>
         </Route> :
