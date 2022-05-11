@@ -33,7 +33,7 @@ const validateAddAuthSignerAddress = (address, selectedAcc) => {
     return { success: true }
 }
 
-const validateSendTransferAddress = (address, selectedAcc, addressConfirmed, isKnownAddress) => {
+const validateSendTransferAddress = (address, selectedAcc, addressConfirmed, isKnownAddress, isUDAddress) => {
     const isValidAddr = validateAddress(address)
     if (!isValidAddr.success) return isValidAddr
 
@@ -51,10 +51,17 @@ const validateSendTransferAddress = (address, selectedAcc, addressConfirmed, isK
         }
     }
 
-    if (address && (!isKnownAddress(address) && !addressConfirmed)) {
+    if (address && (!isKnownAddress(address) && !addressConfirmed && !isUDAddress)) { 
         return {
             success: false,
             message: `You're trying to send to an unknown address. If you're really sure, confirm using the checkbox below.`
+        }
+    }
+
+    if (address && (!isKnownAddress(address) && !addressConfirmed && isUDAddress)) { 
+        return {
+            success: false,
+            message: `You're trying to send to an unstoppable domain. If you really trust to the person who gave you, confirm using the checkbox below.`
         }
     }
 
@@ -94,11 +101,11 @@ const validateSendTransferAmount = (amount, selectedAsset) => {
     return { success: true }
 }
 
-const validateSendNftAddress = (address, selectedAcc, addressConfirmed, isKnownAddress, metadata, selectedNetwork, network) => {
-    const isValidAddr = validateSendTransferAddress(address, selectedAcc, addressConfirmed, isKnownAddress)
+const validateSendNftAddress = (address, selectedAcc, addressConfirmed, isKnownAddress, metadata, selectedNetwork, network, isUDAddress) => {
+    const isValidAddr = validateSendTransferAddress(address, selectedAcc, addressConfirmed, isKnownAddress, isUDAddress)
     if (!isValidAddr.success) return isValidAddr
 
-    if (metadata && selectedAcc && (metadata.owner?.address !== selectedAcc)) {
+    if (metadata && selectedAcc && (metadata.owner?.address.toLowerCase() !== selectedAcc.toLowerCase())) {
         return {
             success: false,
             message: `The NFT you're trying to send is not owned by you!`
