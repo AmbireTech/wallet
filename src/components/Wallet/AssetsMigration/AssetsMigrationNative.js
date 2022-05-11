@@ -121,7 +121,7 @@ const AssetsMigrationNative = ({
 
   }, [setTransactionEstimationCost, setMaxRecommendedAmount, nativeTokenData, network, relayerURL, setError])
 
-  const onAmountChange = useCallback(() => (val) => {
+  const onAmountChange = useCallback((val) => {
     setHasModifiedAmount(true)
     if (val === '') {
       setNativeHumanAmount(0)
