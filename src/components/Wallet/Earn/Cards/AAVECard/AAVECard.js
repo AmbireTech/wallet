@@ -36,7 +36,7 @@ const AAVECard = ({ networkId, tokens, account, addRequest }) => {
                         <ToolTip label="Annual Percentage Rate">
                             <div>APR&nbsp;<MdInfo/></div>
                         </ToolTip>
-                    </>, 
+                    </>,
                     `${token.apr}%`
                 ],
                 ['Lock', 'No Lock'],
@@ -97,7 +97,7 @@ const AAVECard = ({ networkId, tokens, account, addRequest }) => {
             const provider = getProvider(networkDetails.id)
             const lendingPoolProviderContract = new ethers.Contract(providerAddress, AAVELendingPool, provider)
             lendingPoolAddress = await lendingPoolProviderContract.getLendingPool()
-        
+
             const lendingPoolContract = new ethers.Contract(lendingPoolAddress, AAVELendingPool, provider)
             const reserves = await lendingPoolContract.getReservesList()
             const reservesAddresses = reserves.map(reserve => reserve.toLowerCase())
@@ -119,7 +119,7 @@ const AAVECard = ({ networkId, tokens, account, addRequest }) => {
                 ...defaultTokens.filter(({ type, address }) => type === 'deposit' && !depositTokens.map(({ address }) => address).includes(address)),
                 ...defaultTokens.filter(({ type, address }) => type === 'withdraw' && !withdrawTokens.map(({ address }) => address).includes(address))
             ]))
-            
+
             const uniqueTokenAddresses = [...new Set(allTokens.map(({ address }) => address))]
             const tokensAPR = Object.fromEntries(await Promise.all(uniqueTokenAddresses.map(async address => {
                 const data = await lendingPoolContract.getReserveData(address)
@@ -130,7 +130,7 @@ const AAVECard = ({ networkId, tokens, account, addRequest }) => {
 
 
             const tokensItems = allTokens.map(token => {
-                const arp = tokensAPR[token.address] === '0.00' 
+                const arp = tokensAPR[token.address] === '0.00' && tokensAPR[token.baseTokenAddress]
                 ? tokensAPR[token.baseTokenAddress]
                 : tokensAPR[token.address]
                 return {
@@ -160,14 +160,14 @@ const AAVECard = ({ networkId, tokens, account, addRequest }) => {
     }, [networkId])
 
     return (
-        <Card 
-            loading={isLoading} 
-            unavailable={unavailable} 
-            icon={AAVE_ICON} details={details} 
-            tokensItems={tokensItems} 
-            onTokenSelect={onTokenSelect} 
+        <Card
+            loading={isLoading}
+            unavailable={unavailable}
+            icon={AAVE_ICON} details={details}
+            tokensItems={tokensItems}
+            onTokenSelect={onTokenSelect}
             onValidate={onValidate}
-            moreDetails={<EarnDetailsModal 
+            moreDetails={<EarnDetailsModal
                 title={'What is Aave'}
                 description={'Aave is an open source and non-custodial DeFi protocol for earning interest on deposits and borrowing assets. Depositors provide liquidity to the market to earn a passive income, while borrowers are able to borrow in an overcollateralized (perpetually) or undercollateralized (one-block liquidity) fashion.'}/>}
             />
