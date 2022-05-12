@@ -1,6 +1,6 @@
 import './SignMessage.scss'
 import { MdBrokenImage, MdCheck, MdClose } from 'react-icons/md'
-import { ethers, Wallet } from 'ethers'
+import { Wallet } from 'ethers'
 import { toUtf8String, arrayify, isHexString, toUtf8Bytes, _TypedDataEncoder } from 'ethers/lib/utils'
 import { signMessage712, signMessage } from 'adex-protocol-eth/js/Bundle'
 import * as blockies from 'blockies-ts';
@@ -66,88 +66,23 @@ export default function SignMessage ({ toSign, resolve, account, connections, re
   }
 
 
-  //Undeployed signature verification implemenatation
-  const ambireUndeployedValidationCallback = (signer, hash, sig) => {
-
-    //override signer var as the signer is actually the signer, not identity
-    if (!account) return false
-    if (account.signer.address) {
-      signer = account.signer.address
-    } else {
-      signer = account.signer.two
-    }
-
-    const ambireUndeployedQuickAccCheck = (signer, hash, sig) => {
-      const decoded = ethers.utils.defaultAbiCoder.decode([
-        'uint',
-        'bytes',
-        'bytes'
-      ], sig)
-
-      const sig1 = decoded[1]
-      const sig2 = decoded[2]
-
-      const b1 = Buffer.from(sig1.substr(2), 'hex')
-      const subMode1 = b1[b1.length - 1]
-
-      const b2 = Buffer.from(sig2.substr(2), 'hex')
-      const subMode2 = b2[b2.length - 1]
-
-      return ambireUndeployedStandardCheck(signer, hash, sig1, subMode1 === 1) || ambireUndeployedStandardCheck(signer, hash, sig2, subMode2 === 1)
-    }
-
-    const ambireUndeployedStandardCheck = (signer, message, sig, isMessage) => {
-      const b = Buffer.from(sig.substr(2), 'hex')
-      const v = b[64]
-
-      if (v !== 27 && v !== 28) return false
-
-      if (isMessage) {
-        hash = ethers.utils.keccak256(ethers.utils.solidityPack(['string', 'bytes32'], ['\x19Ethereum Signed Message:\n32', hash]))
-      }
-
-      const recoveredSigner = ethers.utils.recoverAddress(hash, '0x' + b.slice(0, 65).toString('hex'))
-
-      if (!recoveredSigner) {
-        return false
-      }
-      return recoveredSigner.toLowerCase() === signer.toLowerCase();
-    }
-
-    const b = Buffer.from(sig.substr(2), 'hex')
-    const mode = b[b.length - 1]
-
-    if (mode === 0 || mode === 1) {
-      return ambireUndeployedStandardCheck(signer, hash, '0x' + b.slice(0, 65).toString('hex'), mode === 1)
-    } else if (mode === 2) {
-      //need deployed contract as privileges are checked, but we can still check one of the signer
-      return ambireUndeployedQuickAccCheck(signer, hash, sig)
-    } else {
-      return false
-    }
-  }
-
-
   const verifySignatureDebug = (toSign, sig) => {
-    if (SIGNATURE_VERIFIER_DEBUGGER) {
-      const provider = getProvider(network.id)
-      verifyMessage({
-        provider,
-        signer: account.id,
-        message: toSign.type === 'eth_signTypedData_v4' ? null : getMessageAsBytes(toSign.txn),
-        typedData: toSign.type === 'eth_signTypedData_v4' ? dataV4 : null,
-        signature: sig,
-        undeployedCallback: ambireUndeployedValidationCallback
-      }).then(verificationResult => {
-        if (verificationResult.success) {
-          addToast('SIGNATURE VALID: ' + verificationResult.type)
-        } else {
-          addToast('SIGNATURE INVALID', { error: true })
-        }
-      }).catch(e => {
-        addToast('SIGNATURE INVALID: ' + e.message, { error: true })
-      })
-    }
+    const provider = getProvider(network.id)
+    verifyMessage({
+      provider,
+      signer: account.id,
+      message: toSign.type === 'eth_signTypedData_v4' ? null : getMessageAsBytes(toSign.txn),
+      typedData: toSign.type === 'eth_signTypedData_v4' ? dataV4 : null,
+      signature: sig
+    }).then(verificationResult => {
+      if (verificationResult) {
+        addToast('SIGNATURE VALID')
+      } else {
+        addToast('SIGNATURE INVALID', { error: true })
+      }
+    }).catch(e => {
+      addToast('SIGNATURE INVALID: ' + e.message, { error: true })
+    })
   }
 
   const approveQuickAcc = async confirmationCode => {
@@ -193,14 +128,13 @@ export default function SignMessage ({ toSign, resolve, account, connections, re
       if (!account.primaryKeyBackup) throw new Error(`No key backup found: you need to import the account from JSON or login again.`)
       const wallet = await Wallet.fromEncryptedJson(JSON.parse(account.primaryKeyBackup), signingState.passphrase)
 
-      let sig
-      if (isTypedData) {
-        sig = await signMessage712(wallet, account.id, account.signer, dataV4.domain, dataV4.types, dataV4.message, signature)
-      } else {
-        sig = await signMessage(wallet, account.id, account.signer, getMessageAsBytes(toSign.txn), signature)
-      }
+      const sig = isTypedData
+        ? await signMessage712(wallet, account.id, account.signer, dataV4.domain, dataV4.types, dataV4.message, signature)
+        : await signMessage(wallet, account.id, account.signer, getMessageAsBytes(toSign.txn), signature)
 
-      verifySignatureDebug(toSign, sig)
+      if (SIGNATURE_VERIFIER_DEBUGGER) {
+        verifySignatureDebug(toSign, sig)
+      }
 
       resolve({ success: true, result: sig })
       addToast(`Successfully signed!`)
@@ -227,14 +161,13 @@ export default function SignMessage ({ toSign, resolve, account, connections, re
       // Unfortunately that isn't possible, because isValidSignature only takes a bytes32 hash; so to sign this with
       // a personal message, we need to be signing the hash itself as binary data such that we match 'Ethereum signed message:\n32<hash binary data>' on the contract
 
-      let sig
-      if (toSign.type === 'eth_signTypedData_v4') {
-        sig = await signMessage712(wallet, account.id, account.signer, dataV4.domain, dataV4.types, dataV4.message)
-      } else {
-        sig = await signMessage(wallet, account.id, account.signer, getMessageAsBytes(toSign.txn))
-      }
+      const sig = toSign.type === 'eth_signTypedData_v4'
+        ? await signMessage712(wallet, account.id, account.signer, dataV4.domain, dataV4.types, dataV4.message)
+        : await signMessage(wallet, account.id, account.signer, getMessageAsBytes(toSign.txn))
 
-      verifySignatureDebug(toSign, sig)
+      if (SIGNATURE_VERIFIER_DEBUGGER) {
+        verifySignatureDebug(toSign, sig)
+      }
 
       resolve({ success: true, result: sig })
       addToast(`Successfully signed!`)
