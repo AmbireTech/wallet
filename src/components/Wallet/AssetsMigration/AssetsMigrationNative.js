@@ -35,9 +35,6 @@ const AssetsMigrationNative = ({
 
   const [hasModifiedAmount, setHasModifiedAmount] = useState(false)
 
-  //TODO: decide whether we use the signer wallet detection feature
-  const [hasCorrectNetwork, setHasCorrectNetwork] = useState(null)
-
   let wallet
   try {
     wallet = getWallet({
@@ -61,7 +58,7 @@ const AssetsMigrationNative = ({
   }, [setStep])
 
   //Pops MM modal to send native to Identity
-  const migrateNative = useCallback(() => {
+  const migrateNative = useCallback(async () => {
     if (!wallet) return
     setError(null)
     setIsMigrationPending(true)
@@ -70,29 +67,37 @@ const AssetsMigrationNative = ({
       setBeforeCloseModalHandler(null)
     }
 
-    wallet.sendTransaction({
-      from: signer.address,
-      to: identityAccount,
-      gasLimit: 25000,
-      value: '0x' + new BigNumber(nativeAmount).toString(16),
-    }).then(async rcpt => {
-      await rcpt.wait()
-      setHasMigratedNative(true)
-      setIsMigrationPending(false)
-      return true
-    }).catch(err => {
-      setHasMigratedNative(false)
-      setIsMigrationPending(false)
+    let hasCorrectChain = wallet.provider ? ( (await wallet.getChainId().catch(e => {setError('Could not get chainId: ', e.message)})) === network.chainId ) : true
 
-      if (err && err.message.includes('must provide an Ethereum address')) {
-        setError(`Make sure your wallet is unlocked and connected with ${signer.address}.`)
-      } else {
-        setError('Native asset migration failed')
-      }
+    if (hasCorrectChain) {
+      wallet.sendTransaction({
+        from: signer.address,
+        to: identityAccount,
+        gasLimit: 25000,
+        value: '0x' + new BigNumber(nativeAmount).toString(16),
+        chainId: network.chainId
+      }).then(async rcpt => {
+        await rcpt.wait()
+        setHasMigratedNative(true)
+        setIsMigrationPending(false)
+        return true
+      }).catch(err => {
+        setHasMigratedNative(false)
+        setIsMigrationPending(false)
 
-      return false
-    })
-  }, [wallet, setError, hasERC20Tokens, signer, identityAccount, nativeAmount, setBeforeCloseModalHandler])
+        if (err && err.message.includes('must provide an Ethereum address')) {
+          setError(`Make sure your wallet is unlocked and connected with ${signer.address}.`)
+        } else {
+          setError('Native asset migration failed')
+        }
+
+        return false
+      })
+    } else {
+      setError(<>Please make sure your signer wallet is connected to the correct chain: <b>{network.id}</b></>)
+      setIsMigrationPending(false)
+    }
+  }, [wallet, setError, hasERC20Tokens, network, setBeforeCloseModalHandler, signer, identityAccount, nativeAmount])
 
   const updateAmount = useCallback((amount) => {
     let newHumanAmount = new BigNumber(amount).dividedBy(10 ** nativeTokenData.decimals).toFixed(nativeTokenData.decimals).replace(/\.?0+$/g, '')
@@ -229,13 +234,6 @@ const AssetsMigrationNative = ({
             </div>
             <div className='migration-native-title-asset-name'>Migrate native asset <b>{nativeTokenData.name}</b></div>
           </div>
-          {
-            hasCorrectNetwork === false &&
-            <div className={'notification-hollow warning mt-4'}>
-              Your signer wallet is connected to the wrong network.<br />
-              Please connect to {network.id}
-            </div>
-          }
 
           {
             hasMigratedNative
