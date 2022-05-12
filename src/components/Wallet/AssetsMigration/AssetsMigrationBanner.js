@@ -4,6 +4,7 @@ import AssetsMigrationModal from 'components/Modals/AssetsMigrationModal/AssetsM
 import { useCallback, useEffect, useState } from 'react'
 import { useModals } from 'hooks'
 import { FaTimes } from 'react-icons/fa'
+import { getWallet } from 'lib/getWallet'
 
 const AssetsMigrationBanner = ({ addRequest, selectedAccount, accounts, selectedNetwork, relayerURL, portfolio, closeable = false, linkMargin = false, useStorage }) => {
 
@@ -11,6 +12,19 @@ const AssetsMigrationBanner = ({ addRequest, selectedAccount, accounts, selected
   const [migrationMessageSeen, setMigrationMessageSeen] = useState(false)
   const { showModal } = useModals()
   const [migrationMessageSeenStorage, setMigrationMessageSeenStorage] = useStorage({key: 'migrationSeen', defaultValue:{}})
+
+  // in the meantime that we integrate HW wallets...
+  const currentAccount = accounts.find(a => a.id === selectedAccount)
+  let wallet
+  try {
+    wallet = getWallet({
+      signer: currentAccount.signer,
+      signerExtra: currentAccount.signerExtra,
+      chainId: selectedNetwork.chainId
+    })
+  } catch (err) {
+    // in case of no window.ethereum was injected from extension
+  }
 
   const closeMigrationMessage = useCallback(() => {
     setMigrationMessageSeen(true)
@@ -42,6 +56,8 @@ const AssetsMigrationBanner = ({ addRequest, selectedAccount, accounts, selected
   useEffect(() => {
     setMigrationMessageSeen(closeable && !!migrationMessageSeenStorage[selectedAccount + selectedNetwork.id])
   }, [closeable, selectedAccount, selectedNetwork, migrationMessageSeenStorage])
+
+  if (!wallet?.provider) return <></>
 
   return (
     (hasSignerAssets && !migrationMessageSeen) &&
