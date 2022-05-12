@@ -9,21 +9,21 @@ import { fetchGet } from 'lib/fetch'
 import { MdOutlineNavigateNext, MdClose, MdOutlineNavigateBefore } from 'react-icons/md'
 
 const AssetsMigrationNative = ({
-                                identityAccount,
-                                signer,
-                                signerExtra,
-                                network,
-                                nativeTokenData,
-                                setSelectedTokensWithAllowance,
-                                setError,
-                                setStep,
-                                hasERC20Tokens,
-                                hideModal,
-                                relayerURL,
-                                setModalButtons,
-                                setBeforeCloseModalHandler,
-                                hidden,
-                               }) => {
+  identityAccount,
+  signer,
+  signerExtra,
+  network,
+  nativeTokenData,
+  setSelectedTokensWithAllowance,
+  setError,
+  setStep,
+  hasERC20Tokens,
+  hideModal,
+  relayerURL,
+  setModalButtons,
+  setBeforeCloseModalHandler,
+  hidden,
+}) => {
 
   const [failedImg, setFailedImg] = useState([])
   const [hasMigratedNative, setHasMigratedNative] = useState(false)
