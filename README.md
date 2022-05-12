@@ -29,6 +29,7 @@ NODE_ENV=development npm start
 Then run the Ambire Wallet:
 ```
 npm i
+git submodule update --init --recursive
 npm start
 ```
 
