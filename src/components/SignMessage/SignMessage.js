@@ -1,14 +1,14 @@
 import './SignMessage.scss'
 import { MdBrokenImage, MdCheck, MdClose } from 'react-icons/md'
 import { Wallet } from 'ethers'
-import { toUtf8String, arrayify, isHexString, toUtf8Bytes, _TypedDataEncoder } from 'ethers/lib/utils'
-import { signMessage712, signMessage } from 'adex-protocol-eth/js/Bundle'
+import { signMessage712, signMessage, Bundle } from 'adex-protocol-eth/js/Bundle'
+import { toUtf8String, toUtf8Bytes, arrayify, isHexString, _TypedDataEncoder } from 'ethers/lib/utils'
 import * as blockies from 'blockies-ts';
 import { getWallet } from 'lib/getWallet'
 import { useToasts } from 'hooks/toasts'
 import { fetchPost } from 'lib/fetch'
 import { verifyMessage } from '@ambire/signature-validator'
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { Button, Loading, TextInput } from 'components/common'
 import { isObject } from 'url/util'
 
@@ -22,16 +22,33 @@ export default function SignMessage ({ toSign, resolve, account, connections, re
   const { addToast } = useToasts()
   const [signingState, setSigningState] = useState(defaultState())
   const [isLoading, setLoading] = useState(false)
+  const [isDeployed, setIsDeployed] = useState(null)
   const [confFieldState, setConfFieldState] = useState({isShown: false,  confCodeRequired: ''})
   const [promiseResolve, setPromiseResolve] = useState(null)
   const inputSecretRef = useRef(null)
-
+  
   const connection = connections.find(({ uri }) => uri === toSign.wcUri)
   const dApp = connection ? connection?.session?.peerMeta || null : null
-
+  
   useEffect(()=> {
     if (confFieldState.isShown) inputSecretRef.current.focus()
   }, [confFieldState])
+  
+  const checkIsDeployed = useCallback(async () => {
+    const bundle = new Bundle({
+      network: network.id,
+      identity: account.id,
+      signer: account.signer
+    })
+
+    const provider = await getProvider(network.id)
+    const isDeployed = await provider.getCode(bundle.identity).then(code => code !== '0x')
+    setIsDeployed(isDeployed)
+  }, [account, network])
+
+  useEffect(() => {
+    checkIsDeployed()
+  }, [checkIsDeployed])
 
   if (!toSign || !account) return (<></>)
 
@@ -226,7 +243,7 @@ export default function SignMessage ({ toSign, resolve, account, connections, re
 
       <div className='actions'>
         <form onSubmit={handleSubmit}>
-          {account.signer.quickAccManager && (<>
+          {account.signer.quickAccManager && isDeployed && (<>
             <TextInput
               password
               required minLength={3}
@@ -249,6 +266,14 @@ export default function SignMessage ({ toSign, resolve, account, connections, re
               />
             </>
             )}
+         
+          {!isDeployed && (<div>
+              <h3 className='error'>You can't sign this message yet.</h3>
+              <h3 className='error'>
+              You need to complete your first transaction in order to be able to sign messages.
+              </h3>
+            </div>
+          )}
 
           <div className="buttons">
             <Button
@@ -258,10 +283,12 @@ export default function SignMessage ({ toSign, resolve, account, connections, re
               className='reject'
               onClick={() => resolve({ message: 'signature denied' })}
             >Reject</Button>
-            <Button type='submit' className='approve' disabled={isLoading}>
+            {isDeployed !== null && isDeployed && (
+              <Button type='submit' className='approve' disabled={isLoading}>
               {isLoading ? (<><Loading/>Signing...</>)
               : (<><MdCheck/> Sign</>)}
             </Button>
+            )}
           </div>
         </form>
       </div>
@@ -283,5 +310,5 @@ function getMessageAsText(msg) {
     try { return toUtf8String(msg) }
     catch(_) { return msg }
   }
-  return msg + ''//what if dapp sends it as object? force string to avoid app crashing
+  return msg?.toString ? msg.toString() : msg + ''//what if dapp sends it as object? force string to avoid app crashing
 }

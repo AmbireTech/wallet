@@ -104,6 +104,16 @@ const networks = [
 		explorerUrl: 'https://explorer.kcc.io',
 		unstoppableDomainsChain: 'ERC20'
 	},
+	{
+		id: 'optimism',
+		chainId: 10,
+		rpc: 'https://mainnet.optimism.io',
+		nativeAssetSymbol: 'ETH',
+		name: 'Optimism',
+		icon: '/resources/networks/optimism.jpg',
+		explorerUrl: 'https://optimistic.etherscan.io',
+		unstoppableDomainsChain: 'ERC20'
+	},
 	// {
 	// 	id: 'andromeda',
 	// 	chainId: 1088,
