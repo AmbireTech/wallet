@@ -13,10 +13,9 @@ import { MdClose, MdOutlineNavigateNext, MdOutlineAddCircleOutline, MdCancel } f
 import { Contract, ethers } from 'ethers'
 import { ERC20PermittableInterface } from 'consts/permittableCoins'
 import { getProvider } from 'lib/provider'
+import { GAS_SPEEDS } from 'consts/gasSpeeds'
 
-const GAS_SPEEDS = ['slow', 'medium', 'fast', 'ape']
-
-const AssetsMigrationSelector = ({ signerAccount, identityAccount, network, setIsSelectionConfirmed, setStep, portfolio, relayerURL, setModalButtons, hideModal, setSelectedTokensWithAllowance, setStepperSteps, hidden }) => {
+const AssetsMigrationSelector = ({ signerAccount, identityAccount, network, setIsSelectionConfirmed, setStep, portfolio, relayerURL, setModalButtons, hideModal, setSelectedTokensWithAllowance, setGasSpeed, setStepperSteps, hidden }) => {
 
   const [selectableTokens, setSelectableTokens] = useState([])
   const [selectableTokensUserInputs, setSelectableTokensUserInputs] = useState([])
@@ -212,7 +211,9 @@ const AssetsMigrationSelector = ({ signerAccount, identityAccount, network, setI
     } else {
       setStep(2)
     }
-  }, [selectableTokens, selectableTokensUserInputs, tokensAllowances, setSelectedTokensWithAllowance, setIsSelectionConfirmed, setStep])
+
+    setGasSpeed(selectedGasSpeed)
+  }, [selectableTokens, selectableTokensUserInputs, tokensAllowances, setSelectedTokensWithAllowance, setIsSelectionConfirmed, setStep, setGasSpeed, selectedGasSpeed])
 
   // fetch selectable tokens
   useEffect(() => {
@@ -587,7 +588,7 @@ const AssetsMigrationSelector = ({ signerAccount, identityAccount, network, setI
                         !!getSuggestedGasTokensOfSpeed(suggestedGasTokens, selectedGasSpeed).length &&
                         <div className={'mt-3'}>
                           You should remove ERC20 tokens from the selection or add one of the following gas tokens :
-                          <ul class={'notification-gas-tokens'}>
+                          <ul className={'notification-gas-tokens'}>
                             {getSuggestedGasTokensOfSpeed(suggestedGasTokens, selectedGasSpeed).map((t, index) => {
                               return <li key={index}>
                                 <span className={'gas-token-suggestion'}

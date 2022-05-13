@@ -11,6 +11,7 @@ import { PERMITTABLE_COINS, PERMIT_TYPE_DAI, ERC20PermittableInterface } from 'c
 import { GiToken } from 'react-icons/gi'
 import { MdOutlineNavigateBefore, MdOutlineNavigateNext } from 'react-icons/md'
 import { ZERO_ADDRESS } from 'consts/specialAddresses'
+import { fetchGet } from 'lib/fetch'
 
 const MAX_INT = '0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff';
 
@@ -25,6 +26,8 @@ const AssetsMigrationPermitter = ({
                                     hideModal,
                                     setStep,
                                     setModalButtons,
+                                    relayerURL,
+                                    gasSpeed,
                                     hidden,
                                   }) => {
 
@@ -38,7 +41,12 @@ const AssetsMigrationPermitter = ({
   const [tokensPendingStatus, setTokensPendingStatus] = useState({})
   //error display logic if a user has rejected one or more MM popup
   const [hasRefusedOnce, setHasRefusedOnce] = useState(false)
+  const [lastRefusalError, setLastRefusalError] = useState(null)
   const [failedImg, setFailedImg] = useState([])
+
+  const [hasCorrectAccountAndChainId, setHasCorrectAccountAndChainId] = useState(null)
+
+  const [currentGasPrice, setCurrentGasPrice] = useState(null)
 
   const wallet = getWallet({
     signer: signer,
@@ -250,10 +258,14 @@ const AssetsMigrationPermitter = ({
       return { ...old }
     })
 
+    setLastRefusalError(null)
     const approveResult = wallet.sendTransaction({
+      from: signer.address,
       to: address,
       data: approveData,
       gasLimit: 80000,
+      gasPrice: currentGasPrice,
+      chainId: network.chainId,
     }).then(async rcpt => {
 
       setTokensPermissions(old => {
@@ -284,6 +296,12 @@ const AssetsMigrationPermitter = ({
         return { ...old }
       })
 
+      if (err.message.includes('underpriced')) { // not copying the whole JSON error returned by the rpc
+        setLastRefusalError('Transaction fee underpriced')
+      } else {
+        setLastRefusalError(err.message)
+      }
+
       setHasRefusedOnce(true)
 
       if (!tokensPermissions[address] || (tokensPermissions[address] && tokensPermissions[address].signing !== false)) {
@@ -300,7 +318,7 @@ const AssetsMigrationPermitter = ({
 
     return !!approveResult
 
-  }, [wallet, identityAccount, tokensPermissions, selectedTokensWithAllowance])
+  }, [wallet, identityAccount, tokensPermissions, selectedTokensWithAllowance, currentGasPrice, network, signer])
 
   //going to assets selection
   const cancelMigration = useCallback(() => {
@@ -354,11 +372,43 @@ const AssetsMigrationPermitter = ({
     hideModal()
   }, [addRequest, cancelMigration, hideModal, identityAccount, network, selectedTokensWithAllowance, signer, tokensAllowances, tokensPendingStatus, tokensPermissions])
 
+  // check correctness of signer wallet before starting the chained popups
+  useEffect(() => {
+    wallet.isConnected(signer.address, network.chainId)
+      .then(connected => {
+        setHasCorrectAccountAndChainId(connected)
+        if (!connected) {
+          setError(<>Please make sure your signer wallet is connected with <b>{signer.address}</b> to the correct chain: <b>{network.id}</b></>)
+        }
+      })
+      .catch(e => {
+      setError('Could not check signer connection status: ' + e.error)
+    })
+  }, [signer, network, wallet, setError])
+
+
+  useEffect(() => {
+    const url = `${relayerURL}/gasPrice/${network.id}`
+
+    fetchGet(url).then(gasData => {
+      let gasPrice = gasData.data.gasPrice[gasSpeed]
+      if (gasData.data.gasPrice.maxPriorityFeePerGas) {
+        gasPrice += gasData.data.gasPrice.maxPriorityFeePerGas[gasSpeed]
+      }
+      setCurrentGasPrice(gasPrice)
+    }).catch(err => {
+      setError(err.message + ' ' + url)
+    })
+
+  }, [network, relayerURL, setError, gasSpeed])
+
   //Automatic permit ask chain
   useEffect(() => {
 
     //Skip initial useEffect
+    if (!hasCorrectAccountAndChainId) return
     if (!Object.values(tokensAllowances).length) return
+    if (!currentGasPrice) return
 
     const tokensWithPermission = getConsolidatedTokensPure(selectedTokensWithAllowance, tokensPermissions, tokensAllowances, []).map(t => {
       return {
@@ -380,7 +430,7 @@ const AssetsMigrationPermitter = ({
         }, 150)
       }
     }
-  }, [selectedTokensWithAllowance, permitToken, approveToken, tokensPermissions, tokensAllowances])
+  }, [selectedTokensWithAllowance, permitToken, approveToken, tokensPermissions, tokensAllowances, hasCorrectAccountAndChainId, currentGasPrice])
 
   useEffect(() => {
     if (!selectedTokensWithAllowance.length) return
@@ -393,9 +443,9 @@ const AssetsMigrationPermitter = ({
 
   useEffect(() => {
     if (hasRefusedOnce) {
-      setError('Every asset below needs to be approved or permitted to complete the migration')
+      setError('Every asset below needs to be approved or permitted to complete the migration' + (lastRefusalError ? ' (' + lastRefusalError + ')': ''))
     }
-  }, [hasRefusedOnce, setError])
+  }, [hasRefusedOnce, setError, lastRefusalError])
 
 
   //Clearing UI error if all the tokens are validated

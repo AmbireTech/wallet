@@ -20,6 +20,9 @@ const AssetsMigration = ({ addRequest, selectedAccount, accounts, network, hideM
 
   const [showCloseConfirmation, setShowCloseConfirmation] = useState(false)
 
+  const [gasSpeed, setGasSpeed] = useState(null)
+
+
   //to get signer
   const currentAccount = accounts.find(a => a.id === selectedAccount)
 
@@ -30,6 +33,7 @@ const AssetsMigration = ({ addRequest, selectedAccount, accounts, network, hideM
       setSelectedTokensWithAllowance([])
       setNativeTokenData(null)
       setHasERC20Tokens(false)
+      setGasSpeed(null)
       setBeforeCloseModalHandler(null)
     }
   }, [network, selectedAccount, step, setBeforeCloseModalHandler])
@@ -109,6 +113,7 @@ const AssetsMigration = ({ addRequest, selectedAccount, accounts, network, hideM
             setError={setError}
             setSelectedTokensWithAllowance={setSelectedTokensWithAllowance}
             setStepperSteps={setStepperSteps}
+            setGasSpeed={setGasSpeed}
           />
         }
         {step === 1 && nativeTokenData &&
@@ -128,6 +133,7 @@ const AssetsMigration = ({ addRequest, selectedAccount, accounts, network, hideM
             setModalButtons={setModalButtons}
             setSelectedTokensWithAllowance={setSelectedTokensWithAllowance}
             setBeforeCloseModalHandler={setBeforeCloseModalHandler}
+            gasSpeed={gasSpeed}
           />
         }
         {step === 2 &&
@@ -144,6 +150,8 @@ const AssetsMigration = ({ addRequest, selectedAccount, accounts, network, hideM
             hideModal={hideModal}
             setStep={setStep}
             setModalButtons={setModalButtons}
+            gasSpeed={gasSpeed}
+            relayerURL={relayerURL}
           />
         }
       </div>
