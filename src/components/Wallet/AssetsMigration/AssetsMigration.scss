@@ -405,21 +405,23 @@
       background: mix($ambire-dark-blue, darken($input-background-color-darker, 2%), 3%);
 
       li {
-        padding:4px 0;
+        padding:8px 0;
         flex-grow: 1;
         list-style: none;
         text-align: center;
-        border-bottom: 2px solid transparent;
+        border: 2px solid transparent;
         cursor: pointer;
         color: mix($input-background-color-darker, $text-color, 50%);
+        text-transform: uppercase;
+        font-size: 15px;
 
         &:hover {
-          border-bottom: 2px solid $ambire-dark-blue;
           color: $text-color;
+          background-color: $input-background-color;
         }
 
         &.selected {
-          border-bottom: 2px solid $ambire-dark-blue;
+          border: 2px solid $ambire-dark-blue;
           background: mix($ambire-dark-blue, darken($input-background-color-darker, 2%), 15%);
           color: $text-color;
         }

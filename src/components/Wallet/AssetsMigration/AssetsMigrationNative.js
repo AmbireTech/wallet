@@ -22,6 +22,7 @@ const AssetsMigrationNative = ({
   relayerURL,
   setModalButtons,
   setBeforeCloseModalHandler,
+  gasSpeed,
   hidden,
 }) => {
 
@@ -34,6 +35,8 @@ const AssetsMigrationNative = ({
   const [nativeHumanAmount, setNativeHumanAmount] = useState('0')
 
   const [hasModifiedAmount, setHasModifiedAmount] = useState(false)
+
+  const [currentGasPrice, setCurrentGasPrice] = useState(null)
 
   let wallet
   try {
@@ -67,13 +70,16 @@ const AssetsMigrationNative = ({
       setBeforeCloseModalHandler(null)
     }
 
-    let hasCorrectChain = wallet.provider ? ( (await wallet.getChainId().catch(e => {setError('Could not get chainId: ', e.message)})) === network.chainId ) : true
+    let hasCorrectChainAndAccount = await wallet.isConnected(signer.address, network.chainId).catch(e => {
+      setError('Could not check signer connection status: ' + e.error)
+    })
 
-    if (hasCorrectChain) {
+    if (hasCorrectChainAndAccount) {
       wallet.sendTransaction({
         from: signer.address,
         to: identityAccount,
         gasLimit: 25000,
+        gasPrice: currentGasPrice,
         value: '0x' + new BigNumber(nativeAmount).toString(16),
         chainId: network.chainId
       }).then(async rcpt => {
@@ -88,16 +94,16 @@ const AssetsMigrationNative = ({
         if (err && err.message.includes('must provide an Ethereum address')) {
           setError(`Make sure your wallet is unlocked and connected with ${signer.address}.`)
         } else {
-          setError('Native asset migration failed')
+          setError('Native asset migration failed: ' + err.message)
         }
 
         return false
       })
     } else {
-      setError(<>Please make sure your signer wallet is connected to the correct chain: <b>{network.id}</b></>)
+      setError(<>Please make sure your signer wallet is connected with <b>{signer.address}</b> to the correct chain: <b>{network.id}</b></>)
       setIsMigrationPending(false)
     }
-  }, [wallet, setError, hasERC20Tokens, network, setBeforeCloseModalHandler, signer, identityAccount, nativeAmount])
+  }, [wallet, setError, hasERC20Tokens, network, setBeforeCloseModalHandler, signer, identityAccount, nativeAmount, currentGasPrice])
 
   const updateAmount = useCallback((amount) => {
     let newHumanAmount = new BigNumber(amount).dividedBy(10 ** nativeTokenData.decimals).toFixed(nativeTokenData.decimals).replace(/\.?0+$/g, '')
@@ -111,20 +117,21 @@ const AssetsMigrationNative = ({
     const url = `${relayerURL}/gasPrice/${network.id}`
 
     fetchGet(url).then(gasData => {
-      let gasPrice = gasData.data.gasPrice.fast
+      let gasPrice = gasData.data.gasPrice[gasSpeed]
       if (gasData.data.gasPrice.maxPriorityFeePerGas) {
-        gasPrice += gasData.data.gasPrice.maxPriorityFeePerGas.fast
+        gasPrice += gasData.data.gasPrice.maxPriorityFeePerGas[gasSpeed]
       }
       const estimatedTransactionCost = gasPrice * 25000
 
       setTransactionEstimationCost(new BigNumber(estimatedTransactionCost.toFixed(0)).toFixed(0))
       const recommendedBN = new BigNumber(nativeTokenData.availableBalance).minus(estimatedTransactionCost)
       setMaxRecommendedAmount(recommendedBN.gte(0) ? recommendedBN.toFixed(0) : 0)
+      setCurrentGasPrice(gasPrice)
     }).catch(err => {
       setError(err.message + ' ' + url)
     })
 
-  }, [setTransactionEstimationCost, setMaxRecommendedAmount, nativeTokenData, network, relayerURL, setError])
+  }, [setTransactionEstimationCost, setMaxRecommendedAmount, nativeTokenData, network, relayerURL, setError, gasSpeed])
 
   const onAmountChange = useCallback((val) => {
     setHasModifiedAmount(true)
