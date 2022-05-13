@@ -1,7 +1,7 @@
 import './GasIndicator.scss'
 import { FaGasPump } from 'react-icons/fa'
 import GasDetailsModal from 'components/Modals/GasDetailsModal/GasDetailsModal'
-import networks from 'consts/networks'
+import networks from 'common/src/constants/networks'
 import { useEffect, useState } from 'react'
 import { fetchGet } from 'lib/fetch'
 import { useModals } from 'hooks'
