@@ -1,0 +1,67 @@
+@import 'variables.scss';
+
+#sandbox {
+    height: 100%;
+    padding-top: ($layout-spacing / 2);
+    @include flex-full-grow-container
+
+    .hollow {
+        margin: 20px 0;
+        display: flex;
+        flex-direction: row;
+        padding: 16px;
+        background: mix($primary-accent-color, $panel-background-color, 5%);
+        border: 1px solid $primary-accent-color;
+
+        &.danger {
+            color: $danger-color;
+            background: mix($danger-color, $panel-background-color, 5%);
+            border: 1px solid $danger-color;
+        }
+    }
+
+    .signForm {
+        display: flex;
+
+        .text-input {
+            flex-grow: 1;
+        }
+    }
+
+    .tabs {
+        display: flex;
+        gap: 32px;
+        a {
+            cursor: pointer;
+            font-size: 1.2em;
+            font-weight: bold;
+            float: left;
+            border-bottom: 2px solid transparent;
+
+            &.selected {
+                border-color: $ambire-purple
+            }
+        }
+        margin-bottom: 20px;
+    }
+
+    .buttonRow {
+        gap: 20px;
+        display: flex;
+    }
+
+    .verifyForm {
+        textarea {
+            width: 100%;
+            background: $input-background-color;
+            color: $text-color;
+        }
+    }
+
+}
+
+@media screen and (max-width: $mobile-breakpoint-max-width) {
+    #sandbox {
+        padding-top: 0;
+    }
+}

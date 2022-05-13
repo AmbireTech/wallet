@@ -6,6 +6,7 @@ import TopBar from "./TopBar/TopBar"
 import SideBar from "./SideBar/SideBar"
 import Deposit from "./Deposit/Deposit"
 import Swap from "./Swap/Swap"
+import SignatureSandbox from "./SignatureSandbox/SignatureSandbox"
 import Transfer from "./Transfer/Transfer"
 import Earn from "./Earn/Earn"
 import Security from "./Security/Security"
@@ -110,6 +111,15 @@ export default function Wallet(props) {
         gnosisDisconnect={props.gnosisDisconnect}
         selectedAcc={props.selectedAcc}
         network={props.network}
+      />
+    },
+    {
+      path: '/signature-sandbox',
+      component: <SignatureSandbox
+        addRequest={props.addRequest}
+        network={props.network}
+        selectedAcc={props.selectedAcc}
+        accounts={props.accounts}
       />
     },
     {

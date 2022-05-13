@@ -67,6 +67,14 @@ function AppInner() {
   const [internalRequests, setInternalRequests] = useState([])
   const addRequest = req => setInternalRequests(reqs => [...reqs, req])
 
+  //For debugging
+  const sandboxResolveMany = (ids, resolution) => {
+    if (ids[0].startsWith('sandbox')) {
+      const r = internalRequests.find(r => r.id === ids[0])
+      if (r) r.callback(resolution)
+    }
+  }
+
   // Merge all requests
   const requests = useMemo(
     () => [...internalRequests, ...wcRequests, ...gnosisRequests]
@@ -76,6 +84,7 @@ function AppInner() {
   const resolveMany = (ids, resolution) => {
     wcResolveMany(ids, resolution)
     gnosisResolveMany(ids, resolution)
+    sandboxResolveMany(ids, resolution)
     setInternalRequests(reqs => reqs.filter(x => !ids.includes(x.id)))
   }
 
@@ -248,6 +257,7 @@ function AppInner() {
             privateMode={privateMode}
             userSorting={userSorting}
             setUserSorting={setUserSorting}
+            sandboxResolveMany={sandboxResolveMany}
           >
           </Wallet>
         </Route> :
