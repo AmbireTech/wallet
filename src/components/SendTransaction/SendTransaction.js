@@ -245,6 +245,10 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, network, account,
     const provider = getProvider(network.id)
     const signer = finalBundle.signer
 
+    // a bit redundant cause we already called it at the beginning of approveTxn, but
+    // we need to freeze finalBundle in the UI in case signing takes a long time (currently only to freeze the fee selector)
+    setSigningStatus({ inProgress: true, finalBundle })
+
     const wallet = getWallet({
       signer,
       signerExtra: account.signerExtra,
@@ -440,6 +444,7 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, network, account,
               </div>
             </div>
 
+            { /* Only lock the fee selector when the bundle is locked too - to make sure that the fee really is set in stone (won't change on the next getFinalBundle()) */ }
             <FeeSelector
               disabled={signingStatus && signingStatus.finalBundle && !(estimation && !estimation.success)}
               signer={bundle.signer}
