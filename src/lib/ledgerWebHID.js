@@ -13,64 +13,42 @@ export const PARENT_HD_PATH = "44'/60'/0'/0"
 
 async function getTransport() {
   connectedDevices = await TransportWebHID.list()
-  if (connectedDevices.length && connectedDevices[0].opened) {
-    return new TransportWebHID(connectedDevices[0])
+  if (connectedDevices.length) {
+    if (connectedDevices[0].opened) {
+      return new TransportWebHID(connectedDevices[0])
+    } else { // when transport is still not closed and time between 2 requests is short
+      return TransportWebHID.open(connectedDevices[0])
+    }
   } else {
     try {
       return await TransportWebHID.request()
     } catch (e) {
-      throw new Error('Could not request WebHID ledger')
+      if (e.message.includes('reading \'open\'')) {
+        throw new Error('ledger WebHID request denied')
+      }
+      throw new Error('Could not request WebHID ledger: ' + e.message)
     }
   }
 }
 
-
 export async function ledgerGetAddresses() {
-  const returnData = {
-    error: null,
-    addresses: []
-  }
-
-  const transport = await getTransport().catch(err => {
-    returnData.error = err
-  })
-  if (!transport) return returnData
-
-  const accountsData = await getAccounts(transport)
-
+  const transport = await getTransport()
+  const accounts = await getAccounts(transport)
   transport.close()
 
-  if (accountsData.error) {
-    returnData.error = accountsData.error
-  } else {
-    returnData.addresses = accountsData.accounts.map(a => a.address)
-  }
-
-  return returnData
+  return accounts.map(a => a.address)
 }
 
 async function getAccounts(transport) {
   const parentKeyDerivationPath = `m/${PARENT_HD_PATH}`
-  const returnData = {
-    error: null,
-    accounts: []
-  }
   let ledgerResponse
-  try {
-    ledgerResponse = await getAddressInternal(transport, parentKeyDerivationPath).then(o => o).catch(err => {
-      if (err.statusCode === 25871 || err.statusCode === 27404) {
-        returnData.error = 'Please make sure your ledger is unlocked and running the Ethereum app. ' + err.message
-      } else {
-        returnData.error = 'Could not get address from ledger : ' + err
-      }
-    })
-  } catch (e) {
-    console.log(e)
-  }
-
-  if (!ledgerResponse) {
-    return returnData
-  }
+  ledgerResponse = await getAddressInternal(transport, parentKeyDerivationPath).then(o => o).catch(err => {
+    if (err.statusCode === 25871 || err.statusCode === 27404) {
+      throw Error('Please make sure your ledger is unlocked and running the Ethereum app. ' + err.message)
+    } else {
+      throw Error('Could not get address from ledger : ' + err)
+    }
+  })
 
   const hdKey = new HDNode()
   hdKey.publicKey = Buffer.from(ledgerResponse.publicKey, 'hex')
@@ -85,8 +63,7 @@ async function getAccounts(transport) {
   }
 
   // currently we can't get addrs to match with what appears in MM/Ledger live so only one is derived
-  returnData.accounts = calculateDerivedHDKeyInfos(initialDerivedKeyInfo, 1)
-  return returnData
+  return calculateDerivedHDKeyInfos(initialDerivedKeyInfo, 1)
 }
 
 
@@ -110,9 +87,7 @@ async function getAddressInternal(transport, parentKeyDerivationPath) {
 }
 
 export async function ledgerSignTransaction(txn, chainId) {
-  const transport = await getTransport().catch(err => {
-    throw err
-  })
+  const transport = await getTransport()
 
   const fromAddr = txn.from
 
@@ -126,18 +101,15 @@ export async function ledgerSignTransaction(txn, chainId) {
 
   let serializedUnsigned = serialize(unsignedTxObj)
   const accountsData = await getAccounts(transport)
-  if (accountsData.error) {
-    throw new Error(accountsData.error)
-  }
 
   //Managing only 1 addr for now
-  const address = accountsData.accounts[0].address
+  const address = accountsData[0].address
 
   let serializedSigned
   if (address.toLowerCase() === fromAddr.toLowerCase()) {
     let rsvResponse
     try {
-      rsvResponse = await new AppEth(transport).signTransaction(accountsData.accounts[0].derivationPath, serializedUnsigned.substr(2))
+      rsvResponse = await new AppEth(transport).signTransaction(accountsData[0].derivationPath, serializedUnsigned.substr(2))
     } catch (e) {
       throw new Error('Could not sign transaction ' + e)
     }
@@ -165,17 +137,11 @@ export async function ledgerSignTransaction(txn, chainId) {
 }
 
 export async function ledgerSignMessage(hash, signerAddress) {
-  const transport = await getTransport().catch(err => {
-    throw err
-  })
-
+  const transport = await getTransport()
   const accountsData = await getAccounts(transport)
-  if (accountsData.error) {
-    throw new Error(accountsData.error)
-  }
 
   //TODO for multiple accs?
-  const account = accountsData.accounts[0]
+  const account = accountsData[0]
 
   let signedMsg
   if (account.address.toLowerCase() === signerAddress.toLowerCase()) {
@@ -193,20 +159,14 @@ export async function ledgerSignMessage(hash, signerAddress) {
 }
 
 export async function ledgerSignMessage712(domainSeparator, hashStructMessage, signerAddress) {
-  const transport = await getTransport().catch(err => {
-    throw err
-  })
+  const transport = await getTransport()
 
   const accountsData = await getAccounts(transport)
-  if (accountsData.error) {
-    throw new Error(accountsData.error)
-  }
 
   //TODO for multiple accs?
-  const account = accountsData.accounts[0]
+  const account = accountsData[0]
 
   let signedMsg
-  debugger
   if (account.address.toLowerCase() === signerAddress.toLowerCase()) {
     try {
       const rsvReply = await new AppEth(transport).signEIP712HashedMessage(account.derivationPath, domainSeparator, hashStructMessage)
