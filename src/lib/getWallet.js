@@ -4,8 +4,9 @@ import { ethers } from 'ethers'
 import HDNode from 'hdkey'
 import { LedgerSubprovider } from '@0x/subproviders/lib/src/subproviders/ledger' // https://github.com/0xProject/0x-monorepo/issues/1400
 import { ledgerEthereumBrowserClientFactoryAsync } from '@0x/subproviders/lib/src' // https://github.com/0xProject/0x-monorepo/issues/1400
-import { ledgerSignMessage, ledgerSignTransaction } from './ledgerWebHID'
+import { ledgerSignMessage, ledgerSignTransaction, ledgerSignMessage712 } from './ledgerWebHID'
 import { latticeInit, latticeConnect, latticeSignMessage, latticeSignTransaction } from 'lib/lattice'
+import { _TypedDataEncoder } from 'ethers/lib/utils'
 
 let wallets = {}
 
@@ -34,7 +35,12 @@ function getWalletNew({ chainId, signer, signerExtra }, opts) {
     if (signerExtra.transportProtocol === 'webHID') {
       return {
         signMessage: hash => ledgerSignMessage(ethers.utils.hexlify(hash), signer.address),
-        signTransaction: params => ledgerSignTransaction(params, chainId)
+        signTransaction: params => ledgerSignTransaction(params, chainId),
+        _signTypedData: (domain, types, value) => {
+          const domainSeparator = _TypedDataEncoder.hashDomain(domain)
+          const hashStructMessage = _TypedDataEncoder.hashStruct(_TypedDataEncoder.getPrimaryType(types), types, value)
+          return ledgerSignMessage712(domainSeparator, hashStructMessage, signer.address)
+        }
       }
     } else {
       const provider = new LedgerSubprovider({
@@ -44,7 +50,10 @@ function getWalletNew({ chainId, signer, signerExtra }, opts) {
       })
       return {
         signMessage: hash => provider.signPersonalMessageAsync(ethers.utils.hexlify(hash), signer.address),
-        signTransaction: params => provider.signTransactionAsync({ ...params, from: signer.address })
+        signTransaction: params => provider.signTransactionAsync({ ...params, from: signer.address }),
+        _signTypedData: (domain, types, value) => {
+          throw Error('Please, use a chrome based browser to use 721 Typed signatures')
+        }
       }
     }
   } else if (signerExtra && signerExtra.type === 'Lattice') {
