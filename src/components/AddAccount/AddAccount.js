@@ -248,15 +248,11 @@ export default function AddAccount({ relayerURL, onAddAccount }) {
     let error = null
     try {
       const addrData = await ledgerGetAddresses()
-      if (!addrData.error) {
-        const signerExtra = { type: 'ledger', transportProtocol: 'webHID' }
-        if (addrData.addresses.length === 1) {
-            onEOASelected(addrData.addresses[0], signerExtra)
-        } else {
-            setChooseSigners({ addresses: addrData.addresses, signerName: 'Ledger', signerExtra })
-        }
+      const signerExtra = { type: 'ledger', transportProtocol: 'webHID' }
+      if (addrData.length === 1) {
+        onEOASelected(addrData[0], signerExtra)
       } else {
-        error = addrData.error
+        setChooseSigners({ addresses: addrData, signerName: 'Ledger', signerExtra })
       }
     } catch (e) {
       console.log(e)

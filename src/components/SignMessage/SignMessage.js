@@ -145,9 +145,10 @@ export default function SignMessage ({ toSign, resolve, account, connections, re
       if (!account.primaryKeyBackup) throw new Error(`No key backup found: you need to import the account from JSON or login again.`)
       const wallet = await Wallet.fromEncryptedJson(JSON.parse(account.primaryKeyBackup), signingState.passphrase)
 
-      const sig = isTypedData
-        ? await signMessage712(wallet, account.id, account.signer, dataV4.domain, dataV4.types, dataV4.message, signature)
-        : await signMessage(wallet, account.id, account.signer, getMessageAsBytes(toSign.txn), signature)
+      const sig = await (isTypedData
+        ? signMessage712(wallet, account.id, account.signer, dataV4.domain, dataV4.types, dataV4.message, signature)
+        : signMessage(wallet, account.id, account.signer, getMessageAsBytes(toSign.txn), signature)
+      )
 
       if (SIGNATURE_VERIFIER_DEBUGGER) {
         verifySignatureDebug(toSign, sig)
@@ -178,9 +179,10 @@ export default function SignMessage ({ toSign, resolve, account, connections, re
       // Unfortunately that isn't possible, because isValidSignature only takes a bytes32 hash; so to sign this with
       // a personal message, we need to be signing the hash itself as binary data such that we match 'Ethereum signed message:\n32<hash binary data>' on the contract
 
-      const sig = toSign.type === 'eth_signTypedData_v4'
-        ? await signMessage712(wallet, account.id, account.signer, dataV4.domain, dataV4.types, dataV4.message)
-        : await signMessage(wallet, account.id, account.signer, getMessageAsBytes(toSign.txn))
+      const sig = await (toSign.type === 'eth_signTypedData_v4'
+        ? signMessage712(wallet, account.id, account.signer, dataV4.domain, dataV4.types, dataV4.message)
+        : signMessage(wallet, account.id, account.signer, getMessageAsBytes(toSign.txn))
+      )
 
       if (SIGNATURE_VERIFIER_DEBUGGER) {
         verifySignatureDebug(toSign, sig)
