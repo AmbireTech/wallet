@@ -5,6 +5,7 @@
   "homepage": "./",
   "dependencies": {
     "@0x/subproviders": "^6.6.1",
+    "@ambire/signature-validator": "^1.0.0",
     "@ethersproject/transactions": "5.4.0",
     "@gnosis.pm/safe-apps-sdk": "^6.2.0",
     "@ledgerhq/hw-app-eth": "6.6.0",
