@@ -60,8 +60,8 @@ export function getDiscountApplied(amnt, discount = 0) {
 }
 
 // Returns feeToken data with all multipliers applied
-export function getFeesData(feeToken, estimation, speed) {
-  const { addedGas, multiplier } = getFeePaymentConsequences(feeToken, estimation)
+export function getFeesData(feeToken, estimation, speed, isGasTankEnabled) {
+  const { addedGas, multiplier } = isGasTankEnabled ? { addedGas: 0, multiplier: 1} : getFeePaymentConsequences(feeToken, estimation)
   const discountMultiplier = 1 - (feeToken?.discount || 0)
   const totalMultiplier = multiplier * discountMultiplier
   const nativeRate = feeToken?.nativeRate || 1

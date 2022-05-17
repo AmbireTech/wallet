@@ -20,7 +20,7 @@ import {
   isTokenEligible, 
   // getFeePaymentConsequences, 
   getFeesData,
-  toHexAmount,
+  toHexAmount
  } from './helpers'
 import { fetchPost } from 'lib/fetch'
 import { toBundleTxn } from 'lib/requestToBundleTxn'
@@ -29,6 +29,7 @@ import { MdInfo } from 'react-icons/md'
 import { useCallback } from 'react'
 import { ToolTip } from 'components/common'
 import { Checkbox } from 'components/common'
+import { useLocalStorage } from 'hooks'
 
 const ERC20 = new Interface(require('adex-protocol-eth/abi/ERC20'))
 
@@ -119,7 +120,7 @@ export default function SendTransaction({ relayerURL, accounts, network, selecte
 }
 
 function SendTransactionWithBundle({ bundle, replaceByDefault, network, account, resolveMany, relayerURL, onBroadcastedTxn, onDismiss }) {
-
+  const [isGasTankEnabled] = useLocalStorage({ key: 'isGasTankEnabled', defaultValue: false })
   const [estimation, setEstimation] = useState(null)
 
   const [replaceTx, setReplaceTx] = useState(!!replaceByDefault)
@@ -153,6 +154,7 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, network, account,
       .then((estimation) => {
         if (unmounted || bundle !== currentBundle.current) return
         estimation.relayerless = !relayerURL
+        //TODO: check what happens below
         estimation.selectedFeeToken = getDefaultFeeToken(estimation.remainingFeeTokenBalances, network, feeSpeed, estimation)
         setEstimation(prevEstimation => {
           if (prevEstimation && prevEstimation.customFee) return prevEstimation
@@ -216,14 +218,32 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, network, account,
     const pendingBundle = estimation.nextNonce?.pendingBundle
     const nextFreeNonce = estimation.nextNonce?.nonce
     const nextNonMinedNonce = estimation.nextNonce?.nextNonMinedNonce
+    
+    if (!!isGasTankEnabled) {
+      let gasLimit
+      if (bundle.txns.length > 1) gasLimit = estimation.gasLimit + (bundle.extraGas || 0)
+      else gasLimit = estimation.gasLimit
+      
+      return new Bundle({
+        ...bundle,
+        gasTank: {
+          assetId: feeToken.id,
+          value: toHexAmount(feeInFeeToken, feeToken.decimals)
+        },
+        txns: [...bundle.txns],
+        gasLimit,
+        nonce: bundle.nonce || ((replaceTx && pendingBundle) ? nextNonMinedNonce : nextFreeNonce)
+      })
+    }
 
     return new Bundle({
       ...bundle,
       txns: [...bundle.txns, feeTxn],
+      gasTank: null,
       gasLimit: estimation.gasLimit + addedGas + (bundle.extraGas || 0),
       nonce: bundle.nonce || ((replaceTx && pendingBundle) ? nextNonMinedNonce : nextFreeNonce)
     })
-  }, [relayerURL, bundle, estimation, feeSpeed, network.nativeAssetSymbol, replaceTx])
+  }, [relayerURL, estimation, feeSpeed, network.nativeAssetSymbol, isGasTankEnabled, bundle, replaceTx])
 
   const approveTxnImpl = async () => {
     if (!estimation) throw new Error('no estimation: should never happen')
@@ -436,6 +456,7 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, network, account,
               feeSpeed={feeSpeed}
               setFeeSpeed={setFeeSpeed}
               onDismiss={onDismiss}
+              isGasTankEnabled={!!isGasTankEnabled}
             ></FeeSelector>
           </div>
 

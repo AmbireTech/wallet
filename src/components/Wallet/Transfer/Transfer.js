@@ -28,7 +28,7 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
     const { tokenAddressOrSymbol } = useParams()
     const { addToast } = useToasts()
     const { state } = useLocation()
-    const [gasTankDetails, setGasTankDetails] = useState(state ? state : null)
+    const [gasTankDetails] = useState(state ? state : null)
     const tokenAddress = isValidAddress(tokenAddressOrSymbol) ? tokenAddressOrSymbol : portfolio.tokens.find(({ symbol }) => symbol === tokenAddressOrSymbol)?.address || null
 
     const [asset, setAsset] = useState(tokenAddress)

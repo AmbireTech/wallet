@@ -8,6 +8,7 @@ import {
   getErrHint,
   getFeesData,
   getDiscountApplied,
+  isGasTankFeeToken
 } from './helpers'
 import { FaPercentage } from 'react-icons/fa'
 import { MdInfoOutline } from 'react-icons/md'
@@ -16,6 +17,7 @@ import { MdEdit } from 'react-icons/md'
 import { useState } from 'react'
 import { getTokenIcon } from 'lib/icons'
 import { formatFloatTokenAmount } from 'lib/formatters'
+import { ethers } from 'ethers'
 
 const SPEEDS = ['slow', 'medium', 'fast', 'ape']
 const walletDiscountBlogpost = 'https://blog.ambire.com/move-crypto-with-ambire-pay-gas-with-wallet-and-save-30-on-fees-35dca1002697'
@@ -81,9 +83,8 @@ const WalletDiscountBanner = ({ currenciesItems, tokens, estimation, onFeeCurren
   )
 }
 
-export function FeeSelector({ disabled, signer, estimation, network, setEstimation, feeSpeed, setFeeSpeed, onDismiss }) {
+export function FeeSelector({ disabled, signer, estimation, network, setEstimation, feeSpeed, setFeeSpeed, onDismiss, isGasTankEnabled }) {
   const [editCustomFee, setEditCustomFee] = useState(false)
-
   if (!estimation) return (<Loading />)
   // Only check for insufficient fee in relayer mode (.feeInUSD is available)
   // Otherwise we don't care whether the user has enough for fees, their signer wallet will take care of it
@@ -105,7 +106,9 @@ export function FeeSelector({ disabled, signer, estimation, network, setEstimati
   }
 
   const { nativeAssetSymbol } = network
-  const tokens = estimation.remainingFeeTokenBalances || [{ symbol: nativeAssetSymbol, decimals: 18, address: '0x0000000000000000000000000000000000000000' }]
+  const gasTankTokens = estimation.gasTank.map(item => { return { ...item, balance:  ethers.utils.parseUnits(item.balance.toString(), item.decimals).toString() }})
+  
+  const tokens = isGasTankEnabled ? gasTankTokens : estimation.remainingFeeTokenBalances || [{ symbol: nativeAssetSymbol, decimals: 18, address: '0x0000000000000000000000000000000000000000' }]
   const onFeeCurrencyChange = value => {
     const token = tokens.find(({ address, symbol }) => address === value || symbol === value)
     setEstimation({ ...estimation, selectedFeeToken: token })
@@ -143,7 +146,7 @@ export function FeeSelector({ disabled, signer, estimation, network, setEstimati
     </div>
   </>) : (<></>)
 
-  const { discount = 0, symbol, nativeRate, decimals } = estimation.selectedFeeToken || {}
+  const { discount = 0, symbol, nativeRate = null, decimals } = estimation.selectedFeeToken || {}
 
   const setCustomFee = value => setEstimation(prevEstimation => ({
     ...prevEstimation,
@@ -173,7 +176,7 @@ export function FeeSelector({ disabled, signer, estimation, network, setEstimati
       feeInFeeToken,
       feeInUSD
       // NOTE: get the estimation res data w/o custom fee for the speeds
-    } = getFeesData({ ...estimation.selectedFeeToken }, { ...estimation, customFee: null }, speed)
+    } = getFeesData({ ...estimation.selectedFeeToken }, { ...estimation, customFee: null }, speed, isGasTankEnabled)
     const discountInFeeToken = getDiscountApplied(feeInFeeToken, discount)
     const discountInFeeInUSD = getDiscountApplied(feeInUSD, discount)
 
