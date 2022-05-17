@@ -189,7 +189,7 @@ export default function SignMessage ({ toSign, resolve, account, connections, re
       // Unfortunately that isn't possible, because isValidSignature only takes a bytes32 hash; so to sign this with
       // a personal message, we need to be signing the hash itself as binary data such that we match 'Ethereum signed message:\n32<hash binary data>' on the contract
 
-      const sig = await (toSign.type === 'eth_signTypedData_v4'
+      const sig = await ((toSign.type === 'eth_signTypedData_v4' || toSign.type === 'eth_signTypedData')
         ? signMessage712(wallet, account.id, account.signer, dataV4.domain, dataV4.types, dataV4.message)
         : signMessage(wallet, account.id, account.signer, getMessageAsBytes(toSign.txn))
       )
