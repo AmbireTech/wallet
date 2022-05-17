@@ -9,7 +9,7 @@ const noop = () => null
 const noopSessionStorage = { setSession: noop, getSession: noop, removeSession: noop }
 
 const STORAGE_KEY = 'wc1_state'
-const SUPPORTED_METHODS = ['eth_sendTransaction', 'gs_multi_send', 'personal_sign', 'eth_sign']
+const SUPPORTED_METHODS = ['eth_sendTransaction', 'gs_multi_send', 'personal_sign', 'eth_sign', 'eth_signTypedData_v4', 'eth_signTypedData']
 const SESSION_TIMEOUT = 10000
 
 const getDefaultState = () => ({ connections: [], requests: [] })
@@ -247,21 +247,36 @@ export default function useWalletConnect ({ account, chainId, initialUri, allNet
             // Opensea "unlock currency" hack; they use a stupid MetaTransactions system built into WETH on Polygon
             // There's no point of this because the user has to sign it separately as a tx anyway; but more importantly,
             // it breaks Ambire and other smart wallets cause it relies on ecrecover and does not depend on EIP1271
+            let txn = payload.params[0]
             if (payload.method === 'eth_signTypedData') {
                 // @TODO: try/catch the JSON parse?
                 const signPayload = JSON.parse(payload.params[1])
+                payload = {
+                    ...payload,
+                    method: 'eth_signTypedData',
+                }
+                txn = signPayload
                 if (signPayload.primaryType === 'MetaTransaction') {
                     payload = {
                         ...payload,
                         method: 'eth_sendTransaction',
-                        params: [{
-                            to: signPayload.domain.verifyingContract,
-                            from: signPayload.message.from,
-                            data: signPayload.message.functionSignature, // @TODO || data?
-                            value: signPayload.message.value || '0x0'
-                        }]
                     }
+                    txn = [{
+                        to: signPayload.domain.verifyingContract,
+                        from: signPayload.message.from,
+                        data: signPayload.message.functionSignature, // @TODO || data?
+                        value: signPayload.message.value || '0x0'
+                    }]
                 }
+            }
+            if (payload.method === 'eth_signTypedData_v4') {
+                // @TODO: try/catch the JSON parse?
+                const signPayload = JSON.parse(payload.params[1])
+                payload = {
+                    ...payload,
+                    method: 'eth_signTypedData_v4',
+                }
+                txn = signPayload
             }
             if (payload.method === 'gs_multi_send' || payload.method === 'ambire_sendBatchTransaction') {
                 dispatch({ type: 'batchRequestsAdded', batchRequest: {
@@ -288,6 +303,7 @@ export default function useWalletConnect ({ account, chainId, initialUri, allNet
                     connector.rejectRequest({ id: payload.id, error: { message: 'Unsupported chain' }})
                 }
             }
+            // Ask what is that
             if (!SUPPORTED_METHODS.includes(payload.method)) {
                 const isUniIgnorable = payload.method === 'eth_signTypedData_v4'
                     && connector.session.peerMeta
@@ -314,7 +330,7 @@ export default function useWalletConnect ({ account, chainId, initialUri, allNet
                 id: payload.id,
                 type: payload.method,
                 wcUri: connectorOpts.uri,
-                txn: payload.method === 'eth_sign' ? payload.params[1] : payload.params[0],
+                txn,
                 chainId: connector.session.chainId,
                 account: connector.session.accounts[0],
                 notification: true
