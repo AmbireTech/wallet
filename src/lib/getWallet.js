@@ -4,8 +4,9 @@ import { ethers } from 'ethers'
 import HDNode from 'hdkey'
 import { LedgerSubprovider } from '@0x/subproviders/lib/src/subproviders/ledger' // https://github.com/0xProject/0x-monorepo/issues/1400
 import { ledgerEthereumBrowserClientFactoryAsync } from '@0x/subproviders/lib/src' // https://github.com/0xProject/0x-monorepo/issues/1400
-import { ledgerSignMessage, ledgerSignTransaction, ledgerGetAddresses } from './ledgerWebHID'
+import { ledgerSignMessage, ledgerSignTransaction, ledgerSignMessage712, ledgerGetAddresses } from './ledgerWebHID'
 import { latticeInit, latticeConnect, latticeSignMessage, latticeSignTransaction } from 'lib/lattice'
+import { _TypedDataEncoder } from 'ethers/lib/utils'
 import { getProvider } from 'lib/provider'
 import networks from 'consts/networks'
 
@@ -64,6 +65,11 @@ function getWalletNew({ chainId, signer, signerExtra }, opts) {
           }
 
           return false
+        },
+        _signTypedData: (domain, types, value) => {
+          const domainSeparator = _TypedDataEncoder.hashDomain(domain)
+          const hashStructMessage = _TypedDataEncoder.hashStruct(_TypedDataEncoder.getPrimaryType(types), types, value)
+          return ledgerSignMessage712(domainSeparator, hashStructMessage, signer.address)
         }
       }
     } else {
@@ -89,6 +95,9 @@ function getWalletNew({ chainId, signer, signerExtra }, opts) {
           }
 
           return false
+        },
+        _signTypedData: (domain, types, value) => {
+          throw Error('Please, use a chrome based browser to use 721 Typed signatures')
         }
       }
     }
