@@ -7,8 +7,7 @@ import {
   mapTxnErrMsg,
   getErrHint,
   getFeesData,
-  getDiscountApplied,
-  isGasTankFeeToken
+  getDiscountApplied
 } from './helpers'
 import { FaPercentage } from 'react-icons/fa'
 import { MdInfoOutline } from 'react-icons/md'
@@ -106,7 +105,7 @@ export function FeeSelector({ disabled, signer, estimation, network, setEstimati
   }
 
   const { nativeAssetSymbol } = network
-  const gasTankTokens = estimation.gasTank.map(item => { return { ...item, balance:  ethers.utils.parseUnits(item.balance.toString(), item.decimals).toString() }})
+  const gasTankTokens = estimation.gasTank?.map(item => { return { ...item, symbol: item.symbol.toUpperCase(), balance: ethers.utils.parseUnits(item.balance.toString(), item.decimals).toString() }})
   
   const tokens = isGasTankEnabled ? gasTankTokens : estimation.remainingFeeTokenBalances || [{ symbol: nativeAssetSymbol, decimals: 18, address: '0x0000000000000000000000000000000000000000' }]
   const onFeeCurrencyChange = value => {
@@ -260,7 +259,10 @@ export function FeeSelector({ disabled, signer, estimation, network, setEstimati
       onDismiss
     })}
 
-    <div className='section-title'>Transaction Speed</div>
+    <div className='section-title'>
+      <span>Transaction Speed</span>
+      <span>Gas Tank: {isGasTankEnabled ? (<span className='gas-tank-enabled'>Enabled</span>) : (<span className='gas-tank-disabled'>Disabled</span>)}</span>
+    </div>
     <div className='fee-selector'>
       <div className='section'>
         <div id='fee-selector'>{feeAmountSelectors}</div>

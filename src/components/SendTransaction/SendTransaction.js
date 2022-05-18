@@ -30,6 +30,7 @@ import { useCallback } from 'react'
 import { ToolTip } from 'components/common'
 import { Checkbox } from 'components/common'
 import { useLocalStorage } from 'hooks'
+import { ethers } from 'ethers'
 
 const ERC20 = new Interface(require('adex-protocol-eth/abi/ERC20'))
 
@@ -154,8 +155,8 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, network, account,
       .then((estimation) => {
         if (unmounted || bundle !== currentBundle.current) return
         estimation.relayerless = !relayerURL
-        //TODO: check what happens below
-        estimation.selectedFeeToken = getDefaultFeeToken(estimation.remainingFeeTokenBalances, network, feeSpeed, estimation)
+        const gasTankTokens = estimation.gasTank?.map(item => { return { ...item, symbol: item.symbol.toUpperCase(), balance: ethers.utils.parseUnits(item.balance.toString(), item.decimals).toString() }})
+        estimation.selectedFeeToken = getDefaultFeeToken(isGasTankEnabled ? gasTankTokens : estimation.remainingFeeTokenBalances, network, feeSpeed, estimation)
         setEstimation(prevEstimation => {
           if (prevEstimation && prevEstimation.customFee) return prevEstimation
           if (estimation.remainingFeeTokenBalances) {
