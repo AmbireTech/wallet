@@ -150,7 +150,7 @@ function AppInner() {
 
   // Network shouldn't matter here
   const everythingToSign = useMemo(() => requests
-    .filter(({ type, account }) => (type === 'personal_sign' || type === 'eth_sign')
+    .filter(({ type, account }) => (type === 'personal_sign' || type === 'eth_sign' || type === 'eth_signTypedData_v4')
       && account === selectedAcc
     ), [requests, selectedAcc])
 
@@ -172,7 +172,7 @@ function AppInner() {
   const [sentTxn, setSentTxn] = useState([])
   const onBroadcastedTxn = hash => {
     if (!hash) {
-      addToast('Transaction signed but not broadcasted to the network!', { timeout: 15000 })
+      addToast('Transaction successfully signed and will be broadcasted to the network later', { timeout: 15000 })
       return
     }
     setSentTxn(sentTxn => [...sentTxn, { confirmed: false, hash }])
@@ -287,6 +287,7 @@ function AppInner() {
             onAddAccount={onAddAccount}
             rewardsData={rewardsData}
             privateMode={privateMode}
+            useStorage={useLocalStorage}
             userSorting={userSorting}
             setUserSorting={setUserSorting}
           >
