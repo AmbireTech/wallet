@@ -168,7 +168,7 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, network, account,
       .then((estimation) => {
         if (unmounted || bundle !== currentBundle.current) return
         estimation.relayerless = !relayerURL
-        const gasTankTokens = estimation.gasTank?.map(item => { return { ...item, symbol: item.symbol.toUpperCase(), balance: ethers.utils.parseUnits(item.balance.toString(), item.decimals).toString() }})
+        const gasTankTokens = estimation.gasTank?.map(item => { return { ...item, symbol: item.symbol.toUpperCase(), balance: ethers.utils.parseUnits(item.balance.toFixed(item.decimals).toString(), item.decimals).toString() }})
         estimation.selectedFeeToken = getDefaultFeeToken(isGasTankEnabled ? gasTankTokens : estimation.remainingFeeTokenBalances, network, feeSpeed, estimation)
         setEstimation(prevEstimation => {
           if (prevEstimation && prevEstimation.customFee) return prevEstimation

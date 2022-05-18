@@ -105,7 +105,7 @@ export function FeeSelector({ disabled, signer, estimation, network, setEstimati
   }
 
   const { nativeAssetSymbol } = network
-  const gasTankTokens = estimation.gasTank?.map(item => { return { ...item, symbol: item.symbol.toUpperCase(), balance: ethers.utils.parseUnits(item.balance.toString(), item.decimals).toString() }})
+  const gasTankTokens = estimation.gasTank?.map(item => { return { ...item, symbol: item.symbol.toUpperCase(), balance: ethers.utils.parseUnits(item.balance.toFixed(item.decimals).toString(), item.decimals).toString() }})
   
   const tokens = isGasTankEnabled ? gasTankTokens : estimation.remainingFeeTokenBalances || [{ symbol: nativeAssetSymbol, decimals: 18, address: '0x0000000000000000000000000000000000000000' }]
   const onFeeCurrencyChange = value => {
