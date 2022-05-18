@@ -1,6 +1,10 @@
 import { MdOutlineWarningAmber } from "react-icons/md"
 import buildRecoveryBundle from 'lib/recoveryBundle'
 import { Bundle } from 'adex-protocol-eth'
+import { Interface } from 'ethers/lib/utils'
+import { getProvider } from 'lib/provider'
+
+const QuickAccManagerInterface = new Interface(require('adex-protocol-eth/abi/QuickAccManager'))
 
 // 10% in geth and most EVM chain RPCs; relayer wants 12%
 const RBF_THRESHOLD = 1.14
@@ -17,9 +21,6 @@ const PendingRecoveryNotice = ({ recoveryLock, showSendTxns, selectedAccount, se
         )
         showSendTxns(bundle)
     }
-    const bundle = recoveryLock && new Bundle({ ...recoveryLock, ...selectedAccount, network: selectedNetwork.id })
-    console.log('bundle', bundle, selectedAccount)
-
     const mapToBundle = (relayerBundle, extra = {}) => (new Bundle({
         ...relayerBundle,
         nonce: relayerBundle.nonce.num,
@@ -30,29 +31,57 @@ const PendingRecoveryNotice = ({ recoveryLock, showSendTxns, selectedAccount, se
         ...extra
     }))
     const cancelByReplacing = relayerBundle => showSendTxns(mapToBundle(relayerBundle, {
-     txns: [[selectedAccount.id, '0x0', '0x']],
+        txns: [[selectedAccount.id, '0x0', '0x']],
     }))
-    const cancel = () => {
-        // debugger
-        // @TODO relayerless
-        bundle.cancel({ relayerURL, fetch })
-          .then(({ success, message }) => {
-            if (!success) {
-              if (message.includes('not possible to cancel')) {
-                // addToast('Transaction already picked up by the network, you will need to pay a fee to replace it with a cancellation transaction.')
-              } else {
-                // addToast(`Not possible to cancel: ${message}, you will need to pay a fee to replace it with a cancellation transaction.`)
-              }
-              cancelByReplacing(bundle)
-            } else {
-            //   addToast('Transaction cancelled successfully')
-            }
-          })
-          .catch(e => {
-            console.error(e)
-            // cancelByReplacing(bundle)
-          })
-      }
+    const cancel = async () => {    
+        const quickAcc = [selectedAccount.signer.timelock, selectedAccount.signer.one, selectedAccount.signer.two]
+        const provider = getProvider(selectedNetwork.id)
+        const bundle = new Bundle({
+            identity: selectedAccount.id,
+            signer: selectedAccount.signer,
+            network: selectedNetwork.id,
+        })
+
+        const nonce = await bundle.getNonce(provider)
+        const txns = [[
+                selectedAccount.signer.quickAccManager,
+                '0x00',
+                QuickAccManagerInterface.encodeFunctionData('cancel', [
+                    selectedAccount.id,
+                    quickAcc,
+                    nonce,
+                    selectedAccount.signer.one,
+                    [[selectedAccount.id, '0x00', '0x']]
+                ])
+            ]]
+        
+        bundle.txns = txns
+        console.log(bundle)
+        // Error from estimateGasWithCatch on relayer IdentityEstimate.js
+        // error panic error: 0x21
+        // https://docs.soliditylang.org/en/v0.8.11/control-structures.html#panic-via-assert-and-error-via-require
+        showSendTxns(bundle)
+
+        // // error: no transaction to replace.
+        // bundle.cancel({ relayerURL, fetch })
+        //   .then(({ success, message }) => {
+        //       console.log(success, message)
+        //     if (!success) {
+        //       if (message.includes('not possible to cancel')) {
+        //         // addToast('Transaction already picked up by the network, you will need to pay a fee to replace it with a cancellation transaction.')
+        //       } else {
+        //         // addToast(`Not possible to cancel: ${message}, you will need to pay a fee to replace it with a cancellation transaction.`)
+        //       }
+        //       cancelByReplacing(bundle)
+        //     } else {
+        //     //   addToast('Transaction cancelled successfully')
+        //     }
+        //   })
+        //   .catch(e => {
+        //     console.error(e)
+        //     // cancelByReplacing(bundle)
+        //   })
+    }
     const recoveryLockStatus = recoveryLock ? recoveryLock.status : 'requestedButNotInitiated'
     console.log({recoveryLock, recoveryLockStatus})
     const remainingTime = seconds => {

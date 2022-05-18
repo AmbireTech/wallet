@@ -261,6 +261,7 @@ const Security = ({
         showSendTxns={showSendTxns}
         selectedAccount={selectedAccount}
         selectedNetwork={selectedNetwork}
+        relayerURL={relayerURL}
       />)}
       <div className='network-warning'>
         <MdInfoOutline size={36}></MdInfoOutline>
