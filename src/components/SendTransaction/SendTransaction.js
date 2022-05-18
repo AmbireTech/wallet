@@ -16,9 +16,9 @@ import { FeeSelector, FailingTxn } from './FeeSelector'
 import Actions from './Actions'
 import TxnPreview from 'components/common/TxnPreview/TxnPreview'
 import { sendNoRelayer } from './noRelayer'
-import { 
-  isTokenEligible, 
-  // getFeePaymentConsequences, 
+import {
+  isTokenEligible,
+  // getFeePaymentConsequences,
   getFeesData,
   toHexAmount
  } from './helpers'
@@ -50,11 +50,11 @@ const getDefaultFeeToken = (remainingFeeTokenBalances, network, feeSpeed, estima
   .sort((a, b) =>
     (WALLET_TOKEN_SYMBOLS.indexOf(b?.symbol) - WALLET_TOKEN_SYMBOLS.indexOf(a?.symbol))
     || ((b?.discount || 0) - (a?.discount || 0))
-    || a?.symbol.toUpperCase().localeCompare(b?.symbol.toUpperCase()) 
+    || a?.symbol.toUpperCase().localeCompare(b?.symbol.toUpperCase())
   )
   .find(token => isTokenEligible(token, feeSpeed, estimation))
   || remainingFeeTokenBalances[0]
-} 
+}
 
 function makeBundle(account, networkId, requests) {
   const bundle = new Bundle({
@@ -65,7 +65,20 @@ function makeBundle(account, networkId, requests) {
   })
   bundle.extraGas = requests.map(x => x.extraGas || 0).reduce((a, b) => a + b, 0)
   bundle.requestIds = requests.map(x => x.id)
-  if (requests.some(item => item.meta)) bundle.meta = { addressLabel: requests.map(x => x.meta.addressLabel) }
+
+  // Attach bundle's meta
+  if (requests.some(item => item.meta)) {
+    bundle.meta = {}
+
+    if (requests.some(item => item.meta?.addressLabel)) {
+      bundle.meta.addressLabel = requests.map(x => !!x.meta?.addressLabel ? x.meta.addressLabel : { addressLabel: '', address: ''})
+    }
+
+    const xWalletReq = requests.find(x => x.meta?.xWallet)
+    if (xWalletReq) {
+      bundle.meta.xWallet = xWalletReq.meta.xWallet
+    }
+  }
 
   return bundle
 }
@@ -165,8 +178,8 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, network, account,
                 prevEstimation
                 && isTokenEligible(prevEstimation.selectedFeeToken, feeSpeed, estimation)
                 && prevEstimation.selectedFeeToken
-              ) 
-              || getDefaultFeeToken(estimation.remainingFeeTokenBalances, network, feeSpeed, estimation)              
+              )
+              || getDefaultFeeToken(estimation.remainingFeeTokenBalances, network, feeSpeed, estimation)
           }
           return estimation
         })
@@ -209,7 +222,7 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, network, account,
       addedGas
     } = getFeesData(feeToken, estimation, feeSpeed)
     const feeTxn = feeToken.symbol === network.nativeAssetSymbol
-      // TODO: check native decimals 
+      // TODO: check native decimals
       ? [accountPresets.feeCollector, toHexAmount(feeInNative, 18), '0x']
       : [feeToken.address, '0x0', ERC20.encodeFunctionData('transfer', [
         accountPresets.feeCollector,
@@ -252,6 +265,10 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, network, account,
     const finalBundle = getFinalBundle()
     const provider = getProvider(network.id)
     const signer = finalBundle.signer
+
+    // a bit redundant cause we already called it at the beginning of approveTxn, but
+    // we need to freeze finalBundle in the UI in case signing takes a long time (currently only to freeze the fee selector)
+    setSigningStatus({ inProgress: true, finalBundle })
 
     const wallet = getWallet({
       signer,
@@ -448,6 +465,7 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, network, account,
               </div>
             </div>
 
+            { /* Only lock the fee selector when the bundle is locked too - to make sure that the fee really is set in stone (won't change on the next getFinalBundle()) */ }
             <FeeSelector
               disabled={signingStatus && signingStatus.finalBundle && !(estimation && !estimation.success)}
               signer={bundle.signer}
@@ -490,7 +508,7 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, network, account,
 
           <div id="actions-container">
             {
-              bundle.signer.quickAccManager && !relayerURL ? 
+              bundle.signer.quickAccManager && !relayerURL ?
                 <FailingTxn message='Signing transactions with an email/password account without being connected to the relayer is unsupported.'></FailingTxn>
                 :
                 <div className='section' id="actions">

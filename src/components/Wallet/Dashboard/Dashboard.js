@@ -8,7 +8,9 @@ import Balances from './Balances/Balances'
 import Protocols from './Protocols/Protocols'
 import Collectibles from './Collectibles/Collectibles'
 import { MdOutlineInfo } from 'react-icons/md'
+
 import Promotions from './Promotions/Promotions'
+import AssetsMigrationBanner from 'components/Wallet/AssetsMigration/AssetsMigrationBanner'
 
 const chartSegments = [
     {
@@ -28,7 +30,7 @@ const tabSegments = [
     }
 ]
 
-export default function Dashboard({ portfolio, selectedNetwork, selectedAccount, setNetwork, privateMode, rewardsData,  userSorting, setUserSorting }) {
+export default function Dashboard({ portfolio, selectedNetwork, selectedAccount, setNetwork, privateMode, rewardsData,  userSorting, setUserSorting, accounts, addRequest, relayerURL, useStorage }) {
     const history = useHistory()
     const { tabId } = useParams()
 
@@ -50,7 +52,7 @@ export default function Dashboard({ portfolio, selectedNetwork, selectedAccount,
             }))
             .filter(({ value }) => value > 0);
 
-        const totalProtocols = portfolio.protocols.map(({ assets }) => 
+        const totalProtocols = portfolio.protocols.map(({ assets }) =>
             assets
                 .map(({ balanceUSD }) => balanceUSD)
                 .reduce((acc, curr) => acc + curr, 0))
@@ -72,21 +74,28 @@ export default function Dashboard({ portfolio, selectedNetwork, selectedAccount,
     return (
         <section id="dashboard">
             <Promotions rewardsData={rewardsData} />
+            {
+              <AssetsMigrationBanner
+                selectedNetwork={selectedNetwork}
+                selectedAccount={selectedAccount}
+                accounts={accounts}
+                addRequest={addRequest}
+                closeable={true}
+                relayerURL={relayerURL}
+                portfolio={portfolio}
+                useStorage={useStorage}
+              />
+            }
             <div id="overview">
                 <div id="balance" className="panel">
                     <div className="title">Balance</div>
                     <div className="content">
-                        {
-                            portfolio.isBalanceLoading ? 
-                                <Loading/>
-                                :
-                                <Balances
-                                    portfolio={portfolio}
-                                    selectedNetwork={selectedNetwork}
-                                    setNetwork={setNetwork}
-                                    hidePrivateValue={privateMode.hidePrivateValue}
-                                />
-                        }
+                        <Balances
+                            portfolio={portfolio}
+                            selectedNetwork={selectedNetwork}
+                            setNetwork={setNetwork}
+                            hidePrivateValue={privateMode.hidePrivateValue}
+                        />
                     </div>
                 </div>
                 <div id="chart" className="panel">
@@ -97,12 +106,12 @@ export default function Dashboard({ portfolio, selectedNetwork, selectedAccount,
                     <div className="content">
                         {
                             chartType === chartSegments[0].value ?
-                                portfolio.isBalanceLoading ?
+                                portfolio.isCurrNetworkBalanceLoading ?
                                     <Loading/>
                                     :
                                     privateMode.hidePrivateContent(<Chart data={chartTokensData} size={200}/>)
                                 :
-                                portfolio.areProtocolsLoading ?
+                                portfolio.isCurrNetworkProtocolsLoading ?
                                     <Loading/>
                                     :
                                     privateMode.hidePrivateContent(<Chart data={chartProtocolsData} size={200}/>)

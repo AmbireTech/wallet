@@ -171,7 +171,8 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
             const validateForm = async() => {
                 const UDAddress =  await resolveUDomain(address, selectedAsset ? selectedAsset.symbol: null, selectedNetwork.unstoppableDomainsChain)
                 timer.current = null
-                const isValidRecipientAddress = validateSendTransferAddress(UDAddress ? UDAddress : address, selectedAcc, addressConfirmed, isKnownAddress)
+                const isUDAddress = UDAddress ? true : false
+                const isValidRecipientAddress = validateSendTransferAddress(UDAddress ? UDAddress : address, selectedAcc, addressConfirmed, isKnownAddress, isUDAddress)
                 
                 setUDAddress(UDAddress)
                 setValidationFormMgs({ 
@@ -204,7 +205,7 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
                    Send
                </div>
                {
-                    portfolio.isBalanceLoading ?
+                    portfolio.isCurrNetworkBalanceLoading ?
                         <Loading/>
                         :
                         assetsItems.length ? 

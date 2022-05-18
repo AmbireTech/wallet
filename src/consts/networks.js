@@ -74,36 +74,46 @@ const networks = [
 		explorerUrl: 'https://moonriver.moonscan.io/',
 		unstoppableDomainsChain: 'ERC20'
 	},
-	// {
-	// 	id: 'arbitrum',
-	// 	chainId: 42161,
-	// 	rpc: 'https://arb1.arbitrum.io/rpc',
-	// 	nativeAssetSymbol: 'AETH',
-	// 	name: 'Arbitrum',
-	// 	icon: '/resources/networks/arbitrum.svg',
-	// 	explorerUrl: 'https://arbiscan.io',
-	// 	unstoppableDomainsChain: 'ERC20'
-	// },
+	{
+		id: 'arbitrum',
+		chainId: 42161,
+		rpc: 'https://arb1.arbitrum.io/rpc',
+		nativeAssetSymbol: 'AETH',
+		name: 'Arbitrum',
+		icon: '/resources/networks/arbitrum.svg',
+		explorerUrl: 'https://arbiscan.io',
+		unstoppableDomainsChain: 'ERC20'
+	},
 	{
 		id: 'gnosis',
 		chainId: 100,
 		rpc: 'https://rpc.xdaichain.com',
 		nativeAssetSymbol: 'XDAI',
-		name: 'Gnosis',
+		name: 'Gnosis Chain',
 		icon: '/resources/networks/gnosis.png',
 		explorerUrl: 'https://blockscout.com',
 		unstoppableDomainsChain: 'ERC20'
 	},
-	// {
-	// 	id: 'kucoin',
-	// 	chainId: 321,
-	// 	rpc: 'https://rpc-mainnet.kcc.network',
-	// 	nativeAssetSymbol: 'KCS',
-	// 	name: 'KCC',
-	// 	icon: '/resources/networks/kucoin.svg',
-	// 	explorerUrl: 'https://explorer.kcc.io',
-	// 	unstoppableDomainsChain: 'ERC20'
-	// },
+	{
+		id: 'kucoin',
+		chainId: 321,
+		rpc: 'https://rpc-mainnet.kcc.network',
+		nativeAssetSymbol: 'KCS',
+		name: 'KCC KuCoin',
+		icon: '/resources/networks/kucoin.svg',
+		explorerUrl: 'https://explorer.kcc.io',
+		unstoppableDomainsChain: 'ERC20'
+	},
+	{
+		id: 'optimism',
+		chainId: 10,
+		rpc: 'https://mainnet.optimism.io',
+		nativeAssetSymbol: 'ETH',
+		name: 'Optimism',
+		icon: '/resources/networks/optimism.jpg',
+		explorerUrl: 'https://optimistic.etherscan.io',
+		unstoppableDomainsChain: 'ERC20'
+	},
 	// {
 	// 	id: 'andromeda',
 	// 	chainId: 1088,

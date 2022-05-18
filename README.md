@@ -43,6 +43,10 @@ REACT_APP_RELAYER_URL=
 
 **Important:** to make the Ledger integration work, you need to be accessing Ambire Wallet through HTTPS. The easiest way to do this in a development environment is to [use localtunnel](https://github.com/localtunnel/localtunnel): for example, `lt --port 3000`
 
+## Building plugins
+
+To see how to build plugins for Ambire, please [read our plugin docs](/how-to-create-a-plugin.md).
+
 ## Code style and recommendations
 
 * No semicolons
@@ -301,3 +305,18 @@ Those contracts (except Ethereum-specific WALLET, xWALLET and SupplyController) 
 * Fix bug when sending NFTs
 * Can display balances on networks not supported by our providers
 * Support NFT on Binance Smart Chain
+
+### v0.5.3
+* Added KCC (KuCoin) Chain
+* Attach xWallet metadata in transactions (current APY, shared value, price in USD)
+* Added warning notifycation on signing message form when wallet contract still not deployded
+* Cached asset prices in memory
+* Implement EIP 712
+* Fix non clickable address area
+* Fix bug when using UD in batch transactions
+* Added Avalanche AAVE for wallets rewards
+
+### v0.5.4
+* Added new option for migration assets from Metamask
+* Added Arbitrum chain
+* Fix: Disable fee selector when proceed to sign step with external signer

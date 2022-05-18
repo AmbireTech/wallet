@@ -37,7 +37,7 @@ const SideBar = ({ match, portfolio, hidePrivateValue, relayerURL, selectedNetwo
     <div id="sidebar" ref={sidebarRef}>
       <div className="balance">
         <label>Balance</label>
-        {portfolio.isBalanceLoading ? (
+        {portfolio.isCurrNetworkBalanceLoading ? (
           <div className={'loaderContainer'}>
             <Loading />
           </div>
