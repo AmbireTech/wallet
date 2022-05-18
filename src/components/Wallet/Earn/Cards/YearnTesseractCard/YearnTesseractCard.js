@@ -2,7 +2,7 @@ import Card from 'components/Wallet/Earn/Card/Card'
 
 import { useEffect, useState, useMemo, useRef } from 'react'
 import { Interface, parseUnits } from 'ethers/lib/utils'
-import networks from 'consts/networks'
+import networks from 'common/src/constants/networks'
 import YEARN_TESSERACT_VAULT_ABI from 'consts/YearnTesseractVaultABI'
 import useYearn from './useYearn'
 import useTesseract from './useTesseract'

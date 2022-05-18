@@ -1,4 +1,4 @@
-import networks from 'consts/networks'
+import networks from 'common/src/constants/networks'
 import { providers } from 'ethers'
 
 // Cache provider instances by a network id

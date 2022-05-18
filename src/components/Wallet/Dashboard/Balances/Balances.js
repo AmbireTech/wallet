@@ -2,7 +2,7 @@ import './Balances.scss'
 
 import { Loading } from 'components/common'
 
-import networks from 'consts/networks'
+import networks from 'common/src/constants/networks'
 
 const Balances = ({ portfolio, selectedNetwork, setNetwork, hidePrivateValue }) => {
     const networkDetails = (network) => networks.find(({ id }) => id === network)

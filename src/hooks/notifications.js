@@ -3,7 +3,7 @@ import { getTransactionSummary } from 'lib/humanReadableTransactions'
 import { BigNumber } from 'ethers'
 import { formatUnits } from 'ethers/lib/utils'
 import { useToasts } from './toasts'
-import networks from 'consts/networks'
+import networks from 'common/src/constants/networks'
 import AMBIRE_ICON from 'resources/icon.png'
 import { getProvider } from 'lib/provider'
 
