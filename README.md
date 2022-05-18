@@ -315,3 +315,8 @@ Those contracts (except Ethereum-specific WALLET, xWALLET and SupplyController) 
 * Fix non clickable address area
 * Fix bug when using UD in batch transactions
 * Added Avalanche AAVE for wallets rewards
+
+### v0.5.4
+* Added new option for migration assets from Metamask
+* Added Arbitrum chain
+* Fix: Disable fee selector when proceed to sign step with external signer
