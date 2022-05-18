@@ -1,7 +1,7 @@
 import { formatUnits } from 'ethers/lib/utils'
 import { constants } from 'ethers'
 import { names, tokens } from 'consts/humanizerInfo'
-import networks from 'common/src/constants/networks'
+import networks from 'ambire-common/src/constants/networks'
 import humanizers from './humanizers'
 
 // address (lowercase) => name

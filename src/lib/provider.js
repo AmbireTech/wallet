@@ -1,4 +1,4 @@
-import networks from 'common/src/constants/networks'
+import networks from 'ambire-common/src/constants/networks'
 import { providers } from 'ethers'
 
 // Cache provider instances by a network id
