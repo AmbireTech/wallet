@@ -208,17 +208,18 @@ export function FeeSelector({ disabled, signer, estimation, network, setEstimati
   const {
     feeInFeeToken,
     feeInUSD,
-  } = getFeesData(estimation.selectedFeeToken, estimation, feeSpeed)
+    savedGas
+  } = getFeesData(estimation.selectedFeeToken, estimation, feeSpeed, isGasTankEnabled)
 
   const {
     feeInFeeToken: minFee,
     feeInUSD: minFeeUSD,
-  } = getFeesData({ ...estimation.selectedFeeToken }, { ...estimation, customFee: null }, 'slow')
+  } = getFeesData({ ...estimation.selectedFeeToken }, { ...estimation, customFee: null }, 'slow', isGasTankEnabled)
 
   const {
     feeInFeeToken: maxFee,
     feeInUSD: maxFeeUSD,
-  } = getFeesData({ ...estimation.selectedFeeToken }, { ...estimation, customFee: null }, 'ape')
+  } = getFeesData({ ...estimation.selectedFeeToken }, { ...estimation, customFee: null }, 'ape', isGasTankEnabled)
 
   const discountMin = getDiscountApplied(minFee, discount)
   const discountMax = getDiscountApplied(maxFee, discount)
@@ -368,6 +369,40 @@ export function FeeSelector({ disabled, signer, estimation, network, setEstimati
             </div> */}
           </div>
         </div>)}
+        {!!isGasTankEnabled && (<>
+          <div className='fee-row native-fee-estimation discount-label'>
+            <div>
+              GasTank Balance:
+            </div>
+            <div className='fee-amounts'>
+              <div>
+                ${formatFloatTokenAmount(estimation.gasTank?.map(({balanceInUSD}) => balanceInUSD).reduce((a, b) => a + b, 0).toFixed(2), true, 4)}
+              </div>
+            </div>
+          </div>
+          <div className='fee-row native-fee-estimation discount-label'>
+            <div>
+              You will save:
+            </div>
+            <div className='fee-amounts'>
+              <div>
+                {/* TODO: fix it */}
+                {savedGas}
+              </div>
+            </div>
+          </div>
+          <div className='fee-row native-fee-estimation discount-label'>
+            <div>
+              You will pay:
+            </div>
+            <div className='fee-amounts'>
+              <div>
+                {/* TODO: fix it */}
+                {savedGas}
+              </div>
+            </div>
+          </div>
+        </>)}
       </div>
     </div>
 

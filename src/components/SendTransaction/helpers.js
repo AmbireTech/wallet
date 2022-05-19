@@ -14,13 +14,16 @@ export function isTokenEligible(token, speed, estimation) {
 }
 
 // can't think of a less funny name for that
-export function getFeePaymentConsequences(token, estimation) {
+export function getFeePaymentConsequences(token, estimation, isGasTankEnabled) {
   // Relayerless mode
   if (!estimation?.feeInUSD || !token) return { multiplier: 1, addedGas: 0 }
   // Relayer mode
   const addedGas = !token?.address || token?.address === '0x0000000000000000000000000000000000000000'
     ? ADDED_GAS_NATIVE
     : ADDED_GAS_TOKEN
+  // If Gas Tank enabled
+  if (!!isGasTankEnabled) return { addedGas: 0, multiplier: 1, savedGas: addedGas }
+
   return {
     // otherwise we get very long floating point numbers with trailing .999999
     multiplier: parseFloat(((estimation.gasLimit + addedGas) / estimation.gasLimit).toFixed(4)),
@@ -61,7 +64,7 @@ export function getDiscountApplied(amnt, discount = 0) {
 
 // Returns feeToken data with all multipliers applied
 export function getFeesData(feeToken, estimation, speed, isGasTankEnabled) {
-  const { addedGas, multiplier } = isGasTankEnabled ? { addedGas: 0, multiplier: 1} : getFeePaymentConsequences(feeToken, estimation)
+  const { addedGas, multiplier, savedGas = null } = getFeePaymentConsequences(feeToken, estimation, isGasTankEnabled)
   const discountMultiplier = 1 - (feeToken?.discount || 0)
   const totalMultiplier = multiplier * discountMultiplier
   const nativeRate = feeToken?.nativeRate || 1
@@ -79,5 +82,6 @@ export function getFeesData(feeToken, estimation, speed, isGasTankEnabled) {
     feeInUSD,
     feeInFeeToken,
     addedGas, // use it bundle data
+    savedGas
   }
 }
