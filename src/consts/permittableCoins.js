@@ -54,6 +54,7 @@ export const ERC20PermittableInterface = new Interface([
   //Dai permit
   "function permit(address holder, address spender, uint256 nonce, uint256 expiry, bool allowed, uint8 v, bytes32 r, bytes32 s)",
   "function transferFrom(address from, address to, uint256 amount) view returns (bool)",
+  "function transfer(address to, uint256 amount) view returns (bool)",
   "function approve(address spender, uint256 amount) returns (bool)",
   "function allowance(address owner, address spender) view returns (uint)"
 ])
