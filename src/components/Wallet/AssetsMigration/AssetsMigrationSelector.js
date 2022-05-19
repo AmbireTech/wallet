@@ -489,7 +489,7 @@ const AssetsMigrationSelector = ({ signerAccount, identityAccount, network, setI
     }
 
     setStepperSteps(steps)
-  }, [selectableTokens, selectableTokensUserInputs, setStepperSteps])
+  }, [selectableTokens, selectableTokensUserInputs, setStepperSteps, network])
 
   if (hidden) return <></>
 
