@@ -200,7 +200,7 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, network, account,
       unmounted = true
       clearInterval(intvl)
     }
-  }, [bundle, setEstimation, feeSpeed, addToast, network, relayerURL, signingStatus, replaceTx, setReplaceTx])
+  }, [bundle, setEstimation, feeSpeed, addToast, network, relayerURL, signingStatus, replaceTx, setReplaceTx, isGasTankEnabled])
 
   // The final bundle is used when signing + sending it
   // the bundle before that is used for estimating
@@ -242,7 +242,7 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, network, account,
         ...bundle,
         gasTank: {
           assetId: feeToken.id,
-          value: toHexAmount(feeInFeeToken, feeToken.decimals)
+          value: ethers.utils.parseUnits(feeInFeeToken.toFixed(feeToken.decimals), feeToken.decimals).toString()
         },
         txns: [...bundle.txns],
         gasLimit,
