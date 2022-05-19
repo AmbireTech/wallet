@@ -292,14 +292,14 @@ const AssetsMigrationNative = ({
                         maxRecommendedAmount > 0
                           ?
                           <>
-                            <span>According to the current gas prices, the maximum recommended to migrate is </span>
+                            <span>You can migrate up to </span>
                             <span className={'migration-native-selection'} onClick={() => updateAmount(maxRecommendedAmount)}>
                               {new BigNumber(maxRecommendedAmount).dividedBy(10 ** nativeTokenData.decimals).toFixed(6)} {nativeTokenData.name}
                             </span>
-                            <div>Sending more might not cover the gas fees</div>
+                            <span> because you need funds for paying the transaction costs.</span>
                           </>
                           :
-                          <span>According to the current gas prices, the signer does not have enough funds to cover the transaction fee</span>
+                          <span>You do not have enough funds to pay the transaction fee.</span>
                       }
                     </div>
                   </div>
