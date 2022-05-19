@@ -78,7 +78,7 @@ const AssetsMigrationNative = ({
       wallet.sendTransaction({
         from: signer.address,
         to: identityAccount,
-        gasLimit: 25000,
+        gasLimit: 25000 + (network.id === 'arbitrum' ? 200000 : 0),
         gasPrice: currentGasPrice,
         value: '0x' + new BigNumber(nativeAmount).toString(16),
         chainId: network.chainId

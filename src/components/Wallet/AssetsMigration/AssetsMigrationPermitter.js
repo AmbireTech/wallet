@@ -12,6 +12,7 @@ import { GiToken } from 'react-icons/gi'
 import { MdOutlineNavigateBefore, MdOutlineNavigateNext } from 'react-icons/md'
 import { ZERO_ADDRESS } from 'consts/specialAddresses'
 import { fetchGet } from 'lib/fetch'
+import BigNumber from 'bignumber.js'
 
 const MAX_INT = '0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff';
 
@@ -508,7 +509,7 @@ const AssetsMigrationPermitter = ({
             {item.name}
           </div>
           <div className='migration-asset-amount'>
-            {item.amount / 10 ** item.decimals} <span
+            {new BigNumber(item.amount).div(10 ** item.decimals).toFixed()} <span
             className={'migration-asset-amount-usd'}>(${((item.amount) * item.rate).toFixed(2)})</span>
           </div>
           <div className='separator'>
