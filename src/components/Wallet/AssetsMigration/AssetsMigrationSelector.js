@@ -356,7 +356,7 @@ const AssetsMigrationSelector = ({ signerAccount, identityAccount, network, setI
       })
     setSuggestedGasTokens(usableFeeTokens)
 
-  }, [selectableTokens, selectableTokensUserInputs, portfolio, gasData, selectedGasSpeed, tokensAllowances])
+  }, [selectableTokens, selectableTokensUserInputs, portfolio, gasData, selectedGasSpeed, tokensAllowances, network])
 
 
   // getting gasPrice data from relayer
