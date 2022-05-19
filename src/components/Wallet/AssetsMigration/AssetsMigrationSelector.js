@@ -141,7 +141,7 @@ const AssetsMigrationSelector = ({ signerAccount, identityAccount, network, setI
               address: customTokenAddress,
               selectedAmount: 0,
               amount: signerBalance.toString(),
-              humanAmount: signerBalance.toString() / 10 ** decimals.toString(),
+              humanAmount: new BigNumber(signerBalance.toString()).div(10 ** decimals.toString()).toFixed(),
               selected: signerBalance.gt(0)
             }
           ]
@@ -235,7 +235,7 @@ const AssetsMigrationSelector = ({ signerAccount, identityAccount, network, setI
           address: t.address,
           selectedAmount: 0,
           amount: t.availableBalance,
-          humanAmount: t.availableBalance / 10 ** t.decimals,
+          humanAmount: new BigNumber(t.availableBalance).div(10 ** t.decimals).toFixed(),
           selected: false
         }
       }))
@@ -262,8 +262,10 @@ const AssetsMigrationSelector = ({ signerAccount, identityAccount, network, setI
     const permitConsumption = 70000
     const transferConsumption = 40000 // higher avg
 
+    const adjustedApprovalCost = network.id === 'arbitrum' ? 200000 : 0;
+
     const migrationTransactionsConsumption = (permitsCount + transfersCount > 0) ? 25000 + permitsCount * permitConsumption + transfersCount * transferConsumption : 0
-    const signerTransactionsConsumption = (approvalCounts * (20000 + 21000)) + (21000 * !!consolidatedTokens.filter(t => t.selected && t.native).length)
+    const signerTransactionsConsumption = (approvalCounts * (20000 + 21000 + adjustedApprovalCost)) + ((21000 + adjustedApprovalCost) * !!consolidatedTokens.filter(t => t.selected && t.native).length)
 
     const nativeRate = gasData.gasFeeAssets.native / 10 ** 18 // should decimals be returned in the API?
 
@@ -583,7 +585,7 @@ const AssetsMigrationSelector = ({ signerAccount, identityAccount, network, setI
                   {
                     !canCoverGasFees(suggestedGasTokens, selectedGasSpeed) && selectableTokensUserInputs.filter(a => a.selected).length > 0 &&
                     <div className={'notification-hollow warning mt-3 mb-3'}>
-                      The identity wallet will not have enough fees to pay for the migration transaction.
+                      Your Ambire Wallet will not have enough fees to pay for the migration transaction.
                       {
                         !!getSuggestedGasTokensOfSpeed(suggestedGasTokens, selectedGasSpeed).length &&
                         <div className={'mt-3'}>
