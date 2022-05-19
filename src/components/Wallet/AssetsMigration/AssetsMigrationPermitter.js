@@ -251,7 +251,7 @@ const AssetsMigrationPermitter = ({
     const tokenToMigrate = selectedTokensWithAllowance.find(t => t.address === address)
     if (!tokenToMigrate) return
 
-    const approveData = ERC20PermittableInterface.encodeFunctionData('approve', [identityAccount, tokenToMigrate.amount])
+    const approveData = ERC20PermittableInterface.encodeFunctionData('approve', [identityAccount, new BigNumber(tokenToMigrate.amount).toFixed(0)])
 
     //UI pending status
     setTokensPendingStatus(old => {
@@ -286,6 +286,14 @@ const AssetsMigrationPermitter = ({
 
         setTokensPendingStatus(old => {
           old[address] = false
+          return { ...old }
+        })
+
+        setTokensPermissions(old => {
+          old[address] = {
+            ...old[address],
+            signing: false,
+          }
           return { ...old }
         })
       }
