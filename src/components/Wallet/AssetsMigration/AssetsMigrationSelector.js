@@ -141,7 +141,7 @@ const AssetsMigrationSelector = ({ signerAccount, identityAccount, network, setI
               address: customTokenAddress,
               selectedAmount: 0,
               amount: signerBalance.toString(),
-              humanAmount: signerBalance.toString() / 10 ** decimals.toString(),
+              humanAmount: new BigNumber(signerBalance.toString()).div(10 ** decimals.toString()).toFixed(),
               selected: signerBalance.gt(0)
             }
           ]
@@ -235,7 +235,7 @@ const AssetsMigrationSelector = ({ signerAccount, identityAccount, network, setI
           address: t.address,
           selectedAmount: 0,
           amount: t.availableBalance,
-          humanAmount: t.availableBalance / 10 ** t.decimals,
+          humanAmount: new BigNumber(t.availableBalance).div(10 ** t.decimals).toFixed(),
           selected: false
         }
       }))
