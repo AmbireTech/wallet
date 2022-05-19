@@ -237,12 +237,13 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, network, account,
       let gasLimit
       if (bundle.txns.length > 1) gasLimit = estimation.gasLimit + (bundle.extraGas || 0)
       else gasLimit = estimation.gasLimit
+      const value = (estimation.feeInNative[feeSpeed]) * (estimation.nativeAssetPriceInUSD / estimation.selectedFeeToken.price)
       
       return new Bundle({
         ...bundle,
         gasTank: {
           assetId: feeToken.id,
-          value: ethers.utils.parseUnits(feeInFeeToken.toFixed(feeToken.decimals), feeToken.decimals).toString()
+          value: ethers.utils.parseUnits(value.toFixed(feeToken.decimals), feeToken.decimals).toString()
         },
         txns: [...bundle.txns],
         gasLimit,
