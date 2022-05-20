@@ -49,11 +49,7 @@ const AssetsMigrationPermitter = ({
 
   const [currentGasPrice, setCurrentGasPrice] = useState(null)
 
-  const wallet = getWallet({
-    signer: signer,
-    signerExtra: signerExtra,
-    chainId: network.chainId
-  })
+  const [wallet, setWallet] = useState(null)
 
   //using a callback would return not up to date data + would trigger useEffect prompt loop while we do not want that
   const getConsolidatedTokensPure = (selected, tokensPermissions=[], tokensTransfers=[], tokensPendingStatus=[]) => {
@@ -82,6 +78,22 @@ const AssetsMigrationPermitter = ({
       return remapped
     })
   }
+
+  const checkWalletConnection = useCallback(async () => {
+    return wallet?.isConnected(signer.address, network.chainId)
+      .then(connected => {
+        setHasCorrectAccountAndChainId(connected)
+        if (!connected) {
+          setError(<>Please make sure your signer wallet is connected with <b>{signer.address}</b> to the correct chain: <b>{network.id}</b></>)
+          return false
+        }
+        return true
+      })
+      .catch(e => {
+        setError('Could not check signer connection status: ' + e.error)
+        return false
+      })
+  }, [network, setError, signer, wallet])
 
   //number of tokens that are ready to migrate (sent / permitted)
   const readyTokensCount = useCallback(() => {
@@ -246,6 +258,8 @@ const AssetsMigrationPermitter = ({
   //Send MM prompt
   const sendToken = useCallback(async (address, waitForRcpt = false) => {
 
+    if (!(await checkWalletConnection())) return
+
     const tokenToMigrate = selectedTokensWithAllowance.find(t => t.address === address)
     if (!tokenToMigrate) return
 
@@ -325,7 +339,7 @@ const AssetsMigrationPermitter = ({
 
     return !!transferResult
 
-  }, [wallet, identityAccount, tokensPermissions, selectedTokensWithAllowance, currentGasPrice, network, signer])
+  }, [wallet, identityAccount, tokensPermissions, selectedTokensWithAllowance, currentGasPrice, network, signer, checkWalletConnection])
 
   //going to assets selection
   const cancelMigration = useCallback(() => {
@@ -381,20 +395,18 @@ const AssetsMigrationPermitter = ({
     hideModal()
   }, [addRequest, cancelMigration, hideModal, identityAccount, network, selectedTokensWithAllowance, signer, tokensTransfers, tokensPendingStatus, tokensPermissions])
 
+  useEffect(() => {
+    setWallet(getWallet({
+      signer: signer,
+      signerExtra: signerExtra,
+      chainId: network.chainId
+    }))
+  }, [network, signer, signerExtra])
+
   // check correctness of signer wallet before starting the chained popups
   useEffect(() => {
-    wallet.isConnected(signer.address, network.chainId)
-      .then(connected => {
-        setHasCorrectAccountAndChainId(connected)
-        if (!connected) {
-          setError(<>Please make sure your signer wallet is connected with <b>{signer.address}</b> to the correct chain: <b>{network.id}</b></>)
-        }
-      })
-      .catch(e => {
-      setError('Could not check signer connection status: ' + e.error)
-    })
-  }, [signer, network, wallet, setError])
-
+    checkWalletConnection()
+  }, [checkWalletConnection])
 
   useEffect(() => {
     const url = `${relayerURL}/gasPrice/${network.id}`
