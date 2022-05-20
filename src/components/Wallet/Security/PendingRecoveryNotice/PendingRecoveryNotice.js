@@ -44,14 +44,14 @@ const PendingRecoveryNotice = ({ recoveryLock, showSendTxns, selectedAccount, se
 
         const nonce = await bundle.getNonce(provider)
         const txns = [[
-                selectedAccount.signer.quickAccManager,
+                selectedAccount.id,
                 '0x00',
                 QuickAccManagerInterface.encodeFunctionData('cancel', [
                     selectedAccount.id,
                     quickAcc,
                     nonce,
                     selectedAccount.signer.one,
-                    [[selectedAccount.id, '0x00', '0x']]
+                    [recoveryLock.txns[0]]
                 ])
             ]]
         
