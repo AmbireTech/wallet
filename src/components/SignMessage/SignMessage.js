@@ -58,15 +58,10 @@ export default function SignMessage ({ toSign, resolve, account, connections, re
     let typeDataErr
     if (isObject(dataV4)) {
       try {
-        console.log('TYPED', dataV4)
-        //const hashTest = _TypedDataEncoder.hash(dataV4.domain, dataV4.types, dataV4.message)
-        //console.log('data v444', hashTest)
         if (dataV4.types.EIP712Domain) { // Avoids failure in case some dapps explicitly add this (redundant) prop
           delete dataV4.types.EIP712Domain
         }
         _TypedDataEncoder.hash(dataV4.domain, dataV4.types, dataV4.message)
-        const hashTest = _TypedDataEncoder.hash(dataV4.domain, dataV4.types, dataV4.message)
-        console.log('data v444', hashTest)
       } catch {
         typeDataErr = '.txn has Invalid TypedData object. Should be {domain, types, message}'
       }
@@ -92,8 +87,7 @@ export default function SignMessage ({ toSign, resolve, account, connections, re
 
   const verifySignatureDebug = (toSign, sig) => {
     const provider = getProvider(network.id)
-    console.log(toSign.type)
-    debugger
+    console.log('verifySigDebug', toSign.type)
     const isTyped = ['eth_signTypedData_v4', 'eth_signTypedData'].indexOf(toSign.type) !== -1
     verifyMessage({
       provider,
