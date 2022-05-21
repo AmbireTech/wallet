@@ -138,6 +138,7 @@ export async function ledgerSignTransaction(txn, chainId) {
 
 export async function ledgerSignMessage(hash, signerAddress) {
   const transport = await getTransport()
+
   const accountsData = await getAccounts(transport)
 
   //TODO for multiple accs?
