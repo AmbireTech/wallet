@@ -36,17 +36,28 @@ export default function Wallet(props) {
         portfolio={props.portfolio}
         selectedNetwork={props.network}
         selectedAccount={props.selectedAcc}
+        accounts={props.accounts}
         setNetwork={props.setNetwork}
         privateMode={props.privateMode}
         rewardsData={props.rewardsData}
+        addRequest={props.addRequest}
         relayerURL={props.relayerURL}
+        useStorage={props.useStorage}
         userSorting={props.userSorting}
         setUserSorting={props.setUserSorting}
       />
     },
     {
       path: '/deposit',
-      component: <Deposit selectedAcc={props.selectedAcc} selectedNetwork={props.network.id} relayerURL={props.relayerURL} />
+      component: <Deposit
+        selectedAcc={props.selectedAcc}
+        selectedNetwork={props.network}
+        accounts={props.accounts}
+        addRequest={props.addRequest}
+        relayerURL={props.relayerURL}
+        portfolio={props.portfolio}
+        useStorage={props.useStorage}
+      />
     },
     {
       path: '/transfer/:tokenAddressOrSymbol?',

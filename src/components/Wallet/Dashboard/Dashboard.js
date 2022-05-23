@@ -8,7 +8,9 @@ import Balances from './Balances/Balances'
 import Protocols from './Protocols/Protocols'
 import Collectibles from './Collectibles/Collectibles'
 import { MdOutlineInfo } from 'react-icons/md'
+
 import Promotions from './Promotions/Promotions'
+import AssetsMigrationBanner from 'components/Wallet/AssetsMigration/AssetsMigrationBanner'
 
 const chartSegments = [
     {
@@ -28,7 +30,7 @@ const tabSegments = [
     }
 ]
 
-export default function Dashboard({ portfolio, selectedNetwork, selectedAccount, setNetwork, privateMode, rewardsData,  userSorting, setUserSorting }) {
+export default function Dashboard({ portfolio, selectedNetwork, selectedAccount, setNetwork, privateMode, rewardsData,  userSorting, setUserSorting, accounts, addRequest, relayerURL, useStorage }) {
     const history = useHistory()
     const { tabId } = useParams()
 
@@ -50,7 +52,7 @@ export default function Dashboard({ portfolio, selectedNetwork, selectedAccount,
             }))
             .filter(({ value }) => value > 0);
 
-        const totalProtocols = portfolio.protocols.map(({ assets }) => 
+        const totalProtocols = portfolio.protocols.map(({ assets }) =>
             assets
                 .map(({ balanceUSD }) => balanceUSD)
                 .reduce((acc, curr) => acc + curr, 0))
@@ -72,10 +74,22 @@ export default function Dashboard({ portfolio, selectedNetwork, selectedAccount,
     return (
         <section id="dashboard">
             <Promotions rewardsData={rewardsData} />
+            {
+              <AssetsMigrationBanner
+                selectedNetwork={selectedNetwork}
+                selectedAccount={selectedAccount}
+                accounts={accounts}
+                addRequest={addRequest}
+                closeable={true}
+                relayerURL={relayerURL}
+                portfolio={portfolio}
+                useStorage={useStorage}
+              />
+            }
             <div id="overview">
                 <div id="balance" className="panel">
                     <div className="title">Balance</div>
-                    <div className="content"> 
+                    <div className="content">
                         <Balances
                             portfolio={portfolio}
                             selectedNetwork={selectedNetwork}
