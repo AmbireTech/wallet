@@ -1,0 +1,94 @@
+@import 'variables.scss';
+
+.stepper {
+  display: flex;
+  //background: $input-background-color-darker;
+  padding: 16px;
+  margin-bottom: 16px;
+
+  .step {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+
+    .stepStatus {
+      //font-size: 16px;
+      margin: auto;
+      display: block;
+      width: 10px;
+      height: 10px;
+      text-align: center;
+      border-radius: 50px;
+      z-index: 2;
+      border: 2px solid transparent;
+    }
+
+    &.stepPrev {
+      .stepStatus {
+        border-color: $primary-accent-color;
+        background: $input-background-color;
+      }
+
+      .stepBarPrev {
+        background: $primary-accent-color
+      }
+      .stepBarNext {
+        background: $primary-accent-color
+      }
+    }
+
+    &.stepCurrent {
+      .stepStatus {
+        border-color: $primary-accent-color;
+        background: $primary-accent-color;
+      }
+
+      .stepBarPrev {
+        background: $primary-accent-color;
+      }
+      .stepBarNext {
+        background: mix($primary-accent-color, $input-background-color, 50%);
+      }
+    }
+
+    &.stepNext {
+      .stepStatus {
+        background: $input-background-color;
+        border-color: mix($primary-accent-color, $input-background-color, 50%);
+      }
+
+      .stepBarPrev {
+        background: mix($primary-accent-color, $input-background-color, 50%);
+      }
+      .stepBarNext {
+        background: mix($primary-accent-color, $input-background-color, 50%);
+      }
+    }
+
+    .stepBar {
+      position: absolute;
+      height: 2px;
+      z-index: 1;
+      top: 4px;
+
+      &.stepBarPrev {
+        width: 50%;
+        left:0;
+      }
+
+      &.stepBarNext {
+        width: 50%;
+        right:0;
+      }
+    }
+
+    .stepName {
+      padding-top: 4px;
+      text-align: center;
+      font-weight: normal;
+      font-size: 12px;
+    }
+  }
+}

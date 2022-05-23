@@ -287,6 +287,7 @@ function AppInner() {
             onAddAccount={onAddAccount}
             rewardsData={rewardsData}
             privateMode={privateMode}
+            useStorage={useLocalStorage}
             userSorting={userSorting}
             setUserSorting={setUserSorting}
           >
