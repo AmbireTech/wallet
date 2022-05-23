@@ -9,7 +9,7 @@ const noop = () => null
 const noopSessionStorage = { setSession: noop, getSession: noop, removeSession: noop }
 
 const STORAGE_KEY = 'wc1_state'
-const SUPPORTED_METHODS = ['eth_sendTransaction', 'gs_multi_send', 'personal_sign', 'eth_sign', 'eth_signTypedData_v4', 'eth_signTypedData']
+const SUPPORTED_METHODS = ['eth_sendTransaction', 'gs_multi_send', 'personal_sign', 'eth_sign', 'eth_signTypedData_v4', 'eth_signTypedData', 'wallet_switchEthereumChain', 'ambire_sendBatchTransaction']
 const SESSION_TIMEOUT = 10000
 
 const getDefaultState = () => ({ connections: [], requests: [] })
@@ -243,6 +243,13 @@ export default function useWalletConnect ({ account, chainId, initialUri, allNet
                 onError(error)
                 return
             }
+
+            if (!SUPPORTED_METHODS.includes(payload.method)) {
+                addToast(`dApp requested unsupported method: ${payload.method}`, { error: true })
+                connector.rejectRequest({ id: payload.id, error: { message: 'METHOD_NOT_SUPPORTED: ' + payload.method }})
+                return
+            }
+
             // @TODO: refactor into wcRequestHandler
             // Opensea "unlock currency" hack; they use a stupid MetaTransactions system built into WETH on Polygon
             // There's no point of this because the user has to sign it separately as a tx anyway; but more importantly,
@@ -277,6 +284,17 @@ export default function useWalletConnect ({ account, chainId, initialUri, allNet
                     method: 'eth_signTypedData_v4',
                 }
                 txn = signPayload
+                // Dealing with Erc20 Permits
+                if (signPayload.primaryType === 'Permit') {
+                    // If Uniswap, reject the permit and expect a graceful fallback (receiving approve eth_sendTransaction afterwards)
+                    if (connector.session.peerMeta?.name?.includes('Uniswap')) {
+                        connector.rejectRequest({ id: payload.id, error: { message: 'METHOD_NOT_SUPPORTED: ' + payload.method }})
+                        return
+                    } else {
+                        addToast(`dApp tried to sign a token permit which does not support Smart Wallets`, { error: true })
+                        return
+                    }
+                }
             }
             if (payload.method === 'gs_multi_send' || payload.method === 'ambire_sendBatchTransaction') {
                 dispatch({ type: 'batchRequestsAdded', batchRequest: {
@@ -303,17 +321,7 @@ export default function useWalletConnect ({ account, chainId, initialUri, allNet
                     connector.rejectRequest({ id: payload.id, error: { message: 'Unsupported chain' }})
                 }
             }
-            // Ask what is that
-            if (!SUPPORTED_METHODS.includes(payload.method)) {
-                const isUniIgnorable = payload.method === 'eth_signTypedData_v4'
-                    && connector.session.peerMeta
-                    && connector.session.peerMeta.name.includes('Uniswap')
-                // @TODO: if the dapp is in a "allow list" of dApps that have fallbacks, ignore certain messages
-                // eg uni has a fallback for eth_signTypedData_v4
-                if (!isUniIgnorable) addToast(`dApp requested unsupported method: ${payload.method}`, { error: true })
-                connector.rejectRequest({ id: payload.id, error: { message: 'METHOD_NOT_SUPPORTED: ' + payload.method }})
-                return
-            }
+
             const wrongAcc = (
                 payload.method === 'eth_sendTransaction' && payload.params[0] && payload.params[0].from
                 && payload.params[0].from.toLowerCase() !== connector.session.accounts[0].toLowerCase()
