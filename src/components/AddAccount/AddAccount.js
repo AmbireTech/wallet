@@ -29,7 +29,7 @@ TrezorConnect.manifest({
   appUrl: 'https://www.ambire.com'
 })
 
-export default function AddAccount({ relayerURL, onAddAccount }) {
+export default function AddAccount({ relayerURL, onAddAccount, accounts, utm }) {
   const [signersToChoose, setChooseSigners] = useState(null)
   const [err, setErr] = useState('')
   const [addAccErr, setAddAccErr] = useState('')
@@ -90,13 +90,22 @@ export default function AddAccount({ relayerURL, onAddAccount }) {
       await firstKeyWallet.encrypt(req.passphrase, accountPresets.encryptionOpts)
     )
 
+    const latestDate = utm.length && !accounts.length && new Date(Math.max(...[...utm].map(e => new Date(e.date))));
+    const utmData = utm.length && !accounts.length && utm.map(el => {
+      if (el.date === latestDate.valueOf()) {
+        el.identityCompleted = true
+      }
+      return el
+    })
+
     const createResp = await fetchPost(`${relayerURL}/identity/${identityAddr}`, {
       email: req.email,
       primaryKeyBackup: req.backupOptout ? undefined : primaryKeyBackup,
       secondKeySecret,
       salt, identityFactoryAddr, baseIdentityAddr,
       privileges,
-      quickAccSigner: signer
+      quickAccSigner: signer,
+      ...(!accounts.length && utm.length && { utm: utmData })
     })
     if (createResp.message === 'EMAIL_ALREADY_USED') {
       setErr('An account with this email already exists')
@@ -130,11 +139,20 @@ export default function AddAccount({ relayerURL, onAddAccount }) {
     const bytecode = getProxyDeployBytecode(baseIdentityAddr, privileges, { privSlot: 0 })
     const identityAddr = getAddress('0x' + generateAddress2(identityFactoryAddr, salt, bytecode).toString('hex'))
 
+    const latestDate = utm.length && !accounts.length && new Date(Math.max(...[...utm].map(e => new Date(e.date))));
+    const utmData = utm.length && !accounts.length && utm.map(el => {
+      if (el.date === latestDate.valueOf()) {
+        el.identityCompleted = true
+      }
+      return el
+    })
+
     if (relayerURL) {
       const createResp = await fetchPost(`${relayerURL}/identity/${identityAddr}`, {
         salt, identityFactoryAddr, baseIdentityAddr,
         privileges,
-        signerType
+        signerType,
+        ...(!accounts.length && utm.length && { utm: utmData })
       })
       if (!createResp.success && !(createResp.message && createResp.message.includes('already exists'))) throw createResp
     }
