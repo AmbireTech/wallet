@@ -63,7 +63,7 @@ const suportedProtocols = [
     },
     {
         network: 'optimism',
-        protocols: [],
+        protocols: ['nft'],
         balancesProvider: 'velcro',
         nftsProvider: 'velcro'
     },
