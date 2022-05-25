@@ -1,0 +1,87 @@
+@import 'variables.scss';
+
+.strategies-list--empty {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+
+    .strategies-how-to {
+        display: flex;
+        gap: 25px;
+
+        .title {
+            text-align: center;
+        }
+    }
+
+    .deposit-how-to {
+        display: flex;
+        justify-content: center;
+        flex-direction: column;
+    }
+
+    .withdraw-how-to {
+        display: flex;
+        justify-content: center;
+    }
+
+    .step-indicator {
+        margin-top: 50px;
+        display: flex;
+        align-items: center;
+        padding: 0 40px;
+    }
+    
+    .step {
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+        position: relative;
+        z-index: 1;
+    }
+
+    .step-header {
+        position: relative;/* flex: 1; */width: 100%;justify-content: center;align-items: center;display: flex;
+    }
+    
+    .step-indicator .step-icon {
+        height: 50px;
+        width: 50px;
+        border-radius: 50%;
+        background: #202229;
+        text-align: center;
+        color: #ffffff;
+        position: relative;
+        line-height: 50px;
+        font-size: 24px;
+        border: 1px solid #923DFF;
+    }
+    
+    .step p {
+        text-align: center;
+        position: relative;
+        color: #c2c2c2;
+        font-size: 14px;
+        font-weight: bold;
+    }
+    
+    .step.step2 p,
+    .step.step3 p {
+        left: 50%;
+        transform: translateX(-50%);
+    }
+    
+    .indicator-line {
+        width: 100%;
+        height: 2px;
+        border: 1px dashed #923DFF;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        z-index: -2;
+        flex: 1;
+    }
+      
+  
+  
+}

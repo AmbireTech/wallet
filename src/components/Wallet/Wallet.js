@@ -8,6 +8,7 @@ import Deposit from "./Deposit/Deposit"
 import Swap from "./Swap/Swap"
 import Transfer from "./Transfer/Transfer"
 import Earn from "./Earn/Earn"
+import EarnNew from "./EarnNew/EarnNew"
 import Security from "./Security/Security"
 import Transactions from './Transactions/Transactions'
 import PluginGnosisSafeApps from 'components/Plugins/GnosisSafeApps/GnosisSafeApps'
@@ -72,6 +73,16 @@ export default function Wallet(props) {
     {
       path: '/earn',
       component: <Earn
+        portfolio={props.portfolio}
+        selectedNetwork={{ ...props.network }}
+        selectedAcc={props.selectedAcc}
+        rewardsData={props.rewardsData}
+        addRequest={props.addRequest}
+      />
+    },
+    {
+      path: '/earn-redesign',
+      component: <EarnNew
         portfolio={props.portfolio}
         selectedNetwork={{ ...props.network }}
         selectedAcc={props.selectedAcc}

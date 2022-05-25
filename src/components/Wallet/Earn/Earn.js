@@ -1,4 +1,4 @@
-import './Earn.scss'
+// import './Earn.scss'
 import AAVECard from './Cards/AAVECard/AAVECard'
 import YearnTesseractCard from './Cards/YearnTesseractCard/YearnTesseractCard'
 import { Loading } from 'components/common'

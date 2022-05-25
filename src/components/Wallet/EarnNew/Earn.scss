@@ -1,0 +1,21 @@
+@import 'variables.scss';
+
+#earn {
+    .cards {
+        display: flex;
+        gap: 25px;
+        flex: 1;
+        justify-content: space-between;
+    }
+}
+
+// Mobile
+@media screen and (max-width: $mobile-breakpoint-max-width) {
+    #earn {
+        .cards {
+            width: 100%;
+            flex-direction: column;
+            gap: 1em;
+        }
+    }
+}

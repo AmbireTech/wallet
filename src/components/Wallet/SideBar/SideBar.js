@@ -88,6 +88,11 @@ const SideBar = ({ match, portfolio, hidePrivateValue, relayerURL, selectedNetwo
               <BsPiggyBank/>Earn
           </div>
         </NavLink>
+        <NavLink to={match.url + "/earn-redesign"} activeClassName="selected">
+          <div className="item">
+              <BsPiggyBank/>Earn Redesign
+          </div>
+        </NavLink>
         <NavLink to={match.url + "/transactions"} activeClassName="selected">
           <div className="item">
                 <MdCompareArrows/>Transactions

@@ -1,0 +1,123 @@
+@import 'variables.scss';
+
+.card-new {
+    flex-basis: 35%;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    padding: 20px 25px;
+    padding-bottom: 25px;
+    background-color: $panel-background-color;
+
+    .amount-label {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+
+        span {
+            text-align: right;
+            opacity: 0.8;
+            max-width: 150px;
+            text-overflow: ellipsis;
+            overflow: hidden;
+        }
+    }
+
+    .header {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        .title {
+            margin: 0;
+        }
+        
+        .step {
+            background: #ffffff0d 0% 0% no-repeat padding-box;
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            text-align: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #FFFFFF;
+            font-weight: bold;
+        }
+    }
+
+    .unavailable {
+        display: flex;
+        justify-content: center;
+        font-weight: bold;
+    }
+
+    .content {
+        height: 100%;
+        display: flex;
+        flex-direction: column !important;
+        gap: 15px;
+
+        .details {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            list-style-type: none;
+            padding: 0 5px;
+            margin: 0;
+
+            li {
+                display: flex;
+                justify-content: space-between;
+                color: #e8e8e9;
+
+                div {
+                    display: flex;
+                    align-items: center;
+                }
+            }
+        }
+
+        .details-placeholder {
+            height: 76px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            opacity: 0.5;
+
+            div {
+                height: 100%;
+                width: 100%;
+                background-color: rgba(255, 255, 255, 0.1);
+            }
+        }
+
+        .info {
+            display: flex;
+            flex-direction: column;
+            gap: 1em;
+            font-weight: 500;
+        }
+
+        .info-message {
+            display: flex;
+            align-items: center;
+            min-height: 102px;
+        }
+
+        .separator {
+            flex-grow: 1;
+        }
+    }
+}
+
+.card-new.large {
+    flex: 1;
+}
+
+// Mobile
+@media screen and (max-width: $mobile-breakpoint-max-width) {
+    .card {
+        width: 100%;
+        padding: 20px;
+    }
+}

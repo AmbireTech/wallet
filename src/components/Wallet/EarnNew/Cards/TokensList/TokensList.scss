@@ -1,0 +1,66 @@
+@import 'variables.scss';
+
+.tokens-list-wrapper {
+    .section-title {
+        color: #FFFFFF80;
+        opacity: 1;
+        text-align: left;
+        margin-bottom: 1em;
+        margin-top: 1.6em;
+    }
+
+    .select-search-input {
+        input {
+            height: 50px;
+            font-size: 1em;
+        }
+    }
+
+    .tokens-list {
+        background: #1A1B20 0% 0% no-repeat padding-box;
+        border-radius: 5px;
+        opacity: 1;
+        padding: 20px 0;
+        max-height: 341px;
+        overflow-y: auto;
+        
+        .token-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            padding: 0 18px;
+            border: 1px solid transparent;
+            
+            &:hover {
+                background-color: rgba(255, 255, 255, 0.04);
+                border-radius: 5px;
+            }
+            
+            &.active {
+                border: 1px solid #A05EFF;
+                border-radius: 5px;
+                opacity: 1;
+            }
+
+            .header {
+                display: flex;
+                .icon {
+                    flex: 0 0 auto;
+                    height: 29px;
+                    width: 29px;
+                    @include flex-center-center;
+                    border-radius: 100%;
+                    background-size: cover;
+                    color: rgba(255, 255, 255, 0.5);
+                    background-color: rgba(255, 255, 255, 0.1);
+                }
+                
+                .symbol {
+                    color: #EBECFF;
+                    word-break: break-all;
+                }
+            }
+        }
+    }
+}
