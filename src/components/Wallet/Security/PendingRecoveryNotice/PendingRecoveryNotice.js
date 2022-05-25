@@ -53,7 +53,7 @@ const PendingRecoveryNotice = ({ recoveryLock, showSendTxns, selectedAccount, se
                     quickAcc,
                     nonce,
                     selectedAccount.signer.one,
-                    [[selectedAccount.id, '0x00', '0x']]
+                    [recoveryLock.txns[0]]
                 ])
             ]]
         
