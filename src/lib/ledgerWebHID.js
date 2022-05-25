@@ -13,40 +13,34 @@ export const PARENT_HD_PATH = "44'/60'/0'/0"
 
 async function getTransport() {
   connectedDevices = await TransportWebHID.list()
-  if (connectedDevices.length && connectedDevices[0].opened) {
-    return new TransportWebHID(connectedDevices[0])
+  if (connectedDevices.length) {
+    if (connectedDevices[0].opened) {
+      return new TransportWebHID(connectedDevices[0])
+    } else { // when transport is still not closed and time between 2 requests is short
+      return TransportWebHID.open(connectedDevices[0])
+    }
   } else {
     try {
       return await TransportWebHID.request()
     } catch (e) {
-      throw new Error('Could not request WebHID ledger')
+      throw new Error('Could not request WebHID ledger: ' + e.message)
     }
   }
 }
 
 
 export async function ledgerGetAddresses() {
-  const returnData = {
-    error: null,
-    addresses: []
+  try {
+    const transport = await getTransport()
+    const accounts = await getAccounts(transport)
+    transport.close()
+
+    if (accounts.error) return {error: accounts.error}
+
+    return { addresses: accounts.accounts.map(a => a.address), error: null }
+  } catch(error) {
+    return { error }
   }
-
-  const transport = await getTransport().catch(err => {
-    returnData.error = err
-  })
-  if (!transport) return returnData
-
-  const accountsData = await getAccounts(transport)
-
-  transport.close()
-
-  if (accountsData.error) {
-    returnData.error = accountsData.error
-  } else {
-    returnData.addresses = accountsData.accounts.map(a => a.address)
-  }
-
-  return returnData
 }
 
 async function getAccounts(transport) {
@@ -110,9 +104,7 @@ async function getAddressInternal(transport, parentKeyDerivationPath) {
 }
 
 export async function ledgerSignTransaction(txn, chainId) {
-  const transport = await getTransport().catch(err => {
-    throw err
-  })
+  const transport = await getTransport()
 
   const fromAddr = txn.from
 
@@ -165,9 +157,7 @@ export async function ledgerSignTransaction(txn, chainId) {
 }
 
 export async function ledgerSignMessage(hash, signerAddress) {
-  const transport = await getTransport().catch(err => {
-    throw err
-  })
+  const transport = await getTransport()
 
   const accountsData = await getAccounts(transport)
   if (accountsData.error) {
@@ -181,6 +171,35 @@ export async function ledgerSignMessage(hash, signerAddress) {
   if (account.address.toLowerCase() === signerAddress.toLowerCase()) {
     try {
       const rsvReply = await new AppEth(transport).signPersonalMessage(account.derivationPath, hash.substr(2))
+      signedMsg = '0x' + rsvReply.r + rsvReply.s + rsvReply.v.toString(16)
+    } catch (e) {
+      throw new Error('Signature denied ' + e.message)
+    }
+  } else {
+    throw new Error('Incorrect address. Are you using the correct account/ledger?')
+  }
+  transport.close()
+  return signedMsg
+}
+
+export async function ledgerSignMessage712(domainSeparator, hashStructMessage, signerAddress) {
+  const transport = await getTransport().catch(err => {
+    throw err
+  })
+
+  const accountsData = await getAccounts(transport)
+  if (accountsData.error) {
+    throw new Error(accountsData.error)
+  }
+
+  //TODO for multiple accs?
+  const account = accountsData.accounts[0]
+
+  let signedMsg
+  debugger
+  if (account.address.toLowerCase() === signerAddress.toLowerCase()) {
+    try {
+      const rsvReply = await new AppEth(transport).signEIP712HashedMessage(account.derivationPath, domainSeparator, hashStructMessage)
       signedMsg = '0x' + rsvReply.r + rsvReply.s + rsvReply.v.toString(16)
     } catch (e) {
       throw new Error('Signature denied ' + e.message)
