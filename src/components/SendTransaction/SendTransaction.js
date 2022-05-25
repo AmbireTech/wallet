@@ -6,7 +6,7 @@ import { MdOutlineInfo } from 'react-icons/md'
 import './SendTransaction.scss'
 import { useEffect, useState, useMemo, useRef } from 'react'
 import { Bundle } from 'adex-protocol-eth/js'
-import { Wallet } from 'ethers'
+import { Wallet, Contract, BigNumber } from 'ethers'
 import { Interface } from 'ethers/lib/utils'
 import * as blockies from 'blockies-ts'
 import { useToasts } from 'hooks/toasts'
@@ -29,8 +29,10 @@ import { MdInfo } from 'react-icons/md'
 import { useCallback } from 'react'
 import { ToolTip } from 'components/common'
 import { Checkbox } from 'components/common'
+import StakingPoolABI from 'consts/WalletStakingPoolABI'
 
 const ERC20 = new Interface(require('adex-protocol-eth/abi/ERC20'))
+const STAKING_POOL_INTERFACE = new Interface(StakingPoolABI)
 
 const DEFAULT_SPEED = 'fast'
 const REESTIMATE_INTERVAL = 15000
@@ -38,6 +40,11 @@ const REESTIMATE_INTERVAL = 15000
 const REJECT_MSG = 'Ambire user rejected the request'
 
 const WALLET_TOKEN_SYMBOLS = ['xWALLET', 'WALLET']
+
+// const STAKING_ADDRESS = '0x47cd7e91c3cbaaf266369fe8518345fc4fc12935'
+
+// polygon tests
+const STAKING_ADDRESS = '0xec3b10ce9cabab5dbf49f946a623e294963fbb4e'
 
 const getDefaultFeeToken = (remainingFeeTokenBalances, network, feeSpeed, estimation) => {
   if(!remainingFeeTokenBalances?.length) {
@@ -139,11 +146,42 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, network, account,
 
   const [signingStatus, setSigningStatus] = useState(false)
   const [feeSpeed, setFeeSpeed] = useState(DEFAULT_SPEED)
+  const [lockedShares, setLockedShares] = useState({})
+
   const { addToast } = useToasts()
   useEffect(() => {
     if (!bundle.txns.length) return
     setEstimation(null)
   }, [bundle, setEstimation])
+
+  const updatePendingUnbonds = useCallback (async() => {
+    const provider = getProvider(network.id)
+    const stakingTokenContract = new Contract(STAKING_ADDRESS, STAKING_POOL_INTERFACE, provider)
+
+    // TODO: check it in mainnet
+    const lockedBalance  = (await stakingTokenContract.lockedShares(account.id)).toString()
+
+    setLockedShares(prev => ({
+      ...prev,
+      [account.id]: lockedBalance
+    }))
+
+    return lockedBalance
+  }, [account.id, network.id])
+
+  const withAvailableBalances = useCallback(async(estimation, accountId) => {
+    const index = estimation.remainingFeeTokenBalances.findIndex(x=> x.symbol === 'xWALLET')
+    if(index >= 0) {
+      const availableBalance = 
+      BigNumber.from(estimation.remainingFeeTokenBalances[index].balance)
+      .sub(BigNumber.from(lockedShares[accountId] || (await updatePendingUnbonds())))
+      .toString()
+
+      estimation.remainingFeeTokenBalances[index].balance = availableBalance
+    }
+
+    return estimation
+  }, [lockedShares, updatePendingUnbonds])
 
   // Estimate the bundle & reestimate periodically
   const currentBundle = useRef(null)
@@ -163,6 +201,13 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, network, account,
         ? bundle.estimate({ relayerURL, fetch, replacing: !!bundle.minFeeInUSDPerGas, getNextNonce: isNaN(bundle.nonce) })
         : bundle.estimateNoRelayer({ provider: getProvider(network.id) })
     )
+      .then((estimation) => {
+        if(estimation.remainingFeeTokenBalances) {
+          return  withAvailableBalances(estimation, account.id)
+        }
+
+        return estimation
+      })
       .then((estimation) => {
         if (unmounted || bundle !== currentBundle.current) return
         estimation.relayerless = !relayerURL
