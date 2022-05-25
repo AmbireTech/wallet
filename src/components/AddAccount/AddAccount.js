@@ -29,7 +29,7 @@ TrezorConnect.manifest({
   appUrl: 'https://www.ambire.com'
 })
 
-export default function AddAccount({ relayerURL, onAddAccount, accounts, utm }) {
+export default function AddAccount({ relayerURL, onAddAccount, utm, setUtm }) {
   const [signersToChoose, setChooseSigners] = useState(null)
   const [err, setErr] = useState('')
   const [addAccErr, setAddAccErr] = useState('')
@@ -107,6 +107,10 @@ export default function AddAccount({ relayerURL, onAddAccount, accounts, utm }) 
       quickAccSigner: signer,
       ...(utm.length && { utm: utmData })
     })
+    
+    if (createResp.success) {
+      setUtm([])
+    }
     if (createResp.message === 'EMAIL_ALREADY_USED') {
       setErr('An account with this email already exists')
       return
@@ -154,6 +158,9 @@ export default function AddAccount({ relayerURL, onAddAccount, accounts, utm }) 
         signerType,
         ...(utm.length && { utm: utmData })
       })
+      if (createResp.success) {
+        setUtm([])
+      }
       if (!createResp.success && !(createResp.message && createResp.message.includes('already exists'))) throw createResp
     }
 
@@ -162,7 +169,7 @@ export default function AddAccount({ relayerURL, onAddAccount, accounts, utm }) 
       salt, identityFactoryAddr, baseIdentityAddr, bytecode,
       signer: { address: getAddress(addr) }
     }
-  }, [relayerURL, utm])
+  }, [relayerURL, utm, setUtm])
 
   async function connectWeb3AndGetAccounts() {
     if (typeof window.ethereum === 'undefined') {

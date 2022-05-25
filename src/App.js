@@ -48,7 +48,7 @@ function AppInner() {
   const { network, setNetwork, allNetworks } = useNetwork({ useStorage: useLocalStorage })
   const { addToast } = useToasts()
   const wcUri = useOneTimeQueryParam('uri')
-  const { utm } = useUtmTracking({ useStorage: useLocalStorage })
+  const { utm, setUtm } = useUtmTracking({ useStorage: useLocalStorage })
 
   // Signing requests: transactions/signed msgs: all requests are pushed into .requests
   const { connections, connect, disconnect, isConnecting, requests: wcRequests, resolveMany: wcResolveMany } = useWalletConnect({
@@ -250,7 +250,7 @@ function AppInner() {
 
     <Switch>
       <Route path="/add-account">
-        <AddAccount relayerURL={relayerURL} onAddAccount={onAddAccount} utm={utm}></AddAccount>
+        <AddAccount relayerURL={relayerURL} onAddAccount={onAddAccount} utm={utm} setUtm={setUtm}></AddAccount>
       </Route>
 
       <Route path="/email-login">
