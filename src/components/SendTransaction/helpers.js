@@ -13,16 +13,20 @@ export function isTokenEligible(token, speed, estimation) {
   return balanceInFeeToken > feeInFeeToken
 }
 
+export function getAddedGas(token) {
+  return !token?.address || token?.address === '0x0000000000000000000000000000000000000000'
+    ? ADDED_GAS_NATIVE
+    : ADDED_GAS_TOKEN
+}
+
 // can't think of a less funny name for that
 export function getFeePaymentConsequences(token, estimation, isGasTankEnabled) {
   // Relayerless mode
   if (!estimation?.feeInUSD || !token) return { multiplier: 1, addedGas: 0 }
   // Relayer mode
-  const addedGas = !token?.address || token?.address === '0x0000000000000000000000000000000000000000'
-    ? ADDED_GAS_NATIVE
-    : ADDED_GAS_TOKEN
+  const addedGas = getAddedGas(token)
   // If Gas Tank enabled
-  if (!!isGasTankEnabled) return { addedGas: 0, multiplier: 1, savedGas: addedGas }
+  if (!!isGasTankEnabled) return { addedGas: 0, multiplier: 1 }
 
   return {
     // otherwise we get very long floating point numbers with trailing .999999
@@ -64,7 +68,8 @@ export function getDiscountApplied(amnt, discount = 0) {
 
 // Returns feeToken data with all multipliers applied
 export function getFeesData(feeToken, estimation, speed, isGasTankEnabled) {
-  const { addedGas, multiplier, savedGas = null } = getFeePaymentConsequences(feeToken, estimation, isGasTankEnabled)
+  const { addedGas, multiplier } = getFeePaymentConsequences(feeToken, estimation, isGasTankEnabled)
+  const savedGas = getAddedGas(feeToken)
   const discountMultiplier = 1 - (feeToken?.discount || 0)
   const totalMultiplier = multiplier * discountMultiplier
   const nativeRate = feeToken?.nativeRate || 1

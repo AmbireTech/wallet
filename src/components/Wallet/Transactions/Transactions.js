@@ -5,7 +5,6 @@ import { MdOutlinePendingActions, MdShuffle, MdCheck } from 'react-icons/md'
 import { useRelayerData } from 'hooks'
 import TxnPreview from 'components/common/TxnPreview/TxnPreview'
 import { Loading, Button } from 'components/common'
-import accountPresets from 'consts/accountPresets'
 import networks from 'consts/networks'
 import { getTransactionSummary } from 'lib/humanReadableTransactions'
 import { Bundle } from 'adex-protocol-eth'
@@ -16,6 +15,9 @@ import { toBundleTxn } from 'lib/requestToBundleTxn'
 import { HiOutlineChevronLeft, HiOutlineChevronRight } from 'react-icons/hi'
 import { useHistory, useParams } from 'react-router-dom/cjs/react-router-dom.min'
 import { formatFloatTokenAmount } from 'lib/formatters'
+import { formatUnits } from 'ethers/lib/utils'
+// eslint-disable-next-line import/no-relative-parent-imports
+import { getAddedGas } from '../../SendTransaction/helpers'
 
 // 10% in geth and most EVM chain RPCs; relayer wants 12%
 const RBF_THRESHOLD = 1.14
@@ -39,6 +41,8 @@ function Transactions ({ relayerURL, selectedAcc, selectedNetwork, showSendTxns,
     ? `${relayerURL}/identity/${selectedAcc}/${selectedNetwork.id}/transactions?cacheBreak=${cacheBreak}`
     : null
   const { data, errMsg, isLoading } = useRelayerData(url)
+  const urlGetFeeAssets = relayerURL ? `${relayerURL}/gas-tank/assets?cacheBreak=${cacheBreak}` : null
+  const { data: feeAssets, errMsg: feeAssetsErrMsg, isLoading: feeAssetsIsLoading }= useRelayerData(urlGetFeeAssets)
 
   const showSendTxnsForReplacement = useCallback(bundle => {
     bundle.txns.slice(0, -1)
@@ -66,7 +70,7 @@ function Transactions ({ relayerURL, selectedAcc, selectedNetwork, showSendTxns,
   const defaultPage = useMemo(() => Math.min(Math.max(Number(params.page), 1), maxPages) || 1, [params.page, maxPages])
   const [page, setPage] = useState(defaultPage)
 
-  const bundlesList = executedTransactions.slice((page - 1) * maxBundlePerPage, page * maxBundlePerPage).map(bundle => BundlePreview({ bundle, mined: true }))
+  const bundlesList = executedTransactions.slice((page - 1) * maxBundlePerPage, page * maxBundlePerPage).map(bundle => BundlePreview({ bundle, mined: true, feeAssets }))
   
   useEffect(() => !isLoading && history.replace(`/wallet/transactions/${page}`), [page, history, isLoading])
   useEffect(() => setPage(defaultPage), [selectedAcc, selectedNetwork, defaultPage])
@@ -195,7 +199,7 @@ function Transactions ({ relayerURL, selectedAcc, selectedNetwork, showSendTxns,
   )
 }
 
-function BundlePreview({ bundle, mined = false }) {
+function BundlePreview({ bundle, mined = false, feeAssets }) {
   const network = networks.find(x => x.id === bundle.network)
   if (!Array.isArray(bundle.txns)) return (<h3 className='error'>Bundle has no transactions (should never happen)</h3>)
   const lastTxn = bundle.txns[bundle.txns.length - 1]
@@ -206,6 +210,8 @@ function BundlePreview({ bundle, mined = false }) {
   const hasFeeMatch = lastTxnSummary.match(new RegExp(`to Gas Tank`, 'i')) 
   const txns = hasFeeMatch ? bundle.txns.slice(0, -1) : bundle.txns
   const toLocaleDateTime = date => `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`
+  const feeTokenDetails = feeAssets?.find(i => i.symbol === bundle.feeToken)
+  const savedGas = feeTokenDetails ? getAddedGas(feeTokenDetails) : null
 
   return (<div className='bundlePreview bundle' key={bundle._id}>
     {txns.map((txn, i) => (<TxnPreview
@@ -236,6 +242,26 @@ function BundlePreview({ bundle, mined = false }) {
             <p>{bundle.executed.errorMsg || 'unknown error'}</p>
           </li>
         )
+      }
+      {
+        bundle.gasTank && (feeTokenDetails !== null) && (
+        <>
+          <li>
+              {/* TODO: the icon has to be changed */}
+              <label><BsCalendarWeek/>Fee (Paid with Gas)</label>
+              <p>{bundle.gasTank.value}</p>
+          </li>
+          {savedGas && (<li>
+              {/* TODO: the icon has to be changed */}
+              <label><BsCalendarWeek/>Saved</label>
+              <p>{bundle.feeInUSDPerGas * savedGas}</p>
+          </li>)}
+          {!!bundle.gasTank.chargeBack && (<li>
+              {/* TODO: the icon has to be changed */}
+              <label><BsCalendarWeek/>Chargeback</label>
+              <p>$ {formatUnits(bundle.gasTank.chargeBack.toString(), feeTokenDetails?.decimals).toString() * feeTokenDetails?.price}</p>
+          </li>)}
+        </>) 
       }
       <li>
         <label><BsCalendarWeek/>Submitted on</label>

@@ -26,12 +26,15 @@ const GasTank = ({ network, relayerURL, portfolio, account, userSorting, setUser
         return () => clearTimeout(intvl)
     }, [cacheBreak])
 
-    const urlGetBalance = relayerURL ? `${relayerURL}/gas-tank/${account}/getBalance` : null
-    const urlGetFeeAssets = relayerURL ? `${relayerURL}/gas-tank/assets` : null
+    const urlGetBalance = relayerURL ? `${relayerURL}/gas-tank/${account}/getBalance?cacheBreak=${cacheBreak}` : null
+    const urlGetFeeAssets = relayerURL ? `${relayerURL}/gas-tank/assets?cacheBreak=${cacheBreak}` : null
+    const urlGetTransactions = relayerURL ? `${relayerURL}/identity/${account}/${network.id}/transactions` : null
     const { data, errMsg, isLoading } = useRelayerData(urlGetBalance)
     const gasTankBalance = data?.map(({balanceInUSD}) => balanceInUSD).reduce((a, b) => a + b, 0).toFixed(2)
     const feeAssetsRes = useRelayerData(urlGetFeeAssets)
     const feeAssetsPerNetwork = feeAssetsRes.data?.filter(item => item.network === network.id)
+    const executedTxnsRes = useRelayerData(urlGetTransactions)
+    const latestThreeGasTankTxns = executedTxnsRes && executedTxnsRes.data?.txns.filter(item => !!item.gasTank).splice(0, 3)
     const { isBalanceLoading, tokens } = portfolio
     const sortType = userSorting.tokens?.sortType || 'decreasing'
     const isMobileScreen = useCheckMobileScreen()
@@ -41,32 +44,7 @@ const GasTank = ({ network, relayerURL, portfolio, account, userSorting, setUser
         return { ...item, balance: 0, balanceUSD: 0, decimals: 0 }
     })
     const [failedImg, setFailedImg] = useState([])
-    
-    // ================= TO REMOVE =================
-    const mockedTxns = [
-        {
-            dateTime: '2022-03-01 12:32',
-            gasPayed: '11.32',
-            saved: '1.23',
-            chargeBack: '0.23',
-            address: '0x9394584921923894912394e'
-        },
-        {
-            dateTime: '2022-02-21 10:11',
-            gasPayed: '10.00',
-            saved: '0.91',
-            chargeBack: '0.13',
-            address: '0x9394584921923894912394e'
-        },
-        {
-            dateTime: '2022-01-01 02:32',
-            gasPayed: '15.32',
-            saved: '2.23',
-            chargeBack: '0.66',
-            address: '0x9394584921923894912394e'
-        }
-    ]
-    // =============================================
+    const toLocaleDateTime = date => `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`
     const sortedTokens = availableFeeAssets?.sort((a, b) => {
         if (sortType === 'custom' && userSorting.tokens?.items?.[`${account}-${network.chainId}`]?.length) {
             const sorted = userSorting.tokens.items[`${account}-${network.chainId}`].indexOf(a.address) - userSorting.tokens.items[`${account}-${network.chainId}`].indexOf(b.address)
@@ -219,21 +197,22 @@ const GasTank = ({ network, relayerURL, portfolio, account, userSorting, setUser
             <div className="list">
                 { 
                    sortedTokens && sortedTokens?.map(({ address, symbol, tokenImageUrl, balance, balanceUSD, network, decimals }, i) =>
-                        tokenItem(i, tokenImageUrl, symbol, balance, balanceUSD, address, true, network, decimals, 'tokens', sortedTokens.length))
+                        tokenItem(i, tokenImageUrl = getTokenIcon(network, address), symbol, balance, balanceUSD, address, true, network, decimals, 'tokens', sortedTokens.length))
                 }
             </div>
             <div className="txns-wapper">
+                <div>Transaction History</div>
                 {
-                    mockedTxns && mockedTxns.map((item, key) => {
+                    latestThreeGasTankTxns && latestThreeGasTankTxns.map((item, key) => {
                         // TODO: Fix the styles
                         return (<div key={key} className="txns-item-wapper">
                             <BiTransferAlt />
-                            <span>{item.dateTime}</span>
-                            <span>Gas payed: {item.gasPayed}</span>
-                            <span>Saved: {item.saved}</span>
-                            <span>Chargeback: {item.chargeBack}</span>
+                            <span>{ item.submittedAt && toLocaleDateTime(new Date(item.submittedAt)).toString() }</span>
+                            <span>Gas payed: { item.feeInUSDPerGas }</span>
+                            <span>Saved: { item.gasTank.value }</span>
+                            <span>Chargeback: { item.gasTank.chargeBack && item.gasTank.chargeBack }</span>
                                 <a
-                                    href={network.explorerUrl + '/address/' + item.address}
+                                    href={network.explorerUrl + '/tx/'+ item.txId}
                                     target='_blank'
                                     rel='noreferrer'
                                     onClick={e => e.stopPropagation()}
