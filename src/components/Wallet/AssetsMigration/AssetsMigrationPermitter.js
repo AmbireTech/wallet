@@ -124,7 +124,13 @@ const AssetsMigrationPermitter = ({
         const provider = getProvider(network.id)
         const tokenContract = new Contract(address, ERC20PermittableInterface, provider)
 
-        const nonce = (await tokenContract.nonces(signer.address)).toString()
+
+        const nonce = (await (
+          permittableToken.nonceFunction
+            ? tokenContract[permittableToken.nonceFunction](signer.address)
+            : tokenContract.nonces(signer.address)
+        )).toString()
+
         //and name, for domain
         const tokenName = await tokenContract.name()
 
@@ -152,10 +158,13 @@ const AssetsMigrationPermitter = ({
         }
 
         let domain = {
-          name: tokenName,
           chainId: network.chainId,
           verifyingContract: address,
         };
+
+        if (permittableToken.name) {
+          domain.name = tokenName
+        }
 
         if (permittableToken.version) {
           domain.version = permittableToken.version
@@ -171,8 +180,6 @@ const AssetsMigrationPermitter = ({
           message: ERC2612PermitMessage,
         }
 
-        let strData = JSON.stringify(typedData)
-
         //UI pending status
         setTokensPendingStatus(old => {
           old[address] = true
@@ -180,7 +187,7 @@ const AssetsMigrationPermitter = ({
         })
 
         //sign
-        const result = await wallet.provider.send('eth_signTypedData_v4', [signer.address, strData])
+        const result = await wallet._signTypedData(domain, {"Permit": permittableToken.permitType}, ERC2612PermitMessage)
           .catch(err => {
             if (err?.code === 4001) {//User rejection
               setTokensPermissions(old => {
