@@ -2,6 +2,8 @@
 
 #balances {
     font-size: 40px;
+    display: flex;
+    flex-direction: column;
 
     #other-balances {
         display: flex;

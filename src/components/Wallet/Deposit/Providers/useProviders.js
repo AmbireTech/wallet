@@ -9,7 +9,7 @@ import url from 'url'
 
 import { RAMP_HOST_API_KEY, PAYTRIE_PARTNER_URL, TRANSAK_API_KEY, TRANSAK_ENV } from 'config'
 
-const useProviders = ({ walletAddress, selectedNetwork }) => {
+const useProviders = ({ walletAddress, selectedNetwork, relayerURL }) => {
 
     const [isLoading, setLoading] = useState([])
     const { addToast } = useToasts()
@@ -102,7 +102,7 @@ const useProviders = ({ walletAddress, selectedNetwork }) => {
 
     const openKriptomat = async () => {
         setLoading(prevState => ['Kriptomat', ...prevState])
-        const kriptomatResponse = await fetchGet(`http://localhost:1934/kriptomat/${walletAddress}/${selectedNetwork}`)
+        const kriptomatResponse = await fetchGet(`${relayerURL}/kriptomat/${walletAddress}/${selectedNetwork}`)
         if (kriptomatResponse.success && kriptomatResponse.data && kriptomatResponse.data.url) popupCenter({
             url: url.format(kriptomatResponse.data.url),
             title: 'Kriptomat Deposit',
