@@ -40,11 +40,13 @@ const PendingRecoveryNotice = ({ recoveryLock, showSendTxns, selectedAccount, se
             identity: selectedAccount.id,
             signer: selectedAccount.signer,
             network: selectedNetwork.id,
+            replacesTxId: recoveryLock.txHash,
+
         })
 
         const nonce = await bundle.getNonce(provider)
         const txns = [[
-                selectedAccount.signer.quickAccManager,
+                selectedAccount.id,
                 '0x00',
                 QuickAccManagerInterface.encodeFunctionData('cancel', [
                     selectedAccount.id,
@@ -72,14 +74,14 @@ const PendingRecoveryNotice = ({ recoveryLock, showSendTxns, selectedAccount, se
         //       } else {
         //         // addToast(`Not possible to cancel: ${message}, you will need to pay a fee to replace it with a cancellation transaction.`)
         //       }
-        //       cancelByReplacing(bundle)
         //     } else {
+        //         cancelByReplacing(bundle)
         //     //   addToast('Transaction cancelled successfully')
         //     }
         //   })
         //   .catch(e => {
         //     console.error(e)
-        //     // cancelByReplacing(bundle)
+        //     cancelByReplacing(bundle)
         //   })
     }
     const recoveryLockStatus = recoveryLock ? recoveryLock.status : 'requestedButNotInitiated'
