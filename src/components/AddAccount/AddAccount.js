@@ -90,8 +90,8 @@ export default function AddAccount({ relayerURL, onAddAccount, accounts, utm }) 
       await firstKeyWallet.encrypt(req.passphrase, accountPresets.encryptionOpts)
     )
 
-    const latestDate = utm.length && !accounts.length && new Date(Math.max(...[...utm].map(e => new Date(e.date))));
-    const utmData = utm.length && !accounts.length && utm.map(el => {
+    const latestDate = utm.length && new Date(Math.max(...[...utm].map(e => new Date(e.date))));
+    const utmData = utm.length && utm.map(el => {
       if (el.date === latestDate.valueOf()) {
         el.identityCompleted = true
       }
@@ -105,7 +105,7 @@ export default function AddAccount({ relayerURL, onAddAccount, accounts, utm }) 
       salt, identityFactoryAddr, baseIdentityAddr,
       privileges,
       quickAccSigner: signer,
-      ...(!accounts.length && utm.length && { utm: utmData })
+      ...(utm.length && { utm: utmData })
     })
     if (createResp.message === 'EMAIL_ALREADY_USED') {
       setErr('An account with this email already exists')
@@ -139,8 +139,8 @@ export default function AddAccount({ relayerURL, onAddAccount, accounts, utm }) 
     const bytecode = getProxyDeployBytecode(baseIdentityAddr, privileges, { privSlot: 0 })
     const identityAddr = getAddress('0x' + generateAddress2(identityFactoryAddr, salt, bytecode).toString('hex'))
 
-    const latestDate = utm.length && !accounts.length && new Date(Math.max(...[...utm].map(e => new Date(e.date))));
-    const utmData = utm.length && !accounts.length && utm.map(el => {
+    const latestDate = utm.length && new Date(Math.max(...[...utm].map(e => new Date(e.date))));
+    const utmData = utm.length && utm.map(el => {
       if (el.date === latestDate.valueOf()) {
         el.identityCompleted = true
       }
@@ -152,7 +152,7 @@ export default function AddAccount({ relayerURL, onAddAccount, accounts, utm }) 
         salt, identityFactoryAddr, baseIdentityAddr,
         privileges,
         signerType,
-        ...(!accounts.length && utm.length && { utm: utmData })
+        ...(utm.length && { utm: utmData })
       })
       if (!createResp.success && !(createResp.message && createResp.message.includes('already exists'))) throw createResp
     }
@@ -162,7 +162,7 @@ export default function AddAccount({ relayerURL, onAddAccount, accounts, utm }) 
       salt, identityFactoryAddr, baseIdentityAddr, bytecode,
       signer: { address: getAddress(addr) }
     }
-  }, [relayerURL])
+  }, [relayerURL, utm])
 
   async function connectWeb3AndGetAccounts() {
     if (typeof window.ethereum === 'undefined') {

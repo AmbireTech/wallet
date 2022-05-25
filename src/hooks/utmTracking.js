@@ -1,10 +1,9 @@
-import { useCallback, useEffect, useMemo } from 'react'
+import { useCallback, useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
 
-export default function useUtmTracking ({ useStorage, accounts }) {
+export default function useUtmTracking ({ useStorage }) {
     const { search } = useLocation()
     const searchParams = new URLSearchParams(search)
-    const isLoggedIn = useMemo(() => accounts.length > 0, [accounts])
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
     const current = {}
@@ -28,10 +27,10 @@ export default function useUtmTracking ({ useStorage, accounts }) {
     }, [setUtm])
     
     useEffect(() => {
-        if (!isLoggedIn && Object.keys(current).length) {
-            setNewCampaign({...current, identityCompleted: isLoggedIn, date: new Date().valueOf() })
+        if (Object.keys(current).length) {
+            setNewCampaign({...current, identityCompleted: false, date: new Date().valueOf() })
         } 
-    }, [current, utm.length, setNewCampaign, isLoggedIn])
+    }, [current, utm.length, setNewCampaign])
 
-    return { utm }
+    return { utm, setUtm }
 }
