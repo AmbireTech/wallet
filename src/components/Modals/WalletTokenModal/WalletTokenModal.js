@@ -32,7 +32,6 @@ const multiplierBadges = [
         multiplier: 1.50,
         link: 'https://blog.ambire.com/ambire-wallet-to-partner-with-lobsterdao-10b57e6da0-53c59c88726b'
     },
-    ,
     {
         id: 'cryptoTesters',
         name: 'CryptoTesters',
