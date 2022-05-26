@@ -17,8 +17,8 @@ export default function Providers({ walletAddress, networkDetails, relayerURL })
             name: 'Kriptomat',
             type: 'Credit Card',
             fees: '2.45%',
-            limits: 'up to 450 EUR/day',
-            currencies: 'EUR',
+            limits: 'up to 5000 EUR/day',
+            currencies: 'USD, EUR, GBP',
             networks: ['ethereum', 'binance-smart-chain'],
             onClick: () => openKriptomat()
         },
