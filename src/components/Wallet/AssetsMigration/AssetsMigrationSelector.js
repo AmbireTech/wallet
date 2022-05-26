@@ -15,6 +15,9 @@ import { ERC20PermittableInterface } from 'consts/permittableCoins'
 import { getProvider } from 'lib/provider'
 import { GAS_SPEEDS } from 'consts/gasSpeeds'
 
+const PERMIT_CONSUMPTION = 70000
+const TRANSFER_CONSUMPTION = 52000 // higher avg, 21000 included
+
 const AssetsMigrationSelector = ({ signerAccount, identityAccount, network, setIsSelectionConfirmed, setStep, portfolio, relayerURL, setModalButtons, hideModal, setSelectedTokensWithAllowance, setGasSpeed, setStepperSteps, hidden }) => {
 
   const [selectableTokens, setSelectableTokens] = useState([])
@@ -262,13 +265,10 @@ const AssetsMigrationSelector = ({ signerAccount, identityAccount, network, setI
     const regularTransfersCount = consolidatedTokens.filter(t => t.selected && !t.permittable && !t.native).length
     const nativeTransfersCount = consolidatedTokens.filter(t => t.selected && t.native).length
 
-    const permitConsumption = 70000
-    const transferConsumption = 52000 // higher avg, 21000 included
-
     const adjustedApprovalCost = network.id === 'arbitrum' ? 200000 : 0;
 
-    const migrationTransactionsConsumption = (permitsCount + permittableTransfersCount > 0) ? 25000 + permitsCount * permitConsumption + permittableTransfersCount * transferConsumption : 0
-    const signerTransactionsConsumption = (regularTransfersCount * (21000 + transferConsumption + adjustedApprovalCost)) + (nativeTransfersCount * 25000)
+    const migrationTransactionsConsumption = (permitsCount + permittableTransfersCount > 0) ? 25000 + permitsCount * PERMIT_CONSUMPTION + permittableTransfersCount * TRANSFER_CONSUMPTION : 0
+    const signerTransactionsConsumption = (regularTransfersCount * (21000 + TRANSFER_CONSUMPTION + adjustedApprovalCost)) + (nativeTransfersCount * 25000)
 
     const nativeRate = gasData.gasFeeAssets.native / 10 ** 18 // should decimals be returned in the API?
 
