@@ -22,8 +22,12 @@ export default function useUtmTracking ({ useStorage }) {
     })
     
     const setUtm = useCallback(_utm => {        
-        const isTracked = utm.some(u => JSON.stringify({ source: u.source, medium: u.medium,
-            campaign: u.campaign, id: u.id}) === JSON.stringify(_utm))
+        const isTracked = utm.some(u =>  {
+            return JSON.stringify(u, (key, value) => {
+                if (key === 'date' || key === 'identityCompleted') return undefined
+                return value
+            }) === JSON.stringify(_utm)
+        })
         if (isTracked) return
 
         _setUtm((prev) => [
