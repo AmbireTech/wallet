@@ -170,15 +170,15 @@ const AssetsMigrationPermitter = ({
           domain.version = permittableToken.version
         }
 
-        const typedData = {
-          types: {
-            EIP712Domain: permittableToken.domainType,
-            Permit: permittableToken.permitType,
-          },
-          domain,
-          primaryType: 'Permit',
-          message: ERC2612PermitMessage,
-        }
+        // const typedData = {
+        //   types: {
+        //     EIP712Domain: permittableToken.domainType,
+        //     Permit: permittableToken.permitType,
+        //   },
+        //   domain,
+        //   primaryType: 'Permit',
+        //   message: ERC2612PermitMessage,
+        // }
 
         //UI pending status
         setTokensPendingStatus(old => {
