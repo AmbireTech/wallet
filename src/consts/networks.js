@@ -87,7 +87,8 @@ const networks = [
 	{
 		id: 'gnosis',
 		chainId: 100,
-		rpc: 'https://rpc.xdaichain.com',
+		// rpc: 'https://rpc.xdaichain.com',
+		rpc: 'https://rpc.ankr.com/gnosis',
 		nativeAssetSymbol: 'XDAI',
 		name: 'Gnosis Chain',
 		icon: '/resources/networks/gnosis.png',
