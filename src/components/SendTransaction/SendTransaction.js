@@ -41,10 +41,12 @@ const REJECT_MSG = 'Ambire user rejected the request'
 
 const WALLET_TOKEN_SYMBOLS = ['xWALLET', 'WALLET']
 
-// const STAKING_ADDRESS = '0x47cd7e91c3cbaaf266369fe8518345fc4fc12935'
-
+const STAKING_TOKEN_SYMBOL = 'xWALLET'
+const STAKING_ADDRESS = '0x47cd7e91c3cbaaf266369fe8518345fc4fc12935'
+const STAKING_TOKEN_NETWORK = 'ethereum'
 // polygon tests
-const STAKING_ADDRESS = '0xec3b10ce9cabab5dbf49f946a623e294963fbb4e'
+// const STAKING_ADDRESS = '0xec3b10ce9cabab5dbf49f946a623e294963fbb4e'
+// const STAKING_TOKEN_NETWORK = 'polygon'
 
 const getDefaultFeeToken = (remainingFeeTokenBalances, network, feeSpeed, estimation) => {
   if(!remainingFeeTokenBalances?.length) {
@@ -154,28 +156,32 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, network, account,
     setEstimation(null)
   }, [bundle, setEstimation])
 
-  const updatePendingUnbonds = useCallback (async() => {
-    const provider = getProvider(network.id)
+  const updatePendingUnbonds = useCallback (async(accountId) => {
+    const provider = getProvider(STAKING_TOKEN_NETWORK)
     const stakingTokenContract = new Contract(STAKING_ADDRESS, STAKING_POOL_INTERFACE, provider)
-
-    // TODO: check it in mainnet
-    const lockedBalance  = (await stakingTokenContract.lockedShares(account.id)).toString()
-
+    const lockedBalance  = (await stakingTokenContract.lockedShares(accountId)).toString()
     setLockedShares(prev => ({
       ...prev,
-      [account.id]: lockedBalance
+      [accountId]: lockedBalance
     }))
-
     return lockedBalance
-  }, [account.id, network.id])
+  }, [])
 
-  const withAvailableBalances = useCallback(async(estimation, accountId) => {
-    const index = estimation.remainingFeeTokenBalances.findIndex(x=> x.symbol === 'xWALLET')
+  const withAvailableBalances = useCallback(async(estimation, accountId, network) => {
+    if(network !== STAKING_TOKEN_NETWORK || !estimation.remainingFeeTokenBalances) {
+     return estimation
+    }
+
+    const index = estimation.remainingFeeTokenBalances.findIndex(x=> x.symbol === STAKING_TOKEN_SYMBOL)
     if(index >= 0) {
+      const locked = lockedShares[accountId] !== undefined 
+        ? lockedShares[accountId] 
+        : (await updatePendingUnbonds(accountId))
+
       const availableBalance = 
-      BigNumber.from(estimation.remainingFeeTokenBalances[index].balance)
-      .sub(BigNumber.from(lockedShares[accountId] || (await updatePendingUnbonds())))
-      .toString()
+        BigNumber.from(estimation.remainingFeeTokenBalances[index].balance)
+        .sub(BigNumber.from(locked))
+        .toString()
 
       estimation.remainingFeeTokenBalances[index].balance = availableBalance
     }
@@ -201,13 +207,7 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, network, account,
         ? bundle.estimate({ relayerURL, fetch, replacing: !!bundle.minFeeInUSDPerGas, getNextNonce: isNaN(bundle.nonce) })
         : bundle.estimateNoRelayer({ provider: getProvider(network.id) })
     )
-      .then((estimation) => {
-        if(estimation.remainingFeeTokenBalances) {
-          return  withAvailableBalances(estimation, account.id)
-        }
-
-        return estimation
-      })
+      .then((estimation) => withAvailableBalances(estimation, account.id, network.id))
       .then((estimation) => {
         if (unmounted || bundle !== currentBundle.current) return
         estimation.relayerless = !relayerURL
