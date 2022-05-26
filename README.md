@@ -315,3 +315,13 @@ Those contracts (except Ethereum-specific WALLET, xWALLET and SupplyController) 
 * Fix non clickable address area
 * Fix bug when using UD in batch transactions
 * Added Avalanche AAVE for wallets rewards
+
+### v0.5.4
+* Added new option for migration assets from Metamask
+* Added Arbitrum chain
+* Added Optimism Network
+* Implement sign messages EIP 712 - https://www.npmjs.com/package/is-valid-signature
+* Custom banner improvments
+* New tokens added in custom tokens for "balance oracle"
+* Fixed: Disable fee selector when proceed to sign step with external signer
+* Fixed: the "Undefined" APY in Earn
