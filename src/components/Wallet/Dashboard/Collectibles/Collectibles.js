@@ -11,7 +11,7 @@ import { HiOutlineChevronLeft, HiOutlineChevronRight } from 'react-icons/hi'
 const Collectibles = ({ portfolio, isPrivateMode }) => {
     const params = useParams()
     const history = useHistory()
-    const maxCollectiblesPerPage = 10
+    const maxCollectiblesPerPage = 15
     const maxPages = Math.ceil(portfolio.collectibles.length / maxCollectiblesPerPage)
     const defaultPage = useMemo(() => Math.min(Math.max(Number(params.page), 1), maxPages) || 1, [params.page, maxPages])
     const [page, setPage] = useState(defaultPage)
