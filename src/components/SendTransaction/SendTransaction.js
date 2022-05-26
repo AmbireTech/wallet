@@ -168,23 +168,28 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, network, account,
   }, [])
 
   const withAvailableBalances = useCallback(async(estimation, accountId, network) => {
-    if(network !== STAKING_TOKEN_NETWORK || !estimation.remainingFeeTokenBalances) {
-     return estimation
-    }
+       if(network !== STAKING_TOKEN_NETWORK || !Array.isArray(estimation?.remainingFeeTokenBalances)) {
+        return estimation
+      }
 
-    const index = estimation.remainingFeeTokenBalances.findIndex(x=> x.symbol === STAKING_TOKEN_SYMBOL)
-    if(index >= 0) {
-      const locked = lockedShares[accountId] !== undefined 
-        ? lockedShares[accountId] 
-        : (await updatePendingUnbonds(accountId))
+      const index = estimation.remainingFeeTokenBalances.findIndex(x=> x.symbol === STAKING_TOKEN_SYMBOL)
+      if(index >= 0) {
+        try {    
+          const locked = lockedShares[accountId] !== undefined
+            ? lockedShares[accountId]
+            : (await updatePendingUnbonds(accountId))
 
-      const availableBalance = 
-        BigNumber.from(estimation.remainingFeeTokenBalances[index].balance)
-        .sub(BigNumber.from(locked))
-        .toString()
-
-      estimation.remainingFeeTokenBalances[index].balance = availableBalance
-    }
+          const availableBalance =
+            BigNumber.from(estimation.remainingFeeTokenBalances[index].balance)
+            .sub(BigNumber.from(locked))
+            .toString()
+            estimation.remainingFeeTokenBalances[index].balance = availableBalance
+        } catch (e) {
+          // NOTE: if there is error getting the locked shares we are disabling paying with xWALLET
+          console.log('can not get xWALLET available balance', e)
+          estimation.remainingFeeTokenBalances[index].balance = '0'
+        }      
+    }       
 
     return estimation
   }, [lockedShares, updatePendingUnbonds])
