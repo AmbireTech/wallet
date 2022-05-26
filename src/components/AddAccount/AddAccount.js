@@ -29,7 +29,7 @@ TrezorConnect.manifest({
   appUrl: 'https://www.ambire.com'
 })
 
-export default function AddAccount({ relayerURL, onAddAccount, utm, setUtm }) {
+export default function AddAccount({ relayerURL, onAddAccount, utmTracking }) {
   const [signersToChoose, setChooseSigners] = useState(null)
   const [err, setErr] = useState('')
   const [addAccErr, setAddAccErr] = useState('')
@@ -90,13 +90,7 @@ export default function AddAccount({ relayerURL, onAddAccount, utm, setUtm }) {
       await firstKeyWallet.encrypt(req.passphrase, accountPresets.encryptionOpts)
     )
 
-    const latestDate = utm.length && new Date(Math.max(...[...utm].map(e => new Date(e.date))));
-    const utmData = utm.length && utm.map(el => {
-      if (el.date === latestDate.valueOf()) {
-        el.identityCompleted = true
-      }
-      return el
-    })
+    const utm = utmTracking.getLatestUtmData()
 
     const createResp = await fetchPost(`${relayerURL}/identity/${identityAddr}`, {
       email: req.email,
@@ -105,11 +99,11 @@ export default function AddAccount({ relayerURL, onAddAccount, utm, setUtm }) {
       salt, identityFactoryAddr, baseIdentityAddr,
       privileges,
       quickAccSigner: signer,
-      ...(utm.length && { utm: utmData })
+      ...(utm.length && { utm })
     })
     
     if (createResp.success) {
-      setUtm([])
+      utmTracking.resetUtm()
     }
     if (createResp.message === 'EMAIL_ALREADY_USED') {
       setErr('An account with this email already exists')
@@ -143,23 +137,17 @@ export default function AddAccount({ relayerURL, onAddAccount, utm, setUtm }) {
     const bytecode = getProxyDeployBytecode(baseIdentityAddr, privileges, { privSlot: 0 })
     const identityAddr = getAddress('0x' + generateAddress2(identityFactoryAddr, salt, bytecode).toString('hex'))
 
-    const latestDate = utm.length && new Date(Math.max(...[...utm].map(e => new Date(e.date))));
-    const utmData = utm.length && utm.map(el => {
-      if (el.date === latestDate.valueOf()) {
-        el.identityCompleted = true
-      }
-      return el
-    })
+    const utm = utmTracking.getLatestUtmData()
 
     if (relayerURL) {
       const createResp = await fetchPost(`${relayerURL}/identity/${identityAddr}`, {
         salt, identityFactoryAddr, baseIdentityAddr,
         privileges,
         signerType,
-        ...(utm.length && { utm: utmData })
+        ...(utm.length && { utm })
       })
       if (createResp.success) {
-        setUtm([])
+        utmTracking.resetUtm()
       }
       if (!createResp.success && !(createResp.message && createResp.message.includes('already exists'))) throw createResp
     }
@@ -169,7 +157,7 @@ export default function AddAccount({ relayerURL, onAddAccount, utm, setUtm }) {
       salt, identityFactoryAddr, baseIdentityAddr, bytecode,
       signer: { address: getAddress(addr) }
     }
-  }, [relayerURL, utm, setUtm])
+  }, [relayerURL, utmTracking])
 
   async function connectWeb3AndGetAccounts() {
     if (typeof window.ethereum === 'undefined') {
