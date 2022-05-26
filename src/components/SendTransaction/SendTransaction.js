@@ -6,7 +6,7 @@ import { MdOutlineInfo } from 'react-icons/md'
 import './SendTransaction.scss'
 import { useEffect, useState, useMemo, useRef } from 'react'
 import { Bundle } from 'adex-protocol-eth/js'
-import { Wallet } from 'ethers'
+import { Wallet, Contract, BigNumber } from 'ethers'
 import { Interface } from 'ethers/lib/utils'
 import * as blockies from 'blockies-ts'
 import { useToasts } from 'hooks/toasts'
@@ -29,8 +29,10 @@ import { MdInfo } from 'react-icons/md'
 import { useCallback } from 'react'
 import { ToolTip } from 'components/common'
 import { Checkbox } from 'components/common'
+import StakingPoolABI from 'consts/WalletStakingPoolABI'
 
 const ERC20 = new Interface(require('adex-protocol-eth/abi/ERC20'))
+const STAKING_POOL_INTERFACE = new Interface(StakingPoolABI)
 
 const DEFAULT_SPEED = 'fast'
 const REESTIMATE_INTERVAL = 15000
@@ -38,6 +40,13 @@ const REESTIMATE_INTERVAL = 15000
 const REJECT_MSG = 'Ambire user rejected the request'
 
 const WALLET_TOKEN_SYMBOLS = ['xWALLET', 'WALLET']
+
+const STAKING_TOKEN_SYMBOL = 'xWALLET'
+const STAKING_ADDRESS = '0x47cd7e91c3cbaaf266369fe8518345fc4fc12935'
+const STAKING_TOKEN_NETWORK = 'ethereum'
+// polygon tests
+// const STAKING_ADDRESS = '0xec3b10ce9cabab5dbf49f946a623e294963fbb4e'
+// const STAKING_TOKEN_NETWORK = 'polygon'
 
 const getDefaultFeeToken = (remainingFeeTokenBalances, network, feeSpeed, estimation) => {
   if(!remainingFeeTokenBalances?.length) {
@@ -139,11 +148,46 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, network, account,
 
   const [signingStatus, setSigningStatus] = useState(false)
   const [feeSpeed, setFeeSpeed] = useState(DEFAULT_SPEED)
+  const [lockedShares, setLockedShares] = useState({})
+
   const { addToast } = useToasts()
   useEffect(() => {
     if (!bundle.txns.length) return
     setEstimation(null)
   }, [bundle, setEstimation])
+
+  const updatePendingUnbonds = useCallback (async(accountId) => {
+    const provider = getProvider(STAKING_TOKEN_NETWORK)
+    const stakingTokenContract = new Contract(STAKING_ADDRESS, STAKING_POOL_INTERFACE, provider)
+    const lockedBalance  = (await stakingTokenContract.lockedShares(accountId)).toString()
+    setLockedShares(prev => ({
+      ...prev,
+      [accountId]: lockedBalance
+    }))
+    return lockedBalance
+  }, [])
+
+  const withAvailableBalances = useCallback(async(estimation, accountId, network) => {
+    if(network !== STAKING_TOKEN_NETWORK || !estimation.remainingFeeTokenBalances) {
+     return estimation
+    }
+
+    const index = estimation.remainingFeeTokenBalances.findIndex(x=> x.symbol === STAKING_TOKEN_SYMBOL)
+    if(index >= 0) {
+      const locked = lockedShares[accountId] !== undefined 
+        ? lockedShares[accountId] 
+        : (await updatePendingUnbonds(accountId))
+
+      const availableBalance = 
+        BigNumber.from(estimation.remainingFeeTokenBalances[index].balance)
+        .sub(BigNumber.from(locked))
+        .toString()
+
+      estimation.remainingFeeTokenBalances[index].balance = availableBalance
+    }
+
+    return estimation
+  }, [lockedShares, updatePendingUnbonds])
 
   // Estimate the bundle & reestimate periodically
   const currentBundle = useRef(null)
@@ -163,6 +207,7 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, network, account,
         ? bundle.estimate({ relayerURL, fetch, replacing: !!bundle.minFeeInUSDPerGas, getNextNonce: isNaN(bundle.nonce) })
         : bundle.estimateNoRelayer({ provider: getProvider(network.id) })
     )
+      .then((estimation) => withAvailableBalances(estimation, account.id, network.id))
       .then((estimation) => {
         if (unmounted || bundle !== currentBundle.current) return
         estimation.relayerless = !relayerURL
@@ -197,7 +242,8 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, network, account,
       unmounted = true
       clearInterval(intvl)
     }
-  }, [bundle, setEstimation, feeSpeed, addToast, network, relayerURL, signingStatus, replaceTx, setReplaceTx])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [bundle, setEstimation, feeSpeed, addToast, network, relayerURL, signingStatus, replaceTx, setReplaceTx, account.id])
 
   // The final bundle is used when signing + sending it
   // the bundle before that is used for estimating

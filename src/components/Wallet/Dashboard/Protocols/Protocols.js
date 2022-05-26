@@ -72,7 +72,7 @@ const Protocols = ({ portfolio, network, account, hidePrivateValue, userSorting,
             return (<div className="token" key={`token-${address}-${index}`}
              draggable={category === 'tokens' && sortedTokensLength > 1 && sortType === 'custom' && !isMobileScreen}
              onDragStart={(e) => { 
-                if (handle.current === target.current || handle.current.contains(target.current)) dragStart(e, index)
+                if ((!!handle.current && !!target.current) && (handle.current === target.current || handle.current.contains(target.current))) dragStart(e, index)
                 else e.preventDefault();
              }}
              onMouseDown={(e) => dragTarget(e, index)}
