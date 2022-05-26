@@ -242,7 +242,8 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, network, account,
       unmounted = true
       clearInterval(intvl)
     }
-  }, [bundle, setEstimation, feeSpeed, addToast, network, relayerURL, signingStatus, replaceTx, setReplaceTx])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [bundle, setEstimation, feeSpeed, addToast, network, relayerURL, signingStatus, replaceTx, setReplaceTx, account.id])
 
   // The final bundle is used when signing + sending it
   // the bundle before that is used for estimating
