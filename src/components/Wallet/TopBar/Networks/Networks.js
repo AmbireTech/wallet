@@ -44,7 +44,7 @@ const Networks = ({
             return sorted
         }
     })
-    const currHideNet = sortedNetworks.filter(n => network.id === n.id && network.hide)[0]
+    const currHideNet = sortedNetworks.find(n => network.id === n.id && network.hide)
     const networksItems = sortedNetworks.filter(n => !n.hide).concat(currHideNet ? currHideNet : []).map(({ id, name, icon }) => ({
       label: name,
       value: id,
