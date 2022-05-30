@@ -125,6 +125,10 @@ export default function useGnosisSafe({selectedAccount, network, verbose = 0, us
         result = await provider.getCode(callTx[0], callTx[1]).catch(err => {
           throw err
         })
+      } else if (method === "eth_getLogs") {
+        result = await provider.getLogs(callTx[0]).catch(err => {
+          throw err
+        })
       } else if (method === "eth_getBlockByNumber") {
         result = await provider.getBlock(callTx[0], callTx[1]).catch(err => {
           throw err
