@@ -95,7 +95,7 @@ const networks = [
 		explorerUrl: 'https://blockscout.com',
 		unstoppableDomainsChain: 'ERC20'
 	},
-	/*{
+	{
 		id: 'kucoin',
 		chainId: 321,
 		rpc: 'https://rpc-mainnet.kcc.network',
@@ -104,7 +104,7 @@ const networks = [
 		icon: '/resources/networks/kucoin.svg',
 		explorerUrl: 'https://explorer.kcc.io',
 		unstoppableDomainsChain: 'ERC20'
-	},*/
+	},
 	{
 		id: 'optimism',
 		chainId: 10,
