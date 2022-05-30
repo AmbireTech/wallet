@@ -7,7 +7,7 @@ import { Contract } from 'ethers'
 import { FaCheck, FaHourglass } from 'react-icons/fa'
 import Button from 'components/common/Button/Button'
 
-import { PERMITTABLE_COINS, PERMIT_TYPE_DAI, ERC20PermittableInterface } from 'consts/permittableCoins'
+import { PERMITTABLE_COINS, PERMIT_TYPE_DAI, ERC20PermittableInterface, EIP712DomainWithSalt } from 'consts/permittableCoins'
 import { GiToken } from 'react-icons/gi'
 import { MdOutlineNavigateBefore, MdOutlineNavigateNext } from 'react-icons/md'
 import { ZERO_ADDRESS } from 'consts/specialAddresses'
@@ -168,6 +168,14 @@ const AssetsMigrationPermitter = ({
 
         if (permittableToken.version) {
           domain.version = permittableToken.version
+        }
+
+        if (permittableToken.salt) {
+          domain.salt = permittableToken.salt
+        }
+
+        if (permittableToken.domainType === EIP712DomainWithSalt) {
+          delete domain.chainId
         }
 
         //UI pending status
