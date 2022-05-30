@@ -4,6 +4,9 @@ import TokenList from 'consts/tokenList'
 import {ZERO_ADDRESS} from 'consts/specialAddresses'
 
 export default function assetMigrationDetector({ networkId, account }) {
+
+  if (!account) return Promise.resolve([])// for web accounts
+
   //First pass
   return fetchGet(`${VELCRO_API_ENDPOINT}/protocols/tokens/balances?addresses[]=${account}&network=${networkId}&api_key=${ZAPPER_API_KEY}&newBalances=true`)
     .then(velcroResponse => {
