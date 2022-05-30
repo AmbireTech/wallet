@@ -61,7 +61,8 @@ const useProviders = ({ walletAddress, selectedNetwork, relayerURL }) => {
     const openTransak = () => {
         const networksAlias = {
             'avalanche': 'avaxcchain',
-            'binance-smart-chain': 'bsc'
+            'binance-smart-chain': 'bsc',
+            'moonbeam': 'mainnet'
         }
 
         const defaultCurency = {
@@ -69,7 +70,10 @@ const useProviders = ({ walletAddress, selectedNetwork, relayerURL }) => {
             'polygon': 'USDC',
             'arbitrum': 'ETH',
             'avalanche': 'AVAX',
-            'binance-smart-chain': 'BNB'
+            'binance-smart-chain': 'BNB',
+            'moonriver': 'MOVR',
+            'moonbeam': 'GLMR',
+            'optimism': 'USDC'
         }
 
         const transak = new transakSDK({
