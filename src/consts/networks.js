@@ -103,7 +103,8 @@ const networks = [
 		name: 'KCC KuCoin',
 		icon: '/resources/networks/kucoin.svg',
 		explorerUrl: 'https://explorer.kcc.io',
-		unstoppableDomainsChain: 'ERC20'
+		unstoppableDomainsChain: 'ERC20',
+		hide: true
 	},
 	{
 		id: 'optimism',
