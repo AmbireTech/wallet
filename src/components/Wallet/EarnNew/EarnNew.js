@@ -6,7 +6,7 @@ import TokensList from './Cards/TokensList/TokensList'
 import StrategiesList from './Cards/StrategiesList/StrategiesList'
 import DepositCard from './Cards/DepositCard/DepositCard'
 
-const Earn = ({ portfolio, selectedNetwork, rewardsData, selectedAcc, addRequest }) => {
+const Earn = ({ portfolio, selectedNetwork, rewardsData, selectedAcc, addRequest, relayerURL }) => {
     const [selectedToken, setSelectedToken] = useState('')
     const [selectedStrategie, setSelectedStrategie] = useState('')
 
@@ -25,6 +25,7 @@ const Earn = ({ portfolio, selectedNetwork, rewardsData, selectedAcc, addRequest
                             header={{ step: 1, title: 'Select a token' }}
                             setSelectedToken={setSelectedToken}
                             selectedToken={selectedToken}
+                            relayerURL={relayerURL}
                         />
                         <StrategiesList
                             networkId={selectedNetwork.id}
