@@ -268,7 +268,7 @@ const AssetsMigrationSelector = ({ signerAccount, identityAccount, network, setI
     const adjustedApprovalCost = network.id === 'arbitrum' ? 200000 : 0;
 
     const migrationTransactionsConsumption = (permitsCount + permittableTransfersCount > 0) ? 25000 + permitsCount * PERMIT_CONSUMPTION + permittableTransfersCount * TRANSFER_CONSUMPTION : 0
-    const signerTransactionsConsumption = (regularTransfersCount * (21000 + TRANSFER_CONSUMPTION + adjustedApprovalCost)) + (nativeTransfersCount * 25000)
+    const signerTransactionsConsumption = (regularTransfersCount * (25000 + TRANSFER_CONSUMPTION + adjustedApprovalCost)) + (nativeTransfersCount * 25000)
 
     const nativeRate = gasData.gasFeeAssets.native / 10 ** 18 // should decimals be returned in the API?
 
