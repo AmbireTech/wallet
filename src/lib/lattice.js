@@ -122,8 +122,39 @@ const latticeSignMessage = async(client, hash) => {
     }
 }
 
+const latticeSignMessage712 = async(client, message) => {
+    const reqData = {
+        currency: 'ETH_MSG',
+        data: {
+          signerPath: [HARDENED_OFFSET+44, HARDENED_OFFSET+60, HARDENED_OFFSET, 0, 0],
+          protocol: 'eip712', // You must use this string to specify this protocol
+          payload: message
+        }
+      }
+
+    try {
+        const sign = await new Promise((resolve, reject) => {
+            client.sign(reqData, (err, signedTx) => {
+                if (err) {
+                    reject(err)
+                    return
+                }
+
+                if (!signedTx) throw new Error('Lattice could not sign the message.')
+                
+                resolve({ signedMsg: '0x' + signedTx.sig.r + signedTx.sig.s + signedTx.sig.v[0].toString(16), errSignMessage: false })  
+            })
+        })
+
+        return sign
+    } catch (err) {
+        console.error(err)
+        return { signedMsg: null, errSignMessage: err }
+    }
+}
+
 const latticeSignTransaction = async(client, txn, chainId) => {
-    const { to, data, gas, gasPrice, nonce } = txn
+    const { to, data, gas, gasPrice, nonce, value = 0 } = txn
     const unsignedTxObj = {
         ...txn,
         gasLimit: txn.gasLimit || txn.gas,
@@ -134,11 +165,11 @@ const latticeSignTransaction = async(client, txn, chainId) => {
 
     const txData = {
         nonce,
-        gasLimit: gas,
+        gasLimit: gas || txn.gasLimit,
         gasPrice,
         to,
-        value: 0,
-        data,
+        value,
+        data: data || '',
         // -- m/44'/60'/0'/0/0
         signerPath: [HARDENED_OFFSET+44, HARDENED_OFFSET+60, HARDENED_OFFSET, 0, 0],
         chainId,
@@ -184,5 +215,6 @@ export {
     latticePair,
     latticeGetAddresses,
     latticeSignMessage,
+    latticeSignMessage712,
     latticeSignTransaction
  }
