@@ -21,7 +21,7 @@ async function resolveENSDomain(domain, bip44Item) {
 }
 
 async function resolveForCoin(resolver, bip44Item) {
-	if (bip44Item) {
+	if (bip44Item && bip44Item.length == 1) {
 		const coinType = getNormalisedCoinType(bip44Item);
 		return resolver.getAddress(coinType)
 	}
@@ -31,7 +31,7 @@ async function resolveForCoin(resolver, bip44Item) {
 }
 
 function getBip44Items(coinTicker) {
-	if(!coinTicker) return []
+	if(!coinTicker) return null
 	return constants.filter(item => item[1] === coinTicker)
 }
 
