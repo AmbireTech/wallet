@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 const fetch = require('node-fetch')
 const ERC20 = require('adex-protocol-eth/abi/ERC20')
+const ambireTokenList = require('../src/consts/tokenList.json')
 
 const etherscans = {
 	ethereum: { host: 'api.etherscan.io', key: 'KJJ4NZ9EQHIFCQY5IJ775PT128YE15AV5S' },
@@ -84,7 +85,8 @@ const customTokens = [
 		address: '0x47cd7e91c3cbaaf266369fe8518345fc4fc12935',
 		symbol: 'xWALLET',
 		decimals: 18
-	}
+	},
+	...Object.keys(ambireTokenList).map(n => ambireTokenList[n]).flat()
 ]
 
 async function generate () {
