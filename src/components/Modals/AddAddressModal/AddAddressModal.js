@@ -46,7 +46,6 @@ const AddAddressModal = ({ title, inputs, selectedNetwork, onClose }) => {
                 .map(({ ref, validate, label }) => {
                     const isUDField = label === 'Address / Unstoppable domainsⓇ'
                     const value = isUDField && uDAddr ? uDAddr : isUDField && ensAddr ? ensAddr : ref.current.value
-                    console.log(value, "wartosc")
                     if (!validate) return !!value
 
                     return validate(value)
