@@ -19,7 +19,7 @@ const Addresses = ({ addresses, addAddress, removeAddress, onSelectAddress, sele
             title="Add New Address" 
             selectedNetwork={selectedNetwork} 
             inputs={modalInputs} 
-            onClose={([name, address, isUd]) => addAddress(name, address, isUd)}
+            onClose={([name, address, type]) => addAddress(name, address, type)}
         ></AddAddressModal>
     const showInputModal = () => showModal(addAddressModal)
 

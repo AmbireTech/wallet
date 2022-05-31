@@ -13,6 +13,19 @@ const networks = [
 		unstoppableDomainsChain: 'ERC20'
 	},
 	{
+		id: 'homestead',
+		chainId: 1,
+		//rpc: 'https://mainnet.infura.io/v3/3d22938fd7dd41b7af4197752f83e8a1',
+		//rpc: 'https://morning-wild-water.quiknode.pro/66011d2c6bdebc583cade5365086c8304c13366c/',
+		//rpc: 'https://mainnet.infura.io/v3/d4319c39c4df452286d8bf6d10de28ae',
+		rpc: 'https://eth-mainnet.alchemyapi.io/v2/e5Gr8LP_EH0SBPZiNCcC08OuEDrvgoYK',
+		nativeAssetSymbol: 'ETH',
+		name: 'Ethereum',
+		icon: '/resources/networks/ethereum.png',
+		explorerUrl: 'https://etherscan.io',
+		unstoppableDomainsChain: 'ERC20'
+	},
+	{
 		id: 'polygon',
 		chainId: 137,
 		rpc: 'https://polygon-rpc.com/rpc',

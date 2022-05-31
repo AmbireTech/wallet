@@ -6,6 +6,7 @@
   "dependencies": {
     "@0x/subproviders": "^6.6.1",
     "@ambire/signature-validator": "^1.0.3",
+    "@ensdomains/eth-ens-namehash": "^2.0.15",
     "@ethersproject/transactions": "5.4.0",
     "@gnosis.pm/safe-apps-sdk": "^6.2.0",
     "@ledgerhq/hw-app-eth": "6.6.0",
@@ -22,6 +23,7 @@
     "@web3-react/types": "^6.0.7",
     "@yfi/sdk": "^1.0.11",
     "adex-protocol-eth": "git+https://git@github.com/AmbireTech/adex-protocol-eth.git#51b46c1a2ede69339e1a5502072314ff7e8ad81b",
+    "bip44-constants": "^128.0.0",
     "blockies-ts": "^1.0.0",
     "eth-keyring-controller": "^6.2.1",
     "ethereumjs-util": "^6.1.0",
@@ -45,7 +47,7 @@
     "web-vitals": "^1.1.2"
   },
   "scripts": {
-    "start": "react-scripts --max_old_space_size=4096 start",
+    "start": "CHOKIDAR_USEPOLLING=true react-scripts --max_old_space_size=4096 start",
     "build": "react-scripts --max_old_space_size=4096 build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",

@@ -82,9 +82,9 @@ const useAddressBook = ({ accounts, useStorage }) => {
         addToast(`${address} added to your Address Book.`)
     }, [addresses, addToast, updateAddresses])
 
-    const removeAddress = useCallback((name, address, isUd = false) => {
+    const removeAddress = useCallback((name, address, type = false) => {
         if (!name || !address) throw new Error('Address Book: invalid arguments supplied')
-        if (!isUd) {
+        if (!type) {
             if (!isValidAddress(address)) throw new Error('Address Book: invalid address format')
         }
         
