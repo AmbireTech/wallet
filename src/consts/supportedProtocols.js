@@ -67,12 +67,12 @@ const suportedProtocols = [
         balancesProvider: 'velcro',
         nftsProvider: 'velcro'
     },
-    // {
-    //     network: 'andromeda',
-    //     protocols: [],
-    //     balancesProvider: 'velcro',
-    //     nftsProvider: 'velcro'
-    // },
+    {
+        network: 'andromeda',
+        protocols: [],
+        balancesProvider: 'velcro',
+        nftsProvider: 'velcro'
+    },
     // {
     //     network: 'cronos',
     //     protocols: [],
