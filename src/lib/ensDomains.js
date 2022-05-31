@@ -11,7 +11,6 @@ const Ens_Domain_Suffix = ".eth"
 const provider = getProvider(ETH_ID)
 
 async function resolveENSDomain(domain, bip44Item) {
-	console.log(domain,bip44Item)
 	const normalizedDomainName = normalize(domain)
 	const resolver = await provider.getResolver(normalizedDomainName)
 	if(!resolver) return null;
