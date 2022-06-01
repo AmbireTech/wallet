@@ -257,6 +257,8 @@ export default function useWalletConnect ({ account, chainId, initialUri, allNet
                 return
             }
 
+            const dappName = connector.session?.peerMeta?.name || ''
+
             // @TODO: refactor into wcRequestHandler
             // Opensea "unlock currency" hack; they use a stupid MetaTransactions system built into WETH on Polygon
             // There's no point of this because the user has to sign it separately as a tx anyway; but more importantly,
@@ -294,7 +296,7 @@ export default function useWalletConnect ({ account, chainId, initialUri, allNet
                 // Dealing with Erc20 Permits
                 if (signPayload.primaryType === 'Permit') {
                     // If Uniswap, reject the permit and expect a graceful fallback (receiving approve eth_sendTransaction afterwards)
-                    if (UNISWAP_PERMIT_EXCEPTIONS.some(ex => connector.session?.peerMeta?.name?.toLowerCase().includes(ex.toLowerCase()))) {
+                    if (UNISWAP_PERMIT_EXCEPTIONS.some(ex => dappName.toLowerCase().includes(ex.toLowerCase()))) {
                         connector.rejectRequest({ id: payload.id, error: { message: 'METHOD_NOT_SUPPORTED: ' + payload.method }})
                         return
                     } else {
