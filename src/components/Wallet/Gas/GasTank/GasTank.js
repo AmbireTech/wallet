@@ -30,7 +30,6 @@ const GasTank = ({ network, relayerURL, portfolio, account, userSorting, setUser
     const urlGetFeeAssets = relayerURL ? `${relayerURL}/gas-tank/assets?cacheBreak=${cacheBreak}` : null
     const urlGetTransactions = relayerURL ? `${relayerURL}/identity/${account}/${network.id}/transactions` : null
     const { data, errMsg, isLoading } = useRelayerData(urlGetBalance)
-    const gasTankBalance = data?.map(({balanceInUSD}) => balanceInUSD).reduce((a, b) => a + b, 0).toFixed(2)
     const feeAssetsRes = useRelayerData(urlGetFeeAssets)
     const feeAssetsPerNetwork = feeAssetsRes.data?.filter(item => item.network === network.id)
     const executedTxnsRes = useRelayerData(urlGetTransactions)
@@ -88,7 +87,7 @@ const GasTank = ({ network, relayerURL, portfolio, account, userSorting, setUser
     }
 
     const openGasTankBalanceByTokensModal = () => {
-        showModal(<GasTankBalanceByTokensModal data={ data && data }/>)
+        showModal(<GasTankBalanceByTokensModal data={ (data && data.length) ? data : [] }/>)
     }
 
     const tokenItem = (index, img, symbol, balance, balanceUSD, address, send = false, network, decimals, category, sortedTokensLength) => 
@@ -153,7 +152,7 @@ const GasTank = ({ network, relayerURL, portfolio, account, userSorting, setUser
             <div className='heading-wrapper'>
                 <div className="balance-wrapper" style={{ cursor: 'pointer' }} onClick={openGasTankBalanceByTokensModal}>
                     <span><FaGasPump/> Gas Tank Balance</span>
-                    <div><span>$</span>{gasTankBalance}</div>
+                    {(data && data.length) ? (<div><span>$</span>{ data?.map(({balanceInUSD}) => balanceInUSD).reduce((a, b) => a + b, 0).toFixed(2) }</div>) : (<div><span>$</span>0.00</div>)}
                     <span>Drag and drop tokens here</span>
                 </div>
                 <div className='switch-wrapper'>
