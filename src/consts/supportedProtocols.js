@@ -73,6 +73,12 @@ const suportedProtocols = [
         balancesProvider: 'velcro',
         nftsProvider: 'velcro'
     },
+    {
+        network: 'rinkeby',
+        protocols: [],
+        balancesProvider: 'velcro',
+        nftsProvider: 'velcro'
+    },
     // {
     //     network: 'cronos',
     //     protocols: [],
