@@ -57,11 +57,11 @@ const AssetsMigrationBanner = ({ addRequest, selectedAccount, accounts, selected
     setMigrationMessageSeen(closeable && !!migrationMessageSeenStorage[selectedAccount + selectedNetwork.id])
   }, [closeable, selectedAccount, selectedNetwork, migrationMessageSeenStorage])
   
-  if (!wallet?.provider && 
-    (currentAccount.signerExtra?.type !== 'ledger' &&
-    currentAccount.signerExtra?.type !== 'trezor' && 
-    currentAccount.signerExtra?.type !== 'Lattice')
-  ) return <></>
+  // We either have a provider (web3) or we use a supported HW wallet
+  const supportedHWWalletTypes = ['ledger', 'trezor', 'Lattice']
+  const shouldShow = wallet?.provider|| (currentAccount.signerExtra && supportedHWWalletTypes.includes(currentAccount.signerExtra.type))
+  if (!shouldShow) return (<></>)
+
   return (
     (hasSignerAssets && !migrationMessageSeen) &&
     <div className={'migration-banner'}>
