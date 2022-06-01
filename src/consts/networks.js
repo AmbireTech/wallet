@@ -116,16 +116,27 @@ const networks = [
 		explorerUrl: 'https://optimistic.etherscan.io',
 		unstoppableDomainsChain: 'ERC20'
 	},
-	// {
-	// 	id: 'andromeda',
-	// 	chainId: 1088,
-	// 	rpc: 'https://andromeda.metis.io/?owner=1088',
-	// 	nativeAssetSymbol: 'METIS',
-	// 	name: 'Andromeda',
-	// 	icon: '/resources/networks/andromeda.svg',
-	// 	explorerUrl: 'https://andromeda-explorer.metis.io',
-	// 	unstoppableDomainsChain: 'ERC20'
-	// },
+	{
+		id: 'andromeda',
+		chainId: 1088,
+		rpc: 'https://andromeda.metis.io/?owner=1088',
+		nativeAssetSymbol: 'METIS',
+		name: 'Andromeda',
+		icon: '/resources/networks/andromeda.svg',
+		explorerUrl: 'https://andromeda-explorer.metis.io',
+		unstoppableDomainsChain: 'ERC20'
+	},
+	{
+		id: 'rinkeby',
+		chainId: 4,
+		rpc: 'https://rinkeby.infura.io/v3/4409badb714444b299066870e0f7b631',
+		nativeAssetSymbol: 'ETH',
+		name: 'Rinkeby',
+		icon: '/resources/networks/rinkeby.png',
+		explorerUrl: 'https://rinkeby.etherscan.io',
+		unstoppableDomainsChain: 'ERC20',
+		hide: true
+	},
 	// {
 	// 	id: 'cronos',
 	// 	chainId: 25,
