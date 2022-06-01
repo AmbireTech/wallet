@@ -57,7 +57,11 @@ const AssetsMigrationBanner = ({ addRequest, selectedAccount, accounts, selected
     setMigrationMessageSeen(closeable && !!migrationMessageSeenStorage[selectedAccount + selectedNetwork.id])
   }, [closeable, selectedAccount, selectedNetwork, migrationMessageSeenStorage])
   
-  if (!(wallet?.provider || ['ledger', 'trezor', 'Lattice'].includes(currentAccount.signerExtra?.type)))  return <></>
+  if (!wallet?.provider && 
+    (currentAccount.signerExtra?.type !== 'ledger' &&
+    currentAccount.signerExtra?.type !== 'trezor' && 
+    currentAccount.signerExtra?.type !== 'Lattice')
+  ) return <></>
   return (
     (hasSignerAssets && !migrationMessageSeen) &&
     <div className={'migration-banner'}>
