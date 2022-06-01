@@ -126,6 +126,17 @@ const networks = [
 		explorerUrl: 'https://andromeda-explorer.metis.io',
 		unstoppableDomainsChain: 'ERC20'
 	},
+	{
+		id: 'rinkeby',
+		chainId: 4,
+		rpc: 'https://rinkeby.infura.io/v3/4409badb714444b299066870e0f7b631',
+		nativeAssetSymbol: 'ETH',
+		name: 'Rinkeby',
+		icon: '/resources/networks/rinkeby.png',
+		explorerUrl: 'https://rinkeby.etherscan.io',
+		unstoppableDomainsChain: 'ERC20',
+		hide: true
+	},
 	// {
 	// 	id: 'cronos',
 	// 	chainId: 25,
