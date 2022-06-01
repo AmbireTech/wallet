@@ -48,7 +48,7 @@ function getWalletNew({ chainId, signer, signerExtra }, opts) {
         transaction.nonce = ethers.utils.hexlify(await broadcastProvider.getTransactionCount(transaction.from))
         const gas = ethers.utils.hexlify(transaction.gas || transaction.gasLimit)
         transaction.gasPrice = ethers.utils.hexlify(transaction.gasPrice)
-        delete transaction.gasLimit
+        
         transaction = {
           ...transaction,
           gas // trezor params requires gas prop
@@ -59,17 +59,9 @@ function getWalletNew({ chainId, signer, signerExtra }, opts) {
         
         return broadcastProvider.sendTransaction(signedTx)
       },
-      isConnected: async (matchAddress) => { // chain is provided to ledger. Not necessary to check network
+      isConnected: async (matchAddress) => { // chain is provided to trezor. Not necessary to check network
         const addresses = await providerTrezor.getAccountsAsync(100)
-
-        if (addresses && addresses.length) {
-          if (matchAddress) {
-            return !!addresses.find(a => a.toLowerCase() === matchAddress.toLowerCase())
-          }
-          return true
-        }
-
-        return false
+        return addresses.map(i => i.toLowerCase()).includes(matchAddress.toLowerCase())
       },
       _signTypedData: async (domain, types, value) => {
         
@@ -128,15 +120,7 @@ function getWalletNew({ chainId, signer, signerExtra }, opts) {
         },
         isConnected: async (matchAddress) => { // chain is provided to ledger. Not necessary to check network
           const addresses = await provider.getAccountsAsync(1)
-
-          if (addresses && addresses.length) {
-            if (matchAddress) {
-              return !!addresses.find(a => a.toLowerCase() === matchAddress.toLowerCase())
-            }
-            return true
-          }
-
-          return false
+          return addresses.map(i => i.toLowerCase()).includes(matchAddress.toLowerCase())
         },
         _signTypedData: (domain, types, value) => {
           throw Error('Please, use a chrome based browser to use 721 Typed signatures')
@@ -243,19 +227,12 @@ function getWalletNew({ chainId, signer, signerExtra }, opts) {
           }
           
           addresses = res
-
-          if (addresses && addresses.length) {
-            if (matchAddress) {
-              return !!addresses.find(a => a.toLowerCase() === matchAddress.toLowerCase())
-            }
-            return true
-          }
-  
-          return false
         } catch(e) {
           console.log(e)
           throw new Error(`Lattice: ${e}`)
         }
+
+        return addresses.map(i => i.toLowerCase()).includes(matchAddress.toLowerCase())
       },
       _signTypedData: async (domain, types, value) => {
         const domainSeparator = _TypedDataEncoder.hashDomain(domain)
