@@ -14,6 +14,13 @@ const SESSION_TIMEOUT = 10000
 
 const getDefaultState = () => ({ connections: [], requests: [] })
 
+const UNISWAP_PERMIT_EXCEPTIONS = [ // based on PeerMeta
+  'Uniswap', // Uniswap Interface
+  'Sushi',
+  'QuickSwap', // QuickSwap Interface
+  'PancakeSwap', // 🥞 PancakeSwap - A next evolution DeFi exchange on BNB Smart Chain (BSC)
+]
+
 let connectors = {}
 let connectionErrors = []
 
@@ -287,7 +294,7 @@ export default function useWalletConnect ({ account, chainId, initialUri, allNet
                 // Dealing with Erc20 Permits
                 if (signPayload.primaryType === 'Permit') {
                     // If Uniswap, reject the permit and expect a graceful fallback (receiving approve eth_sendTransaction afterwards)
-                    if (connector.session.peerMeta?.name?.includes('Uniswap')) {
+                    if (UNISWAP_PERMIT_EXCEPTIONS.some(ex => connector.session?.peerMeta?.name?.toLowerCase().includes(ex.toLowerCase()))) {
                         connector.rejectRequest({ id: payload.id, error: { message: 'METHOD_NOT_SUPPORTED: ' + payload.method }})
                         return
                     } else {
