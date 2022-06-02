@@ -32,7 +32,7 @@ export default function Wallet(props) {
 
   const routes = [
     {
-      path: '/dashboard/:tabId?',
+      path: '/dashboard/:tabId?/:page?',
       component: <Dashboard
         portfolio={props.portfolio}
         selectedNetwork={props.network}

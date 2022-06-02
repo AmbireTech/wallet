@@ -29,7 +29,7 @@ function getBalance(token) {
   return balance / decimals * priceInUSD
 }
 
-const WalletDiscountBanner = ({ currenciesItems, tokens, estimation, onFeeCurrencyChange, onDismiss }) => {
+const WalletDiscountBanner = ({ currenciesItems, tokens, estimation, onFeeCurrencyChange, onDismiss, feeSpeed }) => {
   if (estimation.selectedFeeToken?.symbol
     && (DISCOUNT_TOKENS_SYMBOLS.includes(estimation.selectedFeeToken?.symbol)
       || estimation.selectedFeeToken.discount)
@@ -37,7 +37,7 @@ const WalletDiscountBanner = ({ currenciesItems, tokens, estimation, onFeeCurren
     return null
   }
   const walletDiscountTokens = [...tokens]
-    .filter(x => DISCOUNT_TOKENS_SYMBOLS.includes(x.symbol) && x.discount)
+    .filter(x => DISCOUNT_TOKENS_SYMBOLS.includes(x.symbol) && x.discount && isTokenEligible(x, feeSpeed, estimation))
     .sort((a, b) =>
       b.discount - a.discount
       || ((!parseInt(a.balance) || !parseInt(b.balance)) ? getBalance(b) - getBalance(a) : 0)
@@ -257,7 +257,8 @@ export function FeeSelector({ disabled, signer, estimation, network, setEstimati
       tokens,
       estimation,
       onFeeCurrencyChange,
-      onDismiss
+      onDismiss,
+      feeSpeed
     })}
 
     <div className='section-title'>

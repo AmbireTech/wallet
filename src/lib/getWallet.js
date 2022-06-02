@@ -33,7 +33,22 @@ function getWalletNew({ chainId, signer, signerExtra }, opts) {
       signMessage: hash => providerTrezor.signPersonalMessageAsync(ethers.utils.hexlify(hash), signer.address),
       signTransaction: params => providerTrezor.signTransactionAsync({ ...params, from: signer.address }),
       sendTransaction: async (transaction) => {
-        throw Error('sendTransaction not implemented yet for Trezor')
+        const network = networks.find(n => n.chainId === transaction.chainId)
+        if (!network) throw Error('no network found for chainId : ' + transaction.chainId)
+        const broadcastProvider = await getProvider(network.id)
+        if (!broadcastProvider) throw Error('no provider found for network : ' + network.id)
+
+        transaction.nonce = ethers.utils.hexlify(await broadcastProvider.getTransactionCount(transaction.from))
+
+        transaction = {
+          ...transaction,
+          gas: transaction.gas || transaction.gasLimit // trezor params requires gas prop
+          // no chainId prop but chainId already known by providerTrezor
+        }
+
+        const signedTx = await providerTrezor.signTransactionAsync(transaction)
+
+        return broadcastProvider.sendTransaction(signedTx)
       },
       isConnected: async () => null // TODO: implement
     }
@@ -150,7 +165,34 @@ function getWalletNew({ chainId, signer, signerExtra }, opts) {
         }
       },
       sendTransaction: async (transaction) => {
-        throw Error('sendTransaction not implemented yet for Lattice')
+        const network = networks.find(n => n.chainId === transaction.chainId)
+        if (!network) throw Error('no network found for chainId : ' + transaction.chainId)
+        const broadcastProvider = await getProvider(network.id)
+        if (!broadcastProvider) throw Error('no provider found for network : ' + network.id)
+
+        transaction.nonce = ethers.utils.hexlify(await broadcastProvider.getTransactionCount(transaction.from))
+
+        try {
+          const { commKey, deviceId } = signerExtra
+          const client = latticeInit(commKey)
+          const {isPaired, errConnect } = await latticeConnect(client, deviceId)
+
+          if (errConnect) throw new Error(errConnect.message || errConnect)
+
+          if (!isPaired) {
+            // Canceling the visualization of the secret code on the device's screen.
+            client.pair('')
+            throw new Error('The Lattice device is not paired! Please re-add your account!')
+          }
+
+          const { serializedSigned, errSignTxn } = await latticeSignTransaction(client, transaction, chainId)
+          if (errSignTxn) throw new Error(errSignTxn)
+
+          return broadcastProvider.sendTransaction(serializedSigned)
+        } catch(e) {
+          console.log(e)
+          throw new Error(`Lattice: ${e}`)
+        }
       },
       isConnected: async () => null // TODO: implement (graceful fail for now)
     }

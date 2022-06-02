@@ -118,6 +118,7 @@ export default function SignMessage ({ toSign, resolve, account, connections, re
 
       const { signature, success, message, confCodeRequired } = await fetchPost(
         // network doesn't matter when signing
+        // if it does tho, we can use ${network.id}
         `${relayerURL}/second-key/${account.id}/ethereum/sign${isTypedData ? '?typedData=true' : ''}`, {
           toSign: toSign.txn,
           code: confirmationCode
