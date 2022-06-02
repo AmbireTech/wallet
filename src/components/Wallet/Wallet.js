@@ -89,6 +89,7 @@ export default function Wallet(props) {
         rewardsData={props.rewardsData}
         addRequest={props.addRequest}
         relayerURL={props.relayerURL}
+        privateMode={props.privateMode}
       />
     },
     {

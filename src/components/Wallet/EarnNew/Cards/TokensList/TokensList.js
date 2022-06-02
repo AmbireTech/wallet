@@ -6,24 +6,20 @@ import { TextInput } from "components/common"
 import { getTokenIcon } from 'lib/icons'
 import { GiToken } from 'react-icons/gi'
 import { MdOutlineClose } from 'react-icons/md'
+import {formatFloatTokenAmount} from "../../../../../lib/formatters";
 
-
-
-const TokensList = ({ networkId, accountId, rewardsData, addRequest, header, setSelectedToken, selectedToken, relayerURL }) => {
+const TokensList = ({ networkId, setStrategies, header, setSelectedToken, selectedToken, relayerURL, portfolioTokens, privateMode }) => {
     const [failedImg, setFailedImg] = useState([])
     const [search, setSearch] = useState('')
     const [loading, setLoading] = useState(true)
     const [customInfo, setCustomInfo] = useState(null)
     const [tokens, setTokens] = useState([])
-    const [strategies, setStrategies] = useState(null)
     const hiddenTextInput = useRef();
 
-    const onTokenSelect = useCallback((tokenAddress, isStaked) => {
+    const onTokenSelect = useCallback(token => {
         setCustomInfo(null)
-        let token = tokens.find(({ address }) => address === tokenAddress)
         handleSearch('')
-        setSelectedToken(token)  
-
+        setSelectedToken(token)
     }, [tokens])
 
     const handleSearch = (v) => {
@@ -31,26 +27,59 @@ const TokensList = ({ networkId, accountId, rewardsData, addRequest, header, set
     }
 
     const availableTokens = useMemo(() => {
-        return tokens
+        const uniqueTokens = []
+
+        // Get unique tokens having highest APY
+        tokens.forEach(token => {
+            const uniqueToken = uniqueTokens.find(t => t.baseTokenAddress.toLowerCase() === token.baseTokenAddress.toLowerCase())
+            if (!uniqueToken || token.apy > uniqueToken.apy) {
+                uniqueTokens.push(token)
+            }
+        })
+
+        return uniqueTokens
             .filter(t => parseFloat(t.apy))
-            .filter(t => t.symbol.toLowerCase().indexOf(search.toLowerCase()) !== -1 || t.address.toLowerCase() === search.toLowerCase())
+            .filter(t => t.baseTokenSymbol.toLowerCase().indexOf(search.toLowerCase()) !== -1 || t.baseTokenAddress.toLowerCase() === search.toLowerCase())
             .sort((a, b) => b.apy - a.apy)
     }, [tokens, search])
 
-    const stakedTokens = tokens.filter(t => t.isStaked === true)
+
+    const stakedTokens = useMemo(() => {
+        return tokens
+            .filter(t => t.portfolioToken)
+            .map(t => ({
+                ...t,
+                isStaked: true,
+            }))
+            .filter(t => t.symbol.toLowerCase().indexOf(search.toLowerCase()) !== -1 || t.address.toLowerCase() === search.toLowerCase())
+            .sort((a, b) => b.apy - a.apy)
+    }, [tokens, portfolioTokens, search])
 
     const extractTokens = strategies => {
         const tokens = []
 
         Object.keys(strategies).forEach(strategy => {
             strategies[strategy].forEach(token => {
-                const extractedToken = tokens.find(t => t.address.toLowerCase() === token.address.toLowerCase())
-                if (!extractedToken || token.apy > extractedToken.apy) {
-                    tokens.push({
-                        ...token,
-                        icon: getTokenIcon(networkId, token.address)
-                    })
-                }
+                const portfolioToken = portfolioTokens.find(pt => pt.address.toLowerCase() === token.address.toLowerCase())
+                const portfoliobaseToken = portfolioTokens.find(pt => pt.address.toLowerCase() === token.baseTokenAddress.toLowerCase())
+
+                tokens.push({
+                    ...token,
+                    strategyName: strategy,
+                    icon: getTokenIcon(networkId, token.baseTokenAddress),
+                    ...portfolioToken && {
+                        portfolioToken: {
+                            balance: portfolioToken.balance,
+                            decimals: portfolioToken.decimals
+                        }
+                    },
+                    ...portfoliobaseToken && {
+                        portfolioBaseToken: {
+                            balance: portfoliobaseToken.balance,
+                            decimals: portfoliobaseToken.decimals
+                        }
+                    }
+                })
             })
         })
 
@@ -108,10 +137,10 @@ const TokensList = ({ networkId, accountId, rewardsData, addRequest, header, set
                         <p className="section-title">Available assets</p>
                         <div className="tokens-list">
                             {availableTokens.map(t => (
-                                <div className={`token-item ${selectedToken?.symbol === t.symbol ? 'active': ''}`} onClick={() => onTokenSelect(t.address)}>
+                                <div className={`token-item ${!selectedToken?.isStaked && (selectedToken?.baseTokenAddress === t.baseTokenAddress) ? 'active': ''}`} onClick={() => onTokenSelect(t)}>
                                     <div className="header">
                                         {getIcon(t)}
-                                        <p className="symbol">{t.symbol}</p>
+                                        <p className="symbol">{t.baseTokenSymbol}</p>
                                     </div>
                                     <div>
                                         MAX APY: {t.apy}
@@ -123,18 +152,18 @@ const TokensList = ({ networkId, accountId, rewardsData, addRequest, header, set
                     ) : null
                 }
                 {
-                    stakedTokens && stakedTokens.length ? (
+                    stakedTokens.length ? (
                     <>
                         <p className="section-title">Staked tokens</p>
                         <div className="tokens-list">
                             {stakedTokens.map(t => (
-                                <div className={`token-item ${selectedToken?.symbol === t.symbol && selectedToken?.stakedSelected ? 'active': ''}`} onClick={() => onTokenSelect(t.address, true)}>
+                                <div className={`token-item ${selectedToken?.isStaked && (selectedToken?.address === t.address) ? 'active': ''}`} onClick={() => onTokenSelect(t)}>
                                     <div className="header">
                                         {getIcon(t)}
                                         <p className="symbol">{t.symbol}</p>
                                     </div>
                                     <div>
-                                        2.63
+                                        { privateMode.hidePrivateValue(formatFloatTokenAmount(t.portfolioToken.balance, true, t.portfolioToken.decimals)) }
                                     </div>
                                 </div>
                             ))}
