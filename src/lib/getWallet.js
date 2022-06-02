@@ -129,7 +129,8 @@ function getWalletNew({ chainId, signer, signerExtra }, opts) {
     }
   } else if (signerExtra && signerExtra.type === 'Lattice') {
     return {
-      signMessage: wrapLatticeError(async hash => {
+      signMessage: async hash => {
+        return await wrapLatticeError(async hash => {
           const { commKey, deviceId } = signerExtra
           const client = latticeInit(commKey)
           const {isPaired, errConnect } = await latticeConnect(client, deviceId)
@@ -146,73 +147,80 @@ function getWalletNew({ chainId, signer, signerExtra }, opts) {
           if (errSignMessage) throw new Error(errSignMessage)
 
           return signedMsg
-      }),
-      signTransaction: wrapLatticeError(async params => {
-        const { commKey, deviceId } = signerExtra
-        const client = latticeInit(commKey)
-        const {isPaired, errConnect } = await latticeConnect(client, deviceId)
+        }, [hash])
+      },
+      signTransaction: async params => {
+        return await wrapLatticeError( async params => {
+          const { commKey, deviceId } = signerExtra
+          const client = latticeInit(commKey)
+          const {isPaired, errConnect } = await latticeConnect(client, deviceId)
 
-        if (errConnect) throw new Error(errConnect.message || errConnect)
+          if (errConnect) throw new Error(errConnect.message || errConnect)
 
-        if (!isPaired) {
-          // Canceling the visualization of the secret code on the device's screen.
-          client.pair('')
-          throw new Error('The Lattice device is not paired! Please re-add your account!')
-        }
+          if (!isPaired) {
+            // Canceling the visualization of the secret code on the device's screen.
+            client.pair('')
+            throw new Error('The Lattice device is not paired! Please re-add your account!')
+          }
 
-        const { serializedSigned, errSignTxn } = await latticeSignTransaction(client, params, chainId)
-        if (errSignTxn) throw new Error(errSignTxn)
+          const { serializedSigned, errSignTxn } = await latticeSignTransaction(client, params, chainId)
+          if (errSignTxn) throw new Error(errSignTxn)
 
-        return serializedSigned
-      }),
-      sendTransaction: wrapLatticeError(async (transaction) => {
-        const network = networks.find(n => n.chainId === transaction.chainId)
-        if (!network) throw Error('no network found for chainId : ' + transaction.chainId)
-        const broadcastProvider = await getProvider(network.id)
-        if (!broadcastProvider) throw Error('no provider found for network : ' + network.id)
-        transaction.nonce = ethers.utils.hexlify(await broadcastProvider.getTransactionCount(transaction.from))
-        const { commKey, deviceId } = signerExtra
-        const client = latticeInit(commKey)
-        const { isPaired, errConnect } = await latticeConnect(client, deviceId)
+          return serializedSigned
+        }, [params])
+      },
+      sendTransaction: async transaction => { 
+        return await wrapLatticeError(async (transaction) => {
+          const network = networks.find(n => n.chainId === transaction.chainId)
+          if (!network) throw Error('no network found for chainId : ' + transaction.chainId)
+          const broadcastProvider = await getProvider(network.id)
+          if (!broadcastProvider) throw Error('no provider found for network : ' + network.id)
+          transaction.nonce = ethers.utils.hexlify(await broadcastProvider.getTransactionCount(transaction.from))
+          const { commKey, deviceId } = signerExtra
+          const client = latticeInit(commKey)
+          const { isPaired, errConnect } = await latticeConnect(client, deviceId)
 
-        if (errConnect) throw new Error(errConnect.message || errConnect)
+          if (errConnect) throw new Error(errConnect.message || errConnect)
 
-        if (!isPaired) {
-          // Canceling the visualization of the secret code on the device's screen.
-          client.pair('')
-          throw new Error('The Lattice device is not paired! Please re-add your account!')
-        }
+          if (!isPaired) {
+            // Canceling the visualization of the secret code on the device's screen.
+            client.pair('')
+            throw new Error('The Lattice device is not paired! Please re-add your account!')
+          }
 
-        const { serializedSigned, errSignTxn } = await latticeSignTransaction(client, transaction, chainId)
-        if (errSignTxn) throw new Error(errSignTxn)
+          const { serializedSigned, errSignTxn } = await latticeSignTransaction(client, transaction, chainId)
+          if (errSignTxn) throw new Error(errSignTxn)
 
-        return broadcastProvider.sendTransaction(serializedSigned)
-      }),
-      isConnected: wrapLatticeError(async (matchAddress) => {
-        let addresses = null
+          return broadcastProvider.sendTransaction(serializedSigned)
+        }, [transaction])
+      },
+      isConnected: async matchAddress => { 
+        return await wrapLatticeError(async (matchAddress) => {
+          let addresses = null
 
-        const { commKey, deviceId } = signerExtra
-        const client = latticeInit(commKey)
-        const { isPaired, errConnect } = await latticeConnect(client, deviceId)
+          const { commKey, deviceId } = signerExtra
+          const client = latticeInit(commKey)
+          const { isPaired, errConnect } = await latticeConnect(client, deviceId)
 
-        if (errConnect) throw new Error(errConnect.message || errConnect)
+          if (errConnect) throw new Error(errConnect.message || errConnect)
 
-        if (!isPaired) {
-          // Canceling the visualization of the secret code on the device's screen.
-          client.pair('')
-          throw new Error('The Lattice device is not paired! Please re-add your account!')
-        }
+          if (!isPaired) {
+            // Canceling the visualization of the secret code on the device's screen.
+            client.pair('')
+            throw new Error('The Lattice device is not paired! Please re-add your account!')
+          }
 
-        const { res, errGetAddresses } = await latticeGetAddresses(client)
-        if (errGetAddresses) { 
-          throw new Error(`Lattice: ${errGetAddresses}`, { error: true })
-        }
-          
-        addresses = res
+          const { res, errGetAddresses } = await latticeGetAddresses(client)
+          if (errGetAddresses) { 
+            throw new Error(`Lattice: ${errGetAddresses}`, { error: true })
+          }
 
-        return addresses.map(i => i.toLowerCase()).includes(matchAddress.toLowerCase())
-      }),
-      _signTypedData: wrapLatticeError(async (domain, types, value) => {
+          addresses = res
+          return addresses.map(i => i.toLowerCase()).includes(matchAddress.toLowerCase())
+        }, [matchAddress])
+    },
+    _signTypedData: async (domain, types, value) => {
+      return await wrapLatticeError(async (domain, types, value) => {
         const domainSeparator = _TypedDataEncoder.hashDomain(domain)
         const hashStructMessage = _TypedDataEncoder.hashStruct(_TypedDataEncoder.getPrimaryType(types), types, value)
         const { commKey, deviceId } = signerExtra
@@ -231,8 +239,9 @@ function getWalletNew({ chainId, signer, signerExtra }, opts) {
         if (errSignMessage) throw new Error(errSignMessage)
 
         return signedMsg
-      })
+      }, [domain, types, value])
     }
+  }
   } else if (signer.address) {
     if (!window.ethereum) throw new Error('No web3 support detected in your browser: if you created this account through MetaMask, please install it.')
     // NOTE: for metamask, use `const provider = new ethers.providers.Web3Provider(window.ethereum)`
@@ -275,11 +284,9 @@ function getInitialDerivedKeyInfo(signerExtra) {
   }
 }
 
-const wrapLatticeError = async fn => {
-  try {
-    await fn()
-  } catch (e) {
-    console.error(e)
-    throw new Error(`Lattice: ${e}`)
-  }
+async function wrapLatticeError(fn, arg) {
+  return await fn.apply(this, arg)
+   .catch(e => {
+     throw new Error(`Lattice: ${e.message}`)
+    })
 }
