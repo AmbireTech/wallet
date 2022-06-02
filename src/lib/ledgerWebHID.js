@@ -1,15 +1,14 @@
 import TransportWebHID from '@ledgerhq/hw-transport-webhid'
 import AppEth from '@ledgerhq/hw-app-eth'
 import { serialize } from '@ethersproject/transactions'
+import { addressOfHDKey, DEFAULT_DERIVATION_PATH } from 'lib/ledgerUtils'
 
 const EIP_155_CONSTANT = 35
 
-const ethUtil = require('ethereumjs-util')
 const HDNode = require('hdkey')
 
 let connectedDevices = null
 
-export const PARENT_HD_PATH = "44'/60'/0'/0"
 
 async function getTransport() {
   connectedDevices = await TransportWebHID.list()
@@ -23,48 +22,30 @@ async function getTransport() {
     try {
       return await TransportWebHID.request()
     } catch (e) {
+      if (e.message.includes('reading \'open\'')) {
+        throw new Error('ledger WebHID request denied')
+      }
       throw new Error('Could not request WebHID ledger: ' + e.message)
     }
   }
 }
 
+export async function ledgerGetAddresses(derivationPath = DEFAULT_DERIVATION_PATH, count=1) {
+  const transport = await getTransport()
+  const accounts = await getAccounts(transport, derivationPath, count)
+  transport.close()
 
-export async function ledgerGetAddresses() {
-  try {
-    const transport = await getTransport()
-    const accounts = await getAccounts(transport)
-    transport.close()
-
-    if (accounts.error) return {error: accounts.error}
-
-    return { addresses: accounts.accounts.map(a => a.address), error: null }
-  } catch(error) {
-    return { error }
-  }
+  return accounts.map(a => a.address)
 }
 
-async function getAccounts(transport) {
-  const parentKeyDerivationPath = `m/${PARENT_HD_PATH}`
-  const returnData = {
-    error: null,
-    accounts: []
-  }
-  let ledgerResponse
-  try {
-    ledgerResponse = await getAddressInternal(transport, parentKeyDerivationPath).then(o => o).catch(err => {
-      if (err.statusCode === 25871 || err.statusCode === 27404) {
-        returnData.error = 'Please make sure your ledger is unlocked and running the Ethereum app. ' + err.message
-      } else {
-        returnData.error = 'Could not get address from ledger : ' + err
-      }
-    })
-  } catch (e) {
-    console.log(e)
-  }
+// WARNING: don't use this with derivation paths like Ledge Live, if you want to compute addresses in JS. LedgerLive increments in the middle of the path, but above all, we can't derive hardened nodes
+async function getAccounts(transport, derivationPath = DEFAULT_DERIVATION_PATH, accountsCount=1) {
 
-  if (!ledgerResponse) {
-    return returnData
-  }
+  // We should expect last child to be non hardened, otherwise it might lead to unexpected path
+  const parent = derivationPath.endsWith("'") ? derivationPath : derivationPath.split('/').slice(0, -1).join('/')
+  const child = derivationPath.endsWith("'") ? 0 : derivationPath.split('/').slice(-1)[0] * 1
+
+  const ledgerResponse = await getAddressInternal(transport, parent)
 
   const hdKey = new HDNode()
   hdKey.publicKey = Buffer.from(ledgerResponse.publicKey, 'hex')
@@ -74,13 +55,12 @@ async function getAccounts(transport) {
   const initialDerivedKeyInfo = {
     hdKey,
     address: mainAddress,
-    derivationPath: parentKeyDerivationPath,
-    baseDerivationPath: PARENT_HD_PATH,
+    derivationPath: parent,
+    baseDerivationPath: parent,
   }
 
-  // currently we can't get addrs to match with what appears in MM/Ledger live so only one is derived
-  returnData.accounts = calculateDerivedHDKeyInfos(initialDerivedKeyInfo, 1)
-  return returnData
+  // It is not possible to get ledger live addresses by deriving, as the changing index in LedgerLive is hardened
+  return calculateDerivedHDKeyInfos(initialDerivedKeyInfo, child, accountsCount)
 }
 
 
@@ -100,10 +80,17 @@ async function getAddressInternal(transport, parentKeyDerivationPath) {
   ]).then((res) => {
     clearTimeout(timeoutHandle)
     return res
-  })
+  }).catch(err => {
+      if (err.statusCode === 25871 || err.statusCode === 27404) {
+        throw Error('Please make sure your ledger is unlocked and running the Ethereum app. ' + err.message)
+      } else {
+        throw Error('Could not get address from ledger : ' + err)
+      }
+    })
 }
 
-export async function ledgerSignTransaction(txn, chainId) {
+export async function ledgerSignTransaction(txn, chainId, derivationPath = DEFAULT_DERIVATION_PATH) {
+
   const transport = await getTransport()
 
   const fromAddr = txn.from
@@ -117,19 +104,15 @@ export async function ledgerSignTransaction(txn, chainId) {
   delete unsignedTxObj.gas
 
   let serializedUnsigned = serialize(unsignedTxObj)
-  const accountsData = await getAccounts(transport)
-  if (accountsData.error) {
-    throw new Error(accountsData.error)
-  }
+  const accountsData = await getAccounts(transport, derivationPath, 1)
 
-  //Managing only 1 addr for now
-  const address = accountsData.accounts[0].address
+  const address = accountsData[0].address
 
   let serializedSigned
   if (address.toLowerCase() === fromAddr.toLowerCase()) {
     let rsvResponse
     try {
-      rsvResponse = await new AppEth(transport).signTransaction(accountsData.accounts[0].derivationPath, serializedUnsigned.substr(2))
+      rsvResponse = await new AppEth(transport).signTransaction(accountsData[0].derivationPath, serializedUnsigned.substr(2))
     } catch (e) {
       throw new Error('Could not sign transaction ' + e)
     }
@@ -156,21 +139,17 @@ export async function ledgerSignTransaction(txn, chainId) {
   return serializedSigned
 }
 
-export async function ledgerSignMessage(hash, signerAddress) {
+export async function ledgerSignMessage(hash, signerAddress, derivationPath = DEFAULT_DERIVATION_PATH) {
   const transport = await getTransport()
 
-  const accountsData = await getAccounts(transport)
-  if (accountsData.error) {
-    throw new Error(accountsData.error)
-  }
+  const accountsData = await getAccounts(transport, derivationPath, 1)
 
-  //TODO for multiple accs?
-  const account = accountsData.accounts[0]
+  const account = accountsData[0]
 
   let signedMsg
   if (account.address.toLowerCase() === signerAddress.toLowerCase()) {
     try {
-      const rsvReply = await new AppEth(transport).signPersonalMessage(account.derivationPath, hash.substr(2))
+      const rsvReply = await new AppEth(transport).signPersonalMessage(derivationPath, hash.substr(2))
       signedMsg = '0x' + rsvReply.r + rsvReply.s + rsvReply.v.toString(16)
     } catch (e) {
       throw new Error('Signature denied ' + e.message)
@@ -182,21 +161,14 @@ export async function ledgerSignMessage(hash, signerAddress) {
   return signedMsg
 }
 
-export async function ledgerSignMessage712(domainSeparator, hashStructMessage, signerAddress) {
-  const transport = await getTransport().catch(err => {
-    throw err
-  })
+export async function ledgerSignMessage712(domainSeparator, hashStructMessage, signerAddress, derivationPath = DEFAULT_DERIVATION_PATH) {
+  const transport = await getTransport()
 
-  const accountsData = await getAccounts(transport)
-  if (accountsData.error) {
-    throw new Error(accountsData.error)
-  }
+  const accountsData = await getAccounts(transport, derivationPath, 1)
 
-  //TODO for multiple accs?
-  const account = accountsData.accounts[0]
+  const account = accountsData[0]
 
   let signedMsg
-  debugger
   if (account.address.toLowerCase() === signerAddress.toLowerCase()) {
     try {
       const rsvReply = await new AppEth(transport).signEIP712HashedMessage(account.derivationPath, domainSeparator, hashStructMessage)
@@ -211,18 +183,17 @@ export async function ledgerSignMessage712(domainSeparator, hashStructMessage, s
   return signedMsg
 }
 
-function calculateDerivedHDKeyInfos(initialDerivedKeyInfo, count) {
+// Might use it in the future to calc non Ledger live addresses
+export function calculateDerivedHDKeyInfos(initialDerivedKeyInfo, index, count) {
   const derivedKeys = []
-  for (let i = 0; i < count; i++) {
-
-    const fullDerivationPath = `m/${initialDerivedKeyInfo.baseDerivationPath}/${i}`
-    const path = `m/${i}`
-    const hdKey = initialDerivedKeyInfo.hdKey.derive(path)
+  for (let i = index; i < index + count; i++) {
+    const fullDerivationPath = initialDerivedKeyInfo.baseDerivationPath
+    const hdKey = initialDerivedKeyInfo.hdKey.deriveChild(i)
     const address = addressOfHDKey(hdKey)
     const derivedKey = {
       address,
       hdKey,
-      baseDerivationPath: initialDerivedKeyInfo.baseDerivationPathh,
+      baseDerivationPath: initialDerivedKeyInfo.baseDerivationPath,
       derivationPath: fullDerivationPath,
     }
 
@@ -231,11 +202,3 @@ function calculateDerivedHDKeyInfos(initialDerivedKeyInfo, count) {
   return derivedKeys
 }
 
-export function addressOfHDKey(hdKey) {
-  const shouldSanitizePublicKey = true
-  const derivedPublicKey = hdKey.publicKey
-  const ethereumAddressUnprefixed = ethUtil
-    .publicToAddress(derivedPublicKey, shouldSanitizePublicKey)
-    .toString('hex')
-  return ethUtil.addHexPrefix(ethereumAddressUnprefixed).toLowerCase()
-}

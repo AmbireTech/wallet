@@ -10,6 +10,7 @@ import HideTokenModel from './HideTokenModal/HideTokenModal'
 import AmbireEarnDetailsModal from './AmbireEarnDetailsModal/AmbireEarnDetailsModal'
 import EarnDetailsModal from './EarnDetailsModal/EarnDetailsModal'
 import AddAddressModal from './AddAddressModal/AddAddressModal'
+import LedgerSignersModal from './LedgerSignersModal/LedgerSignersModal'
 
 export {
     PermissionsModal,
@@ -19,6 +20,7 @@ export {
     WalletTokenModal,
     AddTokenModal,
     LatticeModal,
+    LedgerSignersModal,
     UnsupportedDAppsModal,
     HideTokenModel,
     AmbireEarnDetailsModal,

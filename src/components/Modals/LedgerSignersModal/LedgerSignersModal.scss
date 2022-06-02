@@ -1,0 +1,188 @@
+@import 'variables.scss';
+
+
+#ledger-signers-modal {
+
+  .advancedSettings-link {
+    cursor: pointer;
+    color: mix($text-color, $panel-background-color, 50%);
+    margin-top: 16px;
+    text-align: center;
+    padding: 8px;
+    display: flex;
+    justify-content: right;
+
+    svg {
+      margin-top: 3px;
+      margin-right: 4px;
+    }
+
+    &:hover {
+      color: $text-color;
+    }
+  }
+
+  .tablePaths-title {
+    margin-top: 4px;
+    text-align: center;
+  }
+
+  .derivationPathInfo {
+    margin-top: 32px;
+    padding: 16px;
+    text-align: center;
+
+    color: mix($text-color, $input-background-color, 50%);
+
+    background: $input-background-color;
+
+    .derivationPathInfo-title {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 16px;
+    }
+
+    .selectedDerivationPath {
+      cursor: pointer;
+      margin: 16px 0;
+      font-weight: bold;
+      display: flex;
+      justify-content: center;
+
+      &:hover {
+        color: $text-color;
+      }
+
+      .selectedDerivationPath-edit {
+        padding-left: 4px;
+        padding-top: 2px;
+      }
+    }
+
+    button.customDerivationPathAction.buttonComponent {
+      font-size: 12px;
+      cursor: pointer;
+      background: mix($tertiary-accent-color, #000, 75%);
+      padding: 8px;
+      height: auto;
+      margin: auto;
+    }
+  }
+
+  .selectedAddress {
+    padding: 16px 8px;
+    background: $input-background-color-darker;
+
+    b {
+      display: block;
+      text-align: center;
+      margin-bottom: 8px;
+      font-size: 1.2em;
+    }
+
+    span {
+      font-size: 1.2em;
+      display: block;
+      text-align: center;
+      font-family: monospace;
+    }
+  }
+
+  .loaderContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .derivationPathInputContainer {
+    display: flex;
+    align-items: center;
+    .derivationPathInputLabel {
+      white-space:nowrap;
+      flex-grow: 1;
+      padding-right: 12px;
+    }
+
+    padding-bottom: 8px;
+    border-bottom: 1px solid mix($text-color, $panel-background-color, 10%);
+  }
+
+  .retryContainer {
+    margin-top: 32px;
+    display: flex;
+    justify-content: center;
+  }
+
+
+  .derivationPathHelper {
+
+    margin-top: 16px;
+    padding: 16px;
+    background: $input-background-color-darker;
+
+    .childIndex {
+      color: $secondary-accent-color;
+    }
+
+    .copyPath{
+      cursor: pointer;
+      border-bottom: 1px dashed $secondary-accent-color;
+    }
+
+    .ledgerComment {
+      font-size: 0.9em;
+      color: mix($text-color, $panel-background-color, 50%);
+
+      span {
+        color: $secondary-accent-color;
+      }
+    }
+
+    .intStepper {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      button {
+        border: 0;
+        color: $text-color;
+        cursor: pointer;
+        justify-content: center;
+        align-items: center;
+        font-weight: bold;
+        background: darken($input-background-color-darker, 3%);
+        width: 20px;
+        height: 20px;
+        font-size: 0.5em;
+
+        &:hover {
+          background: $secondary-accent-color;
+        }
+      }
+    }
+
+  }
+
+
+
+  table.tablePaths {
+    width: 100%;
+    border-collapse: collapse;
+
+    thead {
+      background: $input-background-color-darker;
+    }
+
+    th {
+      padding: 8px;
+      text-align: left;
+    }
+
+    td {
+      padding: 8px;
+      background: $input-background-color;
+    }
+  }
+
+
+}

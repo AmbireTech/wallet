@@ -208,6 +208,12 @@ select {
     border: 1px solid $tertiary-accent-color;
     color: $tertiary-accent-color
   }
+
+  &.danger {
+    background: mix($danger-color, $panel-background-color, 5%);
+    border: 1px solid $danger-color;
+    color: $danger-color;
+  }
 }
 
 // Mobile

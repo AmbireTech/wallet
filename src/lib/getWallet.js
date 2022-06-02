@@ -55,8 +55,8 @@ function getWalletNew({ chainId, signer, signerExtra }, opts) {
   } else if (signerExtra && signerExtra.type === 'ledger') {
     if (signerExtra.transportProtocol === 'webHID') {
       return {
-        signMessage: hash => ledgerSignMessage(ethers.utils.hexlify(hash), signer.address),
-        signTransaction: params => ledgerSignTransaction(params, chainId),
+        signMessage: hash => ledgerSignMessage(ethers.utils.hexlify(hash), signer.address, signerExtra.derivationPath),
+        signTransaction: params => ledgerSignTransaction(params, chainId, signerExtra.derivationPath),
         sendTransaction: async (transaction) => {
           const network = networks.find(n => n.chainId === transaction.chainId)
           if (!network) throw Error('no network found for chainId : ' + transaction.chainId)
@@ -65,16 +65,17 @@ function getWalletNew({ chainId, signer, signerExtra }, opts) {
 
           transaction.nonce = ethers.utils.hexlify(await provider.getTransactionCount(transaction.from))
 
-          const signedTx = await ledgerSignTransaction(transaction, transaction.chainId)
+          const signedTx = await ledgerSignTransaction(transaction, transaction.chainId, signerExtra.derivationPath)
 
           return provider.sendTransaction(signedTx)
         },
         isConnected: async (matchAddress) => { // chain is provided to ledger. Not necessary to check network
-          const addresses = await ledgerGetAddresses()
 
-          if (addresses && addresses.addresses && addresses.addresses[0]) {
+          const address = (await ledgerGetAddresses(signerExtra.derivationPath))[0]
+
+          if (address) {
             if (matchAddress) {
-              return !!addresses.addresses.find(a => a.toLowerCase() === matchAddress.toLowerCase())
+              return address.toLowerCase() === matchAddress.toLowerCase()
             }
             return true
           }
@@ -84,7 +85,7 @@ function getWalletNew({ chainId, signer, signerExtra }, opts) {
         _signTypedData: (domain, types, value) => {
           const domainSeparator = _TypedDataEncoder.hashDomain(domain)
           const hashStructMessage = _TypedDataEncoder.hashStruct(_TypedDataEncoder.getPrimaryType(types), types, value)
-          return ledgerSignMessage712(domainSeparator, hashStructMessage, signer.address)
+          return ledgerSignMessage712(domainSeparator, hashStructMessage, signer.address, signerExtra.derivationPath)
         }
       }
     } else {
@@ -100,11 +101,12 @@ function getWalletNew({ chainId, signer, signerExtra }, opts) {
           throw Error('Please use a chrome based browser to use Ledger')
         },
         isConnected: async (matchAddress) => { // chain is provided to ledger. Not necessary to check network
-          const addresses = await provider.getAccountsAsync(1)
 
-          if (addresses && addresses.length) {
+          const address = (await provider.getAccountsAsync((signerExtra.childIndex || 0) + 1)).slice(-1)[0]
+
+          if (address) {
             if (matchAddress) {
-              return !!addresses.find(a => a.toLowerCase() === matchAddress.toLowerCase())
+              return address.toLowerCase() === matchAddress.toLowerCase()
             }
             return true
           }

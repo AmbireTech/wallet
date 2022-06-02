@@ -5,8 +5,6 @@ import { Link } from 'react-router-dom'
 import LoginOrSignup from 'components/LoginOrSignupForm/LoginOrSignupForm'
 import TrezorConnect from 'trezor-connect'
 import { TrezorSubprovider } from '@0x/subproviders/lib/src/subproviders/trezor' // https://github.com/0xProject/0x-monorepo/issues/1400
-import { LedgerSubprovider } from '@0x/subproviders/lib/src/subproviders/ledger' // https://github.com/0xProject/0x-monorepo/issues/1400
-import { ledgerEthereumBrowserClientFactoryAsync } from '@0x/subproviders/lib/src' // https://github.com/0xProject/0x-monorepo/issues/1400
 import { hexZeroPad, AbiCoder, keccak256, id, getAddress } from 'ethers/lib/utils'
 import { Wallet } from 'ethers'
 import { generateAddress2 } from 'ethereumjs-util'
@@ -17,12 +15,11 @@ import { useToasts } from 'hooks/toasts'
 import { SelectSignerAccountModal } from 'components/Modals'
 import { useModals } from 'hooks'
 import { Loading } from 'components/common'
-import { ledgerGetAddresses, PARENT_HD_PATH } from 'lib/ledgerWebHID'
 import { isFirefox } from 'lib/isFirefox'
 import { VscJson } from 'react-icons/vsc'
 import { useDropzone } from 'react-dropzone'
 import { validateImportedAccountProps, fileSizeValidator } from 'lib/validations/importedAccountValidations'
-import { LatticeModal } from 'components/Modals'
+import { LatticeModal, LedgerSignersModal } from 'components/Modals'
 
 TrezorConnect.manifest({
   email: 'contactus@ambire.com',
@@ -101,7 +98,7 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking }) {
       quickAccSigner: signer,
       ...(utm.length && { utm })
     })
-    
+
     if (createResp.success) {
       utmTracking.resetUtm()
     }
@@ -232,59 +229,10 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking }) {
   }
 
   async function connectLedgerAndGetAccounts() {
-    if (isFirefox()) {
-      await connectLedgerAndGetAccountsU2F()
-    } else {
-      await connectLedgerAndGetAccountsWebHID()
-    }
-  }
-
-  async function connectLedgerAndGetAccountsU2F() {
-    const provider = new LedgerSubprovider({
-      networkId: 0, // @TODO: probably not needed
-      ledgerEthereumClientFactoryAsync: ledgerEthereumBrowserClientFactoryAsync,
-      baseDerivationPath: PARENT_HD_PATH
-    })
-    // NOTE: do not attempt to do both of these together (await Promise.all)
-    // there is a bug in the ledger subprovider (race condition), so it will think we're trying to make two connections simultaniously
-    // cause one call won't be aware of the other's attempt to connect
-    const addresses = await provider.getAccountsAsync(50)
-    const signerExtra = await provider._initialDerivedKeyInfoAsync().then(info => ({
-      type: 'ledger',
-      info: JSON.parse(JSON.stringify(info))
-    }))
-
-    setChooseSigners({ addresses, signerName: 'Ledger', signerExtra })
-  }
-
-  async function connectLedgerAndGetAccountsWebHID() {
-    let error = null
-    try {
-      const addrData = await ledgerGetAddresses()
-      if (!addrData.error) {
-        const signerExtra = { type: 'ledger', transportProtocol: 'webHID' }
-        if (addrData.addresses.length === 1) {
-            onEOASelected(addrData.addresses[0], signerExtra)
-        } else {
-            setChooseSigners({ addresses: addrData.addresses, signerName: 'Ledger', signerExtra })
-        }
-      } else {
-        error = addrData.error
-      }
-    } catch (e) {
-      console.log(e)
-      if (e.statusCode && e.id === 'InvalidChannel') {
-        error = 'Invalid channel'
-      } else if (e.statusCode && e.statusCode === 25873) {
-        error = 'Please make sure your ledger is connected and the ethereum app is open'
-      } else {
-        error = e.message
-      }
-    }
-
-    if (error) {
-      setAddAccErr(`Ledger error: ${error.message || error}`)
-    }
+    showModal(<LedgerSignersModal
+      onLedgerAccountSelection={onEOASelected}
+      isWebHID={!isFirefox()}
+    />)
   }
 
   const onEOASelected = useCallback(async (addr, signerExtra) => {
@@ -323,10 +271,10 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking }) {
       )
     }
   }, [onSignerAddressClicked, showModal, signersToChoose])
-  
+
   const onDrop = useCallback((acceptedFiles, rejectedFiles) => {
     const reader = new FileReader()
-    
+
     if (rejectedFiles.length) {
       addToast(`${rejectedFiles[0].file.path} - ${(rejectedFiles[0].file.size / 1024).toFixed(2)} KB. ${rejectedFiles[0].errors[0].message}`, { error: true })
     }
@@ -339,7 +287,7 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking }) {
         const content = readerEvent.target.result
         const fileContent = JSON.parse(content)
         const validatedFile = validateImportedAccountProps(fileContent)
-        
+
         if (validatedFile.success) onAddAccount(fileContent, { select: true })
         else addToast(validatedFile.message, { error: true})
       }
