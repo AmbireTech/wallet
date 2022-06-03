@@ -20,7 +20,7 @@ import useNetwork from './hooks/network'
 import useWalletConnect from './hooks/walletconnect'
 import useGnosisSafe from './hooks/useGnosisSafe'
 import useNotifications from './hooks/notifications'
-import { useAttentionGrabber, usePortfolio, useAddressBook, useRelayerData, usePrivateMode, useLocalStorage } from './hooks'
+import { useAttentionGrabber, usePortfolio, useAddressBook, useRelayerData, usePrivateMode, useLocalStorage, useUtmTracking } from './hooks'
 import { useToasts } from './hooks/toasts'
 import { useOneTimeQueryParam } from './hooks/oneTimeQueryParam'
 import WalletStakingPoolABI from './consts/WalletStakingPoolABI.json'
@@ -48,6 +48,7 @@ function AppInner() {
   const { network, setNetwork, allNetworks } = useNetwork({ useStorage: useLocalStorage })
   const { addToast } = useToasts()
   const wcUri = useOneTimeQueryParam('uri')
+  const utmTracking = useUtmTracking({ useStorage: useLocalStorage })
 
   // Signing requests: transactions/signed msgs: all requests are pushed into .requests
   const { connections, connect, disconnect, isConnecting, requests: wcRequests, resolveMany: wcResolveMany } = useWalletConnect({
@@ -259,7 +260,7 @@ function AppInner() {
 
     <Switch>
       <Route path="/add-account">
-        <AddAccount relayerURL={relayerURL} onAddAccount={onAddAccount}></AddAccount>
+        <AddAccount relayerURL={relayerURL} onAddAccount={onAddAccount} utmTracking={utmTracking}></AddAccount>
       </Route>
 
       <Route path="/email-login">
