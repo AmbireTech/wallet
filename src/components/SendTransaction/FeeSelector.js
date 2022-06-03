@@ -29,7 +29,7 @@ function getBalance(token) {
   return balance / decimals * priceInUSD
 }
 
-const WalletDiscountBanner = ({ currenciesItems, tokens, estimation, onFeeCurrencyChange, onDismiss, feeSpeed }) => {
+const WalletDiscountBanner = ({ currenciesItems, tokens, estimation, onFeeCurrencyChange, onDismiss, feeSpeed, isGasTankEnabled }) => {
   if (estimation.selectedFeeToken?.symbol
     && (DISCOUNT_TOKENS_SYMBOLS.includes(estimation.selectedFeeToken?.symbol)
       || estimation.selectedFeeToken.discount)
@@ -37,7 +37,7 @@ const WalletDiscountBanner = ({ currenciesItems, tokens, estimation, onFeeCurren
     return null
   }
   const walletDiscountTokens = [...tokens]
-    .filter(x => DISCOUNT_TOKENS_SYMBOLS.includes(x.symbol) && x.discount && isTokenEligible(x, feeSpeed, estimation))
+    .filter(x => DISCOUNT_TOKENS_SYMBOLS.includes(x.symbol) && x.discount && isTokenEligible(x, feeSpeed, estimation, isGasTankEnabled))
     .sort((a, b) =>
       b.discount - a.discount
       || ((!parseInt(a.balance) || !parseInt(b.balance)) ? getBalance(b) - getBalance(a) : 0)
@@ -88,7 +88,7 @@ export function FeeSelector({ disabled, signer, estimation, network, setEstimati
   // Only check for insufficient fee in relayer mode (.feeInUSD is available)
   // Otherwise we don't care whether the user has enough for fees, their signer wallet will take care of it
   const insufficientFee = estimation && estimation.feeInUSD
-    && !isTokenEligible(estimation.selectedFeeToken, feeSpeed, estimation)
+    && !isTokenEligible(estimation.selectedFeeToken, feeSpeed, estimation, isGasTankEnabled)
   if (estimation && !estimation.success) return (<FailingTxn
     message={<>The current transaction batch cannot be sent because it will fail: {mapTxnErrMsg(estimation.message)}</>}
     tooltip={getErrHint(estimation.message)}
@@ -117,13 +117,13 @@ export function FeeSelector({ disabled, signer, estimation, network, setEstimati
     // NOTE: filter by slowest and then will disable the higher fees speeds otherwise 
     // it will just hide the token from the select
     .sort((a, b) =>
-    (isTokenEligible(b, SPEEDS[0], estimation) - isTokenEligible(a, SPEEDS[0], estimation))
+    (isTokenEligible(b, SPEEDS[0], estimation, isGasTankEnabled) - isTokenEligible(a, SPEEDS[0], estimation, isGasTankEnabled))
     || (DISCOUNT_TOKENS_SYMBOLS.indexOf(b.symbol) - DISCOUNT_TOKENS_SYMBOLS.indexOf(a.symbol))
     || ((b.discount || 0) - (a.discount || 0))
     || a?.symbol.toUpperCase().localeCompare(b?.symbol.toUpperCase())
   )
     .map(({ address, symbol, discount, ...rest }) => ({
-      disabled: !isTokenEligible({address, symbol, discount, ...rest }, SPEEDS[0], estimation),
+      disabled: !isTokenEligible({address, symbol, discount, ...rest }, SPEEDS[0], estimation, isGasTankEnabled),
       icon: address ? getTokenIcon(network.id, address) : null,
       label: symbol,
       value: address || symbol,
@@ -159,13 +159,13 @@ export function FeeSelector({ disabled, signer, estimation, network, setEstimati
   }
 
   if (insufficientFee) {
-    const sufficientSpeeds = SPEEDS.filter((speed, i) => isTokenEligible(estimation.selectedFeeToken, speed, estimation))
+    const sufficientSpeeds = SPEEDS.filter((speed, i) => isTokenEligible(estimation.selectedFeeToken, speed, estimation, isGasTankEnabled))
     const highestSufficientSpeed = sufficientSpeeds[sufficientSpeeds.length - 1]
     setFeeSpeed(highestSufficientSpeed)
   }
 
   const checkIsSelectorDisabled = speed => {
-    const insufficientFee = !isTokenEligible(estimation.selectedFeeToken, speed, estimation)
+    const insufficientFee = !isTokenEligible(estimation.selectedFeeToken, speed, estimation, isGasTankEnabled)
     return disabled || insufficientFee
   }
 
@@ -258,7 +258,8 @@ export function FeeSelector({ disabled, signer, estimation, network, setEstimati
       estimation,
       onFeeCurrencyChange,
       onDismiss,
-      feeSpeed
+      feeSpeed,
+      isGasTankEnabled
     })}
 
     <div className='section-title'>

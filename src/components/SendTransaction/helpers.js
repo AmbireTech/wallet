@@ -5,10 +5,10 @@
 const ADDED_GAS_TOKEN = 30000
 const ADDED_GAS_NATIVE = 12000
 
-export function isTokenEligible(token, speed, estimation) {
+export function isTokenEligible(token, speed, estimation, isGasTankEnabled) {
   if (estimation?.relayerless && token?.address === '0x0000000000000000000000000000000000000000') return true
   if (!token) return false
-  const { feeInFeeToken } = getFeesData(token, estimation, speed )
+  const { feeInFeeToken } = getFeesData(token, estimation, speed, isGasTankEnabled)
   const balanceInFeeToken = (parseInt(token.balance) / Math.pow(10, token.decimals))
   return balanceInFeeToken > feeInFeeToken
 }
@@ -68,6 +68,7 @@ export function getDiscountApplied(amnt, discount = 0) {
 
 // Returns feeToken data with all multipliers applied
 export function getFeesData(feeToken, estimation, speed, isGasTankEnabled) {
+  console.log('feeToken',feeToken)
   const { addedGas, multiplier } = getFeePaymentConsequences(feeToken, estimation, isGasTankEnabled)
   const savedGas = getAddedGas(feeToken)
   const discountMultiplier = 1 - (feeToken?.discount || 0)

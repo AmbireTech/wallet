@@ -180,7 +180,14 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, network, account,
       .then((estimation) => {
         if (unmounted || bundle !== currentBundle.current) return
         estimation.relayerless = !relayerURL
-        const gasTankTokens = estimation.gasTank?.map(item => { return { ...item, symbol: item.symbol.toUpperCase(), balance: ethers.utils.parseUnits(item.balance.toFixed(item.decimals).toString(), item.decimals).toString() }})
+        const gasTankTokens = estimation.gasTank?.map(item => { 
+          return { 
+            ...item, 
+            symbol: item.symbol.toUpperCase(), 
+            balance: ethers.utils.parseUnits(item.balance.toFixed(item.decimals).toString(), item.decimals).toString(),
+            nativeRate: estimation.nativeAssetPriceInUSD / item.price
+          }
+        })
         estimation.selectedFeeToken = getDefaultFeeToken(currentAccGasTankState.isEnabled ? gasTankTokens : estimation.remainingFeeTokenBalances, network, feeSpeed, estimation)
         setEstimation(prevEstimation => {
           if (prevEstimation && prevEstimation.customFee) return prevEstimation
@@ -188,10 +195,10 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, network, account,
             // If there's no eligible token, set it to the first one cause it looks more user friendly (it's the preferred one, usually a stablecoin)
             estimation.selectedFeeToken = (
                 prevEstimation
-                && isTokenEligible(prevEstimation.selectedFeeToken, feeSpeed, estimation)
+                && isTokenEligible(prevEstimation.selectedFeeToken, feeSpeed, estimation, currentAccGasTankState.isEnabled)
                 && prevEstimation.selectedFeeToken
               )
-              || getDefaultFeeToken(estimation.remainingFeeTokenBalances, network, feeSpeed, estimation)
+              || getDefaultFeeToken(currentAccGasTankState.isEnabled ? gasTankTokens : estimation.remainingFeeTokenBalances, network, feeSpeed, estimation)
           }
           return estimation
         })
@@ -232,7 +239,7 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, network, account,
       // Also it can be stable but not in USD
       feeInFeeToken,
       addedGas
-    } = getFeesData(feeToken, estimation, feeSpeed)
+    } = getFeesData(feeToken, estimation, feeSpeed, currentAccGasTankState.isEnabled)
     const feeTxn = feeToken.symbol === network.nativeAssetSymbol
       // TODO: check native decimals
       ? [accountPresets.feeCollector, toHexAmount(feeInNative, 18), '0x']
