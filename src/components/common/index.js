@@ -22,6 +22,7 @@ import ToolTip from './ToolTip/ToolTip';
 import NoFundsPlaceholder from './NoFundsPlaceholder/NoFundsPlaceholder';
 import CountdownTimer from './CountdownTimer/CountdownTimer';
 import ErrorBoundary from './ErrorBoundary/ErrorBoundary';
+import Stepper from './Stepper/Stepper.tsx';
 
 export {
     AddressBook,
@@ -47,5 +48,6 @@ export {
     ToolTip,
     NoFundsPlaceholder,
     CountdownTimer,
-    ErrorBoundary
+    ErrorBoundary,
+    Stepper
 };

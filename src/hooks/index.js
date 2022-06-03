@@ -12,6 +12,7 @@ import useLocalStorage from './useLocalStorage'
 import useAmbireEarnDetails from './ambireEarnDetails'
 import useDragAndDrop from './dragAndDrop'
 import useCheckMobileScreen from './checkMobileScreen'
+import useUtmTracking from './utmTracking'
 
 export {
     useAccounts,
@@ -27,5 +28,6 @@ export {
     useLocalStorage,
     useAmbireEarnDetails,
     useDragAndDrop,
-    useCheckMobileScreen
+    useCheckMobileScreen,
+    useUtmTracking
 }

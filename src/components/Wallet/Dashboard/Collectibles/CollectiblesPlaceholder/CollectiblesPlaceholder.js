@@ -46,23 +46,25 @@ const CollectiblesPlaceholder = ({ isPrivateMode, collectiblesLength }) => {
             </div>
             <div className="placeholder-overlay"></div>
             <div id="collectibles">
-                {
-                    collectibles.map(({ collectionName, collectionImg, name, image, price}) => (
-                        <div className="collectible" key={name}>
-                            <div className="artwork" style={{backgroundImage: `url(${image})`}}/>
-                            <div className="info">
-                                <div className="collection">
-                                    <div className="collection-icon" style={{backgroundImage: `url(${collectionImg})`}}></div>
-                                    { collectionName }
-                                </div>
-                                <div className="details">
-                                    <div className="name">{ name }</div>
-                                    <div className="value"><span className="purple-highlight">$</span> { price }</div>
+                <div className='collectibles-wrapper'>
+                    {
+                        collectibles.map(({ collectionName, collectionImg, name, image, price}) => (
+                            <div className="collectible" key={name}>
+                                <div className="artwork" style={{backgroundImage: `url(${image})`}}/>
+                                <div className="info">
+                                    <div className="collection">
+                                        <div className="collection-icon" style={{backgroundImage: `url(${collectionImg})`}}></div>
+                                        { collectionName }
+                                    </div>
+                                    <div className="details">
+                                        <div className="name">{ name }</div>
+                                        <div className="value"><span className="purple-highlight">$</span> { price }</div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    ))
-                }
+                        ))
+                    }
+                </div>
             </div>
         </div>
     )
