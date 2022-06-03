@@ -98,7 +98,18 @@ function getErrorMessage(e) {
   }
 }
 
-export default function SendTransaction({ relayerURL, accounts, network, selectedAcc, requests, resolveMany, replacementBundle, replaceByDefault, onBroadcastedTxn, onDismiss }) {
+export default function SendTransaction({ relayerURL, 
+  accounts, 
+  network, 
+  selectedAcc, 
+  requests, 
+  resolveMany, 
+  replacementBundle, 
+  replaceByDefault, 
+  onBroadcastedTxn, 
+  onDismiss,
+  gasTankState
+ }) {
   // NOTE: this can be refactored at a top level to only pass the selected account (full object)
   // keeping it that way right now (selectedAcc, accounts) cause maybe we'll need the others at some point?
   const account = accounts.find(x => x.id === selectedAcc)
@@ -130,11 +141,12 @@ export default function SendTransaction({ relayerURL, accounts, network, selecte
     resolveMany={resolveMany}
     onBroadcastedTxn={onBroadcastedTxn}
     onDismiss={onDismiss}
+    gasTankState={gasTankState}
   />)
 }
 
-function SendTransactionWithBundle({ bundle, replaceByDefault, network, account, resolveMany, relayerURL, onBroadcastedTxn, onDismiss }) {
-  const [isGasTankEnabled] = useLocalStorage({ key: 'isGasTankEnabled', defaultValue: false })
+function SendTransactionWithBundle({ bundle, replaceByDefault, network, account, resolveMany, relayerURL, onBroadcastedTxn, onDismiss, gasTankState }) {
+  const currentAccGasTankState = gasTankState.find(i => i.account === account.id)
   const [estimation, setEstimation] = useState(null)
 
   const [replaceTx, setReplaceTx] = useState(!!replaceByDefault)
@@ -169,7 +181,7 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, network, account,
         if (unmounted || bundle !== currentBundle.current) return
         estimation.relayerless = !relayerURL
         const gasTankTokens = estimation.gasTank?.map(item => { return { ...item, symbol: item.symbol.toUpperCase(), balance: ethers.utils.parseUnits(item.balance.toFixed(item.decimals).toString(), item.decimals).toString() }})
-        estimation.selectedFeeToken = getDefaultFeeToken(isGasTankEnabled ? gasTankTokens : estimation.remainingFeeTokenBalances, network, feeSpeed, estimation)
+        estimation.selectedFeeToken = getDefaultFeeToken(currentAccGasTankState.isEnabled ? gasTankTokens : estimation.remainingFeeTokenBalances, network, feeSpeed, estimation)
         setEstimation(prevEstimation => {
           if (prevEstimation && prevEstimation.customFee) return prevEstimation
           if (estimation.remainingFeeTokenBalances) {
@@ -200,7 +212,7 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, network, account,
       unmounted = true
       clearInterval(intvl)
     }
-  }, [bundle, setEstimation, feeSpeed, addToast, network, relayerURL, signingStatus, replaceTx, setReplaceTx, isGasTankEnabled])
+  }, [bundle, setEstimation, feeSpeed, addToast, network, relayerURL, signingStatus, replaceTx, setReplaceTx, currentAccGasTankState.isEnabled])
 
   // The final bundle is used when signing + sending it
   // the bundle before that is used for estimating
@@ -233,7 +245,7 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, network, account,
     const nextFreeNonce = estimation.nextNonce?.nonce
     const nextNonMinedNonce = estimation.nextNonce?.nextNonMinedNonce
     
-    if (!!isGasTankEnabled) {
+    if (!!currentAccGasTankState.isEnabled) {
       let gasLimit
       if (bundle.txns.length > 1) gasLimit = estimation.gasLimit + (bundle.extraGas || 0)
       else gasLimit = estimation.gasLimit
@@ -258,7 +270,7 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, network, account,
       gasLimit: estimation.gasLimit + addedGas + (bundle.extraGas || 0),
       nonce: bundle.nonce || ((replaceTx && pendingBundle) ? nextNonMinedNonce : nextFreeNonce)
     })
-  }, [relayerURL, estimation, feeSpeed, network.nativeAssetSymbol, isGasTankEnabled, bundle, replaceTx])
+  }, [relayerURL, estimation, feeSpeed, network.nativeAssetSymbol, currentAccGasTankState.isEnabled, bundle, replaceTx])
 
   const approveTxnImpl = async () => {
     if (!estimation) throw new Error('no estimation: should never happen')
@@ -476,7 +488,7 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, network, account,
               feeSpeed={feeSpeed}
               setFeeSpeed={setFeeSpeed}
               onDismiss={onDismiss}
-              isGasTankEnabled={!!isGasTankEnabled}
+              isGasTankEnabled={!!currentAccGasTankState.isEnabled}
             ></FeeSelector>
           </div>
 

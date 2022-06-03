@@ -132,7 +132,16 @@ function AppInner() {
   const [userSorting, setUserSorting] = useLocalStorage({
     key: 'userSorting',
     defaultValue: {}
-})
+  })
+  
+  const [gasTankState, setGasTankState] = useLocalStorage({
+    key: 'gasTankState', 
+    defaultValue: [{ account: selectedAcc, isEnabled: false }]
+  })
+
+  if (gasTankState.length && !gasTankState.find(i => i.account === selectedAcc)) {
+    setGasTankState([...gasTankState, { account: selectedAcc, isEnabled: false }])
+  } 
 
   // Show the send transaction full-screen modal if we have a new txn
   const eligibleRequests = useMemo(() => requests
@@ -243,6 +252,7 @@ function AppInner() {
         replacementBundle={sendTxnState.replacementBundle}
         replaceByDefault={sendTxnState.replaceByDefault}
         onBroadcastedTxn={onBroadcastedTxn}
+        gasTankState={gasTankState}
       ></SendTransaction>
     ) : (<></>)
     }
@@ -290,6 +300,8 @@ function AppInner() {
             useStorage={useLocalStorage}
             userSorting={userSorting}
             setUserSorting={setUserSorting}
+            gasTankState={gasTankState}
+            setGasTankState={setGasTankState}
           >
           </Wallet>
         </Route> :

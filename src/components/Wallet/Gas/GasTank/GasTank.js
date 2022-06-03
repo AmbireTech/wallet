@@ -16,7 +16,15 @@ import { useModals } from 'hooks'
 import { GasTankBalanceByTokensModal } from 'components/Modals'
 import { HiOutlineExternalLink } from 'react-icons/hi'
 
-const GasTank = ({ network, relayerURL, portfolio, account, userSorting, setUserSorting }) => {
+const GasTank = ({ network, 
+    relayerURL, 
+    portfolio, 
+    account, 
+    userSorting, 
+    setUserSorting,
+    gasTankState, 
+    setGasTankState 
+}) => {
     const [cacheBreak, setCacheBreak] = useState(() => Date.now())
     const { showModal } = useModals()
 
@@ -70,20 +78,18 @@ const GasTank = ({ network, relayerURL, portfolio, account, userSorting, setUser
         )
     }
 
-    const {
-        dragStart,
-        dragEnter,
-        target,
-        handle,
-        dragTarget,
-        drop
-    } = useDragAndDrop(
-        'address',
-        onDropEnd)
-
-    const [isGasTankEnabled, setIsGasTankEnabled] = useLocalStorage({ key: 'isGasTankEnabled', defaultValue: false })
+    const { dragStart, dragEnter, target, handle, dragTarget,drop } = useDragAndDrop('address', onDropEnd)
+    const currentAccGasTankState = gasTankState.length ? 
+    gasTankState.find(i => i.account === account) :
+     setGasTankState( [
+        ...gasTankState,
+        { account: account, isEnabled: false }
+        ])
     const toggleGasTank = () => {
-        setIsGasTankEnabled(!isGasTankEnabled)
+        const updatedGasTankDetails = 
+            gasTankState.map(item => (item.account === account) ? 
+            { ...item, isEnabled: !item.isEnabled } : item)
+        setGasTankState(updatedGasTankDetails)
     }
 
     const openGasTankBalanceByTokensModal = () => {
@@ -156,8 +162,8 @@ const GasTank = ({ network, relayerURL, portfolio, account, userSorting, setUser
                     <span>Drag and drop tokens here</span>
                 </div>
                 <div className='switch-wrapper'>
-                    <Toggle checked={isGasTankEnabled} onChange={() => toggleGasTank()}/>
-                    {isGasTankEnabled ? <span>Enabled</span> : <span>Disabled</span>}
+                    <Toggle checked={currentAccGasTankState.isEnabled} onChange={() => toggleGasTank()}/>
+                    {currentAccGasTankState.isEnabled ? <span>Enabled</span> : <span>Disabled</span>}
                 </div>
 
                 <div className="balance-wrapper total-save">

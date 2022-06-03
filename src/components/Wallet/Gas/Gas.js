@@ -5,7 +5,16 @@ import GasTank from './GasTank/GasTank'
 import { useState, useEffect } from 'react'
 import { useRelayerData } from 'hooks'
 
-const Gas = ({ selectedNetwork, relayerURL, portfolio, selectedAccount, userSorting, setUserSorting }) => {
+const Gas = ({ 
+    selectedNetwork, 
+    relayerURL, 
+    portfolio, 
+    selectedAccount, 
+    userSorting, 
+    setUserSorting, 
+    gasTankState, 
+    setGasTankState
+ }) => {
     const [cacheBreak, setCacheBreak] = useState(() => Date.now())
 
     useEffect(() => {
@@ -42,6 +51,8 @@ const Gas = ({ selectedNetwork, relayerURL, portfolio, selectedAccount, userSort
                         account={selectedAccount}
                         userSorting={userSorting}
                         setUserSorting={setUserSorting}
+                        gasTankState={gasTankState}
+                        setGasTankState={setGasTankState}
                     />
                 </div>
             </div>
