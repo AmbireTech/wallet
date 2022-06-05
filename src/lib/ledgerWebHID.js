@@ -222,7 +222,7 @@ function calculateDerivedHDKeyInfos(initialDerivedKeyInfo, count) {
     const derivedKey = {
       address,
       hdKey,
-      baseDerivationPath: initialDerivedKeyInfo.baseDerivationPathh,
+      baseDerivationPath: initialDerivedKeyInfo.baseDerivationPath,
       derivationPath: fullDerivationPath,
     }
 
