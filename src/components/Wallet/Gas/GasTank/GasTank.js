@@ -215,7 +215,7 @@ const GasTank = ({ network,
                             <span>{ item.submittedAt && toLocaleDateTime(new Date(item.submittedAt)).toString() }</span>
                             <span>Gas payed: { item.feeInUSDPerGas }</span>
                             <span>Saved: { item.gasTank.value }</span>
-                            <span>Chargeback: { item.gasTank.chargeBack && item.gasTank.chargeBack }</span>
+                            <span>Cashback: { item.gasTank.cashback && item.gasTank.cashback }</span>
                                 <a
                                     href={network.explorerUrl + '/tx/'+ item.txId}
                                     target='_blank'

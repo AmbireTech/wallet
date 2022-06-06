@@ -256,10 +256,10 @@ function BundlePreview({ bundle, mined = false, feeAssets }) {
               <label><BsCalendarWeek/>Saved</label>
               <p>{bundle.feeInUSDPerGas * savedGas}</p>
           </li>)}
-          {!!bundle.gasTank.chargeBack && (<li>
+          {!!bundle.gasTank.cashback && (<li>
               {/* TODO: the icon has to be changed */}
-              <label><BsCalendarWeek/>Chargeback</label>
-              <p>$ {formatUnits(bundle.gasTank.chargeBack.toString(), feeTokenDetails?.decimals).toString() * feeTokenDetails?.price}</p>
+              <label><BsCalendarWeek/>Cashback</label>
+              <p>$ {formatUnits(bundle.gasTank.cashback.toString(), feeTokenDetails?.decimals).toString() * feeTokenDetails?.price}</p>
           </li>)}
         </>) 
       }
