@@ -39,23 +39,25 @@ const Gas = ({
                     {gasData && <GasDetails gasData={gasData} />}
                 </div>
             </div>
-            <div className="panel">
-                <div className="heading">
-                    <div className="title">Gas Tank</div>
+            { selectedNetwork.isGasTankAvailable &&
+                <div className="panel">
+                    <div className="heading">
+                        <div className="title">Gas Tank</div>
+                    </div>
+                    <div className="description">
+                        <GasTank
+                            network={selectedNetwork}
+                            relayerURL={relayerURL}
+                            portfolio={portfolio}
+                            account={selectedAccount}
+                            userSorting={userSorting}
+                            setUserSorting={setUserSorting}
+                            gasTankState={gasTankState}
+                            setGasTankState={setGasTankState}
+                        />
+                    </div>
                 </div>
-                <div className="description">
-                    <GasTank
-                        network={selectedNetwork}
-                        relayerURL={relayerURL}
-                        portfolio={portfolio}
-                        account={selectedAccount}
-                        userSorting={userSorting}
-                        setUserSorting={setUserSorting}
-                        gasTankState={gasTankState}
-                        setGasTankState={setGasTankState}
-                    />
-                </div>
-            </div>
+            }
         </section>
     )
 }

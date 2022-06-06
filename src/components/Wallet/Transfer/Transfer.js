@@ -271,14 +271,14 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
                             <NoFundsPlaceholder/>
                }
            </div>
-           <Addresses
+           {!gasTankDetails && <Addresses
                 selectedAsset={selectedAsset}
                 selectedNetwork={selectedNetwork}
                 addresses={addresses}
                 addAddress={addAddress}
                 removeAddress={removeAddress}
                 onSelectAddress={address => setAddress(address)}
-            />
+            />}
         </div>
     )
 }

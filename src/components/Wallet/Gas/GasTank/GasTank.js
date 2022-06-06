@@ -81,9 +81,9 @@ const GasTank = ({ network,
     const { dragStart, dragEnter, target, handle, dragTarget,drop } = useDragAndDrop('address', onDropEnd)
     const currentAccGasTankState = gasTankState.length ? 
     gasTankState.find(i => i.account === account) :
-     setGasTankState( [
-        ...gasTankState,
-        { account: account, isEnabled: false }
+        setGasTankState([
+            ...gasTankState,
+            { account: account, isEnabled: false }
         ])
     const toggleGasTank = () => {
         const updatedGasTankDetails = 
@@ -208,7 +208,7 @@ const GasTank = ({ network,
             <div className="txns-wapper">
                 <div>Transaction History</div>
                 {
-                    latestThreeGasTankTxns && latestThreeGasTankTxns.map((item, key) => {
+                    latestThreeGasTankTxns && latestThreeGasTankTxns.length ? latestThreeGasTankTxns.map((item, key) => {
                         // TODO: Fix the styles
                         return (<div key={key} className="txns-item-wapper">
                             <BiTransferAlt />
@@ -226,7 +226,7 @@ const GasTank = ({ network,
                                 </a>
                             
                         </div>)
-                    })
+                    }) : <p>No transactions are made via Gas Tank</p>
                 }
             </div>
             <div>

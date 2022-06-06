@@ -10,7 +10,8 @@ const networks = [
 		name: 'Ethereum',
 		icon: '/resources/networks/ethereum.png',
 		explorerUrl: 'https://etherscan.io',
-		unstoppableDomainsChain: 'ERC20'
+		unstoppableDomainsChain: 'ERC20',
+		isGasTankAvailable: true
 	},
 	{
 		id: 'polygon',
@@ -21,7 +22,8 @@ const networks = [
 		name: 'Polygon',
 		icon: '/resources/networks/polygon.png',
 		explorerUrl: 'https://polygonscan.com',
-		unstoppableDomainsChain: 'MATIC'
+		unstoppableDomainsChain: 'MATIC',
+		isGasTankAvailable: true
 	},
 	{
 		id: 'avalanche',
@@ -31,7 +33,8 @@ const networks = [
 		name: 'Avalanche',
 		icon: '/resources/networks/avalanche.png',
 		explorerUrl: 'https://snowtrace.io',
-		unstoppableDomainsChain: 'ERC20'
+		unstoppableDomainsChain: 'ERC20',
+		isGasTankAvailable: true
 	},
 	{
 		// to match the zapper ID
@@ -42,7 +45,8 @@ const networks = [
 		name: 'Binance Smart Chain',
 		icon: '/resources/networks/bsc.png',
 		explorerUrl: 'https://bscscan.com',
-		unstoppableDomainsChain: 'BEP20'
+		unstoppableDomainsChain: 'BEP20',
+		isGasTankAvailable: true
 	},
 	{
 		id: 'fantom',
@@ -52,7 +56,8 @@ const networks = [
 		name: 'Fantom Opera',
 		icon: '/resources/networks/fantom.png',
 		explorerUrl: 'https://ftmscan.com',
-		unstoppableDomainsChain: 'ERC20'
+		unstoppableDomainsChain: 'ERC20',
+		isGasTankAvailable: true
 	},
 	{
 		id: 'moonbeam',
@@ -62,7 +67,8 @@ const networks = [
 		name: 'Moonbeam',
 		icon: '/resources/networks/moonbeam.png',
 		explorerUrl: 'https://moonscan.io/',
-		unstoppableDomainsChain: 'ERC20'
+		unstoppableDomainsChain: 'ERC20',
+		isGasTankAvailable: true
 	},
 	{
 		id: 'moonriver',
@@ -72,7 +78,8 @@ const networks = [
 		name: 'Moonriver',
 		icon: '/resources/networks/moonriver.png',
 		explorerUrl: 'https://moonriver.moonscan.io/',
-		unstoppableDomainsChain: 'ERC20'
+		unstoppableDomainsChain: 'ERC20',
+		isGasTankAvailable: true
 	},
 	{
 		id: 'arbitrum',
@@ -82,7 +89,8 @@ const networks = [
 		name: 'Arbitrum',
 		icon: '/resources/networks/arbitrum.svg',
 		explorerUrl: 'https://arbiscan.io',
-		unstoppableDomainsChain: 'ERC20'
+		unstoppableDomainsChain: 'ERC20',
+		isGasTankAvailable: true
 	},
 	{
 		id: 'gnosis',
@@ -93,7 +101,8 @@ const networks = [
 		name: 'Gnosis Chain',
 		icon: '/resources/networks/gnosis.png',
 		explorerUrl: 'https://blockscout.com',
-		unstoppableDomainsChain: 'ERC20'
+		unstoppableDomainsChain: 'ERC20',
+		isGasTankAvailable: true
 	},
 	{
 		id: 'kucoin',
@@ -104,7 +113,8 @@ const networks = [
 		icon: '/resources/networks/kucoin.svg',
 		explorerUrl: 'https://explorer.kcc.io',
 		unstoppableDomainsChain: 'ERC20',
-		hide: true
+		hide: true,
+		isGasTankAvailable: true
 	},
 	{
 		id: 'optimism',
@@ -114,7 +124,8 @@ const networks = [
 		name: 'Optimism',
 		icon: '/resources/networks/optimism.jpg',
 		explorerUrl: 'https://optimistic.etherscan.io',
-		unstoppableDomainsChain: 'ERC20'
+		unstoppableDomainsChain: 'ERC20',
+		isGasTankAvailable: true
 	},
 	{
 		id: 'andromeda',
@@ -124,7 +135,8 @@ const networks = [
 		name: 'Andromeda',
 		icon: '/resources/networks/andromeda.svg',
 		explorerUrl: 'https://andromeda-explorer.metis.io',
-		unstoppableDomainsChain: 'ERC20'
+		unstoppableDomainsChain: 'ERC20',
+		isGasTankAvailable: true
 	},
 	{
 		id: 'rinkeby',
@@ -135,7 +147,8 @@ const networks = [
 		icon: '/resources/networks/rinkeby.png',
 		explorerUrl: 'https://rinkeby.etherscan.io',
 		unstoppableDomainsChain: 'ERC20',
-		hide: true
+		hide: false,
+		isGasTankAvailable: false
 	},
 	// {
 	// 	id: 'cronos',

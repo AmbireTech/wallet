@@ -14,6 +14,7 @@ import useAmbireEarnDetails from './ambireEarnDetails'
 import useDragAndDrop from './dragAndDrop'
 import useCheckMobileScreen from './checkMobileScreen'
 import useUtmTracking from './utmTracking'
+import useGasTank from "./gasTank"
 
 export {
     useAccounts,
@@ -31,5 +32,6 @@ export {
     useAmbireEarnDetails,
     useDragAndDrop,
     useCheckMobileScreen,
-    useUtmTracking
+    useUtmTracking,
+    useGasTank
 }
