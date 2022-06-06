@@ -6,7 +6,7 @@ import QRCode from 'qrcode'
 import TextInput from 'components/common/TextInput/TextInput'
 import Providers from './Providers/Providers'
 
-import networks from 'ambire-common/src/constants/networks'
+import networks from 'consts/networks'
 
 import AssetsMigrationBanner from 'components/Wallet/AssetsMigration/AssetsMigrationBanner'
 

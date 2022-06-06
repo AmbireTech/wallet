@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useToasts } from 'hooks/toasts'
 import AAVELendingPoolAbi from 'consts/AAVELendingPoolAbi'
 import AAVELendingPoolProviders from 'consts/AAVELendingPoolProviders'
-import networks from 'ambire-common/src/constants/networks'
+import networks from 'consts/networks'
 import { getProvider } from 'lib/provider'
 import { ToolTip } from "components/common"
 import AAVE_ICON from 'resources/aave.svg'

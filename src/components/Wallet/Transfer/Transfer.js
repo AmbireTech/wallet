@@ -13,7 +13,7 @@ import { resolveUDomain } from 'lib/unstoppableDomains'
 import { isValidAddress } from 'lib/address'
 import Addresses from './Addresses/Addresses'
 import { MdInfo } from 'react-icons/md'
-import networks from 'ambire-common/src/constants/networks'
+import networks from 'consts/networks'
 import { getTokenIcon } from 'lib/icons'
 import { formatFloatTokenAmount } from 'lib/formatters'
 

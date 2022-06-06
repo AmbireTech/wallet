@@ -8,7 +8,7 @@ import { ledgerSignMessage, ledgerSignTransaction, ledgerSignMessage712, ledgerG
 import { latticeInit, latticeConnect, latticeSignMessage, latticeSignTransaction } from 'lib/lattice'
 import { _TypedDataEncoder } from 'ethers/lib/utils'
 import { getProvider } from 'lib/provider'
-import networks from 'ambire-common/src/constants/networks'
+import networks from 'consts/networks'
 
 let wallets = {}
 

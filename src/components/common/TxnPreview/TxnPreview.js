@@ -3,7 +3,7 @@ import './TxnPreview.scss'
 import { useState, Fragment, useEffect  } from 'react'
 
 import { getName, getTransactionSummary, isKnown } from 'lib/humanReadableTransactions'
-import networks from 'ambire-common/src/constants/networks'
+import networks from 'consts/networks'
 import { formatUnits } from 'ethers/lib/utils'
 import { ToolTip } from 'components/common'
 import { HiOutlineExternalLink } from 'react-icons/hi'

@@ -5,7 +5,7 @@ import { MdOutlineArrowForward, MdOutlineCheck, MdOutlineClose } from 'react-ico
 import { HiOutlineExternalLink } from 'react-icons/hi'
 import { Loading } from 'components/common'
 import useMovr from 'components/Wallet/CrossChain/useMovr'
-import networks from 'ambire-common/src/constants/networks'
+import networks from 'consts/networks'
 import { useToasts } from 'hooks/toasts'
 import { useRelayerData } from 'hooks'
 import movrTxParser from './movrTxParser'
