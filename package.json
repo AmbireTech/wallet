@@ -22,7 +22,7 @@
     "@web3-react/types": "^6.0.7",
     "@yfi/sdk": "^1.0.11",
     "adex-protocol-eth": "git+https://git@github.com/AmbireTech/adex-protocol-eth.git#51b46c1a2ede69339e1a5502072314ff7e8ad81b",
-    "ambire-common": "git+ssh://git@github.com:AmbireTech/ambire-common.git#v0.6.0",
+    "ambire-common": "git+https://github.com/AmbireTech/ambire-common.git#v0.6.0",
     "blockies-ts": "^1.0.0",
     "eth-keyring-controller": "^6.2.1",
     "ethereumjs-util": "^6.1.0",
