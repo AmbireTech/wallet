@@ -85,7 +85,12 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking }) {
     const accHash = keccak256(abiCoder.encode(['tuple(uint, address, address)'], [quickAccountTuple]))
     const privileges = [[quickAccManager, accHash]]
     const bytecode = getProxyDeployBytecode(baseIdentityAddr, privileges, { privSlot: 0 })
-    const identityAddr = getAddress('0x' + generateAddress2(identityFactoryAddr, salt, bytecode).toString('hex'))
+    const identityAddr = getAddress('0x' + generateAddress2(
+      // Converting to buffer is required in ethereumjs-util version: 7.1.3
+      Buffer.from(identityFactoryAddr.slice(2), 'hex'),
+      Buffer.from(salt.slice(2), 'hex'),
+      Buffer.from(bytecode.slice(2), 'hex')
+    ).toString('hex'))
     const primaryKeyBackup = JSON.stringify(
       await firstKeyWallet.encrypt(req.passphrase, accountPresets.encryptionOpts)
     )
@@ -135,7 +140,12 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking }) {
     const privileges = [[getAddress(addr), hexZeroPad('0x01', 32)]]
     const { salt, baseIdentityAddr, identityFactoryAddr } = accountPresets
     const bytecode = getProxyDeployBytecode(baseIdentityAddr, privileges, { privSlot: 0 })
-    const identityAddr = getAddress('0x' + generateAddress2(identityFactoryAddr, salt, bytecode).toString('hex'))
+    const identityAddr = getAddress('0x' + generateAddress2(
+      // Converting to buffer is required in ethereumjs-util version: 7.1.3
+      Buffer.from(identityFactoryAddr.slice(2), 'hex'),
+      Buffer.from(salt.slice(2), 'hex'),
+      Buffer.from(bytecode.slice(2), 'hex')
+    ).toString('hex'))
 
     const utm = utmTracking.getLatestUtmData()
 
