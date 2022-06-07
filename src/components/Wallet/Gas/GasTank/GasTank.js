@@ -15,6 +15,9 @@ import { useRelayerData, useLocalStorage } from 'hooks'
 import { useModals } from 'hooks'
 import { GasTankBalanceByTokensModal } from 'components/Modals'
 import { HiOutlineExternalLink } from 'react-icons/hi'
+import { formatUnits } from 'ethers/lib/utils'
+// eslint-disable-next-line import/no-relative-parent-imports
+import { getAddedGas } from '../../../SendTransaction/helpers'
 
 const GasTank = ({ network, 
     relayerURL, 
@@ -41,7 +44,8 @@ const GasTank = ({ network,
     const feeAssetsRes = useRelayerData(urlGetFeeAssets)
     const feeAssetsPerNetwork = feeAssetsRes.data?.filter(item => item.network === network.id)
     const executedTxnsRes = useRelayerData(urlGetTransactions)
-    const latestThreeGasTankTxns = executedTxnsRes && executedTxnsRes.data?.txns.filter(item => !!item.gasTank).splice(0, 3)
+    const gasTankTxns = executedTxnsRes && executedTxnsRes.data?.txns.filter(item => !!item.gasTank)
+    const latestThreeGasTankTxns = gasTankTxns && gasTankTxns.splice(0, 3)
     const { isBalanceLoading, tokens } = portfolio
     const sortType = userSorting.tokens?.sortType || 'decreasing'
     const isMobileScreen = useCheckMobileScreen()
@@ -168,7 +172,7 @@ const GasTank = ({ network,
 
                 <div className="balance-wrapper total-save">
                     <span>TOTAL SAVE</span>
-                    <div><span>$</span>43.23</div>
+                    <div><span>$</span>{gasTankTxns && gasTankTxns.map(item => item.feeInUSDPerGas * item.gasTank.value).reduce((a, b) => a + b).toFixed(2)}</div>
                 </div>
             </div>
             <div>
@@ -209,13 +213,15 @@ const GasTank = ({ network,
                 <div>Transaction History</div>
                 {
                     latestThreeGasTankTxns && latestThreeGasTankTxns.length ? latestThreeGasTankTxns.map((item, key) => {
-                        // TODO: Fix the styles
+                        const feeTokenDetails = data && data.length && data.find(i => i.id === item.gasTank.assetId)
+                        const savedGas = getAddedGas(feeTokenDetails)
+                        
                         return (<div key={key} className="txns-item-wapper">
                             <BiTransferAlt />
                             <span>{ item.submittedAt && toLocaleDateTime(new Date(item.submittedAt)).toString() }</span>
-                            <span>Gas payed: { item.feeInUSDPerGas }</span>
-                            <span>Saved: { item.gasTank.value }</span>
-                            <span>Cashback: { item.gasTank.cashback && item.gasTank.cashback }</span>
+                            <span>Gas payed: ${ (item.feeInUSDPerGas * item.gasTank.value).toFixed(2) }</span>
+                            <span>Saved: ${(item.feeInUSDPerGas * savedGas).toFixed(2)}</span>
+                            <span>Cashback: ${ item.gasTank.cashback && (formatUnits(item.gasTank.cashback.toString(), feeTokenDetails.decimals) * feeTokenDetails?.price).toFixed(2) }</span>
                                 <a
                                     href={network.explorerUrl + '/tx/'+ item.txId}
                                     target='_blank'

@@ -249,17 +249,17 @@ function BundlePreview({ bundle, mined = false, feeAssets }) {
           <li>
               {/* TODO: the icon has to be changed */}
               <label><BsCalendarWeek/>Fee (Paid with Gas)</label>
-              <p>{bundle.gasTank.value}</p>
+              <p>${(bundle.feeInUSDPerGas * bundle.gasTank.value).toFixed(2)}</p>
           </li>
           {savedGas && (<li>
               {/* TODO: the icon has to be changed */}
               <label><BsCalendarWeek/>Saved</label>
-              <p>{bundle.feeInUSDPerGas * savedGas}</p>
+              <p>${(bundle.feeInUSDPerGas * savedGas).toFixed(2)}</p>
           </li>)}
           {!!bundle.gasTank.cashback && (<li>
               {/* TODO: the icon has to be changed */}
               <label><BsCalendarWeek/>Cashback</label>
-              <p>$ {formatUnits(bundle.gasTank.cashback.toString(), feeTokenDetails?.decimals).toString() * feeTokenDetails?.price}</p>
+              <p>${(formatUnits(bundle.gasTank.cashback.toString(), feeTokenDetails?.decimals).toString() * feeTokenDetails?.price).toFixed(2)}</p>
           </li>)}
         </>) 
       }
