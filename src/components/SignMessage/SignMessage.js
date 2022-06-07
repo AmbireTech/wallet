@@ -87,7 +87,6 @@ export default function SignMessage ({ toSign, resolve, account, connections, re
 
   const verifySignatureDebug = (toSign, sig) => {
     const provider = getProvider(network.id)
-    console.log('verifySigDebug', toSign.type)
     const isTyped = ['eth_signTypedData_v4', 'eth_signTypedData'].indexOf(toSign.type) !== -1
     verifyMessage({
       provider,
@@ -97,12 +96,12 @@ export default function SignMessage ({ toSign, resolve, account, connections, re
       signature: sig
     }).then(verificationResult => {
       if (verificationResult) {
-        addToast('SIGNATURE VALID')
+        addToast(toSign.type + ' SIGNATURE VALID')
       } else {
-        addToast('SIGNATURE INVALID', { error: true })
+        addToast(toSign.type + ' SIGNATURE INVALID', { error: true })
       }
     }).catch(e => {
-      addToast('SIGNATURE INVALID: ' + e.message, { error: true })
+      addToast(toSign.type + ' SIGNATURE INVALID: ' + e.message, { error: true })
     })
   }
 
