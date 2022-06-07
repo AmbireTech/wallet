@@ -58,6 +58,17 @@
         }
     }
 
+    .sort-holder {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 10px;
+
+        .sort-buttons {
+            display: flex;
+        }
+    }
+
     .list {
         display: flex;
         flex-direction: column;
@@ -175,10 +186,14 @@
         margin: 20px 0;
     }
 
-    .txns-wapper {
+    .txns-wrapper {
         margin-top: 20px;
 
-        .txns-item-wapper {
+        .title {
+            margin-bottom: 10px;
+        }
+
+        .txns-item-wrapper {
             display: flex;
             justify-content: space-around;
             align-items: center;

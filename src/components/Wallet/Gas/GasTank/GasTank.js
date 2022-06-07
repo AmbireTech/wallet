@@ -97,7 +97,7 @@ const GasTank = ({ network,
     }
 
     const openGasTankBalanceByTokensModal = () => {
-        showModal(<GasTankBalanceByTokensModal data={ (data && data.length) ? data : [] }/>)
+        showModal(<GasTankBalanceByTokensModal network={network.id} data={ (data && data.length) ? data : [] }/>)
     }
 
     const tokenItem = (index, img, symbol, balance, balanceUSD, address, send = false, network, decimals, category, sortedTokensLength) => 
@@ -179,7 +179,7 @@ const GasTank = ({ network,
                 <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</p> 
             </div>
             <div className="sort-holder">
-                Available fee tokens
+                <span className='title'>Available fee tokens</span>
                 {sortedTokens && !isMobileScreen &&  (
                     <div className="sort-buttons">
                         <ToolTip label='Sorted tokens by drag and drop'>
@@ -209,19 +209,19 @@ const GasTank = ({ network,
                         tokenItem(i, tokenImageUrl = getTokenIcon(network, address), symbol, balance, balanceUSD, address, true, network, decimals, 'tokens', sortedTokens.length))
                 }
             </div>
-            <div className="txns-wapper">
-                <div>Transaction History</div>
+            <div className="txns-wrapper">
+                <span className='title'>Transaction History</span>
                 {
                     latestThreeGasTankTxns && latestThreeGasTankTxns.length ? latestThreeGasTankTxns.map((item, key) => {
                         const feeTokenDetails = data && data.length && data.find(i => i.id === item.gasTank.assetId)
                         const savedGas = getAddedGas(feeTokenDetails)
                         
-                        return (<div key={key} className="txns-item-wapper">
-                            <BiTransferAlt />
+                        return (<div key={key} className="txns-item-wrapper">
+                            <span><BiTransferAlt /></span>
                             <span>{ item.submittedAt && toLocaleDateTime(new Date(item.submittedAt)).toString() }</span>
-                            <span>Gas payed: ${ (item.feeInUSDPerGas * item.gasTank.value).toFixed(2) }</span>
-                            <span>Saved: ${(item.feeInUSDPerGas * savedGas).toFixed(2)}</span>
-                            <span>Cashback: ${ item.gasTank.cashback && (formatUnits(item.gasTank.cashback.toString(), feeTokenDetails.decimals) * feeTokenDetails?.price).toFixed(2) }</span>
+                            <span>Gas payed: $ { (item.feeInUSDPerGas * item.gasTank.value).toFixed(2) }</span>
+                            <span>Saved: $ {(item.feeInUSDPerGas * savedGas).toFixed(2)}</span>
+                            <span>Cashback: $ { item.gasTank.cashback && (formatUnits(item.gasTank.cashback.toString(), feeTokenDetails.decimals) * feeTokenDetails?.price).toFixed(2) }</span>
                                 <a
                                     href={network.explorerUrl + '/tx/'+ item.txId}
                                     target='_blank'

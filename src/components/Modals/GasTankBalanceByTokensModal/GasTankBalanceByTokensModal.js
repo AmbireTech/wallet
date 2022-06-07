@@ -1,19 +1,14 @@
 import './GasTankBalanceByTokensModal.scss'
 
-import { Button, Loading, Modal } from 'components/common'
-import { useState } from 'react'
+import { Button, Modal } from 'components/common'
 import { MdOutlineClose } from 'react-icons/md'
 import { useModals } from 'hooks'
 import { getTokenIcon } from 'lib/icons'
 
-const GasTankBalanceByTokensModal = ({ network, account, portfolio, data }) => {
+const GasTankBalanceByTokensModal = ({ network, data }) => {
     const { hideModal } = useModals()
     console.log('data', data)
-    // const { extraTokens, onAddExtraToken, onRemoveExtraToken } = portfolio
-
-    const [loading, setLoading] = useState(false)
-    const [showError, setShowError] = useState(false)
-
+    console.log('network', network)
     const buttons = <>
         <Button clear icon={<MdOutlineClose/>} onClick={() => hideModal()}>Close</Button>
     </>
@@ -23,14 +18,15 @@ const GasTankBalanceByTokensModal = ({ network, account, portfolio, data }) => {
            <div className='content'>
                 {
                     data && data.map((item, key) => {
-                            return (
-                                <div key={key}>
-                                    {/* TODO: Add a tokens logo here */}
-                                    <span>{item.symbol}</span>
-                                    <span>{item.balance}</span>
-                                    <span>${item.balanceInUSD.toFixed(2)}</span>
-                                </div>
-                            )
+                        return (
+                            <div className='row' key={key}>
+                                {/* TODO: Add a tokens logo here */}
+                                <img width="25px" height='25px' alt='logo' src={getTokenIcon(network, item.address)} />
+                                <span>{item.symbol.toUpperCase()}</span>
+                                <span>{item.balance}</span>
+                                <span>$ {item.balanceInUSD.toFixed(2)}</span>
+                            </div>
+                        )
                     })
                 }
            </div>
