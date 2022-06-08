@@ -221,8 +221,7 @@ function getWalletNew({ chainId, signer, signerExtra }, opts) {
     },
     _signTypedData: async (domain, types, value) => {
       return await wrapLatticeError(async (domain, types, value) => {
-        const domainSeparator = _TypedDataEncoder.hashDomain(domain)
-        const hashStructMessage = _TypedDataEncoder.hashStruct(_TypedDataEncoder.getPrimaryType(types), types, value)
+        const payload = _TypedDataEncoder.getPayload(domain, types, value)
         const { commKey, deviceId } = signerExtra
         const client = latticeInit(commKey)
         const {isPaired, errConnect } = await latticeConnect(client, deviceId)
@@ -235,7 +234,7 @@ function getWalletNew({ chainId, signer, signerExtra }, opts) {
           throw new Error('The Lattice device is not paired! Please re-add your account!')
         }
 
-        const { signedMsg, errSignMessage } = await latticeSignMessage712(client, { domainSeparator, hashStructMessage, signer: signer.address })
+        const { signedMsg, errSignMessage } = await latticeSignMessage712(client, payload)
         if (errSignMessage) throw new Error(errSignMessage)
 
         return signedMsg
