@@ -202,7 +202,7 @@ const CrossChain = ({ addRequest, selectedAccount, portfolio, network, relayerUR
                 <div className="title">
                     Cross-chain transfers/swaps
                     <div id="powered">
-                        Powered by Movr
+                        Powered by Socket
                     </div>
                 </div>
                 {
