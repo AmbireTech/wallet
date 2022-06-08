@@ -148,6 +148,16 @@ function AppInner() {
   if (gasTankState.length && !gasTankState.find(i => i.account === selectedAcc)) {
     setGasTankState([...gasTankState, { account: selectedAcc, isEnabled: false }])
   } 
+  // Gas Tank: Disables gas tank if the network does not support it
+  if (gasTankState.length && !network.isGasTankAvailable ) {
+    const currentAccGasTankState = gasTankState.find(i => i.account === selectedAcc)
+
+    if (currentAccGasTankState && currentAccGasTankState.isEnabled) {
+      const updatedGasTankState = gasTankState.map(i => (i.account === selectedAcc) ? { ...i, isEnabled: false } : i)
+      
+      setGasTankState(updatedGasTankState)
+    }
+  }
 
   // Show the send transaction full-screen modal if we have a new txn
   const eligibleRequests = useMemo(() => requests

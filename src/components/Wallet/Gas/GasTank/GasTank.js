@@ -44,8 +44,8 @@ const GasTank = ({ network,
     const feeAssetsRes = useRelayerData(urlGetFeeAssets)
     const feeAssetsPerNetwork = feeAssetsRes.data?.filter(item => item.network === network.id)
     const executedTxnsRes = useRelayerData(urlGetTransactions)
-    const gasTankTxns = executedTxnsRes && executedTxnsRes.data?.txns.filter(item => !!item.gasTank)
-    const latestThreeGasTankTxns = gasTankTxns && gasTankTxns.splice(0, 3)
+    const gasTankTxns = executedTxnsRes && executedTxnsRes.length && executedTxnsRes.data?.txns.filter(item => !!item.gasTank)
+    const latestThreeGasTankTxns = gasTankTxns &&  gasTankTxns.length && gasTankTxns.splice(0, 3)
     const { isBalanceLoading, tokens } = portfolio
     const sortType = userSorting.tokens?.sortType || 'decreasing'
     const isMobileScreen = useCheckMobileScreen()
@@ -162,8 +162,11 @@ const GasTank = ({ network,
             <div className='heading-wrapper'>
                 <div className="balance-wrapper" style={{ cursor: 'pointer' }} onClick={openGasTankBalanceByTokensModal}>
                     <span><FaGasPump/> Gas Tank Balance</span>
-                    {(data && data.length) ? (<div><span>$</span>{ data?.map(({balanceInUSD}) => balanceInUSD).reduce((a, b) => a + b, 0).toFixed(2) }</div>) : (<div><span>$</span>0.00</div>)}
-                    <span>Drag and drop tokens here</span>
+                    <div>
+                        <span>$ </span>{ (data && data.length) ? data.map(({balanceInUSD}) => balanceInUSD).reduce((a, b) => a + b, 0).toFixed(2) : '0.00' }
+                    </div>
+                    {/* TODO: Add functionality for drag and drop */}
+                    {/* <span>Drag and drop tokens here</span> */}
                 </div>
                 <div className='switch-wrapper'>
                     <Toggle checked={currentAccGasTankState.isEnabled} onChange={() => toggleGasTank()}/>
@@ -172,7 +175,9 @@ const GasTank = ({ network,
 
                 <div className="balance-wrapper total-save">
                     <span>TOTAL SAVE</span>
-                    <div><span>$</span>{gasTankTxns && gasTankTxns.map(item => item.feeInUSDPerGas * item.gasTank.value).reduce((a, b) => a + b).toFixed(2)}</div>
+                    <div>
+                        <span>$ </span>{gasTankTxns && gasTankTxns.length ? gasTankTxns.map(item => item.feeInUSDPerGas * item.gasTank.value).reduce((a, b) => a + b).toFixed(2) : '0.00'}
+                    </div>
                 </div>
             </div>
             <div>
