@@ -68,7 +68,6 @@ export function getDiscountApplied(amnt, discount = 0) {
 
 // Returns feeToken data with all multipliers applied
 export function getFeesData(feeToken, estimation, speed, isGasTankEnabled) {
-  console.log('feeToken',feeToken)
   const { addedGas, multiplier } = getFeePaymentConsequences(feeToken, estimation, isGasTankEnabled)
   const savedGas = getAddedGas(feeToken)
   const discountMultiplier = 1 - (feeToken?.discount || 0)

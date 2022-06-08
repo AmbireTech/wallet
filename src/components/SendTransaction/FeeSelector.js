@@ -374,11 +374,11 @@ export function FeeSelector({ disabled, signer, estimation, network, setEstimati
         {!!isGasTankEnabled && (<>
           <div className='fee-row native-fee-estimation discount-label'>
             <div>
-              GasTank Balance:
+              Fee token balance:
             </div>
             <div className='fee-amounts'>
               <div>
-                ${formatFloatTokenAmount(estimation.gasTank?.map(({balanceInUSD}) => balanceInUSD).reduce((a, b) => a + b, 0).toFixed(2), true, 4)}
+                $ {estimation.selectedFeeToken.balanceInUSD.toFixed(2)}
               </div>
             </div>
           </div>
@@ -388,22 +388,20 @@ export function FeeSelector({ disabled, signer, estimation, network, setEstimati
             </div>
             <div className='fee-amounts'>
               <div>
-                {/* TODO: fix it */}
-                {savedGas}
+                $ {((feeInUSD / estimation.gasLimit) * savedGas).toFixed(2)}
               </div>
             </div>
           </div>
-          <div className='fee-row native-fee-estimation discount-label'>
+          {/* <div className='fee-row native-fee-estimation discount-label'>
             <div>
               You will pay:
             </div>
             <div className='fee-amounts'>
               <div>
-                {/* TODO: fix it */}
                 {savedGas}
               </div>
             </div>
-          </div>
+          </div> */}
         </>)}
       </div>
     </div>
