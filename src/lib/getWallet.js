@@ -67,8 +67,24 @@ function getWalletNew({ chainId, signer, signerExtra }, opts) {
         
         const domainSeparator = _TypedDataEncoder.hashDomain(domain)
         const hashStructMessage = _TypedDataEncoder.hashStruct(_TypedDataEncoder.getPrimaryType(types), types, value)
-        const signedMsg = await providerTrezor.signTypedDataAsync(value, { domainSeparator, hashStructMessage })
-        return signedMsg
+        const data = _TypedDataEncoder.getPayload(domain, types, value)
+        const initialDerivedKeyInfo = await providerTrezor._initialDerivedKeyInfoAsync()
+        const derivedKeyInfo = providerTrezor._findDerivedKeyInfoForAddress(initialDerivedKeyInfo, signer.address)
+        const path = derivedKeyInfo.derivationPath
+
+        const response = await providerTrezor._trezorConnectClientApi.ethereumSignTypedData({
+          path,
+          data,
+          metamask_v4_compat: true,
+          domain_separator_hash: domainSeparator,
+          message_hash: hashStructMessage
+        })
+
+        if (response.success) {
+          return `${response.payload.signature}`;
+        } else {
+            throw new Error(response.payload.error);
+        }
       }
     }
   } else if (signerExtra && signerExtra.type === 'ledger') {
