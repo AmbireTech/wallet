@@ -265,7 +265,7 @@ const AssetsMigrationSelector = ({ signerAccount, identityAccount, network, setI
     const regularTransfersCount = consolidatedTokens.filter(t => t.selected && !t.permittable && !t.native).length
     const nativeTransfersCount = consolidatedTokens.filter(t => t.selected && t.native).length
 
-    const adjustedApprovalCost = network.id === 'arbitrum' ? 200000 : 0;
+    const adjustedApprovalCost = network.id === 'arbitrum' ? 200000 : 0
 
     const migrationTransactionsConsumption = (permitsCount + permittableTransfersCount > 0) ? 25000 + permitsCount * PERMIT_CONSUMPTION + permittableTransfersCount * TRANSFER_CONSUMPTION : 0
     const signerTransactionsConsumption = (regularTransfersCount * (25000 + TRANSFER_CONSUMPTION + adjustedApprovalCost)) + (nativeTransfersCount * 25000)
