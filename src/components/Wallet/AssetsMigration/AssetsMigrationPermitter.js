@@ -7,14 +7,19 @@ import { Contract } from 'ethers'
 import { FaCheck, FaHourglass } from 'react-icons/fa'
 import Button from 'components/common/Button/Button'
 
-import { PERMITTABLE_COINS, PERMIT_TYPE_DAI, ERC20PermittableInterface, EIP712DomainWithSalt } from 'consts/permittableCoins'
+import {
+  PERMITTABLE_COINS,
+  PERMIT_TYPE_DAI,
+  ERC20PermittableInterface,
+  EIP712DomainWithSalt
+} from 'consts/permittableCoins'
 import { GiToken } from 'react-icons/gi'
 import { MdOutlineNavigateBefore, MdOutlineNavigateNext } from 'react-icons/md'
 import { ZERO_ADDRESS } from 'consts/specialAddresses'
 import { fetchGet } from 'lib/fetch'
 import BigNumber from 'bignumber.js'
 
-const MAX_INT = '0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff';
+const MAX_INT = '0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff'
 
 const AssetsMigrationPermitter = ({
                                     addRequest,
@@ -52,7 +57,7 @@ const AssetsMigrationPermitter = ({
   const [wallet, setWallet] = useState(null)
 
   //using a callback would return not up to date data + would trigger useEffect prompt loop while we do not want that
-  const getConsolidatedTokensPure = (selected, tokensPermissions=[], tokensTransfers=[], tokensPendingStatus=[]) => {
+  const getConsolidatedTokensPure = (selected, tokensPermissions = [], tokensTransfers = [], tokensPendingStatus = []) => {
     return selected.filter(t => t.address !== ZERO_ADDRESS).map(t => {
       let remapped = {
         ...t,
@@ -143,7 +148,7 @@ const AssetsMigrationPermitter = ({
           value,
           nonce: nonce,
           deadline: MAX_INT,
-        };
+        }
 
         //DAI reformatting
         if (permittableToken.permitType === PERMIT_TYPE_DAI) {
@@ -160,7 +165,7 @@ const AssetsMigrationPermitter = ({
         let domain = {
           chainId: network.chainId,
           verifyingContract: address,
-        };
+        }
 
         if (permittableToken.name) {
           domain.name = tokenName
@@ -185,7 +190,7 @@ const AssetsMigrationPermitter = ({
         })
 
         //sign
-        const result = await wallet._signTypedData(domain, {"Permit": permittableToken.permitType}, ERC2612PermitMessage)
+        const result = await wallet._signTypedData(domain, { 'Permit': permittableToken.permitType }, ERC2612PermitMessage)
           .catch(err => {
             if (err?.code === 4001) {//User rejection
               setTokensPermissions(old => {
@@ -220,7 +225,7 @@ const AssetsMigrationPermitter = ({
           r: result.slice(0, 66),
           s: '0x' + result.slice(66, 130),
           v: parseInt(result.slice(130, 132), 16),
-        };
+        }
 
         let txData
         if (permittableToken.permitType === PERMIT_TYPE_DAI) {
@@ -359,7 +364,7 @@ const AssetsMigrationPermitter = ({
     setTokensPermissions([])
     setHasRefusedOnce(false)
     setStep(0)
-  }, [setError, setTokensPermissions, setTokensTransfers, setStep]);
+  }, [setError, setTokensPermissions, setTokensTransfers, setStep])
 
   //batch transactions
   const completeMigration = useCallback(() => {
@@ -376,7 +381,7 @@ const AssetsMigrationPermitter = ({
           type: 'eth_sendTransaction',
           txn: {
             to: t.address,
-            value: "0x0",
+            value: '0x0',
             data: t.signature
           }
         })
@@ -395,7 +400,7 @@ const AssetsMigrationPermitter = ({
         type: 'eth_sendTransaction',
         txn: {
           to: t.address,
-          value: "0x0",
+          value: '0x0',
           data: transferData
         }
       })
@@ -475,7 +480,7 @@ const AssetsMigrationPermitter = ({
 
   useEffect(() => {
     if (hasRefusedOnce) {
-      setError('Every asset below needs to be sent or permitted to complete the migration' + (lastRefusalError ? ' (' + lastRefusalError + ')': ''))
+      setError('Every asset below needs to be sent or permitted to complete the migration' + (lastRefusalError ? ' (' + lastRefusalError + ')' : ''))
     }
   }, [hasRefusedOnce, setError, lastRefusalError])
 
