@@ -198,7 +198,13 @@ const AssetsMigrationPermitter = ({
               })
               setHasRefusedOnce(true)
             } else if (err?.code === -32603) {//bad network
-              setError('Please connect your signer wallet to the correct network: ' + network.id)
+              if (err.message.includes('Not supported on this device')) {
+                setError('Your signer wallet does not support 712 signatures')
+              } else if (err.message.includes('must match the active chainId')) {
+                setError('Please connect your signser wallet to the correct network: ' + network.id)
+              } else {
+                setError(err.message)
+              }
             } else {
               setError(err.message)
             }
