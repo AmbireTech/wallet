@@ -325,3 +325,14 @@ Those contracts (except Ethereum-specific WALLET, xWALLET and SupplyController) 
 * New tokens added in custom tokens for "balance oracle"
 * Fixed: Disable fee selector when proceed to sign step with external signer
 * Fixed: the "Undefined" APY in Earn
+
+### v0.5.5
+* xWALLET Pending unbonds gas fees fix
+* Change signer assets migration process
+* Added Ledger signer assets migration
+* Show discount banner only if eligible
+* Support balance for custom NFTs for netwroks without thirdparty balance providers
+* Added multiplier for CryptoTester NFT
+* Added pagination for Collectibles page
+* Changed kriptomat limit to 5k per day
+* Added new tokens BSC on for rewards
