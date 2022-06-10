@@ -106,14 +106,12 @@ function getWalletNew({ chainId, signer, signerExtra }, opts) {
         },
         isConnected: async (matchAddress) => { // chain is provided to ledger. Not necessary to check network
           const addresses = await ledgerGetAddresses()
-
-          if (addresses && addresses.addresses && addresses.addresses[0]) {
+          if (addresses && addresses[0]) {
             if (matchAddress) {
-              return !!addresses.addresses.find(a => a.toLowerCase() === matchAddress.toLowerCase())
+              return !!addresses.find(a => a.toLowerCase() === matchAddress.toLowerCase())
             }
             return true
           }
-
           return false
         },
         _signTypedData: (domain, types, value) => {
