@@ -12,14 +12,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-
-            div {
-                width: 50%;
-                height: 100%;
-                text-align: center;
-                border-radius: 5px;
-                background-color: green;
-            }
+            gap: 10px;
         }
 
         .balance-wrapper {
@@ -62,8 +55,7 @@
         display: flex;
         align-items: center;
         gap: 10px;
-        margin-bottom: 10px;
-
+        
         .sort-buttons {
             display: flex;
         }
@@ -72,6 +64,9 @@
     .list {
         display: flex;
         flex-direction: column;
+        overflow: hidden;
+        overflow-y: auto;
+        max-height: 240px;
 
         .token {
             display: flex;
@@ -186,12 +181,13 @@
         margin: 20px 0;
     }
 
+    .title {
+        margin: 10px 0;
+    }
     .txns-wrapper {
-        margin-top: 20px;
-
-        .title {
-            margin-bottom: 10px;
-        }
+        max-height: 153px;
+        overflow: hidden;
+        overflow-y: auto;
 
         .txns-item-wrapper {
             display: flex;
@@ -213,5 +209,9 @@
 @media screen and (max-width: $mobile-breakpoint-max-width) {
     .heading-wrapper {
         flex-direction: column;
+
+        .total-save {
+            align-items: center !important;
+        }
     }
 }

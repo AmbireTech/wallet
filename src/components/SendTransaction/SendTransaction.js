@@ -41,7 +41,7 @@ const REJECT_MSG = 'Ambire user rejected the request'
 
 const WALLET_TOKEN_SYMBOLS = ['xWALLET', 'WALLET']
 
-const getDefaultFeeToken = (remainingFeeTokenBalances, network, feeSpeed, estimation) => {
+const getDefaultFeeToken = (remainingFeeTokenBalances, network, feeSpeed, estimation, currentAccGasTankState) => {
   if(!remainingFeeTokenBalances?.length) {
     return { symbol: network.nativeAssetSymbol, decimals: 18, address: '0x0000000000000000000000000000000000000000' }
   }
@@ -52,7 +52,7 @@ const getDefaultFeeToken = (remainingFeeTokenBalances, network, feeSpeed, estima
     || ((b?.discount || 0) - (a?.discount || 0))
     || a?.symbol.toUpperCase().localeCompare(b?.symbol.toUpperCase())
   )
-  .find(token => isTokenEligible(token, feeSpeed, estimation))
+  .find(token => isTokenEligible(token, feeSpeed, estimation, currentAccGasTankState))
   || remainingFeeTokenBalances[0]
 }
 
@@ -185,10 +185,11 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, network, account,
             ...item, 
             symbol: item.symbol.toUpperCase(), 
             balance: ethers.utils.parseUnits(item.balance.toFixed(item.decimals).toString(), item.decimals).toString(),
-            nativeRate: estimation.nativeAssetPriceInUSD / item.price
+            nativeRate: item.address === '0x0000000000000000000000000000000000000000' ? null : estimation.nativeAssetPriceInUSD / item.price
           }
         })
-        estimation.selectedFeeToken = getDefaultFeeToken(currentAccGasTankState.isEnabled ? gasTankTokens : estimation.remainingFeeTokenBalances, network, feeSpeed, estimation)
+        if (currentAccGasTankState.isEnabled) estimation.remainingFeeTokenBalances = gasTankTokens
+        estimation.selectedFeeToken = getDefaultFeeToken(estimation.remainingFeeTokenBalances, network, feeSpeed, estimation, currentAccGasTankState.isEnabled)
         setEstimation(prevEstimation => {
           if (prevEstimation && prevEstimation.customFee) return prevEstimation
           if (estimation.remainingFeeTokenBalances) {
@@ -198,7 +199,7 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, network, account,
                 && isTokenEligible(prevEstimation.selectedFeeToken, feeSpeed, estimation, currentAccGasTankState.isEnabled)
                 && prevEstimation.selectedFeeToken
               )
-              || getDefaultFeeToken(currentAccGasTankState.isEnabled ? gasTankTokens : estimation.remainingFeeTokenBalances, network, feeSpeed, estimation)
+              || getDefaultFeeToken(estimation.remainingFeeTokenBalances, network, feeSpeed, estimation, currentAccGasTankState.isEnabled)
           }
           return estimation
         })
@@ -256,7 +257,13 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, network, account,
       let gasLimit
       if (bundle.txns.length > 1) gasLimit = estimation.gasLimit + (bundle.extraGas || 0)
       else gasLimit = estimation.gasLimit
-      const value = (estimation.feeInNative[feeSpeed]) * (estimation.nativeAssetPriceInUSD / estimation.selectedFeeToken.price)
+
+      let value
+      if (feeToken.address === "0x0000000000000000000000000000000000000000") value = estimation.feeInNative[feeSpeed]
+      else {
+        const fToken = estimation.remainingFeeTokenBalances.find(i => i.id === feeToken.id)
+        value = fToken && estimation.feeInNative[feeSpeed] * fToken.nativeRate
+      }
       
       return new Bundle({
         ...bundle,
