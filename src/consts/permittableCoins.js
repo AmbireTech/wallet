@@ -35,6 +35,13 @@ export const EIP712Domain = [
   { name: "verifyingContract", type: "address" },
 ];
 
+export const EIP712DomainWithSalt = [
+  { name: "name", type: "string" },
+  { name: "version", type: "string" },
+  { name: "verifyingContract", type: "address" },
+  { name: "salt", type: "bytes32" },
+]
+
 export const PERMITTABLE_COINS = {
   1: [
     // Without version 2
@@ -102,13 +109,38 @@ export const PERMITTABLE_COINS = {
   ],
   137: [
     //Not working, only to test UX behavior on polygon
-    { address: '0x2791bca1f2de4661ed88a30c99a7a9449aa84174', name: 'USD Coin', version: '2', domainType: EIP712DomainWithVersion, permitType: PERMIT_TYPE_2612 },
+    { name: 'Governance OHM', address: '0xd8ca34fd379d9ca3c6ee3b3905678320f5b45195', version: '1', domainType: EIP712DomainWithVersion, permitType: PERMIT_TYPE_2612},
+    { name: 'Frax', address: '0x45c32fa6df82ead1e2ef74d17b76547eddfaff89', version: '1', domainType: EIP712DomainWithVersion, permitType: PERMIT_TYPE_2612},
+    { name: 'Aave Matic Market WBTC', address: '0x5c2ed810328349100a66b82b78a1791b101c9d61', version: '1', domainType: EIP712DomainWithVersion, permitType: PERMIT_TYPE_2612},
+
+    { name: 'Aave Matic Market WETH', address: '0x28424507fefb6f7f8e9d3860f56504e4e5f5f390', version: '1', domainType: EIP712DomainWithVersion, permitType: PERMIT_TYPE_2612},
+    { name: 'Aave Matic Market USDC', address: '0x1a13f4ca1d028320a707d99520abfefca3998b7f', version: '1', domainType: EIP712DomainWithVersion, permitType: PERMIT_TYPE_2612},
+    { name: 'Aave Matic Market AAVE', address: '0x1d2a0e5ec8e5bbdca5cb219e649b565d8e5c3360', version: '1', domainType: EIP712DomainWithVersion, permitType: PERMIT_TYPE_2612},
+    { name: 'Synapse', address: '0xf8f9efc0db77d8881500bb06ff5d6abc3070e695', version: '1', domainType: EIP712DomainWithVersion, permitType: PERMIT_TYPE_2612},
+
+    { name: 'Aave Matic Market WMATIC', address: '0x8df3aad3a84da6b69a4da8aec3ea40d9091b2ac4', version: '1', domainType: EIP712DomainWithVersion, permitType: PERMIT_TYPE_2612},
+    { name: 'Aave Matic Market USDT', address: '0x60d55f02a771d515e077c9c2403a1ef324885cec', version: '1', domainType: EIP712DomainWithVersion, permitType: PERMIT_TYPE_2612},
+    { name: 'Klima DAO', address: '0x4e78011ce80ee02d2c3e649fb657e45898257815', version: '1', domainType: EIP712DomainWithVersion, permitType: PERMIT_TYPE_2612},
+
+    { name: 'Quickswap', address: '0xb5c064f955d8e7f38fe0460c556a72987494ee17', domainType: EIP712Domain, permitType: PERMIT_TYPE_2612},
+    { name: 'Route', address: '0x16eccfdbb4ee1a85a33f3a9b21175cd7ae753db4', domainType: EIP712Domain, permitType: PERMIT_TYPE_2612},
+
+    { address: '0x8f3cf7ad23cd3cadbd9735aff958023239c6a063', name: '(PoS) Dai Stablecoin', version: '1', salt: '0x0000000000000000000000000000000000000000000000000000000000000089', domainType: EIP712DomainWithSalt, permitType: PERMIT_TYPE_DAI, nonceFunction: 'getNonce'},
+    { address: '0x2791bca1f2de4661ed88a30c99a7a9449aa84174', name: 'USD Coin (PoS)', version: '1', salt: '0x0000000000000000000000000000000000000000000000000000000000000089', domainType: EIP712DomainWithSalt, permitType: PERMIT_TYPE_2612 },
+  ],
+  56: [
+    { name: '1INCH Token', address: '0x111111111117dc0aa78b770fa6a738034120c302', version: '1', domainType: EIP712DomainWithVersion, permitType: PERMIT_TYPE_2612},
+    { name: 'Frax', address: '0x90c97f71e18723b0cf0dfa30ee176ab653e89f40', version: '1', domainType: EIP712DomainWithVersion, permitType: PERMIT_TYPE_2612},
+    { name: 'JADE', address: '0x7ad7242a99f21aa543f9650a56d141c57e4f6081', version: '1', domainType: EIP712DomainWithVersion, permitType: PERMIT_TYPE_2612},
+    { name: 'Templar Token', address: '0x19e6bfc1a6e4b042fb20531244d47e252445df01', version: '1', domainType: EIP712DomainWithVersion, permitType: PERMIT_TYPE_2612},
+
   ]
 }
 
 export const ERC20PermittableInterface = new Interface([
   "function nonces(address owner) external view returns (uint256)",
   "function _nonces(address owner) external view returns (uint256)",
+  "function getNonce(address owner) external view returns (uint256)",
 
   "function name() external view returns (string)",
   "function symbol() external view returns (string)",
