@@ -46,7 +46,7 @@ export default function Deposit({ selectedAcc, selectedNetwork, accounts, addReq
                     Following networks supported on this address:
                     <div className="list">
                         {
-                            networks.map(({ id, icon, name }) => (
+                            networks.filter(n => !n.hide).map(({ id, icon, name }) => (
                                 <div className="network" key={id}>
                                     <div className="icon" style={{backgroundImage: `url(${icon})`}}></div>
                                     <div className="name">{ name }</div>
