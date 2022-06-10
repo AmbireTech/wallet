@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: agpl-3.0
 pragma solidity 0.8.7;
 
-import "../Identity.sol";
-import "../interfaces/IERC20.sol";
+import "./Identity.sol";
+import "./IERC20.sol";
 
 contract QuickAccManager {
 	// Note: nonces are scoped by identity rather than by accHash - the reason for this is that there's no reason to scope them by accHash,

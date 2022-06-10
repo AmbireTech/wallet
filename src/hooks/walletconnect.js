@@ -297,7 +297,7 @@ export default function useWalletConnect ({ account, chainId, initialUri, allNet
                 if (signPayload.primaryType === 'Permit') {
                     // If Uniswap, reject the permit and expect a graceful fallback (receiving approve eth_sendTransaction afterwards)
                     if (UNISWAP_PERMIT_EXCEPTIONS.some(ex => dappName.toLowerCase().includes(ex.toLowerCase()))) {
-                        connector.rejectRequest({ id: payload.id, error: { message: 'METHOD_NOT_SUPPORTED: ' + payload.method }})
+                        connector.rejectRequest({ id: payload.id, error: { message: 'Method not found: ' + payload.method, code: -32601 }})
                         return
                     } else {
                         addToast(`dApp tried to sign a token permit which does not support Smart Wallets`, { error: true })

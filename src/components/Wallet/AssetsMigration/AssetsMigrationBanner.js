@@ -56,14 +56,17 @@ const AssetsMigrationBanner = ({ addRequest, selectedAccount, accounts, selected
   useEffect(() => {
     setMigrationMessageSeen(closeable && !!migrationMessageSeenStorage[selectedAccount + selectedNetwork.id])
   }, [closeable, selectedAccount, selectedNetwork, migrationMessageSeenStorage])
-
-  if (!wallet?.provider && currentAccount.signerExtra?.type !== 'ledger')  return <></>
+  
+  // We either have a provider (web3) or we use a supported HW wallet
+  const supportedHWWalletTypes = ['ledger', 'trezor', 'Lattice']
+  const shouldShow = wallet?.provider|| (currentAccount.signerExtra && supportedHWWalletTypes.includes(currentAccount.signerExtra.type))
+  if (!shouldShow) return (<></>)
 
   return (
     (hasSignerAssets && !migrationMessageSeen) &&
     <div className={'migration-banner'}>
       <div className='migration-banner-message'>
-        <div>We detected that your signer account has ERC20 tokens that could be migrated to your Ambire wallet.</div>
+        <div>We detected that your signer account has tokens that can be transferred to your Ambire account. We recommend doing this in order to maximize your $WALLET rewards.</div>
         <span className={'link' + (linkMargin ? ' link-margin' : '')} onClick={() => {
           showModal(<AssetsMigrationModal
             addRequest={addRequest}

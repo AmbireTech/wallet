@@ -12,11 +12,11 @@ const MovrMapping = {
     const price = uints[4]
     const paymentToken = Number(tokenAddress) === 0 ? nativeToken(network, price, true) : token(tokenAddress, price, true)
     return !extended ?
-        [`Buy nft from ${seller} for ${price} ETH on OpenSea`]
+        [`Buy NFT from ${seller} for ${price} ETH on OpenSea`]
         : 
         [[
             'Buy',
-            'nft from',
+            'NFT from',
             {
                 type: 'address',
                 address: seller
@@ -45,7 +45,7 @@ const MovrMapping = {
                 type: 'token',
                 ...paymentToken
             },
-            'to buy nft from',
+            'to buy NFT from',
             {
                 type: 'address',
                 address: collection

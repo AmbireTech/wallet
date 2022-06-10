@@ -5,7 +5,14 @@ import HDNode from 'hdkey'
 import { LedgerSubprovider } from '@0x/subproviders/lib/src/subproviders/ledger' // https://github.com/0xProject/0x-monorepo/issues/1400
 import { ledgerEthereumBrowserClientFactoryAsync } from '@0x/subproviders/lib/src' // https://github.com/0xProject/0x-monorepo/issues/1400
 import { ledgerSignMessage, ledgerSignTransaction, ledgerSignMessage712, ledgerGetAddresses } from './ledgerWebHID'
-import { latticeInit, latticeConnect, latticeSignMessage, latticeSignTransaction } from 'lib/lattice'
+import { 
+  latticeInit, 
+  latticeConnect, 
+  latticeSignMessage, 
+  latticeSignTransaction, 
+  latticeGetAddresses, 
+  latticeSignMessage712
+ } from 'lib/lattice'
 import { _TypedDataEncoder } from 'ethers/lib/utils'
 import { getProvider } from 'lib/provider'
 import networks from 'consts/networks'
@@ -33,9 +40,52 @@ function getWalletNew({ chainId, signer, signerExtra }, opts) {
       signMessage: hash => providerTrezor.signPersonalMessageAsync(ethers.utils.hexlify(hash), signer.address),
       signTransaction: params => providerTrezor.signTransactionAsync({ ...params, from: signer.address }),
       sendTransaction: async (transaction) => {
-        throw Error('sendTransaction not implemented yet for Trezor')
+        const network = networks.find(n => n.chainId === transaction.chainId)
+        if (!network) throw Error('no network found for chainId : ' + transaction.chainId)
+        const broadcastProvider = await getProvider(network.id)
+        if (!broadcastProvider) throw Error('no provider found for network : ' + network.id)
+
+        transaction.nonce = ethers.utils.hexlify(await broadcastProvider.getTransactionCount(transaction.from))
+        const gas = ethers.utils.hexlify(transaction.gas || transaction.gasLimit)
+        transaction.gasPrice = ethers.utils.hexlify(transaction.gasPrice)
+        
+        transaction = {
+          ...transaction,
+          gas // trezor params requires gas prop
+          // no chainId prop but chainId already known by providerTrezor
+        }
+        
+        const signedTx = await providerTrezor.signTransactionAsync(transaction)
+        
+        return broadcastProvider.sendTransaction(signedTx)
       },
-      isConnected: async () => null // TODO: implement
+      isConnected: async (matchAddress) => { // chain is provided to trezor. Not necessary to check network
+        const addresses = await providerTrezor.getAccountsAsync(100)
+        return addresses.map(i => i.toLowerCase()).includes(matchAddress.toLowerCase())
+      },
+      _signTypedData: async (domain, types, value) => {
+        
+        const domainSeparator = _TypedDataEncoder.hashDomain(domain)
+        const hashStructMessage = _TypedDataEncoder.hashStruct(_TypedDataEncoder.getPrimaryType(types), types, value)
+        const data = _TypedDataEncoder.getPayload(domain, types, value)
+        const initialDerivedKeyInfo = await providerTrezor._initialDerivedKeyInfoAsync()
+        const derivedKeyInfo = providerTrezor._findDerivedKeyInfoForAddress(initialDerivedKeyInfo, signer.address)
+        const path = derivedKeyInfo.derivationPath
+
+        const response = await providerTrezor._trezorConnectClientApi.ethereumSignTypedData({
+          path,
+          data,
+          metamask_v4_compat: true,
+          domain_separator_hash: domainSeparator,
+          message_hash: hashStructMessage
+        })
+
+        if (response.success) {
+          return `${response.payload.signature}`;
+        } else {
+            throw new Error(response.payload.error);
+        }
+      }
     }
   } else if (signerExtra && signerExtra.type === 'ledger') {
     if (signerExtra.transportProtocol === 'webHID') {
@@ -56,14 +106,12 @@ function getWalletNew({ chainId, signer, signerExtra }, opts) {
         },
         isConnected: async (matchAddress) => { // chain is provided to ledger. Not necessary to check network
           const addresses = await ledgerGetAddresses()
-
-          if (addresses && addresses.addresses && addresses.addresses[0]) {
+          if (addresses && addresses[0]) {
             if (matchAddress) {
-              return !!addresses.addresses.find(a => a.toLowerCase() === matchAddress.toLowerCase())
+              return !!addresses.find(a => a.toLowerCase() === matchAddress.toLowerCase())
             }
             return true
           }
-
           return false
         },
         _signTypedData: (domain, types, value) => {
@@ -86,15 +134,7 @@ function getWalletNew({ chainId, signer, signerExtra }, opts) {
         },
         isConnected: async (matchAddress) => { // chain is provided to ledger. Not necessary to check network
           const addresses = await provider.getAccountsAsync(1)
-
-          if (addresses && addresses.length) {
-            if (matchAddress) {
-              return !!addresses.find(a => a.toLowerCase() === matchAddress.toLowerCase())
-            }
-            return true
-          }
-
-          return false
+          return addresses.map(i => i.toLowerCase()).includes(matchAddress.toLowerCase())
         },
         _signTypedData: (domain, types, value) => {
           throw Error('Please, use a chrome based browser to use 721 Typed signatures')
@@ -104,7 +144,7 @@ function getWalletNew({ chainId, signer, signerExtra }, opts) {
   } else if (signerExtra && signerExtra.type === 'Lattice') {
     return {
       signMessage: async hash => {
-        try {
+        return await wrapLatticeError(async hash => {
           const { commKey, deviceId } = signerExtra
           const client = latticeInit(commKey)
           const {isPaired, errConnect } = await latticeConnect(client, deviceId)
@@ -121,13 +161,10 @@ function getWalletNew({ chainId, signer, signerExtra }, opts) {
           if (errSignMessage) throw new Error(errSignMessage)
 
           return signedMsg
-        } catch(e) {
-          console.log(e)
-          throw new Error(`Lattice: ${e}`)
-        }
+        }, [hash])
       },
       signTransaction: async params => {
-        try {
+        return await wrapLatticeError( async params => {
           const { commKey, deviceId } = signerExtra
           const client = latticeInit(commKey)
           const {isPaired, errConnect } = await latticeConnect(client, deviceId)
@@ -144,16 +181,80 @@ function getWalletNew({ chainId, signer, signerExtra }, opts) {
           if (errSignTxn) throw new Error(errSignTxn)
 
           return serializedSigned
-        } catch(e) {
-          console.log(e)
-          throw new Error(`Lattice: ${e}`)
+        }, [params])
+      },
+      sendTransaction: async transaction => { 
+        return await wrapLatticeError(async (transaction) => {
+          const network = networks.find(n => n.chainId === transaction.chainId)
+          if (!network) throw Error('no network found for chainId : ' + transaction.chainId)
+          const broadcastProvider = await getProvider(network.id)
+          if (!broadcastProvider) throw Error('no provider found for network : ' + network.id)
+          transaction.nonce = ethers.utils.hexlify(await broadcastProvider.getTransactionCount(transaction.from))
+          const { commKey, deviceId } = signerExtra
+          const client = latticeInit(commKey)
+          const { isPaired, errConnect } = await latticeConnect(client, deviceId)
+
+          if (errConnect) throw new Error(errConnect.message || errConnect)
+
+          if (!isPaired) {
+            // Canceling the visualization of the secret code on the device's screen.
+            client.pair('')
+            throw new Error('The Lattice device is not paired! Please re-add your account!')
+          }
+
+          const { serializedSigned, errSignTxn } = await latticeSignTransaction(client, transaction, chainId)
+          if (errSignTxn) throw new Error(errSignTxn)
+
+          return broadcastProvider.sendTransaction(serializedSigned)
+        }, [transaction])
+      },
+      isConnected: async matchAddress => { 
+        return await wrapLatticeError(async (matchAddress) => {
+          let addresses = null
+
+          const { commKey, deviceId } = signerExtra
+          const client = latticeInit(commKey)
+          const { isPaired, errConnect } = await latticeConnect(client, deviceId)
+
+          if (errConnect) throw new Error(errConnect.message || errConnect)
+
+          if (!isPaired) {
+            // Canceling the visualization of the secret code on the device's screen.
+            client.pair('')
+            throw new Error('The Lattice device is not paired! Please re-add your account!')
+          }
+
+          const { res, errGetAddresses } = await latticeGetAddresses(client)
+          if (errGetAddresses) { 
+            throw new Error(`Lattice: ${errGetAddresses}`, { error: true })
+          }
+
+          addresses = res
+          return addresses.map(i => i.toLowerCase()).includes(matchAddress.toLowerCase())
+        }, [matchAddress])
+    },
+    _signTypedData: async (domain, types, value) => {
+      return await wrapLatticeError(async (domain, types, value) => {
+        const payload = _TypedDataEncoder.getPayload(domain, types, value)
+        const { commKey, deviceId } = signerExtra
+        const client = latticeInit(commKey)
+        const {isPaired, errConnect } = await latticeConnect(client, deviceId)
+
+        if (errConnect) throw new Error(errConnect.message || errConnect)
+
+        if (!isPaired) {
+          // Canceling the visualization of the secret code on the device's screen.
+          client.pair('')
+          throw new Error('The Lattice device is not paired! Please re-add your account!')
         }
-      },
-      sendTransaction: async (transaction) => {
-        throw Error('sendTransaction not implemented yet for Lattice')
-      },
-      isConnected: async () => null // TODO: implement (graceful fail for now)
+
+        const { signedMsg, errSignMessage } = await latticeSignMessage712(client, payload)
+        if (errSignMessage) throw new Error(errSignMessage)
+
+        return signedMsg
+      }, [domain, types, value])
     }
+  }
   } else if (signer.address) {
     if (!window.ethereum) throw new Error('No web3 support detected in your browser: if you created this account through MetaMask, please install it.')
     // NOTE: for metamask, use `const provider = new ethers.providers.Web3Provider(window.ethereum)`
@@ -194,4 +295,11 @@ function getInitialDerivedKeyInfo(signerExtra) {
     derivationPath: signerExtra.info.derivationPath,
     baseDerivationPath: signerExtra.info.baseDerivationPath
   }
+}
+
+async function wrapLatticeError(fn, arg) {
+  return await fn.apply(this, arg)
+   .catch(e => {
+     throw new Error(`Lattice: ${e.message}`)
+    })
 }
