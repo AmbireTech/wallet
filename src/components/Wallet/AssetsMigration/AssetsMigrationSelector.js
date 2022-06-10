@@ -15,6 +15,9 @@ import { ERC20PermittableInterface } from 'consts/permittableCoins'
 import { getProvider } from 'lib/provider'
 import { GAS_SPEEDS } from 'consts/gasSpeeds'
 
+const PERMIT_CONSUMPTION = 70000
+const TRANSFER_CONSUMPTION = 52000 // higher avg, 21000 included
+
 const AssetsMigrationSelector = ({ signerAccount, identityAccount, network, setIsSelectionConfirmed, setStep, portfolio, relayerURL, setModalButtons, hideModal, setSelectedTokensWithAllowance, setGasSpeed, setStepperSteps, hidden }) => {
 
   const [selectableTokens, setSelectableTokens] = useState([])
@@ -34,6 +37,10 @@ const AssetsMigrationSelector = ({ signerAccount, identityAccount, network, setI
   const [customTokenError, setCustomTokenError] = useState('')
 
   const customTokenInput = useRef()
+
+  const isPermittable = (chainId, address) => {
+    return !!PERMITTABLE_COINS[chainId]?.find(a => a.address.toLowerCase() === address.toLowerCase())
+  }
 
   useEffect(() => {
     if (isAddCustomTokenFormShown) {
@@ -254,18 +261,14 @@ const AssetsMigrationSelector = ({ signerAccount, identityAccount, network, setI
     const consolidatedTokens = consolidatedSelectableTokens(selectableTokens, selectableTokensUserInputs, tokensAllowances)
 
     const permitsCount = consolidatedTokens.filter(t => t.selected && t.permittable && new BigNumber(t.allowance).isLessThan(t.amount)).length
-    const transfersCount = consolidatedTokens.filter(t => t.selected && !t.native).length
+    const permittableTransfersCount = consolidatedTokens.filter(t => t.selected && !t.native && t.permittable).length
+    const regularTransfersCount = consolidatedTokens.filter(t => t.selected && !t.permittable && !t.native).length
     const nativeTransfersCount = consolidatedTokens.filter(t => t.selected && t.native).length
-
-    const approvalCounts = consolidatedTokens.filter(t => t.selected && !t.native && !t.permittable && new BigNumber(t.allowance).isLessThan(t.amount)).length
-
-    const permitConsumption = 70000
-    const transferConsumption = 40000 // higher avg
 
     const adjustedApprovalCost = network.id === 'arbitrum' ? 200000 : 0;
 
-    const migrationTransactionsConsumption = (permitsCount + transfersCount > 0) ? 25000 + permitsCount * permitConsumption + transfersCount * transferConsumption : 0
-    const signerTransactionsConsumption = (approvalCounts * (20000 + 21000 + adjustedApprovalCost)) + ((21000 + adjustedApprovalCost) * !!consolidatedTokens.filter(t => t.selected && t.native).length)
+    const migrationTransactionsConsumption = (permitsCount + permittableTransfersCount > 0) ? 25000 + permitsCount * PERMIT_CONSUMPTION + permittableTransfersCount * TRANSFER_CONSUMPTION : 0
+    const signerTransactionsConsumption = (regularTransfersCount * (21000 + TRANSFER_CONSUMPTION + adjustedApprovalCost)) + (nativeTransfersCount * 25000)
 
     const nativeRate = gasData.gasFeeAssets.native / 10 ** 18 // should decimals be returned in the API?
 
@@ -285,13 +288,15 @@ const AssetsMigrationSelector = ({ signerAccount, identityAccount, network, setI
         migrationTransactionsCostUSD,
         signerTransactionsCost,
         signerTransactionsCostUSD,
+        migrationTransactionsConsumption,
+        signerTransactionsConsumption
       }
     })
 
     setEstimatedGasFees({
       permitsCount,
-      transfersCount,
-      approvalCounts,
+      permittableTransfersCount,
+      regularTransfersCount,
       nativeTransfersCount,
       gasFees,
     })
@@ -464,20 +469,27 @@ const AssetsMigrationSelector = ({ signerAccount, identityAccount, network, setI
 
     const native = selectableTokensUserInputs.find(a => a.address.toLowerCase() === ZERO_ADDRESS && a.selected)
     if (native) {
-      steps.push(`Move ${selectableTokens.find(t => t.address === native.address).name}`)
+      steps.push(`Send ${selectableTokens.find(t => t.address === native.address).name}`)
     }
 
     if (selectableTokensUserInputs.find(a => a.address.toLowerCase() !== ZERO_ADDRESS && a.selected)) {
-      steps.push('Approve Tokens')
-      steps.push('Move tokens')
+
+      let tokensTitleActions = []
+      if (selectableTokensUserInputs.find(a => a.selected && isPermittable(network.chainId, a.address))) tokensTitleActions.push('Permit')
+      if (selectableTokensUserInputs.find(a => a.selected && a.address.toLowerCase() !== ZERO_ADDRESS && !isPermittable(network.chainId, a.address))) tokensTitleActions.push('Send')
+
+      steps.push(tokensTitleActions.join(' and ') + ' tokens')
+
+      if (selectableTokensUserInputs.find(a => a.selected && isPermittable(network.chainId, a.address)))
+        steps.push('Transfer tokens')
     }
 
     if (steps.length === 1) {
-      steps.push('Move tokens')
+      steps.push('Send tokens')
     }
 
     setStepperSteps(steps)
-  }, [selectableTokens, selectableTokensUserInputs, setStepperSteps])
+  }, [selectableTokens, selectableTokensUserInputs, setStepperSteps, network])
 
   if (hidden) return <></>
 
@@ -632,12 +644,12 @@ const AssetsMigrationSelector = ({ signerAccount, identityAccount, network, setI
                           <td>
                             Migration fee
                             {
-                              (!!estimatedGasFees.transfersCount || !!estimatedGasFees.permitsCount) &&
+                              (!!estimatedGasFees.permittableTransfersCount || !!estimatedGasFees.permitsCount) &&
                               <span className={'migration-actions'}>
                                   (
                                 {
-                                  !!estimatedGasFees.transfersCount &&
-                                  <span>{estimatedGasFees.transfersCount} transfer{estimatedGasFees.transfersCount > 1 && 's'}{!!estimatedGasFees.permitsCount && ', '}</span>
+                                  !!estimatedGasFees.permittableTransfersCount &&
+                                  <span>{estimatedGasFees.permittableTransfersCount} transfer{estimatedGasFees.permittableTransfersCount > 1 && 's'}{!!estimatedGasFees.permitsCount && ', '}</span>
                                 }
                                 {
                                   !!estimatedGasFees.permitsCount &&
@@ -654,19 +666,10 @@ const AssetsMigrationSelector = ({ signerAccount, identityAccount, network, setI
                           <td>
                             Signer fee
                             {
-                              (!!estimatedGasFees.nativeTransfersCount || !!estimatedGasFees.approvalCounts) &&
+                              (!!estimatedGasFees.nativeTransfersCount || !!estimatedGasFees.regularTransfersCount) &&
                               <span className={'migration-actions'}>
-                                  (
-                                {
-                                  !!estimatedGasFees.nativeTransfersCount &&
-                                  <span>{estimatedGasFees.nativeTransfersCount} transfer{!!estimatedGasFees.approvalCounts && ', '}</span>
-                                }
-                                {
-                                  !!estimatedGasFees.approvalCounts &&
-                                  <span>{estimatedGasFees.approvalCounts} approvals</span>
-                                }
-                                )
-                                </span>
+                                  <span>{estimatedGasFees.nativeTransfersCount + estimatedGasFees.regularTransfersCount} transfers</span>
+                              </span>
                             }
                           </td>
                           <td

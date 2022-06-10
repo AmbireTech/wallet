@@ -32,7 +32,7 @@ const tabSegments = [
 
 export default function Dashboard({ portfolio, selectedNetwork, selectedAccount, setNetwork, privateMode, rewardsData,  userSorting, setUserSorting, accounts, addRequest, relayerURL, useStorage }) {
     const history = useHistory()
-    const { tabId } = useParams()
+    const { tabId, page = 1 } = useParams()
 
     const [chartTokensData, setChartTokensData] = useState([]);
     const [chartProtocolsData, setChartProtocolsData] = useState([]);
@@ -41,8 +41,8 @@ export default function Dashboard({ portfolio, selectedNetwork, selectedAccount,
 
     useEffect(() => {
         if (!tab || tab === tabSegments[0].value) return history.replace(`/wallet/dashboard`)
-        history.replace(`/wallet/dashboard/${tab}`)
-    }, [tab, history])
+        history.replace(`/wallet/dashboard/${tab}${tab === tabSegments[1].value ? `/${page}` : ''}`)
+    }, [tab, history, page])
 
     useLayoutEffect(() => {
         const tokensData = portfolio.tokens

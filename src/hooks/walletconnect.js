@@ -330,7 +330,16 @@ export default function useWalletConnect ({ account, chainId, initialUri, allNet
                     connector.rejectRequest({ id: payload.id, error: { message: 'Unsupported chain' }})
                 }
             }
-
+            if (!SUPPORTED_METHODS.includes(payload.method)) {
+                const isUniIgnorable = payload.method === 'eth_signTypedData_v4'
+                    && connector.session.peerMeta
+                    && connector.session.peerMeta.name.includes('Uniswap')
+                // @TODO: if the dapp is in a "allow list" of dApps that have fallbacks, ignore certain messages
+                // eg uni has a fallback for eth_signTypedData_v4
+                if (!isUniIgnorable) addToast(`dApp requested unsupported method: ${payload.method}`, { error: true })
+                connector.rejectRequest({ id: payload.id, error: { message: 'Method not found: ' + payload.method, code: -32601 }})
+                return
+            }
             const wrongAcc = (
                 payload.method === 'eth_sendTransaction' && payload.params[0] && payload.params[0].from
                 && payload.params[0].from.toLowerCase() !== connector.session.accounts[0].toLowerCase()
