@@ -2,17 +2,25 @@ import './SignMessage.scss'
 import { MdBrokenImage, MdCheck, MdClose } from 'react-icons/md'
 import { ethers, Wallet } from 'ethers'
 import { signMessage712, signMessage, Bundle } from 'adex-protocol-eth/js/Bundle'
-import { toUtf8String, toUtf8Bytes, arrayify, isHexString, _TypedDataEncoder, Interface } from 'ethers/lib/utils'
+import {
+  toUtf8String,
+  toUtf8Bytes,
+  arrayify,
+  isHexString,
+  _TypedDataEncoder,
+  Interface,
+  AbiCoder, keccak256
+} from 'ethers/lib/utils'
 import * as blockies from 'blockies-ts';
 import { getWallet } from 'lib/getWallet'
 import { useToasts } from 'hooks/toasts'
 import { fetchPost } from 'lib/fetch'
 import { verifyMessage } from '@ambire/signature-validator'
 import { useState, useEffect, useRef, useCallback } from 'react'
-import { Button, Loading, TextInput, AmbireLoading } from 'components/common'
+import { Button, Loading, TextInput, ToolTip } from 'components/common'
 import { isObject } from 'url/util'
-
-import { SIGNATURE_VERIFIER_DEBUGGER } from 'config'
+import { MdInfoOutline } from 'react-icons/md'
+import accountPresets from 'consts/accountPresets'
 import { getProvider } from 'lib/provider'
 import { getNetworkByChainId } from 'lib/getNetwork'
 
@@ -36,7 +44,35 @@ export default function SignMessage ({ toSign, resolve, account, connections, re
   const connection = connections.find(({ uri }) => uri === toSign.wcUri)
   const dApp = connection ? connection?.session?.peerMeta || null : null
 
-  const requestedNetwork = getNetworkByChainId(toSign.chainId)
+  let typeDataErr
+  const isTypedData = ['eth_signTypedData_v4', 'eth_signTypedData'].indexOf(toSign.type) !== -1
+
+  let dataV4
+
+  let requestedChainId = toSign.chainId
+
+  if (isTypedData) {
+    dataV4 = toSign.txn
+
+    if (isObject(dataV4)) {
+      try {
+        if (dataV4.types.EIP712Domain) { // Avoids failure in case some dapps explicitly add this (redundant) prop
+          delete dataV4.types.EIP712Domain
+        }
+        _TypedDataEncoder.hash(dataV4.domain, dataV4.types, dataV4.message)
+        // enforce chainId
+        if (dataV4.domain.chainId) {
+          requestedChainId = dataV4.domain.chainId
+        }
+      } catch {
+        typeDataErr = '.txn has Invalid TypedData object. Should be {domain, types, message}'
+      }
+    } else {
+      typeDataErr = '.txn should be a TypedData object'
+    }
+  }
+
+  const requestedNetwork = getNetworkByChainId(requestedChainId)
 
   useEffect(()=> {
     if (confFieldState.isShown) inputSecretRef.current.focus()
@@ -53,15 +89,30 @@ export default function SignMessage ({ toSign, resolve, account, connections, re
     const provider = await getProvider(requestedNetwork.id)
 
     const identityContract = new ethers.Contract(bundle.identity, IDENTITY_INTERFACE, provider)
+    let privilegeAddress
+    let quickAccAccountHash
+    if (account.signer.quickAccManager) {
+      const { quickAccTimelock } = accountPresets
+      const quickAccountTuple = [quickAccTimelock, account.signer.one, account.signer.two]
+      const abiCoder = new AbiCoder()
+      quickAccAccountHash = keccak256(abiCoder.encode(['tuple(uint, address, address)'], [quickAccountTuple]))
+      privilegeAddress = account.signer.quickAccManager
+    } else {
+      privilegeAddress = account.signer.address
+    }
 
-    identityContract.privileges(account.signer.address)
+    identityContract.privileges(privilegeAddress)
       .then(result => {
-        // To ask : in what cases it's more than 1?
         setIsDeployed(true)
-        if (result === '0x0000000000000000000000000000000000000000000000000000000000000001') {
-          setHasPrivileges(true)
+        if (account.signer.quickAccManager) {
+          setHasPrivileges(result === quickAccAccountHash)
         } else {
-          setHasPrivileges(false)
+          //TODO: To ask : in what cases it's more than 1?
+          if (result === '0x0000000000000000000000000000000000000000000000000000000000000001') {
+            setHasPrivileges(true)
+          } else {
+            setHasPrivileges(false)
+          }
         }
       })
       .catch(err => {
@@ -85,28 +136,10 @@ export default function SignMessage ({ toSign, resolve, account, connections, re
     </div>)
   }
 
-  let dataV4
-  if (toSign.type === 'eth_signTypedData_v4' || toSign.type === 'eth_signTypedData') {
-    dataV4 = toSign.txn
-    let typeDataErr
-    if (isObject(dataV4)) {
-      try {
-        if (dataV4.types.EIP712Domain) { // Avoids failure in case some dapps explicitly add this (redundant) prop
-          delete dataV4.types.EIP712Domain
-        }
-        _TypedDataEncoder.hash(dataV4.domain, dataV4.types, dataV4.message)
-      } catch {
-        typeDataErr = '.txn has Invalid TypedData object. Should be {domain, types, message}'
-      }
-    } else {
-      typeDataErr = '.txn should be a TypedData object'
-    }
-
-    if (typeDataErr) return (<div id='signMessage'>
-      <h3 className='error'>Invalid signing request: { typeDataErr }</h3>
-      <Button className='reject' onClick={() => resolve({ message: 'signature denied' })}>Reject</Button>
-    </div>)
-  }
+  if (typeDataErr) return (<div id='signMessage'>
+    <h3 className='error'>Invalid signing request: { typeDataErr }</h3>
+    <Button className='reject' onClick={() => resolve({ message: 'signature denied' })}>Reject</Button>
+  </div>)
 
   const handleSigningErr = e => {
     console.error('Signing error', e)
@@ -117,23 +150,22 @@ export default function SignMessage ({ toSign, resolve, account, connections, re
     }
   }
 
-  const verifySignatureDebug = (toSign, sig, chainId) => {
-    const provider = getProvider(chainId)
-    const isTyped = ['eth_signTypedData_v4', 'eth_signTypedData'].indexOf(toSign.type) !== -1
-    verifyMessage({
+  const verifySignature = (toSign, sig, networkId) => {
+    const provider = getProvider(networkId)
+    return verifyMessage({
       provider,
       signer: account.id,
-      message: isTyped ? null : getMessageAsBytes(toSign.txn),
-      typedData: isTyped ? dataV4 : null,
+      message: isTypedData ? null : getMessageAsBytes(toSign.txn),
+      typedData: isTypedData ? dataV4 : null,
       signature: sig
     }).then(verificationResult => {
       if (verificationResult) {
-        addToast(toSign.type + ' SIGNATURE VALID')
+        return true
       } else {
-        addToast(toSign.type + ' SIGNATURE INVALID', { error: true })
+        throw Error(toSign.type + ' SIGNATURE INVALID')
       }
     }).catch(e => {
-      addToast(toSign.type + ' SIGNATURE INVALID: ' + e.message, { error: true })
+      throw Error(toSign.type + ' SIGNATURE INVALID: ' + e.message)
     })
   }
 
@@ -148,8 +180,6 @@ export default function SignMessage ({ toSign, resolve, account, connections, re
     }
     setLoading(true)
     try {
-
-      const isTypedData = toSign.type === 'eth_signTypedData_v4'
 
       const { signature, success, message, confCodeRequired } = await fetchPost(
         // network doesn't matter when signing
@@ -186,9 +216,7 @@ export default function SignMessage ({ toSign, resolve, account, connections, re
         : signMessage(wallet, account.id, account.signer, getMessageAsBytes(toSign.txn), signature)
       )
 
-      if (SIGNATURE_VERIFIER_DEBUGGER) {
-        verifySignatureDebug(toSign, sig, requestedNetwork.chainId)
-      }
+      await verifySignature(toSign, sig, requestedNetwork.id)
 
       resolve({ success: true, result: sig })
       addToast(`Successfully signed!`)
@@ -226,9 +254,7 @@ export default function SignMessage ({ toSign, resolve, account, connections, re
         : signMessage(wallet, account.id, account.signer, getMessageAsBytes(toSign.txn))
       )
 
-      if (SIGNATURE_VERIFIER_DEBUGGER) {
-        verifySignatureDebug(toSign, sig, requestedNetwork.chainId)
-      }
+      await verifySignature(toSign, sig, requestedNetwork.id)
 
       resolve({ success: true, result: sig })
       addToast(`Successfully signed!`)
@@ -263,8 +289,15 @@ export default function SignMessage ({ toSign, resolve, account, connections, re
       </div>
     </div>
     <div className='panel'>
-      <div className='title'>
-        Sign message
+      <div className='title signMessageTitle'>
+        <span className='signMessageTitle-title'>
+          Sign message
+        </span>
+        <span className='signMessageTitle-signatureType'>
+          <ToolTip label={`${isTypedData ? 'An EIP-712 typed data signature has been requested' : 'An ethSign ethereum signature type has been requested'}`}>
+            <MdInfoOutline /> <span>{isTypedData ? 'EIP-712 type' : 'standard type'}</span>
+          </ToolTip>
+        </span>
       </div>
 
       <div className='request-message'>
