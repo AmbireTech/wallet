@@ -14,10 +14,11 @@ import { isObject } from 'url/util'
 
 import { SIGNATURE_VERIFIER_DEBUGGER } from 'config'
 import { getProvider } from 'lib/provider'
+import { getNetworkByChainId } from 'lib/getNetwork'
 
 const CONF_CODE_LENGTH = 6
 
-export default function SignMessage ({ toSign, resolve, account, connections, relayerURL, totalRequests, network }) {
+export default function SignMessage ({ toSign, resolve, account, connections, relayerURL, totalRequests }) {
   const defaultState = () => ({ codeRequired: false, passphrase: '' })
   const { addToast } = useToasts()
   const [signingState, setSigningState] = useState(defaultState())
@@ -29,28 +30,38 @@ export default function SignMessage ({ toSign, resolve, account, connections, re
   
   const connection = connections.find(({ uri }) => uri === toSign.wcUri)
   const dApp = connection ? connection?.session?.peerMeta || null : null
-  
+
+  const requestedNetwork = getNetworkByChainId(toSign.chainId)
+
   useEffect(()=> {
     if (confFieldState.isShown) inputSecretRef.current.focus()
   }, [confFieldState])
   
   const checkIsDeployed = useCallback(async () => {
     const bundle = new Bundle({
-      network: network.id,
+      network: requestedNetwork.id,
       identity: account.id,
       signer: account.signer
     })
 
-    const provider = await getProvider(network.id)
+    const provider = await getProvider(requestedNetwork.id)
     const isDeployed = await provider.getCode(bundle.identity).then(code => code !== '0x')
     setIsDeployed(isDeployed)
-  }, [account, network])
+  }, [account, requestedNetwork])
 
   useEffect(() => {
     checkIsDeployed()
   }, [checkIsDeployed])
 
   if (!toSign || !account) return (<></>)
+
+  // should not happen unless chainId is dropped for some reason in addRequests
+  if (!requestedNetwork) {
+    return (<div id='signMessage'>
+      <h3 className='error'>Inexistant network for chainId : { toSign.chainId }</h3>
+      <Button className='reject' onClick={() => resolve({ message: 'signature denied' })}>Reject</Button>
+    </div>)
+  }
 
   let dataV4
   if (toSign.type === 'eth_signTypedData_v4' || toSign.type === 'eth_signTypedData') {
@@ -84,9 +95,8 @@ export default function SignMessage ({ toSign, resolve, account, connections, re
     }
   }
 
-
-  const verifySignatureDebug = (toSign, sig) => {
-    const provider = getProvider(network.id)
+  const verifySignatureDebug = (toSign, sig, chainId) => {
+    const provider = getProvider(chainId)
     const isTyped = ['eth_signTypedData_v4', 'eth_signTypedData'].indexOf(toSign.type) !== -1
     verifyMessage({
       provider,
@@ -155,7 +165,7 @@ export default function SignMessage ({ toSign, resolve, account, connections, re
       )
 
       if (SIGNATURE_VERIFIER_DEBUGGER) {
-        verifySignatureDebug(toSign, sig)
+        verifySignatureDebug(toSign, sig, requestedNetwork.chainId)
       }
 
       resolve({ success: true, result: sig })
@@ -183,13 +193,19 @@ export default function SignMessage ({ toSign, resolve, account, connections, re
       // Unfortunately that isn't possible, because isValidSignature only takes a bytes32 hash; so to sign this with
       // a personal message, we need to be signing the hash itself as binary data such that we match 'Ethereum signed message:\n32<hash binary data>' on the contract
 
+      // forcing signer to be connected to the matching chain (MM)
+      const isConnected = await wallet.isConnected(account.signer.address, requestedNetwork.chainId)
+      if (!isConnected) {
+        throw Error(`Please connect your signer wallet ${account.signer.address} to the correct chain :  ${requestedNetwork.id}`)
+      }
+
       const sig = await ((toSign.type === 'eth_signTypedData_v4' || toSign.type === 'eth_signTypedData')
         ? signMessage712(wallet, account.id, account.signer, dataV4.domain, dataV4.types, dataV4.message)
         : signMessage(wallet, account.id, account.signer, getMessageAsBytes(toSign.txn))
       )
 
       if (SIGNATURE_VERIFIER_DEBUGGER) {
-        verifySignatureDebug(toSign, sig)
+        verifySignatureDebug(toSign, sig, requestedNetwork.chainId)
       }
 
       resolve({ success: true, result: sig })
@@ -276,7 +292,7 @@ export default function SignMessage ({ toSign, resolve, account, connections, re
           {!isDeployed && (<div>
               <h3 className='error'>You can't sign this message yet.</h3>
               <h3 className='error'>
-              You need to complete your first transaction in order to be able to sign messages.
+              You need to complete your first transaction on {requestedNetwork.name} network in order to be able to sign messages.
               </h3>
             </div>
           )}
