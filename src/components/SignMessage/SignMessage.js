@@ -9,7 +9,8 @@ import {
   isHexString,
   _TypedDataEncoder,
   Interface,
-  AbiCoder, keccak256
+  AbiCoder,
+  keccak256
 } from 'ethers/lib/utils'
 import * as blockies from 'blockies-ts';
 import { getWallet } from 'lib/getWallet'
