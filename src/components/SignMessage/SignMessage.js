@@ -1,15 +1,15 @@
 import './SignMessage.scss'
 import { MdBrokenImage, MdCheck, MdClose } from 'react-icons/md'
-import { Wallet } from 'ethers'
+import { ethers, Wallet } from 'ethers'
 import { signMessage712, signMessage, Bundle } from 'adex-protocol-eth/js/Bundle'
-import { toUtf8String, toUtf8Bytes, arrayify, isHexString, _TypedDataEncoder } from 'ethers/lib/utils'
+import { toUtf8String, toUtf8Bytes, arrayify, isHexString, _TypedDataEncoder, Interface } from 'ethers/lib/utils'
 import * as blockies from 'blockies-ts';
 import { getWallet } from 'lib/getWallet'
 import { useToasts } from 'hooks/toasts'
 import { fetchPost } from 'lib/fetch'
 import { verifyMessage } from '@ambire/signature-validator'
 import { useState, useEffect, useRef, useCallback } from 'react'
-import { Button, Loading, TextInput } from 'components/common'
+import { Button, Loading, TextInput, AmbireLoading } from 'components/common'
 import { isObject } from 'url/util'
 
 import { SIGNATURE_VERIFIER_DEBUGGER } from 'config'
@@ -18,12 +18,17 @@ import { getNetworkByChainId } from 'lib/getNetwork'
 
 const CONF_CODE_LENGTH = 6
 
+const IDENTITY_INTERFACE = new Interface(
+  require('adex-protocol-eth/abi/Identity5.2')
+)
+
 export default function SignMessage ({ toSign, resolve, account, connections, relayerURL, totalRequests }) {
   const defaultState = () => ({ codeRequired: false, passphrase: '' })
   const { addToast } = useToasts()
   const [signingState, setSigningState] = useState(defaultState())
   const [isLoading, setLoading] = useState(false)
   const [isDeployed, setIsDeployed] = useState(null)
+  const [hasPrivileges, setHasPrivileges] = useState(null)
   const [confFieldState, setConfFieldState] = useState({isShown: false,  confCodeRequired: ''})
   const [promiseResolve, setPromiseResolve] = useState(null)
   const inputSecretRef = useRef(null)
@@ -37,7 +42,8 @@ export default function SignMessage ({ toSign, resolve, account, connections, re
     if (confFieldState.isShown) inputSecretRef.current.focus()
   }, [confFieldState])
   
-  const checkIsDeployed = useCallback(async () => {
+
+  const checkIsDeployedAndHasPrivileges = useCallback(async () => {
     const bundle = new Bundle({
       network: requestedNetwork.id,
       identity: account.id,
@@ -45,13 +51,29 @@ export default function SignMessage ({ toSign, resolve, account, connections, re
     })
 
     const provider = await getProvider(requestedNetwork.id)
-    const isDeployed = await provider.getCode(bundle.identity).then(code => code !== '0x')
-    setIsDeployed(isDeployed)
+
+    const identityContract = new ethers.Contract(bundle.identity, IDENTITY_INTERFACE, provider)
+
+    identityContract.privileges(account.signer.address)
+      .then(result => {
+        // To ask : in what cases it's more than 1?
+        setIsDeployed(true)
+        if (result === '0x0000000000000000000000000000000000000000000000000000000000000001') {
+          setHasPrivileges(true)
+        } else {
+          setHasPrivileges(false)
+        }
+      })
+      .catch(err => {
+        // Can we assume that the error thrown would be from non deployed contracts?
+        setIsDeployed(false)
+    })
+
   }, [account, requestedNetwork])
 
   useEffect(() => {
-    checkIsDeployed()
-  }, [checkIsDeployed])
+    checkIsDeployedAndHasPrivileges()
+  }, [checkIsDeployedAndHasPrivileges])
 
   if (!toSign || !account) return (<></>)
 
@@ -229,8 +251,15 @@ export default function SignMessage ({ toSign, resolve, account, connections, re
         Signing with account
       </div>
       <div className="content">
-        <img className='icon' src={blockies.create({ seed: account.id }).toDataURL()} alt='Account Icon'/>
-        { account.id }
+        <div className='signingAccount-account'>
+          <img className='icon' src={blockies.create({ seed: account.id }).toDataURL()} alt='Account Icon'/>
+          { account.id }
+        </div>
+        <div className='signingAccount-network'>
+          on
+          <div className='icon' style={{ backgroundImage: `url(${requestedNetwork.icon})` }}/>
+          <div className='address'>{ requestedNetwork.name }</div>
+        </div>
       </div>
     </div>
     <div className='panel'>
@@ -288,14 +317,30 @@ export default function SignMessage ({ toSign, resolve, account, connections, re
               />
             </>
             )}
-         
-          {!isDeployed && (<div>
+
+
+          {
+            isDeployed === null && (
+              <div>
+                <Loading />
+              </div>
+            )
+          }
+
+          {isDeployed === false && (<div>
               <h3 className='error'>You can't sign this message yet.</h3>
               <h3 className='error'>
               You need to complete your first transaction on {requestedNetwork.name} network in order to be able to sign messages.
               </h3>
             </div>
           )}
+
+          {
+            hasPrivileges === false  && (<div>
+                <h3 className='error'>You do not have the privileges to sign this message.</h3>
+              </div>
+            )
+          }
 
           <div className="buttons">
             <Button
@@ -305,7 +350,7 @@ export default function SignMessage ({ toSign, resolve, account, connections, re
               className='reject'
               onClick={() => resolve({ message: 'signature denied' })}
             >Reject</Button>
-            {isDeployed !== null && isDeployed && (
+            {(isDeployed !== null && isDeployed) && hasPrivileges && (
               <Button type='submit' className='approve' disabled={isLoading}>
               {isLoading ? (<><Loading/>Signing...</>)
               : (<><MdCheck/> Sign</>)}
