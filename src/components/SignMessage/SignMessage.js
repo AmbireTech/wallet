@@ -40,7 +40,7 @@ export default function SignMessage ({ toSign, resolve, account, connections, re
   const [confFieldState, setConfFieldState] = useState({isShown: false,  confCodeRequired: ''})
   const [promiseResolve, setPromiseResolve] = useState(null)
   const inputSecretRef = useRef(null)
-  
+
   const connection = connections.find(({ uri }) => uri === toSign.wcUri)
   const dApp = connection ? connection?.session?.peerMeta || null : null
 
@@ -77,7 +77,7 @@ export default function SignMessage ({ toSign, resolve, account, connections, re
   useEffect(()=> {
     if (confFieldState.isShown) inputSecretRef.current.focus()
   }, [confFieldState])
-  
+
 
   const checkIsDeployedAndHasPrivileges = useCallback(async () => {
     const bundle = new Bundle({
@@ -162,10 +162,10 @@ export default function SignMessage ({ toSign, resolve, account, connections, re
       if (verificationResult) {
         return true
       } else {
-        throw Error(toSign.type + ' SIGNATURE INVALID')
+        throw Error(toSign.type + ': signature verification failed.')
       }
     }).catch(e => {
-      throw Error(toSign.type + ' SIGNATURE INVALID: ' + e.message)
+      throw Error(toSign.type + ': signature verification failed. ' + e.message)
     })
   }
 
