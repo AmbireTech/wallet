@@ -31,7 +31,30 @@ $max-width: 650px;
     .content {
       flex-wrap: wrap;
     }
+
+    .signMessageTitle {
+      display: flex;
+      align-items: baseline;
+
+      .signMessageTitle-title {
+        flex-grow: 1;
+      }
+      .signMessageTitle-signatureType {
+        display: flex;
+        align-items: center;
+        background-color: $input-background-color;
+        padding: 2px 8px;
+        color: $text-container-color;
+        font-weight: 300;
+        font-size: 16px;
+
+        span {
+          margin-left: 4px;
+        }
+      }
+    }
   }
+
 
   #signingAccount {
     .content {
