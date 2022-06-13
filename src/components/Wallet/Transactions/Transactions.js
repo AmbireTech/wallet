@@ -1,7 +1,7 @@
 import './Transactions.scss'
 import { FaSignature } from 'react-icons/fa'
-import { BsCoin, BsCalendarWeek, BsGlobe2, BsCheck2All } from 'react-icons/bs'
-import { MdOutlinePendingActions, MdShuffle, MdCheck } from 'react-icons/md'
+import { BsCoin, BsCalendarWeek, BsGlobe2, BsCheck2All, BsCashCoin } from 'react-icons/bs'
+import { MdOutlinePendingActions, MdShuffle, MdCheck, MdOutlineSavings } from 'react-icons/md'
 import { useRelayerData } from 'hooks'
 import TxnPreview from 'components/common/TxnPreview/TxnPreview'
 import { Loading, Button } from 'components/common'
@@ -74,7 +74,6 @@ function Transactions ({ relayerURL, selectedAcc, selectedNetwork, showSendTxns,
   
   useEffect(() => !isLoading && history.replace(`/wallet/transactions/${page}`), [page, history, isLoading])
   useEffect(() => setPage(defaultPage), [selectedAcc, selectedNetwork, defaultPage])
-
 
   // @TODO implement a service that stores sent transactions locally that will be used in relayerless mode
   if (!relayerURL) return (<section id='transactions'>
@@ -212,6 +211,8 @@ function BundlePreview({ bundle, mined = false, feeAssets }) {
   const toLocaleDateTime = date => `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`
   const feeTokenDetails = feeAssets?.find(i => i.symbol === bundle.feeToken)
   const savedGas = feeTokenDetails ? getAddedGas(feeTokenDetails) : null
+  const splittedLastTxnSummary = lastTxnSummary.split(' ')
+  const fee = splittedLastTxnSummary.length ? splittedLastTxnSummary[1] + ' ' + splittedLastTxnSummary[2] : []
 
   return (<div className='bundlePreview bundle' key={bundle._id}>
     {txns.map((txn, i) => (<TxnPreview
@@ -225,12 +226,7 @@ function BundlePreview({ bundle, mined = false, feeAssets }) {
         hasFeeMatch ?
           <li>
             <label><BsCoin/>Fee</label>
-            <p>{
-            lastTxnSummary
-              .slice(5, -hasFeeMatch[0].length).split(' ')
-              .map((x, i) => i === 0 ? formatFloatTokenAmount(x, true, 8) : x)
-              .join(' ') 
-            }</p>
+            <p>{ fee.split(' ').map((x, i) => i === 0 ? formatFloatTokenAmount(x, true, 8) : x).join(' ') }</p>
           </li>
           :
           null
@@ -247,19 +243,16 @@ function BundlePreview({ bundle, mined = false, feeAssets }) {
         bundle.gasTank && (feeTokenDetails !== null) && (
         <>
           <li>
-              {/* TODO: the icon has to be changed */}
-              <label><BsCalendarWeek/>Fee (Paid with Gas)</label>
-              <p>${(bundle.feeInUSDPerGas * bundle.gasTank.value).toFixed(2)}</p>
+              <label><BsCoin/>Fee (Paid with Gas Tank)</label>
+              <p>${(bundle.feeInUSDPerGas * bundle.gasTank.value).toFixed(6)}</p>
           </li>
           {savedGas && (<li>
-              {/* TODO: the icon has to be changed */}
-              <label><BsCalendarWeek/>Saved</label>
-              <p>${(bundle.feeInUSDPerGas * savedGas).toFixed(2)}</p>
+              <label><MdOutlineSavings/>Saved</label>
+              <p>${(bundle.feeInUSDPerGas * savedGas).toFixed(6)}</p>
           </li>)}
           {!!bundle.gasTank.cashback && (<li>
-              {/* TODO: the icon has to be changed */}
-              <label><BsCalendarWeek/>Cashback</label>
-              <p>${(formatUnits(bundle.gasTank.cashback.toString(), feeTokenDetails?.decimals).toString() * feeTokenDetails?.price).toFixed(2)}</p>
+              <label><BsCashCoin/>Cashback</label>
+              <p>${(formatUnits(bundle.gasTank.cashback.toString(), feeTokenDetails?.decimals).toString() * feeTokenDetails?.price).toFixed(6)}</p>
           </li>)}
         </>) 
       }
