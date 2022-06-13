@@ -127,17 +127,16 @@ const networks = [
 		unstoppableDomainsChain: 'ERC20',
 		isGasTankAvailable: true
 	},
-	{
-		id: 'andromeda',
-		chainId: 1088,
-		rpc: 'https://andromeda.metis.io/?owner=1088',
-		nativeAssetSymbol: 'METIS',
-		name: 'Andromeda',
-		icon: '/resources/networks/andromeda.svg',
-		explorerUrl: 'https://andromeda-explorer.metis.io',
-		unstoppableDomainsChain: 'ERC20',
-		isGasTankAvailable: true
-	},
+	// {
+	// 	id: 'andromeda',
+	// 	chainId: 1088,
+	// 	rpc: 'https://andromeda.metis.io/?owner=1088',
+	// 	nativeAssetSymbol: 'METIS',
+	// 	name: 'Andromeda',
+	// 	icon: '/resources/networks/andromeda.svg',
+	// 	explorerUrl: 'https://andromeda-explorer.metis.io',
+	// 	unstoppableDomainsChain: 'ERC20'
+	// },
 	{
 		id: 'rinkeby',
 		chainId: 4,
