@@ -11,7 +11,7 @@ import { useDragAndDrop, useCheckMobileScreen } from 'hooks'
 import { getTokenIcon } from 'lib/icons'
 import { formatFloatTokenAmount } from 'lib/formatters'
 import { ToolTip } from 'components/common'
-import { useRelayerData, useLocalStorage } from 'hooks'
+import { useRelayerData } from 'hooks'
 import { useModals } from 'hooks'
 import { GasTankBalanceByTokensModal } from 'components/Modals'
 import { HiOutlineExternalLink } from 'react-icons/hi'
@@ -40,12 +40,11 @@ const GasTank = ({ network,
     const urlGetBalance = relayerURL ? `${relayerURL}/gas-tank/${account}/getBalance?cacheBreak=${cacheBreak}` : null
     const urlGetFeeAssets = relayerURL ? `${relayerURL}/gas-tank/assets?cacheBreak=${cacheBreak}` : null
     const urlGetTransactions = relayerURL ? `${relayerURL}/identity/${account}/${network.id}/transactions` : null
-    const { data, errMsg, isLoading } = useRelayerData(urlGetBalance)
+    const { data, isLoading } = useRelayerData(urlGetBalance)
     const feeAssetsRes = useRelayerData(urlGetFeeAssets)
     const feeAssetsPerNetwork = feeAssetsRes.data?.filter(item => item.network === network.id)
     const executedTxnsRes = useRelayerData(urlGetTransactions)
     const gasTankTxns = executedTxnsRes && executedTxnsRes.data?.txns?.length && executedTxnsRes.data?.txns.filter(item => !!item.gasTank)
-    const latestThreeGasTankTxns = gasTankTxns &&  gasTankTxns.length && gasTankTxns
     const { isBalanceLoading, tokens } = portfolio
     const sortType = userSorting.tokens?.sortType || 'decreasing'
     const isMobileScreen = useCheckMobileScreen()
@@ -162,9 +161,11 @@ const GasTank = ({ network,
             <div className='heading-wrapper'>
                 <div className="balance-wrapper" style={{ cursor: 'pointer' }} onClick={openGasTankBalanceByTokensModal}>
                     <span><FaGasPump/> Gas Tank Balance</span>
-                    <div>
-                        <span>$ </span>{ !data ? '0.00' : data.map(({balanceInUSD}) => balanceInUSD).reduce((a, b) => a + b, 0).toFixed(2)  }
-                    </div>
+                    { !isLoading ?
+                        (<div>
+                            <span>$ </span>{ !data ? '0.00' : data.map(({balanceInUSD}) => balanceInUSD).reduce((a, b) => a + b, 0).toFixed(2)  }
+                        </div>) : 
+                        <Loading /> }
                     {/* TODO: Add functionality for drag and drop */}
                     {/* <span>Drag and drop tokens here</span> */}
                 </div>
@@ -176,7 +177,7 @@ const GasTank = ({ network,
                 <div className="balance-wrapper total-save">
                     <span>Total Save</span>
                     <div>
-                        <span>$ </span>{gasTankTxns && gasTankTxns.length ? gasTankTxns.map(item => item.feeInUSDPerGas * item.gasTank.value).reduce((a, b) => a + b).toFixed(2) : '0.00'}
+                        <span>$ </span>{gasTankTxns && gasTankTxns.length ? gasTankTxns.map(item => item.feeInUSDPerGas * item.gasLimit).reduce((a, b) => a + b).toFixed(2) : '0.00'}
                     </div>
                 </div>
             </div>
@@ -209,24 +210,37 @@ const GasTank = ({ network,
                 )}
             </div>
             <div className="list">
-                { 
-                   sortedTokens && sortedTokens?.map(({ address, symbol, tokenImageUrl, balance, balanceUSD, network, decimals }, i) =>
-                        tokenItem(i, tokenImageUrl = getTokenIcon(network, address), symbol, balance, balanceUSD, address, true, network, decimals, 'tokens', sortedTokens.length))
-                }
+                { !isBalanceLoading ?
+                        sortedTokens && sortedTokens?.map(({ address, symbol, tokenImageUrl, balance, balanceUSD, network, decimals }, i) =>
+                            tokenItem(
+                                i, 
+                                tokenImageUrl = getTokenIcon(network, address), 
+                                symbol, 
+                                balance, 
+                                balanceUSD, 
+                                address, 
+                                true, 
+                                network, 
+                                decimals, 
+                                'tokens', 
+                                sortedTokens.length
+                                )
+                            )
+                        : <Loading />  }
             </div>
             <span className='title'>Transaction History</span>
             <div className="txns-wrapper">
                 {
-                    latestThreeGasTankTxns && latestThreeGasTankTxns.length ? latestThreeGasTankTxns.map((item, key) => {
+                    gasTankTxns && gasTankTxns.length ? gasTankTxns.map((item, key) => {
                         const feeTokenDetails = !data ? {} : data.find(i => i.id === item.gasTank.assetId)
                         const savedGas = getAddedGas(feeTokenDetails)
                         
                         return (<div key={key} className="txns-item-wrapper">
                             <span><BiTransferAlt /></span>
                             <span>{ item.submittedAt && toLocaleDateTime(new Date(item.submittedAt)).toString() }</span>
-                            <span>Gas payed: $ { (item.feeInUSDPerGas * item.gasTank.value).toFixed(2) }</span>
-                            <span>Saved: $ {(item.feeInUSDPerGas * savedGas).toFixed(2)}</span>
-                            <span>Cashback: $ { item.gasTank.cashback && (formatUnits(item.gasTank.cashback.toString(), feeTokenDetails.decimals) * feeTokenDetails?.price).toFixed(2) }</span>
+                            <span>Gas payed: $ { (item.feeInUSDPerGas * item.gasLimit).toFixed(6) }</span>
+                            <span>Saved: $ {(item.feeInUSDPerGas * savedGas).toFixed(6)}</span>
+                            <span>Cashback: $ { item.gasTank.cashback ? (formatUnits(item.gasTank.cashback.toString(), feeTokenDetails.decimals) * feeTokenDetails?.price).toFixed(6) : '0.00' }</span>
                                 <a
                                     href={network.explorerUrl + '/tx/'+ item.txId}
                                     target='_blank'

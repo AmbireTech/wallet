@@ -147,7 +147,7 @@ const networks = [
 		icon: '/resources/networks/rinkeby.png',
 		explorerUrl: 'https://rinkeby.etherscan.io',
 		unstoppableDomainsChain: 'ERC20',
-		hide: true,
+		hide: false,
 		isGasTankAvailable: false
 	},
 	// {

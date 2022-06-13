@@ -29,7 +29,6 @@ import { MdInfo } from 'react-icons/md'
 import { useCallback } from 'react'
 import { ToolTip } from 'components/common'
 import { Checkbox } from 'components/common'
-import { useLocalStorage } from 'hooks'
 import { ethers } from 'ethers'
 
 const ERC20 = new Interface(require('adex-protocol-eth/abi/ERC20'))

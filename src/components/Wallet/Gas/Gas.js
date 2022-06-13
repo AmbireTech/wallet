@@ -4,6 +4,7 @@ import GasDetails from './GasDetails/GasDetails'
 import GasTank from './GasTank/GasTank'
 import { useState, useEffect } from 'react'
 import { useRelayerData } from 'hooks'
+import { Loading } from 'components/common'
 
 const Gas = ({ 
     selectedNetwork, 
@@ -36,15 +37,20 @@ const Gas = ({
                     <div className="title">Gas Information</div>
                 </div>
                 <div className="description">
-                    {gasData && <GasDetails gasData={gasData} />}
+                    { gasData && !isLoading && <GasDetails gasData={gasData} />  }
+                    { isLoading && <Loading /> }
+                    { !gasData && errMsg && (
+                        <h3 className="error">Gas Information: {errMsg}</h3>
+                    )}
                 </div>
             </div>
-            { selectedNetwork.isGasTankAvailable &&
+            
                 <div className="panel">
                     <div className="heading">
                         <div className="title">Gas Tank</div>
                     </div>
                     <div className="description">
+                    { selectedNetwork.isGasTankAvailable ?
                         <GasTank
                             network={selectedNetwork}
                             relayerURL={relayerURL}
@@ -54,10 +60,12 @@ const Gas = ({
                             setUserSorting={setUserSorting}
                             gasTankState={gasTankState}
                             setGasTankState={setGasTankState}
-                        />
+                        /> : 
+                        <h3 className="error">Gas Tank is not available on {selectedNetwork.id.toUpperCase()}</h3>
+                    }
                     </div>
                 </div>
-            }
+            
         </section>
     )
 }

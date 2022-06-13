@@ -42,7 +42,7 @@ function Transactions ({ relayerURL, selectedAcc, selectedNetwork, showSendTxns,
     : null
   const { data, errMsg, isLoading } = useRelayerData(url)
   const urlGetFeeAssets = relayerURL ? `${relayerURL}/gas-tank/assets?cacheBreak=${cacheBreak}` : null
-  const { data: feeAssets, errMsg: feeAssetsErrMsg, isLoading: feeAssetsIsLoading }= useRelayerData(urlGetFeeAssets)
+  const { data: feeAssets }= useRelayerData(urlGetFeeAssets)
 
   const showSendTxnsForReplacement = useCallback(bundle => {
     bundle.txns.slice(0, -1)
@@ -209,7 +209,7 @@ function BundlePreview({ bundle, mined = false, feeAssets }) {
   const hasFeeMatch = lastTxnSummary.match(new RegExp(`to Gas Tank`, 'i')) 
   const txns = hasFeeMatch ? bundle.txns.slice(0, -1) : bundle.txns
   const toLocaleDateTime = date => `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`
-  const feeTokenDetails = feeAssets?.find(i => i.symbol === bundle.feeToken)
+  const feeTokenDetails = feeAssets ? feeAssets.find(i => i.symbol === bundle.feeToken) : null
   const savedGas = feeTokenDetails ? getAddedGas(feeTokenDetails) : null
   const splittedLastTxnSummary = lastTxnSummary.split(' ')
   const fee = splittedLastTxnSummary.length ? splittedLastTxnSummary[1] + ' ' + splittedLastTxnSummary[2] : []
@@ -244,7 +244,7 @@ function BundlePreview({ bundle, mined = false, feeAssets }) {
         <>
           <li>
               <label><BsCoin/>Fee (Paid with Gas Tank)</label>
-              <p>${(bundle.feeInUSDPerGas * bundle.gasTank.value).toFixed(6)}</p>
+              <p>${(bundle.feeInUSDPerGas * bundle.gasLimit).toFixed(6)}</p>
           </li>
           {savedGas && (<li>
               <label><MdOutlineSavings/>Saved</label>
