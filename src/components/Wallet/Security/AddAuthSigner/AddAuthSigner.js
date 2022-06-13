@@ -59,18 +59,14 @@ const AddAuthSigner = ({ selectedNetwork, selectedAcc, onAddBtnClicked }) => {
     let error = null
     try {
       const addrData = await ledgerGetAddresses()
-      if (!addrData.error) {
-        if (addrData.length === 1) {
-          return onSignerAddressClicked({
-            address: addrData[0],
-            index: 0,
-          })
-        } else {
-          setChooseSigners({ address: addrData, signerName: 'Ledger' })
-          setModalToggle(true)
-        }
+      if (addrData.length === 1) {
+        return onSignerAddressClicked({
+          address: addrData[0],
+          index: 0,
+        })
       } else {
-        error = addrData.error
+        setChooseSigners({ address: addrData, signerName: 'Ledger' })
+        setModalToggle(true)
       }
     } catch (e) {
       console.log(e)
