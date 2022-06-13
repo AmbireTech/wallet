@@ -15,6 +15,7 @@ const AssetsMigrationNative = ({
   network,
   nativeTokenData,
   setSelectedTokensWithAllowance,
+  selectedTokensWithAllowance,
   setError,
   setStep,
   hasERC20Tokens,
@@ -60,6 +61,10 @@ const AssetsMigrationNative = ({
     setStep(2)
   }, [setStep])
 
+  const erc20TransfersCount = (selectedTokensWithAllowance) => {
+    return selectedTokensWithAllowance.filter(t => t.selected && !t.permittable && !t.native).length
+  }
+
   //Pops MM modal to send native to Identity
   const migrateNative = useCallback(async () => {
     if (!wallet) return
@@ -78,7 +83,7 @@ const AssetsMigrationNative = ({
       wallet.sendTransaction({
         from: signer.address,
         to: identityAccount,
-        gasLimit: 25000,
+        gasLimit: 25000 + (network.id === 'arbitrum' ? 200000 : 0),
         gasPrice: currentGasPrice,
         value: '0x' + new BigNumber(nativeAmount).toString(16),
         chainId: network.chainId
@@ -121,17 +126,20 @@ const AssetsMigrationNative = ({
       if (gasData.data.gasPrice.maxPriorityFeePerGas) {
         gasPrice += gasData.data.gasPrice.maxPriorityFeePerGas[gasSpeed]
       }
-      const estimatedTransactionCost = gasPrice * 25000
+      const nativeTransactionCost = gasPrice * 25000
 
-      setTransactionEstimationCost(new BigNumber(estimatedTransactionCost.toFixed(0)).toFixed(0))
-      const recommendedBN = new BigNumber(nativeTokenData.availableBalance).minus(estimatedTransactionCost)
+      const regularTransfersCount = erc20TransfersCount(selectedTokensWithAllowance)
+      const transfersTransactionCost = regularTransfersCount * gasPrice * (25000 + 52000)
+
+      setTransactionEstimationCost(new BigNumber((nativeTransactionCost + transfersTransactionCost).toFixed(0)).toFixed(0))
+      const recommendedBN = new BigNumber(nativeTokenData.availableBalance).minus((nativeTransactionCost + transfersTransactionCost))
       setMaxRecommendedAmount(recommendedBN.gte(0) ? recommendedBN.toFixed(0) : 0)
       setCurrentGasPrice(gasPrice)
     }).catch(err => {
       setError(err.message + ' ' + url)
     })
 
-  }, [setTransactionEstimationCost, setMaxRecommendedAmount, nativeTokenData, network, relayerURL, setError, gasSpeed])
+  }, [setTransactionEstimationCost, setMaxRecommendedAmount, nativeTokenData, network, relayerURL, setError, gasSpeed, selectedTokensWithAllowance])
 
   const onAmountChange = useCallback((val) => {
     setHasModifiedAmount(true)
@@ -281,7 +289,12 @@ const AssetsMigrationNative = ({
                   maxRecommendedAmount !== null && nativeAmount > maxRecommendedAmount &&
                   <div className={'notification-hollow warning mt-4'}>
                     <div>
-                      Current Transaction cost :
+                      {
+                        !!erc20TransfersCount(selectedTokensWithAllowance)
+                          ? 'Signer transactions cost'
+                          : 'Current Transaction cost'
+                      }
+                      :
                       ~{new BigNumber(transactionEstimationCost).dividedBy(10 ** nativeTokenData.decimals).toFixed(6)} {nativeTokenData.name}
                       <span
                         className={'migration-native-usd'}> (${new BigNumber(transactionEstimationCost).multipliedBy(nativeTokenData.rate).toFixed(2)})</span>
@@ -292,14 +305,14 @@ const AssetsMigrationNative = ({
                         maxRecommendedAmount > 0
                           ?
                           <>
-                            <span>According to the current gas prices, the maximum recommended to migrate is </span>
+                            <span>You should migrate up to </span>
                             <span className={'migration-native-selection'} onClick={() => updateAmount(maxRecommendedAmount)}>
                               {new BigNumber(maxRecommendedAmount).dividedBy(10 ** nativeTokenData.decimals).toFixed(6)} {nativeTokenData.name}
                             </span>
-                            <div>Sending more might not cover the gas fees</div>
+                            <span> because will you need funds to pay the transaction costs.</span>
                           </>
                           :
-                          <span>According to the current gas prices, the signer does not have enough funds to cover the transaction fee</span>
+                          <span>You do not have enough funds to pay the transaction fee.</span>
                       }
                     </div>
                   </div>
