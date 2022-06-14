@@ -21,6 +21,7 @@ import { getAddedGas } from '../../SendTransaction/helpers'
 
 // 10% in geth and most EVM chain RPCs; relayer wants 12%
 const RBF_THRESHOLD = 1.14
+const TO_GAS_TANK = `to Gas Tank`
 
 
 function Transactions ({ relayerURL, selectedAcc, selectedNetwork, showSendTxns, addRequest, eligibleRequests, setSendTxnState }) {
@@ -205,8 +206,7 @@ function BundlePreview({ bundle, mined = false, feeAssets }) {
   // terribly hacky; @TODO fix
   // all of the values are prob checksummed so we may not need toLowerCase
   const lastTxnSummary = getTransactionSummary(lastTxn, bundle.network, bundle.identity)
-  // TODO: "Gas Tank" should be constant"
-  const hasFeeMatch = lastTxnSummary.match(new RegExp(`to Gas Tank`, 'i')) 
+  const hasFeeMatch = (bundle.txns.length > 1) && lastTxnSummary.match(new RegExp(TO_GAS_TANK, 'i'))
   const txns = hasFeeMatch ? bundle.txns.slice(0, -1) : bundle.txns
   const toLocaleDateTime = date => `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`
   const feeTokenDetails = feeAssets ? feeAssets.find(i => i.symbol === bundle.feeToken) : null
