@@ -182,7 +182,8 @@ const GasTank = ({ network,
                 </div>
             </div>
             <div>
-                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</p> 
+                <p>The Ambire Gas Tank is your special account for paying gas and saving on gas fees. By filling up your Gas Tank, you are setting aside, or prepaying for network fees. You can add more tokens to your Gas Tank at any time, and you can also withdraw from it.</p>
+                <p>Please note that only the tokens listed below are eligible for filling up your gas tank.</p>
             </div>
             <div className="sort-holder">
                 <span className='title'>Available fee tokens</span>
