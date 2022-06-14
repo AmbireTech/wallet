@@ -8,6 +8,7 @@ const networks = [
 		rpc: 'https://eth-mainnet.alchemyapi.io/v2/e5Gr8LP_EH0SBPZiNCcC08OuEDrvgoYK',
 		nativeAssetSymbol: 'ETH',
 		name: 'Ethereum',
+		ensName: 'Homestead',
 		icon: '/resources/networks/ethereum.png',
 		explorerUrl: 'https://etherscan.io',
 		unstoppableDomainsChain: 'ERC20'
