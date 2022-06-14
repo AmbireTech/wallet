@@ -37,7 +37,7 @@ const Gas = ({
                     <div className="title">Current Network Fees</div>
                 </div>
                 <div className="description">
-                    <p>Network fees are determined on a market principle - if more users are trying to use the network, fees are higher. Each network has different fees."</p>
+                    <p>Network fees are determined on a market principle - if more users are trying to use the network, fees are higher. Each network has different fees.</p>
                     { gasData && !isLoading && <GasDetails gasData={gasData} />  }
                     { isLoading && <Loading /> }
                     { !gasData && errMsg && (
