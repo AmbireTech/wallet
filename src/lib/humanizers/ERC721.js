@@ -1,6 +1,6 @@
 import { abis } from 'consts/humanizerInfo'
 import { Interface } from 'ethers/lib/utils'
-import { getName } from 'lib/humanReadableTransactions'
+import { token, getName } from 'lib/humanReadableTransactions'
 
 const iface = new Interface(abis.ERC721)
 const fromText = (from, txnFrom) => from.toLowerCase() !== txnFrom.toLowerCase() ? ` from ${from}` : ''
@@ -25,8 +25,29 @@ const toExtended = (tokenId, from, to, txn, network) => [[
 const ERC721Mapping = {
   [iface.getSighash('transferFrom')]: (txn, network, { extended = false }) => {
     const [ from, to, tokenId ] = iface.parseTransaction(txn).args
-    return !extended ? [`Send token #${tokenId.toString(10)}${fromText(from, txn.from)} to ${getName(to, network)}`]
-    : toExtended(tokenId, from, to, txn, network)
+
+    // hack for erc20
+    if (tokenId > 10 ** 6) {
+      const name = getName(to, network)
+      if (extended) return [[
+        'Send',
+        {
+          type: 'token',
+          ...token(txn.to, tokenId, true)
+        },
+        'to',
+        {
+          type: 'address',
+          address: to,
+          name
+        }
+      ]]
+
+      return [`Send ${token(txn.to, tokenId)} to ${to === name ? to : name+' ('+to+')'}`]
+    } else {
+      return !extended ? [`Send token #${tokenId.toString(10)}${fromText(from, txn.from)} to ${getName(to, network)}`] : toExtended(tokenId, from, to, txn, network)
+    }
+
   },
   [iface.getSighash('safeTransferFrom(address,address,uint256)')]: (txn, network, { extended = false }) => {
     const [ from, to, tokenId ] = iface.parseTransaction(txn).args
