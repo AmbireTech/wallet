@@ -58,6 +58,7 @@ function makeBundle(account, networkId, requests) {
   const bundle = new Bundle({
     network: networkId,
     identity: account.id,
+    // checking txn isArray because sometimes we receive txn in array from walletconnect. Also we use Array.isArray because txn object can have prop 0
     txns: requests.map(({ txn }) => toBundleTxn(Array.isArray(txn) ? txn[0] : txn, account.id)),
     signer: account.signer
   })
