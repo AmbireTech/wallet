@@ -53,7 +53,8 @@ export default function SignMessage ({ toSign, resolve, account, connections, re
   if (!toSign || !account) return (<></>)
 
   let dataV4
-  if (toSign.type === 'eth_signTypedData_v4' || toSign.type === 'eth_signTypedData') {
+  const isTypedData = ['eth_signTypedData_v4', 'eth_signTypedData'].indexOf(toSign.type) !== -1
+  if (isTypedData) {
     dataV4 = toSign.txn
     let typeDataErr
     if (isObject(dataV4)) {
@@ -87,12 +88,11 @@ export default function SignMessage ({ toSign, resolve, account, connections, re
 
   const verifySignatureDebug = (toSign, sig) => {
     const provider = getProvider(network.id)
-    const isTyped = ['eth_signTypedData_v4', 'eth_signTypedData'].indexOf(toSign.type) !== -1
     verifyMessage({
       provider,
       signer: account.id,
-      message: isTyped ? null : getMessageAsBytes(toSign.txn),
-      typedData: isTyped ? dataV4 : null,
+      message: isTypedData ? null : getMessageAsBytes(toSign.txn),
+      typedData: isTypedData ? dataV4 : null,
       signature: sig
     }).then(verificationResult => {
       if (verificationResult) {
@@ -116,8 +116,6 @@ export default function SignMessage ({ toSign, resolve, account, connections, re
     }
     setLoading(true)
     try {
-
-      const isTypedData = toSign.type === 'eth_signTypedData_v4'
 
       const { signature, success, message, confCodeRequired } = await fetchPost(
         // network doesn't matter when signing
