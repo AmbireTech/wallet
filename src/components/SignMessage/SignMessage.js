@@ -81,6 +81,8 @@ export default function SignMessage ({ toSign, resolve, account, connections, re
 
 
   const checkIsDeployedAndHasPrivileges = useCallback(async () => {
+    if (!requestedNetwork) return
+
     const bundle = new Bundle({
       network: requestedNetwork.id,
       identity: account.id,
@@ -132,7 +134,7 @@ export default function SignMessage ({ toSign, resolve, account, connections, re
   // should not happen unless chainId is dropped for some reason in addRequests
   if (!requestedNetwork) {
     return (<div id='signMessage'>
-      <h3 className='error'>Inexistant network for chainId : { toSign.chainId }</h3>
+      <h3 className='error'>Inexistant network for chainId : { requestedChainId }</h3>
       <Button className='reject' onClick={() => resolve({ message: 'signature denied' })}>Reject</Button>
     </div>)
   }
