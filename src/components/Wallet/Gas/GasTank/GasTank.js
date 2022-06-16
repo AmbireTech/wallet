@@ -96,7 +96,7 @@ const GasTank = ({ network,
     }
 
     const openGasTankBalanceByTokensModal = () => {
-        showModal(<GasTankBalanceByTokensModal network={network.id} data={ (data && data.length) ? data : [] }/>)
+        showModal(<GasTankBalanceByTokensModal data={ (data && data.length) ? data : [] }/>)
     }
 
     const tokenItem = (index, img, symbol, balance, balanceUSD, address, send = false, network, decimals, category, sortedTokensLength) => 

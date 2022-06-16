@@ -5,10 +5,8 @@ import { MdOutlineClose } from 'react-icons/md'
 import { useModals } from 'hooks'
 import { getTokenIcon } from 'lib/icons'
 
-const GasTankBalanceByTokensModal = ({ network, data }) => {
+const GasTankBalanceByTokensModal = ({ data }) => {
     const { hideModal } = useModals()
-    console.log('data', data)
-    console.log('network', network)
     const buttons = <>
         <Button clear icon={<MdOutlineClose/>} onClick={() => hideModal()}>Close</Button>
     </>
@@ -20,8 +18,7 @@ const GasTankBalanceByTokensModal = ({ network, data }) => {
                     data && data.map((item, key) => {
                         return (
                             <div className='row' key={key}>
-                                {/* TODO: Add a tokens logo here */}
-                                <img width="25px" height='25px' alt='logo' src={getTokenIcon(network, item.address)} />
+                                <img width="25px" height='25px' alt='logo' src={getTokenIcon(item.network, item.address)} /> 
                                 <span>{item.symbol.toUpperCase()}</span>
                                 <span>{item.balance}</span>
                                 <span>$ {item.balanceInUSD.toFixed(2)}</span>
