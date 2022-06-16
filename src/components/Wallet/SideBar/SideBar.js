@@ -2,6 +2,7 @@ import './SideBar.scss'
 
 import { NavLink } from 'react-router-dom'
 import { MdDashboard, MdLock, MdCompareArrows, MdHelpCenter } from 'react-icons/md'
+import { AiOutlineAppstoreAdd } from 'react-icons/ai'
 import { GiReceiveMoney } from 'react-icons/gi'
 import { BsCurrencyExchange } from 'react-icons/bs'
 import { BsPiggyBank } from 'react-icons/bs'
@@ -101,7 +102,12 @@ const SideBar = ({ match, portfolio, hidePrivateValue, relayerURL, selectedNetwo
         </NavLink> */}
         <NavLink to={match.url + "/security"} activeClassName="selected">
           <div className="item">
-              <MdLock/>Security
+            <MdLock/>Security
+          </div>
+        </NavLink>
+        <NavLink to={match.url + "/dapps"} activeClassName="selected">
+          <div className="item">
+            <AiOutlineAppstoreAdd />Dapps
           </div>
         </NavLink>
         <div className="separator"></div>

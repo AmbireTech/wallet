@@ -15,6 +15,25 @@ $input-height: 60px;
     .text-input-container {
         position: relative;
 
+        &.hasIcon {
+            .text-input-container-icon {
+                position: absolute;
+                top: 0;
+                left: 0;
+                height: 100%;
+                display: flex;
+                background-color: $input-background-color;
+                align-items: center;
+                justify-content: center;
+                width: 48px;
+                font-size: 24px;
+            }
+
+            input {
+                padding-left: 48px;
+            }
+        }
+
         input {
             height: $input-height;
             width: 100%;

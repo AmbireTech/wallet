@@ -8,6 +8,7 @@ import Deposit from "./Deposit/Deposit"
 import Swap from "./Swap/Swap"
 import Transfer from "./Transfer/Transfer"
 import Earn from "./Earn/Earn"
+import DappsCatalog from './DappsCatalog/DappsCatalog'
 import Security from "./Security/Security"
 import Transactions from './Transactions/Transactions'
 import PluginGnosisSafeApps from 'components/Plugins/GnosisSafeApps/GnosisSafeApps'
@@ -124,6 +125,12 @@ export default function Wallet(props) {
       />
     },
     {
+      path: '/dapps',
+      component: <DappsCatalog
+        network={props.network}
+      />
+    },
+    {
       path: '/opensea',
       component: <OpenSea
         gnosisConnect={props.gnosisConnect}
@@ -143,7 +150,7 @@ export default function Wallet(props) {
       />
     },
     {
-      path: '/gnosis/plugins',
+      path: '/gnosis/plugins/:plugin?',
       component: <PluginGnosisSafeApps
         gnosisConnect={props.gnosisConnect}
         gnosisDisconnect={props.gnosisDisconnect}

@@ -1,0 +1,148 @@
+@import 'variables.scss';
+$WCBlue: #005eff;
+
+#dappCatalog {
+
+  .filterSection {
+    margin-bottom: 24px;
+  }
+
+  .catalogItems {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+
+    .catalogItem {
+      cursor: pointer;
+      flex: 1 1 30%;
+      //flex-basis: 30%;
+      max-width: 33.333333%;
+      padding: 18px;
+      //flex-grow: 0;
+      background-color: $input-background-color;
+
+      &.not-supported {
+        background-color: mix($input-background-color, $background-color, 50%);
+
+        .logoSplit {
+          opacity: 0.2;
+        }
+
+        .tag {
+          opacity: 0.2;
+
+          &.unsupported {
+            opacity: 0.5;
+            background-color: transparent;
+            border-color: mix($text-color, $input-background-color, 50%);
+            color: mix($text-color, $input-background-color, 50%);
+          }
+        }
+      }
+
+      .logoSplit {
+        display: flex;
+        gap: 16px;
+
+        .logo {
+          min-width: 48px;
+          width: 48px;
+          height: 48px;
+
+          img {
+            max-width: 48px;
+            max-height: 48px;
+            border-radius: 4px;
+          }
+        }
+      }
+
+      .title {
+        font-weight: bold;
+        display: block;
+        font-size: 1.1em;
+      }
+
+      .description {
+        font-size: 0.95em;
+        color: $text-container-color;
+      }
+
+      .tag-row {
+        display: flex;
+        justify-content: right;
+        gap: 8px;
+        margin: 8px 0px;
+
+        &.network-tag-row {
+          gap: 4px;
+        }
+
+        .tag {
+          background-color: mix($secondary-accent-color, $input-background-color, 30%);
+          border: 1px solid $secondary-accent-color;
+          color: mix($secondary-accent-color, $text-color, 70%);
+          padding: 1px 4px;
+          font-size: 11px;
+          border-radius: 32px;
+
+          &.type-tag-walletconnect {
+            background-color: mix($WCBlue, $input-background-color, 30%);
+            border: 1px solid $WCBlue;
+            color: mix($WCBlue, $text-color, 70%);
+          }
+
+          &.network-tag {
+            border: 0;
+            display: block;
+            height: 16px;
+            width: 16px;
+            background-size: 16px 16px;
+            background-color: transparent;
+            border-radius: 100px;
+          }
+        }
+      }
+
+      &:hover {
+        background-color: mix($input-background-color, #FFF, 97%);
+      }
+    }
+
+    .catalogItem-filler {
+      flex: 1 1 30%;
+      //need some css flex expert to trick this
+      //flex-basis: 30%;
+      max-width: 33.333333%;
+    }
+  }
+
+  .no-dapp-found {
+    font-size: 1.2em;
+    text-align: center;
+    padding: 24px;
+    background-color: $input-background-color;
+    color: mix($text-color, $input-background-color);
+  }
+
+  .info-wc {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 12px;
+    padding: 12px;
+    background-color: $input-background-color-darker;
+    color: mix($text-color, $input-background-color-darker);
+  }
+}
+
+@media screen and (max-width: $mobile-breakpoint-max-width) {
+  #dappCatalog {
+    .catalogItems {
+      .catalogItem {
+        flex-basis: 100%;
+        max-width: 100%;
+      }
+    }
+  }
+}
