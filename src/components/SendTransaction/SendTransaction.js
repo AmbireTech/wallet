@@ -58,7 +58,7 @@ function makeBundle(account, networkId, requests) {
   const bundle = new Bundle({
     network: networkId,
     identity: account.id,
-    txns: requests.map(({ txn }) => toBundleTxn(txn, account.id)),
+    txns: requests.map(({ txn }) => toBundleTxn(Array.isArray(txn) ? txn[0] : txn, account.id)),
     signer: account.signer
   })
   bundle.extraGas = requests.map(x => x.extraGas || 0).reduce((a, b) => a + b, 0)
