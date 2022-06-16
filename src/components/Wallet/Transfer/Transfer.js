@@ -199,7 +199,7 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
     const amountLabel = <div className="amount-label">Available Amount: <span>{ maxAmountFormatted } { selectedAsset?.symbol }</span></div>
 
     return (
-        <div id="transfer">
+        <div id="transfer" style={{ justifyContent: gasTankDetails ? 'center' : '' }}>
            <div className="panel">
                <div className="title">
                    Send

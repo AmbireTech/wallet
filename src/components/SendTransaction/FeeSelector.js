@@ -385,7 +385,7 @@ export function FeeSelector({ disabled, signer, estimation, network, setEstimati
             </div>
             <div className='fee-amounts'>
               <div>
-                $ {estimation.selectedFeeToken.balanceInUSD.toFixed(2)}
+                $ {estimation.selectedFeeToken.balanceInUSD.toFixed(4)}
               </div>
             </div>
           </div>
@@ -395,7 +395,7 @@ export function FeeSelector({ disabled, signer, estimation, network, setEstimati
             </div>
             <div className='fee-amounts'>
               <div>
-                $ {((feeInUSD / estimation.gasLimit) * savedGas).toFixed(2)}
+                $ {((feeInUSD / estimation.gasLimit) * savedGas).toFixed(4)}
               </div>
             </div>
           </div>
