@@ -55,12 +55,10 @@ const getDefaultFeeToken = (remainingFeeTokenBalances, network, feeSpeed, estima
 }
 
 function makeBundle(account, networkId, requests) {
-  requests.map(({ txn }) => console.log(txn[0], account.id))
-
   const bundle = new Bundle({
     network: networkId,
     identity: account.id,
-    txns: requests.map(({ txn }) => toBundleTxn(txn[0] || txn, account.id)),
+    txns: requests.map(({ txn }) => toBundleTxn(txn, account.id)),
     signer: account.signer
   })
   bundle.extraGas = requests.map(x => x.extraGas || 0).reduce((a, b) => a + b, 0)
