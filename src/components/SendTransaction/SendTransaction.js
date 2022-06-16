@@ -27,7 +27,7 @@ import { toBundleTxn } from 'lib/requestToBundleTxn'
 import { getProvider } from 'lib/provider'
 import { MdInfo } from 'react-icons/md'
 import { useCallback } from 'react'
-import { ToolTip, Checkbox, Button, Loading } from 'components/common'
+import { ToolTip, Button, Loading } from 'components/common'
 
 const ERC20 = new Interface(require('adex-protocol-eth/abi/ERC20'))
 
