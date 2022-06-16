@@ -75,7 +75,7 @@ const ERC20Mapping = {
     return [`Send ${token(txn.to, amount)} from ${getName(from, network)} to ${getName(to, network)}`]
   },*/
   [iface.getSighash('permit(address owner, address spender, uint256 value, uint256 deadline, uint8 v, bytes32 r, bytes32 s)')]: (txn, network, { extended = false }) => {
-    const [ owner, approvedAddress, amount ] = iface.parseTransaction(txn).args
+    const [ , approvedAddress, amount ] = iface.parseTransaction(txn).args
     const name = getName(approvedAddress, network)
     const tokenName = getName(txn.to, network)
     if (amount.eq(0)) return !extended ? [`Revoke ${name} to use ${tokenName}`] : [[
@@ -110,7 +110,7 @@ const ERC20Mapping = {
     return [`Permit ${name} to use ${token(txn.to, amount)}`]
   },
   [iface.getSighash('permit(address holder, address spender, uint256 nonce, uint256 expiry, bool allowed, uint8 v, bytes32 r, bytes32 s)')]: (txn, network, { extended = false }) => {
-    const [ owner, approvedAddress, nonce, expiry, allowed ] = iface.parseTransaction(txn).args
+    const [ , approvedAddress, , , allowed ] = iface.parseTransaction(txn).args
     const name = getName(approvedAddress, network)
     const tokenName = getName(txn.to, network)
 
