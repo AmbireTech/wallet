@@ -51,7 +51,7 @@ const getDefaultFeeToken = (remainingFeeTokenBalances, network, feeSpeed, estima
     || ((b?.discount || 0) - (a?.discount || 0))
     || a?.symbol.toUpperCase().localeCompare(b?.symbol.toUpperCase())
   )
-  .find(token => isTokenEligible(token, feeSpeed, estimation, currentAccGasTankState))
+  .find(token => isTokenEligible(token, feeSpeed, estimation, currentAccGasTankState, network))
   || remainingFeeTokenBalances[0]
 }
 
@@ -188,17 +188,17 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, network, account,
           }
         })
         if (currentAccGasTankState.isEnabled) estimation.remainingFeeTokenBalances = gasTankTokens
-        estimation.selectedFeeToken = getDefaultFeeToken(estimation.remainingFeeTokenBalances, network, feeSpeed, estimation, currentAccGasTankState.isEnabled)
+        estimation.selectedFeeToken = getDefaultFeeToken(estimation.remainingFeeTokenBalances, network, feeSpeed, estimation, currentAccGasTankState.isEnabled, network)
         setEstimation(prevEstimation => {
           if (prevEstimation && prevEstimation.customFee) return prevEstimation
           if (estimation.remainingFeeTokenBalances) {
             // If there's no eligible token, set it to the first one cause it looks more user friendly (it's the preferred one, usually a stablecoin)
             estimation.selectedFeeToken = (
                 prevEstimation
-                && isTokenEligible(prevEstimation.selectedFeeToken, feeSpeed, estimation, currentAccGasTankState.isEnabled)
+                && isTokenEligible(prevEstimation.selectedFeeToken, feeSpeed, estimation, currentAccGasTankState.isEnabled, network)
                 && prevEstimation.selectedFeeToken
               )
-              || getDefaultFeeToken(estimation.remainingFeeTokenBalances, network, feeSpeed, estimation, currentAccGasTankState.isEnabled)
+              || getDefaultFeeToken(estimation.remainingFeeTokenBalances, network, feeSpeed, estimation, currentAccGasTankState.isEnabled, network)
           }
           return estimation
         })
@@ -239,7 +239,7 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, network, account,
       // Also it can be stable but not in USD
       feeInFeeToken,
       addedGas
-    } = getFeesData(feeToken, estimation, feeSpeed, currentAccGasTankState.isEnabled)
+    } = getFeesData(feeToken, estimation, feeSpeed, currentAccGasTankState.isEnabled, network)
     const feeTxn = feeToken.symbol === network.nativeAssetSymbol
       // TODO: check native decimals
       ? [accountPresets.feeCollector, toHexAmount(feeInNative, 18), '0x']
@@ -258,7 +258,7 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, network, account,
       else gasLimit = estimation.gasLimit
 
       let value
-      if (feeToken.address === "0x0000000000000000000000000000000000000000") value = estimation.feeInNative[feeSpeed]
+      if (feeToken.address === "0x0000000000000000000000000000000000000000") value = feeInNative
       else {
         const fToken = estimation.remainingFeeTokenBalances.find(i => i.id === feeToken.id)
         value = fToken && estimation.feeInNative[feeSpeed] * fToken.nativeRate
@@ -283,7 +283,7 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, network, account,
       gasLimit: estimation.gasLimit + addedGas + (bundle.extraGas || 0),
       nonce: bundle.nonce || ((replaceTx && pendingBundle) ? nextNonMinedNonce : nextFreeNonce)
     })
-  }, [relayerURL, estimation, feeSpeed, network.nativeAssetSymbol, currentAccGasTankState.isEnabled, bundle, replaceTx])
+  }, [relayerURL, estimation, feeSpeed, currentAccGasTankState.isEnabled, network, bundle, replaceTx])
 
   const approveTxnImpl = async () => {
     if (!estimation) throw new Error('no estimation: should never happen')
@@ -545,6 +545,8 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, network, account,
                     cancelSigning={() => setSigningStatus(null)}
                     signingStatus={signingStatus}
                     feeSpeed={feeSpeed}
+                    isGasTankEnabled={currentAccGasTankState.isEnabled}
+                    network={network}
                   />
                 </div>
             }

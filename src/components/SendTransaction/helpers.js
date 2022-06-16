@@ -5,10 +5,10 @@
 const ADDED_GAS_TOKEN = 30000
 const ADDED_GAS_NATIVE = 12000
 
-export function isTokenEligible(token, speed, estimation, isGasTankEnabled) {
+export function isTokenEligible(token, speed, estimation, isGasTankEnabled, network) {
   if (estimation?.relayerless && token?.address === '0x0000000000000000000000000000000000000000') return true
   if (!token) return false
-  const { feeInFeeToken } = getFeesData(token, estimation, speed, isGasTankEnabled)
+  const { feeInFeeToken } = getFeesData(token, estimation, speed, isGasTankEnabled, network)
   const balanceInFeeToken = (parseInt(token.balance) / Math.pow(10, token.decimals))
   return balanceInFeeToken > feeInFeeToken
 }
@@ -67,19 +67,23 @@ export function getDiscountApplied(amnt, discount = 0) {
 }
 
 // Returns feeToken data with all multipliers applied
-export function getFeesData(feeToken, estimation, speed, isGasTankEnabled) {
+export function getFeesData(feeToken, estimation, speed, isGasTankEnabled, network) {
   const { addedGas, multiplier } = getFeePaymentConsequences(feeToken, estimation, isGasTankEnabled)
   const savedGas = getAddedGas(feeToken)
   const discountMultiplier = 1 - (feeToken?.discount || 0)
   const totalMultiplier = multiplier * discountMultiplier
   const nativeRate = feeToken?.nativeRate || 1
-
+  const isCrossChainNativeSelected = isGasTankEnabled && feeToken.address === '0x0000000000000000000000000000000000000000' && (network.id !== feeToken.network)
   const feeInNative = estimation.customFee
     ? ((estimation.customFee * discountMultiplier) / nativeRate)
-    : estimation.feeInNative[speed] * totalMultiplier
-
-  const feeInUSD = !isNaN(estimation.nativeAssetPriceInUSD) ? feeInNative * estimation.nativeAssetPriceInUSD : undefined
-
+    : !isCrossChainNativeSelected ? 
+        estimation.feeInNative[speed] * totalMultiplier : 
+        (((estimation.feeInNative[speed] * totalMultiplier) / nativeRate) * estimation.nativeAssetPriceInUSD) / feeToken.price
+  const feeInUSD = !isNaN(estimation.nativeAssetPriceInUSD) ? 
+    !isCrossChainNativeSelected ? 
+      feeInNative * estimation.nativeAssetPriceInUSD : 
+      feeInNative * feeToken.price : 
+    undefined
   const feeInFeeToken = feeInNative * nativeRate
 
   return {
@@ -87,6 +91,6 @@ export function getFeesData(feeToken, estimation, speed, isGasTankEnabled) {
     feeInUSD,
     feeInFeeToken,
     addedGas, // use it bundle data
-    savedGas
+    savedGas,
   }
 }

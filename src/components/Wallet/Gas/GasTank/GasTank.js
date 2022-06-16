@@ -182,7 +182,7 @@ const GasTank = ({ network,
                 </div>
             </div>
             <div>
-                <p>The Ambire Gas Tank is your special account for paying gas and saving on gas fees. By filling up your Gas Tank, you are setting aside, or prepaying for network fees. You can add more tokens to your Gas Tank at any time, and you can also withdraw from it.</p>
+                <p>The Ambire Gas Tank is your special account for paying gas and saving on gas fees. By filling up your Gas Tank, you are setting aside, or prepaying for network fees. You can add more tokens to your Gas Tank at any time.</p>
                 <p>Please note that only the tokens listed below are eligible for filling up your gas tank.</p>
             </div>
             <div className="sort-holder">
@@ -233,7 +233,7 @@ const GasTank = ({ network,
             <div className="txns-wrapper">
                 {
                     gasTankTxns && gasTankTxns.length ? gasTankTxns.map((item, key) => {
-                        const feeTokenDetails = !data ? {} : data.find(i => i.id === item.gasTank.assetId)
+                        const feeTokenDetails = !data ? data.find(i => i.id === item.gasTank.assetId) : null
                         const savedGas = getAddedGas(feeTokenDetails)
                         
                         return (<div key={key} className="txns-item-wrapper">
@@ -241,7 +241,7 @@ const GasTank = ({ network,
                             <span>{ item.submittedAt && toLocaleDateTime(new Date(item.submittedAt)).toString() }</span>
                             <span>Gas payed: $ { (item.feeInUSDPerGas * item.gasLimit).toFixed(6) }</span>
                             <span>Saved: $ {(item.feeInUSDPerGas * savedGas).toFixed(6)}</span>
-                            <span>Cashback: $ { item.gasTank.cashback ? (formatUnits(item.gasTank.cashback.toString(), feeTokenDetails.decimals) * feeTokenDetails?.price).toFixed(6) : '0.00' }</span>
+                            <span>Cashback: $ { item.gasTank.cashback && feeTokenDetails ? (formatUnits(item.gasTank.cashback.toString(), feeTokenDetails.decimals) * feeTokenDetails?.price).toFixed(6) : '0.00' }</span>
                                 <a
                                     href={network.explorerUrl + '/tx/'+ item.txId}
                                     target='_blank'
