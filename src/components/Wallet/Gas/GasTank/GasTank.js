@@ -233,7 +233,7 @@ const GasTank = ({ network,
             <div className="txns-wrapper">
                 {
                     gasTankTxns && gasTankTxns.length ? gasTankTxns.map((item, key) => {
-                        const feeTokenDetails = !data ? data.find(i => i.id === item.gasTank.assetId) : null
+                        const feeTokenDetails = data && data.length ? data.find(i => i.id === item.gasTank.assetId) : null
                         const savedGas = getAddedGas(feeTokenDetails)
                         
                         return (<div key={key} className="txns-item-wrapper">
