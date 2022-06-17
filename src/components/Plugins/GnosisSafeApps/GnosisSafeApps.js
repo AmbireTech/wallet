@@ -34,13 +34,20 @@ const dapps = [{
   logo: 'https://apy.plasma.finance/logo.svg',
   desc: 'Cross-chain DeFi & DEX aggregator, farming, asset management, fiat on-ramp'
 },
-{
-  id: 'mew',
-  name: 'MEW',
-  url: 'https://www.myetherwallet.com/wallet/sign',
-  logo: 'https://www.myetherwallet.com/wallet/sign/logo.svg',
-  desc: 'MEW as dapp'
-},
+  {
+    id: 'mew',
+    name: 'MEW',
+    url: 'https://www.myetherwallet.com/wallet/sign',
+    logo: 'https://www.myetherwallet.com/wallet/sign/logo.svg',
+    desc: 'MEW as dapp'
+  },
+  {
+    id: 'opensea',
+    name: 'Opensea',
+    url: 'https://opensea-temp.ambire.com/staging/',
+    logo: 'https://opensea.io/static/images/logos/opensea.svg',
+    desc: 'Opensea NFT Marketplace'
+  },
 ]
 
 export default function GnosisSafeApps({

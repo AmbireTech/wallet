@@ -30,8 +30,10 @@ const DApps = ({ connections, connect, disconnect, isWcConnecting }) => {
 
     const isLegacyWC = ({ bridge }) => /https:\/\/bridge.walletconnect.org/g.test(bridge)
 
+    const wcTitle = (<div className='ddWcTitle'><img src='/resources/walletconnect.svg' alt='wc-logo'/>WalletConnect</div>)
+
     return (
-        <DropDown id="dApps" title="dApps" badge={connections.length} onOpen={() => checkPermission()} isLoading={isClipboardGranted && isWcConnecting}>
+        <DropDown id="dApps" title={wcTitle} badge={connections.length} onOpen={() => checkPermission()} isLoading={isClipboardGranted && isWcConnecting}>
             <div id="connect-dapp">
                 <div className="heading">
                     <Button small icon={<BiTransferAlt />} disabled={isClipboardGranted} onClick={readClipboard}>
