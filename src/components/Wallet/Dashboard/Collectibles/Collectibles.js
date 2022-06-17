@@ -30,6 +30,7 @@ const Collectibles = ({ portfolio, isPrivateMode }) => {
     useEffect(() => setPage(defaultPage), [defaultPage])
     
     const handleUri = uri => {
+        if (!uri) return ''
         uri = uri.startsWith('data:application/json') ? uri.replace('data:application/json;utf8,', '') : uri
 
         if (uri.split('/')[0] === 'data:image') return uri

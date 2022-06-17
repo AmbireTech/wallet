@@ -150,7 +150,7 @@ export default function useGnosisSafe({selectedAccount, network, verbose = 0, us
         })
       } 
       else {
-        throw new Error("method not supported " + method)
+        throw new Error('Method not found: ' + method)
       }
       return result
     })
