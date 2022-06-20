@@ -101,18 +101,15 @@ const useTesseract = ({ tokens, provider, networkId, currentNetwork }) => {
     const onTokenSelect = useCallback(address => {
         const selectedToken = tokensItems.find(t => t.tokenAddress === address)
         if (selectedToken) setDetails([
-            // [
-            //     <>
-            //         <ToolTip label="Annual Percentage Yield">
-            //             <div>APY&nbsp;<MdInfo/></div>
-            //         </ToolTip>
-            //     </>,
-            //     `${selectedToken.apy}%`
-            // ],
-            // ['Lock', 'No Lock'],
-            // ['Type', 'Variable Rate'],
-            ['!!! ATTENTION !!!'],
-            ['Tesseract is no longer available for  deposits']
+            <div className='warning-msg'>
+                Tesseract is closing. You will still be able to withdraw your funds indefinitely, but there will be no more earning strategies.&nbsp;
+                <a 
+                    href='https://medium.com/@tesseract_fi/the-omega-of-tesseract-finance-36d6a75d7310' 
+                    target="_blank"
+                    rel="noreferrer noopener">
+                    Learn more.
+               </a>
+            </div>
         ])
     }, [tokensItems])
 
