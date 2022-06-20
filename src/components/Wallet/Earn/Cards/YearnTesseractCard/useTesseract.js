@@ -3,8 +3,8 @@ import { Contract } from 'ethers'
 import ERC20ABI from 'adex-protocol-eth/abi/ERC20.json'
 import TesseractVaultABI from 'consts/YearnTesseractVaultABI'
 import { useToasts } from 'hooks/toasts'
-import { MdInfo } from "react-icons/md"
-import { ToolTip } from "components/common"
+// import { MdInfo } from "react-icons/md"
+// import { ToolTip } from "components/common"
 
 import TESSERACT_ICON from 'resources/tesseract.svg'
 
@@ -101,16 +101,18 @@ const useTesseract = ({ tokens, provider, networkId, currentNetwork }) => {
     const onTokenSelect = useCallback(address => {
         const selectedToken = tokensItems.find(t => t.tokenAddress === address)
         if (selectedToken) setDetails([
-            [
-                <>
-                    <ToolTip label="Annual Percentage Yield">
-                        <div>APY&nbsp;<MdInfo/></div>
-                    </ToolTip>
-                </>,
-                `${selectedToken.apy}%`
-            ],
-            ['Lock', 'No Lock'],
-            ['Type', 'Variable Rate'],
+            // [
+            //     <>
+            //         <ToolTip label="Annual Percentage Yield">
+            //             <div>APY&nbsp;<MdInfo/></div>
+            //         </ToolTip>
+            //     </>,
+            //     `${selectedToken.apy}%`
+            // ],
+            // ['Lock', 'No Lock'],
+            // ['Type', 'Variable Rate'],
+            ['!!! ATTENTION !!!'],
+            ['Tesseract is no longer available for  deposits']
         ])
     }, [tokensItems])
 

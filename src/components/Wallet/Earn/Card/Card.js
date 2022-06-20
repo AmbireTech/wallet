@@ -9,7 +9,7 @@ import { MdOutlineInfo } from 'react-icons/md'
 
 const segments = [{ value: 'Deposit' }, { value: 'Withdraw' }]
 
-const Card = ({ loading, unavailable, tokensItems, icon, details, customInfo, onTokenSelect, onValidate, moreDetails }) => {    
+const Card = ({ loading, unavailable, tokensItems, icon, details, customInfo, onTokenSelect, onValidate, moreDetails, isDepositsDisabled = false }) => {
     const [segment, setSegment] = useState(segments[0].value)
     const [tokens, setTokens] = useState([])
     const [token, setToken] = useState()
@@ -114,7 +114,7 @@ const Card = ({ loading, unavailable, tokensItems, icon, details, customInfo, on
                                         />
                                         <div className="separator"></div>
                                         <Button 
-                                            disabled={disabled || amount === '' || parseFloat(amount) <= 0 || parseFloat(amount) > currentToken?.balance}
+                                            disabled={disabled || amount === '' || parseFloat(amount) <= 0 || parseFloat(amount) > currentToken?.balance || isDepositsDisabled}
                                             icon={segment === segments[0].value ? <BsArrowDownSquare/> : <BsArrowUpSquare/>}
                                             onClick={() => onValidate(segment, token, amount, isMaxAmount())}>
                                                 { segment }
