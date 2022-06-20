@@ -80,19 +80,22 @@ const Card = ({ loading, unavailable, tokensItems, icon, details, customInfo, on
                             />
                             {
                                 !disabled ?
-                                    <ul className="details">
-                                        {
-                                            details.map(([type, value]) => (
-                                                <li key={type}><b>{type}</b> {value}</li>
-                                            ))
-                                        }
-                                    </ul>
-                                    :
-                                    <div className="details-placeholder">
-                                        <div/>
-                                        <div/>
-                                        <div/>
-                                    </div>
+                                   (details.length > 1) ? 
+                                        (<ul className="details">
+                                            {
+                                                details.map(([type, value]) => (
+                                                    <li key={type}><b>{type}</b> {value}</li>
+                                                ))
+                                            }
+                                        </ul>) 
+                                        :
+                                        <>{details[0]}</>
+                                :
+                                <div className="details-placeholder">
+                                    <div/>
+                                    <div/>
+                                    <div/>
+                                </div>
                             }
                             <Segments small defaultValue={segment} segments={segments} onChange={(value) => setSegment(value)}></Segments>
                             {
