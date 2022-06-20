@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react"
+import { useEffect, useState, useCallback } from "react"
 import useDynamicModal from "hooks/useDynamicModals";
 import { Button, ToolTip } from "components/common";
-import { WalletTokenModal } from "components/Modals";
+import { WalletTokenModal, CongratsRewardsModal } from "components/Modals";
 import useClaimableWalletToken from "./useClaimableWalletToken";
 
 const WalletTokenButton = ({ rewardsData, account = {}, network, hidePrivateValue, addRequest }) => {
@@ -17,9 +17,18 @@ const WalletTokenButton = ({ rewardsData, account = {}, network, hidePrivateValu
         : '...'
     const [rewards, setRewards] = useState({})
     const { isLoading, data, errMsg } = rewardsData
-    
+    const [isShown, setIsShown] = useState(false)
     const showWalletTokenModal = useDynamicModal(WalletTokenModal, { claimableWalletToken, accountId: account.id }, { rewards })
-
+    const handleCongratsRewardsModal = useDynamicModal(CongratsRewardsModal)
+    const showCongratsRewardsModal = useCallback(() => {
+        if (pendingTokensTotal === '...' && !isShown) {
+            setIsShown(true)
+            handleCongratsRewardsModal()
+        }
+        
+    }, [isShown, pendingTokensTotal, handleCongratsRewardsModal])
+    
+    useEffect(() =>  showCongratsRewardsModal(), [showCongratsRewardsModal])
     useEffect(() => {
         if (errMsg || !data || !data.success) return
 
