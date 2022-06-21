@@ -147,7 +147,7 @@ const CrossChain = ({ addRequest, selectedAccount, portfolio, network, relayerUR
             if (!portfolioToken) return
             const { decimals } = portfolioToken
             const flatAmount = parseUnits(amount, decimals).toString()
-            const quotes = await fetchQuotes(fromToken, fromChain, toToken, toChain, flatAmount, ['hyphen', 'anyswap-router-v4', 'celer'])
+            const quotes = await fetchQuotes(fromToken, fromChain, toToken, toChain, flatAmount, ['hyphen', 'celer']) //'anyswap-router-v4'
             setQuotes(quotes)
         } catch(e) {
             console.error(e);
@@ -202,7 +202,7 @@ const CrossChain = ({ addRequest, selectedAccount, portfolio, network, relayerUR
                 <div className="title">
                     Cross-chain transfers/swaps
                     <div id="powered">
-                        Powered by Movr
+                        Powered by Socket
                     </div>
                 </div>
                 {

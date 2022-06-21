@@ -53,12 +53,15 @@ export default function SignMessage ({ toSign, resolve, account, connections, re
   if (!toSign || !account) return (<></>)
 
   let dataV4
-  if (toSign.type === 'eth_signTypedData_v4') {
+  const isTypedData = ['eth_signTypedData_v4', 'eth_signTypedData'].indexOf(toSign.type) !== -1
+  if (isTypedData) {
     dataV4 = toSign.txn
     let typeDataErr
-
     if (isObject(dataV4)) {
       try {
+        if (dataV4.types.EIP712Domain) { // Avoids failure in case some dapps explicitly add this (redundant) prop
+          delete dataV4.types.EIP712Domain
+        }
         _TypedDataEncoder.hash(dataV4.domain, dataV4.types, dataV4.message)
       } catch {
         typeDataErr = '.txn has Invalid TypedData object. Should be {domain, types, message}'
@@ -68,7 +71,7 @@ export default function SignMessage ({ toSign, resolve, account, connections, re
     }
 
     if (typeDataErr) return (<div id='signMessage'>
-      <h3 className='error'>Invalid signing request: {{ typeDataErr }}</h3>
+      <h3 className='error'>Invalid signing request: { typeDataErr }</h3>
       <Button className='reject' onClick={() => resolve({ message: 'signature denied' })}>Reject</Button>
     </div>)
   }
@@ -88,17 +91,17 @@ export default function SignMessage ({ toSign, resolve, account, connections, re
     verifyMessage({
       provider,
       signer: account.id,
-      message: toSign.type === 'eth_signTypedData_v4' ? null : getMessageAsBytes(toSign.txn),
-      typedData: toSign.type === 'eth_signTypedData_v4' ? dataV4 : null,
+      message: isTypedData ? null : getMessageAsBytes(toSign.txn),
+      typedData: isTypedData ? dataV4 : null,
       signature: sig
     }).then(verificationResult => {
       if (verificationResult) {
-        addToast('SIGNATURE VALID')
+        addToast(toSign.type + ' SIGNATURE VALID')
       } else {
-        addToast('SIGNATURE INVALID', { error: true })
+        addToast(toSign.type + ' SIGNATURE INVALID', { error: true })
       }
     }).catch(e => {
-      addToast('SIGNATURE INVALID: ' + e.message, { error: true })
+      addToast(toSign.type + ' SIGNATURE INVALID: ' + e.message, { error: true })
     })
   }
 
@@ -114,10 +117,9 @@ export default function SignMessage ({ toSign, resolve, account, connections, re
     setLoading(true)
     try {
 
-      const isTypedData = toSign.type === 'eth_signTypedData_v4'
-
       const { signature, success, message, confCodeRequired } = await fetchPost(
         // network doesn't matter when signing
+        // if it does tho, we can use ${network.id}
         `${relayerURL}/second-key/${account.id}/ethereum/sign${isTypedData ? '?typedData=true' : ''}`, {
           toSign: toSign.txn,
           code: confirmationCode
@@ -145,9 +147,10 @@ export default function SignMessage ({ toSign, resolve, account, connections, re
       if (!account.primaryKeyBackup) throw new Error(`No key backup found: you need to import the account from JSON or login again.`)
       const wallet = await Wallet.fromEncryptedJson(JSON.parse(account.primaryKeyBackup), signingState.passphrase)
 
-      const sig = isTypedData
-        ? await signMessage712(wallet, account.id, account.signer, dataV4.domain, dataV4.types, dataV4.message, signature)
-        : await signMessage(wallet, account.id, account.signer, getMessageAsBytes(toSign.txn), signature)
+      const sig = await (isTypedData
+        ? signMessage712(wallet, account.id, account.signer, dataV4.domain, dataV4.types, dataV4.message, signature)
+        : signMessage(wallet, account.id, account.signer, getMessageAsBytes(toSign.txn), signature)
+      )
 
       if (SIGNATURE_VERIFIER_DEBUGGER) {
         verifySignatureDebug(toSign, sig)
@@ -178,9 +181,10 @@ export default function SignMessage ({ toSign, resolve, account, connections, re
       // Unfortunately that isn't possible, because isValidSignature only takes a bytes32 hash; so to sign this with
       // a personal message, we need to be signing the hash itself as binary data such that we match 'Ethereum signed message:\n32<hash binary data>' on the contract
 
-      const sig = toSign.type === 'eth_signTypedData_v4'
-        ? await signMessage712(wallet, account.id, account.signer, dataV4.domain, dataV4.types, dataV4.message)
-        : await signMessage(wallet, account.id, account.signer, getMessageAsBytes(toSign.txn))
+      const sig = await ((toSign.type === 'eth_signTypedData_v4' || toSign.type === 'eth_signTypedData')
+        ? signMessage712(wallet, account.id, account.signer, dataV4.domain, dataV4.types, dataV4.message)
+        : signMessage(wallet, account.id, account.signer, getMessageAsBytes(toSign.txn))
+      )
 
       if (SIGNATURE_VERIFIER_DEBUGGER) {
         verifySignatureDebug(toSign, sig)
