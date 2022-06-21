@@ -267,7 +267,7 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, network, account,
       
       return new Bundle({
         ...bundle,
-        gasTank: {
+        gasTankFee: {
           assetId: feeToken.id,
           value: ethers.utils.parseUnits(value.toFixed(feeToken.decimals), feeToken.decimals).toString()
         },
@@ -280,7 +280,7 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, network, account,
     return new Bundle({
       ...bundle,
       txns: [...bundle.txns, feeTxn],
-      gasTank: null,
+      gasTankFee: null,
       gasLimit: estimation.gasLimit + addedGas + (bundle.extraGas || 0),
       nonce: bundle.nonce || ((replaceTx && pendingBundle) ? nextNonMinedNonce : nextFreeNonce)
     })
