@@ -240,7 +240,7 @@ function BundlePreview({ bundle, mined = false, feeAssets }) {
         )
       }
       {
-        bundle.gasTank && (feeTokenDetails !== null) && (
+        bundle.gasTankFee && (feeTokenDetails !== null) && (
         <>
           <li>
               <label><BsCoin/>Fee (Paid with Gas Tank)</label>
@@ -250,9 +250,9 @@ function BundlePreview({ bundle, mined = false, feeAssets }) {
               <label><MdOutlineSavings/>Saved</label>
               <p>${(bundle.feeInUSDPerGas * savedGas).toFixed(6)}</p>
           </li>)}
-          {!!bundle.gasTank.cashback && (<li>
+          {!!bundle.gasTankFee.cashback && (<li>
               <label><BsCashCoin/>Cashback</label>
-              <p>${(formatUnits(bundle.gasTank.cashback.toString(), feeTokenDetails?.decimals).toString() * feeTokenDetails?.price).toFixed(6)}</p>
+              <p>${(formatUnits(bundle.gasTankFee.cashback.toString(), feeTokenDetails?.decimals).toString() * feeTokenDetails?.price).toFixed(6)}</p>
           </li>)}
         </>) 
       }

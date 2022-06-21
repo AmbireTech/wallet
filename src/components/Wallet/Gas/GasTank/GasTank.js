@@ -44,7 +44,7 @@ const GasTank = ({ network,
     const feeAssetsRes = useRelayerData(urlGetFeeAssets)
     const feeAssetsPerNetwork = feeAssetsRes.data?.filter(item => item.network === network.id)
     const executedTxnsRes = useRelayerData(urlGetTransactions)
-    const gasTankTxns = executedTxnsRes && executedTxnsRes.data?.txns?.length && executedTxnsRes.data?.txns.filter(item => !!item.gasTank)
+    const gasTankTxns = executedTxnsRes && executedTxnsRes.data?.txns?.length && executedTxnsRes.data?.txns.filter(item => !!item.gasTankFee)
     const { isBalanceLoading, tokens } = portfolio
     const sortType = userSorting.tokens?.sortType || 'decreasing'
     const isMobileScreen = useCheckMobileScreen()
@@ -233,15 +233,14 @@ const GasTank = ({ network,
             <div className="txns-wrapper">
                 {
                     gasTankTxns && gasTankTxns.length ? gasTankTxns.map((item, key) => {
-                        const feeTokenDetails = data && data.length ? data.find(i => i.id === item.gasTank.assetId) : null
+                        const feeTokenDetails = data && data.length ? data.find(i => i.id === item.gasTankFee.assetId) : null
                         const savedGas = getAddedGas(feeTokenDetails)
-                        
                         return (<div key={key} className="txns-item-wrapper">
                             <span><BiTransferAlt /></span>
                             <span>{ item.submittedAt && toLocaleDateTime(new Date(item.submittedAt)).toString() }</span>
                             <span>Gas payed: $ { (item.feeInUSDPerGas * item.gasLimit).toFixed(6) }</span>
                             <span>Saved: $ {(item.feeInUSDPerGas * savedGas).toFixed(6)}</span>
-                            <span>Cashback: $ { item.gasTank.cashback && feeTokenDetails ? (formatUnits(item.gasTank.cashback.toString(), feeTokenDetails.decimals) * feeTokenDetails?.price).toFixed(6) : '0.00' }</span>
+                            <span>Cashback: $ { item.gasTankFee.cashback && feeTokenDetails ? (formatUnits(item.gasTankFee.cashback.toString(), feeTokenDetails.decimals) * feeTokenDetails?.price).toFixed(6) : '0.00' }</span>
                                 <a
                                     href={network.explorerUrl + '/tx/'+ item.txId}
                                     target='_blank'
