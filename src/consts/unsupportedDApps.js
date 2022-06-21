@@ -10,7 +10,6 @@ const unsupportedDApps = [
     'https://unstoppabledomains.com',
     'https://looksrare.org',
     'https://www.myetherwallet.com',
-    'https://snapshot.org',
     'https://collab.land',
     'https://app.epns.io'
 ]
