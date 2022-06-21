@@ -174,7 +174,7 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, network, account,
     // Note: currently, there's no point of getting the nonce if the bundle already has a nonce
     // We may want to change this if we make a check if the currently replaced txn was already mined
     const reestimate = () => (relayerURL
-        ? bundle.estimate({ relayerURL, fetch, replacing: !!bundle.minFeeInUSDPerGas, getNextNonce: isNaN(bundle.nonce) })
+        ? bundle.estimate({ relayerURL, fetch, replacing: !!bundle.minFeeInUSDPerGas, getNextNonce: isNaN(bundle.nonce), gasTank: currentAccGasTankState.isEnabled })
         : bundle.estimateNoRelayer({ provider: getProvider(network.id) })
     )
       .then((estimation) => {
