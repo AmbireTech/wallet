@@ -46,11 +46,9 @@ export default function SignMessage ({ toSign, resolve, account, connections, re
   const dApp = connection ? connection?.session?.peerMeta || null : null
 
   let typeDataErr
-  const isTypedData = ['eth_signTypedData_v4', 'eth_signTypedData'].indexOf(toSign.type) !== -1
-
   let dataV4
-
   let requestedChainId = toSign.chainId
+  const isTypedData = ['eth_signTypedData_v4', 'eth_signTypedData'].indexOf(toSign.type) !== -1
 
   if (isTypedData) {
     dataV4 = toSign.txn
