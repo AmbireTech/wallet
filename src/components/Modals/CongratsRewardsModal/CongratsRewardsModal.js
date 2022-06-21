@@ -6,6 +6,7 @@ import { useModals } from 'hooks'
 import { useEffect } from 'react'
 // import Particles from "react-tsparticles"
 // import { loadFull } from "tsparticles"
+import Confetti from 'react-confetti'
 
 const CongratsRewardsModal = () => {
     const { hideModal } = useModals()
@@ -29,10 +30,16 @@ const CongratsRewardsModal = () => {
         <Button clear icon={<MdOutlineClose/>}>Close</Button>
     </>
     return (
+        <>
         <Modal id="congrats-rewards-modal" title="CONGRATS" buttons={modalButtons}>
             <h1>CONGRATS</h1>
-            {/* <Particles id="tsparticles" url="http://foo.bar/particles.json" init={particlesInit} loaded={particlesLoaded} /> */}
         </Modal>
+        <Confetti
+                width={window.screen.width}
+                height={window.screen.height}
+            />
+        </>
+        
     )
 }
 
