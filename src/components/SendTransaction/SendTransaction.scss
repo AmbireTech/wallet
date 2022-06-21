@@ -267,6 +267,59 @@ $titleBar-height: 90px;
             }
         }
     }
+
+    .replaceInfo {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 16px;
+
+        &.info {
+            background-color: mix($panel-background-color, $info-color, 90%);
+            color: $info-color;
+        }
+
+        &.warning {
+            background-color: mix($panel-background-color, $warning-color, 90%);
+            color: $warning-color;
+        }
+
+        margin-bottom: 16px;
+    }
+
+    #actions-container-replace {
+        .buttons {
+            display: flex;
+            flex-direction: row;
+            gap: 1.5em;
+            flex-wrap: wrap;
+
+            .buttonComponent {
+                height: 75px;
+                // flex: 0 1 50%;
+                flex-grow: 1;
+
+                &.danger {
+                    color: white;
+
+                    .icon-button {
+                        svg {
+                            color: white;
+                        }
+                    }
+                }
+
+                &.approveTxn {
+                    // flex: 1 0 auto;
+
+                    .loading {
+                        width: auto;
+                    }
+                }
+            }
+        }
+    }
+
 }
 
 // Wide
