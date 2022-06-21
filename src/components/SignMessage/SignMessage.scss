@@ -31,18 +31,57 @@ $max-width: 650px;
     .content {
       flex-wrap: wrap;
     }
+
+    .signMessageTitle {
+      display: flex;
+      align-items: baseline;
+
+      .signMessageTitle-title {
+        flex-grow: 1;
+      }
+      .signMessageTitle-signatureType {
+        display: flex;
+        align-items: center;
+        background-color: $input-background-color;
+        padding: 2px 8px;
+        color: $text-container-color;
+        font-weight: 300;
+        font-size: 16px;
+
+        span {
+          margin-left: 4px;
+        }
+      }
+    }
   }
+
 
   #signingAccount {
     .content {
       display: flex;
       flex-direction: row;
-      align-items: center;
       justify-content: flex-start;
-      gap: 10px;
       font-family: 'monospace';
       font-size: 15px;
       font-weight: bold;
+
+      .signingAccount-account {
+        display: flex;
+        gap: 10px;
+        flex-grow: 1;
+        align-items: center;
+      }
+
+      .signingAccount-network {
+        display: flex;
+        gap: 10px;
+        justify-content: right;
+        align-items: center;
+
+        .icon {
+          background-size: contain;
+        }
+      }
 
       .icon {
         height: 20px;
@@ -132,12 +171,12 @@ $max-width: 650px;
             }
           }
         }
-      }
 
-      .icon {
-        position: absolute;
-        top: 20px;
-        left: 20px;
+        .icon {
+          position: absolute;
+          top: 20px;
+          left: 20px;
+        }
       }
     }
   }
