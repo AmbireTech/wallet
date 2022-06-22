@@ -5,7 +5,6 @@ import networks from 'consts/networks'
 import humanizers from './humanizers'
 import accountPresets from 'consts/accountPresets'
 
-const GAS_TANK = 'Gas Tank'
 // address (lowercase) => name
 const knownAliases = {}
 // address (lowercase) => [symbol, decimals]
@@ -85,7 +84,6 @@ export function getName(addr, network) {
         || (tokens[address] ? tokens[address][0] + ' token' : null) 
         || knownAliases[address] 
         || knownUDomains[address] 
-        || (address === accountPresets.feeCollector.toLowerCase() ? GAS_TANK : null)
         || addr
 }
 
