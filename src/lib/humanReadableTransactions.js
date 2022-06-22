@@ -3,7 +3,6 @@ import { constants } from 'ethers'
 import { names, tokens } from 'consts/humanizerInfo'
 import networks from 'consts/networks'
 import humanizers from './humanizers'
-import accountPresets from 'consts/accountPresets'
 
 // address (lowercase) => name
 const knownAliases = {}
