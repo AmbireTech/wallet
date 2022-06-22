@@ -378,7 +378,7 @@ function SendTransactionWithBundle({ bundle, replacementBundle, network, account
   // Allow actions either on regular tx or replacement/speed tx, when not mined
   const canProceed = !!replacementBundle
     ? (
-      estimation?.nextNonce?.nextNonMinedNonce
+      !isNaN(estimation?.nextNonce?.nextNonMinedNonce)
         ? bundle.nonce >= estimation?.nextNonce?.nextNonMinedNonce
         : null // null = waiting to get nonce data from relayer
     )
@@ -485,7 +485,9 @@ function SendTransactionWithBundle({ bundle, replacementBundle, network, account
 
               {
                 canProceed === null &&
-                <Loading />
+                <div>
+                  <Loading />
+                </div>
               }
 
               {
