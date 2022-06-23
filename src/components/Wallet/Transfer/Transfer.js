@@ -116,6 +116,13 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
                         address: uDAddress
                     }
                 }
+            } else if (ensAddress) {
+                req.meta = {
+                    addressLabel: {
+                        addressLabel: address,
+                        address: ensAddress
+                    }
+                }
             }
 
             addRequest(req)
@@ -169,7 +176,7 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
                 timer.current = null
                 const isUDAddress = UDAddress ? true : false
                 const isEnsAddress = ensAddress ? true : false
-                var selectedAddress = ''
+                let selectedAddress = ''
                 if (isEnsAddress) selectedAddress = ensAddress
                 else if (isUDAddress) selectedAddress = UDAddress
                 else selectedAddress = address

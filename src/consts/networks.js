@@ -12,6 +12,7 @@ const networks = [
 		explorerUrl: 'https://etherscan.io',
 		unstoppableDomainsChain: 'ERC20'
 	},
+	//TODO: To remove the code bellow 
 	{
 		id: 'homestead',
 		chainId: 1,
