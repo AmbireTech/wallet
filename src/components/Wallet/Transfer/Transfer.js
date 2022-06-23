@@ -170,16 +170,11 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
                 const isUDAddress = UDAddress ? true : false
                 const isEnsAddress = ensAddress ? true : false
                 var selectedAddress = ''
-                if (isEnsAddress) {
-                    selectedAddress = ensAddress
-                }
-                else if (isUDAddress) {
-                    selectedAddress = UDAddress
-                }
-                else {
-                    selectedAddress = address
-                }
-                const isValidRecipientAddress = validateSendTransferAddress(selectedAddress, selectedAcc, addressConfirmed, isKnownAddress, isUDAddress)
+                if (isEnsAddress) selectedAddress = ensAddress
+                else if (isUDAddress) selectedAddress = UDAddress
+                else selectedAddress = address
+
+                const isValidRecipientAddress = validateSendTransferAddress(selectedAddress, selectedAcc, addressConfirmed, isKnownAddress, isUDAddress, isEnsAddress)
 
                 setUDAddress(UDAddress)
                 setEnsAddress(ensAddress)
@@ -236,6 +231,9 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
                                         value={address}
                                         onInput={setAddress}
                                     />
+                                    <ToolTip label={!ensAddress ? 'You can use Ethereum Name ServiceⓇ' : 'Valid Ethereum Name ServicesⓇ domain'}>
+                                        <div id="ens-logo" className={ensAddress ? 'ens-logo-active ' : ''} />
+                                    </ToolTip>
                                     <ToolTip label={!uDAddress ? 'You can use Unstoppable domainsⓇ' : 'Valid Unstoppable domainsⓇ domain'}>
                                         <div id="udomains-logo" className={uDAddress ? 'ud-logo-active ' : ''} />
                                     </ToolTip>
