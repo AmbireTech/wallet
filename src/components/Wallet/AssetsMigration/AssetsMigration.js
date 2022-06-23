@@ -132,6 +132,7 @@ const AssetsMigration = ({ addRequest, selectedAccount, accounts, network, hideM
             hasERC20Tokens={hasERC20Tokens}
             setModalButtons={setModalButtons}
             setSelectedTokensWithAllowance={setSelectedTokensWithAllowance}
+            selectedTokensWithAllowance={selectedTokensWithAllowance}
             setBeforeCloseModalHandler={setBeforeCloseModalHandler}
             gasSpeed={gasSpeed}
           />
