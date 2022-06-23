@@ -3,40 +3,34 @@ import './CongratsRewardsModal.scss'
 import { Button, Modal } from 'components/common'
 import { MdOutlineClose } from 'react-icons/md'
 import { useModals } from 'hooks'
-import { useEffect } from 'react'
-// import Particles from "react-tsparticles"
-// import { loadFull } from "tsparticles"
 import Confetti from 'react-confetti'
 
 const CongratsRewardsModal = () => {
     const { hideModal } = useModals()
-
-
-    // const particlesInit = async (main) => {
-    //     console.log(main)
+    const drawing = new Image()
+    drawing.src = "https://raw.githubusercontent.com/AmbireTech/ambire-brand/main/logos/Ambire_logo_250x250.png"
     
-    //     // you can initialize the tsParticles instance (main) here, adding custom shapes or presets
-    //     // this loads the tsparticles package bundle, it's the easiest method for getting everything ready
-    //     // starting from v2 you can add only the features you need reducing the bundle size
-    //     await loadFull()
-    //   };
-    
-    //   const particlesLoaded = (container) => {
-    //     console.log(container)
-    //   };
-    
-
     const modalButtons = <>
-        <Button clear icon={<MdOutlineClose/>}>Close</Button>
+        <Button clear icon={<MdOutlineClose/>} onClick={hideModal}>Close</Button>
     </>
     return (
         <>
-        <Modal id="congrats-rewards-modal" title="CONGRATS" buttons={modalButtons}>
-            <h1>CONGRATS</h1>
-        </Modal>
-        <Confetti
-                width={window.screen.width}
-                height={window.screen.height}
+            <Modal id="congrats-rewards-modal" title="Woo-hoo!" buttons={modalButtons}>
+                <div className='heading'>
+                    <div className='title'>You just received X $WALLET!</div>
+                </div>
+                <div className='content'>
+                    <p>You have a balance of $1,000 or more in your Ambire wallet - this means you are eligible to earn WALLET rewards!
+                    The bigger your account balance, the more rewards you earn, and you can claim them every Monday.</p>
+                    <a href='https://blog.ambire.com/tagged/wallet-rewards' target='_blank' rel='noreferrer'>Learn more about WALLET rewards</a>   
+                </div>
+            </Modal>
+            <Confetti
+                    drawShape={ctx => ctx.drawImage(drawing, 0, 0, 30, 30)}
+                    width={window.screen.width}
+                    height={window.screen.height}
+                    // numberOfPieces={1000}
+                    gravity={0.03}
             />
         </>
         
