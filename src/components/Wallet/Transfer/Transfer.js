@@ -218,7 +218,7 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
                         :
                         assetsItems.length ?
                             <div className="form">
-                                <Select searchable defaultValue={asset} items={assetsItems} onChange={(value) => setAsset(value)} />
+                                <Select searchable defaultValue={asset} items={assetsItems.sort((a, b) => a.label.toLowerCase() > b.label.toLowerCase() ? 1 : -1)} onChange={(value) => setAsset(value)}/>
                                 <NumberInput
                                     label={amountLabel}
                                     value={amount}

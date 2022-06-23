@@ -144,14 +144,14 @@ function AppInner() {
     ), [requests, network.chainId, selectedAcc])
   const [sendTxnState, setSendTxnState] = useState(() => ({ showing: !!eligibleRequests.length }))
   useEffect(
-    () => setSendTxnState({ showing: !!eligibleRequests.length }),
+    () => setSendTxnState((prev) => ({ showing: !!eligibleRequests.length, replacementBundle: prev?.replacementBundle })),
     [eligibleRequests.length]
   )
   const showSendTxns = bundle => setSendTxnState({ showing: true, replacementBundle: bundle })
 
   // Network shouldn't matter here
   const everythingToSign = useMemo(() => requests
-    .filter(({ type, account }) => (type === 'personal_sign' || type === 'eth_sign' || type === 'eth_signTypedData_v4')
+    .filter(({ type, account }) => (type === 'personal_sign' || type === 'eth_sign' || type === 'eth_signTypedData_v4' || type === 'eth_signTypedData')
       && account === selectedAcc
     ), [requests, selectedAcc])
 
