@@ -162,6 +162,7 @@ const YearnTesseractCard = ({ networkId, accountId, tokens, addRequest }) => {
 
     return (
         <Card
+            isDepositsDisabled={true}
             loading={loading}
             icon={icon}
             unavailable={unavailable}

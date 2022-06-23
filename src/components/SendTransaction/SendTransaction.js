@@ -2,7 +2,7 @@
 // GiObservatory is also interesting
 import { GiGorilla } from 'react-icons/gi'
 import { FaChevronLeft } from 'react-icons/fa'
-import { MdOutlineInfo } from 'react-icons/md'
+import { MdOutlineClose, MdOutlineInfo, MdWarning } from 'react-icons/md'
 import './SendTransaction.scss'
 import { useEffect, useState, useMemo, useRef } from 'react'
 import { Bundle } from 'adex-protocol-eth/js'
@@ -27,8 +27,7 @@ import { toBundleTxn } from 'lib/requestToBundleTxn'
 import { getProvider } from 'lib/provider'
 import { MdInfo } from 'react-icons/md'
 import { useCallback } from 'react'
-import { ToolTip } from 'components/common'
-import { Checkbox } from 'components/common'
+import { ToolTip, Button, Loading } from 'components/common'
 import { ethers } from 'ethers'
 
 const ERC20 = new Interface(require('adex-protocol-eth/abi/ERC20'))
@@ -105,7 +104,6 @@ export default function SendTransaction({ relayerURL,
   requests, 
   resolveMany, 
   replacementBundle, 
-  replaceByDefault, 
   onBroadcastedTxn, 
   onDismiss,
   gasTankState
@@ -135,7 +133,7 @@ export default function SendTransaction({ relayerURL,
   return (<SendTransactionWithBundle
     relayerURL={relayerURL}
     bundle={bundle}
-    replaceByDefault={replaceByDefault}
+    replacementBundle={replacementBundle}
     network={network}
     account={account}
     resolveMany={resolveMany}
@@ -145,11 +143,9 @@ export default function SendTransaction({ relayerURL,
   />)
 }
 
-function SendTransactionWithBundle({ bundle, replaceByDefault, network, account, resolveMany, relayerURL, onBroadcastedTxn, onDismiss, gasTankState }) {
+function SendTransactionWithBundle({ bundle, replacementBundle, network, account, resolveMany, relayerURL, onBroadcastedTxn, onDismiss, gasTankState }) {
   const currentAccGasTankState = gasTankState.find(i => i.account === account.id)
   const [estimation, setEstimation] = useState(null)
-
-  const [replaceTx, setReplaceTx] = useState(!!replaceByDefault)
 
   const [signingStatus, setSigningStatus] = useState(false)
   const [feeSpeed, setFeeSpeed] = useState(DEFAULT_SPEED)
@@ -174,7 +170,7 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, network, account,
     // Note: currently, there's no point of getting the nonce if the bundle already has a nonce
     // We may want to change this if we make a check if the currently replaced txn was already mined
     const reestimate = () => (relayerURL
-        ? bundle.estimate({ relayerURL, fetch, replacing: !!bundle.minFeeInUSDPerGas, getNextNonce: isNaN(bundle.nonce), gasTank: currentAccGasTankState.isEnabled })
+        ? bundle.estimate({ relayerURL, fetch, replacing: !!bundle.minFeeInUSDPerGas, getNextNonce: true, gasTank: currentAccGasTankState.isEnabled })
         : bundle.estimateNoRelayer({ provider: getProvider(network.id) })
     )
       .then((estimation) => {
@@ -203,9 +199,6 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, network, account,
           }
           return estimation
         })
-        if (estimation.nextNonce && !estimation.nextNonce.pendingBundle) {
-          setReplaceTx(false)
-        }
       })
       .catch(e => {
         if (unmounted) return
@@ -220,7 +213,7 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, network, account,
       unmounted = true
       clearInterval(intvl)
     }
-  }, [bundle, setEstimation, feeSpeed, addToast, network, relayerURL, signingStatus, replaceTx, setReplaceTx, currentAccGasTankState.isEnabled])
+  }, [bundle, setEstimation, feeSpeed, addToast, network, relayerURL, signingStatus, currentAccGasTankState.isEnabled ])
 
   // The final bundle is used when signing + sending it
   // the bundle before that is used for estimating
@@ -273,7 +266,7 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, network, account,
         },
         txns: [...bundle.txns],
         gasLimit,
-        nonce: bundle.nonce || ((replaceTx && pendingBundle) ? nextNonMinedNonce : nextFreeNonce)
+        nonce: bundle.nonce || ((replacementBundle && pendingBundle) ? nextNonMinedNonce : nextFreeNonce)
       })
     }
 
@@ -282,9 +275,9 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, network, account,
       txns: [...bundle.txns, feeTxn],
       gasTankFee: null,
       gasLimit: estimation.gasLimit + addedGas + (bundle.extraGas || 0),
-      nonce: bundle.nonce || ((replaceTx && pendingBundle) ? nextNonMinedNonce : nextFreeNonce)
+      nonce: bundle.nonce || ((replacementBundle && pendingBundle) ? nextNonMinedNonce : nextFreeNonce)
     })
-  }, [relayerURL, estimation, feeSpeed, currentAccGasTankState.isEnabled, network, bundle, replaceTx])
+  }, [relayerURL, estimation, feeSpeed, currentAccGasTankState.isEnabled, network, bundle, replacementBundle])
 
   const approveTxnImpl = async () => {
     if (!estimation) throw new Error('no estimation: should never happen')
@@ -373,7 +366,7 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, network, account,
       addToast('Please confirm this transaction on your Lattice device.', { timeout: 10000 })
     }
 
-    const requestIds = bundle.requestIds
+    const requestIds = replacementBundle ? replacementBundle.replacedRequestIds : bundle.requestIds
     const approveTxnPromise = bundle.signer.quickAccManager ?
       approveTxnImplQuickAcc({ quickAccCredentials })
       : approveTxnImpl()
@@ -392,6 +385,10 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, network, account,
         onBroadcastedTxn(bundleResult.txId)
         onDismiss()
       } else {
+        // to force replacementBundle to be null, so it's not filled from previous state change in App.js in useEffect
+        if (replacementBundle && bundleResult.message.includes('was already mined')) {
+          onDismiss()
+        }
         addToast(`Transaction error: ${getErrorMessage(bundleResult)}`, { error: true })  //'unspecified error'
       }
     })
@@ -416,7 +413,22 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, network, account,
     resolveMany(bundle.requestIds, { message: REJECT_MSG })
   })
 
+  // Only for replacement flow
+  const rejectTxnReplace = (() => {
+    onDismiss()
+    resolveMany(replacementBundle.replacedRequestIds, { message: REJECT_MSG })
+  })
+
   const accountAvatar = blockies.create({ seed: account.id }).toDataURL()
+
+  // Allow actions either on regular tx or replacement/speed tx, when not mined
+  const canProceed = !!replacementBundle
+    ? (
+      !isNaN(estimation?.nextNonce?.nextNonMinedNonce)
+        ? bundle.nonce >= estimation?.nextNonce?.nextNonMinedNonce
+        : null // null = waiting to get nonce data from relayer
+    )
+    : true
 
   return (
     <div id='sendTransaction'>
@@ -493,65 +505,88 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, network, account,
             </div>
 
             { /* Only lock the fee selector when the bundle is locked too - to make sure that the fee really is set in stone (won't change on the next getFinalBundle()) */ }
-            <FeeSelector
-              disabled={signingStatus && signingStatus.finalBundle && !(estimation && !estimation.success)}
-              signer={bundle.signer}
-              estimation={estimation}
-              setEstimation={setEstimation}
-              network={network}
-              feeSpeed={feeSpeed}
-              setFeeSpeed={setFeeSpeed}
-              onDismiss={onDismiss}
-              isGasTankEnabled={!!currentAccGasTankState.isEnabled}
-            ></FeeSelector>
-          </div>
-
-          {
-            // If there's `replacementBundle`, it means we're cancelling or speeding up, so this shouldn't even be visible
-            !!estimation?.nextNonce?.pendingBundle &&
-            (
-              <div>
-               <Checkbox
-                    label='Replace currently pending transaction'
-                    checked={replaceTx}
-                    onChange={({ target }) => setReplaceTx(target.checked)}
-                />
-              </div>
-            )
-          }
-
-          {
-            estimation && estimation.success && estimation.isDeployed === false && bundle.gasLimit ?
-              <div className='first-tx-note'>
-                <div className='first-tx-note-title'><MdInfo/>Note</div>
-                <div className='first-tx-note-message'>
-                  Because this is your first Ambire transaction, this fee is {(60000 / bundle.gasLimit * 100).toFixed()}% higher than usual because we have to deploy your smart wallet.
-                  Subsequent transactions will be cheaper
-                </div>
-              </div>
-              :
-              null
-          }
-
-          <div id="actions-container">
             {
-              bundle.signer.quickAccManager && !relayerURL ?
-                <FailingTxn message='Signing transactions with an email/password account without being connected to the relayer is unsupported.'></FailingTxn>
-                :
-                <div className='section' id="actions">
-                  <Actions
-                    estimation={estimation}
-                    approveTxn={approveTxn}
-                    rejectTxn={rejectTxn}
-                    cancelSigning={() => setSigningStatus(null)}
-                    signingStatus={signingStatus}
-                    feeSpeed={feeSpeed}
-                    isGasTankEnabled={currentAccGasTankState.isEnabled}
-                    network={network}
-                  />
-                </div>
+              canProceed &&
+              <FeeSelector
+                disabled={signingStatus && signingStatus.finalBundle && !(estimation && !estimation.success)}
+                signer={bundle.signer}
+                estimation={estimation}
+                setEstimation={setEstimation}
+                network={network}
+                feeSpeed={feeSpeed}
+                setFeeSpeed={setFeeSpeed}
+                onDismiss={onDismiss}
+                isGasTankEnabled={!!currentAccGasTankState.isEnabled}
+              ></FeeSelector>
             }
+
           </div>
+
+          {
+            replacementBundle &&
+            <>
+
+              {
+                (canProceed || canProceed === null) && <div className='replaceInfo warning' ><MdWarning /><span>This transaction will replace the current pending transaction</span></div>
+              }
+
+              {
+                canProceed === null &&
+                <div>
+                  <Loading />
+                </div>
+              }
+
+              {
+                canProceed === false &&
+                <div id='actions-container-replace'>
+                  <div className='replaceInfo info' ><MdInfo /><span>The transaction you're trying to replace has already been confirmed</span></div>
+                  <div className='buttons'>
+                    <Button clear icon={<MdOutlineClose/>} type='button' className='rejectTxn' onClick={rejectTxnReplace}>Close</Button>
+                  </div>
+                </div>
+              }
+            </>
+          }
+
+          {
+            canProceed &&
+            <>
+              {
+                estimation && estimation.success && estimation.isDeployed === false && bundle.gasLimit ?
+                  <div className='first-tx-note'>
+                    <div className='first-tx-note-title'><MdInfo/>Note</div>
+                    <div className='first-tx-note-message'>
+                      Because this is your first Ambire transaction, this fee is {(60000 / bundle.gasLimit * 100).toFixed()}% higher than usual because we have to deploy your smart wallet.
+                      Subsequent transactions will be cheaper
+                    </div>
+                  </div>
+                  :
+                  null
+              }
+
+              <div id="actions-container">
+                {
+                  bundle.signer.quickAccManager && !relayerURL ?
+                    <FailingTxn message='Signing transactions with an email/password account without being connected to the relayer is unsupported.'></FailingTxn>
+                    :
+                    <div className='section' id="actions">
+                      <Actions
+                        estimation={estimation}
+                        approveTxn={approveTxn}
+                        rejectTxn={rejectTxn}
+                        cancelSigning={() => setSigningStatus(null)}
+                        signingStatus={signingStatus}
+                        feeSpeed={feeSpeed}
+                        isGasTankEnabled={currentAccGasTankState.isEnabled}
+                        network={network}
+                      />
+                    </div>
+                }
+              </div>
+            </>
+          }
+
         </div>
       </div>
     </div>

@@ -46,10 +46,14 @@ function Transactions ({ relayerURL, selectedAcc, selectedNetwork, showSendTxns,
   const { data: feeAssets }= useRelayerData(urlGetFeeAssets)
 
   const showSendTxnsForReplacement = useCallback(bundle => {
+
+    let ids = []
+
     bundle.txns.slice(0, -1)
       .forEach((txn, index) => {
+        ids.push('replace_' + index) // not to interefere with pending ids with existing indexes
         addRequest({
-          id: index,
+          id: ids[ids.length - 1],
           chainId: selectedNetwork.chainId,
           account: selectedAcc,
           type: 'eth_sendTransaction',
@@ -60,8 +64,13 @@ function Transactions ({ relayerURL, selectedAcc, selectedNetwork, showSendTxns,
           }
         })
       })
-    // Wouldn't need to be called cause it will happen autoamtically, except we need `replaceByDefault`
-    setSendTxnState({ showing: true, replaceByDefault: true })
+
+    // need to explicitly compare the bundle.nonce we want to modify
+    let replacementBundle = new Bundle({...bundle})
+    replacementBundle.txns = bundle.txns.slice(0, -1)
+    replacementBundle.replacedRequestIds = ids // adding props for resolveMany, in case of rejection/validation in SendTransaction
+
+    setSendTxnState({ showing: true, replacementBundle })
   }, [addRequest, selectedNetwork, selectedAcc, setSendTxnState])
 
   const maxBundlePerPage = 10
