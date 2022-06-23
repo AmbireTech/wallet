@@ -6,7 +6,7 @@ import { Button, DropDown, TextInput } from 'components/common'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import AddressList from './AddressList/AddressList'
 import { resolveUDomain } from 'lib/unstoppableDomains'
-import { resolveENSDomain, getBip44Items, isEnsDomain } from 'lib/ensDomains'
+import { resolveENSDomain, isEnsDomain } from 'lib/ensDomains'
 
 const AddressBook = ({ addresses, addAddress, removeAddress, newAddress, onClose, onSelectAddress, selectedNetwork }) => {
     const [address, setAddress] = useState('')
@@ -22,7 +22,7 @@ const AddressBook = ({ addresses, addAddress, removeAddress, newAddress, onClose
         setOpenMenu(false)
     }
 
-    const isAddAddressFormValid = ((address.length && name.length && /^0x[a-fA-F0-9]{40}$/.test(uDAddress ? uDAddress : address) || isEnsDomain(address) && ensAddress))
+    const isAddAddressFormValid = (((address.length && name.length && /^0x[a-fA-F0-9]{40}$/.test(uDAddress ? uDAddress : address)) || (isEnsDomain(address) && ensAddress)))
     const onAddAddress = useCallback(() => {
         setOpenMenu(false)
         setOpenAddAddress(false)
