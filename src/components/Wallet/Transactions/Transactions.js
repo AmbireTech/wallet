@@ -48,7 +48,7 @@ function Transactions ({ relayerURL, selectedAcc, selectedNetwork, showSendTxns,
   const showSendTxnsForReplacement = useCallback(bundle => {
 
     let ids = []
-
+    
     bundle.txns.slice(0, -1)
       .forEach((txn, index) => {
         ids.push('replace_' + index) // not to interefere with pending ids with existing indexes
