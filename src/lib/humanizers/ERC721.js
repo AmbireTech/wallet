@@ -1,6 +1,7 @@
 import { abis } from 'consts/humanizerInfo'
 import { Interface } from 'ethers/lib/utils'
 import { token, getName } from 'lib/humanReadableTransactions'
+import TokenList from 'consts/tokenList'
 
 const iface = new Interface(abis.ERC721)
 const fromText = (from, txnFrom) => from.toLowerCase() !== txnFrom.toLowerCase() ? ` from ${from}` : ''
@@ -27,7 +28,10 @@ const ERC721Mapping = {
     const [ from, to, tokenId ] = iface.parseTransaction(txn).args
 
     // hack for erc20
-    if (tokenId > 10 ** 6) {
+    // ? in case a new network is not present in TokenList yet, so we avoid breaking the app
+    const isInTokenList = TokenList[network.id]?.find(t => t.address.toLowerCase() === txn.to.toLowerCase())
+    // ** 6 as USDC has low decimals for example
+    if (tokenId > 10 ** 6 || isInTokenList) {
       const name = getName(to, network)
       if (extended) return [[
         'Send',
