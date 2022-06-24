@@ -11,8 +11,8 @@ const Addresses = ({ addresses, addAddress, removeAddress, onSelectAddress, sele
     const { showModal } = useModals()
 
     const modalInputs = [
-        { label: 'Name', placeholder: 'Address title' },
-        { label: 'Address / Unstoppable domainsⓇ', placeholder: 'Address or Unstoppable.Domains', validate: value => isValidAddress(value) } 
+        { inputType: 'name', label: 'Name', placeholder: 'Address title' },
+        { inputType: 'address', label: 'Address / Unstoppable domainsⓇ / ENSⓇ', placeholder: 'Address / Unstoppable Domains / ENS', validate: value => isValidAddress(value) } 
     ]
 
     const addAddressModal = <AddAddressModal 

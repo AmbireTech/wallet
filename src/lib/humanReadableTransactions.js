@@ -9,7 +9,7 @@ const knownAliases = {}
 // address (lowercase) => [symbol, decimals]
 const knownTokens = {}
 // address (lowercase) => name 
-const knownUDomains = {}
+const knownAddressNames = {}
 
 export const formatNativeTokenAddress = address => address.toLowerCase() === `0x${'e'.repeat(40)}` ? `0x${'0'.repeat(40)}` : address.toLowerCase()
 
@@ -82,7 +82,7 @@ export function getName(addr, network) {
     return names[address] 
         || (tokens[address] ? tokens[address][0] + ' token' : null) 
         || knownAliases[address] 
-        || knownUDomains[address] 
+        || knownAddressNames[address] 
         || addr
 }
 
@@ -141,8 +141,8 @@ export function nativeToken(network, amount, extended = false) {
     }
 }
 
-export function setKnownUDomains(uDomains) {
-    uDomains.forEach(({ address, addressLabel }) => knownUDomains[address.toLowerCase()] = addressLabel)
+export function setKnownAddressNames(uDomains) {
+    uDomains.forEach(({ address, addressLabel }) => knownAddressNames[address.toLowerCase()] = addressLabel)
 }
 
 export function setKnownAddresses(addrs) {

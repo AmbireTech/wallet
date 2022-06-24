@@ -25,9 +25,9 @@ const AddAddressModal = ({ title, inputs, selectedNetwork, onClose }) => {
         }
 
         const validateForm = async () => {
-            const isFound = inputsFields.find(item => item.label === 'Address / Unstoppable domainsⓇ')
+            const isFound = inputsFields.find(item => item.inputType === 'address')
             const domain = isFound && isFound.ref && isFound.ref.current.value
-            if (!domain) return;
+            if (!domain) return
             const isValidEnsDomain = isEnsDomain(domain)
             let uDAddr = null
             let ensAddr = null
@@ -43,8 +43,8 @@ const AddAddressModal = ({ title, inputs, selectedNetwork, onClose }) => {
             }
 
             const isFormValid = inputsFields
-                .map(({ ref, validate, label }) => {
-                    const isUDField = label === 'Address / Unstoppable domainsⓇ'
+                .map(({ ref, validate, inputType }) => {
+                    const isUDField = inputType === 'address'
                     const value = isUDField && uDAddr ? uDAddr : isUDField && ensAddr ? ensAddr : ref.current.value
                     if (!validate) return !!value
 
@@ -63,8 +63,9 @@ const AddAddressModal = ({ title, inputs, selectedNetwork, onClose }) => {
     const onConfirm = () => {
         let values = inputsFields.map(({ ref }) => ref.current.value)
         if (uDAddress) values.push({ type: 'ud' })
-        if (ensAddress) values.push({ type: 'ens' })
-        values.push({ type: 'pub' })
+        else if (ensAddress) values.push({ type: 'ens' })
+        else values.push({ type: 'pub' })
+        
         onClose && onClose(values)
         hideModal()
     }
@@ -77,13 +78,19 @@ const AddAddressModal = ({ title, inputs, selectedNetwork, onClose }) => {
     return (
         <Modal id="input-modal" title={title} buttons={buttons}>
             {
-                inputsFields.map(({ id, label, placeholder, ref }) => (
+                inputsFields.map(({ id, label, placeholder, ref, type }) => (
                     <div key={id + label}>
                         <TextInput label={label} placeholder={placeholder} onInput={onInput} ref={ref} />
-                        {(label === 'Address / Unstoppable domainsⓇ') &&
-                            <ToolTip label={!uDAddress ? 'You can use Unstoppable domainsⓇ' : 'Valid Unstoppable domainsⓇ domain'}>
-                                <span id="udomains-logo" className={uDAddress ? 'ud-logo-active ' : ''} />
-                            </ToolTip>}
+                        {(type === 'address') &&
+                            <>
+                                <ToolTip label={!uDAddress ? 'You can use Unstoppable domainsⓇ' : 'Valid Unstoppable domainsⓇ domain'}>
+                                    <span id="udomains-logo" className={ uDAddress ? 'ud-logo-active ' : '' } />
+                                </ToolTip>
+                                <ToolTip label={!ensAddress ? 'You can use Ethereum Name ServiceⓇ' : 'Valid Ethereum Name ServicesⓇ domain'}>
+                                    <div id="ens-logo" className={ensAddress ? 'ens-logo-active ' : ''} />
+                                </ToolTip>
+                            </>
+                        }
                     </div>
                 ))
             }
