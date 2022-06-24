@@ -6,7 +6,7 @@ import { Button, DropDown, TextInput } from 'components/common'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import AddressList from './AddressList/AddressList'
 import { resolveUDomain } from 'lib/unstoppableDomains'
-import { resolveENSDomain, isEnsDomain } from 'lib/ensDomains'
+import { resolveENSDomain } from 'lib/ensDomains'
 
 const AddressBook = ({ addresses, addAddress, removeAddress, newAddress, onClose, onSelectAddress, selectedNetwork }) => {
     const [address, setAddress] = useState('')
@@ -18,16 +18,16 @@ const AddressBook = ({ addresses, addAddress, removeAddress, newAddress, onClose
     const [ensAddress, setEnsAddress] = useState('')
 
     const selectAddress = address => {
-        onSelectAddress && onSelectAddress(uDAddress ? uDAddress : address)
+        onSelectAddress && onSelectAddress(uDAddress ? uDAddress : ensAddress ? ensAddress : address)
         setOpenMenu(false)
     }
 
-    const isAddAddressFormValid = (((address.length && name.length && /^0x[a-fA-F0-9]{40}$/.test(uDAddress ? uDAddress : address)) || (isEnsDomain(address) && ensAddress)))
+    const isAddAddressFormValid = (address.length && name.length && /^0x[a-fA-F0-9]{40}$/.test(uDAddress ? uDAddress : ensAddress ? ensAddress : address))
     const onAddAddress = useCallback(() => {
         setOpenMenu(false)
         setOpenAddAddress(false)
-        addAddress(name, address, uDAddress ? true : false)
-    }, [addAddress, name, address, uDAddress])
+        addAddress(name, address, uDAddress ? { type: 'ud' } : ensAddress ? { type: 'ens' } : { type: 'pub' })
+    }, [addAddress, name, address, uDAddress, ensAddress])
 
     const onDropDownChange = useCallback(state => {
         setOpenMenu(state)
@@ -53,25 +53,16 @@ const AddressBook = ({ addresses, addAddress, removeAddress, newAddress, onClose
         }
 
         const validateForm = async () => {
-            if (!isEnsDomain(address)) {
-                const UDAddress = await resolveUDomain(address, null, selectedNetwork.unstoppableDomainsChain)
+            const UDAddress = await resolveUDomain(address, null, selectedNetwork.unstoppableDomainsChain)
+            const ensAddress = await resolveENSDomain(address)
 
-                if (UDAddress) {
-                    setUDAddress(UDAddress)
-                } else {
-                    setUDAddress('')
-                }
-
-            }
+            if (UDAddress) setUDAddress(UDAddress)
+            else if (ensAddress) setEnsAddress(ensAddress)
             else {
-                const ensAddress = await resolveENSDomain(address)
-                if(ensAddress) {
-                    setEnsAddress(ensAddress)
-                }
-                else {
-                    setAddress("Ens domain couldn't be resolved")
-                }
+                setUDAddress('')
+                setEnsAddress('')
             }
+            
             timer.current = null
         }
 
