@@ -16,6 +16,7 @@ import { MdInfo } from 'react-icons/md'
 import networks from 'consts/networks'
 import { getTokenIcon } from 'lib/icons'
 import { formatFloatTokenAmount } from 'lib/formatters'
+import { resolveENSDomain, getBip44Items } from 'lib/ensDomains'
 
 const ERC20 = new Interface(require('adex-protocol-eth/abi/ERC20'))
 const unsupportedSWPlatforms = ['Binance', 'Huobi', 'KuCoin', 'Gate.io', 'FTX']
@@ -33,17 +34,18 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
     const [bigNumberHexAmount, setBigNumberHexAmount] = useState('')
     const [address, setAddress] = useState('')
     const [uDAddress, setUDAddress] = useState('')
+    const [ensAddress, setEnsAddress] = useState('')
     const [disabled, setDisabled] = useState(true)
     const [addressConfirmed, setAddressConfirmed] = useState(false)
     const [sWAddressConfirmed, setSWAddressConfirmed] = useState(false)
     const [newAddress, setNewAddress] = useState('')
-    const [validationFormMgs, setValidationFormMgs] = useState({ 
-        success: { 
+    const [validationFormMgs, setValidationFormMgs] = useState({
+        success: {
             amount: false,
             address: false
-        }, 
-        messages: { 
-            amount: '', 
+        },
+        messages: {
+            amount: '',
             address: ''
         }
     })
@@ -58,17 +60,17 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
     const selectedAsset = portfolio.tokens.find(({ address }) => address === asset)
 
     const { maxAmount, maxAmountFormatted } = useMemo(() => {
-        if (!selectedAsset) return {maxAmount: '0', maxAmountFormatted: '0.00'};
+        if (!selectedAsset) return { maxAmount: '0', maxAmountFormatted: '0.00' };
         const { balanceRaw, decimals, balance } = selectedAsset
         return {
             maxAmount: ethers.utils.formatUnits(balanceRaw, decimals),
-            maxAmountFormatted:  formatFloatTokenAmount(balance, true, decimals)
+            maxAmountFormatted: formatFloatTokenAmount(balance, true, decimals)
         }
     }, [selectedAsset])
 
-    const showSWAddressWarning = useMemo(() => 
+    const showSWAddressWarning = useMemo(() =>
         Number(tokenAddress) === 0 && networks.map(({ id }) => id).filter(id => id !== 'ethereum').includes(selectedNetwork.id)
-    , [tokenAddress, selectedNetwork])
+        , [tokenAddress, selectedNetwork])
 
     const setMaxAmount = () => onAmountChange(maxAmount)
 
@@ -83,7 +85,7 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
     }
 
     const sendTx = () => {
-        const recipientAddress = uDAddress ? uDAddress : address
+        const recipientAddress = uDAddress ? uDAddress : ensAddress ? ensAddress :  address
 
         try {
             const txn = {
@@ -108,18 +110,25 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
             }
 
             if (uDAddress) {
-                req.meta = { 
-                    addressLabel: { 
+                req.meta = {
+                    addressLabel: {
                         addressLabel: address,
                         address: uDAddress
                     }
                 }
+            } else if (ensAddress) {
+                req.meta = {
+                    addressLabel: {
+                        addressLabel: address,
+                        address: ensAddress
+                    }
+                }
             }
-             
+
             addRequest(req)
 
             setAmount(0)
-        } catch(e) {
+        } catch (e) {
             console.error(e)
             addToast(`Error: ${e.message || e}`, { error: true })
         }
@@ -142,14 +151,14 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
         if (address.startsWith('0x') && (address.indexOf('.') === -1)) {
             if (uDAddress !== '') setUDAddress('')
             const isValidRecipientAddress = validateSendTransferAddress(address, selectedAcc, addressConfirmed, isKnownAddress)
-            
-            setValidationFormMgs({ 
-                success: { 
-                    amount: isValidSendTransferAmount.success, 
-                    address: isValidRecipientAddress.success 
-                }, 
-                messages: { 
-                    amount: isValidSendTransferAmount.message ?  isValidSendTransferAmount.message : '',
+
+            setValidationFormMgs({
+                success: {
+                    amount: isValidSendTransferAmount.success,
+                    address: isValidRecipientAddress.success
+                },
+                messages: {
+                    amount: isValidSendTransferAmount.message ? isValidSendTransferAmount.message : '',
                     address: isValidRecipientAddress.message ? isValidRecipientAddress.message : ''
                 }
             })
@@ -160,47 +169,56 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
                 clearTimeout(timer.current)
             }
 
-            const validateForm = async() => {
-                const UDAddress =  await resolveUDomain(address, selectedAsset ? selectedAsset.symbol: null, selectedNetwork.unstoppableDomainsChain)
+            const validateForm = async () => {
+                const UDAddress = await resolveUDomain(address, selectedAsset ? selectedAsset.symbol : null, selectedNetwork.unstoppableDomainsChain)
+                const bip44Item = getBip44Items(selectedAsset ? selectedAsset.symbol : null)
+                const ensAddress = await resolveENSDomain(address, bip44Item)
                 timer.current = null
                 const isUDAddress = UDAddress ? true : false
-                const isValidRecipientAddress = validateSendTransferAddress(UDAddress ? UDAddress : address, selectedAcc, addressConfirmed, isKnownAddress, isUDAddress)
-                
+                const isEnsAddress = ensAddress ? true : false
+                let selectedAddress = ''
+                if (isEnsAddress) selectedAddress = ensAddress
+                else if (isUDAddress) selectedAddress = UDAddress
+                else selectedAddress = address
+
+                const isValidRecipientAddress = validateSendTransferAddress(selectedAddress, selectedAcc, addressConfirmed, isKnownAddress, isUDAddress, isEnsAddress)
+
                 setUDAddress(UDAddress)
-                setValidationFormMgs({ 
-                    success: { 
-                        amount: isValidSendTransferAmount.success, 
-                        address: isValidRecipientAddress.success 
-                    }, 
-                    messages: { 
-                        amount: isValidSendTransferAmount.message ?  isValidSendTransferAmount.message : '',
+                setEnsAddress(ensAddress)
+                setValidationFormMgs({
+                    success: {
+                        amount: isValidSendTransferAmount.success,
+                        address: isValidRecipientAddress.success
+                    },
+                    messages: {
+                        amount: isValidSendTransferAmount.message ? isValidSendTransferAmount.message : '',
                         address: isValidRecipientAddress.message ? isValidRecipientAddress.message : ''
                     }
                 })
-    
+
                 setDisabled(!isValidRecipientAddress.success || !isValidSendTransferAmount.success || (showSWAddressWarning && !sWAddressConfirmed))
             }
 
-            timer.current = setTimeout(async() => {
+            timer.current = setTimeout(async () => {
                 return validateForm().catch(console.error)
             }, 300)
         }
         return () => clearTimeout(timer.current)
     }, [address, amount, selectedAcc, selectedAsset, addressConfirmed, showSWAddressWarning, sWAddressConfirmed, isKnownAddress, addToast, selectedNetwork, addAddress, uDAddress])
 
-    const amountLabel = <div className="amount-label">Available Amount: <span>{ maxAmountFormatted } { selectedAsset?.symbol }</span></div>
+    const amountLabel = <div className="amount-label">Available Amount: <span>{maxAmountFormatted} {selectedAsset?.symbol}</span></div>
 
     return (
         <div id="transfer">
-           <div className="panel">
-               <div className="title">
-                   Send
-               </div>
-               {
+            <div className="panel">
+                <div className="title">
+                    Send
+                </div>
+                {
                     portfolio.isCurrNetworkBalanceLoading ?
-                        <Loading/>
+                        <Loading />
                         :
-                        assetsItems.length ? 
+                        assetsItems.length ?
                             <div className="form">
                                 <Select searchable defaultValue={asset} items={assetsItems.sort((a, b) => a.label.toLowerCase() > b.label.toLowerCase() ? 1 : -1)} onChange={(value) => setAsset(value)}/>
                                 <NumberInput
@@ -211,8 +229,8 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
                                     button="MAX"
                                     onButtonClick={() => setMaxAmount()}
                                 />
-                                { validationFormMgs.messages.amount && 
-                                    (<div className='validation-error'><BsXLg size={12}/>&nbsp;{validationFormMgs.messages.amount}</div>)}
+                                {validationFormMgs.messages.amount &&
+                                    (<div className='validation-error'><BsXLg size={12} />&nbsp;{validationFormMgs.messages.amount}</div>)}
                                 <div id="recipient-field">
                                     <TextInput
                                         placeholder="Recipient"
@@ -220,10 +238,13 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
                                         value={address}
                                         onInput={setAddress}
                                     />
+                                    <ToolTip label={!ensAddress ? 'You can use Ethereum Name ServiceⓇ' : 'Valid Ethereum Name ServicesⓇ domain'}>
+                                        <div id="ens-logo" className={ensAddress ? 'ens-logo-active ' : ''} />
+                                    </ToolTip>
                                     <ToolTip label={!uDAddress ? 'You can use Unstoppable domainsⓇ' : 'Valid Unstoppable domainsⓇ domain'}>
                                         <div id="udomains-logo" className={uDAddress ? 'ud-logo-active ' : ''} />
                                     </ToolTip>
-                                    <AddressBook 
+                                    <AddressBook
                                         addresses={addresses.filter(x => x.address !== selectedAcc)}
                                         addAddress={addAddress}
                                         removeAddress={removeAddress}
@@ -233,23 +254,23 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
                                         selectedNetwork={selectedNetwork}
                                     />
                                 </div>
-                                { validationFormMgs.messages.address && 
-                                    (<div className='validation-error'><BsXLg size={12}/>&nbsp;{validationFormMgs.messages.address}</div>)}
-                                <div className="separator"/>
+                                {validationFormMgs.messages.address &&
+                                    (<div className='validation-error'><BsXLg size={12} />&nbsp;{validationFormMgs.messages.address}</div>)}
+                                <div className="separator" />
                                 <AddressWarning
-                                    address={uDAddress ? uDAddress : address}
-                                    onAddNewAddress={() => setNewAddress(uDAddress ? uDAddress : address)}
+                                    address={uDAddress ? uDAddress : ensAddress ? ensAddress : address}
+                                    onAddNewAddress={() => setNewAddress(uDAddress ? uDAddress : ensAddress ? ensAddress : address)}
                                     onChange={(value) => setAddressConfirmed(value)}
                                     isKnownAddress={isKnownAddress}
                                 />
                                 {
-                                    showSWAddressWarning ? 
-                                        <Checkbox 
+                                    showSWAddressWarning ?
+                                        <Checkbox
                                             id="binance-address-warning"
                                             label={<span id="binance-address-warning-label">
-                                                I confirm this address is not a { unsupportedSWPlatforms.join(' / ') } address: <br/>
+                                                I confirm this address is not a {unsupportedSWPlatforms.join(' / ')} address: <br />
                                                 These platforms do not support ${selectedAsset?.symbol} deposits from smart wallets
-                                                <a href='https://help.ambire.com/hc/en-us/articles/4415473743506-Statement-on-MATIC-BNB-deposits-to-Binance' target='_blank' rel='noreferrer'><MdInfo size={20}/></a>
+                                                <a href='https://help.ambire.com/hc/en-us/articles/4415473743506-Statement-on-MATIC-BNB-deposits-to-Binance' target='_blank' rel='noreferrer'><MdInfo size={20} /></a>
                                             </span>}
                                             checked={sWAddressConfirmed}
                                             onChange={({ target }) => setSWAddressConfirmed(target.checked)}
@@ -257,13 +278,13 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
                                         :
                                         null
                                 }
-                                <Button icon={<AiOutlineSend/>} disabled={disabled} onClick={sendTx}>Send</Button>
+                                <Button icon={<AiOutlineSend />} disabled={disabled} onClick={sendTx}>Send</Button>
                             </div>
                             :
-                            <NoFundsPlaceholder/>
-               }
-           </div>
-           <Addresses
+                            <NoFundsPlaceholder />
+                }
+            </div>
+            <Addresses
                 selectedAsset={selectedAsset}
                 selectedNetwork={selectedNetwork}
                 addresses={addresses}
