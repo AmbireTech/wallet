@@ -11,7 +11,8 @@ const ENS_DOMAIN_SUFFIX = ".eth"
 const provider = getProvider(ETH_ID)
 
 async function resolveENSDomain(domain, bip44Item) {
-	const normalizedDomainName = normalize(domain)
+	const normalizedDomainName = normalizeDomain(domain)
+	if (!normalizedDomainName) return null
 	const resolver = await provider.getResolver(normalizedDomainName)
 	if (!resolver) return null
 	const ethAddress = await resolver.getAddress()
@@ -19,9 +20,16 @@ async function resolveENSDomain(domain, bip44Item) {
 	return isCorrectAddress(addressForCoin) ? addressForCoin : ethAddress
 }
 
+const normalizeDomain = domain => {
+	try {
+		return normalize(domain)
+	} catch(e) { return null }
+}
+
 async function resolveForCoin(resolver, bip44Item) {
 	if (bip44Item && bip44Item.length === 1) {
 		const coinType = getNormalisedCoinType(bip44Item)
+		if (!coinType) return null
 		return resolver.getAddress(coinType)
 	} else {
 		return resolver.getAddress()
@@ -34,7 +42,7 @@ function getBip44Items(coinTicker) {
 }
 
 function getNormalisedCoinType(bip44Item) {
-	return bip44Item[0][0] - BIP44_BASE_VALUE
+	return bip44Item[0].length ? bip44Item[0][0] - BIP44_BASE_VALUE : null
 }
 
 function isCorrectAddress(address) {
