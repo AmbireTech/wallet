@@ -114,7 +114,7 @@ const networks = [
 		explorerUrl: 'https://explorer.kcc.io',
 		unstoppableDomainsChain: 'ERC20',
 		hide: true,
-		isGasTankAvailable: true
+		isGasTankAvailable: false
 	},
 	{
 		id: 'optimism',
