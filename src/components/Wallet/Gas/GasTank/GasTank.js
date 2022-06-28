@@ -18,6 +18,9 @@ import { HiOutlineExternalLink } from 'react-icons/hi'
 import { formatUnits } from 'ethers/lib/utils'
 // eslint-disable-next-line import/no-relative-parent-imports
 import { getAddedGas } from '../../../SendTransaction/helpers'
+// eslint-disable-next-line import/no-relative-parent-imports
+import { useToasts } from '../../../../hooks/toasts'
+
 
 const GasTank = ({ network, 
     relayerURL, 
@@ -30,6 +33,7 @@ const GasTank = ({ network,
 }) => {
     const [cacheBreak, setCacheBreak] = useState(() => Date.now())
     const { showModal } = useModals()
+    const { addToast } = useToasts()
 
     useEffect(() => {
         if (Date.now() - cacheBreak > 5 * 1000) setCacheBreak(Date.now())
@@ -89,6 +93,11 @@ const GasTank = ({ network,
             { account: account, isEnabled: false }
         ])
     const toggleGasTank = () => {
+        if (!data && !data.length) {
+            addToast('You should add assets in Gas Tank to be able to enable it!', { error: true })
+            return 
+        }
+
         const updatedGasTankDetails = 
             gasTankState.map(item => (item.account === account) ? 
             { ...item, isEnabled: !item.isEnabled } : item)
@@ -143,7 +152,7 @@ const GasTank = ({ network,
                             <NavLink to={{
                                 pathname: `/wallet/transfer/${address}`,
                                 state: {
-                                    gasTankMsg: "Warning: Deposits to the Gas Tank",
+                                    gasTankMsg: 'Warning: You are about to deposit to the Gas Tank. Deposits to the gas tank are non refundable.',
                                     feeAssetsPerNetwork
                                 }
                             }}>
@@ -258,7 +267,7 @@ const GasTank = ({ network,
                 <NavLink to={{
                     pathname: `/wallet/transfer/`,
                     state: {
-                        gasTankMsg: "Warning: Deposits to the Gas Tank",
+                        gasTankMsg: 'Warning: You are about to deposit to the Gas Tank. Deposits to the gas tank are non refundable.',
                         feeAssetsPerNetwork
                     }
                 }}>

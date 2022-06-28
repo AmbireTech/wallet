@@ -76,12 +76,13 @@
         }
 
         .gas-tank-msg {
-            border: 1px solid black;
-            color: black;
-            font-weight: bold;
-            background-color: $warning-color;
-            padding: 20px;
-            text-align: center;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background-color: mix($panel-background-color, $warning-color, 90%);
+            color: $warning-color;
+            padding: 15px;
+            font-size: 14px;
         }
     }
 
