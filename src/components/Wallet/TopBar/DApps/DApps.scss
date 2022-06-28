@@ -6,6 +6,13 @@
         width: 400px;
     }
 
+
+    .dappList {
+        max-height: calc(65px * 5);
+        overflow-x: hidden;
+        overflow-y: auto;
+    }
+
     .dapps-item {
         width: 100%;
         box-sizing: border-box;
