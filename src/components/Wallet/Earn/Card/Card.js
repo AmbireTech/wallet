@@ -117,7 +117,7 @@ const Card = ({ loading, unavailable, tokensItems, icon, details, customInfo, on
                                         />
                                         <div className="separator"></div>
                                         <Button 
-                                            disabled={disabled || amount === '' || parseFloat(amount) <= 0 || parseFloat(amount) > currentToken?.balance || isDepositsDisabled}
+                                            disabled={disabled || amount === '' || parseFloat(amount) <= 0 || parseFloat(amount) > currentToken?.balance || (segment === segments[0].value && isDepositsDisabled) }
                                             icon={segment === segments[0].value ? <BsArrowDownSquare/> : <BsArrowUpSquare/>}
                                             onClick={() => onValidate(segment, token, amount, isMaxAmount())}>
                                                 { segment }
