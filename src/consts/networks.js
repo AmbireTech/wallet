@@ -136,7 +136,8 @@ const networks = [
 		name: 'Andromeda',
 		icon: '/resources/networks/andromeda.svg',
 		explorerUrl: 'https://andromeda-explorer.metis.io',
-		unstoppableDomainsChain: 'ERC20'
+		unstoppableDomainsChain: 'ERC20',
+		isGasTankAvailable: true
 	},
 	{
 		id: 'rinkeby',
