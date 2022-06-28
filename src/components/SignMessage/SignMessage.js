@@ -1,6 +1,6 @@
 import './SignMessage.scss'
 import { MdBrokenImage, MdCheck, MdClose } from 'react-icons/md'
-import { ethers, Wallet } from 'ethers'
+import { Wallet } from 'ethers'
 import { signMessage712, signMessage, Bundle } from 'adex-protocol-eth/js/Bundle'
 import {
   toUtf8String,
@@ -8,7 +8,6 @@ import {
   arrayify,
   isHexString,
   _TypedDataEncoder,
-  Interface,
   AbiCoder,
   keccak256
 } from 'ethers/lib/utils'
@@ -26,10 +25,6 @@ import { getProvider } from 'lib/provider'
 import { getNetworkByChainId } from 'lib/getNetwork'
 
 const CONF_CODE_LENGTH = 6
-
-const IDENTITY_INTERFACE = new Interface(
-  require('adex-protocol-eth/abi/Identity5.2')
-)
 
 export default function SignMessage ({ toSign, resolve, account, connections, relayerURL, totalRequests }) {
   const defaultState = () => ({ codeRequired: false, passphrase: '' })
