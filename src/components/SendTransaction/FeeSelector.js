@@ -116,7 +116,7 @@ export function FeeSelector({ disabled, signer, estimation, network, setEstimati
     }
   })
   
-  const tokens = isGasTankEnabled ? gasTankTokens : estimation.remainingFeeTokenBalances || [{ symbol: nativeAssetSymbol, decimals: 18, address: '0x0000000000000000000000000000000000000000' }]
+  const tokens = (isGasTankEnabled && gasTankTokens.length) ? gasTankTokens : estimation.remainingFeeTokenBalances || [{ symbol: nativeAssetSymbol, decimals: 18, address: '0x0000000000000000000000000000000000000000' }]
   const onFeeCurrencyChange = value => {
     const token = tokens.find(({ address, symbol }) => address === value || symbol === value)
     setEstimation({ ...estimation, selectedFeeToken: token })
@@ -131,9 +131,9 @@ export function FeeSelector({ disabled, signer, estimation, network, setEstimati
     || ((b.discount || 0) - (a.discount || 0))
     || a?.symbol.toUpperCase().localeCompare(b?.symbol.toUpperCase())
   )
-    .map(({ address, symbol, discount, ...rest }) => ({
+    .map(({ address, symbol, discount, network: tokenNetwork = null, ...rest }) => ({
       disabled: !isTokenEligible({address, symbol, discount, ...rest }, SPEEDS[0], estimation, isGasTankEnabled, network),
-      icon: address ? getTokenIcon(network.id, address) : null,
+      icon: address ? getTokenIcon(isGasTankEnabled ? tokenNetwork : network.id, address) : null,
       label: symbol,
       value: address || symbol,
       ...(discount ? {
@@ -256,7 +256,10 @@ export function FeeSelector({ disabled, signer, estimation, network, setEstimati
 
   return (<>
     {insufficientFee ?
-      (<div className='balance-error'>Insufficient balance for the fee.<br />Accepted tokens: {(estimation.remainingFeeTokenBalances || []).map(x => x.symbol).join(', ')}</div>)
+      (<div className='balance-error'>
+        Insufficient balance for the fee.<br />Accepted tokens: {(estimation.remainingFeeTokenBalances || []).map(x => x.symbol).join(', ')}
+        { isGasTankEnabled && <div>Disable your Gas Tank to use the default fee tokens.</div> }
+      </div>)
       : feeCurrencySelect
     }
 
@@ -385,20 +388,21 @@ export function FeeSelector({ disabled, signer, estimation, network, setEstimati
             </div>
             <div className='fee-amounts'>
               <div>
-                $ {estimation.selectedFeeToken.balanceInUSD.toFixed(4)}
+                ${formatFloatTokenAmount(estimation.selectedFeeToken.balanceInUSD, true, 4)}
               </div>
             </div>
           </div>
-          <div className='fee-row native-fee-estimation discount-label'>
-            <div>
-              You save:
-            </div>
-            <div className='fee-amounts'>
+         {!isNaN((feeInUSD / estimation.gasLimit) * savedGas) && 
+            <div className='fee-row native-fee-estimation discount-label'>
               <div>
-                $ {((feeInUSD / estimation.gasLimit) * savedGas).toFixed(4)}
+                You save:
               </div>
-            </div>
-          </div>
+              <div className='fee-amounts'>
+                <div>
+                  ${formatFloatTokenAmount(((feeInUSD / estimation.gasLimit) * savedGas), true, 4)}
+                </div>
+              </div>
+            </div>}
         </>)}
       </div>
     </div>
