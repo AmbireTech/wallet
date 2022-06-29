@@ -348,3 +348,10 @@ Those contracts (except Ethereum-specific WALLET, xWALLET and SupplyController) 
 * Alphabetically sort of tokens in Transfer page
 * Fixed: Support Pancakeswap through WalletConnect
 * Improve replacment transaction interface
+
+### v0.5.7
+* Added ENS support
+* Improvement sign message page and verification for deployed contract
+* Disable deposit option for Tesseract earn
+* Fixed: Allow to list more then 8 dapps in dapps connection bar
+* Fixed: Notification errors on Chrome browser on Android mobile
