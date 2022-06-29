@@ -334,5 +334,17 @@ Those contracts (except Ethereum-specific WALLET, xWALLET and SupplyController) 
 * Support balance for custom NFTs for netwroks without thirdparty balance providers
 * Added multiplier for CryptoTester NFT
 * Added pagination for Collectibles page
-* Changed kriptomat limit to 5k per day
+* Changed Kriptomat limit to 5k per day
 * Added new tokens BSC on for rewards
+
+### v0.5.6
+* Supported hidden networks
+* Added Andromeda chain
+* Improved humanizer with custom list of eligible tokens
+* Added Trezor and Lattice signer assets migration
+* Added Transak support for Moonbeam, Moonriver and Optimism chains
+* Asset migration improvement to migration with Permit method
+* Added chain verification of sign message
+* Alphabetically sort of tokens in Transfer page
+* Fixed: Support Pancakeswap through WalletConnect
+* Improve replacment transaction interface
