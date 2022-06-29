@@ -1,23 +1,22 @@
 import { Modal, Stepper } from 'components/common'
-
+import { useModals } from 'hooks'
 import { useState } from 'react'
 
-import './PaperImportModal.scss'
 import ImportSeedWordsForm from './SubComponents/ImportSeedWordsForm'
-import ValidateImportEmail from './SubComponents/ValidateImportEmail'
+import SetSeedWordsPassword from './SubComponents/SetSeedWordsPassword'
 
-const PaperImportModal = () => {
+import './PaperImportModal.scss'
+
+const PaperImportModal = ({onAddAccount, selectedAccount, relayerURL}) => {
 
   const [modalButtons] = useState(null)
   const [foundAddress, setFoundAddress] = useState(null)
+  const { hideModal } = useModals()
 
   const [modalSteps, setModalSteps] = useState({
     steps: [
       {
         name: 'Import seed words'
-      },
-      {
-        name: 'Confirm email'
       },
       {
         name: 'Set password'
@@ -26,6 +25,7 @@ const PaperImportModal = () => {
   })
 
   const [error, setError] = useState(null)
+  const [wallet, setWallet] = useState(null)
 
   const getModalTitle = () => {
     return (<div>
@@ -46,24 +46,27 @@ const PaperImportModal = () => {
         {
           modalSteps.stepIndex === 0 &&
           <ImportSeedWordsForm
+            selectedAccount={selectedAccount}
             setError={setError}
             setModalSteps={setModalSteps}
             foundAddress={foundAddress}
             setFoundAddress={setFoundAddress}
+            setWallet={setWallet}
           />
         }
 
         {
           modalSteps.stepIndex === 1 &&
-          <ValidateImportEmail
+          <SetSeedWordsPassword
+            selectedAccount={selectedAccount}
+            wallet={wallet}
             foundAddress={foundAddress}
             setError={setError}
             setModalSteps={setModalSteps}
+            onAddAccount={onAddAccount}
+            relayerURL={relayerURL}
+            hideModal={hideModal}
           />
-        }
-
-        {
-          modalSteps.stepIndex === 2
         }
 
       </div>

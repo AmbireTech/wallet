@@ -6,7 +6,7 @@ import { Button } from "components/common"
 import { PaperBackupModal, PaperImportModal } from 'components/Modals'
 import useModals from 'hooks/modals'
 
-const Backup = ({ selectedAccount, accounts, onOpen, onAddAccount }) => {
+const Backup = ({ selectedAccount, accounts, onOpen, onAddAccount, relayerURL }) => {
 
     const { showModal } = useModals()
 
@@ -25,7 +25,11 @@ const Backup = ({ selectedAccount, accounts, onOpen, onAddAccount }) => {
     }
 
     const onPaperImportClick = () => {
-        showModal(<PaperImportModal />)
+        showModal(<PaperImportModal
+          onAddAccount={onAddAccount}
+          selectedAccount={selectedAccount}
+          relayerURL={relayerURL}
+        />)
     }
 
     return (
@@ -70,10 +74,19 @@ const Backup = ({ selectedAccount, accounts, onOpen, onAddAccount }) => {
                                 The seed phrase will be unencrypted, so store it safely.
                             </p>
                             {
+                              selectedAccount.email && selectedAccount.primaryKeyBackup &&
+                              <Button full small onClick={onPaperBackupClick}>Backup on paper</Button>
+                            }
+
+                            {
+                              selectedAccount.email && !selectedAccount.primaryKeyBackup &&
+                              <Button full small disabled className='email-accounts-only'>Keys required for paper backup</Button>
+                            }
+
+                            {
                                 //Remove in PR: I believe it's better to gray out the button, so it informs the user that it is an option and it might get their interest trying email account
-                                selectedAccount.email
-                                  ? <Button full small onClick={onPaperBackupClick}>Backup on paper</Button>
-                                  : <Button full small disabled className='email-accounts-only'>Available for emails accounts only</Button>
+                                !selectedAccount.email &&
+                                <Button full small disabled className='email-accounts-only'>Available for emails accounts only</Button>
                             }
                         </div>
                     </div>
@@ -104,9 +117,14 @@ const Backup = ({ selectedAccount, accounts, onOpen, onAddAccount }) => {
                     </div>
                     <div className='backup-info'>
                         <p>
-                            Import an Ambire account from a backed up seed phrase
+                            Update your Ambire account ({selectedAccount.id.slice(0, 5)}...{selectedAccount.id.slice(-3)}) with signer keys from a backed up seed phrase
                         </p>
-                        <Button small full onClick={onPaperImportClick}>Import from paper</Button>
+                        {
+                          //Remove in PR: I believe it's better to gray out the button, so it informs the user that it is an option and it might get their interest trying email account
+                          selectedAccount.email
+                            ? <Button small full onClick={onPaperImportClick}>Import from paper</Button>
+                            : <Button full small disabled className='email-accounts-only'>Available for emails accounts only</Button>
+                        }
                     </div>
                 </div>
 

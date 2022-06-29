@@ -105,6 +105,18 @@
     }
   }
 
+  .seedWordsForm {
+    margin-bottom: 16px;
+  }
+
+  .networkFetchError {
+    margin-top: 16px;
+
+    .buttonComponent {
+      margin-top: 16px;
+    }
+  }
+
   .foundAddressContainer {
     margin: 24px 0;
     padding: 12px;
@@ -115,6 +127,7 @@
       margin-top: 4px;
       font-size: 16px;
       font-family: monospace;
+      margin-bottom: 16px;
     }
   }
 

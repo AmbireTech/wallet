@@ -307,6 +307,7 @@ const Security = ({
         accounts={accounts}
         onOpen={open}
         onAddAccount={onAddAccount}
+        relayerURL={relayerURL}
       />
 
     </section>

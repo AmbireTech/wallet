@@ -49,6 +49,8 @@ const PaperBackupModal = ({ selectedAccount, accounts }) => {
         {
           modalSteps.stepIndex === 0 &&
           <UnlockAccount
+            setModalButtons={setModalButtons}
+            hideModal={hideModal}
             setModalSteps={setModalSteps}
             selectedAccount={selectedAccount}
             accounts={accounts}

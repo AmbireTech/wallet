@@ -1,13 +1,16 @@
 import { Button, TextInput } from 'components/common'
 import { useCallback, useState, useRef, useEffect } from 'react'
 import { Wallet } from 'ethers'
+import { MdClose } from 'react-icons/md'
 
-const UnlockAccount = ({ selectedAccount, accounts, setModalSteps, setMnemonic, setError }) => {
+const UnlockAccount = ({ selectedAccount, accounts, setModalSteps, setMnemonic, setError, setModalButtons, hideModal }) => {
 
   const [isLoading, setIsLoading] = useState(false)
   const [passphrase, setPassphrase] = useState()
 
   const textFieldRef = useRef()
+
+  const currentAccount = accounts.find(a => selectedAccount.id.toLowerCase() === a.id.toLowerCase())
 
   const onUnlock = useCallback(async () => {
     if (!passphrase) {
@@ -16,8 +19,6 @@ const UnlockAccount = ({ selectedAccount, accounts, setModalSteps, setMnemonic, 
     }
     setError(null)
     setIsLoading(true)
-
-    const currentAccount = accounts.find(a => selectedAccount.id.toLowerCase() === a.id.toLowerCase())
 
     if (currentAccount.primaryKeyBackup) {
       const keyBackup = JSON.parse(currentAccount.primaryKeyBackup)
@@ -37,13 +38,30 @@ const UnlockAccount = ({ selectedAccount, accounts, setModalSteps, setMnemonic, 
     } else {
       // should not happen because button should be grayed out upstream
     }
-  }, [passphrase, accounts, selectedAccount, setError, setModalSteps, setMnemonic])
+  }, [passphrase, setError, currentAccount.primaryKeyBackup, setMnemonic, setModalSteps])
 
   useEffect(() => {
+
+    if (!currentAccount.primaryKeyBackup) {
+      setModalButtons([<Button
+        full
+        clear
+        icon={<MdClose/>}
+        className={'primary'}
+        onClick={() => hideModal()}
+      >Close</Button>])
+    }
+
     setTimeout(() => {
       textFieldRef?.current?.focus()
     }, 100)
-  }, [])
+  }, [currentAccount, hideModal, setModalButtons])
+
+  if (!currentAccount.primaryKeyBackup) {
+    return (<div>
+      Your account does not have any imported keys. Import your keys first.
+    </div>)
+  }
 
   return (
     <>
