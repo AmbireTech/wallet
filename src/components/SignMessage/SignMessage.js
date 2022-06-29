@@ -210,6 +210,7 @@ export default function SignMessage ({ toSign, resolve, account, connections, re
       }
 
       if (!account.primaryKeyBackup) throw new Error(`No key backup found: you need to import the account from JSON or login again.`)
+      debugger
       const wallet = await Wallet.fromEncryptedJson(JSON.parse(account.primaryKeyBackup), signingState.passphrase)
 
       const sig = await (isTypedData

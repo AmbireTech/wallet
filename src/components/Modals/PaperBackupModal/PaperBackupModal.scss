@@ -1,0 +1,169 @@
+@import 'variables.scss';
+
+#paper-backup-modal {
+
+  min-height: 300px;
+
+  .heading {
+    margin-bottom: 24px;
+  }
+
+  .instructions {
+    padding: 12px;
+    margin-bottom: 12px;
+
+    //background-color: $input-background-color;
+
+    span {
+      color: $primary-accent-color;
+    }
+  }
+
+  .buttonHolder {
+    margin-top: 24px;
+  }
+
+  .seedWordsList {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+
+    .seedWordsList-cell {
+
+      background-color: $input-background-color;
+      padding: 4px 0 4px 12px;
+
+      flex: 1 1 30%;
+      display: flex;
+      gap: 8px;
+
+      .seedWordsList-index {
+        width: 18px;
+        color: $text-container-color;
+      }
+
+    }
+  }
+
+  .wordsSelectorContainer {
+    background: $input-background-color;
+    padding: 16px;
+
+    .wordRequestedTitle {
+      text-align: center;
+
+      span {
+        font-weight: bold;
+        color: $primary-accent-color;
+      }
+
+      margin-bottom: 12px;
+    }
+
+    .wordsSelector {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      transition: 250ms;
+
+      &.nextWordFade {
+        opacity: 0;
+      }
+
+      .wordIndex {
+        display: flex;
+        align-items: center;
+        color: $text-container-color;
+        span {
+          border-radius: 4px;
+          margin-left: 4px;
+          padding: 2px;
+          background: $input-background-color;
+          transition: 1500ms;
+          color: $text-container-color;
+          font-weight: bold;
+        }
+      }
+
+      &.nextWordFade .wordIndex span {
+        transition: 450ms;
+        background: mix($ambire-dark-blue, $input-background-color, 50%);
+      }
+
+      .wordChoices {
+        display: flex;
+        gap: 16px;
+        flex-grow: 1;
+
+        .wordChoice {
+          cursor: pointer;
+          background: $input-background-color-darker;
+          padding: 8px;
+          border: 1px solid transparent;
+          flex-grow: 1;
+          text-align: center;
+          transition: 250ms;
+          width: 25%;
+
+          &.selected {
+            //box-shadow: 0 0 5px 5px rgb(115, 0, 255);
+          }
+
+          &:hover {
+            background-color: mix($input-background-color-darker, $primary-accent-color, 50%);
+            border: 1px solid $primary-accent-color;
+          }
+
+          &.incorrect {
+            background-color: mix($input-background-color-darker, $danger-color, 50%);
+            border: 1px solid $danger-color;
+          }
+
+
+          &.correct {
+            width: 100%;
+            border-color: transparent;
+            background-color: $input-background-color-darker;
+            color: $primary-accent-color;
+
+            &:hover {
+              //background-color: transparent;
+              //border: 0;
+            }
+
+          }
+        }
+
+        &.animated {
+          gap: 0;
+          .wordChoice {
+            width: 0;
+            overflow: hidden;
+            opacity: 0;
+            flex: none;
+            padding-left: 0;
+            padding-right: 0;
+          }
+
+          .wordChoice.correct {
+            opacity: 1;
+            width: 100%;
+          }
+        }
+
+      }
+    }
+
+    .error-message {
+      margin-top: 8px;
+    }
+
+    .visualCheckmark {
+      color: $primary-accent-color;
+    }
+  }
+
+  .buttons .full {
+    flex-basis: 100% !important;
+  }
+}

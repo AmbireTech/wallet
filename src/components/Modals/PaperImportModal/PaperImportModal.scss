@@ -1,0 +1,128 @@
+@import 'variables.scss';
+
+#paper-import-modal {
+
+  min-height: 300px;
+
+  .heading {
+    margin-bottom: 24px;
+  }
+
+  .instructions {
+    padding: 12px;
+    margin-bottom: 12px;
+
+    //background-color: $input-background-color;
+
+    span {
+      color: $primary-accent-color;
+    }
+  }
+
+  .importedSeedWordsList {
+    margin-top: 24px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+
+    &.modifyMode {
+      .importedSeedWord {
+        opacity: 0.1;
+        cursor: default;
+        &:hover {
+          border-color: transparent;
+        }
+      }
+
+      .importedSeedWord .close {
+        cursor: default;
+      }
+
+      .importedSeedWord.modifiable {
+        opacity: 1;
+        border: 1px solid $primary-accent-color;
+      }
+    }
+
+    .importedSeedWord {
+      flex-basis: 30%;
+      display: flex;
+      background: $input-background-color-darker;
+      padding: 8px;
+      border: 1px solid transparent;
+      flex-grow: 1;
+      text-align: center;
+      align-items: center;
+      transition: 250ms;
+      width: 25%;
+      gap: 8px;
+      cursor: pointer;
+
+      .index {
+        color: mix($text-container-color, $input-background-color-darker, 50%);
+      }
+
+      .word {
+        text-align: left;
+        flex-grow: 1;
+      }
+
+      &.deletable {
+        background: mix($input-background-color-darker, $panel-background-color, 20%);
+        color: mix($text-container-color, $panel-background-color, 20%);
+
+        .index {
+          color: mix($text-container-color, $panel-background-color, 20%);
+        }
+
+        .close {
+          color: mix($text-container-color, $panel-background-color, 20%);
+        }
+      }
+
+      .close, .modifying {
+        display: flex;
+        align-items: center;
+        color: mix($text-container-color, $input-background-color-darker, 50%);
+        cursor: pointer;
+      }
+
+      .close:hover {
+        color: $danger-color;
+      }
+
+      .modifying:hover {
+        color: $primary-accent-color;
+      }
+      &:hover {
+        border: 1px solid $primary-accent-color;
+      }
+    }
+
+    .empty {
+      flex-basis: 30%;
+      flex-grow: 1;
+    }
+  }
+
+  .foundAddressContainer {
+    margin: 24px 0;
+    padding: 12px;
+    background: $input-background-color-darker;
+    text-align: center;
+
+    .foundAddress {
+      margin-top: 4px;
+      font-size: 16px;
+      font-family: monospace;
+    }
+  }
+
+  .buttonHolder {
+    margin-top: 24px;
+  }
+
+  .buttons .full {
+    flex-basis: 100% !important;
+  }
+}

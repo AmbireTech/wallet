@@ -5,18 +5,51 @@
     flex-direction: row;
     gap: 2em;
 
-    #export {
+    .backup-note {
+        text-align: left;
+    }
+
+    .panel-sub {
+        align-items: center;
+        display: flex;
+        gap: 24px;
+        background-color: $input-background-color-darker;
+        padding: 16px;
+
         .buttonComponent {
-            height: 60px;
-            width: 100%;
-            background: orange;
+            margin-bottom: 16px;
+        }
+
+        .backupIcon {
+            color: mix($input-background-color-darker, $text-color, 70%);
+            font-size: 4em;
+        }
+
+        .backup-info {
+            font-size: 0.9em;
+            text-align: left;
+            flex-grow: 1;
+
+            .buttonLink {
+                height: 40px;
+            }
+
+            .buttonComponent {
+                height: 30px;
+                background: $warning-color;
+
+                &.email-accounts-only {
+                    font-size: 0.9em;
+                }
+            }
+            button {
+                margin: 0;
+            }
         }
     }
 
     #import {
         .buttonComponent {
-            height: 60px;
-            width: 100%;
             background: $secondary-accent-color;
         }
     }

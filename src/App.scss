@@ -87,6 +87,18 @@ a {
   text-align: center;
 }
 
+.text-center {
+  text-align: center;
+}
+
+.error-message {
+  padding: 16px;
+  background: mix($danger-color, $panel-background-color, 5%);
+  border: 1px solid $danger-color;
+  color: $danger-color;
+  margin-bottom: 16px;
+}
+
 .validation-error {
   font-weight: 500;
   color: $danger-color;

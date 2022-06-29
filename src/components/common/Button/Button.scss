@@ -20,6 +20,10 @@ button.buttonComponent {
         color: black !important;
     }
 
+    &.full {
+        width: 100%;
+    }
+
     &.small {
         height: 50px;
         font-size: 17px;

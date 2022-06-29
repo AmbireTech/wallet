@@ -10,6 +10,8 @@ import HideTokenModel from './HideTokenModal/HideTokenModal'
 import AmbireEarnDetailsModal from './AmbireEarnDetailsModal/AmbireEarnDetailsModal'
 import EarnDetailsModal from './EarnDetailsModal/EarnDetailsModal'
 import AddAddressModal from './AddAddressModal/AddAddressModal'
+import PaperBackupModal from './PaperBackupModal/PaperBackupModal'
+import PaperImportModal from './PaperImportModal/PaperImportModal'
 
 export {
     PermissionsModal,
@@ -23,5 +25,7 @@ export {
     HideTokenModel,
     AmbireEarnDetailsModal,
     EarnDetailsModal,
-    AddAddressModal
+    AddAddressModal,
+    PaperBackupModal,
+    PaperImportModal
 }
