@@ -258,10 +258,12 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
                                     (<div className='validation-error'><BsXLg size={12} />&nbsp;{validationFormMgs.messages.address}</div>)}
                                 <div className="separator" />
                                 <AddressWarning
-                                    address={uDAddress ? uDAddress : ensAddress ? ensAddress : address}
-                                    onAddNewAddress={() => setNewAddress(uDAddress ? uDAddress : ensAddress ? ensAddress : address)}
+                                    address={address}
+                                    onAddNewAddress={() => setNewAddress(address)}
                                     onChange={(value) => setAddressConfirmed(value)}
                                     isKnownAddress={isKnownAddress}
+                                    uDAddress={uDAddress}
+                                    ensAddress={ensAddress}
                                 />
                                 {
                                     showSWAddressWarning ?
