@@ -86,7 +86,8 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
 
     const sendTx = () => {
         const recipientAddress = uDAddress ? uDAddress : ensAddress ? ensAddress :  address
-
+        if (!bigNumberHexAmount) return 
+        
         try {
             const txn = {
                 to: selectedAsset.address,
@@ -150,6 +151,7 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
 
         if (address.startsWith('0x') && (address.indexOf('.') === -1)) {
             if (uDAddress !== '') setUDAddress('')
+            if (ensAddress !== '') setEnsAddress('')
             const isValidRecipientAddress = validateSendTransferAddress(address, selectedAcc, addressConfirmed, isKnownAddress)
 
             setValidationFormMgs({
@@ -172,19 +174,19 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
             const validateForm = async () => {
                 const UDAddress = await resolveUDomain(address, selectedAsset ? selectedAsset.symbol : null, selectedNetwork.unstoppableDomainsChain)
                 const bip44Item = getBip44Items(selectedAsset ? selectedAsset.symbol : null)
-                const ensAddress = await resolveENSDomain(address, bip44Item)
+                const ensAddr = await resolveENSDomain(address, bip44Item)
                 timer.current = null
                 const isUDAddress = UDAddress ? true : false
-                const isEnsAddress = ensAddress ? true : false
+                const isEnsAddress = ensAddr ? true : false
                 let selectedAddress = ''
-                if (isEnsAddress) selectedAddress = ensAddress
+                if (isEnsAddress) selectedAddress = ensAddr
                 else if (isUDAddress) selectedAddress = UDAddress
                 else selectedAddress = address
 
                 const isValidRecipientAddress = validateSendTransferAddress(selectedAddress, selectedAcc, addressConfirmed, isKnownAddress, isUDAddress, isEnsAddress)
 
                 setUDAddress(UDAddress)
-                setEnsAddress(ensAddress)
+                setEnsAddress(ensAddr)
                 setValidationFormMgs({
                     success: {
                         amount: isValidSendTransferAmount.success,
@@ -204,7 +206,7 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
             }, 300)
         }
         return () => clearTimeout(timer.current)
-    }, [address, amount, selectedAcc, selectedAsset, addressConfirmed, showSWAddressWarning, sWAddressConfirmed, isKnownAddress, addToast, selectedNetwork, addAddress, uDAddress])
+    }, [address, amount, selectedAcc, selectedAsset, addressConfirmed, showSWAddressWarning, sWAddressConfirmed, isKnownAddress, addToast, selectedNetwork, addAddress, uDAddress, disabled, ensAddress])
 
     const amountLabel = <div className="amount-label">Available Amount: <span>{maxAmountFormatted} {selectedAsset?.symbol}</span></div>
 
