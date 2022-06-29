@@ -15,7 +15,7 @@ async function resolveENSDomain(domain, bip44Item) {
 	const resolver = await provider.getResolver(normalizedDomainName)
 	if (!resolver) return null
 	const ethAddress = await resolver.getAddress()
-	const addressForCoin = await resolveForCoin(resolver, bip44Item).catch(e => { return null })
+	const addressForCoin = await resolveForCoin(resolver, bip44Item).catch(e => null)
 	return isCorrectAddress(addressForCoin) ? addressForCoin : ethAddress
 }
 
