@@ -9,10 +9,17 @@ const noop = () => null
 const noopSessionStorage = { setSession: noop, getSession: noop, removeSession: noop }
 
 const STORAGE_KEY = 'wc1_state'
-const SUPPORTED_METHODS = ['eth_sendTransaction', 'gs_multi_send', 'personal_sign', 'eth_sign']
+const SUPPORTED_METHODS = ['eth_sendTransaction', 'gs_multi_send', 'personal_sign', 'eth_sign', 'eth_signTypedData_v4', 'eth_signTypedData', 'wallet_switchEthereumChain', 'ambire_sendBatchTransaction']
 const SESSION_TIMEOUT = 10000
 
 const getDefaultState = () => ({ connections: [], requests: [] })
+
+const UNISWAP_PERMIT_EXCEPTIONS = [ // based on PeerMeta
+  'Uniswap', // Uniswap Interface
+  'Sushi',
+  'QuickSwap', // QuickSwap Interface
+  'PancakeSwap', // 🥞 PancakeSwap - A next evolution DeFi exchange on BNB Smart Chain (BSC)
+]
 
 let connectors = {}
 let connectionErrors = []
@@ -23,7 +30,8 @@ async function wait (ms) { return new Promise(resolve => setTimeout(resolve, ms)
 const timePastForConnectionErr = 90 * 1000
 const checkIsOffline = uri => {
     const errors = connectionErrors.filter(x => x.uri === uri)
-    return errors.find(({ time } = {}) => time > (Date.now() - timePastForConnectionErr))
+    // if no errors, return false, else check time diff
+    return errors.length > 0 && errors.find(({ time } = {}) => time > (Date.now() - timePastForConnectionErr))
     //return errors.length > 1 && errors.slice(-2)
     //    .every(({ time } = {}) => time > (Date.now() - timePastForConnectionErr))
 }
@@ -243,23 +251,58 @@ export default function useWalletConnect ({ account, chainId, initialUri, allNet
                 onError(error)
                 return
             }
+
+            if (!SUPPORTED_METHODS.includes(payload.method)) {
+                addToast(`dApp requested unsupported method: ${payload.method}`, { error: true })
+                connector.rejectRequest({ id: payload.id, error: { message: 'Method not found: ' + payload.method, code: -32601 }})
+                return
+            }
+
+            const dappName = connector.session?.peerMeta?.name || ''
+
             // @TODO: refactor into wcRequestHandler
             // Opensea "unlock currency" hack; they use a stupid MetaTransactions system built into WETH on Polygon
             // There's no point of this because the user has to sign it separately as a tx anyway; but more importantly,
             // it breaks Ambire and other smart wallets cause it relies on ecrecover and does not depend on EIP1271
+            let txn = payload.params[0]
             if (payload.method === 'eth_signTypedData') {
                 // @TODO: try/catch the JSON parse?
                 const signPayload = JSON.parse(payload.params[1])
+                payload = {
+                    ...payload,
+                    method: 'eth_signTypedData',
+                }
+                txn = signPayload
                 if (signPayload.primaryType === 'MetaTransaction') {
                     payload = {
                         ...payload,
                         method: 'eth_sendTransaction',
-                        params: [{
-                            to: signPayload.domain.verifyingContract,
-                            from: signPayload.message.from,
-                            data: signPayload.message.functionSignature, // @TODO || data?
-                            value: signPayload.message.value || '0x0'
-                        }]
+                    }
+                    txn = [{
+                        to: signPayload.domain.verifyingContract,
+                        from: signPayload.message.from,
+                        data: signPayload.message.functionSignature, // @TODO || data?
+                        value: signPayload.message.value || '0x0'
+                    }]
+                }
+            }
+            if (payload.method === 'eth_signTypedData_v4') {
+                // @TODO: try/catch the JSON parse?
+                const signPayload = JSON.parse(payload.params[1])
+                payload = {
+                    ...payload,
+                    method: 'eth_signTypedData_v4',
+                }
+                txn = signPayload
+                // Dealing with Erc20 Permits
+                if (signPayload.primaryType === 'Permit') {
+                    // If Uniswap, reject the permit and expect a graceful fallback (receiving approve eth_sendTransaction afterwards)
+                    if (UNISWAP_PERMIT_EXCEPTIONS.some(ex => dappName.toLowerCase().includes(ex.toLowerCase()))) {
+                        connector.rejectRequest({ id: payload.id, error: { message: 'Method not found: ' + payload.method, code: -32601 }})
+                        return
+                    } else {
+                        addToast(`dApp tried to sign a token permit which does not support Smart Wallets`, { error: true })
+                        return
                     }
                 }
             }
@@ -288,16 +331,7 @@ export default function useWalletConnect ({ account, chainId, initialUri, allNet
                     connector.rejectRequest({ id: payload.id, error: { message: 'Unsupported chain' }})
                 }
             }
-            if (!SUPPORTED_METHODS.includes(payload.method)) {
-                const isUniIgnorable = payload.method === 'eth_signTypedData_v4'
-                    && connector.session.peerMeta
-                    && connector.session.peerMeta.name.includes('Uniswap')
-                // @TODO: if the dapp is in a "allow list" of dApps that have fallbacks, ignore certain messages
-                // eg uni has a fallback for eth_signTypedData_v4
-                if (!isUniIgnorable) addToast(`dApp requested unsupported method: ${payload.method}`, { error: true })
-                connector.rejectRequest({ id: payload.id, error: { message: 'METHOD_NOT_SUPPORTED: ' + payload.method }})
-                return
-            }
+
             const wrongAcc = (
                 payload.method === 'eth_sendTransaction' && payload.params[0] && payload.params[0].from
                 && payload.params[0].from.toLowerCase() !== connector.session.accounts[0].toLowerCase()
@@ -314,7 +348,7 @@ export default function useWalletConnect ({ account, chainId, initialUri, allNet
                 id: payload.id,
                 type: payload.method,
                 wcUri: connectorOpts.uri,
-                txn: payload.method === 'eth_sign' ? payload.params[1] : payload.params[0],
+                txn,
                 chainId: connector.session.chainId,
                 account: connector.session.accounts[0],
                 notification: true

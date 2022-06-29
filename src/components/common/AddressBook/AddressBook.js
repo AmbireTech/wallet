@@ -6,26 +6,28 @@ import { Button, DropDown, TextInput } from 'components/common'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import AddressList from './AddressList/AddressList'
 import { resolveUDomain } from 'lib/unstoppableDomains'
+import { resolveENSDomain } from 'lib/ensDomains'
 
-const AddressBook = ({ addresses, addAddress, removeAddress, newAddress, onClose, onSelectAddress, selectedNetwork}) => {
+const AddressBook = ({ addresses, addAddress, removeAddress, newAddress, onClose, onSelectAddress, selectedNetwork }) => {
     const [address, setAddress] = useState('')
     const [name, setName] = useState('')
     const [isOpen, setOpenMenu] = useState(false)
     const [openAddAddress, setOpenAddAddress] = useState(false)
     const timer = useRef(null)
     const [uDAddress, setUDAddress] = useState('')
+    const [ensAddress, setEnsAddress] = useState('')
 
     const selectAddress = address => {
-        onSelectAddress && onSelectAddress(uDAddress ? uDAddress : address)
+        onSelectAddress && onSelectAddress(uDAddress ? uDAddress : ensAddress ? ensAddress : address)
         setOpenMenu(false)
     }
-    
-    const isAddAddressFormValid = address.length && name.length && /^0x[a-fA-F0-9]{40}$/.test(uDAddress ? uDAddress : address)
+
+    const isAddAddressFormValid = (address.length && name.length && /^0x[a-fA-F0-9]{40}$/.test(uDAddress ? uDAddress : ensAddress ? ensAddress : address))
     const onAddAddress = useCallback(() => {
         setOpenMenu(false)
         setOpenAddAddress(false)
-        addAddress(name, address, uDAddress ? true : false)
-    }, [addAddress, name, address, uDAddress])
+        addAddress(name, address, uDAddress ? { type: 'ud' } : ensAddress ? { type: 'ens' } : { type: 'pub' })
+    }, [addAddress, name, address, uDAddress, ensAddress])
 
     const onDropDownChange = useCallback(state => {
         setOpenMenu(state)
@@ -45,40 +47,44 @@ const AddressBook = ({ addresses, addAddress, removeAddress, newAddress, onClose
         }
     }, [newAddress])
 
-    useEffect(() => { 
+    useEffect(() => {
         if (timer.current) {
             clearTimeout(timer.current)
         }
 
-        const validateForm = async() => {
-            const UDAddress =  await resolveUDomain(address, null, selectedNetwork.unstoppableDomainsChain)
-            timer.current = null
-            if (UDAddress) {
-                setUDAddress(UDAddress)
-            } else {
+        const validateForm = async () => {
+            const UDAddress = await resolveUDomain(address, null, selectedNetwork.unstoppableDomainsChain)
+            const ensAddress = await resolveENSDomain(address)
+
+            if (UDAddress) setUDAddress(UDAddress)
+            else if (ensAddress) setEnsAddress(ensAddress)
+            else {
                 setUDAddress('')
+                setEnsAddress('')
             }
+            
+            timer.current = null
         }
 
-        timer.current = setTimeout(async() => {
+        timer.current = setTimeout(async () => {
             return validateForm().catch(console.error)
         }, 500)
     }, [address, selectedNetwork.unstoppableDomainsChain])
 
     return (
-        <DropDown title={<><FaAddressCard/>Address Book</>} className="address-book" open={isOpen} onChange={onDropDownChange}>
+        <DropDown title={<><FaAddressCard />Address Book</>} className="address-book" open={isOpen} onChange={onDropDownChange}>
             <div className="heading">
                 <div className="title">
-                    <FaAddressCard/> Address Book
+                    <FaAddressCard /> Address Book
                 </div>
                 {
                     !openAddAddress ?
                         <div className="button" onClick={() => setOpenAddAddress(true)}>
-                            <MdOutlineAdd/>
+                            <MdOutlineAdd />
                         </div>
                         :
                         <div className="button" onClick={() => setOpenAddAddress(false)}>
-                            <MdClose/>
+                            <MdClose />
                         </div>
                 }
             </div>
@@ -86,11 +92,11 @@ const AddressBook = ({ addresses, addAddress, removeAddress, newAddress, onClose
                 openAddAddress ?
                     <div id="add-address" className="content">
                         <div className="fields">
-                            <TextInput autoComplete="nope" placeholder="Name" value={name} onInput={value => setName(value)}/>
-                            <TextInput autoComplete="nope" placeholder="Address" value={address} onInput={value => setAddress(value)}/>
+                            <TextInput autoComplete="nope" placeholder="Name" value={name} onInput={value => setName(value)} />
+                            <TextInput autoComplete="nope" placeholder="Address" value={address} onInput={value => setAddress(value)} />
                         </div>
                         <Button clear small disabled={!isAddAddressFormValid} onClick={onAddAddress}>
-                            <MdOutlineAdd/> Add Address
+                            <MdOutlineAdd /> Add Address
                         </Button>
                     </div>
                     :
