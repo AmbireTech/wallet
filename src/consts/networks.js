@@ -78,7 +78,7 @@ const networks = [
 	{
 		id: 'arbitrum',
 		chainId: 42161,
-		rpc: 'https://arb1.arbitrum.io/rpc',
+		rpc: 'https://arb-mainnet.g.alchemy.com/v2/wBLFG9QR-n45keJvKjc4rrfp2F1sy1Cp',
 		nativeAssetSymbol: 'AETH',
 		name: 'Arbitrum',
 		icon: '/resources/networks/arbitrum.svg',
