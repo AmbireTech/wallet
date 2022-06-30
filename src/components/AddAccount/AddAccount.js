@@ -20,16 +20,17 @@ import { Loading } from 'components/common'
 import { ledgerGetAddresses, PARENT_HD_PATH } from 'lib/ledgerWebHID'
 import { isFirefox } from 'lib/isFirefox'
 import { VscJson } from 'react-icons/vsc'
+import { BsFileMedicalFill } from 'react-icons/bs'
 import { useDropzone } from 'react-dropzone'
 import { validateImportedAccountProps, fileSizeValidator } from 'lib/validations/importedAccountValidations'
-import { LatticeModal } from 'components/Modals'
+import { LatticeModal, PaperImportModal } from 'components/Modals'
 
 TrezorConnect.manifest({
   email: 'contactus@ambire.com',
   appUrl: 'https://www.ambire.com'
 })
 
-export default function AddAccount({ relayerURL, onAddAccount, utmTracking }) {
+export default function AddAccount({ relayerURL, onAddAccount, utmTracking, accounts }) {
   const [signersToChoose, setChooseSigners] = useState(null)
   const [err, setErr] = useState('')
   const [addAccErr, setAddAccErr] = useState('')
@@ -101,7 +102,7 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking }) {
       quickAccSigner: signer,
       ...(utm.length && { utm })
     })
-    
+
     if (createResp.success) {
       utmTracking.resetUtm()
     }
@@ -319,10 +320,10 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking }) {
       )
     }
   }, [onSignerAddressClicked, showModal, signersToChoose])
-  
+
   const onDrop = useCallback((acceptedFiles, rejectedFiles) => {
     const reader = new FileReader()
-    
+
     if (rejectedFiles.length) {
       addToast(`${rejectedFiles[0].file.path} - ${(rejectedFiles[0].file.size / 1024).toFixed(2)} KB. ${rejectedFiles[0].errors[0].message}`, { error: true })
     }
@@ -335,7 +336,7 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking }) {
         const content = readerEvent.target.result
         const fileContent = JSON.parse(content)
         const validatedFile = validateImportedAccountProps(fileContent)
-        
+
         if (validatedFile.success) onAddAccount(fileContent, { select: true })
         else addToast(validatedFile.message, { error: true})
       }
@@ -350,6 +351,15 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking }) {
     maxFiles: 1,
     validator: fileSizeValidator
   })
+
+  const importFromPaperBackup = () => {
+    showModal(<PaperImportModal
+      accounts={accounts}
+      onAddAccount={onAddAccount}
+      relayerURL={relayerURL}
+      newAccount
+    />)
+  }
 
   // Adding accounts from existing signers
   const addFromSignerButtons = (<>
@@ -372,6 +382,10 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking }) {
     <button onClick={() => wrapErr(open)}>
       <div className="icon"><VscJson size={25}/></div>
       Import from JSON
+    </button>
+    <button onClick={() => wrapErr(importFromPaperBackup)}>
+      <div className="icon"><BsFileMedicalFill size={25}/></div>
+      Import from Paper Backup
     </button>
     <input {...getInputProps()} />
   </>)

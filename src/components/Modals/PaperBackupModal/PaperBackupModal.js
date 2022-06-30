@@ -27,7 +27,6 @@ const PaperBackupModal = ({ selectedAccount, accounts }) => {
   })
 
   const [error, setError] = useState(null)
-
   const [mnemonic, setMnemonic] = useState(null)
 
   const getModalTitle = () => {

@@ -3,7 +3,7 @@ import { Button, TextInput } from 'components/common'
 import { useRef, useEffect, useState, useCallback } from 'react'
 import { validateImportedAccountProps } from 'lib/validations/importedAccountValidations'
 
-const SetSeedWordsPassword = ({ selectedAccount, wallet, setError, onAddAccount, hideModal }) => {
+const SetSeedWordsPassword = ({ wallet, setError, onAddAccount, hideModal, retrievedIdentity, setModalButtons }) => {
 
   const [passphrase, setPassphrase] = useState('')
   const [passphrase2, setPassphrase2] = useState('')
@@ -27,8 +27,11 @@ const SetSeedWordsPassword = ({ selectedAccount, wallet, setError, onAddAccount,
     )
 
     const account = {
-      ...selectedAccount,
-      primaryKeyBackup
+      ...retrievedIdentity,
+      primaryKeyBackup,
+      backupOptout: false,
+      emailConfRequired: false
+      // cloudBackupOptout: TODO : where do we find this data?
     }
 
     const validatedFile = validateImportedAccountProps(account)
@@ -40,7 +43,7 @@ const SetSeedWordsPassword = ({ selectedAccount, wallet, setError, onAddAccount,
       setError(validatedFile.message)
     }
 
-  }, [onAddAccount, passphrase, passphrase2, selectedAccount, setError, wallet, hideModal])
+  }, [passphrase, passphrase2, wallet, retrievedIdentity, setError, onAddAccount, hideModal])
 
   useEffect(() => {
     setTimeout(() => {
@@ -48,10 +51,20 @@ const SetSeedWordsPassword = ({ selectedAccount, wallet, setError, onAddAccount,
     }, 100)
   }, [])
 
+  useEffect(() => {
+    setModalButtons([
+      <Button
+        full
+        onClick={onValidate}>
+        Update account
+      </Button>
+    ])
+  }, [onValidate, setModalButtons])
+
   return (
     <>
       <div className='instructions'>
-        Validate the email associated with your signer account {wallet.address}
+        Secure your Ambire account with a password
       </div>
 
       <TextInput password
@@ -64,13 +77,6 @@ const SetSeedWordsPassword = ({ selectedAccount, wallet, setError, onAddAccount,
                  onChange={(v) => setPassphrase2(v)}
                  placeholder='Repeat password'/>
 
-      <div className='buttonHolder'>
-        <Button
-          full
-          onClick={onValidate}>
-          Save
-        </Button>
-      </div>
     </>
   )
 }

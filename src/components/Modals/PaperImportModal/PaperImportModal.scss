@@ -2,20 +2,26 @@
 
 #paper-import-modal {
 
+
+  &>.content {
+    padding-bottom: 48px;
+  }
+
   min-height: 300px;
 
   .heading {
-    margin-bottom: 24px;
+    margin-bottom: 48px;
   }
 
   .instructions {
-    padding: 12px;
     margin-bottom: 12px;
-
-    //background-color: $input-background-color;
 
     span {
       color: $primary-accent-color;
+    }
+
+    .unimportant {
+      color: $text-container-color;
     }
   }
 
@@ -123,7 +129,7 @@
     background: $input-background-color-darker;
     text-align: center;
 
-    .foundAddress {
+    .address {
       margin-top: 4px;
       font-size: 16px;
       font-family: monospace;

@@ -26,10 +26,31 @@ const Backup = ({ selectedAccount, accounts, onOpen, onAddAccount, relayerURL })
 
     const onPaperImportClick = () => {
         showModal(<PaperImportModal
+          accounts={accounts}
           onAddAccount={onAddAccount}
           selectedAccount={selectedAccount}
           relayerURL={relayerURL}
         />)
+    }
+
+    const renderPaperExportButton = (account) => {
+        if (account.email) {
+            if (account.primaryKeyBackup) {
+                return <Button full small onClick={onPaperBackupClick}>Backup on paper</Button>
+            }
+            return <Button full small disabled className='email-accounts-only'>Keys required for paper backup</Button>
+        }
+        return <Button full small disabled className='email-accounts-only'>Available for emails accounts only</Button>
+    }
+
+    const renderPaperImportButton = (account) => {
+        if (account.email) {
+            if (account.primaryKeyBackup) {
+                return <Button full small disabled >Keys already active</Button>
+            }
+            return <Button small full onClick={onPaperImportClick}>Import from paper</Button>
+        }
+        return <Button full small disabled className='email-accounts-only'>Available for emails accounts only</Button>
     }
 
     return (
@@ -74,19 +95,7 @@ const Backup = ({ selectedAccount, accounts, onOpen, onAddAccount, relayerURL })
                                 The seed phrase will be unencrypted, so store it safely.
                             </p>
                             {
-                              selectedAccount.email && selectedAccount.primaryKeyBackup &&
-                              <Button full small onClick={onPaperBackupClick}>Backup on paper</Button>
-                            }
-
-                            {
-                              selectedAccount.email && !selectedAccount.primaryKeyBackup &&
-                              <Button full small disabled className='email-accounts-only'>Keys required for paper backup</Button>
-                            }
-
-                            {
-                                //Remove in PR: I believe it's better to gray out the button, so it informs the user that it is an option and it might get their interest trying email account
-                                !selectedAccount.email &&
-                                <Button full small disabled className='email-accounts-only'>Available for emails accounts only</Button>
+                                renderPaperExportButton(selectedAccount)
                             }
                         </div>
                     </div>
@@ -120,10 +129,7 @@ const Backup = ({ selectedAccount, accounts, onOpen, onAddAccount, relayerURL })
                             Update your Ambire account ({selectedAccount.id.slice(0, 5)}...{selectedAccount.id.slice(-3)}) with signer keys from a backed up seed phrase
                         </p>
                         {
-                          //Remove in PR: I believe it's better to gray out the button, so it informs the user that it is an option and it might get their interest trying email account
-                          selectedAccount.email
-                            ? <Button small full onClick={onPaperImportClick}>Import from paper</Button>
-                            : <Button full small disabled className='email-accounts-only'>Available for emails accounts only</Button>
+                            renderPaperImportButton(selectedAccount)
                         }
                     </div>
                 </div>

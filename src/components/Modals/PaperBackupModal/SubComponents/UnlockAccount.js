@@ -57,6 +57,7 @@ const UnlockAccount = ({ selectedAccount, accounts, setModalSteps, setMnemonic, 
     }, 100)
   }, [currentAccount, hideModal, setModalButtons])
 
+  // This should not happen
   if (!currentAccount.primaryKeyBackup) {
     return (<div>
       Your account does not have any imported keys. Import your keys first.

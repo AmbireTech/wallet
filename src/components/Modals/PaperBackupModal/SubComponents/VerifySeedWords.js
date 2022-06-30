@@ -3,13 +3,14 @@ import { useCallback, useEffect, useState } from 'react'
 import { MdClose } from 'react-icons/md'
 import { FaCheck } from 'react-icons/fa'
 
-const VerifySeedWords = ({ words, setModalSteps, setModalButtons, hideModal }) => {
+const VerifySeedWords = ({ words, setModalButtons, hideModal }) => {
 
-  const [error, setError] = useState()
+  const [error, setError] = useState(null)
   const [wordIndex, setWordIndex] = useState(0)
   const [selectedWordFeedback, setSelectedWordFeedback] = useState({})
   const [animationNextWord, setAnimationNextWord] = useState(false)
 
+  // to seed random sort words for verification
   const randNum = (word) => {
     let asciiNumStr = '0'
     for (let i = 0; i < word.length; i++) {
@@ -24,22 +25,14 @@ const VerifySeedWords = ({ words, setModalSteps, setModalButtons, hideModal }) =
     return finalNum * 1
   }
 
+  // getting 4 words to pick from, including the correct one
   const getWordChoices = useCallback(() => {
     const correctWord = words[wordIndex]
 
-    /*if (selectedWordFeedback.correct) {
-      return [{
-        word: correctWord,
-        selected: true,
-        correct: true
-      }]
-    }*/
-
-    // better having a random seed
     const shuffledWordsList = [...words.slice(0, wordIndex), ...words.slice(wordIndex + 1)]
       .sort((a, b) => randNum(a) - randNum(b))
 
-    // quick hack to loop
+    // quick hack to loop over end of array
     const wordsStream = [...shuffledWordsList, ...shuffledWordsList]
 
     return [correctWord, ...wordsStream.slice(wordIndex, wordIndex + 3)]
@@ -60,6 +53,7 @@ const VerifySeedWords = ({ words, setModalSteps, setModalButtons, hideModal }) =
     const correct = words[wordIndex] === selectedWord
     setSelectedWordFeedback({ index: selectedIndex, correct })
 
+    // word click animation
     setTimeout(() => {
       if (words[wordIndex] === selectedWord) {
         setAnimationNextWord(true)
@@ -77,6 +71,7 @@ const VerifySeedWords = ({ words, setModalSteps, setModalButtons, hideModal }) =
     }, 400)
   }, [words, wordIndex, setError])
 
+  // Display final closing button when all the words are verified
   useEffect(() => {
     if (wordIndex > 11) {
       setModalButtons([<Button

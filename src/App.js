@@ -250,7 +250,7 @@ function AppInner() {
 
     <Switch>
       <Route path="/add-account">
-        <AddAccount relayerURL={relayerURL} onAddAccount={onAddAccount} utmTracking={utmTracking}></AddAccount>
+        <AddAccount relayerURL={relayerURL} onAddAccount={onAddAccount} utmTracking={utmTracking} accounts={accounts}></AddAccount>
       </Route>
 
       <Route path="/email-login">

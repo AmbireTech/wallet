@@ -7,12 +7,10 @@ import SetSeedWordsPassword from './SubComponents/SetSeedWordsPassword'
 
 import './PaperImportModal.scss'
 
-const PaperImportModal = ({onAddAccount, selectedAccount, relayerURL}) => {
+const PaperImportModal = ({ accounts, onAddAccount, selectedAccount, relayerURL, newAccount }) => {
 
-  const [modalButtons] = useState(null)
+  const [modalButtons, setModalButtons] = useState(null)
   const [foundAddress, setFoundAddress] = useState(null)
-  const { hideModal } = useModals()
-
   const [modalSteps, setModalSteps] = useState({
     steps: [
       {
@@ -26,6 +24,9 @@ const PaperImportModal = ({onAddAccount, selectedAccount, relayerURL}) => {
 
   const [error, setError] = useState(null)
   const [wallet, setWallet] = useState(null)
+  const [retrievedIdentity, setRetrievedIdentity] = useState(null)
+
+  const { hideModal } = useModals()
 
   const getModalTitle = () => {
     return (<div>
@@ -46,29 +47,36 @@ const PaperImportModal = ({onAddAccount, selectedAccount, relayerURL}) => {
         {
           modalSteps.stepIndex === 0 &&
           <ImportSeedWordsForm
+            accounts={accounts}
+            foundAddress={foundAddress}
+            hideModal={hideModal}
+            newAccount={newAccount}
+            relayerURL={relayerURL}
+            retrievedIdentity={retrievedIdentity}
             selectedAccount={selectedAccount}
+            setFoundAddress={setFoundAddress}
             setError={setError}
             setModalSteps={setModalSteps}
-            foundAddress={foundAddress}
-            setFoundAddress={setFoundAddress}
             setWallet={setWallet}
+            setRetrievedIdentity={setRetrievedIdentity}
+            setModalButtons={setModalButtons}
           />
         }
 
         {
           modalSteps.stepIndex === 1 &&
           <SetSeedWordsPassword
+            newAccount={newAccount}
             selectedAccount={selectedAccount}
             wallet={wallet}
-            foundAddress={foundAddress}
             setError={setError}
-            setModalSteps={setModalSteps}
             onAddAccount={onAddAccount}
-            relayerURL={relayerURL}
+            setRetrievedIdentity={setRetrievedIdentity}
+            retrievedIdentity={retrievedIdentity}
             hideModal={hideModal}
+            setModalButtons={setModalButtons}
           />
         }
-
       </div>
     </Modal>
   )

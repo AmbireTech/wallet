@@ -4,7 +4,7 @@ import { FaTimes, FaCheck, FaSync } from 'react-icons/fa'
 import { Wallet } from 'ethers'
 import { fetchGet } from 'lib/fetch'
 
-const ImportSeedWordsForm = ({ selectedAccount, setModalSteps, foundAddress, setFoundAddress, setWallet, relayerURL }) => {
+const ImportSeedWordsForm = ({ accounts, selectedAccount, setModalSteps, foundAddress, setFoundAddress, setWallet, relayerURL, newAccount, retrievedIdentity, setRetrievedIdentity, hideModal, setModalButtons }) => {
 
   // we don't want to pass because we want to display the error further down in the modal instead
   const [error, setError] = useState(null)
@@ -12,18 +12,20 @@ const ImportSeedWordsForm = ({ selectedAccount, setModalSteps, foundAddress, set
   const [words, setWords] = useState([])
   const [previewDeletionIndex, setPreviewDeletionIndex] = useState(null)
   const [modifyingIndex, setModifyingIndex] = useState(null)
-  const [signerMatchesIdentity, setSignerMatchesIdentity] = useState(null)
+
   const [networkFetchError, setNetworkFetchError] = useState(null)
 
   const textFieldRef = useRef()
 
   const validateWord = useCallback(() => {
+    setFoundAddress(null)
     if (!currentWord) {
       setError('Invalid seed word')
       return
     }
     setError(null)
 
+    // in case the user is pasting the whole words
     if (words.length === 0) {
       const pastedWords = currentWord.split(' ')
       if (pastedWords.length === 12) {
@@ -57,7 +59,7 @@ const ImportSeedWordsForm = ({ selectedAccount, setModalSteps, foundAddress, set
       }
       setCurrentWord('')
     }
-  }, [currentWord, setError, words, modifyingIndex])
+  }, [setFoundAddress, currentWord, words.length, modifyingIndex])
 
   const onTextFieldChange = useCallback((val) => {
     if (val.trim() !== currentWord) {
@@ -108,38 +110,61 @@ const ImportSeedWordsForm = ({ selectedAccount, setModalSteps, foundAddress, set
   }, [setWallet, setModalSteps, words])
 
   const validateSeedWords = useCallback(() => {
+    setModalButtons(null)
     if (words.length < 12) {
-      setFoundAddress(null)
       return
     }
     try {
       const wallet = Wallet.fromMnemonic(words.join(' '))
       setFoundAddress(wallet.address)
-      setSignerMatchesIdentity(null)
+      setRetrievedIdentity(null)
     } catch (e) {
       setFoundAddress(null)
       setError('Could not compute address: ' + e.message + '. Please check and delete the incorrect words')
     }
-  }, [setError, words, setFoundAddress])
+  }, [setModalButtons, words, setFoundAddress, setRetrievedIdentity])
 
-  const checkMatchingIdentity = useCallback(() => {
+  const checkMatchingIdentity = useCallback(async() => {
     if (!foundAddress) return
+    if (words.length !== 12) return
     setNetworkFetchError(null)
-    const url = 'https://deelay.me/1500/https://api.coingecko.com/api/v3/ping\n'
+
+    let wallet
+    try {
+      wallet = Wallet.fromMnemonic(words.join(' '))
+    } catch (e) {
+      setError('Failed to compute address:' + e.message)
+      return
+    }
+
+    const signature = await wallet.signMessage('get_identity_from_signer')
+
+    const url = `${relayerURL}/retrieveIdentity/${signature}`
 
     fetchGet(url)
       .then(result => {
-        //throw Error('lol err')
-        if (result.gecko_says) {
-          setSignerMatchesIdentity(true)
+        if (result.success) {
+          setRetrievedIdentity(result.identity)
+
+          const existing = accounts.find(a => a.id.toLowerCase() === result.identity.id.toLowerCase() && !!a.primaryKeyBackup)
+
+          if (existing) {
+            setModalButtons([<Button full clear onClick={() => hideModal()} >
+              Close
+            </Button>])
+          } else {
+            setModalButtons([<Button full onClick={onValidate} >
+              Continue
+            </Button>])
+          }
         } else {
-          setSignerMatchesIdentity(false)
+          setRetrievedIdentity(false)
         }
       })
       .catch(err => {
         setNetworkFetchError(err.message)
       })
-  }, [foundAddress])
+  }, [foundAddress, words, relayerURL, setRetrievedIdentity, accounts, setModalButtons, hideModal, onValidate])
 
   useEffect(() => {
     validateSeedWords()
@@ -155,10 +180,48 @@ const ImportSeedWordsForm = ({ selectedAccount, setModalSteps, foundAddress, set
     }, 100)
   }, [])
 
+  const renderRetrievedIdentityFeedback = useCallback(() => {
+    if (retrievedIdentity !== null) {
+      if (retrievedIdentity === false) {
+        return (<div className='error-message'>Could not retrieve Ambire account from this signer</div>)
+      }
+      if (!newAccount && retrievedIdentity.id.toLowerCase() !== selectedAccount.id.toLowerCase()) {
+        return (
+          <div className='error-message'>
+            The signer account you imported does not belong to the selected Ambire account {selectedAccount.id}.<br />
+            <br />
+            This signer account belongs to the Ambire account {retrievedIdentity.id}
+          </div>
+        )
+      }
+
+      if (newAccount || retrievedIdentity.id.toLowerCase() === selectedAccount.id.toLowerCase()) {
+
+        const existing = accounts.find(a => a.id.toLowerCase() === retrievedIdentity.id.toLowerCase() && !!a.primaryKeyBackup)
+
+        return (
+          <div>
+            <div>
+              <b>Ambire account</b>
+              <div className='address'>{retrievedIdentity.id}</div>
+            </div>
+            {
+              existing &&
+              <div className='notification-hollow info'>
+                You have already added this account
+              </div>
+            }
+          </div>
+          )
+      }
+    }
+  }, [retrievedIdentity, newAccount, onValidate, selectedAccount])
+
   return <div>
     <div className='instructions'>
-      Enter the words in order, as appearing on your backed up paper. Press <i>enter</i> or <i>space</i> after the word
-      to validate it
+      Type in the words in the order they appear on your paper backup.<br />
+      <span className='unimportant'>Press <i>enter</i> or <i>space</i> after each word
+      to validate it</span>
     </div>
     {
       (words.length < 12 || modifyingIndex !== null) &&
@@ -235,10 +298,10 @@ const ImportSeedWordsForm = ({ selectedAccount, setModalSteps, foundAddress, set
     {
       (foundAddress && modifyingIndex === null) &&
       <div className='foundAddressContainer'>
-        <b>Address</b>
-        <div className='foundAddress'>{foundAddress}</div>
+        <b>Signer Account</b>
+        <div className='address'>{foundAddress}</div>
         {
-          (signerMatchesIdentity === null && !networkFetchError) &&
+          (retrievedIdentity === null && !networkFetchError) &&
           <Loading />
         }
         {
@@ -249,18 +312,7 @@ const ImportSeedWordsForm = ({ selectedAccount, setModalSteps, foundAddress, set
           </div>
         }
         {
-          signerMatchesIdentity === false &&
-          <div className='error-message'>
-            Could not match this signer address with the selected account. Are you sure this is the backup for {selectedAccount.id} ?
-          </div>
-        }
-        {
-          signerMatchesIdentity &&
-          <div className='buttonHolder'>
-            <Button full onClick={onValidate} >
-              Continue
-            </Button>
-          </div>
+          renderRetrievedIdentityFeedback()
         }
       </div>
     }
