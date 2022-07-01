@@ -16,7 +16,8 @@ const networks = [
 	{
 		id: 'polygon',
 		chainId: 137,
-		rpc: 'https://polygon-rpc.com/rpc',
+		rpc: 'https://rpc.ankr.com/polygon', // temp - 5M per month and 170k per day
+		// rpc: 'https://polygon-rpc.com/rpc',
 		// rpc: 'https://polygon-mainnet.infura.io/v3/d4319c39c4df452286d8bf6d10de28ae',
 		nativeAssetSymbol: 'MATIC',
 		name: 'Polygon',
