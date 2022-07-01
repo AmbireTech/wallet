@@ -55,7 +55,6 @@
     "eject": "react-scripts eject",
     "lint": "eslint src --ext .js,.jsx"
   },
-  "engineStrict": true,
   "engines": {
     "node": "^16.0.0",
     "npm": "^8.0.0"
