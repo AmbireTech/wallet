@@ -23,7 +23,7 @@
     "@web3-react/types": "^6.0.7",
     "@yfi/sdk": "^1.0.11",
     "adex-protocol-eth": "git+https://git@github.com/AmbireTech/adex-protocol-eth.git#d853d1ef1955cf63052a024f6ca09d40d49cc207",
-    "ambire-common": "git+https://github.com/AmbireTech/ambire-common.git#v0.8.1",
+    "ambire-common": "git+https://github.com/AmbireTech/ambire-common.git#664a096a6e1b0608bb04c50144d232a715beb242",
     "bip44-constants": "^128.0.0",
     "blockies-ts": "^1.0.0",
     "eth-keyring-controller": "^6.2.1",
@@ -55,6 +55,7 @@
     "eject": "react-scripts eject",
     "lint": "eslint src --ext .js,.jsx"
   },
+  "engineStrict": true,
   "engines": {
     "node": "^16.0.0",
     "npm": "^8.0.0"
