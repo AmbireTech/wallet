@@ -27,7 +27,7 @@
     "bip44-constants": "^128.0.0",
     "blockies-ts": "^1.0.0",
     "eth-keyring-controller": "^6.2.1",
-    "ethereumjs-util": "^6.1.0",
+    "ethereumjs-util": "^7.1.3",
     "ethers": "^5.5.2",
     "gridplus-sdk": "^1.3.5",
     "node-fetch": "^2.3.0",
