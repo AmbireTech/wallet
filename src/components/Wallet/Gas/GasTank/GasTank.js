@@ -16,11 +16,9 @@ import { useModals } from 'hooks'
 import { GasTankBalanceByTokensModal } from 'components/Modals'
 import { HiOutlineExternalLink } from 'react-icons/hi'
 import { formatUnits } from 'ethers/lib/utils'
-// eslint-disable-next-line import/no-relative-parent-imports
-import { getAddedGas } from '../../../SendTransaction/helpers'
+import { getGasTankFilledTxns } from 'lib/isFeeCollectorTxn'
 // eslint-disable-next-line import/no-relative-parent-imports
 import { useToasts } from '../../../../hooks/toasts'
-
 
 const GasTank = ({ network, 
     relayerURL, 
@@ -44,11 +42,19 @@ const GasTank = ({ network,
     const urlGetBalance = relayerURL ? `${relayerURL}/gas-tank/${account}/getBalance?cacheBreak=${cacheBreak}` : null
     const urlGetFeeAssets = relayerURL ? `${relayerURL}/gas-tank/assets?cacheBreak=${cacheBreak}` : null
     const urlGetTransactions = relayerURL ? `${relayerURL}/identity/${account}/${network.id}/transactions` : null
-    const { data, isLoading } = useRelayerData(urlGetBalance)
-    const feeAssetsRes = useRelayerData(urlGetFeeAssets)
-    const feeAssetsPerNetwork = feeAssetsRes.data?.filter(item => item.network === network.id)
-    const executedTxnsRes = useRelayerData(urlGetTransactions)
-    const gasTankTxns = executedTxnsRes && executedTxnsRes.data?.txns?.length && executedTxnsRes.data?.txns.filter(item => !!item.gasTankFee)
+
+    const { data: balancesRes, isLoading } = useRelayerData(urlGetBalance)
+    const { data: feeAssetsRes} = useRelayerData(urlGetFeeAssets)
+    const { data: executedTxnsRes } = useRelayerData(urlGetTransactions)
+    
+    const gasTankBalances = balancesRes && balancesRes.length && balancesRes.map(({balanceInUSD}) => balanceInUSD).reduce((a, b) => a + b, 0)
+    const gasTankTxns = executedTxnsRes && executedTxnsRes.txns.length && executedTxnsRes.txns.filter(item => !!item.gasTankFee)
+    const totalSavedResult = gasTankTxns && gasTankTxns.length && gasTankTxns.map(item => item.feeInUSDPerGas * item.gasLimit).reduce((a, b) => a + b)
+    const totalSaved = formatFloatTokenAmount(totalSavedResult, true, 2)
+    const feeAssetsPerNetwork = feeAssetsRes && feeAssetsRes.length && feeAssetsRes.filter(item => item.network === network.id)
+    const executedTxns = executedTxnsRes && executedTxnsRes.txns.length && executedTxnsRes.txns
+    const gasTankFilledTxns = executedTxns && executedTxns.length && getGasTankFilledTxns(executedTxns)
+    
     const { isBalanceLoading, tokens } = portfolio
     const sortType = userSorting.tokens?.sortType || 'decreasing'
     const isMobileScreen = useCheckMobileScreen()
@@ -93,7 +99,7 @@ const GasTank = ({ network,
             { account: account, isEnabled: false }
         ])
     const toggleGasTank = () => {
-        if (!data && !data.length) {
+        if (!gasTankBalances && !gasTankBalances.length) {
             addToast('You should add assets in Gas Tank to be able to enable it!', { error: true })
             return 
         }
@@ -105,7 +111,7 @@ const GasTank = ({ network,
     }
 
     const openGasTankBalanceByTokensModal = () => {
-        showModal(<GasTankBalanceByTokensModal data={ (data && data.length) ? data : [] }/>)
+        showModal(<GasTankBalanceByTokensModal data={ (balancesRes && balancesRes.length) ? balancesRes : [] }/>)
     }
 
     const tokenItem = (index, img, symbol, balance, balanceUSD, address, send = false, network, decimals, category, sortedTokensLength) => 
@@ -172,7 +178,7 @@ const GasTank = ({ network,
                     <span><FaGasPump/> Gas Tank Balance</span>
                     { !isLoading ?
                         (<div>
-                            <span>$ </span>{ !data ? '0.00' : data.map(({balanceInUSD}) => balanceInUSD).reduce((a, b) => a + b, 0).toFixed(2)  }
+                            <span>$ </span>{ gasTankBalances ? formatFloatTokenAmount(gasTankBalances, true, 2) : '0.00' }
                         </div>) : 
                         <Loading /> }
                     {/* TODO: Add functionality for drag and drop */}
@@ -186,7 +192,7 @@ const GasTank = ({ network,
                 <div className="balance-wrapper total-save">
                     <span>Total Save</span>
                     <div>
-                        <span>$ </span>{gasTankTxns && gasTankTxns.length ? gasTankTxns.map(item => item.feeInUSDPerGas * item.gasLimit).reduce((a, b) => a + b).toFixed(2) : '0.00'}
+                        <span>$ </span>{totalSaved ? totalSaved : '0.00'}
                     </div>
                 </div>
             </div>
@@ -238,27 +244,31 @@ const GasTank = ({ network,
                             )
                         : <Loading />  }
             </div>
-            <span className='title'>Transaction History</span>
+            <span className='title'>Gas Tank Deposits Transaction History</span>
             <div className="txns-wrapper">
                 {
-                    gasTankTxns && gasTankTxns.length ? gasTankTxns.map((item, key) => {
-                        const feeTokenDetails = data && data.length ? data.find(i => i.id === item.gasTankFee.assetId) : null
-                        const savedGas = getAddedGas(feeTokenDetails)
+                    //TODO: Changed styles of the table
+                    gasTankFilledTxns && gasTankFilledTxns.length ? gasTankFilledTxns.map((item, key) => {
+                        // const feeTokenDetails = data && data.length ? data.find(i => i.id === item.gasTankFee.assetId) : null
+                        // const savedGas = getAddedGas(feeTokenDetails)
                         return (<div key={key} className="txns-item-wrapper">
                             <span><BiTransferAlt /></span>
                             <span>{ item.submittedAt && toLocaleDateTime(new Date(item.submittedAt)).toString() }</span>
-                            <span>Gas payed: $ { (item.feeInUSDPerGas * item.gasLimit).toFixed(6) }</span>
-                            <span>Saved: $ {(item.feeInUSDPerGas * savedGas).toFixed(6)}</span>
-                            <span>Cashback: $ { item.gasTankFee.cashback && feeTokenDetails ? (formatUnits(item.gasTankFee.cashback.toString(), feeTokenDetails.decimals) * feeTokenDetails?.price).toFixed(6) : '0.00' }</span>
-                                <a
-                                    href={network.explorerUrl + '/tx/'+ item.txId}
-                                    target='_blank'
-                                    rel='noreferrer'
-                                    onClick={e => e.stopPropagation()}
-                                >
-                                    <HiOutlineExternalLink size={25} />
-                                </a>
                             
+                            <span>
+                                <img width="25px" height='25px' alt='logo' src={getTokenIcon(item.network, item.address)} /> 
+                                {/* TODO: Removed hardcoded decimals '6' */}
+                                { formatUnits(item.value.toString(), 6 ).toString()}
+                            </span>
+                            <a
+                                href={network.explorerUrl + '/tx/'+ item.txId}
+                                target='_blank'
+                                rel='noreferrer'
+                                onClick={e => e.stopPropagation()}
+                            >
+                                <HiOutlineExternalLink size={25} />
+                            </a>
+                        
                         </div>)
                     }) : <p>No transactions are made via Gas Tank</p>
                 }
