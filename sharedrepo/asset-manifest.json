@@ -5,13 +5,13 @@
     "main.js.map": "./static/js/main.df96a499.chunk.js.map",
     "runtime-main.js": "./static/js/runtime-main.edb43502.js",
     "runtime-main.js.map": "./static/js/runtime-main.edb43502.js.map",
-    "static/js/2.fa967b77.chunk.js": "./static/js/2.fa967b77.chunk.js",
-    "static/js/2.fa967b77.chunk.js.map": "./static/js/2.fa967b77.chunk.js.map",
+    "static/js/2.d69b883a.chunk.js": "./static/js/2.d69b883a.chunk.js",
+    "static/js/2.d69b883a.chunk.js.map": "./static/js/2.d69b883a.chunk.js.map",
     "static/js/3.459feb36.chunk.js": "./static/js/3.459feb36.chunk.js",
     "static/js/3.459feb36.chunk.js.map": "./static/js/3.459feb36.chunk.js.map",
     "index.html": "./index.html",
     "static/css/main.967bd236.chunk.css.map": "./static/css/main.967bd236.chunk.css.map",
-    "static/js/2.fa967b77.chunk.js.LICENSE.txt": "./static/js/2.fa967b77.chunk.js.LICENSE.txt",
+    "static/js/2.d69b883a.chunk.js.LICENSE.txt": "./static/js/2.d69b883a.chunk.js.LICENSE.txt",
     "static/media/App.scss": "./static/media/UbuntuMono-Regular.9fa7d55c.ttf",
     "static/media/aave.58aec338.svg": "./static/media/aave.58aec338.svg",
     "static/media/Loading.scss": "./static/media/ambire-loader-animation-sprite-160.8b6d7f70.png",
@@ -27,7 +27,7 @@
   },
   "entrypoints": [
     "static/js/runtime-main.edb43502.js",
-    "static/js/2.fa967b77.chunk.js",
+    "static/js/2.d69b883a.chunk.js",
     "static/css/main.967bd236.chunk.css",
     "static/js/main.df96a499.chunk.js"
   ]
