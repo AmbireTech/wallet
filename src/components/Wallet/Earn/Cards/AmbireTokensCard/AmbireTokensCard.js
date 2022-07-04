@@ -168,7 +168,7 @@ const AmbireTokensCard = ({ networkId, accountId, tokens, rewardsData, addReques
                         <div>APY&nbsp;<MdInfo/></div>
                     </ToolTip>
                 </>,
-                selectedToken.label === 'ADX' ? `${adxCurrentAPY.toFixed(2)}%` : rewardsData.isLoading ? `...` : `${walletTokenAPY}%`
+                selectedToken.label === 'ADX' ? adxCurrentAPY > 0.00 ? `${adxCurrentAPY.toFixed(2)}%` : '...' : rewardsData.isLoading ? `...` : `${walletTokenAPY}%`
             ],
             ['Lock', '20 day unbond period'],
             ['Type', 'Variable Rate'],
