@@ -270,7 +270,7 @@ const GasTank = ({ network,
                             </a>
                         
                         </div>)
-                    }) : <p>No transactions are made via Gas Tank</p>
+                    }) : <p>No deposits are made to Gas Tank on {network.id.toUpperCase()}</p>
                 }
             </div>
             <div>

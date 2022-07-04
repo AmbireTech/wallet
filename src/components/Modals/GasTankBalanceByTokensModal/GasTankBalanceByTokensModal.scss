@@ -8,12 +8,24 @@
         .row {
             display: flex;
             justify-content: space-around;
-            // align-items: center;
+            align-items: center;
+            text-align: center;
             height: 60px;
-
-        
+            
             &:nth-child(odd) {
-                background-color: rgba(255, 255, 255, 0.02);
+                background-color: rgba(255, 255, 255, 0.05);
+            }
+            
+            .item {
+                flex: 2 0 0;
+            }
+
+            .logo {
+                flex: 1 0 0;
+            }
+
+            .balance {
+                flex: 4 0 0;
             }
         }
     }
