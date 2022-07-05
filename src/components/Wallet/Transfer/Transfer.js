@@ -78,8 +78,8 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
     }, [selectedAsset])
 
     const showSWAddressWarning = useMemo(() =>
-        Number(tokenAddress) === 0 && networks.map(({ id }) => id).filter(id => id !== 'ethereum').includes(selectedNetwork.id)
-        , [tokenAddress, selectedNetwork])
+        !gasTankDetails && Number(tokenAddress) === 0 && networks.map(({ id }) => id).filter(id => id !== 'ethereum').includes(selectedNetwork.id)
+        , [gasTankDetails, tokenAddress, selectedNetwork.id])
 
     const setMaxAmount = () => onAmountChange(maxAmount)
 
