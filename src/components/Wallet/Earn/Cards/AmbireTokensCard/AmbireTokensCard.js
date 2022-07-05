@@ -383,7 +383,7 @@ const AmbireTokensCard = ({ networkId, accountId, tokens, rewardsData, addReques
         return () => {
             setShareValue(ZERO)
         }
-    }, [networkId, accountId, selectedToken.label])
+    }, [networkId, accountId, selectedToken.label, isAdxTokenSelected])
 
     useEffect(() => setLoading(false), [])
 
