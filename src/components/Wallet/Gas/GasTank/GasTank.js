@@ -2,7 +2,6 @@ import './GasTank.scss'
 import { FaGasPump } from 'react-icons/fa'
 import { Toggle } from 'components/common'
 import { useState, useEffect } from 'react'
-import { BiTransferAlt } from 'react-icons/bi'
 import { GiToken } from 'react-icons/gi'
 import { NavLink } from 'react-router-dom'
 import { Button, Loading } from 'components/common'
@@ -244,32 +243,36 @@ const GasTank = ({ network,
                             )
                         : <Loading />  }
             </div>
-            <span className='title'>Gas Tank Deposits Transaction History</span>
+            <span className='title'>Gas Tank Deposit Transactions History</span>
             <div className="txns-wrapper">
                 {
-                    //TODO: Changed styles of the table
                     gasTankFilledTxns && gasTankFilledTxns.length ? gasTankFilledTxns.map((item, key) => {
-                        // const feeTokenDetails = data && data.length ? data.find(i => i.id === item.gasTankFee.assetId) : null
-                        // const savedGas = getAddedGas(feeTokenDetails)
-                        return (<div key={key} className="txns-item-wrapper">
-                            <span><BiTransferAlt /></span>
-                            <span>{ item.submittedAt && toLocaleDateTime(new Date(item.submittedAt)).toString() }</span>
-                            
-                            <span>
+                        const tokenDetails = feeAssetsRes && feeAssetsRes.length ? 
+                            feeAssetsRes.find(({address, network}) => address.toLowerCase() === item.address.toLowerCase() && network === item.network) : null
+                    
+                        return (
+                            <div key={key} className="txns-item-wrapper">
+                                <div className='logo'><FaGasPump size={15} /></div>
+                                <div className='date'>{ item.submittedAt && toLocaleDateTime(new Date(item.submittedAt)).toString() }</div>
+                                <div className='balance'>
+                                    <img width="25px" height='25px' alt='logo' src={getTokenIcon(item.network, item.address)} /> 
                                 <img width="25px" height='25px' alt='logo' src={getTokenIcon(item.network, item.address)} /> 
-                                {/* TODO: Removed hardcoded decimals '6' */}
-                                { formatUnits(item.value.toString(), 6 ).toString()}
-                            </span>
-                            <a
-                                href={network.explorerUrl + '/tx/'+ item.txId}
-                                target='_blank'
-                                rel='noreferrer'
-                                onClick={e => e.stopPropagation()}
-                            >
-                                <HiOutlineExternalLink size={25} />
-                            </a>
-                        
-                        </div>)
+                                    <img width="25px" height='25px' alt='logo' src={getTokenIcon(item.network, item.address)} /> 
+
+                                    <div>{ tokenDetails.symbol.toUpperCase() }</div>
+                                    { tokenDetails && formatUnits(item.value.toString(), tokenDetails.decimals).toString() }
+                                </div>
+                                <div className='logo'>
+                                    <a
+                                        href={network.explorerUrl + '/tx/'+ item.txId}
+                                        target='_blank'
+                                        rel='noreferrer'
+                                        onClick={e => e.stopPropagation()}
+                                    >
+                                        <HiOutlineExternalLink size={20} />
+                                    </a>
+                                </div>
+                            </div>)
                     }) : <p>No deposits are made to Gas Tank on {network.id.toUpperCase()}</p>
                 }
             </div>

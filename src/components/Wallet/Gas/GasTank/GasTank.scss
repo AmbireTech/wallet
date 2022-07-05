@@ -197,10 +197,34 @@
             background-color: $background-color;
             margin-bottom: 1px;
             font-size: 12px;
+            text-align: center;
     
-            svg {
-                height: 15px;
-                width: 15px;
+            .item {
+                flex: 2 0 0;
+            }
+
+            .logo {
+                flex: 1 0 0;
+
+                img {
+                    border-radius: 50%;
+                }
+
+                svg {
+                    margin-top: 5px;
+                }
+            }
+
+            .date { 
+                flex: 4 0;
+            }
+
+            .balance {
+                display: flex;
+                flex: 4 0;
+                align-items: center;
+                justify-content: left;
+                gap: 10px;
             }
         }
     }
