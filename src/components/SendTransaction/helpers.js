@@ -28,7 +28,7 @@ export function getFeePaymentConsequences(token, estimation) {
   }
 }
 
-const contractErrors = ['caller is a contract', 'caller is another contract', 'contract not allowed', 'contract not supported', 'No contractz allowed', /*no */'contracts allowed', /* c or C*/'ontract is not allowed', 'aller must be user', 'aller must be a user', 'ontract call not allowed']
+const contractErrors = ['caller is a contract', 'caller is another contract', 'contract not allowed', 'contract not supported', 'No contractz allowed', 'o contracts', /*no */'contracts allowed', /* c or C*/'ontract is not allowed', 'aller must be user', 'aller must be a user', 'ontract call not allowed']
 
 export function mapTxnErrMsg(msg) {
   if (!msg) return
