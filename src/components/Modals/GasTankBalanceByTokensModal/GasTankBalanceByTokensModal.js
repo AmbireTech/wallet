@@ -31,7 +31,6 @@ const GasTankBalanceByTokensModal = ({ data }) => {
                     data && data.map((item, key) => {
                         return (
                             <div className='row' key={key}>
-                                {/* //TODO: make the logo to be rounded */}
                                 <div className='logo'>
                                     <img width="25px" height='25px' alt='logo' src={getTokenIcon(item.network, item.address)} /> 
                                 </div>

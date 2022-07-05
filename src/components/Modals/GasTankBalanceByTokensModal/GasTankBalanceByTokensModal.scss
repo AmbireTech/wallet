@@ -22,6 +22,10 @@
 
             .logo {
                 flex: 1 0 0;
+                
+                img {
+                    border-radius: 50%;
+                }
             }
 
             .balance {
