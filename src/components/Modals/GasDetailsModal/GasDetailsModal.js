@@ -5,7 +5,7 @@ import './GasDetailsModal.scss'
 import { MdClose } from 'react-icons/md'
 import { GAS_SPEEDS } from 'consts/gasSpeeds'
 
-import { ACTION_GAS_COSTS, AMBIRE_OVERHEAD_COST } from 'consts/actionGasCosts'
+import { ACTION_GAS_COSTS, AMBIRE_OVERHEAD_COST } from 'ambire-common/src/constants/actionGasCosts'
 
 const GasDetailsModal = ({ gasData }) => {
 

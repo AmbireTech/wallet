@@ -5,7 +5,7 @@ import networks from 'consts/networks'
 import { useEffect, useState } from 'react'
 import { fetchGet } from 'lib/fetch'
 import { useModals } from 'hooks'
-import { ACTION_GAS_COSTS, AMBIRE_OVERHEAD_COST} from 'consts/actionGasCosts'
+import { ACTION_GAS_COSTS, AMBIRE_OVERHEAD_COST} from 'ambire-common/src/constants/actionGasCosts'
 
 const GAS_COST_ERC20_TRANSFER = ACTION_GAS_COSTS.find(c => c.name === 'ERC20: Transfer').gas + AMBIRE_OVERHEAD_COST
 
