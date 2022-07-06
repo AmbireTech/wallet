@@ -1,6 +1,6 @@
 import { Bundle } from 'adex-protocol-eth'
 import { Interface, keccak256, AbiCoder } from 'ethers/lib/utils'
-import accountPresets from 'consts/accountPresets'
+import accountPresets from 'ambire-common/src/constants/accountPresets'
 
 const IDENTITY_INTERFACE = new Interface(require('adex-protocol-eth/abi/Identity5.2'))
 const { quickAccManager } = accountPresets
