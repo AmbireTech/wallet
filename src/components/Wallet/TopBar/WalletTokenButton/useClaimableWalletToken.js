@@ -3,7 +3,7 @@ import { Contract } from 'ethers'
 import { Interface } from 'ethers/lib/utils'
 import { getProvider } from 'lib/provider'
 
-import WALLETVestings from 'consts/WALLETVestings'
+import WALLETVestings from 'ambire-common/src/constants/WALLETVestings.json'
 import WALLETInitialClaimableRewards from 'ambire-common/src/constants/WALLETInitialClaimableRewards.json'
 import WALLETSupplyControllerABI from 'consts/WALLETSupplyControllerABI'
 
