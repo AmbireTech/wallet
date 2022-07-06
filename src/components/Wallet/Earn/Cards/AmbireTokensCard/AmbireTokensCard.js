@@ -6,7 +6,7 @@ import { MdInfo } from "react-icons/md"
 import { ToolTip, Button } from "components/common"
 import { BigNumber, constants, Contract, utils } from "ethers"
 import WalletStakingPoolABI from 'consts/WalletStakingPoolABI'
-import AdexStakingPool from 'consts/AdexStakingPool.json'
+import AdexStakingPool from 'ambire-common/src/constants/AdexStakingPool.json'
 import supplyControllerABI from 'ambire-common/src/constants/ADXSupplyController.json'
 import { Interface, parseUnits, formatUnits } from "ethers/lib/utils"
 import { getProvider } from 'lib/provider'
