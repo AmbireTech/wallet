@@ -1,5 +1,5 @@
 import { Interface } from 'ethers/lib/utils'
-import WALLETSupplyControllerABI from 'consts/WALLETSupplyControllerABI'
+import WALLETSupplyControllerABI from 'ambire-common/src/constants/abis/WALLETSupplyControllerABI.json'
 
 const iface = new Interface(WALLETSupplyControllerABI)
 
