@@ -24,6 +24,8 @@ const ADDR_ADX_SUPPLY_CONTROLLER = '0x515629338229dd5f8cea3f4f3cc8185ba21fa30b'
 
 const WALLET_TOKEN_ADDRESS = '0x88800092ff476844f74dc2fc427974bbee2794ae'
 const WALLET_STAKING_ADDRESS = '0x47cd7e91c3cbaaf266369fe8518345fc4fc12935'
+const ADX_LABEL = 'ADX'
+const WALLET_LABEL = 'WALLET'
 
 // polygon tests
 // const WALLET_TOKEN_ADDRESS = '0xe9415e904143e42007865e6864f7f632bd054a08'
@@ -60,7 +62,7 @@ const AmbireTokensCard = ({ networkId, accountId, tokens, rewardsData, addReques
         tokenAbi: ''
     })
     const [selectedToken, setSelectedToken] = useState({ label: ''})
-    const [adxCurrentAPY, setAdxCurrentAPY] = useState(0.00)
+    const [adxCurrentAPY, setAdxCurrentAPY] = useState(null)
 
     const unavailable = networkId !== 'ethereum'
     const networkDetails = networks.find(({ id }) => id === networkId)
@@ -82,18 +84,18 @@ const AmbireTokensCard = ({ networkId, accountId, tokens, rewardsData, addReques
         {
             type: 'deposit',
             icon: getTokenIcon(networkId, WALLET_TOKEN_ADDRESS),
-            label: 'WALLET',
+            label: WALLET_LABEL,
             value: WALLET_TOKEN_ADDRESS,
-            symbol: 'WALLET',
+            symbol: WALLET_LABEL,
             balance: (walletToken?.balanceRaw && walletToken?.decimals) ? formatUnits(walletToken?.balanceRaw, walletToken?.decimals) : 0,
             balanceRaw: walletToken?.balanceRaw || 0,
         },
         {
             type: 'deposit',
             icon: getTokenIcon(networkId, ADX_TOKEN_ADDRESS),
-            label: 'ADX',
+            label: ADX_LABEL,
             value: ADX_TOKEN_ADDRESS,
-            symbol: 'ADX',
+            symbol: ADX_LABEL,
             balance: (adexToken?.balanceRaw && adexToken?.decimals) ? formatUnits(adexToken?.balanceRaw, adexToken?.decimals) : 0,
             balanceRaw: adexToken?.balanceRaw || 0,
         },
@@ -103,18 +105,18 @@ const AmbireTokensCard = ({ networkId, accountId, tokens, rewardsData, addReques
         {
             type: 'withdraw',
             icon: getTokenIcon(networkId, WALLET_TOKEN_ADDRESS),
-            label: 'WALLET',
+            label: WALLET_LABEL,
             value: WALLET_STAKING_ADDRESS,
-            symbol: 'WALLET',
+            symbol: WALLET_LABEL,
             balance: formatUnits(balanceRaw, xWalletToken?.decimals),
             balanceRaw,
         },
         {
             type: 'withdraw',
             icon: getTokenIcon(networkId, ADX_TOKEN_ADDRESS),
-            label: 'ADX',
+            label: ADX_LABEL,
             value: ADX_STAKING_TOKEN_ADDRESS,
-            symbol: 'ADX',
+            symbol: ADX_LABEL,
             balance: formatUnits(balanceRaw, adexStakingToken?.decimals),
             balanceRaw,
         },
@@ -133,6 +135,10 @@ const AmbireTokensCard = ({ networkId, accountId, tokens, rewardsData, addReques
             data: addresses.stakingPoolInterface.encodeFunctionData('withdraw', [shares.toHexString(), unlocksAt.toHexString(), false])
         })
     }, [addresses, leaveLog, addRequestTxn])
+
+    const isAdxTokenSelected = useCallback(() => {
+        return selectedToken.label === ADX_LABEL
+    }, [selectedToken.label])
 
     const onTokenSelect = useCallback(tokenAddress => {
         setCustomInfo(null)
@@ -168,14 +174,14 @@ const AmbireTokensCard = ({ networkId, accountId, tokens, rewardsData, addReques
                         <div>APY&nbsp;<MdInfo/></div>
                     </ToolTip>
                 </>,
-                selectedToken.label === 'ADX' ? `${adxCurrentAPY.toFixed(2)}%` : rewardsData.isLoading ? `...` : `${walletTokenAPY}%`
+                isAdxTokenSelected() ? adxCurrentAPY ? `${adxCurrentAPY.toFixed(2)}%` : '...' : rewardsData.isLoading ? `...` : `${walletTokenAPY}%`
             ],
             ['Lock', '20 day unbond period'],
             ['Type', 'Variable Rate'],
         ])
-    }, [adxCurrentAPY, leaveLog, lockedRemainingTime, onWithdraw, rewardsData.isLoading, selectedToken.label, tokensItems, walletTokenAPY])
+    }, [adxCurrentAPY, isAdxTokenSelected, leaveLog, lockedRemainingTime, onWithdraw, rewardsData.isLoading, selectedToken.label, tokensItems, walletTokenAPY])
 
-    const onValidate = async (type, tokenAddress, amount, isMaxAmount) => {
+    const onValidate = async (type, amount, isMaxAmount) => {
         const bigNumberAmount = parseUnits(amount, 18)
 
         if (type === 'Deposit') {
@@ -222,11 +228,11 @@ const AmbireTokensCard = ({ networkId, accountId, tokens, rewardsData, addReques
 
                 const provider = getProvider(networkId)
                 
-                const tokenAddress = selectedToken.label === 'ADX' ? ADX_TOKEN_ADDRESS : WALLET_TOKEN_ADDRESS
-                const stakingTokenAddress = selectedToken.label === 'ADX' ? ADX_STAKING_TOKEN_ADDRESS : WALLET_STAKING_ADDRESS
-                const stakingPoolInterface = selectedToken.label === 'ADX' ? ADX_STAKING_POOL_INTERFACE : WALLET_STAKING_POOL_INTERFACE
-                const stakingPoolAbi = selectedToken.label === 'ADX' ? AdexStakingPool : WalletStakingPoolABI
-                const tokenAbi = selectedToken.label === 'ADX' ? ERC20ABI : walletABI
+                const tokenAddress = isAdxTokenSelected() ? ADX_TOKEN_ADDRESS : WALLET_TOKEN_ADDRESS
+                const stakingTokenAddress = isAdxTokenSelected() ? ADX_STAKING_TOKEN_ADDRESS : WALLET_STAKING_ADDRESS
+                const stakingPoolInterface = isAdxTokenSelected() ? ADX_STAKING_POOL_INTERFACE : WALLET_STAKING_POOL_INTERFACE
+                const stakingPoolAbi = isAdxTokenSelected() ? AdexStakingPool : WalletStakingPoolABI
+                const tokenAbi = isAdxTokenSelected() ? ERC20ABI : walletABI
                 const stakingTokenContract = new Contract(stakingTokenAddress, stakingPoolInterface, provider)
                 const tokenContract = new Contract(tokenAddress, tokenAbi, provider)
                 const supplyController = new Contract(
@@ -251,7 +257,7 @@ const AmbireTokensCard = ({ networkId, accountId, tokens, rewardsData, addReques
                     stakingTokenContract.balanceOf(accountId),
                 ])
 
-                if (selectedToken.label === 'ADX') {
+                if (isAdxTokenSelected()) {
                     const [incentivePerSecond, poolTotalStaked] = await Promise.all([
                         supplyController.incentivePerSecond(ADX_STAKING_TOKEN_ADDRESS),
                         tokenContract.balanceOf(stakingTokenAddress),
@@ -377,7 +383,7 @@ const AmbireTokensCard = ({ networkId, accountId, tokens, rewardsData, addReques
         return () => {
             setShareValue(ZERO)
         }
-    }, [networkId, accountId, selectedToken.label])
+    }, [networkId, accountId, selectedToken.label, isAdxTokenSelected])
 
     useEffect(() => setLoading(false), [])
 
@@ -392,7 +398,7 @@ const AmbireTokensCard = ({ networkId, accountId, tokens, rewardsData, addReques
             onTokenSelect={onTokenSelect}
             onValidate={onValidate}
             moreDetails={!unavailable && <AmbireEarnDetailsModal 
-                apy={selectedToken.label === 'ADX'? adxCurrentAPY.toFixed(2) : walletTokenAPY}
+                apy={isAdxTokenSelected()? adxCurrentAPY ? `${adxCurrentAPY.toFixed(2)}%` : '...' : walletTokenAPY}
                 accountId={accountId}
                 msToDaysHours={msToDaysHours}
                 addresses={addresses}
