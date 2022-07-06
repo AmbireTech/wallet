@@ -4,7 +4,7 @@ import { Interface } from 'ethers/lib/utils'
 import { getProvider } from 'lib/provider'
 
 import WALLETVestings from 'consts/WALLETVestings'
-import WALLETInitialClaimableRewards from 'consts/WALLETInitialClaimableRewards'
+import WALLETInitialClaimableRewards from 'ambire-common/src/constants/WALLETInitialClaimableRewards.json'
 import WALLETSupplyControllerABI from 'consts/WALLETSupplyControllerABI'
 
 const supplyControllerAddress = '0xc53af25f831f31ad6256a742b3f0905bc214a430'
