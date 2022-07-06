@@ -3,7 +3,7 @@ import { Modal, Button } from 'components/common'
 import './GasDetailsModal.scss'
 
 import { MdClose } from 'react-icons/md'
-import { GAS_SPEEDS } from 'consts/gasSpeeds'
+import { GAS_SPEEDS } from 'ambire-common/src/constants/gasSpeeds'
 
 import { ACTION_GAS_COSTS, AMBIRE_OVERHEAD_COST } from 'ambire-common/src/constants/actionGasCosts'
 
