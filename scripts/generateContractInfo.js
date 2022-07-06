@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 const fetch = require('node-fetch')
 const ERC20 = require('adex-protocol-eth/abi/ERC20')
-const ambireTokenList = require('../src/consts/tokenList.json')
+const ambireTokenList = require('ambire-common/src/constants/tokenList.json')
 
 const etherscans = {
 	ethereum: { host: 'api.etherscan.io', key: 'KJJ4NZ9EQHIFCQY5IJ775PT128YE15AV5S' },
