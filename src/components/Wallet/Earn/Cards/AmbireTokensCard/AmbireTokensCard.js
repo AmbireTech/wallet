@@ -15,7 +15,7 @@ import networks from 'consts/networks'
 import { AmbireEarnDetailsModal } from 'components/Modals'
 import { getTokenIcon } from 'lib/icons'
 import { BsArrowUpSquare } from "react-icons/bs"
-import walletABI from 'consts/walletTokenABI'
+import walletABI from 'ambire-common/src/constants/abis/walletTokenABI.json'
 
 const ADX_TOKEN_ADDRESS = '0xade00c28244d5ce17d72e40330b1c318cd12b7c3'
 const ADX_STAKING_TOKEN_ADDRESS = '0xb6456b57f03352be48bf101b46c1752a0813491a'
