@@ -7,7 +7,7 @@ import { ToolTip, Button } from "components/common"
 import { BigNumber, constants, Contract, utils } from "ethers"
 import WalletStakingPoolABI from 'consts/WalletStakingPoolABI'
 import AdexStakingPool from 'consts/AdexStakingPool.json'
-import supplyControllerABI from 'consts/ADXSupplyController.json'
+import supplyControllerABI from 'ambire-common/src/constants/ADXSupplyController.json'
 import { Interface, parseUnits, formatUnits } from "ethers/lib/utils"
 import { getProvider } from 'lib/provider'
 import ERC20ABI from 'adex-protocol-eth/abi/ERC20.json'
