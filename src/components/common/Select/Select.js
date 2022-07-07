@@ -21,7 +21,7 @@ const Select = ({ children, native, monospace, searchable, disabled, label, defa
     const [failedImg, setFailedImg] = useState([])
 
     const filteredItems = search.length ? items.filter(({ label }) => label.toLowerCase().includes(search.toLowerCase())) : items
-console.log('filteredItems', filteredItems)
+
     const selectItem = useCallback(item => {
         setOpen(false)
         setSearch('')
