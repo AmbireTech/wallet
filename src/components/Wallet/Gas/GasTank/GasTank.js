@@ -157,11 +157,11 @@ const GasTank = ({ network,
                             <NavLink to={{
                                 pathname: `/wallet/transfer/${address}`,
                                 state: {
-                                    gasTankMsg: 'Warning: You are about to deposit to the Gas Tank. Deposits to the gas tank are non refundable.',
+                                    gasTankMsg: 'Warning: You are about to fill up your Gas Tank. Fillings to the Gas Tank are non-refundable.',
                                     feeAssetsPerNetwork
                                 }
                             }}>
-                                <Button small>Deposit</Button>
+                                <Button small>Fill up</Button>
                             </NavLink>
                         </div>
                         :
@@ -226,10 +226,10 @@ const GasTank = ({ network,
             </div>
             <div className="list">
                 { !isBalanceLoading ?
-                        sortedTokens && sortedTokens?.map(({ address, symbol, tokenImageUrl, balance, balanceUSD, network, decimals }, i) =>
+                        sortedTokens && sortedTokens?.map(({ address, symbol, tokenImageUrl, balance, balanceUSD, network, decimals, icon }, i) =>
                             tokenItem(
                                 i, 
-                                tokenImageUrl = getTokenIcon(network, address), 
+                                tokenImageUrl = tokenImageUrl || icon, 
                                 symbol, 
                                 balance, 
                                 balanceUSD, 
@@ -239,11 +239,11 @@ const GasTank = ({ network,
                                 decimals, 
                                 'tokens', 
                                 sortedTokens.length
-                                )
-                            )
+                            ))
                         : <Loading />  }
             </div>
-            <span className='title'>Gas Tank Deposit Transactions History</span>
+            <span className='title'>Gas Tank fillings history</span>
+            <p className='warning-msg'>Warning: It will take some time to fill up the Gas Tank after the filling up transaction is made.</p>
             <div className="txns-wrapper">
                 {
                     gasTankFilledTxns && gasTankFilledTxns.length ? gasTankFilledTxns.map((item, key) => {
@@ -254,11 +254,13 @@ const GasTank = ({ network,
                             <div key={key} className="txns-item-wrapper">
                                 <div className='logo'><FaGasPump size={15} /></div>
                                 <div className='date'>{ item.submittedAt && toLocaleDateTime(new Date(item.submittedAt)).toString() }</div>
-                                <div className='balance'>
-                                    <img width="25px" height='25px' alt='logo' src={getTokenIcon(item.network, item.address)} /> 
-                                    <div>{ tokenDetails.symbol.toUpperCase() }</div>
-                                    { tokenDetails && formatUnits(item.value.toString(), tokenDetails.decimals).toString() }
-                                </div>
+                                { tokenDetails && 
+                                    (<div className='balance'>
+                                        <img width="25px" height='25px' alt='logo' src={getTokenIcon(item.network, item.address)} /> 
+                                        <div>{ tokenDetails.symbol.toUpperCase() }</div>
+                                        { tokenDetails && formatUnits(item.value.toString(), tokenDetails.decimals).toString() }
+                                    </div>)
+                                }
                                 <div className='logo'>
                                     <a
                                         href={network.explorerUrl + '/tx/'+ item.txId}
@@ -270,18 +272,18 @@ const GasTank = ({ network,
                                     </a>
                                 </div>
                             </div>)
-                    }) : <p>No deposits are made to Gas Tank on {network.id.toUpperCase()}</p>
+                    }) : <p>No fillings are made to Gas Tank on {network.id.toUpperCase()}</p>
                 }
             </div>
             <div>
                 <NavLink to={{
                     pathname: `/wallet/transfer/`,
                     state: {
-                        gasTankMsg: 'Warning: You are about to deposit to the Gas Tank. Deposits to the gas tank are non refundable.',
+                        gasTankMsg: 'Warning: You are about to fill up your Gas Tank. Fillings to the Gas Tank are non-refundable.',
                         feeAssetsPerNetwork
                     }
                 }}>
-                    <Button className='deposit-button' small>Deposit to gas tank</Button>
+                    <Button className='deposit-button' small>fill up gas tank</Button>
                 </NavLink>
             </div>
         </div>

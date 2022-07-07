@@ -32,7 +32,7 @@ const GasTankBalanceByTokensModal = ({ data }) => {
                         return (
                             <div className='row' key={key}>
                                 <div className='logo'>
-                                    <img width="25px" height='25px' alt='logo' src={getTokenIcon(item.network, item.address)} /> 
+                                    <img width="25px" height='25px' alt='logo' src={item.icon || getTokenIcon(item.network, item.address)} /> 
                                 </div>
                                 <div className='item'>
                                     <span>{ item.symbol.toUpperCase() }</span>

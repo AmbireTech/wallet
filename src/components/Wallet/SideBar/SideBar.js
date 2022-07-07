@@ -7,6 +7,7 @@ import { BsCurrencyExchange } from 'react-icons/bs'
 import { BsPiggyBank } from 'react-icons/bs'
 import { BiTransfer } from 'react-icons/bi'
 import { CgArrowsExchangeV } from 'react-icons/cg'
+import { FaGasPump } from 'react-icons/fa'
 import { Loading } from 'components/common'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import GasIndicator from 'components/Wallet/GasIndicator/GasIndicator'
@@ -77,6 +78,11 @@ const SideBar = ({ match, portfolio, hidePrivateValue, relayerURL, selectedNetwo
         <NavLink to={match.url + "/swap"} activeClassName="selected">
           <div className="item">
               <BsCurrencyExchange/>Swap
+          </div>
+        </NavLink>
+        <NavLink to={match.url + "/gas-tank"} activeClassName="selected">
+          <div className="item">
+              <FaGasPump/>Gas Tank
           </div>
         </NavLink>
         <NavLink to={match.url + "/cross-chain"} activeClassName="selected">

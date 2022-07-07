@@ -21,7 +21,7 @@ const Select = ({ children, native, monospace, searchable, disabled, label, defa
     const [failedImg, setFailedImg] = useState([])
 
     const filteredItems = search.length ? items.filter(({ label }) => label.toLowerCase().includes(search.toLowerCase())) : items
-
+console.log('filteredItems', filteredItems)
     const selectItem = useCallback(item => {
         setOpen(false)
         setSearch('')
@@ -108,7 +108,7 @@ const Select = ({ children, native, monospace, searchable, disabled, label, defa
                                             filteredItems.map((item, i) => (
                                                 <div
                                                     className={`option ${item.value === selectedItem.value ? 'active' : ''} ${item.disabled ? 'disabled' : ''}`}
-                                                    key={item.value}
+                                                    key={item.value + item.label}
                                                     onClick={() => !item.disabled && selectItem(item)}
                                                     draggable={draggable}
                                                     onDragStart={(e) => draggable && dragStart(e, i)}
@@ -137,7 +137,7 @@ const Select = ({ children, native, monospace, searchable, disabled, label, defa
             <select className="select" disabled={disabled} onChange={ev => onChange(ev.target.value)} defaultValue={defaultValue}>
                 {
                     items.map(item => (
-                        <option key={item.value} value={item.value} disabled={item.disabled ? 'disabled' : undefined}>
+                        <option key={item.value + item.label} value={item.value} disabled={item.disabled ? 'disabled' : undefined}>
                             {item.label || item.value}
                         </option>
                     ))

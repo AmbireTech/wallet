@@ -184,6 +184,13 @@
     .title {
         margin: 10px 0;
     }
+
+    .warning-msg {
+        padding: 10px;
+        background-color: mix($panel-background-color, $warning-color, 90%);
+        color: $warning-color;
+    }
+
     .txns-wrapper {
         max-height: 153px;
         overflow: hidden;

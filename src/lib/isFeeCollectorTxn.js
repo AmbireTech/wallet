@@ -38,8 +38,8 @@ function isFeeCollectorTxn(txn) {
 
 const getGasTankFilledTxns = transactions => {
     let depositTxns = []
-    transactions.forEach(({ txId, txns, submittedAt, gasTank, identity, ...rest }) => {
-        const filteredTxns = txns.filter((txnCall, i) => isFeeCollectorTxn(txnCall) && (gasTank || i < txns.length - 1))
+    transactions.forEach(({ txId, txns, submittedAt, gasTankFee, identity, ...rest }) => {
+        const filteredTxns = txns.filter((txnCall, i) => isFeeCollectorTxn(txnCall) && (gasTankFee || i < txns.length - 1))
             .map(fillTxn => {
                 if (fillTxn[0] === feeCollector) {
                     return {
@@ -71,7 +71,7 @@ const getGasTankFilledTxns = transactions => {
                     return null
                 }
             })
-        //TODO: check do I have to pass only the first el of filteredTxns
+        
         if (filteredTxns.length) depositTxns.push(filteredTxns[0])
     })
 

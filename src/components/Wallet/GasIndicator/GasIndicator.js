@@ -4,7 +4,7 @@ import networks from 'consts/networks'
 import { useEffect, useState } from 'react'
 import { fetchGet } from 'lib/fetch'
 import { ACTION_GAS_COSTS, AMBIRE_OVERHEAD_COST} from 'consts/actionGasCosts'
-import { Link } from 'react-router-dom'
+// import { Link } from 'react-router-dom'
 
 const GAS_COST_ERC20_TRANSFER = ACTION_GAS_COSTS.find(c => c.name === 'ERC20: Transfer').gas + AMBIRE_OVERHEAD_COST
 
@@ -40,11 +40,9 @@ const GasIndicator = ({ selectedNetwork, relayerURL, match }) => {
               minimumFractionDigits: 2
             })}
             </span>
-             <Link to={match.url + "/gas-tank"}>
-              <span className={'gas-price'}>
-                <FaGasPump/> ${((gasData.gasPrice.maxPriorityFeePerGas ? (gasData.gasPrice.maxPriorityFeePerGas['medium'] + gasData.gasPrice['medium']) : gasData.gasPrice['medium']) * GAS_COST_ERC20_TRANSFER / 10 ** 18 * gasData.gasFeeAssets.native).toFixed(2)}
-              </span>
-            </Link>
+            <span>
+              <FaGasPump/> ${((gasData.gasPrice.maxPriorityFeePerGas ? (gasData.gasPrice.maxPriorityFeePerGas['medium'] + gasData.gasPrice['medium']) : gasData.gasPrice['medium']) * GAS_COST_ERC20_TRANSFER / 10 ** 18 * gasData.gasFeeAssets.native).toFixed(2)}
+            </span>
     </div>)
   }
   return null
