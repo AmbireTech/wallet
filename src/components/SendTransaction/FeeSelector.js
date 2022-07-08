@@ -51,7 +51,7 @@ const WalletDiscountBanner = ({ currenciesItems, tokens, estimation, onFeeCurren
   const { discount } = discountToken
   const eligibleWalletToken = currenciesItems.find(x => x.value && (x.value === 'WALLET' || x.value === discountToken.address))
   const action = !!eligibleWalletToken
-    ? () => onFeeCurrencyChange(eligibleWalletToken.value)
+    ? () => onFeeCurrencyChange(eligibleWalletToken)
     : null
   //TODO: go to swap 
   const actionTxt = !!eligibleWalletToken ? `USE ${discountToken.symbol}` : `BUY ${discountToken.symbol}`
@@ -117,8 +117,8 @@ export function FeeSelector({ disabled, signer, estimation, network, setEstimati
   })
   
   const tokens = (isGasTankEnabled && gasTankTokens.length) ? gasTankTokens : estimation.remainingFeeTokenBalances || [{ symbol: nativeAssetSymbol, decimals: 18, address: '0x0000000000000000000000000000000000000000' }]
-  const onFeeCurrencyChange = value => {
-    const token = tokens.find(({ address, symbol }) => address === value || symbol === value)
+  const onFeeCurrencyChange = ({ value, label}) => {
+    const token = tokens.find(({ address, symbol }) => (address === value) && (symbol === label))
     setEstimation({ ...estimation, selectedFeeToken: token })
   }
 

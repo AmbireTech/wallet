@@ -25,8 +25,8 @@ const Select = ({ children, native, monospace, searchable, disabled, label, defa
     const selectItem = useCallback(item => {
         setOpen(false)
         setSearch('')
-        setSelectedItem(item);
-        onChange(item.value);
+        setSelectedItem(item)
+        onChange(item)
     }, [onChange])
 
     useEffect(() => {
