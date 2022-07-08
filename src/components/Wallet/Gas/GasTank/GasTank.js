@@ -256,7 +256,7 @@ const GasTank = ({ network,
                                 <div className='balance'>
                                     { tokenDetails && 
                                         (<>
-                                            <img width="25px" height='25px' alt='logo' src={getTokenIcon(item.network, item.address)} /> 
+                                            <img width="25px" height='25px' alt='logo' src={tokenDetails.icon || getTokenIcon(item.network, item.address)} /> 
                                             <div>{ tokenDetails.symbol.toUpperCase() }</div>
                                             { tokenDetails && formatUnits(item.value.toString(), tokenDetails.decimals).toString() }
                                         </>)
