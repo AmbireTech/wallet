@@ -2,12 +2,11 @@ import './SideBar.scss'
 
 import { NavLink } from 'react-router-dom'
 import { MdDashboard, MdLock, MdCompareArrows, MdHelpCenter } from 'react-icons/md'
-import { GiReceiveMoney } from 'react-icons/gi'
+import { GiReceiveMoney, GiGasPump } from 'react-icons/gi'
 import { BsCurrencyExchange } from 'react-icons/bs'
 import { BsPiggyBank } from 'react-icons/bs'
 import { BiTransfer } from 'react-icons/bi'
 import { CgArrowsExchangeV } from 'react-icons/cg'
-import { FaGasPump } from 'react-icons/fa'
 import { Loading } from 'components/common'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import GasIndicator from 'components/Wallet/GasIndicator/GasIndicator'
@@ -82,7 +81,7 @@ const SideBar = ({ match, portfolio, hidePrivateValue, relayerURL, selectedNetwo
         </NavLink>
         <NavLink to={match.url + "/gas-tank"} activeClassName="selected">
           <div className="item">
-              <FaGasPump/>Gas Tank
+              <GiGasPump/>Gas Tank
           </div>
         </NavLink>
         <NavLink to={match.url + "/cross-chain"} activeClassName="selected">

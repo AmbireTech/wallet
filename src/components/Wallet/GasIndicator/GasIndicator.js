@@ -1,5 +1,5 @@
 import './GasIndicator.scss'
-import { FaGasPump } from 'react-icons/fa'
+import { GiGasPump } from 'react-icons/gi'
 import networks from 'consts/networks'
 import { useEffect, useState } from 'react'
 import { fetchGet } from 'lib/fetch'
@@ -41,7 +41,7 @@ const GasIndicator = ({ selectedNetwork, relayerURL, match }) => {
             })}
             </span>
             <span>
-              <FaGasPump/> ${((gasData.gasPrice.maxPriorityFeePerGas ? (gasData.gasPrice.maxPriorityFeePerGas['medium'] + gasData.gasPrice['medium']) : gasData.gasPrice['medium']) * GAS_COST_ERC20_TRANSFER / 10 ** 18 * gasData.gasFeeAssets.native).toFixed(2)}
+              <GiGasPump/> ${((gasData.gasPrice.maxPriorityFeePerGas ? (gasData.gasPrice.maxPriorityFeePerGas['medium'] + gasData.gasPrice['medium']) : gasData.gasPrice['medium']) * GAS_COST_ERC20_TRANSFER / 10 ** 18 * gasData.gasFeeAssets.native).toFixed(2)}
             </span>
     </div>)
   }

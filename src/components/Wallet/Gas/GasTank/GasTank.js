@@ -1,8 +1,7 @@
 import './GasTank.scss'
-import { FaGasPump } from 'react-icons/fa'
 import { Toggle } from 'components/common'
 import { useState, useEffect } from 'react'
-import { GiToken } from 'react-icons/gi'
+import { GiToken, GiGasPump } from 'react-icons/gi'
 import { NavLink } from 'react-router-dom'
 import { Button, Loading } from 'components/common'
 import { MdDragIndicator, MdOutlineSort } from 'react-icons/md'
@@ -174,7 +173,7 @@ const GasTank = ({ network,
         <div id="gas-tank">
             <div className='heading-wrapper'>
                 <div className="balance-wrapper" style={{ cursor: 'pointer' }} onClick={openGasTankBalanceByTokensModal}>
-                    <span><FaGasPump/> Gas Tank Balance</span>
+                    <span><GiGasPump/> Gas Tank Balance</span>
                     { !isLoading ?
                         (<div>
                             <span>$ </span>{ gasTankBalances ? formatFloatTokenAmount(gasTankBalances, true, 2) : '0.00' }
@@ -252,15 +251,17 @@ const GasTank = ({ network,
                     
                         return (
                             <div key={key} className="txns-item-wrapper">
-                                <div className='logo'><FaGasPump size={15} /></div>
+                                <div className='logo'><GiGasPump size={20} /></div>
                                 <div className='date'>{ item.submittedAt && toLocaleDateTime(new Date(item.submittedAt)).toString() }</div>
-                                { tokenDetails && 
-                                    (<div className='balance'>
-                                        <img width="25px" height='25px' alt='logo' src={getTokenIcon(item.network, item.address)} /> 
-                                        <div>{ tokenDetails.symbol.toUpperCase() }</div>
-                                        { tokenDetails && formatUnits(item.value.toString(), tokenDetails.decimals).toString() }
-                                    </div>)
-                                }
+                                <div className='balance'>
+                                    { tokenDetails && 
+                                        (<>
+                                            <img width="25px" height='25px' alt='logo' src={getTokenIcon(item.network, item.address)} /> 
+                                            <div>{ tokenDetails.symbol.toUpperCase() }</div>
+                                            { tokenDetails && formatUnits(item.value.toString(), tokenDetails.decimals).toString() }
+                                        </>)
+                                    }
+                                </div>
                                 <div className='logo'>
                                     <a
                                         href={network.explorerUrl + '/tx/'+ item.txId}
