@@ -1,6 +1,7 @@
 import { getProvider } from 'lib/provider'
 import { BigNumber, utils, Contract } from 'ethers'
 import { useEffect, useState, useCallback } from 'react'
+import adexToStakingTransfersLogs from 'consts/rpcResponses/adexToStakingTransfers.json'
 
 const ZERO = BigNumber.from(0)
 const ZERO_ADDR = '0x0000000000000000000000000000000000000000'
@@ -27,13 +28,14 @@ const useAmbireEarnDetails = ({accountId, addresses, tokenLabel}) => {
         const xWalletContract = new Contract(addresses.stakingTokenAddress, addresses.stakingPoolAbi, ethProvider)
         const walletContract = new Contract(addresses.tokenAddress, addresses.tokenAbi, ethProvider)
         const fromBlock = 0
+        const fromBlockHardcoded = (tokenLabel === 'ADX') ? 0xe64fe2 : 0
         const [
             timeToUnbond,
             shareValue,
             sharesTotalSupply,
             balanceShares,
             lockedShares,
-            allEnterWalletTransferLogs,
+            allEnterWalletTransferLogs, // If ADX selected, 0xe64fe2 last block from prefetched data
             leaveLogs,
             withdrawLogs,
             rageLeaveLogs,
@@ -46,7 +48,7 @@ const useAmbireEarnDetails = ({accountId, addresses, tokenLabel}) => {
             xWalletContract.balanceOf(accountId),
             xWalletContract.lockedShares(accountId),
             ethProvider.getLogs({
-                fromBlock,
+                fromBlock: fromBlockHardcoded,
                 ...walletContract.filters.Transfer(null, WALLET_ADDR, null),
             }),
             ethProvider.getLogs({
@@ -96,13 +98,13 @@ const useAmbireEarnDetails = ({accountId, addresses, tokenLabel}) => {
             : balanceShares.mul(PRECISION).div(sharesTotalSupply).toNumber() /
               PRECISION
 
-        const enterWalletTokensByTxHash = allEnterWalletTransferLogs.reduce(
-            (byHash, log) => {
-                byHash[log.transactionHash] = log
-                return byHash
-            },
-            {}
-        )
+        const enterWalletTokensByTxHash = ((tokenLabel === 'ADX') ? adexToStakingTransfersLogs.result : [])
+            .concat(allEnterWalletTransferLogs)
+            .reduce((byHash, log) => {
+                    byHash[log.transactionHash] = log
+                    return byHash
+                }, {}
+            )
 
         const sharesTokensTransfersIn = sharesTokensTransfersInLogs.map(log => {
             const parsedLog = xWalletContract.interface.parseLog(log)
