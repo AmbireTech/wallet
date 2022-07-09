@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import './ToolTip.scss'
 
-const ToolTip = ({ children, label, disabled, className }) => {
+const ToolTip = ({ children, label, htmlContent, disabled, className }) => {
     const [mousePosition, setMousePosition] = useState({ x: 0, y: 0})
 
     const screenBorder = 300
@@ -22,8 +22,8 @@ const ToolTip = ({ children, label, disabled, className }) => {
         >
             { children }
             {
-                !disabled ? 
-                    <div className="tooltip-label" style={{top: mousePosition.y, left: mousePosition.x}}>{ newLineText(label) }</div>
+                !disabled ?
+                    <div className="tooltip-label" style={{top: mousePosition.y, left: mousePosition.x}}>{ htmlContent || newLineText(label) }</div>
                     :
                     null
             }

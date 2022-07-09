@@ -1,10 +1,54 @@
 @import 'variables.scss';
-$WCBlue: #005eff;
+$WCBlue: #0078db;
+$faveColor: #FFFF00;
 
 #dappCatalog {
 
   .filterSection {
     margin-bottom: 24px;
+
+    .categories {
+      padding-top: 12px;
+      display: flex;
+      align-items: flex-end;
+      justify-content: flex-end;
+      gap: 12px;
+
+      .category {
+        cursor: pointer;
+        padding:5px 16px;
+        border-radius: 100px;
+        border: 1px solid mix($text-color, $input-background-color-darker);
+        color: mix($text-color, $input-background-color-darker);
+
+        &:hover {
+          background: mix($panel-background-color, $text-container-color, 85%);
+        }
+
+        &.selected {
+          padding:4px 15px;// border hack not jittering
+          border: 2px solid $primary-accent-color;
+          color: $primary-accent-color;
+
+          &.category-integrated {
+            color: $secondary-accent-color;
+            border-color: $secondary-accent-color;
+          }
+
+          &.category-walletconnect {
+            color: $WCBlue;
+            border-color: $WCBlue;
+          }
+
+          &.category-favorites {
+            color: $faveColor;
+            border-color: $faveColor;
+          }
+
+        }
+      }
+    }
+
   }
 
   .catalogItems {
@@ -15,11 +59,27 @@ $WCBlue: #005eff;
     .catalogItem {
       cursor: pointer;
       flex: 1 1 30%;
-      //flex-basis: 30%;
       max-width: 33.333333%;
       padding: 18px;
-      //flex-grow: 0;
       background-color: $input-background-color;
+      border:1px solid transparent;
+      transition: 100ms;
+      position: relative;
+
+      .favorite {
+        position: absolute;
+        right: 8px;
+        top: 8px;
+        color: mix($text-color, $input-background-color-darker, 20%);
+
+        &.selected {
+          color: $faveColor;
+        }
+
+        &:hover {
+          color: $faveColor;
+        }
+      }
 
       &.not-supported {
         background-color: mix($input-background-color, $background-color, 50%);
@@ -48,10 +108,17 @@ $WCBlue: #005eff;
           min-width: 48px;
           width: 48px;
           height: 48px;
+          background: $input-background-color-darker;
+          //padding: 8px;
+          text-align: center;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          border-radius: 4px;
 
           img {
-            max-width: 48px;
-            max-height: 48px;
+            max-width: 40px;
+            max-height: 40px;
             border-radius: 4px;
           }
         }
@@ -68,14 +135,46 @@ $WCBlue: #005eff;
         color: $text-container-color;
       }
 
+      .aligned-tag-rows {
+        margin-top: 8px;
+        display: flex;
+      }
+
       .tag-row {
         display: flex;
         justify-content: right;
         gap: 8px;
-        margin: 8px 0px;
+        margin: 8px 0;
 
         &.network-tag-row {
           gap: 4px;
+          justify-content: left;
+        }
+
+        &.tag-types {
+          flex-grow: 1;
+        }
+
+
+        .tooltipNetworks {
+
+          .tooltipNetwork {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            margin: 4px 0;
+
+            .tooltipNetwork-icon {
+              border: 0;
+              display: block;
+              height: 16px;
+              width: 16px;
+              background-size: 16px 16px;
+              background-color: transparent;
+              border-radius: 100px;
+            }
+          }
+
         }
 
         .tag {
@@ -93,19 +192,31 @@ $WCBlue: #005eff;
           }
 
           &.network-tag {
-            border: 0;
+            border: 2px solid $input-background-color;
             display: block;
-            height: 16px;
-            width: 16px;
+            height: 20px;
+            width: 20px;
             background-size: 16px 16px;
             background-color: transparent;
             border-radius: 100px;
+            margin-right: -10px;
+          }
+
+          &.network-tag-more {
+            background: transparent;
+            border: 0;
+            margin-left: 4px;
+            margin-right: 0;
+            font-weight: bold;
+            font-size: 16px;
+            color: $text-container-color;
           }
         }
       }
 
       &:hover {
-        background-color: mix($input-background-color, #FFF, 97%);
+        background-color: mix($input-background-color, #FFF, 98%);
+        border:1px solid $ambire-dark-blue;
       }
     }
 
@@ -134,6 +245,7 @@ $WCBlue: #005eff;
     background-color: $input-background-color-darker;
     color: mix($text-color, $input-background-color-darker);
   }
+  padding-bottom: 24px;
 }
 
 @media screen and (max-width: $mobile-breakpoint-max-width) {
