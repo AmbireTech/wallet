@@ -16,7 +16,10 @@ import { HiOutlineExternalLink } from 'react-icons/hi'
 import { formatUnits } from 'ethers/lib/utils'
 import { getGasTankFilledTxns } from 'lib/isFeeCollectorTxn'
 // eslint-disable-next-line import/no-relative-parent-imports
+import { getAddedGas } from '../../../SendTransaction/helpers'
+// eslint-disable-next-line import/no-relative-parent-imports
 import { useToasts } from '../../../../hooks/toasts'
+
 
 const GasTank = ({ network, 
     relayerURL, 
@@ -47,11 +50,15 @@ const GasTank = ({ network,
     
     const gasTankBalances = balancesRes && balancesRes.length && balancesRes.map(({balanceInUSD}) => balanceInUSD).reduce((a, b) => a + b, 0)
     const gasTankTxns = executedTxnsRes && executedTxnsRes.txns.length && executedTxnsRes.txns.filter(item => !!item.gasTankFee)
-    const totalSavedResult = gasTankTxns && gasTankTxns.length && gasTankTxns.map(item => item.feeInUSDPerGas * item.gasLimit).reduce((a, b) => a + b)
-    const totalSaved = formatFloatTokenAmount(totalSavedResult, true, 2)
     const feeAssetsPerNetwork = feeAssetsRes && feeAssetsRes.length && feeAssetsRes.filter(item => item.network === network.id)
     const executedTxns = executedTxnsRes && executedTxnsRes.txns.length && executedTxnsRes.txns
     const gasTankFilledTxns = executedTxns && executedTxns.length && getGasTankFilledTxns(executedTxns)
+    const totalSavedResult = gasTankTxns && gasTankTxns.length && gasTankTxns.map(item => {
+        const feeTokenDetails = feeAssetsRes ? feeAssetsRes.find(i => i.symbol === item.feeToken) : null
+        const savedGas = feeTokenDetails ? getAddedGas(feeTokenDetails) : null
+        return savedGas ? item.feeInUSDPerGas * savedGas : 0.00
+    }).reduce((a, b) => a + b)
+    const totalSaved = formatFloatTokenAmount(totalSavedResult, true, 2)
     
     const { isBalanceLoading, tokens } = portfolio
     const sortType = userSorting.tokens?.sortType || 'decreasing'
@@ -70,11 +77,11 @@ const GasTank = ({ network,
     })
     const [failedImg, setFailedImg] = useState([])
     const toLocaleDateTime = date => `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`
-    const sortedTokens = availableFeeAssets?.sort((a, b) => {
+    const sortedTokens = availableFeeAssets?.sort((a, b) => b.balanceUSD - a.balanceUSD).sort((a, b) => {
         if (sortType === 'custom' && userSorting.tokens?.items?.[`${account}-${network.chainId}`]?.length) {
             const addressA = userSorting.tokens.items[`${account}-${network.chainId}`].indexOf(a.address.toLowerCase())
             const addressB = userSorting.tokens.items[`${account}-${network.chainId}`].indexOf(b.address.toLowerCase())
-            const sorted = (addressA - addressB) || (b.balanceUSD - a.balanceUSD)
+            const sorted = addressA - addressB
             return sorted
         } else {
             const decreasing = b.balanceUSD - a.balanceUSD
