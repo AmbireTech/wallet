@@ -144,7 +144,9 @@ export default function SendTransaction({ relayerURL,
 }
 
 function SendTransactionWithBundle({ bundle, replacementBundle, network, account, resolveMany, relayerURL, onBroadcastedTxn, onDismiss, gasTankState }) {
-  const currentAccGasTankState = gasTankState.find(i => i.account === account.id)
+  const currentAccGasTankState = network.isGasTankAvailable ? 
+    gasTankState.find(i => i.account === account.id) : 
+    { account: account.id, isEnabled: false }
   const [estimation, setEstimation] = useState(null)
 
   const [signingStatus, setSigningStatus] = useState(false)
