@@ -74,7 +74,7 @@ const GasTank = ({ network,
         if (sortType === 'custom' && userSorting.tokens?.items?.[`${account}-${network.chainId}`]?.length) {
             const addressA = userSorting.tokens.items[`${account}-${network.chainId}`].indexOf(a.address.toLowerCase())
             const addressB = userSorting.tokens.items[`${account}-${network.chainId}`].indexOf(b.address.toLowerCase())
-            const sorted = (addressA - addressB) && (b.balanceUSD - a.balanceUSD)
+            const sorted = (addressA - addressB) || (b.balanceUSD - a.balanceUSD)
             return sorted
         } else {
             const decreasing = b.balanceUSD - a.balanceUSD
