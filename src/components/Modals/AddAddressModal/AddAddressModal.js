@@ -5,7 +5,7 @@ import { MdCheck, MdClose } from 'react-icons/md'
 import { useModals } from 'hooks'
 import { Modal, TextInput, Button, ToolTip } from "components/common"
 import { resolveUDomain } from 'lib/unstoppableDomains'
-import { isEnsDomain, resolveENSDomain } from 'lib/ensDomains'
+import { resolveENSDomain } from 'lib/ensDomains'
 
 const AddAddressModal = ({ title, inputs, selectedNetwork, onClose }) => {
     const { hideModal } = useModals()
@@ -28,18 +28,15 @@ const AddAddressModal = ({ title, inputs, selectedNetwork, onClose }) => {
             const isFound = inputsFields.find(item => item.inputType === 'address')
             const domain = isFound && isFound.ref && isFound.ref.current.value
             if (!domain) return
-            const isValidEnsDomain = isEnsDomain(domain)
+            
             let uDAddr = null
             let ensAddr = null
             if (isFound) {
                 uDAddr = await getUDomain(domain)
+                ensAddr = await resolveENSDomain(domain)
                 timer.current = null
-                setUDAddress(uDAddr)
-                if (isValidEnsDomain) {
-                    ensAddr = await resolveENSDomain(domain)
-                    timer.current = null
-                    setEnsAddress(ensAddr)
-                }
+                if (uDAddr) setUDAddress(uDAddr)
+                else if (ensAddr) setEnsAddress(ensAddr)
             }
 
             const isFormValid = inputsFields
