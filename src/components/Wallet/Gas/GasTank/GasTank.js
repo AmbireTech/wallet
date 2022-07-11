@@ -59,17 +59,26 @@ const GasTank = ({ network,
     const availableFeeAssets = feeAssetsPerNetwork?.map(item => {
         const isFound = tokens?.find(x => x.address.toLowerCase() === item.address.toLowerCase()) 
         if (isFound) return isFound
-        return { ...item, balance: 0, balanceUSD: 0, decimals: 0 }
+        return { 
+            ...item, 
+            balance: 0, 
+            balanceUSD: 0, 
+            decimals: 0, 
+            address: item.address.toLowerCase(), 
+            symbol: item.symbol.toUpperCase() 
+        }
     })
     const [failedImg, setFailedImg] = useState([])
     const toLocaleDateTime = date => `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`
     const sortedTokens = availableFeeAssets?.sort((a, b) => {
         if (sortType === 'custom' && userSorting.tokens?.items?.[`${account}-${network.chainId}`]?.length) {
-            const sorted = userSorting.tokens.items[`${account}-${network.chainId}`].indexOf(a.address) - userSorting.tokens.items[`${account}-${network.chainId}`].indexOf(b.address)
+            const addressA = userSorting.tokens.items[`${account}-${network.chainId}`].indexOf(a.address.toLowerCase())
+            const addressB = userSorting.tokens.items[`${account}-${network.chainId}`].indexOf(b.address.toLowerCase())
+            const sorted = (addressA - addressB) && (b.balanceUSD - a.balanceUSD)
             return sorted
         } else {
             const decreasing = b.balanceUSD - a.balanceUSD
-            if (decreasing === 0) return a.symbol.localeCompare(b.symbol)
+            if (decreasing === 0) return a.symbol.toUpperCase().localeCompare(b.symbol.toUpperCase())
             return decreasing
         }
     })
@@ -98,7 +107,7 @@ const GasTank = ({ network,
         ])
     const toggleGasTank = () => {
         if (!gasTankBalances && !gasTankBalances.length) {
-            addToast('You should add assets in Gas Tank to be able to enable it!', { error: true })
+            addToast('You should add assets in the Gas Tank to be able to enable it!', { error: true })
             return 
         }
 
@@ -241,6 +250,17 @@ const GasTank = ({ network,
                             ))
                         : <Loading />  }
             </div>
+            <div>
+                <NavLink to={{
+                    pathname: `/wallet/transfer/`,
+                    state: {
+                        gasTankMsg: 'Warning: You are about to fill up your Gas Tank. Fillings to the Gas Tank are non-refundable.',
+                        feeAssetsPerNetwork
+                    }
+                }}>
+                    <Button className='deposit-button' small>fill up gas tank</Button>
+                </NavLink>
+            </div>
             <span className='title'>Gas Tank fillings history</span>
             <p className='warning-msg'>Warning: It will take some time to fill up the Gas Tank after the filling up transaction is made.</p>
             <div className="txns-wrapper">
@@ -275,17 +295,6 @@ const GasTank = ({ network,
                             </div>)
                     }) : <p>No fillings are made to Gas Tank on {network.id.toUpperCase()}</p>
                 }
-            </div>
-            <div>
-                <NavLink to={{
-                    pathname: `/wallet/transfer/`,
-                    state: {
-                        gasTankMsg: 'Warning: You are about to fill up your Gas Tank. Fillings to the Gas Tank are non-refundable.',
-                        feeAssetsPerNetwork
-                    }
-                }}>
-                    <Button className='deposit-button' small>fill up gas tank</Button>
-                </NavLink>
             </div>
         </div>
     )
