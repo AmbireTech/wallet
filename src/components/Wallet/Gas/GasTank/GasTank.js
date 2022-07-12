@@ -172,11 +172,11 @@ const GasTank = ({ network,
                             <NavLink to={{
                                 pathname: `/wallet/transfer/${address}`,
                                 state: {
-                                    gasTankMsg: 'Warning: You are about to fill up your Gas Tank. Fillings to the Gas Tank are non-refundable.',
+                                    gasTankMsg: 'Warning: You are about to top up your Gas Tank. Top ups to the Gas Tank are non-refundable.',
                                     feeAssetsPerNetwork
                                 }
                             }}>
-                                <Button small>Fill up</Button>
+                                <Button small>Top up</Button>
                             </NavLink>
                         </div>
                         :
@@ -261,15 +261,15 @@ const GasTank = ({ network,
                 <NavLink to={{
                     pathname: `/wallet/transfer/`,
                     state: {
-                        gasTankMsg: 'Warning: You are about to fill up your Gas Tank. Fillings to the Gas Tank are non-refundable.',
+                        gasTankMsg: 'Warning: You are about to top up your Gas Tank. op up to the Gas Tank are non-refundable.',
                         feeAssetsPerNetwork
                     }
                 }}>
-                    <Button className='deposit-button' small>fill up gas tank</Button>
+                    <Button className='deposit-button' small>top up gas tank</Button>
                 </NavLink>
             </div>
-            <span className='title'>Gas Tank fillings history</span>
-            <p className='warning-msg'>Warning: It will take some time to fill up the Gas Tank after the filling up transaction is made.</p>
+            <span className='title'>Gas Tank top ups history</span>
+            <p className='warning-msg'>Warning: It will take some time to top up the Gas Tank after the filling up transaction is made.</p>
             <div className="txns-wrapper">
                 {
                     gasTankFilledTxns && gasTankFilledTxns.length ? gasTankFilledTxns.map((item, key) => {
@@ -300,7 +300,7 @@ const GasTank = ({ network,
                                     </a>
                                 </div>
                             </div>)
-                    }) : <p>No fillings are made to Gas Tank on {network.id.toUpperCase()}</p>
+                    }) : <p>No top ups were made to Gas Tank on {network.id.toUpperCase()}</p>
                 }
             </div>
         </div>
