@@ -10,6 +10,13 @@
   gap: 12px;
   color: $text-container-color;
 
+  .gas-price {
+    cursor: pointer;
+    &:hover {
+      color: $text-color;
+    }
+  }
+
   .native-price {
     padding-right: 12px;
     border-right: 1px solid $secondary-accent-color;
