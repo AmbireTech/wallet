@@ -343,6 +343,7 @@ Those contracts (except Ethereum-specific WALLET, xWALLET and SupplyController) 
 
 ### v0.5.7
 * Added ENS support
+* We now notify users in case the contract they're interacting with intentionally blocks smart wallets, as is the case with many NFT mints
 * Improvement sign message page and verification for deployed contract
 * Disable deposit option for Tesseract earn
 * Fixed: Allow to list more then 8 dapps in dapps connection bar

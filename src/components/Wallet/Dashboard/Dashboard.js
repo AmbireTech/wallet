@@ -11,6 +11,8 @@ import { MdOutlineInfo } from 'react-icons/md'
 
 import Promotions from './Promotions/Promotions'
 import AssetsMigrationBanner from 'components/Wallet/AssetsMigration/AssetsMigrationBanner'
+import PendingRecoveryNotice from 'components/Wallet/Security/PendingRecoveryNotice/PendingRecoveryNotice'
+import usePasswordRecoveryCheck from 'hooks/usePasswordRecoveryCheck'
 
 const chartSegments = [
     {
@@ -30,7 +32,7 @@ const tabSegments = [
     }
 ]
 
-export default function Dashboard({ portfolio, selectedNetwork, selectedAccount, setNetwork, privateMode, rewardsData,  userSorting, setUserSorting, accounts, addRequest, relayerURL, useStorage }) {
+export default function Dashboard({ portfolio, selectedNetwork, selectedAccount, setNetwork, privateMode, rewardsData,  userSorting, setUserSorting, accounts, addRequest, relayerURL, useStorage, showSendTxns }) {
     const history = useHistory()
     const { tabId, page = 1 } = useParams()
 
@@ -38,6 +40,11 @@ export default function Dashboard({ portfolio, selectedNetwork, selectedAccount,
     const [chartProtocolsData, setChartProtocolsData] = useState([]);
     const [chartType, setChartType] = useState([]);
     const [tab, setTab] = useState(tabId || tabSegments[0].value);
+
+    const currentAccount = accounts.find(a => a.id.toLowerCase() === selectedAccount.toLowerCase())
+
+    const { hasPendingReset, recoveryLock, isPasswordRecoveryCheckLoading } = usePasswordRecoveryCheck(relayerURL, currentAccount, selectedNetwork)
+
 
     useEffect(() => {
         if (!tab || tab === tabSegments[0].value) return history.replace(`/wallet/dashboard`)
@@ -85,6 +92,16 @@ export default function Dashboard({ portfolio, selectedNetwork, selectedAccount,
                 portfolio={portfolio}
                 useStorage={useStorage}
               />
+            }
+            {
+              (hasPendingReset && !isPasswordRecoveryCheckLoading) && (
+                <PendingRecoveryNotice
+                  recoveryLock={recoveryLock}
+                  showSendTxns={showSendTxns}
+                  selectedAccount={currentAccount}
+                  selectedNetwork={selectedNetwork}
+                />
+              )
             }
             <div id="overview">
                 <div id="balance" className="panel">

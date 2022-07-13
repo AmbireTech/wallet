@@ -96,7 +96,7 @@ function getErrorMessage(e) {
   }
 }
 
-export default function SendTransaction({ relayerURL, accounts, network, selectedAcc, requests, resolveMany, replacementBundle, onBroadcastedTxn, onDismiss }) {
+export default function SendTransaction({ relayerURL, accounts, network, selectedAcc, requests, resolveMany, replacementBundle, prioritize, onBroadcastedTxn, onDismiss }) {
   // NOTE: this can be refactored at a top level to only pass the selected account (full object)
   // keeping it that way right now (selectedAcc, accounts) cause maybe we'll need the others at some point?
   const account = accounts.find(x => x.id === selectedAcc)
@@ -123,6 +123,7 @@ export default function SendTransaction({ relayerURL, accounts, network, selecte
     relayerURL={relayerURL}
     bundle={bundle}
     replacementBundle={replacementBundle}
+    prioritize={prioritize}
     network={network}
     account={account}
     resolveMany={resolveMany}
@@ -131,7 +132,9 @@ export default function SendTransaction({ relayerURL, accounts, network, selecte
   />)
 }
 
-function SendTransactionWithBundle({ bundle, replacementBundle, network, account, resolveMany, relayerURL, onBroadcastedTxn, onDismiss }) {
+
+// prioritize = true will replace a current pending TX, or send a new one. In any case, it will send the TX ASAP
+function SendTransactionWithBundle({ bundle, replacementBundle, prioritize, network, account, resolveMany, relayerURL, onBroadcastedTxn, onDismiss }) {
 
   const [estimation, setEstimation] = useState(null)
 
@@ -229,9 +232,9 @@ function SendTransactionWithBundle({ bundle, replacementBundle, network, account
       ...bundle,
       txns: [...bundle.txns, feeTxn],
       gasLimit: estimation.gasLimit + addedGas + (bundle.extraGas || 0),
-      nonce: bundle.nonce || ((replacementBundle && pendingBundle) ? nextNonMinedNonce : nextFreeNonce)
+      nonce: bundle.nonce || ((replacementBundle && pendingBundle && !prioritize) ? nextNonMinedNonce : nextFreeNonce)
     })
-  }, [relayerURL, bundle, estimation, feeSpeed, network.nativeAssetSymbol, replacementBundle])
+  }, [relayerURL, bundle, estimation, feeSpeed, network.nativeAssetSymbol, replacementBundle, prioritize])
 
   const approveTxnImpl = async () => {
     if (!estimation) throw new Error('no estimation: should never happen')
@@ -376,7 +379,7 @@ function SendTransactionWithBundle({ bundle, replacementBundle, network, account
   const accountAvatar = blockies.create({ seed: account.id }).toDataURL()
 
   // Allow actions either on regular tx or replacement/speed tx, when not mined
-  const canProceed = !!replacementBundle
+  const canProceed = !!(replacementBundle && !prioritize)
     ? (
       !isNaN(estimation?.nextNonce?.nextNonMinedNonce)
         ? bundle.nonce >= estimation?.nextNonce?.nextNonMinedNonce
@@ -432,6 +435,12 @@ function SendTransactionWithBundle({ bundle, replacementBundle, network, account
                     <span>You can sign multiple transactions at once. Add more transactions to this batch by interacting with a connected dApp right now. Alternatively, you may click "Back" to add more transactions.</span>
                   </>
                   :
+                  prioritize ?
+                    <>
+                     <b>NOTE:</b>
+                    <span>This is a prioritized transaction. It will replace any pending transaction if any.</span>
+                    </>
+                  :
                   <>
                     <b>NOTE:</b>
                     <span>You are currently replacing a pending transaction.</span>
@@ -476,7 +485,7 @@ function SendTransactionWithBundle({ bundle, replacementBundle, network, account
           </div>
 
           {
-            replacementBundle &&
+            (replacementBundle && !prioritize) &&
             <>
 
               {
