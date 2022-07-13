@@ -197,6 +197,7 @@ const GasTank = ({ network,
                         <Loading /> }
                     {/* TODO: Add functionality for drag and drop */}
                     {/* <span>Drag and drop tokens here</span> */}
+                    <span>More details...</span>
                 </div>
                 <div className='switch-wrapper'>
                     <Toggle checked={currentAccGasTankState.isEnabled} onChange={() => toggleGasTank()}/>
