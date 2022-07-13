@@ -28,7 +28,7 @@ const GasTankBalanceByTokensModal = ({ data }) => {
                     </div>
                 </div>
                 {
-                    data && data.map((item, key) => {
+                    data && data.sort((a, b) => b.balance - a.balance).map((item, key) => {
                         return (
                             <div className='row' key={key}>
                                 <div className='logo'>

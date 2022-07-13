@@ -131,9 +131,9 @@ export function FeeSelector({ disabled, signer, estimation, network, setEstimati
     || ((b.discount || 0) - (a.discount || 0))
     || a?.symbol.toUpperCase().localeCompare(b?.symbol.toUpperCase())
   )
-    .map(({ address, symbol, discount, network: tokenNetwork = null, ...rest }) => ({
+    .map(({ address, symbol, discount, network: tokenNetwork = null, icon, ...rest }) => ({
       disabled: !isTokenEligible({address, symbol, discount, ...rest }, SPEEDS[0], estimation, isGasTankEnabled, network),
-      icon: address ? getTokenIcon(isGasTankEnabled ? tokenNetwork : network.id, address) : null,
+      icon: icon || (address ? getTokenIcon(isGasTankEnabled ? tokenNetwork : network.id, address) : null),
       label: symbol,
       value: address || symbol,
       ...(discount ? {
