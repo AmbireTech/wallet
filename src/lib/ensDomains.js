@@ -6,7 +6,6 @@ import { ethers } from 'ethers'
 const ETH_ID = 'ethereum'
 const BIP44_BASE_VALUE = 2147483648
 const ADDRESS_ZERO = "0x0000000000000000000000000000000000000000"
-const ENS_DOMAIN_SUFFIX = ".eth"
 
 const provider = getProvider(ETH_ID)
 
@@ -16,7 +15,7 @@ async function resolveENSDomain(domain, bip44Item) {
 	const resolver = await provider.getResolver(normalizedDomainName)
 	if (!resolver) return null
 	const ethAddress = await resolver.getAddress()
-	const addressForCoin = await resolveForCoin(resolver, bip44Item)
+	const addressForCoin = await resolveForCoin(resolver, bip44Item).catch(e => null)
 	return isCorrectAddress(addressForCoin) ? addressForCoin : ethAddress
 }
 
@@ -49,12 +48,7 @@ function isCorrectAddress(address) {
 	return !(ADDRESS_ZERO === address) && ethers.utils.isAddress(address)
 }
 
-function isEnsDomain(domain) {
-	return domain && typeof domain === 'string' && domain.endsWith(ENS_DOMAIN_SUFFIX)
-}
-
 export {
 	resolveENSDomain,
-	getBip44Items,
-	isEnsDomain
+	getBip44Items
 }

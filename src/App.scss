@@ -208,6 +208,21 @@ select {
     border: 1px solid $tertiary-accent-color;
     color: $tertiary-accent-color
   }
+
+
+  &.action {
+    cursor: pointer;
+
+    &.warning:hover {
+      background: mix($warning-color, $panel-background-color, 10%);
+    }
+  }
+}
+
+.notification-banner {
+  display: flex;
+  align-items: center;
+  gap: 16px;
 }
 
 // Mobile
