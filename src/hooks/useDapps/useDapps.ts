@@ -1,5 +1,5 @@
 import { useState, useCallback, useMemo, useEffect } from 'react'
-import { UseDappModeProps, UseDappModeReturnType, DappManifestData, Category } from './types'
+import { UseDappsProps, UseDappsReturnType, DappManifestData, Category } from './types'
 import { DEFAULT_CATALOG } from './catalogs'
 
 
@@ -22,7 +22,7 @@ const CATEGORIES: Array<Category> = [
     }
 ]
 
-export default function useDappMode({ useStorage }: UseDappModeProps): UseDappModeReturnType {
+export default function useDapps({ useStorage }: UseDappsProps): UseDappsReturnType {
 
     const categories = useMemo(() => CATEGORIES, [])
 

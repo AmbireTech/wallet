@@ -1,4 +1,4 @@
-import useDappMode from './useDapps'
+import useDapps from './useDapps'
 
-export default useDappMode
+export default useDapps
 export * from './types'

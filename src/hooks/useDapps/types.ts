@@ -16,7 +16,7 @@ export type UseStorageType = <ValueType>(
 
 // TODO: import storage types when added to ambire-common
 
-export type UseDappModeProps = {
+export type UseDappsProps = {
     useStorage: UseStorageType
 }
 
@@ -43,7 +43,7 @@ export type Category = {
     filter: (x: any, y?: any) => boolean
 }
 
-export type UseDappModeReturnType = {
+export type UseDappsReturnType = {
     isDappMode: boolean,
     sideBarOpen: boolean,
     currentDappData: DappManifestData,
