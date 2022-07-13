@@ -26,6 +26,7 @@ export default function Wallet(props) {
   const { isClipboardGranted, isNoticationsGranted, arePermissionsLoaded, modalHidden } = usePermissions()
   const { pathname } = useLocation()
   const walletContainer = useRef()
+  const { isDappMode } = props.dappsCatalog
 
   const isLoggedIn = useMemo(() => props.accounts.length > 0, [props.accounts])
   const [advancedModeList, setAdvancedModeList] = useLocalStorage({ key: 'dAppsAdvancedMode', defaultValue: [] })
@@ -128,6 +129,7 @@ export default function Wallet(props) {
       path: '/dapps',
       component: <DappsCatalog
         network={props.network}
+        dappsCatalog={props.dappsCatalog}
       />
     },
     {
@@ -203,10 +205,10 @@ export default function Wallet(props) {
 
   return (
     <div id="wallet">
-      <SideBar match={props.match} portfolio={props.portfolio} hidePrivateValue={props.privateMode.hidePrivateValue} relayerURL={props.relayerURL} selectedNetwork={props.network} />
+      <SideBar match={props.match} portfolio={props.portfolio} hidePrivateValue={props.privateMode.hidePrivateValue} relayerURL={props.relayerURL} selectedNetwork={props.network} dappsCatalog={props.dappsCatalog} />
       <TopBar {...props} />
 
-      <div id="wallet-container" ref={walletContainer}>
+      <div id="wallet-container" className={isDappMode ? 'dapp-mode' : ''} ref={walletContainer}>
         <div id="wallet-container-inner">
           <Switch>
             {

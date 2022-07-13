@@ -22,6 +22,7 @@ import useGnosisSafe from './hooks/useGnosisSafe'
 import useNotifications from './hooks/notifications'
 import { useAttentionGrabber, usePortfolio, useAddressBook, useRelayerData, usePrivateMode, useLocalStorage, useUtmTracking } from './hooks'
 import { useToasts } from './hooks/toasts'
+import { useDapps } from './hooks'
 import { useOneTimeQueryParam } from './hooks/oneTimeQueryParam'
 import WalletStakingPoolABI from './consts/WalletStakingPoolABI.json'
 import { Contract, utils } from 'ethers'
@@ -47,6 +48,7 @@ function AppInner() {
   const addressBook = useAddressBook({ accounts, useStorage: useLocalStorage })
   const { network, setNetwork, allNetworks } = useNetwork({ useStorage: useLocalStorage })
   const { addToast } = useToasts()
+  const dappsCatalog = useDapps({useStorage: useLocalStorage})
   const wcUri = useOneTimeQueryParam('uri')
   const utmTracking = useUtmTracking({ useStorage: useLocalStorage })
 
@@ -291,6 +293,7 @@ function AppInner() {
             useStorage={useLocalStorage}
             userSorting={userSorting}
             setUserSorting={setUserSorting}
+            dappsCatalog={dappsCatalog}
           >
           </Wallet>
         </Route> :

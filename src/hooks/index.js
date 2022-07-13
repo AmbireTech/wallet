@@ -14,7 +14,7 @@ import useAmbireEarnDetails from './ambireEarnDetails'
 import useDragAndDrop from './dragAndDrop'
 import useCheckMobileScreen from './checkMobileScreen'
 import useUtmTracking from './utmTracking'
-import useDappMode from './useDapps'
+import useDapps from './useDapps'
 
 export {
     useAccounts,
@@ -33,5 +33,5 @@ export {
     useDragAndDrop,
     useCheckMobileScreen,
     useUtmTracking,
-    useDappMode
+    useDapps
 }
