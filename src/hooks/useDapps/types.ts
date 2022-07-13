@@ -33,10 +33,15 @@ export interface DappManifestData {
     logo: string,
     description: string,
     type: DappType,
-    networks: Array<string>
+    networks: Array<string>,
 }
 
 export type DappCatalog = Array<DappManifestData>
+
+export type Category = {
+    name: string,
+    filter: (x: any, y?: any) => boolean
+}
 
 export type UseDappModeReturnType = {
     isDappMode: boolean,
@@ -47,5 +52,13 @@ export type UseDappModeReturnType = {
     loadCurrentDappData: (data: DappManifestData) => void,
     addCustomDapp: (dapp: DappManifestData) => void,
     removeCustomDapp: (dapp: DappManifestData) => void,
-    catalog: Array<DappManifestData>
+    favorites: { [key: string]: boolean },
+    toggleFavorite: (dapp: DappManifestData) => void,
+    catalog: Array<DappManifestData>,
+    filteredCatalog: Array<DappManifestData>,
+    onCategorySelect: (category: Category) => void,
+    search: string | null,
+    onSearchChange: (value: string | null) => void,
+    categories: Array<Category>
+    categoryFilter: Category
 }
