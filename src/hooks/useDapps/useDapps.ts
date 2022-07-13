@@ -18,7 +18,7 @@ const CATEGORIES: Array<Category> = [
     },
     {
         name: 'favorites',
-        filter: (f: any, faves: object) => Object.keys(faves).indexOf(f.name) !== -1
+        filter: (f: any, faves: object) => Object.keys(faves).indexOf(f.url) !== -1
     }
 ]
 

@@ -9,8 +9,6 @@ import { AiOutlineStar, AiFillStar } from 'react-icons/ai'
 
 const DappsCatalog = ({ network, dappsCatalog }) => {
 
-  console.log({dappsCatalog})
-
   const { toggleFavorite, favorites, filteredCatalog, onCategorySelect, categoryFilter, search, onSearchChange, categories } = dappsCatalog
 
   const sortFiltered = useCallback((filteredItems) => {
@@ -52,8 +50,9 @@ const DappsCatalog = ({ network, dappsCatalog }) => {
   }, [])
 
   const onFavoriteClick = useCallback((e, item) => {
+    console.log({item})
     toggleFavorite(item)
-    e.stopPropagation();
+    e.stopPropagation()
   }, [toggleFavorite])
 
   const openDapp = (item) => {
@@ -66,11 +65,11 @@ const DappsCatalog = ({ network, dappsCatalog }) => {
 
   return (
     <section id='dappCatalog'>
-      <div className='filterSection'>
+      <div className='filter-section'>
         <div className='input-icon'>
           <TextInput value={search} onChange={onSearchChange} placeholder='Search filter' icon={<MdSearch />} />
         </div>
-        <div categories='categories'>
+        <div className='categories'>
           {categories.map(c => {
             return <span
               className={`category category-${c.name}${categoryFilter?.name === c.name ? ' selected' : ''}`}
@@ -84,8 +83,8 @@ const DappsCatalog = ({ network, dappsCatalog }) => {
           sortFiltered(filteredCatalog).map(item => {
             return <div className={`catalogItem${item.supported ? '' : ' not-supported'}`}
               onClick={() => openDapp(item)}>
-              <span className={`favorite${favorites[item.name] ? ' selected' : ''}`} onClick={(e) => onFavoriteClick(e, item)}> {
-                favorites[item.name]
+              <span className={`favorite${favorites[item.url] ? ' selected' : ''}`} onClick={(e) => onFavoriteClick(e, item)}> {
+                favorites[item.url]
                   ? <AiFillStar />
                   : <AiOutlineStar />
               }</span>
