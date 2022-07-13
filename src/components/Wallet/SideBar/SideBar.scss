@@ -14,6 +14,16 @@
   box-sizing: border-box;
   overflow: hidden;
   transition: width 0.1s ease-in-out;
+  background-color: $background-color;
+
+  &.dapp-mode {
+    transition: left 0.5s ease-in-out;
+    left: -($sidebar-desktop-width);
+
+    &.open {
+      left: 0;
+    } 
+  }
 
   .balance {
     margin-bottom: 3em;

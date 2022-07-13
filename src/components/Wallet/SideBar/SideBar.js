@@ -14,9 +14,10 @@ import GasIndicator from 'components/Wallet/GasIndicator/GasIndicator'
 
 const helpCenterUrl = 'https://help.ambire.com/hc/en-us/categories/4404980091538-Ambire-Wallet'
 
-const SideBar = ({ match, portfolio, hidePrivateValue, relayerURL, selectedNetwork }) => {
+const SideBar = ({ match, portfolio, hidePrivateValue, relayerURL, selectedNetwork, dappsCatalog }) => {
   const sidebarRef = useRef()
   const [balanceFontSize, setBalanceFontSize] = useState(0)
+  const { isDappMode, sideBarOpen } = dappsCatalog
 
     const resizeBalance = useCallback(() => {
         const balanceFontSizes = {
@@ -35,7 +36,7 @@ const SideBar = ({ match, portfolio, hidePrivateValue, relayerURL, selectedNetwo
     useEffect(() => resizeBalance(), [resizeBalance])
 
   return (
-    <div id="sidebar" ref={sidebarRef}>
+    <div id="sidebar" className={(isDappMode ? 'dapp-mode' : '') + (sideBarOpen ? ' open' : '') } ref={sidebarRef}>
       <div className="balance">
         <label>Balance</label>
         {portfolio.isCurrNetworkBalanceLoading ? (
