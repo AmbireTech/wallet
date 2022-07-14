@@ -1,4 +1,5 @@
-import { MdOutlineWarningAmber } from "react-icons/md"
+import { AiFillWarning } from "react-icons/ai"
+import { FaCheck } from "react-icons/fa"
 import buildRecoveryBundle from 'lib/recoveryBundle'
 
 const PendingRecoveryNotice = ({ recoveryLock, showSendTxns, selectedAccount, selectedNetwork }) => {
@@ -11,19 +12,25 @@ const PendingRecoveryNotice = ({ recoveryLock, showSendTxns, selectedAccount, se
             selectedAccount.signer.preRecovery,
             { signer: selectedAccount.signer, primaryKeyBackup: selectedAccount.primaryKeyBackup }
         )
-        showSendTxns(bundle)
+        showSendTxns(bundle, true)
     }
     const recoveryLockStatus = recoveryLock ? recoveryLock.status : 'requestedButNotInitiated'
     const remainingTime = seconds => {
         if (seconds > 86400) return `${Math.ceil(seconds / 86400)} days`
         else return `${Math.ceil(seconds/1440)} hours`
     }
-    const style = isAlreadyInitiated
-        ? (recoveryLockStatus === 'ready' ? { 'background-color': '#6bad6b' } : {})
-        : { cursor: 'pointer' }
+    const styleClass = isAlreadyInitiated
+        ? (recoveryLockStatus === 'ready' ? 'success' : 'warning')
+        : 'warning action'
+
     return (
-        <div className="notice" style={style} onClick={() => createRecoveryRequest()}>
-            <MdOutlineWarningAmber/>
+        <div className={`notification-banner notification-hollow ${styleClass}`} onClick={() => createRecoveryRequest()}>
+            {
+              recoveryLockStatus === 'ready'
+                ? <FaCheck />
+                : <AiFillWarning />
+            }
+
             {
                 recoveryLockStatus === 'requestedButNotInitiated' ?
                     <>Password reset requested but not initiated for {selectedNetwork.name}. Click here to initiate it.</> :

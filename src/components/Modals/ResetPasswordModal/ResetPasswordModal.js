@@ -129,7 +129,7 @@ const ResetPassword = ({ account, selectedNetwork, relayerURL, onAddAccount, sho
 
             const bundle = buildRecoveryBundle(account.id, selectedNetwork.id, signer.preRecovery, { signer, primaryKeyBackup })
             hideModal()
-            showSendTxns(bundle)
+            showSendTxns(bundle, true)
             onAddAccount({
                 ...account,
                 primaryKeyBackup,

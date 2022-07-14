@@ -13,14 +13,13 @@ export function getProvider (networkId) {
   // instead of creating the same object again.
   if (providersByNetwork[networkId]) return providersByNetwork[networkId]
 
-  const { id: name, chainId } = network
+  const { id: name, chainId, ensName } = network
   const url = network.rpc
 
   if (url.startsWith('wss:')) {
-    providersByNetwork[networkId] = new providers.WebSocketProvider(url, { name, chainId })
-  }
-  else {
-    providersByNetwork[networkId] = new providers.StaticJsonRpcProvider(url, { name, chainId })
+    providersByNetwork[networkId] = new providers.WebSocketProvider(url, { name: ensName || name, chainId })
+  } else {
+    providersByNetwork[networkId] = new providers.StaticJsonRpcProvider(url, { name: ensName || name, chainId })
   }
 
   return providersByNetwork[networkId]

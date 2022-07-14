@@ -394,6 +394,7 @@ export default function useWalletConnect ({ account, chainId, initialUri, allNet
     }, [])
 
     const resolveMany = (ids, resolution) => {
+        if (ids === undefined) return
         state.requests.forEach(({ id, wcUri, isBatch }) => {
             if (ids.includes(id)) {
                 const connector = connectors[wcUri]
