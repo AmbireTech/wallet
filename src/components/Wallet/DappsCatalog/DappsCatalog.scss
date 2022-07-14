@@ -3,6 +3,10 @@ $WCBlue: #0078db;
 $faveColor: #FFFF00;
 
 #dappCatalog {
+  height: 100%;
+  @include flex-full-grow-container;
+  border: 1px solid green;
+  position: relative;
 
   .filter-section {
     margin-bottom: 24px;
@@ -246,6 +250,13 @@ $faveColor: #FFFF00;
     color: mix($text-color, $input-background-color-darker);
   }
   padding-bottom: 24px;
+}
+
+.exit-btn {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  opacity: 0.6;
 }
 
 @media screen and (max-width: $mobile-breakpoint-max-width) {
