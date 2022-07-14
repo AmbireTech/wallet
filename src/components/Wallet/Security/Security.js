@@ -1,9 +1,8 @@
 import './Security.scss'
 
-import { MdOutlineRemove } from 'react-icons/md'
 import { RiDragDropLine } from 'react-icons/ri'
 import { useState, useEffect, useCallback } from 'react'
-import { Loading, TextInput, Button } from 'components/common'
+import { Loading, DropDown } from 'components/common'
 import { Interface, AbiCoder, keccak256 } from 'ethers/lib/utils'
 import accountPresets from 'consts/accountPresets'
 import privilegesOptions from 'consts/privilegesOptions'
@@ -13,13 +12,18 @@ import AddAuthSigner from './AddAuthSigner/AddAuthSigner'
 import { useToasts } from 'hooks/toasts'
 import { useHistory } from 'react-router-dom'
 import { useDropzone } from 'react-dropzone'
-import { MdInfoOutline } from 'react-icons/md'
+import { MdInfoOutline, MdOutlinePassword } from 'react-icons/md'
 import { validateImportedAccountProps, fileSizeValidator } from 'lib/validations/importedAccountValidations'
 import OtpTwoFAModal from 'components/Modals/OtpTwoFAModal/OtpTwoFAModal'
 import OtpTwoFADisableModal from 'components/Modals/OtpTwoFADisableModal/OtpTwoFADisableModal'
 import Backup from './Backup/Backup'
 import PendingRecoveryNotice from './PendingRecoveryNotice/PendingRecoveryNotice'
 import { getName } from 'lib/humanReadableTransactions'
+import * as blockies from 'blockies-ts'
+import { FaCog, FaTimes } from 'react-icons/fa'
+import { FiShield, FiShieldOff } from 'react-icons/fi'
+import { MdFactCheck, MdOutlineLockOpen } from 'react-icons/md'
+
 
 const IDENTITY_INTERFACE = new Interface(
   require('adex-protocol-eth/abi/Identity5.2')
@@ -198,55 +202,161 @@ const Security = ({
     )
 
   const privList = Object.entries(privileges)
+    // Avoid random position jumping
+    .sort((a, b) => {
+
+      const [addr_A] = a
+      const [addr_B] = b
+
+      const isQuickAcc_A = addr_A === accountPresets.quickAccManager
+      const signerAddress_A = isQuickAcc_A
+        ? selectedAccount.signer.quickAccManager
+        : selectedAccount.signer.address
+
+      const isQuickAcc_B = addr_B === accountPresets.quickAccManager
+      const signerAddress_B = isQuickAcc_B
+        ? selectedAccount.signer.quickAccManager
+        : selectedAccount.signer.address
+
+      const isSelected_A = signerAddress_A === addr_A
+      const isSelected_B = signerAddress_B === addr_B
+
+      if (isSelected_A && isSelected_B){
+        return addr_A.localeCompare(addr_B)
+      } else {
+        if (isSelected_A) return -1
+        if (isSelected_B) return 1
+      }
+
+      return addr_A.localeCompare(addr_B)
+
+    })
     .map(([addr, privValue]) => {
       if (!privValue) return null
   
       const addressName = getName(addr) || null
       const isQuickAcc = addr === accountPresets.quickAccManager
-      const privText = isQuickAcc
+
+      const relevantAddr = isQuickAcc ? (selectedAccount.signer.one) : addr
+
+      const signerType = isQuickAcc
         ? `Email/password signer (${selectedAccount.email || 'unknown email'})`
-        : `${addr} ${addressName && addressName !== addr ? `(${addressName})` : ''}`
+        : `Regular signer ${addressName && addressName !== addr ? `(${addressName})` : ''}`
+
       const signerAddress = isQuickAcc
         ? selectedAccount.signer.quickAccManager
         : selectedAccount.signer.address
       const isSelected = signerAddress === addr
       const canChangePassword = isQuickAcc && !hasPendingReset
 
+      const accountIcon = blockies.create({ seed: relevantAddr }).toDataURL()
+
       return (
-        <li key={addr}>
-          <TextInput className="depositAddress" value={privText} disabled />
+        <li key={addr} className='privList-item'>
+          <div className='autorizedSigner'>
+            <div className='signerBlockies'>
+              <div className="icon" style={relevantAddr ? {backgroundImage: `url(${accountIcon})`} : null}></div>
+            </div>
+            <div className='signerAddress'>
+              <span className='signerAddress-type' >
+                {signerType}
+              </span>
+              <span className='signerAddress-address' >
+                {relevantAddr || (isQuickAcc ? 'Address displayable only as defaut signer' : '')}
+              </span>
+            </div>
+            <div className='signer-indications'>
+              {
+                (isQuickAcc && !otpEnabled)  &&
+                <span className='2fa-signer-indication'>
+                  <MdOutlineLockOpen /> 2FA disabled
+                </span>
+              }
+              {
+                isSelected &&
+                <span className='main-signer-indication'>
+                  <MdFactCheck /> Default signer
+                </span>
+              }
+            </div>
+          </div>
           <div className="btns-wrapper">
-            {isQuickAcc && (otpEnabled !== null) && (otpEnabled ? 
-              (<Button red onClick={handleDisableOtp} small>Disable 2FA</Button>) : 
-              (<Button onClick={handleEnableOtp} small>Enable 2FA</Button>)
-            )}
-            {isQuickAcc && (<Button
-              disabled={!canChangePassword}
-              title={hasPendingReset ? 'Account recovery already in progress' : ''}
-              onClick={showResetPasswordModal} small>Change password</Button>
-            )}
-            <Button
-              disabled={isSelected}
-              title={isSelected ? 'Signer is already default' : ''}
-              onClick={() =>
-                onMakeDefaultBtnClicked(selectedAccount, addr, isQuickAcc)
-              }
-              small
+            <DropDown
+              className='dropdown-signer-actions'
+              style={{ height: '60px' }}
+              title={<FaCog />}
+              closeOnClick
+              displayChevron={false}
             >
-              Make default
-            </Button>
-            <Button
-              onClick={() => onRemoveBtnClicked(addr)}
-              small
-              red
-              icon={<MdOutlineRemove/>}
-              title={
-                isSelected ? 'Cannot remove the currently used signer' : ''
-              }
-              disabled={isSelected}
-            >
-              Remove
-            </Button>
+              <ul className="signer-actions">
+                {isQuickAcc && (otpEnabled !== null) && (otpEnabled ?
+                    (<li onClick={handleDisableOtp} className='danger'>
+                      <span>
+                        <FiShieldOff />
+                      </span>
+                      Disable 2FA
+                    </li>) :
+                    (<li onClick={handleEnableOtp} >
+                      <span>
+                        <FiShield />
+                      </span>
+                       Enable 2FA
+                    </li>)
+                )}
+                {isQuickAcc && (<li
+                    className={!canChangePassword ? 'disabled' : ''}
+                    onClick={showResetPasswordModal} >
+                    <span>
+                      <MdOutlinePassword />
+                    </span>
+                    {
+                      canChangePassword
+                        ? 'Change password'
+                        : 'Password recovery in progress'
+                    }
+                </li>
+                )}
+                {
+                  !isSelected &&
+                    <li
+                      onClick={() =>
+                        onMakeDefaultBtnClicked(selectedAccount, addr, isQuickAcc)
+                      }
+                    >
+                      <span>
+                        <MdFactCheck />
+                      </span>
+                      Set as default signer
+                    </li>
+                }
+                <li
+                  className={`danger${isSelected ? ' disabled' : ''}`}
+                  onClick={() => {
+                    if (!isSelected) {
+                      onRemoveBtnClicked(addr)
+                    }
+                  }}
+                >
+                  {
+                    isSelected
+                    ?
+                      <>
+                        <span>
+                          <FaTimes />
+                        </span>
+                        Can't Revoke default signer
+                      </>
+                      :
+                      <>
+                        <span>
+                          <FaTimes />
+                        </span>
+                        Revoke signer
+                      </>
+                  }
+                </li>
+              </ul>
+            </DropDown>
           </div>
         </li>
       )
@@ -274,7 +384,7 @@ const Security = ({
         <h3 className="error">Error getting authorized signers: {errMsg}</h3>
       )}
       {showLoading && <Loading />}
-      <ul className="content">{!showLoading && privList}</ul>
+      <ul className="content privList">{!showLoading && privList}</ul>
     </div>
     <div className="panel">
       <div className="panel-title">Add new signer</div>

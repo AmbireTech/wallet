@@ -125,6 +125,132 @@
       font-size: 1.5em;
     }
   }
+
+  ul.privList {
+    gap: 4px;
+
+    li.privList-item {
+      gap: 0;
+      margin-bottom: 0;
+    }
+  }
+
+  .autorizedSigner {
+    display: flex;
+    flex-grow: 1;
+    align-items: center;
+    background: $input-background-color;
+    width: 100%;
+
+
+    .signer-indications {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      color: mix($text-container-color, $input-background-color, 50%);
+      white-space: nowrap;
+      padding-right: 8px;
+
+      span {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+
+    }
+
+    .signerBlockies {
+      display: flex;
+      justify-content: center;
+      padding-left: 16px;
+
+      .icon {
+        width: 24px;
+        height: 24px;
+        border-radius: 100px;
+        background-size: 24px 24px;
+        background-color: $panel-background-color;
+      }
+    }
+
+    .signerAddress {
+      flex-grow: 1;
+      padding: 12px 0 12px 16px;
+      font-size: 16px;
+      font-family: monospace;
+      text-align: left;
+
+      span {
+        display: block;
+
+        &.signerAddress-type {
+          padding-bottom: 4px;
+        }
+
+        &.signerAddress-address {
+          color: mix($text-container-color, $input-background-color, 50%);
+        }
+      }
+    }
+  }
+
+  .dropdown-signer-actions{
+    cursor: pointer;
+
+    .content {
+      padding-left: 15px;
+    }
+
+    .menu {
+
+      background: $input-background-color-darker;
+
+      min-width: 280px;
+
+      .signer-actions {
+        padding-left: 0;
+
+        li {
+          margin: 0;
+          padding: 8px;
+          display: flex;
+          justify-content: left;
+          align-items: center;
+
+          span {
+            display: flex;
+          }
+
+          &.disabled {
+            opacity: 0.4;
+          }
+
+          &.danger {
+            color: $danger-color;
+
+            &.disabled {
+              opacity: 0.4;
+            }
+          }
+
+          &:hover {
+            background: lighten($input-background-color, 5%);
+          }
+        }
+      }
+
+      .buttonComponent {
+        background: $input-background-color;
+        color: $text-color;
+        text-align: left;
+      }
+
+    }
+
+    &:hover {
+      background: lighten($input-background-color, 5%);
+    }
+  }
 }
 
 @media screen and (max-width: 1200px) {
