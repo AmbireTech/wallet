@@ -95,6 +95,7 @@ export default function usePortfolio({ currentNetwork, account, useStorage }) {
     const [collectibles, setCollectibles] = useState([]);
     const [extraTokens, setExtraTokens] = useStorage({ key: 'extraTokens', defaultValue: [] });
     const [hiddenTokens, setHiddenTokens] = useStorage({ key: 'hiddenTokens', defaultValue: [] })
+    const [cachedBalancesByNetworks, setCachedBalancesByNetworks] = useState([])
     
     // We need to be sure we get the latest balancesByNetworksLoading here
     const areAllNetworksBalancesLoading = useCallback(() => Object.values(balancesByNetworksLoading).every(ntwLoading => ntwLoading), [balancesByNetworksLoading])
@@ -213,6 +214,9 @@ export default function usePortfolio({ currentNetwork, account, useStorage }) {
                 }
             }))).filter(data => data)
 
+            const outdatedBalancesByNetworks = updatedTokens.filter(({ systemInfo }) => systemInfo.cache && systemInfo.cache)
+            setCachedBalancesByNetworks(outdatedBalancesByNetworks)
+            
             updatedTokens.map(networkTokens => {
                 return networkTokens.assets = filterByHiddenTokens(networkTokens.assets, hiddenTokens)
             })
@@ -532,6 +536,7 @@ export default function usePortfolio({ currentNetwork, account, useStorage }) {
         areAllNetworksBalancesLoading,
         otherProtocolsByNetworksLoading,
         isCurrNetworkProtocolsLoading: otherProtocolsByNetworksLoading[currentNetwork],
+        cachedBalancesByNetworks
         //updatePortfolio//TODO find a non dirty way to be able to reply to getSafeBalances from the dapps, after the first refresh
     }
 }
