@@ -46,10 +46,10 @@ export type Category = {
 export type UseDappsReturnType = {
     isDappMode: boolean,
     sideBarOpen: boolean,
-    currentDappData: DappManifestData,
+    currentDappData: DappManifestData | null,
     toggleDappMode: () => void,
     toggleSideBarOpen: () => void,
-    loadCurrentDappData: (data: DappManifestData) => void,
+    loadCurrentDappData: (data: DappManifestData | null) => void,
     addCustomDapp: (dapp: DappManifestData) => void,
     removeCustomDapp: (dapp: DappManifestData) => void,
     favorites: { [key: string]: boolean },

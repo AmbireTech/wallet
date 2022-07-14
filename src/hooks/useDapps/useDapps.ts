@@ -28,7 +28,7 @@ export default function useDapps({ useStorage }: UseDappsProps): UseDappsReturnT
 
     const [isDappMode, setIsDappMode] = useStorage<boolean>({ key: 'isDappMode' })
     const [sideBarOpen, setSideBarOpen] = useState(false)
-    const [currentDappData, setCurrentDappData] = useStorage<DappManifestData>({ key: 'currentDappData' })
+    const [currentDappData, setCurrentDappData] = useStorage<DappManifestData | null>({ key: 'currentDappData' })
     const [customDapps, updateCustomDapps] = useStorage<Array<DappManifestData>>({ key: 'customDapps', defaultValue: [] })
 
     const [search, setSearch] = useState<string | null>(null)
@@ -53,9 +53,10 @@ export default function useDapps({ useStorage }: UseDappsProps): UseDappsReturnT
         setSideBarOpen(!sideBarOpen)
     }, [sideBarOpen])
 
-    const loadCurrentDappData = useCallback((data: DappManifestData) => {
+    const loadCurrentDappData = useCallback((data: DappManifestData | null) => {
         setCurrentDappData(data)
-    }, [setCurrentDappData])
+        setIsDappMode(!!data)
+    }, [setCurrentDappData, setIsDappMode])
 
     const addCustomDapp = useCallback((dapp: DappManifestData) => {
         const exists = customDapps.find(x => x.url === dapp.url)
