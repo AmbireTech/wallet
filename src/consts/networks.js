@@ -8,6 +8,7 @@ const networks = [
 		rpc: 'https://eth-mainnet.alchemyapi.io/v2/e5Gr8LP_EH0SBPZiNCcC08OuEDrvgoYK',
 		nativeAssetSymbol: 'ETH',
 		name: 'Ethereum',
+		ensName: 'homestead',
 		icon: '/resources/networks/ethereum.png',
 		explorerUrl: 'https://etherscan.io',
 		unstoppableDomainsChain: 'ERC20'
@@ -15,7 +16,8 @@ const networks = [
 	{
 		id: 'polygon',
 		chainId: 137,
-		rpc: 'https://polygon-rpc.com/rpc',
+		rpc: 'https://rpc.ankr.com/polygon', // temp - 5M per month and 170k per day
+		// rpc: 'https://polygon-rpc.com/rpc',
 		// rpc: 'https://polygon-mainnet.infura.io/v3/d4319c39c4df452286d8bf6d10de28ae',
 		nativeAssetSymbol: 'MATIC',
 		name: 'Polygon',
@@ -77,7 +79,7 @@ const networks = [
 	{
 		id: 'arbitrum',
 		chainId: 42161,
-		rpc: 'https://arb1.arbitrum.io/rpc',
+		rpc: 'https://arb-mainnet.g.alchemy.com/v2/wBLFG9QR-n45keJvKjc4rrfp2F1sy1Cp',
 		nativeAssetSymbol: 'AETH',
 		name: 'Arbitrum',
 		icon: '/resources/networks/arbitrum.svg',
@@ -116,16 +118,16 @@ const networks = [
 		explorerUrl: 'https://optimistic.etherscan.io',
 		unstoppableDomainsChain: 'ERC20'
 	},
-	// {
-	// 	id: 'andromeda',
-	// 	chainId: 1088,
-	// 	rpc: 'https://andromeda.metis.io/?owner=1088',
-	// 	nativeAssetSymbol: 'METIS',
-	// 	name: 'Andromeda',
-	// 	icon: '/resources/networks/andromeda.svg',
-	// 	explorerUrl: 'https://andromeda-explorer.metis.io',
-	// 	unstoppableDomainsChain: 'ERC20'
-	// },
+	{
+		id: 'andromeda',
+		chainId: 1088,
+		rpc: 'https://andromeda.metis.io/?owner=1088',
+		nativeAssetSymbol: 'METIS',
+		name: 'Andromeda',
+		icon: '/resources/networks/andromeda.svg',
+		explorerUrl: 'https://andromeda-explorer.metis.io',
+		unstoppableDomainsChain: 'ERC20'
+	},
 	{
 		id: 'rinkeby',
 		chainId: 4,

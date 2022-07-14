@@ -50,6 +50,7 @@ export default function Wallet(props) {
         useStorage={props.useStorage}
         userSorting={props.userSorting}
         setUserSorting={props.setUserSorting}
+        showSendTxns={props.showSendTxns}
       />
     },
     {

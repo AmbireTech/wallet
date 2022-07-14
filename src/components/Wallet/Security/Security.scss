@@ -112,19 +112,7 @@
     }
   }
 
-  .notice {
-    display: flex;
-    align-items: center;
-    gap: 0.75em;
-    padding: 1em;
-    font-weight: bold;
-    color: $background-color;
-    background-color: #f3ac29;
 
-    svg {
-      font-size: 1.5em;
-    }
-  }
 }
 
 @media screen and (max-width: 1200px) {

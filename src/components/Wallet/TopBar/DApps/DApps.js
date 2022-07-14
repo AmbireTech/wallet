@@ -50,37 +50,39 @@ const DApps = ({ connections, connect, disconnect, isWcConnecting }) => {
                     </label>
                 ) : null}
             </div>
-            {connections.map(({ session, uri, isOffline }) => (
-                <div className="item dapps-item" key={session.key}>
-                    <div className="icon">
-                        <div className="icon-overlay" style={{backgroundImage: `url(${session.peerMeta.icons.filter(x => !x.endsWith('favicon.ico'))[0]})`}}/>
-                        <MdBrokenImage/>
-                    </div>
-                    <a href={session.peerMeta.url} target="_blank" rel="noreferrer">
-                        <div className="details">
-                            {
-                                isLegacyWC(session) ?
+            <div className='dappList'>
+                {connections.map(({ session, uri, isOffline }) => (
+                  <div className="item dapps-item" key={session.key}>
+                      <div className="icon">
+                          <div className="icon-overlay" style={{backgroundImage: `url(${session.peerMeta.icons.filter(x => !x.endsWith('favicon.ico'))[0]})`}}/>
+                          <MdBrokenImage/>
+                      </div>
+                      <a href={session.peerMeta.url} target="_blank" rel="noreferrer">
+                          <div className="details">
+                              {
+                                  isLegacyWC(session) ?
                                     <ToolTip className="session-warning" label="dApp uses legacy WalletConnect bridge which is unreliable and often doesn't work. Please tell the dApp to update to the latest WalletConnect version.">
                                         <MdOutlineWarning/>
                                     </ToolTip>
                                     :
                                     null
-                            }
-                            {
-                                isOffline ?
+                              }
+                              {
+                                  isOffline ?
                                     <ToolTip className="session-error" label="WalletConnect connection may be offline. Check again later. If this warning persist try to disconnect and connect WalletConnect.">
                                         <AiOutlineDisconnect />
                                     </ToolTip>
                                     :
                                     null
-                            }
-                            <div className="name">{session.peerMeta.name}</div>
-                        </div>
-                    </a>
-                    <div className="separator"></div>
-                    <button onClick={() => disconnect(uri)}>Disconnect</button>
-                </div>
-          ))}
+                              }
+                              <div className="name">{session.peerMeta.name}</div>
+                          </div>
+                      </a>
+                      <div className="separator"></div>
+                      <button onClick={() => disconnect(uri)}>Disconnect</button>
+                  </div>
+                ))}
+            </div>
         </DropDown>
     )
 }
