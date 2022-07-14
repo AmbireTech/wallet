@@ -47,6 +47,7 @@ export default function Wallet(props) {
         userSorting={props.userSorting}
         setUserSorting={props.setUserSorting}
         match={props.match}
+        showSendTxns={props.showSendTxns}
       />
     },
     {
