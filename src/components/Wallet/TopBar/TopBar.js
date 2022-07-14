@@ -33,8 +33,14 @@ const TopBar = ({
   const account = accounts.find(({ id }) => id === selectedAcc)
   const accountIcon = blockies.create({ seed: account ? account.id : null }).toDataURL()
 
+  const [showDevEnv, setShowDevEnv] = useState((process.env.REACT_APP_VISUAL_ENV === 'dev' || process.env.REACT_APP_VISUAL_ENV === 'staging'))
+
   return (
-    <div id="topbar">
+    <div id="topbar" className={ showDevEnv ? 'visual-env-dev' : ''}>
+      {
+        showDevEnv &&
+          <div className='dev-env-bar' onClick={() => setShowDevEnv(false)}>Development mode</div>
+      }
       <div id="mobile-menu" onClick={() => setMenuOpen(!isMenuOpen)}>
         <div className="icon" style={{backgroundImage: `url(${accountIcon})`}}></div>
         <MdOutlineArrowForward/>
