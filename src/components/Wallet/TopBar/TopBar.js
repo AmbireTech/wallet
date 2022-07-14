@@ -1,14 +1,15 @@
 import "./TopBar.scss";
 
-import React, { useState } from "react";
-import { NavLink } from "react-router-dom";
-import { MdOutlineArrowForward, MdOutlineClose, MdOutlineMenu, MdRemoveRedEye, MdVisibilityOff } from "react-icons/md";
+import React, { useState, useMemo } from "react";
+import { NavLink, useRouteMatch } from "react-router-dom";
+import { MdOutlineArrowForward, MdOutlineClose, MdOutlineMenu, MdRemoveRedEye, MdVisibilityOff, MdMenu, MdExitToApp } from "react-icons/md";
 import Accounts from "./Accounts/Accounts";
 import Networks from "./Networks/Networks";
 import DApps from "./DApps/DApps";
 import * as blockies from 'blockies-ts';
 import Links from "./Links/Links";
 import WalletTokenButton from "./WalletTokenButton/WalletTokenButton";
+import { Button } from 'components/common';
 
 const TopBar = ({
   connections,
@@ -26,9 +27,15 @@ const TopBar = ({
   privateMode: { isPrivateMode, togglePrivateMode, hidePrivateValue },
   addRequest,
   userSorting,
-  setUserSorting
+  setUserSorting,
+  dappsCatalog
 }) => {
   const [isMenuOpen, setMenuOpen] = useState(false)
+  const routeMatch = useRouteMatch('/wallet/dapps')
+
+  const { isDappMode, toggleSideBarOpen, currentDappData, loadCurrentDappData } = dappsCatalog
+
+  const dapModeSidebar = useMemo(() => isDappMode && routeMatch, [isDappMode, routeMatch])
 
   const account = accounts.find(({ id }) => id === selectedAcc)
   const accountIcon = blockies.create({ seed: account ? account.id : null }).toDataURL()
@@ -44,10 +51,23 @@ const TopBar = ({
         </div>
       </div>
 
+      {dapModeSidebar ?
+      <div className='dapp-menu'>
+        <Button  clear mini icon={<MdMenu />}
+          onClick={() => toggleSideBarOpen()}
+        ></Button>
+        <img className='dapp-logo' src={currentDappData?.logo} alt={currentDappData?.title}/>
+        <Button clear mini icon={<MdExitToApp />}
+          onClick={() => loadCurrentDappData(null)}
+        ></Button>
+      </div>
+      :        
       <NavLink to={'/wallet/dashboard'}>
         <div id="logo" />
         <div id="icon" />
-      </NavLink>
+      </NavLink>     
+      }
+
       <div className={`container ${isMenuOpen ? 'open' : ''}`}>
         {selectedAcc && <WalletTokenButton
           rewardsData={rewardsData}

@@ -8,12 +8,12 @@
     z-index: 50;
     padding: ($layout-spacing / 2) $layout-spacing;
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-end;
     gap: 1em;
     background-color: $background-color;
     box-shadow: 0 5px ($layout-spacing / 4) 5px $background-color;
 
-    #logo, #icon {
+    #logo, #icon, .dapp-menu {
         position: absolute;
         background-size: contain;
         background-repeat: no-repeat;
@@ -36,6 +36,17 @@
         width: 90px;
         background-image: url('/resources/icon.png');
         opacity: 0;
+    }
+
+    .dapp-menu {
+        left: 10px;
+        top: 15px;
+        display: flex;
+        flex-direction: row;
+        gap: 6px;
+        .dapp-logo {
+            height: 40px;
+        }
     }
 
     #mobile-menu {
