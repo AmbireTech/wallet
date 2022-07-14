@@ -31,7 +31,6 @@ const tabSegments = [
         value: 'collectibles'
     }
 ]
-
 export default function Dashboard({ portfolio, selectedNetwork, selectedAccount, setNetwork, privateMode, rewardsData,  userSorting, setUserSorting, accounts, addRequest, relayerURL, useStorage, showSendTxns }) {
     const history = useHistory()
     const { tabId, page = 1 } = useParams()
