@@ -14,11 +14,12 @@
   box-sizing: border-box;
   overflow: hidden;
   transition: width 0.1s ease-in-out;
-  background-color: $background-color;
+  background-color: $background-color; 
   transition: left 0.3s ease-in-out;
 
   &.dapp-mode {
-    left: -($sidebar-desktop-width);
+    left: -($sidebar-desktop-width + 20);
+    box-shadow: 15px 10px 20px 0 rgba(0, 0, 0, 0.5);
 
     &.open {
       left: 0;
