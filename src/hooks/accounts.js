@@ -8,12 +8,15 @@ export default function useAccounts (useStorage) {
 
     const onAdd = useCallback(() => history.push('/wallet/dashboard'), [history])
     const onRemoveLastAccount = useCallback(() => history.push('/add-account'), [history])
+    const onRemoveAccountWithoutBackingItUp =
+      useCallback(() => history.push('/wallet/security'), [history]);
 
     const { accounts, selectedAcc, onSelectAcc, onAddAccount, onRemoveAccount } = useAccountsCommon({
       useStorage,
       useToasts,
       onAdd,
-      onRemoveLastAccount
+      onRemoveLastAccount,
+      onRemoveAccountWithoutBackingItUp
     });
 
     return { accounts, selectedAcc, onSelectAcc, onAddAccount, onRemoveAccount }
