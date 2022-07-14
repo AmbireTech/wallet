@@ -79,7 +79,7 @@ function AppInner() {
 
     const shouldAttachMeta =  [WALLET_TOKEN_ADDRESS, WALLET_STAKING_ADDRESS].includes(req.txn.to.toLowerCase())
 
-    if (shouldAttachMeta) {
+    if (shouldAttachMeta && rewardsData && rewardsData.data) {
       const WALLET_STAKING_POOL_INTERFACE = new utils.Interface(WalletStakingPoolABI)
       const provider = getProvider(network.id)
       const stakingTokenContract = new Contract(WALLET_STAKING_ADDRESS, WALLET_STAKING_POOL_INTERFACE, provider)
