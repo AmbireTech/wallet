@@ -15,9 +15,9 @@
   overflow: hidden;
   transition: width 0.1s ease-in-out;
   background-color: $background-color;
+  transition: left 0.3s ease-in-out;
 
   &.dapp-mode {
-    transition: left 0.5s ease-in-out;
     left: -($sidebar-desktop-width);
 
     &.open {

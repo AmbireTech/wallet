@@ -18,6 +18,11 @@
     align-items: center;
     overflow: hidden;
     overflow-y: auto;
+    transition: left 0.3s ease-in-out;
+
+    &.dapp-mode {
+        left: 0;
+    }
 
     #wallet-container-inner {
         height: 100%;
@@ -48,11 +53,11 @@
     }
 }
 
-@media screen and (max-width: 1400px) {
-    #wallet-container {
-        left: $sidebar-desktop-small-width !important;
-    }
-}
+// @media screen and (max-width: 1400px) {
+//     #wallet-container {
+//         left: $sidebar-desktop-small-width !important;
+//     }
+// }
 
 // Mobile
 @media screen and (max-width: $mobile-breakpoint-max-width) {
