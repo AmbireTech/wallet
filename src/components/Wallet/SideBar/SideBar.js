@@ -1,6 +1,6 @@
 import './SideBar.scss'
 
-import { NavLink } from 'react-router-dom'
+import { NavLink, useRouteMatch  } from 'react-router-dom'
 import { MdDashboard, MdLock, MdCompareArrows, MdHelpCenter } from 'react-icons/md'
 import { AiOutlineAppstoreAdd } from 'react-icons/ai'
 import { GiReceiveMoney } from 'react-icons/gi'
@@ -9,7 +9,7 @@ import { BsPiggyBank } from 'react-icons/bs'
 import { BiTransfer } from 'react-icons/bi'
 import { CgArrowsExchangeV } from 'react-icons/cg'
 import { Loading } from 'components/common'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState, useMemo } from 'react'
 import GasIndicator from 'components/Wallet/GasIndicator/GasIndicator'
 
 const helpCenterUrl = 'https://help.ambire.com/hc/en-us/categories/4404980091538-Ambire-Wallet'
@@ -18,6 +18,9 @@ const SideBar = ({ match, portfolio, hidePrivateValue, relayerURL, selectedNetwo
   const sidebarRef = useRef()
   const [balanceFontSize, setBalanceFontSize] = useState(0)
   const { isDappMode, sideBarOpen } = dappsCatalog
+  const routeMatch = useRouteMatch('/wallet/dapps')
+
+  const dapModeSidebar = useMemo(() => isDappMode && routeMatch, [isDappMode, routeMatch])
 
     const resizeBalance = useCallback(() => {
         const balanceFontSizes = {
@@ -36,7 +39,7 @@ const SideBar = ({ match, portfolio, hidePrivateValue, relayerURL, selectedNetwo
     useEffect(() => resizeBalance(), [resizeBalance])
 
   return (
-    <div id="sidebar" className={(isDappMode ? 'dapp-mode' : '') + (sideBarOpen ? ' open' : '') } ref={sidebarRef}>
+    <div id="sidebar" className={(dapModeSidebar ? 'dapp-mode' : '') + (sideBarOpen ? ' open' : '') } ref={sidebarRef}>
       <div className="balance">
         <label>Balance</label>
         {portfolio.isCurrNetworkBalanceLoading ? (

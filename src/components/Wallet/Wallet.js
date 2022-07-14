@@ -1,6 +1,6 @@
 import "./Wallet.scss"
 
-import { Switch, Route, Redirect, useLocation  } from "react-router-dom"
+import { Switch, Route, Redirect, useLocation, useRouteMatch } from "react-router-dom"
 import Dashboard from "./Dashboard/Dashboard"
 import TopBar from "./TopBar/TopBar"
 import SideBar from "./SideBar/SideBar"
@@ -27,6 +27,9 @@ export default function Wallet(props) {
   const { pathname } = useLocation()
   const walletContainer = useRef()
   const { isDappMode } = props.dappsCatalog
+  const routeMatch = useRouteMatch('/wallet/dapps')
+
+  const dapModeSidebar = useMemo(() => isDappMode && routeMatch, [isDappMode, routeMatch])
 
   const isLoggedIn = useMemo(() => props.accounts.length > 0, [props.accounts])
   const [advancedModeList, setAdvancedModeList] = useLocalStorage({ key: 'dAppsAdvancedMode', defaultValue: [] })
@@ -130,6 +133,9 @@ export default function Wallet(props) {
       component: <DappsCatalog
         network={props.network}
         dappsCatalog={props.dappsCatalog}
+        gnosisConnect={props.gnosisConnect}
+        gnosisDisconnect={props.gnosisDisconnect}
+        selectedAcc={props.selectedAcc}
       />
     },
     {
@@ -208,7 +214,7 @@ export default function Wallet(props) {
       <SideBar match={props.match} portfolio={props.portfolio} hidePrivateValue={props.privateMode.hidePrivateValue} relayerURL={props.relayerURL} selectedNetwork={props.network} dappsCatalog={props.dappsCatalog} />
       <TopBar {...props} />
 
-      <div id="wallet-container" className={isDappMode ? 'dapp-mode' : ''} ref={walletContainer}>
+      <div id="wallet-container" className={dapModeSidebar ? 'dapp-mode' : ''} ref={walletContainer}>
         <div id="wallet-container-inner">
           <Switch>
             {
