@@ -35,7 +35,7 @@ const TopBar = ({
 
   const { isDappMode, toggleSideBarOpen, currentDappData, loadCurrentDappData } = dappsCatalog
 
-  const dapModeSidebar = useMemo(() => isDappMode && routeMatch, [isDappMode, routeMatch])
+  const dapModeTopBar = useMemo(() => isDappMode && routeMatch, [isDappMode, routeMatch])
 
   const account = accounts.find(({ id }) => id === selectedAcc)
   const accountIcon = blockies.create({ seed: account ? account.id : null }).toDataURL()
@@ -51,7 +51,7 @@ const TopBar = ({
         </div>
       </div>
 
-      {dapModeSidebar ?
+      {dapModeTopBar ?
       <div className='dapp-menu'>
         <Button className='ambire-menu-btn' primary small icon={<MdMenu />}
           onClick={() => toggleSideBarOpen()}
@@ -80,7 +80,7 @@ const TopBar = ({
         <DApps connections={connections} connect={connect} disconnect={disconnect} isWcConnecting={isWcConnecting}/>
         <Accounts accounts={accounts} selectedAddress={selectedAcc} onSelectAcc={onSelectAcc} onRemoveAccount={onRemoveAccount} hidePrivateValue={hidePrivateValue}  userSorting={userSorting} setUserSorting={setUserSorting}/>        
         <Networks setNetwork={setNetwork} network={network} allNetworks={allNetworks}  userSorting={userSorting}
-        setUserSorting={setUserSorting}/>
+        setUserSorting={setUserSorting} dappsCatalog={dappsCatalog} dapModeTopBar={dapModeTopBar}/>
         <Links/>
       </div>
     </div>
