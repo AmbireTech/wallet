@@ -79,7 +79,7 @@ function AppInner() {
 
     const shouldAttachMeta =  [WALLET_TOKEN_ADDRESS, WALLET_STAKING_ADDRESS].includes(req.txn.to.toLowerCase())
 
-    if (shouldAttachMeta) {
+    if (shouldAttachMeta && rewardsData && rewardsData.data) {
       const WALLET_STAKING_POOL_INTERFACE = new utils.Interface(WalletStakingPoolABI)
       const provider = getProvider(network.id)
       const stakingTokenContract = new Contract(WALLET_STAKING_ADDRESS, WALLET_STAKING_POOL_INTERFACE, provider)
@@ -144,10 +144,10 @@ function AppInner() {
     ), [requests, network.chainId, selectedAcc])
   const [sendTxnState, setSendTxnState] = useState(() => ({ showing: !!eligibleRequests.length }))
   useEffect(
-    () => setSendTxnState({ showing: !!eligibleRequests.length }),
+    () => setSendTxnState((prev) => ({ showing: !!eligibleRequests.length, replacementBundle: prev?.replacementBundle })),
     [eligibleRequests.length]
   )
-  const showSendTxns = bundle => setSendTxnState({ showing: true, replacementBundle: bundle })
+  const showSendTxns = (bundle, prioritize=false) => setSendTxnState({ showing: true, replacementBundle: bundle, prioritize })
 
   // Network shouldn't matter here
   const everythingToSign = useMemo(() => requests
@@ -242,6 +242,7 @@ function AppInner() {
         relayerURL={relayerURL}
         onDismiss={() => setSendTxnState({ showing: false })}
         replacementBundle={sendTxnState.replacementBundle}
+        prioritize={sendTxnState.prioritize}
         replaceByDefault={sendTxnState.replaceByDefault}
         onBroadcastedTxn={onBroadcastedTxn}
       ></SendTransaction>
