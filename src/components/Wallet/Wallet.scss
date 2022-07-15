@@ -18,10 +18,12 @@
     align-items: center;
     overflow: hidden;
     overflow-y: auto;
-    transition: left 0.3s ease-in-out;
+    transition: all 0.3s ease-in-out;
 
     &.dapp-mode {
         left: 0;
+        padding: 0px;
+        padding-top: $layout-spacing / 2;
     }
 
     #wallet-container-inner {
