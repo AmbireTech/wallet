@@ -67,14 +67,14 @@ const DappsCatalog = ({ network, dappsCatalog, selectedAcc, gnosisConnect, gnosi
   return (
     <section id='dappCatalog'>
       {isDappMode && currentDappData ?
-        < GnosisSafeAppIframe
+        <GnosisSafeAppIframe
+          className='dapp-iframe'
           network={network}
           selectedApp={currentDappData}
           selectedAcc={selectedAcc}
           // removeApp={removeCustomPlugin}
           gnosisConnect={gnosisConnect}
           gnosisDisconnect={gnosisDisconnect}
-
         />
         :
         <Fragment>

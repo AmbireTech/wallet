@@ -5,7 +5,6 @@ $faveColor: #FFFF00;
 #dappCatalog {
   height: 100%;
   @include flex-full-grow-container;
-  border: 1px solid green;
   position: relative;
 
   .filter-section {
@@ -53,6 +52,10 @@ $faveColor: #FFFF00;
       }
     }
 
+  }
+
+  .dapp-iframe {
+    border: 1px solid $primary-accent-color;
   }
 
   .catalogItems {
@@ -249,7 +252,6 @@ $faveColor: #FFFF00;
     background-color: $input-background-color-darker;
     color: mix($text-color, $input-background-color-darker);
   }
-  padding-bottom: 24px;
 }
 
 .exit-btn {
