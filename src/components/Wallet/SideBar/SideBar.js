@@ -1,14 +1,14 @@
 import './SideBar.scss'
 
 import { NavLink, useRouteMatch  } from 'react-router-dom'
-import { MdDashboard, MdLock, MdCompareArrows, MdHelpCenter } from 'react-icons/md'
+import { MdDashboard, MdLock, MdCompareArrows, MdHelpCenter, MdClose } from 'react-icons/md'
 import { AiOutlineAppstoreAdd } from 'react-icons/ai'
 import { GiReceiveMoney } from 'react-icons/gi'
 import { BsCurrencyExchange } from 'react-icons/bs'
 import { BsPiggyBank } from 'react-icons/bs'
 import { BiTransfer } from 'react-icons/bi'
 import { CgArrowsExchangeV } from 'react-icons/cg'
-import { Loading } from 'components/common'
+import { Loading, Button } from 'components/common'
 import { useCallback, useEffect, useRef, useState, useMemo } from 'react'
 import GasIndicator from 'components/Wallet/GasIndicator/GasIndicator'
 
@@ -17,7 +17,7 @@ const helpCenterUrl = 'https://help.ambire.com/hc/en-us/categories/4404980091538
 const SideBar = ({ match, portfolio, hidePrivateValue, relayerURL, selectedNetwork, dappsCatalog }) => {
   const sidebarRef = useRef()
   const [balanceFontSize, setBalanceFontSize] = useState(0)
-  const { isDappMode, sideBarOpen } = dappsCatalog
+  const { isDappMode, sideBarOpen, toggleSideBarOpen } = dappsCatalog
   const routeMatch = useRouteMatch('/wallet/dapps')
 
   const dapModeSidebar = useMemo(() => isDappMode && routeMatch, [isDappMode, routeMatch])
@@ -40,6 +40,15 @@ const SideBar = ({ match, portfolio, hidePrivateValue, relayerURL, selectedNetwo
 
   return (
     <div id="sidebar" className={(dapModeSidebar ? 'dapp-mode' : '') + (sideBarOpen ? ' open' : '') } ref={sidebarRef}>
+      {dapModeSidebar &&
+      <div className='ambire-logo'>
+        <div className="logo" />
+        <div className="icon" />
+        <Button  clear mini icon={<MdClose />}
+          onClick={() => toggleSideBarOpen()}
+        ></Button>
+      </div>
+      }     
       <div className="balance">
         <label>Balance</label>
         {portfolio.isCurrNetworkBalanceLoading ? (
