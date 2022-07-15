@@ -53,11 +53,11 @@ const TopBar = ({
 
       {dapModeSidebar ?
       <div className='dapp-menu'>
-        <Button  clear mini icon={<MdMenu />}
+        <Button className='ambire-menu-btn' primary small icon={<MdMenu />}
           onClick={() => toggleSideBarOpen()}
         ></Button>
         <img className='dapp-logo' src={currentDappData?.logo} alt={currentDappData?.title}/>
-        <Button clear mini icon={<MdExitToApp />}
+        <Button primary small icon={<MdExitToApp />}
           onClick={() => loadCurrentDappData(null)}
         ></Button>
       </div>

@@ -40,13 +40,14 @@
 
     .dapp-menu {
         left: 10px;
-        top: 15px;
+        top: 20px;
         display: flex;
         flex-direction: row;
-        gap: 6px;
+        gap: 10px;
         .dapp-logo {
-            height: 40px;
+            height: 50px;
         }
+        border: 1px solid $primary-accent-color;
     }
 
     #mobile-menu {
