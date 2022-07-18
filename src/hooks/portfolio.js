@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import { usePageVisibility } from 'react-page-visibility';
 import usePortfolioCommon from 'ambire-common/src/hooks/usePortfolio'
 
@@ -35,20 +34,14 @@ export default function usePortfolio({ currentNetwork, account, useStorage }) {
         areAllNetworksBalancesLoading,
         otherProtocolsByNetworksLoading,
         isCurrNetworkProtocolsLoading,
-        refreshTokensIfVisible,
       } = usePortfolioCommon({
         currentNetwork,
         account,
         useStorage,
-        isVisible: true,
+        isVisible,
         useToasts,
         getBalances
     })
-
-    // Refresh balance when window is considered to be visible to the user
-    useEffect(() => {
-        if (isVisible) refreshTokensIfVisible(false)
-    }, [isVisible, refreshTokensIfVisible])
 
     return {
         balance,
