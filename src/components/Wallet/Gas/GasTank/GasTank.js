@@ -114,7 +114,7 @@ const GasTank = ({ network,
         ])
     const toggleGasTank = () => {
         if (!gasTankBalances && !gasTankBalances.length) {
-            addToast('You should add assets in the Gas Tank to be able to enable it!', { error: true })
+            addToast('Add assets from the list to the Gas Tank to enable it.', { error: true })
             return 
         }
 
@@ -189,7 +189,7 @@ const GasTank = ({ network,
         <div id="gas-tank">
             <div className='heading-wrapper'>
                 <div className="balance-wrapper" style={{ cursor: 'pointer' }} onClick={openGasTankBalanceByTokensModal}>
-                    <span><GiGasPump/> Gas Tank Balance</span>
+                    <span><GiGasPump/> Balance on All Networks</span>
                     { !isLoading ?
                         (<div>
                             <span>$ </span>{ gasTankBalances ? formatFloatTokenAmount(gasTankBalances, true, 2) : '0.00' }
@@ -205,18 +205,21 @@ const GasTank = ({ network,
                 </div>
 
                 <div className="balance-wrapper total-save">
-                    <span>Total Save</span>
+                    <span>Total Saved</span>
                     <div>
                         <span>$ </span>{totalSaved ? totalSaved : '0.00'}
                     </div>
+                    <span>From gas fees on {network.id.toUpperCase()}</span>
                 </div>
             </div>
             <div>
-                <p>The Ambire Gas Tank is your special account for paying gas and saving on gas fees. By filling up your Gas Tank, you are setting aside, or prepaying for network fees. You can add more tokens to your Gas Tank at any time.</p>
-                <p>Please note that only the tokens listed below are eligible for filling up your gas tank.</p>
+                <p>This is your special account for pre-paying gas.</p>
+                <p>By filling up your Gas Tank, you are setting aside, or prepaying for network fees.</p>
+                <p>Only the tokens listed below are eligible for filling up your Gas Tank. You can add more tokens to your Gas Tank at any time.</p>
+                <p>The tokens in your Gas Tank can pay network fees on all supported networks.</p>
             </div>
             <div className="sort-holder">
-                <span className='title'>Available fee tokens</span>
+                <span className='title'>Available fee tokens on {network.id.toUpperCase()}</span>
                 {sortedTokens && !isMobileScreen &&  (
                     <div className="sort-buttons">
                         <ToolTip label='Sorted tokens by drag and drop'>
@@ -269,8 +272,8 @@ const GasTank = ({ network,
                     <Button className='deposit-button' small>top up gas tank</Button>
                 </NavLink>
             </div>
-            <span className='title'>Gas Tank top ups history</span>
-            <p className='warning-msg'>Warning: It will take some time to top up the Gas Tank after the filling up transaction is made.</p>
+            <span className='title'>Gas Tank top ups history on {network.id.toUpperCase()}</span>
+            <p className='warning-msg'>Warning: It will take some time to top up the Gas Tank after the transaction is signed.</p>
             <div className="txns-wrapper">
                 {
                     gasTankFilledTxns && gasTankFilledTxns.length ? gasTankFilledTxns.map((item, key) => {
