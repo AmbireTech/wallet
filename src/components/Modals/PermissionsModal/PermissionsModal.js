@@ -14,7 +14,7 @@ import accountPresets from 'consts/accountPresets'
 
 const toastErrorMessage = name => `You blocked the ${name} permission. Check your browser permissions tab.`
 
-const PermissionsModal = ({ relayerIdentityURL, account, onAddAccount, isCloseBtnShown, isBackupOptout, showThankYouPage, setShowThankYouPage }) => {
+const PermissionsModal = ({ relayerIdentityURL, account, onAddAccount, isCloseBtnShown, isBackupOptout, showThankYouPage }) => {
     const { hideModal } = useModals()
     const { isNoticationsGranted, isClipboardGranted, modalHidden, setModalHidden } = usePermissions()
     const { addToast } = useToasts()
@@ -79,12 +79,11 @@ const PermissionsModal = ({ relayerIdentityURL, account, onAddAccount, isCloseBt
     }, [isEmailConfirmed, checkEmailConfirmation])
 
     const handleDoneOrIgnoreBtnsClicked = () => {
-        if (showThankYouPage) {     
-            window.open("https://www.youtube.com", "_blank")
-            setShowThankYouPage(false)
-        }
-        
         hideModal()
+
+        if (showThankYouPage) {     
+            window.open("https://www.ambire.com/thankyou", "_blank")
+        }
     }
 
     const buttons = isJsonBackupDownloaded ? (<>

@@ -302,7 +302,6 @@ function AppInner() {
             userSorting={userSorting}
             setUserSorting={setUserSorting}
             showThankYouPage={showThankYouPage}
-            setShowThankYouPage={setShowThankYouPage}
           >
           </Wallet>
         </Route> :
