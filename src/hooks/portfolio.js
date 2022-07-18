@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useEffect } from 'react';
 import { usePageVisibility } from 'react-page-visibility';
 import usePortfolioCommon from 'ambire-common/src/hooks/usePortfolio'
 
@@ -36,8 +36,6 @@ export default function usePortfolio({ currentNetwork, account, useStorage }) {
         otherProtocolsByNetworksLoading,
         isCurrNetworkProtocolsLoading,
         refreshTokensIfVisible,
-        loadBalance,
-        loadProtocols
       } = usePortfolioCommon({
         currentNetwork,
         account,
@@ -45,10 +43,10 @@ export default function usePortfolio({ currentNetwork, account, useStorage }) {
         isVisible: true,
         useToasts,
         getBalances
-      })
+    })
 
-      // Refresh balance when window is considered visible to the user or not.
-      useEffect(() => {
+    // Refresh balance when window is considered to be visible to the user
+    useEffect(() => {
         if (isVisible) refreshTokensIfVisible(false)
     }, [isVisible, refreshTokensIfVisible])
 
@@ -70,6 +68,5 @@ export default function usePortfolio({ currentNetwork, account, useStorage }) {
         areAllNetworksBalancesLoading,
         otherProtocolsByNetworksLoading,
         isCurrNetworkProtocolsLoading,
-        //updatePortfolio//TODO find a non dirty way to be able to reply to getSafeBalances from the dapps, after the first refresh
     }
 }
