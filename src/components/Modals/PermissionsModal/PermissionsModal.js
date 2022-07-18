@@ -14,7 +14,7 @@ import accountPresets from 'consts/accountPresets'
 
 const toastErrorMessage = name => `You blocked the ${name} permission. Check your browser permissions tab.`
 
-const PermissionsModal = ({ relayerIdentityURL, account, onAddAccount, isCloseBtnShown, isBackupOptout }) => {
+const PermissionsModal = ({ relayerIdentityURL, account, onAddAccount, isCloseBtnShown, isBackupOptout, showThankYouPage, setShowThankYouPage }) => {
     const { hideModal } = useModals()
     const { isNoticationsGranted, isClipboardGranted, modalHidden, setModalHidden } = usePermissions()
     const { addToast } = useToasts()
@@ -78,12 +78,21 @@ const PermissionsModal = ({ relayerIdentityURL, account, onAddAccount, isCloseBt
         return () => clearInterval(emailConfirmationInterval)
     }, [isEmailConfirmed, checkEmailConfirmation])
 
+    const handleDoneOrIgnoreBtnsClicked = () => {
+        if (showThankYouPage) {     
+            window.open("https://www.youtube.com", "_blank")
+            setShowThankYouPage(false)
+        }
+        
+        hideModal()
+    }
+
     const buttons = isJsonBackupDownloaded ? (<>
-        <Button clear small icon={<MdClose/>} disabled={isAccountNotConfirmed} onClick={hideModal}>Ignore</Button>
-        <Button small icon={<MdCheck/>} disabled={buttonDisabled} onClick={hideModal}>Done</Button>
+        <Button clear small icon={<MdClose/>} disabled={isAccountNotConfirmed} onClick={handleDoneOrIgnoreBtnsClicked}>Ignore</Button>
+        <Button small icon={<MdCheck/>} disabled={buttonDisabled} onClick={handleDoneOrIgnoreBtnsClicked}>Done</Button>
     </>) : (<>
-        <Button clear small icon={<MdClose/>} disabled={true} onClick={hideModal}>Ignore</Button>
-        <Button small icon={<MdCheck/>} disabled={true} onClick={hideModal}>Done</Button>
+        <Button clear small icon={<MdClose/>} disabled={true} onClick={handleDoneOrIgnoreBtnsClicked}>Ignore</Button>
+        <Button small icon={<MdCheck/>} disabled={true} onClick={handleDoneOrIgnoreBtnsClicked}>Done</Button>
     </>)
 
     const downloadFile = ({ data, fileName, fileType }) => {

@@ -214,6 +214,15 @@ function AppInner() {
   const rewardsUrl = (relayerURL && selectedAcc) ? `${relayerURL}/wallet-token/rewards/${selectedAcc}?cacheBreak=${cacheBreak}` : null
   const rewardsData = useRelayerData(rewardsUrl)
 
+  // Checks if Thank you page needs to be shown
+  const thankYouUTM = useOneTimeQueryParam('utm')
+  const [showThankYouPage, setShowThankYouPage] = useLocalStorage({
+      key: 'showThankYouPage',
+      defaultValue: false
+  })
+  const handleSetShowThankYouPage = useCallback(() => setShowThankYouPage(true), [setShowThankYouPage])
+  useEffect(() => (thankYouUTM && thankYouUTM.startsWith('thankyou')) && handleSetShowThankYouPage(), [handleSetShowThankYouPage, thankYouUTM])
+
   return (<>
     <Prompt
       message={(location, action) => {
@@ -292,6 +301,8 @@ function AppInner() {
             useStorage={useLocalStorage}
             userSorting={userSorting}
             setUserSorting={setUserSorting}
+            showThankYouPage={showThankYouPage}
+            setShowThankYouPage={setShowThankYouPage}
           >
           </Wallet>
         </Route> :

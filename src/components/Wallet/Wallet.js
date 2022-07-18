@@ -176,10 +176,12 @@ export default function Wallet(props) {
       onAddAccount={props.onAddAccount}
       isCloseBtnShown={!showCauseOfBackupOptout}
       isBackupOptout={!showCauseOfBackupOptout}
+      showThankYouPage={props.showThankYouPage}
+      setShowThankYouPage={props.setShowThankYouPage}
     />
 
     if (showCauseOfEmail || showCauseOfPermissions || showCauseOfBackupOptout) showModal(permissionsModal, { disableClose: true })
-  }, [props.accounts, props.relayerURL, props.onAddAccount, props.selectedAcc, arePermissionsLoaded, isClipboardGranted, isNoticationsGranted, modalHidden, showModal])
+  }, [props.accounts, props.relayerURL, props.onAddAccount, props.showThankYouPage, props.setShowThankYouPage, props.selectedAcc, arePermissionsLoaded, isClipboardGranted, isNoticationsGranted, modalHidden, showModal])
 
   useEffect(() => handlePermissionsModal(), [handlePermissionsModal])
 
