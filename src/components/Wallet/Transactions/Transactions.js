@@ -16,6 +16,7 @@ import { HiOutlineChevronLeft, HiOutlineChevronRight } from 'react-icons/hi'
 import { useHistory, useParams } from 'react-router-dom/cjs/react-router-dom.min'
 import { formatFloatTokenAmount } from 'lib/formatters'
 import { formatUnits } from 'ethers/lib/utils'
+import { ToolTip } from 'components/common' 
 // eslint-disable-next-line import/no-relative-parent-imports
 import { getAddedGas } from '../../SendTransaction/helpers'
 
@@ -222,6 +223,7 @@ function BundlePreview({ bundle, mined = false, feeAssets }) {
   const savedGas = feeTokenDetails ? getAddedGas(feeTokenDetails) : null
   const splittedLastTxnSummary = lastTxnSummary.split(' ')
   const fee = splittedLastTxnSummary.length ? splittedLastTxnSummary[1] + ' ' + splittedLastTxnSummary[2] : []
+  const test = bundle.gasTankFee && (feeTokenDetails !== null) && savedGas && (bundle.feeInUSDPerGas * savedGas) + (formatUnits(bundle.gasTankFee.cashback.toString(), feeTokenDetails?.decimals).toString() * feeTokenDetails?.price)
 
   return (<div className='bundlePreview bundle' key={bundle._id}>
     {txns.map((txn, i) => (<TxnPreview
@@ -255,14 +257,17 @@ function BundlePreview({ bundle, mined = false, feeAssets }) {
               <label><BsCoin/>Fee (Paid with Gas Tank)</label>
               <p>${(bundle.feeInUSDPerGas * bundle.gasLimit).toFixed(6)}</p>
           </li>
-          {savedGas && (<li>
-              <label><MdOutlineSavings/>Saved</label>
-              <p>${(bundle.feeInUSDPerGas * savedGas).toFixed(6)}</p>
-          </li>)}
-          {!!bundle.gasTankFee.cashback && (<li>
-              <label><BsCashCoin/>Cashback</label>
-              <p>${(formatUnits(bundle.gasTankFee.cashback.toString(), feeTokenDetails?.decimals).toString() * feeTokenDetails?.price).toFixed(6)}</p>
-          </li>)}
+          { savedGas && !!bundle.gasTankFee.cashback && ( 
+            <ToolTip label={`
+              Saved: $ ${formatFloatTokenAmount(bundle.feeInUSDPerGas * savedGas, true, 6)}
+              Cashback: $ ${formatFloatTokenAmount((formatUnits(bundle.gasTankFee.cashback.toString(), feeTokenDetails?.decimals).toString() * feeTokenDetails?.price), true, 6)}
+            `}>
+              <li>
+                <label><MdOutlineSavings/>Total Saved</label>
+                $ {formatFloatTokenAmount(test, true, 6)}
+              </li>
+            </ToolTip>
+          )}
         </>) 
       }
       <li>
