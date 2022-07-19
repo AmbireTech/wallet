@@ -33,8 +33,21 @@ const TopBar = ({
   const account = accounts.find(({ id }) => id === selectedAcc)
   const accountIcon = blockies.create({ seed: account ? account.id : null }).toDataURL()
 
+  const visualEnv =
+    (process.env.REACT_APP_VISUAL_ENV === 'dev')
+      ? 'dev' : (
+        new URL(document.URL).pathname.startsWith('/staging/')
+      ) ? 'staging' : null
+
   return (
-    <div id="topbar">
+    <div id="topbar" className={ visualEnv ? ('visual-env visual-env-' + visualEnv ) : ''}>
+      {
+        visualEnv &&
+          <div className='env-bar' >
+            {visualEnv === 'dev' && <>Development mode</>}
+            {visualEnv === 'staging' && <>Staging mode</>}
+          </div>
+      }
       <div id="mobile-menu" onClick={() => setMenuOpen(!isMenuOpen)}>
         <div className="icon" style={{backgroundImage: `url(${accountIcon})`}}></div>
         <MdOutlineArrowForward/>
