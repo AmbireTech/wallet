@@ -1,6 +1,6 @@
 import './Transactions.scss'
 import { FaSignature } from 'react-icons/fa'
-import { BsCoin, BsCalendarWeek, BsGlobe2, BsCheck2All, BsCashCoin } from 'react-icons/bs'
+import { BsCoin, BsCalendarWeek, BsGlobe2, BsCheck2All } from 'react-icons/bs'
 import { MdOutlinePendingActions, MdShuffle, MdCheck, MdOutlineSavings } from 'react-icons/md'
 import { useRelayerData } from 'hooks'
 import TxnPreview from 'components/common/TxnPreview/TxnPreview'
@@ -174,7 +174,7 @@ function Transactions ({ relayerURL, selectedAcc, selectedNetwork, showSendTxns,
         </div>
         <div className="content">
           <div className="bundle">
-            <BundlePreview bundle={firstPending}></BundlePreview>
+            <BundlePreview bundle={firstPending} feeAssets={feeAssets}></BundlePreview>
             <div className='actions'>
               <Button small onClick={() => replace(firstPending)}>Replace or modify</Button>
               <Button small className='cancel' onClick={() => cancel(firstPending)}>Cancel</Button>
@@ -223,7 +223,8 @@ function BundlePreview({ bundle, mined = false, feeAssets }) {
   const savedGas = feeTokenDetails ? getAddedGas(feeTokenDetails) : null
   const splittedLastTxnSummary = lastTxnSummary.split(' ')
   const fee = splittedLastTxnSummary.length ? splittedLastTxnSummary[1] + ' ' + splittedLastTxnSummary[2] : []
-  const test = bundle.gasTankFee && (feeTokenDetails !== null) && savedGas && (bundle.feeInUSDPerGas * savedGas) + (formatUnits(bundle.gasTankFee.cashback.toString(), feeTokenDetails?.decimals).toString() * feeTokenDetails?.price)
+  const totalSaved = bundle.gasTankFee && bundle.gasTankFee.cashback && (feeTokenDetails !== null) && savedGas && 
+    ((bundle.feeInUSDPerGas * savedGas) + (formatUnits(bundle.gasTankFee.cashback.toString(), feeTokenDetails?.decimals).toString() * feeTokenDetails?.price))
 
   return (<div className='bundlePreview bundle' key={bundle._id}>
     {txns.map((txn, i) => (<TxnPreview
@@ -251,7 +252,7 @@ function BundlePreview({ bundle, mined = false, feeAssets }) {
         )
       }
       {
-        bundle.gasTankFee && (feeTokenDetails !== null) && (
+        bundle.gasTankFee && (feeTokenDetails !== null) && mined && (
         <>
           <li>
               <label><BsCoin/>Fee (Paid with Gas Tank)</label>
@@ -264,7 +265,7 @@ function BundlePreview({ bundle, mined = false, feeAssets }) {
             `}>
               <li>
                 <label><MdOutlineSavings/>Total Saved</label>
-                $ {formatFloatTokenAmount(test, true, 6)}
+                $ {formatFloatTokenAmount(totalSaved, true, 6)}
               </li>
             </ToolTip>
           )}
@@ -274,6 +275,13 @@ function BundlePreview({ bundle, mined = false, feeAssets }) {
         <label><BsCalendarWeek/>Submitted on</label>
         <p>{bundle.submittedAt && (toLocaleDateTime(new Date(bundle.submittedAt))).toString()}</p>
       </li>
+      { bundle.gasTankFee && !mined && (
+            <li>
+              <label><MdOutlineSavings/>Saved by Gas Tank</label>
+              $ { formatFloatTokenAmount(bundle.feeInUSDPerGas * savedGas, true, 6) }
+              <span style={{color: '#ebaf40'}}>+ cashback is pending</span>
+            </li>
+          )}
       {
         bundle.replacesTxId ?
           <li>
