@@ -10,7 +10,7 @@ import { ToolTip } from "components/common"
 import AAVE_ICON from 'resources/aave.svg'
 import Card from 'components/Wallet/Earn/Card/Card'
 import { getDefaultTokensItems } from './defaultTokens'
-import approveToken from 'lib/approveToken'
+import approveToken from 'ambire-common/src/services/approveToken'
 import { EarnDetailsModal } from 'components/Modals'
 import { MdInfo } from "react-icons/md"
 
