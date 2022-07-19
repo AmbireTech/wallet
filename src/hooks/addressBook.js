@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useToasts } from './toasts'
 import * as blockies from 'blockies-ts'
-import { isValidAddress, isKnownTokenOrContract } from 'lib/address'
+import { isValidAddress, isKnownTokenOrContract } from 'ambire-common/src/services/address'
 import { setKnownAddresses } from 'lib/humanReadableTransactions'
 import { sha256 } from 'ethers/lib/utils'
 
