@@ -23,7 +23,7 @@ import {
   toHexAmount,
  } from './helpers'
 import { fetchPost } from 'lib/fetch'
-import { toBundleTxn } from 'lib/requestToBundleTxn'
+import { toBundleTxn } from 'ambire-common/src/services/requestToBundleTxn'
 import { getProvider } from 'lib/provider'
 import { MdInfo } from 'react-icons/md'
 import { useCallback } from 'react'
