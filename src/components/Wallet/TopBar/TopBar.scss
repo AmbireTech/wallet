@@ -38,9 +38,9 @@
         opacity: 0;
     }
 
-    &.visual-env-dev {
+    &.visual-env {
         margin-top: 16px;
-        .dev-env-bar
+        .env-bar
         {
             color: #FFF;
             text-align: center;
@@ -54,13 +54,7 @@
             top: -16px;
             left: 0;
             display: block;
-            background: repeating-linear-gradient(
-                            -45deg,
-                            #0066ff 0px,
-                            #0066ff 30px,
-                            #0048b6 30px,
-                            #004cbd 40px
-            );
+
         }
 
         #icon {
@@ -70,6 +64,39 @@
         #logo {
             background-image: url('/resources/ambire-dev-256-full-white.png');
         }
+
+        &.visual-env-dev {
+            .env-bar{
+                background: repeating-linear-gradient(
+                    -45deg,
+                    #0066ff 0px,
+                    #0066ff 30px,
+                    #0048b6 30px,
+                    #004cbd 40px
+                );
+            }
+        }
+
+        &.visual-env-staging {
+            .env-bar{
+                background: repeating-linear-gradient(
+                    -45deg,
+                    #e69b00 0px,
+                    #e69b00 30px,
+                    #c08b00 30px,
+                    #c08b00 40px
+                );
+            }
+
+            #icon {
+                background-image: url('/resources/ambire-staging-256.png');
+            }
+
+            #logo {
+                background-image: url('/resources/ambire-staging-256-full.png');
+            }
+        }
+
     }
 
     #mobile-menu {
