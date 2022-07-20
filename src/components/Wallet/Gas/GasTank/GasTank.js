@@ -58,7 +58,8 @@ const GasTank = ({ network,
         const savedGas = feeTokenDetails ? getAddedGas(feeTokenDetails) : null
         return {
             saved: savedGas ? item.feeInUSDPerGas * savedGas : 0.00,
-            cashback: formatUnits(item.gasTankFee.cashback.toString(), feeTokenDetails?.decimals).toString() * feeTokenDetails?.price
+            cashback: item.gasTankFee && item.gasTankFee.cashback ? 
+                formatUnits(item.gasTankFee.cashback.toString(), feeTokenDetails?.decimals).toString() * feeTokenDetails?.price : 0.00
         }
     })
     
