@@ -75,6 +75,7 @@
 // Mobile
 @media screen and (max-width: $mobile-breakpoint-max-width) {
     #gas {
+        flex-direction: column-reverse;
         gap: 1em;
 
         .panel {
