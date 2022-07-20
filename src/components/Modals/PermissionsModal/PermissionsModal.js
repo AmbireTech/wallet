@@ -80,11 +80,13 @@ const PermissionsModal = ({ relayerIdentityURL, account, onAddAccount, isCloseBt
 
     const handleDoneOrIgnoreBtnsClicked = () => {
         hideModal()
-
-        if (showThankYouPage) {     
-            window.open("https://www.ambire.com/thankyou", "_blank")
-        }
+        if (showThankYouPage) openThankYouPage()
     }
+
+    const handleOnClose = () => {
+        if (showThankYouPage) openThankYouPage()
+    }
+    const openThankYouPage = () => window.open("https://www.ambire.com/thankyou", "_blank")
 
     const buttons = isJsonBackupDownloaded ? (<>
         <Button clear small icon={<MdClose/>} disabled={isAccountNotConfirmed} onClick={handleDoneOrIgnoreBtnsClicked}>Ignore</Button>
@@ -135,7 +137,7 @@ const PermissionsModal = ({ relayerIdentityURL, account, onAddAccount, isCloseBt
     }, [])
 
     return (
-        <Modal id="permissions-modal" title="We need a few things 🙏" buttons={buttons} isCloseBtnShown={isCloseBtnShown}>
+        <Modal id="permissions-modal" title="We need a few things 🙏" buttons={buttons} isCloseBtnShown={isCloseBtnShown} onClose={handleOnClose}>
             {
                 account.email ? 
                     <div className="permission">
