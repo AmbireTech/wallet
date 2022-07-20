@@ -254,13 +254,6 @@ $faveColor: #FFFF00;
   }
 }
 
-.exit-btn {
-  position: absolute;
-  bottom: 0;
-  right: 0;
-  opacity: 0.6;
-}
-
 @media screen and (max-width: $mobile-breakpoint-max-width) {
   #dappCatalog {
     .catalogItems {

@@ -166,11 +166,6 @@ const DappsCatalog = ({ network, dappsCatalog, selectedAcc, gnosisConnect, gnosi
           </div>
         </Fragment>
       }
-      {isDappMode && currentDappData &&
-        <Button className='exit-btn' red mini icon={<AiOutlineClose />}
-          onClick={() => loadCurrentDappData(null)}
-        ></Button>
-      }
     </section>
   )
 }
