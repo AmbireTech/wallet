@@ -39,15 +39,45 @@
     }
 
     .dapp-menu {
-        left: 10px;
-        top: 20px;
-        display: flex;
-        flex-direction: row;
-        gap: 10px;
-        .dapp-logo {
-            height: 50px;
+        left: $layout-spacing / 4;
+        top: 20px;      
+        height: 50px;
+
+        .dapp-menu-btns {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            height: 100%;
+            max-width: 140px;
+            gap: 4px;
+
+            .ambire-menu-btn {
+                margin-right: 20px;
+            }
+
+            .dapp-data {
+                height: 100%;
+                display: flex;
+                flex-direction: row;
+                gap: 4px;
+                .dapp-logo {     
+                    padding: 4px;
+                    width: auto;
+                    max-width: 100%;
+                    object-fit: contain;
+                    align-self: flex-end;
+                    flex-shrink: 0;
+                    height: 100%;
+                    border: 1px solid $secondary-accent-color;
+                }
+            }            
+            
+            .buttonComponent {
+                flex-shrink: 0;
+                height: 100%;
+                width: 50px;          
+            }
         }
-        border: 1px solid $primary-accent-color;
     }
 
     #mobile-menu {
@@ -100,6 +130,18 @@
         #icon {
             opacity: 1;
         }
+
+        .dapp-menu {
+            height: 35px;
+           
+            .dapp-menu-btns {
+                width: 80px;
+                flex-wrap: wrap;
+                .buttonComponent {
+                    width: 35px;
+                }
+            }
+        }
     }
 }
 
@@ -149,6 +191,14 @@
 
             &.open {
                 display: flex;
+            }
+        }
+
+        .dapp-menu {            
+            top: 16px;
+
+            .ambire-menu-btn {
+                display: none;
             }
         }
     }

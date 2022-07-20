@@ -9,7 +9,7 @@ import DApps from "./DApps/DApps";
 import * as blockies from 'blockies-ts';
 import Links from "./Links/Links";
 import WalletTokenButton from "./WalletTokenButton/WalletTokenButton";
-import { Button } from 'components/common';
+import { Button, ToolTip } from 'components/common';
 
 const TopBar = ({
   connections,
@@ -35,7 +35,7 @@ const TopBar = ({
 
   const { isDappMode, toggleSideBarOpen, currentDappData, loadCurrentDappData } = dappsCatalog
 
-  const dapModeTopBar = useMemo(() => isDappMode && routeMatch, [isDappMode, routeMatch])
+  const dapModeTopBar = useMemo(() => isDappMode && routeMatch && currentDappData, [isDappMode, routeMatch])
 
   const account = accounts.find(({ id }) => id === selectedAcc)
   const accountIcon = blockies.create({ seed: account ? account.id : null }).toDataURL()
@@ -52,15 +52,27 @@ const TopBar = ({
       </div>
 
       {dapModeTopBar ?
-      <div className='dapp-menu'>
-        <Button className='ambire-menu-btn' primary small icon={<MdMenu />}
-          onClick={() => toggleSideBarOpen()}
-        ></Button>
-        <img className='dapp-logo' src={currentDappData?.logo} alt={currentDappData?.title}/>
-        <Button primary small icon={<MdExitToApp />}
-          onClick={() => loadCurrentDappData(null)}
-        ></Button>
-      </div>
+        <div className='dapp-menu'>
+          <div className='dapp-menu-btns'>
+            <ToolTip label='Open Ambire Wallet menu'>
+              <Button className='ambire-menu-btn' clear mini icon={<MdMenu />}
+                onClick={() => toggleSideBarOpen()}
+              ></Button>
+            </ToolTip>
+            <div className='dapp-data'>
+              <ToolTip label={`Connect to ${currentDappData?.title} with Ambire Wallet`}>
+                <img className='dapp-logo' src={currentDappData?.logo} alt={currentDappData?.title}/>
+              </ToolTip>
+              <ToolTip label={`Exit from ${currentDappData?.title}`}>
+                <Button
+                  className='dapp-exit-btn'
+                  secondary mini icon={<MdExitToApp /> }
+                  onClick={() => loadCurrentDappData(null)}
+                ></Button>
+              </ToolTip>
+            </div>
+          </div>
+        </div>
       :        
       <NavLink to={'/wallet/dashboard'}>
         <div id="logo" />
