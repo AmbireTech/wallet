@@ -21,11 +21,12 @@
             border: 1px dashed;
             padding: 10px 15px;
             width: 185px;
+            min-height: 103px;
             align-items: center;
             color: gray;
     
     
-            div {
+            .inner-wrapper-left {
                 font-size: 35px;
                 color: white;
     
@@ -46,9 +47,43 @@
         }
 
         .total-save {
-            border: none;
-            align-items: flex-end;
-            text-align: end;
+            border: 1px solid;
+            align-items: flex-start;
+            
+            .inner-wrapper-right {
+                display: flex;
+                justify-content: space-between;
+                font-size: 12px;
+                width: 100%;
+                align-items: center;
+
+                .label {
+                    color: $secondary-accent-color;
+                    max-width: 60%;
+
+                    &.green{
+                        color: $primary-accent-color;
+                    }
+                }
+
+                
+                div {
+                    padding-bottom: 5px;
+                }
+
+                .amount {
+                    text-align: end;
+                    font-size: 14px;
+                    font-weight: bold;
+                    color: white;
+
+                    span {
+                        font-size: 12px;
+                        font-weight: normal;
+                        color: $secondary-accent-color;
+                    }
+                }
+            }
         }
     }
 

@@ -56,10 +56,16 @@ const GasTank = ({ network,
     const totalSavedResult = gasTankTxns && gasTankTxns.length && gasTankTxns.map(item => {
         const feeTokenDetails = feeAssetsRes ? feeAssetsRes.find(i => i.symbol === item.feeToken) : null
         const savedGas = feeTokenDetails ? getAddedGas(feeTokenDetails) : null
-        return savedGas ? item.feeInUSDPerGas * savedGas : 0.00
-    }).reduce((a, b) => a + b)
-    const totalSaved = formatFloatTokenAmount(totalSavedResult, true, 2)
+        return {
+            saved: savedGas ? item.feeInUSDPerGas * savedGas : 0.00,
+            cashback: formatUnits(item.gasTankFee.cashback.toString(), feeTokenDetails?.decimals).toString() * feeTokenDetails?.price
+        }
+    })
     
+    const totalSaved = totalSavedResult && totalSavedResult.length && 
+        formatFloatTokenAmount(totalSavedResult.map(i => i.saved).reduce((a, b) => a + b), true, 2)
+    const totaCashBack = totalSavedResult && totalSavedResult.length && 
+        formatFloatTokenAmount(totalSavedResult.map(i => i.cashback).reduce((a, b) => a + b), true, 2)
     const { isBalanceLoading, tokens } = portfolio
     const sortType = userSorting.tokens?.sortType || 'decreasing'
     const isMobileScreen = useCheckMobileScreen()
@@ -172,7 +178,7 @@ const GasTank = ({ network,
                             <NavLink to={{
                                 pathname: `/wallet/transfer/${address}`,
                                 state: {
-                                    gasTankMsg: 'Warning: You are about to top up your Gas Tank. Top ups to the Gas Tank are non-refundable.',
+                                    gasTankMsg: 'Warning: You are about to top up your Gas Tank. Top up to the Gas Tank are non-refundable.',
                                     feeAssetsPerNetwork
                                 }
                             }}>
@@ -191,7 +197,7 @@ const GasTank = ({ network,
                 <div className="balance-wrapper" style={{ cursor: 'pointer' }} onClick={openGasTankBalanceByTokensModal}>
                     <span><GiGasPump/> Balance on All Networks</span>
                     { !isLoading ?
-                        (<div>
+                        (<div className='inner-wrapper-left'>
                             <span>$ </span>{ gasTankBalances ? formatFloatTokenAmount(gasTankBalances, true, 2) : '0.00' }
                         </div>) : 
                         <Loading /> }
@@ -205,9 +211,13 @@ const GasTank = ({ network,
                 </div>
 
                 <div className="balance-wrapper total-save">
-                    <span>Total Saved</span>
-                    <div>
-                        <span>$ </span>{totalSaved ? totalSaved : '0.00'}
+                    <div className='inner-wrapper-right'>
+                        <div className='label green'>Total Saved: </div> 
+                        <div className='amount'><span>$</span> {totalSaved ? totalSaved : '0.00'}</div>
+                    </div>
+                    <div className='inner-wrapper-right'>
+                        <div className='label'>Total Cashback: </div> 
+                        <div className='amount'><span>$</span> {totaCashBack ? totaCashBack : '0.00'}</div>
                     </div>
                     <span>From gas fees on {network.id.toUpperCase()}</span>
                 </div>
@@ -265,7 +275,7 @@ const GasTank = ({ network,
                 <NavLink to={{
                     pathname: `/wallet/transfer/`,
                     state: {
-                        gasTankMsg: 'Warning: You are about to top up your Gas Tank. op up to the Gas Tank are non-refundable.',
+                        gasTankMsg: 'Warning: You are about to top up your Gas Tank. Top up to the Gas Tank are non-refundable.',
                         feeAssetsPerNetwork
                     }
                 }}>
