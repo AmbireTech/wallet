@@ -22,7 +22,7 @@
 
     &.dapp-mode {
         left: 0;
-        padding: 0px;
+        padding: $layout-spacing / 4;
         padding-top: $layout-spacing / 2;
     }
 
@@ -76,7 +76,7 @@
 
 // Wide screen
 @media screen and (min-width: $wide-breakpoint-min-width) {
-    #wallet-container {
+    #wallet-container & :not(.dapp-mode) {
         #wallet-container-inner {
             max-width: 1500px;
         }
