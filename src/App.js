@@ -79,7 +79,7 @@ function AppInner() {
 
     const shouldAttachMeta =  [WALLET_TOKEN_ADDRESS, WALLET_STAKING_ADDRESS].includes(req.txn.to.toLowerCase())
 
-    if (shouldAttachMeta) {
+    if (shouldAttachMeta && rewardsData && rewardsData.data) {
       const WALLET_STAKING_POOL_INTERFACE = new utils.Interface(WalletStakingPoolABI)
       const provider = getProvider(network.id)
       const stakingTokenContract = new Contract(WALLET_STAKING_ADDRESS, WALLET_STAKING_POOL_INTERFACE, provider)
@@ -214,6 +214,15 @@ function AppInner() {
   const rewardsUrl = (relayerURL && selectedAcc) ? `${relayerURL}/wallet-token/rewards/${selectedAcc}?cacheBreak=${cacheBreak}` : null
   const rewardsData = useRelayerData(rewardsUrl)
 
+  // Checks if Thank you page needs to be shown
+  const thankYouUTM = useOneTimeQueryParam('utm_campaign')
+  const [showThankYouPage, setShowThankYouPage] = useLocalStorage({
+      key: 'showThankYouPage',
+      defaultValue: false
+  })
+  const handleSetShowThankYouPage = useCallback(() => setShowThankYouPage(true), [setShowThankYouPage])
+  useEffect(() => (thankYouUTM && thankYouUTM.startsWith('thankyou')) && handleSetShowThankYouPage(), [handleSetShowThankYouPage, thankYouUTM])
+
   return (<>
     <Prompt
       message={(location, action) => {
@@ -292,6 +301,7 @@ function AppInner() {
             useStorage={useLocalStorage}
             userSorting={userSorting}
             setUserSorting={setUserSorting}
+            showThankYouPage={showThankYouPage}
           >
           </Wallet>
         </Route> :

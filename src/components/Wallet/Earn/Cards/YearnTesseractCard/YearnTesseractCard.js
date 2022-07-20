@@ -38,6 +38,7 @@ const YearnTesseractCard = ({ networkId, accountId, tokens, addRequest }) => {
     const networkDetails = networks.find(({ id }) => id === networkId)
     const addRequestTxn = (id, txn, extraGas = 0) => addRequest({ id, type: 'eth_sendTransaction', chainId: networkDetails.chainId, account: accountId, txn, extraGas })
     const provider = useMemo(() => getProvider(networkDetails.id), [networkDetails.id])
+    const isDepositsDisabled = (networkId === 'polygon') ? true : false
 
     const yearn = useYearn({
         tokens,
@@ -62,8 +63,8 @@ const YearnTesseractCard = ({ networkId, accountId, tokens, addRequest }) => {
     } = useMemo(() => networkId === 'polygon' ? tesseract : yearn, [networkId, yearn, tesseract])
 
     const moreDetails = {
-        title: networkId === 'polygon' ? TESSERACT_DETAILS.title: YEARN_DETAILS.title,
-        description: networkId === 'polygon' ? TESSERACT_DETAILS.description: YEARN_DETAILS.description
+        title: networkId === 'polygon' ? TESSERACT_DETAILS.title : YEARN_DETAILS.title,
+        description: networkId === 'polygon' ? TESSERACT_DETAILS.description : YEARN_DETAILS.description
     }
 
     const onValidate = async (type, value, amount) => {
@@ -162,7 +163,7 @@ const YearnTesseractCard = ({ networkId, accountId, tokens, addRequest }) => {
 
     return (
         <Card
-            isDepositsDisabled={true}
+            isDepositsDisabled={isDepositsDisabled}
             loading={loading}
             icon={icon}
             unavailable={unavailable}
