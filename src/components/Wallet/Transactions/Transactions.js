@@ -223,9 +223,10 @@ function BundlePreview({ bundle, mined = false, feeAssets }) {
   const savedGas = feeTokenDetails ? getAddedGas(feeTokenDetails) : null
   const splittedLastTxnSummary = lastTxnSummary.split(' ')
   const fee = splittedLastTxnSummary.length ? splittedLastTxnSummary[1] + ' ' + splittedLastTxnSummary[2] : []
-  const cashback = (bundle.gasTankFee && bundle.gasTankFee.cashback) ? bundle.gasTankFee.cashback : 0
-  const totalSaved = (feeTokenDetails !== null) && savedGas && 
-    ((bundle.feeInUSDPerGas * savedGas) + (formatUnits(cashback.toString(), feeTokenDetails?.decimals).toString() * feeTokenDetails?.price))
+  const cashback = (bundle.gasTankFee && bundle.gasTankFee.cashback && feeTokenDetails) ? 
+    (formatUnits(bundle.gasTankFee.cashback.toString(), feeTokenDetails?.decimals).toString() * feeTokenDetails?.price) : 0
+  const totalSaved =  savedGas && 
+    ((bundle.feeInUSDPerGas * savedGas) + cashback)
 
   return (<div className='bundlePreview bundle' key={bundle._id}>
     {txns.map((txn, i) => (<TxnPreview
@@ -262,7 +263,7 @@ function BundlePreview({ bundle, mined = false, feeAssets }) {
           { savedGas && ( 
             <ToolTip label={`
               Saved: $ ${formatFloatTokenAmount(bundle.feeInUSDPerGas * savedGas, true, 6)}
-              Cashback: $ ${formatFloatTokenAmount((formatUnits(cashback.toString(), feeTokenDetails?.decimals).toString() * feeTokenDetails?.price), true, 6)}
+              ${ (cashback > 0) ? `Cashback: $ ${formatFloatTokenAmount(cashback, true, 6)}` : ''}
             `}>
               <li>
                 <label><MdOutlineSavings/>Total Saved</label>
