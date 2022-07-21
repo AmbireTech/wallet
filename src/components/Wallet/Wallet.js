@@ -19,6 +19,7 @@ import { isFirefox } from 'lib/isFirefox'
 import CrossChain from "./CrossChain/CrossChain"
 import OpenSea from "./OpenSea/OpenSea"
 import unsupportedDApps from 'consts/unsupportedDApps'
+import Gas from "./Gas/Gas"
 
 export default function Wallet(props) {
   const { showModal } = useModals()
@@ -45,6 +46,7 @@ export default function Wallet(props) {
         useStorage={props.useStorage}
         userSorting={props.userSorting}
         setUserSorting={props.setUserSorting}
+        match={props.match}
         showSendTxns={props.showSendTxns}
       />
     },
@@ -150,6 +152,19 @@ export default function Wallet(props) {
         gnosisDisconnect={props.gnosisDisconnect}
         selectedAcc={props.selectedAcc}
         network={props.network}
+      />
+    },
+    {
+      path: '/gas-tank',
+      component: <Gas
+        selectedNetwork={{...props.network}}
+        relayerURL={props.relayerURL}
+        portfolio={props.portfolio}
+        selectedAccount={props.selectedAcc}
+        userSorting={props.userSorting}
+        setUserSorting={props.setUserSorting}
+        setGasTankState={props.setGasTankState}
+        gasTankState={props.gasTankState}
       />
     }
   ]

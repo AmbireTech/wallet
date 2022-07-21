@@ -20,7 +20,15 @@ import useNetwork from './hooks/network'
 import useWalletConnect from './hooks/walletconnect'
 import useGnosisSafe from './hooks/useGnosisSafe'
 import useNotifications from './hooks/notifications'
-import { useAttentionGrabber, usePortfolio, useAddressBook, useRelayerData, usePrivateMode, useLocalStorage, useUtmTracking } from './hooks'
+import { useAttentionGrabber, 
+  usePortfolio, 
+  useAddressBook, 
+  useRelayerData, 
+  usePrivateMode, 
+  useLocalStorage, 
+  useUtmTracking, 
+  useGasTank 
+} from './hooks'
 import { useToasts } from './hooks/toasts'
 import { useOneTimeQueryParam } from './hooks/oneTimeQueryParam'
 import WalletStakingPoolABI from './consts/WalletStakingPoolABI.json'
@@ -46,6 +54,7 @@ function AppInner() {
   const { accounts, selectedAcc, onSelectAcc, onAddAccount, onRemoveAccount } = useAccounts(useLocalStorage)
   const addressBook = useAddressBook({ accounts, useStorage: useLocalStorage })
   const { network, setNetwork, allNetworks } = useNetwork({ useStorage: useLocalStorage })
+  const { gasTankState, setGasTankState } = useGasTank({ selectedAcc, useStorage: useLocalStorage })
   const { addToast } = useToasts()
   const wcUri = useOneTimeQueryParam('uri')
   const utmTracking = useUtmTracking({ useStorage: useLocalStorage })
@@ -133,7 +142,13 @@ function AppInner() {
   const [userSorting, setUserSorting] = useLocalStorage({
     key: 'userSorting',
     defaultValue: {}
-})
+  })
+  
+  // Gas Tank: Adding default state when the account is changed or created
+  if (gasTankState.length && !gasTankState.find(i => i.account === selectedAcc)) {
+    setGasTankState([...gasTankState, { account: selectedAcc, isEnabled: false }])
+  } 
+
 
   // Show the send transaction full-screen modal if we have a new txn
   const eligibleRequests = useMemo(() => requests
@@ -254,6 +269,7 @@ function AppInner() {
         prioritize={sendTxnState.prioritize}
         replaceByDefault={sendTxnState.replaceByDefault}
         onBroadcastedTxn={onBroadcastedTxn}
+        gasTankState={gasTankState}
       ></SendTransaction>
     ) : (<></>)
     }
@@ -301,6 +317,8 @@ function AppInner() {
             useStorage={useLocalStorage}
             userSorting={userSorting}
             setUserSorting={setUserSorting}
+            gasTankState={gasTankState}
+            setGasTankState={setGasTankState}
             showThankYouPage={showThankYouPage}
           >
           </Wallet>

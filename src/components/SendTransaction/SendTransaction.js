@@ -20,7 +20,7 @@ import {
   isTokenEligible,
   // getFeePaymentConsequences,
   getFeesData,
-  toHexAmount,
+  toHexAmount
  } from './helpers'
 import { fetchPost } from 'lib/fetch'
 import { toBundleTxn } from 'lib/requestToBundleTxn'
@@ -28,6 +28,7 @@ import { getProvider } from 'lib/provider'
 import { MdInfo } from 'react-icons/md'
 import { useCallback } from 'react'
 import { ToolTip, Button, Loading } from 'components/common'
+import { ethers } from 'ethers'
 
 const ERC20 = new Interface(require('adex-protocol-eth/abi/ERC20'))
 
@@ -38,7 +39,7 @@ const REJECT_MSG = 'Ambire user rejected the request'
 
 const WALLET_TOKEN_SYMBOLS = ['xWALLET', 'WALLET']
 
-const getDefaultFeeToken = (remainingFeeTokenBalances, network, feeSpeed, estimation) => {
+const getDefaultFeeToken = (remainingFeeTokenBalances, network, feeSpeed, estimation, currentAccGasTankState) => {
   if(!remainingFeeTokenBalances?.length) {
     return { symbol: network.nativeAssetSymbol, decimals: 18, address: '0x0000000000000000000000000000000000000000' }
   }
@@ -49,7 +50,7 @@ const getDefaultFeeToken = (remainingFeeTokenBalances, network, feeSpeed, estima
     || ((b?.discount || 0) - (a?.discount || 0))
     || a?.symbol.toUpperCase().localeCompare(b?.symbol.toUpperCase())
   )
-  .find(token => isTokenEligible(token, feeSpeed, estimation))
+  .find(token => isTokenEligible(token, feeSpeed, estimation, currentAccGasTankState, network))
   || remainingFeeTokenBalances[0]
 }
 
@@ -96,7 +97,7 @@ function getErrorMessage(e) {
   }
 }
 
-export default function SendTransaction({ relayerURL, accounts, network, selectedAcc, requests, resolveMany, replacementBundle, prioritize, onBroadcastedTxn, onDismiss }) {
+export default function SendTransaction({ relayerURL, accounts, network, selectedAcc, requests, resolveMany, replacementBundle, prioritize, onBroadcastedTxn, onDismiss, gasTankState }) {
   // NOTE: this can be refactored at a top level to only pass the selected account (full object)
   // keeping it that way right now (selectedAcc, accounts) cause maybe we'll need the others at some point?
   const account = accounts.find(x => x.id === selectedAcc)
@@ -129,13 +130,14 @@ export default function SendTransaction({ relayerURL, accounts, network, selecte
     resolveMany={resolveMany}
     onBroadcastedTxn={onBroadcastedTxn}
     onDismiss={onDismiss}
+    gasTankState={gasTankState}
   />)
 }
 
-
-// prioritize = true will replace a current pending TX, or send a new one. In any case, it will send the TX ASAP
-function SendTransactionWithBundle({ bundle, replacementBundle, prioritize, network, account, resolveMany, relayerURL, onBroadcastedTxn, onDismiss }) {
-
+function SendTransactionWithBundle({ bundle, replacementBundle, prioritize, network, account, resolveMany, relayerURL, onBroadcastedTxn, onDismiss, gasTankState }) {
+  const currentAccGasTankState = network.isGasTankAvailable ? 
+    gasTankState.find(i => i.account === account.id) : 
+    { account: account.id, isEnabled: false }
   const [estimation, setEstimation] = useState(null)
 
   const [signingStatus, setSigningStatus] = useState(false)
@@ -161,23 +163,32 @@ function SendTransactionWithBundle({ bundle, replacementBundle, prioritize, netw
     // Note: currently, there's no point of getting the nonce if the bundle already has a nonce
     // We may want to change this if we make a check if the currently replaced txn was already mined
     const reestimate = () => (relayerURL
-        ? bundle.estimate({ relayerURL, fetch, replacing: !!bundle.minFeeInUSDPerGas, getNextNonce: true })
+        ? bundle.estimate({ relayerURL, fetch, replacing: !!bundle.minFeeInUSDPerGas, getNextNonce: true, gasTank: currentAccGasTankState.isEnabled })
         : bundle.estimateNoRelayer({ provider: getProvider(network.id) })
     )
       .then((estimation) => {
         if (unmounted || bundle !== currentBundle.current) return
         estimation.relayerless = !relayerURL
-        estimation.selectedFeeToken = getDefaultFeeToken(estimation.remainingFeeTokenBalances, network, feeSpeed, estimation)
+        const gasTankTokens = estimation.gasTank?.map(item => { 
+          return { 
+            ...item, 
+            symbol: item.symbol.toUpperCase(), 
+            balance: ethers.utils.parseUnits(item.balance.toFixed(item.decimals).toString(), item.decimals).toString(),
+            nativeRate: item.address === '0x0000000000000000000000000000000000000000' ? null : estimation.nativeAssetPriceInUSD / item.price
+          }
+        })
+        if (currentAccGasTankState.isEnabled) estimation.remainingFeeTokenBalances = gasTankTokens
+        estimation.selectedFeeToken = getDefaultFeeToken(estimation.remainingFeeTokenBalances, network, feeSpeed, estimation, currentAccGasTankState.isEnabled, network)
         setEstimation(prevEstimation => {
           if (prevEstimation && prevEstimation.customFee) return prevEstimation
           if (estimation.remainingFeeTokenBalances) {
             // If there's no eligible token, set it to the first one cause it looks more user friendly (it's the preferred one, usually a stablecoin)
             estimation.selectedFeeToken = (
                 prevEstimation
-                && isTokenEligible(prevEstimation.selectedFeeToken, feeSpeed, estimation)
+                && isTokenEligible(prevEstimation.selectedFeeToken, feeSpeed, estimation, currentAccGasTankState.isEnabled, network)
                 && prevEstimation.selectedFeeToken
               )
-              || getDefaultFeeToken(estimation.remainingFeeTokenBalances, network, feeSpeed, estimation)
+              || getDefaultFeeToken(estimation.remainingFeeTokenBalances, network, feeSpeed, estimation, currentAccGasTankState.isEnabled, network)
           }
           return estimation
         })
@@ -195,7 +206,7 @@ function SendTransactionWithBundle({ bundle, replacementBundle, prioritize, netw
       unmounted = true
       clearInterval(intvl)
     }
-  }, [bundle, setEstimation, feeSpeed, addToast, network, relayerURL, signingStatus ])
+  }, [bundle, setEstimation, feeSpeed, addToast, network, relayerURL, signingStatus, currentAccGasTankState.isEnabled ])
 
   // The final bundle is used when signing + sending it
   // the bundle before that is used for estimating
@@ -215,7 +226,7 @@ function SendTransactionWithBundle({ bundle, replacementBundle, prioritize, netw
       // Also it can be stable but not in USD
       feeInFeeToken,
       addedGas
-    } = getFeesData(feeToken, estimation, feeSpeed)
+    } = getFeesData(feeToken, estimation, feeSpeed, currentAccGasTankState.isEnabled, network)
     const feeTxn = feeToken.symbol === network.nativeAssetSymbol
       // TODO: check native decimals
       ? [accountPresets.feeCollector, toHexAmount(feeInNative, 18), '0x']
@@ -227,14 +238,39 @@ function SendTransactionWithBundle({ bundle, replacementBundle, prioritize, netw
     const pendingBundle = estimation.nextNonce?.pendingBundle
     const nextFreeNonce = estimation.nextNonce?.nonce
     const nextNonMinedNonce = estimation.nextNonce?.nextNonMinedNonce
+    
+    if (!!currentAccGasTankState.isEnabled) {
+      let gasLimit
+      if (bundle.txns.length > 1) gasLimit = estimation.gasLimit + (bundle.extraGas || 0)
+      else gasLimit = estimation.gasLimit
+
+      let value
+      if (feeToken.address === "0x0000000000000000000000000000000000000000") value = feeInNative
+      else {
+        const fToken = estimation.remainingFeeTokenBalances.find(i => i.id === feeToken.id)
+        value = fToken && estimation.feeInNative[feeSpeed] * fToken.nativeRate
+      }
+      
+      return new Bundle({
+        ...bundle,
+        gasTankFee: {
+          assetId: feeToken.id,
+          value: ethers.utils.parseUnits(value.toFixed(feeToken.decimals), feeToken.decimals).toString()
+        },
+        txns: [...bundle.txns],
+        gasLimit,
+        nonce: bundle.nonce || ((replacementBundle && pendingBundle) ? nextNonMinedNonce : nextFreeNonce)
+      })
+    }
 
     return new Bundle({
       ...bundle,
       txns: [...bundle.txns, feeTxn],
+      gasTankFee: null,
       gasLimit: estimation.gasLimit + addedGas + (bundle.extraGas || 0),
       nonce: bundle.nonce || ((replacementBundle && pendingBundle && !prioritize) ? nextNonMinedNonce : nextFreeNonce)
     })
-  }, [relayerURL, bundle, estimation, feeSpeed, network.nativeAssetSymbol, replacementBundle, prioritize])
+  }, [relayerURL, estimation, feeSpeed, currentAccGasTankState.isEnabled, network, bundle, replacementBundle, prioritize])
 
   const approveTxnImpl = async () => {
     if (!estimation) throw new Error('no estimation: should never happen')
@@ -479,6 +515,7 @@ function SendTransactionWithBundle({ bundle, replacementBundle, prioritize, netw
                 feeSpeed={feeSpeed}
                 setFeeSpeed={setFeeSpeed}
                 onDismiss={onDismiss}
+                isGasTankEnabled={!!currentAccGasTankState.isEnabled}
               ></FeeSelector>
             }
 
@@ -540,6 +577,8 @@ function SendTransactionWithBundle({ bundle, replacementBundle, prioritize, netw
                         cancelSigning={() => setSigningStatus(null)}
                         signingStatus={signingStatus}
                         feeSpeed={feeSpeed}
+                        isGasTankEnabled={currentAccGasTankState.isEnabled}
+                        network={network}
                       />
                     </div>
                 }

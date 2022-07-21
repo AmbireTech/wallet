@@ -33,7 +33,8 @@ const tabSegments = [
     }
 ]
 
-export default function Dashboard({ portfolio, selectedNetwork, selectedAccount, setNetwork, privateMode, rewardsData,  userSorting, setUserSorting, accounts, addRequest, relayerURL, useStorage, showSendTxns }) {
+
+export default function Dashboard({ portfolio, selectedNetwork, selectedAccount, setNetwork, privateMode, rewardsData,  userSorting, setUserSorting, accounts, addRequest, relayerURL, useStorage, match, showSendTxns }) {
     const history = useHistory()
     const { tabId, page = 1 } = useParams()
 
@@ -120,6 +121,9 @@ export default function Dashboard({ portfolio, selectedNetwork, selectedAccount,
                             selectedNetwork={selectedNetwork}
                             setNetwork={setNetwork}
                             hidePrivateValue={privateMode.hidePrivateValue}
+                            relayerURL={relayerURL}
+                            selectedAccount={selectedAccount}
+                            match={match}
                         />
                     </div>
                 </div>
