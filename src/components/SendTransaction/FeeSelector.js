@@ -277,7 +277,12 @@ export function FeeSelector({ disabled, signer, estimation, network, setEstimati
 
     <div className='section-title'>
       <span>Transaction Speed</span>
-      <span>Gas Tank: {isGasTankEnabled ? (<span className='gas-tank-enabled'>Enabled</span>) : (<span className='gas-tank-disabled'>Disabled</span>)}</span>
+      { network.isGasTankAvailable && 
+        <span>Gas Tank: { isGasTankEnabled ? 
+          (<span className='gas-tank-enabled'>Enabled</span>) : 
+          (<span className='gas-tank-disabled'>Disabled</span>)}
+        </span> 
+      }
     </div>
     <div className='fee-selector'>
       <div className='section'>
