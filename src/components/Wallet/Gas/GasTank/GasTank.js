@@ -179,7 +179,7 @@ const GasTank = ({ network,
                             <NavLink to={{
                                 pathname: `/wallet/transfer/${address}`,
                                 state: {
-                                    gasTankMsg: 'Warning: You are about to top up your Gas Tank. Top up to the Gas Tank are non-refundable.',
+                                    gasTankMsg: 'Warning: You are about to top up your Gas Tank. Top ups to the Gas Tank are non-refundable.',
                                     feeAssetsPerNetwork
                                 }
                             }}>
@@ -276,7 +276,7 @@ const GasTank = ({ network,
                 <NavLink to={{
                     pathname: `/wallet/transfer/`,
                     state: {
-                        gasTankMsg: 'Warning: You are about to top up your Gas Tank. Top up to the Gas Tank are non-refundable.',
+                        gasTankMsg: 'Warning: You are about to top up your Gas Tank. Top ups to the Gas Tank are non-refundable.',
                         feeAssetsPerNetwork
                     }
                 }}>
