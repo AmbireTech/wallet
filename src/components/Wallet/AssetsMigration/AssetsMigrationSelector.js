@@ -37,6 +37,7 @@ const AssetsMigrationSelector = ({ signerAccount, identityAccount, network, setI
   const [customTokenError, setCustomTokenError] = useState('')
 
   const customTokenInput = useRef()
+  const inputRefs = useRef({})
 
   const isPermittable = (chainId, address) => {
     return !!PERMITTABLE_COINS[chainId]?.find(a => a.address.toLowerCase() === address.toLowerCase())
@@ -65,6 +66,13 @@ const AssetsMigrationSelector = ({ signerAccount, identityAccount, network, setI
 
   // Include/Exclude token in migration
   const toggleTokenSelection = useCallback((address, minHumanAmount = null) => {
+
+    // focusing input fields on selection
+    const index = selectableTokens
+      .sort((a, b) => a.name < b.name ? -1 : 1)
+      .findIndex(t => t.address === address)
+    inputRefs.current[index]?.focus()
+
     updateSelectableTokenUserInputs(address, old => {
       let updated = {
         ...old,
@@ -344,8 +352,8 @@ const AssetsMigrationSelector = ({ signerAccount, identityAccount, network, setI
 
         GAS_SPEEDS.forEach(speed => {
           isEnoughToCoverFees[speed] = {
-            ifNotSelected: new BigNumber(identityBalanceUSD).isGreaterThan(gasFees[speed].migrationTransactionsCostUSD),
-            ifSelected: new BigNumber(identityBalanceUSD + selectedAmountUSD).isGreaterThan(gasFees[speed].migrationTransactionsCostUSD),
+            ifNotSelected: new BigNumber(identityBalanceUSD).isGreaterThanOrEqualTo(gasFees[speed].migrationTransactionsCostUSD),
+            ifSelected: new BigNumber(identityBalanceUSD + selectedAmountUSD).isGreaterThanOrEqualTo(gasFees[speed].migrationTransactionsCostUSD),
             minimumSelectionAmount: t.rate > 0 ? new BigNumber(gasFees[speed].migrationTransactionsCostUSD).minus(identityBalanceUSD).dividedBy(t.rate).dividedBy(10 ** t.decimals).multipliedBy(1.0001).toNumber() : 0, // in case rate returned is 0 / adding some wei because precision loss with decimals switching to USD etc
           }
         })
@@ -462,6 +470,12 @@ const AssetsMigrationSelector = ({ signerAccount, identityAccount, network, setI
     return old
   }), [updateSelectableTokenUserInputs])
 
+  useEffect(() => {
+    setTimeout(() => {
+      inputRefs.current[0]?.focus()
+    }, 250)
+  }, [selectableTokens])
+
   // Stepper
   useEffect(() => {
 
@@ -543,6 +557,7 @@ const AssetsMigrationSelector = ({ signerAccount, identityAccount, network, setI
                           </div>
                           <div className='migration-asset-amount'>
                             <TextInput
+                              ref={(element) => inputRefs.current[index] = element}
                               className={'migrate-amount-input'}
                               value={item.humanAmount}
                               onChange={(val) => onAssetAmountChange(val, item)}

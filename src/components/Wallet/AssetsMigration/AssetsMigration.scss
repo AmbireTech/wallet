@@ -31,6 +31,10 @@
 
 #asset-migration-modal {
 
+  *:not(input) {
+    user-select: none;
+  }
+
   >.content{
    padding-top: 32px;
   }
