@@ -166,8 +166,7 @@ const GasTank = ({ network,
                 <div className="separator"></div>
                 <div className="balance">
                     <div className="currency">
-                        <span className="value">{ formatFloatTokenAmount(balance, true, decimals) }</span>
-                        <span className="symbol">{ symbol.toUpperCase() }</span>
+                        <span className="value" >{ formatFloatTokenAmount(balance, true, 4) }</span>
                     </div>
                     <div className="dollar">
                         <span className="symbol">$</span> { balanceUSD.toFixed(2) }
