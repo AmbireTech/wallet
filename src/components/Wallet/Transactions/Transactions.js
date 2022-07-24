@@ -1,5 +1,5 @@
 import './Transactions.scss'
-import { FaSignature } from 'react-icons/fa'
+import { FaSignature, FaMinus, FaPlus } from 'react-icons/fa'
 import { BsCoin, BsCalendarWeek, BsGlobe2, BsCheck2All } from 'react-icons/bs'
 import { MdOutlinePendingActions, MdShuffle, MdCheck, MdOutlineSavings } from 'react-icons/md'
 import { useRelayerData } from 'hooks'
@@ -16,7 +16,7 @@ import { HiOutlineChevronLeft, HiOutlineChevronRight } from 'react-icons/hi'
 import { useHistory, useParams } from 'react-router-dom/cjs/react-router-dom.min'
 import { formatFloatTokenAmount } from 'lib/formatters'
 import { formatUnits } from 'ethers/lib/utils'
-import { ToolTip } from 'components/common' 
+import { ToolTip } from 'components/common'
 // eslint-disable-next-line import/no-relative-parent-imports
 import { getAddedGas } from '../../SendTransaction/helpers'
 
@@ -31,7 +31,8 @@ function Transactions ({ relayerURL, selectedAcc, selectedNetwork, showSendTxns,
   const params = useParams()
 
   const [cacheBreak, setCacheBreak] = useState(() => Date.now())
-  
+  const [bundleExpanded, setBundleExanded] = useState({})
+
   // @TODO refresh this after we submit a bundle; perhaps with the upcoming transactions service
   // We want this pretty much on every rerender with a 5 sec debounce
   useEffect(() => {
@@ -49,7 +50,7 @@ function Transactions ({ relayerURL, selectedAcc, selectedNetwork, showSendTxns,
   const showSendTxnsForReplacement = useCallback(bundle => {
 
     let ids = []
-    
+
     bundle.txns.slice(0, -1)
       .forEach((txn, index) => {
         ids.push('replace_' + index) // not to interefere with pending ids with existing indexes
@@ -81,8 +82,21 @@ function Transactions ({ relayerURL, selectedAcc, selectedNetwork, showSendTxns,
   const defaultPage = useMemo(() => Math.min(Math.max(Number(params.page), 1), maxPages) || 1, [params.page, maxPages])
   const [page, setPage] = useState(defaultPage)
 
-  const bundlesList = executedTransactions.slice((page - 1) * maxBundlePerPage, page * maxBundlePerPage).map(bundle => BundlePreview({ bundle, mined: true, feeAssets }))
-  
+  const bundlesList = executedTransactions
+    .slice((page - 1) * maxBundlePerPage, page * maxBundlePerPage)
+    .map(bundle => BundlePreview({
+      bundle: {
+        ...bundle,
+        expanded: bundleExpanded[bundle._id],
+        expand: (expanded) => setBundleExanded((prev) => {
+          prev[bundle._id] = expanded
+          return {...prev}
+        })
+      },
+      mined: true,
+      feeAssets
+    }))
+
   useEffect(() => !isLoading && history.replace(`/wallet/transactions/${page}`), [page, history, isLoading])
   useEffect(() => setPage(defaultPage), [selectedAcc, selectedNetwork, defaultPage])
 
@@ -223,18 +237,66 @@ function BundlePreview({ bundle, mined = false, feeAssets }) {
   const savedGas = feeTokenDetails ? getAddedGas(feeTokenDetails) : null
   const splittedLastTxnSummary = lastTxnSummary.split(' ')
   const fee = splittedLastTxnSummary.length ? splittedLastTxnSummary[1] + ' ' + splittedLastTxnSummary[2] : []
-  const cashback = (bundle.gasTankFee && bundle.gasTankFee.cashback && feeTokenDetails) ? 
+  const cashback = (bundle.gasTankFee && bundle.gasTankFee.cashback && feeTokenDetails) ?
     (formatUnits(bundle.gasTankFee.cashback.toString(), feeTokenDetails?.decimals).toString() * feeTokenDetails?.price) : 0
-  const totalSaved =  savedGas && 
+  const totalSaved =  savedGas &&
     ((bundle.feeInUSDPerGas * savedGas) + cashback)
 
   return (<div className='bundlePreview bundle' key={bundle._id}>
-    {txns.map((txn, i) => (<TxnPreview
-      key={i} // safe to do this, individual TxnPreviews won't change within a specific bundle
-      txn={txn} network={bundle.network} account={bundle.identity} mined={mined} 
-      addressLabel={!!bundle.meta && bundle.meta.addressLabel}
-      />
-    ))}
+    {
+      txns.length > 2
+      ? (
+          <div>
+            {
+              bundle.expanded
+              ?
+              <div>
+                {
+                  txns.map((txn, i) => (<TxnPreview
+                      key={i} // safe to do this, individual TxnPreviews won't change within a specific bundle
+                      txn={txn} network={bundle.network} account={bundle.identity} mined={mined}
+                      addressLabel={!!bundle.meta && bundle.meta.addressLabel}
+                    />
+                  ))
+                }
+                <div
+                  className='bundleExpander bundleExpander-expanded'
+                  onClick={() => {bundle.expand(false)}} >
+                  <span className='expanderAction'><FaMinus /> Show less</span>
+                </div>
+              </div>
+              :
+              <div>
+                <div className='halfVisibleTxns'>
+                  {
+                    txns.slice(0, 2).map((txn, i) => (<TxnPreview
+                        key={i} // safe to do this, individual TxnPreviews won't change within a specific bundle
+                        txn={txn} network={bundle.network} account={bundle.identity} mined={mined}
+                        addressLabel={!!bundle.meta && bundle.meta.addressLabel}
+                      />
+                    ))
+                  }
+                </div>
+                <div
+                  className='bundleExpander bundleExpander-shrunk'
+                  onClick={() => {bundle.expand(true)}} >
+                    <span className='expanderAction'>
+                      <FaPlus />
+                      Show more
+                    </span> <span className='expanderAction-details'>+ {txns.length - 2} transactions</span>
+                </div>
+              </div>
+            }
+          </div>
+        )
+      : txns.map((txn, i) => (<TxnPreview
+            key={i} // safe to do this, individual TxnPreviews won't change within a specific bundle
+            txn={txn} network={bundle.network} account={bundle.identity} mined={mined}
+            addressLabel={!!bundle.meta && bundle.meta.addressLabel}
+          />
+        ))
+    }
+
     <ul className="details">
       {
         hasFeeMatch ?
@@ -260,7 +322,7 @@ function BundlePreview({ bundle, mined = false, feeAssets }) {
               <label><BsCoin/>Fee (Paid with Gas Tank)</label>
               <p>${(bundle.feeInUSDPerGas * bundle.gasLimit).toFixed(6)}</p>
           </li>
-          { savedGas && ( 
+          { savedGas && (
             <ToolTip label={`
               Saved: $ ${formatFloatTokenAmount(bundle.feeInUSDPerGas * savedGas, true, 6)}
               ${ (cashback > 0) ? `Cashback: $ ${formatFloatTokenAmount(cashback, true, 6)}` : ''}
@@ -271,7 +333,7 @@ function BundlePreview({ bundle, mined = false, feeAssets }) {
               </li>
             </ToolTip>
           )}
-        </>) 
+        </>)
       }
       <li>
         <label><BsCalendarWeek/>Submitted on</label>
