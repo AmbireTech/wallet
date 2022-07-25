@@ -55,6 +55,15 @@
                     background-size: cover;
                     border-radius: 100%;
                 }
+
+                .icon-svg {
+                    display: flex;
+                    align-items: center;
+
+                    svg {
+                        fill: red;
+                    } 
+                }
             }
 
             &:hover {

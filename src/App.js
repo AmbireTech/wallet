@@ -20,7 +20,15 @@ import useNetwork from 'ambire-common/src/hooks/useNetwork'
 import useWalletConnect from './hooks/walletconnect'
 import useGnosisSafe from './hooks/useGnosisSafe'
 import useNotifications from './hooks/notifications'
-import { useAttentionGrabber, usePortfolio, useAddressBook, useRelayerData, usePrivateMode, useLocalStorage, useUtmTracking } from './hooks'
+import { useAttentionGrabber, 
+  usePortfolio, 
+  useAddressBook, 
+  useRelayerData, 
+  usePrivateMode, 
+  useLocalStorage, 
+  useUtmTracking, 
+  useGasTank 
+} from './hooks'
 import { useToasts } from './hooks/toasts'
 import { useOneTimeQueryParam } from './hooks/oneTimeQueryParam'
 import WalletStakingPoolABI from './consts/WalletStakingPoolABI.json'
@@ -47,6 +55,7 @@ function AppInner() {
   const { accounts, selectedAcc, onSelectAcc, onAddAccount, onRemoveAccount } = useAccounts(useLocalStorage)
   const addressBook = useAddressBook({ accounts, useStorage: useLocalStorage })
   const { network, setNetwork } = useNetwork({ useStorage: useLocalStorage })
+  const { gasTankState, setGasTankState } = useGasTank({ selectedAcc, useStorage: useLocalStorage })
   const { addToast } = useToasts()
   const wcUri = useOneTimeQueryParam('uri')
   const utmTracking = useUtmTracking({ useStorage: useLocalStorage })
@@ -80,7 +89,7 @@ function AppInner() {
 
     const shouldAttachMeta =  [WALLET_TOKEN_ADDRESS, WALLET_STAKING_ADDRESS].includes(req.txn.to.toLowerCase())
 
-    if (shouldAttachMeta) {
+    if (shouldAttachMeta && rewardsData && rewardsData.data) {
       const WALLET_STAKING_POOL_INTERFACE = new utils.Interface(WalletStakingPoolABI)
       const provider = getProvider(network.id)
       const stakingTokenContract = new Contract(WALLET_STAKING_ADDRESS, WALLET_STAKING_POOL_INTERFACE, provider)
@@ -134,7 +143,13 @@ function AppInner() {
   const [userSorting, setUserSorting] = useLocalStorage({
     key: 'userSorting',
     defaultValue: {}
-})
+  })
+  
+  // Gas Tank: Adding default state when the account is changed or created
+  if (gasTankState.length && !gasTankState.find(i => i.account === selectedAcc)) {
+    setGasTankState([...gasTankState, { account: selectedAcc, isEnabled: false }])
+  } 
+
 
   // Show the send transaction full-screen modal if we have a new txn
   const eligibleRequests = useMemo(() => requests
@@ -215,6 +230,15 @@ function AppInner() {
   const rewardsUrl = (relayerURL && selectedAcc) ? `${relayerURL}/wallet-token/rewards/${selectedAcc}?cacheBreak=${cacheBreak}` : null
   const rewardsData = useRelayerData(rewardsUrl)
 
+  // Checks if Thank you page needs to be shown
+  const thankYouUTM = useOneTimeQueryParam('utm_campaign')
+  const [showThankYouPage, setShowThankYouPage] = useLocalStorage({
+      key: 'showThankYouPage',
+      defaultValue: false
+  })
+  const handleSetShowThankYouPage = useCallback(() => setShowThankYouPage(true), [setShowThankYouPage])
+  useEffect(() => (thankYouUTM && thankYouUTM.startsWith('thankyou')) && handleSetShowThankYouPage(), [handleSetShowThankYouPage, thankYouUTM])
+
   return (<>
     <Prompt
       message={(location, action) => {
@@ -246,6 +270,7 @@ function AppInner() {
         prioritize={sendTxnState.prioritize}
         replaceByDefault={sendTxnState.replaceByDefault}
         onBroadcastedTxn={onBroadcastedTxn}
+        gasTankState={gasTankState}
       ></SendTransaction>
     ) : (<></>)
     }
@@ -293,6 +318,9 @@ function AppInner() {
             useStorage={useLocalStorage}
             userSorting={userSorting}
             setUserSorting={setUserSorting}
+            gasTankState={gasTankState}
+            setGasTankState={setGasTankState}
+            showThankYouPage={showThankYouPage}
           >
           </Wallet>
         </Route> :

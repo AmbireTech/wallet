@@ -76,7 +76,7 @@ const Card = ({ loading, unavailable, tokensItems, icon, details, customInfo, on
                                 label="Choose Token"
                                 defaultValue={token}
                                 items={tokens}
-                                onChange={(value) => setToken(value)}
+                                onChange={({ value }) => setToken(value)}
                             />
                             {
                                 !disabled ?

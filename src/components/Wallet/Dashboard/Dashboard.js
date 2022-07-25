@@ -13,6 +13,7 @@ import Promotions from './Promotions/Promotions'
 import AssetsMigrationBanner from 'components/Wallet/AssetsMigration/AssetsMigrationBanner'
 import PendingRecoveryNotice from 'components/Wallet/Security/PendingRecoveryNotice/PendingRecoveryNotice'
 import usePasswordRecoveryCheck from 'hooks/usePasswordRecoveryCheck'
+import OutdatedBalancesMsg from './OutdatedBalancesMsg/OutdatedBalancesMsg'
 
 const chartSegments = [
     {
@@ -31,7 +32,9 @@ const tabSegments = [
         value: 'collectibles'
     }
 ]
-export default function Dashboard({ portfolio, selectedNetwork, selectedAccount, setNetwork, privateMode, rewardsData,  userSorting, setUserSorting, accounts, addRequest, relayerURL, useStorage, showSendTxns }) {
+
+
+export default function Dashboard({ portfolio, selectedNetwork, selectedAccount, setNetwork, privateMode, rewardsData,  userSorting, setUserSorting, accounts, addRequest, relayerURL, useStorage, match, showSendTxns }) {
     const history = useHistory()
     const { tabId, page = 1 } = useParams()
 
@@ -43,7 +46,8 @@ export default function Dashboard({ portfolio, selectedNetwork, selectedAccount,
     const currentAccount = accounts.find(a => a.id.toLowerCase() === selectedAccount.toLowerCase())
 
     const { hasPendingReset, recoveryLock, isPasswordRecoveryCheckLoading } = usePasswordRecoveryCheck(relayerURL, currentAccount, selectedNetwork)
-
+    const isBalancesCachedCurrentNetwork = portfolio.cachedBalancesByNetworks.length ? 
+        portfolio.cachedBalancesByNetworks.find(({network}) => network === selectedNetwork.id) : false
 
     useEffect(() => {
         if (!tab || tab === tabSegments[0].value) return history.replace(`/wallet/dashboard`)
@@ -79,6 +83,12 @@ export default function Dashboard({ portfolio, selectedNetwork, selectedAccount,
 
     return (
         <section id="dashboard">
+            { isBalancesCachedCurrentNetwork && (
+                <OutdatedBalancesMsg 
+                    selectedNetwork={selectedNetwork}
+                    selectedAccount={selectedAccount} 
+                />)
+            }
             <Promotions rewardsData={rewardsData} />
             {
               <AssetsMigrationBanner
@@ -111,6 +121,9 @@ export default function Dashboard({ portfolio, selectedNetwork, selectedAccount,
                             selectedNetwork={selectedNetwork}
                             setNetwork={setNetwork}
                             hidePrivateValue={privateMode.hidePrivateValue}
+                            relayerURL={relayerURL}
+                            selectedAccount={selectedAccount}
+                            match={match}
                         />
                     </div>
                 </div>
