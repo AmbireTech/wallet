@@ -4,6 +4,8 @@ import { popupCenter } from 'lib/popupHelper'
 import { fetchGet } from 'lib/fetch'
 import { useState } from 'react';
 import { useToasts } from 'hooks/toasts'
+import { useModals } from 'hooks'
+import { GuardarianDepositProviderModal } from 'components/Modals'
 
 import url from 'url'
 
@@ -13,6 +15,7 @@ const useProviders = ({ walletAddress, selectedNetwork, relayerURL }) => {
 
     const [isLoading, setLoading] = useState([])
     const { addToast } = useToasts()
+    const { showModal } = useModals()
 
     const openRampNetwork = () => {
         const assetsList = {
@@ -117,12 +120,19 @@ const useProviders = ({ walletAddress, selectedNetwork, relayerURL }) => {
         setLoading(prevState => prevState.filter(n => n !== 'Kriptomat'))
     }
 
+    const openGuardarian = () => {
+        setLoading(prevState => ['Kriptomat', ...prevState])
+        showModal(<GuardarianDepositProviderModal relayerURL={relayerURL} selectedNetwork={selectedNetwork}/>)
+        setLoading(prevState => prevState.filter(n => n !== 'Kriptomat'))
+    }
+
 
     return {
         openRampNetwork,
         openPayTrie,
         openTransak,
         openKriptomat,
+        openGuardarian,
         isLoading
     }
 }

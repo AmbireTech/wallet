@@ -1,0 +1,26 @@
+#guardarian-modal {
+    .content {
+        height: 550px;
+    }
+    .input-currencies-wrapper {
+        display: flex;
+        align-items: flex-end;
+
+        input {
+            height: 50px;
+        }
+
+        .amount {
+            width: 60%;
+            // flex-grow: 4;
+        }
+
+        .currency {
+            .select {
+                min-width: 50px;
+            }
+            width: 40%;
+            // flex-grow: 1;
+        }
+    }
+}
