@@ -147,11 +147,20 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, mustReplaceNonce,
   const [feeSpeed, setFeeSpeed] = useState(DEFAULT_SPEED)
   const { addToast } = useToasts()
 
+  // Safety check: make sure our input parameters make sense
   if (isInt(mustReplaceNonce) && !(replaceByDefault || isInt(bundle.nonce))) {
     console.error('ERROR: SendTransactionWithBundle: mustReplaceNonce is set but we are not using replacementBundle or replaceByDefault')
     console.error('ERROR: SendTransactionWithBundle: This is a huge logical error as mustReplaceNonce is intended to be used only when we want to replace a txn')
   }
 
+  // Keep track of unmounted: we need this to not try to modify state after async actions if the component is unmounted
+  const isMounted = useRef(false)
+  useEffect(() => {
+    isMounted.current = true
+    return () => { isMounted.current = false }
+  }, [])
+
+  // Reset the estimation when there are no txns in the bundle
   useEffect(() => {
     if (!bundle.txns.length) return
     setEstimation(null)
@@ -375,11 +384,11 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, mustReplaceNonce,
       approveTxnImplQuickAcc({ quickAccCredentials })
       : approveTxnImpl()
     approveTxnPromise.then(bundleResult => {
-      // special case for approveTxnImplQuickAcc
+      // special case for approveTxnImplQuickAcc: when a user interaction prevents the operation from completing
       if (!bundleResult) return
 
-      // be careful not to call this after onDimiss, cause it might cause state to be changed post-unmount
-      setSigningStatus(null)
+      // do not to call this after onDimiss, cause it might cause state to be changed post-unmount
+      if (isMounted.current) setSigningStatus(null)
 
       // Inform everything that's waiting for the results (eg WalletConnect)
       const skipResolve = !bundleResult.success && bundleResult.message && bundleResult.message.match(/underpriced/i)
@@ -398,7 +407,7 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, mustReplaceNonce,
       }
     })
     .catch(e => {
-      setSigningStatus(null)
+      if (isMounted.current) setSigningStatus(null)
       console.error(e)
       if (e && e.message.includes('must provide an Ethereum address')) {
         addToast(`Signing error: not connected with the correct address. Make sure you're connected with ${bundle.signer.address}.`, { error: true })
