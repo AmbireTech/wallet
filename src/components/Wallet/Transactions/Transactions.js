@@ -86,7 +86,8 @@ function Transactions ({ relayerURL, selectedAcc, selectedNetwork, showSendTxns,
   const removeFeeTxnFromBundleIfGasTankDisabled = bundle => !bundle.gasTankFee ?  { ...bundle, txns: bundle.txns.slice(0, -1) } : bundle
 
   // @TODO: visualize other pending bundles
-  const firstPending = data && data.txns.find(x => !x.executed && !x.replaced)
+  const allPending = data && data.txns.filter(x => !x.executed && !x.replaced)
+  const firstPending = allPending && allPending[0]
 
   const mapToBundle = (relayerBundle, extra = {}) => (new Bundle({
     ...relayerBundle,
@@ -184,6 +185,7 @@ function Transactions ({ relayerURL, selectedAcc, selectedNetwork, showSendTxns,
           </div>
         </div>
       </div>) }
+      {allPending.length > 1 && (<h4>NOTE: There are a total of {allPending.length} pending transaction bundles.</h4>)}
 
       <div id="confirmed" className="panel">
         <div className="panel-heading">
