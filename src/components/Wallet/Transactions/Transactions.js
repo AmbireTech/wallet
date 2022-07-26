@@ -65,11 +65,7 @@ function Transactions ({ relayerURL, selectedAcc, selectedNetwork, showSendTxns,
         })
       })
 
-    // need to explicitly compare the bundle.nonce we want to modify
-    let replacementBundle = new Bundle({...bundle})
-    replacementBundle.replacedRequestIds = ids // adding props for resolveMany, in case of rejection/validation in SendTransaction
-
-    setSendTxnState({ showing: true, replacementBundle })
+    setSendTxnState({ showing: true })
   }, [addRequest, selectedNetwork, selectedAcc, setSendTxnState])
 
   const maxBundlePerPage = 10
