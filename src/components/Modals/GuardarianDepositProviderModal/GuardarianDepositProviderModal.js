@@ -20,18 +20,25 @@ const GuardarianDepositProviderModal = ({ relayerURL, selectedNetwork, account, 
     // get Fiat Currencies
     const urlFiatCurrencies = `${relayerURL}/guardarian/currencies/fiat`
     const { data: fiatCurrencies, errMsg: errFiatCurrencies, isLoading: isFiatReqLoading } = useRelayerData(urlFiatCurrencies)
-    console.log('fiatCurrencies', fiatCurrencies)
     const fiatCurrenciesLabels = (fiatCurrencies && fiatCurrencies.length) ? fiatCurrencies.map(i => {return { label: i.ticker, value: i.ticker, icon: i.logo_url }}) : []
     const [selectedFiatCurrency, setSelectedFiatCurrency] = useState((fiatCurrenciesLabels && fiatCurrenciesLabels.length) ? fiatCurrenciesLabels[0] : '')
 
-    // get Fiat Currencies
+    // get Crypto Currencies
     const urlCryptoCurrencies = `${relayerURL}/guardarian/currencies/crypto`
     const { data: cryptoCurrencies, errMsg: errCryptoCurrencies, isLoading: isCryptoReqLoading } = useRelayerData(urlCryptoCurrencies)
-    console.log('cryptoCurrencies', cryptoCurrencies)
+    const availableNetworks = cryptoCurrencies &&  cryptoCurrencies.map(i => {
+       return i.networks.map(({ name, network }) => { return { name, network} })
+    })
+    const merged = [].concat.apply([], availableNetworks);
+    
+    const uniqueAvailableNet = [...new Set(merged.map(JSON.stringify))].map(JSON.parse)
+
+    
     const cryptoCurrenciesLabels = (cryptoCurrencies && cryptoCurrencies.length) ? cryptoCurrencies.map(i => {return { label: i.ticker, value: i.ticker, icon: i.logo_url }}) : []
     const [selectedCryptoCurrency, setSelectedCryptoCurrency] = useState((cryptoCurrenciesLabels && cryptoCurrenciesLabels.length) ? cryptoCurrenciesLabels[0] : '')
     
     const onInput = value => {
+        //check min-max range
         if (value > 0) estimate(value)
         
     }
