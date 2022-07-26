@@ -162,9 +162,9 @@ function AppInner() {
   useEffect(
     () => setSendTxnState((prev) => ({
       showing: !!eligibleRequests.length,
-      replacementBundle: prev?.replacementBundle,
-      replaceByDefault: prev?.replaceByDefault,
-      mustReplaceNonce: prev?.mustReplaceNonce
+      // we only keep those if there are transactions, otherwise zero them
+      replaceByDefault: eligibleRequests.length ? prev?.replaceByDefault : null,
+      mustReplaceNonce: eligibleRequests.length ? prev?.mustReplaceNonce : null,
     })),
     [eligibleRequests.length]
   )
