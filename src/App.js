@@ -159,7 +159,12 @@ function AppInner() {
     ), [requests, network.chainId, selectedAcc])
   const [sendTxnState, setSendTxnState] = useState(() => ({ showing: !!eligibleRequests.length }))
   useEffect(
-    () => setSendTxnState((prev) => ({ showing: !!eligibleRequests.length, replacementBundle: prev?.replacementBundle })),
+    () => setSendTxnState((prev) => ({
+      showing: !!eligibleRequests.length,
+      replacementBundle: prev?.replacementBundle,
+      replaceByDefault: prev?.replaceByDefault,
+      mustReplaceNonce: prev?.mustReplaceNonce
+    })),
     [eligibleRequests.length]
   )
   const showSendTxns = (replacementBundle, replaceByDefault = false) => setSendTxnState({ showing: true, replacementBundle, replaceByDefault })
