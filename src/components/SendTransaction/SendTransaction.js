@@ -530,7 +530,7 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, mustReplaceNonce,
             isInt(mustReplaceNonce) &&
             <>
               {
-                (canProceed || canProceed === null) && <div className='replaceInfo warning' ><MdWarning /><span>This transaction will replace the current pending transaction</span></div>
+                (canProceed || canProceed === null) && <div className='replaceInfo warning' ><MdWarning /><span>This transaction bundle will replace the one that's currently pending.</span></div>
               }
 
               {
