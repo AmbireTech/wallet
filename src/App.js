@@ -267,6 +267,7 @@ function AppInner() {
         onDismiss={() => setSendTxnState({ showing: false })}
         replacementBundle={sendTxnState.replacementBundle}
         replaceByDefault={sendTxnState.replaceByDefault}
+        mustReplaceNonce={sendTxnState.mustReplaceNonce}
         onBroadcastedTxn={onBroadcastedTxn}
         gasTankState={gasTankState}
       ></SendTransaction>
