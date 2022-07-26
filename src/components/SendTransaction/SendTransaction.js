@@ -240,7 +240,7 @@ function SendTransactionWithBundle({ bundle, replacementBundle, replaceByDefault
     const nextNonMinedNonce = estimation.nextNonce?.nextNonMinedNonce
     // If we've passed in a bundle, use it's nonce (when using a replacementBundle); else, depending on whether we want to replace the current pending bundle,
     // either use the next non-mined nonce or the next free nonce
-    const nonce = bundle.nonce || (replaceByDefault ? nextNonMinedNonce : nextFreeNonce)
+    const nonce = bundle.nonce || (replaceTx ? nextNonMinedNonce : nextFreeNonce)
 
     if (!!currentAccGasTankState.isEnabled) {
       let gasLimit
@@ -273,7 +273,7 @@ function SendTransactionWithBundle({ bundle, replacementBundle, replaceByDefault
       gasLimit: estimation.gasLimit + addedGas + (bundle.extraGas || 0),
       nonce
     })
-  }, [relayerURL, estimation, feeSpeed, currentAccGasTankState.isEnabled, network, bundle, replacementBundle])
+  }, [relayerURL, estimation, feeSpeed, currentAccGasTankState.isEnabled, network, bundle, replaceTx])
 
   const approveTxnImpl = async () => {
     if (!estimation) throw new Error('no estimation: should never happen')
@@ -362,7 +362,7 @@ function SendTransactionWithBundle({ bundle, replacementBundle, replaceByDefault
       addToast('Please confirm this transaction on your Lattice device.', { timeout: 10000 })
     }
 
-    const requestIds = replacementBundle ? replacementBundle.replacedRequestIds : bundle.requestIds
+    const requestIds = bundle.requestIds
     const approveTxnPromise = bundle.signer.quickAccManager ?
       approveTxnImplQuickAcc({ quickAccCredentials })
       : approveTxnImpl()
@@ -382,7 +382,8 @@ function SendTransactionWithBundle({ bundle, replacementBundle, replaceByDefault
         onDismiss()
       } else {
         // to force replacementBundle to be null, so it's not filled from previous state change in App.js in useEffect
-        if (replacementBundle && bundleResult.message.includes('was already mined')) {
+        // basically close the modal if the txn was already mined
+        if (bundleResult.message.includes('was already mined')) {
           onDismiss()
         }
         addToast(`Transaction error: ${getErrorMessage(bundleResult)}`, { error: true })  //'unspecified error'
@@ -407,12 +408,6 @@ function SendTransactionWithBundle({ bundle, replacementBundle, replaceByDefault
   const rejectTxn = bundle.requestIds && (() => {
     onDismiss()
     resolveMany(bundle.requestIds, { message: REJECT_MSG })
-  })
-
-  // Only for replacement flow
-  const rejectTxnReplace = (() => {
-    onDismiss()
-    resolveMany(replacementBundle.replacedRequestIds, { message: REJECT_MSG })
   })
 
   const accountAvatar = blockies.create({ seed: account.id }).toDataURL()
@@ -549,7 +544,7 @@ function SendTransactionWithBundle({ bundle, replacementBundle, replaceByDefault
                 <div id='actions-container-replace'>
                   <div className='replaceInfo info' ><MdInfo /><span>The transaction you're trying to replace has already been confirmed</span></div>
                   <div className='buttons'>
-                    <Button clear icon={<MdOutlineClose/>} type='button' className='rejectTxn' onClick={rejectTxnReplace}>Close</Button>
+                    <Button clear icon={<MdOutlineClose/>} type='button' className='rejectTxn' onClick={rejectTxn}>Close</Button>
                   </div>
                 </div>
               }
