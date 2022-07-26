@@ -65,7 +65,7 @@ function Transactions ({ relayerURL, selectedAcc, selectedNetwork, showSendTxns,
         })
       })
 
-    setSendTxnState({ showing: true, prioritize: true })
+    setSendTxnState({ showing: true, replaceByDefault: true })
   }, [addRequest, selectedNetwork, selectedAcc, setSendTxnState])
 
   const maxBundlePerPage = 10

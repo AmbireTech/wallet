@@ -162,7 +162,7 @@ function AppInner() {
     () => setSendTxnState((prev) => ({ showing: !!eligibleRequests.length, replacementBundle: prev?.replacementBundle })),
     [eligibleRequests.length]
   )
-  const showSendTxns = (bundle, prioritize=false) => setSendTxnState({ showing: true, replacementBundle: bundle, prioritize })
+  const showSendTxns = (bundle) => setSendTxnState({ showing: true, replacementBundle: bundle })
 
   // Network shouldn't matter here
   const everythingToSign = useMemo(() => requests
@@ -266,7 +266,6 @@ function AppInner() {
         relayerURL={relayerURL}
         onDismiss={() => setSendTxnState({ showing: false })}
         replacementBundle={sendTxnState.replacementBundle}
-        prioritize={sendTxnState.prioritize}
         replaceByDefault={sendTxnState.replaceByDefault}
         onBroadcastedTxn={onBroadcastedTxn}
         gasTankState={gasTankState}

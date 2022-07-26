@@ -98,7 +98,7 @@ function getErrorMessage(e) {
   }
 }
 
-export default function SendTransaction({ relayerURL, accounts, network, selectedAcc, requests, resolveMany, replacementBundle, replaceByDefault, prioritize, onBroadcastedTxn, onDismiss, gasTankState }) {
+export default function SendTransaction({ relayerURL, accounts, network, selectedAcc, requests, resolveMany, replacementBundle, replaceByDefault, onBroadcastedTxn, onDismiss, gasTankState }) {
   // NOTE: this can be refactored at a top level to only pass the selected account (full object)
   // keeping it that way right now (selectedAcc, accounts) cause maybe we'll need the others at some point?
   const account = accounts.find(x => x.id === selectedAcc)
@@ -126,7 +126,6 @@ export default function SendTransaction({ relayerURL, accounts, network, selecte
     bundle={bundle}
     replacementBundle={replacementBundle}
     replaceByDefault={replaceByDefault}
-    prioritize={prioritize}
     network={network}
     account={account}
     resolveMany={resolveMany}
@@ -136,7 +135,7 @@ export default function SendTransaction({ relayerURL, accounts, network, selecte
   />)
 }
 
-function SendTransactionWithBundle({ bundle, replacementBundle, replaceByDefault, prioritize, network, account, resolveMany, relayerURL, onBroadcastedTxn, onDismiss, gasTankState }) {
+function SendTransactionWithBundle({ bundle, replacementBundle, replaceByDefault, network, account, resolveMany, relayerURL, onBroadcastedTxn, onDismiss, gasTankState }) {
   const currentAccGasTankState = network.isGasTankAvailable ? 
     gasTankState.find(i => i.account === account.id) : 
     { account: account.id, isEnabled: false }
@@ -263,7 +262,6 @@ function SendTransactionWithBundle({ bundle, replacementBundle, replaceByDefault
         },
         txns: [...bundle.txns],
         gasLimit,
-        // sort of a bug here: repeating code and we had accidently not looked at prioritize
         nonce
       })
     }
@@ -275,7 +273,7 @@ function SendTransactionWithBundle({ bundle, replacementBundle, replaceByDefault
       gasLimit: estimation.gasLimit + addedGas + (bundle.extraGas || 0),
       nonce
     })
-  }, [relayerURL, estimation, feeSpeed, currentAccGasTankState.isEnabled, network, bundle, replacementBundle, prioritize])
+  }, [relayerURL, estimation, feeSpeed, currentAccGasTankState.isEnabled, network, bundle, replacementBundle])
 
   const approveTxnImpl = async () => {
     if (!estimation) throw new Error('no estimation: should never happen')
@@ -420,7 +418,7 @@ function SendTransactionWithBundle({ bundle, replacementBundle, replaceByDefault
   const accountAvatar = blockies.create({ seed: account.id }).toDataURL()
 
   // Allow actions either on regular tx or replacement/speed tx, when not mined
-  const canProceed = !!(replacementBundle && !prioritize)
+  const canProceed = replacementBundle
     ? (
       !isNaN(estimation?.nextNonce?.nextNonMinedNonce)
         ? bundle.nonce >= estimation?.nextNonce?.nextNonMinedNonce
@@ -470,22 +468,11 @@ function SendTransactionWithBundle({ bundle, replacementBundle, replaceByDefault
 
             <div className='transactionsNote'>
               {
-                // if we're using the queue
-                bundle.requestIds ?
+                // only render this if we're using the queue
+                bundle.requestIds &&
                   <>
                     <b><GiGorilla size={16}/> DEGEN TIP</b>
                     <span>You can sign multiple transactions at once. Add more transactions to this batch by interacting with a connected dApp right now. Alternatively, you may click "Back" to add more transactions.</span>
-                  </>
-                  :
-                  prioritize ?
-                    <>
-                     <b>NOTE:</b>
-                    <span>This is a prioritized transaction. It will replace any pending transaction if any.</span>
-                    </>
-                  :
-                  <>
-                    <b>NOTE:</b>
-                    <span>You are currently replacing a pending transaction.</span>
                   </>
               }
             </div>
@@ -542,7 +529,8 @@ function SendTransactionWithBundle({ bundle, replacementBundle, replaceByDefault
           }
 
           {
-            (replacementBundle && !prioritize) &&
+            // @TODO: wrong logic: this shouldn't depend on replacementBundle, but instead on mustReplaceNonce
+            replacementBundle &&
             <>
 
               {
