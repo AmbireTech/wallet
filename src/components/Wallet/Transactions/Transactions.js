@@ -47,13 +47,10 @@ function Transactions ({ relayerURL, selectedAcc, selectedNetwork, showSendTxns,
   const { data: feeAssets } = useRelayerData(urlGetFeeAssets)
 
   const showSendTxnsForReplacement = useCallback(bundle => {
-    let ids = []
-    
     bundle.txns
       .forEach((txn, index) => {
-        ids.push('replace_' + index) // not to interefere with pending ids with existing indexes
         addRequest({
-          id: ids[ids.length - 1],
+          id: 'replace_'+index,
           chainId: selectedNetwork.chainId,
           account: selectedAcc,
           type: 'eth_sendTransaction',
@@ -65,7 +62,7 @@ function Transactions ({ relayerURL, selectedAcc, selectedNetwork, showSendTxns,
         })
       })
 
-    setSendTxnState({ showing: true, replaceByDefault: true, mustReplaceNonce: bundle.nonce })
+    setSendTxnState({ showing: true, replaceByDefault: true, mustReplaceNonce: bundle.nonce.num })
   }, [addRequest, selectedNetwork, selectedAcc, setSendTxnState])
 
   const maxBundlePerPage = 10
