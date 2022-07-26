@@ -150,6 +150,7 @@ function AppInner() {
   } 
 
 
+  // Handling transaction signing requests
   // Show the send transaction full-screen modal if we have a new txn
   const eligibleRequests = useMemo(() => requests
     .filter(({ type, chainId, account }) =>
@@ -167,18 +168,23 @@ function AppInner() {
     })),
     [eligibleRequests.length]
   )
-  const showSendTxns = (replacementBundle, replaceByDefault = false) => setSendTxnState({
-    showing: true,
-    replacementBundle,
-    replaceByDefault
-  })
+  const showSendTxns = (replacementBundle, replaceByDefault = false) => setSendTxnState({ showing: true, replacementBundle, replaceByDefault })
+  // keep values such as replaceByDefault and mustReplaceNonce; those will be reset on any setSendTxnState/showSendTxns
+  // we DONT want to keep replacementBundle - closing the dialog means you've essentially dismissed it
+  const onDismissSendTxns = () => setSendTxnState(prev => ({
+    showing: false,
+    replaceByDefault: prev?.replaceByDefault,
+    mustReplaceNonce: prev?.mustReplaceNonce
+  }))
 
+  // Handling message signatures
   // Network shouldn't matter here
   const everythingToSign = useMemo(() => requests
     .filter(({ type, account }) => (type === 'personal_sign' || type === 'eth_sign' || type === 'eth_signTypedData_v4' || type === 'eth_signTypedData')
       && account === selectedAcc
     ), [requests, selectedAcc])
 
+  // Handling the back button
   // When the user presses back, we first hide the SendTransactions dialog (keeping the queue)
   // Then, signature requests will need to be dismissed one by one, starting with the oldest
   const onPopHistory = () => {
@@ -193,7 +199,7 @@ function AppInner() {
     return true
   }
 
-  // Keeping track of transactions
+  // Keeping track of sent transactions
   const [sentTxn, setSentTxn] = useState([])
   const onBroadcastedTxn = hash => {
     if (!hash) {
@@ -229,6 +235,7 @@ function AppInner() {
     onSitckyClick: useCallback(() => setSendTxnState({ showing: true }), [])
   })
 
+  // Get rewards data
   const [cacheBreak, setCacheBreak] = useState(() => Date.now())
   useEffect(() => {
     if ((Date.now() - cacheBreak) > 5000) setCacheBreak(Date.now())
@@ -273,7 +280,7 @@ function AppInner() {
         requests={eligibleRequests}
         resolveMany={resolveMany}
         relayerURL={relayerURL}
-        onDismiss={() => setSendTxnState({ showing: false })}
+        onDismiss={onDismissSendTxns}
         replacementBundle={sendTxnState.replacementBundle}
         replaceByDefault={sendTxnState.replaceByDefault}
         mustReplaceNonce={sendTxnState.mustReplaceNonce}
