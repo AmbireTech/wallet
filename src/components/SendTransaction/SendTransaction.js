@@ -146,6 +146,12 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, mustReplaceNonce,
   const [signingStatus, setSigningStatus] = useState(false)
   const [feeSpeed, setFeeSpeed] = useState(DEFAULT_SPEED)
   const { addToast } = useToasts()
+
+  if (isInt(mustReplaceNonce) && !(replaceByDefault || isInt(bundle.nonce))) {
+    console.error('ERROR: SendTransactionWithBundle: mustReplaceNonce is set but we are not using replacementBundle or replaceByDefault')
+    console.error('ERROR: SendTransactionWithBundle: This is a huge logical error as mustReplaceNonce is intended to be used only when we want to replace a txn')
+  }
+
   useEffect(() => {
     if (!bundle.txns.length) return
     setEstimation(null)
@@ -512,7 +518,8 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, mustReplaceNonce,
 
          {
             // If there's `bundle.nonce` set, it means we're cancelling or speeding up, so this shouldn't even be visible
-            !isInt(bundle.nonce) && !!estimation?.nextNonce?.pendingBundle &&
+            // We also don't show this in any case in which we're forced to replace a particular transaction (mustReplaceNonce)
+            !isInt(bundle.nonce) && !isInt(mustReplaceNonce) && !!estimation?.nextNonce?.pendingBundle &&
             (
               <div>
                <Checkbox
@@ -525,11 +532,13 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, mustReplaceNonce,
           }
 
           {
-            // @TODO: NOTE there's a case in which both "This transaction will replace the current pending transaction" and the checkbox will render - when we're doing a modify
-            // If we are replacing a txn, look at the canProceed
+            // NOTE there's a case in which both "This transaction will replace the current pending transaction" and the checkbox will render - when we're doing a modify
+            // If we are replacing a txn, look at whether canProceed is true
             isInt(mustReplaceNonce) &&
             <>
               {
+                // We always warn the user if they're trying to replace a particular transaction
+                // This doesn't need to show when replacing is optional
                 (canProceed || canProceed === null) && <div className='replaceInfo warning' ><MdWarning /><span>This transaction bundle will replace the one that's currently pending.</span></div>
               }
 
