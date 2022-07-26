@@ -256,10 +256,16 @@ function BundlePreview({ bundle, mined = false, feeAssets }) {
       {
         bundle.gasTankFee && (feeTokenDetails !== null) && mined && (
         <>
-          <li>
-              <label><BsCoin/>Fee (Paid with Gas Tank)</label>
-              <p>${(bundle.feeInUSDPerGas * bundle.gasLimit).toFixed(6)}</p>
-          </li>
+          { savedGas &&(
+            <ToolTip label={`
+              You saved $ ${formatFloatTokenAmount(bundle.feeInUSDPerGas * savedGas, true, 6)}, ${ (cashback > 0) ? `and got back $ ${formatFloatTokenAmount(cashback, true, 6)} as cashback,` : ''} ended up paying only $ ${formatFloatTokenAmount(((bundle.feeInUSDPerGas * bundle.gasLimit) - cashback), true, 6)}
+            `}>
+              <li>
+                <label><BsCoin/>Fee (Paid with Gas Tank)</label>
+                <p>$ {formatFloatTokenAmount(((bundle.feeInUSDPerGas * bundle.gasLimit) - cashback), true, 6)}</p>
+              </li>
+            </ToolTip>
+          )}
           { savedGas && ( 
             <ToolTip label={`
               Saved: $ ${formatFloatTokenAmount(bundle.feeInUSDPerGas * savedGas, true, 6)}
