@@ -40,6 +40,8 @@ const REJECT_MSG = 'Ambire user rejected the request'
 
 const WALLET_TOKEN_SYMBOLS = ['xWALLET', 'WALLET']
 
+const isInt = x => !isNaN(x) && x !== null
+
 const getDefaultFeeToken = (remainingFeeTokenBalances, network, feeSpeed, estimation, currentAccGasTankState) => {
   if(!remainingFeeTokenBalances?.length) {
     return { symbol: network.nativeAssetSymbol, decimals: 18, address: '0x0000000000000000000000000000000000000000' }
@@ -240,7 +242,7 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, mustReplaceNonce,
     const nextNonMinedNonce = estimation.nextNonce?.nextNonMinedNonce
     // If we've passed in a bundle, use it's nonce (when using a replacementBundle); else, depending on whether we want to replace the current pending bundle,
     // either use the next non-mined nonce or the next free nonce
-    const nonce = bundle.nonce || (replaceTx ? nextNonMinedNonce : nextFreeNonce)
+    const nonce = isInt(bundle.nonce) ? bundle.nonce : (replaceTx ? nextNonMinedNonce : nextFreeNonce)
 
     if (!!currentAccGasTankState.isEnabled) {
       let gasLimit
@@ -404,16 +406,14 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, mustReplaceNonce,
     })
   }
 
-  // Not applicable when .requestIds is not defined (replacement bundle)
-  const rejectTxn = bundle.requestIds && (() => {
+  const rejectTxn = () => {
     onDismiss()
-    resolveMany(bundle.requestIds, { message: REJECT_MSG })
-  })
+    bundle.requestIds && resolveMany(bundle.requestIds, { message: REJECT_MSG })
+  }
 
   const accountAvatar = blockies.create({ seed: account.id }).toDataURL()
 
   // `mustReplaceNonce` is set on speedup/cancel, to prevent the user from broadcasting the txn if the same nonce has been mined
-  const isInt = x => !isNaN(x) && x !== null
   const canProceed = isInt(mustReplaceNonce)
     ? (
       isInt(estimation?.nextNonce?.nextNonMinedNonce)
@@ -512,7 +512,7 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, mustReplaceNonce,
 
          {
             // If there's `bundle.nonce` set, it means we're cancelling or speeding up, so this shouldn't even be visible
-            !bundle.nonce && !!estimation?.nextNonce?.pendingBundle &&
+            !isInt(bundle.nonce) && !!estimation?.nextNonce?.pendingBundle &&
             (
               <div>
                <Checkbox
@@ -525,15 +525,16 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, mustReplaceNonce,
           }
 
           {
-            // @TODO: wrong logic: this shouldn't depend on bundle.nonce, but instead on mustReplaceNonce
-            bundle.nonce &&
+            // @TODO: NOTE there's a case in which both "This transaction will replace the current pending transaction" and the checkbox will render - when we're doing a modify
+            // If we are replacing a txn, look at the canProceed
+            isInt(mustReplaceNonce) &&
             <>
-
               {
                 (canProceed || canProceed === null) && <div className='replaceInfo warning' ><MdWarning /><span>This transaction will replace the current pending transaction</span></div>
               }
 
               {
+                // canProceed equals null means we don't have data yet
                 canProceed === null &&
                 <div>
                   <Loading />
