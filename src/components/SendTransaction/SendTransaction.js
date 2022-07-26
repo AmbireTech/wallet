@@ -259,6 +259,7 @@ function SendTransactionWithBundle({ bundle, replacementBundle, prioritize, netw
         },
         txns: [...bundle.txns],
         gasLimit,
+        // sort of a bug here: repeating code and we had accidently not looked at prioritize
         nonce: bundle.nonce || ((replacementBundle && pendingBundle) ? nextNonMinedNonce : nextFreeNonce)
       })
     }
@@ -268,7 +269,7 @@ function SendTransactionWithBundle({ bundle, replacementBundle, prioritize, netw
       txns: [...bundle.txns, feeTxn],
       gasTankFee: null,
       gasLimit: estimation.gasLimit + addedGas + (bundle.extraGas || 0),
-      nonce: bundle.nonce || ((replacementBundle && pendingBundle && !prioritize) ? nextNonMinedNonce : nextFreeNonce)
+      nonce: bundle.nonce || ((replacementBundle && pendingBundle) ? nextNonMinedNonce : nextFreeNonce)
     })
   }, [relayerURL, estimation, feeSpeed, currentAccGasTankState.isEnabled, network, bundle, replacementBundle, prioritize])
 
