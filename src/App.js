@@ -167,7 +167,11 @@ function AppInner() {
     })),
     [eligibleRequests.length]
   )
-  const showSendTxns = (replacementBundle, replaceByDefault = false) => setSendTxnState({ showing: true, replacementBundle, replaceByDefault })
+  const showSendTxns = (replacementBundle, replaceByDefault = false) => setSendTxnState({
+    showing: true,
+    replacementBundle,
+    replaceByDefault
+  })
 
   // Network shouldn't matter here
   const everythingToSign = useMemo(() => requests

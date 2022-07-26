@@ -62,7 +62,7 @@ function Transactions ({ relayerURL, selectedAcc, selectedNetwork, showSendTxns,
         })
       })
 
-    setSendTxnState({ showing: true, replaceByDefault: true, mustReplaceNonce: bundle.nonce.num })
+    setSendTxnState({ showing: true, replaceByDefault: true, mustReplaceNonce: bundle.nonce })
   }, [addRequest, selectedNetwork, selectedAcc, setSendTxnState])
 
   const maxBundlePerPage = 10
