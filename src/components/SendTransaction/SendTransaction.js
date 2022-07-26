@@ -29,6 +29,7 @@ import { MdInfo } from 'react-icons/md'
 import { useCallback } from 'react'
 import { ToolTip, Button, Loading } from 'components/common'
 import { ethers } from 'ethers'
+import { Checkbox } from 'components/common'
 
 const ERC20 = new Interface(require('adex-protocol-eth/abi/ERC20'))
 
@@ -97,7 +98,7 @@ function getErrorMessage(e) {
   }
 }
 
-export default function SendTransaction({ relayerURL, accounts, network, selectedAcc, requests, resolveMany, replacementBundle, prioritize, onBroadcastedTxn, onDismiss, gasTankState }) {
+export default function SendTransaction({ relayerURL, accounts, network, selectedAcc, requests, resolveMany, replacementBundle, replaceByDefault, prioritize, onBroadcastedTxn, onDismiss, gasTankState }) {
   // NOTE: this can be refactored at a top level to only pass the selected account (full object)
   // keeping it that way right now (selectedAcc, accounts) cause maybe we'll need the others at some point?
   const account = accounts.find(x => x.id === selectedAcc)
@@ -124,6 +125,7 @@ export default function SendTransaction({ relayerURL, accounts, network, selecte
     relayerURL={relayerURL}
     bundle={bundle}
     replacementBundle={replacementBundle}
+    replaceByDefault={replaceByDefault}
     prioritize={prioritize}
     network={network}
     account={account}
@@ -134,12 +136,12 @@ export default function SendTransaction({ relayerURL, accounts, network, selecte
   />)
 }
 
-function SendTransactionWithBundle({ bundle, replacementBundle, prioritize, network, account, resolveMany, relayerURL, onBroadcastedTxn, onDismiss, gasTankState }) {
+function SendTransactionWithBundle({ bundle, replacementBundle, replaceByDefault, prioritize, network, account, resolveMany, relayerURL, onBroadcastedTxn, onDismiss, gasTankState }) {
   const currentAccGasTankState = network.isGasTankAvailable ? 
     gasTankState.find(i => i.account === account.id) : 
     { account: account.id, isEnabled: false }
   const [estimation, setEstimation] = useState(null)
-
+  const [replaceTx, setReplaceTx] = useState(!!replaceByDefault)
   const [signingStatus, setSigningStatus] = useState(false)
   const [feeSpeed, setFeeSpeed] = useState(DEFAULT_SPEED)
   const { addToast } = useToasts()
@@ -235,10 +237,11 @@ function SendTransactionWithBundle({ bundle, replacementBundle, prioritize, netw
         toHexAmount(feeInFeeToken, feeToken.decimals)
     ])]
 
-    const pendingBundle = estimation.nextNonce?.pendingBundle
     const nextFreeNonce = estimation.nextNonce?.nonce
     const nextNonMinedNonce = estimation.nextNonce?.nextNonMinedNonce
-    const nonce = bundle.nonce || ((replacementBundle && pendingBundle) ? nextNonMinedNonce : nextFreeNonce)
+    // If we've passed in a bundle, use it's nonce (when using a replacementBundle); else, depending on whether we want to replace the current pending bundle,
+    // either use the next non-mined nonce or the next free nonce
+    const nonce = bundle.nonce || (replaceByDefault ? nextNonMinedNonce : nextFreeNonce)
 
     if (!!currentAccGasTankState.isEnabled) {
       let gasLimit
@@ -467,6 +470,7 @@ function SendTransactionWithBundle({ bundle, replacementBundle, prioritize, netw
 
             <div className='transactionsNote'>
               {
+                // if we're using the queue
                 bundle.requestIds ?
                   <>
                     <b><GiGorilla size={16}/> DEGEN TIP</b>
@@ -522,6 +526,20 @@ function SendTransactionWithBundle({ bundle, replacementBundle, prioritize, netw
             }
 
           </div>
+
+         {
+            // If there's `replacementBundle`, it means we're cancelling or speeding up, so this shouldn't even be visible
+            !replacementBundle && !!estimation?.nextNonce?.pendingBundle &&
+            (
+              <div>
+               <Checkbox
+                    label='Replace currently pending transaction'
+                    checked={replaceTx}
+                    onChange={({ target }) => setReplaceTx(target.checked)}
+                />
+              </div>
+            )
+          }
 
           {
             (replacementBundle && !prioritize) &&
