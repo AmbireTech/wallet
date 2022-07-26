@@ -98,7 +98,7 @@ function getErrorMessage(e) {
   }
 }
 
-export default function SendTransaction({ relayerURL, accounts, network, selectedAcc, requests, resolveMany, replacementBundle, replaceByDefault, onBroadcastedTxn, onDismiss, gasTankState }) {
+export default function SendTransaction({ relayerURL, accounts, network, selectedAcc, requests, resolveMany, replacementBundle, replaceByDefault, mustReplaceNonce, onBroadcastedTxn, onDismiss, gasTankState }) {
   // NOTE: this can be refactored at a top level to only pass the selected account (full object)
   // keeping it that way right now (selectedAcc, accounts) cause maybe we'll need the others at some point?
   const account = accounts.find(x => x.id === selectedAcc)
@@ -124,8 +124,8 @@ export default function SendTransaction({ relayerURL, accounts, network, selecte
   return (<SendTransactionWithBundle
     relayerURL={relayerURL}
     bundle={bundle}
-    replacementBundle={replacementBundle}
     replaceByDefault={replaceByDefault}
+    mustReplaceNonce={mustReplaceNonce}
     network={network}
     account={account}
     resolveMany={resolveMany}
@@ -135,7 +135,7 @@ export default function SendTransaction({ relayerURL, accounts, network, selecte
   />)
 }
 
-function SendTransactionWithBundle({ bundle, replacementBundle, replaceByDefault, network, account, resolveMany, relayerURL, onBroadcastedTxn, onDismiss, gasTankState }) {
+function SendTransactionWithBundle({ bundle, replaceByDefault, mustReplaceNonce, network, account, resolveMany, relayerURL, onBroadcastedTxn, onDismiss, gasTankState }) {
   const currentAccGasTankState = network.isGasTankAvailable ? 
     gasTankState.find(i => i.account === account.id) : 
     { account: account.id, isEnabled: false }
@@ -412,11 +412,12 @@ function SendTransactionWithBundle({ bundle, replacementBundle, replaceByDefault
 
   const accountAvatar = blockies.create({ seed: account.id }).toDataURL()
 
-  // Allow actions either on regular tx or replacement/speed tx, when not mined
-  const canProceed = replacementBundle
+  // `mustReplaceNonce` is set on speedup/cancel, to prevent the user from broadcasting the txn if the same nonce has been mined
+  const isInt = x => !isNaN(x) && x !== null
+  const canProceed = isInt(mustReplaceNonce)
     ? (
-      !isNaN(estimation?.nextNonce?.nextNonMinedNonce)
-        ? bundle.nonce >= estimation?.nextNonce?.nextNonMinedNonce
+      isInt(estimation?.nextNonce?.nextNonMinedNonce)
+        ? mustReplaceNonce >= estimation?.nextNonce?.nextNonMinedNonce
         : null // null = waiting to get nonce data from relayer
     )
     : true
@@ -510,8 +511,8 @@ function SendTransactionWithBundle({ bundle, replacementBundle, replaceByDefault
           </div>
 
          {
-            // If there's `replacementBundle`, it means we're cancelling or speeding up, so this shouldn't even be visible
-            !replacementBundle && !!estimation?.nextNonce?.pendingBundle &&
+            // If there's `bundle.nonce` set, it means we're cancelling or speeding up, so this shouldn't even be visible
+            !bundle.nonce && !!estimation?.nextNonce?.pendingBundle &&
             (
               <div>
                <Checkbox
@@ -524,8 +525,8 @@ function SendTransactionWithBundle({ bundle, replacementBundle, replaceByDefault
           }
 
           {
-            // @TODO: wrong logic: this shouldn't depend on replacementBundle, but instead on mustReplaceNonce
-            replacementBundle &&
+            // @TODO: wrong logic: this shouldn't depend on bundle.nonce, but instead on mustReplaceNonce
+            bundle.nonce &&
             <>
 
               {
