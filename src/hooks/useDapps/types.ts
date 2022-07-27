@@ -1,4 +1,6 @@
 
+import { AmbireDappManifest } from 'wallet-dapp-catalog'
+
 export type UseStorageProps<ValueType> = {
     storage: Storage
     key: string
@@ -25,16 +27,19 @@ export type DappType =
     | 'walletconnect'
     | 'custom'
 
-// TODO: extend gnosis manifest and add ambire wallet specific props
-export interface DappManifestData {
-    name: string,
-    title: string,
-    url: string,
-    logo: string,
-    description: string,
-    type: DappType,
-    networks: Array<string>,
-}
+// // TODO: extend gnosis manifest and add ambire wallet specific props
+// export interface DappManifestData {
+//     name: string,
+//     title: string,
+//     url: string,
+//     logo: string,
+//     description: string,
+//     type: DappType,
+//     networks: Array<string>,
+// }
+
+
+export type DappManifestData = AmbireDappManifest
 
 export type DappCatalog = Array<DappManifestData>
 
