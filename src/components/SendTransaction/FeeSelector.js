@@ -82,13 +82,13 @@ const WalletDiscountBanner = ({ currenciesItems, tokens, estimation, onFeeCurren
   )
 }
 
-const mapGasTankTokens = nativePrice => item => { 
-  const nativeRate = item.address === '0x0000000000000000000000000000000000000000' ? null : nativePrice / item.price 
-  return { 
-    ...item, 
-    symbol: item.symbol.toUpperCase(), 
+const mapGasTankTokens = nativePrice => item => {
+  const nativeRate = item.address === '0x0000000000000000000000000000000000000000' ? null : nativePrice / item.price
+  return {
+    ...item,
+    symbol: item.symbol.toUpperCase(),
     balance: ethers.utils.parseUnits(
-      item.balance.toFixed(item.decimals).toString(), 
+      item.balance.toFixed(item.decimals).toString(),
       item.decimals
     ).toString(),
     nativeRate
