@@ -9,6 +9,14 @@ import { useToasts } from 'hooks/toasts'
 import { useRelayerData } from 'hooks'
 import { fetchGet } from 'lib/fetch'
 
+const netAssets = {
+	'ethereum': 'ETH',
+	'binance-smart-chain': 'BSC',
+	'polygon': 'MATIC',
+	'fantom': 'FTM',
+	'avalanche': 'AVAX'
+}
+
 const GuardarianDepositProviderModal = ({ relayerURL, selectedNetwork, account, portfolio }) => {
     const { hideModal } = useModals()
     const { addToast } = useToasts()
