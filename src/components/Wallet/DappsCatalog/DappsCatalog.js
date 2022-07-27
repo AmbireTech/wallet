@@ -34,7 +34,7 @@ const DappsCatalog = ({ network, dappsCatalog, selectedAcc, gnosisConnect, gnosi
               return (
                 <div className='tooltipNetwork'>
                   <span className='tooltipNetwork-icon'
-                    style={{ backgroundImage: `url(${network.icon})` }}>
+                    style={{ backgroundImage: `url(${network.iconUrl})` }}>
                   </span>
                   <span>
                     {network.name}
@@ -57,7 +57,7 @@ const DappsCatalog = ({ network, dappsCatalog, selectedAcc, gnosisConnect, gnosi
   }, [toggleFavorite])
 
   const openDapp = (item) => {
-    if (item.type === 'integrated') {
+    if (item.connectionType === 'gnosis') {
       loadCurrentDappData(item)
     } else {
       window.open(item.url, '_blank')
@@ -103,10 +103,10 @@ const DappsCatalog = ({ network, dappsCatalog, selectedAcc, gnosisConnect, gnosi
                   }</span>
                   <div className='logoSplit'>
                     <div className='logo'>
-                      <img src={item.logo} alt={item.name} />
+                      <img src={item.iconUrl} alt={item.name} />
                     </div>
                     <div className='content'>
-                      <span className='title'>{item.title}</span>
+                      <span className='title'>{item.name}</span>
                       <span className='description'>{item.description}</span>
                     </div>
                   </div>
@@ -139,7 +139,7 @@ const DappsCatalog = ({ network, dappsCatalog, selectedAcc, gnosisConnect, gnosi
                     }
 
                     <div className='tag-row tag-types'>
-                      <span className={`tag type-tag type-tag-${item.type}`}>{item.type}</span>
+                      <span className={`tag type-tag type-tag-${item.category}`}>{item.category}</span>
                     </div>
                   </div>
 
