@@ -101,14 +101,16 @@ const DappsCatalog = ({ network, dappsCatalog, selectedAcc, gnosisConnect, gnosi
                       ? <AiFillStar />
                       : <AiOutlineStar />
                   }</span>
-                  <div className='logoSplit'>
-                    <div className='logo'>
-                      <img src={item.iconUrl} alt={item.name} />
+                  <div className='base-info'>
+                    <div className='logoSplit'>
+                      <div className='logo'>
+                        <img src={item.iconUrl} alt={item.name} />
+                      </div>
+                      <div className='content'>
+                        <span className='title'>{item.name}</span>
+                      </div>
                     </div>
-                    <div className='content'>
-                      <span className='title'>{item.name}</span>
-                      <span className='description'>{item.description}</span>
-                    </div>
+                    <div className='description'>{item.description}</div>
                   </div>
 
                   <div className='aligned-tag-rows'>

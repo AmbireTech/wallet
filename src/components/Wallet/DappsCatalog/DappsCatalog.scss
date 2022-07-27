@@ -1,6 +1,7 @@
 @import 'variables.scss';
 $WCBlue: #0078db;
 $faveColor: #FFFF00;
+$gap: 12px;
 
 #dappCatalog {
   height: 100%;
@@ -8,14 +9,15 @@ $faveColor: #FFFF00;
   position: relative;
 
   .filter-section {
-    margin-bottom: 24px;
+    margin-bottom: ($gap * 2);
 
     .categories {
-      padding-top: 12px;
+      margin-top: $gap * 2;
       display: flex;
+      flex-wrap: wrap;
       align-items: flex-end;
       justify-content: flex-end;
-      gap: 12px;
+      gap: $gap;
 
       .category {
         cursor: pointer;
@@ -59,19 +61,23 @@ $faveColor: #FFFF00;
   }
 
   .catalogItems {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 12px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr [col-start]);
+    gap: $gap;
 
     .catalogItem {
       cursor: pointer;
-      flex: 1 1 30%;
-      max-width: 33.333333%;
-      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: $gap;
+      padding: 12px;
+      padding-top: 20px;
       background-color: $input-background-color;
       border:1px solid transparent;
       transition: 100ms;
       position: relative;
+      overflow: hidden;
 
       .favorite {
         position: absolute;
@@ -109,7 +115,9 @@ $faveColor: #FFFF00;
 
       .logoSplit {
         display: flex;
-        gap: 16px;
+        flex-direction: row;
+        align-items: flex-end;
+        gap: $gap;
 
         .logo {
           min-width: 48px;
@@ -134,11 +142,12 @@ $faveColor: #FFFF00;
       .title {
         font-weight: bold;
         display: block;
-        font-size: 1.1em;
+        font-size: 1em;
       }
 
       .description {
-        font-size: 0.95em;
+        margin-top: $gap;
+        font-size: 0.9em;
         color: $text-container-color;
       }
 
@@ -185,7 +194,7 @@ $faveColor: #FFFF00;
         }
 
         .tag {
-          background-color: mix($secondary-accent-color, $input-background-color, 30%);
+          // background-color: mix($secondary-accent-color, $input-background-color, 30%);
           border: 1px solid $secondary-accent-color;
           color: mix($secondary-accent-color, $text-color, 70%);
           padding: 1px 4px;
@@ -193,7 +202,7 @@ $faveColor: #FFFF00;
           border-radius: 32px;
 
           &.type-tag-walletconnect {
-            background-color: mix($WCBlue, $input-background-color, 30%);
+            // background-color: mix($WCBlue, $input-background-color, 30%);
             border: 1px solid $WCBlue;
             color: mix($WCBlue, $text-color, 70%);
           }
@@ -254,13 +263,28 @@ $faveColor: #FFFF00;
   }
 }
 
-@media screen and (max-width: $mobile-breakpoint-max-width) {
+@media screen and (max-width: $small-breakpoint-max-width) {
   #dappCatalog {
     .catalogItems {
-      .catalogItem {
-        flex-basis: 100%;
-        max-width: 100%;
-      }
+      grid-template-columns: repeat(3, 1fr [col-start]);
     }
   }
 }
+
+@media screen and (max-width: 1000px) {
+  #dappCatalog {
+    .catalogItems {
+      grid-template-columns: repeat(2, 1fr [col-start]);
+    }
+  }
+}
+
+@media screen and (max-width: $mobile-breakpoint-max-width) {
+  #dappCatalog {
+    .catalogItems {
+      grid-template-columns: repeat(1, 1fr [col-start]);
+    }
+  }
+}
+
+
