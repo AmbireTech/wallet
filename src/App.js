@@ -36,7 +36,11 @@ import { Contract, utils } from 'ethers'
 import { getProvider } from './lib/provider'
 import allNetworks from './consts/networks'
 
-const relayerURL = process.env.hasOwnProperty('REACT_APP_RELAYER_URL') ? process.env.REACT_APP_RELAYER_URL : 'http://localhost:1934'
+const relayerURL = process.env.REACT_APP_RELAYRLESS === 'true' 
+                  ? null 
+                  : process.env.hasOwnProperty('REACT_APP_RELAYER_URL')
+                    ? process.env.REACT_APP_RELAYER_URL 
+                    : 'http://localhost:1934'
 
 setTimeout(() => {
   //console.warn('☢️ If you do, malicious code could steal your funds! ☢️')
