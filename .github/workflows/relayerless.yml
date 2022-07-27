@@ -41,11 +41,11 @@ jobs:
       with:
         name: production-files
         path: ./build
-  deploy-gastank:
-    name: Deploy gastank
+  deploy-relayerless:
+    name: Deploy relayerless
     needs: build
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/gas-tank-page'
+    if: github.ref == 'refs/heads/relayerless'
     steps:
     - name: Download artifact
       env:
