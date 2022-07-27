@@ -519,7 +519,7 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, mustReplaceNonce,
                 feeSpeed={feeSpeed}
                 setFeeSpeed={setFeeSpeed}
                 onDismiss={onDismiss}
-                isGasTankEnabled={!!currentAccGasTankState.isEnabled}
+                isGasTankEnabled={currentAccGasTankState.isEnabled && !!relayerURL}
               ></FeeSelector>
             }
 
@@ -600,7 +600,7 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, mustReplaceNonce,
                         cancelSigning={() => setSigningStatus(null)}
                         signingStatus={signingStatus}
                         feeSpeed={feeSpeed}
-                        isGasTankEnabled={currentAccGasTankState.isEnabled}
+                        isGasTankEnabled={currentAccGasTankState.isEnabled && !!relayerURL}
                         network={network}
                       />
                     </div>
