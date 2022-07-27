@@ -1,6 +1,6 @@
 import { useState, useCallback, useMemo, useEffect } from 'react'
 import { UseDappsProps, UseDappsReturnType, DappManifestData, Category } from './types'
-import { DEFAULT_CATALOG } from './catalogs'
+import getWalletDappCatalog from 'wallet-dapp-catalog'
 
 
 const CATEGORIES: Array<Category> = [
@@ -10,11 +10,11 @@ const CATEGORIES: Array<Category> = [
     },
     {
         name: 'integrated',
-        filter: (f: any) => f.type === 'integrated'
+        filter: (f: any) => f.connectionType === 'gnosis'
     },
     {
         name: 'walletconnect',
-        filter: (f: any) => f.type === 'walletconnect'
+        filter: (f: any) => f.connectionType === 'walletconnect'
     },
     {
         name: 'favorites',
@@ -22,9 +22,12 @@ const CATEGORIES: Array<Category> = [
     }
 ]
 
+const withCategory = (dapp: DappManifestData) => ({...dapp, category: dapp.connectionType === 'gnosis' ? 'integrated' : dapp.connectionType}) 
+
 export default function useDapps({ useStorage }: UseDappsProps): UseDappsReturnType {
 
     const categories = useMemo(() => CATEGORIES, [])
+    const defaultCatalog = useMemo(() => getWalletDappCatalog(), [])
 
     const [isDappMode, setIsDappMode] = useStorage<boolean>({ key: 'isDappMode' })
     const [sideBarOpen, setSideBarOpen] = useState(false)
@@ -40,8 +43,8 @@ export default function useDapps({ useStorage }: UseDappsProps): UseDappsReturnT
 
 
     const catalog = useMemo(() =>
-        [...DEFAULT_CATALOG, ...customDapps]
-        , [customDapps])
+        [...defaultCatalog, ...customDapps].map(withCategory)
+        , [customDapps, defaultCatalog])
 
     const [filteredCatalog, setFilteredItems] = useState(catalog)
 
@@ -83,11 +86,11 @@ export default function useDapps({ useStorage }: UseDappsProps): UseDappsReturnT
         setFavorites(updated)
     }, [favorites, setFavorites])
 
-    const onCategorySelect = useCallback((category: Category) => {    
+    const onCategorySelect = useCallback((category: Category) => {
         setCategoryFilter(category)
     }, [])
 
-    const onSearchChange = useCallback((val: string | null) => {    
+    const onSearchChange = useCallback((val: string | null) => {
         setSearch(val)
     }, [])
 
@@ -100,7 +103,7 @@ export default function useDapps({ useStorage }: UseDappsProps): UseDappsReturnT
                 match = categoryFilter.filter(item, favorites)
             }
             if (search && match) {
-                match = item.title.toLowerCase().includes(search?.toLowerCase())
+                match = item.name.toLowerCase().includes(search?.toLowerCase())
             }
             return match
         }))
