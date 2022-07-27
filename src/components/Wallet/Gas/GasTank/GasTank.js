@@ -49,6 +49,7 @@ const GasTank = ({ network,
     const { data: executedTxnsRes } = useRelayerData(urlGetTransactions)
     
     const gasTankBalances = balancesRes && balancesRes.length && balancesRes.map(({balanceInUSD}) => balanceInUSD).reduce((a, b) => a + b, 0)
+    const gasTankBalancesFormatted = gasTankBalances ? formatFloatTokenAmount(gasTankBalances, true, 2) : '0.00'
     const gasTankTxns = executedTxnsRes && executedTxnsRes.txns.length && executedTxnsRes.txns.filter(item => !!item.gasTankFee)
     const feeAssetsPerNetwork = feeAssetsRes && feeAssetsRes.length && feeAssetsRes.filter(item => item.network === network.id)
     const executedTxns = executedTxnsRes && executedTxnsRes.txns.length && executedTxnsRes.txns
@@ -196,9 +197,9 @@ const GasTank = ({ network,
             <div className='heading-wrapper'>
                 <div className="balance-wrapper" style={{ cursor: 'pointer' }} onClick={openGasTankBalanceByTokensModal}>
                     <span><GiGasPump/> Balance on All Networks</span>
-                    { !isLoading ?
-                        (<div className='inner-wrapper-left'>
-                            <span>$ </span>{ gasTankBalances ? formatFloatTokenAmount(gasTankBalances, true, 2) : '0.00' }
+                    { (!isLoading && gasTankBalances) ?
+                        (<div className={ (gasTankBalancesFormatted.length > 6)? 'inner-wrapper-left small-font' : 'inner-wrapper-left' } >
+                            <span>$ </span>{ gasTankBalancesFormatted }
                         </div>) : 
                         <Loading /> }
                     {/* TODO: Add functionality for drag and drop */}
@@ -289,7 +290,7 @@ const GasTank = ({ network,
                     gasTankFilledTxns && gasTankFilledTxns.length ? gasTankFilledTxns.map((item, key) => {
                         const tokenDetails = feeAssetsRes && feeAssetsRes.length ? 
                             feeAssetsRes.find(({address, network}) => address.toLowerCase() === item.address.toLowerCase() && network === item.network) : null
-                    
+                        if (!tokenDetails) return null // txn to gas Tank with not eligible token
                         return (
                             <div key={key} className="txns-item-wrapper">
                                 <div className='logo'><GiGasPump size={20} /></div>
@@ -314,7 +315,7 @@ const GasTank = ({ network,
                                     </a>
                                 </div>
                             </div>)
-                    }) : <p>No top ups were made to Gas Tank on {network.id.toUpperCase()}</p>
+                    }).filter(r => r) : <p>No top ups were made to Gas Tank on {network.id.toUpperCase()}</p>
                 }
             </div>
         </div>
