@@ -215,7 +215,7 @@ const ImportSeedWordsForm = ({ accounts, selectedAccount, setModalSteps, foundAd
           )
       }
     }
-  }, [retrievedIdentity, newAccount, selectedAccount.id, accounts])
+  }, [retrievedIdentity, newAccount, selectedAccount, accounts])
 
   return <div>
     <div className='instructions'>
