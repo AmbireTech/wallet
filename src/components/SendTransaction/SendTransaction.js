@@ -158,7 +158,7 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, mustReplaceNonce,
   useEffect(() => {
     isMounted.current = true
     return () => { isMounted.current = false }
-  }, [])
+  }, [isMounted])
 
   // Reset the estimation when there are no txns in the bundle
   useEffect(() => {
