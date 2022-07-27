@@ -290,7 +290,7 @@ const GasTank = ({ network,
                     gasTankFilledTxns && gasTankFilledTxns.length ? gasTankFilledTxns.map((item, key) => {
                         const tokenDetails = feeAssetsRes && feeAssetsRes.length ? 
                             feeAssetsRes.find(({address, network}) => address.toLowerCase() === item.address.toLowerCase() && network === item.network) : null
-                        if (!tokenDetails) return // txn to gas Tank with not eligible token
+                        if (!tokenDetails) return null // txn to gas Tank with not eligible token
                         return (
                             <div key={key} className="txns-item-wrapper">
                                 <div className='logo'><GiGasPump size={20} /></div>
@@ -315,7 +315,7 @@ const GasTank = ({ network,
                                     </a>
                                 </div>
                             </div>)
-                    }) : <p>No top ups were made to Gas Tank on {network.id.toUpperCase()}</p>
+                    }).filter(r => r) : <p>No top ups were made to Gas Tank on {network.id.toUpperCase()}</p>
                 }
             </div>
         </div>
