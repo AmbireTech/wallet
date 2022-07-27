@@ -163,21 +163,22 @@ function AppInner() {
   // mustReplaceNonce must always be used together with either replaceByDefault: true or replacementBundle
   const [sendTxnState, setSendTxnState] = useState(() => ({ showing: !!eligibleRequests.length }))
   useEffect(
-    () => setSendTxnState((prev) => ({
+    () => setSendTxnState(prev => ({
       showing: !!eligibleRequests.length,
       // we only keep those if there are transactions, otherwise zero them
-      replaceByDefault: eligibleRequests.length ? prev?.replaceByDefault : null,
-      mustReplaceNonce: eligibleRequests.length ? prev?.mustReplaceNonce : null,
+      replaceByDefault: eligibleRequests.length ? prev.replaceByDefault : null,
+      mustReplaceNonce: eligibleRequests.length ? prev.mustReplaceNonce : null,
     })),
     [eligibleRequests.length]
   )
   const showSendTxns = (replacementBundle, replaceByDefault = false) => setSendTxnState({ showing: true, replacementBundle, replaceByDefault })
   // keep values such as replaceByDefault and mustReplaceNonce; those will be reset on any setSendTxnState/showSendTxns
   // we DONT want to keep replacementBundle - closing the dialog means you've essentially dismissed it
-  const onDismissSendTxns = () => setSendTxnState(prev => ({
+  // also, if you used to be on a replacementBundle, we DON'T want to keep those props
+  const onDismissSendTxns = () => setSendTxnState(prev => (prev.replacementBundle ? { showing: false } : {
     showing: false,
-    replaceByDefault: prev?.replaceByDefault,
-    mustReplaceNonce: prev?.mustReplaceNonce
+    replaceByDefault: prev.replaceByDefault,
+    mustReplaceNonce: prev.mustReplaceNonce
   }))
 
   // Handling message signatures
