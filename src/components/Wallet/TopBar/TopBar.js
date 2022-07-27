@@ -61,7 +61,7 @@ const TopBar = ({
             </ToolTip>
             <div className='dapp-data'>
               <ToolTip label={`Connect to ${currentDappData?.title} with Ambire Wallet`}>
-                <img className='dapp-logo' src={currentDappData?.logo} alt={currentDappData?.title}/>
+                <img className='dapp-logo' src={currentDappData?.iconUrl} alt={currentDappData?.title}/>
               </ToolTip>
               <ToolTip label={`Exit from ${currentDappData?.title}`}>
                 <Button
