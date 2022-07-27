@@ -47,13 +47,10 @@ function Transactions ({ relayerURL, selectedAcc, selectedNetwork, showSendTxns,
   const { data: feeAssets } = useRelayerData(urlGetFeeAssets)
 
   const showSendTxnsForReplacement = useCallback(bundle => {
-    let ids = []
-    
     bundle.txns
       .forEach((txn, index) => {
-        ids.push('replace_' + index) // not to interefere with pending ids with existing indexes
         addRequest({
-          id: ids[ids.length - 1],
+          id: 'replace_'+index,
           chainId: selectedNetwork.chainId,
           account: selectedAcc,
           type: 'eth_sendTransaction',
@@ -65,11 +62,7 @@ function Transactions ({ relayerURL, selectedAcc, selectedNetwork, showSendTxns,
         })
       })
 
-    // need to explicitly compare the bundle.nonce we want to modify
-    let replacementBundle = new Bundle({...bundle})
-    replacementBundle.replacedRequestIds = ids // adding props for resolveMany, in case of rejection/validation in SendTransaction
-
-    setSendTxnState({ showing: true, replacementBundle })
+    setSendTxnState({ showing: true, replaceByDefault: true, mustReplaceNonce: bundle.nonce })
   }, [addRequest, selectedNetwork, selectedAcc, setSendTxnState])
 
   const maxBundlePerPage = 10
@@ -93,7 +86,8 @@ function Transactions ({ relayerURL, selectedAcc, selectedNetwork, showSendTxns,
   const removeFeeTxnFromBundleIfGasTankDisabled = bundle => !bundle.gasTankFee ?  { ...bundle, txns: bundle.txns.slice(0, -1) } : bundle
 
   // @TODO: visualize other pending bundles
-  const firstPending = data && data.txns.find(x => !x.executed && !x.replaced)
+  const allPending = data && data.txns.filter(x => !x.executed && !x.replaced)
+  const firstPending = allPending && allPending[0]
 
   const mapToBundle = (relayerBundle, extra = {}) => (new Bundle({
     ...relayerBundle,
@@ -103,9 +97,13 @@ function Transactions ({ relayerURL, selectedAcc, selectedNetwork, showSendTxns,
     minFeeInUSDPerGas: relayerBundle.feeInUSDPerGas * RBF_THRESHOLD,
     ...extra
   }))
-  const cancelByReplacing = relayerBundle => showSendTxns(mapToBundle(relayerBundle, {
-    txns: [[selectedAcc, '0x0', '0x']],
-  }))
+  const cancelByReplacing = relayerBundle => setSendTxnState({
+    showing: true,
+    replacementBundle: mapToBundle(relayerBundle, {
+      txns: [[selectedAcc, '0x0', '0x']],
+    }),
+    mustReplaceNonce: relayerBundle.nonce.num
+  })
   const cancel = relayerBundle => {
     // @TODO relayerless
     mapToBundle(relayerBundle).cancel({ relayerURL, fetch })
@@ -128,7 +126,11 @@ function Transactions ({ relayerURL, selectedAcc, selectedNetwork, showSendTxns,
   }
 
   // @TODO: we are currently assuming the last txn is a fee; change that (detect it)
-  const speedup = relayerBundle => showSendTxns(mapToBundle(removeFeeTxnFromBundleIfGasTankDisabled(relayerBundle)))
+  const speedup = relayerBundle => setSendTxnState({
+    showing: true,
+    replacementBundle: mapToBundle(removeFeeTxnFromBundleIfGasTankDisabled(relayerBundle)),
+    mustReplaceNonce: relayerBundle.nonce.num
+  })
   const replace = relayerBundle => showSendTxnsForReplacement(mapToBundle(removeFeeTxnFromBundleIfGasTankDisabled(relayerBundle)))
 
   const paginationControls = (
@@ -183,6 +185,7 @@ function Transactions ({ relayerURL, selectedAcc, selectedNetwork, showSendTxns,
           </div>
         </div>
       </div>) }
+      {allPending && allPending.length > 1 && (<h4>NOTE: There are a total of {allPending.length} pending transaction bundles.</h4>)}
 
       <div id="confirmed" className="panel">
         <div className="panel-heading">
