@@ -217,6 +217,12 @@
       display: none;
     }
 
+    &.dapp-mode {
+      nav {
+        height: 0;
+      }
+    }
+
     nav {
       z-index: 49;
       height: $sidebar-mobile-height;
@@ -229,7 +235,7 @@
       flex-direction: row;
       justify-content: space-between;
 
-      .item {
+       .item {
         gap: 0;
         height: 100%;
         width: 95px;

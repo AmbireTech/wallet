@@ -71,6 +71,10 @@
         padding-right: 10px;
         padding-bottom: 10px;
         overflow-y: auto;
+
+        &.dapp-mode {
+            bottom: 0  !important;
+        }
     }
 }
 
