@@ -1,3 +1,5 @@
+@import 'variables.scss';
+
 #guardarian-modal {
     .content {
         height: 550px;
@@ -11,16 +13,23 @@
         }
 
         .amount {
-            width: 50%;
+            width: 55%;
             // flex-grow: 4;
         }
 
         .currency {
             .select {
-                min-width: 50px;
+                min-width: 45px;
             }
-            width: 50%;
+            width: 45%;
             // flex-grow: 1;
+        }
+
+        .loading-wrapper {
+            margin-top: 30.5px;
+            height: 50px;
+            width: 100%;
+            background-color: $input-background-color;
         }
     }
 }

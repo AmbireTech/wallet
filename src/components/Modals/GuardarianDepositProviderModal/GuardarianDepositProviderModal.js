@@ -1,7 +1,7 @@
 import './GuardarianDepositProviderModal.scss'
 
 
-import { Button, Loading, Modal, TextInput, Select, NumberInput } from 'components/common'
+import { Button, Loading, Modal, TextInput, Select } from 'components/common'
 import { useEffect, useState, useRef, useCallback } from 'react'
 import { MdOutlineClose } from 'react-icons/md'
 import { useModals } from 'hooks'
@@ -17,6 +17,8 @@ const netAssets = {
 	'avalanche': 'AVAX'
 }
 
+const geFiatLogo = ticker => `https://changenow.io/images/sprite/currencies/${ticker.toLowerCase()}.svg`
+
 const GuardarianDepositProviderModal = ({ relayerURL, selectedNetwork, account, portfolio }) => {
     const { hideModal } = useModals()
     const { addToast } = useToasts()
@@ -24,11 +26,12 @@ const GuardarianDepositProviderModal = ({ relayerURL, selectedNetwork, account, 
     const [loading, setLoading] = useState(false)
     const [showError, setShowError] = useState(false)
     const [disabled, setDisabled] = useState(false)
+    const [minMaxRange, setMinMaxRange] = useState(null)
     //TODO: All the logic should be extract in a hook
     // get Fiat Currencies
     const urlFiatCurrencies = `${relayerURL}/guardarian/currencies/fiat`
     const { data: fiatCurrencies, errMsg: errFiatCurrencies, isLoading: isFiatReqLoading } = useRelayerData(urlFiatCurrencies)
-    const fiatCurrenciesLabels = (fiatCurrencies && fiatCurrencies.length) ? fiatCurrencies.map(i => {return { label: i.ticker, value: i.ticker, icon: i.logo_url }}) : []
+    const fiatCurrenciesLabels = (fiatCurrencies && fiatCurrencies.length) ? fiatCurrencies.map(i => {return { label: i.ticker, value: i.ticker, icon: i.logo_url || geFiatLogo(i.ticker) } }) : []
     const [selectedFiatCurrency, setSelectedFiatCurrency] = useState((fiatCurrenciesLabels && fiatCurrenciesLabels.length) ? fiatCurrenciesLabels[0] : '')
 
     // get Crypto Currencies
@@ -41,9 +44,10 @@ const GuardarianDepositProviderModal = ({ relayerURL, selectedNetwork, account, 
     //estimate
     const estimate = useCallback(async amount => {
         if (!amount) return
+        setLoading(true)
         const url = `${relayerURL}/guardarian/estimate/${selectedFiatCurrency}/${selectedNetwork}/${amount}/${selectedCryptoCurrency}/${selectedNetwork}`
         const res = await fetchGet(url)
-        console.log('resEST', res)
+        setLoading(false)
         return res
     }, [relayerURL, selectedCryptoCurrency, selectedFiatCurrency, selectedNetwork])
 
@@ -55,22 +59,25 @@ const GuardarianDepositProviderModal = ({ relayerURL, selectedNetwork, account, 
         if (timer.current) {
             clearTimeout(timer.current)
         }
+        
+        if (minMaxRange && (parseFloat(amount) >= parseFloat(minMaxRange.min)) && 
+            (parseFloat(amount) <= parseFloat(minMaxRange.max))) {
+            const getEstimate = async amount => {
+                const estimationRes = await estimate(amount)
+                if (estimationRes) setEstimationResp(estimationRes)
+                timer.current = null
+            }
 
-        const getEstimate = async amount => {
-            const estimationRes = await estimate(amount)
-            if (estimationRes) setEstimationResp(estimationRes)
-            timer.current = null
-        }
-
-        timer.current = setTimeout(async () => {
-            return getEstimate(amount).catch(console.error)
-        }, 300)
-
+            timer.current = setTimeout(async () => {
+                return getEstimate(amount).catch(console.error)
+            }, 300)
+        } else setEstimationResp(null)
+        
         return () => clearTimeout(timer.current)
-    }, [amount, estimate, relayerURL, selectedCryptoCurrency, selectedFiatCurrency, selectedNetwork])
+    }, [amount, estimate, minMaxRange, relayerURL, selectedCryptoCurrency, selectedFiatCurrency, selectedNetwork])
 
     // market info (min-max range)
-    const [minMaxRange, setMinMaxRange] = useState(null)
+    
     const getMarketInfo = useCallback(async fromTo => {
         if (!fromTo) return
         const url = `${relayerURL}/guardarian/market-info/${fromTo}`
@@ -83,7 +90,7 @@ const GuardarianDepositProviderModal = ({ relayerURL, selectedNetwork, account, 
         let fromTo = null
         const getMarket = async fromTo => {
             const minMaxRangeResp = await getMarketInfo(fromTo)
-            if (minMaxRangeResp) setMinMaxRange(minMaxRangeResp)
+            if (minMaxRangeResp) setMinMaxRange(minMaxRangeResp.data)
         }
         if (selectedFiatCurrency && selectedCryptoCurrency) fromTo = `${selectedFiatCurrency}_${selectedCryptoCurrency}-${netAssets[selectedNetwork]}` 
         if (fromTo) {
@@ -95,11 +102,19 @@ const GuardarianDepositProviderModal = ({ relayerURL, selectedNetwork, account, 
     const handleBuySellBtnClicked = () => {
 
     }
-
+    const [validationMsg, setValidationMsg] = useState('')
     const onInputAmount = value => {
-        // TODO: Add validation min-max range here
         setAmount(value)
     }
+
+    useEffect(() => {
+        if (minMaxRange && (parseFloat(amount) < parseFloat(minMaxRange.min))) {
+            setValidationMsg(`Minimum amount is ${minMaxRange.min} ${minMaxRange.from}`)
+        } else if (minMaxRange && (parseFloat(amount) > parseFloat(minMaxRange.max))) {
+            setValidationMsg(`Maximum amount is ${minMaxRange.max} ${minMaxRange.from}`)
+        } else {
+            setValidationMsg('')}
+    }, [amount, minMaxRange])
 
     const buttons = <>
         <Button clear icon={<MdOutlineClose/>} onClick={() => hideModal()}>Close</Button>
@@ -111,7 +126,7 @@ const GuardarianDepositProviderModal = ({ relayerURL, selectedNetwork, account, 
             {/* Add Form here */}
             <div className='input-currencies-wrapper'>
                 <div className='amount'>
-                    <NumberInput
+                    <TextInput
                         label="You send"
                         placeholder="Input amount"
                         onInput={onInputAmount}
@@ -121,20 +136,25 @@ const GuardarianDepositProviderModal = ({ relayerURL, selectedNetwork, account, 
                     <Select searchable defaultValue={selectedFiatCurrency} items={fiatCurrenciesLabels.sort((a, b) => a > b ? 1 : -1)} onChange={({ value }) => setSelectedFiatCurrency(value)}/>
                 </div>
             </div>
+            { (validationMsg !== '') && (<p style={{ color: 'red' }}>{ validationMsg }</p>)  }
             <p>Estimation rate: { estimationResp && estimationResp.success ? (`1 ${estimationResp.data.from_currency} ≈ ${estimationResp.data.estimated_exchange_rate} ${estimationResp.data.to_currency}`) : ''}</p>
             <div className='input-currencies-wrapper'>
                 <div className='amount'>
                     {/* TODO: add loading while estimates */}
-                    <TextInput
-                        value={(estimationResp && estimationResp.success) ? estimationResp.data.value : '-'}
-                        disabled
-                        label="You get"
-                    />
+                    { !loading ?
+                         (<TextInput
+                            value={(estimationResp && estimationResp.success) ? estimationResp.data.value : '-'}
+                            disabled
+                            label="You get"
+                        />) : 
+                        (<div className='loading-wrapper'><Loading /> </div>
+                    )}
                 </div>
                 <div className='currency'>
                     <Select searchable defaultValue={selectedCryptoCurrency} items={cryptoCurrenciesLabels.sort((a, b) => a > b ? 1 : -1)} onChange={({ value }) => setSelectedCryptoCurrency(value)}/>
                 </div>
             </div>
+        {/* { loading && <Loading />} */}
             
         </Modal>
     )
