@@ -4,20 +4,23 @@ import GnosisSafeAppIframe from 'components/Plugins/GnosisSafeApps/GnosisSafeApp
 import './DappsCatalog.scss'
 import { useCallback, Fragment } from 'react'
 import { MdInfo, MdSearch } from 'react-icons/md'
-import { AiOutlineStar, AiFillStar, AiOutlineClose } from 'react-icons/ai'
+import { AiOutlineStar, AiFillStar } from 'react-icons/ai'
 import { Button } from 'components/common'
 import DAPPS_ICON from 'resources/dapps.svg'
+import { AddCustomDappModal } from 'components/Modals'
+import { useModals } from 'hooks'
 
 
 const DappsCatalog = ({ network, dappsCatalog, selectedAcc, gnosisConnect, gnosisDisconnect }) => {
 
   const { isDappMode, currentDappData, toggleFavorite, favorites, filteredCatalog, onCategorySelect, categoryFilter, search, onSearchChange, categories, loadCurrentDappData } = dappsCatalog
+  const { showModal } = useModals()
 
   const sortFiltered = useCallback((filteredItems) => {
     return filteredItems.map(item => {
       return {
         ...item,
-        supported: !item.networks.length || !!item.networks.find(supported => supported === network.id)
+        supported: !item.networks?.length || !!item.networks?.find(supported => supported === network.id)
       }
     }).sort((a, b) => {
       return b.supported - a.supported
@@ -65,6 +68,8 @@ const DappsCatalog = ({ network, dappsCatalog, selectedAcc, gnosisConnect, gnosi
     }
   }
 
+  const openCustomDappModal = useCallback(() => showModal(<AddCustomDappModal dappsCatalog={dappsCatalog} />), [dappsCatalog, showModal])
+
   return (
     <section id='dappCatalog'>
       {isDappMode && currentDappData ?
@@ -98,7 +103,7 @@ const DappsCatalog = ({ network, dappsCatalog, selectedAcc, gnosisConnect, gnosi
               <div className='custom-dapp-icon-wrapper'>
                 <img className='custom-dapp-icon' src={DAPPS_ICON} alt='add custom dapps icon' />
               </div>
-              <Button border mini>Add custom dApp</Button>
+              <Button border mini onClick={openCustomDappModal}>Add custom dApp</Button>
             </div>
             {
               sortFiltered(filteredCatalog).map(item => {
