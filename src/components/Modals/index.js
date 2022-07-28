@@ -10,6 +10,7 @@ import HideTokenModel from './HideTokenModal/HideTokenModal'
 import AmbireEarnDetailsModal from './AmbireEarnDetailsModal/AmbireEarnDetailsModal'
 import EarnDetailsModal from './EarnDetailsModal/EarnDetailsModal'
 import AddAddressModal from './AddAddressModal/AddAddressModal'
+import AddCustomDappModal from './AddCustomDappModal/AddCustomDappModal'
 
 export {
     PermissionsModal,
@@ -23,5 +24,6 @@ export {
     HideTokenModel,
     AmbireEarnDetailsModal,
     EarnDetailsModal,
-    AddAddressModal
+    AddAddressModal,
+    AddCustomDappModal
 }
