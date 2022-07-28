@@ -59,7 +59,7 @@ export default function Providers({ walletAddress, networkDetails, relayerURL })
             fees: 'from 0.5%',
             limits: 'up to 15,000 EUR/day',
             currencies: 'GBP, EUR, USD and many more',
-            networks: ['ethereum', 'polygon', 'avalanche', 'arbitrum', 'binance-smart-chain', 'moonriver', 'moonbeam', 'optimism'],
+            networks: ['ethereum', 'polygon', 'avalanche', 'binance-smart-chain', 'fantom'],
             onClick: () => openGuardarian()
         }
     ];
