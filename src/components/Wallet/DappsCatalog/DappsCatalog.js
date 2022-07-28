@@ -6,6 +6,7 @@ import { useCallback, Fragment } from 'react'
 import { MdInfo, MdSearch } from 'react-icons/md'
 import { AiOutlineStar, AiFillStar, AiOutlineClose } from 'react-icons/ai'
 import { Button } from 'components/common'
+import DAPPS_ICON from 'resources/dapps.svg'
 
 
 const DappsCatalog = ({ network, dappsCatalog, selectedAcc, gnosisConnect, gnosisDisconnect }) => {
@@ -92,6 +93,13 @@ const DappsCatalog = ({ network, dappsCatalog, selectedAcc, gnosisConnect, gnosi
           </div>
 
           <div className='catalogItems'>
+            <div className={`catalogItem add-custom-dapp`} >
+              <img className='custom-dapp' src={DAPPS_ICON} alt='add custom dapps' />
+              <div className='custom-dapp-icon-wrapper'>
+                <img className='custom-dapp-icon' src={DAPPS_ICON} alt='add custom dapps icon' />
+              </div>
+              <Button border mini>Add custom dApp</Button>
+            </div>
             {
               sortFiltered(filteredCatalog).map(item => {
                 return <div className={`catalogItem${item.supported ? '' : ' not-supported'}`}

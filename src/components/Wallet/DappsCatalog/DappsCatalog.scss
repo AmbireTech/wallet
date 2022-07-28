@@ -71,18 +71,20 @@ $gap: 12px;
       flex-direction: column;
       justify-content: space-between;
       gap: $gap;
-      padding: 12px;
-      padding-top: 20px;
+      padding: $gap;
+      padding-top: $gap + 14px;
       background-color: $input-background-color;
       border:1px solid transparent;
       transition: 100ms;
       position: relative;
       overflow: hidden;
 
-      .favorite {
+      .favorite, .custom-dapp {
         position: absolute;
         right: 8px;
         top: 8px;
+        height: 14px;
+        width: auto;
         color: mix($text-color, $input-background-color-darker, 20%);
 
         &.selected {
@@ -112,6 +114,24 @@ $gap: 12px;
           }
         }
       }
+
+      &.add-custom-dapp {
+        align-items: center;
+        gap: $gap * 2;
+        .custom-dapp-icon-wrapper {
+          width: 96px;
+          height: 96px;
+          border: 1px dashed #333641;
+          padding: 22px;
+          display: flex;
+          flex-direction: column;
+          align-items: stretch;
+          justify-content: center;
+        }
+        .custom-dapp-icon {
+
+        }
+      } 
 
       .logoSplit {
         display: flex;
@@ -230,7 +250,7 @@ $gap: 12px;
         }
       }
 
-      &:hover {
+      &:hover:not(.add-custom-dapp) {
         background-color: mix($input-background-color, #FFF, 98%);
         border:1px solid $ambire-dark-blue;
       }
