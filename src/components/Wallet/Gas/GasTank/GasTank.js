@@ -141,7 +141,7 @@ const GasTank = ({ network,
             const logo = failedImg.includes(img) ? getTokenIcon(network, address) : img
                 
             return (<div className="token" key={`token-${address}-${index}`}
-                disabled={balanceUSD === 0}
+                disabled={balance === 0}
                 draggable={category === 'tokens' && sortedTokensLength > 1 && sortType === 'custom' && !isMobileScreen}
                 onDragStart={(e) => {
                     if (handle.current === target.current || handle.current.contains(target.current)) dragStart(e, index)
