@@ -12,6 +12,7 @@ import * as blockies from 'blockies-ts'
 import { useToasts } from 'hooks/toasts'
 import { getWallet } from 'lib/getWallet'
 import accountPresets from 'consts/accountPresets'
+import { networkIconsById } from 'consts/networks'
 import { FeeSelector, FailingTxn } from './FeeSelector'
 import Actions from './Actions'
 import TxnPreview from 'components/common/TxnPreview/TxnPreview'
@@ -501,7 +502,7 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, mustReplaceNonce,
                 </div>
                 <div className='network'>
                   on
-                  <div className='icon' style={{ backgroundImage: `url(${network.icon})` }}/>
+                  <div className='icon' style={{ backgroundImage: `url(${networkIconsById[network.id]})` }}/>
                   <div className='address'>{ network.name }</div>
                 </div>
               </div>
