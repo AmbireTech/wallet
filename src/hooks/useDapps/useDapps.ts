@@ -75,7 +75,9 @@ export default function useDapps({ useStorage }: UseDappsProps): UseDappsReturnT
     const removeCustomDapp = useCallback((dapp: DappManifestData) => {
         const index = customDapps.findIndex(x => x.id === dapp.id)
         if (index >= 0) {
-            updateCustomDapps([...customDapps].splice(index, 1))
+            const updated = [...customDapps]
+            updated.splice(index, 1)
+            updateCustomDapps(updated)
         }
     }, [customDapps, updateCustomDapps])
 
