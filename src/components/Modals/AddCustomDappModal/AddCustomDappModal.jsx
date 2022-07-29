@@ -11,27 +11,33 @@ const isUrl = (str) => {
     catch (e) { return false }
 }
 
-const getGnosisManifest = async (dAppUrl) => {
+const getManifest = async (dAppUrl) => {
     const url = dAppUrl.toLowerCase().replace(/\/$/, '').replace('/manifest.json', '')
     const manifestUrl = url + '/manifest.json'
 
     const { body } = await fetchCaught(manifestUrl)
 
-    const isGnosisManifest = !!body && body.name && body.description && body.iconPath && body
+    const hasManifest = !!body && body.name
+
+    const isGnosisManifest = hasManifest && body.description && body.iconPath
+    const isStandardManifest = hasManifest && Array.isArray(body.icons) && body.icons.length
 
     const manifest = isGnosisManifest ? {
         ...body,
-        iconUrl: body.iconUrl || url + '/' + body.iconPath.replace(/^\//, '')
-    } : null
+        iconUrl: body.iconUrl || url + '/' + body.iconPath.replace(/^\//, ''),
+        connectionType: 'gnosis'
+    }
+        : isStandardManifest ?
+            {
+                name: body.name,
+                description: body.name,
+                iconUrl: url + '/' + body.icons[0]?.src.replace(/^\//, ''),
+                connectionType: 'walletconnect'
+            }
+            : null
 
 
     return manifest
-}
-
-const isUrlReturnsResponse = async (dAppUrl) => {
-    const { resp, errMsg } = await fetchCaught(dAppUrl)
-    // TODO: detect CORS err - or remove this check
-    return !!resp?.ok
 }
 
 
@@ -43,17 +49,19 @@ const AddCustomDappModal = ({ dappsCatalog }) => {
     const [name, setName] = useState(null)
     const [url, setUrl] = useState(null)
     const [description, setDescription] = useState(null)
+    const [iconUrl, setIconUrl] = useState(null)
+    const [connectionType, setConnectionType] = useState(null)
     const [loading, setLoading] = useState(false)
     const [showExtraData, setShowExtraData] = useState(false)
     const [urlErr, setUrlErr] = useState(null)
-    const [gnosisManifest, setGnosisManifest] = useState(null)
+    const [dappManifest, setDappManifest] = useState(null)
 
 
     const disabled = !name || !url || loading
 
     const addDapp = useCallback(async () => {
         setLoading(true)
-        const manifest = await getGnosisManifest(url)
+        const manifest = await getManifest(url)
 
         if (!manifest) return
 
@@ -70,7 +78,7 @@ const AddCustomDappModal = ({ dappsCatalog }) => {
 
     const onUrlInput = useCallback(async (urlInputStr = '') => {
         setUrl(urlInputStr)
-        setGnosisManifest(null)
+        setDappManifest(null)
         setLoading(true)
         setShowExtraData(false)
         const isValidUrl = isUrl(urlInputStr)
@@ -83,18 +91,16 @@ const AddCustomDappModal = ({ dappsCatalog }) => {
             setUrlErr(null)
         )
 
-        const isValidDapp = await isUrlReturnsResponse(urlInputStr)
+        const manifest = await getManifest(urlInputStr)
 
-        if (!isValidDapp) {
-            setLoading(false)
-            setUrlErr('URL not responding')
-
-            return
+        if (manifest) {
+            setName(manifest.name)
+            setDescription(manifest.description)
+            setIconUrl(manifest.iconUrl)
+            setConnectionType(manifest.connectionType)
         }
 
-        const manifest = await getGnosisManifest(urlInputStr)
-
-        setGnosisManifest(manifest)
+        setDappManifest(manifest)
         setShowExtraData(!manifest)
 
         setLoading(false)
@@ -120,37 +126,32 @@ const AddCustomDappModal = ({ dappsCatalog }) => {
                 }
             </div>
 
-            {
-                gnosisManifest &&
-                <div>
-                    <div>
-                        <img width={46} height={46} src={gnosisManifest.iconUrl} alt={gnosisManifest.name + ' logo'} />
-                    </div>
-                    <div>
-                        <span>Name:</span> <span>{gnosisManifest.name}</span>
-                    </div>
-                    <div>
-                        <span>Description:</span> <span>{gnosisManifest.description}</span>
-                    </div>
+            <TextInput
+                small
+                label="Name"
+                value={name}
+                onInput={value => setName(value)}
+            />
+
+            <TextInput
+                small
+                label="Description"
+                value={description}
+                onInput={value => setDescription(value)}
+            />
+
+            <div className='icon-input'>
+                <TextInput
+                    small
+                    label="Icon Url"
+                    value={iconUrl}
+                    onInput={value => setIconUrl(value)}
+                />
+                <div className='icon-wrapper'>
+                    <img width={46} height={46} src={iconUrl} alt={(name || 'no') + ' logo'} />
                 </div>
+            </div>
 
-            }
-
-            {showExtraData &&
-                <div>
-
-                    <TextInput
-                        label="Name"
-                        onInput={value => setName(value)}
-                    />
-
-                    <TextInput
-                        label="Description"
-                        onInput={value => setDescription(value)}
-                    />
-                </div>
-
-            }
 
         </Modal>
     )

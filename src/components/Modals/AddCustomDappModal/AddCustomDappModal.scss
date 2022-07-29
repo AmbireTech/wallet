@@ -1,0 +1,30 @@
+@import 'variables.scss';
+
+#add-custom-dapp-modal {
+    .content {
+        display: flex;
+        flex-direction: column;
+        gap: 1em;
+
+        .icon-input {
+            display: flex;
+            flex-direction: row;
+            gap: 2em;
+            justify-content: stretch;
+            align-items: flex-end;
+
+            .text-input {
+                flex-grow: 1;
+            }
+
+            .icon-wrapper {
+                border: 1px dashed #333641;
+                padding: 16px;
+                img {
+                    width: 46px;
+                    height: 46px;
+                }
+            }
+        }
+    }
+}
