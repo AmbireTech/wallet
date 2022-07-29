@@ -11,8 +11,13 @@ const isUrl = (str) => {
     catch (e) { return false }
 }
 
+const getNormalizedUrl = (inputStr) => {
+    const url = inputStr.toLowerCase().split(/[?#]/)[0].replace('/manifest.json', '')
+    return url
+}
+
 const getManifest = async (dAppUrl) => {
-    const url = dAppUrl.toLowerCase().replace(/\/$/, '').replace('/manifest.json', '')
+    const url = dAppUrl.replace(/\/$/, '')
     const manifestUrl = url + '/manifest.json'
 
     const { body } = await fetchCaught(manifestUrl)
@@ -46,14 +51,14 @@ const AddCustomDappModal = ({ dappsCatalog }) => {
     const { hideModal } = useModals()
 
     const { addCustomDapp } = dappsCatalog
-    const [name, setName] = useState(null)
-    const [url, setUrl] = useState(null)
-    const [description, setDescription] = useState(null)
-    const [iconUrl, setIconUrl] = useState(null)
-    const [connectionType, setConnectionType] = useState(null)
+    const [name, setName] = useState('')
+    const [url, setUrl] = useState('')
+    const [description, setDescription] = useState('')
+    const [iconUrl, setIconUrl] = useState('')
+    const [connectionType, setConnectionType] = useState('')
     const [loading, setLoading] = useState(false)
-    const [showExtraData, setShowExtraData] = useState(false)
     const [urlErr, setUrlErr] = useState(null)
+    const [urlInfo, setUrlInfo] = useState(null)
     const [dappManifest, setDappManifest] = useState(null)
 
 
@@ -77,32 +82,37 @@ const AddCustomDappModal = ({ dappsCatalog }) => {
     }, [addCustomDapp, addToast, description, name, url])
 
     const onUrlInput = useCallback(async (urlInputStr = '') => {
-        setUrl(urlInputStr)
+        const url = getNormalizedUrl(urlInputStr)
+        setUrl(url)
         setDappManifest(null)
+        setName('')
+        setDescription('')
+        setIconUrl('')
+        setConnectionType('')
         setLoading(true)
-        setShowExtraData(false)
-        const isValidUrl = isUrl(urlInputStr)
+        const isValidUrl = isUrl(url)
 
         if (!isValidUrl) {
-            setUrlErr(!!urlInputStr ? 'Invalid Url' : null)
+            setUrlErr(!!url ? 'Invalid Url' : null)
             setLoading(false)
             return
         } else (
             setUrlErr(null)
         )
 
-        const manifest = await getManifest(urlInputStr)
+        const manifest = await getManifest(url)
 
         if (manifest) {
             setName(manifest.name)
             setDescription(manifest.description)
             setIconUrl(manifest.iconUrl)
             setConnectionType(manifest.connectionType)
+            setUrlInfo('')
+        } else {
+            setUrlInfo('Cant find dApp data - make sure it supports gnosis safe apps ot WalletConnect')
         }
 
         setDappManifest(manifest)
-        setShowExtraData(!manifest)
-
         setLoading(false)
     }, [])
 
@@ -117,11 +127,12 @@ const AddCustomDappModal = ({ dappsCatalog }) => {
         <Modal id='add-custom-dapp-modal' title='Add custom dApp' buttons={buttons}>
             <div>
                 <TextInput
+                    value={url}
                     label="URL"
                     onInput={value => onUrlInput(value)}
                 />
                 {<div>
-                    {urlErr}
+                    {urlErr || urlInfo}
                 </div>
                 }
             </div>
