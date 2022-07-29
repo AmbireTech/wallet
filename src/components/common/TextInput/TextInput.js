@@ -13,7 +13,7 @@ const TextInput = forwardRef(({ value, className, title, pattern, autoComplete, 
     };
 
     return (
-        <div className={`text-input ${copy ? 'copy' : ''} ${small ? 'small' : ''} ${className}`}>
+        <div className={`text-input ${copy ? 'copy' : ''} ${small ? 'small' : ''} ${className || ''}`}>
             {
                 label ?
                     <label>{ label }</label>
