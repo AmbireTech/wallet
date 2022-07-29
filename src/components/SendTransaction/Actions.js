@@ -72,16 +72,18 @@ export default function Actions({
             onChange={value => setQuickAccCredentials({ ...quickAccCredentials, passphrase: value })}
           ></TextInput>
           {/* Changing the autoComplete prop to a random string seems to disable it in more cases */}
-          <TextInput
-            small
-            pattern='[0-9]+'
-            title='Confirmation code should be 6 digits'
-            autoComplete='nope'
-            required minLength={6} maxLength={6}
-            placeholder={signingStatus.confCodeRequired === 'otp' ? 'Authenticator OTP code' : 'Confirmation code'}
-            value={quickAccCredentials.code}
-            onChange={value => setQuickAccCredentials({ ...quickAccCredentials, code: value })}
-          ></TextInput>
+          {signingStatus.confCodeRequired !== 'notRequired' &&
+            <TextInput
+              small
+              pattern='[0-9]+'
+              title='Confirmation code should be 6 digits'
+              autoComplete='nope'
+              required minLength={6} maxLength={6}
+              placeholder={signingStatus.confCodeRequired === 'otp' ? 'Authenticator OTP code' : 'Confirmation code'}
+              value={quickAccCredentials.code}
+              onChange={value => setQuickAccCredentials({ ...quickAccCredentials, code: value })}
+            ></TextInput>
+          }
         </div>
         <div className='buttons'>
           <Button

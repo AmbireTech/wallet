@@ -329,12 +329,14 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, mustReplaceNonce,
     const finalBundle = (signingStatus && signingStatus.finalBundle) || getFinalBundle()
     const signer = finalBundle.signer
 
+    const canSkip2FA = signingStatus && signingStatus.confCodeRequired === 'notRequired'
     const { signature, success, message, confCodeRequired } = await fetchPost(
       `${relayerURL}/second-key/${bundle.identity}/${network.id}/sign`, {
         signer, txns: finalBundle.txns, nonce: finalBundle.nonce, gasLimit: finalBundle.gasLimit,
-        code: quickAccCredentials && quickAccCredentials.code,
+        ...(!canSkip2FA) && {code: quickAccCredentials && quickAccCredentials.code},
         // This can be a boolean but it can also contain the new signer/primaryKeyBackup, which instructs /second-key to update acc upon successful signature
-        recoveryMode: finalBundle.recoveryMode
+        recoveryMode: finalBundle.recoveryMode,
+        canSkip2FA: canSkip2FA
       }
     )
     if (!success) {
