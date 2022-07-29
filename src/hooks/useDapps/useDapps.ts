@@ -17,6 +17,10 @@ const CATEGORIES: Array<Category> = [
         filter: (f: any) => f.connectionType === 'walletconnect'
     },
     {
+        name: 'custom',
+        filter: (f: any) => !!f.custom
+    },
+    {
         name: 'favorites',
         filter: (f: any, faves: object) => Object.keys(faves).indexOf(f.url) !== -1
     }
@@ -62,14 +66,14 @@ export default function useDapps({ useStorage }: UseDappsProps): UseDappsReturnT
     }, [setCurrentDappData, setIsDappMode])
 
     const addCustomDapp = useCallback((dapp: DappManifestData) => {
-        const exists = customDapps.find(x => x.url === dapp.url)
+        const exists = customDapps.find(x => x.id === dapp.id)
         if (!exists) {
-            updateCustomDapps([...customDapps, { ...dapp }])
+            updateCustomDapps([...customDapps, { ...dapp, custom: true }])
         }
     }, [customDapps, updateCustomDapps])
 
     const removeCustomDapp = useCallback((dapp: DappManifestData) => {
-        const index = customDapps.findIndex(x => x.url === dapp.url)
+        const index = customDapps.findIndex(x => x.id === dapp.id)
         if (index >= 0) {
             updateCustomDapps([...customDapps].splice(index, 1))
         }

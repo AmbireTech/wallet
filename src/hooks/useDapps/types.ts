@@ -39,7 +39,7 @@ export type DappType =
 // }
 
 
-export type DappManifestData = AmbireDappManifest
+export type DappManifestData = AmbireDappManifest & { custom?: boolean}
 
 export type DappCatalog = Array<DappManifestData>
 
