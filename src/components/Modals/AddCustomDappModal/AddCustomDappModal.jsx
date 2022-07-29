@@ -1,10 +1,11 @@
 import './AddCustomDappModal.scss'
 import { useState, useMemo, useCallback } from 'react'
-import { Button, Modal, TextInput } from 'components/common'
+import { Button, Modal, TextInput, Radios, ToolTip } from 'components/common'
 import { useModals } from 'hooks'
 import { useToasts } from 'hooks/toasts'
-import { MdOutlineAdd, MdOutlineClose } from 'react-icons/md'
+import { MdOutlineAdd, MdOutlineClose, MdImage } from 'react-icons/md'
 import { fetchCaught } from 'lib/fetch'
+import NETWORKS from 'consts/networks'
 
 const isUrl = (str) => {
     try { return Boolean(new URL(str)); }
@@ -14,6 +15,10 @@ const isUrl = (str) => {
 const getNormalizedUrl = (inputStr) => {
     const url = inputStr.toLowerCase().split(/[?#]/)[0].replace('/manifest.json', '')
     return url
+}
+
+const toDappId = (name = '') => {
+    return name.toLowerCase().replace(/s/g, '_') + '_' + Date.now()
 }
 
 const getManifest = async (dAppUrl) => {
@@ -59,6 +64,7 @@ const AddCustomDappModal = ({ dappsCatalog }) => {
     const [loading, setLoading] = useState(false)
     const [urlErr, setUrlErr] = useState(null)
     const [urlInfo, setUrlInfo] = useState(null)
+    const [networks, setNetworks] = useState([])
     const [dappManifest, setDappManifest] = useState(null)
 
 
@@ -66,20 +72,22 @@ const AddCustomDappModal = ({ dappsCatalog }) => {
 
     const addDapp = useCallback(async () => {
         setLoading(true)
-        const manifest = await getManifest(url)
-
-        if (!manifest) return
 
         addCustomDapp({
+            id: toDappId(name),
             name,
             url,
-            description
+            description,
+            iconUrl,
+            connectionType,
+            networks
         })
 
         addToast(`${name} added to Ambire Wallet dApp catalog`)
 
         setLoading(false)
-    }, [addCustomDapp, addToast, description, name, url])
+        hideModal()
+    }, [addCustomDapp, addToast, connectionType, description, hideModal, iconUrl, name, networks, url])
 
     const onUrlInput = useCallback(async (urlInputStr = '') => {
         const url = getNormalizedUrl(urlInputStr)
@@ -116,12 +124,43 @@ const AddCustomDappModal = ({ dappsCatalog }) => {
         setLoading(false)
     }, [])
 
+    const onRadioChange = useCallback(value => {
+        setConnectionType(value)
+    }, [])
+
+    const radios = useMemo(() => [
+        {
+            label: 'Gnosis safe app',
+            value: 'gnosis',
+            disabled: !url || urlErr
+        },
+        {
+            label: 'WalletConnect',
+            value: 'walletconnect',
+            disabled: !url || urlErr
+        }
+    ], [url, urlErr])
+
     const buttons = useMemo(() =>
         <>
             <Button clear icon={<MdOutlineClose />} onClick={() => hideModal()}>Close</Button>
             <Button icon={<MdOutlineAdd />} disabled={disabled} onClick={addDapp}>Add</Button>
         </>
         , [addDapp, disabled, hideModal])
+
+    const onNetworkClick = (network) => {
+        setNetworks(prev => {
+            const index = prev.indexOf(network)
+            const updated = [...prev]
+            if (index >= 0) {
+                updated.splice(index, 1)
+            } else {
+                updated.push(network)
+            }
+
+            return updated
+        })
+    }
 
     return (
         <Modal id='add-custom-dapp-modal' title='Add custom dApp' buttons={buttons}>
@@ -130,6 +169,7 @@ const AddCustomDappModal = ({ dappsCatalog }) => {
                     value={url}
                     label="URL"
                     onInput={value => onUrlInput(value)}
+                    className='dapp-input'
                 />
                 {<div>
                     {urlErr || urlInfo}
@@ -142,6 +182,7 @@ const AddCustomDappModal = ({ dappsCatalog }) => {
                 label="Name"
                 value={name}
                 onInput={value => setName(value)}
+                className='dapp-input'
             />
 
             <TextInput
@@ -149,6 +190,7 @@ const AddCustomDappModal = ({ dappsCatalog }) => {
                 label="Description"
                 value={description}
                 onInput={value => setDescription(value)}
+                className='dapp-input'
             />
 
             <div className='icon-input'>
@@ -157,9 +199,36 @@ const AddCustomDappModal = ({ dappsCatalog }) => {
                     label="Icon Url"
                     value={iconUrl}
                     onInput={value => setIconUrl(value)}
+                    className='dapp-input'
                 />
                 <div className='icon-wrapper'>
-                    <img width={46} height={46} src={iconUrl} alt={(name || 'no') + ' logo'} />
+                    {iconUrl ? <img width={46} height={46} src={iconUrl} alt={(name || 'no') + ' logo'} />
+                        : <MdImage />}
+                </div>
+            </div>
+            <div const>
+
+            </div>
+            <div className='connection-radios'>
+                <div>Connection type</div>
+                <Radios radios={radios} value={connectionType} onChange={onRadioChange} row />
+            </div>
+            <div className='networks'>
+                <div>Supported network ({networks.length} selected)</div>
+                <div className='networks-container'>
+                    {
+                        NETWORKS.map(n => {
+                            return (
+                                <ToolTip label={n.name} >
+                                    <span className={`network-tag${networks.includes(n.id) ? ' selected' : ''}`}
+                                        style={{ backgroundImage: `url(${n.icon})` }}
+                                        onClick={() => onNetworkClick(n.id)}
+                                    >
+                                    </span>
+                                </ToolTip>
+                            )
+                        })
+                    }
                 </div>
             </div>
 
