@@ -3,7 +3,7 @@ import { TextInput, ToolTip } from 'components/common'
 import GnosisSafeAppIframe from 'components/Plugins/GnosisSafeApps/GnosisSafeAppIframe'
 import './DappsCatalog.scss'
 import { useCallback, Fragment } from 'react'
-import { MdInfo, MdSearch } from 'react-icons/md'
+import { MdInfo, MdSearch, MdDelete } from 'react-icons/md'
 import { AiOutlineStar, AiFillStar } from 'react-icons/ai'
 import { Button } from 'components/common'
 import DAPPS_ICON from 'resources/dapps.svg'
@@ -13,7 +13,7 @@ import { useModals } from 'hooks'
 
 const DappsCatalog = ({ network, dappsCatalog, selectedAcc, gnosisConnect, gnosisDisconnect }) => {
 
-  const { isDappMode, currentDappData, toggleFavorite, favorites, filteredCatalog, onCategorySelect, categoryFilter, search, onSearchChange, categories, loadCurrentDappData } = dappsCatalog
+  const { isDappMode, currentDappData, toggleFavorite, favorites, filteredCatalog, onCategorySelect, categoryFilter, search, onSearchChange, categories, loadCurrentDappData, removeCustomDapp } = dappsCatalog
   const { showModal } = useModals()
 
   const sortFiltered = useCallback((filteredItems) => {
@@ -68,6 +68,13 @@ const DappsCatalog = ({ network, dappsCatalog, selectedAcc, gnosisConnect, gnosi
     }
   }
 
+  const onRemoveCustomClick = useCallback((e, item) => {
+    console.log({ item })
+    e.stopPropagation()
+    e.preventDefault()
+    removeCustomDapp(item)
+  }, [removeCustomDapp])
+
   const openCustomDappModal = useCallback(() => showModal(<AddCustomDappModal dappsCatalog={dappsCatalog} />), [dappsCatalog, showModal])
 
   return (
@@ -99,7 +106,9 @@ const DappsCatalog = ({ network, dappsCatalog, selectedAcc, gnosisConnect, gnosi
 
           <div className='catalogItems'>
             <div className={`catalogItem add-custom-dapp`} >
-              <img className='custom-dapp' src={DAPPS_ICON} alt='add custom dapps' />
+              <div className='tools'>
+                <img className='custom-dapp' src={DAPPS_ICON} alt='add custom dapps' />
+              </div>
               <div className='custom-dapp-icon-wrapper'>
                 <img className='custom-dapp-icon' src={DAPPS_ICON} alt='add custom dapps icon' />
               </div>
@@ -109,11 +118,21 @@ const DappsCatalog = ({ network, dappsCatalog, selectedAcc, gnosisConnect, gnosi
               sortFiltered(filteredCatalog).map(item => {
                 return <div className={`catalogItem${item.supported ? '' : ' not-supported'}`}
                   onClick={() => openDapp(item)}>
-                  <span className={`favorite${favorites[item.url] ? ' selected' : ''}`} onClick={(e) => onFavoriteClick(e, item)}> {
-                    favorites[item.url]
-                      ? <AiFillStar />
-                      : <AiOutlineStar />
-                  }</span>
+
+                  <div className='tools'>
+                    {item.custom &&
+                      <div onClick={(e) => onRemoveCustomClick(e, item)}>
+                        <MdDelete />
+                      </div>}
+                    {item.custom &&
+                      <img className='custom-dapp item' src={DAPPS_ICON} alt='custom dapp icon' />}
+                    <span className={`favorite${favorites[item.url] ? ' selected' : ''}`} onClick={(e) => onFavoriteClick(e, item)}> {
+                      favorites[item.url]
+                        ? <AiFillStar height={20} />
+                        : <AiOutlineStar height={20} />
+                    }</span>
+                  </div>
+
                   <div className='base-info'>
                     <div className='logoSplit'>
                       <div className='logo'>
