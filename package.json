@@ -45,7 +45,7 @@
     "trezor-connect": "^8.2.8",
     "typescript": "^4.5.4",
     "url": "^0.11.0",
-    "wallet-dapp-catalog": "git+https://git@github.com/AmbireTech/wallet-dapp-catalog.git#eeead3506598a5d2a421dd0015a36f7822d727d7",
+    "wallet-dapp-catalog": "git+https://git@github.com/AmbireTech/wallet-dapp-catalog.git#be629cfe7d629304e2178537290b4e6f15baca2a",
     "web-vitals": "^1.1.2"
   },
   "scripts": {
