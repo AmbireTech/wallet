@@ -14,15 +14,14 @@
 
         .amount {
             width: 55%;
-            // flex-grow: 4;
         }
 
         .currency {
+            width: 45%;
+
             .select {
                 min-width: 45px;
             }
-            width: 45%;
-            // flex-grow: 1;
         }
 
         .loading-wrapper {

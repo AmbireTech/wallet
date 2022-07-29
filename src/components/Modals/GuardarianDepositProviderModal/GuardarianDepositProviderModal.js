@@ -8,6 +8,8 @@ import { useModals } from 'hooks'
 import { useToasts } from 'hooks/toasts'
 import { useRelayerData } from 'hooks'
 import { fetchGet } from 'lib/fetch'
+import { popupCenter } from 'lib/popupHelper'
+import url from 'url'
 
 const netAssets = {
 	'ethereum': 'ETH',
@@ -41,15 +43,29 @@ const GuardarianDepositProviderModal = ({ relayerURL, selectedNetwork, account, 
     const cryptoCurrenciesLabels = (availableTokensPerNet && availableTokensPerNet.length) ? availableTokensPerNet.map(i => {return { label: i.ticker, value: i.ticker, icon: i.logo_url }}) : []
     const [selectedCryptoCurrency, setSelectedCryptoCurrency] = useState((availableTokensPerNet && availableTokensPerNet.length) ? availableTokensPerNet[0] : '')
     
-    //estimate
+    // estimate
     const estimate = useCallback(async amount => {
         if (!amount) return
         setLoading(true)
-        const url = `${relayerURL}/guardarian/estimate/${selectedFiatCurrency}/${selectedNetwork}/${amount}/${selectedCryptoCurrency}/${selectedNetwork}`
-        const res = await fetchGet(url)
+        const urlEstimate = `${relayerURL}/guardarian/estimate/${selectedFiatCurrency}/${selectedNetwork}/${amount}/${selectedCryptoCurrency}/${selectedNetwork}`
+        const res = await fetchGet(urlEstimate)
         setLoading(false)
         return res
     }, [relayerURL, selectedCryptoCurrency, selectedFiatCurrency, selectedNetwork])
+
+    // transaction
+    const makeTransaction = async () => {
+        const urlTransaction = `${relayerURL}/guardarian/transaction/${selectedFiatCurrency}/${selectedNetwork}/${amount}/${selectedCryptoCurrency}/${selectedNetwork}`
+        const { success, data: txnData} = await fetchGet(urlTransaction)
+        if (success) {
+            popupCenter({
+                url: url.format(txnData.redirect_url),
+                title: 'Guardarian Deposit',
+                w: 560,
+                h: 710,
+            })
+        }
+    }
 
     const [amount, setAmount] = useState(null)
     const [estimationResp, setEstimationResp] = useState(null)
@@ -76,8 +92,7 @@ const GuardarianDepositProviderModal = ({ relayerURL, selectedNetwork, account, 
         return () => clearTimeout(timer.current)
     }, [amount, estimate, minMaxRange, relayerURL, selectedCryptoCurrency, selectedFiatCurrency, selectedNetwork])
 
-    // market info (min-max range)
-    
+    // market-info (min-max range)
     const getMarketInfo = useCallback(async fromTo => {
         if (!fromTo) return
         const url = `${relayerURL}/guardarian/market-info/${fromTo}`
@@ -99,9 +114,7 @@ const GuardarianDepositProviderModal = ({ relayerURL, selectedNetwork, account, 
         
     }, [getMarketInfo, selectedCryptoCurrency, selectedFiatCurrency, selectedNetwork])
     
-    const handleBuySellBtnClicked = () => {
 
-    }
     const [validationMsg, setValidationMsg] = useState('')
     const onInputAmount = value => {
         setAmount(value)
@@ -118,7 +131,7 @@ const GuardarianDepositProviderModal = ({ relayerURL, selectedNetwork, account, 
 
     const buttons = <>
         <Button clear icon={<MdOutlineClose/>} onClick={() => hideModal()}>Close</Button>
-        <Button  disabled={disabled} onClick={handleBuySellBtnClicked}>Sell</Button>
+        <Button  disabled={disabled} onClick={makeTransaction}>Sell</Button>
     </>
 
     return (
