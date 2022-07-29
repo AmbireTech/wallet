@@ -4,6 +4,25 @@
     .content {
         height: 550px;
     }
+
+    .buy-sell-btns-wrapper {
+        display: flex;
+        flex-direction: row;
+        width: 30%;
+        padding-bottom: 20px;
+
+        .button {
+            padding: 10px 35px;
+            background-color: $input-background-color-darker;
+            color: gray;
+            cursor: pointer;
+            
+            &.active {
+                color: white;
+                background-color: $secondary-accent-color;
+            }
+        }
+    }
     .input-currencies-wrapper {
         display: flex;
         align-items: flex-end;

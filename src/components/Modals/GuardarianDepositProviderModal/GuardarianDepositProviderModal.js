@@ -2,7 +2,7 @@ import './GuardarianDepositProviderModal.scss'
 
 
 import { Button, Loading, Modal, TextInput, Select } from 'components/common'
-import { useEffect, useState, useRef, useCallback } from 'react'
+import { useEffect, useState, useRef, useCallback, useMemo } from 'react'
 import { MdOutlineClose } from 'react-icons/md'
 import { useModals } from 'hooks'
 import { useToasts } from 'hooks/toasts'
@@ -24,38 +24,44 @@ const geFiatLogo = ticker => `https://changenow.io/images/sprite/currencies/${ti
 const GuardarianDepositProviderModal = ({ relayerURL, selectedNetwork, account, portfolio }) => {
     const { hideModal } = useModals()
     const { addToast } = useToasts()
-    // const { tokens } = portfolio
+    const { tokens } = portfolio
     const [loading, setLoading] = useState(false)
     const [showError, setShowError] = useState(false)
-    const [disabled, setDisabled] = useState(false)
     const [minMaxRange, setMinMaxRange] = useState(null)
+    const [isFiatSelected, setIsFiatSelected] = useState(true)
+    const [validationMsg, setValidationMsg] = useState('')
+    const [amount, setAmount] = useState('')
+    const [estimationResp, setEstimationResp] = useState(null)
     //TODO: All the logic should be extract in a hook
+    // TODO: handle errors
     // get Fiat Currencies
     const urlFiatCurrencies = `${relayerURL}/guardarian/currencies/fiat`
     const { data: fiatCurrencies, errMsg: errFiatCurrencies, isLoading: isFiatReqLoading } = useRelayerData(urlFiatCurrencies)
     const fiatCurrenciesLabels = (fiatCurrencies && fiatCurrencies.length) ? fiatCurrencies.map(i => {return { label: i.ticker, value: i.ticker, icon: i.logo_url || geFiatLogo(i.ticker) } }) : []
-    const [selectedFiatCurrency, setSelectedFiatCurrency] = useState((fiatCurrenciesLabels && fiatCurrenciesLabels.length) ? fiatCurrenciesLabels[0] : '')
 
     // get Crypto Currencies
     const urlCryptoCurrencies = `${relayerURL}/guardarian/currencies/crypto`
     const { data: cryptoCurrencies, errMsg: errCryptoCurrencies, isLoading: isCryptoReqLoading } = useRelayerData(urlCryptoCurrencies)
     const availableTokensPerNet = (cryptoCurrencies && cryptoCurrencies.length) ? cryptoCurrencies.filter(({ networks }) => networks.some(({ network }) => network === netAssets[selectedNetwork])) : []
     const cryptoCurrenciesLabels = (availableTokensPerNet && availableTokensPerNet.length) ? availableTokensPerNet.map(i => {return { label: i.ticker, value: i.ticker, icon: i.logo_url }}) : []
-    const [selectedCryptoCurrency, setSelectedCryptoCurrency] = useState((availableTokensPerNet && availableTokensPerNet.length) ? availableTokensPerNet[0] : '')
+    
+    const [selectedSendCurrency, setSelectedSendCurrency] = useState((fiatCurrenciesLabels && fiatCurrenciesLabels.length) ? fiatCurrenciesLabels[0] : '')
+    const [selectedGetCurrency, setSelectedGetCurrency] = useState((cryptoCurrenciesLabels && cryptoCurrenciesLabels.length) ? cryptoCurrenciesLabels[0] : '')
     
     // estimate
     const estimate = useCallback(async amount => {
+        if (validationMsg !== '') return
         if (!amount) return
         setLoading(true)
-        const urlEstimate = `${relayerURL}/guardarian/estimate/${selectedFiatCurrency}/${selectedNetwork}/${amount}/${selectedCryptoCurrency}/${selectedNetwork}`
+        const urlEstimate = `${relayerURL}/guardarian/estimate/${selectedSendCurrency}/${selectedNetwork}/${amount}/${selectedGetCurrency}/${isFiatSelected}`
         const res = await fetchGet(urlEstimate)
         setLoading(false)
         return res
-    }, [relayerURL, selectedCryptoCurrency, selectedFiatCurrency, selectedNetwork])
+    }, [validationMsg, relayerURL, selectedSendCurrency, selectedNetwork, selectedGetCurrency, isFiatSelected])
 
     // transaction
     const makeTransaction = async () => {
-        const urlTransaction = `${relayerURL}/guardarian/transaction/${selectedFiatCurrency}/${selectedNetwork}/${amount}/${selectedCryptoCurrency}/${selectedNetwork}`
+        const urlTransaction = `${relayerURL}/guardarian/transaction/${selectedSendCurrency}/${selectedNetwork}/${amount}/${selectedGetCurrency}/${selectedNetwork}`
         const { success, data: txnData} = await fetchGet(urlTransaction)
         if (success) {
             popupCenter({
@@ -67,9 +73,6 @@ const GuardarianDepositProviderModal = ({ relayerURL, selectedNetwork, account, 
         }
     }
 
-    const [amount, setAmount] = useState(null)
-    const [estimationResp, setEstimationResp] = useState(null)
-
     const timer = useRef(null)
     useEffect(() => {
         if (timer.current) {
@@ -80,7 +83,9 @@ const GuardarianDepositProviderModal = ({ relayerURL, selectedNetwork, account, 
             (parseFloat(amount) <= parseFloat(minMaxRange.max))) {
             const getEstimate = async amount => {
                 const estimationRes = await estimate(amount)
-                if (estimationRes) setEstimationResp(estimationRes)
+                if (estimationRes && estimationRes.success) setEstimationResp(estimationRes)
+                else setEstimationResp(null)
+
                 timer.current = null
             }
 
@@ -90,14 +95,14 @@ const GuardarianDepositProviderModal = ({ relayerURL, selectedNetwork, account, 
         } else setEstimationResp(null)
         
         return () => clearTimeout(timer.current)
-    }, [amount, estimate, minMaxRange, relayerURL, selectedCryptoCurrency, selectedFiatCurrency, selectedNetwork])
+    }, [amount, estimate, minMaxRange, relayerURL, selectedGetCurrency, selectedSendCurrency, selectedNetwork])
 
     // market-info (min-max range)
     const getMarketInfo = useCallback(async fromTo => {
+        // TODO: handle errors
         if (!fromTo) return
         const url = `${relayerURL}/guardarian/market-info/${fromTo}`
         const res = await fetchGet(url)
-        console.log('res', res)
         return res
     }, [relayerURL])
 
@@ -105,37 +110,72 @@ const GuardarianDepositProviderModal = ({ relayerURL, selectedNetwork, account, 
         let fromTo = null
         const getMarket = async fromTo => {
             const minMaxRangeResp = await getMarketInfo(fromTo)
-            if (minMaxRangeResp) setMinMaxRange(minMaxRangeResp.data)
+            if (minMaxRangeResp && minMaxRangeResp.success) setMinMaxRange(minMaxRangeResp.data)
+            else setMinMaxRange(null)
         }
-        if (selectedFiatCurrency && selectedCryptoCurrency) fromTo = `${selectedFiatCurrency}_${selectedCryptoCurrency}-${netAssets[selectedNetwork]}` 
-        if (fromTo) {
-            getMarket(fromTo)
+        if (selectedSendCurrency && selectedGetCurrency) {
+            fromTo = isFiatSelected ?
+                `${selectedSendCurrency}_${selectedGetCurrency}-${netAssets[selectedNetwork]}` :
+                `${selectedSendCurrency}-${netAssets[selectedNetwork]}_${selectedGetCurrency}`   
         }
-        
-    }, [getMarketInfo, selectedCryptoCurrency, selectedFiatCurrency, selectedNetwork])
+        getMarket(fromTo)
+    }, [getMarketInfo, selectedGetCurrency, selectedSendCurrency, selectedNetwork, isFiatSelected])
     
-
-    const [validationMsg, setValidationMsg] = useState('')
     const onInputAmount = value => {
         setAmount(value)
     }
 
     useEffect(() => {
-        if (minMaxRange && (parseFloat(amount) < parseFloat(minMaxRange.min))) {
-            setValidationMsg(`Minimum amount is ${minMaxRange.min} ${minMaxRange.from}`)
-        } else if (minMaxRange && (parseFloat(amount) > parseFloat(minMaxRange.max))) {
-            setValidationMsg(`Maximum amount is ${minMaxRange.max} ${minMaxRange.from}`)
+        if (isFiatSelected) {
+            if (minMaxRange && (parseFloat(amount) < parseFloat(minMaxRange.min))) {
+                setValidationMsg(`Min amount is ${minMaxRange.min} ${minMaxRange.from}`)
+            } else if (minMaxRange && (parseFloat(amount) > parseFloat(minMaxRange.max))) {
+                setValidationMsg(`Max amount is ${minMaxRange.max} ${minMaxRange.from}`)
+            } else setValidationMsg('')
         } else {
-            setValidationMsg('')}
-    }, [amount, minMaxRange])
+            if (!minMaxRange) return
+            if (!tokens) return
+            const currentToken = tokens.find(i => i.symbol.toLowerCase() === minMaxRange.from.toLowerCase())
+            if (!currentToken) return
+            if (parseFloat(amount) > currentToken.balance) {
+                setValidationMsg(`Insufficient balance: ${currentToken.balance} ${currentToken.symbol}`)
+                return
+            }
+            if (minMaxRange && (parseFloat(amount) < parseFloat(minMaxRange.min)) ) {
+                setValidationMsg(`Min amount is ${minMaxRange.min} ${minMaxRange.from} Current balance is: ${currentToken.balance} ${currentToken.symbol}`)
+            } else if (minMaxRange && (parseFloat(amount) > parseFloat(minMaxRange.max))) {
+                setValidationMsg(`Max amount is ${minMaxRange.max} ${minMaxRange.from} Current balance: ${currentToken.balance} ${currentToken.symbol}`)
+            } else setValidationMsg(``)
+        }
+    }, [amount, isFiatSelected, minMaxRange, tokens])
+
+    const buyBtnClicked = () => {
+        if (!(cryptoCurrenciesLabels && cryptoCurrenciesLabels.length) || !(fiatCurrenciesLabels && fiatCurrenciesLabels.length)) return
+    
+        setSelectedSendCurrency(fiatCurrenciesLabels[0].value)
+        setSelectedGetCurrency(cryptoCurrenciesLabels[0].value)
+        setIsFiatSelected(true)
+    }
+
+    const sellBtnClicked = () => {
+        if (!(cryptoCurrenciesLabels && cryptoCurrenciesLabels.length) || !(fiatCurrenciesLabels && fiatCurrenciesLabels.length)) return
+        
+        setSelectedSendCurrency(cryptoCurrenciesLabels[0].value)
+        setSelectedGetCurrency(fiatCurrenciesLabels[0].value)
+        setIsFiatSelected(false)
+    }
 
     const buttons = <>
         <Button clear icon={<MdOutlineClose/>} onClick={() => hideModal()}>Close</Button>
-        <Button  disabled={disabled} onClick={makeTransaction}>Sell</Button>
+        <Button disabled={!estimationResp} onClick={makeTransaction}>Sell</Button>
     </>
 
     return (
         <Modal id="guardarian-modal" title="Guardarian" buttons={buttons}>
+            <div className='buy-sell-btns-wrapper'>
+                <div className={isFiatSelected ? 'button active' : 'button'} onClick={buyBtnClicked}>Buy</div>
+                <div className={!isFiatSelected ? 'button active' : 'button'} onClick={sellBtnClicked}>Sell</div>    
+            </div>
             {/* Add Form here */}
             <div className='input-currencies-wrapper'>
                 <div className='amount'>
@@ -146,14 +186,13 @@ const GuardarianDepositProviderModal = ({ relayerURL, selectedNetwork, account, 
                     />
                 </div>
                 <div className='currency'>
-                    <Select searchable defaultValue={selectedFiatCurrency} items={fiatCurrenciesLabels.sort((a, b) => a > b ? 1 : -1)} onChange={({ value }) => setSelectedFiatCurrency(value)}/>
+                    <Select searchable defaultValue={selectedSendCurrency} items={((!isFiatSelected && tokens) ? cryptoCurrenciesLabels.filter(i => tokens.some(x => i.value.toLowerCase() === x.symbol.toLowerCase())) : fiatCurrenciesLabels).sort((a, b) => a > b ? 1 : -1)} onChange={({value}) => setSelectedSendCurrency(value)}/>
                 </div>
             </div>
             { (validationMsg !== '') && (<p style={{ color: 'red' }}>{ validationMsg }</p>)  }
             <p>Estimation rate: { estimationResp && estimationResp.success ? (`1 ${estimationResp.data.from_currency} ≈ ${estimationResp.data.estimated_exchange_rate} ${estimationResp.data.to_currency}`) : ''}</p>
             <div className='input-currencies-wrapper'>
                 <div className='amount'>
-                    {/* TODO: add loading while estimates */}
                     { !loading ?
                          (<TextInput
                             value={(estimationResp && estimationResp.success) ? estimationResp.data.value : '-'}
@@ -164,11 +203,10 @@ const GuardarianDepositProviderModal = ({ relayerURL, selectedNetwork, account, 
                     )}
                 </div>
                 <div className='currency'>
-                    <Select searchable defaultValue={selectedCryptoCurrency} items={cryptoCurrenciesLabels.sort((a, b) => a > b ? 1 : -1)} onChange={({ value }) => setSelectedCryptoCurrency(value)}/>
+                    <Select searchable defaultValue={selectedGetCurrency} items={ (isFiatSelected ? cryptoCurrenciesLabels : fiatCurrenciesLabels.filter(i => (i.value === 'EUR') || (i.value === 'GBP') || (i.value === 'USD')).sort((a, b) => a > b ? 1 : -1))} onChange={({value}) => setSelectedGetCurrency(value)}/>
                 </div>
             </div>
-        {/* { loading && <Loading />} */}
-            
+            {/* TODO: added loader */}
         </Modal>
     )
 }

@@ -11,7 +11,7 @@ import url from 'url'
 
 import { RAMP_HOST_API_KEY, PAYTRIE_PARTNER_URL, TRANSAK_API_KEY, TRANSAK_ENV } from 'config'
 
-const useProviders = ({ walletAddress, selectedNetwork, relayerURL }) => {
+const useProviders = ({ walletAddress, selectedNetwork, relayerURL, portfolio }) => {
 
     const [isLoading, setLoading] = useState([])
     const { addToast } = useToasts()
@@ -122,7 +122,7 @@ const useProviders = ({ walletAddress, selectedNetwork, relayerURL }) => {
 
     const openGuardarian = () => {
         setLoading(prevState => ['Kriptomat', ...prevState])
-        showModal(<GuardarianDepositProviderModal relayerURL={relayerURL} selectedNetwork={selectedNetwork}/>)
+        showModal(<GuardarianDepositProviderModal relayerURL={relayerURL} selectedNetwork={selectedNetwork} portfolio={portfolio}/>)
         setLoading(prevState => prevState.filter(n => n !== 'Kriptomat'))
     }
 
