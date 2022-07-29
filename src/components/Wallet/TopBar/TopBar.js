@@ -5,6 +5,7 @@ import { NavLink, useRouteMatch } from "react-router-dom";
 import { MdOutlineArrowForward, MdOutlineClose, MdOutlineMenu, MdRemoveRedEye, MdVisibilityOff, MdMenu, MdExitToApp } from "react-icons/md";
 import Accounts from "./Accounts/Accounts";
 import Networks from "./Networks/Networks";
+import { networkIconsById } from "consts/networks";
 import DApps from "./DApps/DApps";
 import * as blockies from 'blockies-ts';
 import Links from "./Links/Links";
@@ -39,13 +40,26 @@ const TopBar = ({
 
   const account = accounts.find(({ id }) => id === selectedAcc)
   const accountIcon = blockies.create({ seed: account ? account.id : null }).toDataURL()
+ 
+  const visualEnv =
+    (process.env.REACT_APP_VISUAL_ENV === 'dev')
+      ? 'dev' : (
+        new URL(document.URL).pathname.startsWith('/staging/')
+      ) ? 'staging' : null
 
-  return (
-    <div id="topbar">
+    return (
+    <div id="topbar" className={ visualEnv ? ('visual-env visual-env-' + visualEnv ) : ''}>
+      {
+        visualEnv &&
+          <div className='env-bar' >
+            {visualEnv === 'dev' && <>Development mode</>}
+            {visualEnv === 'staging' && <>Staging mode</>}
+          </div>
+      }
       <div id="mobile-menu" onClick={() => setMenuOpen(!isMenuOpen)}>
         <div className="icon" style={{backgroundImage: `url(${accountIcon})`}}></div>
         <MdOutlineArrowForward/>
-        <div className="icon" style={{backgroundImage: `url(${network.icon})`}}></div>
+        <div className="icon" style={{backgroundImage: `url(${networkIconsById[network.id]})`}}></div>
         <div id="menu-button">
           { isMenuOpen ? <MdOutlineClose/> : <MdOutlineMenu/> }
         </div>

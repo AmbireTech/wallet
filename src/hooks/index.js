@@ -1,5 +1,4 @@
 import useAccounts from "./accounts"
-import useNetwork from "./network"
 import usePortfolio from "./portfolio"
 import useWalletConnect from "./walletconnect"
 import useRelayerData from './relayerData'
@@ -15,10 +14,10 @@ import useDragAndDrop from './dragAndDrop'
 import useCheckMobileScreen from './checkMobileScreen'
 import useUtmTracking from './utmTracking'
 import useDapps from './useDapps'
+import useGasTank from "./gasTank"
 
 export {
     useAccounts,
-    useNetwork,
     usePortfolio,
     useWalletConnect,
     useRelayerData,
@@ -33,5 +32,6 @@ export {
     useDragAndDrop,
     useCheckMobileScreen,
     useUtmTracking,
-    useDapps
+    useDapps,
+    useGasTank
 }
