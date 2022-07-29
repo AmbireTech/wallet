@@ -257,9 +257,7 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
                                 
                                 { validationFormMgs.messages.amount && 
                                     (<div className='validation-error'><BsXLg size={12}/>&nbsp;{validationFormMgs.messages.amount}</div>)}
-                                { gasTankDetails 
-                                    ? <p className='gas-tank-msg'><MdWarning /> {gasTankDetails?.gasTankMsg}</p> 
-                                    : (<div id="recipient-field">
+                                { gasTankDetails ? <p className='gas-tank-msg'><MdWarning /> {gasTankDetails?.gasTankMsg}</p> : (<div id="recipient-field">
                                     <TextInput
                                         placeholder="Recipient"
                                         info="Please double-check the recipient address, blockchain transactions are not reversible."
