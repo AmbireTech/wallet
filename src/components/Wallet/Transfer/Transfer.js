@@ -245,7 +245,7 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
                         assetsItems.length ?
                             <div className="form">
                                 <Select searchable defaultValue={asset} items={assetsItems.sort((a, b) => a.label.toLowerCase() > b.label.toLowerCase() ? 1 : -1)} onChange={({ value }) => setAsset(value)}/>
-                                { feeBaseTokenWarning ? <p className='gas-tank-convert-msg'><MdWarning /> {feeBaseTokenWarning}</p> : ''}
+                                { feeBaseTokenWarning ? <p className='gas-tank-convert-msg'><MdWarning /> {feeBaseTokenWarning}</p> : <></>}
                                 <NumberInput
                                     label={amountLabel}
                                     value={amount}
