@@ -29,7 +29,7 @@ TrezorConnect.manifest({
   appUrl: 'https://www.ambire.com'
 })
 
-export default function AddAccount({ relayerURL, onAddAccount }) {
+export default function AddAccount({ relayerURL, onAddAccount, utmTracking }) {
   const [signersToChoose, setChooseSigners] = useState(null)
   const [err, setErr] = useState('')
   const [addAccErr, setAddAccErr] = useState('')
@@ -85,10 +85,17 @@ export default function AddAccount({ relayerURL, onAddAccount }) {
     const accHash = keccak256(abiCoder.encode(['tuple(uint, address, address)'], [quickAccountTuple]))
     const privileges = [[quickAccManager, accHash]]
     const bytecode = getProxyDeployBytecode(baseIdentityAddr, privileges, { privSlot: 0 })
-    const identityAddr = getAddress('0x' + generateAddress2(identityFactoryAddr, salt, bytecode).toString('hex'))
+    const identityAddr = getAddress('0x' + generateAddress2(
+      // Converting to buffer is required in ethereumjs-util version: 7.1.3
+      Buffer.from(identityFactoryAddr.slice(2), 'hex'),
+      Buffer.from(salt.slice(2), 'hex'),
+      Buffer.from(bytecode.slice(2), 'hex')
+    ).toString('hex'))
     const primaryKeyBackup = JSON.stringify(
       await firstKeyWallet.encrypt(req.passphrase, accountPresets.encryptionOpts)
     )
+
+    const utm = utmTracking.getLatestUtmData()
 
     const createResp = await fetchPost(`${relayerURL}/identity/${identityAddr}`, {
       email: req.email,
@@ -96,8 +103,13 @@ export default function AddAccount({ relayerURL, onAddAccount }) {
       secondKeySecret,
       salt, identityFactoryAddr, baseIdentityAddr,
       privileges,
-      quickAccSigner: signer
+      quickAccSigner: signer,
+      ...(utm.length && { utm })
     })
+    
+    if (createResp.success) {
+      utmTracking.resetUtm()
+    }
     if (createResp.message === 'EMAIL_ALREADY_USED') {
       setErr('An account with this email already exists')
       return
@@ -128,14 +140,25 @@ export default function AddAccount({ relayerURL, onAddAccount }) {
     const privileges = [[getAddress(addr), hexZeroPad('0x01', 32)]]
     const { salt, baseIdentityAddr, identityFactoryAddr } = accountPresets
     const bytecode = getProxyDeployBytecode(baseIdentityAddr, privileges, { privSlot: 0 })
-    const identityAddr = getAddress('0x' + generateAddress2(identityFactoryAddr, salt, bytecode).toString('hex'))
+    const identityAddr = getAddress('0x' + generateAddress2(
+      // Converting to buffer is required in ethereumjs-util version: 7.1.3
+      Buffer.from(identityFactoryAddr.slice(2), 'hex'),
+      Buffer.from(salt.slice(2), 'hex'),
+      Buffer.from(bytecode.slice(2), 'hex')
+    ).toString('hex'))
+
+    const utm = utmTracking.getLatestUtmData()
 
     if (relayerURL) {
       const createResp = await fetchPost(`${relayerURL}/identity/${identityAddr}`, {
         salt, identityFactoryAddr, baseIdentityAddr,
         privileges,
-        signerType
+        signerType,
+        ...(utm.length && { utm })
       })
+      if (createResp.success) {
+        utmTracking.resetUtm()
+      }
       if (!createResp.success && !(createResp.message && createResp.message.includes('already exists'))) throw createResp
     }
 
@@ -144,7 +167,7 @@ export default function AddAccount({ relayerURL, onAddAccount }) {
       salt, identityFactoryAddr, baseIdentityAddr, bytecode,
       signer: { address: getAddress(addr) }
     }
-  }, [relayerURL])
+  }, [relayerURL, utmTracking])
 
   async function connectWeb3AndGetAccounts() {
     if (typeof window.ethereum === 'undefined') {
@@ -248,15 +271,11 @@ export default function AddAccount({ relayerURL, onAddAccount }) {
     let error = null
     try {
       const addrData = await ledgerGetAddresses()
-      if (!addrData.error) {
-        const signerExtra = { type: 'ledger', transportProtocol: 'webHID' }
-        if (addrData.addresses.length === 1) {
-            onEOASelected(addrData.addresses[0], signerExtra)
-        } else {
-            setChooseSigners({ addresses: addrData.addresses, signerName: 'Ledger', signerExtra })
-        }
+      const signerExtra = { type: 'ledger', transportProtocol: 'webHID' }
+      if (addrData.length === 1) {
+        onEOASelected(addrData[0], signerExtra)
       } else {
-        error = addrData.error
+        setChooseSigners({ addresses: addrData, signerName: 'Ledger', signerExtra })
       }
     } catch (e) {
       console.log(e)
@@ -295,6 +314,8 @@ export default function AddAccount({ relayerURL, onAddAccount }) {
     setChooseSigners(null)
   }, [onEOASelected, signersToChoose])
 
+  const handleSelectSignerAccountModalCloseClicked = useCallback(() => setChooseSigners(null), [])
+  
   // The UI for choosing a signer to create/add an account with, for example
   // when connecting a hardware wallet, it has many addrs you can choose from
   useEffect(() => {
@@ -306,10 +327,11 @@ export default function AddAccount({ relayerURL, onAddAccount }) {
           description={`Signer address is the ${signersToChoose.signerName} address you will use to sign transactions on Ambire Wallet.
                     А new account will be created using this signer if you don’t have one.`}
           isCloseBtnShown={true}
+          onCloseBtnClicked={handleSelectSignerAccountModalCloseClicked}
         />
       )
     }
-  }, [onSignerAddressClicked, showModal, signersToChoose])
+  }, [handleSelectSignerAccountModalCloseClicked, onSignerAddressClicked, showModal, signersToChoose])
   
   const onDrop = useCallback((acceptedFiles, rejectedFiles) => {
     const reader = new FileReader()

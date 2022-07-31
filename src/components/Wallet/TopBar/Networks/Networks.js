@@ -44,8 +44,8 @@ const Networks = ({
             return sorted
         }
     })
-
-    const networksItems = sortedNetworks.map(({ id, name, icon }) => ({
+    const currHideNet = sortedNetworks.filter(n => network.id === n.id && network.hide)
+    const networksItems = sortedNetworks.filter(n => !n.hide).concat(currHideNet).map(({ id, name, icon }) => ({
       label: name,
       value: id,
       icon
@@ -64,7 +64,7 @@ const Networks = ({
             dragTarget={dragTarget}
             items={networksItems}
             displayDraggableHeader={!isMobileScreen}
-            onChange={value => setNetwork(value)}
+            onChange={({ value }) => setNetwork(value)}
             draggableHeader={<div className='sort-buttons'>
                 <ToolTip label='Sorted networks by drag and drop'>
                     <MdDragIndicator color={sortType === "custom" ? "#80ffdb" : ""} cursor="pointer" 

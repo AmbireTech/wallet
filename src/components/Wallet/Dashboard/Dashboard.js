@@ -8,7 +8,12 @@ import Balances from './Balances/Balances'
 import Protocols from './Protocols/Protocols'
 import Collectibles from './Collectibles/Collectibles'
 import { MdOutlineInfo } from 'react-icons/md'
+
 import Promotions from './Promotions/Promotions'
+import AssetsMigrationBanner from 'components/Wallet/AssetsMigration/AssetsMigrationBanner'
+import PendingRecoveryNotice from 'components/Wallet/Security/PendingRecoveryNotice/PendingRecoveryNotice'
+import usePasswordRecoveryCheck from 'hooks/usePasswordRecoveryCheck'
+import OutdatedBalancesMsg from './OutdatedBalancesMsg/OutdatedBalancesMsg'
 
 const chartSegments = [
     {
@@ -28,19 +33,26 @@ const tabSegments = [
     }
 ]
 
-export default function Dashboard({ portfolio, selectedNetwork, selectedAccount, setNetwork, privateMode, rewardsData,  userSorting, setUserSorting }) {
+
+export default function Dashboard({ portfolio, selectedNetwork, selectedAccount, setNetwork, privateMode, rewardsData,  userSorting, setUserSorting, accounts, addRequest, relayerURL, useStorage, match, showSendTxns }) {
     const history = useHistory()
-    const { tabId } = useParams()
+    const { tabId, page = 1 } = useParams()
 
     const [chartTokensData, setChartTokensData] = useState([]);
     const [chartProtocolsData, setChartProtocolsData] = useState([]);
     const [chartType, setChartType] = useState([]);
     const [tab, setTab] = useState(tabId || tabSegments[0].value);
 
+    const currentAccount = accounts.find(a => a.id.toLowerCase() === selectedAccount.toLowerCase())
+
+    const { hasPendingReset, recoveryLock, isPasswordRecoveryCheckLoading } = usePasswordRecoveryCheck(relayerURL, currentAccount, selectedNetwork)
+    const isBalancesCachedCurrentNetwork = portfolio.cachedBalancesByNetworks.length ? 
+        portfolio.cachedBalancesByNetworks.find(({network}) => network === selectedNetwork.id) : false
+
     useEffect(() => {
         if (!tab || tab === tabSegments[0].value) return history.replace(`/wallet/dashboard`)
-        history.replace(`/wallet/dashboard/${tab}`)
-    }, [tab, history])
+        history.replace(`/wallet/dashboard/${tab}${tab === tabSegments[1].value ? `/${page}` : ''}`)
+    }, [tab, history, page])
 
     useLayoutEffect(() => {
         const tokensData = portfolio.tokens
@@ -50,7 +62,7 @@ export default function Dashboard({ portfolio, selectedNetwork, selectedAccount,
             }))
             .filter(({ value }) => value > 0);
 
-        const totalProtocols = portfolio.protocols.map(({ assets }) => 
+        const totalProtocols = portfolio.protocols.map(({ assets }) =>
             assets
                 .map(({ balanceUSD }) => balanceUSD)
                 .reduce((acc, curr) => acc + curr, 0))
@@ -71,16 +83,47 @@ export default function Dashboard({ portfolio, selectedNetwork, selectedAccount,
 
     return (
         <section id="dashboard">
+            { isBalancesCachedCurrentNetwork && (
+                <OutdatedBalancesMsg 
+                    selectedNetwork={selectedNetwork}
+                    selectedAccount={selectedAccount} 
+                />)
+            }
             <Promotions rewardsData={rewardsData} />
+            {
+              <AssetsMigrationBanner
+                selectedNetwork={selectedNetwork}
+                selectedAccount={selectedAccount}
+                accounts={accounts}
+                addRequest={addRequest}
+                closeable={true}
+                relayerURL={relayerURL}
+                portfolio={portfolio}
+                useStorage={useStorage}
+              />
+            }
+            {
+              (hasPendingReset && !isPasswordRecoveryCheckLoading) && (
+                <PendingRecoveryNotice
+                  recoveryLock={recoveryLock}
+                  showSendTxns={showSendTxns}
+                  selectedAccount={currentAccount}
+                  selectedNetwork={selectedNetwork}
+                />
+              )
+            }
             <div id="overview">
                 <div id="balance" className="panel">
                     <div className="title">Balance</div>
-                    <div className="content"> 
+                    <div className="content">
                         <Balances
                             portfolio={portfolio}
                             selectedNetwork={selectedNetwork}
                             setNetwork={setNetwork}
                             hidePrivateValue={privateMode.hidePrivateValue}
+                            relayerURL={relayerURL}
+                            selectedAccount={selectedAccount}
+                            match={match}
                         />
                     </div>
                 </div>

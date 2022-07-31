@@ -4,10 +4,10 @@ import { MdClose } from 'react-icons/md'
 import { useModals } from 'hooks'
 
 const Modal = ({ children, id, title, buttons, isCloseBtnShown = true, onClose, topLeft }) => {
-    const { hideModal } = useModals()
+    const { onHideModal } = useModals()
 
     const onCloseModal = () => {
-        hideModal()
+        onHideModal()
         onClose && onClose()
     }
 

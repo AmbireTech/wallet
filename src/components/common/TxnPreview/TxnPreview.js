@@ -11,7 +11,7 @@ import { MdOutlineClose } from 'react-icons/md'
 import { BsChevronDown, BsChevronUp } from 'react-icons/bs'
 import { getTokenIcon } from 'lib/icons'
 import { formatFloatTokenAmount } from 'lib/formatters'
-import { setKnownUDomains } from 'lib/humanReadableTransactions'
+import { setKnownAddressNames } from 'lib/humanReadableTransactions'
 
 function getNetworkSymbol(networkId) {
   const network = networks.find(x => x.id === networkId)
@@ -93,7 +93,7 @@ export default function TxnPreview ({ txn, onDismiss, network, account, isFirstF
 
   const summary = (extendedSummary.map(entry => Array.isArray(entry) ? entry.map((item, i) => parseExtendedSummaryItem(item, i, networkDetails)) : (entry))) // If entry is extended summary parse it
   
-  useEffect(() => !!addressLabel && setKnownUDomains(addressLabel), [addressLabel])
+  useEffect(() => !!addressLabel && setKnownAddressNames(addressLabel), [addressLabel])
   
   return (
     <div className={isFirstFailing ? 'txnPreview firstFailing' : 'txnPreview'}>

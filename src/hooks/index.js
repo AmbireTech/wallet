@@ -1,5 +1,4 @@
 import useAccounts from "./accounts"
-import useNetwork from "./network"
 import usePortfolio from "./portfolio"
 import useWalletConnect from "./walletconnect"
 import useRelayerData from './relayerData'
@@ -13,10 +12,11 @@ import useLocalStorage from './useLocalStorage'
 import useAmbireEarnDetails from './ambireEarnDetails'
 import useDragAndDrop from './dragAndDrop'
 import useCheckMobileScreen from './checkMobileScreen'
+import useUtmTracking from './utmTracking'
+import useGasTank from "./gasTank"
 
 export {
     useAccounts,
-    useNetwork,
     usePortfolio,
     useWalletConnect,
     useRelayerData,
@@ -29,5 +29,7 @@ export {
     useLocalStorage,
     useAmbireEarnDetails,
     useDragAndDrop,
-    useCheckMobileScreen
+    useCheckMobileScreen,
+    useUtmTracking,
+    useGasTank
 }

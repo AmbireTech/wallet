@@ -1,54 +1,160 @@
 import './SignMessage.scss'
 import { MdBrokenImage, MdCheck, MdClose } from 'react-icons/md'
 import { Wallet } from 'ethers'
-import { toUtf8String, keccak256, arrayify, isHexString } from 'ethers/lib/utils'
-import { signMsgHash, Bundle } from 'adex-protocol-eth/js/Bundle'
+import { signMessage712, signMessage, Bundle } from 'adex-protocol-eth/js/Bundle'
+import {
+  toUtf8String,
+  toUtf8Bytes,
+  arrayify,
+  isHexString,
+  _TypedDataEncoder,
+  AbiCoder,
+  keccak256
+} from 'ethers/lib/utils'
 import * as blockies from 'blockies-ts';
 import { getWallet } from 'lib/getWallet'
 import { useToasts } from 'hooks/toasts'
 import { fetchPost } from 'lib/fetch'
+import { verifyMessage } from '@ambire/signature-validator'
 import { useState, useEffect, useRef, useCallback } from 'react'
+import { Button, Loading, TextInput, ToolTip } from 'components/common'
+import { isObject } from 'url/util'
+import { MdInfoOutline } from 'react-icons/md'
+import accountPresets from 'consts/accountPresets'
 import { getProvider } from 'lib/provider'
-import { Button, Loading, TextInput } from 'components/common'
+import { getNetworkByChainId } from 'lib/getNetwork'
 
 const CONF_CODE_LENGTH = 6
 
-export default function SignMessage ({ toSign, resolve, account, connections, relayerURL, totalRequests, network }) {
+export default function SignMessage ({ toSign, resolve, account, connections, relayerURL, totalRequests }) {
   const defaultState = () => ({ codeRequired: false, passphrase: '' })
   const { addToast } = useToasts()
   const [signingState, setSigningState] = useState(defaultState())
   const [isLoading, setLoading] = useState(false)
   const [isDeployed, setIsDeployed] = useState(null)
+  const [hasPrivileges, setHasPrivileges] = useState(null)
+  const [hasProviderError, setHasProviderError] = useState(null)
+
   const [confFieldState, setConfFieldState] = useState({isShown: false,  confCodeRequired: ''})
   const [promiseResolve, setPromiseResolve] = useState(null)
   const inputSecretRef = useRef(null)
-  
+
   const connection = connections.find(({ uri }) => uri === toSign.wcUri)
   const dApp = connection ? connection?.session?.peerMeta || null : null
-  
+
+  let typeDataErr
+  let dataV4
+  let requestedChainId = toSign.chainId
+  const isTypedData = ['eth_signTypedData_v4', 'eth_signTypedData'].indexOf(toSign.type) !== -1
+
+  if (isTypedData) {
+    dataV4 = toSign.txn
+
+    if (isObject(dataV4)) {
+      try {
+        if (dataV4.types.EIP712Domain) { // Avoids failure in case some dapps explicitly add this (redundant) prop
+          delete dataV4.types.EIP712Domain
+        }
+        _TypedDataEncoder.hash(dataV4.domain, dataV4.types, dataV4.message)
+        // enforce chainId
+        if (dataV4.domain.chainId) {
+          requestedChainId = dataV4.domain.chainId
+        }
+      } catch {
+        typeDataErr = '.txn has Invalid TypedData object. Should be {domain, types, message}'
+      }
+    } else {
+      typeDataErr = '.txn should be a TypedData object'
+    }
+  }
+
+  const requestedNetwork = getNetworkByChainId(requestedChainId)
+
   useEffect(()=> {
     if (confFieldState.isShown) inputSecretRef.current.focus()
   }, [confFieldState])
-  
-  const checkIsDeployed = useCallback(async () => {
+
+
+  const checkIsDeployedAndHasPrivileges = useCallback(async () => {
+    if (!requestedNetwork) return
+
     const bundle = new Bundle({
-      network: network.id,
+      network: requestedNetwork.id,
       identity: account.id,
       signer: account.signer
     })
 
-    const provider = await getProvider(network.id)
-    const isDeployed = await provider.getCode(bundle.identity).then(code => code !== '0x')
-    setIsDeployed(isDeployed)
-  }, [account, network])
+    const provider = await getProvider(requestedNetwork.id)
+
+    let privilegeAddress
+    let quickAccAccountHash
+    if (account.signer.quickAccManager) {
+      const { quickAccTimelock } = accountPresets
+      const quickAccountTuple = [quickAccTimelock, account.signer.one, account.signer.two]
+      const abiCoder = new AbiCoder()
+      quickAccAccountHash = keccak256(abiCoder.encode(['tuple(uint, address, address)'], [quickAccountTuple]))
+      privilegeAddress = account.signer.quickAccManager
+    } else {
+      privilegeAddress = account.signer.address
+    }
+
+
+    // to differenciate reverts and network issues
+    const callObject = {
+      method: "eth_call",
+      params: [
+        {
+          to: bundle.identity,
+          data: '0xc066a5b1000000000000000000000000' + privilegeAddress.toLowerCase().substring(2)
+        },
+        'latest'
+      ],
+      id: 1,
+      jsonrpc:'2.0'
+    }
+
+    fetchPost(provider.connection.url, callObject)
+      .then(result => {
+        if (result.result && result.result !== '0x') {
+          setIsDeployed(true)
+          if (account.signer.quickAccManager) {
+            setHasPrivileges(result.result === quickAccAccountHash)
+          } else {
+            //TODO: To ask : in what cases it's more than 1?
+            if (result.result === '0x0000000000000000000000000000000000000000000000000000000000000001') {
+              setHasPrivileges(true)
+            } else {
+              setHasPrivileges(false)
+            }
+          }
+        } else { // result.error or anything else that does not have a .result prop, we assume it is not deployed
+          setIsDeployed(false)
+        }
+      })
+      .catch(err => {
+        // as raw XHR calls, reverts are not caught, but only have .error prop
+        // this should be a netowrk error
+        setHasProviderError(err.message)
+      })
+
+  }, [account, requestedNetwork])
 
   useEffect(() => {
-    checkIsDeployed()
-  }, [checkIsDeployed])
+    checkIsDeployedAndHasPrivileges()
+  }, [checkIsDeployedAndHasPrivileges])
 
   if (!toSign || !account) return (<></>)
-  if (toSign && !isHexString(toSign.txn)) return (<div id='signMessage'>
-    <h3 className='error'>Invalid signing request: .txn has to be a hex string</h3>
+
+  // should not happen unless chainId is dropped for some reason in addRequests
+  if (!requestedNetwork) {
+    return (<div id='signMessage'>
+      <h3 className='error'>Inexistant network for chainId : { requestedChainId }</h3>
+      <Button className='reject' onClick={() => resolve({ message: 'signature denied' })}>Reject</Button>
+    </div>)
+  }
+
+  if (typeDataErr) return (<div id='signMessage'>
+    <h3 className='error'>Invalid signing request: { typeDataErr }</h3>
     <Button className='reject' onClick={() => resolve({ message: 'signature denied' })}>Reject</Button>
   </div>)
 
@@ -60,6 +166,26 @@ export default function SignMessage ({ toSign, resolve, account, connections, re
       addToast(`Signing error: ${e.message || e}`, { error: true })
     }
   }
+
+  const verifySignature = (toSign, sig, networkId) => {
+    const provider = getProvider(networkId)
+    return verifyMessage({
+      provider,
+      signer: account.id,
+      message: isTypedData ? null : getMessageAsBytes(toSign.txn),
+      typedData: isTypedData ? dataV4 : null,
+      signature: sig
+    }).then(verificationResult => {
+      if (verificationResult) {
+        return true
+      } else {
+        throw Error(toSign.type + ': signature verification failed.')
+      }
+    }).catch(e => {
+      throw Error(toSign.type + ': signature verification failed. ' + e.message)
+    })
+  }
+
   const approveQuickAcc = async confirmationCode => {
     if (!relayerURL) {
       addToast('Email/pass accounts not supported without a relayer connection', { error: true })
@@ -71,12 +197,12 @@ export default function SignMessage ({ toSign, resolve, account, connections, re
     }
     setLoading(true)
     try {
-      const hash = keccak256(arrayify(toSign.txn))
 
       const { signature, success, message, confCodeRequired } = await fetchPost(
         // network doesn't matter when signing
-        `${relayerURL}/second-key/${account.id}/ethereum/sign`, {
-          toSign: hash,
+        // if it does tho, we can use ${network.id}
+        `${relayerURL}/second-key/${account.id}/ethereum/sign${isTypedData ? '?typedData=true' : ''}`, {
+          toSign: toSign.txn,
           code: confirmationCode
         }
       )
@@ -101,7 +227,14 @@ export default function SignMessage ({ toSign, resolve, account, connections, re
 
       if (!account.primaryKeyBackup) throw new Error(`No key backup found: you need to import the account from JSON or login again.`)
       const wallet = await Wallet.fromEncryptedJson(JSON.parse(account.primaryKeyBackup), signingState.passphrase)
-      const sig = await signMsgHash(wallet, account.id, account.signer, arrayify(hash), signature)
+
+      const sig = await (isTypedData
+        ? signMessage712(wallet, account.id, account.signer, dataV4.domain, dataV4.types, dataV4.message, signature)
+        : signMessage(wallet, account.id, account.signer, getMessageAsBytes(toSign.txn), signature)
+      )
+
+      await verifySignature(toSign, sig, requestedNetwork.id)
+
       resolve({ success: true, result: sig })
       addToast(`Successfully signed!`)
     } catch(e) { handleSigningErr(e) }
@@ -117,7 +250,7 @@ export default function SignMessage ({ toSign, resolve, account, connections, re
     setLoading(true)
     try {
       // if quick account, wallet = await fromEncryptedBackup
-      // and just pass the signature as secondSig to signMsgHash
+      // and just pass the signature as secondSig to signMessage
       const wallet = getWallet({
         signer: account.signer,
         signerExtra: account.signerExtra,
@@ -126,8 +259,20 @@ export default function SignMessage ({ toSign, resolve, account, connections, re
       // It would be great if we could pass the full data cause then web3 wallets/hw wallets can display the full text
       // Unfortunately that isn't possible, because isValidSignature only takes a bytes32 hash; so to sign this with
       // a personal message, we need to be signing the hash itself as binary data such that we match 'Ethereum signed message:\n32<hash binary data>' on the contract
-      const hash = keccak256(arrayify(toSign.txn)) // hacky equivalent is: id(toUtf8String(toSign.txn)) 
-      const sig = await signMsgHash(wallet, account.id, account.signer, arrayify(hash))
+
+      // forcing signer to be connected to the matching chain (MM)
+      const isConnected = await wallet.isConnected(account.signer.address, requestedNetwork.chainId)
+      if (!isConnected) {
+        throw Error(`Please connect your signer wallet ${account.signer.address} to the correct chain :  ${requestedNetwork.id}`)
+      }
+
+      const sig = await ((toSign.type === 'eth_signTypedData_v4' || toSign.type === 'eth_signTypedData')
+        ? signMessage712(wallet, account.id, account.signer, dataV4.domain, dataV4.types, dataV4.message)
+        : signMessage(wallet, account.id, account.signer, getMessageAsBytes(toSign.txn))
+      )
+
+      await verifySignature(toSign, sig, requestedNetwork.id)
+
       resolve({ success: true, result: sig })
       addToast(`Successfully signed!`)
     } catch(e) { handleSigningErr(e) }
@@ -139,7 +284,7 @@ export default function SignMessage ({ toSign, resolve, account, connections, re
   }
 
   const handleSubmit = e => {
-    e.preventDefault() 
+    e.preventDefault()
     approve()
   }
 
@@ -149,22 +294,36 @@ export default function SignMessage ({ toSign, resolve, account, connections, re
         Signing with account
       </div>
       <div className="content">
-        <img className='icon' src={blockies.create({ seed: account.id }).toDataURL()} alt='Account Icon'/>
-        { account.id }
+        <div className='signingAccount-account'>
+          <img className='icon' src={blockies.create({ seed: account.id }).toDataURL()} alt='Account Icon'/>
+          { account.id }
+        </div>
+        <div className='signingAccount-network'>
+          on
+          <div className='icon' style={{ backgroundImage: `url(${requestedNetwork.icon})` }}/>
+          <div className='address'>{ requestedNetwork.name }</div>
+        </div>
       </div>
     </div>
     <div className='panel'>
-      <div className='title'>
-        Sign message
+      <div className='title signMessageTitle'>
+        <span className='signMessageTitle-title'>
+          Sign message
+        </span>
+        <span className='signMessageTitle-signatureType'>
+          <ToolTip label={`${isTypedData ? 'An EIP-712 typed data signature has been requested' : 'An ethSign ethereum signature type has been requested'}`}>
+            <MdInfoOutline /> <span>{isTypedData ? 'EIP-712 type' : 'standard type'}</span>
+          </ToolTip>
+        </span>
       </div>
 
       <div className='request-message'>
         <div className='dapp-message'>
-          { 
+          {
             dApp ?
               <a className='dapp' href={dApp.url} target="_blank" rel="noreferrer">
                 <div className='icon' style={{ backgroundImage: `url(${dApp.icons[0]})` }}>
-                 <MdBrokenImage/> 
+                 <MdBrokenImage/>
                 </div>
                 { dApp.name }
               </a>
@@ -175,11 +334,11 @@ export default function SignMessage ({ toSign, resolve, account, connections, re
         </div>
         <span>{totalRequests > 1 ? `You have ${totalRequests - 1} more pending requests.` : ''}</span>
       </div>
-      
+
       <textarea
         className='sign-message'
         type='text'
-        value={getMessageAsText(toSign.txn)}
+        value={dataV4 ? JSON.stringify(dataV4, '\n', ' ') : (toSign.txn !== '0x' ? getMessageAsText(toSign.txn) : '(Empty message)')}
         readOnly={true}
       />
 
@@ -196,10 +355,10 @@ export default function SignMessage ({ toSign, resolve, account, connections, re
             <input type="submit" hidden />
           </>)}
 
-          {confFieldState.isShown && (    
+          {confFieldState.isShown && (
             <>
               {confFieldState.confCodeRequired === 'email' &&
-              (<span>A confirmation code has been sent to your email, it is valid for 3 minutes.</span>)} 
+              (<span>A confirmation code has been sent to your email, it is valid for 3 minutes.</span>)}
               {confFieldState.confCodeRequired === 'otp' && (<span>Please enter your OTP code</span>)}
               <TextInput
                 ref={inputSecretRef}
@@ -208,14 +367,38 @@ export default function SignMessage ({ toSign, resolve, account, connections, re
               />
             </>
             )}
-         
-          {!isDeployed && (<div>
+
+          {
+            (isDeployed === null && !hasProviderError) && (
+              <div>
+                <Loading />
+              </div>
+            )
+          }
+
+          {isDeployed === false && (<div>
               <h3 className='error'>You can't sign this message yet.</h3>
               <h3 className='error'>
-              You need to complete your first transaction in order to be able to sign messages.
+              You need to complete your first transaction on {requestedNetwork.name} network in order to be able to sign messages.
               </h3>
             </div>
           )}
+
+          {
+            hasPrivileges === false  && (<div>
+                <h3 className='error'>You do not have the privileges to sign this message.</h3>
+              </div>
+            )
+          }
+
+          {
+            hasProviderError  && (<div>
+                <h3 className='error'>
+                  There was an issue with the network provider: {hasProviderError}
+                </h3>
+              </div>
+            )
+          }
 
           <div className="buttons">
             <Button
@@ -225,7 +408,7 @@ export default function SignMessage ({ toSign, resolve, account, connections, re
               className='reject'
               onClick={() => resolve({ message: 'signature denied' })}
             >Reject</Button>
-            {isDeployed !== null && isDeployed && (
+            {(isDeployed !== null && isDeployed) && hasPrivileges && (
               <Button type='submit' className='approve' disabled={isLoading}>
               {isLoading ? (<><Loading/>Signing...</>)
               : (<><MdCheck/> Sign</>)}
@@ -238,7 +421,19 @@ export default function SignMessage ({ toSign, resolve, account, connections, re
   </div>)
 }
 
+function getMessageAsBytes(msg) {
+  // Transforming human message / hex string to bytes
+  if (!isHexString(msg)) {
+    return toUtf8Bytes(msg)
+  } else {
+    return arrayify(msg)
+  }
+}
+
 function getMessageAsText(msg) {
-  try { return toUtf8String(msg) }
-  catch(_) { return msg }
+  if (isHexString(msg)) {
+    try { return toUtf8String(msg) }
+    catch(_) { return msg }
+  }
+  return msg?.toString ? msg.toString() : msg + ''//what if dapp sends it as object? force string to avoid app crashing
 }

@@ -46,9 +46,14 @@ export async function sendNoRelayer ({ finalBundle, account, network, wallet, es
       } else {
         // web3 injectors which can't sign, but can sign+send
         // they also don't like the gas arg they fully control the chain ID
-        const { chainId } = await wallet.provider.getNetwork()
-        if (network.chainId !== chainId) throw new Error(`Connected to the wrong network: please switch to ${network.name}`)
-        txId = (await wallet.sendTransaction({ from: txn.from, to: txn.to, data: txn.data, gasPrice: txn.gasPrice, nonce: txn.nonce })).hash
+        if (wallet.provider) {
+          const { chainId } = await wallet.provider.getNetwork()
+          if (network.chainId !== chainId) throw new Error(`Connected to the wrong network: please switch to ${network.name}`)
+          txId = (await wallet.sendTransaction({ from: txn.from, to: txn.to, data: txn.data, gasPrice: txn.gasPrice, nonce: txn.nonce })).hash
+        } else { // implementation of sendTransaction in getWallet
+          txId = (await wallet.sendTransaction({ from: txn.from, to: txn.to, data: txn.data, gasPrice: txn.gasPrice, gas: txn.gas, nonce: txn.nonce, chainId: network.chainId })).hash
+        }
+
       }
       return { success: true, txId }
     } catch(e) {

@@ -17,8 +17,8 @@ export default function Providers({ walletAddress, networkDetails, relayerURL })
             name: 'Kriptomat',
             type: 'Credit Card',
             fees: '2.45%',
-            limits: 'up to 450 EUR/day',
-            currencies: 'EUR',
+            limits: 'up to 5000 EUR/day',
+            currencies: 'USD, EUR, GBP',
             networks: ['ethereum', 'binance-smart-chain'],
             onClick: () => openKriptomat()
         },
@@ -49,7 +49,7 @@ export default function Providers({ walletAddress, networkDetails, relayerURL })
             fees: 'from 0.5%',
             limits: 'up to 15,000 EUR/day',
             currencies: 'GBP, EUR, USD and many more',
-            networks: ['ethereum', 'polygon', 'avalanche', 'arbitrum', 'binance-smart-chain'],
+            networks: ['ethereum', 'polygon', 'avalanche', 'arbitrum', 'binance-smart-chain', 'moonriver', 'moonbeam', 'optimism'],
             onClick: () => openTransak()
         }
     ];

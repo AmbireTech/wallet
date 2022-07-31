@@ -315,3 +315,44 @@ Those contracts (except Ethereum-specific WALLET, xWALLET and SupplyController) 
 * Fix non clickable address area
 * Fix bug when using UD in batch transactions
 * Added Avalanche AAVE for wallets rewards
+
+### v0.5.4
+* Added new option for migration assets from Metamask
+* Added Arbitrum chain
+* Added Optimism Network
+* Implement sign messages EIP 712 - https://www.npmjs.com/package/is-valid-signature
+* Custom banner improvments
+* New tokens added in custom tokens for "balance oracle"
+* Fixed: Disable fee selector when proceed to sign step with external signer
+* Fixed: the "Undefined" APY in Earn
+
+### v0.5.5
+* xWALLET Pending unbonds gas fees fix
+* Change signer assets migration process
+* Added Ledger signer assets migration
+* Show discount banner only if eligible
+* Support balance for custom NFTs for netwroks without thirdparty balance providers
+* Added multiplier for CryptoTester NFT
+* Added pagination for Collectibles page
+* Changed Kriptomat limit to 5k per day
+* Added new tokens BSC on for rewards
+
+### v0.5.6
+* Supported hidden networks
+* Added Andromeda chain
+* Improved humanizer with custom list of eligible tokens
+* Added Trezor and Lattice signer assets migration
+* Added Transak support for Moonbeam, Moonriver and Optimism chains
+* Asset migration improvement to migration with Permit method
+* Added chain verification of sign message
+* Alphabetically sort of tokens in Transfer page
+* Fixed: Support Pancakeswap through WalletConnect
+* Improve replacment transaction interface
+
+### v0.5.7
+* Added ENS support
+* We now notify users in case the contract they're interacting with intentionally blocks smart wallets, as is the case with many NFT mints
+* Improvement sign message page and verification for deployed contract
+* Disable deposit option for Tesseract earn
+* Fixed: Allow to list more then 8 dapps in dapps connection bar
+* Fixed: Notification errors on Chrome browser on Android mobile
