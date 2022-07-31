@@ -235,7 +235,7 @@ const CrossChain = ({ addRequest, selectedAccount, portfolio, network, relayerUR
                                                     <label>From</label>
                                                     <div className="inputs">
                                                         { loadingFromTokens ? <Loading/> : null }
-                                                        <Select searchable defaultValue={fromToken} items={fromTokensItems} onChange={value => setFromToken(value)}/>
+                                                        <Select searchable defaultValue={fromToken} items={fromTokensItems} onChange={({ value }) => setFromToken(value)}/>
                                                         <NumberInput min="0" label={amountLabel} value={amount} onInput={value => setAmount(value)} button="MAX" onButtonClick={() => setAmount(maxAmount)}/>
                                                     </div>
                                                     <div className="separator">
@@ -244,8 +244,8 @@ const CrossChain = ({ addRequest, selectedAccount, portfolio, network, relayerUR
                                                     <label>To</label>
                                                     <div className="inputs">
                                                         { loadingToTokens ? <Loading/> : null }
-                                                        <Select searchable defaultValue={toChain} items={chainsItems} onChange={value => setToChain(value)}/>
-                                                        <Select searchable defaultValue={toToken} items={toTokenItems} onChange={value => setToToken(value)}/>
+                                                        <Select searchable defaultValue={toChain} items={chainsItems} onChange={({ value }) => setToChain(value)}/>
+                                                        <Select searchable defaultValue={toToken} items={toTokenItems} onChange={({ value }) => setToToken(value)}/>
                                                     </div>
                                                     <Button disabled={formDisabled} onClick={getQuotes}>Get Quotes</Button>
                                                 </div>

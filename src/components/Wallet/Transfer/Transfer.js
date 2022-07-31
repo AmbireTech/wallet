@@ -2,6 +2,7 @@ import './Transfer.scss'
 
 import { BsXLg } from 'react-icons/bs'
 import { AiOutlineSend } from 'react-icons/ai'
+import { MdWarning } from 'react-icons/md'
 import { useParams, withRouter } from 'react-router'
 import { useEffect, useMemo, useState, useRef } from 'react'
 import { ethers } from 'ethers'
@@ -16,6 +17,8 @@ import { MdInfo } from 'react-icons/md'
 import networks from 'consts/networks'
 import { getTokenIcon } from 'lib/icons'
 import { formatFloatTokenAmount } from 'lib/formatters'
+import { useLocation } from 'react-router-dom'
+import accountPresets from 'consts/accountPresets'
 import { resolveENSDomain, getBip44Items } from 'lib/ensDomains'
 
 const ERC20 = new Interface(require('adex-protocol-eth/abi/ERC20'))
@@ -26,13 +29,14 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
 
     const { tokenAddressOrSymbol } = useParams()
     const { addToast } = useToasts()
-
+    const { state } = useLocation()
+    const [gasTankDetails] = useState(state ? state : null)
     const tokenAddress = isValidAddress(tokenAddressOrSymbol) ? tokenAddressOrSymbol : portfolio.tokens.find(({ symbol }) => symbol === tokenAddressOrSymbol)?.address || null
 
     const [asset, setAsset] = useState(tokenAddress)
     const [amount, setAmount] = useState(0)
     const [bigNumberHexAmount, setBigNumberHexAmount] = useState('')
-    const [address, setAddress] = useState('')
+    const [address, setAddress] = useState(gasTankDetails ? accountPresets.feeCollector : '')
     const [uDAddress, setUDAddress] = useState('')
     const [ensAddress, setEnsAddress] = useState('')
     const [disabled, setDisabled] = useState(true)
@@ -50,7 +54,12 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
         }
     })
     const timer = useRef(null)
-    const assetsItems = portfolio.tokens.map(({ label, symbol, address, img, tokenImageUrl, network }) => ({
+    let eligibleFeeTokens = null
+    if (gasTankDetails?.feeAssetsPerNetwork) {
+        eligibleFeeTokens = portfolio.tokens.filter(item => gasTankDetails?.feeAssetsPerNetwork.some(i => i.address.toLowerCase() === item.address.toLowerCase()))
+    } else eligibleFeeTokens = portfolio.tokens
+    
+    const assetsItems = eligibleFeeTokens.map(({ label, symbol, address, img, tokenImageUrl, network }) => ({
         label: label || symbol,
         value: address,
         icon: img || tokenImageUrl,
@@ -69,8 +78,8 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
     }, [selectedAsset])
 
     const showSWAddressWarning = useMemo(() =>
-        Number(tokenAddress) === 0 && networks.map(({ id }) => id).filter(id => id !== 'ethereum').includes(selectedNetwork.id)
-        , [tokenAddress, selectedNetwork])
+        !gasTankDetails && Number(tokenAddress) === 0 && networks.map(({ id }) => id).filter(id => id !== 'ethereum').includes(selectedNetwork.id)
+        , [gasTankDetails, tokenAddress, selectedNetwork.id])
 
     const setMaxAmount = () => onAmountChange(maxAmount)
 
@@ -86,7 +95,8 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
 
     const sendTx = () => {
         const recipientAddress = uDAddress ? uDAddress : ensAddress ? ensAddress :  address
-
+        if (!bigNumberHexAmount) return 
+        
         try {
             const txn = {
                 to: selectedAsset.address,
@@ -150,6 +160,7 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
 
         if (address.startsWith('0x') && (address.indexOf('.') === -1)) {
             if (uDAddress !== '') setUDAddress('')
+            if (ensAddress !== '') setEnsAddress('')
             const isValidRecipientAddress = validateSendTransferAddress(address, selectedAcc, addressConfirmed, isKnownAddress)
 
             setValidationFormMgs({
@@ -172,19 +183,19 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
             const validateForm = async () => {
                 const UDAddress = await resolveUDomain(address, selectedAsset ? selectedAsset.symbol : null, selectedNetwork.unstoppableDomainsChain)
                 const bip44Item = getBip44Items(selectedAsset ? selectedAsset.symbol : null)
-                const ensAddress = await resolveENSDomain(address, bip44Item)
+                const ensAddr = await resolveENSDomain(address, bip44Item)
                 timer.current = null
                 const isUDAddress = UDAddress ? true : false
-                const isEnsAddress = ensAddress ? true : false
+                const isEnsAddress = ensAddr ? true : false
                 let selectedAddress = ''
-                if (isEnsAddress) selectedAddress = ensAddress
+                if (isEnsAddress) selectedAddress = ensAddr
                 else if (isUDAddress) selectedAddress = UDAddress
                 else selectedAddress = address
 
                 const isValidRecipientAddress = validateSendTransferAddress(selectedAddress, selectedAcc, addressConfirmed, isKnownAddress, isUDAddress, isEnsAddress)
 
                 setUDAddress(UDAddress)
-                setEnsAddress(ensAddress)
+                setEnsAddress(ensAddr)
                 setValidationFormMgs({
                     success: {
                         amount: isValidSendTransferAmount.success,
@@ -204,23 +215,23 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
             }, 300)
         }
         return () => clearTimeout(timer.current)
-    }, [address, amount, selectedAcc, selectedAsset, addressConfirmed, showSWAddressWarning, sWAddressConfirmed, isKnownAddress, addToast, selectedNetwork, addAddress, uDAddress])
+    }, [address, amount, selectedAcc, selectedAsset, addressConfirmed, showSWAddressWarning, sWAddressConfirmed, isKnownAddress, addToast, selectedNetwork, addAddress, uDAddress, disabled, ensAddress])
 
     const amountLabel = <div className="amount-label">Available Amount: <span>{maxAmountFormatted} {selectedAsset?.symbol}</span></div>
 
     return (
-        <div id="transfer">
-            <div className="panel">
-                <div className="title">
-                    Send
-                </div>
-                {
+        <div id="transfer" style={{ justifyContent: gasTankDetails ? 'center' : '' }}>
+           <div className="panel">
+               <div className="title">
+                   Send
+               </div>
+               {
                     portfolio.isCurrNetworkBalanceLoading ?
                         <Loading />
                         :
                         assetsItems.length ?
                             <div className="form">
-                                <Select searchable defaultValue={asset} items={assetsItems.sort((a, b) => a.label.toLowerCase() > b.label.toLowerCase() ? 1 : -1)} onChange={(value) => setAsset(value)}/>
+                                <Select searchable defaultValue={asset} items={assetsItems.sort((a, b) => a.label.toLowerCase() > b.label.toLowerCase() ? 1 : -1)} onChange={({ value }) => setAsset(value)}/>
                                 <NumberInput
                                     label={amountLabel}
                                     value={amount}
@@ -229,9 +240,9 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
                                     button="MAX"
                                     onButtonClick={() => setMaxAmount()}
                                 />
-                                {validationFormMgs.messages.amount &&
-                                    (<div className='validation-error'><BsXLg size={12} />&nbsp;{validationFormMgs.messages.amount}</div>)}
-                                <div id="recipient-field">
+                                { validationFormMgs.messages.amount && 
+                                    (<div className='validation-error'><BsXLg size={12}/>&nbsp;{validationFormMgs.messages.amount}</div>)}
+                                { gasTankDetails ? <p className='gas-tank-msg'><MdWarning /> {gasTankDetails?.gasTankMsg}</p> : (<div id="recipient-field">
                                     <TextInput
                                         placeholder="Recipient"
                                         info="Please double-check the recipient address, blockchain transactions are not reversible."
@@ -253,15 +264,17 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
                                         onSelectAddress={address => setAddress(address)}
                                         selectedNetwork={selectedNetwork}
                                     />
-                                </div>
-                                {validationFormMgs.messages.address &&
-                                    (<div className='validation-error'><BsXLg size={12} />&nbsp;{validationFormMgs.messages.address}</div>)}
-                                <div className="separator" />
+                                </div>)}
+                                { validationFormMgs.messages.address && 
+                                    (<div className='validation-error'><BsXLg size={12}/>&nbsp;{validationFormMgs.messages.address}</div>)}
+                                <div className="separator"/>
                                 <AddressWarning
-                                    address={uDAddress ? uDAddress : ensAddress ? ensAddress : address}
-                                    onAddNewAddress={() => setNewAddress(uDAddress ? uDAddress : ensAddress ? ensAddress : address)}
+                                    address={address}
+                                    onAddNewAddress={() => setNewAddress(address)}
                                     onChange={(value) => setAddressConfirmed(value)}
                                     isKnownAddress={isKnownAddress}
+                                    uDAddress={uDAddress}
+                                    ensAddress={ensAddress}
                                 />
                                 {
                                     showSWAddressWarning ?
@@ -281,17 +294,17 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
                                 <Button icon={<AiOutlineSend />} disabled={disabled} onClick={sendTx}>Send</Button>
                             </div>
                             :
-                            <NoFundsPlaceholder />
-                }
-            </div>
-            <Addresses
+                            <NoFundsPlaceholder/>
+               }
+           </div>
+           {!gasTankDetails && <Addresses
                 selectedAsset={selectedAsset}
                 selectedNetwork={selectedNetwork}
                 addresses={addresses}
                 addAddress={addAddress}
                 removeAddress={removeAddress}
                 onSelectAddress={address => setAddress(address)}
-            />
+            />}
         </div>
     )
 }

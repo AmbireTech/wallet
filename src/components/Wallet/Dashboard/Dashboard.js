@@ -11,6 +11,9 @@ import { MdOutlineInfo } from 'react-icons/md'
 
 import Promotions from './Promotions/Promotions'
 import AssetsMigrationBanner from 'components/Wallet/AssetsMigration/AssetsMigrationBanner'
+import PendingRecoveryNotice from 'components/Wallet/Security/PendingRecoveryNotice/PendingRecoveryNotice'
+import usePasswordRecoveryCheck from 'hooks/usePasswordRecoveryCheck'
+import OutdatedBalancesMsg from './OutdatedBalancesMsg/OutdatedBalancesMsg'
 
 const chartSegments = [
     {
@@ -30,7 +33,8 @@ const tabSegments = [
     }
 ]
 
-export default function Dashboard({ portfolio, selectedNetwork, selectedAccount, setNetwork, privateMode, rewardsData,  userSorting, setUserSorting, accounts, addRequest, relayerURL, useStorage }) {
+
+export default function Dashboard({ portfolio, selectedNetwork, selectedAccount, setNetwork, privateMode, rewardsData,  userSorting, setUserSorting, accounts, addRequest, relayerURL, useStorage, match, showSendTxns }) {
     const history = useHistory()
     const { tabId, page = 1 } = useParams()
 
@@ -38,6 +42,12 @@ export default function Dashboard({ portfolio, selectedNetwork, selectedAccount,
     const [chartProtocolsData, setChartProtocolsData] = useState([]);
     const [chartType, setChartType] = useState([]);
     const [tab, setTab] = useState(tabId || tabSegments[0].value);
+
+    const currentAccount = accounts.find(a => a.id.toLowerCase() === selectedAccount.toLowerCase())
+
+    const { hasPendingReset, recoveryLock, isPasswordRecoveryCheckLoading } = usePasswordRecoveryCheck(relayerURL, currentAccount, selectedNetwork)
+    const isBalancesCachedCurrentNetwork = portfolio.cachedBalancesByNetworks.length ? 
+        portfolio.cachedBalancesByNetworks.find(({network}) => network === selectedNetwork.id) : false
 
     useEffect(() => {
         if (!tab || tab === tabSegments[0].value) return history.replace(`/wallet/dashboard`)
@@ -73,6 +83,12 @@ export default function Dashboard({ portfolio, selectedNetwork, selectedAccount,
 
     return (
         <section id="dashboard">
+            { isBalancesCachedCurrentNetwork && (
+                <OutdatedBalancesMsg 
+                    selectedNetwork={selectedNetwork}
+                    selectedAccount={selectedAccount} 
+                />)
+            }
             <Promotions rewardsData={rewardsData} />
             {
               <AssetsMigrationBanner
@@ -86,6 +102,16 @@ export default function Dashboard({ portfolio, selectedNetwork, selectedAccount,
                 useStorage={useStorage}
               />
             }
+            {
+              (hasPendingReset && !isPasswordRecoveryCheckLoading) && (
+                <PendingRecoveryNotice
+                  recoveryLock={recoveryLock}
+                  showSendTxns={showSendTxns}
+                  selectedAccount={currentAccount}
+                  selectedNetwork={selectedNetwork}
+                />
+              )
+            }
             <div id="overview">
                 <div id="balance" className="panel">
                     <div className="title">Balance</div>
@@ -95,6 +121,9 @@ export default function Dashboard({ portfolio, selectedNetwork, selectedAccount,
                             selectedNetwork={selectedNetwork}
                             setNetwork={setNetwork}
                             hidePrivateValue={privateMode.hidePrivateValue}
+                            relayerURL={relayerURL}
+                            selectedAccount={selectedAccount}
+                            match={match}
                         />
                     </div>
                 </div>

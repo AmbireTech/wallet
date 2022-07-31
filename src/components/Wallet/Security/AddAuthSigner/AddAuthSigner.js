@@ -194,6 +194,8 @@ const AddAuthSigner = ({ selectedNetwork, selectedAcc, onAddBtnClicked }) => {
     if (signersToChoose) setTextInputInfo(`${signersToChoose.signerName} address # ${value.index + 1}`)
   }, [signersToChoose])
 
+  const handleSelectSignerAccountModalCloseClicked = useCallback(() => setChooseSigners(null), [])
+
   useEffect(() => {
     if (modalToggle && signersToChoose)
       showModal(
@@ -202,9 +204,10 @@ const AddAuthSigner = ({ selectedNetwork, selectedAcc, onAddBtnClicked }) => {
           selectedNetwork={selectedNetwork}
           onSignerAddressClicked={onSignerAddressClicked}
           description={`You will authorize the selected ${signersToChoose.signerName} address to sign transactions for your account.`}
+          onCloseBtnClicked={handleSelectSignerAccountModalCloseClicked}
         />
       )
-  }, [modalToggle, onSignerAddressClicked, selectedNetwork, showModal, signersToChoose])
+  }, [handleSelectSignerAccountModalCloseClicked, modalToggle, onSignerAddressClicked, selectedNetwork, showModal, signersToChoose])
 
   const addFromSignerButtons = (
     <div className="wallet-btns-wrapper">

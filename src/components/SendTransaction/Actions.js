@@ -3,7 +3,16 @@ import { Button, Loading, TextInput } from 'components/common'
 import { isTokenEligible } from './helpers'
 import { MdCheck, MdCheckCircle, MdOutlineCheck, MdOutlineClose } from 'react-icons/md'
 
-export default function Actions({ estimation, feeSpeed, approveTxn, rejectTxn, cancelSigning, signingStatus }) {
+export default function Actions({ 
+    estimation, 
+    feeSpeed, 
+    approveTxn, 
+    rejectTxn, 
+    cancelSigning, 
+    signingStatus, 
+    isGasTankEnabled, 
+    network
+  }) {
   const [quickAccCredentials, setQuickAccCredentials] = useState({ code: '', passphrase: '' })
   // reset this every time the signing status changes
   useEffect(() => !signingStatus && setQuickAccCredentials(prev => ({ ...prev, code: '' })), [signingStatus])
@@ -16,7 +25,7 @@ export default function Actions({ estimation, feeSpeed, approveTxn, rejectTxn, c
     <Button danger icon={<MdOutlineClose/>} type='button' className='rejectTxn' onClick={rejectTxn}>Reject</Button>
   )
   const insufficientFee = estimation && estimation.feeInUSD
-    && !isTokenEligible(estimation.selectedFeeToken, feeSpeed, estimation)
+    && !isTokenEligible(estimation.selectedFeeToken, feeSpeed, estimation, isGasTankEnabled, network)
   const willFail = (estimation && !estimation.success) || insufficientFee
   if (willFail) {
     return (<div className='buttons'>

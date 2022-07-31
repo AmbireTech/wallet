@@ -18,7 +18,7 @@ import {
 
 const toastErrorMessage = name => `You blocked the ${name} permission. Check your browser permissions tab.`
 
-const PermissionsModal = ({ relayerIdentityURL, account, onAddAccount, isCloseBtnShown, isBackupOptout, setRedisplayPermissionsModal }) => {
+const PermissionsModal = ({ relayerIdentityURL, account, onAddAccount, isCloseBtnShown, isBackupOptout, setRedisplayPermissionsModal, showThankYouPage }) => {
     const { hideModal, showModal } = useModals()
     const { isNoticationsGranted, isClipboardGranted, modalHidden, setModalHidden } = usePermissions()
     const { addToast } = useToasts()
@@ -46,7 +46,7 @@ const PermissionsModal = ({ relayerIdentityURL, account, onAddAccount, isCloseBt
             setEmailResent(false)
         }
     }
-    
+
     const checkEmailConfirmation = useCallback(async () => {
         try {
             const identity = await fetchGet(relayerIdentityURL)
@@ -72,29 +72,39 @@ const PermissionsModal = ({ relayerIdentityURL, account, onAddAccount, isCloseBt
         const status = await askForPermission('notifications')
         if (!status) addToast(toastErrorMessage('Notifications'), { error: true })
     }
-    
+
     const requestClipboardPermission = async () => {
         const status = await askForPermission('clipboard-read')
         if (!status) addToast(toastErrorMessage('Clipboard'), { error: true })
     }
-    
+
     useEffect(() => {
         !isEmailConfirmed && checkEmailConfirmation()
         const emailConfirmationInterval = setInterval(() => !isEmailConfirmed && checkEmailConfirmation(), 3000)
         return () => clearInterval(emailConfirmationInterval)
     }, [isEmailConfirmed, checkEmailConfirmation])
 
+    const handleDoneOrIgnoreBtnsClicked = () => {
+        hideModal()
+        if (showThankYouPage) openThankYouPage()
+    }
+
+    const handleOnClose = () => {
+        if (showThankYouPage) openThankYouPage()
+    }
+    const openThankYouPage = () => window.open("https://www.ambire.com/thankyou", "_blank")
+
     const buttons = isJsonBackupDownloaded ? (<>
-        <Button clear small icon={<MdClose/>} disabled={isAccountNotConfirmed} onClick={hideModal}>Ignore</Button>
-        <Button small icon={<MdCheck/>} disabled={buttonDisabled} onClick={hideModal}>Done</Button>
+        <Button clear small icon={<MdClose/>} disabled={isAccountNotConfirmed} onClick={handleDoneOrIgnoreBtnsClicked}>Ignore</Button>
+        <Button small icon={<MdCheck/>} disabled={buttonDisabled} onClick={handleDoneOrIgnoreBtnsClicked}>Done</Button>
     </>) : (<>
-        <Button clear small icon={<MdClose/>} disabled={true} onClick={hideModal}>Ignore</Button>
-        <Button small icon={<MdCheck/>} disabled={true} onClick={hideModal}>Done</Button>
+        <Button clear small icon={<MdClose/>} disabled={true} onClick={handleDoneOrIgnoreBtnsClicked}>Ignore</Button>
+        <Button small icon={<MdCheck/>} disabled={true} onClick={handleDoneOrIgnoreBtnsClicked}>Done</Button>
     </>)
 
     const downloadFile = ({ data, fileName, fileType }) => {
         const blob = new Blob([data], { type: fileType })
-    
+
         const a = document.createElement('a')
         a.download = fileName
         a.href = window.URL.createObjectURL(blob)
@@ -125,13 +135,13 @@ const PermissionsModal = ({ relayerIdentityURL, account, onAddAccount, isCloseBt
         if (typeof copiedAcc.emailConfRequired !== 'undefined') delete copiedAcc.emailConfRequired
         if (typeof copiedAcc.backupOptout !== 'undefined') delete copiedAcc.backupOptout
         if (typeof copiedAcc.cloudBackupOptout !== 'undefined') delete copiedAcc.cloudBackupOptout
-        
+
         downloadFile({
             data: JSON.stringify(copiedAcc),
             fileName: `${copiedAcc.id}.json`,
             fileType: 'text/json',
         })
-        
+
         onAddAccount({
             ...account,
             backupOptout: false
@@ -144,9 +154,9 @@ const PermissionsModal = ({ relayerIdentityURL, account, onAddAccount, isCloseBt
     }, [])
 
     return (
-        <Modal id="permissions-modal" title="We need a few things 🙏" buttons={buttons} isCloseBtnShown={isCloseBtnShown}>
+        <Modal id="permissions-modal" title="We need a few things 🙏" buttons={buttons} isCloseBtnShown={isCloseBtnShown} onClose={handleOnClose}>
             {
-                account.email ? 
+                account.email ?
                     <div className="permission">
                     <div className="details">
                         <div className="name">Email Verification</div>
@@ -156,14 +166,14 @@ const PermissionsModal = ({ relayerIdentityURL, account, onAddAccount, isCloseBt
                         </div>
                     </div>
                     <div className="status">
-                        { 
+                        {
                             !isEmailConfirmed ?
                                 <label>Waiting for<br/>your confirmation</label>
-                                : 
+                                :
                                 <span className="check-icon"><MdOutlineCheck/></span>
                         }
-                        { 
-                            !isEmailConfirmed && !isEmailResent ? 
+                        {
+                            !isEmailConfirmed && !isEmailResent ?
                                 <ToolTip label={`Will be available in ${resendTimeLeft / 1000} seconds`} disabled={resendTimeLeft === 0}>
                                     <Button mini clear icon={<AiOutlineReload/>} disabled={resendTimeLeft !== 0} onClick={sendConfirmationEmail}>Resend</Button>
                                 </ToolTip>
@@ -192,8 +202,8 @@ const PermissionsModal = ({ relayerIdentityURL, account, onAddAccount, isCloseBt
                     <div className="description">
                         Needed so that dApps can be connected automatically just by copying their WalletConnect URL.
                     </div>
-                    { 
-                        isFirefox() ? 
+                    {
+                        isFirefox() ?
                             <div className="unavailable">
                                 Without this, you can still use Ambire, but you will have to paste URLs manually
                             </div> : null

@@ -64,7 +64,7 @@ const Networks = ({
             dragTarget={dragTarget}
             items={networksItems}
             displayDraggableHeader={!isMobileScreen}
-            onChange={value => setNetwork(value)}
+            onChange={({ value }) => setNetwork(value)}
             draggableHeader={<div className='sort-buttons'>
                 <ToolTip label='Sorted networks by drag and drop'>
                     <MdDragIndicator color={sortType === "custom" ? "#80ffdb" : ""} cursor="pointer" 

@@ -1,6 +1,6 @@
 import './SignMessage.scss'
 import { MdBrokenImage, MdCheck, MdClose } from 'react-icons/md'
-import { ethers, Wallet } from 'ethers'
+import { Wallet } from 'ethers'
 import { signMessage712, signMessage, Bundle } from 'adex-protocol-eth/js/Bundle'
 import {
   toUtf8String,
@@ -8,7 +8,6 @@ import {
   arrayify,
   isHexString,
   _TypedDataEncoder,
-  Interface,
   AbiCoder,
   keccak256
 } from 'ethers/lib/utils'
@@ -27,10 +26,6 @@ import { getNetworkByChainId } from 'lib/getNetwork'
 
 const CONF_CODE_LENGTH = 6
 
-const IDENTITY_INTERFACE = new Interface(
-  require('adex-protocol-eth/abi/Identity5.2')
-)
-
 export default function SignMessage ({ toSign, resolve, account, connections, relayerURL, totalRequests }) {
   const defaultState = () => ({ codeRequired: false, passphrase: '' })
   const { addToast } = useToasts()
@@ -38,6 +33,8 @@ export default function SignMessage ({ toSign, resolve, account, connections, re
   const [isLoading, setLoading] = useState(false)
   const [isDeployed, setIsDeployed] = useState(null)
   const [hasPrivileges, setHasPrivileges] = useState(null)
+  const [hasProviderError, setHasProviderError] = useState(null)
+
   const [confFieldState, setConfFieldState] = useState({isShown: false,  confCodeRequired: ''})
   const [promiseResolve, setPromiseResolve] = useState(null)
   const inputSecretRef = useRef(null)
@@ -89,7 +86,6 @@ export default function SignMessage ({ toSign, resolve, account, connections, re
 
     const provider = await getProvider(requestedNetwork.id)
 
-    const identityContract = new ethers.Contract(bundle.identity, IDENTITY_INTERFACE, provider)
     let privilegeAddress
     let quickAccAccountHash
     if (account.signer.quickAccManager) {
@@ -102,24 +98,44 @@ export default function SignMessage ({ toSign, resolve, account, connections, re
       privilegeAddress = account.signer.address
     }
 
-    identityContract.privileges(privilegeAddress)
+
+    // to differenciate reverts and network issues
+    const callObject = {
+      method: "eth_call",
+      params: [
+        {
+          to: bundle.identity,
+          data: '0xc066a5b1000000000000000000000000' + privilegeAddress.toLowerCase().substring(2)
+        },
+        'latest'
+      ],
+      id: 1,
+      jsonrpc:'2.0'
+    }
+
+    fetchPost(provider.connection.url, callObject)
       .then(result => {
-        setIsDeployed(true)
-        if (account.signer.quickAccManager) {
-          setHasPrivileges(result === quickAccAccountHash)
-        } else {
-          //TODO: To ask : in what cases it's more than 1?
-          if (result === '0x0000000000000000000000000000000000000000000000000000000000000001') {
-            setHasPrivileges(true)
+        if (result.result && result.result !== '0x') {
+          setIsDeployed(true)
+          if (account.signer.quickAccManager) {
+            setHasPrivileges(result.result === quickAccAccountHash)
           } else {
-            setHasPrivileges(false)
+            //TODO: To ask : in what cases it's more than 1?
+            if (result.result === '0x0000000000000000000000000000000000000000000000000000000000000001') {
+              setHasPrivileges(true)
+            } else {
+              setHasPrivileges(false)
+            }
           }
+        } else { // result.error or anything else that does not have a .result prop, we assume it is not deployed
+          setIsDeployed(false)
         }
       })
       .catch(err => {
-        // Can we assume that the error thrown would be from non deployed contracts?
-        setIsDeployed(false)
-    })
+        // as raw XHR calls, reverts are not caught, but only have .error prop
+        // this should be a netowrk error
+        setHasProviderError(err.message)
+      })
 
   }, [account, requestedNetwork])
 
@@ -323,7 +339,7 @@ export default function SignMessage ({ toSign, resolve, account, connections, re
       <textarea
         className='sign-message'
         type='text'
-        value={dataV4 ? JSON.stringify(dataV4, '\n', ' ') : getMessageAsText(toSign.txn)}
+        value={dataV4 ? JSON.stringify(dataV4, '\n', ' ') : (toSign.txn !== '0x' ? getMessageAsText(toSign.txn) : '(Empty message)')}
         readOnly={true}
       />
 
@@ -353,9 +369,8 @@ export default function SignMessage ({ toSign, resolve, account, connections, re
             </>
             )}
 
-
           {
-            isDeployed === null && (
+            (isDeployed === null && !hasProviderError) && (
               <div>
                 <Loading />
               </div>
@@ -373,6 +388,15 @@ export default function SignMessage ({ toSign, resolve, account, connections, re
           {
             hasPrivileges === false  && (<div>
                 <h3 className='error'>You do not have the privileges to sign this message.</h3>
+              </div>
+            )
+          }
+
+          {
+            hasProviderError  && (<div>
+                <h3 className='error'>
+                  There was an issue with the network provider: {hasProviderError}
+                </h3>
               </div>
             )
           }

@@ -85,7 +85,7 @@ const useAddressBook = ({ accounts, useStorage }) => {
 
     const removeAddress = useCallback((name, address, type) => {
         if (!name || !address) throw new Error('Address Book: invalid arguments supplied')
-        if (type === 'ud' || type === 'ens') {
+        if (type !== 'ud' && type !== 'ens') {
             if (!isValidAddress(address)) throw new Error('Address Book: invalid address format')
         }
         

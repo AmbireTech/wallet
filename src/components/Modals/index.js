@@ -12,6 +12,7 @@ import EarnDetailsModal from './EarnDetailsModal/EarnDetailsModal'
 import AddAddressModal from './AddAddressModal/AddAddressModal'
 import PaperBackupModal from './PaperBackupModal/PaperBackupModal'
 import PaperImportModal from './PaperImportModal/PaperImportModal'
+import GasTankBalanceByTokensModal from './GasTankBalanceByTokensModal/GasTankBalanceByTokensModal'
 
 export {
     PermissionsModal,
@@ -27,5 +28,6 @@ export {
     EarnDetailsModal,
     AddAddressModal,
     PaperBackupModal,
-    PaperImportModal
+    PaperImportModal,
+    GasTankBalanceByTokensModal
 }
