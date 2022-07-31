@@ -1,21 +1,135 @@
 @import 'variables.scss';
 
 #earn {
-    .cards {
-        display: flex;
-        gap: 25px;
-        flex: 1;
-        justify-content: space-between;
+  .cards {
+    display: flex;
+    gap: 25px;
+    flex: 1;
+    justify-content: space-between;
+  }
+
+  .card-new.inactive {
+    opacity: 0.5;
+  }
+
+  .amount-suggestion {
+    cursor: pointer;
+    border-bottom: 1px dashed $secondary-accent-color;
+  }
+
+  .notification-clear {
+    background-color: $input-background-color;
+    padding: 16px;
+  }
+
+  .card-tokens {
+    flex-basis: 30%;
+  }
+
+  .instructions-panel {
+    flex-grow: 1;
+    flex-basis: 70%;
+
+    h4 {
+      margin-top: 0;
+      text-transform: uppercase;
+      font-size: 18px;
     }
+
+    p {
+      color: $text-container-color;
+    }
+
+    .step-indicator p {
+      padding : 12px;
+    }
+
+    .strategies-how-to {
+      display: flex;
+      gap: 25px;
+    }
+
+    .centered {
+      text-align: center;
+    }
+
+    .step-indicator {
+      margin-top: 50px;
+      display: flex;
+      align-items: center;
+      padding: 0 40px;
+
+      &.step-indicator-small {
+        .step-icon {
+          height: 12px;
+          width: 12px;
+          border-radius: 50%;
+          text-align: center;
+          position: relative;
+          font-size: 24px;
+          border: 1px solid $ambire-purple;
+
+          &::after {
+            content: "";
+            margin-left: 2px;
+            margin-top: 2px;
+            width: 6px;
+            height: 6px;
+            border-radius: 16px;
+            display: block;
+            background: $ambire-purple;
+          }
+        }
+      }
+    }
+
+    .step {
+      display: flex;
+      align-items: center;
+      flex-direction: column;
+      position: relative;
+      z-index: 1;
+    }
+
+    .step-header {
+      position: relative;
+      width: 100%;
+      justify-content: center;
+      align-items: center;
+      display: flex;
+    }
+
+    .step-indicator .step-icon {
+      height: 50px;
+      width: 50px;
+      background: #202229;
+      text-align: center;
+      position: relative;
+      line-height: 50px;
+      font-size: 24px;
+      border: 1px solid $ambire-purple;
+      border-radius: 100%;
+    }
+
+    .indicator-line {
+      width: 100%;
+      height: 2px;
+      border: 1px dashed #923DFF;
+      position: absolute;
+      left: 50%;
+      z-index: -2;
+      flex: 1;
+    }
+  }
 }
 
 // Mobile
 @media screen and (max-width: $mobile-breakpoint-max-width) {
-    #earn {
-        .cards {
-            width: 100%;
-            flex-direction: column;
-            gap: 1em;
-        }
+  #earn {
+    .cards {
+      width: 100%;
+      flex-direction: column;
+      gap: 1em;
     }
+  }
 }

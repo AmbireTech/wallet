@@ -6,6 +6,7 @@ import Checkbox from './Checkbox/Checkbox';
 import DropDown from './DropDown/DropDown';
 import Loading from './Loading/Loading';
 import InfiniteProgressBar from './Loading/InfiniteProgressBar';
+import Image from './Image/Image';
 import AmbireLoading from './Loading/AmbireLoading';
 import Dots from './Loading/Dots';
 import Borders from './Loading/Borders';
@@ -22,6 +23,7 @@ import ToolTip from './ToolTip/ToolTip';
 import NoFundsPlaceholder from './NoFundsPlaceholder/NoFundsPlaceholder';
 import CountdownTimer from './CountdownTimer/CountdownTimer';
 import ErrorBoundary from './ErrorBoundary/ErrorBoundary';
+import AmountInput from './AmountInput/AmountInput'
 
 export {
     AddressBook,
@@ -32,6 +34,7 @@ export {
     DropDown,
     Loading,
     InfiniteProgressBar,
+    Image,
     AmbireLoading,
     Skeleton,
     Dots,
@@ -40,6 +43,7 @@ export {
     Radios,
     Segments,
     Select,
+    AmountInput,
     TextInput,
     NumberInput,
     PasswordInput,

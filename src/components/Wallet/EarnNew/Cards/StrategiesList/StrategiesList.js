@@ -2,66 +2,51 @@ import './StrategiesList.scss'
 import { useEffect, useRef, useState } from 'react'
 import Card from 'components/Wallet/EarnNew/Card/Card'
 
-const StrategiesList = ({ networkId, selectedToken }) => {
-    const currentNetwork = useRef()
-    const [isLoading, setLoading] = useState(true)
+const StrategiesList = ({ networkId, selectedToken, availableStrategies, selectedStrategy, setSelectedStrategy, selectedTokenType }) => {
+  const currentNetwork = useRef()
+  const [isLoading, setLoading] = useState(true)
 
-    useEffect(() => {
-        currentNetwork.current = networkId
-        setLoading(true)
-    }, [networkId])
+  useEffect(() => {
+    currentNetwork.current = networkId
+    setLoading(true)
+  }, [networkId])
 
-    useEffect(() =>  setLoading(false), [])
+  useEffect(() => setLoading(false), [])
 
-    return (
-        <Card
-            loading={isLoading}
-            large={!!!selectedToken}
-        >
-            <div className='strategies-list--empty'>
-                <div className='strategies-how-to'>
-                    <div>
-                        <h4>WHAT IS STAKED TOKEN?</h4>
-                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec arcu diam, facilisis ultricies gravida quis, semper nec sapien. Ut eget dolor dignissim, maximus tellus non, ornare dui. Nunc convallis neque nec libero venenatis facilisis vehicula lobortis turpis. Integer interdum sed augue a aliquet. Donec tincidunt turpis quis lacus dignissim tincidunt. Integer at nulla magna. Praesent bibendum maximus sapien, non posuere diam. Donec consectetur tristique finibus.</p>
+  return (
+    <Card
+      loading={isLoading}
+      large={!!!selectedToken}
+      header={{ step: 2, title: selectedTokenType === 'unstaked' ? 'Select a staking strategy' : 'Protocol to unstake from' }}
+    >
+      <div className='availableStrategies'>
+        {
+          availableStrategies
+            .sort((a, b) => b.token.apy - a.token.apy)
+            .map(s => {
+              return (
+                <div>
+                  <div
+                    onClick={() => setSelectedStrategy(s.name)}
+                    className={`availableStrategy strategy-${s.name.toLowerCase()} ${selectedStrategy === s.name ? 'selected' : ''}`}>
+                    <div className='strategy-logo'>
+                      <img src={`/resources/strategies/${s.name.toLowerCase()}.svg`} alt={s.name}/>
+                      <span className='ribbon'>APY: {s.token.apy}%</span>
                     </div>
-                    <div>
-                        <h4>WHAT IS STAKED TOKEN?</h4>
-                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec arcu diam, facilisis ultricies gravida quis, semper nec sapien. Ut eget dolor dignissim, maximus tellus non, ornare dui. Nunc convallis neque nec libero venenatis facilisis vehicula lobortis turpis. Integer interdum sed augue a aliquet. Donec tincidunt turpis quis lacus dignissim tincidunt. Integer at nulla magna. Praesent bibendum maximus sapien, non posuere diam. Donec consectetur tristique finibus.</p>
-                    </div>
+                    {
+                      selectedStrategy === s.name &&
+                      <div className='strategy-description'>
+                        {s.token.description}
+                      </div>
+                    }
+                  </div>
                 </div>
-
-                <div className='deposit-how-to'>
-                    <h2 className='title'>Deposit</h2>
-
-                    <section className="step-indicator">
-                        <div className="step step1 active">
-                            <div className='step-header'>
-                                <div className="step-icon">1</div>
-                                <div className="indicator-line active"></div>
-                            </div>
-                            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec arcu diam, facilisis ultricies gravida quis, semper nec sapien. Ut eget dolor dignissim, maximus tellus non, ornare dui. Nunc convallis neque nec libero venenatis facilisis vehicula lobortis.</p>
-                        </div>
-                        <div className="step step2">
-                            <div className='step-header'>
-                                <div className="step-icon">2</div>
-                                <div className="indicator-line"></div>
-                            </div>
-                            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec arcu diam, facilisis ultricies gravida quis, semper nec sapien. Ut eget dolor dignissim, maximus tellus non, ornare dui. Nunc convallis neque nec libero venenatis facilisis vehicula lobortis.</p>
-                        </div>
-                        <div className="step step3">
-                            <div className="step-icon">3</div>
-                            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec arcu diam, facilisis ultricies gravida quis, semper nec sapien. Ut eget dolor dignissim, maximus tellus non, ornare dui. Nunc convallis neque nec libero venenatis facilisis vehicula lobortis.</p>
-                        </div>
-                    </section>
-
-                </div>
-
-                <div className='withdraw-how-to'>
-                    <h2 className='title'>Withdraw</h2>
-                </div>
-            </div>
-        </Card>
-    )
+              )
+            })
+        }
+      </div>
+    </Card>
+  )
 }
 
 export default StrategiesList
