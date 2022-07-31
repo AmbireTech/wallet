@@ -3,7 +3,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { MdClose } from 'react-icons/md'
 import { FaCheck } from 'react-icons/fa'
 
-const VerifySeedWords = ({ words, setModalButtons, hideModal }) => {
+const VerifySeedWords = ({ words, setModalButtons, hideModal, onAddAccount, selectedAccount, accounts }) => {
 
   const [error, setError] = useState(null)
   const [wordIndex, setWordIndex] = useState(0)
@@ -74,6 +74,16 @@ const VerifySeedWords = ({ words, setModalButtons, hideModal }) => {
   // Display final closing button when all the words are verified
   useEffect(() => {
     if (wordIndex > 11) {
+      const currentAccount = accounts.find(a => selectedAccount.id.toLowerCase() === a.id.toLowerCase())
+      if (currentAccount) {
+        onAddAccount({
+          ...currentAccount,
+          backupOptout: false
+        })
+      } else {
+        console.error('could not find account for ' + selectedAccount.id)
+      }
+
       setModalButtons([<Button
         full
         icon={<MdClose/>}
@@ -81,7 +91,7 @@ const VerifySeedWords = ({ words, setModalButtons, hideModal }) => {
         onClick={() => hideModal()}
       >Close</Button>])
     }
-  }, [wordIndex, setModalButtons, hideModal])
+  }, [wordIndex, setModalButtons, hideModal, accounts, selectedAccount, onAddAccount])
 
   if (wordIndex > 11) {
     return <div className='notification-hollow success text-center mt-4'>

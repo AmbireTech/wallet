@@ -21,6 +21,7 @@ const Backup = ({ selectedAccount, accounts, onOpen, onAddAccount, relayerURL })
         showModal(<PaperBackupModal
           selectedAccount={selectedAccount}
           accounts={accounts}
+          onAddAccount={onAddAccount}
         />)
     }
 

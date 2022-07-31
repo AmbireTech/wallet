@@ -1,15 +1,15 @@
 import { useModals } from 'hooks'
 import { Modal, Stepper } from 'components/common'
 
-import { useState } from 'react'
+import { useLayoutEffect, useState } from 'react'
 
 import './PaperBackupModal.scss'
 import SeedWordsList from './SubComponents/SeedWordsList'
 import UnlockAccount from './SubComponents/UnlockAccount'
 import VerifySeedWords from './SubComponents/VerifySeedWords'
 
-const PaperBackupModal = ({ selectedAccount, accounts }) => {
-  const { hideModal } = useModals()
+const PaperBackupModal = ({ selectedAccount, accounts, modalCloseHandler, onAddAccount }) => {
+  const { hideModal, setBeforeCloseModalHandler } = useModals()
 
   const [modalButtons, setModalButtons] = useState(null)
   const [modalSteps, setModalSteps] = useState({
@@ -35,6 +35,12 @@ const PaperBackupModal = ({ selectedAccount, accounts }) => {
       <Stepper steps={modalSteps.steps} currentStep={modalSteps.stepIndex} noLabels={false}/>
     </div>)
   }
+
+  useLayoutEffect(() => {
+    if (modalCloseHandler) {
+      setBeforeCloseModalHandler(() => modalCloseHandler)
+    }
+  }, [setBeforeCloseModalHandler, modalCloseHandler])
 
   return (
     <Modal id='paper-backup-modal' title={getModalTitle()} buttons={modalButtons}>
@@ -72,6 +78,9 @@ const PaperBackupModal = ({ selectedAccount, accounts }) => {
             words={mnemonic}
             setError={setError}
             hideModal={hideModal}
+            onAddAccount={onAddAccount}
+            accounts={accounts}
+            selectedAccount={selectedAccount}
           />
         }
 

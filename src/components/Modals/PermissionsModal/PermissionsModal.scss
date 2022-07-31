@@ -66,7 +66,7 @@
                 button {
                     flex: 0 0 auto;
                 }
-            }       
+            }
 
             &.disabled {
                 pointer-events: none;
@@ -79,5 +79,17 @@
                 flex: 0 1 50% !important;
             }
         }
+    }
+
+    .export-buttons {
+        display: flex;
+        gap: 12px;
+
+        flex-direction: column;
+
+        .buttonComponent {
+            background: $warning-color;
+        }
+
     }
 }

@@ -9,19 +9,25 @@ import { Modal, Toggle, Button, Checkbox, ToolTip } from 'components/common'
 import { isFirefox } from 'lib/isFirefox'
 import { fetchGet } from 'lib/fetch'
 import { AiOutlineReload } from 'react-icons/ai'
-import { BiExport } from 'react-icons/bi'
 import accountPresets from 'consts/accountPresets'
+import { PaperBackupModal } from 'components/Modals'
+import {
+    BsFileEarmarkArrowDownFill,
+    BsFileEarmarkTextFill,
+} from 'react-icons/bs'
 
 const toastErrorMessage = name => `You blocked the ${name} permission. Check your browser permissions tab.`
 
-const PermissionsModal = ({ relayerIdentityURL, account, onAddAccount, isCloseBtnShown, isBackupOptout }) => {
-    const { hideModal } = useModals()
+const PermissionsModal = ({ relayerIdentityURL, account, onAddAccount, isCloseBtnShown, isBackupOptout, setRedisplayPermissionsModal }) => {
+    const { hideModal, showModal } = useModals()
     const { isNoticationsGranted, isClipboardGranted, modalHidden, setModalHidden } = usePermissions()
     const { addToast } = useToasts()
     const [isEmailConfirmed, setEmailConfirmed] = useState(false)
     const [isEmailResent, setEmailResent] = useState(false)
     const [isJsonBackupDownloaded, setIsJsonBackupDownloaded] = useState(isBackupOptout)
     const [resendTimeLeft, setResendTimeLeft] = useState(60000)
+
+    setRedisplayPermissionsModal(false)
 
     const days = Math.ceil(accountPresets.quickAccTimelock / 86400)
     const areBlockedPermissions = (!isFirefox() && !isClipboardGranted) || !isNoticationsGranted
@@ -99,6 +105,17 @@ const PermissionsModal = ({ relayerIdentityURL, account, onAddAccount, isCloseBt
         })
         a.dispatchEvent(clickEvt)
         a.remove()
+    }
+
+    const handlePaperBackupClicked = () => {
+        showModal(<PaperBackupModal
+          selectedAccount={account}
+          accounts={[account]}
+          onAddAccount={onAddAccount}
+          modalCloseHandler={() => {
+            setRedisplayPermissionsModal(true)
+          }}
+        />)
     }
 
     const handleExportClicked = () => {
@@ -193,9 +210,14 @@ const PermissionsModal = ({ relayerIdentityURL, account, onAddAccount, isCloseBt
                     </div>
                 </div>
                 <div className="status">
-                    {isJsonBackupDownloaded ? 
-                        (<span className="check-icon"><MdOutlineCheck/></span>) : 
-                        (<Button onClick={handleExportClicked} icon={<BiExport/>}>Export</Button>)
+                    {isJsonBackupDownloaded ?
+                        (<span className="check-icon"><MdOutlineCheck/></span>) :
+                        (
+                            <div className='export-buttons'>
+                                <Button small onClick={handleExportClicked} icon={<BsFileEarmarkArrowDownFill />}>JSON Export</Button>
+                                <Button small onClick={handlePaperBackupClicked} icon={<BsFileEarmarkTextFill />}>Paper Export</Button>
+                            </div>
+                        )
                     }
                 </div>
             </div>}

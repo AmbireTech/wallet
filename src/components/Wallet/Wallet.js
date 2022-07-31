@@ -14,7 +14,7 @@ import PluginGnosisSafeApps from 'components/Plugins/GnosisSafeApps/GnosisSafeAp
 import Collectible from "./Collectible/Collectible"
 import { PermissionsModal, UnsupportedDAppsModal } from 'components/Modals'
 import { useModals, usePermissions, useLocalStorage } from 'hooks'
-import { useCallback, useEffect, useMemo, useRef } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { isFirefox } from 'lib/isFirefox'
 import CrossChain from "./CrossChain/CrossChain"
 import OpenSea from "./OpenSea/OpenSea"
@@ -28,6 +28,7 @@ export default function Wallet(props) {
 
   const isLoggedIn = useMemo(() => props.accounts.length > 0, [props.accounts])
   const [advancedModeList, setAdvancedModeList] = useLocalStorage({ key: 'dAppsAdvancedMode', defaultValue: [] })
+  const [redisplayPermissionsModal, setRedisplayPermissionsModal] = useState(false)
 
   const routes = [
     {
@@ -175,12 +176,20 @@ export default function Wallet(props) {
       onAddAccount={props.onAddAccount}
       isCloseBtnShown={!showCauseOfBackupOptout}
       isBackupOptout={!showCauseOfBackupOptout}
+      setRedisplayPermissionsModal={setRedisplayPermissionsModal}
     />
 
     if (showCauseOfEmail || showCauseOfPermissions || showCauseOfBackupOptout) showModal(permissionsModal, { disableClose: true })
   }, [props.accounts, props.relayerURL, props.onAddAccount, props.selectedAcc, arePermissionsLoaded, isClipboardGranted, isNoticationsGranted, modalHidden, showModal])
 
   useEffect(() => handlePermissionsModal(), [handlePermissionsModal])
+
+  useEffect(() => {
+    if (redisplayPermissionsModal) {
+      handlePermissionsModal()
+      setRedisplayPermissionsModal(false)
+    }
+  }, [handlePermissionsModal, redisplayPermissionsModal])
 
   useEffect(() => {
     const scrollTimeout = setTimeout(() => walletContainer.current && walletContainer.current.scrollTo({ top: 0, behavior: 'smooth' }), 0)
