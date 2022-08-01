@@ -7,7 +7,7 @@
         gap: 14px;
 
         .dapp-input {
-            gap: 6px;
+            gap: 8px;
             .text-input-container {
                 input {
                     height: 40px;
@@ -69,8 +69,8 @@
         }
 
         .networks, .connection-radios {
-            :first-child {
-                margin-bottom: 10px;
+            > :first-child {
+                margin-bottom: 8px;
             }
         }
     }
