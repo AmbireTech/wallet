@@ -27,15 +27,15 @@ import { useAttentionGrabber,
   usePrivateMode, 
   useLocalStorage, 
   useUtmTracking, 
-  useGasTank 
+  useGasTank,
 } from './hooks'
 import { useToasts } from './hooks/toasts'
-import { useDapps } from './hooks'
 import { useOneTimeQueryParam } from './hooks/oneTimeQueryParam'
 import WalletStakingPoolABI from './consts/WalletStakingPoolABI.json'
 import { Contract, utils } from 'ethers'
 import { getProvider } from './lib/provider'
 import allNetworks from './consts/networks'
+import useDapps from 'ambire-common/src/hooks/useDapps'
 
 const relayerURL = process.env.REACT_APP_RELAYRLESS === 'true' 
                   ? null 

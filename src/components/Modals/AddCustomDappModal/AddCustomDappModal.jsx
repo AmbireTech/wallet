@@ -7,11 +7,7 @@ import { MdOutlineAdd, MdOutlineClose, MdImage } from 'react-icons/md'
 import { fetchCaught } from 'lib/fetch'
 import NETWORKS from 'consts/networks'
 import { chainIdToWalletNetworkId } from 'wallet-dapp-catalog'
-
-const isUrl = (str) => {
-    try { return Boolean(new URL(str)); }
-    catch (e) { return false }
-}
+import { isValidUrl } from 'ambire-common/src/services/validations'
 
 const getNormalizedUrl = (inputStr) => {
     const url = inputStr.toLowerCase().split(/[?#]/)[0].replace('/manifest.json', '')
@@ -100,9 +96,9 @@ const AddCustomDappModal = ({ dappsCatalog }) => {
         setIconUrl('')
         setConnectionType('')
         setLoading(true)
-        const isValidUrl = isUrl(url)
+        const isValidUrlInput = isValidUrl(url)
 
-        if (!isValidUrl) {
+        if (!isValidUrlInput) {
             setUrlErr(!!url ? 'Invalid Url' : null)
             setLoading(false)
             return
@@ -173,6 +169,7 @@ const AddCustomDappModal = ({ dappsCatalog }) => {
                     label="URL"
                     onInput={value => onUrlInput(value)}
                     className='dapp-input'
+                    placeholder='https://some.dapp.com'
                 />
                 {<div>
                     {urlErr || urlInfo}
