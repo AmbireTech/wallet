@@ -4,6 +4,7 @@ import RAMP_LOGO from 'resources/ramp.svg';
 import PAYTRIE_LOGO from 'resources/paytrie.svg';
 import TRANSAK_LOGO from 'resources/transak.svg';
 import KRIPTOMAT_LOGO from 'resources/kriptomat.svg';
+import GUARDARIAN_LOGO from 'resources/guardarian.svg'
 
 import { Loading } from 'components/common'
 import useProviders from './useProviders'
@@ -12,6 +13,16 @@ export default function Providers({ walletAddress, networkDetails, relayerURL, p
     const { openRampNetwork, openPayTrie, openTransak, openKriptomat, openGuardarian, isLoading } = useProviders({ walletAddress, selectedNetwork: networkDetails.id, relayerURL, portfolio })
     
     const providers = [
+        {
+            logo: GUARDARIAN_LOGO,
+            name: 'Guardarian',
+            type: 'Credit/Debit card and Bank Transfer (methods availability depends on location)',
+            fees: 'from 0.5%',
+            limits: 'up to 15,000 EUR/day',
+            currencies: 'GBP, EUR, USD and many more',
+            networks: ['ethereum', 'polygon', 'avalanche', 'binance-smart-chain', 'fantom'],
+            onClick: () => openGuardarian()
+        },
         {
             logo: KRIPTOMAT_LOGO,
             name: 'Kriptomat',
@@ -51,16 +62,6 @@ export default function Providers({ walletAddress, networkDetails, relayerURL, p
             currencies: 'GBP, EUR, USD and many more',
             networks: ['ethereum', 'polygon', 'avalanche', 'arbitrum', 'binance-smart-chain', 'moonriver', 'moonbeam', 'optimism'],
             onClick: () => openTransak()
-        },
-        {
-            logo: '',
-            name: 'Guardarian',
-            type: 'Credit/Debit card and Bank Transfer (methods availability depends on location)',
-            fees: 'from 0.5%',
-            limits: 'up to 15,000 EUR/day',
-            currencies: 'GBP, EUR, USD and many more',
-            networks: ['ethereum', 'polygon', 'avalanche', 'binance-smart-chain', 'fantom'],
-            onClick: () => openGuardarian()
         }
     ];
 
