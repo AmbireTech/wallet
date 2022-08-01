@@ -8,6 +8,7 @@ import Loading from './Loading/Loading';
 import InfiniteProgressBar from './Loading/InfiniteProgressBar';
 import AmbireLoading from './Loading/AmbireLoading';
 import Dots from './Loading/Dots';
+import Borders from './Loading/Borders';
 import Skeleton from './Loading/Skeleton';
 import Modal from './Modal/Modal';
 import Radios from './Radios/Radios';
@@ -20,6 +21,8 @@ import Toggle from './Toggle/Toggle';
 import ToolTip from './ToolTip/ToolTip';
 import NoFundsPlaceholder from './NoFundsPlaceholder/NoFundsPlaceholder';
 import CountdownTimer from './CountdownTimer/CountdownTimer';
+import ErrorBoundary from './ErrorBoundary/ErrorBoundary';
+import Stepper from './Stepper/Stepper.tsx';
 
 export {
     AddressBook,
@@ -33,6 +36,7 @@ export {
     AmbireLoading,
     Skeleton,
     Dots,
+    Borders,
     Modal,
     Radios,
     Segments,
@@ -43,5 +47,7 @@ export {
     Toggle,
     ToolTip,
     NoFundsPlaceholder,
-    CountdownTimer
+    CountdownTimer,
+    ErrorBoundary,
+    Stepper
 };

@@ -59,18 +59,14 @@ const AddAuthSigner = ({ selectedNetwork, selectedAcc, onAddBtnClicked }) => {
     let error = null
     try {
       const addrData = await ledgerGetAddresses()
-      if (!addrData.error) {
-        if (addrData.addresses.length === 1) {
-          return onSignerAddressClicked({
-            address: addrData.addresses[0],
-            index: 0,
-          })
-        } else {
-          setChooseSigners({ address: addrData.addresses, signerName: 'Ledger' })
-          setModalToggle(true)
-        }
+      if (addrData.length === 1) {
+        return onSignerAddressClicked({
+          address: addrData[0],
+          index: 0,
+        })
       } else {
-        error = addrData.error
+        setChooseSigners({ address: addrData, signerName: 'Ledger' })
+        setModalToggle(true)
       }
     } catch (e) {
       console.log(e)
@@ -198,6 +194,8 @@ const AddAuthSigner = ({ selectedNetwork, selectedAcc, onAddBtnClicked }) => {
     if (signersToChoose) setTextInputInfo(`${signersToChoose.signerName} address # ${value.index + 1}`)
   }, [signersToChoose])
 
+  const handleSelectSignerAccountModalCloseClicked = useCallback(() => setChooseSigners(null), [])
+
   useEffect(() => {
     if (modalToggle && signersToChoose)
       showModal(
@@ -206,9 +204,10 @@ const AddAuthSigner = ({ selectedNetwork, selectedAcc, onAddBtnClicked }) => {
           selectedNetwork={selectedNetwork}
           onSignerAddressClicked={onSignerAddressClicked}
           description={`You will authorize the selected ${signersToChoose.signerName} address to sign transactions for your account.`}
+          onCloseBtnClicked={handleSelectSignerAccountModalCloseClicked}
         />
       )
-  }, [modalToggle, onSignerAddressClicked, selectedNetwork, showModal, signersToChoose])
+  }, [handleSelectSignerAccountModalCloseClicked, modalToggle, onSignerAddressClicked, selectedNetwork, showModal, signersToChoose])
 
   const addFromSignerButtons = (
     <div className="wallet-btns-wrapper">

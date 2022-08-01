@@ -147,7 +147,7 @@ const CrossChain = ({ addRequest, selectedAccount, portfolio, network, relayerUR
             if (!portfolioToken) return
             const { decimals } = portfolioToken
             const flatAmount = parseUnits(amount, decimals).toString()
-            const quotes = await fetchQuotes(fromToken, fromChain, toToken, toChain, flatAmount, ['hyphen', 'anyswap-router-v4'])
+            const quotes = await fetchQuotes(fromToken, fromChain, toToken, toChain, flatAmount, ['hyphen', 'celer']) //'anyswap-router-v4'
             setQuotes(quotes)
         } catch(e) {
             console.error(e);
@@ -187,10 +187,10 @@ const CrossChain = ({ addRequest, selectedAccount, portfolio, network, relayerUR
     }, [toChain, loadFromTokens])
 
     useEffect(() => {
-        if (!fromChain || portfolio.isBalanceLoading) return
+        if (!fromChain || portfolio.isCurrNetworkBalanceLoading) return
         setQuotes(null)
         asyncLoad(setLoading, loadChains)
-    }, [fromChain, portfolio.isBalanceLoading, loadChains])
+    }, [fromChain, portfolio.isCurrNetworkBalanceLoading, loadChains])
 
     useEffect(() => portfolioTokens.current = portfolio.tokens, [portfolio.tokens])
 
@@ -202,14 +202,14 @@ const CrossChain = ({ addRequest, selectedAccount, portfolio, network, relayerUR
                 <div className="title">
                     Cross-chain transfers/swaps
                     <div id="powered">
-                        Powered by Movr
+                        Powered by Socket
                     </div>
                 </div>
                 {
                     disabled ?
                         <div className="placeholder">Not supported on this Network</div>
                         :
-                        loading || portfolio.isBalanceLoading ?
+                        loading || portfolio.isCurrNetworkBalanceLoading ?
                             <Loading/>
                             :
                             hasNoFunds ?
@@ -235,7 +235,7 @@ const CrossChain = ({ addRequest, selectedAccount, portfolio, network, relayerUR
                                                     <label>From</label>
                                                     <div className="inputs">
                                                         { loadingFromTokens ? <Loading/> : null }
-                                                        <Select searchable defaultValue={fromToken} items={fromTokensItems} onChange={value => setFromToken(value)}/>
+                                                        <Select searchable defaultValue={fromToken} items={fromTokensItems} onChange={({ value }) => setFromToken(value)}/>
                                                         <NumberInput min="0" label={amountLabel} value={amount} onInput={value => setAmount(value)} button="MAX" onButtonClick={() => setAmount(maxAmount)}/>
                                                     </div>
                                                     <div className="separator">
@@ -244,8 +244,8 @@ const CrossChain = ({ addRequest, selectedAccount, portfolio, network, relayerUR
                                                     <label>To</label>
                                                     <div className="inputs">
                                                         { loadingToTokens ? <Loading/> : null }
-                                                        <Select searchable defaultValue={toChain} items={chainsItems} onChange={value => setToChain(value)}/>
-                                                        <Select searchable defaultValue={toToken} items={toTokenItems} onChange={value => setToToken(value)}/>
+                                                        <Select searchable defaultValue={toChain} items={chainsItems} onChange={({ value }) => setToChain(value)}/>
+                                                        <Select searchable defaultValue={toToken} items={toTokenItems} onChange={({ value }) => setToToken(value)}/>
                                                     </div>
                                                     <Button disabled={formDisabled} onClick={getQuotes}>Get Quotes</Button>
                                                 </div>

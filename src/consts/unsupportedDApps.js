@@ -6,7 +6,12 @@ const unsupportedDApps = [
     'https://trade.dydx.exchange',
     'https://zks.app',
     'https://bridge.avax.network',
-    'https://app.pangolin.exchange'
+    'https://app.pangolin.exchange',
+    'https://unstoppabledomains.com',
+    'https://looksrare.org',
+    'https://www.myetherwallet.com',
+    'https://collab.land',
+    'https://app.epns.io'
 ]
 
 export default unsupportedDApps

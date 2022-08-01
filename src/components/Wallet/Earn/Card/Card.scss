@@ -65,6 +65,14 @@
             }
         }
 
+        .warning-msg {
+            background: mix($warning-color, $panel-background-color, 5%);
+            border: 1px solid $warning-color;
+            color: $warning-color;
+            padding: 7px;
+            font-size: 14px;
+        }
+
         .details-placeholder {
             height: 76px;
             display: flex;
@@ -89,7 +97,7 @@
         .info-message {
             display: flex;
             align-items: center;
-            min-height: 88px;
+            min-height: 102px;
         }
 
         .separator {

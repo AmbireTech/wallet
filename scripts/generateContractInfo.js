@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 const fetch = require('node-fetch')
 const ERC20 = require('adex-protocol-eth/abi/ERC20')
+const ambireTokenList = require('../src/consts/tokenList.json')
 
 const etherscans = {
 	ethereum: { host: 'api.etherscan.io', key: 'KJJ4NZ9EQHIFCQY5IJ775PT128YE15AV5S' },
@@ -31,6 +32,7 @@ const tesseractVaults = [
 ]
 const contracts = [
 	{ name: '$WALLET distributor', network: 'ethereum', addr: '0xc53af25f831f31ad6256a742b3f0905bc214a430' },
+	{ name: 'PancakeSwap', network: 'bsc', addr: '0x10ED43C718714eb63d5aA57B78B54704E256024E', abiName: 'PancakeRouter'},
 	{ name: 'Uniswap', network: 'ethereum', addr: '0x7a250d5630b4cf539739df2c5dacb4c659f2488d', abiName: 'UniV2Router' },
 	{ name: 'Uniswap', network: 'ethereum', addr: '0xe592427a0aece92de3edee1f18e0157c05861564', abiName: 'UniV3Router' },
 	{ name: 'Uniswap', network: 'ethereum', addr: '0x68b3465833fb72a70ecdf485e0e4c7bd8665fc45', abiName: 'UniV3Router2' },
@@ -44,6 +46,8 @@ const contracts = [
 	{ name: 'Wrapped MATIC', network: 'polygon', addr: '0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270' },
 	{ name: 'Aave', network: 'ethereum', addr: '0x7d2768de32b0b80b7a3454c06bdac94a69ddc7a9', abiAddr: '0xc6845a5c768bf8d7681249f8927877efda425baf', abiName: 'AaveLendingPoolV2' },
 	{ name: 'Aave', network: 'polygon', addr: '0x8dff5e27ea6b7ac08ebfdf9eb090f32ee9a30fcf' },
+	{ name: 'Aave', network: 'ethereum', addr: '0xcc9a0b7c43dc2a5f023bb9b738e45b0ef6b06e04', abiName: 'AaveWethGatewayV2' },
+	{ name: 'Aave', network: 'polygon', addr: '0xbEadf48d62aCC944a06EEaE0A9054A90E5A7dc97' },
 	{ name: 'Movr 1inch', network: 'ethereum', addr: '0x8f9eaee5c5df888aba3c1ab19689a0660d042c6d' },
 	{ name: 'Movr 1inch', network: 'polygon', addr: '0x2fc9c3bf505b74e59a538fe9d67bc1deb4c03d91' },
 	{ name: 'Movr Router', network: 'bsc', addr: '0xc30141B657f4216252dc59Af2e7CdB9D8792e1B0', abiName: 'MovrRouter' },
@@ -56,7 +60,8 @@ const contracts = [
 	{ name: 'Ambire Batcher', network: 'ethereum', addr: '0x460fad03099f67391d84c9cc0ea7aa2457969cea', abiName: 'Batcher' },
 	{ name: 'WALLET Staking Pool', network: 'ethereum', addr: '0x47cd7e91c3cbaaf266369fe8518345fc4fc12935', abiName: 'StakingPool' },
 	{ name: 'ADX Staking Pool', network: 'ethereum', addr: '0xb6456b57f03352be48bf101b46c1752a0813491a', abiName: 'StakingPool' },
-	{ name: 'OpenSea', network: 'ethereum', addr: '0x7Be8076f4EA4A4AD08075C2508e481d6C946D12b', abiName: 'WyvernExchange' }
+	{ name: 'OpenSea', network: 'ethereum', addr: '0x7Be8076f4EA4A4AD08075C2508e481d6C946D12b', abiName: 'WyvernExchange' },
+	{ name: 'Gas Tank', addr: '0x942f9CE5D9a33a82F88D233AEb3292E680230348' },
 ]
 const tokenlists = [
 	'https://github.com/trustwallet/assets/raw/master/blockchains/ethereum/tokenlist.json',
@@ -81,7 +86,8 @@ const customTokens = [
 		address: '0x47cd7e91c3cbaaf266369fe8518345fc4fc12935',
 		symbol: 'xWALLET',
 		decimals: 18
-	}
+	},
+	...Object.keys(ambireTokenList).map(n => ambireTokenList[n]).flat()
 ]
 
 async function generate () {

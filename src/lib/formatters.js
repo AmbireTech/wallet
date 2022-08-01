@@ -15,3 +15,10 @@ export function formatFloatTokenAmount(amount, useGrouping = true, maximumFracti
         return amount
     }
 }
+
+// Round a floating point number to a specific decimal places, i.e. 1.156 => 1.16
+export function roundFloatingNumber(number, places = 2) {
+  const decimals = Math.pow(10, places)
+
+  return Math.round((number + Number.EPSILON) * decimals) / decimals
+}

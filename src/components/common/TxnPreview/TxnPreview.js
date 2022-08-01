@@ -1,6 +1,6 @@
 import './TxnPreview.scss'
 
-import { useState, Fragment  } from 'react'
+import { useState, Fragment, useEffect  } from 'react'
 
 import { getName, getTransactionSummary, isKnown } from 'lib/humanReadableTransactions'
 import networks from 'consts/networks'
@@ -11,6 +11,7 @@ import { MdOutlineClose } from 'react-icons/md'
 import { BsChevronDown, BsChevronUp } from 'react-icons/bs'
 import { getTokenIcon } from 'lib/icons'
 import { formatFloatTokenAmount } from 'lib/formatters'
+import { setKnownAddressNames } from 'lib/humanReadableTransactions'
 
 function getNetworkSymbol(networkId) {
   const network = networks.find(x => x.id === networkId)
@@ -83,7 +84,7 @@ function parseExtendedSummaryItem(item, i, networkDetails) {
   return <></>
 }
 
-export default function TxnPreview ({ txn, onDismiss, network, account, isFirstFailing, mined, disableExpand, disableDismiss, disableDismissLabel }) {
+export default function TxnPreview ({ txn, onDismiss, network, account, isFirstFailing, mined, disableExpand, disableDismiss, disableDismissLabel, addressLabel = null }) {
   const [isExpanded, setExpanded] = useState(false)
   const contractName = getName(txn[0], network)
 
@@ -91,7 +92,9 @@ export default function TxnPreview ({ txn, onDismiss, network, account, isFirstF
   const extendedSummary = getTransactionSummary(txn, network, account, { mined, extended: true })
 
   const summary = (extendedSummary.map(entry => Array.isArray(entry) ? entry.map((item, i) => parseExtendedSummaryItem(item, i, networkDetails)) : (entry))) // If entry is extended summary parse it
-
+  
+  useEffect(() => !!addressLabel && setKnownAddressNames(addressLabel), [addressLabel])
+  
   return (
     <div className={isFirstFailing ? 'txnPreview firstFailing' : 'txnPreview'}>
         <div className="heading">

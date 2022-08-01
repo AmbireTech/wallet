@@ -7,7 +7,7 @@ import { getTokenIcon } from 'lib/icons'
 const { Interface, AbiCoder, formatUnits, hexlify, isAddress } = ethers.utils
 const RemainingBalancesOracle = new Interface(oracle)
 const SPOOFER = '0x0000000000000000000000000000000000000001'
-const blockTag = 'pending'
+const blockTag = 'latest'
 const remainingBalancesOracleAddr = '0xF1628de74193Dde3Eed716aB0Ef31Ca2b6347eB1'
 
 async function getTokenListBalance ({walletAddr, tokens, network, updateBalance}) {
@@ -29,7 +29,7 @@ async function getTokenListBalance ({walletAddr, tokens, network, updateBalance}
         tokenImageUrl: newTokenBalance.tokenImageUrl || getTokenIcon(network, newTokenBalance.address),
         isHidden: t.isHidden
       } : t)
-    }).filter (t => t && t.balance) //&& parseFloat(t.balance) > 0
+    })
     if (updateBalance && typeof updateBalance === 'function') updateBalance(newBalance)
     return newBalance
   } else {

@@ -20,11 +20,41 @@
 
         .text-input {
             width: 100%;
+
+            input {
+                padding-right: 280px;
+            }
         }
 
         .dropdown {
             position: absolute;
             right: 0;
+        }
+
+        #udomains-logo {
+            position: absolute;
+            top: 18px;
+            right: 275px;
+            height: 25px;
+            width: 25px;
+            background-image: url('/resources/ud-logo-inactive.png');
+        }
+
+        .ud-logo-active {
+            background-image: url('/resources/ud-logo-active.png') !important;  
+        }
+
+        #ens-logo {
+            position: absolute;
+            top: 18px;
+            right: 240px;
+            height: 25px;
+            width: 25px;
+            background-image: url('/resources/ens-logo-inactive.png');
+        }
+
+        .ens-logo-active {
+            background-image: url('/resources/ens-logo-active.png') !important;  
         }
     }
 
@@ -43,6 +73,16 @@
             @include flex-center-center;
             font-size: 40px;
             opacity: 0.5;
+        }
+
+        .gas-tank-msg {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background-color: mix($panel-background-color, $warning-color, 90%);
+            color: $warning-color;
+            padding: 15px;
+            font-size: 14px;
         }
     }
 
@@ -120,6 +160,30 @@
 
             .dropdown {
                 position: relative;
+            }
+            
+            .text-input {
+                width: 100%;
+    
+                input {
+                    padding-right: 50px;
+                }
+            }
+
+            #udomains-logo {
+                position: absolute;
+                top: 18px;
+                right: 50px;
+                height: 25px;
+                width: 25px;
+            }
+
+            #ens-logo {
+                position: absolute;
+                top: 18px;
+                right: 15px;
+                height: 25px;
+                width: 25px;
             }
         }
     }

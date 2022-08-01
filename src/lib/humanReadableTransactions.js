@@ -4,10 +4,12 @@ import { names, tokens } from 'consts/humanizerInfo'
 import networks from 'consts/networks'
 import humanizers from './humanizers'
 
-// address (lwoercase) => name
+// address (lowercase) => name
 const knownAliases = {}
 // address (lowercase) => [symbol, decimals]
 const knownTokens = {}
+// address (lowercase) => name 
+const knownAddressNames = {}
 
 export const formatNativeTokenAddress = address => address.toLowerCase() === `0x${'e'.repeat(40)}` ? `0x${'0'.repeat(40)}` : address.toLowerCase()
 
@@ -80,6 +82,7 @@ export function getName(addr, network) {
     return names[address] 
         || (tokens[address] ? tokens[address][0] + ' token' : null) 
         || knownAliases[address] 
+        || knownAddressNames[address] 
         || addr
 }
 
@@ -136,6 +139,10 @@ export function nativeToken(network, amount, extended = false) {
             amount: formatUnits(amount, 18)
         }
     }
+}
+
+export function setKnownAddressNames(uDomains) {
+    uDomains.forEach(({ address, addressLabel }) => knownAddressNames[address.toLowerCase()] = addressLabel)
 }
 
 export function setKnownAddresses(addrs) {

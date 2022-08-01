@@ -144,8 +144,13 @@ export default function useGnosisSafe({selectedAccount, network, verbose = 0, us
         result = await handlePersonalSign(msg).catch(err => {
           throw err
         })
-      } else {
-        throw new Error("method not supported " + method)
+      } else if (method === 'eth_estimateGas') {
+        result = await provider.estimateGas(callTx).catch(err => {
+          throw err
+        })
+      } 
+      else {
+        throw new Error('Method not found: ' + method)
       }
       return result
     })

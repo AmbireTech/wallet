@@ -9,7 +9,7 @@ import { MdOutlineInfo } from 'react-icons/md'
 
 const segments = [{ value: 'Deposit' }, { value: 'Withdraw' }]
 
-const Card = ({ loading, unavailable, tokensItems, icon, details, customInfo, onTokenSelect, onValidate, moreDetails }) => {    
+const Card = ({ loading, unavailable, tokensItems, icon, details, customInfo, onTokenSelect, onValidate, moreDetails, isDepositsDisabled = false }) => {
     const [segment, setSegment] = useState(segments[0].value)
     const [tokens, setTokens] = useState([])
     const [token, setToken] = useState()
@@ -76,23 +76,26 @@ const Card = ({ loading, unavailable, tokensItems, icon, details, customInfo, on
                                 label="Choose Token"
                                 defaultValue={token}
                                 items={tokens}
-                                onChange={(value) => setToken(value)}
+                                onChange={({ value }) => setToken(value)}
                             />
                             {
                                 !disabled ?
-                                    <ul className="details">
-                                        {
-                                            details.map(([type, value]) => (
-                                                <li key={type}><b>{type}</b> {value}</li>
-                                            ))
-                                        }
-                                    </ul>
-                                    :
-                                    <div className="details-placeholder">
-                                        <div/>
-                                        <div/>
-                                        <div/>
-                                    </div>
+                                   (details.length > 1) ? 
+                                        (<ul className="details">
+                                            {
+                                                details.map(([type, value]) => (
+                                                    <li key={type}><b>{type}</b> {value}</li>
+                                                ))
+                                            }
+                                        </ul>) 
+                                        :
+                                        <>{details[0]}</>
+                                :
+                                <div className="details-placeholder">
+                                    <div/>
+                                    <div/>
+                                    <div/>
+                                </div>
                             }
                             <Segments small defaultValue={segment} segments={segments} onChange={(value) => setSegment(value)}></Segments>
                             {
@@ -114,7 +117,7 @@ const Card = ({ loading, unavailable, tokensItems, icon, details, customInfo, on
                                         />
                                         <div className="separator"></div>
                                         <Button 
-                                            disabled={disabled || amount === '' || parseFloat(amount) <= 0 || parseFloat(amount) > currentToken?.balance}
+                                            disabled={disabled || amount === '' || parseFloat(amount) <= 0 || parseFloat(amount) > currentToken?.balance || (segment === segments[0].value && isDepositsDisabled) }
                                             icon={segment === segments[0].value ? <BsArrowDownSquare/> : <BsArrowUpSquare/>}
                                             onClick={() => onValidate(segment, token, amount, isMaxAmount())}>
                                                 { segment }

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useReducer, useRef } from 'react'
+import { useCallback, useEffect, useReducer, useRef, useState } from 'react'
 import { useToasts } from 'hooks/toasts'
 import { isFirefox } from 'lib/isFirefox'
 
@@ -9,19 +9,29 @@ const noop = () => null
 const noopSessionStorage = { setSession: noop, getSession: noop, removeSession: noop }
 
 const STORAGE_KEY = 'wc1_state'
-const SUPPORTED_METHODS = ['eth_sendTransaction', 'gs_multi_send', 'personal_sign', 'eth_sign']
+const SUPPORTED_METHODS = ['eth_sendTransaction', 'gs_multi_send', 'personal_sign', 'eth_sign', 'eth_signTypedData_v4', 'eth_signTypedData', 'wallet_switchEthereumChain', 'ambire_sendBatchTransaction']
 const SESSION_TIMEOUT = 10000
 
 const getDefaultState = () => ({ connections: [], requests: [] })
 
+const UNISWAP_PERMIT_EXCEPTIONS = [ // based on PeerMeta
+  'Uniswap', // Uniswap Interface
+  'Sushi',
+  'QuickSwap', // QuickSwap Interface
+  'PancakeSwap', // 🥞 PancakeSwap - A next evolution DeFi exchange on BNB Smart Chain (BSC)
+]
+
 let connectors = {}
 let connectionErrors = []
+
+async function wait (ms) { return new Promise(resolve => setTimeout(resolve, ms)) }
 
 // Offline check: if it errored recently
 const timePastForConnectionErr = 90 * 1000
 const checkIsOffline = uri => {
     const errors = connectionErrors.filter(x => x.uri === uri)
-    return errors.find(({ time } = {}) => time > (Date.now() - timePastForConnectionErr))
+    // if no errors, return false, else check time diff
+    return errors.length > 0 && errors.find(({ time } = {}) => time > (Date.now() - timePastForConnectionErr))
     //return errors.length > 1 && errors.slice(-2)
     //    .every(({ time } = {}) => time > (Date.now() - timePastForConnectionErr))
 }
@@ -32,6 +42,8 @@ export default function useWalletConnect ({ account, chainId, initialUri, allNet
     // This is needed cause of the WalletConnect event handlers
     const stateRef = useRef()
     stateRef.current = { account, chainId }
+
+    const [isConnecting, setIsConnecting] = useState(false)
 
     const [stateStorage, setStateStorage] = useStorage({ key: STORAGE_KEY })
 
@@ -126,8 +138,16 @@ export default function useWalletConnect ({ account, chainId, initialUri, allNet
     // we need this so we can invoke the latest version from any event handler
     stateRef.current.maybeUpdateSessions = maybeUpdateSessions
 
+    const clearWcClipboard = async () => {
+        const clipboard = await getClipboardText()
+
+        if (clipboard && isWcUri(clipboard)) {
+            navigator.clipboard.writeText('')
+        }
+    }
+
     // New connections
-    const connect = useCallback(connectorOpts => {
+    const connect = useCallback(async connectorOpts => {
         if (connectors[connectorOpts.uri]) {
             addToast('dApp already connected')
             return connectors[connectorOpts.uri]
@@ -139,6 +159,10 @@ export default function useWalletConnect ({ account, chainId, initialUri, allNet
                 cryptoLib,
                 sessionStorage: noopSessionStorage
             })
+
+            if (!connector.connected) {
+                await connector.createSession();
+            }
         } catch(e) {
             console.error(e)
             addToast(`Unable to connect to ${connectorOpts.uri}: ${e.message}`, { error: true })
@@ -160,11 +184,13 @@ export default function useWalletConnect ({ account, chainId, initialUri, allNet
             if (!connector.session.peerMeta) addToast(`Unable to get session from dApp - ${suggestion}`, { error: true })
         }, SESSION_TIMEOUT)
 
-        connector.on('session_request', (error, payload) => {
+        connector.on('session_request', async (error, payload) => {
             if (error) {
                 onError(error)
                 return
             }
+
+            setIsConnecting(true)
 
             // Clear the "dApp tool too long to connect" timeout
             clearTimeout(sessionTimeout)
@@ -176,17 +202,40 @@ export default function useWalletConnect ({ account, chainId, initialUri, allNet
                 return
             }
 
+            await wait(1000)
+
             // sessionStart is used to check if dApp disconnected immediately
             sessionStart = Date.now()
             connector.approveSession({
                 accounts: [stateRef.current.account],
                 chainId: stateRef.current.chainId,
             })
+
+            await wait(1000)
+
+            // On a session request, remove WC uri from the clipboard.
+            // Otherwise, in the case the user disconnects himself from the dApp, but still having the previous WC uri in the clipboard,
+            // then the app will try to connect him with the already invalidated WC uri.
+            clearWcClipboard()
+
+            // We need to make sure that we are connected to the dApp successfully,
+            // before keeping the session as connected via `connectedNewSession` dispatch.
+            // We had a case with www.chargedefi.fi, where we were immediately disconnected on a session_request,
+            // because of unsupported network selected on our end,
+            // but still storing the session in the state as a successful connection, which resulted in app crashes.
+            if (!connector.connected) {
+                setIsConnecting(false)
+
+                return
+            }
+
             // It's safe to read .session right after approveSession because 1) approveSession itself normally stores the session itself
             // 2) connector.session is a getter that re-reads private properties of the connector; those properties are updated immediately at approveSession
             dispatch({ type: 'connectedNewSession', uri: connectorOpts.uri, session: connector.session })
 
             addToast('Successfully connected to '+connector.session.peerMeta.name)
+
+            setIsConnecting(false)
         })
 
         connector.on('transport_error', (error, payload) => {
@@ -202,23 +251,58 @@ export default function useWalletConnect ({ account, chainId, initialUri, allNet
                 onError(error)
                 return
             }
+
+            if (!SUPPORTED_METHODS.includes(payload.method)) {
+                addToast(`dApp requested unsupported method: ${payload.method}`, { error: true })
+                connector.rejectRequest({ id: payload.id, error: { message: 'Method not found: ' + payload.method, code: -32601 }})
+                return
+            }
+
+            const dappName = connector.session?.peerMeta?.name || ''
+
             // @TODO: refactor into wcRequestHandler
             // Opensea "unlock currency" hack; they use a stupid MetaTransactions system built into WETH on Polygon
             // There's no point of this because the user has to sign it separately as a tx anyway; but more importantly,
             // it breaks Ambire and other smart wallets cause it relies on ecrecover and does not depend on EIP1271
+            let txn = payload.params[0]
             if (payload.method === 'eth_signTypedData') {
                 // @TODO: try/catch the JSON parse?
                 const signPayload = JSON.parse(payload.params[1])
+                payload = {
+                    ...payload,
+                    method: 'eth_signTypedData',
+                }
+                txn = signPayload
                 if (signPayload.primaryType === 'MetaTransaction') {
                     payload = {
                         ...payload,
                         method: 'eth_sendTransaction',
-                        params: [{
-                            to: signPayload.domain.verifyingContract,
-                            from: signPayload.message.from,
-                            data: signPayload.message.functionSignature, // @TODO || data?
-                            value: signPayload.message.value || '0x0'
-                        }]
+                    }
+                    txn = [{
+                        to: signPayload.domain.verifyingContract,
+                        from: signPayload.message.from,
+                        data: signPayload.message.functionSignature, // @TODO || data?
+                        value: signPayload.message.value || '0x0'
+                    }]
+                }
+            }
+            if (payload.method === 'eth_signTypedData_v4') {
+                // @TODO: try/catch the JSON parse?
+                const signPayload = JSON.parse(payload.params[1])
+                payload = {
+                    ...payload,
+                    method: 'eth_signTypedData_v4',
+                }
+                txn = signPayload
+                // Dealing with Erc20 Permits
+                if (signPayload.primaryType === 'Permit') {
+                    // If Uniswap, reject the permit and expect a graceful fallback (receiving approve eth_sendTransaction afterwards)
+                    if (UNISWAP_PERMIT_EXCEPTIONS.some(ex => dappName.toLowerCase().includes(ex.toLowerCase()))) {
+                        connector.rejectRequest({ id: payload.id, error: { message: 'Method not found: ' + payload.method, code: -32601 }})
+                        return
+                    } else {
+                        addToast(`dApp tried to sign a token permit which does not support Smart Wallets`, { error: true })
+                        return
                     }
                 }
             }
@@ -247,16 +331,7 @@ export default function useWalletConnect ({ account, chainId, initialUri, allNet
                     connector.rejectRequest({ id: payload.id, error: { message: 'Unsupported chain' }})
                 }
             }
-            if (!SUPPORTED_METHODS.includes(payload.method)) {
-                const isUniIgnorable = payload.method === 'eth_signTypedData_v4'
-                    && connector.session.peerMeta
-                    && connector.session.peerMeta.name.includes('Uniswap')
-                // @TODO: if the dapp is in a "allow list" of dApps that have fallbacks, ignore certain messages
-                // eg uni has a fallback for eth_signTypedData_v4
-                if (!isUniIgnorable) addToast(`dApp requested unsupported method: ${payload.method}`, { error: true })
-                connector.rejectRequest({ id: payload.id, error: { message: 'METHOD_NOT_SUPPORTED: ' + payload.method }})
-                return
-            }
+
             const wrongAcc = (
                 payload.method === 'eth_sendTransaction' && payload.params[0] && payload.params[0].from
                 && payload.params[0].from.toLowerCase() !== connector.session.accounts[0].toLowerCase()
@@ -273,7 +348,7 @@ export default function useWalletConnect ({ account, chainId, initialUri, allNet
                 id: payload.id,
                 type: payload.method,
                 wcUri: connectorOpts.uri,
-                txn: payload.method === 'eth_sign' ? payload.params[1] : payload.params[0],
+                txn,
                 chainId: connector.session.chainId,
                 account: connector.session.accounts[0],
                 notification: true
@@ -319,6 +394,7 @@ export default function useWalletConnect ({ account, chainId, initialUri, allNet
     }, [])
 
     const resolveMany = (ids, resolution) => {
+        if (ids === undefined) return
         state.requests.forEach(({ id, wcUri, isBatch }) => {
             if (ids.includes(id)) {
                 const connector = connectors[wcUri]
@@ -349,7 +425,7 @@ export default function useWalletConnect ({ account, chainId, initialUri, allNet
         connections: state.connections,
         requests: state.requests,
         resolveMany,
-        connect, disconnect
+        connect, disconnect, isConnecting
     }
 }
 
@@ -365,17 +441,27 @@ function runInitEffects(wcConnect, account, initialUri, addToast) {
     window.wcConnect = uri => wcConnect({ uri })
 
     // @TODO on focus and on user action
-    const clipboardError = e => console.log('non-fatal clipboard/walletconnect err:', e.message)
     const tryReadClipboard = async () => {
         if (!account) return
-        if (isFirefox()) return
-        try {
-            const clipboard = await navigator.clipboard.readText()
-            if (clipboard.startsWith('wc:') && !connectors[clipboard]) wcConnect({ uri: clipboard })
-        } catch(e) { clipboardError(e) }
+
+        const clipboard = await getClipboardText()
+        if (clipboard && isWcUri(clipboard) && !connectors[clipboard]) wcConnect({ uri: clipboard })
     }
 
     tryReadClipboard()
     window.addEventListener('focus', tryReadClipboard)
     return () => window.removeEventListener('focus', tryReadClipboard)
 }
+
+const clipboardError = e => console.log('non-fatal clipboard/walletconnect err:', e.message)
+const getClipboardText = async () => {
+    if (isFirefox()) return false
+
+    try {
+       return await navigator.clipboard.readText()
+    } catch(e) { clipboardError(e) }
+
+    return false
+}
+
+const isWcUri = text => text.startsWith('wc:')

@@ -1,63 +1,26 @@
-const networks = [{
-		id: 'ethereum',
-		chainId: 1,
-		//rpc: 'https://mainnet.infura.io/v3/3d22938fd7dd41b7af4197752f83e8a1',
-		//rpc: 'https://morning-wild-water.quiknode.pro/66011d2c6bdebc583cade5365086c8304c13366c/',
-		rpc: 'https://mainnet.infura.io/v3/d4319c39c4df452286d8bf6d10de28ae',
-		nativeAssetSymbol: 'ETH',
-		name: 'Ethereum',
-		icon: '/resources/networks/ethereum.png',
-		explorerUrl: 'https://etherscan.io'
-	},  {
-		id: 'polygon',
-		chainId: 137,
-		// rpc: 'https://polygon-rpc.com/rpc',
-		rpc: 'https://polygon-mainnet.infura.io/v3/d4319c39c4df452286d8bf6d10de28ae',
-		nativeAssetSymbol: 'MATIC',
-		name: 'Polygon',
-		icon: '/resources/networks/polygon.png',
-		explorerUrl: 'https://polygonscan.com'
-	}, {
-		id: 'avalanche',
-		chainId: 43114,
-		rpc: 'https://api.avax.network/ext/bc/C/rpc',
-		nativeAssetSymbol: 'AVAX',
-		name: 'Avalanche',
-		icon: '/resources/networks/avalanche.png',
-		explorerUrl: 'https://snowtrace.io'
-	}, {
-		// to match the zapper ID
-		id: 'binance-smart-chain',
-		chainId: 56,
-		rpc: 'https://bsc-dataseed1.defibit.io',
-		nativeAssetSymbol: 'BNB',
-		name: 'Binance Smart Chain',
-		icon: '/resources/networks/bsc.png',
-		explorerUrl: 'https://bscscan.com'
-	}, {
-		id: 'fantom',
-		chainId: 250,
-		rpc: 'https://rpc.ftm.tools',
-		nativeAssetSymbol: 'FTM',
-		name: 'Fantom Opera',
-		icon: '/resources/networks/fantom.png',
-		explorerUrl: 'https://ftmscan.com'
-	}/*, {
-		id: 'moonbeam',
-		chainId: 1284,
-		rpc: 'https://rpc.api.moonbeam.network',
-		nativeAssetSymbol: 'GLMR',
-		name: 'Moonbeam',
-		icon: '/resources/networks/moonbeam.png',
-		explorerUrl: 'https://moonscan.io/'
-	}, {
-		id: 'arbitrum',
-		chainId: 42161,
-		rpc: 'https://arb1.arbitrum.io/rpc',
-		nativeAssetSymbol: 'AETH',
-		name: 'Arbitrum',
-		icon: '/resources/networks/arbitrum.svg',
-		explorerUrl: 'https://arbiscan.io'
-}*/]
+import networks from 'ambire-common/src/constants/networks'
 
-export default networks
+/**
+ * Maps each network (by its `id`) to a web-specific icon.
+ * Note: In case of adding a new network, don't forget to map it's icon here 🤞
+ * @enum {string}
+ */
+ export const networkIconsById = {
+  ethereum: '/resources/networks/ethereum.png',
+  polygon: '/resources/networks/polygon.png',
+  avalanche: '/resources/networks/avalanche.png',
+  'binance-smart-chain': '/resources/networks/bsc.png',
+  fantom: '/resources/networks/fantom.png',
+  moonbeam: '/resources/networks/moonbeam.png',
+  moonriver: '/resources/networks/moonriver.png',
+  arbitrum: '/resources/networks/arbitrum.svg',
+  gnosis: '/resources/networks/gnosis.png',
+  kucoin: '/resources/networks/kucoin.svg',
+  optimism: '/resources/networks/optimism.jpg',
+  andromeda: '/resources/networks/andromeda.svg',
+  rinkeby: '/resources/networks/rinkeby.png',
+  cronos: '/resources/networks/cronos.png',
+  aurora: '/resources/networks/aurora.png',
+}
+
+export default networks.map(network => ({ ...network, icon: networkIconsById[network.id]}))

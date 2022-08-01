@@ -2,19 +2,21 @@ import './SideBar.scss'
 
 import { NavLink } from 'react-router-dom'
 import { MdDashboard, MdLock, MdCompareArrows, MdHelpCenter } from 'react-icons/md'
-import { GiReceiveMoney } from 'react-icons/gi'
+import { GiReceiveMoney, GiGasPump } from 'react-icons/gi'
 import { BsCurrencyExchange } from 'react-icons/bs'
 import { BsPiggyBank } from 'react-icons/bs'
 import { BiTransfer } from 'react-icons/bi'
 import { CgArrowsExchangeV } from 'react-icons/cg'
 import { Loading } from 'components/common'
 import { useCallback, useEffect, useRef, useState } from 'react'
+import GasIndicator from 'components/Wallet/GasIndicator/GasIndicator'
 
 const helpCenterUrl = 'https://help.ambire.com/hc/en-us/categories/4404980091538-Ambire-Wallet'
 
-const SideBar = ({ match, portfolio, hidePrivateValue }) => {
+const SideBar = ({ match, portfolio, hidePrivateValue, relayerURL, selectedNetwork }) => {
   const sidebarRef = useRef()
   const [balanceFontSize, setBalanceFontSize] = useState(0)
+
     const resizeBalance = useCallback(() => {
         const balanceFontSizes = {
             3: '2em',
@@ -35,8 +37,10 @@ const SideBar = ({ match, portfolio, hidePrivateValue }) => {
     <div id="sidebar" ref={sidebarRef}>
       <div className="balance">
         <label>Balance</label>
-        {portfolio.isBalanceLoading ? (
-          <Loading />
+        {portfolio.isCurrNetworkBalanceLoading ? (
+          <div className={'loaderContainer'}>
+            <Loading />
+          </div>
         ) : (
           <div
             className="balanceDollarAmount"
@@ -49,6 +53,10 @@ const SideBar = ({ match, portfolio, hidePrivateValue }) => {
             </span>
           </div>
         )}
+        <div>
+          <GasIndicator 
+            relayerURL={relayerURL} selectedNetwork={selectedNetwork} match={match}/>
+        </div>
       </div>
       <nav>
         <NavLink to={match.url + "/dashboard"} activeClassName="selected">
@@ -69,6 +77,11 @@ const SideBar = ({ match, portfolio, hidePrivateValue }) => {
         <NavLink to={match.url + "/swap"} activeClassName="selected">
           <div className="item">
               <BsCurrencyExchange/>Swap
+          </div>
+        </NavLink>
+        <NavLink to={match.url + "/gas-tank"} activeClassName="selected">
+          <div className="item">
+              <GiGasPump/>Gas Tank
           </div>
         </NavLink>
         <NavLink to={match.url + "/cross-chain"} activeClassName="selected">

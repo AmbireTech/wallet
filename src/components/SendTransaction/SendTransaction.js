@@ -2,7 +2,7 @@
 // GiObservatory is also interesting
 import { GiGorilla } from 'react-icons/gi'
 import { FaChevronLeft } from 'react-icons/fa'
-import { MdOutlineInfo } from 'react-icons/md'
+import { MdOutlineClose, MdOutlineInfo, MdWarning } from 'react-icons/md'
 import './SendTransaction.scss'
 import { useEffect, useState, useMemo, useRef } from 'react'
 import { Bundle } from 'adex-protocol-eth/js'
@@ -12,22 +12,24 @@ import * as blockies from 'blockies-ts'
 import { useToasts } from 'hooks/toasts'
 import { getWallet } from 'lib/getWallet'
 import accountPresets from 'consts/accountPresets'
+import { networkIconsById } from 'consts/networks'
 import { FeeSelector, FailingTxn } from './FeeSelector'
 import Actions from './Actions'
 import TxnPreview from 'components/common/TxnPreview/TxnPreview'
 import { sendNoRelayer } from './noRelayer'
-import { 
-  isTokenEligible, 
-  // getFeePaymentConsequences, 
+import {
+  isTokenEligible,
+  // getFeePaymentConsequences,
   getFeesData,
-  toHexAmount,
+  toHexAmount
  } from './helpers'
 import { fetchPost } from 'lib/fetch'
 import { toBundleTxn } from 'lib/requestToBundleTxn'
 import { getProvider } from 'lib/provider'
 import { MdInfo } from 'react-icons/md'
 import { useCallback } from 'react'
-import { ToolTip } from 'components/common'
+import { ToolTip, Button, Loading } from 'components/common'
+import { ethers } from 'ethers'
 import { Checkbox } from 'components/common'
 
 const ERC20 = new Interface(require('adex-protocol-eth/abi/ERC20'))
@@ -37,15 +39,50 @@ const REESTIMATE_INTERVAL = 15000
 
 const REJECT_MSG = 'Ambire user rejected the request'
 
+const WALLET_TOKEN_SYMBOLS = ['xWALLET', 'WALLET']
+
+const isInt = x => !isNaN(x) && x !== null
+
+const getDefaultFeeToken = (remainingFeeTokenBalances, network, feeSpeed, estimation, currentAccGasTankState) => {
+  if(!remainingFeeTokenBalances?.length) {
+    return { symbol: network.nativeAssetSymbol, decimals: 18, address: '0x0000000000000000000000000000000000000000' }
+  }
+
+  return remainingFeeTokenBalances
+  .sort((a, b) =>
+    (WALLET_TOKEN_SYMBOLS.indexOf(b?.symbol) - WALLET_TOKEN_SYMBOLS.indexOf(a?.symbol))
+    || ((b?.discount || 0) - (a?.discount || 0))
+    || a?.symbol.toUpperCase().localeCompare(b?.symbol.toUpperCase())
+  )
+  .find(token => isTokenEligible(token, feeSpeed, estimation, currentAccGasTankState, network))
+  || remainingFeeTokenBalances[0]
+}
+
 function makeBundle(account, networkId, requests) {
   const bundle = new Bundle({
     network: networkId,
     identity: account.id,
-    txns: requests.map(({ txn }) => toBundleTxn(txn, account.id)),
+    // checking txn isArray because sometimes we receive txn in array from walletconnect. Also we use Array.isArray because txn object can have prop 0
+    txns: requests.map(({ txn }) => toBundleTxn(Array.isArray(txn) ? txn[0] : txn, account.id)),
     signer: account.signer
   })
   bundle.extraGas = requests.map(x => x.extraGas || 0).reduce((a, b) => a + b, 0)
   bundle.requestIds = requests.map(x => x.id)
+
+  // Attach bundle's meta
+  if (requests.some(item => item.meta)) {
+    bundle.meta = {}
+
+    if (requests.some(item => item.meta?.addressLabel)) {
+      bundle.meta.addressLabel = requests.map(x => !!x.meta?.addressLabel ? x.meta.addressLabel : { addressLabel: '', address: ''})
+    }
+
+    const xWalletReq = requests.find(x => x.meta?.xWallet)
+    if (xWalletReq) {
+      bundle.meta.xWallet = xWalletReq.meta.xWallet
+    }
+  }
+
   return bundle
 }
 
@@ -54,14 +91,17 @@ function getErrorMessage(e) {
     return 'Your 72 hour recovery waiting period still hasn\'t ended. You will be able to use your account after this lock period.'
   } else if (e && e.message === 'WRONG_ACC_OR_NO_PRIV') {
     return 'Unable to sign with this email/password account. Please contact support.'
+  // NOTE: is INVALID_SIGNATURE even a real error?
   } else if (e && e.message === 'INVALID_SIGNATURE') {
     return 'Invalid signature. This may happen if you used password/derivation path on your hardware wallet.'
+  } else if (e && e.message === 'INSUFFICIENT_PRIVILEGE') {
+    return 'Wrong signature. This may happen if you used password/derivation path on your hardware wallet.'
   } else {
     return e.message || e
   }
 }
 
-export default function SendTransaction({ relayerURL, accounts, network, selectedAcc, requests, resolveMany, replacementBundle, replaceByDefault, onBroadcastedTxn, onDismiss }) {
+export default function SendTransaction({ relayerURL, accounts, network, selectedAcc, requests, resolveMany, replacementBundle, replaceByDefault, mustReplaceNonce, onBroadcastedTxn, onDismiss, gasTankState }) {
   // NOTE: this can be refactored at a top level to only pass the selected account (full object)
   // keeping it that way right now (selectedAcc, accounts) cause maybe we'll need the others at some point?
   const account = accounts.find(x => x.id === selectedAcc)
@@ -88,23 +128,40 @@ export default function SendTransaction({ relayerURL, accounts, network, selecte
     relayerURL={relayerURL}
     bundle={bundle}
     replaceByDefault={replaceByDefault}
+    mustReplaceNonce={mustReplaceNonce}
     network={network}
     account={account}
     resolveMany={resolveMany}
     onBroadcastedTxn={onBroadcastedTxn}
     onDismiss={onDismiss}
+    gasTankState={gasTankState}
   />)
 }
 
-function SendTransactionWithBundle({ bundle, replaceByDefault, network, account, resolveMany, relayerURL, onBroadcastedTxn, onDismiss }) {
-
+function SendTransactionWithBundle({ bundle, replaceByDefault, mustReplaceNonce, network, account, resolveMany, relayerURL, onBroadcastedTxn, onDismiss, gasTankState }) {
+  const currentAccGasTankState = network.isGasTankAvailable ? 
+    gasTankState.find(i => i.account === account.id) : 
+    { account: account.id, isEnabled: false }
   const [estimation, setEstimation] = useState(null)
-
   const [replaceTx, setReplaceTx] = useState(!!replaceByDefault)
-
   const [signingStatus, setSigningStatus] = useState(false)
   const [feeSpeed, setFeeSpeed] = useState(DEFAULT_SPEED)
   const { addToast } = useToasts()
+
+  // Safety check: make sure our input parameters make sense
+  if (isInt(mustReplaceNonce) && !(replaceByDefault || isInt(bundle.nonce))) {
+    console.error('ERROR: SendTransactionWithBundle: mustReplaceNonce is set but we are not using replacementBundle or replaceByDefault')
+    console.error('ERROR: SendTransactionWithBundle: This is a huge logical error as mustReplaceNonce is intended to be used only when we want to replace a txn')
+  }
+
+  // Keep track of unmounted: we need this to not try to modify state after async actions if the component is unmounted
+  const isMounted = useRef(false)
+  useEffect(() => {
+    isMounted.current = true
+    return () => { isMounted.current = false }
+  })
+
+  // Reset the estimation when there are no txns in the bundle
   useEffect(() => {
     if (!bundle.txns.length) return
     setEstimation(null)
@@ -122,31 +179,38 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, network, account,
     // track whether the effect has been unmounted
     let unmounted = false
 
+    // Note: currently, there's no point of getting the nonce if the bundle already has a nonce
+    // We may want to change this if we make a check if the currently replaced txn was already mined
     const reestimate = () => (relayerURL
-        ? bundle.estimate({ relayerURL, fetch, replacing: !!bundle.minFeeInUSDPerGas, getNextNonce: true })
+        ? bundle.estimate({ relayerURL, fetch, replacing: !!bundle.minFeeInUSDPerGas, getNextNonce: true, gasTank: currentAccGasTankState.isEnabled })
         : bundle.estimateNoRelayer({ provider: getProvider(network.id) })
     )
-      .then(estimation => {
+      .then((estimation) => {
         if (unmounted || bundle !== currentBundle.current) return
-        estimation.selectedFeeToken = { symbol: network.nativeAssetSymbol }
+        estimation.relayerless = !relayerURL
+        const gasTankTokens = estimation.gasTank?.map(item => { 
+          return { 
+            ...item, 
+            symbol: item.symbol.toUpperCase(), 
+            balance: ethers.utils.parseUnits(item.balance.toFixed(item.decimals).toString(), item.decimals).toString(),
+            nativeRate: item.address === '0x0000000000000000000000000000000000000000' ? null : estimation.nativeAssetPriceInUSD / item.price
+          }
+        })
+        if (currentAccGasTankState.isEnabled) estimation.remainingFeeTokenBalances = gasTankTokens
+        estimation.selectedFeeToken = getDefaultFeeToken(estimation.remainingFeeTokenBalances, network, feeSpeed, estimation, currentAccGasTankState.isEnabled, network)
         setEstimation(prevEstimation => {
           if (prevEstimation && prevEstimation.customFee) return prevEstimation
           if (estimation.remainingFeeTokenBalances) {
             // If there's no eligible token, set it to the first one cause it looks more user friendly (it's the preferred one, usually a stablecoin)
             estimation.selectedFeeToken = (
                 prevEstimation
-                && isTokenEligible(prevEstimation.selectedFeeToken, feeSpeed, estimation)
+                && isTokenEligible(prevEstimation.selectedFeeToken, feeSpeed, estimation, currentAccGasTankState.isEnabled, network)
                 && prevEstimation.selectedFeeToken
-              ) || estimation.remainingFeeTokenBalances
-              // .sort((a, b) => (b.discount || 0) - (a.discount || 0))
-              .find(token => isTokenEligible(token, feeSpeed, estimation))
-              || estimation.remainingFeeTokenBalances[0]
+              )
+              || getDefaultFeeToken(estimation.remainingFeeTokenBalances, network, feeSpeed, estimation, currentAccGasTankState.isEnabled, network)
           }
           return estimation
         })
-        if (estimation.nextNonce && !estimation.nextNonce.pendingBundle) {
-          setReplaceTx(false)
-        }
       })
       .catch(e => {
         if (unmounted) return
@@ -161,7 +225,7 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, network, account,
       unmounted = true
       clearInterval(intvl)
     }
-  }, [bundle, setEstimation, feeSpeed, addToast, network, relayerURL, signingStatus, replaceTx, setReplaceTx])
+  }, [bundle, setEstimation, feeSpeed, addToast, network, relayerURL, signingStatus, currentAccGasTankState.isEnabled ])
 
   // The final bundle is used when signing + sending it
   // the bundle before that is used for estimating
@@ -181,26 +245,53 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, network, account,
       // Also it can be stable but not in USD
       feeInFeeToken,
       addedGas
-    } = getFeesData(feeToken, estimation, feeSpeed)
+    } = getFeesData(feeToken, estimation, feeSpeed, currentAccGasTankState.isEnabled, network)
     const feeTxn = feeToken.symbol === network.nativeAssetSymbol
-      // TODO: check native decimals 
+      // TODO: check native decimals
       ? [accountPresets.feeCollector, toHexAmount(feeInNative, 18), '0x']
       : [feeToken.address, '0x0', ERC20.encodeFunctionData('transfer', [
         accountPresets.feeCollector,
         toHexAmount(feeInFeeToken, feeToken.decimals)
     ])]
 
-    const pendingBundle = estimation.nextNonce?.pendingBundle
     const nextFreeNonce = estimation.nextNonce?.nonce
     const nextNonMinedNonce = estimation.nextNonce?.nextNonMinedNonce
+    // If we've passed in a bundle, use it's nonce (when using a replacementBundle); else, depending on whether we want to replace the current pending bundle,
+    // either use the next non-mined nonce or the next free nonce
+    const nonce = isInt(bundle.nonce) ? bundle.nonce : (replaceTx ? nextNonMinedNonce : nextFreeNonce)
+
+    if (!!currentAccGasTankState.isEnabled) {
+      let gasLimit
+      if (bundle.txns.length > 1) gasLimit = estimation.gasLimit + (bundle.extraGas || 0)
+      else gasLimit = estimation.gasLimit
+
+      let value
+      if (feeToken.address === "0x0000000000000000000000000000000000000000") value = feeInNative
+      else {
+        const fToken = estimation.remainingFeeTokenBalances.find(i => i.id === feeToken.id)
+        value = fToken && estimation.feeInNative[feeSpeed] * fToken.nativeRate
+      }
+      
+      return new Bundle({
+        ...bundle,
+        gasTankFee: {
+          assetId: feeToken.id,
+          value: ethers.utils.parseUnits(value.toFixed(feeToken.decimals), feeToken.decimals).toString()
+        },
+        txns: [...bundle.txns],
+        gasLimit,
+        nonce
+      })
+    }
 
     return new Bundle({
       ...bundle,
       txns: [...bundle.txns, feeTxn],
+      gasTankFee: null,
       gasLimit: estimation.gasLimit + addedGas + (bundle.extraGas || 0),
-      nonce: (replaceTx && pendingBundle) ? nextNonMinedNonce : nextFreeNonce
+      nonce
     })
-  }, [relayerURL, bundle, estimation, feeSpeed, network.nativeAssetSymbol, replaceTx])
+  }, [relayerURL, estimation, feeSpeed, currentAccGasTankState.isEnabled, network, bundle, replaceTx])
 
   const approveTxnImpl = async () => {
     if (!estimation) throw new Error('no estimation: should never happen')
@@ -208,6 +299,10 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, network, account,
     const finalBundle = getFinalBundle()
     const provider = getProvider(network.id)
     const signer = finalBundle.signer
+
+    // a bit redundant cause we already called it at the beginning of approveTxn, but
+    // we need to freeze finalBundle in the UI in case signing takes a long time (currently only to freeze the fee selector)
+    setSigningStatus({ inProgress: true, finalBundle })
 
     const wallet = getWallet({
       signer,
@@ -290,11 +385,11 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, network, account,
       approveTxnImplQuickAcc({ quickAccCredentials })
       : approveTxnImpl()
     approveTxnPromise.then(bundleResult => {
-      // special case for approveTxnImplQuickAcc
+      // special case for approveTxnImplQuickAcc: when a user interaction prevents the operation from completing
       if (!bundleResult) return
 
-      // be careful not to call this after onDimiss, cause it might cause state to be changed post-unmount
-      setSigningStatus(null)
+      // do not to call this after onDimiss, cause it might cause state to be changed post-unmount
+      if (isMounted.current) setSigningStatus(null)
 
       // Inform everything that's waiting for the results (eg WalletConnect)
       const skipResolve = !bundleResult.success && bundleResult.message && bundleResult.message.match(/underpriced/i)
@@ -304,11 +399,16 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, network, account,
         onBroadcastedTxn(bundleResult.txId)
         onDismiss()
       } else {
+        // to force replacementBundle to be null, so it's not filled from previous state change in App.js in useEffect
+        // basically close the modal if the txn was already mined
+        if (bundleResult.message.includes('was already mined')) {
+          onDismiss()
+        }
         addToast(`Transaction error: ${getErrorMessage(bundleResult)}`, { error: true })  //'unspecified error'
       }
     })
     .catch(e => {
-      setSigningStatus(null)
+      if (isMounted.current) setSigningStatus(null)
       console.error(e)
       if (e && e.message.includes('must provide an Ethereum address')) {
         addToast(`Signing error: not connected with the correct address. Make sure you're connected with ${bundle.signer.address}.`, { error: true })
@@ -322,13 +422,21 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, network, account,
     })
   }
 
-  // Not applicable when .requestIds is not defined (replacement bundle)
-  const rejectTxn = bundle.requestIds && (() => {
+  const rejectTxn = () => {
     onDismiss()
-    resolveMany(bundle.requestIds, { message: REJECT_MSG })
-  })
+    bundle.requestIds && resolveMany(bundle.requestIds, { message: REJECT_MSG })
+  }
 
   const accountAvatar = blockies.create({ seed: account.id }).toDataURL()
+
+  // `mustReplaceNonce` is set on speedup/cancel, to prevent the user from broadcasting the txn if the same nonce has been mined
+  const canProceed = isInt(mustReplaceNonce)
+    ? (
+      isInt(estimation?.nextNonce?.nextNonMinedNonce)
+        ? mustReplaceNonce >= estimation?.nextNonce?.nextNonMinedNonce
+        : null // null = waiting to get nonce data from relayer
+    )
+    : true
 
   return (
     <div id='sendTransaction'>
@@ -362,6 +470,7 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, network, account,
                   isFirstFailing={isFirstFailing}
                   disableDismiss={!!signingStatus}
                   disableDismissLabel={"Cannot modify transaction bundle while a signing procedure is pending"}
+                  addressLabel={!!bundle.meta && bundle.meta.addressLabel}
                   />
                 )
               })}
@@ -371,15 +480,11 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, network, account,
 
             <div className='transactionsNote'>
               {
-                bundle.requestIds ?
+                // only render this if we're using the queue
+                bundle.requestIds &&
                   <>
                     <b><GiGorilla size={16}/> DEGEN TIP</b>
-                    <span>You can sign multiple transactions at once. Add more transactions to this batch by interacting with a connected dApp right now.</span>
-                  </>
-                  :
-                  <>
-                    <b>NOTE:</b>
-                    <span>You are currently replacing a pending transaction.</span>
+                    <span>You can sign multiple transactions at once. Add more transactions to this batch by interacting with a connected dApp right now. Alternatively, you may click "Back" to add more transactions.</span>
                   </>
               }
             </div>
@@ -397,26 +502,34 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, network, account,
                 </div>
                 <div className='network'>
                   on
-                  <div className='icon' style={{ backgroundImage: `url(${network.icon})` }}/>
+                  <div className='icon' style={{ backgroundImage: `url(${networkIconsById[network.id]})` }}/>
                   <div className='address'>{ network.name }</div>
                 </div>
               </div>
             </div>
 
-            <FeeSelector
-              disabled={signingStatus && signingStatus.finalBundle && !(estimation && !estimation.success)}
-              signer={bundle.signer}
-              estimation={estimation}
-              setEstimation={setEstimation}
-              network={network}
-              feeSpeed={feeSpeed}
-              setFeeSpeed={setFeeSpeed}
-              onDismiss={onDismiss}
-            ></FeeSelector>
+            { /* Only lock the fee selector when the bundle is locked too - to make sure that the fee really is set in stone (won't change on the next getFinalBundle()) */ }
+            {
+              canProceed &&
+              <FeeSelector
+                disabled={signingStatus && signingStatus.finalBundle && !(estimation && !estimation.success)}
+                signer={bundle.signer}
+                estimation={estimation}
+                setEstimation={setEstimation}
+                network={network}
+                feeSpeed={feeSpeed}
+                setFeeSpeed={setFeeSpeed}
+                onDismiss={onDismiss}
+                isGasTankEnabled={currentAccGasTankState.isEnabled && !!relayerURL}
+              ></FeeSelector>
+            }
+
           </div>
 
-          {
-            !!estimation?.nextNonce?.pendingBundle &&
+         {
+            // If there's `bundle.nonce` set, it means we're cancelling or speeding up, so this shouldn't even be visible
+            // We also don't show this in any case in which we're forced to replace a particular transaction (mustReplaceNonce)
+            !isInt(bundle.nonce) && !isInt(mustReplaceNonce) && !!estimation?.nextNonce?.pendingBundle &&
             (
               <div>
                <Checkbox
@@ -429,35 +542,74 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, network, account,
           }
 
           {
-            estimation && estimation.success && estimation.isDeployed === false && bundle.gasLimit ?
-              <div className='first-tx-note'>
-                <div className='first-tx-note-title'><MdInfo/>Note</div>
-                <div className='first-tx-note-message'>
-                  Because this is your first Ambire transaction, this fee is {(60000 / bundle.gasLimit * 100).toFixed()}% higher than usual because we have to deploy your smart wallet.
-                  Subsequent transactions will be cheaper
+            // NOTE there's a case in which both "This transaction will replace the current pending transaction" and the checkbox will render - when we're doing a modify
+            // If we are replacing a txn, look at whether canProceed is true
+            isInt(mustReplaceNonce) &&
+            <>
+              {
+                // We always warn the user if they're trying to replace a particular transaction
+                // This doesn't need to show when replacing is optional
+                (canProceed || canProceed === null) && <div className='replaceInfo warning' ><MdWarning /><span>This transaction bundle will replace the one that's currently pending.</span></div>
+              }
+
+              {
+                // canProceed equals null means we don't have data yet
+                canProceed === null &&
+                <div>
+                  <Loading />
                 </div>
-              </div>
-              :
-              null
+              }
+
+              {
+                canProceed === false &&
+                <div id='actions-container-replace'>
+                  <div className='replaceInfo info' ><MdInfo /><span>The transaction you're trying to replace has already been confirmed</span></div>
+                  <div className='buttons'>
+                    <Button clear icon={<MdOutlineClose/>} type='button' className='rejectTxn' onClick={rejectTxn}>Close</Button>
+                  </div>
+                </div>
+              }
+            </>
           }
 
-          <div id="actions-container">
-            {
-              bundle.signer.quickAccManager && !relayerURL ? 
-                <FailingTxn message='Signing transactions with an email/password account without being connected to the relayer is unsupported.'></FailingTxn>
-                :
-                <div className='section' id="actions">
-                  <Actions
-                    estimation={estimation}
-                    approveTxn={approveTxn}
-                    rejectTxn={rejectTxn}
-                    cancelSigning={() => setSigningStatus(null)}
-                    signingStatus={signingStatus}
-                    feeSpeed={feeSpeed}
-                  />
-                </div>
-            }
-          </div>
+          {
+            canProceed &&
+            <>
+              {
+                estimation && estimation.success && estimation.isDeployed === false && bundle.gasLimit ?
+                  <div className='first-tx-note'>
+                    <div className='first-tx-note-title'><MdInfo/>Note</div>
+                    <div className='first-tx-note-message'>
+                      Because this is your first Ambire transaction, this fee is {(60000 / bundle.gasLimit * 100).toFixed()}% higher than usual because we have to deploy your smart wallet.
+                      Subsequent transactions will be cheaper
+                    </div>
+                  </div>
+                  :
+                  null
+              }
+
+              <div id="actions-container">
+                {
+                  bundle.signer.quickAccManager && !relayerURL ?
+                    <FailingTxn message='Signing transactions with an email/password account without being connected to the relayer is unsupported.'></FailingTxn>
+                    :
+                    <div className='section' id="actions">
+                      <Actions
+                        estimation={estimation}
+                        approveTxn={approveTxn}
+                        rejectTxn={rejectTxn}
+                        cancelSigning={() => setSigningStatus(null)}
+                        signingStatus={signingStatus}
+                        feeSpeed={feeSpeed}
+                        isGasTankEnabled={currentAccGasTankState.isEnabled && !!relayerURL}
+                        network={network}
+                      />
+                    </div>
+                }
+              </div>
+            </>
+          }
+
         </div>
       </div>
     </div>

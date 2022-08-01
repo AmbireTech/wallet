@@ -2,6 +2,8 @@
 
 #balances {
     font-size: 40px;
+    display: flex;
+    flex-direction: column;
 
     #other-balances {
         display: flex;
@@ -52,6 +54,15 @@
                     width: 20px;
                     background-size: cover;
                     border-radius: 100%;
+                }
+
+                .icon-svg {
+                    display: flex;
+                    align-items: center;
+
+                    svg {
+                        fill: red;
+                    } 
                 }
             }
 

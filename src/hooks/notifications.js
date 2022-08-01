@@ -37,18 +37,22 @@ export default function useNotifications (requests, onShow, portfolio, selectedA
     
     // Shared code for all notifications
     const showNotification = useCallback(({ id, title, body, requireInteraction, request, onClick }) => {
-        const notification = new Notification(title, {
-            requireInteraction: requireInteraction || false,
-            body,
-            icon: AMBIRE_ICON,
-        })
-        //notification.onclose = 
-        notification.onclick = onClick || (() => {
-            if (request && request.type === 'eth_sendTransaction') window.onClickNotif(request)
-            window.focus()
-            notification.close()
-        })
-        currentNotifs.push({ id, notification })
+        try{    
+            const notification = new Notification(title, {
+                requireInteraction: requireInteraction || false,
+                body,
+                icon: AMBIRE_ICON,
+            })
+            //notification.onclose = 
+            notification.onclick = onClick || (() => {
+                if (request && request.type === 'eth_sendTransaction') window.onClickNotif(request)
+                window.focus()
+                notification.close()
+            })
+            currentNotifs.push({ id, notification })
+        }catch(e){
+            console.error(e)
+        }
     }, [])
 
     // Signing request notifications
@@ -78,7 +82,7 @@ export default function useNotifications (requests, onShow, portfolio, selectedA
     // Balance notifications
     useEffect(() => {
         try {
-            if (!portfolio.isBalanceLoading && portfolio.balance) {
+            if (!portfolio.isCurrNetworkBalanceLoading && portfolio.balance) {
                 if (!isLastTotalBalanceInit) {
                     isLastTotalBalanceInit = true
                     lastTokensBalanceRaw = portfolio.tokens.map(({ address, balanceRaw }) => ({ address, balanceRaw }))

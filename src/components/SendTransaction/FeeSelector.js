@@ -7,7 +7,7 @@ import {
   mapTxnErrMsg,
   getErrHint,
   getFeesData,
-  getDiscountApplied,
+  getDiscountApplied
 } from './helpers'
 import { FaPercentage } from 'react-icons/fa'
 import { MdInfoOutline } from 'react-icons/md'
@@ -16,19 +16,20 @@ import { MdEdit } from 'react-icons/md'
 import { useState } from 'react'
 import { getTokenIcon } from 'lib/icons'
 import { formatFloatTokenAmount } from 'lib/formatters'
+import { ethers } from 'ethers'
 
 const SPEEDS = ['slow', 'medium', 'fast', 'ape']
 const walletDiscountBlogpost = 'https://blog.ambire.com/move-crypto-with-ambire-pay-gas-with-wallet-and-save-30-on-fees-35dca1002697'
 const OVERPRICED_MULTIPLIER = 1.2
 // NOTE: Order matters for for secondary fort after the one by discount
-const DISCOUNT_TOKENS_SYMBOLS = ['WALLET', 'WALLET-STAKING', 'xWALLET']
+const DISCOUNT_TOKENS_SYMBOLS = ['xWALLET', 'WALLET-STAKING', 'WALLET']
 
 function getBalance(token) {
   const { balance, decimals, priceInUSD } = token
   return balance / decimals * priceInUSD
 }
 
-const WalletDiscountBanner = ({ currenciesItems, tokens, estimation, onFeeCurrencyChange, onDismiss }) => {
+const WalletDiscountBanner = ({ currenciesItems, tokens, estimation, onFeeCurrencyChange, onDismiss, feeSpeed, isGasTankEnabled, network }) => {
   if (estimation.selectedFeeToken?.symbol
     && (DISCOUNT_TOKENS_SYMBOLS.includes(estimation.selectedFeeToken?.symbol)
       || estimation.selectedFeeToken.discount)
@@ -36,7 +37,7 @@ const WalletDiscountBanner = ({ currenciesItems, tokens, estimation, onFeeCurren
     return null
   }
   const walletDiscountTokens = [...tokens]
-    .filter(x => DISCOUNT_TOKENS_SYMBOLS.includes(x.symbol) && x.discount)
+    .filter(x => DISCOUNT_TOKENS_SYMBOLS.includes(x.symbol) && x.discount && isTokenEligible(x, feeSpeed, estimation, isGasTankEnabled, network))
     .sort((a, b) =>
       b.discount - a.discount
       || ((!parseInt(a.balance) || !parseInt(b.balance)) ? getBalance(b) - getBalance(a) : 0)
@@ -50,7 +51,7 @@ const WalletDiscountBanner = ({ currenciesItems, tokens, estimation, onFeeCurren
   const { discount } = discountToken
   const eligibleWalletToken = currenciesItems.find(x => x.value && (x.value === 'WALLET' || x.value === discountToken.address))
   const action = !!eligibleWalletToken
-    ? () => onFeeCurrencyChange(eligibleWalletToken.value)
+    ? () => onFeeCurrencyChange(eligibleWalletToken)
     : null
   //TODO: go to swap 
   const actionTxt = !!eligibleWalletToken ? `USE ${discountToken.symbol}` : `BUY ${discountToken.symbol}`
@@ -81,14 +82,26 @@ const WalletDiscountBanner = ({ currenciesItems, tokens, estimation, onFeeCurren
   )
 }
 
-export function FeeSelector({ disabled, signer, estimation, network, setEstimation, feeSpeed, setFeeSpeed, onDismiss }) {
-  const [editCustomFee, setEditCustomFee] = useState(false)
+const mapGasTankTokens = nativePrice => item => {
+  const nativeRate = item.address === '0x0000000000000000000000000000000000000000' ? null : nativePrice / item.price
+  return {
+    ...item,
+    symbol: item.symbol.toUpperCase(),
+    balance: ethers.utils.parseUnits(
+      item.balance.toFixed(item.decimals).toString(),
+      item.decimals
+    ).toString(),
+    nativeRate
+  }
+}
 
+export function FeeSelector({ disabled, signer, estimation, network, setEstimation, feeSpeed, setFeeSpeed, onDismiss, isGasTankEnabled }) {
+  const [editCustomFee, setEditCustomFee] = useState(false)
   if (!estimation) return (<Loading />)
   // Only check for insufficient fee in relayer mode (.feeInUSD is available)
   // Otherwise we don't care whether the user has enough for fees, their signer wallet will take care of it
   const insufficientFee = estimation && estimation.feeInUSD
-    && !isTokenEligible(estimation.selectedFeeToken, feeSpeed, estimation)
+    && !isTokenEligible(estimation.selectedFeeToken, feeSpeed, estimation, isGasTankEnabled, network)
   if (estimation && !estimation.success) return (<FailingTxn
     message={<>The current transaction batch cannot be sent because it will fail: {mapTxnErrMsg(estimation.message)}</>}
     tooltip={getErrHint(estimation.message)}
@@ -105,19 +118,29 @@ export function FeeSelector({ disabled, signer, estimation, network, setEstimati
   }
 
   const { nativeAssetSymbol } = network
-  const tokens = estimation.remainingFeeTokenBalances || [{ symbol: nativeAssetSymbol, decimals: 18 }]
-  const onFeeCurrencyChange = value => {
-    const token = tokens.find(({ address, symbol }) => address === value || symbol === value)
+  const gasTankTokens = estimation.gasTank?.map(mapGasTankTokens(estimation.nativeAssetPriceInUSD))
+  const tokens = (isGasTankEnabled && gasTankTokens?.length)
+    ? gasTankTokens
+    // fallback to the native asset if fee tokens cannot be retrieved for wh  atever reason
+    : estimation.remainingFeeTokenBalances || [{ symbol: nativeAssetSymbol, decimals: 18, address: '0x0000000000000000000000000000000000000000' }]
+
+  const onFeeCurrencyChange = ({ value, label}) => {
+    const token = tokens.find(({ address, symbol }) => (address === value) && (symbol === label))
     setEstimation({ ...estimation, selectedFeeToken: token })
   }
 
   const currenciesItems = tokens
     // NOTE: filter by slowest and then will disable the higher fees speeds otherwise 
     // it will just hide the token from the select
-    .filter(token => isTokenEligible(token, SPEEDS[0], estimation))
-    .sort((a, b) => (b.discount || 0) - (a.discount || 0))
-    .map(({ address, symbol, discount }) => ({
-      icon: address ? getTokenIcon(network.id, address) : null,
+    .sort((a, b) =>
+    (isTokenEligible(b, SPEEDS[0], estimation, isGasTankEnabled, network) - isTokenEligible(a, SPEEDS[0], estimation, isGasTankEnabled, network))
+    || (DISCOUNT_TOKENS_SYMBOLS.indexOf(b.symbol) - DISCOUNT_TOKENS_SYMBOLS.indexOf(a.symbol))
+    || ((b.discount || 0) - (a.discount || 0))
+    || a?.symbol.toUpperCase().localeCompare(b?.symbol.toUpperCase())
+  )
+    .map(({ address, symbol, discount, network: tokenNetwork, icon, ...rest }) => ({
+      disabled: !isTokenEligible({address, symbol, discount, ...rest }, SPEEDS[0], estimation, isGasTankEnabled, network),
+      icon: icon || (address ? getTokenIcon(isGasTankEnabled ? tokenNetwork : network.id, address) : null),
       label: symbol,
       value: address || symbol,
       ...(discount ? {
@@ -138,7 +161,7 @@ export function FeeSelector({ disabled, signer, estimation, network, setEstimati
     </div>
   </>) : (<></>)
 
-  const { discount = 0, symbol, nativeRate, decimals } = estimation.selectedFeeToken
+  const { discount = 0, symbol, nativeRate = null, decimals } = estimation.selectedFeeToken || {}
 
   const setCustomFee = value => setEstimation(prevEstimation => ({
     ...prevEstimation,
@@ -152,13 +175,13 @@ export function FeeSelector({ disabled, signer, estimation, network, setEstimati
   }
 
   if (insufficientFee) {
-    const sufficientSpeeds = SPEEDS.filter((speed, i) => isTokenEligible(estimation.selectedFeeToken, speed, estimation))
+    const sufficientSpeeds = SPEEDS.filter((speed, i) => isTokenEligible(estimation.selectedFeeToken, speed, estimation, isGasTankEnabled, network))
     const highestSufficientSpeed = sufficientSpeeds[sufficientSpeeds.length - 1]
     setFeeSpeed(highestSufficientSpeed)
   }
 
   const checkIsSelectorDisabled = speed => {
-    const insufficientFee = !isTokenEligible(estimation.selectedFeeToken, speed, estimation)
+    const insufficientFee = !isTokenEligible(estimation.selectedFeeToken, speed, estimation, isGasTankEnabled, network)
     return disabled || insufficientFee
   }
 
@@ -166,9 +189,9 @@ export function FeeSelector({ disabled, signer, estimation, network, setEstimati
     const isETH = symbol === 'ETH' && nativeAssetSymbol === 'ETH'
     const {
       feeInFeeToken,
-      feeInUSD
+      feeInUSD,
       // NOTE: get the estimation res data w/o custom fee for the speeds
-    } = getFeesData({ ...estimation.selectedFeeToken }, { ...estimation, customFee: null }, speed)
+    } = getFeesData({ ...estimation.selectedFeeToken }, { ...estimation, customFee: null }, speed, isGasTankEnabled, network)
     const discountInFeeToken = getDiscountApplied(feeInFeeToken, discount)
     const discountInFeeInUSD = getDiscountApplied(feeInUSD, discount)
 
@@ -201,17 +224,18 @@ export function FeeSelector({ disabled, signer, estimation, network, setEstimati
   const {
     feeInFeeToken,
     feeInUSD,
-  } = getFeesData(estimation.selectedFeeToken, estimation, feeSpeed)
+    savedGas,
+  } = getFeesData(estimation.selectedFeeToken, estimation, feeSpeed, isGasTankEnabled, network)
 
   const {
     feeInFeeToken: minFee,
     feeInUSD: minFeeUSD,
-  } = getFeesData({ ...estimation.selectedFeeToken }, { ...estimation, customFee: null }, 'slow')
+  } = getFeesData({ ...estimation.selectedFeeToken }, { ...estimation, customFee: null }, 'slow', isGasTankEnabled, network)
 
   const {
     feeInFeeToken: maxFee,
     feeInUSD: maxFeeUSD,
-  } = getFeesData({ ...estimation.selectedFeeToken }, { ...estimation, customFee: null }, 'ape')
+  } = getFeesData({ ...estimation.selectedFeeToken }, { ...estimation, customFee: null }, 'ape', isGasTankEnabled, network)
 
   const discountMin = getDiscountApplied(minFee, discount)
   const discountMax = getDiscountApplied(maxFee, discount)
@@ -239,7 +263,10 @@ export function FeeSelector({ disabled, signer, estimation, network, setEstimati
 
   return (<>
     {insufficientFee ?
-      (<div className='balance-error'>Insufficient balance for the fee.<br />Accepted tokens: {(estimation.remainingFeeTokenBalances || []).map(x => x.symbol).join(', ')}</div>)
+      (<div className='balance-error'>
+        Insufficient balance for the fee.<br />Accepted tokens: {(estimation.remainingFeeTokenBalances || []).map(x => x.symbol).join(', ')}
+        { isGasTankEnabled && <div>Disable your Gas Tank to use the default fee tokens.</div> }
+      </div>)
       : feeCurrencySelect
     }
 
@@ -249,10 +276,21 @@ export function FeeSelector({ disabled, signer, estimation, network, setEstimati
       tokens,
       estimation,
       onFeeCurrencyChange,
-      onDismiss
+      onDismiss,
+      feeSpeed,
+      isGasTankEnabled,
+      network
     })}
 
-    <div className='section-title'>Transaction Speed</div>
+    <div className='section-title'>
+      <span>Transaction Speed</span>
+      { network.isGasTankAvailable && 
+        <span>Gas Tank: { isGasTankEnabled ? 
+          (<span className='gas-tank-enabled'>Enabled</span>) : 
+          (<span className='gas-tank-disabled'>Disabled</span>)}
+        </span> 
+      }
+    </div>
     <div className='fee-selector'>
       <div className='section'>
         <div id='fee-selector'>{feeAmountSelectors}</div>
@@ -325,7 +363,7 @@ export function FeeSelector({ disabled, signer, estimation, network, setEstimati
               </div>
             }
             {!isNaN(baseFeeInFeeToken) && <div>
-              {formatFloatTokenAmount(baseFeeInFeeToken, true, decimals) + ' ' + estimation.selectedFeeToken.symbol}
+              {formatFloatTokenAmount(baseFeeInFeeToken, true, decimals) + ' ' + estimation?.selectedFeeToken?.symbol}
             </div>
             }
           </div>
@@ -353,11 +391,31 @@ export function FeeSelector({ disabled, signer, estimation, network, setEstimati
             <div>
               ~${formatFloatTokenAmount(feeInUSD, true, 4)}
             </div>
-            {/* <div>
-              {feeInFeeToken + ' ' + estimation.selectedFeeToken.symbol}              
-            </div> */}
           </div>
         </div>)}
+        {!!isGasTankEnabled && (<>
+          <div className='fee-row native-fee-estimation discount-label'>
+            <div>
+              Gas Tank fee token balance:
+            </div>
+            <div className='fee-amounts'>
+              <div>
+                ${formatFloatTokenAmount(estimation.selectedFeeToken.balanceInUSD, true, 4)}
+              </div>
+            </div>
+          </div>
+         {!isNaN((feeInUSD / estimation.gasLimit) * savedGas) && 
+            <div className='fee-row native-fee-estimation discount-label'>
+              <div>
+                Gas Tank saves you:
+              </div>
+              <div className='fee-amounts'>
+                <div>
+                  ${formatFloatTokenAmount(((feeInUSD / estimation.gasLimit) * savedGas), true, 4)}
+                </div>
+              </div>
+            </div>}
+        </>)}
       </div>
     </div>
 

@@ -18,7 +18,7 @@ const AAVELendingPool = new Interface(AAVELendingPoolAbi)
 const RAY = 10**27
 let lendingPoolAddress = null
 
-const AAVECard = ({ networkId, tokens, protocols, account, addRequest }) => {
+const AAVECard = ({ networkId, tokens, account, addRequest }) => {
     const { addToast } = useToasts()
 
     const currentNetwork = useRef()
@@ -36,7 +36,7 @@ const AAVECard = ({ networkId, tokens, protocols, account, addRequest }) => {
                         <ToolTip label="Annual Percentage Rate">
                             <div>APR&nbsp;<MdInfo/></div>
                         </ToolTip>
-                    </>, 
+                    </>,
                     `${token.apr}%`
                 ],
                 ['Lock', 'No Lock'],
@@ -97,19 +97,16 @@ const AAVECard = ({ networkId, tokens, protocols, account, addRequest }) => {
             const provider = getProvider(networkDetails.id)
             const lendingPoolProviderContract = new ethers.Contract(providerAddress, AAVELendingPool, provider)
             lendingPoolAddress = await lendingPoolProviderContract.getLendingPool()
-        
+
             const lendingPoolContract = new ethers.Contract(lendingPoolAddress, AAVELendingPool, provider)
             const reserves = await lendingPoolContract.getReservesList()
             const reservesAddresses = reserves.map(reserve => reserve.toLowerCase())
 
-            const withdrawTokens = (protocols.find(({ label }) => label === 'Aave V2')?.assets || [])
-                .map(({ symbol, tokens }) => tokens && tokens.map(token => ({
-                    ...token,
-                    symbol,
-                    type: 'withdraw'
-                })))
-                .flat(1)
-                .filter(token => token)
+            const withdrawTokens = tokens.filter(({ address }) => defaultTokens.filter(t => t.type === 'withdraw' && t.address === address)[0]).map(token => ({
+                ...token,
+                address: defaultTokens.filter(t => t.type === 'withdraw' && t.address === token.address)[0].baseTokenAddress,
+                type: 'withdraw'
+            })).filter(token => token)
 
             const depositTokens = tokens.filter(({ address }) => reservesAddresses.includes(address)).map(token => ({
                 ...token,
@@ -117,12 +114,12 @@ const AAVECard = ({ networkId, tokens, protocols, account, addRequest }) => {
             })).filter(token => token)
 
             const allTokens = (await Promise.all([
-                ...defaultTokens.filter(({ type, address }) => type === 'deposit' && !depositTokens.map(({ address }) => address).includes(address)),
-                ...defaultTokens.filter(({ type, address }) => type === 'withdraw' && !withdrawTokens.map(({ address }) => address).includes(address)),
                 ...withdrawTokens,
-                ...depositTokens
+                ...depositTokens,
+                ...defaultTokens.filter(({ type, address }) => type === 'deposit' && !depositTokens.map(({ address }) => address).includes(address)),
+                ...defaultTokens.filter(({ type, address }) => type === 'withdraw' && !withdrawTokens.map(({ address }) => address).includes(address))
             ]))
-            
+
             const uniqueTokenAddresses = [...new Set(allTokens.map(({ address }) => address))]
             const tokensAPR = Object.fromEntries(await Promise.all(uniqueTokenAddresses.map(async address => {
                 const data = await lendingPoolContract.getReserveData(address)
@@ -131,14 +128,19 @@ const AAVECard = ({ networkId, tokens, protocols, account, addRequest }) => {
                 return [address, apr]
             })))
 
-            const tokensItems = allTokens.map(token => ({
-                ...token,
-                apr: tokensAPR[token.address],
-                icon: token.img || token.tokenImageUrl,
-                label: `${token.symbol} (${tokensAPR[token.address]}% APR)`,
-                value: token.address
-            }))
 
+            const tokensItems = allTokens.map(token => {
+                const arp = tokensAPR[token.address] === '0.00' && tokensAPR[token.baseTokenAddress]
+                ? tokensAPR[token.baseTokenAddress]
+                : tokensAPR[token.address]
+                return {
+                    ...token,
+                    apr: arp,
+                    icon: token.img || token.tokenImageUrl,
+                    label: `${token.symbol} (${arp}% APR)`,
+                    value: token.address
+                }
+            })
             // Prevent race conditions
             if (currentNetwork.current !== networkDetails.id) return
 
@@ -149,7 +151,7 @@ const AAVECard = ({ networkId, tokens, protocols, account, addRequest }) => {
             console.error(e);
             addToast(`Aave load pool error: ${e.message || e}`, { error: true })
         }
-    }, [addToast, protocols, tokens, defaultTokens, networkDetails])
+    }, [addToast, tokens, defaultTokens, networkDetails])
 
     useEffect(() => loadPool(), [loadPool])
     useEffect(() => {
@@ -158,14 +160,14 @@ const AAVECard = ({ networkId, tokens, protocols, account, addRequest }) => {
     }, [networkId])
 
     return (
-        <Card 
-            loading={isLoading} 
-            unavailable={unavailable} 
-            icon={AAVE_ICON} details={details} 
-            tokensItems={tokensItems} 
-            onTokenSelect={onTokenSelect} 
+        <Card
+            loading={isLoading}
+            unavailable={unavailable}
+            icon={AAVE_ICON} details={details}
+            tokensItems={tokensItems}
+            onTokenSelect={onTokenSelect}
             onValidate={onValidate}
-            moreDetails={<EarnDetailsModal 
+            moreDetails={<EarnDetailsModal
                 title={'What is Aave'}
                 description={'Aave is an open source and non-custodial DeFi protocol for earning interest on deposits and borrowing assets. Depositors provide liquidity to the market to earn a passive income, while borrowers are able to borrow in an overcollateralized (perpetually) or undercollateralized (one-block liquidity) fashion.'}/>}
             />

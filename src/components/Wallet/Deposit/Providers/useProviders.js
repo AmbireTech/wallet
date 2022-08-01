@@ -1,11 +1,19 @@
 import { RampInstantSDK } from '@ramp-network/ramp-instant-sdk'
 import transakSDK from '@transak/transak-sdk'
 import { popupCenter } from 'lib/popupHelper'
+import { fetchGet } from 'lib/fetch'
+import { useState } from 'react';
+import { useToasts } from 'hooks/toasts'
+
 import url from 'url'
 
 import { RAMP_HOST_API_KEY, PAYTRIE_PARTNER_URL, TRANSAK_API_KEY, TRANSAK_ENV } from 'config'
 
-const useProviders = ({ walletAddress, selectedNetwork }) => {
+const useProviders = ({ walletAddress, selectedNetwork, relayerURL }) => {
+
+    const [isLoading, setLoading] = useState([])
+    const { addToast } = useToasts()
+
     const openRampNetwork = () => {
         const assetsList = {
             ethereum: 'ERC20_*,ETH_*',
@@ -24,8 +32,9 @@ const useProviders = ({ walletAddress, selectedNetwork }) => {
         })
         widget.show()
     };
-
-    const openPayTrie = () => {
+    
+    const openPayTrie = async() => {
+        setLoading(prevState => ['PayTrie', ...prevState])
         const rightSideLabels = {
             ethereum: 'USDC',
             polygon: 'USDC-P',
@@ -46,12 +55,14 @@ const useProviders = ({ walletAddress, selectedNetwork }) => {
             w: 450,
             h: 700,
         })
+        setLoading(prevState => prevState.filter(n => n !== 'PayTrie'))
     };
 
     const openTransak = () => {
         const networksAlias = {
             'avalanche': 'avaxcchain',
-            'binance-smart-chain': 'bsc'
+            'binance-smart-chain': 'bsc',
+            'moonbeam': 'mainnet'
         }
 
         const defaultCurency = {
@@ -59,7 +70,10 @@ const useProviders = ({ walletAddress, selectedNetwork }) => {
             'polygon': 'USDC',
             'arbitrum': 'ETH',
             'avalanche': 'AVAX',
-            'binance-smart-chain': 'BNB'
+            'binance-smart-chain': 'BNB',
+            'moonriver': 'MOVR',
+            'moonbeam': 'GLMR',
+            'optimism': 'USDC'
         }
 
         const transak = new transakSDK({
@@ -89,10 +103,27 @@ const useProviders = ({ walletAddress, selectedNetwork }) => {
         })
     }
 
+
+    const openKriptomat = async () => {
+        setLoading(prevState => ['Kriptomat', ...prevState])
+        const kriptomatResponse = await fetchGet(`${relayerURL}/kriptomat/${walletAddress}/${selectedNetwork}`)
+        if (kriptomatResponse.success && kriptomatResponse.data && kriptomatResponse.data.url) popupCenter({
+            url: url.format(kriptomatResponse.data.url),
+            title: 'Kriptomat Deposit',
+            w: 515,
+            h: 600
+        })
+        else addToast(`Error: ${kriptomatResponse.data ? kriptomatResponse.data : 'unexpected error'}`, { error: true })
+        setLoading(prevState => prevState.filter(n => n !== 'Kriptomat'))
+    }
+
+
     return {
         openRampNetwork,
         openPayTrie,
-        openTransak
+        openTransak,
+        openKriptomat,
+        isLoading
     }
 }
 
