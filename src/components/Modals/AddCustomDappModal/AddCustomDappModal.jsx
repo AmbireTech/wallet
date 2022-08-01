@@ -6,6 +6,7 @@ import { useToasts } from 'hooks/toasts'
 import { MdOutlineAdd, MdOutlineClose, MdImage } from 'react-icons/md'
 import { fetchCaught } from 'lib/fetch'
 import NETWORKS from 'consts/networks'
+import { chainIdToWalletNetworkId } from 'wallet-dapp-catalog'
 
 const isUrl = (str) => {
     try { return Boolean(new URL(str)); }
@@ -35,14 +36,15 @@ const getManifest = async (dAppUrl) => {
     const manifest = isGnosisManifest ? {
         ...body,
         iconUrl: body.iconUrl || url + '/' + body.iconPath.replace(/^\//, ''),
-        connectionType: 'gnosis'
+        connectionType: 'gnosis',
+        networks: (body.networks || []).map(chainIdToWalletNetworkId)
     }
         : isStandardManifest ?
             {
                 name: body.name,
                 description: body.name,
                 iconUrl: url + '/' + body.icons[0]?.src.replace(/^\//, ''),
-                connectionType: 'walletconnect'
+                connectionType: 'walletconnect',
             }
             : null
 
@@ -115,6 +117,7 @@ const AddCustomDappModal = ({ dappsCatalog }) => {
             setDescription(manifest.description)
             setIconUrl(manifest.iconUrl)
             setConnectionType(manifest.connectionType)
+            setNetworks(manifest.network || [])
             setUrlInfo('')
         } else {
             setUrlInfo('Cant find dApp data - make sure it supports gnosis safe apps ot WalletConnect')
