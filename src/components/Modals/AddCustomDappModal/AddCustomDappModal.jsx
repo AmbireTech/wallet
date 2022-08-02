@@ -1,5 +1,5 @@
 import './AddCustomDappModal.scss'
-import { useState, useMemo, useCallback } from 'react'
+import { useState, useMemo, useCallback, useEffect } from 'react'
 import { Button, Modal, TextInput, Radios, ToolTip } from 'components/common'
 import { useModals } from 'hooks'
 import { useToasts } from 'hooks/toasts'
@@ -7,7 +7,7 @@ import { MdOutlineAdd, MdOutlineClose, MdImage } from 'react-icons/md'
 import { fetchCaught } from 'lib/fetch'
 import NETWORKS from 'consts/networks'
 import { chainIdToWalletNetworkId } from 'wallet-dapp-catalog'
-import { isValidUrl } from 'ambire-common/src/services/validations'
+import { isValidUrl, isValidCustomDappData } from 'ambire-common/src/services/validations'
 
 const getNormalizedUrl = (inputStr) => {
     const url = inputStr.toLowerCase().split(/[?#]/)[0].replace('/manifest.json', '')
@@ -48,12 +48,11 @@ const getManifest = async (dAppUrl) => {
     return manifest
 }
 
-
 const AddCustomDappModal = ({ dappsCatalog }) => {
     const { addToast } = useToasts()
     const { hideModal } = useModals()
 
-    const { addCustomDapp } = dappsCatalog
+    const { addCustomDapp, isDappInCatalog } = dappsCatalog
     const [name, setName] = useState('')
     const [url, setUrl] = useState('')
     const [description, setDescription] = useState('')
@@ -63,10 +62,10 @@ const AddCustomDappModal = ({ dappsCatalog }) => {
     const [urlErr, setUrlErr] = useState(null)
     const [urlInfo, setUrlInfo] = useState(null)
     const [networks, setNetworks] = useState([])
-    const [dappManifest, setDappManifest] = useState(null)
+    const [inputValidation, setInputValidation] = useState({})
+    const [isAppAlreadyExists, setIsAppAlreadyExists] = useState(false)
 
-
-    const disabled = !name || !url || loading
+    const disabled = useMemo(() => !inputValidation.success || isAppAlreadyExists, [inputValidation.success, isAppAlreadyExists])
 
     const addDapp = useCallback(async () => {
         setLoading(true)
@@ -88,25 +87,26 @@ const AddCustomDappModal = ({ dappsCatalog }) => {
     }, [addCustomDapp, addToast, connectionType, description, hideModal, iconUrl, name, networks, url])
 
     const onUrlInput = useCallback(async (urlInputStr = '') => {
-        const url = getNormalizedUrl(urlInputStr)
-        setUrl(url)
-        setDappManifest(null)
+        const dappUrl = getNormalizedUrl(urlInputStr)
+        setUrl(dappUrl)
         setName('')
         setDescription('')
         setIconUrl('')
         setConnectionType('')
         setLoading(true)
-        const isValidUrlInput = isValidUrl(url)
+        const isValidUrlInput = isValidUrl(dappUrl)
 
         if (!isValidUrlInput) {
-            setUrlErr(!!url ? 'Invalid Url' : null)
+            setUrlErr(!!dappUrl ? 'Invalid Url' : null)
             setLoading(false)
             return
         } else (
             setUrlErr(null)
         )
+        const isInCatalog = isDappInCatalog(dappUrl)
+        setIsAppAlreadyExists(isInCatalog)
 
-        const manifest = await getManifest(url)
+        const manifest = await getManifest(dappUrl)
 
         if (manifest) {
             setName(manifest.name)
@@ -114,14 +114,13 @@ const AddCustomDappModal = ({ dappsCatalog }) => {
             setIconUrl(manifest.iconUrl)
             setConnectionType(manifest.connectionType)
             setNetworks(manifest.network || [])
-            setUrlInfo('')
+            setUrlInfo(isInCatalog ? `${dappUrl} is already in your wallet catalog` : '')
         } else {
             setUrlInfo('Cant find dApp data - make sure it supports gnosis safe apps ot WalletConnect')
         }
 
-        setDappManifest(manifest)
         setLoading(false)
-    }, [])
+    }, [isDappInCatalog])
 
     const onRadioChange = useCallback(value => {
         setConnectionType(value)
@@ -161,6 +160,18 @@ const AddCustomDappModal = ({ dappsCatalog }) => {
         })
     }
 
+    useEffect(() => {
+        setInputValidation(url ? isValidCustomDappData({
+            id: toDappId(name || ''),
+            name,
+            url,
+            description,
+            iconUrl,
+            connectionType,
+            networks
+        }) : {})
+    }, [connectionType, description, iconUrl, name, networks, url])
+
     return (
         <Modal id='add-custom-dapp-modal' title='Add custom dApp' buttons={buttons}>
             <div>
@@ -171,48 +182,62 @@ const AddCustomDappModal = ({ dappsCatalog }) => {
                     className='dapp-input'
                     placeholder='https://some.dapp.com'
                 />
-                {<div>
-                    {urlErr || urlInfo}
-                </div>
-                }
+                {<div className='input-err' >
+                    {urlErr || inputValidation?.errors?.url || urlInfo}
+                </div>}
             </div>
 
-            <TextInput
-                small
-                label="Name"
-                value={name}
-                onInput={value => setName(value)}
-                className='dapp-input'
-            />
-
-            <TextInput
-                small
-                label="Description"
-                value={description}
-                onInput={value => setDescription(value)}
-                className='dapp-input'
-            />
-
-            <div className='icon-input'>
+            <div>
                 <TextInput
                     small
-                    label="Icon Url"
-                    value={iconUrl}
-                    onInput={value => setIconUrl(value)}
+                    label="Name"
+                    value={name}
+                    onInput={value => setName(value)}
                     className='dapp-input'
                 />
-                <div className='icon-wrapper'>
-                    {iconUrl ? <img width={46} height={46} src={iconUrl} alt={(name || 'no') + ' logo'} />
-                        : <MdImage />}
-                </div>
+                {<div className='input-err' >
+                    {inputValidation?.errors?.name}
+                </div>}
             </div>
-            <div const>
+            <div>
+                <TextInput
+                    small
+                    label="Description"
+                    value={description}
+                    onInput={value => setDescription(value)}
+                    className='dapp-input'
+                />
+            </div>
 
+            <div>
+                <div className='icon-input'>
+                    <TextInput
+                        small
+                        label="Icon Url"
+                        value={iconUrl}
+                        onInput={value => setIconUrl(value)}
+                        className='dapp-input'
+                    />
+                    <div className='icon-wrapper'>
+                        {iconUrl ? <img width={46} height={46} src={iconUrl} alt={(name || 'no') + ' logo'} />
+                            : <MdImage />}
+                    </div>
+                </div>
+                {<div className='input-err' >
+                    {inputValidation?.errors?.iconUrl}
+                </div>}
             </div>
-            <div className='connection-radios'>
-                <div>Connection type</div>
-                <Radios radios={radios} value={connectionType} onChange={onRadioChange} row />
+
+            <div>
+                <div className='connection-radios'>
+                    <div>Connection type</div>
+                    <Radios radios={radios} value={connectionType} onChange={onRadioChange} row />
+                </div>
+                {<div className='input-err' >
+                    {inputValidation?.errors?.connectionType}
+                </div>}
             </div>
+
             <div className='networks'>
                 <div>Supported network ({networks.length} selected)</div>
                 <div className='networks-container'>
@@ -230,9 +255,10 @@ const AddCustomDappModal = ({ dappsCatalog }) => {
                         })
                     }
                 </div>
+                {<div className='input-err' >
+                    {inputValidation?.errors?.networks}
+                </div>}
             </div>
-
-
         </Modal>
     )
 

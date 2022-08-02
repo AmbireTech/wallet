@@ -73,5 +73,10 @@
                 margin-bottom: 8px;
             }
         }
+
+        .input-err {
+            margin-top: 4px;
+            color: $warning-color;
+        }
     }
 }
