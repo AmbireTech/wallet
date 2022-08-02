@@ -1,7 +1,7 @@
 import './GuardarianDepositProviderModal.scss'
 
 import { Button, Loading, Modal, TextInput, Select } from 'components/common'
-import { useEffect, useState } from 'react'
+import { useState, useMemo } from 'react'
 import { MdOutlineClose } from 'react-icons/md'
 import useGuardarian from './useGuardarian'
 import { useModals } from 'hooks'
@@ -12,11 +12,31 @@ import url from 'url'
 
 
 const GuardarianDepositProviderModal = ({ relayerURL, walletAddress, selectedNetwork, portfolio }) => {
-    
     const { hideModal } = useModals()
     const guardarian = useGuardarian({relayerURL, selectedNetwork, initMode: 'buy', tokens: portfolio.tokens, walletAddress})
-    const [validationMsg, setValidationMsg] = useState('')
     const [sendTransactionLoading, setSendTransactionLoading] = useState(false)
+
+    const validationMsg = useMemo(() => {
+        const marketData = guardarian?.marketInfo?.data
+
+        // If there is no market data fetch yet, we can't validate
+        if (!marketData) return ''
+
+        const userAmount = parseFloat(guardarian.amount)
+        const marketMin = parseFloat(marketData.min)
+        const marketMax = parseFloat(marketData.max)
+
+        if (guardarian.mode === 'buy') {
+            if (userAmount < marketMin) return `Minimum amount is ${marketData.min} ${marketData.from}`
+            if (userAmount > marketMax) return `Maximum amount is ${marketData.max} ${marketData.from}`
+        } else if (guardarian.mode === 'sell') {
+            const currToken = getCurrentTokenFromBalance()
+
+            if (userAmount < marketMin) return `Minimum amount is ${marketData.min} ${marketData.from}`
+            if (userAmount > marketMax) return `Maximum amount is ${marketData.max} ${marketData.from}`
+            if (currToken && guardarian?.from && (userAmount > currToken.balance)) return `stop pretending to be rich`
+        }
+    }, [guardarian])
     
     function getCurrentTokenFromBalance() {
         if (portfolio.tokens && guardarian?.cryptoCurrencies?.data && guardarian.mode === 'sell') {
@@ -25,28 +45,6 @@ const GuardarianDepositProviderModal = ({ relayerURL, walletAddress, selectedNet
         }
         else return {}
     }
-
-    function genValidateMessage(){
-        if (guardarian.mode === 'buy' && guardarian?.marketInfo?.data){
-            if (parseFloat(guardarian.amount) < parseFloat(guardarian.marketInfo.data.min)) return `Minimum amount is ${guardarian.marketInfo.data.min} ${guardarian.marketInfo.data.from}` 
-            else if (parseFloat(guardarian.amount) > parseFloat(guardarian.marketInfo.data.max)) return `Maximum amount is ${guardarian.marketInfo.data.max} ${guardarian.marketInfo.data.from}`
-            else return ''
-        }else if (guardarian.mode === 'sell'){
-            const currToken = getCurrentTokenFromBalance()
-            if (parseFloat(guardarian.amount) < parseFloat(guardarian.marketInfo.data.min)) return `Minimum amount is ${guardarian.marketInfo.data.min} ${guardarian.marketInfo.data.from}` 
-            else if (parseFloat(guardarian.amount) > parseFloat(guardarian.marketInfo.data.max)) return `Maximum amount is ${guardarian.marketInfo.data.max} ${guardarian.marketInfo.data.from}`
-            else if (guardarian?.from && parseFloat(guardarian.amount) > currToken.balance) return `stop pretending to be rich`
-            else return ''
-        }
-    }
-
-    useEffect(() => {
-        if (guardarian?.marketInfo?.data) {
-            setValidationMsg(genValidateMessage())
-        } else {
-            setValidationMsg('')
-        }
-    }, [guardarian.amount, guardarian.marketInfo])
 
     const switchMode = () => {
         guardarian.setMode((prevMode) => prevMode === 'buy' ? 'sell' : 'buy')
