@@ -47,6 +47,11 @@ const GuardarianDepositProviderModal = ({ relayerURL, walletAddress, selectedNet
     }
 
     const switchMode = () => {
+        // On switching mode, reset from/to, because the next form gets obsolete field values
+        // and can result in wrong API calls (fired in `useGuardarian` useEffect)
+        guardarian.setAmount(null)
+        guardarian.setFrom(null)
+        guardarian.setTo(null)
         guardarian.setMode((prevMode) => prevMode === 'buy' ? 'sell' : 'buy')
     }
 

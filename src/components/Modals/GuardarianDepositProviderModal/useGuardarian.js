@@ -1,7 +1,6 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import { fetchGet } from 'lib/fetch';
 
-const RESET_DATA_AFTER = 10000
 const OFF_RAMP_FIAT = [
     {
         label: 'EUR',
@@ -27,8 +26,7 @@ const NETWORK_MAPPING = {
     'avalanche': 'AVAX'
 }
 
-const useGuardarian = function({relayerURL, selectedNetwork, initMode, tokens, walletAddress}) {
-
+const useGuardarian = function({ relayerURL, selectedNetwork, initMode, tokens, walletAddress }) {
     const FIAT_CURRENCIES_URL = `${relayerURL}/guardarian/currencies/fiat`
     const CRYPTO_CURRENCIES_URL = `${relayerURL}/guardarian/currencies/crypto`
     
@@ -48,31 +46,6 @@ const useGuardarian = function({relayerURL, selectedNetwork, initMode, tokens, w
 
     const [marketInfo, setMarketInfo] = useState(null)
     const [estimateInfo, setEstimateInfo] = useState({data: null, isLoading: false})
-
-    const prevMarketInfoUrl = useRef('')
-    const prevEstimateUrl = useRef('')
-
-
-    function genMarketInfoUrl() {
-        const fromTo = 
-        mode === 'buy'
-            ? `${from}_${to}-${NETWORK_MAPPING[network]}`
-            : mode === 'sell'
-                ? `${from}-${NETWORK_MAPPING[network]}_${to}`
-                : null
-
-        if (fromTo) return `${relayerURL}/guardarian/market-info/${fromTo}`
-        else return null
-    }
-
-
-    function genEstimateUrl() {
-        if (mode === 'buy'){
-            return `${relayerURL}/guardarian/estimate/${from}/${network}/${amount}/${to}/${'true'}`
-        } else {
-            return `${relayerURL}/guardarian/estimate/${from}/${network}/${amount}/${to}/${'false'}`
-        }
-    }
 
     //mode
     useEffect(()=> {
@@ -116,7 +89,6 @@ const useGuardarian = function({relayerURL, selectedNetwork, initMode, tokens, w
         }
     }, [mode, cryptoCurrencies, onRampFiats])
 
-
     //fiat
     useEffect(() => {
         setOnRampFiats({data: null, isLoading: true})
@@ -124,7 +96,6 @@ const useGuardarian = function({relayerURL, selectedNetwork, initMode, tokens, w
             .then((data) => setOnRampFiats({data, isLoading: false}))
             .catch(error => setOnRampFiats({data: null, isLoading: false, error, message: 'Error while fetching fiat list'}))
     }, [network])
-    
 
     //ctypto
     useEffect(() => {
@@ -135,52 +106,66 @@ const useGuardarian = function({relayerURL, selectedNetwork, initMode, tokens, w
     }, [network])
 
 
-    //MarketInfo
-    useEffect(() => {
-        setMarketInfo({data: null, isLoading: true })
-        if (!network || !from || !to || !mode) return setMarketInfo({data: null, isLoading: false})
+    function genMarketInfoUrl() {
+        const fromTo =
+            mode === 'buy'
+                ? `${from}_${to}-${NETWORK_MAPPING[network]}`
+                : mode === 'sell'
+                    ? `${from}-${NETWORK_MAPPING[network]}_${to}`
+                    : null
 
-        let resetDataTimer = null
+        if (fromTo) return `${relayerURL}/guardarian/market-info/${fromTo}`
+        else return null
+    }
+
+    // MarketInfo
+    useEffect(() => {
+        if (!network || !from || !to || !mode) return setMarketInfo({ data: null, isLoading: false })
+
+        setMarketInfo({ data: null, isLoading: true })
+
         const url = genMarketInfoUrl()
-        if (prevMarketInfoUrl.current !== url) {
-            resetDataTimer = setTimeout(() => setMarketInfo({data: null, isLoading: false, error: true, message: 'timeout'}), RESET_DATA_AFTER)
-        }
-        prevMarketInfoUrl.current = url
-        let unloaded = false
+
+        // Prevent State updates on unmounted components
+        let unmounted = false
 
         fetchGet(url)
-            .then(({data}) => !unloaded && prevMarketInfoUrl.current === url && setMarketInfo({data, isLoading: false}))
-            .catch(error => !unloaded && setMarketInfo({data: null, isLoading: false, error, message: 'Error while fetching market info'}))
-            .then(() => clearTimeout(resetDataTimer))
+            .then(({data}) => !unmounted && setMarketInfo({ data, isLoading: false }))
+            .catch(error => !unmounted && setMarketInfo({ data: null, isLoading: false, error, message: 'Error while fetching market info' }))
         return () => {
-            unloaded = true
-            clearTimeout(resetDataTimer)
+            unmounted = true
         }
-    }, [network, from ,to])
-    
+    }, [network, mode, from, to])
 
-    //Estimate
+
+    function genEstimateUrl() {
+        if (mode === 'buy'){
+            return `${relayerURL}/guardarian/estimate/${from}/${network}/${amount}/${to}/${'true'}`
+        } else {
+            return `${relayerURL}/guardarian/estimate/${from}/${network}/${amount}/${to}/${'false'}`
+        }
+    }
+
+    // Estimate
     useEffect(() => {
-        setEstimateInfo({data: null, isLoading: true })
-        if (!network || !from || !to || !mode || !amount || amount==='') return setEstimateInfo({data: null, isLoading: false})
+        if (!network || !from || !to || !mode || !amount) return setEstimateInfo({ data: null, isLoading: false })
 
-        let resetDataTimer = null
+        setEstimateInfo({ data: null, isLoading: true })
+
         const url = genEstimateUrl()
-        if (prevEstimateUrl.current !== url) {
-            resetDataTimer = setTimeout(() => setEstimateInfo({data: null, isLoading: false, error: true, message: 'timeout'}), RESET_DATA_AFTER)
-        }
-        prevEstimateUrl.current = url
+
+        console.log("estimate")
+
+        // Prevent State updates on unmounted components
         let unloaded = false
 
         fetchGet(url)
-            .then(({data}) => !unloaded && prevEstimateUrl.current === url && setEstimateInfo({data, isLoading: false}))
-            .catch(error => !unloaded && setEstimateInfo({data: null, isLoading: false, error, message: 'Error while fetching market info'}))
-            .then(() => clearTimeout(resetDataTimer))
+            .then(({data}) => !unloaded && setEstimateInfo({ data, isLoading: false }))
+            .catch(error => !unloaded && setEstimateInfo({ data: null, isLoading: false, error, message: 'Error while fetching market info' }))
         return () => {
             unloaded = true
-            clearTimeout(resetDataTimer)
         }
-    }, [marketInfo, amount])
+    }, [network, mode, from, to, amount])
 
 
     function genTxnUrl () {
