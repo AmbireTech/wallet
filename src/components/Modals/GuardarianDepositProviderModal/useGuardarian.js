@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { fetchGet } from 'lib/fetch';
+import { useToasts } from 'hooks/toasts'
 
 const OFF_RAMP_FIAT = [
     {
@@ -29,9 +30,8 @@ const NETWORK_MAPPING = {
 const useGuardarian = function({ relayerURL, selectedNetwork, initMode, tokens, walletAddress }) {
     const FIAT_CURRENCIES_URL = `${relayerURL}/guardarian/currencies/fiat`
     const CRYPTO_CURRENCIES_URL = `${relayerURL}/guardarian/currencies/crypto`
-    
     const offRampFiats = OFF_RAMP_FIAT
-
+    const { addToast } = useToasts()
     const [network, setNetwork] = useState(selectedNetwork)
     const [from, setFrom] = useState(null)
     const [to, setTo] = useState(null)
@@ -93,16 +93,23 @@ const useGuardarian = function({ relayerURL, selectedNetwork, initMode, tokens, 
     useEffect(() => {
         setOnRampFiats({data: null, isLoading: true})
         fetchGet(FIAT_CURRENCIES_URL)
-            .then((data) => setOnRampFiats({data, isLoading: false}))
-            .catch(error => setOnRampFiats({data: null, isLoading: false, error, message: 'Error while fetching fiat list'}))
+            .then((data) => setOnRampFiats({data, isLoading: false, error: {}, message: ''}))
+            .catch(error => {
+                console.log(error)
+                setOnRampFiats({data: null, isLoading: false, error, message: 'Error while fetching fiat list'})
+                addToast('Error while fetching fiat list', { error: true })
+            })
     }, [network])
 
     //ctypto
     useEffect(() => {
         setCryptoCurrencies({data: null, isLoading: true})
         fetchGet(CRYPTO_CURRENCIES_URL)
-            .then((data) => setCryptoCurrencies({data, isLoading: false}))
-            .catch(error => setCryptoCurrencies({data: null, isLoading: false, error, message: 'Error while fetching crypto list'}))
+            .then((data) => setCryptoCurrencies({data, isLoading: false, error: {}, message: ''}))
+            .catch(error => {
+                setCryptoCurrencies({data: null, isLoading: false, error, message: 'Error while fetching crypto list'})
+                addToast('Error while fetching crypto list', { error: true })
+            })
     }, [network])
 
 
@@ -131,11 +138,14 @@ const useGuardarian = function({ relayerURL, selectedNetwork, initMode, tokens, 
 
         fetchGet(url)
             .then(({data}) => !unmounted && setMarketInfo({ data, isLoading: false }))
-            .catch(error => !unmounted && setMarketInfo({ data: null, isLoading: false, error, message: 'Error while fetching market info' }))
+            .catch(error => !unmounted && (
+                setMarketInfo({ data: null, isLoading: false, error, message: 'Error while fetching market info' }),
+                addToast('Error while fetching market info', { error: true })
+                ))
         return () => {
             unmounted = true
         }
-    }, [network, mode, from, to])
+    }, [network, mode, from, to, addToast])
 
 
     function genEstimateUrl() {
@@ -159,12 +169,14 @@ const useGuardarian = function({ relayerURL, selectedNetwork, initMode, tokens, 
 
         fetchGet(url)
             .then(({data}) => !unloaded && setEstimateInfo({ data, isLoading: false }))
-            .catch(error => !unloaded && setEstimateInfo({ data: null, isLoading: false, error, message: 'Error while fetching market info' }))
+            .catch(error => !unloaded && (
+                setEstimateInfo({ data: null, isLoading: false, error, message: 'Error while fetching estimate info' }),
+                addToast('Error while fetching estimate info', { error: true }))
+            )
         return () => {
             unloaded = true
         }
     }, [network, mode, from, to, amount])
-
 
     function genTxnUrl () {
         if (mode === 'buy') {

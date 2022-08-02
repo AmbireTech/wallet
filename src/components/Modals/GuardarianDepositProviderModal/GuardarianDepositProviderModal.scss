@@ -44,10 +44,55 @@
         }
 
         .loading-wrapper {
-            margin-top: 30.5px;
+            margin-top: 20px;
             height: 50px;
             width: 100%;
             background-color: $input-background-color;
         }
+    }
+
+    .estimation-info-wrapper {
+        margin-left: 15px;
+        margin-bottom: 10px;
+        position: relative;
+        margin-top: 10px;
+        display: flex;
+        flex-direction: column;
+
+        &:before {
+            content: '';
+            display: block;
+            border-right: 2px solid gray;
+            height: 100%;
+            position: absolute;
+            z-index: -1;
+            margin-left: 4px;
+            
+        }
+    }
+
+    .extra-fees, .estimation-rate {
+        position: relative;
+        padding-left: 25px;
+        margin-top: 0;
+        margin-bottom: 12px;
+        text-decoration: underline;
+        &:before {
+            content: '';
+            background: gray;
+            border-radius: 50%;
+            width: 10px;
+            height: 10px;
+            display: block;
+            position: absolute;
+            left: 0;
+            top: 50%;
+            margin-top: -4px;
+            z-index: 1;
+        }
+    }
+    .extra-fees {
+        margin-top: 13px;
+        margin-bottom: 13px;
     }
 }

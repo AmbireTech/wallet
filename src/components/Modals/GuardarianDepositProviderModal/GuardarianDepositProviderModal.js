@@ -6,6 +6,7 @@ import { MdOutlineClose } from 'react-icons/md'
 import useGuardarian from './useGuardarian'
 import { useModals } from 'hooks'
 import { useToasts } from 'hooks/toasts'
+import { ToolTip } from 'components/common'
 import { fetchGet } from 'lib/fetch';
 import { popupCenter } from 'lib/popupHelper'
 import url from 'url'
@@ -13,7 +14,8 @@ import url from 'url'
 
 const GuardarianDepositProviderModal = ({ relayerURL, walletAddress, selectedNetwork, portfolio }) => {
     const { hideModal } = useModals()
-    const guardarian = useGuardarian({relayerURL, selectedNetwork, initMode: 'buy', tokens: portfolio.tokens, walletAddress})
+    const { addToast } = useToasts()
+    const guardarian = useGuardarian({relayerURL, selectedNetwork, initMode: 'buy', tokens: portfolio.tokens, walletAddress, addToast })
     const [sendTransactionLoading, setSendTransactionLoading] = useState(false)
 
     const validationMsg = useMemo(() => {
@@ -29,12 +31,14 @@ const GuardarianDepositProviderModal = ({ relayerURL, walletAddress, selectedNet
         if (guardarian.mode === 'buy') {
             if (userAmount < marketMin) return `Minimum amount is ${marketData.min} ${marketData.from}`
             if (userAmount > marketMax) return `Maximum amount is ${marketData.max} ${marketData.from}`
+            else return ''
         } else if (guardarian.mode === 'sell') {
             const currToken = getCurrentTokenFromBalance()
 
             if (userAmount < marketMin) return `Minimum amount is ${marketData.min} ${marketData.from}`
             if (userAmount > marketMax) return `Maximum amount is ${marketData.max} ${marketData.from}`
             if (currToken && guardarian?.from && (userAmount > currToken.balance)) return `stop pretending to be rich`
+            else return ''
         }
     }, [guardarian])
     
@@ -82,6 +86,7 @@ const GuardarianDepositProviderModal = ({ relayerURL, walletAddress, selectedNet
                 }
             })
             .catch(e => {
+                addToast('Error while trying to send transaction', { error: true })
                 setSendTransactionLoading(false)
             })
     }
@@ -127,19 +132,38 @@ const GuardarianDepositProviderModal = ({ relayerURL, walletAddress, selectedNet
             </div>
         </div>
         { (validationMsg !== '') && (<p style={{ color: 'red' }}>{ validationMsg }</p>) }
-        { !guardarian.estimateInfo.isLoading && guardarian?.estimateInfo?.data && validationMsg === ''
-            ? (<p>Estimation rate: 1 {guardarian?.estimateInfo?.data?.from_currency} ≈ {guardarian?.estimateInfo?.data?.estimated_exchange_rate} {guardarian?.estimateInfo?.data?.to_currency}</p>)
-            : <></>}
+
+            <div className='estimation-info-wrapper'>
+                <p className='extra-fees'>
+                    <ToolTip label='All the exchange fees are added into the rate. There are no extra costs.'>
+                        No extra fees
+                    </ToolTip>
+                </p>
+                <p className='estimation-rate'>
+                    <ToolTip label='This is expected rate. Guardarian guarantees to pick up the best possible rate on the moment of the exchange'>
+                    Estimation rate: {' '}
+                { !guardarian.estimateInfo.isLoading && guardarian?.estimateInfo?.data && validationMsg === ''
+                    ? (<>
+                        { 1 + guardarian?.estimateInfo?.data?.from_currency} ≈ {guardarian?.estimateInfo?.data?.estimated_exchange_rate} {guardarian?.estimateInfo?.data?.to_currency}
+                    </>)
+                    : <></>}
+                </ToolTip>
+                </p>
+            </div> 
         <div className='input-currencies-wrapper'>
             <div className='amount'> 
                 { !guardarian.estimateInfo.isLoading
                     ? (<TextInput
-                        value= {guardarian?.estimateInfo?.data ? guardarian?.estimateInfo?.data?.value : '-'}
+                        value= {guardarian?.estimateInfo?.data ? guardarian?.estimateInfo?.data?.value : ''}
                         disabled
                         label="You get"
                     />) 
-                    : (<div className='loading-wrapper'><Loading /> </div>
-                )}
+                    : (
+                        <>
+                            <label>You get</label>
+                            <div className='loading-wrapper'><Loading /> </div>
+                        </>
+                    )}
             </div>
             <div className='currency'>
             { (guardarian?.mode === 'buy' && !guardarian?.cryptoList?.isLoading) || (guardarian?.mode === 'sell' && !guardarian?.fiatList?.isLoading)
