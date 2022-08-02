@@ -85,6 +85,9 @@ export default function Actions({
             ></TextInput>
           }
         </div>
+        {signingStatus.confCodeRequired === 'notRequired' &&
+          <p>You already sent 3 or more transactions to this address, confirmation code is not needed.</p>
+        }
         <div className='buttons'>
           <Button
             clear
