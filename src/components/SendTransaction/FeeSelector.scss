@@ -138,6 +138,16 @@
     color: $warning-color
 }
 
+.code-2fa-not-required-msg {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background-color: mix($panel-background-color, $primary-accent-color, 90%);
+    color: $primary-accent-color;
+    padding: 15px;
+    font-size: 14px;
+}
+
 #edit-custom-fee {
     display: flex;
     align-items: center;

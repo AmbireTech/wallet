@@ -59,6 +59,9 @@ export default function Actions({
       }
   
       <form ref={form} className='quickAccSigningForm' onSubmit={e => { e.preventDefault() }}>
+        {signingStatus.confCodeRequired === 'notRequired' &&
+          <p className='code-2fa-not-required-msg'>You already sent 3 or more transactions to this address, confirmation code is not needed.</p>
+        }
         <div className='inputs-container'>
           <TextInput
             small
@@ -85,9 +88,6 @@ export default function Actions({
             ></TextInput>
           }
         </div>
-        {signingStatus.confCodeRequired === 'notRequired' &&
-          <p>You already sent 3 or more transactions to this address, confirmation code is not needed.</p>
-        }
         <div className='buttons'>
           <Button
             clear
