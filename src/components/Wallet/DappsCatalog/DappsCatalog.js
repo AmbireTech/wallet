@@ -180,14 +180,6 @@ const DappsCatalog = ({ network, dappsCatalog, selectedAcc, gnosisConnect, gnosi
                 </div>
               })
             }
-
-            {
-              // Please someone fixes this in CSS (pixel perfect aligned cols when items not 3 in a row)
-              filteredCatalog.length % 3 !== 0 &&
-              [...Array(3 - filteredCatalog.length % 3)].map(a => {
-                return <div className='catalogItem-filler'></div>
-              })
-            }
           </div>
 
           {

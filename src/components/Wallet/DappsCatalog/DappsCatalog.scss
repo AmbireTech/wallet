@@ -79,6 +79,10 @@ $gap: 12px;
       position: relative;
       overflow: hidden;
 
+      &.add-custom-dapp {
+        cursor: default;
+      }
+
       .tools {
         position: absolute;
         right: 8px;
@@ -140,9 +144,6 @@ $gap: 12px;
           align-items: stretch;
           justify-content: center;
         }
-        .custom-dapp-icon {
-
-        }
       } 
 
       .logoSplit {
@@ -186,6 +187,7 @@ $gap: 12px;
       .aligned-tag-rows {
         margin-top: 8px;
         display: flex;
+        flex-wrap: wrap;
       }
 
       .tag-row {
@@ -266,13 +268,6 @@ $gap: 12px;
         background-color: mix($input-background-color, #FFF, 98%);
         border:1px solid $ambire-dark-blue;
       }
-    }
-
-    .catalogItem-filler {
-      flex: 1 1 30%;
-      //need some css flex expert to trick this
-      //flex-basis: 30%;
-      max-width: 33.333333%;
     }
   }
 
