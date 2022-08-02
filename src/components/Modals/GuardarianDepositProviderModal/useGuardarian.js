@@ -154,8 +154,6 @@ const useGuardarian = function({ relayerURL, selectedNetwork, initMode, tokens, 
 
         const url = genEstimateUrl()
 
-        console.log("estimate")
-
         // Prevent State updates on unmounted components
         let unloaded = false
 
