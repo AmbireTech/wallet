@@ -3,7 +3,7 @@ import './Card.scss'
 import { Select, Segments, NumberInput, Button, Loading } from 'components/common'
 import { useEffect, useState, useMemo, useCallback } from 'react'
 import { BsArrowDownSquare, BsArrowUpSquare } from 'react-icons/bs'
-import { ethers, utils } from 'ethers'
+import { utils } from 'ethers'
 import { useModals } from 'hooks'
 import { MdOutlineInfo } from 'react-icons/md'
 
@@ -29,7 +29,7 @@ const Card = ({ loading, unavailable, tokensItems, icon, details, customInfo, on
     const getMaxAmount = () => {
         if (!currentToken) return 0;
         const { balanceRaw, decimals } = currentToken
-        return ethers.utils.formatUnits(balanceRaw, decimals)
+        return utils.formatUnits(balanceRaw, decimals)
     }
 
     const setMaxAmount = () => setAmount(getMaxAmount(amount))
