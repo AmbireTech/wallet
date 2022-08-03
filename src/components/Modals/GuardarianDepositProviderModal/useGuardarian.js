@@ -48,7 +48,7 @@ const useGuardarian = function({ relayerURL, selectedNetwork, initMode, tokens, 
 
     const [marketInfo, setMarketInfo] = useState(null)
     const [estimateInfo, setEstimateInfo] = useState({data: null, isLoading: false})
-    console.log(cryptoList)
+
     //mode
     useEffect(()=> {
         if (mode === 'buy') {
