@@ -61,6 +61,7 @@ const AddCustomDappModal = ({ dappsCatalog }) => {
     const [loading, setLoading] = useState(false)
     const [urlErr, setUrlErr] = useState(null)
     const [urlInfo, setUrlInfo] = useState(null)
+    const [networksInfo, setNetworksInfo] = useState(null)
     const [networks, setNetworks] = useState([])
     const [inputValidation, setInputValidation] = useState({})
     const [isAppAlreadyExists, setIsAppAlreadyExists] = useState(false)
@@ -93,6 +94,8 @@ const AddCustomDappModal = ({ dappsCatalog }) => {
         setDescription('')
         setIconUrl('')
         setConnectionType('')
+        setUrlInfo('')
+        setNetworksInfo('')
         setLoading(true)
         const isValidUrlInput = isValidUrl(dappUrl)
 
@@ -113,8 +116,9 @@ const AddCustomDappModal = ({ dappsCatalog }) => {
             setDescription(manifest.description)
             setIconUrl(manifest.iconUrl)
             setConnectionType(manifest.connectionType)
-            setNetworks(manifest.network || [])
+            setNetworks(manifest.networks || [])
             setUrlInfo(isInCatalog ? `${dappUrl} is already in your wallet catalog` : '')
+            setNetworksInfo(!manifest?.networks?.length ? `Supported networks not detected! Please select manually.` : '')
         } else {
             setUrlInfo('Cant find dApp data - make sure it supports gnosis safe apps ot WalletConnect')
         }
@@ -256,7 +260,7 @@ const AddCustomDappModal = ({ dappsCatalog }) => {
                     }
                 </div>
                 {<div className='input-err' >
-                    {inputValidation?.errors?.networks}
+                    {networksInfo || inputValidation?.errors?.networks}
                 </div>}
             </div>
         </Modal>
