@@ -38,6 +38,66 @@
         opacity: 0;
     }
 
+    &.visual-env {
+        margin-top: 16px;
+        .env-bar
+        {
+            color: #FFF;
+            text-align: center;
+            font-size: 10px;
+            line-height: 11px;
+            font-weight: bold;
+            height: 12px;
+            width: 100%;
+            position: absolute;
+            top: -16px;
+            left: 0;
+            display: block;
+
+        }
+
+        #icon {
+            background-image: url('/resources/ambire-dev-256-white.png');
+        }
+
+        #logo {
+            background-image: url('/resources/ambire-dev-256-full-white.png');
+        }
+
+        &.visual-env-dev {
+            .env-bar{
+                background: repeating-linear-gradient(
+                    -45deg,
+                    #0066ff 0px,
+                    #0066ff 30px,
+                    #0048b6 30px,
+                    #004cbd 40px
+                );
+            }
+        }
+
+        &.visual-env-staging {
+            .env-bar{
+                background: repeating-linear-gradient(
+                    -45deg,
+                    #e69b00 0px,
+                    #e69b00 30px,
+                    #c08b00 30px,
+                    #c08b00 40px
+                );
+            }
+
+            #icon {
+                background-image: url('/resources/ambire-staging-256.png');
+            }
+
+            #logo {
+                background-image: url('/resources/ambire-staging-256-full.png');
+            }
+        }
+
+    }
+
     #mobile-menu {
         display: none;
         align-items: center;
