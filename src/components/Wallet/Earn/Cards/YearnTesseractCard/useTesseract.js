@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { Contract } from 'ethers'
 import ERC20ABI from 'adex-protocol-eth/abi/ERC20.json'
-import TesseractVaultABI from 'consts/YearnTesseractVaultABI'
+import TesseractVaultABI from 'ambire-common/src/constants/abis/YearnTesseractVaultABI'
 import { useToasts } from 'hooks/toasts'
 // import { MdInfo } from "react-icons/md"
 // import { ToolTip } from "components/common"

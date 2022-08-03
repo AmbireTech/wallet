@@ -18,7 +18,7 @@ import networks from 'consts/networks'
 import { getTokenIcon } from 'lib/icons'
 import { formatFloatTokenAmount } from 'lib/formatters'
 import { useLocation } from 'react-router-dom'
-import accountPresets from 'consts/accountPresets'
+import accountPresets from 'ambire-common/src/constants/accountPresets'
 import { resolveENSDomain, getBip44Items } from 'lib/ensDomains'
 
 const ERC20 = new Interface(require('adex-protocol-eth/abi/ERC20'))

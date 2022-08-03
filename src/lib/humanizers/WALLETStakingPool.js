@@ -1,6 +1,6 @@
 import { Interface } from 'ethers/lib/utils'
 import { token } from 'lib/humanReadableTransactions'
-import WalletStakingPoolABI from 'consts/WalletStakingPoolABI'
+import WalletStakingPoolABI from 'ambire-common/src/constants/abis/WalletStakingPoolABI.json'
 
 const STAKING_POOLS = {
   '0x47cd7e91c3cbaaf266369fe8518345fc4fc12935': {

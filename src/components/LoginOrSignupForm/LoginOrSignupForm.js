@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react'
-import accountPresets from 'consts/accountPresets'
+import accountPresets from 'ambire-common/src/constants/accountPresets'
 import { Checkbox } from "components/common"
 
 export default function LoginOrSignupForm({ action = 'LOGIN', onAccRequest, inProgress }) {
