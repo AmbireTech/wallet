@@ -1,5 +1,5 @@
 import { parseUnits } from 'ethers/lib/utils'
-import { isValidAddress, isKnownTokenOrContract } from "lib/address"
+import { isValidAddress, isKnownTokenOrContract } from 'ambire-common/src/services/address'
 import accountPresets from 'ambire-common/src/constants/accountPresets'
 
 const validateAddress = address => {

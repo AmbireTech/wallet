@@ -1,6 +1,6 @@
 import './HideTokenModal.scss'
 
-import { isValidAddress } from 'lib/address'
+import { isValidAddress } from 'ambire-common/src/services/address'
 import { Button, Loading, Modal, TextInput } from 'components/common'
 import { useState } from 'react'
 import { MdVisibilityOff, MdOutlineClose, MdOutlineRemove } from 'react-icons/md'
