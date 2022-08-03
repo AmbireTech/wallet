@@ -181,7 +181,8 @@ const AmbireTokensCard = ({ networkId, accountId, tokens, rewardsData, addReques
         ])
     }, [adxCurrentAPY, isAdxTokenSelected, leaveLog, lockedRemainingTime, onWithdraw, rewardsData.isLoading, selectedToken.label, tokensItems, walletTokenAPY])
 
-    const onValidate = async (type, amount, isMaxAmount) => {
+    // NOTE: tokenAddress is unused because we have two tokens in this card, and we set everything in addresses
+    const onValidate = async (type, _tokenAddress, amount, isMaxAmount) => {
         const bigNumberAmount = parseUnits(amount, 18)
 
         if (type === 'Deposit') {
