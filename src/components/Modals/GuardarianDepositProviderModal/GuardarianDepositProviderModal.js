@@ -21,6 +21,9 @@ const GuardarianDepositProviderModal = ({ relayerURL, walletAddress, selectedNet
     const validationMsg = useMemo(() => {
         const marketData = guardarian?.marketInfo?.data
 
+        // In case of failed market info or estimate requests
+        if (guardarian?.marketInfo?.error || guardarian?.estimateInfo?.error) return 'Sorry! We couldn\'t estimate your order! Please try again later!'
+
         // If there is no market data fetch yet, we can't validate
         if (!marketData) return ''
 
