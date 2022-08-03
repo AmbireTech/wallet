@@ -18,9 +18,9 @@ const Card = ({ loading, unavailable, tokensItems, icon, details, customInfo, on
     const { showModal } = useModals()
     
     const currentToken = tokens.find(({ value }) => value === token)
-    const amountTooBig = parseFloat(amount) > (currentToken && 'balanceRaw' in currentToken ? parseFloat(utils.formatUnits(currentToken.balanceRaw, currentToken.decimals)) : 0)
+    const isAmountTooBig = parseFloat(amount) > (currentToken && 'balanceRaw' in currentToken ? parseFloat(utils.formatUnits(currentToken.balanceRaw, currentToken.decimals)) : 0)
 
-    const buttonDisabled = disabled || amount === '' || parseFloat(amount) <= 0 || amountTooBig || (segment === segments[0].value && isDepositsDisabled) 
+    const buttonDisabled = disabled || amount === '' || parseFloat(amount) <= 0 || isAmountTooBig || (segment === segments[0].value && isDepositsDisabled) 
 
     // Sort tokens items by balance
     const getEquToken = useCallback(token => tokensItems.find((({ address, type }) => address === token.address && (token.type === 'deposit' ? type === 'withdraw' : type === 'deposit'))), [tokensItems])
@@ -123,17 +123,22 @@ const Card = ({ loading, unavailable, tokensItems, icon, details, customInfo, on
                                         <Button 
                                             disabled={buttonDisabled}
                                             icon={segment === segments[0].value ? <BsArrowDownSquare/> : <BsArrowUpSquare/>}
-                                            onClick={() => onValidate(segment, token, amount, isMaxAmount())}>
+                                            onClick={() => onValidate(segment, token, amount, isMaxAmount())}
+                                        >
                                                 { segment }
                                         </Button>
                                     </>
                             }
                             <div className="separator"></div>
-                            {!!moreDetails && <Button clear
-                                icon={ <MdOutlineInfo/> }
-                                onClick={() => showMoreDetails()}>
+                            {!!moreDetails && 
+                                <Button 
+                                    clear
+                                    icon={ <MdOutlineInfo/> }
+                                    onClick={() => showMoreDetails()}
+                                >
                                     See more details
-                            </Button>}
+                                </Button>
+                            }
                         </div>
             }
         </div>
