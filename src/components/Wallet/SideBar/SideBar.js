@@ -1,7 +1,7 @@
 import './SideBar.scss'
 
 import { NavLink, useRouteMatch  } from 'react-router-dom'
-import { MdDashboard, MdLock, MdCompareArrows, MdHelpCenter, MdMenu } from 'react-icons/md'
+import { MdDashboard, MdLock, MdCompareArrows, MdHelpCenter, MdClose } from 'react-icons/md'
 import { AiOutlineAppstoreAdd } from 'react-icons/ai'
 import { GiReceiveMoney, GiGasPump } from 'react-icons/gi'
 import { BsCurrencyExchange } from 'react-icons/bs'
@@ -44,7 +44,7 @@ const SideBar = ({ match, portfolio, hidePrivateValue, relayerURL, selectedNetwo
       <div className='ambire-logo'>
         <div className="logo" />
         <div className="icon" />
-        <Button  clear icon={<MdMenu />} mini primary
+        <Button  clear icon={<MdClose size={23} />} mini primary
           onClick={() => toggleSideBarOpen()}
         ></Button>
       </div>

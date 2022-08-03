@@ -69,18 +69,22 @@ const TopBar = ({
         <div className='dapp-menu'>
           <div className='dapp-menu-btns'>
             <ToolTip label='Open Ambire Wallet menu'>
-              <Button className='ambire-menu-btn' clear mini icon={<MdMenu />}
+              <Button className='ambire-menu-btn' clear mini icon={<MdMenu size={23} />}
                 onClick={() => toggleSideBarOpen()}
               ></Button>
             </ToolTip>
             <div className='dapp-data'>
-              <ToolTip label={`Connect to ${currentDappData?.name} with Ambire Wallet`}>
-                <img className='dapp-logo' src={currentDappData?.iconUrl} alt={currentDappData?.name}/>
+              <ToolTip label={`Connected to ${currentDappData?.name} with Ambire Wallet`}>
+                <a href={currentDappData?.providedBy?.url || currentDappData?.url } 
+                  target="_blank"
+                  rel="noreferrer noopener">
+                  <img className='dapp-logo' src={currentDappData?.iconUrl} alt={currentDappData?.name}/>
+                </a>
               </ToolTip>
               <ToolTip label={`Exit from ${currentDappData?.name}`}>
                 <Button
                   className='dapp-exit-btn'
-                  secondary mini icon={<MdExitToApp /> }
+                  secondary mini icon={<MdExitToApp size={23} /> }
                   onClick={() => loadCurrentDappData(null)}
                 ></Button>
               </ToolTip>
