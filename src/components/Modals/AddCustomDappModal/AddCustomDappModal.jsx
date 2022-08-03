@@ -3,11 +3,12 @@ import { useState, useMemo, useCallback, useEffect } from 'react'
 import { Button, Modal, TextInput, Radios, ToolTip } from 'components/common'
 import { useModals } from 'hooks'
 import { useToasts } from 'hooks/toasts'
-import { MdOutlineAdd, MdOutlineClose, MdImage } from 'react-icons/md'
+import { MdOutlineAdd, MdOutlineClose, MdImage, MdError } from 'react-icons/md'
 import { fetchCaught } from 'lib/fetch'
 import NETWORKS from 'consts/networks'
 import { chainIdToWalletNetworkId } from 'wallet-dapp-catalog'
 import { isValidUrl, isValidCustomDappData } from 'ambire-common/src/services/validations'
+import DAPPS_ICON from 'resources/dapps.svg'
 
 const getNormalizedUrl = (inputStr) => {
     const url = inputStr.toLowerCase().split(/[?#]/)[0].replace('/manifest.json', '')
@@ -223,7 +224,7 @@ const AddCustomDappModal = ({ dappsCatalog }) => {
                         className='dapp-input'
                     />
                     <div className='icon-wrapper'>
-                        {iconUrl ? <img width={46} height={46} src={iconUrl} alt={(name || 'no') + ' logo'} />
+                        {iconUrl ? <img width={46} height={46} src={iconUrl} alt={(name || 'no') + ' logo'} onError={() => { setIconUrl('./resources/dapps.svg') }} />
                             : <MdImage />}
                     </div>
                 </div>
