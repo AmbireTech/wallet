@@ -105,7 +105,7 @@ const AssetsMigrationNative = ({
         return false
       })
     } else {
-      setError(<>Please make sure your signer wallet is connected with <b>{signer.address}</b> to the correct chain: <b>{network.id}</b></>)
+      setError(<>Please make sure your signer wallet is unlocked, and connected with <b>{signer.address}</b> to the correct chain: <b>{network.id}</b></>)
       setIsMigrationPending(false)
     }
   }, [wallet, setError, hasERC20Tokens, network, setBeforeCloseModalHandler, signer, identityAccount, nativeAmount, currentGasPrice])

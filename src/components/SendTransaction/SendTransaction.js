@@ -12,6 +12,7 @@ import * as blockies from 'blockies-ts'
 import { useToasts } from 'hooks/toasts'
 import { getWallet } from 'lib/getWallet'
 import accountPresets from 'ambire-common/src/constants/accountPresets'
+import { networkIconsById } from 'consts/networks'
 import { FeeSelector, FailingTxn } from './FeeSelector'
 import Actions from './Actions'
 import TxnPreview from 'components/common/TxnPreview/TxnPreview'
@@ -20,7 +21,7 @@ import {
   isTokenEligible,
   // getFeePaymentConsequences,
   getFeesData,
-  toHexAmount,
+  toHexAmount
  } from './helpers'
 import { fetchPost } from 'lib/fetch'
 import { toBundleTxn } from 'ambire-common/src/services/requestToBundleTxn'
@@ -28,6 +29,8 @@ import { getProvider } from 'lib/provider'
 import { MdInfo } from 'react-icons/md'
 import { useCallback } from 'react'
 import { ToolTip, Button, Loading } from 'components/common'
+import { ethers } from 'ethers'
+import { Checkbox } from 'components/common'
 
 const ERC20 = new Interface(require('adex-protocol-eth/abi/ERC20'))
 
@@ -38,7 +41,9 @@ const REJECT_MSG = 'Ambire user rejected the request'
 
 const WALLET_TOKEN_SYMBOLS = ['xWALLET', 'WALLET']
 
-const getDefaultFeeToken = (remainingFeeTokenBalances, network, feeSpeed, estimation) => {
+const isInt = x => !isNaN(x) && x !== null
+
+const getDefaultFeeToken = (remainingFeeTokenBalances, network, feeSpeed, estimation, currentAccGasTankState) => {
   if(!remainingFeeTokenBalances?.length) {
     return { symbol: network.nativeAssetSymbol, decimals: 18, address: '0x0000000000000000000000000000000000000000' }
   }
@@ -49,7 +54,7 @@ const getDefaultFeeToken = (remainingFeeTokenBalances, network, feeSpeed, estima
     || ((b?.discount || 0) - (a?.discount || 0))
     || a?.symbol.toUpperCase().localeCompare(b?.symbol.toUpperCase())
   )
-  .find(token => isTokenEligible(token, feeSpeed, estimation))
+  .find(token => isTokenEligible(token, feeSpeed, estimation, currentAccGasTankState, network))
   || remainingFeeTokenBalances[0]
 }
 
@@ -96,7 +101,7 @@ function getErrorMessage(e) {
   }
 }
 
-export default function SendTransaction({ relayerURL, accounts, network, selectedAcc, requests, resolveMany, replacementBundle, prioritize, onBroadcastedTxn, onDismiss }) {
+export default function SendTransaction({ relayerURL, accounts, network, selectedAcc, requests, resolveMany, replacementBundle, replaceByDefault, mustReplaceNonce, onBroadcastedTxn, onDismiss, gasTankState }) {
   // NOTE: this can be refactored at a top level to only pass the selected account (full object)
   // keeping it that way right now (selectedAcc, accounts) cause maybe we'll need the others at some point?
   const account = accounts.find(x => x.id === selectedAcc)
@@ -122,25 +127,41 @@ export default function SendTransaction({ relayerURL, accounts, network, selecte
   return (<SendTransactionWithBundle
     relayerURL={relayerURL}
     bundle={bundle}
-    replacementBundle={replacementBundle}
-    prioritize={prioritize}
+    replaceByDefault={replaceByDefault}
+    mustReplaceNonce={mustReplaceNonce}
     network={network}
     account={account}
     resolveMany={resolveMany}
     onBroadcastedTxn={onBroadcastedTxn}
     onDismiss={onDismiss}
+    gasTankState={gasTankState}
   />)
 }
 
-
-// prioritize = true will replace a current pending TX, or send a new one. In any case, it will send the TX ASAP
-function SendTransactionWithBundle({ bundle, replacementBundle, prioritize, network, account, resolveMany, relayerURL, onBroadcastedTxn, onDismiss }) {
-
+function SendTransactionWithBundle({ bundle, replaceByDefault, mustReplaceNonce, network, account, resolveMany, relayerURL, onBroadcastedTxn, onDismiss, gasTankState }) {
+  const currentAccGasTankState = network.isGasTankAvailable ? 
+    gasTankState.find(i => i.account === account.id) : 
+    { account: account.id, isEnabled: false }
   const [estimation, setEstimation] = useState(null)
-
+  const [replaceTx, setReplaceTx] = useState(!!replaceByDefault)
   const [signingStatus, setSigningStatus] = useState(false)
   const [feeSpeed, setFeeSpeed] = useState(DEFAULT_SPEED)
   const { addToast } = useToasts()
+
+  // Safety check: make sure our input parameters make sense
+  if (isInt(mustReplaceNonce) && !(replaceByDefault || isInt(bundle.nonce))) {
+    console.error('ERROR: SendTransactionWithBundle: mustReplaceNonce is set but we are not using replacementBundle or replaceByDefault')
+    console.error('ERROR: SendTransactionWithBundle: This is a huge logical error as mustReplaceNonce is intended to be used only when we want to replace a txn')
+  }
+
+  // Keep track of unmounted: we need this to not try to modify state after async actions if the component is unmounted
+  const isMounted = useRef(false)
+  useEffect(() => {
+    isMounted.current = true
+    return () => { isMounted.current = false }
+  })
+
+  // Reset the estimation when there are no txns in the bundle
   useEffect(() => {
     if (!bundle.txns.length) return
     setEstimation(null)
@@ -161,23 +182,32 @@ function SendTransactionWithBundle({ bundle, replacementBundle, prioritize, netw
     // Note: currently, there's no point of getting the nonce if the bundle already has a nonce
     // We may want to change this if we make a check if the currently replaced txn was already mined
     const reestimate = () => (relayerURL
-        ? bundle.estimate({ relayerURL, fetch, replacing: !!bundle.minFeeInUSDPerGas, getNextNonce: true })
+        ? bundle.estimate({ relayerURL, fetch, replacing: !!bundle.minFeeInUSDPerGas, getNextNonce: true, gasTank: currentAccGasTankState.isEnabled })
         : bundle.estimateNoRelayer({ provider: getProvider(network.id) })
     )
       .then((estimation) => {
         if (unmounted || bundle !== currentBundle.current) return
         estimation.relayerless = !relayerURL
-        estimation.selectedFeeToken = getDefaultFeeToken(estimation.remainingFeeTokenBalances, network, feeSpeed, estimation)
+        const gasTankTokens = estimation.gasTank?.map(item => { 
+          return { 
+            ...item, 
+            symbol: item.symbol.toUpperCase(), 
+            balance: ethers.utils.parseUnits(item.balance.toFixed(item.decimals).toString(), item.decimals).toString(),
+            nativeRate: item.address === '0x0000000000000000000000000000000000000000' ? null : estimation.nativeAssetPriceInUSD / item.price
+          }
+        })
+        if (currentAccGasTankState.isEnabled) estimation.remainingFeeTokenBalances = gasTankTokens
+        estimation.selectedFeeToken = getDefaultFeeToken(estimation.remainingFeeTokenBalances, network, feeSpeed, estimation, currentAccGasTankState.isEnabled, network)
         setEstimation(prevEstimation => {
           if (prevEstimation && prevEstimation.customFee) return prevEstimation
           if (estimation.remainingFeeTokenBalances) {
             // If there's no eligible token, set it to the first one cause it looks more user friendly (it's the preferred one, usually a stablecoin)
             estimation.selectedFeeToken = (
                 prevEstimation
-                && isTokenEligible(prevEstimation.selectedFeeToken, feeSpeed, estimation)
+                && isTokenEligible(prevEstimation.selectedFeeToken, feeSpeed, estimation, currentAccGasTankState.isEnabled, network)
                 && prevEstimation.selectedFeeToken
               )
-              || getDefaultFeeToken(estimation.remainingFeeTokenBalances, network, feeSpeed, estimation)
+              || getDefaultFeeToken(estimation.remainingFeeTokenBalances, network, feeSpeed, estimation, currentAccGasTankState.isEnabled, network)
           }
           return estimation
         })
@@ -195,7 +225,7 @@ function SendTransactionWithBundle({ bundle, replacementBundle, prioritize, netw
       unmounted = true
       clearInterval(intvl)
     }
-  }, [bundle, setEstimation, feeSpeed, addToast, network, relayerURL, signingStatus ])
+  }, [bundle, setEstimation, feeSpeed, addToast, network, relayerURL, signingStatus, currentAccGasTankState.isEnabled ])
 
   // The final bundle is used when signing + sending it
   // the bundle before that is used for estimating
@@ -215,7 +245,7 @@ function SendTransactionWithBundle({ bundle, replacementBundle, prioritize, netw
       // Also it can be stable but not in USD
       feeInFeeToken,
       addedGas
-    } = getFeesData(feeToken, estimation, feeSpeed)
+    } = getFeesData(feeToken, estimation, feeSpeed, currentAccGasTankState.isEnabled, network)
     const feeTxn = feeToken.symbol === network.nativeAssetSymbol
       // TODO: check native decimals
       ? [accountPresets.feeCollector, toHexAmount(feeInNative, 18), '0x']
@@ -224,17 +254,44 @@ function SendTransactionWithBundle({ bundle, replacementBundle, prioritize, netw
         toHexAmount(feeInFeeToken, feeToken.decimals)
     ])]
 
-    const pendingBundle = estimation.nextNonce?.pendingBundle
     const nextFreeNonce = estimation.nextNonce?.nonce
     const nextNonMinedNonce = estimation.nextNonce?.nextNonMinedNonce
+    // If we've passed in a bundle, use it's nonce (when using a replacementBundle); else, depending on whether we want to replace the current pending bundle,
+    // either use the next non-mined nonce or the next free nonce
+    const nonce = isInt(bundle.nonce) ? bundle.nonce : (replaceTx ? nextNonMinedNonce : nextFreeNonce)
+
+    if (!!currentAccGasTankState.isEnabled) {
+      let gasLimit
+      if (bundle.txns.length > 1) gasLimit = estimation.gasLimit + (bundle.extraGas || 0)
+      else gasLimit = estimation.gasLimit
+
+      let value
+      if (feeToken.address === "0x0000000000000000000000000000000000000000") value = feeInNative
+      else {
+        const fToken = estimation.remainingFeeTokenBalances.find(i => i.id === feeToken.id)
+        value = fToken && estimation.feeInNative[feeSpeed] * fToken.nativeRate
+      }
+      
+      return new Bundle({
+        ...bundle,
+        gasTankFee: {
+          assetId: feeToken.id,
+          value: ethers.utils.parseUnits(value.toFixed(feeToken.decimals), feeToken.decimals).toString()
+        },
+        txns: [...bundle.txns],
+        gasLimit,
+        nonce
+      })
+    }
 
     return new Bundle({
       ...bundle,
       txns: [...bundle.txns, feeTxn],
+      gasTankFee: null,
       gasLimit: estimation.gasLimit + addedGas + (bundle.extraGas || 0),
-      nonce: bundle.nonce || ((replacementBundle && pendingBundle && !prioritize) ? nextNonMinedNonce : nextFreeNonce)
+      nonce
     })
-  }, [relayerURL, bundle, estimation, feeSpeed, network.nativeAssetSymbol, replacementBundle, prioritize])
+  }, [relayerURL, estimation, feeSpeed, currentAccGasTankState.isEnabled, network, bundle, replaceTx])
 
   const approveTxnImpl = async () => {
     if (!estimation) throw new Error('no estimation: should never happen')
@@ -273,12 +330,14 @@ function SendTransactionWithBundle({ bundle, replacementBundle, prioritize, netw
     const finalBundle = (signingStatus && signingStatus.finalBundle) || getFinalBundle()
     const signer = finalBundle.signer
 
+    const canSkip2FA = signingStatus && signingStatus.confCodeRequired === 'notRequired'
     const { signature, success, message, confCodeRequired } = await fetchPost(
       `${relayerURL}/second-key/${bundle.identity}/${network.id}/sign`, {
         signer, txns: finalBundle.txns, nonce: finalBundle.nonce, gasLimit: finalBundle.gasLimit,
-        code: quickAccCredentials && quickAccCredentials.code,
+        ...(!canSkip2FA) && {code: quickAccCredentials && quickAccCredentials.code},
         // This can be a boolean but it can also contain the new signer/primaryKeyBackup, which instructs /second-key to update acc upon successful signature
-        recoveryMode: finalBundle.recoveryMode
+        recoveryMode: finalBundle.recoveryMode,
+        canSkip2FA: canSkip2FA
       }
     )
     if (!success) {
@@ -294,7 +353,7 @@ function SendTransactionWithBundle({ bundle, replacementBundle, prioritize, netw
     } else {
       if (!signature) throw new Error(`QuickAcc internal error: there should be a signature`)
       if (!account.primaryKeyBackup) throw new Error(`No key backup found: you need to import the account from JSON or login again.`)
-      setSigningStatus({ quickAcc: true, inProgress: true })
+      setSigningStatus({ quickAcc: true, inProgress: true, confCodeRequired: canSkip2FA ? 'notRequired' : undefined })
       if (!finalBundle.recoveryMode) {
         // Make sure we let React re-render without blocking (decrypting and signing will block)
         await new Promise(resolve => setTimeout(resolve, 0))
@@ -323,16 +382,16 @@ function SendTransactionWithBundle({ bundle, replacementBundle, prioritize, netw
       addToast('Please confirm this transaction on your Lattice device.', { timeout: 10000 })
     }
 
-    const requestIds = replacementBundle ? replacementBundle.replacedRequestIds : bundle.requestIds
+    const requestIds = bundle.requestIds
     const approveTxnPromise = bundle.signer.quickAccManager ?
       approveTxnImplQuickAcc({ quickAccCredentials })
       : approveTxnImpl()
     approveTxnPromise.then(bundleResult => {
-      // special case for approveTxnImplQuickAcc
+      // special case for approveTxnImplQuickAcc: when a user interaction prevents the operation from completing
       if (!bundleResult) return
 
-      // be careful not to call this after onDimiss, cause it might cause state to be changed post-unmount
-      setSigningStatus(null)
+      // do not to call this after onDimiss, cause it might cause state to be changed post-unmount
+      if (isMounted.current) setSigningStatus(null)
 
       // Inform everything that's waiting for the results (eg WalletConnect)
       const skipResolve = !bundleResult.success && bundleResult.message && bundleResult.message.match(/underpriced/i)
@@ -343,14 +402,15 @@ function SendTransactionWithBundle({ bundle, replacementBundle, prioritize, netw
         onDismiss()
       } else {
         // to force replacementBundle to be null, so it's not filled from previous state change in App.js in useEffect
-        if (replacementBundle && bundleResult.message.includes('was already mined')) {
+        // basically close the modal if the txn was already mined
+        if (bundleResult.message.includes('was already mined')) {
           onDismiss()
         }
         addToast(`Transaction error: ${getErrorMessage(bundleResult)}`, { error: true })  //'unspecified error'
       }
     })
     .catch(e => {
-      setSigningStatus(null)
+      if (isMounted.current) setSigningStatus(null)
       console.error(e)
       if (e && e.message.includes('must provide an Ethereum address')) {
         addToast(`Signing error: not connected with the correct address. Make sure you're connected with ${bundle.signer.address}.`, { error: true })
@@ -364,25 +424,18 @@ function SendTransactionWithBundle({ bundle, replacementBundle, prioritize, netw
     })
   }
 
-  // Not applicable when .requestIds is not defined (replacement bundle)
-  const rejectTxn = bundle.requestIds && (() => {
+  const rejectTxn = () => {
     onDismiss()
-    resolveMany(bundle.requestIds, { message: REJECT_MSG })
-  })
-
-  // Only for replacement flow
-  const rejectTxnReplace = (() => {
-    onDismiss()
-    resolveMany(replacementBundle.replacedRequestIds, { message: REJECT_MSG })
-  })
+    bundle.requestIds && resolveMany(bundle.requestIds, { message: REJECT_MSG })
+  }
 
   const accountAvatar = blockies.create({ seed: account.id }).toDataURL()
 
-  // Allow actions either on regular tx or replacement/speed tx, when not mined
-  const canProceed = !!(replacementBundle && !prioritize)
+  // `mustReplaceNonce` is set on speedup/cancel, to prevent the user from broadcasting the txn if the same nonce has been mined
+  const canProceed = isInt(mustReplaceNonce)
     ? (
-      !isNaN(estimation?.nextNonce?.nextNonMinedNonce)
-        ? bundle.nonce >= estimation?.nextNonce?.nextNonMinedNonce
+      isInt(estimation?.nextNonce?.nextNonMinedNonce)
+        ? mustReplaceNonce >= estimation?.nextNonce?.nextNonMinedNonce
         : null // null = waiting to get nonce data from relayer
     )
     : true
@@ -429,21 +482,11 @@ function SendTransactionWithBundle({ bundle, replacementBundle, prioritize, netw
 
             <div className='transactionsNote'>
               {
-                bundle.requestIds ?
+                // only render this if we're using the queue
+                bundle.requestIds &&
                   <>
                     <b><GiGorilla size={16}/> DEGEN TIP</b>
                     <span>You can sign multiple transactions at once. Add more transactions to this batch by interacting with a connected dApp right now. Alternatively, you may click "Back" to add more transactions.</span>
-                  </>
-                  :
-                  prioritize ?
-                    <>
-                     <b>NOTE:</b>
-                    <span>This is a prioritized transaction. It will replace any pending transaction if any.</span>
-                    </>
-                  :
-                  <>
-                    <b>NOTE:</b>
-                    <span>You are currently replacing a pending transaction.</span>
                   </>
               }
             </div>
@@ -461,7 +504,7 @@ function SendTransactionWithBundle({ bundle, replacementBundle, prioritize, netw
                 </div>
                 <div className='network'>
                   on
-                  <div className='icon' style={{ backgroundImage: `url(${network.icon})` }}/>
+                  <div className='icon' style={{ backgroundImage: `url(${networkIconsById[network.id]})` }}/>
                   <div className='address'>{ network.name }</div>
                 </div>
               </div>
@@ -479,20 +522,40 @@ function SendTransactionWithBundle({ bundle, replacementBundle, prioritize, netw
                 feeSpeed={feeSpeed}
                 setFeeSpeed={setFeeSpeed}
                 onDismiss={onDismiss}
+                isGasTankEnabled={currentAccGasTankState.isEnabled && !!relayerURL}
               ></FeeSelector>
             }
 
           </div>
 
-          {
-            (replacementBundle && !prioritize) &&
-            <>
+         {
+            // If there's `bundle.nonce` set, it means we're cancelling or speeding up, so this shouldn't even be visible
+            // We also don't show this in any case in which we're forced to replace a particular transaction (mustReplaceNonce)
+            !isInt(bundle.nonce) && !isInt(mustReplaceNonce) && !!estimation?.nextNonce?.pendingBundle &&
+            (
+              <div>
+               <Checkbox
+                    label='Replace currently pending transaction'
+                    checked={replaceTx}
+                    onChange={({ target }) => setReplaceTx(target.checked)}
+                />
+              </div>
+            )
+          }
 
+          {
+            // NOTE there's a case in which both "This transaction will replace the current pending transaction" and the checkbox will render - when we're doing a modify
+            // If we are replacing a txn, look at whether canProceed is true
+            isInt(mustReplaceNonce) &&
+            <>
               {
-                (canProceed || canProceed === null) && <div className='replaceInfo warning' ><MdWarning /><span>This transaction will replace the current pending transaction</span></div>
+                // We always warn the user if they're trying to replace a particular transaction
+                // This doesn't need to show when replacing is optional
+                (canProceed || canProceed === null) && <div className='replaceInfo warning' ><MdWarning /><span>This transaction bundle will replace the one that's currently pending.</span></div>
               }
 
               {
+                // canProceed equals null means we don't have data yet
                 canProceed === null &&
                 <div>
                   <Loading />
@@ -504,7 +567,7 @@ function SendTransactionWithBundle({ bundle, replacementBundle, prioritize, netw
                 <div id='actions-container-replace'>
                   <div className='replaceInfo info' ><MdInfo /><span>The transaction you're trying to replace has already been confirmed</span></div>
                   <div className='buttons'>
-                    <Button clear icon={<MdOutlineClose/>} type='button' className='rejectTxn' onClick={rejectTxnReplace}>Close</Button>
+                    <Button clear icon={<MdOutlineClose/>} type='button' className='rejectTxn' onClick={rejectTxn}>Close</Button>
                   </div>
                 </div>
               }
@@ -540,6 +603,8 @@ function SendTransactionWithBundle({ bundle, replacementBundle, prioritize, netw
                         cancelSigning={() => setSigningStatus(null)}
                         signingStatus={signingStatus}
                         feeSpeed={feeSpeed}
+                        isGasTankEnabled={currentAccGasTankState.isEnabled && !!relayerURL}
+                        network={network}
                       />
                     </div>
                 }
