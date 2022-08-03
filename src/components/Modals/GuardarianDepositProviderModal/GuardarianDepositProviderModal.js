@@ -31,15 +31,15 @@ const GuardarianDepositProviderModal = ({ relayerURL, walletAddress, selectedNet
         if (guardarian.mode === 'buy') {
             if (userAmount < marketMin) return `Minimum amount is ${marketData.min} ${marketData.from}`
             if (userAmount > marketMax) return `Maximum amount is ${marketData.max} ${marketData.from}`
-            else return ''
         } else if (guardarian.mode === 'sell') {
             const currToken = getCurrentTokenFromBalance()
 
             if (userAmount < marketMin) return `Minimum amount is ${marketData.min} ${marketData.from}`
             if (userAmount > marketMax) return `Maximum amount is ${marketData.max} ${marketData.from}`
             if (currToken && guardarian?.from && (userAmount > currToken.balance)) return `stop pretending to be rich`
-            else return ''
         }
+
+        return ''
     }, [guardarian])
     
     function getCurrentTokenFromBalance() {
