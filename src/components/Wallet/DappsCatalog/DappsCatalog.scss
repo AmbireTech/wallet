@@ -92,12 +92,12 @@ $gap: 12px;
         gap: 4px;
         align-items: center;
 
-        .favorite, .custom-dapp  {
-          icon {
-            font-size: 14px;
-            height: 14px;
+        .favorite, .custom-dapp, .remove-dapp  {
+          .icon {
+            font-size: 20px;
+            height: 20px;
           }      
-          height: 14px;
+          height: 20px;
           width: auto;
           color: mix($text-color, $input-background-color-darker, 20%);
   
@@ -110,6 +110,11 @@ $gap: 12px;
           }
         }
 
+        .remove-dapp {          
+          &:hover {
+            color: $danger-color;
+          }         
+        }
       }      
 
       &.not-supported {

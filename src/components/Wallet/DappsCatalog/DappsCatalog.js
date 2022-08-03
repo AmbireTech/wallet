@@ -121,15 +121,16 @@ const DappsCatalog = ({ network, dappsCatalog, selectedAcc, gnosisConnect, gnosi
 
                   <div className='tools'>
                     {item.custom &&
-                      <div onClick={(e) => onRemoveCustomClick(e, item)}>
-                        <MdDelete />
-                      </div>}
+                      <ToolTip label={`Remove ${item.name} from your catalog`}>
+                        <MdDelete className='icon remove-dapp' onClick={(e) => onRemoveCustomClick(e, item)} />
+                      </ToolTip>
+                    }
                     {item.custom &&
                       <img className='custom-dapp item' src={DAPPS_ICON} alt='custom dapp icon' />}
                     <span className={`favorite${favorites[item.url] ? ' selected' : ''}`} onClick={(e) => onFavoriteClick(e, item)}> {
                       favorites[item.url]
-                        ? <AiFillStar height={20} />
-                        : <AiOutlineStar height={20} />
+                        ? <AiFillStar className='icon' />
+                        : <AiOutlineStar className='icon' />
                     }</span>
                   </div>
 
