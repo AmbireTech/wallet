@@ -27,6 +27,8 @@ const NETWORK_MAPPING = {
     'avalanche': 'AVAX'
 }
 
+const ZERO_ADDR = '0x0000000000000000000000000000000000000000'
+
 const useGuardarian = function({ relayerURL, selectedNetwork, initMode, tokens, walletAddress }) {
     const FIAT_CURRENCIES_URL = `${relayerURL}/guardarian/currencies/fiat`
     const CRYPTO_CURRENCIES_URL = `${relayerURL}/guardarian/currencies/crypto`
@@ -46,7 +48,7 @@ const useGuardarian = function({ relayerURL, selectedNetwork, initMode, tokens, 
 
     const [marketInfo, setMarketInfo] = useState(null)
     const [estimateInfo, setEstimateInfo] = useState({data: null, isLoading: false})
-
+    console.log(cryptoList)
     //mode
     useEffect(()=> {
         if (mode === 'buy') {
@@ -74,10 +76,8 @@ const useGuardarian = function({ relayerURL, selectedNetwork, initMode, tokens, 
                 data: offRampFiats,
                 isLoading: false
             })
-            // TODO: Discusss: Removed this logic so we return data, if we leave it it results in empty array
-            // && tokens.find(bt => bt?.address?.toLowerCase() === n?.token_contract?.toLowerCase())
             setCryptoList({
-                data: cryptoCurrencies?.data?.filter(t => t.networks.find(n => n.network === NETWORK_MAPPING[network]))
+                data: cryptoCurrencies?.data?.filter(t => t.networks.find(n => n.network === NETWORK_MAPPING[network] && tokens.find(bt => bt?.address?.toLowerCase() === n?.token_contract?.toLowerCase() || (bt?.address === ZERO_ADDR && n?.token_contract === null))))
                     .map(t => ({
                         label: t.ticker,
                         value: t.ticker ,
@@ -107,7 +107,9 @@ const useGuardarian = function({ relayerURL, selectedNetwork, initMode, tokens, 
     useEffect(() => {
         setCryptoCurrencies({data: null, isLoading: true})
         fetchGet(CRYPTO_CURRENCIES_URL)
-            .then((data) => setCryptoCurrencies({data, isLoading: false, error: {}, message: ''}))
+            .then((data) => {
+                setCryptoCurrencies({data, isLoading: false, error: {}, message: ''})
+            })
             .catch(error => {
                 setCryptoCurrencies({data: null, isLoading: false, error, message: 'Error while fetching crypto list'})
                 addToast('Error while fetching crypto list', { error: true })
