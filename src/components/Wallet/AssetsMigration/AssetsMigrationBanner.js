@@ -36,12 +36,15 @@ const AssetsMigrationBanner = ({ addRequest, selectedAccount, accounts, selected
 
   //fetching relevant assets
   useEffect(() => {
+    let unmounted = false
+
     setHasSignerAssets(false)
     const checkSignerAssets = ({ networkId, identityAccount, accounts }) => {
       const currentAccount = accounts.find(a => a.id === identityAccount)
       if (!currentAccount.signer) return
 
       assetMigrationDetector({ networkId: networkId, account: currentAccount.signer.address }).then(assets => {
+        if (unmounted) return
         const relevantAssets = assets.filter(a => a.balanceUSD > 0.001)
         setHasSignerAssets(!!relevantAssets.length)
       }).catch(err => {
@@ -50,6 +53,8 @@ const AssetsMigrationBanner = ({ addRequest, selectedAccount, accounts, selected
     }
 
     checkSignerAssets({ identityAccount: selectedAccount, networkId: selectedNetwork.id, accounts })
+
+    return () => unmounted = true
   }, [selectedAccount, selectedNetwork, accounts])
 
   //checking if closable message has been seen(closed) or not

@@ -28,7 +28,7 @@ class ErrorBoundary extends React.Component {
             <div className="logo" />
           </a>
           <h1>Something went wrong, but your funds are safe!</h1>
-          <p>Please, try to <a href="/" className="error-boundary-content-refresh-btn" onClick={this.refresh}>refresh</a> the current page.</p>
+          <p>Please try to <a href="/" className="error-boundary-content-refresh-btn" onClick={this.refresh}>refresh</a> the current page.</p>
           <p>If the problem persists,<br />please contact us via our Help Center.</p>
           <div className="error-boundary-buttons">
             <a href="https://help.ambire.com/hc/en-us/categories/4404980091538-Ambire-Wallet" target="_blank" rel="noreferrer">

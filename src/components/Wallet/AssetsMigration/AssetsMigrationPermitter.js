@@ -89,7 +89,7 @@ const AssetsMigrationPermitter = ({
       .then(connected => {
         setHasCorrectAccountAndChainId(connected)
         if (!connected) {
-          setError(<>Please make sure your signer wallet is connected with <b>{signer.address}</b> to the correct chain: <b>{network.id}</b></>)
+          setError(<>Please make sure your signer wallet is unlocked, and connected with <b>{signer.address}</b> to the correct chain: <b>{network.id}</b></>)
           return false
         }
         return true

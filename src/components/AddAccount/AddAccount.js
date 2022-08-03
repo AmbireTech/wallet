@@ -314,6 +314,8 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking }) {
     setChooseSigners(null)
   }, [onEOASelected, signersToChoose])
 
+  const handleSelectSignerAccountModalCloseClicked = useCallback(() => setChooseSigners(null), [])
+  
   // The UI for choosing a signer to create/add an account with, for example
   // when connecting a hardware wallet, it has many addrs you can choose from
   useEffect(() => {
@@ -325,10 +327,11 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking }) {
           description={`Signer address is the ${signersToChoose.signerName} address you will use to sign transactions on Ambire Wallet.
                     А new account will be created using this signer if you don’t have one.`}
           isCloseBtnShown={true}
+          onCloseBtnClicked={handleSelectSignerAccountModalCloseClicked}
         />
       )
     }
-  }, [onSignerAddressClicked, showModal, signersToChoose])
+  }, [handleSelectSignerAccountModalCloseClicked, onSignerAddressClicked, showModal, signersToChoose])
   
   const onDrop = useCallback((acceptedFiles, rejectedFiles) => {
     const reader = new FileReader()
