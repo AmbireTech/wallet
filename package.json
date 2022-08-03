@@ -23,7 +23,7 @@
     "@web3-react/types": "^6.0.7",
     "@yfi/sdk": "^1.0.11",
     "adex-protocol-eth": "git+https://git@github.com/AmbireTech/adex-protocol-eth.git#ef2f88f26824c64c1eb12c02a389baec2b2c3889",
-    "ambire-common": "github:AmbireTech/ambire-common#v0.11.2",
+    "ambire-common": "github:AmbireTech/ambire-common#f6d042c1cdc916ede4cf8548105571da83359a91",
     "bip44-constants": "^128.0.0",
     "blockies-ts": "^1.0.0",
     "eth-keyring-controller": "^6.2.1",
@@ -45,7 +45,6 @@
     "trezor-connect": "^8.2.8",
     "typescript": "^4.5.4",
     "url": "^0.11.0",
-    "wallet-dapp-catalog": "git+https://git@github.com/AmbireTech/wallet-dapp-catalog.git#be629cfe7d629304e2178537290b4e6f15baca2a",
     "web-vitals": "^1.1.2"
   },
   "scripts": {
