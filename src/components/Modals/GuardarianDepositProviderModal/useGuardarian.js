@@ -68,14 +68,16 @@ const useGuardarian = function({ relayerURL, selectedNetwork, initMode, tokens, 
             })
             setAmount('50')
             setFrom(fiatList.data && fiatList.data[0] ? fiatList.data[0].value : null)
-            setTo(cryptoList.data && cryptoList.data[0] ? cryptoList.data[0] : null)
+            setTo(cryptoList.data && cryptoList.data[0] ? cryptoList.data[0].value : null)
         } else if (mode === 'sell') {
             setFiatList({
                 data: offRampFiats,
                 isLoading: false
             })
+            // TODO: Discusss: Removed this logic so we return data, if we leave it it results in empty array
+            // && tokens.find(bt => bt?.address?.toLowerCase() === n?.token_contract?.toLowerCase())
             setCryptoList({
-                data: cryptoCurrencies?.data?.filter(t => t.networks.find(n => n.network === NETWORK_MAPPING[network] && tokens.find(bt => bt?.address?.toLowerCase() === n?.token_contract?.toLowerCase())))
+                data: cryptoCurrencies?.data?.filter(t => t.networks.find(n => n.network === NETWORK_MAPPING[network]))
                     .map(t => ({
                         label: t.ticker,
                         value: t.ticker ,
@@ -84,7 +86,7 @@ const useGuardarian = function({ relayerURL, selectedNetwork, initMode, tokens, 
                 isLoading: cryptoCurrencies.isLoading
             })
             setAmount('1')
-            setFrom(cryptoList.data && cryptoList.data[0] ? cryptoList.data[0] : null)
+            setFrom(cryptoList.data && cryptoList.data[0] ? cryptoList.data[0].value : null)
             setTo(fiatList.data && fiatList.data[0] ? fiatList.data[0].value : null)
         }
     }, [mode, cryptoCurrencies, onRampFiats])
