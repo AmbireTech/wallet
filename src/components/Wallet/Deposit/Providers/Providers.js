@@ -4,14 +4,25 @@ import RAMP_LOGO from 'resources/ramp.svg';
 import PAYTRIE_LOGO from 'resources/paytrie.svg';
 import TRANSAK_LOGO from 'resources/transak.svg';
 import KRIPTOMAT_LOGO from 'resources/kriptomat.svg';
+import GUARDARIAN_LOGO from 'resources/guardarian.svg'
 
 import { Loading } from 'components/common'
 import useProviders from './useProviders'
 
-export default function Providers({ walletAddress, networkDetails, relayerURL }) {
-    const { openRampNetwork, openPayTrie, openTransak, openKriptomat, isLoading } = useProviders({ walletAddress, selectedNetwork: networkDetails.id, relayerURL })
+export default function Providers({ walletAddress, networkDetails, relayerURL, portfolio }) {
+    const { openRampNetwork, openPayTrie, openTransak, openKriptomat, openGuardarian, isLoading } = useProviders({ walletAddress, selectedNetwork: networkDetails.id, relayerURL, portfolio })
     
     const providers = [
+        {
+            logo: GUARDARIAN_LOGO,
+            name: 'Guardarian',
+            type: 'Buy with Bank Transfer, Credit/Debit Card, Sell Crypto',
+            fees: 'from 2%',
+            limits: 'up to 15k EUR/monthly on and off ramp',
+            currencies: 'GBP, EUR, USD and many more',
+            networks: ['ethereum', 'polygon', 'avalanche', 'binance-smart-chain', 'fantom'],
+            onClick: () => openGuardarian()
+        },
         {
             logo: KRIPTOMAT_LOGO,
             name: 'Kriptomat',
