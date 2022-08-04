@@ -9,16 +9,17 @@ on:
       - dapp-catalog
 
 jobs:
-  build:
-    name: Build
+  build_and_deploy:
+    name: Build and Deploy dapp catalog
     runs-on: ubuntu-latest
-    
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.ref }}    
     steps:
     - name: Checkout code
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
     
     - name: Install Node.js
-      uses: actions/setup-node@v1
+      uses: actions/setup-node@v3
       with:
         node-version: 16.x
     
@@ -27,25 +28,9 @@ jobs:
     
     - name: Build project
       run: npm run build
-    
-    - name: Upload production-ready build files
-      uses: actions/upload-artifact@v2
-      with:
-        name: production-files
-        path: ./build
-  deploy-dappcatalog:
-    name: Deploy dapp catalog repo
-    needs: build
-    runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/dapp-catalog'
-    steps:
-    - name: Download artifact
-      uses: actions/download-artifact@v2
-      with:
-        name: production-files
-        path: ./build
 
-    - name: Deploy to gh-pages
+    - name: Deploy gh-pages (dapp catalog)
+      if: github.ref == 'refs/heads/dapp-catalog'
       uses: peaceiris/actions-gh-pages@v3
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
