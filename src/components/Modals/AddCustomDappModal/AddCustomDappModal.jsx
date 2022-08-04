@@ -3,11 +3,12 @@ import { useState, useMemo, useCallback, useEffect } from 'react'
 import { Button, Modal, TextInput, Radios, ToolTip } from 'components/common'
 import { useModals } from 'hooks'
 import { useToasts } from 'hooks/toasts'
-import { MdOutlineAdd, MdOutlineClose, MdImage } from 'react-icons/md'
+import { MdOutlineAdd, MdOutlineClose, MdImage, MdErrorOutline } from 'react-icons/md'
 import { fetchCaught } from 'lib/fetch'
 import NETWORKS from 'consts/networks'
 import { chainIdToWalletNetworkId } from 'ambire-common/src/services/dappCatalog'
 import { isValidUrl, isValidCustomDappData } from 'ambire-common/src/services/validations'
+import DAPPS_ICON from 'resources/dapps.svg'
 
 const getNormalizedUrl = (inputStr) => {
     const url = inputStr.toLowerCase().split(/[?#]/)[0].replace('/manifest.json', '')
@@ -56,11 +57,12 @@ const AddCustomDappModal = ({ dappsCatalog }) => {
     const [name, setName] = useState('')
     const [url, setUrl] = useState('')
     const [description, setDescription] = useState('')
-    const [iconUrl, setIconUrl] = useState('')
+    const [iconUrl, setIconUrl] = useState(null)
     const [connectionType, setConnectionType] = useState('')
     const [loading, setLoading] = useState(false)
     const [urlErr, setUrlErr] = useState(null)
     const [urlInfo, setUrlInfo] = useState(null)
+    const [iconUrlInfo, setIconUrlInfo] = useState(null)
     const [networksInfo, setNetworksInfo] = useState(null)
     const [networks, setNetworks] = useState([])
     const [inputValidation, setInputValidation] = useState({})
@@ -76,7 +78,7 @@ const AddCustomDappModal = ({ dappsCatalog }) => {
             name,
             url,
             description,
-            iconUrl,
+            iconUrl: iconUrlInfo ? '' : iconUrl,
             connectionType,
             networks
         })
@@ -85,7 +87,7 @@ const AddCustomDappModal = ({ dappsCatalog }) => {
 
         setLoading(false)
         hideModal()
-    }, [addCustomDapp, addToast, connectionType, description, hideModal, iconUrl, name, networks, url])
+    }, [addCustomDapp, addToast, connectionType, description, hideModal, iconUrl, iconUrlInfo, name, networks, url])
 
     const onUrlInput = useCallback(async (urlInputStr = '') => {
         const dappUrl = getNormalizedUrl(urlInputStr)
@@ -95,6 +97,7 @@ const AddCustomDappModal = ({ dappsCatalog }) => {
         setIconUrl('')
         setConnectionType('')
         setUrlInfo('')
+        setIconUrlInfo('')
         setNetworksInfo('')
         setLoading(true)
         const isValidUrlInput = isValidUrl(dappUrl)
@@ -170,11 +173,11 @@ const AddCustomDappModal = ({ dappsCatalog }) => {
             name,
             url,
             description,
-            iconUrl,
+            iconUrl: iconUrlInfo ? '' : iconUrl,
             connectionType,
             networks
         }) : {})
-    }, [connectionType, description, iconUrl, name, networks, url])
+    }, [connectionType, description, iconUrl, iconUrlInfo, name, networks, url])
 
     return (
         <Modal id='add-custom-dapp-modal' title='Add custom dApp' buttons={buttons}>
@@ -219,16 +222,22 @@ const AddCustomDappModal = ({ dappsCatalog }) => {
                         small
                         label="Icon Url"
                         value={iconUrl}
-                        onInput={value => setIconUrl(value)}
+                        onInput={value => {setIconUrl(value); setIconUrlInfo('')}}
                         className='dapp-input'
                     />
                     <div className='icon-wrapper'>
-                        {iconUrl ? <img width={46} height={46} src={iconUrl} alt={(name || 'no') + ' logo'} onError={() => { setIconUrl('./resources/dapps.svg') }} />
-                            : <MdImage />}
+                        { 
+                        
+                        iconUrl && !iconUrlInfo ?
+                            <img width={46} height={46} src={iconUrl || DAPPS_ICON} alt={(name || 'no') + ' logo'}
+                                onError={() => {
+                                    setIconUrlInfo('Invalid icon URL, please update it or default dApp icon will be displayed');
+                                }} />
+                            : iconUrlInfo ? <MdErrorOutline size={40}/> : <MdImage size={40} />}
                     </div>
                 </div>
                 {<div className='input-err' >
-                    {inputValidation?.errors?.iconUrl}
+                    {inputValidation?.errors?.iconUrl || iconUrlInfo}
                 </div>}
             </div>
 

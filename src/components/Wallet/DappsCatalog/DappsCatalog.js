@@ -27,7 +27,6 @@ const DappsCatalog = ({ network, dappsCatalog, selectedAcc, gnosisConnect, gnosi
     })
   }, [network])
 
-
   const getNetworkTooltipContent = useCallback((networks) => {
     return (
       <div className='tooltipNetworks'>
@@ -137,7 +136,7 @@ const DappsCatalog = ({ network, dappsCatalog, selectedAcc, gnosisConnect, gnosi
                   <div className='base-info'>
                     <div className='logoSplit'>
                       <div className='logo'>
-                        <img src={item.iconUrl} alt={item.name} />
+                        <img src={item.iconUrl  || DAPPS_ICON} alt={item.name} />
                       </div>
                       <div className='content'>
                         <span className='title'>{item.name}</span>
