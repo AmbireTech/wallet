@@ -3,12 +3,11 @@ import { useState, useMemo, useCallback, useEffect } from 'react'
 import { Button, Modal, TextInput, Radios, ToolTip } from 'components/common'
 import { useModals } from 'hooks'
 import { useToasts } from 'hooks/toasts'
-import { MdOutlineAdd, MdOutlineClose, MdImage, MdError } from 'react-icons/md'
+import { MdOutlineAdd, MdOutlineClose, MdImage } from 'react-icons/md'
 import { fetchCaught } from 'lib/fetch'
 import NETWORKS from 'consts/networks'
-import { chainIdToWalletNetworkId } from 'wallet-dapp-catalog'
+import { chainIdToWalletNetworkId } from 'ambire-common/src/services/dappCatalog'
 import { isValidUrl, isValidCustomDappData } from 'ambire-common/src/services/validations'
-import DAPPS_ICON from 'resources/dapps.svg'
 
 const getNormalizedUrl = (inputStr) => {
     const url = inputStr.toLowerCase().split(/[?#]/)[0].replace('/manifest.json', '')
@@ -67,7 +66,7 @@ const AddCustomDappModal = ({ dappsCatalog }) => {
     const [inputValidation, setInputValidation] = useState({})
     const [isAppAlreadyExists, setIsAppAlreadyExists] = useState(false)
 
-    const disabled = useMemo(() => !inputValidation.success || isAppAlreadyExists, [inputValidation.success, isAppAlreadyExists])
+    const disabled = useMemo(() => !inputValidation.success || isAppAlreadyExists || loading, [inputValidation.success, isAppAlreadyExists, loading])
 
     const addDapp = useCallback(async () => {
         setLoading(true)
