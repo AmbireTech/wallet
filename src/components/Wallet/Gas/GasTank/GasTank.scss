@@ -24,11 +24,19 @@
             min-height: 103px;
             align-items: center;
             color: gray;
-    
+            justify-content: space-around;
     
             .inner-wrapper-left {
                 font-size: 35px;
                 color: white;
+
+                &.small-font {
+                    font-size: 22px;
+
+                    span {
+                        font-size: 12px;
+                    }
+                }
     
                 span {
                     font-size: 25px;
@@ -274,6 +282,16 @@
 
         .total-save {
             align-items: center !important;
+        }
+    }
+}
+
+@media only screen and (max-width: 1700px) and (min-width: 1200px)  {
+    .inner-wrapper-left {
+        font-size: 22px !important;
+
+        span {
+            font-size: 12px !important;
         }
     }
 }

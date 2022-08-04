@@ -44,17 +44,13 @@ function Transactions ({ relayerURL, selectedAcc, selectedNetwork, showSendTxns,
     : null
   const { data, errMsg, isLoading } = useRelayerData(url)
   const urlGetFeeAssets = relayerURL ? `${relayerURL}/gas-tank/assets?cacheBreak=${cacheBreak}` : null
-  const { data: feeAssets }= useRelayerData(urlGetFeeAssets)
+  const { data: feeAssets } = useRelayerData(urlGetFeeAssets)
 
   const showSendTxnsForReplacement = useCallback(bundle => {
-
-    let ids = []
-    
-    bundle.txns.slice(0, -1)
+    bundle.txns
       .forEach((txn, index) => {
-        ids.push('replace_' + index) // not to interefere with pending ids with existing indexes
         addRequest({
-          id: ids[ids.length - 1],
+          id: 'replace_'+index,
           chainId: selectedNetwork.chainId,
           account: selectedAcc,
           type: 'eth_sendTransaction',
@@ -66,12 +62,7 @@ function Transactions ({ relayerURL, selectedAcc, selectedNetwork, showSendTxns,
         })
       })
 
-    // need to explicitly compare the bundle.nonce we want to modify
-    let replacementBundle = new Bundle({...bundle})
-    replacementBundle.txns = bundle.txns.slice(0, -1)
-    replacementBundle.replacedRequestIds = ids // adding props for resolveMany, in case of rejection/validation in SendTransaction
-
-    setSendTxnState({ showing: true, replacementBundle })
+    setSendTxnState({ showing: true, replaceByDefault: true, mustReplaceNonce: bundle.nonce })
   }, [addRequest, selectedNetwork, selectedAcc, setSendTxnState])
 
   const maxBundlePerPage = 10
@@ -91,9 +82,12 @@ function Transactions ({ relayerURL, selectedAcc, selectedNetwork, showSendTxns,
     <h3 className='validation-error'>Unsupported: not currently connected to a relayer.</h3>
   </section>)
 
+  // Removed fee txn if Gas tank is not used for payment method
+  const removeFeeTxnFromBundleIfGasTankDisabled = bundle => !bundle.gasTankFee ?  { ...bundle, txns: bundle.txns.slice(0, -1) } : bundle
 
   // @TODO: visualize other pending bundles
-  const firstPending = data && data.txns.find(x => !x.executed && !x.replaced)
+  const allPending = data && data.txns.filter(x => !x.executed && !x.replaced)
+  const firstPending = allPending && allPending[0]
 
   const mapToBundle = (relayerBundle, extra = {}) => (new Bundle({
     ...relayerBundle,
@@ -103,9 +97,13 @@ function Transactions ({ relayerURL, selectedAcc, selectedNetwork, showSendTxns,
     minFeeInUSDPerGas: relayerBundle.feeInUSDPerGas * RBF_THRESHOLD,
     ...extra
   }))
-  const cancelByReplacing = relayerBundle => showSendTxns(mapToBundle(relayerBundle, {
-    txns: [[selectedAcc, '0x0', '0x']],
-  }))
+  const cancelByReplacing = relayerBundle => setSendTxnState({
+    showing: true,
+    replacementBundle: mapToBundle(relayerBundle, {
+      txns: [[selectedAcc, '0x0', '0x']],
+    }),
+    mustReplaceNonce: relayerBundle.nonce.num
+  })
   const cancel = relayerBundle => {
     // @TODO relayerless
     mapToBundle(relayerBundle).cancel({ relayerURL, fetch })
@@ -128,8 +126,12 @@ function Transactions ({ relayerURL, selectedAcc, selectedNetwork, showSendTxns,
   }
 
   // @TODO: we are currently assuming the last txn is a fee; change that (detect it)
-  const speedup = relayerBundle => showSendTxns(mapToBundle(relayerBundle, { txns: relayerBundle.txns.slice(0, -1) }))
-  const replace = relayerBundle => showSendTxnsForReplacement(mapToBundle(relayerBundle))
+  const speedup = relayerBundle => setSendTxnState({
+    showing: true,
+    replacementBundle: mapToBundle(removeFeeTxnFromBundleIfGasTankDisabled(relayerBundle)),
+    mustReplaceNonce: relayerBundle.nonce.num
+  })
+  const replace = relayerBundle => showSendTxnsForReplacement(mapToBundle(removeFeeTxnFromBundleIfGasTankDisabled(relayerBundle)))
 
   const paginationControls = (
     <div className='pagination-controls'>
@@ -183,6 +185,7 @@ function Transactions ({ relayerURL, selectedAcc, selectedNetwork, showSendTxns,
           </div>
         </div>
       </div>) }
+      {allPending && allPending.length > 1 && (<h4>NOTE: There are a total of {allPending.length} pending transaction bundles.</h4>)}
 
       <div id="confirmed" className="panel">
         <div className="panel-heading">
@@ -217,7 +220,7 @@ function BundlePreview({ bundle, mined = false, feeAssets }) {
   // all of the values are prob checksummed so we may not need toLowerCase
   const lastTxnSummary = getTransactionSummary(lastTxn, bundle.network, bundle.identity)
   const hasFeeMatch = (bundle.txns.length > 1) && lastTxnSummary.match(new RegExp(TO_GAS_TANK, 'i'))
-  const txns = hasFeeMatch ? bundle.txns.slice(0, -1) : bundle.txns
+  const txns = (hasFeeMatch && !bundle.gasTankFee) ? bundle.txns.slice(0, -1) : bundle.txns
   const toLocaleDateTime = date => `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`
   const feeTokenDetails = feeAssets ? feeAssets.find(i => i.symbol === bundle.feeToken) : null
   const savedGas = feeTokenDetails ? getAddedGas(feeTokenDetails) : null
@@ -237,7 +240,7 @@ function BundlePreview({ bundle, mined = false, feeAssets }) {
     ))}
     <ul className="details">
       {
-        hasFeeMatch ?
+        (hasFeeMatch && !bundle.gasTankFee) ?
           <li>
             <label><BsCoin/>Fee</label>
             <p>{ fee.split(' ').map((x, i) => i === 0 ? formatFloatTokenAmount(x, true, 8) : x).join(' ') }</p>
@@ -256,10 +259,16 @@ function BundlePreview({ bundle, mined = false, feeAssets }) {
       {
         bundle.gasTankFee && (feeTokenDetails !== null) && mined && (
         <>
-          <li>
-              <label><BsCoin/>Fee (Paid with Gas Tank)</label>
-              <p>${(bundle.feeInUSDPerGas * bundle.gasLimit).toFixed(6)}</p>
-          </li>
+          { savedGas &&(
+            <ToolTip label={`
+              You saved $ ${formatFloatTokenAmount(bundle.feeInUSDPerGas * savedGas, true, 6)}, ${ (cashback > 0) ? `and got back $ ${formatFloatTokenAmount(cashback, true, 6)} as cashback,` : ''} ended up paying only $ ${formatFloatTokenAmount(((bundle.feeInUSDPerGas * bundle.gasLimit) - cashback), true, 6)}
+            `}>
+              <li>
+                <label><BsCoin/>Fee (Paid with Gas Tank)</label>
+                <p>$ {formatFloatTokenAmount(((bundle.feeInUSDPerGas * bundle.gasLimit) - cashback), true, 6)}</p>
+              </li>
+            </ToolTip>
+          )}
           { savedGas && ( 
             <ToolTip label={`
               Saved: $ ${formatFloatTokenAmount(bundle.feeInUSDPerGas * savedGas, true, 6)}

@@ -16,7 +16,7 @@ import ModalProvider from './components/ModalProvider/ModalProvider'
 import SendTransaction from './components/SendTransaction/SendTransaction'
 import SignMessage from './components/SignMessage/SignMessage'
 import useAccounts from './hooks/accounts'
-import useNetwork from './hooks/network'
+import useNetwork from 'ambire-common/src/hooks/useNetwork'
 import useWalletConnect from './hooks/walletconnect'
 import useGnosisSafe from './hooks/useGnosisSafe'
 import useNotifications from './hooks/notifications'
@@ -34,8 +34,13 @@ import { useOneTimeQueryParam } from './hooks/oneTimeQueryParam'
 import WalletStakingPoolABI from './consts/WalletStakingPoolABI.json'
 import { Contract, utils } from 'ethers'
 import { getProvider } from './lib/provider'
+import allNetworks from './consts/networks'
 
-const relayerURL = process.env.hasOwnProperty('REACT_APP_RELAYER_URL') ? process.env.REACT_APP_RELAYER_URL : 'http://localhost:1934'
+const relayerURL = process.env.REACT_APP_RELAYRLESS === 'true' 
+                  ? null 
+                  : process.env.hasOwnProperty('REACT_APP_RELAYER_URL')
+                    ? process.env.REACT_APP_RELAYER_URL 
+                    : 'http://localhost:1934'
 
 setTimeout(() => {
   //console.warn('☢️ If you do, malicious code could steal your funds! ☢️')
@@ -53,7 +58,7 @@ function AppInner() {
   // basic stuff: currently selected account, all accounts, currently selected network
   const { accounts, selectedAcc, onSelectAcc, onAddAccount, onRemoveAccount } = useAccounts(useLocalStorage)
   const addressBook = useAddressBook({ accounts, useStorage: useLocalStorage })
-  const { network, setNetwork, allNetworks } = useNetwork({ useStorage: useLocalStorage })
+  const { network, setNetwork } = useNetwork({ useStorage: useLocalStorage })
   const { gasTankState, setGasTankState } = useGasTank({ selectedAcc, useStorage: useLocalStorage })
   const { addToast } = useToasts()
   const wcUri = useOneTimeQueryParam('uri')
@@ -150,6 +155,7 @@ function AppInner() {
   } 
 
 
+  // Handling transaction signing requests
   // Show the send transaction full-screen modal if we have a new txn
   const eligibleRequests = useMemo(() => requests
     .filter(({ type, chainId, account }) =>
@@ -157,19 +163,37 @@ function AppInner() {
       && chainId === network.chainId
       && account === selectedAcc
     ), [requests, network.chainId, selectedAcc])
+  // Docs: the state is { showing: bool, replacementBundle, replaceByDefault: bool, mustReplaceNonce: number }
+  // mustReplaceNonce is set when the end goal is to replace a particular transaction, and if that txn gets mined we should stop the user from doing anything
+  // mustReplaceNonce must always be used together with either replaceByDefault: true or replacementBundle
   const [sendTxnState, setSendTxnState] = useState(() => ({ showing: !!eligibleRequests.length }))
   useEffect(
-    () => setSendTxnState((prev) => ({ showing: !!eligibleRequests.length, replacementBundle: prev?.replacementBundle })),
+    () => setSendTxnState(prev => ({
+      showing: !!eligibleRequests.length,
+      // we only keep those if there are transactions, otherwise zero them
+      replaceByDefault: eligibleRequests.length ? prev.replaceByDefault : null,
+      mustReplaceNonce: eligibleRequests.length ? prev.mustReplaceNonce : null,
+    })),
     [eligibleRequests.length]
   )
-  const showSendTxns = (bundle, prioritize=false) => setSendTxnState({ showing: true, replacementBundle: bundle, prioritize })
+  const showSendTxns = (replacementBundle, replaceByDefault = false) => setSendTxnState({ showing: true, replacementBundle, replaceByDefault })
+  // keep values such as replaceByDefault and mustReplaceNonce; those will be reset on any setSendTxnState/showSendTxns
+  // we DONT want to keep replacementBundle - closing the dialog means you've essentially dismissed it
+  // also, if you used to be on a replacementBundle, we DON'T want to keep those props
+  const onDismissSendTxns = () => setSendTxnState(prev => (prev.replacementBundle ? { showing: false } : {
+    showing: false,
+    replaceByDefault: prev.replaceByDefault,
+    mustReplaceNonce: prev.mustReplaceNonce
+  }))
 
+  // Handling message signatures
   // Network shouldn't matter here
   const everythingToSign = useMemo(() => requests
     .filter(({ type, account }) => (type === 'personal_sign' || type === 'eth_sign' || type === 'eth_signTypedData_v4' || type === 'eth_signTypedData')
       && account === selectedAcc
     ), [requests, selectedAcc])
 
+  // Handling the back button
   // When the user presses back, we first hide the SendTransactions dialog (keeping the queue)
   // Then, signature requests will need to be dismissed one by one, starting with the oldest
   const onPopHistory = () => {
@@ -184,7 +208,7 @@ function AppInner() {
     return true
   }
 
-  // Keeping track of transactions
+  // Keeping track of sent transactions
   const [sentTxn, setSentTxn] = useState([])
   const onBroadcastedTxn = hash => {
     if (!hash) {
@@ -220,6 +244,7 @@ function AppInner() {
     onSitckyClick: useCallback(() => setSendTxnState({ showing: true }), [])
   })
 
+  // Get rewards data
   const [cacheBreak, setCacheBreak] = useState(() => Date.now())
   useEffect(() => {
     if ((Date.now() - cacheBreak) > 5000) setCacheBreak(Date.now())
@@ -264,10 +289,10 @@ function AppInner() {
         requests={eligibleRequests}
         resolveMany={resolveMany}
         relayerURL={relayerURL}
-        onDismiss={() => setSendTxnState({ showing: false })}
+        onDismiss={onDismissSendTxns}
         replacementBundle={sendTxnState.replacementBundle}
-        prioritize={sendTxnState.prioritize}
         replaceByDefault={sendTxnState.replaceByDefault}
+        mustReplaceNonce={sendTxnState.mustReplaceNonce}
         onBroadcastedTxn={onBroadcastedTxn}
         gasTankState={gasTankState}
       ></SendTransaction>

@@ -53,6 +53,7 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
             address: ''
         }
     })
+    const [feeBaseTokenWarning, setFeeBaseTokenWarning] = useState('')
     const timer = useRef(null)
     let eligibleFeeTokens = null
     if (gasTankDetails?.feeAssetsPerNetwork) {
@@ -145,6 +146,18 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
     }
 
     useEffect(() => {
+        // check gasTank topUp with token for convertion
+        setFeeBaseTokenWarning('')
+        if (gasTankDetails?.feeAssetsPerNetwork){
+            const gasFeeToken = gasTankDetails.feeAssetsPerNetwork.find(ft => ft.address.toLowerCase() === selectedAsset.address.toLowerCase())
+            if (gasFeeToken?.baseToken) {
+                const feeBaseToken = gasTankDetails.feeAssetsPerNetwork.find(ft => ft.address.toLowerCase() === gasFeeToken.baseToken.toLowerCase())
+                setFeeBaseTokenWarning(`Token ${gasFeeToken.symbol.toUpperCase()} will be converted to ${feeBaseToken.symbol.toUpperCase()} without additional fees.`)
+            }
+        }
+    }, [selectedAsset])
+
+    useEffect(() => {
         setAmount(0)
         setBigNumberHexAmount('')
         setSWAddressConfirmed(false)
@@ -232,6 +245,7 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
                         assetsItems.length ?
                             <div className="form">
                                 <Select searchable defaultValue={asset} items={assetsItems.sort((a, b) => a.label.toLowerCase() > b.label.toLowerCase() ? 1 : -1)} onChange={({ value }) => setAsset(value)}/>
+                                { feeBaseTokenWarning ? <p className='gas-tank-convert-msg'><MdWarning /> {feeBaseTokenWarning}</p> : <></>}
                                 <NumberInput
                                     label={amountLabel}
                                     value={amount}
@@ -240,6 +254,7 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
                                     button="MAX"
                                     onButtonClick={() => setMaxAmount()}
                                 />
+                                
                                 { validationFormMgs.messages.amount && 
                                     (<div className='validation-error'><BsXLg size={12}/>&nbsp;{validationFormMgs.messages.amount}</div>)}
                                 { gasTankDetails ? <p className='gas-tank-msg'><MdWarning /> {gasTankDetails?.gasTankMsg}</p> : (<div id="recipient-field">

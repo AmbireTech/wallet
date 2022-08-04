@@ -4,7 +4,7 @@ import { ZAPPER_API_KEY } from 'config';
 import { fetchGet } from 'lib/fetch';
 import { roundFloatingNumber } from 'lib/formatters';
 import { ZAPPER_API_ENDPOINT } from 'config'
-import supportedProtocols from 'consts/supportedProtocols';
+import supportedProtocols from 'ambire-common/src/constants/supportedProtocols';
 import { useToasts } from 'hooks/toasts'
 import { setKnownAddresses, setKnownTokens } from 'lib/humanReadableTransactions';
 import { VELCRO_API_ENDPOINT } from 'config'

@@ -49,6 +49,7 @@ const GasTank = ({ network,
     const { data: executedTxnsRes } = useRelayerData(urlGetTransactions)
     
     const gasTankBalances = balancesRes && balancesRes.length && balancesRes.map(({balanceInUSD}) => balanceInUSD).reduce((a, b) => a + b, 0)
+    const gasTankBalancesFormatted = gasTankBalances ? formatFloatTokenAmount(gasTankBalances, true, 2) : '0.00'
     const gasTankTxns = executedTxnsRes && executedTxnsRes.txns.length && executedTxnsRes.txns.filter(item => !!item.gasTankFee)
     const feeAssetsPerNetwork = feeAssetsRes && feeAssetsRes.length && feeAssetsRes.filter(item => item.network === network.id)
     const executedTxns = executedTxnsRes && executedTxnsRes.txns.length && executedTxnsRes.txns
@@ -72,9 +73,19 @@ const GasTank = ({ network,
     const isMobileScreen = useCheckMobileScreen()
     const availableFeeAssets = feeAssetsPerNetwork?.map(item => {
         const isFound = tokens?.find(x => x.address.toLowerCase() === item.address.toLowerCase()) 
-        if (isFound) return isFound
+        if (isFound) return {
+            ...isFound,
+            tokenImageUrl: item.icon,
+            decimals: item.decimals,
+            symbol: item.symbol,
+            balance: isFound.balance,
+            balanceUSD: parseFloat(isFound.balance) * parseFloat(feeAssetsPerNetwork
+                .find(x => x.address.toLowerCase() === isFound.address.toLowerCase()).price || 0)
+        }
+
         return { 
             ...item, 
+            tokenImageUrl: item.icon,
             balance: 0, 
             balanceUSD: 0, 
             decimals: 0, 
@@ -140,7 +151,7 @@ const GasTank = ({ network,
             const logo = failedImg.includes(img) ? getTokenIcon(network, address) : img
                 
             return (<div className="token" key={`token-${address}-${index}`}
-                disabled={balanceUSD === 0}
+                disabled={balance === 0}
                 draggable={category === 'tokens' && sortedTokensLength > 1 && sortType === 'custom' && !isMobileScreen}
                 onDragStart={(e) => {
                     if (handle.current === target.current || handle.current.contains(target.current)) dragStart(e, index)
@@ -196,9 +207,9 @@ const GasTank = ({ network,
             <div className='heading-wrapper'>
                 <div className="balance-wrapper" style={{ cursor: 'pointer' }} onClick={openGasTankBalanceByTokensModal}>
                     <span><GiGasPump/> Balance on All Networks</span>
-                    { !isLoading ?
-                        (<div className='inner-wrapper-left'>
-                            <span>$ </span>{ gasTankBalances ? formatFloatTokenAmount(gasTankBalances, true, 2) : '0.00' }
+                    { (!isLoading && gasTankBalances) ?
+                        (<div className={ (gasTankBalancesFormatted.length > 6)? 'inner-wrapper-left small-font' : 'inner-wrapper-left' } >
+                            <span>$ </span>{ gasTankBalancesFormatted }
                         </div>) : 
                         <Loading /> }
                     {/* TODO: Add functionality for drag and drop */}
@@ -289,7 +300,7 @@ const GasTank = ({ network,
                     gasTankFilledTxns && gasTankFilledTxns.length ? gasTankFilledTxns.map((item, key) => {
                         const tokenDetails = feeAssetsRes && feeAssetsRes.length ? 
                             feeAssetsRes.find(({address, network}) => address.toLowerCase() === item.address.toLowerCase() && network === item.network) : null
-                    
+                        if (!tokenDetails) return null // txn to gas Tank with not eligible token
                         return (
                             <div key={key} className="txns-item-wrapper">
                                 <div className='logo'><GiGasPump size={20} /></div>
@@ -314,7 +325,7 @@ const GasTank = ({ network,
                                     </a>
                                 </div>
                             </div>)
-                    }) : <p>No top ups were made to Gas Tank on {network.id.toUpperCase()}</p>
+                    }).filter(r => r) : <p>No top ups were made to Gas Tank on {network.id.toUpperCase()}</p>
                 }
             </div>
         </div>
