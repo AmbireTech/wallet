@@ -61,7 +61,8 @@ const useGuardarian = function({ relayerURL, selectedNetwork, initMode, tokens, 
                 isLoading: onRampFiats?.isLoading
             })
             setCryptoList({
-                data: cryptoCurrencies?.data?.filter(t => t.networks.find(n => n.network === NETWORK_MAPPING[network])).map(t => ({
+                data: cryptoCurrencies?.data?.filter(t => t.networks.find(n => n.network === NETWORK_MAPPING[network] && n.payment_methods.some(pm => pm.withdrawal_enabled
+                ))).map(t => ({
                     label: t.ticker,
                     value: t.ticker ,
                     icon: t.logo_url
@@ -77,7 +78,7 @@ const useGuardarian = function({ relayerURL, selectedNetwork, initMode, tokens, 
                 isLoading: false
             })
             setCryptoList({
-                data: cryptoCurrencies?.data?.filter(t => t.networks.find(n => n.network === NETWORK_MAPPING[network] && tokens.find(bt => bt?.address?.toLowerCase() === n?.token_contract?.toLowerCase() || (bt?.address === ZERO_ADDR && n?.token_contract === null))))
+                data: cryptoCurrencies?.data?.filter(t => t.networks.find(n => n.network === NETWORK_MAPPING[network] && n.payment_methods.some(pm => pm.deposit_enabled) && tokens.find(bt => bt?.address?.toLowerCase() === n?.token_contract?.toLowerCase() || (bt?.address === ZERO_ADDR && n?.token_contract === null))))
                     .map(t => ({
                         label: t.ticker,
                         value: t.ticker ,
@@ -97,7 +98,6 @@ const useGuardarian = function({ relayerURL, selectedNetwork, initMode, tokens, 
         fetchGet(FIAT_CURRENCIES_URL)
             .then((data) => setOnRampFiats({data, isLoading: false, error: {}, message: ''}))
             .catch(error => {
-                console.log(error)
                 setOnRampFiats({data: null, isLoading: false, error, message: 'Error while fetching fiat list'})
                 addToast('Error while fetching fiat list', { error: true })
             })
