@@ -152,7 +152,7 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
             const gasFeeToken = gasTankDetails.feeAssetsPerNetwork.find(ft => ft.address.toLowerCase() === selectedAsset.address.toLowerCase())
             if (gasFeeToken?.baseToken) {
                 const feeBaseToken = gasTankDetails.feeAssetsPerNetwork.find(ft => ft.address.toLowerCase() === gasFeeToken.baseToken.toLowerCase())
-                setFeeBaseTokenWarning(`Token ${gasFeeToken.symbol.toUpperCase()} will be converted to ${feeBaseToken.symbol.toUpperCase()} without need of an additonal fee.`)
+                setFeeBaseTokenWarning(`Token ${gasFeeToken.symbol.toUpperCase()} will be converted to ${feeBaseToken.symbol.toUpperCase()} without additional fees.`)
             }
         }
     }, [selectedAsset])
