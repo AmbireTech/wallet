@@ -51,37 +51,27 @@ const AAVECard = ({ networkId, tokens, account, addRequest }) => {
     const addRequestTxn = (id, txn, extraGas = 0) => addRequest({ id, type: 'eth_sendTransaction', chainId: networkDetails.chainId, account, txn, extraGas })
 
     const onValidate = async (type, tokenAddress, amount) => {
-        if (type === 'Deposit') {
-            const token = getToken('deposit', tokenAddress)
+        const validate = async (type, functionData) => {
+            const token = getToken(type, tokenAddress)
             const bigNumberHexAmount = ethers.utils.parseUnits(amount.toString(), token.decimals).toHexString()
             await approveToken('Aave Pool', networkDetails.id, account, lendingPoolAddress, tokenAddress, addRequestTxn, addToast)
 
             try {
-                addRequestTxn(`aave_pool_deposit_${Date.now()}`, {
+                addRequestTxn(`aave_pool_${type}_${Date.now()}`, {
                     to: lendingPoolAddress,
                     value: '0x0',
-                    data: AAVELendingPool.encodeFunctionData('deposit', [tokenAddress, bigNumberHexAmount, account, 0])
+                    data: AAVELendingPool.encodeFunctionData(type, [tokenAddress, bigNumberHexAmount, ...functionData])
                 }, 60000)
             } catch(e) {
                 console.error(e)
-                addToast(`Aave Deposit Error: ${e.message || e}`, { error: true })
+                addToast(`Aave ${type} Error: ${e.message || e}`, { error: true })
             }
         }
+        if (type === 'Deposit') {
+            validate('deposit', [account, 0])
+        }
         else if (type === 'Withdraw') {
-            const token = getToken('withdraw', tokenAddress)
-            const bigNumberHexAmount = ethers.utils.parseUnits(amount.toString(), token.decimals).toHexString()
-            await approveToken('Aave Pool', networkDetails.id, account, lendingPoolAddress, tokenAddress, addRequestTxn, addToast)
-
-            try {
-                addRequestTxn(`aave_pool_withdraw_${Date.now()}`, {
-                    to: lendingPoolAddress,
-                    value: '0x0',
-                    data: AAVELendingPool.encodeFunctionData('withdraw', [tokenAddress, bigNumberHexAmount, account])
-                }, 60000)
-            } catch(e) {
-                console.error(e)
-                addToast(`Aave Withdraw Error: ${e.message || e}`, { error: true })
-            }
+            validate('withdraw', [account])
         }
     }
 
@@ -102,22 +92,23 @@ const AAVECard = ({ networkId, tokens, account, addRequest }) => {
             const reserves = await lendingPoolContract.getReservesList()
             const reservesAddresses = reserves.map(reserve => reserve.toLowerCase())
 
-            const withdrawTokens = tokens.filter(({ address }) => defaultTokens.filter(t => t.type === 'withdraw' && t.address === address)[0]).map(token => ({
+            const supportedATokens = defaultTokens.filter(t => t.type === 'withdraw').map(t => t.address.toLowerCase())
+            const withdrawTokens = tokens.filter(({ address }) => supportedATokens.includes(address)).map(token => ({
                 ...token,
-                address: defaultTokens.filter(t => t.type === 'withdraw' && t.address === token.address)[0].baseTokenAddress,
+                address: defaultTokens.find(t => t.type === 'withdraw' && t.address.toLowerCase() === token.address.toLowerCase())?.baseTokenAddress,
                 type: 'withdraw'
-            })).filter(token => token)
+            })).filter(token => token).sort((a, b) => b.balance - a.balance)
 
             const depositTokens = tokens.filter(({ address }) => reservesAddresses.includes(address)).map(token => ({
                 ...token,
                 type: 'deposit'
-            })).filter(token => token)
+            })).filter(token => token).sort((a, b) => b.balance - a.balance)
 
             const allTokens = (await Promise.all([
                 ...withdrawTokens,
                 ...depositTokens,
-                ...defaultTokens.filter(({ type, address }) => type === 'deposit' && !depositTokens.map(({ address }) => address).includes(address)),
-                ...defaultTokens.filter(({ type, address }) => type === 'withdraw' && !withdrawTokens.map(({ address }) => address).includes(address))
+                ...defaultTokens.filter(({ type, address }) => type === 'deposit' && !depositTokens.map(({ address }) => address.toLowerCase()).includes(address.toLowerCase())),
+                ...defaultTokens.filter(({ type, baseTokenAddress }) => type === 'withdraw' && !withdrawTokens.map(({ address }) => address.toLowerCase()).includes(baseTokenAddress.toLowerCase()))
             ]))
 
             const uniqueTokenAddresses = [...new Set(allTokens.map(({ address }) => address))]
