@@ -20,7 +20,7 @@ import { useState, useEffect, useRef, useCallback } from 'react'
 import { Button, Loading, TextInput, ToolTip } from 'components/common'
 import { isObject } from 'url/util'
 import { MdInfoOutline } from 'react-icons/md'
-import accountPresets from 'consts/accountPresets'
+import accountPresets from 'ambire-common/src/constants/accountPresets'
 import { getProvider } from 'lib/provider'
 import { getNetworkByChainId } from 'lib/getNetwork'
 

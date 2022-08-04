@@ -13,7 +13,7 @@ import { MdClose, MdOutlineNavigateNext, MdOutlineAddCircleOutline, MdCancel } f
 import { Contract, ethers } from 'ethers'
 import { ERC20PermittableInterface } from 'consts/permittableCoins'
 import { getProvider } from 'lib/provider'
-import { GAS_SPEEDS } from 'consts/gasSpeeds'
+import { GAS_SPEEDS } from 'ambire-common/src/constants/gasSpeeds'
 
 const PERMIT_CONSUMPTION = 70000
 const TRANSFER_CONSUMPTION = 52000 // higher avg, 21000 included

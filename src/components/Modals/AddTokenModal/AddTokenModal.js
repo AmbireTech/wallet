@@ -3,7 +3,7 @@ import './AddTokenModal.scss'
 import { Contract } from 'ethers';
 import { formatUnits, Interface } from 'ethers/lib/utils';
 import ERC20ABI from 'adex-protocol-eth/abi/ERC20'
-import { isValidAddress } from 'lib/address';
+import { isValidAddress } from 'ambire-common/src/services/address';
 import { Button, Loading, Modal, TextInput } from 'components/common'
 import { useState } from 'react';
 import { useToasts } from 'hooks/toasts';

@@ -1,7 +1,7 @@
 import ERC20ABI from 'adex-protocol-eth/abi/ERC20.json'
 import { Interface } from 'ethers/lib/utils'
 import { BigNumber } from 'ethers'
-import accountPresets from 'consts/accountPresets'
+import accountPresets from 'ambire-common/src/constants/accountPresets'
 
 const ERC20AbiInterface = new Interface(ERC20ABI)
 const TRANSFER_SIGHASH = ERC20AbiInterface.getSighash(
