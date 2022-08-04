@@ -69,7 +69,7 @@ const useGuardarian = function({ relayerURL, selectedNetwork, initMode, tokens, 
                 })).filter(t => t.value) || [],
                 isLoading: cryptoCurrencies?.isLoading
             })
-            setAmount('50')
+            setAmount('')
             setFrom(fiatList.data && fiatList.data[0] ? fiatList.data[0].value : null)
             setTo(cryptoList.data && cryptoList.data[0] ? cryptoList.data[0].value : null)
         } else if (mode === 'sell') {
@@ -86,7 +86,7 @@ const useGuardarian = function({ relayerURL, selectedNetwork, initMode, tokens, 
                     })).filter(t => t.value) || [],
                 isLoading: cryptoCurrencies.isLoading
             })
-            setAmount('1')
+            setAmount('')
             setFrom(cryptoList.data && cryptoList.data[0] ? cryptoList.data[0].value : null)
             setTo(fiatList.data && fiatList.data[0] ? fiatList.data[0].value : null)
         }

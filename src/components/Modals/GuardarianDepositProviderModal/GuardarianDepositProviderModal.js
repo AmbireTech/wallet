@@ -39,7 +39,7 @@ const GuardarianDepositProviderModal = ({ relayerURL, walletAddress, selectedNet
 
             if (userAmount < marketMin) return `Minimum amount is ${marketData.min} ${marketData.from}`
             if (userAmount > marketMax) return `Maximum amount is ${marketData.max} ${marketData.from}`
-            if (currToken && guardarian?.from && (userAmount > currToken.balance)) return `stop pretending to be rich`
+            if (currToken && guardarian?.from && (userAmount > currToken.balance)) return `You do not have enough funds`
         }
 
         return ''
