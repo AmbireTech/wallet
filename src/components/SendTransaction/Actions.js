@@ -59,6 +59,9 @@ export default function Actions({
       }
   
       <form ref={form} className='quickAccSigningForm' onSubmit={e => { e.preventDefault() }}>
+        {signingStatus.confCodeRequired === 'notRequired' &&
+          <p className='code-2fa-not-required-msg'>You already sent 3 or more transactions to this address, confirmation code is not needed.</p>
+        }
         <div className='inputs-container'>
           <TextInput
             small
@@ -72,16 +75,18 @@ export default function Actions({
             onChange={value => setQuickAccCredentials({ ...quickAccCredentials, passphrase: value })}
           ></TextInput>
           {/* Changing the autoComplete prop to a random string seems to disable it in more cases */}
-          <TextInput
-            small
-            pattern='[0-9]+'
-            title='Confirmation code should be 6 digits'
-            autoComplete='nope'
-            required minLength={6} maxLength={6}
-            placeholder={signingStatus.confCodeRequired === 'otp' ? 'Authenticator OTP code' : 'Confirmation code'}
-            value={quickAccCredentials.code}
-            onChange={value => setQuickAccCredentials({ ...quickAccCredentials, code: value })}
-          ></TextInput>
+          {signingStatus.confCodeRequired !== 'notRequired' &&
+            <TextInput
+              small
+              pattern='[0-9]+'
+              title='Confirmation code should be 6 digits'
+              autoComplete='nope'
+              required minLength={6} maxLength={6}
+              placeholder={signingStatus.confCodeRequired === 'otp' ? 'Authenticator OTP code' : 'Confirmation code'}
+              value={quickAccCredentials.code}
+              onChange={value => setQuickAccCredentials({ ...quickAccCredentials, code: value })}
+            ></TextInput>
+          }
         </div>
         <div className='buttons'>
           <Button
