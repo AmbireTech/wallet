@@ -102,6 +102,7 @@ const GuardarianDepositProviderModal = ({ relayerURL, walletAddress, selectedNet
                 || guardarian?.marketInfo?.isLoading 
                 || guardarian?.estimateInfo?.isLoading 
                 || guardarian?.txn?.isLoading
+                || guardarian?.amount === ''
                 || sendTransactionLoading
             } 
             onClick={sendTxn}>{guardarian.mode === 'buy' ? 'Buy' : 'Sell'}</Button>
