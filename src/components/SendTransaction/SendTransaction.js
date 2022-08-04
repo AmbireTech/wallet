@@ -12,6 +12,7 @@ import * as blockies from 'blockies-ts'
 import { useToasts } from 'hooks/toasts'
 import { getWallet } from 'lib/getWallet'
 import accountPresets from 'consts/accountPresets'
+import { networkIconsById } from 'consts/networks'
 import { FeeSelector, FailingTxn } from './FeeSelector'
 import Actions from './Actions'
 import TxnPreview from 'components/common/TxnPreview/TxnPreview'
@@ -329,12 +330,14 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, mustReplaceNonce,
     const finalBundle = (signingStatus && signingStatus.finalBundle) || getFinalBundle()
     const signer = finalBundle.signer
 
+    const canSkip2FA = signingStatus && signingStatus.confCodeRequired === 'notRequired'
     const { signature, success, message, confCodeRequired } = await fetchPost(
       `${relayerURL}/second-key/${bundle.identity}/${network.id}/sign`, {
         signer, txns: finalBundle.txns, nonce: finalBundle.nonce, gasLimit: finalBundle.gasLimit,
-        code: quickAccCredentials && quickAccCredentials.code,
+        ...(!canSkip2FA) && {code: quickAccCredentials && quickAccCredentials.code},
         // This can be a boolean but it can also contain the new signer/primaryKeyBackup, which instructs /second-key to update acc upon successful signature
-        recoveryMode: finalBundle.recoveryMode
+        recoveryMode: finalBundle.recoveryMode,
+        canSkip2FA: canSkip2FA
       }
     )
     if (!success) {
@@ -350,7 +353,7 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, mustReplaceNonce,
     } else {
       if (!signature) throw new Error(`QuickAcc internal error: there should be a signature`)
       if (!account.primaryKeyBackup) throw new Error(`No key backup found: you need to import the account from JSON or login again.`)
-      setSigningStatus({ quickAcc: true, inProgress: true })
+      setSigningStatus({ quickAcc: true, inProgress: true, confCodeRequired: canSkip2FA ? 'notRequired' : undefined })
       if (!finalBundle.recoveryMode) {
         // Make sure we let React re-render without blocking (decrypting and signing will block)
         await new Promise(resolve => setTimeout(resolve, 0))
@@ -501,7 +504,7 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, mustReplaceNonce,
                 </div>
                 <div className='network'>
                   on
-                  <div className='icon' style={{ backgroundImage: `url(${network.icon})` }}/>
+                  <div className='icon' style={{ backgroundImage: `url(${networkIconsById[network.id]})` }}/>
                   <div className='address'>{ network.name }</div>
                 </div>
               </div>
