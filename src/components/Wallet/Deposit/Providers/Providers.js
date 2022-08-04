@@ -16,9 +16,9 @@ export default function Providers({ walletAddress, networkDetails, relayerURL, p
         {
             logo: GUARDARIAN_LOGO,
             name: 'Guardarian',
-            type: 'Buy and Sell Crypto',
-            fees: 'from 1.5%',
-            limits: 'up to 2000 EUR/day',
+            type: 'Buy with Bank Transfer, Credit/Debit Card, Sell Crypto',
+            fees: 'from 2%',
+            limits: 'up to 15k EUR/monthly on and off ramp',
             currencies: 'GBP, EUR, USD and many more',
             networks: ['ethereum', 'polygon', 'avalanche', 'binance-smart-chain', 'fantom'],
             onClick: () => openGuardarian()
