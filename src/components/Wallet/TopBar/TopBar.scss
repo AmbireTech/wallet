@@ -64,6 +64,7 @@
                     padding: 4px;
                     width: auto;
                     max-width: 100%;
+                    min-width: 50px;
                     object-fit: contain;
                     align-self: flex-end;
                     flex-shrink: 0;
@@ -198,6 +199,11 @@
                 flex-wrap: wrap;
                 .buttonComponent {
                     width: 35px;
+                }
+                .dapp-data {                    
+                    .dapp-logo {
+                        min-width: 35px;
+                    }
                 }
             }
         }

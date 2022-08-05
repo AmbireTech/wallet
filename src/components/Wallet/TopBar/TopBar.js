@@ -11,6 +11,7 @@ import * as blockies from 'blockies-ts';
 import Links from "./Links/Links";
 import WalletTokenButton from "./WalletTokenButton/WalletTokenButton";
 import { Button, ToolTip } from 'components/common';
+import DAPPS_ICON from 'resources/dapps.svg';
 
 const TopBar = ({
   connections,
@@ -36,7 +37,7 @@ const TopBar = ({
 
   const { isDappMode, toggleSideBarOpen, currentDappData, loadCurrentDappData } = dappsCatalog
 
-  const dapModeTopBar = useMemo(() => isDappMode && routeMatch && currentDappData, [isDappMode, routeMatch])
+  const dapModeTopBar = useMemo(() => isDappMode && routeMatch && currentDappData, [currentDappData, isDappMode, routeMatch])
 
   const account = accounts.find(({ id }) => id === selectedAcc)
   const accountIcon = blockies.create({ seed: account ? account.id : null }).toDataURL()
@@ -69,7 +70,7 @@ const TopBar = ({
         <div className='dapp-menu'>
           <div className='dapp-menu-btns'>
             <ToolTip label='Open Ambire Wallet menu'>
-              <Button className='ambire-menu-btn' clear mini icon={<MdMenu size={23} />}
+              <Button className='ambire-menu-btn' border mini icon={<MdMenu size={23} />}
                 onClick={() => toggleSideBarOpen()}
               ></Button>
             </ToolTip>
@@ -78,7 +79,7 @@ const TopBar = ({
                 <a href={currentDappData?.providedBy?.url || currentDappData?.url } 
                   target="_blank"
                   rel="noreferrer noopener">
-                  <img className='dapp-logo' src={currentDappData?.iconUrl} alt={currentDappData?.name}/>
+                  <img className='dapp-logo' src={currentDappData?.iconUrl || DAPPS_ICON} alt={currentDappData?.name}/>
                 </a>
               </ToolTip>
               <ToolTip label={`Exit from ${currentDappData?.name}`}>
