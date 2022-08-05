@@ -119,6 +119,7 @@ $gap: 12px;
 
       &.not-supported {
         background-color: mix($input-background-color, $background-color, 50%);
+        cursor: not-allowed;
 
         .logoSplit {
           opacity: 0.2;

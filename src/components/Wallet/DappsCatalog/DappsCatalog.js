@@ -10,7 +10,6 @@ import DAPPS_ICON from 'resources/dapps.svg'
 import { AddCustomDappModal } from 'components/Modals'
 import { useModals } from 'hooks'
 
-
 const DappsCatalog = ({ network, dappsCatalog, selectedAcc, gnosisConnect, gnosisDisconnect }) => {
 
   const { isDappMode, currentDappData, toggleFavorite, favorites, filteredCatalog, onCategorySelect, categoryFilter, search, onSearchChange, categories, loadCurrentDappData, removeCustomDapp } = dappsCatalog
@@ -116,7 +115,7 @@ const DappsCatalog = ({ network, dappsCatalog, selectedAcc, gnosisConnect, gnosi
             {
               sortFiltered(filteredCatalog).map(item => {
                 return <div className={`catalogItem${item.supported ? '' : ' not-supported'}`}
-                  onClick={() => openDapp(item)}>
+                  onClick={() => item.supported && openDapp(item)}>
 
                   <div className='tools'>
                     {item.custom &&
