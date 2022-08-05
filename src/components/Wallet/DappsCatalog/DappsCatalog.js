@@ -124,7 +124,8 @@ const DappsCatalog = ({ network, dappsCatalog, selectedAcc, gnosisConnect, gnosi
                       </ToolTip>
                     }
                     {item.custom &&
-                      <img className='custom-dapp item' src={DAPPS_ICON} alt='custom dapp icon' />}
+                      <img className='custom-dapp icon' src={DAPPS_ICON} alt='custom dapp icon' />
+                    }
                     <span className={`favorite${favorites[item.url] ? ' selected' : ''}`} onClick={(e) => onFavoriteClick(e, item)}> {
                       favorites[item.url]
                         ? <AiFillStar className='icon' />
@@ -135,7 +136,7 @@ const DappsCatalog = ({ network, dappsCatalog, selectedAcc, gnosisConnect, gnosi
                   <div className='base-info'>
                     <div className='logoSplit'>
                       <div className='logo'>
-                        <img src={item.iconUrl  || DAPPS_ICON} alt={item.name} />
+                        <img src={item.iconUrl || DAPPS_ICON} alt={item.name} />
                       </div>
                       <div className='content'>
                         <span className='title'>{item.name}</span>
@@ -144,35 +145,41 @@ const DappsCatalog = ({ network, dappsCatalog, selectedAcc, gnosisConnect, gnosi
                     <div className='description'>{item.description}</div>
                   </div>
 
-                  <div className='aligned-tag-rows'>
-                    {
-                      !!item.networks?.length &&
-                      <div className='tag-row network-tag-row'>
-                        <ToolTip htmlContent={getNetworkTooltipContent(item.networks)} >
-                          {
-                            !item.supported &&
-                            <span className='tag unsupported'>{network.id} unsupported</span>
-                          }
-                          {
-                            item.networks?.slice(0, 3).map((n) => {
-                              const network = NETWORKS.find(an => an.id === n)
-                              if (network) {
-                                return <span className='tag network-tag'
-                                  style={{ backgroundImage: `url(${network.icon})` }}></span>
-                              }
-                              return null
-                            })
-                          }
-                          {
-                            item.networks?.length > 3 &&
-                            <span className='tag network-tag network-tag-more'>...</span>
-                          }
-                        </ToolTip>
+                  <div>
+
+                    {!item.supported &&
+                      <div className='tag-row unsupported'>
+                        <span className='tag unsupported'>{network.id} unsupported</span>
                       </div>
                     }
 
-                    <div className='tag-row tag-types'>
-                      <span className={`tag type-tag type-tag-${item.category}`}>{item.category}</span>
+                    <div className='aligned-tag-rows'>
+                      {
+                        !!item.networks?.length &&
+                        <ToolTip htmlContent={getNetworkTooltipContent(item.networks)} >
+                          <div className='tag-row network-tag-row'>
+                            {/* NOTE: remove reverse if there is way to match the design without flex-direction: row-reverse; */}
+                            {
+                              item.networks?.length > 3 &&
+                              <span className='tag network-tag network-tag-more'>...</span>
+                            }
+                            {
+                              item.networks?.slice(0, 3).reverse().map((n) => {
+                                const network = NETWORKS.find(an => an.id === n)
+                                if (network) {
+                                  return <span className='tag network-tag'
+                                    style={{ backgroundImage: `url(${network.icon})` }}></span>
+                                }
+                                return null
+                              })
+                            }
+                          </div>
+                        </ToolTip>
+                      }
+
+                      <div className='tag-row tag-types'>
+                        <span className={`tag type-tag type-tag-${item.category}`}>{item.category}</span>
+                      </div>
                     </div>
                   </div>
 

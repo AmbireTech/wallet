@@ -93,9 +93,10 @@ $gap: 12px;
         align-items: center;
 
         .favorite, .custom-dapp, .remove-dapp  {
-          .icon {
+          .icon, &.icon {
             font-size: 20px;
             height: 20px;
+            cursor: pointer;
           }      
           height: 20px;
           width: auto;
@@ -122,14 +123,12 @@ $gap: 12px;
         cursor: not-allowed;
 
         .logoSplit {
-          opacity: 0.2;
+          opacity: 0.4;
         }
 
-        .tag {
-          opacity: 0.2;
-
-          &.unsupported {
-            opacity: 0.5;
+        .tag-row {
+          opacity: 0.5;
+          .tag.unsupported {
             background-color: transparent;
             border-color: mix($text-color, $input-background-color, 50%);
             color: mix($text-color, $input-background-color, 50%);
@@ -199,6 +198,7 @@ $gap: 12px;
       .tag-row {
         display: flex;
         justify-content: right;
+        flex-direction: row-reverse;
         gap: 8px;
         margin: 8px 0;
 
@@ -209,8 +209,14 @@ $gap: 12px;
 
         &.tag-types {
           flex-grow: 1;
+          margin-left: 10px; //fixes hover issue with network tags
         }
 
+        &.unsupported {
+          justify-content: left;
+          margin: 0;
+          margin-top: 8px;
+        }
 
         .tooltipNetworks {
 
@@ -256,6 +262,7 @@ $gap: 12px;
             background-color: transparent;
             border-radius: 100px;
             margin-right: -10px;
+            cursor: initial;
           }
 
           &.network-tag-more {
