@@ -17,6 +17,10 @@
   background-color: $background-color; 
   transition: left 0.3s ease-in-out;
 
+  .outside-handler {
+    display: none;   
+  }
+
   &.dapp-mode {
     z-index: 51;
     left: -($sidebar-desktop-width + 20);
@@ -26,6 +30,15 @@
     &.open {
       left: 0;
     } 
+
+    .outside-handler {
+      display: block;
+      position: fixed;
+      left: $sidebar-desktop-width;;
+      bottom: 0px;
+      top: 0px;
+      right: 0px;
+    }
   }
 
   .ambire-logo {
@@ -177,6 +190,12 @@
 @media screen and (max-width: $sidebar-small-breakpoint) {
   #sidebar {
     width: $sidebar-desktop-small-width;
+
+    &.dapp-mode {
+      .outside-handler {
+        left: $sidebar-desktop-small-width;
+      }
+    }
 
     .balance {
       font-size: 0.8em !important;

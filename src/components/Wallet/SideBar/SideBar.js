@@ -40,6 +40,8 @@ const SideBar = ({ match, portfolio, hidePrivateValue, relayerURL, selectedNetwo
 
   return (
     <div id="sidebar" className={(dapModeSidebar ? 'dapp-mode' : '') + (sideBarOpen ? ' open' : '') } ref={sidebarRef}>
+      {/* NOTE: click outside not working because of the iframe - ths is simpler than adding event listeners to the dapps ifeame  */}
+      {dapModeSidebar && sideBarOpen && <div className='outside-handler' onClick={() => toggleSideBarOpen()}></div> }
       {dapModeSidebar &&
       <div className='ambire-logo'>
         <div className="logo" />
