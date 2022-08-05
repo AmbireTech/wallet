@@ -1,7 +1,7 @@
-import { abis } from 'consts/humanizerInfo'
+import { abis } from 'ambire-common/src/constants/humanizerInfo'
 import { Interface } from 'ethers/lib/utils'
 import { token, getName } from 'lib/humanReadableTransactions'
-import TokenList from 'consts/tokenList'
+import TokenList from 'ambire-common/src/constants/tokenList'
 
 const iface = new Interface(abis.ERC721)
 const fromText = (from, txnFrom) => from.toLowerCase() !== txnFrom.toLowerCase() ? ` from ${from}` : ''

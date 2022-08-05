@@ -10,7 +10,7 @@ import { isFirefox } from 'lib/isFirefox'
 import { fetchGet } from 'lib/fetch'
 import { AiOutlineReload } from 'react-icons/ai'
 import { BiExport } from 'react-icons/bi'
-import accountPresets from 'consts/accountPresets'
+import accountPresets from 'ambire-common/src/constants/accountPresets'
 
 const toastErrorMessage = name => `You blocked the ${name} permission. Check your browser permissions tab.`
 
