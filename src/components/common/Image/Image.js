@@ -1,4 +1,3 @@
-import './Image.scss'
 import { useState } from 'react'
 import { GiToken } from 'react-icons/gi'
 
