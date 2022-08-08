@@ -19,6 +19,7 @@ const OFF_RAMP_FIAT = [
         icon: `https://changenow.io/images/sprite/currencies/usd.svg`
     }
 ]
+
 const NETWORK_MAPPING = {
     'ethereum': 'ETH',
     'binance-smart-chain': 'BSC',
