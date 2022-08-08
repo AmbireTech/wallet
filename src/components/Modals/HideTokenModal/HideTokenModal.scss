@@ -31,31 +31,7 @@
             }
         }
 
-        .token-details {
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5em;
-
-            .heading {
-                height: 50px;
-                display: flex;
-                align-items: center;
-                gap: 0.5em;
-            }
-
-            .balance {
-                font-weight: 500;
-
-                span {
-                    color: $primary-accent-color;
-                }
-            }
-        }
-
         .extra-tokens-list {
-            max-height: 300px;
             display: flex;
             flex-direction: column;
             overflow-y: auto;
@@ -81,6 +57,16 @@
                     background-color: rgba(0, 0, 0, 0.1);
                 }
             }
+        }
+    }
+    .modalBottom {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+
+        .buttonComponent {
+            width: 100%;
         }
     }
 }
