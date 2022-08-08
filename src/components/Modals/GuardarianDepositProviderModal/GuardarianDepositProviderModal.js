@@ -1,7 +1,7 @@
 import './GuardarianDepositProviderModal.scss'
 
 import { Button, Loading, Modal, TextInput, Select } from 'components/common'
-import { useState, useMemo } from 'react'
+import {useState, useMemo, useCallback} from 'react'
 import { MdOutlineClose } from 'react-icons/md'
 import useGuardarian from './useGuardarian'
 import { useModals } from 'hooks'
@@ -17,6 +17,15 @@ const GuardarianDepositProviderModal = ({ relayerURL, walletAddress, selectedNet
     const { addToast } = useToasts()
     const guardarian = useGuardarian({relayerURL, selectedNetwork, initMode: 'buy', tokens: portfolio.tokens, walletAddress, addToast })
     const [sendTransactionLoading, setSendTransactionLoading] = useState(false)
+
+    const getCurrentTokenFromBalance = useCallback(() => {
+        if (portfolio.tokens && guardarian?.cryptoCurrencies?.data && guardarian.mode === 'sell') {
+            const token = guardarian?.cryptoCurrencies?.data?.find(t => t.ticker === guardarian.from)
+            return portfolio?.tokens?.find(t => token?.networks?.find(nt => (nt?.token_contract?.toLowerCase() === t?.address?.toLowerCase())
+                || (nt?.network === guardarian.NETWORK_MAPPING[guardarian.network] && t?.address.toLowerCase() ===  guardarian.NATIVE_ADDRESS && nt?.token_contract === null)))
+        }
+        else return {}
+    }, [guardarian, portfolio.tokens])
 
     const validationMsg = useMemo(() => {
         const marketData = guardarian?.marketInfo?.data
@@ -43,16 +52,7 @@ const GuardarianDepositProviderModal = ({ relayerURL, walletAddress, selectedNet
         }
 
         return ''
-    }, [guardarian])
-    
-    function getCurrentTokenFromBalance() {
-        if (portfolio.tokens && guardarian?.cryptoCurrencies?.data && guardarian.mode === 'sell') {
-            const token = guardarian?.cryptoCurrencies?.data?.find(t => t.ticker === guardarian.from)
-            return portfolio?.tokens?.find(t => token?.networks?.find(nt => (nt?.token_contract?.toLowerCase() === t?.address?.toLowerCase()) 
-                || (nt?.network === guardarian.NETWORK_MAPPING[guardarian.network] && t?.address.toLowerCase() ===  guardarian.NATIVE_ADDRESS && nt?.token_contract === null)))
-        }
-        else return {}
-    }
+    }, [guardarian, getCurrentTokenFromBalance])
 
     const switchMode = () => {
         // On switching mode, reset from/to, because the next form gets obsolete field values
