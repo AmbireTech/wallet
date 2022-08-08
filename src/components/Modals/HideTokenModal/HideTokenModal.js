@@ -41,6 +41,7 @@ const HideTokenModel = ({ portfolio }) => {
       <div className="extra-tokens-list">
         {tokens.map((token) => (
           <Token
+            key={token.address}
             token={token}
             button={
               <Button mini clear onClick={() => hideToken(token)}>
@@ -51,6 +52,7 @@ const HideTokenModel = ({ portfolio }) => {
         ))}
         {hiddenTokens.map((token) => (
           <Token
+            key={token.address}
             token={token}
             button={
               <Button mini clear onClick={() => unhideToken(token)}>
