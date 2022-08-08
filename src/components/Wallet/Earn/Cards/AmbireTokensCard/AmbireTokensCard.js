@@ -5,9 +5,9 @@ import AMBIRE_ICON from 'resources/logo.png'
 import { MdInfo } from "react-icons/md"
 import { ToolTip, Button } from "components/common"
 import { BigNumber, constants, Contract, utils } from "ethers"
-import WalletStakingPoolABI from 'consts/WalletStakingPoolABI'
-import AdexStakingPool from 'consts/AdexStakingPool.json'
-import supplyControllerABI from 'consts/ADXSupplyController.json'
+import WalletStakingPoolABI from 'ambire-common/src/constants/abis/WalletStakingPoolABI.json'
+import AdexStakingPool from 'ambire-common/src/constants/AdexStakingPool.json'
+import supplyControllerABI from 'ambire-common/src/constants/ADXSupplyController.json'
 import { Interface, parseUnits, formatUnits } from "ethers/lib/utils"
 import { getProvider } from 'lib/provider'
 import ERC20ABI from 'adex-protocol-eth/abi/ERC20.json'
@@ -15,7 +15,7 @@ import networks from 'consts/networks'
 import { AmbireEarnDetailsModal } from 'components/Modals'
 import { getTokenIcon } from 'lib/icons'
 import { BsArrowUpSquare } from "react-icons/bs"
-import walletABI from 'consts/walletTokenABI'
+import walletABI from 'ambire-common/src/constants/abis/walletTokenABI.json'
 
 const ADX_TOKEN_ADDRESS = '0xade00c28244d5ce17d72e40330b1c318cd12b7c3'
 const ADX_STAKING_TOKEN_ADDRESS = '0xb6456b57f03352be48bf101b46c1752a0813491a'

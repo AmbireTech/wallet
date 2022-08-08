@@ -151,14 +151,6 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/d
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
 
-## Maintenance
-
-### Updating contract/token info
-
-```
-node scripts/generateContractInfo.js > src/consts/humanizerInfo.json
-```
-
 ## Audits
 
 The contracts used by Ambire Wallet have been audited by:
