@@ -1,5 +1,5 @@
 import './SignMessage.scss'
-import { MdBrokenImage, MdCheck, MdClose } from 'react-icons/md'
+import { MdBrokenImage, MdCheck, MdClose, MdInfoOutline } from 'react-icons/md'
 import { Wallet } from 'ethers'
 import { signMessage712, signMessage, Bundle } from 'adex-protocol-eth/js/Bundle'
 import {
@@ -19,10 +19,10 @@ import { verifyMessage } from '@ambire/signature-validator'
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { Button, Loading, TextInput, ToolTip } from 'components/common'
 import { isObject } from 'url/util'
-import { MdInfoOutline } from 'react-icons/md'
 import accountPresets from 'ambire-common/src/constants/accountPresets'
 import { getProvider } from 'lib/provider'
 import { getNetworkByChainId } from 'lib/getNetwork'
+import supportedDApps from 'ambire-common/src/constants/supportedDApps'
 
 const CONF_CODE_LENGTH = 6
 
@@ -41,6 +41,7 @@ export default function SignMessage ({ toSign, resolve, account, connections, re
 
   const connection = connections.find(({ uri }) => uri === toSign.wcUri)
   const dApp = connection ? connection?.session?.peerMeta || null : null
+  const isDAppSupported = dApp && supportedDApps.includes(dApp.url)
 
   let typeDataErr
   let dataV4
@@ -333,6 +334,18 @@ export default function SignMessage ({ toSign, resolve, account, connections, re
           is requesting your signature.
         </div>
         <span>{totalRequests > 1 ? `You have ${totalRequests - 1} more pending requests.` : ''}</span>
+        { 
+          !isDAppSupported && dApp && 
+            <div className='notification-hollow warning'>
+              Please be advised that { dApp.name } may not support smart contract wallet verification 
+              <ToolTip label='Click to learn more'>
+                <a className='warning' href={'https://help.ambire.com/hc/en-us/articles/4415496135698'} target="_blank" rel="noreferrer">
+                  <MdInfoOutline/>
+                </a>
+              </ToolTip>. 
+              If { dApp.name } does not function correctly following this signature, please contact them to inform them about this issue.
+            </div>
+          }
       </div>
 
       <textarea
