@@ -105,6 +105,7 @@ const useGuardarian = function({ relayerURL, selectedNetwork, initMode, tokens, 
             setFrom(fiatList.data && fiatList.data[0] ? fiatList.data[0].value : null)
             setTo(cryptoList.data && cryptoList.data[0] ? cryptoList.data[0].value : DEFAULT_CRYPTO[network])
         } else if (mode === 'sell') {
+            setAmount('')
             setFrom(cryptoList.data && cryptoList.data[0] ? cryptoList.data[0].value : null)
             setTo(fiatList.data && fiatList.data[0] ? fiatList.data[0].value : null)
         }
