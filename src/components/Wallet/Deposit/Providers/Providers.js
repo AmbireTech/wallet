@@ -20,7 +20,7 @@ export default function Providers({ walletAddress, networkDetails, relayerURL, p
             fees: 'from 2%',
             limits: 'up to 15k EUR/monthly on and off ramp',
             currencies: 'GBP, EUR, USD and many more',
-            networks: ['ethereum', 'polygon', 'avalanche', 'binance-smart-chain', 'fantom'],
+            networks: ['ethereum', 'polygon', 'binance-smart-chain', 'fantom'],
             onClick: () => openGuardarian()
         },
         {

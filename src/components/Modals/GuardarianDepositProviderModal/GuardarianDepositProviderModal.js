@@ -48,7 +48,8 @@ const GuardarianDepositProviderModal = ({ relayerURL, walletAddress, selectedNet
     function getCurrentTokenFromBalance() {
         if (portfolio.tokens && guardarian?.cryptoCurrencies?.data && guardarian.mode === 'sell') {
             const token = guardarian?.cryptoCurrencies?.data?.find(t => t.ticker === guardarian.from)
-            return portfolio?.tokens?.find(t => token?.networks?.find(nt => nt?.token_contract?.toLowerCase() === t?.address?.toLowerCase()))
+            return portfolio?.tokens?.find(t => token?.networks?.find(nt => (nt?.token_contract?.toLowerCase() === t?.address?.toLowerCase()) 
+                || (nt?.network === guardarian.NETWORK_MAPPING[guardarian.network] && t?.address.toLowerCase() ===  guardarian.NATIVE_ADDRESS && nt?.token_contract === null)))
         }
         else return {}
     }

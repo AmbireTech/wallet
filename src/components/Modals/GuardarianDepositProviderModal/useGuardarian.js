@@ -28,7 +28,16 @@ const NETWORK_MAPPING = {
     'avalanche': 'AVAX'
 }
 
-const ZERO_ADDR = '0x0000000000000000000000000000000000000000'
+const DEFAULT_CRYPTO = {
+    'ethereum': 'ETH',
+    'binance-smart-chain': 'BNB',
+    'polygon': 'MATIC',
+    'fantom': 'FTM',
+    'avalanche': 'AVAX'
+
+}
+
+const NATIVE_ADDRESS = '0x'+'0'.repeat(40)
 
 const useGuardarian = function({ relayerURL, selectedNetwork, initMode, tokens, walletAddress }) {
     const FIAT_CURRENCIES_URL = `${relayerURL}/guardarian/currencies/fiat`
@@ -70,16 +79,16 @@ const useGuardarian = function({ relayerURL, selectedNetwork, initMode, tokens, 
                 })).filter(t => t.value) || [],
                 isLoading: cryptoCurrencies?.isLoading
             })
-            setAmount('')
+            setAmount('50')
             setFrom(fiatList.data && fiatList.data[0] ? fiatList.data[0].value : null)
-            setTo(cryptoList.data && cryptoList.data[0] ? cryptoList.data[0].value : null)
+            setTo(cryptoList.data && cryptoList.data[0] ? cryptoList.data[0].value : DEFAULT_CRYPTO[network])
         } else if (mode === 'sell') {
             setFiatList({
                 data: offRampFiats,
                 isLoading: false
             })
             setCryptoList({
-                data: cryptoCurrencies?.data?.filter(t => t.networks.find(n => n.network === NETWORK_MAPPING[network] && n.payment_methods.some(pm => pm.deposit_enabled) && tokens.find(bt => bt?.address?.toLowerCase() === n?.token_contract?.toLowerCase() || (bt?.address === ZERO_ADDR && n?.token_contract === null))))
+                data: cryptoCurrencies?.data?.filter(t => t.networks.find(n => n.network === NETWORK_MAPPING[network] && n.payment_methods.some(pm => pm.deposit_enabled) && tokens.find(bt => bt?.address?.toLowerCase() === n?.token_contract?.toLowerCase() || (bt?.address === NATIVE_ADDRESS && n?.token_contract === null))))
                     .map(t => ({
                         label: t.ticker,
                         value: t.ticker ,
@@ -207,7 +216,9 @@ const useGuardarian = function({ relayerURL, selectedNetwork, initMode, tokens, 
         setTo,
         setMode,
         setAmount,
-        genTxnUrl
+        genTxnUrl,
+        NETWORK_MAPPING,
+        NATIVE_ADDRESS
     }
     
 }
