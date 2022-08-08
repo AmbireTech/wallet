@@ -9,6 +9,19 @@ import { Button } from 'components/common'
 import DAPPS_ICON from 'resources/dapps.svg'
 import { AddCustomDappModal } from 'components/Modals'
 import { useModals } from 'hooks'
+import { fetchCaught } from 'lib/fetch'
+
+const checkIframeCompatibility = async (url) => {
+  const res = await fetchCaught(url, { method: 'HEAD' })
+
+  // NOTE: looks like it enough to open it in iframe 
+  // It fails for cors and x-frame-options
+  const canBeLoaded = res?.resp?.ok
+
+  console.log({ canBeLoaded })
+
+  return canBeLoaded
+}
 
 const DappsCatalog = ({ network, dappsCatalog, selectedAcc, gnosisConnect, gnosisDisconnect }) => {
 
@@ -58,13 +71,13 @@ const DappsCatalog = ({ network, dappsCatalog, selectedAcc, gnosisConnect, gnosi
     e.stopPropagation()
   }, [toggleFavorite])
 
-  const openDapp = (item) => {
-    if (item.connectionType === 'gnosis') {
+  const openDapp = useCallback(async (item) => {
+    if ((item.connectionType === 'gnosis' && (!item.custom)) || await (checkIframeCompatibility(item.url))) {
       loadCurrentDappData(item)
     } else {
       window.open(item.url, '_blank')
     }
-  }
+  }, [loadCurrentDappData])
 
   const onRemoveCustomClick = useCallback((e, item) => {
     console.log({ item })
@@ -74,6 +87,10 @@ const DappsCatalog = ({ network, dappsCatalog, selectedAcc, gnosisConnect, gnosi
   }, [removeCustomDapp])
 
   const openCustomDappModal = useCallback(() => showModal(<AddCustomDappModal dappsCatalog={dappsCatalog} />), [dappsCatalog, showModal])
+
+  const onIframeLoadErr = useCallback(() => {
+
+  }, [])
 
   return (
     <section id='dappCatalog'>
@@ -86,6 +103,7 @@ const DappsCatalog = ({ network, dappsCatalog, selectedAcc, gnosisConnect, gnosi
           // removeApp={removeCustomPlugin}
           gnosisConnect={gnosisConnect}
           gnosisDisconnect={gnosisDisconnect}
+          onLoadError={onIframeLoadErr}
         />
         :
         <Fragment>
