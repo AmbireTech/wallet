@@ -93,13 +93,16 @@ const AAVECard = ({ networkId, tokens, account, addRequest }) => {
             const reservesAddresses = reserves.map(reserve => reserve.toLowerCase())
 
             const supportedATokens = defaultTokens.filter(t => t.type === 'withdraw').map(t => t.address.toLowerCase())
-            const withdrawTokens = tokens.filter(({ address }) => supportedATokens.includes(address)).map(token => ({
+
+            const supportedTokens = defaultTokens.filter(t => t.type === 'deposit').map(t => t.address.toLowerCase())
+
+            const withdrawTokens = tokens.filter(({ address }) => supportedATokens.includes(address.toLowerCase())).map(token => ({
                 ...token,
                 address: defaultTokens.find(t => t.type === 'withdraw' && t.address.toLowerCase() === token.address.toLowerCase())?.baseTokenAddress,
                 type: 'withdraw'
             })).filter(token => token).sort((a, b) => b.balance - a.balance)
 
-            const depositTokens = tokens.filter(({ address }) => reservesAddresses.includes(address)).map(token => ({
+            const depositTokens = tokens.filter(({ address }) => supportedTokens.includes(address.toLowerCase())).filter(t => reservesAddresses.includes(t.address)).map(token => ({
                 ...token,
                 type: 'deposit'
             })).filter(token => token).sort((a, b) => b.balance - a.balance)
