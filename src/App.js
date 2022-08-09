@@ -255,13 +255,13 @@ function AppInner() {
   const rewardsData = useRelayerData(rewardsUrl)
 
   // Checks if Thank you page needs to be shown
-  const thankYouUTM = useOneTimeQueryParam('utm_campaign')
+  const campaignUTM = useOneTimeQueryParam('utm_campaign')
   const [showThankYouPage, setShowThankYouPage] = useLocalStorage({
       key: 'showThankYouPage',
       defaultValue: false
   })
   const handleSetShowThankYouPage = useCallback(() => setShowThankYouPage(true), [setShowThankYouPage])
-  useEffect(() => thankYouUTM && handleSetShowThankYouPage(), [handleSetShowThankYouPage, thankYouUTM])
+  useEffect(() => campaignUTM && handleSetShowThankYouPage(), [handleSetShowThankYouPage, campaignUTM])
 
   return (<>
     <Prompt
