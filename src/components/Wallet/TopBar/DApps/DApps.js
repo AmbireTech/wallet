@@ -8,8 +8,11 @@ import { AiOutlineDisconnect } from 'react-icons/ai'
 import { DropDown, ToolTip, Button } from "components/common"
 import { checkClipboardPermission } from 'lib/permissions'
 import { MdOutlineWarning } from 'react-icons/md'
+import { canOpenInIframe } from 'lib/dappsUtils'
+import { useHistory } from 'react-router-dom'
 
 const DApps = ({ connections, connect, disconnect, isWcConnecting }) => {
+    const history = useHistory()
     const [isClipboardGranted, setClipboardGranted] = useState(false)
 
     const checkPermission = async () => {
@@ -31,6 +34,15 @@ const DApps = ({ connections, connect, disconnect, isWcConnecting }) => {
     const isLegacyWC = ({ bridge }) => /https:\/\/bridge.walletconnect.org/g.test(bridge)
 
     const wcTitle = (<div className='ddWcTitle'><img src='/resources/walletconnect.svg' alt='wc-logo'/>WalletConnect</div>)
+
+    const onConnectionClick = useCallback( async (url) => {
+        const canOpen = await canOpenInIframe(url)
+        if(canOpen) {
+            history.push(`/wallet/dapps?dappUrl=${url}&dappConnectionType=walletconnect`)
+        } else {
+            window.open(url, '_blank')
+        }
+    }, [history])
 
     return (
         <DropDown id="dApps" title={wcTitle} badge={connections.length} onOpen={() => checkPermission()} isLoading={isClipboardGranted && isWcConnecting}>
@@ -57,7 +69,7 @@ const DApps = ({ connections, connect, disconnect, isWcConnecting }) => {
                           <div className="icon-overlay" style={{backgroundImage: `url(${session.peerMeta.icons.filter(x => !x.endsWith('favicon.ico'))[0]})`}}/>
                           <MdBrokenImage/>
                       </div>
-                      <a href={session.peerMeta.url} target="_blank" rel="noreferrer">
+                      <span onClick={() => onConnectionClick(session.peerMeta.url)}>
                           <div className="details">
                               {
                                   isLegacyWC(session) ?
@@ -77,7 +89,7 @@ const DApps = ({ connections, connect, disconnect, isWcConnecting }) => {
                               }
                               <div className="name">{session.peerMeta.name}</div>
                           </div>
-                      </a>
+                      </span>
                       <div className="separator"></div>
                       <button onClick={() => disconnect(uri)}>Disconnect</button>
                   </div>

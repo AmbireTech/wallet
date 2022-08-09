@@ -2,30 +2,19 @@ import NETWORKS from 'consts/networks'
 import { TextInput, ToolTip } from 'components/common'
 import GnosisSafeAppIframe from 'components/Plugins/GnosisSafeApps/GnosisSafeAppIframe'
 import './DappsCatalog.scss'
-import { useCallback, Fragment } from 'react'
+import { useCallback, Fragment, useEffect } from 'react'
 import { MdInfo, MdSearch, MdDelete } from 'react-icons/md'
 import { AiOutlineStar, AiFillStar } from 'react-icons/ai'
 import { Button } from 'components/common'
 import DAPPS_ICON from 'resources/dapps.svg'
 import { AddCustomDappModal } from 'components/Modals'
 import { useModals } from 'hooks'
-import { fetchCaught } from 'lib/fetch'
-
-const checkIframeCompatibility = async (url) => {
-  const res = await fetchCaught(url, { method: 'HEAD' })
-
-  // NOTE: looks like it enough to open it in iframe 
-  // It fails for cors and x-frame-options
-  const canBeLoaded = res?.resp?.ok
-
-  console.log({ canBeLoaded })
-
-  return canBeLoaded
-}
+import { canOpenInIframe } from 'lib/dappsUtils'
+import { useOneTimeQueryParam } from 'hooks/oneTimeQueryParam'
 
 const DappsCatalog = ({ network, dappsCatalog, selectedAcc, gnosisConnect, gnosisDisconnect }) => {
-
-  const { isDappMode, currentDappData, toggleFavorite, favorites, filteredCatalog, onCategorySelect, categoryFilter, search, onSearchChange, categories, loadCurrentDappData, removeCustomDapp } = dappsCatalog
+  const wcDappUrl = useOneTimeQueryParam('wcDappUrl')
+  const { loadDappFromUrl, isDappMode, currentDappData, toggleFavorite, favorites, filteredCatalog, onCategorySelect, categoryFilter, search, onSearchChange, categories, loadCurrentDappData, removeCustomDapp } = dappsCatalog
   const { showModal } = useModals()
 
   const sortFiltered = useCallback((filteredItems) => {
@@ -72,7 +61,7 @@ const DappsCatalog = ({ network, dappsCatalog, selectedAcc, gnosisConnect, gnosi
   }, [toggleFavorite])
 
   const openDapp = useCallback(async (item) => {
-    if ((item.connectionType === 'gnosis' && (!item.custom)) || await (checkIframeCompatibility(item.url))) {
+    if ((item.connectionType === 'gnosis' && (!item.custom)) || await (canOpenInIframe(item.url))) {
       loadCurrentDappData(item)
     } else {
       window.open(item.url, '_blank')
@@ -91,6 +80,19 @@ const DappsCatalog = ({ network, dappsCatalog, selectedAcc, gnosisConnect, gnosi
   const onIframeLoadErr = useCallback(() => {
 
   }, [])
+
+  useEffect(() => {
+    console.log({ wcDappUrl })
+    if (!wcDappUrl) return
+    const loaded = loadDappFromUrl(wcDappUrl)
+
+    if (loaded) {
+      return
+    } else {
+      // TODO: Open preloaded custom dapp modal?
+    }
+
+  }, [wcDappUrl, loadDappFromUrl])
 
   return (
     <section id='dappCatalog'>
