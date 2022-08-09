@@ -45,8 +45,8 @@ const useGuardarian = function({ relayerURL, selectedNetwork, initMode, tokens, 
     const offRampFiats = OFF_RAMP_FIAT
     const { addToast } = useToasts()
     const [network, setNetwork] = useState(selectedNetwork)
-    const [from, setFrom] = useState(null)
-    const [to, setTo] = useState(null)
+    const [from, setFrom] = useState('')
+    const [to, setTo] = useState('')
     const [mode, setMode] = useState(initMode)
     const [amount, setAmount] = useState('50')
 
@@ -103,7 +103,7 @@ const useGuardarian = function({ relayerURL, selectedNetwork, initMode, tokens, 
         if (mode === 'buy') {
             setAmount('50')
             setFrom(fiatList.data && fiatList.data[0] ? fiatList.data[0].value : null)
-            setTo(cryptoList.data && cryptoList.data[0] ? cryptoList.data[0].value : DEFAULT_CRYPTO[network])
+            setTo(DEFAULT_CRYPTO[network])
         } else if (mode === 'sell') {
             setAmount('')
             setFrom(cryptoList.data && cryptoList.data[0] ? cryptoList.data[0].value : null)
@@ -227,7 +227,8 @@ const useGuardarian = function({ relayerURL, selectedNetwork, initMode, tokens, 
         setAmount,
         genTxnUrl,
         NETWORK_MAPPING,
-        NATIVE_ADDRESS
+        NATIVE_ADDRESS,
+        DEFAULT_CRYPTO
     }
     
 }
