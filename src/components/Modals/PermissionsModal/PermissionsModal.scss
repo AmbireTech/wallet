@@ -5,6 +5,7 @@
         display: flex;
         flex-direction: column;
         gap: 30px;
+        padding-bottom: 30px;
 
         .intro {
             opacity: 0.6;
@@ -79,5 +80,9 @@
                 flex: 0 1 50% !important;
             }
         }
+    }
+    .download-backup {
+        opacity: .6;
+        margin: 0;
     }
 }
