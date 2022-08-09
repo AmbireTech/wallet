@@ -1,17 +1,14 @@
 import './GasIndicator.scss'
-import { FaGasPump } from 'react-icons/fa'
-import GasDetailsModal from 'components/Modals/GasDetailsModal/GasDetailsModal'
+import { GiGasPump } from 'react-icons/gi'
 import networks from 'consts/networks'
 import { useEffect, useState } from 'react'
 import { fetchGet } from 'lib/fetch'
-import { useModals } from 'hooks'
-import { ACTION_GAS_COSTS, AMBIRE_OVERHEAD_COST} from 'consts/actionGasCosts'
+import { ACTION_GAS_COSTS, AMBIRE_OVERHEAD_COST} from 'ambire-common/src/constants/actionGasCosts'
+import { Link } from 'react-router-dom'
 
 const GAS_COST_ERC20_TRANSFER = ACTION_GAS_COSTS.find(c => c.name === 'ERC20: Transfer').gas + AMBIRE_OVERHEAD_COST
 
-const GasIndicator = ({ selectedNetwork, relayerURL }) => {
-
-  const { showModal } = useModals()
+const GasIndicator = ({ selectedNetwork, relayerURL, match }) => {
   const [gasData, setGasData] = useState(null)
   const [cacheBreak, setCacheBreak] = useState(() => Date.now())
 
@@ -43,13 +40,11 @@ const GasIndicator = ({ selectedNetwork, relayerURL }) => {
               minimumFractionDigits: 2
             })}
             </span>
-      <span className={'gas-price'}
-            onClick={() => {
-              showModal(<GasDetailsModal gasData={gasData}/>)
-            }
-            }>
-              <FaGasPump/> ${((gasData.gasPrice.maxPriorityFeePerGas ? (gasData.gasPrice.maxPriorityFeePerGas['medium'] + gasData.gasPrice['medium']) : gasData.gasPrice['medium']) * GAS_COST_ERC20_TRANSFER / 10 ** 18 * gasData.gasFeeAssets.native).toFixed(2)}
-            </span>
+            <Link to={match.url + "/gas-tank"}>
+              <span className={'gas-price'}>
+                <GiGasPump/> ${((gasData.gasPrice && gasData.gasPrice.maxPriorityFeePerGas ? (gasData.gasPrice.maxPriorityFeePerGas['medium'] + gasData.gasPrice['medium']) : gasData.gasPrice['medium']) * GAS_COST_ERC20_TRANSFER / 10 ** 18 * gasData.gasFeeAssets.native).toFixed(2)}
+              </span>
+            </Link>
     </div>)
   }
   return null

@@ -9,7 +9,7 @@ import { BsFillImageFill } from 'react-icons/bs'
 import * as blockies from 'blockies-ts';
 import { useToasts } from 'hooks/toasts'
 import { TextInput, Button, Loading, AddressBook, AddressWarning, ToolTip } from 'components/common'
-import ERC721Abi from 'consts/ERC721Abi'
+import ERC721Abi from 'ambire-common/src/constants/abis/ERC721Abi'
 import networks from 'consts/networks'
 import { validateSendNftAddress } from 'lib/validations/formValidations'
 import { BsXLg } from 'react-icons/bs'

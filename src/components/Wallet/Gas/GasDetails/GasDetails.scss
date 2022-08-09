@@ -26,7 +26,6 @@ $thead-background-color: darken($panel-background-color, 2%);
     background: $background-color;
     padding: 12px;
     border: 2px solid transparent;
-    cursor: pointer;
 
     &.selected {
       border-color: $secondary-accent-color;
@@ -50,30 +49,44 @@ $thead-background-color: darken($panel-background-color, 2%);
     margin-bottom: 16px;
   }
 
-  table.gas-action-costs {
-    width: 100%;
-    border-spacing: 0;
-    color: $modal-text-color;
+  .table-wrapper {
+    max-height: 510px;
+    overflow: auto;
 
-    thead {
-      background: $thead-background-color;
-      font-weight: normal;
+    table.gas-action-costs {
+      width: 100%;
+      border-spacing: 0;
+      color: $modal-text-color;
+  
+      thead {
+        background: $thead-background-color;
+        font-weight: normal;
+  
+        th {
+          text-transform: capitalize;
+          padding: 12px;
+          text-align: center;
+          font-weight: 500;
+        }
 
-      th {
-        text-transform: capitalize;
-        padding: 12px;
-        text-align: left;
-        font-weight: 500;
+        th:first-child { 
+          text-align: left;
+        }
       }
-    }
-
-    tbody {
-      background: $background-color;
-    }
-
-    td {
-      padding: 12px;
-      font-size: 0.8em;
+  
+      tbody {
+        background: $background-color;
+      }
+  
+      td:first-child {
+        text-align: left;
+      }
+  
+      td {
+        padding: 12px;
+        font-size: 0.8em;
+        text-align: center;
+      }
     }
   }
 }

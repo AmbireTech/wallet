@@ -25,8 +25,8 @@ const Select = ({ children, native, monospace, searchable, disabled, label, defa
     const selectItem = useCallback(item => {
         setOpen(false)
         setSearch('')
-        setSelectedItem(item);
-        onChange(item.value);
+        setSelectedItem(item)
+        onChange(item)
     }, [onChange])
 
     useEffect(() => {
@@ -107,8 +107,8 @@ const Select = ({ children, native, monospace, searchable, disabled, label, defa
                                         {
                                             filteredItems.map((item, i) => (
                                                 <div
-                                                    className={`option ${item.value === selectedItem.value ? 'active' : ''} ${item.disabled ? 'disabled' : ''}`}
-                                                    key={item.value}
+                                                    className={`option ${(item.value === selectedItem.value) && (item.label === selectedItem.label) ? 'active' : ''} ${item.disabled ? 'disabled' : ''}`}
+                                                    key={item.value + item.label}
                                                     onClick={() => !item.disabled && selectItem(item)}
                                                     draggable={draggable}
                                                     onDragStart={(e) => draggable && dragStart(e, i)}
@@ -137,7 +137,7 @@ const Select = ({ children, native, monospace, searchable, disabled, label, defa
             <select className="select" disabled={disabled} onChange={ev => onChange(ev.target.value)} defaultValue={defaultValue}>
                 {
                     items.map(item => (
-                        <option key={item.value} value={item.value} disabled={item.disabled ? 'disabled' : undefined}>
+                        <option key={item.value + item.label} value={item.value} disabled={item.disabled ? 'disabled' : undefined}>
                             {item.label || item.value}
                         </option>
                     ))
