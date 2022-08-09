@@ -261,7 +261,7 @@ function AppInner() {
       defaultValue: false
   })
   const handleSetShowThankYouPage = useCallback(() => setShowThankYouPage(true), [setShowThankYouPage])
-  useEffect(() => (thankYouUTM && thankYouUTM.startsWith('thankyou')) && handleSetShowThankYouPage(), [handleSetShowThankYouPage, thankYouUTM])
+  useEffect(() => thankYouUTM && handleSetShowThankYouPage(), [handleSetShowThankYouPage, thankYouUTM])
 
   return (<>
     <Prompt
