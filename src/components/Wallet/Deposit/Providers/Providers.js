@@ -30,7 +30,7 @@ export default function Providers({ walletAddress, networkDetails, relayerURL, p
             fees: '2.45%',
             limits: 'up to 5000 EUR/day',
             currencies: 'USD, EUR, GBP',
-            networks: ['ethereum', 'binance-smart-chain'],
+            networks: ['ethereum', 'polygon', 'avalanche', 'binance-smart-chain'],
             onClick: () => openKriptomat()
         },
         {
