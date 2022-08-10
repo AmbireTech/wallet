@@ -155,7 +155,7 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
                 setFeeBaseTokenWarning(`Token ${gasFeeToken.symbol.toUpperCase()} will be converted to ${feeBaseToken.symbol.toUpperCase()} without additional fees.`)
             }
         }
-    }, [gasTankDetails.feeAssetsPerNetwork, selectedAsset])
+    }, [gasTankDetails?.feeAssetsPerNetwork, selectedAsset])
 
     useEffect(() => {
         setAmount(0)
