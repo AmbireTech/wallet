@@ -1,25 +1,27 @@
 import "./Wallet.scss"
 
+import { lazy, Suspense, useCallback, useEffect, useMemo, useRef } from 'react'
 import { Switch, Route, Redirect, useLocation  } from "react-router-dom"
-import Dashboard from "./Dashboard/Dashboard"
-import TopBar from "./TopBar/TopBar"
-import SideBar from "./SideBar/SideBar"
-import Deposit from "./Deposit/Deposit"
-import Swap from "./Swap/Swap"
-import Transfer from "./Transfer/Transfer"
-import Earn from "./Earn/Earn"
-import Security from "./Security/Security"
-import Transactions from './Transactions/Transactions'
 import PluginGnosisSafeApps from 'components/Plugins/GnosisSafeApps/GnosisSafeApps'
-import Collectible from "./Collectible/Collectible"
-import { PermissionsModal, UnsupportedDAppsModal } from 'components/Modals'
 import { useModals, usePermissions, useLocalStorage } from 'hooks'
-import { useCallback, useEffect, useMemo, useRef } from 'react'
 import { isFirefox } from 'lib/isFirefox'
-import CrossChain from "./CrossChain/CrossChain"
-import OpenSea from "./OpenSea/OpenSea"
 import unsupportedDApps from 'ambire-common/src/constants/unsupportedDApps'
-import Gas from "./Gas/Gas"
+// Components
+import TopBar from "./TopBar/TopBar"
+import { PermissionsModal, UnsupportedDAppsModal } from 'components/Modals'
+import SideBar from "./SideBar/SideBar"
+// Pages
+const Dashboard = lazy(() => import("./Dashboard/Dashboard"))
+const Swap = lazy(() => import("./Swap/Swap"))
+const Transfer = lazy(() => import("./Transfer/Transfer"))
+const Earn = lazy(() => import("./Earn/Earn"))
+const Security = lazy(() => import("./Security/Security"))
+const Transactions = lazy(() => import('./Transactions/Transactions'))
+const Collectible = lazy(() => import("./Collectible/Collectible"))
+const CrossChain = lazy(() => import("./CrossChain/CrossChain"))
+const OpenSea = lazy(() => import("./OpenSea/OpenSea"))
+const Deposit = lazy(() => import("./Deposit/Deposit"))
+const Gas = lazy(() => import("./Gas/Gas"))
 
 export default function Wallet(props) {
   const { showModal } = useModals()
@@ -223,7 +225,10 @@ export default function Wallet(props) {
               routes.map(({ path, component }) => (
                 <Route exact path={props.match.url + path} key={path}>
                   <LoggedInGuard/>
-                  { component ? component : null }
+                  {/* TODO: ADD PROPER LOADER HERE */}
+                  <Suspense fallback={null}>
+                    { component ? component : null }
+                  </Suspense>
                 </Route>
               ))
             }
