@@ -129,6 +129,10 @@ $max-width: 650px;
     span {
       opacity: 0.5;
     }
+
+    .warning {
+      color: $warning-color;
+    }
   }
 
   .sign-message {
