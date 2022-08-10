@@ -2,7 +2,7 @@ import NETWORKS from 'consts/networks'
 import { TextInput, ToolTip } from 'components/common'
 import GnosisSafeAppIframe from 'components/Plugins/GnosisSafeApps/GnosisSafeAppIframe'
 import './DappsCatalog.scss'
-import { useCallback, Fragment, useEffect } from 'react'
+import { useCallback, Fragment, useEffect, useState } from 'react'
 import { MdInfo, MdSearch, MdDelete } from 'react-icons/md'
 import { AiOutlineStar, AiFillStar } from 'react-icons/ai'
 import { Button } from 'components/common'
@@ -13,9 +13,14 @@ import { canOpenInIframe } from 'lib/dappsUtils'
 import { useOneTimeQueryParam } from 'hooks/oneTimeQueryParam'
 
 const DappsCatalog = ({ network, dappsCatalog, selectedAcc, gnosisConnect, gnosisDisconnect }) => {
-  const wcDappUrl = useOneTimeQueryParam('wcDappUrl')
+  const dappUrl = useOneTimeQueryParam('dappUrl')
   const { loadDappFromUrl, isDappMode, currentDappData, toggleFavorite, favorites, filteredCatalog, onCategorySelect, categoryFilter, search, onSearchChange, categories, loadCurrentDappData, removeCustomDapp } = dappsCatalog
   const { showModal } = useModals()
+  const [dappUrlFromLink, setDappUrlsFromLink] = useState('')
+
+  useEffect(() => {
+    setDappUrlsFromLink(dappUrl)
+  }, [dappUrl])
 
   const sortFiltered = useCallback((filteredItems) => {
     return filteredItems.map(item => {
@@ -75,24 +80,30 @@ const DappsCatalog = ({ network, dappsCatalog, selectedAcc, gnosisConnect, gnosi
     removeCustomDapp(item)
   }, [removeCustomDapp])
 
-  const openCustomDappModal = useCallback(() => showModal(<AddCustomDappModal dappsCatalog={dappsCatalog} />), [dappsCatalog, showModal])
+  const openCustomDappModal = useCallback((dappUrl) => showModal(<AddCustomDappModal dappsCatalog={dappsCatalog} dappUrl={dappUrl} />), [dappsCatalog, showModal])
 
   const onIframeLoadErr = useCallback(() => {
 
   }, [])
 
   useEffect(() => {
-    console.log({ wcDappUrl })
-    if (!wcDappUrl) return
-    const loaded = loadDappFromUrl(wcDappUrl)
+    if(!selectedAcc) {
+      // TODO: Open ambire wallet registration form with dapp data
+    }
+
+    if (!dappUrlFromLink) return
+    const loaded = loadDappFromUrl(dappUrlFromLink)
+    setDappUrlsFromLink('')
 
     if (loaded) {
       return
     } else {
+      openCustomDappModal(dappUrlFromLink)
       // TODO: Open preloaded custom dapp modal?
     }
 
-  }, [wcDappUrl, loadDappFromUrl])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dappUrlFromLink, loadDappFromUrl, selectedAcc])
 
   return (
     <section id='dappCatalog'>
