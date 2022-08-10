@@ -1,8 +1,9 @@
 import { useEffect, useState, useCallback } from "react"
-import useDynamicModal from "hooks/useDynamicModals";
-import { Button, ToolTip } from "components/common";
-import { WalletTokenModal, CongratsRewardsModal } from "components/Modals";
-import useClaimableWalletToken from "./useClaimableWalletToken";
+import useDynamicModal from "hooks/useDynamicModals"
+import { Button, ToolTip } from "components/common"
+import { WalletTokenModal, CongratsRewardsModal } from "components/Modals"
+import useClaimableWalletToken from "./useClaimableWalletToken"
+import { useLocalStorage } from 'hooks'
 
 const WalletTokenButton = ({ rewardsData, account = {}, network, hidePrivateValue, addRequest }) => {
     const claimableWalletToken = useClaimableWalletToken({ account, network, addRequest })
@@ -17,18 +18,21 @@ const WalletTokenButton = ({ rewardsData, account = {}, network, hidePrivateValu
         : '...'
     const [rewards, setRewards] = useState({})
     const { isLoading, data, errMsg } = rewardsData
-    const [isShown, setIsShown] = useState(false)
+    const [isCongratsModalShown, setIsCongratsModalShown] = useLocalStorage({
+        key: 'isCongratsModalShown',
+        defaultValue: (totalLifetimeRewards === 0 && currentClaimStatus.claimed === 0 && currentClaimStatus.claimedInitial && pendingTokensTotal === 0) ? false : true
+    })
     const showWalletTokenModal = useDynamicModal(WalletTokenModal, { claimableWalletToken, accountId: account.id }, { rewards })
     const handleCongratsRewardsModal = useDynamicModal(CongratsRewardsModal)
     const showCongratsRewardsModal = useCallback(() => {
-        if (pendingTokensTotal === '...' && !isShown) {
-            setIsShown(true)
+        if (pendingTokensTotal > 0 && !isCongratsModalShown) {
+            setIsCongratsModalShown(true)
             handleCongratsRewardsModal()
         }
         
-    }, [isShown, pendingTokensTotal, handleCongratsRewardsModal])
+    }, [pendingTokensTotal, isCongratsModalShown, setIsCongratsModalShown, handleCongratsRewardsModal])
     
-    useEffect(() =>  showCongratsRewardsModal(), [showCongratsRewardsModal])
+    useEffect(() => showCongratsRewardsModal(), [showCongratsRewardsModal])
     useEffect(() => {
         if (errMsg || !data || !data.success) return
 
