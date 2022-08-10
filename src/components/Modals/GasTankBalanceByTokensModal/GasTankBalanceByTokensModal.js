@@ -11,7 +11,7 @@ const GasTankBalanceByTokensModal = ({ data }) => {
     const buttons = <>
         <Button clear icon={<MdOutlineClose/>} onClick={() => hideModal()}>Close</Button>
     </>
-
+    
     return (
         <Modal id="gas-tank-balance-by-tokens-modal" title="GAS TANK BALANCE BY TOKENS" buttons={buttons}>
            <div className='content'>
