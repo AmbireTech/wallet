@@ -339,7 +339,7 @@ export default function SignMessage ({ toSign, resolve, account, connections, re
             <div className='notification-hollow warning'>
               Please be advised that { dApp.name } may not support smart contract wallet verification 
               <ToolTip label='Click to learn more'>
-                <a className='warning' href={'https://help.ambire.com/hc/en-us/articles/4415496135698'} target="_blank" rel="noreferrer">
+                <a className='warning' href={'https://help.ambire.com/hc/en-us/articles/5591676210844'} target="_blank" rel="noreferrer">
                   <MdInfoOutline/>
                 </a>
               </ToolTip>. 
