@@ -33,12 +33,12 @@ const DApps = ({ connections, connect, disconnect, isWcConnecting }) => {
 
     const isLegacyWC = ({ bridge }) => /https:\/\/bridge.walletconnect.org/g.test(bridge)
 
-    const wcTitle = (<div className='ddWcTitle'><img src='/resources/walletconnect.svg' alt='wc-logo'/>WalletConnect</div>)
+    const wcTitle = (<div className='ddWcTitle'><img src='./resources/walletconnect.svg' alt='wc-logo'/>WalletConnect</div>)
 
     const onConnectionClick = useCallback( async (url) => {
         const canOpen = await canOpenInIframe(url)
         if(canOpen) {
-            history.push(`/wallet/dapps?dappUrl=${url}&dappConnectionType=walletconnect`)
+            history.push(`/wallet/dapps?dappUrl=${encodeURIComponent(url + `?${Date.now()}`)}`)
         } else {
             window.open(url, '_blank')
         }

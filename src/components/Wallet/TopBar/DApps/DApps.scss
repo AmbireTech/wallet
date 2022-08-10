@@ -57,7 +57,7 @@
             }
         }
 
-        a {
+        span {
             flex: 0 1 auto;
 
             .details {
@@ -65,6 +65,7 @@
                 display: flex;
                 align-items: center;
                 gap: 10px;
+                cursor: pointer;
 
                 .name {
                     overflow: hidden;
