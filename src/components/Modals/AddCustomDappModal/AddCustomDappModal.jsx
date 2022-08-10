@@ -21,7 +21,7 @@ const toDappId = (name = '') => {
 
 const getManifest = async (dAppUrl) => {
     const url = dAppUrl.replace(/\/$/, '')
-    const manifestUrl = url + '/manifest.json'
+    const manifestUrl = url + '/manifest.json?' + Date.now()
 
     const { body } = await fetchCaught(manifestUrl)
 
@@ -42,6 +42,7 @@ const getManifest = async (dAppUrl) => {
                 description: body.name,
                 iconUrl: url + '/' + body.icons[0]?.src.replace(/^\//, ''),
                 connectionType: 'walletconnect',
+                networks: (body.networks || []).map(chainIdToWalletNetworkId)
             }
             : null
 
@@ -49,7 +50,7 @@ const getManifest = async (dAppUrl) => {
     return manifest
 }
 
-const AddCustomDappModal = ({ dappsCatalog }) => {
+const AddCustomDappModal = ({ dappsCatalog, dappUrl = '' }) => {
     const { addToast } = useToasts()
     const { hideModal } = useModals()
 
@@ -146,6 +147,13 @@ const AddCustomDappModal = ({ dappsCatalog }) => {
         }
     ], [url, urlErr])
 
+    useEffect(() => {
+        if (dappUrl) {
+            onUrlInput(dappUrl)
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [])
+
     const buttons = useMemo(() =>
         <>
             <Button clear icon={<MdOutlineClose />} onClick={() => hideModal()}>Close</Button>
@@ -222,18 +230,18 @@ const AddCustomDappModal = ({ dappsCatalog }) => {
                         small
                         label="Icon Url"
                         value={iconUrl}
-                        onInput={value => {setIconUrl(value); setIconUrlInfo('')}}
+                        onInput={value => { setIconUrl(value); setIconUrlInfo('') }}
                         className='dapp-input'
                     />
                     <div className='icon-wrapper'>
-                        { 
-                        
-                        iconUrl && !iconUrlInfo ?
-                            <img width={46} height={46} src={iconUrl || DAPPS_ICON} alt={(name || 'no') + ' logo'}
-                                onError={() => {
-                                    setIconUrlInfo('Invalid icon URL, please update it or default dApp icon will be displayed');
-                                }} />
-                            : iconUrlInfo ? <MdErrorOutline size={40}/> : <MdImage size={40} />}
+                        {
+
+                            iconUrl && !iconUrlInfo ?
+                                <img width={46} height={46} src={iconUrl || DAPPS_ICON} alt={(name || 'no') + ' logo'}
+                                    onError={() => {
+                                        setIconUrlInfo('Invalid icon URL, please update it or default dApp icon will be displayed');
+                                    }} />
+                                : iconUrlInfo ? <MdErrorOutline size={40} /> : <MdImage size={40} />}
                     </div>
                 </div>
                 {<div className='input-err' >
