@@ -101,7 +101,7 @@ const useAmbireEarnDetails = ({accountId, addresses, tokenLabel}) => {
         const enterWalletTokensByTxHash = ((tokenLabel === 'ADX') ? adexToStakingTransfersLogs.result : [])
             .concat(allEnterWalletTransferLogs)
             .reduce((byHash, log) => {
-                    byHash[log.transactionHash] = log
+                    byHash[log.th] = log
                     return byHash
                 }, {}
             )
