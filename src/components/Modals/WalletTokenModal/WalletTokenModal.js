@@ -1,20 +1,11 @@
 import './WalletTokenModal.scss'
 
-import { useEffect, useMemo, useState, useCallback } from 'react'
+import { useMemo } from 'react'
 import { Button, Modal, ToolTip } from 'components/common'
 import { MdOutlineClose } from 'react-icons/md'
 import { useModals } from 'hooks'
-import WalletStakingPoolABI from 'ambire-common/src/constants/abis/WalletStakingPoolABI.json'
 import { multiplierBadges } from 'ambire-common/src/constants/multiplierBadges'
-import { getProvider } from 'lib/provider'
-import { formatUnits, Interface } from 'ethers/lib/utils'
-import { Contract } from 'ethers'
-
-const WALLET_STAKING_ADDRESS = '0x47cd7e91c3cbaaf266369fe8518345fc4fc12935'
-const WALLET_STAKING_POOL_INTERFACE = new Interface(WalletStakingPoolABI)
-
-const provider = getProvider('ethereum')
-const stakingWalletContract = new Contract(WALLET_STAKING_ADDRESS, WALLET_STAKING_POOL_INTERFACE, provider)
+import useStakedWalletToken from 'ambire-common/src/hooks/useStakedWalletToken'
 
 const MultiplierBadges = ({ rewards }) => {
     // Multiplier badges
@@ -44,6 +35,7 @@ const MultiplierBadges = ({ rewards }) => {
 
 const WalletTokenModal = ({ accountId, claimableWalletToken, rewards }) => {
     const { hideModal } = useModals()
+    const { stakedAmount } = useStakedWalletToken({ accountId })
 
     const {
         vestingEntry,
@@ -68,24 +60,6 @@ const WalletTokenModal = ({ accountId, claimableWalletToken, rewards }) => {
         const confirmed = window.confirm(`${claimeWithBurnNotice}. Are you sure?`)
         if (confirmed) claimEarlyRewards(false)
     }
-
-    const [stakedAmount, setStakedAmount] = useState(0)
-
-    const fetchStakedWalletData = useCallback(async () => {
-        try {
-            const [balanceOf, shareValue] = await Promise.all([
-                stakingWalletContract.balanceOf(accountId),
-                stakingWalletContract.shareValue(),
-            ])
-
-            const stakedAmount = formatUnits(balanceOf.toString(), 18).toString() * formatUnits(shareValue, 18).toString()
-            setStakedAmount(stakedAmount)
-        } catch(e) {
-            console.error(e)
-        }
-    }, [accountId])
-
-    useEffect(() => fetchStakedWalletData(), [fetchStakedWalletData])
 
     const modalButtons = <>
         <Button clear icon={<MdOutlineClose/>} onClick={() => hideModal()}>Close</Button>
