@@ -101,10 +101,11 @@ export default function Promotions({ rewardsData }) {
     }, [closedPromos, setClosedPromos])
 
     useEffect(() => {
-        if (!promo && !!rewardsData?.data?.promo) {
-            setPromo(rewardsData?.data?.promo)
+        // TODO: double check if `promo` is present in ambire-common
+        if (!promo && !!rewardsData?.rewards?.promo) {
+            setPromo(rewardsData?.rewards?.promo)
         }
-    }, [closedPromos, promo, rewardsData?.data?.promo])
+    }, [closedPromos, promo, rewardsData?.rewards?.promo])
 
     if (!promo) return null
     return (
