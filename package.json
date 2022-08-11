@@ -23,7 +23,7 @@
     "@web3-react/types": "^6.0.7",
     "@yfi/sdk": "^1.0.11",
     "adex-protocol-eth": "git+https://git@github.com/AmbireTech/adex-protocol-eth.git#ef2f88f26824c64c1eb12c02a389baec2b2c3889",
-    "ambire-common": "github:AmbireTech/ambire-common#38b6555d4d33bb79cc82dbf9926bcd762fe401c0",
+    "ambire-common": "github:AmbireTech/ambire-common#c1c9c4191e0b2aa2d3208f707d527b6966bead86",
     "bip44-constants": "^128.0.0",
     "blockies-ts": "^1.0.0",
     "eth-keyring-controller": "^6.2.1",
