@@ -1,4 +1,25 @@
 #congrats-rewards-modal {
+    .heading {
+        .title {
+            height: 34px !important;
+        }
+    }
+    .content {
+        padding-bottom: calc(40px + 20px);
+
+        #rewardId {
+            margin: auto;
+            width: 0;
+        }
+
+        .wallet-logo {
+            margin: auto;
+            width: 225px;
+            height: 230px;
+            background-image: url('/resources/wallet-token-congrats.png') !important;  
+        }    
+    }
+    
     .buttons button{
         flex: 0 1 100% !important;
     }

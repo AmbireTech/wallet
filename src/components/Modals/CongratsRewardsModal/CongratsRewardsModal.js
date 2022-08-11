@@ -1,39 +1,38 @@
 import './CongratsRewardsModal.scss'
 
+import { useEffect, useState } from 'react'
 import { Button, Modal } from 'components/common'
-import { MdOutlineClose } from 'react-icons/md'
-import { useModals } from 'hooks'
-import Confetti from 'react-confetti'
+import { useReward } from 'react-rewards'
 
 const CongratsRewardsModal = () => {
-    const { hideModal } = useModals()
-    const drawing = new Image()
-    drawing.src = "https://raw.githubusercontent.com/AmbireTech/ambire-brand/main/logos/Ambire_logo_250x250.png"
+    const { reward, isAnimating } = useReward('rewardId', 'confetti')
+    const [count, setCount] = useState(0)
+    const initialRewardsCount = 3
+
+    useEffect(() => {
+        if (count < initialRewardsCount && !isAnimating ) {
+            reward()
+            setCount(prevState => prevState += 1)
+        }
+    }, [count, isAnimating, reward])
     
     const modalButtons = <>
-        <Button clear icon={<MdOutlineClose/>} onClick={hideModal}>Close</Button>
+        <Button disabled={isAnimating} onClick={reward}>More confetti</Button>
     </>
+
     return (
         <>
             <Modal id="congrats-rewards-modal" title="Woo-hoo!" buttons={modalButtons}>
-                <div className='heading'>
-                    <div className='title'>You just received X $WALLET!</div>
-                </div>
                 <div className='content'>
+                    <div id="rewardId" />
+                    <div className='wallet-logo'></div>
+                    <h2>You just received X $WALLET!</h2>
                     <p>You have a balance of $1,000 or more in your Ambire wallet - this means you are eligible to earn WALLET rewards!
                     The bigger your account balance, the more rewards you earn, and you can claim them every Monday.</p>
                     <a href='https://blog.ambire.com/tagged/wallet-rewards' target='_blank' rel='noreferrer'>Learn more about WALLET rewards</a>   
                 </div>
             </Modal>
-            <Confetti
-                    drawShape={ctx => ctx.drawImage(drawing, 0, 0, 30, 30)}
-                    width={window.screen.width}
-                    height={window.screen.height}
-                    // numberOfPieces={1000}
-                    gravity={0.03}
-            />
-        </>
-        
+        </>   
     )
 }
 
