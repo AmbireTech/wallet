@@ -11,9 +11,9 @@ import TopBar from "./TopBar/TopBar"
 import { PermissionsModal, UnsupportedDAppsModal } from 'components/Modals'
 import SideBar from "./SideBar/SideBar"
 // Pages
+const Transfer = lazy(() => import("./Transfer/Transfer"))
 const Dashboard = lazy(() => import("./Dashboard/Dashboard"))
 const Swap = lazy(() => import("./Swap/Swap"))
-const Transfer = lazy(() => import("./Transfer/Transfer"))
 const Earn = lazy(() => import("./Earn/Earn"))
 const Security = lazy(() => import("./Security/Security"))
 const Transactions = lazy(() => import('./Transactions/Transactions'))
@@ -220,15 +220,14 @@ export default function Wallet(props) {
 
       <div id="wallet-container" ref={walletContainer}>
         <div id="wallet-container-inner">
+            {/* TODO: ADD PROPER LOADER HERE */}
+            <Suspense fallback={<p>...loading</p>}>
           <Switch>
             {
               routes.map(({ path, component }) => (
                 <Route exact path={props.match.url + path} key={path}>
                   <LoggedInGuard/>
-                  {/* TODO: ADD PROPER LOADER HERE */}
-                  <Suspense fallback={null}>
                     { component ? component : null }
-                  </Suspense>
                 </Route>
               ))
             }
@@ -239,6 +238,7 @@ export default function Wallet(props) {
               <LoggedInGuard/>
             </Route>
           </Switch>
+            </Suspense>
         </div>
       </div>
     </div>
