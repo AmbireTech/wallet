@@ -11,12 +11,14 @@ import { AddCustomDappModal } from 'components/Modals'
 import { useModals } from 'hooks'
 import { canOpenInIframe } from 'lib/dappsUtils'
 import { useOneTimeQueryParam } from 'hooks/oneTimeQueryParam'
+import { useHistory } from 'react-router-dom'
 
 const DappsCatalog = ({ network, dappsCatalog, selectedAcc, gnosisConnect, gnosisDisconnect }) => {
   const dappUrl = useOneTimeQueryParam('dappUrl')
   const { loadDappFromUrl, isDappMode, currentDappData, toggleFavorite, favorites, filteredCatalog, onCategorySelect, categoryFilter, search, onSearchChange, categories, loadCurrentDappData, removeCustomDapp } = dappsCatalog
   const { showModal } = useModals()
   const [dappUrlFromLink, setDappUrlsFromLink] = useState('')
+  const history = useHistory()
 
   useEffect(() => {
     setDappUrlsFromLink(dappUrl)
@@ -87,11 +89,13 @@ const DappsCatalog = ({ network, dappsCatalog, selectedAcc, gnosisConnect, gnosi
   }, [])
 
   useEffect(() => {
-    if(!selectedAcc) {
-      // TODO: Open ambire wallet registration form with dapp data
+    if (!dappUrlFromLink) return
+
+    if (!selectedAcc) {
+      // TODO: Handle global query param
+      history.push(`/add-account?dappUrl=${dappUrlFromLink}`)
     }
 
-    if (!dappUrlFromLink) return
     const loaded = loadDappFromUrl(dappUrlFromLink)
     setDappUrlsFromLink('')
 

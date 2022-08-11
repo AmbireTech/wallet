@@ -23,6 +23,8 @@ import { VscJson } from 'react-icons/vsc'
 import { useDropzone } from 'react-dropzone'
 import { validateImportedAccountProps, fileSizeValidator } from 'lib/validations/importedAccountValidations'
 import { LatticeModal } from 'components/Modals'
+import { useOneTimeQueryParam } from 'hooks/oneTimeQueryParam'
+import { getManifestFromDappUrl } from 'ambire-common/src/services/dappCatalog'
 
 TrezorConnect.manifest({
   email: 'contactus@ambire.com',
@@ -36,6 +38,8 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking }) {
   const [inProgress, setInProgress] = useState(false)
   const { addToast } = useToasts()
   const { showModal } = useModals()
+  const [pluginData, setPluginData] = useState(null)
+  const dappUrl = useOneTimeQueryParam('dappUrl')
 
   const wrapProgress = async (fn, type = true) => {
     setInProgress(type)
@@ -364,6 +368,18 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking }) {
     validator: fileSizeValidator
   })
 
+  useEffect(() => {
+    if(!dappUrl) return
+
+    async function checkPluginData() {
+      const manifest = await getManifestFromDappUrl(fetch, dappUrl)
+      if(manifest) {
+        setPluginData(manifest)
+      }
+    }
+    checkPluginData()
+  }, [dappUrl])
+
   // Adding accounts from existing signers
   const addFromSignerButtons = (<>
     <button onClick={() => wrapProgress(connectTrezorAndGetAccounts, 'hwwallet')}>
@@ -404,7 +420,13 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking }) {
   }
   //TODO: Would be great to create Ambire spinners(like 1inch but simpler) (I can have a look at them if you need)
   return (<div className="loginSignupWrapper">
-      <div id="logo"/>
+      <div id="logo" {...(pluginData ? {style: {backgroundImage: `url(${pluginData.iconUrl})` }} : {})}/>
+      {pluginData && 
+      <div id="plugin-info">
+        <div className="name">{pluginData.name}</div>
+        <div>{pluginData.description}</div>
+      </div>
+      }
       <section id="addAccount">
         <div id="loginEmail">
           <h3>Create a new account</h3>
