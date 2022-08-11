@@ -5,6 +5,7 @@ import { Button, Modal, ToolTip } from 'components/common'
 import { MdOutlineClose } from 'react-icons/md'
 import { useModals } from 'hooks'
 import WalletStakingPoolABI from 'ambire-common/src/constants/abis/WalletStakingPoolABI.json'
+import { multiplierBadges } from 'ambire-common/src/constants/multiplierBadges'
 import { getProvider } from 'lib/provider'
 import { formatUnits, Interface } from 'ethers/lib/utils'
 import { Contract } from 'ethers'
@@ -15,40 +16,6 @@ const WALLET_STAKING_POOL_INTERFACE = new Interface(WalletStakingPoolABI)
 const provider = getProvider('ethereum')
 const stakingWalletContract = new Contract(WALLET_STAKING_ADDRESS, WALLET_STAKING_POOL_INTERFACE, provider)
 
-const multiplierBadges = [
-    {
-        id: 'beta-tester',
-        name: 'Beta Testers',
-        icon: '🧪',
-        color: '#6000FF',
-        multiplier: 1.25,
-        link: 'https://blog.ambire.com/announcing-the-wallet-token-a137aeda9747'
-    },
-    {
-        id: 'lobsters',
-        name: 'Lobsters',
-        icon: '🦞',
-        color: '#E82949',
-        multiplier: 1.50,
-        link: 'https://blog.ambire.com/ambire-wallet-to-partner-with-lobsterdao-10b57e6da0-53c59c88726b'
-    },
-    {
-        id: 'cryptoTesters',
-        name: 'CryptoTesters',
-        icon: '🧑‍🔬',
-        color: '#b200e1',
-        multiplier: 1.25,
-        link: 'https://blog.ambire.com/win-a-cryptotesters-nft-with-ambire-and-get-into-one-of-the-hottest-web3-communities-c9d7185760b1'
-    },
-    {
-        id: 'gasTankNft',
-        name: 'GasTankNFT',
-        icon: '⛽',
-        color: '#b18045',
-        multiplier: 1.25,
-        link: 'https://blog.ambire.com/ambire-gas-tank-launches-with-exclusive-nft-drop-2a4eb29f2f07'
-    }
-]
 const MultiplierBadges = ({ rewards }) => {
     // Multiplier badges
     const badges = useMemo(() => multiplierBadges.map(badge => {
