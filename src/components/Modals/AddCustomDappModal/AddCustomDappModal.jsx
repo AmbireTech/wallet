@@ -4,51 +4,11 @@ import { Button, Modal, TextInput, Radios, ToolTip } from 'components/common'
 import { useModals } from 'hooks'
 import { useToasts } from 'hooks/toasts'
 import { MdOutlineAdd, MdOutlineClose, MdImage, MdErrorOutline } from 'react-icons/md'
-import { fetchCaught } from 'lib/fetch'
+import { fetch } from 'lib/fetch'
 import NETWORKS from 'consts/networks'
-import { chainIdToWalletNetworkId } from 'ambire-common/src/services/dappCatalog'
+import { getManifestFromDappUrl, getDappId, getNormalizedUrl } from 'ambire-common/src/services/dappCatalog'
 import { isValidUrl, isValidCustomDappData } from 'ambire-common/src/services/validations'
 import DAPPS_ICON from 'resources/dapps.svg'
-
-const getNormalizedUrl = (inputStr) => {
-    const url = inputStr.toLowerCase().split(/[?#]/)[0].replace('/manifest.json', '')
-    return url
-}
-
-const toDappId = (name = '') => {
-    return name.toLowerCase().replace(/s/g, '_') + '_' + Date.now()
-}
-
-const getManifest = async (dAppUrl) => {
-    const url = dAppUrl.replace(/\/$/, '')
-    const manifestUrl = url + '/manifest.json?' + Date.now()
-
-    const { body } = await fetchCaught(manifestUrl)
-
-    const hasManifest = !!body && body.name
-
-    const isGnosisManifest = hasManifest && body.description && body.iconPath
-    const isStandardManifest = hasManifest && Array.isArray(body.icons) && body.icons.length
-
-    const manifest = isGnosisManifest ? {
-        ...body,
-        iconUrl: body.iconUrl || url + '/' + body.iconPath.replace(/^\//, ''),
-        connectionType: 'gnosis',
-        networks: (body.networks || []).map(chainIdToWalletNetworkId)
-    }
-        : isStandardManifest ?
-            {
-                name: body.name,
-                description: body.name,
-                iconUrl: url + '/' + body.icons[0]?.src.replace(/^\//, ''),
-                connectionType: 'walletconnect',
-                networks: (body.networks || []).map(chainIdToWalletNetworkId)
-            }
-            : null
-
-
-    return manifest
-}
 
 const AddCustomDappModal = ({ dappsCatalog, dappUrl = '' }) => {
     const { addToast } = useToasts()
@@ -75,7 +35,7 @@ const AddCustomDappModal = ({ dappsCatalog, dappUrl = '' }) => {
         setLoading(true)
 
         addCustomDapp({
-            id: toDappId(name),
+            id: getDappId(name),
             name,
             url,
             description,
@@ -91,8 +51,8 @@ const AddCustomDappModal = ({ dappsCatalog, dappUrl = '' }) => {
     }, [addCustomDapp, addToast, connectionType, description, hideModal, iconUrl, iconUrlInfo, name, networks, url])
 
     const onUrlInput = useCallback(async (urlInputStr = '') => {
-        const dappUrl = getNormalizedUrl(urlInputStr)
-        setUrl(dappUrl)
+        const normalizedDappUrl = getNormalizedUrl(urlInputStr)
+        setUrl(normalizedDappUrl)
         setName('')
         setDescription('')
         setIconUrl('')
@@ -101,19 +61,19 @@ const AddCustomDappModal = ({ dappsCatalog, dappUrl = '' }) => {
         setIconUrlInfo('')
         setNetworksInfo('')
         setLoading(true)
-        const isValidUrlInput = isValidUrl(dappUrl)
+        const isValidUrlInput = isValidUrl(normalizedDappUrl)
 
         if (!isValidUrlInput) {
-            setUrlErr(!!dappUrl ? 'Invalid Url' : null)
+            setUrlErr(!!normalizedDappUrl ? 'Invalid Url' : null)
             setLoading(false)
             return
         } else (
             setUrlErr(null)
         )
-        const isInCatalog = isDappInCatalog(dappUrl)
+        const isInCatalog = isDappInCatalog(normalizedDappUrl)
         setIsAppAlreadyExists(isInCatalog)
 
-        const manifest = await getManifest(dappUrl)
+        const manifest = await getManifestFromDappUrl(fetch, normalizedDappUrl)
 
         if (manifest) {
             setName(manifest.name)
@@ -121,7 +81,7 @@ const AddCustomDappModal = ({ dappsCatalog, dappUrl = '' }) => {
             setIconUrl(manifest.iconUrl)
             setConnectionType(manifest.connectionType)
             setNetworks(manifest.networks || [])
-            setUrlInfo(isInCatalog ? `${dappUrl} is already in your wallet catalog` : '')
+            setUrlInfo(isInCatalog ? `${normalizedDappUrl} is already in your wallet catalog` : '')
             setNetworksInfo(!manifest?.networks?.length ? `Supported networks not detected! Please select manually.` : '')
         } else {
             setUrlInfo('Cant find dApp data - make sure it supports gnosis safe apps ot WalletConnect')
@@ -177,7 +137,7 @@ const AddCustomDappModal = ({ dappsCatalog, dappUrl = '' }) => {
 
     useEffect(() => {
         setInputValidation(url ? isValidCustomDappData({
-            id: toDappId(name || ''),
+            id: getDappId(name || ''),
             name,
             url,
             description,
