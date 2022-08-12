@@ -19,10 +19,11 @@ const useProviders = ({ walletAddress, selectedNetwork, relayerURL, portfolio })
 
     const openRampNetwork = () => {
         const assetsList = {
-            ethereum: 'ERC20_*,ETH_*',
-            polygon: 'MATIC_ERC20_*,MATIC_*',
-            avalanche: 'AVAX_*',
+            'ethereum': 'ERC20_*,ETH_*',
+            'polygon': 'MATIC_ERC20_*,MATIC_*',
+            'avalanche': 'AVAX_*',
             'binance-smart-chain': 'BSC_*,BSC_ERC20_*',
+            'gnosis': 'XDAI_*'
         }
 
         const widget = new RampInstantSDK({
