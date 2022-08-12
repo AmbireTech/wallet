@@ -217,6 +217,9 @@ const PermissionsModal = ({ relayerIdentityURL, account, onAddAccount, isCloseBt
                     checked={modalHidden}
                     onChange={({ target }) => setModalHidden(target.checked)}/>)
             }
+            {
+                !isBackupOptout ? <p className="download-backup">You have to download a backup of you profile before you can continue</p> : null
+            }
         </Modal>
     )
 }
