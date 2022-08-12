@@ -108,6 +108,7 @@ const AddCustomDappModal = ({ dappsCatalog, dappUrl = '' }) => {
     ], [url, urlErr])
 
     useEffect(() => {
+        console.log({dappUrl})
         if (dappUrl) {
             onUrlInput(dappUrl)
         }
@@ -225,7 +226,7 @@ const AddCustomDappModal = ({ dappsCatalog, dappUrl = '' }) => {
                     {
                         NETWORKS.map(n => {
                             return (
-                                <ToolTip label={n.name} >
+                                <ToolTip label={n.name} key={n.id}>
                                     <span className={`network-tag${networks.includes(n.id) ? ' selected' : ''}`}
                                         style={{ backgroundImage: `url(${n.icon})` }}
                                         onClick={() => onNetworkClick(n.id)}

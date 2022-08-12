@@ -45,7 +45,7 @@ const DappsCatalog = ({ network, dappsCatalog, selectedAcc, gnosisConnect, gnosi
             const network = NETWORKS.find(an => an.id === n)
             if (network) {
               return (
-                <div className='tooltipNetwork'>
+                <div key={network.id} className='tooltipNetwork'>
                   <span className='tooltipNetwork-icon'
                     style={{ backgroundImage: `url(${network.iconUrl})` }}>
                   </span>
@@ -70,7 +70,7 @@ const DappsCatalog = ({ network, dappsCatalog, selectedAcc, gnosisConnect, gnosi
   }, [toggleFavorite])
 
   const openDapp = useCallback(async (item) => {
-    if ((item.connectionType === 'gnosis' && (!item.custom)) || await (canOpenInIframe(fetch, item.url))) {
+    if ((item.connectionType === 'gnosis' && (!item.custom)) || await canOpenInIframe(fetch, item.url)) {
       loadCurrentDappData(item)
     } else {
       window.open(item.url, '_blank')
@@ -84,11 +84,9 @@ const DappsCatalog = ({ network, dappsCatalog, selectedAcc, gnosisConnect, gnosi
     removeCustomDapp(item)
   }, [removeCustomDapp])
 
-  const openCustomDappModal = useCallback((dappUrl) => showModal(<AddCustomDappModal dappsCatalog={dappsCatalog} dappUrl={dappUrl} />), [dappsCatalog, showModal])
-
-  const onIframeLoadErr = useCallback(() => {
-
-  }, [])
+  const openCustomDappModal = useCallback((_ev, dappUrl) => {
+    showModal(<AddCustomDappModal dappsCatalog={dappsCatalog} dappUrl={dappUrl} />)
+  }, [dappsCatalog, showModal])
 
   useEffect(() => {
     if (!dappUrlFromLink) return
@@ -109,7 +107,7 @@ const DappsCatalog = ({ network, dappsCatalog, selectedAcc, gnosisConnect, gnosi
         if (manifest && manifest.isWalletPlugin) {
           addCustomDapp(manifest)
         } else {
-          openCustomDappModal(dappUrlFromLink)
+          openCustomDappModal(null, dappUrlFromLink)
         }
       }
 
@@ -130,7 +128,6 @@ const DappsCatalog = ({ network, dappsCatalog, selectedAcc, gnosisConnect, gnosi
           // removeApp={removeCustomPlugin}
           gnosisConnect={gnosisConnect}
           gnosisDisconnect={gnosisDisconnect}
-          onLoadError={onIframeLoadErr}
         />
         :
         <Fragment>
@@ -141,6 +138,7 @@ const DappsCatalog = ({ network, dappsCatalog, selectedAcc, gnosisConnect, gnosi
             <div className='categories'>
               {categories.map(c => {
                 return <span
+                  key={c.name}
                   className={`category category-${c.name}${categoryFilter?.name === c.name ? ' selected' : ''}`}
                   onClick={() => onCategorySelect(c)}>{c.name}</span>
               })}
@@ -160,7 +158,9 @@ const DappsCatalog = ({ network, dappsCatalog, selectedAcc, gnosisConnect, gnosi
             {
               sortFiltered(filteredCatalog).map(item => {
                 return <div className={`catalogItem${item.supported ? '' : ' not-supported'}`}
-                  onClick={() => item.supported && openDapp(item)}>
+                  onClick={() => item.supported && openDapp(item)}
+                  key={item.id}
+                >
 
                   <div className='tools'>
                     {item.featured &&
@@ -217,7 +217,7 @@ const DappsCatalog = ({ network, dappsCatalog, selectedAcc, gnosisConnect, gnosi
                               item.networks?.slice(0, 3).reverse().map((n) => {
                                 const network = NETWORKS.find(an => an.id === n)
                                 if (network) {
-                                  return <span className='tag network-tag'
+                                  return <span key={network.id} className='tag network-tag'
                                     style={{ backgroundImage: `url(${network.icon})` }}></span>
                                 }
                                 return null
