@@ -105,7 +105,7 @@ const DappsCatalog = ({ network, dappsCatalog, selectedAcc, gnosisConnect, gnosi
       return
     } else {
       async function tryAutoLoad() {
-        const manifest = await getManifestFromDappUrl(dappUrlFromLink)
+        const manifest = await getManifestFromDappUrl(fetch, dappUrlFromLink)
         if (manifest && manifest.isWalletPlugin) {
           addCustomDapp(manifest)
         } else {
