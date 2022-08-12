@@ -32,16 +32,18 @@ const HideTokenModel = ({ portfolio, account, network, userSorting, sortType, se
   const unhideToken = (token) => onRemoveHiddenToken(token.address)
 
   const sortedTokens = useMemo(() => {
-    return tokens.concat(hiddenTokens).sort((a, b) => {
+    const tempTokens = tokens.concat(hiddenTokens).sort((a, b) => {
       if (sortType === 'custom' && userSorting.tokens?.items?.[`${account}-${network.chainId}`]?.length) {
-          const sorted = userSorting.tokens.items[`${account}-${network.chainId}`].indexOf(a.address) - userSorting.tokens.items[`${account}-${network.chainId}`].indexOf(b.address)
-          return sorted
+        const sorted = userSorting.tokens.items[`${account}-${network.chainId}`].indexOf(a.address) - userSorting.tokens.items[`${account}-${network.chainId}`].indexOf(b.address)
+        return sorted
       } else {
-          const decreasing = b.balanceUSD - a.balanceUSD
-          if (decreasing === 0) return a.symbol.localeCompare(b.symbol)
-          return decreasing
+        const decreasing = b.balanceUSD - a.balanceUSD
+        if (decreasing === 0) return a.symbol.localeCompare(b.symbol)
+        return decreasing
       }
     })
+
+    return [...new Map(tempTokens.map(token => [token.address, token])).values()]
   }, [tokens, hiddenTokens, userSorting, sortType, account, network.chainId])
 
   const handleHideModal = () => {
