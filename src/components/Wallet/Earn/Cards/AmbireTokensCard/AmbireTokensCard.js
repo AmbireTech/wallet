@@ -70,7 +70,7 @@ const AmbireTokensCard = ({ networkId, accountId, tokens, rewardsData, addReques
         addRequest({ id, type: 'eth_sendTransaction', chainId: networkDetails.chainId, account: accountId, txn, extraGas })
     , [networkDetails.chainId, accountId, addRequest])
 
-    const { walletTokenAPYPercentage } = rewardsData.rewards;
+    const { xWALLETAPYPercentage } = rewardsData.rewards;
 
     const walletToken = useMemo(() => tokens.find(({ address }) => address === WALLET_TOKEN_ADDRESS), [tokens])
     const xWalletToken = useMemo(() => tokens.find(({ address }) => address === WALLET_STAKING_ADDRESS), [tokens])
@@ -174,12 +174,12 @@ const AmbireTokensCard = ({ networkId, accountId, tokens, rewardsData, addReques
                         <div>APY&nbsp;<MdInfo/></div>
                     </ToolTip>
                 </>,
-                isAdxTokenSelected() ? adxCurrentAPY ? `${adxCurrentAPY.toFixed(2)}%` : '...' : rewardsData.isLoading ? `...` : walletTokenAPYPercentage
+                isAdxTokenSelected() ? adxCurrentAPY ? `${adxCurrentAPY.toFixed(2)}%` : '...' : rewardsData.isLoading ? `...` : xWALLETAPYPercentage
             ],
             ['Lock', '20 day unbond period'],
             ['Type', 'Variable Rate'],
         ])
-    }, [adxCurrentAPY, isAdxTokenSelected, leaveLog, lockedRemainingTime, onWithdraw, rewardsData.isLoading, selectedToken.label, tokensItems, walletTokenAPYPercentage])
+    }, [adxCurrentAPY, isAdxTokenSelected, leaveLog, lockedRemainingTime, onWithdraw, rewardsData.isLoading, selectedToken.label, tokensItems, xWALLETAPYPercentage])
 
     // NOTE: tokenAddress is unused because we have two tokens in this card, and we set everything in addresses
     const onValidate = async (type, _tokenAddress, amount, isMaxAmount) => {
@@ -399,7 +399,7 @@ const AmbireTokensCard = ({ networkId, accountId, tokens, rewardsData, addReques
             onTokenSelect={onTokenSelect}
             onValidate={onValidate}
             moreDetails={!unavailable && <AmbireEarnDetailsModal 
-                apy={isAdxTokenSelected()? adxCurrentAPY ? `${adxCurrentAPY.toFixed(2)}%` : '...' : walletTokenAPYPercentage}
+                apy={isAdxTokenSelected()? adxCurrentAPY ? `${adxCurrentAPY.toFixed(2)}%` : '...' : xWALLETAPYPercentage}
                 accountId={accountId}
                 msToDaysHours={msToDaysHours}
                 addresses={addresses}
