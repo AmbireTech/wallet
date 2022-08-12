@@ -18,22 +18,30 @@ const WalletTokenButton = ({ rewardsData, account = {}, network, hidePrivateValu
         : '...'
     const [rewards, setRewards] = useState({})
     const { isLoading, data, errMsg } = rewardsData
-    
-    const defaultCongratsModalShownState = (currentClaimStatus && (currentClaimStatus.claimed === 0) && (currentClaimStatus.mintableVesting === 0) && (pendingTokensTotal === 0 || pendingTokensTotal === '...')) ? false : true
+   
+    const [currentCongratsModalState, setCurrentCongratsModalState] = useState(null) 
+    const defaultCongratsModalShownState = (currentClaimStatus && (currentClaimStatus.claimed === 0) && (currentClaimStatus.mintableVesting === 0) && (pendingTokensTotal && pendingTokensTotal !== '...' && parseFloat(pendingTokensTotal) === 0) ) ? false : true
     const [congratsModalState, setCongratsModalState] = useLocalStorage({
         key: 'congratsModalState',
-        defaultValue: [{ account: account.id, isCongratsModalShown: defaultCongratsModalShownState }]
+        defaultValue: []
     })
-
-    if (congratsModalState.length && !congratsModalState.find(i => i.account === account.id)) {
-        setCongratsModalState([...congratsModalState, { account: account.id, isCongratsModalShown: defaultCongratsModalShownState }])
-    } 
+    // debugger
+    useEffect(() => {
+        if (congratsModalState.length === 0) setCongratsModalState([{ account: account.id, isCongratsModalShown: defaultCongratsModalShownState }])
+        if (congratsModalState.length && !congratsModalState.find(i => i.account === account.id)) {
+            setCongratsModalState([...congratsModalState, { account: account.id, isCongratsModalShown: defaultCongratsModalShownState }])
+        }
+        
+        if (congratsModalState.length) {
+            const isFound = congratsModalState.find(i => i.account === account.id)
+            if (isFound) setCurrentCongratsModalState(isFound)
+        }  
+    }, [account.id, congratsModalState, defaultCongratsModalShownState, setCongratsModalState])
     
-    const currentCongratsModalState = congratsModalState.length && congratsModalState.find(i => i.account === account.id)
     const showWalletTokenModal = useDynamicModal(WalletTokenModal, { claimableWalletToken, accountId: account.id }, { rewards })
-    const handleCongratsRewardsModal = useDynamicModal(CongratsRewardsModal)
+    const handleCongratsRewardsModal = useDynamicModal(CongratsRewardsModal, { pendingTokensTotal })
     const showCongratsRewardsModal = useCallback(() => {
-        if (pendingTokensTotal > 0 && !currentCongratsModalState.isCongratsModalShown) {
+        if (parseFloat(pendingTokensTotal) > 0 && !currentCongratsModalState.isCongratsModalShown) {
             const updated = congratsModalState.map(item => (item.account === account.id) ? 
             { ...item, isCongratsModalShown: true } : item)
 

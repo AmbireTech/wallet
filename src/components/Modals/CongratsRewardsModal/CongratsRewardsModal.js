@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { Button, Modal } from 'components/common'
 import { useReward } from 'react-rewards'
 
-const CongratsRewardsModal = () => {
+const CongratsRewardsModal = ({ pendingTokensTotal }) => {
     const { reward, isAnimating } = useReward('rewardId', 'confetti')
     const [count, setCount] = useState(0)
     const initialRewardsCount = 3
@@ -26,7 +26,7 @@ const CongratsRewardsModal = () => {
                 <div className='content'>
                     <div id="rewardId" />
                     <div className='wallet-logo'></div>
-                    <h2>You just received X $WALLET!</h2>
+                    <h2>You just received { pendingTokensTotal } $WALLET!</h2>
                     <p>You have a balance of $1,000 or more in your Ambire wallet - this means you are eligible to earn WALLET rewards!
                     The bigger your account balance, the more rewards you earn, and you can claim them every Monday.</p>
                     <a href='https://blog.ambire.com/tagged/wallet-rewards' target='_blank' rel='noreferrer'>Learn more about WALLET rewards</a>   
