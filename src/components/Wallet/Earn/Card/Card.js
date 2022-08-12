@@ -3,7 +3,7 @@ import './Card.scss'
 import { Select, Segments, NumberInput, Button, Loading } from 'components/common'
 import { useEffect, useState, useMemo, useCallback } from 'react'
 import { BsArrowDownSquare, BsArrowUpSquare } from 'react-icons/bs'
-import { ethers } from 'ethers'
+import { utils } from 'ethers'
 import { useModals } from 'hooks'
 import { MdOutlineInfo } from 'react-icons/md'
 
@@ -16,8 +16,11 @@ const Card = ({ loading, unavailable, tokensItems, icon, details, customInfo, on
     const [amount, setAmount] = useState(0)
     const [disabled, setDisabled] = useState(true)
     const { showModal } = useModals()
-
+    
     const currentToken = tokens.find(({ value }) => value === token)
+    const isAmountTooBig = parseFloat(amount) > (currentToken && 'balanceRaw' in currentToken ? parseFloat(utils.formatUnits(currentToken.balanceRaw, currentToken.decimals)) : 0)
+
+    const buttonDisabled = disabled || amount === '' || parseFloat(amount) <= 0 || isAmountTooBig || (segment === segments[0].value && isDepositsDisabled) 
 
     // Sort tokens items by balance
     const getEquToken = useCallback(token => tokensItems.find((({ address, type }) => address === token.address && (token.type === 'deposit' ? type === 'withdraw' : type === 'deposit'))), [tokensItems])
@@ -26,7 +29,7 @@ const Card = ({ loading, unavailable, tokensItems, icon, details, customInfo, on
     const getMaxAmount = () => {
         if (!currentToken) return 0;
         const { balanceRaw, decimals } = currentToken
-        return ethers.utils.formatUnits(balanceRaw, decimals)
+        return utils.formatUnits(balanceRaw, decimals)
     }
 
     const setMaxAmount = () => setAmount(getMaxAmount(amount))
@@ -107,8 +110,9 @@ const Card = ({ loading, unavailable, tokensItems, icon, details, customInfo, on
                                     <>
                                         <NumberInput
                                             disabled={!currentToken?.balance}
-                                            min="0"
-                                            max={currentToken?.balance}
+                                            // The component does not take these props
+                                            // min="0" 
+                                            // max={currentToken?.balance}
                                             value={amount}
                                             label={amountLabel}
                                             onInput={(value) => setAmount(value)}
@@ -117,19 +121,24 @@ const Card = ({ loading, unavailable, tokensItems, icon, details, customInfo, on
                                         />
                                         <div className="separator"></div>
                                         <Button 
-                                            disabled={disabled || amount === '' || parseFloat(amount) <= 0 || parseFloat(amount) > currentToken?.balance || (segment === segments[0].value && isDepositsDisabled) }
+                                            disabled={buttonDisabled}
                                             icon={segment === segments[0].value ? <BsArrowDownSquare/> : <BsArrowUpSquare/>}
-                                            onClick={() => onValidate(segment, token, amount, isMaxAmount())}>
+                                            onClick={() => onValidate(segment, token, amount, isMaxAmount())}
+                                        >
                                                 { segment }
                                         </Button>
                                     </>
                             }
                             <div className="separator"></div>
-                            {!!moreDetails && <Button clear
-                                icon={ <MdOutlineInfo/> }
-                                onClick={() => showMoreDetails()}>
+                            {!!moreDetails && 
+                                <Button 
+                                    clear
+                                    icon={ <MdOutlineInfo/> }
+                                    onClick={() => showMoreDetails()}
+                                >
                                     See more details
-                            </Button>}
+                                </Button>
+                            }
                         </div>
             }
         </div>
