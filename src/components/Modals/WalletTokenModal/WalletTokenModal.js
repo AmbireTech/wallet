@@ -47,9 +47,9 @@ const WalletTokenModal = ({ accountId, claimableWalletToken, rewards }) => {
         claimVesting,
         claimableNowUsd,
         mintableVestingUsd,
-        mintableVesting,
+        shouldDisplayMintableVesting,
     } = claimableWalletToken
-    const { walletTokenAPYPercentage, adxTokenAPYPercentage, xWALLETAPY } = rewards;
+    const { walletTokenAPYPercentage, adxTokenAPYPercentage, xWALLETAPYPercentage } = rewards;
 
     const claimeWithBurnNotice = 'This procedure will claim 70% of your outstanding rewards as $WALLET, and permanently burn the other 30%'
     const claimWithBurn = () => {
@@ -127,14 +127,14 @@ const WalletTokenModal = ({ accountId, claimableWalletToken, rewards }) => {
                 </div>
             </div>
 
-            {!!mintableVesting && !!vestingEntry && (
+            {shouldDisplayMintableVesting && (
             <div className="item">
                 <div className="details">
                     <label>Claimable early supporters vesting</label>
                     <div className="balance">
-                        <div className="amount"><span className="primary-accent">{
-                            mintableVesting
-                        }</span></div>
+                        <div className="amount"><span className="primary-accent">
+                            { currentClaimStatus.mintableVesting }
+                        </span></div>
                         <div className="amount usd">
                             <span className="secondary-accent">$</span>
                             { mintableVestingUsd }
@@ -159,7 +159,7 @@ const WalletTokenModal = ({ accountId, claimableWalletToken, rewards }) => {
                             <div className="amount"><span className="primary-accent">
                                 { stakedAmount }
                             </span></div>
-                            <div className="amount apy">{ xWALLETAPY } % <span>APY</span></div>
+                            <div className="amount apy">{ xWALLETAPYPercentage } <span>APY</span></div>
                         </div>
                     </div>
                 </div>
