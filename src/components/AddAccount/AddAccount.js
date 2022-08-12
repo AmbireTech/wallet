@@ -23,23 +23,19 @@ import { VscJson } from 'react-icons/vsc'
 import { useDropzone } from 'react-dropzone'
 import { validateImportedAccountProps, fileSizeValidator } from 'lib/validations/importedAccountValidations'
 import { LatticeModal } from 'components/Modals'
-import { useOneTimeQueryParam } from 'hooks/oneTimeQueryParam'
-import { getManifestFromDappUrl } from 'ambire-common/src/services/dappCatalog'
 
 TrezorConnect.manifest({
   email: 'contactus@ambire.com',
   appUrl: 'https://www.ambire.com'
 })
 
-export default function AddAccount({ relayerURL, onAddAccount, utmTracking }) {
+export default function AddAccount({ relayerURL, onAddAccount, utmTracking, pluginData }) {
   const [signersToChoose, setChooseSigners] = useState(null)
   const [err, setErr] = useState('')
   const [addAccErr, setAddAccErr] = useState('')
   const [inProgress, setInProgress] = useState(false)
   const { addToast } = useToasts()
   const { showModal } = useModals()
-  const [pluginData, setPluginData] = useState(null)
-  const dappUrl = useOneTimeQueryParam('dappUrl')
 
   const wrapProgress = async (fn, type = true) => {
     setInProgress(type)
@@ -367,18 +363,6 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking }) {
     maxFiles: 1,
     validator: fileSizeValidator
   })
-
-  useEffect(() => {
-    if(!dappUrl) return
-
-    async function checkPluginData() {
-      const manifest = await getManifestFromDappUrl(fetch, dappUrl)
-      if(manifest) {
-        setPluginData(manifest)
-      }
-    }
-    checkPluginData()
-  }, [dappUrl])
 
   // Adding accounts from existing signers
   const addFromSignerButtons = (<>

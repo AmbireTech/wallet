@@ -36,6 +36,7 @@ import { Contract, utils } from 'ethers'
 import { getProvider } from './lib/provider'
 import allNetworks from './consts/networks'
 import useDapps from 'ambire-common/src/hooks/useDapps'
+import { getManifestFromDappUrl } from 'ambire-common/src/services/dappCatalog'
 
 const relayerURL = process.env.REACT_APP_RELAYRLESS === 'true' 
                   ? null 
@@ -57,7 +58,9 @@ setTimeout(() => {
 
 function AppInner() {
   // basic stuff: currently selected account, all accounts, currently selected network
-  const { accounts, selectedAcc, onSelectAcc, onAddAccount, onRemoveAccount } = useAccounts(useLocalStorage)
+  const dappUrl = useOneTimeQueryParam('dappUrl')
+  const [pluginData, setPluginData] = useState(null)
+  const { accounts, selectedAcc, onSelectAcc, onAddAccount, onRemoveAccount, setPluginUrl } = useAccounts(useLocalStorage, pluginData?.url)
   const addressBook = useAddressBook({ accounts, useStorage: useLocalStorage })
   const { network, setNetwork } = useNetwork({ useStorage: useLocalStorage })
   const { gasTankState, setGasTankState } = useGasTank({ selectedAcc, useStorage: useLocalStorage })
@@ -265,6 +268,18 @@ function AppInner() {
   const handleSetShowThankYouPage = useCallback(() => setShowThankYouPage(true), [setShowThankYouPage])
   useEffect(() => (thankYouUTM && thankYouUTM.startsWith('thankyou')) && handleSetShowThankYouPage(), [handleSetShowThankYouPage, thankYouUTM])
 
+  useEffect(() => {
+    if(!dappUrl) return
+    async function checkPluginData() {
+      const manifest = await getManifestFromDappUrl(fetch, dappUrl)
+      if(manifest) { 
+        setPluginData(manifest)
+        setPluginUrl(manifest.url)
+      }
+    }
+    checkPluginData()
+  }, [dappUrl, setPluginUrl])
+
   return (<>
     <Prompt
       message={(location, action) => {
@@ -303,7 +318,7 @@ function AppInner() {
 
     <Switch>
       <Route path="/add-account">
-        <AddAccount relayerURL={relayerURL} onAddAccount={onAddAccount} utmTracking={utmTracking}></AddAccount>
+        <AddAccount relayerURL={relayerURL} onAddAccount={onAddAccount} utmTracking={utmTracking} pluginData={pluginData}></AddAccount>
       </Route>
 
       <Route path="/email-login">
