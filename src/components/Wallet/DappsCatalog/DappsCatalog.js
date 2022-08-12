@@ -7,15 +7,17 @@ import { MdInfo, MdSearch, MdDelete } from 'react-icons/md'
 import { AiOutlineStar, AiFillStar } from 'react-icons/ai'
 import { Button } from 'components/common'
 import DAPPS_ICON from 'resources/dapps.svg'
+import AMBIRE_ICON_HOT from 'resources/icon.png'
 import { AddCustomDappModal } from 'components/Modals'
 import { useModals } from 'hooks'
-import { canOpenInIframe } from 'lib/dappsUtils'
+import { fetch } from 'lib/fetch'
+import { canOpenInIframe, getManifestFromDappUrl } from 'ambire-common/src/services/dappCatalog'
 import { useOneTimeQueryParam } from 'hooks/oneTimeQueryParam'
 import { useHistory } from 'react-router-dom'
 
 const DappsCatalog = ({ network, dappsCatalog, selectedAcc, gnosisConnect, gnosisDisconnect }) => {
   const dappUrl = useOneTimeQueryParam('dappUrl')
-  const { loadDappFromUrl, isDappMode, currentDappData, toggleFavorite, favorites, filteredCatalog, onCategorySelect, categoryFilter, search, onSearchChange, categories, loadCurrentDappData, removeCustomDapp } = dappsCatalog
+  const { addCustomDapp, loadDappFromUrl, isDappMode, currentDappData, toggleFavorite, favorites, filteredCatalog, onCategorySelect, categoryFilter, search, onSearchChange, categories, loadCurrentDappData, removeCustomDapp } = dappsCatalog
   const { showModal } = useModals()
   const [dappUrlFromLink, setDappUrlsFromLink] = useState('')
   const history = useHistory()
@@ -68,7 +70,7 @@ const DappsCatalog = ({ network, dappsCatalog, selectedAcc, gnosisConnect, gnosi
   }, [toggleFavorite])
 
   const openDapp = useCallback(async (item) => {
-    if ((item.connectionType === 'gnosis' && (!item.custom)) || await (canOpenInIframe(item.url))) {
+    if ((item.connectionType === 'gnosis' && (!item.custom)) || await (canOpenInIframe(fetch, item.url))) {
       loadCurrentDappData(item)
     } else {
       window.open(item.url, '_blank')
@@ -102,8 +104,16 @@ const DappsCatalog = ({ network, dappsCatalog, selectedAcc, gnosisConnect, gnosi
     if (loaded) {
       return
     } else {
-      openCustomDappModal(dappUrlFromLink)
-      // TODO: Open preloaded custom dapp modal?
+      async function tryAutoLoad() {
+        const manifest = await getManifestFromDappUrl(dappUrlFromLink)
+        if (manifest && manifest.isWalletPlugin) {
+          addCustomDapp(manifest)
+        } else {
+          openCustomDappModal(dappUrlFromLink)
+        }
+      }
+
+      tryAutoLoad()
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -153,6 +163,11 @@ const DappsCatalog = ({ network, dappsCatalog, selectedAcc, gnosisConnect, gnosi
                   onClick={() => item.supported && openDapp(item)}>
 
                   <div className='tools'>
+                    {item.featured &&
+                      <ToolTip label={`Hot dapp`}>
+                        <img className='icon hot-dapp' src={AMBIRE_ICON_HOT} alt='hot dapp icon' />
+                      </ToolTip>
+                    }
                     {item.custom &&
                       <ToolTip label={`Remove ${item.name} from your catalog`}>
                         <MdDelete className='icon remove-dapp' onClick={(e) => onRemoveCustomClick(e, item)} />
