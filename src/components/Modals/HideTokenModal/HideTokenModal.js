@@ -7,6 +7,7 @@ import {
   MdRemoveRedEye as HiddenIcon
 } from 'react-icons/md'
 import { useModals } from 'hooks'
+import { useMemo } from 'react'
 
 const Token = ({ token, button }) => (
   <div className="extra-token" key={token.address}>
@@ -18,52 +19,53 @@ const Token = ({ token, button }) => (
         </span>
       </div>
     </div>
-    <div className="actions">{button}</div>
+    {button}
   </div>
 )
 
-const HideTokenModel = ({ portfolio }) => {
+const HideTokenModel = ({ portfolio, account, network, userSorting, sortType, setIsHideTokenModalOpen }) => {
   const { hideModal } = useModals()
   const { hiddenTokens, onAddHiddenToken, onRemoveHiddenToken, tokens } = portfolio
 
-  const hideToken = (token) => {
-    onAddHiddenToken(token)
-    hideModal()
-  }
+  const hideToken = (token) => onAddHiddenToken(token)
 
-  const unhideToken = (token) => {
-    onRemoveHiddenToken(token.address)
+  const unhideToken = (token) => onRemoveHiddenToken(token.address)
+
+  const sortedTokens = useMemo(() => {
+    return tokens.concat(hiddenTokens).sort((a, b) => {
+      if (sortType === 'custom' && userSorting.tokens?.items?.[`${account}-${network.chainId}`]?.length) {
+          const sorted = userSorting.tokens.items[`${account}-${network.chainId}`].indexOf(a.address) - userSorting.tokens.items[`${account}-${network.chainId}`].indexOf(b.address)
+          return sorted
+      } else {
+          const decreasing = b.balanceUSD - a.balanceUSD
+          if (decreasing === 0) return a.symbol.localeCompare(b.symbol)
+          return decreasing
+      }
+    })
+  }, [tokens, hiddenTokens, userSorting, sortType, account, network.chainId])
+
+  const handleHideModal = () => {
+    setIsHideTokenModalOpen(false)
     hideModal()
   }
 
   return (
     <Modal id="hide-token-modal" title="Hide Token">
       <div className="extra-tokens-list">
-        {tokens.map((token) => (
+        {sortedTokens.map((token) => (
           <Token
             key={token.address}
             token={token}
-            button={
-              <Button mini clear onClick={() => hideToken(token)}>
-                <HiddenIcon />
-              </Button>
-            }
-          />
-        ))}
-        {hiddenTokens.map((token) => (
-          <Token
-            key={token.address}
-            token={token}
-            button={
-              <Button mini clear onClick={() => unhideToken(token)}>
-                <VisibleIcon />
-              </Button>
+            button={!token.isHidden ? 
+              <HiddenIcon className="extra-token-icon" color="#36c979" onClick={() => hideToken(token)} /> :
+              <VisibleIcon className="extra-token-icon" color="#f98689" onClick={() => unhideToken(token)} />
             }
           />
         ))}
       </div>
+
       <div className="modalBottom">
-        <Button clear icon={<MdOutlineClose />} onClick={() => hideModal()}>
+        <Button clear icon={<MdOutlineClose />} onClick={handleHideModal}>
           Close
         </Button>
       </div>

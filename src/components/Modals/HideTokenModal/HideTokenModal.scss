@@ -1,10 +1,15 @@
 @import 'variables.scss';
 
 #hide-token-modal {
+    .close {
+        // Modal won't close using this button
+        display: none;
+    }
     .content {
         display: flex;
         flex-direction: column;
         gap: 2em;
+        padding-bottom: 5.9375rem;
 
         .info {
             display: flex;
@@ -34,7 +39,7 @@
         .extra-tokens-list {
             display: flex;
             flex-direction: column;
-            overflow-y: auto;
+            overflow-y:scroll;
 
             .title {
                 margin-bottom: 0.5em;
@@ -46,8 +51,11 @@
                 display: flex;
                 align-items: center;
                 justify-content: space-between;
-                padding: 0.5em;
-                padding-left: 1em;
+                padding: 1em 1.2em;
+
+                &-icon {
+                    cursor: pointer;
+                }
 
                 &:nth-child(even) {
                     background-color: rgba(0, 0, 0, 0.2);
