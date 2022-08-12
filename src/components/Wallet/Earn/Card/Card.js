@@ -100,7 +100,7 @@ const Card = ({ loading, unavailable, tokensItems, icon, details, customInfo, on
                                     <div/>
                                 </div>
                             }
-                            <Segments small defaultValue={segment} segments={segments} onChange={(value) => setSegment(value)}></Segments>
+                            <Segments small defaultValue={segment} segments={segments} onChange={(value) => setSegment(value)} />
                             {
                                 customInfo ? 
                                     <div className="info">
