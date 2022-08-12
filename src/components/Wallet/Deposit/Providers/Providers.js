@@ -40,7 +40,7 @@ export default function Providers({ walletAddress, networkDetails, relayerURL, p
             fees: '0.49%-2.9%',
             limits: '10,000EUR/m',
             currencies: 'USD, EUR, GBP',
-            networks: ['ethereum', 'polygon', 'avalanche', 'binance-smart-chain'],
+            networks: ['ethereum', 'polygon', 'avalanche', 'binance-smart-chain', 'gnosis'],
             onClick: () => openRampNetwork()
         },
         {
