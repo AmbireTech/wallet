@@ -21,8 +21,8 @@ import useWalletConnect from './hooks/walletconnect'
 import useGnosisSafe from './hooks/useGnosisSafe'
 import useNotifications from './hooks/notifications'
 import useAmbireExtension from './hooks/useAmbireExtension'
-import useAmbireBookmarklet from './hooks/useAmbireBookmarklet'
-import { useAttentionGrabber,
+import {
+  useAttentionGrabber,
   usePortfolio,
   useAddressBook,
   useRelayerData,
@@ -37,6 +37,7 @@ import WalletStakingPoolABI from './consts/WalletStakingPoolABI.json'
 import { Contract, utils } from 'ethers'
 import { getProvider } from './lib/provider'
 import allNetworks from './consts/networks'
+import useAmbireExtensionEventsBroadcaster from './hooks/useAmbireExtensionEventsBroadcaster'
 
 const relayerURL = process.env.REACT_APP_RELAYRLESS === 'true'
                   ? null
@@ -66,6 +67,23 @@ function AppInner() {
   const wcUri = useOneTimeQueryParam('uri')
   const utmTracking = useUtmTracking({ useStorage: useLocalStorage })
 
+  // Portfolio: this hook actively updates the balances/assets of the currently selected user
+  const portfolio = usePortfolio({
+    currentNetwork: network.id,
+    account: selectedAcc,
+    useStorage: useLocalStorage
+  })
+
+  // Get rewards data
+  const [cacheBreak, setCacheBreak] = useState(() => Date.now())
+  useEffect(() => {
+    if ((Date.now() - cacheBreak) > 5000) setCacheBreak(Date.now())
+    const intvl = setTimeout(() => setCacheBreak(Date.now()), 30000)
+    return () => clearTimeout(intvl)
+  }, [cacheBreak])
+  const rewardsUrl = (relayerURL && selectedAcc) ? `${relayerURL}/wallet-token/rewards/${selectedAcc}?cacheBreak=${cacheBreak}` : null
+  const rewardsData = useRelayerData(rewardsUrl)
+
   // Signing requests: transactions/signed msgs: all requests are pushed into .requests
   const { connections, connect, disconnect, isConnecting, requests: wcRequests, resolveMany: wcResolveMany } = useWalletConnect({
     account: selectedAcc,
@@ -82,11 +100,23 @@ function AppInner() {
     useStorage: useLocalStorage
   }, [selectedAcc, network])
 
-  const { requests: extensionRequests, resolveMany: extensionResolveMany } = useAmbireExtension({
+  const {
+    requests: extensionRequests,
+    resolveMany: extensionResolveMany,
+    sendMessage,
+    addMessageHandler,
+    removeMessageHandler,
+    sendReply
+  } = useAmbireExtension({
     allNetworks,
+    accounts,
     setNetwork,
     selectedAccount: selectedAcc,
-    network: network
+    network: network,
+    portfolio,
+    rewardsData,
+    onSelectAcc,
+    relayerURL
   }, [selectedAcc, network])
 
   // Attach meta data to req, if needed
@@ -145,13 +175,6 @@ function AppInner() {
     setInternalRequests(reqs => reqs.filter(x => !ids.includes(x.id)))
   }
 
-  // Portfolio: this hook actively updates the balances/assets of the currently selected user
-  const portfolio = usePortfolio({
-    currentNetwork: network.id,
-    account: selectedAcc,
-    useStorage: useLocalStorage
-  })
-
   const privateMode = usePrivateMode(useLocalStorage)
 
   const [userSorting, setUserSorting] = useLocalStorage({
@@ -164,7 +187,6 @@ function AppInner() {
     setGasTankState([...gasTankState, { account: selectedAcc, isEnabled: false }])
   }
 
-
   // Handling transaction signing requests
   // Show the send transaction full-screen modal if we have a new txn
   const eligibleRequests = useMemo(() => requests
@@ -173,6 +195,8 @@ function AppInner() {
       && chainId === network.chainId
       && account === selectedAcc
     ), [requests, network.chainId, selectedAcc])
+
+  const hasNonInternalRequests = eligibleRequests.filter(r => !internalRequests.find(ir => ir.id === r.id ))
   // Docs: the state is { showing: bool, replacementBundle, replaceByDefault: bool, mustReplaceNonce: number }
   // mustReplaceNonce is set when the end goal is to replace a particular transaction, and if that txn gets mined we should stop the user from doing anything
   // mustReplaceNonce must always be used together with either replaceByDefault: true or replacementBundle
@@ -202,6 +226,19 @@ function AppInner() {
     .filter(({ type, account }) => (type === 'personal_sign' || type === 'eth_sign' || type === 'eth_signTypedData_v4' || type === 'eth_signTypedData')
       && account === selectedAcc
     ), [requests, selectedAcc])
+
+
+
+  useAmbireExtensionEventsBroadcaster({
+    portfolio,
+    rewardsData,
+    sendMessage,
+    sendReply,
+    addMessageHandler,
+    removeMessageHandler,
+    hasPendingSignature: !!everythingToSign.length,
+    hasPendingTransactions: (sendTxnState.showing && !!hasNonInternalRequests.length),
+  }, [selectedAcc, network])
 
   // Handling the back button
   // When the user presses back, we first hide the SendTransactions dialog (keeping the queue)
@@ -254,16 +291,6 @@ function AppInner() {
     onSitckyClick: useCallback(() => setSendTxnState({ showing: true }), [])
   })
 
-  // Get rewards data
-  const [cacheBreak, setCacheBreak] = useState(() => Date.now())
-  useEffect(() => {
-    if ((Date.now() - cacheBreak) > 5000) setCacheBreak(Date.now())
-    const intvl = setTimeout(() => setCacheBreak(Date.now()), 30000)
-    return () => clearTimeout(intvl)
-  }, [cacheBreak])
-  const rewardsUrl = (relayerURL && selectedAcc) ? `${relayerURL}/wallet-token/rewards/${selectedAcc}?cacheBreak=${cacheBreak}` : null
-  const rewardsData = useRelayerData(rewardsUrl)
-
   // Checks if Thank you page needs to be shown
   const thankYouUTM = useOneTimeQueryParam('utm_campaign')
   const [showThankYouPage, setShowThankYouPage] = useLocalStorage({
@@ -290,6 +317,7 @@ function AppInner() {
       network={network}
       resolve={outcome => resolveMany([everythingToSign[0].id], outcome)}
     ></SignMessage>)}
+
 
     {sendTxnState.showing ? (
       <SendTransaction

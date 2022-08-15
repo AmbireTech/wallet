@@ -4,7 +4,7 @@
 //Used to know for the current relayer to who to forward
 const PATH = ['pageContext', 'contentScript', 'background', 'ambireContentScript', 'ambirePageContext']
 
-const VERBOSE = parseInt(process.env.VERBOSE) || 0
+const VERBOSE = parseInt(process.env.VERBOSE) || 4
 
 //Explicitly tell the background worker which domains are ambire wallet domains when sending a message. In the forwarding middleware ( ambire -> dapp always OK, dapp -> ambire, only if permitted)
 const AMBIRE_DOMAINS = process.env.AMBIRE_WALLET_URLS ? process.env.AMBIRE_WALLET_URLS.split(' ').map(a => new URL(a).host) : []
@@ -13,7 +13,7 @@ const AMBIRE_DOMAINS = process.env.AMBIRE_WALLET_URLS ? process.env.AMBIRE_WALLE
 let RELAYER
 
 //callbacks for listeners from addMessageHandler
-let HANDLERS = []
+export let HANDLERS = []
 
 //only for background worker, needs to know which tab is ambireWallet
 let AMBIRE_TABID
@@ -243,6 +243,7 @@ export const processBackgroundQueue = () => {
 
 //called by ambireContentScript, to inform background about where the wallet page is
 export const setAmbireTabId = () => {
+  console.log('AMBEX MESSENGER.... SET AMBIRE TAB ID....')
   if (RELAYER === 'ambireContentScript') {
     sendMessageInternal({
       to: 'background',
@@ -436,7 +437,7 @@ export const sendAck = (fromMessage) => {
   })
 }
 
-const removeMessageHandler = (filter) => {
+export const removeMessageHandler = (filter) => {
   const handlerIndex = HANDLERS.findIndex(h =>
     //REPLIES
     (h.requestFilter.isReply && (filter.isReply && h.requestFilter.id === filter.id))
@@ -474,3 +475,4 @@ export const makeRPCError = (requestPayload, error, errorCode = -1) => {
     jsonrpc: requestPayload.jsonrpc
   }
 }
+

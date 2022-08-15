@@ -1,24 +1,41 @@
 import { useCallback, useEffect, useState, useRef } from 'react'
-
 import { getDefaultProvider, BigNumber } from 'ethers'
+import { getTransactionSummary } from 'lib/humanReadableTransactions'
+import { useToasts } from './toasts'
 
 import {
   setupAmbexMessenger,
   sendMessage,
   addMessageHandler,
+  removeMessageHandler,
   clear,
-  sendReply
+  sendReply,
 } from 'lib/ambexMessenger'
+import { fetchGet } from 'lib/fetch'
+import networks from 'consts/networks'
 
 const STORAGE_KEY = 'ambire_extension_state'
 
-export default function useAmbireExtension({ allNetworks, setNetwork, selectedAccount, network, verbose = 1 }) {
+export default function useAmbireExtension({
+                                             allNetworks,
+                                             accounts,
+                                             setNetwork,
+                                             selectedAccount,
+                                             network,
+                                             portfolio,
+                                             rewardsData,
+                                             relayerURL,
+                                             onSelectAcc,
+                                             verbose = 1
+                                           }) {
 
   const stateRef = useRef()
   stateRef.current = {
     selectedAccount,
     network
   }
+
+  const { addToast } = useToasts()
 
   const [requests, setRequests] = useState(() => {
     const json = localStorage[STORAGE_KEY]
@@ -31,6 +48,9 @@ export default function useAmbireExtension({ allNetworks, setNetwork, selectedAc
       return []
     }
   })
+
+
+  const [ambexSetupRefresh, setAmbexSetupRefresh] = useState(null)
 
   const sanitize2hex = useCallback((any) => {
     if (verbose > 2) console.warn(`instanceof of any is ${any instanceof BigNumber}`)
@@ -152,6 +172,11 @@ export default function useAmbireExtension({ allNetworks, setNetwork, selectedAc
       })
     })
 
+    // Post-focus, display a message to the user to make him understand why he switched tabs automatically
+    addMessageHandler({ type: 'displayUserInterventionNotification' }, (message) => {
+      setTimeout(() => addToast('An user interaction has been requested'), 500)
+    })
+
     //contentScript triggers this, then this(ambirePageContext) should inform proper injection to background
     addMessageHandler({ type: 'ambireContentScriptInjected' }, (message) => {
       sendMessage({
@@ -173,6 +198,59 @@ export default function useAmbireExtension({ allNetworks, setNetwork, selectedAc
           chainId: network.chainId
         }
       })
+    })
+
+    addMessageHandler({ type: 'extension_getBundles' }, async (message) => {
+      //TODO should refactor in a hook?
+      const url = relayerURL
+        ? `${relayerURL}/identity/${selectedAccount}/${network.id}/transactions`
+        : null
+
+      const data = await (url ? fetchGet(url) : null)
+
+      const executedTransactions = data ? data.txns.filter(x => x.executed) : []
+      const bundlesList = executedTransactions.map(bundle => {
+        const network = networks.find(x => x.id === bundle.network)
+        const summaries = bundle.txns.slice(0, -1).map(tx => {
+          return getTransactionSummary(tx, bundle.network, bundle.identity)
+        })
+        return {
+          ...bundle,
+          explorerUrl: network?.explorerUrl,
+          summaries
+        }
+      })
+
+      sendReply(message, {
+        data: {
+          confirmed: bundlesList,
+        }
+      })
+    })
+
+    addMessageHandler({ type: 'extension_getAccounts' }, (message) => {
+      console.error('SEND ACCOUNT GET ACCOUNTS......')
+      sendReply(message, {
+        data: {
+          accounts,
+          networks: allNetworks,
+        }
+      })
+    })
+
+    addMessageHandler({ type: 'extension_changeAccount' }, (message) => {
+      onSelectAcc(message.data)
+      sendReply(message, {
+        data: { ack: true }
+      })
+    })
+
+    addMessageHandler({ type: 'extension_changeNetwork' }, (message) => {
+      setNetwork(message.data)
+    })
+
+    addMessageHandler({ type: 'extension_reject' }, (message) => {
+      setNetwork(message.data)
     })
 
     //Handling web3 calls
@@ -372,12 +450,79 @@ export default function useAmbireExtension({ allNetworks, setNetwork, selectedAc
       }
     }
 
+    setAmbexSetupRefresh(new Date().getTime())
+
     return () => {
+      console.log('CLEARING ALL QUEUE')
       clear()
     }
-  }, [selectedAccount, network, sanitize2hex, allNetworks, setNetwork, handlePersonalSign, verbose])
+  }, [
+    selectedAccount,
+    network,
+    sanitize2hex,
+    allNetworks,
+    setNetwork,
+    handlePersonalSign,
+    verbose,
+    relayerURL,
+    onSelectAcc,
+    accounts,
+    addToast
+  ])
+
+
+  useEffect(() => {
+
+    // console.log('portfolio updated...', portfolio)
+    // console.log('RDATA...', rewardsData)
+
+    if (ambexSetupRefresh) {
+
+      console.log('REFRESH ADD HANDLER', ambexSetupRefresh)
+
+      //Used on extension lifecycle reloading to check if previous ambire injected tabs are still up
+      addMessageHandler({ type: 'extension_getBalance' }, async (message) => {
+        if (portfolio.isCurrNetworkBalanceLoading) {
+          sendReply(message, {
+            data: { loading: true }
+          })
+        } else {
+          sendReply(message, {
+            data: {
+              balance: portfolio.balance,
+              rewards: rewardsData
+            }
+          })
+        }
+      })
+
+      addMessageHandler({ type: 'extension_getAssets' }, (message) => {
+        if (portfolio.isCurrNetworkBalanceLoading) {
+          sendReply(message, {
+            data: { loading: true }
+          })
+        } else {
+          sendReply(message, {
+            data: {
+              tokens: portfolio.tokens
+            }
+          })
+        }
+      })
+    }
+
+    return () => {
+      removeMessageHandler({ type: 'extension_getBalance' })
+      removeMessageHandler({ type: 'extension_getAssets' })
+    }
+
+  }, [portfolio, rewardsData, ambexSetupRefresh])
 
   return {
+    sendMessage,
+    addMessageHandler,
+    removeMessageHandler,
+    sendReply,
     requests,
     resolveMany
   }
