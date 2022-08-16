@@ -50,7 +50,7 @@ export default function useAmbireExtensionEventsBroadcaster({
       }
     })
 
-    if (hasPendingTransactions) {
+    if (hasPendingSignature) {
       sendMessage({
         type: 'ambireTabFocus',
         to: 'background',

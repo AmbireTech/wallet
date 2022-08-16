@@ -13,6 +13,7 @@ import {
 } from 'lib/ambexMessenger'
 import { fetchGet } from 'lib/fetch'
 import networks from 'consts/networks'
+import { hexlify } from 'ethers/lib/utils'
 
 const STORAGE_KEY = 'ambire_extension_state'
 
@@ -206,26 +207,34 @@ export default function useAmbireExtension({
         ? `${relayerURL}/identity/${selectedAccount}/${network.id}/transactions`
         : null
 
-      const data = await (url ? fetchGet(url) : null)
+      const data = await fetchGet(url).catch(err => {})
 
-      const executedTransactions = data ? data.txns.filter(x => x.executed) : []
-      const bundlesList = executedTransactions.map(bundle => {
-        const network = networks.find(x => x.id === bundle.network)
-        const summaries = bundle.txns.slice(0, -1).map(tx => {
-          return getTransactionSummary(tx, bundle.network, bundle.identity)
+      if (data) {
+        const executedTransactions = data ? data.txns.filter(x => x.executed) : []
+        const bundlesList = executedTransactions.map(bundle => {
+          const network = networks.find(x => x.id === bundle.network)
+          const summaries = bundle.txns.slice(0, -1).map(tx => {
+            return getTransactionSummary(tx, bundle.network, bundle.identity)
+          })
+          return {
+            ...bundle,
+            explorerUrl: network?.explorerUrl,
+            summaries
+          }
         })
-        return {
-          ...bundle,
-          explorerUrl: network?.explorerUrl,
-          summaries
-        }
-      })
 
-      sendReply(message, {
-        data: {
-          confirmed: bundlesList,
-        }
-      })
+        sendReply(message, {
+          data: {
+            confirmed: bundlesList,
+          }
+        })
+      } else {
+        sendReply(message, {
+          data: {
+            error: 'Could not fetch transactions',
+          }
+        })
+      }
     })
 
     addMessageHandler({ type: 'extension_getAccounts' }, (message) => {
@@ -270,7 +279,7 @@ export default function useAmbireExtension({
       if (method === 'eth_accounts' || method === 'eth_requestAccounts') {
         result = [selectedAccount]
       } else if (method === 'eth_chainId' || method === 'net_version') {
-        result = network.chainId
+        result = hexlify(network.chainId)
       } else if (method === 'wallet_requestPermissions') {
         result = [{ parentCapability: 'eth_accounts' }]
       } else if (method === 'wallet_getPermissions') {
