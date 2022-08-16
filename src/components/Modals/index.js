@@ -7,7 +7,6 @@ import AddTokenModal from './AddTokenModal/AddTokenModal'
 import LatticeModal from './LatticeModal/LatticeModal'
 import UnsupportedDAppsModal from './UnsupportedDAppsModal/UnsupportedDAppsModal'
 import HideTokenModel from './HideTokenModal/HideTokenModal'
-import AmbireEarnDetailsModal from './AmbireEarnDetailsModal/AmbireEarnDetailsModal'
 import EarnDetailsModal from './EarnDetailsModal/EarnDetailsModal'
 import AddAddressModal from './AddAddressModal/AddAddressModal'
 import GasTankBalanceByTokensModal from './GasTankBalanceByTokensModal/GasTankBalanceByTokensModal'
@@ -23,7 +22,6 @@ export {
     LatticeModal,
     UnsupportedDAppsModal,
     HideTokenModel,
-    AmbireEarnDetailsModal,
     EarnDetailsModal,
     AddAddressModal,
     GasTankBalanceByTokensModal,

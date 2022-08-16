@@ -4,7 +4,7 @@ import { MdClose } from 'react-icons/md'
 import { useModals } from 'hooks'
 import { Modal, Button } from 'components/common'
 import { ToolTip } from 'components/common' 
-import { useAmbireEarnDetails } from 'hooks'
+import useAmbireEarnDetails from 'hooks/useAmbireEarnDetails'
 import { Loading } from 'components/common'
 
 const AmbireEarnDetailsModal = ({ title = 'Details', apy, accountId, msToDaysHours, addresses, tokenLabel }) => {
