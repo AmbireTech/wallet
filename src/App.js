@@ -10,12 +10,6 @@ import {
 import { useState, useEffect, useMemo, useCallback, lazy, Suspense } from 'react'
 import ToastProvider from './components/ToastProvider/ToastProvider'
 import ModalProvider from './components/ModalProvider/ModalProvider'
-
-// import EmailLogin from './components/EmailLogin/EmailLogin'
-// import AddAccount from './components/AddAccount/AddAccount'
-// import Wallet from './components/Wallet/Wallet'
-// import SendTransaction from './components/SendTransaction/SendTransaction'
-// import SignMessage from './components/SignMessage/SignMessage'
 import useAccounts from './hooks/accounts'
 import useNetwork from 'ambire-common/src/hooks/useNetwork'
 import useWalletConnect from './hooks/walletconnect'
@@ -277,34 +271,33 @@ function AppInner() {
       }}
     />
     <Suspense fallback={<p>Loading modal...</p>}>
-
-    {!!everythingToSign.length && (<SignMessage
-      selectedAcc={selectedAcc}
-      account={accounts.find(x => x.id === selectedAcc)}
-      toSign={everythingToSign[0]}
-      totalRequests={everythingToSign.length}
-      connections={connections}
-      relayerURL={relayerURL}
-      network={network}
-      resolve={outcome => resolveMany([everythingToSign[0].id], outcome)}
-    ></SignMessage>)}
-
-    {sendTxnState.showing ? (
-      <SendTransaction
-        accounts={accounts}
+      {!!everythingToSign.length && (<SignMessage
         selectedAcc={selectedAcc}
-        network={network}
-        requests={eligibleRequests}
-        resolveMany={resolveMany}
+        account={accounts.find(x => x.id === selectedAcc)}
+        toSign={everythingToSign[0]}
+        totalRequests={everythingToSign.length}
+        connections={connections}
         relayerURL={relayerURL}
-        onDismiss={onDismissSendTxns}
-        replacementBundle={sendTxnState.replacementBundle}
-        replaceByDefault={sendTxnState.replaceByDefault}
-        mustReplaceNonce={sendTxnState.mustReplaceNonce}
-        onBroadcastedTxn={onBroadcastedTxn}
-        gasTankState={gasTankState}
-      ></SendTransaction>
-    ) : (<></>)}
+        network={network}
+        resolve={outcome => resolveMany([everythingToSign[0].id], outcome)}
+      ></SignMessage>)}
+
+      {sendTxnState.showing ? (
+        <SendTransaction
+          accounts={accounts}
+          selectedAcc={selectedAcc}
+          network={network}
+          requests={eligibleRequests}
+          resolveMany={resolveMany}
+          relayerURL={relayerURL}
+          onDismiss={onDismissSendTxns}
+          replacementBundle={sendTxnState.replacementBundle}
+          replaceByDefault={sendTxnState.replaceByDefault}
+          mustReplaceNonce={sendTxnState.mustReplaceNonce}
+          onBroadcastedTxn={onBroadcastedTxn}
+          gasTankState={gasTankState}
+        ></SendTransaction>
+      ) : (<></>)}
     </Suspense>
 
     <Suspense fallback={<p>...Loading</p>}>
