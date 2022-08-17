@@ -5,7 +5,7 @@ import { fetchGet } from 'lib/fetch'
 import { useState } from 'react';
 import { useToasts } from 'hooks/toasts'
 import { useModals } from 'hooks'
-import { GuardarianDepositProviderModal } from 'components/Modals'
+import { GuardarianDepositProviderModal, MoonPayDepositProviderModal } from 'components/Modals'
 
 import url from 'url'
 
@@ -61,6 +61,34 @@ const useProviders = ({ walletAddress, selectedNetwork, relayerURL, portfolio })
         })
         setLoading(prevState => prevState.filter(n => n !== 'PayTrie'))
     };
+
+    // const openMoonPay = () => {
+    //     setLoading(prevState => ['MoonPay', ...prevState])
+    //     // const rightSideLabels = {
+    //     //     ethereum: 'USDC',
+    //     //     polygon: 'USDC-P',
+    //     //     'binance-smart-chain': 'USDT-B',
+    //     // }
+
+    //     const URL = url.parse(REACT_APP_MONNPAY_URL, true)
+    //     URL.search = null
+    //     URL.query = {
+    //         ...URL.query,
+    //         apiKey: REACT_APP_MOONPAY_API_KEY,
+    //         // showOnlyCurrencies: 'eth',
+    //         walletAddressTag: 'EOS',
+    //         showAllCurrencies: true,
+    //         walletAddress: walletAddress
+    //     }
+
+    //     popupCenter({
+    //         url: url.format(URL),
+    //         title: 'MoonPay Deposit',
+    //         w: 450,
+    //         h: 700,
+    //     })
+    //     setLoading(prevState => prevState.filter(n => n !== 'MoonPay'))
+    // }
 
     const openTransak = () => {
         const networksAlias = {
@@ -127,6 +155,11 @@ const useProviders = ({ walletAddress, selectedNetwork, relayerURL, portfolio })
         setLoading(prevState => prevState.filter(n => n !== 'Guardarian'))
     }
 
+    const openMoonPay = () => {
+        setLoading(prevState => ['MoonPay', ...prevState])
+        showModal(<MoonPayDepositProviderModal relayerURL={relayerURL} walletAddress={walletAddress} selectedNetwork={selectedNetwork} portfolio={portfolio}/>)
+        setLoading(prevState => prevState.filter(n => n !== 'MoonPay'))
+    }
 
     return {
         openRampNetwork,
@@ -134,6 +167,7 @@ const useProviders = ({ walletAddress, selectedNetwork, relayerURL, portfolio })
         openTransak,
         openKriptomat,
         openGuardarian,
+        openMoonPay,
         isLoading
     }
 }

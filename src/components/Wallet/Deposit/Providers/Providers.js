@@ -10,7 +10,7 @@ import { Loading } from 'components/common'
 import useProviders from './useProviders'
 
 export default function Providers({ walletAddress, networkDetails, relayerURL, portfolio }) {
-    const { openRampNetwork, openPayTrie, openTransak, openKriptomat, openGuardarian, isLoading } = useProviders({ walletAddress, selectedNetwork: networkDetails.id, relayerURL, portfolio })
+    const { openRampNetwork, openPayTrie, openTransak, openKriptomat, openGuardarian, openMoonPay, isLoading } = useProviders({ walletAddress, selectedNetwork: networkDetails.id, relayerURL, portfolio })
     
     const providers = [
         {
@@ -62,6 +62,16 @@ export default function Providers({ walletAddress, networkDetails, relayerURL, p
             currencies: 'GBP, EUR, USD and many more',
             networks: ['ethereum', 'polygon', 'avalanche', 'arbitrum', 'binance-smart-chain', 'moonriver', 'moonbeam', 'optimism'],
             onClick: () => openTransak()
+        },
+        {
+            logo: '',
+            name: 'MoonPay',
+            type: 'Buy with Bank Transfer, Credit/Debit Card, Sell Crypto',
+            fees: 'from 2%',
+            limits: 'up to 15k EUR/monthly on and off ramp',
+            currencies: 'GBP, EUR, USD and many more',
+            networks: ['ethereum', 'polygon', 'binance-smart-chain', 'fantom'],
+            onClick: () => openMoonPay()
         }
     ];
 
