@@ -18,7 +18,7 @@ const Protocols = ({ portfolio, network, account, hidePrivateValue, userSorting,
     const { showModal } = useModals()
 
     const [failedImg, setFailedImg] = useState([])
-    const { isCurrNetworkBalanceLoading, isCurrNetworkProtocolsLoading, tokens, protocols } = portfolio
+    const { isCurrNetworkBalanceLoading, tokens } = portfolio
 
     const sortType = userSorting.tokens?.sortType || 'decreasing'
 
@@ -61,9 +61,7 @@ const Protocols = ({ portfolio, network, account, hidePrivateValue, userSorting,
         }
     })
 
-
-    const otherProtocols = protocols.filter(({ label }) => label !== 'Tokens')
-    const shouldShowPlaceholder = (!isCurrNetworkBalanceLoading && !tokens.length) && (!isCurrNetworkProtocolsLoading && !otherProtocols.length)
+    const shouldShowPlaceholder = (!isCurrNetworkBalanceLoading && !tokens.length)
 
     const tokenItem = (index, img, symbol, balance, balanceUSD, address, send = false, network, decimals, category, sortedTokensLength) => 
         {
@@ -173,22 +171,6 @@ const Protocols = ({ portfolio, network, account, hidePrivateValue, userSorting,
                             </div>
                         :
                         null
-                }
-                {
-                    isCurrNetworkProtocolsLoading ?
-                        <Loading/>
-                        :
-                            otherProtocols.map(({ label, assets }, i) => (
-                                <div className="category" key={`category-${i}`}>
-                                    <div className="title">{ label }</div>
-                                    <div className="list">
-                                        {
-                                            assets.map(({ category, symbol, tokenImageUrl, balance, balanceUSD, address }, i) => 
-                                                tokenItem(i, tokenImageUrl, symbol, balance, balanceUSD, address, category !== 'claimable', 'protocols'))
-                                        }
-                                    </div>
-                                </div>
-                            ))
                 }
             </>
         </div>

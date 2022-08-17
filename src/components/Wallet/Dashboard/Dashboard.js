@@ -15,15 +15,6 @@ import PendingRecoveryNotice from 'components/Wallet/Security/PendingRecoveryNot
 import usePasswordRecoveryCheck from 'hooks/usePasswordRecoveryCheck'
 import OutdatedBalancesMsg from './OutdatedBalancesMsg/OutdatedBalancesMsg'
 
-const chartSegments = [
-    {
-        value: 'Tokens'
-    },
-    {
-        value: 'Protocols'
-    }
-]
-
 const tabSegments = [
     {
         value: 'tokens'
@@ -39,8 +30,6 @@ export default function Dashboard({ portfolio, selectedNetwork, selectedAccount,
     const { tabId, page = 1 } = useParams()
 
     const [chartTokensData, setChartTokensData] = useState([]);
-    const [chartProtocolsData, setChartProtocolsData] = useState([]);
-    const [chartType, setChartType] = useState([]);
     const [tab, setTab] = useState(tabId || tabSegments[0].value);
 
     const currentAccount = accounts.find(a => a.id.toLowerCase() === selectedAccount.toLowerCase())
@@ -62,24 +51,9 @@ export default function Dashboard({ portfolio, selectedNetwork, selectedAccount,
             }))
             .filter(({ value }) => value > 0);
 
-        const totalProtocols = portfolio.protocols.map(({ assets }) =>
-            assets
-                .map(({ balanceUSD }) => balanceUSD)
-                .reduce((acc, curr) => acc + curr, 0))
-            .reduce((acc, curr) => acc + curr, 0)
-
-        const protocolsData = portfolio.protocols
-            .map(({ label, assets }) => ({
-                label,
-                value: Number(((assets.map(({ balanceUSD }) => balanceUSD).reduce((acc, curr) => acc + curr, 0) / totalProtocols) * 100).toFixed(2))
-            }))
-            .filter(({ value }) => value > 0)
-
         setChartTokensData(tokensData);
-        setChartProtocolsData(protocolsData)
     }, [portfolio.balance, portfolio.tokens, portfolio.protocols]);
 
-    useEffect(() => portfolio.requestOtherProtocolsRefresh(), [portfolio])
 
     return (
         <section id="dashboard">
@@ -129,21 +103,16 @@ export default function Dashboard({ portfolio, selectedNetwork, selectedAccount,
                 </div>
                 <div id="chart" className="panel">
                     <div className="title">
-                        Balance by
-                        <Segments small defaultValue={chartSegments[0].value} segments={chartSegments} onChange={setChartType}/>
+                        Balance by tokens
                     </div>
                     <div className="content">
                         {
-                            chartType === chartSegments[0].value ?
-                                portfolio.isCurrNetworkBalanceLoading ?
-                                    <Loading/>
-                                    :
-                                    privateMode.hidePrivateContent(<Chart data={chartTokensData} size={200}/>)
+                            
+                            portfolio.isCurrNetworkBalanceLoading ?
+                                <Loading/>
                                 :
-                                portfolio.isCurrNetworkProtocolsLoading ?
-                                    <Loading/>
-                                    :
-                                    privateMode.hidePrivateContent(<Chart data={chartProtocolsData} size={200}/>)
+                                privateMode.hidePrivateContent(<Chart data={chartTokensData} size={200}/>)
+                                
                         }
                     </div>
                 </div>
