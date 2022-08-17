@@ -1,3 +1,5 @@
+import useGasTank from 'ambire-common/src/hooks/useGasTank'
+
 import './App.scss'
 
 import {
@@ -27,7 +29,6 @@ import { useAttentionGrabber,
   usePrivateMode, 
   useLocalStorage, 
   useUtmTracking, 
-  useGasTank 
 } from './hooks'
 import { useToasts } from './hooks/toasts'
 import { useOneTimeQueryParam } from './hooks/oneTimeQueryParam'
@@ -252,7 +253,7 @@ function AppInner() {
     return () => clearTimeout(intvl)
   }, [cacheBreak])
   const rewardsUrl = (relayerURL && selectedAcc) ? `${relayerURL}/wallet-token/rewards/${selectedAcc}?cacheBreak=${cacheBreak}` : null
-  const rewardsData = useRelayerData(rewardsUrl)
+  const rewardsData = useRelayerData({ url: rewardsUrl })
 
   // Checks if Thank you page needs to be shown
   const campaignUTM = useOneTimeQueryParam('utm_campaign')

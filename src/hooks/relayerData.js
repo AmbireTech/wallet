@@ -5,7 +5,7 @@ import { fetchCaught } from 'lib/fetch'
 //  so that the component that uses this hook cann display the loading spinner
 const RESET_DATA_AFTER = 250
 
-export default function useRelayerData(url) {
+export default function useRelayerData({ url }) {
   const [isLoading, setLoading] = useState(true)
   const [data, setData] = useState(null)
   const [err, setErr] = useState(null)
