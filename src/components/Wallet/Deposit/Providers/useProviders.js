@@ -127,6 +127,19 @@ const useProviders = ({ walletAddress, selectedNetwork, relayerURL, portfolio })
         setLoading(prevState => prevState.filter(n => n !== 'Guardarian'))
     }
 
+    const openMoonpay = async () => {
+        setLoading(prevState => ['MoonPay', ...prevState])
+        const moonpayResponse = await fetchGet(`${relayerURL}/moonpay/${walletAddress}`)
+        
+        if (moonpayResponse.success && moonpayResponse.data && moonpayResponse.data.url) popupCenter({
+            url: url.format(moonpayResponse.data.url),
+            title: 'MoonPay Deposit',
+            w: 515,
+            h: 600
+        })
+        else addToast(`Error: ${moonpayResponse.data ? moonpayResponse.data : 'unexpected error'}`, { error: true })
+        setLoading(prevState => prevState.filter(n => n !== 'MoonPay'))
+    }
 
     return {
         openRampNetwork,
@@ -134,6 +147,7 @@ const useProviders = ({ walletAddress, selectedNetwork, relayerURL, portfolio })
         openTransak,
         openKriptomat,
         openGuardarian,
+        openMoonpay,
         isLoading
     }
 }

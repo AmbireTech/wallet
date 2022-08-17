@@ -10,7 +10,7 @@ import { Loading } from 'components/common'
 import useProviders from './useProviders'
 
 export default function Providers({ walletAddress, networkDetails, relayerURL, portfolio }) {
-    const { openRampNetwork, openPayTrie, openTransak, openKriptomat, openGuardarian, isLoading } = useProviders({ walletAddress, selectedNetwork: networkDetails.id, relayerURL, portfolio })
+    const { openRampNetwork, openPayTrie, openTransak, openKriptomat, openGuardarian, openMoonpay, isLoading } = useProviders({ walletAddress, selectedNetwork: networkDetails.id, relayerURL, portfolio })
     
     const providers = [
         {
@@ -62,7 +62,17 @@ export default function Providers({ walletAddress, networkDetails, relayerURL, p
             currencies: 'GBP, EUR, USD and many more',
             networks: ['ethereum', 'polygon', 'avalanche', 'arbitrum', 'binance-smart-chain', 'moonriver', 'moonbeam', 'optimism'],
             onClick: () => openTransak()
-        }
+        },
+        {
+            logo: '',
+            name: 'KriptoMoonPaymat',
+            type: 'Credit Card',
+            fees: '2.45%',
+            limits: 'up to 5000 EUR/day',
+            currencies: 'EUR, USD, GBP and many more',
+            networks: ['ethereum', 'polygon', 'avalanche', 'binance-smart-chain'], // check how to provide a network if possible
+            onClick: () => openMoonpay()
+        },
     ];
 
     const shouldBeDisabled = (networks) => {
