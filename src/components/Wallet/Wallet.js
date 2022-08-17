@@ -8,7 +8,8 @@ import { isFirefox } from 'lib/isFirefox'
 import unsupportedDApps from 'ambire-common/src/constants/unsupportedDApps'
 // Components
 import TopBar from "./TopBar/TopBar"
-import { PermissionsModal, UnsupportedDAppsModal } from 'components/Modals'
+import PermissionsModal from "components/Modals/PermissionsModal/PermissionsModal"
+import UnsupportedDAppsModal from "components/Modals/UnsupportedDAppsModal/UnsupportedDAppsModal"
 import SideBar from "./SideBar/SideBar"
 // Pages
 const Transfer = lazy(() => import("./Transfer/Transfer"))

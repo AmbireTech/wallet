@@ -4,7 +4,7 @@ import { MdOutlineAdd } from 'react-icons/md'
 import AddressList from 'components/common/AddressBook/AddressList/AddressList'
 import { Button } from 'components/common'
 import { isValidAddress } from 'ambire-common/src/services/address'
-import { AddAddressModal } from 'components/Modals'
+import AddAddressModal from 'components/Modals/AddAddressModal/AddAddressModal'
 import { useModals } from 'hooks'
 
 const Addresses = ({ addresses, addAddress, removeAddress, onSelectAddress, selectedNetwork }) => {

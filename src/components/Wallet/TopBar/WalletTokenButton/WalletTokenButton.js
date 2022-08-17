@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import useDynamicModal from "hooks/useDynamicModals";
 import { Button, ToolTip } from "components/common";
-import { WalletTokenModal } from "components/Modals";
+import WalletTokenModal from "components/Modals/WalletTokenModal/WalletTokenModal";
 import useClaimableWalletToken from "./useClaimableWalletToken";
 
 const WalletTokenButton = ({ rewardsData, account = {}, network, hidePrivateValue, addRequest }) => {

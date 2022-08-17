@@ -11,7 +11,7 @@ import AAVE_ICON from 'resources/aave.svg'
 import Card from 'components/Wallet/Earn/Card/Card'
 import { getDefaultTokensItems } from './defaultTokens'
 import approveToken from 'ambire-common/src/services/approveToken'
-import { EarnDetailsModal } from 'components/Modals'
+import EarnDetailsModal from 'components/Modals/EarnDetailsModal/EarnDetailsModal'
 import { MdInfo } from "react-icons/md"
 
 const AAVELendingPool = new Interface(AAVELendingPoolAbi)

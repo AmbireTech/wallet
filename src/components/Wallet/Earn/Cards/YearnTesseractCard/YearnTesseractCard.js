@@ -11,7 +11,7 @@ import { getProvider } from 'lib/provider'
 import AmbireBatcherABI from 'ambire-common/src/constants/abis/AmbireBatcherABI.json'
 import ERC20ABI from 'adex-protocol-eth/abi/ERC20.json'
 import { constants, Contract } from 'ethers'
-import { EarnDetailsModal } from 'components/Modals'
+import EarnDetailsModal from 'components/Modals/EarnDetailsModal/EarnDetailsModal'
 
 const BATCHER_ADDRESS = '0x460fad03099f67391d84c9cc0ea7aa2457969cea'
 const BATCHER_INTERFACE = new Interface(AmbireBatcherABI)
