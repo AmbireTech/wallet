@@ -37,6 +37,7 @@ import { getProvider } from './lib/provider'
 import allNetworks from './consts/networks'
 import useDapps from 'ambire-common/src/hooks/useDapps'
 import { getManifestFromDappUrl } from 'ambire-common/src/services/dappCatalog'
+import { fetch } from 'lib/fetch'
 
 const relayerURL = process.env.REACT_APP_RELAYRLESS === 'true' 
                   ? null 
@@ -65,7 +66,7 @@ function AppInner() {
   const { network, setNetwork } = useNetwork({ useStorage: useLocalStorage })
   const { gasTankState, setGasTankState } = useGasTank({ selectedAcc, useStorage: useLocalStorage })
   const { addToast } = useToasts()
-  const dappsCatalog = useDapps({useStorage: useLocalStorage})
+  const dappsCatalog = useDapps({useStorage: useLocalStorage, fetch})
   const wcUri = useOneTimeQueryParam('uri')
   const utmTracking = useUtmTracking({ useStorage: useLocalStorage })
 
