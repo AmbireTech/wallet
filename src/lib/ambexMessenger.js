@@ -188,9 +188,8 @@ const isCorrectForwardingPath = (relayer, source, destination, forwarders = []) 
   return true
 }
 
-
 const handleMessage = function (message, sender = null) {
-  if (!RELAYER) debugger;
+  // ignoring react posting messages
   if (message.source?.startsWith('react')) {
     return
   }
@@ -383,27 +382,28 @@ const getActiveTabId = async () => {
     }, 400)
   })
 
-  const replyPromise = new Promise(async resolve => {
+  const replyPromise = new Promise(resolve => {
     //looping all the known ambire tab injections and ping them
-    const ambireTabIds = await getAmbireTabIds()
-
-    for (let ambireTabId of ambireTabIds) {
-      sendMessage({
-        type: 'keepalive',
-        to: 'ambirePageContext',
-        toTabId: ambireTabId,
+    getAmbireTabIds()
+      .then(ambireTabIds => {
+        for (let ambireTabId of ambireTabIds) {
+          sendMessage({
+            type: 'keepalive',
+            to: 'ambirePageContext',
+            toTabId: ambireTabId,
+          })
+            .then((reply) => {
+              if (reply && reply.data && !foundAmbireTabId) {// handle replyu only if we dont have any AMBIRE_TAB yet
+                foundAmbireTabId = ambireTabId
+                return resolve(ambireTabId)
+              }
+            })
+            .catch(e => {
+              // tab not replying / query timeout
+              // we do not want to catch error on a specific tab timeout but neither throw
+            })
+        }
       })
-        .then((reply) => {
-          if (reply && reply.data && !foundAmbireTabId) {// handle replyu only if we dont have any AMBIRE_TAB yet
-            foundAmbireTabId = ambireTabId
-            return resolve(ambireTabId)
-          }
-        })
-        .catch(e => {
-          // tab not replying / query timeout
-          // we do not want to catch error on a specific tab timeout but neither throw
-        })
-    }
   })
 
   return Promise.race([timeoutPromise, replyPromise])
@@ -468,7 +468,6 @@ const sendMessageInternal = async (message) => {
           throw new Error(`Could not find ambire wallet on tab ${ambireTabId}. Is Ambire wallet open?`)
         }
       }
-
 
     } else if (!message.toTabId) {// if no toTabId specified, background does not know where to sent it
       if (VERBOSE) console.error(`${RELAYER_VERBOSE_TAG[RELAYER]} ambexMessenger[${RELAYER}] toTabId must be specified for worker communication`, message)
