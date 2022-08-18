@@ -348,3 +348,27 @@ Those contracts (except Ethereum-specific WALLET, xWALLET and SupplyController) 
 * Disable deposit option for Tesseract earn
 * Fixed: Allow to list more then 8 dapps in dapps connection bar
 * Fixed: Notification errors on Chrome browser on Android mobile
+
+
+### v0.5.8
+* Gas-Tank
+* Changed the address of the adx-supply-controller
+* New AdEx staking supply controller 
+* Password recovery alert on dashboard
+* Start using shared repo
+* Different visual for Production and Staging
+* Disabled deposit yearn/tesseract btn for polygon
+* Thank you page
+* Migrate const to shared repo
+* Migrate portfolio to shared repo
+* Migrate address, approveToken and requestToBundleTxn to shared repo
+* topUp gasTank with AAVE tokens
+* Added Guardarian as on-ramp and off-ramp provider
+* Improve token hiding functionality
+* Added Polygon and Avalanche as kriptomat supported chains
+* Allow XDAI on Ramp for Gnosis chain
+* Fix: Dapp scrollbar fix disconnect alignment
+* Fix: The send txn is not allowed if missing amount
+* Fix: Adx staking details
+* Fix: popping up the addresses modal when add new signer via Trezor
+* Fix: AAVE earn card
