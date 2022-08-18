@@ -12,10 +12,10 @@ import { popupCenter } from 'lib/popupHelper'
 import url from 'url'
 
 
-const GuardarianDepositProviderModal = ({ relayerURL, walletAddress, selectedNetwork, portfolio }) => {
+const GuardarianDepositProviderModal = ({ relayerURL, walletAddress, selectedNetwork, portfolio, initMode = 'buy' }) => {
     const { hideModal } = useModals()
     const { addToast } = useToasts()
-    const guardarian = useGuardarian({relayerURL, selectedNetwork, initMode: 'buy', tokens: portfolio.tokens, walletAddress, addToast })
+    const guardarian = useGuardarian({relayerURL, selectedNetwork, initMode, tokens: portfolio.tokens, walletAddress, addToast })
     const [sendTransactionLoading, setSendTransactionLoading] = useState(false)
 
     const getCurrentTokenFromBalance = useCallback(() => {

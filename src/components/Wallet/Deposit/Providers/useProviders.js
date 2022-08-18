@@ -121,15 +121,15 @@ const useProviders = ({ walletAddress, selectedNetwork, relayerURL, portfolio })
         setLoading(prevState => prevState.filter(n => n !== 'Kriptomat'))
     }
 
-    const openGuardarian = () => {
+    const openGuardarian = (initMode = 'buy') => {
         setLoading(prevState => ['Guardarian', ...prevState])
-        showModal(<GuardarianDepositProviderModal relayerURL={relayerURL} walletAddress={walletAddress} selectedNetwork={selectedNetwork} portfolio={portfolio}/>)
+        showModal(<GuardarianDepositProviderModal relayerURL={relayerURL} walletAddress={walletAddress} selectedNetwork={selectedNetwork} portfolio={portfolio} initMode={initMode}/>)
         setLoading(prevState => prevState.filter(n => n !== 'Guardarian'))
     }
 
-    const openMoonpay = async () => {
+    const openMoonpay = async (mode = 'buy') => {
         setLoading(prevState => ['MoonPay', ...prevState])
-        const moonpayResponse = await fetchGet(`${relayerURL}/moonpay/${walletAddress}`)
+        const moonpayResponse = await fetchGet(`${relayerURL}/moonpay/${walletAddress}/${mode}`)
         
         if (moonpayResponse.success && moonpayResponse.data && moonpayResponse.data.url) popupCenter({
             url: url.format(moonpayResponse.data.url),

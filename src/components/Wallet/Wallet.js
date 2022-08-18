@@ -71,6 +71,7 @@ export default function Wallet(props) {
         addRequest={props.addRequest}
         accounts={props.accounts}
         addressBook={props.addressBook}
+        relayerURL={props.relayerURL}
       />
     },
     {
