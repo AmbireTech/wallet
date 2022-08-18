@@ -154,7 +154,7 @@ export default function useAmbireExtension({
       data: {
         account: selectedAccount
       }
-    })
+    }, {ignoreReply: true})
 
     sendMessage({
       to: 'background',
@@ -162,7 +162,7 @@ export default function useAmbireExtension({
       data: {
         chainId: network.chainId
       }
-    })
+    }, {ignoreReply: true})
 
     verbose > 2 && console.log('listening to msgs')
 
@@ -187,13 +187,22 @@ export default function useAmbireExtension({
           account: selectedAccount,
           chainId: network.chainId
         }
-      })
+      }, {ignoreReply: true})
     })
 
     //Used on extension lifecycle reloading to check if previous ambire injected tabs are still up
     addMessageHandler({ type: 'keepalive' }, (message) => {
       sendReply(message, {
         type: 'keepalive_reply',//only case where reply with type required (for now)
+        data: {
+          account: selectedAccount,
+          chainId: network.chainId
+        }
+      })
+    })
+
+    addMessageHandler({ type: 'extension_getCoreAccountData' }, (message) => {
+      sendReply(message, {
         data: {
           account: selectedAccount,
           chainId: network.chainId
@@ -479,6 +488,10 @@ export default function useAmbireExtension({
     addToast
   ])
 
+  const portfolioRef = useRef(null)
+  portfolioRef.current = portfolio
+  const rewardsRef = useRef(null)
+  rewardsRef.current = rewardsData
 
   useEffect(() => {
 
@@ -491,29 +504,29 @@ export default function useAmbireExtension({
 
       //Used on extension lifecycle reloading to check if previous ambire injected tabs are still up
       addMessageHandler({ type: 'extension_getBalance' }, async (message) => {
-        if (portfolio.isCurrNetworkBalanceLoading) {
+        if (portfolioRef.current.isCurrNetworkBalanceLoading) {
           sendReply(message, {
             data: { loading: true }
           })
         } else {
           sendReply(message, {
             data: {
-              balance: portfolio.balance,
-              rewards: rewardsData
+              balance: portfolioRef.current.balance,
+              rewards: rewardsRef.current
             }
           })
         }
       })
 
       addMessageHandler({ type: 'extension_getAssets' }, (message) => {
-        if (portfolio.isCurrNetworkBalanceLoading) {
+        if (portfolioRef.current.isCurrNetworkBalanceLoading) {
           sendReply(message, {
             data: { loading: true }
           })
         } else {
           sendReply(message, {
             data: {
-              tokens: portfolio.tokens
+              tokens: portfolioRef.current.tokens
             }
           })
         }
@@ -525,7 +538,7 @@ export default function useAmbireExtension({
       removeMessageHandler({ type: 'extension_getAssets' })
     }
 
-  }, [portfolio, rewardsData, ambexSetupRefresh])
+  }, [ambexSetupRefresh])
 
   return {
     sendMessage,

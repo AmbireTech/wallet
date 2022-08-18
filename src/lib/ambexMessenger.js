@@ -4,7 +4,7 @@
 //Used to know for the current relayer to who to forward
 const PATH = ['pageContext', 'contentScript', 'background', 'ambireContentScript', 'ambirePageContext']
 
-const VERBOSE = parseInt(process.env.VERBOSE) || 4
+const VERBOSE = parseInt(process.env.VERBOSE) || 0
 
 //Explicitly tell the background worker which domains are ambire wallet domains when sending a message. In the forwarding middleware ( ambire -> dapp always OK, dapp -> ambire, only if permitted)
 const AMBIRE_DOMAINS = process.env.AMBIRE_WALLET_URLS ? process.env.AMBIRE_WALLET_URLS.split(' ').map(a => new URL(a).host) : []
@@ -16,7 +16,7 @@ let RELAYER
 export let HANDLERS = []
 
 //only for background worker, needs to know which tab is ambireWallet
-let AMBIRE_TABID
+// let AMBIRE_TABID
 
 //to be part of the JSON RPC generated ids when sendingMessage
 let MSGCOUNT = 0
@@ -32,6 +32,9 @@ let INIT_MSG_QUEUE = []
 
 //for background only, bool
 let BACKGROUND_INITIALIZED
+
+//TO KNOW IF IT IS FF
+let IS_FIREFOX = false
 
 //for verbosity in the console
 //Could create a log func to avoid repeating console logs with long concats
@@ -51,19 +54,25 @@ if (typeof chrome !== 'undefined') {
   chromeObject = chrome
 }
 
+//Only necessary from background
+let BROWSER_API
+
 /**
  * first function to be called from "processes" using the messaging protocol
  * @param relayer == whoami
  */
-export const setupAmbexMessenger = (relayer) => {
+export const setupAmbexMessenger = (relayer, browserAPI) => {
   RELAYER = relayer
-
+  BROWSER_API = browserAPI
   WINDOWLISTENER = (windowMessage) => handleMessage(windowMessage.data)
 
   //If relayer is background
   if (RELAYER === 'background') {
     //listener for contentScript sent messages
     chromeObject.runtime.onMessage.addListener((request, sender, sendResponse) => {
+
+      console.log(RELAYER + ' JUST GOT A REQUEST', request, sender)
+
       //if background worker not initialized, put received message in queue, unless it's a keepalive request reply from ambire wallet
       if (!BACKGROUND_INITIALIZED && !(request.isReply && request.to === 'background' && request.type === 'keepalive_reply')) {
         if (VERBOSE > 1) console.log(`${RELAYER_VERBOSE_TAG[RELAYER]} ambexMessenger[${RELAYER}] request added to init queue`, request)
@@ -79,8 +88,59 @@ export const setupAmbexMessenger = (relayer) => {
     //Higher API levels scripts, injected in each end page
   } else if (RELAYER === 'contentScript' || RELAYER === 'ambireContentScript') {
     //listening to messages coming from background worker
+
     chromeObject.runtime.onMessage.addListener((request, sender, sendResponse) => {
-      handleMessage(request)
+
+      // Security check + avoid double routing, disallow direct handling (eg: contentScript > ambireContentScript), because when CS is broadcasting, both background and other CS-like receive it
+      // TODO firefox
+      if (
+        sender.url === 'chrome-extension://' + sender.id + '/background.js'
+        || (// initially, it seems background sends msg without origin?!
+          !sender.url
+          && sender.origin === 'null'
+        )
+      ) {
+        handleMessage(request)
+        return
+      }
+
+      if (sender.url) {
+        const senderHost = new URL(sender.url).host
+        //console.log('AMBIRE DOMAINS', AMBIRE_DOMAINS, sender)
+        // Allow handling if sent by NOT ambirePageContext but all the rest
+        if (RELAYER === 'contentScript' && !AMBIRE_DOMAINS.find(d => senderHost === d)) {
+          handleMessage(request)
+          return
+        }
+
+        // Allow handling if sent by ambirePageContext
+        if (RELAYER === 'ambireContentScript' && AMBIRE_DOMAINS.find(d => senderHost === d)) {
+          handleMessage(request)
+          return
+        }
+      }
+
+
+      // possible extanally mutable props check > should probably deprecate?
+      /*if (RELAYER === 'contentScript') {
+        if (request.forwarders) {
+          // We allow messages coming only from pageContext or background
+          if (['pageContext', 'background'].indexOf(request.forwarders.slice(-1)[0]) === -1) {
+            console.log('forwarders', request.forwarders)
+            if (VERBOSE > 3) console.log(`${RELAYER_VERBOSE_TAG[RELAYER]} ambexMessenger[${RELAYER}] Ignore direct route ${request.forwarders.slice(-1, 1)[0]} > ${RELAYER}`)
+            return
+          }
+        }
+      }*/
+
+      /*if (RELAYER === 'ambireContentScript') {
+        if (request.forwarders) {
+          // We allow messages coming only from pageContext or background
+          if (['ambirePageContext', 'background'].indexOf(request.forwarders.slice(-1)[0]) === -1) {
+            if (VERBOSE > 3) console.log(`${RELAYER_VERBOSE_TAG[RELAYER]} ambexMessenger[${RELAYER}] Ignore direct route ${request.forwarders.slice(-1, 1)[0]} > ${RELAYER}`)
+          }
+        }
+      }*/
     })
 
     if (VERBOSE > 2) console.log(`${RELAYER_VERBOSE_TAG[RELAYER]} ambexMessenger[${RELAYER}] Add EVENT LISTENER`)
@@ -93,25 +153,64 @@ export const setupAmbexMessenger = (relayer) => {
   }
 }
 
+const isCorrectForwardingPath = (relayer, source, destination, forwarders = []) => {
+  if (PATH.indexOf(source) === -1) {
+    console.log('PathCheck: Unknown source', source)
+    return false
+  }
+
+  if (PATH.indexOf(destination) === -1) {
+    console.log('PathCheck: Unknown destination', destination)
+    return false
+  }
+
+  if (PATH.indexOf(relayer) === -1) {
+    console.log('PathCheck: Unknown relayer', relayer)
+    return false
+  }
+
+  const relayerIndex = PATH.indexOf(relayer)
+  const destinationIndex = PATH.indexOf(destination)
+  const start = (!!forwarders.length && forwarders.slice(-1)[0]) || source
+  const startIndex = PATH.indexOf(start)
+
+  const direction = destinationIndex - startIndex > 0 ? 1 : -1
+
+  if (direction === 1) {
+    if (relayerIndex < startIndex || relayerIndex > destinationIndex) {
+      return false
+    }
+  } else {
+    if (relayerIndex < destinationIndex || relayerIndex > startIndex) {
+      return false
+    }
+  }
+  return true
+}
+
+
 const handleMessage = function (message, sender = null) {
   if (!RELAYER) debugger;
+  if (message.source?.startsWith('react')) {
+    return
+  }
+
   if (VERBOSE > 1) console.log(`${RELAYER_VERBOSE_TAG[RELAYER]} ambexMessenger[${RELAYER}] Handling message`, message)
+
+  if (IS_FIREFOX) {
+    if (!sender.origin) sender.origin = sender.url
+  }
 
   //if I am the final message destination
   if (message.to === RELAYER) {
 
-    //SPECIAL CASE, msg sent from ambire wallet to inform about it's tabId to background when ambire contentScript is injected
-    if (RELAYER === 'background' && message.type === 'setAmbireTabId') {
-      AMBIRE_TABID = sender.tab.id
-      if (VERBOSE > 1) console.log(`${RELAYER_VERBOSE_TAG[RELAYER]} ambexMessenger[${RELAYER}] AMBIRE TAB ID set to  ${sender.tab.id}`, message)
-      return
-    }
-
     //setting tabId origin (normal pages or extension pages/popups)
     if (RELAYER === 'background') {
-      if (sender.tab) {
+      if (IS_FIREFOX && sender.tab && sender.tab.url === 'about:addons') {
+        message.fromTabId = 'extension'
+      } else if (sender.tab) {
         message.fromTabId = sender.tab.id
-      } else if (sender.origin.startsWith('chrome-extension')) {
+      } else if (sender.origin.startsWith('chrome-extension') || sender.origin.startsWith('moz-extension')) {
         message.fromTabId = 'extension'
       }
     }
@@ -133,43 +232,58 @@ const handleMessage = function (message, sender = null) {
       if (VERBOSE > 2) console.debug(`${RELAYER_VERBOSE_TAG[RELAYER]} ambexMessenger[${RELAYER}] Handler #${handlerIndex} found`)
       HANDLERS[handlerIndex].callback(message, message.error)
     } else {
-      if (VERBOSE > 2) console.log(`${RELAYER_VERBOSE_TAG[RELAYER]} ambexMessenger[${RELAYER}] nothing to handle the message`, message)
+      if (message.isReply) {
+        if (VERBOSE > 2) console.log(`${RELAYER_VERBOSE_TAG[RELAYER]} ambexMessenger[${RELAYER}] nothing to handle the reply. Probably a extention broadcast dupe and already process`, message)
+      } else {
+        if (VERBOSE > 2) console.log(`${RELAYER_VERBOSE_TAG[RELAYER]} ambexMessenger[${RELAYER}] nothing to handle the message`, message)
+      }
     }
   } else if (message.to) { //if message not for me, but has a destination, act as a forwarder
+
+    if (!isCorrectForwardingPath(RELAYER, message.from, message.to, message.forwarders)) {
+      if (VERBOSE > 1) console.log(`${RELAYER_VERBOSE_TAG[RELAYER]} ambexMessenger[${RELAYER}] incorrect path. dropping...`, message)
+      return
+    }
 
     //check if I have permission to forward @param message from this @param sender
     checkForwardPermission(message, sender, (granted) => {
 
+      // WEIRD BEHAVIOR ON FIREFOX, probably shared memory for variable message. Would exit thread when message is modified. Fixed with passing it through messageToForward
+      const messageToForward = JSON.parse(JSON.stringify(message))
+
       //Background is the gate letting pass messages or not
       if (RELAYER === 'background') {
         if (sender.tab) {
-          message.fromTabId = sender.tab.id
-        } else if (sender.origin.startsWith('chrome-extension')) {
-          message.fromTabId = 'extension'
+          messageToForward.fromTabId = sender.tab.id
+        } else if (sender.origin.startsWith('chrome-extension') || sender.origin.startsWith('moz-extension')) {
+          messageToForward.fromTabId = 'extension'
         }
       }
 
       //if permission granted
       if (granted) {
         //init previous forwarders if not existing (should I name it previousForwarders instead of forwarders?)
-        if (!message.forwarders) {
-          message.forwarders = []
+        if (!messageToForward.forwarders) {
+          messageToForward.forwarders = []
         }
 
         //If I already forwarded the message
-        if (message.forwarders.indexOf(RELAYER) !== -1) {
-          if (VERBOSE > 1) console.log(`${RELAYER_VERBOSE_TAG[RELAYER]} ambexMessenger[${RELAYER}] : Already forwarded message. Ignoring`, message)
-        } else if (message.from !== RELAYER) { //If I did not forward this message and this message is NOT from me
-          if (VERBOSE > 0) console.log(`${RELAYER_VERBOSE_TAG[RELAYER]} ambexMessenger[${RELAYER}] : Forwarding message`, message)
-          message.forwarders.push(RELAYER)
-          sendMessageInternal(message).catch(err => {
-            sendReply(message, {error: err.message})
+        if (messageToForward.forwarders.indexOf(RELAYER) !== -1) {
+          if (VERBOSE > 1) console.log(`${RELAYER_VERBOSE_TAG[RELAYER]} ambexMessenger[${RELAYER}] : Already forwarded message. Ignoring`, messageToForward)
+          // Ignore self message
+        } else if (RELAYER === message.from) {
+          if (VERBOSE > 1) console.log(`${RELAYER_VERBOSE_TAG[RELAYER]} ambexMessenger[${RELAYER}] : Ignoring self message`, messageToForward)
+        } else if (messageToForward.from !== RELAYER) { //If I did not forward this message and this message is NOT from me + edge case for extension pages catching it...
+          if (VERBOSE > 0) console.log(`${RELAYER_VERBOSE_TAG[RELAYER]} ambexMessenger[${RELAYER}] : Forwarding message`, messageToForward)
+          messageToForward.forwarders.push(RELAYER)
+          sendMessageInternal(messageToForward).catch(err => {
+            sendReply(messageToForward, {error: err.message})
           })
         } else {
-          if (VERBOSE > 1) console.log(`${RELAYER_VERBOSE_TAG[RELAYER]} ambexMessenger[${RELAYER}] : Ignoring self message`, message)
+          if (VERBOSE > 1) console.warn(`${RELAYER_VERBOSE_TAG[RELAYER]} ambexMessenger[${RELAYER}] : Unexpected case:`, messageToForward)
         }
       } else {
-        sendReply(message, {error: 'permissions not granted'})
+        sendReply(messageToForward, {error: 'permissions not granted'})
       }
     })
   } else {
@@ -198,37 +312,31 @@ const checkForwardPermission = (message, sender, callback) => {
 
       //if sender is ambire whitelisted domains, always grant
       if (AMBIRE_DOMAINS.indexOf(new URL(url).host) !== -1) {
-        callback(true)
-      } else {//probably spoof
+        callback(true, message)
+      } else {// probably spoof
         if (VERBOSE) console.warn(`${RELAYER_VERBOSE_TAG[RELAYER]} ambexMessenger[${RELAYER}] : sending message to dApp not from trusted source`, {
           url,
           AMBIRE_DOMAINS
         })
-        callback(false)
+        callback(false, message)
       }
-    } else if (message.from === 'contentScript' && message.to === 'contentScript') {//from/to contentScript/extension page, always forward
-      callback(true)
+      //TODO VERIFY
+    } else if (
+      (message.from === 'contentScript' && message.to === 'contentScript')
+      || (message.from === 'contentScript' && message.to === 'ambirePageContext')
+    ) {//from/to contentScript/extension page, always forward
+      callback(true, message)
     } else { // from dapp pageContext, go through the middleware that checks if domain is permitted
       PERMISSION_MIDDLEWARE(message, sender, callback)
     }
   } else { // if I am not background, always relay
-    callback(true)
+    callback(true, message)
   }
 }
 
 // called in background worker
 export const setPermissionMiddleware = (callback) => {
   PERMISSION_MIDDLEWARE = callback
-}
-
-//called by background
-export const initAmbireTabId = (tabId) => {
-  if (!AMBIRE_TABID) {
-    if (VERBOSE > 1) console.log('ambire tab initiated to ' + tabId)
-    AMBIRE_TABID = tabId * 1
-  } else {
-    if (VERBOSE > 1) console.log('ambire tab already set')
-  }
 }
 
 //called by background processing the pending queue potentially filled before background worker initialisation, then clear it
@@ -241,19 +349,6 @@ export const processBackgroundQueue = () => {
   INIT_MSG_QUEUE = []
 }
 
-//called by ambireContentScript, to inform background about where the wallet page is
-export const setAmbireTabId = () => {
-  console.log('AMBEX MESSENGER.... SET AMBIRE TAB ID....')
-  if (RELAYER === 'ambireContentScript') {
-    sendMessageInternal({
-      to: 'background',
-      type: 'setAmbireTabId'
-    })
-  } else {
-    throw new Error('only possible from ambireContentScript')
-  }
-}
-
 //removing listeners and handlers, only for ambirePageContext / hooks reloading stuff
 export const clear = function () {
   //ONLY FOR REACT AMBIRE WALLET
@@ -264,51 +359,131 @@ export const clear = function () {
   }
 }
 
-//updating and sending message, not exposed
+//TODO where to refactor for no dupes?
+const getAmbireTabIds = async () => {
+  return new Promise((resolve) => {
+    BROWSER_API.tabs.query({}, tabs => {
+      resolve(tabs.filter(t => AMBIRE_DOMAINS.indexOf(new URL(t.url).host) !== -1)
+        .map(t => t.id))
+    })
+  })
+}
+
+
+// used from background only, to know where to route the calls
+const getActiveTabId = async () => {
+  let foundAmbireTabId = null
+
+  const timeoutPromise = new Promise(resolve => {
+    setTimeout(() => {
+      if (!foundAmbireTabId) {
+        console.warn('getActiveTabId: no replies from ambire tabs')
+      }
+      return resolve(foundAmbireTabId)
+    }, 400)
+  })
+
+  const replyPromise = new Promise(async resolve => {
+    //looping all the known ambire tab injections and ping them
+    const ambireTabIds = await getAmbireTabIds()
+
+    for (let ambireTabId of ambireTabIds) {
+      sendMessage({
+        type: 'keepalive',
+        to: 'ambirePageContext',
+        toTabId: ambireTabId,
+      })
+        .then((reply) => {
+          if (reply && reply.data && !foundAmbireTabId) {// handle replyu only if we dont have any AMBIRE_TAB yet
+            foundAmbireTabId = ambireTabId
+            return resolve(ambireTabId)
+          }
+        })
+        .catch(e => {
+          // tab not replying / query timeout
+          // we do not want to catch error on a specific tab timeout but neither throw
+        })
+    }
+  })
+
+  return Promise.race([timeoutPromise, replyPromise])
+}
+
+
+// Updating and sending message, not exposed
 const sendMessageInternal = async (message) => {
   message.sender = RELAYER
   if (VERBOSE > 1) console.log(`${RELAYER_VERBOSE_TAG[RELAYER]} ambexMessenger[${RELAYER}] try sendMessageInternal`, message)
-  //If I am background worker
+  // If I am background worker
   if (RELAYER === 'background') {
 
-    //If destination is for wallet
+    // If destination is for wallet
     if (['ambireContentScript', 'ambirePageContext'].indexOf(message.to) !== -1) {
 
-      let ambireTabId = AMBIRE_TABID
-      //if ambireTabId does not exist yet, and the message comes fronm background with a specified toTabId, we override it
-      if (!ambireTabId && message.from === 'background' && message.toTabId) {
-        ambireTabId = message.toTabId * 1//I don't remember exactly why but int required by chrome api, however toTabId is a str(I think because it's the key of AMBIRE_TAB_INJECTIONS in background so has to be converted at some point
-      }
+      // send msg to all ambire wallets tabs
+      //TODO check if dapp cant mess with that?
+      if (message.walletBroadcast) {
 
-      //if null or NaN
-      if (!ambireTabId) {
-        throw new Error(`Ambire TabID is not SET. Is Ambire wallet open?`)
-      }
+        const ambireTabIds = await getAmbireTabIds()
 
-      //send message to ambire pageContext tab, if found
-      const sent = await new Promise((resolve, reject) => {
-        chromeObject.tabs.get(ambireTabId, tab => {
-          if (tab) {
-            chromeObject.tabs.sendMessage(ambireTabId, message)
-            resolve(true)
-          } else {
-            resolve(false)
-          }
+        ambireTabIds.forEach(ambireTabId => {
+          chromeObject.tabs.get(ambireTabId, tab => {
+            if (tab) {
+              if (VERBOSE) console.log(`${RELAYER_VERBOSE_TAG[RELAYER]} ambexMessenger[${RELAYER}] broadcasting message as BG -> ACS/APC(${message.to}):`, message)
+              chromeObject.tabs.sendMessage(ambireTabId, message)
+            }
+          })
         })
-      })
 
-      if (!sent) {
-        throw new Error(`Could not find ambire wallet on tab ${ambireTabId}. Is Ambire wallet open?`)
+        //when broadcasting events, ignoring replies
+      } else {
+
+        let ambireTabId = null
+        if (!message.toTabId) {
+          ambireTabId = await getActiveTabId()
+        } else if (message.from === 'background') {
+          // if ambireTabId does not exist yet, and the message comes from background with a specified toTabId, we override it
+          //TODO check if we can simplify that
+          ambireTabId = message.toTabId
+        }
+
+        if (!ambireTabId) {
+          throw new Error(`Ambire TabID is not SET. Is Ambire wallet open?`)
+        }
+
+        //send message to ambire pageContext tab, if found
+        const sent = await new Promise((resolve, reject) => {
+          chromeObject.tabs.get(ambireTabId, tab => {
+            if (tab) {
+              if (VERBOSE) console.log(`${RELAYER_VERBOSE_TAG[RELAYER]} ambexMessenger[${RELAYER}] sending message as BG -> ACS/APC(${message.to}):`, message)
+              chromeObject.tabs.sendMessage(ambireTabId, message)
+              resolve(true)
+            } else {
+              resolve(false)
+            }
+          })
+        })
+
+        if (!sent) {
+          throw new Error(`Could not find ambire wallet on tab ${ambireTabId}. Is Ambire wallet open?`)
+        }
       }
+
 
     } else if (!message.toTabId) {// if no toTabId specified, background does not know where to sent it
       if (VERBOSE) console.error(`${RELAYER_VERBOSE_TAG[RELAYER]} ambexMessenger[${RELAYER}] toTabId must be specified for worker communication`, message)
       return false
     } else {
+      console.log('SENDING TO TABID', message.toTabId)
       // extension pages have no tabId but 'extension' is specified in the msg
       if (message.toTabId === 'extension') {
+        if (VERBOSE) console.log(`${RELAYER_VERBOSE_TAG[RELAYER]} ambexMessenger[${RELAYER}] sending message as BG -> EXT(${message.to}):`, message)
         chromeObject.runtime.sendMessage(message)
       } else {// for specific contentScript tabs
+        // TODO if fromTabId url is extension > replace fromTabId with 'extension' for replies ?
+        //  But what about isolated extension pages?
+        if (VERBOSE) console.log(`${RELAYER_VERBOSE_TAG[RELAYER]} ambexMessenger[${RELAYER}] sending message as BG -> ${message.to}:`, message)
+        chromeObject.runtime.sendMessage(message)
         chromeObject.tabs.sendMessage(message.toTabId, message)
       }
     }
@@ -320,16 +495,25 @@ const sendMessageInternal = async (message) => {
     const forwardPath = path.slice(pathIndex + 1, path.length)
 
     if (forwardPath.indexOf(message.to) !== -1) {//if next relayers are BG, ACS, APC
-      if (VERBOSE) console.log(`${RELAYER_VERBOSE_TAG[RELAYER]} ambexMessenger[${RELAYER}] sending message as CS -> BG:`)
+      if (VERBOSE) console.log(`${RELAYER_VERBOSE_TAG[RELAYER]} ambexMessenger[${RELAYER}] sending message as CS -> BG:`, message)
       chromeObject.runtime.sendMessage(message)
     } else if (message.to === 'contentScript') {//other extension pages
-      if (VERBOSE) console.log(`${RELAYER_VERBOSE_TAG[RELAYER]} ambexMessenger[${RELAYER}] sending message as CS -> CS:`)
+      if (VERBOSE) console.log(`${RELAYER_VERBOSE_TAG[RELAYER]} ambexMessenger[${RELAYER}] sending message as CS -> CS:`, message)
       chromeObject.runtime.sendMessage(message)
     } else {//passing down to pageContext
-      if (VERBOSE) console.log(`${RELAYER_VERBOSE_TAG[RELAYER]} ambexMessenger[${RELAYER}] sending message CS -> PC:`)
+      if (VERBOSE) console.log(`${RELAYER_VERBOSE_TAG[RELAYER]} ambexMessenger[${RELAYER}] sending message CS -> PC:`, message)
       window.postMessage(message)
     }
   } else if (RELAYER === 'pageContext' || RELAYER === 'ambirePageContext') {
+
+    if (VERBOSE) {
+      if (RELAYER === 'pageContext') {
+        console.log(`${RELAYER_VERBOSE_TAG[RELAYER]} ambexMessenger[${RELAYER}] sending message PC -> CS:`, message)
+      } else if (RELAYER === 'ambirePageContext') {
+        console.log(`${RELAYER_VERBOSE_TAG[RELAYER]} ambexMessenger[${RELAYER}] sending message APC -> ACS:`, message)
+      }
+    }
+
     //passing up to contentScripts
     window.postMessage(message)
   }
@@ -341,64 +525,74 @@ const sendMessageInternal = async (message) => {
  * @param callback optional reply callback
  * @param options for now only replyTimeout
  */
-export const sendMessage = (message, callback, options = {}) => new Promise((resolve, reject) => {
+//TODO use .then instead of callback
+export const sendMessage = (message, options = {}) => {
 
-    options = {
-      replyTimeout: 5000,
-      ...options
-    }
+  options = {
+    replyTimeout: 5000,
+    ignoreReply: false,
+    ...options
+  }
 
-    //incrementing global var of sender to compose msg id
-    MSGCOUNT++
+  //incrementing global var of sender to compose msg id
+  MSGCOUNT++
 
-    message.id = `${RELAYER}_${MSGCOUNT}_${Math.random()}`
-    message.from = RELAYER
+  message.id = `${RELAYER}_${MSGCOUNT}_${Math.random()}`
+  message.from = RELAYER
 
-    const handlerFilter = {
-      id: message.id,
-      isReply: true
-    }
+  const handlerFilter = {
+    id: message.id,
+    isReply: true
+  }
 
-    //handler when reply is requested and none is given
-    const timeoutHandler = setTimeout(() => {
-      removeMessageHandler(handlerFilter)
-      reject(new Error(`Timeout: no reply for message`))
-      if (VERBOSE > 2) console.log(`${RELAYER_VERBOSE_TAG[RELAYER]} ambexBMLMessenger[${RELAYER}] timeout : ${JSON.stringify(message)}`)
+  let resolved = false
+
+  const timeoutPromise = !options.ignoreReply ? new Promise((resolve, reject) => {
+    setTimeout(() => {
+      if (!resolved) {
+        removeMessageHandler(handlerFilter)
+        reject(new Error(`Timeout: no reply for message` + JSON.stringify(message)))
+        if (VERBOSE > 2) console.log(`${RELAYER_VERBOSE_TAG[RELAYER]} ambexMessenger[${RELAYER}] timeout : ${JSON.stringify(message)}`)
+      }
     }, options.replyTimeout)
+  }) : null
 
-    if (callback) {
-      //add a handler for the reply if there is a callback specified
-      addMessageHandler({
-        id: message.id,
-        isReply: true
-      }, (reply, error) => {
+  const resultPromise = new Promise((resolve, reject) => {
+    //add a handler for the reply if there is a callback specified
+    if (!options.ignoreReply) {
+      addMessageHandler(handlerFilter, (reply, error) => { // error coming from HANDLERS[handlerIndex].callback(message, message.error)
+        resolved = true
         if (VERBOSE > 2) console.log(`${RELAYER_VERBOSE_TAG[RELAYER]} ambexMessenger[${RELAYER}] clearing timeout listener`, message)
-        clearTimeout(timeoutHandler)
+        // clearTimeout(timeoutHandler)
         removeMessageHandler(handlerFilter)
         if (error) {
-          return reject(error)
+          return reject(new Error(error))
         }
         resolve(reply)
-        callback(reply)
       })
     }
 
-    if (VERBOSE) console.log(`${RELAYER_VERBOSE_TAG[RELAYER]} ambexMessenger[${RELAYER}] sendMessage ${callback ? '' : '[no reply requested]'}`, message)
-
     sendMessageInternal(message)
+      .then(() => {
+        if (options.ignoreReply) {
+          resolve(true)
+        }
+      })
       .catch(err => {
+        resolved = true
         console.log('sendMsgInternal err', err)
-        clearTimeout(timeoutHandler)
-        removeMessageHandler(handlerFilter)
-        reject(err.message)
+        if (!options.ignoreReply) {
+          removeMessageHandler(handlerFilter)
+        }
+        reject(err)
       })
-      .then(res => {
-        if (!callback) {
-          resolve(null)
-        }//else : resolved in the handler above
-      })
-  }
-)
+  })
+
+  if (VERBOSE) console.log(`${RELAYER_VERBOSE_TAG[RELAYER]} ambexMessenger[${RELAYER}] sendMessage}`, message)
+
+  if (options.ignoreReply) return resultPromise
+  return Promise.race([timeoutPromise, resultPromise])
+}
 
 /**
  * reply to request, meant to be used by sendMessage processes callbacks
@@ -439,15 +633,23 @@ export const sendAck = (fromMessage) => {
 
 export const removeMessageHandler = (filter) => {
   const handlerIndex = HANDLERS.findIndex(h =>
-    //REPLIES
-    (h.requestFilter.isReply && (filter.isReply && h.requestFilter.id === filter.id))
-    //CALLS
-    || (
-      !h.requestFilter.isReply
-      && h.requestFilter.type === filter.type
-      && (!h.requestFilter.from || h.requestFilter.from === filter.from)
-      && (!h.requestFilter.to || h.requestFilter.to === filter.to)
-    ))
+    (
+      (
+        //REPLIES
+        (h.requestFilter.isReply && (filter.isReply && h.requestFilter.id === filter.id))
+        //CALLS
+        || (
+          !h.requestFilter.isReply
+          && h.requestFilter.type === filter.type
+          && (!h.requestFilter.from || h.requestFilter.from === filter.from)
+          && (!h.requestFilter.to || h.requestFilter.to === filter.to)
+        )
+      )
+      && (!filter.context || filter.context === h.requestFilter.context)
+    )
+  )
+
+  if (VERBOSE > 2) console.debug(`${RELAYER_VERBOSE_TAG[RELAYER]} ambexMessenger[${RELAYER}] remove handler of`, JSON.parse(JSON.stringify(HANDLERS)), filter)
 
   if (handlerIndex !== -1) {
     HANDLERS.splice(handlerIndex, 1)
@@ -463,7 +665,7 @@ export const addMessageHandler = (filter, callback) => {
     requestFilter: {...filter, isFilter: true},
     callback: callback
   })
-  if (VERBOSE > 2) console.debug(`${RELAYER_VERBOSE_TAG[RELAYER]} ambexMessenger[${RELAYER}] handler added`, HANDLERS)
+  if (VERBOSE > 2) console.debug(`${RELAYER_VERBOSE_TAG[RELAYER]} ambexMessenger[${RELAYER}] handler added`, JSON.parse(JSON.stringify(HANDLERS)))
 }
 
 //rpc error helper
@@ -474,5 +676,9 @@ export const makeRPCError = (requestPayload, error, errorCode = -1) => {
     error: {code: errorCode, message: error},
     jsonrpc: requestPayload.jsonrpc
   }
+}
+
+export const setIsFirefox = (isFF) => {
+  IS_FIREFOX = isFF
 }
 

@@ -22,7 +22,7 @@ export default function useAmbireExtensionEventsBroadcaster({
           balance: portfolio.balance,
           rewards: rewardsData
         }
-      })
+      }, {ignoreReply: true})
     }
   }, [portfolio.isCurrNetworkBalanceLoading, rewardsData.isLoading, sendMessage])
 
@@ -36,7 +36,7 @@ export default function useAmbireExtensionEventsBroadcaster({
         data: {
           tokens: portfolio.tokens
         }
-      })
+      }, {ignoreReply: true})
     }
   }, [portfolio.isCurrNetworkBalanceLoading, sendMessage])
 
@@ -48,13 +48,13 @@ export default function useAmbireExtensionEventsBroadcaster({
       data: {
         pending: hasPendingSignature,
       }
-    })
+    }, {ignoreReply: true})
 
     if (hasPendingSignature) {
       sendMessage({
         type: 'ambireTabFocus',
         to: 'background',
-      })
+      }, {ignoreReply: true})
     }
 
   }, [hasPendingSignature, sendMessage])
@@ -67,13 +67,13 @@ export default function useAmbireExtensionEventsBroadcaster({
       data: {
         pending: hasPendingTransactions,
       }
-    })
+    }, {ignoreReply: true})
 
     if (hasPendingTransactions) {
       sendMessage({
         type: 'ambireTabFocus',
         to: 'background',
-      })
+      }, {ignoreReply: true})
     }
 
   }, [hasPendingTransactions, sendMessage])
