@@ -2,7 +2,7 @@ import "./TopBar.scss";
 
 import React, { useState, useMemo } from "react";
 import { NavLink, useRouteMatch } from "react-router-dom";
-import { MdOutlineArrowForward, MdOutlineClose, MdOutlineMenu, MdRemoveRedEye, MdVisibilityOff, MdMenu, MdExitToApp } from "react-icons/md";
+import { MdOutlineArrowForward, MdOutlineClose, MdOutlineMenu, MdRemoveRedEye, MdVisibilityOff, MdMenu, MdExitToApp, MdInfo } from "react-icons/md";
 import Accounts from "./Accounts/Accounts";
 import Networks from "./Networks/Networks";
 import { networkIconsById } from "consts/networks";
@@ -75,8 +75,16 @@ const TopBar = ({
               ></Button>
             </ToolTip>
             <div className='dapp-data'>
+              <ToolTip label={`Connected with ${currentDappData?.connectionType} - find out more in our blog`}>
+                {/* TODO: update the blogpost link */}
+                <a className="info-btn" href={'https://blog.ambire.com/connect-to-any-dapp-with-ambire-wallet-and-walletconnect-c1bc096a531e'} 
+                  target="_blank"
+                  rel="noreferrer noopener">
+                  <MdInfo size={23} />
+                </a>
+              </ToolTip>
               <ToolTip label={`Connected to ${currentDappData?.name} with Ambire Wallet`}>
-                <a href={currentDappData?.providedBy?.url || currentDappData?.url } 
+                <a href={currentDappData?.providedBy?.url || currentDappData?.url} 
                   target="_blank"
                   rel="noreferrer noopener">
                   <img className='dapp-logo' src={currentDappData?.iconUrl || DAPPS_ICON} alt={currentDappData?.name}/>

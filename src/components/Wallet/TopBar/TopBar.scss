@@ -59,7 +59,15 @@
                 height: 100%;
                 display: flex;
                 flex-direction: row;
+                align-items: center;
                 gap: 4px;
+                a {
+                    height: 100%;
+                    display: flex;
+                    flex-direction: row;
+                    align-items: center;
+                    color: $secondary-accent-color;
+                }
                 .dapp-logo {     
                     padding: 4px;
                     width: auto;
