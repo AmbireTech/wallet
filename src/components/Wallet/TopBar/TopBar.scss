@@ -169,15 +169,15 @@
         gap: 1em;
         flex-wrap: wrap;
         max-width: $max-container-width;
-        background-color: $background-color;
+        // background-color: $background-color;
     }
 
     &.dapp-mode {
-        padding-left: 120px;
         padding: ($layout-spacing / 4) $layout-spacing;
         height: $topbar-dapp-mode-height;
         align-items: flex-start;
         .container {
+            padding-left: 120px;
             >button, >svg, >div, .select-input {
                 max-height: 40px;
 

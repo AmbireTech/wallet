@@ -56,11 +56,14 @@
     }
 }
 
-// @media screen and (max-width: 1400px) {
-//     #wallet-container {
-//         left: $sidebar-desktop-small-width !important;
-//     }
-// }
+@media screen and (max-width: 1400px) {
+    #wallet-container {
+        left: $sidebar-desktop-small-width !important;
+        &.dapp-mode {
+            left: 0px !important;
+        }
+    }
+}
 
 // Mobile
 @media screen and (max-width: $mobile-breakpoint-max-width) {
