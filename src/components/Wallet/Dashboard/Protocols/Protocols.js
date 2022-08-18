@@ -131,7 +131,7 @@ const Protocols = ({ portfolio, network, account, hidePrivateValue, userSorting,
                 />
             )
         }
-    }, [portfolio, isHideTokenModalOpen, showModal])
+    }, [portfolio, isHideTokenModalOpen, showModal, account, network, sortType, userSorting])
 
     return (
         <div id="protocols-table">
