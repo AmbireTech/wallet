@@ -20,7 +20,7 @@ const SideBar = ({ match, portfolio, hidePrivateValue, relayerURL, selectedNetwo
   const { isDappMode, sideBarOpen, toggleSideBarOpen } = dappsCatalog
   const routeMatch = useRouteMatch('/wallet/dapps')
 
-  const dapModeSidebar = useMemo(() => isDappMode && routeMatch, [isDappMode, routeMatch])
+  const dappModeSidebar = useMemo(() => isDappMode && routeMatch, [isDappMode, routeMatch])
 
     const resizeBalance = useCallback(() => {
         const balanceFontSizes = {
@@ -39,10 +39,10 @@ const SideBar = ({ match, portfolio, hidePrivateValue, relayerURL, selectedNetwo
     useEffect(() => resizeBalance(), [resizeBalance])
 
   return (
-    <div id="sidebar" className={(dapModeSidebar ? 'dapp-mode' : '') + (sideBarOpen ? ' open' : '') } ref={sidebarRef}>
+    <div id="sidebar" className={(dappModeSidebar ? 'dapp-mode' : '') + (sideBarOpen ? ' open' : '') } ref={sidebarRef}>
       {/* NOTE: click outside not working because of the iframe - ths is simpler than adding event listeners to the dapps ifeame  */}
-      {dapModeSidebar && sideBarOpen && <div className='outside-handler' onClick={() => toggleSideBarOpen()}></div> }
-      {dapModeSidebar &&
+      {dappModeSidebar && sideBarOpen && <div className='outside-handler' onClick={() => toggleSideBarOpen()}></div> }
+      {dappModeSidebar &&
       <div className='ambire-logo'>
         <div className="logo" />
         <div className="icon" />

@@ -37,7 +37,7 @@ const TopBar = ({
 
   const { isDappMode, toggleSideBarOpen, currentDappData, loadCurrentDappData } = dappsCatalog
 
-  const dapModeTopBar = useMemo(() => isDappMode && routeMatch && currentDappData, [currentDappData, isDappMode, routeMatch])
+  const dappModeTopBar = useMemo(() => isDappMode && routeMatch && currentDappData, [currentDappData, isDappMode, routeMatch])
 
   const account = accounts.find(({ id }) => id === selectedAcc)
   const accountIcon = blockies.create({ seed: account ? account.id : null }).toDataURL()
@@ -49,7 +49,7 @@ const TopBar = ({
       ) ? 'staging' : null
 
     return (
-    <div id="topbar" className={ visualEnv ? ('visual-env visual-env-' + visualEnv ) : ''}>
+    <div id="topbar" className={( visualEnv ? ('visual-env visual-env-' + visualEnv ) : '') + (dappModeTopBar ? ' dapp-mode' : '') }>
       {
         visualEnv &&
           <div className='env-bar' >
@@ -66,7 +66,7 @@ const TopBar = ({
         </div>
       </div>
 
-      {dapModeTopBar ?
+      {dappModeTopBar ?
         <div className='dapp-menu'>
           <div className='dapp-menu-btns'>
             <ToolTip label='Open Ambire Wallet menu'>
@@ -111,7 +111,7 @@ const TopBar = ({
         <DApps connections={connections} connect={connect} disconnect={disconnect} isWcConnecting={isWcConnecting}/>
         <Accounts accounts={accounts} selectedAddress={selectedAcc} onSelectAcc={onSelectAcc} onRemoveAccount={onRemoveAccount} hidePrivateValue={hidePrivateValue}  userSorting={userSorting} setUserSorting={setUserSorting}/>        
         <Networks setNetwork={setNetwork} network={network} allNetworks={allNetworks}  userSorting={userSorting}
-        setUserSorting={setUserSorting} dappsCatalog={dappsCatalog} dapModeTopBar={dapModeTopBar}/>
+        setUserSorting={setUserSorting} dappsCatalog={dappsCatalog} dapModeTopBar={dappModeTopBar}/>
         <Links/>
       </div>
     </div>
