@@ -24,6 +24,7 @@
         left: 0;
         padding: $layout-spacing / 4;
         padding-top: $layout-spacing / 2;
+        top: $topbar-dapp-mode-height;
     }
 
     #wallet-container-inner {
@@ -74,6 +75,7 @@
 
         &.dapp-mode {
             bottom: 0  !important;
+            top: $topbar-mobile-dapp-mode-height;
         }
     }
 }
