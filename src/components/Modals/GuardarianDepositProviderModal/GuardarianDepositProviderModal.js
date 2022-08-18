@@ -1,7 +1,7 @@
 import './GuardarianDepositProviderModal.scss'
 
 import { Button, Loading, Modal, TextInput, Select } from 'components/common'
-import { useState, useMemo } from 'react'
+import {useState, useMemo, useCallback} from 'react'
 import { MdOutlineClose } from 'react-icons/md'
 import useGuardarian from './useGuardarian'
 import { useModals } from 'hooks'
@@ -17,6 +17,15 @@ const GuardarianDepositProviderModal = ({ relayerURL, walletAddress, selectedNet
     const { addToast } = useToasts()
     const guardarian = useGuardarian({relayerURL, selectedNetwork, initMode: 'buy', tokens: portfolio.tokens, walletAddress, addToast })
     const [sendTransactionLoading, setSendTransactionLoading] = useState(false)
+
+    const getCurrentTokenFromBalance = useCallback(() => {
+        if (portfolio.tokens && guardarian?.cryptoCurrencies?.data && guardarian.mode === 'sell') {
+            const token = guardarian?.cryptoCurrencies?.data?.find(t => t.ticker === guardarian.from)
+            return portfolio?.tokens?.find(t => token?.networks?.find(nt => (nt?.token_contract?.toLowerCase() === t?.address?.toLowerCase())
+                || (nt?.network === guardarian.NETWORK_MAPPING[guardarian.network] && t?.address.toLowerCase() ===  guardarian.NATIVE_ADDRESS && nt?.token_contract === null)))
+        }
+        else return {}
+    }, [guardarian, portfolio.tokens])
 
     const validationMsg = useMemo(() => {
         const marketData = guardarian?.marketInfo?.data
@@ -43,23 +52,15 @@ const GuardarianDepositProviderModal = ({ relayerURL, walletAddress, selectedNet
         }
 
         return ''
-    }, [guardarian])
-    
-    function getCurrentTokenFromBalance() {
-        if (portfolio.tokens && guardarian?.cryptoCurrencies?.data && guardarian.mode === 'sell') {
-            const token = guardarian?.cryptoCurrencies?.data?.find(t => t.ticker === guardarian.from)
-            return portfolio?.tokens?.find(t => token?.networks?.find(nt => nt?.token_contract?.toLowerCase() === t?.address?.toLowerCase()))
-        }
-        else return {}
-    }
+    }, [guardarian, getCurrentTokenFromBalance])
 
     const switchMode = () => {
         // On switching mode, reset from/to, because the next form gets obsolete field values
         // and can result in wrong API calls (fired in `useGuardarian` useEffect)
-        guardarian.setAmount(null)
-        guardarian.setFrom(null)
-        guardarian.setTo(null)
         guardarian.setMode((prevMode) => prevMode === 'buy' ? 'sell' : 'buy')
+        guardarian.setAmount('')
+        guardarian.setFrom('')
+        guardarian.setTo(guardarian.mode === 'buy' ? guardarian.DEFAULT_CRYPTO[guardarian.NETWORK_MAPPING[guardarian.network]] : '')
     }
 
     function changeFrom(value) {
@@ -138,12 +139,12 @@ const GuardarianDepositProviderModal = ({ relayerURL, walletAddress, selectedNet
         { (validationMsg !== '') && (<p style={{ color: 'red' }}>{ validationMsg }</p>) }
 
             <div className='estimation-info-wrapper'>
-                <p className='extra-fees'>
+                <div className='extra-fees'>
                     <ToolTip label='All the exchange fees are added into the rate. There are no extra costs.'>
                         No extra fees
                     </ToolTip>
-                </p>
-                <p className='estimation-rate'>
+                </div>
+                <div className='estimation-rate'>
                     <ToolTip label='This is expected rate. Guardarian guarantees to pick up the best possible rate on the moment of the exchange'>
                     Estimation rate: {' '}
                 { !guardarian.estimateInfo.isLoading && guardarian?.estimateInfo?.data && validationMsg === ''
@@ -152,7 +153,7 @@ const GuardarianDepositProviderModal = ({ relayerURL, walletAddress, selectedNet
                     </>)
                     : <></>}
                 </ToolTip>
-                </p>
+                </div>
             </div> 
         <div className='input-currencies-wrapper'>
             <div className='amount'> 
@@ -173,7 +174,7 @@ const GuardarianDepositProviderModal = ({ relayerURL, walletAddress, selectedNet
             { (guardarian?.mode === 'buy' && !guardarian?.cryptoList?.isLoading) || (guardarian?.mode === 'sell' && !guardarian?.fiatList?.isLoading)
                 ? <Select 
                     searchable 
-                    defaultValue={guardarian?.to} 
+                    defaultValue={guardarian?.to}
                     items={guardarian?.mode === 'sell' ? guardarian?.fiatList?.data : guardarian?.cryptoList?.data} 
                     onChange={({value}) => changeTo(value)}/> 
                 : <div className='loading-wrapper'><Loading /> </div>}
