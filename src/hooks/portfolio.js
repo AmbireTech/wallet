@@ -1,11 +1,10 @@
-import { usePageVisibility } from 'react-page-visibility';
+import { usePageVisibility } from 'react-page-visibility'
 import usePortfolioCommon from 'ambire-common/src/hooks/usePortfolio'
+import useHiddenTokens from 'ambire-common/src/hooks/useHiddenTokens'
 
-import { ZAPPER_API_KEY } from 'config';
 import { fetchGet } from 'lib/fetch';
-import { ZAPPER_API_ENDPOINT } from 'config'
+import { ZAPPER_API_ENDPOINT, ZAPPER_API_KEY, VELCRO_API_ENDPOINT } from 'config'
 import { useToasts } from 'hooks/toasts'
-import { VELCRO_API_ENDPOINT } from 'config'
 
 const getBalances = (network, protocol, address, provider) =>
     fetchGet(`${provider === 'velcro' ?
@@ -15,27 +14,20 @@ const getBalances = (network, protocol, address, provider) =>
 
 export default function usePortfolio({ currentNetwork, account, useStorage }) {
     const isVisible = usePageVisibility()
-
+    
     const {
         balance,
         otherBalances,
         tokens,
         extraTokens,
-        hiddenTokens,
-        protocols,
         collectibles,
-        requestOtherProtocolsRefresh,
         onAddExtraToken,
         onRemoveExtraToken,
-        onAddHiddenToken,
-        onRemoveHiddenToken,
         balancesByNetworksLoading,
         isCurrNetworkBalanceLoading,
-        areAllNetworksBalancesLoading,
-        otherProtocolsByNetworksLoading,
         isCurrNetworkProtocolsLoading,
         cachedBalancesByNetworks,
-      } = usePortfolioCommon({
+    } = usePortfolioCommon({
         currentNetwork,
         account,
         useStorage,
@@ -44,24 +36,33 @@ export default function usePortfolio({ currentNetwork, account, useStorage }) {
         getBalances
     })
 
+    const {
+        onAddHiddenToken,
+        onRemoveHiddenToken,
+        setHiddenTokens,
+        hiddenTokens,
+        filteredTokens,
+    } = useHiddenTokens({
+        useToasts,
+        useStorage,
+        tokens
+    })
+
     return {
         balance,
         otherBalances,
-        tokens,
+        tokens: filteredTokens,
         extraTokens,
         hiddenTokens,
-        protocols,
+        setHiddenTokens,
         collectibles,
-        requestOtherProtocolsRefresh,
         onAddExtraToken,
         onRemoveExtraToken,
         onAddHiddenToken,
         onRemoveHiddenToken,
         balancesByNetworksLoading,
         isCurrNetworkBalanceLoading,
-        areAllNetworksBalancesLoading,
-        otherProtocolsByNetworksLoading,
         isCurrNetworkProtocolsLoading,
-        cachedBalancesByNetworks
+        cachedBalancesByNetworks,
     }
 }

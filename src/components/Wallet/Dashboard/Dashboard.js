@@ -37,7 +37,7 @@ export default function Dashboard({ portfolio, selectedNetwork, selectedAccount,
     const { hasPendingReset, recoveryLock, isPasswordRecoveryCheckLoading } = usePasswordRecoveryCheck(relayerURL, currentAccount, selectedNetwork)
     const isBalancesCachedCurrentNetwork = portfolio.cachedBalancesByNetworks.length ? 
         portfolio.cachedBalancesByNetworks.find(({network}) => network === selectedNetwork.id) : false
-
+    
     useEffect(() => {
         if (!tab || tab === tabSegments[0].value) return history.replace(`/wallet/dashboard`)
         history.replace(`/wallet/dashboard/${tab}${tab === tabSegments[1].value ? `/${page}` : ''}`)
@@ -52,7 +52,7 @@ export default function Dashboard({ portfolio, selectedNetwork, selectedAccount,
             .filter(({ value }) => value > 0);
 
         setChartTokensData(tokensData);
-    }, [portfolio.balance, portfolio.tokens, portfolio.protocols]);
+    }, [portfolio.balance, portfolio.tokens]);
 
 
     return (
