@@ -312,7 +312,7 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
                             :
                             <NoFundsPlaceholder/>
                 ) :
-                <Providers walletAddress={selectedAcc} networkDetails={selectedNetwork} relayerURL={relayerURL} portfolio={portfolio} sellMode={true}/>
+                <Providers walletAddress={selectedAcc} networkDetails={selectedNetwork} relayerURL={relayerURL} portfolio={portfolio} sellMode={true} selectedAsset={selectedAsset ? selectedAsset : null}/>
                }
            </div>
            {!gasTankDetails && <Addresses

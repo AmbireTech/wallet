@@ -121,9 +121,9 @@ const useProviders = ({ walletAddress, selectedNetwork, relayerURL, portfolio })
         setLoading(prevState => prevState.filter(n => n !== 'Kriptomat'))
     }
 
-    const openGuardarian = (initMode = 'buy') => {
+    const openGuardarian = (initMode = 'buy', selectedAsset) => {
         setLoading(prevState => ['Guardarian', ...prevState])
-        showModal(<GuardarianDepositProviderModal relayerURL={relayerURL} walletAddress={walletAddress} selectedNetwork={selectedNetwork} portfolio={portfolio} initMode={initMode}/>)
+        showModal(<GuardarianDepositProviderModal relayerURL={relayerURL} walletAddress={walletAddress} selectedNetwork={selectedNetwork} portfolio={portfolio} initMode={initMode} selectedAsset={selectedAsset}/>)
         setLoading(prevState => prevState.filter(n => n !== 'Guardarian'))
     }
 

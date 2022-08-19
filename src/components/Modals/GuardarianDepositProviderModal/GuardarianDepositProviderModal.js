@@ -12,12 +12,11 @@ import { popupCenter } from 'lib/popupHelper'
 import url from 'url'
 
 
-const GuardarianDepositProviderModal = ({ relayerURL, walletAddress, selectedNetwork, portfolio, initMode = 'buy' }) => {
+const GuardarianDepositProviderModal = ({ relayerURL, walletAddress, selectedNetwork, portfolio, initMode = 'buy', selectedAsset = null }) => {
     const { hideModal } = useModals()
     const { addToast } = useToasts()
-    const guardarian = useGuardarian({relayerURL, selectedNetwork, initMode, tokens: portfolio.tokens, walletAddress, addToast })
+    const guardarian = useGuardarian({relayerURL, selectedNetwork, initMode, tokens: portfolio.tokens, walletAddress, addToast, selectedAsset })
     const [sendTransactionLoading, setSendTransactionLoading] = useState(false)
-
     const getCurrentTokenFromBalance = useCallback(() => {
         if (portfolio.tokens && guardarian?.cryptoCurrencies?.data && guardarian.mode === 'sell') {
             const token = guardarian?.cryptoCurrencies?.data?.find(t => t.ticker === guardarian.from)

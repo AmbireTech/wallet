@@ -10,7 +10,7 @@ import MOONPAY_LOGO from 'resources/moonpay.svg'
 import { Loading } from 'components/common'
 import useProviders from './useProviders'
 
-export default function Providers({ walletAddress, networkDetails, relayerURL, portfolio, sellMode = false }) {
+export default function Providers({ walletAddress, networkDetails, relayerURL, portfolio, sellMode = false, selectedAsset }) {
     const { openRampNetwork, openPayTrie, openTransak, openKriptomat, openGuardarian, openMoonpay, isLoading } = useProviders({ walletAddress, selectedNetwork: networkDetails.id, relayerURL, portfolio })
     const initMode = sellMode ? 'sell' : 'buy'
     const providers = [
@@ -23,7 +23,7 @@ export default function Providers({ walletAddress, networkDetails, relayerURL, p
             currencies: 'GBP, EUR, USD and many more',
             networks: ['ethereum', 'polygon', 'binance-smart-chain', 'fantom'],
             isSellAvailable: true,
-            onClick: () => openGuardarian(initMode)
+            onClick: () => openGuardarian(initMode, selectedAsset)
         },
         {
             logo: KRIPTOMAT_LOGO,
@@ -118,7 +118,7 @@ export default function Providers({ walletAddress, networkDetails, relayerURL, p
             {
                 networkDetails.id !== 'ethereum' ? 
                     <div id="network-warning">
-                        <b>NOTE:</b> Some deposit methods are unavailable on <b>{networkDetails.name}</b>. Switch to Ethereum for the widest support.
+                        <b>NOTE:</b> Some {sellMode ? 'sell' : 'deposit'} methods are unavailable on <b>{networkDetails.name}</b>. Switch to Ethereum for the widest support.
                     </div>
                     :
                     null
