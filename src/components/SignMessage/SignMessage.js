@@ -373,7 +373,7 @@ export default function SignMessage ({ toSign, resolve, account, connections, re
             <FaExclamationTriangle />
           </span>
           <span className='erc20PermitWarning-message'>
-            The message you are to sign is likely allowing <b>{getName(erc20PermitDetails.spender)}</b> to spend {!erc20PermitDetails.value && 'your'} <b>{token(erc20PermitDetails.verifyingContract, erc20PermitDetails.value || 0)}</b>
+            The message you are about to sign is likely allowing <b>{getName(erc20PermitDetails.spender)}</b> to spend {!erc20PermitDetails.value && 'your'} <b>{token(erc20PermitDetails.verifyingContract, erc20PermitDetails.value || 0)}</b>
           </span>
         </div>
       }
