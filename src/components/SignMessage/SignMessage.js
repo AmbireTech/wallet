@@ -11,6 +11,7 @@ import {
   AbiCoder,
   keccak256
 } from 'ethers/lib/utils'
+import {MaxUint256} from '@ethersproject/constants'
 import * as blockies from 'blockies-ts';
 import { getWallet } from 'lib/getWallet'
 import { token, getName } from 'lib/humanReadableTransactions'
@@ -245,20 +246,16 @@ export default function SignMessage ({ toSign, resolve, account, connections, re
   }
 
   // ERC20 permit warnings
-  let erc20PermitDetails = null
-  if (isTypedData) {
-    // Could improve accuracy, but many permit sigs are not uniform. This should catch most of them
-    if (Object.keys(dataV4.types).indexOf('Permit') !== -1) {
-      if (dataV4.message.spender) {
-        erc20PermitDetails = {
-          spender : dataV4.message.spender,
-          name : dataV4.domain.name,
-          verifyingContract : dataV4.domain.verifyingContract,
-          value : dataV4.message.value
-        }
-      }
+  // .message prop is supposed to already be present, as we check if the msg is valid above
+  // Could improve accuracy (checking domain props), but many permit sigs are not uniform. This should catch most of them
+  const erc20PermitDetails = (isTypedData && Object.keys(dataV4.types).includes('Permit') && dataV4.message.spender)
+    ? {
+      spender : dataV4.message.spender,
+      name : dataV4.domain.name,
+      verifyingContract : dataV4.domain.verifyingContract,
+      value : dataV4.message.allowed ? MaxUint256 : dataV4.message.value // dai permit uses bool
     }
-  }
+    : null
 
   const approve = async () => {
     if (account.signer.quickAccManager) {
@@ -352,15 +349,15 @@ export default function SignMessage ({ toSign, resolve, account, connections, re
           is requesting your signature.
         </div>
         <span>{totalRequests > 1 ? `You have ${totalRequests - 1} more pending requests.` : ''}</span>
-        { 
-          !isDAppSupported && dApp && 
+        {
+          !isDAppSupported && dApp &&
             <div className='notification-hollow warning'>
-              Please be advised that { dApp.name } may not support smart contract wallet verification 
+              Please be advised that { dApp.name } may not support smart contract wallet verification
               <ToolTip label='Click to learn more'>
                 <a className='warning' href={'https://help.ambire.com/hc/en-us/articles/5591676210844'} target="_blank" rel="noreferrer">
                   <MdInfoOutline/>
                 </a>
-              </ToolTip>. 
+              </ToolTip>.
               If { dApp.name } does not function correctly following this signature, please contact them to inform them about this issue.
             </div>
           }
