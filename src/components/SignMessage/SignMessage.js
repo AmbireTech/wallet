@@ -13,6 +13,7 @@ import {
 } from 'ethers/lib/utils'
 import * as blockies from 'blockies-ts';
 import { getWallet } from 'lib/getWallet'
+import { token, getName } from 'lib/humanReadableTransactions'
 import { useToasts } from 'hooks/toasts'
 import { fetchPost } from 'lib/fetch'
 import { verifyMessage } from '@ambire/signature-validator'
@@ -23,6 +24,7 @@ import accountPresets from 'ambire-common/src/constants/accountPresets'
 import { getProvider } from 'lib/provider'
 import { getNetworkByChainId } from 'lib/getNetwork'
 import supportedDApps from 'ambire-common/src/constants/supportedDApps'
+import { FaExclamationTriangle } from 'react-icons/all'
 
 const CONF_CODE_LENGTH = 6
 
@@ -242,6 +244,22 @@ export default function SignMessage ({ toSign, resolve, account, connections, re
     setLoading(false)
   }
 
+  // ERC20 permit warnings
+  let erc20PermitDetails = null
+  if (isTypedData) {
+    // Could improve accuracy, but many permit sigs are not uniform. This should catch most of them
+    if (Object.keys(dataV4.types).indexOf('Permit') !== -1) {
+      if (dataV4.message.spender) {
+        erc20PermitDetails = {
+          spender : dataV4.message.spender,
+          name : dataV4.domain.name,
+          verifyingContract : dataV4.domain.verifyingContract,
+          value : dataV4.message.value
+        }
+      }
+    }
+  }
+
   const approve = async () => {
     if (account.signer.quickAccManager) {
       await approveQuickAcc()
@@ -347,6 +365,18 @@ export default function SignMessage ({ toSign, resolve, account, connections, re
             </div>
           }
       </div>
+
+      {
+        erc20PermitDetails &&
+        <div className='erc20PermitWarning'>
+          <span className='erc20PermitWarning-icon'>
+            <FaExclamationTriangle />
+          </span>
+          <span className='erc20PermitWarning-message'>
+            The message you are to sign is likely allowing <b>{getName(erc20PermitDetails.spender)}</b> to spend {!erc20PermitDetails.value && 'your'} <b>{token(erc20PermitDetails.verifyingContract, erc20PermitDetails.value || 0)}</b>
+          </span>
+        </div>
+      }
 
       <textarea
         className='sign-message'
