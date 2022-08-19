@@ -127,9 +127,9 @@ const useProviders = ({ walletAddress, selectedNetwork, relayerURL, portfolio })
         setLoading(prevState => prevState.filter(n => n !== 'Guardarian'))
     }
 
-    const openMoonpay = async (mode = 'buy') => {
+    const openMoonpay = async (mode = 'buy', selectedAsset) => {
         setLoading(prevState => ['MoonPay', ...prevState])
-        const moonpayResponse = await fetchGet(`${relayerURL}/moonpay/${walletAddress}/${mode}`)
+        const moonpayResponse = await fetchGet(`${relayerURL}/moonpay/${walletAddress}/${mode}/${selectedAsset ? selectedAsset.symbol : null}`)
         
         if (moonpayResponse.success && moonpayResponse.data && moonpayResponse.data.url) popupCenter({
             url: url.format(moonpayResponse.data.url),

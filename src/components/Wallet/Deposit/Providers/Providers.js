@@ -45,7 +45,7 @@ export default function Providers({ walletAddress, networkDetails, relayerURL, p
             currencies: 'EUR, USD, GBP and many more',
             networks: ['ethereum', 'polygon', 'avalanche', 'binance-smart-chain'],
             isSellAvailable: true,
-            onClick: () => openMoonpay(initMode)
+            onClick: () => openMoonpay(initMode, selectedAsset)
         },
         {
             logo: RAMP_LOGO,
