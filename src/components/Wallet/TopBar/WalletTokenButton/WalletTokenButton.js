@@ -4,8 +4,8 @@ import { Button, ToolTip } from "components/common";
 import WalletTokenModal from "components/Modals/WalletTokenModal/WalletTokenModal";
 import useClaimableWalletToken from "./useClaimableWalletToken";
 
-const WalletTokenButton = ({ rewardsData, account = {}, network, hidePrivateValue, addRequest }) => {
-    const claimableWalletToken = useClaimableWalletToken({ account, network, addRequest })
+const WalletTokenButton = ({ rewardsData, account = {}, network, hidePrivateValue, addRequest, WALLETInitialClaimableRewards }) => {
+    const claimableWalletToken = useClaimableWalletToken({ account, network, addRequest, WALLETInitialClaimableRewards })
     const { currentClaimStatus } = claimableWalletToken
     const totalLifetimeRewards = rewardsData.data?.rewards?.map(x => x.rewards[account.id] || 0).reduce((a, b) => a + b, 0)
     const pendingTokensTotal = (currentClaimStatus && !currentClaimStatus.loading && totalLifetimeRewards > 0)

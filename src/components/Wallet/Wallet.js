@@ -94,6 +94,7 @@ export default function Wallet(props) {
         selectedAcc={props.selectedAcc}
         rewardsData={props.rewardsData}
         addRequest={props.addRequest}
+        adexToStakingTransfersLogs={props.adexToStakingTransfersLogs}
       />
     },
     {

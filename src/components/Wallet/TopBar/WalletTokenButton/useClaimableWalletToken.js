@@ -4,13 +4,12 @@ import { Interface } from 'ethers/lib/utils'
 import { getProvider } from 'lib/provider'
 
 import WALLETVestings from 'ambire-common/src/constants/WALLETVestings.json'
-import WALLETInitialClaimableRewards from 'ambire-common/src/constants/WALLETInitialClaimableRewards.json'
 import WALLETSupplyControllerABI from 'ambire-common/src/constants/abis/WALLETSupplyControllerABI.json'
 
 const supplyControllerAddress = '0xc53af25f831f31ad6256a742b3f0905bc214a430'
 const supplyControllerInterface = new Interface(WALLETSupplyControllerABI)
 
-const useClaimableWalletToken = ({ account = {}, network, addRequest }) => {
+const useClaimableWalletToken = ({ account = {}, network, addRequest, WALLETInitialClaimableRewards }) => {
     const provider = useMemo(() => getProvider('ethereum'), [])
     const supplyController = useMemo(() => new Contract(supplyControllerAddress, WALLETSupplyControllerABI, provider), [provider])
     const initialClaimableEntry = WALLETInitialClaimableRewards.find(x => x.addr === account.id)

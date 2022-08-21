@@ -27,7 +27,8 @@ const TopBar = ({
   privateMode: { isPrivateMode, togglePrivateMode, hidePrivateValue },
   addRequest,
   userSorting,
-  setUserSorting
+  setUserSorting,
+  WALLETInitialClaimableRewards
 }) => {
   const [isMenuOpen, setMenuOpen] = useState(false)
   const account = accounts.find(({ id }) => id === selectedAcc)
@@ -68,6 +69,7 @@ const TopBar = ({
           network={network}
           hidePrivateValue={hidePrivateValue}
           addRequest={addRequest}
+          WALLETInitialClaimableRewards={WALLETInitialClaimableRewards}
         />}
         {isPrivateMode ? <MdVisibilityOff cursor="pointer" size={28} onClick={togglePrivateMode} /> : <MdRemoveRedEye cursor="pointer" size={28} onClick={togglePrivateMode} />}
         <DApps connections={connections} connect={connect} disconnect={disconnect} isWcConnecting={isWcConnecting}/>

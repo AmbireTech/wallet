@@ -7,13 +7,13 @@ import { ToolTip } from 'components/common'
 import useAmbireEarnDetails from 'hooks/useAmbireEarnDetails'
 import { Loading } from 'components/common'
 
-const AmbireEarnDetailsModal = ({ title = 'Details', apy, accountId, msToDaysHours, addresses, tokenLabel }) => {
+const AmbireEarnDetailsModal = ({ title = 'Details', apy, accountId, msToDaysHours, addresses, tokenLabel, adexToStakingTransfersLogs }) => {
     const { hideModal } = useModals()
     
     const { 
         details,
         isLoading
-        } = useAmbireEarnDetails({accountId, addresses, tokenLabel})
+        } = useAmbireEarnDetails({accountId, addresses, tokenLabel, adexToStakingTransfersLogs})
 
     const { 
         poolShare, 

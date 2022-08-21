@@ -30,6 +30,7 @@ import WalletStakingPoolABI from 'ambire-common/src/constants/abis/WalletStaking
 import { Contract, utils } from 'ethers'
 import { getProvider } from './lib/provider'
 import allNetworks from './consts/networks'
+import useFetchConstants from 'hooks/useFetchConstants'
 const EmailLogin = lazy(() => import('./components/EmailLogin/EmailLogin'))
 const AddAccount = lazy(() => import('./components/AddAccount/AddAccount'))
 const Wallet = lazy(() => import('./components/Wallet/Wallet'))
@@ -55,6 +56,7 @@ setTimeout(() => {
 }, 4000)
 
 function AppInner() {
+  const { tokenList, humanizerInfo, WALLETInitialClaimableRewards, adexToStakingTransfers } = useFetchConstants()
   // basic stuff: currently selected account, all accounts, currently selected network
   const { accounts, selectedAcc, onSelectAcc, onAddAccount, onRemoveAccount } = useAccounts(useLocalStorage)
   const addressBook = useAddressBook({ accounts, useStorage: useLocalStorage })
@@ -347,6 +349,11 @@ function AppInner() {
               gasTankState={gasTankState}
               setGasTankState={setGasTankState}
               showThankYouPage={showThankYouPage}
+              // Constants
+              tokenList={tokenList}
+              humanizerInfo={humanizerInfo}
+              WALLETInitialClaimableRewards={WALLETInitialClaimableRewards}
+              adexToStakingTransfers={adexToStakingTransfers}
             >
             </Wallet>
           </Route> :

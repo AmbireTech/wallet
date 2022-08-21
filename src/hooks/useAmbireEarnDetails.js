@@ -1,7 +1,6 @@
 import { getProvider } from 'lib/provider'
 import { BigNumber, utils, Contract } from 'ethers'
 import { useEffect, useState, useCallback } from 'react'
-import adexToStakingTransfersLogs from 'consts/rpcResponses/adexToStakingTransfers.json'
 
 const ZERO = BigNumber.from(0)
 const ZERO_ADDR = '0x0000000000000000000000000000000000000000'
@@ -19,7 +18,7 @@ const STAKING_POOL_EVENT_TYPES = {
 
 const ethProvider = getProvider('ethereum')
 
-const useAmbireEarnDetails = ({accountId, addresses, tokenLabel}) => {
+const useAmbireEarnDetails = ({accountId, addresses, tokenLabel, adexToStakingTransfersLogs}) => {
     const WALLET_ADDR = addresses.stakingTokenAddress
     const [details, setDetails] = useState({})
     const [isLoading, setIsLoading] = useState(true)
@@ -654,7 +653,7 @@ const useAmbireEarnDetails = ({accountId, addresses, tokenLabel}) => {
             ),
             remainingTime: stats.remainingTime,
         }
-    }, [WALLET_ADDR, accountId])
+    }, [WALLET_ADDR, accountId, adexToStakingTransfersLogs])
 
     useEffect(() => {
         const getData = async (addresses, tokenLabel) => {
