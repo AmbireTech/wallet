@@ -45,6 +45,7 @@ const relayerURL = process.env.REACT_APP_RELAYRLESS === 'true'
                     ? process.env.REACT_APP_RELAYER_URL
                     : 'http://localhost:1934'
 
+                    
 setTimeout(() => {
   //console.warn('☢️ If you do, malicious code could steal your funds! ☢️')
   //console.error('Only use the console if you are an experienced developer who knows what he\'s doing')
