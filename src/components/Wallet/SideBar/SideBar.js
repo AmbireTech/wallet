@@ -17,7 +17,7 @@ const helpCenterUrl = 'https://help.ambire.com/hc/en-us/categories/4404980091538
 const SideBar = ({ match, portfolio, hidePrivateValue, relayerURL, selectedNetwork, dappsCatalog }) => {
   const sidebarRef = useRef()
   const [balanceFontSize, setBalanceFontSize] = useState(0)
-  const { isDappMode, sideBarOpen, toggleSideBarOpen } = dappsCatalog
+  const { isDappMode, sideBarOpen, toggleSideBarOpen, toggleDappMode } = dappsCatalog
   const routeMatch = useRouteMatch('/wallet/dapps')
 
   const dappModeSidebar = useMemo(() => isDappMode && routeMatch, [isDappMode, routeMatch])
@@ -37,6 +37,12 @@ const SideBar = ({ match, portfolio, hidePrivateValue, relayerURL, selectedNetwo
     }, [portfolio.balance.total])
 
     useEffect(() => resizeBalance(), [resizeBalance])
+
+  const onDappsClick = useCallback(() => {
+    if(dappModeSidebar) {
+      toggleDappMode()
+    }
+  }, [dappModeSidebar, toggleDappMode])  
 
   return (
     <div id="sidebar" className={(dappModeSidebar ? 'dapp-mode' : '') + (sideBarOpen ? ' open' : '') } ref={sidebarRef}>
@@ -95,6 +101,11 @@ const SideBar = ({ match, portfolio, hidePrivateValue, relayerURL, selectedNetwo
               <BsCurrencyExchange/>Swap
           </div>
         </NavLink>
+        <NavLink to={match.url + "/dapps"} activeClassName="selected">
+          <div className="item" onClick={onDappsClick}>
+            <AiOutlineAppstoreAdd />dApps
+          </div>
+        </NavLink>
         <NavLink to={match.url + "/gas-tank"} activeClassName="selected">
           <div className="item">
               <GiGasPump/>Gas Tank
@@ -124,11 +135,6 @@ const SideBar = ({ match, portfolio, hidePrivateValue, relayerURL, selectedNetwo
         <NavLink to={match.url + "/security"} activeClassName="selected">
           <div className="item">
             <MdLock/>Security
-          </div>
-        </NavLink>
-        <NavLink to={match.url + "/dapps"} activeClassName="selected">
-          <div className="item">
-            <AiOutlineAppstoreAdd />Dapps
           </div>
         </NavLink>
         <div className="separator"></div>
