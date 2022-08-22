@@ -75,7 +75,7 @@ const TopBar = ({
               ></Button>
             </ToolTip>
             <div className='dapp-data'>
-              <ToolTip label={`Connected with ${currentDappData?.connectionType} - find out more in our blog`}>
+              <ToolTip label={`Connected with ${currentDappData?.connectionType} -  see/find out more on our blog`}>
                 {/* TODO: update the blogpost link */}
                 <a className="info-btn" href={'https://blog.ambire.com/connect-to-any-dapp-with-ambire-wallet-and-walletconnect-c1bc096a531e'} 
                   target="_blank"
@@ -93,9 +93,10 @@ const TopBar = ({
               <ToolTip label={`Exit from ${currentDappData?.name}`}>
                 <Button
                   className='dapp-exit-btn'
-                  secondary mini icon={<MdExitToApp size={23} /> }
+                  secondary mini 
+                  icon={<MdExitToApp size={15} /> }
                   onClick={() => loadCurrentDappData(null)}
-                ></Button>
+                >Exit</Button>
               </ToolTip>
             </div>
           </div>
