@@ -166,13 +166,6 @@ export default function useAmbireExtension({
 
     verbose > 2 && console.log('listening to msgs')
 
-    //Not relevant for ambex but useful for debug purposes. Leave it?
-    addMessageHandler({ type: 'ping' }, (message) => {
-      sendReply(message, {
-        data: selectedAccount + ' Ambex PONG!!!'
-      })
-    })
-
     // Post-focus, display a message to the user to make him understand why he switched tabs automatically
     addMessageHandler({ type: 'displayUserInterventionNotification' }, (message) => {
       setTimeout(() => addToast('An user interaction has been requested'), 500)

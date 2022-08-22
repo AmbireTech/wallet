@@ -386,23 +386,25 @@ const getActiveTabId = async () => {
     //looping all the known ambire tab injections and ping them
     getAmbireTabIds()
       .then(ambireTabIds => {
-        for (let ambireTabId of ambireTabIds) {
-          sendMessage({
+        const promises = ambireTabIds.map(ambireTabId => {
+          return sendMessage({
             type: 'keepalive',
             to: 'ambirePageContext',
             toTabId: ambireTabId,
+          }).then(() => ambireTabId)
+        })
+
+        Promise.any(promises)
+          .then((ambireTabId) => {
+            if (!foundAmbireTabId) {// handle replyu only if we dont have any AMBIRE_TAB yet
+              foundAmbireTabId = ambireTabId
+              return resolve(ambireTabId)
+            }
           })
-            .then((reply) => {
-              if (reply && reply.data && !foundAmbireTabId) {// handle replyu only if we dont have any AMBIRE_TAB yet
-                foundAmbireTabId = ambireTabId
-                return resolve(ambireTabId)
-              }
-            })
-            .catch(e => {
-              // tab not replying / query timeout
-              // we do not want to catch error on a specific tab timeout but neither throw
-            })
-        }
+          .catch(e => {
+            // tab not replying / query timeout
+            // we do not want to catch error on a specific tab timeout but neither throw
+          })
       })
   })
 
@@ -418,7 +420,7 @@ const sendMessageInternal = async (message) => {
   if (RELAYER === 'background') {
 
     // If destination is for wallet
-    if (['ambireContentScript', 'ambirePageContext'].indexOf(message.to) !== -1) {
+    if (['ambireContentScript', 'ambirePageContext'].includes(message.to)) {
 
       // send msg to all ambire wallets tabs
       //TODO check if dapp cant mess with that?
@@ -493,7 +495,7 @@ const sendMessageInternal = async (message) => {
     const pathIndex = path.indexOf(RELAYER)
     const forwardPath = path.slice(pathIndex + 1, path.length)
 
-    if (forwardPath.indexOf(message.to) !== -1) {//if next relayers are BG, ACS, APC
+    if (forwardPath.includes(message.to)) {//if next relayers are BG, ACS, APC
       if (VERBOSE) console.log(`${RELAYER_VERBOSE_TAG[RELAYER]} ambexMessenger[${RELAYER}] sending message as CS -> BG:`, message)
       chromeObject.runtime.sendMessage(message)
     } else if (message.to === 'contentScript') {//other extension pages

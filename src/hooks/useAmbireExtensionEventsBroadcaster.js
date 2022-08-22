@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 
 export default function useAmbireExtensionEventsBroadcaster({
                                                               portfolio,
@@ -11,20 +11,25 @@ export default function useAmbireExtensionEventsBroadcaster({
                                                               hasPendingTransactions
                                                             }) {
 
+  const portfolioRef = useRef(null)
+  portfolioRef.current = portfolio
+  const rewardsRef = useRef(null)
+  rewardsRef.current = rewardsData
+
   useEffect(() => {
     //event_balanceUpdated
-    if (!portfolio.isCurrNetworkBalanceLoading && !rewardsData.isLoading) {
+    if (!portfolio.isCurrNetworkBalanceLoading && !rewardsRef.current.isLoading) {
       sendMessage({
         type: 'event_balanceUpdated',
         to: 'contentScript',
         toTabId: 'extension',
         data: {
-          balance: portfolio.balance,
-          rewards: rewardsData
+          balance: portfolioRef.current.balance,
+          rewards: rewardsRef.current
         }
       }, {ignoreReply: true})
     }
-  }, [portfolio.isCurrNetworkBalanceLoading, rewardsData.isLoading, sendMessage])
+  }, [sendMessage, portfolio.isCurrNetworkBalanceLoading])
 
   useEffect(() => {
     if (!portfolio.isCurrNetworkBalanceLoading) {
@@ -34,11 +39,11 @@ export default function useAmbireExtensionEventsBroadcaster({
         to: 'contentScript',
         toTabId: 'extension',
         data: {
-          tokens: portfolio.tokens
+          tokens: portfolioRef.current.tokens
         }
       }, {ignoreReply: true})
     }
-  }, [portfolio.isCurrNetworkBalanceLoading, sendMessage])
+  }, [sendMessage, portfolio.isCurrNetworkBalanceLoading])
 
   useEffect(() => {
     sendMessage({
