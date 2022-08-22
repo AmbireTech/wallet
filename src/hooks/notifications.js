@@ -25,7 +25,7 @@ const getAmountReceived = (lastToken, newBalanceRaw, decimals) => {
     }
 }
 
-export default function useNotifications (requests, onShow, portfolio, selectedAcc, network, sentTxn, confirmSentTx) {
+export default function useNotifications (constants, requests, onShow, portfolio, selectedAcc, network, sentTxn, confirmSentTx) {
     const { addToast } = useToasts()
     const onShowRef = useRef({})
     onShowRef.current.onShow = onShow
@@ -69,7 +69,7 @@ export default function useNotifications (requests, onShow, portfolio, selectedA
                 ? 'you have a new message to sign'
                 : `new transaction request on ${network ? network.name : 'unknown network'}`
         )
-        const body = isSign ? 'Click to preview' : getTransactionSummary([request.txn.to, request.txn.value, request.txn.data], request.chainId, request.account)
+        const body = isSign ? 'Click to preview' : getTransactionSummary(constants.humanizerInfo, constants.tokenList, [request.txn.to, request.txn.value, request.txn.data], request.chainId, request.account)
         showNotification({
             id: request.id,
             title,

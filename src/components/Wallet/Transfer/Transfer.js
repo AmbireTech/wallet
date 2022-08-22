@@ -30,7 +30,6 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
     const { tokenAddressOrSymbol } = useParams()
     const { addToast } = useToasts()
     const { state } = useLocation()
-    console.log(state)
     const [gasTankDetails] = useState(state ? state : null)
     const tokenAddress = isValidAddress(tokenAddressOrSymbol) ? tokenAddressOrSymbol : portfolio.tokens.find(({ symbol }) => symbol === tokenAddressOrSymbol)?.address || null
 
@@ -156,7 +155,7 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
                 setFeeBaseTokenWarning(`Token ${gasFeeToken.symbol.toUpperCase()} will be converted to ${feeBaseToken.symbol.toUpperCase()} without additional fees.`)
             }
         }
-    }, [selectedAsset])
+    }, [selectedAsset, gasTankDetails])
 
     useEffect(() => {
         setAmount(0)

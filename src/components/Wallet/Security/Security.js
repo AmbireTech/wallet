@@ -28,6 +28,7 @@ const IDENTITY_INTERFACE = new Interface(
 const REFRESH_INTVL = 40000
 
 const Security = ({
+  humanizerInfo,
   relayerURL,
   selectedAcc,
   selectedNetwork,
@@ -201,7 +202,7 @@ const Security = ({
     .map(([addr, privValue]) => {
       if (!privValue) return null
   
-      const addressName = getName(addr) || null
+      const addressName = getName(humanizerInfo, addr) || null
       const isQuickAcc = addr === accountPresets.quickAccManager
       const privText = isQuickAcc
         ? `Email/password signer (${selectedAccount.email || 'unknown email'})`

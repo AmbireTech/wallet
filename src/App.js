@@ -31,6 +31,7 @@ import { Contract, utils } from 'ethers'
 import { getProvider } from './lib/provider'
 import allNetworks from './consts/networks'
 import useFetchConstants from 'hooks/useFetchConstants'
+import { Loading } from 'components/common'
 const EmailLogin = lazy(() => import('./components/EmailLogin/EmailLogin'))
 const AddAccount = lazy(() => import('./components/AddAccount/AddAccount'))
 const Wallet = lazy(() => import('./components/Wallet/Wallet'))
@@ -55,8 +56,9 @@ setTimeout(() => {
   console.log('At Ambire, we care about our users 💜. Safety is our top priority! DO NOT PASTE ANYTHING HERE or it could result in the LOSS OF YOUR FUNDS!')
 }, 4000)
 
-function AppInner() {
-  const { tokenList, humanizerInfo, WALLETInitialClaimableRewards, adexToStakingTransfers } = useFetchConstants()
+function AppInner() { 
+  const { constants, isLoading: areConstantsLoading } = useFetchConstants()
+
   // basic stuff: currently selected account, all accounts, currently selected network
   const { accounts, selectedAcc, onSelectAcc, onAddAccount, onRemoveAccount } = useAccounts(useLocalStorage)
   const addressBook = useAddressBook({ accounts, useStorage: useLocalStorage })
@@ -234,7 +236,7 @@ function AppInner() {
   })
 
   // Show notifications for all requests
-  useNotifications(requests, request => {
+  useNotifications(constants, requests, request => {
     onSelectAcc(request.account)
     setNetwork(request.chainId)
     setSendTxnState(state => ({ ...state, showing: true }))
@@ -265,14 +267,14 @@ function AppInner() {
   const handleSetShowThankYouPage = useCallback(() => setShowThankYouPage(true), [setShowThankYouPage])
   useEffect(() => (thankYouUTM && thankYouUTM.startsWith('thankyou')) && handleSetShowThankYouPage(), [handleSetShowThankYouPage, thankYouUTM])
 
-  return (<>
+  return !areConstantsLoading && constants ? (<>
     <Prompt
       message={(location, action) => {
         if (action === 'POP') return onPopHistory()
         return true
       }}
     />
-    <Suspense fallback={<p>Loading modal...</p>}>
+    <Suspense fallback={<Loading />}>
       {!!everythingToSign.length && (<SignMessage
         selectedAcc={selectedAcc}
         account={accounts.find(x => x.id === selectedAcc)}
@@ -286,6 +288,8 @@ function AppInner() {
 
       {sendTxnState.showing ? (
         <SendTransaction
+          humanizerInfo={constants.humanizerInfo}
+          tokenList={constants.tokenList}
           accounts={accounts}
           selectedAcc={selectedAcc}
           network={network}
@@ -302,7 +306,7 @@ function AppInner() {
       ) : (<></>)}
     </Suspense>
 
-    <Suspense fallback={<p>...Loading</p>}>
+    <Suspense fallback={<Loading />}>
       <Switch>
         <Route path="/add-account">
           <AddAccount relayerURL={relayerURL} onAddAccount={onAddAccount} utmTracking={utmTracking}></AddAccount>
@@ -350,10 +354,10 @@ function AppInner() {
               setGasTankState={setGasTankState}
               showThankYouPage={showThankYouPage}
               // Constants
-              tokenList={tokenList}
-              humanizerInfo={humanizerInfo}
-              WALLETInitialClaimableRewards={WALLETInitialClaimableRewards}
-              adexToStakingTransfers={adexToStakingTransfers}
+              tokenList={constants.tokenList}
+              humanizerInfo={constants.humanizerInfo}
+              WALLETInitialClaimableRewards={constants.WALLETInitialClaimableRewards}
+              adexToStakingTransfersLogs={constants.adexToStakingTransfersLogs}
             >
             </Wallet>
           </Route> :
@@ -366,7 +370,7 @@ function AppInner() {
 
       </Switch>
       </Suspense>
-  </>)
+  </>) : <Loading />
 }
 
 // handles all the providers so that we can use provider hooks inside of AppInner

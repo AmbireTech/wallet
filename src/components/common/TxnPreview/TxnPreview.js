@@ -84,12 +84,12 @@ function parseExtendedSummaryItem(item, i, networkDetails) {
   return <></>
 }
 
-export default function TxnPreview ({ txn, onDismiss, network, account, isFirstFailing, mined, disableExpand, disableDismiss, disableDismissLabel, addressLabel = null }) {
+export default function TxnPreview ({ humanizerInfo, tokenList, txn, onDismiss, network, account, isFirstFailing, mined, disableExpand, disableDismiss, disableDismissLabel, addressLabel = null }) {
   const [isExpanded, setExpanded] = useState(false)
-  const contractName = getName(txn[0], network)
+  const contractName = getName(humanizerInfo, txn[0])
 
   const networkDetails = networks.find(({ id }) => id === network)
-  const extendedSummary = getTransactionSummary(txn, network, account, { mined, extended: true })
+  const extendedSummary = getTransactionSummary(humanizerInfo, tokenList, txn, network, account, { mined, extended: true })
 
   const summary = (extendedSummary.map(entry => Array.isArray(entry) ? entry.map((item, i) => parseExtendedSummaryItem(item, i, networkDetails)) : (entry))) // If entry is extended summary parse it
   
@@ -106,7 +106,7 @@ export default function TxnPreview ({ txn, onDismiss, network, account, isFirstF
               <div className="summary">{ summary }</div>
             </div>
             {isFirstFailing && (<div className='firstFailingLabel'>This is the first failing transaction.</div>)}
-              {!isFirstFailing && !mined && !isKnown(txn, account) && (<div className='unknownWarning'>Warning: interacting with an unknown contract or address.</div>)}
+              {!isFirstFailing && !mined && !isKnown(humanizerInfo, txn, account) && (<div className='unknownWarning'>Warning: interacting with an unknown contract or address.</div>)}
           </div>
           <div className='actionIcons'>
             {onDismiss ? (

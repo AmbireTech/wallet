@@ -13,7 +13,7 @@ import { useLocalStorage } from 'hooks'
 import Quotes from './Quotes/Quotes'
 import History from './History/History'
 
-const CrossChain = ({ addRequest, selectedAccount, portfolio, network, relayerURL }) => {
+const CrossChain = ({ humanizerInfo, addRequest, selectedAccount, portfolio, network, relayerURL }) => {
     const { addToast } = useToasts()
     const { fetchChains, fetchFromTokens, fetchQuotes, fetchToTokens } = useMovr()
 
@@ -252,6 +252,7 @@ const CrossChain = ({ addRequest, selectedAccount, portfolio, network, relayerUR
                 }
             </div>
             <History
+                humanizerInfo={humanizerInfo}
                 network={network}
                 account={selectedAccount}
                 quotesConfirmed={quotesConfirmed}

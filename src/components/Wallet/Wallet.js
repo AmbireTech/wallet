@@ -11,6 +11,7 @@ import TopBar from "./TopBar/TopBar"
 import PermissionsModal from "components/Modals/PermissionsModal/PermissionsModal"
 import UnsupportedDAppsModal from "components/Modals/UnsupportedDAppsModal/UnsupportedDAppsModal"
 import SideBar from "./SideBar/SideBar"
+import { Loading } from "components/common"
 // Pages
 const Transfer = lazy(() => import("./Transfer/Transfer"))
 const Dashboard = lazy(() => import("./Dashboard/Dashboard"))
@@ -79,6 +80,7 @@ export default function Wallet(props) {
     {
       path: '/cross-chain',
       component: <CrossChain
+        humanizerInfo={props.humanizerInfo}
         addRequest={props.addRequest}
         selectedAccount={props.selectedAcc}
         portfolio={props.portfolio}
@@ -100,6 +102,7 @@ export default function Wallet(props) {
     {
       path: '/security',
       component: <Security
+        humanizerInfo={props.humanizerInfo}
         relayerURL={props.relayerURL}
         selectedAcc={props.selectedAcc}
         selectedNetwork={props.network}
@@ -112,6 +115,8 @@ export default function Wallet(props) {
     {
       path: '/transactions/:page?',
       component: <Transactions
+        humanizerInfo={props.humanizerInfo}
+        tokenList={props.tokenList}
         relayerURL={props.relayerURL}
         selectedAcc={props.selectedAcc}
         selectedNetwork={props.network}
@@ -223,7 +228,7 @@ export default function Wallet(props) {
       <div id="wallet-container" ref={walletContainer}>
         <div id="wallet-container-inner">
             {/* TODO: ADD PROPER LOADER HERE */}
-            <Suspense fallback={<p>...loading</p>}>
+            <Suspense fallback={<Loading />}>
           <Switch>
             {
               routes.map(({ path, component }) => (
