@@ -5,13 +5,13 @@
     "main.js.map": "./static/js/main.326eb6d7.chunk.js.map",
     "runtime-main.js": "./static/js/runtime-main.257d85d8.js",
     "runtime-main.js.map": "./static/js/runtime-main.257d85d8.js.map",
-    "static/js/2.581997c2.chunk.js": "./static/js/2.581997c2.chunk.js",
-    "static/js/2.581997c2.chunk.js.map": "./static/js/2.581997c2.chunk.js.map",
+    "static/js/2.d64b4dbe.chunk.js": "./static/js/2.d64b4dbe.chunk.js",
+    "static/js/2.d64b4dbe.chunk.js.map": "./static/js/2.d64b4dbe.chunk.js.map",
     "static/js/3.4a7f0304.chunk.js": "./static/js/3.4a7f0304.chunk.js",
     "static/js/3.4a7f0304.chunk.js.map": "./static/js/3.4a7f0304.chunk.js.map",
     "index.html": "./index.html",
     "static/css/main.23a4fa1c.chunk.css.map": "./static/css/main.23a4fa1c.chunk.css.map",
-    "static/js/2.581997c2.chunk.js.LICENSE.txt": "./static/js/2.581997c2.chunk.js.LICENSE.txt",
+    "static/js/2.d64b4dbe.chunk.js.LICENSE.txt": "./static/js/2.d64b4dbe.chunk.js.LICENSE.txt",
     "static/media/App.scss": "./static/media/UbuntuMono-Regular.9fa7d55c.ttf",
     "static/media/aave.58aec338.svg": "./static/media/aave.58aec338.svg",
     "static/media/TopBar.scss": "./static/media/logo.ab51d124.png",
@@ -28,7 +28,7 @@
   },
   "entrypoints": [
     "static/js/runtime-main.257d85d8.js",
-    "static/js/2.581997c2.chunk.js",
+    "static/js/2.d64b4dbe.chunk.js",
     "static/css/main.23a4fa1c.chunk.css",
     "static/js/main.326eb6d7.chunk.js"
   ]
