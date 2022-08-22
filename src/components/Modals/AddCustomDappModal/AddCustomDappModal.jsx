@@ -84,7 +84,7 @@ const AddCustomDappModal = ({ dappsCatalog, dappUrl = '' }) => {
             setUrlInfo(isInCatalog ? `${normalizedDappUrl} is already in your wallet catalog` : '')
             setNetworksInfo(!manifest?.networks?.length ? `Supported networks not detected! Please select manually.` : '')
         } else {
-            setUrlInfo('Cant find dApp data - make sure it supports gnosis safe apps ot WalletConnect')
+            setUrlInfo('Can\'t find dApp data — make sure it supports Gnosis Safe apps or WalletConnect')
         }
 
         setLoading(false)
@@ -96,7 +96,7 @@ const AddCustomDappModal = ({ dappsCatalog, dappUrl = '' }) => {
 
     const radios = useMemo(() => [
         {
-            label: 'Gnosis safe app',
+            label: 'Gnosis Safe App',
             value: 'gnosis',
             disabled: !url || urlErr
         },
@@ -189,7 +189,7 @@ const AddCustomDappModal = ({ dappsCatalog, dappUrl = '' }) => {
                 <div className='icon-input'>
                     <TextInput
                         small
-                        label="Icon Url"
+                        label="Icon URL"
                         value={iconUrl}
                         onInput={value => { setIconUrl(value); setIconUrlInfo('') }}
                         className='dapp-input'
@@ -212,7 +212,7 @@ const AddCustomDappModal = ({ dappsCatalog, dappUrl = '' }) => {
 
             <div>
                 <div className='connection-radios'>
-                    <div>Connection type</div>
+                    <div>Connection Type</div>
                     <Radios radios={radios} value={connectionType} onChange={onRadioChange} row />
                 </div>
                 {<div className='input-err' >
@@ -221,7 +221,7 @@ const AddCustomDappModal = ({ dappsCatalog, dappUrl = '' }) => {
             </div>
 
             <div className='networks'>
-                <div>Supported network ({networks.length} selected)</div>
+                <div>Supported networks ({networks.length} selected)</div>
                 <div className='networks-container'>
                     {
                         NETWORKS.map(n => {
