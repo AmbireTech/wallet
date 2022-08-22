@@ -25,6 +25,7 @@ $gap: 12px;
         border-radius: 100px;
         border: 1px solid mix($text-color, $input-background-color-darker);
         color: mix($text-color, $input-background-color-darker);
+        text-transform: capitalize;
 
         &:hover {
           background: mix($panel-background-color, $text-container-color, 85%);
@@ -49,7 +50,6 @@ $gap: 12px;
             color: $faveColor;
             border-color: $faveColor;
           }
-
         }
       }
     }
@@ -158,9 +158,9 @@ $gap: 12px;
         gap: $gap;
 
         .logo {
-          min-width: 48px;
-          width: 48px;
-          height: 48px;
+          min-width: 68px;
+          width: 68px;
+          height: 68px;
           background: $input-background-color-darker;
           //padding: 8px;
           text-align: center;
@@ -170,8 +170,8 @@ $gap: 12px;
           border-radius: 4px;
 
           img {
-            max-width: 40px;
-            max-height: 40px;
+            max-width: 60px;
+            max-height: 60px;
             border-radius: 4px;
           }
         }
@@ -246,11 +246,17 @@ $gap: 12px;
           padding: 1px 4px;
           font-size: 11px;
           border-radius: 32px;
+          text-transform: capitalize;
 
           &.type-tag-walletconnect {
             // background-color: mix($WCBlue, $input-background-color, 30%);
             border: 1px solid $WCBlue;
             color: mix($WCBlue, $text-color, 70%);
+          }
+
+          &.type-tag-hot {
+            border: 1px solid $ambire-dark-blue;
+            color: mix($ambire-dark-blue, $text-color, 70%);
           }
 
           &.network-tag {

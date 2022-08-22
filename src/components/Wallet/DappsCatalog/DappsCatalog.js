@@ -15,6 +15,14 @@ import { canOpenInIframe, getManifestFromDappUrl } from 'ambire-common/src/servi
 import { useOneTimeQueryParam } from 'hooks/oneTimeQueryParam'
 import { useHistory } from 'react-router-dom'
 
+const CONNECTION_TYPE_LABEL = {
+  'walletconnect': 'WalletConnect'
+}
+
+const CATEGORY_LABEL = {
+  'walletconnect': 'WalletConnect'
+}
+
 const DappsCatalog = ({ network, dappsCatalog, selectedAcc, gnosisConnect, gnosisDisconnect }) => {
   const dappUrl = useOneTimeQueryParam('dappUrl')
   const { addCustomDapp, loadDappFromUrl, isDappMode, currentDappData, toggleFavorite, favorites, filteredCatalog, onCategorySelect, categoryFilter, search, onSearchChange, categories, loadCurrentDappData, removeCustomDapp } = dappsCatalog
@@ -70,7 +78,7 @@ const DappsCatalog = ({ network, dappsCatalog, selectedAcc, gnosisConnect, gnosi
   }, [toggleFavorite])
 
   const openDapp = useCallback(async (item) => {
-    if ((item.connectionType === 'gnosis' && (!item.custom)) || await canOpenInIframe(fetch, item.url)) {
+    if ((item.connectionType === 'gnosis' && (!item.custom)) || item.forceInternal || await canOpenInIframe(fetch, item.url)) {
       loadCurrentDappData(item)
     } else {
       window.open(item.url, '_blank')
@@ -140,7 +148,7 @@ const DappsCatalog = ({ network, dappsCatalog, selectedAcc, gnosisConnect, gnosi
                 return <span
                   key={c.name}
                   className={`category category-${c.name}${categoryFilter?.name === c.name ? ' selected' : ''}`}
-                  onClick={() => onCategorySelect(c)}>{c.name}</span>
+                  onClick={() => onCategorySelect(c)}>{CATEGORY_LABEL[c.name] || c.name}</span>
               })}
             </div>
           </div>
@@ -164,8 +172,8 @@ const DappsCatalog = ({ network, dappsCatalog, selectedAcc, gnosisConnect, gnosi
 
                   <div className='tools'>
                     {item.featured &&
-                      <ToolTip label={`Hot dapp`}>
-                        <img className='icon hot-dapp' src={AMBIRE_ICON_HOT} alt='hot dapp icon' />
+                      <ToolTip label={`Hot dApp`}>
+                        <img className='icon hot-dapp' src={AMBIRE_ICON_HOT} alt='hot dApp icon' />
                       </ToolTip>
                     }
                     {item.custom &&
@@ -228,7 +236,7 @@ const DappsCatalog = ({ network, dappsCatalog, selectedAcc, gnosisConnect, gnosi
                       }
 
                       <div className='tag-row tag-types'>
-                        <span className={`tag type-tag type-tag-${item.category}`}>{item.category}</span>
+                        <span className={`tag type-tag type-tag-${item.category}`}>{CONNECTION_TYPE_LABEL[item.category] || item.category}</span>
                       </div>
                     </div>
                   </div>
@@ -244,7 +252,7 @@ const DappsCatalog = ({ network, dappsCatalog, selectedAcc, gnosisConnect, gnosi
           }
 
           <div className='info-wc'>
-            <MdInfo /> Note: any dApp that supports walletconnect can be connected as well
+            <MdInfo /> Note: any dApp that supports WalletConnect can be connected as well
           </div>
         </Fragment>
       }
