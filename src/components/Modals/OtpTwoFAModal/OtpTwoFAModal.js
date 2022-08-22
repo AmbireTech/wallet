@@ -72,7 +72,7 @@ const OtpTwoFAModal = ({ relayerURL, selectedAcc, setCacheBreak }) => {
                 toSign: hexSecret 
             })
         if (!success) addToast('Unexpected error. This should never happen, please report this on help.ambire.com', { error: true })
-        if (success && confCodeRequired !== 'email') addToast('Expected email verification. This should never happen, please report this on help.ambire.com', { error: true })
+        if (confCodeRequired !== 'email') addToast('Expected email verification. This should never happen, please report this on help.ambire.com', { error: true })
         if (success && confCodeRequired === 'email') addToast('A confirmation code was sent to your email, please enter it along...')
     }
     
