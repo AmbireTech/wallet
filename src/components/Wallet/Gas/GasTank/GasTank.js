@@ -44,9 +44,9 @@ const GasTank = ({ network,
     const urlGetFeeAssets = relayerURL ? `${relayerURL}/gas-tank/assets?cacheBreak=${cacheBreak}` : null
     const urlGetTransactions = relayerURL ? `${relayerURL}/identity/${account}/${network.id}/transactions` : null
 
-    const { data: balancesRes, isLoading } = useRelayerData(urlGetBalance)
-    const { data: feeAssetsRes} = useRelayerData(urlGetFeeAssets)
-    const { data: executedTxnsRes } = useRelayerData(urlGetTransactions)
+    const { data: balancesRes, isLoading } = useRelayerData({ url: urlGetBalance })
+    const { data: feeAssetsRes} = useRelayerData({ url: urlGetFeeAssets })
+    const { data: executedTxnsRes } = useRelayerData({ url: urlGetTransactions })
     
     const gasTankBalances = balancesRes && balancesRes.length && balancesRes.map(({balanceInUSD}) => balanceInUSD).reduce((a, b) => a + b, 0)
     const gasTankBalancesFormatted = gasTankBalances ? formatFloatTokenAmount(gasTankBalances, true, 2) : '0.00'
