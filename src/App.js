@@ -267,7 +267,7 @@ function AppInner() {
     {!!everythingToSign.length && (<SignMessage
       selectedAcc={selectedAcc}
       account={accounts.find(x => x.id === selectedAcc)}
-      toSign={everythingToSign[0]}
+      everythingToSign={everythingToSign}
       totalRequests={everythingToSign.length}
       connections={connections}
       relayerURL={relayerURL}
