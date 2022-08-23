@@ -1,3 +1,5 @@
+import useGasTank from 'ambire-common/src/hooks/useGasTank'
+
 import './App.scss'
 
 import {
@@ -27,7 +29,6 @@ import { useAttentionGrabber,
   usePrivateMode, 
   useLocalStorage, 
   useUtmTracking, 
-  useGasTank 
 } from './hooks'
 import { useToasts } from './hooks/toasts'
 import { useOneTimeQueryParam } from './hooks/oneTimeQueryParam'
