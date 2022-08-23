@@ -19,7 +19,7 @@ import { useToasts } from 'hooks/toasts'
 import { fetchPost } from 'lib/fetch'
 import { verifyMessage } from '@ambire/signature-validator'
 import { useState, useEffect, useRef, useCallback } from 'react'
-import { Button, Loading, TextInput, ToolTip } from 'components/common'
+import { Button, Loading, TextInput, ToolTip, DAppIncompatibilityWarningMsg } from 'components/common'
 import { isObject } from 'url/util'
 import accountPresets from 'ambire-common/src/constants/accountPresets'
 import { getProvider } from 'lib/provider'
@@ -349,18 +349,7 @@ export default function SignMessage ({ toSign, resolve, account, connections, re
           is requesting your signature.
         </div>
         <span>{totalRequests > 1 ? `You have ${totalRequests - 1} more pending requests.` : ''}</span>
-        {
-          !isDAppSupported && dApp &&
-            <div className='notification-hollow warning'>
-              Please be advised that { dApp.name } may not support smart contract wallet verification
-              <ToolTip label='Click to learn more'>
-                <a className='warning' href={'https://help.ambire.com/hc/en-us/articles/5591676210844'} target="_blank" rel="noreferrer">
-                  <MdInfoOutline/>
-                </a>
-              </ToolTip>.
-              If { dApp.name } does not function correctly following this signature, please contact them to inform them about this issue.
-            </div>
-          }
+        { !isDAppSupported && <DAppIncompatibilityWarningMsg /> }
       </div>
 
       {
