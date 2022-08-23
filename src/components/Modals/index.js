@@ -12,7 +12,6 @@ import EarnDetailsModal from './EarnDetailsModal/EarnDetailsModal'
 import AddAddressModal from './AddAddressModal/AddAddressModal'
 import GasTankBalanceByTokensModal from './GasTankBalanceByTokensModal/GasTankBalanceByTokensModal'
 import GuardarianDepositProviderModal from './GuardarianDepositProviderModal/GuardarianDepositProviderModal'
-import DAppIncompatibilityModal from './DAppIncompatibilityModal/DAppIncompatibilityModal'
 
 export {
     PermissionsModal,
@@ -28,6 +27,5 @@ export {
     EarnDetailsModal,
     AddAddressModal,
     GasTankBalanceByTokensModal,
-    GuardarianDepositProviderModal,
-    DAppIncompatibilityModal
+    GuardarianDepositProviderModal
 }

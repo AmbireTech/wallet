@@ -59,7 +59,7 @@ export function getErrHint(msg) {
 }
 
 export function checkIfDAppIncompatible(msg) {
-  return contractErrors.find(contractMsg => msg.includes(contractMsg)) ? true : false
+  return contractErrors.find(contractMsg => msg.includes(contractMsg))
 }
 
 export function toHexAmount(amnt, decimals) {

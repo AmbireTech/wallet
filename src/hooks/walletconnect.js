@@ -1,9 +1,6 @@
 import { useCallback, useEffect, useReducer, useRef, useState } from 'react'
 import { useToasts } from 'hooks/toasts'
 import { isFirefox } from 'lib/isFirefox'
-import supportedDApps from 'ambire-common/src/constants/supportedDApps'
-import useDynamicModal from "hooks/useDynamicModals"
-import { DAppIncompatibilityModal } from 'components/Modals'
 
 import WalletConnectCore from '@walletconnect/core'
 import * as cryptoLib from '@walletconnect/iso-crypto'
@@ -41,7 +38,7 @@ const checkIsOffline = uri => {
 
 export default function useWalletConnect ({ account, chainId, initialUri, allNetworks, setNetwork, useStorage }) {
     const { addToast } = useToasts()
-    const showWalletTokenModal = useDynamicModal(DAppIncompatibilityModal)
+
     // This is needed cause of the WalletConnect event handlers
     const stateRef = useRef()
     stateRef.current = { account, chainId }
@@ -236,7 +233,6 @@ export default function useWalletConnect ({ account, chainId, initialUri, allNet
             // 2) connector.session is a getter that re-reads private properties of the connector; those properties are updated immediately at approveSession
             dispatch({ type: 'connectedNewSession', uri: connectorOpts.uri, session: connector.session })
 
-            if (!supportedDApps.includes(connector.session.peerMeta.url)) showWalletTokenModal()
             addToast('Successfully connected to '+connector.session.peerMeta.name)
 
             setIsConnecting(false)
@@ -385,7 +381,7 @@ export default function useWalletConnect ({ account, chainId, initialUri, allNet
         connector.on('error', onError)
 
         return connector
-    }, [addToast, allNetworks, setNetwork, showWalletTokenModal])
+    }, [addToast, allNetworks, setNetwork])
 
     const disconnect = useCallback(uri => {
         // connector might not be there, either cause we disconnected before,
