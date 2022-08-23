@@ -9,7 +9,7 @@ import * as blockies from "blockies-ts"
 import { getWallet } from "lib/getWallet"
 import { useToasts } from "hooks/toasts"
 import { useState, useEffect, useRef } from "react"
-import { Button, Loading, TextInput, ToolTip } from "components/common"
+import { Button, Loading, TextInput, ToolTip, DAppIncompatibilityWarningMsg } from "components/common"
 
 const CONF_CODE_LENGTH = 6
 
@@ -189,26 +189,7 @@ export default function SignMessage({ everythingToSign, resolve, account, connec
               ? `You have ${totalRequests - 1} more pending requests.`
               : ""}
           </span>
-          {!isDAppSupported && dApp && (
-            <div className='notification-hollow warning'>
-              Please be advised that {dApp.name} may not support smart contract
-              wallet verification
-              <ToolTip label='Click to learn more'>
-                <a
-                  className='warning'
-                  href={
-                    "https://help.ambire.com/hc/en-us/articles/5591676210844"
-                  }
-                  target='_blank'
-                  rel='noreferrer'
-                >
-                  <MdInfoOutline />
-                </a>
-              </ToolTip>
-              . If {dApp.name} does not function correctly following this
-              signature, please contact them to inform them about this issue.
-            </div>
-          )}
+          {!isDAppSupported && <DAppIncompatibilityWarningMsg />}
         </div>
 
         <textarea
