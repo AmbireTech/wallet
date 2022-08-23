@@ -48,7 +48,7 @@ const Security = ({
   const url = relayerURL
     ? `${relayerURL}/identity/${selectedAcc}/${selectedNetwork.id}/privileges?cacheBreak=${cacheBreak}`
     : null
-  const { data, errMsg, isLoading } = useRelayerData(url)
+  const { data, errMsg, isLoading } = useRelayerData({ url })
   const privileges = data ? data.privileges : {}
   const otpEnabled = data ? data.otpEnabled : null
   const recoveryLock = data && data.recoveryLock

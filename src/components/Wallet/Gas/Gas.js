@@ -26,7 +26,7 @@ const Gas = ({
 
     const url = relayerURL ? `${relayerURL}/gasPrice/${selectedNetwork.id}?cacheBreak=${cacheBreak}` : null
     //TODO: To implement "isLoading" and "errMsg"
-    const { data, errMsg, isLoading } = useRelayerData(url)
+    const { data, errMsg, isLoading } = useRelayerData({ url })
     
     const gasData = data ? data.data : null
     
