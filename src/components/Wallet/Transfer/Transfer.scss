@@ -22,7 +22,7 @@
             width: 100%;
 
             input {
-                padding-right: 280px;
+                padding-right: 310px;
             }
         }
 
@@ -81,6 +81,16 @@
             gap: 12px;
             background-color: mix($panel-background-color, $warning-color, 90%);
             color: $warning-color;
+            padding: 15px;
+            font-size: 14px;
+        }
+
+        .gas-tank-convert-msg {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background-color: mix($panel-background-color, $primary-accent-color, 90%);
+            color: $primary-accent-color;
             padding: 15px;
             font-size: 14px;
         }
@@ -166,7 +176,7 @@
                 width: 100%;
     
                 input {
-                    padding-right: 50px;
+                    padding-right: 80px;
                 }
             }
 

@@ -1,4 +1,4 @@
-import { abis } from 'consts/humanizerInfo'
+import { abis } from 'ambire-common/src/constants/humanizerInfo'
 import { Interface } from 'ethers/lib/utils'
 import { token } from 'lib/humanReadableTransactions'
 

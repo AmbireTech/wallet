@@ -19,7 +19,7 @@ import { isFirefox } from 'lib/isFirefox'
 import CrossChain from "./CrossChain/CrossChain"
 import Bookmarklet from './Security/Bookmarklet/Bookmarklet'
 import OpenSea from "./OpenSea/OpenSea"
-import unsupportedDApps from 'consts/unsupportedDApps'
+import unsupportedDApps from 'ambire-common/src/constants/unsupportedDApps'
 import Gas from "./Gas/Gas"
 
 export default function Wallet(props) {

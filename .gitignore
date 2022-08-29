@@ -25,3 +25,7 @@ yarn-error.log*
 public/bookmarklet/webpackedAmbexBookmarkletMessenger.js
 public/bookmarklet/bookmarkletSnippet.js
 public/bookmarklet/webpackedBookmarkletInjection.js
+=======
+
+# other
+.prettierrc

@@ -73,9 +73,19 @@ const GasTank = ({ network,
     const isMobileScreen = useCheckMobileScreen()
     const availableFeeAssets = feeAssetsPerNetwork?.map(item => {
         const isFound = tokens?.find(x => x.address.toLowerCase() === item.address.toLowerCase()) 
-        if (isFound) return isFound
+        if (isFound) return {
+            ...isFound,
+            tokenImageUrl: item.icon,
+            decimals: item.decimals,
+            symbol: item.symbol,
+            balance: isFound.balance,
+            balanceUSD: parseFloat(isFound.balance) * parseFloat(feeAssetsPerNetwork
+                .find(x => x.address.toLowerCase() === isFound.address.toLowerCase()).price || 0)
+        }
+
         return { 
             ...item, 
+            tokenImageUrl: item.icon,
             balance: 0, 
             balanceUSD: 0, 
             decimals: 0, 

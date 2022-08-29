@@ -1,5 +1,5 @@
 import './SignMessage.scss'
-import { MdBrokenImage, MdCheck, MdClose } from 'react-icons/md'
+import { MdBrokenImage, MdCheck, MdClose, MdInfoOutline } from 'react-icons/md'
 import { Wallet } from 'ethers'
 import { signMessage712, signMessage, Bundle } from 'adex-protocol-eth/js/Bundle'
 import {
@@ -11,18 +11,21 @@ import {
   AbiCoder,
   keccak256
 } from 'ethers/lib/utils'
+import {MaxUint256} from '@ethersproject/constants'
 import * as blockies from 'blockies-ts';
 import { getWallet } from 'lib/getWallet'
+import { token, getName } from 'lib/humanReadableTransactions'
 import { useToasts } from 'hooks/toasts'
 import { fetchPost } from 'lib/fetch'
 import { verifyMessage } from '@ambire/signature-validator'
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { Button, Loading, TextInput, ToolTip } from 'components/common'
 import { isObject } from 'url/util'
-import { MdInfoOutline } from 'react-icons/md'
-import accountPresets from 'consts/accountPresets'
+import accountPresets from 'ambire-common/src/constants/accountPresets'
 import { getProvider } from 'lib/provider'
 import { getNetworkByChainId } from 'lib/getNetwork'
+import supportedDApps from 'ambire-common/src/constants/supportedDApps'
+import { FaExclamationTriangle } from 'react-icons/all'
 
 const CONF_CODE_LENGTH = 6
 
@@ -41,6 +44,7 @@ export default function SignMessage ({ toSign, resolve, account, connections, re
 
   const connection = connections.find(({ uri }) => uri === toSign.wcUri)
   const dApp = connection ? connection?.session?.peerMeta || null : null
+  const isDAppSupported = dApp && supportedDApps.includes(dApp.url)
 
   let typeDataErr
   let dataV4
@@ -241,6 +245,18 @@ export default function SignMessage ({ toSign, resolve, account, connections, re
     setLoading(false)
   }
 
+  // ERC20 permit warnings
+  // .message prop is supposed to already be present, as we check if the msg is valid above
+  // Could improve accuracy (checking domain props), but many permit sigs are not uniform. This should catch most of them
+  const erc20PermitDetails = (isTypedData && Object.keys(dataV4.types).includes('Permit') && dataV4.message.spender)
+    ? {
+      spender : dataV4.message.spender,
+      name : dataV4.domain.name,
+      verifyingContract : dataV4.domain.verifyingContract,
+      value : dataV4.message.allowed ? MaxUint256 : dataV4.message.value // dai permit uses bool
+    }
+    : null
+
   const approve = async () => {
     if (account.signer.quickAccManager) {
       await approveQuickAcc()
@@ -333,7 +349,31 @@ export default function SignMessage ({ toSign, resolve, account, connections, re
           is requesting your signature.
         </div>
         <span>{totalRequests > 1 ? `You have ${totalRequests - 1} more pending requests.` : ''}</span>
+        {
+          !isDAppSupported && dApp &&
+            <div className='notification-hollow warning'>
+              Please be advised that { dApp.name } may not support smart contract wallet verification
+              <ToolTip label='Click to learn more'>
+                <a className='warning' href={'https://help.ambire.com/hc/en-us/articles/5591676210844'} target="_blank" rel="noreferrer">
+                  <MdInfoOutline/>
+                </a>
+              </ToolTip>.
+              If { dApp.name } does not function correctly following this signature, please contact them to inform them about this issue.
+            </div>
+          }
       </div>
+
+      {
+        erc20PermitDetails &&
+        <div className='erc20PermitWarning'>
+          <span className='erc20PermitWarning-icon'>
+            <FaExclamationTriangle />
+          </span>
+          <span className='erc20PermitWarning-message'>
+            The message you are about to sign is likely allowing <b>{getName(erc20PermitDetails.spender)}</b> to spend {!erc20PermitDetails.value && 'your'} <b>{token(erc20PermitDetails.verifyingContract, erc20PermitDetails.value || 0)}</b>
+          </span>
+        </div>
+      }
 
       <textarea
         className='sign-message'

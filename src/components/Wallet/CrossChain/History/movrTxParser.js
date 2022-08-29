@@ -1,5 +1,4 @@
-import { abis } from 'consts/humanizerInfo'
-import { tokens } from 'consts/humanizerInfo'
+import { abis, tokens } from 'ambire-common/src/constants/humanizerInfo'
 import { formatNativeTokenAddress, knownTokens } from 'lib/humanReadableTransactions'
 import { Interface } from 'ethers/lib/utils'
 import networks from 'consts/networks'

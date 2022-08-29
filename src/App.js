@@ -33,7 +33,7 @@ import {
 } from './hooks'
 import { useToasts } from './hooks/toasts'
 import { useOneTimeQueryParam } from './hooks/oneTimeQueryParam'
-import WalletStakingPoolABI from './consts/WalletStakingPoolABI.json'
+import WalletStakingPoolABI from 'ambire-common/src/constants/abis/WalletStakingPoolABI.json'
 import { Contract, utils } from 'ethers'
 import { getProvider } from './lib/provider'
 import allNetworks from './consts/networks'
@@ -293,13 +293,13 @@ function AppInner() {
   })
 
   // Checks if Thank you page needs to be shown
-  const thankYouUTM = useOneTimeQueryParam('utm_campaign')
+  const campaignUTM = useOneTimeQueryParam('utm_campaign')
   const [showThankYouPage, setShowThankYouPage] = useLocalStorage({
       key: 'showThankYouPage',
       defaultValue: false
   })
   const handleSetShowThankYouPage = useCallback(() => setShowThankYouPage(true), [setShowThankYouPage])
-  useEffect(() => (thankYouUTM && thankYouUTM.startsWith('thankyou')) && handleSetShowThankYouPage(), [handleSetShowThankYouPage, thankYouUTM])
+  useEffect(() => campaignUTM && handleSetShowThankYouPage(), [handleSetShowThankYouPage, campaignUTM])
 
   return (<>
     <Prompt

@@ -1,4 +1,4 @@
-import { abis } from 'consts/humanizerInfo'
+import { abis } from 'ambire-common/src/constants/humanizerInfo'
 import { Interface } from 'ethers/lib/utils'
 import { nativeToken, token } from 'lib/humanReadableTransactions'
 
@@ -149,7 +149,7 @@ const uniV3Mapping = {
   [ifaceV3.getSighash('exactOutput')]: (txn, network, opts = {}) => {
     const [ params ] = ifaceV3.parseTransaction(txn).args
     const path = parsePath(params.path)
-    return [`Swap up to ${token(path[0], params.amountInMaximum)} for ${token(path[path.length - 1], params.amountOut)}${recipientText(params.recipient, txn.from)}${deadlineText(params.deadline, opts.mined)}`]
+    return [`Swap up to ${token(path[path.length - 1], params.amountInMaximum)} for ${token(path[0], params.amountOut)}${recipientText(params.recipient, txn.from)}${deadlineText(params.deadline, opts.mined)}`]
   },
   [ifaceV3.getSighash('unwrapWETH9')]: (txn, network) => {
     const [ amountMin, recipient ] = ifaceV3.parseTransaction(txn).args
@@ -190,12 +190,12 @@ const uniV32Mapping = {
   [ifaceV32.getSighash('exactOutput')]: (txn, network) => {
     const [ params ] = ifaceV32.parseTransaction(txn).args
     const path = parsePath(params.path)
-    return [`Swap up to ${token(path[0], params.amountInMaximum)} for ${token(path[path.length - 1], params.amountOut)}${recipientText(params.recipient, txn.from)}}`]
+    return [`Swap up to ${token(path[path.length - 1], params.amountInMaximum)} for ${token(path[0], params.amountOut)}${recipientText(params.recipient, txn.from)}`]
   },
   [ifaceV32.getSighash('swapTokensForExactTokens')]: (txn, network) => {
     // NOTE: is amountInMax set when dealing with ETH? it should be... cause value and max are not the same thing
     const { amountOut, amountInMax, path, to } = ifaceV32.parseTransaction(txn).args
-    return [`Swap up to ${token(path[0], amountInMax)} for ${token(path[path.length - 1], amountOut)}${recipientText(to, txn.from)}}`]
+    return [`Swap up to ${token(path[0], amountInMax)} for ${token(path[path.length - 1], amountOut)}${recipientText(to, txn.from)}`]
   },
   [ifaceV32.getSighash('swapExactTokensForTokens')]: (txn, network) => {
     // NOTE: is amountIn set when dealing with ETH?

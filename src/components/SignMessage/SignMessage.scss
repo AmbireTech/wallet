@@ -129,6 +129,10 @@ $max-width: 650px;
     span {
       opacity: 0.5;
     }
+
+    .warning {
+      color: $warning-color;
+    }
   }
 
   .sign-message {
@@ -179,6 +183,20 @@ $max-width: 650px;
         }
       }
     }
+  }
+
+  .erc20PermitWarning {
+    padding: 16px;
+    display: flex;
+    background-color: $input-background-color;
+    gap: 16px;
+    align-items: center;
+
+    .erc20PermitWarning-icon {
+      font-size: 32px;
+      color: $warning-color;
+    }
+
   }
 }
 

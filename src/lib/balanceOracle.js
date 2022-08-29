@@ -1,6 +1,6 @@
 import { ethers } from 'ethers'
 import oracle from 'adex-protocol-eth/abi/RemainingBalancesOracle.json'
-import tokenList from 'consts/tokenList.json'
+import tokenList from 'ambire-common/src/constants/tokenList'
 import { getProvider } from 'lib/provider'
 import { getTokenIcon } from 'lib/icons'
 

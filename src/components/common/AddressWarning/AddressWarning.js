@@ -3,8 +3,8 @@ import './AddressWarning.scss'
 import { MdOutlineAdd } from 'react-icons/md'
 import { Checkbox } from 'components/common'
 import { useEffect, useMemo, useState } from 'react'
-import { isValidAddress, isKnownTokenOrContract } from 'lib/address';
-import accountPresets from 'consts/accountPresets';
+import { isValidAddress, isKnownTokenOrContract } from 'ambire-common/src/services/address'
+import accountPresets from 'ambire-common/src/constants/accountPresets'
 
 const AddressWarning = ({ address, onChange, onAddNewAddress, isKnownAddress, uDAddress, ensAddress }) => {
     const [confirmed, setConfirmed] = useState(false)
