@@ -79,7 +79,7 @@ export default function Deposit({ selectedAcc, selectedNetwork, accounts, addReq
                 <div className="description">
                     Deposit with credit card to your account directly using one of our partners
                 </div>
-                <Providers walletAddress={selectedAcc} networkDetails={networkDetails} relayerURL={relayerURL}/>
+                <Providers walletAddress={selectedAcc} networkDetails={networkDetails} relayerURL={relayerURL} portfolio={portfolio}/>
             </div>
         </section>
     )

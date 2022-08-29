@@ -3,7 +3,7 @@ import './Addresses.scss'
 import { MdOutlineAdd } from 'react-icons/md'
 import AddressList from 'components/common/AddressBook/AddressList/AddressList'
 import { Button } from 'components/common'
-import { isValidAddress } from 'lib/address'
+import { isValidAddress } from 'ambire-common/src/services/address'
 import { AddAddressModal } from 'components/Modals'
 import { useModals } from 'hooks'
 

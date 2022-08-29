@@ -1,3 +1,5 @@
+import useGasTank from 'ambire-common/src/hooks/useGasTank'
+
 import './App.scss'
 
 import {
@@ -27,11 +29,11 @@ import { useAttentionGrabber,
   usePrivateMode, 
   useLocalStorage, 
   useUtmTracking, 
-  useGasTank 
 } from './hooks'
 import { useToasts } from './hooks/toasts'
 import { useOneTimeQueryParam } from './hooks/oneTimeQueryParam'
-import WalletStakingPoolABI from './consts/WalletStakingPoolABI.json'
+import WalletStakingPoolABI from 'ambire-common/src/constants/abis/WalletStakingPoolABI.json'
+import useRewards from 'ambire-common/src/hooks/useRewards'
 import { Contract, utils } from 'ethers'
 import { getProvider } from './lib/provider'
 import allNetworks from './consts/networks'
@@ -93,12 +95,12 @@ function AppInner() {
 
     const shouldAttachMeta =  [WALLET_TOKEN_ADDRESS, WALLET_STAKING_ADDRESS].includes(req.txn.to.toLowerCase())
 
-    if (shouldAttachMeta && rewardsData && rewardsData.data) {
+    if (shouldAttachMeta) {
       const WALLET_STAKING_POOL_INTERFACE = new utils.Interface(WalletStakingPoolABI)
       const provider = getProvider(network.id)
       const stakingTokenContract = new Contract(WALLET_STAKING_ADDRESS, WALLET_STAKING_POOL_INTERFACE, provider)
       const shareValue = await stakingTokenContract.shareValue()
-      const { usdPrice: walletTokenUsdPrice, xWALLETAPY: APY } = rewardsData.data
+      const { walletUsdPrice: walletTokenUsdPrice, xWALLETAPY: APY } = rewardsData.rewards
 
       meta = {
         xWallet: {
@@ -244,24 +246,16 @@ function AppInner() {
     onSitckyClick: useCallback(() => setSendTxnState({ showing: true }), [])
   })
 
-  // Get rewards data
-  const [cacheBreak, setCacheBreak] = useState(() => Date.now())
-  useEffect(() => {
-    if ((Date.now() - cacheBreak) > 5000) setCacheBreak(Date.now())
-    const intvl = setTimeout(() => setCacheBreak(Date.now()), 30000)
-    return () => clearTimeout(intvl)
-  }, [cacheBreak])
-  const rewardsUrl = (relayerURL && selectedAcc) ? `${relayerURL}/wallet-token/rewards/${selectedAcc}?cacheBreak=${cacheBreak}` : null
-  const rewardsData = useRelayerData(rewardsUrl)
+  const rewardsData = useRewards({ relayerURL, accountId: selectedAcc, useRelayerData })
 
   // Checks if Thank you page needs to be shown
-  const thankYouUTM = useOneTimeQueryParam('utm_campaign')
+  const campaignUTM = useOneTimeQueryParam('utm_campaign')
   const [showThankYouPage, setShowThankYouPage] = useLocalStorage({
       key: 'showThankYouPage',
       defaultValue: false
   })
   const handleSetShowThankYouPage = useCallback(() => setShowThankYouPage(true), [setShowThankYouPage])
-  useEffect(() => (thankYouUTM && thankYouUTM.startsWith('thankyou')) && handleSetShowThankYouPage(), [handleSetShowThankYouPage, thankYouUTM])
+  useEffect(() => campaignUTM && handleSetShowThankYouPage(), [handleSetShowThankYouPage, campaignUTM])
 
   return (<>
     <Prompt
@@ -273,7 +267,7 @@ function AppInner() {
     {!!everythingToSign.length && (<SignMessage
       selectedAcc={selectedAcc}
       account={accounts.find(x => x.id === selectedAcc)}
-      toSign={everythingToSign[0]}
+      everythingToSign={everythingToSign}
       totalRequests={everythingToSign.length}
       connections={connections}
       relayerURL={relayerURL}

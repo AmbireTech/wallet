@@ -9,12 +9,12 @@ import { Modal, Toggle, Button, Checkbox, ToolTip } from 'components/common'
 import { isFirefox } from 'lib/isFirefox'
 import { fetchGet } from 'lib/fetch'
 import { AiOutlineReload } from 'react-icons/ai'
-import accountPresets from 'consts/accountPresets'
-import { PaperBackupModal } from 'components/Modals'
 import {
     BsFileEarmarkArrowDownFill,
     BsFileEarmarkTextFill,
 } from 'react-icons/bs'
+import { PaperBackupModal } from 'components/Modals'
+import accountPresets from 'ambire-common/src/constants/accountPresets'
 
 const toastErrorMessage = name => `You blocked the ${name} permission. Check your browser permissions tab.`
 
@@ -238,6 +238,9 @@ const PermissionsModal = ({ relayerIdentityURL, account, onAddAccount, isCloseBt
                     label="I understand, do not show this again."
                     checked={modalHidden}
                     onChange={({ target }) => setModalHidden(target.checked)}/>)
+            }
+            {
+                !isBackupOptout ? <p className="download-backup">You have to download a backup of you profile before you can continue</p> : null
             }
         </Modal>
     )

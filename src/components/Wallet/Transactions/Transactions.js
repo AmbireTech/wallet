@@ -11,7 +11,7 @@ import { Bundle } from 'adex-protocol-eth'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import fetch from 'node-fetch'
 import { useToasts } from 'hooks/toasts'
-import { toBundleTxn } from 'lib/requestToBundleTxn'
+import { toBundleTxn } from 'ambire-common/src/services/requestToBundleTxn'
 import { HiOutlineChevronLeft, HiOutlineChevronRight } from 'react-icons/hi'
 import { useHistory, useParams } from 'react-router-dom/cjs/react-router-dom.min'
 import { formatFloatTokenAmount } from 'lib/formatters'
@@ -42,9 +42,9 @@ function Transactions ({ relayerURL, selectedAcc, selectedNetwork, showSendTxns,
   const url = relayerURL
     ? `${relayerURL}/identity/${selectedAcc}/${selectedNetwork.id}/transactions?cacheBreak=${cacheBreak}`
     : null
-  const { data, errMsg, isLoading } = useRelayerData(url)
+  const { data, errMsg, isLoading } = useRelayerData({ url })
   const urlGetFeeAssets = relayerURL ? `${relayerURL}/gas-tank/assets?cacheBreak=${cacheBreak}` : null
-  const { data: feeAssets } = useRelayerData(urlGetFeeAssets)
+  const { data: feeAssets } = useRelayerData({ url: urlGetFeeAssets })
 
   const showSendTxnsForReplacement = useCallback(bundle => {
     bundle.txns

@@ -1,102 +1,78 @@
 import './HideTokenModal.scss'
 
-import { isValidAddress } from 'lib/address'
-import { Button, Loading, Modal, TextInput } from 'components/common'
-import { useState } from 'react'
-import { MdVisibilityOff, MdOutlineClose, MdOutlineRemove } from 'react-icons/md'
+import { Button, Modal } from 'components/common'
+import {
+  MdOutlineClose,
+  MdVisibilityOff as VisibleIcon,
+  MdRemoveRedEye as HiddenIcon
+} from 'react-icons/md'
 import { useModals } from 'hooks'
-import { useToasts } from 'hooks/toasts'
+import { useMemo } from 'react'
 
-const ADDRESS_LENGTH = 42
-const TOKEN_SYMBOL_MIN_LENGTH = 3
+const Token = ({ token, button }) => (
+  <div className="extra-token" key={token.address}>
+    <div className="info">
+      <div className="icon" style={{ backgroundImage: `url(${token.tokenImageUrl})` }} />
+      <div className="name">
+        <span>
+          {token.symbol} ({token.network.toUpperCase()})
+        </span>
+      </div>
+    </div>
+    {button}
+  </div>
+)
 
-const HideTokenModel = ({ network, account, portfolio }) => {
-    const { hideModal } = useModals()
-    const { addToast } = useToasts()
-    const { hiddenTokens, onAddHiddenToken, onRemoveHiddenToken, tokens } = portfolio
-    const [loading, setLoading] = useState(false)
-    const [tokenDetails, setTokenDetails] = useState(null)
-    const [showError, setShowError] = useState(false)
+const HideTokenModel = ({ portfolio, account, network, userSorting, sortType, setIsHideTokenModalOpen }) => {
+  const { hideModal } = useModals()
+  const { hiddenTokens, onAddHiddenToken, onRemoveHiddenToken, tokens } = portfolio
 
-    const disabled = !tokenDetails
+  const hideToken = (token) => onAddHiddenToken(token)
 
-    const onInput = addressOrSymbol => {
-        setTokenDetails(null)
-        setLoading(true)
-        setShowError(false)
+  const unhideToken = (token) => onRemoveHiddenToken(token.address)
 
-        if (addressOrSymbol.length === ADDRESS_LENGTH && !isValidAddress(addressOrSymbol)) addToast(`Invalid address: ${addressOrSymbol}`, {error: true})
-        const foundByAddressOrSymbol = tokens.find(i => (i.symbol.toLowerCase() === addressOrSymbol.toLowerCase()) ||
-            (i.address.toLowerCase() === addressOrSymbol.toLowerCase()))
+  const sortedTokens = useMemo(() => {
+    const tempTokens = tokens.concat(hiddenTokens).sort((a, b) => {
+      if (sortType === 'custom' && userSorting.tokens?.items?.[`${account}-${network.chainId}`]?.length) {
+        const sorted = userSorting.tokens.items[`${account}-${network.chainId}`].indexOf(a.address) - userSorting.tokens.items[`${account}-${network.chainId}`].indexOf(b.address)
+        return sorted
+      } else {
+        const decreasing = b.balanceUSD - a.balanceUSD
+        if (decreasing === 0) return a.symbol.localeCompare(b.symbol)
+        return decreasing
+      }
+    })
 
-        if (!!foundByAddressOrSymbol) setTokenDetails(foundByAddressOrSymbol)
-        else if (addressOrSymbol.length >= TOKEN_SYMBOL_MIN_LENGTH) setShowError(true) 
- 
-        setLoading(false)
-    }
+    return [...new Map(tempTokens.map(token => [token.address, token])).values()]
+  }, [tokens, hiddenTokens, userSorting, sortType, account, network.chainId])
 
-    const addToken = () => {
-        onAddHiddenToken(tokenDetails)
-        hideModal()
-    }
+  const handleHideModal = () => {
+    setIsHideTokenModalOpen(false)
+    hideModal()
+  }
 
-    const removeToken = address => {
-        onRemoveHiddenToken(address)
-        hideModal()
-    }
-
-    const buttons = <>
-        <Button clear icon={<MdOutlineClose/>} onClick={() => hideModal()}>Close</Button>
-        <Button icon={<MdVisibilityOff/>} disabled={disabled} onClick={addToken}>Hide</Button>
-    </>
-
-    return (
-        <Modal id="hide-token-modal" title="Hide Token" buttons={buttons}>
-            <TextInput
-                label="Token Address or Symbol"
-                placeholder="Input token address or symbol"
-                onInput={value => onInput(value)}
-            />
-            {showError && 
-                (<div className="validation-error">The address/symbol you entered does not appear to correspond to you assets list or it's already hidden.</div>)
+  return (
+    <Modal id="hide-token-modal" title="Hide Token">
+      <div className="extra-tokens-list">
+        {sortedTokens.map((token) => (
+          <Token
+            key={token.address}
+            token={token}
+            button={!token.isHidden ? 
+              <HiddenIcon className="extra-token-icon" color="#36c979" onClick={() => hideToken(token)} /> :
+              <VisibleIcon className="extra-token-icon" color="#f98689" onClick={() => unhideToken(token)} />
             }
-            {
-                loading ?
-                    <Loading/>
-                    :
-                        !showError && tokenDetails ? 
-                            <div className="token-details">
-                                <div className="info">
-                                    <div className="icon" style={{backgroundImage: `url(${tokenDetails.tokenImageUrl})`}}/>
-                                    <div className="name"><span>{tokenDetails.symbol} ({tokenDetails.network.toUpperCase()})</span>
-                                    </div>
-                                </div>
-                                <div className="balance">
-                                    Balance: <span>{ tokenDetails.balance }</span> <b>{ tokenDetails.symbol }</b>
-                                </div>
-                            </div>
-                            :
-                            null
-            }
-            <div className="extra-tokens-list">
-                {
-                    hiddenTokens.map(({ address, symbol, tokenImageUrl, network }) => (
-                        <div className="extra-token" key={address}>
-                            <div className="info">
-                                <div className="icon" style={{ backgroundImage: `url(${tokenImageUrl})` }}/>
-                                <div className="name"><span>{ symbol } ({network.toUpperCase()})</span></div>
-                            </div>
-                            <div className="actions">
-                                <Button mini clear onClick={() => removeToken(address)}>
-                                    <MdOutlineRemove/>
-                                </Button>
-                            </div>
-                        </div>
-                    ))
-                }
-            </div>
-        </Modal>
-    )
+          />
+        ))}
+      </div>
+
+      <div className="modalBottom">
+        <Button clear icon={<MdOutlineClose />} onClick={handleHideModal}>
+          Close
+        </Button>
+      </div>
+    </Modal>
+  )
 }
 
 export default HideTokenModel

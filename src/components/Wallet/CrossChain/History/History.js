@@ -34,7 +34,7 @@ const History = ({ relayerURL, network, account, quotesConfirmed }) => {
         ? `${relayerURL}/identity/${account}/${network.id}/transactions?cacheBreak=${cacheBreak}`
         : null
 
-    const { data: relayerTransactions, errMsg, isLoading: isRelayerLoading } = useRelayerData(url)
+    const { data: relayerTransactions, errMsg, isLoading: isRelayerLoading } = useRelayerData({ url })
     
     // Return relayer txs that contains outboundTransferTo calls to Movr contracts and parse them
     const txTransfers = useMemo(() => {

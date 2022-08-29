@@ -5,6 +5,7 @@
         display: flex;
         flex-direction: column;
         gap: 30px;
+        padding-bottom: 30px;
 
         .intro {
             opacity: 0.6;
@@ -91,5 +92,10 @@
             background: $warning-color;
         }
 
+    }
+
+    .download-backup {
+        opacity: .6;
+        margin: 0;
     }
 }

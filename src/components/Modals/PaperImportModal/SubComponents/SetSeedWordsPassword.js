@@ -1,4 +1,4 @@
-import accountPresets from 'consts/accountPresets'
+import accountPresets from 'ambire-common/src/constants/accountPresets'
 import { Button, TextInput } from 'components/common'
 import { useRef, useEffect, useState, useCallback } from 'react'
 import { validateImportedAccountProps } from 'lib/validations/importedAccountValidations'

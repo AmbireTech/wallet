@@ -13,6 +13,7 @@ import AddAddressModal from './AddAddressModal/AddAddressModal'
 import PaperBackupModal from './PaperBackupModal/PaperBackupModal'
 import PaperImportModal from './PaperImportModal/PaperImportModal'
 import GasTankBalanceByTokensModal from './GasTankBalanceByTokensModal/GasTankBalanceByTokensModal'
+import GuardarianDepositProviderModal from './GuardarianDepositProviderModal/GuardarianDepositProviderModal'
 
 export {
     PermissionsModal,
@@ -29,5 +30,6 @@ export {
     AddAddressModal,
     PaperBackupModal,
     PaperImportModal,
-    GasTankBalanceByTokensModal
+    GasTankBalanceByTokensModal,
+    GuardarianDepositProviderModal
 }
