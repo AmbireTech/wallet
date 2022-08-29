@@ -27,7 +27,7 @@ jobs:
     - name: Install NPM packages
       env:
         REACT_APP_RELAYRLESS: true
-      run: npm ci
+      run: npm ci --no-audit
     
     - name: Build project
       env:
