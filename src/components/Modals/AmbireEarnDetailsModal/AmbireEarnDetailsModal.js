@@ -38,7 +38,7 @@ const AmbireEarnDetailsModal = ({ title = 'Details', apy, accountId, msToDaysHou
            {isLoading ? (
            <>
                 <div className="wrapper">
-                    <div>Annual Percentage Yield (APY)</div><div>{apy}%</div>
+                    <div>Annual Percentage Yield (APY)</div><div>{apy}</div>
                 </div>
                 <div className="wrapper odd-rows-bg">
                     <div>Current Available Balance</div>

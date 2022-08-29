@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback, useMemo } from 'react'
 import { fetchGet } from 'lib/fetch';
 import { useToasts } from 'hooks/toasts'
 
@@ -19,6 +19,7 @@ const OFF_RAMP_FIAT = [
         icon: `https://changenow.io/images/sprite/currencies/usd.svg`
     }
 ]
+
 const NETWORK_MAPPING = {
     'ethereum': 'ETH',
     'binance-smart-chain': 'BSC',
@@ -27,7 +28,16 @@ const NETWORK_MAPPING = {
     'avalanche': 'AVAX'
 }
 
-const ZERO_ADDR = '0x0000000000000000000000000000000000000000'
+const DEFAULT_CRYPTO = {
+    'ethereum': 'ETH',
+    'binance-smart-chain': 'BNB',
+    'polygon': 'MATIC',
+    'fantom': 'FTM',
+    'avalanche': 'AVAX'
+
+}
+
+const NATIVE_ADDRESS = '0x'+'0'.repeat(40)
 
 const useGuardarian = function({ relayerURL, selectedNetwork, initMode, tokens, walletAddress }) {
     const FIAT_CURRENCIES_URL = `${relayerURL}/guardarian/currencies/fiat`
@@ -35,13 +45,10 @@ const useGuardarian = function({ relayerURL, selectedNetwork, initMode, tokens, 
     const offRampFiats = OFF_RAMP_FIAT
     const { addToast } = useToasts()
     const [network, setNetwork] = useState(selectedNetwork)
-    const [from, setFrom] = useState(null)
-    const [to, setTo] = useState(null)
+    const [from, setFrom] = useState('')
+    const [to, setTo] = useState('')
     const [mode, setMode] = useState(initMode)
     const [amount, setAmount] = useState('50')
-   
-    const [fiatList, setFiatList] = useState({data: []})
-    const [cryptoList, setCryptoList] = useState({data: []})
 
     const [cryptoCurrencies, setCryptoCurrencies] = useState({data: []})
     const [onRampFiats, setOnRampFiats] = useState({data: []})
@@ -49,18 +56,9 @@ const useGuardarian = function({ relayerURL, selectedNetwork, initMode, tokens, 
     const [marketInfo, setMarketInfo] = useState(null)
     const [estimateInfo, setEstimateInfo] = useState({data: null, isLoading: false})
 
-    //mode
-    useEffect(()=> {
+    const cryptoList = useMemo(() => {
         if (mode === 'buy') {
-            setFiatList({
-                data: onRampFiats?.data?.map(f => ({
-                    label: f.ticker,
-                    value: f.ticker,
-                    icon: f.logo_url || `https://changenow.io/images/sprite/currencies/${f?.ticker?.toLowerCase()}.svg`
-                })) || [],
-                isLoading: onRampFiats?.isLoading
-            })
-            setCryptoList({
+            return {
                 data: cryptoCurrencies?.data?.filter(t => t.networks.find(n => n.network === NETWORK_MAPPING[network] && n.payment_methods.some(pm => pm.withdrawal_enabled
                 ))).map(t => ({
                     label: t.ticker,
@@ -68,29 +66,50 @@ const useGuardarian = function({ relayerURL, selectedNetwork, initMode, tokens, 
                     icon: t.logo_url
                 })).filter(t => t.value) || [],
                 isLoading: cryptoCurrencies?.isLoading
-            })
-            setAmount('')
-            setFrom(fiatList.data && fiatList.data[0] ? fiatList.data[0].value : null)
-            setTo(cryptoList.data && cryptoList.data[0] ? cryptoList.data[0].value : null)
+            }
         } else if (mode === 'sell') {
-            setFiatList({
-                data: offRampFiats,
-                isLoading: false
-            })
-            setCryptoList({
-                data: cryptoCurrencies?.data?.filter(t => t.networks.find(n => n.network === NETWORK_MAPPING[network] && n.payment_methods.some(pm => pm.deposit_enabled) && tokens.find(bt => bt?.address?.toLowerCase() === n?.token_contract?.toLowerCase() || (bt?.address === ZERO_ADDR && n?.token_contract === null))))
+            return {
+                data: cryptoCurrencies?.data?.filter(t => t.networks.find(n => n.network === NETWORK_MAPPING[network] && n.payment_methods.some(pm => pm.deposit_enabled) && tokens.find(bt => bt?.address?.toLowerCase() === n?.token_contract?.toLowerCase() || (bt?.address === NATIVE_ADDRESS && n?.token_contract === null))))
                     .map(t => ({
                         label: t.ticker,
                         value: t.ticker ,
                         icon: t.logo_url
                     })).filter(t => t.value) || [],
                 isLoading: cryptoCurrencies.isLoading
-            })
+            }
+        }
+    }, [mode, cryptoCurrencies, network, tokens])
+
+    const fiatList = useMemo(() => {
+        if (mode === 'buy') {
+            return {
+                data: onRampFiats?.data?.map(f => ({
+                    label: f.ticker,
+                    value: f.ticker,
+                    icon: f.logo_url || `https://changenow.io/images/sprite/currencies/${f?.ticker?.toLowerCase()}.svg`
+                })) || [],
+                isLoading: onRampFiats?.isLoading
+            }
+        } else if (mode === 'sell') {
+            return {
+                data: offRampFiats,
+                isLoading: false
+            }
+        }
+    }, [mode, onRampFiats, offRampFiats])
+
+    //mode
+    useEffect(()=> {
+        if (mode === 'buy') {
+            setAmount('50')
+            setFrom(fiatList.data && fiatList.data[0] ? fiatList.data[0].value : null)
+            setTo(DEFAULT_CRYPTO[network])
+        } else if (mode === 'sell') {
             setAmount('')
             setFrom(cryptoList.data && cryptoList.data[0] ? cryptoList.data[0].value : null)
             setTo(fiatList.data && fiatList.data[0] ? fiatList.data[0].value : null)
         }
-    }, [mode, cryptoCurrencies, onRampFiats])
+    }, [mode, fiatList, cryptoList, network])
 
     //fiat
     useEffect(() => {
@@ -101,7 +120,7 @@ const useGuardarian = function({ relayerURL, selectedNetwork, initMode, tokens, 
                 setOnRampFiats({data: null, isLoading: false, error, message: 'Error while fetching fiat list'})
                 addToast('Error while fetching fiat list', { error: true })
             })
-    }, [network])
+    }, [FIAT_CURRENCIES_URL, addToast])
 
     //ctypto
     useEffect(() => {
@@ -114,10 +133,10 @@ const useGuardarian = function({ relayerURL, selectedNetwork, initMode, tokens, 
                 setCryptoCurrencies({data: null, isLoading: false, error, message: 'Error while fetching crypto list'})
                 addToast('Error while fetching crypto list', { error: true })
             })
-    }, [network])
+    }, [network, CRYPTO_CURRENCIES_URL, addToast])
 
 
-    function genMarketInfoUrl() {
+    const genMarketInfoUrl = useCallback(() => {
         const fromTo =
             mode === 'buy'
                 ? `${from}_${to}-${NETWORK_MAPPING[network]}`
@@ -127,7 +146,7 @@ const useGuardarian = function({ relayerURL, selectedNetwork, initMode, tokens, 
 
         if (fromTo) return `${relayerURL}/guardarian/market-info/${fromTo}`
         else return null
-    }
+    }, [mode, from, to, network, relayerURL])
 
     // MarketInfo
     useEffect(() => {
@@ -149,16 +168,16 @@ const useGuardarian = function({ relayerURL, selectedNetwork, initMode, tokens, 
         return () => {
             unmounted = true
         }
-    }, [network, mode, from, to, addToast])
+    }, [network, mode, from, to, addToast, genMarketInfoUrl])
 
 
-    function genEstimateUrl() {
+    const genEstimateUrl = useCallback(() => {
         if (mode === 'buy'){
             return `${relayerURL}/guardarian/estimate/${from}/${network}/${amount}/${to}/${'true'}`
         } else {
             return `${relayerURL}/guardarian/estimate/${from}/${network}/${amount}/${to}/${'false'}`
         }
-    }
+    }, [mode, relayerURL, from, network, amount, to])
 
     // Estimate
     useEffect(() => {
@@ -180,7 +199,7 @@ const useGuardarian = function({ relayerURL, selectedNetwork, initMode, tokens, 
         return () => {
             unloaded = true
         }
-    }, [network, mode, from, to, amount])
+    }, [network, mode, from, to, amount, addToast, genEstimateUrl])
 
     function genTxnUrl () {
         if (mode === 'buy') {
@@ -206,7 +225,10 @@ const useGuardarian = function({ relayerURL, selectedNetwork, initMode, tokens, 
         setTo,
         setMode,
         setAmount,
-        genTxnUrl
+        genTxnUrl,
+        NETWORK_MAPPING,
+        NATIVE_ADDRESS,
+        DEFAULT_CRYPTO
     }
     
 }

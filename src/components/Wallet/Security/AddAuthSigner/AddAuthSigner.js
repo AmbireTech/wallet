@@ -192,6 +192,7 @@ const AddAuthSigner = ({ selectedNetwork, selectedAcc, onAddBtnClicked }) => {
     setSignerAddress(value)
     modalHandler()
     if (signersToChoose) setTextInputInfo(`${signersToChoose.signerName} address # ${value.index + 1}`)
+    setChooseSigners(null)
   }, [signersToChoose])
 
   const handleSelectSignerAccountModalCloseClicked = useCallback(() => setChooseSigners(null), [])

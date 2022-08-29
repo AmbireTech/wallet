@@ -92,7 +92,6 @@ export default function TxnPreview ({ humanizerInfo, tokenList, txn, onDismiss, 
   const extendedSummary = getTransactionSummary(humanizerInfo, tokenList, txn, network, account, { mined, extended: true })
 
   const summary = (extendedSummary.map(entry => Array.isArray(entry) ? entry.map((item, i) => parseExtendedSummaryItem(item, i, networkDetails)) : (entry))) // If entry is extended summary parse it
-  
   useEffect(() => !!addressLabel && setKnownAddressNames(addressLabel), [addressLabel])
   
   return (

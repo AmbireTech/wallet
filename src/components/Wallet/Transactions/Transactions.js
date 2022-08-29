@@ -42,9 +42,9 @@ function Transactions ({ humanizerInfo, tokenList, relayerURL, selectedAcc, sele
   const url = relayerURL
     ? `${relayerURL}/identity/${selectedAcc}/${selectedNetwork.id}/transactions?cacheBreak=${cacheBreak}`
     : null
-  const { data, errMsg, isLoading } = useRelayerData(url)
+  const { data, errMsg, isLoading } = useRelayerData({ url })
   const urlGetFeeAssets = relayerURL ? `${relayerURL}/gas-tank/assets?cacheBreak=${cacheBreak}` : null
-  const { data: feeAssets } = useRelayerData(urlGetFeeAssets)
+  const { data: feeAssets } = useRelayerData({ url: urlGetFeeAssets })
 
   const showSendTxnsForReplacement = useCallback(bundle => {
     bundle.txns

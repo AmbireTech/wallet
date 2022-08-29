@@ -51,8 +51,15 @@ export function getErrHint(msg) {
   if (msg.includes('Router: EXPIRED')) return 'Try performing the swap again'
   if (msg.includes('Router: INSUFFICIENT_OUTPUT_AMOUNT')) return 'Try performing the swap again or increase your slippage requirements'
   if (msg.includes('INSUFFICIENT_PRIVILEGE')) return 'If you set a new signer for this account, try re-adding the account.'
-  if (contractErrors.find(contractMsg => msg.includes(contractMsg))) return 'This dApp does not support smart wallets or purposefully excludes them. Contact the dApp developers to tell them to implement smart wallets by not blocking contract interactions and/or implementing EIP1271.'
+  if (contractErrors.find(contractMsg => msg.includes(contractMsg))) {
+    return 'WARNING! We detected that this dApp intentionally blocks smart contract calls. This is a highly disruptive practice, as it breaks support for all smart wallets (Ambire, Gnosis Safe and others). We recommend you report this to the dApp ASAP and ask them to fix it.'
+    // return 'This dApp does not support smart wallets or purposefully excludes them. Contact the dApp developers to tell them to implement smart wallets by not blocking contract interactions and/or implementing EIP1271.'
+  }
   return 'Sending this transaction batch would have resulted in an error, so we prevented it.'
+}
+
+export function checkIfDAppIncompatible(msg) {
+  return contractErrors.find(contractMsg => msg.includes(contractMsg))
 }
 
 export function toHexAmount(amnt, decimals) {
