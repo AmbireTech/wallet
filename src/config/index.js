@@ -9,3 +9,4 @@ export const VELCRO_API_ENDPOINT = process.env.REACT_APP_VELCRO_API_ENDPOINT;
 export const SUSHI_SWAP_FRAME = process.env.REACT_APP_SUSHI_SWAP_FRAME_URL;
 export const SUSHI_SWAP_FRAME_EXCEPTIONS = process.env.REACT_APP_SUSHI_SWAP_FRAME_EXCEPTIONS_URL ? JSON.parse(process.env.REACT_APP_SUSHI_SWAP_FRAME_EXCEPTIONS_URL) : {};
 export const SIGNATURE_VERIFIER_DEBUGGER = (process.env.REACT_APP_SIGNATURE_VERIFIER_DEBUGGER * 1 && true) || false
+export const COINGECKO_API_URL = process.env.COINGECKO_API_URL || 'https://api.coingecko.com/api/v3';

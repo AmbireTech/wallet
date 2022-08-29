@@ -35,9 +35,8 @@ export default function Dashboard({ portfolio, selectedNetwork, selectedAccount,
     const currentAccount = accounts.find(a => a.id.toLowerCase() === selectedAccount.toLowerCase())
 
     const { hasPendingReset, recoveryLock, isPasswordRecoveryCheckLoading } = usePasswordRecoveryCheck(relayerURL, currentAccount, selectedNetwork)
-    const isBalancesCachedCurrentNetwork = portfolio.cachedBalancesByNetworks.length ? 
-        portfolio.cachedBalancesByNetworks.find(({network}) => network === selectedNetwork.id) : false
-    
+    const isBalancesCachedCurrentNetwork = portfolio.cache || false
+
     useEffect(() => {
         if (!tab || tab === tabSegments[0].value) return history.replace(`/wallet/dashboard`)
         history.replace(`/wallet/dashboard/${tab}${tab === tabSegments[1].value ? `/${page}` : ''}`)
@@ -134,7 +133,11 @@ export default function Dashboard({ portfolio, selectedNetwork, selectedAccount,
                                 setUserSorting={setUserSorting}
                             />
                             :
-                            <Collectibles portfolio={portfolio} isPrivateMode={privateMode.isPrivateMode} />
+                            <Collectibles
+                                portfolio={portfolio}
+                                isPrivateMode={privateMode.isPrivateMode}
+                                selectedNetwork={selectedNetwork}
+                            />
                     }
                 </div>
                 <div className="footer">

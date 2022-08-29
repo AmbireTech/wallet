@@ -11,7 +11,7 @@ const Balances = ({ portfolio, selectedNetwork, setNetwork, hidePrivateValue, re
     const history = useHistory()
     const networkDetails = (network) => networks.find(({ id }) => id === network)
     const otherBalances = portfolio.otherBalances.filter(({ network, total }) => network !== selectedNetwork.id && total.full > 0)
-    const otherBalancesLoading = Object.entries(portfolio.balancesByNetworksLoading).find(ntw => ntw[0] !== selectedNetwork.id && ntw[1])
+    const otherBalancesLoading = portfolio.balancesByNetworksLoading
     const urlGetBalance = relayerURL ? `${relayerURL}/gas-tank/${selectedAccount}/getBalance` : null
     const { data: balancesRes, isLoading } = useRelayerData(urlGetBalance)
     const gasTankBalances = balancesRes && balancesRes.length && balancesRes.map(({balanceInUSD}) => balanceInUSD).reduce((a, b) => a + b, 0)    

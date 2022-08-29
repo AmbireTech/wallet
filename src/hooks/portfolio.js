@@ -3,13 +3,23 @@ import usePortfolioCommon from 'ambire-common/src/hooks/usePortfolio'
 import useHiddenTokens from 'ambire-common/src/hooks/useHiddenTokens'
 
 import { fetchGet } from 'lib/fetch';
-import { ZAPPER_API_ENDPOINT, ZAPPER_API_KEY, VELCRO_API_ENDPOINT } from 'config'
+import { ZAPPER_API_ENDPOINT, VELCRO_API_ENDPOINT, COINGECKO_API_URL } from 'config'
 import { useToasts } from 'hooks/toasts'
 
-const getBalances = (network, protocol, address, provider) =>
+const getBalances = (network, address, provider) =>
     fetchGet(`${provider === 'velcro' ?
         VELCRO_API_ENDPOINT :
-        ZAPPER_API_ENDPOINT}/protocols/${protocol}/balances?addresses[]=${address}&network=${network}&api_key=${ZAPPER_API_KEY}&newBalances=true`
+        ZAPPER_API_ENDPOINT}/balance/${address}/${network}?provider=covalent`
+    )
+
+const getOtherNetworksTotals = (network, address, provider) =>
+    fetchGet(`${provider === 'velcro' ?
+        VELCRO_API_ENDPOINT :
+        ZAPPER_API_ENDPOINT}/balance/other_networks/${address}/${network}?provider=covalent`
+    )
+
+const getCoingeckoPrices = (addresses) =>
+    fetchGet(`${COINGECKO_API_URL}/simple/price?ids=${addresses}&vs_currencies=usd`
     )
 
 export default function usePortfolio({ currentNetwork, account, useStorage }) {
@@ -25,15 +35,17 @@ export default function usePortfolio({ currentNetwork, account, useStorage }) {
         onRemoveExtraToken,
         balancesByNetworksLoading,
         isCurrNetworkBalanceLoading,
-        isCurrNetworkProtocolsLoading,
-        cachedBalancesByNetworks,
+        loading,
+        cache,
     } = usePortfolioCommon({
         currentNetwork,
         account,
         useStorage,
         isVisible,
         useToasts,
-        getBalances
+        getBalances,
+        getOtherNetworksTotals,
+        getCoingeckoPrices
     })
 
     const {
@@ -62,7 +74,7 @@ export default function usePortfolio({ currentNetwork, account, useStorage }) {
         onRemoveHiddenToken,
         balancesByNetworksLoading,
         isCurrNetworkBalanceLoading,
-        isCurrNetworkProtocolsLoading,
-        cachedBalancesByNetworks,
+        loading,
+        cache,
     }
 }

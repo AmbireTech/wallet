@@ -8,7 +8,7 @@ import { useHistory, useParams } from 'react-router-dom/cjs/react-router-dom.min
 import { Button } from 'components/common'
 import { HiOutlineChevronLeft, HiOutlineChevronRight } from 'react-icons/hi'
 
-const Collectibles = ({ portfolio, isPrivateMode }) => {
+const Collectibles = ({ selectedNetwork, portfolio, isPrivateMode }) => {
     const params = useParams()
     const history = useHistory()
     const maxCollectiblesPerPage = 15
@@ -40,7 +40,7 @@ const Collectibles = ({ portfolio, isPrivateMode }) => {
         return uri
     }
 
-    if (portfolio.isCurrNetworkProtocolsLoading) return <Loading />;
+    if (portfolio.loading) return <Loading />;
 
     if (!portfolio.collectibles.length || isPrivateMode) {
         return (
@@ -55,17 +55,17 @@ const Collectibles = ({ portfolio, isPrivateMode }) => {
         <div id="collectibles">
             <div className='collectibles-wrapper'>
                 {
-                    collectiblesList.map(({ network, address, collectionName, collectionImg, assets }) => (assets || []).map(({ tokenId, assetName, assetImg, balanceUSD }) => (
+                    collectiblesList.map(({ address, collectionName, collectionImg, assets, balanceUSD }) => (assets || []).map(({ tokenId, data }) => (
                         <div className="collectible" key={tokenId}>
-                            <NavLink to={`/wallet/nft/${network}/${address}/${tokenId}`}>
-                                <div className="artwork" style={{backgroundImage: `url(${handleUri(assetImg)})`}}/>
+                            <NavLink to={`/wallet/nft/${selectedNetwork.id}/${address}/${tokenId}`}>
+                                <div className="artwork" style={{backgroundImage: `url(${handleUri(data.image)})`}}/>
                                 <div className="info">
                                     <div className="collection">
                                         <div className="collection-icon" style={{backgroundImage: `url(${collectionImg})`}}></div>
                                         <span className="collection-name">{ collectionName }</span>
                                     </div>
                                     <div className="details">
-                                        <div className="name">{ assetName }</div>
+                                        <div className="name">{ data.name }</div>
                                         <div className="value"><span className="purple-highlight">$</span> {balanceUSD.toFixed(2) }</div>
                                     </div>
                                 </div>
