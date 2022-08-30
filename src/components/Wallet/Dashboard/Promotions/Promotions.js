@@ -1,9 +1,5 @@
 import './Promotions.scss'
-import {
-    useEffect,
-    useState,
-    useCallback
-} from 'react'
+import { useCallback } from 'react'
 import FinalCountdown from 'components/common/FinalCountdown/FinalCountdown'
 import useLocalStorage from "hooks/useLocalStorage"
 import { AiOutlineRight } from 'react-icons/ai'
@@ -83,8 +79,7 @@ function Promo({
     )
 }
 
-export default function Promotions({ rewardsData }) {
-    const [promo, setPromo] = useState(null)
+export default function Promotions({ rewardsData: { rewards: { promo }} }) {
     const [closedPromos, setClosedPromos] = useLocalStorage({ key: 'closedPromos', defaultValue: [] })
 
     const togglePromo = useCallback(promoId => {
@@ -100,14 +95,9 @@ export default function Promotions({ rewardsData }) {
         setClosedPromos(prevClosed)
     }, [closedPromos, setClosedPromos])
 
-    useEffect(() => {
-        if (!promo && !!rewardsData?.data?.promo) {
-            setPromo(rewardsData?.data?.promo)
-        }
-    }, [closedPromos, promo, rewardsData?.data?.promo])
-
     if (!promo) return null
+
     return (
-        <Promo {...promo} togglePromo={togglePromo} minimized={closedPromos.includes(promo?.id)} />
+        <Promo {...promo} togglePromo={togglePromo} minimized={closedPromos.includes(promo.id)} />
     )
 }
