@@ -30,6 +30,7 @@
     "ethereumjs-util": "^7.1.3",
     "ethers": "^5.5.2",
     "gridplus-sdk": "^1.3.5",
+    "metamask-extension-provider": "^3.0.0",
     "node-fetch": "^2.3.0",
     "node-sass": "^6.0.1",
     "otplib": "^12.0.1",
@@ -52,6 +53,7 @@
     "start": "CHOKIDAR_USEPOLLING=true react-scripts --max_old_space_size=4096 start",
     "postinstall": "node scripts/hackWebpack.js",
     "build": "react-scripts --max_old_space_size=4096 build",
+    "build-extension": "INLINE_RUNTIME_CHUNK=false npm run build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "lint": "eslint src --ext .js,.jsx"

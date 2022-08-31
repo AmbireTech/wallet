@@ -16,6 +16,7 @@ import {
 import { _TypedDataEncoder } from 'ethers/lib/utils'
 import { getProvider } from 'lib/provider'
 import networks from 'consts/networks'
+import createMetaMaskProvider from 'metamask-extension-provider'
 
 let wallets = {}
 
@@ -256,10 +257,12 @@ function getWalletNew({ chainId, signer, signerExtra }, opts) {
     }
   }
   } else if (signer.address) {
-    if (!window.ethereum) throw new Error('No web3 support detected in your browser: if you created this account through MetaMask, please install it.')
+    const ethereum = window.ethereum || createMetaMaskProvider()
+
+    if (!ethereum) throw new Error('No web3 support detected in your browser: if you created this account through MetaMask, please install it.')
     // NOTE: for metamask, use `const provider = new ethers.providers.Web3Provider(window.ethereum)`
     // 'any' is explained here: https://github.com/ethers-io/ethers.js/issues/1107
-    const provider = new ethers.providers.Web3Provider(window.ethereum, 'any')
+    const provider = new ethers.providers.Web3Provider(ethereum, 'any')
 
     const signerObject = provider.getSigner(signer.address)
 

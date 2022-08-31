@@ -70,6 +70,10 @@ body {
   height: 100%;
   color: white;
   font-family: 'Open Sans';
+  // Just for the Extension demo.
+  // Later we can set it conditionally, based on env variable (web or extension context).
+  min-width: 600px;
+  min-height: 600px;
 }
 
 a {

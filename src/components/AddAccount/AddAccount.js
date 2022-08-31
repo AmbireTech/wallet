@@ -23,6 +23,7 @@ import { VscJson } from 'react-icons/vsc'
 import { useDropzone } from 'react-dropzone'
 import { validateImportedAccountProps, fileSizeValidator } from 'lib/validations/importedAccountValidations'
 import { LatticeModal } from 'components/Modals'
+import createMetaMaskProvider from 'metamask-extension-provider'
 
 TrezorConnect.manifest({
   email: 'contactus@ambire.com',
@@ -170,10 +171,12 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking }) {
   }, [relayerURL, utmTracking])
 
   async function connectWeb3AndGetAccounts() {
-    if (typeof window.ethereum === 'undefined') {
+    const ethereum = window.ethereum || createMetaMaskProvider()
+
+    if (typeof ethereum === 'undefined') {
       throw new Error('MetaMask not available')
     }
-    const ethereum = window.ethereum
+
     const web3Accs = await ethereum.request({ method: 'eth_requestAccounts' })
     if (!web3Accs.length) throw new Error('No accounts connected')
     if (web3Accs.length === 1) return onEOASelected(web3Accs[0], {type: 'Web3'})

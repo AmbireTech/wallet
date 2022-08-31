@@ -15,6 +15,7 @@ import { BsXLg } from 'react-icons/bs'
 import { MdOutlineAdd } from 'react-icons/md'
 import { LatticeModal } from 'components/Modals'
 import { latticeInit, latticeConnect, latticeGetAddresses } from 'lib/lattice'
+import createMetaMaskProvider from 'metamask-extension-provider'
 
 const AddAuthSigner = ({ selectedNetwork, selectedAcc, onAddBtnClicked }) => {
   const [signerAddress, setSignerAddress] = useState({
@@ -100,12 +101,14 @@ const AddAuthSigner = ({ selectedNetwork, selectedAcc, onAddBtnClicked }) => {
   }
 
   async function connectWeb3AndGetAccounts() {
+    const ethereum = window.ethereum || createMetaMaskProvider()
+
     // @TODO: pending state; should bein the LoginORSignup (AddAccount) component
-    if (typeof window.ethereum === 'undefined') {
+    if (typeof ethereum === 'undefined') {
       // @TODO catch this
       throw new Error('MetaMask not available')
     }
-    const ethereum = window.ethereum
+
     const web3Accs = await ethereum.request({ method: 'eth_requestAccounts' })
     if (!web3Accs.length) throw new Error('No accounts connected')
     if (web3Accs.length === 1)
