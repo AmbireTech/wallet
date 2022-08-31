@@ -166,7 +166,7 @@ const AmbireTokensCard = ({ networkId, accountId, tokens, rewardsData, addReques
                 </>
             )
         }
-        const apyTooltipMsg = `Annual Percentage Yield: IN ADDITION to what you earn in ${selectedToken.label}s`
+        const apyTooltipMsg = `Annual Percentage Yield${selectedToken.label === 'WALLET' ? `: IN ADDITION to what you earn in ${selectedToken.label}s` : ''}`
         setDetails([
             [
                 <>
@@ -399,7 +399,7 @@ const AmbireTokensCard = ({ networkId, accountId, tokens, rewardsData, addReques
             onTokenSelect={onTokenSelect}
             onValidate={onValidate}
             moreDetails={!unavailable && <AmbireEarnDetailsModal 
-                apy={isAdxTokenSelected()? adxCurrentAPY ? `${adxCurrentAPY.toFixed(2)}%` : '...' : xWALLETAPYPercentage}
+                apy={isAdxTokenSelected()? adxCurrentAPY ? `${adxCurrentAPY.toFixed(2)}` : '...' : xWALLETAPYPercentage}
                 accountId={accountId}
                 msToDaysHours={msToDaysHours}
                 addresses={addresses}
