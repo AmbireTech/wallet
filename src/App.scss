@@ -1,27 +1,28 @@
 @import './variables.scss';
 @import './transitions.scss';
 
-:root {
-  scrollbar-color: #bbb #1c1e24;
-  scrollbar-width: thin;
-}
-
-::-webkit-scrollbar {
-  height: 10px;
-  width: 10px;
-}
-
-::-webkit-scrollbar-track {
-  background: #1c1e24;
-}
-
-::-webkit-scrollbar-thumb {
-  background: #bbb;
-
-  &:hover {
-    background: #cfcfcf;
-  }
-}
+// It breaks the extension scrolling.
+//:root {
+//  scrollbar-color: #bbb #1c1e24;
+//  scrollbar-width: thin;
+//}
+//
+//::-webkit-scrollbar {
+//  height: 10px;
+//  width: 10px;
+//}
+//
+//::-webkit-scrollbar-track {
+//  background: #1c1e24;
+//}
+//
+//::-webkit-scrollbar-thumb {
+//  background: #bbb;
+//
+//  &:hover {
+//    background: #cfcfcf;
+//  }
+//}
 
 @font-face {
   font-family: 'Open Sans';
