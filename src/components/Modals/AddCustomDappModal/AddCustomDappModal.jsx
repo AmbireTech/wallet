@@ -108,7 +108,6 @@ const AddCustomDappModal = ({ dappsCatalog, dappUrl = '' }) => {
     ], [url, urlErr])
 
     useEffect(() => {
-        console.log({dappUrl})
         if (dappUrl) {
             onUrlInput(dappUrl)
         }

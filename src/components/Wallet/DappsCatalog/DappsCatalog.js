@@ -72,7 +72,6 @@ const DappsCatalog = ({ network, dappsCatalog, selectedAcc, gnosisConnect, gnosi
   }, [])
 
   const onFavoriteClick = useCallback((e, item) => {
-    console.log({ item })
     toggleFavorite(item)
     e.stopPropagation()
   }, [toggleFavorite])
@@ -86,7 +85,6 @@ const DappsCatalog = ({ network, dappsCatalog, selectedAcc, gnosisConnect, gnosi
   }, [loadCurrentDappData])
 
   const onRemoveCustomClick = useCallback((e, item) => {
-    console.log({ item })
     e.stopPropagation()
     e.preventDefault()
     removeCustomDapp(item)
