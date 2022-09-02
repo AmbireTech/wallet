@@ -47,6 +47,14 @@ const multiplierBadges = [
         color: '#b18045',
         multiplier: 1.25,
         link: 'https://blog.ambire.com/ambire-gas-tank-launches-with-exclusive-nft-drop-2a4eb29f2f07'
+    },
+    {
+        id: '10TxnsIn30Days',
+        name: '10in30-ETH-Transactions',
+        icon: '💸',
+        color: '#658f3f',
+        multiplier: 1.25,
+        link: 'https://blog.ambire.com/xxxx'
     }
 ]
 const MultiplierBadges = ({ rewards }) => {
