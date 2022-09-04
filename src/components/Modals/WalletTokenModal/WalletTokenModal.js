@@ -1,54 +1,12 @@
 import './WalletTokenModal.scss'
 
-import { useEffect, useMemo, useState, useCallback } from 'react'
+import { useMemo } from 'react'
 import { Button, Modal, ToolTip } from 'components/common'
 import { MdOutlineClose } from 'react-icons/md'
 import { useModals } from 'hooks'
-import WalletStakingPoolABI from 'ambire-common/src/constants/abis/WalletStakingPoolABI.json'
-import { getProvider } from 'lib/provider'
-import { formatUnits, Interface } from 'ethers/lib/utils'
-import { Contract } from 'ethers'
+import { multiplierBadges } from 'ambire-common/src/constants/multiplierBadges'
+import useStakedWalletToken from 'ambire-common/src/hooks/useStakedWalletToken'
 
-const WALLET_STAKING_ADDRESS = '0x47cd7e91c3cbaaf266369fe8518345fc4fc12935'
-const WALLET_STAKING_POOL_INTERFACE = new Interface(WalletStakingPoolABI)
-
-const provider = getProvider('ethereum')
-const stakingWalletContract = new Contract(WALLET_STAKING_ADDRESS, WALLET_STAKING_POOL_INTERFACE, provider)
-
-const multiplierBadges = [
-    {
-        id: 'beta-tester',
-        name: 'Beta Testers',
-        icon: '🧪',
-        color: '#6000FF',
-        multiplier: 1.25,
-        link: 'https://blog.ambire.com/announcing-the-wallet-token-a137aeda9747'
-    },
-    {
-        id: 'lobsters',
-        name: 'Lobsters',
-        icon: '🦞',
-        color: '#E82949',
-        multiplier: 1.50,
-        link: 'https://blog.ambire.com/ambire-wallet-to-partner-with-lobsterdao-10b57e6da0-53c59c88726b'
-    },
-    {
-        id: 'cryptoTesters',
-        name: 'CryptoTesters',
-        icon: '🧑‍🔬',
-        color: '#b200e1',
-        multiplier: 1.25,
-        link: 'https://blog.ambire.com/win-a-cryptotesters-nft-with-ambire-and-get-into-one-of-the-hottest-web3-communities-c9d7185760b1'
-    },
-    {
-        id: 'gasTankNft',
-        name: 'GasTankNFT',
-        icon: '⛽',
-        color: '#b18045',
-        multiplier: 1.25,
-        link: 'https://blog.ambire.com/ambire-gas-tank-launches-with-exclusive-nft-drop-2a4eb29f2f07'
-    }
-]
 const MultiplierBadges = ({ rewards }) => {
     // Multiplier badges
     const badges = useMemo(() => multiplierBadges.map(badge => {
@@ -77,6 +35,7 @@ const MultiplierBadges = ({ rewards }) => {
 
 const WalletTokenModal = ({ accountId, claimableWalletToken, rewards }) => {
     const { hideModal } = useModals()
+    const { stakedAmount } = useStakedWalletToken({ accountId })
 
     const {
         vestingEntry,
@@ -85,40 +44,18 @@ const WalletTokenModal = ({ accountId, claimableWalletToken, rewards }) => {
         disabledReason,
         claimDisabledReason,
         claimEarlyRewards,
-        claimVesting
+        claimVesting,
+        claimableNowUsd,
+        mintableVestingUsd,
+        shouldDisplayMintableVesting,
     } = claimableWalletToken
-
-    const walletTokenAPY = rewards.walletTokenAPY ? (rewards.walletTokenAPY * 100).toFixed(2) : '...'
-    const adxTokenAPY = rewards.adxTokenAPY ? (rewards.adxTokenAPY * 100).toFixed(2) : '...'
-    const xWALLETAPY = rewards.xWALLETAPY ? (rewards.xWALLETAPY * 100).toFixed(2) : '...'
-    const walletTokenUSDPrice = rewards.walletUsdPrice || 0
-
-    const claimableNowUsd = walletTokenUSDPrice && !currentClaimStatus.loading && claimableNow ? (walletTokenUSDPrice * claimableNow).toFixed(2) : '...'
-    const mintableVestingUsd = walletTokenUSDPrice && !currentClaimStatus.loading && currentClaimStatus.mintableVesting ? (walletTokenUSDPrice * currentClaimStatus.mintableVesting).toFixed(2) : '...'
+    const { walletTokenAPYPercentage, adxTokenAPYPercentage, xWALLETAPYPercentage } = rewards;
 
     const claimeWithBurnNotice = 'This procedure will claim 70% of your outstanding rewards as $WALLET, and permanently burn the other 30%'
     const claimWithBurn = () => {
         const confirmed = window.confirm(`${claimeWithBurnNotice}. Are you sure?`)
         if (confirmed) claimEarlyRewards(false)
     }
-
-    const [stakedAmount, setStakedAmount] = useState(0)
-
-    const fetchStakedWalletData = useCallback(async () => {
-        try {
-            const [balanceOf, shareValue] = await Promise.all([
-                stakingWalletContract.balanceOf(accountId),
-                stakingWalletContract.shareValue(),
-            ])
-
-            const stakedAmount = formatUnits(balanceOf.toString(), 18).toString() * formatUnits(shareValue, 18).toString()
-            setStakedAmount(stakedAmount)
-        } catch(e) {
-            console.error(e)
-        }
-    }, [accountId])
-
-    useEffect(() => fetchStakedWalletData(), [fetchStakedWalletData])
 
     const modalButtons = <>
         <Button clear icon={<MdOutlineClose/>} onClick={() => hideModal()}>Close</Button>
@@ -130,7 +67,7 @@ const WalletTokenModal = ({ accountId, claimableWalletToken, rewards }) => {
                     <label>Early users Incentive: Total</label>
                     <div className="balance">
                         <div className="amount"><span className="primary-accent">{ rewards['balance-rewards'] }</span></div>
-                        <div className="amount apy">{ walletTokenAPY } % <span>APY</span></div>
+                        <div className="amount apy">{walletTokenAPYPercentage} <span>APY</span></div>
                     </div>
                 </div>
                 <div className="actions">
@@ -154,7 +91,7 @@ const WalletTokenModal = ({ accountId, claimableWalletToken, rewards }) => {
                     <label>ADX Staking Bonus: Total</label>
                     <div className="balance">
                         <div className="amount"><span className="primary-accent">{ rewards['adx-rewards'] }</span></div>
-                        <div className="amount apy">{ adxTokenAPY } % <span>APY</span></div>
+                        <div className="amount apy">{adxTokenAPYPercentage} <span>APY</span></div>
                     </div>
                 </div>
                 <div className="actions">
@@ -190,14 +127,14 @@ const WalletTokenModal = ({ accountId, claimableWalletToken, rewards }) => {
                 </div>
             </div>
 
-            {!!currentClaimStatus.mintableVesting && !!vestingEntry && (
+            {shouldDisplayMintableVesting && (
             <div className="item">
                 <div className="details">
                     <label>Claimable early supporters vesting</label>
                     <div className="balance">
-                        <div className="amount"><span className="primary-accent">{
-                            currentClaimStatus.mintableVesting
-                        }</span></div>
+                        <div className="amount"><span className="primary-accent">
+                            { currentClaimStatus.mintableVesting }
+                        </span></div>
                         <div className="amount usd">
                             <span className="secondary-accent">$</span>
                             { mintableVestingUsd }
@@ -222,7 +159,7 @@ const WalletTokenModal = ({ accountId, claimableWalletToken, rewards }) => {
                             <div className="amount"><span className="primary-accent">
                                 { stakedAmount }
                             </span></div>
-                            <div className="amount apy">{ xWALLETAPY } % <span>APY</span></div>
+                            <div className="amount apy">{ xWALLETAPYPercentage } <span>APY</span></div>
                         </div>
                     </div>
                 </div>
