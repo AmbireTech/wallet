@@ -5,10 +5,10 @@ import { fetchGet } from 'lib/fetch';
 import { ZAPPER_API_ENDPOINT, VELCRO_API_ENDPOINT, COINGECKO_API_URL } from 'config'
 import { useToasts } from 'hooks/toasts'
 
-const getBalances = (network, address, provider) =>
+const getBalances = (network, address, provider, quickResponse) =>
     fetchGet(`${provider === 'velcro' ?
         VELCRO_API_ENDPOINT :
-        ZAPPER_API_ENDPOINT}/balance/${address}/${network}?provider=covalent`
+        ZAPPER_API_ENDPOINT}/balance/${address}/${network}?provider=covalent${quickResponse ? '&quick=true': ''}`
     )
 
 const getCoingeckoPrices = (addresses) =>
