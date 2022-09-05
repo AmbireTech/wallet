@@ -71,7 +71,7 @@ export default function SignMessage({ everythingToSign, resolve, account, connec
     getHardwareWallet
   })
 
-  const connection = connections.find(({ uri }) => uri === toSign.wcUri)
+  const connection = connections.find(({ connectionId }) => connectionId === toSign.connectionId)
   const dApp = connection ? connection?.session?.peerMeta || null : null
   const isDAppSupported = dApp && supportedDApps.includes(dApp.url)
 

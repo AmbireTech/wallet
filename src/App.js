@@ -19,7 +19,7 @@ import SendTransaction from './components/SendTransaction/SendTransaction'
 import SignMessage from './components/SignMessage/SignMessage'
 import useAccounts from './hooks/accounts'
 import useNetwork from 'ambire-common/src/hooks/useNetwork'
-import useWalletConnect from './hooks/walletconnect'
+import useWalletConnect from './hooks/useWalletConnect'
 import useGnosisSafe from './hooks/useGnosisSafe'
 import useNotifications from './hooks/notifications'
 import { useAttentionGrabber, 
@@ -67,7 +67,15 @@ function AppInner() {
   const utmTracking = useUtmTracking({ useStorage: useLocalStorage })
 
   // Signing requests: transactions/signed msgs: all requests are pushed into .requests
-  const { connections, connect, disconnect, isConnecting, requests: wcRequests, resolveMany: wcResolveMany } = useWalletConnect({
+  const {
+    connections: wcConnections,
+    connect: wcConnect,
+    disconnect: wcDisconnect,
+    isConnecting,
+    requests: wcRequests,
+    resolveMany: wcResolveMany
+  } = useWalletConnect({
+    network,
     account: selectedAcc,
     chainId: network.chainId,
     initialUri: wcUri,
@@ -131,6 +139,7 @@ function AppInner() {
       .filter(({ account }) => accounts.find(({ id }) => id === account)),
     [wcRequests, internalRequests, gnosisRequests, accounts]
   )
+
   const resolveMany = (ids, resolution) => {
     wcResolveMany(ids, resolution)
     gnosisResolveMany(ids, resolution)
@@ -269,7 +278,7 @@ function AppInner() {
       account={accounts.find(x => x.id === selectedAcc)}
       everythingToSign={everythingToSign}
       totalRequests={everythingToSign.length}
-      connections={connections}
+      connections={wcConnections}
       relayerURL={relayerURL}
       network={network}
       resolve={outcome => resolveMany([everythingToSign[0].id], outcome)}
@@ -316,10 +325,10 @@ function AppInner() {
             network={network}
             setNetwork={setNetwork}
             addRequest={addRequest}
-            connections={connections}
+            connections={wcConnections}
             // needed by the top bar to disconnect/connect dapps
-            connect={connect}
-            disconnect={disconnect}
+            connect={wcConnect}
+            disconnect={wcDisconnect}
             isWcConnecting={isConnecting}
             // needed by the gnosis plugins
             gnosisConnect={gnosisConnect}

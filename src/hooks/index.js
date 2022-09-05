@@ -1,6 +1,6 @@
 import useAccounts from "./accounts"
 import usePortfolio from "./portfolio"
-import useWalletConnect from "./walletconnect"
+import useWalletConnect from "./useWalletConnect"
 import useRelayerData from './relayerData'
 import useAddressBook from "./addressBook"
 import useAttentionGrabber from './attentionGrabber'

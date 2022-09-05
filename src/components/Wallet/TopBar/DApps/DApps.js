@@ -49,7 +49,7 @@ const DApps = ({ connections, connect, disconnect, isWcConnecting }) => {
                 ) : null}
             </div>
             <div className='dappList'>
-                {connections.map(({ session, uri, isOffline }) => (
+                {connections.map(({ session, connectionId, isOffline, wcVersion }) => (
                   <div className="item dapps-item" key={session.key}>
                       <div className="icon">
                           <div className="icon-overlay" style={{backgroundImage: `url(${session.peerMeta.icons.filter(x => !x.endsWith('favicon.ico'))[0]})`}}/>
@@ -73,11 +73,11 @@ const DApps = ({ connections, connect, disconnect, isWcConnecting }) => {
                                     :
                                     null
                               }
-                              <div className="name">{session.peerMeta.name}</div>
+                              <div className="name">{session.peerMeta.name || 'Untitled dApp'}</div>
                           </div>
                       </a>
                       <div className="separator"></div>
-                      <button onClick={() => disconnect(uri)}>Disconnect</button>
+                      <button onClick={() => disconnect(connectionId, wcVersion)}>Disconnect</button>
                   </div>
                 ))}
             </div>
