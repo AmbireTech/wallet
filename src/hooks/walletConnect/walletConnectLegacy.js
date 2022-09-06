@@ -30,7 +30,7 @@ const checkIsOffline = connectionId => {
     //    .every(({ time } = {}) => time > (Date.now() - timePastForConnectionErr))
 }
 
-export default function useWalletConnectLegacy ({ account, chainId, initialUri, allNetworks, setNetwork, useStorage }) {
+export default function useWalletConnectLegacy ({ account, chainId, clearWcClipboard, allNetworks, setNetwork, useStorage }) {
     const { addToast } = useToasts()
 
     // This is needed cause of the WalletConnect event handlers
@@ -132,18 +132,12 @@ export default function useWalletConnectLegacy ({ account, chainId, initialUri, 
     // we need this so we can invoke the latest version from any event handler
     stateRef.current.maybeUpdateSessions = maybeUpdateSessions
 
-    const clearWcClipboard = async () => {
-        const clipboard = await getClipboardText()
 
-        if (clipboard && isWcUri(clipboard)) {
-            navigator.clipboard.writeText('')
-        }
-    }
 
     // New connections
     const connect = useCallback(async connectorOpts => {
 
-        const connectionIdentifier = connectorOpts.connectionId
+        const connectionIdentifier = connectorOpts.uri
 
         if (connectors[connectionIdentifier]) {
             addToast('dApp already connected')
@@ -424,9 +418,6 @@ export default function useWalletConnectLegacy ({ account, chainId, initialUri, 
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [connect])
 
-    // Initialization effects
-    useEffect(() => runInitEffects(connect, account, initialUri, addToast), [connect, account, initialUri, addToast])
-
     return {
         connections: state.connections,
         requests: state.requests,
@@ -434,40 +425,3 @@ export default function useWalletConnectLegacy ({ account, chainId, initialUri, 
         connect, disconnect, isConnecting
     }
 }
-
-// Initialization side effects
-// Connect to the URL, read from clipboard, etc.
-function runInitEffects(wcConnect, account, initialUri, addToast) {
-    if (initialUri) {
-        if (account) wcConnect({ uri: initialUri })
-        else addToast('WalletConnect dApp connection request detected, please create an account and you will be connected to the dApp.', { timeout: 15000 })
-    }
-
-    // hax
-    window.wcConnect = uri => wcConnect({ uri })
-
-    // @TODO on focus and on user action
-    const tryReadClipboard = async () => {
-        if (!account) return
-
-        const clipboard = await getClipboardText()
-        if (clipboard && isWcUri(clipboard) && !connectors[clipboard]) wcConnect({ uri: clipboard })
-    }
-
-    tryReadClipboard()
-    window.addEventListener('focus', tryReadClipboard)
-    return () => window.removeEventListener('focus', tryReadClipboard)
-}
-
-const clipboardError = e => console.log('non-fatal clipboard/walletconnect err:', e.message)
-const getClipboardText = async () => {
-    if (isFirefox()) return false
-
-    try {
-       return await navigator.clipboard.readText()
-    } catch(e) { clipboardError(e) }
-
-    return false
-}
-
-const isWcUri = text => text.startsWith('wc:')

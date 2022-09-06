@@ -1,11 +1,30 @@
-import { useMemo } from 'react'
+import { useMemo, useEffect, useCallback } from 'react'
 import { useToasts } from 'hooks/toasts'
 import useWalletConnectV2 from 'hooks/walletConnect/walletConnectV2'
 import useWalletConnectLegacy from 'hooks/walletConnect/walletConnectLegacy'
+import { isFirefox } from 'lib/isFirefox'
 
-export default function useWalletConnect({ account, network, wcUri, allNetworks, setNetwork, useStorage }) {
+export default function useWalletConnect({ account, network, initialWcURI, allNetworks, setNetwork, useStorage }) {
 
   const { addToast } = useToasts()
+
+  const clipboardError = e => console.log('non-fatal clipboard/walletconnect err:', e.message)
+  const getClipboardText = async () => {
+    if (isFirefox()) return false
+
+    try {
+      return await navigator.clipboard.readText()
+    } catch(e) { clipboardError(e) }
+
+    return false
+  }
+
+  const clearWcClipboard = async () => {
+    const clipboardText = await getClipboardText()
+    if (clipboardText && clipboardText.match(/wc:[a-f0-9-]+@[12]\?/)) {
+      navigator.clipboard.writeText('')
+    }
+  }
 
   const {
     connections: connectionsLegacy,
@@ -16,8 +35,9 @@ export default function useWalletConnect({ account, network, wcUri, allNetworks,
     resolveMany: resolveManyLegacy
   } = useWalletConnectLegacy({
     account,
+    clearWcClipboard,
+    getClipboardText,
     chainId: network.chainId,
-    initialUri: wcUri,
     allNetworks,
     setNetwork,
     useStorage
@@ -29,8 +49,11 @@ export default function useWalletConnect({ account, network, wcUri, allNetworks,
     disconnect: disconnectV2,
     isConnecting: isConnectingV2,
     requests: requestsV2,
-    resolveMany: resolveManyV2 } = useWalletConnectV2({
+    resolveMany: resolveManyV2
+  } = useWalletConnectV2({
     account,
+    clearWcClipboard,
+    getClipboardText,
     chainId: network.chainId
   })
 
@@ -47,7 +70,7 @@ export default function useWalletConnect({ account, network, wcUri, allNetworks,
         wcVersion: 2
       }
     })
-  ], [requestsLegacy, requestsV2] )
+  ], [requestsLegacy, requestsV2])
 
   const connections = useMemo(() => [
     ...connectionsLegacy.map(c => {
@@ -69,15 +92,15 @@ export default function useWalletConnect({ account, network, wcUri, allNetworks,
     resolveManyV2(ids, resolution)
   }
 
-  const connect = (connectorOpts) => {
+  const connect = useCallback((connectorOpts) => {
     if (connectorOpts.uri.match(/^wc:([a-f0-9]+)@2/)) {
       connectV2(connectorOpts)
     } else if (connectorOpts.uri.match(/^wc:([a-f0-9-]+)@1/)) {
       connectLegacy(connectorOpts)
     } else {
-      addToast('Invalid WalletConnect uri', {error: true})
+      addToast('Invalid WalletConnect uri', { error: true })
     }
-  }
+  }, [connectV2, connectLegacy, addToast] )
 
   const disconnect = (connectionId, wcVersion) => {
     if (wcVersion === 2) {
@@ -86,6 +109,43 @@ export default function useWalletConnect({ account, network, wcUri, allNetworks,
       disconnectLegacy(connectionId)
     }
   }
+
+
+  // clipboard stuff
+  useEffect(() => {
+    if (initialWcURI) {
+      if (account) connect({ uri: initialWcURI })
+      else addToast('WalletConnect dApp connection request detected, please create an account and you will be connected to the dApp.', { timeout: 15000 })
+    }
+    const query = new URLSearchParams(window.location.href.split('?').slice(1).join('?'))
+    const wcUri = query.get('uri')
+    if (wcUri) connect({ uri: wcUri })
+
+    // hax TODO: ask why? seems working without
+    // window.wcConnect = uri => connect({ uri })
+
+    // @TODO on focus and on user action
+    const clipboardError = e => console.log('non-fatal clipboard/walletconnect err:', e.message)
+    const tryReadClipboard = async () => {
+      if (!account) return
+      if (isFirefox()) return
+      try {
+        const clipboard = await navigator.clipboard.readText()
+        if (clipboard.match(/wc:[a-f0-9-]+@[12]\?/)) {
+          connect({ uri: clipboard })
+        }
+      } catch (e) {
+        clipboardError(e)
+      }
+    }
+
+    tryReadClipboard()
+    window.addEventListener('focus', tryReadClipboard)
+
+    return () => {
+      window.removeEventListener('focus', tryReadClipboard)
+    }
+  }, [connect])
 
   return {
     connections: connections,

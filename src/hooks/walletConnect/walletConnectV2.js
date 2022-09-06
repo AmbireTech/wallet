@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useReducer, useRef, useState } from 'react'
 import { useToasts } from 'hooks/toasts'
-import { isFirefox } from 'lib/isFirefox'
 
 import { SignClient } from '@walletconnect/sign-client'
 import { formatJsonRpcError, formatJsonRpcResult } from '@json-rpc-tools/utils'
@@ -15,7 +14,7 @@ const getDefaultState = () => ({ connections: [], requests: [] })
 
 let client
 
-export default function useWalletConnectV2({ account, chainId, onCallRequest }) {
+export default function useWalletConnectV2({ account, chainId, clearWcClipboard }) {
 
   // This is needed cause of the WalletConnect event handlers
   const stateRef = useRef()
@@ -30,7 +29,7 @@ export default function useWalletConnectV2({ account, chainId, onCallRequest }) 
     try {
 
       SignClient.init({
-        projectId: '0ambirewallet123456789',
+        projectId: 'ambirewallet123456789',
         relayUrl: 'wss://relay.walletconnect.com',
         metadata: {
           name: 'Ambire Wallet',
@@ -164,9 +163,10 @@ export default function useWalletConnectV2({ account, chainId, onCallRequest }) 
 
     if (connection) {
       const session = client.session.values.find(a => a.peer.publicKey === connection.proposerPublicKey)
+      if (WC2_VERBOSE) console.log('WC2 disconnect (connection, session)', connection, session)
 
       if (session) {
-        client.disconnect(session)
+        client.disconnect({topic: session.topic})
       }
     }
 
@@ -228,6 +228,7 @@ export default function useWalletConnectV2({ account, chainId, onCallRequest }) 
       })
       if (unsupportedChains.length) {
         addToast(`Chains not supported ${unsupportedChains.join(',')}`, { error: true })
+        if (WC2_VERBOSE) console.log('WC2 : Proposal rejected')
         return client.reject({ proposal })
       }
 
@@ -241,6 +242,7 @@ export default function useWalletConnectV2({ account, chainId, onCallRequest }) 
 
       const existingClientSession = client.session.values.find(s => s.peer.publicKey === params.proposer.publicKey)
 
+      clearWcClipboard()
       if (!existingClientSession) {
         if (WC2_VERBOSE) console.log('WC2 Approving client', namespaces)
         client.approve({
@@ -419,7 +421,6 @@ export default function useWalletConnectV2({ account, chainId, onCallRequest }) 
               events: DEFAULT_EIP155_EVENTS,
             }
           }
-
           client.update({
             topic: session.topic,
             namespaces
@@ -455,37 +456,10 @@ export default function useWalletConnectV2({ account, chainId, onCallRequest }) 
       client.on('session_request', onSessionRequest)
       client.on('session_delete', onSessionDelete)
 
-      const query = new URLSearchParams(window.location.href.split('?').slice(1).join('?'))
-      const wcUri = query.get('uri')
-      if (wcUri) connect({ uri: wcUri })
-
-      // hax
-      window.wc2Connect = uri => connect({ uri })
-
-      // @TODO on focus and on user action
-      const clipboardError = e => console.log('non-fatal clipboard/walletconnect err:', e.message)
-      const tryReadClipboard = async () => {
-        if (!account) return
-        if (isFirefox()) return
-        try {
-          const clipboard = await navigator.clipboard.readText()
-          if (clipboard.match(/wc:[a-f0-9]+@2\?/)) {
-            await connect({ uri: clipboard })
-          }
-        } catch (e) {
-          clipboardError(e)
-        }
-      }
-
-      tryReadClipboard()
-      window.addEventListener('focus', tryReadClipboard)
-
       return () => {
         client.removeListener('session_proposal', onSessionProposal)
         client.removeListener('session_request', onSessionRequest)
         client.removeListener('session_delete', onSessionDelete)
-
-        window.removeEventListener('focus', tryReadClipboard)
       }
     }
 
