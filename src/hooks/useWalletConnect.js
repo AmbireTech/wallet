@@ -11,7 +11,7 @@ export default function useWalletConnect({ account, network, wcUri, allNetworks,
     connections: connectionsLegacy,
     connect: connectLegacy,
     disconnect: disconnectLegacy,
-    isConnecting,// TODO
+    isConnecting: isConnectingLegacy,
     requests: requestsLegacy,
     resolveMany: resolveManyLegacy
   } = useWalletConnectLegacy({
@@ -27,6 +27,7 @@ export default function useWalletConnect({ account, network, wcUri, allNetworks,
     connections: connectionsV2,
     connect: connectV2,
     disconnect: disconnectV2,
+    isConnecting: isConnectingV2,
     requests: requestsV2,
     resolveMany: resolveManyV2 } = useWalletConnectV2({
     account,
@@ -88,6 +89,7 @@ export default function useWalletConnect({ account, network, wcUri, allNetworks,
 
   return {
     connections: connections,
+    isConnecting: isConnectingLegacy || isConnectingV2,
     requests: requests,
     resolveMany,
     connect,

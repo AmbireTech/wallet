@@ -5,21 +5,15 @@ import { isFirefox } from 'lib/isFirefox'
 import WalletConnectCore from 'walletconnect-legacy-core'
 import * as cryptoLib from 'walletconnect-legacy-iso-crypto'
 
+import { UNISWAP_PERMIT_EXCEPTIONS, WC1_SUPPORTED_METHODS } from 'hooks/walletConnect/wcConsts'
+
 const noop = () => null
 const noopSessionStorage = { setSession: noop, getSession: noop, removeSession: noop }
 
 const STORAGE_KEY = 'wc1_state'
-const SUPPORTED_METHODS = ['eth_sendTransaction', 'gs_multi_send', 'personal_sign', 'eth_sign', 'eth_signTypedData_v4', 'eth_signTypedData', 'wallet_switchEthereumChain', 'ambire_sendBatchTransaction']
 const SESSION_TIMEOUT = 10000
 
 const getDefaultState = () => ({ connections: [], requests: [] })
-
-const UNISWAP_PERMIT_EXCEPTIONS = [ // based on PeerMeta
-  'Uniswap', // Uniswap Interface
-  'Sushi',
-  'QuickSwap', // QuickSwap Interface
-  'PancakeSwap', // 🥞 PancakeSwap - A next evolution DeFi exchange on BNB Smart Chain (BSC)
-]
 
 let connectors = {}
 let connectionErrors = []
@@ -260,7 +254,7 @@ export default function useWalletConnectLegacy ({ account, chainId, initialUri, 
                 return
             }
 
-            if (!SUPPORTED_METHODS.includes(payload.method)) {
+            if (!WC1_SUPPORTED_METHODS.includes(payload.method)) {
                 addToast(`dApp requested unsupported method: ${payload.method}`, { error: true })
                 connector.rejectRequest({ id: payload.id, error: { message: 'Method not found: ' + payload.method, code: -32601 }})
                 return

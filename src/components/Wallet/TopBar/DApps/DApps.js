@@ -5,7 +5,7 @@ import { FiHelpCircle } from 'react-icons/fi'
 import { BiTransferAlt } from 'react-icons/bi'
 import { MdBrokenImage } from 'react-icons/md'
 import { AiOutlineDisconnect } from 'react-icons/ai'
-import { DropDown, ToolTip, Button } from "components/common"
+import { DropDown, ToolTip, Button, Loading } from "components/common"
 import { checkClipboardPermission } from 'lib/permissions'
 import { MdOutlineWarning } from 'react-icons/md'
 
@@ -34,7 +34,7 @@ const DApps = ({ connections, connect, disconnect, isWcConnecting }) => {
         <DropDown id="dApps" title="dApps" badge={connections.length} onOpen={() => checkPermission()} isLoading={isClipboardGranted && isWcConnecting}>
             <div id="connect-dapp">
                 <div className="heading">
-                    <Button small icon={<BiTransferAlt />} disabled={isClipboardGranted} onClick={readClipboard}>
+                    <Button small icon={isWcConnecting ? <Loading size={16} /> : <BiTransferAlt />} disabled={isClipboardGranted || isWcConnecting} onClick={readClipboard}>
                         Connect dApp
                     </Button>
                     <a href='https://help.ambire.com/hc/en-us/articles/4410889965842' target='_blank' rel='noreferrer'>

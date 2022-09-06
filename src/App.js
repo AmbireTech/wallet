@@ -71,7 +71,7 @@ function AppInner() {
     connections: wcConnections,
     connect: wcConnect,
     disconnect: wcDisconnect,
-    isConnecting,
+    isConnecting: isWcConnecting,
     requests: wcRequests,
     resolveMany: wcResolveMany
   } = useWalletConnect({
@@ -329,7 +329,7 @@ function AppInner() {
             // needed by the top bar to disconnect/connect dapps
             connect={wcConnect}
             disconnect={wcDisconnect}
-            isWcConnecting={isConnecting}
+            isWcConnecting={isWcConnecting}
             // needed by the gnosis plugins
             gnosisConnect={gnosisConnect}
             gnosisDisconnect={gnosisDisconnect}

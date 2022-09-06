@@ -5,21 +5,11 @@ import { isFirefox } from 'lib/isFirefox'
 import { SignClient } from '@walletconnect/sign-client'
 import { formatJsonRpcError, formatJsonRpcResult } from '@json-rpc-tools/utils'
 
+import { UNISWAP_PERMIT_EXCEPTIONS, DEFAULT_EIP155_METHODS, DEFAULT_EIP155_EVENTS, WC2_SUPPORTED_METHODS } from 'hooks/walletConnect/wcConsts'
 import networks from 'consts/networks'
 
-import {
-  DEFAULT_EIP155_METHODS,
-  DEFAULT_EIP155_EVENTS,
-} from 'consts/walletConnectConsts'
-
 const STORAGE_KEY = 'wc2_state'
-
-const WC2_SUPPORTED_METHODS = [
-  'eth_sendTransaction',
-  'personal_sign',
-  'eth_signTypedData',
-  'eth_sign'
-]
+const WC2_VERBOSE = process.env.REACT_APP_WC2_VERBOSE || 0
 
 const getDefaultState = () => ({ connections: [], requests: [] })
 
@@ -31,11 +21,8 @@ export default function useWalletConnectV2({ account, chainId, onCallRequest }) 
   const stateRef = useRef()
   stateRef.current = { account, chainId }
 
-  const getConnectionFromSessionTopic = useCallback((sessionTopic) => {
-    return state.connections.find(c => c.sessionTopics.includes(sessionTopic))
-  }, [])
-
   const [initialized, setInitialized] = useState(false)
+  const [isConnecting, setIsConnecting] = useState(false)
 
   const { addToast } = useToasts()
 
@@ -58,7 +45,7 @@ export default function useWalletConnectV2({ account, chainId, onCallRequest }) 
           if (typeof signClient === 'undefined') {
             throw new Error('Client is not initialized')
           }
-          console.log('WC2 signClient initialized')
+          if (WC2_VERBOSE) console.log('WC2 signClient initialized')
           return true
         })
 
@@ -134,30 +121,44 @@ export default function useWalletConnectV2({ account, chainId, onCallRequest }) 
     }
   })
 
+  const getConnectionFromSessionTopic = useCallback((sessionTopic) => {
+    return state.connections.find(c => c.sessionTopics.includes(sessionTopic))
+  }, [state])
+
   const connect = useCallback(async (connectorOpts) => {
+
+    if (!client) {
+      if (WC2_VERBOSE) console.log('WC2: Client not initialized')
+      return
+    }
 
     const pairingTopicMatches = connectorOpts.uri.match(/wc:([a-f0-9]+)/)
     const pairingTopic = pairingTopicMatches[1]
 
     const existingPair = client?.pairing.values.find(p => p.topic === pairingTopic)
     if (existingPair) {
-      console.log('WC2: Pairing already active')
+      if (WC2_VERBOSE) console.log('WC2: Pairing already active')
       return
     }
 
+    setIsConnecting(true)
     try {
       let res = await client.pair({ uri: connectorOpts.uri })
-      console.log('pairing result', res)
+      if (WC2_VERBOSE) console.log('pairing result', res)
     } catch (e) {
       addToast(e.message)
     }
 
   }, [addToast])
 
-  //TODO
   const disconnect = useCallback(connectionId => {
     // connector might not be there, either cause we disconnected before,
     // or cause we failed to connect in the first place
+    if (!client) {
+      if (WC2_VERBOSE) console.log('WC2 disconnect: Client not initialized')
+      dispatch({ type: 'disconnected', connectionId })
+      return
+    }
 
     const connection = state.connections.find(c => c.connectionId === connectionId)
 
@@ -230,34 +231,25 @@ export default function useWalletConnectV2({ account, chainId, onCallRequest }) 
         return client.reject({ proposal })
       }
 
-      const unsupportedMethods = []
-      requiredNamespaces.eip155?.methods.forEach(method => {
-        if (DEFAULT_EIP155_METHODS.includes(method)) return
-        unsupportedMethods.push(method)
-      })
-      if (unsupportedMethods.length) {
-        // TODO PASS?
-        //return client.reject({ proposal })
-      }
-
       const namespaces = {
         eip155: {
           accounts: usedChains.map(a => a + ':' + account),
           methods: DEFAULT_EIP155_METHODS,
-          events: requiredNamespaces.eip155?.events
+          events: DEFAULT_EIP155_EVENTS
         }
       }
 
       const existingClientSession = client.session.values.find(s => s.peer.publicKey === params.proposer.publicKey)
 
       if (!existingClientSession) {
-        console.log('WC2 Approving client', namespaces)
+        if (WC2_VERBOSE) console.log('WC2 Approving client', namespaces)
         client.approve({
           id,
           relayProtocol: relays[0].protocol,
           namespaces
         }).then(approveResult => {
-          console.log('WC2 Approve result', approveResult)
+          if (WC2_VERBOSE) console.log('WC2 Approve result', approveResult)
+          setIsConnecting(false)
           dispatch({
             type: 'connectedNewSession',
             pairingTopic: params.pairingTopic,
@@ -268,19 +260,21 @@ export default function useWalletConnectV2({ account, chainId, onCallRequest }) 
             proposal
           })
         }).catch(err => {
+          setIsConnecting(false)
           console.error('WC2 Error : ', err.message)
         })
+      } else {
+        setIsConnecting(false)
       }
     }
     , [account, addToast])
 
   const onSessionRequest = useCallback(
     async (requestEvent) => {
-      console.log('session_request', requestEvent)
+      if (WC2_VERBOSE) console.log('session_request', requestEvent)
       const { id, topic, params } = requestEvent
       const { request: wcRequest } = params
 
-      console.log('EVENT', 'session_request', requestEvent.request)
       const namespacedChainId = (params.chainId || ('eip155:' + stateRef.current.chainId)).split(':')
 
       const namespace = namespacedChainId[0]
@@ -298,40 +292,76 @@ export default function useWalletConnectV2({ account, chainId, onCallRequest }) 
         return
       }
 
-      //IF HAS TO SIGN
       if (WC2_SUPPORTED_METHODS.includes(wcRequest.method)) {
-        console.log('requestEvent.request.method', wcRequest.method)
-        console.log(wcRequest)
-        let request
+        let txn
+        let requestAccount
+        let method = wcRequest.method
+        if (WC2_VERBOSE) console.log('requestEvent.request.method', method)
+
         const connection = getConnectionFromSessionTopic(topic)
+
         if (connection) {
-          if (wcRequest.method === 'personal_sign' || wcRequest.method === 'eth_sign') {
-            request = {
-              id,
-              type: wcRequest.method,
-              connectionId: connection.pairingTopic,
-              txn: wcRequest.params[wcRequest.method === 'personal_sign' ? 0 : 1],
-              chainId,
-              topic,
-              account: wcRequest.params[wcRequest.method === 'personal_sign' ? 1 : 0],
-              notification: true
+          const dappName = connection.session?.peerMeta?.name || ''
+          if (method === 'personal_sign' || wcRequest.method === 'eth_sign') {
+            txn = wcRequest.params[wcRequest.method === 'personal_sign' ? 0 : 1]
+            requestAccount = wcRequest.params[wcRequest.method === 'personal_sign' ? 1 : 0]
+          } else if (method === 'eth_sendTransaction') {
+            requestAccount = wcRequest.params[0].from
+            txn = wcRequest.params[0]
+          } else if (method === 'eth_signTypedData') {
+            requestAccount = wcRequest.params[0]
+            txn = JSON.parse(wcRequest.params[1])
+
+            if (txn.primaryType === 'MetaTransaction') {
+              // either this, either declaring a method var, ONLY for this case
+              method = 'eth_sendTransaction'
+              txn = [{
+                to: txn.domain.verifyingContract,
+                from: txn.message.from,
+                data: txn.message.functionSignature,
+                value: txn.message.value || '0x0'
+              }]
             }
-          } else if (wcRequest.method === 'eth_sendTransaction') {
-            request = {
-              id,
-              connectionId: connection.pairingTopic,
-              type: wcRequest.method,
-              txn: wcRequest.params[0],
-              chainId,
-              topic,
-              account: wcRequest.params[0].from,
-              notification: true
+          } else if (method === 'eth_signTypedData_v4') {
+            requestAccount = wcRequest.params[0]
+            txn = JSON.parse(wcRequest.params[1])
+
+            // Dealing with Erc20 Permits
+            if (txn.primaryType === 'Permit') {
+              // If Uniswap, reject the permit and expect a graceful fallback (receiving approve eth_sendTransaction afterwards)
+              if (UNISWAP_PERMIT_EXCEPTIONS.some(ex => dappName.toLowerCase().includes(ex.toLowerCase()))) {
+                const response = formatJsonRpcError(id, { message: 'Method not found: ' + method, code: -32601 })
+                client.respond({
+                  topic: topic,
+                  response,
+                }).catch(err => {
+                  addToast(err.message, { error: true })
+                })
+
+                return
+              } else {
+                addToast(`dApp tried to sign a token permit which does not support Smart Wallets`, { error: true })
+                return
+              }
             }
           }
 
-          dispatch({
-            type: 'requestAdded', request
-          })
+          if (txn) {
+            const request = {
+              id,
+              type: method,
+              connectionId: connection.pairingTopic,
+              txn,
+              chainId,
+              topic,
+              account: requestAccount,
+              notification: true
+            }
+            if (WC2_VERBOSE) console.log('WC2 request added :', request)
+            dispatch({
+              type: 'requestAdded', request
+            })
+          }
         }
       } else {
         const err = `Method "${wcRequest.method}" not supported`
@@ -342,7 +372,7 @@ export default function useWalletConnectV2({ account, chainId, onCallRequest }) 
         })
       }
     },
-    [addToast]
+    [addToast, getConnectionFromSessionTopic]
   )
 
   const onSessionDelete = useCallback((deletion) => {
@@ -363,7 +393,7 @@ export default function useWalletConnectV2({ account, chainId, onCallRequest }) 
       connectionId: connectionToDelete.connectionId
     })
 
-  }, [dispatch, state])
+  }, [dispatch, getConnectionFromSessionTopic])
 
 ////////////////////////
 // SESSION HANDLERS STOP
@@ -377,7 +407,7 @@ export default function useWalletConnectV2({ account, chainId, onCallRequest }) 
 
       // updating active connections
       client.session.values.forEach(session => {
-        console.log('WC2 updating session', session)
+        if (WC2_VERBOSE) console.log('WC2 updating session', session)
         const connection = state.connections.find(c => c.sessionTopics.includes(session.topic))
         if (connection) {
 
@@ -394,10 +424,9 @@ export default function useWalletConnectV2({ account, chainId, onCallRequest }) 
             topic: session.topic,
             namespaces
           }).then(updateResult => {
-            console.log('WC2 Updated ' + updateResult)
+            if (WC2_VERBOSE) console.log('WC2 Updated ', updateResult)
           }).catch(err => {
-            console.log('WC2 Update Error: ' + err.message)
-            console.log('WC2 Session trying to update' + session)
+            console.log('WC2 Update Error: ' + err.message, session)
           })
         } else {
           //console.log('WC2 : session topic not found in connections ' + session.topic)
@@ -412,9 +441,9 @@ export default function useWalletConnectV2({ account, chainId, onCallRequest }) 
 
     if (!initialized) {
       onInitialize().then(res => {
-        console.log('WC2 Client INITIALIZED')
+        if (WC2_VERBOSE) console.log('WC2 Client INITIALIZED')
       }).catch(err => {
-        console.log('WC2 Inititialization error')
+        console.error('WC2 Inititialization error')
       })
     }
 
@@ -425,11 +454,6 @@ export default function useWalletConnectV2({ account, chainId, onCallRequest }) 
       client.on('session_proposal', onSessionProposal)
       client.on('session_request', onSessionRequest)
       client.on('session_delete', onSessionDelete)
-
-      // TODOs
-      //client.on('session_ping', data => console.log('ping', data))
-      //client.on('session_event', data => console.log('event', data))
-      //client.on('session_update', data => console.log('update', data))
 
       const query = new URLSearchParams(window.location.href.split('?').slice(1).join('?'))
       const wcUri = query.get('uri')
@@ -445,7 +469,6 @@ export default function useWalletConnectV2({ account, chainId, onCallRequest }) 
         if (isFirefox()) return
         try {
           const clipboard = await navigator.clipboard.readText()
-          console.log('CLIPBOARD ' + clipboard)
           if (clipboard.match(/wc:[a-f0-9]+@2\?/)) {
             await connect({ uri: clipboard })
           }
@@ -471,6 +494,7 @@ export default function useWalletConnectV2({ account, chainId, onCallRequest }) 
   return {
     connections: state.connections,
     requests: state.requests,
+    isConnecting,
     resolveMany,
     connect, disconnect
   }

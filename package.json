@@ -97,5 +97,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@babel/plugin-proposal-logical-assignment-operators": "^7.18.9"
   }
 }
