@@ -23,7 +23,7 @@ jobs:
         node-version: 16.x
     
     - name: Install NPM packages
-      run: npm ci
+      run: npm ci--no-audit
     
     - name: Build project
       run: npm run build
