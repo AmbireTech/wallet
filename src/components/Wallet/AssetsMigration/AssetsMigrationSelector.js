@@ -168,11 +168,8 @@ const AssetsMigrationSelector = ({ signerAccount, identityAccount, network, setI
   }, [network, customTokenAddress, signerAccount, identityAccount, setCustomTokenError, selectableTokens])
 
   const canCoverGasFees = useCallback((speed) => {
-    console.log('nativeToken', nativeToken, estimatedGasFees)
-
     const nativeToSpend = selectableTokensUserInputs.find(t => t.address === ZERO_ADDRESS && t.selected)?.amount || 0
 
-    console.log('nativeToSpend', nativeToSpend)
     return new BigNumber(estimatedGasFees.gasFees[speed].signerTransactionsCost)
       .plus(nativeToSpend)
       .lte(nativeToken.availableBalance || 0)
@@ -529,7 +526,7 @@ const AssetsMigrationSelector = ({ signerAccount, identityAccount, network, setI
                       Your Signer Wallet will not have enough fees to pay for the migration.
                       Please transfer a maximum of <span className={'max-native-suggestion'}
                                                          onClick={() => onAssetAmountChange(new BigNumber(getMaxTransferableNative(selectedGasSpeed)).dividedBy(10 ** nativeToken.decimals).toFixed(6, BigNumber.ROUND_DOWN), nativeToken)}>
-                        {new BigNumber(getMaxTransferableNative(selectedGasSpeed)).dividedBy(10 ** nativeToken.decimals).toFixed(6)} {network.nativeAssetSymbol}
+                        {new BigNumber(getMaxTransferableNative(selectedGasSpeed)).dividedBy(10 ** nativeToken.decimals).toFixed(6, BigNumber.ROUND_DOWN)} {network.nativeAssetSymbol}
                       </span>
                     </div>
                   }
