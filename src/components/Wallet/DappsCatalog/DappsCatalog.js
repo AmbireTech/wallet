@@ -182,11 +182,14 @@ const DappsCatalog = ({ network, dappsCatalog, selectedAcc, gnosisConnect, gnosi
                     {item.custom &&
                       <img className='custom-dapp icon' src={DAPPS_ICON} alt='custom dapp icon' />
                     }
-                    <span className={`favorite${favorites[item.url] ? ' selected' : ''}`} onClick={(e) => onFavoriteClick(e, item)}> {
-                      favorites[item.url]
-                        ? <AiFillStar className='icon' />
-                        : <AiOutlineStar className='icon' />
-                    }</span>
+                    <ToolTip label={`${favorites[item.url] ? 'Remove' : 'Add'} ${item.name} ${favorites[item.url] ? 'from' : 'to'} favorites`}>
+                      <span className={`favorite${favorites[item.url] ? ' selected' : ''}`} onClick={(e) => onFavoriteClick(e, item)}> {
+                        favorites[item.url]
+                          ? <AiFillStar className='icon' /> :
+                          <AiOutlineStar className='icon' />
+
+                      }</span>
+                    </ToolTip>
                   </div>
 
                   <div className='base-info'>
