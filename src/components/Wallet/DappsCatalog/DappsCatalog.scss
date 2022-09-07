@@ -126,6 +126,10 @@ $gap: 12px;
           opacity: 0.4;
         }
 
+        .tools :not(.tooltip-label) {
+          opacity: 0.5;
+        }
+
         .tag-row {
           opacity: 0.5;
           .tag.unsupported {
