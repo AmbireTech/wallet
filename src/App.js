@@ -27,8 +27,8 @@ import { useAttentionGrabber,
   useAddressBook, 
   useRelayerData, 
   usePrivateMode, 
-  useLocalStorage, 
-  useUtmTracking, 
+  useLocalStorage,
+  useUtmTracking,
 } from './hooks'
 import { useToasts } from './hooks/toasts'
 import { useOneTimeQueryParam } from './hooks/oneTimeQueryParam'
@@ -37,6 +37,9 @@ import useRewards from 'ambire-common/src/hooks/useRewards'
 import { Contract, utils } from 'ethers'
 import { getProvider } from './lib/provider'
 import allNetworks from './consts/networks'
+import useDapps from 'ambire-common/src/hooks/useDapps'
+import { getManifestFromDappUrl } from 'ambire-common/src/services/dappCatalog'
+import { fetch } from 'lib/fetch'
 
 const relayerURL = process.env.REACT_APP_RELAYRLESS === 'true' 
                   ? null 
@@ -58,11 +61,14 @@ setTimeout(() => {
 
 function AppInner() {
   // basic stuff: currently selected account, all accounts, currently selected network
-  const { accounts, selectedAcc, onSelectAcc, onAddAccount, onRemoveAccount } = useAccounts(useLocalStorage)
+  const dappUrl = useOneTimeQueryParam('dappUrl')
+  const [pluginData, setPluginData] = useState(null)
+  const { accounts, selectedAcc, onSelectAcc, onAddAccount, onRemoveAccount, setPluginUrl } = useAccounts(useLocalStorage, pluginData?.url)
   const addressBook = useAddressBook({ accounts, useStorage: useLocalStorage })
   const { network, setNetwork } = useNetwork({ useStorage: useLocalStorage })
   const { gasTankState, setGasTankState } = useGasTank({ selectedAcc, useStorage: useLocalStorage })
   const { addToast } = useToasts()
+  const dappsCatalog = useDapps({useStorage: useLocalStorage, fetch})
   const wcUri = useOneTimeQueryParam('uri')
   const utmTracking = useUtmTracking({ useStorage: useLocalStorage })
 
@@ -257,6 +263,18 @@ function AppInner() {
   const handleSetShowThankYouPage = useCallback(() => setShowThankYouPage(true), [setShowThankYouPage])
   useEffect(() => campaignUTM && handleSetShowThankYouPage(), [handleSetShowThankYouPage, campaignUTM])
 
+  useEffect(() => {
+    if(!dappUrl) return
+    async function checkPluginData() {
+      const manifest = await getManifestFromDappUrl(fetch, dappUrl)
+      if(manifest) { 
+        setPluginData(manifest)
+        setPluginUrl(manifest.url)
+      }
+    }
+    checkPluginData()
+  }, [dappUrl, setPluginUrl])
+
   return (<>
     <Prompt
       message={(location, action) => {
@@ -295,7 +313,7 @@ function AppInner() {
 
     <Switch>
       <Route path="/add-account">
-        <AddAccount relayerURL={relayerURL} onAddAccount={onAddAccount} utmTracking={utmTracking}></AddAccount>
+        <AddAccount relayerURL={relayerURL} onAddAccount={onAddAccount} utmTracking={utmTracking} pluginData={pluginData}></AddAccount>
       </Route>
 
       <Route path="/email-login">
@@ -336,6 +354,7 @@ function AppInner() {
             useStorage={useLocalStorage}
             userSorting={userSorting}
             setUserSorting={setUserSorting}
+            dappsCatalog={dappsCatalog}
             gasTankState={gasTankState}
             setGasTankState={setGasTankState}
             showThankYouPage={showThankYouPage}
