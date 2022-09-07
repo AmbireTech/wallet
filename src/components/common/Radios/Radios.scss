@@ -5,6 +5,10 @@
     flex-direction: column;
     gap: 15px;
 
+    &.row {
+        flex-direction: row;
+    }
+
     .radio-container {
         display: flex;
         flex-direction: row;
