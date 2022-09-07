@@ -1,13 +1,14 @@
 import './FeeSelector.scss'
 
 import { AiOutlineWarning } from 'react-icons/ai'
-import { Loading, Select, ToolTip, Button, TextInput } from 'components/common'
+import { Loading, Select, ToolTip, Button, TextInput, DAppIncompatibilityWarningMsg } from 'components/common'
 import {
   isTokenEligible,
   mapTxnErrMsg,
   getErrHint,
   getFeesData,
-  getDiscountApplied
+  getDiscountApplied,
+  checkIfDAppIncompatible
 } from './helpers'
 import { FaPercentage } from 'react-icons/fa'
 import { MdInfoOutline } from 'react-icons/md'
@@ -82,6 +83,19 @@ const WalletDiscountBanner = ({ currenciesItems, tokens, estimation, onFeeCurren
   )
 }
 
+const mapGasTankTokens = nativePrice => item => {
+  const nativeRate = item.address === '0x0000000000000000000000000000000000000000' ? null : nativePrice / item.price
+  return {
+    ...item,
+    symbol: item.symbol.toUpperCase(),
+    balance: ethers.utils.parseUnits(
+      item.balance.toFixed(item.decimals).toString(),
+      item.decimals
+    ).toString(),
+    nativeRate
+  }
+}
+
 export function FeeSelector({ disabled, signer, estimation, network, setEstimation, feeSpeed, setFeeSpeed, onDismiss, isGasTankEnabled }) {
   const [editCustomFee, setEditCustomFee] = useState(false)
   if (!estimation) return (<Loading />)
@@ -89,10 +103,11 @@ export function FeeSelector({ disabled, signer, estimation, network, setEstimati
   // Otherwise we don't care whether the user has enough for fees, their signer wallet will take care of it
   const insufficientFee = estimation && estimation.feeInUSD
     && !isTokenEligible(estimation.selectedFeeToken, feeSpeed, estimation, isGasTankEnabled, network)
-  if (estimation && !estimation.success) return (<FailingTxn
-    message={<>The current transaction batch cannot be sent because it will fail: {mapTxnErrMsg(estimation.message)}</>}
-    tooltip={getErrHint(estimation.message)}
-  />)
+  if (estimation && !estimation.success) return (!checkIfDAppIncompatible(estimation.message) ?
+    <FailingTxn
+      message={<>The current transaction batch cannot be sent because it will fail: {mapTxnErrMsg(estimation.message)}</>}
+      tooltip={getErrHint(estimation.message)}
+    /> : <DAppIncompatibilityWarningMsg title={'Unable to send transaction'} />)
 
   if (!estimation.feeInNative) return (<></>)
   if (estimation && !estimation.feeInUSD && estimation.gasLimit < 40000) {
@@ -105,18 +120,12 @@ export function FeeSelector({ disabled, signer, estimation, network, setEstimati
   }
 
   const { nativeAssetSymbol } = network
-  const gasTankTokens = estimation.gasTank?.map(item => { 
-    const nativeRate = item.address === '0x0000000000000000000000000000000000000000' ? null : estimation.nativeAssetPriceInUSD / item.price 
-    return { 
-      ...item, 
-      symbol: item.symbol.toUpperCase(), 
-      balance: ethers.utils.parseUnits(item.balance.toFixed(item.decimals).toString(), 
-      item.decimals).toString(), 
-      nativeRate
-    }
-  })
-  
-  const tokens = (isGasTankEnabled && gasTankTokens.length) ? gasTankTokens : estimation.remainingFeeTokenBalances || [{ symbol: nativeAssetSymbol, decimals: 18, address: '0x0000000000000000000000000000000000000000' }]
+  const gasTankTokens = estimation.gasTank?.map(mapGasTankTokens(estimation.nativeAssetPriceInUSD))
+  const tokens = (isGasTankEnabled && gasTankTokens?.length)
+    ? gasTankTokens
+    // fallback to the native asset if fee tokens cannot be retrieved for wh  atever reason
+    : estimation.remainingFeeTokenBalances || [{ symbol: nativeAssetSymbol, decimals: 18, address: '0x0000000000000000000000000000000000000000' }]
+
   const onFeeCurrencyChange = ({ value, label}) => {
     const token = tokens.find(({ address, symbol }) => (address === value) && (symbol === label))
     setEstimation({ ...estimation, selectedFeeToken: token })
@@ -131,7 +140,7 @@ export function FeeSelector({ disabled, signer, estimation, network, setEstimati
     || ((b.discount || 0) - (a.discount || 0))
     || a?.symbol.toUpperCase().localeCompare(b?.symbol.toUpperCase())
   )
-    .map(({ address, symbol, discount, network: tokenNetwork = null, icon, ...rest }) => ({
+    .map(({ address, symbol, discount, network: tokenNetwork, icon, ...rest }) => ({
       disabled: !isTokenEligible({address, symbol, discount, ...rest }, SPEEDS[0], estimation, isGasTankEnabled, network),
       icon: icon || (address ? getTokenIcon(isGasTankEnabled ? tokenNetwork : network.id, address) : null),
       label: symbol,
@@ -386,6 +395,17 @@ export function FeeSelector({ disabled, signer, estimation, network, setEstimati
             </div>
           </div>
         </div>)}
+        {!isGasTankEnabled && !isNaN((feeInUSD / estimation.gasLimit) * savedGas) && 
+            <div className='fee-row native-fee-estimation discount-label'>
+              <div>
+                Gas Tank Saves You:
+              </div>
+              <div className='fee-amounts'>
+                <div>
+                  ${formatFloatTokenAmount(((feeInUSD / estimation.gasLimit) * savedGas), true, 4)}
+                </div>
+              </div>
+            </div>}
         {!!isGasTankEnabled && (<>
           <div className='fee-row native-fee-estimation discount-label'>
             <div>

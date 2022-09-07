@@ -5,9 +5,9 @@ import AMBIRE_ICON from 'resources/logo.png'
 import { MdInfo } from "react-icons/md"
 import { ToolTip, Button } from "components/common"
 import { BigNumber, constants, Contract, utils } from "ethers"
-import WalletStakingPoolABI from 'consts/WalletStakingPoolABI'
-import AdexStakingPool from 'consts/AdexStakingPool.json'
-import supplyControllerABI from 'consts/ADXSupplyController.json'
+import WalletStakingPoolABI from 'ambire-common/src/constants/abis/WalletStakingPoolABI.json'
+import AdexStakingPool from 'ambire-common/src/constants/AdexStakingPool.json'
+import supplyControllerABI from 'ambire-common/src/constants/ADXSupplyController.json'
 import { Interface, parseUnits, formatUnits } from "ethers/lib/utils"
 import { getProvider } from 'lib/provider'
 import ERC20ABI from 'adex-protocol-eth/abi/ERC20.json'
@@ -15,7 +15,7 @@ import networks from 'consts/networks'
 import { AmbireEarnDetailsModal } from 'components/Modals'
 import { getTokenIcon } from 'lib/icons'
 import { BsArrowUpSquare } from "react-icons/bs"
-import walletABI from 'consts/walletTokenABI'
+import walletABI from 'ambire-common/src/constants/abis/walletTokenABI.json'
 
 const ADX_TOKEN_ADDRESS = '0xade00c28244d5ce17d72e40330b1c318cd12b7c3'
 const ADX_STAKING_TOKEN_ADDRESS = '0xb6456b57f03352be48bf101b46c1752a0813491a'
@@ -69,8 +69,8 @@ const AmbireTokensCard = ({ networkId, accountId, tokens, rewardsData, addReques
     const addRequestTxn = useCallback((id, txn, extraGas = 0) =>
         addRequest({ id, type: 'eth_sendTransaction', chainId: networkDetails.chainId, account: accountId, txn, extraGas })
     , [networkDetails.chainId, accountId, addRequest])
-    
-    const walletTokenAPY = !rewardsData.isLoading && rewardsData.data ? (rewardsData.data?.xWALLETAPY * 100).toFixed(2) : 0
+
+    const { xWALLETAPYPercentage } = rewardsData.rewards;
 
     const walletToken = useMemo(() => tokens.find(({ address }) => address === WALLET_TOKEN_ADDRESS), [tokens])
     const xWalletToken = useMemo(() => tokens.find(({ address }) => address === WALLET_STAKING_ADDRESS), [tokens])
@@ -174,12 +174,12 @@ const AmbireTokensCard = ({ networkId, accountId, tokens, rewardsData, addReques
                         <div>APY&nbsp;<MdInfo/></div>
                     </ToolTip>
                 </>,
-                isAdxTokenSelected() ? adxCurrentAPY ? `${adxCurrentAPY.toFixed(2)}%` : '...' : rewardsData.isLoading ? `...` : `${walletTokenAPY}%`
+                isAdxTokenSelected() ? adxCurrentAPY ? `${adxCurrentAPY.toFixed(2)}%` : '...' : rewardsData.isLoading ? `...` : xWALLETAPYPercentage
             ],
             ['Lock', '20 day unbond period'],
             ['Type', 'Variable Rate'],
         ])
-    }, [adxCurrentAPY, isAdxTokenSelected, leaveLog, lockedRemainingTime, onWithdraw, rewardsData.isLoading, selectedToken.label, tokensItems, walletTokenAPY])
+    }, [adxCurrentAPY, isAdxTokenSelected, leaveLog, lockedRemainingTime, onWithdraw, rewardsData.isLoading, selectedToken.label, tokensItems, xWALLETAPYPercentage])
 
     // NOTE: tokenAddress is unused because we have two tokens in this card, and we set everything in addresses
     const onValidate = async (type, _tokenAddress, amount, isMaxAmount) => {
@@ -399,7 +399,7 @@ const AmbireTokensCard = ({ networkId, accountId, tokens, rewardsData, addReques
             onTokenSelect={onTokenSelect}
             onValidate={onValidate}
             moreDetails={!unavailable && <AmbireEarnDetailsModal 
-                apy={isAdxTokenSelected()? adxCurrentAPY ? `${adxCurrentAPY.toFixed(2)}%` : '...' : walletTokenAPY}
+                apy={isAdxTokenSelected()? adxCurrentAPY ? `${adxCurrentAPY.toFixed(2)}%` : '...' : xWALLETAPYPercentage}
                 accountId={accountId}
                 msToDaysHours={msToDaysHours}
                 addresses={addresses}

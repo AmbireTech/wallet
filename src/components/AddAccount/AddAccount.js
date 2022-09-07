@@ -12,7 +12,7 @@ import { Wallet } from 'ethers'
 import { generateAddress2 } from 'ethereumjs-util'
 import { getProxyDeployBytecode } from 'adex-protocol-eth/js/IdentityProxyDeploy'
 import { fetch, fetchPost } from 'lib/fetch'
-import accountPresets from 'consts/accountPresets'
+import accountPresets from 'ambire-common/src/constants/accountPresets'
 import { useToasts } from 'hooks/toasts'
 import { SelectSignerAccountModal } from 'components/Modals'
 import { useModals } from 'hooks'
@@ -85,7 +85,12 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking }) {
     const accHash = keccak256(abiCoder.encode(['tuple(uint, address, address)'], [quickAccountTuple]))
     const privileges = [[quickAccManager, accHash]]
     const bytecode = getProxyDeployBytecode(baseIdentityAddr, privileges, { privSlot: 0 })
-    const identityAddr = getAddress('0x' + generateAddress2(identityFactoryAddr, salt, bytecode).toString('hex'))
+    const identityAddr = getAddress('0x' + generateAddress2(
+      // Converting to buffer is required in ethereumjs-util version: 7.1.3
+      Buffer.from(identityFactoryAddr.slice(2), 'hex'),
+      Buffer.from(salt.slice(2), 'hex'),
+      Buffer.from(bytecode.slice(2), 'hex')
+    ).toString('hex'))
     const primaryKeyBackup = JSON.stringify(
       await firstKeyWallet.encrypt(req.passphrase, accountPresets.encryptionOpts)
     )
@@ -135,7 +140,12 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking }) {
     const privileges = [[getAddress(addr), hexZeroPad('0x01', 32)]]
     const { salt, baseIdentityAddr, identityFactoryAddr } = accountPresets
     const bytecode = getProxyDeployBytecode(baseIdentityAddr, privileges, { privSlot: 0 })
-    const identityAddr = getAddress('0x' + generateAddress2(identityFactoryAddr, salt, bytecode).toString('hex'))
+    const identityAddr = getAddress('0x' + generateAddress2(
+      // Converting to buffer is required in ethereumjs-util version: 7.1.3
+      Buffer.from(identityFactoryAddr.slice(2), 'hex'),
+      Buffer.from(salt.slice(2), 'hex'),
+      Buffer.from(bytecode.slice(2), 'hex')
+    ).toString('hex'))
 
     const utm = utmTracking.getLatestUtmData()
 
@@ -304,6 +314,8 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking }) {
     setChooseSigners(null)
   }, [onEOASelected, signersToChoose])
 
+  const handleSelectSignerAccountModalCloseClicked = useCallback(() => setChooseSigners(null), [])
+  
   // The UI for choosing a signer to create/add an account with, for example
   // when connecting a hardware wallet, it has many addrs you can choose from
   useEffect(() => {
@@ -315,10 +327,11 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking }) {
           description={`Signer address is the ${signersToChoose.signerName} address you will use to sign transactions on Ambire Wallet.
                     А new account will be created using this signer if you don’t have one.`}
           isCloseBtnShown={true}
+          onCloseBtnClicked={handleSelectSignerAccountModalCloseClicked}
         />
       )
     }
-  }, [onSignerAddressClicked, showModal, signersToChoose])
+  }, [handleSelectSignerAccountModalCloseClicked, onSignerAddressClicked, showModal, signersToChoose])
   
   const onDrop = useCallback((acceptedFiles, rejectedFiles) => {
     const reader = new FileReader()

@@ -1,7 +1,7 @@
 import './GasDetails.scss'
 
-import { GAS_SPEEDS } from 'consts/gasSpeeds'
-import { ACTION_GAS_COSTS, AMBIRE_OVERHEAD_COST } from 'consts/actionGasCosts'
+import { GAS_SPEEDS } from 'ambire-common/src/constants/gasSpeeds'
+import { ACTION_GAS_COSTS, AMBIRE_OVERHEAD_COST } from 'ambire-common/src/constants/actionGasCosts'
 
 const GasDetails = ({ gasData }) => {
   const GAS_PRICES = GAS_SPEEDS.reduce((acc, speed) => {

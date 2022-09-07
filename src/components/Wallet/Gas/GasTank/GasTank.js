@@ -1,6 +1,8 @@
+import useGasTankData from 'ambire-common/src/hooks/useGasTankData'
+
 import './GasTank.scss'
 import { Toggle } from 'components/common'
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { GiToken, GiGasPump } from 'react-icons/gi'
 import { NavLink } from 'react-router-dom'
 import { Button, Loading } from 'components/common'
@@ -14,14 +16,11 @@ import { useModals } from 'hooks'
 import { GasTankBalanceByTokensModal } from 'components/Modals'
 import { HiOutlineExternalLink } from 'react-icons/hi'
 import { formatUnits } from 'ethers/lib/utils'
-import { getGasTankFilledTxns } from 'lib/isFeeCollectorTxn'
-// eslint-disable-next-line import/no-relative-parent-imports
-import { getAddedGas } from '../../../SendTransaction/helpers'
 // eslint-disable-next-line import/no-relative-parent-imports
 import { useToasts } from '../../../../hooks/toasts'
 
-
-const GasTank = ({ network, 
+const GasTank = ({ 
+    network, 
     relayerURL, 
     portfolio, 
     account, 
@@ -30,58 +29,36 @@ const GasTank = ({ network,
     gasTankState, 
     setGasTankState 
 }) => {
-    const [cacheBreak, setCacheBreak] = useState(() => Date.now())
+    const {
+        isLoading,
+        balancesRes,
+        gasTankBalances,
+        totalSavedResult,
+        gasTankFilledTxns,
+        feeAssetsRes,
+        availableFeeAssets
+      } = useGasTankData({
+        relayerURL,
+        selectedAcc: account,
+        network,
+        portfolio,
+        useRelayerData
+      })
+
     const { showModal } = useModals()
     const { addToast } = useToasts()
 
-    useEffect(() => {
-        if (Date.now() - cacheBreak > 5 * 1000) setCacheBreak(Date.now())
-        const intvl = setTimeout(() => setCacheBreak(Date.now()), 60 * 1000)
-        return () => clearTimeout(intvl)
-    }, [cacheBreak])
-
-    const urlGetBalance = relayerURL ? `${relayerURL}/gas-tank/${account}/getBalance?cacheBreak=${cacheBreak}` : null
-    const urlGetFeeAssets = relayerURL ? `${relayerURL}/gas-tank/assets?cacheBreak=${cacheBreak}` : null
-    const urlGetTransactions = relayerURL ? `${relayerURL}/identity/${account}/${network.id}/transactions` : null
-
-    const { data: balancesRes, isLoading } = useRelayerData(urlGetBalance)
-    const { data: feeAssetsRes} = useRelayerData(urlGetFeeAssets)
-    const { data: executedTxnsRes } = useRelayerData(urlGetTransactions)
-    
-    const gasTankBalances = balancesRes && balancesRes.length && balancesRes.map(({balanceInUSD}) => balanceInUSD).reduce((a, b) => a + b, 0)
-    const gasTankTxns = executedTxnsRes && executedTxnsRes.txns.length && executedTxnsRes.txns.filter(item => !!item.gasTankFee)
+    const gasTankBalancesFormatted = gasTankBalances ? formatFloatTokenAmount(gasTankBalances, true, 2) : '0.00'
     const feeAssetsPerNetwork = feeAssetsRes && feeAssetsRes.length && feeAssetsRes.filter(item => item.network === network.id)
-    const executedTxns = executedTxnsRes && executedTxnsRes.txns.length && executedTxnsRes.txns
-    const gasTankFilledTxns = executedTxns && executedTxns.length && getGasTankFilledTxns(executedTxns)
-    const totalSavedResult = gasTankTxns && gasTankTxns.length && gasTankTxns.map(item => {
-        const feeTokenDetails = feeAssetsRes ? feeAssetsRes.find(i => i.symbol === item.feeToken) : null
-        const savedGas = feeTokenDetails ? getAddedGas(feeTokenDetails) : null
-        return {
-            saved: savedGas ? item.feeInUSDPerGas * savedGas : 0.00,
-            cashback: item.gasTankFee && item.gasTankFee.cashback ? 
-                formatUnits(item.gasTankFee.cashback.toString(), feeTokenDetails?.decimals).toString() * feeTokenDetails?.price : 0.00
-        }
-    })
     
     const totalSaved = totalSavedResult && totalSavedResult.length && 
         formatFloatTokenAmount(totalSavedResult.map(i => i.saved).reduce((a, b) => a + b), true, 2)
-    const totaCashBack = totalSavedResult && totalSavedResult.length && 
+    const totalCashBack = totalSavedResult && totalSavedResult.length && 
         formatFloatTokenAmount(totalSavedResult.map(i => i.cashback).reduce((a, b) => a + b), true, 2)
-    const { isBalanceLoading, tokens } = portfolio
+        
+    const { isBalanceLoading } = portfolio
     const sortType = userSorting.tokens?.sortType || 'decreasing'
     const isMobileScreen = useCheckMobileScreen()
-    const availableFeeAssets = feeAssetsPerNetwork?.map(item => {
-        const isFound = tokens?.find(x => x.address.toLowerCase() === item.address.toLowerCase()) 
-        if (isFound) return isFound
-        return { 
-            ...item, 
-            balance: 0, 
-            balanceUSD: 0, 
-            decimals: 0, 
-            address: item.address.toLowerCase(), 
-            symbol: item.symbol.toUpperCase() 
-        }
-    })
     const [failedImg, setFailedImg] = useState([])
     const toLocaleDateTime = date => `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`
     const sortedTokens = availableFeeAssets?.sort((a, b) => b.balanceUSD - a.balanceUSD).sort((a, b) => {
@@ -140,7 +117,7 @@ const GasTank = ({ network,
             const logo = failedImg.includes(img) ? getTokenIcon(network, address) : img
                 
             return (<div className="token" key={`token-${address}-${index}`}
-                disabled={balanceUSD === 0}
+                disabled={balance === 0}
                 draggable={category === 'tokens' && sortedTokensLength > 1 && sortType === 'custom' && !isMobileScreen}
                 onDragStart={(e) => {
                     if (handle.current === target.current || handle.current.contains(target.current)) dragStart(e, index)
@@ -166,8 +143,7 @@ const GasTank = ({ network,
                 <div className="separator"></div>
                 <div className="balance">
                     <div className="currency">
-                        <span className="value">{ formatFloatTokenAmount(balance, true, decimals) }</span>
-                        <span className="symbol">{ symbol.toUpperCase() }</span>
+                        <span className="value" >{ formatFloatTokenAmount(balance, true, 4) }</span>
                     </div>
                     <div className="dollar">
                         <span className="symbol">$</span> { balanceUSD.toFixed(2) }
@@ -197,9 +173,9 @@ const GasTank = ({ network,
             <div className='heading-wrapper'>
                 <div className="balance-wrapper" style={{ cursor: 'pointer' }} onClick={openGasTankBalanceByTokensModal}>
                     <span><GiGasPump/> Balance on All Networks</span>
-                    { !isLoading ?
-                        (<div className='inner-wrapper-left'>
-                            <span>$ </span>{ gasTankBalances ? formatFloatTokenAmount(gasTankBalances, true, 2) : '0.00' }
+                    { (!isLoading && gasTankBalances) ?
+                        (<div className={ (gasTankBalancesFormatted.length > 6)? 'inner-wrapper-left small-font' : 'inner-wrapper-left' } >
+                            <span>$ </span>{ gasTankBalancesFormatted }
                         </div>) : 
                         <Loading /> }
                     {/* TODO: Add functionality for drag and drop */}
@@ -218,7 +194,7 @@ const GasTank = ({ network,
                     </div>
                     <div className='inner-wrapper-right'>
                         <div className='label'>Total Cashback: </div> 
-                        <div className='amount'><span>$</span> {totaCashBack ? totaCashBack : '0.00'}</div>
+                        <div className='amount'><span>$</span> {totalCashBack ? totalCashBack : '0.00'}</div>
                     </div>
                     <span>From gas fees on {network.id.toUpperCase()}</span>
                 </div>
@@ -290,7 +266,7 @@ const GasTank = ({ network,
                     gasTankFilledTxns && gasTankFilledTxns.length ? gasTankFilledTxns.map((item, key) => {
                         const tokenDetails = feeAssetsRes && feeAssetsRes.length ? 
                             feeAssetsRes.find(({address, network}) => address.toLowerCase() === item.address.toLowerCase() && network === item.network) : null
-                    
+                        if (!tokenDetails) return null // txn to gas Tank with not eligible token
                         return (
                             <div key={key} className="txns-item-wrapper">
                                 <div className='logo'><GiGasPump size={20} /></div>
@@ -315,7 +291,7 @@ const GasTank = ({ network,
                                     </a>
                                 </div>
                             </div>)
-                    }) : <p>No top ups were made to Gas Tank on {network.id.toUpperCase()}</p>
+                    }).filter(r => r) : <p>No top ups were made to Gas Tank on {network.id.toUpperCase()}</p>
                 }
             </div>
         </div>
