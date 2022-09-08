@@ -12,6 +12,7 @@ import EarnDetailsModal from './EarnDetailsModal/EarnDetailsModal'
 import AddAddressModal from './AddAddressModal/AddAddressModal'
 import PaperBackupModal from './PaperBackupModal/PaperBackupModal'
 import PaperImportModal from './PaperImportModal/PaperImportModal'
+import AddCustomDappModal from './AddCustomDappModal/AddCustomDappModal'
 import GasTankBalanceByTokensModal from './GasTankBalanceByTokensModal/GasTankBalanceByTokensModal'
 import GuardarianDepositProviderModal from './GuardarianDepositProviderModal/GuardarianDepositProviderModal'
 
@@ -31,5 +32,6 @@ export {
     PaperBackupModal,
     PaperImportModal,
     GasTankBalanceByTokensModal,
+    AddCustomDappModal,
     GuardarianDepositProviderModal
 }

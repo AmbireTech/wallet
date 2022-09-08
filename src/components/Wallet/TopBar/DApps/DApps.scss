@@ -2,6 +2,21 @@
 
 #dApps {
     
+
+    .content {
+        cursor: pointer;
+    }
+
+    .ddWcTitle {
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        img {
+            max-height: 32px;
+            max-width: 32px;
+        }
+    }
+
     .menu {
         width: 400px;
     }
@@ -42,7 +57,7 @@
             }
         }
 
-        a {
+        span {
             flex: 0 1 auto;
 
             .details {
@@ -50,6 +65,7 @@
                 display: flex;
                 align-items: center;
                 gap: 10px;
+                cursor: pointer;
 
                 .name {
                     overflow: hidden;
