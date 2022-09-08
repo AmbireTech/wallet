@@ -5,6 +5,7 @@ import useClaimableWalletToken from 'ambire-common/src/hooks/useClaimableWalletT
 
 const WalletTokenButton = ({ rewardsData, account = {}, network, hidePrivateValue, addRequest }) => {
     const claimableWalletToken = useClaimableWalletToken({
+        fetch,
         accountId: account.id,
         network,
         addRequest,

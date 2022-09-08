@@ -36,6 +36,7 @@ export default function usePortfolio({ currentNetwork, account, useStorage }) {
         isCurrNetworkProtocolsLoading,
         cachedBalancesByNetworks,
       } = usePortfolioCommon({
+        fetch,
         currentNetwork,
         account,
         useStorage,
