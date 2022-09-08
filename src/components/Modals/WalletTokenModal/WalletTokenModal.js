@@ -1,41 +1,19 @@
 import './WalletTokenModal.scss'
 
-import { useMemo } from 'react'
 import { Button, Modal, ToolTip } from 'components/common'
 import { MdOutlineClose } from 'react-icons/md'
 import { useModals } from 'hooks'
-import { multiplierBadges } from 'ambire-common/src/constants/multiplierBadges'
 import useStakedWalletToken from 'ambire-common/src/hooks/useStakedWalletToken'
-
-const MultiplierBadges = ({ rewards }) => {
-    // Multiplier badges
-    const badges = useMemo(() => multiplierBadges.map(badge => {
-        const isUnlocked = rewards.multipliers && rewards.multipliers.map(({ name }) => name).includes(badge.id)
-        return {
-            ...badge,
-            active: isUnlocked
-        }
-    }), [rewards])
-
-    return (<div className="badges">
-        {
-            badges.map(({ id, name, icon, color, multiplier, link, active }) => (
-                <a href={link} target="_blank" rel="noreferrer" key={id}>
-                    <ToolTip label={`You ${active ? 'are receiving' : 'do not have'} the ${name} x${multiplier} multiplier`}>
-                        <div className={`badge ${active ? 'active' : ''}`} style={{ backgroundColor: color, borderColor: color }}>
-                            <div className="icon">{ icon }</div>
-                            <div className="multiplier">x { multiplier }</div>
-                        </div>
-                    </ToolTip>
-                </a>
-            ))
-        }
-    </div>)
-}
+import MultiplierBadges from './MultiplierBadges'
+import { useState } from 'react'
+import UnbondModal from './UnbondModal/UnbondModal'
 
 const WalletTokenModal = ({ accountId, claimableWalletToken, rewards }) => {
+    const [isUnbondModalVisible, setIsUnbondModalVisible] = useState(false)
     const { hideModal } = useModals()
     const { stakedAmount } = useStakedWalletToken({ accountId })
+
+    const hideUnbondModal = () => setIsUnbondModalVisible(false)
 
     const {
         vestingEntry,
@@ -51,20 +29,20 @@ const WalletTokenModal = ({ accountId, claimableWalletToken, rewards }) => {
     } = claimableWalletToken
     const { walletTokenAPYPercentage, adxTokenAPYPercentage, xWALLETAPYPercentage } = rewards;
 
-    const claimeWithBurnNotice = 'This procedure will claim 70% of your outstanding rewards as $WALLET, and permanently burn the other 30%'
+    const claimeWithBurnNotice = 'This procedure will claim 50% of your outstanding rewards as $WALLET, and permanently burn the other 50%'
     const claimWithBurn = () => {
         const confirmed = window.confirm(`${claimeWithBurnNotice}. Are you sure?`)
         if (confirmed) claimEarlyRewards(false)
     }
 
-    const modalButtons = <>
-        <Button clear icon={<MdOutlineClose/>} onClick={() => hideModal()}>Close</Button>
-    </>
+    const modalButtons = <Button clear icon={<MdOutlineClose/>} onClick={() => hideModal()}>Close</Button>
+
     return (
         <Modal id="wallet-token-modal" title="WALLET token distribution" buttons={modalButtons}>
+            <UnbondModal isVisible={isUnbondModalVisible} hideModal={hideUnbondModal}/>
             <div className="item">
                 <div className="details">
-                    <label>Early users Incentive: Total</label>
+                    <label onClick={() => setIsUnbondModalVisible(true)}>Early users Incentive: Total</label>
                     <div className="balance">
                         <div className="amount"><span className="primary-accent">{ rewards['balance-rewards'] }</span></div>
                         <div className="amount apy">{walletTokenAPYPercentage} <span>APY</span></div>
