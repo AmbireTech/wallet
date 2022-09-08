@@ -1,6 +1,6 @@
 import { Button, TextInput, Loading } from 'components/common'
 import { useCallback, useEffect, useState, useRef } from 'react'
-import { FaTimes, FaCheck, FaSync } from 'react-icons/fa'
+import { FaTimes, FaCheck, FaSync, FaInfoCircle } from 'react-icons/fa'
 import { Wallet } from 'ethers'
 import { fetchGet } from 'lib/fetch'
 
@@ -12,6 +12,8 @@ const ImportSeedWordsForm = ({ accounts, selectedAccount, setModalSteps, foundAd
   const [words, setWords] = useState([])
   const [previewDeletionIndex, setPreviewDeletionIndex] = useState(null)
   const [modifyingIndex, setModifyingIndex] = useState(null)
+
+  const [possibleRetrievedIdentities, setPossibleRetrievedIdentities] = useState(null)
 
   const [networkFetchError, setNetworkFetchError] = useState(null)
 
@@ -139,23 +141,15 @@ const ImportSeedWordsForm = ({ accounts, selectedAccount, setModalSteps, foundAd
 
     const signature = await wallet.signMessage('get_identity_from_signer')
 
-    const url = `${relayerURL}/retrieveIdentity/${signature}`
+    const url = `${relayerURL}/retrieveIdentityFromSigner/${signature}`
 
     fetchGet(url)
       .then(result => {
         if (result.success) {
-          setRetrievedIdentity(result.identity)
-
-          const existing = accounts.find(a => a.id.toLowerCase() === result.identity.id.toLowerCase() && !!a.primaryKeyBackup)
-
-          if (existing) {
-            setModalButtons([<Button full clear onClick={() => hideModal()} >
-              Close
-            </Button>])
+          if (result.identities.length === 1) {
+            setRetrievedIdentity(result.identities[0])
           } else {
-            setModalButtons([<Button full onClick={onValidate} >
-              Continue
-            </Button>])
+            setPossibleRetrievedIdentities(result.identities)
           }
         } else {
           setRetrievedIdentity(false)
@@ -164,7 +158,28 @@ const ImportSeedWordsForm = ({ accounts, selectedAccount, setModalSteps, foundAd
       .catch(err => {
         setNetworkFetchError(err.message)
       })
-  }, [foundAddress, words, relayerURL, setRetrievedIdentity, accounts, setModalButtons, hideModal, onValidate])
+  }, [foundAddress, words, relayerURL, setRetrievedIdentity])
+
+  const pickPossibleIdentity = useCallback((identity) => {
+    setPossibleRetrievedIdentities(null)
+    setRetrievedIdentity(identity)
+  }, [setRetrievedIdentity])
+
+  useEffect(() => {
+    if (retrievedIdentity) {
+      const existing = accounts.find(a => a.id.toLowerCase() === retrievedIdentity.id.toLowerCase() && !!a.primaryKeyBackup)
+
+      if (existing) {
+        setModalButtons([<Button full clear onClick={() => hideModal()} >
+          Close
+        </Button>])
+      } else {
+        setModalButtons([<Button full onClick={onValidate} >
+          Continue
+        </Button>])
+      }
+    }
+  }, [accounts, hideModal, onValidate, retrievedIdentity, setModalButtons])
 
   useEffect(() => {
     validateSeedWords()
@@ -301,7 +316,7 @@ const ImportSeedWordsForm = ({ accounts, selectedAccount, setModalSteps, foundAd
         <b>Signer Account</b>
         <div className='address'>{foundAddress}</div>
         {
-          (retrievedIdentity === null && !networkFetchError) &&
+          ((retrievedIdentity === null && possibleRetrievedIdentities === null) && !networkFetchError) &&
           <Loading />
         }
         {
@@ -312,7 +327,23 @@ const ImportSeedWordsForm = ({ accounts, selectedAccount, setModalSteps, foundAd
           </div>
         }
         {
-          renderRetrievedIdentityFeedback()
+          possibleRetrievedIdentities
+          ? (
+            <div className='identities-selector'>
+              <p className='notification-hollow info'>
+                <FaInfoCircle /> Multiple wallets found for this signer.
+                Please select the wallet to import.
+              </p>
+              <div className='identities-selector-holder'>
+                {possibleRetrievedIdentities.map(identity => {
+                  return (<div onClick={() => pickPossibleIdentity(identity)}>{identity.id}</div>)
+                })}
+              </div>
+            </div>
+          )
+          : (
+              renderRetrievedIdentityFeedback()
+          )
         }
       </div>
     }

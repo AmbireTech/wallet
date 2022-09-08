@@ -2,7 +2,6 @@
 
 #paper-import-modal {
 
-
   &>.content {
     padding-bottom: 48px;
   }
@@ -144,4 +143,39 @@
   .buttons .full {
     flex-basis: 100% !important;
   }
+
+  .identities-selector {
+    background: $input-background-color-darker;
+
+    p {
+      display: flex;
+      text-align: left;
+      gap: 12px;
+      align-items: center;
+
+      svg {
+        font-size: 24px;
+      }
+
+    }
+
+    .identities-selector-holder {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .identities-selector-holder div {
+      cursor: pointer;
+      font-family: monospace;
+      padding: 8px;
+      background: darken($input-background-color-darker, 4%);
+
+      &:hover {
+        background: darken($input-background-color-darker, 2%);
+      }
+    }
+
+  }
+
 }
