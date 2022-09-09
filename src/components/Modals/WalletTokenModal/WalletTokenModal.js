@@ -15,6 +15,8 @@ const WalletTokenModal = ({ accountId, claimableWalletToken, rewards }) => {
 
     const hideUnbondModal = () => setIsUnbondModalVisible(false)
 
+    const openUnbondModal = () => setIsUnbondModalVisible(true)
+
     const {
         vestingEntry,
         currentClaimStatus,
@@ -30,19 +32,24 @@ const WalletTokenModal = ({ accountId, claimableWalletToken, rewards }) => {
     const { walletTokenAPYPercentage, adxTokenAPYPercentage, xWALLETAPYPercentage } = rewards;
 
     const claimeWithBurnNotice = 'This procedure will claim 50% of your outstanding rewards as $WALLET, and permanently burn the other 50%'
-    const claimWithBurn = () => {
-        const confirmed = window.confirm(`${claimeWithBurnNotice}. Are you sure?`)
-        if (confirmed) claimEarlyRewards(false)
-    }
+    
+    const claimWithBurn = () => claimEarlyRewards(false)
 
     const modalButtons = <Button clear icon={<MdOutlineClose/>} onClick={() => hideModal()}>Close</Button>
 
     return (
         <Modal id="wallet-token-modal" title="WALLET token distribution" buttons={modalButtons}>
-            <UnbondModal isVisible={isUnbondModalVisible} hideModal={hideUnbondModal}/>
+            <UnbondModal 
+                isVisible={isUnbondModalVisible} 
+                hideModal={hideUnbondModal} 
+                text="This procedure will claim only 50% of your outstanding 
+                rewards as $WALLET, and permanently burn the rest. 
+                Are you sure?"
+                onClick={claimWithBurn}
+            />
             <div className="item">
                 <div className="details">
-                    <label onClick={() => setIsUnbondModalVisible(true)}>Early users Incentive: Total</label>
+                    <label>Early users Incentive: Total</label>
                     <div className="balance">
                         <div className="amount"><span className="primary-accent">{ rewards['balance-rewards'] }</span></div>
                         <div className="amount apy">{walletTokenAPYPercentage} <span>APY</span></div>
@@ -94,7 +101,7 @@ const WalletTokenModal = ({ accountId, claimableWalletToken, rewards }) => {
                     <ToolTip label={
                             claimDisabledReason || disabledReason || claimeWithBurnNotice
                         }>
-                        <Button className="claim-rewards-with-burn" small clear onClick={() => claimWithBurn()} disabled={!!(claimDisabledReason || disabledReason)}>Claim with burn</Button>
+                        <Button className="claim-rewards-with-burn" small clear onClick={openUnbondModal} disabled={!!(claimDisabledReason || disabledReason)}>Claim with burn</Button>
                     </ToolTip>
 
                     <ToolTip label={
