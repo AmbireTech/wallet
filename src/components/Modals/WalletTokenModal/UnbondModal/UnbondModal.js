@@ -7,8 +7,9 @@ import Lottie from 'lottie-react'
 import AnimationData from './assets/animation.json'
 import Circle from './assets/circle.svg'
 
-const UnbondModal = ({ isVisible, hideModal }) => {
+const UnbondModal = ({ isVisible, hideModal, text, onClick }) => {
   const root = document.getElementById('root')
+  
   return isVisible ? createPortal(
     <div id="unbond-modal">
       <div className='modal'>
@@ -19,13 +20,11 @@ const UnbondModal = ({ isVisible, hideModal }) => {
           </div>
           <span className='warning-title'>Warning</span>
           <p className='warning-text'>
-            This procedure will claim only 50% of your outstanding 
-            rewards as $WALLET, and permanently burn the rest. 
-            Are you sure?
+            {text}
           </p>
         </div>
         <div className='buttons'>
-          <Button className='button' danger onClick={() => console.log('Unbonded')}>Yes, Claim anyway</Button>
+          <Button className='button' danger onClick={onClick}>Yes, Claim anyway</Button>
           <Button className='button' clear icon={<MdOutlineClose/>} onClick={hideModal}>Close</Button>
         </div>
       </div>
