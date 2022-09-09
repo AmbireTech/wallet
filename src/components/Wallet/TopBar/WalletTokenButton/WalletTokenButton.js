@@ -3,9 +3,9 @@ import { Button, ToolTip } from "components/common";
 import WalletTokenModal from "components/Modals/WalletTokenModal/WalletTokenModal";
 import useClaimableWalletToken from 'ambire-common/src/hooks/useClaimableWalletToken'
 
-const WalletTokenButton = ({ rewardsData, account = {}, network, hidePrivateValue, addRequest }) => {
+const WalletTokenButton = ({ useFetchConstants, rewardsData, account = {}, network, hidePrivateValue, addRequest }) => {
     const claimableWalletToken = useClaimableWalletToken({
-        fetch,
+        useFetchConstants,
         accountId: account.id,
         network,
         addRequest,

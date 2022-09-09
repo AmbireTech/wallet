@@ -12,6 +12,7 @@ import Links from "./Links/Links";
 import WalletTokenButton from "./WalletTokenButton/WalletTokenButton";
 
 const TopBar = ({
+  useFetchConstants,
   connections,
   connect,
   disconnect,
@@ -64,6 +65,7 @@ const TopBar = ({
       </NavLink>
       <div className={`container ${isMenuOpen ? 'open' : ''}`}>
         {selectedAcc && <WalletTokenButton
+          useFetchConstants={useFetchConstants}
           rewardsData={rewardsData}
           account={account}
           network={network}

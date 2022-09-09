@@ -145,7 +145,8 @@ function AppInner() {
   const portfolio = usePortfolio({
     currentNetwork: network.id,
     account: selectedAcc,
-    useStorage: useLocalStorage
+    useStorage: useLocalStorage,
+    useFetchConstants
   })
 
   const privateMode = usePrivateMode(useLocalStorage)
@@ -349,6 +350,7 @@ function AppInner() {
               setGasTankState={setGasTankState}
               showThankYouPage={showThankYouPage}
               // Constants
+              useFetchConstants={useFetchConstants}
               tokenList={constants.tokenList}
               humanizerInfo={constants.humanizerInfo}
               WALLETInitialClaimableRewards={constants.WALLETInitialClaimableRewards}

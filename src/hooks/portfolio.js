@@ -13,7 +13,7 @@ const getBalances = (network, protocol, address, provider) =>
         ZAPPER_API_ENDPOINT}/protocols/${protocol}/balances?addresses[]=${address}&network=${network}&api_key=${ZAPPER_API_KEY}&newBalances=true`
     )
 
-export default function usePortfolio({ currentNetwork, account, useStorage }) {
+export default function usePortfolio({ useFetchConstants, currentNetwork, account, useStorage }) {
     const isVisible = usePageVisibility()
 
     const {
@@ -36,7 +36,7 @@ export default function usePortfolio({ currentNetwork, account, useStorage }) {
         isCurrNetworkProtocolsLoading,
         cachedBalancesByNetworks,
       } = usePortfolioCommon({
-        fetch,
+        useFetchConstants,
         currentNetwork,
         account,
         useStorage,
