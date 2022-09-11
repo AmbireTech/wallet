@@ -2,11 +2,45 @@ import { useState, useRef } from 'react'
 import accountPresets from 'ambire-common/src/constants/accountPresets'
 import { Checkbox } from "components/common"
 
+// TODO: take sha1 list
+const WEAK_PASSWORDS = ['12345678', '123123123']
+
 export default function LoginOrSignupForm({ action = 'LOGIN', onAccRequest, inProgress }) {
     const passConfirmInput = useRef(null)
+    const passInput = useRef(null)
     const [state, setState] = useState({
       email: '', passphrase: '', passphraseConfirm: '', action
     })
+
+  const passwordStrength = (passphrase) => {
+    let strength = 0
+    let passwordError = ''
+    if (state.passphrase.length >= 8) {
+      strength += 1
+      if (passphrase.match(/\d/)) strength += 1
+      if (passphrase.match(/[a-z]/)) strength += 1
+      if (passphrase.match(/[A-Z]/)) strength += 1
+      if (passphrase.match(/[@_.,+;()\[\]-]/)) strength += 1
+
+      if (strength < 3) {
+        passwordError = 'Password too weak. Include Uppercase, lowercase letters, numbers and special characters'
+      }
+    } else if (!!passphrase.length) {
+      strength += 1
+      passwordError = 'Password should be 8 characters minimum'
+    }
+
+    if (WEAK_PASSWORDS.includes(passphrase)) {
+      passwordError = 'This password is too common'
+      strength = 1
+    }
+
+    return {
+      strength,
+      error: passwordError
+    }
+  }
+
     const onSubmit = e => {
       e.preventDefault()
       onAccRequest({
@@ -24,6 +58,11 @@ export default function LoginOrSignupForm({ action = 'LOGIN', onAccRequest, inPr
       const invalid = shouldValidate && (
         newState.passphrase !== newState.passphraseConfirm
       )
+
+      const passwordStrengthFeedback = passwordStrength(newState.passphrase)
+
+      passInput.current.setCustomValidity(passwordStrengthFeedback.error || '')
+
       // @TODO translation string
       if (passConfirmInput.current) {
           passConfirmInput.current.setCustomValidity(invalid ? 'Passwords must match' : '')
@@ -39,14 +78,23 @@ export default function LoginOrSignupForm({ action = 'LOGIN', onAccRequest, inPr
     const Link = ({ href, children }) => (<a href={href} target='_blank' rel='noreferrer' onClick={e => e.stopPropagation()}>{children}</a>)
     const additionalInputs = isSignup ?
       (<>
-        <input
-          type="password"
-          required
-          minLength={minPwdLen}
-          placeholder="Password"
-          value={state.passphrase}
-          onChange={e => onUpdate({ passphrase: e.target.value })}
-        ></input>
+        <div className='passwordHolder'>
+          <input
+            type="password"
+            ref={passInput}
+            required
+            minLength={minPwdLen}
+            placeholder="Password"
+            value={state.passphrase}
+            onChange={e => onUpdate({ passphrase: e.target.value })}
+          ></input>
+          {
+            !!state.passphrase.length &&
+            <div className='password-strength'>
+              <div className={`password-strength-progress password-strength-progress-${passwordStrength(state.passphrase).strength}`}></div>
+            </div>
+          }
+        </div>
         <input
           ref={passConfirmInput}
           required

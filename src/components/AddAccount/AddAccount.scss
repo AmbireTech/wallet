@@ -110,7 +110,7 @@
         .name {
             font-size: 1.7em;
         }
-    } 
+    }
 
     #signersToChoose {
         margin: 0px auto;
@@ -215,6 +215,63 @@
 
     .checkbox-label {
         display: block;
+    }
+
+    .passwordHolder {
+        margin: 2em 0;
+        position: relative;
+        input {
+            margin: 0;
+        }
+    }
+
+    .password-strength {
+        position: absolute;
+        width: 100%;
+        //margin-top: -4px;
+        bottom: 6px;
+        height: 2px;
+        background: $input-background-color-darker;
+
+        .password-strength-progress {
+            background: $danger-color;
+            height: 2px;
+            width: 0;
+
+            &.password-strength-progress-0 {
+                width: 10%;
+            }
+
+            &.password-strength-progress-0 {
+                width: 10%;
+                background: $danger-color;
+            }
+
+            &.password-strength-progress-1 {
+                width: 20%;
+                background: $danger-color;
+            }
+
+            &.password-strength-progress-2 {
+                width: 40%;
+                background: $warning-color;
+            }
+
+            &.password-strength-progress-3 {
+                width: 60%;
+                background: mix($warning-color, $primary-accent-color, 40%);
+            }
+
+            &.password-strength-progress-4 {
+                width: 80%;
+                background: mix($warning-color, $primary-accent-color, 20%);
+            }
+
+            &.password-strength-progress-5 {
+                width: 100%;
+                background: $primary-accent-color;
+            }
+        }
     }
 }
 
