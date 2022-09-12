@@ -118,6 +118,9 @@ const DappsCatalog = ({ network, dappsCatalog, selectedAcc, gnosisConnect, gnosi
       }
 
       tryAutoLoad()
+        .catch(e => {
+          console.error('tryAutoLoad:', e);
+        })
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps

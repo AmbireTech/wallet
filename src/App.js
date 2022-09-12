@@ -273,6 +273,9 @@ function AppInner() {
       }
     }
     checkPluginData()
+      .catch(e => {
+        console.error('checkPluginData:', e)
+      })
   }, [dappUrl, setPluginUrl])
 
   return (<>
