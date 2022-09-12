@@ -69,35 +69,35 @@ const TopBar = ({
       {dappModeTopBar ?
         <div className='dapp-menu'>
           <div className='dapp-menu-btns'>
-            <ToolTip label='Open Ambire Wallet menu'>
+            {/* <ToolTip label='Open Ambire Wallet menu'> */}
               <Button className='ambire-menu-btn' border mini icon={<MdMenu size={23} />}
                 onClick={() => toggleSideBarOpen()}
               ></Button>
-            </ToolTip>
+            {/* </ToolTip> */}
             <div className='dapp-data'>
-              <ToolTip label={`Connected with ${currentDappData?.connectionType} -  see/find out more on our blog`}>
+              {/* <ToolTip label={`Connected with ${currentDappData?.connectionType} -  see/find out more on our blog`}> */}
                 {/* TODO: update the blogpost link */}
                 <a className="info-btn" href={'https://blog.ambire.com/connect-to-any-dapp-with-ambire-wallet-and-walletconnect-c1bc096a531e'} 
                   target="_blank"
                   rel="noreferrer noopener">
                   <MdInfo size={23} />
                 </a>
-              </ToolTip>
-              <ToolTip label={`Connected to ${currentDappData?.name} with Ambire Wallet`}>
+              {/* </ToolTip> */}
+              {/* <ToolTip label={`Connected to ${currentDappData?.name} with Ambire Wallet`}> */}
                 <a href={currentDappData?.providedBy?.url || currentDappData?.url} 
                   target="_blank"
                   rel="noreferrer noopener">
                   <img className='dapp-logo' src={currentDappData?.iconUrl || DAPPS_ICON} alt={currentDappData?.name}/>
                 </a>
-              </ToolTip>
-              <ToolTip label={`Exit from ${currentDappData?.name}`}>
+              {/* </ToolTip> */}
+              {/* <ToolTip label={`Exit from ${currentDappData?.name}`}> */}
                 <Button
                   className='dapp-exit-btn'
                   secondary mini 
                   icon={<MdExitToApp size={15} /> }
                   onClick={() => loadCurrentDappData(null)}
                 >Exit</Button>
-              </ToolTip>
+              {/* </ToolTip> */}
             </div>
           </div>
         </div>
