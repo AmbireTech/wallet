@@ -1,6 +1,26 @@
 @import 'variables.scss';
 
 #add-custom-dapp-modal {
+    .title {
+        .custom-dapp-title {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 12px;
+            .info-btn {
+                height: 32px;
+                color: $ambire-purple;
+                opacity: 0.5;
+                &:hover {
+                    opacity: 1;
+                } 
+                .icon {
+                    font-size: 32px;
+                    height: 32px;
+                }
+            }            
+        }
+    }
     .content {
         display: flex;
         flex-direction: column;
