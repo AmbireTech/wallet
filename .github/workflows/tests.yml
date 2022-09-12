@@ -1,4 +1,4 @@
-name: Tests
+name: Tests (Component and Unit)
 
 on: [push, pull_request]
 
