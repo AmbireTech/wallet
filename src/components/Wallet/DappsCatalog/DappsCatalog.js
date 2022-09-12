@@ -154,7 +154,7 @@ const DappsCatalog = ({ network, dappsCatalog, selectedAcc, gnosisConnect, gnosi
           <div className='catalogItems'>
             <div className={`catalogItem add-custom-dapp`} >
               <div className='tools'>
-                <ToolTip label={`Click here to see how to add your dApp to Ambire Wallet dApp catalog`}>
+                <ToolTip label={`Click here to see how create dApp for Ambire Wallet catalog`}>
                   <a className="info-btn" href={'https://github.com/AmbireTech/wallet-dapp-catalog#readme'}
                     target="_blank"
                     rel="noreferrer noopener">
