@@ -3,7 +3,7 @@ import { TextInput, ToolTip } from 'components/common'
 import GnosisSafeAppIframe from 'components/Plugins/GnosisSafeApps/GnosisSafeAppIframe'
 import './DappsCatalog.scss'
 import { useCallback, Fragment, useEffect, useState } from 'react'
-import { MdInfo, MdSearch, MdDelete } from 'react-icons/md'
+import { MdInfo, MdSearch, MdDelete, MdBuildCircle } from 'react-icons/md'
 import { AiOutlineStar, AiFillStar } from 'react-icons/ai'
 import { Button } from 'components/common'
 import DAPPS_ICON from 'resources/dapps.svg'
@@ -154,6 +154,13 @@ const DappsCatalog = ({ network, dappsCatalog, selectedAcc, gnosisConnect, gnosi
           <div className='catalogItems'>
             <div className={`catalogItem add-custom-dapp`} >
               <div className='tools'>
+                <ToolTip label={`Click here to see how to add your dApp to Ambire Wallet dApp catalog`}>
+                  <a className="info-btn" href={'https://github.com/AmbireTech/wallet-dapp-catalog#readme'}
+                    target="_blank"
+                    rel="noreferrer noopener">
+                    <MdBuildCircle size={23} />
+                  </a>
+                </ToolTip>
                 <img className='custom-dapp' src={DAPPS_ICON} alt='add custom dapps' />
               </div>
               <div className='custom-dapp-icon-wrapper'>

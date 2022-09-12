@@ -3,7 +3,7 @@ import { useState, useMemo, useCallback, useEffect } from 'react'
 import { Button, Modal, TextInput, Radios, ToolTip } from 'components/common'
 import { useModals } from 'hooks'
 import { useToasts } from 'hooks/toasts'
-import { MdOutlineAdd, MdOutlineClose, MdImage, MdErrorOutline } from 'react-icons/md'
+import { MdOutlineAdd, MdOutlineClose, MdImage, MdErrorOutline, MdBuildCircle } from 'react-icons/md'
 import { fetch } from 'lib/fetch'
 import NETWORKS from 'consts/networks'
 import { getManifestFromDappUrl, getDappId, getNormalizedUrl } from 'ambire-common/src/services/dappCatalog'
@@ -148,7 +148,19 @@ const AddCustomDappModal = ({ dappsCatalog, dappUrl = '' }) => {
     }, [connectionType, description, iconUrl, iconUrlInfo, name, networks, url])
 
     return (
-        <Modal id='add-custom-dapp-modal' title='Add custom dApp' buttons={buttons}>
+        <Modal id='add-custom-dapp-modal'
+            title={<div className='custom-dapp-title'>
+                <ToolTip label={`Click here to see how to add your dApp to Ambire Wallet dApp catalog`}>
+                    <a className="info-btn" href={'https://github.com/AmbireTech/wallet-dapp-catalog#readme'}
+                        target="_blank"
+                        rel="noreferrer noopener">
+                        <MdBuildCircle size={32} />
+                    </a>
+                </ToolTip>
+                <div>Add custom dApp</div>
+            </div>
+            }
+            buttons={buttons}>
             <div>
                 <TextInput
                     value={url}
