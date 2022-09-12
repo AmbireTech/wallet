@@ -3,14 +3,14 @@ import { Button, Loading, TextInput } from 'components/common'
 import { isTokenEligible } from './helpers'
 import { MdCheck, MdCheckCircle, MdOutlineCheck, MdOutlineClose } from 'react-icons/md'
 
-export default function Actions({ 
-    estimation, 
-    feeSpeed, 
-    approveTxn, 
-    rejectTxn, 
-    cancelSigning, 
-    signingStatus, 
-    isGasTankEnabled, 
+export default function Actions({
+    estimation,
+    feeSpeed,
+    approveTxn,
+    rejectTxn,
+    cancelSigning,
+    signingStatus,
+    isGasTankEnabled,
     network
   }) {
   const [quickAccCredentials, setQuickAccCredentials] = useState({ code: '', passphrase: '' })
@@ -73,20 +73,20 @@ export default function Actions({
             style={isRecoveryMode ? { visibility: 'hidden' } : {} }
             disabled={isRecoveryMode}
             onChange={value => setQuickAccCredentials({ ...quickAccCredentials, passphrase: value })}
+            testId='password'
           ></TextInput>
           {/* Changing the autoComplete prop to a random string seems to disable it in more cases */}
-          {signingStatus.confCodeRequired !== 'notRequired' &&
-            <TextInput
-              small
-              pattern='[0-9]+'
-              title='Confirmation code should be 6 digits'
-              autoComplete='nope'
-              required minLength={6} maxLength={6}
-              placeholder={signingStatus.confCodeRequired === 'otp' ? 'Authenticator OTP code' : 'Confirmation code'}
-              value={quickAccCredentials.code}
-              onChange={value => setQuickAccCredentials({ ...quickAccCredentials, code: value })}
-            ></TextInput>
-          }
+          {signingStatus.confCodeRequired !== 'notRequired' &&<TextInput
+            small
+            pattern='[0-9]+'
+            title='Confirmation code should be 6 digits'
+            autoComplete='nope'
+            required minLength={6} maxLength={6}
+            placeholder={signingStatus.confCodeRequired === 'otp' ? 'Authenticator OTP code' : 'Confirmation code'}
+            value={quickAccCredentials.code}
+            onChange={value => setQuickAccCredentials({ ...quickAccCredentials, code: value })}
+            testId='confirmationCode'
+          ></TextInput>}
         </div>
         <div className='buttons'>
           <Button
@@ -105,6 +105,7 @@ export default function Actions({
               if (!form.current.checkValidity()) return
               approveTxn({ quickAccCredentials })
             }}
+            testId='confirmSigning'
           >
             { signingStatus && signingStatus.inProgress ? <Loading/> : <><MdCheck/> Confirm</>}
           </Button>
@@ -115,7 +116,7 @@ export default function Actions({
 
   return (<div className='buttons'>
       {rejectButton}
-      <Button className='approveTxn' disabled={!estimation || signingStatus} onClick={approveTxn}>
+      <Button className='approveTxn' disabled={!estimation || signingStatus} onClick={approveTxn} testId="approveTxn">
         {signButtonLabel}
       </Button>
   </div>)

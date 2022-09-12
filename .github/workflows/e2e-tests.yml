@@ -1,0 +1,54 @@
+name: E2E tests
+
+on: [push, pull_request]
+
+jobs:
+  cypress-run:
+    runs-on: ubuntu-latest
+    environment: cypress
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: create-json
+        id: create-credentials-json
+        uses: jsdaniell/create-json@1.1.2
+        with:
+          name: "credentials.json"
+          json: ${{ secrets.CYPRESS_GOOGLE_APP_CREDENTIALS }}
+      - name: create-json
+        id: create-token-json
+        uses: jsdaniell/create-json@1.1.2
+        with:
+          name: "token.json"
+          json: ${{ secrets.CYPRESS_GOOGLE_APP_TOKEN }}
+      # Set default Production env variables, such as Relayer, Velcro, etc.
+      - run: cat .env.production >> $GITHUB_ENV
+      # Install NPM dependencies, cache them correctly
+      # and run all Cypress tests
+      - name: Cypress run
+        uses: cypress-io/github-action@v4.1.0
+        with:
+          build: npm run build
+          start: npm start
+          wait-on: 'http://localhost:3000'
+          browser: chrome
+        env:
+          CYPRESS_SELECTED_ACCOUNT: ${{ secrets.CYPRESS_SELECTED_ACCOUNT }}
+          CYPRESS_ACCOUNTS: ${{ secrets.CYPRESS_ACCOUNTS }}
+          CYPRESS_ACCOUNT_PASSWORD: ${{ secrets.CYPRESS_ACCOUNT_PASSWORD }}
+          CYPRESS_GOOGLE_APP_CREDENTIALS: ${{ secrets.CYPRESS_GOOGLE_APP_CREDENTIALS }}
+          CYPRESS_GOOGLE_APP_TOKEN: ${{ secrets.CYPRESS_GOOGLE_APP_TOKEN }}
+      # Upload the test Screenshots (in case of failure) as Artifact
+      - name: Artifacts - Screenshots
+        uses: actions/upload-artifact@v2
+        if: failure()
+        with:
+          name: cypress-screenshots
+          path: cypress/screenshots
+      # Upload the recorded test Video as Artifact
+      - name: Artifacts - Videos
+        uses: actions/upload-artifact@v2
+        if: always()
+        with:
+          name: cypress-videos
+          path: cypress/videos

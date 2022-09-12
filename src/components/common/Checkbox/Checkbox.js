@@ -3,7 +3,7 @@ import './Checkbox.scss'
 
 const Checkbox = forwardRef((props, ref) => {
     const inputElem =  (
-        <input type="checkbox" checked={props.checked} required={props.required} onChange={props.onChange} ref={ref}/>
+        <input type="checkbox" checked={props.checked} required={props.required} onChange={props.onChange} ref={ref} data-testid={props.testId}/>
     )
 
     return props.label ? (<label className={`checkbox-container ${props.disabled ? 'disabled': ''}`}>

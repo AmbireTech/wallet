@@ -1,6 +1,6 @@
 import './Button.scss'
 
-const Button = ({ children, className, small, mini, icon, iconAfter, disabled, onClick, red, danger, clear, border, title, type, textOnly, secondary }) => {
+const Button = ({ children, className, small, mini, icon, iconAfter, disabled, onClick, red, danger, clear, border, title, type, textOnly, secondary, testId }) => {
     return (
         <button
             onClick={(...args) => !disabled && onClick && onClick.apply(this, args)}
@@ -9,6 +9,7 @@ const Button = ({ children, className, small, mini, icon, iconAfter, disabled, o
             title={title}
             // used with <form>
             type={type}
+            data-testid={testId}
         >
             { icon ? <div className="icon-button">{ icon }</div> : null }
             { children }
