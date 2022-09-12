@@ -2,8 +2,7 @@ import { useState, useRef } from 'react'
 import accountPresets from 'ambire-common/src/constants/accountPresets'
 import { Checkbox } from "components/common"
 
-// TODO: take sha1 list
-const WEAK_PASSWORDS = ['12345678', '123123123']
+import WEAK_PASSWORDS from 'ambire-common/src/constants/commonPasswords.json'
 
 export default function LoginOrSignupForm({ action = 'LOGIN', onAccRequest, inProgress }) {
     const passConfirmInput = useRef(null)
@@ -20,7 +19,7 @@ export default function LoginOrSignupForm({ action = 'LOGIN', onAccRequest, inPr
       if (passphrase.match(/\d/)) strength += 1
       if (passphrase.match(/[a-z]/)) strength += 1
       if (passphrase.match(/[A-Z]/)) strength += 1
-      if (passphrase.match(/[@_.,+;()\[\]-]/)) strength += 1
+      if (passphrase.match(/[@_.,+;()[\]-]/)) strength += 1
 
       if (strength < 3) {
         passwordError = 'Password too weak. Include Uppercase, lowercase letters, numbers and special characters'
