@@ -1,6 +1,7 @@
 import { useState, useRef } from 'react'
 import accountPresets from 'ambire-common/src/constants/accountPresets'
 import { Checkbox } from "components/common"
+import { ethers } from "ethers"
 
 import WEAK_PASSWORDS from 'ambire-common/src/constants/commonPasswords.json'
 
@@ -29,7 +30,7 @@ export default function LoginOrSignupForm({ action = 'LOGIN', onAccRequest, inPr
       passwordError = 'Password should be 8 characters minimum'
     }
 
-    if (WEAK_PASSWORDS.includes(passphrase)) {
+    if (WEAK_PASSWORDS.includes(ethers.utils.ripemd160(ethers.utils.toUtf8Bytes(passphrase)))) {
       passwordError = 'This password is too common'
       strength = 1
     }
