@@ -2,10 +2,11 @@ import useDynamicModal from "hooks/useDynamicModals";
 import { Button, ToolTip } from "components/common";
 import WalletTokenModal from "components/Modals/WalletTokenModal/WalletTokenModal";
 import useClaimableWalletToken from 'ambire-common/src/hooks/useClaimableWalletToken'
+import { useConstantsContext } from 'components/ConstantsProvider/ConstantsProvider'
 
-const WalletTokenButton = ({ useFetchConstants, rewardsData, account = {}, network, hidePrivateValue, addRequest }) => {
+const WalletTokenButton = ({ rewardsData, account = {}, network, hidePrivateValue, addRequest }) => {
     const claimableWalletToken = useClaimableWalletToken({
-        useFetchConstants,
+        useFetchConstants: useConstantsContext,
         accountId: account.id,
         network,
         addRequest,
