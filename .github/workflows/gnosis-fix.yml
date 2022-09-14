@@ -1,0 +1,39 @@
+name: Build & deploy Gnosis fix staging
+
+on:
+  push:
+    branches:
+      - gnosis-methods-handlers-fix
+  pull_request:
+    branches:
+      - gnosis-methods-handlers-fix
+
+jobs:
+  build_and_deploy:
+    name: Build and Deploy gnosis fix
+    runs-on: ubuntu-latest
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.ref }}    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+    
+    - name: Install Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: 16.x
+    
+    - name: Install NPM packages
+      run: npm ci --no-audit
+    
+    - name: Build project
+      run: npm run build
+
+    - name: Deploy gh-pages (gnosis fix)
+      if: github.ref == 'refs/heads/gnosis-methods-handlers-fix'
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./build
+        destination_dir: ./gnosis-fix
+        cname: wallet.ambire.com
