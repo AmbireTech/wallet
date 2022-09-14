@@ -32,8 +32,9 @@ import useRewards from 'ambire-common/src/hooks/useRewards'
 import { Contract, utils } from 'ethers'
 import { getProvider } from './lib/provider'
 import allNetworks from './consts/networks'
-import useFetchConstants from 'hooks/useFetchConstants'
 import { Loading } from 'components/common'
+import ConstantsProvider, { useConstantsContext } from 'components/ConstantsProvider/ConstantsProvider'
+// import useFetchConstants from 'ambire-common/src/hooks/useFetchConstants'
 const EmailLogin = lazy(() => import('./components/EmailLogin/EmailLogin'))
 const AddAccount = lazy(() => import('./components/AddAccount/AddAccount'))
 const Wallet = lazy(() => import('./components/Wallet/Wallet'))
@@ -59,7 +60,7 @@ setTimeout(() => {
 }, 4000)
 
 function AppInner() { 
-  const { constants, isLoading: areConstantsLoading } = useFetchConstants()
+  const { constants, useFetchConstants } = useConstantsContext()
 
   // basic stuff: currently selected account, all accounts, currently selected network
   const { accounts, selectedAcc, onSelectAcc, onAddAccount, onRemoveAccount } = useAccounts(useLocalStorage)
@@ -146,7 +147,7 @@ function AppInner() {
     currentNetwork: network.id,
     account: selectedAcc,
     useStorage: useLocalStorage,
-    useFetchConstants
+    useFetchConstants: useFetchConstants
   })
 
   const privateMode = usePrivateMode(useLocalStorage)
@@ -262,7 +263,7 @@ function AppInner() {
   const handleSetShowThankYouPage = useCallback(() => setShowThankYouPage(true), [setShowThankYouPage])
   useEffect(() => campaignUTM && handleSetShowThankYouPage(), [handleSetShowThankYouPage, campaignUTM])
 
-  return !areConstantsLoading && constants ? (<>
+  return (<>
     <Prompt
       message={(location, action) => {
         if (action === 'POP') return onPopHistory()
@@ -367,18 +368,20 @@ function AppInner() {
 
       </Switch>
       </Suspense>
-  </>) : <Loading />  
+  </>) 
 }
 
 // handles all the providers so that we can use provider hooks inside of AppInner
 export default function App() {
   return (
     <Router>
-      <ToastProvider>
-        <ModalProvider>
-          <AppInner/>
-        </ModalProvider>
-      </ToastProvider>
+      <ConstantsProvider errorScreen={<>error</>} loadingScreen={<>loading</>}>
+        <ToastProvider>
+          <ModalProvider>
+            <AppInner/>
+          </ModalProvider>
+        </ToastProvider>
+      </ConstantsProvider>
     </Router>
   )
 }
