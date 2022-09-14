@@ -60,7 +60,7 @@ setTimeout(() => {
 }, 4000)
 
 function AppInner() { 
-  const { constants, useFetchConstants } = useConstantsContext()
+  const { constants } = useConstantsContext()
 
   // basic stuff: currently selected account, all accounts, currently selected network
   const { accounts, selectedAcc, onSelectAcc, onAddAccount, onRemoveAccount } = useAccounts(useLocalStorage)
@@ -146,8 +146,7 @@ function AppInner() {
   const portfolio = usePortfolio({
     currentNetwork: network.id,
     account: selectedAcc,
-    useStorage: useLocalStorage,
-    useFetchConstants: useFetchConstants
+    useStorage: useLocalStorage
   })
 
   const privateMode = usePrivateMode(useLocalStorage)
@@ -351,7 +350,6 @@ function AppInner() {
               setGasTankState={setGasTankState}
               showThankYouPage={showThankYouPage}
               // Constants
-              useFetchConstants={useFetchConstants}
               tokenList={constants.tokenList}
               humanizerInfo={constants.humanizerInfo}
               WALLETInitialClaimableRewards={constants.WALLETInitialClaimableRewards}
@@ -375,7 +373,7 @@ function AppInner() {
 export default function App() {
   return (
     <Router>
-      <ConstantsProvider errorScreen={<>error</>} loadingScreen={<>loading</>}>
+      <ConstantsProvider errorScreen={<h1>We encountered an error while trying to load your data</h1>}>
         <ToastProvider>
           <ModalProvider>
             <AppInner/>
