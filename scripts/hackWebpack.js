@@ -32,7 +32,7 @@ modifyLineFromFile({
   lineToModify: {
     index: 406,
     value: 'include: paths.appSrc,',
-    newValue: "include: [paths.appSrc, /\.(ts|tsx)$/],"
+    newValue: "include: [paths.appSrc, paths.appNodeModules + '/ambire-common'],"
   },
 });
 
