@@ -8,12 +8,12 @@
     z-index: 50;
     padding: ($layout-spacing / 2) $layout-spacing;
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-end;
     gap: 1em;
     background-color: $background-color;
     box-shadow: 0 5px ($layout-spacing / 4) 5px $background-color;
 
-    #logo, #icon {
+    #logo, #icon, .dapp-menu {
         position: absolute;
         background-size: contain;
         background-repeat: no-repeat;
@@ -38,6 +38,125 @@
         opacity: 0;
     }
 
+    .dapp-menu {
+        left: $layout-spacing / 4;
+        top: 10px;      
+        height: 40px;
+
+        .dapp-menu-btns {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            height: 100%;
+            max-width: 169px;
+            gap: 4px;
+
+            .ambire-menu-btn {
+                margin-right: 20px;
+            }
+
+            .dapp-data {
+                height: 100%;
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                gap: 4px;
+                a {
+                    height: 100%;
+                    display: flex;
+                    flex-direction: row;
+                    align-items: center;
+                    color: $secondary-accent-color;
+                }
+                .dapp-logo {     
+                    padding: 4px;
+                    width: auto;
+                    max-width: 100%;
+                    min-width: 50px;
+                    object-fit: contain;
+                    align-self: flex-end;
+                    flex-shrink: 0;
+                    height: 100%;
+                    border: 1px solid $secondary-accent-color;
+                }
+                .dapp-exit-btn {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 2px;
+                    padding: 2px;
+                    justify-content: space-between;
+                    font-size: 15px;
+                    line-height: 15px;
+                }
+            }            
+            
+            .buttonComponent {
+                flex-shrink: 0;
+                height: 100%;
+                width: 50px;          
+            }
+        }
+    }
+    
+    &.visual-env {
+        margin-top: 16px;
+        .env-bar
+        {
+            color: #FFF;
+            text-align: center;
+            font-size: 10px;
+            line-height: 11px;
+            font-weight: bold;
+            height: 12px;
+            width: 100%;
+            position: absolute;
+            top: -16px;
+            left: 0;
+            display: block;
+
+        }
+
+        #icon {
+            background-image: url('/resources/ambire-dev-256-white.png');
+        }
+
+        #logo {
+            background-image: url('/resources/ambire-dev-256-full-white.png');
+        }
+
+        &.visual-env-dev {
+            .env-bar{
+                background: repeating-linear-gradient(
+                    -45deg,
+                    #0066ff 0px,
+                    #0066ff 30px,
+                    #0048b6 30px,
+                    #004cbd 40px
+                );
+            }
+        }
+
+        &.visual-env-staging {
+            .env-bar{
+                background: repeating-linear-gradient(
+                    -45deg,
+                    #e69b00 0px,
+                    #e69b00 30px,
+                    #c08b00 30px,
+                    #c08b00 40px
+                );
+            }
+
+            #icon {
+                background-image: url('/resources/ambire-staging-256.png');
+            }
+
+            #logo {
+                background-image: url('/resources/ambire-staging-256-full.png');
+            }
+        }
+    }
+
     #mobile-menu {
         display: none;
         align-items: center;
@@ -60,14 +179,30 @@
         }
     }
 
-    .container {
+    .container {        
         display: flex;
         justify-content: flex-end;
         align-items: center;
         gap: 1em;
         flex-wrap: wrap;
         max-width: $max-container-width;
-        background-color: $background-color;
+        // background-color: $background-color;
+    }
+
+    &.dapp-mode {
+        padding: ($layout-spacing / 4) $layout-spacing;
+        height: $topbar-dapp-mode-height;
+        align-items: flex-start;
+        .container {
+            padding-left: 120px;
+            >button, >svg, >div, .select-input {
+                max-height: 40px;
+
+                .menu, .select-menu {
+                    top: 40px;
+                }
+            }
+        }
     }
 }
 
@@ -87,6 +222,36 @@
 
         #icon {
             opacity: 1;
+        }
+
+        .dapp-menu {
+            height: 35px;
+           
+            .dapp-menu-btns {
+                width: 140px;
+                // flex-wrap: wrap;
+                .buttonComponent {
+                    width: 35px;
+                }
+                .dapp-data {                    
+                    .dapp-logo {
+                        min-width: 35px;
+                    }
+                }
+            }
+        }
+
+        &.dapp-mode {
+            .container {
+                gap: 0.5em;
+                >button, >svg, >div, .select-input {
+                    max-height: 35px;
+    
+                    .menu, .select-menu {
+                        top: 35px;
+                    }
+                }
+            }
         }
     }
 }
@@ -122,6 +287,7 @@
             display: none;
             padding: 10px 10px;
             box-shadow: $box-shadow;
+            background-color: $background-color;
 
             .dropdown {
                 width: 100%;
@@ -137,6 +303,21 @@
 
             &.open {
                 display: flex;
+            }
+        }
+
+        &.dapp-mode {
+            .container {
+                top: $topbar-mobile-dapp-mode-height;
+            }
+
+            height: $topbar-mobile-dapp-mode-height;
+            .dapp-menu {            
+                top: 10px;
+
+                .ambire-menu-btn {
+                    display: none;
+                }
             }
         }
     }

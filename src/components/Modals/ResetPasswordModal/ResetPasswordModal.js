@@ -7,7 +7,7 @@ import { Modal, Radios, Checkbox, Button, ToolTip, Loading, PasswordInput } from
 import { MdOutlineCheck, MdOutlineClose, MdOutlineHelpOutline } from 'react-icons/md'
 import { useModals } from 'hooks'
 import { useToasts } from 'hooks/toasts'
-import accountPresets from 'consts/accountPresets'
+import accountPresets from 'ambire-common/src/constants/accountPresets'
 import { fetchPost } from 'lib/fetch'
 import buildRecoveryBundle from 'lib/recoveryBundle'
 
@@ -129,7 +129,7 @@ const ResetPassword = ({ account, selectedNetwork, relayerURL, onAddAccount, sho
 
             const bundle = buildRecoveryBundle(account.id, selectedNetwork.id, signer.preRecovery, { signer, primaryKeyBackup })
             hideModal()
-            showSendTxns(bundle)
+            showSendTxns(bundle, true)
             onAddAccount({
                 ...account,
                 primaryKeyBackup,

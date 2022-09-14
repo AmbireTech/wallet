@@ -10,6 +10,9 @@ import HideTokenModel from './HideTokenModal/HideTokenModal'
 import AmbireEarnDetailsModal from './AmbireEarnDetailsModal/AmbireEarnDetailsModal'
 import EarnDetailsModal from './EarnDetailsModal/EarnDetailsModal'
 import AddAddressModal from './AddAddressModal/AddAddressModal'
+import AddCustomDappModal from './AddCustomDappModal/AddCustomDappModal'
+import GasTankBalanceByTokensModal from './GasTankBalanceByTokensModal/GasTankBalanceByTokensModal'
+import GuardarianDepositProviderModal from './GuardarianDepositProviderModal/GuardarianDepositProviderModal'
 
 export {
     PermissionsModal,
@@ -23,5 +26,8 @@ export {
     HideTokenModel,
     AmbireEarnDetailsModal,
     EarnDetailsModal,
-    AddAddressModal
+    AddAddressModal,
+    GasTankBalanceByTokensModal,
+    AddCustomDappModal,
+    GuardarianDepositProviderModal
 }

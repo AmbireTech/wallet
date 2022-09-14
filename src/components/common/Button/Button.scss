@@ -49,6 +49,10 @@ button.buttonComponent {
         }
     }
 
+    &.secondary {
+        background-color: $secondary-accent-color;
+    }
+
     &.text-only {
         padding: 0;
         margin: 0;

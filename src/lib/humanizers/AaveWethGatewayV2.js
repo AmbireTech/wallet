@@ -1,9 +1,9 @@
-import { abis } from 'consts/humanizerInfo'
+import { abis } from 'ambire-common/src/constants/humanizerInfo'
 import { Interface } from 'ethers/lib/utils'
 import { nativeToken } from 'lib/humanReadableTransactions'
 
 const iface = new Interface(abis.AaveWethGatewayV2)
-const onBehalfText = (onBehalf, txnFrom) => onBehalf.toLowerCase() !== txnFrom.toLowerCase()
+const onBehalfText = (onBehalf, txnFrom) => onBehalf && (onBehalf.toLowerCase() !== txnFrom.toLowerCase())
   ? ' on behalf of '+onBehalf
   : ''
 

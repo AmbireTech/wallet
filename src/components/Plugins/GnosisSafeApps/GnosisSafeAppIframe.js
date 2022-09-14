@@ -12,7 +12,8 @@ export default function GnosisSafeAppIframe({
     network,
     selectedAcc,
     gnosisConnect,
-    gnosisDisconnect
+    gnosisDisconnect,
+    className
 }) {
 
     const { chainId } = network || {}
@@ -45,7 +46,7 @@ export default function GnosisSafeAppIframe({
     }, [selectedApp, network, selectedAcc, iframeRef, gnosisConnect, gnosisDisconnect])
 
     return (
-        <div id="plugin-gnosis-container">
+        <div id="plugin-gnosis-container" className={className}>
             {
                 loading &&
                 <div className='iframe-placeholder'>

@@ -151,14 +151,6 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/d
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
 
-## Maintenance
-
-### Updating contract/token info
-
-```
-node scripts/generateContractInfo.js > src/consts/humanizerInfo.json
-```
-
 ## Audits
 
 The contracts used by Ambire Wallet have been audited by:
@@ -334,5 +326,49 @@ Those contracts (except Ethereum-specific WALLET, xWALLET and SupplyController) 
 * Support balance for custom NFTs for netwroks without thirdparty balance providers
 * Added multiplier for CryptoTester NFT
 * Added pagination for Collectibles page
-* Changed kriptomat limit to 5k per day
+* Changed Kriptomat limit to 5k per day
 * Added new tokens BSC on for rewards
+
+### v0.5.6
+* Supported hidden networks
+* Added Andromeda chain
+* Improved humanizer with custom list of eligible tokens
+* Added Trezor and Lattice signer assets migration
+* Added Transak support for Moonbeam, Moonriver and Optimism chains
+* Asset migration improvement to migration with Permit method
+* Added chain verification of sign message
+* Alphabetically sort of tokens in Transfer page
+* Fixed: Support Pancakeswap through WalletConnect
+* Improve replacment transaction interface
+
+### v0.5.7
+* Added ENS support
+* We now notify users in case the contract they're interacting with intentionally blocks smart wallets, as is the case with many NFT mints
+* Improvement sign message page and verification for deployed contract
+* Disable deposit option for Tesseract earn
+* Fixed: Allow to list more then 8 dapps in dapps connection bar
+* Fixed: Notification errors on Chrome browser on Android mobile
+
+
+### v0.5.8
+* Gas-Tank
+* Changed the address of the adx-supply-controller
+* New AdEx staking supply controller 
+* Password recovery alert on dashboard
+* Start using shared repo
+* Different visual for Production and Staging
+* Disabled deposit yearn/tesseract btn for polygon
+* Thank you page
+* Migrate const to shared repo
+* Migrate portfolio to shared repo
+* Migrate address, approveToken and requestToBundleTxn to shared repo
+* topUp gasTank with AAVE tokens
+* Added Guardarian as on-ramp and off-ramp provider
+* Improve token hiding functionality
+* Added Polygon and Avalanche as kriptomat supported chains
+* Allow XDAI on Ramp for Gnosis chain
+* Fix: Dapp scrollbar fix disconnect alignment
+* Fix: The send txn is not allowed if missing amount
+* Fix: Adx staking details
+* Fix: popping up the addresses modal when add new signer via Trezor
+* Fix: AAVE earn card

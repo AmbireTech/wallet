@@ -1,6 +1,6 @@
 import "./Wallet.scss"
 
-import { Switch, Route, Redirect, useLocation  } from "react-router-dom"
+import { Switch, Route, Redirect, useLocation, useRouteMatch } from "react-router-dom"
 import Dashboard from "./Dashboard/Dashboard"
 import TopBar from "./TopBar/TopBar"
 import SideBar from "./SideBar/SideBar"
@@ -8,6 +8,7 @@ import Deposit from "./Deposit/Deposit"
 import Swap from "./Swap/Swap"
 import Transfer from "./Transfer/Transfer"
 import Earn from "./Earn/Earn"
+import DappsCatalog from './DappsCatalog/DappsCatalog'
 import Security from "./Security/Security"
 import Transactions from './Transactions/Transactions'
 import PluginGnosisSafeApps from 'components/Plugins/GnosisSafeApps/GnosisSafeApps'
@@ -18,13 +19,18 @@ import { useCallback, useEffect, useMemo, useRef } from 'react'
 import { isFirefox } from 'lib/isFirefox'
 import CrossChain from "./CrossChain/CrossChain"
 import OpenSea from "./OpenSea/OpenSea"
-import unsupportedDApps from 'consts/unsupportedDApps'
+import unsupportedDApps from 'ambire-common/src/constants/unsupportedDApps'
+import Gas from "./Gas/Gas"
 
 export default function Wallet(props) {
   const { showModal } = useModals()
   const { isClipboardGranted, isNoticationsGranted, arePermissionsLoaded, modalHidden } = usePermissions()
   const { pathname } = useLocation()
   const walletContainer = useRef()
+  const { isDappMode } = props.dappsCatalog
+  const routeMatch = useRouteMatch('/wallet/dapps')
+
+  const dapModeSidebar = useMemo(() => isDappMode && routeMatch, [isDappMode, routeMatch])
 
   const isLoggedIn = useMemo(() => props.accounts.length > 0, [props.accounts])
   const [advancedModeList, setAdvancedModeList] = useLocalStorage({ key: 'dAppsAdvancedMode', defaultValue: [] })
@@ -45,6 +51,8 @@ export default function Wallet(props) {
         useStorage={props.useStorage}
         userSorting={props.userSorting}
         setUserSorting={props.setUserSorting}
+        match={props.match}
+        showSendTxns={props.showSendTxns}
       />
     },
     {
@@ -124,6 +132,16 @@ export default function Wallet(props) {
       />
     },
     {
+      path: '/dapps',
+      component: <DappsCatalog
+        network={props.network}
+        dappsCatalog={props.dappsCatalog}
+        gnosisConnect={props.gnosisConnect}
+        gnosisDisconnect={props.gnosisDisconnect}
+        selectedAcc={props.selectedAcc}
+      />
+    },
+    {
       path: '/opensea',
       component: <OpenSea
         gnosisConnect={props.gnosisConnect}
@@ -143,12 +161,25 @@ export default function Wallet(props) {
       />
     },
     {
-      path: '/gnosis/plugins',
+      path: '/gnosis/plugins/:plugin?',
       component: <PluginGnosisSafeApps
         gnosisConnect={props.gnosisConnect}
         gnosisDisconnect={props.gnosisDisconnect}
         selectedAcc={props.selectedAcc}
         network={props.network}
+      />
+    },
+    {
+      path: '/gas-tank',
+      component: <Gas
+        selectedNetwork={{...props.network}}
+        relayerURL={props.relayerURL}
+        portfolio={props.portfolio}
+        selectedAccount={props.selectedAcc}
+        userSorting={props.userSorting}
+        setUserSorting={props.setUserSorting}
+        setGasTankState={props.setGasTankState}
+        gasTankState={props.gasTankState}
       />
     }
   ]
@@ -175,10 +206,11 @@ export default function Wallet(props) {
       onAddAccount={props.onAddAccount}
       isCloseBtnShown={!showCauseOfBackupOptout}
       isBackupOptout={!showCauseOfBackupOptout}
+      showThankYouPage={props.showThankYouPage}
     />
 
     if (showCauseOfEmail || showCauseOfPermissions || showCauseOfBackupOptout) showModal(permissionsModal, { disableClose: true })
-  }, [props.accounts, props.relayerURL, props.onAddAccount, props.selectedAcc, arePermissionsLoaded, isClipboardGranted, isNoticationsGranted, modalHidden, showModal])
+  }, [props.accounts, props.relayerURL, props.onAddAccount, props.showThankYouPage, props.selectedAcc, arePermissionsLoaded, isClipboardGranted, isNoticationsGranted, modalHidden, showModal])
 
   useEffect(() => handlePermissionsModal(), [handlePermissionsModal])
 
@@ -196,10 +228,10 @@ export default function Wallet(props) {
 
   return (
     <div id="wallet">
-      <SideBar match={props.match} portfolio={props.portfolio} hidePrivateValue={props.privateMode.hidePrivateValue} relayerURL={props.relayerURL} selectedNetwork={props.network} />
+      <SideBar match={props.match} portfolio={props.portfolio} hidePrivateValue={props.privateMode.hidePrivateValue} relayerURL={props.relayerURL} selectedNetwork={props.network} dappsCatalog={props.dappsCatalog} />
       <TopBar {...props} />
 
-      <div id="wallet-container" ref={walletContainer}>
+      <div id="wallet-container" className={dapModeSidebar ? 'dapp-mode' : ''} ref={walletContainer}>
         <div id="wallet-container-inner">
           <Switch>
             {

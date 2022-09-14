@@ -30,7 +30,8 @@ async function wait (ms) { return new Promise(resolve => setTimeout(resolve, ms)
 const timePastForConnectionErr = 90 * 1000
 const checkIsOffline = uri => {
     const errors = connectionErrors.filter(x => x.uri === uri)
-    return errors.find(({ time } = {}) => time > (Date.now() - timePastForConnectionErr))
+    // if no errors, return false, else check time diff
+    return errors.length > 0 && errors.find(({ time } = {}) => time > (Date.now() - timePastForConnectionErr))
     //return errors.length > 1 && errors.slice(-2)
     //    .every(({ time } = {}) => time > (Date.now() - timePastForConnectionErr))
 }
@@ -393,6 +394,7 @@ export default function useWalletConnect ({ account, chainId, initialUri, allNet
     }, [])
 
     const resolveMany = (ids, resolution) => {
+        if (ids === undefined) return
         state.requests.forEach(({ id, wcUri, isBatch }) => {
             if (ids.includes(id)) {
                 const connector = connectors[wcUri]

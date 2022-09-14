@@ -9,7 +9,7 @@ import { BsFillImageFill } from 'react-icons/bs'
 import * as blockies from 'blockies-ts';
 import { useToasts } from 'hooks/toasts'
 import { TextInput, Button, Loading, AddressBook, AddressWarning, ToolTip } from 'components/common'
-import ERC721Abi from 'consts/ERC721Abi'
+import ERC721Abi from 'ambire-common/src/constants/abis/ERC721Abi'
 import networks from 'consts/networks'
 import { validateSendNftAddress } from 'lib/validations/formValidations'
 import { BsXLg } from 'react-icons/bs'
@@ -17,6 +17,7 @@ import { getProvider } from 'lib/provider'
 import { VELCRO_API_ENDPOINT } from 'config'
 import { fetchGet } from 'lib/fetch'
 import { resolveUDomain } from 'lib/unstoppableDomains'
+import { resolveENSDomain, getBip44Items } from 'lib/ensDomains'
 
 const ERC721 = new Interface(ERC721Abi)
 
@@ -48,6 +49,7 @@ const Collectible = ({ selectedAcc, selectedNetwork, addRequest, addressBook }) 
     })
     const [recipientAddress, setRecipientAddress] = useState('')
     const [uDAddress, setUDAddress] = useState('')
+    const [ensAddress, setEnsAddress] = useState('')
     const [isTransferDisabled, setTransferDisabled] = useState(true)
     const [addressConfirmed, setAddressConfirmed] = useState(false)
     const [newAddress, setNewAddress] = useState(null)
@@ -58,7 +60,7 @@ const Collectible = ({ selectedAcc, selectedNetwork, addRequest, addressBook }) 
     const timer = useRef(null)
     
     const sendTransferTx = () => {
-        const recipAddress = uDAddress ? uDAddress : recipientAddress
+        const recipAddress = uDAddress ? uDAddress : ensAddress ? ensAddress : recipientAddress
 
         try {
             let req = {
@@ -79,6 +81,13 @@ const Collectible = ({ selectedAcc, selectedNetwork, addRequest, addressBook }) 
                     addressLabel: { 
                         addressLabel: recipientAddress,
                         address: uDAddress
+                    }
+                }
+            } else if (ensAddress) {
+                req.meta = {
+                    addressLabel: {
+                        addressLabel: recipientAddress,
+                        address: ensAddress
                     }
                 }
             }
@@ -106,10 +115,20 @@ const Collectible = ({ selectedAcc, selectedNetwork, addRequest, addressBook }) 
     
             const validateForm = async() => {
                 const UDAddress =  await resolveUDomain(recipientAddress, null, selectedNetwork.unstoppableDomainsChain)
+                const bip44Item = getBip44Items(null)
+                const ensAddress = await resolveENSDomain(recipientAddress, bip44Item)
+                
                 timer.current = null
                 const isUDAddress = UDAddress ? true : false
-                const isAddressValid = validateSendNftAddress(UDAddress ? UDAddress : recipientAddress, selectedAcc, addressConfirmed, isKnownAddress, metadata, selectedNetwork, network, isUDAddress)
+                const isEnsAddress = ensAddress ? true : false
+                let selectedAddress = ''
+                if (isEnsAddress) selectedAddress = ensAddress
+                else if (isUDAddress) selectedAddress = UDAddress
+                else selectedAddress = recipientAddress
+
+                const isAddressValid = validateSendNftAddress(selectedAddress, selectedAcc, addressConfirmed, isKnownAddress, metadata, selectedNetwork, network, isUDAddress, isEnsAddress)
                 setUDAddress(UDAddress)
+                setEnsAddress(ensAddress)
                 
                 setTransferDisabled(!isAddressValid.success)
                 setValidationFormMgs({ 
@@ -253,6 +272,9 @@ const Collectible = ({ selectedAcc, selectedNetwork, addRequest, addressBook }) 
                 <div className="content">
                     <div id="recipient-address">
                         <TextInput placeholder="Recipient Address" value={recipientAddress} onInput={(value) => setRecipientAddress(value)}/>
+                        <ToolTip label={!ensAddress ? 'You can use Ethereum Name ServiceⓇ' : 'Valid Ethereum Name ServicesⓇ domain'}>
+                            <div id="ens-logo" className={ensAddress ? 'ens-logo-active ' : ''} />
+                        </ToolTip>
                         <ToolTip label={!uDAddress ? 'You can use Unstoppable domainsⓇ' : 'Valid Unstoppable domainsⓇ domain'}>
                             <div id="udomains-logo" className={uDAddress ? 'ud-logo-active ' : ''} />
                         </ToolTip>
@@ -271,8 +293,8 @@ const Collectible = ({ selectedAcc, selectedNetwork, addRequest, addressBook }) 
                     }
                     <div className="separator"></div>
                     <AddressWarning
-                        address={uDAddress ? uDAddress : recipientAddress}
-                        onAddNewAddress={() => setNewAddress(uDAddress ? uDAddress : recipientAddress)}
+                        address={uDAddress ? uDAddress : ensAddress ? ensAddress : recipientAddress}
+                        onAddNewAddress={() => setNewAddress(uDAddress ? uDAddress : ensAddress ? ensAddress : recipientAddress)}
                         onChange={(value) => setAddressConfirmed(value)}
                         isKnownAddress={isKnownAddress}
                     />

@@ -3,7 +3,16 @@ import { Button, Loading, TextInput } from 'components/common'
 import { isTokenEligible } from './helpers'
 import { MdCheck, MdCheckCircle, MdOutlineCheck, MdOutlineClose } from 'react-icons/md'
 
-export default function Actions({ estimation, feeSpeed, approveTxn, rejectTxn, cancelSigning, signingStatus }) {
+export default function Actions({ 
+    estimation, 
+    feeSpeed, 
+    approveTxn, 
+    rejectTxn, 
+    cancelSigning, 
+    signingStatus, 
+    isGasTankEnabled, 
+    network
+  }) {
   const [quickAccCredentials, setQuickAccCredentials] = useState({ code: '', passphrase: '' })
   // reset this every time the signing status changes
   useEffect(() => !signingStatus && setQuickAccCredentials(prev => ({ ...prev, code: '' })), [signingStatus])
@@ -16,7 +25,7 @@ export default function Actions({ estimation, feeSpeed, approveTxn, rejectTxn, c
     <Button danger icon={<MdOutlineClose/>} type='button' className='rejectTxn' onClick={rejectTxn}>Reject</Button>
   )
   const insufficientFee = estimation && estimation.feeInUSD
-    && !isTokenEligible(estimation.selectedFeeToken, feeSpeed, estimation)
+    && !isTokenEligible(estimation.selectedFeeToken, feeSpeed, estimation, isGasTankEnabled, network)
   const willFail = (estimation && !estimation.success) || insufficientFee
   if (willFail) {
     return (<div className='buttons'>
@@ -50,6 +59,9 @@ export default function Actions({ estimation, feeSpeed, approveTxn, rejectTxn, c
       }
   
       <form ref={form} className='quickAccSigningForm' onSubmit={e => { e.preventDefault() }}>
+        {signingStatus.confCodeRequired === 'notRequired' &&
+          <p className='code-2fa-not-required-msg'>You already sent 3 or more transactions to this address, confirmation code is not needed.</p>
+        }
         <div className='inputs-container'>
           <TextInput
             small
@@ -63,16 +75,18 @@ export default function Actions({ estimation, feeSpeed, approveTxn, rejectTxn, c
             onChange={value => setQuickAccCredentials({ ...quickAccCredentials, passphrase: value })}
           ></TextInput>
           {/* Changing the autoComplete prop to a random string seems to disable it in more cases */}
-          <TextInput
-            small
-            pattern='[0-9]+'
-            title='Confirmation code should be 6 digits'
-            autoComplete='nope'
-            required minLength={6} maxLength={6}
-            placeholder={signingStatus.confCodeRequired === 'otp' ? 'Authenticator OTP code' : 'Confirmation code'}
-            value={quickAccCredentials.code}
-            onChange={value => setQuickAccCredentials({ ...quickAccCredentials, code: value })}
-          ></TextInput>
+          {signingStatus.confCodeRequired !== 'notRequired' &&
+            <TextInput
+              small
+              pattern='[0-9]+'
+              title='Confirmation code should be 6 digits'
+              autoComplete='nope'
+              required minLength={6} maxLength={6}
+              placeholder={signingStatus.confCodeRequired === 'otp' ? 'Authenticator OTP code' : 'Confirmation code'}
+              value={quickAccCredentials.code}
+              onChange={value => setQuickAccCredentials({ ...quickAccCredentials, code: value })}
+            ></TextInput>
+          }
         </div>
         <div className='buttons'>
           <Button

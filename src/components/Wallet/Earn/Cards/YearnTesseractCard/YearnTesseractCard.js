@@ -3,12 +3,12 @@ import Card from 'components/Wallet/Earn/Card/Card'
 import { useEffect, useState, useMemo, useRef } from 'react'
 import { Interface, parseUnits } from 'ethers/lib/utils'
 import networks from 'consts/networks'
-import YEARN_TESSERACT_VAULT_ABI from 'consts/YearnTesseractVaultABI'
+import YEARN_TESSERACT_VAULT_ABI from 'ambire-common/src/constants/abis/YearnTesseractVaultABI'
 import useYearn from './useYearn'
 import useTesseract from './useTesseract'
 import { useToasts } from 'hooks/toasts'
 import { getProvider } from 'lib/provider'
-import AmbireBatcherABI from 'consts/AmbireBatcherABI.json'
+import AmbireBatcherABI from 'ambire-common/src/constants/abis/AmbireBatcherABI.json'
 import ERC20ABI from 'adex-protocol-eth/abi/ERC20.json'
 import { constants, Contract } from 'ethers'
 import { EarnDetailsModal } from 'components/Modals'
@@ -38,6 +38,7 @@ const YearnTesseractCard = ({ networkId, accountId, tokens, addRequest }) => {
     const networkDetails = networks.find(({ id }) => id === networkId)
     const addRequestTxn = (id, txn, extraGas = 0) => addRequest({ id, type: 'eth_sendTransaction', chainId: networkDetails.chainId, account: accountId, txn, extraGas })
     const provider = useMemo(() => getProvider(networkDetails.id), [networkDetails.id])
+    const isDepositsDisabled = (networkId === 'polygon') ? true : false
 
     const yearn = useYearn({
         tokens,
@@ -62,8 +63,8 @@ const YearnTesseractCard = ({ networkId, accountId, tokens, addRequest }) => {
     } = useMemo(() => networkId === 'polygon' ? tesseract : yearn, [networkId, yearn, tesseract])
 
     const moreDetails = {
-        title: networkId === 'polygon' ? TESSERACT_DETAILS.title: YEARN_DETAILS.title,
-        description: networkId === 'polygon' ? TESSERACT_DETAILS.description: YEARN_DETAILS.description
+        title: networkId === 'polygon' ? TESSERACT_DETAILS.title : YEARN_DETAILS.title,
+        description: networkId === 'polygon' ? TESSERACT_DETAILS.description : YEARN_DETAILS.description
     }
 
     const onValidate = async (type, value, amount) => {
@@ -162,6 +163,7 @@ const YearnTesseractCard = ({ networkId, accountId, tokens, addRequest }) => {
 
     return (
         <Card
+            isDepositsDisabled={isDepositsDisabled}
             loading={loading}
             icon={icon}
             unavailable={unavailable}

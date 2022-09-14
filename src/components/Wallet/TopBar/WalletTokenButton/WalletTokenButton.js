@@ -1,42 +1,24 @@
-import { useEffect, useState } from "react"
 import useDynamicModal from "hooks/useDynamicModals";
 import { Button, ToolTip } from "components/common";
 import { WalletTokenModal } from "components/Modals";
-import useClaimableWalletToken from "./useClaimableWalletToken";
+import useClaimableWalletToken from 'ambire-common/src/hooks/useClaimableWalletToken'
 
 const WalletTokenButton = ({ rewardsData, account = {}, network, hidePrivateValue, addRequest }) => {
-    const claimableWalletToken = useClaimableWalletToken({ account, network, addRequest })
-    const { currentClaimStatus } = claimableWalletToken
-    const totalLifetimeRewards = rewardsData.data?.rewards?.map(x => x.rewards[account.id] || 0).reduce((a, b) => a + b, 0)
-    const pendingTokensTotal = (currentClaimStatus && !currentClaimStatus.loading && totalLifetimeRewards > 0)
-        ?
-            ((totalLifetimeRewards || 0) 
-            - (currentClaimStatus.claimed || 0) 
-            - (currentClaimStatus.claimedInitial || 0 ) 
-            + (currentClaimStatus.mintableVesting || 0)).toFixed(3) 
-        : '...'
-    const [rewards, setRewards] = useState({})
-    const { isLoading, data, errMsg } = rewardsData
-    
-    const showWalletTokenModal = useDynamicModal(WalletTokenModal, { claimableWalletToken, accountId: account.id }, { rewards })
+    const claimableWalletToken = useClaimableWalletToken({
+        accountId: account.id,
+        network,
+        addRequest,
+        totalLifetimeRewards: rewardsData.rewards.totalLifetimeRewards,
+        walletUsdPrice: rewardsData.rewards.walletUsdPrice,
+      })
+    const { currentClaimStatus, pendingTokensTotal } = claimableWalletToken
+    const { isLoading: isRewardsDataLoading, errMsg } = rewardsData
+    const isLoading = isRewardsDataLoading || currentClaimStatus.loading;
 
-    useEffect(() => {
-        if (errMsg || !data || !data.success) return
-
-        const { rewards, multipliers } = data
-        if (!rewards.length) return
-
-        const rewardsDetails = Object.fromEntries(rewards.map(({ _id, rewards }) => [_id, rewards[account.id] || 0]))
-        rewardsDetails.multipliers = multipliers
-        rewardsDetails.walletTokenAPY = data.walletTokenAPY
-        rewardsDetails.adxTokenAPY = data.adxTokenAPY
-        rewardsDetails.walletUsdPrice = data.usdPrice
-        rewardsDetails.xWALLETAPY = data.xWALLETAPY
-        setRewards(rewardsDetails)
-    }, [data, errMsg, account])
+    const showWalletTokenModal = useDynamicModal(WalletTokenModal, { claimableWalletToken, accountId: account.id }, { rewards: rewardsData.rewards })
 
     return (
-        !isLoading && (errMsg || !data || currentClaimStatus.error) ?
+        !isLoading && (errMsg || currentClaimStatus.error) ?
             <ToolTip label="WALLET rewards are not available without a connection to the relayer">
                 <Button small border disabled onClick={showWalletTokenModal}>Unavailable</Button>
             </ToolTip>

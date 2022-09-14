@@ -66,7 +66,7 @@ function GnosisConnector(_iframeRef, _app) {
         }
       } catch (err) {
         console.error("GS : " + err);
-        this.send(err.message, msg.data.id, true)
+        this.send(null, msg.data.id, err.message)
         /*trackError(Errors._901, err.message, {
           contexts: {
             safeApp: this.app,

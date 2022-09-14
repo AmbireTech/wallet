@@ -1,21 +1,26 @@
 import './SideBar.scss'
 
-import { NavLink } from 'react-router-dom'
-import { MdDashboard, MdLock, MdCompareArrows, MdHelpCenter } from 'react-icons/md'
-import { GiReceiveMoney } from 'react-icons/gi'
+import { NavLink, useRouteMatch  } from 'react-router-dom'
+import { MdDashboard, MdLock, MdCompareArrows, MdHelpCenter, MdClose } from 'react-icons/md'
+import { AiOutlineAppstoreAdd } from 'react-icons/ai'
+import { GiReceiveMoney, GiGasPump } from 'react-icons/gi'
 import { BsCurrencyExchange } from 'react-icons/bs'
 import { BsPiggyBank } from 'react-icons/bs'
 import { BiTransfer } from 'react-icons/bi'
 import { CgArrowsExchangeV } from 'react-icons/cg'
-import { Loading } from 'components/common'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { Loading, Button } from 'components/common'
+import { useCallback, useEffect, useRef, useState, useMemo } from 'react'
 import GasIndicator from 'components/Wallet/GasIndicator/GasIndicator'
 
 const helpCenterUrl = 'https://help.ambire.com/hc/en-us/categories/4404980091538-Ambire-Wallet'
 
-const SideBar = ({ match, portfolio, hidePrivateValue, relayerURL, selectedNetwork }) => {
+const SideBar = ({ match, portfolio, hidePrivateValue, relayerURL, selectedNetwork, dappsCatalog }) => {
   const sidebarRef = useRef()
   const [balanceFontSize, setBalanceFontSize] = useState(0)
+  const { isDappMode, sideBarOpen, toggleSideBarOpen, toggleDappMode } = dappsCatalog
+  const routeMatch = useRouteMatch('/wallet/dapps')
+
+  const dappModeSidebar = useMemo(() => isDappMode && routeMatch, [isDappMode, routeMatch])
 
     const resizeBalance = useCallback(() => {
         const balanceFontSizes = {
@@ -33,8 +38,25 @@ const SideBar = ({ match, portfolio, hidePrivateValue, relayerURL, selectedNetwo
 
     useEffect(() => resizeBalance(), [resizeBalance])
 
+  const onDappsClick = useCallback(() => {
+    if(dappModeSidebar) {
+      toggleDappMode()
+    }
+  }, [dappModeSidebar, toggleDappMode])  
+
   return (
-    <div id="sidebar" ref={sidebarRef}>
+    <div id="sidebar" className={(dappModeSidebar ? 'dapp-mode' : '') + (sideBarOpen ? ' open' : '') } ref={sidebarRef}>
+      {/* NOTE: click outside not working because of the iframe - ths is simpler than adding event listeners to the dapps ifeame  */}
+      {dappModeSidebar && sideBarOpen && <div className='outside-handler' onClick={() => toggleSideBarOpen()}></div> }
+      {dappModeSidebar &&
+      <div className='ambire-logo'>
+        <div className="logo" />
+        <div className="icon" />
+        <Button  clear icon={<MdClose size={23} />} mini border
+          onClick={() => toggleSideBarOpen()}
+        ></Button>
+      </div>
+      }     
       <div className="balance">
         <label>Balance</label>
         {portfolio.isCurrNetworkBalanceLoading ? (
@@ -54,7 +76,8 @@ const SideBar = ({ match, portfolio, hidePrivateValue, relayerURL, selectedNetwo
           </div>
         )}
         <div>
-          <GasIndicator relayerURL={relayerURL} selectedNetwork={selectedNetwork}/>
+          <GasIndicator 
+            relayerURL={relayerURL} selectedNetwork={selectedNetwork} match={match}/>
         </div>
       </div>
       <nav>
@@ -76,6 +99,16 @@ const SideBar = ({ match, portfolio, hidePrivateValue, relayerURL, selectedNetwo
         <NavLink to={match.url + "/swap"} activeClassName="selected">
           <div className="item">
               <BsCurrencyExchange/>Swap
+          </div>
+        </NavLink>
+        <NavLink to={match.url + "/dapps"} activeClassName="selected">
+          <div className="item" onClick={onDappsClick}>
+            <AiOutlineAppstoreAdd />dApps
+          </div>
+        </NavLink>
+        <NavLink to={match.url + "/gas-tank"} activeClassName="selected">
+          <div className="item">
+              <GiGasPump/>Gas Tank
           </div>
         </NavLink>
         <NavLink to={match.url + "/cross-chain"} activeClassName="selected">
@@ -101,7 +134,7 @@ const SideBar = ({ match, portfolio, hidePrivateValue, relayerURL, selectedNetwo
         </NavLink> */}
         <NavLink to={match.url + "/security"} activeClassName="selected">
           <div className="item">
-              <MdLock/>Security
+            <MdLock/>Security
           </div>
         </NavLink>
         <div className="separator"></div>

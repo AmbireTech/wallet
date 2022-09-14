@@ -22,7 +22,7 @@
             width: 100%;
 
             input {
-                padding-right: 280px;
+                padding-right: 310px;
             }
         }
 
@@ -34,7 +34,7 @@
         #udomains-logo {
             position: absolute;
             top: 18px;
-            right: 240px;
+            right: 275px;
             height: 25px;
             width: 25px;
             background-image: url('/resources/ud-logo-inactive.png');
@@ -42,6 +42,19 @@
 
         .ud-logo-active {
             background-image: url('/resources/ud-logo-active.png') !important;  
+        }
+
+        #ens-logo {
+            position: absolute;
+            top: 18px;
+            right: 240px;
+            height: 25px;
+            width: 25px;
+            background-image: url('/resources/ens-logo-inactive.png');
+        }
+
+        .ens-logo-active {
+            background-image: url('/resources/ens-logo-active.png') !important;  
         }
     }
 
@@ -60,6 +73,26 @@
             @include flex-center-center;
             font-size: 40px;
             opacity: 0.5;
+        }
+
+        .gas-tank-msg {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background-color: mix($panel-background-color, $warning-color, 90%);
+            color: $warning-color;
+            padding: 15px;
+            font-size: 14px;
+        }
+
+        .gas-tank-convert-msg {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background-color: mix($panel-background-color, $primary-accent-color, 90%);
+            color: $primary-accent-color;
+            padding: 15px;
+            font-size: 14px;
         }
     }
 
@@ -143,11 +176,19 @@
                 width: 100%;
     
                 input {
-                    padding-right: 50px;
+                    padding-right: 80px;
                 }
             }
 
             #udomains-logo {
+                position: absolute;
+                top: 18px;
+                right: 50px;
+                height: 25px;
+                width: 25px;
+            }
+
+            #ens-logo {
                 position: absolute;
                 top: 18px;
                 right: 15px;

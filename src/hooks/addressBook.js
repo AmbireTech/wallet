@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useToasts } from './toasts'
 import * as blockies from 'blockies-ts'
-import { isValidAddress, isKnownTokenOrContract } from 'lib/address'
+import { isValidAddress, isKnownTokenOrContract } from 'ambire-common/src/services/address'
 import { setKnownAddresses } from 'lib/humanReadableTransactions'
 import { sha256 } from 'ethers/lib/utils'
 
@@ -28,7 +28,8 @@ const useAddressBook = ({ accounts, useStorage }) => {
                 })),
                 ...addresses.map(entry => ({
                     ...entry,
-                    icon: toIcon(entry.address)
+                    icon: toIcon(entry.address),
+                    type: entry.type || (entry.isUd ? 'ud' : 'pub')
                 }))
             ]
         } catch (e) {
@@ -56,11 +57,11 @@ const useAddressBook = ({ accounts, useStorage }) => {
         ].includes((address.startsWith('0x') && (address.indexOf('.') === -1)) ? sha256(address) : address)
     }, [addresses, accounts])
 
-    const addAddress = useCallback((name, address, isUd = false) => {
+    const addAddress = useCallback((name, address, { type }) => {
         if (!name || !address) throw new Error('Address Book: invalid arguments supplied')
-        if (isUd) {
+        if (type === 'ens' || type === 'ud') {
             const isFound = addresses.find(item => item.address.toLowerCase() === address.toLowerCase())
-            if (isFound) return addToast('Address Book: The UD is already added to the Address book', { error: true })
+            if (isFound) return addToast(`Address Book: The ${type.toUpperCase()} is already added to the Address book`, { error: true })
         } else {
             const isFound = addresses.find(item => item.address.toLowerCase() === address.toLowerCase())
             if (isFound) return addToast('Address Book: The address is already added to the Address book', { error: true })
@@ -73,18 +74,18 @@ const useAddressBook = ({ accounts, useStorage }) => {
             {
                 name,
                 address,
-                isUd
+                type
             }
         ]
-
+        
         updateAddresses(newAddresses)
 
         addToast(`${address} added to your Address Book.`)
     }, [addresses, addToast, updateAddresses])
 
-    const removeAddress = useCallback((name, address, isUd = false) => {
+    const removeAddress = useCallback((name, address, type) => {
         if (!name || !address) throw new Error('Address Book: invalid arguments supplied')
-        if (!isUd) {
+        if (type !== 'ud' && type !== 'ens') {
             if (!isValidAddress(address)) throw new Error('Address Book: invalid address format')
         }
         
