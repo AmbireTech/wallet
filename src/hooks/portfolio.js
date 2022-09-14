@@ -6,6 +6,7 @@ import { fetchGet } from 'lib/fetch';
 import { ZAPPER_API_ENDPOINT } from 'config'
 import { useToasts } from 'hooks/toasts'
 import { VELCRO_API_ENDPOINT } from 'config'
+import { useConstantsContext } from 'components/ConstantsProvider/ConstantsProvider';
 
 const getBalances = (network, protocol, address, provider) =>
     fetchGet(`${provider === 'velcro' ?
@@ -13,7 +14,7 @@ const getBalances = (network, protocol, address, provider) =>
         ZAPPER_API_ENDPOINT}/protocols/${protocol}/balances?addresses[]=${address}&network=${network}&api_key=${ZAPPER_API_KEY}&newBalances=true`
     )
 
-export default function usePortfolio({ useFetchConstants, currentNetwork, account, useStorage }) {
+export default function usePortfolio({ currentNetwork, account, useStorage }) {
     const isVisible = usePageVisibility()
 
     const {
@@ -36,7 +37,7 @@ export default function usePortfolio({ useFetchConstants, currentNetwork, accoun
         isCurrNetworkProtocolsLoading,
         cachedBalancesByNetworks,
       } = usePortfolioCommon({
-        useFetchConstants,
+        useFetchConstants: useConstantsContext,
         currentNetwork,
         account,
         useStorage,
