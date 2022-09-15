@@ -34,7 +34,7 @@ import { getProvider } from './lib/provider'
 import allNetworks from './consts/networks'
 import { Loading } from 'components/common'
 import ConstantsProvider, { useConstantsContext } from 'components/ConstantsProvider/ConstantsProvider'
-// import useFetchConstants from 'ambire-common/src/hooks/useFetchConstants'
+
 const EmailLogin = lazy(() => import('./components/EmailLogin/EmailLogin'))
 const AddAccount = lazy(() => import('./components/AddAccount/AddAccount'))
 const Wallet = lazy(() => import('./components/Wallet/Wallet'))
