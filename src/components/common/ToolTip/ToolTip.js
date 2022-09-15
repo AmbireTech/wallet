@@ -3,11 +3,13 @@ import './ToolTip.scss'
 
 const ToolTip = ({ children, label, htmlContent, disabled, className }) => {
     const [labelPosition, setLabelPosition] = useState({ top: 0, left: 0 })
+    const [arrowPosition, setArrowPosition] = useState('top left')
     const ref = useRef(null)
 
     const margin = 15
-    const onMouseEnter = (event) => {
-        console.log({ event })
+    const onMouseEnter = () => {
+        // TODO: See if anyone will have issues when scrolling and hovering simultaneously
+        // and then update events
         const childBounding = ref.current.children[0].getBoundingClientRect()
         const tooltipBounding = ref.current.children[1].getBoundingClientRect()
 
@@ -18,11 +20,17 @@ const ToolTip = ({ children, label, htmlContent, disabled, className }) => {
             right: 'auto'
         }
 
+        const position = {
+            vertical: 'top',
+            horizontal: 'left'
+        }
+
         if (
             window.innerWidth - childBounding.right <= tooltipBounding.width
         ) {
             tooltipPosition.left = 'auto'
             tooltipPosition.right = window.innerWidth - childBounding.right
+            position.horizontal = 'right'
         }
 
         if (
@@ -30,9 +38,11 @@ const ToolTip = ({ children, label, htmlContent, disabled, className }) => {
         ) {
             tooltipPosition.top = 'auto'
             tooltipPosition.bottom = window.innerHeight - childBounding.bottom + childBounding.height + margin
+            position.vertical = 'bottom'
         }
 
         setLabelPosition(tooltipPosition)
+        setArrowPosition(`${position.vertical} ${position.horizontal}`)
     }
 
     const newLineText = text => {
@@ -49,7 +59,10 @@ const ToolTip = ({ children, label, htmlContent, disabled, className }) => {
             {children}
             {
                 !disabled ?
-                    <div className="tooltip-label" style={labelPosition}>{htmlContent || newLineText(label)}</div>
+                    <div className="tooltip-label" style={labelPosition}>
+                        {htmlContent || newLineText(label)}
+                        <div className={`arrow ${arrowPosition || ''}`}></div>
+                        </div>
                     :
                     null
             }
