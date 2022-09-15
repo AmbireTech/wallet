@@ -12,7 +12,7 @@ export default function ConstantsProvider({
   children,
   errorScreen,
 }) {
-  const { constants, isLoading, retryFetch, hasError } = useConstants({ fetch })
+  const { constants, isLoading, retryFetch, hasError } = useConstants({ fetch, endpoint: process.env.REACT_APP_CONSTANTS_ENDPOINT })
 
   const ConstantsProviderValue = useMemo(() => ({ constants, retryFetch }), [constants, retryFetch])
 
