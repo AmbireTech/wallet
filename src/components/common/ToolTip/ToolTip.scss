@@ -1,14 +1,11 @@
 @import 'variables.scss';
 
 .tooltip {
-    position: relative;
     display: contents;
 
     .tooltip-label {
         z-index: 50;
         position: fixed;
-        top: 0;
-        left: 0;
         max-width: 300px;
         padding: 15px 20px;
         font-size: 15px;
@@ -20,6 +17,7 @@
         opacity: 0;
         overflow: hidden;
         transition: opacity 0.1s ease-in-out;
+        pointer-events: none;
     }
 
     &:hover {
@@ -27,4 +25,11 @@
             opacity: 1;
         }
     }
+
+    @media screen and (max-width: $mobile-breakpoint-max-width) {
+        .tooltip-label {          
+            transition-delay: 400ms;
+        }
+      }
+      
 }

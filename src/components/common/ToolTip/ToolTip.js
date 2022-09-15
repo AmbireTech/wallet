@@ -1,14 +1,38 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import './ToolTip.scss'
 
 const ToolTip = ({ children, label, htmlContent, disabled, className }) => {
-    const [mousePosition, setMousePosition] = useState({ x: 0, y: 0})
+    const [labelPosition, setLabelPosition] = useState({ top: 0, left: 0 })
+    const ref = useRef(null)
 
-    const screenBorder = 300
     const margin = 15
-    const onMouseMove = ({ clientY, clientX }) => {
-        if (clientX > window.innerWidth - screenBorder) clientX = clientX - screenBorder
-        setMousePosition({ x: clientX + margin, y: clientY + margin })
+    const onMouseEnter = (event) => {
+        console.log({ event })
+        const childBounding = ref.current.children[0].getBoundingClientRect()
+        const tooltipBounding = ref.current.children[1].getBoundingClientRect()
+
+        const tooltipPosition = {
+            top: childBounding.height + childBounding.top + margin,
+            left: childBounding.left,
+            bottom: 'auto',
+            right: 'auto'
+        }
+
+        if (
+            window.innerWidth - childBounding.right <= tooltipBounding.width
+        ) {
+            tooltipPosition.left = 'auto'
+            tooltipPosition.right = window.innerWidth - childBounding.right
+        }
+
+        if (
+            window.innerHeight - childBounding.bottom - margin <= tooltipBounding.height
+        ) {
+            tooltipPosition.top = 'auto'
+            tooltipPosition.bottom = window.innerHeight - childBounding.bottom + childBounding.height + margin
+        }
+
+        setLabelPosition(tooltipPosition)
     }
 
     const newLineText = text => {
@@ -17,13 +41,15 @@ const ToolTip = ({ children, label, htmlContent, disabled, className }) => {
 
     return (
         <div
+            ref={ref}
             className={`tooltip ${className ? className : ''}`}
-            onMouseMove={onMouseMove}
+            onMouseEnter={onMouseEnter}
+            onTouchStart={onMouseEnter}
         >
-            { children }
+            {children}
             {
                 !disabled ?
-                    <div className="tooltip-label" style={{top: mousePosition.y, left: mousePosition.x}}>{ htmlContent || newLineText(label) }</div>
+                    <div className="tooltip-label" style={labelPosition}>{htmlContent || newLineText(label)}</div>
                     :
                     null
             }
