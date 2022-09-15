@@ -6,7 +6,7 @@ import { useConstantsContext } from 'components/ConstantsProvider/ConstantsProvi
 
 const WalletTokenButton = ({ rewardsData, account = {}, network, hidePrivateValue, addRequest }) => {
     const claimableWalletToken = useClaimableWalletToken({
-        useFetchConstants: useConstantsContext,
+        useConstants: useConstantsContext,
         accountId: account.id,
         network,
         addRequest,
