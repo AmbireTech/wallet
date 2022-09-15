@@ -373,7 +373,7 @@ function AppInner() {
 export default function App() {
   return (
     <Router>
-      <ConstantsProvider errorScreen={<h1>We encountered an error while trying to load your data</h1>}>
+      <ConstantsProvider>
         <ToastProvider>
           <ModalProvider>
             <AppInner/>
