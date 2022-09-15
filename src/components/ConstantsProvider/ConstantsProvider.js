@@ -1,4 +1,4 @@
-import useFetchConstants from 'ambire-common/src/hooks/useFetchConstants'
+import useConstants from 'ambire-common/src/hooks/useConstants'
 import { Loading } from 'components/common'
 import { fetch } from 'lib/fetch'
 import { createContext, useContext, useMemo } from 'react'
@@ -12,9 +12,7 @@ export default function ConstantsProvider({
   children,
   errorScreen,
 }) {
-  const { constants, isLoading, retryFetch, hasError } = useFetchConstants({ fetch: fetch })
-
-  console.log(isLoading, hasError)
+  const { constants, isLoading, retryFetch, hasError } = useConstants({ fetch })
 
   const ConstantsProviderValue = useMemo(() => ({ constants, retryFetch }), [constants, retryFetch])
 
