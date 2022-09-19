@@ -1,0 +1,37 @@
+{
+  "files": {
+    "main.css": "./static/css/main.5c5b29f0.chunk.css",
+    "main.js": "./static/js/main.2bb05e6f.chunk.js",
+    "main.js.map": "./static/js/main.2bb05e6f.chunk.js.map",
+    "runtime-main.js": "./static/js/runtime-main.bc1146af.js",
+    "runtime-main.js.map": "./static/js/runtime-main.bc1146af.js.map",
+    "static/js/2.fce5b137.chunk.js": "./static/js/2.fce5b137.chunk.js",
+    "static/js/2.fce5b137.chunk.js.map": "./static/js/2.fce5b137.chunk.js.map",
+    "static/js/3.feb15204.chunk.js": "./static/js/3.feb15204.chunk.js",
+    "static/js/3.feb15204.chunk.js.map": "./static/js/3.feb15204.chunk.js.map",
+    "index.html": "./index.html",
+    "static/css/main.5c5b29f0.chunk.css.map": "./static/css/main.5c5b29f0.chunk.css.map",
+    "static/js/2.fce5b137.chunk.js.LICENSE.txt": "./static/js/2.fce5b137.chunk.js.LICENSE.txt",
+    "static/media/App.scss": "./static/media/UbuntuMono-Regular.9fa7d55c.ttf",
+    "static/media/aave.58aec338.svg": "./static/media/aave.58aec338.svg",
+    "static/media/TopBar.scss": "./static/media/ambire-staging-256.1945c047.png",
+    "static/media/Loading.scss": "./static/media/ambire-loader-animation-sprite-160.8b6d7f70.png",
+    "static/media/circle.ee8bb2e5.svg": "./static/media/circle.ee8bb2e5.svg",
+    "static/media/dapps.svg": "./static/media/dapps.cec88e8a.svg",
+    "static/media/guardarian.5b666fba.svg": "./static/media/guardarian.5b666fba.svg",
+    "static/media/AddAccount.scss": "./static/media/hero-darkened.32d9e32c.svg",
+    "static/media/SideBar.scss": "./static/media/opensea.6706f228.svg",
+    "static/media/kriptomat.4c8e4fc1.svg": "./static/media/kriptomat.4c8e4fc1.svg",
+    "static/media/paytrie.338f7c3b.svg": "./static/media/paytrie.338f7c3b.svg",
+    "static/media/ramp.26a99e26.svg": "./static/media/ramp.26a99e26.svg",
+    "static/media/tesseract.3da02a6d.svg": "./static/media/tesseract.3da02a6d.svg",
+    "static/media/transak.e01c0265.svg": "./static/media/transak.e01c0265.svg",
+    "static/media/yearn.ac5ab573.svg": "./static/media/yearn.ac5ab573.svg"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.bc1146af.js",
+    "static/js/2.fce5b137.chunk.js",
+    "static/css/main.5c5b29f0.chunk.css",
+    "static/js/main.2bb05e6f.chunk.js"
+  ]
+}
