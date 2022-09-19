@@ -17,9 +17,7 @@ export default function ConstantsProvider({
 
   return (
     <ConstantsContext.Provider value={ConstantsProviderValue}>
-      {(isLoading && !constants && !hasError) ? <Loading /> : null}
-      {(!isLoading && constants && !hasError) ? children : null}
-      {(!isLoading && !constants && hasError) ? <ErrorScreen /> : null}
+      {isLoading ? <Loading /> : (!hasError && constants) ? children : <ErrorScreen />}
     </ConstantsContext.Provider>
   )
 }
