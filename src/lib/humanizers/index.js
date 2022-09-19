@@ -26,7 +26,7 @@ const all = ({humanizerInfo, TokenList}) => ({
 	...Movr(humanizerInfo),
 	...OpenSea(humanizerInfo),
 	...WALLETSupplyController(),
-	...AmbireBatcher(humanizerInfo),
+	...AmbireBatcher(humanizerInfo, TokenList),
 	...WALLETStakingPool(humanizerInfo),
 })
 

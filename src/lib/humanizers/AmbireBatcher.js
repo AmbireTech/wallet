@@ -1,7 +1,7 @@
 import { Interface } from 'ethers/lib/utils'
 import humanizers from './'
 
-const AmbireBatcher = (humanizerInfo) => {
+const AmbireBatcher = (humanizerInfo, TokenList) => {
   const { abis } = humanizerInfo
   const iface = new Interface(abis.Batcher)
 
@@ -10,7 +10,7 @@ const AmbireBatcher = (humanizerInfo) => {
       const { txns } = iface.parseTransaction(txn).args
       const { to, value, data, from } = txns[txns.length - 1]
       const sigHash = data.slice(0, 10)
-      const humanizer = humanizers({humanizerInfo})[sigHash]
+      const humanizer = humanizers({humanizerInfo, TokenList})[sigHash]
       return humanizer({ to, value, data, from }, network, opts)
     },
   }
