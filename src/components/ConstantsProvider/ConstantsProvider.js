@@ -23,5 +23,11 @@ export default function ConstantsProvider({
 }
 
 export function useConstantsContext() {
-  return useContext(ConstantsContext)
+  const context = useContext(ConstantsContext)
+
+  if (!context) {
+    throw new Error('useConstantsContext must be used within an ConstantsProvider')
+  }
+
+  return context
 }
