@@ -72,7 +72,7 @@ const ERC20Mapping = (humanizerInfo) => {
     // HACK: since this conflicts with ERC721 in terms of sigHash, but ERC721 is more likely to use this function from a user perspective, do not define this one
     [iface.getSighash('transferFrom')]: (txn, network) => {
       const [ from, to, amount ] = iface.parseTransaction(txn).args
-      return [`Send ${token(txn.to, amount)} from ${getName(from, network)} to ${getName(to, network)}`]
+      return [`Send ${token(txn.to, amount)} from ${getName(humanizerInfo, from, network)} to ${getName(humanizerInfo, to, network)}`]
     },*/
     [iface.getSighash('permit(address owner, address spender, uint256 value, uint256 deadline, uint8 v, bytes32 r, bytes32 s)')]: (txn, network, { extended = false }) => {
       const [ , approvedAddress, amount ] = iface.parseTransaction(txn).args
