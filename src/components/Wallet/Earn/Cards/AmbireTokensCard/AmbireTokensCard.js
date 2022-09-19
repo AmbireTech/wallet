@@ -39,11 +39,6 @@ const ZERO = BigNumber.from(0)
 const secondsInYear = 60 * 60 * 24 * 365
 const PRECISION = 1_000_000_000_000
 
-function getLockDays(textForToken) {
-    if (textForToken.label === 'WALLET') return 60
-    else return 20
-}
-
 const msToDaysHours = ms => {
     const day = 24 * 60 * 60 * 1000
     const days = Math.floor(ms / day)
@@ -73,6 +68,11 @@ const AmbireTokensCard = ({ networkId, accountId, tokens, rewardsData, addReques
     const [isUnstakeConfirmed, setIsUnstakeConfirmed] = useState(false)
     const [validateData, setValidateData] = useState(null)
 
+    const getLockDays = useCallback(() => {
+        if (selectedToken.label === 'WALLET') return 60
+        else return 20
+    }, [selectedToken.label])
+    
     const unavailable = networkId !== 'ethereum'
     const networkDetails = networks.find(({ id }) => id === networkId)
     const addRequestTxn = useCallback((id, txn, extraGas = 0) =>
@@ -185,10 +185,10 @@ const AmbireTokensCard = ({ networkId, accountId, tokens, rewardsData, addReques
                 </>,
                 isAdxTokenSelected() ? adxCurrentAPY ? `${adxCurrentAPY.toFixed(2)}%` : '...' : rewardsData.isLoading ? `...` : xWALLETAPYPercentage
             ],
-            ['Lock', `${getLockDays(selectedToken)} day unbond period`],
+            ['Lock', `${getLockDays()} day unbond period`],
             ['Type', 'Variable Rate'],
         ])
-    }, [adxCurrentAPY, isAdxTokenSelected, leaveLog, lockedRemainingTime, onWithdraw, rewardsData.isLoading, selectedToken.label, tokensItems, xWALLETAPYPercentage])
+    }, [getLockDays, adxCurrentAPY, isAdxTokenSelected, leaveLog, lockedRemainingTime, onWithdraw, rewardsData.isLoading, selectedToken.label, tokensItems, xWALLETAPYPercentage])
 
     // NOTE: tokenAddress is unused because we have two tokens in this card, and we set everything in addresses
     const onValidate = async (type, _tokenAddress, amount, isMaxAmount) => {
@@ -416,7 +416,7 @@ const AmbireTokensCard = ({ networkId, accountId, tokens, rewardsData, addReques
             <UnbondModal 
                 isVisible={isUnbondModalVisible} 
                 hideModal={() => setIsUnbondModalVisible(false)} 
-                text={`There is a ${getLockDays(selectedToken)}-day lockup period for the tokens you are requesting to unbond. You will not be earning staking rewards on these tokens during these ${getLockDays(selectedToken)} days!`}
+                text={`There is a ${getLockDays()}-day lockup period for the tokens you are requesting to unbond. You will not be earning staking rewards on these tokens during these ${getLockDays()} days!`}
                 onClick={() => setIsUnstakeConfirmed(true)}
             />
             <Card
