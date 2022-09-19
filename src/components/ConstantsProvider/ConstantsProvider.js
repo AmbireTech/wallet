@@ -5,7 +5,7 @@ import { createContext, useContext, useMemo } from 'react'
 
 const ConstantsContext = createContext({
   constants: null,
-  retryFetch: null
+  retryFetch: () => {}
 })
 
 export default function ConstantsProvider({
