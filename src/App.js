@@ -33,7 +33,8 @@ import { Contract, utils } from 'ethers'
 import { getProvider } from './lib/provider'
 import allNetworks from './consts/networks'
 import { Loading } from 'components/common'
-import ConstantsProvider, { useConstantsContext } from 'components/ConstantsProvider/ConstantsProvider'
+import ConstantsProvider from 'components/ConstantsProvider/ConstantsProvider'
+import useConstants from 'hooks/useConstants'
 
 const EmailLogin = lazy(() => import('./components/EmailLogin/EmailLogin'))
 const AddAccount = lazy(() => import('./components/AddAccount/AddAccount'))
@@ -60,7 +61,7 @@ setTimeout(() => {
 }, 4000)
 
 function AppInner() { 
-  const { constants } = useConstantsContext()
+  const { constants } = useConstants()
 
   // basic stuff: currently selected account, all accounts, currently selected network
   const { accounts, selectedAcc, onSelectAcc, onAddAccount, onRemoveAccount } = useAccounts(useLocalStorage)
