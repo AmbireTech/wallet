@@ -1,7 +1,7 @@
 import "./Wallet.scss"
 
 import { lazy, Suspense, useCallback, useEffect, useMemo, useRef } from 'react'
-import { Switch, Route, Redirect, useLocation  } from "react-router-dom"
+import { Switch, Route, Redirect, useLocation, useRouteMatch } from "react-router-dom"
 import PluginGnosisSafeApps from 'components/Plugins/GnosisSafeApps/GnosisSafeApps'
 import { useModals, usePermissions, useLocalStorage } from 'hooks'
 import { isFirefox } from 'lib/isFirefox'
@@ -12,6 +12,7 @@ import PermissionsModal from "components/Modals/PermissionsModal/PermissionsModa
 import UnsupportedDAppsModal from "components/Modals/UnsupportedDAppsModal/UnsupportedDAppsModal"
 import SideBar from "./SideBar/SideBar"
 import { Loading } from "components/common"
+import DappsCatalog from "./DappsCatalog/DappsCatalog"
 // Pages
 const Transfer = lazy(() => import("./Transfer/Transfer"))
 const Dashboard = lazy(() => import("./Dashboard/Dashboard"))
@@ -30,6 +31,10 @@ export default function Wallet(props) {
   const { isClipboardGranted, isNoticationsGranted, arePermissionsLoaded, modalHidden } = usePermissions()
   const { pathname } = useLocation()
   const walletContainer = useRef()
+  const { isDappMode } = props.dappsCatalog
+  const routeMatch = useRouteMatch('/wallet/dapps')
+
+  const dapModeSidebar = useMemo(() => isDappMode && routeMatch, [isDappMode, routeMatch])
 
   const isLoggedIn = useMemo(() => props.accounts.length > 0, [props.accounts])
   const [advancedModeList, setAdvancedModeList] = useLocalStorage({ key: 'dAppsAdvancedMode', defaultValue: [] })
@@ -136,6 +141,16 @@ export default function Wallet(props) {
       />
     },
     {
+      path: '/dapps',
+      component: <DappsCatalog
+        network={props.network}
+        dappsCatalog={props.dappsCatalog}
+        gnosisConnect={props.gnosisConnect}
+        gnosisDisconnect={props.gnosisDisconnect}
+        selectedAcc={props.selectedAcc}
+      />
+    },
+    {
       path: '/opensea',
       component: <OpenSea
         gnosisConnect={props.gnosisConnect}
@@ -155,7 +170,7 @@ export default function Wallet(props) {
       />
     },
     {
-      path: '/gnosis/plugins',
+      path: '/gnosis/plugins/:plugin?',
       component: <PluginGnosisSafeApps
         gnosisConnect={props.gnosisConnect}
         gnosisDisconnect={props.gnosisDisconnect}
@@ -222,10 +237,10 @@ export default function Wallet(props) {
 
   return (
     <div id="wallet">
-      <SideBar match={props.match} portfolio={props.portfolio} hidePrivateValue={props.privateMode.hidePrivateValue} relayerURL={props.relayerURL} selectedNetwork={props.network} />
+      <SideBar match={props.match} portfolio={props.portfolio} hidePrivateValue={props.privateMode.hidePrivateValue} relayerURL={props.relayerURL} selectedNetwork={props.network} dappsCatalog={props.dappsCatalog} />
       <TopBar {...props} />
 
-      <div id="wallet-container" ref={walletContainer}>
+      <div id="wallet-container" className={dapModeSidebar ? 'dapp-mode' : ''} ref={walletContainer}>
         <div id="wallet-container-inner">
             {/* TODO: ADD PROPER LOADER HERE */}
             <Suspense fallback={<Loading />}>

@@ -22,8 +22,8 @@ import { useAttentionGrabber,
   useAddressBook, 
   useRelayerData, 
   usePrivateMode, 
-  useLocalStorage, 
-  useUtmTracking, 
+  useLocalStorage,
+  useUtmTracking,
 } from './hooks'
 import { useToasts } from './hooks/toasts'
 import { useOneTimeQueryParam } from './hooks/oneTimeQueryParam'
@@ -35,6 +35,9 @@ import allNetworks from './consts/networks'
 import { Loading } from 'components/common'
 import ConstantsProvider from 'components/ConstantsProvider/ConstantsProvider'
 import useConstants from 'hooks/useConstants'
+import useDapps from 'ambire-common/src/hooks/useDapps'
+import { getManifestFromDappUrl } from 'ambire-common/src/services/dappCatalog'
+import { fetch } from 'lib/fetch'
 
 const EmailLogin = lazy(() => import('./components/EmailLogin/EmailLogin'))
 const AddAccount = lazy(() => import('./components/AddAccount/AddAccount'))
@@ -64,11 +67,14 @@ function AppInner() {
   const { constants } = useConstants()
 
   // basic stuff: currently selected account, all accounts, currently selected network
-  const { accounts, selectedAcc, onSelectAcc, onAddAccount, onRemoveAccount } = useAccounts(useLocalStorage)
+  const dappUrl = useOneTimeQueryParam('dappUrl')
+  const [pluginData, setPluginData] = useState(null)
+  const { accounts, selectedAcc, onSelectAcc, onAddAccount, onRemoveAccount, setPluginUrl } = useAccounts(useLocalStorage, pluginData?.url)
   const addressBook = useAddressBook({ accounts, useStorage: useLocalStorage })
   const { network, setNetwork } = useNetwork({ useStorage: useLocalStorage })
   const { gasTankState, setGasTankState } = useGasTank({ selectedAcc, useStorage: useLocalStorage })
   const { addToast } = useToasts()
+  const dappsCatalog = useDapps({useStorage: useLocalStorage, fetch})
   const wcUri = useOneTimeQueryParam('uri')
   const utmTracking = useUtmTracking({ useStorage: useLocalStorage })
 
@@ -263,6 +269,21 @@ function AppInner() {
   const handleSetShowThankYouPage = useCallback(() => setShowThankYouPage(true), [setShowThankYouPage])
   useEffect(() => campaignUTM && handleSetShowThankYouPage(), [handleSetShowThankYouPage, campaignUTM])
 
+  useEffect(() => {
+    if(!dappUrl) return
+    async function checkPluginData() {
+      const manifest = await getManifestFromDappUrl(fetch, dappUrl)
+      if(manifest) { 
+        setPluginData(manifest)
+        setPluginUrl(manifest.url)
+      }
+    }
+    checkPluginData()
+      .catch(e => {
+        console.error('checkPluginData:', e)
+      })
+  }, [dappUrl, setPluginUrl])
+
   return (<>
     <Prompt
       message={(location, action) => {
@@ -350,6 +371,7 @@ function AppInner() {
               gasTankState={gasTankState}
               setGasTankState={setGasTankState}
               showThankYouPage={showThankYouPage}
+              dappsCatalog={dappsCatalog}
               // Constants
               tokenList={constants.tokenList}
               humanizerInfo={constants.humanizerInfo}

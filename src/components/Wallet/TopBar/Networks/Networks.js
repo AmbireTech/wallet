@@ -8,9 +8,10 @@ const Networks = ({
     setNetwork,
     allNetworks,
     userSorting,
-    setUserSorting
+    setUserSorting,
+    dappsCatalog,
+    dapModeTopBar
   }) => {
-
     const sortType = userSorting.networks?.sortType || 'default'
 
     const onDropEnd = (list) => {        
@@ -48,7 +49,8 @@ const Networks = ({
     const networksItems = sortedNetworks.filter(n => !n.hide).concat(currHideNet).map(({ id, name, icon }) => ({
       label: name,
       value: id,
-      icon
+      icon,
+      disabled: dapModeTopBar && !dappsCatalog?.currentDappData?.networks?.includes(id)
     }))
    
     return (
