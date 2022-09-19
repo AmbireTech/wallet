@@ -107,7 +107,7 @@ const ERC20Mapping = (humanizerInfo) => {
       ]]
 
       if (amount.eq(constants.MaxUint256)) return [`Permit ${name} to use your ${tokenName}`]
-      return [`Permit ${name} to use ${token(txn.to, amount)}`]
+      return [`Permit ${name} to use ${token(humanizerInfo, txn.to, amount)}`]
     },
     [iface.getSighash('permit(address holder, address spender, uint256 nonce, uint256 expiry, bool allowed, uint8 v, bytes32 r, bytes32 s)')]: (txn, network, { extended = false }) => {
       const [ , approvedAddress, , , allowed ] = iface.parseTransaction(txn).args
@@ -124,7 +124,7 @@ const ERC20Mapping = (humanizerInfo) => {
         'to use',
         {
           type: 'token',
-          ...token(txn.to, constants.MaxUint256, true)
+          ...token(humanizerInfo, txn.to, constants.MaxUint256, true)
         }
       ]]
 
@@ -138,7 +138,7 @@ const ERC20Mapping = (humanizerInfo) => {
         `to use your`,
         {
           type: 'token',
-          ...token(txn.to, constants.MaxUint256, true)
+          ...token(humanizerInfo, txn.to, constants.MaxUint256, true)
         }
       ]]
 
