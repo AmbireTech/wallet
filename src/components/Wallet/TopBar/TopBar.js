@@ -10,7 +10,7 @@ import DApps from "./DApps/DApps";
 import * as blockies from 'blockies-ts';
 import Links from "./Links/Links";
 import WalletTokenButton from "./WalletTokenButton/WalletTokenButton";
-import { Button, ToolTip } from 'components/common';
+import { Button } from 'components/common';
 import DAPPS_ICON from 'resources/dapps.svg';
 
 const TopBar = ({
