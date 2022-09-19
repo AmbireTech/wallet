@@ -44,25 +44,21 @@ const formatTx = (tokens, fromChainId, toChainId, inputToken, outputToken, amoun
 }
 
 const movrTxParser = (humanizerInfo) => {
-    if (humanizerInfo) {
-        const { tokens, abis } = humanizerInfo
+    const { tokens, abis } = humanizerInfo
 
-        const MovrAnyswapInterface = new Interface(abis.MovrAnyswap)
-        const MovrRouterInterface = new Interface(abis.MovrRouter)
-        return {
-            [MovrAnyswapInterface.getSighash('outboundTransferTo')]: (value, data, currentNetwork) => {
-                const { middlewareInputToken, amount, tokenToBridge, toChainId } = MovrAnyswapInterface.parseTransaction({ data, value }).args[0]
-                return formatTx(tokens, currentNetwork.chainId, toChainId, middlewareInputToken, tokenToBridge, amount)
-            },
-            [MovrRouterInterface.getSighash('outboundTransferTo')]: (value, data, currentNetwork) => {
-                const { middlewareRequest, amount, bridgeRequest, toChainId } = MovrRouterInterface.parseTransaction({ data, value }).args[0]
-                const { inputToken } = middlewareRequest
-                const { inputToken: outputToken } = bridgeRequest
-                return formatTx(tokens, currentNetwork.chainId, toChainId, inputToken, outputToken, amount)
-            }
+    const MovrAnyswapInterface = new Interface(abis.MovrAnyswap)
+    const MovrRouterInterface = new Interface(abis.MovrRouter)
+    return {
+        [MovrAnyswapInterface.getSighash('outboundTransferTo')]: (value, data, currentNetwork) => {
+            const { middlewareInputToken, amount, tokenToBridge, toChainId } = MovrAnyswapInterface.parseTransaction({ data, value }).args[0]
+            return formatTx(tokens, currentNetwork.chainId, toChainId, middlewareInputToken, tokenToBridge, amount)
+        },
+        [MovrRouterInterface.getSighash('outboundTransferTo')]: (value, data, currentNetwork) => {
+            const { middlewareRequest, amount, bridgeRequest, toChainId } = MovrRouterInterface.parseTransaction({ data, value }).args[0]
+            const { inputToken } = middlewareRequest
+            const { inputToken: outputToken } = bridgeRequest
+            return formatTx(tokens, currentNetwork.chainId, toChainId, inputToken, outputToken, amount)
         }
-    } else {
-        throw new Error ('Failed to fetch humanizer information')
     }
 }
 
