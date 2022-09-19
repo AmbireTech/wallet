@@ -1,7 +1,7 @@
 import useConstants from 'ambire-common/src/hooks/useConstants'
 import { ErrorScreen, Loading } from 'components/common'
 import { fetch } from 'lib/fetch'
-import { createContext, useContext, useMemo } from 'react'
+import { createContext, useMemo } from 'react'
 
 const ConstantsContext = createContext({
   constants: null,
@@ -22,12 +22,4 @@ export default function ConstantsProvider({
   )
 }
 
-export function useConstantsContext() {
-  const context = useContext(ConstantsContext)
-
-  if (!context) {
-    throw new Error('useConstantsContext must be used within an ConstantsProvider')
-  }
-
-  return context
-}
+export { ConstantsContext }
