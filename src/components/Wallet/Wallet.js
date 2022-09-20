@@ -117,7 +117,6 @@ export default function Wallet(props) {
     {
       path: '/transactions/:page?',
       component: <Transactions
-        tokenList={props.tokenList}
         relayerURL={props.relayerURL}
         selectedAcc={props.selectedAcc}
         selectedNetwork={props.network}
