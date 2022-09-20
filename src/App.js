@@ -388,8 +388,8 @@ function AppInner() {
         </Route>
 
       </Switch>
-      </Suspense>
-  </>) 
+    </Suspense>
+  </>)
 }
 
 // handles all the providers so that we can use provider hooks inside of AppInner
