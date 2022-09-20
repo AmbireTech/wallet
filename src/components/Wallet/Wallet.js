@@ -242,25 +242,24 @@ export default function Wallet(props) {
 
       <div id="wallet-container" className={dapModeSidebar ? 'dapp-mode' : ''} ref={walletContainer}>
         <div id="wallet-container-inner">
-            {/* TODO: ADD PROPER LOADER HERE */}
-            <Suspense fallback={<Loading />}>
-          <Switch>
-            {
-              routes.map(({ path, component }) => (
-                <Route exact path={props.match.url + path} key={path}>
-                  <LoggedInGuard/>
-                    { component ? component : null }
-                </Route>
-              ))
-            }
-            <Route path={props.match.url + '/*'}>
-              <Redirect to={props.match.url + '/dashboard'} />
-            </Route>
-            <Route path={props.match.url}>
-              <LoggedInGuard/>
-            </Route>
-          </Switch>
-            </Suspense>
+          <Suspense fallback={<Loading />}>
+            <Switch>
+              {
+                routes.map(({ path, component }) => (
+                  <Route exact path={props.match.url + path} key={path}>
+                    <LoggedInGuard/>
+                      { component ? component : null }
+                  </Route>
+                ))
+              }
+              <Route path={props.match.url + '/*'}>
+                <Redirect to={props.match.url + '/dashboard'} />
+              </Route>
+              <Route path={props.match.url}>
+                <LoggedInGuard/>
+              </Route>
+            </Switch>
+          </Suspense>
         </div>
       </div>
     </div>
