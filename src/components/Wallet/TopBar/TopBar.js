@@ -30,7 +30,6 @@ const TopBar = ({
   addRequest,
   userSorting,
   setUserSorting,
-  WALLETInitialClaimableRewards,
   dappsCatalog
 }) => {
   const [isMenuOpen, setMenuOpen] = useState(false)
@@ -116,7 +115,6 @@ const TopBar = ({
           network={network}
           hidePrivateValue={hidePrivateValue}
           addRequest={addRequest}
-          WALLETInitialClaimableRewards={WALLETInitialClaimableRewards}
         />}
         {isPrivateMode ? <MdVisibilityOff cursor="pointer" size={28} onClick={togglePrivateMode} /> : <MdRemoveRedEye cursor="pointer" size={28} onClick={togglePrivateMode} />}
         <DApps connections={connections} connect={connect} disconnect={disconnect} isWcConnecting={isWcConnecting}/>

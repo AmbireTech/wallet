@@ -5,6 +5,7 @@ import { createContext, useMemo } from 'react'
 
 const ConstantsContext = createContext({
   constants: null,
+  isLoading: true,
   retryFetch: () => {}
 })
 
@@ -13,7 +14,7 @@ export default function ConstantsProvider({
 }) {
   const { constants, isLoading, retryFetch, hasError } = useConstants({ fetch, endpoint: process.env.REACT_APP_CONSTANTS_ENDPOINT })
 
-  const ConstantsProviderValue = useMemo(() => ({ constants, retryFetch }), [constants, retryFetch])
+  const ConstantsProviderValue = useMemo(() => ({ constants, retryFetch, isLoading }), [constants, retryFetch, isLoading])
 
   return (
     <ConstantsContext.Provider value={ConstantsProviderValue}>

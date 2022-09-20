@@ -375,7 +375,6 @@ function AppInner() {
               // Constants
               tokenList={constants.tokenList}
               humanizerInfo={constants.humanizerInfo}
-              WALLETInitialClaimableRewards={constants.WALLETInitialClaimableRewards}
               adexToStakingTransfersLogs={constants.adexToStakingTransfersLogs}
             >
             </Wallet>
