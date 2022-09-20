@@ -9,8 +9,11 @@ import networks from 'consts/networks'
 import { useToasts } from 'hooks/toasts'
 import { useRelayerData } from 'hooks'
 import movrTxParser from './movrTxParser'
+import useConstants from 'hooks/useConstants'
 
-const History = ({ humanizerInfo, relayerURL, network, account, quotesConfirmed }) => {
+const History = ({ relayerURL, network, account, quotesConfirmed }) => {
+    const { constants} = useConstants()
+    const { humanizerInfo } = constants
     const { addToast } = useToasts()
     const { checkTxStatus } = useMovr()
 

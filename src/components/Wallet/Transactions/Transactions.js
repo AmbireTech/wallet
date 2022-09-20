@@ -19,13 +19,16 @@ import { formatUnits } from 'ethers/lib/utils'
 import { ToolTip } from 'components/common' 
 // eslint-disable-next-line import/no-relative-parent-imports
 import { getAddedGas } from '../../SendTransaction/helpers'
+import useConstants from 'hooks/useConstants'
 
 // 10% in geth and most EVM chain RPCs; relayer wants 12%
 const RBF_THRESHOLD = 1.14
 const TO_GAS_TANK = `to Gas Tank`
 
 
-function Transactions ({ humanizerInfo, tokenList, relayerURL, selectedAcc, selectedNetwork, showSendTxns, addRequest, eligibleRequests, setSendTxnState }) {
+function Transactions ({ tokenList, relayerURL, selectedAcc, selectedNetwork, showSendTxns, addRequest, eligibleRequests, setSendTxnState }) {
+  const { constants } = useConstants()
+  const { humanizerInfo } = constants
   const { addToast } = useToasts()
   const history = useHistory()
   const params = useParams()
@@ -153,7 +156,6 @@ function Transactions ({ humanizerInfo, tokenList, relayerURL, selectedAcc, sele
             <div className="bundle-list" onClick={() => showSendTxns(null)}>
               {eligibleRequests.map(req => (
                 <TxnPreview
-                  humanizerInfo={humanizerInfo}
                   tokenList={tokenList}
                   key={req.id}
                   network={selectedNetwork.id}
@@ -236,7 +238,6 @@ function BundlePreview({ humanizerInfo, tokenList, bundle, mined = false, feeAss
 
   return (<div className='bundlePreview bundle' key={bundle._id}>
     {txns.map((txn, i) => (<TxnPreview
-      humanizerInfo={humanizerInfo}
       tokenList={tokenList}
       key={i} // safe to do this, individual TxnPreviews won't change within a specific bundle
       txn={txn} network={bundle.network} account={bundle.identity} mined={mined} 

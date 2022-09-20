@@ -12,6 +12,7 @@ import { BsChevronDown, BsChevronUp } from 'react-icons/bs'
 import { getTokenIcon } from 'lib/icons'
 import { formatFloatTokenAmount } from 'lib/formatters'
 import { setKnownAddressNames } from 'lib/humanReadableTransactions'
+import useConstants from 'hooks/useConstants'
 
 function getNetworkSymbol(networkId) {
   const network = networks.find(x => x.id === networkId)
@@ -84,7 +85,9 @@ function parseExtendedSummaryItem(item, i, networkDetails) {
   return <></>
 }
 
-export default function TxnPreview ({ humanizerInfo, tokenList, txn, onDismiss, network, account, isFirstFailing, mined, disableExpand, disableDismiss, disableDismissLabel, addressLabel = null }) {
+export default function TxnPreview ({ tokenList, txn, onDismiss, network, account, isFirstFailing, mined, disableExpand, disableDismiss, disableDismissLabel, addressLabel = null }) {
+  const { constants } = useConstants()
+  const { humanizerInfo } = constants
   const [isExpanded, setExpanded] = useState(false)
   const contractName = getName(humanizerInfo, txn[0])
 

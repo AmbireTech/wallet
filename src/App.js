@@ -306,7 +306,6 @@ function AppInner() {
 
       {sendTxnState.showing ? (
         <SendTransaction
-          humanizerInfo={constants.humanizerInfo}
           tokenList={constants.tokenList}
           accounts={accounts}
           selectedAcc={selectedAcc}
@@ -374,7 +373,6 @@ function AppInner() {
               dappsCatalog={dappsCatalog}
               // Constants
               tokenList={constants.tokenList}
-              humanizerInfo={constants.humanizerInfo}
             >
             </Wallet>
           </Route> :

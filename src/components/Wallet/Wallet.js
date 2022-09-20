@@ -85,7 +85,6 @@ export default function Wallet(props) {
     {
       path: '/cross-chain',
       component: <CrossChain
-        humanizerInfo={props.humanizerInfo}
         addRequest={props.addRequest}
         selectedAccount={props.selectedAcc}
         portfolio={props.portfolio}
@@ -106,7 +105,6 @@ export default function Wallet(props) {
     {
       path: '/security',
       component: <Security
-        humanizerInfo={props.humanizerInfo}
         relayerURL={props.relayerURL}
         selectedAcc={props.selectedAcc}
         selectedNetwork={props.network}
@@ -119,7 +117,6 @@ export default function Wallet(props) {
     {
       path: '/transactions/:page?',
       component: <Transactions
-        humanizerInfo={props.humanizerInfo}
         tokenList={props.tokenList}
         relayerURL={props.relayerURL}
         selectedAcc={props.selectedAcc}

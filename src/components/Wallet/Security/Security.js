@@ -20,6 +20,7 @@ import OtpTwoFADisableModal from 'components/Modals/OtpTwoFADisableModal/OtpTwoF
 import Backup from './Backup/Backup'
 import PendingRecoveryNotice from './PendingRecoveryNotice/PendingRecoveryNotice'
 import { getName } from 'lib/humanReadableTransactions'
+import useConstants from 'hooks/useConstants'
 
 const IDENTITY_INTERFACE = new Interface(
   require('adex-protocol-eth/abi/Identity5.2')
@@ -28,7 +29,6 @@ const IDENTITY_INTERFACE = new Interface(
 const REFRESH_INTVL = 40000
 
 const Security = ({
-  humanizerInfo,
   relayerURL,
   selectedAcc,
   selectedNetwork,
@@ -37,6 +37,8 @@ const Security = ({
   showSendTxns,
   onAddAccount
 }) => {
+  const { constants } = useConstants()
+  const { humanizerInfo } = constants
   const { showModal } = useModals()
   const [ cacheBreak, setCacheBreak ] = useState(() => Date.now())
   
