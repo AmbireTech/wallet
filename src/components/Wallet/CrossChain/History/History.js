@@ -12,8 +12,7 @@ import movrTxParser from './movrTxParser'
 import useConstants from 'hooks/useConstants'
 
 const History = ({ relayerURL, network, account, quotesConfirmed }) => {
-    const { constants} = useConstants()
-    const { humanizerInfo } = constants
+    const { constants: { humanizerInfo } } = useConstants()
     const { addToast } = useToasts()
     const { checkTxStatus } = useMovr()
 

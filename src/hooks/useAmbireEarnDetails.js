@@ -20,7 +20,7 @@ const STAKING_POOL_EVENT_TYPES = {
 const ethProvider = getProvider('ethereum')
 
 const useAmbireEarnDetails = ({accountId, addresses, tokenLabel}) => {
-    const { constants } = useConstants()
+    const { constants: { adexToStakingTransfersLogs } } = useConstants()
     const WALLET_ADDR = addresses.stakingTokenAddress
     const [details, setDetails] = useState({})
     const [isLoading, setIsLoading] = useState(true)
@@ -99,7 +99,7 @@ const useAmbireEarnDetails = ({accountId, addresses, tokenLabel}) => {
             : balanceShares.mul(PRECISION).div(sharesTotalSupply).toNumber() /
               PRECISION
 
-        const enterWalletTokensByTxHash = ((tokenLabel === 'ADX') ? constants.adexToStakingTransfersLogs.result : [])
+        const enterWalletTokensByTxHash = ((tokenLabel === 'ADX') ? adexToStakingTransfersLogs.result : [])
             .concat(allEnterWalletTransferLogs)
             .reduce((byHash, log) => {
                     byHash[log.transactionHash] = log
@@ -655,7 +655,7 @@ const useAmbireEarnDetails = ({accountId, addresses, tokenLabel}) => {
             ),
             remainingTime: stats.remainingTime,
         }
-    }, [WALLET_ADDR, accountId, constants.adexToStakingTransfersLogs])
+    }, [WALLET_ADDR, accountId, adexToStakingTransfersLogs])
 
     useEffect(() => {
         const getData = async (addresses, tokenLabel) => {

@@ -37,8 +37,7 @@ const Security = ({
   showSendTxns,
   onAddAccount
 }) => {
-  const { constants } = useConstants()
-  const { humanizerInfo } = constants
+  const { constants: { humanizerInfo } } = useConstants()
   const { showModal } = useModals()
   const [ cacheBreak, setCacheBreak ] = useState(() => Date.now())
   
