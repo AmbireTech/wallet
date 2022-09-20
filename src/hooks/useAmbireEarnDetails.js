@@ -1,6 +1,7 @@
 import { getProvider } from 'lib/provider'
 import { BigNumber, utils, Contract } from 'ethers'
 import { useEffect, useState, useCallback } from 'react'
+import useConstants from './useConstants'
 
 const ZERO = BigNumber.from(0)
 const ZERO_ADDR = '0x0000000000000000000000000000000000000000'
@@ -18,7 +19,8 @@ const STAKING_POOL_EVENT_TYPES = {
 
 const ethProvider = getProvider('ethereum')
 
-const useAmbireEarnDetails = ({accountId, addresses, tokenLabel, adexToStakingTransfersLogs}) => {
+const useAmbireEarnDetails = ({accountId, addresses, tokenLabel}) => {
+    const { constants } = useConstants()
     const WALLET_ADDR = addresses.stakingTokenAddress
     const [details, setDetails] = useState({})
     const [isLoading, setIsLoading] = useState(true)
@@ -97,7 +99,7 @@ const useAmbireEarnDetails = ({accountId, addresses, tokenLabel, adexToStakingTr
             : balanceShares.mul(PRECISION).div(sharesTotalSupply).toNumber() /
               PRECISION
 
-        const enterWalletTokensByTxHash = ((tokenLabel === 'ADX') ? adexToStakingTransfersLogs.result : [])
+        const enterWalletTokensByTxHash = ((tokenLabel === 'ADX') ? constants.adexToStakingTransfersLogs.result : [])
             .concat(allEnterWalletTransferLogs)
             .reduce((byHash, log) => {
                     byHash[log.transactionHash] = log
@@ -653,7 +655,7 @@ const useAmbireEarnDetails = ({accountId, addresses, tokenLabel, adexToStakingTr
             ),
             remainingTime: stats.remainingTime,
         }
-    }, [WALLET_ADDR, accountId, adexToStakingTransfersLogs])
+    }, [WALLET_ADDR, accountId, constants.adexToStakingTransfersLogs])
 
     useEffect(() => {
         const getData = async (addresses, tokenLabel) => {

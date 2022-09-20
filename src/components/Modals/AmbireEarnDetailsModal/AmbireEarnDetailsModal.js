@@ -6,14 +6,16 @@ import { Modal, Button } from 'components/common'
 import { ToolTip } from 'components/common' 
 import useAmbireEarnDetails from 'hooks/useAmbireEarnDetails'
 import { Loading } from 'components/common'
+import useConstants from 'hooks/useConstants'
 
-const AmbireEarnDetailsModal = ({ title = 'Details', apy, accountId, msToDaysHours, addresses, tokenLabel, adexToStakingTransfersLogs }) => {
+const AmbireEarnDetailsModal = ({ title = 'Details', apy, accountId, msToDaysHours, addresses, tokenLabel }) => {
+    const { constants } = useConstants()
     const { hideModal } = useModals()
     
     const { 
         details,
         isLoading
-        } = useAmbireEarnDetails({accountId, addresses, tokenLabel, adexToStakingTransfersLogs})
+    } = useAmbireEarnDetails({accountId, addresses, tokenLabel, adexToStakingTransfers: constants.adexToStakingTransfers})
 
     const { 
         poolShare, 

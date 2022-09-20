@@ -4,7 +4,7 @@ import YearnTesseractCard from './Cards/YearnTesseractCard/YearnTesseractCard'
 import { Loading } from 'components/common'
 import AmbireTokensCard from './Cards/AmbireTokensCard/AmbireTokensCard'
 
-const Earn = ({ portfolio, selectedNetwork, rewardsData, selectedAcc, addRequest, adexToStakingTransfersLogs }) => {
+const Earn = ({ portfolio, selectedNetwork, rewardsData, selectedAcc, addRequest }) => {
     return (
         <div id="earn">
             {
@@ -18,7 +18,6 @@ const Earn = ({ portfolio, selectedNetwork, rewardsData, selectedAcc, addRequest
                             tokens={portfolio.tokens}
                             rewardsData={rewardsData}
                             addRequest={addRequest}
-                            adexToStakingTransfersLogs={adexToStakingTransfersLogs}
                         />
                         <AAVECard networkId={selectedNetwork.id} tokens={portfolio.tokens} account={selectedAcc} addRequest={addRequest}/>
                         <YearnTesseractCard

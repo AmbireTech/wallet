@@ -46,7 +46,7 @@ const msToDaysHours = ms => {
     return days < 1 ? `${hours} hours` : `${days} days`
 }
 
-const AmbireTokensCard = ({ networkId, accountId, tokens, rewardsData, addRequest, adexToStakingTransfersLogs }) => {
+const AmbireTokensCard = ({ networkId, accountId, tokens, rewardsData, addRequest }) => {
     const [loading, setLoading] = useState(true)
     const [details, setDetails] = useState([])
     const [customInfo, setCustomInfo] = useState(null)
@@ -432,7 +432,6 @@ const AmbireTokensCard = ({ networkId, accountId, tokens, rewardsData, addReques
                     apy={isAdxTokenSelected()? adxCurrentAPY ? `${adxCurrentAPY.toFixed(2)}%` : '...' : xWALLETAPYPercentage}
                     accountId={accountId}
                     msToDaysHours={msToDaysHours}
-                    adexToStakingTransfersLogs={adexToStakingTransfersLogs}
                     addresses={addresses}
                     tokenLabel={selectedToken.label}
                 />}
