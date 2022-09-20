@@ -306,7 +306,6 @@ function AppInner() {
 
       {sendTxnState.showing ? (
         <SendTransaction
-          tokenList={constants.tokenList}
           accounts={accounts}
           selectedAcc={selectedAcc}
           network={network}
@@ -371,8 +370,6 @@ function AppInner() {
               setGasTankState={setGasTankState}
               showThankYouPage={showThankYouPage}
               dappsCatalog={dappsCatalog}
-              // Constants
-              tokenList={constants.tokenList}
             >
             </Wallet>
           </Route> :

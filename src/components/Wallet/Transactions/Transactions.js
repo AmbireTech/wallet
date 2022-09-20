@@ -26,9 +26,8 @@ const RBF_THRESHOLD = 1.14
 const TO_GAS_TANK = `to Gas Tank`
 
 
-function Transactions ({ tokenList, relayerURL, selectedAcc, selectedNetwork, showSendTxns, addRequest, eligibleRequests, setSendTxnState }) {
-  const { constants } = useConstants()
-  const { humanizerInfo } = constants
+function Transactions ({ relayerURL, selectedAcc, selectedNetwork, showSendTxns, addRequest, eligibleRequests, setSendTxnState }) {
+  const { constants: { tokenList, humanizerInfo } } = useConstants()
   const { addToast } = useToasts()
   const history = useHistory()
   const params = useParams()
@@ -156,7 +155,6 @@ function Transactions ({ tokenList, relayerURL, selectedAcc, selectedNetwork, sh
             <div className="bundle-list" onClick={() => showSendTxns(null)}>
               {eligibleRequests.map(req => (
                 <TxnPreview
-                  tokenList={tokenList}
                   key={req.id}
                   network={selectedNetwork.id}
                   account={selectedAcc}

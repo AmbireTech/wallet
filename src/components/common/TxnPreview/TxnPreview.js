@@ -85,9 +85,8 @@ function parseExtendedSummaryItem(item, i, networkDetails) {
   return <></>
 }
 
-export default function TxnPreview ({ tokenList, txn, onDismiss, network, account, isFirstFailing, mined, disableExpand, disableDismiss, disableDismissLabel, addressLabel = null }) {
-  const { constants } = useConstants()
-  const { humanizerInfo } = constants
+export default function TxnPreview ({ txn, onDismiss, network, account, isFirstFailing, mined, disableExpand, disableDismiss, disableDismissLabel, addressLabel = null }) {
+  const { constants: { tokenList, humanizerInfo } } = useConstants()
   const [isExpanded, setExpanded] = useState(false)
   const contractName = getName(humanizerInfo, txn[0])
 

@@ -101,7 +101,7 @@ function getErrorMessage(e) {
   }
 }
 
-export default function SendTransaction({ tokenList, relayerURL, accounts, network, selectedAcc, requests, resolveMany, replacementBundle, replaceByDefault, mustReplaceNonce, onBroadcastedTxn, onDismiss, gasTankState }) {
+export default function SendTransaction({ relayerURL, accounts, network, selectedAcc, requests, resolveMany, replacementBundle, replaceByDefault, mustReplaceNonce, onBroadcastedTxn, onDismiss, gasTankState }) {
   // NOTE: this can be refactored at a top level to only pass the selected account (full object)
   // keeping it that way right now (selectedAcc, accounts) cause maybe we'll need the others at some point?
   const account = accounts.find(x => x.id === selectedAcc)
@@ -125,7 +125,6 @@ export default function SendTransaction({ tokenList, relayerURL, accounts, netwo
     <h3 className='error'>SendTransactions: No account or no requests: should never happen.</h3>
   </div>)
   return (<SendTransactionWithBundle
-    tokenList={tokenList}
     relayerURL={relayerURL}
     bundle={bundle}
     replaceByDefault={replaceByDefault}
@@ -139,7 +138,7 @@ export default function SendTransaction({ tokenList, relayerURL, accounts, netwo
   />)
 }
 
-function SendTransactionWithBundle({ tokenList, bundle, replaceByDefault, mustReplaceNonce, network, account, resolveMany, relayerURL, onBroadcastedTxn, onDismiss, gasTankState }) {
+function SendTransactionWithBundle({ bundle, replaceByDefault, mustReplaceNonce, network, account, resolveMany, relayerURL, onBroadcastedTxn, onDismiss, gasTankState }) {
   const currentAccGasTankState = network.isGasTankAvailable ? 
     gasTankState.find(i => i.account === account.id) : 
     { account: account.id, isEnabled: false }
@@ -465,7 +464,6 @@ function SendTransactionWithBundle({ tokenList, bundle, replaceByDefault, mustRe
                 // we need to re-render twice per minute cause of DEX deadlines
                 const min = Math.floor(Date.now() / 30000)
                 return (<TxnPreview
-                  tokenList={tokenList}
                   key={[...txn, i].join(':')}
                   // pasing an unused property to make it update
                   minute={min}
