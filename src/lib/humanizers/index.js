@@ -13,12 +13,12 @@ import AmbireBatcher from './AmbireBatcher'
 import WALLETStakingPool from './WALLETStakingPool'
 import AaveWethGatewayV2 from './AaveWethGatewayV2'
 
-const all = ({humanizerInfo, TokenList}) => ({
+const all = ({humanizerInfo, tokenList}) => ({
 	...UniRouters(humanizerInfo),
 	...AaveLendingPoolV2(humanizerInfo),
 	...AaveWethGatewayV2(humanizerInfo.abis),
 	...ERC20(humanizerInfo),
-	...ERC721(humanizerInfo, TokenList),
+	...ERC721(humanizerInfo, tokenList),
 	...WETH(humanizerInfo.abis),
 	...AmbireIdentity(humanizerInfo),
 	...AmbireFactory(),
@@ -26,7 +26,7 @@ const all = ({humanizerInfo, TokenList}) => ({
 	...Movr(humanizerInfo),
 	...OpenSea(humanizerInfo),
 	...WALLETSupplyController(),
-	...AmbireBatcher(humanizerInfo, TokenList),
+	...AmbireBatcher(humanizerInfo, tokenList),
 	...WALLETStakingPool(humanizerInfo),
 })
 

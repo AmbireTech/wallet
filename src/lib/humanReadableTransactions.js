@@ -60,7 +60,7 @@ export function getTransactionSummary(humanizerInfo, tokenList, txn, networkId, 
         ]
 
         const sigHash = data.slice(0, 10)
-        const humanizer = humanizers({humanizerInfo, TokenList:tokenList})[sigHash]
+        const humanizer = humanizers({humanizerInfo, tokenList})[sigHash]
         if (humanizer) {
             try {
                 const actions = humanizer({ to, value, data, from: accountAddr }, network, opts)

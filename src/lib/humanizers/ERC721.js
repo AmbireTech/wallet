@@ -20,15 +20,15 @@ const toExtended = (humanizerInfo, tokenId, from, to, txn, network) => [[
   }
 ]]
 
-const ERC721Mapping = (humanizerInfo, TokenList) => { 
+const ERC721Mapping = (humanizerInfo, tokenList) => { 
   const iface = new Interface(humanizerInfo.abis.ERC721)
   return {
     [iface.getSighash('transferFrom')]: (txn, network, { extended = false }) => {
       const [ from, to, tokenId ] = iface.parseTransaction(txn).args
 
       // hack for erc20
-      // ? in case a new network is not present in TokenList yet, so we avoid breaking the app
-      const isInTokenList = TokenList[network.id]?.find(t => t.address.toLowerCase() === txn.to.toLowerCase())
+      // ? in case a new network is not present in tokenList yet, so we avoid breaking the app
+      const isInTokenList = tokenList[network.id]?.find(t => t.address.toLowerCase() === txn.to.toLowerCase())
       // ** 6 as USDC has low decimals for example
       if (tokenId > 10 ** 6 || isInTokenList) {
         const name = getName(humanizerInfo, to)
