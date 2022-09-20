@@ -34,7 +34,6 @@ import { getProvider } from './lib/provider'
 import allNetworks from './consts/networks'
 import { Loading } from 'components/common'
 import ConstantsProvider from 'components/ConstantsProvider/ConstantsProvider'
-import useConstants from 'hooks/useConstants'
 import useDapps from 'ambire-common/src/hooks/useDapps'
 import { getManifestFromDappUrl } from 'ambire-common/src/services/dappCatalog'
 import { fetch } from 'lib/fetch'
@@ -64,8 +63,6 @@ setTimeout(() => {
 }, 4000)
 
 function AppInner() { 
-  const { constants } = useConstants()
-
   // basic stuff: currently selected account, all accounts, currently selected network
   const dappUrl = useOneTimeQueryParam('dappUrl')
   const [pluginData, setPluginData] = useState(null)
@@ -246,7 +243,7 @@ function AppInner() {
   })
 
   // Show notifications for all requests
-  useNotifications(constants, requests, request => {
+  useNotifications(requests, request => {
     onSelectAcc(request.account)
     setNetwork(request.chainId)
     setSendTxnState(state => ({ ...state, showing: true }))
