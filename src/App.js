@@ -322,7 +322,7 @@ function AppInner() {
     <Suspense fallback={<Loading />}>
       <Switch>
         <Route path="/add-account">
-          <AddAccount relayerURL={relayerURL} onAddAccount={onAddAccount} utmTracking={utmTracking}></AddAccount>
+          <AddAccount relayerURL={relayerURL} onAddAccount={onAddAccount} utmTracking={utmTracking} pluginData={pluginData}></AddAccount>
         </Route>
 
         <Route path="/email-login">
