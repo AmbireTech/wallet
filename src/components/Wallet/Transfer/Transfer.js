@@ -67,7 +67,7 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
         fallbackIcon: getTokenIcon(network, address)
     }))
 
-    const selectedAsset = portfolio.tokens.find(({ address }) => address.toLowerCase() === asset)
+    const selectedAsset = portfolio.tokens.find(({ address }) => address === asset)
 
     const { maxAmount, maxAmountFormatted } = useMemo(() => {
         if (!selectedAsset) return { maxAmount: '0', maxAmountFormatted: '0.00' };
@@ -149,13 +149,13 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
         // check gasTank topUp with token for convertion
         setFeeBaseTokenWarning('')
         if (gasTankDetails?.feeAssetsPerNetwork){
-            const gasFeeToken = gasTankDetails.feeAssetsPerNetwork.find(ft => ft.address.toLowerCase() === selectedAsset?.address?.toLowerCase())
+            const gasFeeToken = gasTankDetails.feeAssetsPerNetwork.find(ft => ft?.address?.toLowerCase() === selectedAsset?.address?.toLowerCase())
             if (gasFeeToken?.baseToken) {
                 const feeBaseToken = gasTankDetails.feeAssetsPerNetwork.find(ft => ft.address.toLowerCase() === gasFeeToken.baseToken.toLowerCase())
                 setFeeBaseTokenWarning(`Token ${gasFeeToken.symbol.toUpperCase()} will be converted to ${feeBaseToken.symbol.toUpperCase()} without additional fees.`)
             }
         }
-    }, [selectedAsset, gasTankDetails])
+    }, [gasTankDetails?.feeAssetsPerNetwork, selectedAsset])
 
     useEffect(() => {
         setAmount(0)
