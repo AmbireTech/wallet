@@ -1,6 +1,6 @@
 @import 'variables.scss';
 
-#sidebar {
+.wrapper {
   z-index: 49;
   height: 100%;
   width: $sidebar-desktop-width;
@@ -12,16 +12,26 @@
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
-  overflow: hidden;
   transition: width 0.1s ease-in-out;
-  background-color: $background-color; 
+  background-color: $c-ebony-clay;
   transition: left 0.3s ease-in-out;
 
-  .outside-handler {
-    display: none;   
+  &:after {
+    content: '';
+    width: 2px;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    right: -1px;
+    background: rgb(61,68,106);
+    background: linear-gradient(180deg, rgba(61,68,106,1) 0%, rgba(53,58,91,1) 25%, rgba(100,111,174,1) 50%, rgba(58,63,99,1) 75%, rgba(37,40,63,1) 100%);
   }
 
-  &.dapp-mode {
+  .outsideHandler {
+    display: none;
+  }
+
+  &.dappMode {
     z-index: 51;
     left: -($sidebar-desktop-width + 20);
     box-shadow: 15px 10px 20px 0 rgba(0, 0, 0, 0.25);
@@ -29,9 +39,9 @@
 
     &.open {
       left: 0;
-    } 
+    }
 
-    .outside-handler {
+    .outsideHandler {
       display: block;
       position: fixed;
       left: $sidebar-desktop-width;;
@@ -41,7 +51,7 @@
     }
   }
 
-  .ambire-logo {
+  .ambireLogo {
     background-color: $background-color;
     display: flex;
     flex-direction: row;
@@ -73,9 +83,10 @@
     padding-left: 1em;
 
     label {
+      font-size: 15px;
+      line-height: 23px;
+      color: $c-titan-white;
       text-transform: uppercase;
-      line-height: 1.75;
-      font-weight: 600;
     }
 
     .balanceDollarAmount {
@@ -93,27 +104,29 @@
     .item {
       display: flex;
       align-items: center;
-      gap: 30px;
-      padding: 15px 15px;
+      gap: 27px;
+      padding: 12px;
       line-height: 30px;
       cursor: pointer;
-      color: #bbb;
+      color: $c-manatee;
+      font-size: 14px;
+      line-height: 21px;
       text-align: center;
       white-space: nowrap;
       transition: all 0.1s ease-in-out;
 
       svg {
         font-size: 30px;
-        color: #bbb;
+        color: $c-manatee;
         transition: color 0.1s ease-in-out;
       }
 
       &:hover {
-        background-color: rgba(0, 0, 0, 0.3) !important;
-        color: #fff;
+        background-color: $c-martinique !important;
+        color: $c-turquoise;
 
         svg {
-          color: #fff;
+          color: $c-turquoise;
         }
       }
 
@@ -134,6 +147,15 @@
         background-image: url('../../../resources/opensea.svg');
         filter: grayscale(1);
       }
+
+      &.helpLink  {
+        color: $c-heliotrope;
+        margin-top: 80px;
+
+        svg {
+          color: $c-heliotrope;
+        }
+      }
     }
 
     .separator {
@@ -150,11 +172,11 @@
   }
 
   a.selected .item svg {
-    color: $secondary-accent-color;
+    color: $c-turquoise;
   }
   a.selected .item {
-    background-color: rgba(0, 0, 0, 0.15);
-    color: #fff;
+    background-color: $c-martinique;
+    color: $c-turquoise;
 
     .opensea-icon {
       filter: grayscale(0);
@@ -162,7 +184,7 @@
   }
 
   .highlight {
-    color: $primary-accent-color;
+    color: $c-turquoise;
   }
 
   .dollarSign {
@@ -178,7 +200,7 @@
 }
 
 @media screen and (min-width: $sidebar-small-breakpoint) {
-  #sidebar {
+  .wrapper {
     .balance {
       .balanceDollarAmount {
         font-size: 2em !important;
@@ -188,7 +210,7 @@
 }
 
 @media screen and (max-width: $sidebar-small-breakpoint) {
-  #sidebar {
+  .wrapper {
     width: $sidebar-desktop-small-width;
 
     &.dapp-mode {
@@ -227,7 +249,7 @@
 
 // Mobile
 @media screen and (max-width: $mobile-breakpoint-max-width) {
-  #sidebar {
+  .wrapper {
     height: $sidebar-mobile-height;
     width: 170px;
     padding: 0 10px;
