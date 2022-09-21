@@ -12,6 +12,7 @@ import WALLETSupplyController from './WALLETSupplyController'
 import AmbireBatcher from './AmbireBatcher'
 import WALLETStakingPool from './WALLETStakingPool'
 import AaveWethGatewayV2 from './AaveWethGatewayV2'
+import SwappinMapping from './Swappin'
 
 const all = {
 	...UniRouters,
@@ -28,5 +29,6 @@ const all = {
 	...WALLETSupplyController,
 	...AmbireBatcher,
 	...WALLETStakingPool,
+	...SwappinMapping
 }
 export default all
