@@ -15,7 +15,6 @@ $account-height: 60px;
     .menu {
         background-color: #1e2033;
         padding-top: 15px;
-        width: 100%;
 
         .list {
             max-height: calc(#{$account-height} * 6.5);
@@ -160,6 +159,16 @@ $account-height: 60px;
         padding-bottom: 18px;
     
         button {
+            width: 100%;
+        }
+    }
+}
+
+// Mobile 
+
+@media screen and (max-width: $mobile-breakpoint-max-width) {
+    .wrapper {
+        .menu {
             width: 100%;
         }
     }
