@@ -284,6 +284,10 @@
         font-weight: 500;
         padding: 0;
 
+         &.helpLink {
+           margin-top: 0;
+         }
+
         svg {
           font-size: 25px;
         }
