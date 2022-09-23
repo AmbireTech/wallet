@@ -1,23 +1,24 @@
 @import 'variables.scss';
 
-button.buttonComponent {
+.wrapper {
     height: 60px;
+    border-radius: 12px;
     @include flex-center-center;
     gap: 10px;
     padding: 0 20px;
     border: none;
-    font-family: 'Open Sans';
+    font-family: 'Poppins', sans-serif;
     font-size: 20px;
-    font-weight: bold;
-    color: black;
-    background-color: $primary-accent-color;
-    text-transform: uppercase;
+    font-weight: 500;
+    background-color: transparent;
+    color: #27E8A7;
+    border: 2px solid #27e8a7;
     outline: none;
     transition: 0.1s ease-in-out;
     
-    .icon-button {
+    .iconButton {
         @include flex-center-center;
-        color: black !important;
+        color: #27E8A7 !important;
     }
 
     &.small {
@@ -33,14 +34,21 @@ button.buttonComponent {
     }
 
     &.danger {
+        border: none;
+        color: #fff;
         background: $danger-color;
+
+        .iconButton {
+            color: white !important;
+        }
     }
 
     &.clear {
+        border: none;
         color: white;
         background-color: rgba(0, 0, 0, 0.1);
 
-        .icon-button {
+        .iconButton {
             color: white !important;
         }
 
@@ -49,11 +57,27 @@ button.buttonComponent {
         }
     }
 
-    &.secondary {
-        background-color: $secondary-accent-color;
+    &.primaryGradient {
+        border: none;
+        background: transparent linear-gradient(90deg, #27E8A7 0%, #6000FF 100%) 0% 0% no-repeat padding-box;
+        color: #fff;
+
+        .iconButton {
+            color: white !important;
+        }
     }
 
-    &.text-only {
+    &.secondary {
+        border: none;
+        color: #fff;
+        background-color: $secondary-accent-color;
+
+        .iconButton {
+            color: white !important;
+        }
+    }
+
+    &.textOnly {
         padding: 0;
         margin: 0;
         height: auto;
@@ -64,12 +88,12 @@ button.buttonComponent {
     }
 
     &.border {
-        color: $primary-accent-color;
+        color: #27e8a7;
         background-color: transparent;
-        border: 1px solid $primary-accent-color;
+        border: 2px solid #27e8a7;
 
-        .icon-button {
-            color: $primary-accent-color !important;
+        .iconButton {
+            color: #27e8a7 !important;
         }
 
         &:not([disabled]):hover {
