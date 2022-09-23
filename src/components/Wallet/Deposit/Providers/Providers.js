@@ -5,13 +5,13 @@ import PAYTRIE_LOGO from 'resources/paytrie.svg';
 import TRANSAK_LOGO from 'resources/transak.svg';
 import KRIPTOMAT_LOGO from 'resources/kriptomat.svg';
 import GUARDARIAN_LOGO from 'resources/guardarian.svg'
-import MOONPAY_LOGO from 'resources/moonpay.svg'
+// import MOONPAY_LOGO from 'resources/moonpay.svg'
 
 import { Loading } from 'components/common'
 import useProviders from './useProviders'
 
 export default function Providers({ walletAddress, networkDetails, relayerURL, portfolio, sellMode = false, selectedAsset }) {
-    const { openRampNetwork, openPayTrie, openTransak, openKriptomat, openGuardarian, openMoonpay, isLoading } = useProviders({ walletAddress, selectedNetwork: networkDetails.id, relayerURL, portfolio })
+    const { openRampNetwork, openPayTrie, openTransak, openKriptomat, openGuardarian, isLoading } = useProviders({ walletAddress, selectedNetwork: networkDetails.id, relayerURL, portfolio })
     const initMode = sellMode ? 'sell' : 'buy'
     const providers = [
         {
@@ -36,17 +36,17 @@ export default function Providers({ walletAddress, networkDetails, relayerURL, p
             isSellAvailable: false,
             onClick: () => openKriptomat()
         },
-        {
-            logo: MOONPAY_LOGO,
-            name: 'MoonPay',
-            type: 'Credit / Debit card',
-            fees: 'from 1%',
-            limits: 'up to 5000 EUR/day',
-            currencies: 'EUR, USD, GBP and many more',
-            networks: ['ethereum', 'polygon', 'avalanche', 'binance-smart-chain'],
-            isSellAvailable: true,
-            onClick: () => openMoonpay(initMode, selectedAsset)
-        },
+        // {
+        //     logo: MOONPAY_LOGO,
+        //     name: 'MoonPay',
+        //     type: 'Credit / Debit card',
+        //     fees: 'from 1%',
+        //     limits: 'up to 5000 EUR/day',
+        //     currencies: 'EUR, USD, GBP and many more',
+        //     networks: ['ethereum', 'polygon', 'avalanche', 'binance-smart-chain'],
+        //     isSellAvailable: true,
+        //     onClick: () => openMoonpay(initMode, selectedAsset)
+        // },
         {
             logo: RAMP_LOGO,
             name: 'Ramp',
