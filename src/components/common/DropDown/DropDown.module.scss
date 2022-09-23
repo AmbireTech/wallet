@@ -3,8 +3,14 @@
 .dropdown {
     position: relative;
     height: 50px;
-    background-color: $input-background-color;
+    background-color: #24263d;
     user-select: none;
+    border: 1px solid #3E436BCC;
+    border-radius: 12px;
+
+    &:hover, &:active {
+        background-color: #1e2033;
+    }
 
     .content {
         height: 100%;
@@ -12,21 +18,21 @@
         flex-direction: row;
         align-items: center;
         gap: 0.75em;
-        padding-left: 20px;
-        padding-right: 15px;
+        padding-left: 10px;
+        padding-right: 10px;
 
         .icon {
-            height: 22px;
-            width: 22px;
+            height: 32px;
+            width: 32px;
             background-size: cover;
-            border-radius: 100%;
+            border-radius: 12px;
         }
 
         .title {
             display: flex;
             align-items: center;
             gap: 10px;
-            font-size: 15px;
+            font-size: 14px;
         }
 
         .badge {
@@ -45,9 +51,14 @@
         }
 
         .handle {
+            cursor: pointer;
             @include flex-center-center;
-            margin-left: 15px;
+            height: 32px;
+            width: 32px;
+            background: rgba(#EBECFF, 0.05);
+            border-radius: 12px;
             transition: all 0.1s ease-in-out;
+            margin-left: auto;
 
             &.open {
                 transform: scaleY(-1);
@@ -59,24 +70,14 @@
         z-index: 97;
         min-width: 100%;
         position: absolute;
-        top: 50px;
+        top: 60px;
+        border-radius: 12px;
         right: 0;
         display: flex;
         flex-direction: column;
-        background-color: $input-background-color;
-        box-shadow: $box-shadow;
+        background-color: #24263d;
+        box-shadow: 0px 4px 10px #00000073;
+        border: 1px solid #3E436BCC;
         overflow: hidden;
-
-        .item {
-            height: 65px;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            padding: 0 15px;
-
-            .separator {
-                flex-grow: 1;
-            }
-        }
     }
 }
