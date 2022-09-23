@@ -2,7 +2,7 @@
 
 $account-height: 60px;
 
-#accounts {
+.wrapper {
     .content {
         cursor: pointer;
     }
@@ -13,7 +13,9 @@ $account-height: 60px;
     }
 
     .menu {
-        padding-top: 10px;
+        background-color: #1e2033;
+        padding-top: 15px;
+        width: 100%;
 
         .list {
             max-height: calc(#{$account-height} * 6.5);
@@ -21,8 +23,8 @@ $account-height: 60px;
             overflow-y: auto;
             scrollbar-width: thin;
 
-            .sort-buttons {
-                padding: 0 20px;
+            .sortButtons {
+                padding: 0 10px;
             }
 
             .account {
@@ -31,13 +33,13 @@ $account-height: 60px;
                 align-items: center;
                 justify-content: space-between;
 
-                &[draggable="true"] .drag-handle {
+                &[draggable="true"] .dragHandle {
                     cursor: grab;
                     cursor: -moz-grab;
                     cursor: -webkit-grab;
                 }
 
-                &[draggable="true"]:active .drag-handle {
+                &[draggable="true"]:active .dragHandle {
                     cursor: grabbing;
                     cursor: -moz-grabbing;
                     cursor: -webkit-grabbing;
@@ -51,16 +53,16 @@ $account-height: 60px;
                     align-items: center;
                     justify-content: flex-start;
                     gap: 15px;
-                    padding: 0 20px;
+                    padding: 0 10px;
                     opacity: 0.6;
                     cursor: pointer;
 
                     .icon {
                         flex: 0 0 auto;
-                        height: 30px;
-                        width: 30px;
+                        height: 32px;
+                        width: 32px;
                         @include flex-center-center;
-                        border-radius: 100%;
+                        border-radius: 12px;
                         background-size: cover;
                     }
 
@@ -91,10 +93,13 @@ $account-height: 60px;
                     }
 
                     &:hover {
-                        background-color: rgba(0, 0, 0, 0.2);
+                        background-color: #24263d;
 
                         ~.buttons .button {
-                            background-color: rgba(0, 0, 0, 0.2);
+                            svg {
+                                opacity: 1;
+                            }
+                            background-color: #24263d;
                         }
                     }
                 }
@@ -108,15 +113,16 @@ $account-height: 60px;
                         height: 60px;
                         width: 50px;
                         @include flex-center-center;
-                        font-size: 17px;
+                        color: #ebecff;
+                        font-size: 28px;
                         cursor: pointer;
 
                         svg {
-                            opacity: 0.3;
+                            opacity: 0.4;
                         }
 
                         &:hover {
-                            background-color: rgba(0, 0, 0, 0.2);
+                            background-color: #24263d;
 
                             svg {
                                 opacity: 1;
@@ -130,9 +136,6 @@ $account-height: 60px;
                 }
 
                 &.active {
-                    .icon {
-                        box-shadow: 0 0 0 2px $primary-accent-color;
-                    }
 
                     .inner {
                         opacity: 1;
@@ -141,7 +144,7 @@ $account-height: 60px;
             }
         }
 
-        #confirm-delete-account {
+        .confirmDeleteAccount {
             padding-left: 25px;
             white-space: nowrap;
             
@@ -150,6 +153,14 @@ $account-height: 60px;
                 font-size: 15px;
                 font-weight: bold;
             }
+        }
+    }
+    .addAccount {
+        padding: 20px 10px;
+        padding-bottom: 18px;
+    
+        button {
+            width: 100%;
         }
     }
 }

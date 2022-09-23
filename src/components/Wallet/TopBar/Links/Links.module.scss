@@ -1,6 +1,6 @@
 @import 'variables.scss';
 
-#help-dropdown {
+.wrapper {
     .content {
         gap: 0.25em;
 
@@ -12,11 +12,23 @@
 
     .item {
         height: 50px;
-        font-weight: 500;
-        white-space: nowrap;
+        padding-left: 16px;
+        padding-right: 22px;
+        background-color: #1e2033;
+        
+        a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 18px;
+            line-height: 27px;
+            color: #ebecff;
+            white-space: nowrap;
+            font-weight: 400;
+        }
 
         &:hover {
-            background-color: rgba(0, 0, 0, 0.2);
+            background-color: #24263d;
             cursor: pointer;
         }
     }

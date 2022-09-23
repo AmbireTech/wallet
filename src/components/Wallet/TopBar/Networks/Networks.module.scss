@@ -1,0 +1,19 @@
+@import 'variables.scss';
+
+.select {
+  option {
+    font-size: 18px;
+    font-weight: 400;
+  }
+}
+
+.iconClassName {
+  width: 32px!important;
+  height: 32px!important;
+  background-color: transparent!important;
+}
+
+.labelClassName {
+  font-size: 18px;
+  font-weight: 300;
+}

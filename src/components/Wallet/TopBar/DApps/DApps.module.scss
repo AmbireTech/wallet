@@ -1,8 +1,6 @@
 @import 'variables.scss';
 
-#dApps {
-    
-
+.wrapper {
     .content {
         cursor: pointer;
     }
@@ -11,6 +9,7 @@
         cursor: pointer;
         display: flex;
         align-items: center;
+        
         img {
             max-height: 32px;
             max-width: 32px;
@@ -21,14 +20,13 @@
         width: 400px;
     }
 
-
     .dappList {
         max-height: calc(65px * 5);
         overflow-x: hidden;
         overflow-y: auto;
     }
 
-    .dapps-item {
+    .dappsItem {
         width: 100%;
         box-sizing: border-box;
         overflow: hidden;
@@ -44,7 +42,7 @@
             color: rgba(255, 255, 255, 0.2);
             background-color: rgba(0, 0, 0, 0.2);
 
-            .icon-overlay {
+            .iconOverlay {
                 z-index: 49;
                 @include absolute-full-size;
                 background-size: contain;
@@ -73,12 +71,12 @@
                     text-overflow: ellipsis;
                 }
 
-                .session-warning, .session-error {
+                .sessionWarning, .sessionError {
                     @include flex-center-center;
                     color: #fdc835;
                 }
 
-                .session-error {
+                .sessionError {
                     color: $danger-color ;
                 }                
             }
@@ -109,34 +107,47 @@
         }
     }
 
-    #connect-dapp {
+    .connectDapp {
         width: 100%;
         display: flex;
         flex-direction: column;
         gap: 10px;
-        padding: 20px;
-        padding-bottom: 10px;
+        padding: 10px;
 
         .heading {
             display: flex;
             align-items: center;
-            gap: 20px;
+            gap: 10px;
+            padding-right: 6px;
 
-            button {
+            .buttonClass {
                 width: 100%;
+            }
+
+            a {
+                display: flex;
+                align-items: center;
             }
         }
 
         label {
-            font-size: 13px;
+            font-size: 14px;
+            color: #ebecff;
+            font-weight: 300;
+            margin-bottom: 21px;
         }
     }
 }
 
 // Mobile
 @media screen and (max-width: $mobile-breakpoint-max-width) {
-    #dApps {
-        .dapps-item {
+    .wrapper {
+      
+        .menu {
+            min-width: unset;
+            width: 100%;
+        }
+        .dappsItem {
             .details {
                 max-width: 130px !important;
             }

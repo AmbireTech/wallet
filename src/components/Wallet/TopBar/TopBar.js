@@ -1,8 +1,10 @@
-import "./TopBar.scss";
+import styles from "./TopBar.module.scss";
 
 import React, { useState, useMemo } from "react";
 import { NavLink, useRouteMatch } from "react-router-dom";
-import { MdOutlineArrowForward, MdOutlineClose, MdOutlineMenu, MdRemoveRedEye, MdVisibilityOff, MdMenu, MdExitToApp, MdInfo } from "react-icons/md";
+import { MdOutlineArrowForward, MdOutlineClose, MdOutlineMenu, MdMenu, MdExitToApp, MdInfo } from "react-icons/md";
+import { ReactComponent as PrivacyOff } from './images/privacy-off.svg'
+import { ReactComponent as PrivacyOn } from './images/privacy-on.svg'
 import Accounts from "./Accounts/Accounts";
 import Networks from "./Networks/Networks";
 import { networkIconsById } from "consts/networks";
@@ -49,55 +51,50 @@ const TopBar = ({
       ) ? 'staging' : null
 
     return (
-    <div id="topbar" className={( visualEnv ? ('visual-env visual-env-' + visualEnv ) : '') + (dappModeTopBar ? ' dapp-mode' : '') }>
+    <div className={`${styles.wrapper} ${( visualEnv ? (`${styles.visualEnv} ${styles['visualEnv' + visualEnv]}`) : styles.wrapper) + (dappModeTopBar ? ` ${styles.dappMode}` : '')}`}>
       {
         visualEnv &&
-          <div className='env-bar' >
+          <div className={styles.envBar} >
             {visualEnv === 'dev' && <>Development mode</>}
             {visualEnv === 'staging' && <>Staging mode</>}
           </div>
       }
-      <div id="mobile-menu" onClick={() => setMenuOpen(!isMenuOpen)}>
-        <div className="icon" style={{backgroundImage: `url(${accountIcon})`}}></div>
-        <MdOutlineArrowForward/>
-        <div className="icon" style={{backgroundImage: `url(${networkIconsById[network.id]})`}}></div>
-        <div id="menu-button">
-          { isMenuOpen ? <MdOutlineClose/> : <MdOutlineMenu/> }
+      <div className={styles.mobileMenu} onClick={() => setMenuOpen(prev => !prev)}>
+        <img src='/resources/logo.svg' className={styles.logo} alt='ambire-logo' />
+        <div className={styles.mobileMenuRight}>
+          <div className={styles.icon} style={{backgroundImage: `url(${accountIcon})`}}></div>
+          <MdOutlineArrowForward/>
+          <div className={styles.icon} style={{backgroundImage: `url(${networkIconsById[network.id]})`}}></div>
+          <div className={styles.menuButton}>
+            { isMenuOpen ? <MdOutlineClose/> : <MdOutlineMenu/> }
+          </div>
         </div>
       </div>
 
       {dappModeTopBar ?
-        <div className='dapp-menu'>
-          <div className='dapp-menu-btns'>
-            {/* <ToolTip label='Open Ambire Wallet menu'> */}
-              <Button className='ambire-menu-btn' border mini icon={<MdMenu size={23} />}
+        <div className={styles.dappMenu}>
+          <div className={styles.dappMenuBtns}>
+              <Button className={`${styles.buttonComponent} ${styles.ambireMenuBtn}`} border mini icon={<MdMenu size={23} />}
                 onClick={() => toggleSideBarOpen()}
               ></Button>
-            {/* </ToolTip> */}
-            <div className='dapp-data'>
-              {/* <ToolTip label={`Connected with ${currentDappData?.connectionType} -  see/find out more on our blog`}> */}
+            <div className={styles.dappData}>
                 {/* TODO: update the blogpost link */}
                 <a className="info-btn" href={'https://blog.ambire.com/connect-to-any-dapp-with-ambire-wallet-and-walletconnect-c1bc096a531e'} 
                   target="_blank"
                   rel="noreferrer noopener">
                   <MdInfo size={23} />
                 </a>
-              {/* </ToolTip> */}
-              {/* <ToolTip label={`Connected to ${currentDappData?.name} with Ambire Wallet`}> */}
                 <a href={currentDappData?.providedBy?.url || currentDappData?.url} 
                   target="_blank"
                   rel="noreferrer noopener">
-                  <img className='dapp-logo' src={currentDappData?.iconUrl || DAPPS_ICON} alt={currentDappData?.name}/>
+                  <img className={styles.dappLogo} src={currentDappData?.iconUrl || DAPPS_ICON} alt={currentDappData?.name}/>
                 </a>
-              {/* </ToolTip> */}
-              {/* <ToolTip label={`Exit from ${currentDappData?.name}`}> */}
                 <Button
-                  className='dapp-exit-btn'
+                  className={`${styles.buttonComponent} ${styles.dappExitBtn}`}
                   secondary mini 
                   icon={<MdExitToApp size={15} /> }
                   onClick={() => loadCurrentDappData(null)}
                 >Exit</Button>
-              {/* </ToolTip> */}
             </div>
           </div>
         </div>
@@ -108,15 +105,17 @@ const TopBar = ({
       </NavLink>     
       }
 
-      <div className={`container ${isMenuOpen ? 'open' : ''}`}>
-        {selectedAcc && <WalletTokenButton
-          rewardsData={rewardsData}
-          account={account}
-          network={network}
-          hidePrivateValue={hidePrivateValue}
-          addRequest={addRequest}
-        />}
-        {isPrivateMode ? <MdVisibilityOff cursor="pointer" size={28} onClick={togglePrivateMode} /> : <MdRemoveRedEye cursor="pointer" size={28} onClick={togglePrivateMode} />}
+      <div className={`${styles.container} ${isMenuOpen ? styles.open : ''}`}>
+        <div className={styles.privacyAndRewards}>
+          {isPrivateMode ? <PrivacyOff cursor="pointer" size={28} onClick={togglePrivateMode} /> : <PrivacyOn cursor="pointer" size={28} onClick={togglePrivateMode} />}
+          {selectedAcc && <WalletTokenButton
+            rewardsData={rewardsData}
+            account={account}
+            network={network}
+            hidePrivateValue={hidePrivateValue}
+            addRequest={addRequest}
+          />}
+        </div>
         <DApps connections={connections} connect={connect} disconnect={disconnect} isWcConnecting={isWcConnecting}/>
         <Accounts accounts={accounts} selectedAddress={selectedAcc} onSelectAcc={onSelectAcc} onRemoveAccount={onRemoveAccount} hidePrivateValue={hidePrivateValue}  userSorting={userSorting} setUserSorting={setUserSorting}/>        
         <Networks setNetwork={setNetwork} network={network} allNetworks={allNetworks}  userSorting={userSorting}
