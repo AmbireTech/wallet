@@ -214,6 +214,7 @@ const AddAuthSigner = ({ selectedNetwork, selectedAcc, onAddBtnClicked }) => {
     <div className="wallet-btns-wrapper">
       <Button
         onClick={() => wrapErr(connectTrezorAndGetAccounts)}
+        className='buttonComponent'
       >
         <div
           className="icon"
@@ -223,6 +224,7 @@ const AddAuthSigner = ({ selectedNetwork, selectedAcc, onAddBtnClicked }) => {
       </Button>
       <Button
         onClick={() => wrapErr(connectLedgerAndGetAccounts)}
+        className='buttonComponent'
       >
         <div
           className="icon"
@@ -232,6 +234,7 @@ const AddAuthSigner = ({ selectedNetwork, selectedAcc, onAddBtnClicked }) => {
       </Button>
       <Button
         onClick={() => wrapErr(connectGridPlusAndGetAccounts)}
+        className='buttonComponent'
       >
         <div
           className="icon"
@@ -241,6 +244,7 @@ const AddAuthSigner = ({ selectedNetwork, selectedAcc, onAddBtnClicked }) => {
       </Button>
       <Button
         onClick={() => wrapErr(connectWeb3AndGetAccounts)}
+        className='buttonComponent'
       >
         <div
           className="icon"
@@ -299,6 +303,7 @@ const AddAuthSigner = ({ selectedNetwork, selectedAcc, onAddBtnClicked }) => {
             icon={<MdOutlineAdd/>}
             onClick={() => onAddBtnClicked(signerAddress)}
             small
+            className='buttonComponent'
           >
             Add
           </Button>
