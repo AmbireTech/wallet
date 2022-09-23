@@ -1,13 +1,12 @@
-import './Select.scss';
+import styles from './Select.module.scss';
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { BsChevronDown } from 'react-icons/bs'
 import { CSSTransition } from 'react-transition-group';
 import useOnClickOutside from 'hooks/onClickOutside';
 import { TextInput } from 'components/common';
 import { MdOutlineClose, MdDragIndicator } from 'react-icons/md';
 
-const Select = ({ children, native, monospace, searchable, disabled, label, defaultValue, items, onChange, className, draggable, dragStart, dragEnter, dragTarget, drop, draggableHeader, displayDraggableHeader }) => {
+const Select = ({ children, native, monospace, searchable, disabled, label, defaultValue, items, onChange, className, iconClassName, labelClassName, draggable, dragStart, dragEnter, dragTarget, drop, draggableHeader, displayDraggableHeader }) => {
     const ref = useRef();
     const hiddenTextInput = useRef();
     const transitionRef = useRef();
@@ -52,9 +51,9 @@ const Select = ({ children, native, monospace, searchable, disabled, label, defa
         const url = failedImg.includes(icon) && fallbackIcon ? fallbackIcon : icon
         return (
             failedImg.includes(url)
-                ? < div className="icon" />
+                ? <div className={`${styles.icon} ${iconClassName}`} />
                 : <img
-                    className="icon"
+                    className={`${styles.icon} ${iconClassName}`}
                     src={url}
                     draggable="false"
                     alt={label}
@@ -65,7 +64,7 @@ const Select = ({ children, native, monospace, searchable, disabled, label, defa
 
     return (
         !native ?
-            <div className={`select ${monospace ? 'monospace' : ''} ${disabled ? 'disabled' : ''} ${searchable ? 'searchable' : ''} ${className || ''}`} ref={ref}>
+            <div className={`${styles.select} ${monospace ? styles.monospace : ''} ${disabled ? styles.disabled : ''} ${searchable ? styles.searchable : ''} ${className || ''}`} ref={ref}>
                 {
                     label ?
                         <label>{label}</label>
@@ -74,25 +73,25 @@ const Select = ({ children, native, monospace, searchable, disabled, label, defa
                 }
                 {
                     selectedItem ?
-                        <div className="select-container">
-                            <div className="select-input" onClick={() => setOpen(!isOpen)}
+                        <div className={styles.selectContainer}>
+                            <div className={styles.selectInput} onClick={() => setOpen(!isOpen)}
                                 >
                                 {getIcon(selectedItem)}
-                                <div className="label">{selectedItem.label || selectedItem.value}</div>
-                                {selectedItem.extra && <div className="extra">{selectedItem.extra}</div>}
+                                <div className={`${styles.label} ${labelClassName}`}>{selectedItem.label || selectedItem.value}</div>
+                                {selectedItem.extra && <div className={styles.extra}>{selectedItem.extra}</div>}
                                 {/* <div className="separator"></div> */}
-                                <div className={`handle ${isOpen ? 'open' : ''}`}>
-                                    <BsChevronDown size={20}></BsChevronDown>
+                                <div className={`${styles.handle} ${isOpen ? styles.open : ''}`}>
+                                    <img src='resources/icons/arrow-down.svg' alt='arrow-down' />
                                 </div>
                             </div>
                             {
                                 <CSSTransition unmountOnExit in={isOpen} timeout={200} classNames="fade" nodeRef={transitionRef}>
-                                    <div className="select-menu" ref={transitionRef}>
+                                    <div className={styles.selectMenu} ref={transitionRef}>
                                         {displayDraggableHeader && draggableHeader}
                                         {
                                             searchable ?
                                                 <TextInput
-                                                    className="select-search-input"
+                                                    className={styles.selectSearchInput}
                                                     disabled={disabled}
                                                     placeholder="Search"
                                                     value={search}
@@ -107,7 +106,7 @@ const Select = ({ children, native, monospace, searchable, disabled, label, defa
                                         {
                                             filteredItems.map((item, i) => (
                                                 <div
-                                                    className={`option ${(item.value === selectedItem.value) && (item.label === selectedItem.label) ? 'active' : ''} ${item.disabled ? 'disabled' : ''}`}
+                                                    className={`${styles.option} ${(item.value === selectedItem.value) && (item.label === selectedItem.label) ? styles.active : ''} ${item.disabled ? styles.disabled : ''}`}
                                                     key={item.value + item.label}
                                                     onClick={() => !item.disabled && selectItem(item)}
                                                     draggable={draggable}
@@ -117,10 +116,10 @@ const Select = ({ children, native, monospace, searchable, disabled, label, defa
                                                     onDragEnd={() => draggable && drop(filteredItems)}
                                                     onDragOver={(e) => e.preventDefault()}
                                                 >
-                                                    {draggable && <MdDragIndicator className='drag-handle' id={`${i}-handle`} />}
+                                                    {draggable && <MdDragIndicator className={styles.dragHandle} id={`${i}-handle`} />}
                                                     {getIcon(item)}
-                                                    <div className="label">{item.label || item.value}</div>
-                                                    {item.extra && <div className="extra">{item.extra}</div>}
+                                                    <div className={styles.label}>{item.label || item.value}</div>
+                                                    {item.extra && <div className={styles.extra}>{item.extra}</div>}
                                                 </div>
                                             ))
                                         }
@@ -134,7 +133,7 @@ const Select = ({ children, native, monospace, searchable, disabled, label, defa
                 }
             </div>
             :
-            <select className="select" disabled={disabled} onChange={ev => onChange(ev.target.value)} defaultValue={defaultValue}>
+            <select className={styles.select} disabled={disabled} onChange={ev => onChange(ev.target.value)} defaultValue={defaultValue}>
                 {
                     items.map(item => (
                         <option key={item.value + item.label} value={item.value} disabled={item.disabled ? 'disabled' : undefined}>

@@ -20,14 +20,14 @@
     }
 
     .icon {
+        width: 24px;
+        height: 24px;
         flex: 0 0 auto;
-        height: 22px;
-        width: 22px;
         display: flex;
         align-items: center;
         justify-content: center;
-        border-radius: 100%;
-        background-color: rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        background-color: rgba(#ebecff, 0.05);
         background-size: contain;
         background-position: center center;
         background-repeat: no-repeat;
@@ -45,29 +45,32 @@
         flex-grow: 1;
     }
 
-    .select-container {
+    .selectContainer {
         position: relative;
+        cursor: pointer;
 
-        .select-input {
+        .selectInput {
             position: relative;
             height: 50px;
             display: flex;
             align-items: center;
             gap: 12px;
-            padding: 0 20px;
+            padding: 0 10px;
             font-size: 16px;
             font-weight: bold;
-            background-color: $input-background-color;
+            background-color: #24263d;
+            border-radius: 12px;
 
             .separator {
                 flex-grow: 1;
             }
 
             .handle {
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                margin-left: 10px;
+                cursor: pointer;
+                @include flex-center-center;
+                height: 32px;
+                width: 32px;
+                border-radius: 12px;
                 transition: all 0.1s ease-in-out;
 
                 &.open {
@@ -76,24 +79,23 @@
             }
         }
 
-        .select-menu {
+        .selectMenu {
             z-index: 97;
             position: absolute;
-            top: 50px;
+            top: 60px;
             left: 0;
             min-height: 50px;
             max-height: 250px;
             width: 100%;
-            background-color: $input-background-color;
-            box-shadow: $box-shadow;
+            border-radius: 12px;
+            background-color: #1e2033;
+            box-shadow: 0px 4px 10px #00000073;
+            border: 1px solid #3E436BCC;
             overflow: hidden;
             overflow-y: auto;
             scrollbar-width: thin;
 
-            .sort-buttons {
-                padding: 0 20px;
-            }
-            .select-search-input {
+            .selectSearchInput {
                 width: 100%;
                 position: sticky;
                 top: 0;
@@ -119,23 +121,24 @@
                 font-weight: 500;
                 opacity: 0.8;
                 cursor: pointer;
-                .drag-handle {
+
+                .dragHandle {
                     min-width: 14px;
                 }
-                &[draggable="true"] .drag-handle {
+                &[draggable="true"] .dragHandle {
                     cursor: grab;
                     cursor: -moz-grab;
                     cursor: -webkit-grab;
                 }
                 
-                &[draggable="true"]:active .drag-handle {
+                &[draggable="true"]:active .dragHandle {
                     cursor: grabbing;
                     cursor: -moz-grabbing;
                     cursor: -webkit-grabbing;
                 }
                 
                 &:hover {
-                    background-color: rgba(0, 0, 0, 0.2);
+                    background-color: #24263d;
                 }
                 
                 &.active {
@@ -162,8 +165,8 @@
     }
 
     &.searchable {
-        .select-container {
-            .select-menu {
+        .selectContainer {
+            .selectMenu {
                 max-height: 300px;
             }
         }
