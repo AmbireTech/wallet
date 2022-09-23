@@ -4,7 +4,7 @@ $modal-text-color: mix($text-color, $panel-background-color, 70%);
 $thead-background-color: darken($panel-background-color, 2%);
 
 #gas-details-modal {
-  button.buttonComponent {
+  .buttonComponent {
     flex: 0 1 100% !important;
   }
 
