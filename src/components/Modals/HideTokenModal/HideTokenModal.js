@@ -67,7 +67,7 @@ const HideTokenModel = ({ portfolio, account, network, userSorting, sortType, se
       </div>
 
       <div className="modalBottom">
-        <Button clear icon={<MdOutlineClose />} onClick={handleHideModal}>
+        <Button clear icon={<MdOutlineClose />} onClick={handleHideModal} className='buttonComponent'>
           Close
         </Button>
       </div>
