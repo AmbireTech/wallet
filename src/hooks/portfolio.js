@@ -7,11 +7,13 @@ import { ZAPPER_API_ENDPOINT } from 'config'
 import { useToasts } from 'hooks/toasts'
 import { VELCRO_API_ENDPOINT } from 'config'
 
-const getBalances = (network, protocol, address, provider) =>
-    fetchGet(`${provider === 'velcro' ?
-        VELCRO_API_ENDPOINT :
-        ZAPPER_API_ENDPOINT}/protocols/${protocol}/balances?addresses[]=${address}&network=${network}&api_key=${ZAPPER_API_KEY}&newBalances=true`
-    )
+const getBalances = (network, protocol, address, provider) =>{
+    if (provider === '' || !provider) return null
+    return fetchGet(`${provider === 'velcro' ?
+    VELCRO_API_ENDPOINT :
+    ZAPPER_API_ENDPOINT}/protocols/${protocol}/balances?addresses[]=${address}&network=${network}&api_key=${ZAPPER_API_KEY}&newBalances=true`
+)
+}
 
 export default function usePortfolio({ currentNetwork, account, useStorage }) {
     const isVisible = usePageVisibility()

@@ -1,5 +1,9 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useCallback } from 'react';
 import './ToolTip.scss'
+
+const newLineText = (text = '') => {
+    return text.split('\n').map((str, key) => <div key={key}>{str}</div>)
+}
 
 const ToolTip = ({ children, label, htmlContent, disabled, className }) => {
     const [labelPosition, setLabelPosition] = useState({ top: 0, left: 0 })
@@ -7,9 +11,11 @@ const ToolTip = ({ children, label, htmlContent, disabled, className }) => {
     const ref = useRef(null)
 
     const margin = 15
-    const onMouseEnter = () => {
+    const onMouseEnter = useCallback(() => {
         // TODO: See if anyone will have issues when scrolling and hovering simultaneously
         // and then update events
+        if (ref?.current?.children?.length < 2) return
+
         const childBounding = ref.current.children[0].getBoundingClientRect()
         const tooltipBounding = ref.current.children[1].getBoundingClientRect()
 
@@ -43,30 +49,28 @@ const ToolTip = ({ children, label, htmlContent, disabled, className }) => {
 
         setLabelPosition(tooltipPosition)
         setArrowPosition(`${position.vertical} ${position.horizontal}`)
-    }
+    }, [ref])
 
-    const newLineText = text => {
-        return text.split('\n').map((str, key) => <div key={key}>{str}</div>)
-    }
 
     return (
-        <div
-            ref={ref}
-            className={`tooltip ${className ? className : ''}`}
-            onMouseEnter={onMouseEnter}
-            onTouchStart={onMouseEnter}
-        >
-            {children}
-            {
-                !disabled ?
-                    <div className="tooltip-label" style={labelPosition}>
-                        {htmlContent || newLineText(label)}
-                        <div className={`arrow ${arrowPosition || ''}`}></div>
+        !children ? null :
+            <div
+                ref={ref}
+                className={`tooltip ${className ? className : ''}`}
+                onMouseEnter={onMouseEnter}
+                onTouchStart={onMouseEnter}
+            >
+                {children}
+                {
+                    !disabled && (!!htmlContent || !!label) ?
+                        <div className="tooltip-label" style={labelPosition}>
+                            {htmlContent || newLineText(label)}
+                            <div className={`arrow ${arrowPosition || ''}`}></div>
                         </div>
-                    :
-                    null
-            }
-        </div>
+                        :
+                        null
+                }
+            </div>
     )
 }
 
