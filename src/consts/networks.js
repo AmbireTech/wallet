@@ -1,7 +1,7 @@
 import networks from 'ambire-common/src/constants/networks'
 
 const isRelayerless = process.env.REACT_APP_RELAYRLESS === 'true' || !process.env.REACT_APP_RELAYER_URL
-console.log({isRelayerless});
+
 /**
  * Maps each network (by its `id`) to a web-specific icon.
  * Note: In case of adding a new network, don't forget to map it's icon here 🤞
