@@ -1,4 +1,4 @@
-import './EmailLogin.scss'
+import styles from './EmailLogin.module.scss'
 
 import { useState, useEffect } from 'react'
 import { MdEmail } from 'react-icons/md'
@@ -101,33 +101,37 @@ export default function EmailLogin({ relayerURL, onAddAccount }) {
     const importJSONHref = `/#/json-import`
 
     if (!relayerURL) {
-        return (<section className="loginSignupWrapper" id="emailLoginSection">
-            <div id="logo"/>
-            <h3 className="error">Email login not supported without the relayer.</h3>
+        return (<section className={`${styles.loginSignupWrapper} ${styles.emailLoginSection}`}>
+            <div className={styles.logo}/>
+            <h3 className={styles.error}>Email login not supported without the relayer.</h3>
             <a href={importJSONHref}><button>Import JSON</button></a>
         </section>)
     }
 
     const inner = requiresEmailConfFor ?
-      (<div id="loginEmail" className="emailConf">
+      (<div className={`${styles.loginEmail} ${styles.emailConf}`}>
         <h3><MdEmail size={25} color="white"/>Email confirmation required</h3>
         <p>
         We sent an email to {requiresEmailConfFor.email}, please check your inbox and click "<b>Authorize New Device</b>".
         </p>
-        {err ? (<p className="error">{err}</p>) : (<></>)}
+        {err ? (<p className={styles.error}>{err}</p>) : (<></>)}
       </div>)
-      : (<div id="loginEmail">
+      : (<div className={styles.loginEmail}>
         <LoginOrSignup onAccRequest={onLoginUserAction} inProgress={inProgress}></LoginOrSignup>
-        <div className='magicLink'>A password will not be required, we will send a magic login link to your email.</div>
-
-        {err ? (<p className="error">{err}</p>) : (<></>)}
+        <div className={styles.magicLink}>A password will not be required, we will send a magic login link to your email.</div>
+        <a className={styles.backButton} href="/add-account/#add-account">
+          <img src='/resources/icons/chevron-left.svg' alt="back-icon" />
+          {' '}
+          Back to Register
+        </a>
+        {err ? (<p className={styles.error}>{err}</p>) : (<></>)}
 
         {/*<a href={importJSONHref}>Import JSON</a>*/}
       </div>)
 
     return (
-      <section className="loginSignupWrapper" id="emailLoginSection">
-      <div id="logo"/>
+      <section className={`${styles.loginSignupWrapper} ${styles.emailLoginSection}`}>
+      <div className={styles.logo} />
       {inner}
     </section>
     )
