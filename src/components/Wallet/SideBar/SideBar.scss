@@ -14,6 +14,59 @@
   box-sizing: border-box;
   overflow: hidden;
   transition: width 0.1s ease-in-out;
+  background-color: $background-color; 
+  transition: left 0.3s ease-in-out;
+
+  .outside-handler {
+    display: none;   
+  }
+
+  &.dapp-mode {
+    z-index: 51;
+    left: -($sidebar-desktop-width + 20);
+    box-shadow: 15px 10px 20px 0 rgba(0, 0, 0, 0.25);
+    padding-top: 0;
+
+    &.open {
+      left: 0;
+    } 
+
+    .outside-handler {
+      display: block;
+      position: fixed;
+      left: $sidebar-desktop-width;;
+      bottom: 0px;
+      top: 0px;
+      right: 0px;
+    }
+  }
+
+  .ambire-logo {
+    background-color: $background-color;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    height: 75px;
+    padding: 15px;
+    gap: 8px;
+    .logo, .icon {
+      height: 100%;
+      width: 100%;
+
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: left center;
+    }
+
+    .logo {
+      background-image: url('/resources/logo.png');
+    }
+
+    .icon {
+        background-image: url('/resources/icon.png');
+        display: none;
+    }
+  }
 
   .balance {
     margin-bottom: 3em;
@@ -138,11 +191,27 @@
   #sidebar {
     width: $sidebar-desktop-small-width;
 
+    &.dapp-mode {
+      .outside-handler {
+        left: $sidebar-desktop-small-width;
+      }
+    }
+
     .balance {
       font-size: 0.8em !important;
 
       label {
         font-size: 1.1em !important;
+      }
+    }
+
+    .ambire-logo {
+      .logo {
+        display: none;
+      }
+  
+      .icon {
+        display: block;
       }
     }
 
@@ -167,6 +236,12 @@
       display: none;
     }
 
+    &.dapp-mode {
+      nav {
+        height: 0;
+      }
+    }
+
     nav {
       z-index: 49;
       height: $sidebar-mobile-height;
@@ -179,7 +254,7 @@
       flex-direction: row;
       justify-content: space-between;
 
-      .item {
+       .item {
         gap: 0;
         height: 100%;
         width: 95px;

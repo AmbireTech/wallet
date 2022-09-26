@@ -196,11 +196,12 @@ const GasTank = ({
                         <div className='label'>Total Cashback: </div> 
                         <div className='amount'><span>$</span> {totalCashBack ? totalCashBack : '0.00'}</div>
                     </div>
-                    <span>From gas fees on {network.id.toUpperCase()}</span>
+                    <span>From transaction fees on {network.id.toUpperCase()}</span>
                 </div>
             </div>
             <div>
-                <p>This is your special account for pre-paying gas.</p>
+                <p className='benefit'>Save over 20% of fees by enabling the gas tank</p>
+                <p>This is your special account for pre-paying transaction fees.</p>
                 <p>By filling up your Gas Tank, you are setting aside, or prepaying for network fees.</p>
                 <p>Only the tokens listed below are eligible for filling up your Gas Tank. You can add more tokens to your Gas Tank at any time.</p>
                 <p>The tokens in your Gas Tank can pay network fees on all supported networks.</p>
