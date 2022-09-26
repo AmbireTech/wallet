@@ -1,0 +1,63 @@
+.checkboxContainer {
+  position: relative;
+  display: block;
+  cursor: pointer;
+  margin: 1.3em 0px;
+  user-select: none;
+
+  &.disabled {
+    opacity: 0.5;
+    pointer-events: none;
+  }
+
+  &:not(.disabled):hover {
+    input, .checkbox-mark {
+      background-color: #7B7597;
+    }
+  }
+
+  input {
+    position: absolute;
+    opacity: 0;
+    padding: 0;
+    margin: 0;
+    border: 0;
+    top: 0;
+    left: 0;
+
+    &:checked ~ .checkboxMark {
+      background-color: #27e8a7;
+      border-color: #27e8a7;
+
+      &:after {
+        display: block;
+      }
+    }
+  }
+
+  .checkboxMark {
+    display: block;
+    position: relative;
+    float: left;
+    height: 25px;
+    width: 25px;
+    border: 3px solid #51588C;
+    border-radius: 3px;
+    background-color: transparent;
+    margin-right: 1rem;
+    box-sizing: border-box;
+
+    &:after {
+      content: "";
+      position: absolute;
+      display: none;
+      left: 6px;
+      top: 0px;
+      width: 5px;
+      height: 14px;
+      border: solid #000;
+      border-width: 0 3px 3px 0;
+      transform: rotate(45deg);
+    }
+  }
+}
