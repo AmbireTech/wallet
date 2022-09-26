@@ -3,7 +3,7 @@ import { Interface } from 'ethers/lib/utils'
 import networks from 'consts/networks'
 import { getTokenIcon } from 'lib/icons'
 
-const getAssetInfo = (address, tokens) => {
+const getAssetInfo = (tokens, address) => {
     const formattedAddress = formatNativeTokenAddress(address)
     return tokens[formattedAddress] || knownTokens[formattedAddress] || ['Unknown', 0]
 }
