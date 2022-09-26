@@ -5,7 +5,7 @@ import { AiOutlineSend } from 'react-icons/ai'
 import { NavLink } from 'react-router-dom'
 import { Button, Loading } from 'components/common'
 import ProtocolsPlaceholder from './ProtocolsPlaceholder/ProtocolsPlaceholder'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { MdOutlineAdd, MdVisibilityOff, MdDragIndicator, MdOutlineSort } from 'react-icons/md'
 import AddTokenModal from 'components/Modals/AddTokenModal/AddTokenModal'
 import { useModals, useDragAndDrop, useCheckMobileScreen } from 'hooks'
@@ -115,8 +115,8 @@ const Protocols = ({ portfolio, network, account, hidePrivateValue, userSorting,
             }
         </div>)}
 
-    const openAddTokenModal = () => showModal(<AddTokenModal network={network} account={account} portfolio={portfolio} />)
-    const openHideTokenModal = () => setIsHideTokenModalOpen(true)
+    const openAddTokenModal = useCallback(() => showModal(<AddTokenModal network={network} account={account} portfolio={portfolio} />), [account, network, portfolio, showModal])
+    const openHideTokenModal = useCallback(() => setIsHideTokenModalOpen(true), [])
 
     useEffect(() => {
         if(isHideTokenModalOpen) {

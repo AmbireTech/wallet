@@ -31,11 +31,15 @@
 
 #asset-migration-modal {
 
-  >.content{
-   padding-top: 32px;
+  *:not(input) {
+    user-select: none;
   }
 
-  .title{
+  > .content {
+    padding-top: 32px;
+  }
+
+  .title {
     width: 100%;
   }
 
@@ -68,7 +72,7 @@
         width: 20px;
         border: 2px solid transparent;
 
-        &:after{
+        &:after {
           left: 4px;
           top: 0px;
 
@@ -76,7 +80,6 @@
         }
       }
     }
-
 
 
     &:hover {
@@ -144,13 +147,13 @@
   .custom-token-row {
     text-align: right;
 
-    .custom-token-input input{
+    .custom-token-input input {
       height: 40px;
       padding: 10px;
       font-size: 1em;
     }
 
-    button.buttonComponent{
+    button.buttonComponent {
       height: 30px;
       font-size: 0.9em;
       font-weight: normal;
@@ -186,19 +189,10 @@
     color: $text-container-color;
   }
 
-  ul.notification-gas-tokens {
-    padding-left: 12px;
-    li {
-      list-style: none;
-      span.gas-token-suggestion {
-        cursor:pointer;
-        border-bottom: 1px dashed $secondary-accent-color;
-      }
 
-      span.gas-token-amount {
-        color: darken($warning-color, 20%);
-      }
-    }
+  span.max-native-suggestion {
+    cursor: pointer;
+    border-bottom: 1px dashed $secondary-accent-color;
   }
 
   .migration-native-row {
@@ -323,7 +317,8 @@
   .gas-notification-info {
     padding: 12px;
     background: $input-background-color-darker;
-    b{
+
+    b {
       display: block;
       font-weight: bold;
       text-align: center;
@@ -337,7 +332,7 @@
 
 
   button.buttonComponent .loading .icon {
-    padding-top:6px;
+    padding-top: 6px;
 
     svg {
       height: 24px
@@ -405,7 +400,7 @@
       background: mix($ambire-dark-blue, darken($input-background-color-darker, 2%), 3%);
 
       li {
-        padding:8px 0;
+        padding: 8px 0;
         flex-grow: 1;
         list-style: none;
         text-align: center;
@@ -432,9 +427,10 @@
     table {
       width: 100%;
 
-      td{
+      td {
         padding: 8px;
-        &.gas-estimation-details-amount{
+
+        &.gas-estimation-details-amount {
           width: 0
         }
       }
@@ -456,7 +452,6 @@
       color: $warning-color;
     }
   }
-
 
 
 }

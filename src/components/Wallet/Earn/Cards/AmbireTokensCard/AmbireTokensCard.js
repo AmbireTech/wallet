@@ -28,6 +28,9 @@ const WALLET_STAKING_ADDRESS = '0x47cd7e91c3cbaaf266369fe8518345fc4fc12935'
 const ADX_LABEL = 'ADX'
 const WALLET_LABEL = 'WALLET'
 
+const WALLET_LOCK_PERIOD_IN_DAYS = 30
+const ADEX_LOCK_PERIOD_IN_DAYS = 20
+
 // polygon tests
 // const WALLET_TOKEN_ADDRESS = '0xe9415e904143e42007865e6864f7f632bd054a08'
 // const WALLET_STAKING_ADDRESS = '0xec3b10ce9cabab5dbf49f946a623e294963fbb4e'
@@ -69,8 +72,8 @@ const AmbireTokensCard = ({ networkId, accountId, tokens, rewardsData, addReques
     const [validateData, setValidateData] = useState(null)
 
     const getLockDays = useCallback(() => {
-        if (selectedToken.label === 'WALLET') return 60
-        else return 20
+        if (selectedToken.label === 'WALLET') return WALLET_LOCK_PERIOD_IN_DAYS
+        else return ADEX_LOCK_PERIOD_IN_DAYS
     }, [selectedToken.label])
     
     const unavailable = networkId !== 'ethereum'
@@ -175,7 +178,7 @@ const AmbireTokensCard = ({ networkId, accountId, tokens, rewardsData, addReques
                 </>
             )
         }
-        const apyTooltipMsg = `Annual Percentage Yield: IN ADDITION to what you earn in ${selectedToken.label}s`
+        const apyTooltipMsg = `Annual Percentage Yield${selectedToken.label === 'WALLET' ? `: IN ADDITION to what you earn in ${selectedToken.label}s` : ''}`
         setDetails([
             [
                 <>
