@@ -199,7 +199,7 @@ const ResetPassword = ({ account, selectedNetwork, relayerURL, onAddAccount, sho
                         <PasswordInput autocomplete="new-password" placeholder="Confirm New Password" onInput={value => setNewPasswordConfirm(value)}/>
                         {
                             checkboxes[0].map(({ label, ref }, i) => (
-                                <Checkbox key={`checkbox-${i}`} ref={ref} label={label} onChange={() => validateForm()}/>
+                                <Checkbox labelClassName='checkbox-label' key={`checkbox-${i}`} ref={ref} label={label} onChange={() => validateForm()}/>
                             ))
                         }
                     </form> : null
@@ -211,7 +211,7 @@ const ResetPassword = ({ account, selectedNetwork, relayerURL, onAddAccount, sho
                         <PasswordInput autocomplete="new-password" placeholder="Confirm New Password" onInput={value => setNewPasswordConfirm(value)}/>
                         {
                             checkboxes[1].map(({ label, ref }, i) => (
-                                <Checkbox key={`checkbox-${i}`} ref={ref} label={label} onChange={() => validateForm()}/>
+                                <Checkbox labelClassName='checkbox-label' key={`checkbox-${i}`} ref={ref} label={label} onChange={() => validateForm()}/>
                             ))
                         }
                     </form> : null
