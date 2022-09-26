@@ -131,7 +131,7 @@ export function FeeSelector({ disabled, signer, estimation, network, setEstimati
     setEstimation({ ...estimation, selectedFeeToken: token })
   }
 
-  const currenciesItems = tokens
+  const currenciesItems = tokens.filter(item => !isGasTankEnabled ? !item.disable : item)
     // NOTE: filter by slowest and then will disable the higher fees speeds otherwise 
     // it will just hide the token from the select
     .sort((a, b) =>
