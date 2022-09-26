@@ -1,36 +1,40 @@
 @import 'variables.scss';
 
-.chooseSigners h3 {
-    text-align: center;
-    font-size: 1.5em;
-    font-weight: 300;
-}
-
 .loginSignupWrapper {
     display: flex;
     flex-direction: column;
+    justify-content: center;
     gap: 3em;
-    background: url('/resources/hero-darkened.svg');
-    background-size: auto 800px;
+    background: url('/resources/login-bg.png');
+    background-size: cover;
     background-position: top center;
     background-repeat: no-repeat;
     min-height: 100%;
     padding: 2em 0;
     overflow: hidden;
 
+    h3 {
+        font-size: 25px;
+        text-align: left;
+        color: #ebecff;
+        font-weight: 400;
+        margin-bottom: 43px;
+    }
+
     button, input {
-        font-size: 1em;
+        font-size: 16px;
         border: 0px;
         background: none; /* #282c34; */
         padding: 1em;
         box-sizing: border-box;
-        font-family: 'Open Sans';
+        font-family: 'Poppins', sans-serif;
         transition: all 0.1s ease-in-out;
     }
 
     button {
         background-color: white;
     }
+
     button, input[type=submit] {
         cursor: pointer;
     }
@@ -57,50 +61,42 @@
     }
 
     input[type=submit] {
+        height: 60px;
         width: 100%;
-        /*background-color: rgb(255, 209, 0);*/
-        background-color: rgb(128, 255, 219);
-        opacity: 0.8;
-        border: 0px;
-        font-size: 1.5em;
-        color: black;
-        font-weight: 600;
-        text-transform: uppercase;
-        padding: 0.6em;
-
-        &:disabled {
-            opacity: 0.5;
-        }
-
-        &:not([disabled]):hover {
-            opacity: 1.0;
-        }
+        border: none;
+        background: transparent linear-gradient(90deg, #27E8A7 0%, #6000FF 100%) 0% 0% no-repeat padding-box;
+        border-radius: 12px;
+        color: #fff;
+        font-size: 20px;
+        font-weight: 500;
+        padding: 0;
+        margin-bottom: 30px;
     }
 
     input {
+        color: #6770b3;
         margin: 2em 0px;
-        border-bottom: 2px solid #b3c4e6;
+        border-bottom: 2px solid #ebecff;
         width: 100%;
-        color: white;
-        font-size: 1.1em;
+        font-size: 16px;
 
         &:not([type=submit]):focus {
             border-bottom: 3px solid #dae6fd;
         }
     }
 
-    #logo {
-        background-image: url('/resources/logo.png');
-        width: 35%;
-        max-width: 400px;
+    .logo {
+        background-image: url('/resources/logo.svg');
+        width: 100%;
+        max-width: 252px;
         margin: 0px auto;
-        height: 200px;
+        height: 110px;
         background-size: contain;
         background-repeat: no-repeat;
         background-position: center;
     }
 
-    #plugin-info {
+    .pluginInfo {
         display: flex;
         flex-direction: column;
         gap: 8px;
@@ -112,7 +108,7 @@
         }
     } 
 
-    #signersToChoose {
+    .signersToChoose {
         margin: 0px auto;
         display: block;
         line-height: 2em;
@@ -129,17 +125,17 @@
         }
     }
 
-    #loginEmail {
+    .loginEmail {
         flex: 0.9;
     }
 
-    #loginEmail form > *, #loginEmail button,
-    #addAccount form > *, #addAccount button {
+    .loginEmail form > *, .loginEmail button,
+    .addAccount form > *, .addAccount button {
         /* TODO */
         display: block;
     }
 
-    #addAccount {
+    .addAccount {
         display: flex;
         flex-direction: row;
         width: 100%;
@@ -147,46 +143,72 @@
         /* TODO some sort of vertical alignment */
         margin: 0em auto 0em;
 
-        h3 {
-            margin-top: 0px;
-            margin-bottom: 2em;
-            text-align: center;
-            font-size: 1.5em;
-            font-weight: 300;
-        }
-
         input[type=submit]:hover {
             opacity: 1.0;
         }
 
-        #loginSeparator {
-            flex: 0.6;
-            text-align: center;
-            font-size: 2.5em;
-            text-transform: uppercase;
-            font-weight: 300;
+        .loginSeparator {
             height: 500px;
-
-            .verticalLine {
-                width: 2px;
-                background-color: #c3d4f6;
-                height: 45%;
-                margin: 10px auto;
-            }
+            width: 2px;
+            background-color: #6770b3;
+            margin: 0 96px;
+            margin-top: 20px;
         }
 
-        #loginOthers {
+        .loginOthers {
             flex: 0.9;
 
             button {
+                position: relative;
+                top: 0;
                 width: 100%;
-                box-sizing: border-box;
-                text-align: left;
-                margin: 1.5em 0px;
-                border: 0px;
-                color: black;
-                background-color: white;
-                line-height: 25px;
+                border: 1px solid var(--unnamed-color-6770b3);
+                background: #1E2033;
+                border: 1px solid #6770B3;
+                border-radius: 12px;
+                color: #6770b3;
+                height: 60px;
+                text-align: center;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                gap: 7px;
+                margin-bottom: 20px;
+                transition: .3s ease-out all;
+
+                svg {
+                    color: #6770b3;
+                    transition: .3s ease-out all;
+                }
+
+                &:hover {
+                    top: -4px;
+                    color: #fff;
+                    svg {
+                        color: #fff;
+                    }
+
+                    svg.email {
+                        color: #27E8A7;
+                    }
+                    svg.metamask {
+                        color: #EF801B;
+
+                        :global(#decoration) {
+                            color: #fff;
+                        }
+                    }
+
+                    svg.gridplus {
+                        color: #fff;
+                        :global(#logo) {
+                            color: #fff;
+                        }
+                        :global(#decoration) {
+                            color: #47AEE9;
+                        }
+                    }
+                }
             }
 
             .icon {
@@ -195,7 +217,6 @@
                 height: 25px;
                 background-repeat: no-repeat;
                 background-size: contain;
-                float: left;
             }
 
             .accountLoader {
@@ -206,15 +227,11 @@
 
             .error {
                 max-width: 300px;
-                font-size: 1.5em;
-                font-weight: 600;
+                font-size: 1em;
+                font-weight: 300;
                 position: relative;
             }
         }
-    }
-
-    .checkbox-label {
-        display: block;
     }
 }
 
@@ -224,22 +241,19 @@
         gap: 0;
         padding: 0 1em;
 
-        #logo {
+        .logo {
             width: 75%;
         }
 
-        #addAccount {
+        .addAccount {
             flex-direction: column;
             gap: 2em;
 
-            #loginSeparator {
-                display: flex;
-                align-items: center;
+            .loginSeparator {
 
-                .verticalLine {
-                    height: 2px;
-                    width: 30%;
-                }
+                height: 100%;
+                width: 2px;
+                background-color: red;
             }
         }
     }
