@@ -59,6 +59,7 @@ const Networks = ({
         <Select
             defaultValue={network.id}
             className={styles.select}
+            selectInputClassName={styles.selectInput}
             draggable={sortType === 'custom' && !isMobileScreen ? true : false}
             dragEnter={dragEnter}
             drop={drop}
