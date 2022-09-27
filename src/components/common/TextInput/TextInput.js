@@ -1,4 +1,4 @@
-import './TextInput.scss'
+import styles from './TextInput.module.scss'
 
 import { forwardRef } from 'react';
 import { MdContentCopy } from 'react-icons/md';
@@ -13,17 +13,17 @@ const TextInput = forwardRef(({ value, className, title, pattern, autoComplete, 
     };
 
     return (
-        <div className={`text-input ${copy ? 'copy' : ''} ${small ? 'small' : ''} ${className || ''}`}>
+        <div className={`${styles.textInput} ${copy ? styles.copy : ''} ${small ? styles.small : ''} ${className || ''}`}>
             {
                 label ?
                     <label>{ label }</label>
                     :
                     null
             }
-            <div className={`text-input-container${icon ? ' hasIcon' : ''}`} onClick={copy ? onClick : null}>
+            <div className={`${styles.textInputContainer}${icon ? ` ${styles.hasIcon}` : ''}`} onClick={copy ? onClick : null}>
                 {
                     icon &&
-                    <div className='text-input-container-icon'>
+                    <div className={styles.textInputContainerIcon}>
                         {icon}
                     </div>
                 }
@@ -45,7 +45,7 @@ const TextInput = forwardRef(({ value, className, title, pattern, autoComplete, 
                 />
                 {
                     copy ?
-                        <div className="button">
+                        <div className={styles.button}>
                             <MdContentCopy size={20}/>
                         </div>
                         :
@@ -53,7 +53,7 @@ const TextInput = forwardRef(({ value, className, title, pattern, autoComplete, 
                 }
                 {
                     buttonLabel ?
-                        <div className="button" onClick={onButtonClick}>
+                        <div className={styles.button} onClick={onButtonClick}>
                             { buttonLabel }
                         </div>
                         :
@@ -62,7 +62,7 @@ const TextInput = forwardRef(({ value, className, title, pattern, autoComplete, 
             </div>
             {
                 info ?
-                    <div className="info">
+                    <div className={styles.info}>
                         { info }
                     </div>
                     :

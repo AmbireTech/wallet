@@ -2,7 +2,7 @@
 
 $input-height: 60px;
 
-.text-input {
+.textInput {
     position: relative;
     display: flex;
     flex-direction: column;
@@ -12,11 +12,11 @@ $input-height: 60px;
         font-weight: 500;
     }
 
-    .text-input-container {
+    &Container {
         position: relative;
 
         &.hasIcon {
-            .text-input-container-icon {
+            .textInputContainerIcon {
                 position: absolute;
                 top: 0;
                 left: 0;
@@ -35,20 +35,24 @@ $input-height: 60px;
         }
 
         input {
+            border-radius: 12px;
             height: $input-height;
             width: 100%;
-            color: white;
-            font-family: 'Open Sans';
-            font-size: 1.2em;
-            padding: 1em;
+            color: #6770b3;
+            font-family: 'Poppins', sans-serif;
+            font-size: 16px;
+            padding: 18px;
+            padding-left: 20px;
+            opacity: 1;
             border: none;
             text-overflow: ellipsis;
             outline: none;
-            background-color: $input-background-color;
+            background-color: #1E2033;
             transition: all 0.1s ease-in-out;
 
             &:focus {
-                box-shadow: 0 2px 0 0 $tertiary-accent-color;
+                height: calc($input-height - 2px);
+                border-bottom: 2px solid #ebecff;
             }
         }
 
