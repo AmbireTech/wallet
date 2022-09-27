@@ -5,7 +5,7 @@ import { Borders as LoadingBorders } from 'components/common'
 import { CSSTransition } from 'react-transition-group';
 import useOnClickOutside from 'hooks/onClickOutside';
 
-export default function DropDown({ children, id, icon, className, menuClassName, title, badge, open, closeOnClick, onChange, onOpen, onClose, style, isLoading }) {
+export default function DropDown({ children, id, icon, className, menuClassName, title, badge, open, closeOnClick, onChange, onOpen, onClose, style, isLoading, handleClassName }) {
     const ref = useRef();
     const transitionRef = useRef();
     const [isMenuOpen, setMenuOpen] = useState(false);
@@ -35,14 +35,14 @@ export default function DropDown({ children, id, icon, className, menuClassName,
                         null
                 }
                 {/* <div className={styles.separator}></div> */}
-                <div className={`${styles.handle} ${isMenuOpen ? styles.open : ''}`}>
+                <div className={`${styles.handle} ${isMenuOpen ? styles.open : ''} ${handleClassName || ''}`}>
                     <img src='resources/icons/arrow-down.svg' alt='arrow-down' />
                 </div>
 
                 { isLoading && <LoadingBorders /> }
             </div>
             <CSSTransition unmountOnExit in={isMenuOpen} timeout={200} classNames="fade" nodeRef={transitionRef}>
-                <div className={`${styles.menu} ${menuClassName}`} ref={transitionRef} onClick={closeOnClick ? () => setMenuOpen(false) : null}>
+                <div className={`${styles.menu} ${menuClassName || ''}`} ref={transitionRef} onClick={closeOnClick ? () => setMenuOpen(false) : null}>
                     { children }
                 </div>
             </CSSTransition>
