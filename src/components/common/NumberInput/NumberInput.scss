@@ -4,18 +4,19 @@
     position: relative;
     display: flex;
     flex-direction: column;
-    gap: 7px;
-
+    gap: 10px;
+    
     &.disabled {
         pointer-events: none;
         opacity: 0.5;
     }
-
+    
     label {
-        padding-left: 0.2em;
-        font-weight: 500;
+        padding-left: 20px;
+        font-weight: 400;
+        color: #ebecff;
     }
-
+    
     .input {
         position: relative;
         height: 60px;
@@ -25,15 +26,17 @@
         input[type=text] {
             height: 100%;
             width: 100%;
-            color: white;
-            font-family: 'Open Sans';
-            font-size: 1.2em;
-            padding: 1em;
+            color: #ebecff;
+            font-family: 'Poppins', sans-serif;
+            font-size: 16px;
+            padding: 18px;
+            padding-left: 20px;
             border: none;
             outline: none;
             text-overflow: ellipsis;
-            background-color: $input-background-color;
+            background-color: #1e2033;            
             transition: all 0.1s ease-in-out;
+            border-radius: 12px 0 0 12px;
             -moz-appearance: textfield;
 
             &::-webkit-outer-spin-button,
@@ -52,11 +55,11 @@
             @include flex-center-center;
             padding: 0 1.5rem;
             cursor: pointer;
-            font-size: 15px;
-            font-weight: bold;
-            color: white;
+            font-size: 16px;
+            color: #ebecff;
             transition: all 0.1s ease-in-out;
-            background-color: $input-background-color-darker;
+            background-color: #1e2033;
+            border-radius: 0 12px 12px 0;       
             user-select: none;
 
             &:hover {
