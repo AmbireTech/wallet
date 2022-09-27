@@ -73,7 +73,8 @@ export default function SignMessage({ everythingToSign, resolve, account, connec
 
   const connection = connections.find(({ uri }) => uri === toSign.wcUri)
   const dApp = connection ? connection?.session?.peerMeta || null : null
-  const isDAppSupported = dApp && supportedDApps.includes(dApp.url)
+  const isDAppSupported = (dApp && supportedDApps.includes(dApp.url))
+    || (toSign.origin && supportedDApps.includes(toSign.origin))
 
   useEffect(() => {
     if (confirmationType) inputSecretRef.current.focus()

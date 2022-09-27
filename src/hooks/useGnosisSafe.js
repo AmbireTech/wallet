@@ -214,6 +214,7 @@ export default function useGnosisSafe({selectedAccount, network, verbose = 0, us
         id,
         forwardId: msg.data.id,
         type: message.signType === 'eth_signTypedData_v4' ? 'eth_signTypedData_v4' : 'personal_sign',
+        origin: msg.origin,
         txn: message.signType === 'eth_signTypedData_v4' ? JSON.parse(message.message) : message,
         chainId: stateRef.current.network.chainId,
         account: stateRef.current.selectedAccount
