@@ -61,7 +61,7 @@ const GasTank = ({
     const isMobileScreen = useCheckMobileScreen()
     const [failedImg, setFailedImg] = useState([])
     const toLocaleDateTime = date => `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`
-    const sortedTokens = availableFeeAssets?.filter(item => !item.disable).sort((a, b) => b.balanceUSD - a.balanceUSD).sort((a, b) => {
+    const sortedTokens = availableFeeAssets?.filter(item => !item.disableGasTankDeposit).sort((a, b) => b.balanceUSD - a.balanceUSD).sort((a, b) => {
         if (sortType === 'custom' && userSorting.tokens?.items?.[`${account}-${network.chainId}`]?.length) {
             const addressA = userSorting.tokens.items[`${account}-${network.chainId}`].indexOf(a.address.toLowerCase())
             const addressB = userSorting.tokens.items[`${account}-${network.chainId}`].indexOf(b.address.toLowerCase())
