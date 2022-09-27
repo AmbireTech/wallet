@@ -1,6 +1,6 @@
 import './Dashboard.scss'
 
-import { useEffect, useLayoutEffect, useState } from 'react'
+import { useEffect, useLayoutEffect, useState, useMemo } from 'react'
 import { useHistory, useParams } from 'react-router-dom'
 
 import { Chart, Loading, Segments } from 'components/common'
@@ -28,7 +28,8 @@ const tabSegments = [
 export default function Dashboard({ portfolio, selectedNetwork, selectedAccount, setNetwork, privateMode, rewardsData,  userSorting, setUserSorting, accounts, addRequest, relayerURL, useStorage, match, showSendTxns }) {
     const history = useHistory()
     const { tabId, page = 1 } = useParams()
-
+    const balance = useMemo(() => portfolio.balance, [portfolio.balance])
+    const tokens = useMemo(() => portfolio.tokens, [portfolio.tokens])
     const [chartTokensData, setChartTokensData] = useState([]);
     const [tab, setTab] = useState(tabId || tabSegments[0].value);
 
@@ -43,15 +44,14 @@ export default function Dashboard({ portfolio, selectedNetwork, selectedAccount,
     }, [tab, history, page])
 
     useLayoutEffect(() => {
-        const tokensData = portfolio.tokens
+        const tokensData = tokens
             .map(({ label, symbol, balanceUSD }) => ({
                 label: label || symbol,
-                value: Number(((balanceUSD / portfolio.balance.total.full) * 100).toFixed(2))
+                value: Number(((balanceUSD / balance.total.full) * 100).toFixed(2))
             }))
             .filter(({ value }) => value > 0);
-
         setChartTokensData(tokensData);
-    }, [portfolio.balance, portfolio.tokens]);
+    }, [balance, tokens]);
 
 
     return (
