@@ -1,12 +1,14 @@
 import styles from './EmailLogin.module.scss'
 
 import { useState, useEffect } from 'react'
-import { MdEmail } from 'react-icons/md'
 
 import { fetch, fetchCaught } from 'lib/fetch'
 
 import LoginOrSignup from 'components/LoginOrSignupForm/LoginOrSignupForm'
 import { useLocalStorage } from 'hooks'
+
+// eslint-disable-next-line import/no-relative-parent-imports
+import { ReactComponent as EmailIcon } from '../../resources/email.svg'
 
 // NOTE: the same polling that we do here with the setEffect should be used for txns
 // that require email confirmation
@@ -110,9 +112,23 @@ export default function EmailLogin({ relayerURL, onAddAccount }) {
 
     const inner = requiresEmailConfFor ?
       (<div className={`${styles.loginEmail} ${styles.emailConf}`}>
-        <h3><MdEmail size={25} color="white"/>Email confirmation required</h3>
+        <h3>
+          <EmailIcon />
+          Email confirmation required
+        </h3>
         <p>
-        We sent an email to {requiresEmailConfFor.email}, please check your inbox and click "<b>Authorize New Device</b>".
+          We sent an email to
+          {' '}
+          <span className={styles.email}>
+            {requiresEmailConfFor.email}
+          </span>
+          , please check your inbox and click
+          {' '}
+          "
+          <span className={styles.label}>
+            Authorize New Device
+          </span>
+          ".
         </p>
         {err ? (<p className={styles.error}>{err}</p>) : (<></>)}
       </div>)

@@ -187,12 +187,17 @@
 }
 
 .emailConf {
-    background-color: rgba(0, 0, 0, 0.3);
-    padding: 1.5em;
+    background-color: #1E2033;
+    border: 1px solid #6770B3;
+    border-radius: 12px;
+    padding: 30px;
+    text-align: center;
+    color: #ebecff;
 }
 
 .emailConf h3 {
     text-align: center;
+    margin-top: 0;
 }
 
 .emailConf h3 svg {
@@ -202,7 +207,15 @@
 }
 
 .emailConf p {
-    font-size: 1.2em;
+    font-size: 20px;
+    margin-bottom: 0;
+
+    span.email {
+        color: #ae60ff;
+    }
+    span.label {
+        font-weight: 600;
+    }
 }
 
 .magicLink {
