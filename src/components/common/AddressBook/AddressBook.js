@@ -1,4 +1,3 @@
-import './AddressBook.scss'
 
 import { FaAddressCard } from 'react-icons/fa'
 import { MdOutlineAdd, MdClose } from 'react-icons/md'
@@ -7,6 +6,9 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import AddressList from './AddressList/AddressList'
 import { resolveUDomain } from 'lib/unstoppableDomains'
 import { resolveENSDomain } from 'lib/ensDomains'
+
+import { ReactComponent as AddressBookIcon } from './images/address-book.svg'
+import './AddressBook.scss'
 
 const AddressBook = ({ addresses, addAddress, removeAddress, newAddress, onClose, onSelectAddress, selectedNetwork }) => {
     const [address, setAddress] = useState('')
@@ -72,7 +74,7 @@ const AddressBook = ({ addresses, addAddress, removeAddress, newAddress, onClose
     }, [address, selectedNetwork.unstoppableDomainsChain])
 
     return (
-        <DropDown title={<><FaAddressCard />Address Book</>} className="address-book" open={isOpen} onChange={onDropDownChange}>
+        <DropDown title={<AddressBookIcon />} className="address-book" menuClassName="menu" open={isOpen} onChange={onDropDownChange} handleClassName='handle'>
             <div className="heading">
                 <div className="title">
                     <FaAddressCard /> Address Book
