@@ -8,7 +8,7 @@ import { Loading, Button } from 'components/common'
 import networks from 'consts/networks'
 import { getTransactionSummary } from 'lib/humanReadableTransactions'
 import { Bundle } from 'adex-protocol-eth'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import fetch from 'node-fetch'
 import { useToasts } from 'hooks/toasts'
 import { toBundleTxn } from 'ambire-common/src/services/requestToBundleTxn'
@@ -74,8 +74,10 @@ function Transactions ({ relayerURL, selectedAcc, selectedNetwork, showSendTxns,
   const defaultPage = useMemo(() => Math.min(Math.max(Number(params.page), 1), maxPages) || 1, [params.page, maxPages])
   const [page, setPage] = useState(defaultPage)
 
-  const bundlesList = executedTransactions.slice((page - 1) * maxBundlePerPage, page * maxBundlePerPage).map(bundle => BundlePreview({ humanizerInfo, tokenList, bundle, mined: true, feeAssets }))
-  
+  const bundlesList = executedTransactions
+    .slice((page - 1) * maxBundlePerPage, page * maxBundlePerPage)
+    .map(bundle => <BundlePreview humanizerInfo={humanizerInfo} tokenList={tokenList} bundle={bundle} mined={true} feeAssets={feeAssets} />)
+
   useEffect(() => !isLoading && history.replace(`/wallet/transactions/${page}`), [page, history, isLoading])
   useEffect(() => setPage(defaultPage), [selectedAcc, selectedNetwork, defaultPage])
 
@@ -215,7 +217,7 @@ function Transactions ({ relayerURL, selectedAcc, selectedNetwork, showSendTxns,
   )
 }
 
-function BundlePreview({ humanizerInfo, tokenList, bundle, mined = false, feeAssets }) {
+const BundlePreview = React.memo(({ humanizerInfo, tokenList, bundle, mined = false, feeAssets }) => {
   const network = networks.find(x => x.id === bundle.network)
   if (!Array.isArray(bundle.txns)) return (<h3 className='error'>Bundle has no transactions (should never happen)</h3>)
   const lastTxn = bundle.txns[bundle.txns.length - 1]
@@ -316,6 +318,6 @@ function BundlePreview({ humanizerInfo, tokenList, bundle, mined = false, feeAss
       }
     </ul>
   </div>)
-}
+})
 
 export default Transactions
