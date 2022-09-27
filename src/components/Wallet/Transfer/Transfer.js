@@ -263,6 +263,7 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
                                         info="Please double-check the recipient address, blockchain transactions are not reversible."
                                         value={address}
                                         onInput={setAddress}
+                                        className='recipient-input'
                                     />
                                     <ToolTip label={!ensAddress ? 'You can use Ethereum Name ServiceⓇ' : 'Valid Ethereum Name ServicesⓇ domain'}>
                                         <div id="ens-logo" className={ensAddress ? 'ens-logo-active ' : ''} />
