@@ -6,7 +6,7 @@ import useOnClickOutside from 'hooks/onClickOutside';
 import { TextInput } from 'components/common';
 import { MdOutlineClose, MdDragIndicator } from 'react-icons/md';
 
-const Select = ({ children, native, monospace, searchable, disabled, label, defaultValue, items, onChange, className, iconClassName, labelClassName, draggable, dragStart, dragEnter, dragTarget, drop, draggableHeader, displayDraggableHeader }) => {
+const Select = ({ children, native, monospace, searchable, disabled, label, defaultValue, items, onChange, className, iconClassName, labelClassName, selectInputClassName, draggable, dragStart, dragEnter, dragTarget, drop, draggableHeader, displayDraggableHeader }) => {
     const ref = useRef();
     const hiddenTextInput = useRef();
     const transitionRef = useRef();
@@ -74,7 +74,7 @@ const Select = ({ children, native, monospace, searchable, disabled, label, defa
                 {
                     selectedItem ?
                         <div className={styles.selectContainer}>
-                            <div className={styles.selectInput} onClick={() => setOpen(!isOpen)}
+                            <div className={`${styles.selectInput} ${selectInputClassName}`} onClick={() => setOpen(!isOpen)}
                                 >
                                 {getIcon(selectedItem)}
                                 <div className={`${styles.label} ${labelClassName}`}>{selectedItem.label || selectedItem.value}</div>
