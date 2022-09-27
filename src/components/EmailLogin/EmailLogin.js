@@ -8,7 +8,9 @@ import LoginOrSignup from 'components/LoginOrSignupForm/LoginOrSignupForm'
 import { useLocalStorage } from 'hooks'
 
 // eslint-disable-next-line import/no-relative-parent-imports
-import { ReactComponent as EmailIcon } from '../../resources/email.svg'
+// import { ReactComponent as EmailIcon } from '../../resources/email.svg'
+import Lottie from 'lottie-react'
+import AnimationData from './assets/confirm-email.json'
 
 // NOTE: the same polling that we do here with the setEffect should be used for txns
 // that require email confirmation
@@ -111,9 +113,9 @@ export default function EmailLogin({ relayerURL, onAddAccount }) {
     }
 
     const inner = requiresEmailConfFor ?
-      (<div className={`${styles.loginEmail} ${styles.emailConf}`}>
+      (<div className={`${styles.emailConf}`}>
+        <Lottie className={styles.emailAnimation} animationData={AnimationData} background="transparent" speed="1" loop autoplay />
         <h3>
-          <EmailIcon />
           Email confirmation required
         </h3>
         <p>
@@ -122,13 +124,11 @@ export default function EmailLogin({ relayerURL, onAddAccount }) {
           <span className={styles.email}>
             {requiresEmailConfFor.email}
           </span>
-          , please check your inbox and click
-          {' '}
-          "
-          <span className={styles.label}>
-            Authorize New Device
-          </span>
-          ".
+          .
+          <br />
+          Please check your inbox and click
+          <br />
+          "Authorize New Device".
         </p>
         {err ? (<p className={styles.error}>{err}</p>) : (<></>)}
       </div>)
