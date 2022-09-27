@@ -150,7 +150,7 @@ const AddCustomDappModal = ({ dappsCatalog, dappUrl = '' }) => {
     return (
         <Modal id='add-custom-dapp-modal'
             title={<div className='custom-dapp-title'>
-                <ToolTip label={`Click here to see how create dApp for Ambire Wallet catalog`}>
+                <ToolTip label={`Click here to see how to create dApp for the Ambire Wallet catalog`}>
                     <a className="info-btn" href={'https://github.com/AmbireTech/wallet-dapp-catalog#readme'}
                         target="_blank"
                         rel="noreferrer noopener">
