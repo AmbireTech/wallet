@@ -102,7 +102,7 @@
     }
 
     &:disabled, &.disabled{
-        opacity: 0.2 !important;
+        opacity: 0.4 !important;
     }
 
     &:not([disabled]):not(.disabled) {
