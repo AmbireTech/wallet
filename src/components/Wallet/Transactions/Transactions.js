@@ -27,7 +27,6 @@ const TO_GAS_TANK = `to Gas Tank`
 
 
 function Transactions ({ relayerURL, selectedAcc, selectedNetwork, showSendTxns, addRequest, eligibleRequests, setSendTxnState }) {
-  const { constants: { tokenList, humanizerInfo } } = useConstants()
   const { addToast } = useToasts()
   const history = useHistory()
   const params = useParams()
@@ -76,7 +75,7 @@ function Transactions ({ relayerURL, selectedAcc, selectedNetwork, showSendTxns,
 
   const bundlesList = executedTransactions
     .slice((page - 1) * maxBundlePerPage, page * maxBundlePerPage)
-    .map(bundle => <BundlePreview humanizerInfo={humanizerInfo} tokenList={tokenList} bundle={bundle} mined={true} feeAssets={feeAssets} />)
+    .map(bundle => <BundlePreview bundle={bundle} mined={true} feeAssets={feeAssets} />)
 
   useEffect(() => !isLoading && history.replace(`/wallet/transactions/${page}`), [page, history, isLoading])
   useEffect(() => setPage(defaultPage), [selectedAcc, selectedNetwork, defaultPage])
@@ -181,7 +180,7 @@ function Transactions ({ relayerURL, selectedAcc, selectedNetwork, showSendTxns,
         </div>
         <div className="content">
           <div className="bundle">
-            <BundlePreview humanizerInfo={humanizerInfo} tokenList={tokenList} bundle={firstPending} feeAssets={feeAssets} />
+            <BundlePreview bundle={firstPending} feeAssets={feeAssets} />
             <div className='actions'>
               <Button small onClick={() => replace(firstPending)}>Replace or modify</Button>
               <Button small className='cancel' onClick={() => cancel(firstPending)}>Cancel</Button>
@@ -217,7 +216,8 @@ function Transactions ({ relayerURL, selectedAcc, selectedNetwork, showSendTxns,
   )
 }
 
-const BundlePreview = React.memo(({ humanizerInfo, tokenList, bundle, mined = false, feeAssets }) => {
+const BundlePreview = React.memo(({ bundle, mined = false, feeAssets }) => {
+  const { constants: { tokenList, humanizerInfo } } = useConstants()
   const network = networks.find(x => x.id === bundle.network)
   if (!Array.isArray(bundle.txns)) return (<h3 className='error'>Bundle has no transactions (should never happen)</h3>)
   const lastTxn = bundle.txns[bundle.txns.length - 1]
