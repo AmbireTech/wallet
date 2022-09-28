@@ -9,7 +9,7 @@ on:
       - development
 
 jobs:
-  build:
+  build-staging:
     name: Build-staging
     runs-on: ubuntu-latest
     steps:
@@ -34,7 +34,7 @@ jobs:
         path: ./build
   deploy-staging:
     name: Deploy staging
-    needs: build
+    needs: build-staging
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/development'
     steps:
@@ -51,7 +51,7 @@ jobs:
         publish_dir: ./build
         destination_dir: ./staging
         cname: wallet.ambire.com
-  build:
+  build-relayrless:
     name: Build-Relayrless
     runs-on: ubuntu-latest
     steps:
@@ -84,7 +84,7 @@ jobs:
         path: ./build
   deploy-relayerless:
     name: Deploy relayerless
-    needs: build
+    needs: build-relayrless
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/relayerless'
     steps:
