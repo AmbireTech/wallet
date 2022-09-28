@@ -1,5 +1,11 @@
 @import 'variables.scss';
 
+.transfer-button {
+    max-width: 400px;
+    width: 100%;
+    margin: 0 auto;
+}
+
 #transfer {
     display: flex;
     gap: 30px;
