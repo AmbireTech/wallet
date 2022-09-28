@@ -81,7 +81,7 @@ jobs:
         REACT_APP_RELAYRLESS: true
       with:
         name: production-files
-        path: ./build
+        path: ./build-relayerless
   deploy-relayerless:
     name: Deploy relayerless
     needs: build-relayrless
@@ -94,7 +94,7 @@ jobs:
       uses: actions/download-artifact@v2
       with:
         name: production-files
-        path: ./build
+        path: ./build-relayerless
 
     - name: Deploy to gh-pages
       env:
@@ -102,6 +102,6 @@ jobs:
       uses: peaceiris/actions-gh-pages@v3
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./build
+        publish_dir: ./build-relayerless
         destination_dir: ./relayerless
         cname: wallet.ambire.com
