@@ -4,7 +4,7 @@
     position: relative;
     display: contents;
 
-    .tooltip-label {
+    .tooltipLabel {
         z-index: 50;
         position: fixed;
         top: 0;
@@ -13,9 +13,11 @@
         padding: 15px 20px;
         font-size: 15px;
         font-weight: 500;
-        color: white;
-        background-color: $background-color;
-        box-shadow: $box-shadow;
+        color: #ebecff;
+        background: #24263D;
+        border: 1px solid #3E436B;
+        border-radius: 12px;
+        text-align: center;
         white-space: normal;
         opacity: 0;
         overflow: hidden;
@@ -23,7 +25,7 @@
     }
 
     &:hover {
-        .tooltip-label {
+        .tooltipLabel {
             opacity: 1;
         }
     }
