@@ -9,7 +9,7 @@ const Checkbox = forwardRef(({ checked, required, onChange, disabled, label, lab
     return label ? (<label className={`${styles.checkboxContainer} ${disabled ? styles.disabled : ''}`}>
         {inputElem}
         <div className={styles.checkboxMark}></div>
-        <div className={labelClassName}>{label}</div>
+        <div className={`${styles.label}${` ${labelClassName}`}`}>{label}</div>
     </label>) : (<>
         {inputElem}
         <div className={styles.checkboxMark}></div>
