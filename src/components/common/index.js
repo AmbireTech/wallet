@@ -23,6 +23,7 @@ import NoFundsPlaceholder from './NoFundsPlaceholder/NoFundsPlaceholder';
 import CountdownTimer from './CountdownTimer/CountdownTimer';
 import ErrorBoundary from './ErrorBoundary/ErrorBoundary';
 import Stepper from './Stepper/Stepper.tsx';
+import DAppIncompatibilityWarningMsg from './DAppIncompatibilityWarningMsg/DAppIncompatibilityWarningMsg';
 
 export {
     AddressBook,
@@ -49,5 +50,6 @@ export {
     NoFundsPlaceholder,
     CountdownTimer,
     ErrorBoundary,
-    Stepper
+    Stepper,
+    DAppIncompatibilityWarningMsg
 };

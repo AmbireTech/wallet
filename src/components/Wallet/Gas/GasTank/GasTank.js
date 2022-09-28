@@ -1,6 +1,8 @@
+import useGasTankData from 'ambire-common/src/hooks/useGasTankData'
+
 import './GasTank.scss'
 import { Toggle } from 'components/common'
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { GiToken, GiGasPump } from 'react-icons/gi'
 import { NavLink } from 'react-router-dom'
 import { Button, Loading } from 'components/common'
@@ -14,14 +16,11 @@ import { useModals } from 'hooks'
 import { GasTankBalanceByTokensModal } from 'components/Modals'
 import { HiOutlineExternalLink } from 'react-icons/hi'
 import { formatUnits } from 'ethers/lib/utils'
-import { getGasTankFilledTxns } from 'lib/isFeeCollectorTxn'
-// eslint-disable-next-line import/no-relative-parent-imports
-import { getAddedGas } from '../../../SendTransaction/helpers'
 // eslint-disable-next-line import/no-relative-parent-imports
 import { useToasts } from '../../../../hooks/toasts'
 
-
-const GasTank = ({ network, 
+const GasTank = ({ 
+    network, 
     relayerURL, 
     portfolio, 
     account, 
@@ -30,69 +29,36 @@ const GasTank = ({ network,
     gasTankState, 
     setGasTankState 
 }) => {
-    const [cacheBreak, setCacheBreak] = useState(() => Date.now())
+    const {
+        isLoading,
+        balancesRes,
+        gasTankBalances,
+        totalSavedResult,
+        gasTankFilledTxns,
+        feeAssetsRes,
+        availableFeeAssets
+      } = useGasTankData({
+        relayerURL,
+        selectedAcc: account,
+        network,
+        portfolio,
+        useRelayerData
+      })
+
     const { showModal } = useModals()
     const { addToast } = useToasts()
 
-    useEffect(() => {
-        if (Date.now() - cacheBreak > 5 * 1000) setCacheBreak(Date.now())
-        const intvl = setTimeout(() => setCacheBreak(Date.now()), 60 * 1000)
-        return () => clearTimeout(intvl)
-    }, [cacheBreak])
-
-    const urlGetBalance = relayerURL ? `${relayerURL}/gas-tank/${account}/getBalance?cacheBreak=${cacheBreak}` : null
-    const urlGetFeeAssets = relayerURL ? `${relayerURL}/gas-tank/assets?cacheBreak=${cacheBreak}` : null
-    const urlGetTransactions = relayerURL ? `${relayerURL}/identity/${account}/${network.id}/transactions` : null
-
-    const { data: balancesRes, isLoading } = useRelayerData(urlGetBalance)
-    const { data: feeAssetsRes} = useRelayerData(urlGetFeeAssets)
-    const { data: executedTxnsRes } = useRelayerData(urlGetTransactions)
-    
-    const gasTankBalances = balancesRes && balancesRes.length && balancesRes.map(({balanceInUSD}) => balanceInUSD).reduce((a, b) => a + b, 0)
     const gasTankBalancesFormatted = gasTankBalances ? formatFloatTokenAmount(gasTankBalances, true, 2) : '0.00'
-    const gasTankTxns = executedTxnsRes && executedTxnsRes.txns.length && executedTxnsRes.txns.filter(item => !!item.gasTankFee)
     const feeAssetsPerNetwork = feeAssetsRes && feeAssetsRes.length && feeAssetsRes.filter(item => item.network === network.id)
-    const executedTxns = executedTxnsRes && executedTxnsRes.txns.length && executedTxnsRes.txns
-    const gasTankFilledTxns = executedTxns && executedTxns.length && getGasTankFilledTxns(executedTxns)
-    const totalSavedResult = gasTankTxns && gasTankTxns.length && gasTankTxns.map(item => {
-        const feeTokenDetails = feeAssetsRes ? feeAssetsRes.find(i => i.symbol === item.feeToken) : null
-        const savedGas = feeTokenDetails ? getAddedGas(feeTokenDetails) : null
-        return {
-            saved: savedGas ? item.feeInUSDPerGas * savedGas : 0.00,
-            cashback: item.gasTankFee && item.gasTankFee.cashback ? 
-                formatUnits(item.gasTankFee.cashback.toString(), feeTokenDetails?.decimals).toString() * feeTokenDetails?.price : 0.00
-        }
-    })
     
     const totalSaved = totalSavedResult && totalSavedResult.length && 
         formatFloatTokenAmount(totalSavedResult.map(i => i.saved).reduce((a, b) => a + b), true, 2)
-    const totaCashBack = totalSavedResult && totalSavedResult.length && 
+    const totalCashBack = totalSavedResult && totalSavedResult.length && 
         formatFloatTokenAmount(totalSavedResult.map(i => i.cashback).reduce((a, b) => a + b), true, 2)
-    const { isBalanceLoading, tokens } = portfolio
+        
+    const { isBalanceLoading } = portfolio
     const sortType = userSorting.tokens?.sortType || 'decreasing'
     const isMobileScreen = useCheckMobileScreen()
-    const availableFeeAssets = feeAssetsPerNetwork?.map(item => {
-        const isFound = tokens?.find(x => x.address.toLowerCase() === item.address.toLowerCase()) 
-        if (isFound) return {
-            ...isFound,
-            tokenImageUrl: item.icon,
-            decimals: item.decimals,
-            symbol: item.symbol,
-            balance: isFound.balance,
-            balanceUSD: parseFloat(isFound.balance) * parseFloat(feeAssetsPerNetwork
-                .find(x => x.address.toLowerCase() === isFound.address.toLowerCase()).price || 0)
-        }
-
-        return { 
-            ...item, 
-            tokenImageUrl: item.icon,
-            balance: 0, 
-            balanceUSD: 0, 
-            decimals: 0, 
-            address: item.address.toLowerCase(), 
-            symbol: item.symbol.toUpperCase() 
-        }
-    })
     const [failedImg, setFailedImg] = useState([])
     const toLocaleDateTime = date => `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`
     const sortedTokens = availableFeeAssets?.sort((a, b) => b.balanceUSD - a.balanceUSD).sort((a, b) => {
@@ -228,13 +194,14 @@ const GasTank = ({ network,
                     </div>
                     <div className='inner-wrapper-right'>
                         <div className='label'>Total Cashback: </div> 
-                        <div className='amount'><span>$</span> {totaCashBack ? totaCashBack : '0.00'}</div>
+                        <div className='amount'><span>$</span> {totalCashBack ? totalCashBack : '0.00'}</div>
                     </div>
-                    <span>From gas fees on {network.id.toUpperCase()}</span>
+                    <span>From transaction fees on {network.id.toUpperCase()}</span>
                 </div>
             </div>
             <div>
-                <p>This is your special account for pre-paying gas.</p>
+                <p className='benefit'>Save over 20% of fees by enabling the gas tank</p>
+                <p>This is your special account for pre-paying transaction fees.</p>
                 <p>By filling up your Gas Tank, you are setting aside, or prepaying for network fees.</p>
                 <p>Only the tokens listed below are eligible for filling up your Gas Tank. You can add more tokens to your Gas Tank at any time.</p>
                 <p>The tokens in your Gas Tank can pay network fees on all supported networks.</p>

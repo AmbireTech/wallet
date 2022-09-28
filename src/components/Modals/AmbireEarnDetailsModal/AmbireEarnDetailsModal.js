@@ -38,12 +38,12 @@ const AmbireEarnDetailsModal = ({ title = 'Details', apy, accountId, msToDaysHou
            {isLoading ? (
            <>
                 <div className="wrapper">
-                    <div>Annual Percentage Yield (APY)</div><div>{apy}%</div>
+                    <div>Annual Percentage Yield (APY)</div><div>{apy}</div>
                 </div>
                 <div className="wrapper odd-rows-bg">
                     <div>Current Available Balance</div>
                     <div>
-                        <ToolTip label="* Warning: The pool share value may includes your pending to unlock tokens.">
+                        <ToolTip label="* Warning: The pool share value may include your pending to unlock tokens.">
                             {parseFloat(currentBalanceWalletAtCurrentShareValue).toFixed(4)} {tokenLabel} (Pool share*: {(poolShare * 100).toFixed(2)}%)
                         </ToolTip>
                     </div>
@@ -58,7 +58,7 @@ const AmbireEarnDetailsModal = ({ title = 'Details', apy, accountId, msToDaysHou
                     </ToolTip>
                 </div>
                 <div className="wrapper">
-                <ToolTip label={`Withdraws: ${parseFloat(totalWithdraws).toFixed(4)} ${tokenLabel}
+                <ToolTip label={`Withdrawals: ${parseFloat(totalWithdraws).toFixed(4)} ${tokenLabel}
                                 \nTransfers out: ${parseFloat(totalSharesOutTransfersWalletValue).toFixed(4)} ${tokenLabel} 
                                 \nRage leaves: 
                                 \nReceived ${parseFloat(rageLeavesReceivedWalletTotal).toFixed(4)} ${tokenLabel} 

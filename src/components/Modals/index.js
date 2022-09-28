@@ -11,6 +11,7 @@ import AmbireEarnDetailsModal from './AmbireEarnDetailsModal/AmbireEarnDetailsMo
 import EarnDetailsModal from './EarnDetailsModal/EarnDetailsModal'
 import AddAddressModal from './AddAddressModal/AddAddressModal'
 import CongratsRewardsModal from './CongratsRewardsModal/CongratsRewardsModal'
+import AddCustomDappModal from './AddCustomDappModal/AddCustomDappModal'
 import GasTankBalanceByTokensModal from './GasTankBalanceByTokensModal/GasTankBalanceByTokensModal'
 import GuardarianDepositProviderModal from './GuardarianDepositProviderModal/GuardarianDepositProviderModal'
 
@@ -29,5 +30,6 @@ export {
     AddAddressModal,
     CongratsRewardsModal,
     GasTankBalanceByTokensModal,
+    AddCustomDappModal,
     GuardarianDepositProviderModal
 }

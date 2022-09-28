@@ -16,6 +16,7 @@ import { AmbireEarnDetailsModal } from 'components/Modals'
 import { getTokenIcon } from 'lib/icons'
 import { BsArrowUpSquare } from "react-icons/bs"
 import walletABI from 'ambire-common/src/constants/abis/walletTokenABI.json'
+import UnbondModal from "components/Modals/WalletTokenModal/UnbondModal/UnbondModal"
 
 const ADX_TOKEN_ADDRESS = '0xade00c28244d5ce17d72e40330b1c318cd12b7c3'
 const ADX_STAKING_TOKEN_ADDRESS = '0xb6456b57f03352be48bf101b46c1752a0813491a'
@@ -26,6 +27,9 @@ const WALLET_TOKEN_ADDRESS = '0x88800092ff476844f74dc2fc427974bbee2794ae'
 const WALLET_STAKING_ADDRESS = '0x47cd7e91c3cbaaf266369fe8518345fc4fc12935'
 const ADX_LABEL = 'ADX'
 const WALLET_LABEL = 'WALLET'
+
+const WALLET_LOCK_PERIOD_IN_DAYS = 30
+const ADEX_LOCK_PERIOD_IN_DAYS = 20
 
 // polygon tests
 // const WALLET_TOKEN_ADDRESS = '0xe9415e904143e42007865e6864f7f632bd054a08'
@@ -63,14 +67,22 @@ const AmbireTokensCard = ({ networkId, accountId, tokens, rewardsData, addReques
     })
     const [selectedToken, setSelectedToken] = useState({ label: ''})
     const [adxCurrentAPY, setAdxCurrentAPY] = useState(null)
+    const [isUnbondModalVisible, setIsUnbondModalVisible] = useState(false)
+    const [isUnstakeConfirmed, setIsUnstakeConfirmed] = useState(false)
+    const [validateData, setValidateData] = useState(null)
 
+    const getLockDays = useCallback(() => {
+        if (selectedToken.label === 'WALLET') return WALLET_LOCK_PERIOD_IN_DAYS
+        else return ADEX_LOCK_PERIOD_IN_DAYS
+    }, [selectedToken.label])
+    
     const unavailable = networkId !== 'ethereum'
     const networkDetails = networks.find(({ id }) => id === networkId)
     const addRequestTxn = useCallback((id, txn, extraGas = 0) =>
         addRequest({ id, type: 'eth_sendTransaction', chainId: networkDetails.chainId, account: accountId, txn, extraGas })
     , [networkDetails.chainId, accountId, addRequest])
-    
-    const walletTokenAPY = !rewardsData.isLoading && rewardsData.data ? (rewardsData.data?.xWALLETAPY * 100).toFixed(2) : 0
+
+    const { xWALLETAPYPercentage } = rewardsData.rewards;
 
     const walletToken = useMemo(() => tokens.find(({ address }) => address === WALLET_TOKEN_ADDRESS), [tokens])
     const xWalletToken = useMemo(() => tokens.find(({ address }) => address === WALLET_STAKING_ADDRESS), [tokens])
@@ -166,7 +178,7 @@ const AmbireTokensCard = ({ networkId, accountId, tokens, rewardsData, addReques
                 </>
             )
         }
-        const apyTooltipMsg = `Annual Percentage Yield: IN ADDITION to what you earn in ${selectedToken.label}s`
+        const apyTooltipMsg = `Annual Percentage Yield${selectedToken.label === 'WALLET' ? `: IN ADDITION to what you earn in ${selectedToken.label}s` : ''}`
         setDetails([
             [
                 <>
@@ -174,12 +186,12 @@ const AmbireTokensCard = ({ networkId, accountId, tokens, rewardsData, addReques
                         <div>APY&nbsp;<MdInfo/></div>
                     </ToolTip>
                 </>,
-                isAdxTokenSelected() ? adxCurrentAPY ? `${adxCurrentAPY.toFixed(2)}%` : '...' : rewardsData.isLoading ? `...` : `${walletTokenAPY}%`
+                isAdxTokenSelected() ? adxCurrentAPY ? `${adxCurrentAPY.toFixed(2)}%` : '...' : rewardsData.isLoading ? `...` : xWALLETAPYPercentage
             ],
-            ['Lock', '20 day unbond period'],
+            ['Lock', `${getLockDays()} day unbond period`],
             ['Type', 'Variable Rate'],
         ])
-    }, [adxCurrentAPY, isAdxTokenSelected, leaveLog, lockedRemainingTime, onWithdraw, rewardsData.isLoading, selectedToken.label, tokensItems, walletTokenAPY])
+    }, [getLockDays, adxCurrentAPY, isAdxTokenSelected, leaveLog, lockedRemainingTime, onWithdraw, rewardsData.isLoading, selectedToken.label, tokensItems, xWALLETAPYPercentage])
 
     // NOTE: tokenAddress is unused because we have two tokens in this card, and we set everything in addresses
     const onValidate = async (type, _tokenAddress, amount, isMaxAmount) => {
@@ -204,22 +216,36 @@ const AmbireTokensCard = ({ networkId, accountId, tokens, rewardsData, addReques
         }
 
         if (type === 'Withdraw') {
-            let xWalletAmount
-            // In case of withdrawing the max amount of xWallet tokens, get the latest balance of xWallet.
-            // Otherwise, `stakingTokenBalanceRaw` may be outdated.
-            if (isMaxAmount) {
-                xWalletAmount = await stakingTokenContract.balanceOf(accountId)
-            } else {
-                xWalletAmount = bigNumberAmount.mul(BigNumber.from((1e18).toString())).div(shareValue)
-            }
-
-            addRequestTxn(`leave_staking_pool_${Date.now()}`, {
-                to: addresses.stakingTokenAddress,
-                value: '0x0',
-                data: addresses.stakingPoolInterface.encodeFunctionData('leave', [xWalletAmount.toHexString(), false])
-            })
+            setIsUnbondModalVisible(true)
+            setValidateData({bigNumberAmount, type, _tokenAddress, amount, isMaxAmount})
         }
     }
+
+    const handleUnstake = useCallback(async ({bigNumberAmount, isMaxAmount}) => {
+        let xWalletAmount
+        // In case of withdrawing the max amount of xWallet tokens, get the latest balance of xWallet.
+        // Otherwise, `stakingTokenBalanceRaw` may be outdated.
+        if (isMaxAmount) {
+            xWalletAmount = await stakingTokenContract.balanceOf(accountId)
+        } else {
+            xWalletAmount = bigNumberAmount.mul(BigNumber.from((1e18).toString())).div(shareValue)
+        }
+
+        addRequestTxn(`leave_staking_pool_${Date.now()}`, {
+            to: addresses.stakingTokenAddress,
+            value: '0x0',
+            data: addresses.stakingPoolInterface.encodeFunctionData('leave', [xWalletAmount.toHexString(), false])
+        })
+    }, [accountId, addRequestTxn, addresses, shareValue, stakingTokenContract])
+
+    useEffect(() => {
+        if (isUnstakeConfirmed && validateData != null) {
+            handleUnstake(validateData)
+            setIsUnbondModalVisible(false)
+            setIsUnstakeConfirmed(false)
+            setValidateData(null)
+        }
+    }, [isUnstakeConfirmed, handleUnstake, validateData])
 
     useEffect(() => {
         async function init() {
@@ -389,23 +415,31 @@ const AmbireTokensCard = ({ networkId, accountId, tokens, rewardsData, addReques
     useEffect(() => setLoading(false), [])
 
     return (
-        <Card
-            loading={loading || (!stakingTokenBalanceRaw && !unavailable)}
-            icon={AMBIRE_ICON}
-            unavailable={unavailable}
-            tokensItems={tokensItems}
-            details={details}
-            customInfo={customInfo}
-            onTokenSelect={onTokenSelect}
-            onValidate={onValidate}
-            moreDetails={!unavailable && <AmbireEarnDetailsModal 
-                apy={isAdxTokenSelected()? adxCurrentAPY ? `${adxCurrentAPY.toFixed(2)}%` : '...' : walletTokenAPY}
-                accountId={accountId}
-                msToDaysHours={msToDaysHours}
-                addresses={addresses}
-                tokenLabel={selectedToken.label}
-            />}
-        />
+        <>
+            <UnbondModal 
+                isVisible={isUnbondModalVisible} 
+                hideModal={() => setIsUnbondModalVisible(false)} 
+                text={`There is a ${getLockDays()}-day lockup period for the tokens you are requesting to unbond. You will not be earning staking rewards on these tokens during these ${getLockDays()} days!`}
+                onClick={() => setIsUnstakeConfirmed(true)}
+            />
+            <Card
+                loading={loading || (!stakingTokenBalanceRaw && !unavailable)}
+                icon={AMBIRE_ICON}
+                unavailable={unavailable}
+                tokensItems={tokensItems}
+                details={details}
+                customInfo={customInfo}
+                onTokenSelect={onTokenSelect}
+                onValidate={onValidate}
+                moreDetails={!unavailable && <AmbireEarnDetailsModal 
+                    apy={isAdxTokenSelected()? adxCurrentAPY ? `${adxCurrentAPY.toFixed(2)}%` : '...' : xWALLETAPYPercentage}
+                    accountId={accountId}
+                    msToDaysHours={msToDaysHours}
+                    addresses={addresses}
+                    tokenLabel={selectedToken.label}
+                />}
+            />
+        </>
     )
 }
 

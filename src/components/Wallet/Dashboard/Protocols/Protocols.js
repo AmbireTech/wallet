@@ -5,7 +5,7 @@ import { AiOutlineSend } from 'react-icons/ai'
 import { NavLink } from 'react-router-dom'
 import { Button, Loading } from 'components/common'
 import ProtocolsPlaceholder from './ProtocolsPlaceholder/ProtocolsPlaceholder'
-import { useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { MdOutlineAdd, MdVisibilityOff, MdDragIndicator, MdOutlineSort } from 'react-icons/md'
 import { AddTokenModal } from 'components/Modals'
 import { useModals, useDragAndDrop, useCheckMobileScreen } from 'hooks'
@@ -18,6 +18,7 @@ const Protocols = ({ portfolio, network, account, hidePrivateValue, userSorting,
     const { showModal } = useModals()
 
     const [failedImg, setFailedImg] = useState([])
+    const [isHideTokenModalOpen, setIsHideTokenModalOpen] = useState(false)
     const { isCurrNetworkBalanceLoading, isCurrNetworkProtocolsLoading, tokens, protocols } = portfolio
 
     const sortType = userSorting.tokens?.sortType || 'decreasing'
@@ -114,9 +115,23 @@ const Protocols = ({ portfolio, network, account, hidePrivateValue, userSorting,
             }
         </div>)}
 
-    const openAddTokenModal = () => showModal(<AddTokenModal network={network} account={account} portfolio={portfolio} />)
-    const openHideTokenModal = () => showModal(<HideTokenModel network={network} account={account} portfolio={portfolio} />)
+    const openAddTokenModal = useCallback(() => showModal(<AddTokenModal network={network} account={account} portfolio={portfolio} />), [account, network, portfolio, showModal])
+    const openHideTokenModal = useCallback(() => setIsHideTokenModalOpen(true), [])
 
+    useEffect(() => {
+        if(isHideTokenModalOpen) {
+            showModal(
+                <HideTokenModel 
+                    portfolio={portfolio} 
+                    account={account} 
+                    userSorting={userSorting}
+                    sortType={sortType}
+                    network={network} 
+                    setIsHideTokenModalOpen={setIsHideTokenModalOpen} 
+                />
+            )
+        }
+    }, [portfolio, isHideTokenModalOpen, showModal, account, network, sortType, userSorting])
 
     return (
         <div id="protocols-table">

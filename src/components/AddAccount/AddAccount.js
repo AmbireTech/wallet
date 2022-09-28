@@ -3,7 +3,7 @@ import './AddAccount.scss'
 import { useState, useEffect, useCallback } from 'react'
 import { Link } from 'react-router-dom'
 import LoginOrSignup from 'components/LoginOrSignupForm/LoginOrSignupForm'
-import TrezorConnect from 'trezor-connect'
+import TrezorConnect from '@trezor/connect-web'
 import { TrezorSubprovider } from '@0x/subproviders/lib/src/subproviders/trezor' // https://github.com/0xProject/0x-monorepo/issues/1400
 import { LedgerSubprovider } from '@0x/subproviders/lib/src/subproviders/ledger' // https://github.com/0xProject/0x-monorepo/issues/1400
 import { ledgerEthereumBrowserClientFactoryAsync } from '@0x/subproviders/lib/src' // https://github.com/0xProject/0x-monorepo/issues/1400
@@ -29,7 +29,7 @@ TrezorConnect.manifest({
   appUrl: 'https://www.ambire.com'
 })
 
-export default function AddAccount({ relayerURL, onAddAccount, utmTracking }) {
+export default function AddAccount({ relayerURL, onAddAccount, utmTracking, pluginData }) {
   const [signersToChoose, setChooseSigners] = useState(null)
   const [err, setErr] = useState('')
   const [addAccErr, setAddAccErr] = useState('')
@@ -404,7 +404,13 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking }) {
   }
   //TODO: Would be great to create Ambire spinners(like 1inch but simpler) (I can have a look at them if you need)
   return (<div className="loginSignupWrapper">
-      <div id="logo"/>
+      <div id="logo" {...(pluginData ? {style: {backgroundImage: `url(${pluginData.iconUrl})` }} : {})}/>
+      {pluginData && 
+      <div id="plugin-info">
+        <div className="name">{pluginData.name}</div>
+        <div>{pluginData.description}</div>
+      </div>
+      }
       <section id="addAccount">
         <div id="loginEmail">
           <h3>Create a new account</h3>
