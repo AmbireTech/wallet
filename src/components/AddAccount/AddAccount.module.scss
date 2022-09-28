@@ -4,13 +4,13 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
-    gap: 3em;
+    gap: 50px;
     background: url('/resources/login-bg.png');
     background-size: cover;
     background-position: top center;
     background-repeat: no-repeat;
     min-height: 100%;
-    padding: 2em 0;
+    padding: 40px 0;
     overflow: hidden;
 
     h3 {
@@ -129,8 +129,8 @@
         flex: 0.9;
     }
 
-    .loginEmail form > *, .loginEmail button,
-    .addAccount form > *, .addAccount button {
+    .loginEmail form > :not(label), .loginEmail button,
+    .addAccount form > :not(label), .addAccount button {
         /* TODO */
         display: block;
     }
@@ -250,10 +250,9 @@
             gap: 2em;
 
             .loginSeparator {
-
-                height: 100%;
-                width: 2px;
-                background-color: red;
+                margin: 0;
+                width: 100%;
+                height: 2px;
             }
         }
     }
