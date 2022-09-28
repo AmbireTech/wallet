@@ -9,8 +9,8 @@ on:
       - development
 
 jobs:
-  build-staging:
-    name: Build
+  build:
+    name: Build-staging
     runs-on: ubuntu-latest
     steps:
     - name: Checkout code
@@ -51,8 +51,8 @@ jobs:
         publish_dir: ./build
         destination_dir: ./staging
         cname: wallet.ambire.com
-  build-relayerless:
-    name: Build
+  build:
+    name: Build-Relayrless
     runs-on: ubuntu-latest
     steps:
     - name: Checkout code
