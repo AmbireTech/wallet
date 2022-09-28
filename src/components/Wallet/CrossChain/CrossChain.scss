@@ -7,6 +7,10 @@
 
     .buttonComponent {
         flex: 0 0 auto;
+        max-width: 400px;
+        width: 100%;
+        margin: 0 auto;
+        margin-top: 75px;
     }
 
     .amount-label {

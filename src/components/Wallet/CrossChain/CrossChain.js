@@ -247,7 +247,7 @@ const CrossChain = ({ addRequest, selectedAccount, portfolio, network, relayerUR
                                                         <Select searchable defaultValue={toChain} items={chainsItems} onChange={({ value }) => setToChain(value)}/>
                                                         <Select searchable defaultValue={toToken} items={toTokenItems} onChange={({ value }) => setToToken(value)}/>
                                                     </div>
-                                                    <Button className='buttonComponent' disabled={formDisabled} onClick={getQuotes}>Get Quotes</Button>
+                                                    <Button primaryGradient={true} className='buttonComponent' disabled={formDisabled} onClick={getQuotes}>Get Quotes</Button>
                                                 </div>
                 }
             </div>
