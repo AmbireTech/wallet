@@ -1,6 +1,6 @@
 @import 'variables.scss';
 
-$toggle-height: 25px;
+$toggle-height: 14px;
 $slider-margin: 8px;
 $slider-size: calc(#{$toggle-height} - #{$slider-margin});
 
@@ -8,7 +8,7 @@ $slider-size: calc(#{$toggle-height} - #{$slider-margin});
     flex: 0 0 auto;
     position: relative;
     display: inline-block;
-    width: 50px;
+    width: 35px;
     height: $toggle-height;
 
     input {
@@ -25,27 +25,30 @@ $slider-size: calc(#{$toggle-height} - #{$slider-margin});
         right: 0;
         bottom: 0;
         border-radius: $toggle-height;
-        background-color: rgba(255, 255, 255, 0.1);
+        background-color: #6770b3;
         transition: .4s;
 
         &:before {
             position: absolute;
             content: "";
-            height: $slider-size;
-            width: $slider-size;
-            top: calc(#{$slider-margin} / 2);
-            left: calc(#{$slider-margin} / 2);
+            height: 20px;
+            width: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            box-shadow: 0px 0px 5px 10px #000;
+            left: 0;
             border-radius: 50%;
-            background-color: white;
+            background-color: #6770b3;
             transition: .4s;
         }
     }
 
     input:checked + .slider {
-        background-color: $secondary-accent-color;
+        background-color: #27E8A761;
     }
 
     input:checked + .slider:before {
-        transform: translateX(calc(#{$slider-size} + #{$slider-margin}));
+        left: calc(100% - 20px);// Circle width
+        background-color: #27e8a7;
     }
 }
