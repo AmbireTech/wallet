@@ -256,7 +256,7 @@ const GasTank = ({
                         feeAssetsPerNetwork
                     }
                 }}>
-                    <Button className='deposit-button buttonComponent' small>Top up Gas Tank</Button>
+                    <Button primaryGradient={true} className='deposit-button buttonComponent' small>Top up Gas Tank</Button>
                 </NavLink>
             </div>
             <span className='title'>Gas Tank top ups history on {network.id.toUpperCase()}</span>

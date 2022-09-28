@@ -216,8 +216,10 @@
     }
 
     .deposit-button {
+        max-width: 400px;
         width: 100%;
-        margin: 20px 0;
+        height: 60px;
+        margin: 20px auto;
     }
 
     .title {
