@@ -9,7 +9,7 @@ on:
       - development
 
 jobs:
-  build-staging:
+  build:
     name: Build-staging
     runs-on: ubuntu-latest
     steps:
@@ -34,7 +34,7 @@ jobs:
         path: ./build
   deploy-staging:
     name: Deploy staging
-    needs: build-staging
+    needs: build
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/development'
     steps:
@@ -50,58 +50,4 @@ jobs:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         publish_dir: ./build
         destination_dir: ./staging
-        cname: wallet.ambire.com
-  build-relayrless:
-    name: Build-Relayrless
-    runs-on: ubuntu-latest
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
-    
-    - name: Install Node.js
-      env:
-        REACT_APP_RELAYRLESS: true
-      uses: actions/setup-node@v1
-      with:
-        node-version: 16.x
-    
-    - name: Install NPM packages
-      env:
-        REACT_APP_RELAYRLESS: true
-      run: npm ci
-    
-    - name: Build project
-      env:
-          REACT_APP_RELAYRLESS: true
-      run: npm run build
-    
-    - name: Upload production-ready build files
-      uses: actions/upload-artifact@v2
-      env:
-        REACT_APP_RELAYRLESS: true
-      with:
-        name: production-files
-        path: ./build-relayerless
-  deploy-relayerless:
-    name: Deploy relayerless
-    needs: build-relayrless
-    runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/relayerless'
-    steps:
-    - name: Download artifact
-      env:
-          REACT_APP_RELAYRLESS: true
-      uses: actions/download-artifact@v2
-      with:
-        name: production-files
-        path: ./build-relayerless
-
-    - name: Deploy to gh-pages
-      env:
-        REACT_APP_RELAYRLESS: true
-      uses: peaceiris/actions-gh-pages@v3
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./build-relayerless
-        destination_dir: ./relayerless
         cname: wallet.ambire.com
