@@ -277,8 +277,7 @@ const AmbireTokensCard = ({ networkId, accountId, tokens, rewardsData, addReques
                     tokenAbi
                 })
                 
-                const [timeToUnbond, shareValue, sharesTotalSupply, stakingTokenBalanceRaw] = await Promise.all([
-                    stakingTokenContract.timeToUnbond(),
+                const [shareValue, sharesTotalSupply, stakingTokenBalanceRaw] = await Promise.all([
                     stakingTokenContract.shareValue(),
                     stakingTokenContract.totalSupply(),
                     stakingTokenContract.balanceOf(accountId),
@@ -396,11 +395,9 @@ const AmbireTokensCard = ({ networkId, accountId, tokens, rewardsData, addReques
                     })
                 
                     const { timestamp } = await provider.getBlock(blockNumber)
-                    let remainingTimeTest = leaveLog ? (leaveLog.unlocksAt.toString()) - (Date.now() - (timestamp * 1000)) : null
-                    console.log('unlockAt', remainingTimeTest)
-                    let remainingTime = (timeToUnbond.toString() * 1000) - (Date.now() - (timestamp * 1000))
+                    let remainingTime = leaveLog ? (leaveLog.unlocksAt.toString()) - (Date.now() - (timestamp * 1000)) : null
                     if (remainingTime <= 0) remainingTime = 0
-                    setLockedRemainingTime(remainingTimeTest)    
+                    setLockedRemainingTime(remainingTime)    
                 } else {
                     setLeaveLog(null)
                 }
