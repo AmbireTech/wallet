@@ -1,9 +1,9 @@
 import './Providers.scss'
 
-import RAMP_LOGO from 'resources/ramp.svg';
-import PAYTRIE_LOGO from 'resources/paytrie.svg';
-import TRANSAK_LOGO from 'resources/transak.svg';
-import KRIPTOMAT_LOGO from 'resources/kriptomat.svg';
+import RAMP_LOGO from 'resources/ramp.svg'
+import PAYTRIE_LOGO from 'resources/paytrie.svg'
+import TRANSAK_LOGO from 'resources/transak.svg'
+import KRIPTOMAT_LOGO from 'resources/kriptomat.svg'
 import GUARDARIAN_LOGO from 'resources/guardarian.svg'
 
 import { Loading } from 'components/common'
@@ -63,11 +63,12 @@ export default function Providers({ walletAddress, networkDetails, relayerURL, p
             networks: ['ethereum', 'polygon', 'avalanche', 'arbitrum', 'binance-smart-chain', 'moonriver', 'moonbeam', 'optimism'],
             onClick: () => openTransak()
         }
-    ];
+    ]
 
     const shouldBeDisabled = (networks) => {
-        return networks.includes(networkDetails.id) ? null : 'disabled'; 
-    };
+        return networks.includes(networkDetails.id) ? null : 'disabled'
+    }
+    const isNoteVisible = () => providers.find(i => !i.networks.includes(networkDetails.id))
 
     return (
         <div id="providers">
@@ -98,12 +99,10 @@ export default function Providers({ walletAddress, networkDetails, relayerURL, p
                 )
             }
             {
-                networkDetails.id !== 'ethereum' ? 
+                !!isNoteVisible() && 
                     <div id="network-warning">
                         <b>NOTE:</b> Some deposit methods are unavailable on <b>{networkDetails.name}</b>. Switch to Ethereum for the widest support.
                     </div>
-                    :
-                    null
             }
         </div>
     )
