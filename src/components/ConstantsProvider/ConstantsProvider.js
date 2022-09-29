@@ -6,15 +6,20 @@ import { createContext, useMemo } from 'react'
 const ConstantsContext = createContext({
   constants: null,
   isLoading: true,
-  retryFetch: () => {}
+  retryFetch: () => {},
+  getAdexToStakingTransfersLogs: () => Promise.resolve(null)
 })
 
 export default function ConstantsProvider({
   children,
 }) {
-  const { constants, isLoading, retryFetch, hasError } = useConstants({ fetch, endpoint: process.env.REACT_APP_CONSTANTS_ENDPOINT })
+  const { constants, getAdexToStakingTransfersLogs, isLoading, retryFetch, hasError } =
+    useConstants({ fetch, endpoint: process.env.REACT_APP_CONSTANTS_ENDPOINT })
 
-  const ConstantsProviderValue = useMemo(() => ({ constants, retryFetch, isLoading }), [constants, retryFetch, isLoading])
+  const ConstantsProviderValue = useMemo(() =>
+    ({ constants, getAdexToStakingTransfersLogs, retryFetch, isLoading }),
+    [constants, getAdexToStakingTransfersLogs, retryFetch, isLoading]
+  )
 
   return (
     <ConstantsContext.Provider value={ConstantsProviderValue}>

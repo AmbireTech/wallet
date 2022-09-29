@@ -9,13 +9,8 @@ import { Loading } from 'components/common'
 import useConstants from 'hooks/useConstants'
 
 const AmbireEarnDetailsModal = ({ title = 'Details', apy, accountId, msToDaysHours, addresses, tokenLabel }) => {
-    const { constants: { adexToStakingTransfers } } = useConstants()
     const { hideModal } = useModals()
-    
-    const { 
-        details,
-        isLoading
-    } = useAmbireEarnDetails({accountId, addresses, tokenLabel, adexToStakingTransfers})
+    const { details, isLoading } = useAmbireEarnDetails({ accountId, addresses, tokenLabel })
 
     const { 
         poolShare, 
