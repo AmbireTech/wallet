@@ -9,7 +9,7 @@
   display: inline-flex;
   margin-left: auto;
   gap: 12px;
-  color: #FFFFFF;
+  color: $text-color;
 
   .gas-price {
     cursor: pointer;
@@ -21,12 +21,12 @@
 
   .native-price {
     padding-right: 12px;
-    border-right: 1px solid #27E8A7;
+    border-right: 1px solid $c-turquoise;
   }
 
   span svg {
     width: 15px;
-    color: #27E8A7;
+    color: $c-turquoise;
   }
 }
 
@@ -47,7 +47,7 @@
       padding-right: 12px;
       border-right: 0;
       padding-bottom: 4px;
-      border-bottom: 1px solid #27E8A7;
+      border-bottom: 1px solid $c-turquoise;
     }
 
     .gas-price {
@@ -72,7 +72,7 @@
       padding-top: 0;
       padding-bottom: 0;
       border-bottom: 0;
-      border-right: 1px solid #27E8A7;
+      border-right: 1px solid $c-turquoise;
     }
 
     .gas-price {
