@@ -178,7 +178,7 @@ const AmbireTokensCard = ({ networkId, accountId, tokens, rewardsData, addReques
                 </>
             )
         }
-        const apyTooltipMsg = `Annual Percentage Yield: IN ADDITION to what you earn in ${selectedToken.label}s`
+        const apyTooltipMsg = `Annual Percentage Yield${selectedToken.label === 'WALLET' ? `: IN ADDITION to what you earn in ${selectedToken.label}s` : ''}`
         setDetails([
             [
                 <>

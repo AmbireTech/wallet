@@ -2,24 +2,15 @@ import './AssetsMigration.scss'
 import { ethers } from 'ethers'
 import { useCallback, useEffect, useState } from 'react'
 import { getWallet } from 'lib/getWallet'
-import { getProvider } from 'lib/provider'
-import { Contract } from 'ethers'
 import { FaCheck, FaHourglass } from 'react-icons/fa'
 import Button from 'components/common/Button/Button'
 
-import {
-  PERMITTABLE_COINS,
-  PERMIT_TYPE_DAI,
-  ERC20PermittableInterface,
-  EIP712DomainWithSalt
-} from 'consts/permittableCoins'
 import { GiToken } from 'react-icons/gi'
 import { MdOutlineNavigateBefore, MdOutlineNavigateNext } from 'react-icons/md'
 import { ZERO_ADDRESS } from 'consts/specialAddresses'
 import { fetchGet } from 'lib/fetch'
 import BigNumber from 'bignumber.js'
-
-const MAX_INT = '0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff'
+import { ERC20PermittableInterface } from 'consts/permittableCoins'
 
 const AssetsMigrationPermitter = ({
                                     addRequest,
@@ -89,7 +80,8 @@ const AssetsMigrationPermitter = ({
       .then(connected => {
         setHasCorrectAccountAndChainId(connected)
         if (!connected) {
-          setError(<>Please make sure your signer wallet is unlocked, and connected with <b>{signer.address}</b> to the correct chain: <b>{network.id}</b></>)
+          setError(<>Please make sure your signer wallet is unlocked, and connected with <b>{signer.address}</b> to the
+            correct chain: <b>{network.id}</b></>)
           return false
         }
         return true
@@ -104,172 +96,12 @@ const AssetsMigrationPermitter = ({
   const readyTokensCount = useCallback(() => {
     let count = 0
     getConsolidatedTokensPure(selectedTokensWithAllowance, tokensPermissions, tokensTransfers, []).forEach(t => {
-      if (t.permittable && t.signature) {
-        count++
-      } else if (t.sent) {
+      if (t.sent) {
         count++
       }
     })
     return count
   }, [selectedTokensWithAllowance, tokensPermissions, tokensTransfers])
-
-
-  //Offline signing MM prompt
-  const permitToken = useCallback(async (address) => {
-    const permittableToken = PERMITTABLE_COINS[network.chainId].find(a => a.address.toLowerCase() === address.toLowerCase())
-    if (permittableToken) {
-
-      const index = selectedTokensWithAllowance.findIndex(a => a.address === address)
-
-      if (index !== -1) {
-
-        const tokenToMigrate = selectedTokensWithAllowance[index]
-
-        //get ERC20 permittable nonce
-        const provider = getProvider(network.id)
-        const tokenContract = new Contract(address, ERC20PermittableInterface, provider)
-
-
-        const nonce = (await (
-          permittableToken.nonceFunction
-            ? tokenContract[permittableToken.nonceFunction](signer.address)
-            : tokenContract.nonces(signer.address)
-        )).toString()
-
-        //and name, for domain
-        const tokenName = await tokenContract.name()
-
-        //the quantity to permit
-        const value = tokenToMigrate.amount
-
-        let ERC2612PermitMessage = {
-          owner: signer.address,
-          spender: identityAccount,
-          value,
-          nonce: nonce,
-          deadline: MAX_INT,
-        }
-
-        //DAI reformatting
-        if (permittableToken.permitType === PERMIT_TYPE_DAI) {
-          ERC2612PermitMessage.allowed = true
-          delete ERC2612PermitMessage.value
-
-          ERC2612PermitMessage.holder = ERC2612PermitMessage.owner
-          delete ERC2612PermitMessage.owner
-
-          ERC2612PermitMessage.expiry = ERC2612PermitMessage.deadline
-          delete ERC2612PermitMessage.deadline
-        }
-
-        let domain = {
-          chainId: network.chainId,
-          verifyingContract: address,
-        }
-
-        if (permittableToken.name) {
-          domain.name = tokenName
-        }
-
-        if (permittableToken.version) {
-          domain.version = permittableToken.version
-        }
-
-        if (permittableToken.salt) {
-          domain.salt = permittableToken.salt
-        }
-
-        if (permittableToken.domainType === EIP712DomainWithSalt) {
-          delete domain.chainId
-        }
-
-        //UI pending status
-        setTokensPendingStatus(old => {
-          old[address] = true
-          return { ...old }
-        })
-
-        //sign
-        const result = await wallet._signTypedData(domain, { 'Permit': permittableToken.permitType }, ERC2612PermitMessage)
-          .catch(err => {
-            if (err?.code === 4001) {//User rejection
-              setTokensPermissions(old => {
-                old[address] = {
-                  ...old[address],
-                  signing: false,
-                  signature: null
-                }
-                return { ...old }
-              })
-              setHasRefusedOnce(true)
-            } else if (err?.code === -32603) {//bad network
-              if (err.message.includes('Not supported on this device')) {
-                setError('Your signer wallet does not support 712 signatures')
-              } else if (err.message.includes('must match the active chainId')) {
-                setError('Please connect your signser wallet to the correct network: ' + network.id)
-              } else {
-                setError(err.message)
-              }
-            } else {
-              setError(err.message)
-            }
-            setTokensPendingStatus(old => {
-              old[address] = false
-              return { ...old }
-            })
-          })
-
-        if (!result) return false
-
-        const rsv = {
-          r: result.slice(0, 66),
-          s: '0x' + result.slice(66, 130),
-          v: parseInt(result.slice(130, 132), 16),
-        }
-
-        let txData
-        if (permittableToken.permitType === PERMIT_TYPE_DAI) {
-          txData = ERC20PermittableInterface.encodeFunctionData('permit(address holder, address spender, uint256 nonce, uint256 expiry, bool allowed, uint8 v, bytes32 r, bytes32 s)', [
-            ERC2612PermitMessage.holder,
-            ERC2612PermitMessage.spender,
-            nonce,
-            ERC2612PermitMessage.expiry,
-            ERC2612PermitMessage.allowed,
-            rsv.v,
-            rsv.r,
-            rsv.s,
-          ])
-        } else {
-          txData = ERC20PermittableInterface.encodeFunctionData('permit(address owner, address spender, uint256 value, uint256 deadline, uint8 v, bytes32 r, bytes32 s)', [
-            ERC2612PermitMessage.owner,
-            ERC2612PermitMessage.spender,
-            value,
-            ERC2612PermitMessage.deadline,
-            rsv.v,
-            rsv.r,
-            rsv.s,
-          ])
-        }
-
-        //saving permit hexData for later transaction building
-        setTokensPermissions(old => {
-          old[address] = {
-            ...old[address],
-            signing: true,
-            signature: txData
-          }
-          return { ...old }
-        })
-
-        setTokensPendingStatus(old => {
-          old[address] = false
-          return { ...old }
-        })
-
-        return true
-      }//end if index found
-    }//end if is permittable
-  }, [network, selectedTokensWithAllowance, signer, identityAccount, setError, wallet])
 
   //Send MM prompt
   const sendToken = useCallback(async (address, waitForRcpt = false) => {
@@ -368,48 +200,10 @@ const AssetsMigrationPermitter = ({
 
   //batch transactions
   const completeMigration = useCallback(() => {
-
-    getConsolidatedTokensPure(selectedTokensWithAllowance, tokensPermissions, tokensTransfers, tokensPendingStatus).forEach(t => {
-
-      if (!t.permittable) return
-
-      if (!(t.allowance && ethers.BigNumber.from(t.allowance).gte(t.amount))) {
-        addRequest({
-          id: 'req-' + Math.random(),
-          chainId: network.chainId,
-          account: identityAccount,
-          type: 'eth_sendTransaction',
-          txn: {
-            to: t.address,
-            value: '0x0',
-            data: t.signature
-          }
-        })
-      }
-
-      const transferData = ERC20PermittableInterface.encodeFunctionData('transferFrom', [
-        signer.address,
-        identityAccount,
-        t.amount
-      ])
-
-      addRequest({
-        id: 'req-' + Math.random(),
-        chainId: network.chainId,
-        account: identityAccount,
-        type: 'eth_sendTransaction',
-        txn: {
-          to: t.address,
-          value: '0x0',
-          data: transferData
-        }
-      })
-    })
-
     //reset assets migration status
     cancelMigration()
     hideModal()
-  }, [addRequest, cancelMigration, hideModal, identityAccount, network, selectedTokensWithAllowance, signer, tokensTransfers, tokensPendingStatus, tokensPermissions])
+  }, [cancelMigration, hideModal])
 
   useEffect(() => {
     setWallet(getWallet({
@@ -451,23 +245,18 @@ const AssetsMigrationPermitter = ({
       return {
         address: t.address,
         signed: t.signing,
-        permittable: t.permittable
       }
     })
 
     const nextTokenToAsk = tokensWithPermission.find(a => a.signed === null)
 
     if (nextTokenToAsk) {
-      if (nextTokenToAsk.permittable) {
-        permitToken(nextTokenToAsk.address)
-      } else {
-        //avoid MM popup losing focus when immediately running the next action
-        setTimeout(() => {
-          sendToken(nextTokenToAsk.address, true)
-        }, 150)
-      }
+      //avoid MM popup losing focus when immediately running the next action
+      setTimeout(() => {
+        sendToken(nextTokenToAsk.address, true)
+      }, 150)
     }
-  }, [selectedTokensWithAllowance, permitToken, sendToken, tokensPermissions, tokensTransfers, hasCorrectAccountAndChainId, currentGasPrice])
+  }, [selectedTokensWithAllowance, sendToken, tokensPermissions, tokensTransfers, hasCorrectAccountAndChainId, currentGasPrice])
 
   useEffect(() => {
     if (!selectedTokensWithAllowance.length) return
@@ -480,7 +269,7 @@ const AssetsMigrationPermitter = ({
 
   useEffect(() => {
     if (hasRefusedOnce) {
-      setError('Every asset below needs to be sent or permitted to complete the migration' + (lastRefusalError ? ' (' + lastRefusalError + ')' : ''))
+      setError('Every asset below needs to be sent to complete the migration' + (lastRefusalError ? ' (' + lastRefusalError + ')' : ''))
     }
   }, [hasRefusedOnce, setError, lastRefusalError])
 
@@ -502,35 +291,18 @@ const AssetsMigrationPermitter = ({
           onClick={() => cancelMigration()}
         >Back</Button>
         {
-          selectedTokensWithAllowance.find(t => t.permittable)
-            ? (
-              readyTokensCount() === getConsolidatedTokensPure(selectedTokensWithAllowance).length
-                ?
-                <Button
-                  className={'primary'}
-                  icon={<MdOutlineNavigateNext/>}
-                  onClick={() => completeMigration()}
-                >Move tokens</Button>
-                :
-                <Button
-                  className={'primary disabled'}
-                  icon={<MdOutlineNavigateNext/>}
-                >Move tokens</Button>
-            )
-            : (
-              readyTokensCount() === getConsolidatedTokensPure(selectedTokensWithAllowance).length
-                ?
-                <Button
-                  className={'primary'}
-                  icon={<MdOutlineNavigateNext/>}
-                  onClick={() => hideModal()}
-                >Close</Button>
-                :
-                <Button
-                  className={'primary disabled'}
-                  icon={<MdOutlineNavigateNext/>}
-                >Complete</Button>
-            )
+          readyTokensCount() === getConsolidatedTokensPure(selectedTokensWithAllowance).length
+            ?
+            <Button
+              className={'primary'}
+              icon={<MdOutlineNavigateNext/>}
+              onClick={() => hideModal()}
+            >Close</Button>
+            :
+            <Button
+              className={'primary disabled'}
+              icon={<MdOutlineNavigateNext/>}
+            >Complete</Button>
         }
       </>
     )
@@ -545,11 +317,7 @@ const AssetsMigrationPermitter = ({
           ? <div
             className='small-asset-notification mb-3 warning'>{`${getConsolidatedTokensPure(selectedTokensWithAllowance).length - readyTokensCount()} actions left to complete the migration`}</div>
           : <div className='small-asset-notification mb-3 success'>
-            {
-              selectedTokensWithAllowance.find(t => t.permittable)
-                ? 'Your tokens are ready to be migrated'
-                : 'Your tokens were migrated. You can close this window'
-            }
+            Your tokens were migrated. You can close this window
           </div>
       }
       {getConsolidatedTokensPure(selectedTokensWithAllowance, tokensPermissions, tokensTransfers, tokensPendingStatus).map((item, index) => (
@@ -578,28 +346,13 @@ const AssetsMigrationPermitter = ({
             {!((item.allowance && ethers.BigNumber.from(item.allowance).gte(item.amount)) || item.sent)
               ?
               <>
-                {item.permittable
-                  ? (
-                    <>
-                      {!item.signature && !item.pending && <button className={'buttonComponent button-small secondary'}
-                                                                   onClick={() => permitToken(item.address)}>Permit</button>}
-                      {!item.signature && item.pending &&
-                        <div className={'migration-permitted warning'}><FaHourglass/> Permitting...</div>}
-                      {item.signature && <div className={'migration-permitted'}><FaCheck/> Permitted</div>}
-                    </>
-                  )
-                  : (
-                    <>
-                      {(item.pending || item.signing)
-                        ? <div className={'migration-permitted warning'}><FaHourglass/> Sending...</div>
-                        :
-                        <Button className={'button-small secondary'}
-                                onClick={() => sendToken(item.address)}>
-                          Send
-                        </Button>
-                      }
-                    </>
-                  )
+                {(item.pending || item.signing)
+                  ? <div className={'migration-permitted warning'}><FaHourglass/> Sending...</div>
+                  :
+                  <Button className={'button-small secondary'}
+                          onClick={() => sendToken(item.address)}>
+                    Send
+                  </Button>
                 }
               </>
               :

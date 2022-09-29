@@ -7,7 +7,7 @@ import {
   MdRemoveRedEye as HiddenIcon
 } from 'react-icons/md'
 import { useModals } from 'hooks'
-import { useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 
 const Token = ({ token, button }) => (
   <div className="extra-token" key={token.address}>
@@ -24,7 +24,7 @@ const Token = ({ token, button }) => (
 )
 
 const HideTokenModel = ({ portfolio, account, network, userSorting, sortType, setIsHideTokenModalOpen }) => {
-  const { hideModal } = useModals()
+  const { hideModal, setOnClose } = useModals()
   const { hiddenTokens, onAddHiddenToken, onRemoveHiddenToken, tokens } = portfolio
 
   const hideToken = (token) => onAddHiddenToken(token)
@@ -50,6 +50,10 @@ const HideTokenModel = ({ portfolio, account, network, userSorting, sortType, se
     setIsHideTokenModalOpen(false)
     hideModal()
   }
+
+  useEffect(() => {
+    setOnClose({close: () => setIsHideTokenModalOpen(false)})
+  }, [setOnClose, setIsHideTokenModalOpen])
 
   return (
     <Modal id="hide-token-modal" title="Hide Token">
