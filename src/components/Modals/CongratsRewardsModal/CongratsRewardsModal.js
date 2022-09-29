@@ -1,6 +1,6 @@
 import './CongratsRewardsModal.scss'
 
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { Button, Modal } from 'components/common'
 import { useReward } from 'react-rewards'
 
@@ -8,13 +8,16 @@ const CongratsRewardsModal = ({ pendingTokensTotal }) => {
     const { reward, isAnimating } = useReward('rewardId', 'confetti')
     const [count, setCount] = useState(0)
     const initialRewardsCount = 3
+    const playReward = useCallback(() => {
+        return reward()
+    }, [reward])
 
     useEffect(() => {
         if (count < initialRewardsCount && !isAnimating ) {
-            reward()
+            playReward()
             setCount(prevState => prevState += 1)
         }
-    }, [count, isAnimating, reward])
+    }, [count, isAnimating, playReward])
     
     const modalButtons = <>
         <Button disabled={isAnimating} onClick={reward}>More confetti</Button>
