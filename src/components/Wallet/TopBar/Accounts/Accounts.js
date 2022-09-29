@@ -1,8 +1,7 @@
-import './Accounts.scss'
+import styles from './Accounts.module.scss'
 
 import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
-import { AiOutlinePlus } from 'react-icons/ai'
 import { MdOutlineContentCopy, MdLogout, MdOutlineClose, MdOutlineCheck } from 'react-icons/md'
 import { MdDragIndicator, MdOutlineSort } from 'react-icons/md'
 
@@ -53,7 +52,7 @@ const Accounts = ({ accounts, selectedAddress, onSelectAcc, onRemoveAccount, hid
     })
 
     const shortenedAddress = address => address.slice(0, 5) + '...' + address.slice(-3)
-    const isActive = id => id === selectedAddress ? 'active' : ''
+    const isActive = id => id === selectedAddress ? styles.active : ''
     const toIcon = seed => blockies.create({ seed }).toDataURL()
     const toIconBackgroundImage = seed => ({ backgroundImage: `url(${toIcon(seed)})`})
     const walletType = signerExtra => {
@@ -72,9 +71,16 @@ const Accounts = ({ accounts, selectedAddress, onSelectAcc, onRemoveAccount, hid
     }
 
     return (
-        <DropDown id="accounts" icon={toIcon(selectedAddress)} title={hidePrivateValue(shortenedAddress(selectedAddress))} open={closed} onOpen={() => setClosed(false)}>
-          <div className="list">
-            {!isMobileScreen && <div className="sort-buttons">
+        <DropDown 
+            className={styles.wrapper}
+            menuClassName={styles.menu}
+            icon={toIcon(selectedAddress)} 
+            title={hidePrivateValue(shortenedAddress(selectedAddress))} 
+            open={closed} 
+            onOpen={() => setClosed(false)}
+        >
+          <div className={styles.list}>
+            {!isMobileScreen && <div className={styles.sortButtons}>
                 <ToolTip label='Sorted accounts by drag and drop'>
                     <MdDragIndicator color={sortType === "custom" ? "#80ffdb" : ""} cursor="pointer"
                     onClick={() => setUserSorting(prev => ({
@@ -100,7 +106,7 @@ const Accounts = ({ accounts, selectedAddress, onSelectAcc, onRemoveAccount, hid
               sortedAccounts.map(({ id, email, signer, signerExtra }, i) => 
                 logoutWarning !== id ?
                     <div
-                        className={`account ${isActive(id)}`}
+                        className={`${styles.account} ${isActive(id)}`}
                         key={id}
                         draggable={sortedAccounts.length > 1 && sortType === 'custom' && !isMobileScreen}
                         onDragStart={(e) => {                
@@ -112,29 +118,29 @@ const Accounts = ({ accounts, selectedAddress, onSelectAcc, onRemoveAccount, hid
                         onDragEnd={(e) => drop(sortedAccounts)}
                         onDragOver={(e) => e.preventDefault()}
                     >
-                        <div className="inner" onClick={() => onSelectAccount(id)}>
-                            {sortedAccounts.length > 1 && sortType === 'custom' && !isMobileScreen && <MdDragIndicator className='drag-handle' id={`${i}-handle`} />}
-                            <div className="icon" style={toIconBackgroundImage(id)}></div>
-                            <div className="details">
-                                <div className="address">{ id }</div>
+                        <div className={styles.inner} onClick={() => onSelectAccount(id)}>
+                            {sortedAccounts.length > 1 && sortType === 'custom' && !isMobileScreen && <MdDragIndicator className={styles.dragHandle} id={`${i}-handle`} />}
+                            <div className={styles.icon} style={toIconBackgroundImage(id)}></div>
+                            <div className={styles.details}>
+                                <div className={styles.address}>{ id }</div>
                                 <label>{ email ? `Email/Password account (${email})` : `${walletType(signerExtra)} (${shortenedAddress(signer.address)})` }</label>
                             </div>
                         </div>
-                        <div className="buttons">
-                            <div className="button" onClick={() => copyAddress(id)}>
+                        <div className={styles.buttons}>
+                            <div className={styles.button} onClick={() => copyAddress(id)}>
                                 <MdOutlineContentCopy/>
                             </div>
-                            <div className="button" onClick={() => setLogoutWarning(id)}>
+                            <div className={styles.button} onClick={() => setLogoutWarning(id)}>
                                 <MdLogout/>
                             </div>
                         </div>
                     </div>
                     :
-                    <div id="confirm-delete-account" className={`account ${isActive(id)}`} key={id}>
-                        <div className="message">
+                    <div className={`${styles.account} ${isActive(id)} ${styles.confirmDeleteAccount}`} key={id}>
+                        <div className={styles.message}>
                             Are you sure you want to log out from this account ?
                         </div>
-                        <div className="buttons">
+                        <div className='buttons'>
                             <div className="button danger" onClick={() => {
                                 setLogoutWarning(false)
                                 onRemoveAccount(id)
@@ -149,9 +155,9 @@ const Accounts = ({ accounts, selectedAddress, onSelectAcc, onRemoveAccount, hid
               )
             }
           </div>
-          <div id="add-account">
+          <div className={styles.addAccount}>
             <NavLink to="/add-account">
-              <Button icon={<AiOutlinePlus/>} small>Add Account</Button>
+              <Button small primaryGradient>Add Account</Button>
             </NavLink>
           </div>
         </DropDown>

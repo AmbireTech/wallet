@@ -10,6 +10,12 @@
             height: 60px;
             width: 100%;
             background: orange;
+            border: none;
+            color: #fff;
+
+            svg {
+                color: white !important;
+            }
         }
     }
 
@@ -18,6 +24,12 @@
             height: 60px;
             width: 100%;
             background: $secondary-accent-color;
+            border: none;
+            color: #fff;
+
+            svg {
+                color: white !important;
+            }
         }
     }
 }

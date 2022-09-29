@@ -1,4 +1,4 @@
-import './AddAccount.scss'
+import styles from './AddAccount.module.scss'
 
 import { useState, useEffect, useCallback } from 'react'
 import { Link } from 'react-router-dom'
@@ -23,6 +23,12 @@ import { VscJson } from 'react-icons/vsc'
 import { useDropzone } from 'react-dropzone'
 import { validateImportedAccountProps, fileSizeValidator } from 'lib/validations/importedAccountValidations'
 import { LatticeModal } from 'components/Modals'
+// Icons
+import { ReactComponent as TrezorIcon } from 'resources/trezor.svg'
+import { ReactComponent as LedgerIcon } from 'resources/ledger.svg'
+import { ReactComponent as GridPlusIcon } from 'resources/grid-plus.svg'
+import { ReactComponent as MetamaskIcon } from 'resources/metamask.svg'
+import { ReactComponent as EmailIcon } from 'resources/email.svg'
 
 TrezorConnect.manifest({
   email: 'contactus@ambire.com',
@@ -367,78 +373,74 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking, plug
   // Adding accounts from existing signers
   const addFromSignerButtons = (<>
     <button onClick={() => wrapProgress(connectTrezorAndGetAccounts, 'hwwallet')}>
-      <div className="icon" style={{ backgroundImage: 'url(./resources/trezor.png)' }}/>
-      Trezor
+      {/* Trezor */}
+      <TrezorIcon />
     </button>
     <button onClick={() => wrapProgress(connectLedgerAndGetAccounts, 'hwwallet')}>
-      <div className="icon" style={{ backgroundImage: 'url(./resources/ledger.png)' }}/>
-      Ledger
+      {/* Ledger */}
+      <LedgerIcon />
     </button>
     <button onClick={() => wrapProgress(connectGridPlusAndGetAccounts, 'hwwallet')}>
-      <div className="icon" style={{ backgroundImage: 'url(./resources/grid-plus.png)' }}/>
-      Grid+ Lattice1
+      {/* Grid+ Lattice1 */}
+      <GridPlusIcon className={styles.gridplus} />
     </button>
     <button onClick={() => wrapErr(connectWeb3AndGetAccounts)}>
-      <div className="icon" style={{ backgroundImage: 'url(./resources/metamask.png)' }}/>
-      Metamask / Browser
+      {/* Metamask / Browser */}
+      <MetamaskIcon className={styles.metamask} />
     </button>
     <button onClick={() => wrapErr(open)}>
-      <div className="icon"><VscJson size={25}/></div>
+      <VscJson size={25} />
       Import from JSON
     </button>
     <input {...getInputProps()} />
   </>)
 
   if (!relayerURL) {
-    return (<div className="loginSignupWrapper">
-      <div id="logo"/>
-      <section id="addAccount">
-        <div id="loginOthers">
+    return (<div className={styles.loginSignupWrapper}>
+      <div className={styles.logo}/>
+      <section className={styles.addAccount}>
+        <div className={styles.loginOthers}>
           <h3>Add an account</h3>
           {addFromSignerButtons}
           <h3>NOTE: You can enable email/password login by connecting to a relayer.</h3>
-          {addAccErr ? (<p className="error" style={{maxWidth: '800px'}}>{addAccErr}</p>) : (<></>)}
+          {addAccErr ? (<p className={styles.error} style={{maxWidth: '800px'}}>{addAccErr}</p>) : (<></>)}
         </div>
       </section>
     </div>)
   }
   //TODO: Would be great to create Ambire spinners(like 1inch but simpler) (I can have a look at them if you need)
-  return (<div className="loginSignupWrapper">
-      <div id="logo" {...(pluginData ? {style: {backgroundImage: `url(${pluginData.iconUrl})` }} : {})}/>
+  return (<div className={styles.loginSignupWrapper}>
+      <div className={styles.logo} {...(pluginData ? {style: {backgroundImage: `url(${pluginData.iconUrl})` }} : {})}/>
       {pluginData && 
-      <div id="plugin-info">
-        <div className="name">{pluginData.name}</div>
+      <div className={styles.pluginInfo}>
+        <div className={styles.name}>{pluginData.name}</div>
         <div>{pluginData.description}</div>
       </div>
       }
-      <section id="addAccount">
-        <div id="loginEmail">
+      <section className={styles.addAccount}>
+        <div className={styles.loginEmail}>
           <h3>Create a new account</h3>
           <LoginOrSignup
             inProgress={inProgress === 'email'}
             onAccRequest={req => wrapProgress(() => createQuickAcc(req), 'email')}
             action="SIGNUP"
           ></LoginOrSignup>
-          {err ? (<p className="error">{err}</p>) : (<></>)}
+          {err ? (<p className={styles.error}>{err}</p>) : (<></>)}
         </div>
 
-        <div id="loginSeparator">
-          <div className="verticalLine"></div>
-          <span>or</span>
-          <div className="verticalLine"></div>
-        </div>
-        <div id="loginOthers">
+        <div className={styles.loginSeparator} />
+        <div className={styles.loginOthers}>
           <h3>Add an account</h3>
           {inProgress !== 'hwwallet' ? (<>
             <Link to="/email-login">
               <button>
-                <div className="icon" style={{ backgroundImage: 'url(./resources/envelope.png)' }}/>
+                <EmailIcon className={styles.email} />
                 Email login
               </button>
             </Link>
             {addFromSignerButtons}
-            {addAccErr ? (<p className="error">{addAccErr}</p>) : (<></>)}
-          </>) : (<div className="accountLoader">
+            {addAccErr ? (<p className={styles.error}>{addAccErr}</p>) : (<></>)}
+          </>) : (<div className={styles.accountLoader}>
             <Loading/>
           </div>)}
         </div>

@@ -1,28 +1,32 @@
 @import 'variables.scss';
 
+.transfer-button {
+    max-width: 400px;
+    width: 100%;
+    margin: 0 auto;
+}
+
 .wrapper {
     display: flex;
     gap: 30px;
 
     .amountLabel {
+        font-size: 14px;
         width: 100%;
         display: flex;
         justify-content: space-between;
-
-        span {
-            opacity: 0.8;
-        }
+        color: #ebecff;
     }
 
     .recipientField {
         position: relative;
         display: flex;
 
-        .text-input {
+        .recipient-input {
             width: 100%;
 
             input {
-                padding-right: 310px;
+                border-radius: 12px 0 0 12px!important;
             }
         }
 
@@ -34,7 +38,7 @@
         .udomainsLogo {
             position: absolute;
             top: 18px;
-            right: 275px;
+            right: 155px;
             height: 25px;
             width: 25px;
             background-image: url('/resources/ud-logo-inactive.png');
@@ -47,7 +51,7 @@
         .ensLogo {
             position: absolute;
             top: 18px;
-            right: 240px;
+            right: 100px;
             height: 25px;
             width: 25px;
             background-image: url('/resources/ens-logo-inactive.png');

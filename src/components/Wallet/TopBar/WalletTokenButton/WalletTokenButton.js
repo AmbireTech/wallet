@@ -23,7 +23,7 @@ const WalletTokenButton = ({ rewardsData, account = {}, network, hidePrivateValu
                 <Button small border disabled onClick={showWalletTokenModal}>Unavailable</Button>
             </ToolTip>
             :
-            <Button small border disabled={isLoading} onClick={showWalletTokenModal}>{ isLoading ? '...' : hidePrivateValue(pendingTokensTotal) } WALLET</Button>
+            <Button small border disabled={isLoading} onClick={showWalletTokenModal} style={{ textTransform: 'none'}}>{ isLoading ? '...' : hidePrivateValue(pendingTokensTotal) } WALLET Rewards</Button>
     )
 }
 

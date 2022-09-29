@@ -1,7 +1,6 @@
 import styles from './Transfer.module.scss'
 
 import { BsXLg } from 'react-icons/bs'
-import { AiOutlineSend } from 'react-icons/ai'
 import { MdWarning } from 'react-icons/md'
 import { useParams, withRouter } from 'react-router'
 import { useEffect, useMemo, useState, useRef } from 'react'
@@ -261,6 +260,7 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
                                         info="Please double-check the recipient address, blockchain transactions are not reversible."
                                         value={address}
                                         onInput={setAddress}
+                                        className='recipient-input'
                                     />
                                     <ToolTip label={!ensAddress ? 'You can use Ethereum Name ServiceⓇ' : 'Valid Ethereum Name ServicesⓇ domain'}>
                                         <div className={cn(styles.ensLogo, {[styles.ensLogoActive]: ensAddress})} />
@@ -305,7 +305,7 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
                                         :
                                         null
                                 }
-                                <Button icon={<AiOutlineSend />} disabled={disabled} onClick={sendTx}>Send</Button>
+                                <Button primaryGradient={true} disabled={disabled} onClick={sendTx} className='transfer-button'>Send</Button>
                             </div>
                             :
                             <NoFundsPlaceholder/>

@@ -1,0 +1,32 @@
+@import 'variables.scss';
+
+.tooltip {
+    position: relative;
+    display: contents;
+
+    .tooltipLabel {
+        z-index: 50;
+        position: fixed;
+        top: 0;
+        left: 0;
+        max-width: 300px;
+        padding: 15px 20px;
+        font-size: 15px;
+        font-weight: 500;
+        color: #ebecff;
+        background: #24263D;
+        border: 1px solid #3E436B;
+        border-radius: 12px;
+        text-align: center;
+        white-space: normal;
+        opacity: 0;
+        overflow: hidden;
+        transition: opacity 0.1s ease-in-out;
+    }
+
+    &:hover {
+        .tooltipLabel {
+            opacity: 1;
+        }
+    }
+}

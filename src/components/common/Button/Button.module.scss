@@ -1,0 +1,118 @@
+@import 'variables.scss';
+
+.wrapper {
+    height: 60px;
+    border-radius: 12px;
+    @include flex-center-center;
+    gap: 10px;
+    padding: 0 20px;
+    border: none;
+    font-family: 'Poppins', sans-serif;
+    font-size: 20px;
+    font-weight: 500;
+    background-color: transparent;
+    color: #27E8A7;
+    border: 2px solid #27e8a7;
+    outline: none;
+    transition: 0.1s ease-in-out;
+    
+    .iconButton {
+        @include flex-center-center;
+        color: #27E8A7 !important;
+    }
+
+    &.small {
+        height: 50px;
+        font-size: 17px;
+    }
+
+    &.mini {
+        gap: 5px;
+        height: 40px;
+        padding: 0 10px;
+        font-size: 14px;
+    }
+
+    &.danger {
+        border: none;
+        color: #fff;
+        background: $danger-color;
+
+        .iconButton {
+            color: white !important;
+        }
+    }
+
+    &.clear {
+        border: none;
+        color: white;
+        background-color: rgba(0, 0, 0, 0.1);
+
+        .iconButton {
+            color: white !important;
+        }
+
+        &:not([disabled]):hover {
+            background-color: rgba(0, 0, 0, 0.2);
+        }
+    }
+
+    &.primaryGradient {
+        border: none;
+        background: transparent linear-gradient(90deg, #27E8A7 0%, #6000FF 100%) 0% 0% no-repeat padding-box;
+        color: #fff;
+
+        .iconButton {
+            color: white !important;
+        }
+    }
+
+    &.secondary {
+        border: none;
+        color: #fff;
+        background-color: $secondary-accent-color;
+
+        .iconButton {
+            color: white !important;
+        }
+    }
+
+    &.textOnly {
+        padding: 0;
+        margin: 0;
+        height: auto;
+        background: 0;
+        color: $text-color;
+        font-size: 1em;
+        display: inline-flex;
+    }
+
+    &.border {
+        color: #27e8a7;
+        background-color: transparent;
+        border: 2px solid #27e8a7;
+
+        .iconButton {
+            color: #27e8a7 !important;
+        }
+
+        &:not([disabled]):hover {
+            background-color: rgba(0, 0, 0, 0.2);
+        }
+    }
+
+    &:disabled, &.disabled{
+        opacity: 0.4 !important;
+    }
+
+    &:not([disabled]):not(.disabled) {
+        &:hover {
+            cursor: pointer;
+            opacity: 0.8;
+        }
+
+        &:active {
+            opacity: 0.6;
+        }
+    }
+}

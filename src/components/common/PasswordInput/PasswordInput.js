@@ -1,7 +1,6 @@
 import './PasswordInput.scss'
 
 import { forwardRef, useState } from 'react'
-import { MdOutlineRemoveRedEye, MdRemoveRedEye } from 'react-icons/md'
 
 const PasswordInput = forwardRef(({ label, placeholder, autoComplete, peakPassword, disabled, value, onInput, onChange }, ref) => {
     const [showPassword, setShowPassword] = useState()
@@ -29,11 +28,11 @@ const PasswordInput = forwardRef(({ label, placeholder, autoComplete, peakPasswo
                     peakPassword ?
                         !showPassword ?
                             <div className="button" onClick={() => setShowPassword(true)}>
-                                <MdOutlineRemoveRedEye size={20}/>
+                                <img src="/resources/icons/visible.svg" alt="visible" />
                             </div>
                             :
                             <div className="button" onClick={() => setShowPassword(false)}>
-                                <MdRemoveRedEye size={20}/>
+                                <img src="/resources/icons/invisible.svg" alt="visible" />
                             </div>
                         :
                         null

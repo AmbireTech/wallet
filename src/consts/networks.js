@@ -6,21 +6,21 @@ import networks from 'ambire-common/src/constants/networks'
  * @enum {string}
  */
  export const networkIconsById = {
-  ethereum: '/resources/networks/ethereum.png',
-  polygon: '/resources/networks/polygon.png',
-  avalanche: '/resources/networks/avalanche.png',
-  'binance-smart-chain': '/resources/networks/bsc.png',
-  fantom: '/resources/networks/fantom.png',
-  moonbeam: '/resources/networks/moonbeam.png',
-  moonriver: '/resources/networks/moonriver.png',
+  ethereum: '/resources/networks/ethereum.svg',
+  polygon: '/resources/networks/polygon.svg',
+  avalanche: '/resources/networks/avalanche.svg',
+  'binance-smart-chain': '/resources/networks/bsc.svg',
+  fantom: '/resources/networks/fantom.svg',
+  moonbeam: '/resources/networks/moonbeam.svg',
+  moonriver: '/resources/networks/moonriver.svg',
   arbitrum: '/resources/networks/arbitrum.svg',
-  gnosis: '/resources/networks/gnosis.png',
+  gnosis: '/resources/networks/gnosis.svg',
   kucoin: '/resources/networks/kucoin.svg',
-  optimism: '/resources/networks/optimism.jpg',
+  optimism: '/resources/networks/optimism.svg',
   andromeda: '/resources/networks/andromeda.svg',
-  rinkeby: '/resources/networks/rinkeby.png',
+  rinkeby: '/resources/networks/rinkeby.svg',
   cronos: '/resources/networks/cronos.png',
-  aurora: '/resources/networks/aurora.png',
+  aurora: '/resources/networks/aurora.svg',
 }
 
 export default networks.map(network => ({ ...network, icon: networkIconsById[network.id]}))

@@ -1,6 +1,5 @@
 import styles from './Addresses.module.scss'
 
-import { MdOutlineAdd } from 'react-icons/md'
 import AddressList from 'components/common/AddressBook/AddressList/AddressList'
 import { Button, Panel } from 'components/common'
 import { isValidAddress } from 'ambire-common/src/services/address'
@@ -32,7 +31,7 @@ const Addresses = ({ addresses, addAddress, removeAddress, onSelectAddress, sele
                 onSelectAddress={onSelectAddress}
             />
             <div className={styles.separator}></div>
-            <Button icon={<MdOutlineAdd/>} onClick={showInputModal}>Add Address</Button>
+            <Button onClick={showInputModal} className={styles['addresses-button']}>Add Address</Button>
         </Panel>
     )
 }

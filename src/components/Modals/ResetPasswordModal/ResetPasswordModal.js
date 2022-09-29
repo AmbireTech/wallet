@@ -4,7 +4,7 @@ import { Wallet } from 'ethers'
 import { id } from 'ethers/lib/utils'
 import { useState, useMemo, createRef, useEffect, useCallback } from 'react'
 import { Modal, Radios, Checkbox, Button, ToolTip, Loading, PasswordInput } from 'components/common'
-import { MdOutlineCheck, MdOutlineClose, MdOutlineHelpOutline } from 'react-icons/md'
+import { MdOutlineHelpOutline } from 'react-icons/md'
 import { useModals } from 'hooks'
 import { useToasts } from 'hooks/toasts'
 import accountPresets from 'ambire-common/src/constants/accountPresets'
@@ -44,6 +44,7 @@ const ResetPassword = ({ account, selectedNetwork, relayerURL, onAddAccount, sho
                     <>
                         I understand the following: the new password will be required for subsequent logins, but places where you're already logged in will work with the old password until you re-login.
                         <ToolTip
+                            className='tooltip'
                             label="This is because, for security reasons, the encrypted key is retrieved only when logging in, so we have no way of forcing every device to update it.
                             If you want to disable access for other devices, consider the next option.">
                             <MdOutlineHelpOutline/>
@@ -57,6 +58,7 @@ const ResetPassword = ({ account, selectedNetwork, relayerURL, onAddAccount, sho
                 label: <>
                     I understand I am only changing the password on the {selectedNetwork.name} network.
                     <ToolTip
+                        className='tooltip'
                         label="You will be able to trigger the change for other networks by switching the network">
                         <MdOutlineHelpOutline/>
                     </ToolTip>
@@ -176,8 +178,8 @@ const ResetPassword = ({ account, selectedNetwork, relayerURL, onAddAccount, sho
     useEffect(() => validateForm(), [isLoading, validateForm, oldPassword, newPassword, newPasswordConfirm])
 
     const modalButtons = <>
-        <Button icon={<MdOutlineClose/>} clear onClick={() => hideModal()}>Cancel</Button>
-        <Button icon={<MdOutlineCheck/>} disabled={disabled} onClick={() => type === 'change' ? changePassword(): resetPassword()}>Confirm</Button>
+        <Button onClick={() => hideModal()}>Cancel</Button>
+        <Button primaryGradient={true} disabled={disabled} onClick={() => type === 'change' ? changePassword(): resetPassword()}>Confirm</Button>
     </>
 
     return (
@@ -190,7 +192,7 @@ const ResetPassword = ({ account, selectedNetwork, relayerURL, onAddAccount, sho
                     :
                     null
             }
-            <Radios radios={radios} onChange={onRadioChange}/>
+            <Radios radios={radios} onChange={onRadioChange} className='radios-container' />
             {
                 type === 'change' ?
                     <form>
@@ -199,7 +201,7 @@ const ResetPassword = ({ account, selectedNetwork, relayerURL, onAddAccount, sho
                         <PasswordInput autocomplete="new-password" placeholder="Confirm New Password" onInput={value => setNewPasswordConfirm(value)}/>
                         {
                             checkboxes[0].map(({ label, ref }, i) => (
-                                <Checkbox key={`checkbox-${i}`} ref={ref} label={label} onChange={() => validateForm()}/>
+                                <Checkbox labelClassName='checkbox-label' key={`checkbox-${i}`} ref={ref} label={label} onChange={() => validateForm()}/>
                             ))
                         }
                     </form> : null
@@ -211,7 +213,7 @@ const ResetPassword = ({ account, selectedNetwork, relayerURL, onAddAccount, sho
                         <PasswordInput autocomplete="new-password" placeholder="Confirm New Password" onInput={value => setNewPasswordConfirm(value)}/>
                         {
                             checkboxes[1].map(({ label, ref }, i) => (
-                                <Checkbox key={`checkbox-${i}`} ref={ref} label={label} onChange={() => validateForm()}/>
+                                <Checkbox labelClassName='checkbox-label' key={`checkbox-${i}`} ref={ref} label={label} onChange={() => validateForm()}/>
                             ))
                         }
                     </form> : null

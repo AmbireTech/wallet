@@ -1,5 +1,11 @@
 @import 'variables.scss';
 
+.addresses-button {
+    max-width: 400px;
+    width: 100%;
+    margin: 0 auto;
+}
+
 .wrapper {
     gap: 15px;
     flex: 0 1 50%;

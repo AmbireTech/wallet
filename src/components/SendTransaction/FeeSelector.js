@@ -70,7 +70,7 @@ const WalletDiscountBanner = ({ currenciesItems, tokens, estimation, onFeeCurren
           <MdInfoOutline />
         </a>
       </div>
-      {!!action && <Button onClick={action} mini>
+      {!!action && <Button onClick={action} mini className='buttonComponent'>
         {actionTxt}
       </Button>}
       {showSwap && <div className='swap-info'>

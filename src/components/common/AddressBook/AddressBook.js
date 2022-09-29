@@ -7,6 +7,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import AddressList from './AddressList/AddressList'
 import { resolveUDomain } from 'lib/unstoppableDomains'
 import { resolveENSDomain } from 'lib/ensDomains'
+import { ReactComponent as AddressBookIcon } from './images/address-book.svg'
 import cn from 'classnames'
 
 const AddressBook = ({ addresses, addAddress, removeAddress, newAddress, onClose, onSelectAddress, selectedNetwork, className }) => {
@@ -73,7 +74,7 @@ const AddressBook = ({ addresses, addAddress, removeAddress, newAddress, onClose
     }, [address, selectedNetwork.unstoppableDomainsChain])
 
     return (
-        <DropDown title={<><FaAddressCard />Address Book</>} className={cn(styles.addressBook, className)} open={isOpen} onChange={onDropDownChange}>
+        <DropDown title={<><AddressBookIcon />Address Book</>} className={cn(styles.addressBook, className)} menuClassName={styles.menu} handleClassName={styles.handle} open={isOpen} onChange={onDropDownChange}>
             <div className={styles.heading}>
                 <div className={styles.title}>
                     <FaAddressCard /> Address Book
