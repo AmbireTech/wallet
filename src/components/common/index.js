@@ -24,6 +24,7 @@ import CountdownTimer from './CountdownTimer/CountdownTimer';
 import ErrorBoundary from './ErrorBoundary/ErrorBoundary';
 import Stepper from './Stepper/Stepper.tsx';
 import DAppIncompatibilityWarningMsg from './DAppIncompatibilityWarningMsg/DAppIncompatibilityWarningMsg';
+import Panel from './Panel/Panel';
 
 export {
     AddressBook,
@@ -51,5 +52,6 @@ export {
     CountdownTimer,
     ErrorBoundary,
     Stepper,
-    DAppIncompatibilityWarningMsg
+    DAppIncompatibilityWarningMsg,
+    Panel
 };

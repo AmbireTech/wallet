@@ -14,8 +14,9 @@ $buttons-height: 60px;
     flex-direction: column;
     gap: 10px;
     padding-top: 25px;
-    background-color: $panel-background-color;
-    box-shadow: $box-shadow;
+    background: $c-ebony-clay;
+    border: 1px solid $c-fiord;
+    border-radius: 12px;
     box-sizing: border-box;
 
     &.buttons {

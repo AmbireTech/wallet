@@ -73,8 +73,9 @@ $gap: 12px;
       gap: $gap;
       padding: $gap;
       padding-top: $gap + 14px;
-      background-color: $input-background-color;
-      border:1px solid transparent;
+      background-color: $c-ebony-clay;
+      border-radius: 12px;
+      border: 1px solid transparent;
       transition: 100ms;
       position: relative;
       overflow: hidden;
@@ -127,8 +128,13 @@ $gap: 12px;
       }      
 
       &.not-supported {
-        background-color: mix($input-background-color, $background-color, 50%);
+        background-color: $c-ebony-clay;
         cursor: not-allowed;
+        opacity: 0.2;
+
+        &:hover {
+          background-color: $c-martinique;
+        }
 
         .logoSplit {
           opacity: 0.4;
@@ -173,7 +179,7 @@ $gap: 12px;
           min-width: 68px;
           width: 68px;
           height: 68px;
-          background: $input-background-color-darker;
+          background: $c-mirage;
           //padding: 8px;
           text-align: center;
           display: flex;
@@ -296,8 +302,8 @@ $gap: 12px;
       }
 
       &:hover:not(.add-custom-dapp) {
-        background-color: mix($input-background-color, #FFF, 98%);
-        border:1px solid $ambire-dark-blue;
+        background-color: $c-martinique;
+        border: 1px solid $c-turquoise;
       }
     }
   }

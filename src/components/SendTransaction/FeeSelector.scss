@@ -41,7 +41,8 @@
         @include flex-center-center;
         flex-direction: column;
         padding: 0 1em;
-        background: $background-color;
+        background: $c-mirage;
+        border-radius: 12px;
         cursor: default;
         transition: all 0.1s ease-in-out;
         position: relative;
@@ -73,12 +74,12 @@
 
         &:not(.disabled):hover {
             cursor: pointer;
-            background-color: $input-background-color;
+            background-color: rgba(0, 0, 0, 0.4);
         }
 
         &.selected {
             box-shadow: 0 0 0 3px $ambire-dark-blue inset;
-            background-color: $input-background-color;
+            background-color: rgba(0, 0, 0, 0.4);
         }
 
         .discount-badge {
@@ -115,7 +116,7 @@
         padding: 0.5em;
         gap: 1em;
         &:nth-of-type(odd) {
-            background-color: $background-color;
+            background-color: $c-mirage;
         }
     }
 

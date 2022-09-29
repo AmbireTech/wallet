@@ -1,6 +1,6 @@
 @import 'variables.scss';
 
-#deposit {
+.deposit {
     display: flex;
     justify-content: center;
     gap: 2em;
@@ -50,7 +50,7 @@
             color: white;
             user-select: none;
 
-            #qr-code {
+            .qrCode {
                 height: 180px;
                 width: 180px;
                 margin: 0 auto;
@@ -58,7 +58,7 @@
             }
         }
 
-        #networks {
+        .networks {
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -101,7 +101,7 @@
 }
 
 @media screen and (max-width: 1200px) {
-   #deposit {
+   .deposit {
        flex-direction: column;
 
         .panel {
@@ -111,7 +111,7 @@
 }
 
 @media screen and (min-width: 1000px) and (max-width: 1450px) {
-    #deposit {
+    .deposit {
         .text-input {
             input {
                 font-size: 16px !important;
@@ -122,14 +122,14 @@
 
 // Mobile
 @media screen and (max-width: $mobile-breakpoint-max-width) {
-    #deposit {
+    .deposit {
         gap: 1em;
 
         .panel {
             padding: 20px 20px;
         }
 
-        #networks {
+        .networks {
             .logos {
                 gap: 1em !important;
             }

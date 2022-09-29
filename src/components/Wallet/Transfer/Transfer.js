@@ -1,4 +1,4 @@
-import './Transfer.scss'
+import styles from './Transfer.module.scss'
 
 import { BsXLg } from 'react-icons/bs'
 import { AiOutlineSend } from 'react-icons/ai'
@@ -8,7 +8,7 @@ import { useEffect, useMemo, useState, useRef } from 'react'
 import { ethers } from 'ethers'
 import { Interface } from 'ethers/lib/utils'
 import { useToasts } from 'hooks/toasts'
-import { TextInput, NumberInput, Button, Select, Loading, AddressBook, AddressWarning, NoFundsPlaceholder, Checkbox, ToolTip } from 'components/common'
+import { TextInput, NumberInput, Button, Select, Loading, AddressBook, AddressWarning, NoFundsPlaceholder, Checkbox, ToolTip, Panel } from 'components/common'
 import { validateSendTransferAddress, validateSendTransferAmount } from 'lib/validations/formValidations'
 import { resolveUDomain } from 'lib/unstoppableDomains'
 import { isValidAddress } from 'ambire-common/src/services/address'
@@ -20,6 +20,7 @@ import { formatFloatTokenAmount } from 'lib/formatters'
 import { useLocation } from 'react-router-dom'
 import accountPresets from 'ambire-common/src/constants/accountPresets'
 import { resolveENSDomain, getBip44Items } from 'lib/ensDomains'
+import cn from 'classnames'
 
 const ERC20 = new Interface(require('adex-protocol-eth/abi/ERC20'))
 const unsupportedSWPlatforms = ['Binance', 'Huobi', 'KuCoin', 'Gate.io', 'FTX']
@@ -230,22 +231,19 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
         return () => clearTimeout(timer.current)
     }, [address, amount, selectedAcc, selectedAsset, addressConfirmed, showSWAddressWarning, sWAddressConfirmed, isKnownAddress, addToast, selectedNetwork, addAddress, uDAddress, disabled, ensAddress])
 
-    const amountLabel = <div className="amount-label">Available Amount: <span>{maxAmountFormatted} {selectedAsset?.symbol}</span></div>
+    const amountLabel = <div className={styles.amountLabel}>Available Amount: <span>{maxAmountFormatted} {selectedAsset?.symbol}</span></div>
 
     return (
-        <div id="transfer" style={{ justifyContent: gasTankDetails ? 'center' : '' }}>
-           <div className="panel">
-               <div className="title">
-                   Send
-               </div>
+        <div className={styles.wrapper} style={{ justifyContent: gasTankDetails ? 'center' : '' }}>
+           <Panel title="Send" className={styles.panel}>
                {
                     portfolio.isCurrNetworkBalanceLoading ?
                         <Loading />
                         :
                         assetsItems.length ?
-                            <div className="form">
+                            <div className={styles.form}>
                                 <Select searchable defaultValue={asset} items={assetsItems.sort((a, b) => a.label.toLowerCase() > b.label.toLowerCase() ? 1 : -1)} onChange={({ value }) => setAsset(value)}/>
-                                { feeBaseTokenWarning ? <p className='gas-tank-convert-msg'><MdWarning /> {feeBaseTokenWarning}</p> : <></>}
+                                { feeBaseTokenWarning ? <p className={styles.gasTankConvertMsg}><MdWarning /> {feeBaseTokenWarning}</p> : <></>}
                                 <NumberInput
                                     label={amountLabel}
                                     value={amount}
@@ -257,7 +255,7 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
                                 
                                 { validationFormMgs.messages.amount && 
                                     (<div className='validation-error'><BsXLg size={12}/>&nbsp;{validationFormMgs.messages.amount}</div>)}
-                                { gasTankDetails ? <p className='gas-tank-msg'><MdWarning /> {gasTankDetails?.gasTankMsg}</p> : (<div id="recipient-field">
+                                { gasTankDetails ? <p className={styles.gasTankMsg}><MdWarning /> {gasTankDetails?.gasTankMsg}</p> : (<div className={styles.recipientField}>
                                     <TextInput
                                         placeholder="Recipient"
                                         info="Please double-check the recipient address, blockchain transactions are not reversible."
@@ -265,10 +263,10 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
                                         onInput={setAddress}
                                     />
                                     <ToolTip label={!ensAddress ? 'You can use Ethereum Name ServiceⓇ' : 'Valid Ethereum Name ServicesⓇ domain'}>
-                                        <div id="ens-logo" className={ensAddress ? 'ens-logo-active ' : ''} />
+                                        <div className={cn(styles.ensLogo, {[styles.ensLogoActive]: ensAddress})} />
                                     </ToolTip>
                                     <ToolTip label={!uDAddress ? 'You can use Unstoppable domainsⓇ' : 'Valid Unstoppable domainsⓇ domain'}>
-                                        <div id="udomains-logo" className={uDAddress ? 'ud-logo-active ' : ''} />
+                                        <div className={cn(styles.udomainsLogo, { [styles.udomainsLogoActive]: uDAddress })} />
                                     </ToolTip>
                                     <AddressBook
                                         addresses={addresses.filter(x => x.address !== selectedAcc)}
@@ -278,11 +276,12 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
                                         onClose={() => setNewAddress(null)}
                                         onSelectAddress={address => setAddress(address)}
                                         selectedNetwork={selectedNetwork}
+                                        className={styles.dropdown}
                                     />
                                 </div>)}
                                 { validationFormMgs.messages.address && 
                                     (<div className='validation-error'><BsXLg size={12}/>&nbsp;{validationFormMgs.messages.address}</div>)}
-                                <div className="separator"/>
+                                <div className={styles.separator} />
                                 <AddressWarning
                                     address={address}
                                     onAddNewAddress={() => setNewAddress(address)}
@@ -294,7 +293,7 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
                                 {
                                     showSWAddressWarning ?
                                         <Checkbox
-                                            id="binance-address-warning"
+                                            className={styles.binanceAddressWarning}
                                             label={<span id="binance-address-warning-label">
                                                 I confirm this address is not a {unsupportedSWPlatforms.join(' / ')} address: <br />
                                                 These platforms do not support ${selectedAsset?.symbol} deposits from smart wallets
@@ -311,7 +310,7 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
                             :
                             <NoFundsPlaceholder/>
                }
-           </div>
+           </Panel>
            {!gasTankDetails && <Addresses
                 selectedAsset={selectedAsset}
                 selectedNetwork={selectedNetwork}

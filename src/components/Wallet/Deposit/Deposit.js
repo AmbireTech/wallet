@@ -1,7 +1,8 @@
-import './Deposit.scss'
+import styles from './Deposit.module.scss'
 
 import { useCallback, useEffect, useState } from 'react'
 import { MdAccountBalance, MdAccountBalanceWallet } from 'react-icons/md'
+import { Panel } from 'components/common'
 import QRCode from 'qrcode'
 import TextInput from 'components/common/TextInput/TextInput'
 import Providers from './Providers/Providers'
@@ -27,29 +28,29 @@ export default function Deposit({ selectedAcc, selectedNetwork, accounts, addReq
     useEffect(() => generateQRCode(), [generateQRCode])
 
     return (
-        <section id="deposit">
-            <div className="panel">
-                <div className="heading">
-                     <div className="title">
+        <section className={styles.deposit}>
+            <Panel className={styles.panel}>
+                <div className={styles.heading}>
+                     <div className={styles.title}>
                         <MdAccountBalanceWallet size={35}/>
                         Deposit Tokens
                     </div>
-                    <div className="subtitle">
+                    <div className={styles.subtitle}>
                         Direct Deposit
                     </div>
                 </div>
-                <div className="description">
-                    <TextInput className="depositAddress" label={`Send ${networkDetails.nativeAssetSymbol}, tokens or collectibles (NFTs) to this address:`} value={selectedAcc} copy/>
-                    <img id="qr-code" alt="QR Code" src={qrCodeUrl}></img>
+                <div className={styles.description}>
+                    <TextInput className={styles.depositAddress} label={`Send ${networkDetails.nativeAssetSymbol}, tokens or collectibles (NFTs) to this address:`} value={selectedAcc} copy/>
+                    <img className={styles.qrCode} alt="QR Code" src={qrCodeUrl}></img>
                 </div>
-                <div id="networks">
+                <div className={styles.networks}>
                     Following networks supported on this address:
-                    <div className="list">
+                    <div className={styles.list}>
                         {
                             networks.filter(n => !n.hide).map(({ id, icon, name }) => (
-                                <div className="network" key={id}>
-                                    <div className="icon" style={{backgroundImage: `url(${icon})`}}></div>
-                                    <div className="name">{ name }</div>
+                                <div className={styles.network} key={id}>
+                                    <div className={styles.icon} style={{backgroundImage: `url(${icon})`}}></div>
+                                    <div className={styles.name}>{ name }</div>
                                 </div>
                             ))
                         }
@@ -65,22 +66,22 @@ export default function Deposit({ selectedAcc, selectedNetwork, accounts, addReq
                     portfolio={portfolio}
                     useStorage={useStorage}
                 />
-            </div>
-            <div className="panel">
-                <div className="heading">
-                    <div className="title">
+            </Panel>
+            <Panel className={styles.panel}>
+                <div className={styles.heading}>
+                    <div className={styles.title}>
                         <MdAccountBalance size={35}/>
                         Fiat Currency
                     </div>
-                    <div className="subtitle">
+                    <div className={styles.subtitle}>
                         Credit Card & Bank Transfer
                     </div>
                 </div>
-                <div className="description">
+                <div className={styles.description}>
                     Deposit with credit card to your account directly using one of our partners
                 </div>
                 <Providers walletAddress={selectedAcc} networkDetails={networkDetails} relayerURL={relayerURL} portfolio={portfolio}/>
-            </div>
+            </Panel>
         </section>
     )
 }

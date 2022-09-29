@@ -23,9 +23,10 @@ $thead-background-color: darken($panel-background-color, 2%);
     text-align: center;
     flex: 1;
     color: $modal-text-color;
-    background: $background-color;
+    background: $c-mirage;
     padding: 12px;
     border: 2px solid transparent;
+    border-radius: 12px;
 
     &.selected {
       border-color: $secondary-accent-color;
@@ -59,8 +60,9 @@ $thead-background-color: darken($panel-background-color, 2%);
       color: $modal-text-color;
   
       thead {
-        background: $thead-background-color;
+        background: $c-mirage;
         font-weight: normal;
+        border-radius: 12px 12px 0px 0px;
   
         th {
           text-transform: capitalize;
@@ -75,7 +77,7 @@ $thead-background-color: darken($panel-background-color, 2%);
       }
   
       tbody {
-        background: $background-color;
+        background: $c-martinique;
       }
   
       td:first-child {
