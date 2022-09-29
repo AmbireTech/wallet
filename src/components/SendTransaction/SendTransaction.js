@@ -190,7 +190,7 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, mustReplaceNonce,
         estimation.relayerless = !relayerURL
         const gasTankTokens = estimation.gasTank?.map(item => { 
           return { 
-            ...item, 
+            ...item,
             symbol: item.symbol.toUpperCase(), 
             balance: ethers.utils.parseUnits(item.balance.toFixed(item.decimals).toString(), item.decimals).toString(),
             nativeRate: item.address === '0x0000000000000000000000000000000000000000' ? null : estimation.nativeAssetPriceInUSD / item.price
