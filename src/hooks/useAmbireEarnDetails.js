@@ -660,14 +660,14 @@ const useAmbireEarnDetails = ({accountId, addresses, tokenLabel}) => {
 
     useEffect(() => {
         const getData = async (addresses, tokenLabel) => {
-            setIsLoading(prevState => !prevState)
+            setIsLoading(true)
             try {
                 const data = await getStats(addresses, tokenLabel)
                 setDetails(data)
-                setIsLoading(prevState => !prevState)
+                setIsLoading(false)
             } catch(e) {
                 console.error(e)
-                setIsLoading(prevState => !prevState)
+                setIsLoading(false)
             }
         }
         if (!accountId) return

@@ -32,7 +32,7 @@ const AmbireEarnDetailsModal = ({ title = 'Details', apy, accountId, msToDaysHou
    
     return (
         <Modal id="wallet-more-details-modal" title={title} buttons={buttons}>
-           {isLoading ? (
+           {!isLoading ? (
            <>
                 <div className="wrapper">
                     <div>Annual Percentage Yield (APY)</div><div>{apy}</div>
