@@ -8,7 +8,7 @@
   left: 0px;
   bottom: 0px;
   top: 0px;
-  padding-top: calc(#{$topbar-height} + 50px);
+  padding-top: 30px;
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
@@ -51,8 +51,12 @@
     }
   }
 
+  .sidebarLogo {
+    max-width: 138px;
+    margin: 0 0 108px 1em;
+  }
+
   .ambireLogo {
-    background-color: $background-color;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
