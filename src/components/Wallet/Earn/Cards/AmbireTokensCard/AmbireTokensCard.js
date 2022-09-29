@@ -396,9 +396,11 @@ const AmbireTokensCard = ({ networkId, accountId, tokens, rewardsData, addReques
                     })
                 
                     const { timestamp } = await provider.getBlock(blockNumber)
+                    let remainingTimeTest = leaveLog ? (leaveLog.unlocksAt.toString()) - (Date.now() - (timestamp * 1000)) : null
+                    console.log('unlockAt', remainingTimeTest)
                     let remainingTime = (timeToUnbond.toString() * 1000) - (Date.now() - (timestamp * 1000))
                     if (remainingTime <= 0) remainingTime = 0
-                    setLockedRemainingTime(remainingTime)    
+                    setLockedRemainingTime(remainingTimeTest)    
                 } else {
                     setLeaveLog(null)
                 }
@@ -410,7 +412,7 @@ const AmbireTokensCard = ({ networkId, accountId, tokens, rewardsData, addReques
         return () => {
             setShareValue(ZERO)
         }
-    }, [networkId, accountId, selectedToken.label, isAdxTokenSelected])
+    }, [networkId, accountId, selectedToken.label, isAdxTokenSelected, leaveLog])
 
     useEffect(() => setLoading(false), [])
 
