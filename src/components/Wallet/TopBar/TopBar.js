@@ -60,7 +60,9 @@ const TopBar = ({
           </div>
       }
       <div className={styles.mobileMenu} onClick={() => setMenuOpen(prev => !prev)}>
-        <img src='/resources/logo.svg' className={styles.logo} alt='ambire-logo' />
+        <NavLink to={'/wallet/dashboard'}>
+         <img src='/resources/logo.svg' className={styles.logo} alt='ambire-logo' />
+        </NavLink>
         <div className={styles.mobileMenuRight}>
           <div className={styles.icon} style={{backgroundImage: `url(${accountIcon})`}}></div>
           <MdOutlineArrowForward/>
