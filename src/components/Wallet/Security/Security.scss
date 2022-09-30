@@ -6,6 +6,10 @@
   flex-direction: column;
   gap: 2em;
   border: 1px dashed transparent;
+    
+  .depositAddress {
+    width: 100%;
+  }
 
   .acceptStyleIcon {
     z-index: 2;
