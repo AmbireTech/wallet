@@ -24,11 +24,11 @@ import { useDropzone } from 'react-dropzone'
 import { validateImportedAccountProps, fileSizeValidator } from 'lib/validations/importedAccountValidations'
 import { LatticeModal } from 'components/Modals'
 // Icons
-import { ReactComponent as TrezorIcon } from 'resources/trezor.svg'
-import { ReactComponent as LedgerIcon } from 'resources/ledger.svg'
-import { ReactComponent as GridPlusIcon } from 'resources/grid-plus.svg'
-import { ReactComponent as MetamaskIcon } from 'resources/metamask.svg'
-import { ReactComponent as EmailIcon } from 'resources/email.svg'
+import { ReactComponent as TrezorIcon } from 'resources/providers/trezor.svg'
+import { ReactComponent as LedgerIcon } from 'resources/providers/ledger.svg'
+import { ReactComponent as GridPlusIcon } from 'resources/providers/grid-plus.svg'
+import { ReactComponent as MetamaskIcon } from 'resources/providers/metamask.svg'
+import { ReactComponent as EmailIcon } from 'resources/icons/email.svg'
 
 TrezorConnect.manifest({
   email: 'contactus@ambire.com',

@@ -5,6 +5,7 @@ import { CSSTransition } from 'react-transition-group';
 import useOnClickOutside from 'hooks/onClickOutside';
 import { TextInput } from 'components/common';
 import { MdOutlineClose, MdDragIndicator } from 'react-icons/md';
+import { ReactComponent as ArrowDownIcon } from 'resources/icons/arrow-down.svg'
 
 const Select = ({ children, native, monospace, searchable, disabled, label, defaultValue, items, onChange, className, iconClassName, labelClassName, selectInputClassName, draggable, dragStart, dragEnter, dragTarget, drop, draggableHeader, displayDraggableHeader }) => {
     const ref = useRef();
@@ -81,7 +82,7 @@ const Select = ({ children, native, monospace, searchable, disabled, label, defa
                                 {selectedItem.extra && <div className={styles.extra}>{selectedItem.extra}</div>}
                                 {/* <div className="separator"></div> */}
                                 <div className={`${styles.handle} ${isOpen ? styles.open : ''}`}>
-                                    <img src='resources/icons/arrow-down.svg' alt='arrow-down' />
+                                    <ArrowDownIcon />
                                 </div>
                             </div>
                             {

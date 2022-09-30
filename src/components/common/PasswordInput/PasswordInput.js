@@ -2,6 +2,9 @@ import styles from './PasswordInput.module.scss'
 
 import { forwardRef, useState } from 'react'
 
+import { ReactComponent as VisibleIcon } from 'resources/icons/visible.svg'
+import { ReactComponent as InvisibleIcon } from 'resources/icons/invisible.svg'
+
 const PasswordInput = forwardRef(({ label, placeholder, autoComplete, peakPassword, disabled, value, onInput, onChange, className }, ref) => {
     const [showPassword, setShowPassword] = useState()
 
@@ -28,11 +31,11 @@ const PasswordInput = forwardRef(({ label, placeholder, autoComplete, peakPasswo
                     peakPassword ?
                         !showPassword ?
                             <div className={styles.button} onClick={() => setShowPassword(true)}>
-                                <img src="/resources/icons/visible.svg" alt="visible-icon" />
+                                <VisibleIcon />
                             </div>
                             :
                             <div className={styles.button} onClick={() => setShowPassword(false)}>
-                                <img src="/resources/icons/invisible.svg" alt="invisible-icon" />
+                                <InvisibleIcon />
                             </div>
                         :
                         null

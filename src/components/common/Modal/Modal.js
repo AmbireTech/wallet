@@ -2,6 +2,8 @@ import './Modal.scss'
 
 import { useModals } from 'hooks'
 
+import { ReactComponent as CloseIcon } from 'resources/icons/close.svg'
+
 const Modal = ({ children, id, title, buttons, isCloseBtnShown = true, onClose, topLeft, className }) => {
     const { onHideModal } = useModals()
 
@@ -16,7 +18,7 @@ const Modal = ({ children, id, title, buttons, isCloseBtnShown = true, onClose, 
                 <div className={`title ${!isCloseBtnShown ? 'centered' : ''}`} style={topLeft ? { maxWidth: '360px' } : {}}>{ title }</div>
                 {topLeft && <div className="top-left">{ topLeft }</div>}
                 {isCloseBtnShown ? (<div className="close" onClick={onCloseModal}>
-                    <img src="/resources/icons/close.svg" alt="close-icon" />
+                    <CloseIcon />
                 </div>) : <></>}
             </div>
             <div className="content">{ children }</div>

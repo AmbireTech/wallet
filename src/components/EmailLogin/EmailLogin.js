@@ -7,8 +7,8 @@ import { fetch, fetchCaught } from 'lib/fetch'
 import LoginOrSignup from 'components/LoginOrSignupForm/LoginOrSignupForm'
 import { useLocalStorage } from 'hooks'
 
-// eslint-disable-next-line import/no-relative-parent-imports
-// import { ReactComponent as EmailIcon } from '../../resources/email.svg'
+import { ReactComponent as ChevronLeftIcon } from 'resources/icons/chevron-left.svg'
+
 import Lottie from 'lottie-react'
 import AnimationData from './assets/confirm-email.json'
 
@@ -136,7 +136,7 @@ export default function EmailLogin({ relayerURL, onAddAccount }) {
         <LoginOrSignup onAccRequest={onLoginUserAction} inProgress={inProgress}></LoginOrSignup>
         <div className={styles.magicLink}>A password will not be required, we will send a magic login link to your email.</div>
         <a className={styles.backButton} href="/add-account/#add-account">
-          <img src='/resources/icons/chevron-left.svg' alt="back-icon" />
+          <ChevronLeftIcon />
           {' '}
           Back to Register
         </a>
