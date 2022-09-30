@@ -14,6 +14,8 @@ $input-height: 60px;
 
     &Container {
         position: relative;
+        border-radius: 12px;
+        overflow: hidden;
 
         &.hasIcon {
             .textInputContainerIcon {
@@ -22,20 +24,38 @@ $input-height: 60px;
                 left: 0;
                 height: 100%;
                 display: flex;
-                background-color: $input-background-color;
+                background-color: #171826;
                 align-items: center;
                 justify-content: center;
                 width: 48px;
                 font-size: 24px;
+                color: #ebecff;
             }
 
             input {
                 padding-left: 48px;
             }
         }
+        
+        .button {
+            position: absolute;
+            top: 0;
+            right: 0;
+            height: 100%;
+            width: 3.5em;
+            @include flex-center-center;
+            color: white;
+            cursor: pointer;
+            user-select: none;
+            transition: $basic-transition;
+            border-bottom: 2px solid transparent;
+
+            &:hover {
+                background-color: rgba(0, 0, 0, 0.1);
+            }
+        }
 
         input {
-            border-radius: 12px;
             height: $input-height;
             width: 100%;
             color: #6770b3;
@@ -49,27 +69,14 @@ $input-height: 60px;
             outline: none;
             background-color: #1E2033;
             transition: all 0.1s ease-in-out;
+            border-bottom: 2px solid transparent;
 
             &:focus {
-                height: calc($input-height - 2px);
-                border-bottom: 2px solid #ebecff;
+                border-bottom-color: #ebecff;
             }
-        }
 
-        .button {
-            position: absolute;
-            top: 0;
-            right: 0;
-            height: 100%;
-            width: 3.5em;
-            @include flex-center-center;
-            color: white;
-            cursor: pointer;
-            user-select: none;
-            transition: $basic-transition;
-
-            &:hover {
-                background-color: rgba(0, 0, 0, 0.1);
+            &:focus ~ .button {
+                border-bottom-color: #ebecff;
             }
         }
     }
