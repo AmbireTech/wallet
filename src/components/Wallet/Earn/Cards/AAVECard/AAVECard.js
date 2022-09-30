@@ -54,7 +54,7 @@ const AAVECard = ({ networkId, tokens, account, addRequest }) => {
         const validate = async (type, functionData) => {
             const token = getToken(type, tokenAddress)
             const bigNumberHexAmount = ethers.utils.parseUnits(amount.toString(), token.decimals).toHexString()
-            await approveToken('Aave Pool', networkDetails.id, account, lendingPoolAddress, tokenAddress, addRequestTxn, addToast)
+            if (type === 'deposit') await approveToken('Aave Pool', networkDetails.id, account, lendingPoolAddress, tokenAddress, addRequestTxn, addToast)
 
             try {
                 addRequestTxn(`aave_pool_${type}_${Date.now()}`, {
