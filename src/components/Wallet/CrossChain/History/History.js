@@ -3,7 +3,7 @@ import './History.scss'
 import { useState, useEffect, useMemo, useRef } from 'react'
 import { MdOutlineArrowForward, MdOutlineCheck, MdOutlineClose } from 'react-icons/md'
 import { HiOutlineExternalLink } from 'react-icons/hi'
-import { Loading } from 'components/common'
+import { Loading, Panel } from 'components/common'
 import useMovr from 'components/Wallet/CrossChain/useMovr'
 import networks from 'consts/networks'
 import { useToasts } from 'hooks/toasts'
@@ -117,10 +117,7 @@ const History = ({ relayerURL, network, account, quotesConfirmed }) => {
     }, [network])
 
     return (
-        <div id="history" className="panel">
-            <div className="title">
-               History
-            </div>
+        <Panel id="history" className="panel" title="History">
             <div>
                 {
                     loading ?
@@ -187,7 +184,7 @@ const History = ({ relayerURL, network, account, quotesConfirmed }) => {
                             ))
                 }
             </div>
-        </div>
+        </Panel>
     )
 }
 

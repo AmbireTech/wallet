@@ -54,7 +54,9 @@
     padding-bottom: 3em;
     box-sizing: border-box;
     //  overflow: hidden;
-    background-color: $panel-background-color;
+    background: $c-ebony-clay;
+    border: 1px solid $c-fiord;
+    border-radius: 12px;
 
     .network-warning {
       background-color: rgba(0, 0, 0, 0.25);

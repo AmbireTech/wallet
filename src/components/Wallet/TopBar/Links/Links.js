@@ -16,7 +16,7 @@ const Links = () => {
     const onOpen = () => setLinksViewed(true)
 
     return (
-        <DropDown className={`${styles.wrapper} ${linksViewed ? styles.viewed : ''}`} title={<img src="/resources/icons/question-mark.svg" alt='help-icon' />} onOpen={onOpen}>
+        <DropDown className={`${styles.wrapper} ${linksViewed ? styles.viewed : ''}`} title={<img src={`${window.location.origin}${window.location.pathname}resources/icons/question-mark.svg`} alt='help-icon' />} onOpen={onOpen}>
             <DropDownItem className={styles.item}>
                 <a href='https://help.ambire.com/hc/en-us/categories/4404980091538-Ambire-Wallet' target="_blank" rel="noreferrer">
                     <HelpCenter /> Help Center

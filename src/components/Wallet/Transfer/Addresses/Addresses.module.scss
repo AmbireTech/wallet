@@ -6,8 +6,9 @@
     margin: 0 auto;
 }
 
-#addresses {
+.wrapper {
     gap: 15px;
+    flex: 0 1 50%;
 
     .separator {
         flex: 1 0 auto;
@@ -47,7 +48,7 @@
 
 // Mobile
 @media screen and (max-width: $mobile-breakpoint-max-width) {
-    #addresses {
+    .wrapper {
         .item {
             padding-left: 15px !important;
 

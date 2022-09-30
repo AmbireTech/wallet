@@ -65,7 +65,12 @@ const SideBar = ({ match, portfolio, hidePrivateValue, relayerURL, selectedNetwo
           onClick={() => toggleSideBarOpen()}
         ></Button>
       </div>
-      }     
+      }
+
+      { !dappModeSidebar && <NavLink to={'/wallet/dashboard'} className={styles.sidebarLogo}>
+        <img src={`${window.location.origin}${window.location.pathname}resources/logo.svg`} alt='ambire-logo' />
+      </NavLink>
+      }
       <div className={styles.balance}>
         <label>Balance</label>
         {portfolio.isCurrNetworkBalanceLoading ? (

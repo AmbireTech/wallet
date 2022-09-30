@@ -2,8 +2,9 @@ import './Chart.scss';
 
 import DonutChart from "react-donut-chart";
 import { useState } from 'react';
+import cn from "classnames";
 
-const Chart = ({ data, size }) => {
+const Chart = ({ data, size, className }) => {
     const [hoveredItem, setHoveredItem] = useState({});
 
     const colors = [
@@ -41,7 +42,7 @@ const Chart = ({ data, size }) => {
     };
 
     return (
-        <div className="chart">
+        <div className={cn('chart', className)}>
             <DonutChart
                 className="donut"
                 height={size}

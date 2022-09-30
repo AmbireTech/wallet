@@ -6,7 +6,7 @@ $heading-height: 45px;
     display: none!important;
 }
 
-.address-book {
+.addressBook {
     height: 60px !important;
     background-color: #171826!important;
     border: none!important;
@@ -27,7 +27,7 @@ $heading-height: 45px;
         }
     }
 
-    .menu {
+    :global(.menu) {
         top: 60px !important;
         display: flex;
         flex-direction: column;
@@ -90,7 +90,7 @@ $heading-height: 45px;
             }
         }
 
-        #add-address {
+        .addAddress {
             padding: 10px;
 
             .fields {
@@ -118,7 +118,7 @@ $heading-height: 45px;
 
 // Mobile
 @media screen and (max-width: $mobile-breakpoint-max-width) {
-    .address-book {
+    .addressBook {
         .menu {
             width: 100%;
         }

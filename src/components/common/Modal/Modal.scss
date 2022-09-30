@@ -14,8 +14,8 @@ $buttons-height: 160px;
     flex-direction: column;
     gap: 10px;
     padding-top: 40px;
-    background: #24263D;
-    border: 1px solid #3E436B;
+    background: $c-ebony-clay;
+    border: 1px solid $c-fiord;
     border-radius: 12px;
     color: #ebecff;
     box-sizing: border-box;
@@ -29,7 +29,7 @@ $buttons-height: 160px;
         align-items: center;
         padding: 0 40px;
         justify-content: space-between;
-        
+
         .title {
             font-size: 25px;
             &.centered {

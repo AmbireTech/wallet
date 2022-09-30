@@ -7,12 +7,11 @@
     left: $sidebar-desktop-width;
     right: 0;
     height: $topbar-height;
-    width: calc(100% - (2 * $sidebar-desktop-width));
+    width: calc(100% - (2 * #{$sidebar-desktop-width}));
     padding: ($layout-spacing / 2) $layout-spacing;
     display: flex;
     justify-content: flex-end;
     gap: 1em;
-    background: #3E436B;
     color: #ebecff;
 
     .dappMenu {
@@ -248,6 +247,7 @@
         border: 1px solid #3E436BCC;
         padding-left: 15px;
         padding-right: 15px;
+        background-color: $c-fiord;
 
         .mobileMenu {
             display: flex;
@@ -267,7 +267,7 @@
             display: none;
             padding: 10px 10px;
             box-shadow: $box-shadow;
-            background-color: #3E436B;
+            background-color: $c-fiord;
 
             .privacyAndRewards {
                 display: flex;

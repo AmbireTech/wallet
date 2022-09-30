@@ -1,20 +1,16 @@
 @import 'variables.scss';
 
-#transfer {
+.transferButton {
+    max-width: 400px;
+    width: 100%;
+    margin: 0 auto;
+}
+
+.wrapper {
     display: flex;
     gap: 30px;
 
-    .transfer-button {
-        max-width: 400px;
-        width: 100%;
-        margin: 0 auto;
-    }
-    
-    .text-input-container {
-        border-radius: 12px 0 0 12px;
-    }
-
-    .amount-label {
+    .amountLabel {
         font-size: 14px;
         width: 100%;
         display: flex;
@@ -22,12 +18,16 @@
         color: #ebecff;
     }
 
-    #recipient-field {
+    .recipientField {
         position: relative;
         display: flex;
 
-        .recipient-input {
+        .recipientInput {
             width: 100%;
+
+            input {
+                border-radius: 12px 0 0 12px;
+            }
         }
 
         .dropdown {
@@ -35,7 +35,7 @@
             right: 0;
         }
 
-        #udomains-logo {
+        .udomainsLogo {
             position: absolute;
             top: 18px;
             right: 155px;
@@ -44,11 +44,11 @@
             background-image: url('/resources/ud-logo-inactive.png');
         }
 
-        .ud-logo-active {
+        .udomainsLogoActive {
             background-image: url('/resources/ud-logo-active.png') !important;  
         }
 
-        #ens-logo {
+        .ensLogo {
             position: absolute;
             top: 18px;
             right: 100px;
@@ -57,7 +57,7 @@
             background-image: url('/resources/ens-logo-inactive.png');
         }
 
-        .ens-logo-active {
+        .ensLogoActive {
             background-image: url('/resources/ens-logo-active.png') !important;  
         }
     }
@@ -79,7 +79,7 @@
             opacity: 0.5;
         }
 
-        .gas-tank-msg {
+        .gasTankMsg {
             display: flex;
             align-items: center;
             gap: 12px;
@@ -89,7 +89,7 @@
             font-size: 14px;
         }
 
-        .gas-tank-convert-msg {
+        .gasTankConvertMsg {
             display: flex;
             align-items: center;
             gap: 12px;
@@ -109,7 +109,7 @@
         }
     }
 
-    #binance-address-warning-label {
+    .binanceAddressWarning {
         a {
             vertical-align: middle;
             margin-left: 0.5em;
@@ -118,14 +118,14 @@
 }
 
 @media screen and (max-width: 1400px) {
-    #transfer {
+    .wrapper {
         flex-direction: column;
     }
 }
 
 @mixin recipient-field-font-size($size) {
-    #recipient-field {
-        .text-input {
+    .recipientField {
+        .textInput {
             input {
                 font-size: #{$size} !important;
             }
@@ -134,41 +134,41 @@
 }
 
 @media screen and (min-width: $wide-breakpoint-min-width){
-    #transfer {
+    .wrapper {
         @include recipient-field-font-size(1em)
     }
 }
 
 @media screen and (min-width: 1600px) and (max-width: 1700px) {
-    #transfer {
+    .wrapper {
         @include recipient-field-font-size(0.8vw)
     }
 }
 
 @media screen and (min-width: 1400px) and (max-width: 1600px) {
-    #transfer {
+    .wrapper {
         @include recipient-field-font-size(0.7vw)
     }
 }
 
 @media screen and (min-width: 900px) and (max-width: 1400px) {
-    #transfer {
+    .wrapper {
         @include recipient-field-font-size(1.5vw)
     }
 }
 
 @media screen and (min-width: 800px) and (max-width: 900px) {
-    #transfer {
+    .wrapper {
         @include recipient-field-font-size(1.4vw)
     }
 }
 
 // Mobile
 @media screen and (max-width: $mobile-breakpoint-max-width) {
-    #transfer {
+    .wrapper {
         gap: 1em;
 
-        #recipient-field {
+        .recipientField {
             flex-direction: column;
             gap: 10px;
 
@@ -176,7 +176,7 @@
                 position: relative;
             }
             
-            .text-input {
+            .textInput {
                 width: 100%;
     
                 input {
@@ -184,7 +184,7 @@
                 }
             }
 
-            #udomains-logo {
+            .udomainsLogo {
                 position: absolute;
                 top: 18px;
                 right: 50px;
@@ -192,7 +192,7 @@
                 width: 25px;
             }
 
-            #ens-logo {
+            .ensLogo {
                 position: absolute;
                 top: 18px;
                 right: 15px;
