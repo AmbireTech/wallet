@@ -9,5 +9,11 @@ module.exports = {
     'import/resolver': {
       typescript: {}
     },
+  },
+  rules: {
+    // Since a lot of files contain JSX, but are with .js extension,
+    // do not require specifically .jsx extension, since converting all files
+    // results huuuuuge diff in git + history gets lost. Blah.
+    "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
   }
 }
