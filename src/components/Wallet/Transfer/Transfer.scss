@@ -1,14 +1,18 @@
 @import 'variables.scss';
 
-.transfer-button {
-    max-width: 400px;
-    width: 100%;
-    margin: 0 auto;
-}
-
 #transfer {
     display: flex;
     gap: 30px;
+
+    .transfer-button {
+        max-width: 400px;
+        width: 100%;
+        margin: 0 auto;
+    }
+    
+    .text-input-container {
+        border-radius: 12px 0 0 12px;
+    }
 
     .amount-label {
         font-size: 14px;
@@ -24,10 +28,6 @@
 
         .recipient-input {
             width: 100%;
-            
-            input {
-                border-radius: 12px 0 0 12px!important;
-            }
         }
 
         .dropdown {
