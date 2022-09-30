@@ -373,8 +373,6 @@ function AppInner() {
             onBroadcastedTxn={onBroadcastedTxn}
             gasTankState={gasTankState}
           />
-        ) : (
-          <></>
         )}
       </Suspense>
 
