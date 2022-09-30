@@ -6,7 +6,6 @@ import { Modal, Button } from 'components/common'
 import { ToolTip } from 'components/common' 
 import useAmbireEarnDetails from 'hooks/useAmbireEarnDetails'
 import { Loading } from 'components/common'
-import useConstants from 'hooks/useConstants'
 
 const AmbireEarnDetailsModal = ({ title = 'Details', apy, accountId, msToDaysHours, addresses, tokenLabel }) => {
     const { hideModal } = useModals()
