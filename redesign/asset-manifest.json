@@ -1,8 +1,8 @@
 {
   "files": {
     "main.css": "./static/css/main.3b1dce92.chunk.css",
-    "main.js": "./static/js/main.a2f56fb4.chunk.js",
-    "main.js.map": "./static/js/main.a2f56fb4.chunk.js.map",
+    "main.js": "./static/js/main.7fe6a27e.chunk.js",
+    "main.js.map": "./static/js/main.7fe6a27e.chunk.js.map",
     "runtime-main.js": "./static/js/runtime-main.32a06484.js",
     "runtime-main.js.map": "./static/js/runtime-main.32a06484.js.map",
     "static/css/2.e770e63e.chunk.css": "./static/css/2.e770e63e.chunk.css",
@@ -18,7 +18,10 @@
     "static/media/aave.58aec338.svg": "./static/media/aave.58aec338.svg",
     "static/media/address-book.e4b981ed.svg": "./static/media/address-book.e4b981ed.svg",
     "static/media/Loading.scss": "./static/media/ambire-loader-animation-sprite-160.8b6d7f70.png",
+    "static/media/arrow-down.40f0ad1f.svg": "./static/media/arrow-down.40f0ad1f.svg",
+    "static/media/chevron-left.adab1904.svg": "./static/media/chevron-left.adab1904.svg",
     "static/media/circle.ee8bb2e5.svg": "./static/media/circle.ee8bb2e5.svg",
+    "static/media/close.06d537bc.svg": "./static/media/close.06d537bc.svg",
     "static/media/connect.7beba5c5.svg": "./static/media/connect.7beba5c5.svg",
     "static/media/cross-chain.f80266d1.svg": "./static/media/cross-chain.f80266d1.svg",
     "static/media/dapps.838c9ab7.svg": "./static/media/dapps.838c9ab7.svg",
@@ -34,6 +37,7 @@
     "static/media/help-center.20f94826.svg": "./static/media/help-center.20f94826.svg",
     "static/media/help.100b4d52.svg": "./static/media/help.100b4d52.svg",
     "static/media/SideBar.module.scss": "./static/media/opensea.6706f228.svg",
+    "static/media/invisible.a56ad71b.svg": "./static/media/invisible.a56ad71b.svg",
     "static/media/issue.d79f17ab.svg": "./static/media/issue.d79f17ab.svg",
     "static/media/kriptomat.4c8e4fc1.svg": "./static/media/kriptomat.4c8e4fc1.svg",
     "static/media/ledger.svg": "./static/media/ledger.4faa0bd7.svg",
@@ -44,6 +48,7 @@
     "static/media/index.css": "./static/media/poppins-latin-ext-400-normal.4f38b433.woff2",
     "static/media/privacy-off.97d404e0.svg": "./static/media/privacy-off.97d404e0.svg",
     "static/media/privacy-on.9935ee8f.svg": "./static/media/privacy-on.9935ee8f.svg",
+    "static/media/question-mark.08659fec.svg": "./static/media/question-mark.08659fec.svg",
     "static/media/ramp.26a99e26.svg": "./static/media/ramp.26a99e26.svg",
     "static/media/security.d402e353.svg": "./static/media/security.d402e353.svg",
     "static/media/swap.7a30a9c1.svg": "./static/media/swap.7a30a9c1.svg",
@@ -55,6 +60,7 @@
     "static/media/transfer.149372d4.svg": "./static/media/transfer.149372d4.svg",
     "static/media/trezor.svg": "./static/media/trezor.b0eb3c8e.svg",
     "static/media/twitter.edbf22ac.svg": "./static/media/twitter.edbf22ac.svg",
+    "static/media/visible.c0aed4be.svg": "./static/media/visible.c0aed4be.svg",
     "static/media/wallet-connect.e19e45fb.svg": "./static/media/wallet-connect.e19e45fb.svg",
     "static/media/yearn.ac5ab573.svg": "./static/media/yearn.ac5ab573.svg"
   },
@@ -63,6 +69,6 @@
     "static/css/2.e770e63e.chunk.css",
     "static/js/2.eba7375c.chunk.js",
     "static/css/main.3b1dce92.chunk.css",
-    "static/js/main.a2f56fb4.chunk.js"
+    "static/js/main.7fe6a27e.chunk.js"
   ]
 }
