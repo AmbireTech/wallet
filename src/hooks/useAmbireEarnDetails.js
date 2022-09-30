@@ -1,7 +1,7 @@
 import { getProvider } from 'lib/provider'
 import { BigNumber, utils, Contract } from 'ethers'
 import { useEffect, useState, useCallback } from 'react'
-import adexToStakingTransfersLogs from 'consts/rpcResponses/adexToStakingTransfers.json'
+import useConstants from './useConstants'
 
 const ZERO = BigNumber.from(0)
 const ZERO_ADDR = '0x0000000000000000000000000000000000000000'
@@ -20,6 +20,7 @@ const STAKING_POOL_EVENT_TYPES = {
 const ethProvider = getProvider('ethereum')
 
 const useAmbireEarnDetails = ({accountId, addresses, tokenLabel}) => {
+    const { getAdexToStakingTransfersLogs } = useConstants()
     const WALLET_ADDR = addresses.stakingTokenAddress
     const [details, setDetails] = useState({})
     const [isLoading, setIsLoading] = useState(true)
@@ -98,7 +99,8 @@ const useAmbireEarnDetails = ({accountId, addresses, tokenLabel}) => {
             : balanceShares.mul(PRECISION).div(sharesTotalSupply).toNumber() /
               PRECISION
 
-        const enterWalletTokensByTxHash = ((tokenLabel === 'ADX') ? adexToStakingTransfersLogs.result : [])
+        const adexToStakingTransfersLogs = await getAdexToStakingTransfersLogs();
+        const enterWalletTokensByTxHash = ((tokenLabel === 'ADX' && adexToStakingTransfersLogs) ? adexToStakingTransfersLogs.result : [])
             .concat(allEnterWalletTransferLogs)
             .reduce((byHash, log) => {
                     byHash[log.transactionHash] = log
@@ -654,18 +656,18 @@ const useAmbireEarnDetails = ({accountId, addresses, tokenLabel}) => {
             ),
             remainingTime: stats.remainingTime,
         }
-    }, [WALLET_ADDR, accountId])
+    }, [WALLET_ADDR, accountId, getAdexToStakingTransfersLogs])
 
     useEffect(() => {
         const getData = async (addresses, tokenLabel) => {
-            setIsLoading(prevState => !prevState)
+            setIsLoading(true)
             try {
                 const data = await getStats(addresses, tokenLabel)
                 setDetails(data)
-                setIsLoading(prevState => !prevState)
+                setIsLoading(false)
             } catch(e) {
                 console.error(e)
-                setIsLoading(prevState => !prevState)
+                setIsLoading(false)
             }
         }
         if (!accountId) return

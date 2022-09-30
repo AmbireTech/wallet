@@ -8,7 +8,7 @@ import { AiOutlineStar, AiFillStar } from 'react-icons/ai'
 import { Button } from 'components/common'
 import DAPPS_ICON from 'resources/dapps.svg'
 import AMBIRE_ICON_HOT from 'resources/icon.png'
-import { AddCustomDappModal } from 'components/Modals'
+import AddCustomDappModal from 'components/Modals/AddCustomDappModal/AddCustomDappModal'
 import { useModals } from 'hooks'
 import { fetch } from 'lib/fetch'
 import { canOpenInIframe, getManifestFromDappUrl } from 'ambire-common/src/services/dappCatalog'
@@ -180,26 +180,26 @@ const DappsCatalog = ({ network, dappsCatalog, selectedAcc, gnosisConnect, gnosi
 
                   <div className='tools'>
                     {item.featured &&
-                      // <ToolTip label={`Hot dApp`}>
+                      <ToolTip label={`Hot dApp`}>
                         <img className='icon hot-dapp' src={AMBIRE_ICON_HOT} alt='hot dApp icon' />
-                      // </ToolTip>
+                      </ToolTip>
                     }
                     {item.custom &&
-                      // <ToolTip label={`Remove ${item.name} from your catalog`}>
+                      <ToolTip label={`Remove ${item.name} from your catalog`}>
                         <MdDelete className='icon remove-dapp' onClick={(e) => onRemoveCustomClick(e, item)} />
-                      // </ToolTip>
+                      </ToolTip>
                     }
                     {item.custom &&
                       <img className='custom-dapp icon' src={DAPPS_ICON} alt='custom dapp icon' />
                     }
-                    {/* <ToolTip label={`${favorites[item.url] ? 'Remove' : 'Add'} ${item.name} ${favorites[item.url] ? 'from' : 'to'} favorites`}> */}
+                    <ToolTip label={`${favorites[item.url] ? 'Remove' : 'Add'} ${item.name} ${favorites[item.url] ? 'from' : 'to'} favorites`}>
                       <span className={`favorite${favorites[item.url] ? ' selected' : ''}`} onClick={(e) => onFavoriteClick(e, item)}> {
                         favorites[item.url]
                           ? <AiFillStar className='icon' /> :
                           <AiOutlineStar className='icon' />
 
                       }</span>
-                    {/* </ToolTip> */}
+                    </ToolTip>
                   </div>
 
                   <div className='base-info'>

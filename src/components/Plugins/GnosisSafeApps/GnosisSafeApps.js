@@ -2,7 +2,7 @@ import { MdOutlineAdd, MdRemove } from 'react-icons/md'
 import './GnosisSafeApps.scss'
 import GnosisSafeAppIframe from './GnosisSafeAppIframe'
 import { useLocalStorage } from 'hooks'
-import { InputModal } from 'components/Modals'
+import InputModal from 'components/Modals/InputModal/InputModal'
 import { Button } from 'components/common'
 
 import { useModals } from 'hooks'
