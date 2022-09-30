@@ -7,7 +7,7 @@
     left: $sidebar-desktop-width;
     right: 0;
     height: $topbar-height;
-    width: calc(100% - (2 * $sidebar-desktop-width));
+    width: calc(100% - (2 * #{$sidebar-desktop-width}));
     padding: ($layout-spacing / 2) $layout-spacing;
     display: flex;
     justify-content: flex-end;
