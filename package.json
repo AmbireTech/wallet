@@ -19,7 +19,7 @@
     "@walletconnect/utils": "^1.7.1",
     "@yfi/sdk": "^1.0.11",
     "adex-protocol-eth": "git+https://git@github.com/AmbireTech/adex-protocol-eth.git#ef2f88f26824c64c1eb12c02a389baec2b2c3889",
-    "ambire-common": "github:AmbireTech/ambire-common#f8ea108b8bfdeb6391ada6d5bda74ada8114e6bc",
+    "ambire-common": "github:AmbireTech/ambire-common#v0.16.0",
     "bip44-constants": "^128.0.0",
     "blockies-ts": "^1.0.0",
     "ethereumjs-util": "^7.1.3",
@@ -90,11 +90,11 @@
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/react": "^11.2.7",
     "@testing-library/user-event": "^12.8.3",
+    "@types/validator": "^13.7.6",
     "@web3-react/types": "^6.0.7",
     "progress-bar-webpack-plugin": "^2.1.0",
     "typescript": "^4.5.4",
     "web-vitals": "^1.1.2",
-    "webpack-bundle-analyzer": "^4.6.1",
-    "@types/validator": "^13.7.6"
+    "webpack-bundle-analyzer": "^4.6.1"
   }
 }
