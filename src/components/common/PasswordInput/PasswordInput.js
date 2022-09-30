@@ -1,19 +1,19 @@
-import './PasswordInput.scss'
+import styles from './PasswordInput.module.scss'
 
 import { forwardRef, useState } from 'react'
 
-const PasswordInput = forwardRef(({ label, placeholder, autoComplete, peakPassword, disabled, value, onInput, onChange }, ref) => {
+const PasswordInput = forwardRef(({ label, placeholder, autoComplete, peakPassword, disabled, value, onInput, onChange, className }, ref) => {
     const [showPassword, setShowPassword] = useState()
 
     return (
-        <div className="password-input">
+        <div className={`${styles.passwordInput} ${className || ''}`}>
             {
                 label ?
                     <label>{ label }</label>
                     :
                     null
             }
-            <div className="input-container">
+            <div className={styles.inputContainer}>
                 <input
                     value={value}
                     autoComplete={autoComplete}
@@ -27,12 +27,12 @@ const PasswordInput = forwardRef(({ label, placeholder, autoComplete, peakPasswo
                 {
                     peakPassword ?
                         !showPassword ?
-                            <div className="button" onClick={() => setShowPassword(true)}>
-                                <img src="/resources/icons/visible.svg" alt="visible" />
+                            <div className={styles.button} onClick={() => setShowPassword(true)}>
+                                <img src="/resources/icons/visible.svg" alt="visible-icon" />
                             </div>
                             :
-                            <div className="button" onClick={() => setShowPassword(false)}>
-                                <img src="/resources/icons/invisible.svg" alt="visible" />
+                            <div className={styles.button} onClick={() => setShowPassword(false)}>
+                                <img src="/resources/icons/invisible.svg" alt="invisible-icon" />
                             </div>
                         :
                         null
