@@ -10,6 +10,10 @@
     cursor: pointer;
     min-width: 240px;
 
+    &InputContainer {
+        border-radius: 0;
+    }
+
     &.disabled {
         pointer-events: none;
         opacity: 0.5;

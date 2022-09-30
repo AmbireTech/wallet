@@ -93,6 +93,7 @@ const Select = ({ children, native, monospace, searchable, disabled, label, defa
                                                 <TextInput
                                                     className={styles.selectSearchInput}
                                                     disabled={disabled}
+                                                    inputContainerClass={styles.selectInputContainer}
                                                     placeholder="Search"
                                                     value={search}
                                                     ref={hiddenTextInput}
