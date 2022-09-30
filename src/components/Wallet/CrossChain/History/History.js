@@ -9,8 +9,10 @@ import networks from 'consts/networks'
 import { useToasts } from 'hooks/toasts'
 import { useRelayerData } from 'hooks'
 import movrTxParser from './movrTxParser'
+import useConstants from 'hooks/useConstants'
 
 const History = ({ relayerURL, network, account, quotesConfirmed }) => {
+    const { constants: { humanizerInfo } } = useConstants()
     const { addToast } = useToasts()
     const { checkTxStatus } = useMovr()
 
@@ -44,7 +46,7 @@ const History = ({ relayerURL, network, account, quotesConfirmed }) => {
         return transactions.map(({ txId, txns }) => {
             const outboundTransferTo = txns.map(([, value, data]) => {
                 const sigHash = data.slice(0, 10)
-                const parseOutboundTransferTo = movrTxParser[sigHash]
+                const parseOutboundTransferTo = movrTxParser(humanizerInfo)[sigHash]
                 if (parseOutboundTransferTo) return {
                     txData: data,
                     ...parseOutboundTransferTo(value, data, network)
@@ -57,7 +59,7 @@ const History = ({ relayerURL, network, account, quotesConfirmed }) => {
                 ...outboundTransferTo[0]
             } : null
         }).filter(tx => tx)
-    }, [relayerTransactions, network])
+    }, [relayerTransactions, network, humanizerInfo])
 
     useEffect(() => {
         async function getStatuses() {
