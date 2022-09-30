@@ -8,6 +8,11 @@ $gap: 12px;
   @include flex-full-grow-container;
   position: relative;
 
+  .text-input-container {
+    padding-left: 20px;
+    border-radius: 12px;
+  }
+
   .filter-section {
     margin-bottom: ($gap * 2);
 
