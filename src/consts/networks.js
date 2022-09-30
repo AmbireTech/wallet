@@ -23,4 +23,4 @@ import networks from 'ambire-common/src/constants/networks'
   aurora: '/resources/networks/aurora.svg',
 }
 
-export default networks.map(network => ({ ...network, icon: networkIconsById[network.id]}))
+export default networks.map(network => ({ ...network, icon: `${window.location.origin}${networkIconsById[network.id]}`}))
