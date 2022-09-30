@@ -9,7 +9,7 @@ import networks from 'ambire-common/src/constants/networks'
   ethereum: 'resources/networks/redesign/ethereum.svg',
   polygon: 'resources/networks/redesign/polygon.svg',
   avalanche: 'resources/networks/redesign/avalanche.svg',
-  'binance-smart-chain': 'resources/redesign/networks/bsc.svg',
+  'binance-smart-chain': 'resources/networks/redesign/bsc.svg',
   fantom: 'resources/networks/redesign/fantom.svg',
   moonbeam: 'resources/networks/redesign/moonbeam.svg',
   moonriver: 'resources/networks/redesign/moonriver.svg',
