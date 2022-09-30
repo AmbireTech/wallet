@@ -55,6 +55,8 @@ $account-height: 60px;
                     gap: 15px;
                     margin-right: 10px;
                     opacity: 0.6;
+                    padding: 0 10px;
+                    border-radius: 12px;
                     cursor: pointer;
 
                     .icon {
@@ -95,12 +97,12 @@ $account-height: 60px;
                     &:hover {
                         background-color: #24263d;
 
-                        ~.buttons .button {
-                            svg {
-                                opacity: 1;
-                            }
-                            background-color: #24263d;
-                        }
+                        // ~.buttons .button {
+                        //     svg {
+                        //         opacity: 1;
+                        //     }
+                        //     background-color: #24263d;
+                        // }
                     }
                 }
 
