@@ -57,7 +57,7 @@ $buttons-height: 60px;
             font-size: 20px;
         }
     }
-    
+
     .content {
         height: 100%;
         position: relative;
@@ -80,6 +80,10 @@ $buttons-height: 60px;
         button {
             flex: 0 1 50% !important;
             height: 100%;
+
+            &.full {
+                flex: 0 1 100% !important;
+            }
         }
     }
 }

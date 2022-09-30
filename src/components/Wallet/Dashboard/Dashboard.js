@@ -12,6 +12,7 @@ import { MdOutlineInfo } from 'react-icons/md'
 import Promotions from './Promotions/Promotions'
 import AssetsMigrationBanner from 'components/Wallet/AssetsMigration/AssetsMigrationBanner'
 import PendingRecoveryNotice from 'components/Wallet/Security/PendingRecoveryNotice/PendingRecoveryNotice'
+
 import usePasswordRecoveryCheck from 'hooks/usePasswordRecoveryCheck'
 import OutdatedBalancesMsg from './OutdatedBalancesMsg/OutdatedBalancesMsg'
 
@@ -34,7 +35,7 @@ const tabSegments = [
 ]
 
 
-export default function Dashboard({ portfolio, selectedNetwork, selectedAccount, setNetwork, privateMode, rewardsData,  userSorting, setUserSorting, accounts, addRequest, relayerURL, useStorage, match, showSendTxns }) {
+export default function Dashboard({ portfolio, selectedNetwork, selectedAccount, setNetwork, privateMode, rewardsData,  userSorting, setUserSorting, accounts, addRequest, relayerURL, useStorage, match, showSendTxns, onAddAccount }) {
     const history = useHistory()
     const { tabId, page = 1 } = useParams()
 
@@ -45,8 +46,8 @@ export default function Dashboard({ portfolio, selectedNetwork, selectedAccount,
 
     const currentAccount = accounts.find(a => a.id.toLowerCase() === selectedAccount.toLowerCase())
 
-    const { hasPendingReset, recoveryLock, isPasswordRecoveryCheckLoading } = usePasswordRecoveryCheck(relayerURL, currentAccount, selectedNetwork)
-    const isBalancesCachedCurrentNetwork = portfolio.cachedBalancesByNetworks.length ? 
+    const { hasPendingReset, recoveryLock, isPasswordRecoveryCheckLoading } = usePasswordRecoveryCheck(relayerURL, currentAccount, selectedNetwork, onAddAccount)
+    const isBalancesCachedCurrentNetwork = portfolio.cachedBalancesByNetworks.length ?
         portfolio.cachedBalancesByNetworks.find(({network}) => network === selectedNetwork.id) : false
 
     useEffect(() => {
@@ -84,9 +85,9 @@ export default function Dashboard({ portfolio, selectedNetwork, selectedAccount,
     return (
         <section id="dashboard">
             { isBalancesCachedCurrentNetwork && (
-                <OutdatedBalancesMsg 
+                <OutdatedBalancesMsg
                     selectedNetwork={selectedNetwork}
-                    selectedAccount={selectedAccount} 
+                    selectedAccount={selectedAccount}
                 />)
             }
             <Promotions rewardsData={rewardsData} />

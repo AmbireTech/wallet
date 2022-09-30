@@ -87,6 +87,10 @@ a {
   text-align: center;
 }
 
+.text-center {
+  text-align: center;
+}
+
 .validation-error {
   font-weight: 500;
   color: $danger-color;
@@ -209,6 +213,11 @@ select {
     color: $tertiary-accent-color
   }
 
+  &.danger {
+    background: mix($danger-color, $panel-background-color, 5%);
+    border: 1px solid $danger-color;
+    color: $danger-color
+  }
 
   &.action {
     cursor: pointer;
@@ -217,6 +226,17 @@ select {
       background: mix($warning-color, $panel-background-color, 10%);
     }
   }
+
+  span.link {
+    text-decoration: underline;
+    cursor: pointer;
+  }
+
+}
+
+.info-panel {
+  padding: 16px;
+  background-color: $input-background-color;
 }
 
 .notification-banner {

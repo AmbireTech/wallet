@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useRelayerData } from 'hooks'
-import { AbiCoder, keccak256 } from 'ethers/lib/utils'
+import { accHash } from 'lib/quickaccUtils'
 
 const REFRESH_INTVL = 30 * 1000
 
@@ -31,11 +31,6 @@ export default function usePasswordRecoveryCheck(relayerURL, currentAccount, sel
     const privileges = data ? data.privileges : {}
     const recoveryLock = data && data.recoveryLock
 
-    const accHash = signer => {
-      const abiCoder = new AbiCoder()
-      const { timelock, one, two } = signer
-      return keccak256(abiCoder.encode(['tuple(uint, address, address)'], [[timelock, one, two]]))
-    }
     const hasPendingReset = privileges[currentAccount.signer.quickAccManager] && (
       (recoveryLock && recoveryLock.status && !isLoading)
       || (

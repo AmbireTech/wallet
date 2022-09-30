@@ -112,6 +112,33 @@
     }
   }
 
+  .email-account-change {
+    background: $input-background-color;
+    padding: 16px;
+    display: flex;
+    gap: 16px;
+    align-items: center;
+
+    & > svg {
+      font-size: 2em;
+      color: $warning-color;
+    }
+
+    .email-account-change-title {
+      font-weight: bold;
+    }
+
+    .email-account-change-desc {
+      text-align: left;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .email-account-change-action {
+      margin-top: 8px;
+    }
+  }
 
 }
 

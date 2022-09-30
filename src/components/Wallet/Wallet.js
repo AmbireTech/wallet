@@ -53,6 +53,7 @@ export default function Wallet(props) {
         setUserSorting={props.setUserSorting}
         match={props.match}
         showSendTxns={props.showSendTxns}
+        onAddAccount={props.onAddAccount}
       />
     },
     {

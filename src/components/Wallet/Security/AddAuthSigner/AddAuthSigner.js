@@ -6,7 +6,7 @@ import { LedgerSubprovider } from '@0x/subproviders/lib/src/subproviders/ledger'
 import { ledgerEthereumBrowserClientFactoryAsync } from '@0x/subproviders/lib/src' // https://github.com/0xProject/0x-monorepo/issues/1400
 import TrezorConnect from 'trezor-connect'
 import { TrezorSubprovider } from '@0x/subproviders/lib/src/subproviders/trezor' // https://github.com/0xProject/0x-monorepo/issues/1400
-import { SelectSignerAccountModal } from 'components/Modals'
+import { SelectSignerAccountModal, AddEmailAccountModal } from 'components/Modals'
 import { useModals } from 'hooks'
 import { isFirefox } from 'lib/isFirefox'
 import { ledgerGetAddresses, PARENT_HD_PATH } from "lib/ledgerWebHID"
@@ -16,7 +16,7 @@ import { MdOutlineAdd } from 'react-icons/md'
 import { LatticeModal } from 'components/Modals'
 import { latticeInit, latticeConnect, latticeGetAddresses } from 'lib/lattice'
 
-const AddAuthSigner = ({ selectedNetwork, selectedAcc, onAddBtnClicked }) => {
+const AddAuthSigner = ({ selectedNetwork, selectedAcc, onAddBtnClicked, relayerURL, onAddAccount, showSendTxns }) => {
   const [signerAddress, setSignerAddress] = useState({
     address: '',
     index: 0,
@@ -28,11 +28,11 @@ const AddAuthSigner = ({ selectedNetwork, selectedAcc, onAddBtnClicked }) => {
   const [showLoading, setShowLoading] = useState(false)
   const [textInputInfo, setTextInputInfo] = useState('')
   const { showModal } = useModals()
-  const [validationFormMgs, setValidationFormMgs] = useState({ 
-    success: false, 
+  const [validationFormMgs, setValidationFormMgs] = useState({
+    success: false,
     message: ''
   })
-  
+
   async function connectLedgerAndGetAccounts() {
     if (isFirefox()) {
       await connectLedgerAndGetAccountsU2F()
@@ -118,6 +118,19 @@ const AddAuthSigner = ({ selectedNetwork, selectedAcc, onAddBtnClicked }) => {
     setModalToggle(true)
   }
 
+  async function connectEmailSigner() {
+    showModal(
+      <AddEmailAccountModal
+        relayerURL={relayerURL}
+        onAddBtnClicked={onAddBtnClicked}
+        onAddAccount={onAddAccount}
+        selectedAcc={selectedAcc}
+        selectedNetwork={selectedNetwork}
+        showSendTxns={showSendTxns}
+      />
+    )
+  }
+
   const setLatticeAddresses = ({ addresses, deviceId, commKey, isPaired }) => {
     setChooseSigners({
       addresses, signerName: 'Lattice', signerExtra: {
@@ -130,10 +143,10 @@ const AddAuthSigner = ({ selectedNetwork, selectedAcc, onAddBtnClicked }) => {
 
     setModalToggle(true)
   }
-  
+
   async function connectGridPlusAndGetAccounts() {
-    if (selectedAcc.signerExtra && 
-      selectedAcc.signerExtra.type === 'Lattice' && 
+    if (selectedAcc.signerExtra &&
+      selectedAcc.signerExtra.type === 'Lattice' &&
       selectedAcc.signerExtra.isPaired) {
         const { commKey, deviceId } = selectedAcc.signerExtra
         const client = latticeInit(commKey)
@@ -153,8 +166,8 @@ const AddAuthSigner = ({ selectedNetwork, selectedAcc, onAddBtnClicked }) => {
           // Canceling the visualization of the secret code on the device's screen.
           client.pair('')
           setAddAccErr(`The Lattice device is not paired! Please re-add your account!.`, { timeout: 30000 })
-          
-          return 
+
+          return
         }
 
         const { res, errGetAddresses } = await latticeGetAddresses(client)
@@ -164,7 +177,7 @@ const AddAuthSigner = ({ selectedNetwork, selectedAcc, onAddBtnClicked }) => {
 
             return
         }
-        
+
         if (res) {
           setShowLoading(false)
           setLatticeAddresses({ addresses: res, deviceId, commKey, isPaired: true })
@@ -248,6 +261,18 @@ const AddAuthSigner = ({ selectedNetwork, selectedAcc, onAddBtnClicked }) => {
         />
         Metamask / Browser
       </Button>
+      {
+        !selectedAcc.email &&
+        <Button
+          onClick={() => wrapErr(connectEmailSigner)}
+        >
+          <div
+            className="icon"
+            style={{ backgroundImage: 'url(./resources/envelope.png)' }}
+          />
+          Email Account
+        </Button>
+      }
     </div>
   )
 
@@ -258,11 +283,11 @@ const AddAuthSigner = ({ selectedNetwork, selectedAcc, onAddBtnClicked }) => {
 
   useEffect(() => {
     const isAddressValid = validateAddAuthSignerAddress(signerAddress.address, selectedAcc.id)
-    
+
     setDisabled(!isAddressValid.success)
 
-    setValidationFormMgs({ 
-      success: isAddressValid.success, 
+    setValidationFormMgs({
+      success: isAddressValid.success,
       message: isAddressValid.message ? isAddressValid.message : ''
     })
 
@@ -270,7 +295,7 @@ const AddAuthSigner = ({ selectedNetwork, selectedAcc, onAddBtnClicked }) => {
 
   return (
     <div className="content">
-      {showLoading && 
+      {showLoading &&
       (<>
         <h3>It may takes a while.</h3>
         <h3>Please wait...</h3>
@@ -304,8 +329,8 @@ const AddAuthSigner = ({ selectedNetwork, selectedAcc, onAddBtnClicked }) => {
           </Button>
         </div>
       </div>)}
-      { validationFormMgs.message && 
-        (<div className='validation-error'><BsXLg size={12}/>&nbsp;{validationFormMgs.message}</div>) 
+      { validationFormMgs.message &&
+        (<div className='validation-error'><BsXLg size={12}/>&nbsp;{validationFormMgs.message}</div>)
       }
       {addAccErr ? <h3 className="error">{addAccErr}</h3> : <></>}
     </div>

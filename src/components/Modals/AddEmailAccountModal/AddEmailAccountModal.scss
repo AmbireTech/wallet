@@ -1,0 +1,45 @@
+@import 'variables.scss';
+
+#add-email-modal {
+    .confirmation-message {
+        display: flex;
+        gap: 16px;
+        align-items: center;
+    }
+
+    .instructions-message {
+        display: flex;
+        gap: 16px;
+        align-items: center;
+
+        svg {
+            font-size: 2em;
+        }
+    }
+
+    .instructions-message-small {
+        font-size: 0.8em;
+    }
+
+    .email-modal-inputs {
+        margin-top: 16px;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .resend-email {
+        display: flex;
+        gap: 8px;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        text-align: center;
+
+        .resendEmailButton {
+            height: 20px;
+            font-size: 1em;
+        }
+    }
+
+}
