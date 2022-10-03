@@ -3,12 +3,20 @@
 $collectible-details-height: 70px;
 $collectible-size: 250px;
 
-#collectibles {
+.wrapper {
     display: flex;
     flex-direction: column;
     gap: 1em;
+    
+    .greenHighlight {
+        color: $primary-accent-color;
+    }
 
-    .pagination-controls {
+    .purpleHighlight {
+        color: $secondary-accent-color;
+    }
+
+    .paginationControls {
         display: flex;
         align-items: center;
         align-self: flex-end;
@@ -16,14 +24,14 @@ $collectible-size: 250px;
         font-size: 15px;
         font-weight: 500;
 
-        .pagination-current {
+        .paginationCurrent {
             span {
                 opacity: 0.5;
             }
         }
     }
 
-    .collectibles-wrapper {
+    .collectiblesWrapper {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
         grid-gap: 2.5vh 1.5vh;
@@ -74,7 +82,7 @@ $collectible-size: 250px;
                     font-weight: 500;
                     color: white;
 
-                    .collection-icon {
+                    .collectionIcon {
                         flex: 0 0 auto;
                         height: 15px;
                         width: 15px;
@@ -84,7 +92,7 @@ $collectible-size: 250px;
                         background-color: rgba(255, 255, 255, 0.1);
                     }
 
-                    .collection-name {
+                    .collectionName {
                         white-space: nowrap;
                         overflow: hidden;
                         text-overflow: ellipsis;
@@ -125,8 +133,8 @@ $collectible-size: 250px;
 }
 // Mobile
 @media screen and (max-width: $mobile-breakpoint-max-width) {
-    #collectibles {
-        .panel-heading {
+    .collectibles {
+        .panelHeading {
             top: -20px !important;
             height: auto !important;
             flex-direction: column;
@@ -138,7 +146,7 @@ $collectible-size: 250px;
                 align-self: flex-start;
             }
 
-            .pagination-controls {
+            .paginationControls {
                 align-self: flex-end !important;
             }
         }
