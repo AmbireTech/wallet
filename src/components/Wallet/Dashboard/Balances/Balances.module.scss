@@ -1,11 +1,19 @@
 @import 'variables.scss';
 
-#balances {
+.wrapper {
     font-size: 40px;
     display: flex;
     flex-direction: column;
 
-    #other-balances {
+    .greenHighlight {
+        color: $primary-accent-color;
+    }
+
+    .purpleHighlight {
+        color: $secondary-accent-color;
+    }
+
+    .otherBalances {
         display: flex;
         flex-direction: row;
         flex-wrap: wrap;
@@ -19,13 +27,13 @@
             opacity: 0.8;
         }
 
-        .balance-container {
+        .balanceContainer {
             display: flex;
             gap: 7px;
             flex-wrap: wrap;
         }
 
-        .other-balance {
+        .otherBalance {
             display: flex;
             flex-direction: row;
             align-items: center;
@@ -56,7 +64,7 @@
                     border-radius: 100%;
                 }
 
-                .icon-svg {
+                .iconSvg {
                     display: flex;
                     align-items: center;
 
@@ -74,15 +82,15 @@
 }
 
 @media screen and (max-width: $mobile-breakpoint-max-width) {
-    #balances {
-        #other-balances {
+    .wrapper {
+        .otherBalances {
             gap: 9px;
 
             label {
                 font-size: 20px;
             }
 
-            .other-balance {
+            .otherBalance {
                 font-size: 20px;
             }
         }

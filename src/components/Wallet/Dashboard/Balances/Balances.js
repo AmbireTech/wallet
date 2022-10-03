@@ -1,4 +1,4 @@
-import './Balances.scss'
+import styles from './Balances.module.scss'
 
 import { Loading } from 'components/common'
 import { useRelayerData } from 'hooks'
@@ -26,32 +26,32 @@ const Balances = ({ portfolio, selectedNetwork, setNetwork, hidePrivateValue, re
     }
     
     return (
-        <div id="balances">
+        <div className={styles.wrapper}>
             { portfolio.isCurrNetworkBalanceLoading && otherBalancesLoading ? <Loading /> : (
                 <>
                 { portfolio.isCurrNetworkBalanceLoading ? <Loading /> : (
                     <div>
-                        <span className="green-highlight">$</span> { hidePrivateValue(portfolio.balance.total.truncated) }
-                        <span className="green-highlight">.{ hidePrivateValue(portfolio.balance.total.decimals) }</span>
+                        <span className={styles.greenHighlight}>$</span> { hidePrivateValue(portfolio.balance.total.truncated) }
+                        <span className={styles.greenHighlight}>.{ hidePrivateValue(portfolio.balance.total.decimals) }</span>
                     </div>
                 )}
             
-                <div id="other-balances">
+                <div className={styles.otherBalances}>
                     { otherBalancesLoading ? <Loading /> : (
                         <>
                             { otherBalances.length ? <label>You also have</label> : null }
                             {
                                 otherBalances.filter(({ network }) => networkDetails(network)).map(({ network, total }, i) => (
-                                    <div className="balance-container" key={network}>
-                                        <div className="other-balance" onClick={() => setNetwork(network)}>
+                                    <div className={styles.balanceContainer} key={network}>
+                                        <div className={styles.otherBalance} onClick={() => setNetwork(network)}>
                                             <label>
-                                                <span className="purple-highlight">$</span> { hidePrivateValue(total.truncated) }
-                                                <span className="purple-highlight">.{hidePrivateValue(total.decimals)}</span>
+                                                <span className={styles.purpleHighlight}>$</span> { hidePrivateValue(total.truncated) }
+                                                <span className={styles.purpleHighlight}>.{hidePrivateValue(total.decimals)}</span>
                                             </label>
                                             on
-                                            <div className="network">
-                                                <div className="icon" style={{backgroundImage: `url(${networkDetails(network).icon})`}}></div>
-                                                <div className="name">
+                                            <div className={styles.network}>
+                                                <div className={styles.icon} style={{backgroundImage: `url(${networkDetails(network).icon})`}}></div>
+                                                <div className={styles.name}>
                                                     { networkDetails(network).name }
                                                 </div>
                                             </div>
@@ -61,16 +61,16 @@ const Balances = ({ portfolio, selectedNetwork, setNetwork, hidePrivateValue, re
                                 ))
                             }
                             { gasTankDetails && (gasTankDetails.total.full > 0) && !isLoading &&
-                                <div className="balance-container">
-                                    <div className="other-balance" onClick={() => history.push('/wallet/gas-tank')}>
+                                <div className={styles.balanceContainer}>
+                                    <div className={styles.otherBalance} onClick={() => history.push('/wallet/gas-tank')}>
                                         <label>
-                                            <span className="purple-highlight">$</span> { hidePrivateValue(gasTankDetails.total.truncated) }
-                                            <span className="purple-highlight">.{ hidePrivateValue(gasTankDetails.total.decimals) }</span>
+                                            <span className={styles.purpleHighlight}>$</span> { hidePrivateValue(gasTankDetails.total.truncated) }
+                                            <span className={styles.purpleHighlight}>.{ hidePrivateValue(gasTankDetails.total.decimals) }</span>
                                         </label>
                                         on
-                                        <div className="network">
+                                        <div className={styles.network}>
                                             <div className='icon-svg'><GiGasPump size={20}/></div>
-                                            <div className="name">
+                                            <div className={styles.name}>
                                                 { gasTankDetails.label }
                                             </div>
                                         </div>
