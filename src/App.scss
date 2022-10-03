@@ -204,15 +204,15 @@ select {
 }
 
 .notification-hollow {
-
-  padding: 16px;
+  border-radius: 12px;
+  padding: 13px 10px;
   background: mix($primary-accent-color, $panel-background-color, 5%);
   border: 1px solid $primary-accent-color;
 
   &.warning {
-    background: mix($warning-color, $panel-background-color, 5%);
-    border: 1px solid $warning-color;
-    color: $warning-color
+    background-color: #FEF5DB;
+    border-left: 7px solid #FFBC00;
+    color: #333757;
   }
 
   &.info {
