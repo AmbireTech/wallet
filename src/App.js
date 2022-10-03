@@ -107,6 +107,8 @@ function AppInner() {
     [selectedAcc, network]
   )
 
+  const rewardsData = useRewards({ relayerURL, accountId: selectedAcc, useRelayerData })
+
   // Attach meta data to req, if needed
   const attachMeta = async (req) => {
     let meta
@@ -303,8 +305,6 @@ function AppInner() {
     isSendTxnShowing: sendTxnState.showing,
     onSitckyClick: useCallback(() => setSendTxnState({ showing: true }), [])
   })
-
-  const rewardsData = useRewards({ relayerURL, accountId: selectedAcc, useRelayerData })
 
   // Checks if Thank you page needs to be shown
   const campaignUTM = useOneTimeQueryParam('utm_campaign')
