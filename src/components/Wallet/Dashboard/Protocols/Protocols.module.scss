@@ -1,6 +1,6 @@
 @import 'variables.scss';
 
-#protocols-table {
+.wrapper {
     display: flex;
     flex-direction: column;
     gap: 30px;
@@ -18,15 +18,15 @@
             font-weight: bold;
             background-color: rgba(255, 255, 255, 0.1);
 
-            .sort-holder {
+            .sortHolder {
                 display: flex;
                 align-items: center;
                 gap: 10px;
-                .sort-buttons {
+                .sortButtons {
                     display: flex;
                 }
             }
-            .wrapper-btns {
+            .wrapperBtns {
                 display: flex;
                 gap: 10px;
             }
@@ -44,14 +44,14 @@
                 font-size: 15px;
                 color: white;
                 
-                &[draggable="true"] .drag-handle {
+                &[draggable="true"] .dragHandle {
                     cursor: grab;
                     cursor: -moz-grab;
                     cursor: -webkit-grab;
             
                 }
 
-                &[draggable="true"]:active .drag-handle {
+                &[draggable="true"]:active .dragHandle {
                     cursor: grabbing;
                     cursor: -moz-grabbing;
                     cursor: -webkit-grabbing;
@@ -142,11 +142,11 @@
 }
 
 @media screen and (max-width: $mobile-breakpoint-max-width) {
-    #protocols-table {
+    .wrapper {
         gap: 20px;
 
         .title {
-            .sort-holder {
+            .sortHolder {
                 flex-direction: column;
             }
         }
