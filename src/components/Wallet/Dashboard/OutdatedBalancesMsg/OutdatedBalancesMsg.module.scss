@@ -1,0 +1,30 @@
+.wrapper {
+  display: flex;
+  align-items: center;
+  padding-right: 20px;
+
+  .body {
+    margin-left: 20px;
+    flex: 1;
+
+    .title {
+      margin: 0;
+      margin-bottom: 5px;
+      font-size: 20px;
+    }
+
+    .text {
+      margin: 0;
+      font-size: 16px;
+    }
+  }
+
+  .close {
+    margin-left: 30px;
+    cursor: pointer;
+    color: #FFBC00;
+    background-color: transparent;
+    border: 0;
+    outline: none;
+  }
+}
