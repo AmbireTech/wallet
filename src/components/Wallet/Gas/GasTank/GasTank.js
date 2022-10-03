@@ -49,8 +49,6 @@ const GasTank = ({
     const { addToast } = useToasts()
 
     const gasTankBalancesFormatted = gasTankBalances ? formatFloatTokenAmount(gasTankBalances, true, 2) : '0.00'
-    const feeAssetsPerNetwork = feeAssetsRes && feeAssetsRes.length && feeAssetsRes.filter(item => item.network === network.id)
-    
     const totalSaved = totalSavedResult && totalSavedResult.length && 
         formatFloatTokenAmount(totalSavedResult.map(i => i.saved).reduce((a, b) => a + b), true, 2)
     const totalCashBack = totalSavedResult && totalSavedResult.length && 
@@ -156,7 +154,7 @@ const GasTank = ({
                                 pathname: `/wallet/transfer/${address}`,
                                 state: {
                                     gasTankMsg: 'Warning: You are about to top up your Gas Tank. Top ups to the Gas Tank are non-refundable.',
-                                    feeAssetsPerNetwork
+                                    isTopUp: true
                                 }
                             }}>
                                 <Button small>Top up</Button>
@@ -254,7 +252,7 @@ const GasTank = ({
                     pathname: `/wallet/transfer/`,
                     state: {
                         gasTankMsg: 'Warning: You are about to top up your Gas Tank. Top ups to the Gas Tank are non-refundable.',
-                        feeAssetsPerNetwork
+                        isTopUp: true
                     }
                 }}>
                     <Button className='deposit-button' small>top up gas tank</Button>
