@@ -7,8 +7,19 @@
 
     .panel {
         flex: 0 1 50%;
+
+        .panelTitle {
+            font-size: 25px;
+            font-weight: 400;
+            color: #ebecff;
+        }
     }
 
+    .topPanels {
+        padding-top: 15px;
+        padding-bottom: 18px;
+    }
+    
     .overview {
         display: flex;
         justify-content: space-between;
