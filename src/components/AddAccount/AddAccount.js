@@ -14,7 +14,7 @@ import { getProxyDeployBytecode } from 'adex-protocol-eth/js/IdentityProxyDeploy
 import { fetch, fetchPost } from 'lib/fetch'
 import accountPresets from 'ambire-common/src/constants/accountPresets'
 import { useToasts } from 'hooks/toasts'
-import { SelectSignerAccountModal } from 'components/Modals'
+import SelectSignerAccountModal from 'components/Modals/SelectSignerAccountModal/SelectSignerAccountModal'
 import { useModals } from 'hooks'
 import { Loading } from 'components/common'
 import { ledgerGetAddresses, PARENT_HD_PATH } from 'lib/ledgerWebHID'
@@ -22,7 +22,7 @@ import { isFirefox } from 'lib/isFirefox'
 import { VscJson } from 'react-icons/vsc'
 import { useDropzone } from 'react-dropzone'
 import { validateImportedAccountProps, fileSizeValidator } from 'lib/validations/importedAccountValidations'
-import { LatticeModal } from 'components/Modals'
+import LatticeModal from 'components/Modals/LatticeModal/LatticeModal'
 
 TrezorConnect.manifest({
   email: 'contactus@ambire.com',

@@ -13,7 +13,7 @@ import { formatFloatTokenAmount } from 'lib/formatters'
 import { ToolTip } from 'components/common'
 import { useRelayerData } from 'hooks'
 import { useModals } from 'hooks'
-import { GasTankBalanceByTokensModal } from 'components/Modals'
+import GasTankBalanceByTokensModal from 'components/Modals/GasTankBalanceByTokensModal/GasTankBalanceByTokensModal'
 import { HiOutlineExternalLink } from 'react-icons/hi'
 import { formatUnits } from 'ethers/lib/utils'
 // eslint-disable-next-line import/no-relative-parent-imports
@@ -49,7 +49,7 @@ const GasTank = ({
     const { addToast } = useToasts()
 
     const gasTankBalancesFormatted = gasTankBalances ? formatFloatTokenAmount(gasTankBalances, true, 2) : '0.00'
-    const feeAssetsPerNetwork = feeAssetsRes && feeAssetsRes.length && feeAssetsRes.filter(item => item.network === network.id)
+    const feeAssetsPerNetwork = feeAssetsRes && feeAssetsRes.length && feeAssetsRes.filter(item => (item.network === network.id) && !item.disableGasTankDeposit)
     
     const totalSaved = totalSavedResult && totalSavedResult.length && 
         formatFloatTokenAmount(totalSavedResult.map(i => i.saved).reduce((a, b) => a + b), true, 2)
