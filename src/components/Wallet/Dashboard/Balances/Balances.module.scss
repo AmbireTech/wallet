@@ -18,66 +18,24 @@
         flex-direction: row;
         flex-wrap: wrap;
         align-items: center;
-        gap: 7px;
-        margin-top: 20px;
+        margin-top: 12px;
 
-        label {
+        .icon {
             flex: 0 0 auto;
-            font-size: 22px;
-            opacity: 0.8;
-        }
-
-        .balanceContainer {
+            height: 20px;
+            width: 20px;
+            background-size: cover;
+            border-radius: 100%;
+          }
+      
+          .iconSvg {
             display: flex;
-            gap: 7px;
-            flex-wrap: wrap;
-        }
-
-        .otherBalance {
-            display: flex;
-            flex-direction: row;
             align-items: center;
-            gap: 7px;
-            flex-wrap: wrap;
-            font-weight: 500;
-            font-size: 22px;
-            opacity: 0.8;
-            cursor: pointer;
-            transition: opacity 0.1s ease-in-out;
-            user-select: none;
-
-            label {
-                cursor: pointer;
-            }
-
-            .network {
-                display: flex;
-                flex-direction: row;
-                align-items: center;
-                gap: 8px;
-
-                .icon {
-                    flex: 0 0 auto;
-                    height: 20px;
-                    width: 20px;
-                    background-size: cover;
-                    border-radius: 100%;
-                }
-
-                .iconSvg {
-                    display: flex;
-                    align-items: center;
-
-                    svg {
-                        fill: red;
-                    } 
-                }
-            }
-
-            &:hover {
-                opacity: 1;
-            }
-        }
+      
+            svg {
+                fill: red;
+            } 
+          }
     }
 }
 

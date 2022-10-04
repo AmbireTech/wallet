@@ -6,6 +6,7 @@ import { GiGasPump } from 'react-icons/gi'
 import { useHistory } from 'react-router-dom'
 
 import networks from 'consts/networks'
+import BalanceItem from './BalanceItem/BalanceItem'
 
 const Balances = ({ portfolio, selectedNetwork, setNetwork, hidePrivateValue, relayerURL, selectedAccount, match }) => {
     const history = useHistory()
@@ -28,59 +29,37 @@ const Balances = ({ portfolio, selectedNetwork, setNetwork, hidePrivateValue, re
     return (
         <div className={styles.wrapper}>
             { portfolio.isCurrNetworkBalanceLoading && otherBalancesLoading ? <Loading /> : (
-                <>
-                { portfolio.isCurrNetworkBalanceLoading ? <Loading /> : (
-                    <div>
-                        <span className={styles.greenHighlight}>$</span> { hidePrivateValue(portfolio.balance.total.truncated) }
-                        <span className={styles.greenHighlight}>.{ hidePrivateValue(portfolio.balance.total.decimals) }</span>
-                    </div>
-                )}
-            
                 <div className={styles.otherBalances}>
                     { otherBalancesLoading ? <Loading /> : (
                         <>
-                            { otherBalances.length ? <label>You also have</label> : null }
                             {
                                 otherBalances.filter(({ network }) => networkDetails(network)).map(({ network, total }, i) => (
-                                    <div className={styles.balanceContainer} key={network}>
-                                        <div className={styles.otherBalance} onClick={() => setNetwork(network)}>
-                                            <label>
-                                                <span className={styles.purpleHighlight}>$</span> { hidePrivateValue(total.truncated) }
-                                                <span className={styles.purpleHighlight}>.{hidePrivateValue(total.decimals)}</span>
-                                            </label>
-                                            on
-                                            <div className={styles.network}>
-                                                <div className={styles.icon} style={{backgroundImage: `url(${networkDetails(network).icon})`}}></div>
-                                                <div className={styles.name}>
-                                                    { networkDetails(network).name }
-                                                </div>
-                                            </div>
-                                        </div>
-                                        { otherBalances.length - (gasTankDetails.total.full > 0.00 ? 0 : 1) !== i ? <label>and</label> : null }
-                                    </div>
+                                    <BalanceItem 
+                                        onClick={() => setNetwork(network)}
+                                        key={network}
+                                        name={networkDetails(network).name}
+                                        value={hidePrivateValue(total.truncated)}
+                                        decimalValue={hidePrivateValue(total.decimals)}
+                                        icon={
+                                            <div className={styles.icon} style={{backgroundImage: `url(${networkDetails(network).icon})`}}></div>
+                                        }
+                                    />
                                 ))
                             }
                             { gasTankDetails && (gasTankDetails.total.full > 0) && !isLoading &&
-                                <div className={styles.balanceContainer}>
-                                    <div className={styles.otherBalance} onClick={() => history.push('/wallet/gas-tank')}>
-                                        <label>
-                                            <span className={styles.purpleHighlight}>$</span> { hidePrivateValue(gasTankDetails.total.truncated) }
-                                            <span className={styles.purpleHighlight}>.{ hidePrivateValue(gasTankDetails.total.decimals) }</span>
-                                        </label>
-                                        on
-                                        <div className={styles.network}>
-                                            <div className='icon-svg'><GiGasPump size={20}/></div>
-                                            <div className={styles.name}>
-                                                { gasTankDetails.label }
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                               <BalanceItem 
+                                    onClick={() => history.push('/wallet/gas-tank')}
+                                    name={gasTankDetails.label}
+                                    value={hidePrivateValue(gasTankDetails.total.truncated)}
+                                    decimalValue={hidePrivateValue(gasTankDetails.total.decimals)}
+                                    icon={
+                                        <div className={styles.iconSvg}><GiGasPump size={20}/></div>
+                                    }
+                                />
                             }
                         </>)
                     }
                 </div>
-            </>
             )}
         </div>
     )
