@@ -1,78 +1,88 @@
-import './Chart.scss';
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js'
+import { Doughnut } from 'react-chartjs-2'
+import cn from 'classnames'
+import { useState } from 'react'
+import { networkIconsById } from 'consts/networks'
 
-import DonutChart from "react-donut-chart";
-import { useState } from 'react';
-import cn from "classnames";
+import styles from './Chart.module.scss'
 
-const Chart = ({ data, size, className }) => {
-    const [hoveredItem, setHoveredItem] = useState({});
+ChartJS.register(ArcElement, Tooltip, Legend)
 
-    const colors = [
-        "#AA6AFF",
-        "#80FFDB",
-        "#8088FF",
-        "#E680FF",
-        "#A5FF80",
-        "#E6FF80",
-        "#FFC480",
-        "#FF8080",
-    ];
-    
-    const strokeColor = "transparent";
-    const innerRadius = 0.5;
-    const selectedOffset = 0.05;
+const colors = [
+  "#6000FF",
+  "#AE60FF",
+  "#4DE827",
+  "#FD1A64",
+  "#FFBC00",
+  "#898DCB",
+]
 
-    const onMouseEnter = (item) => {
-        setHoveredItem(item.label);
-    };
+const options = {
+  plugins: {
+    legend: {
+      display: false
+    }
+  }
+}
 
-    const onClick = (item, toggled) => {
-        if (toggled) {
-            console.log(item);
-        }
-    };
+const Chart = ({ portfolio, hidePrivateValue, selectedNetwork,  data, className }) => {
+  const networkBalance = hidePrivateValue(portfolio.balance.total.full)
+  const [hoveredItem, setHoveredItem] = useState({});
 
-    const sortData = data => {
-        return data.sort((a, b) => b.value - a.value);
-    };
+  const sortedData = () => data.sort((a, b) => b.value - a.value)
 
-    const getItemColor = index => {
-        const colorCount = colors.length - 1;
-        return index > colorCount ? colors[index - (colors.length * Math.trunc(index / colors.length))] : colors[index];
-    };
+  const chartData = {
+    labels: sortedData().map(i => i.label),
+    datasets: [
+      {
+        data: sortedData().map(i => i.balanceUSD),
+        backgroundColor: colors,
+        borderColor: '#24263D',
+        borderWidth: 3,
+        cutout: '80%',
+      },
+    ],
+  }
 
-    return (
-        <div className={cn('chart', className)}>
-            <DonutChart
-                className="donut"
-                height={size}
-                width={size}
-                onMouseEnter={(item) => onMouseEnter(item)}
-                data={sortData(data)}
-                colors={colors}
-                startAngle={-90}
-                strokeColor={strokeColor}
-                innerRadius={innerRadius}
-                selectedOffset={selectedOffset}
-                legend={false}
-                onClick={(item, toggled) => onClick(item, toggled)}
-            />
-            <div className="legend" style={{maxHeight: size}}>
-                {
-                    data.map((item, i) => (
-                        <div className={`item ${hoveredItem === item.label ? 'active' : ''}`} key={`item-${i}`}>
-                            <div className="color" style={{backgroundColor: getItemColor(i)}}/>
-                            <label>{ item.label }</label>
-                            <div className="separator"></div>
-                            <div className="percent">
-                                { parseFloat(item.value).toFixed(2) }%
-                            </div>
-                        </div>
-                    ))
-                }
-            </div>
+  const getItemColor = index => {
+    const colorCount = colors.length - 1;
+    return index > colorCount ? colors[index - (colors.length * Math.trunc(index / colors.length))] : colors[index];
+  }
+
+  return (
+    <div className={cn(styles.wrapper, className)}>
+      <div className={styles.donut}>
+        <Doughnut 
+          data={chartData} 
+          options={options}
+        />
+        <div className={styles.networkInfo}>
+          <img className={styles.networkIcon} src={networkIconsById[selectedNetwork.id]} alt={selectedNetwork.id} />
+          <label className={styles.networkAmount}>
+            <span className={styles.currency}>$</span>
+            {networkBalance >= 10000 ? `${(networkBalance/1000).toFixed(1)}K` : networkBalance}
+          </label>
         </div>
-    );
-};
+      </div>
+      <div className={styles.legend}>
+        <h2 className={styles.legendTitle}>Balance by tokens</h2>
+        <div className={styles.legendItems}>
+          {
+            data.map((item, i) => (
+              <div className={`${styles.item} ${hoveredItem === item.label ? styles.active : ''}`} key={`item-${i}`}>
+                  <div className={styles.color} style={{backgroundColor: getItemColor(i)}}/>
+                  <label>{ item.label }</label>
+                  <div className={styles.separator}></div>
+                  <div className={styles.percent}>
+                    { parseFloat(item.value).toFixed(2) }%
+                  </div>
+              </div>
+            ))
+          }
+        </div>
+      </div>
+  </div>
+  )
+}
 
-export default Chart;
+export default Chart
