@@ -14,6 +14,8 @@ import { Button, ToolTip } from 'components/common';
 import DAPPS_ICON from 'resources/dapps.svg';
 
 const TopBar = ({
+  useRelayerData,
+  relayerURL,
   connections,
   connect,
   disconnect,
@@ -110,6 +112,8 @@ const TopBar = ({
 
       <div className={`container ${isMenuOpen ? 'open' : ''}`}>
         {selectedAcc && <WalletTokenButton
+          useRelayerData={useRelayerData}
+          relayerURL={relayerURL}
           rewardsData={rewardsData}
           account={account}
           network={network}
