@@ -2,7 +2,7 @@ import styles from './Balances.module.scss'
 
 import { Loading } from 'components/common'
 import { useRelayerData } from 'hooks'
-import { GiGasPump } from 'react-icons/gi'
+import { ReactComponent as GasTankIcon } from 'resources/icons/gas-tank.svg'
 import { useHistory } from 'react-router-dom'
 
 import networks from 'consts/networks'
@@ -53,7 +53,7 @@ const Balances = ({ portfolio, selectedNetwork, setNetwork, hidePrivateValue, re
                                     value={hidePrivateValue(gasTankDetails.total.truncated)}
                                     decimalValue={hidePrivateValue(gasTankDetails.total.decimals)}
                                     icon={
-                                        <div className={styles.iconSvg}><GiGasPump size={20}/></div>
+                                        <div className={styles.iconSvg}><GasTankIcon /></div>
                                     }
                                 />
                             }
