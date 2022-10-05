@@ -54,7 +54,21 @@ export default function Dashboard({ portfolio, selectedNetwork, selectedAccount,
             }))
             .filter(({ value }) => value > 0);
 
-        setChartTokensData(tokensData);
+        if (portfolio?.balance?.total?.full && tokensData) {
+                setChartTokensData({
+                    empty: false,
+                    data: tokensData?.sort((a, b) => b.value - a.value)
+                })
+        } else {
+            setChartTokensData({
+                empty: true,
+                data: [{
+                    label: "You don't have any tokens",
+                    balanceUSD: 1,
+                    value: 0
+                }]
+            })
+        }
     }, [portfolio.balance, portfolio.tokens]);
 
     useEffect(() => portfolio.requestOtherProtocolsRefresh(), [portfolio])
