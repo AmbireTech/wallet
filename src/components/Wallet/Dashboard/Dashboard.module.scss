@@ -16,14 +16,16 @@
     }
 
     .topPanels {
+        padding: 0 50px;
         padding-top: 15px;
         padding-bottom: 18px;
+        max-height: 295px;
     }
     
     .overview {
         display: flex;
         justify-content: space-between;
-        gap: 30px;
+        gap: 17px;
 
         .balance {
             gap: 10px;
