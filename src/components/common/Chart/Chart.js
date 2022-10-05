@@ -5,6 +5,7 @@ import { networkIconsById } from 'consts/networks'
 import { ReactComponent as AlertCircle } from 'resources/icons/alert-circle.svg'
 
 import styles from './Chart.module.scss'
+import { useEffect, useRef, useState } from 'react'
 
 ChartJS.register(ArcElement, Tooltip, Legend)
 
@@ -28,17 +29,19 @@ const options = {
 const round = num => Math.round((num + Number.EPSILON) * 100) / 100
 
 const Chart = ({ portfolio, hidePrivateValue, selectedNetwork, data, className }) => {
+  const chartRef = useRef()
   const networkBalance = hidePrivateValue(portfolio.balance.total.full)
+  const [activeItem, setActiveItem] = useState(null)
 
   const chartData = {
     labels: data?.data?.map(i => i.label),
     datasets: [
       {
-        data: data?.data?.map(i => i.balanceUSD),
+        data: data?.data?.map(i => i.balanceUSD + (portfolio?.balance?.total?.full*1.5/100)),
         backgroundColor: portfolio?.balance?.total?.full ? colors : '#1E2033',
         borderColor: '#24263D',
         borderWidth: data?.data?.length > 1 ? 0 : 0, // Change the first zero to 3 to add spacing
-        cutout: '80%',
+        cutout: '85%',
       },
     ],
   }
@@ -48,12 +51,23 @@ const Chart = ({ portfolio, hidePrivateValue, selectedNetwork, data, className }
     return index > colorCount ? colors[index - (colors.length * Math.trunc(index / colors.length))] : colors[index];
   }
 
+  const onMouseMove = () => setActiveItem(chartRef?.current?._active[0]?.index)
+
+  useEffect(() => {
+    window.addEventListener('mousemove', onMouseMove)
+
+    return () => {
+      window.removeEventListener('mousemove', onMouseMove)
+    }
+  }, [])
+
   return (
     <div className={cn(styles.wrapper, className)}>
       <div className={styles.donut}>
         <Doughnut 
-          data={chartData} 
+          data={chartData}
           options={options}
+          ref={chartRef}
         />
         <div className={styles.networkInfo}>
           <img className={styles.networkIcon} src={networkIconsById[selectedNetwork.id]} alt={selectedNetwork.id} />
@@ -75,7 +89,7 @@ const Chart = ({ portfolio, hidePrivateValue, selectedNetwork, data, className }
           {!data?.empty ?
             <div className={styles.legendItems}>
               {data?.data?.map((item, i) => (
-                <div className={`${styles.item} ${false === item.label ? styles.active : ''}`} key={`item-${i}`}>{/* hovered logic disabled for now */}
+                <div className={`${styles.item} ${activeItem === i ? styles.active : ''}`} key={`item-${i}`}>{/* hovered logic disabled for now */}
                     <div className={styles.color} style={{backgroundColor: getItemColor(i)}}/>
                     <label>{ item.label }</label>
                     <div className={styles.separator}></div>
