@@ -1,8 +1,8 @@
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js'
 import { Doughnut } from 'react-chartjs-2'
 import cn from 'classnames'
-import { useState } from 'react'
 import { networkIconsById } from 'consts/networks'
+import { ReactComponent as AlertCircle } from 'resources/icons/alert-circle.svg'
 
 import styles from './Chart.module.scss'
 
@@ -25,20 +25,19 @@ const options = {
   }
 }
 
-const Chart = ({ portfolio, hidePrivateValue, selectedNetwork,  data, className }) => {
-  const networkBalance = hidePrivateValue(portfolio.balance.total.full)
-  const [hoveredItem, setHoveredItem] = useState({});
+const round = num => Math.round((num + Number.EPSILON) * 100) / 100
 
-  const sortedData = () => data.sort((a, b) => b.value - a.value)
+const Chart = ({ portfolio, hidePrivateValue, selectedNetwork, data, className }) => {
+  const networkBalance = hidePrivateValue(portfolio.balance.total.full)
 
   const chartData = {
-    labels: sortedData().map(i => i.label),
+    labels: data?.data?.map(i => i.label),
     datasets: [
       {
-        data: sortedData().map(i => i.balanceUSD),
-        backgroundColor: colors,
+        data: data?.data?.map(i => i.balanceUSD),
+        backgroundColor: portfolio?.balance?.total?.full ? colors : '#1E2033',
         borderColor: '#24263D',
-        borderWidth: 3,
+        borderWidth: data?.data?.length > 1 ? 0 : 0, // Change the first zero to 3 to add spacing
         cutout: '80%',
       },
     ],
@@ -60,26 +59,39 @@ const Chart = ({ portfolio, hidePrivateValue, selectedNetwork,  data, className 
           <img className={styles.networkIcon} src={networkIconsById[selectedNetwork.id]} alt={selectedNetwork.id} />
           <label className={styles.networkAmount}>
             <span className={styles.currency}>$</span>
-            {networkBalance >= 10000 ? `${(networkBalance/1000).toFixed(1)}K` : networkBalance}
+            {typeof networkBalance === 'number' ? 
+              (
+                networkBalance >= 10000 ? 
+                `${round(networkBalance/1000)}K` : 
+                networkBalance.toFixed(2)
+              ) :
+              0
+            }
           </label>
         </div>
       </div>
       <div className={styles.legend}>
         <h2 className={styles.legendTitle}>Balance by tokens</h2>
-        <div className={styles.legendItems}>
-          {
-            data.map((item, i) => (
-              <div className={`${styles.item} ${hoveredItem === item.label ? styles.active : ''}`} key={`item-${i}`}>
-                  <div className={styles.color} style={{backgroundColor: getItemColor(i)}}/>
-                  <label>{ item.label }</label>
-                  <div className={styles.separator}></div>
-                  <div className={styles.percent}>
-                    { parseFloat(item.value).toFixed(2) }%
-                  </div>
+          {!data?.empty ?
+            <div className={styles.legendItems}>
+              {data?.data?.map((item, i) => (
+                <div className={`${styles.item} ${false === item.label ? styles.active : ''}`} key={`item-${i}`}>{/* hovered logic disabled for now */}
+                    <div className={styles.color} style={{backgroundColor: getItemColor(i)}}/>
+                    <label>{ item.label }</label>
+                    <div className={styles.separator}></div>
+                    <div className={styles.percent}>
+                      { parseFloat(item.value).toFixed(2) }%
+                    </div>
+                </div>
+              ))} 
+            </div> :
+            <div className={styles.noTokensWrapper}>
+              <div className={styles.noTokens}>
+                <AlertCircle />
+                <label>You don't have any tokens on this network</label>
               </div>
-            ))
+            </div>
           }
-        </div>
       </div>
   </div>
   )
