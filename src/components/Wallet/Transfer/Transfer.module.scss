@@ -1,6 +1,6 @@
 @import 'variables.scss';
 
-.transfer-button {
+.transferButton {
     max-width: 400px;
     width: 100%;
     margin: 0 auto;
@@ -22,11 +22,11 @@
         position: relative;
         display: flex;
 
-        .recipient-input {
+        .recipientInput {
             width: 100%;
 
             input {
-                border-radius: 12px 0 0 12px!important;
+                border-radius: 12px 0 0 12px;
             }
         }
 
@@ -125,7 +125,7 @@
 
 @mixin recipient-field-font-size($size) {
     .recipientField {
-        .text-input {
+        .textInput {
             input {
                 font-size: #{$size} !important;
             }
@@ -176,7 +176,7 @@
                 position: relative;
             }
             
-            .text-input {
+            .textInput {
                 width: 100%;
     
                 input {

@@ -2,7 +2,7 @@ import styles from './AddressBook.module.scss'
 
 import { FaAddressCard } from 'react-icons/fa'
 import { MdOutlineAdd, MdClose } from 'react-icons/md'
-import { Button, DropDown, TextInput, Panel } from 'components/common'
+import { Button, DropDown, TextInput } from 'components/common'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import AddressList from './AddressList/AddressList'
 import { resolveUDomain } from 'lib/unstoppableDomains'

@@ -6,21 +6,21 @@ import networks from 'ambire-common/src/constants/networks'
  * @enum {string}
  */
  export const networkIconsById = {
-  ethereum: 'resources/networks/ethereum.svg',
-  polygon: 'resources/networks/polygon.svg',
-  avalanche: 'resources/networks/avalanche.svg',
-  'binance-smart-chain': 'resources/networks/bsc.svg',
-  fantom: 'resources/networks/fantom.svg',
-  moonbeam: 'resources/networks/moonbeam.svg',
-  moonriver: 'resources/networks/moonriver.svg',
-  arbitrum: 'resources/networks/arbitrum.svg',
-  gnosis: 'resources/networks/gnosis.svg',
-  kucoin: 'resources/networks/kucoin.svg',
-  optimism: 'resources/networks/optimism.svg',
-  andromeda: 'resources/networks/andromeda.svg',
-  rinkeby: 'resources/networks/rinkeby.svg',
-  cronos: 'resources/networks/cronos.png',
-  aurora: 'resources/networks/aurora.svg',
+  ethereum: 'resources/networks/redesign/ethereum.svg',
+  polygon: 'resources/networks/redesign/polygon.svg',
+  avalanche: 'resources/networks/redesign/avalanche.svg',
+  'binance-smart-chain': 'resources/networks/redesign/bsc.svg',
+  fantom: 'resources/networks/redesign/fantom.svg',
+  moonbeam: 'resources/networks/redesign/moonbeam.svg',
+  moonriver: 'resources/networks/redesign/moonriver.svg',
+  arbitrum: 'resources/networks/redesign/arbitrum.svg',
+  gnosis: 'resources/networks/redesign/gnosis.svg',
+  kucoin: 'resources/networks/redesign/kucoin.svg',
+  optimism: 'resources/networks/redesign/optimism.svg',
+  andromeda: 'resources/networks/redesign/andromeda.svg',
+  rinkeby: 'resources/networks/redesign/rinkeby.svg',
+  cronos: 'resources/networks/redesign/cronos.png',
+  aurora: 'resources/networks/redesign/aurora.svg',
 }
 
 // TODO: Upload the new network icons to Production, in order to use them on the Redesign branch (which is still not merged yet)

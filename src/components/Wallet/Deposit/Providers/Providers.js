@@ -1,10 +1,10 @@
 import './Providers.scss'
 
-import RAMP_LOGO from 'resources/ramp.svg';
-import PAYTRIE_LOGO from 'resources/paytrie.svg';
-import TRANSAK_LOGO from 'resources/transak.svg';
-import KRIPTOMAT_LOGO from 'resources/kriptomat.svg';
-import GUARDARIAN_LOGO from 'resources/guardarian.svg'
+import RAMP_LOGO from 'resources/payment-providers/ramp.svg';
+import PAYTRIE_LOGO from 'resources/payment-providers/paytrie.svg';
+import TRANSAK_LOGO from 'resources/payment-providers/transak.svg';
+import KRIPTOMAT_LOGO from 'resources/payment-providers/kriptomat.svg';
+import GUARDARIAN_LOGO from 'resources/payment-providers/guardarian.svg'
 
 import { Loading } from 'components/common'
 import useProviders from './useProviders'

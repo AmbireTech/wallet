@@ -142,7 +142,7 @@ const DappsCatalog = ({ network, dappsCatalog, selectedAcc, gnosisConnect, gnosi
         <Fragment>
           <div className='filter-section'>
             <div className='input-icon'>
-              <TextInput value={search} onChange={onSearchChange} placeholder='Search filter' icon={<MdSearch />} />
+              <TextInput inputContainerClass='text-input-container' value={search} onChange={onSearchChange} placeholder='Search filter' icon={<MdSearch />} />
             </div>
             <div className='categories'>
               {categories.map(c => {

@@ -10,13 +10,15 @@ import { ReactComponent as Tos } from './images/tos.svg'
 import useLocalStorage from "hooks/useLocalStorage";
 import DropDownItem from 'components/common/DropDown/DropDownItem/DropDownItem';
 
+import { ReactComponent as QuestionMark } from 'resources/icons/question-mark.svg'
+
 const Links = () => {
     const [linksViewed, setLinksViewed] = useLocalStorage({ key: 'linksViewed', defaultValue: false })
 
     const onOpen = () => setLinksViewed(true)
 
     return (
-        <DropDown className={`${styles.wrapper} ${linksViewed ? styles.viewed : ''}`} title={<img src={`${window.location.origin}${window.location.pathname}resources/icons/question-mark.svg`} alt='help-icon' />} onOpen={onOpen}>
+        <DropDown className={`${styles.wrapper} ${linksViewed ? styles.viewed : ''}`} title={<QuestionMark />} onOpen={onOpen}>
             <DropDownItem className={styles.item}>
                 <a href='https://help.ambire.com/hc/en-us/categories/4404980091538-Ambire-Wallet' target="_blank" rel="noreferrer">
                     <HelpCenter /> Help Center

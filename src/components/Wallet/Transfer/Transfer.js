@@ -1,4 +1,3 @@
-import styles from './Transfer.module.scss'
 
 import { BsXLg } from 'react-icons/bs'
 import { MdWarning } from 'react-icons/md'
@@ -20,6 +19,7 @@ import { useLocation } from 'react-router-dom'
 import accountPresets from 'ambire-common/src/constants/accountPresets'
 import { resolveENSDomain, getBip44Items } from 'lib/ensDomains'
 import cn from 'classnames'
+import styles from './Transfer.module.scss'
 
 const ERC20 = new Interface(require('adex-protocol-eth/abi/ERC20'))
 const unsupportedSWPlatforms = ['Binance', 'Huobi', 'KuCoin', 'Gate.io', 'FTX']
@@ -260,7 +260,8 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
                                         info="Please double-check the recipient address, blockchain transactions are not reversible."
                                         value={address}
                                         onInput={setAddress}
-                                        className='recipient-input'
+                                        className={styles.recipientInput}
+                                        inputContainerClass={styles.textInputContainer}
                                     />
                                     <ToolTip label={!ensAddress ? 'You can use Ethereum Name ServiceⓇ' : 'Valid Ethereum Name ServicesⓇ domain'}>
                                         <div className={cn(styles.ensLogo, {[styles.ensLogoActive]: ensAddress})} />

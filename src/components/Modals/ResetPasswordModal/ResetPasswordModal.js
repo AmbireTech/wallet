@@ -196,9 +196,9 @@ const ResetPassword = ({ account, selectedNetwork, relayerURL, onAddAccount, sho
             {
                 type === 'change' ?
                     <form>
-                        <PasswordInput autocomplete="current-password" placeholder="Old Password" onInput={value => setOldPassword(value)}/>
-                        <PasswordInput peakPassword autocomplete="new-password" placeholder="New Password" onInput={value => setNewPassword(value)}/>
-                        <PasswordInput autocomplete="new-password" placeholder="Confirm New Password" onInput={value => setNewPasswordConfirm(value)}/>
+                        <PasswordInput className='password-input' autocomplete="current-password" placeholder="Old Password" onInput={value => setOldPassword(value)}/>
+                        <PasswordInput className='password-input' peakPassword autocomplete="new-password" placeholder="New Password" onInput={value => setNewPassword(value)}/>
+                        <PasswordInput className='password-input' autocomplete="new-password" placeholder="Confirm New Password" onInput={value => setNewPasswordConfirm(value)}/>
                         {
                             checkboxes[0].map(({ label, ref }, i) => (
                                 <Checkbox labelClassName='checkbox-label' key={`checkbox-${i}`} ref={ref} label={label} onChange={() => validateForm()}/>
@@ -209,8 +209,8 @@ const ResetPassword = ({ account, selectedNetwork, relayerURL, onAddAccount, sho
             {
                 type === 'reset' ?
                     <form>
-                        <PasswordInput peakPassword autocomplete="new-password" placeholder="New Password" onInput={value => setNewPassword(value)}/>
-                        <PasswordInput autocomplete="new-password" placeholder="Confirm New Password" onInput={value => setNewPasswordConfirm(value)}/>
+                        <PasswordInput className='password-input' peakPassword autocomplete="new-password" placeholder="New Password" onInput={value => setNewPassword(value)}/>
+                        <PasswordInput className='password-input' autocomplete="new-password" placeholder="Confirm New Password" onInput={value => setNewPasswordConfirm(value)}/>
                         {
                             checkboxes[1].map(({ label, ref }, i) => (
                                 <Checkbox labelClassName='checkbox-label' key={`checkbox-${i}`} ref={ref} label={label} onChange={() => validateForm()}/>
