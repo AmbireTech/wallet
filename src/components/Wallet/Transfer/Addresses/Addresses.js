@@ -3,7 +3,7 @@ import styles from './Addresses.module.scss'
 import AddressList from 'components/common/AddressBook/AddressList/AddressList'
 import { Button, Panel } from 'components/common'
 import { isValidAddress } from 'ambire-common/src/services/address'
-import { AddAddressModal } from 'components/Modals'
+import AddAddressModal from 'components/Modals/AddAddressModal/AddAddressModal'
 import { useModals } from 'hooks'
 
 const Addresses = ({ addresses, addAddress, removeAddress, onSelectAddress, selectedNetwork }) => {

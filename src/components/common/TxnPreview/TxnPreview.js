@@ -12,6 +12,7 @@ import { BsChevronDown, BsChevronUp } from 'react-icons/bs'
 import { getTokenIcon } from 'lib/icons'
 import { formatFloatTokenAmount } from 'lib/formatters'
 import { setKnownAddressNames } from 'lib/humanReadableTransactions'
+import useConstants from 'hooks/useConstants'
 
 function getNetworkSymbol(networkId) {
   const network = networks.find(x => x.id === networkId)
@@ -85,11 +86,12 @@ function parseExtendedSummaryItem(item, i, networkDetails) {
 }
 
 export default function TxnPreview ({ txn, onDismiss, network, account, isFirstFailing, mined, disableExpand, disableDismiss, disableDismissLabel, addressLabel = null }) {
+  const { constants: { tokenList, humanizerInfo } } = useConstants()
   const [isExpanded, setExpanded] = useState(false)
-  const contractName = getName(txn[0], network)
+  const contractName = getName(humanizerInfo, txn[0])
 
   const networkDetails = networks.find(({ id }) => id === network)
-  const extendedSummary = getTransactionSummary(txn, network, account, { mined, extended: true })
+  const extendedSummary = getTransactionSummary(humanizerInfo, tokenList, txn, network, account, { mined, extended: true })
 
   const summary = (extendedSummary.map(entry => Array.isArray(entry) ? entry.map((item, i) => parseExtendedSummaryItem(item, i, networkDetails)) : (entry))) // If entry is extended summary parse it
   useEffect(() => !!addressLabel && setKnownAddressNames(addressLabel), [addressLabel])
@@ -105,7 +107,7 @@ export default function TxnPreview ({ txn, onDismiss, network, account, isFirstF
               <div className="summary">{ summary }</div>
             </div>
             {isFirstFailing && (<div className='firstFailingLabel'>This is the first failing transaction.</div>)}
-              {!isFirstFailing && !mined && !isKnown(txn, account) && (<div className='unknownWarning'>Warning: interacting with an unknown contract or address.</div>)}
+              {!isFirstFailing && !mined && !isKnown(humanizerInfo, txn, account) && (<div className='unknownWarning'>Warning: interacting with an unknown contract or address.</div>)}
           </div>
           <div className='actionIcons'>
             {onDismiss ? (

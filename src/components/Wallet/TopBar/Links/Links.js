@@ -40,7 +40,7 @@ const Links = () => {
                 </a>
             </DropDownItem>
             <DropDownItem className={styles.item}>
-                <a href="https://t.me/AmbireWallet" target="_blank" rel="noreferrer">
+                <a href="https://t.me/AmbireOfficial" target="_blank" rel="noreferrer">
                     <Telegram /> Telegram
                 </a>
             </DropDownItem>

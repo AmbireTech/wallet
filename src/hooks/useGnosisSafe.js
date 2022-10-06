@@ -148,7 +148,7 @@ export default function useGnosisSafe({selectedAccount, network, verbose = 0, us
         result = await provider.estimateGas(callTx).catch(err => {
           throw err
         })
-      } 
+      }
       else {
         throw new Error('Method not found: ' + method)
       }
@@ -213,8 +213,8 @@ export default function useGnosisSafe({selectedAccount, network, verbose = 0, us
       const request = {
         id,
         forwardId: msg.data.id,
-        type: 'personal_sign',
-        txn: message,
+        type: message.signType === 'eth_signTypedData_v4' ? 'eth_signTypedData_v4' : 'personal_sign',
+        txn: message.signType === 'eth_signTypedData_v4' ? JSON.parse(message.message) : message,
         chainId: stateRef.current.network.chainId,
         account: stateRef.current.selectedAccount
       }

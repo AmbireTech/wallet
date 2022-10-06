@@ -19,6 +19,7 @@ const GasIndicator = ({ selectedNetwork, relayerURL, match }) => {
   }, [cacheBreak])
 
   useEffect(() => {
+    if (selectedNetwork.relayerlessOnly) return 
     let unmounted = false
     const url = `${relayerURL}/gasPrice/${selectedNetwork.id}?cacheBreak=${cacheBreak}`
 

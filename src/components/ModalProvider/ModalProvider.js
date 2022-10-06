@@ -5,6 +5,7 @@ const ModalContext = createContext(null)
 
 const ModalProvider = ({ children }) => {
     const [modal, setModal] = useState(null)
+    const [onClose, setOnClose] = useState(null)
     const [dynamicModal, setDynamicModal] = useState(null)
     const [beforeCloseModalHandler, setBeforeCloseModalHandler] = useState(null)
 
@@ -22,9 +23,10 @@ const ModalProvider = ({ children }) => {
 
     const hideModal = useCallback(() => {
         setModal(null)
+        onClose?.close && onClose?.close()
         setDynamicModal(null)
         setBeforeCloseModalHandler(null)
-    }, [])
+    }, [onClose])
 
     // intercept non explicit hide modal
     const onHideModal = useCallback(() => {
@@ -46,7 +48,7 @@ const ModalProvider = ({ children }) => {
     , [])
     
     return (
-        <ModalContext.Provider value={{ showModal, showDynamicModal, hideModal, onHideModal, updateModal, beforeCloseModalHandler, setBeforeCloseModalHandler }}>
+        <ModalContext.Provider value={{ showModal, showDynamicModal, hideModal, onHideModal, updateModal, beforeCloseModalHandler, setBeforeCloseModalHandler, setOnClose }}>
             {
                 modal ?
                     <div id="modal-container">

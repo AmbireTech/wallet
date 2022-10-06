@@ -1,3 +1,4 @@
+import styles from './Transfer.module.scss'
 
 import { BsXLg } from 'react-icons/bs'
 import { MdWarning } from 'react-icons/md'
@@ -18,15 +19,25 @@ import { formatFloatTokenAmount } from 'lib/formatters'
 import { useLocation } from 'react-router-dom'
 import accountPresets from 'ambire-common/src/constants/accountPresets'
 import { resolveENSDomain, getBip44Items } from 'lib/ensDomains'
+import useGasTankData from 'ambire-common/src/hooks/useGasTankData'
+import { useRelayerData } from 'hooks'
 import cn from 'classnames'
-import styles from './Transfer.module.scss'
 
 const ERC20 = new Interface(require('adex-protocol-eth/abi/ERC20'))
 const unsupportedSWPlatforms = ['Binance', 'Huobi', 'KuCoin', 'Gate.io', 'FTX']
 
-const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest, addressBook }) => {
+const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest, addressBook, relayerURL }) => {
     const { addresses, addAddress, removeAddress, isKnownAddress } = addressBook
-
+    const {
+        feeAssetsRes
+      } = useGasTankData({
+        relayerURL,
+        selectedAcc,
+        network: selectedNetwork,
+        portfolio,
+        useRelayerData
+      })
+    const feeAssetsPerNetwork = feeAssetsRes && feeAssetsRes.length && feeAssetsRes.filter(item => (item.network === selectedNetwork.id) && !item.disableGasTankDeposit)
     const { tokenAddressOrSymbol } = useParams()
     const { addToast } = useToasts()
     const { state } = useLocation()
@@ -56,8 +67,8 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
     const [feeBaseTokenWarning, setFeeBaseTokenWarning] = useState('')
     const timer = useRef(null)
     let eligibleFeeTokens = null
-    if (gasTankDetails?.feeAssetsPerNetwork) {
-        eligibleFeeTokens = portfolio.tokens.filter(item => gasTankDetails?.feeAssetsPerNetwork.some(i => i.address.toLowerCase() === item.address.toLowerCase()))
+    if (gasTankDetails?.isTopUp) {
+        eligibleFeeTokens = portfolio.tokens.filter(item => feeAssetsPerNetwork && feeAssetsPerNetwork?.some(i => i.address.toLowerCase() === item.address.toLowerCase()))
     } else eligibleFeeTokens = portfolio.tokens
     
     const assetsItems = eligibleFeeTokens.map(({ label, symbol, address, img, tokenImageUrl, network }) => ({
@@ -148,14 +159,14 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
     useEffect(() => {
         // check gasTank topUp with token for convertion
         setFeeBaseTokenWarning('')
-        if (gasTankDetails?.feeAssetsPerNetwork){
-            const gasFeeToken = gasTankDetails.feeAssetsPerNetwork.find(ft => ft?.address?.toLowerCase() === selectedAsset?.address?.toLowerCase())
+        if (gasTankDetails?.isTopUp){
+            const gasFeeToken = feeAssetsPerNetwork && feeAssetsPerNetwork.find(ft => ft?.address?.toLowerCase() === selectedAsset?.address?.toLowerCase())
             if (gasFeeToken?.baseToken) {
-                const feeBaseToken = gasTankDetails.feeAssetsPerNetwork.find(ft => ft.address.toLowerCase() === gasFeeToken.baseToken.toLowerCase())
+                const feeBaseToken = feeAssetsPerNetwork && feeAssetsPerNetwork.find(ft => ft.address.toLowerCase() === gasFeeToken.baseToken.toLowerCase())
                 setFeeBaseTokenWarning(`Token ${gasFeeToken.symbol.toUpperCase()} will be converted to ${feeBaseToken.symbol.toUpperCase()} without additional fees.`)
             }
         }
-    }, [gasTankDetails?.feeAssetsPerNetwork, selectedAsset])
+    }, [feeAssetsPerNetwork, gasTankDetails?.isTopUp, selectedAsset])
 
     useEffect(() => {
         setAmount(0)

@@ -12,10 +12,12 @@ import DApps from "./DApps/DApps";
 import * as blockies from 'blockies-ts';
 import Links from "./Links/Links";
 import WalletTokenButton from "./WalletTokenButton/WalletTokenButton";
-import { Button } from 'components/common';
+import { Button, ToolTip } from 'components/common';
 import DAPPS_ICON from 'resources/dapps.svg';
 
 const TopBar = ({
+  useRelayerData,
+  relayerURL,
   connections,
   connect,
   disconnect,
@@ -44,9 +46,8 @@ const TopBar = ({
   const account = accounts.find(({ id }) => id === selectedAcc)
   const accountIcon = blockies.create({ seed: account ? account.id : null }).toDataURL()
 
-  // TODO
   const visualEnv =
-    false && (process.env.REACT_APP_VISUAL_ENV === 'dev')
+    (process.env.REACT_APP_VISUAL_ENV === 'dev')
       ? 'dev' : (
         new URL(document.URL).pathname.startsWith('/staging/')
       ) ? 'staging' : null
@@ -64,27 +65,35 @@ const TopBar = ({
       {dappModeTopBar ?
         <div className={styles.dappMenu}>
           <div className={styles.dappMenuBtns}>
+            <ToolTip label='Open Ambire Wallet menu'>
               <Button className={`${styles.buttonComponent} ${styles.ambireMenuBtn}`} border mini icon={<MdMenu size={23} />}
                 onClick={() => toggleSideBarOpen()}
               ></Button>
+            </ToolTip>
             <div className={styles.dappData}>
+              <ToolTip label={`Connected with ${currentDappData?.connectionType} -  see/find out more on our blog`}>
                 {/* TODO: update the blogpost link */}
-                <a className="info-btn" href={'https://blog.ambire.com/connect-to-any-dapp-with-ambire-wallet-and-walletconnect-c1bc096a531e'} 
+                <a className="info-btn" href={'https://blog.ambire.com/connect-to-any-dapp-with-ambire-wallet-and-walletconnect-c1bc096a531e'}
                   target="_blank"
                   rel="noreferrer noopener">
                   <MdInfo size={23} />
                 </a>
-                <a href={currentDappData?.providedBy?.url || currentDappData?.url} 
+              </ToolTip>
+              <ToolTip label={`Connected to ${currentDappData?.name} with Ambire Wallet`}>
+                <a href={currentDappData?.providedBy?.url || currentDappData?.url}
                   target="_blank"
                   rel="noreferrer noopener">
                   <img className={styles.dappLogo} src={currentDappData?.iconUrl || DAPPS_ICON} alt={currentDappData?.name}/>
                 </a>
+              </ToolTip>
+              <ToolTip label={`Exit from ${currentDappData?.name}`}>
                 <Button
                   className={`${styles.buttonComponent} ${styles.dappExitBtn}`}
                   secondary mini 
                   icon={<MdExitToApp size={15} /> }
                   onClick={() => loadCurrentDappData(null)}
                 >Exit</Button>
+              </ToolTip>
             </div>
           </div>
         </div>
@@ -113,6 +122,8 @@ const TopBar = ({
         <div className={styles.privacyAndRewards}>
           {isPrivateMode ? <PrivacyOff cursor="pointer" size={28} onClick={togglePrivateMode} /> : <PrivacyOn cursor="pointer" size={28} onClick={togglePrivateMode} />}
           {selectedAcc && <WalletTokenButton
+            useRelayerData={useRelayerData}
+            relayerURL={relayerURL}
             rewardsData={rewardsData}
             account={account}
             network={network}
@@ -120,11 +131,11 @@ const TopBar = ({
             addRequest={addRequest}
           />}
         </div>
-        <DApps connections={connections} connect={connect} disconnect={disconnect} isWcConnecting={isWcConnecting}/>
-        <Accounts accounts={accounts} selectedAddress={selectedAcc} onSelectAcc={onSelectAcc} onRemoveAccount={onRemoveAccount} hidePrivateValue={hidePrivateValue}  userSorting={userSorting} setUserSorting={setUserSorting}/>        
-        <Networks setNetwork={setNetwork} network={network} allNetworks={allNetworks}  userSorting={userSorting}
-        setUserSorting={setUserSorting} dappsCatalog={dappsCatalog} dapModeTopBar={dappModeTopBar}/>
-        <Links/>
+        <DApps connections={connections} connect={connect} disconnect={disconnect} isWcConnecting={isWcConnecting} />
+        <Accounts accounts={accounts} selectedAddress={selectedAcc} onSelectAcc={onSelectAcc} onRemoveAccount={onRemoveAccount} hidePrivateValue={hidePrivateValue} userSorting={userSorting} setUserSorting={setUserSorting} />
+        <Networks setNetwork={setNetwork} network={network} allNetworks={allNetworks} userSorting={userSorting}
+          setUserSorting={setUserSorting} dappsCatalog={dappsCatalog} dapModeTopBar={dappModeTopBar} />
+        <Links />
       </div>
     </div>
   );

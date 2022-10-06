@@ -12,7 +12,7 @@ import { Interface, parseUnits, formatUnits } from "ethers/lib/utils"
 import { getProvider } from 'lib/provider'
 import ERC20ABI from 'adex-protocol-eth/abi/ERC20.json'
 import networks from 'consts/networks'
-import { AmbireEarnDetailsModal } from 'components/Modals'
+import AmbireEarnDetailsModal from 'components/Modals/AmbireEarnDetailsModal/AmbireEarnDetailsModal'
 import { getTokenIcon } from 'lib/icons'
 import { BsArrowUpSquare } from "react-icons/bs"
 import walletABI from 'ambire-common/src/constants/abis/walletTokenABI.json'
@@ -27,6 +27,9 @@ const WALLET_TOKEN_ADDRESS = '0x88800092ff476844f74dc2fc427974bbee2794ae'
 const WALLET_STAKING_ADDRESS = '0x47cd7e91c3cbaaf266369fe8518345fc4fc12935'
 const ADX_LABEL = 'ADX'
 const WALLET_LABEL = 'WALLET'
+
+const WALLET_LOCK_PERIOD_IN_DAYS = 30
+const ADEX_LOCK_PERIOD_IN_DAYS = 20
 
 // polygon tests
 // const WALLET_TOKEN_ADDRESS = '0xe9415e904143e42007865e6864f7f632bd054a08'
@@ -69,8 +72,8 @@ const AmbireTokensCard = ({ networkId, accountId, tokens, rewardsData, addReques
     const [validateData, setValidateData] = useState(null)
 
     const getLockDays = useCallback(() => {
-        if (selectedToken.label === 'WALLET') return 60
-        else return 20
+        if (selectedToken.label === 'WALLET') return WALLET_LOCK_PERIOD_IN_DAYS
+        else return ADEX_LOCK_PERIOD_IN_DAYS
     }, [selectedToken.label])
     
     const unavailable = networkId !== 'ethereum'
@@ -175,7 +178,7 @@ const AmbireTokensCard = ({ networkId, accountId, tokens, rewardsData, addReques
                 </>
             )
         }
-        const apyTooltipMsg = `Annual Percentage Yield: IN ADDITION to what you earn in ${selectedToken.label}s`
+        const apyTooltipMsg = `Annual Percentage Yield${selectedToken.label === 'WALLET' ? `: IN ADDITION to what you earn in ${selectedToken.label}s` : ''}`
         setDetails([
             [
                 <>
@@ -274,8 +277,7 @@ const AmbireTokensCard = ({ networkId, accountId, tokens, rewardsData, addReques
                     tokenAbi
                 })
                 
-                const [timeToUnbond, shareValue, sharesTotalSupply, stakingTokenBalanceRaw] = await Promise.all([
-                    stakingTokenContract.timeToUnbond(),
+                const [shareValue, sharesTotalSupply, stakingTokenBalanceRaw] = await Promise.all([
                     stakingTokenContract.shareValue(),
                     stakingTokenContract.totalSupply(),
                     stakingTokenContract.balanceOf(accountId),
@@ -393,7 +395,7 @@ const AmbireTokensCard = ({ networkId, accountId, tokens, rewardsData, addReques
                     })
                 
                     const { timestamp } = await provider.getBlock(blockNumber)
-                    let remainingTime = (timeToUnbond.toString() * 1000) - (Date.now() - (timestamp * 1000))
+                    let remainingTime = leaveLog ? (leaveLog.unlocksAt.toString()) - (Date.now() - (timestamp * 1000)) : null
                     if (remainingTime <= 0) remainingTime = 0
                     setLockedRemainingTime(remainingTime)    
                 } else {
@@ -407,7 +409,7 @@ const AmbireTokensCard = ({ networkId, accountId, tokens, rewardsData, addReques
         return () => {
             setShareValue(ZERO)
         }
-    }, [networkId, accountId, selectedToken.label, isAdxTokenSelected])
+    }, [networkId, accountId, selectedToken.label, isAdxTokenSelected, leaveLog])
 
     useEffect(() => setLoading(false), [])
 

@@ -1,7 +1,7 @@
 import { getProvider } from 'lib/provider'
 import { BigNumber, utils, Contract } from 'ethers'
 import { useEffect, useState, useCallback } from 'react'
-import adexToStakingTransfersLogs from 'consts/rpcResponses/adexToStakingTransfers.json'
+import useConstants from './useConstants'
 
 const ZERO = BigNumber.from(0)
 const ZERO_ADDR = '0x0000000000000000000000000000000000000000'
@@ -20,6 +20,7 @@ const STAKING_POOL_EVENT_TYPES = {
 const ethProvider = getProvider('ethereum')
 
 const useAmbireEarnDetails = ({accountId, addresses, tokenLabel}) => {
+    const { getAdexToStakingTransfersLogs } = useConstants()
     const WALLET_ADDR = addresses.stakingTokenAddress
     const [details, setDetails] = useState({})
     const [isLoading, setIsLoading] = useState(true)
@@ -30,7 +31,6 @@ const useAmbireEarnDetails = ({accountId, addresses, tokenLabel}) => {
         const fromBlock = 0
         const fromBlockHardcoded = (tokenLabel === 'ADX') ? 0xe64fe2 : 0
         const [
-            timeToUnbond,
             shareValue,
             sharesTotalSupply,
             balanceShares,
@@ -83,22 +83,14 @@ const useAmbireEarnDetails = ({accountId, addresses, tokenLabel}) => {
                 ...xWalletContract.filters.Transfer(accountId, null, null),
             }),
         ])
-        const [latestLog] = leaveLogs.sort((a, b) => b.blockNumber - a.blockNumber)
-        let remainingTime
-        if (latestLog) {
-            const { timestamp } = await ethProvider.getBlock(latestLog.blockNumber)
-            remainingTime = (timeToUnbond.toString() * 1000) - (Date.now() - (timestamp * 1000))
-            if (remainingTime <= 0) remainingTime = 0
-        } else {
-            remainingTime = null
-        }
        
         const userShare = sharesTotalSupply.isZero()
             ? ZERO
             : balanceShares.mul(PRECISION).div(sharesTotalSupply).toNumber() /
               PRECISION
 
-        const enterWalletTokensByTxHash = ((tokenLabel === 'ADX') ? adexToStakingTransfersLogs.result : [])
+        const adexToStakingTransfersLogs = await getAdexToStakingTransfersLogs();
+        const enterWalletTokensByTxHash = ((tokenLabel === 'ADX' && adexToStakingTransfersLogs) ? adexToStakingTransfersLogs.result : [])
             .concat(allEnterWalletTransferLogs)
             .reduce((byHash, log) => {
                     byHash[log.transactionHash] = log
@@ -297,6 +289,20 @@ const useAmbireEarnDetails = ({accountId, addresses, tokenLabel}) => {
             (a, b) => a.add(b.walletValue),
             ZERO
         )
+
+        let leavePendingToUnlockOrReadyToWithdraw = null 
+        if (leavesReadyToWithdraw.length) leavePendingToUnlockOrReadyToWithdraw = leavesReadyToWithdraw[0]
+        else if (leavesPendingToUnlock.length) leavePendingToUnlockOrReadyToWithdraw = leavesPendingToUnlock[0]
+        const [latestLog] = leaveLogs.sort((a, b) => b.blockNumber - a.blockNumber)
+        let remainingTime
+        if (leavePendingToUnlockOrReadyToWithdraw && latestLog) {
+            const { unlocksAt } = leavePendingToUnlockOrReadyToWithdraw
+            const { timestamp } = await ethProvider.getBlock(latestLog.blockNumber)
+            remainingTime = (unlocksAt.toString()) - (Date.now() - (timestamp * 1000))
+            if (remainingTime <= 0) remainingTime = 0
+        } else {
+            remainingTime = null
+        }
 
         if (
             sharesTokensTransfersOut.length ||
@@ -654,18 +660,18 @@ const useAmbireEarnDetails = ({accountId, addresses, tokenLabel}) => {
             ),
             remainingTime: stats.remainingTime,
         }
-    }, [WALLET_ADDR, accountId])
+    }, [WALLET_ADDR, accountId, getAdexToStakingTransfersLogs])
 
     useEffect(() => {
         const getData = async (addresses, tokenLabel) => {
-            setIsLoading(prevState => !prevState)
+            setIsLoading(true)
             try {
                 const data = await getStats(addresses, tokenLabel)
                 setDetails(data)
-                setIsLoading(prevState => !prevState)
+                setIsLoading(false)
             } catch(e) {
                 console.error(e)
-                setIsLoading(prevState => !prevState)
+                setIsLoading(false)
             }
         }
         if (!accountId) return

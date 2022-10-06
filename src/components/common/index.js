@@ -22,6 +22,7 @@ import ToolTip from './ToolTip/ToolTip';
 import NoFundsPlaceholder from './NoFundsPlaceholder/NoFundsPlaceholder';
 import CountdownTimer from './CountdownTimer/CountdownTimer';
 import ErrorBoundary from './ErrorBoundary/ErrorBoundary';
+import ErrorScreen from './ErrorScreen/ErrorScreen';
 import Stepper from './Stepper/Stepper.tsx';
 import DAppIncompatibilityWarningMsg from './DAppIncompatibilityWarningMsg/DAppIncompatibilityWarningMsg';
 import Panel from './Panel/Panel';
@@ -51,6 +52,7 @@ export {
     NoFundsPlaceholder,
     CountdownTimer,
     ErrorBoundary,
+    ErrorScreen,
     Stepper,
     DAppIncompatibilityWarningMsg,
     Panel
