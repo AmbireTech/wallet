@@ -3,6 +3,8 @@ import { Button, ToolTip } from "components/common";
 import { WalletTokenModal } from "components/Modals";
 import useClaimableWalletToken from 'ambire-common/src/hooks/useClaimableWalletToken'
 
+import styles from './WalletTokenButton.module.scss'
+
 const WalletTokenButton = ({ rewardsData, account = {}, network, hidePrivateValue, addRequest }) => {
     const claimableWalletToken = useClaimableWalletToken({
         accountId: account.id,
@@ -12,6 +14,7 @@ const WalletTokenButton = ({ rewardsData, account = {}, network, hidePrivateValu
         walletUsdPrice: rewardsData.rewards.walletUsdPrice,
       })
     const { currentClaimStatus, pendingTokensTotal } = claimableWalletToken
+    const buttonMessage = String(hidePrivateValue(pendingTokensTotal)).concat(' WALLET REWARDS')
     const { isLoading: isRewardsDataLoading, errMsg } = rewardsData
     const isLoading = isRewardsDataLoading || currentClaimStatus.loading;
 
@@ -23,7 +26,24 @@ const WalletTokenButton = ({ rewardsData, account = {}, network, hidePrivateValu
                 <Button small border disabled onClick={showWalletTokenModal}>Unavailable</Button>
             </ToolTip>
             :
-            <Button small border disabled={isLoading} onClick={showWalletTokenModal} style={{ textTransform: 'none'}}>{ isLoading ? '...' : hidePrivateValue(pendingTokensTotal) } WALLET Rewards</Button>
+            <Button 
+                small 
+                border 
+                disabled={isLoading} 
+                onClick={showWalletTokenModal} 
+                className={styles.button} 
+                style={{ textTransform: 'none'}}
+            >
+                {
+                    isLoading ? 
+                    '... WALLET Rewards' : (
+                        buttonMessage.length <= 22 ?
+                        buttonMessage :
+                        `${buttonMessage.substring(0, 19)}...` 
+                    )
+                    
+                }
+            </Button>
     )
 }
 
