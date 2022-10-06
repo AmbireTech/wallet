@@ -18,32 +18,24 @@ const colors = [
   "#898DCB",
 ]
 
-const options = {
-  plugins: {
-    legend: {
-      display: false
-    }
-  }
-}
-
 const round = num => Math.round((num + Number.EPSILON) * 100) / 100
 
 const Chart = ({ portfolio, hidePrivateValue, selectedNetwork, data, className }) => {
-  const chartRef = useRef()
   const networkBalance = hidePrivateValue(portfolio.balance.total.full)
   const [activeItem, setActiveItem] = useState(null)
+  const chartRef = useRef()
 
   const chartData = {
     labels: data?.data?.map(i => i.label),
     datasets: [
       {
-        data: data?.data?.map(i => i.balanceUSD + (portfolio?.balance?.total?.full*1.5/100)),
+        data: data?.data?.map(i => i.balanceUSD),
         backgroundColor: portfolio?.balance?.total?.full ? colors : '#1E2033',
         borderColor: '#24263D',
         borderWidth: data?.data?.length > 1 ? 0 : 0, // Change the first zero to 3 to add spacing
         cutout: '85%',
-      },
-    ],
+      }
+    ]
   }
 
   const getItemColor = index => {
@@ -61,6 +53,24 @@ const Chart = ({ portfolio, hidePrivateValue, selectedNetwork, data, className }
     }
   }, [])
 
+  const options = {
+    plugins: {
+      legend: {
+        display: false
+      },
+      tooltip: {
+        callbacks: {
+          label: function(context) {
+            if (data.empty) {
+              return 'No funds on this network'
+            }
+            return (context.raw.toFixed(2) + '$')
+          }
+        },
+      }
+    },
+  }
+
   return (
     <div className={cn(styles.wrapper, className)}>
       <div className={styles.donut}>
@@ -76,7 +86,7 @@ const Chart = ({ portfolio, hidePrivateValue, selectedNetwork, data, className }
             {typeof networkBalance === 'number' ? 
               (
                 networkBalance >= 10000 ? 
-                `${round(networkBalance/1000)}K` : 
+                `${String(round(networkBalance/1000)).split('.').join(',')}K` : 
                 networkBalance.toFixed(2)
               ) :
               0

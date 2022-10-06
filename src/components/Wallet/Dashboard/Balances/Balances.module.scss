@@ -1,9 +1,9 @@
 @import 'variables.scss';
 
 .wrapper {
-    font-size: 40px;
     display: flex;
     flex-direction: column;
+    height: 100%;
 
     .greenHighlight {
         color: $primary-accent-color;
@@ -14,13 +14,14 @@
     }
 
     .otherBalances {
-        display: flex;
-        flex-direction: row;
-        flex-wrap: wrap;
-        align-items: center;
-        margin-top: 12px;
         max-height: 200px;
+        height: 100%;
         overflow-y: auto;
+        mask-image: linear-gradient(to bottom, transparent 0, black var(--top-mask-size, 0), black calc(100% - var(--bottom-mask-size, 0)), transparent 100%);
+
+        &.bottomOverflow {
+            --bottom-mask-size: 60px;
+        }
 
         .icon {
             flex: 0 0 auto;
@@ -37,7 +38,7 @@
             svg {
                 fill: red;
             } 
-          }
+        }
     }
 }
 
@@ -45,14 +46,6 @@
     .wrapper {
         .otherBalances {
             gap: 9px;
-
-            label {
-                font-size: 20px;
-            }
-
-            .otherBalance {
-                font-size: 20px;
-            }
         }
     }
 }
