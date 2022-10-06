@@ -18,7 +18,8 @@ const AAVELendingPool = new Interface(AAVELendingPoolAbi)
 const RAY = 10**27
 let lendingPoolAddress = null
 
-const AAVECard = ({ networkId, tokens, account, addRequest }) => {
+const AAVECard = ({ networkId, tokens: tokensData, account, addRequest }) => {
+    const [tokens] = useState(tokensData)
     const { addToast } = useToasts()
 
     const currentNetwork = useRef()
@@ -75,6 +76,16 @@ const AAVECard = ({ networkId, tokens, account, addRequest }) => {
         }
     }
 
+    const loadTokensAPR = useCallback(async(uniqueTokenAddresses, lendingPoolContract) => {
+        return Object.fromEntries(await Promise.all(uniqueTokenAddresses.map(async address => {
+            const data = await lendingPoolContract.getReserveData(address)
+                const { liquidityRate } = data
+                const apr = ((liquidityRate / RAY) * 100).toFixed(2)
+                return [address, apr]
+
+            })))
+    }, [])
+    
     const loadPool = useCallback(async () => {
         const providerAddress = AAVELendingPoolProviders[networkDetails.id]
         if (!providerAddress) {
@@ -107,22 +118,17 @@ const AAVECard = ({ networkId, tokens, account, addRequest }) => {
                 type: 'deposit'
             })).filter(token => token).sort((a, b) => b.balance - a.balance)
 
-            const allTokens = (await Promise.all([
+            const allTokens = [
                 ...withdrawTokens,
                 ...depositTokens,
                 ...defaultTokens.filter(({ type, address }) => type === 'deposit' && !depositTokens.map(({ address }) => address.toLowerCase()).includes(address.toLowerCase())),
                 ...defaultTokens.filter(({ type, baseTokenAddress }) => type === 'withdraw' && !withdrawTokens.map(({ address }) => address.toLowerCase()).includes(baseTokenAddress.toLowerCase()))
-            ]))
+            ]
 
             const uniqueTokenAddresses = [...new Set(allTokens.map(({ address }) => address))]
-            const tokensAPR = Object.fromEntries(await Promise.all(uniqueTokenAddresses.map(async address => {
-                const data = await lendingPoolContract.getReserveData(address)
-                const { liquidityRate } = data
-                const apr = ((liquidityRate / RAY) * 100).toFixed(2)
-                return [address, apr]
-            })))
 
 
+            const tokensAPR = await loadTokensAPR(uniqueTokenAddresses, lendingPoolContract)
             const tokensItems = allTokens.map(token => {
                 const arp = tokensAPR[token.address] === '0.00' && tokensAPR[token.baseTokenAddress]
                 ? tokensAPR[token.baseTokenAddress]
@@ -145,9 +151,12 @@ const AAVECard = ({ networkId, tokens, account, addRequest }) => {
             console.error(e);
             addToast(`Aave load pool error: ${e.message || e}`, { error: true })
         }
-    }, [addToast, tokens, defaultTokens, networkDetails])
+    }, [networkDetails.id, defaultTokens, tokens, loadTokensAPR, addToast])
 
-    useEffect(() => loadPool(), [loadPool])
+    useEffect(() => {
+        const invokeLoadPool = async() => await loadPool()
+        invokeLoadPool()
+    }, [loadPool])
     useEffect(() => {
         currentNetwork.current = networkId
         setLoading(true)
