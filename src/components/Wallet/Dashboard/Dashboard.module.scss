@@ -12,6 +12,7 @@
             font-size: 25px;
             font-weight: 400;
             color: #ebecff;
+            margin-bottom: 20px;
         }
     }
 
@@ -20,16 +21,14 @@
         padding-top: 15px;
         padding-bottom: 18px;
         max-height: 295px;
+        gap: 0;
+        overflow: hidden;
     }
     
     .overview {
         display: flex;
         justify-content: space-between;
         gap: 17px;
-
-        .balance {
-            gap: 10px;
-        }
     }
 
     .footer {
@@ -60,6 +59,20 @@
     }
 }
 
+@media screen and (max-width: 1800px) {
+    .wrapper {
+        .panel {
+            .panelTitle {
+                font-size: 20px;
+                margin-bottom: 23px;
+            }
+        }
+        .topPanels {
+            padding: 15px 30px;
+        }
+    }
+}
+
 @media screen and (max-width: 1200px) {
     .overview {
         flex-direction: column;
@@ -79,6 +92,10 @@
             flex-direction: column;
         }
 
+        .topPanels {
+            overflow-y: auto;
+            max-height: 500px;
+        }
 
         .footer {
             flex-direction: column;
