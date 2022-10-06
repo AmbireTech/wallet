@@ -126,7 +126,7 @@ export default function Dashboard({ portfolio, selectedNetwork, selectedAccount,
                 <Panel 
                     className={cn(styles.balance, styles.panel, styles.topPanels)} 
                     titleClassName={styles.panelTitle} 
-                    title="You also have:">
+                    title="You also have">
                     <Balances
                         portfolio={portfolio}
                         selectedNetwork={selectedNetwork}
