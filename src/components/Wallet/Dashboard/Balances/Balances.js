@@ -42,6 +42,8 @@ const Balances = ({ portfolio, selectedNetwork, setNetwork, hidePrivateValue, re
         }
             
         const balancesNode = document.querySelector('#content')
+
+        if (!balancesNode) return
         
         balancesNode.addEventListener('scroll', (e) => {
             const el = e.currentTarget;
