@@ -152,7 +152,6 @@
 
       &.helpLink  {
         color: $c-heliotrope;
-        margin-top: 80px;
 
         svg {
           color: $c-heliotrope;
@@ -285,10 +284,6 @@
         font-size: 13px;
         font-weight: 500;
         padding: 0;
-
-         &.helpLink {
-           margin-top: 0;
-         }
 
         svg {
           font-size: 25px;
