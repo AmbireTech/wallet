@@ -37,7 +37,7 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
         portfolio,
         useRelayerData
       })
-    const feeAssetsPerNetwork = feeAssetsRes && feeAssetsRes.length && feeAssetsRes.filter(item => item.network === selectedNetwork.id)
+    const feeAssetsPerNetwork = feeAssetsRes && feeAssetsRes.length && feeAssetsRes.filter(item => (item.network === selectedNetwork.id) && !item.disableGasTankDeposit)
     const { tokenAddressOrSymbol } = useParams()
     const { addToast } = useToasts()
     const { state } = useLocation()
