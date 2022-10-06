@@ -1,78 +1,114 @@
-import './Chart.scss';
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js'
+import { Doughnut } from 'react-chartjs-2'
+import cn from 'classnames'
+import { networkIconsById } from 'consts/networks'
+import { ReactComponent as AlertCircle } from 'resources/icons/alert-circle.svg'
 
-import DonutChart from "react-donut-chart";
-import { useState } from 'react';
-import cn from "classnames";
+import styles from './Chart.module.scss'
+import { useEffect, useRef, useState } from 'react'
 
-const Chart = ({ data, size, className }) => {
-    const [hoveredItem, setHoveredItem] = useState({});
+ChartJS.register(ArcElement, Tooltip, Legend)
 
-    const colors = [
-        "#AA6AFF",
-        "#80FFDB",
-        "#8088FF",
-        "#E680FF",
-        "#A5FF80",
-        "#E6FF80",
-        "#FFC480",
-        "#FF8080",
-    ];
-    
-    const strokeColor = "transparent";
-    const innerRadius = 0.5;
-    const selectedOffset = 0.05;
+const colors = [
+  "#6000FF",
+  "#AE60FF",
+  "#4DE827",
+  "#FD1A64",
+  "#FFBC00",
+  "#898DCB",
+]
 
-    const onMouseEnter = (item) => {
-        setHoveredItem(item.label);
-    };
+const options = {
+  plugins: {
+    legend: {
+      display: false
+    }
+  }
+}
 
-    const onClick = (item, toggled) => {
-        if (toggled) {
-            console.log(item);
-        }
-    };
+const round = num => Math.round((num + Number.EPSILON) * 100) / 100
 
-    const sortData = data => {
-        return data.sort((a, b) => b.value - a.value);
-    };
+const Chart = ({ portfolio, hidePrivateValue, selectedNetwork, data, className }) => {
+  const chartRef = useRef()
+  const networkBalance = hidePrivateValue(portfolio.balance.total.full)
+  const [activeItem, setActiveItem] = useState(null)
 
-    const getItemColor = index => {
-        const colorCount = colors.length - 1;
-        return index > colorCount ? colors[index - (colors.length * Math.trunc(index / colors.length))] : colors[index];
-    };
+  const chartData = {
+    labels: data?.data?.map(i => i.label),
+    datasets: [
+      {
+        data: data?.data?.map(i => i.balanceUSD + (portfolio?.balance?.total?.full*1.5/100)),
+        backgroundColor: portfolio?.balance?.total?.full ? colors : '#1E2033',
+        borderColor: '#24263D',
+        borderWidth: data?.data?.length > 1 ? 0 : 0, // Change the first zero to 3 to add spacing
+        cutout: '85%',
+      },
+    ],
+  }
 
-    return (
-        <div className={cn('chart', className)}>
-            <DonutChart
-                className="donut"
-                height={size}
-                width={size}
-                onMouseEnter={(item) => onMouseEnter(item)}
-                data={sortData(data)}
-                colors={colors}
-                startAngle={-90}
-                strokeColor={strokeColor}
-                innerRadius={innerRadius}
-                selectedOffset={selectedOffset}
-                legend={false}
-                onClick={(item, toggled) => onClick(item, toggled)}
-            />
-            <div className="legend" style={{maxHeight: size}}>
-                {
-                    data.map((item, i) => (
-                        <div className={`item ${hoveredItem === item.label ? 'active' : ''}`} key={`item-${i}`}>
-                            <div className="color" style={{backgroundColor: getItemColor(i)}}/>
-                            <label>{ item.label }</label>
-                            <div className="separator"></div>
-                            <div className="percent">
-                                { parseFloat(item.value).toFixed(2) }%
-                            </div>
-                        </div>
-                    ))
-                }
-            </div>
+  const getItemColor = index => {
+    const colorCount = colors.length - 1;
+    return index > colorCount ? colors[index - (colors.length * Math.trunc(index / colors.length))] : colors[index];
+  }
+
+  const onMouseMove = () => setActiveItem(chartRef?.current?._active[0]?.index)
+
+  useEffect(() => {
+    window.addEventListener('mousemove', onMouseMove)
+
+    return () => {
+      window.removeEventListener('mousemove', onMouseMove)
+    }
+  }, [])
+
+  return (
+    <div className={cn(styles.wrapper, className)}>
+      <div className={styles.donut}>
+        <Doughnut 
+          data={chartData}
+          options={options}
+          ref={chartRef}
+        />
+        <div className={styles.networkInfo}>
+          <img className={styles.networkIcon} src={networkIconsById[selectedNetwork.id]} alt={selectedNetwork.id} />
+          <label className={styles.networkAmount}>
+            <span className={styles.currency}>$</span>
+            {typeof networkBalance === 'number' ? 
+              (
+                networkBalance >= 10000 ? 
+                `${round(networkBalance/1000)}K` : 
+                networkBalance.toFixed(2)
+              ) :
+              0
+            }
+          </label>
         </div>
-    );
-};
+      </div>
+      <div className={styles.legend}>
+        <h2 className={styles.legendTitle}>Balance by tokens</h2>
+          {!data?.empty ?
+            <div className={styles.legendItems}>
+              {data?.data?.map((item, i) => (
+                <div className={`${styles.item} ${activeItem === i ? styles.active : ''}`} key={`item-${i}`}>{/* hovered logic disabled for now */}
+                    <div className={styles.color} style={{backgroundColor: getItemColor(i)}}/>
+                    <label>{ item.label }</label>
+                    <div className={styles.separator}></div>
+                    <div className={styles.percent}>
+                      { parseFloat(item.value).toFixed(2) }%
+                    </div>
+                </div>
+              ))} 
+            </div> :
+            <div className={styles.noTokensWrapper}>
+              <div className={styles.noTokens}>
+                <AlertCircle />
+                <label>You don't have any tokens on this network</label>
+              </div>
+            </div>
+          }
+      </div>
+  </div>
+  )
+}
 
-export default Chart;
+export default Chart

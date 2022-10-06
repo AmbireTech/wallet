@@ -1,4 +1,3 @@
-import styles from './Dashboard.module.scss'
 
 import { useEffect, useLayoutEffect, useState } from 'react'
 import { useHistory, useParams } from 'react-router-dom'
@@ -16,14 +15,7 @@ import usePasswordRecoveryCheck from 'hooks/usePasswordRecoveryCheck'
 import OutdatedBalancesMsg from './OutdatedBalancesMsg/OutdatedBalancesMsg'
 import cn from 'classnames'
 
-const chartSegments = [
-    {
-        value: 'Tokens'
-    },
-    {
-        value: 'Protocols'
-    }
-]
+import styles from './Dashboard.module.scss'
 
 const tabSegments = [
     {
@@ -40,8 +32,6 @@ export default function Dashboard({ portfolio, selectedNetwork, selectedAccount,
     const { tabId, page = 1 } = useParams()
 
     const [chartTokensData, setChartTokensData] = useState([]);
-    const [chartProtocolsData, setChartProtocolsData] = useState([]);
-    const [chartType, setChartType] = useState([]);
     const [tab, setTab] = useState(tabId || tabSegments[0].value);
 
     const currentAccount = accounts.find(a => a.id.toLowerCase() === selectedAccount.toLowerCase())
@@ -59,26 +49,27 @@ export default function Dashboard({ portfolio, selectedNetwork, selectedAccount,
         const tokensData = portfolio.tokens
             .map(({ label, symbol, balanceUSD }) => ({
                 label: label || symbol,
-                value: Number(((balanceUSD / portfolio.balance.total.full) * 100).toFixed(2))
+                value: Number(((balanceUSD / portfolio.balance.total.full) * 100).toFixed(2)),
+                balanceUSD
             }))
             .filter(({ value }) => value > 0);
 
-        const totalProtocols = portfolio.protocols.map(({ assets }) =>
-            assets
-                .map(({ balanceUSD }) => balanceUSD)
-                .reduce((acc, curr) => acc + curr, 0))
-            .reduce((acc, curr) => acc + curr, 0)
-
-        const protocolsData = portfolio.protocols
-            .map(({ label, assets }) => ({
-                label,
-                value: Number(((assets.map(({ balanceUSD }) => balanceUSD).reduce((acc, curr) => acc + curr, 0) / totalProtocols) * 100).toFixed(2))
-            }))
-            .filter(({ value }) => value > 0)
-
-        setChartTokensData(tokensData);
-        setChartProtocolsData(protocolsData)
-    }, [portfolio.balance, portfolio.tokens, portfolio.protocols]);
+        if (portfolio?.balance?.total?.full && tokensData) {
+                setChartTokensData({
+                    empty: false,
+                    data: tokensData?.sort((a, b) => b.value - a.value)
+                })
+        } else {
+            setChartTokensData({
+                empty: true,
+                data: [{
+                    label: "You don't have any tokens",
+                    balanceUSD: 1,
+                    value: 0
+                }]
+            })
+        }
+    }, [portfolio.balance, portfolio.tokens]);
 
     useEffect(() => portfolio.requestOtherProtocolsRefresh(), [portfolio])
 
@@ -114,7 +105,28 @@ export default function Dashboard({ portfolio, selectedNetwork, selectedAccount,
               )
             }
             <div className={styles.overview}>
-                <Panel className={cn(styles.balance, styles.panel)} title="Balance">
+                <Panel 
+                    className={cn(styles.chart, styles.panel, styles.topPanels)}
+                >
+                    {
+                        portfolio.isCurrNetworkBalanceLoading ?
+                        <Loading/> :
+                        privateMode.hidePrivateContent(
+                            <Chart 
+                                selectedNetwork={selectedNetwork} 
+                                data={chartTokensData} 
+                                size={200} 
+                                className={styles.chart} 
+                                hidePrivateValue={privateMode.hidePrivateValue}
+                                portfolio={portfolio}
+                            />
+                        )
+                    }
+                </Panel>
+                <Panel 
+                    className={cn(styles.balance, styles.panel, styles.topPanels)} 
+                    titleClassName={styles.panelTitle} 
+                    title="You also have:">
                     <Balances
                         portfolio={portfolio}
                         selectedNetwork={selectedNetwork}
@@ -124,20 +136,6 @@ export default function Dashboard({ portfolio, selectedNetwork, selectedAccount,
                         selectedAccount={selectedAccount}
                         match={match}
                     />
-                </Panel>
-                <Panel className={cn(styles.chart, styles.panel)} title={<>Balance by <Segments small defaultValue={chartSegments[0].value} segments={chartSegments} onChange={setChartType} /></>}>
-                    {
-                        chartType === chartSegments[0].value ?
-                            portfolio.isCurrNetworkBalanceLoading ?
-                                <Loading/>
-                                :
-                                privateMode.hidePrivateContent(<Chart data={chartTokensData} size={200} className={styles.chart} />)
-                            :
-                            portfolio.isCurrNetworkProtocolsLoading ?
-                                <Loading/>
-                                :
-                                privateMode.hidePrivateContent(<Chart data={chartProtocolsData} size={200} className={styles.chart} />)
-                    }
                 </Panel>
             </div>
             <Panel title={<>Assets <Segments small defaultValue={tab} segments={tabSegments} onChange={setTab} /></>}>

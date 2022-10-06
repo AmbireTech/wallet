@@ -1,0 +1,54 @@
+@import 'variables.scss';
+
+.purpleHighlight {
+  color: $secondary-accent-color;
+}
+
+.balanceContainer {
+  display: flex;
+  width: 100%;
+  gap: 7px;
+  flex-wrap: wrap;
+  border: 1px solid transparent;
+  border-bottom-color:#3e436b;
+  padding: 1.4px 20px;
+  padding-left: 0;
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.otherBalance {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 100%;
+  align-items: center;
+  gap: 7px;
+  flex-wrap: wrap;
+  opacity: 1;
+  cursor: pointer;
+  transition: opacity 0.1s ease-in-out;
+  user-select: none;
+
+  label {
+    opacity: 1;
+    cursor: pointer;
+    color: #ebecff;
+    font-weight: 300;
+    font-size: 14px;
+  }
+
+  .network {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+    font-weight: 400;
+  }
+
+  &:hover {
+    opacity: .8;
+  }
+}

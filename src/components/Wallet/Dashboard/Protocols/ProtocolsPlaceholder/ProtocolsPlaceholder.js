@@ -1,4 +1,4 @@
-import './ProtocolsPlaceholder.scss'
+import styles from './ProtocolsPlaceholder.module.scss'
 
 import { NavLink } from 'react-router-dom'
 import { GiReceiveMoney } from 'react-icons/gi'
@@ -36,39 +36,39 @@ const ProtocolsPlaceholder = ({ onClickAddToken, onClickShowToken }) => {
     }
     
     return (
-        <div id="protocols-placeholder" >
-            <div className="placeholder-overlay">
+        <div className={styles.wrapper}>
+            <div className={styles.placeholderOverlay}>
                 <label>
                     Welcome! You don't have any funds on this account.
                 </label>
                 <NavLink to="/wallet/deposit">
                     <Button small icon={<GiReceiveMoney/>}>Deposit</Button>
                 </NavLink>
-                <div className="add-token">
+                <div className={styles.addToken}>
                     <label>You have a token that's not displayed?</label>
                     <Button mini clear icon={<MdOutlineAdd/>} onClick={onClickAddToken}>Click here to add it</Button>
                     {hiddenTokensCount > 0 && (<label style={{ cursor: 'pointer'}} onClick={onClickShowToken}>There are also {hiddenTokensCount} hidden tokens. Click to configure</label>)}
                 </div>
             </div>
-            <div className="category">
-                <div className="title">Tokens</div>
-                <div className="list">
+            <div className={styles.category}>
+                <div className={styles.title}>Tokens</div>
+                <div className={styles.list}>
                     {
                         tokens.map(({ icon, symbol, balance, balanceUSD }) => (
-                            <div className="token" key={symbol}>
-                                <div className="icon">
+                            <div className={styles.token} key={symbol}>
+                                <div className={styles.icon}>
                                     <img src={icon} alt="Token Icon"/>
                                 </div>
-                                <div className="name">
+                                <div className={styles.name}>
                                     { symbol }
                                 </div>
-                                <div className="separator"></div>
-                                <div className="balance">
-                                    <div className="currency">
-                                        { balance } <span className="symbol">{ symbol }</span>
+                                <div className={styles.separator}></div>
+                                <div className={styles.balance}>
+                                    <div className={styles.currency}>
+                                        { balance } <span className={styles.symbol}>{ symbol }</span>
                                     </div>
-                                    <div className="dollar">
-                                        <span className="symbol">$</span> { balanceUSD }
+                                    <div className={styles.dollar}>
+                                        <span className={styles.symbol}>$</span> { balanceUSD }
                                     </div>
                                 </div>
                             </div>
