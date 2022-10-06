@@ -1,12 +1,12 @@
-name: Build & deploy staging for Redesign
+name: Build & deploy staging for Redesign (devcon6)
 
 on:
   push:
     branches:
-      - feature/redesign-common-style
+      - devcon6
   pull_request:
     branches:
-      - feature/redesign-common-style
+      - devcon6
 
 jobs:
   build:
@@ -34,10 +34,10 @@ jobs:
           name: production-files
           path: ./build
   deploy-redesign:
-    name: Deploy Redesign
+    name: Deploy Redesign (devcon6)
     needs: build
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/feature/redesign-common-style'
+    if: github.ref == 'refs/heads/devcon6'
     steps:
       - name: Download artifact
         uses: actions/download-artifact@v2
@@ -50,5 +50,5 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./build
-          destination_dir: ./redesign
+          destination_dir: ./devcon6
           cname: wallet.ambire.com
