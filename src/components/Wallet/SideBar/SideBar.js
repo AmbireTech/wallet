@@ -68,7 +68,7 @@ const SideBar = ({ match, portfolio, hidePrivateValue, relayerURL, selectedNetwo
       }
 
       { !dappModeSidebar && <NavLink to={'/wallet/dashboard'} className={styles.sidebarLogo}>
-        <img src={`${window.location.origin}${window.location.pathname}resources/logo.svg`} alt='ambire-logo' />
+        <img src='/resources/logo.svg' alt='ambire-logo' />
       </NavLink>
       }
       <div className={styles.balance}>
