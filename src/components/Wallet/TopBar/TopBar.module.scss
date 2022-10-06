@@ -6,11 +6,11 @@
     padding: 45px $layout-spacing 45px 0;
     display: flex;
     width: 100%;
-    justify-content: flex-end;
+    justify-content: space-between;
     color: #ebecff;
+    min-height: 96px;
 
     .dappMenu {
-        position: absolute;
         background-size: contain;
         background-repeat: no-repeat;
         background-position: center center;
@@ -18,8 +18,6 @@
     }
 
     .dappMenu {
-        left: $layout-spacing / 4;
-        top: 10px;      
         height: 40px;
 
         .dappMenuBtns {
@@ -169,58 +167,29 @@
     }
 
     &.dappMode {
-        padding: ($layout-spacing / 4) $layout-spacing;
-        height: $topbar-dapp-mode-height;
-        align-items: flex-start;
-        .container {
-            padding-left: 120px;
-            >button, >svg, >div, .select-input {
-                max-height: 40px;
+        padding: 20px;
+        align-items: center;
 
-                .menu, .selectMenu {
-                    top: 40px;
-                }
-            }
+        .mobileMenu {
+            padding: 0;
+            width: auto;
         }
     }
 }
 
 @media screen and (max-width: $sidebar-small-breakpoint) {
     .wrapper {
-
         .dappMenu {
             height: 35px;
-           
+
             .dappMenuBtns {
                 width: 140px;
-                // flex-wrap: wrap;
                 .buttonComponent {
                     width: 35px;
                 }
-                .dappData {                    
+                .dappData {
                     .dappLogo {
                         min-width: 35px;
-                    }
-                }
-            }
-        }
-
-        .container {        
-            gap: 10px;
-
-            .privacyAndRewards {
-                gap: 10px;
-            }
-        }
-
-        &.dappMode {
-            .container {
-                gap: 0.5em;
-                >button, >svg, >div, .selectInput {
-                    max-height: 35px;
-    
-                    .menu, .selectMenu {
-                        top: 35px;
                     }
                 }
             }
@@ -281,14 +250,7 @@
         }
 
         &.dappMode {
-            .container {
-                top: $topbar-mobile-dapp-mode-height;
-            }
-
-            height: $topbar-mobile-dapp-mode-height;
-            .dappMenu {            
-                top: 10px;
-
+            .dappMenu {
                 .ambireMenuBtn {
                     display: none;
                 }

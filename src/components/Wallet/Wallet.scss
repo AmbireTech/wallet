@@ -17,10 +17,9 @@
     transition: all 0.3s ease-in-out;
 
     &.dapp-mode {
-        left: 0;
-        padding: $layout-spacing / 4;
-        padding-top: $layout-spacing / 2;
-        top: $topbar-dapp-mode-height;
+        #wallet-container-inner {
+            padding: 20px 10px 10px;
+        }
     }
 
     #wallet-container-inner {
@@ -56,14 +55,9 @@
 
 @media screen and (max-width: $small-breakpoint-max-width) {
     #wallet-container {
-        left: $sidebar-desktop-small-width !important;
 
         #wallet-container-inner {
             padding: 0 $layout-spacing / 4;
-        }
-
-        &.dapp-mode {
-            left: 0px !important;
         }
     }
 }
@@ -74,13 +68,12 @@
         overflow-y: auto;
         padding-bottom: $sidebar-mobile-height !important;
 
-        #wallet-container-inner {
-            padding: 40px 10px 10px 10px;
+        &.dapp-mode {
+            padding-bottom: 0 !important;
         }
 
-        &.dapp-mode {
-            bottom: 0  !important;
-            top: $topbar-mobile-dapp-mode-height;
+        #wallet-container-inner {
+            padding: 40px 10px 10px;
         }
     }
 }

@@ -60,19 +60,6 @@ const TopBar = ({
             {visualEnv === 'staging' && <>Staging mode</>}
           </div>
       }
-      <div className={styles.mobileMenu} onClick={() => setMenuOpen(prev => !prev)}>
-        <NavLink to={'/wallet/dashboard'}>
-         <img src='/resources/logo.svg' className={styles.logo} alt='ambire-logo' />
-        </NavLink>
-        <div className={styles.mobileMenuRight}>
-          <div className={styles.icon} style={{backgroundImage: `url(${accountIcon})`}}></div>
-          <MdOutlineArrowForward/>
-          <div className={styles.icon} style={{backgroundImage: `url(${networkIconsById[network.id]})`}}></div>
-          <div className={styles.menuButton}>
-            { isMenuOpen ? <MdOutlineClose/> : <MdOutlineMenu/> }
-          </div>
-        </div>
-      </div>
 
       {dappModeTopBar ?
         <div className={styles.dappMenu}>
@@ -107,6 +94,20 @@ const TopBar = ({
         <div id="icon" />
       </NavLink>     
       }
+
+      <div className={styles.mobileMenu} onClick={() => setMenuOpen(prev => !prev)}>
+        {!dappModeTopBar &&  <NavLink to={'/wallet/dashboard'}>
+          <img src='/resources/logo.svg' className={styles.logo} alt='ambire-logo' />
+        </NavLink> }
+        <div className={styles.mobileMenuRight}>
+          <div className={styles.icon} style={{backgroundImage: `url(${accountIcon})`}}></div>
+          <MdOutlineArrowForward/>
+          <div className={styles.icon} style={{backgroundImage: `url(${networkIconsById[network.id]})`}}></div>
+          <div className={styles.menuButton}>
+            { isMenuOpen ? <MdOutlineClose/> : <MdOutlineMenu/> }
+          </div>
+        </div>
+      </div>
 
       <div className={`${styles.container} ${isMenuOpen ? styles.open : ''}`}>
         <div className={styles.privacyAndRewards}>

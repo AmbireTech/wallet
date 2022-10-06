@@ -29,6 +29,7 @@
   }
 
   &.dappMode {
+    position: fixed;
     z-index: 51;
     left: -($sidebar-desktop-width + 20);
     box-shadow: 15px 10px 20px 0 rgba(0, 0, 0, 0.25);
@@ -214,7 +215,7 @@
   .wrapper {
     width: $sidebar-desktop-small-width;
 
-    &.dapp-mode {
+    &.dappMode {
       .outside-handler {
         left: $sidebar-desktop-small-width;
       }
@@ -262,7 +263,10 @@
       display: none;
     }
 
-    &.dapp-mode {
+    &.dappMode {
+      display: none;
+      position: relative;
+
       nav {
         height: 0;
       }
