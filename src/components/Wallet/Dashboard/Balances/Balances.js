@@ -7,6 +7,7 @@ import { useHistory } from 'react-router-dom'
 
 import networks from 'consts/networks'
 import BalanceItem from './BalanceItem/BalanceItem'
+import { useEffect } from 'react'
 
 const Balances = ({ portfolio, selectedNetwork, setNetwork, hidePrivateValue, relayerURL, selectedAccount, match }) => {
     const history = useHistory()
@@ -25,11 +26,34 @@ const Balances = ({ portfolio, selectedNetwork, setNetwork, hidePrivateValue, re
             truncated
         }
     }
+
+    useEffect(() => {
+        function setClasses(el) {
+            const isScrollable = el.scrollHeight > el.clientHeight;
+            
+            // GUARD: If element is not scrollable, remove all classes
+            if (!isScrollable) {
+                el.classList.remove(styles.bottomOverflow);
+                return;
+            }
+            
+            const isScrolledToBottom = el.scrollHeight <= el.clientHeight + el.scrollTop;
+            el.classList.toggle(styles.bottomOverflow, !isScrolledToBottom);
+        }
+            
+        const balancesNode = document.querySelector('#content')
+        
+        balancesNode.addEventListener('scroll', (e) => {
+            const el = e.currentTarget;
+            setClasses(el);
+        })
+        setClasses(document.querySelector('#content'));
+    }, [])
     
     return (
         <div className={styles.wrapper}>
             { portfolio.isCurrNetworkBalanceLoading && otherBalancesLoading ? <Loading /> : (
-                <div className={styles.otherBalances}>
+                <div className={styles.otherBalances} id="content">
                     { otherBalancesLoading ? <Loading /> : (
                         <>
                             {
