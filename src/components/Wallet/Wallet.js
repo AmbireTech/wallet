@@ -229,9 +229,9 @@ export default function Wallet(props) {
   return (
     <div id="wallet">
       <SideBar match={props.match} portfolio={props.portfolio} hidePrivateValue={props.privateMode.hidePrivateValue} relayerURL={props.relayerURL} selectedNetwork={props.network} dappsCatalog={props.dappsCatalog} />
-      <TopBar {...props} />
 
       <div id="wallet-container" className={dapModeSidebar ? 'dapp-mode' : ''} ref={walletContainer}>
+        <TopBar {...props} />
         <div id="wallet-container-inner">
           <Switch>
             {

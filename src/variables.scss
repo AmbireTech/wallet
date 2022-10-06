@@ -16,11 +16,10 @@ $ambire-purple: #AF50FF;
 $text-dark: #202229;
 
 $sidebar-desktop-width: 260px;
-$sidebar-small-breakpoint: 1400px;
 $sidebar-desktop-small-width: 120px;
+$sidebar-small-breakpoint: 1400px;
 $sidebar-mobile-height: 80px;
-$topbar-height: 90px;
-$topbar-mobile-height: 70px;
+
 $topbar-dapp-mode-height: 60px;
 $topbar-mobile-dapp-mode-height: 50px;
 $mobile-breakpoint-max-width: 800px;
@@ -54,7 +53,7 @@ $box-shadow: 0px 5px 10px 0 rgba(0, 0, 0, 0.25);
     right: 0;
 }
 
-$layout-spacing: 40px;
+$layout-spacing: 150px;
 $max-container-width: 1690px;
 
 // Redesign variables. Later we will apply them in the current variables naming pattern.

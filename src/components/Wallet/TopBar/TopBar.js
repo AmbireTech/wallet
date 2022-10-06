@@ -43,9 +43,10 @@ const TopBar = ({
 
   const account = accounts.find(({ id }) => id === selectedAcc)
   const accountIcon = blockies.create({ seed: account ? account.id : null }).toDataURL()
- 
+
+  // TODO
   const visualEnv =
-    (process.env.REACT_APP_VISUAL_ENV === 'dev')
+    false && (process.env.REACT_APP_VISUAL_ENV === 'dev')
       ? 'dev' : (
         new URL(document.URL).pathname.startsWith('/staging/')
       ) ? 'staging' : null

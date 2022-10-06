@@ -1,17 +1,12 @@
 @import 'variables.scss';
 
 .wrapper {
-    position: absolute;
+    position: sticky;
     z-index: 48;
-    top: 0;
-    left: $sidebar-desktop-width;
-    right: 0;
-    height: $topbar-height;
-    width: calc(100% - (2 * #{$sidebar-desktop-width}));
-    padding: ($layout-spacing / 2) $layout-spacing;
+    padding: 45px $layout-spacing 45px 0;
     display: flex;
+    width: 100%;
     justify-content: flex-end;
-    gap: 1em;
     color: #ebecff;
 
     .dappMenu {
@@ -129,10 +124,6 @@
         display: none;
         align-items: center;
         gap: 1em;
-        position: absolute;
-        height: 70px;
-        top: 0;
-        left: 0;
         padding: 0 20px;
 
         .logo {
@@ -196,7 +187,7 @@
 
 @media screen and (max-width: $sidebar-small-breakpoint) {
     .wrapper {
-        left: $sidebar-desktop-small-width;
+
         .dappMenu {
             height: 35px;
            
@@ -240,13 +231,10 @@
 // Mobile
 @media screen and (max-width: $mobile-breakpoint-max-width) {
     .wrapper {
-        left: 0;
         z-index: 50;
-        height: $topbar-mobile-height;
-        box-shadow: 0px 4px 10px #00000073;
+        box-shadow: 0 4px 10px #00000073;
         border: 1px solid #3E436BCC;
-        padding-left: 15px;
-        padding-right: 15px;
+        padding: 20px 0;
         background-color: $c-fiord;
 
         .mobileMenu {
@@ -260,7 +248,7 @@
             position: absolute;
             flex-direction: column;
             align-items: stretch;
-            top: $topbar-mobile-height;
+            top: 93px;
             left: 0;
             right: 0;
             gap: 10px;

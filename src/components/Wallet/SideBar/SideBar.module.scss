@@ -1,13 +1,10 @@
 @import 'variables.scss';
 
 .wrapper {
+  position: relative;
   z-index: 49;
   height: 100%;
   width: $sidebar-desktop-width;
-  position: fixed;
-  left: 0px;
-  bottom: 0px;
-  top: 0px;
   padding-top: 30px;
   display: flex;
   flex-direction: column;
@@ -254,11 +251,14 @@
 // Mobile
 @media screen and (max-width: $mobile-breakpoint-max-width) {
   .wrapper {
+    position: fixed;
+    bottom: 0;
     height: $sidebar-mobile-height;
-    width: 170px;
-    padding: 0 10px;
+    width: 100%;
+    padding:0;
+    z-index: 50;
 
-    .balance {
+    .balance, .sidebarLogo {
       display: none;
     }
 
@@ -269,16 +269,10 @@
     }
 
     nav {
-      z-index: 49;
-      height: $sidebar-mobile-height;
-      width: 100%;
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
       display: flex;
       flex-direction: row;
       justify-content: space-between;
+      width: 100%;
 
        .item {
         gap: 0;
