@@ -353,6 +353,7 @@ function AppInner() {
               gnosisDisconnect={gnosisDisconnect}
               // required for the security and transactions pages
               relayerURL={relayerURL}
+              useRelayerData={useRelayerData}
               // required by the transactions page
               eligibleRequests={eligibleRequests}
               showSendTxns={showSendTxns}
