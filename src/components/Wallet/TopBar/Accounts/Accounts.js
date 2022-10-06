@@ -10,6 +10,7 @@ import { DropDown, Button } from 'components/common';
 import { useToasts } from 'hooks/toasts';
 import { useDragAndDrop, useCheckMobileScreen } from 'hooks'
 import { ToolTip } from 'components/common'
+import cn from 'classnames'
 
 const Accounts = ({ accounts, selectedAddress, onSelectAcc, onRemoveAccount, hidePrivateValue, userSorting, setUserSorting }) => {
     const { addToast } = useToasts()
@@ -140,14 +141,14 @@ const Accounts = ({ accounts, selectedAddress, onSelectAcc, onRemoveAccount, hid
                         <div className={styles.message}>
                             Are you sure you want to log out from this account ?
                         </div>
-                        <div className='buttons'>
-                            <div className="button danger" onClick={() => {
+                        <div className={styles.buttons}>
+                            <div className={cn(styles.button, styles.danger)} onClick={() => {
                                 setLogoutWarning(false)
                                 onRemoveAccount(id)
                             }}>
                                 <MdOutlineCheck/>
                             </div>
-                            <div className="button" onClick={() => setLogoutWarning(false)}>
+                            <div className={styles.button} onClick={() => setLogoutWarning(false)}>
                                 <MdOutlineClose/>
                             </div>
                         </div>
