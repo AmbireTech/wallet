@@ -1,19 +1,19 @@
 {
   "files": {
-    "main.css": "./static/css/main.01664b21.chunk.css",
-    "main.js": "./static/js/main.cddb872d.chunk.js",
-    "main.js.map": "./static/js/main.cddb872d.chunk.js.map",
-    "runtime-main.js": "./static/js/runtime-main.bc1146af.js",
-    "runtime-main.js.map": "./static/js/runtime-main.bc1146af.js.map",
+    "main.css": "./static/css/main.b6e65fd7.chunk.css",
+    "main.js": "./static/js/main.c0e83081.chunk.js",
+    "main.js.map": "./static/js/main.c0e83081.chunk.js.map",
+    "runtime-main.js": "./static/js/runtime-main.4dc11687.js",
+    "runtime-main.js.map": "./static/js/runtime-main.4dc11687.js.map",
     "static/css/2.e770e63e.chunk.css": "./static/css/2.e770e63e.chunk.css",
-    "static/js/2.56822a35.chunk.js": "./static/js/2.56822a35.chunk.js",
-    "static/js/2.56822a35.chunk.js.map": "./static/js/2.56822a35.chunk.js.map",
-    "static/js/3.feb15204.chunk.js": "./static/js/3.feb15204.chunk.js",
-    "static/js/3.feb15204.chunk.js.map": "./static/js/3.feb15204.chunk.js.map",
+    "static/js/2.5f4f5e78.chunk.js": "./static/js/2.5f4f5e78.chunk.js",
+    "static/js/2.5f4f5e78.chunk.js.map": "./static/js/2.5f4f5e78.chunk.js.map",
+    "static/js/3.1d2a0377.chunk.js": "./static/js/3.1d2a0377.chunk.js",
+    "static/js/3.1d2a0377.chunk.js.map": "./static/js/3.1d2a0377.chunk.js.map",
     "index.html": "./index.html",
     "static/css/2.e770e63e.chunk.css.map": "./static/css/2.e770e63e.chunk.css.map",
-    "static/css/main.01664b21.chunk.css.map": "./static/css/main.01664b21.chunk.css.map",
-    "static/js/2.56822a35.chunk.js.LICENSE.txt": "./static/js/2.56822a35.chunk.js.LICENSE.txt",
+    "static/css/main.b6e65fd7.chunk.css.map": "./static/css/main.b6e65fd7.chunk.css.map",
+    "static/js/2.5f4f5e78.chunk.js.LICENSE.txt": "./static/js/2.5f4f5e78.chunk.js.LICENSE.txt",
     "static/media/App.scss": "./static/media/UbuntuMono-Regular.9fa7d55c.ttf",
     "static/media/aave.58aec338.svg": "./static/media/aave.58aec338.svg",
     "static/media/address-book.e4b981ed.svg": "./static/media/address-book.e4b981ed.svg",
@@ -68,10 +68,10 @@
     "static/media/yearn.ac5ab573.svg": "./static/media/yearn.ac5ab573.svg"
   },
   "entrypoints": [
-    "static/js/runtime-main.bc1146af.js",
+    "static/js/runtime-main.4dc11687.js",
     "static/css/2.e770e63e.chunk.css",
-    "static/js/2.56822a35.chunk.js",
-    "static/css/main.01664b21.chunk.css",
-    "static/js/main.cddb872d.chunk.js"
+    "static/js/2.5f4f5e78.chunk.js",
+    "static/css/main.b6e65fd7.chunk.css",
+    "static/js/main.c0e83081.chunk.js"
   ]
 }
