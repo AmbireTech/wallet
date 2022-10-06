@@ -4,7 +4,7 @@ $arrow-size: 15px;
 .tooltip {
     display: contents;
 
-    .tooltip-label {
+    .tooltipLabel {
         z-index: 50;
         position: fixed;
         max-width: 300px;
@@ -14,6 +14,7 @@ $arrow-size: 15px;
         color: white;
         background-color: $input-background-color-darker;
         box-shadow: $box-shadow;
+        border-radius: 12px;
         white-space: normal;
         opacity: 0;
         overflow: visible;
@@ -24,7 +25,7 @@ $arrow-size: 15px;
             position: absolute;
             width: 0;
             &.top {
-                top: -$arrow-size;
+                top: -$arrow-size + 1; // +1, because of the border-radius of its parent. Otherwise there's a little space between the arrow and the label.
                 border-bottom: $arrow-size solid $input-background-color-darker;
             }
 
@@ -48,15 +49,15 @@ $arrow-size: 15px;
     }
 
     &:hover {
-        .tooltip-label {
+        .tooltipLabel {
             opacity: 1;
         }
     }
 
     @media screen and (max-width: $mobile-breakpoint-max-width) {
-        .tooltip-label {          
+        .tooltipLabel {
             transition-delay: 400ms;
         }
-      }
-      
+    }
+
 }
