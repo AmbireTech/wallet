@@ -1,8 +1,8 @@
 @import 'variables.scss';
 
 .card {
-    width: 380px;
     display: flex;
+    flex: 1;
     flex-direction: column;
     gap: 30px;
     padding: 20px 25px;
