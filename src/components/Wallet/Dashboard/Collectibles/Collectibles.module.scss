@@ -41,7 +41,7 @@ $collectible-size: 250px;
             position: relative;
             height: calc(#{$collectible-size} + #{$collectible-details-height});
             width: $collectible-size;
-            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
             overflow: hidden;
             transition: all 0.1s ease-in-out;
 
@@ -70,7 +70,7 @@ $collectible-size: 250px;
                 justify-content: center;
                 gap: 5px;
                 padding: 0 20px;
-                background-color: $input-background-color;
+                background-color: #1e2033;
                 overflow: hidden;
 
                 .collection {
@@ -80,12 +80,12 @@ $collectible-size: 250px;
                     gap: 10px;
                     font-size: 12px;
                     font-weight: 500;
-                    color: white;
+                    color: #ebecff;
 
                     .collectionIcon {
                         flex: 0 0 auto;
-                        height: 15px;
-                        width: 15px;
+                        height: 18px;
+                        width: 18px;
                         background-size: cover;
                         background-position: center center;
                         border-radius: 100%;
@@ -112,14 +112,12 @@ $collectible-size: 250px;
                         white-space: nowrap;
                         text-overflow: ellipsis;
                         font-size: 15px;
-                        font-weight: bold;
-                        color: white;
+                        color: #ebecff;
                     }
 
                     .value {
                         flex: 0 0 auto;
                         font-size: 12px;
-                        font-weight: bold;
                     }
                 }
             }

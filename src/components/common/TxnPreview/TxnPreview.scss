@@ -7,7 +7,9 @@ $extended-summary-height: 31px;
     display: flex;
     flex-direction: column;
     flex: 0 0 auto;
-    background-color: $c-mirage;
+    background-color: #1e2033;
+    color: #ebecff;
+    border-radius: 12px;
     min-height: $txn-height;
     position: relative;
     user-select: none;
@@ -64,17 +66,14 @@ $extended-summary-height: 31px;
                         display: flex;
                         align-items: center;
                         height: $extended-summary-height;
-                        font-weight: bold;
-                        text-transform: uppercase;
-                        padding: 0 0.75em;
-                        background-color: $ambire-dark-blue;
+                        color: #27e8a7;
 
                         &.unknown {
-                            background-color: #d06f1b;
+                            color: #d06f1b;
                         }
 
                         &.cancel {
-                            background-color: #c33a3a;
+                            color: #c33a3a;
                         }
                     }
 

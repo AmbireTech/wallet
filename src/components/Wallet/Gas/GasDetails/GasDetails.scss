@@ -10,7 +10,7 @@ $thead-background-color: darken($panel-background-color, 2%);
 
   .gas-details-date {
     font-size: 0.8em;
-    color: $modal-text-color;
+    color: #6770b3;
   }
 
   .gas-speed-row {
@@ -22,7 +22,7 @@ $thead-background-color: darken($panel-background-color, 2%);
   .gas-speed-block {
     text-align: center;
     flex: 1;
-    color: $modal-text-color;
+    color: #ebecff;
     background: $c-mirage;
     padding: 12px;
     border: 2px solid transparent;
@@ -40,25 +40,27 @@ $thead-background-color: darken($panel-background-color, 2%);
 
     .gas-speed-price {
       font-size: 0.8em;
+      opacity: .7;
     }
   }
 
   h4 {
     font-weight: normal;
     margin-top: 48px;
-    color: $modal-text-color;
+    color: #ebecff;
     margin-bottom: 16px;
   }
 
   .table-wrapper {
+    border-radius: 12px;
     max-height: 510px;
     overflow: auto;
-
+    
     table.gas-action-costs {
       width: 100%;
       border-spacing: 0;
-      color: $modal-text-color;
-  
+      color: #ebecff;
+
       thead {
         background: $c-mirage;
         font-weight: normal;
