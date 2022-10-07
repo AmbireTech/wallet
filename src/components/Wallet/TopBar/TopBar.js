@@ -104,11 +104,11 @@ const TopBar = ({
       </NavLink>     
       }
 
-      <div className={styles.mobileMenu} onClick={() => setMenuOpen(prev => !prev)}>
+      <div className={styles.mobileMenu}>
         {!dappModeTopBar &&  <NavLink to={'/wallet/dashboard'}>
           <img src='/resources/logo.svg' className={styles.logo} alt='ambire-logo' />
         </NavLink> }
-        <div className={styles.mobileMenuRight}>
+        <div className={styles.mobileMenuRight} onClick={() => setMenuOpen(prev => !prev)}>
           <div className={styles.icon} style={{backgroundImage: `url(${accountIcon})`}}></div>
           <MdOutlineArrowForward/>
           <div className={styles.icon} style={{backgroundImage: `url(${networkIconsById[network.id]})`}}></div>

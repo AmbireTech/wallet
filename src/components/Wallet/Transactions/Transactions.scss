@@ -1,6 +1,7 @@
 @import 'variables.scss';
 
 #transactions {
+    color: #ebecff;
     .pagination-controls {
         display: flex;
         align-items: center;
@@ -38,7 +39,7 @@
 
                 &.cancel {
                     background-color: #da5151;
-                    color: white;
+                    color: #ebecff;
                 }
             }
         }
@@ -76,6 +77,11 @@
                     white-space: nowrap;
                     overflow: hidden;
                     text-overflow: ellipsis;
+
+                    a.explorer-url {
+                        color: #ae60ff;
+                        text-decoration: underline;
+                    }
                 }
             }
         }
@@ -90,8 +96,6 @@
         .panel-heading {
             height: 75px;
             z-index: 47;
-            position: sticky;
-            top: -30px;
             display: flex;
             align-items: center;
             justify-content: space-between;

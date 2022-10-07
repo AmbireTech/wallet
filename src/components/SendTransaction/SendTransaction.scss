@@ -42,7 +42,7 @@ $titleBar-height: 90px;
             }
 
             &:hover {
-                color: white;
+                color: #ebecff;
             }
         }
     }
@@ -253,11 +253,11 @@ $titleBar-height: 90px;
                             flex-grow: 1;
 
                             &.danger {
-                                color: white;
+                                color: #ebecff;
 
                                 .icon-button {
                                     svg {
-                                        color: white;
+                                        color: #ebecff;
                                     }
                                 }
                             }
@@ -308,11 +308,11 @@ $titleBar-height: 90px;
                 flex-grow: 1;
 
                 &.danger {
-                    color: white;
+                    color: #ebecff;
 
                     .icon-button {
                         svg {
-                            color: white;
+                            color: #ebecff;
                         }
                     }
                 }

@@ -5,7 +5,7 @@
   z-index: 49;
   height: 100%;
   width: $sidebar-desktop-width;
-  padding-top: 30px;
+  padding-top: 45px;
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
@@ -51,7 +51,7 @@
 
   .sidebarLogo {
     max-width: 138px;
-    margin: 0 0 108px 1em;
+    margin: 0 0 30px 1em;
   }
 
   .ambireLogo {
@@ -81,7 +81,7 @@
   }
 
   .balance {
-    margin-bottom: 3em;
+    margin-bottom: 80px;
     padding-left: 1em;
 
     label {
@@ -213,6 +213,11 @@
 @media screen and (max-width: $sidebar-small-breakpoint) {
   .wrapper {
     width: $sidebar-desktop-small-width;
+
+    .sidebarLogo {
+      margin: 0 8px;
+      margin-bottom: 25px;
+    }
 
     &.dappMode {
       .outside-handler {

@@ -5,6 +5,12 @@
     justify-content: center;
     gap: 2em;
 
+    .depositAddress {
+        label {
+            text-align: center;
+        }
+    }
+
     .panel {
         flex: 1;
         gap: 2em;
@@ -48,13 +54,16 @@
             gap: 0.2em;
             text-align: left;
             font-size: 1em;
-            color: white;
+            color: #ebecff;
             user-select: none;
 
             .qrCode {
                 height: 180px;
                 width: 180px;
                 margin: 0 auto;
+                border-radius: 12px;
+                padding: 6px;
+                background-color: #fff;
                 margin-top: 1.5em;
             }
         }
@@ -65,7 +74,7 @@
             justify-content: center;
             gap: 1em;
             font-size: 1em;
-            color: #8c8d91;
+            color: rgba(#ebecff, 0.8);
             margin-top: 2em;
 
             .list {
@@ -93,7 +102,7 @@
                     .name {
                         font-size: 1.2em;
                         font-weight: 500;
-                        color: white;
+                        color: #ebecff;
                     }
                 }
             }

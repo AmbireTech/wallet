@@ -5,7 +5,7 @@ import { networkIconsById } from 'consts/networks'
 import { ReactComponent as AlertCircle } from 'resources/icons/alert-circle.svg'
 
 import styles from './Chart.module.scss'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 
 ChartJS.register(ArcElement, Tooltip, Legend)
 
@@ -25,7 +25,7 @@ const Chart = ({ portfolio, hidePrivateValue, selectedNetwork, data, className }
   const [activeItem, setActiveItem] = useState(null)
   const chartRef = useRef()
 
-  const chartData = {
+  const chartData = useMemo(() => ({
     labels: data?.data?.map(i => i.label),
     datasets: [
       {
@@ -36,7 +36,7 @@ const Chart = ({ portfolio, hidePrivateValue, selectedNetwork, data, className }
         cutout: '85%',
       }
     ]
-  }
+  }), [data?.data, portfolio?.balance?.total?.full])
 
   const getItemColor = index => {
     const colorCount = colors.length - 1;
@@ -53,7 +53,7 @@ const Chart = ({ portfolio, hidePrivateValue, selectedNetwork, data, className }
     }
   }, [])
 
-  const options = {
+  const options = useMemo(() => ({
     plugins: {
       legend: {
         display: false
@@ -69,7 +69,7 @@ const Chart = ({ portfolio, hidePrivateValue, selectedNetwork, data, className }
         },
       }
     },
-  }
+  }), [data.empty])
 
   return (
     <div className={cn(styles.wrapper, className)}>

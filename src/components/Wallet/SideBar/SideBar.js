@@ -141,14 +141,14 @@ const SideBar = ({ match, portfolio, hidePrivateValue, relayerURL, selectedNetwo
             <div className='opensea-icon'/>OpenSea
           </div>
         </NavLink> */}
-        <NavLink to={match.url + "/security"} activeClassName={styles.selected}>
-          <div className={styles.item}>
-            <SecurityIcon />Security
-          </div>
-        </NavLink>
         <NavLink to={match.url + "/dapps"} activeClassName={styles.selected}>
           <div className={styles.item} onClick={onDappsClick}>
               <DappsIcon />dApps
+          </div>
+        </NavLink>
+        <NavLink to={match.url + "/security"} activeClassName={styles.selected}>
+          <div className={styles.item}>
+            <SecurityIcon />Security
           </div>
         </NavLink>
         <div className="separator"></div>

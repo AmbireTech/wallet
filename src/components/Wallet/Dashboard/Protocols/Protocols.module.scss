@@ -4,6 +4,8 @@
     display: flex;
     flex-direction: column;
     gap: 30px;
+    border-radius: 12px;
+    overflow: hidden;
 
     .category {
         position: relative;
@@ -11,6 +13,8 @@
 
         .title {
             display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
             align-items: center;
             justify-content: space-between;
             padding: 15px 20px;
@@ -42,7 +46,7 @@
                 gap: 12px;
                 padding: 15px 20px;
                 font-size: 15px;
-                color: white;
+                color: #ebecff;
                 
                 &[draggable="true"] .dragHandle {
                     cursor: grab;
@@ -145,9 +149,13 @@
     .wrapper {
         gap: 20px;
 
-        .title {
-            .sortHolder {
-                flex-direction: column;
+        .category {
+            .title {
+                padding: 15px;
+                justify-content: center;
+                .sortHolder {
+                    flex-direction: column;
+                }
             }
         }
         .token {
