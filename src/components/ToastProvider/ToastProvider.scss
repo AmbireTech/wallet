@@ -35,7 +35,7 @@
             user-select: none;
 
             &.error {
-                color: white;
+                color: #ebecff;
                 background-color: $danger-color;
 
                 a {
@@ -80,7 +80,7 @@
                     @include flex-center-center;
                     border-radius: 100%;
                     font-size: 13px;
-                    color: white;
+                    color: #ebecff;
                     background-color: $danger-color;
                 }
             }

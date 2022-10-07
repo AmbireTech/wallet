@@ -93,7 +93,7 @@ html {
 body {
   height: 100%;
   margin: 0;
-  color: white;
+  color: #ebecff;
   font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
   'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
   sans-serif;
@@ -112,7 +112,7 @@ a {
   transition: color 0.1s ease-in-out;
 
   &:hover {
-    color: white;
+    color: #ebecff;
   }
 }
 
@@ -139,7 +139,7 @@ a {
 select {
   border: 0px;
   outline: 0px;
-  color: white;
+  color: #ebecff;
   padding: 15px;
   background-color: rgba(0,0,0,0.3);
 }

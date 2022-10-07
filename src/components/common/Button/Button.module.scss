@@ -35,21 +35,21 @@
 
     &.danger {
         border: none;
-        color: #fff;
+        color: #ebecff;
         background: $danger-color;
 
         .iconButton {
-            color: white !important;
+            color: #ebecff !important;
         }
     }
 
     &.clear {
         border: none;
-        color: white;
+        color: #ebecff;
         background-color: rgba(0, 0, 0, 0.1);
 
         .iconButton {
-            color: white !important;
+            color: #ebecff !important;
         }
 
         &:not([disabled]):hover {
@@ -60,20 +60,20 @@
     &.primaryGradient {
         border: none;
         background: transparent linear-gradient(90deg, #27E8A7 0%, #6000FF 100%) 0% 0% no-repeat padding-box;
-        color: #fff;
+        color: #ebecff;
 
         .iconButton {
-            color: white !important;
+            color: #ebecff !important;
         }
     }
 
     &.secondary {
         border: none;
-        color: #fff;
+        color: #ebecff;
         background-color: $secondary-accent-color;
 
         .iconButton {
-            color: white !important;
+            color: #ebecff !important;
         }
     }
 
