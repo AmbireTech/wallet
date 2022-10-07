@@ -316,18 +316,22 @@ $gap: 12px;
     font-size: 1.2em;
     text-align: center;
     padding: 24px;
-    background-color: $input-background-color;
-    color: mix($text-color, $input-background-color);
+    background-color: #1e2033;
+    border-radius: 12px;
+    margin-top: 20px;
+    color: rgba(#ebecff, 0.8);
   }
 
   .info-wc {
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 8px;
-    margin-top: 12px;
+    margin: 10px 0;
     padding: 12px;
-    background-color: $input-background-color-darker;
-    color: mix($text-color, $input-background-color-darker);
+    background-color: #1e2033;
+    border-radius: 12px;
+    color: rgba(#ebecff, 0.8);
   }
 }
 

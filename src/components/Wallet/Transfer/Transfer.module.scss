@@ -25,6 +25,11 @@
         .recipientInput {
             width: 100%;
 
+            div:last-child {
+                opacity: 1;
+                padding-left: 20px;
+            }
+
             input {
                 border-radius: 12px 0 0 12px;
                 padding-right: 290px;
