@@ -35,21 +35,11 @@
         gap: 1em;
 
         .missingTokenNotice {
-            display: flex;
-            justify-content: center;
-            width: 100%;
-            align-items: center;
-            gap: 0.5em;
             font-size: 15px;
-            opacity: 0.8;
+            color: #ebecff;
 
-            svg {
-                flex: 0 0 auto;
-                font-size: 18px;
-            }
-
-            span {
-                color: #ebecff;
+            a {
+                color: #ae60ff;
             }
         }
 

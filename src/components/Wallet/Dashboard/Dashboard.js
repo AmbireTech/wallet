@@ -6,7 +6,6 @@ import { Chart, Loading, Segments, Panel } from 'components/common'
 import Balances from './Balances/Balances'
 import Protocols from './Protocols/Protocols'
 import Collectibles from './Collectibles/Collectibles'
-import { MdOutlineInfo } from 'react-icons/md'
 
 import Promotions from './Promotions/Promotions'
 import AssetsMigrationBanner from 'components/Wallet/AssetsMigration/AssetsMigrationBanner'
@@ -153,12 +152,9 @@ export default function Dashboard({ portfolio, selectedNetwork, selectedAccount,
                         <Collectibles portfolio={portfolio} isPrivateMode={privateMode.isPrivateMode} />
                 }
                 <div className={styles.footer}>
-                    <div className={styles.missingTokenNotice}>
-                        <MdOutlineInfo/>
-                        <span>
-                            If you don't see a specific token that you own, please check the <a href={`${selectedNetwork.explorerUrl}/address/${selectedAccount}`} target="_blank" rel="noreferrer">Block Explorer</a>
-                        </span>
-                    </div>
+                    <span className={styles.missingTokenNotice}>
+                        If you don't see a specific token that you own, please check the <a href={`${selectedNetwork.explorerUrl}/address/${selectedAccount}`} target="_blank" rel="noreferrer">Block Explorer</a>
+                    </span>
                 </div>
             </Panel>
         </section>
