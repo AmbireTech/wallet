@@ -179,6 +179,8 @@
 
 @media screen and (max-width: $sidebar-small-breakpoint) {
     .wrapper {
+        padding: $layout-spacing / 4;
+
         .dappMenu {
             height: 35px;
 
