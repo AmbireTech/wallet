@@ -112,10 +112,11 @@
         position: relative;
         display: flex;
 
-        .text-input {
+        .recipient-input {
             width: 100%;
 
             input {
+                border-radius: 12px 0 0 12px;
                 padding-right: 280px;
             }
         }
@@ -167,9 +168,7 @@
             flex-direction: column;
             gap: 10px;
 
-            .text-input {
-                width: 100%;
-    
+            .recipient-input {
                 input {
                     padding-right: 50px;
                 }
@@ -189,6 +188,10 @@
                 right: 15px;
                 height: 25px;
                 width: 25px;
+            }
+
+            .address-book {
+                position: relative !important;
             }
 
             .dropdown {
