@@ -311,7 +311,7 @@ const BundlePreview = React.memo(({ bundle, mined = false, feeAssets }) => {
         bundle.txId ?
           <li>
             <label><BsGlobe2/>Block Explorer</label>
-            <p><a href={network.explorerUrl+'/tx/'+bundle.txId} target='_blank' rel='noreferrer'>{network.explorerUrl.split('/')[2]}</a></p>
+            <p><a className='explorer-url' href={network.explorerUrl+'/tx/'+bundle.txId} target='_blank' rel='noreferrer'>{network.explorerUrl.split('/')[2]}</a></p>
           </li>
           :
           null
