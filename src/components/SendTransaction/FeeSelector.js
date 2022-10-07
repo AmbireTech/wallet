@@ -396,9 +396,9 @@ export function FeeSelector({ disabled, signer, estimation, network, setEstimati
           </div>
         </div>)}
         {!isGasTankEnabled && !isNaN((feeInUSD / estimation.gasLimit) * savedGas) && 
-            <div className='fee-row native-fee-estimation discount-label'>
+            <div className='fee-row native-fee-estimation warning-label'>
               <div>
-                Gas Tank Saves You:
+              Enable Gas Tank to save:
               </div>
               <div className='fee-amounts'>
                 <div>
