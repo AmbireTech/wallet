@@ -99,6 +99,8 @@ body {
   sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background: rgb(61,68,106);
+  background: transparent linear-gradient(180deg, $c-fiord 0%, $c-ebony-clay 100%) 0% 0% no-repeat padding-box;
 }
 
 code {
