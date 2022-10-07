@@ -7,9 +7,10 @@ import { useHistory } from 'react-router-dom'
 
 import networks from 'consts/networks'
 import BalanceItem from './BalanceItem/BalanceItem'
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 
 const Balances = ({ portfolio, selectedNetwork, setNetwork, hidePrivateValue, relayerURL, selectedAccount, match }) => {
+    const legendRef = useRef()
     const history = useHistory()
     const networkDetails = (network) => networks.find(({ id }) => id === network)
     const otherBalances = portfolio.otherBalances.filter(({ network, total }) => network !== selectedNetwork.id && total.full > 0)
@@ -27,8 +28,8 @@ const Balances = ({ portfolio, selectedNetwork, setNetwork, hidePrivateValue, re
         }
     }
 
-    useEffect(() => {
-        function setClasses(el) {
+    function setClasses(el) {
+        if (el) {
             const isScrollable = el.scrollHeight > el.clientHeight;
             
             // GUARD: If element is not scrollable, remove all classes
@@ -40,22 +41,18 @@ const Balances = ({ portfolio, selectedNetwork, setNetwork, hidePrivateValue, re
             const isScrolledToBottom = el.scrollHeight <= el.clientHeight + el.scrollTop;
             el.classList.toggle(styles.bottomOverflow, !isScrolledToBottom);
         }
-            
-        const balancesNode = document.querySelector('#content')
+    }
 
-        if (!balancesNode) return
-        
-        balancesNode.addEventListener('scroll', (e) => {
-            const el = e.currentTarget;
-            setClasses(el);
-        })
-        setClasses(document.querySelector('#content'));
-    }, [])
+    useEffect(() => {
+        if(!otherBalancesLoading && otherBalances) {
+            setClasses(legendRef.current)
+        }
+    }, [otherBalancesLoading, otherBalances])
     
     return (
         <div className={styles.wrapper}>
             { portfolio.isCurrNetworkBalanceLoading && otherBalancesLoading ? <Loading /> : (
-                <div className={styles.otherBalances} id="content">
+                <div className={styles.otherBalances} ref={legendRef}>
                     { otherBalancesLoading ? <Loading /> : (
                         <>
                             {
