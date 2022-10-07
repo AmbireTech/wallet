@@ -3,7 +3,7 @@
 .wrapper {
     position: sticky;
     z-index: 48;
-    padding: 45px $layout-spacing 45px 0;
+    padding: 45px $layout-spacing 40px 0;
     display: flex;
     width: 100%;
     justify-content: space-between;
@@ -79,7 +79,7 @@
         margin-top: 12px;
         .envBar
         {
-            color: #FFF;
+            color: #ebecff;
             text-align: center;
             font-size: 10px;
             line-height: 11px;

@@ -3,7 +3,7 @@
 .wrapper {
     display: flex;
     flex-direction: column;
-    gap: 30px;
+    gap: 17px;
 
     .panel {
         flex: 0 1 50%;
@@ -17,10 +17,7 @@
     }
 
     .topPanels {
-        padding: 0 50px;
-        padding-top: 15px;
-        padding-bottom: 18px;
-        max-height: 295px;
+        padding: 15px 50px;
         gap: 0;
         overflow: hidden;
     }
@@ -39,14 +36,20 @@
 
         .missingTokenNotice {
             display: flex;
+            justify-content: center;
+            width: 100%;
             align-items: center;
             gap: 0.5em;
             font-size: 15px;
-            opacity: 0.5;
+            opacity: 0.8;
 
             svg {
                 flex: 0 0 auto;
                 font-size: 18px;
+            }
+
+            span {
+                color: #ebecff;
             }
         }
 

@@ -27,6 +27,7 @@
         width: 100%;
         overflow-y: auto;
         padding: 20px $layout-spacing;
+        padding-top: 0;
     }
 
     .placeholder-overlay {
@@ -44,7 +45,7 @@
         font-size: 22px;
         font-weight: bold;
         text-align: center;
-        color: white;
+        color: #ebecff;
         text-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
     }
 
