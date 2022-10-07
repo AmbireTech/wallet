@@ -18,7 +18,6 @@ import { VELCRO_API_ENDPOINT } from 'config'
 import { fetchGet } from 'lib/fetch'
 import { resolveUDomain } from 'lib/unstoppableDomains'
 import { resolveENSDomain, getBip44Items } from 'lib/ensDomains'
-import styles from "../Transfer/Transfer.module.scss";
 
 const ERC721 = new Interface(ERC721Abi)
 
