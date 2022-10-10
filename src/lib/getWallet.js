@@ -32,7 +32,7 @@ function getWalletNew({ chainId, signer, signerExtra }, opts) {
   if (signerExtra && signerExtra.type === 'trezor') {
     TrezorConnect.manifest({
       email: 'contactus@ambire.com',
-      appUrl: 'https://www.ambire.com'
+      appUrl: 'https://wallet.ambire.com'
     })
     const providerTrezor = new TrezorSubprovider({
       trezorConnectClientApi: TrezorConnect,

@@ -93,7 +93,7 @@ const AddAuthSigner = ({ selectedNetwork, selectedAcc, onAddBtnClicked }) => {
       */
     TrezorConnect.manifest({
       email: 'contactus@ambire.com',
-      appUrl: 'https://www.ambire.com'
+      appUrl: 'https://wallet.ambire.com'
     })
     const provider = new TrezorSubprovider({
       trezorConnectClientApi: TrezorConnect,
