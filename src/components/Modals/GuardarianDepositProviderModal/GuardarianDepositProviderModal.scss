@@ -8,27 +8,30 @@
     .buy-sell-btns-wrapper {
         display: flex;
         flex-direction: row;
+        gap: 10px;
         width: 30%;
         padding-bottom: 20px;
 
         .button {
             padding: 10px 35px;
             background-color: $input-background-color-darker;
-            color: gray;
+            color: #ebecff;
             cursor: pointer;
+            border-radius: 12px;
             
             &.active {
                 color: #ebecff;
-                background-color: $secondary-accent-color;
+                background-color: #ae60ff;
             }
         }
     }
     .input-currencies-wrapper {
         display: flex;
+        gap: 10px;
         align-items: flex-end;
 
         input {
-            height: 50px;
+            height: 60px;
         }
 
         .amount {
@@ -45,9 +48,10 @@
 
         .loading-wrapper {
             margin-top: 20px;
-            height: 50px;
+            height: 60px;
             width: 100%;
-            background-color: $input-background-color;
+            background-color: #1E2033;
+            border-radius: 12px;
         }
     }
 
@@ -62,7 +66,7 @@
         &:before {
             content: '';
             display: block;
-            border-right: 2px solid gray;
+            border-right: 2px solid rgba(#ebecff, .7);
             height: 100%;
             position: absolute;
             z-index: -1;
@@ -79,7 +83,7 @@
         text-decoration: underline;
         &:before {
             content: '';
-            background: gray;
+            background: #ebecff;
             border-radius: 50%;
             width: 10px;
             height: 10px;
