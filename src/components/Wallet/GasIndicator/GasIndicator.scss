@@ -40,10 +40,6 @@
     display: block;
     border-radius: 12px 0 0 12px;
 
-    span {
-      display: block;
-    }
-
     .native-price {
       padding-right: 12px;
       border-right: 0;
@@ -52,6 +48,7 @@
     }
 
     .gas-price {
+      display: block;
       padding-top: 4px;
     }
 
