@@ -158,7 +158,7 @@
     .addToken {
         display: flex;
         flex-direction: column;
-        gap: 0.5em;
+        gap: 12px;
         align-items: center;
         font-size: 15px;
         font-weight: 500;
@@ -172,8 +172,14 @@
 
 @media screen and (max-width: $mobile-breakpoint-max-width) {
     .wrapper {
+        width: 100%;
         gap: 20px;
         min-height: 400px;
+
+        .placeholderOverlay {
+            width: 100%;
+            padding: 10px;
+        }
 
         .title {
             .sortHolder {
