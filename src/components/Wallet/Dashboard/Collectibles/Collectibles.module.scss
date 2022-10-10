@@ -46,7 +46,7 @@ $collectible-size: 250px;
             transition: all 0.1s ease-in-out;
 
             .artwork {
-                z-index: 48;
+                z-index: 3;
                 height: 250px;
                 width: 100%;
                 position: absolute;
@@ -58,7 +58,7 @@ $collectible-size: 250px;
             }
 
             .info {
-                z-index: 49;
+                z-index: 4;
                 height: $collectible-details-height;
                 position: absolute;
                 left: 0;
