@@ -91,6 +91,10 @@ const AddAuthSigner = ({ selectedNetwork, selectedAcc, onAddBtnClicked }) => {
       engine.addProvider(new CacheSubprovider())
       engine.addProvider(new RPCSubprovider(this.url, this.requestTimeoutMs))
       */
+    TrezorConnect.manifest({
+      email: 'contactus@ambire.com',
+      appUrl: 'https://www.ambire.com'
+    })
     const provider = new TrezorSubprovider({
       trezorConnectClientApi: TrezorConnect,
     })
