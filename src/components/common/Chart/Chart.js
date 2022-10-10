@@ -12,10 +12,24 @@ ChartJS.register(ArcElement, Tooltip, Legend)
 const colors = [
   "#6000FF",
   "#AE60FF",
-  "#4DE827",
+  "#38D612",
   "#FD1A64",
-  "#FFBC00",
-  "#898DCB",
+  "#ffbc00",
+  "#838AFF",
+  "#D5FF40",
+  "#00B9FF",
+  "#ED5911",
+  "#08A186",
+  "#0D33FF",
+  "#EE0DFF",
+  "#FFEF0D",
+  "#0B62E6",
+  "#FF880D",
+  "#86B7D9",
+  "#E6160B",
+  "#00FFF7",
+  "#8E49FF",
+  "#B68500"
 ]
 
 const round = num => Math.round((num + Number.EPSILON) * 100) / 100
