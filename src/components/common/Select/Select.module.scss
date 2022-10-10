@@ -106,6 +106,10 @@
                 top: 0;
                 z-index: 49;
 
+                div {
+                    border-radius: 0;
+                }
+
                 input {
                     height: 50px !important;
                     font-size: 15px;
