@@ -292,6 +292,7 @@ const AddAuthSigner = ({ selectedNetwork, selectedAcc, onAddBtnClicked }) => {
           <DropDown
             style={{ height: '60px' }}
             title="Connect signer"
+            className='connect-signer-dropdown'
             closeOnClick
           >
             {addFromSignerButtons}

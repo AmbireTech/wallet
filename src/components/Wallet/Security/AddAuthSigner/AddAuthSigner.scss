@@ -7,6 +7,7 @@
 
   .signer-address-input {
     flex: 1 1 auto;
+    gap: 10px;
     display: flex;
 
     .text-input {
@@ -81,6 +82,16 @@
 
     .signer-address-input {
       flex-direction: column;
+      align-items: center;
+    }
+
+    .connect-signer-dropdown {
+      width: 100%;
+    }
+
+    .btns-wrapper {
+      margin: 0 auto;
+      width: 100%;
     }
   }
 }
