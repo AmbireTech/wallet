@@ -177,6 +177,12 @@
     }
 }
 
+@media screen and (max-width: 1650px) {
+    .wrapper {
+        padding: 45px $layout-spacing / 3 40px 0;
+    }
+}
+
 @media screen and (max-width: $sidebar-small-breakpoint) {
     .wrapper {
         padding: $layout-spacing / 4;
