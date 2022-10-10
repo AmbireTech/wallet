@@ -17,6 +17,7 @@ $thead-background-color: darken($panel-background-color, 2%);
     margin-top: 18px;
     display: flex;
     gap: 16px;
+    flex-wrap: wrap;
   }
 
   .gas-speed-block {
@@ -27,6 +28,7 @@ $thead-background-color: darken($panel-background-color, 2%);
     padding: 12px;
     border: 2px solid transparent;
     border-radius: 12px;
+    min-width: 100px;
 
     &.selected {
       border-color: $secondary-accent-color;
