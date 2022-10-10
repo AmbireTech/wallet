@@ -17,13 +17,15 @@ $text-dark: #202229;
 
 $sidebar-desktop-width: 260px;
 $sidebar-desktop-small-width: 120px;
-$sidebar-small-breakpoint: 1400px;
+$sidebar-small-breakpoint: 1540px;
 $sidebar-mobile-height: 80px;
 
 $topbar-dapp-mode-height: 60px;
 $topbar-mobile-dapp-mode-height: 50px;
-$mobile-breakpoint-max-width: 800px;
-$small-breakpoint-max-width: 1400px;
+// We want to target Tablets and mobile Landscape here too, because we don't have a specific design for these resolutions.
+// That's the reason we set 1300px to target both tablets and mobile.
+$mobile-breakpoint-max-width: 1300px;
+$small-breakpoint-max-width: 1540px;
 $wide-breakpoint-min-width: 1920px;
 
 $text-color:#FFF;
