@@ -30,6 +30,10 @@ export function getWallet({ signer, signerExtra, chainId }, opts = {}) {
 
 function getWalletNew({ chainId, signer, signerExtra }, opts) {
   if (signerExtra && signerExtra.type === 'trezor') {
+    TrezorConnect.manifest({
+      email: 'contactus@ambire.com',
+      appUrl: 'https://www.ambire.com'
+    })
     const providerTrezor = new TrezorSubprovider({
       trezorConnectClientApi: TrezorConnect,
       networkId: chainId
