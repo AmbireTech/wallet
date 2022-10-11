@@ -32,7 +32,9 @@
             gap: 1em;
 
             button {
-                background-color: #80ffdb;
+                background-color: $c-turquoise;
+                color: #000;
+                border: 0;
                 padding: 1em;
                 font-weight: bold;
                 text-transform: uppercase;
