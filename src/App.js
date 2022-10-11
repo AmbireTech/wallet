@@ -44,6 +44,7 @@ const Wallet = lazy(() => import('./components/Wallet/Wallet'))
 const SendTransaction = lazy(() => import('./components/SendTransaction/SendTransaction'))
 const SignMessage = lazy(() => import('./components/SignMessage/SignMessage'))
 
+
 const relayerURL = process.env.REACT_APP_RELAYRLESS === 'true' 
                   ? null 
                   : process.env.hasOwnProperty('REACT_APP_RELAYER_URL')
