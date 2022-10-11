@@ -48,13 +48,15 @@ $layout-spacing: 150px;
 $max-container-width: 1690px;
 
 // Redesign variables. Later we will apply them in the current variables naming pattern.
-$c-fiord: #3e436b;
 $c-ebony-clay: #24263d;
 $c-mirage: #1e2033;
+$c-fiord: #3e436b;
 $c-martinique: #2d314d;
 $c-manatee: #88899d;
 $c-heliotrope: #ae60ff;
 $c-turquoise: #27e8a7;
+$c-half-spanish-white: #fef5db;
 $c-titan-white: #ebecff;
+$c-white: #ffffff;
 
 $text-container-color:mix($c-titan-white, $c-ebony-clay, 60%);

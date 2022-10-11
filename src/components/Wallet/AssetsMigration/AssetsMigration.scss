@@ -4,8 +4,9 @@
   display: flex;
   flex-direction: row;
   padding: 16px;
-  background: mix($c-turquoise, $c-ebony-clay, 5%);
-  border: 1px solid $c-turquoise;
+  background: $c-ebony-clay;
+  border: 1px solid $c-fiord;
+  border-radius: 12px;
 
   .migration-banner-message {
     display: flex;
@@ -47,13 +48,13 @@
     display: flex;
     flex-direction: row;
     align-items: center;
-    border-bottom: 1px solid #FF0000;
+    border-bottom: 1px solid $c-mirage;
     padding: 8px 4px;
     height: 50px;
 
     .checkbox-container:not(.disabled):hover {
       .checkbox-mark {
-        background: mix($c-turquoise, #FF0000, 50%);
+        background-color: $c-mirage;
         border: 2px solid $c-turquoise;
       }
     }
@@ -61,13 +62,12 @@
     .checkbox-container {
 
       input:checked ~ .checkbox-mark {
-        background: mix($c-turquoise, $c-ebony-clay, 5%);
+        background: $c-mirage;
       }
 
       .checkbox-mark {
         margin-top: 1px;
-        background: #FF0000;
-        border: 0;
+        background: $c-mirage;
         height: 20px;
         width: 20px;
         border: 2px solid transparent;
@@ -83,7 +83,7 @@
 
 
     &:hover {
-      background: mix($c-fiord, $c-ebony-clay, 30%);
+      background-color: $c-mirage;
     }
 
     .checkbox-container {
@@ -130,7 +130,7 @@
     }
 
     .migration-asset-usd {
-      color: $text-container-color;
+      color: $c-manatee;
       padding-right: 8px;
     }
 
@@ -140,7 +140,7 @@
     }
 
     .migration-asset-amount-usd {
-      color: $text-container-color;
+      color: $c-manatee;
     }
   }
 
@@ -159,7 +159,7 @@
       font-weight: normal;
       padding: 0 10px;
       text-transform: initial;
-      background: #FF0000;
+      background: $c-mirage;
 
       &.primary {
         background: $c-turquoise;
@@ -169,7 +169,7 @@
     .custom-token-message-fetching {
       padding: 8px;
       text-align: center;
-      background: #FF0000;
+      background: $c-mirage;
     }
   }
 
@@ -186,7 +186,7 @@
 
   .migration-actions {
     padding-left: 8px;
-    color: $text-container-color;
+    color: $c-manatee;
   }
 
 
@@ -199,7 +199,7 @@
     display: flex;
     flex-direction: row;
     align-items: center;
-    border-bottom: 1px solid #FF0000;
+    border-bottom: 1px solid $c-mirage;
     padding: 8px 4px;
     height: 50px;
 
@@ -216,7 +216,7 @@
   }
 
   .migration-native-usd {
-    color: $text-container-color;
+    color: $c-manatee;
   }
 
   .migration-asset-select-icon {
@@ -270,7 +270,7 @@
     color: $c-turquoise;
 
     .required {
-      color: $warning-color;
+      color: $c-half-spanish-white;
     }
   }
 
@@ -289,8 +289,8 @@
     display: block;
 
     &.warning {
-      background: mix($warning-color, $c-ebony-clay, 10%);
-      color: $warning-color;
+      background: mix($c-half-spanish-white, $c-ebony-clay, 10%);
+      color: $c-half-spanish-white;
     }
 
     &.success {
@@ -301,9 +301,10 @@
 
   .error {
     background: $danger-color;
-    color: $c-titan-white;
+    color: $c-white;
     padding: 8px;
     margin-bottom: 18px;
+    border-radius: 12px;
   }
 
   .content-center {
@@ -316,7 +317,7 @@
 
   .gas-notification-info {
     padding: 12px;
-    background: #FF0000;
+    background: $c-mirage;
 
     b {
       display: block;
@@ -356,8 +357,8 @@
 
   button.buttonComponent.buttonHollow {
     background: transparent;
-    border: 2px solid $c-titan-white;
-    color: $c-titan-white;
+    border: 2px solid $c-white;
+    color: $c-white;
 
     &.danger {
       background: transparent;
@@ -382,14 +383,16 @@
 
 
   .gas-estimation-block {
-    background: #FF0000;
+    background: $c-mirage;
+    border-radius: 12px;
 
     .gas-estimation-block-title {
       padding: 8px;
       font-weight: bold;
       text-align: center;
       text-transform: uppercase;
-      background: darken(#FF0000, 3%);
+      background: $c-mirage;
+      border-radius: 12px;
     }
 
     ul.gas-estimation-selector {
@@ -397,7 +400,7 @@
       flex-direction: row;
       padding: 0;
       margin: 0;
-      background: mix($ambire-dark-blue, darken(#FF0000, 2%), 3%);
+      background: $c-martinique;
 
       li {
         padding: 8px 0;
@@ -406,19 +409,19 @@
         text-align: center;
         border: 2px solid transparent;
         cursor: pointer;
-        color: mix(#FF0000, $c-titan-white, 50%);
+        color: mix($c-ebony-clay, $c-white, 50%);
         text-transform: uppercase;
         font-size: 15px;
 
         &:hover {
-          color: $c-titan-white;
+          color: $c-white;
           background-color: $c-mirage;
         }
 
         &.selected {
           border: 2px solid $ambire-dark-blue;
-          background: mix($ambire-dark-blue, darken(#FF0000, 2%), 15%);
-          color: $c-titan-white;
+          background: $c-mirage;
+          color: $c-white;
         }
 
       }
@@ -448,8 +451,8 @@
     gap: 4px;
 
     &.warning {
-      background: mix($warning-color, $c-ebony-clay, 5%);
-      color: $warning-color;
+      background: mix($c-half-spanish-white, $c-ebony-clay, 5%);
+      color: $c-half-spanish-white;
     }
   }
 
