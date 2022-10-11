@@ -1,7 +1,6 @@
 import styles from './Deposit.module.scss'
 
 import { useCallback, useEffect, useState } from 'react'
-import { MdAccountBalance, MdAccountBalanceWallet } from 'react-icons/md'
 import { Panel } from 'components/common'
 import QRCode from 'qrcode'
 import TextInput from 'components/common/TextInput/TextInput'
@@ -32,7 +31,6 @@ export default function Deposit({ selectedAcc, selectedNetwork, accounts, addReq
             <Panel className={styles.panel}>
                 <div className={styles.heading}>
                      <div className={styles.title}>
-                        <MdAccountBalanceWallet size={35}/>
                         Deposit Tokens
                     </div>
                     <div className={styles.subtitle}>
@@ -70,7 +68,6 @@ export default function Deposit({ selectedAcc, selectedNetwork, accounts, addReq
             <Panel className={styles.panel}>
                 <div className={styles.heading}>
                     <div className={styles.title}>
-                        <MdAccountBalance size={35}/>
                         Fiat Currency
                     </div>
                     <div className={styles.subtitle}>

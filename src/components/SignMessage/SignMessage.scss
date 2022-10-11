@@ -42,7 +42,7 @@ $max-width: 650px;
       .signMessageTitle-signatureType {
         display: flex;
         align-items: center;
-        background-color: $input-background-color;
+        background-color: $c-mirage;
         padding: 2px 8px;
         color: $text-container-color;
         font-weight: 300;
@@ -168,10 +168,10 @@ $max-width: 650px;
           }
 
           &.reject {
-            color: #ebecff;
+            color: $c-titan-white;
 
             svg {
-              color: #ebecff;
+              color: $c-titan-white;
             }
           }
         }
@@ -188,7 +188,7 @@ $max-width: 650px;
   .erc20PermitWarning {
     padding: 16px;
     display: flex;
-    background-color: $input-background-color;
+    background-color: $c-mirage;
     gap: 16px;
     align-items: center;
 

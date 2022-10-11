@@ -58,7 +58,7 @@
                 gap: 12px;
                 padding: 15px 20px;
                 font-size: 15px;
-                color: #ebecff;
+                color: $c-titan-white;
                 
                 &[draggable="true"] .dragHandle {
                     cursor: grab;
@@ -120,7 +120,7 @@
 
                         .symbol {
                             font-weight: bold;
-                            color: $primary-accent-color;
+                            color: #80ffdb;
                         }
                     }
 
@@ -131,7 +131,7 @@
 
                         .symbol {
                             font-weight: bold;
-                            color: $secondary-accent-color;
+                            color: $c-heliotrope;
                         }
                     }
                 }

@@ -31,7 +31,7 @@
         align-items: center;
         justify-content: center;
         border-radius: 12px;
-        background-color: rgba(#ebecff, 0.05);
+        background-color: rgba($c-titan-white, 0.05);
         background-size: contain;
         background-position: center center;
         background-repeat: no-repeat;
@@ -147,7 +147,7 @@
                 }
                 
                 &:hover {
-                    background-color: #24263d;
+                    background-color: $c-ebony-clay;
                 }
                 
                 &.active {
@@ -160,7 +160,7 @@
                         right: 15px;
                         height: 8px;
                         width: 8px;
-                        background-color: $primary-accent-color;
+                        background-color: $c-turquoise;
                         border-radius: 100%;
                     }
                 }

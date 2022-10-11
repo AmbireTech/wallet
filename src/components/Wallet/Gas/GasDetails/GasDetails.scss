@@ -1,7 +1,7 @@
 @import 'variables.scss';
 
-$modal-text-color: mix($text-color, $panel-background-color, 70%);
-$thead-background-color: darken($panel-background-color, 2%);
+$modal-text-color: mix($c-titan-white, $c-ebony-clay, 70%);
+$thead-background-color: darken($c-ebony-clay, 2%);
 
 #gas-details-modal {
   .buttonComponent {
@@ -23,7 +23,7 @@ $thead-background-color: darken($panel-background-color, 2%);
   .gas-speed-block {
     text-align: center;
     flex: 1;
-    color: #ebecff;
+    color: $c-titan-white;
     background: $c-mirage;
     padding: 12px;
     border: 2px solid transparent;
@@ -31,8 +31,8 @@ $thead-background-color: darken($panel-background-color, 2%);
     min-width: 100px;
 
     &.selected {
-      border-color: $secondary-accent-color;
-      color: $secondary-accent-color;
+      border-color: $c-heliotrope;
+      color: $c-heliotrope;
     }
 
     .gas-speed-name {
@@ -49,7 +49,7 @@ $thead-background-color: darken($panel-background-color, 2%);
   h4 {
     font-weight: normal;
     margin-top: 48px;
-    color: #ebecff;
+    color: $c-titan-white;
     margin-bottom: 16px;
   }
 
@@ -61,7 +61,7 @@ $thead-background-color: darken($panel-background-color, 2%);
     table.gas-action-costs {
       width: 100%;
       border-spacing: 0;
-      color: #ebecff;
+      color: $c-titan-white;
 
       thead {
         background: $c-mirage;

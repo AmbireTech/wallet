@@ -93,7 +93,7 @@ html {
 body {
   height: 100%;
   margin: 0;
-  color: #ebecff;
+  color: $c-titan-white;
   font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
   'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
   sans-serif;
@@ -114,7 +114,7 @@ a {
   transition: color 0.1s ease-in-out;
 
   &:hover {
-    color: #ebecff;
+    color: $c-titan-white;
   }
 }
 
@@ -141,7 +141,7 @@ a {
 select {
   border: 0px;
   outline: 0px;
-  color: #ebecff;
+  color: $c-titan-white;
   padding: 15px;
   background-color: rgba(0,0,0,0.3);
 }
@@ -153,7 +153,7 @@ select {
   gap: 25px;
   padding: 30px;
   padding-top: 25px;
-  background-color: $panel-background-color;
+  background-color: $c-ebony-clay;
   box-sizing: border-box;
 
   .title {
@@ -230,8 +230,8 @@ select {
 .notification-hollow {
   border-radius: 12px;
   padding: 13px 10px;
-  background: mix($primary-accent-color, $panel-background-color, 5%);
-  border: 1px solid $primary-accent-color;
+  background: mix($c-turquoise, $c-ebony-clay, 5%);
+  border: 1px solid $c-turquoise;
 
   &.warning {
     background-color: #FEF5DB;
@@ -240,7 +240,7 @@ select {
   }
 
   &.info {
-    background: mix($tertiary-accent-color, $panel-background-color, 5%);
+    background: mix($tertiary-accent-color, $c-ebony-clay, 5%);
     border: 1px solid $tertiary-accent-color;
     color: $tertiary-accent-color
   }
@@ -250,7 +250,7 @@ select {
     cursor: pointer;
 
     &.warning:hover {
-      background: mix($warning-color, $panel-background-color, 10%);
+      background: mix($warning-color, $c-ebony-clay, 10%);
     }
   }
 }

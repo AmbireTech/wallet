@@ -1,9 +1,11 @@
+@import 'variables.scss';
+
 .wrapper {
   display: flex;
   gap: 70px;
   height: 100%;
   overflow: hidden;
-  color: #ebecff;
+  color: $c-titan-white;
 
   .donut {
     position: relative;
@@ -35,7 +37,7 @@
       .networkAmount {
         font-size: 30px;
         font-weight: 400;
-        color: #ebecff;
+        color: $c-titan-white;
 
         .currency {
           color: #27E8A7;
@@ -100,13 +102,13 @@
         label {
           flex: 0 0 auto;
           font-size: 14px;
-          color: #ebecff;
+          color: $c-titan-white;
         }
   
         .percent {
           flex: 0 0 auto;
           font-size: 14px;
-          color: #ebecff;
+          color: $c-titan-white;
         }
       }
     } 

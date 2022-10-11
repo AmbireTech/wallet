@@ -35,21 +35,21 @@
 
     &.danger {
         border: none;
-        color: #ebecff;
+        color: $c-titan-white;
         background: $danger-color;
 
         .iconButton {
-            color: #ebecff !important;
+            color: $c-titan-white !important;
         }
     }
 
     &.clear {
         border: none;
-        color: #ebecff;
+        color: $c-titan-white;
         background-color: rgba(0, 0, 0, 0.1);
 
         .iconButton {
-            color: #ebecff !important;
+            color: $c-titan-white !important;
         }
 
         &:not([disabled]):hover {
@@ -60,20 +60,20 @@
     &.primaryGradient {
         border: none;
         background: transparent linear-gradient(90deg, #27E8A7 0%, #6000FF 100%) 0% 0% no-repeat padding-box;
-        color: #ebecff;
+        color: $c-titan-white;
 
         .iconButton {
-            color: #ebecff !important;
+            color: $c-titan-white !important;
         }
     }
 
     &.secondary {
         border: none;
-        color: #ebecff;
-        background-color: $secondary-accent-color;
+        color: $c-titan-white;
+        background-color: $c-heliotrope;
 
         .iconButton {
-            color: #ebecff !important;
+            color: $c-titan-white !important;
         }
     }
 
@@ -82,7 +82,7 @@
         margin: 0;
         height: auto;
         background: 0;
-        color: $text-color;
+        color: $c-titan-white;
         font-size: 1em;
         display: inline-flex;
     }

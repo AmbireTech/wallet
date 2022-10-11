@@ -5,7 +5,7 @@
 }
 
 .discount-label {
-    color: $primary-accent-color;
+    color: $c-turquoise;
 }
 
 .balance-error {
@@ -20,7 +20,7 @@
     justify-content: space-between;
 
     .gas-tank-enabled {
-        color: $primary-accent-color;
+        color: $c-turquoise;
     }
 
     .gas-tank-disabled {
@@ -86,7 +86,7 @@
             position: absolute;
             top: 4px;
             right: 4px;
-            color: $primary-accent-color;
+            color: $c-turquoise;
         }
     }
 }
@@ -94,7 +94,7 @@
 .fee-select {
     .discount {
         @include flex-center-center;
-        color: $primary-accent-color;
+        color: $c-turquoise;
         font-size: 1.2rem;
         font-weight: bold;
     }
@@ -143,8 +143,8 @@
     display: flex;
     align-items: center;
     gap: 12px;
-    background-color: mix($panel-background-color, $primary-accent-color, 90%);
-    color: $primary-accent-color;
+    background-color: mix($c-ebony-clay, $c-turquoise, 90%);
+    color: $c-turquoise;
     padding: 15px;
     font-size: 14px;
 }
@@ -177,7 +177,7 @@
         &.selected {
             input {
                 box-shadow: 0 0 0 3px $ambire-dark-blue inset;
-                background-color: $input-background-color;
+                background-color: $c-mirage;
             }
         }
     }
@@ -239,7 +239,7 @@
     .swap-info {
         font-size: 18px;
         .link {
-            color: $primary-accent-color;
+            color: $c-turquoise;
         }
     }
 }

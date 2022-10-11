@@ -151,9 +151,8 @@ const SideBar = ({ match, portfolio, hidePrivateValue, relayerURL, selectedNetwo
             <SecurityIcon />Security
           </div>
         </NavLink>
-        <div className="separator"></div>
         <a href={helpCenterUrl} target="_blank" rel="noreferrer">
-          <div className={cn(styles.item, styles.helpLink)} id="help-center">
+          <div className={cn(styles.item, styles.helpLink)}>
             <HelpIcon />Help Center
           </div>
         </a>

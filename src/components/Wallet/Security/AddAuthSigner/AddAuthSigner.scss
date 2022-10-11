@@ -16,7 +16,7 @@
   
     .dropdown {
       flex: 0 0 auto;
-      background-color: $input-background-color-darker;
+      background-color: $c-mirage;
     }
   }
 
@@ -50,7 +50,7 @@
         text-transform: none;
         color: black;
         padding: 1em !important;
-        background-color: #ebecff;
+        background-color: $c-titan-white;
         line-height: 25px;
       }
 

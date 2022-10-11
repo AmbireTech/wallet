@@ -63,7 +63,7 @@ const HideTokenModel = ({ portfolio, account, network, userSorting, sortType, se
             key={token.address}
             token={token}
             button={!token.isHidden ? 
-              <HiddenIcon className="extra-token-icon" color="#36c979" onClick={() => hideToken(token)} /> :
+              <HiddenIcon className="extra-token-icon" color="#27e8a7" onClick={() => hideToken(token)} /> :
               <VisibleIcon className="extra-token-icon" color="#f98689" onClick={() => unhideToken(token)} />
             }
           />

@@ -68,11 +68,12 @@
         }
 
         .warning-msg {
-            background: mix($warning-color, $panel-background-color, 5%);
+            background: mix($warning-color, $c-ebony-clay, 5%);
             border: 1px solid $warning-color;
             color: $warning-color;
-            padding: 7px;
+            padding: 8px;
             font-size: 14px;
+            border-radius: 12px;
         }
 
         .details-placeholder {

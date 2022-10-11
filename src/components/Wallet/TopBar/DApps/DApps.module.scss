@@ -92,9 +92,9 @@
             padding: 0 10px;
             font-size: 11px;
             font-weight: bold;
-            border: 1px solid #ebecff;
+            border: 1px solid $c-titan-white;
             text-transform: uppercase;
-            color: #ebecff;
+            color: $c-titan-white;
             background-color: transparent;
             opacity: 1;
             transition: all 0.1s ease-in-out;
@@ -132,7 +132,7 @@
 
         label {
             font-size: 14px;
-            color: #ebecff;
+            color: $c-titan-white;
             font-weight: 300;
             margin-bottom: 21px;
         }

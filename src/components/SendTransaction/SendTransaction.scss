@@ -42,7 +42,7 @@ $titleBar-height: 90px;
             }
 
             &:hover {
-                color: #ebecff;
+                color: $c-titan-white;
             }
         }
     }
@@ -253,11 +253,11 @@ $titleBar-height: 90px;
                             flex-grow: 1;
 
                             &.danger {
-                                color: #ebecff;
+                                color: $c-titan-white;
 
                                 .icon-button {
                                     svg {
-                                        color: #ebecff;
+                                        color: $c-titan-white;
                                     }
                                 }
                             }
@@ -283,12 +283,12 @@ $titleBar-height: 90px;
         padding: 16px;
 
         &.info {
-            background-color: mix($panel-background-color, $info-color, 90%);
+            background-color: mix($c-ebony-clay, $info-color, 90%);
             color: $info-color;
         }
 
         &.warning {
-            background-color: mix($panel-background-color, $warning-color, 90%);
+            background-color: mix($c-ebony-clay, $warning-color, 90%);
             color: $warning-color;
         }
 
@@ -308,11 +308,11 @@ $titleBar-height: 90px;
                 flex-grow: 1;
 
                 &.danger {
-                    color: #ebecff;
+                    color: $c-titan-white;
 
                     .icon-button {
                         svg {
-                            color: #ebecff;
+                            color: $c-titan-white;
                         }
                     }
                 }

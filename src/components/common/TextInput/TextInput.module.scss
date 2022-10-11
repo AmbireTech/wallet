@@ -29,7 +29,7 @@ $input-height: 60px;
                 justify-content: center;
                 width: 48px;
                 font-size: 24px;
-                color: #ebecff;
+                color: $c-titan-white;
             }
 
             input {
@@ -44,7 +44,7 @@ $input-height: 60px;
             height: 100%;
             width: 3.5em;
             @include flex-center-center;
-            color: #ebecff;
+            color: $c-titan-white;
             cursor: pointer;
             user-select: none;
             transition: $basic-transition;
@@ -72,11 +72,11 @@ $input-height: 60px;
             border-bottom: 2px solid transparent;
 
             &:focus {
-                border-bottom-color: #ebecff;
+                border-bottom-color: $c-titan-white;
             }
 
             &:focus ~ .button {
-                border-bottom-color: #ebecff;
+                border-bottom-color: $c-titan-white;
             }
         }
     }

@@ -11,7 +11,7 @@
         .panelTitle {
             font-size: 25px;
             font-weight: 400;
-            color: #ebecff;
+            color: $c-titan-white;
             margin-bottom: 20px;
         }
     }
@@ -36,10 +36,10 @@
 
         .missingTokenNotice {
             font-size: 15px;
-            color: #ebecff;
+            color: $c-titan-white;
 
             a {
-                color: #ae60ff;
+                color: $c-heliotrope;
             }
         }
 

@@ -1,7 +1,9 @@
+@import 'variables.scss';
+
 .checkboxLabel {
-  color: #EBECFF;
+  color: $c-titan-white;
   
   a {
-    color: #ae60ff;
+    color: $c-heliotrope;
   }
 }

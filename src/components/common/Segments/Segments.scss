@@ -33,8 +33,8 @@ $segment-small-height: 40px;
 
         &.active {
             font-weight: bold;
-            color: #ebecff;
-            box-shadow: 0 2px 0 0 $primary-accent-color;
+            color: $c-titan-white;
+            box-shadow: 0 2px 0 0 $c-turquoise;
             opacity: 1;
         }
 

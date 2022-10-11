@@ -7,7 +7,7 @@
     display: flex;
     width: 100%;
     justify-content: space-between;
-    color: #ebecff;
+    color: $c-titan-white;
     min-height: 96px;
 
     .dappMenu {
@@ -43,7 +43,7 @@
                     display: flex;
                     flex-direction: row;
                     align-items: center;
-                    color: $secondary-accent-color;
+                    color: $c-heliotrope;
                 }
                 .dappLogo {     
                     padding: 4px;
@@ -54,7 +54,7 @@
                     align-self: flex-end;
                     flex-shrink: 0;
                     height: 100%;
-                    border: 1px solid $secondary-accent-color;
+                    border: 1px solid $c-heliotrope;
                 }
                 .dappExitBtn {
                     display: flex;
@@ -79,7 +79,7 @@
         margin-top: 12px;
         .envBar
         {
-            color: #ebecff;
+            color: $c-titan-white;
             text-align: center;
             font-size: 10px;
             line-height: 11px;

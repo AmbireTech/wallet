@@ -11,10 +11,10 @@
             width: 100%;
             background: orange;
             border: none;
-            color: #ebecff;
+            color: $c-titan-white;
 
             svg {
-                color: #ebecff !important;
+                color: $c-titan-white !important;
             }
         }
     }
@@ -23,12 +23,12 @@
         .buttonComponent {
             height: 60px;
             width: 100%;
-            background: $secondary-accent-color;
+            background: $c-heliotrope;
             border: none;
-            color: #ebecff;
+            color: $c-titan-white;
 
             svg {
-                color: #ebecff !important;
+                color: $c-titan-white !important;
             }
         }
     }

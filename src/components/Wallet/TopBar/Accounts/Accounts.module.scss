@@ -3,7 +3,7 @@
 $account-height: 60px;
 
 .wrapper {
-    color: #ebecff;
+    color: $c-titan-white;
     .content {
         cursor: pointer;
     }
@@ -96,13 +96,13 @@ $account-height: 60px;
                     }
 
                     &:hover {
-                        background-color: #24263d;
+                        background-color: $c-ebony-clay;
 
                         // ~.buttons .button {
                         //     svg {
                         //         opacity: 1;
                         //     }
-                        //     background-color: #24263d;
+                        //     background-color: $c-ebony-clay;
                         // }
                     }
                 }
@@ -117,7 +117,7 @@ $account-height: 60px;
                         height: 60px;
                         width: 50px;
                         @include flex-center-center;
-                        color: #ebecff;
+                        color: $c-titan-white;
                         font-size: 28px;
                         cursor: pointer;
                         border-radius: 12px;
@@ -127,7 +127,7 @@ $account-height: 60px;
                         }
 
                         &:hover {
-                            background-color: #24263d;
+                            background-color: $c-ebony-clay;
 
                             svg {
                                 opacity: 1;

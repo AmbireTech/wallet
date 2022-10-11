@@ -73,7 +73,7 @@ $collectible-size: 250px;
                     gap: 10px;
                     font-size: 12px;
                     font-weight: 500;
-                    color: #ebecff;
+                    color: $c-titan-white;
 
                     .collectionIcon {
                         flex: 0 0 auto;
@@ -105,7 +105,7 @@ $collectible-size: 250px;
                         white-space: nowrap;
                         text-overflow: ellipsis;
                         font-size: 15px;
-                        color: #ebecff;
+                        color: $c-titan-white;
                     }
 
                     .value {

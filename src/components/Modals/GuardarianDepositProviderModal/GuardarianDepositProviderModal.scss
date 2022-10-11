@@ -14,14 +14,14 @@
 
         .button {
             padding: 10px 35px;
-            background-color: $input-background-color-darker;
-            color: #ebecff;
+            background-color: $c-mirage;
+            color: $c-titan-white;
             cursor: pointer;
             border-radius: 12px;
             
             &.active {
-                color: #ebecff;
-                background-color: #ae60ff;
+                color: $c-titan-white;
+                background-color: $c-heliotrope;
             }
         }
     }
@@ -66,7 +66,7 @@
         &:before {
             content: '';
             display: block;
-            border-right: 2px solid rgba(#ebecff, .7);
+            border-right: 2px solid rgba($c-titan-white, .7);
             height: 100%;
             position: absolute;
             z-index: -1;
@@ -83,7 +83,7 @@
         text-decoration: underline;
         &:before {
             content: '';
-            background: #ebecff;
+            background: $c-titan-white;
             border-radius: 50%;
             width: 10px;
             height: 10px;

@@ -68,7 +68,7 @@
                 flex-direction: row;
                 gap: 4px;
                 .network-tag {
-                    border: 2px solid $input-background-color;
+                    border: 2px solid $c-mirage;
                     display: block;
                     height: 20px;
                     width: 20px;
@@ -82,7 +82,7 @@
 
                     &.selected {
                         filter: none;
-                        border: 2px solid $primary-accent-color;
+                        border: 2px solid $c-turquoise;
                     }
                 }
             }

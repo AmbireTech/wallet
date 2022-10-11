@@ -1,7 +1,7 @@
 @import 'variables.scss';
 
 .purpleHighlight {
-  color: $secondary-accent-color;
+  color: $c-heliotrope;
 }
 
 .balanceContainer {
@@ -29,7 +29,7 @@
   label {
     opacity: 1;
     cursor: pointer;
-    color: #ebecff;
+    color: $c-titan-white;
     font-weight: 300;
     font-size: 14px;
   }

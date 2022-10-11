@@ -1,3 +1,5 @@
+@import 'variables.scss';
+
 .checkboxContainer {
   position: relative;
   display: flex;
@@ -7,7 +9,7 @@
   cursor: pointer;
   margin: 20px 0px;
   user-select: none;
-  color: #ebecff;
+  color: $c-titan-white;
 
   &.disabled {
     opacity: 0.5;

@@ -89,7 +89,7 @@
             display: flex;
             align-items: center;
             gap: 12px;
-            background-color: mix($panel-background-color, $warning-color, 90%);
+            background-color: mix($c-ebony-clay, $warning-color, 90%);
             color: $warning-color;
             padding: 15px;
             font-size: 14px;
@@ -100,8 +100,8 @@
             display: flex;
             align-items: center;
             gap: 12px;
-            background-color: mix($panel-background-color, $primary-accent-color, 90%);
-            color: $primary-accent-color;
+            background-color: mix($c-ebony-clay, $c-turquoise, 90%);
+            color: $c-turquoise;
             padding: 15px;
             font-size: 14px;
             border-radius: 12px;
