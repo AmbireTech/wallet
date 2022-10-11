@@ -74,7 +74,7 @@ export default function Dashboard({ portfolio, selectedNetwork, selectedAccount,
 
     return (
         <section className={styles.wrapper}>
-            { isBalancesCachedCurrentNetwork && (
+            { isBalancesCachedCurrentNetwork || true && (
                 <OutdatedBalancesMsg 
                     selectedNetwork={selectedNetwork}
                     selectedAccount={selectedAccount} 

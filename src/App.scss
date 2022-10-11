@@ -239,6 +239,11 @@ select {
     color: #333757;
   }
 
+  &.success {
+    background-color: $c-ebony-clay;
+    border-left: 7px solid $c-turquoise;
+  }
+
   &.info {
     background: mix($tertiary-accent-color, $panel-background-color, 5%);
     border: 1px solid $tertiary-accent-color;
