@@ -39,7 +39,7 @@
         background: $danger-color;
 
         .iconButton {
-            color: $c-titan-white !important;
+            color: inherit!important;
         }
     }
 
@@ -49,7 +49,7 @@
         background-color: rgba(0, 0, 0, 0.1);
 
         .iconButton {
-            color: $c-titan-white !important;
+            color: inherit!important;
         }
 
         &:not([disabled]):hover {
@@ -63,7 +63,7 @@
         color: $c-titan-white;
 
         .iconButton {
-            color: $c-titan-white !important;
+            color: inherit!important;
         }
     }
 
@@ -73,7 +73,7 @@
         background-color: $c-heliotrope;
 
         .iconButton {
-            color: $c-titan-white !important;
+            color: inherit!important;
         }
     }
 
