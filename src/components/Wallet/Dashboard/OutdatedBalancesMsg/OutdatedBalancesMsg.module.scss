@@ -12,7 +12,7 @@
     width: 99%;
     height: 40px;
     transform: translateX(-50%);
-    background: #1E203380;
+    background: rgba($c-mirage, .8);
     mix-blend-mode: multiply;
     border-radius: 10px;
     filter: blur(5px);
@@ -29,7 +29,7 @@
       align-items: center;
       padding: 13px 20px;
       padding-left: 13px;
-      background-color: #FEF5DB;
+      background-color: $c-half-spanish-white;
       border-left: 7px solid #FFBC00;
       color: #333757;
     

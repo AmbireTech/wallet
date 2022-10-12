@@ -10,14 +10,14 @@
     background-position: top center;
     background-repeat: no-repeat;
     min-height: 100%;
-    padding: 2em 0;
+    padding: 40px 0;
     overflow: hidden;
 
     button, input {
         font-size: 16px;
         border: 0px;
         background: none; /* #282c34; */
-        padding: 1em;
+        padding: 16px;
         box-sizing: border-box;
         font-family: 'Poppins', sans-serif;
         transition: all 0.1s ease-in-out;
@@ -56,9 +56,9 @@
         height: 60px;
         width: 100%;
         border: none;
-        background: transparent linear-gradient(90deg, #27E8A7 0%, #6000FF 100%) 0% 0% no-repeat padding-box;
+        background: transparent linear-gradient(90deg, $c-turquoise 0%, #6000FF 100%) 0% 0% no-repeat padding-box;
         border-radius: 12px;
-        color: #fff;
+        color: $c-white;
         font-size: 20px;
         font-weight: 500;
         padding: 0;
@@ -66,14 +66,14 @@
     }
 
     input {
-        color: #6770b3;
-        margin: 2em 0px;
+        color: $c-scampi;
+        margin: 32px 0px;
         border-bottom: 2px solid $c-titan-white;
         width: 100%;
         font-size: 16px;
 
         &:not([type=submit]):focus {
-            border-bottom: 3px solid #dae6fd;
+            border-bottom-color: #dae6fd;
         }
     }
 
@@ -93,7 +93,7 @@
         flex-direction: column;
         gap: 8px;
         align-items: center;
-        font-size: 1.2em;
+        font-size: 18px;
 
         .name {
             font-size: 1.7em;
@@ -103,8 +103,8 @@
     .signersToChoose {
         margin: 0px auto;
         display: block;
-        line-height: 2em;
-        font-size: 1.5em;
+        line-height: 32px;
+        font-size: 24px;
         color: #ccc;
         list-style: none;
         font-family: 'monospace';
@@ -113,7 +113,7 @@
 
         li:hover {
             background-color: rgba(0, 0, 0, 0.3);
-            color: #fff;
+            color: $c-white;
         }
     }
 
@@ -126,10 +126,10 @@
 .emailLoginSection {
     a {
         display: block;
-        margin: 1.3em auto;
+        margin: 21px auto;
         text-transform: uppercase;
         font-weight: 600;
-        font-size: 1.2em;
+        font-size: 20px;
         text-align: center;
     }
 
@@ -166,7 +166,7 @@
             font-weight: 300;
             background-color: rgba(#fd1a64, 0.8);
             text-align: center;
-            color: #fff;
+            color: $c-white;
             padding: 15px 30px;
             border-radius: 12px;
         }
@@ -174,8 +174,8 @@
 }
 
 .emailConf {
-    background-color: #1E2033;
-    border: 1px solid #6770B3;
+    background-color: $c-mirage;
+    border: 1px solid $c-scampi;
     border-radius: 12px;
     padding: 30px 60px;
     padding-top: 12px;
@@ -223,7 +223,7 @@
 @media screen and (max-width: $mobile-breakpoint-max-width) {
     .loginSignupWrapper {
         gap: 40px;
-        padding: 0 1em;
+        padding: 0 16px;
 
         .logo {
             width: 75%;

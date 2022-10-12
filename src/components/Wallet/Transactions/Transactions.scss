@@ -1,7 +1,7 @@
 @import 'variables.scss';
 
 #transactions {
-    color: #ebecff;
+    color: $c-titan-white;
     .pagination-controls {
         display: flex;
         align-items: center;
@@ -41,7 +41,7 @@
 
                 &.cancel {
                     background-color: #da5151;
-                    color: #ebecff;
+                    color: $c-titan-white;
                 }
             }
         }

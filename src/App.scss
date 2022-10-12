@@ -62,17 +62,17 @@
   
   &::-webkit-scrollbar {
     width: 8px;
-    background: #1e2033;
+    background: $c-mirage;
   }
   
   &::-webkit-scrollbar-track {
-    background: #1e2033;
+    background: $c-mirage;
     border-radius: 13px;
-    border: 1px solid #3E436B66;
+    border: 1px solid $c-fiord;
   }
   
   &::-webkit-scrollbar-thumb {
-    background-color: #898dcb;
+    background-color: $c-blue-bell;
     border-radius: 13px;
     max-height: 70px;
   }
@@ -82,7 +82,7 @@
   }
 
   scrollbar-width: thin;
-  scrollbar-color: #898dcb #1e2033;
+  scrollbar-color: $c-blue-bell $c-mirage;
 }
 
 html {

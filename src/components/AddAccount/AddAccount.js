@@ -33,7 +33,7 @@ import { ReactComponent as EmailIcon } from 'resources/icons/email.svg'
 
 TrezorConnect.manifest({
   email: 'contactus@ambire.com',
-  appUrl: 'https://www.ambire.com'
+  appUrl: 'https://wallet.ambire.com'
 })
 
 export default function AddAccount({ relayerURL, onAddAccount, utmTracking, pluginData }) {

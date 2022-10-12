@@ -37,8 +37,8 @@
     left: 0;
 
     &:checked ~ .checkboxMark {
-      background-color: #27e8a7;
-      border-color: #27e8a7;
+      background-color: $c-turquoise;
+      border-color: $c-turquoise;
 
       &:after {
         display: block;

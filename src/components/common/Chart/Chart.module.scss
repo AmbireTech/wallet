@@ -28,7 +28,7 @@
       gap: 8px;
 
       .networkIcon {
-        background-color: #1E2033;
+        background-color: $c-mirage;
         border-radius: 12px;
         width: 32px;
         height: 32px;
@@ -40,7 +40,7 @@
         color: $c-titan-white;
 
         .currency {
-          color: #27E8A7;
+          color: $c-turquoise;
         }
       }
     }
@@ -84,8 +84,8 @@
         }
   
         &.active {
-          background-color: #282B44;
-          border: 1px solid #3E436BCC;
+          background-color: $c-ebony-clay-light;
+          border: 1px solid $c-fiord;
         }
   
         .separator {

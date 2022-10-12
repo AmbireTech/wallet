@@ -1,3 +1,5 @@
+import cn from 'classnames'
+
 import styles from './NumberInput.module.scss'
 
 const NumberInput = ({ disabled, precision, label, value, button, onButtonClick, onInput }) => {
@@ -13,7 +15,7 @@ const NumberInput = ({ disabled, precision, label, value, button, onButtonClick,
     }
 
     return (
-        <div className={`${styles.numberInput} ${disabled ? styles.disabled : ''}`}>
+        <div className={cn(styles.numberInput, {disabled: styles.disabled})}>
             {
                 label ?
                     <label>{ label }</label>

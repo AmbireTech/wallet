@@ -23,7 +23,7 @@
             width: 185px;
             min-height: 103px;
             align-items: center;
-            color: #6770b3;
+            color: $c-scampi;
             justify-content: space-around;
             border-radius: 12px;
     
@@ -100,7 +100,7 @@
     .benefit {
         color: $c-heliotrope;
         padding: 10px;
-        background-color: #1e2033;
+        background-color: $c-mirage;
         border-radius: 12px;
     }
 
@@ -253,7 +253,7 @@
             justify-content: space-around;
             align-items: center;
             height: 50px;
-            background-color: #1e2033;
+            background-color: $c-mirage;
             border-radius: 12px;
             font-size: 12px;
             margin-bottom: 10px;

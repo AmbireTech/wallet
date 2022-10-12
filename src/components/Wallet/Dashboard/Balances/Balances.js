@@ -10,7 +10,7 @@ import BalanceItem from './BalanceItem/BalanceItem'
 import { useEffect, useRef } from 'react'
 
 const Balances = ({ portfolio, selectedNetwork, setNetwork, hidePrivateValue, relayerURL, selectedAccount, match }) => {
-    const legendRef = useRef()
+    const otherBalancesRef = useRef()
     const history = useHistory()
     const networkDetails = (network) => networks.find(({ id }) => id === network)
     const otherBalances = portfolio.otherBalances.filter(({ network, total }) => network !== selectedNetwork.id && total.full > 0)
@@ -28,31 +28,32 @@ const Balances = ({ portfolio, selectedNetwork, setNetwork, hidePrivateValue, re
         }
     }
 
+    // Used to add blur at the bottom of balances when scrollbar is visible
     function setClasses(el) {
-        if (el) {
-            const isScrollable = el.scrollHeight > el.clientHeight;
-            
-            // GUARD: If element is not scrollable, remove all classes
-            if (!isScrollable) {
-                el.classList.remove(styles.bottomOverflow);
-                return;
-            }
-            
-            const isScrolledToBottom = el.scrollHeight <= el.clientHeight + el.scrollTop;
-            el.classList.toggle(styles.bottomOverflow, !isScrolledToBottom);
+        if (!el) return
+
+        const isScrollable = el.scrollHeight > el.clientHeight;
+        
+        // GUARD: If element is not scrollable, remove all classes
+        if (!isScrollable) {
+            el.classList.remove(styles.bottomOverflow);
+            return;
         }
+        
+        const isScrolledToBottom = el.scrollHeight <= el.clientHeight + el.scrollTop;
+        el.classList.toggle(styles.bottomOverflow, !isScrolledToBottom);
     }
 
     useEffect(() => {
         if(!otherBalancesLoading && otherBalances) {
-            setClasses(legendRef.current)
+            setClasses(otherBalancesRef.current)
         }
     }, [otherBalancesLoading, otherBalances])
     
     return (
         <div className={styles.wrapper}>
             { portfolio.isCurrNetworkBalanceLoading && otherBalancesLoading ? <Loading /> : (
-                <div className={styles.otherBalances} ref={legendRef}>
+                <div className={styles.otherBalances} ref={otherBalancesRef}>
                     { otherBalancesLoading ? <Loading /> : (
                         <>
                             {
