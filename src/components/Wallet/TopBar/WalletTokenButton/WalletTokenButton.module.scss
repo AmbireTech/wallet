@@ -2,4 +2,10 @@
   width: 215px;
   font-size: 14px!important;
   padding: 15px 16px!important;
+
+  span {
+    white-space: nowrap;
+    overflow: hidden !important;
+    text-overflow: ellipsis;
+  }
 }

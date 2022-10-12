@@ -36,15 +36,9 @@ const WalletTokenButton = ({ rewardsData, account = {}, network, hidePrivateValu
                 className={styles.button}
                 style={{ textTransform: 'none'}}
             >
-                {
-                    isLoading ?
-                    '... WALLET Rewards' : (
-                        buttonMessage.length <= 22 ?
-                        buttonMessage :
-                        `${buttonMessage.substring(0, 19)}...`
-                    )
-
-                }
+                <span>
+                    {buttonMessage}
+                </span>
             </Button>
     )
 }
