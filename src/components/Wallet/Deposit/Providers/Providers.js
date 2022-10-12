@@ -1,4 +1,3 @@
-import './Providers.scss'
 
 import RAMP_LOGO from 'resources/payment-providers/ramp.svg';
 import PAYTRIE_LOGO from 'resources/payment-providers/paytrie.svg';
@@ -8,6 +7,8 @@ import GUARDARIAN_LOGO from 'resources/payment-providers/guardarian.svg'
 
 import { Loading } from 'components/common'
 import useProviders from './useProviders'
+
+import styles from './Providers.module.scss'
 
 export default function Providers({ walletAddress, networkDetails, relayerURL, portfolio }) {
     const { openRampNetwork, openPayTrie, openTransak, openKriptomat, openGuardarian, isLoading } = useProviders({ walletAddress, selectedNetwork: networkDetails.id, relayerURL, portfolio })
@@ -70,26 +71,26 @@ export default function Providers({ walletAddress, networkDetails, relayerURL, p
     };
 
     return (
-        <div id="providers">
+        <div className={styles.wrapper}>
             {
                 providers.map(({ logo, name, type, fees, limits, currencies, networks, onClick }) =>
                 
-                    <div className={`provider ${shouldBeDisabled(networks)}`} key={name} onClick={onClick}>
-                        <div className="logo">
+                    <div className={`${styles.provider} ${shouldBeDisabled(networks)}`} key={name} onClick={onClick}>
+                        <div className={styles.logo}>
                             <img src={logo} alt={name}></img>
                         </div>
                         { isLoading.includes(name) ? <div> <Loading/> </div> :
-                        <div className="details">
-                            <div className="type">
+                        <div className={styles.details}>
+                            <div className={styles.type}>
                                 { type }
                             </div>
-                            <div className="fees">
+                            <div className={styles.fees}>
                                 Fees: { fees }
                             </div>
-                            <div className="limits">
+                            <div className={styles.limits}>
                                 Limits: { limits }
                             </div>
-                            <div className="currencies">
+                            <div className={styles.currencies}>
                                 Currencies: { currencies }
                             </div>
                         </div>
@@ -99,7 +100,7 @@ export default function Providers({ walletAddress, networkDetails, relayerURL, p
             }
             {
                 networkDetails.id !== 'ethereum' ? 
-                    <div id="network-warning">
+                    <div className={styles.networkWarning}>
                         <b>NOTE:</b> Some deposit methods are unavailable on <b>{networkDetails.name}</b>. Switch to Ethereum for the widest support.
                     </div>
                     :

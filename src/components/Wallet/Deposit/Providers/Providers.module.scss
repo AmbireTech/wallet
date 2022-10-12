@@ -1,6 +1,6 @@
 @import 'variables.scss';
 
-#providers {
+.wrapper {
     display: flex;
     flex-direction: column;
     gap: 0.75em;
@@ -53,7 +53,7 @@
         }
     }
 
-    #network-warning {
+    .networkWarning {
         font-size: 15px;
         font-style: italic;
         opacity: 0.8;
@@ -62,7 +62,7 @@
 
 // Mobile
 @media screen and (max-width: $mobile-breakpoint-max-width) {
-    #providers {
+    .wrapper {
         .provider {
             flex-direction: column;
             padding: 1.2em;
