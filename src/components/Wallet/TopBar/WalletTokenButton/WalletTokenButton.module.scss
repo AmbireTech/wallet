@@ -1,5 +1,5 @@
 .button {
-  width: 215px;
+  width: 230px;
   font-size: 14px!important;
   padding: 15px 16px!important;
 
@@ -7,5 +7,6 @@
     white-space: nowrap;
     overflow: hidden !important;
     text-overflow: ellipsis;
+    max-width: 65px;
   }
 }

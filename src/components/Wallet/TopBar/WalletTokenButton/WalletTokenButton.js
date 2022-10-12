@@ -16,7 +16,7 @@ const WalletTokenButton = ({ rewardsData, account = {}, network, hidePrivateValu
         walletUsdPrice: rewardsData.rewards.walletUsdPrice,
       })
     const { currentClaimStatus, pendingTokensTotal } = claimableWalletToken
-    const buttonMessage = String(hidePrivateValue(pendingTokensTotal)).concat(' WALLET REWARDS')
+    // const buttonMessage = String(hidePrivateValue(pendingTokensTotal)).concat(' WALLET REWARDS')
     const { isLoading: isRewardsDataLoading, errMsg } = rewardsData
     const isLoading = isRewardsDataLoading || currentClaimStatus.loading;
 
@@ -37,8 +37,9 @@ const WalletTokenButton = ({ rewardsData, account = {}, network, hidePrivateValu
                 style={{ textTransform: 'none'}}
             >
                 <span>
-                    {buttonMessage}
+                    {hidePrivateValue(pendingTokensTotal)}
                 </span>
+                WALLET REWARDS
             </Button>
     )
 }
