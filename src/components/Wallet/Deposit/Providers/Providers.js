@@ -10,6 +10,8 @@ import useProviders from './useProviders'
 
 import styles from './Providers.module.scss'
 
+import { ReactComponent as InfoIcon } from 'resources/icons/information.svg' 
+
 export default function Providers({ walletAddress, networkDetails, relayerURL, portfolio }) {
     const { openRampNetwork, openPayTrie, openTransak, openKriptomat, openGuardarian, isLoading } = useProviders({ walletAddress, selectedNetwork: networkDetails.id, relayerURL, portfolio })
     
@@ -75,7 +77,7 @@ export default function Providers({ walletAddress, networkDetails, relayerURL, p
             {
                 providers.map(({ logo, name, type, fees, limits, currencies, networks, onClick }) =>
                 
-                    <div className={`${styles.provider} ${shouldBeDisabled(networks)}`} key={name} onClick={onClick}>
+                    <div className={`${styles.provider} ${shouldBeDisabled(networks) || ''}`} key={name} onClick={onClick}>
                         <div className={styles.logo}>
                             <img src={logo} alt={name}></img>
                         </div>
@@ -100,9 +102,12 @@ export default function Providers({ walletAddress, networkDetails, relayerURL, p
             }
             {
                 networkDetails.id !== 'ethereum' ? 
-                    <div className={styles.networkWarning}>
-                        <b>NOTE:</b> Some deposit methods are unavailable on <b>{networkDetails.name}</b>. Switch to Ethereum for the widest support.
-                    </div>
+                    <label className={styles.networkWarning}>
+                        <InfoIcon />
+                        <label>
+                            Some deposit methods are unavailable on {networkDetails.name}. Switch to Ethereum for the widest support.
+                        </label>
+                    </label>
                     :
                     null
             }
