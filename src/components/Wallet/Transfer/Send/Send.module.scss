@@ -1,0 +1,96 @@
+@import 'variables.scss';
+
+.transferButton {
+  max-width: 400px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.wrapper {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+
+  .separator {
+    flex-grow: 1;
+    @include flex-center-center;
+    font-size: 40px;
+    opacity: 0.5;
+  }
+
+  .gasTankMsg {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background-color: mix($c-ebony-clay, $warning-color, 90%);
+    color: $warning-color;
+    padding: 15px;
+    font-size: 14px;
+    border-radius: 12px;
+  }
+
+  .gasTankConvertMsg {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background-color: mix($c-ebony-clay, $c-turquoise, 90%);
+    color: $c-turquoise;
+    padding: 15px;
+    font-size: 14px;
+    border-radius: 12px;
+  }
+
+  #addresses {
+    .content {
+      .address-list {
+          max-height: 390px;
+          overflow-y: auto;
+      }
+    }
+  }
+
+  .binanceAddressWarning {
+    a {
+      vertical-align: middle;
+      margin-left: 0.5em;
+    }
+  }
+}
+
+// Mobile
+@media screen and (max-width: $mobile-breakpoint-max-width) {
+  .wrapper {
+    .recipientField {
+      flex-direction: column;
+      gap: 10px;
+
+      .dropdown {
+        position: relative;
+        border-radius: 12px!important;
+      }
+
+      .recipientInput {
+        input {
+            padding-right: 80px;
+        }
+      }
+
+      .udomainsLogo {
+        position: absolute;
+        top: 18px;
+        right: 50px;
+        height: 25px;
+        width: 25px;
+      }
+
+      .ensLogo {
+        position: absolute;
+        top: 18px;
+        right: 15px;
+        height: 25px;
+        width: 25px;
+      }
+    }
+  }
+}
