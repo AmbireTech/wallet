@@ -29,11 +29,6 @@
     }
 
     .footer {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 1em;
-
         .missingTokenNotice {
             font-size: 15px;
             color: $c-titan-white;
