@@ -7,6 +7,8 @@ import { TextInput } from 'components/common';
 import { MdOutlineClose, MdDragIndicator } from 'react-icons/md';
 import { ReactComponent as ArrowDownIcon } from 'resources/icons/arrow-down.svg'
 
+import cn from 'classnames'
+
 const Select = ({ children, native, monospace, searchable, disabled, label, defaultValue, items, onChange, className, iconClassName, labelClassName, selectInputClassName, draggable, dragStart, dragEnter, dragTarget, drop, draggableHeader, displayDraggableHeader }) => {
     const ref = useRef();
     const hiddenTextInput = useRef();
@@ -81,7 +83,7 @@ const Select = ({ children, native, monospace, searchable, disabled, label, defa
                                 <div className={`${styles.label} ${labelClassName}`}>{selectedItem.label || selectedItem.value}</div>
                                 {selectedItem.extra && <div className={styles.extra}>{selectedItem.extra}</div>}
                                 {/* <div className="separator"></div> */}
-                                <div className={`${styles.handle} ${isOpen ? styles.open : ''}`}>
+                                <div className={cn(styles.handle, {[styles.open]: isOpen})}>
                                     <ArrowDownIcon />
                                 </div>
                             </div>
