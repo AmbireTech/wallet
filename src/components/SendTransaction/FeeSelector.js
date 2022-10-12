@@ -107,7 +107,10 @@ export function FeeSelector({ disabled, signer, estimation, network, setEstimati
     <FailingTxn
       message={<>The current transaction batch cannot be sent because it will fail: {mapTxnErrMsg(estimation.message)}</>}
       tooltip={getErrHint(estimation.message)}
-    /> : <DAppIncompatibilityWarningMsg title={'Unable to send transaction'} />)
+    /> : <DAppIncompatibilityWarningMsg 
+            title={'Unable to send transaction'}
+            msg={getErrHint(estimation.message)}
+          />)
 
   if (!estimation.feeInNative) return (<></>)
   if (estimation && !estimation.feeInUSD && estimation.gasLimit < 40000) {
@@ -396,9 +399,9 @@ export function FeeSelector({ disabled, signer, estimation, network, setEstimati
           </div>
         </div>)}
         {!isGasTankEnabled && !isNaN((feeInUSD / estimation.gasLimit) * savedGas) && 
-            <div className='fee-row native-fee-estimation discount-label'>
+            <div className='fee-row native-fee-estimation warning-label'>
               <div>
-                Gas Tank Saves You:
+              Enable Gas Tank to save:
               </div>
               <div className='fee-amounts'>
                 <div>
