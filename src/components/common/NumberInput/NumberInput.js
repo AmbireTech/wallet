@@ -15,7 +15,7 @@ const NumberInput = ({ disabled, precision, label, value, button, onButtonClick,
     }
 
     return (
-        <div className={cn(styles.numberInput, {disabled: styles.disabled})}>
+        <div className={cn(styles.numberInput, {[styles.disabled]: disabled})}>
             {
                 label ?
                     <label>{ label }</label>
