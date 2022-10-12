@@ -10,7 +10,7 @@
     cursor: pointer;
 
     &:hover, &:active {
-        background-color: #1e2033;
+        background-color: $c-mirage;
     }
 
     .content {

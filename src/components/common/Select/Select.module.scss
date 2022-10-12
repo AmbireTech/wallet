@@ -63,7 +63,7 @@
             padding: 0 20px;
             font-size: 16px;
             font-weight: bold;
-            background-color: #1e2033;
+            background-color: $c-mirage;
             border-radius: 12px;
 
             .separator {
@@ -93,7 +93,7 @@
             max-height: 250px;
             width: 100%;
             border-radius: 12px;
-            background-color: #1e2033;
+            background-color: $c-mirage;
             box-shadow: 0px 4px 10px #00000073;
             border: 1px solid #3E436BCC;
             overflow: hidden;

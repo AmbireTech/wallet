@@ -62,11 +62,11 @@
   
   &::-webkit-scrollbar {
     width: 8px;
-    background: #1e2033;
+    background: $c-mirage;
   }
   
   &::-webkit-scrollbar-track {
-    background: #1e2033;
+    background: $c-mirage;
     border-radius: 13px;
     border: 1px solid #3E436B66;
   }
@@ -82,7 +82,7 @@
   }
 
   scrollbar-width: thin;
-  scrollbar-color: #898dcb #1e2033;
+  scrollbar-color: #898dcb $c-mirage;
 }
 
 html {

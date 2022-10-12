@@ -323,7 +323,7 @@ $gap: 12px;
     font-size: 1.2em;
     text-align: center;
     padding: 24px;
-    background-color: #1e2033;
+    background-color: $c-mirage;
     border-radius: 12px;
     margin-top: 20px;
     color: rgba($c-titan-white, 0.8);
@@ -336,7 +336,7 @@ $gap: 12px;
     gap: 8px;
     margin-top: 10px;
     padding: 12px;
-    background-color: #1e2033;
+    background-color: $c-mirage;
     border-radius: 12px 12px 0 0;
     color: rgba($c-titan-white, 0.8);
   }
