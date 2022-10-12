@@ -11,14 +11,14 @@
     font-size: 20px;
     font-weight: 500;
     background-color: transparent;
-    color: #27E8A7;
-    border: 2px solid #27e8a7;
+    color: $c-turquoise;
+    border: 2px solid $c-turquoise;
     outline: none;
     transition: 0.1s ease-in-out;
     
     .iconButton {
         @include flex-center-center;
-        color: #27E8A7 !important;
+        color: $c-turquoise !important;
     }
 
     &.small {
@@ -59,7 +59,7 @@
 
     &.primaryGradient {
         border: none;
-        background: transparent linear-gradient(90deg, #27E8A7 0%, #6000FF 100%) 0% 0% no-repeat padding-box;
+        background: transparent linear-gradient(90deg, $c-turquoise 0%, #6000FF 100%) 0% 0% no-repeat padding-box;
         color: $c-titan-white;
 
         .iconButton {
@@ -88,12 +88,12 @@
     }
 
     &.border {
-        color: #27e8a7;
+        color: $c-turquoise;
         background-color: transparent;
-        border: 2px solid #27e8a7;
+        border: 2px solid $c-turquoise;
 
         .iconButton {
-            color: #27e8a7 !important;
+            color: $c-turquoise !important;
         }
 
         &:not([disabled]):hover {

@@ -5,7 +5,7 @@
     height: 50px;
     background-color: $c-ebony-clay;
     user-select: none;
-    border: 1px solid #3E436BCC;
+    border: 1px solid $c-fiord;
     border-radius: 12px;
     cursor: pointer;
 
@@ -78,7 +78,7 @@
         flex-direction: column;
         background-color: $c-ebony-clay;
         box-shadow: 0px 4px 10px #00000073;
-        border: 1px solid #3E436BCC;
+        border: 1px solid $c-fiord;
         overflow: hidden;
     }
 }

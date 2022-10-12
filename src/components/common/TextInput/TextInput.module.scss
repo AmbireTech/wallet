@@ -24,7 +24,7 @@ $input-height: 60px;
                 left: 0;
                 height: 100%;
                 display: flex;
-                background-color: #171826;
+                background-color: $c-mirage-dark;
                 align-items: center;
                 justify-content: center;
                 width: 48px;
@@ -58,7 +58,7 @@ $input-height: 60px;
         input {
             height: $input-height;
             width: 100%;
-            color: #6770b3;
+            color: $c-scampi;
             font-family: 'Poppins', sans-serif;
             font-size: 16px;
             padding: 18px;

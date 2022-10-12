@@ -21,7 +21,7 @@
             height: 24px;
             width: 24px;
             border-radius: 100%;
-            border: 3px solid #6770b3;
+            border: 3px solid $c-scampi;
             overflow: hidden;
             transition: .3s ease-in-out all;
 
@@ -53,10 +53,10 @@
             pointer-events: none;
 
             .radio {
-                border: 3px solid #27e8a7;
+                border: 3px solid $c-turquoise;
                 &Inner {
                     display: block;
-                    background-color: #27e8a7;
+                    background-color: $c-turquoise;
                 }
             }
         }
@@ -65,10 +65,10 @@
             cursor: pointer;
 
             .radio {
-                border: 3px solid #27e8a7;
+                border: 3px solid $c-turquoise;
                 &Inner {
                     display: block;
-                    background-color: #27e8a7;
+                    background-color: $c-turquoise;
                 }
             }
 

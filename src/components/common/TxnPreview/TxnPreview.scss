@@ -66,7 +66,7 @@ $extended-summary-height: 31px;
                         display: flex;
                         align-items: center;
                         height: $extended-summary-height;
-                        color: #27e8a7;
+                        color: $c-turquoise;
 
                         &.unknown {
                             color: #d06f1b;
