@@ -133,6 +133,7 @@
 // Mobile
 @media screen and (max-width: $mobile-breakpoint-max-width) {
   .wrapper {
+    padding: 20px;
     .recipientField {
       flex-direction: column;
       gap: 10px;
