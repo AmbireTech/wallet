@@ -1,79 +1,94 @@
 @import 'variables.scss';
 
 .wrapper {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  padding: 40px;
-  padding-top: 15px;
-
-  .provider {
+    height: 100%;
     display: flex;
-    justify-content: space-between;
-    gap: 1em;
-    padding: 1.5em;
-    border-radius: 12px;
-    background-color: $c-ebony-clay-light;
-    box-shadow: 0px 5px 10px #00000026;
-    cursor: pointer;
-    transition: all 0.1s ease-in;
+    flex-direction: column;
+    gap: 20px;
+    padding: 40px;
+    padding-top: 15px;
 
-    .logo {
-        flex: 0 0 auto;
-        width: 8em;
-        opacity: 0.9;
-
-        img {
-            width: 100%;
-        }
-    }
-
-    .details {
-        flex: 0 1 auto;
-        font-size: 0.9em;
-        text-align: right;
-
-        .fees,
-        .limits,
-        .currencies {
-            opacity: 0.5;
-        }
-    }
-
-    &:not(.disabled):hover {
-        background-color: rgba(0, 0, 0, 0.4);
+    .provider {
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        padding: 16px 35px 16px 53px;
+        border-radius: 12px;
+        background-color: $c-ebony-clay;
+        box-shadow: 0px 5px 10px #00000026;
+        cursor: pointer;
+        transition: all 0.1s ease-in;
+        gap: 57px;
 
         .logo {
-            opacity: 1;
+            display: block;
+        }
+
+        .details {
+            flex: 1;
+            text-align: left;
+
+            .type {
+                margin-bottom: 8px;
+                font-size: 12px;
+            }
+            .fees,
+            .limits,
+            .currencies {
+                color: #898dcb;
+                font-size: 12px;
+            }
+        }
+
+        &:not(.disabled):hover {
+            background-color: $c-martinique;
+
+            .logo {
+                opacity: 1;
+            }
+        }
+
+        &.disabled {
+            opacity: 0.3;
+            pointer-events: none;
+            cursor: default;
         }
     }
 
-    &.disabled {
-        opacity: 0.3;
-        pointer-events: none;
-        cursor: default;
+    .networkWarning {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+
+        svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        label {
+            font-size: 12px;
+            opacity: 0.8;
+            text-align: left;
+        }
     }
-  }
 }
 
 // Mobile
 @media screen and (max-width: $mobile-breakpoint-max-width) {
-  .wrapper {
-    .provider {
-        flex-direction: column;
-        padding: 1.2em;
+    .wrapper {
+        padding: 20px;
 
-        .details {
-            display: flex;
+        .provider {
             flex-direction: column;
-            gap: 0.15em;
-            text-align: left;
+            gap: 20px;
+            padding: 30px;
+            .details {
+                text-align: center;
 
-            .type {
-                margin-bottom: 0.25em;
+                .type {
+                    margin-bottom: 0.25em;
+                }
             }
         }
     }
-  }
 }
