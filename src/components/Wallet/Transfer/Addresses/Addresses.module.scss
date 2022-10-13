@@ -7,8 +7,14 @@
 }
 
 .wrapper {
-    gap: 15px;
+    gap: 57px;
+    padding-top: 15px;
     flex: 0 1 50%;
+
+    .title {
+        font-size: 25px;
+        font-weight: 400;
+    }
 
     .separator {
         flex: 1 0 auto;
