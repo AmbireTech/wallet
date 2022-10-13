@@ -1,6 +1,6 @@
 @import 'variables.scss';
 
-.address-list {
+.wrapper {
     width: 100%;
 
     .placeholder {
@@ -20,6 +20,7 @@
         padding: 0 !important;
         padding-left: 15px !important;
         cursor: pointer;
+        border-radius: 12px;
 
         .inner {
             height: 100%;
@@ -79,20 +80,21 @@
             font-size: 17px;
             font-weight: bold;
             color: $c-titan-white;
+            border-radius: 0 12px 12px 0;
 
             &:not([disabled]):hover {
                 cursor: pointer;
                 opacity: 1;
-                background-color: rgba(0, 0, 0, 0.2) !important;
+                background-color: $c-mirage-dark!important;
             }
 
             &:active {
-                background-color: rgba(255, 255, 255, 0.05) !important;
+                background-color: $c-fiord!important;
             }
         }
 
         &:hover {
-            background-color: rgba(0, 0, 0, 0.2);
+            background-color: $c-mirage;
         }
     }
 }
