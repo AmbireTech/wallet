@@ -12,6 +12,14 @@
   flex-direction: column;
   gap: 20px;
 
+  .amountLabel {
+    font-size: 14px;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    color: $c-titan-white;
+  }
+
   .separator {
     flex-grow: 1;
     @include flex-center-center;
@@ -41,6 +49,56 @@
     border-radius: 12px;
   }
 
+  .recipientField {
+    position: relative;
+    display: flex;
+
+    .recipientInput {
+      width: 100%;
+
+      div:last-child {
+          opacity: 1;
+          padding-left: 20px;
+      }
+
+      input {
+          // border-radius: 12px 0 0 12px;
+          padding-right: 290px;
+      }
+    }
+
+    .dropdown {
+        position: absolute;
+        right: 0;
+    }
+
+    .udomainsLogo {
+        position: absolute;
+        top: 18px;
+        right: 250px;
+        height: 25px;
+        width: 25px;
+        background-image: url('/resources/ud-logo-inactive.png');
+    }
+
+    .udomainsLogoActive {
+        background-image: url('/resources/ud-logo-active.png') !important;  
+    }
+
+    .ensLogo {
+        position: absolute;
+        top: 18px;
+        right: 200px;
+        height: 25px;
+        width: 25px;
+        background-image: url('/resources/ens-logo-inactive.png');
+    }
+
+    .ensLogoActive {
+        background-image: url('/resources/ens-logo-active.png') !important;  
+    }
+  }
+
   #addresses {
     .content {
       .address-list {
@@ -55,6 +113,44 @@
       vertical-align: middle;
       margin-left: 0.5em;
     }
+  }
+}
+
+@mixin recipient-field-font-size($size) {
+  .recipientInput {
+    input {
+      font-size: #{$size} !important;
+    }
+  }
+}
+
+@media screen and (min-width: $wide-breakpoint-min-width){
+  .wrapper {
+    @include recipient-field-font-size(1em)
+  }
+}
+
+@media screen and (min-width: 1600px) and (max-width: 1700px) {
+  .wrapper {
+    @include recipient-field-font-size(0.8vw)
+  }
+}
+
+@media screen and (min-width: 1400px) and (max-width: 1600px) {
+  .wrapper {
+    @include recipient-field-font-size(0.7vw)
+  }
+}
+
+@media screen and (min-width: 900px) and (max-width: 1400px) {
+  .wrapper {
+    @include recipient-field-font-size(1.5vw)
+  }
+}
+
+@media screen and (min-width: 800px) and (max-width: 900px) {
+  .wrapper {
+    @include recipient-field-font-size(1.4vw)
   }
 }
 
