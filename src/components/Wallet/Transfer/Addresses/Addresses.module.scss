@@ -8,6 +8,7 @@
 
 .wrapper {
     gap: 57px;
+    padding: 40px;
     padding-top: 15px;
     flex: 0 1 50%;
 
@@ -51,10 +52,24 @@
         }
     }
 }
+@media screen and (max-width: 1400px) {
+    .wrapper {
+        padding-top: 30px;
+        .title {
+            text-align: center;
+            width: auto;
+            margin: 0 auto;
+        }
+    }
+}
 
 // Mobile
 @media screen and (max-width: $mobile-breakpoint-max-width) {
     .wrapper {
+        padding: 20px;
+        .title {
+            font-size: 20px;
+        }
         .item {
             padding-left: 15px !important;
 
