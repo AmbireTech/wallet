@@ -250,72 +250,78 @@ const Send = ({
         :
         assetsItems.length ?
             <div className={styles.wrapper}>
-                <Select searchable defaultValue={asset} items={assetsItems.sort((a, b) => a.label.toLowerCase() > b.label.toLowerCase() ? 1 : -1)} onChange={({ value }) => setAsset(value)}/>
-                { feeBaseTokenWarning ? <p className={styles.gasTankConvertMsg}><MdWarning /> {feeBaseTokenWarning}</p> : <></>}
-                <NumberInput
-                    label={amountLabel}
-                    value={amount}
-                    precision={selectedAsset?.decimals}
-                    onInput={onAmountChange}
-                    button="MAX"
-                    onButtonClick={() => setMaxAmount()}
-                />
-                
-                { validationFormMgs.messages.amount && 
-                    (<div className='validation-error'><BsXLg size={12}/>&nbsp;{validationFormMgs.messages.amount}</div>)}
-                { gasTankDetails ? <p className={styles.gasTankMsg}><MdWarning /> {gasTankDetails?.gasTankMsg}</p> : (<div className={styles.recipientField}>
-                    <TextInput
-                        placeholder="Recipient"
-                        info="Please double-check the recipient address, blockchain transactions are not reversible."
-                        value={address}
-                        onInput={setAddress}
-                        className={styles.recipientInput}
-                        inputContainerClass={styles.textInputContainer}
+                <div className={styles.content}>
+                    <Select searchable defaultValue={asset} items={assetsItems.sort((a, b) => a.label.toLowerCase() > b.label.toLowerCase() ? 1 : -1)} onChange={({ value }) => setAsset(value)}/>
+                    { feeBaseTokenWarning ? <p className={styles.gasTankConvertMsg}><MdWarning /> {feeBaseTokenWarning}</p> : <></>}
+                    <NumberInput
+                        label={amountLabel}
+                        value={amount}
+                        precision={selectedAsset?.decimals}
+                        onInput={onAmountChange}
+                        button="MAX"
+                        onButtonClick={() => setMaxAmount()}
                     />
-                    <ToolTip label={!ensAddress ? 'You can use Ethereum Name ServiceⓇ' : 'Valid Ethereum Name ServicesⓇ domain'}>
-                        <div className={cn(styles.ensLogo, {[styles.ensLogoActive]: ensAddress})} />
-                    </ToolTip>
-                    <ToolTip label={!uDAddress ? 'You can use Unstoppable domainsⓇ' : 'Valid Unstoppable domainsⓇ domain'}>
-                        <div className={cn(styles.udomainsLogo, { [styles.udomainsLogoActive]: uDAddress })} />
-                    </ToolTip>
-                    <AddressBook
-                        addresses={addresses.filter(x => x.address !== selectedAcc)}
-                        addAddress={addAddress}
-                        removeAddress={removeAddress}
-                        newAddress={newAddress}
-                        onClose={() => setNewAddress(null)}
-                        onSelectAddress={address => setAddress(address)}
-                        selectedNetwork={selectedNetwork}
-                        className={styles.dropdown}
-                    />
-                </div>)}
-                { validationFormMgs.messages.address && 
-                    (<div className='validation-error'><BsXLg size={12}/>&nbsp;{validationFormMgs.messages.address}</div>)}
-                <div className={styles.separator} />
-                <AddressWarning
-                    address={address}
-                    onAddNewAddress={() => setNewAddress(address)}
-                    onChange={(value) => setAddressConfirmed(value)}
-                    isKnownAddress={isKnownAddress}
-                    uDAddress={uDAddress}
-                    ensAddress={ensAddress}
-                />
-                {
-                    showSWAddressWarning ?
-                        <Checkbox
-                            className={styles.binanceAddressWarning}
-                            label={<span>
-                                I confirm this address is not a {unsupportedSWPlatforms.join(' / ')} address: <br />
-                                These platforms do not support ${selectedAsset?.symbol} deposits from smart wallets
-                                <a href='https://help.ambire.com/hc/en-us/articles/4415473743506-Statement-on-MATIC-BNB-deposits-to-Binance' target='_blank' rel='noreferrer'><MdInfo size={20} /></a>
-                            </span>}
-                            checked={sWAddressConfirmed}
-                            onChange={({ target }) => setSWAddressConfirmed(target.checked)}
+                    
+                    { validationFormMgs.messages.amount && 
+                        (<div className='validation-error'><BsXLg size={12}/>&nbsp;{validationFormMgs.messages.amount}</div>)}
+                    { gasTankDetails ? <p className={styles.gasTankMsg}><MdWarning /> {gasTankDetails?.gasTankMsg}</p> : (<div className={styles.recipientField}>
+                        <TextInput
+                            placeholder="Recipient"
+                            info="Please double-check the recipient address, blockchain transactions are not reversible."
+                            value={address}
+                            onInput={setAddress}
+                            className={styles.recipientInput}
+                            inputContainerClass={styles.textInputContainer}
                         />
-                        :
-                        null
-                }
-                <Button primaryGradient={true} disabled={disabled} onClick={sendTx} className='transfer-button'>Send</Button>
+                        <ToolTip label={!ensAddress ? 'You can use Ethereum Name ServiceⓇ' : 'Valid Ethereum Name ServicesⓇ domain'}>
+                            <div className={cn(styles.ensLogo, {[styles.ensLogoActive]: ensAddress})} />
+                        </ToolTip>
+                        <ToolTip label={!uDAddress ? 'You can use Unstoppable domainsⓇ' : 'Valid Unstoppable domainsⓇ domain'}>
+                            <div className={cn(styles.udomainsLogo, { [styles.udomainsLogoActive]: uDAddress })} />
+                        </ToolTip>
+                        <AddressBook
+                            addresses={addresses.filter(x => x.address !== selectedAcc)}
+                            addAddress={addAddress}
+                            removeAddress={removeAddress}
+                            newAddress={newAddress}
+                            onClose={() => setNewAddress(null)}
+                            onSelectAddress={address => setAddress(address)}
+                            selectedNetwork={selectedNetwork}
+                            className={styles.dropdown}
+                        />
+                    </div>)}
+                    { validationFormMgs.messages.address && 
+                        (<div className='validation-error'><BsXLg size={12}/>&nbsp;{validationFormMgs.messages.address}</div>)}
+                    {/* <div className={styles.separator} /> */}
+                    <AddressWarning
+                        address={address}
+                        onAddNewAddress={() => setNewAddress(address)}
+                        onChange={(value) => setAddressConfirmed(value)}
+                        isKnownAddress={isKnownAddress}
+                        uDAddress={uDAddress}
+                        ensAddress={ensAddress}
+                    />
+                    {
+                        showSWAddressWarning ?
+                            <div
+                                className={styles.binanceAddressWarning}
+                            >
+                                <Checkbox
+                                    label={<span>
+                                        I confirm this address is not a {unsupportedSWPlatforms.join(' / ')} address: <br />
+                                        These platforms do not support ${selectedAsset?.symbol} deposits from smart wallets
+                                        <a href='https://help.ambire.com/hc/en-us/articles/4415473743506-Statement-on-MATIC-BNB-deposits-to-Binance' target='_blank' rel='noreferrer'><MdInfo size={20} /></a>
+                                    </span>}
+                                    labelClassName={styles.checkBoxLabel}
+                                    checked={sWAddressConfirmed}
+                                    onChange={({ target }) => setSWAddressConfirmed(target.checked)}
+                                />
+                            </div>
+                            :
+                            null
+                    }    
+                </div>
+                <Button primaryGradient={true} disabled={disabled} onClick={sendTx} className={styles.transferButton}>Send</Button>
             </div>
             :
             <NoFundsPlaceholder/>
