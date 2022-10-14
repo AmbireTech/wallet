@@ -3,7 +3,7 @@ import "./Wallet.scss"
 import { lazy, Suspense, useCallback, useEffect, useMemo, useRef } from 'react'
 import { Switch, Route, Redirect, useLocation, useRouteMatch } from "react-router-dom"
 import PluginGnosisSafeApps from 'components/Plugins/GnosisSafeApps/GnosisSafeApps'
-import { useModals, usePermissions, useLocalStorage } from 'hooks'
+import { useModals, usePermissions, useLocalStorage, useCheckMobileScreen } from 'hooks'
 import { isFirefox } from 'lib/isFirefox'
 import unsupportedDApps from 'ambire-common/src/constants/unsupportedDApps'
 // Components
@@ -33,6 +33,7 @@ export default function Wallet(props) {
   const walletContainer = useRef()
   const { isDappMode } = props.dappsCatalog
   const routeMatch = useRouteMatch('/wallet/dapps')
+  const isMobileScreen = useCheckMobileScreen()
 
   const dapModeSidebar = useMemo(() => isDappMode && routeMatch, [isDappMode, routeMatch])
 
@@ -214,8 +215,9 @@ export default function Wallet(props) {
       showThankYouPage={props.showThankYouPage}
     />
 
-    if (showCauseOfEmail || showCauseOfPermissions || showCauseOfBackupOptout) showModal(permissionsModal, { disableClose: true })
-  }, [props.accounts, props.relayerURL, props.onAddAccount, props.showThankYouPage, props.selectedAcc, arePermissionsLoaded, isClipboardGranted, isNoticationsGranted, modalHidden, showModal])
+    const isMobile = navigator.platform.includes('Android') || navigator.platform.includes('iOS') || isMobileScreen
+    if ((showCauseOfEmail || showCauseOfPermissions || showCauseOfBackupOptout) && !isMobile) showModal(permissionsModal, { disableClose: true })
+  }, [props.accounts, props.relayerURL, props.onAddAccount, props.showThankYouPage, props.selectedAcc, arePermissionsLoaded, isClipboardGranted, isNoticationsGranted, modalHidden, showModal, isMobileScreen])
 
   useEffect(() => handlePermissionsModal(), [handlePermissionsModal])
 
