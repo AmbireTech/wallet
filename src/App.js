@@ -172,8 +172,8 @@ function AppInner() {
     useStorage: useLocalStorage,
     relayerURL: relayerURL,
     useRelayerData: useRelayerData,
-    eligibleRequests: eligibleRequests,
-    requests: requests,
+    eligibleRequests,
+    requests,
     selectedAccount: accounts.find(x => x.id === selectedAcc)
   })
 
