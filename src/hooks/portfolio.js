@@ -4,12 +4,15 @@ import usePortfolioCommon from 'ambire-common/src/hooks/usePortfolio'
 import { fetchGet } from 'lib/fetch';
 import { ZAPPER_API_ENDPOINT, VELCRO_API_ENDPOINT, COINGECKO_API_URL } from 'config'
 import { useToasts } from 'hooks/toasts'
+import useConstants from './useConstants'
 
-const getBalances = (network, address, provider, quickResponse) =>
-    fetchGet(`${provider === 'velcro' ?
-        VELCRO_API_ENDPOINT :
-        ZAPPER_API_ENDPOINT}/balance/${address}/${network}?provider=covalent${quickResponse ? '&quick=true': ''}`
+const getBalances = (network, address, provider, quickResponse) => {
+    if (provider === '' || !provider) return null
+    return fetchGet(`${provider === 'velcro' ?
+    VELCRO_API_ENDPOINT :
+    ZAPPER_API_ENDPOINT}/balance/${address}/${network}?provider=covalent${quickResponse ? '&quick=true': ''}`
     )
+}
 
 const getCoingeckoPrices = (addresses) =>
     fetchGet(`${COINGECKO_API_URL}/simple/price?ids=${addresses}&vs_currencies=usd`
@@ -43,6 +46,7 @@ export default function usePortfolio({ currentNetwork, account, useStorage, rela
         loading,
         cache,
     } = usePortfolioCommon({
+        useConstants,
         currentNetwork,
         account,
         useStorage,

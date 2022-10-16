@@ -4,16 +4,12 @@ import { MdClose } from 'react-icons/md'
 import { useModals } from 'hooks'
 import { Modal, Button } from 'components/common'
 import { ToolTip } from 'components/common' 
-import { useAmbireEarnDetails } from 'hooks'
+import useAmbireEarnDetails from 'hooks/useAmbireEarnDetails'
 import { Loading } from 'components/common'
 
 const AmbireEarnDetailsModal = ({ title = 'Details', apy, accountId, msToDaysHours, addresses, tokenLabel }) => {
     const { hideModal } = useModals()
-    
-    const { 
-        details,
-        isLoading
-        } = useAmbireEarnDetails({accountId, addresses, tokenLabel})
+    const { details, isLoading } = useAmbireEarnDetails({ accountId, addresses, tokenLabel })
 
     const { 
         poolShare, 
@@ -35,7 +31,7 @@ const AmbireEarnDetailsModal = ({ title = 'Details', apy, accountId, msToDaysHou
    
     return (
         <Modal id="wallet-more-details-modal" title={title} buttons={buttons}>
-           {isLoading ? (
+           {!isLoading ? (
            <>
                 <div className="wrapper">
                     <div>Annual Percentage Yield (APY)</div><div>{apy}</div>
@@ -43,7 +39,7 @@ const AmbireEarnDetailsModal = ({ title = 'Details', apy, accountId, msToDaysHou
                 <div className="wrapper odd-rows-bg">
                     <div>Current Available Balance</div>
                     <div>
-                        <ToolTip label="* Warning: The pool share value may includes your pending to unlock tokens.">
+                        <ToolTip label="* Warning: The pool share value may include your pending to unlock tokens.">
                             {parseFloat(currentBalanceWalletAtCurrentShareValue).toFixed(4)} {tokenLabel} (Pool share*: {(poolShare * 100).toFixed(2)}%)
                         </ToolTip>
                     </div>
@@ -58,7 +54,7 @@ const AmbireEarnDetailsModal = ({ title = 'Details', apy, accountId, msToDaysHou
                     </ToolTip>
                 </div>
                 <div className="wrapper">
-                <ToolTip label={`Withdraws: ${parseFloat(totalWithdraws).toFixed(4)} ${tokenLabel}
+                <ToolTip label={`Withdrawals: ${parseFloat(totalWithdraws).toFixed(4)} ${tokenLabel}
                                 \nTransfers out: ${parseFloat(totalSharesOutTransfersWalletValue).toFixed(4)} ${tokenLabel} 
                                 \nRage leaves: 
                                 \nReceived ${parseFloat(rageLeavesReceivedWalletTotal).toFixed(4)} ${tokenLabel} 

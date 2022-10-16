@@ -1,9 +1,10 @@
 import { VELCRO_API_ENDPOINT } from 'config'
 import { fetchGet } from 'lib/fetch'
 import {ZERO_ADDRESS} from 'consts/specialAddresses'
+import networks from 'consts/networks'
 
 export default function assetMigrationDetector({ networkId, account }) {
-
+  if (networks.find(({id}) => id === networkId)?.relayerlessOnly) return Promise.resolve([])
   if (!account) return Promise.resolve([])// for web accounts
   //First pass
   return fetchGet(`${VELCRO_API_ENDPOINT}/balance/${account}/${networkId}?provider=covalent&newBalances=true&available_on_coingecko=true`)
