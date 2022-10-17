@@ -1,7 +1,7 @@
-import './CountdownTimer.scss'
-
 import { useState, useEffect } from 'react'
-import { MdOutlineAvTimer } from 'react-icons/md'
+import { ReactComponent as ClockIcon } from 'resources/icons/clock.svg'
+
+import styles from './CountdownTimer.module.scss'
 
 const CountdownTimer = ({ seconds, setTimeIsUp }) => {
     const [counter, setCounter] = useState(seconds)
@@ -26,10 +26,11 @@ const CountdownTimer = ({ seconds, setTimeIsUp }) => {
 
     return (
         <div
-            id="countdown-timer"
+            className={styles.wrapper}
             style={isTimeIsUp ? { color: 'red' } : {}}
         >
-            <MdOutlineAvTimer /> {timerFormatted}
+            <ClockIcon /> 
+            <label>{timerFormatted}</label>
         </div>
     )
 }

@@ -1,7 +1,12 @@
 @import 'variables.scss';
 
-#countdown-timer {
+.wrapper {
     display: flex;
     align-items: center;
     color: $c-turquoise;
+    gap: 10px;
+
+    label {
+        font-size: 25px;
+    }
 }
