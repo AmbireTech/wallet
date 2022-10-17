@@ -1,14 +1,15 @@
-import './OtpTwoFAModal.scss'
-
 import { Modal, Button, TextInput, Loading } from 'components/common'
 import { authenticator } from '@otplib/preset-default'
 import QRCode from 'qrcode'
+import cn from 'classnames'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useToasts } from 'hooks/toasts'
 import { fetchPost } from 'lib/fetch'
 import { useModals } from 'hooks'
 import { ethers } from 'ethers'
 import { CountdownTimer } from 'components/common'
+
+import styles from './OtpTwoFAModal.module.scss'
 
 const TIMER_IN_SECONDS = 300
 
@@ -135,27 +136,27 @@ const OtpTwoFAModal = ({ relayerURL, selectedAcc, setCacheBreak }) => {
 
     return (
         <Modal
+            buttons={!isLoading ? (<Button primaryGradient type="submit" disabled={isTimeIsUp} className={styles.button}>Enable 2FA</Button>) : (<Button disabled className={styles.button}><Loading /></Button>)}
             title="Two Factor Authentication" 
             topLeft={(<CountdownTimer seconds={TIMER_IN_SECONDS} setTimeIsUp={handleTimeIsUp}/>)}
         >
-            <div id="otp-auth">
-                {isTimeIsUp && <div className='timer-reset-msg'>Please reopen the modal to reset the session.</div>}
-                <div className="img-wrapper">
+            <div className={styles.wrapper}>
+                {isTimeIsUp && <div className={styles.timerResetMsg}>Please reopen the modal to reset the session.</div>}
+                <div className={styles.imgWrapper}>
                     <img alt="qr-code" src={imageURL}></img>
                 </div>
-                <div className="img-msg" style={{ marginBottom: showSecret ? '0px' : '22px'}}>
+                <div className={cn(styles.imgMsg, {[styles.showSecret]: showSecret})}>
                     {!showSecret && 
-                    (<span className="click-here" onClick={() => { setShowSecret(prevState => !prevState) }}>
-                        Unable to scan code? Click here.
+                    (<span className={styles.clickHere}>
+                        Unable to scan code? <button onClick={() => setShowSecret(prevState => !prevState)}>Click here.</button>
                     </span>)}
                     {showSecret && (<><span>Enter this OTP in your app:</span><div>{secret}</div></>)}
                 </div>
                 <form onSubmit={handleSubmit}>
                     <div>
                         <h4>Confirmation code sent via Email</h4>
-                        <div className='input-wrapper'>
+                        <div className={styles.inputWrapper}>
                             <TextInput
-                                small
                                 pattern='[0-9]+'
                                 title='Confirmation code should be 6 digits'
                                 autoComplete='nope'
@@ -165,8 +166,10 @@ const OtpTwoFAModal = ({ relayerURL, selectedAcc, setCacheBreak }) => {
                                 onInput={value => setEmailConfirmCode(value)}
                             ></TextInput>
                             
-                            <Button type="button" small disabled={isTimeIsUp} onClick={sendEmail}>Send Email</Button>
+                            <Button type="button" primaryGradient disabled={isTimeIsUp} onClick={sendEmail}>Send Email</Button>
                         </div>
+                    </div>
+                    <div>
                         <h4>Authenticator app code</h4>
                         <TextInput
                             placeholder="Enter the code from authenticator app"
@@ -175,9 +178,6 @@ const OtpTwoFAModal = ({ relayerURL, selectedAcc, setCacheBreak }) => {
                             pattern="[0-9]{6}"
                             required
                         />
-                    </div>
-                    <div className="buttons">
-                        {!isLoading ? (<Button type="submit" disabled={isTimeIsUp}>Enable 2FA</Button>) : (<Button disabled><Loading /></Button>)}
                     </div>
                 </form>
             </div>
