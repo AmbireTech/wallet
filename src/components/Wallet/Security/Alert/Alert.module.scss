@@ -30,7 +30,7 @@
       padding: 13px 20px;
       padding-left: 13px;
       background-color: #EDE2FF;
-      border-left: 7px solid #6000ff;
+      border-left: 7px solid $ambire-dark-blue;
       color: #333757;
     
       .body {
@@ -52,15 +52,6 @@
           }
         }
       }
-    
-      .close {
-        margin-left: 30px;
-        cursor: pointer;
-        color: #FFBC00;
-        background-color: transparent;
-        border: 0;
-        outline: none;
-      }
     }
   }
 }
@@ -74,7 +65,7 @@
         padding: 20px;
         gap: 20px;
         border-left: 0;
-        border-top: 7px solid #FFBC00;
+        border-top: 7px solid $ambire-dark-blue;
         text-align: center;
       
         svg {
@@ -98,7 +89,7 @@
         .close {
           margin-left: 30px;
           cursor: pointer;
-          color: #FFBC00;
+          color: $warning-color;
           background-color: transparent;
           border: 0;
           outline: none;
