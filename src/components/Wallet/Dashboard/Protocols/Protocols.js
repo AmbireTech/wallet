@@ -66,8 +66,7 @@ const Protocols = ({ portfolio, network, account, hidePrivateValue, userSorting,
 
     const tokenItem = (index, img, symbol, balance, balanceUSD, address, send = false, network, decimals, category, sortedTokensLength, pending, unconfirmed, price) => 
         {
-            const logo = failedImg.includes(img) ? getTokenIcon(network, address) : img
-
+            const logo = failedImg.includes(img) || !img ? getTokenIcon(network, address) : img
             return (<div className="token" key={`token-${address}-${index}`}
              draggable={category === 'tokens' && sortedTokensLength > 1 && sortType === 'custom' && !isMobileScreen}
              onDragStart={(e) => { 
