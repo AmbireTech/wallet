@@ -6,14 +6,14 @@
   justify-content: space-between;
   width: 100%;
   max-width: 240px;
-  background: #1E2033;
-  border: 1px solid #6770B3;
+  background: $c-mirage;
+  border: 1px solid $c-scampi;
   border-radius: 12px;
   padding: 20px;
   padding-top: 15px;
 
   &.active {
-    border-color: #27e8a7;
+    border-color: $c-turquoise;
   }
 
   .manage {
@@ -46,7 +46,7 @@
       height: 34px;
       padding: 0;
       background-color: transparent;
-      border: 1px #FD1A6480 solid;
+      border: 1px rgba($danger-color, 0.8) solid;
       border-radius: 12px;
       cursor: pointer;
 
@@ -56,7 +56,7 @@
       }
 
       svg {
-        color: #fd1a64;
+        color: $danger-color;
         width: 34px;
         height: 34px;
       }
@@ -79,7 +79,7 @@
     }
     
     .privText {
-      color: #6770B3;
+      color: $c-scampi;
     }
   }
 
