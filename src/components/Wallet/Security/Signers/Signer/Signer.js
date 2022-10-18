@@ -55,6 +55,7 @@ const Signer = ({
       <div>
         <div className={styles.manage}>
           <Checkbox
+            disabled={isSelected}
             checked={isSelected}
             onChange={handleCheckboxClick}
             className={styles.checkbox}
@@ -63,7 +64,7 @@ const Signer = ({
           />
           <button
             className={cn(styles.close, {[styles.disabled]: isSelected})}
-            title={isSelected ? 'Cannot remove the currently used signer' : ''}
+            title={isSelected ? 'Cannot remove the currently used signer' : 'Remove Signer'}
             disabled={isSelected}
             onClick={handleRemove}
           >
