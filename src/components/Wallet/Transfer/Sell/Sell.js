@@ -1,3 +1,4 @@
+import cn from 'classnames'
 import styles from './Sell.module.scss'
 import GUARDARIAN_LOGO from 'resources/payment-providers/guardarian.svg'
 import useProviders from 'components/Wallet/Deposit/Providers/useProviders'
@@ -8,11 +9,11 @@ const Sell = ({ walletAddress, networkDetails, relayerURL, portfolio }) => {
 
   const { openGuardarian, isLoading } = useProviders({ walletAddress, selectedNetwork: networkDetails.id, relayerURL, portfolio })
 
-  const shouldBeDisabled = (networks) => networks.includes(networkDetails.id) ? null : styles.disabled 
+  const shouldBeDisabled = (networks) => networks.includes(networkDetails.id)
 
   return (
     <div className={styles.wrapper}>
-      <div className={`${styles.provider} ${shouldBeDisabled(networks)}`} onClick={openGuardarian}>
+      <div className={cn(styles.provider, { [styles.disabled]: !shouldBeDisabled(networks) })} onClick={openGuardarian}>
           <div className={styles.logo}>
             <img src={GUARDARIAN_LOGO} alt={''}></img>
           </div>
