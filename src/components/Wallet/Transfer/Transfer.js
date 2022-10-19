@@ -39,7 +39,7 @@ const Transfer = (props) => {
 
     return (
         <div className={styles.wrapper} style={{ justifyContent: gasTankDetails ? 'center' : '' }}>
-           <Panel title="" className={styles.panel}>
+           <Panel className={styles.panel}>
                 <div className={styles.tabs}>
                     <button 
                         onClick={handleOpenSend}
