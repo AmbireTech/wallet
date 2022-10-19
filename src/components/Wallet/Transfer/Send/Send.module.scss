@@ -108,15 +108,6 @@
     }
   }
 
-  #addresses {
-    .content {
-      .address-list {
-        max-height: 390px;
-        overflow-y: auto;
-      }
-    }
-  }
-
   .binanceAddressWarning {
     .checkBoxLabel {
       vertical-align: middle;
@@ -145,7 +136,7 @@
 
       .recipientInput {
         input {
-            padding-right: 80px;
+          padding-right: 80px;
         }
       }
 
