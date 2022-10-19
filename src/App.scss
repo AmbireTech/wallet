@@ -232,6 +232,7 @@ select {
   padding: 13px 10px;
   background: mix($c-turquoise, $c-ebony-clay, 5%);
   border: 1px solid $c-turquoise;
+  transition: .3s ease-out opacity;
 
   &.warning {
     background-color: #FEF5DB;
@@ -255,7 +256,7 @@ select {
     cursor: pointer;
 
     &.warning:hover {
-      background: mix($warning-color, $c-ebony-clay, 10%);
+      opacity: .8;
     }
   }
 }
