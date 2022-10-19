@@ -11,6 +11,8 @@ import { useToasts } from "hooks/toasts"
 import { useState, useEffect, useRef } from "react"
 import { Button, Loading, TextInput, ToolTip, DAppIncompatibilityWarningMsg } from "components/common"
 
+import useLocalStorage from 'hooks/useLocalStorage'
+
 const CONF_CODE_LENGTH = 6
 
 export default function SignMessage({ everythingToSign, resolve, account, connections, relayerURL, totalRequests }) {
@@ -59,7 +61,8 @@ export default function SignMessage({ everythingToSign, resolve, account, connec
     requestedNetwork,
     requestedChainId,
     isTypedData,
-    confirmationType
+    confirmationType,
+    dApp
   } = useSignMessage({
     fetch,
     account,
@@ -68,11 +71,11 @@ export default function SignMessage({ everythingToSign, resolve, account, connec
     addToast,
     resolve,
     onConfirmationCodeRequired,
-    getHardwareWallet
+    getHardwareWallet,
+    useStorage: useLocalStorage,
+    connections
   })
 
-  const connection = connections.find(({ uri }) => uri === toSign.wcUri)
-  const dApp = connection ? connection?.session?.peerMeta || null : null
   const isDAppSupported = dApp && supportedDApps.includes(dApp.url)
 
   useEffect(() => {

@@ -1,0 +1,141 @@
+@import 'variables.scss';
+
+#Signatures {
+  .title {
+    display: flex;
+
+    h2 {
+      flex-grow: 1;
+    }
+  }
+
+  user-select: none;
+
+  .pagination-controls-holder {
+    display: flex;
+    justify-content: right;
+    margin: 8px 0;
+
+    .pagination-controls {
+      display: flex;
+      align-items: center;
+      align-self: flex-end;
+      gap: 1em;
+      font-size: 15px;
+      font-weight: 500;
+
+      .pagination-current {
+        span {
+          opacity: 0.5;
+        }
+      }
+    }
+  }
+
+  .main-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 1.5em;
+    background: $c-ebony-clay;
+    border: 1px solid $c-fiord;
+    border-radius: 12px;
+
+    .col-dapp {
+      flex-basis: 30%;
+    }
+
+    .col-sigtype {
+      flex-basis: 30%;
+    }
+
+    .col-date {
+      flex-basis: 30%;
+    }
+
+    .col-expand {
+      flex-basis: 40px;
+    }
+
+    .header-container {
+      padding: 8px 16px;
+      color: #6770B3;
+      display: flex;
+      gap: 16px;
+      justify-content: space-between;
+    }
+
+    .sub-container {
+      border-radius: 12px;
+      padding: 16px;
+      overflow: hidden;
+      background-color: $c-mirage;
+      color: $c-titan-white;
+
+      .sub-container-visible {
+        display: flex;
+        gap: 16px;
+
+        border-radius: 12px;
+        position: relative;
+        align-items: center;
+        justify-content: space-between;
+
+        .dapp {
+          display: flex;
+          gap: 16px;
+          align-items: center;
+          flex-basis: 30%;
+
+          .dapp-icon {
+            display: flex;
+            width: 40px;
+            height: 40px;
+            padding: 4px;
+            justify-content: center;
+            align-items: center;
+            background-color: rgba(235, 236, 255, 0.05);
+            border-radius: 12px;
+          }
+        }
+
+        .signature-expand {
+          cursor: pointer;
+          border-radius: 12px;
+          width: 40px;
+          height: 40px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background-color: rgba(235, 236, 255, 0.05);
+
+          &:hover {
+            background-color: rgba(235, 236, 255, 0.1);
+          }
+        }
+      }
+
+      .sub-container-expanded {
+        user-select: text;
+        padding: 16px 0 0 16px;
+
+        & > div {
+
+          margin: 16px 0;
+
+          b {
+            font-weight: normal;
+          }
+
+          .message-content {
+            padding-top: 4px;
+            color: #6770B3;
+            font-family: monospace;
+            white-space: break-spaces;
+            font-size: 1.1em;
+          }
+        }
+      }
+    }
+  }
+}
