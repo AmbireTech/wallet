@@ -1,16 +1,21 @@
 import './Collectibles.scss'
 
+import { MdVisibilityOff } from 'react-icons/md'
 import { NavLink } from 'react-router-dom'
 import CollectiblesPlaceholder from './CollectiblesPlaceholder/CollectiblesPlaceholder'
 import { Loading } from 'components/common'
-import { useMemo, useState, useEffect } from 'react'
+import HideCollectibleModal from 'components/Modals/HideCollectibleModal/HideCollectibleModal'
+import { useMemo, useState, useEffect, useCallback } from 'react'
 import { useHistory, useParams } from 'react-router-dom/cjs/react-router-dom.min'
 import { Button } from 'components/common'
+import { useModals } from 'hooks'
 import { HiOutlineChevronLeft, HiOutlineChevronRight } from 'react-icons/hi'
 
 const Collectibles = ({ selectedNetwork, portfolio, isPrivateMode }) => {
     const params = useParams()
     const history = useHistory()
+    const { showModal } = useModals()
+    const [isHideTokenModalOpen, setIsHideTokenModalOpen] = useState(false)
     const maxCollectiblesPerPage = 15
     const maxPages = Math.ceil(portfolio.collectibles.length / maxCollectiblesPerPage)
     const defaultPage = useMemo(() => Math.min(Math.max(Number(params.page), 1), maxPages) || 1, [params.page, maxPages])
@@ -40,6 +45,20 @@ const Collectibles = ({ selectedNetwork, portfolio, isPrivateMode }) => {
         return uri
     }
 
+    const openHideTokenModal = useCallback(() => setIsHideTokenModalOpen(true), [])
+
+    useEffect(() => {
+        if(isHideTokenModalOpen) {
+            showModal(
+                <HideCollectibleModal 
+                    portfolio={portfolio} 
+                    setIsHideTokenModalOpen={setIsHideTokenModalOpen} 
+                    handleUri={handleUri}
+                />
+            )
+        }
+    }, [portfolio, isHideTokenModalOpen, showModal])
+
     if (portfolio.loading) return <Loading />;
 
     if (!portfolio.collectibles.length || isPrivateMode) {
@@ -53,6 +72,9 @@ const Collectibles = ({ selectedNetwork, portfolio, isPrivateMode }) => {
 
     return (
         <div id="collectibles">
+            <div className="wrapper-btns">
+                <Button mini clear icon={<MdVisibilityOff/>} onClick={() => openHideTokenModal()}>Hide Collectible</Button>
+            </div>
             <div className='collectibles-wrapper'>
                 {
                     collectiblesList.map(({ address, collectionName, collectionImg, assets, balanceUSD }) => (assets || []).map(({ tokenId, data }) => (

@@ -26,7 +26,7 @@ const getCoingeckoPriceByContract = (id, addresses) =>
     fetchGet(`${COINGECKO_API_URL}/coins/${id}/contract/${addresses}`
     )
 
-export default function usePortfolio({ currentNetwork, account, useStorage, relayerURL, useRelayerData, eligibleRequests, requests, selectedAccount }) {
+export default function usePortfolio({ currentNetwork, account, useStorage, relayerURL, useRelayerData, eligibleRequests, requests, selectedAccount, sentTxn }) {
     const isVisible = usePageVisibility()
     
     const {
@@ -34,7 +34,6 @@ export default function usePortfolio({ currentNetwork, account, useStorage, rela
         otherBalances,
         tokens,
         hiddenTokens,
-        setHiddenTokens,
         onAddHiddenToken,
         onRemoveHiddenToken,
         extraTokens,
@@ -45,6 +44,10 @@ export default function usePortfolio({ currentNetwork, account, useStorage, rela
         isCurrNetworkBalanceLoading,
         loading,
         cache,
+        onAddHiddenCollectible,
+        onRemoveHiddenCollectible,
+        setHiddenCollectibles,
+        hiddenCollectibles
     } = usePortfolioCommon({
         useConstants,
         currentNetwork,
@@ -60,7 +63,8 @@ export default function usePortfolio({ currentNetwork, account, useStorage, rela
         useRelayerData,
         eligibleRequests,
         requests,
-        selectedAccount
+        selectedAccount,
+        sentTxn
     })
 
     return {
@@ -69,7 +73,6 @@ export default function usePortfolio({ currentNetwork, account, useStorage, rela
         tokens,
         extraTokens,
         hiddenTokens,
-        setHiddenTokens,
         collectibles,
         onAddExtraToken,
         onRemoveExtraToken,
@@ -79,5 +82,9 @@ export default function usePortfolio({ currentNetwork, account, useStorage, rela
         isCurrNetworkBalanceLoading,
         loading,
         cache,
+        onAddHiddenCollectible,
+        onRemoveHiddenCollectible,
+        setHiddenCollectibles,
+        hiddenCollectibles
     }
 }

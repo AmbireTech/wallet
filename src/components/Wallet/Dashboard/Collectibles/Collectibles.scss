@@ -8,6 +8,9 @@ $collectible-size: 250px;
     flex-direction: column;
     gap: 1em;
 
+    .wrapper-btns {
+        align-self: flex-end;
+    }
     .pagination-controls {
         display: flex;
         align-items: center;

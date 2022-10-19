@@ -168,19 +168,6 @@ function AppInner() {
       && account === selectedAcc
     ), [requests, network.chainId, selectedAcc])
 
-  // Portfolio: this hook actively updates the balances/assets of the currently selected user
-  const portfolio = usePortfolio({
-    currentNetwork: network.id,
-    account: selectedAcc,
-    useStorage: useLocalStorage,
-    relayerURL: relayerURL,
-    useRelayerData: useRelayerData,
-    eligibleRequests,
-    requests,
-    selectedAccount: accounts.find(x => x.id === selectedAcc)
-  })
-
-
   // Docs: the state is { showing: bool, replacementBundle, replaceByDefault: bool, mustReplaceNonce: number }
   // mustReplaceNonce is set when the end goal is to replace a particular transaction, and if that txn gets mined we should stop the user from doing anything
   // mustReplaceNonce must always be used together with either replaceByDefault: true or replacementBundle
@@ -247,6 +234,19 @@ function AppInner() {
       ...sentTxn.filter(tx => tx.hash !== txHash),
       tx
     ]
+  })
+
+  // Portfolio: this hook actively updates the balances/assets of the currently selected user
+  const portfolio = usePortfolio({
+    currentNetwork: network.id,
+    account: selectedAcc,
+    useStorage: useLocalStorage,
+    relayerURL: relayerURL,
+    useRelayerData: useRelayerData,
+    eligibleRequests,
+    requests,
+    selectedAccount: accounts.find(x => x.id === selectedAcc),
+    sentTxn
   })
 
   // Show notifications for all requests
