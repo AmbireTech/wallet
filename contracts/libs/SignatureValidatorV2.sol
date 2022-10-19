@@ -67,5 +67,7 @@ library SignatureValidator {
 			sig.trimToSize(32);
 			return abi.decode(sig, (address));
 		}
+		// should be impossible to get here
+		return address(0);
 	}
 }
