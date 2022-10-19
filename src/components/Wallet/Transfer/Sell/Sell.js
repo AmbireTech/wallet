@@ -1,8 +1,8 @@
 import cn from 'classnames'
-import styles from './Sell.module.scss'
-import GUARDARIAN_LOGO from 'resources/payment-providers/guardarian.svg'
 import useProviders from 'components/Wallet/Deposit/Providers/useProviders'
 import { Loading } from 'components/common'
+import GUARDARIAN_LOGO from 'resources/payment-providers/guardarian.svg'
+import styles from './Sell.module.scss'
 
 const Sell = ({ walletAddress, networkDetails, relayerURL, portfolio }) => {
   const networks = ['ethereum', 'polygon', 'binance-smart-chain', 'fantom']
