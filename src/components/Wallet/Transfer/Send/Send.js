@@ -248,7 +248,7 @@ const Send = ({
     if (portfolio.isCurrNetworkBalanceLoading) {
         return <Loading />
     }
-    
+
     return assetsItems.length ? (<div className={styles.wrapper}>
             <div className={styles.content}>
                 <Select searchable defaultValue={asset} items={assetsItems.sort((a, b) => a.label.toLowerCase() > b.label.toLowerCase() ? 1 : -1)} onChange={({ value }) => setAsset(value)}/>
@@ -321,7 +321,7 @@ const Send = ({
                         null
                 }    
             </div>
-            <Button primaryGradient={true} disabled={disabled} onClick={sendTx} className={styles.transferButton}>Send</Button>
+            <Button primaryGradient disabled={disabled} onClick={sendTx} className={styles.transferButton}>Send</Button>
         </div>) : <NoFundsPlaceholder/>
 }
 
