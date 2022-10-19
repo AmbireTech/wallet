@@ -15,7 +15,7 @@ const Sell = ({ walletAddress, networkDetails, relayerURL, portfolio }) => {
     <div className={styles.wrapper}>
       <div className={cn(styles.provider, { [styles.disabled]: !shouldBeDisabled(networks) })} onClick={openGuardarian}>
           <div className={styles.logo}>
-            <img src={GUARDARIAN_LOGO} alt={''}></img>
+            <img src={GUARDARIAN_LOGO} alt='guardarian-logo'></img>
           </div>
           { isLoading.includes('Guardarian') ? <div><Loading/></div> :
           <div className={styles.details}>
