@@ -5,6 +5,10 @@
     flex: unset!important;
 }
 
+.modal {
+    max-width: 600px;
+}
+
 .wrapper {
     .timerResetMsg {
         text-align: center;
@@ -70,7 +74,11 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            gap: 10px; 
+            gap: 10px;
+
+            & > button, div {
+                flex: 0 1 50%!important;
+            }
         }
         
         button { 
