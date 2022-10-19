@@ -49,15 +49,15 @@ const msToDaysHours = ms => {
     return days < 1 ? `${hours} hours` : `${days} days`
 }
 
-  const attachMetaIfNeeded = (req, shareValue, rewardsData) => {
+const attachMetaIfNeeded = (req, shareValue, rewardsData) => {
     let meta
     const shouldAttachMeta = [WALLET_TOKEN_ADDRESS, WALLET_STAKING_ADDRESS].includes(req.txn.to.toLowerCase())
     if (shouldAttachMeta) {
-      const { walletUsdPrice: walletTokenUsdPrice, xWALLETAPY: APY } = rewardsData.rewards
-      meta = { xWallet: { APY, shareValue, walletTokenUsdPrice } }
+        const { walletUsdPrice: walletTokenUsdPrice, xWALLETAPY: APY } = rewardsData.rewards
+        meta = { xWallet: { APY, shareValue, walletTokenUsdPrice } }
     }
     return !meta ? req : { ...req, meta: { ...req.meta && req.meta, ...meta }}
-  }
+}
 
 const AmbireTokensCard = ({ networkId, accountId, tokens, rewardsData, addRequest }) => {
     const [loading, setLoading] = useState(true)
