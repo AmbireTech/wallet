@@ -7,7 +7,7 @@ const Checkbox = forwardRef(({ checked, required, onChange, disabled, label, lab
         <input type="checkbox" checked={checked} required={required} onChange={onChange} ref={ref}/>
     )
 
-    return label ? (<label className={cn(styles.checkboxContainer, {[styles.disabled]: disabled, [className]: className || ''})}>
+    return label ? (<label className={cn(styles.checkboxContainer, {[styles.disabled]: disabled, [className]: className})}>
         {inputElem}
         <div className={styles.checkboxMark}></div>
         <div className={`${styles.label}${` ${labelClassName}`}`}>{label}</div>
