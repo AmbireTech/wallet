@@ -49,6 +49,16 @@ const msToDaysHours = ms => {
     return days < 1 ? `${hours} hours` : `${days} days`
 }
 
+const attachMetaIfNeeded = (req, shareValue, rewardsData) => {
+    let meta
+    const shouldAttachMeta = [WALLET_TOKEN_ADDRESS, WALLET_STAKING_ADDRESS].includes(req.txn.to.toLowerCase())
+    if (shouldAttachMeta) {
+        const { walletUsdPrice: walletTokenUsdPrice, xWALLETAPY: APY } = rewardsData.rewards
+        meta = { xWallet: { APY, shareValue, walletTokenUsdPrice } }
+    }
+    return !meta ? req : { ...req, meta: { ...req.meta && req.meta, ...meta }}
+}
+
 const AmbireTokensCard = ({ networkId, accountId, tokens, rewardsData, addRequest }) => {
     const [loading, setLoading] = useState(true)
     const [details, setDetails] = useState([])
@@ -78,9 +88,15 @@ const AmbireTokensCard = ({ networkId, accountId, tokens, rewardsData, addReques
     
     const unavailable = networkId !== 'ethereum'
     const networkDetails = networks.find(({ id }) => id === networkId)
-    const addRequestTxn = useCallback((id, txn, extraGas = 0) =>
-        addRequest({ id, type: 'eth_sendTransaction', chainId: networkDetails.chainId, account: accountId, txn, extraGas })
-    , [networkDetails.chainId, accountId, addRequest])
+    const addRequestTxn = useCallback((id, txn, extraGas = 0) => { 
+        const request = attachMetaIfNeeded(
+                { id, type: 'eth_sendTransaction', chainId: networkDetails.chainId, account: accountId, txn, extraGas },
+                shareValue,
+                rewardsData
+            )
+
+        addRequest(request)
+    }, [networkDetails.chainId, accountId, shareValue, rewardsData, addRequest])
 
     const { xWALLETAPYPercentage } = rewardsData.rewards;
 
