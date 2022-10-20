@@ -101,17 +101,23 @@ $buttons-height: 160px;
 // Mobile
 @media screen and (max-width: $mobile-breakpoint-max-width) {
     .modal {
+        max-width: 600px;
         height: 100% !important;
         width: 100% !important;
 
         .heading {
+            padding: 0 30px;
             .title-wrapper {
                 flex-direction: column;
             }
         }
 
         .content {
-            padding: 1.5em;
+            padding: 30px;
+        }
+
+        .buttons {
+            padding: 30px;
         }
     }
 }
