@@ -21,7 +21,7 @@ export default function Providers({ walletAddress, networkDetails, relayerURL, p
             limits: 'up to 15k EUR/monthly on and off ramp',
             currencies: 'GBP, EUR, USD and many more',
             networks: ['ethereum', 'polygon', 'binance-smart-chain', 'fantom'],
-            onClick: () => openGuardarian()
+            onClick: () => openGuardarian('buy')
         },
         {
             logo: KRIPTOMAT_LOGO,

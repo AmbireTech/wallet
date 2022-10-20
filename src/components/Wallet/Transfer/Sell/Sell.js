@@ -11,9 +11,11 @@ const Sell = ({ walletAddress, networkDetails, relayerURL, portfolio }) => {
 
   const shouldBeDisabled = (networks) => networks.includes(networkDetails.id)
 
+  const handleSell = () => openGuardarian('sell')
+
   return (
     <div className={styles.wrapper}>
-      <div className={cn(styles.provider, { [styles.disabled]: !shouldBeDisabled(networks) })} onClick={openGuardarian}>
+      <div className={cn(styles.provider, { [styles.disabled]: !shouldBeDisabled(networks) })} onClick={handleSell}>
           <div className={styles.logo}>
             <img src={GUARDARIAN_LOGO} alt='guardarian-logo'></img>
           </div>
