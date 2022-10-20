@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react'
+import cn from 'classnames'
 import { ReactComponent as ClockIcon } from 'resources/icons/clock.svg'
 
 import styles from './CountdownTimer.module.scss'
 
-const CountdownTimer = ({ seconds, setTimeIsUp }) => {
+const CountdownTimer = ({ seconds, setTimeIsUp, className }) => {
     const [counter, setCounter] = useState(seconds)
     const [timerFormatted, setTimerFormatted] = useState('')
 
@@ -26,8 +27,7 @@ const CountdownTimer = ({ seconds, setTimeIsUp }) => {
 
     return (
         <div
-            className={styles.wrapper}
-            style={isTimeIsUp ? { color: 'red' } : {}}
+            className={cn(styles.wrapper, className, {[styles.isTimeUp]: isTimeIsUp})}
         >
             <ClockIcon /> 
             <label>{timerFormatted}</label>
