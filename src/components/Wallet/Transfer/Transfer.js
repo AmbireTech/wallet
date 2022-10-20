@@ -242,7 +242,8 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
     }, [address, amount, selectedAcc, selectedAsset, addressConfirmed, showSWAddressWarning, sWAddressConfirmed, isKnownAddress, addToast, selectedNetwork, addAddress, uDAddress, disabled, ensAddress])
 
     const amountLabel = <div className="amount-label">Available Amount: <span>{maxAmountFormatted} {selectedAsset?.symbol}</span></div>
-
+    const sortFeeAssets = (a, b) => a.label === 'wallet' ? 1 : a.label.toLowerCase() > b.label.toLowerCase() ? 1 : -1
+    
     return (
         <div id="transfer" style={{ justifyContent: gasTankDetails ? 'center' : '' }}>
            <div className="panel">
@@ -255,7 +256,7 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
                         :
                         assetsItems.length ?
                             <div className="form">
-                                <Select searchable defaultValue={asset} items={assetsItems.sort((a, b) => a.label.toLowerCase() > b.label.toLowerCase() ? 1 : -1)} onChange={({ value }) => setAsset(value)}/>
+                                <Select searchable defaultValue={asset} items={assetsItems.sort((a, b) => sortFeeAssets(a, b))} onChange={({ value }) => setAsset(value)}/>
                                 { feeBaseTokenWarning ? <p className='gas-tank-convert-msg'><MdWarning /> {feeBaseTokenWarning}</p> : <></>}
                                 <NumberInput
                                     label={amountLabel}
