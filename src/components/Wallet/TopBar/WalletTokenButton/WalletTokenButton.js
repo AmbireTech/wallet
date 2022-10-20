@@ -39,7 +39,7 @@ const WalletTokenButton = ({ rewardsData, account = {}, network, hidePrivateValu
                 <span>
                     {hidePrivateValue(pendingTokensTotal)}
                 </span>
-                WALLET REWARDS
+                $ WALLETS
             </Button>
     )
 }
