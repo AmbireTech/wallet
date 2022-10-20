@@ -139,10 +139,10 @@ const OtpTwoFAModal = ({ relayerURL, selectedAcc, setCacheBreak }) => {
             className={styles.modal}
             buttons={!isLoading ? (<Button primaryGradient type="submit" disabled={isTimeIsUp} className={styles.button}>Enable 2FA</Button>) : (<Button disabled className={styles.button}><Loading /></Button>)}
             title="Two Factor Authentication" 
-            topRight={(<CountdownTimer seconds={TIMER_IN_SECONDS} setTimeIsUp={handleTimeIsUp}/>)}
         >
             <div className={styles.wrapper}>
                 {isTimeIsUp && <div className={styles.timerResetMsg}>Please reopen the modal to reset the session.</div>}
+                <CountdownTimer seconds={TIMER_IN_SECONDS} setTimeIsUp={handleTimeIsUp} className={styles.timer} />
                 <div className={styles.imgWrapper}>
                     <img alt="qr-code" src={imageURL}></img>
                 </div>
@@ -154,10 +154,11 @@ const OtpTwoFAModal = ({ relayerURL, selectedAcc, setCacheBreak }) => {
                     {showSecret && (<><span>Enter this OTP in your app:</span><div>{secret}</div></>)}
                 </div>
                 <form onSubmit={handleSubmit}>
-                    <div>
+                    <div className={styles.emailWrapper}>
                         <h4>Confirmation code sent via Email</h4>
-                        <div className={styles.inputWrapper}>
+                        <div className={styles.emailBody}>
                             <TextInput
+                                className={styles.emailInput}
                                 pattern='[0-9]+'
                                 title='Confirmation code should be 6 digits'
                                 autoComplete='nope'
@@ -170,7 +171,7 @@ const OtpTwoFAModal = ({ relayerURL, selectedAcc, setCacheBreak }) => {
                             <Button type="button" primaryGradient disabled={isTimeIsUp} onClick={sendEmail}>Send Email</Button>
                         </div>
                     </div>
-                    <div>
+                    <div className={styles.authenticatorWrapper}>
                         <h4>Authenticator app code</h4>
                         <TextInput
                             placeholder="Enter the code from authenticator app"
