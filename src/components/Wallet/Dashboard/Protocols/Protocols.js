@@ -97,7 +97,7 @@ const Protocols = ({ portfolio, network, account, hidePrivateValue, userSorting,
                     <span className="symbol">{ symbol }</span>
                 </div>
                 <div className="dollar">
-                    <span className="symbol">$</span>{ price ?  hidePrivateValue(balanceUSD.toFixed(2))  : '-'}
+                    <span className="symbol">${' '}</span>{ price ?  hidePrivateValue(balanceUSD.toFixed(2))  : '-'}
                     {unconfirmed && <span className="balance-awaiting"> awaiting signature { hidePrivateValue(unconfirmed.balanceUSD.toFixed(2)) } </span> }
                     {pending && <span className="balance-pending"> pending { hidePrivateValue(pending.balanceUSD.toFixed(2)) } </span> }
                 </div>

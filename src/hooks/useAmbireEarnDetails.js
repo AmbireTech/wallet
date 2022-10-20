@@ -42,7 +42,6 @@ const useAmbireEarnDetails = ({accountId, addresses, tokenLabel}) => {
             sharesTokensTransfersInLogs,
             sharesTokensTransfersOutLogs,
         ] = await Promise.all([
-            xWalletContract.timeToUnbond(),
             xWalletContract.shareValue(),
             xWalletContract.totalSupply(),
             xWalletContract.balanceOf(accountId),
