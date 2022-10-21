@@ -384,7 +384,6 @@ const AmbireTokensCard = ({ networkId, accountId, tokens, rewardsData, addReques
                         maxTokens, 
                         shares, 
                         unlocksAt, 
-                        blockNumber, 
                         walletValue } = leavePendingToUnlockOrReadyToWithdraw
                 
                     setLeaveLog({
@@ -394,8 +393,7 @@ const AmbireTokensCard = ({ networkId, accountId, tokens, rewardsData, addReques
                         walletValue: utils.formatUnits(walletValue.toString(), 18)
                     })
                 
-                    const { timestamp } = await provider.getBlock(blockNumber)
-                    let remainingTime = leaveLog ? (leaveLog.unlocksAt.toString()) - (Date.now() - (timestamp * 1000)) : null
+                    let remainingTime = leaveLog ? ((leaveLog.unlocksAt.toString() * 1000) - Date.now()) : null
                     if (remainingTime <= 0) remainingTime = 0
                     setLockedRemainingTime(remainingTime)    
                 } else {
