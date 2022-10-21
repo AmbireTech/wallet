@@ -1,4 +1,4 @@
-name: Build & deploy Paper backup staging
+name: Build & deploy staging
 
 on:
   push:
@@ -9,31 +9,45 @@ on:
       - paper-backup
 
 jobs:
-  build_and_deploy:
-    name: Build and Deploy dapp catalog
+  build:
+    name: Build-staging
     runs-on: ubuntu-latest
-    concurrency:
-      group: ${{ github.workflow }}-${{ github.ref }}
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-    - name: Install Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: 16.x
+      - name: Install Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: 16.x
 
-    - name: Install NPM packages
-      run: npm ci --no-audit
+      - name: Install NPM packages
+        run: npm ci
 
-    - name: Build project
-      run: npm run build
+      - name: Build project
+        run: npm run build
 
-    - name: Deploy gh-pages (paper backup)
-      if: github.ref == 'refs/heads/paper-backup'
-      uses: peaceiris/actions-gh-pages@v3
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./build
-        destination_dir: ./paperbackup
-        cname: wallet.ambire.com
+      - name: Upload production-ready build files
+        uses: actions/upload-artifact@v2
+        with:
+          name: production-files
+          path: ./build
+  deploy-staging:
+    name: Deploy staging
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/paper-backup'
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: production-files
+          path: ./build
+
+      - name: Deploy to gh-pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./build
+          destination_dir: ./paperbackup
+          cname: wallet.ambire.com
