@@ -1,11 +1,9 @@
 import "./Wallet.scss"
 
-import { lazy, Suspense, useCallback, useEffect, useMemo, useRef } from 'react'
+import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Switch, Route, Redirect, useLocation, useRouteMatch } from "react-router-dom"
 import PluginGnosisSafeApps from 'components/Plugins/GnosisSafeApps/GnosisSafeApps'
 import { useModals, usePermissions, useLocalStorage } from 'hooks'
-
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import { isFirefox } from 'lib/isFirefox'
 import unsupportedDApps from 'ambire-common/src/constants/unsupportedDApps'
