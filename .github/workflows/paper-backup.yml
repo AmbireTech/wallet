@@ -1,4 +1,4 @@
-name: Build & deploy Dapp catalog staging
+name: Build & deploy Paper backup staging
 
 on:
   push:
@@ -30,7 +30,7 @@ jobs:
       run: npm run build
 
     - name: Deploy gh-pages (dapp catalog)
-      if: github.ref == 'refs/heads/dapp-catalog'
+      if: github.ref == 'refs/heads/paper-backup'
       uses: peaceiris/actions-gh-pages@v3
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
