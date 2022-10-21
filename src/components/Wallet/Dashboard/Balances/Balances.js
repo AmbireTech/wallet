@@ -9,6 +9,8 @@ import networks from 'consts/networks'
 import BalanceItem from './BalanceItem/BalanceItem'
 import { useEffect, useRef } from 'react'
 
+import { ReactComponent as AlertCircle } from 'resources/icons/alert-circle.svg'
+
 const Balances = ({ portfolio, selectedNetwork, setNetwork, hidePrivateValue, relayerURL, selectedAccount, match }) => {
     const otherBalancesRef = useRef()
     const history = useHistory()
@@ -54,7 +56,7 @@ const Balances = ({ portfolio, selectedNetwork, setNetwork, hidePrivateValue, re
         <div className={styles.wrapper}>
             { portfolio.isCurrNetworkBalanceLoading && otherBalancesLoading ? <Loading /> : (
                 <div className={styles.otherBalances} ref={otherBalancesRef}>
-                    { otherBalancesLoading ? <Loading /> : (
+                    { otherBalances.length > 0 ? (
                         <>
                             {
                                 otherBalances.filter(({ network }) => networkDetails(network)).map(({ network, total }, i) => (
@@ -81,7 +83,12 @@ const Balances = ({ portfolio, selectedNetwork, setNetwork, hidePrivateValue, re
                                     }
                                 />
                             }
-                        </>)
+                        </>) : <div className={styles.noOtherBalancesWrapper}>
+                            <div className={styles.noOtherBalances}>
+                                <AlertCircle />
+                                <label>You don't have any tokens on this network</label>
+                            </div>
+                        </div>
                     }
                 </div>
             )}
