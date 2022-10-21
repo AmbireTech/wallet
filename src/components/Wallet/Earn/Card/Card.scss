@@ -10,6 +10,9 @@
     background: $c-ebony-clay;
     border: 1px solid $c-fiord;
     border-radius: 12px;
+    max-height: 700px;
+    min-height: 450px;
+    max-width: 450px;
 
     .amount-label {
         width: 100%;
@@ -112,6 +115,8 @@
 // Mobile
 @media screen and (max-width: $mobile-breakpoint-max-width) {
     .card {
+        min-height: unset;
+        max-height: unset;
         width: 100%;
         padding: 20px;
     }
