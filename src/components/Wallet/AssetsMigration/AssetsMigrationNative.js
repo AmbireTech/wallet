@@ -286,7 +286,7 @@ const AssetsMigrationNative = ({
                 </div>
 
                 {
-                  maxRecommendedAmount !== null && nativeAmount > maxRecommendedAmount &&
+                  maxRecommendedAmount !== null && new BigNumber(nativeAmount).gt(maxRecommendedAmount) &&
                   <div className={'notification-hollow warning mt-4'}>
                     <div>
                       {

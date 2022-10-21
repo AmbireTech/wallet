@@ -26,7 +26,7 @@ const Links = () => {
             <a className="item" href="https://twitter.com/AmbireWallet" target="_blank" rel="noreferrer">
                 <BsTwitter/> Twitter
             </a>
-            <a className="item" href="https://t.me/AmbireWallet" target="_blank" rel="noreferrer">
+            <a className="item" href="https://t.me/AmbireOfficial" target="_blank" rel="noreferrer">
                 <BsTelegram/> Telegram
             </a>
             <a className="item" href="https://www.ambire.com/Ambire%20ToS%20and%20PP%20(26%20November%202021).pdf" target="_blank" rel="noreferrer">

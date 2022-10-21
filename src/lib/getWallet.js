@@ -1,5 +1,5 @@
 import { TrezorSubprovider } from '@0x/subproviders/lib/src/subproviders/trezor' // https://github.com/0xProject/0x-monorepo/issues/1400
-import TrezorConnect from 'trezor-connect'
+import TrezorConnect from '@trezor/connect-web'
 import { ethers } from 'ethers'
 import HDNode from 'hdkey'
 import { LedgerSubprovider } from '@0x/subproviders/lib/src/subproviders/ledger' // https://github.com/0xProject/0x-monorepo/issues/1400
@@ -30,6 +30,10 @@ export function getWallet({ signer, signerExtra, chainId }, opts = {}) {
 
 function getWalletNew({ chainId, signer, signerExtra }, opts) {
   if (signerExtra && signerExtra.type === 'trezor') {
+    TrezorConnect.manifest({
+      email: 'contactus@ambire.com',
+      appUrl: 'https://wallet.ambire.com'
+    })
     const providerTrezor = new TrezorSubprovider({
       trezorConnectClientApi: TrezorConnect,
       networkId: chainId

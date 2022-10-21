@@ -11,7 +11,7 @@ import AAVE_ICON from 'resources/aave.svg'
 import Card from 'components/Wallet/Earn/Card/Card'
 import { getDefaultTokensItems } from './defaultTokens'
 import approveToken from 'ambire-common/src/services/approveToken'
-import { EarnDetailsModal } from 'components/Modals'
+import EarnDetailsModal from 'components/Modals/EarnDetailsModal/EarnDetailsModal'
 import { MdInfo } from "react-icons/md"
 
 const AAVELendingPool = new Interface(AAVELendingPoolAbi)
@@ -54,7 +54,7 @@ const AAVECard = ({ networkId, tokens, account, addRequest }) => {
         const validate = async (type, functionData) => {
             const token = getToken(type, tokenAddress)
             const bigNumberHexAmount = ethers.utils.parseUnits(amount.toString(), token.decimals).toHexString()
-            await approveToken('Aave Pool', networkDetails.id, account, lendingPoolAddress, tokenAddress, addRequestTxn, addToast)
+            if (type === 'deposit') await approveToken('Aave Pool', networkDetails.id, account, lendingPoolAddress, tokenAddress, addRequestTxn, addToast)
 
             try {
                 addRequestTxn(`aave_pool_${type}_${Date.now()}`, {

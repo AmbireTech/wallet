@@ -9,42 +9,42 @@ import {
   Redirect,
   Prompt
 } from 'react-router-dom'
-import { useState, useEffect, useMemo, useCallback } from 'react'
-import EmailLogin from './components/EmailLogin/EmailLogin'
-import AddAccount from './components/AddAccount/AddAccount'
-import Wallet from './components/Wallet/Wallet'
+import { useState, useEffect, useMemo, useCallback, lazy, Suspense } from 'react'
 import ToastProvider from './components/ToastProvider/ToastProvider'
 import ModalProvider from './components/ModalProvider/ModalProvider'
-import SendTransaction from './components/SendTransaction/SendTransaction'
-import SignMessage from './components/SignMessage/SignMessage'
 import useAccounts from './hooks/accounts'
 import useNetwork from 'ambire-common/src/hooks/useNetwork'
 import useWalletConnect from './hooks/walletconnect'
 import useGnosisSafe from './hooks/useGnosisSafe'
 import useNotifications from './hooks/notifications'
-import { useAttentionGrabber,
-  usePortfolio,
-  useAddressBook,
-  useRelayerData,
-  usePrivateMode,
+import { useAttentionGrabber, 
+  usePortfolio, 
+  useAddressBook, 
+  useRelayerData, 
+  usePrivateMode, 
   useLocalStorage,
   useUtmTracking,
 } from './hooks'
 import { useToasts } from './hooks/toasts'
 import { useOneTimeQueryParam } from './hooks/oneTimeQueryParam'
-import WalletStakingPoolABI from 'ambire-common/src/constants/abis/WalletStakingPoolABI.json'
 import useRewards from 'ambire-common/src/hooks/useRewards'
-import { Contract, utils } from 'ethers'
-import { getProvider } from './lib/provider'
 import allNetworks from './consts/networks'
+import { Loading } from 'components/common'
+import ConstantsProvider from 'components/ConstantsProvider/ConstantsProvider'
 import useDapps from 'ambire-common/src/hooks/useDapps'
 import { getManifestFromDappUrl } from 'ambire-common/src/services/dappCatalog'
 import { fetch } from 'lib/fetch'
 
-const relayerURL = process.env.REACT_APP_RELAYRLESS === 'true'
-                  ? null
+const EmailLogin = lazy(() => import('./components/EmailLogin/EmailLogin'))
+const AddAccount = lazy(() => import('./components/AddAccount/AddAccount'))
+const Wallet = lazy(() => import('./components/Wallet/Wallet'))
+const SendTransaction = lazy(() => import('./components/SendTransaction/SendTransaction'))
+const SignMessage = lazy(() => import('./components/SignMessage/SignMessage'))
+
+const relayerURL = process.env.REACT_APP_RELAYRLESS === 'true' 
+                  ? null 
                   : process.env.hasOwnProperty('REACT_APP_RELAYER_URL')
-                    ? process.env.REACT_APP_RELAYER_URL
+                    ? process.env.REACT_APP_RELAYER_URL 
                     : 'http://localhost:1934'
 
 setTimeout(() => {
@@ -59,7 +59,7 @@ setTimeout(() => {
   console.log('At Ambire, we care about our users 💜. Safety is our top priority! DO NOT PASTE ANYTHING HERE or it could result in the LOSS OF YOUR FUNDS!')
 }, 4000)
 
-function AppInner() {
+function AppInner() { 
   // basic stuff: currently selected account, all accounts, currently selected network
   const dappUrl = useOneTimeQueryParam('dappUrl')
   const [pluginData, setPluginData] = useState(null)
@@ -88,48 +88,10 @@ function AppInner() {
     useStorage: useLocalStorage
   }, [selectedAcc, network])
 
-  // Attach meta data to req, if needed
-  const attachMeta = async req => {
-    let meta
-
-    const WALLET_TOKEN_ADDRESS = '0x88800092ff476844f74dc2fc427974bbee2794ae'
-    const WALLET_STAKING_ADDRESS = '0x47cd7e91c3cbaaf266369fe8518345fc4fc12935'
-
-    //polygon tests
-    // const WALLET_TOKEN_ADDRESS = '0xe9415e904143e42007865e6864f7f632bd054a08'
-    // const WALLET_STAKING_ADDRESS = '0xec3b10ce9cabab5dbf49f946a623e294963fbb4e'
-
-    const shouldAttachMeta =  [WALLET_TOKEN_ADDRESS, WALLET_STAKING_ADDRESS].includes(req.txn.to.toLowerCase())
-
-    if (shouldAttachMeta) {
-      const WALLET_STAKING_POOL_INTERFACE = new utils.Interface(WalletStakingPoolABI)
-      const provider = getProvider(network.id)
-      const stakingTokenContract = new Contract(WALLET_STAKING_ADDRESS, WALLET_STAKING_POOL_INTERFACE, provider)
-      const shareValue = await stakingTokenContract.shareValue()
-      const { walletUsdPrice: walletTokenUsdPrice, xWALLETAPY: APY } = rewardsData.rewards
-
-      meta = {
-        xWallet: {
-          APY,
-          shareValue,
-          walletTokenUsdPrice,
-        },
-      }
-    }
-
-    if (!meta) return req
-
-    return { ...req, meta: { ...req.meta && req.meta, ...meta }}
-  }
-
   // Internal requests: eg from the Transfer page, Security page, etc. - requests originating in the wallet UI itself
   // unlike WalletConnect or SafeSDK requests, those do not need to be persisted
   const [internalRequests, setInternalRequests] = useState([])
-  const addRequest = async req => {
-    const request = await attachMeta(req)
-
-    return setInternalRequests(reqs => [...reqs, request])
-  }
+  const addRequest = async req => setInternalRequests(reqs => [...reqs, req])
 
   // Merge all requests
   const requests = useMemo(
@@ -156,11 +118,11 @@ function AppInner() {
     key: 'userSorting',
     defaultValue: {}
   })
-
+  
   // Gas Tank: Adding default state when the account is changed or created
   if (gasTankState.length && !gasTankState.find(i => i.account === selectedAcc)) {
     setGasTankState([...gasTankState, { account: selectedAcc, isEnabled: false }])
-  }
+  } 
 
 
   // Handling transaction signing requests
@@ -267,12 +229,15 @@ function AppInner() {
     if(!dappUrl) return
     async function checkPluginData() {
       const manifest = await getManifestFromDappUrl(fetch, dappUrl)
-      if(manifest) {
+      if(manifest) { 
         setPluginData(manifest)
         setPluginUrl(manifest.url)
       }
     }
     checkPluginData()
+      .catch(e => {
+        console.error('checkPluginData:', e)
+      })
   }, [dappUrl, setPluginUrl])
 
   return (<>
@@ -280,95 +245,100 @@ function AppInner() {
       message={(location, action) => {
         if (action === 'POP') return onPopHistory()
         return true
-      }}/>
+      }}
+    />
 
-    {!!everythingToSign.length && (<SignMessage
-      selectedAcc={selectedAcc}
-      account={accounts.find(x => x.id === selectedAcc)}
-      everythingToSign={everythingToSign}
-      totalRequests={everythingToSign.length}
-      connections={connections}
-      relayerURL={relayerURL}
-      network={network}
-      resolve={outcome => resolveMany([everythingToSign[0].id], outcome)}
-    ></SignMessage>)}
-
-    {sendTxnState.showing ? (
-      <SendTransaction
-        accounts={accounts}
+    <Suspense fallback={<Loading />}>
+      {!!everythingToSign.length && (<SignMessage
         selectedAcc={selectedAcc}
-        network={network}
-        requests={eligibleRequests}
-        resolveMany={resolveMany}
+        account={accounts.find(x => x.id === selectedAcc)}
+        everythingToSign={everythingToSign}
+        totalRequests={everythingToSign.length}
+        connections={connections}
         relayerURL={relayerURL}
-        onDismiss={onDismissSendTxns}
-        replacementBundle={sendTxnState.replacementBundle}
-        replaceByDefault={sendTxnState.replaceByDefault}
-        mustReplaceNonce={sendTxnState.mustReplaceNonce}
-        onBroadcastedTxn={onBroadcastedTxn}
-        gasTankState={gasTankState}
-      ></SendTransaction>
-    ) : (<></>)
-    }
+        network={network}
+        resolve={outcome => resolveMany([everythingToSign[0].id], outcome)}
+      ></SignMessage>)}
 
-    <Switch>
-      <Route path="/add-account">
-        <AddAccount relayerURL={relayerURL} onAddAccount={onAddAccount} utmTracking={utmTracking} pluginData={pluginData} accounts={accounts}></AddAccount>
-      </Route>
+      {sendTxnState.showing ? (
+        <SendTransaction
+          accounts={accounts}
+          selectedAcc={selectedAcc}
+          network={network}
+          requests={eligibleRequests}
+          resolveMany={resolveMany}
+          relayerURL={relayerURL}
+          onDismiss={onDismissSendTxns}
+          replacementBundle={sendTxnState.replacementBundle}
+          replaceByDefault={sendTxnState.replaceByDefault}
+          mustReplaceNonce={sendTxnState.mustReplaceNonce}
+          onBroadcastedTxn={onBroadcastedTxn}
+          gasTankState={gasTankState}
+        ></SendTransaction>
+      ) : (<></>)}
+    </Suspense>
 
-      <Route path="/email-login">
-        <EmailLogin relayerURL={relayerURL} onAddAccount={onAddAccount}></EmailLogin>
-      </Route>
+    <Suspense fallback={<Loading />}>
+      <Switch>
+        <Route path="/add-account">
+          <AddAccount relayerURL={relayerURL} onAddAccount={onAddAccount} utmTracking={utmTracking} pluginData={pluginData}></AddAccount>
+        </Route>
 
-      {selectedAcc ?
-        <Route path="/wallet">
-          <Wallet
-            match={{ url: "/wallet" }}
-            accounts={accounts}
-            selectedAcc={selectedAcc}
-            addressBook={addressBook}
-            portfolio={portfolio}
-            onSelectAcc={onSelectAcc}
-            onRemoveAccount={onRemoveAccount}
-            allNetworks={allNetworks}
-            network={network}
-            setNetwork={setNetwork}
-            addRequest={addRequest}
-            connections={connections}
-            // needed by the top bar to disconnect/connect dapps
-            connect={connect}
-            disconnect={disconnect}
-            isWcConnecting={isConnecting}
-            // needed by the gnosis plugins
-            gnosisConnect={gnosisConnect}
-            gnosisDisconnect={gnosisDisconnect}
-            // required for the security and transactions pages
-            relayerURL={relayerURL}
-            // required by the transactions page
-            eligibleRequests={eligibleRequests}
-            showSendTxns={showSendTxns}
-            setSendTxnState={setSendTxnState}
-            onAddAccount={onAddAccount}
-            rewardsData={rewardsData}
-            privateMode={privateMode}
-            useStorage={useLocalStorage}
-            userSorting={userSorting}
-            setUserSorting={setUserSorting}
-            dappsCatalog={dappsCatalog}
-            gasTankState={gasTankState}
-            setGasTankState={setGasTankState}
-            showThankYouPage={showThankYouPage}
-          >
-          </Wallet>
-        </Route> :
-        <Redirect to={"/add-account"} />
-      }
+        <Route path="/email-login">
+          <EmailLogin relayerURL={relayerURL} onAddAccount={onAddAccount}></EmailLogin>
+        </Route>
 
-      <Route path="/">
-        <Redirect to={selectedAcc ? "/wallet/dashboard" : "/add-account"}/>
-      </Route>
+        {selectedAcc ?
+          <Route path="/wallet">
+            <Wallet
+              match={{ url: "/wallet" }}
+              accounts={accounts}
+              selectedAcc={selectedAcc}
+              addressBook={addressBook}
+              portfolio={portfolio}
+              onSelectAcc={onSelectAcc}
+              onRemoveAccount={onRemoveAccount}
+              allNetworks={allNetworks}
+              network={network}
+              setNetwork={setNetwork}
+              addRequest={addRequest}
+              connections={connections}
+              // needed by the top bar to disconnect/connect dapps
+              connect={connect}
+              disconnect={disconnect}
+              isWcConnecting={isConnecting}
+              // needed by the gnosis plugins
+              gnosisConnect={gnosisConnect}
+              gnosisDisconnect={gnosisDisconnect}
+              // required for the security and transactions pages
+              relayerURL={relayerURL}
+              useRelayerData={useRelayerData}
+              // required by the transactions page
+              eligibleRequests={eligibleRequests}
+              showSendTxns={showSendTxns}
+              setSendTxnState={setSendTxnState}
+              onAddAccount={onAddAccount}
+              rewardsData={rewardsData}
+              privateMode={privateMode}
+              useStorage={useLocalStorage}
+              userSorting={userSorting}
+              setUserSorting={setUserSorting}
+              gasTankState={gasTankState}
+              setGasTankState={setGasTankState}
+              showThankYouPage={showThankYouPage}
+              dappsCatalog={dappsCatalog}
+            >
+            </Wallet>
+          </Route> :
+          <Redirect to={"/add-account"} />
+        }
 
-    </Switch>
+        <Route path="/">
+          <Redirect to={selectedAcc ? "/wallet/dashboard" : "/add-account"}/>
+        </Route>
+
+      </Switch>
+    </Suspense>
   </>)
 }
 
@@ -376,11 +346,13 @@ function AppInner() {
 export default function App() {
   return (
     <Router>
-      <ToastProvider>
-        <ModalProvider>
-          <AppInner/>
-        </ModalProvider>
-      </ToastProvider>
+      <ConstantsProvider>
+        <ToastProvider>
+          <ModalProvider>
+            <AppInner/>
+          </ModalProvider>
+        </ToastProvider>
+      </ConstantsProvider>
     </Router>
   )
 }

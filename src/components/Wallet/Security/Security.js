@@ -8,7 +8,7 @@ import { Interface, AbiCoder, keccak256 } from 'ethers/lib/utils'
 import accountPresets from 'ambire-common/src/constants/accountPresets'
 import privilegesOptions from 'ambire-common/src/constants/privilegesOptions'
 import { useRelayerData, useModals } from 'hooks'
-import { ResetPasswordModal } from 'components/Modals'
+import ResetPasswordModal from 'components/Modals/ResetPasswordModal/ResetPasswordModal'
 import AddAuthSigner from './AddAuthSigner/AddAuthSigner'
 import { useToasts } from 'hooks/toasts'
 import { useHistory } from 'react-router-dom'
@@ -20,6 +20,7 @@ import OtpTwoFADisableModal from 'components/Modals/OtpTwoFADisableModal/OtpTwoF
 import Backup from './Backup/Backup'
 import PendingRecoveryNotice from './PendingRecoveryNotice/PendingRecoveryNotice'
 import { getName } from 'lib/humanReadableTransactions'
+import useConstants from 'hooks/useConstants'
 
 const IDENTITY_INTERFACE = new Interface(
   require('adex-protocol-eth/abi/Identity5.2')
@@ -36,9 +37,10 @@ const Security = ({
   showSendTxns,
   onAddAccount
 }) => {
+  const { constants: { humanizerInfo } } = useConstants()
   const { showModal } = useModals()
   const [ cacheBreak, setCacheBreak ] = useState(() => Date.now())
-
+  
   useEffect(() => {
     if (Date.now() - cacheBreak > 30000) setCacheBreak(Date.now())
     const intvl = setTimeout(() => setCacheBreak(Date.now()), REFRESH_INTVL)
@@ -128,10 +130,10 @@ const Security = ({
       return addToast('Unsupported without a connection to the relayer', { error: true })
     }
 
-    showModal(<OtpTwoFAModal
-      relayerURL={relayerURL}
-      selectedAcc={selectedAccount}
-      setCacheBreak={() => { setCacheBreak(Date.now()) }}
+    showModal(<OtpTwoFAModal 
+      relayerURL={relayerURL} 
+      selectedAcc={selectedAccount} 
+      setCacheBreak={() => { setCacheBreak(Date.now()) }} 
       />)
   }
 
@@ -139,18 +141,18 @@ const Security = ({
     if (!relayerURL) {
       return addToast('Unsupported without a connection to the relayer', { error: true })
     }
-
-    showModal(<OtpTwoFADisableModal
-      relayerURL={relayerURL}
-      selectedAcc={selectedAccount}
-      setCacheBreak={() => { setCacheBreak(Date.now()) }}
+    
+    showModal(<OtpTwoFADisableModal 
+      relayerURL={relayerURL} 
+      selectedAcc={selectedAccount} 
+      setCacheBreak={() => { setCacheBreak(Date.now()) }} 
       />)
   }
-
+  
   // JSON import
   const onDrop = useCallback((acceptedFiles, rejectedFiles) => {
     const reader = new FileReader()
-
+    
     if (rejectedFiles.length) {
       addToast(`${rejectedFiles[0].file.path} - ${(rejectedFiles[0].file.size / 1024).toFixed(2)} KB. ${rejectedFiles[0].errors[0].message}`, { error: true })
     }
@@ -163,7 +165,7 @@ const Security = ({
         const content = readerEvent.target.result
         const fileContent = JSON.parse(content)
         const validatedFile = validateImportedAccountProps(fileContent)
-
+        
         if (validatedFile.success) onAddAccount(fileContent, { select: true })
         else addToast(validatedFile.message, { error: true})
       }
@@ -200,8 +202,8 @@ const Security = ({
   const privList = Object.entries(privileges)
     .map(([addr, privValue]) => {
       if (!privValue) return null
-
-      const addressName = getName(addr) || null
+  
+      const addressName = getName(humanizerInfo, addr) || null
       const isQuickAcc = addr === accountPresets.quickAccManager
       const privText = isQuickAcc
         ? `Email/password signer (${selectedAccount.email || 'unknown email'})`
@@ -216,8 +218,8 @@ const Security = ({
         <li key={addr}>
           <TextInput className="depositAddress" value={privText} disabled />
           <div className="btns-wrapper">
-            {isQuickAcc && (otpEnabled !== null) && (otpEnabled ?
-              (<Button red onClick={handleDisableOtp} small>Disable 2FA</Button>) :
+            {isQuickAcc && (otpEnabled !== null) && (otpEnabled ? 
+              (<Button red onClick={handleDisableOtp} small>Disable 2FA</Button>) : 
               (<Button onClick={handleEnableOtp} small>Enable 2FA</Button>)
             )}
             {isQuickAcc && (<Button
@@ -298,18 +300,15 @@ const Security = ({
         (isDragAccept || isDragReject)
         && (<div className={isDragAccept ? 'acceptStyleIcon' : 'rejectStyleIcon'}><RiDragDropLine size={100}/></div>)
       }
-
+      
       <input {...getInputProps()} />
       {signersFragment}
 
-      <Backup
+      <Backup 
         selectedAccount={selectedAccount}
-        accounts={accounts}
         onOpen={open}
         onAddAccount={onAddAccount}
-        relayerURL={relayerURL}
       />
-
     </section>
   )
 }

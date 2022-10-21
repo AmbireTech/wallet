@@ -1,26 +1,33 @@
 import "./Wallet.scss"
 
+import { lazy, Suspense, useCallback, useEffect, useMemo, useRef } from 'react'
 import { Switch, Route, Redirect, useLocation, useRouteMatch } from "react-router-dom"
-import Dashboard from "./Dashboard/Dashboard"
-import TopBar from "./TopBar/TopBar"
-import SideBar from "./SideBar/SideBar"
-import Deposit from "./Deposit/Deposit"
-import Swap from "./Swap/Swap"
-import Transfer from "./Transfer/Transfer"
-import Earn from "./Earn/Earn"
-import DappsCatalog from './DappsCatalog/DappsCatalog'
-import Security from "./Security/Security"
-import Transactions from './Transactions/Transactions'
 import PluginGnosisSafeApps from 'components/Plugins/GnosisSafeApps/GnosisSafeApps'
-import Collectible from "./Collectible/Collectible"
-import { PermissionsModal, UnsupportedDAppsModal } from 'components/Modals'
 import { useModals, usePermissions, useLocalStorage } from 'hooks'
+
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+
 import { isFirefox } from 'lib/isFirefox'
-import CrossChain from "./CrossChain/CrossChain"
-import OpenSea from "./OpenSea/OpenSea"
 import unsupportedDApps from 'ambire-common/src/constants/unsupportedDApps'
-import Gas from "./Gas/Gas"
+// Components
+import TopBar from "./TopBar/TopBar"
+import PermissionsModal from "components/Modals/PermissionsModal/PermissionsModal"
+import UnsupportedDAppsModal from "components/Modals/UnsupportedDAppsModal/UnsupportedDAppsModal"
+import SideBar from "./SideBar/SideBar"
+import { Loading } from "components/common"
+import DappsCatalog from "./DappsCatalog/DappsCatalog"
+// Pages
+const Transfer = lazy(() => import("./Transfer/Transfer"))
+const Dashboard = lazy(() => import("./Dashboard/Dashboard"))
+const Swap = lazy(() => import("./Swap/Swap"))
+const Earn = lazy(() => import("./Earn/Earn"))
+const Security = lazy(() => import("./Security/Security"))
+const Transactions = lazy(() => import('./Transactions/Transactions'))
+const Collectible = lazy(() => import("./Collectible/Collectible"))
+const CrossChain = lazy(() => import("./CrossChain/CrossChain"))
+const OpenSea = lazy(() => import("./OpenSea/OpenSea"))
+const Deposit = lazy(() => import("./Deposit/Deposit"))
+const Gas = lazy(() => import("./Gas/Gas"))
 
 export default function Wallet(props) {
   const { showModal } = useModals()
@@ -77,6 +84,7 @@ export default function Wallet(props) {
         addRequest={props.addRequest}
         accounts={props.accounts}
         addressBook={props.addressBook}
+        relayerURL={props.relayerURL}
       />
     },
     {
@@ -211,7 +219,8 @@ export default function Wallet(props) {
       showThankYouPage={props.showThankYouPage}
     />
 
-    if (showCauseOfEmail || showCauseOfPermissions || showCauseOfBackupOptout) showModal(permissionsModal, { disableClose: true })
+    const isMobile = navigator.platform.includes('Android') || navigator.platform.includes('iOS')
+    if ((showCauseOfEmail || showCauseOfPermissions || showCauseOfBackupOptout) && !isMobile) showModal(permissionsModal, { disableClose: true })
   }, [props.accounts, props.relayerURL, props.onAddAccount, props.showThankYouPage, props.selectedAcc, arePermissionsLoaded, isClipboardGranted, isNoticationsGranted, modalHidden, showModal])
 
   useEffect(() => handlePermissionsModal(), [handlePermissionsModal])
@@ -242,22 +251,24 @@ export default function Wallet(props) {
 
       <div id="wallet-container" className={dapModeSidebar ? 'dapp-mode' : ''} ref={walletContainer}>
         <div id="wallet-container-inner">
-          <Switch>
-            {
-              routes.map(({ path, component }) => (
-                <Route exact path={props.match.url + path} key={path}>
-                  <LoggedInGuard/>
-                  { component ? component : null }
-                </Route>
-              ))
-            }
-            <Route path={props.match.url + '/*'}>
-              <Redirect to={props.match.url + '/dashboard'} />
-            </Route>
-            <Route path={props.match.url}>
-              <LoggedInGuard/>
-            </Route>
-          </Switch>
+          <Suspense fallback={<Loading />}>
+            <Switch>
+              {
+                routes.map(({ path, component }) => (
+                  <Route exact path={props.match.url + path} key={path}>
+                    <LoggedInGuard/>
+                      { component ? component : null }
+                  </Route>
+                ))
+              }
+              <Route path={props.match.url + '/*'}>
+                <Redirect to={props.match.url + '/dashboard'} />
+              </Route>
+              <Route path={props.match.url}>
+                <LoggedInGuard/>
+              </Route>
+            </Switch>
+          </Suspense>
         </div>
       </div>
     </div>
