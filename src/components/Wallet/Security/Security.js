@@ -304,8 +304,9 @@ const Security = ({
       <input {...getInputProps()} />
       {signersFragment}
 
-      <Backup 
+      <Backup
         selectedAccount={selectedAccount}
+        accounts={accounts}
         onOpen={open}
         onAddAccount={onAddAccount}
       />
