@@ -86,7 +86,7 @@ const Balances = ({ portfolio, selectedNetwork, setNetwork, hidePrivateValue, re
                         </>) : <div className={styles.noOtherBalancesWrapper}>
                             <div className={styles.noOtherBalances}>
                                 <AlertCircle />
-                                <label>You don't have any tokens on this network</label>
+                                <label>You don't have any tokens on the other networks.</label>
                             </div>
                         </div>
                     }
