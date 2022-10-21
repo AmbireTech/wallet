@@ -108,6 +108,11 @@ code {
   monospace;
 }
 
+::placeholder {
+  color:  #6770B3;
+  opacity: 1;
+}
+
 a {
   text-decoration: none;
   color: #ccc;
