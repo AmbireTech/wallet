@@ -42,7 +42,6 @@ const useAmbireEarnDetails = ({accountId, addresses, tokenLabel}) => {
             sharesTokensTransfersInLogs,
             sharesTokensTransfersOutLogs,
         ] = await Promise.all([
-            xWalletContract.timeToUnbond(),
             xWalletContract.shareValue(),
             xWalletContract.totalSupply(),
             xWalletContract.balanceOf(accountId),
@@ -297,8 +296,7 @@ const useAmbireEarnDetails = ({accountId, addresses, tokenLabel}) => {
         let remainingTime
         if (leavePendingToUnlockOrReadyToWithdraw && latestLog) {
             const { unlocksAt } = leavePendingToUnlockOrReadyToWithdraw
-            const { timestamp } = await ethProvider.getBlock(latestLog.blockNumber)
-            remainingTime = (unlocksAt.toString()) - (Date.now() - (timestamp * 1000))
+            remainingTime = (unlocksAt.toString() * 1000) - Date.now()
             if (remainingTime <= 0) remainingTime = 0
         } else {
             remainingTime = null
