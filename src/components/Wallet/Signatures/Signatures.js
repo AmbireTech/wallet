@@ -13,7 +13,7 @@ import { useHistory, useParams } from 'react-router-dom'
 
 const ITEMS_PER_PAGE = 8
 
-function Signatures({ selectedAcc, selectedNetwork }) {
+function Signatures({ selectedAcc, selectedNetwork, privateMode }) {
 
   const [messages] = useLocalStorage({
     storage: useLocalStorage,
@@ -71,7 +71,7 @@ function Signatures({ selectedAcc, selectedNetwork }) {
         !filteredMessages.length
           ? (
             <div className={'main-container'}>
-              No messages signed with the account {selectedAcc} yet on {selectedNetwork.id}
+              No messages signed with the account { privateMode.hidePrivateValue(selectedAcc) } yet on {selectedNetwork.id}
             </div>
           )
           : (
