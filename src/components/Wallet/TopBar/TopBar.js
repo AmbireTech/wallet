@@ -111,9 +111,9 @@ const TopBar = ({
           <img src='/resources/logo.svg' className={styles.logo} alt='ambire-logo' />
         </NavLink> }
         <div className={styles.mobileMenuRight} onClick={() => setMenuOpen(prev => !prev)}>
-          <div className={styles.icon} style={{backgroundImage: `url(${accountIcon})`}}></div>
+          <img className={styles.icon} src={accountIcon} alt="account-icon" />
           <MdOutlineArrowForward/>
-          <div className={styles.icon} style={{backgroundImage: `url(${networkIconsById[network.id]})`}}></div>
+          <img className={styles.icon} src={networkIconsById[network.id]} alt="network-icon" />
           <div className={styles.menuButton}>
             { isMenuOpen ? <MdOutlineClose/> : <MdOutlineMenu/> }
           </div>

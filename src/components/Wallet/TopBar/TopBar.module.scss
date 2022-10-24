@@ -135,13 +135,9 @@
 
             .icon {
                 height: 25px;
-                font-size: 2em;
                 width: 25px;
                 background-color: $c-mirage;
-                background-size: contain;
-                background-position: center center;
-                background-repeat: no-repeat;
-                border-radius: 100%;
+                border-radius: 8px;
             }
     
             .menuButton {
