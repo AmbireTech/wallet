@@ -24,16 +24,22 @@ $input-height: 60px;
                 left: 0;
                 height: 100%;
                 display: flex;
-                background-color: $c-mirage-dark;
+                background-color: $c-mirage;
                 align-items: center;
                 justify-content: center;
-                width: 48px;
+                width: 60px;
                 font-size: 24px;
                 color: $c-titan-white;
+                border-bottom: 2px solid transparent;
+                transition: all 0.1s ease-in-out;
             }
 
             input {
                 padding-left: 48px;
+
+                &:focus ~ .textInputContainerIcon {
+                    border-bottom-color: $c-titan-white;
+                }
             }
         }
         
