@@ -141,6 +141,12 @@
 // Mobile
 @media screen and (max-width: $mobile-breakpoint-max-width) {
     .wrapper {
+        .title {
+            svg {
+                width: 32px;
+                height: 32px;
+            }
+        }    
       
         .menu {
             min-width: unset;
