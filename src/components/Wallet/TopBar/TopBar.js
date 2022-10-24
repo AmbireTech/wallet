@@ -1,6 +1,7 @@
 import styles from "./TopBar.module.scss";
 
 import React, { useState, useMemo } from "react";
+import cn from 'classnames'
 import { NavLink, useRouteMatch } from "react-router-dom";
 import { MdOutlineArrowForward, MdOutlineClose, MdOutlineMenu, MdMenu, MdExitToApp, MdInfo } from "react-icons/md";
 import { ReactComponent as PrivacyOff } from './images/privacy-off.svg'
@@ -45,14 +46,15 @@ const TopBar = ({
 
   const account = accounts.find(({ id }) => id === selectedAcc)
   const accountIcon = blockies.create({ seed: account ? account.id : null }).toDataURL()
-
+  
   const visualEnv =
     (process.env.REACT_APP_VISUAL_ENV === 'dev')
       ? 'dev' : (
         new URL(document.URL).pathname.startsWith('/staging/')
       ) ? 'staging' : null
 
-    return (
+    return (<>
+    <div className={cn(styles.mobileBackground, {[styles.visible]: isMenuOpen})}></div>
     <div className={`${styles.wrapper} ${( visualEnv ? (`${styles.visualEnv} ${styles['visualEnv' + visualEnv]}`) : styles.wrapper) + (dappModeTopBar ? ` ${styles.dappMode}` : '')}`}>
       {
         visualEnv &&
@@ -138,7 +140,7 @@ const TopBar = ({
         <Links />
       </div>
     </div>
-  );
+  </>);
 };
 
 export default TopBar;
