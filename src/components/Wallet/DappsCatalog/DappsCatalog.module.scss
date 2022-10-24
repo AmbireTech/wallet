@@ -391,8 +391,18 @@ $gap: 12px;
 
 @media screen and (max-width: $mobile-breakpoint-max-width) {
   .wrapper {
+    .filterSection { 
+      flex-direction: column;
+    }
+
     .catalogItems {
       grid-template-columns: repeat(1, 1fr [col-start]);
+
+      .catalogItem {
+        max-width: 395px;
+        width: 100%;
+        margin: 0 auto;
+      }
     }
   }
 }
