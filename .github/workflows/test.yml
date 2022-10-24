@@ -3,10 +3,10 @@ name: Build & deploy 🔥 Ambire Wallet 🔥 (temp wf-tes 🐛)
 on:
   push:
     branches:
-      - development
+      - workflow-update
   pull_request:
     branches:
-      - development
+      - workflow-update
 permissions:
   contents: write
 jobs:
