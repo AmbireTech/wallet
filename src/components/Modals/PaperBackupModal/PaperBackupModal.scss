@@ -12,8 +12,6 @@
     padding: 12px;
     margin-bottom: 12px;
 
-    //background-color: $input-background-color;
-
     span {
       color: $primary-accent-color;
     }
@@ -103,11 +101,6 @@
           flex-grow: 1;
           text-align: center;
           transition: 250ms;
-          width: 25%;
-
-          &.selected {
-            //box-shadow: 0 0 5px 5px rgb(115, 0, 255);
-          }
 
           &:hover {
             background-color: mix($input-background-color-darker, $primary-accent-color, 50%);
@@ -125,11 +118,6 @@
             border-color: transparent;
             background-color: $input-background-color-darker;
             color: $primary-accent-color;
-
-            &:hover {
-              //background-color: transparent;
-              //border: 0;
-            }
 
           }
         }

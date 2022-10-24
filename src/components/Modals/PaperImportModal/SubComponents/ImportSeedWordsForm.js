@@ -141,11 +141,12 @@ const ImportSeedWordsForm = ({ accounts, selectedAccount, setModalSteps, foundAd
 
     const signature = await wallet.signMessage('get_identity_from_signer')
 
-    const url = `${relayerURL}/retrieveIdentityFromSigner/${signature}`
+    const url = `${relayerURL}/account-by-quickAccPrimaryKey/${signature}`
 
     fetchGet(url)
       .then(result => {
         if (result.success) {
+          debugger
           if (result.identities.length === 1) {
             setRetrievedIdentity(result.identities[0])
           } else {
@@ -167,7 +168,7 @@ const ImportSeedWordsForm = ({ accounts, selectedAccount, setModalSteps, foundAd
 
   useEffect(() => {
     if (retrievedIdentity) {
-      const existing = accounts.find(a => a.id.toLowerCase() === retrievedIdentity.id.toLowerCase() && !!a.primaryKeyBackup)
+      const existing = accounts && accounts.find(a => a.id.toLowerCase() === retrievedIdentity.id.toLowerCase() && !!a.primaryKeyBackup)
 
       if (existing) {
         setModalButtons([<Button full clear onClick={() => hideModal()} >
@@ -212,7 +213,7 @@ const ImportSeedWordsForm = ({ accounts, selectedAccount, setModalSteps, foundAd
 
       if (newAccount || retrievedIdentity.id.toLowerCase() === selectedAccount.id.toLowerCase()) {
 
-        const existing = accounts.find(a => a.id.toLowerCase() === retrievedIdentity.id.toLowerCase() && !!a.primaryKeyBackup)
+        const existing = accounts && accounts.find(a => a.id.toLowerCase() === retrievedIdentity.id.toLowerCase() && !!a.primaryKeyBackup)
 
         return (
           <div>
