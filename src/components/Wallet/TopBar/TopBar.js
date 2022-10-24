@@ -1,9 +1,8 @@
-import styles from "./TopBar.module.scss";
 
 import React, { useState, useMemo } from "react";
 import cn from 'classnames'
 import { NavLink, useRouteMatch } from "react-router-dom";
-import { MdOutlineArrowForward, MdOutlineClose, MdOutlineMenu, MdMenu, MdExitToApp, MdInfo } from "react-icons/md";
+import { MdOutlineArrowForward, MdMenu, MdExitToApp, MdInfo } from "react-icons/md";
 import { ReactComponent as PrivacyOff } from './images/privacy-off.svg'
 import { ReactComponent as PrivacyOn } from './images/privacy-on.svg'
 import Accounts from "./Accounts/Accounts";
@@ -15,6 +14,11 @@ import Links from "./Links/Links";
 import WalletTokenButton from "./WalletTokenButton/WalletTokenButton";
 import { Button, ToolTip } from 'components/common';
 import DAPPS_ICON from 'resources/dapps.svg';
+
+import { ReactComponent as MenuIcon } from 'resources/icons/burger-menu.svg'
+import { ReactComponent as CloseIcon } from 'resources/icons/close.svg' 
+
+import styles from "./TopBar.module.scss";
 
 const TopBar = ({
   useRelayerData,
@@ -115,7 +119,11 @@ const TopBar = ({
           <MdOutlineArrowForward/>
           <img className={styles.icon} src={networkIconsById[network.id]} alt="network-icon" />
           <div className={styles.menuButton}>
-            { isMenuOpen ? <MdOutlineClose/> : <MdOutlineMenu/> }
+            { isMenuOpen ? <CloseIcon /> : 
+              <div className={styles.menuIcon}>
+                <MenuIcon/>
+              </div>
+            }
           </div>
         </div>
       </div>

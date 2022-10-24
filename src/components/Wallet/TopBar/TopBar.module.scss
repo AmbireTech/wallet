@@ -143,6 +143,17 @@
             .menuButton {
                 @include flex-center-center;
                 font-size: 30px;
+                margin-left: 10px;
+
+                .menuIcon {
+                    width: 40px;
+                    height: 40px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    border-radius: 12px;
+                    background-color: rgba($c-titan-white, 0.05);
+                }
             }
         }
     }
@@ -232,6 +243,7 @@
             align-items: center;
             justify-content: space-between;
             width: 100%;
+            padding: 0 10px;
         }
 
         .container {
