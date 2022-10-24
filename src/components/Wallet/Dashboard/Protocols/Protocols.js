@@ -64,7 +64,7 @@ const Protocols = ({ portfolio, network, account, hidePrivateValue, userSorting,
 
     const shouldShowPlaceholder = (!isCurrNetworkBalanceLoading && !tokens.length)
 
-    const tokenItem = (index, img, symbol, balance, balanceUSD, address, send = false, network, decimals, category, sortedTokensLength, pending, unconfirmed, price) => 
+    const tokenItem = (index, img, symbol, balance, balanceUSD, address, send = false, network, decimals, category, sortedTokensLength, pending, unconfirmed, latest, price) => 
         {
             const logo = failedImg.includes(img) || !img ? getTokenIcon(network, address) : img
             return (<div className="token" key={`token-${address}-${index}`}
@@ -97,7 +97,7 @@ const Protocols = ({ portfolio, network, account, hidePrivateValue, userSorting,
                     <span className="symbol">{ symbol }</span>
                 </div>
                 <div className="dollar">
-                    <span className="symbol">${' '}</span>{ price ?  hidePrivateValue(balanceUSD.toFixed(2))  : '-'}
+                    <span className="symbol">${' '}</span>{ price ?  hidePrivateValue((latest ? latest.balanceUSD : balanceUSD).toFixed(2))  : '-'}
                     {unconfirmed && <span className="balance-awaiting"> awaiting signature { hidePrivateValue(unconfirmed.balanceUSD.toFixed(2)) } </span> }
                     {pending && <span className="balance-pending"> pending { hidePrivateValue(pending.balanceUSD.toFixed(2)) } </span> }
                 </div>
@@ -180,8 +180,8 @@ const Protocols = ({ portfolio, network, account, hidePrivateValue, userSorting,
                                 </div>
                                 <div className="list">
                                     { 
-                                        sortedTokens.map(({ address, symbol, tokenImageUrl, balance, balanceUSD, network, decimals, pending, unconfirmed, price }, i) =>
-                                            tokenItem(i, tokenImageUrl, symbol, balance, balanceUSD, address, true, network, decimals, 'tokens', sortedTokens.length, pending, unconfirmed, price))
+                                        sortedTokens.map(({ address, symbol, tokenImageUrl, balance, balanceUSD, network, decimals, pending, unconfirmed, latest, price }, i) =>
+                                            tokenItem(i, tokenImageUrl, symbol, balance, balanceUSD, address, true, network, decimals, 'tokens', sortedTokens.length, pending, unconfirmed, latest, price))
                                     }
                                 </div>
                             </div>
