@@ -34,7 +34,7 @@ jobs:
       uses: JamesIves/github-pages-deploy-action@v4.4.1
       with:
         branch: gh-pages
-        folder: ./build
+        folder: build
         cname: wallet.ambire.com
         clean-exclude: |
             staging
@@ -44,6 +44,10 @@ jobs:
             ethpow
             gastank
             relayerless
+            redesign
+            devcon6
+            paperbackup
+            portfolio-v2
             uniswap
 
 
