@@ -141,7 +141,7 @@ const ImportSeedWordsForm = ({ accounts, selectedAccount, setModalSteps, foundAd
 
     const signature = await wallet.signMessage('get_identity_from_signer')
 
-    const url = `${relayerURL}/retrieveIdentityFromSigner/${signature}`
+    const url = `${relayerURL}/account-by-quickAccPrimaryKey/${signature}`
 
     fetchGet(url)
       .then(result => {
