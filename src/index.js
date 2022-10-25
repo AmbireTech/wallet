@@ -1,6 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import '@fontsource/poppins';
+// If we want any other Poppins style/weight, we should import it manually here, i.e.:
+// import '@fontsource/poppins/600.css'
+import '@fontsource/poppins'; // Defaults to 400 weight
 import App from './App';
 import { ErrorBoundary } from './components/common';
 import reportWebVitals from './reportWebVitals';
