@@ -1,9 +1,0 @@
-@import 'variables.scss';
-
-#no-funds-placeholder {
-    min-height: 400px;
-    @include flex-center-center;
-    flex-direction: column;
-    font-size: 20px;
-    gap: 20px;
-}

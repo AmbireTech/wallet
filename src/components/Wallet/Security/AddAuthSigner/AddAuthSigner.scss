@@ -7,6 +7,7 @@
 
   .signer-address-input {
     flex: 1 1 auto;
+    gap: 10px;
     display: flex;
 
     .text-input {
@@ -15,7 +16,7 @@
   
     .dropdown {
       flex: 0 0 auto;
-      background-color: $input-background-color-darker;
+      background-color: $c-mirage;
     }
   }
 
@@ -49,7 +50,7 @@
         text-transform: none;
         color: black;
         padding: 1em !important;
-        background-color: #fff;
+        background-color: $c-titan-white;
         line-height: 25px;
       }
 
@@ -81,6 +82,16 @@
 
     .signer-address-input {
       flex-direction: column;
+      align-items: center;
+    }
+
+    .connect-signer-dropdown {
+      width: 100%;
+    }
+
+    .btns-wrapper {
+      margin: 0 auto;
+      width: 100%;
     }
   }
 }

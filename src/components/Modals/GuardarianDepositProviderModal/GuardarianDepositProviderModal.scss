@@ -8,27 +8,30 @@
     .buy-sell-btns-wrapper {
         display: flex;
         flex-direction: row;
+        gap: 10px;
         width: 30%;
         padding-bottom: 20px;
 
         .button {
             padding: 10px 35px;
-            background-color: $input-background-color-darker;
-            color: gray;
+            background-color: $c-mirage;
+            color: $c-titan-white;
             cursor: pointer;
+            border-radius: 12px;
             
             &.active {
-                color: white;
-                background-color: $secondary-accent-color;
+                color: $c-titan-white;
+                background-color: $c-heliotrope;
             }
         }
     }
     .input-currencies-wrapper {
         display: flex;
+        gap: 10px;
         align-items: flex-end;
 
         input {
-            height: 50px;
+            height: 60px;
         }
 
         .amount {
@@ -45,9 +48,10 @@
 
         .loading-wrapper {
             margin-top: 20px;
-            height: 50px;
+            height: 60px;
             width: 100%;
-            background-color: $input-background-color;
+            background-color: $c-mirage;
+            border-radius: 12px;
         }
     }
 
@@ -62,7 +66,7 @@
         &:before {
             content: '';
             display: block;
-            border-right: 2px solid gray;
+            border-right: 2px solid rgba($c-titan-white, .7);
             height: 100%;
             position: absolute;
             z-index: -1;
@@ -79,7 +83,7 @@
         text-decoration: underline;
         &:before {
             content: '';
-            background: gray;
+            background: $c-titan-white;
             border-radius: 50%;
             width: 10px;
             height: 10px;
@@ -89,6 +93,10 @@
             top: 50%;
             margin-top: -4px;
             z-index: 1;
+        }
+
+        p {
+            margin: 0;
         }
     }
     .extra-fees {

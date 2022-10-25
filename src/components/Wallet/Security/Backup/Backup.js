@@ -23,7 +23,7 @@ const Backup = ({ selectedAccount, onOpen, onAddAccount }) => {
                         )}`}
                         download={`${selectedAccount.id}.json`}
                     >
-                        <Button icon={<BiExport/>} onClick={onBackupDownloaded}>Export</Button>
+                        <Button icon={<BiExport/>} onClick={onBackupDownloaded} className='buttonComponent'>Export</Button>
                     </a>
                     <div style={{ fontSize: '0.9em' }}>
                         Downloads a backup of your current account ({selectedAccount.id.slice(0, 5)}...{selectedAccount.id.slice(-3)}) encrypted with
@@ -35,7 +35,7 @@ const Backup = ({ selectedAccount, onOpen, onAddAccount }) => {
             <div className="panel">
                 <div className="panel-title">Import an account from backup</div>
                 <div className="content" id="import">
-                    <Button icon={<BiImport/>} onClick={onOpen}>Import</Button>
+                    <Button icon={<BiImport/>} onClick={onOpen} className='buttonComponent'>Import</Button>
                     <p>...or you can drop an account backup JSON file on this page</p>
                 </div>
             </div>

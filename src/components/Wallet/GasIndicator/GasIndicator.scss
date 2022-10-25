@@ -2,28 +2,31 @@
 
 .gas-info {
   margin-top: 8px;
-  background: $panel-background-color;
+  background: #292B43;
+  border-radius: 12px;
   padding: 4px 8px;
   font-size: 0.8em;
   display: inline-flex;
   margin-left: auto;
   gap: 12px;
-  color: $text-container-color;
+  color: $c-titan-white;
 
   .gas-price {
     cursor: pointer;
-    &:hover {
-      color: $text-color;
+
+    span {
+      opacity: 0.5;
     }
   }
 
   .native-price {
     padding-right: 12px;
-    border-right: 1px solid $secondary-accent-color;
+    border-right: 1px solid $c-turquoise;
   }
 
   span svg {
-    color: $secondary-accent-color;
+    width: 15px;
+    color: $c-turquoise;
   }
 }
 
@@ -31,23 +34,21 @@
 @media screen and (max-width: $sidebar-small-breakpoint) {
   .gas-info {
     margin-top: 8px;
-    background: $panel-background-color;
+    background: #292B43;
     padding: 8px;
     font-size: 0.9em;
     display: block;
-
-    span {
-      display: block;
-    }
+    border-radius: 12px 0 0 12px;
 
     .native-price {
       padding-right: 12px;
       border-right: 0;
       padding-bottom: 4px;
-      border-bottom: 1px solid $secondary-accent-color;
+      border-bottom: 1px solid $c-turquoise;
     }
 
     .gas-price {
+      display: block;
       padding-top: 4px;
     }
 
@@ -69,7 +70,7 @@
       padding-top: 0;
       padding-bottom: 0;
       border-bottom: 0;
-      border-right: 1px solid $secondary-accent-color;
+      border-right: 1px solid $c-turquoise;
     }
 
     .gas-price {
