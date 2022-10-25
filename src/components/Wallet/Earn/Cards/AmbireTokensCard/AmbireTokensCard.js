@@ -79,7 +79,7 @@ const AmbireTokensCard = ({ networkId, accountId, tokens, rewardsData, addReques
     const unavailable = networkId !== 'ethereum'
     const networkDetails = networks.find(({ id }) => id === networkId)
     const addRequestTxn = useCallback((id, txn, extraGas = 0) =>
-        addRequest({ id, type: 'eth_sendTransaction', chainId: networkDetails.chainId, account: accountId, txn, extraGas })
+        addRequest({ id, type: 'eth_sendTransaction', dateAdded: new Date().valueOf(), chainId: networkDetails.chainId, account: accountId, txn, extraGas })
     , [networkDetails.chainId, accountId, addRequest])
 
     const { xWALLETAPYPercentage } = rewardsData.rewards;

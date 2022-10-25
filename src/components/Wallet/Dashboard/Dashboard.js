@@ -28,8 +28,8 @@ const tabSegments = [
 export default function Dashboard({ portfolio, selectedNetwork, selectedAccount, setNetwork, privateMode, rewardsData,  userSorting, setUserSorting, accounts, addRequest, relayerURL, useStorage, match, showSendTxns }) {
     const history = useHistory()
     const { tabId, page = 1 } = useParams()
-    const balance = useMemo(() => portfolio.balance, [portfolio.balance])
-    const tokens = useMemo(() => portfolio.tokens, [portfolio.tokens])
+    const balance = useMemo(() => portfolio.balance, [portfolio])
+    const tokens = useMemo(() => portfolio.tokens, [portfolio])
     const [chartTokensData, setChartTokensData] = useState([]);
     const [tab, setTab] = useState(tabId || tabSegments[0].value);
 

@@ -36,7 +36,7 @@ const checkIsOffline = uri => {
     //    .every(({ time } = {}) => time > (Date.now() - timePastForConnectionErr))
 }
 
-export default function useWalletConnect ({ account, chainId, initialUri, allNetworks, setNetwork, useStorage }) {
+export default function useWalletConnect ({ account, chainId, initialUri, allNetworks, setNetwork, useStorage, setRequests }) {
     const { addToast } = useToasts()
 
     // This is needed cause of the WalletConnect event handlers
@@ -70,6 +70,7 @@ export default function useWalletConnect ({ account, chainId, initialUri, allNet
                     newRequests.push({
                         ...action.batchRequest,
                         type: 'eth_sendTransaction',
+                        dateAdded: new Date().valueOf(),
                         isBatch: true,
                         id: action.batchRequest.id + ':' + ix,
                         account,
@@ -126,6 +127,7 @@ export default function useWalletConnect ({ account, chainId, initialUri, allNet
         })
 
         setStateStorage(state)
+        setRequests(currRe => [...currRe, ...state.requests])
 
         if (updateConnections) dispatch({
             type: 'updateConnections',
@@ -134,7 +136,7 @@ export default function useWalletConnect ({ account, chainId, initialUri, allNet
                 .map(({ uri }) => ({ uri, session: connectors[uri].session, isOffline: checkIsOffline(uri) }))
         })
     }
-    useEffect(maybeUpdateSessions, [account, chainId, state, setStateStorage])
+    useEffect(maybeUpdateSessions, [account, chainId, state, setStateStorage, setRequests])
     // we need this so we can invoke the latest version from any event handler
     stateRef.current.maybeUpdateSessions = maybeUpdateSessions
 
@@ -309,6 +311,7 @@ export default function useWalletConnect ({ account, chainId, initialUri, allNet
             if (payload.method === 'gs_multi_send' || payload.method === 'ambire_sendBatchTransaction') {
                 dispatch({ type: 'batchRequestsAdded', batchRequest: {
                         id: payload.id,
+                        dateAdded: new Date().valueOf(),
                         type: payload.method,
                         wcUri: connectorOpts.uri,
                         txns: payload.params,
@@ -346,6 +349,7 @@ export default function useWalletConnect ({ account, chainId, initialUri, allNet
             }
             dispatch({ type: 'requestAdded', request: {
                 id: payload.id,
+                dateAdded: new Date().valueOf(),
                 type: payload.method,
                 wcUri: connectorOpts.uri,
                 txn,

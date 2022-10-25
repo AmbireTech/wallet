@@ -75,6 +75,7 @@ function AppInner() {
   const wcUri = useOneTimeQueryParam('uri')
   const utmTracking = useUtmTracking({ useStorage: useLocalStorage })
 
+  const [allRequests, setRequests] = useState([])
   // Signing requests: transactions/signed msgs: all requests are pushed into .requests
   const { connections, connect, disconnect, isConnecting, requests: wcRequests, resolveMany: wcResolveMany } = useWalletConnect({
     account: selectedAcc,
@@ -82,13 +83,15 @@ function AppInner() {
     initialUri: wcUri,
     allNetworks,
     setNetwork,
-    useStorage: useLocalStorage
+    useStorage: useLocalStorage,
+    setRequests: setRequests
   })
 
   const { requests: gnosisRequests, resolveMany: gnosisResolveMany, connect: gnosisConnect, disconnect: gnosisDisconnect } = useGnosisSafe({
     selectedAccount: selectedAcc,
     network: network,
-    useStorage: useLocalStorage
+    useStorage: useLocalStorage,
+    setRequests: setRequests
   }, [selectedAcc, network])
 
   // Attach meta data to req, if needed
@@ -124,26 +127,38 @@ function AppInner() {
 
     return { ...req, meta: { ...req.meta && req.meta, ...meta }}
   }
+  
+  // Filter gnosisRequests and wcRequests by dateAdded,
+  // because they are saved in local storage and add them on first render
+  useEffect(() => {
+    const storageRequests = [...gnosisRequests, ...wcRequests]
+    if (storageRequests.length) {
+      const newRequests = storageRequests.filter(r => !allRequests.find(x => x.id === r.id) || r).sort((a, b) => a.dateAdded - b.dateAdded)
+
+      setRequests(reqs => [...reqs, ...newRequests])
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+  
+  const requests = useMemo(
+    () => allRequests
+      .filter(({ account }) => accounts.find(({ id }) => id === account)),
+    [accounts, allRequests]
+  )
 
   // Internal requests: eg from the Transfer page, Security page, etc. - requests originating in the wallet UI itself
   // unlike WalletConnect or SafeSDK requests, those do not need to be persisted
-  const [internalRequests, setInternalRequests] = useState([])
   const addRequest = async req => {
     const request = await attachMeta(req)
-
-    return setInternalRequests(reqs => [...reqs, request])
+    return setRequests(reqs => [...reqs, request])
   }
 
   // Merge all requests
-  const requests = useMemo(
-    () => [...internalRequests, ...wcRequests, ...gnosisRequests]
-      .filter(({ account }) => accounts.find(({ id }) => id === account)),
-    [wcRequests, internalRequests, gnosisRequests, accounts]
-  )
   const resolveMany = (ids, resolution) => {
     wcResolveMany(ids, resolution)
     gnosisResolveMany(ids, resolution)
-    setInternalRequests(reqs => reqs.filter(x => !ids.includes(x.id)))
+    setRequests(reqs => reqs.filter(x => !ids.includes(x.id)))
+
   }
 
   const privateMode = usePrivateMode(useLocalStorage)
@@ -167,7 +182,6 @@ function AppInner() {
       && chainId === network.chainId
       && account === selectedAcc
     ), [requests, network.chainId, selectedAcc])
-
   // Docs: the state is { showing: bool, replacementBundle, replaceByDefault: bool, mustReplaceNonce: number }
   // mustReplaceNonce is set when the end goal is to replace a particular transaction, and if that txn gets mined we should stop the user from doing anything
   // mustReplaceNonce must always be used together with either replaceByDefault: true or replacementBundle

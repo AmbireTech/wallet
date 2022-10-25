@@ -36,7 +36,7 @@ const YearnTesseractCard = ({ networkId, accountId, tokens, addRequest }) => {
     const unavailable = !(networkId === 'ethereum' || networkId === 'polygon' || networkId === 'fantom')
     const name = networkId === 'ethereum' ? 'Yearn' : 'Tesseract'
     const networkDetails = networks.find(({ id }) => id === networkId)
-    const addRequestTxn = (id, txn, extraGas = 0) => addRequest({ id, type: 'eth_sendTransaction', chainId: networkDetails.chainId, account: accountId, txn, extraGas })
+    const addRequestTxn = (id, txn, extraGas = 0) => addRequest({ id, dateAdded: new Date().valueOf(), type: 'eth_sendTransaction', chainId: networkDetails.chainId, account: accountId, txn, extraGas })
     const provider = useMemo(() => getProvider(networkDetails.id), [networkDetails.id])
     const isDepositsDisabled = (networkId === 'polygon') ? true : false
 

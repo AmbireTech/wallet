@@ -52,6 +52,7 @@ function Transactions ({ relayerURL, selectedAcc, selectedNetwork, showSendTxns,
       .forEach((txn, index) => {
         addRequest({
           id: 'replace_'+index,
+          dateAdded: new Date().valueOf(),
           chainId: selectedNetwork.chainId,
           account: selectedAcc,
           type: 'eth_sendTransaction',
