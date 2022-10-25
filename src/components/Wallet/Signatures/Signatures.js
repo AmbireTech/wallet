@@ -3,7 +3,7 @@ import { useLocalStorage } from 'hooks'
 
 import { Button, Image } from 'components/common'
 import React, { useCallback, useState, useEffect } from 'react'
-import { toUtf8String } from 'ethers/lib/utils'
+import { isHexString, toUtf8String } from 'ethers/lib/utils'
 import { id } from 'ethers/lib/utils'
 
 import { AiFillAppstore } from 'react-icons/ai'
@@ -13,9 +13,20 @@ import { useHistory, useParams } from 'react-router-dom'
 
 const ITEMS_PER_PAGE = 8
 
+function getMessageAsText(msg) {
+  if (isHexString(msg)) {
+    try {
+      return toUtf8String(msg)
+    } catch (_) {
+      return msg
+    }
+  }
+  return msg?.toString ? msg.toString() : msg + "" //what if dapp sends it as object? force string to avoid app crashing
+}
+
 function Signatures({ selectedAcc, selectedNetwork, privateMode }) {
 
-  const [messages] = useLocalStorage({
+  const [messages, setMessages] = useLocalStorage({
     storage: useLocalStorage,
     key: 'signedMessages',
     defaultValue: []
@@ -37,6 +48,17 @@ function Signatures({ selectedAcc, selectedNetwork, privateMode }) {
   const [page, setPage] = useState(Math.min(params.page, maxPage) || 1)
 
   const [expansions, setExpansions] = useState({})
+
+  //hacky, and preventing Outer scope values warning. but either this, either having a localstorage listener
+  let localSignedMessagesStr = localStorage.signedMessages
+
+  useEffect(() => {
+    try {
+      setMessages(JSON.parse(localSignedMessagesStr))
+    } catch (err) {
+      console.error('SignedMessages localstorage: invalid format')
+    }
+  }, [setMessages, localSignedMessagesStr])
 
   const paginatedMessages = filteredMessages.slice((page - 1) * ITEMS_PER_PAGE, (page - 1) * ITEMS_PER_PAGE + ITEMS_PER_PAGE)
 
@@ -128,14 +150,14 @@ function Signatures({ selectedAcc, selectedNetwork, privateMode }) {
                                 {
                                   m.typed
                                     ? <div>{JSON.stringify(m.message, null, ' ')}</div>
-                                    : <div>{!m.string ? toUtf8String(m.message) : m.message}</div>
+                                    : <div>{getMessageAsText(m.message)}</div>
                                 }
                               </div>
                             </div>
                             <div>
                               <b>Signature</b>
                               <div className={'message-content'}>
-                                {m.signature || '0xTODO'}
+                                {m.signature}
                               </div>
                             </div>
                           </div>
