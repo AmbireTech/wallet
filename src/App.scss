@@ -23,17 +23,6 @@
   }
 }
 
-@font-face {
-  font-family: 'monospace';
-  src: url('./fonts/UbuntuMono/UbuntuMono-Regular.ttf');
-}
-
-@font-face {
-  font-family: 'monospace';
-  font-weight: bold;
-  src: url('./fonts/UbuntuMono/UbuntuMono-Bold.ttf');
-}
-
 * {
   box-sizing: border-box;
   
@@ -81,8 +70,7 @@ body {
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-  monospace;
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', 'Ubuntu Mono';
 }
 
 ::placeholder {
