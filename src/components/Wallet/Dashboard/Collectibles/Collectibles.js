@@ -1,4 +1,4 @@
-import './Collectibles.scss'
+import styles from './Collectibles.module.scss'
 
 import { MdVisibilityOff } from 'react-icons/md'
 import { NavLink } from 'react-router-dom'
@@ -23,10 +23,10 @@ const Collectibles = ({ selectedNetwork, portfolio, isPrivateMode }) => {
     const collectiblesList = portfolio.collectibles.slice((page - 1) * maxCollectiblesPerPage, page * maxCollectiblesPerPage)
 
     const paginationControls = (
-        <div className='pagination-controls'>
-          <div className='pagination-title'>Page</div>
+        <div className={styles.paginationControls}>
+          <div className={styles.paginationTitle}>Page</div>
           <Button clear mini onClick={() => page > 1 && setPage(page => page - 1)}><HiOutlineChevronLeft/></Button>
-          <div className='pagination-current'>{ page } <span>/ { maxPages }</span></div>
+          <div className={styles.paginationCurrent}>{ page } <span>/ { maxPages }</span></div>
           <Button clear mini onClick={() => page < maxPages && setPage(page => page + 1)}><HiOutlineChevronRight/></Button>
         </div>
     )
@@ -71,24 +71,21 @@ const Collectibles = ({ selectedNetwork, portfolio, isPrivateMode }) => {
     }
 
     return (
-        <div id="collectibles">
-            <div className="wrapper-btns">
-                <Button mini clear icon={<MdVisibilityOff/>} onClick={() => openHideTokenModal()}>Hide Collectible</Button>
-            </div>
-            <div className='collectibles-wrapper'>
+        <div className={styles.wrapper}>
+            <div className={styles.collectiblesWrapper}>
                 {
-                    collectiblesList.map(({ address, collectionName, assets, balanceUSD }) => (assets || []).map(({ tokenId, data }) => (
-                        <div className="collectible" key={tokenId}>
-                            <NavLink to={`/wallet/nft/${selectedNetwork.id}/${address}/${tokenId}`}>
-                                <div className="artwork" style={{backgroundImage: `url(${handleUri(data.image)})`}}/>
-                                <div className="info">
-                                    <div className="collection">
-                                        <div className="collection-icon" style={{backgroundImage: `url(${handleUri(data.image)})`}}></div>
-                                        <span className="collection-name">{ collectionName }</span>
+                    collectiblesList.map(({ network, address, collectionName, collectionImg, assets }) => (assets || []).map(({ tokenId, assetName, assetImg, balanceUSD }) => (
+                        <div className={styles.collectible} key={tokenId}>
+                            <NavLink to={`/wallet/nft/${network}/${address}/${tokenId}`}>
+                                <div className={styles.artwork} style={{backgroundImage: `url(${handleUri(assetImg)})`}}/>
+                                <div className={styles.info}>
+                                    <div className={styles.collection}>
+                                        <div className={styles.collectionIcon} style={{backgroundImage: `url(${collectionImg})`}}></div>
+                                        <span className={styles.collectionName}>{ collectionName }</span>
                                     </div>
-                                    <div className="details">
-                                        <div className="name">{ data.name }</div>
-                                        <div className="value"><span className="purple-highlight">$</span> {balanceUSD.toFixed(2) }</div>
+                                    <div className={styles.details}>
+                                        <div className={styles.name}>{ assetName }</div>
+                                        <div className={styles.value}><span className={styles.purpleHighlight}>$</span> {balanceUSD.toFixed(2) }</div>
                                     </div>
                                 </div>
                             </NavLink>

@@ -8,6 +8,18 @@ $gap: 12px;
   @include flex-full-grow-container;
   position: relative;
 
+  .dappCatalog-inner {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+  }
+
+  .text-input-container {
+    padding-left: 20px;
+    border-radius: 12px;
+  }
+
   .filter-section {
     margin-bottom: ($gap * 2);
 
@@ -23,22 +35,22 @@ $gap: 12px;
         cursor: pointer;
         padding:5px 16px;
         border-radius: 100px;
-        border: 1px solid mix($text-color, $input-background-color-darker);
-        color: mix($text-color, $input-background-color-darker);
+        border: 1px solid mix($c-titan-white, $c-mirage);
+        color: mix($c-titan-white, $c-mirage);
         text-transform: capitalize;
 
         &:hover {
-          background: mix($panel-background-color, $text-container-color, 85%);
+          background: mix($c-ebony-clay, $text-container-color, 85%);
         }
 
         &.selected {
           padding:4px 15px;// border hack not jittering
-          border: 2px solid $primary-accent-color;
-          color: $primary-accent-color;
+          border: 2px solid $c-turquoise;
+          color: $c-turquoise;
 
           &.category-integrated {
-            color: $secondary-accent-color;
-            border-color: $secondary-accent-color;
+            color: $c-heliotrope;
+            border-color: $c-heliotrope;
           }
 
           &.category-walletconnect {
@@ -57,7 +69,7 @@ $gap: 12px;
   }
 
   .dapp-iframe {
-    border: 1px solid $secondary-accent-color;
+    border: 1px solid $c-heliotrope;
   }
 
   .catalogItems {
@@ -73,8 +85,9 @@ $gap: 12px;
       gap: $gap;
       padding: $gap;
       padding-top: $gap + 14px;
-      background-color: $input-background-color;
-      border:1px solid transparent;
+      background-color: $c-ebony-clay;
+      border-radius: 12px;
+      border: 1px solid transparent;
       transition: 100ms;
       position: relative;
       overflow: hidden;
@@ -100,7 +113,7 @@ $gap: 12px;
           }      
           height: 20px;
           width: auto;
-          color: mix($text-color, $input-background-color-darker, 20%);
+          color: mix($c-titan-white, $c-mirage, 20%);
   
           &.selected {
             color: $faveColor;
@@ -127,8 +140,12 @@ $gap: 12px;
       }      
 
       &.not-supported {
-        background-color: mix($input-background-color, $background-color, 50%);
         cursor: not-allowed;
+        opacity: 0.2;
+
+        &:hover {
+          background-color: $c-martinique;
+        }
 
         .logoSplit {
           opacity: 0.4;
@@ -142,8 +159,8 @@ $gap: 12px;
           opacity: 0.5;
           .tag.unsupported {
             background-color: transparent;
-            border-color: mix($text-color, $input-background-color, 50%);
-            color: mix($text-color, $input-background-color, 50%);
+            border-color: mix($c-titan-white, $c-mirage, 50%);
+            color: mix($c-titan-white, $c-mirage, 50%);
           }
         }
       }
@@ -173,7 +190,7 @@ $gap: 12px;
           min-width: 68px;
           width: 68px;
           height: 68px;
-          background: $input-background-color-darker;
+          background: $c-mirage;
           //padding: 8px;
           text-align: center;
           display: flex;
@@ -252,27 +269,27 @@ $gap: 12px;
         }
 
         .tag {
-          // background-color: mix($secondary-accent-color, $input-background-color, 30%);
-          border: 1px solid $secondary-accent-color;
-          color: mix($secondary-accent-color, $text-color, 70%);
+          // background-color: mix($c-heliotrope, $c-mirage, 30%);
+          border: 1px solid $c-heliotrope;
+          color: mix($c-heliotrope, $c-titan-white, 70%);
           padding: 1px 4px;
           font-size: 11px;
           border-radius: 32px;
           text-transform: capitalize;
 
           &.type-tag-walletconnect {
-            // background-color: mix($WCBlue, $input-background-color, 30%);
+            // background-color: mix($WCBlue, $c-mirage, 30%);
             border: 1px solid $WCBlue;
-            color: mix($WCBlue, $text-color, 70%);
+            color: mix($WCBlue, $c-titan-white, 70%);
           }
 
           &.type-tag-hot {
             border: 1px solid $ambire-dark-blue;
-            color: mix($ambire-dark-blue, $text-color, 70%);
+            color: mix($ambire-dark-blue, $c-titan-white, 70%);
           }
 
           &.network-tag {
-            border: 2px solid $input-background-color;
+            border: 2px solid $c-mirage;
             display: block;
             height: 20px;
             width: 20px;
@@ -296,8 +313,8 @@ $gap: 12px;
       }
 
       &:hover:not(.add-custom-dapp) {
-        background-color: mix($input-background-color, #FFF, 98%);
-        border:1px solid $ambire-dark-blue;
+        background-color: $c-martinique;
+        border: 1px solid $c-turquoise;
       }
     }
   }
@@ -306,18 +323,22 @@ $gap: 12px;
     font-size: 1.2em;
     text-align: center;
     padding: 24px;
-    background-color: $input-background-color;
-    color: mix($text-color, $input-background-color);
+    background-color: $c-mirage;
+    border-radius: 12px;
+    margin-top: 20px;
+    color: rgba($c-titan-white, 0.8);
   }
 
   .info-wc {
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 8px;
-    margin-top: 12px;
+    margin-top: 10px;
     padding: 12px;
-    background-color: $input-background-color-darker;
-    color: mix($text-color, $input-background-color-darker);
+    background-color: $c-mirage;
+    border-radius: 12px 12px 0 0;
+    color: rgba($c-titan-white, 0.8);
   }
 }
 

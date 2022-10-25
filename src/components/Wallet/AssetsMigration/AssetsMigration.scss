@@ -4,8 +4,9 @@
   display: flex;
   flex-direction: row;
   padding: 16px;
-  background: mix($primary-accent-color, $panel-background-color, 5%);
-  border: 1px solid $primary-accent-color;
+  background: $c-ebony-clay;
+  border: 1px solid $c-fiord;
+  border-radius: 12px;
 
   .migration-banner-message {
     display: flex;
@@ -20,7 +21,7 @@
   span.link {
     cursor: pointer;
     display: block;
-    color: $primary-accent-color;
+    color: $c-turquoise;
     text-decoration: underline;
 
     &.link-margin {
@@ -47,27 +48,26 @@
     display: flex;
     flex-direction: row;
     align-items: center;
-    border-bottom: 1px solid $input-background-color-darker;
+    border-bottom: 1px solid $c-mirage;
     padding: 8px 4px;
     height: 50px;
 
     .checkbox-container:not(.disabled):hover {
       .checkbox-mark {
-        background: mix($primary-accent-color, $input-background-color-darker, 50%);
-        border: 2px solid $primary-accent-color;
+        background-color: $c-mirage;
+        border: 2px solid $c-turquoise;
       }
     }
 
     .checkbox-container {
 
       input:checked ~ .checkbox-mark {
-        background: mix($primary-accent-color, $panel-background-color, 5%);
+        background: $c-mirage;
       }
 
       .checkbox-mark {
         margin-top: 1px;
-        background: $input-background-color-darker;
-        border: 0;
+        background: $c-mirage;
         height: 20px;
         width: 20px;
         border: 2px solid transparent;
@@ -76,14 +76,14 @@
           left: 4px;
           top: 0px;
 
-          border-color: $primary-accent-color;
+          border-color: $c-turquoise;
         }
       }
     }
 
 
     &:hover {
-      background: mix($background-color, $panel-background-color, 30%);
+      background-color: $c-mirage;
     }
 
     .checkbox-container {
@@ -107,13 +107,13 @@
 
       &:hover .checkbox-mark {
         svg {
-          color: $secondary-accent-color;
+          color: $c-heliotrope;
         }
       }
 
       &.checked .checkbox-mark {
         svg {
-          color: $primary-accent-color;
+          color: $c-turquoise;
         }
       }
     }
@@ -130,7 +130,7 @@
     }
 
     .migration-asset-usd {
-      color: $text-container-color;
+      color: $c-manatee;
       padding-right: 8px;
     }
 
@@ -140,7 +140,7 @@
     }
 
     .migration-asset-amount-usd {
-      color: $text-container-color;
+      color: $c-manatee;
     }
   }
 
@@ -159,17 +159,17 @@
       font-weight: normal;
       padding: 0 10px;
       text-transform: initial;
-      background: $input-background-color-darker;
+      background: $c-mirage;
 
       &.primary {
-        background: $primary-accent-color;
+        background: $c-turquoise;
       }
     }
 
     .custom-token-message-fetching {
       padding: 8px;
       text-align: center;
-      background: $input-background-color-darker;
+      background: $c-mirage;
     }
   }
 
@@ -186,20 +186,20 @@
 
   .migration-actions {
     padding-left: 8px;
-    color: $text-container-color;
+    color: $c-manatee;
   }
 
 
   span.max-native-suggestion {
     cursor: pointer;
-    border-bottom: 1px dashed $secondary-accent-color;
+    border-bottom: 1px dashed $c-heliotrope;
   }
 
   .migration-native-row {
     display: flex;
     flex-direction: row;
     align-items: center;
-    border-bottom: 1px solid $input-background-color-darker;
+    border-bottom: 1px solid $c-mirage;
     padding: 8px 4px;
     height: 50px;
 
@@ -216,7 +216,7 @@
   }
 
   .migration-native-usd {
-    color: $text-container-color;
+    color: $c-manatee;
   }
 
   .migration-asset-select-icon {
@@ -262,15 +262,15 @@
 
   .migration-native-selection {
     cursor: pointer;
-    border-bottom: 1px dashed $secondary-accent-color;
+    border-bottom: 1px dashed $c-heliotrope;
     font-weight: bold;
   }
 
   .migration-asset-status {
-    color: $primary-accent-color;
+    color: $c-turquoise;
 
     .required {
-      color: $warning-color;
+      color: $c-half-spanish-white;
     }
   }
 
@@ -281,7 +281,7 @@
   .header-accent {
     display: inline;
     padding-bottom: 8px;
-    border-bottom: 2px solid $primary-accent-color;
+    border-bottom: 2px solid $c-turquoise;
   }
 
   .small-asset-notification {
@@ -289,21 +289,22 @@
     display: block;
 
     &.warning {
-      background: mix($warning-color, $panel-background-color, 10%);
-      color: $warning-color;
+      background: mix($c-half-spanish-white, $c-ebony-clay, 10%);
+      color: $c-half-spanish-white;
     }
 
     &.success {
-      background: mix($primary-accent-color, $panel-background-color, 5%);
-      color: $primary-accent-color;
+      background: mix($c-turquoise, $c-ebony-clay, 5%);
+      color: $c-turquoise;
     }
   }
 
   .error {
     background: $danger-color;
-    color: $text-color;
+    color: $c-white;
     padding: 8px;
     margin-bottom: 18px;
+    border-radius: 12px;
   }
 
   .content-center {
@@ -316,7 +317,7 @@
 
   .gas-notification-info {
     padding: 12px;
-    background: $input-background-color-darker;
+    background: $c-mirage;
 
     b {
       display: block;
@@ -351,13 +352,13 @@
   }
 
   button.secondary {
-    background: $secondary-accent-color;
+    background: $c-heliotrope;
   }
 
   button.buttonComponent.buttonHollow {
     background: transparent;
-    border: 2px solid $text-color;
-    color: $text-color;
+    border: 2px solid $c-white;
+    color: $c-white;
 
     &.danger {
       background: transparent;
@@ -370,26 +371,28 @@
     }
 
     &.secondary {
-      border: 2px solid $secondary-accent-color;
-      color: $secondary-accent-color;
+      border: 2px solid $c-heliotrope;
+      color: $c-heliotrope;
       background: transparent;
 
       .icon-button {
-        color: $secondary-accent-color !important;
+        color: $c-heliotrope !important;
       }
     }
   }
 
 
   .gas-estimation-block {
-    background: $input-background-color-darker;
+    background: $c-mirage;
+    border-radius: 12px;
 
     .gas-estimation-block-title {
       padding: 8px;
       font-weight: bold;
       text-align: center;
       text-transform: uppercase;
-      background: darken($input-background-color-darker, 3%);
+      background: $c-mirage;
+      border-radius: 12px;
     }
 
     ul.gas-estimation-selector {
@@ -397,7 +400,7 @@
       flex-direction: row;
       padding: 0;
       margin: 0;
-      background: mix($ambire-dark-blue, darken($input-background-color-darker, 2%), 3%);
+      background: $c-martinique;
 
       li {
         padding: 8px 0;
@@ -406,19 +409,19 @@
         text-align: center;
         border: 2px solid transparent;
         cursor: pointer;
-        color: mix($input-background-color-darker, $text-color, 50%);
+        color: mix($c-ebony-clay, $c-white, 50%);
         text-transform: uppercase;
         font-size: 15px;
 
         &:hover {
-          color: $text-color;
-          background-color: $input-background-color;
+          color: $c-white;
+          background-color: $c-mirage;
         }
 
         &.selected {
           border: 2px solid $ambire-dark-blue;
-          background: mix($ambire-dark-blue, darken($input-background-color-darker, 2%), 15%);
-          color: $text-color;
+          background: $c-mirage;
+          color: $c-white;
         }
 
       }
@@ -441,15 +444,15 @@
   .migration-permitted {
     padding: 8px;
     font-size: 0.8em;
-    background: mix($primary-accent-color, $panel-background-color, 5%);
-    color: $primary-accent-color;
+    background: mix($c-turquoise, $c-ebony-clay, 5%);
+    color: $c-turquoise;
     display: flex;
     align-items: center;
     gap: 4px;
 
     &.warning {
-      background: mix($warning-color, $panel-background-color, 5%);
-      color: $warning-color;
+      background: mix($c-half-spanish-white, $c-ebony-clay, 5%);
+      color: $c-half-spanish-white;
     }
   }
 

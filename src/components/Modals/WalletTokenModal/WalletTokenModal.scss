@@ -13,6 +13,13 @@ $badge-size: 65px;
             gap: 1.5em;
             padding: 1em;
 
+            &:first-child {
+                border-radius: 12px 12px 0 0;
+            }
+            &:last-child {
+                border-radius: 0 0 12px 12px;
+            }
+
             .details {
                 display: flex;
                 justify-content: space-between;
@@ -34,7 +41,7 @@ $badge-size: 65px;
                         font-size: 18px;
 
                         span {
-                            color: $primary-accent-color;
+                            color: $c-turquoise;
                         }
 
                         &.usd, &.apy {
@@ -43,7 +50,7 @@ $badge-size: 65px;
 
                         &.usd {
                             span {
-                                color: $secondary-accent-color;
+                                color: $c-heliotrope;
                             }
                         }
 
@@ -132,7 +139,7 @@ $badge-size: 65px;
                 .multiplier {
                     font-size: 0.8em;
                     font-weight: bold;
-                    color: white;
+                    color: $c-titan-white;
                 }
 
                 &:after {

@@ -1,21 +1,23 @@
 @import 'variables.scss';
 
-$modal-height: 730px;
-$modal-width: 530px;
-$buttons-height: 60px;
+$modal-height: 740px;
+$modal-width: 580px;
+$buttons-height: 160px;
 
 .modal {
     z-index: 52;
     position: relative;
-    min-height: 600px;
+    min-height: 740px;
     max-height: $modal-height;
     width: $modal-width;
     display: flex;
     flex-direction: column;
     gap: 10px;
-    padding-top: 25px;
-    background-color: $panel-background-color;
-    box-shadow: $box-shadow;
+    padding-top: 40px;
+    background: $c-ebony-clay;
+    border: 1px solid $c-fiord;
+    border-radius: 12px;
+    color: $c-titan-white;
     box-sizing: border-box;
 
     &.buttons {
@@ -24,30 +26,34 @@ $buttons-height: 60px;
 
     .heading {
         display: flex;
-        justify-content: center;
+        align-items: center;
+        padding: 0 40px;
+        justify-content: space-between;
 
         .title {
-            height: 60px;
             font-size: 25px;
-            font-weight: bold;
-            text-align: center;
+            &.centered {
+                text-align: center;
+                margin: 0 auto;
+            }
+
         }
 
         .close {
-            height: 50px;
-            width: 50px;
-            position: absolute;
-            top: 0;
-            right: 0;
+            height: 40px;
+            width: 40px;
+            background-color: rgba($c-titan-white, 0.05);
+            border-radius: 12px;
             @include flex-center-center;
             font-size: 20px;
 
             &:hover {
-                background-color: rgba(0, 0, 0, 0.1);
+                cursor: pointer;
+                background-color: rgba($c-titan-white, 0.02);
             }
         }
 
-        .top-left {
+        .topLeft {
             height: 50px;
             width: 75px;
             position: absolute;
@@ -61,8 +67,8 @@ $buttons-height: 60px;
     .content {
         height: 100%;
         position: relative;
-        padding: 0 35px;
-        padding-bottom: calc(#{$buttons-height} + 20px);
+        padding: 40px;
+        padding-bottom: 0;
         overflow: hidden;
         overflow-y: auto;
         scrollbar-width: thin;
@@ -72,14 +78,16 @@ $buttons-height: 60px;
         position: absolute;
         left: 0;
         bottom: 0;
-        height: $buttons-height;
         width: 100%;
         display: flex;
         box-sizing: border-box;
+        gap: 10px;
+        padding: 50px 40px;
+        height: 160px;
 
         button {
+            height: 60px;
             flex: 0 1 50% !important;
-            height: 100%;
         }
     }
 }

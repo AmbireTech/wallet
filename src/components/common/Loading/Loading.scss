@@ -56,7 +56,8 @@
 .Skeleton {
     width: 100%;
     flex-grow: 1;
-    background: $panel-background-color;
+    background: $c-ebony-clay;
+    border-radius: 12px;
     @include flex-center-center;
     font-size: 2rem;
 }
