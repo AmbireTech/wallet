@@ -31,6 +31,7 @@ const Tabs = ({
         >
           {secondTabLabel}
         </button>
+        <div className={styles.shadow}></div>
       </div>
       {currentTab === 1 ? firstTab : secondTab}
       {footer}
