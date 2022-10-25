@@ -64,6 +64,10 @@
             font-size: 14px;
             color: $c-titan-white;
             user-select: none;
+            
+            &.margin {
+                margin-bottom: 20px;
+            }
 
             .qrCode {
                 height: 168px;

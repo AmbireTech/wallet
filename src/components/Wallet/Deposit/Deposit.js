@@ -1,4 +1,4 @@
-
+import cn from 'classnames'
 import { useCallback, useEffect, useState } from 'react'
 import { Panel } from 'components/common'
 import QRCode from 'qrcode'
@@ -81,7 +81,7 @@ export default function Deposit({ selectedAcc, selectedNetwork, accounts, addReq
                         Credit Card & Bank Transfer
                     </div>
                 </div>
-                <div className={styles.description}>
+                <div className={cn(styles.description, styles.margin)}>
                     Deposit with credit card to your account directly using one of our partners
                 </div>
                 <Providers walletAddress={selectedAcc} networkDetails={networkDetails} relayerURL={relayerURL} portfolio={portfolio}/>
