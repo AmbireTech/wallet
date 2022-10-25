@@ -185,19 +185,19 @@ const DappsCatalog = ({ network, dappsCatalog, selectedAcc, gnosisConnect, gnosi
 
                     <div className={styles.tools}>
                       {item.featured &&
-                        <ToolTip label={`Hot dApp`}>
+                        <ToolTip label={`Hot dApp`} labelClassName={styles.tooltipLabel}>
                           <img className={cn(styles.icon, styles.hotDapp)} src={AMBIRE_ICON_HOT} alt='hot dApp icon' />
                         </ToolTip>
                       }
                       {item.custom &&
-                        <ToolTip label={`Remove ${item.name} from your catalog`}>
+                        <ToolTip label={`Remove ${item.name} from your catalog`} labelClassName={styles.tooltipLabel}>
                           <MdDelete className={cn(styles.icon, styles.removeDapp)} onClick={(e) => onRemoveCustomClick(e, item)} />
                         </ToolTip>
                       }
                       {item.custom &&
                         <img className={cn(styles.customDapp, styles.icon)} src={DAPPS_ICON} alt='custom dapp icon' />
                       }
-                      <ToolTip label={`${favorites[item.url] ? 'Remove' : 'Add'} ${item.name} ${favorites[item.url] ? 'from' : 'to'} favorites`}>
+                      <ToolTip label={`${favorites[item.url] ? 'Remove' : 'Add'} ${item.name} ${favorites[item.url] ? 'from' : 'to'} favorites`} labelClassName={styles.tooltipLabel}>
                         <span className={cn(styles.favorite, {[styles.selected]: favorites[item.url]})} onClick={(e) => onFavoriteClick(e, item)}> {
                           favorites[item.url]
                             ? <AiFillStar className={styles.icon} /> :
