@@ -1,8 +1,8 @@
 
 import { useEffect, useLayoutEffect, useState } from 'react'
-import { useHistory, useParams } from 'react-router-dom'
+// import { useHistory, useParams } from 'react-router-dom'
 
-import { Chart, Loading, Segments, Panel } from 'components/common'
+import { Chart, Loading, Panel } from 'components/common'
 import Balances from './Balances/Balances'
 import Protocols from './Protocols/Protocols'
 import Collectibles from './Collectibles/Collectibles'
@@ -15,23 +15,24 @@ import OutdatedBalancesMsg from './OutdatedBalancesMsg/OutdatedBalancesMsg'
 import cn from 'classnames'
 
 import styles from './Dashboard.module.scss'
+import Tabs from 'components/common/Tabs/Tabs'
 
-const tabSegments = [
-    {
-        value: 'tokens'
-    },
-    {
-        value: 'collectibles'
-    }
-]
+// const tabSegments = [
+//     {
+//         value: 'tokens'
+//     },
+//     {
+//         value: 'collectibles'
+//     }
+// ]
 
 
 export default function Dashboard({ portfolio, selectedNetwork, selectedAccount, setNetwork, privateMode, rewardsData,  userSorting, setUserSorting, accounts, addRequest, relayerURL, useStorage, match, showSendTxns }) {
-    const history = useHistory()
-    const { tabId, page = 1 } = useParams()
+    // const history = useHistory()
+    // const { tabId, page = 1 } = useParams()
 
     const [chartTokensData, setChartTokensData] = useState([]);
-    const [tab, setTab] = useState(tabId || tabSegments[0].value);
+    // const [tab, setTab] = useState(tabId || tabSegments[0].value);
 
     const currentAccount = accounts.find(a => a.id.toLowerCase() === selectedAccount.toLowerCase())
 
@@ -39,10 +40,10 @@ export default function Dashboard({ portfolio, selectedNetwork, selectedAccount,
     const isBalancesCachedCurrentNetwork = portfolio.cachedBalancesByNetworks.length ? 
         portfolio.cachedBalancesByNetworks.find(({network}) => network === selectedNetwork.id) : false
 
-    useEffect(() => {
-        if (!tab || tab === tabSegments[0].value) return history.replace(`/wallet/dashboard`)
-        history.replace(`/wallet/dashboard/${tab}${tab === tabSegments[1].value ? `/${page}` : ''}`)
-    }, [tab, history, page])
+    // useEffect(() => {
+    //     if (!tab || tab === tabSegments[0].value) return history.replace(`/wallet/dashboard`)
+    //     history.replace(`/wallet/dashboard/${tab}${tab === tabSegments[1].value ? `/${page}` : ''}`)
+    // }, [tab, history, page])
 
     useLayoutEffect(() => {
         const tokensData = portfolio.tokens
@@ -137,9 +138,10 @@ export default function Dashboard({ portfolio, selectedNetwork, selectedAccount,
                     />
                 </Panel>
             </div>
-            <Panel title={<>Assets <Segments small defaultValue={tab} segments={tabSegments} onChange={setTab} /></>}>
-                {
-                    tab === tabSegments[0].value ?
+                <Tabs
+                    firstTabLabel="Tokens"
+                    secondTabLabel="Collectibles"
+                    firstTab={
                         <Protocols
                             portfolio={portfolio}
                             network={selectedNetwork}
@@ -148,15 +150,16 @@ export default function Dashboard({ portfolio, selectedNetwork, selectedAccount,
                             userSorting={userSorting}
                             setUserSorting={setUserSorting}
                         />
-                        :
+                    }
+                    secondTab={
                         <Collectibles portfolio={portfolio} isPrivateMode={privateMode.isPrivateMode} />
-                }
+                    }
+                />
                 <div className={styles.footer}>
                     <span className={styles.missingTokenNotice}>
                         If you don't see a specific token that you own, please check the <a href={`${selectedNetwork.explorerUrl}/address/${selectedAccount}`} target="_blank" rel="noreferrer">Block Explorer</a>
                     </span>
                 </div>
-            </Panel>
         </section>
     )
 }
