@@ -175,7 +175,7 @@ const AmbireTokensCard = ({ networkId, accountId, tokens, rewardsData, addReques
 
         setSelectedToken({label: token?.label}) 
         if (token && token.type === 'withdraw' && leaveLog && (parseFloat(leaveLog.walletValue) > 0)) {
-            const unbondToolTipLabelMdg = `* Because of pending to withdraw, you are not able to unstaking more ${selectedToken.label} until unbond period is end.`
+            const unbondToolTipLabelMdg = `* Because of funds that are pending withdrawal, you are not able to unstake more ${selectedToken.label} tokens until the unbond period is over.`
             
             setCustomInfo(
                 <>
