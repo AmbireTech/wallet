@@ -131,6 +131,7 @@ export default function Wallet(props) {
     {
       path: '/messages/:page?',
       component: <Signatures
+        privateMode={props.privateMode}
         selectedAcc={props.selectedAcc}
         selectedNetwork={props.network}
       />
