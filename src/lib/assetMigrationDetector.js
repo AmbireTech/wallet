@@ -25,7 +25,6 @@ export default function assetMigrationDetector({ networkId, account }) {
       return fetchGet(urlCustomTokens)
         .then(finalResponse => {
           const filteredAssets = finalResponse.data?.tokens
-          debugger
           return filteredAssets.map(a => {
             return {
               name: a.symbol,
@@ -44,8 +43,6 @@ export default function assetMigrationDetector({ networkId, account }) {
         })
     })
     .catch(err => {
-      console.log(err)
-      debugger
       throw Error('Could not get assets from velcro')
     })
 }
