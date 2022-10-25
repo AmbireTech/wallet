@@ -9,6 +9,7 @@ const Tabs = ({
   firstTab,
   secondTab,
   panelClassName,
+  footer
 }) => {
   const [currentTab, setCurrentTab] = useState(1)
 
@@ -32,6 +33,7 @@ const Tabs = ({
         </button>
       </div>
       {currentTab === 1 ? firstTab : secondTab}
+      {footer}
     </Panel>
   )
 }
