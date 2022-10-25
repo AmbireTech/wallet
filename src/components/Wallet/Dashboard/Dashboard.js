@@ -154,12 +154,14 @@ export default function Dashboard({ portfolio, selectedNetwork, selectedAccount,
                     secondTab={
                         <Collectibles portfolio={portfolio} isPrivateMode={privateMode.isPrivateMode} />
                     }
+                    footer={
+                        <div className={styles.footer}>
+                            <span className={styles.missingTokenNotice}>
+                                If you don't see a specific token that you own, please check the <a href={`${selectedNetwork.explorerUrl}/address/${selectedAccount}`} target="_blank" rel="noreferrer">Block Explorer</a>
+                            </span>
+                        </div>
+                    }
                 />
-                <div className={styles.footer}>
-                    <span className={styles.missingTokenNotice}>
-                        If you don't see a specific token that you own, please check the <a href={`${selectedNetwork.explorerUrl}/address/${selectedAccount}`} target="_blank" rel="noreferrer">Block Explorer</a>
-                    </span>
-                </div>
         </section>
     )
 }
