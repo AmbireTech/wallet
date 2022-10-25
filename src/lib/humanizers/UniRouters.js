@@ -130,7 +130,8 @@ const uniV3Mapping = (humanizerInfo) => {
       // the current verbosity of "Swap ..., unwrap WETH to ETH" will be a nice pedantic quirk
       const parsed = calls.map(data => {
         const sigHash = data.slice(0, 10)
-        const humanizer = uniV3Mapping[sigHash]
+        const mappingResult = uniV32Mapping(humanizerInfo)
+        const humanizer = mappingResult[sigHash]
         return humanizer ? humanizer({ ...txn, data }, network) : null
       }).flat().filter(x => x)
       return parsed.length ? parsed : [`Unknown Uni V3 interaction`]
@@ -172,7 +173,8 @@ const uniV32Mapping = (humanizerInfo) => {
       // the current verbosity of "Swap ..., unwrap WETH to ETH" will be a nice pedantic quirk
       const parsed = calls.map(data => {
         const sigHash = data.slice(0, 10)
-        const humanizer = uniV32Mapping[sigHash]
+        const mappingResult = uniV32Mapping(humanizerInfo)
+        const humanizer = mappingResult[sigHash]
         return humanizer ? humanizer({ ...txn, data }, network) : null
       }).flat().filter(x => x)
       return (parsed.length ? parsed : [`Unknown Uni V3 interaction`])
