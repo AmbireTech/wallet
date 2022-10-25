@@ -19,7 +19,7 @@ const Protocols = ({ portfolio, network, account, hidePrivateValue, userSorting,
 
     const [failedImg, setFailedImg] = useState([])
     const [isHideTokenModalOpen, setIsHideTokenModalOpen] = useState(false)
-    const { isCurrNetworkBalanceLoading, isCurrNetworkProtocolsLoading, tokens, protocols } = portfolio
+    const { isCurrNetworkBalanceLoading, tokens } = portfolio
 
     const sortType = userSorting.tokens?.sortType || 'decreasing'
 
@@ -62,14 +62,11 @@ const Protocols = ({ portfolio, network, account, hidePrivateValue, userSorting,
         }
     })
 
+    const shouldShowPlaceholder = (!isCurrNetworkBalanceLoading && !tokens.length)
 
-    const otherProtocols = protocols.filter(({ label }) => label !== 'Tokens')
-    const shouldShowPlaceholder = (!isCurrNetworkBalanceLoading && !tokens.length) && (!isCurrNetworkProtocolsLoading && !otherProtocols.length)
-
-    const tokenItem = (index, img, symbol, balance, balanceUSD, address, send = false, network, decimals, category, sortedTokensLength) => 
+    const tokenItem = (index, img, symbol, balance, balanceUSD, address, send = false, network, decimals, category, sortedTokensLength, pending, unconfirmed, latest, price) => 
         {
-            const logo = failedImg.includes(img) ? getTokenIcon(network, address) : img
-                
+            const logo = failedImg.includes(img) || !img ? getTokenIcon(network, address) : img
             return (<div className="token" key={`token-${address}-${index}`}
              draggable={category === 'tokens' && sortedTokensLength > 1 && sortType === 'custom' && !isMobileScreen}
              onDragStart={(e) => { 
@@ -100,7 +97,9 @@ const Protocols = ({ portfolio, network, account, hidePrivateValue, userSorting,
                     <span className="symbol">{ symbol }</span>
                 </div>
                 <div className="dollar">
-                    <span className="symbol">$</span> { hidePrivateValue(balanceUSD.toFixed(2)) }
+                    <span className="symbol">${' '}</span>{ price ?  hidePrivateValue((latest ? latest.balanceUSD : balanceUSD).toFixed(2))  : '-'}
+                    {unconfirmed && <span className="balance-awaiting"> awaiting signature { hidePrivateValue(unconfirmed.balanceUSD.toFixed(2)) } </span> }
+                    {pending && <span className="balance-pending"> pending { hidePrivateValue(pending.balanceUSD.toFixed(2)) } </span> }
                 </div>
             </div>
             {
@@ -181,29 +180,13 @@ const Protocols = ({ portfolio, network, account, hidePrivateValue, userSorting,
                                 </div>
                                 <div className="list">
                                     { 
-                                        sortedTokens.map(({ address, symbol, tokenImageUrl, balance, balanceUSD, network, decimals }, i) =>
-                                            tokenItem(i, tokenImageUrl, symbol, balance, balanceUSD, address, true, network, decimals, 'tokens', sortedTokens.length))
+                                        sortedTokens.map(({ address, symbol, tokenImageUrl, balance, balanceUSD, network, decimals, pending, unconfirmed, latest, price }, i) =>
+                                            tokenItem(i, tokenImageUrl, symbol, balance, balanceUSD, address, true, network, decimals, 'tokens', sortedTokens.length, pending, unconfirmed, latest, price))
                                     }
                                 </div>
                             </div>
                         :
                         null
-                }
-                {
-                    isCurrNetworkProtocolsLoading ?
-                        <Loading/>
-                        :
-                            otherProtocols.map(({ label, assets }, i) => (
-                                <div className="category" key={`category-${i}`}>
-                                    <div className="title">{ label }</div>
-                                    <div className="list">
-                                        {
-                                            assets.map(({ category, symbol, tokenImageUrl, balance, balanceUSD, address }, i) => 
-                                                tokenItem(i, tokenImageUrl, symbol, balance, balanceUSD, address, category !== 'claimable', 'protocols'))
-                                        }
-                                    </div>
-                                </div>
-                            ))
                 }
             </>
         </div>
