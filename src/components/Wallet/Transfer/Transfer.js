@@ -243,6 +243,11 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
 
     const amountLabel = <div className={styles.amountLabel}>Available Amount: <span>{maxAmountFormatted} {selectedAsset?.symbol}</span></div>
 
+    const sortedAssetsItems = [
+        ...assetsItems.filter(i => i.label.toLowerCase() === 'wallet'),
+        ...assetsItems.filter(i => i.label.toLowerCase() !== 'wallet').sort((a, b) => a.label.toLowerCase() > b.label.toLowerCase() ? 1 : -1),
+    ]
+
     return (
         <div className={styles.wrapper} style={{ justifyContent: gasTankDetails ? 'center' : '' }}>
            <Panel title="Send" className={styles.panel}>
@@ -251,8 +256,8 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
                         <Loading />
                         :
                         assetsItems.length ?
-                            <div className={styles.form}>
-                                <Select searchable defaultValue={asset} items={assetsItems.sort((a, b) => a.label.toLowerCase() > b.label.toLowerCase() ? 1 : -1)} onChange={({ value }) => setAsset(value)}/>
+                            <div className="form">
+                                <Select searchable defaultValue={asset} items={sortedAssetsItems} onChange={({ value }) => setAsset(value)}/>
                                 { feeBaseTokenWarning ? <p className={styles.gasTankConvertMsg}><MdWarning /> {feeBaseTokenWarning}</p> : <></>}
                                 <NumberInput
                                     label={amountLabel}
