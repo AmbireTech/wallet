@@ -21,7 +21,7 @@ $wide-breakpoint-min-width: 1920px;
 
 
 $basic-transition: all 0.1s ease-in-out;
-$box-shadow: 0px 5px 10px 0 rgba(0, 0, 0, 0.25);
+$box-shadow: 0px 5px 10px #00000026;
 
 @mixin flex-center-center {
     display: flex;
