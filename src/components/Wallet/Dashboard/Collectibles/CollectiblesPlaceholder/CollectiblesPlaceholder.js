@@ -1,3 +1,4 @@
+import Collectible from 'components/Wallet/Dashboard/Collectibles/Collectible/Collectible'
 import styles from './CollectiblesPlaceholder.module.scss'
 
 const CollectiblesPlaceholder = ({ isPrivateMode, collectiblesLength }) => {
@@ -49,19 +50,15 @@ const CollectiblesPlaceholder = ({ isPrivateMode, collectiblesLength }) => {
                 <div className={styles.collectiblesWrapper}>
                     {
                         collectibles.map(({ collectionName, collectionImg, name, image, price}) => (
-                            <div className={styles.collectible} key={name}>
-                                <div className={styles.artwork} style={{backgroundImage: `url(${image})`}}/>
-                                <div className={styles.info}>
-                                    <div className={styles.collection}>
-                                        <div className={styles.collectionIcon} style={{backgroundImage: `url(${collectionImg})`}}></div>
-                                        { collectionName }
-                                    </div>
-                                    <div className={styles.details}>
-                                        <div className={styles.name}>{ name }</div>
-                                        <div className={styles.value}><span className="purple-highlight">$</span> { price }</div>
-                                    </div>
-                                </div>
-                            </div>
+                            <Collectible
+                                key={name}
+                                collectionIcon={collectionImg}
+                                collectionName={collectionName}
+                                image={image}
+                                name={name}
+                                price={price}
+                                href="/wallet"
+                            />
                         ))
                     }
                 </div>
