@@ -1,5 +1,4 @@
-import styles from './Protocols.module.scss'
-
+import { useHistory } from 'react-router-dom'
 import { GiToken } from 'react-icons/gi'
 import { AiOutlineSend } from 'react-icons/ai'
 import { NavLink } from 'react-router-dom'
@@ -14,7 +13,10 @@ import { getTokenIcon } from 'lib/icons'
 import { formatFloatTokenAmount } from 'lib/formatters'
 import { ToolTip } from 'components/common'
 
+import styles from './Protocols.module.scss'
+
 const Protocols = ({ portfolio, network, account, hidePrivateValue, userSorting, setUserSorting }) => {
+    const history = useHistory()
     const { showModal } = useModals()
 
     const [failedImg, setFailedImg] = useState([])
@@ -132,6 +134,8 @@ const Protocols = ({ portfolio, network, account, hidePrivateValue, userSorting,
             )
         }
     }, [portfolio, isHideTokenModalOpen, showModal, account, network, sortType, userSorting])
+
+    useEffect(() => history.replace(`/wallet/dashboard`), [history])
 
     return (
         <div className={styles.wrapper}>
