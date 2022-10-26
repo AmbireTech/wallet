@@ -77,15 +77,14 @@ const AAVECard = ({ networkId, tokens: tokensData, account, addRequest }) => {
     }
 
     const loadTokensAPR = useCallback(async(uniqueTokenAddresses, lendingPoolContract) => {
-        return Object.fromEntries(await Promise.all(uniqueTokenAddresses.map(async address => {
-            const data = await lendingPoolContract.getReserveData(address)
-                const { liquidityRate } = data
-                const apr = ((liquidityRate / RAY) * 100).toFixed(2)
-                return [address, apr]
-
-            })))
+        const aprs = await Promise.all(uniqueTokenAddresses.map(address => lendingPoolContract.getReserveData(address).catch(e => { throw Error(e) })))
+        return Object.fromEntries(uniqueTokenAddresses.map((addr, i) => {
+            const { liquidityRate } = aprs[i]
+            const apr = ((liquidityRate / RAY) * 100).toFixed(2)
+            return ([addr, apr])
+        }))
     }, [])
-    
+ 
     const loadPool = useCallback(async () => {
         const providerAddress = AAVELendingPoolProviders[networkDetails.id]
         if (!providerAddress) {
