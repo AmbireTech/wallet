@@ -135,12 +135,12 @@ const Quotes = ({ addRequest, selectedAccount, fromTokensItems, quotes, onQuotes
                 }
             })
             onCancel()
+            setLoading(false)
         } catch(e) {
             console.error(e);
             addToast(e.message || e, { error: true })
+            setLoading(false)
         }
-
-        setLoading(false)
     }
 
     return (
