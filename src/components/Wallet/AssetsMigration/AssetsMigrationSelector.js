@@ -446,6 +446,7 @@ const AssetsMigrationSelector = ({ signerAccount, identityAccount, network, setI
                           <div className={`migration-asset-select${item.selected ? ' checked' : ''}`}
                                onClick={() => false}>
                             <Checkbox
+                              labelClassName='checkbox-label'
                               id={`check-${item.address}`}
                               label={<span className={'migration-asset-select-label'}>
                                   <span className='migration-asset-select-icon'>

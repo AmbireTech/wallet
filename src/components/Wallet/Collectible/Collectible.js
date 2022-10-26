@@ -8,7 +8,7 @@ import { AiOutlineSend } from 'react-icons/ai'
 import { BsFillImageFill } from 'react-icons/bs'
 import * as blockies from 'blockies-ts';
 import { useToasts } from 'hooks/toasts'
-import { TextInput, Button, Loading, AddressBook, AddressWarning, ToolTip } from 'components/common'
+import { TextInput, Button, Loading, AddressBook, AddressWarning, ToolTip, Panel } from 'components/common'
 import ERC721Abi from 'ambire-common/src/constants/abis/ERC721Abi'
 import networks from 'consts/networks'
 import { validateSendNftAddress } from 'lib/validations/formValidations'
@@ -229,7 +229,7 @@ const Collectible = ({ selectedAcc, selectedNetwork, addRequest, addressBook }) 
 
     return (
         <div id="collectible">
-            <div className="panel">
+            <Panel className='panel'>
                 <div className="heading">
                     <div className="title">{ metadata.collection } #{ tokenId }</div>
                     <div className="contract">
@@ -267,12 +267,11 @@ const Collectible = ({ selectedAcc, selectedNetwork, addRequest, addressBook }) 
                             </div>
                         </div>
                 }
-            </div>
-            <div className="panel">
-                <div className="title">Transfer</div>
+            </Panel>
+            <Panel title="Transfer" className='panel'>
                 <div className="content">
                     <div id="recipient-address">
-                        <TextInput placeholder="Recipient Address" value={recipientAddress} onInput={(value) => setRecipientAddress(value)}/>
+                        <TextInput className='recipient-input' placeholder="Recipient Address" value={recipientAddress} onInput={(value) => setRecipientAddress(value)}/>
                         <ToolTip label={!ensAddress ? 'You can use Ethereum Name ServiceⓇ' : 'Valid Ethereum Name ServicesⓇ domain'}>
                             <div id="ens-logo" className={ensAddress ? 'ens-logo-active ' : ''} />
                         </ToolTip>
@@ -287,6 +286,7 @@ const Collectible = ({ selectedAcc, selectedNetwork, addRequest, addressBook }) 
                             onClose={() => setNewAddress(null)}
                             onSelectAddress={address => setRecipientAddress(address)}
                             selectedNetwork={selectedNetwork}
+                            className="address-book"
                         />
                     </div>
                     { validationFormMgs.message && 
@@ -301,7 +301,7 @@ const Collectible = ({ selectedAcc, selectedNetwork, addRequest, addressBook }) 
                     />
                     <Button icon={<AiOutlineSend/>} disabled={isTransferDisabled} onClick={sendTransferTx}>Send</Button>
                 </div>
-            </div>
+            </Panel>
         </div>
     )
 }

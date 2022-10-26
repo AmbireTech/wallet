@@ -220,13 +220,13 @@ const Security = ({
           <TextInput className="depositAddress" value={privText} disabled />
           <div className="btns-wrapper">
             {isQuickAcc && (otpEnabled !== null) && (otpEnabled ? 
-              (<Button red onClick={handleDisableOtp} small>Disable 2FA</Button>) : 
-              (<Button onClick={handleEnableOtp} small>Enable 2FA</Button>)
+              (<Button red onClick={handleDisableOtp} small className='buttonComponent'>Disable 2FA</Button>) : 
+              (<Button onClick={handleEnableOtp} small className='buttonComponent'>Enable 2FA</Button>)
             )}
             {isQuickAcc && (<Button
               disabled={!canChangePassword}
               title={hasPendingReset ? 'Account recovery already in progress' : ''}
-              onClick={showResetPasswordModal} small>Change password</Button>
+              onClick={showResetPasswordModal} small className='buttonComponent'>Change password</Button>
             )}
             <Button
               disabled={isSelected}
@@ -235,6 +235,7 @@ const Security = ({
                 onMakeDefaultBtnClicked(selectedAccount, addr, isQuickAcc)
               }
               small
+              className='buttonComponent'
             >
               Make default
             </Button>
@@ -247,6 +248,7 @@ const Security = ({
                 isSelected ? 'Cannot remove the currently used signer' : ''
               }
               disabled={isSelected}
+              className='buttonComponent'
             >
               Remove
             </Button>

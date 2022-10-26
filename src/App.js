@@ -27,10 +27,7 @@ import { useAttentionGrabber,
 } from './hooks'
 import { useToasts } from './hooks/toasts'
 import { useOneTimeQueryParam } from './hooks/oneTimeQueryParam'
-import WalletStakingPoolABI from 'ambire-common/src/constants/abis/WalletStakingPoolABI.json'
 import useRewards from 'ambire-common/src/hooks/useRewards'
-import { Contract, utils } from 'ethers'
-import { getProvider } from './lib/provider'
 import allNetworks from './consts/networks'
 import { Loading } from 'components/common'
 import ConstantsProvider from 'components/ConstantsProvider/ConstantsProvider'
@@ -94,39 +91,6 @@ function AppInner() {
     setRequests: setRequests
   }, [selectedAcc, network])
 
-  // Attach meta data to req, if needed
-  const attachMeta = async req => {
-    let meta
-
-    const WALLET_TOKEN_ADDRESS = '0x88800092ff476844f74dc2fc427974bbee2794ae'
-    const WALLET_STAKING_ADDRESS = '0x47cd7e91c3cbaaf266369fe8518345fc4fc12935'
-
-    //polygon tests
-    // const WALLET_TOKEN_ADDRESS = '0xe9415e904143e42007865e6864f7f632bd054a08'
-    // const WALLET_STAKING_ADDRESS = '0xec3b10ce9cabab5dbf49f946a623e294963fbb4e'
-
-    const shouldAttachMeta =  [WALLET_TOKEN_ADDRESS, WALLET_STAKING_ADDRESS].includes(req.txn.to.toLowerCase())
-
-    if (shouldAttachMeta) {
-      const WALLET_STAKING_POOL_INTERFACE = new utils.Interface(WalletStakingPoolABI)
-      const provider = getProvider(network.id)
-      const stakingTokenContract = new Contract(WALLET_STAKING_ADDRESS, WALLET_STAKING_POOL_INTERFACE, provider)
-      const shareValue = await stakingTokenContract.shareValue()
-      const { walletUsdPrice: walletTokenUsdPrice, xWALLETAPY: APY } = rewardsData.rewards
-
-      meta = {
-        xWallet: {
-          APY,
-          shareValue,
-          walletTokenUsdPrice,
-        },
-      }
-    }
-
-    if (!meta) return req
-
-    return { ...req, meta: { ...req.meta && req.meta, ...meta }}
-  }
   
   // Filter gnosisRequests and wcRequests by dateAdded,
   // because they are saved in local storage and add them on first render
@@ -149,8 +113,7 @@ function AppInner() {
   // Internal requests: eg from the Transfer page, Security page, etc. - requests originating in the wallet UI itself
   // unlike WalletConnect or SafeSDK requests, those do not need to be persisted
   const addRequest = async req => {
-    const request = await attachMeta(req)
-    return setRequests(reqs => [...reqs, request])
+    return setRequests(reqs => [...reqs, req])
   }
 
   // Merge all requests

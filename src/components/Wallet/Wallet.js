@@ -30,7 +30,7 @@ export default function Wallet(props) {
   const { showModal } = useModals()
   const { isClipboardGranted, isNoticationsGranted, arePermissionsLoaded, modalHidden } = usePermissions()
   const { pathname } = useLocation()
-  const walletContainer = useRef()
+  const walletContainerInner = useRef()
   const { isDappMode } = props.dappsCatalog
   const routeMatch = useRouteMatch('/wallet/dapps')
 
@@ -220,8 +220,9 @@ export default function Wallet(props) {
 
   useEffect(() => handlePermissionsModal(), [handlePermissionsModal])
 
+  // On pathname change (i.e. navigating to different page), always scroll to top
   useEffect(() => {
-    const scrollTimeout = setTimeout(() => walletContainer.current && walletContainer.current.scrollTo({ top: 0, behavior: 'smooth' }), 0)
+    const scrollTimeout = setTimeout(() => walletContainerInner.current && walletContainerInner.current.scrollTo({ top: 0, behavior: 'smooth' }), 0)
     return () => clearTimeout(scrollTimeout)
   }, [pathname])
 
@@ -235,10 +236,10 @@ export default function Wallet(props) {
   return (
     <div id="wallet">
       <SideBar match={props.match} portfolio={props.portfolio} hidePrivateValue={props.privateMode.hidePrivateValue} relayerURL={props.relayerURL} selectedNetwork={props.network} dappsCatalog={props.dappsCatalog} />
-      <TopBar {...props} />
 
-      <div id="wallet-container" className={dapModeSidebar ? 'dapp-mode' : ''} ref={walletContainer}>
-        <div id="wallet-container-inner">
+      <div id="wallet-container" className={dapModeSidebar ? 'dapp-mode' : ''}>
+        <TopBar {...props} />
+        <div id="wallet-container-inner" ref={walletContainerInner}>
           <Suspense fallback={<Loading />}>
             <Switch>
               {

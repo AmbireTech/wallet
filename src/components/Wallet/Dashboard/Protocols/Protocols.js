@@ -1,4 +1,4 @@
-import './Protocols.scss'
+import styles from './Protocols.module.scss'
 
 import { GiToken } from 'react-icons/gi'
 import { AiOutlineSend } from 'react-icons/ai'
@@ -67,7 +67,7 @@ const Protocols = ({ portfolio, network, account, hidePrivateValue, userSorting,
     const tokenItem = (index, img, symbol, balance, balanceUSD, address, send = false, network, decimals, category, sortedTokensLength, pending, unconfirmed, latest, price) => 
         {
             const logo = failedImg.includes(img) || !img ? getTokenIcon(network, address) : img
-            return (<div className="token" key={`token-${address}-${index}`}
+            return (<div className={styles.token} key={`token-${address}-${index}`}
              draggable={category === 'tokens' && sortedTokensLength > 1 && sortType === 'custom' && !isMobileScreen}
              onDragStart={(e) => { 
                 if (handle.current === target.current || handle.current.contains(target.current)) dragStart(e, index)
@@ -78,8 +78,8 @@ const Protocols = ({ portfolio, network, account, hidePrivateValue, userSorting,
              onDragEnd={() => drop(sortedTokens)}
              onDragOver={(e) => e.preventDefault()}
             >
-            {sortedTokensLength > 1 && sortType === 'custom' && !isMobileScreen && <MdDragIndicator size={20} className='drag-handle' onClick={(e) => dragStart(e, index)} id={`${index}-handle`} />}
-            <div className="icon">
+            {sortedTokensLength > 1 && sortType === 'custom' && !isMobileScreen && <MdDragIndicator size={20} className={styles.dragHandle} onClick={(e) => dragStart(e, index)} id={`${index}-handle`} />}
+            <div className={styles.icon}>
                 { 
                     failedImg.includes(logo) ?
                         <GiToken size={20}/>
@@ -87,24 +87,24 @@ const Protocols = ({ portfolio, network, account, hidePrivateValue, userSorting,
                         <img src={logo} draggable="false" alt="Token Icon" onError={() => setFailedImg(failed => [...failed, logo])}/>
                 }
             </div>
-            <div className="name">
+            <div className={styles.name}>
                 { symbol }
             </div>
-            <div className="separator"></div>
-            <div className="balance">
-                <div className="currency">
-                    <span className="value">{ hidePrivateValue(formatFloatTokenAmount(balance, true, decimals)) }</span>
-                    <span className="symbol">{ symbol }</span>
+            <div className={styles.separator}></div>
+            <div className={styles.balance}>
+                <div className={styles.currency}>
+                    <span className={styles.value}>{ hidePrivateValue(formatFloatTokenAmount(balance, true, decimals)) }</span>
+                    <span className={styles.symbol}>{ symbol }</span>
                 </div>
-                <div className="dollar">
-                    <span className="symbol">${' '}</span>{ price ?  hidePrivateValue((latest ? latest.balanceUSD : balanceUSD).toFixed(2))  : '-'}
-                    {unconfirmed && <span className="balance-awaiting"> awaiting signature { hidePrivateValue(unconfirmed.balanceUSD.toFixed(2)) } </span> }
-                    {pending && <span className="balance-pending"> pending { hidePrivateValue(pending.balanceUSD.toFixed(2)) } </span> }
+                <div className={styles.dollar}>
+                    <span className={styles.symbol}>${' '}</span>{ price ?  hidePrivateValue((latest ? latest.balanceUSD : balanceUSD).toFixed(2))  : '-'}
+                    {unconfirmed && <span className={styles.balanceAwaiting}> awaiting signature { hidePrivateValue(unconfirmed.balanceUSD.toFixed(2)) } </span> }
+                    {pending && <span className={styles.balancePending}> pending { hidePrivateValue(pending.balanceUSD.toFixed(2)) } </span> }
                 </div>
             </div>
             {
                 send ? 
-                    <div className="actions">
+                    <div className={styles.actions}>
                         <NavLink to={`/wallet/transfer/${address}`}>
                             <Button small icon={<AiOutlineSend/>}>Send</Button>
                         </NavLink>
@@ -133,7 +133,7 @@ const Protocols = ({ portfolio, network, account, hidePrivateValue, userSorting,
     }, [portfolio, isHideTokenModalOpen, showModal, account, network, sortType, userSorting])
 
     return (
-        <div id="protocols-table">
+        <div className={styles.wrapper}>
             {
                 shouldShowPlaceholder ?
                     <ProtocolsPlaceholder onClickAddToken={openAddTokenModal} onClickShowToken={openHideTokenModal}/>
@@ -146,12 +146,12 @@ const Protocols = ({ portfolio, network, account, hidePrivateValue, userSorting,
                         <Loading/>
                         :
                         !shouldShowPlaceholder && sortedTokens.length ?
-                            <div className="category" key="category-tokens">
-                                <div className="title">
-                                    <div className="sort-holder">
+                            <div className={styles.category} key="category-tokens">
+                                <div className={styles.title}>
+                                    <div className={styles.sortHolder}>
                                         Tokens
                                         {sortedTokens.length > 1 && !isMobileScreen &&  (
-                                            <div className="sort-buttons">
+                                            <div className={styles.sortButtons}>
                                                 <ToolTip label='Sorted tokens by drag and drop'>
                                                     <MdDragIndicator color={sortType === "custom" ? "#80ffdb" : ""} cursor="pointer" onClick={() => setUserSorting(prev => ({
                                                         ...prev,
@@ -173,12 +173,12 @@ const Protocols = ({ portfolio, network, account, hidePrivateValue, userSorting,
                                             </div>
                                         )}
                                     </div>
-                                    <div className="wrapper-btns">
+                                    <div className={styles.wrapperBtns}>
                                         <Button mini clear icon={<MdVisibilityOff/>} onClick={() => openHideTokenModal()}>Hide Token</Button>
                                         <Button mini clear icon={<MdOutlineAdd/>} onClick={() => openAddTokenModal()}>Add Token</Button>
                                     </div>
                                 </div>
-                                <div className="list">
+                                <div className={styles.list}>
                                     { 
                                         sortedTokens.map(({ address, symbol, tokenImageUrl, balance, balanceUSD, network, decimals, pending, unconfirmed, latest, price }, i) =>
                                             tokenItem(i, tokenImageUrl, symbol, balance, balanceUSD, address, true, network, decimals, 'tokens', sortedTokens.length, pending, unconfirmed, latest, price))

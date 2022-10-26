@@ -1,20 +1,24 @@
-import './PasswordInput.scss'
+import styles from './PasswordInput.module.scss'
 
 import { forwardRef, useState } from 'react'
-import { MdOutlineRemoveRedEye, MdRemoveRedEye } from 'react-icons/md'
 
-const PasswordInput = forwardRef(({ label, placeholder, autoComplete, peakPassword, disabled, value, onInput, onChange }, ref) => {
+import { ReactComponent as VisibleIcon } from 'resources/icons/visible.svg'
+import { ReactComponent as InvisibleIcon } from 'resources/icons/invisible.svg'
+
+import cn from 'classnames'
+
+const PasswordInput = forwardRef(({ label, placeholder, autoComplete, peakPassword, disabled, value, onInput, onChange, className }, ref) => {
     const [showPassword, setShowPassword] = useState()
 
     return (
-        <div className="password-input">
+        <div className={cn(styles.passwordInput, className || '')}>
             {
                 label ?
                     <label>{ label }</label>
                     :
                     null
             }
-            <div className="input-container">
+            <div className={styles.inputContainer}>
                 <input
                     value={value}
                     autoComplete={autoComplete}
@@ -28,12 +32,12 @@ const PasswordInput = forwardRef(({ label, placeholder, autoComplete, peakPasswo
                 {
                     peakPassword ?
                         !showPassword ?
-                            <div className="button" onClick={() => setShowPassword(true)}>
-                                <MdOutlineRemoveRedEye size={20}/>
+                            <div className={styles.button} onClick={() => setShowPassword(true)}>
+                                <VisibleIcon />
                             </div>
                             :
-                            <div className="button" onClick={() => setShowPassword(false)}>
-                                <MdRemoveRedEye size={20}/>
+                            <div className={styles.button} onClick={() => setShowPassword(false)}>
+                                <InvisibleIcon />
                             </div>
                         :
                         null
