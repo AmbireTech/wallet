@@ -134,8 +134,8 @@ const Quotes = ({ addRequest, selectedAccount, fromTokensItems, quotes, onQuotes
                     amount: outputAmount
                 }
             })
-            onCancel()
             setLoading(false)
+            onCancel()
         } catch(e) {
             console.error(e);
             addToast(e.message || e, { error: true })
