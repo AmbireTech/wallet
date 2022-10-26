@@ -1,6 +1,6 @@
 
 import { useEffect, useLayoutEffect, useState } from 'react'
-// import { useHistory, useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 
 import { Chart, Loading, Panel } from 'components/common'
 import Balances from './Balances/Balances'
@@ -17,33 +17,17 @@ import cn from 'classnames'
 import styles from './Dashboard.module.scss'
 import Tabs from 'components/common/Tabs/Tabs'
 
-// const tabSegments = [
-//     {
-//         value: 'tokens'
-//     },
-//     {
-//         value: 'collectibles'
-//     }
-// ]
-
-
 export default function Dashboard({ portfolio, selectedNetwork, selectedAccount, setNetwork, privateMode, rewardsData,  userSorting, setUserSorting, accounts, addRequest, relayerURL, useStorage, match, showSendTxns }) {
-    // const history = useHistory()
-    // const { tabId, page = 1 } = useParams()
+    const { tabId } = useParams()
 
     const [chartTokensData, setChartTokensData] = useState([]);
-    // const [tab, setTab] = useState(tabId || tabSegments[0].value);
+    const [defaultTab] = useState(tabId ? (tabId === 'tokens' ? 1 : 2) : 1)
 
     const currentAccount = accounts.find(a => a.id.toLowerCase() === selectedAccount.toLowerCase())
 
     const { hasPendingReset, recoveryLock, isPasswordRecoveryCheckLoading } = usePasswordRecoveryCheck(relayerURL, currentAccount, selectedNetwork)
     const isBalancesCachedCurrentNetwork = portfolio.cachedBalancesByNetworks.length ? 
         portfolio.cachedBalancesByNetworks.find(({network}) => network === selectedNetwork.id) : false
-
-    // useEffect(() => {
-    //     if (!tab || tab === tabSegments[0].value) return history.replace(`/wallet/dashboard`)
-    //     history.replace(`/wallet/dashboard/${tab}${tab === tabSegments[1].value ? `/${page}` : ''}`)
-    // }, [tab, history, page])
 
     useLayoutEffect(() => {
         const tokensData = portfolio.tokens
@@ -154,6 +138,7 @@ export default function Dashboard({ portfolio, selectedNetwork, selectedAccount,
                     secondTab={
                         <Collectibles portfolio={portfolio} isPrivateMode={privateMode.isPrivateMode} />
                     }
+                    tabClassName={styles.tab}
                     footer={
                         <div className={styles.footer}>
                             <span className={styles.missingTokenNotice}>
@@ -161,6 +146,7 @@ export default function Dashboard({ portfolio, selectedNetwork, selectedAccount,
                             </span>
                         </div>
                     }
+                    defaultTab={defaultTab}
                 />
         </section>
     )
