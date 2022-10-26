@@ -72,7 +72,7 @@ const Collectibles = ({ selectedNetwork, portfolio, isPrivateMode }) => {
 
     return (
         <div className={styles.wrapper}>
-            <div className="wrapper-btns">
+            <div className={styles.wrapperBtns}>
                 <Button mini clear icon={<MdVisibilityOff/>} onClick={() => openHideTokenModal()}>Hide Collectible</Button>
             </div>
             <div className={styles.collectiblesWrapper}>

@@ -67,6 +67,9 @@ const Protocols = ({ portfolio, network, account, hidePrivateValue, userSorting,
     const tokenItem = (index, img, symbol, balance, balanceUSD, address, send = false, network, decimals, category, sortedTokensLength, pending, unconfirmed, latest, price) => 
         {
             const logo = failedImg.includes(img) || !img ? getTokenIcon(network, address) : img
+            // In the case we have a pending or unconfirmed token without latest balance => 
+            // It is new in our portfolio so we display 0.
+            const latestBalance = latest ? latest.balance : ((!unconfirmed && !pending) ? balance : 0) 
             return (<div className={styles.token} key={`token-${address}-${index}`}
              draggable={category === 'tokens' && sortedTokensLength > 1 && sortType === 'custom' && !isMobileScreen}
              onDragStart={(e) => { 
@@ -93,13 +96,13 @@ const Protocols = ({ portfolio, network, account, hidePrivateValue, userSorting,
             <div className={styles.separator}></div>
             <div className={styles.balance}>
                 <div className={styles.currency}>
-                    <span className={styles.value}>{ hidePrivateValue(formatFloatTokenAmount(balance, true, decimals)) }</span>
+                    <span className={styles.value}>{ hidePrivateValue(formatFloatTokenAmount(latestBalance, true, decimals)) }</span>
+                    {unconfirmed && <span className={styles.balanceAwaiting}> awaiting signature { hidePrivateValue(formatFloatTokenAmount(unconfirmed.balance, true, decimals)) } </span> }
+                    {pending && <span className={styles.balancePending}> pending { hidePrivateValue(pending.balance.toFixed(2)) } </span> }
                     <span className={styles.symbol}>{ symbol }</span>
                 </div>
                 <div className={styles.dollar}>
                     <span className={styles.symbol}>${' '}</span>{ price ?  hidePrivateValue((latest ? latest.balanceUSD : balanceUSD).toFixed(2))  : '-'}
-                    {unconfirmed && <span className={styles.balanceAwaiting}> awaiting signature { hidePrivateValue(unconfirmed.balanceUSD.toFixed(2)) } </span> }
-                    {pending && <span className={styles.balancePending}> pending { hidePrivateValue(pending.balanceUSD.toFixed(2)) } </span> }
                 </div>
             </div>
             {

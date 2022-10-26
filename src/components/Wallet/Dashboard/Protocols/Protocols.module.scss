@@ -111,6 +111,26 @@
                             font-weight: bold;
                             color: $c-aquamarine;
                         }
+
+                        .balanceAwaiting {
+                            border: 1px solid orange;
+                            padding: 1px 5px;
+                            font-style: italic;
+                            box-shadow: 0 2px 5px rgba(0,0,0,.25);
+                            margin-left: 5px;
+                            font-size: 15px;
+                            border-radius: 3px;
+                        }
+        
+                        .balancePending {
+                            border: 1px solid red;
+                            padding: 1px 5px;
+                            font-style: italic;
+                            box-shadow: 0 2px 5px rgba(0,0,0,.25);
+                            margin-left: 5px;
+                            border-radius: 3px;
+        
+                        }
                     }
                     
                     .dollar {
