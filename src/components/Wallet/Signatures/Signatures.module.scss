@@ -15,7 +15,7 @@
     display: flex;
     flex-direction: column;
     gap: 10px;
-    padding: 1.5em;
+    padding: 24px;
     background: $c-ebony-clay;
     border: 1px solid $c-fiord;
     border-radius: 12px;
@@ -111,7 +111,7 @@
             color: $c-scampi;
             font-family: monospace;
             white-space: break-spaces;
-            font-size: 1.1em;
+            font-size: 16px;
             overflow-wrap: break-word;
           }
         }
