@@ -5,8 +5,8 @@
     flex-direction: column;
     gap: 30px;
 
-    
     .placeholderOverlay {
+        color: $c-titan-white;
         z-index: 3;
         font-size: 18px;
         position: absolute;
@@ -34,131 +34,56 @@
         .title {
             display: flex;
             align-items: center;
-            justify-content: space-between;
-            padding: 15px 20px;
+            padding: 20px 30px;
             font-size: 20px;
-            font-weight: bold;
-            background-color: rgba(255, 255, 255, 0.1);
+            margin-bottom: 14px;
+
+            h3 {
+                font-weight: 400;
+                font-size: 20px;
+                margin: 0;
+            }
+
+            & > * {
+                flex: 1;
+            }
 
             .sortHolder {
-                display: flex;
-                align-items: center;
-                gap: 10px;
-                .sortButtons {
-                    display: flex;
-                }
+                flex: 1.5;
             }
+
+            .dragHandle {
+                flex: none;
+                margin-right: 15px;
+            }
+        
+            .price {
+                // flex: .7;
+                flex: 1.2;
+            }
+
+            .balance {
+                flex: 1.2;
+            }
+        
+            // .value {
+            //     flex: 1.2;
+            // }
+
             .wrapperBtns {
                 display: flex;
                 gap: 10px;
+            }
+
+            .actions {
+                text-align: end;
             }
         }
 
         .list {
             display: flex;
+            gap: 10px;
             flex-direction: column;
-
-            .token {
-                display: flex;
-                align-items: center;
-                gap: 12px;
-                padding: 15px 20px;
-                font-size: 15px;
-                color: $c-titan-white;
-                
-                &[draggable="true"] .dragHandle {
-                    cursor: grab;
-                    cursor: -moz-grab;
-                    cursor: -webkit-grab;
-            
-                }
-
-                &[draggable="true"]:active .dragHandle {
-                    cursor: grabbing;
-                    cursor: -moz-grabbing;
-                    cursor: -webkit-grabbing;
-                }
-
-                &:nth-child(odd) {
-                    background-color: rgba(255, 255, 255, 0.04);
-                }
-
-                &:nth-child(even) {
-                    background-color: rgba(255, 255, 255, 0.02);
-                }
-
-                .separator {
-                    flex-grow: 1;
-                }
-
-                .icon {
-                    position: relative;
-                    flex: 0 0 auto;
-                    @include flex-center-center;
-                    height: 40px;
-                    width: 40px;
-                    border-radius: 100%;
-                    color: rgba(255, 255, 255, 0.5);
-                    background-color: rgba(255, 255, 255, 0.1);
-                    overflow: hidden;
-
-                    img {
-                        height: 100%;
-                        user-select: none;
-                    }
-                }
-
-                .name {
-                    font-size: 17px;
-                    font-weight: bold;
-                }
-
-                .balance {
-                    display: flex;
-                    flex-direction: column;
-                    text-align: right;
-
-                    .currency {
-                        display: flex;
-                        gap: 5px;
-                        font-size: 18px;
-                        font-weight: 500;
-
-                        .symbol {
-                            font-weight: bold;
-                            color: $c-aquamarine;
-                        }
-                    }
-
-                    .dollar {
-                        font-size: 14px;
-                        font-weight: 500;
-                        color: #bbb;
-
-                        .symbol {
-                            font-weight: bold;
-                            color: $c-heliotrope;
-                        }
-                    }
-                }
-
-                .actions {
-                    width: 0;
-                    display: flex;
-                    align-items: center;
-                    justify-content: flex-end;
-                    opacity: 0;
-                    transition: all 0.1s ease-in-out;
-                    transition-delay: 0.25s;
-                }
-
-                &:hover {
-                    .actions {
-                        width: 125px;
-                        opacity: 1;
-                    }
-                }
-            }
         }
     }
     .addToken {
@@ -172,7 +97,7 @@
 
     .category {
         filter: blur(7px);
-        background-color: rgba(0, 0, 0, 0.1);
+        background-color: rgba($c-mirage-dark, 0.1);
     }
 }
 
@@ -185,43 +110,6 @@
         .placeholderOverlay {
             width: 100%;
             padding: 10px;
-        }
-
-        .title {
-            .sortHolder {
-                flex-direction: column;
-            }
-        }
-        .token {
-            padding: 10px 15px !important;
-            padding-right: 5px !important;
-
-            .icon {
-                height: 35px !important;
-                width: 35px !important;
-            }
-
-            .separator {
-                flex-grow: initial !important;
-            }
-
-            .balance {
-                flex: 1 0 auto;
-
-                .currency {
-                    justify-content: flex-end;
-
-                    .symbol {
-                        display: none;
-                    }
-
-                    .value {
-                        max-width: 120px;
-                        overflow: hidden;
-                        text-overflow: ellipsis;
-                    }
-                }
-            }
         }
     }
 }
