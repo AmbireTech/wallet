@@ -26,7 +26,8 @@ function parseExtendedSummaryItem(item, i, networkDetails, feeAssets) {
 
   if (!item.type) return (<div className='word' key={`item-${i}`}>{ item }</div>)
   if (item.type === 'token') {
-    const foundToken = feeAssets && feeAssets.find(i => (i.address === item.address) && (i.symbol.toLowerCase() === item.symbol.toLowerCase()))
+    console.log({item}, {feeAssets});
+    const foundToken = feeAssets && feeAssets.find(i => (i.address === item.address) && (!item.symbol || (i.symbol.toLowerCase() === item.symbol.toLowerCase())))
     return (
     <div className='token' key={`item-${i}`}>
       { item.amount > 0 && <span>{ formatFloatTokenAmount(item.amount, true, item.decimals) }</span> }
