@@ -16,6 +16,10 @@
         }
     }
 
+    .tab {
+        font-size: 20px;
+    }
+
     .topPanels {
         padding: 15px 50px;
         gap: 0;
@@ -29,6 +33,7 @@
     }
 
     .footer {
+        margin-top: 15px;
         margin-bottom: 40px;
         margin-left: 30px;
         .missingTokenNotice {
