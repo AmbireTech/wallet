@@ -10,9 +10,10 @@ const Tabs = ({
   secondTab,
   panelClassName,
   tabClassName,
-  footer
+  footer,
+  defaultTab
 }) => {
-  const [currentTab, setCurrentTab] = useState(1)
+  const [currentTab, setCurrentTab] = useState(defaultTab || 1)
 
   const handleOpenFirst = () => setCurrentTab(1)
   const handleOpenSecond = () => setCurrentTab(2)
