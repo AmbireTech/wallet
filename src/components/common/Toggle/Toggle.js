@@ -1,10 +1,10 @@
-import './Toggle.scss'
+import styles from './Toggle.module.scss'
 
 const Toggle = ({ defaultChecked, checked, onChange }) => {
     return (
-        <label className="toggle">
+        <label className={styles.toggle}>
             <input type="checkbox" defaultChecked={defaultChecked} checked={checked} onChange={onChange}/>
-            <span className="slider"></span>
+            <span className={styles.slider}></span>
         </label>
     )
 }

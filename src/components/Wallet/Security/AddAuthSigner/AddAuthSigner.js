@@ -91,6 +91,10 @@ const AddAuthSigner = ({ selectedNetwork, selectedAcc, onAddBtnClicked }) => {
       engine.addProvider(new CacheSubprovider())
       engine.addProvider(new RPCSubprovider(this.url, this.requestTimeoutMs))
       */
+    TrezorConnect.manifest({
+      email: 'contactus@ambire.com',
+      appUrl: 'https://wallet.ambire.com'
+    })
     const provider = new TrezorSubprovider({
       trezorConnectClientApi: TrezorConnect,
     })
@@ -214,6 +218,7 @@ const AddAuthSigner = ({ selectedNetwork, selectedAcc, onAddBtnClicked }) => {
     <div className="wallet-btns-wrapper">
       <Button
         onClick={() => wrapErr(connectTrezorAndGetAccounts)}
+        className='buttonComponent'
       >
         <div
           className="icon"
@@ -223,6 +228,7 @@ const AddAuthSigner = ({ selectedNetwork, selectedAcc, onAddBtnClicked }) => {
       </Button>
       <Button
         onClick={() => wrapErr(connectLedgerAndGetAccounts)}
+        className='buttonComponent'
       >
         <div
           className="icon"
@@ -232,6 +238,7 @@ const AddAuthSigner = ({ selectedNetwork, selectedAcc, onAddBtnClicked }) => {
       </Button>
       <Button
         onClick={() => wrapErr(connectGridPlusAndGetAccounts)}
+        className='buttonComponent'
       >
         <div
           className="icon"
@@ -241,6 +248,7 @@ const AddAuthSigner = ({ selectedNetwork, selectedAcc, onAddBtnClicked }) => {
       </Button>
       <Button
         onClick={() => wrapErr(connectWeb3AndGetAccounts)}
+        className='buttonComponent'
       >
         <div
           className="icon"
@@ -288,6 +296,7 @@ const AddAuthSigner = ({ selectedNetwork, selectedAcc, onAddBtnClicked }) => {
           <DropDown
             style={{ height: '60px' }}
             title="Connect signer"
+            className='connect-signer-dropdown'
             closeOnClick
           >
             {addFromSignerButtons}
@@ -299,6 +308,7 @@ const AddAuthSigner = ({ selectedNetwork, selectedAcc, onAddBtnClicked }) => {
             icon={<MdOutlineAdd/>}
             onClick={() => onAddBtnClicked(signerAddress)}
             small
+            className='buttonComponent'
           >
             Add
           </Button>

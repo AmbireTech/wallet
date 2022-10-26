@@ -190,9 +190,9 @@ const Quotes = ({ addRequest, selectedAccount, fromTokensItems, quotes, onQuotes
             <div className="separator"></div>
 
             <div id="buttons">
-                <Button small clear icon={routes.length ? <MdOutlineClose/> : <MdOutlineArrowBack/>} disabled={loading} onClick={onCancel}>{ routes.length ? 'Cancel' : 'Go Back' }</Button>
+                <Button small clear icon={routes.length ? <MdOutlineClose/> : <MdOutlineArrowBack/>} disabled={loading} onClick={onCancel} className='buttonComponent'>{ routes.length ? 'Cancel' : 'Go Back' }</Button>
                 { routes.length ? 
-                    <Button small icon={<MdOutlineCheck/>} disabled={!selectedRoute || loading} onClick={onConfirm}>Confirm</Button>
+                    <Button small icon={<MdOutlineCheck/>} disabled={!selectedRoute || loading} onClick={onConfirm} className='buttonComponent'>Confirm</Button>
                 : null }
             </div>
         </div>

@@ -5,7 +5,7 @@ import { BsArrowDown } from 'react-icons/bs'
 import { useEffect, useState, useCallback, useMemo, useRef } from 'react'
 import { ethers } from 'ethers'
 import { parseUnits } from 'ethers/lib/utils'
-import { NumberInput, Button, Select, Loading, NoFundsPlaceholder } from 'components/common'
+import { NumberInput, Button, Select, Loading, NoFundsPlaceholder, Panel } from 'components/common'
 import useMovr from './useMovr'
 import networks from 'consts/networks'
 import { useToasts } from 'hooks/toasts'
@@ -202,13 +202,7 @@ const CrossChain = ({ addRequest, selectedAccount, portfolio, network, relayerUR
 
     return (
         <div id="cross-chain">
-            <div className='panel'>
-                <div className="title">
-                    Cross-chain transfers/swaps
-                    <div id="powered">
-                        Powered by Socket
-                    </div>
-                </div>
+            <Panel className='panel' title="Cross-chain transfers/swaps">
                 {
                     disabled ?
                         <div className="placeholder">Not supported on this Network</div>
@@ -251,10 +245,10 @@ const CrossChain = ({ addRequest, selectedAccount, portfolio, network, relayerUR
                                                         <Select searchable defaultValue={toChain} items={chainsItems} onChange={({ value }) => setToChain(value)}/>
                                                         <Select searchable defaultValue={toToken} items={toTokenItems} onChange={({ value }) => setToToken(value)}/>
                                                     </div>
-                                                    <Button disabled={formDisabled} onClick={getQuotes}>Get Quotes</Button>
+                                                    <Button primaryGradient={true} className='buttonComponent' disabled={formDisabled} onClick={getQuotes}>Get Quotes</Button>
                                                 </div>
                 }
-            </div>
+            </Panel>
             <History
                 network={network}
                 account={selectedAccount}
