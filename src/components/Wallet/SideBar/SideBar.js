@@ -23,7 +23,8 @@ const helpCenterUrl = 'https://help.ambire.com/hc/en-us/categories/4404980091538
 const round = num => Math.round((num + Number.EPSILON) * 100) / 100
 
 const SideBar = ({ match, portfolio, hidePrivateValue, relayerURL, selectedNetwork, dappsCatalog }) => {
-  const networkBalance = hidePrivateValue(portfolio.balance.total.full)
+  const networkBalance = portfolio.balance.total.full
+  const shortBalance = networkBalance >= 10000 ? `${String(round(networkBalance/1000)).split('.').join(',')}K` : networkBalance.toFixed(2)
   const sidebarRef = useRef()
   const [balanceFontSize, setBalanceFontSize] = useState(0)
   const { isDappMode, sideBarOpen, toggleSideBarOpen, toggleDappMode } = dappsCatalog
@@ -51,7 +52,7 @@ const SideBar = ({ match, portfolio, hidePrivateValue, relayerURL, selectedNetwo
     if(dappModeSidebar) {
       toggleDappMode()
     }
-  }, [dappModeSidebar, toggleDappMode])  
+  }, [dappModeSidebar, toggleDappMode])
 
   return (
     <div className={cn(styles.wrapper, {
@@ -86,14 +87,7 @@ const SideBar = ({ match, portfolio, hidePrivateValue, relayerURL, selectedNetwo
             style={{ fontSize: balanceFontSize }}
           >
             <span className={cn(styles.dollarSign, styles.highlight)}>$</span>
-            {typeof networkBalance === 'number' ? 
-              (
-                networkBalance >= 10000 ? 
-                `${String(round(networkBalance/1000)).split('.').join(',')}K` : 
-                networkBalance.toFixed(2)
-              ) :
-              0
-            }
+            {hidePrivateValue(shortBalance)}
           </div>
         )}
         <div>
