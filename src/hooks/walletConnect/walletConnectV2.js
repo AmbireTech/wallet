@@ -4,7 +4,12 @@ import { useToasts } from 'hooks/toasts'
 import { SignClient } from '@walletconnect/sign-client'
 import { formatJsonRpcError, formatJsonRpcResult } from '@json-rpc-tools/utils'
 
-import { UNISWAP_PERMIT_EXCEPTIONS, DEFAULT_EIP155_METHODS, DEFAULT_EIP155_EVENTS, WC2_SUPPORTED_METHODS } from 'hooks/walletConnect/wcConsts'
+import {
+  UNISWAP_PERMIT_EXCEPTIONS,
+  DEFAULT_EIP155_METHODS,
+  DEFAULT_EIP155_EVENTS,
+  WC2_SUPPORTED_METHODS
+} from 'hooks/walletConnect/wcConsts'
 import networks from 'consts/networks'
 
 const STORAGE_KEY = 'wc2_state'
@@ -27,9 +32,8 @@ export default function useWalletConnectV2({ account, chainId, clearWcClipboard 
 
   const onInitialize = useCallback(async () => {
     try {
-
       SignClient.init({
-        projectId: 'ambirewallet123456789',
+        projectId: 'f19f5c8e2b1ea7fbd382583761c167b3',// TODO
         relayUrl: 'wss://relay.walletconnect.com',
         metadata: {
           name: 'Ambire Wallet',
@@ -166,7 +170,7 @@ export default function useWalletConnectV2({ account, chainId, clearWcClipboard 
       if (WC2_VERBOSE) console.log('WC2 disconnect (connection, session)', connection, session)
 
       if (session) {
-        client.disconnect({topic: session.topic})
+        client.disconnect({ topic: session.topic })
       }
     }
 
@@ -258,7 +262,7 @@ export default function useWalletConnectV2({ account, chainId, clearWcClipboard 
             sessionTopic: approveResult.topic,
             proposerPublicKey: params.proposer.publicKey,
             session: { peerMeta: proposer.metadata },
-            namespacedChainIds : usedChains,
+            namespacedChainIds: usedChains,
             proposal
           })
         }).catch(err => {
@@ -269,7 +273,7 @@ export default function useWalletConnectV2({ account, chainId, clearWcClipboard 
         setIsConnecting(false)
       }
     }
-    , [account, addToast])
+    , [account, addToast, clearWcClipboard])
 
   const onSessionRequest = useCallback(
     async (requestEvent) => {
@@ -430,7 +434,7 @@ export default function useWalletConnectV2({ account, chainId, clearWcClipboard 
             console.log('WC2 Update Error: ' + err.message, session)
           })
         } else {
-          //console.log('WC2 : session topic not found in connections ' + session.topic)
+          if (WC2_VERBOSE) console.log('WC2 : session topic not found in connections ' + session.topic)
         }
       })
     }
@@ -444,7 +448,7 @@ export default function useWalletConnectV2({ account, chainId, clearWcClipboard 
       onInitialize().then(res => {
         if (WC2_VERBOSE) console.log('WC2 Client INITIALIZED')
       }).catch(err => {
-        console.error('WC2 Inititialization error')
+        console.error('WC2 Inititialization error: ' + err.message)
       })
     }
 

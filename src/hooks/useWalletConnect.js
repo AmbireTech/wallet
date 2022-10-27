@@ -4,12 +4,12 @@ import useWalletConnectV2 from 'hooks/walletConnect/walletConnectV2'
 import useWalletConnectLegacy from 'hooks/walletConnect/walletConnectLegacy'
 import { isFirefox } from 'lib/isFirefox'
 
-export default function useWalletConnect({ account, network, initialWcURI, allNetworks, setNetwork, useStorage }) {
+export default function useWalletConnect({ account, chainId, initialWcURI, allNetworks, setNetwork, useStorage }) {
 
   const { addToast } = useToasts()
 
   const clipboardError = e => console.log('non-fatal clipboard/walletconnect err:', e.message)
-  const getClipboardText = async () => {
+  const getClipboardText = useCallback(async () => {
     if (isFirefox()) return false
 
     try {
@@ -17,14 +17,14 @@ export default function useWalletConnect({ account, network, initialWcURI, allNe
     } catch(e) { clipboardError(e) }
 
     return false
-  }
+  }, [])
 
-  const clearWcClipboard = async () => {
+  const clearWcClipboard = useCallback(async () => {
     const clipboardText = await getClipboardText()
     if (clipboardText && clipboardText.match(/wc:[a-f0-9-]+@[12]\?/)) {
       navigator.clipboard.writeText('')
     }
-  }
+  }, [getClipboardText])
 
   const {
     connections: connectionsLegacy,
@@ -37,7 +37,7 @@ export default function useWalletConnect({ account, network, initialWcURI, allNe
     account,
     clearWcClipboard,
     getClipboardText,
-    chainId: network.chainId,
+    chainId,
     allNetworks,
     setNetwork,
     useStorage
@@ -54,7 +54,7 @@ export default function useWalletConnect({ account, network, initialWcURI, allNe
     account,
     clearWcClipboard,
     getClipboardText,
-    chainId: network.chainId
+    chainId,
   })
 
   const requests = useMemo(() => [
@@ -145,7 +145,7 @@ export default function useWalletConnect({ account, network, initialWcURI, allNe
     return () => {
       window.removeEventListener('focus', tryReadClipboard)
     }
-  }, [connect])
+  }, [connect, account, addToast, initialWcURI])
 
   return {
     connections: connections,

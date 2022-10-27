@@ -6,7 +6,7 @@ import { ReactComponent as ConnectIcon } from './images/connect.svg'
 import { MdBrokenImage } from 'react-icons/md'
 import { AiOutlineDisconnect } from 'react-icons/ai'
 import { ReactComponent as WalletConnect } from 'resources/icons/wallet-connect.svg'
-import { DropDown, ToolTip, Button } from "components/common"
+import { DropDown, ToolTip, Button, Loading } from "components/common"
 import { checkClipboardPermission } from 'lib/permissions'
 import { MdOutlineWarning } from 'react-icons/md'
 import { canOpenInIframe } from 'lib/dappsUtils'
@@ -61,7 +61,7 @@ const DApps = ({ connections, connect, disconnect, isWcConnecting }) => {
         >
             <div className={styles.connectDapp}>
                 <div className={styles.heading}>
-                    <Button primaryGradient small className={styles.buttonClass} icon={<ConnectIcon />} disabled={isClipboardGranted} onClick={readClipboard}>
+                    <Button primaryGradient small className={styles.buttonClass} icon={isWcConnecting ? <Loading size={16} /> : <ConnectIcon />} disabled={isClipboardGranted || isWcConnecting} onClick={readClipboard}>
                         Connect dApp
                     </Button>
                     <a href='https://help.ambire.com/hc/en-us/articles/4410889965842' target='_blank' rel='noreferrer'>
@@ -76,8 +76,8 @@ const DApps = ({ connections, connect, disconnect, isWcConnecting }) => {
                 ) : null}
             </div>
             <div className={styles.dappList}>
-                {connections.map(({ session, uri, isOffline }) => (
-                  <DropDownItem className={styles.dappsItem} key={session.key}>
+                {connections.map(({ session, connectionId, isOffline, wcVersion }, index) => (
+                  <DropDownItem className={styles.dappsItem} key={index}>
                       <div className={styles.icon}>
                           <div className={styles.iconOverlay} style={{backgroundImage: `url(${session.peerMeta.icons.filter(x => !x.endsWith('favicon.ico'))[0]})`}}/>
                           <MdBrokenImage/>
@@ -100,11 +100,11 @@ const DApps = ({ connections, connect, disconnect, isWcConnecting }) => {
                                     :
                                     null
                               }
-                              <div className={styles.name}>{session.peerMeta.name}</div>
+                              <div className={styles.name}>{session.peerMeta.name || 'Untitled dApp'}</div>
                           </div>
                       </span>
                       <DropDownItemSeparator />
-                      <button onClick={() => disconnect(uri)}>Disconnect</button>
+                      <button onClick={() => disconnect(connectionId, wcVersion)}>Disconnect</button>
                   </DropDownItem>
                 ))}
             </div>
