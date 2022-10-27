@@ -26,7 +26,6 @@ function parseExtendedSummaryItem(item, i, networkDetails, feeAssets) {
 
   if (!item.type) return (<div className='word' key={`item-${i}`}>{ item }</div>)
   if (item.type === 'token') {
-    console.log({item}, {feeAssets});
     const foundToken = feeAssets && feeAssets.find(i => (i.address === item.address) && (!item.symbol || (i.symbol.toLowerCase() === item.symbol.toLowerCase())))
     return (
     <div className='token' key={`item-${i}`}>
