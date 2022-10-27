@@ -1,32 +1,41 @@
 @import 'variables.scss';
 
 .wrapper {
-    display: flex;
-    flex-direction: column;
-    gap: 30px;
+    position: relative;
+    border-radius: 12px;
 
     .blur {
         filter: blur(15px);
     }
+
     .placeholderOverlay {
-        color: $c-titan-white;
-        z-index: 3;
         font-size: 18px;
-        position: absolute;
-        left: 50%;
-        top: 50%;
-        transform: translate(-50%, -50%);
-        text-align: center;
-        display: flex;
+        color: $c-titan-white;
+        z-index: 4;
+        @include absolute-full-size;
+        @include flex-center-center;
         flex-direction: column;
-        justify-content: center;
         gap: 20px;
-        align-items: center;
 
         svg {
             g {
                 opacity: 1;
             }
+        }
+    }
+
+    .addToken {
+        @include flex-center-center;
+        flex-direction: column;
+        gap: 10px;
+
+        &Button {
+            font-weight: 400;
+        }
+
+        svg {
+            width: 18px;
+            height: 18px;
         }
     }
 }
