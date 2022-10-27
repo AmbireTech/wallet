@@ -1,4 +1,4 @@
-import './Promotions.scss'
+import styles from './Promotions.module.scss'
 import { useCallback } from 'react'
 import FinalCountdown from 'components/common/FinalCountdown/FinalCountdown'
 import useLocalStorage from "hooks/useLocalStorage"
@@ -37,7 +37,7 @@ function Promo({
     }, {})
 
     const elmojies = Object.entries({ ...emojies }).reduce((elmos, [key, { text, size } = {}]) => {
-        const elmo = <span key={key} className='emoji' style={{ fontSize: size }}>
+        const elmo = <span key={key} className={styles.emoji} style={{ fontSize: size }}>
             {text}
         </span >
 
@@ -46,13 +46,13 @@ function Promo({
     }, {})
 
     return (
-        <div className={`notice ${minimized ? 'minimized' : ''}`} style={{
+        <div className={`${styles.notice} ${minimized ? styles.minimized : ''}`} style={{
             ...(background ? { backgroundColor: background } : {}),
             ...(color ? { color } : {})
         }}>
             {!minimized && <div>
                 {title &&
-                    <div className='title'>
+                    <div className={styles.title}>
                         {title}
                     </div>
                 }
@@ -61,7 +61,7 @@ function Promo({
                 </div>
                 {
                     period?.to && period?.timer &&
-                    <div className='timer'>
+                    <div className={styles.timer}>
                         <FinalCountdown endDateTime={period.to} />
                     </div>
                 }
@@ -70,8 +70,8 @@ function Promo({
             {
                 !!id
                     ? minimized
-                        ? <MdOutlineMarkEmailUnread className='close-btn' onClick={() => togglePromo(id)} />
-                        : <div><AiOutlineRight className='close-btn' onClick={() => togglePromo(id)} /></div>
+                        ? <MdOutlineMarkEmailUnread className={styles.closeBtn} onClick={() => togglePromo(id)} />
+                        : <div><AiOutlineRight className={styles.closeBtn} onClick={() => togglePromo(id)} /></div>
                     : null
 
             }
