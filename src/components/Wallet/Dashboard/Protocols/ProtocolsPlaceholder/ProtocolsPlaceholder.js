@@ -11,6 +11,7 @@ import protocolStyles from 'components/Wallet/Dashboard/Protocols/Protocol/Proto
 import { ReactComponent as SendIcon } from 'resources/icons/send.svg'
 import { ReactComponent as EarnIcon } from 'resources/icons/earn.svg'
 import { ReactComponent as SwapIcon } from 'resources/icons/swap-2.svg'
+import ProtocolsWrapper from 'components/Wallet/Dashboard/Protocols/ProtocolsWrapper/ProtocolsWrapper'
 
 const ProtocolsPlaceholder = ({ onClickAddToken, onClickShowToken }) => {
     const tokens = [
@@ -56,78 +57,51 @@ const ProtocolsPlaceholder = ({ onClickAddToken, onClickShowToken }) => {
                     {hiddenTokensCount > 0 && (<label style={{ cursor: 'pointer'}} onClick={onClickShowToken}>There are also {hiddenTokensCount} hidden tokens. Click to configure</label>)}
                 </div>
             </div>
-            <div className={styles.category}>
-                <div className={styles.title}>
-                    <div className={styles.sortHolder}>
-                        Token
-                    </div>
-                    <h3 className={styles.balance}>
-                        Balance
-                    </h3>
-                    <h3 className={styles.price}>
-                        Price
-                    </h3>
-                    <h3 className={styles.value}>
-                        Value
-                    </h3>
-                    {/* <h3 className={styles.pending}>
-                        Pending
-                    </h3>
-                    <h3 className={styles.pending}>
-                        Pending+
-                    </h3> */}
-                    <div className={styles.actions}>
-                        Actions
-                    </div>
-                </div>
-                <div className={styles.list}>
-                    {
-                        tokens.map(({ icon, symbol, balance, balanceUSD }) => (
-                            <div className={protocolStyles.wrapper}>
-                                <h3 className={protocolStyles.name}>
-                                    <div className={protocolStyles.iconWrapper}>
-                                    { 
-                                        <img 
-                                            src={icon} 
-                                            draggable="false" 
-                                            alt="Token Icon" 
-                                            className={protocolStyles.icon}
-                                        />
-                                    }
-                                    </div>
-                                    { symbol }
-                                </h3>
-                                <h3 className={protocolStyles.balance}>
-                                    { balance }
-                                </h3>
-                                <h3 className={protocolStyles.price}>
-                                    $0.94
-                                </h3>
-                                <h3 className={protocolStyles.value}>
-                                    <span className={protocolStyles.symbol}>$</span> { balanceUSD }
-                                </h3>
-                                {/* <h3 className={styles.pending}>
-                                    Pending
-                                </h3>
-                                <h3 className={styles.pending}>
-                                    Pending+
-                                </h3> */}
-                                <div className={protocolStyles.actions}>
-                                    <div className={protocolStyles.action}>
-                                        <SendIcon />
-                                    </div>
-                                    <div className={protocolStyles.action}>
-                                    <EarnIcon />
-                                    </div>
-                                    <div className={protocolStyles.action}>
-                                    <SwapIcon />
-                                    </div>
-                                </div>
+            <ProtocolsWrapper className={styles.blur}>
+                {tokens.map(({ icon, symbol, balance, balanceUSD }) => (
+                    <div className={protocolStyles.wrapper}>
+                        <h3 className={protocolStyles.name}>
+                            <div className={protocolStyles.iconWrapper}>
+                            { 
+                                <img 
+                                    src={icon} 
+                                    draggable="false" 
+                                    alt="Token Icon" 
+                                    className={protocolStyles.icon}
+                                />
+                            }
                             </div>
-                        ))
-                    }
-                </div>
-            </div>
+                            { symbol }
+                        </h3>
+                        <h3 className={protocolStyles.balance}>
+                            { balance }
+                        </h3>
+                        <h3 className={protocolStyles.price}>
+                            $0.94
+                        </h3>
+                        <h3 className={protocolStyles.value}>
+                            <span className={protocolStyles.symbol}>$</span> { balanceUSD }
+                        </h3>
+                        {/* <h3 className={styles.pending}>
+                            Pending
+                        </h3>
+                        <h3 className={styles.pending}>
+                            Pending+
+                        </h3> */}
+                        <div className={protocolStyles.actions}>
+                            <div className={protocolStyles.action}>
+                                <SendIcon />
+                            </div>
+                            <div className={protocolStyles.action}>
+                                <EarnIcon />
+                            </div>
+                            <div className={protocolStyles.action}>
+                                <SwapIcon />
+                            </div>
+                        </div>
+                    </div>
+                ))}
+            </ProtocolsWrapper>
         </div>
     )
 }

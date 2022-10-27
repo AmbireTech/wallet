@@ -5,6 +5,9 @@
     flex-direction: column;
     gap: 30px;
 
+    .blur {
+        filter: blur(15px);
+    }
     .placeholderOverlay {
         color: $c-titan-white;
         z-index: 3;
@@ -25,79 +28,6 @@
                 opacity: 1;
             }
         }
-    }
-
-    .category {
-        position: relative;
-        overflow: hidden;
-
-        .title {
-            display: flex;
-            align-items: center;
-            padding: 20px 30px;
-            font-size: 20px;
-            margin-bottom: 14px;
-
-            h3 {
-                font-weight: 400;
-                font-size: 20px;
-                margin: 0;
-            }
-
-            & > * {
-                flex: 1;
-            }
-
-            .sortHolder {
-                flex: 1.5;
-            }
-
-            .dragHandle {
-                flex: none;
-                margin-right: 15px;
-            }
-        
-            .price {
-                // flex: .7;
-                flex: 1.2;
-            }
-
-            .balance {
-                flex: 1.2;
-            }
-        
-            // .value {
-            //     flex: 1.2;
-            // }
-
-            .wrapperBtns {
-                display: flex;
-                gap: 10px;
-            }
-
-            .actions {
-                text-align: end;
-            }
-        }
-
-        .list {
-            display: flex;
-            gap: 10px;
-            flex-direction: column;
-        }
-    }
-    .addToken {
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-        align-items: center;
-        font-size: 15px;
-        font-weight: 500;
-    }
-
-    .category {
-        filter: blur(7px);
-        background-color: rgba($c-mirage-dark, 0.1);
     }
 }
 
