@@ -1,12 +1,16 @@
-import { useCallback } from 'react'
+import { useCallback, useState } from 'react'
 import { useToasts } from 'hooks/toasts'
 import { useHistory } from 'react-router-dom'
 import useAccountsCommon from 'ambire-common/src/hooks/useAccounts'
 
 export default function useAccounts (useStorage) {
     const history = useHistory()
+    const [pluginUrl, setPluginUrl] = useState(null)
 
-    const onAdd = useCallback(() => history.push('/wallet/dashboard'), [history])
+    // const onAdd = useCallback(() => history.push('/wallet/dashboard'), [history])
+    const onAdd = useCallback(() => pluginUrl ? 
+      history.push(`/wallet/dapps?dappUrl=${encodeURIComponent(pluginUrl + `?${Date.now()}`)}`) 
+    : history.push('/wallet/dashboard'), [history, pluginUrl])
     const onRemoveLastAccount = useCallback(() => history.push('/add-account'), [history])
     const onRemoveAccountWithoutBackingItUp =
       useCallback(() => history.push('/wallet/security'), [history]);
@@ -19,5 +23,5 @@ export default function useAccounts (useStorage) {
       onRemoveAccountWithoutBackingItUp
     });
 
-    return { accounts, selectedAcc, onSelectAcc, onAddAccount, onRemoveAccount }
+    return { accounts, selectedAcc, onSelectAcc, onAddAccount, onRemoveAccount, setPluginUrl }
   }

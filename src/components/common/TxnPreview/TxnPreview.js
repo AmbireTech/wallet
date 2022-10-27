@@ -12,19 +12,21 @@ import { BsChevronDown, BsChevronUp } from 'react-icons/bs'
 import { getTokenIcon } from 'lib/icons'
 import { formatFloatTokenAmount } from 'lib/formatters'
 import { setKnownAddressNames } from 'lib/humanReadableTransactions'
+import useConstants from 'hooks/useConstants'
 
 function getNetworkSymbol(networkId) {
   const network = networks.find(x => x.id === networkId)
   return network ? network.nativeAssetSymbol : 'UNKNW'
 }
 
-function parseExtendedSummaryItem(item, i, networkDetails) {
+function parseExtendedSummaryItem(item, i, networkDetails, feeAssets) {
   if (item.length === 1) return item
 
   if (i === 0) return (<div className={`action ${item.toLowerCase()}`} key={`item-${i}`}>{ item }</div>)
 
   if (!item.type) return (<div className='word' key={`item-${i}`}>{ item }</div>)
   if (item.type === 'token') {
+    const foundToken = feeAssets && feeAssets.find(i => (i.address === item.address) && (!item.symbol || (i.symbol.toLowerCase() === item.symbol.toLowerCase())))
     return (
     <div className='token' key={`item-${i}`}>
       { item.amount > 0 && <span>{ formatFloatTokenAmount(item.amount, true, item.decimals) }</span> }
@@ -32,7 +34,7 @@ function parseExtendedSummaryItem(item, i, networkDetails) {
         <Fragment>
           {item.address &&
             <div className='icon' 
-              style={{ backgroundImage: `url(${getTokenIcon(networkDetails.id, item.address)})` }}>
+              style={{ backgroundImage: `url(${foundToken ? foundToken.icon : getTokenIcon(networkDetails.id, item.address)})` }}>
             </div>}
           {item.symbol}
         </Fragment>
@@ -84,14 +86,15 @@ function parseExtendedSummaryItem(item, i, networkDetails) {
   return <></>
 }
 
-export default function TxnPreview ({ txn, onDismiss, network, account, isFirstFailing, mined, disableExpand, disableDismiss, disableDismissLabel, addressLabel = null }) {
+export default function TxnPreview ({ txn, onDismiss, network, account, isFirstFailing, mined, disableExpand, disableDismiss, disableDismissLabel, addressLabel = null, feeAssets }) {
+  const { constants: { tokenList, humanizerInfo } } = useConstants()
   const [isExpanded, setExpanded] = useState(false)
-  const contractName = getName(txn[0], network)
+  const contractName = getName(humanizerInfo, txn[0])
 
   const networkDetails = networks.find(({ id }) => id === network)
-  const extendedSummary = getTransactionSummary(txn, network, account, { mined, extended: true })
+  const extendedSummary = getTransactionSummary(humanizerInfo, tokenList, txn, network, account, { mined, extended: true })
 
-  const summary = (extendedSummary.map(entry => Array.isArray(entry) ? entry.map((item, i) => parseExtendedSummaryItem(item, i, networkDetails)) : (entry))) // If entry is extended summary parse it
+  const summary = (extendedSummary.map(entry => Array.isArray(entry) ? entry.map((item, i) => parseExtendedSummaryItem(item, i, networkDetails, feeAssets)) : (entry))) // If entry is extended summary parse it
   useEffect(() => !!addressLabel && setKnownAddressNames(addressLabel), [addressLabel])
   
   return (
@@ -105,7 +108,7 @@ export default function TxnPreview ({ txn, onDismiss, network, account, isFirstF
               <div className="summary">{ summary }</div>
             </div>
             {isFirstFailing && (<div className='firstFailingLabel'>This is the first failing transaction.</div>)}
-              {!isFirstFailing && !mined && !isKnown(txn, account) && (<div className='unknownWarning'>Warning: interacting with an unknown contract or address.</div>)}
+              {!isFirstFailing && !mined && !isKnown(humanizerInfo, txn, account) && (<div className='unknownWarning'>Warning: interacting with an unknown contract or address.</div>)}
           </div>
           <div className='actionIcons'>
             {onDismiss ? (

@@ -190,7 +190,7 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, mustReplaceNonce,
         estimation.relayerless = !relayerURL
         const gasTankTokens = estimation.gasTank?.map(item => { 
           return { 
-            ...item, 
+            ...item,
             symbol: item.symbol.toUpperCase(), 
             balance: ethers.utils.parseUnits(item.balance.toFixed(item.decimals).toString(), item.decimals).toString(),
             nativeRate: item.address === '0x0000000000000000000000000000000000000000' ? null : estimation.nativeAssetPriceInUSD / item.price
@@ -567,7 +567,7 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, mustReplaceNonce,
                 <div id='actions-container-replace'>
                   <div className='replaceInfo info' ><MdInfo /><span>The transaction you're trying to replace has already been confirmed</span></div>
                   <div className='buttons'>
-                    <Button clear icon={<MdOutlineClose/>} type='button' className='rejectTxn' onClick={rejectTxn}>Close</Button>
+                    <Button clear icon={<MdOutlineClose/>} type='button' className='rejectTxn buttonComponent' onClick={rejectTxn}>Close</Button>
                   </div>
                 </div>
               }

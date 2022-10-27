@@ -1,15 +1,15 @@
-import './Protocols.scss'
+import styles from './Protocols.module.scss'
 
 import { GiToken } from 'react-icons/gi'
 import { AiOutlineSend } from 'react-icons/ai'
 import { NavLink } from 'react-router-dom'
 import { Button, Loading } from 'components/common'
 import ProtocolsPlaceholder from './ProtocolsPlaceholder/ProtocolsPlaceholder'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { MdOutlineAdd, MdVisibilityOff, MdDragIndicator, MdOutlineSort } from 'react-icons/md'
-import { AddTokenModal } from 'components/Modals'
+import AddTokenModal from 'components/Modals/AddTokenModal/AddTokenModal'
 import { useModals, useDragAndDrop, useCheckMobileScreen } from 'hooks'
-import { HideTokenModel } from 'components/Modals'
+import HideTokenModel from 'components/Modals/HideTokenModal/HideTokenModal'
 import { getTokenIcon } from 'lib/icons'
 import { formatFloatTokenAmount } from 'lib/formatters'
 import { ToolTip } from 'components/common'
@@ -70,7 +70,7 @@ const Protocols = ({ portfolio, network, account, hidePrivateValue, userSorting,
         {
             const logo = failedImg.includes(img) ? getTokenIcon(network, address) : img
                 
-            return (<div className="token" key={`token-${address}-${index}`}
+            return (<div className={styles.token} key={`token-${address}-${index}`}
              draggable={category === 'tokens' && sortedTokensLength > 1 && sortType === 'custom' && !isMobileScreen}
              onDragStart={(e) => { 
                 if (handle.current === target.current || handle.current.contains(target.current)) dragStart(e, index)
@@ -81,8 +81,8 @@ const Protocols = ({ portfolio, network, account, hidePrivateValue, userSorting,
              onDragEnd={() => drop(sortedTokens)}
              onDragOver={(e) => e.preventDefault()}
             >
-            {sortedTokensLength > 1 && sortType === 'custom' && !isMobileScreen && <MdDragIndicator size={20} className='drag-handle' onClick={(e) => dragStart(e, index)} id={`${index}-handle`} />}
-            <div className="icon">
+            {sortedTokensLength > 1 && sortType === 'custom' && !isMobileScreen && <MdDragIndicator size={20} className={styles.dragHandle} onClick={(e) => dragStart(e, index)} id={`${index}-handle`} />}
+            <div className={styles.icon}>
                 { 
                     failedImg.includes(logo) ?
                         <GiToken size={20}/>
@@ -90,22 +90,22 @@ const Protocols = ({ portfolio, network, account, hidePrivateValue, userSorting,
                         <img src={logo} draggable="false" alt="Token Icon" onError={() => setFailedImg(failed => [...failed, logo])}/>
                 }
             </div>
-            <div className="name">
+            <div className={styles.name}>
                 { symbol }
             </div>
-            <div className="separator"></div>
-            <div className="balance">
-                <div className="currency">
-                    <span className="value">{ hidePrivateValue(formatFloatTokenAmount(balance, true, decimals)) }</span>
-                    <span className="symbol">{ symbol }</span>
+            <div className={styles.separator}></div>
+            <div className={styles.balance}>
+                <div className={styles.currency}>
+                    <span className={styles.value}>{ hidePrivateValue(formatFloatTokenAmount(balance, true, decimals)) }</span>
+                    <span className={styles.symbol}>{ symbol }</span>
                 </div>
-                <div className="dollar">
-                    <span className="symbol">$</span> { hidePrivateValue(balanceUSD.toFixed(2)) }
+                <div className={styles.dollar}>
+                    <span className={styles.symbol}>$</span> { hidePrivateValue(balanceUSD.toFixed(2)) }
                 </div>
             </div>
             {
                 send ? 
-                    <div className="actions">
+                    <div className={styles.actions}>
                         <NavLink to={`/wallet/transfer/${address}`}>
                             <Button small icon={<AiOutlineSend/>}>Send</Button>
                         </NavLink>
@@ -115,8 +115,8 @@ const Protocols = ({ portfolio, network, account, hidePrivateValue, userSorting,
             }
         </div>)}
 
-    const openAddTokenModal = () => showModal(<AddTokenModal network={network} account={account} portfolio={portfolio} />)
-    const openHideTokenModal = () => setIsHideTokenModalOpen(true)
+    const openAddTokenModal = useCallback(() => showModal(<AddTokenModal network={network} account={account} portfolio={portfolio} />), [account, network, portfolio, showModal])
+    const openHideTokenModal = useCallback(() => setIsHideTokenModalOpen(true), [])
 
     useEffect(() => {
         if(isHideTokenModalOpen) {
@@ -134,7 +134,7 @@ const Protocols = ({ portfolio, network, account, hidePrivateValue, userSorting,
     }, [portfolio, isHideTokenModalOpen, showModal, account, network, sortType, userSorting])
 
     return (
-        <div id="protocols-table">
+        <div className={styles.wrapper}>
             {
                 shouldShowPlaceholder ?
                     <ProtocolsPlaceholder onClickAddToken={openAddTokenModal} onClickShowToken={openHideTokenModal}/>
@@ -147,12 +147,12 @@ const Protocols = ({ portfolio, network, account, hidePrivateValue, userSorting,
                         <Loading/>
                         :
                         !shouldShowPlaceholder && sortedTokens.length ?
-                            <div className="category" key="category-tokens">
-                                <div className="title">
-                                    <div className="sort-holder">
+                            <div className={styles.category} key="category-tokens">
+                                <div className={styles.title}>
+                                    <div className={styles.sortHolder}>
                                         Tokens
                                         {sortedTokens.length > 1 && !isMobileScreen &&  (
-                                            <div className="sort-buttons">
+                                            <div className={styles.sortButtons}>
                                                 <ToolTip label='Sorted tokens by drag and drop'>
                                                     <MdDragIndicator color={sortType === "custom" ? "#80ffdb" : ""} cursor="pointer" onClick={() => setUserSorting(prev => ({
                                                         ...prev,
@@ -174,12 +174,12 @@ const Protocols = ({ portfolio, network, account, hidePrivateValue, userSorting,
                                             </div>
                                         )}
                                     </div>
-                                    <div className="wrapper-btns">
+                                    <div className={styles.wrapperBtns}>
                                         <Button mini clear icon={<MdVisibilityOff/>} onClick={() => openHideTokenModal()}>Hide Token</Button>
                                         <Button mini clear icon={<MdOutlineAdd/>} onClick={() => openAddTokenModal()}>Add Token</Button>
                                     </div>
                                 </div>
-                                <div className="list">
+                                <div className={styles.list}>
                                     { 
                                         sortedTokens.map(({ address, symbol, tokenImageUrl, balance, balanceUSD, network, decimals }, i) =>
                                             tokenItem(i, tokenImageUrl, symbol, balance, balanceUSD, address, true, network, decimals, 'tokens', sortedTokens.length))

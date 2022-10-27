@@ -1,4 +1,4 @@
-name: Build & deploy staging
+name: Build & deploy 🔥 Ambire Wallet 🔥 (staging 🧪🔬)
 
 on:
   push:
@@ -7,48 +7,33 @@ on:
   pull_request:
     branches:
       - development
-
+permissions:
+  contents: write
 jobs:
   build:
-    name: Build
+    name: Build & Deploy - (staging 🧪🔬)
     runs-on: ubuntu-latest
-    
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.ref }} 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
-    
-    - name: Install Node.js
-      uses: actions/setup-node@v1
+    - name: Checkout code 🛎️
+      uses: actions/checkout@v3
+
+    - name: Install Node.js ⚙️
+      uses: actions/setup-node@v3
       with:
         node-version: 16.x
-    
-    - name: Install NPM packages
+    - name: Install NPM packages ♾️🕳️
       run: npm ci
-    
-    - name: Build project
-      run: npm run build
-    
-    - name: Upload production-ready build files
-      uses: actions/upload-artifact@v2
-      with:
-        name: production-files
-        path: ./build
-  deploy-staging:
-    name: Deploy staging
-    needs: build
-    runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/development'
-    steps:
-    - name: Download artifact
-      uses: actions/download-artifact@v2
-      with:
-        name: production-files
-        path: ./build
 
-    - name: Deploy to gh-pages
-      uses: peaceiris/actions-gh-pages@v3
+    - name: Build project 🛠️
+      run: npm run build
+
+    - name: Deploy 🚀🌕 (staging 🧪🔬)
+      if: github.ref == 'refs/heads/development'
+      uses: JamesIves/github-pages-deploy-action@v4.4.1
       with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./build
-        destination_dir: ./staging
+        branch: gh-pages
+        folder: build
+        target-folder: staging
         cname: wallet.ambire.com

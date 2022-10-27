@@ -137,6 +137,7 @@ const OtpTwoFAModal = ({ relayerURL, selectedAcc, setCacheBreak }) => {
         <Modal
             title="Two Factor Authentication" 
             topLeft={(<CountdownTimer seconds={TIMER_IN_SECONDS} setTimeIsUp={handleTimeIsUp}/>)}
+            buttons={!isLoading ? (<Button type="submit" disabled={isTimeIsUp} className='button'>Enable 2FA</Button>) : (<Button disabled className='button'><Loading /></Button>)}
         >
             <div id="otp-auth">
                 {isTimeIsUp && <div className='timer-reset-msg'>Please reopen the modal to reset the session.</div>}
@@ -175,9 +176,6 @@ const OtpTwoFAModal = ({ relayerURL, selectedAcc, setCacheBreak }) => {
                             pattern="[0-9]{6}"
                             required
                         />
-                    </div>
-                    <div className="buttons">
-                        {!isLoading ? (<Button type="submit" disabled={isTimeIsUp}>Enable 2FA</Button>) : (<Button disabled><Loading /></Button>)}
                     </div>
                 </form>
             </div>
