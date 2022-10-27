@@ -5,55 +5,19 @@ $collectible-details-height: 60px;
 $collectible-size: 204px;
 
 .wrapper {
+    position: relative;
     display: flex;
     flex-direction: column;
     gap: 15px;
-    
-    // .paginationControls {
-    //     display: flex;
-    //     align-items: center;
-    //     align-self: flex-end;
-    //     gap: 1em;
-    //     font-size: 15px;
-    //     font-weight: 500;
-
-    //     .paginationCurrent {
-    //         span {
-    //             opacity: 0.5;
-    //         }
-    //     }
-    // }
 
     .collectiblesWrapper {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax($collectible-size, 1fr));
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
         grid-gap: 2.5vh 1.5vh;
+        padding: 0 50px;
         justify-items: center;
     }
-}
-// Mobile
-// @media screen and (max-width: $mobile-breakpoint-max-width) {
-//     .collectibles {
-//         .panelHeading {
-//             top: -20px !important;
-//             height: auto !important;
-//             flex-direction: column;
-//             justify-content: center !important;
-//             gap: 0.5em;
-//             padding: 1em 0;
 
-//             .title {
-//                 align-self: flex-start;
-//             }
-
-//             .paginationControls {
-//                 align-self: flex-end !important;
-//             }
-//         }
-//     }
-// }
-
-.wrapper {
     .placeholderText {
         z-index: 4;
         @include absolute-full-size;
@@ -69,7 +33,7 @@ $collectible-size: 204px;
     }
 
     .collectibles {
-        padding: 2em 0;
+        padding: 40px 0;
         filter: blur(15px);
     }
 }
