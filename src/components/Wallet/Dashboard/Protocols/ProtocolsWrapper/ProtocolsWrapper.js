@@ -2,7 +2,7 @@ import cn from 'classnames'
 import styles from './ProtocolsWrapper.module.scss'
 
 const ProtocolsWrapper = ({ children, tokenLabelChildren, className }) => (
-  <div className={styles.category} key="category-tokens">
+  <div className={cn(styles.category, className)} key="category-tokens">
     <div className={styles.title}>
       <div className={styles.token}>
         Token
@@ -27,7 +27,7 @@ const ProtocolsWrapper = ({ children, tokenLabelChildren, className }) => (
         Actions
       </div>
     </div>
-    <div className={cn(styles.list, className)}>
+    <div className={styles.list}>
       {children}
     </div>
 </div>
