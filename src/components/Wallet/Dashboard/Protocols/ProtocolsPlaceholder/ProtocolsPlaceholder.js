@@ -53,7 +53,15 @@ const ProtocolsPlaceholder = ({ onClickAddToken, onClickShowToken }) => {
                 </NavLink>
                 <div className={styles.addToken}>
                     <label>You have a token that's not displayed?</label>
-                    <Button mini clear icon={<AddIcon />} onClick={onClickAddToken}>Click here to add it</Button>
+                    <Button 
+                        mini 
+                        clear 
+                        icon={<AddIcon />} 
+                        onClick={onClickAddToken}
+                        className={styles.addTokenButton}
+                    >
+                        Click here to add it
+                    </Button>
                     {hiddenTokensCount > 0 && (<label onClick={onClickShowToken}>There are also {hiddenTokensCount} hidden tokens. Click to configure</label>)}
                 </div>
             </div>
