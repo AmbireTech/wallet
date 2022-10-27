@@ -1,4 +1,6 @@
 import Collectible from 'components/Wallet/Dashboard/Collectibles/Collectible/Collectible'
+import CollectiblesWrapper from 'components/Wallet/Dashboard/Collectibles/CollectiblesWrapper/CollectiblesWrapper'
+
 import styles from './CollectiblesPlaceholder.module.scss'
 
 const CollectiblesPlaceholder = ({ isPrivateMode, collectiblesLength }) => {
@@ -41,29 +43,30 @@ const CollectiblesPlaceholder = ({ isPrivateMode, collectiblesLength }) => {
     ]
 
     return (
-        <div className={styles.wrapper}>
-            <div className={styles.placeholderText}>
-                {isPrivateMode && collectiblesLength ? 'You can\'t see collectibles in private mode' : 'You don\'t have any collectibles (NFTs) yet' }
-            </div>
-            <div className={styles.placeholderOverlay}></div>
-            <div className={styles.collectibles}>
-                <div className={styles.collectiblesWrapper}>
-                    {
-                        collectibles.map(({ collectionName, collectionImg, name, image, price}) => (
-                            <Collectible
-                                key={name}
-                                collectionIcon={collectionImg}
-                                collectionName={collectionName}
-                                image={image}
-                                name={name}
-                                price={price}
-                                href="/wallet"
-                            />
-                        ))
-                    }
+        <CollectiblesWrapper 
+            className={styles.blur}
+            wrapperChildren={
+                <div className={styles.placeholderOverlay}>
+                    <div className={styles.placeholderText}>
+                        {(isPrivateMode && collectiblesLength) ? 'You can\'t see collectibles in private mode' : 'You don\'t have any collectibles (NFTs) yet' }
+                    </div>
                 </div>
-            </div>
-        </div>
+            }
+        >
+            {
+                collectibles.map(({ collectionName, collectionImg, name, image, price}) => (
+                    <Collectible
+                        key={name}
+                        collectionIcon={collectionImg}
+                        collectionName={collectionName}
+                        image={image}
+                        name={name}
+                        price={price}
+                        href="/wallet"
+                    />
+                ))
+            }
+        </CollectiblesWrapper>
     )
 }
 

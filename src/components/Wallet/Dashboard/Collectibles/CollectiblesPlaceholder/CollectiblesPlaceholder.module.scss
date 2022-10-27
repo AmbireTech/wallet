@@ -1,82 +1,17 @@
 @import 'variables.scss';
-@import 'variables.scss';
 
-$collectible-details-height: 60px;
-$collectible-size: 204px;
-
-.wrapper {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-
-    .collectiblesWrapper {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-        grid-gap: 2.5vh 1.5vh;
-        padding: 0 50px;
-        justify-items: center;
-    }
+.placeholderOverlay {
+    z-index: 4;
+    @include absolute-full-size;
+    @include flex-center-center;
 
     .placeholderText {
-        z-index: 4;
-        @include absolute-full-size;
-        @include flex-center-center;
         text-align: center;
         font-size: 22px;
         text-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
     }
-
-    .placeholderOverlay {
-        background-color: rgba(0, 0, 0, 0.2);
-        filter: blur(15px);
-    }
-
-    .collectibles {
-        padding: 40px 0;
-        filter: blur(15px);
-    }
 }
 
-@mixin hide-collectible($count) {
-    @for $child from (5 - $count) + 1 through 5 {
-        .collectible:nth-child(#{$child}) {
-            display: none;
-        }
-    }
-}
-
-// Mobile
-@media screen and (max-width: $mobile-breakpoint-max-width) {
-    .collectiblesPlaceholder {
-        padding: 0;
-
-        .collectibles {
-           @include hide-collectible(4)
-        }
-    }
-}
-
-@media screen and (max-width: 1750px) {
-    .collectiblesPlaceholder {
-        .collectibles {
-           @include hide-collectible(1)
-        }
-    }
-}
-
-@media screen and (max-width: 1480px) {
-    .collectiblesPlaceholder {
-        .collectibles {
-           @include hide-collectible(2)
-        }
-    }
-}
-
-@media screen and (max-width: 1060px) {
-    .collectiblesPlaceholder {
-        .collectibles {
-           @include hide-collectible(3)
-        }
-    }
+.blur {
+    filter: blur(15px);
 }

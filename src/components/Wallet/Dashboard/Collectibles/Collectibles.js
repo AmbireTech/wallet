@@ -1,11 +1,11 @@
-import CollectiblesPlaceholder from './CollectiblesPlaceholder/CollectiblesPlaceholder'
+import { useEffect } from 'react'
 import { useHistory } from 'react-router-dom'
-import { Loading } from 'components/common'
 
+import { Loading } from 'components/common'
+import CollectiblesPlaceholder from './CollectiblesPlaceholder/CollectiblesPlaceholder'
+import CollectiblesWrapper from './CollectiblesWrapper/CollectiblesWrapper'
 import Collectible from './Collectible/Collectible'
 
-import styles from './Collectibles.module.scss'
-import { useEffect } from 'react'
 
 const Collectibles = ({ portfolio, isPrivateMode }) => {
     const history = useHistory()
@@ -36,23 +36,21 @@ const Collectibles = ({ portfolio, isPrivateMode }) => {
     }
 
     return (
-        <div className={styles.wrapper}>
-            <div className={styles.collectiblesWrapper}>
-                {
-                    collectiblesList.map(({ network, address, collectionName, collectionImg, assets }) => (assets || []).map(({ tokenId, assetName, assetImg, balanceUSD }) => (
-                        <Collectible
-                            key={tokenId}
-                            href={`/wallet/nft/${network}/${address}/${tokenId}`}
-                            collectionIcon={collectionImg}
-                            collectionName={collectionName}
-                            name={assetName}
-                            image={handleUri(assetImg)}
-                            price={balanceUSD.toFixed(2)}
-                        />
-                    )))
-                }
-            </div>    
-        </div>        
+        <CollectiblesWrapper>
+            {
+                collectiblesList.map(({ network, address, collectionName, collectionImg, assets }) => (assets || []).map(({ tokenId, assetName, assetImg, balanceUSD }) => (
+                    <Collectible
+                        key={tokenId}
+                        href={`/wallet/nft/${network}/${address}/${tokenId}`}
+                        collectionIcon={collectionImg}
+                        collectionName={collectionName}
+                        name={assetName}
+                        image={handleUri(assetImg)}
+                        price={balanceUSD.toFixed(2)}
+                    />
+                )))
+            }
+        </CollectiblesWrapper>  
     )
 }
 
