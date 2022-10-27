@@ -12,6 +12,7 @@ import { ToolTip } from 'components/common'
 import styles from './Protocols.module.scss'
 import Protocol from './Protocol/Protocol'
 import ProtocolsWrapper from './ProtocolsWrapper/ProtocolsWrapper'
+import AddOrHideTokenButton from './AddOrHideTokenButton/AddOrHideTokenButton'
 
 const Protocols = ({ portfolio, network, account, hidePrivateValue, userSorting, setUserSorting }) => {
     const history = useHistory()
@@ -135,6 +136,7 @@ const Protocols = ({ portfolio, network, account, hidePrivateValue, userSorting,
                                     dragAndDrop={dragAndDrop}
                                 />
                         ))}
+                        <AddOrHideTokenButton />
                     </ProtocolsWrapper> : null)
                 }
             </>
