@@ -74,7 +74,7 @@ $details-size: 60px;
         white-space: nowrap;
         text-overflow: ellipsis;
         font-size: 14px;
-        font-weight: 400;
+        font-weight: 300;
         color: $c-titan-white;
       }
 
@@ -82,6 +82,7 @@ $details-size: 60px;
         flex: 0 0 auto;
         font-size: 12px;
         margin: 0;
+        font-weight: 300;
       }
     }
   }
