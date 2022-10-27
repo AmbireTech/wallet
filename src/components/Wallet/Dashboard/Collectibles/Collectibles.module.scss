@@ -27,18 +27,9 @@ $collectible-size: 204px;
 }
 // Mobile
 @media screen and (max-width: $mobile-breakpoint-max-width) {
-    .collectibles {
-        .panelHeading {
-            top: -20px !important;
-            height: auto !important;
-            flex-direction: column;
-            justify-content: center !important;
-            gap: 0.5em;
-            padding: 1em 0;
-
-            .title {
-                align-self: flex-start;
-            }
+    .wrapper {
+        .collectiblesWrapper {
+            padding: 0 20px;
         }
     }
 }
