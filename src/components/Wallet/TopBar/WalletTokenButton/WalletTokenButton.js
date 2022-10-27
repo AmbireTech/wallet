@@ -24,7 +24,7 @@ const WalletTokenButton = ({ rewardsData, account = {}, network, hidePrivateValu
     return (
         !isLoading && (errMsg || currentClaimStatus.error) ?
             <ToolTip label="WALLET rewards are not available without a connection to the relayer">
-                <Button small border disabled onClick={showWalletTokenModal}>Unavailable</Button>
+                <Button small border disabled onClick={showWalletTokenModal} className={styles.button}>Unavailable</Button>
             </ToolTip>
             :
             <Button
@@ -33,12 +33,8 @@ const WalletTokenButton = ({ rewardsData, account = {}, network, hidePrivateValu
                 disabled={isLoading}
                 onClick={showWalletTokenModal}
                 className={styles.button}
-                style={{ textTransform: 'none'}}
             >
-                <span>
-                    {hidePrivateValue(pendingTokensTotal)}
-                </span>
-                $ WALLETS
+                <span>{hidePrivateValue(pendingTokensTotal)}</span>$WALLETS
             </Button>
     )
 }
