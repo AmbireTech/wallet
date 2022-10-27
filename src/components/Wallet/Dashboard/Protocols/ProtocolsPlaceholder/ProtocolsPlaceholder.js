@@ -1,17 +1,17 @@
 import { NavLink } from 'react-router-dom'
 import { Button } from 'components/common'
-import { MdOutlineAdd } from 'react-icons/md'
 import { useLocalStorage } from 'hooks'
 
-import { ReactComponent as DepositIcon } from 'components/Wallet/SideBar/images/deposit.svg'
-
-import styles from './ProtocolsPlaceholder.module.scss'
+import ProtocolsWrapper from 'components/Wallet/Dashboard/Protocols/ProtocolsWrapper/ProtocolsWrapper'
 import protocolStyles from 'components/Wallet/Dashboard/Protocols/Protocol/Protocol.module.scss'
 
+import { ReactComponent as DepositIcon } from 'components/Wallet/SideBar/images/deposit.svg'
 import { ReactComponent as SendIcon } from 'resources/icons/send.svg'
 import { ReactComponent as EarnIcon } from 'resources/icons/earn.svg'
 import { ReactComponent as SwapIcon } from 'resources/icons/swap-2.svg'
-import ProtocolsWrapper from 'components/Wallet/Dashboard/Protocols/ProtocolsWrapper/ProtocolsWrapper'
+import { ReactComponent as AddIcon } from 'resources/icons/add.svg'
+
+import styles from './ProtocolsPlaceholder.module.scss'
 
 const ProtocolsPlaceholder = ({ onClickAddToken, onClickShowToken }) => {
     const tokens = [
@@ -53,8 +53,8 @@ const ProtocolsPlaceholder = ({ onClickAddToken, onClickShowToken }) => {
                 </NavLink>
                 <div className={styles.addToken}>
                     <label>You have a token that's not displayed?</label>
-                    <Button mini clear icon={<MdOutlineAdd/>} onClick={onClickAddToken}>Click here to add it</Button>
-                    {hiddenTokensCount > 0 && (<label style={{ cursor: 'pointer'}} onClick={onClickShowToken}>There are also {hiddenTokensCount} hidden tokens. Click to configure</label>)}
+                    <Button mini clear icon={<AddIcon />} onClick={onClickAddToken}>Click here to add it</Button>
+                    {hiddenTokensCount > 0 && (<label onClick={onClickShowToken}>There are also {hiddenTokensCount} hidden tokens. Click to configure</label>)}
                 </div>
             </div>
             <ProtocolsWrapper className={styles.blur}>
