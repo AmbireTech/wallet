@@ -88,7 +88,7 @@ const AAVECard = ({ networkId, tokens: tokensData, account, addRequest }) => {
     const loadPool = useCallback(async () => {
         const providerAddress = AAVELendingPoolProviders[networkDetails.id]
         if (!providerAddress) {
-            setLoading(true)
+            setLoading(false)
             setUnavailable(true)
             return
         }
@@ -161,7 +161,7 @@ const AAVECard = ({ networkId, tokens: tokensData, account, addRequest }) => {
             setLoading(false)
             setUnavailable(false)
         }
-    }, [loadPool])
+    }, [loadPool, unavailable])
     useEffect(() => {
         currentNetwork.current = networkId
         setLoading(true)
