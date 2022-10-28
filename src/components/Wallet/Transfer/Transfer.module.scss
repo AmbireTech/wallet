@@ -9,6 +9,8 @@
 .wrapper {
     display: flex;
     gap: 30px;
+    overflow-y: hidden;
+    height: 100%;
 
     .amountLabel {
         font-size: 14px;
@@ -77,6 +79,7 @@
         display: flex;
         flex-direction: column;
         gap: 20px;
+        overflow-y: auto;
 
         .separator {
             flex-grow: 1;
@@ -108,13 +111,8 @@
         }
     }
 
-    #addresses {
-        .content {
-            .address-list {
-                max-height: 390px;
-                overflow-y: auto;
-            }
-        }
+    :global(.address-list) {
+        overflow-y: auto;
     }
 
     .binanceAddressWarning {
@@ -167,6 +165,7 @@
 @media screen and (max-width: $mobile-breakpoint-max-width) {
     .wrapper {
         gap: 1em;
+        overflow-y: auto;
         flex-direction: column;
 
         .recipientField {
