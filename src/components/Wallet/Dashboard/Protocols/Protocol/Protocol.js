@@ -55,7 +55,7 @@ const Protocol = ({
       onDragOver={(e) => e.preventDefault()}
     >
       {sortedTokens.length > 1 && sortType === 'custom' && !isMobileScreen && <MdDragIndicator size={20} className={styles.dragHandle} onClick={(e) => dragStart(e, index)} id={`${index}-handle`} />}
-      <h3 className={styles.name}>
+      <div className={styles.baseInfo}>
         <div className={styles.iconWrapper}>
           { 
             failedImg.includes(logo) ?
@@ -68,23 +68,19 @@ const Protocol = ({
               />
           }
         </div>
-        { symbol }
-      </h3>
-      <h3 className={styles.balance}>
-        { hidePrivateValue(formatFloatTokenAmount(balance.toFixed(2), true, decimals)) }
-      </h3>
+        <div className={styles.amountAndName}>
+          <h3 className={styles.name}>{ symbol }</h3>
+          <p className={styles.balance}>
+            { hidePrivateValue(formatFloatTokenAmount(balance.toFixed(2), true, decimals)) }
+          </p>
+        </div>
+      </div>
       <h3 className={styles.price}>
         ${price < 1 ? price.toFixed(5) : price.toFixed(2)}
       </h3>
       <h3 className={styles.value}>
         <span className={styles.symbol}>$</span>{ hidePrivateValue(balanceUSD.toFixed(2)) }
       </h3>
-      {/* <h3 className={styles.pending}>
-        Pending
-      </h3>
-      <h3 className={styles.pending}>
-        Pending+
-      </h3> */}
       <div className={styles.actions}>
         {
           send ? <NavLink to={`/wallet/transfer/${address}`}>

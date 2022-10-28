@@ -23,7 +23,7 @@
     margin: 0;
   }
 
-  .name {
+  .baseInfo {
     display: flex;
     align-items: center;
     gap: 20px;
@@ -46,28 +46,26 @@
         border-radius: 12px;
       }
     }
-  }
 
-  .balance {
-    color: $c-titan-white;
-    font-weight: 300;
-    flex: 1.2;
+    .amountAndName {
+      .name {
+        margin: 0;
+        font-size: 20px;
+        font-weight: 500;
+      }
+      .balance {
+        margin: 0;
+        font-size: 16px;
+        color: $c-turquoise;
+        font-weight: 400;
+      }
+    }
   }
 
   .price {
-    // flex: .7;
     flex: 1.2;
     color: #ae60ff;
   }
-
-  .value {
-    color: $c-turquoise;
-    // flex: 1.1;
-  }
-
-  // .pending {
-  //   color: #898dcb;
-  // }
 
   .actions {
     display: flex;
