@@ -8,21 +8,12 @@ const ProtocolsWrapper = ({ children, tokenLabelChildren, className }) => (
         Token
         {tokenLabelChildren}
       </div>
-      <h3 className={styles.balance}>
-        Balance
-      </h3>
       <h3 className={styles.price}>
         Price
       </h3>
       <h3 className={styles.value}>
         Value
       </h3>
-      {/* <h3 className={styles.pending}>
-          Pending
-      </h3>
-      <h3 className={styles.pending}>
-          Pending+
-      </h3> */}
       <div className={styles.actions}>
         Actions
       </div>
