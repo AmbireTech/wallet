@@ -3,6 +3,8 @@ import { Button, ToolTip } from "components/common";
 import WalletTokenModal from "components/Modals/WalletTokenModal/WalletTokenModal";
 import useClaimableWalletToken from 'ambire-common/src/hooks/useClaimableWalletToken'
 
+import styles from './WalletTokenButton.module.scss'
+
 const WalletTokenButton = ({ rewardsData, account = {}, network, hidePrivateValue, addRequest, relayerURL, useRelayerData }) => {
     const claimableWalletToken = useClaimableWalletToken({
         relayerURL,
@@ -15,7 +17,7 @@ const WalletTokenButton = ({ rewardsData, account = {}, network, hidePrivateValu
       })
     const { currentClaimStatus, pendingTokensTotal } = claimableWalletToken
     const { isLoading: isRewardsDataLoading, errMsg } = rewardsData
-    const isLoading = isRewardsDataLoading || currentClaimStatus.loading;
+    const isLoading = isRewardsDataLoading || currentClaimStatus.loading
 
     const showWalletTokenModal = useDynamicModal(WalletTokenModal, { claimableWalletToken, accountId: account.id }, { rewards: rewardsData.rewards })
 
@@ -25,7 +27,19 @@ const WalletTokenButton = ({ rewardsData, account = {}, network, hidePrivateValu
                 <Button small border disabled onClick={showWalletTokenModal}>Unavailable</Button>
             </ToolTip>
             :
-            <Button small border disabled={isLoading} onClick={showWalletTokenModal}>{ isLoading ? '...' : hidePrivateValue(pendingTokensTotal) } WALLET</Button>
+            <Button
+                small
+                border
+                disabled={isLoading}
+                onClick={showWalletTokenModal}
+                className={styles.button}
+                style={{ textTransform: 'none'}}
+            >
+                <span>
+                    {hidePrivateValue(pendingTokensTotal)}
+                </span>
+                $ WALLETS
+            </Button>
     )
 }
 

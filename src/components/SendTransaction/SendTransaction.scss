@@ -12,7 +12,8 @@ $titleBar-height: 90px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    background-color: $background-color;
+    background: rgb(61,68,106);
+    background: transparent linear-gradient(180deg, $c-fiord 0%, $c-ebony-clay 100%) 0% 0% no-repeat padding-box;
 
     #titleBar {
         z-index: 49;
@@ -25,7 +26,6 @@ $titleBar-height: 90px;
         align-items: center;
         justify-content: space-between;
         padding: 0 1vw;
-        background-color: $background-color;
 
         .dismiss {
             @include flex-center-center;
@@ -42,7 +42,7 @@ $titleBar-height: 90px;
             }
 
             &:hover {
-                color: white;
+                color: $c-titan-white;
             }
         }
     }
@@ -66,6 +66,9 @@ $titleBar-height: 90px;
         #transactionPanel {
             min-width: 0;
             flex: 0 1 70%;
+            background: $c-ebony-clay;
+            border: 1px solid $c-fiord;
+            border-radius: 12px;
 
             .content {
                 height: 100%;
@@ -85,7 +88,8 @@ $titleBar-height: 90px;
                     gap: 0.5em;
                     padding: 1em 1.5em;
                     border-bottom: 3px solid $ambire-dark-blue;
-                    background-color: $input-background-color;
+                    background: $c-mirage;
+                    border-radius: 12px;
 
                     b {
                         display: flex;
@@ -105,6 +109,9 @@ $titleBar-height: 90px;
             flex: 0 1 30%;
             justify-content: space-between;
             gap: 2em;
+            background: $c-ebony-clay;
+            border: 1px solid $c-fiord;
+            border-radius: 12px;
 
             .section {
                 display: flex;
@@ -119,6 +126,7 @@ $titleBar-height: 90px;
                 .section-content {
                     display: flex;
                     flex-direction: column;
+
                 }
             }
 
@@ -245,11 +253,11 @@ $titleBar-height: 90px;
                             flex-grow: 1;
 
                             &.danger {
-                                color: white;
+                                color: $c-titan-white;
 
                                 .icon-button {
                                     svg {
-                                        color: white;
+                                        color: $c-titan-white;
                                     }
                                 }
                             }
@@ -275,12 +283,12 @@ $titleBar-height: 90px;
         padding: 16px;
 
         &.info {
-            background-color: mix($panel-background-color, $info-color, 90%);
+            background-color: mix($c-ebony-clay, $info-color, 90%);
             color: $info-color;
         }
 
         &.warning {
-            background-color: mix($panel-background-color, $warning-color, 90%);
+            background-color: mix($c-ebony-clay, $warning-color, 90%);
             color: $warning-color;
         }
 
@@ -300,11 +308,11 @@ $titleBar-height: 90px;
                 flex-grow: 1;
 
                 &.danger {
-                    color: white;
+                    color: $c-titan-white;
 
                     .icon-button {
                         svg {
-                            color: white;
+                            color: $c-titan-white;
                         }
                     }
                 }

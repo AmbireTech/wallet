@@ -1,37 +1,27 @@
-$background-color: #282b33;
-$panel-background-color: #202229;
-$input-background-color: #1c1e24;
-$input-background-color-darker: #191b20;
-
-$primary-accent-color: #80ffdb;
-$secondary-accent-color: #AA6AFF;
 $tertiary-accent-color: #C3D4F6;
-$danger-color: #da5151;
-$warning-color: #ebaf40;
+$danger-color: #fd1a64;
+$warning-color: #ffbc00;
 $info-color: #7189ff;
 
 $ambire-dark-blue: #6000FF;
 $ambire-purple: #AF50FF;
 
-$text-dark: #202229;
-
-$sidebar-desktop-width: 280px;
-$sidebar-small-breakpoint: 1400px;
+$sidebar-desktop-width: 260px;
 $sidebar-desktop-small-width: 120px;
+$sidebar-small-breakpoint: 1540px;
 $sidebar-mobile-height: 80px;
-$topbar-height: 90px;
-$topbar-mobile-height: 70px;
+
 $topbar-dapp-mode-height: 60px;
 $topbar-mobile-dapp-mode-height: 50px;
-$mobile-breakpoint-max-width: 800px;
-$small-breakpoint-max-width: 1400px;
+// We want to target Tablets and mobile Landscape here too, because we don't have a specific design for these resolutions.
+// That's the reason we set 1300px to target both tablets and mobile.
+$mobile-breakpoint-max-width: 1300px;
+$small-breakpoint-max-width: 1540px;
 $wide-breakpoint-min-width: 1920px;
 
-$text-color:#FFF;
-$text-container-color:mix($text-color, $panel-background-color, 60%);
 
 $basic-transition: all 0.1s ease-in-out;
-$box-shadow: 0px 5px 10px 0 rgba(0, 0, 0, 0.25);
+$box-shadow: 0px 5px 10px #00000026;
 
 @mixin flex-center-center {
     display: flex;
@@ -54,5 +44,25 @@ $box-shadow: 0px 5px 10px 0 rgba(0, 0, 0, 0.25);
     right: 0;
 }
 
-$layout-spacing: 40px;
+$layout-spacing: 150px;
 $max-container-width: 1690px;
+
+// Redesign variables. Later we will apply them in the current variables naming pattern.
+$c-ebony-clay: #24263d;
+$c-ebony-clay-light: #282B44;
+$c-mirage: #1e2033;
+$c-mirage-dark: #171826;
+$c-shark: #202229;
+$c-fiord: #3e436b;
+$c-martinique: #2d314d;
+$c-manatee: #88899d;
+$c-blue-bell: #898dcb;
+$c-scampi: #6770B3;
+$c-heliotrope: #ae60ff;
+$c-turquoise: #27e8a7;
+$c-aquamarine: #80ffdb;
+$c-half-spanish-white: #fef5db;
+$c-titan-white: #ebecff;
+$c-white: #ffffff;
+
+$text-container-color:mix($c-titan-white, $c-ebony-clay, 60%);
