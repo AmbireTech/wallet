@@ -35,5 +35,5 @@ jobs:
       with:
         branch: gh-pages
         folder: build
-        target-folder: wc2
+        target-folder: walletconncet2
         cname: wallet.ambire.com
