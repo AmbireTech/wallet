@@ -47,79 +47,77 @@
                 padding: 15px 20px;
                 font-size: 15px;
                 color: $c-titan-white;
-                
-                &[draggable="true"] .dragHandle {
-                    cursor: grab;
-                    cursor: -moz-grab;
-                    cursor: -webkit-grab;
-            
-                }
 
-                &[draggable="true"]:active .dragHandle {
-                    cursor: grabbing;
-                    cursor: -moz-grabbing;
-                    cursor: -webkit-grabbing;
-                }
-
-                &:nth-child(odd) {
-                    background-color: rgba(255, 255, 255, 0.04);
-                }
-
-                &:nth-child(even) {
-                    background-color: rgba(255, 255, 255, 0.02);
-                }
-
-                .separator {
-                    flex-grow: 1;
-                }
-
-                .icon {
-                    position: relative;
-                    flex: 0 0 auto;
-                    @include flex-center-center;
-                    height: 40px;
-                    width: 40px;
-                    border-radius: 100%;
-                    color: rgba(255, 255, 255, 0.5);
-                    background-color: rgba(255, 255, 255, 0.1);
-                    overflow: hidden;
-
-                    img {
-                        height: 100%;
-                        user-select: none;
-                    }
-                }
-
-                .name {
-                    font-size: 17px;
-                    font-weight: bold;
-                }
-
-                .balance {
+                .body {
                     display: flex;
-                    flex-direction: column;
-                    text-align: right;
+                    align-items: center;
+                    flex: 1;
 
-                    .currency {
-                        display: flex;
-                        gap: 5px;
-                        font-size: 18px;
-                        font-weight: 500;
-
-                        .symbol {
-                            font-weight: bold;
-                            color: $c-aquamarine;
+                    &[draggable="true"] .dragHandle {
+                        cursor: grab;
+                        cursor: -moz-grab;
+                        cursor: -webkit-grab;
+                
+                    }
+    
+                    &[draggable="true"]:active .dragHandle {
+                        cursor: grabbing;
+                        cursor: -moz-grabbing;
+                        cursor: -webkit-grabbing;
+                    }
+    
+                    .separator {
+                        flex-grow: 1;
+                    }
+    
+                    .icon {
+                        position: relative;
+                        flex: 0 0 auto;
+                        @include flex-center-center;
+                        height: 40px;
+                        width: 40px;
+                        border-radius: 100%;
+                        color: rgba(255, 255, 255, 0.5);
+                        background-color: rgba(255, 255, 255, 0.1);
+                        overflow: hidden;
+    
+                        img {
+                            height: 100%;
+                            user-select: none;
                         }
                     }
-
-                    .dollar {
-                        font-size: 14px;
-                        font-weight: 500;
-                        color: #bbb;
-
-                        .symbol {
-                            font-weight: bold;
-                            color: $c-heliotrope;
+    
+                    .name {
+                        font-size: 17px;
+                        font-weight: bold;
+                    }
+    
+                    .balance {
+                        display: flex;
+                        flex-direction: column;
+                        text-align: right;
+    
+                        .currency {
+                            display: flex;
+                            gap: 5px;
+                            font-size: 18px;
+                            font-weight: 500;
+    
+                            .symbol {
+                                font-weight: bold;
+                                color: $c-aquamarine;
+                            }
+                        }
+    
+                        .dollar {
+                            font-size: 14px;
+                            font-weight: 500;
+                            color: #bbb;
+    
+                            .symbol {
+                                font-weight: bold;
+                                color: $c-heliotrope;
+                            }
                         }
                     }
                 }
@@ -132,6 +130,14 @@
                     opacity: 0;
                     transition: all 0.1s ease-in-out;
                     transition-delay: 0.25s;
+                }
+
+                &:nth-child(odd) {
+                    background-color: rgba(255, 255, 255, 0.04);
+                }
+
+                &:nth-child(even) {
+                    background-color: rgba(255, 255, 255, 0.02);
                 }
 
                 &:hover {
@@ -152,39 +158,75 @@
         .category {
             .title {
                 padding: 15px;
-                justify-content: center;
-                .sortHolder {
-                    flex-direction: column;
-                }
             }
         }
+
         .token {
             padding: 10px 15px !important;
             padding-right: 5px !important;
 
-            .icon {
-                height: 35px !important;
-                width: 35px !important;
-            }
-
-            .separator {
-                flex-grow: initial !important;
-            }
-
-            .balance {
-                flex: 1 0 auto;
-
-                .currency {
-                    justify-content: flex-end;
-
-                    .symbol {
-                        display: none;
+            .body {
+                .icon {
+                    height: 35px !important;
+                    width: 35px !important;
+                }
+    
+                .separator {
+                    flex-grow: initial !important;
+                }
+    
+                .balance {
+                    flex: 1 0 auto;
+    
+                    .currency {
+                        justify-content: flex-end;
+    
+                        .symbol {
+                            display: none;
+                        }
+    
+                        .value {
+                            max-width: 120px;
+                            overflow: hidden;
+                            text-overflow: ellipsis;
+                        }
                     }
+                }
+            }
+        }
+    }
+}
 
-                    .value {
-                        max-width: 120px;
-                        overflow: hidden;
-                        text-overflow: ellipsis;
+@media (max-width: 600px) {
+    .wrapper {
+        .category {
+            .title {
+                flex-direction: column;
+                align-items: center;
+            }
+            .list {
+                .token {
+                    flex-direction: column;
+                    width: 100%;
+                    .body {
+                        width: 100%;
+                    }
+                    .actions {
+                        width: 100%;
+                        .sendButton {
+                            width: 100%;
+                        }
+        
+                        a {
+                            width: 100%;
+                        }
+                    }
+        
+                    &:hover {
+                        .actions {
+                            width: 100%;
+                            opacity: 1;
+                        }
                     }
                 }
             }
