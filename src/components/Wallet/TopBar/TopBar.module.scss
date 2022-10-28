@@ -191,6 +191,16 @@
     }
 }
 
+// On this breakpoint, the TopBar items overflow and are wrapped on a second row.
+// In order to prevent it, we decrease the items gap.
+@media screen and (max-width: 1350px) {
+    .wrapper {
+        .container {
+            gap: 15px;
+        }
+    }
+}
+
 @media screen and (max-width: $sidebar-small-breakpoint) {
     .wrapper {
         padding: $layout-spacing / 4;
