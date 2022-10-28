@@ -8,7 +8,7 @@ import { Loading, Button } from 'components/common'
 import networks from 'consts/networks'
 import { getTransactionSummary } from 'lib/humanReadableTransactions'
 import { Bundle } from 'adex-protocol-eth'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import fetch from 'node-fetch'
 import { useToasts } from 'hooks/toasts'
 import { toBundleTxn } from 'ambire-common/src/services/requestToBundleTxn'
@@ -19,6 +19,7 @@ import { formatUnits } from 'ethers/lib/utils'
 import { ToolTip } from 'components/common' 
 // eslint-disable-next-line import/no-relative-parent-imports
 import { getAddedGas } from '../../SendTransaction/helpers'
+import useConstants from 'hooks/useConstants'
 
 // 10% in geth and most EVM chain RPCs; relayer wants 12%
 const RBF_THRESHOLD = 1.14
@@ -42,9 +43,9 @@ function Transactions ({ relayerURL, selectedAcc, selectedNetwork, showSendTxns,
   const url = relayerURL
     ? `${relayerURL}/identity/${selectedAcc}/${selectedNetwork.id}/transactions?cacheBreak=${cacheBreak}`
     : null
-  const { data, errMsg, isLoading } = useRelayerData(url)
+  const { data, errMsg, isLoading } = useRelayerData({ url })
   const urlGetFeeAssets = relayerURL ? `${relayerURL}/gas-tank/assets?cacheBreak=${cacheBreak}` : null
-  const { data: feeAssets } = useRelayerData(urlGetFeeAssets)
+  const { data: feeAssets } = useRelayerData({ url: urlGetFeeAssets })
 
   const showSendTxnsForReplacement = useCallback(bundle => {
     bundle.txns
@@ -72,8 +73,10 @@ function Transactions ({ relayerURL, selectedAcc, selectedNetwork, showSendTxns,
   const defaultPage = useMemo(() => Math.min(Math.max(Number(params.page), 1), maxPages) || 1, [params.page, maxPages])
   const [page, setPage] = useState(defaultPage)
 
-  const bundlesList = executedTransactions.slice((page - 1) * maxBundlePerPage, page * maxBundlePerPage).map(bundle => BundlePreview({ bundle, mined: true, feeAssets }))
-  
+  const bundlesList = executedTransactions
+    .slice((page - 1) * maxBundlePerPage, page * maxBundlePerPage)
+    .map(bundle => <BundlePreview bundle={bundle} mined={true} feeAssets={feeAssets} />)
+
   useEffect(() => !isLoading && history.replace(`/wallet/transactions/${page}`), [page, history, isLoading])
   useEffect(() => setPage(defaultPage), [selectedAcc, selectedNetwork, defaultPage])
 
@@ -153,11 +156,12 @@ function Transactions ({ relayerURL, selectedAcc, selectedNetwork, showSendTxns,
             <div className="bundle-list" onClick={() => showSendTxns(null)}>
               {eligibleRequests.map(req => (
                 <TxnPreview
-                    key={req.id}
-                    network={selectedNetwork.id}
-                    account={selectedAcc}
-                    disableExpand={true}
-                    txn={toBundleTxn(req.txn, selectedAcc)}/>
+                  key={req.id}
+                  network={selectedNetwork.id}
+                  account={selectedAcc}
+                  disableExpand={true}
+                  txn={toBundleTxn(req.txn, selectedAcc)}
+                />
               ))}
             </div>
               <div className='actions'>
@@ -165,7 +169,7 @@ function Transactions ({ relayerURL, selectedAcc, selectedNetwork, showSendTxns,
                 <Button small className='cancel' onClick={
                   () => resolveMany(eligibleRequests.map(x => x.id), { message: 'Ambire user rejected all requests' })
                 }>Reject all</Button>*/}
-                <Button small icon={<MdCheck/>} onClick={() => showSendTxns(null)}>Sign or reject</Button>
+                <Button small clear icon={<MdCheck/>} onClick={() => showSendTxns(null)}>Sign or reject</Button>
               </div>
           </div>
         </div>
@@ -176,7 +180,7 @@ function Transactions ({ relayerURL, selectedAcc, selectedNetwork, showSendTxns,
         </div>
         <div className="content">
           <div className="bundle">
-            <BundlePreview bundle={firstPending} feeAssets={feeAssets}></BundlePreview>
+            <BundlePreview bundle={firstPending} feeAssets={feeAssets} />
             <div className='actions'>
               <Button small onClick={() => replace(firstPending)}>Replace or modify</Button>
               <Button small className='cancel' onClick={() => cancel(firstPending)}>Cancel</Button>
@@ -212,13 +216,14 @@ function Transactions ({ relayerURL, selectedAcc, selectedNetwork, showSendTxns,
   )
 }
 
-function BundlePreview({ bundle, mined = false, feeAssets }) {
+const BundlePreview = React.memo(({ bundle, mined = false, feeAssets }) => {
+  const { constants: { tokenList, humanizerInfo } } = useConstants()
   const network = networks.find(x => x.id === bundle.network)
   if (!Array.isArray(bundle.txns)) return (<h3 className='error'>Bundle has no transactions (should never happen)</h3>)
   const lastTxn = bundle.txns[bundle.txns.length - 1]
   // terribly hacky; @TODO fix
   // all of the values are prob checksummed so we may not need toLowerCase
-  const lastTxnSummary = getTransactionSummary(lastTxn, bundle.network, bundle.identity)
+  const lastTxnSummary = getTransactionSummary(humanizerInfo, tokenList, lastTxn, bundle.network, bundle.identity)
   const hasFeeMatch = (bundle.txns.length > 1) && lastTxnSummary.match(new RegExp(TO_GAS_TANK, 'i'))
   const txns = (hasFeeMatch && !bundle.gasTankFee) ? bundle.txns.slice(0, -1) : bundle.txns
   const toLocaleDateTime = date => `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`
@@ -236,6 +241,7 @@ function BundlePreview({ bundle, mined = false, feeAssets }) {
       key={i} // safe to do this, individual TxnPreviews won't change within a specific bundle
       txn={txn} network={bundle.network} account={bundle.identity} mined={mined} 
       addressLabel={!!bundle.meta && bundle.meta.addressLabel}
+      feeAssets={feeAssets}
       />
     ))}
     <ul className="details">
@@ -306,13 +312,13 @@ function BundlePreview({ bundle, mined = false, feeAssets }) {
         bundle.txId ?
           <li>
             <label><BsGlobe2/>Block Explorer</label>
-            <p><a href={network.explorerUrl+'/tx/'+bundle.txId} target='_blank' rel='noreferrer'>{network.explorerUrl.split('/')[2]}</a></p>
+            <p><a className='explorer-url' href={network.explorerUrl+'/tx/'+bundle.txId} target='_blank' rel='noreferrer'>{network.explorerUrl.split('/')[2]}</a></p>
           </li>
           :
           null
       }
     </ul>
   </div>)
-}
+})
 
 export default Transactions

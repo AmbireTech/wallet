@@ -8,7 +8,7 @@ import { Interface, AbiCoder, keccak256 } from 'ethers/lib/utils'
 import accountPresets from 'ambire-common/src/constants/accountPresets'
 import privilegesOptions from 'ambire-common/src/constants/privilegesOptions'
 import { useRelayerData, useModals } from 'hooks'
-import { ResetPasswordModal } from 'components/Modals'
+import ResetPasswordModal from 'components/Modals/ResetPasswordModal/ResetPasswordModal'
 import AddAuthSigner from './AddAuthSigner/AddAuthSigner'
 import { useToasts } from 'hooks/toasts'
 import { useHistory } from 'react-router-dom'
@@ -20,6 +20,7 @@ import OtpTwoFADisableModal from 'components/Modals/OtpTwoFADisableModal/OtpTwoF
 import Backup from './Backup/Backup'
 import PendingRecoveryNotice from './PendingRecoveryNotice/PendingRecoveryNotice'
 import { getName } from 'lib/humanReadableTransactions'
+import useConstants from 'hooks/useConstants'
 
 const IDENTITY_INTERFACE = new Interface(
   require('adex-protocol-eth/abi/Identity5.2')
@@ -36,6 +37,7 @@ const Security = ({
   showSendTxns,
   onAddAccount
 }) => {
+  const { constants: { humanizerInfo } } = useConstants()
   const { showModal } = useModals()
   const [ cacheBreak, setCacheBreak ] = useState(() => Date.now())
   
@@ -48,7 +50,7 @@ const Security = ({
   const url = relayerURL
     ? `${relayerURL}/identity/${selectedAcc}/${selectedNetwork.id}/privileges?cacheBreak=${cacheBreak}`
     : null
-  const { data, errMsg, isLoading } = useRelayerData(url)
+  const { data, errMsg, isLoading } = useRelayerData({ url })
   const privileges = data ? data.privileges : {}
   const otpEnabled = data ? data.otpEnabled : null
   const recoveryLock = data && data.recoveryLock
@@ -201,7 +203,7 @@ const Security = ({
     .map(([addr, privValue]) => {
       if (!privValue) return null
   
-      const addressName = getName(addr) || null
+      const addressName = getName(humanizerInfo, addr) || null
       const isQuickAcc = addr === accountPresets.quickAccManager
       const privText = isQuickAcc
         ? `Email/password signer (${selectedAccount.email || 'unknown email'})`
@@ -217,13 +219,13 @@ const Security = ({
           <TextInput className="depositAddress" value={privText} disabled />
           <div className="btns-wrapper">
             {isQuickAcc && (otpEnabled !== null) && (otpEnabled ? 
-              (<Button red onClick={handleDisableOtp} small>Disable 2FA</Button>) : 
-              (<Button onClick={handleEnableOtp} small>Enable 2FA</Button>)
+              (<Button red onClick={handleDisableOtp} small className='buttonComponent'>Disable 2FA</Button>) : 
+              (<Button onClick={handleEnableOtp} small className='buttonComponent'>Enable 2FA</Button>)
             )}
             {isQuickAcc && (<Button
               disabled={!canChangePassword}
               title={hasPendingReset ? 'Account recovery already in progress' : ''}
-              onClick={showResetPasswordModal} small>Change password</Button>
+              onClick={showResetPasswordModal} small className='buttonComponent'>Change password</Button>
             )}
             <Button
               disabled={isSelected}
@@ -232,6 +234,7 @@ const Security = ({
                 onMakeDefaultBtnClicked(selectedAccount, addr, isQuickAcc)
               }
               small
+              className='buttonComponent'
             >
               Make default
             </Button>
@@ -244,6 +247,7 @@ const Security = ({
                 isSelected ? 'Cannot remove the currently used signer' : ''
               }
               disabled={isSelected}
+              className='buttonComponent'
             >
               Remove
             </Button>

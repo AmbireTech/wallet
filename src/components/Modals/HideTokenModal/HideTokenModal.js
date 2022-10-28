@@ -7,7 +7,7 @@ import {
   MdRemoveRedEye as HiddenIcon
 } from 'react-icons/md'
 import { useModals } from 'hooks'
-import { useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 
 const Token = ({ token, button }) => (
   <div className="extra-token" key={token.address}>
@@ -24,7 +24,7 @@ const Token = ({ token, button }) => (
 )
 
 const HideTokenModel = ({ portfolio, account, network, userSorting, sortType, setIsHideTokenModalOpen }) => {
-  const { hideModal } = useModals()
+  const { hideModal, setOnClose } = useModals()
   const { hiddenTokens, onAddHiddenToken, onRemoveHiddenToken, tokens } = portfolio
 
   const hideToken = (token) => onAddHiddenToken(token)
@@ -51,15 +51,19 @@ const HideTokenModel = ({ portfolio, account, network, userSorting, sortType, se
     hideModal()
   }
 
+  useEffect(() => {
+    setOnClose({close: () => setIsHideTokenModalOpen(false)})
+  }, [setOnClose, setIsHideTokenModalOpen])
+
   return (
-    <Modal id="hide-token-modal" title="Hide Token">
+    <Modal id="hide-token-modal" title="Hide Token" isCloseBtnShown={false}>
       <div className="extra-tokens-list">
         {sortedTokens.map((token) => (
           <Token
             key={token.address}
             token={token}
             button={!token.isHidden ? 
-              <HiddenIcon className="extra-token-icon" color="#36c979" onClick={() => hideToken(token)} /> :
+              <HiddenIcon className="extra-token-icon" color="#27e8a7" onClick={() => hideToken(token)} /> :
               <VisibleIcon className="extra-token-icon" color="#f98689" onClick={() => unhideToken(token)} />
             }
           />
@@ -67,7 +71,7 @@ const HideTokenModel = ({ portfolio, account, network, userSorting, sortType, se
       </div>
 
       <div className="modalBottom">
-        <Button clear icon={<MdOutlineClose />} onClick={handleHideModal}>
+        <Button clear icon={<MdOutlineClose />} onClick={handleHideModal} className='buttonComponent'>
           Close
         </Button>
       </div>

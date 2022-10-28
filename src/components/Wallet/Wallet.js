@@ -1,31 +1,40 @@
 import "./Wallet.scss"
 
-import { Switch, Route, Redirect, useLocation  } from "react-router-dom"
-import Dashboard from "./Dashboard/Dashboard"
-import TopBar from "./TopBar/TopBar"
-import SideBar from "./SideBar/SideBar"
-import Deposit from "./Deposit/Deposit"
-import Swap from "./Swap/Swap"
-import Transfer from "./Transfer/Transfer"
-import Earn from "./Earn/Earn"
-import Security from "./Security/Security"
-import Transactions from './Transactions/Transactions'
+import { lazy, Suspense, useCallback, useEffect, useMemo, useRef } from 'react'
+import { Switch, Route, Redirect, useLocation, useRouteMatch } from "react-router-dom"
 import PluginGnosisSafeApps from 'components/Plugins/GnosisSafeApps/GnosisSafeApps'
-import Collectible from "./Collectible/Collectible"
-import { PermissionsModal, UnsupportedDAppsModal } from 'components/Modals'
 import { useModals, usePermissions, useLocalStorage } from 'hooks'
-import { useCallback, useEffect, useMemo, useRef } from 'react'
 import { isFirefox } from 'lib/isFirefox'
-import CrossChain from "./CrossChain/CrossChain"
-import OpenSea from "./OpenSea/OpenSea"
 import unsupportedDApps from 'ambire-common/src/constants/unsupportedDApps'
-import Gas from "./Gas/Gas"
+// Components
+import TopBar from "./TopBar/TopBar"
+import PermissionsModal from "components/Modals/PermissionsModal/PermissionsModal"
+import UnsupportedDAppsModal from "components/Modals/UnsupportedDAppsModal/UnsupportedDAppsModal"
+import SideBar from "./SideBar/SideBar"
+import { Loading } from "components/common"
+import DappsCatalog from "./DappsCatalog/DappsCatalog"
+// Pages
+const Transfer = lazy(() => import("./Transfer/Transfer"))
+const Dashboard = lazy(() => import("./Dashboard/Dashboard"))
+const Swap = lazy(() => import("./Swap/Swap"))
+const Earn = lazy(() => import("./Earn/Earn"))
+const Security = lazy(() => import("./Security/Security"))
+const Transactions = lazy(() => import('./Transactions/Transactions'))
+const Collectible = lazy(() => import("./Collectible/Collectible"))
+const CrossChain = lazy(() => import("./CrossChain/CrossChain"))
+const OpenSea = lazy(() => import("./OpenSea/OpenSea"))
+const Deposit = lazy(() => import("./Deposit/Deposit"))
+const Gas = lazy(() => import("./Gas/Gas"))
 
 export default function Wallet(props) {
   const { showModal } = useModals()
   const { isClipboardGranted, isNoticationsGranted, arePermissionsLoaded, modalHidden } = usePermissions()
   const { pathname } = useLocation()
-  const walletContainer = useRef()
+  const walletContainerInner = useRef()
+  const { isDappMode } = props.dappsCatalog
+  const routeMatch = useRouteMatch('/wallet/dapps')
+
+  const dapModeSidebar = useMemo(() => isDappMode && routeMatch, [isDappMode, routeMatch])
 
   const isLoggedIn = useMemo(() => props.accounts.length > 0, [props.accounts])
   const [advancedModeList, setAdvancedModeList] = useLocalStorage({ key: 'dAppsAdvancedMode', defaultValue: [] })
@@ -128,6 +137,16 @@ export default function Wallet(props) {
       />
     },
     {
+      path: '/dapps',
+      component: <DappsCatalog
+        network={props.network}
+        dappsCatalog={props.dappsCatalog}
+        gnosisConnect={props.gnosisConnect}
+        gnosisDisconnect={props.gnosisDisconnect}
+        selectedAcc={props.selectedAcc}
+      />
+    },
+    {
       path: '/opensea',
       component: <OpenSea
         gnosisConnect={props.gnosisConnect}
@@ -147,7 +166,7 @@ export default function Wallet(props) {
       />
     },
     {
-      path: '/gnosis/plugins',
+      path: '/gnosis/plugins/:plugin?',
       component: <PluginGnosisSafeApps
         gnosisConnect={props.gnosisConnect}
         gnosisDisconnect={props.gnosisDisconnect}
@@ -194,14 +213,16 @@ export default function Wallet(props) {
       isBackupOptout={!showCauseOfBackupOptout}
       showThankYouPage={props.showThankYouPage}
     />
-
-    if (showCauseOfEmail || showCauseOfPermissions || showCauseOfBackupOptout) showModal(permissionsModal, { disableClose: true })
+    
+    const isMobile = navigator.platform.includes('Android') || navigator.platform.includes('iOS')
+    if ((showCauseOfEmail || showCauseOfPermissions || showCauseOfBackupOptout) && !isMobile) showModal(permissionsModal, { disableClose: true })
   }, [props.accounts, props.relayerURL, props.onAddAccount, props.showThankYouPage, props.selectedAcc, arePermissionsLoaded, isClipboardGranted, isNoticationsGranted, modalHidden, showModal])
 
   useEffect(() => handlePermissionsModal(), [handlePermissionsModal])
 
+  // On pathname change (i.e. navigating to different page), always scroll to top
   useEffect(() => {
-    const scrollTimeout = setTimeout(() => walletContainer.current && walletContainer.current.scrollTo({ top: 0, behavior: 'smooth' }), 0)
+    const scrollTimeout = setTimeout(() => walletContainerInner.current && walletContainerInner.current.scrollTo({ top: 0, behavior: 'smooth' }), 0)
     return () => clearTimeout(scrollTimeout)
   }, [pathname])
 
@@ -214,27 +235,29 @@ export default function Wallet(props) {
 
   return (
     <div id="wallet">
-      <SideBar match={props.match} portfolio={props.portfolio} hidePrivateValue={props.privateMode.hidePrivateValue} relayerURL={props.relayerURL} selectedNetwork={props.network} />
-      <TopBar {...props} />
+      <SideBar match={props.match} portfolio={props.portfolio} hidePrivateValue={props.privateMode.hidePrivateValue} relayerURL={props.relayerURL} selectedNetwork={props.network} dappsCatalog={props.dappsCatalog} />
 
-      <div id="wallet-container" ref={walletContainer}>
-        <div id="wallet-container-inner">
-          <Switch>
-            {
-              routes.map(({ path, component }) => (
-                <Route exact path={props.match.url + path} key={path}>
-                  <LoggedInGuard/>
-                  { component ? component : null }
-                </Route>
-              ))
-            }
-            <Route path={props.match.url + '/*'}>
-              <Redirect to={props.match.url + '/dashboard'} />
-            </Route>
-            <Route path={props.match.url}>
-              <LoggedInGuard/>
-            </Route>
-          </Switch>
+      <div id="wallet-container" className={dapModeSidebar ? 'dapp-mode' : ''}>
+        <TopBar {...props} />
+        <div id="wallet-container-inner" ref={walletContainerInner}>
+          <Suspense fallback={<Loading />}>
+            <Switch>
+              {
+                routes.map(({ path, component }) => (
+                  <Route exact path={props.match.url + path} key={path}>
+                    <LoggedInGuard/>
+                      { component ? component : null }
+                  </Route>
+                ))
+              }
+              <Route path={props.match.url + '/*'}>
+                <Redirect to={props.match.url + '/dashboard'} />
+              </Route>
+              <Route path={props.match.url}>
+                <LoggedInGuard/>
+              </Route>
+            </Switch>
+          </Suspense>
         </div>
       </div>
     </div>

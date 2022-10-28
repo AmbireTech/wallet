@@ -5,7 +5,7 @@ import { fetchGet } from 'lib/fetch'
 import { useState } from 'react';
 import { useToasts } from 'hooks/toasts'
 import { useModals } from 'hooks'
-import { GuardarianDepositProviderModal } from 'components/Modals'
+import GuardarianDepositProviderModal from 'components/Modals/GuardarianDepositProviderModal/GuardarianDepositProviderModal'
 
 import url from 'url'
 

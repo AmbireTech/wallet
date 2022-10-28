@@ -1,5 +1,11 @@
 @import 'variables.scss';
 
+
+.button {
+    width: 100%;
+    flex: 0 1 100% !important;
+}
+
 #otp-auth {
     .timer-reset-msg {
         text-align: center;
@@ -23,7 +29,7 @@
         margin-top: 10px;
 
         div { 
-            color: $primary-accent-color;
+            color: $c-turquoise;
         }
 
         .click-here {
@@ -55,11 +61,6 @@
             justify-content: space-between;
             align-items: center;
             column-gap: 20px; 
-        }
-        
-        button { 
-            width: 100%;
-            flex: 0 1 100% !important;
         }
     }
 }

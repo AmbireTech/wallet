@@ -140,17 +140,19 @@ const GuardarianDepositProviderModal = ({ relayerURL, walletAddress, selectedNet
             <div className='estimation-info-wrapper'>
                 <div className='extra-fees'>
                     <ToolTip label='All the exchange fees are added into the rate. There are no extra costs.'>
-                        No extra fees
+                        <p>No extra fees</p>
                     </ToolTip>
                 </div>
                 <div className='estimation-rate'>
                     <ToolTip label='This is expected rate. Guardarian guarantees to pick up the best possible rate on the moment of the exchange'>
-                    Estimation rate: {' '}
-                { !guardarian.estimateInfo.isLoading && guardarian?.estimateInfo?.data && validationMsg === ''
-                    ? (<>
+                    <p>
+                        Estimation rate: {' '}
+                        { !guardarian.estimateInfo.isLoading && guardarian?.estimateInfo?.data && validationMsg === ''
+                        ? (<>
                         { 1 + guardarian?.estimateInfo?.data?.from_currency} ≈ {guardarian?.estimateInfo?.data?.estimated_exchange_rate} {guardarian?.estimateInfo?.data?.to_currency}
                     </>)
                     : <></>}
+                    </p>
                 </ToolTip>
                 </div>
             </div> 

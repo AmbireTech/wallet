@@ -3,7 +3,6 @@ import './AssetsMigration.scss'
 import BigNumber from 'bignumber.js'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import assetMigrationDetector from 'lib/assetMigrationDetector'
-import { PERMITTABLE_COINS } from 'consts/permittableCoins'
 import { ZERO_ADDRESS } from 'consts/specialAddresses'
 import AmbireLoading from 'components/common/Loading/AmbireLoading'
 import { Checkbox, TextInput, Button, Loading } from 'components/common'
@@ -15,7 +14,6 @@ import { ERC20PermittableInterface } from 'consts/permittableCoins'
 import { getProvider } from 'lib/provider'
 import { GAS_SPEEDS } from 'ambire-common/src/constants/gasSpeeds'
 
-const PERMIT_CONSUMPTION = 70000
 const TRANSFER_CONSUMPTION = 52000 // higher avg, 21000 included
 
 const AssetsMigrationSelector = ({ signerAccount, identityAccount, network, setIsSelectionConfirmed, setStep, portfolio, relayerURL, setModalButtons, hideModal, setSelectedTokensWithAllowance, setGasSpeed, setStepperSteps, hidden }) => {
@@ -23,10 +21,11 @@ const AssetsMigrationSelector = ({ signerAccount, identityAccount, network, setI
   const [selectableTokens, setSelectableTokens] = useState([])
   const [selectableTokensUserInputs, setSelectableTokensUserInputs] = useState([])
 
+  const [nativeToken, setNativeToken] = useState(null)
+
   const [isLoading, setIsLoading] = useState(true)
   const [failedImg, setFailedImg] = useState([])
   const [gasData, setGasData] = useState(null)
-  const [suggestedGasTokens, setSuggestedGasTokens] = useState([])
   const [estimatedGasFees, setEstimatedGasFees] = useState(null)
   const [selectedGasSpeed, setSelectedGasSpeed] = useState('fast')
   const [tokensAllowances, setTokenAllowances] = useState([])
@@ -37,16 +36,7 @@ const AssetsMigrationSelector = ({ signerAccount, identityAccount, network, setI
   const [customTokenError, setCustomTokenError] = useState('')
 
   const customTokenInput = useRef()
-
-  const isPermittable = (chainId, address) => {
-    return !!PERMITTABLE_COINS[chainId]?.find(a => a.address.toLowerCase() === address.toLowerCase())
-  }
-
-  useEffect(() => {
-    if (isAddCustomTokenFormShown) {
-      customTokenInput.current.focus()
-    }
-  }, [isAddCustomTokenFormShown])
+  const inputRefs = useRef({})
 
   // update signerTokens state helper
   const updateSelectableTokenUserInputs = useCallback((address, callback) => {
@@ -65,6 +55,13 @@ const AssetsMigrationSelector = ({ signerAccount, identityAccount, network, setI
 
   // Include/Exclude token in migration
   const toggleTokenSelection = useCallback((address, minHumanAmount = null) => {
+
+    // focusing input fields on selection
+    const index = selectableTokens
+      .sort((a, b) => a.name < b.name ? -1 : 1)
+      .findIndex(t => t.address === address)
+    inputRefs.current[index]?.focus()
+
     updateSelectableTokenUserInputs(address, old => {
       let updated = {
         ...old,
@@ -159,8 +156,7 @@ const AssetsMigrationSelector = ({ signerAccount, identityAccount, network, setI
             ...old,
             {
               address: customTokenAddress,
-              allowance: 0,
-              permittable: false//I guess if not in velcro certainly not permittable
+              allowance: 0
             }
           ]
         })
@@ -171,24 +167,19 @@ const AssetsMigrationSelector = ({ signerAccount, identityAccount, network, setI
     })
   }, [network, customTokenAddress, signerAccount, identityAccount, setCustomTokenError, selectableTokens])
 
-  const canCoverGasFees = (suggestedGasTokens, speed) => {
-    return !!suggestedGasTokens.filter(gt => (gt.selected && gt.isEnoughToCoverFees[speed].ifSelected) || gt.isEnoughToCoverFees[speed].ifNotSelected).length
-  }
+  const canCoverGasFees = useCallback((speed) => {
+    if (!estimatedGasFees) return false
+    const nativeToSpend = selectableTokensUserInputs.find(t => t.address === ZERO_ADDRESS && t.selected)?.amount || 0
 
-  const getSuggestedGasTokensOfSpeed = (suggestedGasTokens, speed) => {
-    return suggestedGasTokens
-      .filter(gt => gt.isEnoughToCoverFees[speed].ifSelected)
-      .map(gt => {
-        return {
-          ...gt,
-          minimumSelectionAmount: gt.isEnoughToCoverFees[speed].minimumSelectionAmount
-        }
-      })
-  }
+    return new BigNumber(estimatedGasFees.gasFees[speed].signerTransactionsCost)
+      .plus(nativeToSpend)
+      .lte(nativeToken.availableBalance || 0)
 
-  const getSuggestedGasTokensAcceptableSpeeds = (suggestedGasTokens) => {
-    return GAS_SPEEDS.filter(speed => !!suggestedGasTokens.filter(gt => (gt.selected && gt.isEnoughToCoverFees[speed].ifSelected) || gt.isEnoughToCoverFees[speed].ifNotSelected).length)
-  }
+  }, [selectableTokensUserInputs, estimatedGasFees, nativeToken])
+
+  const getMaxTransferableNative = useCallback((speed) => {
+    return new BigNumber(nativeToken.availableBalance).minus(estimatedGasFees.gasFees[speed].signerTransactionsCost)
+  }, [estimatedGasFees, nativeToken])
 
   const consolidatedSelectableTokens = (selectableTokens, selectableTokensUserInputs = [], tokensAllowances = []) => {
     return selectableTokens.map(st => {
@@ -221,6 +212,16 @@ const AssetsMigrationSelector = ({ signerAccount, identityAccount, network, setI
 
     setGasSpeed(selectedGasSpeed)
   }, [selectableTokens, selectableTokensUserInputs, tokensAllowances, setSelectedTokensWithAllowance, setIsSelectionConfirmed, setStep, setGasSpeed, selectedGasSpeed])
+
+  useEffect(() => {
+    if (isAddCustomTokenFormShown) {
+      customTokenInput.current.focus()
+    }
+  }, [isAddCustomTokenFormShown])
+
+  useEffect(() => {
+    setNativeToken(selectableTokens.find(t => t.native))
+  }, [selectableTokens])
 
   // fetch selectable tokens
   useEffect(() => {
@@ -260,14 +261,11 @@ const AssetsMigrationSelector = ({ signerAccount, identityAccount, network, setI
 
     const consolidatedTokens = consolidatedSelectableTokens(selectableTokens, selectableTokensUserInputs, tokensAllowances)
 
-    const permitsCount = consolidatedTokens.filter(t => t.selected && t.permittable && new BigNumber(t.allowance).isLessThan(t.amount)).length
-    const permittableTransfersCount = consolidatedTokens.filter(t => t.selected && !t.native && t.permittable).length
-    const regularTransfersCount = consolidatedTokens.filter(t => t.selected && !t.permittable && !t.native).length
+    const regularTransfersCount = consolidatedTokens.filter(t => t.selected && !t.native).length
     const nativeTransfersCount = consolidatedTokens.filter(t => t.selected && t.native).length
 
     const adjustedApprovalCost = network.id === 'arbitrum' ? 200000 : 0
 
-    const migrationTransactionsConsumption = (permitsCount + permittableTransfersCount > 0) ? 25000 + permitsCount * PERMIT_CONSUMPTION + permittableTransfersCount * TRANSFER_CONSUMPTION : 0
     const signerTransactionsConsumption = (regularTransfersCount * (25000 + TRANSFER_CONSUMPTION + adjustedApprovalCost)) + (nativeTransfersCount * 25000)
 
     const nativeRate = gasData.gasFeeAssets.native / 10 ** 18 // should decimals be returned in the API?
@@ -276,90 +274,22 @@ const AssetsMigrationSelector = ({ signerAccount, identityAccount, network, setI
     GAS_SPEEDS.forEach(speed => {
       let gasPrice = (gasData.gasPrice[speed] + (gasData.gasPrice.maxPriorityFeePerGas ? gasData.gasPrice.maxPriorityFeePerGas[speed] * 1 : 0))
 
-      const migrationTransactionsCost = migrationTransactionsConsumption * gasPrice
-      const migrationTransactionsCostUSD = migrationTransactionsCost * nativeRate
-
       const signerTransactionsCost = signerTransactionsConsumption * gasPrice
       const signerTransactionsCostUSD = signerTransactionsCost * nativeRate
 
       gasFees[speed] = {
         speed,
-        migrationTransactionsCost,
-        migrationTransactionsCostUSD,
         signerTransactionsCost,
         signerTransactionsCostUSD,
-        migrationTransactionsConsumption,
         signerTransactionsConsumption
       }
     })
 
     setEstimatedGasFees({
-      permitsCount,
-      permittableTransfersCount,
       regularTransfersCount,
       nativeTransfersCount,
       gasFees,
     })
-
-    const possibleFeeTokens = [
-      ZERO_ADDRESS,
-      ...gasData.gasFeeAssets.feeTokens.map(ft => ft.address)
-    ]
-
-    // includes existing tokens in identity portfolio + selected signer tokens, then filters by feeTokens
-    let usableTokens = consolidatedTokens.filter(t => {
-      return possibleFeeTokens.find(ft => ft.toLowerCase() === t.address.toLowerCase())
-    })
-
-    portfolio.tokens.forEach(pt => {
-      if (
-        // add to usableTokens, if token is present in the existing portfolio
-        possibleFeeTokens.find(ft => ft.toLowerCase() === pt.address.toLowerCase()) &&
-        // and if portfolio token is not already present
-        !usableTokens.find(t => t.address.toLowerCase() === pt.address.toLowerCase())) {
-        usableTokens.push({ ...pt, fromPortfolio: true }) // fromPortfolio = exists in portfolio but NOT in signer tokens
-      }
-    })
-
-    const usableFeeTokens = usableTokens
-      .map(t => {
-        let identityBalanceUSD = 0
-        let selectedAmountUSD = 0
-        if (t.fromPortfolio) {// if exists in portfolio only
-          identityBalanceUSD = t.balanceUSD
-        } else {
-          const identityAssets = portfolio?.tokens
-          if (identityAssets) {
-            const identityFeeAsset = identityAssets.find(it => it.address.toLowerCase() === t.address.toLowerCase())
-            identityBalanceUSD = identityFeeAsset?.balanceUSD || 0
-          } else {
-            console.warn('no identity assets!')
-          }
-          selectedAmountUSD = new BigNumber(t.amount).multipliedBy(t.rate).toNumber()
-        }
-
-        let isEnoughToCoverFees = {}
-
-        const selected = (!t.fromPortfolio && t.selected) || false
-
-        GAS_SPEEDS.forEach(speed => {
-          isEnoughToCoverFees[speed] = {
-            ifNotSelected: new BigNumber(identityBalanceUSD).isGreaterThan(gasFees[speed].migrationTransactionsCostUSD),
-            ifSelected: new BigNumber(identityBalanceUSD + selectedAmountUSD).isGreaterThan(gasFees[speed].migrationTransactionsCostUSD),
-            minimumSelectionAmount: t.rate > 0 ? new BigNumber(gasFees[speed].migrationTransactionsCostUSD).minus(identityBalanceUSD).dividedBy(t.rate).dividedBy(10 ** t.decimals).multipliedBy(1.0001).toNumber() : 0, // in case rate returned is 0 / adding some wei because precision loss with decimals switching to USD etc
-          }
-        })
-
-        return {
-          address: t.address,
-          name: t.name,
-          selected: selected,
-          identityBalanceUSD,
-          selectedAmountUSD,
-          isEnoughToCoverFees,
-        }
-      })
-    setSuggestedGasTokens(usableFeeTokens)
 
   }, [selectableTokens, selectableTokensUserInputs, portfolio, gasData, selectedGasSpeed, tokensAllowances, network])
 
@@ -384,15 +314,9 @@ const AssetsMigrationSelector = ({ signerAccount, identityAccount, network, setI
         return tokenContract.allowance(signerAccount, identityAccount)
           .then((allowance) => {
 
-            let permittableData = false
-            if (PERMITTABLE_COINS[network.chainId]) {
-              permittableData = PERMITTABLE_COINS[network.chainId].find(p => p.address.toLowerCase() === t.address.toLowerCase()) || false
-            }
-
             return {
               address: t.address,
               allowance: allowance.toString(),
-              permittable: permittableData
             }
           }).catch(err => {
             console.log('err getting allowance', err)
@@ -401,7 +325,6 @@ const AssetsMigrationSelector = ({ signerAccount, identityAccount, network, setI
       return {
         address: t.address,
         allowance: 0,
-        permittable: false
       }
     })
 
@@ -418,14 +341,14 @@ const AssetsMigrationSelector = ({ signerAccount, identityAccount, network, setI
       <>
         <Button clear small icon={<MdClose/>} onClick={hideModal}>Close</Button>
         {
-          (selectableTokensUserInputs.filter(a => a.selected).length > 0 && canCoverGasFees(suggestedGasTokens, selectedGasSpeed))
+          (selectableTokensUserInputs.filter(a => a.selected).length > 0 && canCoverGasFees(selectedGasSpeed))
             ? <Button small icon={<MdOutlineNavigateNext/>} className={'primary'}
                       onClick={() => confirmTokenSelection()}>Move {selectableTokensUserInputs.filter(a => a.selected).length} assets</Button>
             : <Button small icon={<MdOutlineNavigateNext/>} className={'primary disabled'}>Move assets</Button>
         }
       </>
     )
-  }, [selectableTokensUserInputs, suggestedGasTokens, selectedGasSpeed, setModalButtons, hideModal, confirmTokenSelection, hidden])
+  }, [selectableTokensUserInputs, selectedGasSpeed, setModalButtons, hideModal, confirmTokenSelection, hidden, canCoverGasFees])
 
   const onAssetAmountChange = useCallback((val, item) => updateSelectableTokenUserInputs(item.address, (old) => {
     if (val === '') {
@@ -437,7 +360,7 @@ const AssetsMigrationSelector = ({ signerAccount, identityAccount, network, setI
     }
     if (
       (val.endsWith('.') && val.split('.').length === 2)
-      || (val.split('.').length === 2 && val.endsWith('0'))
+      || (val.split('.').length === 2 && (val.endsWith('0') && new BigNumber(val).isEqualTo(old.humanAmount)))
     ) {
       return {
         ...old,
@@ -462,6 +385,12 @@ const AssetsMigrationSelector = ({ signerAccount, identityAccount, network, setI
     return old
   }), [updateSelectableTokenUserInputs])
 
+  useEffect(() => {
+    setTimeout(() => {
+      inputRefs.current[0]?.focus()
+    }, 250)
+  }, [selectableTokens])
+
   // Stepper
   useEffect(() => {
 
@@ -475,13 +404,10 @@ const AssetsMigrationSelector = ({ signerAccount, identityAccount, network, setI
     if (selectableTokensUserInputs.find(a => a.address.toLowerCase() !== ZERO_ADDRESS && a.selected)) {
 
       let tokensTitleActions = []
-      if (selectableTokensUserInputs.find(a => a.selected && isPermittable(network.chainId, a.address))) tokensTitleActions.push('Permit')
-      if (selectableTokensUserInputs.find(a => a.selected && a.address.toLowerCase() !== ZERO_ADDRESS && !isPermittable(network.chainId, a.address))) tokensTitleActions.push('Send')
+      if (selectableTokensUserInputs.find(a => a.selected && a.address.toLowerCase() !== ZERO_ADDRESS)) tokensTitleActions.push('Send')
 
       steps.push(tokensTitleActions.join(' and ') + ' tokens')
 
-      if (selectableTokensUserInputs.find(a => a.selected && isPermittable(network.chainId, a.address)))
-        steps.push('Transfer tokens')
     }
 
     if (steps.length === 1) {
@@ -520,6 +446,7 @@ const AssetsMigrationSelector = ({ signerAccount, identityAccount, network, setI
                           <div className={`migration-asset-select${item.selected ? ' checked' : ''}`}
                                onClick={() => false}>
                             <Checkbox
+                              labelClassName='checkbox-label'
                               id={`check-${item.address}`}
                               label={<span className={'migration-asset-select-label'}>
                                   <span className='migration-asset-select-icon'>
@@ -543,6 +470,7 @@ const AssetsMigrationSelector = ({ signerAccount, identityAccount, network, setI
                           </div>
                           <div className='migration-asset-amount'>
                             <TextInput
+                              ref={(element) => inputRefs.current[index] = element}
                               className={'migrate-amount-input'}
                               value={item.humanAmount}
                               onChange={(val) => onAssetAmountChange(val, item)}
@@ -595,34 +523,13 @@ const AssetsMigrationSelector = ({ signerAccount, identityAccount, network, setI
                     }
                   </div>
                   {
-                    !canCoverGasFees(suggestedGasTokens, selectedGasSpeed) && selectableTokensUserInputs.filter(a => a.selected).length > 0 &&
+                    !canCoverGasFees(selectedGasSpeed) && selectableTokensUserInputs.filter(a => a.selected).length > 0 &&
                     <div className={'notification-hollow warning mt-3 mb-3'}>
-                      Your Ambire Wallet will not have enough fees to pay for the migration transaction.
-                      {
-                        !!getSuggestedGasTokensOfSpeed(suggestedGasTokens, selectedGasSpeed).length &&
-                        <div className={'mt-3'}>
-                          You should remove ERC20 tokens from the selection or add one of the following gas tokens :
-                          <ul className={'notification-gas-tokens'}>
-                            {getSuggestedGasTokensOfSpeed(suggestedGasTokens, selectedGasSpeed).map((t, index) => {
-                              return <li key={index}>
-                                <span className={'gas-token-suggestion'}
-                                      onClick={() => toggleTokenSelection(t.address, t.minimumSelectionAmount)}>
-                                  {t.name}
-                                  <span
-                                    className={'gas-token-amount'}> (min {t.minimumSelectionAmount.toFixed(6)})</span>
-                                </span>
-                              </li>
-                            })}
-                          </ul>
-                        </div>
-                      }
-                      {
-                        !!getSuggestedGasTokensAcceptableSpeeds(suggestedGasTokens).length &&
-                        <div>
-                          {!!getSuggestedGasTokensOfSpeed(suggestedGasTokens, selectedGasSpeed).length ? 'You can also' : 'Please'} select
-                          a slower gas speed ({getSuggestedGasTokensAcceptableSpeeds(suggestedGasTokens).join(', ')}).
-                        </div>
-                      }
+                      Your Signer Wallet will not have enough fees to pay for the migration.
+                      Please transfer a maximum of <span className={'max-native-suggestion'}
+                                                         onClick={() => onAssetAmountChange(new BigNumber(getMaxTransferableNative(selectedGasSpeed)).dividedBy(10 ** nativeToken.decimals).toFixed(6, BigNumber.ROUND_DOWN), nativeToken)}>
+                        {new BigNumber(getMaxTransferableNative(selectedGasSpeed)).dividedBy(10 ** nativeToken.decimals).toFixed(6, BigNumber.ROUND_DOWN)} {network.nativeAssetSymbol}
+                      </span>
                     </div>
                   }
                   {
@@ -640,28 +547,6 @@ const AssetsMigrationSelector = ({ signerAccount, identityAccount, network, setI
                       </ul>
                       <table className={'gas-estimation-details'}>
                         <tbody>
-                        <tr>
-                          <td>
-                            Migration fee
-                            {
-                              (!!estimatedGasFees.permittableTransfersCount || !!estimatedGasFees.permitsCount) &&
-                              <span className={'migration-actions'}>
-                                  (
-                                {
-                                  !!estimatedGasFees.permittableTransfersCount &&
-                                  <span>{estimatedGasFees.permittableTransfersCount} transfer{estimatedGasFees.permittableTransfersCount > 1 && 's'}{!!estimatedGasFees.permitsCount && ', '}</span>
-                                }
-                                {
-                                  !!estimatedGasFees.permitsCount &&
-                                  <span>{estimatedGasFees.permitsCount} permit{estimatedGasFees.permitsCount > 1 && 's'}</span>
-                                }
-                                )
-                                </span>
-                            }
-                          </td>
-                          <td
-                            className={'gas-estimation-details-amount'}>${estimatedGasFees.gasFees[selectedGasSpeed].migrationTransactionsCostUSD.toFixed(2)}</td>
-                        </tr>
                         <tr>
                           <td>
                             Signer fee

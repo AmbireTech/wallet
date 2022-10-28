@@ -42,7 +42,7 @@ $max-width: 650px;
       .signMessageTitle-signatureType {
         display: flex;
         align-items: center;
-        background-color: $input-background-color;
+        background-color: $c-mirage;
         padding: 2px 8px;
         color: $text-container-color;
         font-weight: 300;
@@ -61,7 +61,7 @@ $max-width: 650px;
       display: flex;
       flex-direction: row;
       justify-content: flex-start;
-      font-family: 'monospace';
+      font-family: 'Ubuntu Mono';
       font-size: 15px;
       font-weight: bold;
 
@@ -168,10 +168,10 @@ $max-width: 650px;
           }
 
           &.reject {
-            color: white;
+            color: $c-titan-white;
 
             svg {
-              color: white;
+              color: $c-titan-white;
             }
           }
         }
@@ -183,6 +183,20 @@ $max-width: 650px;
         }
       }
     }
+  }
+
+  .erc20PermitWarning {
+    padding: 16px;
+    display: flex;
+    background-color: $c-mirage;
+    gap: 16px;
+    align-items: center;
+
+    .erc20PermitWarning-icon {
+      font-size: 32px;
+      color: $warning-color;
+    }
+
   }
 }
 

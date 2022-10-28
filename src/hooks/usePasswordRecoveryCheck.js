@@ -24,7 +24,7 @@ export default function usePasswordRecoveryCheck(relayerURL, currentAccount, sel
     ? `${relayerURL}/identity/${currentAccount.id}/${selectedNetwork.id}/privileges?cacheBreak=${cacheBreak}`
     : null
 
-  const { data, errMsg, isLoading } = useRelayerData(url)
+  const { data, errMsg, isLoading } = useRelayerData({ url })
 
   useEffect(() => {
 

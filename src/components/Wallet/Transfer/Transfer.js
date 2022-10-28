@@ -1,14 +1,13 @@
-import './Transfer.scss'
+import styles from './Transfer.module.scss'
 
 import { BsXLg } from 'react-icons/bs'
-import { AiOutlineSend } from 'react-icons/ai'
 import { MdWarning } from 'react-icons/md'
 import { useParams, withRouter } from 'react-router'
 import { useEffect, useMemo, useState, useRef } from 'react'
 import { ethers } from 'ethers'
 import { Interface } from 'ethers/lib/utils'
 import { useToasts } from 'hooks/toasts'
-import { TextInput, NumberInput, Button, Select, Loading, AddressBook, AddressWarning, NoFundsPlaceholder, Checkbox, ToolTip, Segments } from 'components/common'
+import { TextInput, NumberInput, Button, Select, Loading, AddressBook, AddressWarning, NoFundsPlaceholder, Checkbox, ToolTip, Panel, Segments } from 'components/common'
 import { validateSendTransferAddress, validateSendTransferAmount } from 'lib/validations/formValidations'
 import { resolveUDomain } from 'lib/unstoppableDomains'
 import { isValidAddress } from 'ambire-common/src/services/address'
@@ -22,6 +21,9 @@ import accountPresets from 'ambire-common/src/constants/accountPresets'
 import { resolveENSDomain, getBip44Items } from 'lib/ensDomains'
 // eslint-disable-next-line import/no-relative-parent-imports
 import Providers from '../Deposit/Providers/Providers'
+import useGasTankData from 'ambire-common/src/hooks/useGasTankData'
+import { useRelayerData } from 'hooks'
+import cn from 'classnames'
 
 const ERC20 = new Interface(require('adex-protocol-eth/abi/ERC20'))
 const unsupportedSWPlatforms = ['Binance', 'Huobi', 'KuCoin', 'Gate.io', 'FTX']
@@ -29,7 +31,16 @@ const segments = [{ value: 'Send' }, { value: 'Sell' }]
 
 const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest, addressBook, relayerURL }) => {
     const { addresses, addAddress, removeAddress, isKnownAddress } = addressBook
-
+    const {
+        feeAssetsRes
+      } = useGasTankData({
+        relayerURL,
+        selectedAcc,
+        network: selectedNetwork,
+        portfolio,
+        useRelayerData
+      })
+    const feeAssetsPerNetwork = feeAssetsRes && feeAssetsRes.length && feeAssetsRes.filter(item => (item.network === selectedNetwork.id) && !item.disableGasTankDeposit)
     const { tokenAddressOrSymbol } = useParams()
     const { addToast } = useToasts()
     const { state } = useLocation()
@@ -59,8 +70,8 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
     const [feeBaseTokenWarning, setFeeBaseTokenWarning] = useState('')
     const timer = useRef(null)
     let eligibleFeeTokens = null
-    if (gasTankDetails?.feeAssetsPerNetwork) {
-        eligibleFeeTokens = portfolio.tokens.filter(item => gasTankDetails?.feeAssetsPerNetwork.some(i => i.address.toLowerCase() === item.address.toLowerCase()))
+    if (gasTankDetails?.isTopUp) {
+        eligibleFeeTokens = portfolio.tokens.filter(item => feeAssetsPerNetwork && feeAssetsPerNetwork?.some(i => i.address.toLowerCase() === item.address.toLowerCase()))
     } else eligibleFeeTokens = portfolio.tokens
     
     const assetsItems = eligibleFeeTokens.map(({ label, symbol, address, img, tokenImageUrl, network }) => ({
@@ -151,14 +162,14 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
     useEffect(() => {
         // check gasTank topUp with token for convertion
         setFeeBaseTokenWarning('')
-        if (gasTankDetails?.feeAssetsPerNetwork){
-            const gasFeeToken = gasTankDetails.feeAssetsPerNetwork.find(ft => ft?.address?.toLowerCase() === selectedAsset?.address?.toLowerCase())
+        if (gasTankDetails?.isTopUp){
+            const gasFeeToken = feeAssetsPerNetwork && feeAssetsPerNetwork.find(ft => ft?.address?.toLowerCase() === selectedAsset?.address?.toLowerCase())
             if (gasFeeToken?.baseToken) {
-                const feeBaseToken = gasTankDetails.feeAssetsPerNetwork.find(ft => ft.address.toLowerCase() === gasFeeToken.baseToken.toLowerCase())
+                const feeBaseToken = feeAssetsPerNetwork && feeAssetsPerNetwork.find(ft => ft.address.toLowerCase() === gasFeeToken.baseToken.toLowerCase())
                 setFeeBaseTokenWarning(`Token ${gasFeeToken.symbol.toUpperCase()} will be converted to ${feeBaseToken.symbol.toUpperCase()} without additional fees.`)
             }
         }
-    }, [gasTankDetails?.feeAssetsPerNetwork, selectedAsset])
+    }, [feeAssetsPerNetwork, gasTankDetails?.isTopUp, selectedAsset])
 
     useEffect(() => {
         setAmount(0)
@@ -233,20 +244,25 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
         return () => clearTimeout(timer.current)
     }, [address, amount, selectedAcc, selectedAsset, addressConfirmed, showSWAddressWarning, sWAddressConfirmed, isKnownAddress, addToast, selectedNetwork, addAddress, uDAddress, disabled, ensAddress])
 
-    const amountLabel = <div className="amount-label">Available Amount: <span>{maxAmountFormatted} {selectedAsset?.symbol}</span></div>
+    const amountLabel = <div className={styles.amountLabel}>Available Amount: <span>{maxAmountFormatted} {selectedAsset?.symbol}</span></div>
     const [segment, setSegment] = useState(segments[0].value)
+    const sortedAssetsItems = [
+        ...assetsItems.filter(i => i.label.toLowerCase() === 'wallet'),
+        ...assetsItems.filter(i => i.label.toLowerCase() !== 'wallet').sort((a, b) => a.label.toLowerCase() > b.label.toLowerCase() ? 1 : -1),
+    ]
+
     return (
-        <div id="transfer" style={{ justifyContent: gasTankDetails ? 'center' : '' }}>
-           <div className="panel">
-                <Segments small defaultValue={segment} segments={segments} onChange={(value) => setSegment(value)} />
+        <div className={styles.wrapper} style={{ justifyContent: gasTankDetails ? 'center' : '' }}>
+           <Panel title="Send" className={styles.panel}>
+           <Segments small defaultValue={segment} segments={segments} onChange={(value) => setSegment(value)} />
                { segment === segments[0].value ? (
                     portfolio.isCurrNetworkBalanceLoading ?
                         <Loading />
                         :
                         assetsItems.length ?
-                            <div className="form">
-                                <Select searchable defaultValue={asset} items={assetsItems.sort((a, b) => a.label.toLowerCase() > b.label.toLowerCase() ? 1 : -1)} onChange={({ value }) => setAsset(value)}/>
-                                { feeBaseTokenWarning ? <p className='gas-tank-convert-msg'><MdWarning /> {feeBaseTokenWarning}</p> : <></>}
+                            <div className={styles.form}>
+                                <Select searchable defaultValue={asset} items={sortedAssetsItems} onChange={({ value }) => setAsset(value)}/>
+                                { feeBaseTokenWarning ? <p className={styles.gasTankConvertMsg}><MdWarning /> {feeBaseTokenWarning}</p> : <></>}
                                 <NumberInput
                                     label={amountLabel}
                                     value={amount}
@@ -258,18 +274,20 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
                                 
                                 { validationFormMgs.messages.amount && 
                                     (<div className='validation-error'><BsXLg size={12}/>&nbsp;{validationFormMgs.messages.amount}</div>)}
-                                { gasTankDetails ? <p className='gas-tank-msg'><MdWarning /> {gasTankDetails?.gasTankMsg}</p> : (<div id="recipient-field">
+                                { gasTankDetails ? <p className={styles.gasTankMsg}><MdWarning /> {gasTankDetails?.gasTankMsg}</p> : (<div className={styles.recipientField}>
                                     <TextInput
                                         placeholder="Recipient"
                                         info="Please double-check the recipient address, blockchain transactions are not reversible."
                                         value={address}
                                         onInput={setAddress}
+                                        className={styles.recipientInput}
+                                        inputContainerClass={styles.textInputContainer}
                                     />
                                     <ToolTip label={!ensAddress ? 'You can use Ethereum Name ServiceⓇ' : 'Valid Ethereum Name ServicesⓇ domain'}>
-                                        <div id="ens-logo" className={ensAddress ? 'ens-logo-active ' : ''} />
+                                        <div className={cn(styles.ensLogo, {[styles.ensLogoActive]: ensAddress})} />
                                     </ToolTip>
                                     <ToolTip label={!uDAddress ? 'You can use Unstoppable domainsⓇ' : 'Valid Unstoppable domainsⓇ domain'}>
-                                        <div id="udomains-logo" className={uDAddress ? 'ud-logo-active ' : ''} />
+                                        <div className={cn(styles.udomainsLogo, { [styles.udomainsLogoActive]: uDAddress })} />
                                     </ToolTip>
                                     <AddressBook
                                         addresses={addresses.filter(x => x.address !== selectedAcc)}
@@ -279,11 +297,12 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
                                         onClose={() => setNewAddress(null)}
                                         onSelectAddress={address => setAddress(address)}
                                         selectedNetwork={selectedNetwork}
+                                        className={styles.dropdown}
                                     />
                                 </div>)}
                                 { validationFormMgs.messages.address && 
                                     (<div className='validation-error'><BsXLg size={12}/>&nbsp;{validationFormMgs.messages.address}</div>)}
-                                <div className="separator"/>
+                                <div className={styles.separator} />
                                 <AddressWarning
                                     address={address}
                                     onAddNewAddress={() => setNewAddress(address)}
@@ -295,7 +314,7 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
                                 {
                                     showSWAddressWarning ?
                                         <Checkbox
-                                            id="binance-address-warning"
+                                            className={styles.binanceAddressWarning}
                                             label={<span id="binance-address-warning-label">
                                                 I confirm this address is not a {unsupportedSWPlatforms.join(' / ')} address: <br />
                                                 These platforms do not support ${selectedAsset?.symbol} deposits from smart wallets
@@ -307,14 +326,14 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
                                         :
                                         null
                                 }
-                                <Button icon={<AiOutlineSend />} disabled={disabled} onClick={sendTx}>Send</Button>
+                                <Button primaryGradient={true} disabled={disabled} onClick={sendTx} className='transfer-button'>Send</Button>
                             </div>
                             :
                             <NoFundsPlaceholder/>
                 ) :
                 <Providers walletAddress={selectedAcc} networkDetails={selectedNetwork} relayerURL={relayerURL} portfolio={portfolio} sellMode={true} selectedAsset={selectedAsset ? selectedAsset : null}/>
                }
-           </div>
+           </Panel>
            {!gasTankDetails && <Addresses
                 selectedAsset={selectedAsset}
                 selectedNetwork={selectedNetwork}

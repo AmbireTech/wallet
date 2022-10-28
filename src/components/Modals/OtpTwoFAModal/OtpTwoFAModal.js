@@ -71,10 +71,9 @@ const OtpTwoFAModal = ({ relayerURL, selectedAcc, setCacheBreak }) => {
             `${relayerURL}/second-key/${selectedAcc.id}/ethereum/sign`, { 
                 toSign: hexSecret 
             })
-        
+        if (!success) addToast('Unexpected error. This should never happen, please report this on help.ambire.com', { error: true })
         if (confCodeRequired !== 'email') addToast('Expected email verification. This should never happen, please report this on help.ambire.com', { error: true })
         if (success && confCodeRequired === 'email') addToast('A confirmation code was sent to your email, please enter it along...')
-        
     }
     
     const verifyOTP = async () => {
@@ -138,6 +137,7 @@ const OtpTwoFAModal = ({ relayerURL, selectedAcc, setCacheBreak }) => {
         <Modal
             title="Two Factor Authentication" 
             topLeft={(<CountdownTimer seconds={TIMER_IN_SECONDS} setTimeIsUp={handleTimeIsUp}/>)}
+            buttons={!isLoading ? (<Button type="submit" disabled={isTimeIsUp} className='button'>Enable 2FA</Button>) : (<Button disabled className='button'><Loading /></Button>)}
         >
             <div id="otp-auth">
                 {isTimeIsUp && <div className='timer-reset-msg'>Please reopen the modal to reset the session.</div>}
@@ -176,9 +176,6 @@ const OtpTwoFAModal = ({ relayerURL, selectedAcc, setCacheBreak }) => {
                             pattern="[0-9]{6}"
                             required
                         />
-                    </div>
-                    <div className="buttons">
-                        {!isLoading ? (<Button type="submit" disabled={isTimeIsUp}>Enable 2FA</Button>) : (<Button disabled><Loading /></Button>)}
                     </div>
                 </form>
             </div>

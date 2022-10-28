@@ -1,35 +1,38 @@
 @import 'variables.scss';
 
-$modal-text-color: mix($text-color, $panel-background-color, 70%);
-$thead-background-color: darken($panel-background-color, 2%);
+$modal-text-color: mix($c-titan-white, $c-ebony-clay, 70%);
+$thead-background-color: darken($c-ebony-clay, 2%);
 
 #gas-details-modal {
-  button.buttonComponent {
+  .buttonComponent {
     flex: 0 1 100% !important;
   }
 
   .gas-details-date {
     font-size: 0.8em;
-    color: $modal-text-color;
+    color: $c-scampi;
   }
 
   .gas-speed-row {
     margin-top: 18px;
     display: flex;
     gap: 16px;
+    flex-wrap: wrap;
   }
 
   .gas-speed-block {
     text-align: center;
     flex: 1;
-    color: $modal-text-color;
-    background: $background-color;
+    color: $c-titan-white;
+    background: $c-mirage;
     padding: 12px;
     border: 2px solid transparent;
+    border-radius: 12px;
+    min-width: 100px;
 
     &.selected {
-      border-color: $secondary-accent-color;
-      color: $secondary-accent-color;
+      border-color: $c-heliotrope;
+      color: $c-heliotrope;
     }
 
     .gas-speed-name {
@@ -39,28 +42,31 @@ $thead-background-color: darken($panel-background-color, 2%);
 
     .gas-speed-price {
       font-size: 0.8em;
+      opacity: .7;
     }
   }
 
   h4 {
     font-weight: normal;
     margin-top: 48px;
-    color: $modal-text-color;
+    color: $c-titan-white;
     margin-bottom: 16px;
   }
 
   .table-wrapper {
+    border-radius: 12px;
     max-height: 510px;
     overflow: auto;
-
+    
     table.gas-action-costs {
       width: 100%;
       border-spacing: 0;
-      color: $modal-text-color;
-  
+      color: $c-titan-white;
+
       thead {
-        background: $thead-background-color;
+        background: $c-mirage;
         font-weight: normal;
+        border-radius: 12px 12px 0px 0px;
   
         th {
           text-transform: capitalize;
@@ -75,7 +81,7 @@ $thead-background-color: darken($panel-background-color, 2%);
       }
   
       tbody {
-        background: $background-color;
+        background: $c-martinique;
       }
   
       td:first-child {

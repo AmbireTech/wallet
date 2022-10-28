@@ -1,13 +1,14 @@
 import './FeeSelector.scss'
 
 import { AiOutlineWarning } from 'react-icons/ai'
-import { Loading, Select, ToolTip, Button, TextInput } from 'components/common'
+import { Loading, Select, ToolTip, Button, TextInput, DAppIncompatibilityWarningMsg } from 'components/common'
 import {
   isTokenEligible,
   mapTxnErrMsg,
   getErrHint,
   getFeesData,
-  getDiscountApplied
+  getDiscountApplied,
+  checkIfDAppIncompatible
 } from './helpers'
 import { FaPercentage } from 'react-icons/fa'
 import { MdInfoOutline } from 'react-icons/md'
@@ -69,7 +70,7 @@ const WalletDiscountBanner = ({ currenciesItems, tokens, estimation, onFeeCurren
           <MdInfoOutline />
         </a>
       </div>
-      {!!action && <Button onClick={action} mini>
+      {!!action && <Button onClick={action} mini className='buttonComponent'>
         {actionTxt}
       </Button>}
       {showSwap && <div className='swap-info'>
@@ -102,10 +103,14 @@ export function FeeSelector({ disabled, signer, estimation, network, setEstimati
   // Otherwise we don't care whether the user has enough for fees, their signer wallet will take care of it
   const insufficientFee = estimation && estimation.feeInUSD
     && !isTokenEligible(estimation.selectedFeeToken, feeSpeed, estimation, isGasTankEnabled, network)
-  if (estimation && !estimation.success) return (<FailingTxn
-    message={<>The current transaction batch cannot be sent because it will fail: {mapTxnErrMsg(estimation.message)}</>}
-    tooltip={getErrHint(estimation.message)}
-  />)
+  if (estimation && !estimation.success) return (!checkIfDAppIncompatible(estimation.message) ?
+    <FailingTxn
+      message={<>The current transaction batch cannot be sent because it will fail: {mapTxnErrMsg(estimation.message)}</>}
+      tooltip={getErrHint(estimation.message)}
+    /> : <DAppIncompatibilityWarningMsg 
+            title={'Unable to send transaction'}
+            msg={getErrHint(estimation.message)}
+          />)
 
   if (!estimation.feeInNative) return (<></>)
   if (estimation && !estimation.feeInUSD && estimation.gasLimit < 40000) {
@@ -393,6 +398,17 @@ export function FeeSelector({ disabled, signer, estimation, network, setEstimati
             </div>
           </div>
         </div>)}
+        {!isGasTankEnabled && !isNaN((feeInUSD / estimation.gasLimit) * savedGas) && 
+            <div className='fee-row native-fee-estimation warning-label'>
+              <div>
+              Enable Gas Tank to save:
+              </div>
+              <div className='fee-amounts'>
+                <div>
+                  ${formatFloatTokenAmount(((feeInUSD / estimation.gasLimit) * savedGas), true, 4)}
+                </div>
+              </div>
+            </div>}
         {!!isGasTankEnabled && (<>
           <div className='fee-row native-fee-estimation discount-label'>
             <div>

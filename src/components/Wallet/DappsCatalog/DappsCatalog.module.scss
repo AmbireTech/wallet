@@ -1,0 +1,413 @@
+@import 'variables.scss';
+$WCBlue: #0078db;
+$faveColor: #FFFF00;
+$gap: 12px;
+
+.wrapper {
+  height: 100%;
+  @include flex-full-grow-container;
+  position: relative;
+
+  .dappCatalogInner {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+  }
+
+  .filterInput {
+    flex: 1;
+  }
+
+  .textInputContainer {
+    padding-left: 20px;
+    border-radius: 12px;
+
+    input {
+      background-color: $c-mirage!important;
+    }
+    
+    ::placeholder {
+      color: $c-titan-white!important;
+    }
+  }
+
+  .filterSection {
+    display: flex;
+    gap: 24px;
+    align-items: center;
+    width: 100%;
+    margin-bottom: ($gap * 2);
+
+    .categories {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-end;
+      justify-content: flex-end;
+      gap: $gap;
+
+      .category {
+        cursor: pointer;
+        padding: 11.5px 14px;
+        border-radius: 12px;
+        border: 2px solid mix($c-titan-white, $c-mirage);
+        color: mix($c-titan-white, $c-mirage);
+        text-transform: lowercase;
+
+        &:hover {
+          background: mix($c-ebony-clay, $text-container-color, 85%);
+        }
+
+        &.selected {
+          border: 2px solid $c-turquoise;
+          color: $c-turquoise;
+
+          &.categoryintegrated {
+            color: $c-heliotrope;
+            border-color: $c-heliotrope;
+          }
+
+          &.categorywalletconnect {
+            color: $WCBlue;
+            border-color: $WCBlue;
+          }
+
+          &.categoryfavorites {
+            color: $faveColor;
+            border-color: $faveColor;
+          }
+        }
+      }
+    }
+
+  }
+
+  .dappIframe {
+    border: 1px solid $c-heliotrope;
+  }
+
+  .catalogItems {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr [col-start]);
+    gap: $gap;
+
+    .catalogItem {
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: $gap;
+      padding: ($gap + 14px) 10px 27px 25px;
+      background-color: $c-ebony-clay;
+      border-radius: 12px;
+      border: 1px solid transparent;
+      transition: 100ms;
+      position: relative;
+      overflow: hidden;
+      transition: .1s ease-out border;
+
+      &.addCustomDapp {
+        cursor: default;
+      }
+
+      .tools {
+        position: absolute;
+        right: 10px;
+        top: 10px;
+        display: flex;
+        flex-direction: row;
+        gap: 4px;
+        align-items: center;
+
+        .favorite, .customDapp, .removeDapp, .hotDapp, .infoBtn {
+          .icon, &.icon {
+            font-size: 20px;
+            height: 20px;
+            cursor: pointer;
+          }      
+          height: 14px;
+          width: auto;
+          color: mix($c-titan-white, $c-mirage, 20%);
+  
+          &.selected {
+            color: $faveColor;
+          }
+  
+          &:hover {
+            color: $faveColor;
+          }
+        }
+
+        .favorite {
+          height: 18px;
+          width: 18px;
+        }
+
+        .removeDapp {          
+          &:hover {
+            color: $danger-color;
+          }         
+        }
+        .infoBtn {
+          color: $ambire-purple;
+          opacity: 0.5;
+          &:hover {
+            color: $ambire-purple;
+            opacity: 1;
+          }         
+        }
+      }      
+
+      &.notSupported {
+        cursor: not-allowed;
+        opacity: 0.2;
+
+        &:hover {
+          background-color: $c-martinique;
+        }
+
+        .logoSplit {
+          opacity: 0.4;
+        }
+
+        .tools :not(.tooltipLabel) {
+          opacity: 0.5;
+        }
+
+        .tagRow {
+          opacity: 0.5;
+          .tag.unsupported {
+            background-color: transparent;
+            border-color: mix($c-titan-white, $c-mirage, 50%);
+            color: mix($c-titan-white, $c-mirage, 50%);
+          }
+        }
+      }
+
+      &.addCustomDapp {
+        align-items: center;
+        gap: $gap * 2;
+        .customDappIconWrapper {
+          border: 1px dashed $c-fiord;
+          border-radius: 12px;
+          padding: 22px;
+          display: flex;
+          flex-direction: column;
+          align-items: stretch;
+          justify-content: center;
+
+          img {
+            background-color: $c-mirage;
+            padding: 8px;
+            width: 56px;
+            height: 56px;
+            border-radius: 12px;
+          }
+        }
+      } 
+
+      .logoSplit {
+        display: flex;
+        flex-direction: row;
+        align-items: flex-end;
+        gap: 20px;
+
+        .logo {
+          min-width: 56px;
+          width: 56px;
+          height: 56px;
+          border-radius: 12px;
+          background: $c-mirage;
+          //padding: 8px;
+          text-align: center;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+
+          img {
+            max-width: 44px;
+            max-height: 44px;
+            border-radius: 12px;
+          }
+        }
+      }
+
+      .title {
+        font-weight: 400;
+        display: block;
+        font-size: 20px;
+      }
+
+      .description {
+        margin-top: $gap;
+        font-size: 14px;
+        color: $c-titan-white;
+        opacity: .5;
+        margin-top: 20px;
+      }
+
+      .alignedTagRows {
+        display: flex;
+        flex-wrap: wrap;
+      }
+
+      .tagRow {
+        display: flex;
+        justify-content: right;
+        flex-direction: row-reverse;
+        gap: 8px;
+
+        &.networkTagRow {
+          gap: 4px;
+          justify-content: left;
+        }
+
+        &.tagTypes {
+          flex-grow: 1;
+          margin-left: 10px; //fixes hover issue with network tags
+        }
+
+        &.unsupported {
+          justify-content: left;
+          margin: 0;
+          margin-top: 8px;
+        }
+
+        .tooltipNetworks {
+
+          .tooltipNetwork {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            margin: 4px 0;
+
+            .tooltipNetworkIcon {
+              border: 0;
+              display: block;
+              height: 16px;
+              width: 16px;
+              background-size: 16px 16px;
+              background-color: transparent;
+              border-radius: 100px;
+            }
+          }
+
+        }
+
+        .tag {
+          // background-color: mix($c-heliotrope, $c-mirage, 30%);
+          border: 1px solid $c-heliotrope;
+          color: mix($c-heliotrope, $c-titan-white, 70%);
+          padding: 3.5px 21.5px;
+          font-size: 12px;
+          border-radius: 32px;
+          text-transform: capitalize;
+
+          &.typeTagwalletconnect {
+            // background-color: mix($WCBlue, $c-mirage, 30%);
+            border: 1px solid $WCBlue;
+            color: mix($WCBlue, $c-titan-white, 70%);
+          }
+
+          &.typeTaghot {
+            border: 1px solid $ambire-dark-blue;
+            color: mix($ambire-dark-blue, $c-titan-white, 70%);
+          }
+
+          &.networkTag {
+            border: 2px solid $c-ebony-clay;
+            display: block;
+            height: 24px;
+            width: 24px;
+            padding: 0px 0px;
+            background-size: 16px 16px;
+            background-color: transparent;
+            background-repeat: no-repeat;
+            background-position: center;
+            background-color: $c-titan-white;
+            border-radius: 100px;
+            margin-right: -10px;
+            cursor: initial;
+          }
+
+          &.networkTagMore {
+            background: transparent;
+            border: 0;
+            margin-left: 4px;
+            margin-right: 0;
+            font-weight: bold;
+            font-size: 16px;
+            margin-left: 10px;
+            color: $text-container-color;
+          }
+        }
+      }
+
+      &:hover:not(.addCustomDapp) {
+        background-color: $c-martinique;
+        border: 1px solid $c-turquoise;
+      }
+    }
+  }
+
+  .noDappFound {
+    font-size: 1.2em;
+    text-align: center;
+    padding: 24px;
+    background-color: $c-mirage;
+    border-radius: 12px;
+    margin-top: 20px;
+    color: rgba($c-titan-white, 0.8);
+  }
+
+  .infoWc {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 10px;
+    padding: 12px;
+    background-color: $c-mirage;
+    border-radius: 12px;
+    color: rgba($c-titan-white, 0.8);
+  }
+}
+
+@media screen and (max-width: $small-breakpoint-max-width) {
+  .wrapper {
+    .catalogItems {
+      grid-template-columns: repeat(3, 1fr [col-start]);
+    }
+    .infoWc {
+      border-radius: 12px 12px 0 0;
+    }
+  }
+}
+
+@media screen and (max-width: 1000px) {
+  .wrapper {
+    .catalogItems {
+      grid-template-columns: repeat(2, 1fr [col-start]);
+    }
+  }
+}
+
+@media screen and (max-width: $mobile-breakpoint-max-width) {
+  .wrapper {
+    .filterSection { 
+      flex-direction: column;
+    }
+
+    .catalogItems {
+      grid-template-columns: repeat(1, 1fr [col-start]);
+
+      .catalogItem {
+        max-width: 395px;
+        width: 100%;
+        margin: 0 auto;
+      }
+    }
+  }
+}
+
+

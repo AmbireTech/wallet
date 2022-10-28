@@ -58,6 +58,10 @@ export function getErrHint(msg) {
   return 'Sending this transaction batch would have resulted in an error, so we prevented it.'
 }
 
+export function checkIfDAppIncompatible(msg) {
+  return contractErrors.find(contractMsg => msg.includes(contractMsg))
+}
+
 export function toHexAmount(amnt, decimals) {
   return '0x' + Math.round(amnt * Math.pow(10, decimals)).toString(16)
 }
