@@ -47,7 +47,7 @@
         }
       }
   
-      .amountAndSymbol {
+      .balanceAndSymbol {
         .symbol {
           margin: 0;
           font-size: 20px;
@@ -108,8 +108,54 @@
 }
 
 // Mobile
-// @media screen and (max-width: 768px) {
-//   .wrapper {
-    
-//   }
-// }
+@media screen and (max-width: 768px) {
+  .wrapper {
+    flex-direction: column;
+    gap: 30px;
+    padding: 20px;
+
+    .body {
+      justify-content: space-between;
+      width: 100%;
+
+      .baseInfo {
+        gap: 10px;
+        .balanceAndSymbol {
+          .symbol {
+            font-weight: 500;
+            font-size: 16px;
+          }
+
+          .balance {
+            font-size: 14px;
+          }
+        }
+      }
+
+      .priceAndValue {
+        flex-direction: column;
+        align-items: flex-end;
+        
+        .price {
+          font-size: 16px;
+        }
+
+        .value {
+          font-size: 18px;
+        }
+      }
+    }
+    .actions {
+      gap: 20px;
+      .action {
+        width: 50px;
+        height: 50px;
+
+        svg {
+          width: 32px;
+          height: 32px;
+        }
+      }
+    }
+  }
+}

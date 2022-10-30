@@ -58,3 +58,11 @@
     }
   }
 }
+
+@media screen and (max-width: 768px) {
+  .category {
+    .title {
+      display: none;
+    }
+  }
+}

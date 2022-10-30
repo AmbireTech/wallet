@@ -69,7 +69,7 @@ const Protocol = ({
                 />
             }
           </div>
-          <div className={styles.amountAndSymbol}>
+          <div className={styles.balanceAndSymbol}>
             <h3 className={styles.symbol}>{ symbol }</h3>
             <p className={styles.balance}>
               { hidePrivateValue(formatFloatTokenAmount(balance.toFixed(2), true, decimals)) }
