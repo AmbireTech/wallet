@@ -91,6 +91,7 @@ const Protocols = ({ portfolio, network, account, hidePrivateValue, userSorting,
             <>
                 {
                     isCurrNetworkBalanceLoading ? <Loading/> : ((!shouldShowPlaceholder && sortedTokens.length) ? <ProtocolsWrapper
+                        titleSpacedLeft={sortType === "custom" || isMobileScreen}
                         tokenLabelChildren={sortedTokens.length > 1 && !isMobileScreen &&  (
                             <div className={styles.sortButtons}>
                                 <ToolTip label='Sorted tokens by drag and drop'>
