@@ -55,32 +55,37 @@ const Protocol = ({
       onDragOver={(e) => e.preventDefault()}
     >
       {sortedTokens.length > 1 && sortType === 'custom' && !isMobileScreen && <MdDragIndicator size={20} className={styles.dragHandle} onClick={(e) => dragStart(e, index)} id={`${index}-handle`} />}
-      <div className={styles.baseInfo}>
-        <div className={styles.iconWrapper}>
-          { 
-            failedImg.includes(logo) ?
-              <GiToken size={20}/> : <img 
-                src={logo} 
-                draggable="false" 
-                alt="Token Icon" 
-                onError={() => setFailedImg(failed => [...failed, logo])}
-                className={styles.icon}
-              />
-          }
+      <div className={styles.body}>
+        <div className={styles.baseInfo}>
+          <div className={styles.iconWrapper}>
+            { 
+              failedImg.includes(logo) ?
+                <GiToken size={20}/> : <img 
+                  src={logo} 
+                  draggable="false" 
+                  alt="Token Icon" 
+                  onError={() => setFailedImg(failed => [...failed, logo])}
+                  className={styles.icon}
+                />
+            }
+          </div>
+          <div className={styles.amountAndSymbol}>
+            <h3 className={styles.symbol}>{ symbol }</h3>
+            <p className={styles.balance}>
+              { hidePrivateValue(formatFloatTokenAmount(balance.toFixed(2), true, decimals)) }
+            </p>
+          </div>
         </div>
-        <div className={styles.amountAndName}>
-          <h3 className={styles.name}>{ symbol }</h3>
-          <p className={styles.balance}>
-            { hidePrivateValue(formatFloatTokenAmount(balance.toFixed(2), true, decimals)) }
-          </p>
+        <div className={styles.priceAndValue}>
+          <h3 className={styles.price}>
+            ${price < 1 ? price.toFixed(5) : price.toFixed(2)}
+          </h3>
+          <h3 className={styles.value}>
+            <span className={styles.symbol}>$</span>{ hidePrivateValue(balanceUSD.toFixed(2)) }
+          </h3>
         </div>
       </div>
-      <h3 className={styles.price}>
-        ${price < 1 ? price.toFixed(5) : price.toFixed(2)}
-      </h3>
-      <h3 className={styles.value}>
-        <span className={styles.symbol}>$</span>{ hidePrivateValue(balanceUSD.toFixed(2)) }
-      </h3>
+
       <div className={styles.actions}>
         {
           send ? <NavLink to={`/wallet/transfer/${address}`}>

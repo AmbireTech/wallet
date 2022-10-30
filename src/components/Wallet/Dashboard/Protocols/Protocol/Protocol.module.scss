@@ -8,10 +8,6 @@
   background-color: $c-mirage;
   border-radius: 12px;
 
-  & > * {
-    flex: 1;
-  }
-
   .dragHandle {
     flex: none;
     margin-right: 15px;
@@ -23,55 +19,69 @@
     margin: 0;
   }
 
-  .baseInfo {
+  .body {
     display: flex;
     align-items: center;
-    gap: 20px;
-    flex: 1.5;
-    font-weight: 500;
-    color: $c-titan-white;
-    
-    .iconWrapper {
-      border-radius: 12px;
-      background-color: rgba($c-titan-white, 0.04);
-      width: 40px;
-      height: 40px;
+    flex: 3.7;
+    .baseInfo {
       display: flex;
       align-items: center;
-      justify-content: center;
+      gap: 20px;
+      flex: 1.5;
+      font-weight: 500;
+      color: $c-titan-white;
       
-      .icon {
-        width: 24px;
-        height: 24px;
+      .iconWrapper {
         border-radius: 12px;
+        background-color: rgba($c-titan-white, 0.04);
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        
+        .icon {
+          width: 24px;
+          height: 24px;
+          border-radius: 12px;
+        }
+      }
+  
+      .amountAndSymbol {
+        .symbol {
+          margin: 0;
+          font-size: 20px;
+          font-weight: 600;
+        }
+        .balance {
+          margin: 0;
+          font-size: 16px;
+          color: $c-turquoise;
+          font-weight: 400;
+        }
       }
     }
 
-    .amountAndName {
-      .name {
-        margin: 0;
-        font-size: 20px;
-        font-weight: 600;
+    .priceAndValue {
+      display: flex;
+      flex: 2.2;
+      .price {
+        color: #ae60ff;
+        flex: 1.2;
       }
-      .balance {
-        margin: 0;
-        font-size: 16px;
-        color: $c-turquoise;
-        font-weight: 400;
+      .value {
+        flex: 1;
       }
     }
   }
 
-  .price {
-    flex: 1.2;
-    color: #ae60ff;
-  }
 
   .actions {
     display: flex;
     justify-content: flex-end;
     align-items: center;
     gap: 10px;
+    flex: 1;
 
     .action {
       display: flex;
