@@ -21,7 +21,7 @@
 
   .body {
     display: flex;
-    align-items: center;
+    align-items: flex-end;
     flex: 3.7;
     .baseInfo {
       display: flex;
@@ -51,7 +51,7 @@
         .symbol {
           margin: 0;
           font-size: 20px;
-          font-weight: 600;
+          font-weight: 500;
         }
         .balance {
           margin: 0;
@@ -64,13 +64,17 @@
 
     .priceAndValue {
       display: flex;
+      align-items: flex-end;
       flex: 2.2;
       .price {
-        color: #ae60ff;
+        color: $c-heliotrope;
         flex: 1.2;
+        font-size: 16px;
       }
       .value {
         flex: 1;
+        color: $c-titan-white;
+        opacity: 1;
       }
     }
   }
