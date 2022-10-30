@@ -17,7 +17,6 @@ import AddOrHideTokenButton from './AddOrHideTokenButton/AddOrHideTokenButton'
 const Protocols = ({ portfolio, network, account, hidePrivateValue, userSorting, setUserSorting }) => {
     const history = useHistory()
     const { showModal } = useModals()
-    console.log(portfolio)
 
     const [isHideTokenModalOpen, setIsHideTokenModalOpen] = useState(false)
     const { isCurrNetworkBalanceLoading, isCurrNetworkProtocolsLoading, tokens, protocols } = portfolio
