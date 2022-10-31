@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import {
   MdVisibilityOff as VisibleIcon,
   MdRemoveRedEye as HiddenIcon
@@ -17,9 +17,9 @@ const HideToken = ({
   sortType
 }) => {
   const { hiddenTokens, onAddHiddenToken, onRemoveHiddenToken, tokens } = portfolio
+  const [search, setSearch] = useState('')
 
   const hideToken = (token) => onAddHiddenToken(token)
-
   const unhideToken = (token) => onRemoveHiddenToken(token.address)
 
   const sortedTokens = useMemo(() => {
@@ -37,17 +37,27 @@ const HideToken = ({
     return [...new Map(tempTokens.map(token => [token.address, token])).values()]
   }, [tokens, hiddenTokens, userSorting, sortType, account, network.chainId])
 
+  const filteredTokens = sortedTokens.filter((token) => {
+    const searchValue = search ? search.toLowerCase() : ''
+
+    if (('address' in token) && ('symbol' in token)) {
+      return token.address.toLowerCase().includes(searchValue) || token.symbol.toLowerCase().includes(searchValue)
+    }
+
+    return false
+  })
+
   return (
     <div className={styles.wrapper}>
       <TextInput
         small
         label="Token Address or Symbol"
         placeholder="Input token address or symbol"
-        // onInput={value => onInput(value)}
+        onInput={value => setSearch(value)}
         className={styles.addressInput}
       />
       <div className={styles.tokens}>
-        {sortedTokens.map((token) => {
+        {filteredTokens.map((token) => {
           const {tokenImageUrl, network, symbol, address, isHidden} = token
           return (
             <Token
