@@ -17,7 +17,10 @@ const Protocols = ({ portfolio, network, account, hidePrivateValue, userSorting,
     const history = useHistory()
     const { showModal } = useModals()
 
-    const [isAddOrHideTokenModalOpen, setIsAddOrHideTokenModalOpen] = useState(false)
+    const [addOrHideTokenModal, setAddOrHideTokenModal] = useState({
+        isOpen: false,
+        defaultSection: null
+    })
     const { isCurrNetworkBalanceLoading, isCurrNetworkProtocolsLoading, tokens, protocols } = portfolio
 
     const sortType = userSorting.tokens?.sortType || 'decreasing'
@@ -58,10 +61,12 @@ const Protocols = ({ portfolio, network, account, hidePrivateValue, userSorting,
     const otherProtocols = protocols.filter(({ label }) => label !== 'Tokens')
     const shouldShowPlaceholder = (!isCurrNetworkBalanceLoading && !tokens.length) && (!isCurrNetworkProtocolsLoading && !otherProtocols.length)
 
-    const openAddOrHideTokenModal = useCallback(() => setIsAddOrHideTokenModalOpen(true), [])
+    const handleModalVisiblity = useCallback((value) => setAddOrHideTokenModal((prev) => ({...prev, isOpen: value})), [setAddOrHideTokenModal])
+
+    const openAddOrHideTokenModal = useCallback(() => handleModalVisiblity(true), [handleModalVisiblity])
 
     useEffect(() => {
-        if(isAddOrHideTokenModalOpen) {
+        if(addOrHideTokenModal.isOpen) {
             showModal(
                 <AddOrHideTokenModal
                     portfolio={portfolio} 
@@ -69,21 +74,22 @@ const Protocols = ({ portfolio, network, account, hidePrivateValue, userSorting,
                     userSorting={userSorting}
                     sortType={sortType}
                     network={network} 
-                    setIsAddOrHideTokenModalOpen={setIsAddOrHideTokenModalOpen} 
+                    handleModalVisiblity={handleModalVisiblity} 
+                    defaultSection={addOrHideTokenModal.defaultSection}
                 />
             )
         }
-    }, [portfolio, isAddOrHideTokenModalOpen, showModal, account, network, sortType, userSorting])
+    }, [portfolio, addOrHideTokenModal, handleModalVisiblity, showModal, account, network, sortType, userSorting])
 
     useEffect(() => history.replace(`/wallet/dashboard`), [history])
 
     return (
         <div className={styles.wrapper}>
             {
-                shouldShowPlaceholder ?
-                    <ProtocolsPlaceholder onClickAddToken={() => console.log('TODO')} onClickShowToken={openAddOrHideTokenModal}/>
-                    :
-                    null
+                shouldShowPlaceholder ? <ProtocolsPlaceholder
+                    onClickAddToken={() => setAddOrHideTokenModal({isOpen: true, defaultSection: 'Add Token'})} 
+                    onClickShowToken={() => setAddOrHideTokenModal({isOpen: true, defaultSection: 'Hide Token'})}
+                /> : null
             }
             <>
                 {

@@ -12,22 +12,23 @@ import styles from './AddOrHideTokenModal.module.scss'
 const segments = [{ value: 'Add Token' }, { value: 'Hide Token' }]
 
 const AddOrHideTokenModal = ({ 
-  setIsAddOrHideTokenModalOpen,
+  defaultSection,
+  handleModalVisiblity,
   network, account, portfolio,
   userSorting, sortType // HideToken
 }) => {
-  const [segment, setSegment] = useState(segments[0].value)
+  const [segment, setSegment] = useState(defaultSection || segments[0].value)
 
   const { hideModal, setOnClose } = useModals()
 
   const handleHideModal = () => {
-    setIsAddOrHideTokenModalOpen(false)
+    handleModalVisiblity(false)
     hideModal()
   }
 
   useEffect(() => {
-    setOnClose({close: () => setIsAddOrHideTokenModalOpen(false)})
-  }, [setOnClose, setIsAddOrHideTokenModalOpen])
+    setOnClose({close: () => handleModalVisiblity(false)})
+  }, [setOnClose, handleModalVisiblity])
 
   return (
     <Modal className={styles.modal} isCloseBtnShown={false} buttons={<Button onClick={handleHideModal} className={styles.closeButton}>Close</Button>}>
