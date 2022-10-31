@@ -1,8 +1,9 @@
 import styles from './AddOrHideTokenButton.module.scss'
 
-const AddOrHideTokenButton = () => {
+const AddOrHideTokenButton = ({ openAddOrHideTokenModal }) => {
+
   return (
-    <button className={styles.wrapper}>
+    <button className={styles.wrapper} onClick={openAddOrHideTokenModal}>
       Add or Hide Token
     </button>
   )
