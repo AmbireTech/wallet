@@ -1,24 +1,23 @@
 import { useHistory } from 'react-router-dom'
-import { Loading } from 'components/common'
-import ProtocolsPlaceholder from './ProtocolsPlaceholder/ProtocolsPlaceholder'
 import { useCallback, useEffect, useState } from 'react'
 import { MdDragIndicator, MdOutlineSort } from 'react-icons/md'
-import AddTokenModal from 'components/Modals/AddTokenModal/AddTokenModal'
+
 import { useModals, useCheckMobileScreen, useDragAndDrop } from 'hooks'
-import HideTokenModel from 'components/Modals/HideTokenModal/HideTokenModal'
-
+import { Loading } from 'components/common'
 import { ToolTip } from 'components/common'
-
-import styles from './Protocols.module.scss'
+import ProtocolsPlaceholder from './ProtocolsPlaceholder/ProtocolsPlaceholder'
 import Protocol from './Protocol/Protocol'
 import ProtocolsWrapper from './ProtocolsWrapper/ProtocolsWrapper'
 import AddOrHideTokenButton from './AddOrHideTokenButton/AddOrHideTokenButton'
+import AddOrHideTokenModal from 'components/Modals/AddOrHideTokenModal/AddOrHideTokenModal'
+
+import styles from './Protocols.module.scss'
 
 const Protocols = ({ portfolio, network, account, hidePrivateValue, userSorting, setUserSorting }) => {
     const history = useHistory()
     const { showModal } = useModals()
 
-    const [isHideTokenModalOpen, setIsHideTokenModalOpen] = useState(false)
+    const [isAddOrHideTokenModalOpen, setIsAddOrHideTokenModalOpen] = useState(false)
     const { isCurrNetworkBalanceLoading, isCurrNetworkProtocolsLoading, tokens, protocols } = portfolio
 
     const sortType = userSorting.tokens?.sortType || 'decreasing'
@@ -59,23 +58,22 @@ const Protocols = ({ portfolio, network, account, hidePrivateValue, userSorting,
     const otherProtocols = protocols.filter(({ label }) => label !== 'Tokens')
     const shouldShowPlaceholder = (!isCurrNetworkBalanceLoading && !tokens.length) && (!isCurrNetworkProtocolsLoading && !otherProtocols.length)
 
-    const openAddTokenModal = useCallback(() => showModal(<AddTokenModal network={network} account={account} portfolio={portfolio} />), [account, network, portfolio, showModal])
-    const openHideTokenModal = useCallback(() => setIsHideTokenModalOpen(true), [])
+    const openAddOrHideTokenModal = useCallback(() => setIsAddOrHideTokenModalOpen(true), [])
 
     useEffect(() => {
-        if(isHideTokenModalOpen) {
+        if(isAddOrHideTokenModalOpen) {
             showModal(
-                <HideTokenModel 
+                <AddOrHideTokenModal
                     portfolio={portfolio} 
                     account={account} 
                     userSorting={userSorting}
                     sortType={sortType}
                     network={network} 
-                    setIsHideTokenModalOpen={setIsHideTokenModalOpen} 
+                    setIsAddOrHideTokenModalOpen={setIsAddOrHideTokenModalOpen} 
                 />
             )
         }
-    }, [portfolio, isHideTokenModalOpen, showModal, account, network, sortType, userSorting])
+    }, [portfolio, isAddOrHideTokenModalOpen, showModal, account, network, sortType, userSorting])
 
     useEffect(() => history.replace(`/wallet/dashboard`), [history])
 
@@ -83,7 +81,7 @@ const Protocols = ({ portfolio, network, account, hidePrivateValue, userSorting,
         <div className={styles.wrapper}>
             {
                 shouldShowPlaceholder ?
-                    <ProtocolsPlaceholder onClickAddToken={openAddTokenModal} onClickShowToken={openHideTokenModal}/>
+                    <ProtocolsPlaceholder onClickAddToken={() => console.log('TODO')} onClickShowToken={openAddOrHideTokenModal}/>
                     :
                     null
             }
@@ -136,7 +134,7 @@ const Protocols = ({ portfolio, network, account, hidePrivateValue, userSorting,
                                     dragAndDrop={dragAndDrop}
                                 />
                         ))}
-                        <AddOrHideTokenButton />
+                        <AddOrHideTokenButton openAddOrHideTokenModal={openAddOrHideTokenModal} />
                     </ProtocolsWrapper> : null)
                 }
             </>
