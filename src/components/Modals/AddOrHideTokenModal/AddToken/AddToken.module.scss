@@ -2,17 +2,18 @@
 
 .wrapper {
   .addressInput {
-    margin-bottom: 30px;
+    margin-bottom: 20px;
 
     label {
       margin-left: 20px;
       font-weight: 400;
+      font-size: 14px;
     }
   }
   .addButton {
     width: 100%;
     font-weight: 400;
-    margin-bottom: 30px;
+    margin-bottom: 20px;
   }
 
   // Token balance
