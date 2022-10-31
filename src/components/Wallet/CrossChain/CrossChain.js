@@ -190,6 +190,10 @@ const CrossChain = ({ addRequest, selectedAccount, portfolio, network, relayerUR
         if (!fromChain || portfolio.isCurrNetworkBalanceLoading) return
         setQuotes(null)
         asyncLoad(setLoading, loadChains)
+
+        return () => {
+            setChainsItems([])
+        }
     }, [fromChain, portfolio.isCurrNetworkBalanceLoading, loadChains])
 
     useEffect(() => portfolioTokens.current = portfolio.tokens, [portfolio.tokens])
