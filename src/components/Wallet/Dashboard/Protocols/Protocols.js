@@ -19,7 +19,7 @@ const Protocols = ({ portfolio, network, account, hidePrivateValue, userSorting,
 
     const [addOrHideTokenModal, setAddOrHideTokenModal] = useState({
         isOpen: false,
-        defaultSection: null
+        defaultSection: 'Add Token'
     })
     const { isCurrNetworkBalanceLoading, isCurrNetworkProtocolsLoading, tokens, protocols } = portfolio
 
