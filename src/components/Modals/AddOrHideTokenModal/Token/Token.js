@@ -4,14 +4,16 @@ import styles from './Token.module.scss'
 const Token = ({ name, symbol, icon, className, children }) => (
   <div className={cn(styles.wrapper, className)}>
     <div className={styles.info}>
-      <img src={icon} alt="" className={styles.icon} />
-      <div className={styles.name}>
+      <div className={styles.iconWrapper}>
+        <img src={icon} alt="" className={styles.icon} />
+      </div>
+      <h3 className={styles.name}>
         { name }
         {' '}
         <span>
           { symbol }
         </span>
-      </div>
+      </h3>
     </div>
     { children }
   </div>
