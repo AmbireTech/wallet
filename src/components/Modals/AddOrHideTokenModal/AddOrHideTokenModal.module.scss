@@ -1,1 +1,16 @@
 @import 'variables';
+
+.modal {
+  padding-top: 15px;
+  width: 500px;
+  min-height: unset;
+  height: 600px!important;
+}
+
+.closeButton {
+  flex: 0 1 100%!important;
+}
+
+.body {
+  padding-top: 40px;
+}
