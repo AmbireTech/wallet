@@ -69,15 +69,16 @@ export default function Providers({ walletAddress, networkDetails, relayerURL, p
     ];
 
     const shouldBeDisabled = (networks) => {
-        return networks.includes(networkDetails.id) ? null : 'disabled'; 
-    };
+        return !networks.includes(networkDetails.id)
+    }
 
     return (
         <div className={styles.wrapper}>
             {
                 providers.map(({ logo, name, type, fees, limits, currencies, networks, onClick }) =>
                 
-                    <div className={`${styles.provider} ${shouldBeDisabled(networks) || ''}`} key={name} onClick={onClick}>
+                    <div className={`${styles.provider} ${shouldBeDisabled(networks) && styles.disabled}`} key={name} onClick={onClick}>
+
                         <div className={styles.logo}>
                             <img src={logo} alt={name}></img>
                         </div>
