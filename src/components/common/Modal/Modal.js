@@ -22,7 +22,7 @@ const Modal = ({ children, id, title, buttons, isCloseBtnShown = true, onClose, 
                     <CloseIcon />
                 </div>) : <></>}
             </div>
-            <div className="content">{ children }</div>
+            <div className={cn("content", { "no-padding-top": !isCloseBtnShown })}>{ children }</div>
             { buttons ? 
                 <div className="buttons">{ buttons }</div>
             : null}

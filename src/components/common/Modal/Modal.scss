@@ -72,6 +72,10 @@ $buttons-height: 160px;
         overflow: hidden;
         overflow-y: auto;
         scrollbar-width: thin;
+
+        &.no-padding-top {
+            padding-top: 0;
+        }
     }
 
     .buttons {
