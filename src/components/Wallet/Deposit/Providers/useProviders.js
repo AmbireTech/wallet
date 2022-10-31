@@ -6,13 +6,14 @@ import { useState } from 'react';
 import { useToasts } from 'hooks/toasts'
 import { useModals } from 'hooks'
 import GuardarianDepositProviderModal from 'components/Modals/GuardarianDepositProviderModal/GuardarianDepositProviderModal'
+import { useHistory } from 'react-router-dom'
 
 import url from 'url'
 
 import { RAMP_HOST_API_KEY, PAYTRIE_PARTNER_URL, TRANSAK_API_KEY, TRANSAK_ENV } from 'config'
 
 const useProviders = ({ walletAddress, selectedNetwork, relayerURL, portfolio }) => {
-
+    const history = useHistory()
     const [isLoading, setLoading] = useState([])
     const { addToast } = useToasts()
     const { showModal } = useModals()
@@ -28,7 +29,7 @@ const useProviders = ({ walletAddress, selectedNetwork, relayerURL, portfolio })
 
         const widget = new RampInstantSDK({
             hostAppName: 'Ambire',
-            hostLogoUrl: 'https://www.ambire.com/ambire-logo.png',
+            hostLogoUrl: 'https://app.swappin.gifts/ref/ambire',
             variant: 'auto',
             swapAsset: assetsList[selectedNetwork],
             userAddress: walletAddress,
@@ -141,6 +142,13 @@ const useProviders = ({ walletAddress, selectedNetwork, relayerURL, portfolio })
         setLoading(prevState => prevState.filter(n => n !== 'MoonPay'))
     }
 
+    const openSwappin = async () => {
+        setLoading(prevState => ['Swappin', ...prevState])
+        const url = 'https://app.swappin.gifts/ref/ambire'
+        history.push(`/wallet/dapps?dappUrl=${url}`)
+        setLoading(prevState => prevState.filter(n => n !== 'Swappin'))
+    }
+
     return {
         openRampNetwork,
         openPayTrie,
@@ -148,6 +156,7 @@ const useProviders = ({ walletAddress, selectedNetwork, relayerURL, portfolio })
         openKriptomat,
         openGuardarian,
         openMoonpay,
+        openSwappin,
         isLoading
     }
 }

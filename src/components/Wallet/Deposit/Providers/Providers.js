@@ -4,7 +4,8 @@ import PAYTRIE_LOGO from 'resources/payment-providers/paytrie.svg';
 import TRANSAK_LOGO from 'resources/payment-providers/transak.svg';
 import KRIPTOMAT_LOGO from 'resources/payment-providers/kriptomat.svg';
 import GUARDARIAN_LOGO from 'resources/payment-providers/guardarian.svg'
-// import MOONPAY_LOGO from 'resources/moonpay.svg'
+import SWAPPIN_LOGO from 'resources/payment-providers/swappin.svg'
+// import MOONPAY_LOGO from 'resources/payment-providers/moonpay.svg'
 
 import { Loading } from 'components/common'
 import useProviders from './useProviders'
@@ -14,7 +15,7 @@ import styles from './Providers.module.scss'
 import { ReactComponent as InfoIcon } from 'resources/icons/information.svg' 
 
 export default function Providers({ walletAddress, networkDetails, relayerURL, portfolio,  sellMode = false, selectedAsset }) {
-    const { openRampNetwork, openPayTrie, openTransak, openKriptomat, openGuardarian, isLoading } = useProviders({ walletAddress, selectedNetwork: networkDetails.id, relayerURL, portfolio })
+    const { openRampNetwork, openPayTrie, openTransak, openKriptomat, openGuardarian, openSwappin, isLoading } = useProviders({ walletAddress, selectedNetwork: networkDetails.id, relayerURL, portfolio })
     const initMode = sellMode ? 'sell' : 'buy'
     const providers = [
         {
@@ -26,6 +27,7 @@ export default function Providers({ walletAddress, networkDetails, relayerURL, p
             currencies: 'GBP, EUR, USD and many more',
             networks: ['ethereum', 'polygon', 'binance-smart-chain', 'fantom'],
             isSellAvailable: true,
+            isBuyAvailable: true,
             onClick: () => openGuardarian(initMode, selectedAsset)
         },
         {
@@ -37,6 +39,7 @@ export default function Providers({ walletAddress, networkDetails, relayerURL, p
             currencies: 'USD, EUR, GBP',
             networks: ['ethereum', 'polygon', 'binance-smart-chain'],
             isSellAvailable: false,
+            isBuyAvailable: true,
             onClick: () => openKriptomat()
         },
         // {
@@ -48,6 +51,7 @@ export default function Providers({ walletAddress, networkDetails, relayerURL, p
         //     currencies: 'EUR, USD, GBP and many more',
         //     networks: ['ethereum', 'polygon', 'avalanche', 'binance-smart-chain'],
         //     isSellAvailable: true,
+        //    isBuyAvailable: true,
         //     onClick: () => openMoonpay(initMode, selectedAsset)
         // },
         {
@@ -59,6 +63,7 @@ export default function Providers({ walletAddress, networkDetails, relayerURL, p
             currencies: 'USD, EUR, GBP',
             networks: ['ethereum', 'polygon', 'avalanche', 'binance-smart-chain', 'gnosis'],
             isSellAvailable: false,
+            isBuyAvailable: true,
             onClick: () => openRampNetwork()
         },
         {
@@ -70,6 +75,7 @@ export default function Providers({ walletAddress, networkDetails, relayerURL, p
             currencies: 'CAD',
             networks: ['ethereum', 'polygon', 'binance-smart-chain'],
             isSellAvailable: false,
+            isBuyAvailable: true,
             onClick: () => openPayTrie()
         },
         {
@@ -82,20 +88,33 @@ export default function Providers({ walletAddress, networkDetails, relayerURL, p
             networks: ['ethereum', 'polygon', 'avalanche', 'arbitrum', 'binance-smart-chain', 'moonriver', 'moonbeam', 'optimism'],
             isSellAvailable: false,
             onClick: () => openTransak()
+        },
+        {
+            //TODO: fit details with Swappin
+            logo: SWAPPIN_LOGO,
+            name: 'Swappin',
+            type: 'Buy online gift cards, converting your crypto into real-life goods and services.',
+            fees: '',
+            limits: '',
+            description: `Supporting more than 20.000 tokens. You can acquire digital vouchers from more than 1000 retailers worldwide, in over 40 countries.`,
+            networks: ['ethereum', 'polygon', 'avalanche', 'binance-smart-chain'],
+            isSellAvailable: true,
+            isBuyAvailable: false,
+            onClick: () => openSwappin()
         }
     ];
     
-    const filteredProviders = providers.filter(p => sellMode ? p.isSellAvailable : p)
+    const filteredProviders = providers.filter(p => sellMode ? p.isSellAvailable : p.isBuyAvailable)
     const shouldBeDisabled = (networks) => {
-        return networks.includes(networkDetails.id) ? null : 'disabled'; 
+        return !networks.includes(networkDetails.id)
     };
 
     return (
         <div className={styles.wrapper}>
             {
-                filteredProviders.map(({ logo, name, type, fees, limits, currencies, networks, onClick }) =>
+                filteredProviders.map(({ logo, name, type, fees, limits, currencies, networks, description = '', onClick }) =>
                 
-                    <div className={`${styles.provider} ${shouldBeDisabled(networks) || ''}`} key={name} onClick={onClick}>
+                    <div className={`${styles.provider} ${shouldBeDisabled(networks) && styles.disabled}`} key={name} onClick={onClick}>
                         <div className={styles.logo}>
                             <img src={logo} alt={name}></img>
                         </div>
@@ -104,15 +123,22 @@ export default function Providers({ walletAddress, networkDetails, relayerURL, p
                             <div className={styles.type}>
                                 { type }
                             </div>
-                            <div className={styles.fees}>
-                                Fees: { fees }
-                            </div>
-                            <div className={styles.limits}>
-                                Limits: { limits }
-                            </div>
-                            <div className={styles.currencies}>
-                                Currencies: { currencies }
-                            </div>
+                            {name !== 'Swappin' ? <>
+                                <div className={styles.fees}>
+                                    Fees: { fees }
+                                </div>
+                                <div className={styles.limits}>
+                                    Limits: { limits }
+                                </div>
+                                <div className={styles.currencies}>
+                                    Currencies: { currencies }
+                                </div>
+                            </>
+                            :   <div className={styles.fees}>
+                                    { description }
+                                </div>
+                            }
+                            
                         </div>
                         }
                     </div>
