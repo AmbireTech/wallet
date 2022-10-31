@@ -11,7 +11,7 @@ import { getTokenIcon } from 'lib/icons'
 import { useModals } from 'hooks'
 import { useToasts } from 'hooks/toasts'
 import { Button, Loading, TextInput } from 'components/common'
-import Token from './Token/Token'
+import Token from 'components/Modals/AddOrHideTokenModal/Token/Token'
 
 import styles from './AddToken.module.scss'
 
@@ -87,6 +87,7 @@ const AddToken = ({ network, account, portfolio }) => {
   return (
     <div className={styles.wrapper}>
       <TextInput
+        small
         label="Token Address"
         placeholder="0x..."
         onInput={value => onInput(value)}
