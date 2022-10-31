@@ -1,0 +1,28 @@
+@import 'variables';
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 30px;
+
+  .info {
+    display: flex;
+    align-items: center;
+    
+    .icon {
+      width: 28px;
+      height: 28px;
+      border-radius: 100%;
+      margin-right: 10px;
+      background-color: rgba($c-titan-white, 0.04);
+    }
+
+    .name {
+      span {
+        color: $c-scampi;
+      }
+    }
+  }
+}
