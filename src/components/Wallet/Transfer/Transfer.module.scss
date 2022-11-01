@@ -123,12 +123,6 @@
     }
 }
 
-@media screen and (max-width: 1400px) {
-    .wrapper {
-        flex-direction: column;
-    }
-}
-
 @mixin recipient-field-font-size($size) {
     .recipientInput {
         input {
@@ -172,6 +166,7 @@
     .wrapper {
         gap: 1em;
         overflow-y: auto;
+        flex-direction: column;
 
         .recipientField {
             flex-direction: column;
