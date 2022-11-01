@@ -3,7 +3,6 @@ import { Button } from 'components/common'
 import { useLocalStorage } from 'hooks'
 
 import TokensWrapper from 'components/Wallet/Dashboard/Tokens/TokensWrapper/TokensWrapper'
-import tokenStyles from 'components/Wallet/Dashboard/Tokens/Token/Token.module.scss'
 
 import { ReactComponent as DepositIcon } from 'components/Wallet/SideBar/images/deposit.svg'
 import { ReactComponent as SendIcon } from 'resources/icons/send.svg'
@@ -11,6 +10,7 @@ import { ReactComponent as EarnIcon } from 'resources/icons/earn.svg'
 import { ReactComponent as SwapIcon } from 'resources/icons/swap-2.svg'
 import { ReactComponent as AddIcon } from 'resources/icons/add.svg'
 
+import tokenStyles from 'components/Wallet/Dashboard/Tokens/Token/Token.module.scss'
 import styles from './TokensPlaceholder.module.scss'
 
 const TokensPlaceholder = ({ onClickAddToken, onClickShowToken }) => {
@@ -68,34 +68,32 @@ const TokensPlaceholder = ({ onClickAddToken, onClickShowToken }) => {
             <TokensWrapper className={styles.blur}>
                 {tokens.map(({ icon, symbol, balance, balanceUSD }) => (
                     <div className={tokenStyles.wrapper}>
-                        <h3 className={tokenStyles.name}>
-                            <div className={tokenStyles.iconWrapper}>
-                            { 
-                                <img 
-                                    src={icon} 
-                                    draggable="false" 
-                                    alt="Token Icon" 
-                                    className={tokenStyles.icon}
-                                />
-                            }
+                        <div className={tokenStyles.body}>
+                            <h3 className={tokenStyles.baseInfo}>
+                                <div className={tokenStyles.iconWrapper}>
+                                    <img 
+                                        src={icon} 
+                                        draggable="false" 
+                                        alt="Token Icon" 
+                                        className={tokenStyles.icon}
+                                    />
+                                </div>
+                                <div className={tokenStyles.balanceAndSymbol}>
+                                    <h3 className={tokenStyles.symbol}>{ symbol }</h3>
+                                    <p className={tokenStyles.balance}>
+                                        { balance }
+                                    </p>
+                                </div>
+                            </h3>
+                            <div className={tokenStyles.priceAndValue}>
+                                <h3 className={tokenStyles.price}>
+                                    $0.94
+                                </h3>
+                                <h3 className={tokenStyles.value}>
+                                    <span className={tokenStyles.symbol}>$</span> { balanceUSD }
+                                </h3>
                             </div>
-                            { symbol }
-                        </h3>
-                        <h3 className={tokenStyles.balance}>
-                            { balance }
-                        </h3>
-                        <h3 className={tokenStyles.price}>
-                            $0.94
-                        </h3>
-                        <h3 className={tokenStyles.value}>
-                            <span className={tokenStyles.symbol}>$</span> { balanceUSD }
-                        </h3>
-                        {/* <h3 className={styles.pending}>
-                            Pending
-                        </h3>
-                        <h3 className={styles.pending}>
-                            Pending+
-                        </h3> */}
+                        </div>
                         <div className={tokenStyles.actions}>
                             <div className={tokenStyles.action}>
                                 <SendIcon />
