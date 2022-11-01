@@ -1,4 +1,3 @@
-// import { abis } from '../../constants/humanizerInfo.json'
 import { Interface } from 'ethers/lib/utils'
 import { nativeToken, token } from 'lib/humanReadableTransactions'
 
