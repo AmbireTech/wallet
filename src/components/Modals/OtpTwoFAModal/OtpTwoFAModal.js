@@ -137,7 +137,7 @@ const OtpTwoFAModal = ({ relayerURL, selectedAcc, setCacheBreak }) => {
         <Modal
             title="Two Factor Authentication" 
             topLeft={(<CountdownTimer seconds={TIMER_IN_SECONDS} setTimeIsUp={handleTimeIsUp}/>)}
-            buttons={!isLoading ? (<Button type="submit" disabled={isTimeIsUp} className='button'>Enable 2FA</Button>) : (<Button disabled className='button'><Loading /></Button>)}
+            buttons={!isLoading ? (<Button form="enable2faForm" type="submit" disabled={isTimeIsUp} className='button'>Enable 2FA</Button>) : (<Button disabled className='button'><Loading /></Button>)}
         >
             <div id="otp-auth">
                 {isTimeIsUp && <div className='timer-reset-msg'>Please reopen the modal to reset the session.</div>}
@@ -151,7 +151,7 @@ const OtpTwoFAModal = ({ relayerURL, selectedAcc, setCacheBreak }) => {
                     </span>)}
                     {showSecret && (<><span>Enter this OTP in your app:</span><div>{secret}</div></>)}
                 </div>
-                <form onSubmit={handleSubmit}>
+                <form onSubmit={handleSubmit} id="enable2faForm">
                     <div>
                         <h4>Confirmation code sent via Email</h4>
                         <div className='input-wrapper'>
@@ -177,6 +177,9 @@ const OtpTwoFAModal = ({ relayerURL, selectedAcc, setCacheBreak }) => {
                             required
                         />
                     </div>
+                    {/* <div className="buttons">
+                        {!isLoading ? (<Button type="submit" disabled={isTimeIsUp} className='button'>Enable 2FA</Button>) : (<Button disabled className='button'><Loading /></Button>)}
+                    </div> */}
                 </form>
             </div>
         </Modal>
