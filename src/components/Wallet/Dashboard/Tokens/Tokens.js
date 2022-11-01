@@ -8,7 +8,7 @@ import { ToolTip } from 'components/common'
 import TokensPlaceholder from './TokensPlaceholder/TokensPlaceholder'
 import Token from './Token/Token'
 import TokensWrapper from './TokensWrapper/TokensWrapper'
-import AddOrHideTokenButton from './AddOrHideTokenButton/AddOrHideTokenButton'
+import AddOrHideButton from 'components/Wallet/Dashboard/AddOrHideButton/AddOrHideButton'
 import AddOrHideTokenModal from 'components/Modals/AddOrHideTokenModal/AddOrHideTokenModal'
 
 import styles from './Tokens.module.scss'
@@ -141,7 +141,9 @@ const Tokens = ({ portfolio, network, account, hidePrivateValue, userSorting, se
                                     dragAndDrop={dragAndDrop}
                                 />
                         ))}
-                        <AddOrHideTokenButton openAddOrHideTokenModal={openAddOrHideTokenModal} />
+                        <AddOrHideButton onClick={openAddOrHideTokenModal}>
+                            Token
+                        </AddOrHideButton>
                     </TokensWrapper> : null)
                 }
             </>

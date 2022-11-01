@@ -3,11 +3,11 @@ import { useHistory } from 'react-router-dom'
 
 import { useModals } from 'hooks'
 import { Loading } from 'components/common'
+import AddOrHideButton from 'components/Wallet/Dashboard/AddOrHideButton/AddOrHideButton'
 import CollectiblesPlaceholder from './CollectiblesPlaceholder/CollectiblesPlaceholder'
 import CollectiblesWrapper from './CollectiblesWrapper/CollectiblesWrapper'
 import Collectible from './Collectible/Collectible'
 import HideCollectibleModal from 'components/Modals/HideCollectibleModal/HideCollectibleModal'
-
 
 const Collectibles = ({ portfolio, isPrivateMode, selectedNetwork }) => {
     const { showModal } = useModals()
@@ -54,7 +54,11 @@ const Collectibles = ({ portfolio, isPrivateMode, selectedNetwork }) => {
     }
 
     return (
-        <CollectiblesWrapper>
+        <CollectiblesWrapper 
+            wrapperEndChildren={
+                <AddOrHideButton onClick={openHideCollectibleModal}>Collectible</AddOrHideButton>
+            }
+        >
             {
                 collectiblesList.map(({ network, address, collectionName, assets, balanceUSD }) => (assets || []).map(({ tokenId, data: { name, image } }) => (
                     <Collectible
@@ -68,7 +72,6 @@ const Collectibles = ({ portfolio, isPrivateMode, selectedNetwork }) => {
                     />
                 )))
             }
-            <button onClick={openHideCollectibleModal}>Open</button>
         </CollectiblesWrapper>  
     )
 }
