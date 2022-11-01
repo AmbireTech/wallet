@@ -1,5 +1,5 @@
 
-import { useEffect, useLayoutEffect, useState } from 'react'
+import { useLayoutEffect, useState, useMemo } from 'react'
 import { useParams } from 'react-router-dom'
 
 import { Chart, Loading, Panel } from 'components/common'
@@ -20,24 +20,25 @@ import Tabs from 'components/common/Tabs/Tabs'
 export default function Dashboard({ portfolio, selectedNetwork, selectedAccount, setNetwork, privateMode, rewardsData,  userSorting, setUserSorting, accounts, addRequest, relayerURL, useStorage, match, showSendTxns }) {
     const { tabId } = useParams()
 
+    const balance = useMemo(() => portfolio.balance, [portfolio.balance])
+    const tokens = useMemo(() => portfolio.tokens, [portfolio.tokens])
     const [chartTokensData, setChartTokensData] = useState([]);
     const [defaultTab] = useState(tabId ? (tabId === 'tokens' ? 1 : 2) : 1)
 
     const currentAccount = accounts.find(a => a.id.toLowerCase() === selectedAccount.toLowerCase())
 
     const { hasPendingReset, recoveryLock, isPasswordRecoveryCheckLoading } = usePasswordRecoveryCheck(relayerURL, currentAccount, selectedNetwork)
-    const isBalancesCachedCurrentNetwork = portfolio.cachedBalancesByNetworks.length ? 
-        portfolio.cachedBalancesByNetworks.find(({network}) => network === selectedNetwork.id) : false
+    const isBalancesCachedCurrentNetwork = portfolio.cache || false
 
     useLayoutEffect(() => {
-        const tokensData = portfolio.tokens
+        const tokensData = tokens
             .map(({ label, symbol, balanceUSD }) => ({
                 label: label || symbol,
-                value: Number(((balanceUSD / portfolio.balance.total.full) * 100).toFixed(2)),
+                value: Number(((balanceUSD / balance.total.full) * 100).toFixed(2)),
                 balanceUSD
             }))
             .filter(({ value }) => value > 0);
-
+        
         if (portfolio?.balance?.total?.full && tokensData) {
                 setChartTokensData({
                     empty: false,
@@ -53,9 +54,8 @@ export default function Dashboard({ portfolio, selectedNetwork, selectedAccount,
                 }]
             })
         }
-    }, [portfolio.balance, portfolio.tokens]);
+    }, [balance, tokens, portfolio?.balance?.total?.full]);
 
-    useEffect(() => portfolio.requestOtherProtocolsRefresh(), [portfolio])
 
     return (
         <section className={styles.wrapper}>
@@ -136,7 +136,7 @@ export default function Dashboard({ portfolio, selectedNetwork, selectedAccount,
                         />
                     }
                     secondTab={
-                        <Collectibles portfolio={portfolio} isPrivateMode={privateMode.isPrivateMode} />
+                        <Collectibles portfolio={portfolio} isPrivateMode={privateMode.isPrivateMode} selectedNetwork={selectedNetwork} />
                     }
                     tabClassName={styles.tab}
                     footer={

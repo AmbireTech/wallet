@@ -1,15 +1,19 @@
-import { useEffect } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useHistory } from 'react-router-dom'
 
+import { useModals } from 'hooks'
 import { Loading } from 'components/common'
 import CollectiblesPlaceholder from './CollectiblesPlaceholder/CollectiblesPlaceholder'
 import CollectiblesWrapper from './CollectiblesWrapper/CollectiblesWrapper'
 import Collectible from './Collectible/Collectible'
+import HideCollectibleModal from 'components/Modals/HideCollectibleModal/HideCollectibleModal'
 
 
-const Collectibles = ({ portfolio, isPrivateMode }) => {
+const Collectibles = ({ portfolio, isPrivateMode, selectedNetwork }) => {
+    const { showModal } = useModals()
     const history = useHistory()
     const collectiblesList = portfolio.collectibles
+    const [isHideCollectiblesModalOpen, setIsHideCollectiblesModalOpen] = useState(false)
     
     const handleUri = uri => {
         if (!uri) return ''
@@ -23,8 +27,22 @@ const Collectibles = ({ portfolio, isPrivateMode }) => {
     }
 
     useEffect(() => history.replace(`/wallet/dashboard/collectibles`), [history])
+    
+    const openHideCollectibleModal = useCallback(() => setIsHideCollectiblesModalOpen(true), [])
 
-    if (portfolio.isCurrNetworkProtocolsLoading) return <Loading />;
+    useEffect(() => {
+        if(isHideCollectiblesModalOpen) {
+            showModal(
+                <HideCollectibleModal
+                    portfolio={portfolio} 
+                    setIsHideTokenModalOpen={setIsHideCollectiblesModalOpen} 
+                    handleUri={handleUri}
+                />
+            )
+        }
+    }, [portfolio, isHideCollectiblesModalOpen, showModal])
+
+    if (portfolio.loading) return <Loading />;
 
     if (!portfolio.collectibles.length || isPrivateMode) {
         return (
@@ -38,18 +56,19 @@ const Collectibles = ({ portfolio, isPrivateMode }) => {
     return (
         <CollectiblesWrapper>
             {
-                collectiblesList.map(({ network, address, collectionName, collectionImg, assets }) => (assets || []).map(({ tokenId, assetName, assetImg, balanceUSD }) => (
+                collectiblesList.map(({ network, address, collectionName, assets, balanceUSD }) => (assets || []).map(({ tokenId, data: { name, image } }) => (
                     <Collectible
                         key={tokenId}
-                        href={`/wallet/nft/${network}/${address}/${tokenId}`}
-                        collectionIcon={collectionImg}
+                        href={`/wallet/nft/${selectedNetwork.id}/${address}/${tokenId}`}
+                        collectionIcon={image}
                         collectionName={collectionName}
-                        name={assetName}
-                        image={handleUri(assetImg)}
+                        name={name}
+                        image={handleUri(image)}
                         price={balanceUSD.toFixed(2)}
                     />
                 )))
             }
+            <button onClick={openHideCollectibleModal}>Open</button>
         </CollectiblesWrapper>  
     )
 }

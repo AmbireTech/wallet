@@ -49,7 +49,7 @@ const AAVECard = ({ networkId, tokens: tokensData, account, addRequest }) => {
     const networkDetails = networks.find(({ id }) => id === networkId)
     const defaultTokens = useMemo(() => getDefaultTokensItems(networkDetails.id), [networkDetails.id])
     const getToken = (type, address) => tokensItems.filter(token => token.type === type).find(token => token.address === address)
-    const addRequestTxn = (id, txn, extraGas = 0) => addRequest({ id, type: 'eth_sendTransaction', chainId: networkDetails.chainId, account, txn, extraGas })
+    const addRequestTxn = (id, txn, extraGas = 0) => addRequest({ id, dateAdded: new Date().valueOf(), type: 'eth_sendTransaction', chainId: networkDetails.chainId, account, txn, extraGas })
 
     const onValidate = async (type, tokenAddress, amount) => {
         const validate = async (type, functionData) => {
@@ -88,7 +88,7 @@ const AAVECard = ({ networkId, tokens: tokensData, account, addRequest }) => {
     const loadPool = useCallback(async () => {
         const providerAddress = AAVELendingPoolProviders[networkDetails.id]
         if (!providerAddress) {
-            setLoading(true)
+            setLoading(false)
             setUnavailable(true)
             return
         }
@@ -161,7 +161,7 @@ const AAVECard = ({ networkId, tokens: tokensData, account, addRequest }) => {
             setLoading(false)
             setUnavailable(false)
         }
-    }, [loadPool])
+    }, [loadPool, unavailable])
     useEffect(() => {
         currentNetwork.current = networkId
         setLoading(true)

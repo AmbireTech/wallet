@@ -73,6 +73,7 @@ const Security = ({
     try {
       addRequest({
         id: `setPriv_${txn.data}`,
+        dateAdded: new Date().valueOf(),
         type: 'eth_sendTransaction',
         txn: txn,
         chainId: selectedNetwork.chainId,

@@ -124,6 +124,7 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
 
             let req = {
                 id: `transfer_${Date.now()}`,
+                dateAdded: new Date().valueOf(),
                 type: 'eth_sendTransaction',
                 chainId: selectedNetwork.chainId,
                 account: selectedAcc,
