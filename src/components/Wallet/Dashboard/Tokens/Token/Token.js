@@ -28,10 +28,15 @@ const Token = ({
   hidePrivateValue,
   sortType,
   isMobileScreen,
-  dragAndDrop
+  dragAndDrop, 
+  pending,
+  unconfirmed, 
+  latest
 }) => {
   const [failedImg, setFailedImg] = useState([])
-  const logo = failedImg.includes(img) ? getTokenIcon(network, address) : img
+  const logo = failedImg.includes(img) || !img ? getTokenIcon(network, address) : img
+
+  const latestBalance = latest ? latest.balance : ((!unconfirmed && !pending) ? balance : 0)
 
   const {
     dragStart,
@@ -59,14 +64,13 @@ const Token = ({
         <div className={styles.baseInfo}>
           <div className={styles.iconWrapper}>
             { 
-              failedImg.includes(logo) ?
-                <GiToken size={20}/> : <img 
-                  src={logo} 
-                  draggable="false" 
-                  alt="Token Icon" 
-                  onError={() => setFailedImg(failed => [...failed, logo])}
-                  className={styles.icon}
-                />
+              failedImg.includes(logo) ? <GiToken size={20} /> : <img 
+                src={logo} 
+                draggable="false" 
+                alt="Token Icon" 
+                onError={() => setFailedImg(failed => [...failed, logo])}
+                className={styles.icon}
+              />
             }
           </div>
           <div className={styles.balanceAndSymbol}>
@@ -78,13 +82,18 @@ const Token = ({
         </div>
         <div className={styles.priceAndValue}>
           <h3 className={styles.price}>
-            ${price < 1 ? price.toFixed(5) : price.toFixed(2)}
+            {/* latest ? latest.balanceUSD : balanceUSD */}
+            ${price ? hidePrivateValue((price).toFixed((price < 1) ? 5 : 2)) : '-'}
           </h3>
           <h3 className={styles.value}>
-            <span className={styles.symbol}>$</span>{ hidePrivateValue(balanceUSD.toFixed(2)) }
+            <span className={styles.symbol}>$</span>
+            { hidePrivateValue(formatFloatTokenAmount(latestBalance, true, decimals)) }
           </h3>
         </div>
       </div>
+
+      {unconfirmed && <span className={styles.balanceAwaiting}> awaiting signature { hidePrivateValue(formatFloatTokenAmount(unconfirmed.balance, true, decimals)) } </span> }
+      {pending && <span className={styles.balancePending}> pending { hidePrivateValue(pending.balance.toFixed(2)) } </span> }
 
       <div className={styles.actions}>
         {

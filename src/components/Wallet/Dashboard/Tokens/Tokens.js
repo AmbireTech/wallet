@@ -21,8 +21,8 @@ const Tokens = ({ portfolio, network, account, hidePrivateValue, userSorting, se
         isOpen: false,
         defaultSection: 'Add Token'
     })
-    const { isCurrNetworkBalanceLoading, isCurrNetworkProtocolsLoading, tokens, protocols } = portfolio
-
+    const { isCurrNetworkBalanceLoading, tokens } = portfolio
+    
     const sortType = userSorting.tokens?.sortType || 'decreasing'
 
     const isMobileScreen = useCheckMobileScreen()
@@ -58,9 +58,7 @@ const Tokens = ({ portfolio, network, account, hidePrivateValue, userSorting, se
     })
 
 
-    const otherProtocols = protocols.filter(({ label }) => label !== 'Tokens')
-    const shouldShowPlaceholder = (!isCurrNetworkBalanceLoading && !tokens.length) && (!isCurrNetworkProtocolsLoading && !otherProtocols.length)
-
+    const shouldShowPlaceholder = (!isCurrNetworkBalanceLoading && !tokens.length)
     const handleModalVisiblity = useCallback((value) => setAddOrHideTokenModal((prev) => ({...prev, isOpen: value})), [setAddOrHideTokenModal])
 
     const openAddOrHideTokenModal = useCallback(() => handleModalVisiblity(true), [handleModalVisiblity])
@@ -119,7 +117,7 @@ const Tokens = ({ portfolio, network, account, hidePrivateValue, userSorting, se
                         )}
                     >
                         { 
-                            sortedTokens.map(({ address, symbol, tokenImageUrl, balance, balanceUSD, network, decimals, price }, i) => (
+                            sortedTokens.map(({ address, symbol, tokenImageUrl, balance, balanceUSD, network, decimals, pending, unconfirmed, latest, price }, i) => (
                                 <Token
                                     key={address}
                                     index={i}
@@ -130,6 +128,9 @@ const Tokens = ({ portfolio, network, account, hidePrivateValue, userSorting, se
                                     address={address}
                                     send={true}
                                     network={network}
+                                    pending={pending}
+                                    unconfirmed={unconfirmed}
+                                    latest={latest}
                                     price={price}
                                     decimals={decimals}
                                     category="tokens"
