@@ -35,7 +35,7 @@ const Collectibles = ({ portfolio, isPrivateMode, selectedNetwork }) => {
             showModal(
                 <HideCollectibleModal
                     portfolio={portfolio} 
-                    setIsHideTokenModalOpen={setIsHideCollectiblesModalOpen} 
+                    setIsHideCollectiblesModalOpen={setIsHideCollectiblesModalOpen} 
                     handleUri={handleUri}
                 />
             )
