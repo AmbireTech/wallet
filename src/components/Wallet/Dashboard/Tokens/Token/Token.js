@@ -10,9 +10,9 @@ import { ReactComponent as SendIcon } from 'resources/icons/send.svg'
 import { ReactComponent as EarnIcon } from 'resources/icons/earn.svg'
 import { ReactComponent as SwapIcon } from 'resources/icons/swap-2.svg'
 
-import styles from './Protocol.module.scss'
+import styles from './Token.module.scss'
 
-const Protocol = ({
+const Token = ({
   index, 
   img, 
   symbol, 
@@ -105,4 +105,4 @@ const Protocol = ({
   )
 }
 
-export default Protocol
+export default Token

@@ -4,7 +4,7 @@ import { useParams } from 'react-router-dom'
 
 import { Chart, Loading, Panel } from 'components/common'
 import Balances from './Balances/Balances'
-import Protocols from './Protocols/Protocols'
+import Tokens from './Tokens/Tokens'
 import Collectibles from './Collectibles/Collectibles'
 
 import Promotions from './Promotions/Promotions'
@@ -126,7 +126,7 @@ export default function Dashboard({ portfolio, selectedNetwork, selectedAccount,
                     firstTabLabel="Tokens"
                     secondTabLabel="Collectibles"
                     firstTab={
-                        <Protocols
+                        <Tokens
                             portfolio={portfolio}
                             network={selectedNetwork}
                             account={selectedAccount}

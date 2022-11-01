@@ -1,7 +1,7 @@
 import cn from 'classnames'
-import styles from './ProtocolsWrapper.module.scss'
+import styles from './TokensWrapper.module.scss'
 
-const ProtocolsWrapper = ({ children, titleSpacedLeft, tokenLabelChildren, className }) => (
+const TokensWrapper = ({ children, titleSpacedLeft, tokenLabelChildren, className }) => (
   <div className={cn(styles.category, className)} key="category-tokens">
     <div className={cn(styles.title, { [styles.titleSpacedLeft]: titleSpacedLeft})}>
       <div className={styles.token}>
@@ -24,4 +24,4 @@ const ProtocolsWrapper = ({ children, titleSpacedLeft, tokenLabelChildren, class
 </div>
 )
 
-export default ProtocolsWrapper
+export default TokensWrapper

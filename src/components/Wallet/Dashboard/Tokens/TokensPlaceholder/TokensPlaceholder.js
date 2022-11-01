@@ -2,8 +2,8 @@ import { NavLink } from 'react-router-dom'
 import { Button } from 'components/common'
 import { useLocalStorage } from 'hooks'
 
-import ProtocolsWrapper from 'components/Wallet/Dashboard/Protocols/ProtocolsWrapper/ProtocolsWrapper'
-import protocolStyles from 'components/Wallet/Dashboard/Protocols/Protocol/Protocol.module.scss'
+import TokensWrapper from 'components/Wallet/Dashboard/Tokens/TokensWrapper/TokensWrapper'
+import tokenStyles from 'components/Wallet/Dashboard/Tokens/Token/Token.module.scss'
 
 import { ReactComponent as DepositIcon } from 'components/Wallet/SideBar/images/deposit.svg'
 import { ReactComponent as SendIcon } from 'resources/icons/send.svg'
@@ -11,9 +11,9 @@ import { ReactComponent as EarnIcon } from 'resources/icons/earn.svg'
 import { ReactComponent as SwapIcon } from 'resources/icons/swap-2.svg'
 import { ReactComponent as AddIcon } from 'resources/icons/add.svg'
 
-import styles from './ProtocolsPlaceholder.module.scss'
+import styles from './TokensPlaceholder.module.scss'
 
-const ProtocolsPlaceholder = ({ onClickAddToken, onClickShowToken }) => {
+const TokensPlaceholder = ({ onClickAddToken, onClickShowToken }) => {
     const tokens = [
         {
             icon: 'https://storage.googleapis.com/zapper-fi-assets/tokens/ethereum/0xade00c28244d5ce17d72e40330b1c318cd12b7c3.png',
@@ -65,30 +65,30 @@ const ProtocolsPlaceholder = ({ onClickAddToken, onClickShowToken }) => {
                     {hiddenTokensCount > 0 && (<label onClick={onClickShowToken}>There are also {hiddenTokensCount} hidden tokens. Click to configure</label>)}
                 </div>
             </div>
-            <ProtocolsWrapper className={styles.blur}>
+            <TokensWrapper className={styles.blur}>
                 {tokens.map(({ icon, symbol, balance, balanceUSD }) => (
-                    <div className={protocolStyles.wrapper}>
-                        <h3 className={protocolStyles.name}>
-                            <div className={protocolStyles.iconWrapper}>
+                    <div className={tokenStyles.wrapper}>
+                        <h3 className={tokenStyles.name}>
+                            <div className={tokenStyles.iconWrapper}>
                             { 
                                 <img 
                                     src={icon} 
                                     draggable="false" 
                                     alt="Token Icon" 
-                                    className={protocolStyles.icon}
+                                    className={tokenStyles.icon}
                                 />
                             }
                             </div>
                             { symbol }
                         </h3>
-                        <h3 className={protocolStyles.balance}>
+                        <h3 className={tokenStyles.balance}>
                             { balance }
                         </h3>
-                        <h3 className={protocolStyles.price}>
+                        <h3 className={tokenStyles.price}>
                             $0.94
                         </h3>
-                        <h3 className={protocolStyles.value}>
-                            <span className={protocolStyles.symbol}>$</span> { balanceUSD }
+                        <h3 className={tokenStyles.value}>
+                            <span className={tokenStyles.symbol}>$</span> { balanceUSD }
                         </h3>
                         {/* <h3 className={styles.pending}>
                             Pending
@@ -96,22 +96,22 @@ const ProtocolsPlaceholder = ({ onClickAddToken, onClickShowToken }) => {
                         <h3 className={styles.pending}>
                             Pending+
                         </h3> */}
-                        <div className={protocolStyles.actions}>
-                            <div className={protocolStyles.action}>
+                        <div className={tokenStyles.actions}>
+                            <div className={tokenStyles.action}>
                                 <SendIcon />
                             </div>
-                            <div className={protocolStyles.action}>
+                            <div className={tokenStyles.action}>
                                 <EarnIcon />
                             </div>
-                            <div className={protocolStyles.action}>
+                            <div className={tokenStyles.action}>
                                 <SwapIcon />
                             </div>
                         </div>
                     </div>
                 ))}
-            </ProtocolsWrapper>
+            </TokensWrapper>
         </div>
     )
 }
 
-export default ProtocolsPlaceholder
+export default TokensPlaceholder

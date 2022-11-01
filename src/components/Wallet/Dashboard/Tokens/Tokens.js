@@ -5,15 +5,15 @@ import { MdDragIndicator, MdOutlineSort } from 'react-icons/md'
 import { useModals, useCheckMobileScreen, useDragAndDrop } from 'hooks'
 import { Loading } from 'components/common'
 import { ToolTip } from 'components/common'
-import ProtocolsPlaceholder from './ProtocolsPlaceholder/ProtocolsPlaceholder'
-import Protocol from './Protocol/Protocol'
-import ProtocolsWrapper from './ProtocolsWrapper/ProtocolsWrapper'
+import TokensPlaceholder from './TokensPlaceholder/TokensPlaceholder'
+import Token from './Token/Token'
+import TokensWrapper from './TokensWrapper/TokensWrapper'
 import AddOrHideTokenButton from './AddOrHideTokenButton/AddOrHideTokenButton'
 import AddOrHideTokenModal from 'components/Modals/AddOrHideTokenModal/AddOrHideTokenModal'
 
-import styles from './Protocols.module.scss'
+import styles from './Tokens.module.scss'
 
-const Protocols = ({ portfolio, network, account, hidePrivateValue, userSorting, setUserSorting }) => {
+const Tokens = ({ portfolio, network, account, hidePrivateValue, userSorting, setUserSorting }) => {
     const history = useHistory()
     const { showModal } = useModals()
 
@@ -86,14 +86,14 @@ const Protocols = ({ portfolio, network, account, hidePrivateValue, userSorting,
     return (
         <div className={styles.wrapper}>
             {
-                shouldShowPlaceholder ? <ProtocolsPlaceholder
+                shouldShowPlaceholder ? <TokensPlaceholder
                     onClickAddToken={() => setAddOrHideTokenModal({isOpen: true, defaultSection: 'Add Token'})} 
                     onClickShowToken={() => setAddOrHideTokenModal({isOpen: true, defaultSection: 'Hide Token'})}
                 /> : null
             }
             <>
                 {
-                    isCurrNetworkBalanceLoading ? <Loading/> : ((!shouldShowPlaceholder && sortedTokens.length) ? <ProtocolsWrapper
+                    isCurrNetworkBalanceLoading ? <Loading/> : ((!shouldShowPlaceholder && sortedTokens.length) ? <TokensWrapper
                         titleSpacedLeft={sortType === "custom" && !isMobileScreen}
                         tokenLabelChildren={sortedTokens.length > 1 && !isMobileScreen &&  (
                             <div className={styles.sortButtons}>
@@ -120,7 +120,7 @@ const Protocols = ({ portfolio, network, account, hidePrivateValue, userSorting,
                     >
                         { 
                             sortedTokens.map(({ address, symbol, tokenImageUrl, balance, balanceUSD, network, decimals, price }, i) => (
-                                <Protocol
+                                <Token
                                     key={address}
                                     index={i}
                                     img={tokenImageUrl}
@@ -141,11 +141,11 @@ const Protocols = ({ portfolio, network, account, hidePrivateValue, userSorting,
                                 />
                         ))}
                         <AddOrHideTokenButton openAddOrHideTokenModal={openAddOrHideTokenModal} />
-                    </ProtocolsWrapper> : null)
+                    </TokensWrapper> : null)
                 }
             </>
         </div>
     )
 }
 
-export default Protocols
+export default Tokens
