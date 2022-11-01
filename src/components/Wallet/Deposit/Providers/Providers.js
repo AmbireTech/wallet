@@ -90,7 +90,6 @@ export default function Providers({ walletAddress, networkDetails, relayerURL, p
             onClick: () => openTransak()
         },
         {
-            //TODO: fit details with Swappin
             logo: SWAPPIN_LOGO,
             name: 'Swappin',
             type: 'Buy online gift cards, converting your crypto into real-life goods and services.',
