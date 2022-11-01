@@ -8,21 +8,19 @@ $collectible-size: 204px;
   display: flex;
   flex-direction: column;
   gap: 15px;
+  padding: 0 50px;
   margin-top: 12px;
 
   .collectiblesWrapper {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax($collectible-size, 1fr));
     grid-gap: 30px 46px;
-    padding: 0 50px;
     justify-items: center;
   }
 }
 // Mobile
 @media screen and (max-width: $mobile-breakpoint-max-width) {
   .wrapper {
-    .collectiblesWrapper {
-      padding: 0 20px;
-    }
+    padding: 0 20px;
   }
 }
