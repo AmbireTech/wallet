@@ -12,8 +12,8 @@ const Collectible = ({
 }) => {
 
   return (
+  <NavLink to={href}>
     <div className={styles.wrapper}>
-      <NavLink to={href}>
         <img className={styles.artwork} src={image} alt="" />
         <div className={styles.info}>
           <div className={styles.collection}>
@@ -27,8 +27,8 @@ const Collectible = ({
             </p>
           </div>
         </div>
-      </NavLink>
     </div>
+  </NavLink>
   )
 }
 
