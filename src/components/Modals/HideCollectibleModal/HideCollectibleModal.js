@@ -1,71 +1,75 @@
-import './HideCollectibleModal.scss'
 
+import { useEffect, useMemo } from 'react'
+
+import { useModals } from 'hooks'
 import { Button, Modal } from 'components/common'
+
 import {
-  MdOutlineClose,
   MdVisibilityOff as VisibleIcon,
   MdRemoveRedEye as HiddenIcon
 } from 'react-icons/md'
-import { useModals } from 'hooks'
-import { useEffect, useMemo } from 'react'
 
-const Token = ({ token, button, handleUri, asset }) => (
-  <div className="extra-token" key={token.address}>
-    <div className="info">
-      <div className="icon" style={{ backgroundImage: `url(${handleUri(asset.data.image)})` }}/>
-      <div className="name">
-        <span>
-          {asset.data.name} 
-        </span>
+import styles from './HideCollectibleModal.module.scss'
+
+const Collectible = ({ button, handleUri, asset }) => (
+  <div className={styles.collectible}>
+    <div className={styles.info}>
+      <div className={styles.iconWrapper}>
+        <img src={handleUri(asset.data.image)} alt="" className={styles.icon} />
       </div>
+      <h3 className={styles.name}>
+        { asset.data.name }
+      </h3>
     </div>
-    {button}
+    { button }
   </div>
 )
 
-const HideCollectibleModal = ({ portfolio, setIsHideTokenModalOpen, handleUri }) => {
+const HideCollectibleModal = ({ portfolio, setIsHideCollectiblesModalOpen, handleUri }) => {
   const { hideModal, setOnClose } = useModals()
   const { hiddenCollectibles, onAddHiddenCollectible, onRemoveHiddenCollectible, collectibles } = portfolio
 
-  const hideToken = (token, assetId) => onAddHiddenCollectible(token, assetId)
+  const hideCollectible = (collectible, assetId) => onAddHiddenCollectible(collectible, assetId)
 
-  const unhideToken = (token, assetId) => onRemoveHiddenCollectible(token.address, assetId)
+  const unhideCollectible = (collectible, assetId) => onRemoveHiddenCollectible(collectible.address, assetId)
 
   const sortedCollectibles = useMemo(() => {
-    const tempTokens = collectibles.concat(hiddenCollectibles)
-    return [...new Map(tempTokens.map(token => [token.address, token])).values()]
+    const tempCollectibles = collectibles.concat(hiddenCollectibles)
+    return [...new Map(tempCollectibles.map(collectible => [collectible.address, collectible])).values()]
   }, [collectibles, hiddenCollectibles])
 
   const handleHideModal = () => {
-    setIsHideTokenModalOpen(false)
+    setIsHideCollectiblesModalOpen(false)
     hideModal()
   }
 
   useEffect(() => {
-    setOnClose({close: () => setIsHideTokenModalOpen(false)})
-  }, [setOnClose, setIsHideTokenModalOpen])
+    setOnClose({close: () => setIsHideCollectiblesModalOpen(false)})
+  }, [setOnClose, setIsHideCollectiblesModalOpen])
 
   return (
-    <Modal id="hide-collectible-modal" title="Hide Collectible">
-      <div className="extra-tokens-list">
-        {sortedCollectibles.map((token) => (token.assets || []).map((asset) => (
-          <Token
-            key={token.address}
-            token={token}
+    <Modal 
+      className={styles.modal} 
+      title="Hide Collectible" 
+      buttons={
+        <Button className={styles.closeButton} onClick={handleHideModal}>
+          Close
+        </Button>
+      }
+      isCloseBtnShown={false}
+    >
+      <div className={styles.collectibles}>
+        {sortedCollectibles.map((collectible) => (collectible.assets || []).map((asset) => (
+          <Collectible
+            key={collectible.address}
             asset={asset}
             button={!asset.isHidden ? 
-              <HiddenIcon className="extra-token-icon" color="#36c979" onClick={() => hideToken(token, asset.tokenId)} /> :
-              <VisibleIcon className="extra-token-icon" color="#f98689" onClick={() => unhideToken(token, asset.tokenId)} />
+              <HiddenIcon className={styles.icon} color="#27e8a7" onClick={() => hideCollectible(collectible, asset.tokenId)} /> :
+              <VisibleIcon className={styles.icon} color="#F21A61" onClick={() => unhideCollectible(collectible, asset.tokenId)} />
             }
             handleUri={handleUri}
           />
         )))}
-      </div>
-
-      <div className="modalBottom">
-        <Button clear icon={<MdOutlineClose />} onClick={handleHideModal}>
-          Close
-        </Button>
       </div>
     </Modal>
   )
