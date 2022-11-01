@@ -36,8 +36,6 @@ const Token = ({
   const [failedImg, setFailedImg] = useState([])
   const logo = failedImg.includes(img) || !img ? getTokenIcon(network, address) : img
 
-  const latestBalance = latest ? latest.balance : ((!unconfirmed && !pending) ? balance : 0)
-
   const {
     dragStart,
     dragEnter,
@@ -82,12 +80,11 @@ const Token = ({
         </div>
         <div className={styles.priceAndValue}>
           <h3 className={styles.price}>
-            {/* latest ? latest.balanceUSD : balanceUSD */}
             ${price ? hidePrivateValue((price).toFixed((price < 1) ? 5 : 2)) : '-'}
           </h3>
           <h3 className={styles.value}>
             <span className={styles.symbol}>$</span>
-            { hidePrivateValue(formatFloatTokenAmount(latestBalance, true, decimals)) }
+            { hidePrivateValue(formatFloatTokenAmount(latest ? latest.balanceUSD : balanceUSD, true, decimals)) }
           </h3>
         </div>
       </div>
