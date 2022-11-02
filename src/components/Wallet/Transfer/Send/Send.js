@@ -245,13 +245,19 @@ const Send = ({
 
     const amountLabel = <div className={styles.amountLabel}>Available Amount: <span>{maxAmountFormatted} {selectedAsset?.symbol}</span></div>
 
+    const sortedAssetsItems = [
+        ...assetsItems.filter(i => i.label.toLowerCase() === 'wallet'),
+        ...assetsItems.filter(i => i.label.toLowerCase() !== 'wallet').sort((a, b) => a.label.toLowerCase() > b.label.toLowerCase() ? 1 : -1),
+    ]
+
     if (portfolio.isCurrNetworkBalanceLoading) {
         return <Loading />
     }
 
-    return assetsItems.length ? (<div className={styles.wrapper}>
+
+    return sortedAssetsItems.length ? (<div className={styles.wrapper}>
             <div className={styles.content}>
-                <Select searchable defaultValue={asset} items={assetsItems.sort((a, b) => a.label.toLowerCase() > b.label.toLowerCase() ? 1 : -1)} onChange={({ value }) => setAsset(value)}/>
+                <Select searchable defaultValue={asset} items={sortedAssetsItems} onChange={({ value }) => setAsset(value)}/>
                 { feeBaseTokenWarning ? <p className={styles.gasTankConvertMsg}><MdWarning /> {feeBaseTokenWarning}</p> : <></>}
                 <NumberInput
                     label={amountLabel}
