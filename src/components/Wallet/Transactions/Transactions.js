@@ -241,6 +241,7 @@ const BundlePreview = React.memo(({ bundle, mined = false, feeAssets }) => {
       key={i} // safe to do this, individual TxnPreviews won't change within a specific bundle
       txn={txn} network={bundle.network} account={bundle.identity} mined={mined} 
       addressLabel={!!bundle.meta && bundle.meta.addressLabel}
+      feeAssets={feeAssets}
       />
     ))}
     <ul className="details">

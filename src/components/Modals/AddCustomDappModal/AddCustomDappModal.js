@@ -1,5 +1,5 @@
-import './AddCustomDappModal.scss'
 import { useState, useMemo, useCallback, useEffect } from 'react'
+import cn from 'classnames'
 import { Button, Modal, TextInput, Radios, ToolTip } from 'components/common'
 import { useModals } from 'hooks'
 import { useToasts } from 'hooks/toasts'
@@ -9,6 +9,8 @@ import NETWORKS from 'consts/networks'
 import { getManifestFromDappUrl, getDappId, getNormalizedUrl } from 'ambire-common/src/services/dappCatalog'
 import { isValidUrl, isValidCustomDappData } from 'ambire-common/src/services/validations'
 import DAPPS_ICON from 'resources/dapps.svg'
+
+import styles from './AddCustomDappModal.module.scss'
 
 const AddCustomDappModal = ({ dappsCatalog, dappUrl = '' }) => {
     const { addToast } = useToasts()
@@ -148,10 +150,11 @@ const AddCustomDappModal = ({ dappsCatalog, dappUrl = '' }) => {
     }, [connectionType, description, iconUrl, iconUrlInfo, name, networks, url])
 
     return (
-        <Modal id='add-custom-dapp-modal'
-            title={<div className='custom-dapp-title'>
+        <Modal 
+            className={styles.wrapper}
+            title={<div className={styles.customDappTitle}>
                 <ToolTip label={`Click here to see how create dApp for Ambire Wallet catalog`}>
-                    <a className="info-btn" href={'https://github.com/AmbireTech/wallet-dapp-catalog#readme'}
+                    <a className={styles.infoBtn} href={'https://github.com/AmbireTech/wallet-dapp-catalog#readme'}
                         target="_blank"
                         rel="noreferrer noopener">
                         <MdBuildCircle size={32} />
@@ -166,10 +169,11 @@ const AddCustomDappModal = ({ dappsCatalog, dappUrl = '' }) => {
                     value={url}
                     label="URL"
                     onInput={value => onUrlInput(value)}
-                    className='dapp-input'
+                    className={styles.dappInput}
+                    inputContainerClass={styles.textInputContainer}
                     placeholder='https://some.dapp.com'
                 />
-                {<div className='input-err' >
+                {<div className={styles.inputErr}>
                     {urlErr || inputValidation?.errors?.url || urlInfo}
                 </div>}
             </div>
@@ -180,9 +184,10 @@ const AddCustomDappModal = ({ dappsCatalog, dappUrl = '' }) => {
                     label="Name"
                     value={name}
                     onInput={value => setName(value)}
-                    className='dapp-input'
+                    className={styles.dappInput}
+                    inputContainerClass={styles.textInputContainer}
                 />
-                {<div className='input-err' >
+                {<div className={styles.inputErr}>
                     {inputValidation?.errors?.name}
                 </div>}
             </div>
@@ -192,20 +197,22 @@ const AddCustomDappModal = ({ dappsCatalog, dappUrl = '' }) => {
                     label="Description"
                     value={description}
                     onInput={value => setDescription(value)}
-                    className='dapp-input'
+                    className={styles.dappInput}
+                    inputContainerClass={styles.textInputContainer}
                 />
             </div>
 
             <div>
-                <div className='icon-input'>
+                <div className={styles.iconInput}>
                     <TextInput
                         small
                         label="Icon URL"
                         value={iconUrl}
                         onInput={value => { setIconUrl(value); setIconUrlInfo('') }}
-                        className='dapp-input'
+                        className={styles.dappInput}
+                        inputContainerClass={styles.textInputContainer}
                     />
-                    <div className='icon-wrapper'>
+                    <div className={styles.iconWrapper}>
                         {
 
                             iconUrl && !iconUrlInfo ?
@@ -216,29 +223,29 @@ const AddCustomDappModal = ({ dappsCatalog, dappUrl = '' }) => {
                                 : iconUrlInfo ? <MdErrorOutline size={40} /> : <MdImage size={40} />}
                     </div>
                 </div>
-                {<div className='input-err' >
+                {<div className={styles.inputErr} >
                     {inputValidation?.errors?.iconUrl || iconUrlInfo}
                 </div>}
             </div>
 
             <div>
-                <div className='connection-radios'>
+                <div className={styles.connectionRadios}>
                     <div>Connection Type</div>
                     <Radios radios={radios} value={connectionType} onChange={onRadioChange} row />
                 </div>
-                {<div className='input-err' >
+                {<div className={styles.inputErr} >
                     {inputValidation?.errors?.connectionType}
                 </div>}
             </div>
 
-            <div className='networks'>
+            <div className={styles.networks}>
                 <div>Supported networks ({networks.length} selected)</div>
-                <div className='networks-container'>
+                <div className={styles.networksContainer}>
                     {
                         NETWORKS.map(n => {
                             return (
                                 <ToolTip label={n.name} key={n.id}>
-                                    <span className={`network-tag${networks.includes(n.id) ? ' selected' : ''}`}
+                                    <span className={cn(styles.networkTag, {[styles.selected]: networks.includes(n.id)})}
                                         style={{ backgroundImage: `url(${n.icon})` }}
                                         onClick={() => onNetworkClick(n.id)}
                                     >
@@ -248,7 +255,7 @@ const AddCustomDappModal = ({ dappsCatalog, dappUrl = '' }) => {
                         })
                     }
                 </div>
-                {<div className='input-err' >
+                {<div className={styles.inputErr} >
                     {networksInfo || inputValidation?.errors?.networks}
                 </div>}
             </div>

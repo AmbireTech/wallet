@@ -7,7 +7,9 @@ import { useHistory } from 'react-router-dom'
 
 import networks from 'consts/networks'
 import BalanceItem from './BalanceItem/BalanceItem'
-import { useEffect, useRef } from 'react'
+import { useCallback, useEffect, useRef } from 'react'
+
+import { ReactComponent as AlertCircle } from 'resources/icons/alert-circle.svg'
 
 const Balances = ({ portfolio, selectedNetwork, setNetwork, hidePrivateValue, relayerURL, selectedAccount, match }) => {
     const otherBalancesRef = useRef()
@@ -29,32 +31,34 @@ const Balances = ({ portfolio, selectedNetwork, setNetwork, hidePrivateValue, re
     }
 
     // Used to add blur at the bottom of balances when scrollbar is visible
-    function setClasses(el) {
-        if (!el) return
+    const handleSetBlur = useCallback(() => {
+        if(!otherBalancesLoading && otherBalances) {
+            const el = otherBalancesRef.current
+            if (!el) return
 
-        const isScrollable = el.scrollHeight > el.clientHeight;
-        
-        // GUARD: If element is not scrollable, remove all classes
-        if (!isScrollable) {
-            el.classList.remove(styles.bottomOverflow);
-            return;
+            const maxScroll = el.scrollHeight - el.clientHeight
+            const isScrollable = el.scrollHeight > el.clientHeight;
+            
+            // GUARD: If element is not scrollable, remove all classes
+            if (!isScrollable || (maxScroll <= el.scrollTop)) {
+                el.classList.remove(styles.bottomOverflow);
+                return;
+            }
+            
+            el.classList.toggle(styles.bottomOverflow, true);
+        } else {
         }
-        
-        const isScrolledToBottom = el.scrollHeight <= el.clientHeight + el.scrollTop;
-        el.classList.toggle(styles.bottomOverflow, !isScrolledToBottom);
-    }
+    }, [otherBalances, otherBalancesLoading])
 
     useEffect(() => {
-        if(!otherBalancesLoading && otherBalances) {
-            setClasses(otherBalancesRef.current)
-        }
-    }, [otherBalancesLoading, otherBalances])
+        handleSetBlur()    
+    }, [otherBalancesLoading, otherBalances, handleSetBlur])
     
     return (
         <div className={styles.wrapper}>
             { portfolio.isCurrNetworkBalanceLoading && otherBalancesLoading ? <Loading /> : (
-                <div className={styles.otherBalances} ref={otherBalancesRef}>
-                    { otherBalancesLoading ? <Loading /> : (
+                <div className={styles.otherBalances} ref={otherBalancesRef} onScroll={handleSetBlur}>
+                    { otherBalances.length > 0 ? (
                         <>
                             {
                                 otherBalances.filter(({ network }) => networkDetails(network)).map(({ network, total }, i) => (
@@ -81,7 +85,12 @@ const Balances = ({ portfolio, selectedNetwork, setNetwork, hidePrivateValue, re
                                     }
                                 />
                             }
-                        </>)
+                        </>) : <div className={styles.noOtherBalancesWrapper}>
+                            <div className={styles.noOtherBalances}>
+                                <AlertCircle />
+                                <label>You don't have any tokens on the other networks.</label>
+                            </div>
+                        </div>
                     }
                 </div>
             )}
