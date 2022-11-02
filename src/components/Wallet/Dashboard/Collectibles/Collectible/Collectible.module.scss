@@ -21,6 +21,11 @@ $details-size: 60px;
   .artwork {
     width: 100%;
     max-height: $collectible-size;
+    
+    &.fallbackImage {
+      background-color: $c-mirage;
+      padding: 25%;
+    }
   }
 
   .info {
@@ -48,6 +53,10 @@ $details-size: 60px;
         width: 18px;
         border-radius: 100%;
         background-color: rgba($c-titan-white, 0.04);
+
+        &.fallbackImage {
+          padding: 2px;
+        }
       }
 
       &Name {
