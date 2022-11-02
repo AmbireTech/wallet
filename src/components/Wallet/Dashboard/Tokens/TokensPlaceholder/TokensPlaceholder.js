@@ -47,14 +47,14 @@ const TokensPlaceholder = ({ onClickAddToken, onClickShowToken, footer }) => {
             className={styles.blur}
             wrapperChildren={
                 <div className={styles.placeholderOverlay}>
-                    <label>
+                    <h2>
                         Welcome! You don't have any funds on this account.
-                    </label>
+                    </h2>
                     <NavLink to="/wallet/deposit">
                         <Button small icon={<DepositIcon />}>Deposit</Button>
                     </NavLink>
                     <div className={styles.addToken}>
-                        <label>You have a token that's not displayed?</label>
+                        <p>You have a token that's not displayed?</p>
                         <Button 
                             mini 
                             clear 
@@ -64,7 +64,9 @@ const TokensPlaceholder = ({ onClickAddToken, onClickShowToken, footer }) => {
                         >
                             Click here to add it
                         </Button>
-                        {hiddenTokensCount > 0 && (<label onClick={onClickShowToken}>There are also {hiddenTokensCount} hidden tokens. Click to configure</label>)}
+                        {(hiddenTokensCount > 0) && <p onClick={onClickShowToken} className={styles.clickable}>
+                            There are also {hiddenTokensCount} hidden tokens. Click to configure
+                        </p>}
                     </div>
                 </div>
             }
