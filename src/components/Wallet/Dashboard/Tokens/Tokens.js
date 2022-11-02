@@ -140,15 +140,15 @@ const Tokens = ({ portfolio, network, account, hidePrivateValue, userSorting, se
                                         balance={hidePrivateValue(formatFloatTokenAmount(balance, true, decimals))}
                                         value={hidePrivateValue(formatFloatTokenAmount(latest ? latest.balanceUSD : balanceUSD, true, decimals))}
                                         price={`$${price ? hidePrivateValue((price).toFixed((price < 1) ? 5 : 2)) : '-'}`}
+                                        // Actions
+                                        sendUrl={`/wallet/transfer/${address}`}
+                                        // Drag props
                                         wrapperChildren={sortedTokens.length > 1 && sortType === 'custom' && !isMobileScreen && <MdDragIndicator 
                                                 size={20} 
                                                 className={styles.dragHandle} 
                                                 onClick={(e) => dragStart(e, index)} id={`${index}-handle`} 
                                             />
                                         }
-                                        // Actions
-                                        sendUrl={`/wallet/transfer/${address}`}
-                                        // Drag props
                                         draggable={sortedTokens.length > 1 && sortType === 'custom' && !isMobileScreen}
                                         onDragStart={(e) => { 
                                             if (handle.current === target.current || handle.current.contains(target.current)) dragStart(e, index)
