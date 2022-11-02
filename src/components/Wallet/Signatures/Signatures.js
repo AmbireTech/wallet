@@ -35,7 +35,7 @@ function Signatures({ selectedAcc, selectedNetwork, privateMode }) {
   const filteredMessages = useMemo(() =>
     messages
       .filter(m =>
-        m.account === selectedAcc
+        m.accountId === selectedAcc
         && m.networkId === selectedNetwork.chainId
       )
       .sort((a, b) => b.date - a.date)

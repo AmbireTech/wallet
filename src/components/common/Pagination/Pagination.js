@@ -13,7 +13,7 @@ const Pagination = ({ items, setPaginatedItems, itemsPerPage, url, parentPage = 
 
   const maxPage = Math.ceil(items.length / itemsPerPage)
 
-  const routerPage = (parentPage || localParams.page) * 1
+  const routerPage = (parentPage || localParams.page || 1) * 1
 
   const handlePageChange = (page) => {
     const newUrl = url.replace('{p}', page)
