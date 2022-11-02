@@ -12,6 +12,7 @@ import AddOrHideButton from 'components/Wallet/Dashboard/AddOrHideButton/AddOrHi
 import AddOrHideTokenModal from 'components/Modals/AddOrHideTokenModal/AddOrHideTokenModal'
 
 import styles from './Tokens.module.scss'
+import { formatFloatTokenAmount } from 'lib/formatters'
 
 const Tokens = ({ portfolio, network, account, hidePrivateValue, userSorting, setUserSorting, footer }) => {
     const history = useHistory()
@@ -118,30 +119,48 @@ const Tokens = ({ portfolio, network, account, hidePrivateValue, userSorting, se
                         )}
                     >
                         { 
-                            sortedTokens.map(({ address, symbol, tokenImageUrl, balance, balanceUSD, network, decimals, pending, unconfirmed, latest, price }, i) => (
-                                <Token
-                                    key={address}
-                                    index={i}
-                                    img={tokenImageUrl}
-                                    symbol={symbol}
-                                    balance={balance}
-                                    balanceUSD={balanceUSD}
-                                    address={address}
-                                    send={true}
-                                    network={network}
-                                    pending={pending}
-                                    unconfirmed={unconfirmed}
-                                    latest={latest}
-                                    price={price}
-                                    decimals={decimals}
-                                    category="tokens"
-                                    sortedTokens={sortedTokens}
-                                    hidePrivateValue={hidePrivateValue}
-                                    sortType={sortType}
-                                    isMobileScreen={isMobileScreen}
-                                    dragAndDrop={dragAndDrop}
-                                />
-                        ))}
+                            sortedTokens.map(({ address, symbol, tokenImageUrl, balance, balanceUSD, network, decimals, pending, unconfirmed, latest, price }, index) => {
+                                const {
+                                    dragStart,
+                                    dragEnter,
+                                    target,
+                                    handle,
+                                    dragTarget,
+                                    drop
+                                } = dragAndDrop
+
+                                return (
+                                    <Token
+                                        key={address}
+                                        address={address}
+                                        network={network}
+                                        // Token data
+                                        img={tokenImageUrl}
+                                        symbol={symbol}
+                                        balance={hidePrivateValue(formatFloatTokenAmount(balance, true, decimals))}
+                                        value={hidePrivateValue(formatFloatTokenAmount(latest ? latest.balanceUSD : balanceUSD, true, decimals))}
+                                        price={`$${price ? hidePrivateValue((price).toFixed((price < 1) ? 5 : 2)) : '-'}`}
+                                        wrapperChildren={sortedTokens.length > 1 && sortType === 'custom' && !isMobileScreen && <MdDragIndicator 
+                                                size={20} 
+                                                className={styles.dragHandle} 
+                                                onClick={(e) => dragStart(e, index)} id={`${index}-handle`} 
+                                            />
+                                        }
+                                        // Actions
+                                        sendUrl={`/wallet/transfer/${address}`}
+                                        // Drag props
+                                        draggable={sortedTokens.length > 1 && sortType === 'custom' && !isMobileScreen}
+                                        onDragStart={(e) => { 
+                                            if (handle.current === target.current || handle.current.contains(target.current)) dragStart(e, index)
+                                            else e.preventDefault();
+                                        }}
+                                        onMouseDown={(e) => dragTarget(e, index)}
+                                        onDragEnter={(e) => dragEnter(e, index)}
+                                        onDragEnd={() => drop(sortedTokens)}
+                                        onDragOver={(e) => e.preventDefault()}
+                                    />
+                                )
+                        })}
                         <AddOrHideButton onClick={openAddOrHideTokenModal}>
                             Token
                         </AddOrHideButton>
