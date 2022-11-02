@@ -3,8 +3,6 @@ import cn from 'classnames'
 import styles from './NumberInput.module.scss'
 
 const NumberInput = ({ disabled, precision, label, value, button, onButtonClick, onInput }) => {
-    const noLeadingZeroValue = parseFloat(value) >= 1 ? parseFloat(value) : value
-
     const onInputValue = ({ target }) => {
         if (!onInput) return
         if (!target.value.length) return onInput('')
@@ -28,7 +26,7 @@ const NumberInput = ({ disabled, precision, label, value, button, onButtonClick,
                 <input
                     type="text"
                     disabled={disabled}
-                    value={noLeadingZeroValue}
+                    value={value}
                     onInput={onInputValue}
                 />
                 {
