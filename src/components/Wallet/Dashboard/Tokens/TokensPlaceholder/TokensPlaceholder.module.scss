@@ -1,8 +1,5 @@
 @import 'variables.scss';
 
-.wrapper {
-    position: relative;
-    border-radius: 12px;
 
     .blur {
         filter: blur(15px);
@@ -38,17 +35,17 @@
             height: 18px;
         }
     }
-}
+
 
 @media screen and (max-width: $mobile-breakpoint-max-width) {
-    .wrapper {
-        width: 100%;
-        gap: 20px;
-        min-height: 400px;
+    // .wrapper {
+    //     width: 100%;
+    //     gap: 20px;
+    //     min-height: 400px;
 
-        .placeholderOverlay {
-            width: 100%;
-            padding: 10px;
-        }
+    .placeholderOverlay {
+        width: 100%;
+        padding: 10px;
     }
+    // }
 }

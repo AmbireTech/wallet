@@ -13,7 +13,7 @@ import { ReactComponent as AddIcon } from 'resources/icons/add.svg'
 import tokenStyles from 'components/Wallet/Dashboard/Tokens/Token/Token.module.scss'
 import styles from './TokensPlaceholder.module.scss'
 
-const TokensPlaceholder = ({ onClickAddToken, onClickShowToken }) => {
+const TokensPlaceholder = ({ onClickAddToken, onClickShowToken, footer }) => {
     const tokens = [
         {
             icon: 'https://storage.googleapis.com/zapper-fi-assets/tokens/ethereum/0xade00c28244d5ce17d72e40330b1c318cd12b7c3.png',
@@ -43,72 +43,75 @@ const TokensPlaceholder = ({ onClickAddToken, onClickShowToken }) => {
     }
     
     return (
-        <div className={styles.wrapper}>
-            <div className={styles.placeholderOverlay}>
-                <label>
-                    Welcome! You don't have any funds on this account.
-                </label>
-                <NavLink to="/wallet/deposit">
-                    <Button small icon={<DepositIcon />}>Deposit</Button>
-                </NavLink>
-                <div className={styles.addToken}>
-                    <label>You have a token that's not displayed?</label>
-                    <Button 
-                        mini 
-                        clear 
-                        icon={<AddIcon />} 
-                        onClick={onClickAddToken}
-                        className={styles.addTokenButton}
-                    >
-                        Click here to add it
-                    </Button>
-                    {hiddenTokensCount > 0 && (<label onClick={onClickShowToken}>There are also {hiddenTokensCount} hidden tokens. Click to configure</label>)}
+        <TokensWrapper 
+            className={styles.blur}
+            wrapperChildren={
+                <div className={styles.placeholderOverlay}>
+                    <label>
+                        Welcome! You don't have any funds on this account.
+                    </label>
+                    <NavLink to="/wallet/deposit">
+                        <Button small icon={<DepositIcon />}>Deposit</Button>
+                    </NavLink>
+                    <div className={styles.addToken}>
+                        <label>You have a token that's not displayed?</label>
+                        <Button 
+                            mini 
+                            clear 
+                            icon={<AddIcon />} 
+                            onClick={onClickAddToken}
+                            className={styles.addTokenButton}
+                        >
+                            Click here to add it
+                        </Button>
+                        {hiddenTokensCount > 0 && (<label onClick={onClickShowToken}>There are also {hiddenTokensCount} hidden tokens. Click to configure</label>)}
+                    </div>
                 </div>
-            </div>
-            <TokensWrapper className={styles.blur}>
-                {tokens.map(({ icon, symbol, balance, balanceUSD }) => (
-                    <div className={tokenStyles.wrapper}>
-                        <div className={tokenStyles.body}>
-                            <h3 className={tokenStyles.baseInfo}>
-                                <div className={tokenStyles.iconWrapper}>
-                                    <img 
-                                        src={icon} 
-                                        draggable="false" 
-                                        alt="Token Icon" 
-                                        className={tokenStyles.icon}
-                                    />
-                                </div>
-                                <div className={tokenStyles.balanceAndSymbol}>
-                                    <h3 className={tokenStyles.symbol}>{ symbol }</h3>
-                                    <p className={tokenStyles.balance}>
-                                        { balance }
-                                    </p>
-                                </div>
+            }
+            wrapperEndChildren={footer}
+        >
+            {tokens.map(({ icon, symbol, balance, balanceUSD }) => (
+                <div className={tokenStyles.wrapper}>
+                    <div className={tokenStyles.body}>
+                        <h3 className={tokenStyles.baseInfo}>
+                            <div className={tokenStyles.iconWrapper}>
+                                <img 
+                                    src={icon} 
+                                    draggable="false" 
+                                    alt="Token Icon" 
+                                    className={tokenStyles.icon}
+                                />
+                            </div>
+                            <div className={tokenStyles.balanceAndSymbol}>
+                                <h3 className={tokenStyles.symbol}>{ symbol }</h3>
+                                <p className={tokenStyles.balance}>
+                                    { balance }
+                                </p>
+                            </div>
+                        </h3>
+                        <div className={tokenStyles.priceAndValue}>
+                            <h3 className={tokenStyles.price}>
+                                $0.94
                             </h3>
-                            <div className={tokenStyles.priceAndValue}>
-                                <h3 className={tokenStyles.price}>
-                                    $0.94
-                                </h3>
-                                <h3 className={tokenStyles.value}>
-                                    <span className={tokenStyles.symbol}>$</span> { balanceUSD }
-                                </h3>
-                            </div>
-                        </div>
-                        <div className={tokenStyles.actions}>
-                            <div className={tokenStyles.action}>
-                                <SendIcon />
-                            </div>
-                            <div className={tokenStyles.action}>
-                                <EarnIcon />
-                            </div>
-                            <div className={tokenStyles.action}>
-                                <SwapIcon />
-                            </div>
+                            <h3 className={tokenStyles.value}>
+                                <span className={tokenStyles.symbol}>$</span> { balanceUSD }
+                            </h3>
                         </div>
                     </div>
-                ))}
-            </TokensWrapper>
-        </div>
+                    <div className={tokenStyles.actions}>
+                        <div className={tokenStyles.action}>
+                            <SendIcon />
+                        </div>
+                        <div className={tokenStyles.action}>
+                            <EarnIcon />
+                        </div>
+                        <div className={tokenStyles.action}>
+                            <SwapIcon />
+                        </div>
+                    </div>
+                </div>
+            ))}
+        </TokensWrapper>
     )
 }
 
