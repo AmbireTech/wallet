@@ -1,8 +1,11 @@
 @import 'variables.scss';
 
 .wrapper {
-  position: relative;
   overflow: hidden;
+
+  .relative {
+    position: relative;
+  }
 
   .title {
     display: flex;
