@@ -75,7 +75,7 @@ export default function SignMessage({ everythingToSign, resolve, account, relaye
     useStorage: useLocalStorage,
   })
 
-  const isDAppSupported = dApp && supportedDApps.includes(dApp.url)
+  const isDAppSupported = dApp && (supportedDApps.includes(dApp.url) || supportedDApps.includes(dApp.url+'/'))
 
   useEffect(() => {
     if (confirmationType) inputSecretRef.current.focus()
