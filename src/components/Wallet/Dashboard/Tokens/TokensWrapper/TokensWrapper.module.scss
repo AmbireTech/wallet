@@ -55,7 +55,7 @@
 }
 
 @media screen and (max-width: $mobile-breakpoint-max-width) {
-  .category {
+  .wrapper {
     .title {
       padding: 0 20px;
     }
@@ -63,7 +63,7 @@
 }
 
 @media screen and (max-width: 768px) {
-  .category {
+  .wrapper {
     .title {
       display: none;
     }
