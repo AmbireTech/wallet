@@ -17,6 +17,16 @@ import cn from 'classnames'
 import styles from './Dashboard.module.scss'
 import Tabs from 'components/common/Tabs/Tabs'
 
+const Footer = ({selectedAccount, selectedNetwork}) => <div className={styles.footer}>
+    <span className={styles.missingTokenNotice}>
+        If you don't see a specific token that you own, please check the
+        {' '}
+        <a href={`${selectedNetwork.explorerUrl}/address/${selectedAccount}`} target="_blank" rel="noreferrer">
+            Block Explorer
+        </a>
+    </span>
+</div>
+
 export default function Dashboard({ portfolio, selectedNetwork, selectedAccount, setNetwork, privateMode, rewardsData,  userSorting, setUserSorting, accounts, addRequest, relayerURL, useStorage, match, showSendTxns }) {
     const { tabId } = useParams()
 
@@ -133,19 +143,28 @@ export default function Dashboard({ portfolio, selectedNetwork, selectedAccount,
                             hidePrivateValue={privateMode.hidePrivateValue}
                             userSorting={userSorting}
                             setUserSorting={setUserSorting}
+                            footer={
+                                <Footer 
+                                    selectedAccount={selectedAccount} 
+                                    selectedNetwork={selectedNetwork}
+                                />
+                            }
                         />
                     }
                     secondTab={
-                        <Collectibles portfolio={portfolio} isPrivateMode={privateMode.isPrivateMode} selectedNetwork={selectedNetwork} />
+                        <Collectibles 
+                            portfolio={portfolio} 
+                            isPrivateMode={privateMode.isPrivateMode} 
+                            selectedNetwork={selectedNetwork} 
+                            footer={
+                                <Footer 
+                                    selectedAccount={selectedAccount} 
+                                    selectedNetwork={selectedNetwork}
+                                />
+                            }
+                        />
                     }
                     tabClassName={styles.tab}
-                    footer={
-                        <div className={styles.footer}>
-                            <span className={styles.missingTokenNotice}>
-                                If you don't see a specific token that you own, please check the <a href={`${selectedNetwork.explorerUrl}/address/${selectedAccount}`} target="_blank" rel="noreferrer">Block Explorer</a>
-                            </span>
-                        </div>
-                    }
                     defaultTab={defaultTab}
                 />
         </section>
