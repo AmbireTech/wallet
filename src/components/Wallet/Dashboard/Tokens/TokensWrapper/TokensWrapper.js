@@ -2,7 +2,7 @@ import cn from 'classnames'
 import styles from './TokensWrapper.module.scss'
 
 const TokensWrapper = ({ children, titleSpacedLeft, tokenLabelChildren, className }) => (
-  <div className={cn(styles.category, className)} key="category-tokens">
+  <div className={cn(styles.wrapper, className)} key="category-tokens">
     <div className={cn(styles.title, { [styles.titleSpacedLeft]: titleSpacedLeft})}>
       <div className={styles.token}>
         Token
