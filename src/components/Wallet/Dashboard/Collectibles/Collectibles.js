@@ -49,6 +49,7 @@ const Collectibles = ({ portfolio, isPrivateMode, selectedNetwork, footer }) => 
             <CollectiblesPlaceholder
                 isPrivateMode={isPrivateMode}
                 collectiblesLength={portfolio.collectibles.length}
+                onClickShowCollectible={openHideCollectibleModal}
                 footer={footer}
             />
         );
