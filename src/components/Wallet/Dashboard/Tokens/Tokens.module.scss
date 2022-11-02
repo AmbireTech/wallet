@@ -10,6 +10,10 @@
     overflow: hidden;
     color: $c-scampi;
     margin-top: 3px;
+
+    .dragHandle {
+        margin-right: 15px;
+    }
 }
 
 @media screen and (max-width: $mobile-breakpoint-max-width) {
