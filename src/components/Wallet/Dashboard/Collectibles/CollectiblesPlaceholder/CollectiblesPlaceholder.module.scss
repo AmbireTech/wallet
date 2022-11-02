@@ -7,13 +7,23 @@
 
     .placeholderText {
         text-align: center;
-        font-size: 22px;
         text-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+
+        h2 {
+            font-size: 22px;
+            margin: 0;
+            margin-bottom: 20px;
+        }
+
+        p {
+            margin: 0;
+            cursor: pointer;
+        }
     }
 }
 
 .blur {
     filter: blur(15px);
-    opacity: .6;
+    opacity: .4;
     padding-bottom: 50px;
 }
