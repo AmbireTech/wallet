@@ -137,7 +137,7 @@ const OtpTwoFAModal = ({ relayerURL, selectedAcc, setCacheBreak }) => {
     return (
         <Modal
             className={styles.modal}
-            buttons={!isLoading ? (<Button primaryGradient type="submit" disabled={isTimeIsUp} className={styles.button}>Enable 2FA</Button>) : (<Button disabled className={styles.button}><Loading /></Button>)}
+            buttons={!isLoading ? (<Button form="enable2faForm" primaryGradient type="submit" disabled={isTimeIsUp} className={styles.button}>Enable 2FA</Button>) : (<Button disabled className={styles.button}><Loading /></Button>)}
             title="Two Factor Authentication" 
         >
             <div className={styles.wrapper}>
@@ -153,7 +153,7 @@ const OtpTwoFAModal = ({ relayerURL, selectedAcc, setCacheBreak }) => {
                     </span>)}
                     {showSecret && (<><span>Enter this OTP in your app:</span><div>{secret}</div></>)}
                 </div>
-                <form onSubmit={handleSubmit}>
+                <form onSubmit={handleSubmit} id="enable2faForm">
                     <div className={styles.emailWrapper}>
                         <h4>Confirmation code sent via Email</h4>
                         <div className={styles.emailBody}>

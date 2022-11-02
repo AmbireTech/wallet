@@ -74,9 +74,9 @@ const OtpTwoFADisableModal = ({ relayerURL, selectedAcc, setCacheBreak }) => {
         <Modal 
           className={styles.wrapper} 
           title="Disable Two Factor Authentication" 
-          buttons={!isLoading ? (<Button className={styles.button} primaryGradient type="submit" disabled={isTimeIsUp}>Disable 2FA</Button>) : (<Button className={styles.button} primaryGradient disabled><Loading /></Button>)}
+          buttons={!isLoading ? (<Button form="disable2faForm" className={styles.button} primaryGradient type="submit" disabled={isTimeIsUp}>Disable 2FA</Button>) : (<Button className={styles.button} primaryGradient disabled><Loading /></Button>)}
         >
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit} id="disable2faForm">
             {isTimeIsUp && <div className={styles.timerResetMsg}>Please reopen the modal to reset the session.</div>}
             <CountdownTimer seconds={TIMER_IN_SECONDS} setTimeIsUp={handleTimeIsUp} className={styles.timer} />
             <div>
