@@ -27,3 +27,10 @@
     opacity: .4;
     padding-bottom: 50px;
 }
+
+@media (max-width: 768px) {
+    .placeholderOverlay {
+        align-items: flex-start;
+        padding-top: 100px;
+    }
+}
