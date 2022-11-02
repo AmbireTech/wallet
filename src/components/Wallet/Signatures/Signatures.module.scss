@@ -1,6 +1,6 @@
 @import 'variables.scss';
 
-#Signatures {
+.signatures {
   .title {
     display: flex;
 
@@ -11,68 +11,47 @@
 
   user-select: none;
 
-  .pagination-controls-holder {
-    display: flex;
-    justify-content: right;
-    margin: 8px 0;
-
-    .pagination-controls {
-      display: flex;
-      align-items: center;
-      align-self: flex-end;
-      gap: 1em;
-      font-size: 15px;
-      font-weight: 500;
-
-      .pagination-current {
-        span {
-          opacity: 0.5;
-        }
-      }
-    }
-  }
-
-  .main-container {
+  .mainContainer {
     display: flex;
     flex-direction: column;
     gap: 10px;
-    padding: 1.5em;
+    padding: 24px;
     background: $c-ebony-clay;
     border: 1px solid $c-fiord;
     border-radius: 12px;
 
-    .col-dapp {
+    .colDapp {
       flex-basis: 30%;
     }
 
-    .col-sigtype {
+    .colSigtype {
       flex-basis: 30%;
     }
 
-    .col-date {
+    .colDate {
       flex-basis: 30%;
     }
 
-    .col-expand {
+    .colExpand {
       flex-basis: 40px;
     }
 
-    .header-container {
+    .headerContainer {
       padding: 8px 16px;
-      color: #6770B3;
+      color: $c-scampi;
       display: flex;
       gap: 16px;
       justify-content: space-between;
     }
 
-    .sub-container {
+    .subContainer {
       border-radius: 12px;
       padding: 16px;
       overflow: hidden;
       background-color: $c-mirage;
       color: $c-titan-white;
 
-      .sub-container-visible {
+      .subContainerVisible {
         display: flex;
         gap: 16px;
 
@@ -87,7 +66,7 @@
           align-items: center;
           flex-basis: 30%;
 
-          .dapp-icon {
+          .dappIcon {
             display: flex;
             width: 40px;
             height: 40px;
@@ -99,7 +78,7 @@
           }
         }
 
-        .signature-expand {
+        .signatureExpand {
           cursor: pointer;
           border-radius: 12px;
           width: 40px;
@@ -115,7 +94,7 @@
         }
       }
 
-      .sub-container-expanded {
+      .subContainerExpanded {
         user-select: text;
         padding: 16px 0 0 16px;
 
@@ -127,12 +106,12 @@
             font-weight: normal;
           }
 
-          .message-content {
+          .messageContent {
             padding-top: 4px;
-            color: #6770B3;
+            color: $c-scampi;
             font-family: monospace;
             white-space: break-spaces;
-            font-size: 1.1em;
+            font-size: 16px;
             overflow-wrap: break-word;
           }
         }

@@ -15,7 +15,7 @@ import useLocalStorage from 'hooks/useLocalStorage'
 
 const CONF_CODE_LENGTH = 6
 
-export default function SignMessage({ everythingToSign, resolve, account, connections, relayerURL, totalRequests }) {
+export default function SignMessage({ everythingToSign, resolve, account, relayerURL, totalRequests }) {
   const defaultState = () => ({ codeRequired: false, passphrase: "" })
   const { addToast } = useToasts()
   const [signingState, setSigningState] = useState(defaultState())
@@ -73,7 +73,6 @@ export default function SignMessage({ everythingToSign, resolve, account, connec
     onConfirmationCodeRequired,
     getHardwareWallet,
     useStorage: useLocalStorage,
-    connections
   })
 
   const isDAppSupported = dApp && supportedDApps.includes(dApp.url)
@@ -176,7 +175,7 @@ export default function SignMessage({ everythingToSign, resolve, account, connec
               >
                 <div
                   className='icon'
-                  style={{ backgroundImage: `url(${dApp.icons[0]})` }}
+                  style={{ backgroundImage: `url(${dApp.icons ? dApp.icons[0] : 'none'})` }}
                 >
                   <MdBrokenImage />
                 </div>
