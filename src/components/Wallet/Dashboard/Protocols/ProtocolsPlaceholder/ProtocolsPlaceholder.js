@@ -1,10 +1,11 @@
-import styles from './ProtocolsPlaceholder.module.scss'
-
 import { NavLink } from 'react-router-dom'
-import { GiReceiveMoney } from 'react-icons/gi'
 import { Button } from 'components/common'
 import { MdOutlineAdd } from 'react-icons/md'
 import { useLocalStorage } from 'hooks'
+
+import { ReactComponent as DepositIcon } from 'components/Wallet/SideBar/images/deposit.svg'
+
+import styles from './ProtocolsPlaceholder.module.scss'
 
 const ProtocolsPlaceholder = ({ onClickAddToken, onClickShowToken }) => {
     const tokens = [
@@ -42,7 +43,7 @@ const ProtocolsPlaceholder = ({ onClickAddToken, onClickShowToken }) => {
                     Welcome! You don't have any funds on this account.
                 </label>
                 <NavLink to="/wallet/deposit">
-                    <Button small icon={<GiReceiveMoney/>}>Deposit</Button>
+                    <Button small icon={<DepositIcon />}>Deposit</Button>
                 </NavLink>
                 <div className={styles.addToken}>
                     <label>You have a token that's not displayed?</label>

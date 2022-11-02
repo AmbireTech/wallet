@@ -23,40 +23,6 @@
   }
 }
 
-@font-face {
-  font-family: 'Open Sans';
-  src: url('./fonts/OpenSans-Regular.ttf');
-}
-
-@font-face {
-  font-family: 'Open Sans';
-  font-weight: 600;
-  src: url('./fonts/OpenSans-Regular.ttf');
-}
-
-@font-face {
-  font-family: 'Open Sans';
-  font-weight: 500;
-  src: url('./fonts/OpenSans-Medium.ttf');
-}
-
-@font-face {
-  font-family: 'Open Sans';
-  font-weight: bold;
-  src: url('./fonts/OpenSans-Bold.ttf');
-}
-
-@font-face {
-  font-family: 'monospace';
-  src: url('./fonts/UbuntuMono/UbuntuMono-Regular.ttf');
-}
-
-@font-face {
-  font-family: 'monospace';
-  font-weight: bold;
-  src: url('./fonts/UbuntuMono/UbuntuMono-Bold.ttf');
-}
-
 * {
   box-sizing: border-box;
   
@@ -104,8 +70,12 @@ body {
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-  monospace;
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', 'Ubuntu Mono';
+}
+
+::placeholder {
+  color:  #6770B3;
+  opacity: 1;
 }
 
 a {
@@ -232,6 +202,7 @@ select {
   padding: 13px 10px;
   background: mix($c-turquoise, $c-ebony-clay, 5%);
   border: 1px solid $c-turquoise;
+  transition: .3s ease-out opacity;
 
   &.warning {
     background-color: #FEF5DB;
@@ -255,7 +226,7 @@ select {
     cursor: pointer;
 
     &.warning:hover {
-      background: mix($warning-color, $c-ebony-clay, 10%);
+      opacity: .8;
     }
   }
 }

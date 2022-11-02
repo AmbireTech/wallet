@@ -5,14 +5,13 @@
         cursor: pointer;
     }
 
-    .ddWcTitle {
-        cursor: pointer;
+    .title {
         display: flex;
         align-items: center;
+        gap: 10px;
         
-        img {
-            max-height: 32px;
-            max-width: 32px;
+        label {
+            font-size: 14px;
         }
     }
 
@@ -142,6 +141,12 @@
 // Mobile
 @media screen and (max-width: $mobile-breakpoint-max-width) {
     .wrapper {
+        .title {
+            svg {
+                width: 32px;
+                height: 32px;
+            }
+        }    
       
         .menu {
             min-width: unset;

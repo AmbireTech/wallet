@@ -16,9 +16,8 @@ const WalletTokenButton = ({ rewardsData, account = {}, network, hidePrivateValu
         walletUsdPrice: rewardsData.rewards.walletUsdPrice,
       })
     const { currentClaimStatus, pendingTokensTotal } = claimableWalletToken
-    // const buttonMessage = String(hidePrivateValue(pendingTokensTotal)).concat(' WALLET REWARDS')
     const { isLoading: isRewardsDataLoading, errMsg } = rewardsData
-    const isLoading = isRewardsDataLoading || currentClaimStatus.loading;
+    const isLoading = isRewardsDataLoading || currentClaimStatus.loading
 
     const showWalletTokenModal = useDynamicModal(WalletTokenModal, { claimableWalletToken, accountId: account.id }, { rewards: rewardsData.rewards })
 
@@ -39,7 +38,7 @@ const WalletTokenButton = ({ rewardsData, account = {}, network, hidePrivateValu
                 <span>
                     {hidePrivateValue(pendingTokensTotal)}
                 </span>
-                WALLET REWARDS
+                $ WALLETS
             </Button>
     )
 }
