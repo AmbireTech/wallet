@@ -106,7 +106,7 @@ export default function Providers({ walletAddress, networkDetails, relayerURL, p
     const filteredProviders = providers.filter(p => sellMode ? p.isSellAvailable : p.isBuyAvailable)
     const shouldBeDisabled = (networks) => {
         return !networks.includes(networkDetails.id)
-    };
+    }
 
     return (
         <div className={styles.wrapper}>
@@ -114,6 +114,7 @@ export default function Providers({ walletAddress, networkDetails, relayerURL, p
                 filteredProviders.map(({ logo, name, type, fees, limits, currencies, networks, description = '', onClick }) =>
                 
                     <div className={`${styles.provider} ${shouldBeDisabled(networks) && styles.disabled}`} key={name} onClick={onClick}>
+
                         <div className={styles.logo}>
                             <img src={logo} alt={name}></img>
                         </div>
