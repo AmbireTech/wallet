@@ -9,7 +9,7 @@ import CollectiblesWrapper from './CollectiblesWrapper/CollectiblesWrapper'
 import Collectible from './Collectible/Collectible'
 import HideCollectibleModal from 'components/Modals/HideCollectibleModal/HideCollectibleModal'
 
-const Collectibles = ({ portfolio, isPrivateMode, selectedNetwork }) => {
+const Collectibles = ({ portfolio, isPrivateMode, selectedNetwork, footer }) => {
     const { showModal } = useModals()
     const history = useHistory()
     const collectiblesList = portfolio.collectibles
@@ -55,8 +55,10 @@ const Collectibles = ({ portfolio, isPrivateMode, selectedNetwork }) => {
 
     return (
         <CollectiblesWrapper 
-            wrapperEndChildren={
+            wrapperEndChildren={<>
                 <AddOrHideButton onClick={openHideCollectibleModal}>Collectible</AddOrHideButton>
+                { footer }
+            </>
             }
         >
             {

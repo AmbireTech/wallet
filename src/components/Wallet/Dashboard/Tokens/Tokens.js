@@ -13,7 +13,7 @@ import AddOrHideTokenModal from 'components/Modals/AddOrHideTokenModal/AddOrHide
 
 import styles from './Tokens.module.scss'
 
-const Tokens = ({ portfolio, network, account, hidePrivateValue, userSorting, setUserSorting }) => {
+const Tokens = ({ portfolio, network, account, hidePrivateValue, userSorting, setUserSorting, footer }) => {
     const history = useHistory()
     const { showModal } = useModals()
 
@@ -144,6 +144,7 @@ const Tokens = ({ portfolio, network, account, hidePrivateValue, userSorting, se
                         <AddOrHideButton onClick={openAddOrHideTokenModal}>
                             Token
                         </AddOrHideButton>
+                        { footer }
                     </TokensWrapper> : null)
                 }
             </>
