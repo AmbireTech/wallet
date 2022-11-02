@@ -4,12 +4,15 @@ $collectible-details-height: 60px;
 $collectible-size: 204px;
 
 .wrapper {
-  position: relative;
   display: flex;
   flex-direction: column;
   gap: 15px;
   padding: 0 50px;
   margin-top: 12px;
+
+  .relative {
+    position: relative;
+  }
 
   .collectiblesWrapper {
     display: grid;
