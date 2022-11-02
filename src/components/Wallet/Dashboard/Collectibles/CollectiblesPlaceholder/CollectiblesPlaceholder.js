@@ -5,7 +5,7 @@ import collectibles from './collectibles'
 
 import styles from './CollectiblesPlaceholder.module.scss'
 
-const CollectiblesPlaceholder = ({ isPrivateMode, collectiblesLength }) => (
+const CollectiblesPlaceholder = ({ isPrivateMode, collectiblesLength, footer }) => (
     <CollectiblesWrapper 
         className={styles.blur}
         wrapperChildren={
@@ -15,6 +15,7 @@ const CollectiblesPlaceholder = ({ isPrivateMode, collectiblesLength }) => (
                 </div>
             </div>
         }
+        wrapperEndChildren={footer}
     >
         {
             collectibles.map(({ collectionName, collectionImg, name, image, price}) => (
