@@ -5,14 +5,13 @@
         cursor: pointer;
     }
 
-    .ddWcTitle {
-        cursor: pointer;
+    .title {
         display: flex;
         align-items: center;
+        gap: 10px;
         
-        img {
-            max-height: 32px;
-            max-width: 32px;
+        label {
+            font-size: 14px;
         }
     }
 
@@ -92,9 +91,9 @@
             padding: 0 10px;
             font-size: 11px;
             font-weight: bold;
-            border: 1px solid #ebecff;
+            border: 1px solid $c-titan-white;
             text-transform: uppercase;
-            color: #ebecff;
+            color: $c-titan-white;
             background-color: transparent;
             opacity: 1;
             transition: all 0.1s ease-in-out;
@@ -132,7 +131,7 @@
 
         label {
             font-size: 14px;
-            color: #ebecff;
+            color: $c-titan-white;
             font-weight: 300;
             margin-bottom: 21px;
         }
@@ -142,6 +141,12 @@
 // Mobile
 @media screen and (max-width: $mobile-breakpoint-max-width) {
     .wrapper {
+        .title {
+            svg {
+                width: 32px;
+                height: 32px;
+            }
+        }    
       
         .menu {
             min-width: unset;

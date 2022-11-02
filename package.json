@@ -9,6 +9,7 @@
     "@ensdomains/eth-ens-namehash": "^2.0.15",
     "@ethersproject/transactions": "5.4.0",
     "@fontsource/poppins": "^4.5.9",
+    "@fontsource/ubuntu-mono": "^4.5.11",
     "@gnosis.pm/safe-apps-sdk": "^6.2.0",
     "@ledgerhq/hw-app-eth": "6.6.0",
     "@ledgerhq/hw-transport-webhid": "^6.11.2",

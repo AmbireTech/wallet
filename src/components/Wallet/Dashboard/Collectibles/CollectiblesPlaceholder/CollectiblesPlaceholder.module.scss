@@ -34,12 +34,12 @@ $collectible-size: 250px;
             position: relative;
             height: calc(#{$collectible-size} + #{$collectible-details-height});
             width: $collectible-size;
-            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
             overflow: hidden;
             transition: all 0.1s ease-in-out;
 
             .artwork {
-                z-index: 48;
+                z-index: 3;
                 height: 250px;
                 width: 100%;
                 position: absolute;
@@ -51,7 +51,7 @@ $collectible-size: 250px;
             }
 
             .info {
-                z-index: 49;
+                z-index: 4;
                 height: $collectible-details-height;
                 position: absolute;
                 left: 0;
@@ -63,7 +63,7 @@ $collectible-size: 250px;
                 justify-content: center;
                 gap: 5px;
                 padding: 0 20px;
-                background-color: $input-background-color;
+                background-color: $c-mirage;
                 overflow: hidden;
 
                 .collection {
@@ -73,12 +73,12 @@ $collectible-size: 250px;
                     gap: 10px;
                     font-size: 12px;
                     font-weight: 500;
-                    color: #ebecff;
+                    color: $c-titan-white;
 
                     .collectionIcon {
                         flex: 0 0 auto;
-                        height: 15px;
-                        width: 15px;
+                        height: 18px;
+                        width: 18px;
                         background-size: cover;
                         background-position: center center;
                         border-radius: 100%;
@@ -105,14 +105,12 @@ $collectible-size: 250px;
                         white-space: nowrap;
                         text-overflow: ellipsis;
                         font-size: 15px;
-                        font-weight: bold;
-                        color: #ebecff;
+                        color: $c-titan-white;
                     }
 
                     .value {
                         flex: 0 0 auto;
                         font-size: 12px;
-                        font-weight: bold;
                     }
                 }
             }
@@ -149,7 +147,7 @@ $collectible-size: 250px;
 .wrapper {
 
     .placeholderText {
-        z-index: 49;
+        z-index: 4;
         @include absolute-full-size;
         @include flex-center-center;
         text-align: center;

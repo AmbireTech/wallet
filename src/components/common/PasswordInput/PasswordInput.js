@@ -5,11 +5,13 @@ import { forwardRef, useState } from 'react'
 import { ReactComponent as VisibleIcon } from 'resources/icons/visible.svg'
 import { ReactComponent as InvisibleIcon } from 'resources/icons/invisible.svg'
 
+import cn from 'classnames'
+
 const PasswordInput = forwardRef(({ label, placeholder, autoComplete, peakPassword, disabled, value, onInput, onChange, className }, ref) => {
     const [showPassword, setShowPassword] = useState()
 
     return (
-        <div className={`${styles.passwordInput} ${className || ''}`}>
+        <div className={cn(styles.passwordInput, className || '')}>
             {
                 label ?
                     <label>{ label }</label>

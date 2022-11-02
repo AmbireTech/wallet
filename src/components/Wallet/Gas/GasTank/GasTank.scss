@@ -23,13 +23,13 @@
             width: 185px;
             min-height: 103px;
             align-items: center;
-            color: #6770b3;
+            color: $c-scampi;
             justify-content: space-around;
             border-radius: 12px;
     
             .inner-wrapper-left {
                 font-size: 35px;
-                color: #ebecff;
+                color: $c-titan-white;
 
                 &.small-font {
                     font-size: 22px;
@@ -41,18 +41,18 @@
     
                 span {
                     font-size: 25px;
-                    color: $secondary-accent-color;
+                    color: $c-heliotrope;
                     font-weight: bold;
                 }
             }
     
             span {
                 font-size: 12px;
-                color: #ebecff;
+                color: $c-titan-white;
             }
     
             span svg {
-                color: $secondary-accent-color;
+                color: $c-heliotrope;
               }
         }
 
@@ -68,11 +68,11 @@
                 align-items: center;
 
                 .label {
-                    color: $secondary-accent-color;
+                    color: $c-heliotrope;
                     max-width: 60%;
 
                     &.green{
-                        color: $primary-accent-color;
+                        color: $c-turquoise;
                     }
                 }
 
@@ -85,12 +85,12 @@
                     text-align: end;
                     font-size: 14px;
                     font-weight: bold;
-                    color: #ebecff;
+                    color: $c-titan-white;
 
                     span {
                         font-size: 12px;
                         font-weight: normal;
-                        color: $secondary-accent-color;
+                        color: $c-heliotrope;
                     }
                 }
             }
@@ -98,9 +98,9 @@
     }
 
     .benefit {
-        color: $secondary-accent-color;
+        color: $c-heliotrope;
         padding: 10px;
-        background-color: #1e2033;
+        background-color: $c-mirage;
         border-radius: 12px;
     }
 
@@ -128,7 +128,7 @@
             gap: 12px;
             padding: 15px 20px;
             font-size: 15px;
-            color: #ebecff;
+            color: $c-titan-white;
 
             &[disabled] {
                 pointer-events: none;
@@ -201,7 +201,7 @@
 
                     .symbol {
                         font-weight: bold;
-                        color: $secondary-accent-color;
+                        color: $c-heliotrope;
                     }
                 }
             }
@@ -238,7 +238,7 @@
 
     .warning-msg {
         padding: 10px;
-        background-color: mix($panel-background-color, $warning-color, 90%);
+        background-color: mix($c-ebony-clay, $warning-color, 90%);
         color: $warning-color;
         border-radius: 12px;
     }
@@ -253,7 +253,7 @@
             justify-content: space-around;
             align-items: center;
             height: 50px;
-            background-color: #1e2033;
+            background-color: $c-mirage;
             border-radius: 12px;
             font-size: 12px;
             margin-bottom: 10px;

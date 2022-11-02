@@ -3,18 +3,18 @@
 $account-height: 60px;
 
 .wrapper {
-    color: #ebecff;
+    color: $c-titan-white;
     .content {
         cursor: pointer;
     }
 
     .title {
-        font-family: 'monospace';
+        font-family: 'Ubuntu Mono';
         font-weight: bold;
     }
 
     .menu {
-        background-color: #1e2033;
+        background-color: $c-mirage;
         padding-top: 15px;
 
         .list {
@@ -82,9 +82,8 @@ $account-height: 60px;
                         }
 
                         .address {
-                            font-family: 'monospace';
-                            font-size: 15px;
-                            font-weight: bold;
+                            font-size: 14px;
+                            font-weight: 400;
                         }
 
                         label {
@@ -96,13 +95,13 @@ $account-height: 60px;
                     }
 
                     &:hover {
-                        background-color: #24263d;
+                        background-color: $c-ebony-clay;
 
                         // ~.buttons .button {
                         //     svg {
                         //         opacity: 1;
                         //     }
-                        //     background-color: #24263d;
+                        //     background-color: $c-ebony-clay;
                         // }
                     }
                 }
@@ -117,17 +116,19 @@ $account-height: 60px;
                         height: 60px;
                         width: 50px;
                         @include flex-center-center;
-                        color: #ebecff;
+                        color: $c-titan-white;
                         font-size: 28px;
                         cursor: pointer;
                         border-radius: 12px;
 
                         svg {
                             opacity: 0.4;
+                            width: 28px;
+                            height: 28px;
                         }
 
                         &:hover {
-                            background-color: #24263d;
+                            background-color: $c-ebony-clay;
 
                             svg {
                                 opacity: 1;

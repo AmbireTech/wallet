@@ -17,7 +17,7 @@ $buttons-height: 160px;
     background: $c-ebony-clay;
     border: 1px solid $c-fiord;
     border-radius: 12px;
-    color: #ebecff;
+    color: $c-titan-white;
     box-sizing: border-box;
 
     &.buttons {
@@ -42,14 +42,14 @@ $buttons-height: 160px;
         .close {
             height: 40px;
             width: 40px;
-            background-color: rgba(#ebecff, 0.05);
+            background-color: rgba($c-titan-white, 0.05);
             border-radius: 12px;
             @include flex-center-center;
             font-size: 20px;
 
             &:hover {
                 cursor: pointer;
-                background-color: rgba(#ebecff, 0.02);
+                background-color: rgba($c-titan-white, 0.02);
             }
         }
 
@@ -87,7 +87,7 @@ $buttons-height: 160px;
 
         button {
             height: 60px;
-            flex: 0 1 50% !important;
+            flex: 0 1 50%;
         }
     }
 }

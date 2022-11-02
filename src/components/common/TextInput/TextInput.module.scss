@@ -24,16 +24,22 @@ $input-height: 60px;
                 left: 0;
                 height: 100%;
                 display: flex;
-                background-color: #171826;
+                background-color: $c-mirage;
                 align-items: center;
                 justify-content: center;
-                width: 48px;
+                width: 60px;
                 font-size: 24px;
-                color: #ebecff;
+                color: $c-titan-white;
+                border-bottom: 2px solid transparent;
+                transition: all 0.1s ease-in-out;
             }
 
             input {
                 padding-left: 48px;
+
+                &:focus ~ .textInputContainerIcon {
+                    border-bottom-color: $c-titan-white;
+                }
             }
         }
         
@@ -44,7 +50,7 @@ $input-height: 60px;
             height: 100%;
             width: 3.5em;
             @include flex-center-center;
-            color: #ebecff;
+            color: $c-titan-white;
             cursor: pointer;
             user-select: none;
             transition: $basic-transition;
@@ -58,7 +64,7 @@ $input-height: 60px;
         input {
             height: $input-height;
             width: 100%;
-            color: #6770b3;
+            color: $c-scampi;
             font-family: 'Poppins', sans-serif;
             font-size: 16px;
             padding: 18px;
@@ -67,16 +73,16 @@ $input-height: 60px;
             border: none;
             text-overflow: ellipsis;
             outline: none;
-            background-color: #1E2033;
+            background-color: $c-mirage;
             transition: all 0.1s ease-in-out;
             border-bottom: 2px solid transparent;
 
             &:focus {
-                border-bottom-color: #ebecff;
+                border-bottom-color: $c-titan-white;
             }
 
             &:focus ~ .button {
-                border-bottom-color: #ebecff;
+                border-bottom-color: $c-titan-white;
             }
         }
     }
@@ -95,7 +101,7 @@ $input-height: 60px;
         input {
             cursor: text;
             padding-right: 2.5em;
-            font-family: 'monospace';
+            font-family: 'Ubuntu Mono';
             font-size: 1.5em;
 
             &:disabled {

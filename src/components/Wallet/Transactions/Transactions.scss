@@ -1,7 +1,7 @@
 @import 'variables.scss';
 
 #transactions {
-    color: #ebecff;
+    color: $c-titan-white;
     .pagination-controls {
         display: flex;
         align-items: center;
@@ -32,14 +32,16 @@
             gap: 1em;
 
             button {
-                background-color: #80ffdb;
+                background-color: $c-turquoise;
+                color: #000;
+                border: 0;
                 padding: 1em;
                 font-weight: bold;
                 text-transform: uppercase;
 
                 &.cancel {
                     background-color: #da5151;
-                    color: #ebecff;
+                    color: $c-titan-white;
                 }
             }
         }
@@ -79,7 +81,7 @@
                     text-overflow: ellipsis;
 
                     a.explorer-url {
-                        color: #ae60ff;
+                        color: $c-heliotrope;
                         text-decoration: underline;
                     }
                 }

@@ -14,7 +14,7 @@
         height: 50px;
         padding-left: 16px;
         padding-right: 22px;
-        background-color: #1e2033;
+        background-color: $c-mirage;
         
         a {
             display: flex;
@@ -22,13 +22,13 @@
             gap: 10px;
             font-size: 18px;
             line-height: 27px;
-            color: #ebecff;
+            color: $c-titan-white;
             white-space: nowrap;
             font-weight: 400;
         }
 
         &:hover {
-            background-color: #24263d;
+            background-color: $c-ebony-clay;
             cursor: pointer;
         }
     }
@@ -43,7 +43,7 @@
                 height: 8px;
                 width: 8px;
                 border-radius: 100%;
-                background-color: $primary-accent-color;
+                background-color: $c-turquoise;
             }
         }
     }

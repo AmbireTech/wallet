@@ -5,7 +5,7 @@
         font-weight: bold;
         background-color: $warning-color;
         padding: 0.9rem 1.2rem;
-        color: $text-dark;
+        color: $c-shark;
         font-size: 1rem;
         display: flex;
         flex-direction: row;
@@ -30,7 +30,7 @@
             margin-bottom: 0.2rem;;
         }
         .link {
-            color: $text-dark;
+            color: $c-shark;
             text-decoration: underline;
         }
         .close-btn {

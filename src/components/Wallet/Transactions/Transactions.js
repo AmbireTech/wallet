@@ -169,7 +169,7 @@ function Transactions ({ relayerURL, selectedAcc, selectedNetwork, showSendTxns,
                 <Button small className='cancel' onClick={
                   () => resolveMany(eligibleRequests.map(x => x.id), { message: 'Ambire user rejected all requests' })
                 }>Reject all</Button>*/}
-                <Button small icon={<MdCheck/>} onClick={() => showSendTxns(null)}>Sign or reject</Button>
+                <Button small clear icon={<MdCheck/>} onClick={() => showSendTxns(null)}>Sign or reject</Button>
               </div>
           </div>
         </div>
@@ -241,6 +241,7 @@ const BundlePreview = React.memo(({ bundle, mined = false, feeAssets }) => {
       key={i} // safe to do this, individual TxnPreviews won't change within a specific bundle
       txn={txn} network={bundle.network} account={bundle.identity} mined={mined} 
       addressLabel={!!bundle.meta && bundle.meta.addressLabel}
+      feeAssets={feeAssets}
       />
     ))}
     <ul className="details">

@@ -158,18 +158,6 @@
         }
       }
     }
-
-    .separator {
-      flex-grow: 1;
-    }
-
-    #help-center {
-      color: $primary-accent-color;
-
-      svg {
-        color: $primary-accent-color;
-      }
-    }
   }
 
   a.selected .item svg {

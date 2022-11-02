@@ -14,7 +14,7 @@
     label {
         padding-left: 20px;
         font-weight: 400;
-        color: #ebecff;
+        color: $c-titan-white;
     }
 
     .button {
@@ -23,10 +23,10 @@
         padding: 0 1.5rem;
         cursor: pointer;
         font-size: 16px;
-        color: #ebecff;
+        color: $c-titan-white;
         transition: all 0.1s ease-in-out;
         user-select: none;
-        background-color: #1e2033;
+        background-color: $c-mirage;
         border-bottom: 2px solid transparent;
 
         &:hover {
@@ -53,7 +53,7 @@
         input[type=text] {
             height: 100%;
             width: 100%;
-            color: #ebecff;
+            color: $c-titan-white;
             font-family: 'Poppins', sans-serif;
             font-size: 16px;
             padding: 18px;
@@ -61,23 +61,21 @@
             border: none;
             outline: none;
             text-overflow: ellipsis;
-            background-color: #1e2033;            
+            background-color: $c-mirage;            
             transition: all 0.1s ease-in-out;
-            -moz-appearance: textfield;
             border-bottom: 2px solid transparent;
             
             &::-webkit-outer-spin-button,
             &::-webkit-inner-spin-button {
-                -webkit-appearance: none;
                 margin: 0;
             }
 
             &:focus  {
-                border-bottom-color: #ebecff;
+                border-bottom-color: $c-titan-white;
             }
 
             &:focus ~ .button {
-                border-bottom-color: #ebecff;
+                border-bottom-color: $c-titan-white;
             }
         }
     }

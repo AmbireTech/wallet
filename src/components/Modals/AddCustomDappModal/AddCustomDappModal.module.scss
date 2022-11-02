@@ -1,34 +1,36 @@
 @import 'variables.scss';
 
-#add-custom-dapp-modal {
-    .title {
-        .custom-dapp-title {
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-            gap: 12px;
-            .info-btn {
+.wrapper {
+    .customDappTitle {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 12px;
+
+        .infoBtn {
+            height: 32px;
+            color: $ambire-purple;
+            opacity: 0.5;
+            &:hover {
+                opacity: 1;
+            } 
+            .icon {
+                font-size: 32px;
                 height: 32px;
-                color: $ambire-purple;
-                opacity: 0.5;
-                &:hover {
-                    opacity: 1;
-                } 
-                .icon {
-                    font-size: 32px;
-                    height: 32px;
-                }
-            }            
-        }
+            }
+        }            
     }
-    .content {
+    
+    :global(.content) {
         display: flex;
         flex-direction: column;
         gap: 14px;
 
-        .dapp-input {
+        .dappInput {
+            flex: 1;
             gap: 8px;
-            .text-input-container {
+            width: 100%;
+            .textInputContainer {
                 input {
                     height: 40px;
                     font-size: 1em;
@@ -37,24 +39,26 @@
             }
         }
 
-        .icon-input {
+        .iconInput {
             display: flex;
             flex-direction: row;
-            gap: 2em;
-            justify-content: stretch;
+            gap: 20px;
+            justify-content: space-between;
             align-items: flex-end;
 
-            .text-input {
+            .textInput {
                 flex-grow: 1;
             }
 
-            .icon-wrapper {
-                border: 1px dashed #333641;
+            .iconWrapper {
+                border: 1px dashed $c-scampi;
+                border-radius: 12px;
                 width: 66px;
                 height: 66px;
                 display: flex;
                 align-items: center;
                 justify-content: center;
+
                 img {
                     width: 46px;
                     height: 46px;
@@ -63,12 +67,12 @@
         }
 
         .networks {
-            .networks-container {
+            .networksContainer {
                 display: flex;
                 flex-direction: row;
                 gap: 4px;
-                .network-tag {
-                    border: 2px solid $input-background-color;
+                .networkTag {
+                    border: 2px solid $c-mirage;
                     display: block;
                     height: 20px;
                     width: 20px;
@@ -82,19 +86,19 @@
 
                     &.selected {
                         filter: none;
-                        border: 2px solid $primary-accent-color;
+                        border: 2px solid $c-turquoise;
                     }
                 }
             }
         }
 
-        .networks, .connection-radios {
+        .networks, .connectionRadios {
             > :first-child {
                 margin-bottom: 8px;
             }
         }
 
-        .input-err {
+        .inputErr {
             margin-top: 4px;
             color: $warning-color;
             font-size: 0.8em;

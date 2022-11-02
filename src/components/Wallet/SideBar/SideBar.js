@@ -21,7 +21,11 @@ import cn from 'classnames'
 
 const helpCenterUrl = 'https://help.ambire.com/hc/en-us/categories/4404980091538-Ambire-Wallet'
 
+const round = num => Math.round((num + Number.EPSILON) * 100) / 100
+
 const SideBar = ({ match, portfolio, hidePrivateValue, relayerURL, selectedNetwork, dappsCatalog }) => {
+  const networkBalance = portfolio.balance.total.full
+  const shortBalance = networkBalance >= 10000 ? `${String(round(networkBalance/1000)).split('.').join(',')}K` : networkBalance.toFixed(2)
   const sidebarRef = useRef()
   const [balanceFontSize, setBalanceFontSize] = useState(0)
   const { isDappMode, sideBarOpen, toggleSideBarOpen, toggleDappMode } = dappsCatalog
@@ -49,7 +53,7 @@ const SideBar = ({ match, portfolio, hidePrivateValue, relayerURL, selectedNetwo
     if(dappModeSidebar) {
       toggleDappMode()
     }
-  }, [dappModeSidebar, toggleDappMode])  
+  }, [dappModeSidebar, toggleDappMode])
 
   return (
     <div className={cn(styles.wrapper, {
@@ -84,10 +88,7 @@ const SideBar = ({ match, portfolio, hidePrivateValue, relayerURL, selectedNetwo
             style={{ fontSize: balanceFontSize }}
           >
             <span className={cn(styles.dollarSign, styles.highlight)}>$</span>
-            {hidePrivateValue(portfolio.balance.total.truncated)}
-            <span>
-              .{hidePrivateValue(portfolio.balance.total.decimals)}
-            </span>
+            {hidePrivateValue(shortBalance)}
           </div>
         )}
         <div>
@@ -157,9 +158,8 @@ const SideBar = ({ match, portfolio, hidePrivateValue, relayerURL, selectedNetwo
             <SecurityIcon />Security
           </div>
         </NavLink>
-        <div className="separator"></div>
         <a href={helpCenterUrl} target="_blank" rel="noreferrer">
-          <div className={cn(styles.item, styles.helpLink)} id="help-center">
+          <div className={cn(styles.item, styles.helpLink)}>
             <HelpIcon />Help Center
           </div>
         </a>

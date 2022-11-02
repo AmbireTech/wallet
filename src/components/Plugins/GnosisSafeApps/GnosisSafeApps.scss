@@ -25,17 +25,17 @@
       margin: 8px 16px;
       flex: 1 0 120px;
       list-style: none;
-      background: $panel-background-color;
+      background: $c-ebony-clay;
       padding: 16px;
       cursor: pointer;
       transition: $basic-transition;
 
       &:hover {
-        background: lighten($panel-background-color, 5%);
+        background: lighten($c-ebony-clay, 5%);
       }
 
       &.selected { 
-        background: lighten($panel-background-color, 50%);
+        background: lighten($c-ebony-clay, 50%);
       }
 
       &.add-plugin {

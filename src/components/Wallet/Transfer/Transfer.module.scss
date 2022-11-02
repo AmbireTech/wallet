@@ -9,13 +9,15 @@
 .wrapper {
     display: flex;
     gap: 30px;
+    overflow-y: hidden;
+    height: 100%;
 
     .amountLabel {
         font-size: 14px;
         width: 100%;
         display: flex;
         justify-content: space-between;
-        color: #ebecff;
+        color: $c-titan-white;
     }
 
     .recipientField {
@@ -31,7 +33,7 @@
             }
 
             input {
-                border-radius: 12px 0 0 12px;
+                // border-radius: 12px 0 0 12px;
                 padding-right: 290px;
             }
         }
@@ -77,6 +79,7 @@
         display: flex;
         flex-direction: column;
         gap: 20px;
+        overflow-y: auto;
 
         .separator {
             flex-grow: 1;
@@ -89,30 +92,27 @@
             display: flex;
             align-items: center;
             gap: 12px;
-            background-color: mix($panel-background-color, $warning-color, 90%);
+            background-color: mix($c-ebony-clay, $warning-color, 90%);
             color: $warning-color;
             padding: 15px;
             font-size: 14px;
+            border-radius: 12px;
         }
 
         .gasTankConvertMsg {
             display: flex;
             align-items: center;
             gap: 12px;
-            background-color: mix($panel-background-color, $primary-accent-color, 90%);
-            color: $primary-accent-color;
+            background-color: mix($c-ebony-clay, $c-turquoise, 90%);
+            color: $c-turquoise;
             padding: 15px;
             font-size: 14px;
+            border-radius: 12px;
         }
     }
 
-    #addresses {
-        .content {
-            .address-list {
-                max-height: 390px;
-                overflow-y: auto;
-            }
-        }
+    :global(.address-list) {
+        overflow-y: auto;
     }
 
     .binanceAddressWarning {
@@ -120,12 +120,6 @@
             vertical-align: middle;
             margin-left: 0.5em;
         }
-    }
-}
-
-@media screen and (max-width: 1400px) {
-    .wrapper {
-        flex-direction: column;
     }
 }
 
@@ -171,6 +165,8 @@
 @media screen and (max-width: $mobile-breakpoint-max-width) {
     .wrapper {
         gap: 1em;
+        overflow-y: auto;
+        flex-direction: column;
 
         .recipientField {
             flex-direction: column;
@@ -178,6 +174,7 @@
 
             .dropdown {
                 position: relative;
+                border-radius: 12px!important;
             }
 
             .recipientInput {

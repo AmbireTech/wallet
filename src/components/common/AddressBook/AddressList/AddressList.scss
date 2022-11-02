@@ -64,7 +64,7 @@
                 }
 
                 .address {
-                    font-family: 'monospace';
+                    font-family: 'Ubuntu Mono';
                     font-size: 15px;
                     font-weight: bold;
                 }
@@ -78,7 +78,7 @@
             @include flex-center-center;
             font-size: 17px;
             font-weight: bold;
-            color: #ebecff;
+            color: $c-titan-white;
 
             &:not([disabled]):hover {
                 cursor: pointer;

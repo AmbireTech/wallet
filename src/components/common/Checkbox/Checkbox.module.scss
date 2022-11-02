@@ -1,3 +1,5 @@
+@import 'variables.scss';
+
 .checkboxContainer {
   position: relative;
   display: flex;
@@ -7,7 +9,7 @@
   cursor: pointer;
   margin: 20px 0px;
   user-select: none;
-  color: #ebecff;
+  color: $c-titan-white;
 
   &.disabled {
     opacity: 0.5;
@@ -35,8 +37,8 @@
     left: 0;
 
     &:checked ~ .checkboxMark {
-      background-color: #27e8a7;
-      border-color: #27e8a7;
+      background-color: $c-turquoise;
+      border-color: $c-turquoise;
 
       &:after {
         display: block;

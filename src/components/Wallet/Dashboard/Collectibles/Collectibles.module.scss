@@ -9,11 +9,11 @@ $collectible-size: 250px;
     gap: 1em;
     
     .greenHighlight {
-        color: $primary-accent-color;
+        color: $c-turquoise;
     }
 
     .purpleHighlight {
-        color: $secondary-accent-color;
+        color: $c-heliotrope;
     }
 
     .paginationControls {
@@ -46,7 +46,7 @@ $collectible-size: 250px;
             transition: all 0.1s ease-in-out;
 
             .artwork {
-                z-index: 48;
+                z-index: 3;
                 height: 250px;
                 width: 100%;
                 position: absolute;
@@ -58,7 +58,7 @@ $collectible-size: 250px;
             }
 
             .info {
-                z-index: 49;
+                z-index: 4;
                 height: $collectible-details-height;
                 position: absolute;
                 left: 0;
@@ -70,7 +70,7 @@ $collectible-size: 250px;
                 justify-content: center;
                 gap: 5px;
                 padding: 0 20px;
-                background-color: #1e2033;
+                background-color: $c-mirage;
                 overflow: hidden;
 
                 .collection {
@@ -80,7 +80,7 @@ $collectible-size: 250px;
                     gap: 10px;
                     font-size: 12px;
                     font-weight: 500;
-                    color: #ebecff;
+                    color: $c-titan-white;
 
                     .collectionIcon {
                         flex: 0 0 auto;
@@ -112,7 +112,7 @@ $collectible-size: 250px;
                         white-space: nowrap;
                         text-overflow: ellipsis;
                         font-size: 15px;
-                        color: #ebecff;
+                        color: $c-titan-white;
                     }
 
                     .value {

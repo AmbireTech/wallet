@@ -11,8 +11,8 @@ $arrow-size: 15px;
         padding: 15px 20px;
         font-size: 15px;
         font-weight: 500;
-        color: #ebecff;
-        background-color: $input-background-color-darker;
+        color: $c-titan-white;
+        background-color: $c-mirage;
         box-shadow: $box-shadow;
         border-radius: 12px;
         white-space: normal;
@@ -26,12 +26,12 @@ $arrow-size: 15px;
             width: 0;
             &.top {
                 top: -$arrow-size + 1; // +1, because of the border-radius of its parent. Otherwise there's a little space between the arrow and the label.
-                border-bottom: $arrow-size solid $input-background-color-darker;
+                border-bottom: $arrow-size solid $c-mirage;
             }
 
             &.bottom {
                 bottom: -$arrow-size;
-                border-top: $arrow-size solid $input-background-color-darker;
+                border-top: $arrow-size solid $c-mirage;
             }
 
             &.right {

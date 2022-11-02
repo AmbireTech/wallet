@@ -8,7 +8,7 @@ $heading-height: 45px;
 
 .addressBook {
     height: 60px !important;
-    background-color: #171826!important;
+    background-color: $c-mirage-dark!important;
     border: none!important;
     border-radius: 0 12px 12px 0!important;
     padding: 0 10px;
@@ -41,16 +41,16 @@ $heading-height: 45px;
         @include flex-center-center;
         font-size: 17px;
         font-weight: bold;
-        color: #ebecff;
+        color: $c-titan-white;
 
         &:not([disabled]):hover {
             cursor: pointer;
             opacity: 1;
-            background-color: rgba(#1E2033, 0.2) !important;
+            background-color: rgba($c-mirage, 0.2) !important;
         }
 
         &:active {
-            background-color: #1E2033!important;
+            background-color: $c-mirage!important;
         }
     }
 
@@ -60,7 +60,7 @@ $heading-height: 45px;
         align-items: center;
         justify-content: space-between;
         padding-left: 20px;
-        background-color: #1E2033;
+        background-color: $c-mirage;
 
         .title {
             display: flex;
@@ -80,7 +80,6 @@ $heading-height: 45px;
         max-height: 250px;
         display: flex;
         flex-direction: column;
-        min-width: 300px;
         padding: 0;
         overflow-y: auto;
 
@@ -100,18 +99,23 @@ $heading-height: 45px;
             gap: 10px;
 
             input[type=text] {
+                display: block;
                 height: 40px;
                 width: 300px;
+                margin: 0 auto;
                 font-size: 1em !important;
-                background-color: #1E2033;
+                background-color: $c-mirage;
                 border-radius: 8px;
-                color: #ebecff;
+                color: $c-titan-white;
             }
         }
 
         button {
             width: 100%;
-            color: #ebecff;
+            max-width: 300px;
+            margin: 0 auto;
+            margin-top: 15px;
+            color: $c-titan-white;
         }
     }
 }

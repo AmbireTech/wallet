@@ -1,6 +1,6 @@
 @import 'variables.scss';
 
-#gas-tank-balance-by-tokens-modal {
+.wrapper {
     .content {
         display: flex;
         flex-direction: column;
@@ -13,7 +13,14 @@
             height: 60px;
             
             &:nth-child(odd) {
-                background-color: rgba(255, 255, 255, 0.05);
+                background-color: rgba(255, 255, 255, 0.02);
+            }
+
+            &:first-child {
+                border-radius: 12px 12px 0 0;
+            }
+            &:last-child {
+                border-radius: 0 0 12px 12px;
             }
             
             .item {
@@ -34,7 +41,7 @@
         }
     }
 
-    .buttons button {
+    :global(.buttons button) {
         flex: 0 1 100% !important;
         height: 100%;
     }

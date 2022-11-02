@@ -16,7 +16,7 @@
     h3 {
         font-size: 25px;
         text-align: left;
-        color: #ebecff;
+        color: $c-titan-white;
         font-weight: 400;
         margin-bottom: 43px;
     }
@@ -64,9 +64,9 @@
         height: 60px;
         width: 100%;
         border: none;
-        background: transparent linear-gradient(90deg, #27E8A7 0%, #6000FF 100%) 0% 0% no-repeat padding-box;
+        background: transparent linear-gradient(90deg, $c-turquoise 0%, #6000FF 100%) 0% 0% no-repeat padding-box;
         border-radius: 12px;
-        color: #ebecff;
+        color: $c-titan-white;
         font-size: 20px;
         font-weight: 500;
         padding: 0;
@@ -74,14 +74,14 @@
     }
 
     input {
-        color: #6770b3;
+        color: $c-scampi;
         margin: 2em 0px;
-        border-bottom: 2px solid #ebecff;
+        border-bottom: 2px solid $c-titan-white;
         width: 100%;
         font-size: 16px;
 
         &:not([type=submit]):focus {
-            border-bottom: 3px solid #dae6fd;
+            border-bottom-color: #dae6fd;
         }
     }
 
@@ -115,13 +115,13 @@
         font-size: 1.5em;
         color: #ccc;
         list-style: none;
-        font-family: 'monospace';
+        font-family: 'Ubuntu Mono';
         width: 500px;
         cursor: pointer;
 
         li:hover {
             background-color: rgba(0, 0, 0, 0.3);
-            color: #fff;
+            color: $c-white;
         }
     }
 
@@ -148,11 +148,11 @@
         }
 
         .loginSeparator {
-            height: 500px;
-            width: 2px;
-            background-color: #6770b3;
+            width: 1px;
+            background-color: $c-scampi;
             margin: 0 96px;
-            margin-top: 20px;
+            margin-top: 35px;
+            margin-bottom: 30px;
         }
 
         .loginOthers {
@@ -162,11 +162,10 @@
                 position: relative;
                 top: 0;
                 width: 100%;
-                border: 1px solid var(--unnamed-color-6770b3);
-                background: #1E2033;
-                border: 1px solid #6770B3;
+                background: $c-mirage;
+                border: 1px solid $c-scampi;
                 border-radius: 12px;
-                color: #6770b3;
+                color: $c-scampi;
                 height: 60px;
                 text-align: center;
                 display: flex;
@@ -177,32 +176,32 @@
                 transition: .3s ease-out all;
 
                 svg {
-                    color: #6770b3;
+                    color: $c-scampi;
                     transition: .3s ease-out all;
                 }
 
                 &:hover {
                     top: -4px;
-                    color: #fff;
+                    color: $c-white;
                     svg {
-                        color: #fff;
+                        color: $c-white;
                     }
 
                     svg.email {
-                        color: #27E8A7;
+                        color: $c-turquoise;
                     }
                     svg.metamask {
                         color: #EF801B;
 
                         :global(#decoration) {
-                            color: #fff;
+                            color: $c-white;
                         }
                     }
 
                     svg.gridplus {
-                        color: #fff;
+                        color: $c-white;
                         :global(#logo) {
-                            color: #fff;
+                            color: $c-white;
                         }
                         :global(#decoration) {
                             color: #47AEE9;
