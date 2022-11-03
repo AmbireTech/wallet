@@ -1,7 +1,6 @@
 import AddressBook from './AddressBook/AddressBook';
 import AddressWarning from './AddressWarning/AddressWarning';
 import Button from './Button/Button';
-import Chart from './Chart/Chart';
 import Checkbox from './Checkbox/Checkbox';
 import DropDown from './DropDown/DropDown';
 import Loading from './Loading/Loading';
@@ -33,7 +32,6 @@ export {
     AddressBook,
     AddressWarning,
     Button,
-    Chart,
     Checkbox,
     DropDown,
     Loading,
