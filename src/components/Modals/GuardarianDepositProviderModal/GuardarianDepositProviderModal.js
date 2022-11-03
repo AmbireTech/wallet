@@ -11,11 +11,10 @@ import { ReactComponent as GuardarianIcon } from 'resources/payment-providers/gu
 
 import styles from './GuardarianDepositProviderModal.module.scss'
 
-const GuardianDepositProviderModal = ({ relayerURL, walletAddress, selectedNetwork, portfolio, mode }) => {
+const GuardarianDepositProviderModal = ({ relayerURL, walletAddress, selectedNetwork, portfolio, initMode = 'buy', selectedAsset = null }) => {
     const { addToast } = useToasts()
-    const guardarian = useGuardarian({relayerURL, selectedNetwork, initMode: mode, tokens: portfolio.tokens, walletAddress, addToast })
+    const guardarian = useGuardarian({relayerURL, selectedNetwork, initMode, tokens: portfolio.tokens, walletAddress, addToast, selectedAsset })
     const [sendTransactionLoading, setSendTransactionLoading] = useState(false)
-
     const getCurrentTokenFromBalance = useCallback(() => {
         if (portfolio.tokens && guardarian?.cryptoCurrencies?.data && guardarian.mode === 'sell') {
             const token = guardarian?.cryptoCurrencies?.data?.find(t => t.ticker === guardarian.from)
@@ -184,4 +183,4 @@ const GuardianDepositProviderModal = ({ relayerURL, walletAddress, selectedNetwo
     )
 }                    
 
-export default GuardianDepositProviderModal
+export default GuardarianDepositProviderModal
