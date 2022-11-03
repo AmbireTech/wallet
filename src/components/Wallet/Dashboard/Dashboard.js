@@ -1,21 +1,21 @@
-
+import cn from 'classnames'
 import { useLayoutEffect, useState, useMemo } from 'react'
 import { useParams } from 'react-router-dom'
 
-import { Chart, Loading, Panel } from 'components/common'
+import { Loading, Panel } from 'components/common'
 import Balances from './Balances/Balances'
 import Tokens from './Tokens/Tokens'
 import Collectibles from './Collectibles/Collectibles'
 
 import Promotions from './Promotions/Promotions'
+import Tabs from 'components/common/Tabs/Tabs'
+import Chart from './Chart/Chart'
 import AssetsMigrationBanner from 'components/Wallet/AssetsMigration/AssetsMigrationBanner'
 import PendingRecoveryNotice from 'components/Wallet/Security/PendingRecoveryNotice/PendingRecoveryNotice'
 import usePasswordRecoveryCheck from 'hooks/usePasswordRecoveryCheck'
 import OutdatedBalancesMsg from './OutdatedBalancesMsg/OutdatedBalancesMsg'
-import cn from 'classnames'
 
 import styles from './Dashboard.module.scss'
-import Tabs from 'components/common/Tabs/Tabs'
 
 const Footer = ({selectedAccount, selectedNetwork}) => <div className={styles.footer}>
     <span className={styles.missingTokenNotice}>
