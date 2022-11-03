@@ -240,6 +240,13 @@ function AppInner() {
       })
   }, [dappUrl, setPluginUrl])
 
+  const onLoginSuccess = wallet_address => {
+    const event = new CustomEvent('login-success', { detail: {
+      address: wallet_address
+    } })
+    window.dispatchEvent(event);
+  }
+
   return (<>
     <Prompt
       message={(location, action) => {
@@ -285,6 +292,10 @@ function AppInner() {
 
         <Route path="/email-login">
           <EmailLogin relayerURL={relayerURL} onAddAccount={onAddAccount}></EmailLogin>
+        </Route>
+
+        <Route path="/email-login-iframe">
+          <EmailLogin relayerURL={relayerURL} onAddAccount={onAddAccount} onLoginSuccess={onLoginSuccess}></EmailLogin>
         </Route>
 
         {selectedAcc ?

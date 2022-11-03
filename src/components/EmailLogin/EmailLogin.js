@@ -14,7 +14,7 @@ import AnimationData from './assets/confirm-email.json'
 
 // NOTE: the same polling that we do here with the setEffect should be used for txns
 // that require email confirmation
-export default function EmailLogin({ relayerURL, onAddAccount }) {
+export default function EmailLogin({ relayerURL, onAddAccount, onLoginSuccess = null }) {
     const [requiresEmailConfFor, setRequiresConfFor] = useState(null)
     const [err, setErr] = useState('')
     const [inProgress, setInProgress] = useState(false)
@@ -71,6 +71,10 @@ export default function EmailLogin({ relayerURL, onAddAccount }) {
 
         // Remove the key value so that it can't be used anymore on this browser
         removeLoginSessionKey()
+
+        if (onLoginSuccess) {
+          onLoginSuccess(_id)
+        }
       } else {
         setErr(body.message ? `Relayer error: ${body.message}` : `Unknown no-message error: ${resp.status}`)
       }
