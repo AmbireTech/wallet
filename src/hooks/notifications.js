@@ -148,6 +148,11 @@ export default function useNotifications (requests, onShow, portfolio, selectedA
     useEffect(() => {
         isLastTotalBalanceInit = false
         lastTokensBalanceRaw = []
+        // Reset data on component unmount
+        return () => {
+            isLastTotalBalanceInit = false
+            lastTokensBalanceRaw = []
+        }
     }, [selectedAcc, network])
 
     currentNotifs = currentNotifs.filter(({ id, notification }) => {

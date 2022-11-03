@@ -279,7 +279,6 @@ function AppInner() {
         account={accounts.find(x => x.id === selectedAcc)}
         everythingToSign={everythingToSign}
         totalRequests={everythingToSign.length}
-        connections={connections}
         relayerURL={relayerURL}
         network={network}
         resolve={outcome => resolveMany([everythingToSign[0].id], outcome)}

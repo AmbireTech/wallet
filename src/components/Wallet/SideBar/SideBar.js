@@ -16,6 +16,7 @@ import { ReactComponent as TransactionsIcon } from './images/transactions.svg'
 import { ReactComponent as SecurityIcon } from './images/security.svg'
 import { ReactComponent as DappsIcon } from './images/dapps.svg'
 import { ReactComponent as HelpIcon } from './images/help.svg'
+import { ReactComponent as SignedMessagesIcon } from './images/signed-messages.svg'
 import cn from 'classnames'
 
 const helpCenterUrl = 'https://help.ambire.com/hc/en-us/categories/4404980091538-Ambire-Wallet'
@@ -134,6 +135,11 @@ const SideBar = ({ match, portfolio, hidePrivateValue, relayerURL, selectedNetwo
         <NavLink to={match.url + "/transactions"} activeClassName={styles.selected}>
           <div className={styles.item}>
                 <TransactionsIcon />Transactions
+          </div>
+        </NavLink>
+        <NavLink to={match.url + "/messages"} activeClassName={styles.selected}>
+          <div className={styles.item}>
+            <SignedMessagesIcon />Signed Messages
           </div>
         </NavLink>
         {/* Temporarily commented OpenSea tab. */}

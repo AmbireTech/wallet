@@ -74,9 +74,9 @@ const OtpTwoFADisableModal = ({ relayerURL, selectedAcc, setCacheBreak }) => {
         <Modal id='disable-otp-modal' 
           title="Disable Two Factor Authentication" 
           topLeft={(<CountdownTimer seconds={TIMER_IN_SECONDS} setTimeIsUp={handleTimeIsUp}/>)}
-          buttons={!isLoading ? (<Button type="submit" disabled={isTimeIsUp} className='button'>Disable 2FA</Button>) : (<Button disabled className='button'><Loading /></Button>)}
+          buttons={!isLoading ? (<Button type="submit" form="disable2faForm" disabled={isTimeIsUp} className='button'>Disable 2FA</Button>) : (<Button disabled className='button'><Loading /></Button>)}
         >
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit} id="disable2faForm">
             {isTimeIsUp && <div className='timer-reset-msg'>Please reopen the modal to reset the session.</div>}
             <div>
               <h4>Authenticator app code</h4>

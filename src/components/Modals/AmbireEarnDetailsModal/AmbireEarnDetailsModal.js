@@ -38,29 +38,29 @@ const AmbireEarnDetailsModal = ({ title = 'Details', apy, accountId, msToDaysHou
                     </div>
                     <div className="wrapper odd-rows-bg">
                         <div>Current Available Balance</div>
-                        <div>
-                            <ToolTip label="* Warning: The pool share value may include your pending to unlock tokens.">
-                                {parseFloat(currentBalanceWalletAtCurrentShareValue).toFixed(4)} {tokenLabel} (Pool share*: {(poolShare * 100).toFixed(2)}%)
-                            </ToolTip>
-                        </div>
+                        <ToolTip label="* Warning: The pool share value may include your pending to unlock tokens.">
+                            <div>{parseFloat(currentBalanceWalletAtCurrentShareValue).toFixed(4)} {tokenLabel} (Pool share*: {(poolShare * 100).toFixed(2)}%)</div>
+                        </ToolTip>
                     </div>
                     <div className="wrapper">
                         <div>All time rewards</div><div>{parseFloat(allTimeRewards).toFixed(4)} {tokenLabel}</div>
                     </div>
                     <div className="wrapper odd-rows-bg">
+                        <div>Total deposit</div>
                         <ToolTip label={`Deposits: ${parseFloat(totalDeposit).toFixed(4)} ${tokenLabel} 
                                         \nTransfers in: ${parseFloat(totalSharesInTransfersWalletValue).toFixed(4)} ${tokenLabel}`}>
-                            <div>Total deposit</div><div>{parseFloat(totalInTokenValue).toFixed(4)} {tokenLabel}</div>
+                            <div>{parseFloat(totalInTokenValue).toFixed(4)} {tokenLabel}</div>
                         </ToolTip>
                     </div>
                     <div className="wrapper">
-                    <ToolTip label={`Withdrawals: ${parseFloat(totalWithdraws).toFixed(4)} ${tokenLabel}
+                        <div>Total withdraws</div>
+                        <ToolTip label={`Withdrawals: ${parseFloat(totalWithdraws).toFixed(4)} ${tokenLabel}
                                     \nTransfers out: ${parseFloat(totalSharesOutTransfersWalletValue).toFixed(4)} ${tokenLabel} 
                                     \nRage leaves: 
                                     \nReceived ${parseFloat(rageLeavesReceivedWalletTotal).toFixed(4)} ${tokenLabel} 
                                     \nWithdrawn ${parseFloat(rageLeavesWithdrawnWalletTotal).toFixed(4)} ${tokenLabel}`}>
-                        <div>Total withdraws</div><div>{parseFloat(totalOutTokenValue).toFixed(4)} {tokenLabel}</div>
-                    </ToolTip>
+                            <div>{parseFloat(totalOutTokenValue).toFixed(4)} {tokenLabel}</div>
+                        </ToolTip>
                     </div>
                     <div className="wrapper odd-rows-bg">
                         <div>Total pending to unlock</div>
