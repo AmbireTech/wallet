@@ -4,6 +4,7 @@
     display: flex;
     flex-direction: column;
     height: 100%;
+    overflow: hidden;
 
     .greenHighlight {
         color: $c-turquoise;
@@ -16,8 +17,6 @@
     .otherBalances {
         display: flex;
         flex-direction: column;
-        max-height: 215px;
-        height: 100%;
         overflow-y: auto;
         mask-image: linear-gradient(to bottom, transparent 0, black var(--top-mask-size, 0), black calc(100% - var(--bottom-mask-size, 0)), transparent 100%);
 

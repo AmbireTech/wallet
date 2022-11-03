@@ -30,6 +30,7 @@
         display: flex;
         justify-content: space-between;
         gap: 17px;
+        max-height: 300px;
     }
 
     .footer {
@@ -80,6 +81,7 @@
 
         .overview {
             gap: 15px;
+            max-height: 700px;
         }
 
         .chart {
