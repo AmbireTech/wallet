@@ -271,7 +271,7 @@ export default function SignMessage({ everythingToSign, resolve, account, relaye
             {hasPrivileges === false && (
               <div>
                 <h3 className='error'>
-                  You do not have the privileges to sign this message.
+                  The currently used signer is not authorized to control this account and therefore you cannot sign messages.
                 </h3>
               </div>
             )}
