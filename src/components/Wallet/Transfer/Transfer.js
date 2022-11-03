@@ -7,7 +7,7 @@ import { useEffect, useMemo, useState, useRef } from 'react'
 import { ethers } from 'ethers'
 import { Interface } from 'ethers/lib/utils'
 import { useToasts } from 'hooks/toasts'
-import { TextInput, NumberInput, Button, Select, Loading, AddressBook, AddressWarning, NoFundsPlaceholder, Checkbox, ToolTip, Panel } from 'components/common'
+import { TextInput, NumberInput, Button, Select, Loading, AddressBook, AddressWarning, NoFundsPlaceholder, Checkbox, ToolTip, Panel, Segments } from 'components/common'
 import { validateSendTransferAddress, validateSendTransferAmount } from 'lib/validations/formValidations'
 import { resolveUDomain } from 'lib/unstoppableDomains'
 import { isValidAddress } from 'ambire-common/src/services/address'
@@ -19,12 +19,15 @@ import { formatFloatTokenAmount } from 'lib/formatters'
 import { useLocation } from 'react-router-dom'
 import accountPresets from 'ambire-common/src/constants/accountPresets'
 import { resolveENSDomain, getBip44Items } from 'lib/ensDomains'
+// eslint-disable-next-line import/no-relative-parent-imports
+import Providers from '../Deposit/Providers/Providers'
 import useGasTankData from 'ambire-common/src/hooks/useGasTankData'
 import { useRelayerData } from 'hooks'
 import cn from 'classnames'
 
 const ERC20 = new Interface(require('adex-protocol-eth/abi/ERC20'))
 const unsupportedSWPlatforms = ['Binance', 'Huobi', 'KuCoin', 'Gate.io', 'FTX']
+const segments = [{ value: 'Send' }, { value: 'Sell' }]
 
 const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest, addressBook, relayerURL }) => {
     const { addresses, addAddress, removeAddress, isKnownAddress } = addressBook
@@ -242,7 +245,7 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
     }, [address, amount, selectedAcc, selectedAsset, addressConfirmed, showSWAddressWarning, sWAddressConfirmed, isKnownAddress, addToast, selectedNetwork, addAddress, uDAddress, disabled, ensAddress])
 
     const amountLabel = <div className={styles.amountLabel}>Available Amount: <span>{maxAmountFormatted} {selectedAsset?.symbol}</span></div>
-
+    const [segment, setSegment] = useState(segments[0].value)
     const sortedAssetsItems = [
         ...assetsItems.filter(i => i.label.toLowerCase() === 'wallet'),
         ...assetsItems.filter(i => i.label.toLowerCase() !== 'wallet').sort((a, b) => a.label.toLowerCase() > b.label.toLowerCase() ? 1 : -1),
@@ -251,7 +254,8 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
     return (
         <div className={styles.wrapper} style={{ justifyContent: gasTankDetails ? 'center' : '' }}>
            <Panel title="Send" className={styles.panel}>
-               {
+           <Segments small defaultValue={segment} segments={segments} onChange={(value) => setSegment(value)} />
+               { segment === segments[0].value ? (
                     portfolio.isCurrNetworkBalanceLoading ?
                         <Loading />
                         :
@@ -326,6 +330,8 @@ const Transfer = ({ history, portfolio, selectedAcc, selectedNetwork, addRequest
                             </div>
                             :
                             <NoFundsPlaceholder/>
+                ) :
+                <Providers walletAddress={selectedAcc} networkDetails={selectedNetwork} relayerURL={relayerURL} portfolio={portfolio} sellMode={true} selectedAsset={selectedAsset ? selectedAsset : null}/>
                }
            </Panel>
            {!gasTankDetails && <Addresses
