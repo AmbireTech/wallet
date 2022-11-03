@@ -5,8 +5,8 @@ import { GiToken } from 'react-icons/gi'
 import { getTokenIcon } from 'lib/icons'
 
 import { ReactComponent as SendIcon } from 'resources/icons/send.svg'
-import { ReactComponent as EarnIcon } from 'resources/icons/earn.svg'
-import { ReactComponent as SwapIcon } from 'resources/icons/swap-2.svg'
+// import { ReactComponent as EarnIcon } from 'resources/icons/earn.svg'
+// import { ReactComponent as SwapIcon } from 'resources/icons/swap-2.svg'
 
 import styles from './Token.module.scss'
 
@@ -71,12 +71,12 @@ const Token = ({
               <SendIcon />
             </div>
           </NavLink>
-          <div className={styles.action}>
+          {/* <div className={styles.action}>
             <EarnIcon />
           </div>
           <div className={styles.action}>
             <SwapIcon />
-          </div>
+          </div> */}
         </div>
       </div>
       {wrapperEndChildren}
