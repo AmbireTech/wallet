@@ -2,8 +2,7 @@
 
 .wrapper {
   display: flex;
-  justify-content: flex-start;
-  align-items: center;
+  flex-direction: column;
   padding: 20px 30px;
   background-color: $c-mirage;
   border-radius: 12px;
@@ -15,6 +14,12 @@
   }
 
   .body {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+  }
+
+  .infoAndActions {
     display: flex;
     align-items: flex-end;
     flex: 3.7;
@@ -109,20 +114,29 @@
 // Mobile
 @media screen and (max-width: 768px) {
   .wrapper {
-    flex-direction: column;
-    gap: 30px;
     padding: 20px;
 
     .body {
+      flex-direction: column;
+      gap: 30px;
+    }
+
+    .infoAndActions {
       justify-content: space-between;
       width: 100%;
 
       .baseInfo {
+        display: flex;
+        flex: 1;
+        max-width: 60%;
         gap: 10px;
+
         .balanceAndSymbol {
+          width: calc(100% - 50px);
           .symbol {
             font-weight: 500;
             font-size: 16px;
+            word-wrap: break-word;
           }
 
           .balance {
@@ -132,6 +146,7 @@
       }
 
       .priceAndValue {
+        flex: 1;
         flex-direction: column;
         align-items: flex-end;
         

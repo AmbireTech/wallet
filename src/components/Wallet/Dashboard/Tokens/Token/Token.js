@@ -18,7 +18,9 @@ const Token = ({
   address, 
   network, 
   value,
-  wrapperChildren,
+  // Children
+  bodyChildren,
+  wrapperEndChildren,
   // Actions
   sendUrl,
   ...props
@@ -31,51 +33,54 @@ const Token = ({
       className={styles.wrapper}
       {...props}
     >
-      {wrapperChildren}
       <div className={styles.body}>
-        <div className={styles.baseInfo}>
-          <div className={styles.iconWrapper}>
-            { 
-              failedImg.includes(logo) ? <GiToken size={20} /> : <img 
-                src={logo} 
-                draggable="false" 
-                alt="Token Icon" 
-                onError={() => setFailedImg(failed => [...failed, logo])}
-                className={styles.icon}
-              />
-            }
+        {bodyChildren}
+        <div className={styles.infoAndActions}>
+          <div className={styles.baseInfo}>
+            <div className={styles.iconWrapper}>
+              { 
+                failedImg.includes(logo) ? <GiToken size={20} /> : <img 
+                  src={logo} 
+                  draggable="false" 
+                  alt="Token Icon" 
+                  onError={() => setFailedImg(failed => [...failed, logo])}
+                  className={styles.icon}
+                />
+              }
+            </div>
+            <div className={styles.balanceAndSymbol}>
+              <h3 className={styles.symbol}>{ symbol }</h3>
+              <p className={styles.balance}>
+                { balance }
+              </p>
+            </div>
           </div>
-          <div className={styles.balanceAndSymbol}>
-            <h3 className={styles.symbol}>{ symbol }</h3>
-            <p className={styles.balance}>
-              { balance }
-            </p>
+          <div className={styles.priceAndValue}>
+            <h3 className={styles.price}>
+              { price }
+            </h3>
+            <h3 className={styles.value}>
+              <span className={styles.symbol}>$</span>
+              { value }
+            </h3>
           </div>
         </div>
-        <div className={styles.priceAndValue}>
-          <h3 className={styles.price}>
-            { price }
-          </h3>
-          <h3 className={styles.value}>
-            <span className={styles.symbol}>$</span>
-            { value }
-          </h3>
-        </div>
-      </div>
-      <div className={styles.actions}>
-        <NavLink to={sendUrl || '/wallet'}>
+        <div className={styles.actions}>
+          <NavLink to={sendUrl || '/wallet'}>
+            <div className={styles.action}>
+              <SendIcon />
+            </div>
+          </NavLink>
           <div className={styles.action}>
-            <SendIcon />
+            <EarnIcon />
           </div>
-        </NavLink>
-        <div className={styles.action}>
-          <EarnIcon />
-        </div>
-        <div className={styles.action}>
-          <SwapIcon />
+          <div className={styles.action}>
+            <SwapIcon />
+          </div>
         </div>
       </div>
-  </div>
+      {wrapperEndChildren}
+    </div>
   )
 }
 
