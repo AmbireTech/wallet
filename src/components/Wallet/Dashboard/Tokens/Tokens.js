@@ -130,6 +130,8 @@ const Tokens = ({ portfolio, network, account, hidePrivateValue, userSorting, se
                                     drop
                                 } = dragAndDrop
 
+                                const currentBalance = latest ? latest.balance : balance
+
                                 return (
                                     <Token
                                         key={address}
@@ -149,9 +151,9 @@ const Tokens = ({ portfolio, network, account, hidePrivateValue, userSorting, se
                                         // Token data
                                         img={tokenImageUrl}
                                         symbol={symbol}
-                                        balance={hidePrivateValue(formatFloatTokenAmount(latest ? latest.balance : balance, true, decimals))}
+                                        balance={hidePrivateValue(formatFloatTokenAmount(currentBalance.toFixed((currentBalance < 1) ? 8 : 4), true, decimals))}
                                         value={hidePrivateValue(formatFloatTokenAmount(latest ? latest.balanceUSD : balanceUSD, true, decimals))}
-                                        price={`$${price ? hidePrivateValue((price).toFixed((price < 1) ? 5 : 2)) : '-'}`}
+                                        price={`$${price ? hidePrivateValue(price.toFixed((price < 1) ? 5 : 2)) : '-'}`}
                                         // Actions
                                         sendUrl={`/wallet/transfer/${address}`}
                                         // Drag props
