@@ -181,6 +181,9 @@ const OtpTwoFAModal = ({ relayerURL, selectedAcc, setCacheBreak }) => {
                             required
                         />
                     </div>
+                    {/* <div className="buttons">
+                        {!isLoading ? (<Button type="submit" disabled={isTimeIsUp} className='button'>Enable 2FA</Button>) : (<Button disabled className='button'><Loading /></Button>)}
+                    </div> */}
                 </form>
             </div>
         </Modal>
