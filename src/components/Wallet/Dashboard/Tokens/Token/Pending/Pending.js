@@ -17,13 +17,13 @@ const Pending = ({ hidePrivateValue, balance, pending, unconfirmed, extraMargin 
           Unsigned
         </p> : null}
       </div>
-      {(unconfirmed || pending) ? <h3 className={styles.estimated}>
+      <h3 className={styles.estimated}>
         <span>
           { hidePrivateValue(balance) }
         </span>
         {' '}
         Estimated balance
-      </h3> : null}
+      </h3>
     </div>
   ) : null
 }
