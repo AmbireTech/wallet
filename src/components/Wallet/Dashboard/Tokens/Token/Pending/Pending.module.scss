@@ -20,8 +20,8 @@
 
     .oval {
       display: block;
-      border: 1px solid #ffbc00;
-      color: #ffbc00;
+      border: 1px solid $warning-color;
+      color: $warning-color;
       border-radius: 15px;
       font-size: 12px;
       font-weight: 300;
@@ -33,7 +33,7 @@
   .estimated {
     margin: 0;
     font-size: 16px;
-    color: #ffbc00;
+    color: $warning-color;
 
     span {
       font-weight: 500;
