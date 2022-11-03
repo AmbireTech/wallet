@@ -13,9 +13,11 @@ import { Button, Loading, TextInput, ToolTip, DAppIncompatibilityWarningMsg, Pan
 import { networkIconsById } from 'consts/networks'
 import cn from "classnames"
 
+import useLocalStorage from 'hooks/useLocalStorage'
+
 const CONF_CODE_LENGTH = 6
 
-export default function SignMessage({ everythingToSign, resolve, account, connections, relayerURL, totalRequests }) {
+export default function SignMessage({ everythingToSign, resolve, account, relayerURL, totalRequests }) {
   const defaultState = () => ({ codeRequired: false, passphrase: "" })
   const { addToast } = useToasts()
   const [signingState, setSigningState] = useState(defaultState())
@@ -61,7 +63,8 @@ export default function SignMessage({ everythingToSign, resolve, account, connec
     requestedNetwork,
     requestedChainId,
     isTypedData,
-    confirmationType
+    confirmationType,
+    dApp
   } = useSignMessage({
     fetch,
     account,
@@ -70,12 +73,11 @@ export default function SignMessage({ everythingToSign, resolve, account, connec
     addToast,
     resolve,
     onConfirmationCodeRequired,
-    getHardwareWallet
+    getHardwareWallet,
+    useStorage: useLocalStorage,
   })
 
-  const connection = connections.find(({ uri }) => uri === toSign.wcUri)
-  const dApp = connection ? connection?.session?.peerMeta || null : null
-  const isDAppSupported = dApp && supportedDApps.includes(dApp.url)
+  const isDAppSupported = dApp && (supportedDApps.includes(dApp.url) || supportedDApps.includes(dApp.url+'/'))
 
   useEffect(() => {
     if (confirmationType) inputSecretRef.current.focus()
@@ -176,7 +178,7 @@ export default function SignMessage({ everythingToSign, resolve, account, connec
               >
                 <div
                   className={styles.icon}
-                  style={{ backgroundImage: `url(${dApp.icons[0]})` }}
+                  style={{ backgroundImage: `url(${dApp.icons ? dApp.icons[0] : 'none'})` }}
                 >
                   <MdBrokenImage />
                 </div>

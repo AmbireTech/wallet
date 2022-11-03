@@ -23,6 +23,12 @@
         flex-direction: column;
         flex: 1;
         gap: 25px;
+        // Without setting this prop, a child auto-scrollable component (without certain height) is not growing correctly into the available space,
+        // instead it gets 100% height, its scrollbars are not even shown and it overflows its parent height.
+        // Please check how Transfer -> Address book list is working when toggling on/off this prop.
+        // min-height set a proper height for the child components and works perfectly.
+        // @credits: https://stackoverflow.com/a/68183297/4312466
+        min-height: 0;
     }
 }
 

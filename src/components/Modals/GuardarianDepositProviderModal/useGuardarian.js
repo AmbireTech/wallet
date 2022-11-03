@@ -39,7 +39,7 @@ const DEFAULT_CRYPTO = {
 
 const NATIVE_ADDRESS = '0x'+'0'.repeat(40)
 
-const useGuardarian = function({ relayerURL, selectedNetwork, initMode, tokens, walletAddress }) {
+const useGuardarian = function({ relayerURL, selectedNetwork, initMode, tokens, walletAddress, selectedAsset }) {
     const FIAT_CURRENCIES_URL = `${relayerURL}/guardarian/currencies/fiat`
     const CRYPTO_CURRENCIES_URL = `${relayerURL}/guardarian/currencies/crypto`
     const offRampFiats = OFF_RAMP_FIAT
@@ -106,10 +106,13 @@ const useGuardarian = function({ relayerURL, selectedNetwork, initMode, tokens, 
             setTo(DEFAULT_CRYPTO[network])
         } else if (mode === 'sell') {
             setAmount('')
-            setFrom(cryptoList.data && cryptoList.data[0] ? cryptoList.data[0].value : null)
+            if (cryptoList.data && selectedAsset) {
+                const isSelectedAssetExistInCryptoList = cryptoList.data && cryptoList.data.length && cryptoList.data.find(i => i.value === selectedAsset.symbol)
+                if (isSelectedAssetExistInCryptoList) setFrom(isSelectedAssetExistInCryptoList.value)
+            } else setFrom(cryptoList.data && cryptoList.data[0] ? cryptoList.data[0].value : null)
             setTo(fiatList.data && fiatList.data[0] ? fiatList.data[0].value : null)
         }
-    }, [mode, fiatList, cryptoList, network])
+    }, [mode, fiatList, cryptoList, network, selectedAsset])
 
     //fiat
     useEffect(() => {
