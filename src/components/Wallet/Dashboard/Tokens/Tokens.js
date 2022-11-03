@@ -13,6 +13,7 @@ import AddOrHideTokenModal from 'components/Modals/AddOrHideTokenModal/AddOrHide
 
 import styles from './Tokens.module.scss'
 import { formatFloatTokenAmount } from 'lib/formatters'
+import Pending from './Token/Pending/Pending'
 
 const Tokens = ({ portfolio, network, account, hidePrivateValue, userSorting, setUserSorting, footer }) => {
     const history = useHistory()
@@ -134,16 +135,27 @@ const Tokens = ({ portfolio, network, account, hidePrivateValue, userSorting, se
                                         key={address}
                                         address={address}
                                         network={network}
+                                        wrapperEndChildren={
+                                            <Pending
+                                                balance={balance}
+                                                hidePrivateValue={hidePrivateValue}
+                                                decimals={decimals}
+                                                pending={pending}
+                                                unconfirmed={unconfirmed}
+                                                latest={latest}
+                                                extraMargin={sortType === "custom"}
+                                            />
+                                        }
                                         // Token data
                                         img={tokenImageUrl}
                                         symbol={symbol}
-                                        balance={hidePrivateValue(formatFloatTokenAmount(balance, true, decimals))}
+                                        balance={hidePrivateValue(formatFloatTokenAmount(latest ? latest.balance : balance, true, decimals))}
                                         value={hidePrivateValue(formatFloatTokenAmount(latest ? latest.balanceUSD : balanceUSD, true, decimals))}
                                         price={`$${price ? hidePrivateValue((price).toFixed((price < 1) ? 5 : 2)) : '-'}`}
                                         // Actions
                                         sendUrl={`/wallet/transfer/${address}`}
                                         // Drag props
-                                        wrapperChildren={sortedTokens.length > 1 && sortType === 'custom' && !isMobileScreen && <MdDragIndicator 
+                                        bodyChildren={sortedTokens.length > 1 && sortType === 'custom' && !isMobileScreen && <MdDragIndicator 
                                                 size={20} 
                                                 className={styles.dragHandle} 
                                                 onClick={(e) => dragStart(e, index)} id={`${index}-handle`} 
