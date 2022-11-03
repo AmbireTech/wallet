@@ -241,10 +241,14 @@ function AppInner() {
   }, [dappUrl, setPluginUrl])
 
   const onLoginSuccess = wallet_address => {
-    const event = new CustomEvent('login-success', { detail: {
+    // const event = new CustomEvent('login-success', { detail: {
+    //   address: wallet_address
+    // } })
+    // window.dispatchEvent(event);
+
+    window.parent.postMessage({
       address: wallet_address
-    } })
-    window.dispatchEvent(event);
+    }, '*')
   }
 
   return (<>
