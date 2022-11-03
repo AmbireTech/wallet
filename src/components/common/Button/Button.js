@@ -1,6 +1,6 @@
 import styles from './Button.module.scss'
 
-const Button = ({ children, className, small, mini, icon, iconAfter, disabled, onClick, red, primaryGradient, danger, clear, border, title, type, textOnly, secondary }) => {
+const Button = ({ children, className, small, mini, icon, iconAfter, form, disabled, onClick, red, primaryGradient, danger, clear, border, title, type, textOnly, secondary }) => {
     return (
         <button
             onClick={(...args) => !disabled && onClick && onClick.apply(this, args)}
@@ -9,6 +9,7 @@ const Button = ({ children, className, small, mini, icon, iconAfter, disabled, o
             title={title}
             // used with <form>
             type={type}
+            form={form}
         >
             { icon ? <div className={styles.iconButton}>{ icon }</div> : null }
             { children }
