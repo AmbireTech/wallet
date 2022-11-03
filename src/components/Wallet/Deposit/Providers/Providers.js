@@ -42,6 +42,7 @@ export default function Providers({ walletAddress, networkDetails, relayerURL, p
             isBuyAvailable: true,
             onClick: () => openKriptomat()
         },
+        // DISABLED: The Moonpay ready to use, but at this moment we will not release it.
         // {
         //     logo: MOONPAY_LOGO,
         //     name: 'MoonPay',
@@ -51,7 +52,7 @@ export default function Providers({ walletAddress, networkDetails, relayerURL, p
         //     currencies: 'EUR, USD, GBP and many more',
         //     networks: ['ethereum', 'polygon', 'avalanche', 'binance-smart-chain'],
         //     isSellAvailable: true,
-        //    isBuyAvailable: true,
+        //     isBuyAvailable: true,
         //     onClick: () => openMoonpay(initMode, selectedAsset)
         // },
         {
