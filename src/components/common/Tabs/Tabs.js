@@ -10,6 +10,7 @@ const Tabs = ({
   secondTab,
   panelClassName,
   tabClassName,
+  shadowClassName,
   footer,
   defaultTab
 }) => {
@@ -33,7 +34,7 @@ const Tabs = ({
         >
           {secondTabLabel}
         </button>
-        <div className={styles.shadow}></div>
+        <div className={cn(styles.shadow, shadowClassName)}></div>
       </div>
       {currentTab === 1 ? firstTab : secondTab}
       {footer}
