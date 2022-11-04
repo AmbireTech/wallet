@@ -4,12 +4,14 @@
     padding: 0;
     flex: 0 1 50%;
     min-height: 670px;
-    max-height: 800px;
+    max-height: 900px;
+    overflow-y: auto;
 }
 
 .wrapper {
     display: flex;
     gap: 30px;
+    overflow-y: auto;
 }
 
 @media screen and (max-width: 1400px) {
@@ -22,5 +24,11 @@
 @media screen and (max-width: $mobile-breakpoint-max-width) {
     .wrapper {
         gap: 15px;
+    }
+    .panel {
+        padding: 0;
+        flex: 0 1 50%;
+        min-height: unset;
+        max-height: unset;
     }
 }
