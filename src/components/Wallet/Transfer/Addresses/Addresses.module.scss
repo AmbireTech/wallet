@@ -1,6 +1,6 @@
 @import 'variables.scss';
 
-.addresses-button {
+.addressesButton {
     max-width: 400px;
     width: 100%;
     margin: 0 auto;
@@ -11,6 +11,14 @@
     padding: 40px;
     padding-top: 15px;
     flex: 0 1 50%;
+    min-height: 670px;
+    max-height: 800px;
+    overflow-y: hidden;
+
+    .addressList {
+        overflow-y: auto;
+        flex: 1;
+    }
 
     .title {
         font-size: 25px;
@@ -35,6 +43,7 @@
 
         .details {
             text-align: left;
+            overflow-x: auto;
 
             .address {
                 word-break: break-all;
