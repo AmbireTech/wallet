@@ -4,6 +4,7 @@
     padding: 0;
     flex: 0 1 50%;
     min-height: 670px;
+    max-height: 800px;
 }
 
 .wrapper {
@@ -20,6 +21,6 @@
 // Mobile
 @media screen and (max-width: $mobile-breakpoint-max-width) {
     .wrapper {
-        gap: 1em;
+        gap: 15px;
     }
 }
