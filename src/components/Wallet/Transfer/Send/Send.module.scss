@@ -15,10 +15,16 @@
   padding-top: 15px;
   gap: 40px;
 
+  .validationError {
+    color: $danger-color;
+    font-size: 14px;
+  }
+
   .content {
     display: flex;
     flex-direction: column;
     gap: 20px;
+    flex: 1;
   }
 
   .amountLabel {

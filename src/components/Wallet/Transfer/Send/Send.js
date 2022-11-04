@@ -269,7 +269,7 @@ const Send = ({
                 />
                 
                 { validationFormMgs.messages.amount && 
-                    (<div className='validation-error'><BsXLg size={12}/>&nbsp;{validationFormMgs.messages.amount}</div>)}
+                    (<div className={styles.validationError}><BsXLg size={12}/>&nbsp;{validationFormMgs.messages.amount}</div>)}
                 { gasTankDetails ? <p className={styles.gasTankMsg}><MdWarning /> {gasTankDetails?.gasTankMsg}</p> : (<div className={styles.recipientField}>
                     <TextInput
                         placeholder="Recipient"
@@ -297,7 +297,7 @@ const Send = ({
                     />
                 </div>)}
                 { validationFormMgs.messages.address && 
-                    (<div className='validation-error'><BsXLg size={12}/>&nbsp;{validationFormMgs.messages.address}</div>)}
+                    (<div className={styles.validationError}><BsXLg size={12}/>&nbsp;{validationFormMgs.messages.address}</div>)}
                 {/* <div className={styles.separator} /> */}
                 <AddressWarning
                     address={address}
