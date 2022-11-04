@@ -91,8 +91,9 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      width: 40px;
-      height: 40px;
+      height: 50px;
+      padding: 0 20px;
+      gap: 5px;
       background-color: rgba($c-titan-white, 0.04);
       border-radius: 12px;
       cursor: pointer;
@@ -107,6 +108,10 @@
         width: 28px;
         height: 28px;
       }
+
+      p {
+        font-size: 14px;
+      }
     }
   }
 }
@@ -114,11 +119,12 @@
 // Mobile
 @media screen and (max-width: 768px) {
   .wrapper {
-    padding: 20px;
+    padding: 20px 15px;
+    border: 1px solid #2D314D;
 
     .body {
       flex-direction: column;
-      gap: 30px;
+      gap: 25px;
     }
 
     .infoAndActions {
@@ -147,22 +153,23 @@
 
       .priceAndValue {
         flex: 1;
-        flex-direction: column;
+        flex-direction: column-reverse;
         align-items: flex-end;
         
-        .price {
+        .value {
           font-size: 16px;
         }
 
-        .value {
-          font-size: 18px;
+        .price {
+          font-size: 14px;
         }
       }
     }
     .actions {
       gap: 20px;
+      width: 100%;
       .action {
-        width: 50px;
+        width: 100%;
         height: 50px;
 
         svg {

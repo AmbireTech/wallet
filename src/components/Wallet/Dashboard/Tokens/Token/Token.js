@@ -66,10 +66,11 @@ const Token = ({
           </div>
         </div>
         <div className={styles.actions}>
-          <NavLink to={sendUrl || '/wallet'}>
-            <div className={styles.action}>
-              <SendIcon />
-            </div>
+          <NavLink to={sendUrl || '/wallet'} className={styles.action}>
+            <SendIcon />
+            <p>
+              Send
+            </p>
           </NavLink>
           {/* <div className={styles.action}>
             <EarnIcon />
