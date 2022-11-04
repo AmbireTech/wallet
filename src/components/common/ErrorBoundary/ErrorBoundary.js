@@ -23,7 +23,7 @@ class ErrorBoundary extends React.Component {
     // {@link https://stackoverflow.com/a/62284335/1333836}
     const hasChunkFailedToLoad = error.name === 'ChunkLoadError'
 
-    return !hasChunkFailedToLoad ? <ChunkErrorScreen /> : <ErrorScreen />
+    return hasChunkFailedToLoad ? <ChunkErrorScreen /> : <ErrorScreen />
   }
 }
 
