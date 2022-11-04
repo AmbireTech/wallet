@@ -29,9 +29,10 @@ const Addresses = ({ addresses, addAddress, removeAddress, onSelectAddress, sele
                 addresses={addresses}
                 removeAddress={removeAddress}
                 onSelectAddress={onSelectAddress}
+                className={styles.addressList}
             />
             <div className={styles.separator}></div>
-            <Button onClick={showInputModal} className={styles['addresses-button']}>Add Address</Button>
+            <Button onClick={showInputModal} className={styles.addressesButton}>Add Address</Button>
         </Panel>
     )
 }
