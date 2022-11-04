@@ -2,6 +2,10 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
+    <!-- Cache-Control header to let the browsers never cache any content -->
+    <!-- Pragma & Cache-Control is one and the same thing but from the different HTTP specification. -->
+    <meta http-equiv="Cache-control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
     <link rel="icon" href="%PUBLIC_URL%/favicon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#000000" />
