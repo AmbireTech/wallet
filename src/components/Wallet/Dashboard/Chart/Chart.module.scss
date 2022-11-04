@@ -163,3 +163,33 @@
     }
   }
 }
+
+@media screen and (max-width: $mobile-breakpoint-max-width) {
+  .wrapper {
+    .donut {
+      max-width: 200px;
+      height: 200px;
+    }
+    
+    .noTokensWrapper {
+      padding: 20px;
+      background: $c-ebony-clay;
+      border: 1px solid $c-fiord;
+      border-radius: 12px;
+    }
+
+    .legend {
+      &Title {
+        margin-left: 20px;
+        margin-bottom: 15px;
+      }
+      &Items {
+        padding: 20px;
+        background: $c-ebony-clay;
+        border: 1px solid $c-fiord;
+        border-radius: 12px;
+        overflow-y: auto;
+      }
+    }
+  }
+}
