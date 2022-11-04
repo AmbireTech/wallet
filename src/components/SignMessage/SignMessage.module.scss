@@ -16,7 +16,8 @@ $max-width: 650px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 2em;
+  gap: 32px;
+  padding: 32px;
   box-sizing: border-box;
 
   .panel {
@@ -25,7 +26,7 @@ $max-width: 650px;
     .title {
       align-items: center;
       justify-content: flex-start;
-      gap: 0.5em;
+      gap: 8px;
     }
 
     .content {
@@ -95,21 +96,21 @@ $max-width: 650px;
   .requestMessage {
     display: flex;
     flex-direction: column;
-    gap: 1em;
+    gap: 16px;
     font-weight: 500;
 
     .dappMessage {
       display: flex;
       flex-direction: row;
-      gap: 0.5em;
-      row-gap: 0.2em;
+      gap: 8px;
+      row-gap: 3px;
       align-items: center;
       flex-wrap: wrap;
 
       .dapp {
         display: flex;
         flex-direction: row;
-        gap: 0.5em;
+        gap: 8px;
 
         .icon {
           height: 22px;
@@ -138,7 +139,7 @@ $max-width: 650px;
 
   .signMessage {
     width: auto;
-    padding: 2em;
+    padding: 32px;
     color: #ccc;
     min-height: 300px;
     background-color: rgba(0,0,0,0.4);
@@ -151,11 +152,11 @@ $max-width: 650px;
     form {
       display: flex;
       flex-direction: column;
-      gap: 1.5em;
+      gap: 24px;
 
       .buttons {
         display: flex;
-        gap: 1.5em;
+        gap: 24px;
 
         button {
           flex: 1 1 50%;
@@ -191,14 +192,14 @@ $max-width: 650px;
 // Mobile
 @media screen and (max-width: $mobile-breakpoint-max-width) {
   .wrapper {
-    gap: 1em;
-    padding: 10px;
+    gap: 16px;
+    padding: 16px;
 
     .panel {
       width: 100%;
       min-width: auto !important;
       max-width: 100% !important;
-      padding: 2em 1em !important;
+      padding: 32px 16px !important;
     }
   }
 }
