@@ -1,12 +1,13 @@
+import cn from 'classnames'
 import styles from './AddressList.module.scss'
 
 import { MdOutlineDelete } from 'react-icons/md'
 
-const AddressList = ({ noAccounts, addresses, onSelectAddress, removeAddress }) => {
+const AddressList = ({ noAccounts, addresses, onSelectAddress, removeAddress ,className }) => {
     const items = addresses.filter(({ isAccount }) => !(isAccount && noAccounts))
 
     return (
-        <div className={styles.wrapper}>
+        <div className={cn(styles.wrapper, className)}>
             {
                 !items.length ?
                     <div className={styles.placeholder}>Your Address Book is empty</div>
@@ -17,7 +18,7 @@ const AddressList = ({ noAccounts, addresses, onSelectAddress, removeAddress }) 
                                 <div className={styles.icon} style={{ backgroundImage: `url(${icon})`}}></div>
                                 <div className={styles.details}>
                                     <label>{ name }</label>
-                                    <div className="address">{ address }</div>
+                                    <div className={styles.address}>{ address }</div>
                                 </div>
                             </div>
                             {
