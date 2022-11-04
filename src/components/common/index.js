@@ -23,6 +23,7 @@ import NoFundsPlaceholder from './NoFundsPlaceholder/NoFundsPlaceholder';
 import CountdownTimer from './CountdownTimer/CountdownTimer';
 import ErrorBoundary from './ErrorBoundary/ErrorBoundary';
 import ErrorScreen from './ErrorScreen/ErrorScreen';
+import ChunkErrorScreen from './ErrorScreen/ChunkErrorScreen';
 import Stepper from './Stepper/Stepper.tsx';
 import DAppIncompatibilityWarningMsg from './DAppIncompatibilityWarningMsg/DAppIncompatibilityWarningMsg';
 import Pagination from './Pagination/Pagination';
@@ -55,6 +56,7 @@ export {
     CountdownTimer,
     ErrorBoundary,
     ErrorScreen,
+    ChunkErrorScreen,
     Stepper,
     DAppIncompatibilityWarningMsg,
     Pagination,
