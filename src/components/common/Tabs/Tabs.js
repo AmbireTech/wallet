@@ -16,7 +16,7 @@ const Tabs = ({
   const handleOpenSecond = () => setCurrentTab(2)
 
   return (
-    <Panel className={panelClassName || ''}>
+    <Panel className={cn(panelClassName)}>
       <div className={styles.tabs}>
         <button 
           onClick={handleOpenFirst}
