@@ -1,6 +1,6 @@
-import useDynamicModal from "hooks/useDynamicModals";
-import { Button, ToolTip } from "components/common";
-import WalletTokenModal from "components/Modals/WalletTokenModal/WalletTokenModal";
+import useDynamicModal from "hooks/useDynamicModals"
+import { Button, ToolTip, Loading } from "components/common"
+import WalletTokenModal from "components/Modals/WalletTokenModal/WalletTokenModal"
 import useClaimableWalletToken from 'ambire-common/src/hooks/useClaimableWalletToken'
 
 import styles from './WalletTokenButton.module.scss'
@@ -35,10 +35,15 @@ const WalletTokenButton = ({ rewardsData, account = {}, network, hidePrivateValu
                 className={styles.button}
                 style={{ textTransform: 'none'}}
             >
-                <span>
-                    {hidePrivateValue(pendingTokensTotal)}
-                </span>
-                $ WALLETS
+                { !pendingTokensTotal 
+                    ? (<span><Loading/></span>)
+                    : (<>
+                        <span>
+                            { hidePrivateValue(pendingTokensTotal) }
+                        </span>
+                        $ WALLETS
+                    </>)
+                }
             </Button>
     )
 }
