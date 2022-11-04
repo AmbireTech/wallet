@@ -4,6 +4,7 @@
   max-width: 400px;
   width: 100%;
   margin: 0 auto;
+  min-height: 60px;
 }
 
 .wrapper {
@@ -14,6 +15,11 @@
   padding: 40px;
   padding-top: 15px;
   gap: 40px;
+  overflow-y: auto;
+
+  .confirmations {
+    padding-left: 20px;
+  }
 
   .validationError {
     color: $danger-color;
