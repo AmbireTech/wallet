@@ -36,6 +36,7 @@ import { getManifestFromDappUrl } from 'ambire-common/src/services/dappCatalog'
 import { fetch } from 'lib/fetch'
 
 const EmailLogin = lazy(() => import('./components/EmailLogin/EmailLogin'))
+const EmailLoginSDK = lazy(() => import('./components/EmailLogin/EmailLoginSDK'))
 const AddAccount = lazy(() => import('./components/AddAccount/AddAccount'))
 const Wallet = lazy(() => import('./components/Wallet/Wallet'))
 const SendTransaction = lazy(() => import('./components/SendTransaction/SendTransaction'))
@@ -241,11 +242,6 @@ function AppInner() {
   }, [dappUrl, setPluginUrl])
 
   const onLoginSuccess = wallet_address => {
-    // const event = new CustomEvent('login-success', { detail: {
-    //   address: wallet_address
-    // } })
-    // window.dispatchEvent(event);
-
     window.parent.postMessage({
       address: wallet_address
     }, '*')
@@ -299,7 +295,7 @@ function AppInner() {
         </Route>
 
         <Route path="/email-login-iframe">
-          <EmailLogin relayerURL={relayerURL} onAddAccount={onAddAccount} onLoginSuccess={onLoginSuccess}></EmailLogin>
+          <EmailLoginSDK relayerURL={relayerURL} onAddAccount={onAddAccount} onLoginSuccess={onLoginSuccess}></EmailLoginSDK>
         </Route>
 
         {selectedAcc ?
