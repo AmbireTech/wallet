@@ -6,10 +6,6 @@ $heading-height: 45px;
     display: none!important;
 }
 
-.square {
-    border-radius: 0;
-}
-
 .addressBook {
     height: 60px !important;
     background-color: $c-mirage-dark!important;
@@ -98,6 +94,10 @@ $heading-height: 45px;
         .emptyText {
             padding: 15px;
             margin: 0;
+        }
+
+        .address {
+            border-radius: 0;
         }
     }
 
