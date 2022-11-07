@@ -1,0 +1,19 @@
+@import 'variables.scss';
+
+.wrapper {
+    display: flex;
+    align-items: center;
+    color: $c-turquoise;
+    gap: 10px;
+
+    &.isTimeUp {
+        color: $danger-color;
+        svg {
+            color: $danger-color;
+        }
+    }
+
+    label {
+        font-size: 25px;
+    }
+}
