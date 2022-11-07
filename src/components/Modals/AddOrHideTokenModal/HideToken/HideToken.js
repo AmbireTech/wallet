@@ -64,7 +64,7 @@ const HideToken = ({
               key={address}
               icon={tokenImageUrl}
               name={symbol}
-              symbol={`(${network.toUpperCase()})`}
+              network={network.toUpperCase()}
               className={styles.token}
             >
               {!isHidden ? 
