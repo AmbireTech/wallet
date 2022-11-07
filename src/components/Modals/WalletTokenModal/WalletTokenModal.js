@@ -121,9 +121,9 @@ const WalletTokenModal = ({ accountId, claimableWalletToken, rewards }) => {
         </div>
         <div className='actions mt-4'>
           <Button className='claim-rewards-with-burn' purpleGradient full onClick={openUnbondModal}
-                  xdisabled={!!(claimDisabledReason || disabledReason)}>Claim with burn</Button>
+                  disabled={!!(claimDisabledReason || disabledReason)}>Claim with burn</Button>
           <Button className='claim-rewards-x-wallet' greenGradient full onClick={claimEarlyRewards}
-                  xdisabled={!!(claimDisabledReason || disabledReason)}>CLAIM IN xWALLET</Button>
+                  disabled={!!(claimDisabledReason || disabledReason)}>CLAIM IN xWALLET</Button>
         </div>
       </div>
 

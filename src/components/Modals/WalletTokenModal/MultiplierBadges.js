@@ -1,7 +1,6 @@
 import { useMemo } from "react"
 import { multiplierBadges } from 'ambire-common/src/constants/multiplierBadges'
 import { ToolTip } from "components/common"
-import { icons } from 'react-icons'
 
 const MultiplierBadges = ({ rewards, apys }) => {
   // Multiplier badges
@@ -23,12 +22,13 @@ const MultiplierBadges = ({ rewards, apys }) => {
   return (
     <div className="badges">
       {
-        badges.map(({ id, name, icon_svg, color, multiplier, link, active, apy }) => (
+        badges.map(({ id, name, icon_svg, multiplier, link, active, apy }) => (
           <a href={link} target="_blank" rel="noreferrer" key={id}>
             <ToolTip label={multiplier !== 0 ? (`You ${active ? 'are receiving' : 'do not have'} the ${name} x${multiplier} multiplier`) : (active ? 'This bonus is enabled' : 'You do not have this bonus enabled')}>
               <div className={`badge ${active ? 'active' : ''}`} >
                 <div className={`icon-svg icon-svg-${icon_svg}`}></div>
                 {/*
+                  //TODO what should we do with this, as the numbers are in the design?
                   multiplier
                     ? <div className="multiplier">x { multiplier }</div>
                     : <div className="multiplier">{ apy }</div>
