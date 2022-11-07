@@ -10,7 +10,7 @@ const getBalances = (network, address, provider, quickResponse) => {
     if (provider === '' || !provider) return null
     return fetchGet(`${provider === 'velcro' ?
     VELCRO_API_ENDPOINT :
-    ZAPPER_API_ENDPOINT}/balance/${address}/${network}?provider=covalent${quickResponse ? '&quick=true': ''}`
+    ZAPPER_API_ENDPOINT}/balance/${address}/${network}${quickResponse ? '?quick=true': ''}`
     )
 }
 
