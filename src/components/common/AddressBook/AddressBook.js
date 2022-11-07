@@ -104,7 +104,7 @@ const AddressBook = ({ addresses, addAddress, removeAddress, newAddress, onClose
                     :
                     !addresses.length ?
                         <div className={styles.content}>
-                            Your Address Book is empty.
+                            <p className={styles.emptyText}>Your Address Book is empty.</p>
                         </div>
                         :
                         <div className={styles.content}>
@@ -112,6 +112,7 @@ const AddressBook = ({ addresses, addAddress, removeAddress, newAddress, onClose
                                 addresses={addresses}
                                 onSelectAddress={selectAddress}
                                 removeAddress={removeAddress}
+                                addressClassName={styles.square}
                             />
                         </div>
             }
