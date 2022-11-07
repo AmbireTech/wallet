@@ -1,14 +1,16 @@
-import styles from './AddressBook.module.scss'
+import { useCallback, useEffect, useRef, useState } from 'react'
+import cn from 'classnames'
+
+import { resolveENSDomain } from 'lib/ensDomains'
+import { resolveUDomain } from 'lib/unstoppableDomains'
+import { Button, DropDown, TextInput } from 'components/common'
+import AddressList from './AddressList/AddressList'
 
 import { FaAddressCard } from 'react-icons/fa'
 import { MdOutlineAdd, MdClose } from 'react-icons/md'
-import { Button, DropDown, TextInput } from 'components/common'
-import { useCallback, useEffect, useRef, useState } from 'react'
-import AddressList from './AddressList/AddressList'
-import { resolveUDomain } from 'lib/unstoppableDomains'
-import { resolveENSDomain } from 'lib/ensDomains'
 import { ReactComponent as AddressBookIcon } from './images/address-book.svg'
-import cn from 'classnames'
+
+import styles from './AddressBook.module.scss'
 
 const AddressBook = ({ addresses, addAddress, removeAddress, newAddress, onClose, onSelectAddress, selectedNetwork, className }) => {
     const [address, setAddress] = useState('')
