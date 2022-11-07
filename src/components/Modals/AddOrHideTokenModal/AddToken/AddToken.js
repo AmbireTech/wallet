@@ -100,9 +100,9 @@ const AddToken = ({ network, account, portfolio }) => {
       }
       {
         loading ? <Loading/> : (!showError && tokenDetails) ? <Token
-          icon={tokenDetails.icon}
+          icon={tokenDetails.tokenImageUrl}
           name={tokenDetails.name}
-          symbol={`${ tokenDetails.symbol } ${tokenDetails.network.toUpperCase()}`}
+          network={tokenDetails.network.toUpperCase()}
         >
           <div className={styles.balanceWrapper}>
             Balance:
