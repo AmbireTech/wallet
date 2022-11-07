@@ -19,13 +19,14 @@ const deadlineText = (deadlineSecs, mined) => {
   return ''
 }
 
-const toExtendedUnwrap = (action, network, amount) => {
+const toExtendedUnwrap = (action, network, amount, recipient = []) => {
   return [[
       action,
       {
         type: 'token',
         ...nativeToken(network, amount, true)
-      }
+      },
+      ...recipient
     ]]
 }
 
@@ -150,25 +151,35 @@ const uniV3Mapping = (humanizerInfo) => {
     [ifaceV3.getSighash('exactInputSingle')]: (txn, network, opts = {}) => {
       const [ params ] = ifaceV3.parseTransaction(txn).args
       // @TODO: consider fees
-      return [`Swap ${token(humanizerInfo, params.tokenIn, params.amountIn)} for at least ${token(humanizerInfo, params.tokenOut, params.amountOutMinimum)}${recipientText(humanizerInfo, params.recipient, txn.from)}${deadlineText(params.deadline, opts.mined)}`]
+      return !opts.extended 
+        ? [`Swap ${token(humanizerInfo, params.tokenIn, params.amountIn)} for at least ${token(humanizerInfo, params.tokenOut, params.amountOutMinimum)}${recipientText(humanizerInfo, params.recipient, txn.from)}${deadlineText(params.deadline, opts.mined)}`]
+        : toExtended(token(humanizerInfo, params.tokenIn, params.amountIn, true), token(humanizerInfo, params.tokenOut, params.amountOutMinimum, true), recipientText(humanizerInfo, params.recipient, txn.from), deadlineText(params.deadline, opts.mined))
     },
     [ifaceV3.getSighash('exactInput')]: (txn, network, opts = {}) => {
       const [ params ] = ifaceV3.parseTransaction(txn).args
       const path = parsePath(params.path)
-      return [`Swap ${token(humanizerInfo, path[0], params.amountIn)} for at least ${token(humanizerInfo, path[path.length - 1], params.amountOutMinimum)}${recipientText(humanizerInfo, params.recipient, txn.from)}${deadlineText(params.deadline, opts.mined)}`]
+      return !opts.extended 
+        ? [`Swap ${token(humanizerInfo, path[0], params.amountIn)} for at least ${token(humanizerInfo, path[path.length - 1], params.amountOutMinimum)}${recipientText(humanizerInfo, params.recipient, txn.from)}${deadlineText(params.deadline, opts.mined)}`]
+        : toExtended(token(humanizerInfo, path[0], params.amountIn, true), token(humanizerInfo, path[path.length - 1], params.amountOutMinimum, true), recipientText(humanizerInfo, params.recipient, txn.from), deadlineText(params.deadline, opts.mined))
     },
     [ifaceV3.getSighash('exactOutputSingle')]: (txn, network, opts = {}) => {
       const [ params ] = ifaceV3.parseTransaction(txn).args
-      return [`Swap up to ${token(humanizerInfo, params.tokenIn, params.amountInMaximum)} for ${token(humanizerInfo, params.tokenOut, params.amountOut)}${recipientText(humanizerInfo, params.recipient, txn.from)}${deadlineText(params.deadline, opts.mined)}`]
+      return !opts.extended 
+        ? [`Swap up to ${token(humanizerInfo, params.tokenIn, params.amountInMaximum)} for ${token(humanizerInfo, params.tokenOut, params.amountOut)}${recipientText(humanizerInfo, params.recipient, txn.from)}${deadlineText(params.deadline, opts.mined)}`]
+        : toExtended(token(humanizerInfo, params.tokenIn, params.amountInMaximum, true), token(humanizerInfo, params.tokenOut, params.amountOut, true), recipientText(humanizerInfo, params.recipient, txn.from), deadlineText(params.deadline, opts.mined))
     },
     [ifaceV3.getSighash('exactOutput')]: (txn, network, opts = {}) => {
       const [ params ] = ifaceV3.parseTransaction(txn).args
       const path = parsePath(params.path)
-      return [`Swap up to ${token(humanizerInfo, path[path.length - 1], params.amountInMaximum)} for ${token(humanizerInfo, path[0], params.amountOut)}${recipientText(humanizerInfo, params.recipient, txn.from)}${deadlineText(params.deadline, opts.mined)}`]
+      return !opts.extended 
+        ? [`Swap up to ${token(humanizerInfo, path[path.length - 1], params.amountInMaximum)} for ${token(humanizerInfo, path[0], params.amountOut)}${recipientText(humanizerInfo, params.recipient, txn.from)}${deadlineText(params.deadline, opts.mined)}`]
+        : toExtended(token(humanizerInfo, path[path.length - 1], params.amountInMaximum, true), token(humanizerInfo, path[0], params.amountOut, true), recipientText(humanizerInfo, params.recipient, txn.from), deadlineText(params.deadline, opts.mined))
     },
-    [ifaceV3.getSighash('unwrapWETH9')]: (txn, network) => {
+    [ifaceV3.getSighash('unwrapWETH9')]: (txn, network, opts = {}) => {
       const [ amountMin, recipient ] = ifaceV3.parseTransaction(txn).args
-      return [`Unwrap at least ${nativeToken(network, amountMin)}${recipientText(humanizerInfo,recipient, txn.from)}`]
+      return !opts.extended
+        ? [`Unwrap at least ${nativeToken(network, amountMin)}${recipientText(humanizerInfo,recipient, txn.from)}`]
+        : toExtendedUnwrap('Unwrap at least', network, amountMin, recipientText(humanizerInfo,recipient, txn.from, true))
     },
   }
 }
@@ -196,55 +207,55 @@ const uniV32Mapping = (humanizerInfo) => {
     [ifaceV32.getSighash('exactInputSingle')]: (txn, network, opts = {}) => {
       const [ params ] = ifaceV32.parseTransaction(txn).args
       // @TODO: consider fees
-      return !opts.extended ? 
-       [`Swap ${token(humanizerInfo, params.tokenIn, params.amountIn)} for at least ${token(humanizerInfo, params.tokenOut, params.amountOutMinimum)}${recipientText(humanizerInfo, params.recipient, txn.from)}`]
+      return !opts.extended 
+        ? [`Swap ${token(humanizerInfo, params.tokenIn, params.amountIn)} for at least ${token(humanizerInfo, params.tokenOut, params.amountOutMinimum)}${recipientText(humanizerInfo, params.recipient, txn.from)}`]
         : toExtended(token(humanizerInfo, params.tokenIn, params.amountIn, true), token(humanizerInfo, params.tokenOut, params.amountOutMinimum, true), recipientText(humanizerInfo, params.recipient, txn.from))
     },
     [ifaceV32.getSighash('exactInput')]: (txn, network, opts = {}) => {
       const [ params ] = ifaceV32.parseTransaction(txn).args
       const path = parsePath(params.path)
-      return !opts.extended ? 
-        [`Swap ${token(humanizerInfo, path[0], params.amountIn)} for at least ${token(humanizerInfo, path[path.length - 1], params.amountOutMinimum)}${recipientText(humanizerInfo, params.recipient, txn.from)}`]
+      return !opts.extended
+        ? [`Swap ${token(humanizerInfo, path[0], params.amountIn)} for at least ${token(humanizerInfo, path[path.length - 1], params.amountOutMinimum)}${recipientText(humanizerInfo, params.recipient, txn.from)}`]
         : toExtended(token(humanizerInfo, path[0], params.amountIn, true), token(humanizerInfo, path[path.length - 1], params.amountOutMinimum, true), recipientText(humanizerInfo, params.recipient, txn.from))
     },
     [ifaceV32.getSighash('exactOutputSingle')]: (txn, network, opts = {}) => {
       const [ params ] = ifaceV32.parseTransaction(txn).args
-      return !opts.extended ? 
-        [`Swap up to ${token(humanizerInfo, params.tokenIn, params.amountInMaximum)} for ${token(humanizerInfo, params.tokenOut, params.amountOut)}${recipientText(humanizerInfo, params.recipient, txn.from)}`]
+      return !opts.extended
+        ? [`Swap up to ${token(humanizerInfo, params.tokenIn, params.amountInMaximum)} for ${token(humanizerInfo, params.tokenOut, params.amountOut)}${recipientText(humanizerInfo, params.recipient, txn.from)}`]
         : toExtended(token(humanizerInfo, params.tokenIn, params.amountInMaximum, true), token(humanizerInfo, params.tokenOut, params.amountOut, true), recipientText(humanizerInfo, params.recipient, txn.from), [], false)
     },
     [ifaceV32.getSighash('exactOutput')]: (txn, network, opts = {}) => {
       const [ params ] = ifaceV32.parseTransaction(txn).args
       const path = parsePath(params.path)
-      return !opts.extended ? 
-        [`Swap up to ${token(humanizerInfo, path[path.length - 1], params.amountInMaximum)} for ${token(humanizerInfo, path[0], params.amountOut)}${recipientText(humanizerInfo, params.recipient, txn.from)}`]
+      return !opts.extended
+        ? [`Swap up to ${token(humanizerInfo, path[path.length - 1], params.amountInMaximum)} for ${token(humanizerInfo, path[0], params.amountOut)}${recipientText(humanizerInfo, params.recipient, txn.from)}`]
         : toExtended(token(humanizerInfo, path[path.length - 1], params.amountInMaximum, true), token(humanizerInfo, path[0], params.amountOut, true), recipientText(humanizerInfo, params.recipient, txn.from), [], false)
     },
     [ifaceV32.getSighash('swapTokensForExactTokens')]: (txn, network, opts = {}) => {
       // NOTE: is amountInMax set when dealing with ETH? it should be... cause value and max are not the same thing
       const { amountOut, amountInMax, path, to } = ifaceV32.parseTransaction(txn).args
-      return !opts.extended ? 
-        [`Swap up to ${token(humanizerInfo, path[0], amountInMax)} for ${token(humanizerInfo, path[path.length - 1], amountOut)}${recipientText(humanizerInfo, to, txn.from)}`]
+      return !opts.extended 
+        ? [`Swap up to ${token(humanizerInfo, path[0], amountInMax)} for ${token(humanizerInfo, path[path.length - 1], amountOut)}${recipientText(humanizerInfo, to, txn.from)}`]
         : toExtended(token(humanizerInfo, path[0], amountInMax, true), token(humanizerInfo, path[path.length - 1], amountOut, true), recipientText(humanizerInfo, to, txn.from), [], false)
     },
     [ifaceV32.getSighash('swapExactTokensForTokens')]: (txn, network, opts = {}) => {
       // NOTE: is amountIn set when dealing with ETH?
       const { amountIn, amountOutMin, path, to } = ifaceV32.parseTransaction(txn).args
-      return !opts.extended ? 
-        [`Swap ${token(humanizerInfo, path[0], amountIn)} for at least ${token(humanizerInfo, path[path.length - 1], amountOutMin)}${recipientText(humanizerInfo, to, txn.from)}`]
+      return !opts.extended
+        ? [`Swap ${token(humanizerInfo, path[0], amountIn)} for at least ${token(humanizerInfo, path[path.length - 1], amountOutMin)}${recipientText(humanizerInfo, to, txn.from)}`]
         : toExtended(token(humanizerInfo, path[0], amountIn, true), token(humanizerInfo, path[path.length - 1], amountOutMin, true), recipientText(humanizerInfo, to, txn.from))
     },
     [ifaceV32.getSighash('unwrapWETH9(uint256)')]: (txn, network, opts = {}) => {
       const [ amountMin ] = ifaceV32.parseTransaction(txn).args
-      return !opts.extended ? 
-        [`Unwrap at least ${nativeToken(network, amountMin)}`]
+      return !opts.extended
+        ? [`Unwrap at least ${nativeToken(network, amountMin)}`]
         : toExtendedUnwrap('Unwrap at least', network, amountMin)
     },
     [ifaceV32.getSighash('unwrapWETH9(uint256,address)')]: (txn, network, opts = {}) => {
       const [ amountMin, recipient ] = ifaceV32.parseTransaction(txn).args
-      return !opts.extended ? 
-        [`Unwrap at least ${nativeToken(network, amountMin)}${recipientText(humanizerInfo, recipient, txn.from)}`]
-        : toExtendedUnwrap('Unwrap at least', network, amountMin)
+      return !opts.extended
+        ? [`Unwrap at least ${nativeToken(network, amountMin)}${recipientText(humanizerInfo, recipient, txn.from)}`]
+        : toExtendedUnwrap('Unwrap at least', network, amountMin, recipientText(humanizerInfo,recipient, txn.from, true))
     },
   }
 }
