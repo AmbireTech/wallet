@@ -15,7 +15,7 @@
     border: 2px solid $c-turquoise;
     outline: none;
     transition: 0.1s ease-in-out;
-    
+
     .iconButton {
         @include flex-center-center;
         color: $c-turquoise !important;
@@ -24,6 +24,10 @@
     &.small {
         height: 50px;
         font-size: 17px;
+    }
+
+    &.full {
+        width: 100%;
     }
 
     &.mini {
@@ -60,6 +64,26 @@
     &.primaryGradient {
         border: none;
         background: transparent linear-gradient(90deg, $c-turquoise 0%, #6000FF 100%) 0% 0% no-repeat padding-box;
+        color: $c-titan-white;
+
+        .iconButton {
+            color: inherit!important;
+        }
+    }
+
+    &.purpleGradient {
+        border: none;
+        background: transparent linear-gradient(90deg, $c-heliotrope 0%, $c-electric-violet 100%) 0% 0% no-repeat padding-box;
+        color: $c-titan-white;
+
+        .iconButton {
+            color: inherit!important;
+        }
+    }
+
+    &.greenGradient {
+        border: none;
+        background: transparent linear-gradient(90deg, $c-turquoise 0%, $c-blue-lagoon 100%) 0% 0% no-repeat padding-box;
         color: $c-titan-white;
 
         .iconButton {
