@@ -117,7 +117,7 @@ export default function Providers({ walletAddress, networkDetails, relayerURL, p
                     <div className={`${styles.provider} ${shouldBeDisabled(networks) && styles.disabled}`} key={name} onClick={onClick}>
 
                         <div className={styles.logo}>
-                            <img src={logo} alt={name}></img>
+                            <img src={logo} alt={name} />
                         </div>
                         { isLoading.includes(name) ? <div> <Loading/> </div> :
                         <div className={styles.details}>
