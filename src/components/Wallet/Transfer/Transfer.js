@@ -5,21 +5,16 @@ import { useParams } from 'react-router'
 import accountPresets from 'ambire-common/src/constants/accountPresets'
 import { isValidAddress } from 'ambire-common/src/services/address'
 
-import networks from 'consts/networks'
-
+import { Panel, Tabs } from 'components/common'
 import Send from './Send/Send'
-import Sell from './Sell/Sell'
 import Addresses from './Addresses/Addresses'
-import Tabs from 'components/common/Tabs/Tabs'
-import { Panel } from 'components/common'
+import Providers from 'components/Wallet/Deposit/Providers/Providers'
 
 import styles from './Transfer.module.scss'
 
 const Transfer = (props) => {
     const { portfolio, selectedNetwork, addressBook, selectedAcc, relayerURL } = props
     const { addresses, addAddress, removeAddress } = addressBook
-
-    const networkDetails = networks.find(({ id }) => id === selectedNetwork.id)
     
     const { state } = useLocation()
     const { tokenAddressOrSymbol } = useParams()
@@ -50,13 +45,16 @@ const Transfer = (props) => {
                     />
                 }
                 secondTab={
-                    <Sell 
-                        walletAddress={selectedAcc}
-                        networkDetails={networkDetails}
-                        relayerURL={relayerURL}
-                        portfolio={portfolio}
-                        selectedAsset={selectedAsset}
-                    />
+                    <div className={styles.sell}>
+                        <Providers
+                            walletAddress={selectedAcc} 
+                            networkDetails={selectedNetwork} 
+                            relayerURL={relayerURL} 
+                            portfolio={portfolio} 
+                            sellMode={true} 
+                            selectedAsset={selectedAsset ? selectedAsset : null}
+                        />
+                    </div>
                 }
                 panelClassName={styles.panel}
             /> : <Panel className={styles.panel}>
