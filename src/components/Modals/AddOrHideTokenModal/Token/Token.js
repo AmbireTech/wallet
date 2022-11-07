@@ -1,7 +1,7 @@
 import cn from 'classnames'
 import styles from './Token.module.scss'
 
-const Token = ({ name, symbol, icon, className, children }) => (
+const Token = ({ name, network, icon, className, children }) => (
   <div className={cn(styles.wrapper, className)}>
     <div className={styles.info}>
       <div className={styles.iconWrapper}>
@@ -11,7 +11,7 @@ const Token = ({ name, symbol, icon, className, children }) => (
         { name }
         {' '}
         <span>
-          { symbol }
+          ({ network })
         </span>
       </h3>
     </div>
