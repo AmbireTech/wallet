@@ -9,6 +9,7 @@
     right: 0;
     @include flex-center-center;
     overflow: hidden;
+    padding: 20px;
     
     .backdrop {
         position: absolute;
