@@ -9,11 +9,12 @@ export async function fetchPost (url, body) {
 	return r.json()
 }
 
-export const fetchGet = async url => {
+export const fetchGet = async (url, params = { headers: {} }) => {
   const response = await fetch(url, {
     method: 'GET',
     headers: {
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
+      ...params.headers
     }
   });
   if (response.status !== 200) throw new Error('Failed to fetch')
