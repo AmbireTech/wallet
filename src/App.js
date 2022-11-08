@@ -243,7 +243,8 @@ function AppInner() {
 
   const onLoginSuccess = wallet_address => {
     window.parent.postMessage({
-      address: wallet_address
+      address: wallet_address,
+      type: 'loginSuccess',
     }, '*')
   }
 
