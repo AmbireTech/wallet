@@ -29,7 +29,7 @@ const useProviders = ({ walletAddress, selectedNetwork, relayerURL, portfolio })
 
         const widget = new RampInstantSDK({
             hostAppName: 'Ambire',
-            hostLogoUrl: 'https://app.swappin.gifts/ref/ambire',
+            hostLogoUrl: 'https://raw.githubusercontent.com/AmbireTech/ambire-brand/main/logos/Ambire%20Horizontal%20Light%20Background.svg',
             variant: 'auto',
             swapAsset: assetsList[selectedNetwork],
             userAddress: walletAddress,
