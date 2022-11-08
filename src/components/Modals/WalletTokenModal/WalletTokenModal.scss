@@ -1,7 +1,7 @@
 @import 'variables.scss';
 
-$badge-size-width: 80px;
-$badge-size-height: 112px;
+$badge-size-width: 64px;
+$badge-size-height: 90px;
 
 #wallet-token-modal {
 
@@ -81,7 +81,7 @@ $badge-size-height: 112px;
                 color: $c-scampi;
 
                 b {
-                    font-size: 13px;
+                    font-size: 12px;
                 }
             }
         }
@@ -224,7 +224,7 @@ $badge-size-height: 112px;
             .actions {
                 display: flex;
                 justify-content: flex-end;
-                gap: 1em;
+                gap: 12px;
 
                 button {
                     height: 40px;
@@ -243,7 +243,7 @@ $badge-size-height: 112px;
         }
 
         #info {
-            margin-top: 1em;
+            margin-top: 0; // To keep in mind if badges visual margin is removed
             opacity: 0.8;
         }
 
@@ -252,7 +252,7 @@ $badge-size-height: 112px;
             display: flex;
             justify-content: center;
             gap: 20px;
-            padding-top: 1.5em;
+            padding-top: 12px;
             margin-bottom: 0; // Badges svg already have visual margin
 
             a {
@@ -281,13 +281,8 @@ $badge-size-height: 112px;
                     }
                 }
 
-                .icon {
-                    font-size: 1.5em;
-                    filter: grayscale(1);
-                }
-
                 .multiplier {
-                    font-size: 0.8em;
+                    font-size: 12px;
                     font-weight: bold;
                     color: $c-titan-white;
                 }
@@ -368,35 +363,6 @@ $badge-size-height: 112px;
             display: flex;
             justify-content: center;
             flex-basis: 50%;
-
-            .wallet-rewards-claimable {
-                border-radius: 16px;
-                padding: 16px;
-                display: flex;
-                width: 100%;
-                flex-direction: column;
-                gap: 12px;
-                justify-content: center;
-
-                min-width: 130px;
-
-                .wallet-rewards-claimable-heading {
-                    display: flex;
-                    flex-direction: column;
-                    text-align: center;
-                    align-content: center;
-
-                    b {
-                        font-size: 1.4em;
-                    }
-
-                    span {
-                        font-size: 0.8em;
-                        color: $text-container-color;
-                    }
-
-                }
-            }
 
             .actions {
                 display: flex;

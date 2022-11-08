@@ -74,26 +74,29 @@ const WalletTokenModal = ({ accountId, claimableWalletToken, rewards }) => {
           <div className={`rewards-progress-bar rewards-progress-holding active`}>
             <div className={`rewards-progress-bar-filler`}
                  style={{ width: (Math.min(rewards.balance.balanceInUSD / MIN_ELIGIBLE_USD, 1) * 100) + '%' }}></div>
-            <span><b>${Math.floor(Math.min(rewards.balance.balanceInUSD, MIN_ELIGIBLE_USD))}</b>/${MIN_ELIGIBLE_USD}</span>
+            <span><b>${Math.floor(Math.min(rewards.balance.balanceInUSD, MIN_ELIGIBLE_USD))}{rewards.balance.balanceInUSD > MIN_ELIGIBLE_USD && '+'}</b>/${MIN_ELIGIBLE_USD}</span>
           </div>
 
           <div className={`rewards-wallet ${isEligible ? 'active' : 'inactive'}`}>
             {
               isEligible
-                ? <Lottie className='rewards-wallet-icon-animated' animationData={AmbireLogoAnimation}
-                          background='transparent' speed='1' loop autoplay/>
-                : <div className={`rewards-wallet-icon`}></div>
+                ? (<ToolTip label={`You are earning $WALLET rewards`}>
+                    <Lottie className='rewards-wallet-icon-animated' animationData={AmbireLogoAnimation} background='transparent' speed='1' loop autoplay/>
+                </ToolTip>)
+                : (<ToolTip label={`You need a balance worth more than $${MIN_ELIGIBLE_USD} worth of tokens to start accumulating $WALLET rewards`}><div className={`rewards-wallet-icon`}></div></ToolTip>)
             }
           </div>
 
           <div className={`rewards-progress-bar rewards-progress-wallets ${isEligible ? 'active' : 'inactive'}`}>
             <div className={`rewards-progress-bar-filler`}
                  style={{ width: (Math.min(claimableNow / MIN_CLAIMABLE_WALLET, 1) * 100) + '%' }}></div>
-            <span><b>${Math.floor(Math.min(claimableNow, MIN_CLAIMABLE_WALLET))}</b>/${MIN_CLAIMABLE_WALLET}</span>
+            <span><b>$Wallet {Math.floor(Math.min(claimableNow, MIN_CLAIMABLE_WALLET))}{claimableNow > MIN_CLAIMABLE_WALLET && '+'}</b>/{MIN_CLAIMABLE_WALLET}</span>
           </div>
-          <div className={`rewards-progress-claim ${canClaimWallet ? 'active' : 'inactive'}`}>
-            <div className={`rewards-progress-claim-icon`}></div>
-          </div>
+          <ToolTip label={canClaimWallet ? `You need to accumulate ${MIN_CLAIMABLE_WALLET} $WALLET to claim` : `You can claim accumulated $WALLET rewards`}>
+            <div className={`rewards-progress-claim ${canClaimWallet ? 'active' : 'inactive'}`}>
+              <div className={`rewards-progress-claim-icon`}></div>
+            </div>
+          </ToolTip>
         </div>
         <div className={'rewards-progress-labels'}>
           <span>Balance</span>
@@ -140,9 +143,11 @@ const WalletTokenModal = ({ accountId, claimableWalletToken, rewards }) => {
       <div className='item'>
         <div className='details'>
           <label>ADX staking bonus</label>
-          <div className={'activation-badge'}>
-            <span className={`badge-adx ${rewards['adx-rewards'] > 0 ? 'active' : 'inactive'}`}></span>
-          </div>
+          <ToolTip label={rewards['adx-rewards'] > 0 ? `$ADX Staking bonus is active` : `You need to stake $ADX to receive the $ADX staking bonus`}>
+            <div className={'activation-badge'}>
+              <span className={`badge-adx ${rewards['adx-rewards'] > 0 ? 'active' : 'inactive'}`}></span>
+            </div>
+          </ToolTip>
           <div className='balance'>
             <div className='amount'><span
               className='primary-accent'>{rewards['adx-rewards'] === 0 ? '0.00' : rewards['adx-rewards']}</span></div>
