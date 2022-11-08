@@ -296,7 +296,7 @@ function AppInner() {
         </Route>
 
         <Route path="/email-login-iframe">
-          <EmailLoginSDK relayerURL={relayerURL} onAddAccount={onAddAccount} onLoginSuccess={onLoginSuccess}></EmailLoginSDK>
+          <EmailLoginSDK relayerURL={relayerURL} userSorting={userSorting} setUserSorting={setUserSorting} onLoginSuccess={onLoginSuccess}></EmailLoginSDK>
         </Route>
 
         {selectedAcc ?
