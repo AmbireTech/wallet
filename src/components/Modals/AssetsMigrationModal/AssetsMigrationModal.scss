@@ -1,0 +1,430 @@
+@import 'variables';
+
+#asset-migration-modal {
+
+  *:not(input) {
+    user-select: none;
+  }
+
+  > .content {
+    padding-top: 32px;
+  }
+
+  .title {
+    width: 100%;
+  }
+
+  .migration-asset-row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    border-bottom: 1px solid $c-mirage;
+    padding: 8px 4px;
+    height: 50px;
+
+    .checkbox-container:not(.disabled):hover {
+      .checkbox-mark {
+        background-color: $c-mirage;
+        border: 2px solid $c-turquoise;
+      }
+    }
+
+    .checkbox-container {
+
+      input:checked ~ .checkbox-mark {
+        background: $c-mirage;
+      }
+
+      .checkbox-mark {
+        margin-top: 1px;
+        background: $c-mirage;
+        height: 20px;
+        width: 20px;
+        border: 2px solid transparent;
+
+        &:after {
+          left: 4px;
+          top: 0px;
+
+          border-color: $c-turquoise;
+        }
+      }
+    }
+
+
+    &:hover {
+      background-color: $c-mirage;
+    }
+
+    .checkbox-container {
+      padding-top: 12px;
+      height: 50px;
+    }
+
+    .migration-asset-name {
+      font-weight: bold;
+    }
+
+    .migration-asset-select {
+
+      flex-grow: 1;
+      cursor: pointer;
+      padding-left: 8px;
+
+      .checkbox-label {
+        height: 25px;
+      }
+
+      &:hover .checkbox-mark {
+        svg {
+          color: $c-heliotrope;
+        }
+      }
+
+      &.checked .checkbox-mark {
+        svg {
+          color: $c-turquoise;
+        }
+      }
+    }
+
+    .separator {
+      flex-grow: 1;
+    }
+
+    .migrate-amount-input input {
+      height: 40px;
+      padding: 10px;
+      font-size: 1em;
+      max-width: 120px;
+    }
+
+    .migration-asset-usd {
+      color: $c-manatee;
+      padding-right: 8px;
+    }
+
+    .migration-asset-amount {
+      padding-left: 8px;
+      flex-shrink: 1;
+    }
+
+    .migration-asset-amount-usd {
+      color: $c-manatee;
+    }
+  }
+
+  .custom-token-row {
+    text-align: right;
+
+    .custom-token-input input {
+      height: 40px;
+      padding: 10px;
+      font-size: 1em;
+    }
+
+    button.buttonComponent {
+      height: 30px;
+      font-size: 0.9em;
+      font-weight: normal;
+      padding: 0 10px;
+      text-transform: initial;
+      background: $c-mirage;
+
+      &.primary {
+        background: $c-turquoise;
+      }
+    }
+
+    .custom-token-message-fetching {
+      padding: 8px;
+      text-align: center;
+      background: $c-mirage;
+    }
+  }
+
+  .migration-asset-select-label {
+    display: flex;
+    flex-direction: row;
+
+    .migration-asset-select-name {
+      white-space: nowrap;
+      padding-left: 4px;
+      padding-top: 0px;
+    }
+  }
+
+  .migration-actions {
+    padding-left: 8px;
+    color: $c-manatee;
+  }
+
+
+  span.max-native-suggestion {
+    cursor: pointer;
+    border-bottom: 1px dashed $c-heliotrope;
+  }
+
+  .migration-native-row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    border-bottom: 1px solid $c-mirage;
+    padding: 8px 4px;
+    height: 50px;
+
+    .migration-native-row-key {
+      flex-grow: 1;
+    }
+
+    .migrate-amount-input input {
+      height: 40px;
+      padding: 10px;
+      font-size: 1em;
+      max-width: 160px;
+    }
+  }
+
+  .migration-native-usd {
+    color: $c-manatee;
+  }
+
+  .migration-asset-select-icon {
+    height: 22px;
+    width: 22px;
+    padding: 2px;
+    border-radius: 100px;
+    background: rgba(255, 255, 255, 0.1);
+    overflow: hidden;
+
+    img {
+      max-width: 18px;
+    }
+
+    &.migration-asset-select-icon-permit {
+      margin-top: 0;
+      margin-right: 8px;
+    }
+  }
+
+  .migration-native-title {
+    text-align: center;
+
+    .migration-native-asset-icon {
+      margin: 12px auto 12px auto;
+      height: 68px;
+      width: 68px;
+      padding: 2px;
+      border-radius: 100px;
+      background: rgba(255, 255, 255, 0.1);
+
+      img {
+        max-width: 64px;
+      }
+    }
+
+    .migration-native-title-asset-name {
+      b {
+        font-weight: bold;
+      }
+    }
+  }
+
+  .migration-native-selection {
+    cursor: pointer;
+    border-bottom: 1px dashed $c-heliotrope;
+    font-weight: bold;
+  }
+
+  .migration-asset-status {
+    color: $c-turquoise;
+
+    .required {
+      color: $c-half-spanish-white;
+    }
+  }
+
+  .header-inline-flex {
+    display: inline-flex;
+  }
+
+  .header-accent {
+    display: inline;
+    padding-bottom: 8px;
+    border-bottom: 2px solid $c-turquoise;
+  }
+
+  .small-asset-notification {
+    padding: 8px;
+    display: block;
+
+    &.warning {
+      background: mix($c-half-spanish-white, $c-ebony-clay, 10%);
+      color: $c-half-spanish-white;
+    }
+
+    &.success {
+      background: mix($c-turquoise, $c-ebony-clay, 5%);
+      color: $c-turquoise;
+    }
+  }
+
+  .error {
+    background: $danger-color;
+    color: $c-white;
+    padding: 8px;
+    margin-bottom: 18px;
+    border-radius: 12px;
+  }
+
+  .content-center {
+    text-align: center;
+
+    div {
+      margin: auto;
+    }
+  }
+
+  .gas-notification-info {
+    padding: 12px;
+    background: $c-mirage;
+
+    b {
+      display: block;
+      font-weight: bold;
+      text-align: center;
+      margin-bottom: 8px;
+    }
+
+    div {
+      padding: 2px 0px;
+    }
+  }
+
+
+  button.buttonComponent .loading .icon {
+    padding-top: 6px;
+
+    svg {
+      height: 24px
+    }
+  }
+
+
+  button.button-small {
+    padding: 8px;
+    font-size: 0.8em;
+    height: auto;
+  }
+
+  &.modal button.full {
+    flex: 0 1 100% !important;
+  }
+
+  button.secondary {
+    background: $c-heliotrope;
+  }
+
+  button.buttonComponent.buttonHollow {
+    background: transparent;
+    border: 2px solid $c-white;
+    color: $c-white;
+
+    &.danger {
+      background: transparent;
+      border-color: $danger-color;
+      color: $danger-color;
+
+      .icon-button {
+        color: $danger-color !important;
+      }
+    }
+
+    &.secondary {
+      border: 2px solid $c-heliotrope;
+      color: $c-heliotrope;
+      background: transparent;
+
+      .icon-button {
+        color: $c-heliotrope !important;
+      }
+    }
+  }
+
+
+  .gas-estimation-block {
+    background: $c-mirage;
+    border-radius: 12px;
+
+    .gas-estimation-block-title {
+      padding: 8px;
+      font-weight: bold;
+      text-align: center;
+      text-transform: uppercase;
+      background: $c-mirage;
+      border-radius: 12px;
+    }
+
+    ul.gas-estimation-selector {
+      display: flex;
+      flex-direction: row;
+      padding: 0;
+      margin: 0;
+      background: $c-martinique;
+
+      li {
+        padding: 8px 0;
+        flex-grow: 1;
+        list-style: none;
+        text-align: center;
+        border: 2px solid transparent;
+        cursor: pointer;
+        color: mix($c-ebony-clay, $c-white, 50%);
+        text-transform: uppercase;
+        font-size: 15px;
+
+        &:hover {
+          color: $c-white;
+          background-color: $c-mirage;
+        }
+
+        &.selected {
+          border: 2px solid $ambire-dark-blue;
+          background: $c-mirage;
+          color: $c-white;
+        }
+
+      }
+    }
+
+    table {
+      width: 100%;
+
+      td {
+        padding: 8px;
+
+        &.gas-estimation-details-amount {
+          width: 0
+        }
+      }
+    }
+  }
+
+
+  .migration-permitted {
+    padding: 8px;
+    font-size: 0.8em;
+    background: mix($c-turquoise, $c-ebony-clay, 5%);
+    color: $c-turquoise;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+
+    &.warning {
+      background: mix($c-half-spanish-white, $c-ebony-clay, 5%);
+      color: $c-half-spanish-white;
+    }
+  }
+
+
+}
