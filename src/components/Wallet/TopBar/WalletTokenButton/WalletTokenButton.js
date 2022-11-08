@@ -14,12 +14,24 @@ const WalletTokenButton = ({ rewardsData, account = {}, network, hidePrivateValu
         addRequest,
         totalLifetimeRewards: rewardsData.rewards.totalLifetimeRewards,
         walletUsdPrice: rewardsData.rewards.walletUsdPrice,
+        rewardsLastUpdated: rewardsData.lastUpdated
       })
+
     const { currentClaimStatus, pendingTokensTotal } = claimableWalletToken
     const { isLoading: isRewardsDataLoading, errMsg } = rewardsData
     const isLoading = isRewardsDataLoading || currentClaimStatus.loading
-
     const showWalletTokenModal = useDynamicModal(WalletTokenModal, { claimableWalletToken, accountId: account.id }, { rewards: rewardsData.rewards })
+    const renderRewardsButtonText = () => {
+        if (currentClaimStatus.loading && !currentClaimStatus.lastUpdated) {
+          return (<span><Loading/></span>)
+        }
+    
+        if (isRewardsDataLoading && !rewardsData.lastUpdated) {
+          return (<span><Loading/></span>)
+        }
+    
+        return `${hidePrivateValue(pendingTokensTotal)} $ WALLETS`
+    }
 
     return (
         !isLoading && (errMsg || currentClaimStatus.error) ?
@@ -35,15 +47,8 @@ const WalletTokenButton = ({ rewardsData, account = {}, network, hidePrivateValu
                 className={styles.button}
                 style={{ textTransform: 'none'}}
             >
-                { !pendingTokensTotal 
-                    ? (<span><Loading/></span>)
-                    : (<>
-                        <span>
-                            { hidePrivateValue(pendingTokensTotal) }
-                        </span>
-                        $ WALLETS
-                    </>)
-                }
+                { renderRewardsButtonText() }
+                
             </Button>
     )
 }
