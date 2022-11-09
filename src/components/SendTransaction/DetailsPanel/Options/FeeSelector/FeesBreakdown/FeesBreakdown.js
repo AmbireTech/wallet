@@ -1,6 +1,9 @@
 import cn from 'classnames'
-import { getDiscountApplied } from 'components/SendTransaction/helpers'
+
 import { formatFloatTokenAmount } from 'lib/formatters'
+
+import { getDiscountApplied } from 'components/SendTransaction/helpers'
+
 import { MdInfoOutline } from 'react-icons/md'
 
 import styles from './FeesBreakdown.module.scss'

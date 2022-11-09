@@ -1,4 +1,5 @@
 import { ToolTip } from "components/common";
+
 import { ReactComponent as ChevronLeftIcon } from "resources/icons/chevron-left.svg";
 import { ReactComponent as InfoIcon } from "resources/icons/information.svg";
 

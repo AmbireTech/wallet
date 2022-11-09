@@ -1,4 +1,5 @@
 import cn from 'classnames'
+
 import FailingTxn from "components/SendTransaction/DetailsPanel/FailingTxn/FailingTxn";
 import Actions from "./Actions/Actions";
 

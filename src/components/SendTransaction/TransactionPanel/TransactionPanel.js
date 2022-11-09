@@ -1,7 +1,9 @@
 import cn from "classnames";
-import { GiGorilla } from "react-icons/gi";
-import TxnPreview from "components/common/TxnPreview/TxnPreview";
+
 import { Panel } from "components/common";
+import TxnPreview from "components/common/TxnPreview/TxnPreview";
+
+import { GiGorilla } from "react-icons/gi";
 
 import styles from "./TransactionPanel.module.scss";
 

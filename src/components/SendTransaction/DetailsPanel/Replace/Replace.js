@@ -1,5 +1,7 @@
 import cn from 'classnames'
+
 import { Button, Loading } from 'components/common'
+
 import { MdInfo, MdOutlineClose, MdWarning } from 'react-icons/md'
 
 import styles from './Replace.module.scss'

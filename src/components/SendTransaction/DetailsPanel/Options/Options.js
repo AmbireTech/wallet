@@ -1,6 +1,7 @@
 import * as blockies from 'blockies-ts'
 
 import { networkIconsById } from 'consts/networks'
+
 import { FeeSelector } from 'components/SendTransaction/DetailsPanel/Options/FeeSelector/FeeSelector'
 
 import styles from './Options.module.scss'

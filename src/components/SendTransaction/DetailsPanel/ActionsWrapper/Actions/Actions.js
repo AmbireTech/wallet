@@ -1,26 +1,25 @@
-import cn from 'classnames'
 import { useState, useRef, useEffect, useCallback } from 'react'
-import { Button, Loading, TextInput } from 'components/common'
-import { isTokenEligible } from 'components/SendTransaction/helpers'
-import { MdCheckCircle } from 'react-icons/md'
-
-import { sendNoRelayer } from "components/SendTransaction/noRelayer";
-import { getWallet } from "lib/getWallet";
+import { Wallet, ethers } from "ethers";
+import { Interface } from 'ethers/lib/utils';
 import accountPresets from "ambire-common/src/constants/accountPresets";
+import { Bundle } from "adex-protocol-eth/js";
+import cn from 'classnames'
+
+import { getWallet } from "lib/getWallet";
 import { fetchPost } from "lib/fetch";
 import { getProvider } from "lib/provider";
 
-import { Bundle } from "adex-protocol-eth/js";
-import { Wallet, ethers } from "ethers";
-
-import { getFeesData, toHexAmount } from "components/SendTransaction/helpers";
-import { Interface } from 'ethers/lib/utils';
 import { useToasts } from 'hooks/toasts';
+import { Button, Loading, TextInput } from 'components/common'
+import { isTokenEligible } from 'components/SendTransaction/helpers'
+import { sendNoRelayer } from "components/SendTransaction/noRelayer";
+import { getFeesData, toHexAmount } from "components/SendTransaction/helpers";
+
+import { MdCheckCircle } from 'react-icons/md'
 
 import styles from './Actions.module.scss'
 
 const ERC20 = new Interface(require("adex-protocol-eth/abi/ERC20"));
-
 
 function getErrorMessage(e) {
   if (e && e.message === "NOT_TIME") {

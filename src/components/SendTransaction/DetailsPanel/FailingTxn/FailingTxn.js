@@ -1,5 +1,7 @@
 import { ToolTip } from "components/common"
+
 import { ReactComponent as ErrorIcon } from 'resources/icons/error.svg'
+
 import styles from './FailingTxn.module.scss'
 
 const FailingTxn = ({ message, tooltip = '' }) => {

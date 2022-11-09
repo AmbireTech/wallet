@@ -1,14 +1,15 @@
 import { useState } from 'react'
 import cn from 'classnames'
-import { formatFloatTokenAmount } from "lib/formatters"
-import { Button, TextInput } from 'components/common'
-import FeeAmountSelectors from './FeeAmountSelectors/FeeAmountSelectors'
 
-import { ReactComponent as EditIcon } from 'resources/icons/edit.svg'
+import { formatFloatTokenAmount } from "lib/formatters"
 
 import {
   getFeesData
 } from 'components/SendTransaction/helpers'
+import { Button, TextInput } from 'components/common'
+import FeeAmountSelectors from './FeeAmountSelectors/FeeAmountSelectors'
+
+import { ReactComponent as EditIcon } from 'resources/icons/edit.svg'
 
 import styles from './SelectFeeType.module.scss'
 

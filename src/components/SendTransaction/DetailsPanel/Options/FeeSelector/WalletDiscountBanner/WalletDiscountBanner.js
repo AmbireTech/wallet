@@ -1,4 +1,5 @@
 import cn from 'classnames'
+
 import { isTokenEligible } from 'components/SendTransaction/helpers'
 import { Button } from "components/common"
 

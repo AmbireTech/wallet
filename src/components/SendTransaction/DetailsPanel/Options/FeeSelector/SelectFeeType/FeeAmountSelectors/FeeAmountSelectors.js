@@ -1,10 +1,13 @@
 import cn from 'classnames'
+
+import { formatFloatTokenAmount } from 'lib/formatters'
+
 import {
   isTokenEligible,
   getFeesData,
   getDiscountApplied,
 } from 'components/SendTransaction/helpers'
-import { formatFloatTokenAmount } from 'lib/formatters'
+
 import { FaPercentage } from 'react-icons/fa'
 
 import styles from './FeeAmountSelectors.module.scss'

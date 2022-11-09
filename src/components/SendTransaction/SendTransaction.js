@@ -1,18 +1,18 @@
-//import { GrInspect } from 'react-icons/gr'
-// GiObservatory is also interesting
 import { useEffect, useState, useMemo, useRef } from 'react'
+import { ethers } from 'ethers'
+
+import { getProvider } from 'lib/provider'
+
 import { useToasts } from 'hooks/toasts'
 import {
   getDefaultFeeToken,
   isTokenEligible, makeBundle
  } from './helpers'
-import { getProvider } from 'lib/provider'
-import { ethers } from 'ethers'
 import TitleBar from './TitleBar/TitleBar'
-
-import styles from './SendTransaction.module.scss'
 import DetailsPanel from './DetailsPanel/DetailsPanel'
 import TransactionPanel from './TransactionPanel/TransactionPanel'
+
+import styles from './SendTransaction.module.scss'
 
 
 const DEFAULT_SPEED = 'fast'

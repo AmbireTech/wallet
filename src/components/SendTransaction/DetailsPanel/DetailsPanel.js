@@ -1,11 +1,12 @@
+import { useState } from "react";
 import cn from "classnames";
+
+import { Checkbox, Panel } from "components/common";
 import Options from "./Options/Options";
 import Replace from "./Replace/Replace";
+import ActionsWrapper from "./ActionsWrapper/ActionsWrapper";
 
 import styles from "./DetailsPanel.module.scss";
-import { useState } from "react";
-import { Checkbox, Panel } from "components/common";
-import ActionsWrapper from "./ActionsWrapper/ActionsWrapper";
 
 const DetailsPanel = ({
   estimation,
