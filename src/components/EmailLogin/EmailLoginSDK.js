@@ -4,28 +4,21 @@ import { useState, useEffect } from 'react'
 
 import { fetch, fetchCaught } from 'lib/fetch'
 
-import LoginOrSignup from 'components/LoginOrSignupForm/LoginOrSignupForm'
-import { useLocalStorage, useAccounts, usePrivateMode } from 'hooks'
+import LoginForm from 'components/SDK/LoginForm'
+import { useLocalStorage } from 'hooks'
 
 import { ReactComponent as ChevronLeftIcon } from 'resources/icons/chevron-left.svg'
 
 import Lottie from 'lottie-react'
 import AnimationData from './assets/confirm-email.json'
-import Accounts from "./Accounts";
 
 // NOTE: the same polling that we do here with the setEffect should be used for txns
 // that require email confirmation
-export default function EmailLoginSDK({ relayerURL, onLoginSuccess, userSorting, setUserSorting }) {
+export default function EmailLoginSDK({ relayerURL, onAddAccount, onLoginSuccess }) {
     const [requiresEmailConfFor, setRequiresConfFor] = useState(null)
     const [err, setErr] = useState('')
     const [inProgress, setInProgress] = useState(false)
     const [loginSessionKey, setLoginSessionKey, removeLoginSessionKey] = useLocalStorage({ key: 'loginSessionKey', isStringStorage: true })
-
-    // check if the user is logged in.
-    // if he is, display his account in a dropdown...
-    // that should be OK for now
-    const { accounts, selectedAcc, onSelectAcc, onAddAccount } = useAccounts(useLocalStorage)
-    const { hidePrivateValue } = usePrivateMode(useLocalStorage)
 
     const EMAIL_VERIFICATION_RECHECK = 3000
 
@@ -141,12 +134,7 @@ export default function EmailLoginSDK({ relayerURL, onLoginSuccess, userSorting,
         {err ? (<p className={styles.error}>{err}</p>) : (<></>)}
       </div>)
       : (<div className={styles.loginEmail}>
-        {
-          accounts.length
-            ? (<Accounts accounts={accounts} selectedAddress={selectedAcc} onSelectAcc={onSelectAcc} hidePrivateValue={hidePrivateValue} userSorting={userSorting} setUserSorting={setUserSorting} />)
-          : (<div></div>)
-        }
-        <LoginOrSignup onAccRequest={onLoginUserAction} inProgress={inProgress}></LoginOrSignup>
+        <LoginForm onAccRequest={onLoginUserAction} inProgress={inProgress}></LoginForm>
         <div className={styles.magicLink}>A password will not be required, we will send a magic login link to your email.</div>
         <a className={styles.backButton} href="#/add-account">
           <ChevronLeftIcon />
