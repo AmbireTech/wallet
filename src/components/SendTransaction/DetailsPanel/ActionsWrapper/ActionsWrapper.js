@@ -1,7 +1,8 @@
 import cn from 'classnames'
-import { MdInfo } from "react-icons/md"
 import FailingTxn from "components/SendTransaction/DetailsPanel/FailingTxn/FailingTxn";
 import Actions from "./Actions/Actions";
+
+import { ReactComponent as InfoIcon } from 'resources/icons/information.svg'
 
 import styles from './ActionsWrapper.module.scss';
 
@@ -33,7 +34,7 @@ const ActionsWrapper = ({
       bundle.gasLimit ? (
         <div className={styles.firstTxNote}>
           <div className={styles.firstTxNoteTitle}>
-            <MdInfo />
+            <InfoIcon />
             Note
           </div>
           <div className={styles.firstTxNoteMessage}>
