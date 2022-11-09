@@ -1,0 +1,45 @@
+@import "variables";
+
+$txn-height: 65px;
+$extended-summary-height: 40px;
+
+.action {
+  display: flex;
+  align-items: center;
+  height: $extended-summary-height;
+  color: $c-turquoise;
+  font-size: 14px;
+
+  &.unknown {
+    color: #d06f1b;
+  }
+
+  &.cancel {
+    color: #c33a3a;
+  }
+}
+
+.word {
+  font-size: 13px;
+  color: $c-scampi;
+}
+
+.token,
+.address,
+.network,
+.erc721 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  flex-wrap: wrap;
+  color: $c-titan-white;
+
+  .icon {
+    height: 40px;
+    width: 40px;
+    padding: 8px;
+    border-radius: 12px;
+    background-color: rgba($c-titan-white, 0.05);
+  }
+}
