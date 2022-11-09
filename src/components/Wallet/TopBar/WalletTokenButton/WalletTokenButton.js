@@ -41,7 +41,7 @@ const WalletTokenButton = ({ rewardsData, account = {}, network, hidePrivateValu
           return (<span><Loading/></span>)
         }
     
-        return `${hidePrivateValue(pendingTokensTotal)} $WALLETs`
+        return `${hidePrivateValue(pendingTokensTotal)} $WALLET`
     }, [currentClaimStatus.error, currentClaimStatus.lastUpdated, currentClaimStatus.loading, hidePrivateValue, pendingTokensTotal, rewardsErrMsg, rewardsIsLoading, rewardsLastUpdated])
 
     return (
