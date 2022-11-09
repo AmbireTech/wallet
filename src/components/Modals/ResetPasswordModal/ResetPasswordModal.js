@@ -235,7 +235,7 @@ const ResetPassword = ({ account, selectedNetwork, relayerURL, onAddAccount, sho
                 }
                 {
                     passwordsLengthWarning ?
-                        <div className="warning">Password length must be greater than 8 characters</div> : null
+                        <div className="warning">Password must be at least 8 characters</div> : null
                 }
             </div>
         </Modal>
