@@ -11,13 +11,18 @@
     align-items: center;
     gap: 10px;
     font-size: 18px;
-    font-weight: bold;
-    text-transform: uppercase;
+    font-weight: 300;
+    text-transform: capitalize;
+
+    svg {
+      width: 24px;
+      height: 24px;
+    }
   }
 
   .firstTxNoteMessage {
     font-size: 16px;
-    font-weight: 500;
+    font-weight: 300;
     opacity: 0.8;
   }
 }
