@@ -38,6 +38,7 @@ import { fetch } from 'lib/fetch'
 const EmailLogin = lazy(() => import('./components/EmailLogin/EmailLogin'))
 const EmailLoginSDK = lazy(() => import('./components/EmailLogin/EmailLoginSDK'))
 const AddAccount = lazy(() => import('./components/AddAccount/AddAccount'))
+const AddAccountSDK = lazy(() => import('./components/SDK/AddAccount'))
 const Wallet = lazy(() => import('./components/Wallet/Wallet'))
 const SendTransaction = lazy(() => import('./components/SendTransaction/SendTransaction'))
 const SignMessage = lazy(() => import('./components/SignMessage/SignMessage'))
@@ -289,6 +290,10 @@ function AppInner() {
       <Switch>
         <Route path="/add-account">
           <AddAccount relayerURL={relayerURL} onAddAccount={onAddAccount} utmTracking={utmTracking} pluginData={pluginData}></AddAccount>
+        </Route>
+
+        <Route path="/add-account-sdk">
+          <AddAccountSDK relayerURL={relayerURL} onAddAccount={onAddAccount} utmTracking={utmTracking} pluginData={pluginData}></AddAccountSDK>
         </Route>
 
         <Route path="/email-login">
