@@ -18,7 +18,7 @@
     transform: translateY(100%)
   }
 
-  &Button {
+  .button {
     font-family: 'Poppins', sans-serif;
     flex: 1;
     padding: 15px;
@@ -65,8 +65,8 @@
 
 @media screen and (max-width: 1400px) {
   .tabs {
-    &Button {
-        font-size: 22px;
+    .button {
+      font-size: 22px;
     }
   }
 }
@@ -74,8 +74,8 @@
 // Mobile
 @media screen and (max-width: $mobile-breakpoint-max-width) {
   .tabs {
-    &Button {
-        font-size: 16px;
+    .button {
+      font-size: 16px;
     }
   }
 }

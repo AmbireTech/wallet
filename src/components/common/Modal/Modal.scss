@@ -26,17 +26,21 @@ $buttons-height: 160px;
 
     .heading {
         display: flex;
-        align-items: center;
+        align-items: flex-start;
         padding: 0 40px;
         justify-content: space-between;
 
-        .title {
-            font-size: 25px;
-            &.centered {
-                text-align: center;
-                margin: 0 auto;
+        .title-wrapper {
+            display: flex;
+            gap: 10px 30px;
+            .title {
+                font-size: 25px;
+                &.centered {
+                    text-align: center;
+                    margin: 0 auto;
+                }
+    
             }
-
         }
 
         .close {
@@ -51,16 +55,6 @@ $buttons-height: 160px;
                 cursor: pointer;
                 background-color: rgba($c-titan-white, 0.02);
             }
-        }
-
-        .topLeft {
-            height: 50px;
-            width: 75px;
-            position: absolute;
-            top: 17px;
-            left: 15px;
-            @include flex-center-center;
-            font-size: 20px;
         }
     }
     
@@ -111,11 +105,23 @@ $buttons-height: 160px;
 // Mobile
 @media screen and (max-width: $mobile-breakpoint-max-width) {
     .modal {
+        max-width: 600px;
         height: 100% !important;
         width: 100% !important;
 
+        .heading {
+            padding: 0 30px;
+            .title-wrapper {
+                flex-direction: column;
+            }
+        }
+
         .content {
-            padding: 1.5em;
+            padding: 30px;
+        }
+
+        .buttons {
+            padding: 30px;
         }
     }
 }

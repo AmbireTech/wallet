@@ -2,7 +2,7 @@
 
 $max-width: 650px;
 
-#signMessage {
+.wrapper {
   position: fixed;
   top: 0px;
   left: 0px;
@@ -10,22 +10,23 @@ $max-width: 650px;
   bottom: 0px;
   z-index: 999;
   overflow-y: auto;
-  background-color: #282b33;
+  background: rgb(61,68,106);
+  background: transparent linear-gradient(180deg, $c-fiord 0%, $c-ebony-clay 100%) 0% 0% no-repeat padding-box;
 
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 2em;
+  gap: 32px;
+  padding: 32px;
+  box-sizing: border-box;
 
   .panel {
     width: $max-width;
-    box-sizing: border-box;
-    background-color: rgba(0, 0, 0, 0.2);
 
     .title {
       align-items: center;
       justify-content: flex-start;
-      gap: 0.5em;
+      gap: 8px;
     }
 
     .content {
@@ -36,10 +37,10 @@ $max-width: 650px;
       display: flex;
       align-items: baseline;
 
-      .signMessageTitle-title {
+      .signMessageTitleTitle {
         flex-grow: 1;
       }
-      .signMessageTitle-signatureType {
+      .signMessageTitleSignatureType {
         display: flex;
         align-items: center;
         background-color: $c-mirage;
@@ -47,6 +48,7 @@ $max-width: 650px;
         color: $text-container-color;
         font-weight: 300;
         font-size: 16px;
+        border-radius: 12px;
 
         span {
           margin-left: 4px;
@@ -56,59 +58,59 @@ $max-width: 650px;
   }
 
 
-  #signingAccount {
-    .content {
+  .signingAccountContent {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    font-family: 'Ubuntu Mono';
+    font-size: 15px;
+    font-weight: bold;
+    flex-wrap: wrap;
+
+    .signingAccountAccount {
       display: flex;
-      flex-direction: row;
-      justify-content: flex-start;
-      font-family: 'Ubuntu Mono';
-      font-size: 15px;
-      font-weight: bold;
+      gap: 10px;
+      flex-grow: 1;
+      align-items: center;
+      overflow-wrap: anywhere;
+    }
 
-      .signingAccount-account {
-        display: flex;
-        gap: 10px;
-        flex-grow: 1;
-        align-items: center;
-      }
-
-      .signingAccount-network {
-        display: flex;
-        gap: 10px;
-        justify-content: right;
-        align-items: center;
-
-        .icon {
-          background-size: contain;
-        }
-      }
+    .signingAccountNetwork {
+      display: flex;
+      gap: 10px;
+      justify-content: right;
+      align-items: center;
 
       .icon {
-        height: 20px;
-        width: 20px;
-        border-radius: 100%;
+        background-size: contain;
       }
+    }
+
+    .icon {
+      height: 20px;
+      width: 20px;
+      border-radius: 100%;
     }
   }
 
-  .request-message {
+  .requestMessage {
     display: flex;
     flex-direction: column;
-    gap: 1em;
+    gap: 16px;
     font-weight: 500;
 
-    .dapp-message {
+    .dappMessage {
       display: flex;
       flex-direction: row;
-      gap: 0.5em;
-      row-gap: 0.2em;
+      gap: 8px;
+      row-gap: 3px;
       align-items: center;
       flex-wrap: wrap;
 
       .dapp {
         display: flex;
         flex-direction: row;
-        gap: 0.5em;
+        gap: 8px;
 
         .icon {
           height: 22px;
@@ -135,13 +137,14 @@ $max-width: 650px;
     }
   }
 
-  .sign-message {
+  .signMessage {
     width: auto;
-    padding: 2em;
+    padding: 32px;
     color: #ccc;
     min-height: 300px;
     background-color: rgba(0,0,0,0.4);
     border: 0px;
+    border-radius: 12px;
     resize: none;
   }
 
@@ -149,11 +152,11 @@ $max-width: 650px;
     form {
       display: flex;
       flex-direction: column;
-      gap: 1.5em;
+      gap: 24px;
 
       .buttons {
         display: flex;
-        gap: 1.5em;
+        gap: 24px;
 
         button {
           flex: 1 1 50%;
@@ -184,32 +187,19 @@ $max-width: 650px;
       }
     }
   }
-
-  .erc20PermitWarning {
-    padding: 16px;
-    display: flex;
-    background-color: $c-mirage;
-    gap: 16px;
-    align-items: center;
-
-    .erc20PermitWarning-icon {
-      font-size: 32px;
-      color: $warning-color;
-    }
-
-  }
 }
 
 // Mobile
 @media screen and (max-width: $mobile-breakpoint-max-width) {
-  #signMessage {
-    gap: 1em;
+  .wrapper {
+    gap: 16px;
+    padding: 16px;
 
     .panel {
       width: 100%;
       min-width: auto !important;
       max-width: 100% !important;
-      padding: 2em 1em !important;
+      padding: 32px 16px !important;
     }
   }
 }
