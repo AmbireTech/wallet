@@ -5,6 +5,7 @@ import { fetchGet } from 'lib/fetch';
 import { ZAPPER_API_ENDPOINT, VELCRO_API_ENDPOINT, COINGECKO_API_URL } from 'config'
 import { useToasts } from 'hooks/toasts'
 import useConstants from './useConstants'
+import useIndexedDBStorage from './useIndexedDBStorage'
 
 const getBalances = (network, address, provider, quickResponse) => {
     if (provider === '' || !provider) return null
@@ -64,7 +65,8 @@ export default function usePortfolio({ currentNetwork, account, useStorage, rela
         eligibleRequests,
         requests,
         selectedAccount,
-        sentTxn
+        sentTxn,
+        useIndexedDBStorage
     })
 
     return {
