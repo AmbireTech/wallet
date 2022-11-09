@@ -1,0 +1,31 @@
+@import "variables.scss";
+
+.balanceError {
+  padding: 15px 0;
+  font-size: 18px;
+  font-weight: bold;
+  color: $danger-color;
+}
+
+.sectionTitle {
+  display: flex;
+  justify-content: space-between;
+
+  span {
+    font-size: 16px;
+    margin-bottom: 10px;
+    font-weight: 300;
+  }
+
+  .gasTankEnabled {
+    color: $c-turquoise;
+  }
+
+  .gasTankDisabled {
+    color: $danger-color;
+  }
+}
+
+.noRelayerMsg {
+  color: $warning-color;
+}

@@ -1,0 +1,59 @@
+@import "variables";
+
+$titleBar-height: 90px;
+
+.wrapper {
+  z-index: 49;
+  height: $titleBar-height;
+  width: 100%;
+  position: sticky;
+  top: 0;
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 40px;
+
+  .backIcon {
+    background-color: rgba($c-titan-white, 0.05);
+    min-width: 40px;
+    min-height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+  }
+
+  p {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 300;
+  }
+
+  .infoIcon {
+    width: 20px;
+    height: 20px;
+  }
+  .dismiss {
+    @include flex-center-center;
+    gap: 10px;
+    cursor: pointer;
+    line-height: 35px;
+    height: 35px;
+    font-size: 20px;
+
+    span {
+      float: right;
+    }
+
+    &:hover {
+      color: $c-titan-white;
+    }
+  }
+}
+
+@media (max-width: $mobile-breakpoint-max-width) {
+  .wrapper {
+    padding: 0 20px;
+  }
+}

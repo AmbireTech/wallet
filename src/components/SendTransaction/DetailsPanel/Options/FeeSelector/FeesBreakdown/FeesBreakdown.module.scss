@@ -1,0 +1,39 @@
+@import "variables";
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.fee {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 22px;
+  background-color: $c-mirage;
+  border-radius: 12px;
+  color: $c-titan-white;
+
+  &.discount {
+    color: $c-turquoise;
+  }
+
+  &.warning {
+    color: $warning-color;
+  }
+
+  p {
+    display: block;
+    margin: 0;
+    font-weight: 300;
+  }
+}
+
+@media (max-width: $mobile-breakpoint-max-width) {
+  .fee {
+    flex-direction: column;
+    text-align: center;
+    gap: 15px;
+  }
+}

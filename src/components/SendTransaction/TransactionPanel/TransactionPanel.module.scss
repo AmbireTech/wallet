@@ -1,0 +1,38 @@
+@import "variables";
+
+.wrapper {
+  .listOfTransactions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    overflow-y: auto;
+    margin-bottom: 20px;
+  }
+
+  .transactionsNote {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 15px 30px;
+    border-bottom: 3px solid $ambire-dark-blue;
+    background: $c-mirage;
+    border-radius: 12px;
+
+    b {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    span {
+      font-weight: 500;
+      opacity: 0.6;
+    }
+  }
+}
+
+@media screen and (max-width: $mobile-breakpoint-max-width) {
+  .wrapper {
+    overflow-y: unset;
+  }
+}

@@ -1,0 +1,13 @@
+@import "variables";
+
+.section {
+  margin-bottom: 20px;
+
+  .sectionTitle {
+    font-size: 16px;
+    font-weight: 300;
+    color: $c-titan-white;
+    margin: 0;
+    margin-bottom: 10px;
+  }
+}

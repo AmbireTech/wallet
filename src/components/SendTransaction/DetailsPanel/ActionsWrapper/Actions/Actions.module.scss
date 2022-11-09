@@ -1,0 +1,93 @@
+@import "variables";
+
+.confirmationCodeInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 20px;
+
+  .confirmationCodeInfoTitle {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+    font-size: 18px;
+    font-weight: bold;
+    text-transform: uppercase;
+  }
+
+  .confirmationCodeInfoMessage {
+    font-size: 17px;
+    font-weight: 500;
+    opacity: 0.8;
+  }
+}
+
+.code2faNotRequiredMsg {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background-color: mix($c-ebony-clay, $c-turquoise, 90%);
+  color: $c-turquoise;
+  padding: 15px;
+  font-size: 14px;
+}
+
+.wrapper {
+  gap: 30px;
+
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    .inputsContainer {
+      display: flex;
+      flex-direction: row;
+      gap: 10px;
+
+      .textInput {
+        flex: 0 1 50%;
+      }
+    }
+
+    .buttons {
+      margin-top: 15px;
+    }
+  }
+}
+
+.buttons {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  gap: 20px;
+  flex-wrap: wrap;
+
+  .button {
+    flex-grow: 1;
+
+    &.rejectTxn {
+      flex: 1;
+      background-color: transparent;
+      border: 2px solid $danger-color;
+      color: $danger-color;
+    }
+
+    &.approveTxn {
+      flex: 3;
+      .loading {
+        width: auto;
+      }
+    }
+  }
+}
+
+@media (max-width: $mobile-breakpoint-max-width) {
+  .buttons {
+    .button {
+      font-size: 16px;
+    }
+  }
+}
