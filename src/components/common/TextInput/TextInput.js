@@ -20,7 +20,7 @@ const TextInput = forwardRef(({ value, className, title, pattern, autoComplete, 
                     :
                     null
             }
-            <div className={`${styles.textInputContainer}${inputContainerClass ? ` ${inputContainerClass}` : ''}${icon ? ` ${styles.hasIcon}` : ''}`} onClick={copy ? onClick : null}>
+            <div className={`${styles.container}${inputContainerClass ? ` ${inputContainerClass}` : ''}${icon ? ` ${styles.hasIcon}` : ''}`} onClick={copy ? onClick : null}>
                 <input
                     value={value}
                     title={title}
