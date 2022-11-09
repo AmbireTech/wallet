@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import React, { useState } from 'react'
 import Accounts from "./Accounts";
 
 import { useLocalStorage, useAccounts, usePrivateMode } from 'hooks'
@@ -39,16 +39,22 @@ export default function LoginForm({ onAccRequest, inProgress, onLoginSuccess }) 
     setState(newState)
   }
 
+  const signInBtnMsg = selectedAcc
+    ? 'Sign In'
+    : 'Login with Email'
+
   return (
     <form onSubmit={onSubmit}>
       {
         accounts.length
-          ? (<Accounts accounts={accounts} selectedAddress={selectedAcc} onSelectAcc={onSelectAcc} hidePrivateValue={hidePrivateValue} />)
+          ? (<React.Fragment>
+              <Accounts accounts={accounts} selectedAddress={selectedAcc} onSelectAcc={onSelectAcc} hidePrivateValue={hidePrivateValue} />
+              <div>OR</div>
+            </React.Fragment>)
         : (<></>)
       }
-      <div>OR</div>
       <input type="email" placeholder="Email" value={state.email} onChange={e => onUpdate({ email: e.target.value })}></input>
-      <input type="submit" disabled={inProgress} value={(inProgress ? "Signing in..." : "Sign In")}></input>
+      <input type="submit" disabled={inProgress} value={(inProgress ? "Signing in..." : signInBtnMsg)}></input>
     </form>
   )
 }
