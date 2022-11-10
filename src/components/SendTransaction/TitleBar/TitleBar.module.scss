@@ -55,5 +55,6 @@ $titleBar-height: 90px;
 @media (max-width: $mobile-breakpoint-max-width) {
   .wrapper {
     padding: 0 20px;
+    height: 65px;
   }
 }
