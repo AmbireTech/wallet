@@ -10,8 +10,6 @@ import { useToasts } from 'hooks/toasts';
 
 const formatAmount = (amount, asset) => amount / Math.pow(10, asset.decimals)
 const formatFeeAmount = (fee, route) => {
-    // console.log({fee, route})
-    // const asset = fee.asset.address === route.toAsset.address ? fee.toAsset : route.fromAsset
     return formatAmount(fee.amount, fee.asset)
 }
 const getNetwork = id => networks.find(({ chainId }) => chainId === id)
@@ -26,68 +24,69 @@ const Quotes = ({ addRequest, selectedAccount, fromTokensItems, quotes, onQuotes
     const toNetwork = getNetwork(toAsset.chainId)
     const [selectedRoute, setSelectedRoute] = useState(null)
     const [loading, setLoading] = useState(false)
-console.log({quotes});
+
     const refuel = quotes.refuel
     const routes = quotes.routes.map(route => {
         const { userTxs } = route
         const bridgeStep = userTxs.map(tx => tx.steps.find(s => s.type === 'bridge')).find(x => x)
         const bridgeRoute = userTxs.find(tx => tx.steps.find(s => s.type === 'bridge'))
+        const middlewareRoute = userTxs.map(tx => tx.steps.find(s => s.type === 'middleware')).find(x => x)
+
         return {
             ...route,
             bridgeStep,
+            middlewareRoute,
             userTxType: bridgeRoute.userTxType,
             txType: bridgeRoute.txType,
-            middlewareFee: 0, // middlewareRoute ? formatFeeAmount(fees.middlewareFee, middlewareRoute) : 0,
+            middlewareFee: middlewareRoute?.protocolFees ? formatFeeAmount(middlewareRoute?.protocolFees, route) : 0,
             bridgeFee: bridgeStep?.protocolFees ? formatFeeAmount(bridgeStep?.protocolFees, route) : 0
         }
     })
 
-    const radios = routes.map(({ bridgeStep, bridgeFee, maxServiceTime, fromAmount, toAmount, routeId, integratorFee, userTxs }) => ({
+    const radios = routes.map(({ bridgeStep, bridgeFee, maxServiceTime, serviceTime, middlewareRoute, middlewareFee, fromAmount, toAmount, routeId, integratorFee, userTxs }) => ({
         label:
             <div className="route">
                 <div className="info">
-                    {/* {
+                    {
                         middlewareRoute ?
                             <div className="middleware">
-                                <div className="icon" style={{backgroundImage: `url(${middlewareRoute.middlewareInfo.icon})`}}></div>
-                                <div className="name">{ middlewareRoute.middlewareInfo.displayName }</div>
+                                <div className="icon" style={{backgroundImage: `url(${middlewareRoute.protocol.icon})`}}></div>
+                                <div className="name">{ middlewareRoute.protocol.displayName }</div>
                             </div>
                             :
                             null
-                    } */}
+                    }
                     <div className="bridge">
                         <div className="icon" style={{backgroundImage: `url(${bridgeStep.protocol.icon})`}}></div>
                         <div className="name">{ bridgeStep.protocol.displayName }</div>
                     </div>
                 </div>
                 <div className="summary">
-                    <div className="time">{ ` ${maxServiceTime/60} estimation in minutes` }</div>
                     <div className="amounts">
-                        {/* {
-                            middlewareRoute ?
-                                <div className="amount">
-                                    { formatAmount(middlewareRoute.inputAmount, middlewareRoute.fromAsset) } { middlewareRoute.fromAsset.symbol }
-                                </div>
-                                :
-                                null
-                        }    */}
                         <div className="amount">
                             { formatAmount(bridgeStep.toAmount, bridgeStep.toAsset) } { bridgeStep.toAsset.symbol }
                         </div>
                     </div>
                     <div className="fees">
                         {
+                            middlewareFee ?
+                            <div className="fee">
+                                { middlewareFee ? <>Fee: { middlewareFee } { middlewareRoute?.protocolFees?.asset?.symbol }</> : null }
+                            </div>
+                            :
+                            null
+                        }
+                        {
                             bridgeFee ?
                                 <div className="fee">
-                                    { bridgeFee ? <>Fee: { bridgeFee } { bridgeStep?.protocolFees?.ассет?.symbol }</> : null }
+                                    { bridgeFee ? <>Fee: { bridgeFee } { bridgeStep?.protocolFees?.asset?.symbol }</> : null }
                                 </div>
                                 :
                                 null
                         }
-                        {/* <div className="fee">
-                            { bridgeFee ? <>Fee: { bridgeFee } { bridgeRoute.toAsset.symbol }</> : null }
-                        </div> */}
                     </div>
+                    <div className="time">{ `ETA ${serviceTime/60} minutes` }</div>
+                    <div className="time">{ `Max ETA ${maxServiceTime/60} minutes` }</div>
                 </div>
             </div>,
         value: routeId
@@ -112,7 +111,6 @@ console.log({quotes});
 
         try {
             const route = routes.find(({ routeId }) => routeId === selectedRoute)
-console.log({route});
             // let fromAsset, inputAmount = null
             // if (middlewareRoute) {
             //     fromAsset = middlewareRoute.fromAsset
