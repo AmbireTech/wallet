@@ -30,7 +30,7 @@ const WalletTokenButton = ({ rewardsData, account = {}, network, hidePrivateValu
         if (hasErrorAndNoPrevValues) {
           return 'Rewards'
         }
-    
+
         // Display loading state only if prev data is missing for any of both data sets.
         // For all other cases - display the prev data instead of loading indicator,
         // so that the UI doesn't jump by switching loading indicator on and off.
@@ -40,9 +40,12 @@ const WalletTokenButton = ({ rewardsData, account = {}, network, hidePrivateValu
         if (isCurrentClaimStatusLoadingAndNoPrevData || isRewardsDataLoadingAndNoPrevData) {
           return (<span><Loading/></span>)
         }
+        if ((currentClaimStatus.claimed === null) || (currentClaimStatus.mintableVesting === null)) {
+          return <span><Loading/></span>
+        }
     
         return `${hidePrivateValue(pendingTokensTotal)} $WALLET`
-    }, [currentClaimStatus.error, currentClaimStatus.lastUpdated, currentClaimStatus.loading, hidePrivateValue, pendingTokensTotal, rewardsErrMsg, rewardsIsLoading, rewardsLastUpdated])
+    }, [currentClaimStatus.claimed, currentClaimStatus.error, currentClaimStatus.lastUpdated, currentClaimStatus.loading, currentClaimStatus.mintableVesting, hidePrivateValue, pendingTokensTotal, rewardsErrMsg, rewardsIsLoading, rewardsLastUpdated])
 
     return (
         !relayerURL ?
