@@ -3,23 +3,20 @@
 .confirmationCodeInfo {
   display: flex;
   flex-direction: column;
-  gap: 10px;
   margin-bottom: 20px;
 
   .confirmationCodeInfoTitle {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 10px;
-    font-size: 18px;
-    font-weight: bold;
-    text-transform: uppercase;
+    font-size: 16px;
+    margin-bottom: 10px;
   }
 
-  .confirmationCodeInfoMessage {
-    font-size: 17px;
-    font-weight: 500;
-    opacity: 0.8;
+  .confirmationCodeInfoMessage {    
+    p {
+      opacity: .9;
+      font-size: 14px;
+      font-weight: 300;
+      margin: 0;
+    }
   }
 }
 
@@ -43,12 +40,8 @@
 
     .inputsContainer {
       display: flex;
-      flex-direction: row;
+      flex-direction: column;
       gap: 10px;
-
-      .textInput {
-        flex: 0 1 50%;
-      }
     }
 
     .buttons {
@@ -68,7 +61,7 @@
   .button {
     flex-grow: 1;
 
-    &.rejectTxn {
+    &.danger {
       flex: 1;
       background-color: transparent;
       border: 2px solid $danger-color;

@@ -15,8 +15,6 @@ import { isTokenEligible } from 'components/SendTransaction/helpers'
 import { sendNoRelayer } from "components/SendTransaction/noRelayer";
 import { getFeesData, toHexAmount } from "components/SendTransaction/helpers";
 
-import { MdCheckCircle } from 'react-icons/md'
-
 import styles from './Actions.module.scss'
 
 const ERC20 = new Interface(require("adex-protocol-eth/abi/ERC20"));
@@ -66,7 +64,7 @@ const Actions = ({
   const rejectButton = rejectTxn && (
     // WARNING: DO NOT remove type='button' here, it indicates that this button is not a submit button in the <form>
     // if it is, pressing Enter will reject the transaction rather than submit it
-    <Button danger type='button' className={cn(styles.button, styles.rejectTxn, styles.danger)} onClick={rejectTxn}>Reject</Button>
+    <Button danger type='button' className={cn(styles.button, styles.danger)} onClick={rejectTxn}>Reject</Button>
   )
 
   const approveTxn = ({ quickAccCredentials }) => {
@@ -363,13 +361,13 @@ const Actions = ({
       {
         signingStatus.confCodeRequired ?
           <div className={styles.confirmationCodeInfo}>
-            <div className={styles.confirmationCodeInfoTitle}><MdCheckCircle/>Confirmation</div>
+            <div className={styles.confirmationCodeInfoTitle}>Confirmation</div>
             <div className={styles.confirmationCodeInfoMessage}>
-              {signingStatus.confCodeRequired === 'otp' ? <>Please enter your OTP code and your password.</> : null}
+              {signingStatus.confCodeRequired === 'otp' ? <p>Please enter your OTP code and your password.</p> : null}
               {signingStatus.confCodeRequired === 'email' ?
                 (isRecoveryMode
-                  ? <>A confirmation code was sent to your email, please enter it to initiate the recovery.</>
-                  : <>A confirmation code was sent to your email, please enter it along with your password.</>)
+                  ? <p>A confirmation code was sent to your email. Please enter it to initiate the recovery.</p>
+                  : <p>A confirmation code was sent to your email. Please enter it along with your password.</p>)
                       : null
 	      }
             </div>
@@ -384,7 +382,6 @@ const Actions = ({
         }
         <div className={styles.inputsContainer}>
           <TextInput
-            small
             password
             required
             minLength={3}
@@ -398,8 +395,6 @@ const Actions = ({
           {/* Changing the autoComplete prop to a random string seems to disable it in more cases */}
           {signingStatus.confCodeRequired !== 'notRequired' &&
             <TextInput
-
-              small
               pattern='[0-9]+'
               title='Confirmation code should be 6 digits'
               autoComplete='nope'
@@ -413,10 +408,10 @@ const Actions = ({
         </div>
         <div className={styles.buttons}>
           <Button
-            clear
+            danger
             disabled={signingStatus && signingStatus.inProgress}
             type='button'
-            className={cn(styles.cancelSigning, styles.button)}
+            className={cn(styles.button, styles.danger)}
             onClick={cancelSigning}
           >
             Cancel
