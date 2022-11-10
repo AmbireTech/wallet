@@ -8,7 +8,7 @@ import {
   getDiscountApplied,
   checkIfDAppIncompatible
 } from 'components/SendTransaction/helpers'
-import { Loading, DAppIncompatibilityWarningMsg } from 'components/common'
+import { Loading, DAppIncompatibilityWarningMsg, Alert } from 'components/common'
 // Sections
 import WalletDiscountBanner from './WalletDiscountBanner/WalletDiscountBanner'
 import FeeCurrencySelect from './FeeCurrencySelect/FeeCurrencySelect'
@@ -118,12 +118,15 @@ export function FeeSelector({ disabled, signer, estimation, network, setEstimati
 
 
   return (<>
-    {insufficientFee ?
-      (<div className={styles.balanceError}>
-        Insufficient balance for the fee.<br />Accepted tokens: {(estimation.remainingFeeTokenBalances || []).map(x => x.symbol).join(', ')}
-        { isGasTankEnabled && <div>Disable your Gas Tank to use the default fee tokens.</div> }
-      </div>)
-      : <FeeCurrencySelect 
+    {insufficientFee ? <Alert
+        className={styles.feeSelectorAlert}
+        type="danger"
+        title="Insufficient balance for the fee."
+        text={`Accepted tokens: ${(estimation.remainingFeeTokenBalances || []).map(x => x.symbol).join(', ')}
+          ${ isGasTankEnabled ? 'Disable your Gas Tank to use the default fee tokens.' : ''}
+        `}
+        iconNextToTitle={true}
+      /> : <FeeCurrencySelect 
         estimation={estimation}
         disabled={disabled}
         currenciesItems={currenciesItems}
@@ -185,15 +188,15 @@ export function FeeSelector({ disabled, signer, estimation, network, setEstimati
       DISCOUNT_TOKENS_SYMBOLS={DISCOUNT_TOKENS_SYMBOLS}
     />
 
-    {!estimation.feeInUSD ?
-      (<span className={styles.noRelayerMsg}>
-        <b>WARNING:</b>
-        {' '}
-        Paying fees in tokens other than {nativeAssetSymbol} is unavailable because you are not connected to a relayer.
-        You will pay the fee from
-        {' '}
-        <b>{signer.address}</b>.
-      </span>)
-      : (<></>)}
+    {!estimation.feeInUSD ? <Alert
+        className={styles.feeSelectorAlert}
+        type="warning"
+        title="Warning"
+        text={`
+          Paying fees in tokens other than ${nativeAssetSymbol} is unavailable because you are not connected to a relayer.
+          You will pay the fee from ${signer.address}
+        `}
+        iconNextToTitle={true}
+      /> : null}
   </>)
 }

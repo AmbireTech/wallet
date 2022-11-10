@@ -1,10 +1,7 @@
 @import "variables.scss";
 
-.balanceError {
-  padding: 15px 0;
-  font-size: 16px;
-  font-weight: 300;
-  color: $danger-color;
+.feeSelectorAlert {
+  margin: 20px 0;
 }
 
 .sectionTitle {
@@ -24,10 +21,6 @@
   .gasTankDisabled {
     color: $danger-color;
   }
-}
-
-.noRelayerMsg {
-  color: $warning-color;
 }
 
 @media screen and (max-width: $mobile-breakpoint-max-width) {
