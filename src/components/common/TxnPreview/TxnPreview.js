@@ -68,7 +68,7 @@ export default function TxnPreview ({ txn, onDismiss, network, account, isFirstF
                   <CloseIcon />
                 </div>
               </ToolTip>
-            ) : (<></>)}
+            ) : null}
           </div>
         </div>
         {
@@ -76,7 +76,7 @@ export default function TxnPreview ({ txn, onDismiss, network, account, isFirstF
             <p>Interacting with (<i>to</i>): {txn[0]}{contractName ? ` (${contractName})` : ''}</p>
             <p>Value to be sent (<i>value</i>): {formatUnits(txn[1] || '0x0', 18)} {getNetworkSymbol(network)}</p>
             <p>Data: {txn[2]}</p>
-          </div>) : (<></>)
+          </div>) : null
         }
     </div>
   )
