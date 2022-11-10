@@ -353,7 +353,7 @@ const Actions = ({
 
   const signButtonLabel = signingStatus && signingStatus.inProgress ?
     <><Loading/>Signing...</>
-    : 'Sign and send'
+    : 'Sign and Send'
 
   const isRecoveryMode = signingStatus && signingStatus.finalBundle && signingStatus.finalBundle.recoveryMode
   if (signingStatus && signingStatus.quickAcc) {
