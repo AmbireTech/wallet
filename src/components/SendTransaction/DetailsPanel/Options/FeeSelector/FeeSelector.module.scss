@@ -29,3 +29,15 @@
 .noRelayerMsg {
   color: $warning-color;
 }
+
+@media screen and (max-width: $mobile-breakpoint-max-width) {
+  .sectionTitle {
+    flex-direction: column-reverse;
+    text-align: center;
+    gap: 20px;
+    margin-bottom: 20px;
+    span {
+      margin-bottom: 0;
+    }
+  }
+}
