@@ -24,10 +24,7 @@
   }
 
   .customFeeSelector {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    margin-bottom: 30px;
+    margin-bottom: 20px;
     width: 100%;
 
     .title {
@@ -37,21 +34,9 @@
       margin-bottom: 10px;
     }
 
-    .textInput {
-      margin-bottom: 10px;
-    }
-
     .priceWarning {
       color: $warning-color;
       font-size: 14px;
-    }
-  }
-}
-
-@media screen and (max-width: $mobile-breakpoint-max-width) {
-  .wrapper {
-    .customFeeSelector {
-      margin-bottom: 10px;
     }
   }
 }
