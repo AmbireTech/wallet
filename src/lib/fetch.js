@@ -1,8 +1,11 @@
 export const fetch = require('node-fetch')
 
-export async function fetchPost (url, body) {
+export async function fetchPost (url, body, params = { headers: {} }) {
 	const r = await fetch(url, {
-		headers: { 'content-type': 'application/json' },
+		headers: { 
+      'content-type': 'application/json' ,
+      ...params.headers
+    },
 		method: 'POST',
 		body: JSON.stringify(body)
 	})

@@ -10,8 +10,9 @@ import { useToasts } from 'hooks/toasts';
 
 const formatAmount = (amount, asset) => amount / Math.pow(10, asset.decimals)
 const formatFeeAmount = (fee, route) => {
-    const asset = fee.address === route.toAsset.address ? route.toAsset : route.fromAsset
-    return formatAmount(fee.amount, asset)
+    // console.log({fee, route})
+    // const asset = fee.asset.address === route.toAsset.address ? fee.toAsset : route.fromAsset
+    return formatAmount(fee.amount, fee.asset)
 }
 const getNetwork = id => networks.find(({ chainId }) => chainId === id)
 
@@ -25,21 +26,27 @@ const Quotes = ({ addRequest, selectedAccount, fromTokensItems, quotes, onQuotes
     const toNetwork = getNetwork(toAsset.chainId)
     const [selectedRoute, setSelectedRoute] = useState(null)
     const [loading, setLoading] = useState(false)
-
+console.log({quotes});
+    const refuel = quotes.refuel
     const routes = quotes.routes.map(route => {
-        const { fees, middlewareRoute, bridgeRoute } = route
+        const { userTxs } = route
+        const bridgeStep = userTxs.map(tx => tx.steps.find(s => s.type === 'bridge')).find(x => x)
+        const bridgeRoute = userTxs.find(tx => tx.steps.find(s => s.type === 'bridge'))
         return {
             ...route,
-            middlewareFee: middlewareRoute ? formatFeeAmount(fees.middlewareFee, middlewareRoute) : 0,
-            bridgeFee: bridgeRoute ? formatFeeAmount(fees.bridgeFee, bridgeRoute) : 0
+            bridgeStep,
+            userTxType: bridgeRoute.userTxType,
+            txType: bridgeRoute.txType,
+            middlewareFee: 0, // middlewareRoute ? formatFeeAmount(fees.middlewareFee, middlewareRoute) : 0,
+            bridgeFee: bridgeStep?.protocolFees ? formatFeeAmount(bridgeStep?.protocolFees, route) : 0
         }
     })
 
-    const radios = routes.map(({ routePath, middlewareFee, bridgeFee, middlewareRoute, bridgeRoute }) => ({
+    const radios = routes.map(({ bridgeStep, bridgeFee, maxServiceTime, fromAmount, toAmount, routeId, integratorFee, userTxs }) => ({
         label:
             <div className="route">
                 <div className="info">
-                    {
+                    {/* {
                         middlewareRoute ?
                             <div className="middleware">
                                 <div className="icon" style={{backgroundImage: `url(${middlewareRoute.middlewareInfo.icon})`}}></div>
@@ -47,42 +54,43 @@ const Quotes = ({ addRequest, selectedAccount, fromTokensItems, quotes, onQuotes
                             </div>
                             :
                             null
-                    }
+                    } */}
                     <div className="bridge">
-                        <div className="icon" style={{backgroundImage: `url(${bridgeRoute.bridgeInfo.icon})`}}></div>
-                        <div className="name">{ bridgeRoute.bridgeInfo.displayName }</div>
+                        <div className="icon" style={{backgroundImage: `url(${bridgeStep.protocol.icon})`}}></div>
+                        <div className="name">{ bridgeStep.protocol.displayName }</div>
                     </div>
                 </div>
                 <div className="summary">
+                    <div className="time">{ ` ${maxServiceTime/60} estimation in minutes` }</div>
                     <div className="amounts">
-                        {
+                        {/* {
                             middlewareRoute ?
                                 <div className="amount">
                                     { formatAmount(middlewareRoute.inputAmount, middlewareRoute.fromAsset) } { middlewareRoute.fromAsset.symbol }
                                 </div>
                                 :
                                 null
-                        }   
+                        }    */}
                         <div className="amount">
-                            { formatAmount(bridgeRoute.outputAmount, bridgeRoute.toAsset) } { bridgeRoute.toAsset.symbol }
+                            { formatAmount(bridgeStep.toAmount, bridgeStep.toAsset) } { bridgeStep.toAsset.symbol }
                         </div>
                     </div>
                     <div className="fees">
                         {
-                            middlewareRoute ?
+                            bridgeFee ?
                                 <div className="fee">
-                                    { middlewareFee ? <>Fee: { middlewareFee } { middlewareRoute.fromAsset.symbol }</> : null }
+                                    { bridgeFee ? <>Fee: { bridgeFee } { bridgeStep?.protocolFees?.ассет?.symbol }</> : null }
                                 </div>
                                 :
                                 null
                         }
-                        <div className="fee">
+                        {/* <div className="fee">
                             { bridgeFee ? <>Fee: { bridgeFee } { bridgeRoute.toAsset.symbol }</> : null }
-                        </div>
+                        </div> */}
                     </div>
                 </div>
             </div>,
-        value: routePath
+        value: routeId
     }))
 
     const sendTx = (id, chainId, to, data, value = '0x00') => {
@@ -103,35 +111,36 @@ const Quotes = ({ addRequest, selectedAccount, fromTokensItems, quotes, onQuotes
         setLoading(true)
 
         try {
-            const { allowanceTarget, isApprovalRequired, middlewareRoute, bridgeRoute, routePath } = routes.find(({ routePath }) => routePath === selectedRoute)
+            const route = routes.find(({ routeId }) => routeId === selectedRoute)
+console.log({route});
+            // let fromAsset, inputAmount = null
+            // if (middlewareRoute) {
+            //     fromAsset = middlewareRoute.fromAsset
+            //     inputAmount = middlewareRoute.inputAmount
+            // } else {
+            //     fromAsset = bridgeRoute.fromAsset
+            //     inputAmount = bridgeRoute.inputAmount
+            // }
 
-            let fromAsset, inputAmount = null
-            if (middlewareRoute) {
-                fromAsset = middlewareRoute.fromAsset
-                inputAmount = middlewareRoute.inputAmount
-            } else {
-                fromAsset = bridgeRoute.fromAsset
-                inputAmount = bridgeRoute.inputAmount
-            }
-
-            const { toAsset, outputAmount, bridgeInfo } = bridgeRoute
+            // const { toAsset, outputAmount, bridgeInfo } = bridgeRoute
             
-            if (isApprovalRequired) {
-                const { to, data } = await approvalBuildTx(fromAsset.chainId, selectedAccount, allowanceTarget, fromAsset.address, inputAmount)
-                sendTx(`transfer_approval_crosschain_${Date.now()}`, fromAsset.chainId, to, data)
-            }
+            const approvalTxn = await Promise.all(route.userTxs.filter(tx => tx?.approvalData).map(tx => {
+                return approvalBuildTx(route.bridgeStep.fromChainId, selectedAccount, tx?.approvalData?.allowanceTarget, tx?.approvalData?.approvalTokenAddress, tx?.approvalData?.minimumApprovalAmount)
+            }))
 
-            const { tx } = await sendBuildTx(selectedAccount, fromAsset.address, fromAsset.chainId, toAsset.address, toAsset.chainId, inputAmount, outputAmount, routePath)
-            sendTx(`transfer_send_crosschain_${Date.now()}`, fromAsset.chainId, tx.to, tx.data, tx.value.hex)
+            approvalTxn.map(tx => sendTx(`transfer_approval_crosschain_${Date.now()}`, route.bridgeStep.fromChainId, tx.to, tx.data))
+            
+            const tx = await sendBuildTx(route, refuel)
+            sendTx(`transfer_send_crosschain_${Date.now()}`, route.bridgeStep.fromChainId, tx.txTarget, tx.txData, tx.value)
 
-            const serviceTimeMinutes = new Date((bridgeInfo?.serviceTime || 0) + (middlewareRoute?.serviceTime || 0)).getMinutes()
+            const serviceTimeMinutes = new Date((route?.serviceTime || 0) + (route?.serviceTime || 0)).getMinutes()
             onQuotesConfirmed({
-                txData: tx.data,
+                txData: tx.txData,
                 serviceTimeMinutes,
                 to: {
                     chainId: toAsset.chainId,
                     asset: toAsset,
-                    amount: outputAmount
+                    amount: route.toAmount
                 }
             })
             setLoading(false)
