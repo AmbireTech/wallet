@@ -1,9 +1,7 @@
 import cn from "classnames";
 
-import { Panel } from "components/common";
+import { Panel, Alert } from "components/common";
 import TxnPreview from "components/common/TxnPreview/TxnPreview";
-
-import { GiGorilla } from "react-icons/gi";
 
 import styles from "./TransactionPanel.module.scss";
 
@@ -55,24 +53,17 @@ const TransactionPanel = ({
         })}
       </div>
 
-      <div className={styles.transactionsNote}>
-        {
-          // only render this if we're using the queue
-          bundle.requestIds && (
-            <>
-              <b>
-                <GiGorilla size={16} /> DEGEN TIP
-              </b>
-              <span>
-                You can sign multiple transactions at once. Add more
-                transactions to this batch by interacting with a connected
-                dApp right now. Alternatively, you may click "Back" to add
-                more transactions.
-              </span>
-            </>
-          )
-        }
-      </div>
+      {bundle.requestIds && <Alert
+        title="Degen tip"
+        type="information"
+        text="
+          You can sign multiple transactions at once. Add more
+          transactions to this batch by interacting with a connected
+          dApp right now. Alternatively, you may click 'Back' to add
+          more transactions.
+        "
+        iconNextToTitle={true}
+      />}
     </Panel>
   );
 };
