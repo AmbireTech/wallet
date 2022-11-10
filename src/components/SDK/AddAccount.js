@@ -1,6 +1,6 @@
 import styles from 'components/AddAccount/AddAccount.module.scss'
 
-import { useState, useCallback, useEffect } from 'react'
+import React, { useState, useCallback, useEffect } from 'react'
 import { fetchGet } from 'lib/fetch'
 import LoginOrSignup from 'components/LoginOrSignupForm/LoginOrSignupForm'
 import { AbiCoder, keccak256, id, getAddress } from 'ethers/lib/utils'
@@ -15,7 +15,7 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking, plug
   const [err, setErr] = useState('')
   const [inProgress, setInProgress] = useState(false)
   const [isEmailConfirmed, setEmailConfirmed] = useState(false)
-  const [identityAddr, setIdentityAddr] = useState(null)
+  const [account, setAccount] = useState(null)
   const { addToast } = useToasts()
 
   const wrapProgress = async (fn, type = true) => {
@@ -89,13 +89,24 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking, plug
       return
     }
 
-    setIdentityAddr(identityAddress)
+    setAccount({
+      id: identityAddress,
+      email: req.email,
+      primaryKeyBackup,
+      salt, identityFactoryAddr, baseIdentityAddr, bytecode,
+      signer,
+      cloudBackupOptout: !!req.backupOptout,
+      // This makes the modal appear, and will be removed by the modal which will call onAddAccount to update it
+      backupOptout: !!req.backupOptout,
+      // This makes the modal appear, and will be removed by the modal which will call onAddAccount to update it
+      emailConfRequired: true
+    })
   }
 
   const checkEmailConfirmation = useCallback(async () => {
     try {
       console.log('trying to retrieve confirmation')
-      const relayerIdentityURL = `${relayerURL}/identity/${identityAddr}`
+      const relayerIdentityURL = `${relayerURL}/identity/${account.id}`
       const identity = await fetchGet(relayerIdentityURL)
       if (identity) {
           const { emailConfirmed } = identity.meta
@@ -103,28 +114,30 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking, plug
           setEmailConfirmed(isConfirmed)
           console.log('is confirmed:' + isConfirmed)
 
-          // TO DO: ADD THE ACCOUNT PROPERLY
-          // if (isConfirmed && account.emailConfRequired) {
-          //     onAddAccount({
-          //         ...account,
-          //         emailConfRequired: false
-          //     })
-          // }
+          if (isConfirmed) {
+            onAddAccount(account, { select: true, isNew: true })
+
+            window.parent.postMessage({
+              address: account.id,
+              type: 'registrationSuccess',
+            }, '*')
+          }
       }
     } catch(e) {
       console.error(e);
       addToast('Could not check email confirmation.', { error: true })
     }
-  }, [relayerURL, addToast, identityAddr])
+  }, [relayerURL, addToast, account, onAddAccount])
 
   useEffect(() => {
-    if (!identityAddr) return
+    if (!account) return
     !isEmailConfirmed && checkEmailConfirmation()
     const emailConfirmationInterval = setInterval(() => !isEmailConfirmed && checkEmailConfirmation(), 3000)
     return () => clearInterval(emailConfirmationInterval)
-  }, [isEmailConfirmed, checkEmailConfirmation, identityAddr])
+  }, [isEmailConfirmed, checkEmailConfirmation, account])
 
-  return (<div className={styles.loginSignupWrapper}>
+  return (
+    <div className={styles.loginSignupWrapper}>
       <div className={styles.logo} {...(pluginData ? {style: {backgroundImage: `url(${pluginData.iconUrl})` }} : {})}/>
       {pluginData &&
       <div className={styles.pluginInfo}>
@@ -134,13 +147,22 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking, plug
       }
       <section className={styles.addAccount}>
         <div className={styles.loginEmail}>
-          <h3>Create a new account</h3>
-          <LoginOrSignup
-            inProgress={inProgress === 'email'}
-            onAccRequest={req => wrapProgress(() => createQuickAcc(req), 'email')}
-            action="SIGNUP"
-          ></LoginOrSignup>
-          {err ? (<p className={styles.error}>{err}</p>) : (<></>)}
+        {
+          !account ?
+            <React.Fragment>
+              <h3>Create a new account</h3>
+              <LoginOrSignup
+                inProgress={inProgress === 'email'}
+                onAccRequest={req => wrapProgress(() => createQuickAcc(req), 'email')}
+                action="SIGNUP"
+              ></LoginOrSignup>
+              {err ? (<p className={styles.error}>{err}</p>) : (<></>)}
+            </React.Fragment>
+          :
+            <div>
+              <p>Please confirm your email</p>
+            </div>
+        }
         </div>
       </section>
     </div>
