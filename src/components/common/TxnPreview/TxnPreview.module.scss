@@ -1,6 +1,6 @@
 @import 'variables.scss';
 
-$txn-height: 60px;
+$txn-height: 54px;
 $extended-summary-height: 40px;
 
 .wrapper {
@@ -26,6 +26,11 @@ $extended-summary-height: 40px;
         cursor: pointer;
         box-sizing: border-box;
 
+        .icon {
+            width: 36px;
+            height: 36px;
+        }
+
         .info {
             min-width: 0;
             height: 100%;
@@ -48,14 +53,9 @@ $extended-summary-height: 40px;
 
                 .expandTxn {
                     align-self: flex-start;
-                    height: 40px;
+                    height: 36px;
                     @include flex-center-center;
                     transition: .1s ease-in-out transform;
-
-                    svg {
-                        width: 40px;
-                        height: 40px;
-                    }
 
                     &.reversedChevron {
                         transform: rotate(180deg);

@@ -52,7 +52,7 @@ const ExtendedSummaryItem = ({ item, i, networkDetails, feeAssets }) => {
       >
         <ToolTip disabled={!item.address} label={item.address}>
           {item.name ? item.name : item.address}
-          {item.address ? <ExternalLinkIcon /> : null}
+          {item.address ? <ExternalLinkIcon className={styles.externalLink} /> : null}
         </ToolTip>
       </a>
     )

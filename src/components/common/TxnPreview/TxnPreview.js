@@ -36,7 +36,7 @@ export default function TxnPreview ({ txn, onDismiss, network, account, isFirstF
           <div className={styles.info} onClick={() => !disableExpand && setExpanded(e => !e)}>
             <div className={styles.summaryContainer}>
               {!disableExpand && (<div className={cn(styles.expandTxn, {[styles.reversedChevron]: isExpanded})}>
-                <ChevronDownIcon />
+                <ChevronDownIcon className={styles.icon} />
               </div>)}
               <div className={styles.summary}>
                 {extendedSummary.map(entry => { // If entry is extended summary parse it
@@ -65,7 +65,7 @@ export default function TxnPreview ({ txn, onDismiss, network, account, isFirstF
                   className={cn(styles.dismissTxn, {[styles.disabled]: disableDismiss})} 
                   onClick={e => { e.stopPropagation(); !disableDismiss && onDismiss.apply(this, e) }}
                 >
-                  <CloseIcon />
+                  <CloseIcon className={styles.icon} />
                 </div>
               </ToolTip>
             ) : null}

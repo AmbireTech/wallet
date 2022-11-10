@@ -36,10 +36,15 @@ $extended-summary-height: 40px;
   color: $c-titan-white;
 
   .icon {
-    height: 40px;
-    width: 40px;
+    height: 36px;
+    width: 36px;
     padding: 8px;
     border-radius: 12px;
     background-color: rgba($c-titan-white, 0.05);
   }
+}
+
+.externalLink {
+  width: 24px;
+  height: 24px;
 }
