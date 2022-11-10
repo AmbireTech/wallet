@@ -47,3 +47,11 @@
     }
   }
 }
+
+@media screen and (max-width: $mobile-breakpoint-max-width) {
+  .wrapper {
+    .customFeeSelector {
+      margin-bottom: 10px;
+    }
+  }
+}
