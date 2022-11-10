@@ -59,12 +59,19 @@ $titleBar-height: 90px;
       height: auto;
       overflow-y: auto;
       padding: 20px;
+      gap: 40px;
       padding-bottom: 40px;
       max-width: 900px;
       margin: 0 auto;
 
       .panelWrapper {
         max-width: 100%;
+
+        .panelWrapperTitle {
+          font-size: 24px;
+          margin-bottom: 15px;
+          text-align: center;
+        }
 
         .panel {
           overflow-y: unset;
