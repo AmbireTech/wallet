@@ -1,0 +1,153 @@
+@import 'variables.scss';
+
+.wrapper {
+  position: relative;
+  margin-bottom: 27px;
+
+  .shadow {
+    position: absolute;
+    left: 50%;
+    z-index: 1;
+    bottom: -6.5px;
+    width: 99%;
+    height: 40px;
+    transform: translateX(-50%);
+    background: rgba($c-mirage, 0.8);
+    mix-blend-mode: multiply;
+    border-radius: 10px;
+    filter: blur(5px);
+  }
+
+  .alertWrapper {
+    overflow: hidden;
+    border-radius: 12px;
+
+    .alert {
+      position: relative;
+      display: flex;
+      align-items: center;
+      z-index: 2;
+      gap: 20px;
+      padding: 13px 20px;
+      padding-left: 13px;
+      color: $c-martinique-light;
+      border-left: 7px solid;
+
+      &.alertIconNextToTitle {
+        padding-left: 20px;
+      }
+
+      svg {
+        width: 34px;
+        height: 34px;
+      }
+
+      &.information {
+        background-color: $info-background-color;
+        border-left-color: $ambire-dark-blue;
+      }
+
+      &.success {
+        background-color: $success-background-color;
+        border-left-color: $success-color;
+      }
+
+      &.warning {
+        background-color: $warning-background-color;
+        border-left-color: $warning-color;
+      }
+
+      &.danger {
+        background-color: $danger-background-color;
+        border-left-color: $danger-color;
+      }
+
+      .body {
+        flex: 1;
+
+        .titleWrapper {
+          display: flex;
+          align-items: center;
+          gap: 20px;
+          margin-bottom: 10px;
+
+          .title {
+            margin: 0;
+            font-size: 20px;
+          }
+        }
+        .text {
+          margin: 0;
+          font-size: 16px;
+          text-align: left;
+
+          .link {
+            color: $c-heliotrope;
+          }
+        }
+      }
+    }
+  }
+}
+
+@media screen and (max-width: $mobile-breakpoint-max-width) {
+  .wrapper {
+    .alertWrapper {
+      .alert {
+        display: flex;
+        flex-direction: column;
+        padding: 20px;
+        gap: 10px;
+        border-left: 0;
+        border-top: 7px solid;
+        text-align: center;
+
+        &.information {
+          border-top-color: $ambire-dark-blue;
+        }
+  
+        &.success {
+          border-top-color: $success-color;
+        }
+  
+        &.warning {
+          border-top-color: $warning-color;
+        }
+  
+        &.danger {
+          border-top-color: $danger-color;
+        }
+
+        svg {
+          width: 40px;
+          height: 40px;
+        }
+
+        .body {
+          margin-left: 0;
+
+          .titleWrapper {
+            margin-bottom: 15px;
+            flex-direction: column;
+            justify-content: flex-start;
+            gap: 10px;
+          }
+
+          .text {
+            font-size: 14px;
+            text-align: center;
+          }
+        }
+
+        .close {
+          margin-left: 30px;
+          cursor: pointer;
+          color: $warning-color;
+          background-color: transparent;
+          border: 0;
+          outline: none;
+        }
+      }
+    }
+  }
+}
