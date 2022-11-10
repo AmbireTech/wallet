@@ -82,32 +82,34 @@ const Protocols = ({ portfolio, network, account, hidePrivateValue, userSorting,
              onDragOver={(e) => e.preventDefault()}
             >
             {sortedTokensLength > 1 && sortType === 'custom' && !isMobileScreen && <MdDragIndicator size={20} className={styles.dragHandle} onClick={(e) => dragStart(e, index)} id={`${index}-handle`} />}
-            <div className={styles.icon}>
-                { 
-                    failedImg.includes(logo) ?
-                        <GiToken size={20}/>
-                        :
-                        <img src={logo} draggable="false" alt="Token Icon" onError={() => setFailedImg(failed => [...failed, logo])}/>
-                }
-            </div>
-            <div className={styles.name}>
-                { symbol }
-            </div>
-            <div className={styles.separator}></div>
-            <div className={styles.balance}>
-                <div className={styles.currency}>
-                    <span className={styles.value}>{ hidePrivateValue(formatFloatTokenAmount(balance, true, decimals)) }</span>
-                    <span className={styles.symbol}>{ symbol }</span>
+            <div className={styles.body}>
+                <div className={styles.icon}>
+                    { 
+                        failedImg.includes(logo) ?
+                            <GiToken size={20}/>
+                            :
+                            <img src={logo} draggable="false" alt="Token Icon" onError={() => setFailedImg(failed => [...failed, logo])}/>
+                    }
                 </div>
-                <div className={styles.dollar}>
-                    <span className={styles.symbol}>$</span> { hidePrivateValue(balanceUSD.toFixed(2)) }
+                <div className={styles.name}>
+                    { symbol }
+                </div>
+                <div className={styles.separator}></div>
+                <div className={styles.balance}>
+                    <div className={styles.currency}>
+                        <span className={styles.value}>{ hidePrivateValue(formatFloatTokenAmount(balance, true, decimals)) }</span>
+                        <span className={styles.symbol}>{ symbol }</span>
+                    </div>
+                    <div className={styles.dollar}>
+                        <span className={styles.symbol}>$</span> { hidePrivateValue(balanceUSD.toFixed(2)) }
+                    </div>
                 </div>
             </div>
             {
                 send ? 
                     <div className={styles.actions}>
                         <NavLink to={`/wallet/transfer/${address}`}>
-                            <Button small icon={<AiOutlineSend/>}>Send</Button>
+                            <Button small icon={<AiOutlineSend/>} className={styles.sendButton}>Send</Button>
                         </NavLink>
                     </div>
                     :
