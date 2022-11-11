@@ -418,7 +418,7 @@ const Actions = ({
           </Button>
           <Button
             primaryGradient
-            className={styles.button}
+            className={cn(styles.button, styles.confirm)}
             onClick={() => {
               if (!form.current.checkValidity()) return
               approveTxn({ quickAccCredentials })
@@ -433,7 +433,7 @@ const Actions = ({
 
   return (<div className={styles.buttons}>
       {rejectButton}
-      <Button primaryGradient className={cn(styles.button, styles.approveTxn)} disabled={!estimation || signingStatus} onClick={approveTxn}>
+      <Button primaryGradient className={cn(styles.button, styles.confirm)} disabled={!estimation || signingStatus} onClick={approveTxn}>
         {signButtonLabel}
       </Button>
   </div>)
