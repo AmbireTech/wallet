@@ -1,7 +1,6 @@
 import * as blockies from 'blockies-ts'
 
-import { networkIconsById } from 'consts/networks'
-
+import AccountAndNetwork from './AccountAndNetwork/AccountAndNetwork'
 import { FeeSelector } from 'components/SendTransaction/DetailsPanel/Options/FeeSelector/FeeSelector'
 
 import styles from './Options.module.scss'
@@ -24,28 +23,11 @@ const Options = ({
 
   return (
     <div className={styles.wrapper}>
-      <div className={styles.details}>
-        <h2 className={styles.detailsTitle}>Signing With</h2>
-        <div className={styles.accountAndNetwork}>
-          <div className={styles.account}>
-            <img
-              className={styles.avatar}
-              alt="avatar"
-              src={accountAvatar}
-            />
-            <p className={styles.address}>{account.id}</p>
-          </div>
-          <p className={styles.network}>
-            on {network.name}
-            <img
-              className={styles.icon}
-              src={networkIconsById[network.id]}
-              alt={network.name}
-            />
-          </p>
-        </div>
-      </div>
-
+      <AccountAndNetwork
+        account={account}
+        accountAvatar={accountAvatar}
+        network={network}
+      />
       {/* Only lock the fee selector when the bundle is locked too - to make sure that the fee really is set in stone (won't change on the next getFinalBundle()) */}
       {canProceed && (
         <FeeSelector
