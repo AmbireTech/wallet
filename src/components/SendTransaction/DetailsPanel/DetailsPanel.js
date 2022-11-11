@@ -6,8 +6,6 @@ import Options from "./Options/Options";
 import Replace from "./Replace/Replace";
 import ActionsWrapper from "./ActionsWrapper/ActionsWrapper";
 
-import styles from "./DetailsPanel.module.scss";
-
 const DetailsPanel = ({
   estimation,
   setEstimation,
@@ -49,7 +47,7 @@ const DetailsPanel = ({
     : true;
 
   return (
-    <Panel className={cn(panelClassName, styles.wrapper)}>
+    <Panel className={cn(panelClassName)}>
       <Options
         account={account}
         network={network}
