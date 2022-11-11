@@ -6,12 +6,12 @@ import { useCallback } from 'react'
 
 import styles from './WalletTokenButton.module.scss'
 
-const WalletTokenButton = ({ rewardsData, account = {}, network, hidePrivateValue, addRequest, relayerURL, useRelayerData }) => {
+const WalletTokenButton = ({ rewardsData, accountId, network, hidePrivateValue, addRequest, relayerURL, useRelayerData }) => {
     const { isLoading: rewardsIsLoading, errMsg: rewardsErrMsg, lastUpdated: rewardsLastUpdated } = rewardsData
     const claimableWalletToken = useClaimableWalletToken({
         relayerURL,
         useRelayerData,
-        accountId: account.id,
+        accountId,
         network,
         addRequest,
         totalLifetimeRewards: rewardsData.rewards.totalLifetimeRewards,
@@ -19,8 +19,8 @@ const WalletTokenButton = ({ rewardsData, account = {}, network, hidePrivateValu
         rewardsLastUpdated
       })
 
-    const { currentClaimStatus, pendingTokensTotal } = claimableWalletToken
-    const showWalletTokenModal = useDynamicModal(WalletTokenModal, { claimableWalletToken, accountId: account.id }, { rewards: rewardsData.rewards })
+    const { currentClaimStatus, pendingTokensTotal, vestingEntry } = claimableWalletToken
+    const showWalletTokenModal = useDynamicModal(WalletTokenModal, { claimableWalletToken, accountId }, { rewards: rewardsData.rewards })
     const renderRewardsButtonText = useCallback(() => {
         // The rewards value depends on both - the currentClaimStatus and the
         // rewards data. Therefore - require both data sets to be loaded.
@@ -40,12 +40,19 @@ const WalletTokenButton = ({ rewardsData, account = {}, network, hidePrivateValu
         if (isCurrentClaimStatusLoadingAndNoPrevData || isRewardsDataLoadingAndNoPrevData) {
           return (<span><Loading/></span>)
         }
-        if ((currentClaimStatus.claimed === null) || (currentClaimStatus.mintableVesting === null)) {
+        
+        if (!vestingEntry) {
+          return `${hidePrivateValue('0.00')} $WALLET`
+        }
+        
+        if ((currentClaimStatus.claimed === null)
+          || (currentClaimStatus.mintableVesting === null)
+          || (currentClaimStatus.claimedInitial === null)) {
           return <span><Loading/></span>
         }
     
         return `${hidePrivateValue(pendingTokensTotal)} $WALLET`
-    }, [currentClaimStatus.claimed, currentClaimStatus.error, currentClaimStatus.lastUpdated, currentClaimStatus.loading, currentClaimStatus.mintableVesting, hidePrivateValue, pendingTokensTotal, rewardsErrMsg, rewardsIsLoading, rewardsLastUpdated])
+    }, [currentClaimStatus, hidePrivateValue, pendingTokensTotal, rewardsErrMsg, rewardsIsLoading, rewardsLastUpdated, vestingEntry])
 
     return (
         !relayerURL ?
