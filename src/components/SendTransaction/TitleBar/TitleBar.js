@@ -11,7 +11,7 @@ const TitleBar = ({ onDismiss }) => (
       <div className={styles.backIcon}>
         <ChevronLeftIcon />
       </div>
-      <p>Back</p>
+      <p className={styles.backLabel}>Back</p>
       <ToolTip label="You can go back to the main dashboard and add more transactions to this bundle in order to sign & send them all at once.">
         <InfoIcon className={styles.infoIcon} />
       </ToolTip>

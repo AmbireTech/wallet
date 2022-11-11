@@ -24,7 +24,7 @@ $titleBar-height: 90px;
     border-radius: 12px;
   }
 
-  p {
+  .backLabel {
     margin: 0;
     font-size: 16px;
     font-weight: 300;
@@ -34,6 +34,7 @@ $titleBar-height: 90px;
     width: 20px;
     height: 20px;
   }
+
   .dismiss {
     @include flex-center-center;
     gap: 10px;
