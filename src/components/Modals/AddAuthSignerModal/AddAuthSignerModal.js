@@ -13,7 +13,7 @@ import { isFirefox } from "lib/isFirefox"
 import { useModals } from "hooks"
 import { useToasts } from "hooks/toasts"
 import { Button, Loading, Modal, TextInput } from "components/common"
-import SelectSignerAccountModal from "components/Modals/SelectSignerAccountModal/SelectSignerAccountModal"
+import SelectSignerAccount from "components/common/SelectSignerAccount/SelectSignerAccount"
 import LatticeModal from "components/Modals/LatticeModal/LatticeModal"
 
 import { ReactComponent as TrezorIcon } from 'resources/providers/trezor.svg'
@@ -125,15 +125,28 @@ const AddAuthSignerModal = ({ onAddBtnClicked, selectedAcc, selectedNetwork }) =
       throw new Error('MetaMask not available')
     }
     const ethereum = window.ethereum
-    const web3Accs = await ethereum.request({ method: 'eth_requestAccounts' })
-    if (!web3Accs.length) throw new Error('No accounts connected')
-    if (web3Accs.length === 1)
+    const permissions = await ethereum.request({
+      method: 'wallet_requestPermissions',
+      params: [{ eth_accounts: {} }],
+    })
+
+    const accountsPermission = permissions.find(
+      (permission) => permission.parentCapability === 'eth_accounts'
+    )
+
+    if (!accountsPermission) {
+      throw new Error('No accounts connected')
+    }
+
+    const addresses = accountsPermission.caveats[0].value
+
+    if (addresses.length === 1)
       return onSignerAddressClicked({
-        address: web3Accs[0],
+        address: addresses[0],
         index: 0,
       })
 
-    setChooseSigners({ addresses: web3Accs, signerName: 'Web3' })
+    setChooseSigners({ addresses, signerName: 'Web3' })
     setModalToggle(true)
   }
 
@@ -209,19 +222,6 @@ const AddAuthSignerModal = ({ onAddBtnClicked, selectedAcc, selectedNetwork }) =
 
   const handleSelectSignerAccountModalCloseClicked = useCallback(() => setChooseSigners(null), [])
 
-  useEffect(() => {
-    if (modalToggle && signersToChoose)
-      showModal(
-        <SelectSignerAccountModal
-          signersToChoose={signersToChoose.addresses}
-          selectedNetwork={selectedNetwork}
-          onSignerAddressClicked={onSignerAddressClicked}
-          description={`You will authorize the selected ${signersToChoose.signerName} address to sign transactions for your account.`}
-          onCloseBtnClicked={handleSelectSignerAccountModalCloseClicked}
-        />
-      )
-  }, [handleSelectSignerAccountModalCloseClicked, modalToggle, onSignerAddressClicked, selectedNetwork, showModal, signersToChoose])
-
   const onTextInput = value => {
     if (textInputInfo.length) setTextInputInfo('')
     setSignerAddress({ ...signerAddress, address: value })
@@ -279,6 +279,15 @@ const AddAuthSignerModal = ({ onAddBtnClicked, selectedAcc, selectedNetwork }) =
       { validationFormMgs.message && 
         <div className={styles.validationeError}><BsXLg size={12}/>&nbsp;{validationFormMgs.message}</div>
       }
+
+      {modalToggle && signersToChoose && <SelectSignerAccount
+          showTitle
+          signersToChoose={signersToChoose.addresses}
+          selectedNetwork={selectedNetwork}
+          onSignerAddressClicked={onSignerAddressClicked}
+          description={`You will authorize the selected ${signersToChoose.signerName} address to sign transactions for your account.`}
+          onCloseBtnClicked={handleSelectSignerAccountModalCloseClicked}
+      />}
     </Modal>
   ) : <Loading />
 }
