@@ -13,7 +13,7 @@ export default function Sign(props) {
             data: txnData
         }
         return {
-            id: `transfer_${Date.now()}`,
+            id: `sdk_sign_${Date.now()}`,
             type: 'eth_sendTransaction',
             chainId: props.selectedNetwork.chainId,
             account: props.selectedAcc,

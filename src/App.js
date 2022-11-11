@@ -42,6 +42,7 @@ const AddAccountSDK = lazy(() => import('./components/SDK/AddAccount'))
 const Wallet = lazy(() => import('./components/Wallet/Wallet'))
 const SendTransaction = lazy(() => import('./components/SendTransaction/SendTransaction'))
 const SignMessage = lazy(() => import('./components/SignMessage/SignMessage'))
+const SignSDK = lazy(() => import('components/SDK/Sign'))
 
 const relayerURL = process.env.REACT_APP_RELAYRLESS === 'true' 
                   ? null 
@@ -302,6 +303,10 @@ function AppInner() {
 
         <Route path="/email-login-iframe">
           <EmailLoginSDK relayerURL={relayerURL} onAddAccount={onAddAccount} onLoginSuccess={onLoginSuccess}></EmailLoginSDK>
+        </Route>
+
+        <Route path="/sign-sdk/:txnTo/:txnValue/:txnData">
+          <SignSDK selectedAcc={selectedAcc} selectedNetwork={network} addRequest={addRequest}></SignSDK>
         </Route>
 
         {selectedAcc ?
