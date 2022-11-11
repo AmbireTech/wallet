@@ -1,42 +1,43 @@
 @import "variables";
 
-.confirmationCodeInfo {
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 20px;
-
-  .confirmationCodeInfoTitle {
-    font-size: 16px;
-    margin-bottom: 10px;
-  }
-
-  .confirmationCodeInfoMessage {    
-    p {
-      opacity: .9;
-      font-size: 14px;
-      font-weight: 300;
-      margin: 0;
-    }
-  }
-}
-
-.code2faNotRequiredMsg {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  background-color: mix($c-ebony-clay, $c-turquoise, 90%);
-  color: $c-turquoise;
-  padding: 15px;
-  font-size: 14px;
-}
-
 .wrapper {
   gap: 30px;
 
-  form {
+  .confirmationCodeInfo {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 20px;
+  
+    .confirmationCodeInfoTitle {
+      font-size: 16px;
+      margin-bottom: 10px;
+    }
+  
+    .confirmationCodeInfoMessage {    
+      p {
+        opacity: .9;
+        font-size: 14px;
+        font-weight: 300;
+        margin: 0;
+      }
+    }
+  }
+
+  .quickAccSigningForm {
     display: flex;
     flex-direction: column;
     gap: 10px;
+
+    .code2faNotRequiredMsg {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background-color: mix($c-ebony-clay, $c-turquoise, 90%);
+      color: $c-turquoise;    
+      padding: 15px;
+      font-size: 14px;
+      border-radius: 12px;
+    }
 
     .inputsContainer {
       display: flex;
