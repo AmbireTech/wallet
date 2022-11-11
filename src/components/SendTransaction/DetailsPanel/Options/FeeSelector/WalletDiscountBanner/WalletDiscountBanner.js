@@ -58,7 +58,7 @@ const WalletDiscountBanner = ({
       <div className={styles.row}>
         Get {discount * 100} <FaPercentage /> fees discount with &nbsp;<strong>$WALLET</strong> &nbsp;
         <a
-          className={cn(styles.address, styles.row)}
+          className={styles.row}
           href={walletDiscountBlogpost}
           target="_blank"
           rel="noreferrer noopener">
