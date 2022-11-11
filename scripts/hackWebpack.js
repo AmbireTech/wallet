@@ -37,12 +37,14 @@ modifyLineFromFile({
 });
 
 /**
- * Solve having more than one copy of React in ambire-wallet,
+ * Solve having more than one copy of a dependency in ambire-wallet,
  * which is happening when the ambire-common package gets linked (npm link),
  * and ambire-common dependencies get installed.
- * In this scenario, two versions of React lib are present,
+ * In this scenario, two versions of React and Ethers libs are present,
  * and the app crashes with the following error: "Invalid hook call. Hooks can
- * only be called inside of the body of a function component..."
+ * only be called inside of the body of a function component..." for React
+ * and "TypeError: ethers__WEBPACK_IMPORTED_MODULE_0__.providers.
+ * StaticJsonRpcProvider is not a constructor" for Ethers
  * {@link https://stackoverflow.com/a/68497876/1333836}
  */
 modifyLineFromFile({
@@ -50,7 +52,7 @@ modifyLineFromFile({
   lineToModify: {
     index: 337,
     value: 'alias: {',
-    newValue: "alias: { react: path.resolve('./node_modules/react'),"
+    newValue: "alias: { react: path.resolve('./node_modules/react'), ethers: path.resolve('./node_modules/ethers'),"
   },
 });
 
