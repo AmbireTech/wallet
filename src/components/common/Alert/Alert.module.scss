@@ -41,10 +41,9 @@
         height: 34px;
       }
 
-      &.information {
-        background-color: $info-background-color;
-        border-left-color: $ambire-dark-blue;
-      }
+      // Information
+      background-color: $info-background-color;
+      border-left-color: $ambire-dark-blue;
 
       &.success {
         background-color: $success-background-color;
