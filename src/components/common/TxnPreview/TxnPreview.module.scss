@@ -1,7 +1,7 @@
 @import 'variables.scss';
 
 $txn-height: 54px;
-$extended-summary-height: 40px;
+$extended-summary-height: 36px;
 
 .wrapper {
     display: flex;
@@ -25,6 +25,7 @@ $extended-summary-height: 40px;
         margin: 0;
         cursor: pointer;
         box-sizing: border-box;
+        padding: 10px 20px;
 
         .icon {
             width: 36px;
@@ -40,16 +41,13 @@ $extended-summary-height: 40px;
             align-items: flex-start;
             justify-content: center;
             gap: 30px;
-            padding: 10px 0;
-            padding-left: 20px;
+
 
             .summaryContainer {
                 width: 100%;
                 display: flex;
-                align-items: center;
+                align-items: flex-start;
                 gap: 20px;
-                font-size: 17px;
-                font-weight: 500;
 
                 .expandTxn {
                     align-self: flex-start;
@@ -87,12 +85,9 @@ $extended-summary-height: 40px;
 
         .actionIcons {
             align-self: flex-start;
+            height: 36px;
 
             .dismissTxn {
-                @include flex-center-center;
-                height: $txn-height;
-                width: 65px;
-                font-size: 25px;
                 transition: all 0.1s ease-in-out;
 
                 &.disabled {
