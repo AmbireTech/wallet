@@ -10,10 +10,9 @@ const FeeCurrencySelect = ({
 }) => {
   
   return estimation.feeInUSD ? ( 
-  <div className={styles.section}>
-    <div className={styles.sectionTitle}>Fee Currency</div>
+  <div className={styles.wrapper}>
+    <p className={styles.title}>Fee Currency</p>
     <Select
-      className={styles.feeSelect}
       disabled={disabled}
       defaultValue={estimation.selectedFeeToken?.address || estimation.selectedFeeToken?.symbol}
       items={currenciesItems}
