@@ -377,9 +377,9 @@ const Actions = ({
       }
   
       <form ref={form} className={styles.quickAccSigningForm} onSubmit={e => { e.preventDefault() }}>
-        {/* {signingStatus.confCodeRequired === 'notRequired' && */}
+        {signingStatus.confCodeRequired === 'notRequired' &&
           <p className={styles.code2faNotRequiredMsg}>You already sent 3 or more transactions to this address, confirmation code is not needed.</p>
-        {/* } */}
+        }
         <div className={styles.inputsContainer}>
           <TextInput
             password
