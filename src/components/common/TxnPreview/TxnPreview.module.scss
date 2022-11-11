@@ -14,6 +14,11 @@ $extended-summary-height: 36px;
     position: relative;
     user-select: none;
     overflow: hidden;
+    transition: .3s ease-out;
+
+    &:hover {
+        background-color: rgba($c-mirage, 0.8)
+    }
 
     .heading {
         width: 100%;
@@ -89,20 +94,15 @@ $extended-summary-height: 36px;
 
             .dismissTxn {
                 transition: all 0.1s ease-in-out;
-
+                opacity: .9;
                 &.disabled {
                     opacity: 0.2;
                 }
 
                 &:not(.disabled):hover {
-                    opacity: .8;
-                    background-color: rgba($c-mirage, 0.1);
+                    opacity: .6;
                 }
             }
-        }
-
-        &:hover {
-            background-color: rgba($c-mirage, 0.1)
         }
     }
 
