@@ -10,11 +10,10 @@ import { latticeConnect, latticeGetAddresses, latticeInit } from "lib/lattice"
 import { validateAddAuthSignerAddress } from "lib/validations/formValidations"
 import { isFirefox } from "lib/isFirefox"
 
-import { useModals } from "hooks"
 import { useToasts } from "hooks/toasts"
 import { Button, Loading, Modal, TextInput } from "components/common"
+import LatticePair from "components/common/LatticePair/LatticePair"
 import SelectSignerAccount from "components/common/SelectSignerAccount/SelectSignerAccount"
-import LatticeModal from "components/Modals/LatticeModal/LatticeModal"
 
 import { ReactComponent as TrezorIcon } from 'resources/providers/trezor.svg'
 import { ReactComponent as LedgerIcon } from 'resources/providers/ledger.svg'
@@ -24,7 +23,6 @@ import { ReactComponent as MetaMaskIcon } from 'resources/providers/metamask-fox
 import styles from './AddAuthSignerModal.module.scss'
 
 const AddAuthSignerModal = ({ onAddBtnClicked, selectedAcc, selectedNetwork }) => {
-  const { showModal } = useModals()
   const { addToast } = useToasts()
 
   const [disabled, setDisabled] = useState(true)
@@ -33,6 +31,7 @@ const AddAuthSignerModal = ({ onAddBtnClicked, selectedAcc, selectedNetwork }) =
     index: 0,
   })
   const [modalToggle, setModalToggle] = useState(true)
+  const [latticeToggle, setLatticeToggle] = useState(false)
   const [signersToChoose, setChooseSigners] = useState(null)
   const [showLoading, setShowLoading] = useState(false)
   const [textInputInfo, setTextInputInfo] = useState('')
@@ -175,6 +174,7 @@ const AddAuthSignerModal = ({ onAddBtnClicked, selectedAcc, selectedNetwork }) =
         const { isPaired, errConnect } = await latticeConnect(client, deviceId)
         if (errConnect) {
           setShowLoading(false)
+          setLatticeToggle(false)
           addToast(errConnect.message || errConnect, { error: true })
 
           return
@@ -182,6 +182,7 @@ const AddAuthSignerModal = ({ onAddBtnClicked, selectedAcc, selectedNetwork }) =
 
         if (!isPaired) {
           setShowLoading(false)
+          setLatticeToggle(false)
           // Canceling the visualization of the secret code on the device's screen.
           client.pair('')
 
@@ -193,6 +194,7 @@ const AddAuthSignerModal = ({ onAddBtnClicked, selectedAcc, selectedNetwork }) =
         const { res, errGetAddresses } = await latticeGetAddresses(client)
         if (errGetAddresses) {
             setShowLoading(false)
+            setLatticeToggle(false)
             addToast(`Lattice: ${errGetAddresses}`, { error: true })
 
             return
@@ -200,10 +202,11 @@ const AddAuthSignerModal = ({ onAddBtnClicked, selectedAcc, selectedNetwork }) =
         
         if (res) {
           setShowLoading(false)
+          setLatticeToggle(false)
           setLatticeAddresses({ addresses: res, deviceId, commKey, isPaired: true })
         }
       } else {
-        showModal(<LatticeModal addresses={setLatticeAddresses} />)
+        setLatticeToggle(true)
       }
   }
 
@@ -279,6 +282,8 @@ const AddAuthSignerModal = ({ onAddBtnClicked, selectedAcc, selectedNetwork }) =
       { validationFormMgs.message && 
         <div className={styles.validationeError}><BsXLg size={12}/>&nbsp;{validationFormMgs.message}</div>
       }
+
+      {latticeToggle && <LatticePair addresses={setLatticeAddresses} />}
 
       {modalToggle && signersToChoose && <SelectSignerAccount
           showTitle
