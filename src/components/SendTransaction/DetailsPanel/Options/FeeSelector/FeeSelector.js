@@ -119,7 +119,7 @@ export function FeeSelector({ disabled, signer, estimation, network, setEstimati
 
   return (<>
     {insufficientFee ? <Alert
-        className={styles.feeSelectorAlert}
+        className={styles.alert}
         type="danger"
         title="Insufficient balance for the fee."
         text={`Accepted tokens: ${(estimation.remainingFeeTokenBalances || []).map(x => x.symbol).join(', ')}
@@ -148,7 +148,7 @@ export function FeeSelector({ disabled, signer, estimation, network, setEstimati
       walletDiscountBlogpost={walletDiscountBlogpost}
     />
 
-    <div className={styles.sectionTitle}>
+    <div className={styles.title}>
       <span>Transaction Speed</span>
       { network.isGasTankAvailable && 
         <span>Gas Tank: { isGasTankEnabled ? 
@@ -189,7 +189,7 @@ export function FeeSelector({ disabled, signer, estimation, network, setEstimati
     />
 
     {!estimation.feeInUSD ? <Alert
-        className={styles.feeSelectorAlert}
+        className={styles.alert}
         type="warning"
         title="Warning"
         text={`

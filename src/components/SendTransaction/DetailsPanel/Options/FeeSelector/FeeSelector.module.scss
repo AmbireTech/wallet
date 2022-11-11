@@ -1,10 +1,10 @@
 @import "variables.scss";
 
-.feeSelectorAlert {
+.alert {
   margin: 20px 0;
 }
 
-.sectionTitle {
+.title {
   display: flex;
   justify-content: space-between;
 
@@ -24,7 +24,7 @@
 }
 
 @media screen and (max-width: $mobile-breakpoint-max-width) {
-  .sectionTitle {
+  .title {
     flex-direction: column-reverse;
     text-align: center;
     gap: 20px;
