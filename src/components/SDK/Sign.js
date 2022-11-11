@@ -1,8 +1,13 @@
-import { useEffect, useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useParams } from 'react-router-dom'
 
 export default function Sign(props) {
+    const [hasLoaded, setHasLoaded] = useState(false)
     const { txnTo, txnValue = null,  txnData = null } = useParams()
+
+    const showingTxDialog = useMemo(() => {
+        return !!props.sendTxnState?.showing
+    }, [props.sendTxnState])
 
     const req = useMemo(() => {
         if (!txnTo || !txnValue || !txnData) return null
@@ -26,7 +31,16 @@ export default function Sign(props) {
         if (!req) return
 
         props.addRequest(req)
-    }, [req])
+        setHasLoaded(true)
+    }, [props.addRequest, req])
+
+    useEffect(() => {
+        if (hasLoaded && !showingTxDialog) {
+            window.parent.postMessage({
+                type: 'signClose',
+            }, '*')
+        }
+    }, [hasLoaded, showingTxDialog])
 
     return (null)
 }

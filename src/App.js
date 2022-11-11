@@ -306,7 +306,13 @@ function AppInner() {
         </Route>
 
         <Route path="/sign-sdk/:txnTo/:txnValue/:txnData">
-          <SignSDK selectedAcc={selectedAcc} selectedNetwork={network} addRequest={addRequest}></SignSDK>
+          <SignSDK
+            selectedAcc={selectedAcc}
+            selectedNetwork={network}
+            addRequest={addRequest}
+            sendTxnState={sendTxnState}
+          >
+          </SignSDK>
         </Route>
 
         {selectedAcc ?
