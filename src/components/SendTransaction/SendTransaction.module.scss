@@ -49,6 +49,24 @@
     }
   }
 }
+// Here we are not using a breakpoint from variables.scss, but SendTransaction
+// covers the whole screen, so it shouldn't be a problem.
+@media screen and (max-width: 1600px) { 
+  .wrapper {
+    .container {
+      max-width: 1400px;
+      padding-bottom: 25px;
+      padding-top: 10px;
+
+      .panelWrapper {
+        .panelWrapperTitle {
+          font-size: 23px;
+          margin-bottom: 10px;
+        }
+      }
+    }
+  }
+}
 
 @media (max-width: $mobile-breakpoint-max-width) {
   .wrapper {
