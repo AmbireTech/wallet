@@ -55,8 +55,8 @@ export default function TxnPreview ({ txn, onDismiss, network, account, isFirstF
                 })}
               </div>
             </div>
-            {isFirstFailing && (<div className={styles.firstFailingLabel}>This is the first failing transaction.</div>)}
-              {!isFirstFailing && !mined && !isKnown(humanizerInfo, txn, account) && (<div className={styles.unknownWarning}>Warning: interacting with an unknown contract or address.</div>)}
+            {isFirstFailing && (<p className={styles.warning}>This is the first failing transaction.</p>)}
+              {!isFirstFailing && !mined && !isKnown(humanizerInfo, txn, account) && (<p className={styles.warning}>Warning: interacting with an unknown contract or address.</p>)}
           </div>
           <div className={styles.actionIcons}>
             {onDismiss ? (

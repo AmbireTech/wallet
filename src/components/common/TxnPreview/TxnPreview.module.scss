@@ -74,17 +74,14 @@ $extended-summary-height: 40px;
                 }
             }
 
-            .firstFailingLabel,
-            .unknownWarning {
-                height: $extended-summary-height;
-                display: flex;
-                align-items: center;
-                align-self: flex-start;
-                font-size: 12px;
-                font-weight: bold;
-                padding: 0 15px;
-                white-space: nowrap;
+            .warning {
+                font-size: 13px;
+                font-weight: 300;
+                padding: 10px 15px;
+                text-align: center;
                 background-color: $danger-color;
+                border-radius: 12px;
+                margin: 0;
             }
         }
 
