@@ -39,6 +39,7 @@ const EmailLogin = lazy(() => import('./components/EmailLogin/EmailLogin'))
 const EmailLoginSDK = lazy(() => import('./components/EmailLogin/EmailLoginSDK'))
 const AddAccount = lazy(() => import('./components/AddAccount/AddAccount'))
 const AddAccountSDK = lazy(() => import('./components/SDK/AddAccount'))
+const OnRampSDK = lazy(() => import('./components/SDK/OnRamp'))
 const Wallet = lazy(() => import('./components/Wallet/Wallet'))
 const SendTransaction = lazy(() => import('./components/SendTransaction/SendTransaction'))
 const SignMessage = lazy(() => import('./components/SignMessage/SignMessage'))
@@ -294,6 +295,10 @@ function AppInner() {
 
         <Route path="/add-account-sdk">
           <AddAccountSDK relayerURL={relayerURL} onAddAccount={onAddAccount} utmTracking={utmTracking} pluginData={pluginData}></AddAccountSDK>
+        </Route>
+
+        <Route path="/on-ramp-sdk">
+          <OnRampSDK></OnRampSDK>
         </Route>
 
         <Route path="/email-login">
