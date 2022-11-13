@@ -65,7 +65,8 @@ export default function Dashboard({ portfolio, selectedNetwork, selectedAccount,
                     label: "You don't have any tokens",
                     balanceUSD: 1,
                     value: 0
-                }]
+                }],
+                tokensLength: tokens?.length
             })
         }
     }, [balance, tokens]);

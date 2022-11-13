@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from 'react'
 
-export default function useIndexedDBStorage({ dbName, version }) {
+export default function useIndexedDBStorage({ dbName, version, account, network }) {
     const [items, setItemsLocally] = useState({})
     const [isLoading, setIsLoading] = useState(true)
     const [shouldStartFetching, setShouldStartFetching] = useState(false)
@@ -32,10 +32,11 @@ export default function useIndexedDBStorage({ dbName, version }) {
                     
                     const store = transaction.objectStore("assets").getAll();
                     store.onsuccess = function () {
-                        const res = store.result.reduce(function(acc, cur) {
+                        const res = store.result.filter(({ key }) => key.includes(account)).reduce(function(acc, cur) {
                             acc[cur.key] = cur;
                             return acc;
-                        }, {});
+                        }, {})
+                        
                         setItemsLocally(prev => ({...prev, ...res}))
                         resolve(db.current)
                     }
@@ -71,7 +72,7 @@ export default function useIndexedDBStorage({ dbName, version }) {
         }
         setIsLoading(false)
 
-        if (Object.keys(items).length) {
+        if (Object.keys(items).length && Object.keys(items).includes(account) && Object.keys(items).includes(network)) {
             setTimeout(() => {
                 setShouldStartFetching(true)
             }, 10000)
@@ -79,7 +80,7 @@ export default function useIndexedDBStorage({ dbName, version }) {
             setShouldStartFetching(true)
         }
 
-    }, [items])
+    }, [items, account, network])
 
     // GET
 
@@ -87,7 +88,6 @@ export default function useIndexedDBStorage({ dbName, version }) {
     const setItems = async ({ assetsByAccount, key }) => {
         if (!db.current) {
             await openDatabase().then(_db => {
-                debugger
                 const transaction = _db.transaction("assets", "readwrite");
                 const store = transaction.objectStore('assets');
                 store.put({ key: key, ...assetsByAccount})

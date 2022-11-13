@@ -101,9 +101,9 @@ const Chart = ({ portfolio, hidePrivateValue, selectedNetwork, data, className }
               (
                 networkBalance >= 10000 ? 
                 `${String(round(networkBalance/1000)).split('.').join(',')}K` : 
-                networkBalance.toFixed(2)
+                (data?.tokensLength ? ' -' : networkBalance.toFixed(2))
               ) :
-              0
+              (data?.tokensLength ? ' -' : 0 )
             }
           </label>
         </div>
@@ -123,12 +123,14 @@ const Chart = ({ portfolio, hidePrivateValue, selectedNetwork, data, className }
                 </div>
               ))} 
             </div> :
-            <div className={styles.noTokensWrapper}>
+            (!data.tokensLength ? (
+              <div className={styles.noTokensWrapper}>
               <div className={styles.noTokens}>
                 <AlertCircle />
                 <label>You don't have any tokens on this network</label>
               </div>
             </div>
+            ) : null)
           }
       </div>
   </div>
