@@ -106,11 +106,11 @@ export default function useWalletConnectLegacy({ account, chainId, clearWcClipbo
   const maybeUpdateSessions = () => {
     // restore connectors and update the ones that are stale
     let updateConnections = false
-    state.connections.forEach(({ uri, session, isOffline }) => {
-      if (connectors[uri]) {
-        const connector = connectors[uri]
+    state.connections.forEach(({ connectionId, isOffline }) => {
+      if (connectors[connectionId]) {
+        const connector = connectors[connectionId]
         const session = connector.session
-        if (session.accounts[0] !== account || session.chainId !== chainId || checkIsOffline(uri) !== isOffline) {
+        if (session.accounts[0] !== account || session.chainId !== chainId || checkIsOffline(connectionId) !== isOffline) {
           // NOTE: in case isOffline is different, we do not need to do this, but we're gonna leave that just in case the session is outdated anyway
           connector.updateSession({ accounts: [account], chainId })
           updateConnections = true
