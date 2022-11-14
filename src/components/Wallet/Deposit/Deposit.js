@@ -1,5 +1,4 @@
-import styles from './Deposit.module.scss'
-
+import cn from 'classnames'
 import { useCallback, useEffect, useState } from 'react'
 import { Panel } from 'components/common'
 import QRCode from 'qrcode'
@@ -9,6 +8,8 @@ import Providers from './Providers/Providers'
 import networks from 'consts/networks'
 
 import AssetsMigrationBanner from 'components/Wallet/AssetsMigration/AssetsMigrationBanner'
+
+import styles from './Deposit.module.scss'
 
 export default function Deposit({ selectedAcc, selectedNetwork, accounts, addRequest, relayerURL, portfolio, useStorage }) {
     const networkDetails = networks.find(({ id }) => id === selectedNetwork.id)
@@ -38,17 +39,23 @@ export default function Deposit({ selectedAcc, selectedNetwork, accounts, addReq
                     </div>
                 </div>
                 <div className={styles.description}>
-                    <TextInput className={styles.depositAddress} label={`Send ${networkDetails.nativeAssetSymbol}, tokens or collectibles (NFTs) to this address:`} value={selectedAcc} copy/>
+                    <TextInput 
+                        className={styles.depositAddress}
+                        inputContainerClass={styles.inputClass}
+                        label={`Send ${networkDetails.nativeAssetSymbol}, tokens or collectibles (NFTs) to this address:`} 
+                        value={selectedAcc} 
+                        copy
+                    />
                     <img className={styles.qrCode} alt="QR Code" src={qrCodeUrl}></img>
                 </div>
                 <div className={styles.networks}>
-                    Following networks supported on this address:
+                    <label className={styles.networksTitle}>Following networks supported on this address:</label>
                     <div className={styles.list}>
                         {
                             networks.filter(n => !n.hide).map(({ id, icon, name }) => (
                                 <div className={styles.network} key={id}>
                                     <div className={styles.icon} style={{backgroundImage: `url(${icon})`}}></div>
-                                    <div className={styles.name}>{ name }</div>
+                                    <div className={styles.name}>{ id === 'binance-smart-chain' ? 'BSC' : name }</div>
                                 </div>
                             ))
                         }
@@ -74,7 +81,7 @@ export default function Deposit({ selectedAcc, selectedNetwork, accounts, addReq
                         Credit Card & Bank Transfer
                     </div>
                 </div>
-                <div className={styles.description}>
+                <div className={cn(styles.description, styles.margin)}>
                     Deposit with credit card to your account directly using one of our partners
                 </div>
                 <Providers walletAddress={selectedAcc} networkDetails={networkDetails} relayerURL={relayerURL} portfolio={portfolio}/>

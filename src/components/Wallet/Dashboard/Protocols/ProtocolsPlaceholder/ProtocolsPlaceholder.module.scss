@@ -19,6 +19,12 @@
         justify-content: center;
         gap: 20px;
         align-items: center;
+
+        svg {
+            g {
+                opacity: 1;
+            }
+        }
     }
 
     .category {

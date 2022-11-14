@@ -63,12 +63,10 @@
             text-overflow: ellipsis;
             background-color: $c-mirage;            
             transition: all 0.1s ease-in-out;
-            -moz-appearance: textfield;
             border-bottom: 2px solid transparent;
             
             &::-webkit-outer-spin-button,
             &::-webkit-inner-spin-button {
-                -webkit-appearance: none;
                 margin: 0;
             }
 

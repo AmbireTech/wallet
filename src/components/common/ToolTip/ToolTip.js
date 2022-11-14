@@ -6,7 +6,7 @@ const newLineText = (text = '') => {
     return text.split('\n').map((str, key) => <div key={key}>{str}</div>)
 }
 
-const ToolTip = ({ children, label, htmlContent, disabled, className }) => {
+const ToolTip = ({ children, label, htmlContent, disabled, className, labelClassName }) => {
     const [labelPosition, setLabelPosition] = useState({ top: 0, left: 0 })
     const [arrowPosition, setArrowPosition] = useState('top left')
     const ref = useRef(null)
@@ -64,7 +64,7 @@ const ToolTip = ({ children, label, htmlContent, disabled, className }) => {
                 {children}
                 {
                     !disabled && (!!htmlContent || !!label) ?
-                        <div className={cn(styles.tooltipLabel, 'tooltip-label')} style={labelPosition}>
+                        <div className={cn(styles.tooltipLabel, 'tooltip-label', labelClassName)} style={labelPosition}>
                             {htmlContent || newLineText(label)}
                             <div className={cn(styles.arrow, ...(arrowPosition.split(' ').map(position => styles[position])))}></div>
                         </div>

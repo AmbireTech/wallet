@@ -190,6 +190,10 @@ const CrossChain = ({ addRequest, selectedAccount, portfolio, network, relayerUR
         if (!fromChain || portfolio.isCurrNetworkBalanceLoading) return
         setQuotes(null)
         asyncLoad(setLoading, loadChains)
+
+        return () => {
+            setChainsItems([])
+        }
     }, [fromChain, portfolio.isCurrNetworkBalanceLoading, loadChains])
 
     useEffect(() => portfolioTokens.current = portfolio.tokens, [portfolio.tokens])
@@ -198,13 +202,7 @@ const CrossChain = ({ addRequest, selectedAccount, portfolio, network, relayerUR
 
     return (
         <div id="cross-chain">
-            <Panel className='panel'>
-                <div className="title">
-                    Cross-chain transfers/swaps
-                    <div id="powered">
-                        Powered by Socket
-                    </div>
-                </div>
+            <Panel className='panel' title="Cross-chain transfers/swaps">
                 {
                     disabled ?
                         <div className="placeholder">Not supported on this Network</div>

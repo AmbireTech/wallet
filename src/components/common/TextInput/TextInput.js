@@ -20,13 +20,7 @@ const TextInput = forwardRef(({ value, className, title, pattern, autoComplete, 
                     :
                     null
             }
-            <div className={`${styles.textInputContainer}${inputContainerClass ? ` ${inputContainerClass}` : ''}${icon ? ` ${styles.hasIcon}` : ''}`} onClick={copy ? onClick : null}>
-                {
-                    icon &&
-                    <div className={styles.textInputContainerIcon}>
-                        {icon}
-                    </div>
-                }
+            <div className={`${styles.container}${inputContainerClass ? ` ${inputContainerClass}` : ''}${icon ? ` ${styles.hasIcon}` : ''}`} onClick={copy ? onClick : null}>
                 <input
                     value={value}
                     title={title}
@@ -42,7 +36,13 @@ const TextInput = forwardRef(({ value, className, title, pattern, autoComplete, 
                     onChange={ev => onChange && onChange(ev.target.value)}
                     ref={ref}
                     style={style}
-                />
+                    />
+                    {
+                        icon &&
+                        <div className={styles.textInputContainerIcon}>
+                            {icon}
+                        </div>
+                    }
                 {
                     copy ?
                         <div className={styles.button}>

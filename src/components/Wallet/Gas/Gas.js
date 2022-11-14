@@ -32,10 +32,7 @@ const Gas = ({
     
     return (
         <section id="gas">
-            <Panel className="panel">
-                <div className="heading">
-                    <div className="title">Current Network Fees</div>
-                </div>
+            <Panel className="panel" title="Current Network Fees">
                 <div className="description">
                     <p>Network fees are determined on a market principle - if more users are trying to use the network, fees are higher. Each network has different fees.</p>
                     { gasData && !isLoading && <GasDetails gasData={gasData} />  }
@@ -46,10 +43,7 @@ const Gas = ({
                 </div>
             </Panel>
             
-            <Panel className="panel">
-                <div className="heading">
-                    <div className="title">Gas Tank</div>
-                </div>
+            <Panel className="panel" title="Gas Tank">
                 <div className="description">
                 { selectedNetwork.isGasTankAvailable ?
                     <GasTank

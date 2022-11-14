@@ -5,7 +5,7 @@ import { FiHelpCircle } from 'react-icons/fi'
 import { ReactComponent as ConnectIcon } from './images/connect.svg'
 import { MdBrokenImage } from 'react-icons/md'
 import { AiOutlineDisconnect } from 'react-icons/ai'
-import { ReactComponent as WalletConnect } from './images/wallet-connect.svg'
+import { ReactComponent as WalletConnect } from 'resources/icons/wallet-connect.svg'
 import { DropDown, ToolTip, Button } from "components/common"
 import { checkClipboardPermission } from 'lib/permissions'
 import { MdOutlineWarning } from 'react-icons/md'
@@ -36,8 +36,6 @@ const DApps = ({ connections, connect, disconnect, isWcConnecting }) => {
 
     const isLegacyWC = ({ bridge }) => /https:\/\/bridge.walletconnect.org/g.test(bridge)
 
-    const wcTitle = <WalletConnect />
-
     const onConnectionClick = useCallback( async (url) => {
         const canOpen = await canOpenInIframe(url)
         if(canOpen) {
@@ -48,7 +46,19 @@ const DApps = ({ connections, connect, disconnect, isWcConnecting }) => {
     }, [history])
 
     return (
-        <DropDown className={styles.wrapper} menuClassName={styles.menu} title={wcTitle} badge={connections.length} onOpen={() => checkPermission()} isLoading={isClipboardGranted && isWcConnecting}>
+        <DropDown 
+            className={styles.wrapper} 
+            menuClassName={styles.menu} 
+            title={
+                <div className={styles.title}>
+                    <WalletConnect />
+                    <label>WalletConnect</label>
+                </div>
+            } 
+            badge={connections.length} 
+            onOpen={() => checkPermission()} 
+            isLoading={isClipboardGranted && isWcConnecting}
+        >
             <div className={styles.connectDapp}>
                 <div className={styles.heading}>
                     <Button primaryGradient small className={styles.buttonClass} icon={<ConnectIcon />} disabled={isClipboardGranted} onClick={readClipboard}>

@@ -2,7 +2,7 @@ import styles from './Accounts.module.scss'
 
 import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
-import { MdOutlineContentCopy, MdLogout, MdOutlineClose, MdOutlineCheck } from 'react-icons/md'
+import { MdOutlineClose, MdOutlineCheck } from 'react-icons/md'
 import { MdDragIndicator, MdOutlineSort } from 'react-icons/md'
 
 import * as blockies from 'blockies-ts';
@@ -11,6 +11,9 @@ import { useToasts } from 'hooks/toasts';
 import { useDragAndDrop, useCheckMobileScreen } from 'hooks'
 import { ToolTip } from 'components/common'
 import cn from 'classnames'
+
+import { ReactComponent as LogOut } from './icons/log-out.svg'
+import { ReactComponent as Copy } from 'resources/icons/copy.svg'
 
 const Accounts = ({ accounts, selectedAddress, onSelectAcc, onRemoveAccount, hidePrivateValue, userSorting, setUserSorting }) => {
     const { addToast } = useToasts()
@@ -129,10 +132,10 @@ const Accounts = ({ accounts, selectedAddress, onSelectAcc, onRemoveAccount, hid
                         </div>
                         <div className={styles.buttons}>
                             <div className={styles.button} onClick={() => copyAddress(id)}>
-                                <MdOutlineContentCopy/>
+                                <Copy />
                             </div>
                             <div className={styles.button} onClick={() => setLogoutWarning(id)}>
-                                <MdLogout/>
+                                <LogOut />
                             </div>
                         </div>
                     </div>
