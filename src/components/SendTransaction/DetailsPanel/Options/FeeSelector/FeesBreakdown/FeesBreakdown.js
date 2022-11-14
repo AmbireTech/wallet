@@ -28,7 +28,7 @@ const FeesBreakdown = ({
       {(<div className={styles.fee}>
         <p className={styles.feeSide}>
           Fee
-          {!!discount && <span className='discount-label'>*</span>}
+          {!!discount && <span className={styles.discount}>*</span>}
           {!!(discount && DISCOUNT_TOKENS_SYMBOLS.includes(estimation.selectedFeeToken?.symbol)) && <a
               className="address row discount-label"
               href={walletDiscountBlogpost}
