@@ -23,15 +23,15 @@ const Addresses = ({ addresses, addAddress, removeAddress, onSelectAddress, sele
     const showInputModal = () => showModal(addAddressModal)
 
     return (
-        <Panel title="Address Book" className={styles.wrapper}>
+        <Panel title="Address Book" titleClassName={styles.title} className={styles.wrapper}>
             <AddressList
                 noAccounts={true}
                 addresses={addresses}
                 removeAddress={removeAddress}
                 onSelectAddress={onSelectAddress}
+                className={styles.addressList}
             />
-            <div className={styles.separator}></div>
-            <Button onClick={showInputModal} className={styles['addresses-button']}>Add Address</Button>
+            <Button onClick={showInputModal} className={styles.addressesButton}>Add Address</Button>
         </Panel>
     )
 }

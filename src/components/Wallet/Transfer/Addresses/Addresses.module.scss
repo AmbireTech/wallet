@@ -1,14 +1,26 @@
 @import 'variables.scss';
 
-.addresses-button {
+.addressesButton {
     max-width: 400px;
     width: 100%;
     margin: 0 auto;
 }
 
 .wrapper {
-    gap: 15px;
+    gap: 57px;
+    padding: 40px;
+    padding-top: 15px;
     flex: 0 1 50%;
+
+    .addressList {
+        overflow-y: auto;
+        flex: 1;
+    }
+
+    .title {
+        font-size: 25px;
+        font-weight: 400;
+    }
 
     .separator {
         flex: 1 0 auto;
@@ -28,6 +40,7 @@
 
         .details {
             text-align: left;
+            overflow-x: auto;
 
             .address {
                 word-break: break-all;
@@ -45,10 +58,24 @@
         }
     }
 }
+@media screen and (max-width: $small-breakpoint-max-width) {
+    .wrapper {
+        padding-top: 30px;
+        .title {
+            text-align: center;
+            width: auto;
+            margin: 0 auto;
+        }
+    }
+}
 
 // Mobile
 @media screen and (max-width: $mobile-breakpoint-max-width) {
     .wrapper {
+        padding: 20px;
+        .title {
+            font-size: 20px;
+        }
         .item {
             padding-left: 15px !important;
 
