@@ -9,7 +9,7 @@ import {
   Redirect,
   Prompt
 } from 'react-router-dom'
-import { useState, useEffect, useMemo, useCallback, lazy, Suspense } from 'react'
+import { useState, useEffect, useMemo, useCallback, Suspense } from 'react'
 import ToastProvider from './components/ToastProvider/ToastProvider'
 import ModalProvider from './components/ModalProvider/ModalProvider'
 import useAccounts from './hooks/accounts'
@@ -35,11 +35,11 @@ import useDapps from 'ambire-common/src/hooks/useDapps'
 import { getManifestFromDappUrl } from 'ambire-common/src/services/dappCatalog'
 import { fetch } from 'lib/fetch'
 
-const EmailLogin = lazy(() => import('./components/EmailLogin/EmailLogin'))
-const AddAccount = lazy(() => import('./components/AddAccount/AddAccount'))
-const Wallet = lazy(() => import('./components/Wallet/Wallet'))
-const SendTransaction = lazy(() => import('./components/SendTransaction/SendTransaction'))
-const SignMessage = lazy(() => import('./components/SignMessage/SignMessage'))
+import EmailLogin from './components/EmailLogin/EmailLogin'
+import AddAccount from './components/AddAccount/AddAccount'
+import Wallet from './components/Wallet/Wallet'
+import SendTransaction from './components/SendTransaction/SendTransaction'
+import SignMessage from './components/SignMessage/SignMessage'
 
 const relayerURL = process.env.REACT_APP_RELAYRLESS === 'true' 
                   ? null 

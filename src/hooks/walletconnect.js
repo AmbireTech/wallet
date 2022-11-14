@@ -19,6 +19,7 @@ const UNISWAP_PERMIT_EXCEPTIONS = [ // based on PeerMeta
   'Sushi',
   'QuickSwap', // QuickSwap Interface
   'PancakeSwap', // 🥞 PancakeSwap - A next evolution DeFi exchange on BNB Smart Chain (BSC)
+  'Aave'
 ]
 
 let connectors = {}
