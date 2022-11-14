@@ -72,7 +72,7 @@ export default function useIndexedDBStorage({ dbName, version, account, network 
         }
         setIsLoading(false)
 
-        if (Object.keys(items).length && Object.keys(items).includes(account) && Object.keys(items).includes(network)) {
+        if (Object.keys(items).length && Object.keys(items).some(key => key.includes(account)) && Object.keys(items).some(key => key.includes(account))) {
             setTimeout(() => {
                 setShouldStartFetching(true)
             }, 10000)
