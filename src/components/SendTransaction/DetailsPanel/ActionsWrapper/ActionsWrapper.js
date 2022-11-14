@@ -2,6 +2,8 @@ import { Alert } from 'components/common';
 import FailingTxn from "components/SendTransaction/DetailsPanel/FailingTxn/FailingTxn";
 import Actions from "./Actions/Actions";
 
+import styles from './ActionsWrapper.module.scss'
+
 const ActionsWrapper = ({
   signingStatus,
   setSigningStatus,
@@ -29,6 +31,7 @@ const ActionsWrapper = ({
       estimation.isDeployed === false &&
       bundle.gasLimit ? (
       <Alert
+        className={styles.firstTransactionAlert}
         type="information"
         title="Note"
         text={`
