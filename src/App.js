@@ -5,9 +5,7 @@ import './App.scss'
 import { HashRouter as Router, Switch, Route, Redirect, Prompt } from 'react-router-dom'
 import React, { useState, useEffect, useMemo, useCallback, lazy, Suspense } from 'react'
 import useNetwork from 'ambire-common/src/hooks/useNetwork'
-import WalletStakingPoolABI from 'ambire-common/src/constants/abis/WalletStakingPoolABI.json'
 import useRewards from 'ambire-common/src/hooks/useRewards'
-import { Contract, utils } from 'ethers'
 import { Loading } from 'components/common'
 import ConstantsProvider from 'components/ConstantsProvider/ConstantsProvider'
 import useDapps from 'ambire-common/src/hooks/useDapps'
@@ -30,7 +28,6 @@ import {
 } from './hooks'
 import { useToasts } from './hooks/toasts'
 import { useOneTimeQueryParam } from './hooks/oneTimeQueryParam'
-import { getProvider } from './lib/provider'
 import allNetworks from './consts/networks'
 
 const EmailLogin = lazy(() => import('./components/EmailLogin/EmailLogin'))
@@ -112,7 +109,7 @@ function AppInner() {
   // Internal requests: eg from the Transfer page, Security page, etc. - requests originating in the wallet UI itself
   // unlike WalletConnect or SafeSDK requests, those do not need to be persisted
   const [internalRequests, setInternalRequests] = useState([])
-  const addRequest = async req => setInternalRequests(reqs => [...reqs, req])
+  const addRequest = async (req) => setInternalRequests((reqs) => [...reqs, req])
 
   // Merge all requests
   const requests = useMemo(
@@ -228,17 +225,17 @@ function AppInner() {
       })
       return
     }
-    setSentTxn((sentTxn) => [...sentTxn, { confirmed: false, hash }])
+    setSentTxn((prevState) => [...prevState, { confirmed: false, hash }])
     addToast(
       <span>Transaction signed and sent successfully! &nbsp;Click to view on block explorer.</span>,
       { url: `${network.explorerUrl}/tx/${hash}`, timeout: 15000 }
     )
   }
   const confirmSentTx = (txHash) =>
-    setSentTxn((sentTxn) => {
-      const tx = sentTxn.find((tx) => tx.hash === txHash)
+    setSentTxn((prevState) => {
+      const tx = prevState.find((txn) => txn.hash === txHash)
       tx.confirmed = true
-      return [...sentTxn.filter((tx) => tx.hash !== txHash), tx]
+      return [...prevState.filter((txn) => txn.hash !== txHash), tx]
     })
 
   // Show notifications for all requests
@@ -376,6 +373,7 @@ function AppInner() {
                 gnosisDisconnect={gnosisDisconnect}
                 // required for the security and transactions pages
                 relayerURL={relayerURL}
+                useRelayerData={useRelayerData}
                 // required by the transactions page
                 eligibleRequests={eligibleRequests}
                 showSendTxns={showSendTxns}
