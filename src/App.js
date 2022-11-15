@@ -316,6 +316,7 @@ function AppInner() {
             selectedNetwork={network}
             addRequest={addRequest}
             sendTxnState={sendTxnState}
+            internalRequests={internalRequests}
           >
           </SignSDK>
         </Route>
