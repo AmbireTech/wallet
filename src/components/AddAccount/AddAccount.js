@@ -1,5 +1,3 @@
-import styles from './AddAccount.module.scss'
-
 import React, { useState, useEffect, useCallback } from 'react'
 import { Link } from 'react-router-dom'
 import LoginOrSignup from 'components/LoginOrSignupForm/LoginOrSignupForm'
@@ -34,6 +32,8 @@ import { ReactComponent as GridPlusIcon } from 'resources/providers/grid-plus.sv
 import { ReactComponent as MetamaskIcon } from 'resources/providers/metamask.svg'
 import { ReactComponent as EmailIcon } from 'resources/icons/email.svg'
 
+import styles from './AddAccount.module.scss'
+
 TrezorConnect.manifest({
   email: 'contactus@ambire.com',
   appUrl: 'https://wallet.ambire.com'
@@ -52,6 +52,7 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking, plug
     try {
       await fn()
     } catch (e) {
+      // eslint-disable-next-line
       console.error(e)
       setAddAccErr(`Unexpected error: ${e.message || e}`)
     }
@@ -63,6 +64,7 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking, plug
     try {
       await fn()
     } catch (e) {
+      // eslint-disable-next-line
       console.error(e)
       setInProgress(false)
       setAddAccErr(`Unexpected error: ${e.message || e}`)
@@ -73,23 +75,20 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking, plug
     setErr('')
 
     // async hack to let React run a tick so it can re-render before the blocking Wallet.createRandom()
+    // eslint-disable-next-line
     await new Promise((resolve) => setTimeout(resolve, 0))
 
     const extraEntropy = id(
-      req.email +
-        ':' +
-        Date.now() +
-        ':' +
-        Math.random() +
-        ':' +
-        (typeof performance === 'object' && performance.now())
+      `${req.email}:${Date.now()}:${Math.random()}:${
+        typeof performance === 'object' && performance.now()
+      }`
     )
     const firstKeyWallet = Wallet.createRandom({ extraEntropy })
     // 6 words is 2048**6
-    const secondKeySecret =
-      Wallet.createRandom({ extraEntropy }).mnemonic.phrase.split(' ').slice(0, 6).join(' ') +
-      ' ' +
-      req.email
+    const secondKeySecret = `${Wallet.createRandom({ extraEntropy })
+      .mnemonic.phrase.split(' ')
+      .slice(0, 6)
+      .join(' ')} ${req.email}`
 
     const secondKeyResp = await fetchPost(`${relayerURL}/second-key`, { secondKeySecret })
     if (!secondKeyResp.address)
@@ -113,13 +112,12 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking, plug
     const privileges = [[quickAccManager, accHash]]
     const bytecode = getProxyDeployBytecode(baseIdentityAddr, privileges, { privSlot: 0 })
     const identityAddr = getAddress(
-      '0x' +
-        generateAddress2(
-          // Converting to buffer is required in ethereumjs-util version: 7.1.3
-          Buffer.from(identityFactoryAddr.slice(2), 'hex'),
-          Buffer.from(salt.slice(2), 'hex'),
-          Buffer.from(bytecode.slice(2), 'hex')
-        ).toString('hex')
+      `0x ${generateAddress2(
+        // Converting to buffer is required in ethereumjs-util version: 7.1.3
+        Buffer.from(identityFactoryAddr.slice(2), 'hex'),
+        Buffer.from(salt.slice(2), 'hex'),
+        Buffer.from(bytecode.slice(2), 'hex')
+      ).toString('hex')}`
     )
     const primaryKeyBackup = JSON.stringify(
       await firstKeyWallet.encrypt(req.passphrase, accountPresets.encryptionOpts)
@@ -147,7 +145,8 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking, plug
       return
     }
     if (!createResp.success) {
-      console.log(createResp)
+      // eslint-disable-next-line
+      console.error(createResp)
       setErr(`Unexpected sign up error: ${createResp.message || 'unknown'}`)
       return
     }
@@ -180,13 +179,12 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking, plug
       const { salt, baseIdentityAddr, identityFactoryAddr } = accountPresets
       const bytecode = getProxyDeployBytecode(baseIdentityAddr, privileges, { privSlot: 0 })
       const identityAddr = getAddress(
-        '0x' +
-          generateAddress2(
-            // Converting to buffer is required in ethereumjs-util version: 7.1.3
-            Buffer.from(identityFactoryAddr.slice(2), 'hex'),
-            Buffer.from(salt.slice(2), 'hex'),
-            Buffer.from(bytecode.slice(2), 'hex')
-          ).toString('hex')
+        `0x ${generateAddress2(
+          // Converting to buffer is required in ethereumjs-util version: 7.1.3
+          Buffer.from(identityFactoryAddr.slice(2), 'hex'),
+          Buffer.from(salt.slice(2), 'hex'),
+          Buffer.from(bytecode.slice(2), 'hex')
+        ).toString('hex')}`
       )
 
       const utm = utmTracking.getLatestUtmData()
@@ -272,7 +270,7 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking, plug
 
   const getOwnedByEOAs = useCallback(
     async (eoas) => {
-      let allUniqueOwned = {}
+      const allUniqueOwned = {}
 
       await Promise.all(
         eoas.map(async (signerAddr) => {
@@ -281,7 +279,9 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking, plug
           )
           const privEntries = Object.entries(await resp.json())
           // discard the privileges value, we do not need it as we wanna add all accounts EVER owned by this eoa
-          privEntries.forEach(([id, _]) => (allUniqueOwned[id] = getAddress(signerAddr)))
+          privEntries.forEach(([privEntryId]) => {
+            allUniqueOwned[privEntryId] = getAddress(signerAddr)
+          })
         })
       )
 
@@ -474,23 +474,23 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking, plug
   // Adding accounts from existing signers
   const addFromSignerButtons = (
     <>
-      <button onClick={() => wrapProgress(connectTrezorAndGetAccounts, 'hwwallet')}>
+      <button type="button" onClick={() => wrapProgress(connectTrezorAndGetAccounts, 'hwwallet')}>
         {/* Trezor */}
         <TrezorIcon />
       </button>
-      <button onClick={() => wrapProgress(connectLedgerAndGetAccounts, 'hwwallet')}>
+      <button type="button" onClick={() => wrapProgress(connectLedgerAndGetAccounts, 'hwwallet')}>
         {/* Ledger */}
         <LedgerIcon />
       </button>
-      <button onClick={() => wrapProgress(connectGridPlusAndGetAccounts, 'hwwallet')}>
+      <button type="button" onClick={() => wrapProgress(connectGridPlusAndGetAccounts, 'hwwallet')}>
         {/* Grid+ Lattice1 */}
         <GridPlusIcon className={styles.gridplus} />
       </button>
-      <button onClick={() => wrapErr(connectWeb3AndGetAccounts)}>
+      <button type="button" onClick={() => wrapErr(connectWeb3AndGetAccounts)}>
         {/* Metamask / Browser */}
         <MetamaskIcon className={styles.metamask} />
       </button>
-      <button onClick={() => wrapErr(open)}>
+      <button type="button" onClick={() => wrapErr(open)}>
         <VscJson size={25} />
         Import from JSON
       </button>
@@ -507,19 +507,17 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking, plug
             <h3>Add an account</h3>
             {addFromSignerButtons}
             <h3>NOTE: You can enable email/password login by connecting to a relayer.</h3>
-            {addAccErr ? (
+            {addAccErr && (
               <p className={styles.error} style={{ maxWidth: '800px' }}>
                 {addAccErr}
               </p>
-            ) : (
-              <></>
             )}
           </div>
         </section>
       </div>
     )
   }
-  //TODO: Would be great to create Ambire spinners(like 1inch but simpler) (I can have a look at them if you need)
+  // TODO: Would be great to create Ambire spinners(like 1inch but simpler) (I can have a look at them if you need)
   return (
     <div className={styles.loginSignupWrapper}>
       <div
@@ -539,8 +537,8 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking, plug
             inProgress={inProgress === 'email'}
             onAccRequest={(req) => wrapProgress(() => createQuickAcc(req), 'email')}
             action="SIGNUP"
-          ></LoginOrSignup>
-          {err ? <p className={styles.error}>{err}</p> : <></>}
+          />
+          {err && <p className={styles.error}>{err}</p>}
         </div>
 
         <div className={styles.loginSeparator} />
@@ -549,13 +547,13 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking, plug
           {inProgress !== 'hwwallet' ? (
             <>
               <Link to="/email-login">
-                <button>
+                <button type="button">
                   <EmailIcon className={styles.email} />
                   Email login
                 </button>
               </Link>
               {addFromSignerButtons}
-              {addAccErr ? <p className={styles.error}>{addAccErr}</p> : <></>}
+              {addAccErr && <p className={styles.error}>{addAccErr}</p>}
             </>
           ) : (
             <div className={styles.accountLoader}>
