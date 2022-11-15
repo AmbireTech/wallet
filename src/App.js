@@ -298,7 +298,7 @@ function AppInner() {
           <AddAccountSDK relayerURL={relayerURL} onAddAccount={onAddAccount} utmTracking={utmTracking} pluginData={pluginData}></AddAccountSDK>
         </Route>
 
-        <Route path="/on-ramp-sdk">
+        <Route path="/on-ramp-sdk/:chainID">
           <OnRampSDK></OnRampSDK>
         </Route>
 

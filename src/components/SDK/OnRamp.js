@@ -1,18 +1,26 @@
 import styles from 'components/AddAccount/AddAccount.module.scss'
+import { useParams } from 'react-router-dom'
+import networks from 'ambire-common/src/constants/networks'
 
 import useAccounts from 'hooks/accounts'
 import { useLocalStorage } from 'hooks'
 
 export default function OnRamp() {
-  // to do: just show two buttons for now:
-  // one is going to binance connect
-  // the other is just canceling the on ramp
-
   const { selectedAcc } = useAccounts(useLocalStorage)
+  const { chainID } = useParams()
 
   const openRamp = () => {
+    // TO DO:
+    // send an HTTP request to the relayer
+    // sign the message and return it
+
+    const validNetwork = networks.filter(network => network.chainId === parseInt(chainID))
+    const networkCode = validNetwork.length ? validNetwork[0].nativeAssetSymbol : ''
+
     window.parent.postMessage({
-      type: 'openRamp'
+      type: 'openRamp',
+      address: selectedAcc,
+      networkCode: networkCode,
     }, '*')
   }
 
