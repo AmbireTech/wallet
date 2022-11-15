@@ -21,7 +21,7 @@
     "@walletconnect/utils": "^1.7.1",
     "@yfi/sdk": "^1.0.11",
     "adex-protocol-eth": "git+https://git@github.com/AmbireTech/adex-protocol-eth.git#ef2f88f26824c64c1eb12c02a389baec2b2c3889",
-    "ambire-common": "github:AmbireTech/ambire-common#1ca015516648b5950d0a2e45a0627557f93edf63",
+    "ambire-common": "github:AmbireTech/ambire-common#9c854515db63d14eaa0db7e2a7185bf14e322781",
     "bip44-constants": "^128.0.0",
     "blockies-ts": "^1.0.0",
     "chart.js": "^3.9.1",

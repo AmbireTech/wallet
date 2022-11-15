@@ -223,7 +223,8 @@ function AppInner() {
     eligibleRequests,
     requests,
     selectedAccount: accounts.find(x => x.id === selectedAcc),
-    sentTxn
+    sentTxn,
+    accounts
   })
 
   // Show notifications for all requests

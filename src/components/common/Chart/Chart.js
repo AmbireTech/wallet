@@ -101,9 +101,9 @@ const Chart = ({ portfolio, hidePrivateValue, selectedNetwork, data, className }
               (
                 networkBalance >= 10000 ? 
                 `${String(round(networkBalance/1000)).split('.').join(',')}K` : 
-                (data?.tokensLength ? ' -' : networkBalance.toFixed(2))
+                (data?.allTokensWithoutPrice ? ' -' : networkBalance.toFixed(2))
               ) :
-              (data?.tokensLength ? ' -' : 0 )
+              (data?.allTokensWithoutPrice ? ' -' : 0 )
             }
           </label>
         </div>

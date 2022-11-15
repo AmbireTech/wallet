@@ -66,7 +66,8 @@ export default function Dashboard({ portfolio, selectedNetwork, selectedAccount,
                     balanceUSD: 1,
                     value: 0
                 }],
-                tokensLength: tokens?.length
+                tokensLength: tokens?.length,
+                allTokensWithoutPrice: tokens?.length && tokens.every(t => !t.price)
             })
         }
     }, [balance, tokens]);

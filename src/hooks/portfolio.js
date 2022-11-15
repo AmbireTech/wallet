@@ -5,8 +5,15 @@ import { fetchGet } from 'lib/fetch';
 import { ZAPPER_API_ENDPOINT, VELCRO_API_ENDPOINT, COINGECKO_API_URL } from 'config'
 import { useToasts } from 'hooks/toasts'
 import useConstants from './useConstants'
-import useIndexedDBStorage from './useIndexedDBStorage'
+import useDbCacheStorage from './useCacheStorage'
+import useLocalCacheStorage from './useLocalCacheStorage'
 
+const useCacheStorage = window.indexedDB ||
+    window.mozIndexedDB ||
+    window.webkitIndexedDB ||
+    window.msIndexedDB ||
+    window.shimIndexedDB ? useDbCacheStorage : useLocalCacheStorage
+            
 const getBalances = (network, address, provider, quickResponse) => {
     if (provider === '' || !provider) return null
     return fetchGet(`${provider === 'velcro' ?
@@ -27,7 +34,7 @@ const getCoingeckoPriceByContract = (id, addresses) =>
     fetchGet(`${COINGECKO_API_URL}/coins/${id}/contract/${addresses}`
     )
 
-export default function usePortfolio({ currentNetwork, account, useStorage, relayerURL, useRelayerData, eligibleRequests, requests, selectedAccount, sentTxn }) {
+export default function usePortfolio({ currentNetwork, account, useStorage, relayerURL, useRelayerData, eligibleRequests, requests, selectedAccount, sentTxn, accounts }) {
     const isVisible = usePageVisibility()
     
     const {
@@ -66,7 +73,8 @@ export default function usePortfolio({ currentNetwork, account, useStorage, rela
         requests,
         selectedAccount,
         sentTxn,
-        useIndexedDBStorage
+        useCacheStorage,
+        accounts
     })
 
     return {
