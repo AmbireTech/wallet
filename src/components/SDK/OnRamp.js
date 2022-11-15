@@ -1,26 +1,28 @@
 import styles from 'components/AddAccount/AddAccount.module.scss'
 import { useParams } from 'react-router-dom'
 import networks from 'ambire-common/src/constants/networks'
+import { fetchPost } from 'lib/fetch'
 
 import useAccounts from 'hooks/accounts'
 import { useLocalStorage } from 'hooks'
 
-export default function OnRamp() {
+export default function OnRamp({relayerURL}) {
   const { selectedAcc } = useAccounts(useLocalStorage)
   const { chainID } = useParams()
 
-  const openRamp = () => {
-    // TO DO:
-    // send an HTTP request to the relayer
-    // sign the message and return it
+  const openRamp = async () => {
 
     const validNetwork = networks.filter(network => network.chainId === parseInt(chainID))
     const networkCode = validNetwork.length ? validNetwork[0].nativeAssetSymbol : ''
+
+    const fetchSignature = await fetchPost(`${relayerURL}/binance-connect/sign`, { chainID, networkCode })
+    const signature = fetchSignature.signature
 
     window.parent.postMessage({
       type: 'openRamp',
       address: selectedAcc,
       networkCode: networkCode,
+      signature: signature,
     }, '*')
   }
 

@@ -299,7 +299,7 @@ function AppInner() {
         </Route>
 
         <Route path="/on-ramp-sdk/:chainID">
-          <OnRampSDK></OnRampSDK>
+          <OnRampSDK relayerURL={relayerURL}></OnRampSDK>
         </Route>
 
         <Route path="/email-login">
