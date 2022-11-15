@@ -1,13 +1,14 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useParams } from 'react-router-dom'
 
-export default function Sign(props) {
+export default function Sign({selectedAcc, selectedNetwork, addRequest, sendTxnState, internalRequests}) {
     const [hasLoaded, setHasLoaded] = useState(false)
+    const showingTxDialogRef = useRef()
     const { txnTo, txnValue = null,  txnData = null } = useParams()
 
     const showingTxDialog = useMemo(() => {
-        return !!props.sendTxnState?.showing
-    }, [props.sendTxnState])
+        return !!sendTxnState?.showing
+    }, [sendTxnState])
 
     const req = useMemo(() => {
         if (!txnTo || !txnValue || !txnData) return null
@@ -20,27 +21,32 @@ export default function Sign(props) {
         return {
             id: `sdk_sign_${Date.now()}`,
             type: 'eth_sendTransaction',
-            chainId: props.selectedNetwork.chainId,
-            account: props.selectedAcc,
+            chainId: selectedNetwork.chainId,
+            account: selectedAcc,
             txn,
             meta: null
         }
-    }, [txnTo, txnValue,  txnData, props.selectedNetwork.chainId, props.selectedAcc])
+    }, [txnTo, txnValue,  txnData, selectedNetwork.chainId, selectedAcc])
 
     useEffect(() => {
-        if (!req) return
+        if (hasLoaded || !req) return
 
-        props.addRequest(req)
+        addRequest(req)
         setHasLoaded(true)
-    }, [props.addRequest, req])
+    }, [hasLoaded, addRequest, req])
 
     useEffect(() => {
-        if (hasLoaded && !showingTxDialog) {
+        if (hasLoaded && showingTxDialogRef.current && !showingTxDialog && internalRequests.length === 0) {
             window.parent.postMessage({
                 type: 'signClose',
             }, '*')
+
+            setHasLoaded(false)
         }
-    }, [hasLoaded, showingTxDialog])
+
+        // keep prev value
+        showingTxDialogRef.current = showingTxDialog
+    }, [hasLoaded, showingTxDialog, internalRequests])
 
     return (null)
 }
