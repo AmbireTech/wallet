@@ -31,16 +31,6 @@
                 color: $c-heliotrope;
             }
         }
-
-        .description {
-            display: flex;
-            flex-direction: column;
-            gap: 0.2em;
-            text-align: left;
-            font-size: 1em;
-            color: $c-titan-white;
-            user-select: none;
-        }
     }
 }
 
