@@ -1,5 +1,6 @@
 import styles from 'components/AddAccount/AddAccount.module.scss'
 import { useParams } from 'react-router-dom'
+import { useState } from 'react'
 import networks from 'ambire-common/src/constants/networks'
 import { fetchPost } from 'lib/fetch'
 
@@ -7,6 +8,7 @@ import useAccounts from 'hooks/accounts'
 import { useLocalStorage } from 'hooks'
 
 export default function OnRamp({relayerURL}) {
+  const [onRampUrl, setOnRampUrl] = useState(false)
   const { selectedAcc } = useAccounts(useLocalStorage)
   const { chainID } = useParams()
 
@@ -15,15 +17,12 @@ export default function OnRamp({relayerURL}) {
     const validNetwork = networks.filter(network => network.chainId === parseInt(chainID))
     const networkCode = validNetwork.length ? validNetwork[0].nativeAssetSymbol : ''
 
-    const fetchSignature = await fetchPost(`${relayerURL}/binance-connect/sign`, { chainID, networkCode })
+    const fetchSignature = await fetchPost(`${relayerURL}/binance-connect/sign`, { address: selectedAcc, networkCode })
     const signature = fetchSignature.signature
-
-    window.parent.postMessage({
-      type: 'openRamp',
-      address: selectedAcc,
-      networkCode: networkCode,
-      signature: signature,
-    }, '*')
+    const timestamp = Date.now()
+    const merchantCode = "xubo_test"
+    const iframeUrl = "https://www.binancecnt.com/en/pre-connect?merchantCode="+merchantCode+"&timestamp="+timestamp+"&cryptoAddress="+selectedAcc+"&cryptoNetwork="+networkCode+"&signature="+signature
+    setOnRampUrl(iframeUrl)
   }
 
   const cancel = () => {
@@ -36,13 +35,21 @@ export default function OnRamp({relayerURL}) {
   return (
     <div className={styles.loginSignupWrapper}>
       <div className={styles.logo}/>
-      <section className={styles.addAccount}>
+      {onRampUrl &&
         <div>
-          <h2>Buy Crypto with Fiat?</h2>
-          <button onClick={openRamp}>Proceed</button>
-          <button onClick={cancel}>Cancel</button>
+          <iframe src={onRampUrl} width="100%" height="500px" frameborder="0" title="Binance Connect" />
+          <button onClick={cancel}>Finish</button>
         </div>
-      </section>
+      }
+      {!onRampUrl &&
+        <section className={styles.addAccount}>
+            <div>
+              <h2>Buy Crypto with Fiat?</h2>
+              <button id="proceed_btn" onClick={openRamp}>Proceed</button>
+              <button onClick={cancel}>Cancel</button>
+            </div>
+        </section>
+      }
     </div>
   )
 }
