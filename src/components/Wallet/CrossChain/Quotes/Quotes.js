@@ -62,10 +62,10 @@ const Quotes = ({ addRequest, selectedAccount, fromTokensItems, quotes, onQuotes
                 </div>
                 <div className="summary">
                     <div className="amounts">
-                        {middlewareRoute ? <div className="amount">
+                        {middlewareRoute ? <div className="amount middleware">
                             { formatAmount(middlewareRoute.fromAmount, middlewareRoute.fromAsset) } { middlewareRoute.fromAsset.symbol }
                         </div> : null}
-                        <div className="amount">
+                        <div className="amount bridge">
                             { formatAmount(bridgeStep.toAmount, bridgeStep.toAsset) } { bridgeStep.toAsset.symbol }
                         </div>
                     </div>

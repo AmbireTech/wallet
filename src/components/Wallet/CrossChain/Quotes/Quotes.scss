@@ -113,6 +113,10 @@
                         font-weight: 300;
                     }
                 }
+
+                .bridge {
+                    margin-left: auto;
+                }
             }
 
             .summary {
@@ -130,7 +134,11 @@
                         font-size: 14px;
                         flex: 1 1 50%;
 
-                        &:nth-child(2) {
+                        &.middleware {
+                            text-align: left;
+                        }
+
+                        &.bridge {
                             text-align: right;
                         }
                     }
