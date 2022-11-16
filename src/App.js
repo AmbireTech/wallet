@@ -43,7 +43,7 @@ const OnRampSDK = lazy(() => import('./components/SDK/OnRamp'))
 const Wallet = lazy(() => import('./components/Wallet/Wallet'))
 const SendTransaction = lazy(() => import('./components/SendTransaction/SendTransaction'))
 const SignMessage = lazy(() => import('./components/SignMessage/SignMessage'))
-const SignSDK = lazy(() => import('components/SDK/Sign'))
+const SendTransactionSDK = lazy(() => import('components/SDK/SendTransaction'))
 
 const relayerURL = process.env.REACT_APP_RELAYRLESS === 'true' 
                   ? null 
@@ -310,15 +310,15 @@ function AppInner() {
           <EmailLoginSDK relayerURL={relayerURL} onAddAccount={onAddAccount} onLoginSuccess={onLoginSuccess}></EmailLoginSDK>
         </Route>
 
-        <Route path="/sign-sdk/:txnTo/:txnValue/:txnData">
-          <SignSDK
+        <Route path="/send-transaction-sdk/:txnTo/:txnValue/:txnData">
+          <SendTransactionSDK
             selectedAcc={selectedAcc}
             selectedNetwork={network}
             addRequest={addRequest}
             sendTxnState={sendTxnState}
             internalRequests={internalRequests}
           >
-          </SignSDK>
+          </SendTransactionSDK>
         </Route>
 
         {selectedAcc ?

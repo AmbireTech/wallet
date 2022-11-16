@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useParams } from 'react-router-dom'
 
-export default function Sign({selectedAcc, selectedNetwork, addRequest, sendTxnState, internalRequests}) {
+export default function SendTransaction({selectedAcc, selectedNetwork, addRequest, sendTxnState, internalRequests}) {
     const [hasLoaded, setHasLoaded] = useState(false)
     const showingTxDialogRef = useRef()
     const { txnTo, txnValue = null,  txnData = null } = useParams()
