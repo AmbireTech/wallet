@@ -1,5 +1,3 @@
-import './Quotes.scss'
-
 import { MdOutlineArrowBack, MdOutlineArrowForward, MdOutlineCheck, MdOutlineClose } from 'react-icons/md';
 import { Button, Loading, Radios } from 'components/common';
 import { useState } from 'react';
@@ -7,6 +5,7 @@ import networks from 'consts/networks';
 import useMovr from 'components/Wallet/CrossChain/useMovr';
 import { useToasts } from 'hooks/toasts';
 
+import './Quotes.scss'
 
 const formatAmount = (amount, asset) => amount / Math.pow(10, asset.decimals)
 const formatFeeAmount = (fee, route) => {
@@ -32,7 +31,7 @@ const Quotes = ({ addRequest, selectedAccount, fromTokensItems, quotes, onQuotes
         const bridgeRoute = userTxs.find(tx => tx.steps.find(s => s.type === 'bridge'))
         const middlewareRoute = userTxs.map(tx => tx.steps.find(s => s.type === 'middleware')).find(x => x)
 
-        return {
+        const data = {
             ...route,
             bridgeStep,
             middlewareRoute,
@@ -41,11 +40,14 @@ const Quotes = ({ addRequest, selectedAccount, fromTokensItems, quotes, onQuotes
             middlewareFee: middlewareRoute?.protocolFees ? formatFeeAmount(middlewareRoute?.protocolFees, route) : 0,
             bridgeFee: bridgeStep?.protocolFees ? formatFeeAmount(bridgeStep?.protocolFees, route) : 0
         }
+        console.log(data)
+      
+        return data
     })
 
     const radios = routes.map(({ bridgeStep, bridgeFee, maxServiceTime, serviceTime, middlewareRoute, middlewareFee, fromAmount, toAmount, routeId, integratorFee, userTxs }) => ({
         label:
-            <div className="route">
+            <div className="route-body">
                 <div className="info">
                     {
                         middlewareRoute ?
@@ -64,13 +66,16 @@ const Quotes = ({ addRequest, selectedAccount, fromTokensItems, quotes, onQuotes
                 <div className="summary">
                     <div className="amounts">
                         <div className="amount">
+                            { formatAmount(middlewareRoute.fromAmount, middlewareRoute.toAsset) } { middlewareRoute.fromAsset.symbol }
+                        </div>
+                        <div className="amount">
                             { formatAmount(bridgeStep.toAmount, bridgeStep.toAsset) } { bridgeStep.toAsset.symbol }
                         </div>
                     </div>
                     <div className="fees">
                         {
                             middlewareFee ?
-                            <div className="fee">
+                            <div className="fee middleware">
                                 { middlewareFee ? <>Fee: { middlewareFee } { middlewareRoute?.protocolFees?.asset?.symbol }</> : null }
                             </div>
                             :
@@ -78,7 +83,7 @@ const Quotes = ({ addRequest, selectedAccount, fromTokensItems, quotes, onQuotes
                         }
                         {
                             bridgeFee ?
-                                <div className="fee">
+                                <div className="fee bridge">
                                     { bridgeFee ? <>Fee: { bridgeFee } { bridgeStep?.protocolFees?.asset?.symbol }</> : null }
                                 </div>
                                 :
@@ -189,7 +194,7 @@ const Quotes = ({ addRequest, selectedAccount, fromTokensItems, quotes, onQuotes
                                     Try increasing the amount or switching token.
                                 </div>
                                 :
-                                <Radios radios={radios} onChange={value => setSelectedRoute(value)}/>
+                                <Radios radios={radios} onChange={value => setSelectedRoute(value)} radioClassName="route" />
                         }
                     </div>
             }
