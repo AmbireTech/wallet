@@ -1,0 +1,21 @@
+@import 'variables.scss';
+
+.wrapper {
+    display: flex;
+    justify-content: center;
+    gap: 17px;
+
+    .panel {
+        flex: 1;
+    }
+}
+
+// @media screen and (max-width: $sidebar-small-max-width) {
+//    .wrapper {
+//         flex-direction: column-reverse;
+
+//         .panel {
+//             width: 100%;
+//         }
+//    }
+// }

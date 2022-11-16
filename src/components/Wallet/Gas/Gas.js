@@ -1,7 +1,8 @@
-import GasTank from './GasTank/GasTank'
-
-import './Gas.scss'
+import RightPanel from './RightPanel/RightPanel'
 import { Panel } from 'components/common'
+
+import styles from './Gas.module.scss'
+import LeftPanel from './LeftPanel/LeftPanel'
 
 const Gas = ({ 
     selectedNetwork, 
@@ -15,12 +16,20 @@ const Gas = ({
  }) => {
     
     return (
-        <section id="gas">
-            
-            <Panel className="panel" title="Gas Tank">
-                <div className="description">
+        <section className={styles.wrapper}>
+            <Panel className={styles.panel} title="Gas Tank">
+                <LeftPanel
+                    network={selectedNetwork}
+                    relayerURL={relayerURL}
+                    portfolio={portfolio}
+                    account={selectedAccount}
+                    gasTankState={gasTankState}
+                    setGasTankState={setGasTankState}
+                />
+            </Panel>
+            <Panel className={styles.panel}>
                 { selectedNetwork.isGasTankAvailable ?
-                    <GasTank
+                    <RightPanel
                         network={selectedNetwork}
                         relayerURL={relayerURL}
                         portfolio={portfolio}
@@ -32,7 +41,6 @@ const Gas = ({
                     /> :
                     <h3 className="error">Gas Tank is not available on {selectedNetwork.id.toUpperCase()}</h3>
                 }
-                </div>
             </Panel>
             
         </section>
