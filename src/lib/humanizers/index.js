@@ -12,7 +12,7 @@ import WALLETSupplyController from './WALLETSupplyController'
 import AmbireBatcher from './AmbireBatcher'
 import WALLETStakingPool from './WALLETStakingPool'
 import AaveWethGatewayV2 from './AaveWethGatewayV2'
-import Swappin from 'ambire-common/src/services/humanizers/Swappin'
+import Swappin from './Swappin'
 
 const all = ({humanizerInfo, tokenList}) => ({
 	...UniRouters(humanizerInfo),

@@ -181,11 +181,25 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking, plug
       throw new Error('MetaMask not available')
     }
     const ethereum = window.ethereum
-    const web3Accs = await ethereum.request({ method: 'eth_requestAccounts' })
-    if (!web3Accs.length) throw new Error('No accounts connected')
-    if (web3Accs.length === 1) return onEOASelected(web3Accs[0], {type: 'Web3'})
 
-    setChooseSigners({ addresses: web3Accs, signerName: 'Web3' })
+    const permissions = await ethereum.request({
+      method: 'wallet_requestPermissions',
+      params: [{ eth_accounts: {} }],
+    })
+
+    const accountsPermission = permissions.find(
+        (permission) => permission.parentCapability === 'eth_accounts'
+    )
+
+    if (!accountsPermission) {
+      throw new Error('No accounts connected')
+    }
+
+    const addresses = accountsPermission.caveats[0].value
+
+    if (addresses.length === 1) return onEOASelected(addresses[0], {type: 'Web3'})
+
+    setChooseSigners({ addresses, signerName: 'Web3' })
   }
 
   const getAccountByAddr = useCallback(async (idAddr, signerAddr) => {

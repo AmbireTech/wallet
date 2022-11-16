@@ -1,0 +1,61 @@
+@import 'variables.scss';
+
+.wrapper {
+    display: flex;
+    flex-direction: column;
+
+    .title {
+        font-size: 22px;
+    }
+
+    .content {
+        overflow: visible !important;
+    }
+
+    .intro {
+        color: $text-container-color;
+    }
+
+    .signers {
+        background: transparent;
+    }
+
+    ul {
+        padding: 0;
+        line-height: 2.5em !important;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+
+        .oddRow {
+            background: $c-ebony-clay;
+        }
+
+        li {
+            display: flex;
+            padding: 0 20px;
+            cursor: pointer;
+
+            .indexRow {
+                width: 25px;
+            }
+
+            svg {
+                margin-bottom: -5px;
+            }
+        }
+    }
+
+    .pages {
+        text-align: center;
+        padding-top: 20px;
+    }
+
+    .buttons {
+        position: inherit;
+
+        button {
+            flex: 0 1 50% !important;
+        }
+    }
+}
