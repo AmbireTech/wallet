@@ -220,32 +220,6 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking, plug
     [relayerURL, utmTracking]
   )
 
-  async function connectWeb3AndGetAccounts() {
-    if (typeof window.ethereum === 'undefined') {
-      throw new Error('MetaMask not available')
-    }
-    const ethereum = window.ethereum
-
-    const permissions = await ethereum.request({
-      method: 'wallet_requestPermissions',
-      params: [{ eth_accounts: {} }]
-    })
-
-    const accountsPermission = permissions.find(
-      (permission) => permission.parentCapability === 'eth_accounts'
-    )
-
-    if (!accountsPermission) {
-      throw new Error('No accounts connected')
-    }
-
-    const addresses = accountsPermission.caveats[0].value
-
-    if (addresses.length === 1) return onEOASelected(addresses[0], { type: 'Web3' })
-
-    setChooseSigners({ addresses, signerName: 'Web3' })
-  }
-
   const getAccountByAddr = useCallback(
     async (idAddr, signerAddr) => {
       // In principle, we need these values to be able to operate in relayerless mode,
@@ -285,12 +259,60 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking, plug
         })
       )
 
-      return await Promise.all(
-        Object.entries(allUniqueOwned).map(([id, signer]) => getAccountByAddr(id, signer))
+      const ownedByEOAs = await Promise.all(
+        Object.entries(allUniqueOwned).map(([ownedId, signer]) => getAccountByAddr(ownedId, signer))
       )
+
+      return ownedByEOAs
     },
     [getAccountByAddr, relayerURL]
   )
+
+  const onEOASelected = useCallback(
+    async (addr, signerExtra) => {
+      const addAccount = (acc, opts) => onAddAccount({ ...acc, signerExtra }, opts)
+      // when there is no relayer, we can only add the 'default' account created from that EOA
+      // @TODO in the future, it would be nice to do getLogs from the provider here to find out which other addrs we control
+      //   ... maybe we can isolate the code for that in lib/relayerless or something like that to not clutter this code
+      if (!relayerURL)
+        return addAccount(await createFromEOA(addr, signerExtra.type), { select: true })
+      // otherwise check which accs we already own and add them
+      const owned = await getOwnedByEOAs([addr])
+      if (!owned.length) {
+        addAccount(await createFromEOA(addr, signerExtra.type), { select: true, isNew: true })
+      } else {
+        addToast(`Found ${owned.length} existing accounts with signer ${addr}`, { timeout: 15000 })
+        owned.forEach((acc, i) => addAccount(acc, { select: i === 0 }))
+      }
+    },
+    [addToast, createFromEOA, getOwnedByEOAs, onAddAccount, relayerURL]
+  )
+
+  async function connectWeb3AndGetAccounts() {
+    if (typeof window.ethereum === 'undefined') {
+      throw new Error('MetaMask not available')
+    }
+    const ethereum = window.ethereum
+
+    const permissions = await ethereum.request({
+      method: 'wallet_requestPermissions',
+      params: [{ eth_accounts: {} }]
+    })
+
+    const accountsPermission = permissions.find(
+      (permission) => permission.parentCapability === 'eth_accounts'
+    )
+
+    if (!accountsPermission) {
+      throw new Error('No accounts connected')
+    }
+
+    const addresses = accountsPermission.caveats[0].value
+
+    if (addresses.length === 1) return onEOASelected(addresses[0], { type: 'Web3' })
+
+    setChooseSigners({ addresses, signerName: 'Web3' })
+  }
 
   const getGridPlusAddresses = ({ addresses, deviceId, commKey, isPaired }) => {
     setChooseSigners({
@@ -323,17 +345,10 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking, plug
       signerName: 'Trezor',
       signerExtra: {
         type: 'trezor',
+        /* eslint no-underscore-dangle: 0 */
         info: JSON.parse(JSON.stringify(provider._initialDerivedKeyInfo))
       }
     })
-  }
-
-  async function connectLedgerAndGetAccounts() {
-    if (isFirefox()) {
-      await connectLedgerAndGetAccountsU2F()
-    } else {
-      await connectLedgerAndGetAccountsWebHID()
-    }
   }
 
   async function connectLedgerAndGetAccountsU2F() {
@@ -365,7 +380,8 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking, plug
         setChooseSigners({ addresses: addrData, signerName: 'Ledger', signerExtra })
       }
     } catch (e) {
-      console.log(e)
+      // eslint-disable-next-line
+      console.error(e)
       if (e.statusCode && e.id === 'InvalidChannel') {
         error = 'Invalid channel'
       } else if (e.statusCode && e.statusCode === 25873) {
@@ -380,25 +396,13 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking, plug
     }
   }
 
-  const onEOASelected = useCallback(
-    async (addr, signerExtra) => {
-      const addAccount = (acc, opts) => onAddAccount({ ...acc, signerExtra }, opts)
-      // when there is no relayer, we can only add the 'default' account created from that EOA
-      // @TODO in the future, it would be nice to do getLogs from the provider here to find out which other addrs we control
-      //   ... maybe we can isolate the code for that in lib/relayerless or something like that to not clutter this code
-      if (!relayerURL)
-        return addAccount(await createFromEOA(addr, signerExtra.type), { select: true })
-      // otherwise check which accs we already own and add them
-      const owned = await getOwnedByEOAs([addr])
-      if (!owned.length) {
-        addAccount(await createFromEOA(addr, signerExtra.type), { select: true, isNew: true })
-      } else {
-        addToast(`Found ${owned.length} existing accounts with signer ${addr}`, { timeout: 15000 })
-        owned.forEach((acc, i) => addAccount(acc, { select: i === 0 }))
-      }
-    },
-    [addToast, createFromEOA, getOwnedByEOAs, onAddAccount, relayerURL]
-  )
+  async function connectLedgerAndGetAccounts() {
+    if (isFirefox()) {
+      await connectLedgerAndGetAccountsU2F()
+    } else {
+      await connectLedgerAndGetAccountsWebHID()
+    }
+  }
 
   const onSignerAddressClicked = useCallback(
     (val) => {
@@ -420,7 +424,6 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking, plug
           onSignerAddressClicked={onSignerAddressClicked}
           description={`Signer address is the ${signersToChoose.signerName} address you will use to sign transactions on Ambire Wallet.
                     А new account will be created using this signer if you don’t have one.`}
-          isCloseBtnShown={true}
           onCloseBtnClicked={handleSelectSignerAccountModalCloseClicked}
         />
       )

@@ -16,5 +16,10 @@ module.exports = {
     // results huuuuuge diff in git + history gets lost. Blah.
     "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
     "react/prop-types": "off"
+  },
+  env: {
+    browser: true,
+    node: true,
+    es2021: true
   }
 }
