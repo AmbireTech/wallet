@@ -31,7 +31,7 @@ const Quotes = ({ addRequest, selectedAccount, fromTokensItems, quotes, onQuotes
         const bridgeRoute = userTxs.find(tx => tx.steps.find(s => s.type === 'bridge'))
         const middlewareRoute = userTxs.map(tx => tx.steps.find(s => s.type === 'middleware')).find(x => x)
 
-        const data = {
+        return {
             ...route,
             bridgeStep,
             middlewareRoute,
@@ -39,10 +39,7 @@ const Quotes = ({ addRequest, selectedAccount, fromTokensItems, quotes, onQuotes
             txType: bridgeRoute.txType,
             middlewareFee: middlewareRoute?.protocolFees ? formatFeeAmount(middlewareRoute?.protocolFees, route) : 0,
             bridgeFee: bridgeStep?.protocolFees ? formatFeeAmount(bridgeStep?.protocolFees, route) : 0
-        }
-        console.log(data)
-      
-        return data
+        }      
     })
 
     const radios = routes.map(({ bridgeStep, bridgeFee, maxServiceTime, serviceTime, middlewareRoute, middlewareFee, fromAmount, toAmount, routeId, integratorFee, userTxs }) => ({
@@ -65,9 +62,9 @@ const Quotes = ({ addRequest, selectedAccount, fromTokensItems, quotes, onQuotes
                 </div>
                 <div className="summary">
                     <div className="amounts">
-                        <div className="amount">
-                            { formatAmount(middlewareRoute.fromAmount, middlewareRoute.toAsset) } { middlewareRoute.fromAsset.symbol }
-                        </div>
+                        {middlewareRoute ? <div className="amount">
+                            { formatAmount(middlewareRoute.fromAmount, middlewareRoute.fromAsset) } { middlewareRoute.fromAsset.symbol }
+                        </div> : null}
                         <div className="amount">
                             { formatAmount(bridgeStep.toAmount, bridgeStep.toAsset) } { bridgeStep.toAsset.symbol }
                         </div>
