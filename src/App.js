@@ -44,6 +44,7 @@ const Wallet = lazy(() => import('./components/Wallet/Wallet'))
 const SendTransaction = lazy(() => import('./components/SendTransaction/SendTransaction'))
 const SignMessage = lazy(() => import('./components/SignMessage/SignMessage'))
 const SendTransactionSDK = lazy(() => import('components/SDK/SendTransaction'))
+const SignMessageSDK = lazy(() => import('components/SDK/SignMessage'))
 
 const relayerURL = process.env.REACT_APP_RELAYRLESS === 'true' 
                   ? null 
@@ -319,6 +320,16 @@ function AppInner() {
             internalRequests={internalRequests}
           >
           </SendTransactionSDK>
+        </Route>
+
+        <Route path="/sign-message-sdk/:messageToSign">
+          <SignMessageSDK
+            selectedAcc={selectedAcc}
+            selectedNetwork={network}
+            addRequest={addRequest}
+            everythingToSign={everythingToSign}
+          >
+          </SignMessageSDK>
         </Route>
 
         {selectedAcc ?
