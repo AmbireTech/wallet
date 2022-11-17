@@ -19,6 +19,7 @@ const UNISWAP_PERMIT_EXCEPTIONS = [ // based on PeerMeta
   'Sushi',
   'QuickSwap', // QuickSwap Interface
   'PancakeSwap', // 🥞 PancakeSwap - A next evolution DeFi exchange on BNB Smart Chain (BSC)
+  'Aave'
 ]
 
 let connectors = {}
@@ -90,6 +91,10 @@ export default function useWalletConnect ({ account, chainId, initialUri, allNet
             if (state.requests.find(({ id }) => id === action.request.id)) return { ...state }
 
             const currentConnection = state.connections?.find(({ uri }) => uri === action.request.wcUri)
+            if (!currentConnection) {
+                addToast(`Couldn't find connection with: ${action.request.wcUri}`, { error: true })
+                return { ...state }
+            }
 
             return { ...state, requests: [...state.requests, {
                 ...action.request,
