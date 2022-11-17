@@ -1,8 +1,12 @@
-import './Backup.scss'
+import cn from 'classnames'
+import { Button, Panel } from "components/common"
+import { ReactComponent as ExportIcon } from 'resources/icons/export.svg'
+import { ReactComponent as ImportIcon } from 'resources/icons/import.svg'
+
+import styles from './Backup.module.scss'
 
 import { BsFileEarmarkTextFill, BsFileEarmarkArrowDownFill, BsFileEarmarkArrowUpFill, BsFileMedicalFill } from "react-icons/bs"
 
-import { Button } from "components/common"
 import { PaperBackupModal, PaperImportModal } from 'components/Modals'
 import useModals from 'hooks/modals'
 
@@ -55,70 +59,45 @@ const Backup = ({ selectedAccount, accounts, onOpen, onAddAccount, relayerURL })
     }
 
     return (
-        <div id="backup">
-            <div className="panel">
-                <div className="panel-title">Backup current account</div>
-                <div className='backup-note'>
-                    <b>Note:</b> Those backups exports will be importable in Ambire Wallet only. They are not importable in other wallets.
+        <div className={styles.wrapper}>
+            <Panel className={styles.panel} titleClassName={styles.panelTitle} title="Backup current account">
+                <div className={cn(styles.content, styles.export)}>
+                    <a
+                        type="button"
+                        href={`data:text/json;charset=utf-8,${encodeURIComponent(
+                            JSON.stringify(selectedAccount)
+                        )}`}
+                        download={`${selectedAccount.id}.json`}
+                    >
+                        <Button icon={<ExportIcon />} onClick={onBackupDownloaded} className={styles.button}>Export</Button>
+                    </a>
+                    <p>
+                        Downloads a backup of your current account ({selectedAccount.id.slice(0, 5)}...{selectedAccount.id.slice(-3)}) encrypted with
+                        your password. It's safe to store in iCloud/Google Drive, but you cannot use it to restore your account if you forget the password.
+                        <b> You can only import this in Ambire</b>, it's not importable in other wallets.
+                    </p>
                 </div>
-                <div className="content" id="export">
 
-                    <div className='panel-sub'>
-                        <div className='backupIcon'>
-                            <BsFileEarmarkArrowDownFill />
-                        </div>
-                        <div className='backup-info'>
-                            <p>
-                                Download a backup of your current account ({selectedAccount.id.slice(0, 5)}...{selectedAccount.id.slice(-3)}) encrypted with
-                                your password. It's safe to store in iCloud/Google Drive, but you cannot use it to restore your account if you forget the password.
-                            </p>
-
-                            <a
-                              className='buttonLink'
-                              type="button"
-                              href={`data:text/json;charset=utf-8,${encodeURIComponent(
-                                JSON.stringify(selectedAccount)
-                              )}`}
-                              download={`${selectedAccount.id}.json`}
-                            >
-                                <Button small full onClick={onBackupDownloaded}>Export as JSON</Button>
-                            </a>
-                        </div>
-                    </div>
-
-                    <div className='panel-sub'>
-                        <div className='backupIcon'>
-                            <BsFileEarmarkTextFill />
-                        </div>
-                        <div className='backup-info'>
-                            <p>
-                                Backup your account ({selectedAccount.id.slice(0, 5)}...{selectedAccount.id.slice(-3)}) on paper as a seed phrase.
-                                The seed phrase will be unencrypted, so store it safely.
-                            </p>
-                            {
-                                renderPaperExportButton(selectedAccount)
-                            }
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-            <div className="panel" id="import">
-                <div className="panel-title">Import an account from backup</div>
-                <div className='backup-note'>
-                    <b>Note:</b> Only backups previously saved with Ambire Wallet are compatible.
-                </div>
                 <div className='panel-sub'>
                     <div className='backupIcon'>
-                        <BsFileEarmarkArrowUpFill />
+                        <BsFileEarmarkTextFill />
                     </div>
                     <div className='backup-info'>
                         <p>
-                            Import an Ambire account from a backed up JSON file.<br />
-                            You can also drag and drop an account backup JSON file on this page
+                            Backup your account ({selectedAccount.id.slice(0, 5)}...{selectedAccount.id.slice(-3)}) on paper as a seed phrase.
+                            The seed phrase will be unencrypted, so store it safely.
                         </p>
-                        <Button small full onClick={onOpen}>Import from JSON</Button>
+                        {
+                            renderPaperExportButton(selectedAccount)
+                        }
                     </div>
+                </div>
+
+            </Panel>
+            <Panel className={styles.panel} titleClassName={styles.panelTitle} title="Import an account from backup">
+                <div className={cn(styles.content, styles.import)}>
+                    <Button icon={<ImportIcon />} onClick={onOpen} className={styles.button}>Import</Button>
+                    <p>...or you can drop an account backup JSON file on this page</p>
                 </div>
 
                 <div className='panel-sub'>
@@ -134,8 +113,7 @@ const Backup = ({ selectedAccount, accounts, onOpen, onAddAccount, relayerURL })
                         }
                     </div>
                 </div>
-
-            </div>
+            </Panel>
         </div>
     )
 }

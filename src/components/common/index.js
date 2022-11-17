@@ -25,6 +25,9 @@ import ErrorBoundary from './ErrorBoundary/ErrorBoundary';
 import ErrorScreen from './ErrorScreen/ErrorScreen';
 import Stepper from './Stepper/Stepper.tsx';
 import DAppIncompatibilityWarningMsg from './DAppIncompatibilityWarningMsg/DAppIncompatibilityWarningMsg';
+import Pagination from './Pagination/Pagination';
+import Panel from './Panel/Panel';
+import Image from './Image/Image';
 
 export {
     AddressBook,
@@ -53,5 +56,8 @@ export {
     ErrorBoundary,
     ErrorScreen,
     Stepper,
-    DAppIncompatibilityWarningMsg
+    DAppIncompatibilityWarningMsg,
+    Pagination,
+    Panel,
+    Image,
 };

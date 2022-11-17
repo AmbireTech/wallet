@@ -1,0 +1,36 @@
+@import 'variables.scss';
+
+.wrapper {
+    .button {
+        height: 40px;
+        width: fit-content;
+        @include flex-center-center;
+        gap: 7px;
+        padding: 0 15px;
+        opacity: 0.6;
+
+        &:hover {
+            opacity: 1;
+            cursor: pointer;
+            background-color: rgba(0, 0, 0, 0.1);
+        }
+
+        &:active {
+            opacity: 1;
+            cursor: pointer;
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+    }
+}
+
+#smart-contract-warning {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-weight: bold;
+    color: $danger-color;
+
+    svg {
+        font-size: 20px;
+    }
+}

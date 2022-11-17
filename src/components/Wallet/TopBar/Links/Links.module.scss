@@ -1,0 +1,50 @@
+@import 'variables.scss';
+
+.wrapper {
+    .content {
+        gap: 0.25em;
+
+        .title {
+            position: relative;
+            font-size: 22px;
+        }
+    }
+
+    .item {
+        height: 50px;
+        padding-left: 16px;
+        padding-right: 22px;
+        background-color: $c-mirage;
+        
+        a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 18px;
+            line-height: 27px;
+            color: $c-titan-white;
+            white-space: nowrap;
+            font-weight: 400;
+        }
+
+        &:hover {
+            background-color: $c-ebony-clay;
+            cursor: pointer;
+        }
+    }
+
+    &:not(.viewed) {
+        .title {
+            &::after {
+                content: "";
+                position: absolute;
+                top: -4px;
+                right: -12px;
+                height: 8px;
+                width: 8px;
+                border-radius: 100%;
+                background-color: $c-turquoise;
+            }
+        }
+    }
+}

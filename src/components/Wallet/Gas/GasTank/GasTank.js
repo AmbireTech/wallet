@@ -157,7 +157,7 @@ const GasTank = ({
                                     isTopUp: true
                                 }
                             }}>
-                                <Button small>Top up</Button>
+                                <Button className='buttonComponent' small>Top up</Button>
                             </NavLink>
                         </div>
                         :
@@ -255,7 +255,7 @@ const GasTank = ({
                         isTopUp: true
                     }
                 }}>
-                    <Button className='deposit-button' small>top up gas tank</Button>
+                    <Button primaryGradient={true} className='deposit-button buttonComponent' small>Top up Gas Tank</Button>
                 </NavLink>
             </div>
             <span className='title'>Gas Tank top ups history on {network.id.toUpperCase()}</span>

@@ -21,6 +21,7 @@ const Swap = lazy(() => import("./Swap/Swap"))
 const Earn = lazy(() => import("./Earn/Earn"))
 const Security = lazy(() => import("./Security/Security"))
 const Transactions = lazy(() => import('./Transactions/Transactions'))
+const Signatures = lazy(() => import('./Signatures/Signatures'))
 const Collectible = lazy(() => import("./Collectible/Collectible"))
 const CrossChain = lazy(() => import("./CrossChain/CrossChain"))
 const OpenSea = lazy(() => import("./OpenSea/OpenSea"))
@@ -31,7 +32,7 @@ export default function Wallet(props) {
   const { showModal } = useModals()
   const { isClipboardGranted, isNoticationsGranted, arePermissionsLoaded, modalHidden } = usePermissions()
   const { pathname } = useLocation()
-  const walletContainer = useRef()
+  const walletContainerInner = useRef()
   const { isDappMode } = props.dappsCatalog
   const routeMatch = useRouteMatch('/wallet/dapps')
 
@@ -130,6 +131,14 @@ export default function Wallet(props) {
       />
     },
     {
+      path: '/messages/:page?',
+      component: <Signatures
+        privateMode={props.privateMode}
+        selectedAcc={props.selectedAcc}
+        selectedNetwork={props.network}
+      />
+    },
+    {
       path: '/swap',
       component: <Swap
         gnosisConnect={props.gnosisConnect}
@@ -223,6 +232,7 @@ export default function Wallet(props) {
 
   useEffect(() => handlePermissionsModal(), [handlePermissionsModal])
 
+  // On pathname change (i.e. navigating to different page), always scroll to top
   useEffect(() => {
     if (redisplayPermissionsModal) {
       handlePermissionsModal()
@@ -231,7 +241,7 @@ export default function Wallet(props) {
   }, [handlePermissionsModal, redisplayPermissionsModal])
 
   useEffect(() => {
-    const scrollTimeout = setTimeout(() => walletContainer.current && walletContainer.current.scrollTo({ top: 0, behavior: 'smooth' }), 0)
+    const scrollTimeout = setTimeout(() => walletContainerInner.current && walletContainerInner.current.scrollTo({ top: 0, behavior: 'smooth' }), 0)
     return () => clearTimeout(scrollTimeout)
   }, [pathname])
 
@@ -245,10 +255,10 @@ export default function Wallet(props) {
   return (
     <div id="wallet">
       <SideBar match={props.match} portfolio={props.portfolio} hidePrivateValue={props.privateMode.hidePrivateValue} relayerURL={props.relayerURL} selectedNetwork={props.network} dappsCatalog={props.dappsCatalog} />
-      <TopBar {...props} />
 
-      <div id="wallet-container" className={dapModeSidebar ? 'dapp-mode' : ''} ref={walletContainer}>
-        <div id="wallet-container-inner">
+      <div id="wallet-container" className={dapModeSidebar ? 'dapp-mode' : ''}>
+        <TopBar {...props} />
+        <div id="wallet-container-inner" ref={walletContainerInner}>
           <Suspense fallback={<Loading />}>
             <Switch>
               {
