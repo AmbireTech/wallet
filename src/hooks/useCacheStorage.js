@@ -2,13 +2,12 @@ import { useEffect, useState, useCallback, useRef } from 'react'
 
 import usePrevious from 'ambire-common/src/hooks/usePrevious'
 
-export default function useCacheStorage({ key, data: {account, network, accounts} }) {
+export default function useCacheStorage({ key, data: { accounts} }) {
     let db = useRef()
     const prevAccounts = usePrevious(accounts)
 
     const [assets, setAssets] = useState({})
     const [isInitializing, setIsInitializing] = useState(true)
-    const [hasActiveCache, setHasActiveCache] = useState(true)
 
     const openDatabase = useCallback(async () => {
         const indexedDB =
@@ -38,31 +37,19 @@ export default function useCacheStorage({ key, data: {account, network, accounts
                     }, {})
 
                     setAssets(prev => ({...prev, ...res}))
-                    
-                    const currentAssets = res[`${account}-${network}`]                    
                     setIsInitializing(false)
-                    if (Object.keys(res).length && currentAssets && currentAssets?.tokens && currentAssets?.tokens?.length) {
-                        setTimeout(() => {
-                            setHasActiveCache(false)
-                        }, 10000)
-                    } else {
-                        setHasActiveCache(false)
-                    }
                 }
             } else {
                 setIsInitializing(false)
-                setHasActiveCache(false)
             }
         };
-        request.onerror = async (event) => {
+        request.onerror = async () => {
             setIsInitializing(false)
-            setHasActiveCache(false)
         };
-        request.onupgradeneeded = async (event) => {
+        request.onupgradeneeded = async () => {
             db.current = request.result;
             db.current.createObjectStore("assets", { keyPath: "key" });
             setIsInitializing(false)
-            setHasActiveCache(false)
         };
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [key])
@@ -160,5 +147,5 @@ export default function useCacheStorage({ key, data: {account, network, accounts
         }
     }
 
-    return [assets, setAssetsByAccount, isInitializing, hasActiveCache]
+    return [assets, setAssetsByAccount, isInitializing]
 }
