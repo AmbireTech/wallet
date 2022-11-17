@@ -1,12 +1,11 @@
+import { Panel } from 'components/common'
 import Heading from './Heading/Heading'
 import Information from './Information/Information'
 
-import styles from './LeftPanel.module.scss'
-
-const LeftPanel = ({ network, relayerURL, portfolio, account, gasTankState, setGasTankState }) => {
+const LeftPanel = ({ network, relayerURL, portfolio, account, gasTankState, setGasTankState, panelClassName }) => {
 
   return (
-    <div className={styles.wrapper}>
+    <Panel className={panelClassName} title="Gas Tank">
       <Heading
         network={network}
         relayerURL={relayerURL}
@@ -16,7 +15,7 @@ const LeftPanel = ({ network, relayerURL, portfolio, account, gasTankState, setG
         setGasTankState={setGasTankState}
       />
       <Information />
-    </div>
+    </Panel>
   )
 }
 

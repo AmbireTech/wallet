@@ -5,9 +5,9 @@ import { useRelayerData } from 'hooks'
 import History from './History/History'
 import TopUp from './TopUp/TopUp'
 
-import styles from './RightPanel.module.scss'
+import { Panel } from 'components/common'
 
-const RightPanel = ({ network, relayerURL, portfolio, account, userSorting, setUserSorting }) => {
+const RightPanel = ({ network, relayerURL, portfolio, account,  panelClassName }) => {
   const { gasTankFilledTxns, feeAssetsRes, availableFeeAssets } = useGasTankData({
     relayerURL,
     selectedAcc: account,
@@ -17,17 +17,14 @@ const RightPanel = ({ network, relayerURL, portfolio, account, userSorting, setU
   })
 
   return (
-    <div className={styles.wrapper}>
+    <Panel className={panelClassName}>
       <TopUp
         portfolio={portfolio}
-        userSorting={userSorting}
-        account={account}
         network={network}
-        setUserSorting={setUserSorting}
         availableFeeAssets={availableFeeAssets}
       />
       <History network={network} gasTankFilledTxns={gasTankFilledTxns} feeAssetsRes={feeAssetsRes} />
-    </div>
+    </Panel>
   )
 }
 

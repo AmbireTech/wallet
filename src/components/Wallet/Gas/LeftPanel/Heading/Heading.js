@@ -1,3 +1,4 @@
+import cn from 'classnames'
 import useGasTankData from 'ambire-common/src/hooks/useGasTankData'
 
 import { formatFloatTokenAmount } from 'lib/formatters'
@@ -60,41 +61,42 @@ const Heading = ({ network, relayerURL, portfolio, account, gasTankState, setGas
   }
 
   return (
-    <div className={styles.heading}>
-      <div className={styles.balance} style={{ cursor: 'pointer' }} onClick={openGasTankBalanceByTokensModal}>
-        <span>
+    <div className={styles.wrapper}>
+      <div className={styles.balanceWrapper} onClick={openGasTankBalanceByTokensModal} style={{ cursor: 'pointer' }}>
+        <span className={styles.balanceAllNetworks}>
           <GiGasPump /> Balance on All Networks
         </span>
         {!isLoading && gasTankBalances ? (
-          <div className={gasTankBalancesFormatted.length > 6 ? 'inner-wrapper-left small-font' : 'inner-wrapper-left'}>
-            <span>$</span> {gasTankBalancesFormatted}
-          </div>
+          <h3 className={cn(styles.bigText, { [styles.small]: gasTankBalancesFormatted.length > 6 })}>
+            <span>$</span>{gasTankBalancesFormatted}
+          </h3>
         ) : (
           <Loading />
         )}
         {/* TODO: Add functionality for drag and drop */}
         {/* <span>Drag and drop tokens here</span> */}
-        <span>Click for more</span>
-      </div>
-      <div className={styles.toggleWrapper}>
-        <Toggle checked={currentAccGasTankState.isEnabled} onChange={() => toggleGasTank()} />
-        {currentAccGasTankState.isEnabled ? <span>Enabled</span> : <span>Disabled</span>}
+        <p className={styles.footer}>Click for more</p>
       </div>
 
-      <div className="balance-wrapper total-save">
-        <div className="inner-wrapper-right">
-          <div className="label green">Total Saved: </div>
-          <div className="amount">
-            <span>$</span> {totalSaved ? totalSaved : '0.00'}
-          </div>
+      <div className={styles.toggleWrapper}>
+        <Toggle checked={currentAccGasTankState.isEnabled} onChange={() => toggleGasTank()} />
+        <span className={styles.toggleLabel}>{currentAccGasTankState.isEnabled ? 'Enabled' : 'Disabled'}</span>
+      </div>
+
+      <div className={cn(styles.balanceWrapper, styles.totalSave)}>
+        <div className={styles.smallText}>
+          <h5 className={cn(styles.label, styles.green)}>Total Saved: </h5>
+          <p className={styles.amount}>
+            <span>$</span>{totalSaved ? totalSaved : '0.00'}
+          </p>
         </div>
-        <div className="inner-wrapper-right">
-          <div className="label">Total Cashback: </div>
-          <div className="amount">
-            <span>$</span> {totalCashBack ? totalCashBack : '0.00'}
-          </div>
+        <div className={styles.smallText}>
+          <h5 className={styles.label}>Total Cashback: </h5>
+          <p className={styles.amount}>
+            <span>$</span>{totalCashBack ? totalCashBack : '0.00'}
+          </p>
         </div>
-        <span>From transaction fees on {network.id.toUpperCase()}</span>
+        <p className={styles.footer}>From gas fees on {network.id.toUpperCase()}</p>
       </div>
     </div>
   )

@@ -1,0 +1,107 @@
+@import 'variables';
+
+.wrapper {
+  display: flex;
+  align-items: center;
+  padding: 10px 20px;
+  height: 60px;
+  border-radius: 12px;
+  color: $c-titan-white;
+  background-color: $c-mirage;
+
+  .body {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    justify-content: space-between;
+    gap: 12px;
+
+    .baseInfo {
+      display: flex;
+      align-items: center;
+
+      .icon {
+        position: relative;
+        flex: 0 0 auto;
+        @include flex-center-center;
+        height: 40px;
+        width: 40px;
+        border-radius: 12px;
+        background-color: rgba($c-titan-white, 0.05);
+        overflow: hidden;
+    
+        img {
+          height: 24px;
+          width: 24px;
+          user-select: none;
+        }
+      }
+    
+      .name {
+        font-size: 20px;
+        font-weight: 500;
+        margin-left: 12px;
+      }
+    }
+
+  
+    .balance {
+      display: flex;
+      flex-direction: column;
+      text-align: right;
+  
+      .currency {
+        margin: 0;
+        display: flex;
+        gap: 5px;
+        font-size: 16px;
+      }
+  
+      .dollar {
+        margin: 0;
+        font-size: 14px;
+        color: $c-turquoise;
+      }
+    }
+  }
+  
+
+  .actions {
+    width: 0;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    opacity: 0;
+    transition: all 0.1s ease-in-out;
+    transition-delay: 0.25s;
+    margin-left: 12px;
+  }
+
+  &:hover {
+    .actions {
+      width: 137px;
+      opacity: 1;
+    }
+  }
+}
+
+@media screen and (max-width: $mobile-breakpoint-max-width) {
+  .wrapper {
+    flex-direction: column;
+    height: auto;
+    gap: 20px;
+    .actions {
+      width: 100%;
+      opacity: 1;
+      margin-left: 0;
+
+      a, button {
+        width: 100%;
+      }
+
+      &:hover {
+        width: 100%;
+      }
+    }
+  }
+}

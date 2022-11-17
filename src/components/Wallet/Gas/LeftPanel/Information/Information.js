@@ -1,7 +1,7 @@
 import styles from './Information.module.scss'
 
 const Information = () => (
-  <div>
+  <div className={styles.wrapper}>
     <p className={styles.benefit}>Save over 20% of fees by enabling the gas tank</p>
     <p>This is your special account for pre-paying transaction fees.</p>
     <p>By filling up your Gas Tank, you are setting aside, or prepaying for network fees.</p>

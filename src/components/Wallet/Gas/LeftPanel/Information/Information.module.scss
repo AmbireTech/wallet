@@ -1,0 +1,19 @@
+@import 'variables';
+
+.wrapper {
+  p {
+    margin: 0;
+    margin-bottom: 15px;
+    font-weight: 300;
+    opacity: .7;
+  }
+  
+  .benefit {
+    opacity: 1;
+    color: $c-heliotrope;
+    padding: 10px;
+    background-color: $c-mirage;
+    border-radius: 12px;
+    margin-bottom: 60px;
+  }
+}

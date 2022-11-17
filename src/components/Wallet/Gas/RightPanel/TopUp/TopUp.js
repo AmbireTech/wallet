@@ -1,113 +1,50 @@
 import { NavLink } from 'react-router-dom'
+import { Button, Loading } from 'components/common'
 
-import { useCheckMobileScreen, useDragAndDrop } from 'hooks'
+import { networkIconsById } from 'consts/networks'
 
-import { ToolTip, Button, Loading } from 'components/common'
-
-import { MdDragIndicator, MdOutlineSort } from 'react-icons/md'
 import Token from './Token/Token'
 
-const TopUp = ({ portfolio, userSorting, account, network, setUserSorting, availableFeeAssets }) => {
+import styles from './TopUp.module.scss'
+
+const TopUp = ({ portfolio, network, availableFeeAssets }) => {
   const { isBalanceLoading } = portfolio
-  const sortType = userSorting.tokens?.sortType || 'decreasing'
-  const isMobileScreen = useCheckMobileScreen()
 
   const sortedTokens = availableFeeAssets
     ?.filter((item) => !item.disableGasTankDeposit)
     .sort((a, b) => b.balanceUSD - a.balanceUSD)
     .sort((a, b) => {
-      if (sortType === 'custom' && userSorting.tokens?.items?.[`${account}-${network.chainId}`]?.length) {
-        const addressA = userSorting.tokens.items[`${account}-${network.chainId}`].indexOf(a.address.toLowerCase())
-        const addressB = userSorting.tokens.items[`${account}-${network.chainId}`].indexOf(b.address.toLowerCase())
-        const sorted = addressA - addressB
-        return sorted
-      } else {
-        const decreasing = b.balanceUSD - a.balanceUSD
-        if (decreasing === 0) return a.symbol.toUpperCase().localeCompare(b.symbol.toUpperCase())
-        return decreasing
-      }
+      const decreasing = b.balanceUSD - a.balanceUSD
+      if (decreasing === 0) return a.symbol.toUpperCase().localeCompare(b.symbol.toUpperCase())
+      return decreasing
     })
 
-  const onDropEnd = (list) => {
-    setUserSorting((prev) => ({
-      ...prev,
-      tokens: {
-        sortType: 'custom',
-        items: {
-          ...prev.tokens?.items,
-          [`${account}-${network.chainId}`]: list,
-        },
-      },
-    }))
-  }
-
-  const { dragStart, dragEnter, target, handle, dragTarget, drop } = useDragAndDrop('address', onDropEnd)
-
   return (
-    <div>
-      <div className="sort-holder">
-        <span className="title">Available fee tokens on {network.id.toUpperCase()}</span>
-        {sortedTokens && !isMobileScreen && (
-          <div className="sort-buttons">
-            <ToolTip label="Sorted tokens by drag and drop">
-              <MdDragIndicator
-                color={sortType === 'custom' ? '#80ffdb' : ''}
-                cursor="pointer"
-                onClick={() =>
-                  setUserSorting((prev) => ({
-                    ...prev,
-                    tokens: {
-                      ...prev.tokens,
-                      sortType: 'custom',
-                    },
-                  }))
-                }
-              />
-            </ToolTip>
-            <ToolTip label="Sorted tokens by DESC balance">
-              <MdOutlineSort
-                color={sortType === 'decreasing' ? '#80ffdb' : ''}
-                cursor="pointer"
-                onClick={() =>
-                  setUserSorting((prev) => ({
-                    ...prev,
-                    tokens: {
-                      ...prev.tokens,
-                      sortType: 'decreasing',
-                    },
-                  }))
-                }
-              />
-            </ToolTip>
-          </div>
-        )}
+    <div className={styles.wrapper}>
+      <div className={styles.titleWrapper}>
+        <h2 className={styles.title}>Available fee tokens</h2>
+        <div className={styles.network}>
+          <p>on</p>
+          <div className={styles.networkIcon}>
+            <img src={networkIconsById[network.id]} alt="" />
+          </div>  
+          <p className={styles.name}>{network.id}</p>
+        </div>
       </div>
-      <div className="list">
+      <div className={styles.list}>
         {!isBalanceLoading ? (
           sortedTokens &&
-          sortedTokens?.map(({ address, symbol, tokenImageUrl, balance, balanceUSD, network, decimals, icon }, i) => (
+          sortedTokens?.map(({ address, symbol, tokenImageUrl, balance, balanceUSD, network }, i) => (
             <Token
               key={`token-${address}-${i}`}
               index={i}
-              img={icon}
+              img={tokenImageUrl}
               symbol={symbol}
               balance={balance}
               balanceUSD={balanceUSD}
               address={address}
-              send={false} // TODO
               network={network}
-              category="tokens"
               sortedTokensLength={sortedTokens.length}
-              // Drag
-              handle={handle}
-              target={target}
-              dragStart={dragStart}
-              dragEnter={dragEnter}
-              dragTarget={dragTarget}
-              isMobileScreen={isMobileScreen}
-              drop={drop}
-              sortType={sortType}
-              sortedTokens={sortedTokens}
             />
           ))
         ) : (
@@ -124,7 +61,7 @@ const TopUp = ({ portfolio, userSorting, account, network, setUserSorting, avail
             },
           }}
         >
-          <Button primaryGradient={true} className="deposit-button buttonComponent" small>
+          <Button primaryGradient={true} className={styles.depositBtn}>
             Top up Gas Tank
           </Button>
         </NavLink>
