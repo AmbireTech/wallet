@@ -1,6 +1,6 @@
 import './WalletTokenModal.scss'
 
-import { Button, Modal, ToolTip } from 'components/common'
+import { Button, Modal, ToolTip, RemoteLottie } from 'components/common'
 import { MdOutlineClose } from 'react-icons/md'
 import { useModals } from 'hooks'
 import useStakedWalletToken from 'ambire-common/src/hooks/useStakedWalletToken'
@@ -8,8 +8,6 @@ import MultiplierBadges from './MultiplierBadges'
 import { useState } from 'react'
 import UnbondModal from './UnbondModal/UnbondModal'
 import { formatFloatTokenAmount } from 'lib/formatters'
-import Lottie from 'lottie-react'
-import AmbireLogoAnimation from 'resources/rewards/rewards-active.mp4.lottie.json'
 
 const MIN_ELIGIBLE_USD = 1000
 const MIN_CLAIMABLE_WALLET = 1000
@@ -81,7 +79,7 @@ const WalletTokenModal = ({ accountId, claimableWalletToken, rewards }) => {
             {
               isEligible
                 ? (<ToolTip label={`You are earning $WALLET rewards`}>
-                    <Lottie className='rewards-wallet-icon-animated' animationData={AmbireLogoAnimation} background='transparent' speed='1' loop autoplay/>
+                    <RemoteLottie remoteJson={'/resources/rewards/rewards-active.mp4.lottie.json'} className='rewards-wallet-icon-animated' background='transparent' speed='1' loop autoplay />
                 </ToolTip>)
                 : (<ToolTip label={`You need a balance worth more than $${MIN_ELIGIBLE_USD} worth of tokens to start accumulating $WALLET rewards`}><div className={`rewards-wallet-icon`}></div></ToolTip>)
             }
