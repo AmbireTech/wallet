@@ -17,3 +17,14 @@
     margin-bottom: 60px;
   }
 }
+
+@media screen and (max-width: $mobile-breakpoint-max-width) {
+  .wrapper {
+    p {
+      margin-bottom: 10px;
+    }
+    .benefit {
+      margin-bottom: 30px;
+    }
+  }
+}

@@ -113,6 +113,12 @@
   }
 }
 
+@media screen and (max-width: $mobile-breakpoint-max-width) {
+  .wrapper {
+    margin-bottom: 10px;
+  }
+}
+
 @media screen and (max-width: 600px) {
   .wrapper {
     flex-direction: column;
