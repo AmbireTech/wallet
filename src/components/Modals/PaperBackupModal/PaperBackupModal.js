@@ -32,7 +32,6 @@ const PaperBackupModal = ({ selectedAccount, accounts, modalCloseHandler, onAddA
   const getModalTitle = () => {
     return (<div>
       <span>Backup on paper</span>
-      <Stepper steps={modalSteps.steps} currentStep={modalSteps.stepIndex} noLabels={false}/>
     </div>)
   }
 
@@ -44,6 +43,7 @@ const PaperBackupModal = ({ selectedAccount, accounts, modalCloseHandler, onAddA
 
   return (
     <Modal id='paper-backup-modal' title={getModalTitle()} buttons={modalButtons}>
+      <Stepper steps={modalSteps.steps} currentStep={modalSteps.stepIndex} noLabels={false}/>
       <div>
         {
           error && <div className='error-message'>

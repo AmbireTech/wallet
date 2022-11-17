@@ -78,6 +78,7 @@ const VerifySeedWords = ({ words, setModalButtons, hideModal, onAddAccount, sele
       if (currentAccount) {
         onAddAccount({
           ...currentAccount,
+          downloadedBackup: true,
           backupOptout: false
         })
       } else {

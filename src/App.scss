@@ -25,18 +25,18 @@
 
 * {
   box-sizing: border-box;
-  
+
   &::-webkit-scrollbar {
     width: 8px;
     background: $c-mirage;
   }
-  
+
   &::-webkit-scrollbar-track {
     background: $c-mirage;
     border-radius: 13px;
     border: 1px solid $c-fiord;
   }
-  
+
   &::-webkit-scrollbar-thumb {
     background-color: $c-blue-bell;
     border-radius: 13px;
@@ -99,10 +99,11 @@ a {
 
 .error-message {
   padding: 16px;
-  background: mix($danger-color, $panel-background-color, 5%);
   border: 1px solid $danger-color;
+  background-color: mix($danger-color, $c-mirage, 10%);
   color: $danger-color;
   margin-bottom: 16px;
+  border-radius: 12px;
 }
 
 .validation-error {

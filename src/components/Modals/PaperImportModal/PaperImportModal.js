@@ -31,12 +31,12 @@ const PaperImportModal = ({ accounts, onAddAccount, selectedAccount, relayerURL,
   const getModalTitle = () => {
     return (<div>
       <span>Import backup from paper</span>
-      <Stepper steps={modalSteps.steps} currentStep={modalSteps.stepIndex} noLabels={false}/>
     </div>)
   }
 
   return (
     <Modal id='paper-import-modal' title={getModalTitle()} buttons={modalButtons}>
+      <Stepper steps={modalSteps.steps} currentStep={modalSteps.stepIndex} noLabels={false}/>
       <div>
         {
           error && <div className='error-message'>

@@ -2,10 +2,18 @@
 
 #paper-backup-modal {
 
+  .buttons button {
+    flex: 0 1 100%!important;
+  }
+
   min-height: 300px;
 
   .heading {
     margin-bottom: 24px;
+  }
+
+  .stepper {
+    margin-top: -40px;
   }
 
   .instructions {
@@ -13,7 +21,7 @@
     margin-bottom: 12px;
 
     span {
-      color: $primary-accent-color;
+      color: $c-turquoise;
     }
   }
 
@@ -28,7 +36,8 @@
 
     .seedWordsList-cell {
 
-      background-color: $input-background-color;
+      border-radius: 8px;
+      background-color: $c-mirage;
       padding: 4px 0 4px 12px;
 
       flex: 1 1 30%;
@@ -44,7 +53,8 @@
   }
 
   .wordsSelectorContainer {
-    background: $input-background-color;
+    background: $c-mirage;
+    border-radius: 12px;
     padding: 16px;
 
     .wordRequestedTitle {
@@ -52,7 +62,7 @@
 
       span {
         font-weight: bold;
-        color: $primary-accent-color;
+        color: $c-turquoise;
       }
 
       margin-bottom: 12px;
@@ -76,7 +86,7 @@
           border-radius: 4px;
           margin-left: 4px;
           padding: 2px;
-          background: $input-background-color;
+          background: $c-shark;
           transition: 1500ms;
           color: $text-container-color;
           font-weight: bold;
@@ -85,7 +95,7 @@
 
       &.nextWordFade .wordIndex span {
         transition: 450ms;
-        background: mix($ambire-dark-blue, $input-background-color, 50%);
+        background: $c-turquoise;
       }
 
       .wordChoices {
@@ -95,20 +105,21 @@
 
         .wordChoice {
           cursor: pointer;
-          background: $input-background-color-darker;
+          background: $c-mirage-dark;
           padding: 8px;
           border: 1px solid transparent;
           flex-grow: 1;
           text-align: center;
           transition: 250ms;
+          border-radius: 4px;
 
           &:hover {
-            background-color: mix($input-background-color-darker, $primary-accent-color, 50%);
-            border: 1px solid $primary-accent-color;
+            background-color: mix($c-mirage, $c-turquoise, 50%);
+            border: 1px solid $c-shark;
           }
 
           &.incorrect {
-            background-color: mix($input-background-color-darker, $danger-color, 50%);
+            background-color: mix($c-mirage-dark, $danger-color, 50%);
             border: 1px solid $danger-color;
           }
 
@@ -116,8 +127,8 @@
           &.correct {
             width: 100%;
             border-color: transparent;
-            background-color: $input-background-color-darker;
-            color: $primary-accent-color;
+            background-color: $c-mirage-dark;
+            color: $c-shark;
 
           }
         }
@@ -147,7 +158,7 @@
     }
 
     .visualCheckmark {
-      color: $primary-accent-color;
+      color: $c-mirage-dark;
     }
   }
 

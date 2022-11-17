@@ -39,7 +39,7 @@ $buttons-height: 160px;
                     text-align: center;
                     margin: 0 auto;
                 }
-    
+
             }
         }
 
@@ -57,7 +57,7 @@ $buttons-height: 160px;
             }
         }
     }
-    
+
     .content {
         height: 100%;
         position: relative;
@@ -82,6 +82,10 @@ $buttons-height: 160px;
         button {
             height: 60px;
             flex: 0 1 50%;
+
+            &.full {
+                flex-grow: 1;
+            }
         }
     }
 }

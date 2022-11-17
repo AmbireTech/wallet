@@ -19,6 +19,10 @@
             font-size: 25px;
         }
 
+        .separator {
+            border: 1px solid $c-martinique-light;
+        }
+
         .export {
             .button {
                 margin-bottom: 20px;
@@ -27,22 +31,22 @@
                 background: transparent linear-gradient(90deg, $ambire-dark-blue 0%, $ambire-dark-blue 100%) 0% 0%;
                 border: none;
                 color: $c-titan-white;
-    
+
                 svg {
                     color: $c-titan-white !important;
                 }
             }
         }
-    
+
         .import {
-            .button { 
+            .button {
                 margin-bottom: 20px;
                 height: 60px;
                 width: 100%;
                 background: transparent linear-gradient(90deg, $c-turquoise 0%, #007D8A 100%) 0% 0%;
                 border: none;
                 color: $c-titan-white;
-    
+
                 svg {
                     color: $c-titan-white !important;
                 }

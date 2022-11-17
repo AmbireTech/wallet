@@ -2,6 +2,14 @@
 
 #paper-import-modal {
 
+  .buttons button {
+    flex: 0 1 100%!important;
+  }
+
+  .stepper {
+    margin-top: -40px;
+  }
+
   &>.content {
     padding-bottom: 48px;
   }
@@ -16,7 +24,7 @@
     margin-bottom: 12px;
 
     span {
-      color: $primary-accent-color;
+      color: $c-turquoise;
     }
 
     .unimportant {
@@ -45,14 +53,15 @@
 
       .importedSeedWord.modifiable {
         opacity: 1;
-        border: 1px solid $primary-accent-color;
+        border: 1px solid $c-turquoise;
       }
     }
 
     .importedSeedWord {
+      border-radius: 4px;
       flex-basis: 30%;
       display: flex;
-      background: $input-background-color-darker;
+      background: $c-mirage;
       padding: 8px;
       border: 1px solid transparent;
       flex-grow: 1;
@@ -64,7 +73,7 @@
       cursor: pointer;
 
       .index {
-        color: mix($text-container-color, $input-background-color-darker, 50%);
+        color: mix($text-container-color, $c-mirage-dark, 50%);
       }
 
       .word {
@@ -73,22 +82,22 @@
       }
 
       &.deletable {
-        background: mix($input-background-color-darker, $panel-background-color, 20%);
-        color: mix($text-container-color, $panel-background-color, 20%);
+        background: mix($c-mirage-dark, $c-martinique, 20%);
+        color: mix($text-container-color, $c-martinique, 20%);
 
         .index {
-          color: mix($text-container-color, $panel-background-color, 20%);
+          color: mix($text-container-color, $c-martinique, 20%);
         }
 
         .close {
-          color: mix($text-container-color, $panel-background-color, 20%);
+          color: mix($text-container-color, $c-martinique, 20%);
         }
       }
 
       .close, .modifying {
         display: flex;
         align-items: center;
-        color: mix($text-container-color, $input-background-color-darker, 50%);
+        color: mix($text-container-color, $c-mirage-dark, 50%);
         cursor: pointer;
       }
 
@@ -97,10 +106,10 @@
       }
 
       .modifying:hover {
-        color: $primary-accent-color;
+        color: $c-turquoise;
       }
       &:hover {
-        border: 1px solid $primary-accent-color;
+        border: 1px solid $c-turquoise;
       }
     }
 
@@ -125,8 +134,9 @@
   .foundAddressContainer {
     margin: 24px 0;
     padding: 12px;
-    background: $input-background-color-darker;
+    background: $c-mirage-dark;
     text-align: center;
+    border-radius: 12px;
 
     .address {
       margin-top: 4px;
@@ -145,7 +155,7 @@
   }
 
   .identities-selector {
-    background: $input-background-color-darker;
+    background: $c-mirage-dark;
 
     p {
       display: flex;
@@ -169,10 +179,10 @@
       cursor: pointer;
       font-family: monospace;
       padding: 8px;
-      background: darken($input-background-color-darker, 4%);
+      background: darken($c-mirage-dark, 4%);
 
       &:hover {
-        background: darken($input-background-color-darker, 2%);
+        background: darken($c-mirage-dark, 2%);
       }
     }
 

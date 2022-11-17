@@ -419,7 +419,7 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking, plug
       Import from JSON
     </button>
     <button onClick={() => wrapErr(importFromPaperBackup)}>
-      <div className="icon"><BsFileMedicalFill size={25}/></div>
+      <BsFileMedicalFill size={25}/>
       Import from Paper Backup
     </button>
     <input {...getInputProps()} />
