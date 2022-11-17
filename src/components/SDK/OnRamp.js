@@ -17,10 +17,10 @@ export default function OnRamp({relayerURL}) {
     const validNetwork = networks.filter(network => network.chainId === parseInt(chainID))
     const networkCode = validNetwork.length ? validNetwork[0].nativeAssetSymbol : ''
 
-    const fetchSignature = await fetchPost(`${relayerURL}/binance-connect/sign`, { address: selectedAcc, networkCode })
-    const signature = fetchSignature.signature
-    const timestamp = Date.now()
-    const merchantCode = "xubo_test"
+    const fetchData = await fetchPost(`${relayerURL}/binance-connect/sign`, { address: selectedAcc, networkCode })
+    const signature = encodeURIComponent(fetchData.signature)
+    const merchantCode = fetchData.merchantCode
+    const timestamp = fetchData.timestamp
     const iframeUrl = "https://www.binancecnt.com/en/pre-connect?merchantCode="+merchantCode+"&timestamp="+timestamp+"&cryptoAddress="+selectedAcc+"&cryptoNetwork="+networkCode+"&signature="+signature
     setOnRampUrl(iframeUrl)
   }
