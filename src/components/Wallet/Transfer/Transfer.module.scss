@@ -2,7 +2,7 @@
 
 .panel {
     padding: 0;
-    flex: 0 1 50%;
+    flex: 1;
 }
 
 .wrapper {
@@ -10,6 +10,17 @@
     gap: 30px;
     overflow-y: hidden;
     height: 100%;
+
+    .sell {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        padding: 40px;
+        padding-top: 15px;
+        gap: 40px;
+        overflow-y: auto;
+    }
 }
 
 @media screen and (max-width: 1400px) {
@@ -23,6 +34,10 @@
     .wrapper {
         gap: 15px;
         overflow-y: auto;
+
+        .sell {
+            padding: 20px;
+        }
     }
     .panel {
         padding: 0;
