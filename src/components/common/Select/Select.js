@@ -1,152 +1,188 @@
-import styles from './Select.module.scss';
-
-import { useCallback, useEffect, useRef, useState } from "react";
-import { CSSTransition } from 'react-transition-group';
-import useOnClickOutside from 'hooks/onClickOutside';
-import { TextInput } from 'components/common';
-import { MdOutlineClose, MdDragIndicator } from 'react-icons/md';
+import React, { useCallback, useEffect, useRef, useState } from 'react'
+import { CSSTransition } from 'react-transition-group'
+import useOnClickOutside from 'hooks/onClickOutside'
+import { TextInput } from 'components/common'
+import { MdOutlineClose, MdDragIndicator } from 'react-icons/md'
 import { ReactComponent as ArrowDownIcon } from 'resources/icons/arrow-down.svg'
-
 import cn from 'classnames'
+import styles from './Select.module.scss'
 
-const Select = ({ children, native, monospace, searchable, disabled, label, defaultValue, items, onChange, className, iconClassName, labelClassName, selectInputClassName, draggable, dragStart, dragEnter, dragTarget, drop, draggableHeader, displayDraggableHeader }) => {
-    const ref = useRef();
-    const hiddenTextInput = useRef();
-    const transitionRef = useRef();
-    const [isOpen, setOpen] = useState();
-    const [search, setSearch] = useState('');
-    const [selectedItem, setSelectedItem] = useState({
-        label: null,
-        value: null,
-        icon: null,
-    });
-    const [failedImg, setFailedImg] = useState([])
+const Select = ({
+  children,
+  native,
+  monospace,
+  searchable,
+  disabled,
+  label,
+  defaultValue,
+  items,
+  onChange,
+  className,
+  iconClassName,
+  labelClassName,
+  selectInputClassName,
+  draggable,
+  dragStart,
+  dragEnter,
+  dragTarget,
+  drop,
+  draggableHeader,
+  displayDraggableHeader
+}) => {
+  const ref = useRef()
+  const hiddenTextInput = useRef()
+  const transitionRef = useRef()
+  const [isOpen, setOpen] = useState()
+  const [search, setSearch] = useState('')
+  const [selectedItem, setSelectedItem] = useState({
+    label: null,
+    value: null,
+    icon: null
+  })
+  const [failedImg, setFailedImg] = useState([])
 
-    const filteredItems = search.length ? items.filter(({ label }) => label.toLowerCase().includes(search.toLowerCase())) : items
+  const filteredItems = search.length
+    ? items.filter(({ label: l }) => l.toLowerCase().includes(search.toLowerCase()))
+    : items
 
-    const selectItem = useCallback(item => {
-        setOpen(false)
-        setSearch('')
-        setSelectedItem(item)
-        onChange(item)
-    }, [onChange])
+  const selectItem = useCallback(
+    (item) => {
+      setOpen(false)
+      setSearch('')
+      setSelectedItem(item)
+      onChange(item)
+    },
+    [onChange]
+  )
 
-    useEffect(() => {
-        const item = items.find(item => item.value === defaultValue) || items[0]
-        if (item && (selectedItem.value !== item.value)) selectItem(item)
-    }, [items, defaultValue, selectedItem, selectItem])
+  useEffect(() => {
+    const defaultItem = items.find((item) => item.value === defaultValue) || items[0]
+    if (defaultItem && selectedItem.value !== defaultItem.value) selectItem(defaultItem)
+  }, [items, defaultValue, selectedItem, selectItem])
 
-    useEffect(() => {
-        if (!items.length) return setSelectedItem({})
-    }, [items])
+  useEffect(() => {
+    if (!items.length) return setSelectedItem({})
+  }, [items])
 
-    useEffect(() => {
-        if (isOpen && searchable) {
-            hiddenTextInput.current.focus()
-            setSearch('')
-        }
-    }, [isOpen, searchable])
-
-    useOnClickOutside(ref, () => setOpen(false));
-
-    const getIcon = ({ icon, fallbackIcon, label }) => {
-        if (!icon) return null
-        const url = failedImg.includes(icon) && fallbackIcon ? fallbackIcon : icon
-        return (
-            failedImg.includes(url)
-                ? <div className={`${styles.icon} ${iconClassName}`} />
-                : <img
-                    className={`${styles.icon} ${iconClassName}`}
-                    src={url}
-                    draggable="false"
-                    alt={label}
-                    onError={() => setFailedImg(failed => [...failed, url])}
-                />
-        )
+  useEffect(() => {
+    if (isOpen && searchable) {
+      hiddenTextInput.current.focus()
+      setSearch('')
     }
+  }, [isOpen, searchable])
 
-    return (
-        !native ?
-            <div className={`${styles.select} ${monospace ? styles.monospace : ''} ${disabled ? styles.disabled : ''} ${searchable ? styles.searchable : ''} ${className || ''}`} ref={ref}>
-                {
-                    label ?
-                        <label>{label}</label>
-                        :
-                        null
-                }
-                {
-                    selectedItem ?
-                        <div className={styles.selectContainer}>
-                            <div className={`${styles.selectInput} ${selectInputClassName}`} onClick={() => setOpen(!isOpen)}
-                                >
-                                {getIcon(selectedItem)}
-                                <div className={`${styles.label} ${labelClassName}`}>{selectedItem.label || selectedItem.value}</div>
-                                {selectedItem.extra && <div className={styles.extra}>{selectedItem.extra}</div>}
-                                {/* <div className="separator"></div> */}
-                                <div className={cn(styles.handle, {[styles.open]: isOpen})}>
-                                    <ArrowDownIcon />
-                                </div>
-                            </div>
-                            {
-                                <CSSTransition unmountOnExit in={isOpen} timeout={200} classNames="fade" nodeRef={transitionRef}>
-                                    <div className={styles.selectMenu} ref={transitionRef}>
-                                        {displayDraggableHeader && draggableHeader}
-                                        {
-                                            searchable ?
-                                                <TextInput
-                                                    className={styles.selectSearchInput}
-                                                    disabled={disabled}
-                                                    inputContainerClass={styles.selectInputContainer}
-                                                    placeholder="Search"
-                                                    value={search}
-                                                    ref={hiddenTextInput}
-                                                    buttonLabel={search.length ? <MdOutlineClose /> : null}
-                                                    onInput={value => setSearch(value)}
-                                                    onButtonClick={() => setSearch('')}
-                                                />
-                                                :
-                                                null
-                                        }
-                                        {
-                                            filteredItems.map((item, i) => (
-                                                <div
-                                                    className={`${styles.option} ${(item.value === selectedItem.value) && (item.label === selectedItem.label) ? styles.active : ''} ${item.disabled ? styles.disabled : ''}`}
-                                                    key={item.value + item.label}
-                                                    onClick={() => !item.disabled && selectItem(item)}
-                                                    draggable={draggable}
-                                                    onDragStart={(e) => draggable && dragStart(e, i)}
-                                                    onMouseDown={(e) => draggable && dragTarget(e, i)}
-                                                    onDragEnter={(e) => draggable && dragEnter(e, i)}
-                                                    onDragEnd={() => draggable && drop(filteredItems)}
-                                                    onDragOver={(e) => e.preventDefault()}
-                                                >
-                                                    {draggable && <MdDragIndicator className={styles.dragHandle} id={`${i}-handle`} />}
-                                                    {getIcon(item)}
-                                                    <div className={styles.label}>{item.label || item.value}</div>
-                                                    {item.extra && <div className={styles.extra}>{item.extra}</div>}
-                                                </div>
-                                            ))
-                                        }
-                                        {children}
-                                    </div>
-                                </CSSTransition>
-                            }
-                        </div>
-                        :
-                        null
-                }
+  useOnClickOutside(ref, () => setOpen(false))
+
+  const getIcon = ({ icon, fallbackIcon, label: iconLabel }) => {
+    if (!icon) return null
+    const url = failedImg.includes(icon) && fallbackIcon ? fallbackIcon : icon
+    return failedImg.includes(url) ? (
+      <div className={`${styles.icon} ${iconClassName}`} />
+    ) : (
+      <img
+        className={`${styles.icon} ${iconClassName}`}
+        src={url}
+        draggable="false"
+        alt={iconLabel}
+        onError={() => setFailedImg((failed) => [...failed, url])}
+      />
+    )
+  }
+
+  return !native ? (
+    <div
+      className={`${styles.select} ${monospace ? styles.monospace : ''} ${
+        disabled ? styles.disabled : ''
+      } ${searchable ? styles.searchable : ''} ${className || ''}`}
+      ref={ref}
+    >
+      {label ? <label>{label}</label> : null}
+      {selectedItem ? (
+        <div className={styles.selectContainer}>
+          <div
+            className={`${styles.selectInput} ${selectInputClassName}`}
+            onClick={() => setOpen(!isOpen)}
+          >
+            {getIcon(selectedItem)}
+            <div className={`${styles.label} ${labelClassName}`}>
+              {selectedItem.label || selectedItem.value}
             </div>
-            :
-            <select className={styles.select} disabled={disabled} onChange={ev => onChange(ev.target.value)} defaultValue={defaultValue}>
-                {
-                    items.map(item => (
-                        <option key={item.value + item.label} value={item.value} disabled={item.disabled ? 'disabled' : undefined}>
-                            {item.label || item.value}
-                        </option>
-                    ))
-                }
-            </select>
-    );
-};
+            {selectedItem.extra && <div className={styles.extra}>{selectedItem.extra}</div>}
+            {/* <div className="separator"></div> */}
+            <div className={cn(styles.handle, { [styles.open]: isOpen })}>
+              <ArrowDownIcon />
+            </div>
+          </div>
+          <CSSTransition
+            unmountOnExit
+            in={isOpen}
+            timeout={200}
+            classNames="fade"
+            nodeRef={transitionRef}
+          >
+            <div className={styles.selectMenu} ref={transitionRef}>
+              {displayDraggableHeader && draggableHeader}
+              {searchable ? (
+                <TextInput
+                  className={styles.selectSearchInput}
+                  disabled={disabled}
+                  inputContainerClass={styles.selectInputContainer}
+                  placeholder="Search"
+                  value={search}
+                  ref={hiddenTextInput}
+                  buttonLabel={search.length ? <MdOutlineClose /> : null}
+                  onInput={(value) => setSearch(value)}
+                  onButtonClick={() => setSearch('')}
+                />
+              ) : null}
+              {filteredItems.map((item, i) => (
+                <div
+                  className={`${styles.option} ${
+                    item.value === selectedItem.value && item.label === selectedItem.label
+                      ? styles.active
+                      : ''
+                  } ${item.disabled ? styles.disabled : ''}`}
+                  key={item.value + item.label}
+                  onClick={() => !item.disabled && selectItem(item)}
+                  draggable={draggable}
+                  onDragStart={(e) => draggable && dragStart(e, i)}
+                  onMouseDown={(e) => draggable && dragTarget(e, i)}
+                  onDragEnter={(e) => draggable && dragEnter(e, i)}
+                  onDragEnd={() => draggable && drop(filteredItems)}
+                  onDragOver={(e) => e.preventDefault()}
+                >
+                  {draggable && (
+                    <MdDragIndicator className={styles.dragHandle} id={`${i}-handle`} />
+                  )}
+                  {getIcon(item)}
+                  <div className={styles.label}>{item.label || item.value}</div>
+                  {item.extra && <div className={styles.extra}>{item.extra}</div>}
+                </div>
+              ))}
+              {children}
+            </div>
+          </CSSTransition>
+        </div>
+      ) : null}
+    </div>
+  ) : (
+    <select
+      className={styles.select}
+      disabled={disabled}
+      onChange={(ev) => onChange(ev.target.value)}
+      defaultValue={defaultValue}
+    >
+      {items.map((item) => (
+        <option
+          key={item.value + item.label}
+          value={item.value}
+          disabled={item.disabled ? 'disabled' : undefined}
+        >
+          {item.label || item.value}
+        </option>
+      ))}
+    </select>
+  )
+}
 
-export default Select;
+export default Select
