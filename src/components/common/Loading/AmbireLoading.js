@@ -1,10 +1,8 @@
-import './Loading.scss';
+import React from 'react'
+import './Loading.scss'
 
 const AmbireLoading = () => {
-    return (
-        <div className="ambire-loading-animation-128">
-        </div>
-    );
-};
+  return <div className="ambire-loading-animation-128" />
+}
 
-export default AmbireLoading;
+export default AmbireLoading

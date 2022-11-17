@@ -1,7 +1,6 @@
+import React from 'react'
 import styles from './DropDownItem.module.scss'
 
-const DropDownItemSeparator = () => (
-  <div className={styles.separator} />
-)
+const DropDownItemSeparator = () => <div className={styles.separator} />
 
 export default DropDownItemSeparator
