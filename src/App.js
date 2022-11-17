@@ -84,14 +84,46 @@ function AppInner() {
     setRequests: setRequests
   })
 
+  const requests = useMemo(
+    () => allRequests
+      .filter(({ account }) => accounts.find(({ id }) => id === account)),
+    [accounts, allRequests]
+  )
+
+  // Keeping track of sent transactions
+  const [sentTxn, setSentTxn] = useState([])
+
+  // Handling transaction signing requests
+  // Show the send transaction full-screen modal if we have a new txn
+  const eligibleRequests = useMemo(() => requests
+    .filter(({ type, chainId, account }) =>
+      type === 'eth_sendTransaction'
+      && chainId === network.chainId
+      && account === selectedAcc
+    ), [requests, network.chainId, selectedAcc])
+
+  // Portfolio: this hook actively updates the balances/assets of the currently selected user
+  const portfolio = usePortfolio({
+    currentNetwork: network.id,
+    account: selectedAcc,
+    useStorage: useLocalStorage,
+    relayerURL: relayerURL,
+    useRelayerData: useRelayerData,
+    eligibleRequests,
+    requests,
+    selectedAccount: accounts.find(x => x.id === selectedAcc),
+    sentTxn,
+    accounts
+  })
+
   const { requests: gnosisRequests, resolveMany: gnosisResolveMany, connect: gnosisConnect, disconnect: gnosisDisconnect } = useGnosisSafe({
     selectedAccount: selectedAcc,
     network: network,
     useStorage: useLocalStorage,
-    setRequests: setRequests
-  }, [selectedAcc, network])
+    setRequests: setRequests,
+    tokens: portfolio.tokens
+  }, [selectedAcc, network, portfolio.tokens])
 
-  
   // Filter gnosisRequests and wcRequests by dateAdded,
   // because they are saved in local storage and add them on first render
   useEffect(() => {
@@ -104,11 +136,6 @@ function AppInner() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
   
-  const requests = useMemo(
-    () => allRequests
-      .filter(({ account }) => accounts.find(({ id }) => id === account)),
-    [accounts, allRequests]
-  )
 
   // Internal requests: eg from the Transfer page, Security page, etc. - requests originating in the wallet UI itself
   // unlike WalletConnect or SafeSDK requests, those do not need to be persisted
@@ -137,14 +164,6 @@ function AppInner() {
   } 
 
 
-  // Handling transaction signing requests
-  // Show the send transaction full-screen modal if we have a new txn
-  const eligibleRequests = useMemo(() => requests
-    .filter(({ type, chainId, account }) =>
-      type === 'eth_sendTransaction'
-      && chainId === network.chainId
-      && account === selectedAcc
-    ), [requests, network.chainId, selectedAcc])
   // Docs: the state is { showing: bool, replacementBundle, replaceByDefault: bool, mustReplaceNonce: number }
   // mustReplaceNonce is set when the end goal is to replace a particular transaction, and if that txn gets mined we should stop the user from doing anything
   // mustReplaceNonce must always be used together with either replaceByDefault: true or replacementBundle
@@ -190,8 +209,6 @@ function AppInner() {
     return true
   }
 
-  // Keeping track of sent transactions
-  const [sentTxn, setSentTxn] = useState([])
   const onBroadcastedTxn = hash => {
     if (!hash) {
       addToast('Transaction successfully signed and will be broadcasted to the network later', { timeout: 15000 })
@@ -213,19 +230,6 @@ function AppInner() {
     ]
   })
 
-  // Portfolio: this hook actively updates the balances/assets of the currently selected user
-  const portfolio = usePortfolio({
-    currentNetwork: network.id,
-    account: selectedAcc,
-    useStorage: useLocalStorage,
-    relayerURL: relayerURL,
-    useRelayerData: useRelayerData,
-    eligibleRequests,
-    requests,
-    selectedAccount: accounts.find(x => x.id === selectedAcc),
-    sentTxn,
-    accounts
-  })
 
   // Show notifications for all requests
   useNotifications(requests, request => {

@@ -7,7 +7,7 @@ import { getProvider } from 'lib/provider'
 
 const STORAGE_KEY = 'gnosis_safe_state'
 
-export default function useGnosisSafe({selectedAccount, network, verbose = 0, useStorage, setRequests }) {
+export default function useGnosisSafe({selectedAccount, network, verbose = 0, useStorage, setRequests, tokens }) {
   // One connector at a time
   const connector = useRef(null)
 
@@ -19,7 +19,8 @@ export default function useGnosisSafe({selectedAccount, network, verbose = 0, us
   const stateRef = useRef()
   stateRef.current = {
     selectedAccount,
-    network
+    network,
+    tokens
   }
 
   const [stateStorage, setStateStorage] = useStorage({
@@ -63,26 +64,41 @@ export default function useGnosisSafe({selectedAccount, network, verbose = 0, us
     //console.log(portfolio)
 
     //struct template
-    /*connector.current.on(Methods.getSafeBalances, () => {
-      return {
-        "fiatTotal": "0.18072",
-          "items": [
-          {
-            "tokenInfo": {
-              "type": "NATIVE_TOKEN",
-              "address": "0x0000000000000000000000000000000000000000",
-              "decimals": 18,
-              "symbol": "MATIC",
-              "name": "Matic",
-              "logoUri": "https://safe-transaction-assets.staging.gnosisdev.com/chains/137/currency_logo.png"
-            },
-            "balance": "100000000000000000",
-            "fiatBalance": "0.18072",
-            "fiatConversion": "1.8072"
-          }
-        ]
-      }
-     })*/
+    connector.current.on(Methods.getSafeBalances, (msg) => {
+
+      const balances = msg?.data?.params?.currency.map(x=>{
+        const tkn = tokens.find(t => t.address.toLowerCase() ===  x.toLowerCase() )  
+
+        // TODO: full data
+        return {
+          address: x, // as asked
+          balance: tkn?.balanceRaw
+        }
+       
+      })
+
+      return balances
+      
+
+      // return {
+      //   "fiatTotal": "0.18072",
+      //     "items": [
+      //     {
+      //       "tokenInfo": {
+      //         "type": "NATIVE_TOKEN",
+      //         "address": "0x0000000000000000000000000000000000000000",
+      //         "decimals": 18,
+      //         "symbol": "MATIC",
+      //         "name": "Matic",
+      //         "logoUri": "https://safe-transaction-assets.staging.gnosisdev.com/chains/137/currency_logo.png"
+      //       },
+      //       "balance": "100000000000000000",
+      //       "fiatBalance": "0.18072",
+      //       "fiatConversion": "1.8072"
+      //     }
+      //   ]
+      // }
+     })
 
     connector.current.on(Methods.rpcCall, async (msg) => {
       verbose > 0 && console.log("DApp requested rpcCall", msg)
