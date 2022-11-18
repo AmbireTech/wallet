@@ -7,11 +7,11 @@ const parseZeroAddressIfNeeded = address => {
         : address
 }
 
-const SwappinMapping = (humanizerInfo) => {
-    const swappin = new Interface(humanizerInfo.abis.Swappin)
+const OneInchMapping = (humanizerInfo) => {
+    const iface = new Interface(humanizerInfo.abis.OneInch)
 
     return {
-        [swappin.getSighash('swap')]: (txn, network, { extended = false }) => {
+        [iface.getSighash('swap')]: (txn, network, { extended = false }) => {
             const { desc } = swappin.parseTransaction(txn).args
             const srcToken = parseZeroAddressIfNeeded(desc.srcToken)
             const dstToken = parseZeroAddressIfNeeded(desc.dstToken)
@@ -19,7 +19,7 @@ const SwappinMapping = (humanizerInfo) => {
             const paymentToken = Number(dstToken) === 0 ? nativeToken(network, desc.minReturnAmount, extended) : token(humanizerInfo, dstToken, desc.minReturnAmount, extended)
             
             return !extended
-                ? [`Swap ${paymentSrcToken} for at least ${paymentToken} on Swappin`]
+                ? [`Swap ${paymentSrcToken} for at least ${paymentToken} on 1inch`]
                 : [
                     [
                     'Swap',
@@ -32,7 +32,7 @@ const SwappinMapping = (humanizerInfo) => {
                         type: 'token',
                         ...paymentToken
                     },
-                    'on Swappin'
+                    'on 1inch'
                     ]
                 ]
             }
@@ -40,4 +40,4 @@ const SwappinMapping = (humanizerInfo) => {
   
 }
 
-export default SwappinMapping
+export default OneInchMapping
