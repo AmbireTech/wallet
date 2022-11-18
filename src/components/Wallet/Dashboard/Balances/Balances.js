@@ -32,7 +32,7 @@ const Balances = ({ portfolio, selectedNetwork, setNetwork, hidePrivateValue, re
 
     // Used to add blur at the bottom of balances when scrollbar is visible
     const handleSetBlur = useCallback(() => {
-        if(!otherBalancesLoading && otherBalances) {
+        if(otherBalances || !otherBalancesLoading) {
             const el = otherBalancesRef.current
             if (!el) return
 
@@ -56,9 +56,9 @@ const Balances = ({ portfolio, selectedNetwork, setNetwork, hidePrivateValue, re
     
     return (
         <div className={styles.wrapper}>
-            { portfolio.isCurrNetworkBalanceLoading && otherBalancesLoading ? <Loading /> : (
+            { portfolio.isCurrNetworkBalanceLoading ? <Loading /> : (
                 <div className={styles.otherBalances} ref={otherBalancesRef} onScroll={handleSetBlur}>
-                    { otherBalances.length > 0 ? (
+                    { !otherBalances.length && otherBalancesLoading ? <Loading /> : otherBalances.length > 0 ? (
                         <>
                             {
                                 otherBalances.filter(({ network }) => networkDetails(network)).map(({ network, total }, i) => (

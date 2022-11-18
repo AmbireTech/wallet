@@ -151,7 +151,7 @@ const Tokens = ({ portfolio, network, account, hidePrivateValue, userSorting, se
                                         // Token data
                                         img={tokenImageUrl}
                                         symbol={symbol}
-                                        balance={hidePrivateValue(formatFloatTokenAmount(currentBalance.toFixed((currentBalance < 1) ? 8 : 4), true, decimals))}
+                                        balance={hidePrivateValue(formatFloatTokenAmount(Number(currentBalance).toFixed((currentBalance < 1) ? 8 : 4), true, decimals))}
                                         value={hidePrivateValue(formatFloatTokenAmount(latest ? latest.balanceUSD : balanceUSD, true, decimals))}
                                         price={`$${price ? hidePrivateValue(price.toFixed((price < 1) ? 5 : 2)) : '-'}`}
                                         // Actions
