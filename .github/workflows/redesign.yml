@@ -3,10 +3,10 @@ name: Build & deploy staging for Redesign
 on:
   push:
     branches:
-      - feature/redesign-common-style
+      - feature/redesign-dashboard-style
   pull_request:
     branches:
-      - feature/redesign-common-style
+      - feature/redesign-dashboard-style
 
 jobs:
   build:
