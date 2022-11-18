@@ -12,7 +12,7 @@ const OneInchMapping = (humanizerInfo) => {
 
     return {
         [iface.getSighash('swap')]: (txn, network, { extended = false }) => {
-            const { desc } = swappin.parseTransaction(txn).args
+            const { desc } = iface.parseTransaction(txn).args
             const srcToken = parseZeroAddressIfNeeded(desc.srcToken)
             const dstToken = parseZeroAddressIfNeeded(desc.dstToken)
             const paymentSrcToken = Number(srcToken) === 0 ? nativeToken(network, desc.amount, extended) : token(humanizerInfo, srcToken, desc.amount, extended)
