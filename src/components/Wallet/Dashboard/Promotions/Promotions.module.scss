@@ -1,23 +1,23 @@
 @import 'variables.scss';
 
 .notice {
-    font-weight: bold;
+    border-radius: 12px;
     background-color: $warning-color;
-    padding: 0.9rem 1.2rem;
+    padding: 15px 20px;
     color: $c-shark;
-    font-size: 1rem;
+    font-size: 16px;
     display: flex;
     flex-direction: row;
     align-items: flex-start;
     justify-content: space-between;
-    gap: 0.8rem;
+    gap: 15px;
     transition: $basic-transition;
 
     &.minimized {
         display: inline-flex;
-        gap: 0.5rem; 
-        padding: 0.4rem 0.52rem;
-        font-size:0.81rem;
+        gap: 10px; 
+        padding: 5px 10px;
+        font-size: 12px;
         align-items: center;
         align-self: flex-end;
 
@@ -27,8 +27,8 @@
     }
 
     .title {
-        font-size: 1.2rem;
-        margin-bottom: 0.2rem;;
+        font-size: 20px;
+        margin-bottom: 5px;
     }
 
     .link {
@@ -43,23 +43,23 @@
     }
 
     .timer {
-        margin-top: 0.5rem;
+        margin-top: 10px;
     }
     
     .minimized {
-        font-size: 0.8rem;
+        font-size: 12px;
         flex: 1;  
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
 
         .title {
-            font-size: 0.8rem;
+            font-size: 12px;
             margin: 0;
         }
 
         .emoji {
-            font-size: 0.8rem!important;
+            font-size: 12px!important;
         }
     }
 }
