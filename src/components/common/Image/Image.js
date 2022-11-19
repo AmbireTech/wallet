@@ -5,7 +5,7 @@ import { ReactComponent as FallbackIcon } from 'resources/icons/fallback.svg'
 
 import styles from  './Image.module.scss'
 
-export default function Image({ src, fallback, size = 64, alt = 'image', imageClassName }) {
+export default function Image({ src, fallback, size = 64, alt = 'image', imageClassName, failedClassName }) {
 
   const [failed, setFailed] = useState(false)
 
@@ -19,7 +19,7 @@ export default function Image({ src, fallback, size = 64, alt = 'image', imageCl
                  alt={alt}
                  style={{ maxWidth: size, maxHeight: size }}
                  onError={() => setFailed(true)}
-                 className={cn(imageClassName)}
+                 className={cn(imageClassName, {[failedClassName]: failed && failedClassName})}
           />
       }
     </div>
