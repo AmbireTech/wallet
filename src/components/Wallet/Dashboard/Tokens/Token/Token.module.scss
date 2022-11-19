@@ -138,7 +138,7 @@
         gap: 10px;
 
         .balanceAndSymbol {
-          width: calc(100% - 50px);
+          flex: 1;
           .symbol {
             font-weight: 500;
             font-size: 16px;
