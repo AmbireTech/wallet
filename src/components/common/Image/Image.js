@@ -13,7 +13,7 @@ export default function Image({ src, fallback, size = 64, alt = 'image', imageCl
     <div className={styles.image} >
       {
         failed
-          ? (fallback || <FallbackIcon />)
+          ? (fallback || <FallbackIcon className={cn(imageClassName, {[failedClassName]: failed && failedClassName})} />)
           : <img src={src}
                  draggable='false'
                  alt={alt}
