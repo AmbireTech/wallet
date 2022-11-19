@@ -12,6 +12,7 @@
     @include absolute-full-size;
     @include flex-center-center;
     flex-direction: column;
+    text-align: center;
     gap: 20px;
 
     svg {
