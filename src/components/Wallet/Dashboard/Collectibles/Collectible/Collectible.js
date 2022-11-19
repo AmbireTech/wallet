@@ -1,3 +1,4 @@
+import { Image } from 'components/common'
 import { NavLink } from 'react-router-dom'
 
 import FallbackImage from 'resources/icons/fallback.svg'
@@ -14,27 +15,24 @@ const Collectible = ({
 }) => (
   <NavLink to={href}>
     <div className={styles.wrapper}>
-        <img 
-          className={styles.artwork} 
-          src={image} 
-          alt="" 
-          onError={({ currentTarget }) => {
-            currentTarget.onerror = null // prevents looping
-            currentTarget.src=FallbackImage
-            currentTarget.classList.add(styles.fallbackImage)
-          }} 
-        />
+      <Image 
+        alt=""
+        src={image}
+        imageClassName={styles.artwork}
+        fallbackImageClassName={styles.fallbackImage}
+        fallbackImage={FallbackImage}
+        size={'unset'}
+      />
+
         <div className={styles.info}>
           <div className={styles.collection}>
-            <img 
-              src={collectionIcon} 
-              alt="" 
-              className={styles.collectionIcon} 
-              onError={({ currentTarget }) => {
-                currentTarget.onerror = null // prevents looping
-                currentTarget.src=FallbackImage
-                currentTarget.classList.add(styles.fallbackImage)
-              }} 
+            <Image 
+              alt=""
+              src={collectionIcon}
+              imageClassName={styles.collectionIcon}
+              fallbackImageClassName={styles.fallbackImage}
+              fallbackImage={FallbackImage}
+              size={18}
             />
             <h2 className={styles.collectionName}>{ collectionName }</h2>
           </div>
