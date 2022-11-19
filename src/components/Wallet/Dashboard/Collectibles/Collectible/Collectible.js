@@ -1,6 +1,6 @@
 import { NavLink } from 'react-router-dom'
 
-import FallbackImage from './images/fallback.svg'
+import FallbackImage from 'resources/icons/fallback.svg'
 
 import styles from './Collectible.module.scss'
 
