@@ -18,6 +18,7 @@ const Collectible = ({
       <Image 
         alt=""
         src={image}
+        className={styles.artworkWrapper}
         imageClassName={styles.artwork}
         fallbackImageClassName={styles.fallbackImage}
         fallbackImage={FallbackImage}

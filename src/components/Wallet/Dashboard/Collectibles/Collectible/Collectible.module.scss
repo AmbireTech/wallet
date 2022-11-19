@@ -18,15 +18,20 @@ $details-size: 60px;
     color: $c-heliotrope;
   }
 
-  .artwork {
-    width: 100%;
+  .artworkWrapper {
     max-height: $collectible-size;
-    
-    &.fallbackImage {
-      background-color: $c-mirage;
-      padding: 25%;
+    height: 100%;
+    .artwork {
+      width: 100%;
+      max-height: $collectible-size;
+      
+      &.fallbackImage {
+        background-color: $c-mirage;
+        padding: 25%;
+      }
     }
   }
+
 
   .info {
     display: flex;
@@ -97,7 +102,7 @@ $details-size: 60px;
   }
 
   &:hover {
-      transform: scale(1.05);
-      box-shadow: $box-shadow;
+    transform: scale(1.05);
+    box-shadow: $box-shadow;
   }
 }
