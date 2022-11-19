@@ -36,12 +36,11 @@ const Token = ({
         <div className={styles.infoAndActions}>
           <div className={styles.baseInfo}>
             <div className={styles.iconWrapper}>
-              { 
-                <Image 
-                  src={img || getTokenIcon(network, address)}
-                  alt=""
-                />
-              }
+              <Image 
+                src={img || getTokenIcon(network, address)}
+                alt=""
+                failedClassName={styles.iconFailed}
+              />
             </div>
             <div className={styles.balanceAndSymbol}>
               <h3 className={styles.symbol}>{ symbol }</h3>
