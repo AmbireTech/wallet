@@ -1,7 +1,9 @@
 import { useState } from 'react'
-import styles from  './Image.module.scss'
 import cn from 'classnames'
-import { FaImage } from 'react-icons/fa'
+
+import { ReactComponent as FallbackIcon } from 'resources/icons/fallback.svg'
+
+import styles from  './Image.module.scss'
 
 export default function Image({ src, fallback, size = 64, alt = 'image' }) {
 
@@ -11,7 +13,7 @@ export default function Image({ src, fallback, size = 64, alt = 'image' }) {
     <div className={cn(styles.image)} >
       {
         failed
-          ? (fallback || <FaImage/>)
+          ? (fallback || <FallbackIcon />)
           : <img src={src}
                  draggable='false'
                  alt={alt}
