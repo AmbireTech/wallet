@@ -47,7 +47,7 @@ $details-size: 60px;
       font-weight: 500;
       color: $c-titan-white;
 
-      &Icon {
+      .collectionIcon {
         flex: 0 0 auto;
         height: 18px;
         width: 18px;
@@ -59,7 +59,7 @@ $details-size: 60px;
         }
       }
 
-      &Name {
+      .collectionName {
         font-size: 12px;
         margin: 0;
         font-weight: 300;

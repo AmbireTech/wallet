@@ -53,14 +53,14 @@
     flex-direction: column;
     justify-content: stretch;
     
-    &Title {
+    .legendTitle {
       font-size: 25px;
       font-weight: 400;
       margin: 0;
       margin-bottom: 20px;
     }
 
-    &Items {
+    .legendItems {
       width: 100%;
       display: flex;
       flex-direction: column;
