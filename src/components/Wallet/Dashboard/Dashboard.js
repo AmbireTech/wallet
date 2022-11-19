@@ -33,7 +33,7 @@ export default function Dashboard({ portfolio, selectedNetwork, selectedAccount,
     const balance = useMemo(() => portfolio.balance, [portfolio.balance])
     const tokens = useMemo(() => portfolio.tokens, [portfolio.tokens])
     const [chartTokensData, setChartTokensData] = useState([]);
-    const [defaultTab] = useState(tabId ? (tabId === 'tokens' ? 1 : 2) : 1)
+    const defaultTab = tabId ? (tabId === 'tokens' ? 1 : 2) : 1
 
     const currentAccount = accounts.find(a => a.id.toLowerCase() === selectedAccount.toLowerCase())
 
