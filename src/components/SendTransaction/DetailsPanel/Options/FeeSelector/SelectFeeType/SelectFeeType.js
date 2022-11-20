@@ -98,7 +98,7 @@ const SelectFeeType = ({
             <h2 className={styles.title}>Custom Fee ({symbol})</h2>
             <TextInput
               placeholder='Enter amount'
-              className={cn(styles.textInput, {[styles.selected]: estimation.customFee})}
+              className={cn({[styles.inputMb]: isOverpriced || isUnderpriced})}
               onChange={value => setCustomFee(value)}
               value={estimation.customFee}
             />
