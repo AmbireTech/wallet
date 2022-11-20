@@ -5,6 +5,7 @@
   align-items: center;
   gap: 12px;
   padding: 16px;
+  border-radius: 12px;
 
   &.info {
     background-color: mix($c-ebony-clay, $info-color, 90%);
