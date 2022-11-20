@@ -32,7 +32,7 @@ const ActionsWrapper = ({
       bundle.gasLimit ? (
       <Alert
         className={styles.firstTransactionAlert}
-        type="information"
+        type="info"
         title="Note"
         text={`
           Because this is your first Ambire transaction, this fee is 

@@ -55,7 +55,7 @@ const TransactionPanel = ({
 
       {bundle.requestIds && <Alert
         title="Degen tip"
-        type="information"
+        type="info"
         text="
           You can sign multiple transactions at once. Add more
           transactions to this batch by interacting with a connected
