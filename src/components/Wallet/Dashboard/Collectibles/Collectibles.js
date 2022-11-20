@@ -59,7 +59,7 @@ const Collectibles = ({ portfolio, isPrivateMode, selectedNetwork, footer }) => 
     return (
         <CollectiblesWrapper 
             wrapperEndChildren={<>
-                <AddOrHideButton onClick={openHideCollectibleModal}>Collectible</AddOrHideButton>
+                <AddOrHideButton onClick={openHideCollectibleModal}>Hide Collectible</AddOrHideButton>
                 { footer }
             </>
             }

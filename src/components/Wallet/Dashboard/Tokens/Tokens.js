@@ -176,7 +176,7 @@ const Tokens = ({ portfolio, network, account, hidePrivateValue, userSorting, se
                                 )
                         })}
                         <AddOrHideButton onClick={openAddOrHideTokenModal}>
-                            Token
+                            Add or Hide Token
                         </AddOrHideButton>
                         { footer }
                     </TokensWrapper> : null)
