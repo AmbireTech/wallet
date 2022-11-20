@@ -62,28 +62,29 @@ const Heading = ({ network, relayerURL, portfolio, account, gasTankState, setGas
 
   return (
     <div className={styles.wrapper}>
-      <div className={styles.balanceWrapper} onClick={openGasTankBalanceByTokensModal} style={{ cursor: 'pointer' }}>
-        <span className={styles.balanceAllNetworks}>
-          <GiGasPump /> Balance on All Networks
-        </span>
-        {!isLoading && gasTankBalances ? (
-          <h3 className={cn(styles.bigText, { [styles.small]: gasTankBalancesFormatted.length > 6 })}>
-            <span>$</span>{gasTankBalancesFormatted}
-          </h3>
-        ) : (
-          <Loading />
-        )}
-        {/* TODO: Add functionality for drag and drop */}
-        {/* <span>Drag and drop tokens here</span> */}
-        <p className={styles.footer}>Click for more</p>
-      </div>
+      <div className={styles.allNetworksAndToggle}>
+        <div className={styles.box} onClick={openGasTankBalanceByTokensModal} style={{ cursor: 'pointer' }}>
+          <span className={styles.balanceAllNetworks}>
+            <GiGasPump /> Balance on All Networks
+          </span>
+          {!isLoading && gasTankBalances ? (
+            <h3 className={cn(styles.bigText, { [styles.small]: gasTankBalancesFormatted.length > 6 })}>
+              <span>$</span>{gasTankBalancesFormatted}
+            </h3>
+          ) : (
+            <Loading />
+          )}
+          {/* TODO: Add functionality for drag and drop */}
+          {/* <span>Drag and drop tokens here</span> */}
+          <p className={styles.footer}>Click for more</p>
+        </div>
 
-      <div className={styles.toggleWrapper}>
-        <Toggle checked={currentAccGasTankState.isEnabled} onChange={() => toggleGasTank()} />
-        <span className={styles.toggleLabel}>{currentAccGasTankState.isEnabled ? 'Enabled' : 'Disabled'}</span>
+        <div className={styles.toggleWrapper}>
+          <Toggle checked={currentAccGasTankState.isEnabled} onChange={() => toggleGasTank()} />
+          <span className={styles.toggleLabel}>{currentAccGasTankState.isEnabled ? 'Enabled' : 'Disabled'}</span>
+        </div>
       </div>
-
-      <div className={cn(styles.balanceWrapper, styles.totalSave)}>
+      <div className={cn(styles.box, styles.totalSave)}>
         <div className={styles.smallText}>
           <h5 className={cn(styles.label, styles.green)}>Total Saved: </h5>
           <p className={styles.amount}>

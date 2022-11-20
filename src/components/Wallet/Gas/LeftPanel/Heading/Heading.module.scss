@@ -5,23 +5,31 @@
   justify-content: space-between;
   align-items: stretch;
   flex-wrap: wrap;
-  gap: 20px 10px;
+  gap: 20px 0;
   margin-bottom: 40px;
 
-  .toggleWrapper {
+  .allNetworksAndToggle {
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
+    justify-content: space-between;
+    gap: 20px 10px;
+    flex: 1;
+    
+    .toggleWrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin: 0 auto;
 
-    .toggleLabel {
-      font-size: 14px;
-      color: $c-scampi;
+      .toggleLabel {
+        font-size: 14px;
+        color: $c-scampi;
+      }
     }
   }
 
-  .balanceWrapper {
+  .box {
     display: flex;
     flex-direction: column;
     padding: 7px 10px;
@@ -122,6 +130,16 @@
 @media screen and (max-width: 600px) {
   .wrapper {
     flex-direction: column;
-    gap: 40px;
+    gap: 20px;
+
+    .allNetworksAndToggle { 
+      flex-direction: column-reverse;
+
+      .toggleWrapper {
+        margin: 0;
+        flex-direction: row-reverse;
+        align-self: flex-end;
+      }
+    }
   }
 }
