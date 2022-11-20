@@ -44,7 +44,7 @@
 
     .balanceAllNetworks {
       color: $c-titan-white;
-      margin-bottom: 12px;
+      margin-bottom: 5px;
       font-size: 12px;
 
       svg {
@@ -84,6 +84,7 @@
       border-color: $c-scampi;
       align-items: flex-start;
       padding: 15px 10px;
+      padding-bottom: 12px;
       box-shadow: none;
 
       .smallText {
@@ -92,7 +93,7 @@
         font-size: 12px;
         width: 100%;
         align-items: center;
-        margin-bottom: 9px;
+        margin-bottom: 5px;
 
         .label {
           font-size: 12px;
