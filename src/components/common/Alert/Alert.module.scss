@@ -41,10 +41,6 @@
         height: 34px;
       }
 
-      // Information
-      background-color: $info-background-color;
-      border-left-color: $ambire-dark-blue;
-
       &.success {
         background-color: $success-background-color;
         border-left-color: $success-color;
@@ -58,6 +54,11 @@
       &.danger {
         background-color: $danger-background-color;
         border-left-color: $danger-color;
+      }
+
+      &.info {
+        background-color: $info-background-color;
+        border-left-color: $ambire-dark-blue;
       }
 
       .body {

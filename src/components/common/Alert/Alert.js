@@ -7,22 +7,20 @@ import { ReactComponent as DangerIcon } from './images/danger.svg'
 
 import styles from './Alert.module.scss'
 
+const icons = {
+  danger: <DangerIcon />,
+  warning: <WarningIcon />,
+  success: <SuccessIcon />,
+  info: <InformationIcon />
+}
+
 const Alert = ({ title, text, type, iconNextToTitle, className }) => {
-  const icon =
-    type === 'danger' ? (
-      <DangerIcon />
-    ) : type === 'warning' ? (
-      <WarningIcon />
-    ) : type === 'success' ? (
-      <SuccessIcon />
-    ) : (
-      <InformationIcon />
-    )
+  const icon = icons[type] || icons.info
 
   return (
     <div className={cn(styles.wrapper, className)}>
       <div className={styles.alertWrapper}>
-        <div className={cn(styles.alert, styles[type], styles.alertIconNextToTitle)}>
+        <div className={cn(styles.alert, styles[type || 'info'], styles.alertIconNextToTitle)}>
           {iconNextToTitle ? null : icon}
           <div className={styles.body}>
             <div className={styles.titleWrapper}>
