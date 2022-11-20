@@ -27,9 +27,10 @@
       font-weight: 300;
       font-size: 12px;
     }
-  
+    
     svg {
       width: 15px;
+      height: 15px;
       color: $c-turquoise;
     }
   }
@@ -46,11 +47,11 @@
     margin-top: 8px;
     background: #292B43;
     padding: 8px;
-    font-size: 16px;
-    display: block;
+    font-size: 11.5px;
     border-radius: 12px 0 0 12px;
     display: flex;
-    align-items: center;
+    flex-direction: column;
+    gap: 0;
 
     .nativePrice {
       padding-right: 12px;
@@ -60,8 +61,12 @@
     }
 
     .gasPrice {
-      display: block;
+      text-align: left;
       padding-top: 4px;
+
+      span {
+        margin-left: 4px;
+      }
 
       svg {
         padding-top: 1px;
