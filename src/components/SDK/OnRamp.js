@@ -1,6 +1,5 @@
 import styles from 'components/AddAccount/AddAccount.module.scss'
 import { useParams } from 'react-router-dom'
-import { useState } from 'react'
 import networks from 'ambire-common/src/constants/networks'
 import { fetchPost } from 'lib/fetch'
 
@@ -8,7 +7,6 @@ import useAccounts from 'hooks/accounts'
 import { useLocalStorage } from 'hooks'
 
 export default function OnRamp({relayerURL}) {
-  const [onRampUrl, setOnRampUrl] = useState(false)
   const { selectedAcc } = useAccounts(useLocalStorage)
   const { chainID } = useParams()
 
@@ -22,7 +20,7 @@ export default function OnRamp({relayerURL}) {
     const merchantCode = fetchData.merchantCode
     const timestamp = fetchData.timestamp
     const iframeUrl = "https://www.binancecnt.com/en/pre-connect?merchantCode="+merchantCode+"&timestamp="+timestamp+"&cryptoAddress="+selectedAcc+"&cryptoNetwork="+networkCode+"&signature="+signature
-    setOnRampUrl(iframeUrl)
+    window.open(iframeUrl,"binance-connect","menubar=1,resizable=1,width=400,height=640")
   }
 
   const cancel = () => {
@@ -35,21 +33,13 @@ export default function OnRamp({relayerURL}) {
   return (
     <div className={styles.loginSignupWrapper}>
       <div className={styles.logo}/>
-      {onRampUrl &&
-        <div>
-          <iframe src={onRampUrl} width="100%" height="500px" frameborder="0" title="Binance Connect" />
-          <button onClick={cancel}>Finish</button>
-        </div>
-      }
-      {!onRampUrl &&
-        <section className={styles.addAccount}>
-            <div>
-              <h2>Buy Crypto with Fiat?</h2>
-              <button id="proceed_btn" onClick={openRamp}>Proceed</button>
-              <button onClick={cancel}>Cancel</button>
-            </div>
-        </section>
-      }
+      <section className={styles.addAccount}>
+          <div>
+            <h2>Buy Crypto with Fiat?</h2>
+            <button id="proceed_btn" onClick={openRamp}>Proceed</button>
+            <button onClick={cancel}>Cancel</button>
+          </div>
+      </section>
     </div>
   )
 }
