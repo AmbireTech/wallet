@@ -25,25 +25,25 @@
       overflow-y: auto;
       padding-right: 20px;
       margin-right: 11px;
-
-      .emptyMessage {
-        text-align: center;
-        color: $warning-color;
-      }
     }
+  }
+
+  .emptyMessage {
+    text-align: center;
+    color: $warning-color;
   }
 
   .warning {
     display: flex;
     gap: 10px;
 
-    &Icon {
+    .warningIcon {
       width: 24px;
       height: 24px;
       color: $c-ebony-clay;
     }
 
-    &Text {
+    .warningText {
       font-size: 14px;
       margin: 0;
       color: $warning-color;
@@ -63,6 +63,14 @@
         max-height: 320px;
         gap: 12px;
       }
+    }
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .wrapper {
+    .title {
+      text-align: center;
     }
   }
 }

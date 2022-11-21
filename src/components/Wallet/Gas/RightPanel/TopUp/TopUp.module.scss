@@ -2,6 +2,7 @@
 
 .wrapper {
   margin-bottom: 30px;
+
   .titleWrapper {
     display: flex;
     align-items: center;
@@ -32,7 +33,7 @@
         }
       }
       
-      &Icon {
+      .networkIcon {
         flex: 0 0 auto;
         @include flex-center-center;
         height: 32px;
@@ -71,6 +72,14 @@
   .wrapper {
     .list {
       max-height: 430px;
+    }
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .wrapper {
+    .titleWrapper {
+      flex-direction: column;
     }
   }
 }

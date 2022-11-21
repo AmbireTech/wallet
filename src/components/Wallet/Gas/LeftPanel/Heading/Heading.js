@@ -97,7 +97,7 @@ const Heading = ({ network, relayerURL, portfolio, account, gasTankState, setGas
             <span>$</span>{totalCashBack ? totalCashBack : '0.00'}
           </p>
         </div>
-        <p className={styles.footer}>From gas fees on {network.id.toUpperCase()}</p>
+        <p className={styles.footer}>From gas fees on {network.name}</p>
       </div>
     </div>
   )

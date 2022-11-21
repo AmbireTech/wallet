@@ -28,7 +28,7 @@ const TopUp = ({ portfolio, network, availableFeeAssets }) => {
           <div className={styles.networkIcon}>
             <img src={networkIconsById[network.id]} alt="" />
           </div>  
-          <p className={styles.name}>{network.id}</p>
+          <p className={styles.name}>{network.name}</p>
         </div>
       </div>
       <div className={styles.list}>

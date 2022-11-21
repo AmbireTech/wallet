@@ -96,6 +96,11 @@
     padding-bottom: 12px;
     border-bottom: 1px solid rgba($c-scampi, 0.2);
 
+    &:last-child {
+      padding-bottom: 0;
+      border-bottom: none;
+    }
+
     .icon {
       width: 20px;
       height: 20px;
