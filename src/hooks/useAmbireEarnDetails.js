@@ -413,9 +413,11 @@ const useAmbireEarnDetails = ({accountId, addresses, tokenLabel}) => {
                 const { shares, maxTokens } = parsedLog.args
                 return {
                     blockNumber: log.blockNumber,
-                    shareValue: maxTokens
-                        .mul(POOL_SHARES_TOKEN_DECIMALS_MUL)
-                        .div(shares),
+                    shareValue: shares > 0 
+                        ? maxTokens
+                            .mul(POOL_SHARES_TOKEN_DECIMALS_MUL)
+                            .div(shares)
+                        : BigNumber.from(0)
                 }
             })
 
