@@ -23,10 +23,10 @@ export default function OnRamp({relayerURL}) {
     window.open(iframeUrl,"binance-connect","menubar=1,resizable=1,width=400,height=640")
   }
 
-  const cancel = () => {
+  const finish = () => {
     window.parent.postMessage({
       address: selectedAcc,
-      type: 'cancelRamp'
+      type: 'finishRamp'
     }, '*')
   }
 
@@ -37,7 +37,7 @@ export default function OnRamp({relayerURL}) {
           <div>
             <h2>Buy Crypto with Fiat?</h2>
             <button id="proceed_btn" onClick={openRamp}>Proceed</button>
-            <button onClick={cancel}>Cancel</button>
+            <button onClick={finish}>Finish</button>
           </div>
       </section>
     </div>
