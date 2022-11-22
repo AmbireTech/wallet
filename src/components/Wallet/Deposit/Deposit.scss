@@ -1,0 +1,138 @@
+@import 'variables.scss';
+
+#deposit {
+    display: flex;
+    justify-content: center;
+    gap: 2em;
+
+    .panel {
+        gap: 2em;
+        width: 36em;
+        text-align: center;
+        padding: 0 2.5em;
+        padding-top: 2.5em;
+        padding-bottom: 3em;
+        overflow: hidden;
+
+        .text-input {
+            input {
+                font-size: 18px;
+            }
+        }
+
+        .heading {
+            display: flex;
+            flex-direction: column;
+            gap: 0.2rem;
+
+            .title {
+                @include flex-center-center;
+                gap: 0.5rem;
+                font-size: 1.5em;
+                font-weight: bold;
+                color: $primary-accent-color;
+                text-transform: uppercase;
+            }
+
+            .subtitle {
+                font-size: 1.3em;
+                text-transform: uppercase;
+                color: $secondary-accent-color;
+            }
+        }
+
+        .description {
+            display: flex;
+            flex-direction: column;
+            gap: 0.2em;
+            text-align: left;
+            font-size: 1em;
+            color: white;
+            user-select: none;
+
+            #qr-code {
+                height: 180px;
+                width: 180px;
+                margin: 0 auto;
+                margin-top: 1.5em;
+            }
+        }
+
+        #networks {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 1em;
+            font-size: 1em;
+            color: #8c8d91;
+            margin-top: 2em;
+
+            .list {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 1em;
+                flex-wrap: wrap;
+                opacity: 0.9;
+
+                .network {
+                    display: flex;
+                    align-items: center;
+                    gap: 0.5em;
+
+                    .icon {
+                        flex: 0 0 auto;
+                        height: 1.5em;
+                        width: 1.5em;
+                        @include flex-center-center;
+                        background-size: cover;
+                        border-radius: 100%;
+                    }
+
+                    .name {
+                        font-size: 1.2em;
+                        font-weight: 500;
+                        color: white;
+                    }
+                }
+            }
+        }
+    }
+}
+
+@media screen and (max-width: 1200px) {
+   #deposit {
+       flex-direction: column;
+
+        .panel {
+            width: 100%;
+        }
+   }
+}
+
+@media screen and (min-width: 1000px) and (max-width: 1450px) {
+    #deposit {
+        .text-input {
+            input {
+                font-size: 16px !important;
+            }
+        }
+    }
+}
+
+// Mobile
+@media screen and (max-width: $mobile-breakpoint-max-width) {
+    #deposit {
+        gap: 1em;
+
+        .panel {
+            padding: 20px 20px;
+        }
+
+        #networks {
+            .logos {
+                gap: 1em !important;
+            }
+        }
+    }
+}

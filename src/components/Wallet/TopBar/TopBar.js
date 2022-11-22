@@ -1,10 +1,8 @@
+import "./TopBar.scss";
 
 import React, { useState, useMemo } from "react";
-import cn from 'classnames'
 import { NavLink, useRouteMatch } from "react-router-dom";
-import { MdOutlineArrowForward, MdMenu, MdExitToApp, MdInfo } from "react-icons/md";
-import { ReactComponent as PrivacyOff } from './images/privacy-off.svg'
-import { ReactComponent as PrivacyOn } from './images/privacy-on.svg'
+import { MdOutlineArrowForward, MdOutlineClose, MdOutlineMenu, MdRemoveRedEye, MdVisibilityOff, MdMenu, MdExitToApp, MdInfo } from "react-icons/md";
 import Accounts from "./Accounts/Accounts";
 import Networks from "./Networks/Networks";
 import { networkIconsById } from "consts/networks";
@@ -15,14 +13,7 @@ import WalletTokenButton from "./WalletTokenButton/WalletTokenButton";
 import { Button, ToolTip } from 'components/common';
 import DAPPS_ICON from 'resources/dapps.svg';
 
-import { ReactComponent as MenuIcon } from 'resources/icons/burger-menu.svg'
-import { ReactComponent as CloseIcon } from 'resources/icons/close.svg' 
-
-import styles from "./TopBar.module.scss";
-
 const TopBar = ({
-  useRelayerData,
-  relayerURL,
   connections,
   connect,
   disconnect,
@@ -50,33 +41,40 @@ const TopBar = ({
 
   const account = accounts.find(({ id }) => id === selectedAcc)
   const accountIcon = blockies.create({ seed: account ? account.id : null }).toDataURL()
-  
+
   const visualEnv =
     (process.env.REACT_APP_VISUAL_ENV === 'dev')
       ? 'dev' : (
         new URL(document.URL).pathname.startsWith('/staging/')
       ) ? 'staging' : null
 
-    return (<>
-    <div className={cn(styles.mobileBackground, {[styles.visible]: isMenuOpen})}></div>
-    <div className={`${styles.wrapper} ${( visualEnv ? (`${styles.visualEnv} ${styles['visualEnv' + visualEnv]}`) : styles.wrapper) + (dappModeTopBar ? ` ${styles.dappMode}` : '')}`}>
+  return (
+    <div id="topbar" className={(visualEnv ? ('visual-env visual-env-' + visualEnv) : '') + (dappModeTopBar ? ' dapp-mode' : '')}>
       {
         visualEnv &&
-          <div className={styles.envBar} >
-            {visualEnv === 'dev' && <>Development mode</>}
-            {visualEnv === 'staging' && <>Staging mode</>}
-          </div>
+        <div className='env-bar' >
+          {visualEnv === 'dev' && <>Development mode</>}
+          {visualEnv === 'staging' && <>Staging mode</>}
+        </div>
       }
+      <div id="mobile-menu" onClick={() => setMenuOpen(!isMenuOpen)}>
+        <div className="icon" style={{ backgroundImage: `url(${accountIcon})` }}></div>
+        <MdOutlineArrowForward />
+        <div className="icon" style={{ backgroundImage: `url(${networkIconsById[network.id]})` }}></div>
+        <div id="menu-button">
+          {isMenuOpen ? <MdOutlineClose /> : <MdOutlineMenu />}
+        </div>
+      </div>
 
       {dappModeTopBar ?
-        <div className={styles.dappMenu}>
-          <div className={styles.dappMenuBtns}>
+        <div className='dapp-menu'>
+          <div className='dapp-menu-btns'>
             <ToolTip label='Open Ambire Wallet menu'>
-              <Button className={`${styles.buttonComponent} ${styles.ambireMenuBtn}`} border mini icon={<MdMenu size={23} />}
+              <Button className='ambire-menu-btn' border mini icon={<MdMenu size={23} />}
                 onClick={() => toggleSideBarOpen()}
               ></Button>
             </ToolTip>
-            <div className={styles.dappData}>
+            <div className='dapp-data'>
               <ToolTip label={`Connected with ${currentDappData?.connectionType} -  see/find out more on our blog`}>
                 {/* TODO: update the blogpost link */}
                 <a className="info-btn" href={'https://blog.ambire.com/connect-to-any-dapp-with-ambire-wallet-and-walletconnect-c1bc096a531e'}
@@ -89,58 +87,36 @@ const TopBar = ({
                 <a href={currentDappData?.providedBy?.url || currentDappData?.url}
                   target="_blank"
                   rel="noreferrer noopener">
-                  <img className={styles.dappLogo} src={currentDappData?.iconUrl || DAPPS_ICON} alt={currentDappData?.name}/>
+                  <img className='dapp-logo' src={currentDappData?.iconUrl || DAPPS_ICON} alt={currentDappData?.name} />
                 </a>
               </ToolTip>
               <ToolTip label={`Exit from ${currentDappData?.name}`}>
                 <Button
-                  className={`${styles.buttonComponent} ${styles.dappExitBtn}`}
-                  secondary mini 
-                  icon={<MdExitToApp size={15} /> }
+                  className='dapp-exit-btn'
+                  secondary mini
+                  icon={<MdExitToApp size={15} />}
                   onClick={() => loadCurrentDappData(null)}
                 >Exit</Button>
               </ToolTip>
             </div>
           </div>
         </div>
-      :        
-      <NavLink to={'/wallet/dashboard'}>
-        <div id="logo" />
-        <div id="icon" />
-      </NavLink>     
+        :
+        <NavLink to={'/wallet/dashboard'}>
+          <div id="logo" />
+          <div id="icon" />
+        </NavLink>
       }
 
-      <div className={styles.mobileMenu}>
-        {!dappModeTopBar &&  <NavLink to={'/wallet/dashboard'}>
-          <img src='/resources/logo.svg' className={styles.logo} alt='ambire-logo' />
-        </NavLink> }
-        <div className={styles.mobileMenuRight} onClick={() => setMenuOpen(prev => !prev)}>
-          <img className={styles.icon} src={accountIcon} alt="account-icon" />
-          <MdOutlineArrowForward/>
-          <img className={styles.icon} src={networkIconsById[network.id]} alt="network-icon" />
-          <div className={styles.menuButton}>
-            { isMenuOpen ? <CloseIcon /> : 
-              <div className={styles.menuIcon}>
-                <MenuIcon/>
-              </div>
-            }
-          </div>
-        </div>
-      </div>
-
-      <div className={`${styles.container} ${isMenuOpen ? styles.open : ''}`}>
-        <div className={styles.privacyAndRewards}>
-          {isPrivateMode ? <PrivacyOff cursor="pointer" size={28} onClick={togglePrivateMode} /> : <PrivacyOn cursor="pointer" size={28} onClick={togglePrivateMode} />}
-          {selectedAcc && <WalletTokenButton
-            useRelayerData={useRelayerData}
-            relayerURL={relayerURL}
-            rewardsData={rewardsData}
-            accountId={selectedAcc}
-            network={network}
-            hidePrivateValue={hidePrivateValue}
-            addRequest={addRequest}
-          />}
-        </div>
+      <div className={`container ${isMenuOpen ? 'open' : ''}`}>
+        {selectedAcc && <WalletTokenButton
+          rewardsData={rewardsData}
+          account={account}
+          network={network}
+          hidePrivateValue={hidePrivateValue}
+          addRequest={addRequest}
+        />}
+        {isPrivateMode ? <MdVisibilityOff cursor="pointer" size={28} onClick={togglePrivateMode} /> : <MdRemoveRedEye cursor="pointer" size={28} onClick={togglePrivateMode} />}
         <DApps connections={connections} connect={connect} disconnect={disconnect} isWcConnecting={isWcConnecting} />
         <Accounts accounts={accounts} selectedAddress={selectedAcc} onSelectAcc={onSelectAcc} onRemoveAccount={onRemoveAccount} hidePrivateValue={hidePrivateValue} userSorting={userSorting} setUserSorting={setUserSorting} />
         <Networks setNetwork={setNetwork} network={network} allNetworks={allNetworks} userSorting={userSorting}
@@ -148,7 +124,7 @@ const TopBar = ({
         <Links />
       </div>
     </div>
-  </>);
+  );
 };
 
 export default TopBar;

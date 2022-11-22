@@ -168,7 +168,6 @@ const AssetsMigrationSelector = ({ signerAccount, identityAccount, network, setI
   }, [network, customTokenAddress, signerAccount, identityAccount, setCustomTokenError, selectableTokens])
 
   const canCoverGasFees = useCallback((speed) => {
-    if (!estimatedGasFees) return false
     const nativeToSpend = selectableTokensUserInputs.find(t => t.address === ZERO_ADDRESS && t.selected)?.amount || 0
 
     return new BigNumber(estimatedGasFees.gasFees[speed].signerTransactionsCost)
@@ -446,7 +445,6 @@ const AssetsMigrationSelector = ({ signerAccount, identityAccount, network, setI
                           <div className={`migration-asset-select${item.selected ? ' checked' : ''}`}
                                onClick={() => false}>
                             <Checkbox
-                              labelClassName='checkbox-label'
                               id={`check-${item.address}`}
                               label={<span className={'migration-asset-select-label'}>
                                   <span className='migration-asset-select-icon'>

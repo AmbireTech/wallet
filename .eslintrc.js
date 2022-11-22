@@ -15,11 +15,5 @@ module.exports = {
     // do not require specifically .jsx extension, since converting all files
     // results huuuuuge diff in git + history gets lost. Blah.
     "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
-    "react/prop-types": "off"
-  },
-  env: {
-    browser: true,
-    node: true,
-    es2021: true
   }
 }

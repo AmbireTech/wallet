@@ -56,14 +56,14 @@ const HideTokenModel = ({ portfolio, account, network, userSorting, sortType, se
   }, [setOnClose, setIsHideTokenModalOpen])
 
   return (
-    <Modal id="hide-token-modal" title="Hide Token" isCloseBtnShown={false}>
+    <Modal id="hide-token-modal" title="Hide Token">
       <div className="extra-tokens-list">
         {sortedTokens.map((token) => (
           <Token
             key={token.address}
             token={token}
             button={!token.isHidden ? 
-              <HiddenIcon className="extra-token-icon" color="#27e8a7" onClick={() => hideToken(token)} /> :
+              <HiddenIcon className="extra-token-icon" color="#36c979" onClick={() => hideToken(token)} /> :
               <VisibleIcon className="extra-token-icon" color="#f98689" onClick={() => unhideToken(token)} />
             }
           />
@@ -71,7 +71,7 @@ const HideTokenModel = ({ portfolio, account, network, userSorting, sortType, se
       </div>
 
       <div className="modalBottom">
-        <Button clear icon={<MdOutlineClose />} onClick={handleHideModal} className='buttonComponent'>
+        <Button clear icon={<MdOutlineClose />} onClick={handleHideModal}>
           Close
         </Button>
       </div>

@@ -1,36 +1,42 @@
 import './Stepper.scss'
-import React, { FC } from 'react'
+import {FC} from "react";
 
 interface Step {
-  name: string
+  name: string;
 }
 
-type Props = {
+type props = {
   steps: Step[]
   currentStep: Number
   noLabels: boolean
 }
 
-// step
-const Stepper: FC<Props> = ({ steps, currentStep, noLabels = false }) => {
-  return (
-    <div className="stepper">
-      {steps.map((s, index) => {
-        return (
-          <div
-            className={`step step${
-              currentStep > index ? 'Prev' : currentStep === index ? 'Current' : 'Next'
-            }`}
-            key={index}
-          >
-            <span className="stepStatus" />
-            {!noLabels && <span className="stepName">{s.name}</span>}
-            {index > 0 && <span className="stepBar stepBarPrev" />}
+//step
+const Stepper: FC<props> = ({steps, currentStep, noLabels = false}) => {
 
-            {index < steps.length - 1 && <span className="stepBar stepBarNext" />}
-          </div>
-        )
-      })}
+  return (
+    <div className='stepper'>
+      {
+        steps.map((s, index) => {
+          return (
+            <div className={`step step${currentStep > index ? 'Prev' : (currentStep === index ? 'Current' : 'Next')}`} key={index}>
+              <span className='stepStatus'></span>
+              {
+                !noLabels &&
+                <span className='stepName'>{s.name}</span>
+              }
+              {
+                index > 0 &&
+                <span className='stepBar stepBarPrev'></span>
+              }
+
+              {
+                index < steps.length - 1 &&
+                <span className='stepBar stepBarNext'></span>
+              }
+            </div>)
+        })
+      }
     </div>
   )
 }

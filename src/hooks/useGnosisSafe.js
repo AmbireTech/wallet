@@ -210,21 +210,13 @@ export default function useGnosisSafe({selectedAccount, network, verbose = 0, us
         return
       }
 
-      const currentAppData = connector.current.app
-
       const request = {
         id,
         forwardId: msg.data.id,
         type: message.signType === 'eth_signTypedData_v4' ? 'eth_signTypedData_v4' : 'personal_sign',
         txn: message.signType === 'eth_signTypedData_v4' ? JSON.parse(message.message) : message,
         chainId: stateRef.current.network.chainId,
-        account: stateRef.current.selectedAccount,
-        dapp: currentAppData ? {
-          name: currentAppData.name,
-          description: currentAppData.description,
-          icons: [currentAppData.iconUrl],
-          url: currentAppData.url,
-        } : null
+        account: stateRef.current.selectedAccount
       }
 
       setRequests(prevRequests => prevRequests.find(x => x.id === request.id) ? prevRequests : [...prevRequests, request])

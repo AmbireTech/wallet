@@ -22,7 +22,7 @@ export default function Actions({
   const rejectButton = rejectTxn && (
     // WARNING: DO NOT remove type='button' here, it indicates that this button is not a submit button in the <form>
     // if it is, pressing Enter will reject the transaction rather than submit it
-    <Button danger type='button' className='rejectTxn' onClick={rejectTxn}>Reject</Button>
+    <Button danger icon={<MdOutlineClose/>} type='button' className='rejectTxn' onClick={rejectTxn}>Reject</Button>
   )
   const insufficientFee = estimation && estimation.feeInUSD
     && !isTokenEligible(estimation.selectedFeeToken, feeSpeed, estimation, isGasTankEnabled, network)
@@ -94,13 +94,13 @@ export default function Actions({
             disabled={signingStatus && signingStatus.inProgress}
             icon={<MdOutlineClose/>}
             type='button'
-            className='cancelSigning buttonComponent'
+            className='cancelSigning'
             onClick={cancelSigning}
           >
             Cancel
           </Button>
           <Button 
-            className='confirmSigning buttonComponent'
+            className='confirmSigning'
             onClick={() => {
               if (!form.current.checkValidity()) return
               approveTxn({ quickAccCredentials })

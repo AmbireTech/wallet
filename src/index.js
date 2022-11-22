@@ -1,10 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-// If we want any other Poppins style/weight, we should import it manually here, i.e.:
-// import '@fontsource/poppins/600.css'
-import '@fontsource/poppins'; // Defaults to weight 400.
-import "@fontsource/ubuntu-mono"; // Defaults to weight 400.
-import "@fontsource/ubuntu-mono/700.css";
+import './index.css';
 import App from './App';
 import { ErrorBoundary } from './components/common';
 import reportWebVitals from './reportWebVitals';

@@ -1,7 +1,7 @@
 import useSignMessage from "ambire-common/src/hooks/useSignMessage"
 import supportedDApps from "ambire-common/src/constants/supportedDApps"
 
-import styles from "./SignMessage.module.scss"
+import "./SignMessage.scss"
 
 import { MdBrokenImage, MdCheck, MdClose, MdInfoOutline } from "react-icons/md"
 import { toUtf8String, isHexString } from "ethers/lib/utils"
@@ -9,15 +9,11 @@ import * as blockies from "blockies-ts"
 import { getWallet } from "lib/getWallet"
 import { useToasts } from "hooks/toasts"
 import { useState, useEffect, useRef } from "react"
-import { Button, Loading, TextInput, ToolTip, DAppIncompatibilityWarningMsg, Panel } from "components/common"
-import { networkIconsById } from 'consts/networks'
-import cn from "classnames"
-
-import useLocalStorage from 'hooks/useLocalStorage'
+import { Button, Loading, TextInput, ToolTip, DAppIncompatibilityWarningMsg } from "components/common"
 
 const CONF_CODE_LENGTH = 6
 
-export default function SignMessage({ everythingToSign, resolve, account, relayerURL, totalRequests }) {
+export default function SignMessage({ everythingToSign, resolve, account, connections, relayerURL, totalRequests }) {
   const defaultState = () => ({ codeRequired: false, passphrase: "" })
   const { addToast } = useToasts()
   const [signingState, setSigningState] = useState(defaultState())
@@ -63,8 +59,7 @@ export default function SignMessage({ everythingToSign, resolve, account, relaye
     requestedNetwork,
     requestedChainId,
     isTypedData,
-    confirmationType,
-    dApp
+    confirmationType
   } = useSignMessage({
     fetch,
     account,
@@ -73,11 +68,12 @@ export default function SignMessage({ everythingToSign, resolve, account, relaye
     addToast,
     resolve,
     onConfirmationCodeRequired,
-    getHardwareWallet,
-    useStorage: useLocalStorage,
+    getHardwareWallet
   })
 
-  const isDAppSupported = dApp && (supportedDApps.includes(dApp.url) || supportedDApps.includes(dApp.url+'/'))
+  const connection = connections.find(({ uri }) => uri === toSign.wcUri)
+  const dApp = connection ? connection?.session?.peerMeta || null : null
+  const isDAppSupported = dApp && supportedDApps.includes(dApp.url)
 
   useEffect(() => {
     if (confirmationType) inputSecretRef.current.focus()
@@ -88,12 +84,12 @@ export default function SignMessage({ everythingToSign, resolve, account, relaye
   // should not happen unless chainId is dropped for some reason in addRequests
   if (!requestedNetwork) {
     return (
-      <div className={styles.wrapper}>
+      <div id='signMessage'>
         <h3 className='error'>
           Inexistant network for chainId : {requestedChainId}
         </h3>
         <Button
-          className={styles.reject}
+          className='reject'
           onClick={() => resolve({ message: "signature denied" })}
         >
           Reject
@@ -104,10 +100,10 @@ export default function SignMessage({ everythingToSign, resolve, account, relaye
 
   if (typeDataErr)
     return (
-      <div className={styles.wrapper}>
+      <div id='signMessage'>
         <h3 className='error'>Invalid signing request: {typeDataErr}</h3>
         <Button
-          className={styles.reject}
+          className='reject'
           onClick={() => resolve({ message: "signature denied" })}
         >
           Reject
@@ -126,34 +122,33 @@ export default function SignMessage({ everythingToSign, resolve, account, relaye
     })
   }
 
-  const requestedNetworkIcon = networkIconsById[requestedNetwork.id]
-
   return (
-    <div className={styles.wrapper}>
-      <Panel title={'Signing with account'} className={styles.panel}>
-        <div className={styles.signingAccountContent}>
-          <div className={styles.signingAccountAccount}>
+    <div id='signMessage'>
+      <div id='signingAccount' className='panel'>
+        <div className='title'>Signing with account</div>
+        <div className='content'>
+          <div className='signingAccount-account'>
             <img
-              className={styles.icon}
+              className='icon'
               src={blockies.create({ seed: account.id }).toDataURL()}
               alt='Account Icon'
             />
             {account.id}
           </div>
-          <div className={styles.signingAccountNetwork}>
+          <div className='signingAccount-network'>
             on
             <div
-              className={styles.icon}
-              style={{ backgroundImage: `url(${requestedNetworkIcon})` }}
+              className='icon'
+              style={{ backgroundImage: `url(${requestedNetwork.icon})` }}
             />
             <div className='address'>{requestedNetwork.name}</div>
           </div>
         </div>
-      </Panel>
-      <Panel className={styles.panel}>
-        <div className={cn(styles.title, styles.signMessageTitle)}>
-          <span className={styles.signMessageTitleTitle}>Sign message</span>
-          <span className={styles.signMessageTitleSignatureType}>
+      </div>
+      <div className='panel'>
+        <div className='title signMessageTitle'>
+          <span className='signMessageTitle-title'>Sign message</span>
+          <span className='signMessageTitle-signatureType'>
             <ToolTip
               label={`${
                 isTypedData
@@ -167,18 +162,18 @@ export default function SignMessage({ everythingToSign, resolve, account, relaye
           </span>
         </div>
 
-        <div className={styles.requestMessage}>
-          <div className={styles.dappMessage}>
+        <div className='request-message'>
+          <div className='dapp-message'>
             {dApp ? (
               <a
-                className={styles.dapp}
+                className='dapp'
                 href={dApp.url}
                 target='_blank'
                 rel='noreferrer'
               >
                 <div
-                  className={styles.icon}
-                  style={{ backgroundImage: `url(${dApp.icons ? dApp.icons[0] : 'none'})` }}
+                  className='icon'
+                  style={{ backgroundImage: `url(${dApp.icons[0]})` }}
                 >
                   <MdBrokenImage />
                 </div>
@@ -198,7 +193,7 @@ export default function SignMessage({ everythingToSign, resolve, account, relaye
         </div>
 
         <textarea
-          className={styles.signMessage}
+          className='sign-message'
           type='text'
           value={
             dataV4
@@ -210,7 +205,7 @@ export default function SignMessage({ everythingToSign, resolve, account, relaye
           readOnly={true}
         />
 
-        <div className={styles.actions}>
+        <div className='actions'>
           <form onSubmit={handleSubmit}>
             {account.signer.quickAccManager && isDeployed && (
               <>
@@ -271,7 +266,7 @@ export default function SignMessage({ everythingToSign, resolve, account, relaye
             {hasPrivileges === false && (
               <div>
                 <h3 className='error'>
-                  The currently used signer is not authorized to control this account and therefore you cannot sign messages.
+                  You do not have the privileges to sign this message.
                 </h3>
               </div>
             )}
@@ -285,18 +280,18 @@ export default function SignMessage({ everythingToSign, resolve, account, relaye
               </div>
             )}
 
-            <div className={styles.buttons}>
+            <div className='buttons'>
               <Button
                 type='button'
                 danger
                 icon={<MdClose />}
-                className={styles.reject}
+                className='reject'
                 onClick={() => resolve({ message: "signature denied" })}
               >
                 Reject
               </Button>
               {isDeployed !== null && isDeployed && hasPrivileges && (
-                <Button type='submit' disabled={isLoading}>
+                <Button type='submit' className='approve' disabled={isLoading}>
                   {isLoading ? (
                     <>
                       <Loading />
@@ -312,7 +307,7 @@ export default function SignMessage({ everythingToSign, resolve, account, relaye
             </div>
           </form>
         </div>
-      </Panel>
+      </div>
     </div>
   )
 }

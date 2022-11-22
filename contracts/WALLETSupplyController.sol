@@ -79,13 +79,10 @@ contract WALLETSupplyController {
 
 	function mintVesting(address recipient, uint end, uint amountPerSecond) external {
 		uint amount = mintableVesting(recipient, end, amountPerSecond);
-		// this check here is critical, as it ensures this user has a vesting entry
-		if (amount > 0) {
-			// solhint-disable-next-line not-rely-on-time
-			vestingLastMint[recipient][end][amountPerSecond] = block.timestamp;
-			WALLET.mint(recipient, amount);
-			emit LogMintVesting(recipient, amount);
-		}
+		// solhint-disable-next-line not-rely-on-time
+		vestingLastMint[recipient][end][amountPerSecond] = block.timestamp;
+		WALLET.mint(recipient, amount);
+		emit LogMintVesting(recipient, amount);
 	}
 
 	//

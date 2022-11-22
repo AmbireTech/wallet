@@ -121,8 +121,6 @@ const useTesseract = ({ tokens, provider, networkId, currentNetwork }) => {
             ...depositTokenItems,
             ...withdrawTokenItems
         ])
-        
-        return () => setTokensItems([])
     }, [vaults, toTokensItems])
 
     return {

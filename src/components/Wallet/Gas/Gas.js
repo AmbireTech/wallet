@@ -4,7 +4,7 @@ import GasDetails from './GasDetails/GasDetails'
 import GasTank from './GasTank/GasTank'
 import { useState, useEffect } from 'react'
 import { useRelayerData } from 'hooks'
-import { Loading, Panel } from 'components/common'
+import { Loading } from 'components/common'
 
 const Gas = ({ 
     selectedNetwork, 
@@ -32,7 +32,10 @@ const Gas = ({
     
     return (
         <section id="gas">
-            <Panel className="panel" title="Current Network Fees">
+            <div className="panel">
+                <div className="heading">
+                    <div className="title">Current Network Fees</div>
+                </div>
                 <div className="description">
                     <p>Network fees are determined on a market principle - if more users are trying to use the network, fees are higher. Each network has different fees.</p>
                     { gasData && !isLoading && <GasDetails gasData={gasData} />  }
@@ -41,25 +44,28 @@ const Gas = ({
                         <h3 className="error">Gas Information: {errMsg}</h3>
                     )}
                 </div>
-            </Panel>
+            </div>
             
-            <Panel className="panel" title="Gas Tank">
-                <div className="description">
-                { selectedNetwork.isGasTankAvailable ?
-                    <GasTank
-                        network={selectedNetwork}
-                        relayerURL={relayerURL}
-                        portfolio={portfolio}
-                        account={selectedAccount}
-                        userSorting={userSorting}
-                        setUserSorting={setUserSorting}
-                        gasTankState={gasTankState}
-                        setGasTankState={setGasTankState}
-                    /> :
-                    <h3 className="error">Gas Tank is not available on {selectedNetwork.id.toUpperCase()}</h3>
-                }
+                <div className="panel">
+                    <div className="heading">
+                        <div className="title">Gas Tank</div>
+                    </div>
+                    <div className="description">
+                    { selectedNetwork.isGasTankAvailable ?
+                        <GasTank
+                            network={selectedNetwork}
+                            relayerURL={relayerURL}
+                            portfolio={portfolio}
+                            account={selectedAccount}
+                            userSorting={userSorting}
+                            setUserSorting={setUserSorting}
+                            gasTankState={gasTankState}
+                            setGasTankState={setGasTankState}
+                        /> : 
+                        <h3 className="error">Gas Tank is not available on {selectedNetwork.id.toUpperCase()}</h3>
+                    }
+                    </div>
                 </div>
-            </Panel>
             
         </section>
     )

@@ -98,50 +98,51 @@ const LatticeModal = ({ addresses }) => {
         }
     }
 
-    const buttons = <>
-        {!isLoading ? (
-            <Button onClick={connectToDevice}>
-                Connect to Wallet
-            </Button>
-        ) : (
-            <Button disabled>
-                <Loading />
-            </Button>
-        )}
-    </>
-
     return (
-        <Modal id="grid-plus" title="Connect to Lattice Device" buttons={buttons}>
-            <div className="grid-plus-content">
-                <p>
-                    The device ID is listed on your Lattice under{' '}
-                    <strong>Settings</strong>.
-                </p>
-                <h4>Device ID</h4>
-                <TextInput
-                    disabled={isSecretFieldShown}
-                    placeholder="Enter the device ID"
-                    onInput={value => handleInputDeviceId(value)}
-                />
-                {isSecretFieldShown && (
-                    <>
-                        <h4>Secret</h4>
-                        <TextInput
-                            ref={inputSecretRef}
-                            placeholder="Enter secret"
-                            style={{ textTransform:'uppercase' }}
-                            onInput={value => handleInputSecret(value)}
-                        />
-                    </>
-                )}
-                {(isLoading && !isSecretFieldShown) ? (
-                    <>
-                        <h3>It may takes a while.</h3>
-                        <h3>Please wait...</h3>
-                    </>
-                ) : (
-                    <></>
-                )}
+        <Modal title="Connect to Lattice Device">
+            <div id="grid-plus">
+                <div>
+                    <p>
+                        The device ID is listed on your Lattice under{' '}
+                        <strong>Settings</strong>.
+                    </p>
+                    <h4>Device ID</h4>
+                    <TextInput
+                        disabled={isSecretFieldShown}
+                        placeholder="Enter the device ID"
+                        onInput={value => handleInputDeviceId(value)}
+                    />
+                    {isSecretFieldShown && (
+                        <>
+                            <h4>Secret</h4>
+                            <TextInput
+                                ref={inputSecretRef}
+                                placeholder="Enter secret"
+                                style={{ textTransform:'uppercase' }}
+                                onInput={value => handleInputSecret(value)}
+                            />
+                        </>
+                    )}
+                    {(isLoading && !isSecretFieldShown) ? (
+                        <>
+                            <h3>It may takes a while.</h3>
+                            <h3>Please wait...</h3>
+                        </>
+                    ) : (
+                        <></>
+                    )}
+                    <div className="buttons">
+                        {!isLoading ? (
+                            <Button onClick={connectToDevice}>
+                                Connect to Wallet
+                            </Button>
+                        ) : (
+                            <Button disabled>
+                                <Loading />
+                            </Button>
+                        )}
+                    </div>
+                </div>
             </div>
         </Modal>
     )

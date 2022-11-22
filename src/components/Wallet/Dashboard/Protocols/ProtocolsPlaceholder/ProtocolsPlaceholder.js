@@ -1,11 +1,10 @@
+import './ProtocolsPlaceholder.scss'
+
 import { NavLink } from 'react-router-dom'
+import { GiReceiveMoney } from 'react-icons/gi'
 import { Button } from 'components/common'
 import { MdOutlineAdd } from 'react-icons/md'
 import { useLocalStorage } from 'hooks'
-
-import { ReactComponent as DepositIcon } from 'components/Wallet/SideBar/images/deposit.svg'
-
-import styles from './ProtocolsPlaceholder.module.scss'
 
 const ProtocolsPlaceholder = ({ onClickAddToken, onClickShowToken }) => {
     const tokens = [
@@ -37,39 +36,39 @@ const ProtocolsPlaceholder = ({ onClickAddToken, onClickShowToken }) => {
     }
     
     return (
-        <div className={styles.wrapper}>
-            <div className={styles.placeholderOverlay}>
+        <div id="protocols-placeholder" >
+            <div className="placeholder-overlay">
                 <label>
                     Welcome! You don't have any funds on this account.
                 </label>
                 <NavLink to="/wallet/deposit">
-                    <Button small icon={<DepositIcon />}>Deposit</Button>
+                    <Button small icon={<GiReceiveMoney/>}>Deposit</Button>
                 </NavLink>
-                <div className={styles.addToken}>
+                <div className="add-token">
                     <label>You have a token that's not displayed?</label>
                     <Button mini clear icon={<MdOutlineAdd/>} onClick={onClickAddToken}>Click here to add it</Button>
                     {hiddenTokensCount > 0 && (<label style={{ cursor: 'pointer'}} onClick={onClickShowToken}>There are also {hiddenTokensCount} hidden tokens. Click to configure</label>)}
                 </div>
             </div>
-            <div className={styles.category}>
-                <div className={styles.title}>Tokens</div>
-                <div className={styles.list}>
+            <div className="category">
+                <div className="title">Tokens</div>
+                <div className="list">
                     {
                         tokens.map(({ icon, symbol, balance, balanceUSD }) => (
-                            <div className={styles.token} key={symbol}>
-                                <div className={styles.icon}>
+                            <div className="token" key={symbol}>
+                                <div className="icon">
                                     <img src={icon} alt="Token Icon"/>
                                 </div>
-                                <div className={styles.name}>
+                                <div className="name">
                                     { symbol }
                                 </div>
-                                <div className={styles.separator}></div>
-                                <div className={styles.balance}>
-                                    <div className={styles.currency}>
-                                        { balance } <span className={styles.symbol}>{ symbol }</span>
+                                <div className="separator"></div>
+                                <div className="balance">
+                                    <div className="currency">
+                                        { balance } <span className="symbol">{ symbol }</span>
                                     </div>
-                                    <div className={styles.dollar}>
-                                        <span className={styles.symbol}>$</span> { balanceUSD }
+                                    <div className="dollar">
+                                        <span className="symbol">$</span> { balanceUSD }
                                     </div>
                                 </div>
                             </div>

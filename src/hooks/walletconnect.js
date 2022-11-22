@@ -87,18 +87,7 @@ export default function useWalletConnect ({ account, chainId, initialUri, allNet
         }
         if (action.type === 'requestAdded') {
             if (state.requests.find(({ id }) => id === action.request.id)) return { ...state }
-
-            const currentConnection = state.connections?.find(({ uri }) => uri === action.request.wcUri)
-
-            return { ...state, requests: [...state.requests, {
-                ...action.request,
-                dapp: {
-                    name: currentConnection.session.peerMeta.name,
-                    description: currentConnection.session.peerMeta.description,
-                    url: currentConnection.session.peerMeta.url,
-                    icons: currentConnection.session.peerMeta.icons,
-                }
-            }] }
+            return { ...state, requests: [...state.requests, action.request] }
         }
         if (action.type === 'requestsResolved') {
             return {

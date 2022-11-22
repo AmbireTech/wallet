@@ -1,6 +1,7 @@
-import cn from 'classnames'
+import './Deposit.scss'
+
 import { useCallback, useEffect, useState } from 'react'
-import { Panel } from 'components/common'
+import { MdAccountBalance, MdAccountBalanceWallet } from 'react-icons/md'
 import QRCode from 'qrcode'
 import TextInput from 'components/common/TextInput/TextInput'
 import Providers from './Providers/Providers'
@@ -8,8 +9,6 @@ import Providers from './Providers/Providers'
 import networks from 'consts/networks'
 
 import AssetsMigrationBanner from 'components/Wallet/AssetsMigration/AssetsMigrationBanner'
-
-import styles from './Deposit.module.scss'
 
 export default function Deposit({ selectedAcc, selectedNetwork, accounts, addRequest, relayerURL, portfolio, useStorage }) {
     const networkDetails = networks.find(({ id }) => id === selectedNetwork.id)
@@ -28,34 +27,29 @@ export default function Deposit({ selectedAcc, selectedNetwork, accounts, addReq
     useEffect(() => generateQRCode(), [generateQRCode])
 
     return (
-        <section className={styles.deposit}>
-            <Panel className={styles.panel}>
-                <div className={styles.heading}>
-                     <div className={styles.title}>
+        <section id="deposit">
+            <div className="panel">
+                <div className="heading">
+                     <div className="title">
+                        <MdAccountBalanceWallet size={35}/>
                         Deposit Tokens
                     </div>
-                    <div className={styles.subtitle}>
+                    <div className="subtitle">
                         Direct Deposit
                     </div>
                 </div>
-                <div className={styles.description}>
-                    <TextInput 
-                        className={styles.depositAddress}
-                        inputContainerClass={styles.inputClass}
-                        label={`Send ${networkDetails.nativeAssetSymbol}, tokens or collectibles (NFTs) to this address:`} 
-                        value={selectedAcc} 
-                        copy
-                    />
-                    <img className={styles.qrCode} alt="QR Code" src={qrCodeUrl}></img>
+                <div className="description">
+                    <TextInput className="depositAddress" label={`Send ${networkDetails.nativeAssetSymbol}, tokens or collectibles (NFTs) to this address:`} value={selectedAcc} copy/>
+                    <img id="qr-code" alt="QR Code" src={qrCodeUrl}></img>
                 </div>
-                <div className={styles.networks}>
-                    <label className={styles.networksTitle}>Following networks supported on this address:</label>
-                    <div className={styles.list}>
+                <div id="networks">
+                    Following networks supported on this address:
+                    <div className="list">
                         {
                             networks.filter(n => !n.hide).map(({ id, icon, name }) => (
-                                <div className={styles.network} key={id}>
-                                    <div className={styles.icon} style={{backgroundImage: `url(${icon})`}}></div>
-                                    <div className={styles.name}>{ id === 'binance-smart-chain' ? 'BSC' : name }</div>
+                                <div className="network" key={id}>
+                                    <div className="icon" style={{backgroundImage: `url(${icon})`}}></div>
+                                    <div className="name">{ name }</div>
                                 </div>
                             ))
                         }
@@ -71,21 +65,22 @@ export default function Deposit({ selectedAcc, selectedNetwork, accounts, addReq
                     portfolio={portfolio}
                     useStorage={useStorage}
                 />
-            </Panel>
-            <Panel className={styles.panel}>
-                <div className={styles.heading}>
-                    <div className={styles.title}>
+            </div>
+            <div className="panel">
+                <div className="heading">
+                    <div className="title">
+                        <MdAccountBalance size={35}/>
                         Fiat Currency
                     </div>
-                    <div className={styles.subtitle}>
+                    <div className="subtitle">
                         Credit Card & Bank Transfer
                     </div>
                 </div>
-                <div className={cn(styles.description, styles.margin)}>
+                <div className="description">
                     Deposit with credit card to your account directly using one of our partners
                 </div>
                 <Providers walletAddress={selectedAcc} networkDetails={networkDetails} relayerURL={relayerURL} portfolio={portfolio}/>
-            </Panel>
+            </div>
         </section>
     )
 }

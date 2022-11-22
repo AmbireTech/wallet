@@ -1,13 +1,5 @@
 @import 'variables.scss';
 
-.address-input {
-    width: 100%;
-
-    input {
-        padding-right: 50px;
-    }
-}
-
 #input-modal {
     .content {
         display: flex;
@@ -16,6 +8,14 @@
 
         div {
             display: flex;
+
+            .text-input {
+                width: 100%;
+
+                input {
+                    padding-right: 50px;
+                }
+            }
 
             #udomains-logo {
                 position: absolute;

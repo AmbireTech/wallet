@@ -1,16 +1,15 @@
-import React from 'react'
-import './Loading.scss'
+import './Loading.scss';
 
-import { AiOutlineLoading } from 'react-icons/ai'
+import { AiOutlineLoading } from 'react-icons/ai';
 
 const Loading = () => {
-  return (
-    <div className="loading">
-      <div className="icon">
-        <AiOutlineLoading size={35} />
-      </div>
-    </div>
-  )
-}
+    return (
+        <div className="loading">
+            <div className="icon">
+                <AiOutlineLoading size={35}/>
+            </div>
+        </div>
+    );
+};
 
-export default Loading
+export default Loading;

@@ -66,7 +66,6 @@ export default function GnosisSafeAppIframe({
                     src={url}
                     onLoad={() => setLoading(false)}
                     style={loading ? { display: 'none' } : {}}
-                    allow='clipboard-read; clipboard-write'
                 />
             }
         </div>)

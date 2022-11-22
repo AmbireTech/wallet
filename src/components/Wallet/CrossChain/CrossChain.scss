@@ -7,10 +7,6 @@
 
     .buttonComponent {
         flex: 0 0 auto;
-        max-width: 400px;
-        width: 100%;
-        margin: 0 auto;
-        margin-top: 75px;
     }
 
     .amount-label {
@@ -51,8 +47,7 @@
                 bottom: 0;
                 left: 0;
                 right: 0;
-                background-color: $c-mirage;
-                border-radius: 12px;
+                background-color: $panel-background-color;
             }
         }
 

@@ -1,34 +1,28 @@
-import React, { useState } from 'react'
-import styles from './Radios.module.scss'
+import './Radios.scss'
 
-const Radios = ({ radios, defaultValue, onChange, value, row, className }) => {
-  const [currentValue, setCurrentValue] = useState(defaultValue || null)
-  const controlledValue = value || currentValue
+import { useState } from 'react'
 
-  const onSelect = (val) => {
-    setCurrentValue(val)
-    onChange && onChange(val)
-  }
+const Radios = ({ radios, defaultValue, onChange, value, row }) => {
+    const [currentValue, setCurrentValue] = useState(defaultValue || null)
+    const controlledValue = value || currentValue
 
-  return (
-    <div className={`${styles.radiosContainer}${row ? ` ${styles.row}` : ''} ${className || ''}`}>
-      {radios.map(({ label, val, disabled }, i) => (
-        <div
-          className={`${styles.radioContainer} ${val === controlledValue ? styles.active : ''} ${
-            disabled ? styles.disabled : ''
-          }`}
-          key={`radio-${i}`}
-          onClick={() => !disabled && onSelect(val)}
-        >
-          {/* <div className={styles.radio}></div> */}
-          <div className={styles.radio}>
-            <div className={styles.radioInner} />
-          </div>
-          <label>{label}</label>
+    const onSelect = value => {
+        setCurrentValue(value)
+        onChange && onChange(value)
+    }
+
+    return (
+        <div className={`radios-container${row ? ' row' : ''}`}>
+            {
+                radios.map(({label, value, disabled }, i) => (
+                    <div className={`radio-container ${value === controlledValue ? 'active' : ''} ${disabled ? 'disabled' : ''}`} key={`radio-${i}`} onClick={() => !disabled && onSelect(value)}>
+                        <div className="radio"></div>
+                        <label>{ label }</label>
+                    </div>
+                ))
+            }
         </div>
-      ))}
-    </div>
-  )
+    )
 }
 
 export default Radios

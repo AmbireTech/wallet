@@ -25,10 +25,18 @@
             flex-direction: column;
             gap: 0.2rem;
 
+            .title {
+                @include flex-center-center;
+                gap: 0.5rem;
+                font-size: 1.5em;
+                font-weight: bold;
+                text-transform: uppercase;
+            }
+
             .subtitle {
                 font-size: 1.3em;
                 text-transform: uppercase;
-                color: $c-heliotrope;
+                color: $secondary-accent-color;
             }
         }
 
@@ -38,7 +46,7 @@
             gap: 0.2em;
             text-align: left;
             font-size: 1em;
-            color: $c-titan-white;
+            color: white;
             user-select: none;
         }
     }

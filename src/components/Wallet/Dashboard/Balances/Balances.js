@@ -1,18 +1,13 @@
-import styles from './Balances.module.scss'
+import './Balances.scss'
 
 import { Loading } from 'components/common'
 import { useRelayerData } from 'hooks'
-import { ReactComponent as GasTankIcon } from 'resources/icons/gas-tank.svg'
+import { GiGasPump } from 'react-icons/gi'
 import { useHistory } from 'react-router-dom'
 
 import networks from 'consts/networks'
-import BalanceItem from './BalanceItem/BalanceItem'
-import { useCallback, useEffect, useRef } from 'react'
-
-import { ReactComponent as AlertCircle } from 'resources/icons/alert-circle.svg'
 
 const Balances = ({ portfolio, selectedNetwork, setNetwork, hidePrivateValue, relayerURL, selectedAccount, match }) => {
-    const otherBalancesRef = useRef()
     const history = useHistory()
     const networkDetails = (network) => networks.find(({ id }) => id === network)
     const otherBalances = portfolio.otherBalances.filter(({ network, total }) => network !== selectedNetwork.id && total.full > 0)
@@ -29,70 +24,63 @@ const Balances = ({ portfolio, selectedNetwork, setNetwork, hidePrivateValue, re
             truncated
         }
     }
-
-    // Used to add blur at the bottom of balances when scrollbar is visible
-    const handleSetBlur = useCallback(() => {
-        if(!otherBalancesLoading && otherBalances) {
-            const el = otherBalancesRef.current
-            if (!el) return
-
-            const maxScroll = el.scrollHeight - el.clientHeight
-            const isScrollable = el.scrollHeight > el.clientHeight;
-            
-            // GUARD: If element is not scrollable, remove all classes
-            if (!isScrollable || (maxScroll <= el.scrollTop)) {
-                el.classList.remove(styles.bottomOverflow);
-                return;
-            }
-            
-            el.classList.toggle(styles.bottomOverflow, true);
-        } else {
-        }
-    }, [otherBalances, otherBalancesLoading])
-
-    useEffect(() => {
-        handleSetBlur()    
-    }, [otherBalancesLoading, otherBalances, handleSetBlur])
     
     return (
-        <div className={styles.wrapper}>
+        <div id="balances">
             { portfolio.isCurrNetworkBalanceLoading && otherBalancesLoading ? <Loading /> : (
-                <div className={styles.otherBalances} ref={otherBalancesRef} onScroll={handleSetBlur}>
-                    { otherBalances.length > 0 ? (
+                <>
+                { portfolio.isCurrNetworkBalanceLoading ? <Loading /> : (
+                    <div>
+                        <span className="green-highlight">$</span> { hidePrivateValue(portfolio.balance.total.truncated) }
+                        <span className="green-highlight">.{ hidePrivateValue(portfolio.balance.total.decimals) }</span>
+                    </div>
+                )}
+            
+                <div id="other-balances">
+                    { otherBalancesLoading ? <Loading /> : (
                         <>
+                            { otherBalances.length ? <label>You also have</label> : null }
                             {
                                 otherBalances.filter(({ network }) => networkDetails(network)).map(({ network, total }, i) => (
-                                    <BalanceItem 
-                                        onClick={() => setNetwork(network)}
-                                        key={network}
-                                        name={networkDetails(network).name}
-                                        value={hidePrivateValue(total.truncated)}
-                                        decimalValue={hidePrivateValue(total.decimals)}
-                                        icon={
-                                            <div className={styles.icon} style={{backgroundImage: `url(${networkDetails(network).icon})`}}></div>
-                                        }
-                                    />
+                                    <div className="balance-container" key={network}>
+                                        <div className="other-balance" onClick={() => setNetwork(network)}>
+                                            <label>
+                                                <span className="purple-highlight">$</span> { hidePrivateValue(total.truncated) }
+                                                <span className="purple-highlight">.{hidePrivateValue(total.decimals)}</span>
+                                            </label>
+                                            on
+                                            <div className="network">
+                                                <div className="icon" style={{backgroundImage: `url(${networkDetails(network).icon})`}}></div>
+                                                <div className="name">
+                                                    { networkDetails(network).name }
+                                                </div>
+                                            </div>
+                                        </div>
+                                        { otherBalances.length - (gasTankDetails.total.full > 0.00 ? 0 : 1) !== i ? <label>and</label> : null }
+                                    </div>
                                 ))
                             }
                             { gasTankDetails && (gasTankDetails.total.full > 0) && !isLoading &&
-                               <BalanceItem 
-                                    onClick={() => history.push('/wallet/gas-tank')}
-                                    name={gasTankDetails.label}
-                                    value={hidePrivateValue(gasTankDetails.total.truncated)}
-                                    decimalValue={hidePrivateValue(gasTankDetails.total.decimals)}
-                                    icon={
-                                        <div className={styles.iconSvg}><GasTankIcon /></div>
-                                    }
-                                />
+                                <div className="balance-container">
+                                    <div className="other-balance" onClick={() => history.push('/wallet/gas-tank')}>
+                                        <label>
+                                            <span className="purple-highlight">$</span> { hidePrivateValue(gasTankDetails.total.truncated) }
+                                            <span className="purple-highlight">.{ hidePrivateValue(gasTankDetails.total.decimals) }</span>
+                                        </label>
+                                        on
+                                        <div className="network">
+                                            <div className='icon-svg'><GiGasPump size={20}/></div>
+                                            <div className="name">
+                                                { gasTankDetails.label }
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             }
-                        </>) : <div className={styles.noOtherBalancesWrapper}>
-                            <div className={styles.noOtherBalances}>
-                                <AlertCircle />
-                                <label>You don't have any tokens on the other networks.</label>
-                            </div>
-                        </div>
+                        </>)
                     }
                 </div>
+            </>
             )}
         </div>
     )

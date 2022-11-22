@@ -43,7 +43,7 @@ const GasIndicator = ({ selectedNetwork, relayerURL, match }) => {
             </span>
             <Link to={match.url + "/gas-tank"}>
               <span className={'gas-price'}>
-                <GiGasPump/> <span>${((gasData.gasPrice && gasData.gasPrice.maxPriorityFeePerGas ? (gasData.gasPrice.maxPriorityFeePerGas['medium'] + gasData.gasPrice['medium']) : gasData.gasPrice['medium']) * GAS_COST_ERC20_TRANSFER / 10 ** 18 * gasData.gasFeeAssets.native).toFixed(2)}</span>
+                <GiGasPump/> ${((gasData.gasPrice && gasData.gasPrice.maxPriorityFeePerGas ? (gasData.gasPrice.maxPriorityFeePerGas['medium'] + gasData.gasPrice['medium']) : gasData.gasPrice['medium']) * GAS_COST_ERC20_TRANSFER / 10 ** 18 * gasData.gasFeeAssets.native).toFixed(2)}
               </span>
             </Link>
     </div>)

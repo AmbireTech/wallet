@@ -1,16 +1,12 @@
-import styles from './EmailLogin.module.scss'
+import './EmailLogin.scss'
 
 import { useState, useEffect } from 'react'
+import { MdEmail } from 'react-icons/md'
 
 import { fetch, fetchCaught } from 'lib/fetch'
 
 import LoginOrSignup from 'components/LoginOrSignupForm/LoginOrSignupForm'
 import { useLocalStorage } from 'hooks'
-
-import { ReactComponent as ChevronLeftIcon } from 'resources/icons/chevron-left.svg'
-
-import Lottie from 'lottie-react'
-import AnimationData from './assets/confirm-email.json'
 
 // NOTE: the same polling that we do here with the setEffect should be used for txns
 // that require email confirmation
@@ -105,49 +101,33 @@ export default function EmailLogin({ relayerURL, onAddAccount }) {
     const importJSONHref = `/#/json-import`
 
     if (!relayerURL) {
-        return (<section className={`${styles.loginSignupWrapper} ${styles.emailLoginSection}`}>
-            <div className={styles.logo}/>
-            <h3 className={styles.error}>Email login not supported without the relayer.</h3>
+        return (<section className="loginSignupWrapper" id="emailLoginSection">
+            <div id="logo"/>
+            <h3 className="error">Email login not supported without the relayer.</h3>
             <a href={importJSONHref}><button>Import JSON</button></a>
         </section>)
     }
 
     const inner = requiresEmailConfFor ?
-      (<div className={`${styles.emailConf}`}>
-        <Lottie className={styles.emailAnimation} animationData={AnimationData} background="transparent" speed="1" loop autoplay />
-        <h3>
-          Email confirmation required
-        </h3>
+      (<div id="loginEmail" className="emailConf">
+        <h3><MdEmail size={25} color="white"/>Email confirmation required</h3>
         <p>
-          We sent an email to
-          {' '}
-          <span className={styles.email}>
-            {requiresEmailConfFor.email}
-          </span>
-          .
-          <br />
-          Please check your inbox and click
-          <br />
-          "Authorize New Device".
+        We sent an email to {requiresEmailConfFor.email}, please check your inbox and click "<b>Authorize New Device</b>".
         </p>
-        {err ? (<p className={styles.error}>{err}</p>) : (<></>)}
+        {err ? (<p className="error">{err}</p>) : (<></>)}
       </div>)
-      : (<div className={styles.loginEmail}>
+      : (<div id="loginEmail">
         <LoginOrSignup onAccRequest={onLoginUserAction} inProgress={inProgress}></LoginOrSignup>
-        <div className={styles.magicLink}>A password will not be required, we will send a magic login link to your email.</div>
-        <a className={styles.backButton} href="#/add-account">
-          <ChevronLeftIcon />
-          {' '}
-          Back to Register
-        </a>
-        {err ? (<p className={styles.error}>{err}</p>) : (<></>)}
+        <div className='magicLink'>A password will not be required, we will send a magic login link to your email.</div>
+
+        {err ? (<p className="error">{err}</p>) : (<></>)}
 
         {/*<a href={importJSONHref}>Import JSON</a>*/}
       </div>)
 
     return (
-      <section className={`${styles.loginSignupWrapper} ${styles.emailLoginSection}`}>
-      <div className={styles.logo} />
+      <section className="loginSignupWrapper" id="emailLoginSection">
+      <div id="logo"/>
       {inner}
     </section>
     )

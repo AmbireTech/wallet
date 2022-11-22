@@ -7,9 +7,7 @@ $extended-summary-height: 31px;
     display: flex;
     flex-direction: column;
     flex: 0 0 auto;
-    background-color: $c-mirage;
-    color: $c-titan-white;
-    border-radius: 12px;
+    background-color: $input-background-color;
     min-height: $txn-height;
     position: relative;
     user-select: none;
@@ -66,14 +64,17 @@ $extended-summary-height: 31px;
                         display: flex;
                         align-items: center;
                         height: $extended-summary-height;
-                        color: $c-turquoise;
+                        font-weight: bold;
+                        text-transform: uppercase;
+                        padding: 0 0.75em;
+                        background-color: $ambire-dark-blue;
 
                         &.unknown {
-                            color: #d06f1b;
+                            background-color: #d06f1b;
                         }
 
                         &.cancel {
-                            color: #c33a3a;
+                            background-color: #c33a3a;
                         }
                     }
 
@@ -103,7 +104,8 @@ $extended-summary-height: 31px;
 
                     .address {
                         span {
-                            font-family: 'Ubuntu Mono';
+                            font-family: 'monospace';
+                            font-weight: 500;
                             opacity: 0.7;
                         }
                     }
@@ -158,7 +160,7 @@ $extended-summary-height: 31px;
         padding: 10px 25px;
         padding-bottom: 20px;
         word-wrap: break-word;
-        font-family: 'Ubuntu Mono';
+        font-family: 'monospace';
         opacity: 0.7;
 
         div {

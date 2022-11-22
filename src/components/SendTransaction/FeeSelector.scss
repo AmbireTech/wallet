@@ -5,11 +5,7 @@
 }
 
 .discount-label {
-    color: $c-turquoise;
-}
-
-.warning-label {
-    color: $warning-color;
+    color: $primary-accent-color;
 }
 
 .balance-error {
@@ -24,7 +20,7 @@
     justify-content: space-between;
 
     .gas-tank-enabled {
-        color: $c-turquoise;
+        color: $primary-accent-color;
     }
 
     .gas-tank-disabled {
@@ -45,8 +41,7 @@
         @include flex-center-center;
         flex-direction: column;
         padding: 0 1em;
-        background: $c-mirage;
-        border-radius: 12px;
+        background: $background-color;
         cursor: default;
         transition: all 0.1s ease-in-out;
         position: relative;
@@ -78,19 +73,19 @@
 
         &:not(.disabled):hover {
             cursor: pointer;
-            background-color: rgba(0, 0, 0, 0.4);
+            background-color: $input-background-color;
         }
 
         &.selected {
             box-shadow: 0 0 0 3px $ambire-dark-blue inset;
-            background-color: rgba(0, 0, 0, 0.4);
+            background-color: $input-background-color;
         }
 
         .discount-badge {
             position: absolute;
             top: 4px;
             right: 4px;
-            color: $c-turquoise;
+            color: $primary-accent-color;
         }
     }
 }
@@ -98,7 +93,7 @@
 .fee-select {
     .discount {
         @include flex-center-center;
-        color: $c-turquoise;
+        color: $primary-accent-color;
         font-size: 1.2rem;
         font-weight: bold;
     }
@@ -120,7 +115,7 @@
         padding: 0.5em;
         gap: 1em;
         &:nth-of-type(odd) {
-            background-color: $c-mirage;
+            background-color: $background-color;
         }
     }
 
@@ -147,8 +142,8 @@
     display: flex;
     align-items: center;
     gap: 12px;
-    background-color: mix($c-ebony-clay, $c-turquoise, 90%);
-    color: $c-turquoise;
+    background-color: mix($panel-background-color, $primary-accent-color, 90%);
+    color: $primary-accent-color;
     padding: 15px;
     font-size: 14px;
 }
@@ -181,7 +176,7 @@
         &.selected {
             input {
                 box-shadow: 0 0 0 3px $ambire-dark-blue inset;
-                background-color: $c-mirage;
+                background-color: $input-background-color;
             }
         }
     }
@@ -243,7 +238,7 @@
     .swap-info {
         font-size: 18px;
         .link {
-            color: $c-turquoise;
+            color: $primary-accent-color;
         }
     }
 }

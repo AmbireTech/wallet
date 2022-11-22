@@ -1,4 +1,4 @@
-import styles from './CollectiblesPlaceholder.module.scss'
+import './CollectiblesPlaceholder.scss'
 
 const CollectiblesPlaceholder = ({ isPrivateMode, collectiblesLength }) => {
     const collectibles = [
@@ -40,25 +40,25 @@ const CollectiblesPlaceholder = ({ isPrivateMode, collectiblesLength }) => {
     ]
 
     return (
-        <div className={styles.wrapper}>
-            <div className={styles.placeholderText}>
+        <div id="collectibles-placeholder">
+            <div className="placeholder-text">
                 {isPrivateMode && collectiblesLength ? 'You can\'t see collectibles in private mode' : 'You don\'t have any collectibles (NFTs) yet' }
             </div>
-            <div className={styles.placeholderOverlay}></div>
-            <div className={styles.collectibles}>
-                <div className={styles.collectiblesWrapper}>
+            <div className="placeholder-overlay"></div>
+            <div id="collectibles">
+                <div className='collectibles-wrapper'>
                     {
                         collectibles.map(({ collectionName, collectionImg, name, image, price}) => (
-                            <div className={styles.collectible} key={name}>
-                                <div className={styles.artwork} style={{backgroundImage: `url(${image})`}}/>
-                                <div className={styles.info}>
-                                    <div className={styles.collection}>
-                                        <div className={styles.collectionIcon} style={{backgroundImage: `url(${collectionImg})`}}></div>
+                            <div className="collectible" key={name}>
+                                <div className="artwork" style={{backgroundImage: `url(${image})`}}/>
+                                <div className="info">
+                                    <div className="collection">
+                                        <div className="collection-icon" style={{backgroundImage: `url(${collectionImg})`}}></div>
                                         { collectionName }
                                     </div>
-                                    <div className={styles.details}>
-                                        <div className={styles.name}>{ name }</div>
-                                        <div className={styles.value}><span className="purple-highlight">$</span> { price }</div>
+                                    <div className="details">
+                                        <div className="name">{ name }</div>
+                                        <div className="value"><span className="purple-highlight">$</span> { price }</div>
                                     </div>
                                 </div>
                             </div>

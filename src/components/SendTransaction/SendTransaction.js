@@ -567,7 +567,7 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, mustReplaceNonce,
                 <div id='actions-container-replace'>
                   <div className='replaceInfo info' ><MdInfo /><span>The transaction you're trying to replace has already been confirmed</span></div>
                   <div className='buttons'>
-                    <Button clear icon={<MdOutlineClose/>} type='button' className='rejectTxn buttonComponent' onClick={rejectTxn}>Close</Button>
+                    <Button clear icon={<MdOutlineClose/>} type='button' className='rejectTxn' onClick={rejectTxn}>Close</Button>
                   </div>
                 </div>
               }

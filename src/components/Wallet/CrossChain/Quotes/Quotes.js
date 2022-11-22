@@ -134,13 +134,13 @@ const Quotes = ({ addRequest, selectedAccount, fromTokensItems, quotes, onQuotes
                     amount: outputAmount
                 }
             })
-            setLoading(false)
             onCancel()
         } catch(e) {
             console.error(e);
             addToast(e.message || e, { error: true })
-            setLoading(false)
         }
+
+        setLoading(false)
     }
 
     return (
@@ -190,9 +190,9 @@ const Quotes = ({ addRequest, selectedAccount, fromTokensItems, quotes, onQuotes
             <div className="separator"></div>
 
             <div id="buttons">
-                <Button small clear icon={routes.length ? <MdOutlineClose/> : <MdOutlineArrowBack/>} disabled={loading} onClick={onCancel} className='buttonComponent'>{ routes.length ? 'Cancel' : 'Go Back' }</Button>
+                <Button small clear icon={routes.length ? <MdOutlineClose/> : <MdOutlineArrowBack/>} disabled={loading} onClick={onCancel}>{ routes.length ? 'Cancel' : 'Go Back' }</Button>
                 { routes.length ? 
-                    <Button small icon={<MdOutlineCheck/>} disabled={!selectedRoute || loading} onClick={onConfirm} className='buttonComponent'>Confirm</Button>
+                    <Button small icon={<MdOutlineCheck/>} disabled={!selectedRoute || loading} onClick={onConfirm}>Confirm</Button>
                 : null }
             </div>
         </div>

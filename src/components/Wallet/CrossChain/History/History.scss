@@ -8,7 +8,6 @@
         justify-content: space-between;
         gap: 1.5em;
         padding: 1em 1.5em;
-        border-radius: 12px;
 
         &:nth-child(odd) {
             background-color: rgba(0, 0, 0, 0.1);
@@ -24,14 +23,14 @@
             flex-direction: row;
             align-items: center;
             justify-content: space-between;
-            gap: 15px;
-            
+            gap: 1em;
+
             .network,
             .asset {
                 display: flex;
                 align-items: center;
                 gap: 7px;
-                font-weight: 400;
+                font-weight: 500;
 
                 .icon {
                     flex: 0 0 auto;
@@ -41,7 +40,7 @@
                     background-size: contain;
                     background-position: center center;
                     background-repeat: no-repeat;
-                    background-color: $c-ebony-clay-light;
+                    background-color: rgba(255, 255, 255, 0.1);
                 }
 
                 .name {
@@ -50,7 +49,8 @@
             }
 
             .network {
-                font-size: 16px;
+                font-weight: bold;
+                font-size: 17px;
 
                 .icon {
                     height: 17px;
@@ -91,7 +91,8 @@
             flex-wrap: wrap-reverse;
 
             a {
-                color: $c-heliotrope;
+                opacity: 0.5;
+
                 svg {
                     display: inline-block;
                     vertical-align: -2px;
@@ -114,7 +115,7 @@
                 }
 
                 &.confirmed {
-                    color: $c-turquoise;
+                    color: $primary-accent-color;
                 }
 
                 .loading {

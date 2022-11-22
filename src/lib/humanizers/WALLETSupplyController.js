@@ -12,15 +12,10 @@ const WALLETSupplyControllerMapping = () => {
     [iface.getSighash('claim')]: (txn, network, { extended = false }) => {
       const { toBurnBps } = iface.parseTransaction(txn).args
       const burnPercentage = toBurnBps.toString() / 100
-      return toExtended(extended, 'Claim rewards', burnPercentage > 0 ? `with ${burnPercentage}% burn` : '')
-    },
-    [iface.getSighash('claimWithRootUpdate')]: (txn, network, { extended = false }) => {
-      const { toBurnBps } = iface.parseTransaction(txn).args
-      const burnPercentage = toBurnBps.toString() / 100
-      return toExtended(extended, 'Claim rewards', burnPercentage > 0 ? `with ${burnPercentage}% burn` : '')
+      return toExtended(extended, 'claim rewards', burnPercentage > 0 ? `with ${burnPercentage}% burn` : '')
     },
     [iface.getSighash('mintVesting')]: (txn, network, { extended = false }) => {
-      return toExtended(extended, 'Claim vested tokens')
+      return toExtended(extended, 'claim vested tokens')
     },
   }
 }

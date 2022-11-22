@@ -1,148 +1,77 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react'
-import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js'
-import { Doughnut } from 'react-chartjs-2'
-import cn from 'classnames'
-import { networkIconsById } from 'consts/networks'
-import { ReactComponent as AlertCircle } from 'resources/icons/alert-circle.svg'
+import './Chart.scss';
 
-import styles from './Chart.module.scss'
+import DonutChart from "react-donut-chart";
+import { useState } from 'react';
 
-ChartJS.register(ArcElement, Tooltip, Legend)
+const Chart = ({ data, size }) => {
+    const [hoveredItem, setHoveredItem] = useState({});
 
-const colors = [
-  '#6000FF',
-  '#AE60FF',
-  '#38D612',
-  '#FD1A64',
-  '#ffbc00',
-  '#838AFF',
-  '#D5FF40',
-  '#00B9FF',
-  '#ED5911',
-  '#08A186',
-  '#0D33FF',
-  '#EE0DFF',
-  '#FFEF0D',
-  '#0B62E6',
-  '#FF880D',
-  '#86B7D9',
-  '#E6160B',
-  '#00FFF7',
-  '#8E49FF',
-  '#B68500'
-]
+    const colors = [
+        "#AA6AFF",
+        "#80FFDB",
+        "#8088FF",
+        "#E680FF",
+        "#A5FF80",
+        "#E6FF80",
+        "#FFC480",
+        "#FF8080",
+    ];
+    
+    const strokeColor = "transparent";
+    const innerRadius = 0.5;
+    const selectedOffset = 0.05;
 
-const round = (num) => Math.round((num + Number.EPSILON) * 100) / 100
+    const onMouseEnter = (item) => {
+        setHoveredItem(item.label);
+    };
 
-const Chart = ({ portfolio, hidePrivateValue, selectedNetwork, data, className }) => {
-  const networkBalance = hidePrivateValue(portfolio.balance.total.full)
-  const [activeItem, setActiveItem] = useState(null)
-  const chartRef = useRef()
-
-  const chartData = useMemo(
-    () => ({
-      labels: data?.data?.map((i) => i.label),
-      datasets: [
-        {
-          data: data?.data?.map((i) => i.balanceUSD),
-          backgroundColor: portfolio?.balance?.total?.full ? colors : '#1E2033',
-          borderColor: '#24263D',
-          borderWidth: data?.data?.length > 1 ? 0 : 0, // Change the first zero to 3 to add spacing
-          cutout: '85%'
+    const onClick = (item, toggled) => {
+        if (toggled) {
+            console.log(item);
         }
-      ]
-    }),
-    [data?.data, portfolio?.balance?.total?.full]
-  )
+    };
 
-  const getItemColor = (index) => {
-    const colorCount = colors.length - 1
-    return index > colorCount
-      ? colors[index - colors.length * Math.trunc(index / colors.length)]
-      : colors[index]
-  }
+    const sortData = data => {
+        return data.sort((a, b) => b.value - a.value);
+    };
 
-  const onMouseMove = () => setActiveItem(chartRef?.current?._active[0]?.index)
+    const getItemColor = index => {
+        const colorCount = colors.length - 1;
+        return index > colorCount ? colors[index - (colors.length * Math.trunc(index / colors.length))] : colors[index];
+    };
 
-  useEffect(() => {
-    window.addEventListener('mousemove', onMouseMove)
-
-    return () => {
-      window.removeEventListener('mousemove', onMouseMove)
-    }
-  }, [])
-
-  const options = useMemo(
-    () => ({
-      plugins: {
-        legend: {
-          display: false
-        },
-        tooltip: {
-          callbacks: {
-            label: (context) => {
-              if (data.empty) {
-                return 'No funds on this network'
-              }
-              return `${context.raw.toFixed(2)} $`
-            }
-          }
-        }
-      }
-    }),
-    [data.empty]
-  )
-
-  return (
-    <div className={cn(styles.wrapper, className)}>
-      <div className={styles.donut}>
-        <Doughnut data={chartData} options={options} ref={chartRef} />
-        <div className={styles.networkInfo}>
-          <img
-            className={styles.networkIcon}
-            src={networkIconsById[selectedNetwork.id]}
-            alt={selectedNetwork.id}
-          />
-          <label className={styles.networkAmount}>
-            <span className={styles.currency}>$</span>
-            {typeof networkBalance === 'number'
-              ? networkBalance >= 10000
-                ? `${String(round(networkBalance / 1000))
-                    .split('.')
-                    .join(',')}K`
-                : networkBalance.toFixed(2)
-              : 0}
-          </label>
-        </div>
-      </div>
-      <div className={styles.legend}>
-        <h2 className={styles.legendTitle}>Balance by tokens</h2>
-        {!data?.empty ? (
-          <div className={styles.legendItems}>
-            {data?.data?.map((item, i) => (
-              <div
-                className={`${styles.item} ${activeItem === i ? styles.active : ''}`}
-                key={`item-${i}`}
-              >
-                {/* hovered logic disabled for now */}
-                <div className={styles.color} style={{ backgroundColor: getItemColor(i) }} />
-                <label>{item.label}</label>
-                <div className={styles.separator} />
-                <div className={styles.percent}>{parseFloat(item.value).toFixed(2)}%</div>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <div className={styles.noTokensWrapper}>
-            <div className={styles.noTokens}>
-              <AlertCircle />
-              <label>You don't have any tokens on this network</label>
+    return (
+        <div className="chart">
+            <DonutChart
+                className="donut"
+                height={size}
+                width={size}
+                onMouseEnter={(item) => onMouseEnter(item)}
+                data={sortData(data)}
+                colors={colors}
+                startAngle={-90}
+                strokeColor={strokeColor}
+                innerRadius={innerRadius}
+                selectedOffset={selectedOffset}
+                legend={false}
+                onClick={(item, toggled) => onClick(item, toggled)}
+            />
+            <div className="legend" style={{maxHeight: size}}>
+                {
+                    data.map((item, i) => (
+                        <div className={`item ${hoveredItem === item.label ? 'active' : ''}`} key={`item-${i}`}>
+                            <div className="color" style={{backgroundColor: getItemColor(i)}}/>
+                            <label>{ item.label }</label>
+                            <div className="separator"></div>
+                            <div className="percent">
+                                { parseFloat(item.value).toFixed(2) }%
+                            </div>
+                        </div>
+                    ))
+                }
             </div>
-          </div>
-        )}
-      </div>
-    </div>
-  )
-}
+        </div>
+    );
+};
 
-export default Chart
+export default Chart;

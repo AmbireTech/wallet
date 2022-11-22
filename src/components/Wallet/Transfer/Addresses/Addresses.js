@@ -1,7 +1,8 @@
-import styles from './Addresses.module.scss'
+import './Addresses.scss'
 
+import { MdOutlineAdd } from 'react-icons/md'
 import AddressList from 'components/common/AddressBook/AddressList/AddressList'
-import { Button, Panel } from 'components/common'
+import { Button } from 'components/common'
 import { isValidAddress } from 'ambire-common/src/services/address'
 import AddAddressModal from 'components/Modals/AddAddressModal/AddAddressModal'
 import { useModals } from 'hooks'
@@ -23,16 +24,19 @@ const Addresses = ({ addresses, addAddress, removeAddress, onSelectAddress, sele
     const showInputModal = () => showModal(addAddressModal)
 
     return (
-        <Panel title="Address Book" titleClassName={styles.title} className={styles.wrapper}>
-            <AddressList
-                noAccounts={true}
-                addresses={addresses}
-                removeAddress={removeAddress}
-                onSelectAddress={onSelectAddress}
-                className={styles.addressList}
-            />
-            <Button onClick={showInputModal} className={styles.addressesButton}>Add Address</Button>
-        </Panel>
+        <div id="addresses" className='panel'>
+            <div className='title'>Address Book</div>
+            <div className="content">
+                <AddressList
+                    noAccounts={true}
+                    addresses={addresses}
+                    removeAddress={removeAddress}
+                    onSelectAddress={onSelectAddress}
+                />
+            </div>
+            <div className="separator"></div>
+            <Button icon={<MdOutlineAdd/>} onClick={showInputModal}>Add Address</Button>
+        </div>
     )
 }
 

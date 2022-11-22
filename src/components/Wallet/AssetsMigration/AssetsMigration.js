@@ -67,13 +67,13 @@ const AssetsMigration = ({ addRequest, selectedAccount, accounts, network, hideM
       setModalButtons([
         (<Button
           icon={<MdOutlineNavigateBefore/>}
-          className={'clear buttonComponent'}
+          className={'clear'}
           onClick={() => setShowCloseConfirmation(false)}
           key='0'
         >Back</Button>),
         (<Button
           icon={<MdClose/>}
-          className={'danger buttonComponent'}
+          className={'danger'}
           onClick={() => hideModal()}
           key='1'
         >Close</Button>)

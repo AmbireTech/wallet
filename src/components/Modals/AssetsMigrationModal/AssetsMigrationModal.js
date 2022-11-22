@@ -1,5 +1,3 @@
-import './AssetsMigrationModal.scss'
-
 import { useModals } from 'hooks'
 import { Modal, Stepper } from 'components/common'
 

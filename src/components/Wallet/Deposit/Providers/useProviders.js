@@ -6,14 +6,13 @@ import { useState } from 'react';
 import { useToasts } from 'hooks/toasts'
 import { useModals } from 'hooks'
 import GuardarianDepositProviderModal from 'components/Modals/GuardarianDepositProviderModal/GuardarianDepositProviderModal'
-import { useHistory } from 'react-router-dom'
 
 import url from 'url'
 
 import { RAMP_HOST_API_KEY, PAYTRIE_PARTNER_URL, TRANSAK_API_KEY, TRANSAK_ENV } from 'config'
 
 const useProviders = ({ walletAddress, selectedNetwork, relayerURL, portfolio }) => {
-    const history = useHistory()
+
     const [isLoading, setLoading] = useState([])
     const { addToast } = useToasts()
     const { showModal } = useModals()
@@ -29,7 +28,7 @@ const useProviders = ({ walletAddress, selectedNetwork, relayerURL, portfolio })
 
         const widget = new RampInstantSDK({
             hostAppName: 'Ambire',
-            hostLogoUrl: 'https://raw.githubusercontent.com/AmbireTech/ambire-brand/main/logos/Ambire%20Horizontal%20Light%20Background.svg',
+            hostLogoUrl: 'https://www.ambire.com/ambire-logo.png',
             variant: 'auto',
             swapAsset: assetsList[selectedNetwork],
             userAddress: walletAddress,
@@ -122,32 +121,12 @@ const useProviders = ({ walletAddress, selectedNetwork, relayerURL, portfolio })
         setLoading(prevState => prevState.filter(n => n !== 'Kriptomat'))
     }
 
-    const openGuardarian = (initMode = 'buy', selectedAsset) => {
+    const openGuardarian = () => {
         setLoading(prevState => ['Guardarian', ...prevState])
-        showModal(<GuardarianDepositProviderModal relayerURL={relayerURL} walletAddress={walletAddress} selectedNetwork={selectedNetwork} portfolio={portfolio} initMode={initMode} selectedAsset={selectedAsset}/>)
+        showModal(<GuardarianDepositProviderModal relayerURL={relayerURL} walletAddress={walletAddress} selectedNetwork={selectedNetwork} portfolio={portfolio}/>)
         setLoading(prevState => prevState.filter(n => n !== 'Guardarian'))
     }
 
-    const openMoonpay = async (mode = 'buy', selectedAsset) => {
-        setLoading(prevState => ['MoonPay', ...prevState])
-        const moonpayResponse = await fetchGet(`${relayerURL}/moonpay/${walletAddress}/${mode}/${selectedAsset ? selectedAsset.symbol : null}`)
-        
-        if (moonpayResponse.success && moonpayResponse.data && moonpayResponse.data.url) popupCenter({
-            url: url.format(moonpayResponse.data.url),
-            title: 'MoonPay Deposit',
-            w: 515,
-            h: 600
-        })
-        else addToast(`Error: ${moonpayResponse.data ? moonpayResponse.data : 'unexpected error'}`, { error: true })
-        setLoading(prevState => prevState.filter(n => n !== 'MoonPay'))
-    }
-
-    const openSwappin = async () => {
-        setLoading(prevState => ['Swappin', ...prevState])
-        const url = 'https://app.swappin.gifts/ref/ambire'
-        history.push(`/wallet/dapps?dappUrl=${url}`)
-        setLoading(prevState => prevState.filter(n => n !== 'Swappin'))
-    }
 
     return {
         openRampNetwork,
@@ -155,8 +134,6 @@ const useProviders = ({ walletAddress, selectedNetwork, relayerURL, portfolio })
         openTransak,
         openKriptomat,
         openGuardarian,
-        openMoonpay,
-        openSwappin,
         isLoading
     }
 }
