@@ -1,15 +1,16 @@
-import './History.scss'
-
 import { useState, useEffect, useMemo, useRef } from 'react'
-import { MdOutlineArrowForward, MdOutlineCheck, MdOutlineClose } from 'react-icons/md'
-import { HiOutlineExternalLink } from 'react-icons/hi'
+
+import networks from 'consts/networks'
+
+import movrTxParser from './movrTxParser'
+import { useRelayerData } from 'hooks'
+import { useToasts } from 'hooks/toasts'
+import useConstants from 'hooks/useConstants'
 import { Loading, Panel } from 'components/common'
 import useMovr from 'components/Wallet/CrossChain/useMovr'
-import networks from 'consts/networks'
-import { useToasts } from 'hooks/toasts'
-import { useRelayerData } from 'hooks'
-import movrTxParser from './movrTxParser'
-import useConstants from 'hooks/useConstants'
+import TxStatus from './TxStatus/TxStatus'
+
+import styles from './History.module.scss'
 
 const History = ({ relayerURL, network, account, quotesConfirmed }) => {
     const { constants: { humanizerInfo } } = useConstants()
@@ -22,7 +23,6 @@ const History = ({ relayerURL, network, account, quotesConfirmed }) => {
     const currentNetwork = useRef(network.id)
 
     const getNetworkDetails = chainId => networks.find(n => n.chainId === chainId)
-    const formatAmount = (amount, asset) => amount / Math.pow(10, asset.decimals)
 
     // @TODO refresh this after we submit a bundle; perhaps with the upcoming transactions service
     // We want this pretty much on every rerender with a 5 sec debounce
@@ -121,7 +121,7 @@ const History = ({ relayerURL, network, account, quotesConfirmed }) => {
     }, [network])
 
     return (
-        <Panel id="history" className="panel" title="History">
+        <Panel className={styles.wrapper} title="History">
             {
                 loading ?
                     <Loading/>
@@ -129,62 +129,11 @@ const History = ({ relayerURL, network, account, quotesConfirmed }) => {
                     !txStatuses.length ?
                         <div>No pending transfer/swap on this network.</div>
                         :
-                        txStatuses.map(({ sourceTx, fromNetwork, toNetwork, toAsset, toAmount, from, to, serviceTimeMinutes, isPending, statusError }) => (
-                            <div className="tx-status" key={sourceTx}>
-                                <div className="summary">
-                                    <div className="path">
-                                        <div className="network">
-                                            <div className="icon" style={{backgroundImage: `url(${fromNetwork.icon})`}}></div>
-                                            <div className="name">{ fromNetwork.name }</div>
-                                        </div>
-                                        <div className="amount">
-                                            { from.amount ? formatAmount(from.amount, from.asset) : '' }
-                                            <div className="asset">
-                                                <div className="icon" style={{backgroundImage: `url(${from?.asset?.icon})`}}></div>
-                                                <div className="name">{ from?.asset?.symbol }</div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <MdOutlineArrowForward/>
-                                    <div className="path">
-                                        <div className="network">
-                                            <div className="icon" style={{backgroundImage: `url(${toNetwork.icon})`}}></div>
-                                            <div className="name">{ toNetwork.name }</div>
-                                        </div>
-
-                                        <div className="amount">
-                                            { to.amount ? formatAmount(to.amount, to.asset) : '' }
-                                            { toAsset && toAmount ? formatAmount(parseFloat(toAmount), toAsset) : '' }
-                                            <div className="asset">
-                                                <div className="icon" style={{backgroundImage: `url(${to?.asset?.icon})`}}></div>
-                                                <div className="name">{ to?.asset?.symbol }</div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="details">
-                                    <a href={`${fromNetwork.explorerUrl}/tx/${sourceTx}`} target="_blank" rel="noreferrer">View on Block Explorer <HiOutlineExternalLink/></a>
-                                    {
-                                        statusError ? 
-                                            <div className="status error">
-                                                <MdOutlineClose/>
-                                                Could not fetch status
-                                            </div>
-                                            :
-                                            isPending ? 
-                                                <div className="status pending">
-                                                    <Loading/>
-                                                    Pending
-                                                    <span>(Usually takes { serviceTimeMinutes || 20 } minutes)</span>
-                                                </div>
-                                                :
-                                                <div className="status confirmed">
-                                                    <MdOutlineCheck/>
-                                                    Confirmed
-                                                </div>
-                                    }
-                                </div>
-                            </div>
+                        txStatuses.map((data) => (
+                            <TxStatus 
+                                key={data.sourceTx}
+                                data={data}
+                            />
                         ))
             }
         </Panel>

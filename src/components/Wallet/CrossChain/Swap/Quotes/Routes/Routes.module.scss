@@ -1,0 +1,28 @@
+@import 'variables';
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  .title {
+    font-size: 20px;
+    font-weight: bold;
+  }
+
+  .route {
+    background-color: $c-mirage;
+    border-radius: 12px;
+    padding: 20px;
+    align-items: flex-start;
+
+    > div {
+      margin-top: 15px;
+    }
+  }
+
+  .noRoutesPlaceholder {
+    font-size: 16px;
+    opacity: 0.8;
+  }
+}
