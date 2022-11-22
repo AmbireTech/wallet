@@ -90,53 +90,55 @@ const GetQuotesForm = ({
 
   return (
     <div className={styles.wrapper}>
-      <div className={styles.fromSection}>
-        <label className={styles.label}>From</label>
-        <div className={styles.inputs}>
-          {loadingFromTokens ? <Loading /> : null}
-          <Select
-            searchable
-            defaultValue={fromToken}
-            items={fromTokensItems}
-            onChange={({ value }) => setFromToken(value)}
-            iconClassName={styles.selectIcon}
-            selectInputClassName={styles.selectInput}
-          />
-          <NumberInput
-            min="0"
-            label={
-              <div className={styles.amountLabel}>
-                Available Amount: <span>{maxAmount}</span>
-              </div>
-            }
-            value={amount}
-            onInput={(value) => setAmount(value)}
-            button="MAX"
-            onButtonClick={() => setAmount(maxAmount)}
-          />
+      <div className={styles.body}>
+        <div className={styles.fromSection}>
+          <label className={styles.label}>From</label>
+          <div className={styles.inputs}>
+            {loadingFromTokens ? <Loading /> : null}
+            <Select
+              searchable
+              defaultValue={fromToken}
+              items={fromTokensItems}
+              onChange={({ value }) => setFromToken(value)}
+              iconClassName={styles.selectIcon}
+              selectInputClassName={styles.selectInput}
+            />
+            <NumberInput
+              min="0"
+              label={
+                <div className={styles.amountLabel}>
+                  Available Amount: <span>{maxAmount}</span>
+                </div>
+              }
+              value={amount}
+              onInput={(value) => setAmount(value)}
+              button="MAX"
+              onButtonClick={() => setAmount(maxAmount)}
+            />
+          </div>
         </div>
-      </div>
-      <SwapIcon className={styles.separator} />
-      <div className={styles.toSection}>
-        <label className={styles.label}>To</label>
-        <div className={styles.inputs}>
-          {loadingToTokens ? <Loading /> : null}
-          <Select
-            searchable
-            defaultValue={toChain}
-            items={chainsItems}
-            onChange={({ value }) => setToChain(value)}
-            iconClassName={styles.selectIcon}
-            selectInputClassName={styles.selectInput}
-          />
-          <Select
-            searchable
-            defaultValue={toToken}
-            items={toTokenItems}
-            onChange={({ value }) => setToToken(value)}
-            iconClassName={styles.selectIcon}
-            selectInputClassName={styles.selectInput}
-          />
+        <SwapIcon className={styles.separator} />
+        <div className={styles.toSection}>
+          <label className={styles.label}>To</label>
+          <div className={styles.inputs}>
+            {loadingToTokens ? <Loading /> : null}
+            <Select
+              searchable
+              defaultValue={toChain}
+              items={chainsItems}
+              onChange={({ value }) => setToChain(value)}
+              iconClassName={styles.selectIcon}
+              selectInputClassName={styles.selectInput}
+            />
+            <Select
+              searchable
+              defaultValue={toToken}
+              items={toTokenItems}
+              onChange={({ value }) => setToToken(value)}
+              iconClassName={styles.selectIcon}
+              selectInputClassName={styles.selectInput}
+            />
+          </div>
         </div>
       </div>
       <Button primaryGradient={true} className={styles.button} disabled={formDisabled} onClick={getQuotes}>
