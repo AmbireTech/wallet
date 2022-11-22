@@ -3,7 +3,7 @@ import { useEffect, useState, useCallback, useMemo } from 'react'
 import { parseUnits } from 'ethers/lib/utils'
 import { useToasts } from 'hooks/toasts'
 
-import { BsArrowDown } from 'react-icons/bs'
+import { ReactComponent as SwapIcon } from 'resources/icons/cross-chain.svg'
 
 import { NumberInput, Button, Select, Loading } from 'components/common'
 
@@ -90,36 +90,48 @@ const GetQuotesForm = ({
 
   return (
     <div className={styles.wrapper}>
-      <label>From</label>
-      <div className={styles.inputs}>
-        {loadingFromTokens ? <Loading /> : null}
-        <Select
-          searchable
-          defaultValue={fromToken}
-          items={fromTokensItems}
-          onChange={({ value }) => setFromToken(value)}
-        />
-        <NumberInput
-          min="0"
-          label={
-            <div className={styles.amountLabel}>
-              Available Amount: <span>{maxAmount}</span>
-            </div>
-          }
-          value={amount}
-          onInput={(value) => setAmount(value)}
-          button="MAX"
-          onButtonClick={() => setAmount(maxAmount)}
-        />
+      <div className={styles.fromSection}>
+        <label className={styles.label}>From</label>
+        <div className={styles.inputs}>
+          {loadingFromTokens ? <Loading /> : null}
+          <Select
+            searchable
+            defaultValue={fromToken}
+            items={fromTokensItems}
+            onChange={({ value }) => setFromToken(value)}
+          />
+          <NumberInput
+            min="0"
+            label={
+              <div className={styles.amountLabel}>
+                Available Amount: <span>{maxAmount}</span>
+              </div>
+            }
+            value={amount}
+            onInput={(value) => setAmount(value)}
+            button="MAX"
+            onButtonClick={() => setAmount(maxAmount)}
+          />
+        </div>
       </div>
-      <div className={styles.separator}>
-        <BsArrowDown />
-      </div>
-      <label>To</label>
-      <div className={styles.inputs}>
-        {loadingToTokens ? <Loading /> : null}
-        <Select searchable defaultValue={toChain} items={chainsItems} onChange={({ value }) => setToChain(value)} />
-        <Select searchable defaultValue={toToken} items={toTokenItems} onChange={({ value }) => setToToken(value)} />
+      <SwapIcon className={styles.separator} />
+      <div className={styles.toSection}>
+        <label className={styles.label}>To</label>
+        <div className={styles.inputs}>
+          {loadingToTokens ? <Loading /> : null}
+          <Select
+            searchable
+            defaultValue={toChain}
+            items={chainsItems}
+            onChange={({ value }) => setToChain(value)}
+          />
+          <Select
+            searchable
+            defaultValue={toToken}
+            items={toTokenItems}
+            onChange={({ value }) => setToToken(value)}
+          />
+        </div>
       </div>
       <Button primaryGradient={true} className={styles.button} disabled={formDisabled} onClick={getQuotes}>
         Get Quotes
