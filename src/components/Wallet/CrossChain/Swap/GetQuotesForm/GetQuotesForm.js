@@ -99,6 +99,8 @@ const GetQuotesForm = ({
             defaultValue={fromToken}
             items={fromTokensItems}
             onChange={({ value }) => setFromToken(value)}
+            iconClassName={styles.selectIcon}
+            selectInputClassName={styles.selectInput}
           />
           <NumberInput
             min="0"
@@ -124,12 +126,16 @@ const GetQuotesForm = ({
             defaultValue={toChain}
             items={chainsItems}
             onChange={({ value }) => setToChain(value)}
+            iconClassName={styles.selectIcon}
+            selectInputClassName={styles.selectInput}
           />
           <Select
             searchable
             defaultValue={toToken}
             items={toTokenItems}
             onChange={({ value }) => setToToken(value)}
+            iconClassName={styles.selectIcon}
+            selectInputClassName={styles.selectInput}
           />
         </div>
       </div>
