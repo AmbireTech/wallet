@@ -2,17 +2,10 @@
 
 .wrapper {
   flex: 1;
+  height: 100%;
 
   .placeholder {
     font-weight: 500;
     opacity: 0.8;
   }
-}
-
-#powered {
-  align-self: center;
-  text-align: right;
-  font-size: 12px;
-  font-weight: normal;
-  opacity: 0.5;
 }
