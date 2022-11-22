@@ -127,7 +127,9 @@ const History = ({ relayerURL, network, account, quotesConfirmed }) => {
           ) : !txStatuses.length ? (
             <div>No pending transfer/swap on this network.</div>
           ) : (
-            txStatuses.map((data) => <TxStatus key={data.sourceTx} data={data} />)
+            <div className={styles.txStatuses}>
+                {txStatuses.map((data) => <TxStatus key={data.sourceTx} data={data} />)}
+            </div>
           )}
         </Panel>
       )
