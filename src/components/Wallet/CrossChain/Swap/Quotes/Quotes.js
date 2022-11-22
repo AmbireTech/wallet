@@ -125,8 +125,7 @@ const Quotes = ({ addRequest, selectedAccount, fromTokensItems, quotes, onQuotes
 
       <div className={styles.buttons}>
         <Button
-          small
-          clear
+          border
           icon={routes.length ? <MdOutlineClose /> : <MdOutlineArrowBack />}
           disabled={loading}
           onClick={onCancel}
@@ -136,7 +135,7 @@ const Quotes = ({ addRequest, selectedAccount, fromTokensItems, quotes, onQuotes
         </Button>
         {routes.length ? (
           <Button
-            small
+            primaryGradient
             icon={<MdOutlineCheck />}
             disabled={!selectedRoute || loading}
             onClick={onConfirm}
