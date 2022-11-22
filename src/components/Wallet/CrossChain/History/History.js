@@ -122,22 +122,15 @@ const History = ({ relayerURL, network, account, quotesConfirmed }) => {
 
     return (
         <Panel className={styles.wrapper} title="History">
-            {
-                loading ?
-                    <Loading/>
-                    :
-                    !txStatuses.length ?
-                        <div>No pending transfer/swap on this network.</div>
-                        :
-                        txStatuses.map((data) => (
-                            <TxStatus 
-                                key={data.sourceTx}
-                                data={data}
-                            />
-                        ))
-            }
+          {loading ? (
+            <Loading />
+          ) : !txStatuses.length ? (
+            <div>No pending transfer/swap on this network.</div>
+          ) : (
+            txStatuses.map((data) => <TxStatus key={data.sourceTx} data={data} />)
+          )}
         </Panel>
-    )
+      )
 }
 
 export default History
