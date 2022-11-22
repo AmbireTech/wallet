@@ -2,11 +2,11 @@
 
 .wrapper {
   flex: 1;
-  overflow-y: auto;
-
+  
   .txStatuses {
     display: flex;
     flex-direction: column;
     gap: 10px;
+    overflow-y: auto;
   }
 }
