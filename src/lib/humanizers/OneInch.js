@@ -8,7 +8,7 @@ const parseZeroAddressIfNeeded = address => {
 }
 
 const OneInchMapping = (humanizerInfo) => {
-    const iface = new Interface(humanizerInfo.abis.OneInch)
+    const iface = new Interface(humanizerInfo.abis.Swappin)
 
     return {
         [iface.getSighash('swap')]: (txn, network, { extended = false }) => {
