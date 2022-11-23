@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react'
+
+import { PERMITTABLE_COINS } from 'consts/permittableCoins'
+
+import { Button } from 'components/common'
 import AssetsMigrationSelector from './AssetsMigrationSelector/AssetsMigrationSelector'
 import AssetsMigrationPermitter from './AssetsMigrationPermitter/AssetsMigrationPermitter'
 import AssetsMigrationNative from './AssetsMigrationNative/AssetsMigrationNative'
-import { PERMITTABLE_COINS } from 'consts/permittableCoins'
-import { MdOutlineNavigateBefore } from 'react-icons/md'
-import { Button } from 'components/common'
 
 import styles from './AssetsMigration.module.scss'
 
@@ -76,7 +77,6 @@ const AssetsMigration = ({
       setShowCloseConfirmation(true)
       setModalButtons([
         <Button
-          icon={<MdOutlineNavigateBefore />}
           clear
           onClick={() => setShowCloseConfirmation(false)}
           key="0"
