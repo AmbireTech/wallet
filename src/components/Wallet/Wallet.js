@@ -14,18 +14,17 @@ import SideBar from "./SideBar/SideBar"
 import { Loading } from "components/common"
 import DappsCatalog from "./DappsCatalog/DappsCatalog"
 // Pages
-import Transfer from "./Transfer/Transfer"
-import Dashboard from "./Dashboard/Dashboard"
-import Swap from "./Swap/Swap"
-import Earn from "./Earn/Earn"
-import Security from "./Security/Security"
-import Transactions from './Transactions/Transactions'
-import Signatures from './Signatures/Signatures'
-import Collectible from "./Collectible/Collectible"
-import CrossChain from "./CrossChain/CrossChain"
-import OpenSea from "./OpenSea/OpenSea"
-import Deposit from "./Deposit/Deposit"
-import Gas from "./Gas/Gas"
+const Transfer = lazy(() => import("./Transfer/Transfer"))
+const Dashboard = lazy(() => import("./Dashboard/Dashboard"))
+const Swap = lazy(() => import("./Swap/Swap"))
+const Earn = lazy(() => import("./Earn/Earn"))
+const Security = lazy(() => import("./Security/Security"))
+const Transactions = lazy(() => import('./Transactions/Transactions'))
+const Collectible = lazy(() => import("./Collectible/Collectible"))
+const CrossChain = lazy(() => import("./CrossChain/CrossChain"))
+const OpenSea = lazy(() => import("./OpenSea/OpenSea"))
+const Deposit = lazy(() => import("./Deposit/Deposit"))
+const Gas = lazy(() => import("./Gas/Gas"))
 
 export default function Wallet(props) {
   const { showModal } = useModals()
@@ -126,14 +125,21 @@ export default function Wallet(props) {
         eligibleRequests={props.eligibleRequests}
         showSendTxns={props.showSendTxns}
         setSendTxnState={props.setSendTxnState}
+        privateMode={props.privateMode}
       />
     },
     {
-      path: '/messages/:page?',
-      component: <Signatures
-        privateMode={props.privateMode}
+      path: '/transactions/messages/:page?',
+      component: <Transactions
+        relayerURL={props.relayerURL}
         selectedAcc={props.selectedAcc}
         selectedNetwork={props.network}
+        addRequest={props.addRequest}
+        eligibleRequests={props.eligibleRequests}
+        showSendTxns={props.showSendTxns}
+        setSendTxnState={props.setSendTxnState}
+        privateMode={props.privateMode}
+        showMessagesView={true}
       />
     },
     {
