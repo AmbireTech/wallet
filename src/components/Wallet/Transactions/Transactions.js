@@ -1,7 +1,6 @@
 import styles from './Transactions.module.scss'
-import { FaSignature } from 'react-icons/fa'
-import { BsCoin, BsCalendarWeek, BsGlobe2, BsCheck2All } from 'react-icons/bs'
-import { MdOutlinePendingActions, MdShuffle, MdCheck, MdOutlineSavings } from 'react-icons/md'
+import { BsCoin, BsCalendarWeek, BsGlobe2 } from 'react-icons/bs'
+import { MdShuffle, MdOutlineSavings } from 'react-icons/md'
 import { useRelayerData } from 'hooks'
 import TxnPreview from 'components/common/TxnPreview/TxnPreview'
 import { Loading, Button } from 'components/common'
@@ -41,7 +40,6 @@ import { useLocalStorage } from 'hooks'
 const RBF_THRESHOLD = 1.14
 const TO_GAS_TANK = `to Gas Tank`
 const ITEMS_PER_PAGE = 2
-
 
 function getMessageAsText(msg) {
   if (isHexString(msg)) {
