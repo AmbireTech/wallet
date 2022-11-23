@@ -20,7 +20,6 @@ const Swap = lazy(() => import("./Swap/Swap"))
 const Earn = lazy(() => import("./Earn/Earn"))
 const Security = lazy(() => import("./Security/Security"))
 const Transactions = lazy(() => import('./Transactions/Transactions'))
-const Signatures = lazy(() => import('./Signatures/Signatures'))
 const Collectible = lazy(() => import("./Collectible/Collectible"))
 const CrossChain = lazy(() => import("./CrossChain/CrossChain"))
 const OpenSea = lazy(() => import("./OpenSea/OpenSea"))
@@ -126,14 +125,21 @@ export default function Wallet(props) {
         eligibleRequests={props.eligibleRequests}
         showSendTxns={props.showSendTxns}
         setSendTxnState={props.setSendTxnState}
+        privateMode={props.privateMode}
       />
     },
     {
-      path: '/messages/:page?',
-      component: <Signatures
-        privateMode={props.privateMode}
+      path: '/transactions/messages/:page?',
+      component: <Transactions
+        relayerURL={props.relayerURL}
         selectedAcc={props.selectedAcc}
         selectedNetwork={props.network}
+        addRequest={props.addRequest}
+        eligibleRequests={props.eligibleRequests}
+        showSendTxns={props.showSendTxns}
+        setSendTxnState={props.setSendTxnState}
+        privateMode={props.privateMode}
+        showMessagesView={true}
       />
     },
     {
