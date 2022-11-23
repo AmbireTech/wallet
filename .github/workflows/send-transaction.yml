@@ -37,7 +37,7 @@ jobs:
     name: Deploy Send Transaction
     needs: build
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/feature/redesign-sign-transaction-style
+    if: github.ref == 'refs/heads/feature/redesign-sign-transaction-style'
     steps:
       - name: Download artifact
         uses: actions/download-artifact@v2
