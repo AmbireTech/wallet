@@ -1,8 +1,10 @@
+import { useState } from 'react'
+
 import { useModals } from 'hooks'
 import { Modal, Stepper } from 'components/common'
-
 import AssetsMigration from './AssetMigration/AssetsMigration'
-import { useState } from 'react'
+
+import styles from './AssetMigrationModal.module.scss'
 
 const AssetsMigrationModal = ({ addRequest, selectedAccount, selectedNetwork, accounts, relayerURL, portfolio }) => {
   const { hideModal, setBeforeCloseModalHandler } = useModals()
@@ -18,7 +20,7 @@ const AssetsMigrationModal = ({ addRequest, selectedAccount, selectedNetwork, ac
   }
 
   return (
-    <Modal title={getModalTitle()} buttons={modalButtons}>
+    <Modal className={styles.wrapper} title={getModalTitle()} buttons={modalButtons}>
       <AssetsMigration
         addRequest={addRequest}
         selectedAccount={selectedAccount}
