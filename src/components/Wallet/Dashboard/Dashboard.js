@@ -8,7 +8,7 @@ import Protocols from './Protocols/Protocols'
 import Collectibles from './Collectibles/Collectibles'
 
 import Promotions from './Promotions/Promotions'
-import AssetsMigrationBanner from 'components/Wallet/AssetsMigration/AssetsMigrationBanner'
+import AssetsMigrationBanner from 'components/common/AssetsMigrationBanner/AssetsMigrationBanner'
 import PendingRecoveryNotice from 'components/Wallet/Security/PendingRecoveryNotice/PendingRecoveryNotice'
 import usePasswordRecoveryCheck from 'hooks/usePasswordRecoveryCheck'
 import OutdatedBalancesMsg from './OutdatedBalancesMsg/OutdatedBalancesMsg'

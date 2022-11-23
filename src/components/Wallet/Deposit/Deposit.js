@@ -7,7 +7,7 @@ import Providers from './Providers/Providers'
 
 import networks from 'consts/networks'
 
-import AssetsMigrationBanner from 'components/Wallet/AssetsMigration/AssetsMigrationBanner'
+import AssetsMigrationBanner from 'components/common/AssetsMigrationBanner/AssetsMigrationBanner'
 
 import styles from './Deposit.module.scss'
 
