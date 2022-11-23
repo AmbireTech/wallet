@@ -284,7 +284,7 @@ function Transactions ({ relayerURL, selectedAcc, selectedNetwork, showSendTxns,
           }
         </div>)}
         { showMessages &&
-        (false
+        (!filteredMessages.length
           ? (
             <div className={cn(styles.signedMessages)}>
               No messages signed with the account { privateMode.hidePrivateValue(selectedAcc) } yet on {selectedNetwork.id}
