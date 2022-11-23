@@ -3,11 +3,9 @@ import useGasTank from 'ambire-common/src/hooks/useGasTank'
 import './App.scss'
 
 import { HashRouter as Router, Switch, Route, Redirect, Prompt } from 'react-router-dom'
-import React, { useState, useEffect, useMemo, useCallback, lazy, Suspense } from 'react'
+import React, { useState, useEffect, useMemo, useCallback, Suspense } from 'react'
 import useNetwork from 'ambire-common/src/hooks/useNetwork'
-import WalletStakingPoolABI from 'ambire-common/src/constants/abis/WalletStakingPoolABI.json'
 import useRewards from 'ambire-common/src/hooks/useRewards'
-import { Contract, utils } from 'ethers'
 import { Loading } from 'components/common'
 import ConstantsProvider from 'components/ConstantsProvider/ConstantsProvider'
 import useDapps from 'ambire-common/src/hooks/useDapps'
@@ -30,7 +28,6 @@ import {
 } from './hooks'
 import { useToasts } from './hooks/toasts'
 import { useOneTimeQueryParam } from './hooks/oneTimeQueryParam'
-import { getProvider } from './lib/provider'
 import allNetworks from './consts/networks'
 
 import EmailLogin from './components/EmailLogin/EmailLogin'
@@ -39,12 +36,14 @@ import Wallet from './components/Wallet/Wallet'
 import SendTransaction from './components/SendTransaction/SendTransaction'
 import SignMessage from './components/SignMessage/SignMessage'
 
-const relayerURL =
-  process.env.REACT_APP_RELAYRLESS === 'true'
-    ? null
-    : process.env.hasOwnProperty('REACT_APP_RELAYER_URL')
-    ? process.env.REACT_APP_RELAYER_URL
-    : 'http://localhost:1934'
+const setRelayerURL = () => {
+  if (process.env.REACT_APP_RELAYRLESS === 'true') null
+  if (Object.prototype.hasOwnProperty.call(process.env, 'REACT_APP_RELAYER_URL'))
+    process.env.REACT_APP_RELAYER_URL
+  return 'http://localhost:1934'
+}
+
+const relayerURL = setRelayerURL()
 
 setTimeout(() => {
   // console.warn('☢️ If you do, malicious code could steal your funds! ☢️')
@@ -228,17 +227,17 @@ function AppInner() {
       })
       return
     }
-    setSentTxn((sentTxn) => [...sentTxn, { confirmed: false, hash }])
+    setSentTxn((prevState) => [...prevState, { confirmed: false, hash }])
     addToast(
       <span>Transaction signed and sent successfully! &nbsp;Click to view on block explorer.</span>,
       { url: `${network.explorerUrl}/tx/${hash}`, timeout: 15000 }
     )
   }
   const confirmSentTx = (txHash) =>
-    setSentTxn((sentTxn) => {
-      const tx = sentTxn.find((tx) => tx.hash === txHash)
-      tx.confirmed = true
-      return [...sentTxn.filter((tx) => tx.hash !== txHash), tx]
+    setSentTxn((prevState) => {
+      const foundTxn = prevState.find((tx) => tx.hash === txHash)
+      foundTxn.confirmed = true
+      return [...prevState.filter((tx) => tx.hash !== txHash), foundTxn]
     })
 
   // Show notifications for all requests
@@ -310,7 +309,7 @@ function AppInner() {
             relayerURL={relayerURL}
             network={network}
             resolve={(outcome) => resolveMany([everythingToSign[0].id], outcome)}
-          ></SignMessage>
+          />
         )}
 
         {sendTxnState.showing && (
