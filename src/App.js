@@ -40,11 +40,11 @@ const setRelayerURL = () => {
   if (process.env.REACT_APP_RELAYRLESS === 'true') {
     return null
   }
-  
+
   if (Object.prototype.hasOwnProperty.call(process.env, 'REACT_APP_RELAYER_URL')) {
     return process.env.REACT_APP_RELAYER_URL
   }
-    
+
   return 'http://localhost:1934'
 }
 
