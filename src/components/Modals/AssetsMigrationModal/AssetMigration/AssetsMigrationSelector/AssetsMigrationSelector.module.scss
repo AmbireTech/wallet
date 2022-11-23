@@ -1,0 +1,17 @@
+@import 'variables';
+
+.wrapper {
+  .loading {
+    div {
+      margin: 0 auto;
+    }
+  }
+
+  .title {
+    font-size: 18px;
+    text-align: center;
+    font-weight: 400;
+    margin: 0;
+    margin-bottom: 30px;
+  }
+}

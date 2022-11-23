@@ -1,0 +1,101 @@
+@import 'variables';
+
+.wrapper {
+  .row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    border-bottom: 1px solid $c-mirage;
+    padding: 8px 4px;
+    height: 50px;
+
+    &:hover {
+      background-color: $c-mirage;
+    }
+
+    .name {
+      font-weight: bold;
+    }
+
+    .select {
+      flex-grow: 1;
+      cursor: pointer;
+      padding-left: 8px;
+
+      .checkboxLabel {
+        height: 25px;
+      }
+
+      &:hover .checkboxMark {
+        svg {
+          color: $c-heliotrope;
+        }
+      }
+
+      &.checked .checkboxMark {
+        svg {
+          color: $c-turquoise;
+        }
+      }
+    }
+
+    .separator {
+      flex-grow: 1;
+    }
+
+    .amountInput input {
+      height: 40px;
+      padding: 10px;
+      font-size: 1em;
+      max-width: 120px;
+    }
+
+    .usd {
+      color: $c-manatee;
+      padding-right: 8px;
+    }
+
+    .amount {
+      padding-left: 8px;
+      flex-shrink: 1;
+    }
+
+    .amountUsd {
+      color: $c-manatee;
+    }
+
+    .selectIcon {
+      height: 22px;
+      width: 22px;
+      padding: 2px;
+      border-radius: 100px;
+      background: rgba($c-titan-white, 0.05);
+      overflow: hidden;
+
+      img {
+        max-width: 18px;
+      }
+
+      &.selectIconPermit {
+        margin-top: 0;
+        margin-right: 8px;
+      }
+    }
+  }
+
+  .migrationPermitted {
+    padding: 8px;
+    font-size: 14px;
+    background: mix($c-turquoise, $c-ebony-clay, 5%);
+    color: $c-turquoise;
+    display: flex;
+    align-items: center;
+    border-radius: 12px;
+    gap: 4px;
+
+    &.warning {
+      background: mix($c-half-spanish-white, $c-ebony-clay, 5%);
+      color: $c-half-spanish-white;
+    }
+  }
+}

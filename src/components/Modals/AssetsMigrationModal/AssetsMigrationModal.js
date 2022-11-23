@@ -1,9 +1,7 @@
-import './AssetsMigrationModal.scss'
-
 import { useModals } from 'hooks'
 import { Modal, Stepper } from 'components/common'
 
-import AssetsMigration from 'components/Wallet/AssetsMigration/AssetsMigration'
+import AssetsMigration from './AssetMigration/AssetsMigration'
 import { useState } from 'react'
 
 const AssetsMigrationModal = ({ addRequest, selectedAccount, selectedNetwork, accounts, relayerURL, portfolio }) => {
@@ -20,7 +18,7 @@ const AssetsMigrationModal = ({ addRequest, selectedAccount, selectedNetwork, ac
   }
 
   return (
-    <Modal id='asset-migration-modal' title={getModalTitle()} buttons={modalButtons} >
+    <Modal title={getModalTitle()} buttons={modalButtons}>
       <AssetsMigration
         addRequest={addRequest}
         selectedAccount={selectedAccount}

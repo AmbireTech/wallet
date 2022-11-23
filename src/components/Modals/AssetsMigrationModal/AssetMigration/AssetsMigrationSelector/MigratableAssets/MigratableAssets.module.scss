@@ -1,0 +1,88 @@
+@import 'variables';
+
+.wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 30px 10px;
+  padding: 10px 20px;
+  border-radius: 12px;
+  margin-bottom: 10px;
+
+  border-bottom: 1px solid $c-mirage;
+
+  &:last-child {
+    border-bottom: 0;
+  }
+
+  p {
+    margin: 0;
+  }
+
+  .selectLabel {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+
+    img {
+      width: 24px;
+      height: 24px;
+    }
+    .selectName {
+      white-space: nowrap;
+      padding-left: 4px;
+      padding-top: 0px;
+    }
+  }
+
+  .checkbox {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0;
+
+    input:checked ~ .checkbox-mark {
+      background: $c-mirage;
+    }
+
+    .checkboxMark {
+      margin-top: 1px;
+      background: $c-mirage;
+      height: 20px;
+      width: 20px;
+      border: 2px solid transparent;
+
+      &:after {
+        left: 4px;
+        top: 0px;
+
+        border-color: $c-turquoise;
+      }
+    }
+
+    &:not(.disabled):hover {
+      .checkboxMark {
+        background-color: $c-mirage;
+        border: 2px solid $c-turquoise;
+      }
+    }
+  }
+
+  .amountUsd {
+    margin-left: 10px;
+  }
+
+  .amountWrapper {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-left: auto;
+
+    .amountInput {
+      input {
+        width: 120px;
+        height: 40px;
+        padding: 5px 10px;
+      }
+    }
+  }
+}
