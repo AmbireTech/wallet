@@ -26,7 +26,7 @@ const MultiplierBadges = ({ rewards, apys }) => {
           <a href={link} target="_blank" rel="noreferrer" key={id}>
             <ToolTip label={multiplier !== 0 ? (`You ${active ? 'are receiving' : 'do not have'} the ${name} x${multiplier} multiplier`) : (active ? 'This bonus is enabled' : 'You do not have this bonus enabled')}>
               <div className={`badge ${active ? 'active' : ''}`} >
-                <div className={`icon-svg icon-svg-${icon_svg}`}></div>
+                <div className={`icon-svg icon-svg-reward-${id}`}></div>
                 {/*
                   //TODO what should we do with this, as the numbers are in the design?
                   multiplier

@@ -121,7 +121,6 @@ $badge-size-height: 90px;
         }
     }
 
-
     .icon-svg {
         background-size: contain;
         width: 98px;
@@ -130,24 +129,24 @@ $badge-size-height: 90px;
         background-repeat: no-repeat;
         background-position: 50% 50%;
 
-        &.icon-svg-rewards-beta-tester {
+        &.icon-svg-reward-beta-tester {
             background-image: url('../../../resources/rewards/reward-beta-tester.svg');
         }
 
-        &.icon-svg-rewards-lobster {
-            background-image: url('../../../resources/rewards/reward-lobster.svg');
+        &.icon-svg-reward-lobsters {
+            background-image: url('../../../resources/rewards/reward-lobsters.svg');
         }
 
-        &.icon-svg-reward-power-user {
-            background-image: url('../../../resources/rewards/reward-power-user.svg');
+        &.icon-svg-reward-powerUserMultiplier {
+            background-image: url('../../../resources/rewards/reward-powerUserMultiplier.svg');
         }
 
-        &.icon-svg-rewards-crypto-tester {
-            background-image: url('../../../resources/rewards/reward-crypto-tester.svg');
+        &.icon-svg-reward-cryptoTesters {
+            background-image: url('../../../resources/rewards/reward-cryptoTesters.svg');
         }
 
-        &.icon-svg-rewards-gas-tank {
-            background-image: url('../../../resources/rewards/reward-gas-tank.svg');
+        &.icon-svg-reward-gasTankNft {
+            background-image: url('../../../resources/rewards/reward-gasTankNft.svg');
         }
 
     }
