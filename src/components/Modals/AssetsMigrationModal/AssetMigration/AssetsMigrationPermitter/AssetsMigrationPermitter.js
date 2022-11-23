@@ -1,18 +1,15 @@
-import { ethers } from 'ethers'
 import { useCallback, useEffect, useState } from 'react'
+import BigNumber from 'bignumber.js'
+
+import { ZERO_ADDRESS } from 'consts/specialAddresses'
+import { ERC20PermittableInterface } from 'consts/permittableCoins'
+import { fetchGet } from 'lib/fetch'
 import { getWallet } from 'lib/getWallet'
-import { FaCheck, FaHourglass } from 'react-icons/fa'
-import cn from 'classnames'
+
 import Button from 'components/common/Button/Button'
 
-import { GiToken } from 'react-icons/gi'
-import { MdOutlineNavigateBefore, MdOutlineNavigateNext } from 'react-icons/md'
-import { ZERO_ADDRESS } from 'consts/specialAddresses'
-import { fetchGet } from 'lib/fetch'
-import BigNumber from 'bignumber.js'
-import { ERC20PermittableInterface } from 'consts/permittableCoins'
-
 import styles from './AssetsMigrationPermitter.module.scss'
+import Token from './Token/Token'
 
 const AssetsMigrationPermitter = ({
   addRequest,
@@ -40,7 +37,6 @@ const AssetsMigrationPermitter = ({
   //error display logic if a user has rejected one or more MM popup
   const [hasRefusedOnce, setHasRefusedOnce] = useState(false)
   const [lastRefusalError, setLastRefusalError] = useState(null)
-  const [failedImg, setFailedImg] = useState([])
 
   const [hasCorrectAccountAndChainId, setHasCorrectAccountAndChainId] = useState(null)
 
@@ -333,15 +329,15 @@ const AssetsMigrationPermitter = ({
     if (hidden) return
     setModalButtons(
       <>
-        <Button clear icon={<MdOutlineNavigateBefore />} onClick={() => cancelMigration()}>
+        <Button clear icon onClick={() => cancelMigration()}>
           Back
         </Button>
         {readyTokensCount() === getConsolidatedTokensPure(selectedTokensWithAllowance).length ? (
-          <Button border icon={<MdOutlineNavigateNext />} onClick={() => hideModal()}>
+          <Button border icon onClick={() => hideModal()}>
             Close
           </Button>
         ) : (
-          <Button primaryGradient disabled icon={<MdOutlineNavigateNext />}>
+          <Button primaryGradient disabled icon>
             Complete
           </Button>
         )}
@@ -362,7 +358,7 @@ const AssetsMigrationPermitter = ({
   return (
     <div className={styles.wrapper}>
       {readyTokensCount() < getConsolidatedTokensPure(selectedTokensWithAllowance).length ? (
-        <div className="notification-hollow mb-3 warning">{`${
+        <div className={styles.actionsLeft}>{`${
           getConsolidatedTokensPure(selectedTokensWithAllowance).length - readyTokensCount()
         } actions left to complete the migration`}</div>
       ) : (
@@ -374,47 +370,7 @@ const AssetsMigrationPermitter = ({
         tokensTransfers,
         tokensPendingStatus
       ).map((item, index) => (
-        <div className={styles.row} key={index}>
-          <span className={cn(styles.selectIcon, styles.selectIconPermit)}>
-            {!item.icon || failedImg.includes(item.icon) ? (
-              <GiToken size={18} />
-            ) : (
-              <img
-                src={item.icon}
-                draggable="false"
-                alt="Token Icon"
-                onError={(err) => {
-                  setFailedImg((failed) => [...failed, item.icon])
-                }}
-              />
-            )}
-          </span>
-          <div className={styles.name}>{item.name}</div>
-          <div className={styles.amount}>
-            {new BigNumber(item.amount).div(10 ** item.decimals).toFixed()}{' '}
-            <span className={styles.amountUsd}>(${(item.amount * item.rate).toFixed(2)})</span>
-          </div>
-          <div className={styles.separator}></div>
-          <div>
-            {!((item.allowance && ethers.BigNumber.from(item.allowance).gte(item.amount)) || item.sent) ? (
-              <>
-                {item.pending || item.signing ? (
-                  <div className={cn(styles.migrationPermitted, styles.warning)}>
-                    <FaHourglass /> Sending...
-                  </div>
-                ) : (
-                  <Button small primaryGradient onClick={() => sendToken(item.address)}>
-                    Send
-                  </Button>
-                )}
-              </>
-            ) : (
-              <div className={styles.migrationPermitted} onClick={() => sendToken(item.address)}>
-                <FaCheck /> Sent
-              </div>
-            )}
-          </div>
-        </div>
+        <Token data={item} sendToken={sendToken} key={index}/>
       ))}
     </div>
   )
