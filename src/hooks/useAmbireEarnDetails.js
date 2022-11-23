@@ -31,7 +31,6 @@ const useAmbireEarnDetails = ({accountId, addresses, tokenLabel}) => {
         const fromBlock = 0
         const fromBlockHardcoded = (tokenLabel === 'ADX') ? 0xe64fe2 : 0
         const [
-            timeToUnbond,
             shareValue,
             sharesTotalSupply,
             balanceShares,
@@ -43,7 +42,6 @@ const useAmbireEarnDetails = ({accountId, addresses, tokenLabel}) => {
             sharesTokensTransfersInLogs,
             sharesTokensTransfersOutLogs,
         ] = await Promise.all([
-            xWalletContract.timeToUnbond(),
             xWalletContract.shareValue(),
             xWalletContract.totalSupply(),
             xWalletContract.balanceOf(accountId),
@@ -84,15 +82,6 @@ const useAmbireEarnDetails = ({accountId, addresses, tokenLabel}) => {
                 ...xWalletContract.filters.Transfer(accountId, null, null),
             }),
         ])
-        const [latestLog] = leaveLogs.sort((a, b) => b.blockNumber - a.blockNumber)
-        let remainingTime
-        if (latestLog) {
-            const { timestamp } = await ethProvider.getBlock(latestLog.blockNumber)
-            remainingTime = (timeToUnbond.toString() * 1000) - (Date.now() - (timestamp * 1000))
-            if (remainingTime <= 0) remainingTime = 0
-        } else {
-            remainingTime = null
-        }
        
         const userShare = sharesTotalSupply.isZero()
             ? ZERO
@@ -299,6 +288,19 @@ const useAmbireEarnDetails = ({accountId, addresses, tokenLabel}) => {
             (a, b) => a.add(b.walletValue),
             ZERO
         )
+
+        let leavePendingToUnlockOrReadyToWithdraw = null 
+        if (leavesReadyToWithdraw.length) leavePendingToUnlockOrReadyToWithdraw = leavesReadyToWithdraw[0]
+        else if (leavesPendingToUnlock.length) leavePendingToUnlockOrReadyToWithdraw = leavesPendingToUnlock[0]
+        const [latestLog] = leaveLogs.sort((a, b) => b.blockNumber - a.blockNumber)
+        let remainingTime
+        if (leavePendingToUnlockOrReadyToWithdraw && latestLog) {
+            const { unlocksAt } = leavePendingToUnlockOrReadyToWithdraw
+            remainingTime = (unlocksAt.toString() * 1000) - Date.now()
+            if (remainingTime <= 0) remainingTime = 0
+        } else {
+            remainingTime = null
+        }
 
         if (
             sharesTokensTransfersOut.length ||
