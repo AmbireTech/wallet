@@ -16,33 +16,51 @@ const TxStatus = ({
   return (
     <div className={styles.wrapper}>
       <div className={styles.summary}>
-        <div className={styles.path}>
+        <div className={styles.networks}>
+          {/* From Network */}
           <div className={styles.network}>
-            <div className={styles.icon} style={{ backgroundImage: `url(${fromNetwork.icon})` }}></div>
-            <div className={styles.name}>{fromNetwork.name}</div>
+            <div className={styles.iconWrapper}>
+              <img src={fromNetwork.icon} alt="" className={styles.icon} />
+            </div>
+            <div className={styles.networkName}>
+              <p>From</p>
+              <h4 className={styles.name}>{fromNetwork.name}</h4>
+            </div>
           </div>
-          <div className={styles.amount}>
-            {from.amount ? formatAmount(from.amount, from.asset) : ''}
-            <div className={styles.asset}>
-              <div className={styles.icon} style={{ backgroundImage: `url(${from?.asset?.icon})` }}></div>
-              <div className={styles.name}>{from?.asset?.symbol}</div>
+          {/* To Network */}
+          <div className={cn(styles.network, styles.toNetwork)}>
+            <div className={styles.iconWrapper}>
+              <img src={toNetwork.icon} alt="" className={styles.icon} />
+            </div>
+            <div className={styles.networkName}>
+              <p>To</p>
+              <h4 className={styles.name}>{toNetwork.name}</h4>
             </div>
           </div>
         </div>
-        <SwapIcon className={styles.swapIcon} />
-        <div className={styles.path}>
-          <div className={styles.network}>
-            <div className={styles.icon} style={{ backgroundImage: `url(${toNetwork.icon})` }}></div>
-            <div className={styles.name}>{toNetwork.name}</div>
+        <div className={styles.tokens}>
+          {/* From Token */}
+          <div className={styles.token}>
+            <p className={styles.amount}>
+              {from.amount ? formatAmount(from.amount, from.asset) : ''}
+            </p>
+            <div className={styles.iconWrapper}>
+              <img className={styles.icon} alt="" src={from?.asset?.icon} />
+            </div>
+            <p className={styles.amount}>{from?.asset?.symbol}</p>
           </div>
-
-          <div className={styles.amount}>
+          {/* Swap Icon  */}
+          <SwapIcon className={styles.swapIcon} />
+          {/* To Token */}
+          <div className={cn(styles.token, styles.toToken)}>
+            <p className={styles.amount}>
             {to.amount ? formatAmount(to.amount, to.asset) : ''}
             {toAsset && toAmount ? formatAmount(parseFloat(toAmount), toAsset) : ''}
-            <div className={styles.asset}>
-              <div className={styles.icon} style={{ backgroundImage: `url(${to?.asset?.icon})` }}></div>
-              <div className={styles.name}>{to?.asset?.symbol}</div>
+            </p>
+            <div className={styles.iconWrapper}>
+              <img className={styles.icon} alt="" src={to?.asset?.icon} />
             </div>
+            <p className={styles.amount}>{to?.asset?.symbol}</p>
           </div>
         </div>
       </div>

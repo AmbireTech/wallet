@@ -1,71 +1,111 @@
 @import 'variables';
 
+@mixin Icon ($width, $height) {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: $width;
+  height: $height;
+  border-radius: 12px;
+  background-color: rgba($c-titan-white, 0.05);
+}
+
 .wrapper {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
-  gap: 20px;
-  padding: 30px 20px;
+  gap: 18px;
+  padding: 20px;
+  padding-bottom: 15px;
   border-radius: 12px;
   background-color: $c-mirage;
+
+  p {
+    margin: 0;
+  }
   
   .summary {
     width: 100%;
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     align-items: center;
-    justify-content: space-between;
     gap: 15px;
 
-    .network,
-    .asset {
+    .networks {
       display: flex;
       align-items: center;
-      gap: 7px;
-      font-weight: 400;
-
-      .icon {
-        flex: 0 0 auto;
-        height: 20px;
-        width: 20px;
-        border-radius: 100%;
-        background-size: contain;
-        background-position: center center;
-        background-repeat: no-repeat;
-        background-color: $c-ebony-clay-light;
-      }
-
-      .name {
-        flex: 0 0 auto;
-      }
-    }
-
-    .network {
-      font-size: 16px;
-
-      .icon {
-        height: 17px;
-        width: 17px;
-      }
-    }
-
-    .path {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
       justify-content: space-between;
-      gap: 10px;
-      flex: 1;
+      width: 100%;
 
-      &:nth-child(3) {
-        align-items: flex-end;
-      }
-
-      .amount {
+      .network {
         display: flex;
         gap: 10px;
-        opacity: 0.8;
+        align-items: center;
+
+        .iconWrapper {
+          @include Icon(40px, 40px);
+
+          .icon {
+            width: 36px;
+            height: 36px;
+          }
+        }
+
+        .networkName {
+          font-size: 14px;
+
+          .name {
+            margin: 0;
+            font-size: 16px;
+            font-weight: 600;
+          }
+        }
+
+        &.toNetwork {
+          flex-direction: row-reverse;
+          text-align: right;
+        }
+      }
+    }
+
+    .tokens {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      
+      .token {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex: 1;
+
+        .amount {
+          font-size: 14px;
+          max-width: 120px;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+
+        .iconWrapper {
+          @include Icon(28px, 28px);
+
+          .icon {
+            width: 18px;
+            height: 18px;
+          }
+        }
+
+        &.toToken {
+          justify-content: flex-end;
+        }
+      }
+
+      .swapIcon {
+        width: 30px;
+        height: 30px;
       }
     }
   }
@@ -142,20 +182,38 @@
     .summary {
       flex-direction: column;
       align-items: center;
-      gap: 15px;
+      gap: 20px;
 
-      .path {
-        &:first-child {
-          align-self: flex-start;
-        }
-        &:last-child {
-          align-self: flex-end;
-          text-align: right;
+      .networks {
+        .network {
+          flex-direction: column;
+          align-items: flex-start;
+
+          &.toNetwork {
+            flex-direction: column;
+            align-items: flex-end;
+            text-align: right;
+          }
         }
       }
 
-      .swapIcon {
-        transform: rotate(90deg);
+      .tokens {
+        // flex-direction: column;
+        gap: 15px;
+
+        .token {
+          flex-direction: column;
+          align-items: flex-start;
+
+          &.toToken {
+            align-items: flex-end;
+          }
+        }
+
+        .swapIcon {
+          width: 40px;
+          height: 40px;
+        }
       }
     }
   }
