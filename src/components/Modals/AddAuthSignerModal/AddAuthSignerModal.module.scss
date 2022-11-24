@@ -5,7 +5,8 @@
 }
 
 .wrapper {
-  max-width: 600px;
+  width: 100%;
+  max-width: 1000px;
   padding-bottom: 100px!important;
 
   .signerAddress {
@@ -22,7 +23,7 @@
 .signers {
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
+  justify-content: space-around;
   align-items: stretch;
   gap: 20px;
 
@@ -30,7 +31,6 @@
     position: relative;
     top: 0;
     padding: 50px 10px;
-    flex: 1 1 0;
     background: $c-mirage;
     border: 1px solid $c-scampi;
     border-radius: 12px;

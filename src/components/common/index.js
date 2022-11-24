@@ -29,6 +29,7 @@ import DAppIncompatibilityWarningMsg from './DAppIncompatibilityWarningMsg/DAppI
 import Pagination from './Pagination/Pagination';
 import Panel from './Panel/Panel';
 import Image from './Image/Image';
+import RemoteLottie from './RemoteLottie/RemoteLottie'
 
 export {
     AddressBook,
@@ -62,4 +63,5 @@ export {
     Pagination,
     Panel,
     Image,
+    RemoteLottie
 };

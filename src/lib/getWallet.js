@@ -14,7 +14,7 @@ import {
   latticeSignMessage712
  } from 'lib/lattice'
 import { _TypedDataEncoder } from 'ethers/lib/utils'
-import { getProvider } from 'lib/provider'
+import { getProvider } from 'ambire-common/src/services/provider'
 import networks from 'consts/networks'
 
 let wallets = {}
@@ -46,7 +46,7 @@ function getWalletNew({ chainId, signer, signerExtra }, opts) {
       sendTransaction: async (transaction) => {
         const network = networks.find(n => n.chainId === transaction.chainId)
         if (!network) throw Error('no network found for chainId : ' + transaction.chainId)
-        const broadcastProvider = await getProvider(network.id)
+        const broadcastProvider = getProvider(network.id)
         if (!broadcastProvider) throw Error('no provider found for network : ' + network.id)
 
         transaction.nonce = ethers.utils.hexlify(await broadcastProvider.getTransactionCount(transaction.from))
@@ -99,7 +99,7 @@ function getWalletNew({ chainId, signer, signerExtra }, opts) {
         sendTransaction: async (transaction) => {
           const network = networks.find(n => n.chainId === transaction.chainId)
           if (!network) throw Error('no network found for chainId : ' + transaction.chainId)
-          const provider = await getProvider(network.id)
+          const provider = getProvider(network.id)
           if (!provider) throw Error('no provider found for network : ' + network.id)
 
           transaction.nonce = ethers.utils.hexlify(await provider.getTransactionCount(transaction.from))
@@ -191,7 +191,7 @@ function getWalletNew({ chainId, signer, signerExtra }, opts) {
         return await wrapLatticeError(async (transaction) => {
           const network = networks.find(n => n.chainId === transaction.chainId)
           if (!network) throw Error('no network found for chainId : ' + transaction.chainId)
-          const broadcastProvider = await getProvider(network.id)
+          const broadcastProvider = getProvider(network.id)
           if (!broadcastProvider) throw Error('no provider found for network : ' + network.id)
           transaction.nonce = ethers.utils.hexlify(await broadcastProvider.getTransactionCount(transaction.from))
           const { commKey, deviceId } = signerExtra

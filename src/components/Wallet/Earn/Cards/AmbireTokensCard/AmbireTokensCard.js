@@ -9,7 +9,7 @@ import WalletStakingPoolABI from 'ambire-common/src/constants/abis/WalletStaking
 import AdexStakingPool from 'ambire-common/src/constants/AdexStakingPool.json'
 import supplyControllerABI from 'ambire-common/src/constants/ADXSupplyController.json'
 import { Interface, parseUnits, formatUnits } from "ethers/lib/utils"
-import { getProvider } from 'lib/provider'
+import { getProvider } from 'ambire-common/src/services/provider'
 import ERC20ABI from 'adex-protocol-eth/abi/ERC20.json'
 import networks from 'consts/networks'
 import AmbireEarnDetailsModal from 'components/Modals/AmbireEarnDetailsModal/AmbireEarnDetailsModal'

@@ -15,8 +15,8 @@ const Signer = ({
   addToast,
   privValue, 
   selectedAccount, 
-  hasPendingReset, 
-  relayerURL, 
+  hasPendingReset,
+  relayerData,
   handleDisableOtp, 
   handleEnableOtp,
   onMakeDefaultBtnClicked,
@@ -25,7 +25,7 @@ const Signer = ({
 }) => {
   const { showModal } = useModals()
 
-  const otpEnabled = relayerURL ? relayerURL.otpEnabled : null
+  const otpEnabled = relayerData ? relayerData.otpEnabled : null
   const { constants: { humanizerInfo } } = useConstants()
 
   if (!privValue) return null
@@ -81,10 +81,10 @@ const Signer = ({
         </div>
       </div>
       <div className={styles.buttons}>
-        {(isQuickAcc && (otpEnabled !== null) && otpEnabled) ? 
-          <Button className={styles.button} red onClick={handleDisableOtp}>Disable 2FA</Button> : 
-          <Button className={styles.button} primaryGradient onClick={handleEnableOtp}>Enable 2FA</Button>
-        }
+        {isQuickAcc && (otpEnabled !== null) && (otpEnabled ?
+            <Button className={styles.button} red onClick={handleDisableOtp}>Disable 2FA</Button> :
+            <Button className={styles.button} primaryGradient onClick={handleEnableOtp}>Enable 2FA</Button>
+        )}
         {isQuickAcc && <Button
           disabled={!canChangePassword}
           className={styles.button}

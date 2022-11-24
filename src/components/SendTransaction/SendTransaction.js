@@ -1,7 +1,6 @@
 import { useEffect, useState, useMemo, useRef } from 'react'
 import { ethers } from 'ethers'
-
-import { getProvider } from 'lib/provider'
+import { getProvider } from 'ambire-common/src/services/provider'
 
 import { useToasts } from 'hooks/toasts'
 import {
