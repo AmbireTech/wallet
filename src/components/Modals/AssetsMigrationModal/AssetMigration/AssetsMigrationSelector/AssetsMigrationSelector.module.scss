@@ -15,3 +15,11 @@
     margin-bottom: 30px;
   }
 }
+
+@media screen and (max-width: $mobile-breakpoint-max-width) {
+  .wrapper {
+    .title {
+      font-size: 14px;
+    }
+  }
+}
