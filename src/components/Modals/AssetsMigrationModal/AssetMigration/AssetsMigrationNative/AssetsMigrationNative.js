@@ -5,11 +5,11 @@ import cn from 'classnames'
 import { getWallet } from 'lib/getWallet'
 
 import { Button, Loading } from 'components/common'
+import Summary from './Summary/Summary'
 
 import { GiToken } from 'react-icons/gi'
 
 import styles from './AssetsMigrationNative.module.scss'
-import Summary from './Summary/Summary'
 
 const AssetsMigrationNative = ({
   identityAccount,
