@@ -1,0 +1,17 @@
+@import "variables";
+
+.wrapper {
+  .listOfTransactions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    overflow-y: auto;
+    margin-bottom: 20px;
+  }
+}
+
+@media screen and (max-width: $mobile-breakpoint-max-width) {
+  .wrapper {
+    overflow-y: unset;
+  }
+}
