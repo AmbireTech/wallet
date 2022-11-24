@@ -1,3 +1,0 @@
-/*! MIT License. Copyright 2015-2018 Richard Moore <me@ricmoo.com>. See LICENSE.txt. */
-
-/*! safe-buffer. MIT License. Feross Aboukhadijeh <https://feross.org/opensource> */
