@@ -1,0 +1,18 @@
+<svg id="Unlock_claim_icon" data-name="Unlock claim icon" xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="0 0 50 50">
+  <g id="unlock_clain_" data-name="unlock clain " transform="translate(-1569.439 -43.533)">
+    <g id="Rectangle_845" data-name="Rectangle 845" transform="translate(1571.561 50.238)" fill="#24263d" stroke="#6770b3" stroke-linecap="round" stroke-width="1.5" stroke-dasharray="1 4">
+      <rect width="39.372" height="31.064" rx="5" stroke="none"/>
+      <rect x="0.75" y="0.75" width="37.872" height="29.564" rx="4.25" fill="none"/>
+    </g>
+    <g id="Rectangle_844" data-name="Rectangle 844" transform="translate(1571.561 55.32)" fill="#24263d" stroke="#6770b3" stroke-linecap="round" stroke-width="1.5" stroke-dasharray="1 4">
+      <rect width="45.184" height="31.507" rx="5" stroke="none"/>
+      <rect x="0.75" y="0.75" width="43.684" height="30.007" rx="4.25" fill="none"/>
+    </g>
+    <g id="Rectangle_847" data-name="Rectangle 847" transform="translate(1602.06 67.182)" fill="#24263d" stroke="#6770b3" stroke-linecap="round" stroke-width="1.5" stroke-dasharray="1 4">
+      <rect width="16.379" height="9.113" rx="4" stroke="none"/>
+      <rect x="0.75" y="0.75" width="14.879" height="7.613" rx="3.25" fill="none"/>
+    </g>
+    <circle id="Ellipse_126" data-name="Ellipse 126" cx="1.977" cy="1.977" r="1.977" transform="translate(1604.884 69.762)" fill="#6770b3"/>
+  </g>
+  <rect id="Rectangle_872" data-name="Rectangle 872" width="50" height="50" fill="none"/>
+</svg>
