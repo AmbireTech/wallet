@@ -4,10 +4,10 @@
   display: flex;
   flex-wrap: wrap;
   gap: 30px 10px;
-  padding: 10px 20px;
+  padding: 5px 15px;
   border-radius: 12px;
   margin-bottom: 10px;
-
+  background-color: $c-mirage;
   border-bottom: 1px solid $c-mirage;
 
   &:last-child {
@@ -18,57 +18,37 @@
     margin: 0;
   }
 
-  .selectLabel {
+  .checkboxWrapper {
     display: flex;
     align-items: center;
-    gap: 5px;
+   
+    .checkbox {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 0;
+  
+      .checkboxLabel {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    
+        .tokenIcon {
+          width: 24px;
+          height: 24px;
+        }
 
-    img {
-      width: 24px;
-      height: 24px;
-    }
-    .selectName {
-      white-space: nowrap;
-      padding-left: 4px;
-      padding-top: 0px;
-    }
-  }
+        .tokenName {
+          white-space: nowrap;
+          padding-left: 4px;
+          padding-top: 0px;
+        }
+      }
 
-  .checkbox {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin: 0;
-
-    input:checked ~ .checkbox-mark {
-      background: $c-mirage;
-    }
-
-    .checkboxMark {
-      margin-top: 1px;
-      background: $c-mirage;
-      height: 20px;
-      width: 20px;
-      border: 2px solid transparent;
-
-      &:after {
-        left: 4px;
-        top: 0px;
-
-        border-color: $c-turquoise;
+      div { // Checkbox mark
+        margin-top: 0;
       }
     }
-
-    &:not(.disabled):hover {
-      .checkboxMark {
-        background-color: $c-mirage;
-        border: 2px solid $c-turquoise;
-      }
-    }
-  }
-
-  .amountUsd {
-    margin-left: 10px;
   }
 
   .amountWrapper {
@@ -77,11 +57,46 @@
     gap: 15px;
     margin-left: auto;
 
+    .amountUsd {
+      margin-left: 10px;
+    }
+
     .amountInput {
       input {
         width: 120px;
         height: 40px;
         padding: 5px 10px;
+      }
+    }
+  }
+}
+
+@media screen and (max-width: $mobile-breakpoint-max-width) {
+  .wrapper {
+    padding: 15px 20px;
+    flex-direction: column;
+    justify-content: center;
+
+    .checkboxWrapper {
+      .checkbox {
+        display: flex;
+        justify-content: center;
+
+        .checkboxLabel {
+          justify-content: flex-end;
+        }
+      }
+    }
+
+    .amountWrapper {
+      justify-content: space-between;
+      margin: 0;
+
+      .amountInput {
+        input {
+          max-width: 200px;
+          width: 100%;
+        }
       }
     }
   }

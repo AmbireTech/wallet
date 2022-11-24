@@ -48,18 +48,19 @@ const MigratableAssets = ({
     .sort((a, b) => (a.name < b.name ? -1 : 1))
     .map((item, index) => (
       <div className={styles.wrapper} key={index}>
-        <div className={styles.select} onClick={() => false}>
+        <div className={styles.checkboxWrapper} onClick={() => false}>
           <Checkbox
             className={styles.checkbox}
             labelClassName={styles.checkboxLabel}
             id={`check-${item.address}`}
             label={
-              <span className={styles.selectLabel}>
+              <span className={styles.checkboxLabel}>
                 {failedImg.includes(item.icon) || !item.icon ? (
                   <GiToken size={18} />
                 ) : (
                   <img
                     src={item.icon}
+                    className={styles.tokenIcon}
                     draggable="false"
                     alt="Token Icon"
                     onError={(err) => {
@@ -67,7 +68,7 @@ const MigratableAssets = ({
                     }}
                   />
                 )}
-                <span className={styles.selectName}>{item.name}</span>
+                <span className={styles.tokenName}>{item.name}</span>
               </span>
             }
             checked={item.selected}
