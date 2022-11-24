@@ -39,7 +39,7 @@ import { useLocalStorage } from 'hooks'
 // 10% in geth and most EVM chain RPCs; relayer wants 12%
 const RBF_THRESHOLD = 1.14
 const TO_GAS_TANK = `to Gas Tank`
-const ITEMS_PER_PAGE = 2
+const ITEMS_PER_PAGE = 8
 
 function getMessageAsText(msg) {
   if (isHexString(msg)) {
@@ -97,11 +97,7 @@ function Transactions ({ relayerURL, selectedAcc, selectedNetwork, showSendTxns,
 
   const maxBundlePerPage = 10
   const executedTransactions = data ? data.txns.filter(x => x.executed) : []
-  const maxPages = Math.ceil(executedTransactions.length / maxBundlePerPage)
 
-  const defaultPage = useMemo(() => Math.min(Math.max(Number(params.page), 1), maxPages) || 1, [params.page, maxPages])
-  const [page, setPage] = useState(defaultPage)
-  const [paginatedMessages, setPaginatedMessages] = useState([])
 
   const [expansions, setExpansions] = useState({})
   const [messages] = useLocalStorage({
@@ -118,6 +114,12 @@ function Transactions ({ relayerURL, selectedAcc, selectedNetwork, showSendTxns,
       )
       .sort((a, b) => b.date - a.date)
   , [messages, selectedNetwork, selectedAcc])
+
+  // Even though maxPages is only used for txsPagination, msgsPagination can overflow with a wrong param without this
+  const maxPages = showMessages ? Math.ceil(filteredMessages.length / ITEMS_PER_PAGE) : Math.ceil(executedTransactions.length / maxBundlePerPage)
+  const defaultPage = useMemo(() => Math.min(Math.max(Number(params.page), 1), maxPages) || 1, [params.page, maxPages])
+  const [page, setPage] = useState(defaultPage)
+  const [paginatedMessages, setPaginatedMessages] = useState([])
 
   const bundlesList = executedTransactions
     .slice((page - 1) * maxBundlePerPage, page * maxBundlePerPage)
