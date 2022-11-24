@@ -8,13 +8,14 @@ import CollectiblesPlaceholder from './CollectiblesPlaceholder/CollectiblesPlace
 import CollectiblesWrapper from './CollectiblesWrapper/CollectiblesWrapper'
 import Collectible from './Collectible/Collectible'
 import HideCollectibleModal from 'components/Modals/HideCollectibleModal/HideCollectibleModal'
+import AddOrHideTokenModal from 'components/Modals/AddOrHideCollectiblesModal/AddOrHideTokenModal'
 
-const Collectibles = ({ portfolio, isPrivateMode, selectedNetwork, footer }) => {
+const Collectibles = ({ network, portfolio, account, isPrivateMode, selectedNetwork, footer }) => {
     const { showModal } = useModals()
     const history = useHistory()
     const collectiblesList = portfolio.collectibles
     const [isHideCollectiblesModalOpen, setIsHideCollectiblesModalOpen] = useState(false)
-    
+    console.log(collectiblesList)
     const handleUri = uri => {
         if (!uri) return ''
         uri = uri.startsWith('data:application/json') ? uri.replace('data:application/json;utf8,', '') : uri
@@ -34,10 +35,12 @@ const Collectibles = ({ portfolio, isPrivateMode, selectedNetwork, footer }) => 
     useEffect(() => {
         if(isHideCollectiblesModalOpen) {
             showModal(
-                <HideCollectibleModal
+                <AddOrHideTokenModal
                     portfolio={portfolio} 
                     setIsHideCollectiblesModalOpen={setIsHideCollectiblesModalOpen} 
                     handleUri={handleUri}
+                    network={network}
+                    account={account}
                 />
             )
         }

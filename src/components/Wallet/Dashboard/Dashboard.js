@@ -156,6 +156,8 @@ export default function Dashboard({ portfolio, selectedNetwork, selectedAccount,
                     secondTab={
                         <Collectibles 
                             portfolio={portfolio} 
+                            network={selectedNetwork}
+                            account={selectedAccount}
                             isPrivateMode={privateMode.isPrivateMode} 
                             selectedNetwork={selectedNetwork} 
                             footer={
