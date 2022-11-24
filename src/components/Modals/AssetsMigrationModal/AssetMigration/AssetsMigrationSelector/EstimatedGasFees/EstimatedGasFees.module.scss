@@ -70,6 +70,10 @@
     .fees {
       gap: 10px;
       margin-bottom: 10px;
+      
+      .fee {
+        min-width: 100px;
+      }
     }
 
     .details {
