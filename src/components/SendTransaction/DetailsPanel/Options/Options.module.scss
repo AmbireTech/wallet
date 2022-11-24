@@ -2,6 +2,7 @@
 
 .wrapper {
   overflow-y: auto;
+  padding-right: 15px; // Temporary fix until we find a better solution for the scrollbar
 }
 
 // Adding this padding for laptop screens, because we are sure that the user will
