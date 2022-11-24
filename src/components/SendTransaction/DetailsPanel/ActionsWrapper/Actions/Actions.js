@@ -7,7 +7,7 @@ import cn from 'classnames'
 
 import { getWallet } from "lib/getWallet";
 import { fetchPost } from "lib/fetch";
-import { getProvider } from "lib/provider";
+import { getProvider } from 'ambire-common/src/services/provider'
 
 import { useToasts } from 'hooks/toasts';
 import { Button, Loading, TextInput } from 'components/common'
