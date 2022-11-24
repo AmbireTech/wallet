@@ -7,9 +7,9 @@ import { fetchGet } from 'lib/fetch'
 import { getWallet } from 'lib/getWallet'
 
 import Button from 'components/common/Button/Button'
+import Token from './Token/Token'
 
 import styles from './AssetsMigrationPermitter.module.scss'
-import Token from './Token/Token'
 
 const AssetsMigrationPermitter = ({
   addRequest,
