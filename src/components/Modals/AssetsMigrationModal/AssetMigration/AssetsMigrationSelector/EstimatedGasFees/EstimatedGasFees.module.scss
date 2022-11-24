@@ -46,6 +46,7 @@
     padding: 15px 20px;
     background-color: $c-mirage;
     border-radius: 12px;
+    opacity: .8;
 
     p {
       margin: 0;
@@ -60,6 +61,21 @@
 
     .detailsAmount {
       opacity: 0.8;
+    }
+  }
+}
+
+@media screen and (max-width: $mobile-breakpoint-max-width) {
+  .wrapper {
+    .fees {
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .details {
+      flex-direction: column;
+      justify-content: center;
+      gap: 15px;
     }
   }
 }
