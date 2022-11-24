@@ -47,10 +47,10 @@
     opacity: .9;
     margin-left: 8px;
     flex-shrink: 1;
-  }
 
-  .amountUsd {
-    color: $c-manatee;
+    .amountUsd {
+      color: $c-manatee;
+    }
   }
 
   .status {
@@ -64,6 +64,27 @@
 
     .success {
       color: $c-turquoise;
+    }
+  }
+}
+
+@media screen and (max-width: $mobile-breakpoint-max-width) {
+  .wrapper {
+    flex-direction: column;
+    justify-content: center;
+    gap: 10px;
+    padding: 15px 20px;
+
+    .name {
+      margin-left: 0;
+    }
+
+    .amount {
+      margin-bottom: 10px;
+    }
+
+    .status {
+      margin: 0;
     }
   }
 }
