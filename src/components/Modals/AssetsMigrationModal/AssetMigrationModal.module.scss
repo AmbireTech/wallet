@@ -1,5 +1,15 @@
+@import 'variables';
+
 .wrapper {
   :global(.content) {
     padding-top: 0;
+  }
+}
+
+@media screen and (max-width: $mobile-breakpoint-max-width) {
+  .wrapper {
+    button {
+      font-size: 14px!important;
+    }
   }
 }
