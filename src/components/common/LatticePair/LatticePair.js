@@ -1,6 +1,6 @@
-import './LatticeModal.scss'
+import styles from './LatticePair.module.scss'
 
-import { Modal, Button, TextInput, Loading } from 'components/common'
+import { Button, TextInput, Loading } from 'components/common'
 import { useState, useEffect, useRef } from 'react'
 import { useToasts } from 'hooks/toasts'
 import { latticeInit, 
@@ -14,7 +14,7 @@ const SECRET_LENGTH = 8
 const DEVICE_ID_LENGTH = 6
 const commKey = crypto.randomBytes(32).toString('hex')
 
-const LatticeModal = ({ addresses }) => {
+const LatticePair = ({ addresses }) => {
     const { addToast } = useToasts()
     const [isLoading, setLoading] = useState(false)
     const [deviceId, setDeviceId] = useState('')
@@ -111,8 +111,9 @@ const LatticeModal = ({ addresses }) => {
     </>
 
     return (
-        <Modal id="grid-plus" title="Connect to Lattice Device" buttons={buttons}>
-            <div className="grid-plus-content">
+        <div className={styles.wrapper}>
+            <div className={styles.title}>Connect to Lattice Device</div>
+            <div className={styles.content}>
                 <p>
                     The device ID is listed on your Lattice under{' '}
                     <strong>Settings</strong>.
@@ -142,9 +143,10 @@ const LatticeModal = ({ addresses }) => {
                 ) : (
                     <></>
                 )}
+                {buttons}
             </div>
-        </Modal>
+        </div>
     )
 }
 
-export default LatticeModal
+export default LatticePair

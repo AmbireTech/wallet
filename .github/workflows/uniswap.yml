@@ -3,10 +3,7 @@ name: Build & deploy staging for Redesign
 on:
   push:
     branches:
-      - feature/redesign-dashboard-style
-  pull_request:
-    branches:
-      - feature/redesign-dashboard-style
+      - uniswap-staging
 
 jobs:
   build:
@@ -15,7 +12,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Install Node.js
         uses: actions/setup-node@v1
@@ -37,7 +34,7 @@ jobs:
     name: Deploy Redesign
     needs: build
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/feature/redesign-dashboard-style'
+    if: github.ref == 'refs/heads/uniswap-staging'
     steps:
       - name: Download artifact
         uses: actions/download-artifact@v2
@@ -50,5 +47,5 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./build
-          destination_dir: ./redesign
+          destination_dir: ./uniswap
           cname: wallet.ambire.com

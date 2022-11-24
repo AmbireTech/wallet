@@ -1,4 +1,4 @@
-import { getProvider } from 'lib/provider'
+import { getProvider } from 'ambire-common/src/services/provider'
 import { BigNumber, utils, Contract } from 'ethers'
 import { useEffect, useState, useCallback } from 'react'
 import useConstants from './useConstants'

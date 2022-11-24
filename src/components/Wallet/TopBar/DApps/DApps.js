@@ -52,7 +52,7 @@ const DApps = ({ connections, connect, disconnect, isWcConnecting }) => {
             title={
                 <div className={styles.title}>
                     <WalletConnect />
-                    <label>Wallet Connect</label>
+                    <label>WalletConnect</label>
                 </div>
             } 
             badge={connections.length} 
