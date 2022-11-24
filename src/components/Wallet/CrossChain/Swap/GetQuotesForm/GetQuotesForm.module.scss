@@ -104,17 +104,19 @@
 
 @media screen and (max-width: $mobile-breakpoint-max-width) {
   .wrapper {
-    .inputs {
-      .selectInput {
-        padding: 0 10px;
-        font-size: 14px;
-
-        .selectIcon {
-          margin-left: 10px;
-        }
-
-        &::before {
-          left: 10px;
+    .body {
+      .inputs {
+        .selectInput {
+          padding: 0 10px;
+          font-size: 14px;
+  
+          .selectIcon {
+            margin-left: 10px;
+          }
+  
+          &::before {
+            left: 10px;
+          }
         }
       }
     }
