@@ -364,12 +364,20 @@
   .transactions {
     .panel {
       .panelHeading {
-        flex-wrap: wrap;
-        justify-content: flex-start;
+        flex-direction: column;
+        justify-content: space-between;
+        margin-bottom: 4rem;
+
+        .title {
+          margin-bottom: 1rem;
+        }
         .paginationControls {
-          align-self: flex-end;
+          align-self: center;
           margin-left: 0;
         }
+      }
+      .signedMessages {
+        word-wrap: break-word;
       }
     }
     .bundle {
