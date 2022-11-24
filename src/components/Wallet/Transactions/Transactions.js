@@ -27,7 +27,7 @@ import { ReactComponent as ConfirmedInactiveTxsIcon } from './images/confirmed-i
 import { getAddedGas } from '../../SendTransaction/helpers'
 import useConstants from 'hooks/useConstants'
 
-import { Image, Pagination } from 'components/common'
+import { Image } from 'components/common'
 import { id } from 'ethers/lib/utils'
 
 import { AiFillAppstore } from 'react-icons/ai'
@@ -52,12 +52,10 @@ function getMessageAsText(msg) {
   return msg?.toString ? msg.toString() : msg + "" //what if dapp sends it as object? force string to avoid app crashing
 }
 
-
 function Transactions ({ relayerURL, selectedAcc, selectedNetwork, showSendTxns, addRequest, eligibleRequests, setSendTxnState, privateMode, showMessagesView }) {
   const { addToast } = useToasts()
   const history = useHistory()
   const params = useParams()
-  const parentPage = params.page
   const [showMessages, setShowMessages] = useState(!!showMessagesView)
   const [cacheBreak, setCacheBreak] = useState(() => Date.now())
 
@@ -98,7 +96,6 @@ function Transactions ({ relayerURL, selectedAcc, selectedNetwork, showSendTxns,
   const maxBundlePerPage = 10
   const executedTransactions = data ? data.txns.filter(x => x.executed) : []
 
-
   const [expansions, setExpansions] = useState({})
   const [messages] = useLocalStorage({
     storage: useLocalStorage,
@@ -115,11 +112,10 @@ function Transactions ({ relayerURL, selectedAcc, selectedNetwork, showSendTxns,
       .sort((a, b) => b.date - a.date)
   , [messages, selectedNetwork, selectedAcc])
 
-  // Even though maxPages is only used for txsPagination, msgsPagination can overflow with a wrong param without this
   const maxPages = showMessages ? Math.ceil(filteredMessages.length / ITEMS_PER_PAGE) : Math.ceil(executedTransactions.length / maxBundlePerPage)
   const defaultPage = useMemo(() => Math.min(Math.max(Number(params.page), 1), maxPages) || 1, [params.page, maxPages])
   const [page, setPage] = useState(defaultPage)
-  const [paginatedMessages, setPaginatedMessages] = useState([])
+  const paginatedMessages = filteredMessages.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE)
 
   const bundlesList = executedTransactions
     .slice((page - 1) * maxBundlePerPage, page * maxBundlePerPage)
@@ -193,18 +189,6 @@ function Transactions ({ relayerURL, selectedAcc, selectedNetwork, showSendTxns,
     </div>
   )
 
-  const msgPaginationControls = (
-    <div className={cn(styles.paginationControls)}>
-      <Pagination
-        items={filteredMessages}
-        setPaginatedItems={setPaginatedMessages}
-        itemsPerPage={ITEMS_PER_PAGE}
-        url='/wallet/transactions/messages/{p}'
-        parentPage={parentPage}
-      />
-    </div>
-  )
-
   return (
     <section className={cn(styles.transactions)}>
       {!!eligibleRequests.length && (<div className={cn(styles.panel, styles.waitingTransactions)}>
@@ -263,8 +247,6 @@ function Transactions ({ relayerURL, selectedAcc, selectedNetwork, showSendTxns,
           </div>
           {/* { !bundlesList.length ? null : paginationControls } */}
           {
-            showMessages ?
-            msgPaginationControls :
             paginationControls
           }
         </div>
@@ -361,7 +343,7 @@ function Transactions ({ relayerURL, selectedAcc, selectedNetwork, showSendTxns,
                 }
               </div>
               <div className={cn(styles.bottomMsgPagination)}>
-                { msgPaginationControls }
+                { paginationControls }
               </div>
             </div>
           )
