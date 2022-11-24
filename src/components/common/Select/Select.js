@@ -5,7 +5,7 @@ import { CSSTransition } from 'react-transition-group';
 import useOnClickOutside from 'hooks/onClickOutside';
 import { TextInput } from 'components/common';
 import { MdOutlineClose, MdDragIndicator } from 'react-icons/md';
-import { ReactComponent as ChevronDownIcon } from 'resources/icons/chevron-down.svg'
+import { ReactComponent as ArrowDownIcon } from 'resources/icons/arrow-down.svg'
 
 import cn from 'classnames'
 
@@ -84,7 +84,7 @@ const Select = ({ children, native, monospace, searchable, disabled, label, defa
                                 {selectedItem.extra && <div className={styles.extra}>{selectedItem.extra}</div>}
                                 {/* <div className="separator"></div> */}
                                 <div className={cn(styles.handle, {[styles.open]: isOpen})}>
-                                    <ChevronDownIcon />
+                                    <ArrowDownIcon />
                                 </div>
                             </div>
                             {
