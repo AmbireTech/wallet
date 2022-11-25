@@ -3,9 +3,9 @@ import { ToolTip } from "components/common";
 import { ReactComponent as ChevronLeftIcon } from "resources/icons/chevron-left.svg";
 import { ReactComponent as InfoIcon } from "resources/icons/information.svg";
 
-import styles from "./TitleBar.module.scss";
+import styles from "./BackButton.module.scss";
 
-const TitleBar = ({ onDismiss }) => (
+const BackButton = ({ onDismiss }) => (
   <div className={styles.wrapper}>
     <div className={styles.dismiss} onClick={onDismiss}>
       <div className={styles.backIcon}>
@@ -19,4 +19,4 @@ const TitleBar = ({ onDismiss }) => (
   </div>
 );
 
-export default TitleBar;
+export default BackButton;
