@@ -1,0 +1,60 @@
+@import 'variables.scss';
+
+.wrapper {
+    display: flex;
+    flex-direction: row;
+    gap: 17px;
+
+    p {
+        margin: 0;
+    }
+
+    .panel {
+        flex: 0 1 50%;
+        padding: 30px 40px;
+        gap: 40px;
+
+        &Title {
+            font-weight: 400;
+            font-size: 25px;
+        }
+
+        .export {
+            .button {
+                margin-bottom: 20px;
+                height: 60px;
+                width: 100%;
+                background: transparent linear-gradient(90deg, $ambire-dark-blue 0%, $ambire-dark-blue 100%) 0% 0%;
+                border: none;
+                color: $c-titan-white;
+    
+                svg {
+                    color: $c-titan-white !important;
+                }
+            }
+        }
+    
+        .import {
+            .button { 
+                margin-bottom: 20px;
+                height: 60px;
+                width: 100%;
+                background: transparent linear-gradient(90deg, $c-turquoise 0%, #007D8A 100%) 0% 0%;
+                border: none;
+                color: $c-titan-white;
+    
+                svg {
+                    color: $c-titan-white !important;
+                }
+            }
+        }
+    }
+}
+
+// Mobile
+@media screen and (max-width: $mobile-breakpoint-max-width) {
+    .wrapper {
+        flex-direction: column;
+        gap: 1em;
+    }
+}

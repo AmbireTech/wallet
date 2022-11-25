@@ -1,5 +1,6 @@
 import { NavLink } from 'react-router-dom'
 import { Button } from 'components/common'
+
 import { ReactComponent as DepositIcon } from 'components/Wallet/SideBar/images/deposit.svg'
 
 import styles from './NoFundsPlaceholder.module.scss'

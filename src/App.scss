@@ -207,7 +207,7 @@ select {
   &.warning {
     background-color: #FEF5DB;
     border-left: 7px solid #FFBC00;
-    color: #333757;
+    color: $c-martinique-light;
   }
 
   &.success {
