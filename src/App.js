@@ -36,7 +36,6 @@ import { getManifestFromDappUrl } from 'ambire-common/src/services/dappCatalog'
 import { fetch } from 'lib/fetch'
 
 import EmailLogin from './components/EmailLogin/EmailLogin'
-import EmailLoginSDK from './components/EmailLogin/EmailLoginSDK'
 import AddAccount from './components/AddAccount/AddAccount'
 import OnRampSDK from './components/SDK/OnRamp'
 import Wallet from './components/Wallet/Wallet'
@@ -319,7 +318,7 @@ function AppInner() {
         </Route>
 
         <Route path="/email-login-iframe">
-          <EmailLoginSDK relayerURL={relayerURL} onAddAccount={onAddAccount} onLoginSuccess={onLoginSuccess}></EmailLoginSDK>
+          <EmailLogin relayerURL={relayerURL} onAddAccount={onAddAccount} onLoginSuccess={onLoginSuccess}></EmailLogin>
         </Route>
 
         <Route path="/send-transaction-sdk/:txnTo/:txnValue/:txnData">

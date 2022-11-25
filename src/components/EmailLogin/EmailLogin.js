@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react'
 import { fetch, fetchCaught } from 'lib/fetch'
 
 import LoginOrSignup from 'components/LoginOrSignupForm/LoginOrSignupForm'
+import LoginForm from 'components/SDK/LoginForm'
 import { useLocalStorage } from 'hooks'
 
 import { ReactComponent as ChevronLeftIcon } from 'resources/icons/chevron-left.svg'
@@ -14,7 +15,7 @@ import AnimationData from './assets/confirm-email.json'
 
 // NOTE: the same polling that we do here with the setEffect should be used for txns
 // that require email confirmation
-export default function EmailLogin({ relayerURL, onAddAccount }) {
+export default function EmailLogin({ relayerURL, onAddAccount, onLoginSuccess = null }) {
     const [requiresEmailConfFor, setRequiresConfFor] = useState(null)
     const [err, setErr] = useState('')
     const [inProgress, setInProgress] = useState(false)
@@ -71,6 +72,9 @@ export default function EmailLogin({ relayerURL, onAddAccount }) {
 
         // Remove the key value so that it can't be used anymore on this browser
         removeLoginSessionKey()
+
+        // dispatch login success if passed as prop
+        if (onLoginSuccess) onLoginSuccess(_id)
       } else {
         setErr(body.message ? `Relayer error: ${body.message}` : `Unknown no-message error: ${resp.status}`)
       }
@@ -133,7 +137,11 @@ export default function EmailLogin({ relayerURL, onAddAccount }) {
         {err ? (<p className={styles.error}>{err}</p>) : (<></>)}
       </div>)
       : (<div className={styles.loginEmail}>
-        <LoginOrSignup onAccRequest={onLoginUserAction} inProgress={inProgress}></LoginOrSignup>
+        {onLoginSuccess ?
+          <LoginForm onAccRequest={onLoginUserAction} inProgress={inProgress} onLoginSuccess={onLoginSuccess}></LoginForm>
+        :
+          <LoginOrSignup onAccRequest={onLoginUserAction} inProgress={inProgress}></LoginOrSignup>
+        }
         <div className={styles.magicLink}>A password will not be required, we will send a magic login link to your email.</div>
         <a className={styles.backButton} href="#/add-account">
           <ChevronLeftIcon />
