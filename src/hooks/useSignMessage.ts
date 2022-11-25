@@ -26,7 +26,6 @@ export type UseSignMessageProps = {
     confCodeRequired?: 'email' | 'otp' | null,
     approveQuickAcc?: (confCode: number) => void
   ) => Promise<any>
-  onLastMessageSign: () => void
   useStorage: Omit<UseStorageProps<any>, 'storage'>
 }
 
@@ -67,7 +66,6 @@ const useSignMessage = ({
   relayerURL,
   resolve,
   onConfirmationCodeRequired,
-  onLastMessageSign,
   useStorage
 }: UseSignMessageProps): UseSignMessageReturnType => {
   const [isLoading, setLoading] = useState<boolean>(false)
@@ -82,7 +80,7 @@ const useSignMessage = ({
 
   const requestedNetwork = getNetworkByChainId(requestedChainId)
 
-  const { signedMessages, addSignedMessage } = useSignedMsgs({ useStorage })
+  const { addSignedMessage } = useSignedMsgs({ useStorage })
 
   const { isDeployed, hasPrivileges } = useAccSignMsgStatus({
     fetch,
@@ -233,11 +231,9 @@ const useSignMessage = ({
       addToast,
       dataV4,
       messagesToSign,
-      fetch,
       handleSigningErr,
       isTypedData,
       onConfirmationCodeRequired,
-      onLastMessageSign,
       relayerURL,
       requestedNetwork,
       resolve,
@@ -246,7 +242,6 @@ const useSignMessage = ({
       dApp,
       requestedChainId,
       addSignedMessage,
-      signedMessages
     ]
   )
   // Passing hardware device is required only for the mobile app
@@ -317,7 +312,6 @@ const useSignMessage = ({
       msgToSign,
       isTypedData,
       verifySignature,
-      signedMessages,
       addSignedMessage,
       dApp,
       requestedChainId
