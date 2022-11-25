@@ -1,5 +1,5 @@
 import { signMessage, signMessage712 } from 'adex-protocol-eth/js/Bundle'
-import { NetworkType } from 'constants/networks'
+import { NetworkType } from 'ambire-common/src/constants/networks'
 import { Wallet } from 'ethers'
 import { arrayify, isHexString, toUtf8Bytes } from 'ethers/lib/utils'
 import { useCallback, useMemo, useState } from 'react'
@@ -79,7 +79,7 @@ const useSignMessage = ({
   const dApp = msgToSign.dapp
 
   const { typeDataErr, requestedChainId, dataV4, isTypedData } = useGetMsgType({ msgToSign })
-  
+
   const requestedNetwork = getNetworkByChainId(requestedChainId)
 
   const { signedMessages, addSignedMessage } = useSignedMsgs({ useStorage })
