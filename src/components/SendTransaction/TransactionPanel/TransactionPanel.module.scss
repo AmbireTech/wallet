@@ -1,6 +1,6 @@
 @import "variables";
 
-.wrapper {
+.wrapper {  
   .listOfTransactions {
     display: flex;
     flex-direction: column;
@@ -12,6 +12,13 @@
 
 @media screen and (max-width: $mobile-breakpoint-max-width) {
   .wrapper {
-    overflow-y: unset;
+    .titleWrapper {
+      flex-direction: column;
+
+      .title {
+        position: static;
+        transform: none;
+      }
+    }
   }
 }
