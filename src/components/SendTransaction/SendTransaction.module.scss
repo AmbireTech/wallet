@@ -18,12 +18,12 @@
     flex-direction: column;
     height: 100%;
     width: 100%;
-    padding: 37px 40px;
     padding-bottom: 46px;
     max-width: 1760px;
-    overflow: hidden;
+    padding: 37px 40px;
     
     .containerBody {
+      overflow: hidden;
       flex: 1;
       display: flex;
       gap: 16px;
@@ -76,15 +76,15 @@
 @media (max-width: $mobile-breakpoint-max-width) {
   .wrapper {
     .container {
-      height: auto;
       padding: 40px 20px;
       padding-top: 5px; // Fix for the Back Icon being cut
       max-width: 900px;
       margin: 0 auto;
-      overflow-y: auto;
       margin-top: 30px;
+      overflow-y: auto;
       
       .containerBody {
+        overflow: unset;
         flex-direction: column;
         gap: 40px;
         flex: unset;
