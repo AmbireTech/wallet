@@ -42,7 +42,7 @@ const WalletTokenButton = ({ rewardsData, accountId, network, hidePrivateValue, 
         }
         
         if (!vestingEntry) {
-          return `${hidePrivateValue('0.00')} $WALLET`
+          return `${hidePrivateValue(pendingTokensTotal)} $WALLET`
         }
         
         if ((currentClaimStatus.claimed === null)
