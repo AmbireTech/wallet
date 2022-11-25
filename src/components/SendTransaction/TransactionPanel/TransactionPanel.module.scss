@@ -1,11 +1,14 @@
 @import "variables";
 
 .wrapper {  
+  .panelBody {
+    overflow: auto;
+  }
+
   .listOfTransactions {
     display: flex;
     flex-direction: column;
     gap: 10px;
-    overflow-y: auto;
     margin-bottom: 20px;
   }
 }

@@ -16,7 +16,7 @@ const TransactionPanel = ({
 }) => {
   return (
     <Panel className={cn(panelClassName, styles.wrapper)}>
-      <div>
+      <div className={styles.panelBody}>
         <h2 className={cn(panelTitleClassName, styles.title)}>{ bundle.txns.length } Transaction{ bundle.txns.length > 1 ? 's' : '' } Waiting</h2>
         <div
           className={cn(styles.listOfTransactions, {
