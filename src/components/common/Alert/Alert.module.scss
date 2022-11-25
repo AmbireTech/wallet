@@ -56,7 +56,7 @@
         border-left-color: $danger-color;
       }
 
-      &.info {
+      &.info, &.degenTip {
         background-color: $info-background-color;
         border-left-color: $ambire-dark-blue;
       }
@@ -75,6 +75,7 @@
             font-size: 20px;
           }
         }
+
         .text {
           margin: 0;
           font-size: 16px;
@@ -138,7 +139,7 @@
         border-top: 7px solid;
         text-align: center;
 
-        &.info {
+        &.info, &.degenTip {
           border-top-color: $ambire-dark-blue;
         }
   
