@@ -1,9 +1,10 @@
 import './ToastProvider.scss';
 
-import React, { createRef, useState, useCallback, useEffect } from "react";
+import React, { createRef, useState, useCallback, useEffect, useContext } from "react";
 import { MdOutlineClose } from 'react-icons/md';
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
 import { useHistory } from 'react-router-dom'
+import { OfflineContext } from 'components/OfflineProvider/OfflineProvider'
 
 const ToastContext = React.createContext(null);
 
@@ -11,7 +12,8 @@ let id = 0
 
 const ToastProvider = ({ children }) => {
     const history = useHistory()
-    const [toasts, setToasts] = useState([]);
+    const { isOffline } = useContext(OfflineContext)
+    const [toasts, setToasts] = useState([])
 
     const removeToast = useCallback(id => {
         setToasts(toasts => toasts.filter(t => t.id !== id));
@@ -97,7 +99,7 @@ const ToastProvider = ({ children }) => {
                             <div className={`toast ${error ? 'error' : ''} ${sticky ? 'sticky' : ''} ${position ? position : ''}`} ref={ref}>
                                 <div className="inner" onClick={() => onToastClick(id, onClick, url, route)}>
                                     { badge ? <div className="badge">{ badge }</div> : null }
-                                    { content }
+                                    { isOffline && 'Offline: ' } { content }
                                 </div>
                                 {
                                     sticky ? 
