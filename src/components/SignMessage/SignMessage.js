@@ -1,4 +1,4 @@
-import useSignMessage from "ambire-common/src/hooks/useSignMessage"
+// import useSignMessage from "ambire-common/src/hooks/useSignMessage"
 import supportedDApps from "ambire-common/src/constants/supportedDApps"
 
 import styles from "./SignMessage.module.scss"
@@ -6,20 +6,17 @@ import styles from "./SignMessage.module.scss"
 import { MdBrokenImage, MdCheck, MdClose, MdInfoOutline } from "react-icons/md"
 import { toUtf8String, isHexString } from "ethers/lib/utils"
 import * as blockies from "blockies-ts"
-import { getWallet } from "lib/getWallet"
-import { useToasts } from "hooks/toasts"
 import { useState, useEffect, useRef } from "react"
 import { Button, Loading, TextInput, ToolTip, DAppIncompatibilityWarningMsg, Panel } from "components/common"
 import { networkIconsById } from 'consts/networks'
 import cn from "classnames"
 
-import useLocalStorage from 'hooks/useLocalStorage'
+import { useSignMessage } from "hooks"
 
 const CONF_CODE_LENGTH = 6
 
-export default function SignMessage({ everythingToSign, resolve, account, relayerURL, totalRequests }) {
+export default function SignMessage({ everythingToSign, resolve, account, relayerURL, totalRequests, useStorage }) {
   const defaultState = () => ({ codeRequired: false, passphrase: "" })
-  const { addToast } = useToasts()
   const [signingState, setSigningState] = useState(defaultState())
   const [promiseResolve, setPromiseResolve] = useState(null)
   const inputSecretRef = useRef(null)
@@ -37,23 +34,9 @@ export default function SignMessage({ everythingToSign, resolve, account, relaye
     return
   }
 
-  const getHardwareWallet = () => {
-    // if quick account, wallet = await fromEncryptedBackup
-    // and just pass the signature as secondSig to signMsgHash
-    const wallet = getWallet(
-      {
-        signer: account.signer,
-        signerExtra: account.signerExtra,
-        chainId: 1 // does not matter
-      }
-    )
-
-    return wallet
-  }
-
   const {
     approve,
-    toSign,
+    msgToSign,
     isLoading,
     hasPrivileges,
     hasProviderError,
@@ -66,15 +49,12 @@ export default function SignMessage({ everythingToSign, resolve, account, relaye
     confirmationType,
     dApp
   } = useSignMessage({
-    fetch,
     account,
-    everythingToSign,
+    messagesToSign: everythingToSign,
     relayerURL,
-    addToast,
     resolve,
     onConfirmationCodeRequired,
-    getHardwareWallet,
-    useStorage: useLocalStorage,
+    useStorage,
   })
 
   const isDAppSupported = dApp && (supportedDApps.includes(dApp.url) || supportedDApps.includes(dApp.url+'/'))
@@ -83,7 +63,7 @@ export default function SignMessage({ everythingToSign, resolve, account, relaye
     if (confirmationType) inputSecretRef.current.focus()
   }, [confirmationType])
 
-  if (!toSign || !account) return <></>
+  if (!msgToSign || !account) return <></>
 
   // should not happen unless chainId is dropped for some reason in addRequests
   if (!requestedNetwork) {
@@ -203,8 +183,8 @@ export default function SignMessage({ everythingToSign, resolve, account, relaye
           value={
             dataV4
               ? JSON.stringify(dataV4, "\n", " ")
-              : toSign.txn !== "0x"
-              ? getMessageAsText(toSign.txn)
+              : msgToSign.txn !== "0x"
+              ? getMessageAsText(msgToSign.txn)
               : "(Empty message)"
           }
           readOnly={true}
