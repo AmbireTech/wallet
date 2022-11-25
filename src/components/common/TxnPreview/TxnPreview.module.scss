@@ -51,18 +51,21 @@ $extended-summary-height: 36px;
 
                 .expandTxn {
                     align-self: flex-start;
-                    width: 36px;
-                    height: 36px;
+                    min-width: 36px;
+                    min-height: 36px;
                     @include flex-center-center;
-                    transition: .1s ease-in-out transform;
-
+                    background-color: rgba($c-titan-white, 0.05);
+                    border-radius: 12px;
+                    
                     .icon {
-                        width: 36px;
-                        height: 36px;
+                        transition: .2s ease-out transform;
+                        width: 10px;
                     }
 
                     &.reversedChevron {
-                        transform: rotate(180deg);
+                        .icon {
+                            transform: rotate(180deg);
+                        }
                     }
                 }
 
