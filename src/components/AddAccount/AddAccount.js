@@ -1,6 +1,6 @@
 import styles from './AddAccount.module.scss'
 
-import { useState, useEffect, useCallback } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { Link } from 'react-router-dom'
 import LoginOrSignup from 'components/LoginOrSignupForm/LoginOrSignupForm'
 import TrezorConnect from '@trezor/connect-web'
@@ -23,6 +23,7 @@ import { VscJson } from 'react-icons/vsc'
 import { useDropzone } from 'react-dropzone'
 import { validateImportedAccountProps, fileSizeValidator } from 'lib/validations/importedAccountValidations'
 import LatticeModal from 'components/Modals/LatticeModal/LatticeModal'
+import { fetchGet } from 'lib/fetch'
 
 // Icons
 import { ReactComponent as TrezorIcon } from 'resources/providers/trezor.svg'
@@ -36,13 +37,15 @@ TrezorConnect.manifest({
   appUrl: 'https://wallet.ambire.com'
 })
 
-export default function AddAccount({ relayerURL, onAddAccount, utmTracking, pluginData }) {
+export default function AddAccount({ relayerURL, onAddAccount, utmTracking, pluginData, isSDK = false }) {
   const [signersToChoose, setChooseSigners] = useState(null)
   const [err, setErr] = useState('')
   const [addAccErr, setAddAccErr] = useState('')
   const [inProgress, setInProgress] = useState(false)
   const { addToast } = useToasts()
   const { showModal } = useModals()
+  const [account, setAccount] = useState(null)
+  const [isEmailConfirmed, setEmailConfirmed] = useState(false)
 
   const wrapProgress = async (fn, type = true) => {
     setInProgress(type)
@@ -127,18 +130,35 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking, plug
       return
     }
 
-    onAddAccount({
-      id: identityAddr,
-      email: req.email,
-      primaryKeyBackup,
-      salt, identityFactoryAddr, baseIdentityAddr, bytecode,
-      signer,
-      cloudBackupOptout: !!req.backupOptout,
-      // This makes the modal appear, and will be removed by the modal which will call onAddAccount to update it
-      backupOptout: !!req.backupOptout,
-      // This makes the modal appear, and will be removed by the modal which will call onAddAccount to update it
-      emailConfRequired: true
-    }, { select: true, isNew: true })
+    // if it's the normal Ambire registration flow, proceed.
+    // if not, set the account and confirm it on a later stage
+    if (! isSDK) {
+      onAddAccount({
+        id: identityAddr,
+        email: req.email,
+        primaryKeyBackup,
+        salt, identityFactoryAddr, baseIdentityAddr, bytecode,
+        signer,
+        cloudBackupOptout: !!req.backupOptout,
+        // This makes the modal appear, and will be removed by the modal which will call onAddAccount to update it
+        backupOptout: !!req.backupOptout,
+        // This makes the modal appear, and will be removed by the modal which will call onAddAccount to update it
+        emailConfRequired: true
+      }, { select: true, isNew: true })
+    } else {
+      setAccount({
+        id: identityAddr,
+        email: req.email,
+        primaryKeyBackup,
+        salt, identityFactoryAddr, baseIdentityAddr, bytecode,
+        signer,
+        cloudBackupOptout: !!req.backupOptout,
+        // This makes the modal appear, and will be removed by the modal which will call onAddAccount to update it
+        backupOptout: !!req.backupOptout,
+        // This makes the modal appear, and will be removed by the modal which will call onAddAccount to update it
+        emailConfRequired: true
+      })
+    }
   }
 
   // EOA implementations
@@ -410,6 +430,37 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking, plug
     <input {...getInputProps()} />
   </>)
 
+  const checkEmailConfirmation = useCallback(async () => {
+    try {
+      const relayerIdentityURL = `${relayerURL}/identity/${account.id}`
+      const identity = await fetchGet(relayerIdentityURL)
+      if (identity) {
+          const { emailConfirmed } = identity.meta
+          const isConfirmed = !!emailConfirmed
+          setEmailConfirmed(isConfirmed)
+
+          if (isConfirmed) {
+            onAddAccount(account, { select: true, isNew: true })
+
+            window.parent.postMessage({
+              address: account.id,
+              type: 'registrationSuccess',
+            }, '*')
+          }
+      }
+    } catch(e) {
+      console.error(e);
+      addToast('Could not check email confirmation.', { error: true })
+    }
+  }, [relayerURL, addToast, account, onAddAccount])
+
+  useEffect(() => {
+    if (!account) return
+    !isEmailConfirmed && checkEmailConfirmation()
+    const emailConfirmationInterval = setInterval(() => !isEmailConfirmed && checkEmailConfirmation(), 3500)
+    return () => clearInterval(emailConfirmationInterval)
+  }, [isEmailConfirmed, checkEmailConfirmation, account])
+
   if (!relayerURL) {
     return (<div className={styles.loginSignupWrapper}>
       <div className={styles.logo}/>
@@ -426,39 +477,52 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking, plug
   //TODO: Would be great to create Ambire spinners(like 1inch but simpler) (I can have a look at them if you need)
   return (<div className={styles.loginSignupWrapper}>
       <div className={styles.logo} {...(pluginData ? {style: {backgroundImage: `url(${pluginData.iconUrl})` }} : {})}/>
-      {pluginData && 
+      {pluginData &&
       <div className={styles.pluginInfo}>
         <div className={styles.name}>{pluginData.name}</div>
         <div>{pluginData.description}</div>
       </div>
       }
       <section className={styles.addAccount}>
-        <div className={styles.loginEmail}>
-          <h3>Create a new account</h3>
-          <LoginOrSignup
-            inProgress={inProgress === 'email'}
-            onAccRequest={req => wrapProgress(() => createQuickAcc(req), 'email')}
-            action="SIGNUP"
-          ></LoginOrSignup>
-          {err ? (<p className={styles.error}>{err}</p>) : (<></>)}
-        </div>
+        {!account ?
+          <>
+            <div className={styles.loginEmail}>
+              <h3>Create a new account</h3>
+              <LoginOrSignup
+                inProgress={inProgress === 'email'}
+                onAccRequest={req => wrapProgress(() => createQuickAcc(req), 'email')}
+                action="SIGNUP"
+              ></LoginOrSignup>
+              {err ? (<p className={styles.error}>{err}</p>) : (<></>)}
+            </div>
 
-        <div className={styles.loginSeparator} />
-        <div className={styles.loginOthers}>
-          <h3>Add an account</h3>
-          {inProgress !== 'hwwallet' ? (<>
-            <Link to="/email-login">
-              <button>
-                <EmailIcon className={styles.email} />
-                Email login
-              </button>
-            </Link>
-            {addFromSignerButtons}
-            {addAccErr ? (<p className={styles.error}>{addAccErr}</p>) : (<></>)}
-          </>) : (<div className={styles.accountLoader}>
-            <Loading/>
-          </div>)}
-        </div>
+            {!isSDK ?
+              <>
+                <div className={styles.loginSeparator} />
+                <div className={styles.loginOthers}>
+                  <h3>Add an account</h3>
+                  {inProgress !== 'hwwallet' ? (<>
+                    <Link to="/email-login">
+                      <button>
+                        <EmailIcon className={styles.email} />
+                        Email login
+                      </button>
+                    </Link>
+                    {addFromSignerButtons}
+                    {addAccErr ? (<p className={styles.error}>{addAccErr}</p>) : (<></>)}
+                  </>) : (<div className={styles.accountLoader}>
+                    <Loading/>
+                  </div>)}
+                </div>
+              </>
+            : <></>
+            }
+          </>
+        :
+          <div>
+            <p>Please confirm your email</p>
+          </div>
+        }
       </section>
     </div>
   )

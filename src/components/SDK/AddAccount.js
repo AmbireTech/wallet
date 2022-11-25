@@ -105,14 +105,12 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking, plug
 
   const checkEmailConfirmation = useCallback(async () => {
     try {
-      console.log('trying to retrieve confirmation')
       const relayerIdentityURL = `${relayerURL}/identity/${account.id}`
       const identity = await fetchGet(relayerIdentityURL)
       if (identity) {
           const { emailConfirmed } = identity.meta
           const isConfirmed = !!emailConfirmed
           setEmailConfirmed(isConfirmed)
-          console.log('is confirmed:' + isConfirmed)
 
           if (isConfirmed) {
             onAddAccount(account, { select: true, isNew: true })
@@ -149,7 +147,7 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking, plug
         <div className={styles.loginEmail}>
         {
           !account ?
-            <React.Fragment>
+            <>
               <h3>Create a new account</h3>
               <LoginOrSignup
                 inProgress={inProgress === 'email'}
@@ -157,7 +155,7 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking, plug
                 action="SIGNUP"
               ></LoginOrSignup>
               {err ? (<p className={styles.error}>{err}</p>) : (<></>)}
-            </React.Fragment>
+            </>
           :
             <div>
               <p>Please confirm your email</p>
