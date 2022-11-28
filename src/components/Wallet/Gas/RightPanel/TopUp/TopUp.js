@@ -1,3 +1,4 @@
+import { useMemo } from 'react'
 import { NavLink } from 'react-router-dom'
 import { Button, Loading } from 'components/common'
 
@@ -10,14 +11,13 @@ import styles from './TopUp.module.scss'
 const TopUp = ({ portfolio, network, availableFeeAssets }) => {
   const { isBalanceLoading } = portfolio
 
-  const sortedTokens = availableFeeAssets
+  const sortedTokens = useMemo(() => availableFeeAssets
     ?.filter((item) => !item.disableGasTankDeposit)
-    .sort((a, b) => b.balanceUSD - a.balanceUSD)
     .sort((a, b) => {
       const decreasing = b.balanceUSD - a.balanceUSD
       if (decreasing === 0) return a.symbol.toUpperCase().localeCompare(b.symbol.toUpperCase())
       return decreasing
-    })
+    }), [availableFeeAssets])
 
   return (
     <div className={styles.wrapper}>
