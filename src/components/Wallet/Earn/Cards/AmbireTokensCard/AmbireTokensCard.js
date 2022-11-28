@@ -9,7 +9,7 @@ import WalletStakingPoolABI from 'ambire-common/src/constants/abis/WalletStaking
 import AdexStakingPool from 'ambire-common/src/constants/AdexStakingPool.json'
 import supplyControllerABI from 'ambire-common/src/constants/ADXSupplyController.json'
 import { Interface, parseUnits, formatUnits } from "ethers/lib/utils"
-import { getProvider } from 'lib/provider'
+import { getProvider } from 'ambire-common/src/services/provider'
 import ERC20ABI from 'adex-protocol-eth/abi/ERC20.json'
 import networks from 'consts/networks'
 import AmbireEarnDetailsModal from 'components/Modals/AmbireEarnDetailsModal/AmbireEarnDetailsModal'
@@ -175,7 +175,7 @@ const AmbireTokensCard = ({ networkId, accountId, tokens, rewardsData, addReques
 
         setSelectedToken({label: token?.label}) 
         if (token && token.type === 'withdraw' && leaveLog && (parseFloat(leaveLog.walletValue) > 0)) {
-            const unbondToolTipLabelMdg = `* Because of pending to withdraw, you are not able to unstaking more ${selectedToken.label} until unbond period is end.`
+            const unbondToolTipLabelMdg = `* Because of funds that are pending withdrawal, you are not able to unstake more ${selectedToken.label} tokens until the unbond period is over.`
             
             setCustomInfo(
                 <>
@@ -400,7 +400,6 @@ const AmbireTokensCard = ({ networkId, accountId, tokens, rewardsData, addReques
                         maxTokens, 
                         shares, 
                         unlocksAt, 
-                        blockNumber, 
                         walletValue } = leavePendingToUnlockOrReadyToWithdraw
                 
                     setLeaveLog({
@@ -410,8 +409,7 @@ const AmbireTokensCard = ({ networkId, accountId, tokens, rewardsData, addReques
                         walletValue: utils.formatUnits(walletValue.toString(), 18)
                     })
                 
-                    const { timestamp } = await provider.getBlock(blockNumber)
-                    let remainingTime = leaveLog ? (leaveLog.unlocksAt.toString()) - (Date.now() - (timestamp * 1000)) : null
+                    let remainingTime = leaveLog ? ((leaveLog.unlocksAt.toString() * 1000) - Date.now()) : null
                     if (remainingTime <= 0) remainingTime = 0
                     setLockedRemainingTime(remainingTime)    
                 } else {

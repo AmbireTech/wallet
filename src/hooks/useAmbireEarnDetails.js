@@ -1,4 +1,4 @@
-import { getProvider } from 'lib/provider'
+import { getProvider } from 'ambire-common/src/services/provider'
 import { BigNumber, utils, Contract } from 'ethers'
 import { useEffect, useState, useCallback } from 'react'
 import useConstants from './useConstants'
@@ -296,8 +296,7 @@ const useAmbireEarnDetails = ({accountId, addresses, tokenLabel}) => {
         let remainingTime
         if (leavePendingToUnlockOrReadyToWithdraw && latestLog) {
             const { unlocksAt } = leavePendingToUnlockOrReadyToWithdraw
-            const { timestamp } = await ethProvider.getBlock(latestLog.blockNumber)
-            remainingTime = (unlocksAt.toString()) - (Date.now() - (timestamp * 1000))
+            remainingTime = (unlocksAt.toString() * 1000) - Date.now()
             if (remainingTime <= 0) remainingTime = 0
         } else {
             remainingTime = null

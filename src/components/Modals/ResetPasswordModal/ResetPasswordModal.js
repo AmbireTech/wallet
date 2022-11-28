@@ -4,7 +4,7 @@ import { Wallet } from 'ethers'
 import { id } from 'ethers/lib/utils'
 import { useState, useMemo, createRef, useEffect, useCallback } from 'react'
 import { Modal, Radios, Checkbox, Button, ToolTip, Loading, PasswordInput } from 'components/common'
-import { MdOutlineCheck, MdOutlineClose, MdOutlineHelpOutline } from 'react-icons/md'
+import { MdOutlineHelpOutline } from 'react-icons/md'
 import { useModals } from 'hooks'
 import { useToasts } from 'hooks/toasts'
 import accountPresets from 'ambire-common/src/constants/accountPresets'
@@ -24,7 +24,8 @@ const ResetPassword = ({ account, selectedNetwork, relayerURL, onAddAccount, sho
 
     const [passwordsMustMatchWarning, setPasswordsMustMatchWarning] = useState(false)
     const [passwordsLengthWarning, setPasswordsLengthWarning] = useState(false)
-    
+    const [oldPasswordEmptyWarning, setOldPasswordEmptyWarning] = useState(false)
+
     const radios = useMemo(() => [
         {
             label: 'Change the password on this device and Ambire Cloud. Best if you just want to routinely change the password.',
@@ -44,6 +45,7 @@ const ResetPassword = ({ account, selectedNetwork, relayerURL, onAddAccount, sho
                     <>
                         I understand the following: the new password will be required for subsequent logins, but places where you're already logged in will work with the old password until you re-login.
                         <ToolTip
+                            className='tooltip'
                             label="This is because, for security reasons, the encrypted key is retrieved only when logging in, so we have no way of forcing every device to update it.
                             If you want to disable access for other devices, consider the next option.">
                             <MdOutlineHelpOutline/>
@@ -57,6 +59,7 @@ const ResetPassword = ({ account, selectedNetwork, relayerURL, onAddAccount, sho
                 label: <>
                     I understand I am only changing the password on the {selectedNetwork.name} network.
                     <ToolTip
+                        className='tooltip'
                         label="You will be able to trigger the change for other networks by switching the network">
                         <MdOutlineHelpOutline/>
                     </ToolTip>
@@ -75,6 +78,7 @@ const ResetPassword = ({ account, selectedNetwork, relayerURL, onAddAccount, sho
         setOldPassword('')
         setNewPassword('')
         setNewPasswordConfirm('')
+        setOldPasswordEmptyWarning(false)
         setPasswordsMustMatchWarning(false)
         setPasswordsLengthWarning(false)
     }
@@ -146,29 +150,33 @@ const ResetPassword = ({ account, selectedNetwork, relayerURL, onAddAccount, sho
 
     const validateForm = useCallback(() => {
         const arePasswordsMatching = newPassword === newPasswordConfirm
-        let areFieldsNotEmpty = false
-        let isLengthValid = false
+        const isLengthValid = newPassword.length >= 8 && newPasswordConfirm.length >= 8
+        const areFieldsNotEmpty = newPassword.length && newPasswordConfirm.length
+        let isOldPasswordNotEmpty = false
         let areCheckboxesChecked = false
         
         if (type === 'change') {
-            areFieldsNotEmpty = oldPassword.length && newPassword.length && newPasswordConfirm.length
-            isLengthValid = oldPassword.length >= 8 && newPassword.length >= 8 && newPasswordConfirm.length >= 8
+            isOldPasswordNotEmpty = oldPassword.length
             areCheckboxesChecked = checkboxes[0].every(({ ref }) => ref.current && ref.current.checked)
         }
 
         if (type === 'reset') {
-            areFieldsNotEmpty = newPassword.length && newPasswordConfirm.length
-            isLengthValid = newPassword.length >= 8 && newPasswordConfirm.length >= 8
+            isOldPasswordNotEmpty = true // in case of Reset we don't have an Old Password, so we just skip its validation
             areCheckboxesChecked = checkboxes[1].every(({ ref }) => ref.current && ref.current.checked)
         }
 
-        setDisabled(!isLengthValid || !arePasswordsMatching || !areCheckboxesChecked)
+        setDisabled(!isLengthValid || !arePasswordsMatching || !areCheckboxesChecked || !isOldPasswordNotEmpty)
 
         if (areFieldsNotEmpty) {
+            if (isLengthValid && arePasswordsMatching) {
+                setOldPasswordEmptyWarning(!isOldPasswordNotEmpty)
+            }
+
             setPasswordsLengthWarning(!isLengthValid)
             setPasswordsMustMatchWarning(!arePasswordsMatching)
         } else {
-            setPasswordsLengthWarning(false)
+            setOldPasswordEmptyWarning(false)
+            setPasswordsMustMatchWarning(false)
             setPasswordsMustMatchWarning(false)
         }
     }, [checkboxes, type, oldPassword, newPassword, newPasswordConfirm])
@@ -176,8 +184,8 @@ const ResetPassword = ({ account, selectedNetwork, relayerURL, onAddAccount, sho
     useEffect(() => validateForm(), [isLoading, validateForm, oldPassword, newPassword, newPasswordConfirm])
 
     const modalButtons = <>
-        <Button icon={<MdOutlineClose/>} clear onClick={() => hideModal()}>Cancel</Button>
-        <Button icon={<MdOutlineCheck/>} disabled={disabled} onClick={() => type === 'change' ? changePassword(): resetPassword()}>Confirm</Button>
+        <Button onClick={() => hideModal()}>Cancel</Button>
+        <Button primaryGradient={true} disabled={disabled} onClick={() => type === 'change' ? changePassword(): resetPassword()}>Confirm</Button>
     </>
 
     return (
@@ -190,16 +198,16 @@ const ResetPassword = ({ account, selectedNetwork, relayerURL, onAddAccount, sho
                     :
                     null
             }
-            <Radios radios={radios} onChange={onRadioChange}/>
+            <Radios radios={radios} onChange={onRadioChange} className='radios-container' />
             {
                 type === 'change' ?
                     <form>
-                        <PasswordInput autocomplete="current-password" placeholder="Old Password" onInput={value => setOldPassword(value)}/>
-                        <PasswordInput peakPassword autocomplete="new-password" placeholder="New Password" onInput={value => setNewPassword(value)}/>
-                        <PasswordInput autocomplete="new-password" placeholder="Confirm New Password" onInput={value => setNewPasswordConfirm(value)}/>
+                        <PasswordInput className='password-input' autocomplete="current-password" placeholder="Old Password" onInput={value => setOldPassword(value)}/>
+                        <PasswordInput className='password-input' peakPassword autocomplete="new-password" placeholder="New Password" onInput={value => setNewPassword(value)}/>
+                        <PasswordInput className='password-input' autocomplete="new-password" placeholder="Confirm New Password" onInput={value => setNewPasswordConfirm(value)}/>
                         {
                             checkboxes[0].map(({ label, ref }, i) => (
-                                <Checkbox key={`checkbox-${i}`} ref={ref} label={label} onChange={() => validateForm()}/>
+                                <Checkbox labelClassName='checkbox-label' key={`checkbox-${i}`} ref={ref} label={label} onChange={() => validateForm()}/>
                             ))
                         }
                     </form> : null
@@ -207,23 +215,27 @@ const ResetPassword = ({ account, selectedNetwork, relayerURL, onAddAccount, sho
             {
                 type === 'reset' ?
                     <form>
-                        <PasswordInput peakPassword autocomplete="new-password" placeholder="New Password" onInput={value => setNewPassword(value)}/>
-                        <PasswordInput autocomplete="new-password" placeholder="Confirm New Password" onInput={value => setNewPasswordConfirm(value)}/>
+                        <PasswordInput className='password-input' peakPassword autocomplete="new-password" placeholder="New Password" onInput={value => setNewPassword(value)}/>
+                        <PasswordInput className='password-input' autocomplete="new-password" placeholder="Confirm New Password" onInput={value => setNewPasswordConfirm(value)}/>
                         {
                             checkboxes[1].map(({ label, ref }, i) => (
-                                <Checkbox key={`checkbox-${i}`} ref={ref} label={label} onChange={() => validateForm()}/>
+                                <Checkbox labelClassName='checkbox-label' key={`checkbox-${i}`} ref={ref} label={label} onChange={() => validateForm()}/>
                             ))
                         }
                     </form> : null
             }
             <div id="warnings">
                 {
+                    oldPasswordEmptyWarning ?
+                        <div className="warning">Old Password must be set</div> : null
+                }
+                {
                     passwordsMustMatchWarning ?
                         <div className="warning">Passwords must match</div> : null
                 }
                 {
                     passwordsLengthWarning ?
-                        <div className="warning">Password length must be greater than 8 characters</div> : null
+                        <div className="warning">Password must be at least 8 characters</div> : null
                 }
             </div>
         </Modal>

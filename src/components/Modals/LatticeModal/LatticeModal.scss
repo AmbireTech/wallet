@@ -1,19 +1,19 @@
 @import '../../../variables.scss';
 
 #grid-plus {
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    justify-content: center;
-    height: 424px;
+    .grid-plus-content {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        justify-content: center;
+    }
 
     h3 {
         text-align: center;
-        color: $primary-accent-color;
+        color: $c-turquoise;
     }
 
-    button { 
-        width: 100%;
+    button {
         flex: 0 1 100% !important;
     }
 }

@@ -1,0 +1,99 @@
+@import "variables.scss";
+
+.wrapper {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 999;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: transparent linear-gradient(180deg, $c-fiord 0%, $c-ebony-clay 100%);
+  overflow: hidden;
+
+  .container {
+    display: flex;
+    gap: 16px;
+    height: 100%;
+    width: 100%;
+    padding: 25px 40px;
+    padding-bottom: 90px;
+    max-width: 1500px;
+    overflow: hidden;
+
+    .panelWrapper {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      align-items: stretch;
+      max-width: 50%;
+
+      .panelWrapperTitle {
+        font-size: 25px;
+        font-weight: 400;
+        margin: 0;
+        margin-bottom: 20px;
+      }
+
+      .panel {
+        flex: 1;
+        overflow-y: auto;
+        padding: 30px 40px;
+    
+        & > div {
+          justify-content: space-between;
+        }
+      }
+    }
+  }
+}
+// Here we are not using a breakpoint from variables.scss, but SendTransaction
+// covers the whole screen, so it shouldn't be a problem.
+@media screen and (max-width: 1600px) { 
+  .wrapper {
+    .container {
+      max-width: 1400px;
+      padding-bottom: 25px;
+      padding-top: 10px;
+
+      .panelWrapper {
+        .panelWrapperTitle {
+          font-size: 23px;
+          margin-bottom: 10px;
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: $mobile-breakpoint-max-width) {
+  .wrapper {
+    .container {
+      flex-direction: column;
+      height: auto;
+      overflow-y: auto;
+      padding: 20px;
+      gap: 40px;
+      padding-bottom: 40px;
+      max-width: 900px;
+      margin: 0 auto;
+
+      .panelWrapper {
+        max-width: 100%;
+
+        .panelWrapperTitle {
+          font-size: 24px;
+          margin-bottom: 15px;
+          text-align: center;
+        }
+
+        .panel {
+          overflow-y: unset;
+          padding: 20px;
+        }
+      }
+    }
+  }
+}

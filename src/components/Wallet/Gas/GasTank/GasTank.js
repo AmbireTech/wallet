@@ -157,7 +157,7 @@ const GasTank = ({
                                     isTopUp: true
                                 }
                             }}>
-                                <Button small>Top up</Button>
+                                <Button className='buttonComponent' small>Top up</Button>
                             </NavLink>
                         </div>
                         :
@@ -171,7 +171,7 @@ const GasTank = ({
             <div className='heading-wrapper'>
                 <div className="balance-wrapper" style={{ cursor: 'pointer' }} onClick={openGasTankBalanceByTokensModal}>
                     <span><GiGasPump/> Balance on All Networks</span>
-                    { (!isLoading && gasTankBalances) ?
+                    { (!isLoading) ?
                         (<div className={ (gasTankBalancesFormatted.length > 6)? 'inner-wrapper-left small-font' : 'inner-wrapper-left' } >
                             <span>$ </span>{ gasTankBalancesFormatted }
                         </div>) : 
@@ -255,7 +255,7 @@ const GasTank = ({
                         isTopUp: true
                     }
                 }}>
-                    <Button className='deposit-button' small>top up gas tank</Button>
+                    <Button primaryGradient={true} className='deposit-button buttonComponent' small>Top up Gas Tank</Button>
                 </NavLink>
             </div>
             <span className='title'>Gas Tank top ups history on {network.id.toUpperCase()}</span>
