@@ -11,7 +11,7 @@ import { ToolTip } from 'components/common'
 import ExtendedSummaryItem from './ExtendedSummaryItem/ExtendedSummaryItem'
 
 import { ReactComponent as ChevronDownIcon } from 'resources/icons/chevron-down.svg'
-import { ReactComponent as CloseIcon } from 'resources/icons/close.svg'
+import { ReactComponent as TrashIcon } from 'resources/icons/trash.svg'
 
 import styles from './TxnPreview.module.scss'
 
@@ -65,7 +65,7 @@ export default function TxnPreview ({ txn, onDismiss, network, account, isFirstF
                   className={cn(styles.dismissTxn, {[styles.disabled]: disableDismiss})} 
                   onClick={e => { e.stopPropagation(); !disableDismiss && onDismiss.apply(this, e) }}
                 >
-                  <CloseIcon className={styles.icon} />
+                  <TrashIcon className={styles.icon} />
                 </div>
               </ToolTip>
             ) : null}
