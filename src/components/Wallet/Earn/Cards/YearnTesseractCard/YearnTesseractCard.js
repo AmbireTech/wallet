@@ -7,7 +7,7 @@ import YEARN_TESSERACT_VAULT_ABI from 'ambire-common/src/constants/abis/YearnTes
 import useYearn from './useYearn'
 import useTesseract from './useTesseract'
 import { useToasts } from 'hooks/toasts'
-import { getProvider } from 'lib/provider'
+import { getProvider } from 'ambire-common/src/services/provider'
 import AmbireBatcherABI from 'ambire-common/src/constants/abis/AmbireBatcherABI.json'
 import ERC20ABI from 'adex-protocol-eth/abi/ERC20.json'
 import { constants, Contract } from 'ethers'

@@ -3,10 +3,10 @@ name: Build & deploy staging for Redesign
 on:
   push:
     branches:
-      - feature/redesign-common-style
+      - feature/redesign-dashboard-style
   pull_request:
     branches:
-      - feature/redesign-common-style
+      - feature/redesign-dashboard-style
 
 jobs:
   build:
@@ -37,7 +37,7 @@ jobs:
     name: Deploy Redesign
     needs: build
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/feature/redesign-common-style'
+    if: github.ref == 'refs/heads/feature/redesign-dashboard-style'
     steps:
       - name: Download artifact
         uses: actions/download-artifact@v2
