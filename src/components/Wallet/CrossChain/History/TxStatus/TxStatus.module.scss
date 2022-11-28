@@ -198,21 +198,47 @@
       }
 
       .tokens {
-        // flex-direction: column;
+        justify-content: unset;
         gap: 15px;
 
         .token {
-          flex-direction: column;
-          align-items: flex-start;
+          flex: 1;
+          flex-wrap: wrap;
+          align-items: center;
 
-          &.toToken {
-            align-items: flex-end;
+          .amount {
+            font-size: 12px;
           }
         }
 
         .swapIcon {
-          width: 40px;
-          height: 40px;
+          min-width: 40px;
+          min-height: 40px;
+        }
+      }
+    }
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .wrapper {
+    .summary {
+      .networks {
+        .network {
+          .networkName {
+            font-size: 12px;
+  
+            .name {
+              font-size: 14px;
+            }
+          }
+        }
+      }
+      .tokens {
+        flex-wrap: wrap;
+        .swapIcon {
+          min-width: 30px;
+          min-height: 30px; 
         }
       }
     }
