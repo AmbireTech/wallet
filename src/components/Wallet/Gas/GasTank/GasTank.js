@@ -171,7 +171,7 @@ const GasTank = ({
             <div className='heading-wrapper'>
                 <div className="balance-wrapper" style={{ cursor: 'pointer' }} onClick={openGasTankBalanceByTokensModal}>
                     <span><GiGasPump/> Balance on All Networks</span>
-                    { (!isLoading && gasTankBalances) ?
+                    { (!isLoading) ?
                         (<div className={ (gasTankBalancesFormatted.length > 6)? 'inner-wrapper-left small-font' : 'inner-wrapper-left' } >
                             <span>$ </span>{ gasTankBalancesFormatted }
                         </div>) : 

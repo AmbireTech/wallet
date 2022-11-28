@@ -5,7 +5,7 @@ import { useToasts } from 'hooks/toasts'
 import AAVELendingPoolAbi from 'ambire-common/src/constants/abis/AAVELendingPoolAbi'
 import AAVELendingPoolProviders from 'ambire-common/src/constants/AAVELendingPoolProviders'
 import networks from 'consts/networks'
-import { getProvider } from 'lib/provider'
+import { getProvider } from 'ambire-common/src/services/provider'
 import { ToolTip } from "components/common"
 import AAVE_ICON from 'resources/aave.svg'
 import Card from 'components/Wallet/Earn/Card/Card'
