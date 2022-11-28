@@ -67,7 +67,7 @@ const Heading = ({ network, relayerURL, portfolio, account, gasTankState, setGas
           <span className={styles.balanceAllNetworks}>
             <GiGasPump /> Balance on All Networks
           </span>
-          {!isLoading && gasTankBalances ? (
+          {!isLoading ? (
             <h3 className={cn(styles.bigText, { [styles.small]: gasTankBalancesFormatted.length > 6 })}>
               <span>$</span>{gasTankBalancesFormatted}
             </h3>
