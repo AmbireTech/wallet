@@ -121,8 +121,8 @@ function AppInner() {
     network: network,
     useStorage: useLocalStorage,
     setRequests: setRequests,
-    tokens: portfolio.tokens
-  }, [selectedAcc, network, portfolio.tokens])
+    portfolio: portfolio
+  }, [selectedAcc, network, portfolio])
 
   // Filter gnosisRequests and wcRequests by dateAdded,
   // because they are saved in local storage and add them on first render

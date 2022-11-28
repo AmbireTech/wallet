@@ -7,7 +7,7 @@ import { getProvider } from 'lib/provider'
 
 const STORAGE_KEY = 'gnosis_safe_state'
 
-export default function useGnosisSafe({selectedAccount, network, verbose = 0, useStorage, setRequests, tokens }) {
+export default function useGnosisSafe({selectedAccount, network, verbose = 0, useStorage, setRequests, portfolio }) {
   // One connector at a time
   const connector = useRef(null)
 
@@ -20,7 +20,7 @@ export default function useGnosisSafe({selectedAccount, network, verbose = 0, us
   stateRef.current = {
     selectedAccount,
     network,
-    tokens
+    portfolio
   }
 
   const [stateStorage, setStateStorage] = useStorage({
@@ -66,38 +66,25 @@ export default function useGnosisSafe({selectedAccount, network, verbose = 0, us
     //struct template
     connector.current.on(Methods.getSafeBalances, (msg) => {
 
-      const balances = msg?.data?.params?.currency.map(x=>{
-        const tkn = tokens.find(t => t.address.toLowerCase() ===  x.toLowerCase() )  
+  
+      // TODO: check msg currency and throw error if different from USD
 
-        // TODO: full data
-        return {
-          address: x, // as asked
-          balance: tkn?.balanceRaw
-        }
-       
-      })
-
-      return balances
-      
-
-      // return {
-      //   "fiatTotal": "0.18072",
-      //     "items": [
-      //     {
-      //       "tokenInfo": {
-      //         "type": "NATIVE_TOKEN",
-      //         "address": "0x0000000000000000000000000000000000000000",
-      //         "decimals": 18,
-      //         "symbol": "MATIC",
-      //         "name": "Matic",
-      //         "logoUri": "https://safe-transaction-assets.staging.gnosisdev.com/chains/137/currency_logo.png"
-      //       },
-      //       "balance": "100000000000000000",
-      //       "fiatBalance": "0.18072",
-      //       "fiatConversion": "1.8072"
-      //     }
-      //   ]
-      // }
+      return {
+        fiatTotal:  stateRef.current.portfolio?.balance?.total?.truncated,
+          items: stateRef.current.portfolio?.tokens.map(token => ({        
+              tokenInfo: {
+                type: token.type,
+                address: token.address,
+                decimals: token.decimals,
+                symbol: token.symbol,
+                name: token.name,
+                logoUri: token.tokenImageUrl
+              },
+              balance: token.balanceRaw,
+              fiatBalance: token.balanceUSD?.toString(),
+              fiatConversion: token.price?.toString()            
+          })) 
+      }
      })
 
     connector.current.on(Methods.rpcCall, async (msg) => {
