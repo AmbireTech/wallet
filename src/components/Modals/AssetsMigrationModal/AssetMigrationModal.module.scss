@@ -8,8 +8,10 @@
 
 @media screen and (max-width: $mobile-breakpoint-max-width) {
   .wrapper {
-    button {
-      font-size: 14px!important;
+    :global(.buttons) {
+      button {
+        font-size: 14px!important;
+      }
     }
   }
 }
