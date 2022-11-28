@@ -1,0 +1,187 @@
+@import 'variables';
+
+@mixin Icon($width, $height) {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: $width;
+  height: $height;
+  border-radius: 12px;
+  background-color: rgba($c-titan-white, 0.05);
+}
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 20px;
+  padding-bottom: 15px;
+  border-radius: 12px;
+  background-color: $c-mirage;
+
+  p {
+    margin: 0;
+  }
+
+  .summary {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+
+    .networks {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+
+      .network {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+
+        .iconWrapper {
+          @include Icon(40px, 40px);
+
+          .icon {
+            width: 36px;
+            height: 36px;
+          }
+        }
+
+        .networkName {
+          font-size: 14px;
+
+          .name {
+            margin: 0;
+            font-size: 16px;
+            font-weight: 600;
+          }
+        }
+
+        &.toNetwork {
+          flex-direction: row-reverse;
+          text-align: right;
+        }
+      }
+    }
+
+    .tokens {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+
+      .token {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex: 1;
+
+        .amount {
+          font-size: 14px;
+          max-width: 120px;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+
+        .iconWrapper {
+          @include Icon(28px, 28px);
+
+          .icon {
+            width: 18px;
+            height: 18px;
+          }
+        }
+
+        &.toToken {
+          justify-content: flex-end;
+        }
+      }
+
+      .swapIcon {
+        width: 30px;
+        height: 30px;
+      }
+    }
+  }
+}
+
+// Mobile
+@media screen and (max-width: $mobile-breakpoint-max-width) {
+  .wrapper {
+    flex-direction: column;
+    gap: 30px;
+    padding: 20px;
+
+    .summary {
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+
+      .networks {
+        .network {
+          flex-direction: column;
+          align-items: flex-start;
+
+          &.toNetwork {
+            flex-direction: column;
+            align-items: flex-end;
+            text-align: right;
+          }
+        }
+      }
+
+      .tokens {
+        justify-content: unset;
+        gap: 15px;
+
+        .token {
+          flex: 1;
+          flex-wrap: wrap;
+          align-items: center;
+
+          .amount {
+            font-size: 12px;
+          }
+        }
+
+        .swapIcon {
+          min-width: 40px;
+          min-height: 40px;
+        }
+      }
+    }
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .wrapper {
+    .summary {
+      gap: 10px;
+      .networks {
+        .network {
+          .networkName {
+            font-size: 12px;
+
+            .name {
+              font-size: 14px;
+            }
+          }
+        }
+      }
+
+      .tokens {
+        flex-wrap: wrap;
+        .swapIcon {
+          min-width: 30px;
+          min-height: 30px;
+        }
+      }
+    }
+  }
+}
