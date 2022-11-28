@@ -12,7 +12,7 @@ const isRelayerless = process.env.REACT_APP_RELAYRLESS === 'true' || !process.en
   'ethereum-pow': '/resources/networks/redesign/ethereum.svg',
   polygon: '/resources/networks/redesign/polygon.svg',
   avalanche: '/resources/networks/redesign/avalanche.svg',
-  'binance-smart-chain': '/resources/networks/redesign/bsc.svg',
+  'binance-smart-chain': '/resources/networks/redesign/bnb.svg',
   fantom: '/resources/networks/redesign/fantom.svg',
   moonbeam: '/resources/networks/redesign/moonbeam.svg',
   moonriver: '/resources/networks/redesign/moonriver.svg',

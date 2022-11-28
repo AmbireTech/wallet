@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 26.0.3, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.0" id="katman_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 600 450" style="enable-background:new 0 0 600 450;" xml:space="preserve">
+<style type="text/css">
+	.st0{fill:url(#SVGID_1_);}
+</style>
+<symbol  id="Dex-g" viewBox="-8.7 -10 17.3 20">
+	<g>
+		<linearGradient id="SVGID_1_" gradientUnits="userSpaceOnUse" x1="0" y1="-10" x2="1.224647e-15" y2="10">
+			<stop  offset="0" style="stop-color:#F9D230"/>
+			<stop  offset="1" style="stop-color:#F0B90C"/>
+		</linearGradient>
+		<path class="st0" d="M-3.4-5.8l-1.9-1.1L0-10l5.3,3.1L3.4-5.8L0-7.7L-3.4-5.8z M6.7-3.9v2.3l1.9-1.1V-5L6.7-6.1L4.8-5
+			C4.8-5,6.7-3.9,6.7-3.9z M-1.9-5L0-3.9L1.9-5L0-6.1C0-6.1-1.9-5-1.9-5z M5.3-3.1L3.4-4.2L0-2.3l-3.4-1.9l-1.9,1.1v2.3l3.4,1.9V5
+			L0,6.1L1.9,5V1.1l3.4-1.9V-3.1z M6.7,3.9L3.4,5.8v2.3L8.7,5v-6.1L6.7,0C6.7,0,6.7,3.9,6.7,3.9z M3.4,4.2l1.9-1.1V0.8L3.4,1.9V4.2z
+			 M-1.9,6.6v2.3L0,10l1.9-1.1V6.6L0,7.7L-1.9,6.6L-1.9,6.6z M-8.7-2.7l1.9,1.1v-2.3L-4.8-5l-1.9-1.1L-8.7-5L-8.7-2.7L-8.7-2.7z
+			 M-6.7,0l-1.9-1.1V5l5.3,3.1V5.8l-3.4-1.9C-6.7,3.9-6.7,0-6.7,0z M-3.4,1.9l-1.9-1.1v2.3l1.9,1.1C-3.4,4.2-3.4,1.9-3.4,1.9z"/>
+	</g>
+</symbol>
+<use xlink:href="#Dex-g"  width="17.3" height="20" x="-8.7" y="-10" transform="matrix(16.867 0 0 16.867 300 225)" style="overflow:visible;"/>
+</svg>
