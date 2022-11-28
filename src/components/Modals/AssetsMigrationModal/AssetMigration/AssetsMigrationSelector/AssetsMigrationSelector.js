@@ -3,10 +3,10 @@ import { Contract } from 'ethers'
 import BigNumber from 'bignumber.js'
 import { GAS_SPEEDS } from 'ambire-common/src/constants/gasSpeeds'
 
+import { getProvider } from 'ambire-common/src/services/provider'
 import { ZERO_ADDRESS } from 'consts/specialAddresses'
 import { ERC20PermittableInterface } from 'consts/permittableCoins'
 import { fetchGet } from 'lib/fetch'
-import { getProvider } from 'lib/provider'
 import assetMigrationDetector from 'lib/assetMigrationDetector'
 
 import { Button } from 'components/common'

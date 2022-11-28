@@ -4,7 +4,7 @@ import BigNumber from 'bignumber.js'
 import cn from 'classnames'
 
 import { ERC20PermittableInterface } from 'consts/permittableCoins'
-import { getProvider } from 'lib/provider'
+import { getProvider } from 'ambire-common/src/services/provider'
 
 import { Button, Loading, TextInput } from 'components/common'
 
