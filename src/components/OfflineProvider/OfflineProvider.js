@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useContext } from 'react'
 
-const OfflineContext = React.createContext(null)
+const OfflineContext = React.createContext(false)
 
 const OfflineProvider = ({ children }) => {
     const [isOffline, setIsOffline] = useState(false)
@@ -17,11 +17,14 @@ const OfflineProvider = ({ children }) => {
         }
     }, [])
     return (
-        <OfflineContext.Provider value={{ isOffline }}>
+        <OfflineContext.Provider value={isOffline}>
             {children}
         </OfflineContext.Provider>
     )
 }
 
-export { OfflineContext }
+export const useOfflineStatus = () => {
+    return useContext(OfflineContext)
+}
+
 export default OfflineProvider

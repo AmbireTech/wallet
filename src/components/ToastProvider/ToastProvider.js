@@ -1,10 +1,10 @@
 import './ToastProvider.scss';
 
-import React, { createRef, useState, useCallback, useEffect, useContext } from "react";
+import React, { createRef, useState, useCallback, useEffect } from "react"
 import { MdOutlineClose } from 'react-icons/md';
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
 import { useHistory } from 'react-router-dom'
-import { OfflineContext } from 'components/OfflineProvider/OfflineProvider'
+import { useOfflineStatus } from 'components/OfflineProvider/OfflineProvider'
 
 const ToastContext = React.createContext(null);
 
@@ -12,7 +12,7 @@ let id = 0
 
 const ToastProvider = ({ children }) => {
     const history = useHistory()
-    const { isOffline } = useContext(OfflineContext)
+    const isOffline = useOfflineStatus()
     const [toasts, setToasts] = useState([])
 
     const removeToast = useCallback(id => {
