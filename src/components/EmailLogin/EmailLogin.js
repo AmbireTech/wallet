@@ -143,10 +143,10 @@ export default function EmailLogin({ relayerURL, onAddAccount, onLoginSuccess = 
           <LoginOrSignup onAccRequest={onLoginUserAction} inProgress={inProgress}></LoginOrSignup>
         }
         <div className={styles.magicLink}>A password will not be required, we will send a magic login link to your email.</div>
-        <a className={styles.backButton} href="#/add-account">
+        <a className={styles.backButton} href={onLoginSuccess ? "#/add-account-sdk" : "#/add-account"}>
           <ChevronLeftIcon />
           {' '}
-          Back to Register
+          {onLoginSuccess ? "Create Account" : "Back to Register"}
         </a>
         {err ? (<p className={styles.error}>{err}</p>) : (<></>)}
 
