@@ -43,8 +43,9 @@ const WalletTokenModal = ({ accountId, claimableWalletToken, rewards, network })
 
   const eligibilityLeft = MIN_ELIGIBLE_USD - rewards.balance.balanceInUSD
   const isEligible = eligibilityLeft <= 0
-  const walletClaimableLeft = MIN_CLAIMABLE_WALLET - claimableNow
-  const canClaimWallet = walletClaimableLeft <= 0
+  // now + claimed + vesting
+  const claimable = claimableNow + currentClaimStatus.claimed + currentClaimStatus.mintableVesting
+  const canClaimWallet = claimable >= MIN_CLAIMABLE_WALLET
 
   const apys = {
     adxStakingApy: {
@@ -89,8 +90,8 @@ const WalletTokenModal = ({ accountId, claimableWalletToken, rewards, network })
 
           <div className={`rewards-progress-bar rewards-progress-wallets ${isEligible ? 'active' : 'inactive'}`}>
             <div className={`rewards-progress-bar-filler`}
-                 style={{ width: (Math.min(claimableNow / MIN_CLAIMABLE_WALLET, 1) * 100) + '%' }}></div>
-            <span><b>$Wallet {Math.floor(Math.min(claimableNow, MIN_CLAIMABLE_WALLET))}{claimableNow > MIN_CLAIMABLE_WALLET && '+'}</b>/{MIN_CLAIMABLE_WALLET}</span>
+                 style={{ width: (Math.min(claimable / MIN_CLAIMABLE_WALLET, 1) * 100) + '%' }}></div>
+            <span><b>$Wallet {Math.floor(Math.min(claimable, MIN_CLAIMABLE_WALLET))}{claimable > MIN_CLAIMABLE_WALLET && '+'}</b>/{MIN_CLAIMABLE_WALLET}</span>
           </div>
           <ToolTip label={canClaimWallet ? `You can claim accumulated $WALLET rewards`: `You need to accumulate ${MIN_CLAIMABLE_WALLET} $WALLET to claim`}>
             <div className={`rewards-progress-claim ${canClaimWallet ? 'active' : 'inactive'}`}>
