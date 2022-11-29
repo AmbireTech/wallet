@@ -12,7 +12,7 @@ import { formatFloatTokenAmount } from 'lib/formatters'
 const MIN_ELIGIBLE_USD = 1000
 const MIN_CLAIMABLE_WALLET = 1000
 
-const WalletTokenModal = ({ accountId, claimableWalletToken, rewards }) => {
+const WalletTokenModal = ({ accountId, claimableWalletToken, rewards, network }) => {
 
   const [isUnbondModalVisible, setIsUnbondModalVisible] = useState(false)
   const { hideModal } = useModals()
@@ -123,10 +123,12 @@ const WalletTokenModal = ({ accountId, claimableWalletToken, rewards }) => {
           </div>
         </div>
         <div className='actions mt-4'>
-          <Button className='claim-rewards-with-burn' purpleGradient full onClick={openUnbondModal}
-                  disabled={!!(claimDisabledReason || disabledReason)}>Claim with burn</Button>
-          <Button className='claim-rewards-x-wallet' greenGradient full onClick={claimEarlyRewards}
+          <ToolTip label={network.id !== 'ethereum' ? 'Switch to Ethereum network to claim' : ''}>
+            <Button className='claim-rewards-with-burn' purpleGradient full onClick={openUnbondModal}
+                    disabled={!!(claimDisabledReason || disabledReason)}>Claim with burn</Button>
+            <Button className='claim-rewards-x-wallet' greenGradient full onClick={claimEarlyRewards}
                   disabled={!!(claimDisabledReason || disabledReason)}>CLAIM IN xWALLET</Button>
+          </ToolTip>
         </div>
       </div>
 
