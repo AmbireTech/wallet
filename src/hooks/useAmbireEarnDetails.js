@@ -17,9 +17,8 @@ const STAKING_POOL_EVENT_TYPES = {
     shareTokensTransferOut: 'shareTokensTransferOut',
 }
 
-const ethProvider = getProvider('ethereum')
-
 const useAmbireEarnDetails = ({accountId, addresses, tokenLabel}) => {
+    const ethProvider = getProvider('ethereum')
     const { getAdexToStakingTransfersLogs } = useConstants()
     const WALLET_ADDR = addresses.stakingTokenAddress
     const [details, setDetails] = useState({})
@@ -658,7 +657,7 @@ const useAmbireEarnDetails = ({accountId, addresses, tokenLabel}) => {
             ),
             remainingTime: stats.remainingTime,
         }
-    }, [WALLET_ADDR, accountId, getAdexToStakingTransfersLogs])
+    }, [WALLET_ADDR, accountId, getAdexToStakingTransfersLogs, ethProvider])
 
     useEffect(() => {
         const getData = async (addresses, tokenLabel) => {
