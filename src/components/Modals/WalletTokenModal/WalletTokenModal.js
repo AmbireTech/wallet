@@ -53,6 +53,8 @@ const WalletTokenModal = ({ accountId, claimableWalletToken, rewards }) => {
     }
   }
 
+  const formatAmount = amount => amount ? amount.toFixed(6): 0
+
   return (
     <Modal id='wallet-token-modal' title='WALLET token distribution' buttons={modalButtons}>
       <UnbondModal
@@ -132,7 +134,7 @@ const WalletTokenModal = ({ accountId, claimableWalletToken, rewards }) => {
         <div className='details'>
           <label>Early users Incentive</label>
           <div className='balance'>
-            <div className='amount'><span className='primary-accent'>{rewards['balance-rewards']}</span></div>
+            <div className='amount'><span className='primary-accent'>{formatAmount(rewards['balance-rewards'])}</span></div>
             <div className='amount apy'>{walletTokenAPYPercentage} <span>APY</span></div>
           </div>
         </div>
@@ -148,7 +150,7 @@ const WalletTokenModal = ({ accountId, claimableWalletToken, rewards }) => {
           </ToolTip>
           <div className='balance'>
             <div className='amount'><span
-              className='primary-accent'>{rewards['adx-rewards'] === 0 ? '0.00' : rewards['adx-rewards']}</span></div>
+              className='primary-accent'>{formatAmount(rewards['adx-rewards'])}</span></div>
             <div className='amount apy'>{adxTokenAPYPercentage} <span>APY</span></div>
           </div>
         </div>
@@ -160,8 +162,8 @@ const WalletTokenModal = ({ accountId, claimableWalletToken, rewards }) => {
             <label>Claimable early supporters vesting</label>
             <div className='balance'>
               <div className='amount'><span className='primary-accent'>
-                                {currentClaimStatus.mintableVesting}
-                            </span></div>
+                  {formatAmount(currentClaimStatus.mintableVesting)}
+              </span></div>
               <div className='amount usd'>
                 <span className='secondary-accent'>$</span>
                 {mintableVestingUsd}
@@ -184,8 +186,8 @@ const WalletTokenModal = ({ accountId, claimableWalletToken, rewards }) => {
             <label>Staked WALLET</label>
             <div className='balance'>
               <div className='amount'><span className='primary-accent'>
-                                    {stakedAmount}
-                                </span></div>
+                  {formatAmount(stakedAmount)}
+              </span></div>
               <div className='amount apy'>{xWALLETAPYPercentage} <span>APY</span></div>
             </div>
           </div>
