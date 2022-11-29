@@ -149,7 +149,7 @@ const useSignMessage = ({
             isTypedData ? '?typedData=true' : ''
           }`,
           {
-            toSign: msgToSign.txn,
+            toSign: isTypedData ? dataV4 : msgToSign.txn,
             code: credentials.code?.length ? credentials.code : undefined
           }
         )

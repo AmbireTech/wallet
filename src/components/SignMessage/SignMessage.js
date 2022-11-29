@@ -39,7 +39,6 @@ export default function SignMessage({ everythingToSign, resolve, account, relaye
     msgToSign,
     isLoading,
     hasPrivileges,
-    hasProviderError,
     typeDataErr,
     isDeployed,
     dataV4,
@@ -70,7 +69,7 @@ export default function SignMessage({ everythingToSign, resolve, account, relaye
     return (
       <div className={styles.wrapper}>
         <h3 className='error'>
-          Inexistant network for chainId : {requestedChainId}
+        Unexistent network for chainId : {requestedChainId}
         </h3>
         <Button
           className={styles.reject}
@@ -231,7 +230,7 @@ export default function SignMessage({ everythingToSign, resolve, account, relaye
               </>
             )}
 
-            {isDeployed === null && !hasProviderError && (
+            {isDeployed === null && (
               <div>
                 <Loading />
               </div>
@@ -252,15 +251,6 @@ export default function SignMessage({ everythingToSign, resolve, account, relaye
               <div>
                 <h3 className='error'>
                   The currently used signer is not authorized to control this account and therefore you cannot sign messages.
-                </h3>
-              </div>
-            )}
-
-            {hasProviderError && (
-              <div>
-                <h3 className='error'>
-                  There was an issue with the network provider:{" "}
-                  {hasProviderError}
                 </h3>
               </div>
             )}
