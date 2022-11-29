@@ -1,0 +1,15 @@
+@import 'variables';
+
+.wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 200px;
+  width: 100%;
+  background-color: $c-mirage;
+  border-radius: 12px;
+
+  &.smaller {
+    height: 140px;
+  }
+}
