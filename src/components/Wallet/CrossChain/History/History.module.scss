@@ -2,11 +2,12 @@
 
 .wrapper {
   flex: 1;
+  // height: 100%;
   
   .txStatuses {
     display: flex;
     flex-direction: column;
     gap: 10px;
-    overflow-y: auto;
+    // overflow-y: auto;
   }
 }

@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo, useRef } from 'react'
+import cn from 'classnames'
 
 import networks from 'consts/networks'
 
@@ -6,13 +7,13 @@ import movrTxParser from './movrTxParser'
 import { useRelayerData } from 'hooks'
 import { useToasts } from 'hooks/toasts'
 import useConstants from 'hooks/useConstants'
-import { Loading, Panel } from 'components/common'
 import useMovr from 'components/Wallet/CrossChain/useMovr'
+import { Loading, Panel } from 'components/common'
 import TxStatus from './TxStatus/TxStatus'
 
 import styles from './History.module.scss'
 
-const History = ({ relayerURL, network, account, quotesConfirmed }) => {
+const History = ({ relayerURL, network, account, quotesConfirmed, panelClassName }) => {
     const { constants: { humanizerInfo } } = useConstants()
     const { addToast } = useToasts()
     const { checkTxStatus } = useMovr()
@@ -71,7 +72,6 @@ const History = ({ relayerURL, network, account, quotesConfirmed }) => {
 
                 try {
                     const status = await checkTxStatus(hash, from.chainId, to.chainId)
-                    console.log(status)
                     return {
                         ...status,
                         sourceTx: status.sourceTransactionHash,
@@ -121,7 +121,7 @@ const History = ({ relayerURL, network, account, quotesConfirmed }) => {
     }, [network])
 
     return (
-        <Panel className={styles.wrapper} title="History">
+        <Panel className={cn(panelClassName, styles.wrapper)} title="History">
           {loading ? (
             <Loading />
           ) : !txStatuses.length ? (
