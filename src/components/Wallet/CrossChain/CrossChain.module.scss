@@ -1,17 +1,34 @@
 @import 'variables.scss';
 
 .wrapper {
-    overflow: hidden;
     display: flex;
     flex-direction: row;
     gap: 17px;
-    height: 100%;
+    min-height: 100%;
+
+    .panel {
+        padding: 40px;
+        padding-top: 36px;
+    }
 }
 
 // Small screen
 @media screen and (max-width: $small-breakpoint-max-width) {
     .wrapper {
-        height: auto;
+        min-height: auto;
         flex-direction: column;
+
+        .panel {
+            padding: 30px;
+        }
+    }
+}
+
+// Mobile screen
+@media screen and (max-width: 600px) {
+    .wrapper {
+        .panel {
+            padding: 20px;
+        }
     }
 }

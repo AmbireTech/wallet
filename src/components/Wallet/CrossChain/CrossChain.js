@@ -17,12 +17,14 @@ const CrossChain = ({ addRequest, selectedAccount, portfolio, network, relayerUR
                 selectedAccount={selectedAccount}
                 quotesConfirmed={quotesConfirmed}
                 setQuotesConfirmed={setQuotesConfirmed}
+                panelClassName={styles.panel}
             />
             <History
                 network={network}
                 account={selectedAccount}
                 quotesConfirmed={quotesConfirmed}
                 relayerURL={relayerURL}
+                panelClassName={styles.panel}
             />
         </div>
     )
