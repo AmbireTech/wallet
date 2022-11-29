@@ -7,7 +7,8 @@ import { useHistory } from 'react-router-dom'
 import { useOfflineStatus } from 'components/OfflineProvider/OfflineProvider'
 
 const ToastContext = React.createContext(null);
-
+const ERROR_MSG_LIMIT_COUNT = 3
+const MSG_CONTENT_LIMIT_SYMBOLS = 400
 let id = 0
 
 const ToastProvider = ({ children }) => {
@@ -20,6 +21,9 @@ const ToastProvider = ({ children }) => {
     }, []);
 
     const addToast = useCallback((content, options) => {
+        if (content.length > MSG_CONTENT_LIMIT_SYMBOLS) {
+            content = `${content.substring(0, MSG_CONTENT_LIMIT_SYMBOLS)}...`
+        }
         const defaultOptions = {
             timeout: 8000,
             error: false,
@@ -47,7 +51,7 @@ const ToastProvider = ({ children }) => {
         !toast.sticky && setTimeout(() => removeToast(toast.id), toast.timeout)
 
         return toast.id;
-    }, [setToasts, removeToast]);
+    }, [setToasts, removeToast])
 
     const updateToastsPositions = useCallback(() => {
         toasts
@@ -71,12 +75,22 @@ const ToastProvider = ({ children }) => {
             })
     }, [toasts])
 
+    const LimitsErrorMsgs = useCallback(() => {
+        let errToastsCount = 0
+        toasts.forEach((t) => t.error && errToastsCount++)
+        
+        if ((toasts.length > ERROR_MSG_LIMIT_COUNT) && (errToastsCount > ERROR_MSG_LIMIT_COUNT)) {
+            setToasts(toasts => toasts.slice(toasts.length - ERROR_MSG_LIMIT_COUNT, toasts.length))
+        }
+    }, [toasts])
+
     useEffect(() => updateToastsPositions(), [toasts, updateToastsPositions])
     useEffect(() => {
         const onResize = () => updateToastsPositions()
         window.addEventListener('resize', onResize, false);
         return () => window.removeEventListener('resize', onResize, false);
     }, [updateToastsPositions])
+    useEffect(()=> LimitsErrorMsgs(), [toasts, LimitsErrorMsgs])
 
     const onToastClick = (id, onClick, url, route) => {
         if (url) window.open(url, '_blank')
