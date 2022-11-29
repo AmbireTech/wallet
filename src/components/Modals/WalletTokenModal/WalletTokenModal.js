@@ -90,7 +90,7 @@ const WalletTokenModal = ({ accountId, claimableWalletToken, rewards }) => {
                  style={{ width: (Math.min(claimableNow / MIN_CLAIMABLE_WALLET, 1) * 100) + '%' }}></div>
             <span><b>$Wallet {Math.floor(Math.min(claimableNow, MIN_CLAIMABLE_WALLET))}{claimableNow > MIN_CLAIMABLE_WALLET && '+'}</b>/{MIN_CLAIMABLE_WALLET}</span>
           </div>
-          <ToolTip label={canClaimWallet ? `You need to accumulate ${MIN_CLAIMABLE_WALLET} $WALLET to claim` : `You can claim accumulated $WALLET rewards`}>
+          <ToolTip label={canClaimWallet ? `You can claim accumulated $WALLET rewards`: `You need to accumulate ${MIN_CLAIMABLE_WALLET} $WALLET to claim`}>
             <div className={`rewards-progress-claim ${canClaimWallet ? 'active' : 'inactive'}`}>
               <div className={`rewards-progress-claim-icon`}></div>
             </div>
