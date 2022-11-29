@@ -1,22 +1,23 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import cn from 'classnames'
 
 import networks from 'consts/networks'
 
 import useMovr from 'components/Wallet/CrossChain/useMovr'
+import { useToasts } from 'hooks/toasts'
 import { Loading, NoFundsPlaceholder, Panel } from 'components/common'
 import Quotes from './Quotes/Quotes'
 import GetQuotesForm from './GetQuotesForm/GetQuotesForm'
 
 import styles from './Swap.module.scss'
-import { useToasts } from 'hooks/toasts'
 
-const Swap = ({ network, portfolio, addRequest, selectedAccount, quotesConfirmed, setQuotesConfirmed }) => {
+const Swap = ({ network, portfolio, addRequest, selectedAccount, quotesConfirmed, setQuotesConfirmed, panelClassName }) => {
   const { addToast } = useToasts()
-
+  
   const { fetchChains, fetchFromTokens, fetchQuotes, fetchToTokens } = useMovr()
-
+  
   const portfolioTokens = useRef([])
-
+  
   const [disabled, setDisabled] = useState(false)
   const [loading, setLoading] = useState(true)
   const [loadingFromTokens, setLoadingFromTokens] = useState(false)
@@ -27,9 +28,14 @@ const Swap = ({ network, portfolio, addRequest, selectedAccount, quotesConfirmed
   const [chainsItems, setChainsItems] = useState([])
   const [toTokenItems, setToTokenItems] = useState([])
   const [fromTokensItems, setFromTokenItems] = useState([])
-
+  const [fromToken, setFromToken] = useState(null)
+  const [toToken, setToToken] = useState(null)
+  const [amount, setAmount] = useState(0)
+  
   const fromChain = useMemo(() => network.chainId, [network.chainId])
   const hasNoFunds = !portfolio.balance.total.full
+    
+  const onCancel = () => setQuotes(null)
 
   const onQuotesConfirmed = (quoteRequest) => {
     const updatedQuotesConfirmed = [...quotesConfirmed, quoteRequest]
@@ -159,8 +165,16 @@ const Swap = ({ network, portfolio, addRequest, selectedAccount, quotesConfirmed
     }
   }, [portfolio.isCurrNetworkBalanceLoading, loadChains, fromChain])
 
+  useEffect(() => setAmount(0), [fromToken, setAmount])
+  useEffect(() => {
+    const fromTokenItem = fromTokensItems.find(({ value }) => value === fromToken)
+    if (!fromTokenItem) return
+    const equivalentToken = toTokenItems.find(({ symbol }) => symbol === fromTokenItem.symbol)
+    if (equivalentToken) setToToken(equivalentToken.value)
+  }, [fromTokensItems, toTokenItems, fromToken, setToToken])
+
   return (
-    <Panel className={styles.wrapper} title="Cross-Chain transfers/swaps">
+    <Panel className={cn(panelClassName, styles.wrapper)} title="Cross-Chain transfers/swaps">
       {disabled ? (
         <div className={styles.placeholder}>Not supported on this Network</div>
       ) : loading || portfolio.isCurrNetworkBalanceLoading ? (
@@ -178,7 +192,7 @@ const Swap = ({ network, portfolio, addRequest, selectedAccount, quotesConfirmed
           fromTokensItems={fromTokensItems}
           quotes={quotes}
           onQuotesConfirmed={onQuotesConfirmed}
-          onCancel={() => setQuotes(null)}
+          onCancel={onCancel}
         />
       ) : (
         <GetQuotesForm
@@ -191,6 +205,12 @@ const Swap = ({ network, portfolio, addRequest, selectedAccount, quotesConfirmed
           loadingToTokens={loadingToTokens}
           fromChain={fromChain}
           toChain={toChain}
+          fromToken={fromToken}
+          setFromToken={setFromToken}
+          toToken={toToken}
+          setToToken={setToToken}
+          amount={amount}
+          setAmount={setAmount}
           toTokenItems={toTokenItems}
           chainsItems={chainsItems}
           setToChain={setToChain}
