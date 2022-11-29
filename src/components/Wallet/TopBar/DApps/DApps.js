@@ -39,7 +39,7 @@ const DApps = ({ connections, connect, disconnect, isWcConnecting }) => {
     const onConnectionClick = useCallback( async (url) => {
         const canOpen = await canOpenInIframe(url)
         if(canOpen) {
-            history.push(`/wallet/dapps?dappUrl=${encodeURIComponent(url + `?${Date.now()}`)}`)
+            history.push(`/wallet/dapps?dappUrlCatalog=${encodeURIComponent(url + `?${Date.now()}`)}`)
         } else {
             window.open(url, '_blank')
         }
