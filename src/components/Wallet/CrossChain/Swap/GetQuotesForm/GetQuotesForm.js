@@ -1,14 +1,15 @@
-import { useEffect, useState, useCallback, useMemo } from 'react'
-
+import { useEffect, useCallback, useMemo } from 'react'
+import { ethers } from 'ethers'
 import { parseUnits } from 'ethers/lib/utils'
+import cn from 'classnames'
+
 import { useToasts } from 'hooks/toasts'
+import { NumberInput, Button, Select } from 'components/common'
+import FormSection from './FormSection/FormSection'
 
 import { ReactComponent as SwapIcon } from 'resources/icons/cross-chain.svg'
 
-import { NumberInput, Button, Select, Loading } from 'components/common'
-
 import styles from './GetQuotesForm.module.scss'
-import { ethers } from 'ethers'
 
 const GetQuotesForm = ({
   portfolio,
@@ -19,19 +20,20 @@ const GetQuotesForm = ({
   loadingFromTokens,
   loadingToTokens,
   fromChain,
+  fromToken,
   toChain,
+  setToChain,
+  setFromToken,
+  toToken,
+  setToToken,
+  amount,
+  setAmount,
   toTokenItems,
   chainsItems,
-  setToChain,
   fetchQuotes,
   portfolioTokens,
 }) => {
   const { addToast } = useToasts()
-
-  const [fromToken, setFromToken] = useState(null)
-  const [amount, setAmount] = useState(0)
-
-  const [toToken, setToToken] = useState(null)
 
   const formDisabled = !(fromToken && toToken && fromChain && toChain && amount > 0)
   const getTokenFromPortofolio = useCallback(
@@ -45,7 +47,7 @@ const GetQuotesForm = ({
     [portfolio.tokens]
   )
 
-  const getQuotes = async () => {
+  const getQuotes = useCallback(async () => {
     setLoadingQuotes(true)
 
     try {
@@ -64,15 +66,7 @@ const GetQuotesForm = ({
     }
 
     setLoadingQuotes(false)
-  }
-
-  useEffect(() => setAmount(0), [fromToken])
-  useEffect(() => {
-    const fromTokenItem = fromTokensItems.find(({ value }) => value === fromToken)
-    if (!fromTokenItem) return
-    const equivalentToken = toTokenItems.find(({ symbol }) => symbol === fromTokenItem.symbol)
-    if (equivalentToken) setToToken(equivalentToken.value)
-  }, [fromTokensItems, toTokenItems, fromToken])
+  }, [addToast, amount, fetchQuotes, fromChain, fromToken, getTokenFromPortofolio, selectedAccount, setLoadingQuotes, setQuotes, toChain, toToken])
 
   useEffect(() => (portfolioTokens.current = portfolio.tokens), [portfolio.tokens, portfolioTokens])
 
@@ -90,56 +84,58 @@ const GetQuotesForm = ({
 
   return (
     <div className={styles.wrapper}>
-      <div className={styles.body}>
-        <div className={styles.fromSection}>
-          <label className={styles.label}>From</label>
-          <div className={styles.inputs}>
-            {loadingFromTokens ? <Loading /> : null}
-            <Select
-              searchable
-              defaultValue={fromToken}
-              items={fromTokensItems}
-              onChange={({ value }) => setFromToken(value)}
-              iconClassName={styles.selectIcon}
-              selectInputClassName={styles.selectInput}
-            />
-            <NumberInput
-              min="0"
-              label={
-                <div className={styles.amountLabel}>
-                  Available Amount: <span>{maxAmount}</span>
-                </div>
-              }
-              value={amount}
-              onInput={(value) => setAmount(value)}
-              button="MAX"
-              onButtonClick={() => setAmount(maxAmount)}
-            />
+      <div className={cn(styles.body, {[styles.loading]: loadingFromTokens || loadingToTokens})}>
+        <FormSection isLoading={loadingFromTokens}>
+          <div className={styles.fromSection}>
+            <label className={styles.label}>From</label>
+            <div className={styles.inputs}>
+              <Select
+                searchable
+                defaultValue={fromToken}
+                items={fromTokensItems}
+                onChange={({ value }) => setFromToken(value)}
+                iconClassName={styles.selectIcon}
+                selectInputClassName={styles.selectInput}
+              />
+              <NumberInput
+                min="0"
+                label={
+                  <div className={styles.amountLabel}>
+                    Available Amount: <span>{maxAmount}</span>
+                  </div>
+                }
+                value={amount}
+                onInput={(value) => setAmount(value)}
+                button="MAX"
+                onButtonClick={() => setAmount(maxAmount)}
+              />
+            </div>
           </div>
-        </div>
+        </FormSection>
         <SwapIcon className={styles.separator} />
-        <div className={styles.toSection}>
-          <label className={styles.label}>To</label>
-          <div className={styles.inputs}>
-            {loadingToTokens ? <Loading /> : null}
-            <Select
-              searchable
-              defaultValue={toChain}
-              items={chainsItems}
-              onChange={({ value }) => setToChain(value)}
-              iconClassName={styles.selectIcon}
-              selectInputClassName={styles.selectInput}
-            />
-            <Select
-              searchable
-              defaultValue={toToken}
-              items={toTokenItems}
-              onChange={({ value }) => setToToken(value)}
-              iconClassName={styles.selectIcon}
-              selectInputClassName={styles.selectInput}
-            />
+        <FormSection smaller={true} isLoading={loadingToTokens}>
+          <div className={styles.toSection}>
+            <label className={styles.label}>To</label>
+            <div className={styles.inputs}>
+              <Select
+                searchable
+                defaultValue={toChain}
+                items={chainsItems}
+                onChange={({ value }) => setToChain(value)}
+                iconClassName={styles.selectIcon}
+                selectInputClassName={styles.selectInput}
+              />
+              <Select
+                searchable
+                defaultValue={toToken}
+                items={toTokenItems}
+                onChange={({ value }) => setToToken(value)}
+                iconClassName={styles.selectIcon}
+                selectInputClassName={styles.selectInput}
+              />
+            </div>
           </div>
-        </div>
+        </FormSection>
       </div>
       <Button primaryGradient={true} className={styles.button} disabled={formDisabled} onClick={getQuotes}>
         Get Quotes
