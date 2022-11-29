@@ -328,7 +328,7 @@ function AppInner() {
           </SendTransactionSDK>
         </Route>
 
-        <Route path="/sign-message-sdk/:messageToSign">
+        <Route path="/sign-message-sdk/:type/:messageToSign">
           <SignMessageSDK
             selectedAcc={selectedAcc}
             selectedNetwork={network}
