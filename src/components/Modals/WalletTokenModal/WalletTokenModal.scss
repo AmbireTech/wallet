@@ -173,6 +173,11 @@ $badge-size-height: 90px;
                 height: 32px;
                 background: url("../../../resources/rewards/adx-staking-active.svg") no-repeat 50% 50%;
                 background-size: contain;
+                margin-left: 5px;
+
+                &.inactive {
+                    background-image: url("../../../resources/rewards/adx-staking-inactive.svg");
+                }
             }
 
             .details {

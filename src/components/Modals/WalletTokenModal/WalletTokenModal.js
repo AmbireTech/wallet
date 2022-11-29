@@ -142,12 +142,12 @@ const WalletTokenModal = ({ accountId, claimableWalletToken, rewards }) => {
 
       <div className='item'>
         <div className='details'>
-          <label>ADX staking bonus</label>
-          <ToolTip label={rewards['adx-rewards'] > 0 ? `$ADX Staking bonus is active` : `You need to stake $ADX to receive the $ADX staking bonus`}>
-            <div className={'activation-badge'}>
-              <span className={`badge-adx ${rewards['adx-rewards'] > 0 ? 'active' : 'inactive'}`}></span>
-            </div>
-          </ToolTip>
+          <label>
+            <ToolTip label={rewards['adx-rewards'] > 0 ? `$ADX Staking bonus is active` : `You need to stake $ADX to receive the $ADX staking bonus`}>
+              <div className={'activation-badge'}>
+                ADX staking bonus <span className={`badge-adx ${rewards['adx-rewards'] > 0 ? 'active' : 'inactive'}`}></span>
+              </div>
+            </ToolTip></label>
           <div className='balance'>
             <div className='amount'><span
               className='primary-accent'>{formatAmount(rewards['adx-rewards'])}</span></div>
