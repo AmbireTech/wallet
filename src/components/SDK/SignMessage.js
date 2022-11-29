@@ -8,13 +8,13 @@ export default function SignMessage({selectedAcc, selectedNetwork, addRequest, e
     const req = useMemo(() => {
         if (!type || !['personal_sign', 'eth_signTypedData'].includes(type)) return null
         if (!messageToSign) return null
-console.log(`in component: ${decodeURIComponent(JSON.parse(messageToSign))}`)
+
         return {
             id: `sdk_sign_${Date.now()}`,
             type: type,
             chainId: selectedNetwork.chainId,
             account: selectedAcc,
-            txn: type === 'eth_signTypedData' ? JSON.parse(messageToSign) : messageToSign,
+            txn: type === 'eth_signTypedData' ? JSON.parse(decodeURIComponent(messageToSign)) : messageToSign,
             dapp: {
                 // TODO: dummy data, replace it with something coming from as input params
                 name: 'Example Dapp',
