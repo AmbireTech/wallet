@@ -1,97 +1,149 @@
 @import 'variables';
 
 .wrapper {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-  padding: 5px 0;
-  font-weight: 500;
+  padding-top: 29px; // The height of the checkbox + 5px gap
 
-  .info {
+  .body {
     display: flex;
-    align-items: center;
     justify-content: space-between;
-    gap: 10px;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 13px;
 
-    .icon {
-      flex: 0 0 auto;
-      height: 16px;
-      width: 16px;
-      border-radius: 100%;
-      background-size: contain;
-      background-position: center center;
-      background-repeat: no-repeat;
-    }
-
-    .time {
-      flex: 0 0 auto;
-    }
-
-    .bridge,
-    .middleware {
+    .topItem {
+      position: absolute;
+      bottom: 10px;
+      transform: translateY(-100%);
       display: flex;
       align-items: center;
-      gap: 5px;
-
-      .name {
-        font-weight: 300;
-      }
-    }
-
-    .bridge {
-      margin-left: auto;
-    }
-  }
-
-  .summary {
-    display: flex;
-    flex-direction: column;
-    opacity: 0.8;
-
-    .amounts {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
       gap: 10px;
 
-      .amount {
+      .topItemIcon {
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+      }
+
+      .topItemName {
+        margin: 0;
+        font-weight: 400;
         font-size: 14px;
-        flex: 1 1 50%;
-
-        &.middleware {
-          text-align: left;
-        }
-
-        &.bridge {
-          text-align: right;
-        }
       }
     }
 
-    .fees {
+    .iconWrapper {
+      position: relative;
       display: flex;
-      justify-content: space-between;
+      align-items: center;
+      justify-content: center;
+      width: 30px;
+      height: 30px;
+      background-color: rgba($c-titan-white, 0.05);
+      border-radius: 12px;
+
+      .icon {
+        width: 20px;
+        height: 20px;
+      }
+
+      .fromAmount,
+      .toAmount {
+        margin: 0;
+        position: absolute;
+        top: 22px;
+        left: 0;
+        transform: translateY(100%);
+        // Truncate
+        max-width: 90px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .toAmount {
+        left: unset;
+        right: 0;
+      }
+    }
+
+    .middlewareWrapper {
+      height: 30px;
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      .middlewareAssetIcon {
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        border: 2px solid $c-mirage;
+
+        &:last-child {
+          position: relative;
+          left: -5px;
+        }
+      }
+    }
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .wrapper {
+    $side-spacing: 40px;
+    padding-top: 0;
+    overflow: hidden;
+
+    .body {
+      flex-direction: column;
       margin-bottom: 20px;
 
-      .fee {
-        flex: 1 1 50%;
-        font-size: 13px;
-        opacity: 0.8;
-        color: $c-heliotrope;
+      .topItem {
+        top: 5px;
+        left: $side-spacing;
+        transform: unset;
+        flex-wrap: wrap;
+        height: 20px;
+        width: 100px;
+
+        .topItemIcon {
+          width: 20px;
+          height: 20px;
+        }
+
+        .topItemName {
+          font-size: 13px;
+        }
 
         &.middleware {
-          text-align: left;
-        }
-        &.bridge {
-          text-align: right;
+          left: unset;
+          right: $side-spacing;
+          flex-direction: row-reverse;
         }
       }
-    }
 
-    .time {
-      text-align: right;
-      font-size: 12px;
-      opacity: 0.7;
+      .iconWrapper {
+        .swapIcon {
+          transform: rotate(90deg);
+        }
+
+        .fromAmount,
+        .toAmount {
+          top: -50%;
+          font-size: 13px;
+        }
+
+        .fromAmount {
+          left: unset;
+          right: $side-spacing;
+        }
+
+        .toAmount {
+          left: $side-spacing;
+          width: 100px;
+          word-wrap: break-all;
+        }
+      }
     }
   }
 }
