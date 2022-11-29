@@ -1,12 +1,12 @@
-name: Build & deploy staging for portfolio-v2
+name: Build & deploy staging for Dashboard redesign
 
 on:
   push:
     branches:
-      - feature/portfolio-hook-v2
+      - feature/redesign/dashboard-style
   pull_request:
     branches:
-      - feature/portfolio-hook-v2
+      - feature/redesign/dashboard-style
 
 jobs:
   build:
@@ -33,11 +33,11 @@ jobs:
       with:
         name: production-files
         path: ./build
-  deploy-portfolio-hook-v2:
-    name: Deploy portfolio-hook-v2
+  deploy-dashboard:
+    name: Deploy Dashboard
     needs: build
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/feature/portfolio-hook-v2'
+    if: github.ref == 'refs/heads/feature/redesign/dashboard-style'
     steps:
     - name: Download artifact
       uses: actions/download-artifact@v2
@@ -50,5 +50,5 @@ jobs:
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         publish_dir: ./build
-        destination_dir: ./portfolio-v2
+        destination_dir: ./dashboard
         cname: wallet.ambire.com
