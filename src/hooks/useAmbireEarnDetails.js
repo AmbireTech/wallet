@@ -1,4 +1,4 @@
-import { getProvider } from 'lib/provider'
+import { getProvider } from 'ambire-common/src/services/provider'
 import { BigNumber, utils, Contract } from 'ethers'
 import { useEffect, useState, useCallback } from 'react'
 import useConstants from './useConstants'
@@ -388,7 +388,9 @@ const useAmbireEarnDetails = ({accountId, addresses, tokenLabel}) => {
 
                 return {
                     blockNumber: log.blockNumber,
-                    shareValue: maxTokens
+                    shareValue: shares.isZero()
+                    ? ZERO
+                    : maxTokens
                         .mul(POOL_SHARES_TOKEN_DECIMALS_MUL)
                         .div(shares),
                 }
@@ -401,7 +403,9 @@ const useAmbireEarnDetails = ({accountId, addresses, tokenLabel}) => {
                 const { shares, maxTokens } = parsedRageLeaveLog.args
 
                 return {
-                    shareValue: maxTokens
+                    shareValue: shares.isZero()
+                    ? ZERO
+                    : maxTokens
                         .mul(POOL_SHARES_TOKEN_DECIMALS_MUL)
                         .div(shares),
                     blockNumber: log.blockNumber,
@@ -413,9 +417,11 @@ const useAmbireEarnDetails = ({accountId, addresses, tokenLabel}) => {
                 const { shares, maxTokens } = parsedLog.args
                 return {
                     blockNumber: log.blockNumber,
-                    shareValue: maxTokens
+                    shareValue: shares.isZero()
+                    ? ZERO 
+                    : maxTokens
                         .mul(POOL_SHARES_TOKEN_DECIMALS_MUL)
-                        .div(shares),
+                        .div(shares)
                 }
             })
 

@@ -3,7 +3,7 @@ import {useToasts} from 'hooks/toasts'
 
 import {Methods} from '@gnosis.pm/safe-apps-sdk'
 import {GnosisConnector} from 'lib/GnosisConnector'
-import { getProvider } from 'lib/provider'
+import { getProvider } from 'ambire-common/src/services/provider'
 
 const STORAGE_KEY = 'gnosis_safe_state'
 
