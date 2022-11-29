@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import cn from 'classnames'
 
 import networks from 'consts/networks'
 
@@ -7,8 +8,6 @@ import { Button, Loading } from 'components/common'
 import useMovr from 'components/Wallet/CrossChain/useMovr'
 import Summary from './Summary/Summary'
 import Routes from './Routes/Routes'
-
-import { MdOutlineArrowBack, MdOutlineCheck, MdOutlineClose } from 'react-icons/md'
 
 import styles from './Quotes.module.scss'
 
@@ -44,6 +43,8 @@ const Quotes = ({ addRequest, selectedAccount, fromTokensItems, quotes, onQuotes
       txType: bridgeRoute.txType,
       middlewareFee: middlewareRoute?.protocolFees ? formatFeeAmount(middlewareRoute?.protocolFees, route) : 0,
       bridgeFee: bridgeStep?.protocolFees ? formatFeeAmount(bridgeStep?.protocolFees, route) : 0,
+      fromAsset,
+      toAsset
     }
   })
 
@@ -119,14 +120,15 @@ const Quotes = ({ addRequest, selectedAccount, fromTokensItems, quotes, onQuotes
 
   return (
     <div className={styles.wrapper}>
-      <Summary fromNetwork={fromNetwork} fromAsset={fromAsset} toNetwork={toNetwork} toAsset={toAsset} />
+      <div>
+        <Summary fromNetwork={fromNetwork} fromAsset={fromAsset} toNetwork={toNetwork} toAsset={toAsset} />
 
-      {loading ? <Loading /> : <Routes routes={routes} setSelectedRoute={setSelectedRoute} />}
+        {loading ? <Loading /> : <Routes routes={routes} setSelectedRoute={setSelectedRoute} />}
+      </div>
 
-      <div className={styles.buttons}>
+      <div className={cn(styles.buttons, styles.singleButton)}>
         <Button
           border
-          icon={routes.length ? <MdOutlineClose /> : <MdOutlineArrowBack />}
           disabled={loading}
           onClick={onCancel}
           className={styles.button}
@@ -136,7 +138,6 @@ const Quotes = ({ addRequest, selectedAccount, fromTokensItems, quotes, onQuotes
         {routes.length ? (
           <Button
             primaryGradient
-            icon={<MdOutlineCheck />}
             disabled={!selectedRoute || loading}
             onClick={onConfirm}
             className={styles.button}
