@@ -3,17 +3,18 @@ import { useParams } from 'react-router-dom'
 
 export default function SignMessage({selectedAcc, selectedNetwork, addRequest, everythingToSign}) {
     const [hasLoaded, setHasLoaded] = useState(false)
-    const { messageToSign } = useParams()
+    const { type, messageToSign } = useParams()
 
     const req = useMemo(() => {
+        if (!type || !['personal_sign', 'eth_signTypedData'].includes(type)) return null
         if (!messageToSign) return null
-
+console.log(`in component: ${decodeURIComponent(JSON.parse(messageToSign))}`)
         return {
             id: `sdk_sign_${Date.now()}`,
-            type: 'personal_sign',
+            type: type,
             chainId: selectedNetwork.chainId,
             account: selectedAcc,
-            txn: messageToSign,
+            txn: type === 'eth_signTypedData' ? JSON.parse(messageToSign) : messageToSign,
             dapp: {
                 // TODO: dummy data, replace it with something coming from as input params
                 name: 'Example Dapp',
@@ -24,7 +25,7 @@ export default function SignMessage({selectedAcc, selectedNetwork, addRequest, e
             },
             // notification: true
         }
-    }, [messageToSign, selectedNetwork.chainId, selectedAcc])
+    }, [type, messageToSign, selectedNetwork.chainId, selectedAcc])
 
     useEffect(() => {
         if (hasLoaded || !req) return
