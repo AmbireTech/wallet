@@ -3,12 +3,19 @@
 .wrapper {
   display: flex;
   flex-direction: column;
-  gap: 10px;
   overflow-y: auto;
 
-  .title {
-    font-size: 20px;
-    font-weight: bold;
+  .titleWrapper {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+
+    .title {
+      font-size: 16px;
+      font-weight: 400;
+      margin: 0;
+    }
   }
 
   .route {
@@ -17,13 +24,24 @@
     padding: 20px;
     align-items: flex-start;
 
-    > div {
-      margin-top: 15px;
-    }
+    // > div {
+    //   margin-top: 15px;
+    // }
   }
 
   .noRoutesPlaceholder {
-    font-size: 16px;
-    opacity: 0.8;
+    max-width: 480px;
+    font-size: 14px;
+    font-weight: 300;
+    opacity: 0.9;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .wrapper {
+    .route {
+      flex-direction: column;
+      padding: 15px;
+    }
   }
 }

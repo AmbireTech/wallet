@@ -1,6 +1,8 @@
 import { Radios } from 'components/common'
 import Route from './Route/Route'
 
+import { ReactComponent as RoutesIcon } from './images/routes.svg'
+
 import styles from './Routes.module.scss'
 
 const Routes = ({ routes, setSelectedRoute }) => {
@@ -11,13 +13,15 @@ const Routes = ({ routes, setSelectedRoute }) => {
 
   return (
     <div className={styles.wrapper}>
-      <div className={styles.title}>Routes</div>
+      <div className={styles.titleWrapper}>
+        <RoutesIcon />
+        <h2 className={styles.title}>Routes</h2>
+      </div>
+
       {!radios.length ? (
-        <div className={styles.noRoutesPlaceholder}>
-          There is no routes available for this configuration at the moment.
-          <br />
-          Try increasing the amount or switching token.
-        </div>
+        <p className={styles.noRoutesPlaceholder}>
+          There is no routes available for this configuration at the moment. Try increasing the amount or switching token.
+        </p>
       ) : (
         <Radios radios={radios} onChange={(value) => setSelectedRoute(value)} radioClassName={styles.route} />
       )}
