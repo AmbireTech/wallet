@@ -393,3 +393,21 @@ $badge-size-height: 90px;
         }
     }
 }
+
+// Mobile
+@media screen and (max-width: $mobile-breakpoint-max-width) {
+    #wallet-token-modal {
+        .rewards-progress-path {
+            .rewards-progress-bar {
+                .rewards-wallet-icon {
+                    width: 70px;
+                    height: 70px;
+                }
+                span {
+                    white-space: nowrap;
+                    bottom: 40px;
+                }
+            }
+       }
+    }
+}
