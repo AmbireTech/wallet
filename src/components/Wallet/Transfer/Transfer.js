@@ -54,6 +54,7 @@ const Transfer = (props) => {
                         networkDetails={networkDetails}
                         relayerURL={relayerURL}
                         portfolio={portfolio}
+                        selectedAsset={selectedAsset}
                     />
                 }
                 panelClassName={styles.panel}

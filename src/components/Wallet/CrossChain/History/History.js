@@ -71,7 +71,6 @@ const History = ({ relayerURL, network, account, quotesConfirmed }) => {
 
                 try {
                     const status = await checkTxStatus(hash, from.chainId, to.chainId)
-                    console.log(status)
                     return {
                         ...status,
                         sourceTx: status.sourceTransactionHash,
