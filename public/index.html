@@ -1,6 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    <!--
+      1. script-src 'self 'unsafe-eval' - Block all remote sources/scripts and all inline scripts.
+        Unfortunately, we need to allow `eval`, because some of our third-party deps are using it.
+      2. object-src 'self' - Block all remote sources/scripts for embed/object/applet.
+      3. frame-ancestors 'none' - Block all parent websites loading the wallet into iframes.
+        This can't be set here, so we are going to set it on the server side.
+
+      {@link https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy/Sources}
+      {@link https://web.dev/csp/}
+    -->
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="script-src 'self' 'unsafe-eval'; object-src 'self';"
+    />
     <meta charset="utf-8" />
     <link rel="icon" href="%PUBLIC_URL%/favicon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
