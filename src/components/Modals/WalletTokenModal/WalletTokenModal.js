@@ -11,6 +11,7 @@ import { formatFloatTokenAmount } from 'lib/formatters'
 
 const MIN_ELIGIBLE_USD = 1000
 const MIN_CLAIMABLE_WALLET = 1000
+const MIN_CLAIMABLE_ADX_USD = 1000
 
 const WalletTokenModal = ({ accountId, claimableWalletToken, rewards, network }) => {
 
@@ -43,9 +44,8 @@ const WalletTokenModal = ({ accountId, claimableWalletToken, rewards, network })
 
   const eligibilityLeft = MIN_ELIGIBLE_USD - rewards.balance.balanceInUSD
   const isEligible = eligibilityLeft <= 0
-  // now + claimed + vesting
-  const claimable = claimableNow + currentClaimStatus.claimed + currentClaimStatus.mintableVesting
-  const canClaimWallet = claimable >= MIN_CLAIMABLE_WALLET
+  const accumulatedWallets = rewards['balance-rewards'] + rewards['adx-rewards']
+  const canClaimWallet = accumulatedWallets >= MIN_CLAIMABLE_WALLET
 
   const apys = {
     adxStakingApy: {
@@ -90,8 +90,8 @@ const WalletTokenModal = ({ accountId, claimableWalletToken, rewards, network })
 
           <div className={`rewards-progress-bar rewards-progress-wallets ${isEligible ? 'active' : 'inactive'}`}>
             <div className={`rewards-progress-bar-filler`}
-                 style={{ width: (Math.min(claimable / MIN_CLAIMABLE_WALLET, 1) * 100) + '%' }}></div>
-            <span><b>$Wallet {Math.floor(Math.min(claimable, MIN_CLAIMABLE_WALLET))}{claimable > MIN_CLAIMABLE_WALLET && '+'}</b>/{MIN_CLAIMABLE_WALLET}</span>
+                 style={{ width: (Math.min(accumulatedWallets / MIN_CLAIMABLE_WALLET, 1) * 100) + '%' }}></div>
+            <span><b>$WALLET {Math.floor(Math.min(accumulatedWallets, MIN_CLAIMABLE_WALLET))}{accumulatedWallets > MIN_CLAIMABLE_WALLET && '+'}</b>/{MIN_CLAIMABLE_WALLET}</span>
           </div>
           <ToolTip label={canClaimWallet ? `You can claim accumulated $WALLET rewards`: `You need to accumulate ${MIN_CLAIMABLE_WALLET} $WALLET to claim`}>
             <div className={`rewards-progress-claim ${canClaimWallet ? 'active' : 'inactive'}`}>
@@ -135,7 +135,7 @@ const WalletTokenModal = ({ accountId, claimableWalletToken, rewards, network })
 
       <div className='item'>
         <div className='details'>
-          <label>Early users Incentive</label>
+          <label>Early users Incentive (Total)</label>
           <div className='balance'>
             <div className='amount'><span className='primary-accent'>{formatAmount(rewards['balance-rewards'])}</span></div>
             <div className='amount apy'>{walletTokenAPYPercentage} <span>APY</span></div>
@@ -146,9 +146,9 @@ const WalletTokenModal = ({ accountId, claimableWalletToken, rewards, network })
       <div className='item'>
         <div className='details'>
           <label>
-            <ToolTip label={rewards['adx-rewards'] > 0 ? `$ADX Staking bonus is active` : `You need to stake $ADX to receive the $ADX staking bonus`}>
+            <ToolTip label={rewards.balance.balanceFromADX >= MIN_CLAIMABLE_ADX_USD ? `$ADX Staking bonus is active` : `You need to stake $${MIN_CLAIMABLE_ADX_USD} in $ADX to receive the $ADX staking bonus`}>
               <div className={'activation-badge'}>
-                ADX staking bonus <span className={`badge-adx ${rewards['adx-rewards'] > 0 ? 'active' : 'inactive'}`}></span>
+                ADX staking bonus (Total) <span className={`badge-adx ${rewards.balance.balanceFromADX >= MIN_CLAIMABLE_ADX_USD ? 'active' : 'inactive'}`}></span>
               </div>
             </ToolTip></label>
           <div className='balance'>
