@@ -17,7 +17,7 @@ const formatFeeAmount = (fee, route) => {
 }
 const getNetwork = (id) => networks.find(({ chainId }) => chainId === id)
 
-const Quotes = ({ addRequest, selectedAccount, fromTokensItems, quotes, onQuotesConfirmed, onCancel }) => {
+const Quotes = ({ addRequest, selectedAccount, fromTokensItems, quotes, onQuotesConfirmed, onCancel, amount }) => {
   const { addToast } = useToasts()
   const { approvalBuildTx, sendBuildTx } = useMovr()
 
@@ -121,7 +121,7 @@ const Quotes = ({ addRequest, selectedAccount, fromTokensItems, quotes, onQuotes
   return (
     <div className={styles.wrapper}>
       <div>
-        <Summary fromNetwork={fromNetwork} fromAsset={fromAsset} toNetwork={toNetwork} toAsset={toAsset} />
+        <Summary fromNetwork={fromNetwork} fromAsset={fromAsset} toNetwork={toNetwork} toAsset={toAsset} amount={amount} />
 
         {loading ? <Loading /> : <Routes routes={routes} setSelectedRoute={setSelectedRoute} />}
       </div>

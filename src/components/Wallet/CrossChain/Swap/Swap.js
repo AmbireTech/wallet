@@ -193,6 +193,7 @@ const Swap = ({ network, portfolio, addRequest, selectedAccount, quotesConfirmed
           quotes={quotes}
           onQuotesConfirmed={onQuotesConfirmed}
           onCancel={onCancel}
+          amount={amount}
         />
       ) : (
         <GetQuotesForm
