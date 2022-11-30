@@ -173,6 +173,11 @@ $badge-size-height: 90px;
                 height: 32px;
                 background: url("../../../resources/rewards/adx-staking-active.svg") no-repeat 50% 50%;
                 background-size: contain;
+                margin-left: 5px;
+
+                &.inactive {
+                    background-image: url("../../../resources/rewards/adx-staking-inactive.svg");
+                }
             }
 
             .details {
@@ -391,5 +396,24 @@ $badge-size-height: 90px;
         button {
             flex: 0 1 100% !important;
         }
+    }
+}
+
+// Mobile
+@media screen and (max-width: $mobile-breakpoint-max-width) {
+    #wallet-token-modal {
+        .rewards-progress-path {
+            .rewards-progress-bar {
+                .rewards-wallet-icon {
+                    width: 70px;
+                    height: 70px;
+                }
+                span {
+                    white-space: nowrap;
+                    bottom: 40px;
+                    left: -30px;
+                }
+            }
+       }
     }
 }
