@@ -68,14 +68,15 @@ const setProvider = (_id: NetworkId) => {
       if (typeof target[prop] === 'function'){
         return function () {
           let to
+          let data
           Object.keys(arguments).forEach(x => {
             if (arguments[x] && arguments[x].to) to = arguments[x].to
+            if (arguments[x] && arguments[x].data) data = arguments[x].data
           })
-          console.log(new Date().toLocaleString(), `===> to:::${to}`)
-          if (to) calls[to] = calls[to] ? calls[to] + 1 : 1
+          // console.log(new Date().toLocaleString(), `===> to:::${to}`)
+          if (to && data && to === '0x47Cd7E91C3CBaAF266369fe8518345fc4FC12935') calls[`${to}::${data.substr(0,9)}`] = calls[`${to}::${data.substr(0,9)}`] ? calls[`${to}::${data.substr(0,9)}`] + 1 : 1
+          else if (to) calls[to] = calls[to] ? calls[to] + 1 : 1
           else calls['unknown'] = calls['unknown'] ? calls['unknown'] + 1 : 1
-          if (to.toLowerCase() === '0x6FDb43bca2D8fe6284242d92620156205d4fA028'.toLowerCase()) console.log(arguments)
-          if (to.toLowerCase() === '0xF1628de74193Dde3Eed716aB0Ef31Ca2b6347eB1'.toLowerCase()) console.log(arguments)
           return target[prop](...arguments)
         }
       }
