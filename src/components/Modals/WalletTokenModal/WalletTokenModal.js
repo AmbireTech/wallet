@@ -44,7 +44,7 @@ const WalletTokenModal = ({ accountId, claimableWalletToken, rewards, network })
 
   const eligibilityLeft = MIN_ELIGIBLE_USD - rewards.balance.balanceInUSD
   const isEligible = eligibilityLeft <= 0
-  const accumulatedWallets = rewards['balance-rewards'] + rewards['adx-rewards'] + currentClaimStatus.mintableVesting
+  const accumulatedWallets = rewards['balance-rewards'] + rewards['adx-rewards']
   const canClaimWallet = accumulatedWallets >= MIN_CLAIMABLE_WALLET
 
   const apys = {
