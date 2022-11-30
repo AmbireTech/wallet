@@ -1,19 +1,19 @@
 {
   "files": {
     "main.css": "./static/css/main.f72dcdc1.chunk.css",
-    "main.js": "./static/js/main.f3b521db.chunk.js",
-    "main.js.map": "./static/js/main.f3b521db.chunk.js.map",
+    "main.js": "./static/js/main.379f3680.chunk.js",
+    "main.js.map": "./static/js/main.379f3680.chunk.js.map",
     "runtime-main.js": "./static/js/runtime-main.20d2a000.js",
     "runtime-main.js.map": "./static/js/runtime-main.20d2a000.js.map",
     "static/css/2.ca21a63f.chunk.css": "./static/css/2.ca21a63f.chunk.css",
-    "static/js/2.db179d28.chunk.js": "./static/js/2.db179d28.chunk.js",
-    "static/js/2.db179d28.chunk.js.map": "./static/js/2.db179d28.chunk.js.map",
+    "static/js/2.458d07e5.chunk.js": "./static/js/2.458d07e5.chunk.js",
+    "static/js/2.458d07e5.chunk.js.map": "./static/js/2.458d07e5.chunk.js.map",
     "static/js/3.aea886fa.chunk.js": "./static/js/3.aea886fa.chunk.js",
     "static/js/3.aea886fa.chunk.js.map": "./static/js/3.aea886fa.chunk.js.map",
     "index.html": "./index.html",
     "static/css/2.ca21a63f.chunk.css.map": "./static/css/2.ca21a63f.chunk.css.map",
     "static/css/main.f72dcdc1.chunk.css.map": "./static/css/main.f72dcdc1.chunk.css.map",
-    "static/js/2.db179d28.chunk.js.LICENSE.txt": "./static/js/2.db179d28.chunk.js.LICENSE.txt",
+    "static/js/2.458d07e5.chunk.js.LICENSE.txt": "./static/js/2.458d07e5.chunk.js.LICENSE.txt",
     "static/media/aave.58aec338.svg": "./static/media/aave.58aec338.svg",
     "static/media/add.50379121.svg": "./static/media/add.50379121.svg",
     "static/media/address-book.e4b981ed.svg": "./static/media/address-book.e4b981ed.svg",
@@ -59,8 +59,7 @@
     "static/media/log-out.d027a35a.svg": "./static/media/log-out.d027a35a.svg",
     "static/media/EmailLogin.module.scss": "./static/media/logo.f8d17b6b.svg",
     "static/media/ErrorScreen.scss": "./static/media/logo.ab51d124.png",
-    "static/media/metamask-fox.5b2c2026.svg": "./static/media/metamask-fox.5b2c2026.svg",
-    "static/media/metamask.svg": "./static/media/metamask.4078df8b.svg",
+    "static/media/metamask-fox.svg": "./static/media/metamask-fox.5b2c2026.svg",
     "static/media/SideBar.module.scss": "./static/media/opensea.6706f228.svg",
     "static/media/paytrie.81b0b17f.svg": "./static/media/paytrie.81b0b17f.svg",
     "static/media/index.css": "./static/media/ubuntu-mono-latin-ext-400-normal.b56e2315.woff2",
@@ -92,8 +91,8 @@
   "entrypoints": [
     "static/js/runtime-main.20d2a000.js",
     "static/css/2.ca21a63f.chunk.css",
-    "static/js/2.db179d28.chunk.js",
+    "static/js/2.458d07e5.chunk.js",
     "static/css/main.f72dcdc1.chunk.css",
-    "static/js/main.f3b521db.chunk.js"
+    "static/js/main.379f3680.chunk.js"
   ]
 }
