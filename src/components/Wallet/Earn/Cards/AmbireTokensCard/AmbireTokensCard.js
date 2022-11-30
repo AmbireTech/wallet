@@ -409,7 +409,7 @@ const AmbireTokensCard = ({ networkId, accountId, tokens, rewardsData, addReques
                         walletValue: utils.formatUnits(walletValue.toString(), 18)
                     })
                 
-                    let remainingTime = leaveLog ? ((leaveLog.unlocksAt.toString() * 1000) - Date.now()) : null
+                    let remainingTime = unlocksAt ? ((unlocksAt.toString() * 1000) - Date.now()) : null
                     if (remainingTime <= 0) remainingTime = 0
                     setLockedRemainingTime(remainingTime)    
                 } else {
@@ -423,7 +423,7 @@ const AmbireTokensCard = ({ networkId, accountId, tokens, rewardsData, addReques
         return () => {
             setShareValue(ZERO)
         }
-    }, [networkId, accountId, selectedToken.label, isAdxTokenSelected, leaveLog])
+    }, [networkId, accountId, selectedToken.label, isAdxTokenSelected])
 
     useEffect(() => setLoading(false), [])
 

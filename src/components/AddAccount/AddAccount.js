@@ -28,7 +28,7 @@ import LatticeModal from 'components/Modals/LatticeModal/LatticeModal'
 import { ReactComponent as TrezorIcon } from 'resources/providers/trezor.svg'
 import { ReactComponent as LedgerIcon } from 'resources/providers/ledger.svg'
 import { ReactComponent as GridPlusIcon } from 'resources/providers/grid-plus.svg'
-import { ReactComponent as MetamaskIcon } from 'resources/providers/metamask.svg'
+import { ReactComponent as MetamaskIcon } from 'resources/providers/metamask-fox.svg'
 import { ReactComponent as EmailIcon } from 'resources/icons/email.svg'
 
 TrezorConnect.manifest({
@@ -401,7 +401,7 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking, plug
     </button>
     <button onClick={() => wrapErr(connectWeb3AndGetAccounts)}>
       {/* Metamask / Browser */}
-      <MetamaskIcon className={styles.metamask} />
+      <MetamaskIcon className={styles.metamask} width={25} /> Web3 Wallet
     </button>
     <button onClick={() => wrapErr(open)}>
       <VscJson size={25} />
