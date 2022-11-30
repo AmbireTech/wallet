@@ -38,7 +38,7 @@ const FeesBreakdown = ({
             </a>
           }:
           {
-            !isNaN(baseFeeInFeeToken) && ` ${formatFloatTokenAmount(baseFeeInFeeToken, true, decimals) + ' ' + estimation?.selectedFeeToken?.symbol}`
+            !isNaN(baseFeeInFeeToken) ? ` ${formatFloatTokenAmount(baseFeeInFeeToken, true, decimals) + ' ' + estimation?.selectedFeeToken?.symbol}` : ' -'
           }
         </p>
         {
