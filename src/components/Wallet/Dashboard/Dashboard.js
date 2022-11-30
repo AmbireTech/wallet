@@ -12,6 +12,8 @@ import AssetsMigrationBanner from 'components/Wallet/AssetsMigration/AssetsMigra
 import PendingRecoveryNotice from 'components/Wallet/Security/PendingRecoveryNotice/PendingRecoveryNotice'
 import usePasswordRecoveryCheck from 'hooks/usePasswordRecoveryCheck'
 import OutdatedBalancesMsg from './OutdatedBalancesMsg/OutdatedBalancesMsg'
+import OfflineMsg from './OfflineMsg/OfflineMsg'
+import { useOfflineStatus } from 'components/OfflineProvider/OfflineProvider'
 import cn from 'classnames'
 
 import styles from './Dashboard.module.scss'
@@ -27,6 +29,7 @@ const tabSegments = [
 
 
 export default function Dashboard({ portfolio, selectedNetwork, selectedAccount, setNetwork, privateMode, rewardsData,  userSorting, setUserSorting, accounts, addRequest, relayerURL, useStorage, match, showSendTxns }) {
+    const isOffline = useOfflineStatus()
     const history = useHistory()
     const { tabId, page = 1 } = useParams()
 
@@ -74,6 +77,7 @@ export default function Dashboard({ portfolio, selectedNetwork, selectedAccount,
 
     return (
         <section className={styles.wrapper}>
+            { isOffline && (<OfflineMsg />) }
             { isBalancesCachedCurrentNetwork && (
                 <OutdatedBalancesMsg 
                     selectedNetwork={selectedNetwork}
