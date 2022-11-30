@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import Accounts from "./Accounts";
 
 import { useLocalStorage, useAccounts, usePrivateMode } from 'hooks'
@@ -47,10 +47,10 @@ export default function LoginForm({ onAccRequest, inProgress, onLoginSuccess }) 
     <form onSubmit={onSubmit}>
       {
         accounts.length
-          ? (<React.Fragment>
+          ? (<>
               <Accounts accounts={accounts} selectedAddress={selectedAcc} onSelectAcc={onSelectAcc} hidePrivateValue={hidePrivateValue} />
               <div>OR</div>
-            </React.Fragment>)
+            </>)
         : (<></>)
       }
       <input type="email" placeholder="Email" value={state.email} onChange={e => onUpdate({ email: e.target.value })}></input>
