@@ -20,7 +20,7 @@ const TxStatusComponent = ({
 }) => {
   return (
     <div className={cn(styles.wrapper, className)}>
-      <div className={styles.summary}>
+      <div className={styles.body}>
         <div className={styles.networks}>
           {/* From Network */}
           <div className={styles.network}>
@@ -46,21 +46,25 @@ const TxStatusComponent = ({
         <div className={styles.tokens}>
           {/* From Token */}
           <div className={styles.token}>
-            {fromTokenName ? <p className={styles.amount}>{fromTokenName}</p> : null}
-            <div className={styles.iconWrapper}>
-              <img className={styles.icon} alt="" src={fromTokenIcon} />
+            {fromTokenAmount ? <p className={styles.tokenText}>{fromTokenAmount}</p> : null}
+            <div className={styles.tokenBody}>
+              <div className={styles.iconWrapper}>
+                <img className={styles.icon} alt="" src={fromTokenIcon} />
+              </div>
+              {fromTokenName ? <p className={styles.tokenText}>{fromTokenName}</p> : null}
             </div>
-            {fromTokenAmount ? <p className={styles.amount}>{fromTokenAmount}</p> : null}
           </div>
           {/* Swap Icon  */}
           <SwapIcon className={styles.swapIcon} />
           {/* To Token */}
           <div className={cn(styles.token, styles.toToken)}>
-            {toTokenAmount ? <p className={styles.amount}>{toTokenAmount}</p> : null}
-            <div className={styles.iconWrapper}>
-              <img className={styles.icon} alt="" src={toTokenIcon} />
+            {toTokenAmount ? <p className={styles.tokenText}>{toTokenAmount}</p> : null}
+            <div className={styles.tokenBody}>
+              <div className={styles.iconWrapper}>
+                <img className={styles.icon} alt="" src={toTokenIcon} />
+              </div>
+              {toTokenName ? <p className={styles.tokenText}>{toTokenName}</p> : null}
             </div>
-            {toTokenName ? <p className={styles.amount}>{toTokenName}</p> : null}
           </div>
         </div>
       </div>

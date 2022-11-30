@@ -25,13 +25,14 @@
     margin: 0;
   }
 
-  .summary {
+  .body {
     width: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 15px;
 
+    // Networks 
     .networks {
       display: flex;
       align-items: center;
@@ -69,6 +70,7 @@
       }
     }
 
+    // Tokens 
     .tokens {
       display: flex;
       align-items: center;
@@ -81,7 +83,13 @@
         gap: 10px;
         flex: 1;
 
-        .amount {
+        .tokenBody {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+        }
+
+        .tokenText {
           font-size: 14px;
           max-width: 120px;
           white-space: nowrap;
@@ -118,11 +126,12 @@
     gap: 30px;
     padding: 20px;
 
-    .summary {
+    .body {
       flex-direction: column;
       align-items: center;
       gap: 20px;
 
+      // Networks 
       .networks {
         .network {
           flex-direction: column;
@@ -136,6 +145,7 @@
         }
       }
 
+      // Tokens 
       .tokens {
         justify-content: unset;
         gap: 15px;
@@ -145,8 +155,9 @@
           flex-wrap: wrap;
           align-items: center;
 
-          .amount {
+          .tokenText {
             font-size: 12px;
+            max-width: 80px;
           }
         }
 
@@ -161,8 +172,10 @@
 
 @media screen and (max-width: 600px) {
   .wrapper {
-    .summary {
+    .body {
       gap: 10px;
+
+      // Networks 
       .networks {
         .network {
           .networkName {
@@ -175,8 +188,24 @@
         }
       }
 
+      // Tokens 
       .tokens {
+        align-items: flex-start;
         flex-wrap: wrap;
+
+        .token {
+          flex-direction: column-reverse;
+          align-items: flex-start;
+
+          &.toToken {
+            align-items: flex-end;
+
+            .tokenBody {
+              flex-direction: row-reverse;
+            }
+          }
+        }
+
         .swapIcon {
           min-width: 30px;
           min-height: 30px;
