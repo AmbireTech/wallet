@@ -5,7 +5,7 @@
   flex-direction: column;
   justify-content: space-between;
   height: 100%;
-  
+
   .body {
     display: flex;
     flex-direction: column;
@@ -15,59 +15,35 @@
       gap: 20px;
     }
 
-    .label {
-      display: block;
-      padding-left: 20px;
-      margin-bottom: 10px;
-      font-size: 14px;
-    }
-
-    .inputs {
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      gap: 15px;
-
-      .selectInput {
-        .selectIcon {
-          position: relative;
-          width: 20px;
-          height: 20px;
-          margin: 0 10px;
-        }
-
-        &::before {
-          position: absolute;
-          top: 10px;
-          left: 20px;
-          width: 40px;
-          height: 40px;
-          content: '';
-          background-color: $c-titan-white;
-          opacity: 0.05;
-          border-radius: 12px;
-        }
+    .selectInput {
+      .selectIcon {
+        position: relative;
+        width: 20px;
+        height: 20px;
+        margin: 0 10px;
       }
 
-      .loading {
-        z-index: 49;
+      &::before {
         position: absolute;
-        top: 0;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        background-color: $c-mirage;
+        top: 10px;
+        left: 20px;
+        width: 40px;
+        height: 40px;
+        content: '';
+        background-color: $c-titan-white;
+        opacity: 0.05;
         border-radius: 12px;
       }
+    }
 
-      .amountLabel {
-        width: 100%;
-        display: flex;
-        justify-content: space-between;
+    .amountLabel {
+      margin: 0;
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
 
-        span {
-          opacity: 0.8;
-        }
+      span {
+        opacity: 0.8;
       }
     }
 
@@ -88,12 +64,6 @@
       border-radius: 12px;
       transform: rotate(90deg);
     }
-
-    .toSection {
-      .inputs {
-        gap: 10px;
-      }
-    }
   }
 
   .button {
@@ -107,18 +77,23 @@
 @media screen and (max-width: $mobile-breakpoint-max-width) {
   .wrapper {
     .body {
-      .inputs {
-        .selectInput {
-          padding: 0 10px;
-          font-size: 14px;
-  
-          .selectIcon {
-            margin-left: 10px;
-          }
-  
-          &::before {
-            left: 10px;
-          }
+      .swapIcon {
+        min-width: 40px;
+        min-height: 40px;
+        width: 40px;
+        height: 40px;
+      }
+
+      .selectInput {
+        padding: 0 10px;
+        font-size: 14px;
+
+        .selectIcon {
+          margin-left: 10px;
+        }
+
+        &::before {
+          left: 10px;
         }
       }
     }
