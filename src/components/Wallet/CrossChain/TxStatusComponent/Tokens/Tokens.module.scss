@@ -50,11 +50,6 @@
       justify-content: flex-end;
     }
   }
-
-  .swapIcon {
-    width: 30px;
-    height: 30px;
-  }
 }
 // Mobile
 @media screen and (max-width: $mobile-breakpoint-max-width) {
@@ -70,13 +65,8 @@
 
       .tokenText {
         font-size: 12px;
-        max-width: 80px;
+        max-width: 90px;
       }
-    }
-
-    .swapIcon {
-      min-width: 40px;
-      min-height: 40px;
     }
   }
 }
@@ -98,12 +88,6 @@
           flex-direction: row-reverse;
         }
       }
-    }
-
-    .swapIcon {
-      min-width: 30px;
-      min-height: 30px;
-      // display: none;
     }
   }
 }

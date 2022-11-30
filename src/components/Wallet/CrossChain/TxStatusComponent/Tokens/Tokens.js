@@ -1,6 +1,6 @@
 import cn from 'classnames'
+import { ToolTip } from 'components/common'
 
-import { ReactComponent as SwapIcon } from 'resources/icons/cross-chain.svg'
 
 import styles from './Tokens.module.scss'
 
@@ -8,7 +8,11 @@ const Tokens = ({ fromTokenAmount, fromTokenIcon, fromTokenName, toTokenAmount, 
   <div className={styles.wrapper}>
     {/* From Token */}
     <div className={styles.token}>
-      {fromTokenAmount ? <p className={styles.tokenText}>{fromTokenAmount}</p> : null}
+      {fromTokenAmount ? (
+        <ToolTip label={fromTokenAmount}>
+          <p className={styles.tokenText}>{fromTokenAmount}</p>
+        </ToolTip>
+      ) : null}
       <div className={styles.tokenBody}>
         <div className={styles.iconWrapper}>
           <img className={styles.icon} alt="" src={fromTokenIcon} />
@@ -16,11 +20,13 @@ const Tokens = ({ fromTokenAmount, fromTokenIcon, fromTokenName, toTokenAmount, 
         {fromTokenName ? <p className={styles.tokenText}>{fromTokenName}</p> : null}
       </div>
     </div>
-    {/* Swap Icon  */}
-    <SwapIcon className={styles.swapIcon} />
     {/* To Token */}
     <div className={cn(styles.token, styles.toToken)}>
-      {toTokenAmount ? <p className={styles.tokenText}>{toTokenAmount}</p> : null}
+      {toTokenAmount ? (
+        <ToolTip label={toTokenAmount}>
+          <p className={styles.tokenText}>{toTokenAmount}</p>
+        </ToolTip>
+      ) : null}
       <div className={styles.tokenBody}>
         <div className={styles.iconWrapper}>
           <img className={styles.icon} alt="" src={toTokenIcon} />
