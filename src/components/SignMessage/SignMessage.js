@@ -1,4 +1,3 @@
-// import useSignMessage from "ambire-common/src/hooks/useSignMessage"
 import supportedDApps from "ambire-common/src/constants/supportedDApps"
 
 import styles from "./SignMessage.module.scss"
