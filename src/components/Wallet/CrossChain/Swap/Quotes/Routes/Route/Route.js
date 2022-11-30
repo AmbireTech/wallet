@@ -1,12 +1,13 @@
 import cn from 'classnames'
+
+import { formatAmount } from 'components/Wallet/CrossChain/CrossChain'
+
 import Footer from './Footer/Footer'
+import Separator from './Separator/Separator'
 
 import { ReactComponent as SwapIcon } from 'resources/icons/cross-chain.svg'
 
 import styles from './Route.module.scss'
-import Separator from './Separator/Separator'
-
-const formatAmount = (amount, asset) => (amount / Math.pow(10, asset.decimals))
 
 const Route = ({
   data: { bridgeStep, middlewareRoute, middlewareFee, bridgeFee, maxServiceTime, serviceTime, fromAsset, toAsset },
@@ -24,9 +25,9 @@ const Route = ({
       <Separator />
       {middlewareRoute ? (
         <div className={styles.middlewareWrapper}>
-          <div className={cn(styles.topItem, styles.middleware)}>
-            <img className={styles.topItemIcon} src={middlewareRoute.protocol.icon} alt="" />
-            <h4 className={styles.topItemName}>{middlewareRoute.protocol.displayName}</h4>
+          <div className={styles.stepItem}>
+            <img className={styles.stepItemIcon} src={middlewareRoute.protocol.icon} alt="" />
+            <h4 className={styles.stepItemName}>{middlewareRoute.protocol.displayName}</h4>
           </div>
           <img className={styles.middlewareAssetIcon} src={middlewareRoute.fromAsset.icon} alt="" />
           <img className={styles.middlewareAssetIcon} src={middlewareRoute.toAsset.icon} alt="" />
@@ -35,9 +36,9 @@ const Route = ({
       {middlewareRoute ? <Separator /> : null}
       <div className={cn(styles.iconWrapper, styles.swapIconWrapper)}>
         <SwapIcon className={styles.swapIcon} />
-        <div className={styles.topItem}>
-          <img className={styles.topItemIcon} src={bridgeStep.protocol.icon} alt="" />
-          <h4 className={styles.topItemName}>{bridgeStep.protocol.displayName}</h4>
+        <div className={styles.stepItem}>
+          <img className={styles.stepItemIcon} src={bridgeStep.protocol.icon} alt="" />
+          <h4 className={styles.stepItemName}>{bridgeStep.protocol.displayName}</h4>
         </div>
       </div>
       <Separator />

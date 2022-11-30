@@ -1,5 +1,10 @@
 @import 'variables';
 
+$body-size: 30px;
+$top-item-mobile-up-distance: 5.5px;
+$bottom-item-mobile-up-distance: 13px;
+$item-mobile-distance: 10px;
+
 .wrapper {
   padding-top: 29px; // The height of the checkbox + 5px gap
 
@@ -10,21 +15,20 @@
     gap: 8px;
     margin-bottom: 13px;
 
-    .topItem {
+    .stepItem {
       position: absolute;
-      bottom: 10px;
-      transform: translateY(-100%);
+      bottom: calc(#{$body-size} + #{$top-item-mobile-up-distance});
       display: flex;
       align-items: center;
       gap: 10px;
 
-      .topItemIcon {
+      .stepItemIcon {
         width: 24px;
         height: 24px;
         border-radius: 50%;
       }
 
-      .topItemName {
+      .stepItemName {
         margin: 0;
         font-weight: 400;
         font-size: 14px;
@@ -50,14 +54,8 @@
       .toAmount {
         margin: 0;
         position: absolute;
-        top: 22px;
+        top: calc(#{$body-size} + #{$bottom-item-mobile-up-distance});
         left: 0;
-        transform: translateY(100%);
-        // Truncate
-        max-width: 90px;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
       }
 
       .toAmount {
@@ -68,6 +66,8 @@
 
     .middlewareWrapper {
       height: 30px;
+      // We hardcode the width in order to fix the width problems
+      width: 30px;
       position: relative;
       display: flex;
       justify-content: center;
@@ -78,10 +78,11 @@
         height: 18px;
         border-radius: 50%;
         border: 2px solid $c-mirage;
+        // We add transform to both icons in order to center them
+        transform: translateX(2.5px);
 
         &:last-child {
-          position: relative;
-          left: -5px;
+          transform: translateX(-2.5px);
         }
       }
     }
@@ -90,7 +91,6 @@
 
 @media screen and (max-width: 600px) {
   .wrapper {
-    $side-spacing: 40px;
     padding-top: 0;
     overflow: hidden;
 
@@ -98,27 +98,21 @@
       flex-direction: column;
       margin-bottom: 20px;
 
-      .topItem {
+      .stepItem {
         top: 5px;
-        left: $side-spacing;
+        left: calc(#{$body-size} + #{$item-mobile-distance});
         transform: unset;
         flex-wrap: wrap;
         height: 20px;
         width: 100px;
 
-        .topItemIcon {
+        .stepItemIcon {
           width: 20px;
           height: 20px;
         }
 
-        .topItemName {
+        .stepItemName {
           font-size: 13px;
-        }
-
-        &.middleware {
-          left: unset;
-          right: $side-spacing;
-          flex-direction: row-reverse;
         }
       }
 
@@ -129,19 +123,10 @@
 
         .fromAmount,
         .toAmount {
-          top: -50%;
+          top: 5px;
           font-size: 13px;
-        }
-
-        .fromAmount {
           left: unset;
-          right: $side-spacing;
-        }
-
-        .toAmount {
-          left: $side-spacing;
-          width: 100px;
-          word-wrap: break-all;
+          right: calc(#{$body-size} + #{$item-mobile-distance});
         }
       }
     }
