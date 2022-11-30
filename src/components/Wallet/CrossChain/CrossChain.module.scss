@@ -7,8 +7,13 @@
     min-height: 100%;
 
     .panel {
+        flex: 1;
         padding: 40px;
         padding-top: 36px;
+
+        & > div {
+            padding-top: 20px;
+        }
     }
 }
 

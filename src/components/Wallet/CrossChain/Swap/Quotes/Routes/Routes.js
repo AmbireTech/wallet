@@ -20,7 +20,8 @@ const Routes = ({ routes, setSelectedRoute }) => {
 
       {!radios.length ? (
         <p className={styles.noRoutesPlaceholder}>
-          There is no routes available for this configuration at the moment. Try increasing the amount or switching token.
+          There is no routes available for this configuration at the moment. Try increasing the amount or switching
+          token.
         </p>
       ) : (
         <Radios radios={radios} onChange={(value) => setSelectedRoute(value)} radioClassName={styles.route} />

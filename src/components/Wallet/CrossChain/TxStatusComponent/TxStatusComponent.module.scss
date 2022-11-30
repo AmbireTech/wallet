@@ -1,15 +1,5 @@
 @import 'variables';
 
-@mixin Icon($width, $height) {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: $width;
-  height: $height;
-  border-radius: 12px;
-  background-color: rgba($c-titan-white, 0.05);
-}
-
 .wrapper {
   display: flex;
   flex-direction: column;
@@ -32,88 +22,15 @@
     align-items: center;
     gap: 15px;
 
-    // Networks 
+    // Networks
     .networks {
       display: flex;
       align-items: center;
       justify-content: space-between;
       width: 100%;
 
-      .network {
-        display: flex;
-        gap: 10px;
-        align-items: center;
-
-        .iconWrapper {
-          @include Icon(40px, 40px);
-
-          .icon {
-            width: 36px;
-            height: 36px;
-          }
-        }
-
-        .networkName {
-          font-size: 14px;
-
-          .name {
-            margin: 0;
-            font-size: 16px;
-            font-weight: 600;
-          }
-        }
-
-        &.toNetwork {
-          flex-direction: row-reverse;
-          text-align: right;
-        }
-      }
-    }
-
-    // Tokens 
-    .tokens {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      width: 100%;
-
-      .token {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        flex: 1;
-
-        .tokenBody {
-          display: flex;
-          align-items: center;
-          gap: 10px;
-        }
-
-        .tokenText {
-          font-size: 14px;
-          max-width: 120px;
-          white-space: nowrap;
-          overflow: hidden;
-          text-overflow: ellipsis;
-        }
-
-        .iconWrapper {
-          @include Icon(28px, 28px);
-
-          .icon {
-            width: 18px;
-            height: 18px;
-          }
-        }
-
-        &.toToken {
-          justify-content: flex-end;
-        }
-      }
-
-      .swapIcon {
-        width: 30px;
-        height: 30px;
+      .mobileSwapIcon {
+        display: none;
       }
     }
   }
@@ -130,42 +47,6 @@
       flex-direction: column;
       align-items: center;
       gap: 20px;
-
-      // Networks 
-      .networks {
-        .network {
-          flex-direction: column;
-          align-items: flex-start;
-
-          &.toNetwork {
-            flex-direction: column;
-            align-items: flex-end;
-            text-align: right;
-          }
-        }
-      }
-
-      // Tokens 
-      .tokens {
-        justify-content: unset;
-        gap: 15px;
-
-        .token {
-          flex: 1;
-          flex-wrap: wrap;
-          align-items: center;
-
-          .tokenText {
-            font-size: 12px;
-            max-width: 80px;
-          }
-        }
-
-        .swapIcon {
-          min-width: 40px;
-          min-height: 40px;
-        }
-      }
     }
   }
 }
@@ -174,43 +55,6 @@
   .wrapper {
     .body {
       gap: 10px;
-
-      // Networks 
-      .networks {
-        .network {
-          .networkName {
-            font-size: 12px;
-
-            .name {
-              font-size: 14px;
-            }
-          }
-        }
-      }
-
-      // Tokens 
-      .tokens {
-        align-items: flex-start;
-        flex-wrap: wrap;
-
-        .token {
-          flex-direction: column-reverse;
-          align-items: flex-start;
-
-          &.toToken {
-            align-items: flex-end;
-
-            .tokenBody {
-              flex-direction: row-reverse;
-            }
-          }
-        }
-
-        .swapIcon {
-          min-width: 30px;
-          min-height: 30px;
-        }
-      }
     }
   }
 }
