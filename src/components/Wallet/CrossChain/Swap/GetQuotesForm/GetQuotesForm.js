@@ -112,7 +112,7 @@ const GetQuotesForm = ({
             </div>
           </div>
         </FormSection>
-        <SwapIcon className={styles.separator} />
+        <SwapIcon className={styles.swapIcon} />
         <FormSection smaller={true} isLoading={loadingToTokens}>
           <div className={styles.toSection}>
             <label className={styles.label}>To</label>
