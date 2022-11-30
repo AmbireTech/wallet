@@ -1,14 +1,15 @@
 import cn from 'classnames'
 
+import { formatAmount } from 'components/Wallet/CrossChain/CrossChain'
+
 import { Loading } from 'components/common'
+import TxStatusComponent from 'components/Wallet/CrossChain/TxStatusComponent/TxStatusComponent'
 
 import { MdOutlineCheck, MdOutlineClose } from 'react-icons/md'
 import { ReactComponent as ExternalLinkIcon } from 'resources/icons/external-link.svg'
 
 import styles from './TxStatus.module.scss'
-import TxStatusComponent from 'components/Wallet/CrossChain/TxStatusComponent/TxStatusComponent'
 
-const formatAmount = (amount, asset) => amount / Math.pow(10, asset.decimals)
 
 const TxStatus = ({
   data: { sourceTx, fromNetwork, toNetwork, toAsset, toAmount, from, to, serviceTimeMinutes, isPending, statusError },
