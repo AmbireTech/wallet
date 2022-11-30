@@ -11,6 +11,10 @@
     gap: 10px;
     margin-bottom: 10px;
 
+    &.noRoutes {
+      margin-bottom: 20px;
+    }
+
     .title {
       font-size: 16px;
       font-weight: 400;
@@ -26,6 +30,7 @@
   }
 
   .noRoutesPlaceholder {
+    margin: 0;
     max-width: 480px;
     font-size: 14px;
     font-weight: 300;

@@ -1,3 +1,5 @@
+import cn from 'classnames'
+
 import { Radios } from 'components/common'
 import Route from './Route/Route'
 
@@ -13,7 +15,7 @@ const Routes = ({ routes, setSelectedRoute }) => {
 
   return (
     <div className={styles.wrapper}>
-      <div className={styles.titleWrapper}>
+      <div className={cn(styles.titleWrapper, {[styles.noRoutes]: !radios.length})}>
         <RoutesIcon />
         <h2 className={styles.title}>Routes</h2>
       </div>
