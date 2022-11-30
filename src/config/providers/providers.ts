@@ -54,7 +54,7 @@ const setProvider = (_id: NetworkId) => {
 // NOTE: temp for testing
 // @ts-ignore
 // TODO: Change the key for the Alchemy
-rpcProviders['temp-ethereum-ambire-earn'] = new providers.StaticJsonRpcProvider('https://eth-mainnet.alchemyapi.io/v2/e5Gr8LP_EH0SBPZiNCcC08OuEDrvgoYK', {
+rpcProviders['temp-ethereum-ambire-earn'] = new providers.StaticJsonRpcProvider('https://eth-mainnet.alchemyapi.io/v2/Qi7xcrPZH22WtSWDSB5KzF1RIFXVP8Oh', {
   name: 'temp-ethereum-ambire-earn',
   chainId: 1
 })
