@@ -1,5 +1,4 @@
 import { useLocalStorage } from 'hooks'
-
 import History from './History/History'
 import Swap from './Swap/Swap'
 
