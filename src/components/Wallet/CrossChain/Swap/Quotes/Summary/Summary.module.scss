@@ -1,4 +1,12 @@
+@import 'variables';
+
 .wrapper {
   padding-bottom: 15px;
   margin-bottom: 46px;
+}
+
+@media screen and (max-width: $mobile-breakpoint-max-width) {
+  .wrapper {
+    margin-bottom: 30px;
+  }
 }
