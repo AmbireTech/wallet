@@ -1,6 +1,6 @@
 import cn from 'classnames'
-import Networks from './Networks/Networks'
 
+import Networks from './Networks/Networks'
 import Tokens from './Tokens/Tokens'
 
 import styles from './TxStatusComponent.module.scss'
