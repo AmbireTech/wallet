@@ -145,7 +145,7 @@ const useProviders = ({ walletAddress, selectedNetwork, relayerURL, portfolio })
     const openSwappin = async () => {
         setLoading(prevState => ['Swappin', ...prevState])
         const url = 'https://app.swappin.gifts/ref/ambire'
-        history.push(`/wallet/dapps?dappUrl=${url}`)
+        history.push(`/wallet/dapps?dappUrlCatalog=${url}`)
         setLoading(prevState => prevState.filter(n => n !== 'Swappin'))
     }
 

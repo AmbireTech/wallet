@@ -1,3 +1,5 @@
+import { Bundle } from 'adex-protocol-eth/js'
+import { toBundleTxn } from 'ambire-common/src/services/requestToBundleTxn'
 // It costs around 19k to send a token, if that token was interacted with before in the same transaction,
 // because of SLOAD costs - they depend on whether a slot has been read
 // however, it costs 30k if the token has not been interacted with
@@ -100,4 +102,49 @@ export function getFeesData(feeToken, estimation, speed, isGasTankEnabled, netwo
     addedGas, // use it bundle data
     savedGas,
   }
+}
+
+export const getDefaultFeeToken = (remainingFeeTokenBalances, network, feeSpeed, estimation, currentAccGasTankState) => {
+  const WALLET_TOKEN_SYMBOLS = ['xWALLET', 'WALLET']
+
+  if(!remainingFeeTokenBalances?.length) {
+    return { symbol: network.nativeAssetSymbol, decimals: 18, address: '0x0000000000000000000000000000000000000000' }
+  }
+
+  return remainingFeeTokenBalances
+  .sort((a, b) =>
+    (WALLET_TOKEN_SYMBOLS.indexOf(b?.symbol) - WALLET_TOKEN_SYMBOLS.indexOf(a?.symbol))
+    || ((b?.discount || 0) - (a?.discount || 0))
+    || a?.symbol.toUpperCase().localeCompare(b?.symbol.toUpperCase())
+  )
+  .find(token => isTokenEligible(token, feeSpeed, estimation, currentAccGasTankState, network))
+  || remainingFeeTokenBalances[0]
+}
+
+export function makeBundle(account, networkId, requests) {
+  const bundle = new Bundle({
+    network: networkId,
+    identity: account.id,
+    // checking txn isArray because sometimes we receive txn in array from walletconnect. Also we use Array.isArray because txn object can have prop 0
+    txns: requests.map(({ txn }) => toBundleTxn(Array.isArray(txn) ? txn[0] : txn, account.id)),
+    signer: account.signer
+  })
+  bundle.extraGas = requests.map(x => x.extraGas || 0).reduce((a, b) => a + b, 0)
+  bundle.requestIds = requests.map(x => x.id)
+
+  // Attach bundle's meta
+  if (requests.some(item => item.meta)) {
+    bundle.meta = {}
+
+    if (requests.some(item => item.meta?.addressLabel)) {
+      bundle.meta.addressLabel = requests.map(x => !!x.meta?.addressLabel ? x.meta.addressLabel : { addressLabel: '', address: ''})
+    }
+
+    const xWalletReq = requests.find(x => x.meta?.xWallet)
+    if (xWalletReq) {
+      bundle.meta.xWallet = xWalletReq.meta.xWallet
+    }
+  }
+
+  return bundle
 }
