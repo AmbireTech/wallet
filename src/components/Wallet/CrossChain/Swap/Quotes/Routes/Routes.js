@@ -26,7 +26,7 @@ const Routes = ({ routes, setSelectedRoute }) => {
           token.
         </p>
       ) : (
-        <Radios radios={radios} onChange={(value) => setSelectedRoute(value)} radioClassName={styles.route} />
+        <Radios radios={radios} onChange={(value) => setSelectedRoute(value)} radioClassName={styles.route} className={styles.routes} />
       )}
     </div>
   )

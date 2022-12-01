@@ -22,13 +22,17 @@
     }
   }
 
-  .route {
-    background-color: $c-mirage;
-    border-radius: 12px;
-    padding: 20px;
-    align-items: flex-start;
-  }
+  .routes {
+    gap: 12px;
 
+    .route {
+      background-color: $c-mirage;
+      border-radius: 12px;
+      padding: 20px;
+      align-items: flex-start;
+    }
+  }
+  
   .noRoutesPlaceholder {
     margin: 0;
     max-width: 480px;
@@ -40,9 +44,11 @@
 
 @media screen and (max-width: 600px) {
   .wrapper {
-    .route {
-      flex-direction: column;
-      padding: 15px;
+    .routes {   
+      .route {
+        flex-direction: column;
+        padding: 15px;
+      }
     }
   }
 }
