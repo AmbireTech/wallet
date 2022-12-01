@@ -4,8 +4,8 @@ import { useState } from 'react'
 import { Contract } from 'ethers'
 import { formatUnits, Interface } from 'ethers/lib/utils'
 import { isValidAddress } from 'ambire-common/src/services/address'
+import { getProvider } from 'ambire-common/src/services/provider'
 
-import { getProvider } from 'lib/provider'
 import { getTokenIcon } from 'lib/icons'
 
 import { useModals } from 'hooks'
