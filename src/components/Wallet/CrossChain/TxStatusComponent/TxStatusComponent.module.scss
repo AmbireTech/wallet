@@ -21,18 +21,6 @@
     flex-direction: column;
     align-items: center;
     gap: 15px;
-
-    // Networks
-    .networks {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      width: 100%;
-
-      .mobileSwapIcon {
-        display: none;
-      }
-    }
   }
 }
 
