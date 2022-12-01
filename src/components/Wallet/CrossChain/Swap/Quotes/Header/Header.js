@@ -1,8 +1,8 @@
 import TxStatusComponent from 'components/Wallet/CrossChain/TxStatusComponent/TxStatusComponent'
 
-import styles from './Summary.module.scss'
+import styles from './Header.module.scss'
 
-const Summary = ({ fromNetwork, fromAsset, toNetwork, toAsset, amount }) => (
+const Header = ({ fromNetwork, fromAsset, toNetwork, toAsset, amount }) => (
   <TxStatusComponent
     fromNetworkIcon={fromNetwork.icon}
     fromNetworkName={fromNetwork.name}
@@ -18,4 +18,4 @@ const Summary = ({ fromNetwork, fromAsset, toNetwork, toAsset, amount }) => (
   />
 )
 
-export default Summary
+export default Header
