@@ -1,6 +1,8 @@
 import cn from 'classnames'
-import { ToolTip } from 'components/common'
 
+import { ReactComponent as SwapIcon } from 'resources/icons/cross-chain.svg'
+
+import { ToolTip } from 'components/common'
 
 import styles from './Tokens.module.scss'
 
@@ -20,6 +22,7 @@ const Tokens = ({ fromTokenAmount, fromTokenIcon, fromTokenName, toTokenAmount, 
         {fromTokenName ? <p className={styles.tokenText}>{fromTokenName}</p> : null}
       </div>
     </div>
+    <SwapIcon className={styles.swapIcon} />
     {/* To Token */}
     <div className={cn(styles.token, styles.toToken)}>
       {toTokenAmount ? (

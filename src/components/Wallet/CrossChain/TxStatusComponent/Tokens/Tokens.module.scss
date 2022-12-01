@@ -10,12 +10,19 @@
   background-color: rgba($c-titan-white, 0.05);
 }
 
-// Tokens
 .wrapper {
   display: flex;
   align-items: center;
   justify-content: space-between;
   width: 100%;
+
+  .swapIcon {
+    width: 30px;
+    height: 30px;
+    // We stop it from shrinking
+    min-width: 30px;
+    min-height: 30px;
+  }
 
   .token {
     display: flex;
@@ -53,33 +60,14 @@
 }
 // Mobile
 @media screen and (max-width: $mobile-breakpoint-max-width) {
-  // Tokens
   .wrapper {
     justify-content: unset;
     gap: 15px;
 
     .token {
-      flex: 1;
-      flex-wrap: wrap;
-      align-items: center;
-
-      .tokenText {
-        font-size: 12px;
-        max-width: 90px;
-      }
-    }
-  }
-}
-
-@media screen and (max-width: 600px) {
-  // Tokens
-  .wrapper {
-    align-items: flex-start;
-    flex-wrap: wrap;
-
-    .token {
       flex-direction: column-reverse;
       align-items: flex-start;
+      flex: 1;
 
       &.toToken {
         align-items: flex-end;
@@ -87,6 +75,29 @@
         .tokenBody {
           flex-direction: row-reverse;
         }
+      }
+      .tokenText {
+        font-size: 12px;
+
+        max-width: unset;
+        flex: 1;
+      }
+    }
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .wrapper {
+    align-items: flex-start;
+    flex-wrap: wrap;
+
+    .swapIcon {
+      display: none;
+    }
+
+    .token {
+      .tokenText {
+        max-width: 120px;
       }
     }
   }
