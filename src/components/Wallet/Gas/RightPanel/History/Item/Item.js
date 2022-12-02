@@ -8,7 +8,7 @@ import { ReactComponent as ExternalLinkIcon } from 'resources/icons/external-lin
 
 import styles from './Item.module.scss'
 
-const toLocaleDateTime = (date) => `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`
+const toLocaleDateTime = (date) => `${date.toLocaleDateString()} ${date.toLocaleTimeString([], {timeStyle: 'short'})}`
 
 const Item = ({ tokenDetails, item, network }) => (
   <div className={styles.wrapper}>
