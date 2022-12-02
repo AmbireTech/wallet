@@ -37,13 +37,10 @@ import { fetch } from 'lib/fetch'
 
 import EmailLogin from './components/EmailLogin/EmailLogin'
 import AddAccount from './components/AddAccount/AddAccount'
-import AddAccountSDK from './components/SDK/AddAccount'
-import OnRampSDK from './components/SDK/OnRamp'
 import Wallet from './components/Wallet/Wallet'
 import SendTransaction from './components/SendTransaction/SendTransaction'
 import SignMessage from './components/SignMessage/SignMessage'
-import SendTransactionSDK from 'components/SDK/SendTransaction'
-import SignMessageSDK from 'components/SDK/SignMessage'
+import SDKWrapper from 'components/SDK/SDKWrapper'
 import { initRpcProviders } from 'ambire-common/src/services/provider'
 
 import { rpcProviders } from 'config/providers'
@@ -303,46 +300,26 @@ function AppInner() {
           <AddAccount relayerURL={relayerURL} onAddAccount={onAddAccount} utmTracking={utmTracking} pluginData={pluginData}></AddAccount>
         </Route>
 
-        <Route path="/add-account-sdk">
-          <AddAccountSDK
-            relayerURL={relayerURL}
-            onAddAccount={onAddAccount}
-            utmTracking={utmTracking}
-            pluginData={pluginData}
-          ></AddAccountSDK>
-        </Route>
-
-        <Route path="/on-ramp-sdk/:chainID">
-          <OnRampSDK relayerURL={relayerURL}></OnRampSDK>
-        </Route>
-
         <Route path="/email-login">
           <EmailLogin relayerURL={relayerURL} onAddAccount={onAddAccount}></EmailLogin>
         </Route>
 
-        <Route path="/email-login-iframe">
-          <EmailLogin relayerURL={relayerURL} onAddAccount={onAddAccount} onLoginSuccess={onLoginSuccess}></EmailLogin>
-        </Route>
-
-        <Route path="/send-transaction-sdk/:txnTo/:txnValue/:txnData">
-          <SendTransactionSDK
+        <Route path="/sdk">
+          <SDKWrapper
+            match={{ url: "/sdk" }}
+            relayerURL={relayerURL}
+            onAddAccount={onAddAccount}
+            utmTracking={utmTracking}
+            pluginData={pluginData}
+            onLoginSuccess={onLoginSuccess}
             selectedAcc={selectedAcc}
             selectedNetwork={network}
             addRequest={addRequest}
             sendTxnState={sendTxnState}
             internalRequests={internalRequests}
-          >
-          </SendTransactionSDK>
-        </Route>
-
-        <Route path="/sign-message-sdk/:type/:messageToSign">
-          <SignMessageSDK
-            selectedAcc={selectedAcc}
-            selectedNetwork={network}
-            addRequest={addRequest}
             everythingToSign={everythingToSign}
           >
-          </SignMessageSDK>
+          </SDKWrapper>
         </Route>
 
         {selectedAcc ?
