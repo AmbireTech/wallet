@@ -10,7 +10,7 @@ import { fetchPost } from "lib/fetch";
 import { getProvider } from 'ambire-common/src/services/provider'
 
 import { useToasts } from 'hooks/toasts';
-import { Button, Loading, TextInput } from 'components/common'
+import { Button, TextInput } from 'components/common'
 import { isTokenEligible } from 'components/SendTransaction/helpers'
 import { sendNoRelayer } from "components/SendTransaction/noRelayer";
 import { getFeesData, toHexAmount } from "components/SendTransaction/helpers";
@@ -352,10 +352,6 @@ const Actions = ({
     </div>)
   }
 
-  const signButtonLabel = signingStatus && signingStatus.inProgress ?
-    <><Loading/>Signing...</>
-    : 'Sign and Send'
-
   const isRecoveryMode = signingStatus && signingStatus.finalBundle && signingStatus.finalBundle.recoveryMode
   if (signingStatus && signingStatus.quickAcc) {
     return (<div className={styles.wrapper}>
@@ -425,7 +421,7 @@ const Actions = ({
               approveTxn({ quickAccCredentials })
             }}
           >
-            { signingStatus && signingStatus.inProgress ? <Loading/> : 'Confirm'}
+            { signingStatus && signingStatus.inProgress ? 'Loading...' : 'Confirm'}
           </Button>
         </div>
       </form>
@@ -435,7 +431,7 @@ const Actions = ({
   return (<div className={styles.buttons}>
       {rejectButton}
       <Button primaryGradient className={cn(styles.button, styles.confirm)} disabled={!estimation || signingStatus} onClick={approveTxn}>
-        {signButtonLabel}
+        {signingStatus && signingStatus.inProgress ? 'Signing...' : 'Sign and Send'}
       </Button>
   </div>)
 }
