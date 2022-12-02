@@ -5,14 +5,14 @@ import { useParams } from 'react-router'
 import accountPresets from 'ambire-common/src/constants/accountPresets'
 import { isValidAddress } from 'ambire-common/src/services/address'
 
+import networks from 'consts/networks'
+
 import Send from './Send/Send'
 import Sell from './Sell/Sell'
 import Addresses from './Addresses/Addresses'
-
-import networks from 'consts/networks'
+import Tabs from 'components/common/Tabs/Tabs'
 
 import styles from './Transfer.module.scss'
-import Tabs from 'components/common/Tabs/Tabs'
 
 const Transfer = (props) => {
     const { portfolio, selectedNetwork, addressBook, selectedAcc, relayerURL } = props
