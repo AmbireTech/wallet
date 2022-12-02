@@ -4,6 +4,7 @@ $badge-size-width: 64px;
 $badge-size-height: 90px;
 
 #wallet-token-modal {
+    padding-bottom: 30px;
 
     .rewards-progress-path {
         display: flex;
@@ -11,8 +12,8 @@ $badge-size-height: 90px;
         gap: 10px;
 
         .rewards-wallet-icon {
-            width: 100px;
-            height: 100px;
+            width: 80px;
+            height: 80px;
             background-position: 50% 50%;
             background-size: contain;
             background-repeat: no-repeat;
@@ -155,10 +156,11 @@ $badge-size-height: 90px;
         display: flex;
         flex-direction: column;
         gap: 12px;
+        padding-bottom: 10px;
 
         .item {
             border-radius: 12px;
-            padding: 20px;
+            padding: 15px 20px;
             display: flex;
             flex-direction: column;
             background: $c-mirage;

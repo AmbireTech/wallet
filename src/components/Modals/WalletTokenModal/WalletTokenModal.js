@@ -40,8 +40,6 @@ const WalletTokenModal = ({ accountId, claimableWalletToken, rewards, network })
 
   const claimWithBurn = () => claimEarlyRewards(false)
 
-  const modalButtons = <Button clear icon={<MdOutlineClose/>} onClick={() => hideModal()}>Close</Button>
-
   const eligibilityLeft = MIN_ELIGIBLE_USD - rewards.balance.balanceInUSD
   const isEligible = eligibilityLeft <= 0
   const accumulatedWallets = rewards['balance-rewards'] + rewards['adx-rewards']
@@ -57,7 +55,7 @@ const WalletTokenModal = ({ accountId, claimableWalletToken, rewards, network })
   const formatAmount = amount => amount ? amount.toFixed(6): 0
 
   return (
-    <Modal id='wallet-token-modal' title='WALLET token distribution' buttons={modalButtons}>
+    <Modal id='wallet-token-modal' title='WALLET token distribution'>
       <UnbondModal
         isVisible={isUnbondModalVisible}
         hideModal={hideUnbondModal}
@@ -177,7 +175,7 @@ const WalletTokenModal = ({ accountId, claimableWalletToken, rewards, network })
             <ToolTip label={
               disabledReason || `Linearly vested over approximately ${Math.ceil((vestingEntry.end - vestingEntry.start) / 86400)} days`
             }>
-              <Button primaryGradient full onClick={claimVesting} disabled={!!disabledReason}>CLAIM</Button>
+              <Button primaryGradient full onClick={claimVesting} disabled={!!disabledReason}>Claim</Button>
             </ToolTip>
           </div>
         </div>
