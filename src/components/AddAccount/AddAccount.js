@@ -15,7 +15,7 @@ import { fetch, fetchPost } from 'lib/fetch'
 import accountPresets from 'ambire-common/src/constants/accountPresets'
 import { useToasts } from 'hooks/toasts'
 import SelectSignerAccountModal from 'components/Modals/SelectSignerAccountModal/SelectSignerAccountModal'
-import { useModals } from 'hooks'
+import { useModals, useLocalStorage } from 'hooks'
 import { Loading } from 'components/common'
 import { ledgerGetAddresses, PARENT_HD_PATH } from 'lib/ledgerWebHID'
 import { isFirefox } from 'lib/isFirefox'
@@ -24,6 +24,7 @@ import { useDropzone } from 'react-dropzone'
 import { validateImportedAccountProps, fileSizeValidator } from 'lib/validations/importedAccountValidations'
 import LatticeModal from 'components/Modals/LatticeModal/LatticeModal'
 import { fetchGet } from 'lib/fetch'
+import useNetwork from 'ambire-common/src/hooks/useNetwork'
 
 // Icons
 import { ReactComponent as TrezorIcon } from 'resources/providers/trezor.svg'
@@ -46,6 +47,7 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking, plug
   const { showModal } = useModals()
   const [account, setAccount] = useState(null)
   const [isEmailConfirmed, setEmailConfirmed] = useState(false)
+  const { network } = useNetwork({ useStorage: useLocalStorage })
 
   const wrapProgress = async (fn, type = true) => {
     setInProgress(type)
@@ -444,6 +446,7 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking, plug
 
             window.parent.postMessage({
               address: account.id,
+              chainId: network.chainId,
               type: 'registrationSuccess',
             }, '*')
           }
@@ -452,7 +455,7 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking, plug
       console.error(e);
       addToast('Could not check email confirmation.', { error: true })
     }
-  }, [relayerURL, addToast, account, onAddAccount])
+  }, [relayerURL, addToast, account, onAddAccount, network.chainId])
 
   useEffect(() => {
     if (!account) return

@@ -252,6 +252,7 @@ function AppInner() {
   const onLoginSuccess = wallet_address => {
     window.parent.postMessage({
       address: wallet_address,
+      chainId: network.chainId,
       type: 'loginSuccess',
     }, '*')
   }
