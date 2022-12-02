@@ -26,7 +26,7 @@ const History = ({ network, gasTankFilledTxns, feeAssetsRes }) => {
               .filter((r) => r)}
           </div>
         ) : (
-          <p className={styles.emptyMessage}>No top ups were made to Gas Tank on {network.id.toUpperCase()}</p>
+          <p className={styles.emptyMessage}>No top ups were made to Gas Tank on {network.name}</p>
         )}
       </div>
       <div className={styles.warning}>
