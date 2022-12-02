@@ -8,12 +8,12 @@
     opacity: .7;
   }
   
-  .benefit {
-    opacity: 1;
-    color: $c-heliotrope;
-    padding: 10px;
-    background-color: $c-mirage;
-    border-radius: 12px;
+  .saveAlert {
+    // opacity: 1;
+    // color: $c-heliotrope;
+    // padding: 10px;
+    // background-color: $c-mirage;
+    // border-radius: 12px;
     margin-bottom: 60px;
   }
 }
@@ -23,7 +23,8 @@
     p {
       margin-bottom: 10px;
     }
-    .benefit {
+    
+    .saveAlert {
       margin-bottom: 30px;
     }
   }
