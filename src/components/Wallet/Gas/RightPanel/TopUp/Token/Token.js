@@ -1,5 +1,6 @@
 import { NavLink } from 'react-router-dom'
 import { useState } from 'react'
+import cn from 'classnames'
 
 import { getTokenIcon } from 'lib/icons'
 import { formatFloatTokenAmount } from 'lib/formatters'
@@ -11,7 +12,6 @@ import { GiToken } from 'react-icons/gi'
 import styles from './Token.module.scss'
 
 const Token = ({
-  index,
   img,
   symbol,
   balance,
@@ -19,15 +19,13 @@ const Token = ({
   address,
   network,
 }) => {
+  const disabled = balance === 0
   const [failedImg, setFailedImg] = useState([])
 
   const logo = failedImg.includes(img) ? getTokenIcon(network, address) : img
 
   return (
-    <div
-      className={styles.wrapper}
-      disabled={balance === 0}
-    >
+    <div className={cn(styles.wrapper, {[styles.disabled]: disabled})}>
       <div className={styles.body}>
         <div className={styles.baseInfo}>
           <div className={styles.icon}>
@@ -44,7 +42,7 @@ const Token = ({
           <p className={styles.dollar}>${balanceUSD.toFixed(2)}</p>
         </div>
       </div>
-      <div className={styles.actions}>
+      {!disabled ? <div className={styles.actions}>
         <NavLink
           to={{
             pathname: `/wallet/transfer/${address}`,
@@ -58,7 +56,7 @@ const Token = ({
             Top up
           </Button>
         </NavLink>
-      </div>
+      </div> : null}
     </div>
   )
 }

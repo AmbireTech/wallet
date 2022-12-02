@@ -9,6 +9,17 @@
   color: $c-titan-white;
   background-color: $c-mirage;
 
+  &.disabled {
+    opacity: .2;
+  }
+
+  &:hover:not(.disabled) {
+    .actions {
+      width: 137px;
+      opacity: 1;
+    }
+  }
+
   .body {
     display: flex;
     align-items: center;
@@ -76,13 +87,6 @@
     transition: all 0.1s ease-in-out;
     transition-delay: 0.25s;
     margin-left: 12px;
-  }
-
-  &:hover {
-    .actions {
-      width: 137px;
-      opacity: 1;
-    }
   }
 }
 
