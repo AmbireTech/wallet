@@ -1,8 +1,6 @@
 import './WalletTokenModal.scss'
 
 import { Button, Modal, ToolTip, RemoteLottie } from 'components/common'
-import { MdOutlineClose } from 'react-icons/md'
-import { useModals } from 'hooks'
 import useStakedWalletToken from 'ambire-common/src/hooks/useStakedWalletToken'
 import MultiplierBadges from './MultiplierBadges'
 import { useState } from 'react'
@@ -16,7 +14,6 @@ const MIN_CLAIMABLE_ADX_USD = 1000
 const WalletTokenModal = ({ accountId, claimableWalletToken, rewards, network }) => {
 
   const [isUnbondModalVisible, setIsUnbondModalVisible] = useState(false)
-  const { hideModal } = useModals()
   const { stakedAmount } = useStakedWalletToken({ accountId })
 
   const hideUnbondModal = () => setIsUnbondModalVisible(false)
