@@ -16,13 +16,13 @@ const icons = {
   degenTip: <DegenTipIcon />
 }
 
-const Alert = ({ title, text, type, iconNextToTitle, className }) => {
+const Alert = ({ title, text, type, size, iconNextToTitle, className }) => {
   const icon = icons[type] || icons.info
 
   return (
     <div className={cn(styles.wrapper, className)}>
       <div className={styles.alertWrapper}>
-        <div className={cn(styles.alert, styles[type || 'info'], styles.alertIconNextToTitle)}>
+        <div className={cn(styles.alert, styles[type || "info"], styles[size || "normal"], {[styles.alertIconNextToTitle] : iconNextToTitle})}>
           {iconNextToTitle ? null : icon}
           <div className={styles.body}>
             <div className={styles.titleWrapper}>

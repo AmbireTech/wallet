@@ -85,6 +85,18 @@
           }
         }
       }
+
+      // Sizes
+      &.small {
+        .body {
+          .titleWrapper {
+            .title {
+              font-size: 16px;
+              font-weight: 400;
+            }
+          }
+        }
+      }
     }
   }
 }
@@ -119,6 +131,19 @@
           background-color: transparent;
           border: 0;
           outline: none;
+        }
+
+        // Sizes
+        &.small {
+          gap: 10px;
+          
+          .body {
+            .titleWrapper {
+              .title {
+                font-size: 14px;
+              }
+            }
+          }
         }
       }
     }
