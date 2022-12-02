@@ -1,12 +1,15 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useParams } from 'react-router-dom'
 
+const VALID_SIGN_METHODS = ['eth_sign', 'personal_sign', 'eth_signTypedData', 'eth_signTypedData_v4']
+const TYPED_DATA_METHODS = ['eth_signTypedData', 'eth_signTypedData_v4']
+
 export default function SignMessage({selectedAcc, selectedNetwork, addRequest, everythingToSign}) {
     const [hasLoaded, setHasLoaded] = useState(false)
     const { type, messageToSign } = useParams()
 
     const req = useMemo(() => {
-        if (!type || !['personal_sign', 'eth_signTypedData'].includes(type)) return null
+        if (!type || !VALID_SIGN_METHODS.includes(type)) return null
         if (!messageToSign) return null
 
         return {
@@ -14,7 +17,7 @@ export default function SignMessage({selectedAcc, selectedNetwork, addRequest, e
             type: type,
             chainId: selectedNetwork.chainId,
             account: selectedAcc,
-            txn: type === 'eth_signTypedData' ? JSON.parse(decodeURIComponent(messageToSign)) : messageToSign,
+            txn: TYPED_DATA_METHODS.includes(type) ? JSON.parse(decodeURIComponent(messageToSign)) : messageToSign,
             dapp: {
                 // TODO: dummy data, replace it with something coming from as input params
                 name: 'Example Dapp',
