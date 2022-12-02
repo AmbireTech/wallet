@@ -1,5 +1,11 @@
 @import 'variables.scss';
 
+.unavailable {
+  padding-top: 50px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
 .wrapper {
   display: flex;
   justify-content: center;
