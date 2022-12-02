@@ -1,6 +1,6 @@
 import styles from './AddAccount.module.scss'
 
-import React, { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { Link } from 'react-router-dom'
 import LoginOrSignup from 'components/LoginOrSignupForm/LoginOrSignupForm'
 import TrezorConnect from '@trezor/connect-web'
@@ -15,7 +15,7 @@ import { fetch, fetchPost } from 'lib/fetch'
 import accountPresets from 'ambire-common/src/constants/accountPresets'
 import { useToasts } from 'hooks/toasts'
 import SelectSignerAccountModal from 'components/Modals/SelectSignerAccountModal/SelectSignerAccountModal'
-import { useModals, useLocalStorage } from 'hooks'
+import { useModals } from 'hooks'
 import { Loading } from 'components/common'
 import { ledgerGetAddresses, PARENT_HD_PATH } from 'lib/ledgerWebHID'
 import { isFirefox } from 'lib/isFirefox'
@@ -23,8 +23,6 @@ import { VscJson } from 'react-icons/vsc'
 import { useDropzone } from 'react-dropzone'
 import { validateImportedAccountProps, fileSizeValidator } from 'lib/validations/importedAccountValidations'
 import LatticeModal from 'components/Modals/LatticeModal/LatticeModal'
-import { fetchGet } from 'lib/fetch'
-import useNetwork from 'ambire-common/src/hooks/useNetwork'
 
 // Icons
 import { ReactComponent as TrezorIcon } from 'resources/providers/trezor.svg'
@@ -38,16 +36,13 @@ TrezorConnect.manifest({
   appUrl: 'https://wallet.ambire.com'
 })
 
-export default function AddAccount({ relayerURL, onAddAccount, utmTracking, pluginData, isSDK = false }) {
+export default function AddAccount({ relayerURL, onAddAccount, utmTracking, pluginData, isSDK = false, account = null, setAccount = undefined }) {
   const [signersToChoose, setChooseSigners] = useState(null)
   const [err, setErr] = useState('')
   const [addAccErr, setAddAccErr] = useState('')
   const [inProgress, setInProgress] = useState(false)
   const { addToast } = useToasts()
   const { showModal } = useModals()
-  const [account, setAccount] = useState(null)
-  const [isEmailConfirmed, setEmailConfirmed] = useState(false)
-  const { network } = useNetwork({ useStorage: useLocalStorage })
 
   const wrapProgress = async (fn, type = true) => {
     setInProgress(type)
@@ -431,38 +426,6 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking, plug
     </button>
     <input {...getInputProps()} />
   </>)
-
-  const checkEmailConfirmation = useCallback(async () => {
-    try {
-      const relayerIdentityURL = `${relayerURL}/identity/${account.id}`
-      const identity = await fetchGet(relayerIdentityURL)
-      if (identity) {
-          const { emailConfirmed } = identity.meta
-          const isConfirmed = !!emailConfirmed
-          setEmailConfirmed(isConfirmed)
-
-          if (isConfirmed) {
-            onAddAccount(account, { select: true, isNew: true })
-
-            window.parent.postMessage({
-              address: account.id,
-              chainId: network.chainId,
-              type: 'registrationSuccess',
-            }, '*')
-          }
-      }
-    } catch(e) {
-      console.error(e);
-      addToast('Could not check email confirmation.', { error: true })
-    }
-  }, [relayerURL, addToast, account, onAddAccount, network.chainId])
-
-  useEffect(() => {
-    if (!account) return
-    !isEmailConfirmed && checkEmailConfirmation()
-    const emailConfirmationInterval = setInterval(() => !isEmailConfirmed && checkEmailConfirmation(), 3500)
-    return () => clearInterval(emailConfirmationInterval)
-  }, [isEmailConfirmed, checkEmailConfirmation, account])
 
   if (!relayerURL) {
     return (<div className={styles.loginSignupWrapper}>

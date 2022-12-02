@@ -37,6 +37,7 @@ import { fetch } from 'lib/fetch'
 
 import EmailLogin from './components/EmailLogin/EmailLogin'
 import AddAccount from './components/AddAccount/AddAccount'
+import AddAccountSDK from './components/SDK/AddAccount'
 import OnRampSDK from './components/SDK/OnRamp'
 import Wallet from './components/Wallet/Wallet'
 import SendTransaction from './components/SendTransaction/SendTransaction'
@@ -303,13 +304,12 @@ function AppInner() {
         </Route>
 
         <Route path="/add-account-sdk">
-          <AddAccount
+          <AddAccountSDK
             relayerURL={relayerURL}
             onAddAccount={onAddAccount}
             utmTracking={utmTracking}
             pluginData={pluginData}
-            isSDK={true}
-          ></AddAccount>
+          ></AddAccountSDK>
         </Route>
 
         <Route path="/on-ramp-sdk/:chainID">
