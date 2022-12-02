@@ -29,7 +29,7 @@ const Alert = ({ title, text, type, iconNextToTitle, className }) => {
               {iconNextToTitle ? icon : null}
               <h4 className={styles.title}>{title}</h4>
             </div>
-            <p className={styles.text}>{text}</p>
+            {text ? <p className={styles.text}>{text}</p> : null}
           </div>
         </div>
       </div>
