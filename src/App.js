@@ -249,10 +249,12 @@ function AppInner() {
       })
   }, [dappUrl, setPluginUrl])
 
-  const onLoginSuccess = wallet_address => {
+  const onLoginSuccess = (wallet_address, chainId = null) => {
+    chainId = parseInt(chainId)
+    if (chainId) setNetwork(chainId)
     window.parent.postMessage({
       address: wallet_address,
-      chainId: network.chainId,
+      chainId: chainId ? chainId : network.chainId,
       type: 'loginSuccess',
     }, '*')
   }

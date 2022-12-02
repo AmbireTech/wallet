@@ -1,6 +1,7 @@
 import styles from './EmailLogin.module.scss'
 
 import { useState, useEffect } from 'react'
+import { useLocation } from 'react-router-dom'
 
 import { fetch, fetchCaught } from 'lib/fetch'
 
@@ -16,6 +17,7 @@ import AnimationData from './assets/confirm-email.json'
 // NOTE: the same polling that we do here with the setEffect should be used for txns
 // that require email confirmation
 export default function EmailLogin({ relayerURL, onAddAccount, onLoginSuccess = null }) {
+    const location = useLocation();
     const [requiresEmailConfFor, setRequiresConfFor] = useState(null)
     const [err, setErr] = useState('')
     const [inProgress, setInProgress] = useState(false)
@@ -74,7 +76,7 @@ export default function EmailLogin({ relayerURL, onAddAccount, onLoginSuccess = 
         removeLoginSessionKey()
 
         // dispatch login success if passed as prop
-        if (onLoginSuccess) onLoginSuccess(_id)
+        if (onLoginSuccess) onLoginSuccess(_id, new URLSearchParams(location.search).get("chainId"))
       } else {
         setErr(body.message ? `Relayer error: ${body.message}` : `Unknown no-message error: ${resp.status}`)
       }
