@@ -64,7 +64,6 @@
       }
     }
   }
-  
 
   .actions {
     width: 0;
@@ -90,6 +89,7 @@
     flex-direction: column;
     height: auto;
     gap: 20px;
+
     .actions {
       width: 100%;
       opacity: 1;
@@ -98,8 +98,10 @@
       a, button {
         width: 100%;
       }
+    }
 
-      &:hover {
+    &:hover {
+      .actions {
         width: 100%;
       }
     }
