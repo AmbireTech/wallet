@@ -40,6 +40,7 @@
       .name {
         font-size: 20px;
         font-weight: 500;
+        margin: 0;
         margin-left: 12px;
       }
     }
@@ -49,6 +50,7 @@
       display: flex;
       flex-direction: column;
       text-align: right;
+      align-items: flex-end;
   
       .currency {
         margin: 0;
@@ -89,6 +91,16 @@
     flex-direction: column;
     height: auto;
     gap: 20px;
+    
+    .body {
+      .baseInfo {
+        .name {
+          font-size: 16px;
+          margin-left: 8px;
+        }
+      }
+    }
+
 
     .actions {
       width: 100%;

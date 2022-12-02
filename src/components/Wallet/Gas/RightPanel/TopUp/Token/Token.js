@@ -37,10 +37,10 @@ const Token = ({
               <img src={logo} alt="" onError={() => setFailedImg((failed) => [...failed, logo])} />
             )}
           </div>
-          <div className={styles.name}>{symbol.toUpperCase()}</div>
+          <h4 className={styles.name}>{symbol.toUpperCase()}</h4>
         </div>
         <div className={styles.balance}>
-          <p className={styles.currency}>${formatFloatTokenAmount(balance, true, 4)}</p>
+          <p className={styles.currency}>{formatFloatTokenAmount(balance, true, 4)}</p>
           <p className={styles.dollar}>${balanceUSD.toFixed(2)}</p>
         </div>
       </div>
