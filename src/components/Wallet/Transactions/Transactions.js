@@ -56,7 +56,7 @@ function Transactions ({ relayerURL, selectedAcc, selectedNetwork, showSendTxns,
   const { addToast } = useToasts()
   const history = useHistory()
   const params = useParams()
-  const [showMessages, setShowMessages] = useState(!!showMessagesView)
+  const [showMessages, setShowMessages] = useState(false)
   const [cacheBreak, setCacheBreak] = useState(() => Date.now())
 
   // @TODO refresh this after we submit a bundle; perhaps with the upcoming transactions service
