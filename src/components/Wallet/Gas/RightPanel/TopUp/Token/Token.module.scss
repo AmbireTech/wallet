@@ -3,6 +3,7 @@
 .wrapper {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   padding: 10px 20px;
   height: 60px;
   border-radius: 12px;
@@ -10,26 +11,27 @@
   background-color: $c-mirage;
 
   &.disabled {
-    opacity: .2;
+    opacity: 0.2;
   }
 
-  &:hover:not(.disabled) {
-    .actions {
-      width: 137px;
-      opacity: 1;
+  &:not(.disabled) {
+    .topUpLink {
+      cursor: pointer;
+      &:hover {
+        opacity: 0.6;
+      }
     }
   }
 
   .body {
     display: flex;
     align-items: center;
-    width: 100%;
-    justify-content: space-between;
-    gap: 12px;
+    flex: 1;
 
     .baseInfo {
       display: flex;
       align-items: center;
+      flex: 1.5;
 
       .icon {
         position: relative;
@@ -40,14 +42,14 @@
         border-radius: 12px;
         background-color: rgba($c-titan-white, 0.05);
         overflow: hidden;
-    
+
         img {
           height: 24px;
           width: 24px;
           user-select: none;
         }
       }
-    
+
       .name {
         font-size: 20px;
         font-weight: 500;
@@ -56,70 +58,73 @@
       }
     }
 
-  
     .balance {
       display: flex;
-      flex-direction: column;
-      text-align: right;
-      align-items: flex-end;
-  
-      .currency {
+      align-items: center;
+      flex: 2;
+
+      .currency,
+      .dollar {
         margin: 0;
+        flex: 1;
+      }
+
+      .currency {
         display: flex;
         gap: 5px;
         font-size: 16px;
       }
-  
+
       .dollar {
-        margin: 0;
         font-size: 14px;
         color: $c-turquoise;
       }
     }
   }
 
-  .actions {
-    width: 0;
+  .topUpLink {
     display: flex;
     align-items: center;
-    justify-content: flex-end;
-    opacity: 0;
-    transition: all 0.1s ease-in-out;
-    transition-delay: 0.25s;
-    margin-left: 12px;
+    justify-content: center;
+    gap: 5px;
+    height: 40px;
+    padding: 0 18px;
+    background-color: rgba($c-titan-white, 0.04);
+    border-radius: 12px;
+    font-size: 14px;
+    opacity: 1;
+    transition: 0.3s ease-out opacity;
+    cursor: not-allowed;
   }
 }
 
-@media screen and (max-width: $mobile-breakpoint-max-width) {
+@media screen and (max-width: 600px) {
   .wrapper {
     flex-direction: column;
     height: auto;
-    gap: 20px;
-    
+    gap: 10px;
+    padding: 15px;
+
     .body {
+      width: 100%;
+      justify-content: space-between;
+
       .baseInfo {
         .name {
           font-size: 16px;
           margin-left: 8px;
         }
       }
+
+      .balance {
+        flex-direction: column;
+        align-items: flex-end;
+        flex: unset;
+      }
     }
 
-
-    .actions {
+    .topUpLink {
       width: 100%;
-      opacity: 1;
-      margin-left: 0;
-
-      a, button {
-        width: 100%;
-      }
-    }
-
-    &:hover {
-      .actions:not(.disabled) {
-        width: 100%;
-      }
     }
   }
 }
