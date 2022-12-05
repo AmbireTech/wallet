@@ -206,7 +206,7 @@ const uniV32Mapping = (humanizerInfo) => {
           const sigHash = data.slice(0, 10)
           const humanizer = mappingResult[sigHash]
           const result = humanizer ? humanizer({ ...txn, data }, network, opts) : null
-          return result ? result : null
+          return result
         })
         
         parsed = !opts.extended 
