@@ -1,7 +1,5 @@
 import Item from './Item/Item'
 
-import { ReactComponent as AlertIcon } from 'resources/icons/alert.svg'
-
 import styles from './History.module.scss'
 
 const History = ({ network, gasTankFilledTxns, feeAssetsRes }) => {
@@ -28,12 +26,6 @@ const History = ({ network, gasTankFilledTxns, feeAssetsRes }) => {
         ) : (
           <p className={styles.emptyMessage}>No top ups were made to Gas Tank on {network.name}</p>
         )}
-      </div>
-      <div className={styles.warning}>
-        <AlertIcon className={styles.warningIcon} />
-        <p className={styles.warningText}>
-          <span>Warning:</span> It will take some time to top up the Gas Tank after the transaction is signed.
-        </p>
       </div>
     </div>
   )

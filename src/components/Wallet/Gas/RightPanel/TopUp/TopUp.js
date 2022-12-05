@@ -6,6 +6,8 @@ import { networkIconsById } from 'consts/networks'
 
 import Token from './Token/Token'
 
+import { ReactComponent as AlertIcon } from 'resources/icons/alert.svg'
+
 import styles from './TopUp.module.scss'
 
 const TopUp = ({ portfolio, network, availableFeeAssets }) => {
@@ -51,6 +53,12 @@ const TopUp = ({ portfolio, network, availableFeeAssets }) => {
           <Loading />
         )}
       </div>
+      <div className={styles.warning}>
+        <AlertIcon className={styles.warningIcon} />
+        <p className={styles.warningText}>
+          <span>Warning:</span> It will take some time to top up the Gas Tank after the transaction is signed.
+        </p>
+      </div>
       <div>
         <NavLink
           to={{
@@ -61,7 +69,7 @@ const TopUp = ({ portfolio, network, availableFeeAssets }) => {
             },
           }}
         >
-          <Button primaryGradient={true} className={styles.depositBtn}>
+          <Button primaryGradient className={styles.depositBtn}>
             Top up Gas Tank
           </Button>
         </NavLink>
