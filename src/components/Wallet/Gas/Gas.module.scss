@@ -29,3 +29,11 @@
     }
   }
 }
+
+@media screen and (max-width: 600px) {
+  .wrapper {
+    .panel {
+      padding: 20px;
+    }
+  }
+}
