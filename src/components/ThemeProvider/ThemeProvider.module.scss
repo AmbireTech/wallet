@@ -1,0 +1,11 @@
+@import 'variables';
+
+.dark {
+  --background: #{$c-mirage};
+  --color: #{$c-titan-white};
+}
+
+.light {
+  --background: #{$c-heliotrope};
+  --color: #{$c-mirage};
+}
