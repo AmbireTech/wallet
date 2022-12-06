@@ -15,7 +15,7 @@ import cn from 'classnames'
 import { ReactComponent as LogOut } from './icons/log-out.svg'
 import { ReactComponent as Copy } from 'resources/icons/copy.svg'
 
-const Accounts = ({ accounts, selectedAddress, onSelectAcc, onRemoveAccount, hidePrivateValue, userSorting, setUserSorting }) => {
+const Accounts = ({ accounts, selectedAddress, onSelectAcc, onRemoveAccount, hidePrivateValue, userSorting, setUserSorting, isSDK = false }) => {
     const { addToast } = useToasts()
     const [logoutWarning, setLogoutWarning] = useState(false)
     const [closed, setClosed] = useState(false)
@@ -108,7 +108,7 @@ const Accounts = ({ accounts, selectedAddress, onSelectAcc, onRemoveAccount, hid
             </div>}
             {
               sortedAccounts.map(({ id, email, signer, signerExtra }, i) => 
-                logoutWarning !== id ?
+                logoutWarning !== id || isSDK ?
                     <div
                         className={`${styles.account} ${isActive(id)}`}
                         key={id}
@@ -130,14 +130,16 @@ const Accounts = ({ accounts, selectedAddress, onSelectAcc, onRemoveAccount, hid
                                 <label>{ email ? `Email/Password account (${email})` : `${walletType(signerExtra)} (${shortenedAddress(signer.address)})` }</label>
                             </div>
                         </div>
-                        <div className={styles.buttons}>
-                            <div className={styles.button} onClick={() => copyAddress(id)}>
-                                <Copy />
+                        {!isSDK &&
+                            <div className={styles.buttons}>
+                                <div className={styles.button} onClick={() => copyAddress(id)}>
+                                    <Copy />
+                                </div>
+                                <div className={styles.button} onClick={() => setLogoutWarning(id)}>
+                                    <LogOut />
+                                </div>
                             </div>
-                            <div className={styles.button} onClick={() => setLogoutWarning(id)}>
-                                <LogOut />
-                            </div>
-                        </div>
+                        }
                     </div>
                     :
                     <div className={`${styles.account} ${isActive(id)} ${styles.confirmDeleteAccount}`} key={id}>
@@ -159,11 +161,13 @@ const Accounts = ({ accounts, selectedAddress, onSelectAcc, onRemoveAccount, hid
               )
             }
           </div>
-          <div className={styles.addAccount}>
-            <NavLink to="/add-account">
-              <Button small primaryGradient>Add Account</Button>
-            </NavLink>
-          </div>
+          {!isSDK &&
+            <div className={styles.addAccount}>
+                <NavLink to="/add-account">
+                <Button small primaryGradient>Add Account</Button>
+                </NavLink>
+            </div>
+          }
         </DropDown>
     )
 }
