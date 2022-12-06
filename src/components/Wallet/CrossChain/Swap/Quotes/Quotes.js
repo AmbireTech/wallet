@@ -67,16 +67,6 @@ const Quotes = ({ addRequest, selectedAccount, fromTokensItems, quotes, onQuotes
 
     try {
       const route = routes.find(({ routeId }) => routeId === selectedRoute)
-      // let fromAsset, inputAmount = null
-      // if (middlewareRoute) {
-      //     fromAsset = middlewareRoute.fromAsset
-      //     inputAmount = middlewareRoute.inputAmount
-      // } else {
-      //     fromAsset = bridgeRoute.fromAsset
-      //     inputAmount = bridgeRoute.inputAmount
-      // }
-
-      // const { toAsset, outputAmount, bridgeInfo } = bridgeRoute
 
       const approvalTxn = await Promise.all(
         route.userTxs
