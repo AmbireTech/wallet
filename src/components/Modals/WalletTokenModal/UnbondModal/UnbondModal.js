@@ -6,14 +6,15 @@ import { MdOutlineClose } from 'react-icons/md'
 import Lottie from 'lottie-react'
 import AnimationData from './assets/animation.json'
 import Circle from './assets/circle.svg'
+import cn from 'classnames'
 
 const UnbondModal = ({ isVisible, hideModal, text, onClick }) => {
   const root = document.getElementById('root')
   
   return isVisible ? createPortal(
     <div className={styles.wrapper}>
-      <div className={styles.modal}>
-        <div className={styles.content}>
+      <div className={cn(styles.modal, 'modal')}>
+        <div className={cn(styles.content, 'content')}>
           <div className={styles.dangerAnimationWrapper}>
             <Lottie className={styles.dangerAnimation} animationData={AnimationData} background="transparent" speed="1" loop autoplay />
             <img src={Circle} alt='circle' className={styles.dangerAnimationCircle} />
