@@ -4,6 +4,7 @@ import { useLocalStorage } from 'hooks'
 import { useToasts } from 'hooks/toasts'
 import { fetchGet } from 'lib/fetch'
 import useNetwork from 'ambire-common/src/hooks/useNetwork'
+import { getProvider } from 'ambire-common/src/services/provider'
 
 export default function AddAccount({ relayerURL, onAddAccount, utmTracking, pluginData }) {
   const [account, setAccount] = useState(null)
@@ -23,9 +24,12 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking, plug
           if (isConfirmed) {
             onAddAccount(account, { select: true, isNew: true })
 
+            const provider = getProvider(network.id)
+
             window.parent.postMessage({
               address: account.id,
               chainId: network.chainId,
+              providerUrl: provider.connection.url,
               type: 'registrationSuccess',
             }, '*')
           }
@@ -34,7 +38,7 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking, plug
       console.error(e);
       addToast('Could not check email confirmation.', { error: true })
     }
-  }, [relayerURL, addToast, account, onAddAccount, network.chainId])
+  }, [relayerURL, addToast, account, onAddAccount, network.chainId, network.id])
 
   useEffect(() => {
     if (!account) return
