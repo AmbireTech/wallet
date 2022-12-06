@@ -116,7 +116,7 @@ export default function Wallet(props) {
       />
     },
     {
-      path: '/transactions/:page?',
+      path: '/transactions/:page?/(messages)?/:page?',
       component: <Transactions
         relayerURL={props.relayerURL}
         selectedAcc={props.selectedAcc}
@@ -126,20 +126,6 @@ export default function Wallet(props) {
         showSendTxns={props.showSendTxns}
         setSendTxnState={props.setSendTxnState}
         privateMode={props.privateMode}
-      />
-    },
-    {
-      path: '/transactions/messages/:page?',
-      component: <Transactions
-        relayerURL={props.relayerURL}
-        selectedAcc={props.selectedAcc}
-        selectedNetwork={props.network}
-        addRequest={props.addRequest}
-        eligibleRequests={props.eligibleRequests}
-        showSendTxns={props.showSendTxns}
-        setSendTxnState={props.setSendTxnState}
-        privateMode={props.privateMode}
-        showMessagesView={true}
       />
     },
     {
