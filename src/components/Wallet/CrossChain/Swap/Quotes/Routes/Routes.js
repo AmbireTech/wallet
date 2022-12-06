@@ -17,7 +17,7 @@ const Routes = ({ routes, setSelectedRoute }) => {
     <div className={styles.wrapper}>
       <div className={cn(styles.titleWrapper, {[styles.noRoutes]: !radios.length})}>
         <RoutesIcon />
-        <h2 className={styles.title}>Routes</h2>
+        <h2 className={styles.title}>Choose a Route</h2>
       </div>
 
       {!radios.length ? (
