@@ -8,9 +8,6 @@ import useConstants from './useConstants'
 import useDbCacheStorage from './useCacheStorage'
 import useLocalCacheStorage from './useLocalCacheStorage'
 
-// import useLocalCacheStorage from './useLocalCacheStorage'
-import useExtraCollectibles from 'ambire-common/src/hooks/usePortfolio/useExtraCollectibles'
-
 
 const useCacheStorage = window.indexedDB ||
     window.mozIndexedDB ||
@@ -40,7 +37,7 @@ const getCoingeckoPriceByContract = (id, addresses) =>
 
 export default function usePortfolio({ currentNetwork, account, useStorage, relayerURL, useRelayerData, eligibleRequests, requests, selectedAccount, sentTxn, accounts }) {
     const isVisible = usePageVisibility()
-    const { onAddExtraCollectible } = useExtraCollectibles({useStorage, useToasts})
+
     const {
         balance,
         otherBalances,
@@ -60,7 +57,8 @@ export default function usePortfolio({ currentNetwork, account, useStorage, rela
         onAddHiddenCollectible,
         onRemoveHiddenCollectible,
         setHiddenCollectibles,
-        hiddenCollectibles
+        hiddenCollectibles,
+        extraCollectibles, getExtraCollectiblesAssets, onAddExtraCollectible, onRemoveExtraCollectible
     } = usePortfolioCommon({
         useConstants,
         currentNetwork,
@@ -102,6 +100,6 @@ export default function usePortfolio({ currentNetwork, account, useStorage, rela
         onRemoveHiddenCollectible,
         setHiddenCollectibles,
         hiddenCollectibles,
-        onAddExtraCollectible
+        extraCollectibles, getExtraCollectiblesAssets, onAddExtraCollectible, onRemoveExtraCollectible
     }
 }
