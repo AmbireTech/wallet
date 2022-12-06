@@ -12,7 +12,7 @@ import { useDragAndDrop, useCheckMobileScreen } from 'hooks'
 import { ToolTip } from 'components/common'
 import cn from 'classnames'
 
-import { ReactComponent as LogOut } from './icons/log-out.svg'
+import { ReactComponent as LogOut } from 'resources/icons/log-out.svg'
 import { ReactComponent as Copy } from 'resources/icons/copy.svg'
 
 const Accounts = ({ accounts, selectedAddress, onSelectAcc, onRemoveAccount, hidePrivateValue, userSorting, setUserSorting }) => {
