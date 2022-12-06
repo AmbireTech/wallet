@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import cn from 'classnames'
 
 import networks from 'consts/networks'
@@ -29,7 +29,7 @@ const Quotes = ({ addRequest, selectedAccount, fromTokensItems, quotes, onQuotes
   const [loading, setLoading] = useState(false)
 
   const refuel = quotes.refuel
-  const routes = quotes.routes.map((route) => {
+  const routes = useMemo(() => quotes.routes.map((route) => {
     const { userTxs } = route
     const bridgeStep = userTxs.map((tx) => tx.steps.find((s) => s.type === 'bridge')).find((x) => x)
     const bridgeRoute = userTxs.find((tx) => tx.steps.find((s) => s.type === 'bridge'))
@@ -46,7 +46,7 @@ const Quotes = ({ addRequest, selectedAccount, fromTokensItems, quotes, onQuotes
       fromAsset,
       toAsset
     }
-  })
+  }), [fromAsset, quotes.routes, toAsset])
 
   const sendTx = (id, chainId, to, data, value = '0x00') => {
     addRequest({
