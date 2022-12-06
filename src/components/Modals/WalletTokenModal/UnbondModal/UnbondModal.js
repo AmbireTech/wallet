@@ -1,4 +1,4 @@
-import './UnbondModal.scss'
+import styles from './UnbondModal.module.scss'
 
 import { createPortal } from 'react-dom'
 import { Button } from 'components/common'
@@ -11,21 +11,21 @@ const UnbondModal = ({ isVisible, hideModal, text, onClick }) => {
   const root = document.getElementById('root')
   
   return isVisible ? createPortal(
-    <div id="unbond-modal">
-      <div className='modal'>
-        <div className='content'>
-          <div className='danger-animation-wrapper'>
-            <Lottie className='danger-animation' animationData={AnimationData} background="transparent" speed="1" loop autoplay />
-            <img src={Circle} alt='circle' className='danger-animation-circle'/>
+    <div className={styles.wrapper}>
+      <div className={styles.modal}>
+        <div className={styles.content}>
+          <div className={styles.dangerAnimationWrapper}>
+            <Lottie className={styles.dangerAnimation} animationData={AnimationData} background="transparent" speed="1" loop autoplay />
+            <img src={Circle} alt='circle' className={styles.dangerAnimationCircle} />
           </div>
-          <span className='warning-title'>Warning</span>
-          <p className='warning-text'>
+          <span className={styles.warningTitle}>Warning</span>
+          <p className={styles.warningText}>
             {text}
           </p>
         </div>
-        <div className='buttons'>
-          <Button className='button' danger onClick={onClick}>Yes, Claim anyway</Button>
-          <Button className='button' clear icon={<MdOutlineClose/>} onClick={hideModal}>Close</Button>
+        <div className={styles.buttons}>
+          <Button className={styles.button} danger onClick={onClick}>Yes, Claim anyway</Button>
+          <Button className={styles.button} clear icon={<MdOutlineClose/>} onClick={hideModal}>Close</Button>
         </div>
       </div>
     </div>
