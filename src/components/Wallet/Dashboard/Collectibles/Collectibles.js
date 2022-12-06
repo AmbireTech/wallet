@@ -7,15 +7,17 @@ import AddOrHideButton from 'components/Wallet/Dashboard/AddOrHideButton/AddOrHi
 import CollectiblesPlaceholder from './CollectiblesPlaceholder/CollectiblesPlaceholder'
 import CollectiblesWrapper from './CollectiblesWrapper/CollectiblesWrapper'
 import Collectible from './Collectible/Collectible'
-import HideCollectibleModal from 'components/Modals/HideCollectibleModal/HideCollectibleModal'
-import AddOrHideTokenModal from 'components/Modals/AddOrHideCollectiblesModal/AddOrHideTokenModal'
+import AddOrHideCollectibleModal from 'components/Modals/AddOrHideCollectiblesModal/AddOrHideCollectibleModal'
 
 const Collectibles = ({ network, portfolio, account, isPrivateMode, selectedNetwork, footer }) => {
     const { showModal } = useModals()
     const history = useHistory()
     const collectiblesList = portfolio.collectibles
+    const [addOrHideCollectibleModal, setAddOrHideCollectibleModal] = useState({
+        isOpen: false,
+        defaultSection: 'Add Collectible'
+    })
     const [isHideCollectiblesModalOpen, setIsHideCollectiblesModalOpen] = useState(false)
-    console.log(collectiblesList)
     const handleUri = uri => {
         if (!uri) return ''
         uri = uri.startsWith('data:application/json') ? uri.replace('data:application/json;utf8,', '') : uri
@@ -31,20 +33,23 @@ const Collectibles = ({ network, portfolio, account, isPrivateMode, selectedNetw
     useEffect(() => history.replace(`/wallet/dashboard/collectibles`), [history])
     
     const openHideCollectibleModal = useCallback(() => setIsHideCollectiblesModalOpen(true), [])
+    const handleModalVisiblity = useCallback((value) => setAddOrHideCollectibleModal((prev) => ({...prev, isOpen: value})), [setAddOrHideCollectibleModal])
 
     useEffect(() => {
         if(isHideCollectiblesModalOpen) {
             showModal(
-                <AddOrHideTokenModal
+                <AddOrHideCollectibleModal
                     portfolio={portfolio} 
                     setIsHideCollectiblesModalOpen={setIsHideCollectiblesModalOpen} 
                     handleUri={handleUri}
+                    handleModalVisiblity={handleModalVisiblity}
                     network={network}
                     account={account}
+                    defaultSection={addOrHideCollectibleModal.defaultSection}
                 />
             )
         }
-    }, [portfolio, isHideCollectiblesModalOpen, showModal])
+    }, [portfolio, handleModalVisiblity, isHideCollectiblesModalOpen, addOrHideCollectibleModal, showModal, account, network])
 
     if (portfolio.loading) return <Loading />;
 
@@ -62,7 +67,7 @@ const Collectibles = ({ network, portfolio, account, isPrivateMode, selectedNetw
     return (
         <CollectiblesWrapper 
             wrapperEndChildren={<>
-                <AddOrHideButton onClick={openHideCollectibleModal}>Hide Collectible</AddOrHideButton>
+                <AddOrHideButton onClick={openHideCollectibleModal}>Add or Hide Collectible</AddOrHideButton>
                 { footer }
             </>
             }

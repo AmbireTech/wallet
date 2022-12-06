@@ -4,18 +4,19 @@ import { useModals } from "hooks"
 import { Button, Modal } from "components/common"
 import { Segments } from 'components/common'
 
-import AddToken from "./AddToken/AddToken"
-import HideToken from "./HideCollectibleModal/HideCollectibleModal"
+import AddCollectible from "./AddCollectible/AddCollectible"
+import HideCollectible from "./HideCollectible/HideCollectible"
 
-import styles from './AddOrHideTokenModal.module.scss'
+import styles from './AddOrHideCollectibleModal.module.scss'
 
 const segments = [{ value: 'Add Collectible' }, { value: 'Hide Collectible' }]
 
-const AddOrHideTokenModal = ({ 
+const AddOrHideCollectibleModal = ({ 
   defaultSection,
   handleModalVisiblity,
-  network, account, portfolio,
-  userSorting, sortType // HideToken
+  network, account,
+  portfolio,
+  handleUri
 }) => {
   const [segment, setSegment] = useState(defaultSection || segments[0].value)
 
@@ -35,16 +36,16 @@ const AddOrHideTokenModal = ({
       <Segments small defaultValue={segment} segments={segments} onChange={(value) => setSegment(value)} />
       <div className={styles.body}>
         {
-          segment === 'Add Collectible' ? <AddToken
+          segment === 'Add Collectible' ? <AddCollectible
             network={network}
             account={account}
             portfolio={portfolio}
-          /> : <HideToken 
+            handleUri={handleUri}
+          /> : <HideCollectible
             network={network}
             account={account}
             portfolio={portfolio} 
-            userSorting={userSorting}
-            sortType={sortType}          
+            handleUri={handleUri}         
           />
         }
       </div>
@@ -52,4 +53,4 @@ const AddOrHideTokenModal = ({
   )
 }
 
-export default AddOrHideTokenModal
+export default AddOrHideCollectibleModal
