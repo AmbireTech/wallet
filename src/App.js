@@ -41,7 +41,7 @@ import Wallet from './components/Wallet/Wallet'
 import SendTransaction from './components/SendTransaction/SendTransaction'
 import SignMessage from './components/SignMessage/SignMessage'
 import SDKWrapper from 'components/SDK/SDKWrapper'
-import { initRpcProviders } from 'ambire-common/src/services/provider'
+import { getProvider, initRpcProviders } from 'ambire-common/src/services/provider'
 
 import { rpcProviders } from 'config/providers'
 
@@ -250,9 +250,13 @@ function AppInner() {
   const onLoginSuccess = (wallet_address, chainId = null) => {
     chainId = parseInt(chainId)
     if (chainId) setNetwork(chainId)
+
+    const provider = getProvider(network.id)
+
     window.parent.postMessage({
       address: wallet_address,
-      chainId: chainId ? chainId : network.chainId,
+      chainId: network.chainId,
+      providerUrl: provider.connection.url,
       type: 'loginSuccess',
     }, '*')
   }
