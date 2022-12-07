@@ -5,7 +5,8 @@ import { formatUnits } from 'ethers/lib/utils'
 import { useToasts } from './toasts'
 import networks from 'consts/networks'
 import AMBIRE_ICON from 'resources/icon.png'
-import { getProvider } from 'lib/provider'
+import { getProvider } from 'ambire-common/src/services/provider'
+import useConstants from './useConstants'
 
 const REQUEST_TITLE_PREFIX = 'Ambire Wallet: '
 const SUPPORTED_TYPES =  ['eth_sendTransaction', 'personal_sign']
@@ -26,6 +27,7 @@ const getAmountReceived = (lastToken, newBalanceRaw, decimals) => {
 }
 
 export default function useNotifications (requests, onShow, portfolio, selectedAcc, network, sentTxn, confirmSentTx) {
+    const { constants: { humanizerInfo, tokenList } } = useConstants() 
     const { addToast } = useToasts()
     const onShowRef = useRef({})
     onShowRef.current.onShow = onShow
@@ -69,7 +71,7 @@ export default function useNotifications (requests, onShow, portfolio, selectedA
                 ? 'you have a new message to sign'
                 : `new transaction request on ${network ? network.name : 'unknown network'}`
         )
-        const body = isSign ? 'Click to preview' : getTransactionSummary([request.txn.to, request.txn.value, request.txn.data], request.chainId, request.account)
+        const body = isSign ? 'Click to preview' : getTransactionSummary(humanizerInfo, tokenList, [request.txn.to, request.txn.value, request.txn.data], request.chainId, request.account)
         showNotification({
             id: request.id,
             title,

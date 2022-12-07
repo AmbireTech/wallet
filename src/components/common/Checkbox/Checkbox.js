@@ -1,19 +1,20 @@
-import React, { forwardRef } from 'react';
-import './Checkbox.scss'
+import React, { forwardRef } from 'react'
+import cn from 'classnames'
+import styles from './Checkbox.module.scss'
 
-const Checkbox = forwardRef((props, ref) => {
+const Checkbox = forwardRef(({ checked, required, onChange, disabled, label, labelClassName, className }, ref) => {
     const inputElem =  (
-        <input type="checkbox" checked={props.checked} required={props.required} onChange={props.onChange} ref={ref}/>
+        <input type="checkbox" checked={checked} required={required} onChange={onChange} ref={ref}/>
     )
 
-    return props.label ? (<label className={`checkbox-container ${props.disabled ? 'disabled': ''}`}>
+    return label ? (<label className={cn(styles.checkboxContainer, {[styles.disabled]: disabled, [className]: className})}>
         {inputElem}
-        <div className="checkbox-mark"></div>
-        <div className="checkbox-label">{props.label}</div>
-    </label>) : (<>
+        <div className={styles.checkboxMark}></div>
+        <div className={`${styles.label}${` ${labelClassName}`}`}>{label}</div>
+    </label>) : (<div>
         {inputElem}
-        <div className="checkbox-mark"></div>
-    </>)
+        <div className={styles.checkboxMark}></div>
+    </div>)
 })
 
 export { Checkbox as default }

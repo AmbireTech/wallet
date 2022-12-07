@@ -1,0 +1,33 @@
+@import 'variables.scss';
+
+.wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5em;
+    cursor: default;
+    border: 1px solid $danger-color;
+    border-radius: 12px;
+    padding: 20px;
+    
+    .title {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        font-size: 20px;
+        font-weight: bold;
+        text-transform: uppercase;
+        color: $danger-color; 
+
+        svg {
+            font-size: 100px;
+        }
+    }
+
+    .message {
+        font-size: 18px;
+        font-weight: 500;
+        color: $warning-color;
+        word-break: break-word;
+        text-align: center;
+    }
+}

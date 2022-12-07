@@ -1,0 +1,287 @@
+@import 'variables.scss';
+
+.wrapper {
+  position: relative;
+  z-index: 49;
+  height: 100%;
+  width: $sidebar-desktop-width;
+  padding-top: 45px;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  transition: width 0.1s ease-in-out;
+  background-color: $c-ebony-clay;
+  transition: left 0.3s ease-in-out;
+
+  &:after {
+    content: '';
+    width: 2px;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    right: -1px;
+    background: rgb(61,68,106);
+    background: linear-gradient(180deg, rgba(61,68,106,1) 0%, rgba(53,58,91,1) 25%, rgba(100,111,174,1) 50%, rgba(58,63,99,1) 75%, rgba(37,40,63,1) 100%);
+  }
+
+  .outsideHandler {
+    display: none;
+  }
+
+  &.dappMode {
+    position: fixed;
+    z-index: 51;
+    left: -($sidebar-desktop-width + 20);
+    box-shadow: 15px 10px 20px 0 rgba(0, 0, 0, 0.25);
+    padding-top: 0;
+
+    &.open {
+      left: 0;
+    }
+
+    .outsideHandler {
+      display: block;
+      position: fixed;
+      left: $sidebar-desktop-width;;
+      bottom: 0px;
+      top: 0px;
+      right: 0px;
+    }
+  }
+
+  .sidebarLogo {
+    max-width: 138px;
+    margin: 0 0 30px 1em;
+  }
+
+  .ambireLogo {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    height: 75px;
+    padding: 15px;
+    gap: 8px;
+    .logo, .icon {
+      height: 100%;
+      width: 100%;
+
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: left center;
+    }
+
+    .logo {
+      background-image: url('/resources/logo.png');
+    }
+
+    .icon {
+        background-image: url('/resources/icon.png');
+        display: none;
+    }
+  }
+
+  .balance {
+    margin-bottom: 80px;
+    padding-left: 1em;
+
+    label {
+      font-size: 15px;
+      line-height: 23px;
+      color: $c-titan-white;
+      text-transform: uppercase;
+    }
+
+    .balanceDollarAmount {
+      transition: font-size 0.1s ease-in-out;
+    }
+  }
+
+  nav {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    scrollbar-width: thin;
+
+    .item {
+      display: flex;
+      align-items: center;
+      gap: 27px;
+      padding: 12px;
+      line-height: 30px;
+      cursor: pointer;
+      color: $c-manatee;
+      font-size: 14px;
+      line-height: 21px;
+      text-align: center;
+      white-space: nowrap;
+      transition: all 0.1s ease-in-out;
+
+      svg {
+        font-size: 30px;
+        color: $c-manatee;
+        transition: color 0.1s ease-in-out;
+      }
+
+      &:hover {
+        background-color: $c-martinique !important;
+        color: $c-turquoise;
+
+        svg {
+          color: $c-turquoise;
+        }
+      }
+
+      .badge-wrapper {
+        font-weight: bold;
+        width: 30px;
+        height: 30px;
+        text-align: center;
+        border: 1px solid $danger-color;
+        border-radius: 50%;
+        background: $danger-color;
+      }
+
+      .opensea-icon {
+        height: 30px;
+        width: 30px;
+        background-size: contain;
+        background-image: url('../../../resources/opensea.svg');
+        filter: grayscale(1);
+      }
+
+      &.helpLink  {
+        color: $c-heliotrope;
+
+        svg {
+          color: $c-heliotrope;
+        }
+      }
+    }
+  }
+
+  a.selected .item svg {
+    color: $c-turquoise;
+  }
+  a.selected .item {
+    background-color: $c-martinique;
+    color: $c-turquoise;
+
+    .opensea-icon {
+      filter: grayscale(0);
+    }
+  }
+
+  .highlight {
+    color: $c-turquoise;
+  }
+
+  .dollarSign {
+    margin-right: 5px;
+  }
+
+  .balanceDollarAmount {
+    font-size: 2em;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+}
+
+@media screen and (min-width: $sidebar-small-breakpoint) {
+  .wrapper {
+    .balance {
+      .balanceDollarAmount {
+        font-size: 2em !important;
+      }
+    }
+  }
+}
+
+@media screen and (max-width: $sidebar-small-breakpoint) {
+  .wrapper {
+    width: $sidebar-desktop-small-width;
+
+    .sidebarLogo {
+      margin: 0 8px;
+      margin-bottom: 25px;
+    }
+
+    &.dappMode {
+      .outside-handler {
+        left: $sidebar-desktop-small-width;
+      }
+    }
+
+    .balance {
+      font-size: 0.8em !important;
+
+      label {
+        font-size: 1.1em !important;
+      }
+    }
+
+    .ambire-logo {
+      .logo {
+        display: none;
+      }
+  
+      .icon {
+        display: block;
+      }
+    }
+
+    nav {
+      .item {
+        gap: 5px;
+        flex-direction: column;
+        justify-content: center;
+      }
+    }
+  }
+}
+
+// Mobile
+@media screen and (max-width: $mobile-breakpoint-max-width) {
+  .wrapper {
+    position: fixed;
+    bottom: 0;
+    height: $sidebar-mobile-height;
+    width: 100%;
+    padding:0;
+    z-index: 50;
+
+    .balance, .sidebarLogo {
+      display: none;
+    }
+
+    &.dappMode {
+      display: none;
+      position: relative;
+
+      nav {
+        height: 0;
+      }
+    }
+
+    nav {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      width: 100%;
+
+       .item {
+        gap: 0;
+        height: 100%;
+        width: 95px;
+        font-size: 13px;
+        font-weight: 500;
+        padding: 0;
+
+        svg {
+          font-size: 25px;
+        }
+      }
+    }
+  }
+}

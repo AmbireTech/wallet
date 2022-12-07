@@ -13,7 +13,7 @@ import { formatFloatTokenAmount } from 'lib/formatters'
 import { ToolTip } from 'components/common'
 import { useRelayerData } from 'hooks'
 import { useModals } from 'hooks'
-import { GasTankBalanceByTokensModal } from 'components/Modals'
+import GasTankBalanceByTokensModal from 'components/Modals/GasTankBalanceByTokensModal/GasTankBalanceByTokensModal'
 import { HiOutlineExternalLink } from 'react-icons/hi'
 import { formatUnits } from 'ethers/lib/utils'
 // eslint-disable-next-line import/no-relative-parent-imports
@@ -49,8 +49,6 @@ const GasTank = ({
     const { addToast } = useToasts()
 
     const gasTankBalancesFormatted = gasTankBalances ? formatFloatTokenAmount(gasTankBalances, true, 2) : '0.00'
-    const feeAssetsPerNetwork = feeAssetsRes && feeAssetsRes.length && feeAssetsRes.filter(item => item.network === network.id)
-    
     const totalSaved = totalSavedResult && totalSavedResult.length && 
         formatFloatTokenAmount(totalSavedResult.map(i => i.saved).reduce((a, b) => a + b), true, 2)
     const totalCashBack = totalSavedResult && totalSavedResult.length && 
@@ -61,7 +59,7 @@ const GasTank = ({
     const isMobileScreen = useCheckMobileScreen()
     const [failedImg, setFailedImg] = useState([])
     const toLocaleDateTime = date => `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`
-    const sortedTokens = availableFeeAssets?.sort((a, b) => b.balanceUSD - a.balanceUSD).sort((a, b) => {
+    const sortedTokens = availableFeeAssets?.filter(item => !item.disableGasTankDeposit).sort((a, b) => b.balanceUSD - a.balanceUSD).sort((a, b) => {
         if (sortType === 'custom' && userSorting.tokens?.items?.[`${account}-${network.chainId}`]?.length) {
             const addressA = userSorting.tokens.items[`${account}-${network.chainId}`].indexOf(a.address.toLowerCase())
             const addressB = userSorting.tokens.items[`${account}-${network.chainId}`].indexOf(b.address.toLowerCase())
@@ -156,10 +154,10 @@ const GasTank = ({
                                 pathname: `/wallet/transfer/${address}`,
                                 state: {
                                     gasTankMsg: 'Warning: You are about to top up your Gas Tank. Top ups to the Gas Tank are non-refundable.',
-                                    feeAssetsPerNetwork
+                                    isTopUp: true
                                 }
                             }}>
-                                <Button small>Top up</Button>
+                                <Button className='buttonComponent' small>Top up</Button>
                             </NavLink>
                         </div>
                         :
@@ -173,7 +171,7 @@ const GasTank = ({
             <div className='heading-wrapper'>
                 <div className="balance-wrapper" style={{ cursor: 'pointer' }} onClick={openGasTankBalanceByTokensModal}>
                     <span><GiGasPump/> Balance on All Networks</span>
-                    { (!isLoading && gasTankBalances) ?
+                    { (!isLoading) ?
                         (<div className={ (gasTankBalancesFormatted.length > 6)? 'inner-wrapper-left small-font' : 'inner-wrapper-left' } >
                             <span>$ </span>{ gasTankBalancesFormatted }
                         </div>) : 
@@ -254,10 +252,10 @@ const GasTank = ({
                     pathname: `/wallet/transfer/`,
                     state: {
                         gasTankMsg: 'Warning: You are about to top up your Gas Tank. Top ups to the Gas Tank are non-refundable.',
-                        feeAssetsPerNetwork
+                        isTopUp: true
                     }
                 }}>
-                    <Button className='deposit-button' small>top up gas tank</Button>
+                    <Button primaryGradient={true} className='deposit-button buttonComponent' small>Top up Gas Tank</Button>
                 </NavLink>
             </div>
             <span className='title'>Gas Tank top ups history on {network.id.toUpperCase()}</span>

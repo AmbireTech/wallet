@@ -1,5 +1,6 @@
 import AddressBook from './AddressBook/AddressBook';
 import AddressWarning from './AddressWarning/AddressWarning';
+import Alert from "components/common/Alert/Alert";
 import Button from './Button/Button';
 import Chart from './Chart/Chart';
 import Checkbox from './Checkbox/Checkbox';
@@ -22,12 +23,18 @@ import ToolTip from './ToolTip/ToolTip';
 import NoFundsPlaceholder from './NoFundsPlaceholder/NoFundsPlaceholder';
 import CountdownTimer from './CountdownTimer/CountdownTimer';
 import ErrorBoundary from './ErrorBoundary/ErrorBoundary';
+import ErrorScreen from './ErrorScreen/ErrorScreen';
 import Stepper from './Stepper/Stepper.tsx';
 import DAppIncompatibilityWarningMsg from './DAppIncompatibilityWarningMsg/DAppIncompatibilityWarningMsg';
+import Pagination from './Pagination/Pagination';
+import Panel from './Panel/Panel';
+import Image from './Image/Image';
+import RemoteLottie from './RemoteLottie/RemoteLottie'
 
 export {
     AddressBook,
     AddressWarning,
+    Alert,
     Button,
     Chart,
     Checkbox,
@@ -50,6 +57,11 @@ export {
     NoFundsPlaceholder,
     CountdownTimer,
     ErrorBoundary,
+    ErrorScreen,
     Stepper,
-    DAppIncompatibilityWarningMsg
+    DAppIncompatibilityWarningMsg,
+    Pagination,
+    Panel,
+    Image,
+    RemoteLottie
 };
