@@ -1,4 +1,4 @@
-import { getProvider } from 'ambire-common/src/services/provider'
+import { rpcProviders } from 'config/providers'
 import { BigNumber, utils, Contract } from 'ethers'
 import { useEffect, useState, useCallback } from 'react'
 import useConstants from './useConstants'
@@ -18,7 +18,7 @@ const STAKING_POOL_EVENT_TYPES = {
 }
 
 const useAmbireEarnDetails = ({accountId, addresses, tokenLabel}) => {
-    const ethProvider = getProvider('ethereum')
+    const ethProvider = rpcProviders['ethereum-ambire-earn']
     const { getAdexToStakingTransfersLogs } = useConstants()
     const WALLET_ADDR = addresses.stakingTokenAddress
     const [details, setDetails] = useState({})
