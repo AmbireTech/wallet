@@ -41,7 +41,6 @@ import Wallet from './components/Wallet/Wallet'
 import SendTransaction from './components/SendTransaction/SendTransaction'
 import SignMessage from './components/SignMessage/SignMessage'
 import SDKWrapper from 'components/SDK/SDKWrapper'
-import { initRpcProviders } from 'ambire-common/src/services/provider'
 import { onTxnSent } from 'components/SDK/WindowMessages'
 import { getProvider, initRpcProviders } from 'ambire-common/src/services/provider'
 
