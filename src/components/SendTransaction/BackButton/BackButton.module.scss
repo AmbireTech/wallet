@@ -3,16 +3,9 @@
 $titleBar-height: 90px;
 
 .wrapper {
-  z-index: 49;
-  height: $titleBar-height;
-  width: 100%;
-  position: sticky;
-  top: 0;
-  flex: 0 0 auto;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 0 40px;
+  margin-bottom: 30px;
 
   .backIcon {
     background-color: rgba($c-titan-white, 0.05);
@@ -50,12 +43,5 @@ $titleBar-height: 90px;
     &:hover {
       color: $c-titan-white;
     }
-  }
-}
-
-@media (max-width: $mobile-breakpoint-max-width) {
-  .wrapper {
-    padding: 0 20px;
-    height: 65px;
   }
 }

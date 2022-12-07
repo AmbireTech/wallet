@@ -7,12 +7,11 @@ import {
   getDefaultFeeToken,
   isTokenEligible, makeBundle
  } from './helpers'
-import TitleBar from './TitleBar/TitleBar'
+ import BackButton from './BackButton/BackButton'
 import DetailsPanel from './DetailsPanel/DetailsPanel'
 import TransactionPanel from './TransactionPanel/TransactionPanel'
 
 import styles from './SendTransaction.module.scss'
-
 
 const DEFAULT_SPEED = 'fast'
 const REESTIMATE_INTERVAL = 15000
@@ -150,23 +149,19 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, mustReplaceNonce,
 
   return (
     <div className={styles.wrapper}>
-      <TitleBar 
-        onDismiss={onDismiss}
-      />
       <div className={styles.container}>
-        <div className={styles.panelWrapper}>
-          <h2 className={styles.panelWrapperTitle}>{ bundle.txns.length } Transaction{ bundle.txns.length > 1 ? 's' : '' } Waiting</h2>
+        <BackButton onDismiss={onDismiss} />
+        <div className={styles.containerBody}>
           <TransactionPanel
             bundle={bundle}
             estimation={estimation}
             REJECT_MSG={REJECT_MSG}
             resolveMany={resolveMany}
             signingStatus={signingStatus}
+            onDismiss={onDismiss}
             panelClassName={styles.panel}
+            panelTitleClassName={styles.panelTitle}
           />
-        </div>
-        <div className={styles.panelWrapper}>
-          <h2 className={styles.panelWrapperTitle}>Estimation</h2>
           <DetailsPanel 
             estimation={estimation}
             setEstimation={setEstimation}
@@ -188,6 +183,7 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, mustReplaceNonce,
             REJECT_MSG={REJECT_MSG}
             onBroadcastedTxn={onBroadcastedTxn}
             panelClassName={styles.panel}
+            panelTitleClassName={styles.panelTitle}
           />
         </div>
       </div>

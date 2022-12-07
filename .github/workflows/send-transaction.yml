@@ -3,10 +3,10 @@ name: Build & deploy staging for Send Transaction redesign
 on:
   push:
     branches:
-      - feature/redesign-sign-transaction-style
+      - improve/send-transaction-redesign
   pull_request:
     branches:
-      - feature/redesign-sign-transaction-style
+      - improve/send-transaction-redesign
 
 jobs:
   build:
@@ -37,7 +37,7 @@ jobs:
     name: Deploy Send Transaction
     needs: build
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/feature/redesign-sign-transaction-style'
+    if: github.ref == 'refs/heads/improve/send-transaction-redesign'
     steps:
       - name: Download artifact
         uses: actions/download-artifact@v2

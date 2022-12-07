@@ -48,3 +48,17 @@ $extended-summary-height: 36px;
   width: 24px;
   height: 24px;
 }
+
+@media screen and (max-width: $mobile-breakpoint-max-width) {
+  .token,
+  .address,
+  .network,
+  .erc721,
+  .word,
+  .action,
+  .externalLink {
+    align-items: center;
+    text-align: center;
+    margin: 0 auto;
+  }
+}

@@ -32,11 +32,6 @@ $extended-summary-height: 36px;
         box-sizing: border-box;
         padding: 10px 20px;
 
-        .icon {
-            width: 36px;
-            height: 36px;
-        }
-
         .info {
             min-width: 0;
             height: 100%;
@@ -56,12 +51,21 @@ $extended-summary-height: 36px;
 
                 .expandTxn {
                     align-self: flex-start;
-                    height: 36px;
+                    min-width: 36px;
+                    min-height: 36px;
                     @include flex-center-center;
-                    transition: .1s ease-in-out transform;
+                    background-color: rgba($c-titan-white, 0.05);
+                    border-radius: 12px;
+                    
+                    .icon {
+                        transition: .2s ease-out transform;
+                        width: 10px;
+                    }
 
                     &.reversedChevron {
-                        transform: rotate(180deg);
+                        .icon {
+                            transform: rotate(180deg);
+                        }
                     }
                 }
 
@@ -93,14 +97,27 @@ $extended-summary-height: 36px;
             height: 36px;
 
             .dismissTxn {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                width: 36px;
+                height: 36px;
+                border-radius: 12px;
+                background-color: rgba($c-titan-white, 0.05);
                 transition: all 0.1s ease-in-out;
-                opacity: .9;
+                opacity: 1;
+
                 &.disabled {
                     opacity: 0.2;
                 }
 
                 &:not(.disabled):hover {
                     opacity: .6;
+                }
+
+                .icon {
+                    width: 22px;
+                    height: 22px;
                 }
             }
         }
@@ -127,7 +144,36 @@ $extended-summary-height: 36px;
 
 // Mobile
 @media screen and (max-width: $mobile-breakpoint-max-width) {
-    .summaryContainer {
-        flex-direction: column;
+    .wrapper {
+        position: relative;
+
+        .heading {
+            gap: 5px;
+            flex-direction: column-reverse;
+
+            .actionIcons {
+                align-self: flex-end;
+                height: 36px;
+            }
+        }
+
+        .summaryContainer {
+            flex-direction: column;
+        
+            .expandTxn {
+                position: absolute;
+                top: 10px;
+                left: 20px;
+            }
+
+            .summary {
+                text-align: center;
+                justify-content: center;
+            }
+        }
+        
+        .advanced {
+            text-align: center;
+        }
     }
 }

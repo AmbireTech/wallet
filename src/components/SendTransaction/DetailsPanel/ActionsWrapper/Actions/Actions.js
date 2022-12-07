@@ -298,6 +298,7 @@ const Actions = ({
         // This can be a boolean but it can also contain the new signer/primaryKeyBackup, which instructs /second-key to update acc upon successful signature
         recoveryMode: finalBundle.recoveryMode,
         canSkip2FA: canSkip2FA,
+        isGasTankEnabled: currentAccGasTankState.isEnabled && !!relayerURL
       }
     );
     if (!success) {
@@ -395,7 +396,6 @@ const Actions = ({
           {/* Changing the autoComplete prop to a random string seems to disable it in more cases */}
           {signingStatus.confCodeRequired !== 'notRequired' &&
             <TextInput
-              pattern='[0-9]+'
               title='Confirmation code should be 6 digits'
               autoComplete='nope'
               required minLength={6} maxLength={6}
