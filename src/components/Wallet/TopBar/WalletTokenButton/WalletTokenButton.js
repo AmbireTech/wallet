@@ -63,28 +63,28 @@ const WalletTokenButton = ({ rewardsData, accountId, network, hidePrivateValue, 
     })
     
     useEffect(() => {
-        if (congratsModalState.length === 0) setCongratsModalState([{ account: account.id, isCongratsModalShown: defaultCongratsModalShownState }])
-        if (congratsModalState.length && !congratsModalState.find(i => i.account === account.id)) {
-            setCongratsModalState([...congratsModalState, { account: account.id, isCongratsModalShown: defaultCongratsModalShownState }])
+        if (congratsModalState.length === 0) setCongratsModalState([{ account: accountId, isCongratsModalShown: defaultCongratsModalShownState }])
+        if (congratsModalState.length && !congratsModalState.find(i => i.account === accountId)) {
+            setCongratsModalState([...congratsModalState, { account: accountId, isCongratsModalShown: defaultCongratsModalShownState }])
         }
         
         if (congratsModalState.length) {
-            const isFound = congratsModalState.find(i => i.account === account.id)
+            const isFound = congratsModalState.find(i => i.account === accountId)
             if (isFound) setCurrentCongratsModalState(isFound)
         }  
-    }, [account.id, congratsModalState, defaultCongratsModalShownState, setCongratsModalState])
+    }, [accountId, congratsModalState, defaultCongratsModalShownState, setCongratsModalState])
     
     const handleCongratsRewardsModal = useDynamicModal(CongratsRewardsModal, { pendingTokensTotal })
     const showCongratsRewardsModal = useCallback(() => {
         if (parseFloat(pendingTokensTotal) > 0 && !currentCongratsModalState.isCongratsModalShown) {
-            const updated = congratsModalState.map(item => (item.account === account.id) ? 
+            const updated = congratsModalState.map(item => (item.account === accountId) ? 
             { ...item, isCongratsModalShown: true } : item)
 
             setCongratsModalState(updated)
             handleCongratsRewardsModal()
         }
         
-    }, [pendingTokensTotal, currentCongratsModalState, setCongratsModalState, congratsModalState, account.id, handleCongratsRewardsModal])
+    }, [pendingTokensTotal, currentCongratsModalState, setCongratsModalState, congratsModalState, accountId, handleCongratsRewardsModal])
     
     useEffect(() => showCongratsRewardsModal(), [showCongratsRewardsModal])
     
