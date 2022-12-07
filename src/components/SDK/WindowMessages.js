@@ -3,3 +3,10 @@ export function onTxnRejected() {
     type: 'txnRejected',
   }, '*')
 }
+
+export function onTxnSent(hash) {
+  window.parent.postMessage({
+    type: 'txnSent',
+    hash: hash
+  }, '*')
+}
