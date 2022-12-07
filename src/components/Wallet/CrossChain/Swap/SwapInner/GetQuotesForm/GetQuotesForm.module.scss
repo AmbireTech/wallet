@@ -12,7 +12,9 @@
     margin-bottom: 30px;
 
     &.loading {
-      gap: 20px;
+      .swapIcon {
+        margin-bottom: 30px;
+      }
     }
 
     .selectInput {
