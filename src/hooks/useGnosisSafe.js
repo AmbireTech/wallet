@@ -95,7 +95,7 @@ export default function useGnosisSafe({selectedAccount, network, verbose = 0, us
       const method = msg.data.params.call
       const callTx = msg.data.params.params
 
-      // NOTE: temp for swap debug
+      // NOTE: swap only provider
       const provider = (stateRef.current?.network?.id === 'ethereum' && connector?.current?.app?.name === 'Ambire swap') ?
         rpcProviders['ethereum-ambire-swap']
         : getProvider(stateRef.current.network.id)
