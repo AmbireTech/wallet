@@ -253,7 +253,10 @@ function AppInner() {
     chainId = parseInt(chainId)
     if (chainId) setNetwork(chainId)
 
-    const provider = getProvider(network.id)
+    const networkId = chainId
+      ? allNetworks.filter(aNetwork => aNetwork.chainId === chainId)[0].id
+      : network.id
+    const provider = getProvider(networkId)
 
     window.parent.postMessage({
       address: wallet_address,
