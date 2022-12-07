@@ -2,7 +2,7 @@
 
 .wrapper {
     min-height: unset; // it makes the modal height dynamic/responsive, according to the modal content size. If the modal height exceeds the viewport, a scrollbar will be shown.
-    max-height: unset; // it makes the modal height dynamic/responsive, according to the modal content size. If the modal height exceeds the viewport, a scrollbar will be shown.
+    max-height: 100%; // it makes the modal height dynamic/responsive, according to the modal content size. If the modal height exceeds the viewport, a scrollbar will be shown.
     padding-bottom: 30px;
 
     .content {
