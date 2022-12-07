@@ -1,0 +1,130 @@
+@import 'variables';
+
+.wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 20px;
+  height: 60px;
+  border-radius: 12px;
+  color: $c-titan-white;
+  background-color: $c-mirage;
+
+  &.disabled {
+    opacity: 0.2;
+  }
+
+  &:not(.disabled) {
+    .topUpLink {
+      cursor: pointer;
+      &:hover {
+        opacity: 0.6;
+      }
+    }
+  }
+
+  .body {
+    display: flex;
+    align-items: center;
+    flex: 1;
+
+    .baseInfo {
+      display: flex;
+      align-items: center;
+      flex: 1.5;
+
+      .icon {
+        position: relative;
+        flex: 0 0 auto;
+        @include flex-center-center;
+        height: 40px;
+        width: 40px;
+        border-radius: 12px;
+        background-color: rgba($c-titan-white, 0.05);
+        overflow: hidden;
+
+        img {
+          height: 24px;
+          width: 24px;
+          user-select: none;
+        }
+      }
+
+      .name {
+        font-size: 20px;
+        font-weight: 500;
+        margin: 0;
+        margin-left: 12px;
+      }
+    }
+
+    .balance {
+      display: flex;
+      align-items: center;
+      flex: 2;
+
+      .currency,
+      .dollar {
+        margin: 0;
+        flex: 1;
+      }
+
+      .currency {
+        display: flex;
+        gap: 5px;
+        font-size: 16px;
+      }
+
+      .dollar {
+        font-size: 14px;
+        color: $c-turquoise;
+      }
+    }
+  }
+
+  .topUpLink {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    height: 40px;
+    padding: 0 18px;
+    background-color: rgba($c-titan-white, 0.04);
+    border-radius: 12px;
+    font-size: 14px;
+    opacity: 1;
+    transition: 0.3s ease-out opacity;
+    cursor: not-allowed;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .wrapper {
+    flex-direction: column;
+    height: auto;
+    gap: 10px;
+    padding: 15px;
+
+    .body {
+      width: 100%;
+      justify-content: space-between;
+
+      .baseInfo {
+        .name {
+          font-size: 16px;
+          margin-left: 8px;
+        }
+      }
+
+      .balance {
+        flex-direction: column;
+        align-items: flex-end;
+        flex: unset;
+      }
+    }
+
+    .topUpLink {
+      width: 100%;
+    }
+  }
+}
