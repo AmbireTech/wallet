@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 
 import networks from 'consts/networks'
 
@@ -26,7 +26,7 @@ const SwapInner = ({
 
   const [disabled, setDisabled] = useState(false)
   const [loading, setLoading] = useState(true)
-  const [loadingFromTokens, setLoadingFromTokens] = useState(false)
+  const [loadingFromTokens, setLoadingFromTokens] = useState(true) // We set it to true to avoid empty fromToken on initial load
   const [loadingToTokens, setLoadingToTokens] = useState(false)
   const [loadingQuotes, setLoadingQuotes] = useState(false)
   const [quotes, setQuotes] = useState(null)
@@ -38,21 +38,15 @@ const SwapInner = ({
   const [toToken, setToToken] = useState(null)
   const [amount, setAmount] = useState(0)
 
-  const fromChain = useMemo(() => network.chainId, [network.chainId])
+  const fromChain = network.chainId
   const hasNoFunds = !portfolio.balance.total.full
 
   const onCancel = () => setQuotes(null)
 
-  const onQuotesConfirmed = (quoteRequest) => {
+  const onQuotesConfirmed = useCallback((quoteRequest) => {
     const updatedQuotesConfirmed = [...quotesConfirmed, quoteRequest]
     setQuotesConfirmed(updatedQuotesConfirmed)
-  }
-
-  const asyncLoad = async (setStateLoading, loadCallback) => {
-    setStateLoading(true)
-    const loaded = await loadCallback()
-    setStateLoading(!loaded)
-  }
+  }, [quotesConfirmed, setQuotesConfirmed])
 
   const loadFromTokens = useCallback(async () => {
     if (!fromChain || !toChain) return
@@ -82,12 +76,14 @@ const SwapInner = ({
           value: address,
           symbol,
         }))
-      setFromTokenItems(fromTokensItems)
-      return true
+      setLoadingFromTokens(() => {
+        setFromTokenItems(fromTokensItems)
+        return false
+      })
     } catch (e) {
       console.error(e)
       addToast(`Error while loading from tokens: ${e.message || e}`, { error: true })
-      return false
+      setLoadingFromTokens(true)
     }
   }, [fromChain, toChain, fetchFromTokens, addToast, setFromTokenItems])
 
@@ -105,17 +101,21 @@ const SwapInner = ({
           label: name,
           value: chainId,
         }))
-      setChainsItems(chainsItems)
-      setToChain(chainsItems[0].value)
-      return true
+
+        setLoading(() => {
+          setToChain(chainsItems[0].value)
+          setChainsItems(chainsItems)
+          return false
+      })
     } catch (e) {
       console.error(e)
       addToast(`Error while loading chains: ${e.message || e}`, { error: true })
-      return false
+      setLoading(true)
     }
   }, [fromChain, fetchChains, addToast, setDisabled])
 
   const loadToTokens = useCallback(async () => {
+    setLoadingToTokens(true)
     if (!fromChain || !toChain) return
 
     try {
@@ -132,44 +132,36 @@ const SwapInner = ({
           symbol,
         }))
         .sort((a, b) => a.label.localeCompare(b.label))
-      setToTokenItems(tokenItems)
-      return true
+      setLoadingToTokens(() => {
+        setToTokenItems(tokenItems)
+        return false
+      })
     } catch (e) {
       console.error(e)
       addToast(`Error while loading to tokens: ${e.message || e}`, { error: true })
-      return false
+      setLoadingToTokens(true)
     }
   }, [fromChain, toChain, fetchToTokens, addToast])
 
   useEffect(() => {
     if (!toChain) return
-    asyncLoad(setLoadingToTokens, loadToTokens)
+    loadToTokens()
   }, [toChain, loadToTokens, setLoadingToTokens])
 
   useEffect(() => {
     if (!toChain) return
-    asyncLoad(setLoadingFromTokens, loadFromTokens)
+    loadFromTokens()
   }, [toChain, loadFromTokens, setLoadingFromTokens])
 
   useEffect(() => {
     if (!fromChain || portfolio.isCurrNetworkBalanceLoading) return
     setQuotes(null)
-    asyncLoad(setLoading, loadChains)
+    loadChains()
 
     return () => {
       setChainsItems([])
     }
   }, [portfolio.isCurrNetworkBalanceLoading, loadChains, setLoading, setQuotes, fromChain])
-
-  useEffect(() => {
-    if (!fromChain || portfolio.isCurrNetworkBalanceLoading) return
-    setQuotes(null)
-    asyncLoad(setLoading, loadChains)
-
-    return () => {
-      setChainsItems([])
-    }
-  }, [portfolio.isCurrNetworkBalanceLoading, loadChains, fromChain])
 
   useEffect(() => setAmount(0), [fromToken, setAmount])
   useEffect(() => {
@@ -188,7 +180,7 @@ const SwapInner = ({
   } else if (!loadingFromTokens && !loadingToTokens && !fromTokensItems.length) {
     return <p className={styles.placeholder}>You don't have any available tokens to swap</p>
   }
-
+  
   return quotes ? (
     <Quotes
       addRequest={addRequest}
