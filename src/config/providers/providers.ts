@@ -58,8 +58,8 @@ rpcProviders['ethereum-ambire-earn'] = new providers.StaticJsonRpcProvider('http
   chainId: 1
 })
 // @ts-ignore
-rpcProviders['temp-ethereum-ambire-swap'] = new providers.StaticJsonRpcProvider('https://eth-mainnet.alchemyapi.io/v2/qTJpCSwjRITY038rUWB3CS_IYex2VFtO', {
-  name: 'temp-ethereum-ambire-swap',
+rpcProviders['ethereum-ambire-swap'] = new providers.StaticJsonRpcProvider('https://eth-mainnet.alchemyapi.io/v2/qTJpCSwjRITY038rUWB3CS_IYex2VFtO', {
+  name: 'ethereum-ambire-swap',
   chainId: 1
 })
 
