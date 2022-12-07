@@ -1,56 +1,29 @@
 import styles from './Transactions.module.scss'
-import { BsCoin, BsCalendarWeek, BsGlobe2 } from 'react-icons/bs'
-import { MdShuffle, MdOutlineSavings } from 'react-icons/md'
 import { useRelayerData } from 'hooks'
 import TxnPreview from 'components/common/TxnPreview/TxnPreview'
 import { Loading, Button } from 'components/common'
-import networks from 'consts/networks'
-import { getTransactionSummary } from 'lib/humanReadableTransactions'
 import { Bundle } from 'adex-protocol-eth'
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import fetch from 'node-fetch'
 import { useToasts } from 'hooks/toasts'
 import { toBundleTxn } from 'ambire-common/src/services/requestToBundleTxn'
 import { HiOutlineChevronLeft, HiOutlineChevronRight } from 'react-icons/hi'
 import { useHistory, useParams } from 'react-router-dom/cjs/react-router-dom.min'
-import { formatFloatTokenAmount } from 'lib/formatters'
-import { formatUnits } from 'ethers/lib/utils'
-import { ToolTip } from 'components/common'
 import { ReactComponent as SignedMsgActiveIcon } from './images/signed-messages-active.svg'
 import { ReactComponent as SignedMsgInactiveIcon } from './images/signed-messages-inactive.svg'
 import { ReactComponent as WaitingTxsIcon } from './images/waiting.svg'
 import { ReactComponent as PendingTxsIcon } from './images/pending.svg'
 import { ReactComponent as ConfirmedActiveTxsIcon } from './images/confirmed-active.svg'
 import { ReactComponent as ConfirmedInactiveTxsIcon } from './images/confirmed-inactive.svg'
+import SignedMessages from './SignedMessages'
+import BundlePreview from './BundlePreview'
 
-// eslint-disable-next-line import/no-relative-parent-imports
-import { getAddedGas } from '../../SendTransaction/helpers'
-import useConstants from 'hooks/useConstants'
-
-import { Image } from 'components/common'
-import { id } from 'ethers/lib/utils'
-
-import { AiFillAppstore } from 'react-icons/ai'
-import { FaChevronDown, FaChevronUp } from 'react-icons/fa'
 import cn from 'classnames'
-import { isHexString, toUtf8String } from 'ethers/lib/utils'
 import { useLocalStorage } from 'hooks'
 
 // 10% in geth and most EVM chain RPCs; relayer wants 12%
 const RBF_THRESHOLD = 1.14
-const TO_GAS_TANK = `to Gas Tank`
 const ITEMS_PER_PAGE = 8
-
-function getMessageAsText(msg) {
-  if (isHexString(msg)) {
-    try {
-      return toUtf8String(msg)
-    } catch (_) {
-      return msg
-    }
-  }
-  return msg?.toString ? msg.toString() : msg + "" //what if dapp sends it as object? force string to avoid app crashing
-}
 
 function Transactions ({ relayerURL, selectedAcc, selectedNetwork, showSendTxns, addRequest, eligibleRequests, setSendTxnState, privateMode, showMessagesView }) {
   const { addToast } = useToasts()
@@ -101,6 +74,7 @@ function Transactions ({ relayerURL, selectedAcc, selectedNetwork, showSendTxns,
     key: 'signedMessages',
     defaultValue: []
   })
+
 
   const filteredMessages = useMemo(() =>
     messages
@@ -179,23 +153,23 @@ function Transactions ({ relayerURL, selectedAcc, selectedNetwork, showSendTxns,
   const replace = relayerBundle => showSendTxnsForReplacement(mapToBundle(removeFeeTxnFromBundleIfGasTankDisabled(relayerBundle)))
 
   const paginationControls = (
-    <div className={cn(styles.paginationControls)}>
-      <div className={cn(styles.paginationTitle)}>Page</div>
+    <div className={styles.paginationControls}>
+      <div className={styles.paginationTitle}>Page</div>
       <Button clear mini onClick={() => page > 1 && setPage(page => page - 1)}><HiOutlineChevronLeft/></Button>
-      <div className={cn(styles.paginationCurrent)}>{ page } <span>/ { maxPages }</span></div>
+      <div className={styles.paginationCurrent}>{ page } <span>/ { maxPages }</span></div>
       <Button clear mini onClick={() => page < maxPages && setPage(page => page + 1)}><HiOutlineChevronRight/></Button>
     </div>
   )
 
   return (
-    <section className={cn(styles.transactions)}>
+    <section className={styles.transactions}>
       {!!eligibleRequests.length && (<div className={cn(styles.panel, styles.waitingTransactions)}>
-        <div className={cn(styles.panelHeading)}>
-          <div className={cn(styles.title)}><WaitingTxsIcon/>Waiting to be signed (current batch)</div>
+        <div className={styles.panelHeading}>
+          <div className={styles.title}><WaitingTxsIcon/>Waiting to be signed (current batch)</div>
         </div>
-        <div className={cn(styles.content)}>
-          <div className={cn(styles.bundle)}>
-            <div className={cn(styles.bundleList)} onClick={() => showSendTxns(null)}>
+        <div className={styles.content}>
+          <div className={styles.bundle}>
+            <div className={styles.bundleList} onClick={() => showSendTxns(null)}>
               {eligibleRequests.map(req => (
                 <TxnPreview
                   key={req.id}
@@ -206,27 +180,27 @@ function Transactions ({ relayerURL, selectedAcc, selectedNetwork, showSendTxns,
                 />
               ))}
             </div>
-              <div className={cn(styles.actions)}>
+              <div className={styles.actions}>
                 {/*
                 <Button small className='cancel' onClick={
                   () => resolveMany(eligibleRequests.map(x => x.id), { message: 'Ambire user rejected all requests' })
                 }>Reject all</Button>*/}
-                <Button small primaryGradient className={cn(styles.gradient)} onClick={() => showSendTxns(null)}>Sign or Reject</Button>
+                <Button small primaryGradient className={styles.gradient} onClick={() => showSendTxns(null)}>Sign or Reject</Button>
               </div>
           </div>
         </div>
       </div>)}
       { !!firstPending && (<div className={cn(styles.panel, styles.pending)}>
-        <div className={cn(styles.panelHeading)}>
-          <div className={cn(styles.title)}><PendingTxsIcon/>Pending transactions</div>
+        <div className={styles.panelHeading}>
+          <div className={styles.title}><PendingTxsIcon/>Pending transactions</div>
         </div>
-        <div className={cn(styles.content)}>
-          <div className={cn(styles.bundle)}>
+        <div className={styles.content}>
+          <div className={styles.bundle}>
             <BundlePreview bundle={firstPending} feeAssets={feeAssets} />
-            <div className={cn(styles.actions)}>
-              <Button small className={cn(styles.cancel)} onClick={() => cancel(firstPending)}>Cancel</Button>
-              <Button small className={cn(styles.speedUp)} onClick={() => speedup(firstPending)}>Speed up</Button>
-              <Button small primaryGradient className={cn(styles.gradient)} onClick={() => replace(firstPending)}>Replace or Modify</Button>
+            <div className={styles.actions}>
+              <Button small className={styles.cancel} onClick={() => cancel(firstPending)}>Cancel</Button>
+              <Button small className={styles.speedUp} onClick={() => speedup(firstPending)}>Speed up</Button>
+              <Button small primaryGradient className={styles.gradient} onClick={() => replace(firstPending)}>Replace or Modify</Button>
             </div>
           </div>
         </div>
@@ -234,27 +208,27 @@ function Transactions ({ relayerURL, selectedAcc, selectedNetwork, showSendTxns,
       {allPending && allPending.length > 1 && (<h4>NOTE: There are a total of {allPending.length} pending transaction bundles.</h4>)}
 
       <div className={cn(styles.panel, styles.confirmed)}>
-        <div className={cn(styles.panelHeading)}>
-          <div className={cn(styles.buttons)}>
-            <div className={cn(styles.title)}>
+        <div className={styles.panelHeading}>
+          <div className={styles.buttons}>
+            <div className={styles.title}>
               {showMessages ? <ConfirmedInactiveTxsIcon /> : <ConfirmedActiveTxsIcon/> }
               <button className={showMessages ? cn(styles.inactive, styles.txnBtn) : cn(styles.active, styles.txnBtn)} onClick={() => {setShowMessages(false); setPage(1)}}>Confirmed Transactions</button>
             </div>
-            <div className={cn(styles.title)}>
+            <div className={styles.title}>
             {showMessages ? <SignedMsgActiveIcon /> : <SignedMsgInactiveIcon/> }
               <button className={showMessages ? cn(styles.active, styles.msgBtn) : cn(styles.inactive, styles.msgBtn)} onClick={() => {setShowMessages(true); setPage(1)}}>Signed Messages</button>
             </div>
           </div>
-          <div className={cn(styles.topPagination)}>
+          <div className={styles.topPagination}>
             {
               paginationControls
             }
           </div>
         </div>
         {
-          !showMessages && (<div className={cn(styles.content)}>
-          {!relayerURL && (<h3 className={cn(styles.validationError)}>Unsupported: not currently connected to a relayer.</h3>)}
-          {errMsg && (<h3 className={cn(styles.validationError)}>Error getting list of transactions: {errMsg}</h3>)}
+          !showMessages && (<div className={styles.content}>
+          {!relayerURL && (<h3 className={styles.validationError}>Unsupported: not currently connected to a relayer.</h3>)}
+          {errMsg && (<h3 className={styles.validationError}>Error getting list of transactions: {errMsg}</h3>)}
           {
             isLoading && !data ? <Loading /> :
               !bundlesList.length ? null :
@@ -264,202 +238,12 @@ function Transactions ({ relayerURL, selectedAcc, selectedNetwork, showSendTxns,
           }
         </div>)}
         { showMessages && <SignedMessages filteredMessages={filteredMessages} privateMode={privateMode} page={page} selectedAcc={selectedAcc} selectedNetwork={selectedNetwork}/> }
-        <div className={cn(styles.bottomPagination)}>
+        <div className={styles.bottomPagination}>
           { paginationControls }
         </div>
       </div>
     </section>
   )
 }
-
-const BundlePreview = React.memo(({ bundle, mined = false, feeAssets }) => {
-  const { constants: { tokenList, humanizerInfo } } = useConstants()
-  const network = networks.find(x => x.id === bundle.network)
-  if (!Array.isArray(bundle.txns)) return (<h3 className={cn(styles.error)}>Bundle has no transactions (should never happen)</h3>)
-  const lastTxn = bundle.txns[bundle.txns.length - 1]
-  // terribly hacky; @TODO fix
-  // all of the values are prob checksummed so we may not need toLowerCase
-  const lastTxnSummary = getTransactionSummary(humanizerInfo, tokenList, lastTxn, bundle.network, bundle.identity)
-  const hasFeeMatch = (bundle.txns.length > 1) && lastTxnSummary.match(new RegExp(TO_GAS_TANK, 'i'))
-  const txns = (hasFeeMatch && !bundle.gasTankFee) ? bundle.txns.slice(0, -1) : bundle.txns
-  const toLocaleDateTime = date => `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`
-  const feeTokenDetails = feeAssets ? feeAssets.find(i => i.symbol === bundle.feeToken) : null
-  const savedGas = feeTokenDetails ? getAddedGas(feeTokenDetails) : null
-  const splittedLastTxnSummary = lastTxnSummary.split(' ')
-  const fee = splittedLastTxnSummary.length ? splittedLastTxnSummary[1] + ' ' + splittedLastTxnSummary[2] : []
-  const cashback = (bundle.gasTankFee && bundle.gasTankFee.cashback && feeTokenDetails) ?
-    (formatUnits(bundle.gasTankFee.cashback.toString(), feeTokenDetails?.decimals).toString() * feeTokenDetails?.price) : 0
-  const totalSaved =  savedGas &&
-    ((bundle.feeInUSDPerGas * savedGas) + cashback)
-
-  return (<div className={cn(styles.bundlePreview, styles.bundle)} key={bundle._id}>
-    {txns.map((txn, i) => (<TxnPreview
-      key={i} // safe to do this, individual TxnPreviews won't change within a specific bundle
-      txn={txn} network={bundle.network} account={bundle.identity} mined={mined}
-      addressLabel={!!bundle.meta && bundle.meta.addressLabel}
-      feeAssets={feeAssets}
-      />
-    ))}
-    <ul className={cn(styles.details)}>
-      {
-        (hasFeeMatch && !bundle.gasTankFee) ?
-          <li>
-            <label><BsCoin/>Fee</label>
-            <p>{ fee.split(' ').map((x, i) => i === 0 ? formatFloatTokenAmount(x, true, 8) : x).join(' ') }</p>
-          </li>
-          :
-          null
-      }
-      {
-        bundle.executed && !bundle.executed.success && (
-          <li>
-            <label>Error</label>
-            <p>{bundle.executed.errorMsg || 'unknown error'}</p>
-          </li>
-        )
-      }
-      {
-        bundle.gasTankFee && (feeTokenDetails !== null) && mined && (
-        <>
-          { savedGas &&(
-            <ToolTip label={`
-              You saved $ ${formatFloatTokenAmount(bundle.feeInUSDPerGas * savedGas, true, 6)}, ${ (cashback > 0) ? `and got back $ ${formatFloatTokenAmount(cashback, true, 6)} as cashback,` : ''} ended up paying only $ ${formatFloatTokenAmount(((bundle.feeInUSDPerGas * bundle.gasLimit) - cashback), true, 6)}
-            `}>
-              <li>
-                <label><BsCoin/>Fee (Paid with Gas Tank)</label>
-                <p>$ {formatFloatTokenAmount(((bundle.feeInUSDPerGas * bundle.gasLimit) - cashback), true, 6)}</p>
-              </li>
-            </ToolTip>
-          )}
-          { savedGas && (
-            <ToolTip label={`
-              Saved: $ ${formatFloatTokenAmount(bundle.feeInUSDPerGas * savedGas, true, 6)}
-              ${ (cashback > 0) ? `Cashback: $ ${formatFloatTokenAmount(cashback, true, 6)}` : ''}
-            `}>
-              <li>
-                <label><MdOutlineSavings/>Total Saved</label>
-                $ {formatFloatTokenAmount(totalSaved, true, 6)}
-              </li>
-            </ToolTip>
-          )}
-        </>)
-      }
-      <li>
-        <label><BsCalendarWeek/>Submitted on</label>
-        <p>{bundle.submittedAt && (toLocaleDateTime(new Date(bundle.submittedAt))).toString()}</p>
-      </li>
-      { bundle.gasTankFee && !mined && (
-            <li>
-              <label><MdOutlineSavings/>Saved by Gas Tank</label>
-              $ { formatFloatTokenAmount(bundle.feeInUSDPerGas * savedGas, true, 6) }
-              <span style={{color: '#ebaf40'}}>+ cashback is pending</span>
-            </li>
-          )}
-      {
-        bundle.replacesTxId ?
-          <li>
-            <label><MdShuffle/>Replaces transaction</label>
-            <p>{bundle.replacesTxId}</p>
-          </li>
-          :
-          null
-      }
-      {
-        bundle.txId ?
-          <li>
-            <label><BsGlobe2/>Block Explorer</label>
-            <p><a className={cn(styles.explorerUrl)} href={network.explorerUrl+'/tx/'+bundle.txId} target='_blank' rel='noreferrer'>{network.explorerUrl.split('/')[2]}</a></p>
-          </li>
-          :
-          null
-      }
-    </ul>
-  </div>)
-})
-
-const SignedMessages = React.memo(({filteredMessages, privateMode, page, selectedAcc, selectedNetwork}) => {
-  const paginatedMessages = filteredMessages.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE)
-  const [expansions, setExpansions] = useState({})
-
-  return (!filteredMessages.length
-    ? (
-      <div className={cn(styles.signedMessages)}>
-        No messages signed with the account { privateMode.hidePrivateValue(selectedAcc) } yet on {selectedNetwork.id}
-      </div>
-    )
-    : (
-      <div>
-        <div className={cn(styles.signedMessages)}>
-          <div className={cn(styles.headerContainer)}>
-            <div className={cn(styles.dapp, styles.colDapp)}>
-              <div className={cn(styles.dappTitle)}>Dapp</div>
-            </div>
-            <div className={cn(styles.colSigtype)}>Type</div>
-            <div className={cn(styles.colDate)}>Signed on</div>
-            <div className={cn(styles.colExpand, styles.signatureExpand)}></div>
-          </div>
-          {
-            paginatedMessages && paginatedMessages.map((m, index) => {
-              const hash = id(JSON.stringify(m))
-              return (
-                <div className={cn(styles.subContainer)} key={index} >
-                  <div className={cn(styles.subContainerVisible)} >
-                    <div className={cn(styles.dapp, styles.colDapp)} >
-                      <div className={cn(styles.dappIcon)} >
-                        {
-                          m.dApp?.icons[0]
-                            ? (
-                              <Image src={m.dApp.icons[0]} size={32} />
-                            )
-                            : (
-                              <AiFillAppstore style={{ opacity: 0.5 }}/>
-                            )
-                        }
-                      </div>
-                      <div className={cn(styles.dappTitle)} >{m.dApp?.name || 'Unknown dapp'}</div>
-                    </div>
-                    <div className={cn(styles.colSigtype)} >{m.typed ? '1271 TypedData' : 'Standard'}</div>
-                    <div
-                      className={cn(styles.colDate)} >{`${new Date(m.date).toLocaleDateString()} ${new Date(m.date).toLocaleTimeString()}`}</div>
-                    <div className={cn(styles.colExpand, styles.signatureExpand)} onClick={() => {
-                      setExpansions(prev => ({ ...prev, [hash]: !prev[hash] }))
-                    }}>{expansions[hash] ? <FaChevronUp/> : <FaChevronDown/>}</div>
-                  </div>
-                  {
-                    expansions[hash] &&
-                    <div className={cn(styles.subContainerExpanded)}>
-                      <div>
-                        <b>Signer</b>
-                        <div className={cn(styles.messageContent)} >
-                          {m.signer.address || m.signer.quickAcc}
-                        </div>
-                      </div>
-                      <div>
-                        <b>Message</b>
-                        <div className={cn(styles.messageContent)} >
-                          {
-                            m.typed
-                              ? <div>{JSON.stringify(m.message, null, ' ')}</div>
-                              : <div>{getMessageAsText(m.message)}</div>
-                          }
-                        </div>
-                      </div>
-                      <div>
-                        <b>Signature</b>
-                        <div className={cn(styles.messageContent)} >
-                          {m.signature}
-                        </div>
-                      </div>
-                    </div>
-                  }
-                </div>
-              )
-            })
-          }
-        </div>
-      </div>
-    )
-  )
-})
 
 export default Transactions

@@ -129,11 +129,14 @@
                   .inactive {
                     color: $c-scampi;
                     border-bottom: 3px solid $c-scampi;
+                    border-radius: 3px;
+
                   }
 
                   .active {
                     color: $c-titan-white;
                     border-bottom: 3px solid $c-turquoise;
+                    border-radius: 3px;
                   }
 
                   .activeIcon {
@@ -241,6 +244,10 @@
             align-items: center;
             flex-basis: 30%;
 
+            .colExpandMobile {
+              display: none;
+            }
+
             .dappIcon {
               display: flex;
               width: 40px;
@@ -265,6 +272,18 @@
 
             &:hover {
               background-color: rgba(235, 236, 255, 0.1);
+            }
+          }
+
+          .colSigtype {
+            .colSigtypeLabel {
+              display: none;
+            }
+          }
+
+          .colDate {
+            .colDateLabel {
+              display: none;
             }
           }
         }
@@ -385,6 +404,14 @@
             .inactive {
               text-overflow: ellipsis;
               overflow: hidden;
+              border-bottom: 2px solid $c-scampi;
+              border-radius: 2px;
+
+            }
+
+            .active {
+              border-bottom: 2px solid $c-turquoise;
+              border-radius: 2px;
             }
           }
         }
@@ -397,6 +424,54 @@
       }
       .signedMessages {
         overflow-wrap: break-word;
+
+        .headerContainer {
+          display: none;
+        }
+
+        .subContainer {
+          .subContainerVisible {
+            flex-direction: column;
+            align-items: flex-start;
+            .colExpand {
+              display: none;
+            }
+
+            .dapp {
+              width: 100%;
+              .colExpandMobile {
+                display: flex;
+                margin-left: auto;
+              }
+            }
+
+            .colSigtype {
+              display: flex;
+              flex-direction: row;
+              justify-content: space-between;
+              font-size: 12px;
+              width: 100%;
+
+              .colSigtypeLabel {
+                color: $c-scampi;
+                display: flex;
+              }
+            }
+
+            .colDate {
+              display: flex;
+              flex-direction: row;
+              justify-content: space-between;
+              font-size: 12px;
+              width: 100%;
+
+              .colDateLabel {
+                color: $c-scampi;
+                display: flex;
+              }
+            }
+          }
+        }
       }
     }
     .bundle {
@@ -408,6 +483,9 @@
       .panelHeading {
         margin-bottom: 0;
       }
+    }
+    .bottomPagination {
+      justify-content: center;
     }
   }
 }
