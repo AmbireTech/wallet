@@ -10,30 +10,30 @@ import { ReactComponent as SwapIcon } from 'resources/icons/cross-chain.svg'
 import styles from './Route.module.scss'
 
 const Route = ({
-  data: { bridgeStep, middlewareRoute, middlewareFee, bridgeFee, maxServiceTime, serviceTime, fromAsset, toAsset },
+  data: { bridgeStep, middlewareStep, middlewareFee, bridgeFee, maxServiceTime, serviceTime, fromAsset, toAsset },
 }) => (
   <div className={styles.wrapper}>
     <div className={styles.body}>
       <div className={styles.iconWrapper}>
         <img className={styles.icon} src={fromAsset.icon} alt="" />
         <p className={styles.fromAmount}>
-          {middlewareRoute
-            ? formatAmount(middlewareRoute.fromAmount, middlewareRoute.fromAsset)
+          {middlewareStep
+            ? formatAmount(middlewareStep.fromAmount, middlewareStep.fromAsset)
             : formatAmount(bridgeStep.fromAmount, bridgeStep.fromAsset)}
         </p>
       </div>
       <Separator />
-      {middlewareRoute ? (
+      {middlewareStep ? (
         <div className={styles.middlewareWrapper}>
           <div className={styles.stepItem}>
-            <img className={styles.stepItemIcon} src={middlewareRoute.protocol.icon} alt="" />
-            <h4 className={styles.stepItemName}>{middlewareRoute.protocol.displayName}</h4>
+            <img className={styles.stepItemIcon} src={middlewareStep.protocol.icon} alt="" />
+            <h4 className={styles.stepItemName}>{middlewareStep.protocol.displayName}</h4>
           </div>
-          <img className={styles.middlewareAssetIcon} src={middlewareRoute.fromAsset.icon} alt="" />
-          <img className={styles.middlewareAssetIcon} src={middlewareRoute.toAsset.icon} alt="" />
+          <img className={styles.middlewareAssetIcon} src={middlewareStep.fromAsset.icon} alt="" />
+          <img className={styles.middlewareAssetIcon} src={middlewareStep.toAsset.icon} alt="" />
         </div>
       ) : null}
-      {middlewareRoute ? <Separator /> : null}
+      {middlewareStep ? <Separator /> : null}
       <div className={cn(styles.iconWrapper, styles.swapIconWrapper)}>
         <SwapIcon className={styles.swapIcon} />
         <div className={styles.stepItem}>

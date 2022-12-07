@@ -31,17 +31,20 @@ const Quotes = ({ addRequest, selectedAccount, fromTokensItems, quotes, onQuotes
   const refuel = quotes.refuel
   const routes = useMemo(() => quotes.routes.map((route) => {
     const { userTxs } = route
-    const bridgeStep = userTxs.map((tx) => tx.steps.find((s) => s.type === 'bridge')).find((x) => x)
+
     const bridgeRoute = userTxs.find((tx) => tx.steps.find((s) => s.type === 'bridge'))
-    const middlewareRoute = userTxs.map((tx) => tx.steps.find((s) => s.type === 'middleware')).find((x) => x)
+    const bridgeStep = bridgeRoute.steps?.find((s) => s.type === 'bridge')
+
+    const middlewareRoute = userTxs.find((tx) => tx.steps.find((s) => s.type === 'middleware'))
+    const middlewareStep = middlewareRoute?.steps?.find((s) => s.type === 'middleware')
 
     return {
       ...route,
       bridgeStep,
-      middlewareRoute,
+      middlewareStep,
       userTxType: bridgeRoute.userTxType,
       txType: bridgeRoute.txType,
-      middlewareFee: middlewareRoute?.protocolFees ? formatFeeAmount(middlewareRoute?.protocolFees, route) : 0,
+      middlewareFee: middlewareStep?.protocolFees ? formatFeeAmount(middlewareStep?.protocolFees, route) : 0,
       bridgeFee: bridgeStep?.protocolFees ? formatFeeAmount(bridgeStep?.protocolFees, route) : 0,
       fromAsset,
       toAsset
