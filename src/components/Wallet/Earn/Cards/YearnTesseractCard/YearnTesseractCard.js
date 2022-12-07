@@ -40,7 +40,7 @@ const YearnTesseractCard = ({ networkId, accountId, tokens, addRequest }) => {
     const addRequestTxn = (id, txn, extraGas = 0) => addRequest({ id, type: 'eth_sendTransaction', chainId: networkDetails.chainId, account: accountId, txn, extraGas })
     const provider = useMemo(() => {
         return (networkDetails.id === 'ethereum')
-        ? rpcProviders['temp-ethereum-ambire-earn']
+        ? rpcProviders['ethereum-ambire-earn']
         : getProvider(networkDetails.id)
     }, [networkDetails.id])
     const isDepositsDisabled = (networkId === 'polygon') ? true : false
@@ -103,7 +103,7 @@ const YearnTesseractCard = ({ networkId, accountId, tokens, addRequest }) => {
                 let batchCallTxn = []
 
                 const provider = (networkId === 'ethereum')
-                    ? rpcProviders['temp-ethereum-ambire-earn']
+                    ? rpcProviders['ethereum-ambire-earn']
                     : getProvider(networkId)
                 const tokenContract = new Contract(tokenAddress, ERC20_INTERFACE, provider)
                 const allowance = await tokenContract.allowance(BATCHER_ADDRESS, vaultAddress)

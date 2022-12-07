@@ -269,7 +269,7 @@ const AmbireTokensCard = ({ networkId, accountId, tokens, rewardsData, addReques
                 // Prevent init if the card is unavailable for current network
                 if (networkId !== 'ethereum') return
 
-                const provider = rpcProviders['temp-ethereum-ambire-earn']
+                const provider = rpcProviders['ethereum-ambire-earn']
                 
                 const tokenAddress = isAdxTokenSelected() ? ADX_TOKEN_ADDRESS : WALLET_TOKEN_ADDRESS
                 const stakingTokenAddress = isAdxTokenSelected() ? ADX_STAKING_TOKEN_ADDRESS : WALLET_STAKING_ADDRESS

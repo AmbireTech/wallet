@@ -18,7 +18,7 @@ const STAKING_POOL_EVENT_TYPES = {
 }
 
 const useAmbireEarnDetails = ({accountId, addresses, tokenLabel}) => {
-    const ethProvider = rpcProviders['temp-ethereum-ambire-earn']
+    const ethProvider = rpcProviders['ethereum-ambire-earn']
     const { getAdexToStakingTransfersLogs } = useConstants()
     const WALLET_ADDR = addresses.stakingTokenAddress
     const [details, setDetails] = useState({})

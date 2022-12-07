@@ -96,7 +96,7 @@ const AAVECard = ({ networkId, tokens: tokensData, account, addRequest }) => {
 
         try {
             const provider = (networkDetails.id === 'ethereum') 
-                ? rpcProviders['temp-ethereum-ambire-earn']
+                ? rpcProviders['ethereum-ambire-earn']
                 : getProvider(networkDetails.id)
             const lendingPoolProviderContract = new ethers.Contract(providerAddress, AAVELendingPool, provider)
             lendingPoolAddress = await lendingPoolProviderContract.getLendingPool()
