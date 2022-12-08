@@ -68,8 +68,8 @@ const SideBar = ({ match, portfolio, hidePrivateValue, relayerURL, selectedNetwo
       <div className={styles.ambireLogo}>
         <div className={styles.logo} />
         <div className={styles.icon} />
-        <Button  clear icon={<MdClose size={23} />} mini border
-          onClick={() => toggleSideBarOpen()}
+        <Button clear icon={<MdClose size={23} />} mini
+          onClick={toggleSideBarOpen}
         ></Button>
       </div>
       }
