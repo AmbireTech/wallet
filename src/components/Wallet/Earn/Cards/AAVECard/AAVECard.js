@@ -13,6 +13,7 @@ import { getDefaultTokensItems } from './defaultTokens'
 import approveToken from 'ambire-common/src/services/approveToken'
 import EarnDetailsModal from 'components/Modals/EarnDetailsModal/EarnDetailsModal'
 import { MdInfo } from "react-icons/md"
+import { rpcProviders } from 'config/providers'
 
 const AAVELendingPool = new Interface(AAVELendingPoolAbi)
 const RAY = 10**27
@@ -94,7 +95,9 @@ const AAVECard = ({ networkId, tokens: tokensData, account, addRequest }) => {
         }
 
         try {
-            const provider = getProvider(networkDetails.id)
+            const provider = (networkDetails.id === 'ethereum') 
+                ? rpcProviders['ethereum-ambire-earn']
+                : getProvider(networkDetails.id)
             const lendingPoolProviderContract = new ethers.Contract(providerAddress, AAVELendingPool, provider)
             lendingPoolAddress = await lendingPoolProviderContract.getLendingPool()
 

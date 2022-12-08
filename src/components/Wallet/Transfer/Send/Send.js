@@ -35,7 +35,8 @@ const Send = ({
   asset, 
   setAsset, 
   tokenAddress, 
-  selectedAsset
+  selectedAsset,
+  title
 }) => {
   const { addresses, addAddress, removeAddress, isKnownAddress } = addressBook
   const {
@@ -257,6 +258,7 @@ const Send = ({
 
 
     return sortedAssetsItems.length ? (<div className={styles.wrapper}>
+            {title}
             <div className={styles.content}>
                 <Select searchable defaultValue={asset} items={sortedAssetsItems} onChange={({ value }) => setAsset(value)}/>
                 { feeBaseTokenWarning ? <p className={styles.gasTankConvertMsg}><MdWarning /> {feeBaseTokenWarning}</p> : <></>}
