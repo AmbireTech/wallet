@@ -69,7 +69,6 @@ const FeeAmountSelectors = ({
               <p className={styles.feeEstimation}>
                 {(isETH ? 'Ξ ' : '')
                   + (showInUSD ? `$${formatFloatTokenAmount(baseFeeInFeeUSD, true, 4)}` : formatFloatTokenAmount(baseFeeInFeeToken, true, decimals))
-                  + (!isETH && !showInUSD ? ` ${estimation.selectedFeeToken.symbol}` : '')
                 }
               </p>
               {!isETH && !showInUSD && <p className={cn(styles.feeEstimation, styles.symbol)}>
