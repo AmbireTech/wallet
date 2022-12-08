@@ -17,7 +17,6 @@ import { ReactComponent as TransactionsIcon } from './images/transactions.svg'
 import { ReactComponent as SecurityIcon } from './images/security.svg'
 import { ReactComponent as DappsIcon } from './images/dapps.svg'
 import { ReactComponent as HelpIcon } from './images/help.svg'
-import { ReactComponent as SignedMessagesIcon } from './images/signed-messages.svg'
 
 import styles from './SideBar.module.scss'
 
