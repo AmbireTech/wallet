@@ -1,8 +1,8 @@
-import './CongratsRewardsModal.scss'
-
 import { useCallback, useEffect, useState } from 'react'
 import { Button, Modal } from 'components/common'
 import { useReward } from 'react-rewards'
+
+import styles from './CongratsRewardsModal.module.scss'
 
 const CongratsRewardsModal = ({ pendingTokensTotal }) => {
     const { reward, isAnimating } = useReward('rewardId', 'confetti')
@@ -25,14 +25,14 @@ const CongratsRewardsModal = ({ pendingTokensTotal }) => {
 
     return (
         <>
-            <Modal id="congrats-rewards-modal" title="Woo-hoo!" buttons={modalButtons}>
-                <div className='content'>
-                    <div id="rewardId" />
-                    <div className='wallet-logo'></div>
+            <Modal className={styles.wrapper} title="Woo-hoo!" buttons={modalButtons}>
+                <div className={styles.content}>
+                    <div id="rewardId" className={styles.reward} />
+                    <div className={styles.logo}></div>
                     <h2>You just received { pendingTokensTotal } $WALLET!</h2>
-                    <p>You have a balance of $1,000 or more in your Ambire wallet - this means you are eligible to earn WALLET rewards!
-                    The bigger your account balance, the more rewards you earn, and you can claim them every Monday.</p>
-                    <a href='https://blog.ambire.com/tagged/wallet-rewards' target='_blank' rel='noreferrer'>Learn more about WALLET rewards</a>   
+                    <p>You have a balance of $1,000 or more in your Ambire wallet - this means you are eligible to earn WALLET rewards!</p>
+                    <p>The bigger your account balance, the more rewards you earn, and you can claim them every Monday.</p>
+                    <a href='https://blog.ambire.com/wallet-rewards-mechanism-explained-start-accumulating-value-before-the-token-is-launched/' target='_blank' rel='noreferrer'>Learn more about WALLET rewards</a>   
                 </div>
             </Modal>
         </>   

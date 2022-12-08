@@ -1,0 +1,29 @@
+.wrapper {
+    .heading {
+        .title {
+            height: 34px !important;
+        }
+    }
+
+    :global(.content) {
+        padding-bottom: 0 40px;
+
+        .reward {
+            margin: auto;
+            width: 0;
+        }
+
+        .logo {
+            margin: auto;
+            width: 225px;
+            height: 230px;
+            background-image: url('/resources/wallet-token-congrats.png') !important;
+        }
+    }
+    
+    .buttons {
+        button {
+            flex: 0 1 100% !important;
+        }
+    }    
+}
