@@ -1,3 +1,6 @@
+// @ts-nocheck
+// nocheck because the TS warnings are logged in the dev console
+// TODO: TS setup fix: stop the TS logs and then remove the nocheck
 import { signMessage, signMessage712 } from 'adex-protocol-eth/js/Bundle'
 import { NetworkType } from 'ambire-common/src/constants/networks'
 import { Wallet } from 'ethers'
