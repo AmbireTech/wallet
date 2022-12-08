@@ -13,7 +13,7 @@
     </g>
   </g>
   <g id="adex_token" transform="translate(8.52 8.914)">
-    <g id="Ellipse_184" data-name="Ellipse 184" transform="translate(0 0)" fill="#904dff" stroke="#24263d" stroke-linecap="round" stroke-linejoin="round" stroke-width="1">
+    <g id="Ellipse_184" data-name="Ellipse 184" transform="translate(0 0)" fill="#904dff" stroke="#24263d" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="1">
       <ellipse cx="10.522" cy="10.522" rx="10.522" ry="10.522" stroke="none"/>
       <ellipse cx="10.522" cy="10.522" rx="11.022" ry="11.022" fill="none"/>
     </g>
@@ -30,8 +30,8 @@
       </g>
       <g id="_2583651711024_00000058554860177999400870000008691308943655005829_" transform="translate(0.528)">
         <path id="Path_1950" data-name="Path 1950" d="M979.53,391.522l2.872-2.872-2.872-2.872,1.7-1.708,2.875,2.875,2.875-2.875,1.7,1.708-2.872,2.872,2.872,2.872-1.708,1.7-2.872-2.872-2.872,2.872Z" transform="translate(-979.53 -381.198)" fill="#e7cfff" fill-rule="evenodd"/>
-        <path id="Path_1951" data-name="Path 1951" d="M985.86,377.18l2.68-2.68,2.68,2.68-1.437,1.438-1.242-1.242-1.242,1.242Z" transform="translate(-983.96 -374.5)" fill="#c58efc" fill-rule="evenodd"/>
-        <path id="Path_1952" data-name="Path 1952" d="M985.86,411.867l2.68,2.683,2.68-2.683-1.437-1.437-1.242,1.242L987.3,410.43Z" transform="translate(-983.96 -399.647)" fill="#c58efc" fill-rule="evenodd"/>
+        <path id="Path_1951" data-name="Path 1951" d="M985.86,377.18l2.68-2.68,2.68,2.68-1.437,1.438-1.242-1.242-1.242,1.242Z" transform="translate(-983.96 -374.5)" fill="#e7cfff" fill-rule="evenodd"/>
+        <path id="Path_1952" data-name="Path 1952" d="M985.86,411.867l2.68,2.683,2.68-2.683-1.437-1.437-1.242,1.242L987.3,410.43Z" transform="translate(-983.96 -399.647)" fill="#e7cfff" fill-rule="evenodd"/>
       </g>
     </g>
   </g>
