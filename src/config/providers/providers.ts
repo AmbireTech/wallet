@@ -57,7 +57,7 @@ rpcProviders['ethereum-ambire-earn'] = new providers.StaticJsonRpcProvider('http
   chainId: 1
 })
 // @ts-ignore
-rpcProviders['ethereum-ambire-swap'] = new providers.StaticJsonRpcProvider('unufri-ethereum.adex.network/v3/099fc58e0de9451d80b18d7c74caa7c1', {
+rpcProviders['ethereum-ambire-swap'] = new providers.StaticJsonRpcProvider('https://unufri-ethereum.adex.network/v3/099fc58e0de9451d80b18d7c74caa7c1', {
   name: 'ethereum-ambire-swap',
   chainId: 1
 })
