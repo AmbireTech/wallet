@@ -37,10 +37,6 @@ export default function SendTransaction({selectedAcc, selectedNetwork, addReques
 
     useEffect(() => {
         if (hasLoaded && showingTxDialogRef.current && !showingTxDialog && internalRequests.length === 0) {
-            window.parent.postMessage({
-                type: 'signClose',
-            }, '*')
-
             setHasLoaded(false)
         }
 

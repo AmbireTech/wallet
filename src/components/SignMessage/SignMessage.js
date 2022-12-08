@@ -8,10 +8,11 @@ import { toUtf8String, isHexString } from "ethers/lib/utils"
 import * as blockies from "blockies-ts"
 import { getWallet } from "lib/getWallet"
 import { useToasts } from "hooks/toasts"
-import { useState, useEffect, useRef } from "react"
+import { useState, useEffect, useRef, useCallback } from "react"
 import { Button, Loading, TextInput, ToolTip, DAppIncompatibilityWarningMsg, Panel } from "components/common"
 import { networkIconsById } from 'consts/networks'
 import cn from "classnames"
+import { onMsgRejected, onMsgSigned } from 'components/SDK/WindowMessages'
 
 import useLocalStorage from 'hooks/useLocalStorage'
 
@@ -79,6 +80,11 @@ export default function SignMessage({ everythingToSign, resolve, account, relaye
 
   const isDAppSupported = dApp && (supportedDApps.includes(dApp.url) || supportedDApps.includes(dApp.url+'/'))
 
+  const rejectMsg = useCallback(() => {
+    resolve({ message: "signature denied" })
+    onMsgRejected()
+  }, [resolve])
+
   useEffect(() => {
     if (confirmationType) inputSecretRef.current.focus()
   }, [confirmationType])
@@ -94,7 +100,7 @@ export default function SignMessage({ everythingToSign, resolve, account, relaye
         </h3>
         <Button
           className={styles.reject}
-          onClick={() => resolve({ message: "signature denied" })}
+          onClick={rejectMsg}
         >
           Reject
         </Button>
@@ -108,7 +114,7 @@ export default function SignMessage({ everythingToSign, resolve, account, relaye
         <h3 className='error'>Invalid signing request: {typeDataErr}</h3>
         <Button
           className={styles.reject}
-          onClick={() => resolve({ message: "signature denied" })}
+          onClick={rejectMsg}
         >
           Reject
         </Button>
@@ -119,11 +125,12 @@ export default function SignMessage({ everythingToSign, resolve, account, relaye
     if (e.length === CONF_CODE_LENGTH) promiseResolve(e)
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    approve({
+    await approve({
       password: signingState.passphrase
     })
+    onMsgSigned()
   }
 
   const requestedNetworkIcon = networkIconsById[requestedNetwork.id]
@@ -291,7 +298,7 @@ export default function SignMessage({ everythingToSign, resolve, account, relaye
                 danger
                 icon={<MdClose />}
                 className={styles.reject}
-                onClick={() => resolve({ message: "signature denied" })}
+                onClick={rejectMsg}
               >
                 Reject
               </Button>

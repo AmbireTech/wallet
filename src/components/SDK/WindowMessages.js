@@ -10,3 +10,15 @@ export function onTxnSent(hash) {
     hash: hash
   }, '*')
 }
+
+export function onMsgRejected() {
+  window.parent.postMessage({
+    type: 'msgRejected'
+  }, '*')
+}
+
+export function onMsgSigned() {
+  window.parent.postMessage({
+    type: 'msgSigned'
+  }, '*')
+}
