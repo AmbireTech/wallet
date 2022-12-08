@@ -1,14 +1,20 @@
-import './GasIndicator.scss'
-import { GiGasPump } from 'react-icons/gi'
-import networks from 'consts/networks'
 import { useEffect, useState } from 'react'
-import { fetchGet } from 'lib/fetch'
 import { ACTION_GAS_COSTS, AMBIRE_OVERHEAD_COST} from 'ambire-common/src/constants/actionGasCosts'
-import { Link } from 'react-router-dom'
+
+import networks from 'consts/networks'
+import { fetchGet } from 'lib/fetch'
+
+import { useModals } from 'hooks'
+import NetworkFeesModal from 'components/Modals/NetworkFeesModal/NetworkFeesModal'
+
+import { GiGasPump } from 'react-icons/gi'
+
+import styles from './GasIndicator.module.scss'
 
 const GAS_COST_ERC20_TRANSFER = ACTION_GAS_COSTS.find(c => c.name === 'ERC20: Transfer').gas + AMBIRE_OVERHEAD_COST
 
 const GasIndicator = ({ selectedNetwork, relayerURL, match }) => {
+  const { showModal } = useModals()
   const [gasData, setGasData] = useState(null)
   const [cacheBreak, setCacheBreak] = useState(() => Date.now())
 
@@ -34,18 +40,21 @@ const GasIndicator = ({ selectedNetwork, relayerURL, match }) => {
     return () => unmounted = true
   }, [relayerURL, selectedNetwork, cacheBreak])
 
+  const showNetworkFeesModal = () => showModal(<NetworkFeesModal relayerURL={relayerURL} selectedNetwork={selectedNetwork} />)
+
   if (gasData) {
-    return (<div className={'gas-info'}>
-            <span className={'native-price'}>
+    return (<div className={styles.wrapper}>
+            <span className={styles.nativePrice}>
                 {networks.find(n => n.id === selectedNetwork.id)?.nativeAssetSymbol}: {(Number(gasData.gasFeeAssets.native)).toLocaleString('en-US', {
               minimumFractionDigits: 2
             })}
             </span>
-            <Link to={match.url + "/gas-tank"}>
-              <span className={'gas-price'}>
-                <GiGasPump/> <span>${((gasData.gasPrice && gasData.gasPrice.maxPriorityFeePerGas ? (gasData.gasPrice.maxPriorityFeePerGas['medium'] + gasData.gasPrice['medium']) : gasData.gasPrice['medium']) * GAS_COST_ERC20_TRANSFER / 10 ** 18 * gasData.gasFeeAssets.native).toFixed(2)}</span>
+            <button className={styles.gasPrice} onClick={showNetworkFeesModal}>
+              <GiGasPump/>
+              <span>
+                ${((gasData.gasPrice && gasData.gasPrice.maxPriorityFeePerGas ? (gasData.gasPrice.maxPriorityFeePerGas['medium'] + gasData.gasPrice['medium']) : gasData.gasPrice['medium']) * GAS_COST_ERC20_TRANSFER / 10 ** 18 * gasData.gasFeeAssets.native).toFixed(2)}
               </span>
-            </Link>
+            </button>
     </div>)
   }
   return null
