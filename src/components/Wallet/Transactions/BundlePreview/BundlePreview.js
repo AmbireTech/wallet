@@ -1,4 +1,4 @@
-import styles from './Transactions.module.scss'
+import styles from './BundlePreview.module.scss'
 import TxnPreview from 'components/common/TxnPreview/TxnPreview'
 import { BsCoin, BsCalendarWeek, BsGlobe2 } from 'react-icons/bs'
 import { MdShuffle, MdOutlineSavings } from 'react-icons/md'
@@ -10,7 +10,7 @@ import { formatFloatTokenAmount } from 'lib/formatters'
 import { formatUnits } from 'ethers/lib/utils'
 import { ToolTip } from 'components/common'
 // eslint-disable-next-line import/no-relative-parent-imports
-import { getAddedGas } from '../../SendTransaction/helpers'
+import { getAddedGas } from '../../../SendTransaction/helpers'
 import useConstants from 'hooks/useConstants'
 import cn from 'classnames'
 

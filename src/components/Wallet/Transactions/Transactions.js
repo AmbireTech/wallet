@@ -15,15 +15,15 @@ import { ReactComponent as WaitingTxsIcon } from './images/waiting.svg'
 import { ReactComponent as PendingTxsIcon } from './images/pending.svg'
 import { ReactComponent as ConfirmedActiveTxsIcon } from './images/confirmed-active.svg'
 import { ReactComponent as ConfirmedInactiveTxsIcon } from './images/confirmed-inactive.svg'
-import SignedMessages from './SignedMessages'
-import BundlePreview from './BundlePreview'
+import SignedMessages from './SignedMessages/SignedMessages'
+import BundlePreview from './BundlePreview/BundlePreview'
 
 import cn from 'classnames'
 import { useLocalStorage } from 'hooks'
 
 // 10% in geth and most EVM chain RPCs; relayer wants 12%
 const RBF_THRESHOLD = 1.14
-const ITEMS_PER_PAGE = 8
+const ITEMS_PER_PAGE = 3
 
 function Transactions ({ relayerURL, selectedAcc, selectedNetwork, showSendTxns, addRequest, eligibleRequests, setSendTxnState, privateMode, showMessagesView }) {
   const { addToast } = useToasts()
@@ -85,7 +85,9 @@ function Transactions ({ relayerURL, selectedAcc, selectedNetwork, showSendTxns,
       .sort((a, b) => b.date - a.date)
   , [messages, selectedNetwork, selectedAcc])
 
-  const maxPages = showMessages ? Math.ceil(filteredMessages.length / ITEMS_PER_PAGE) : Math.ceil(executedTransactions.length / maxBundlePerPage)
+  let maxPages = showMessages ? Math.ceil(filteredMessages.length / ITEMS_PER_PAGE) : Math.ceil(executedTransactions.length / maxBundlePerPage)
+  // Making sure we don't get "Page 1/0" if no items
+  maxPages = Math.max(1, maxPages)
   const defaultPage = useMemo(() => Math.min(Math.max(Number(params.page), 1), maxPages) || 1, [params.page, maxPages])
   const [page, setPage] = useState(defaultPage)
 

@@ -1,4 +1,4 @@
-import styles from './Transactions.module.scss'
+import styles from './SignedMessages.module.scss'
 
 import React, { useState } from 'react'
 import { Image } from 'components/common'
@@ -7,7 +7,6 @@ import { isHexString, toUtf8String } from 'ethers/lib/utils'
 import { AiFillAppstore } from 'react-icons/ai'
 import { FaChevronDown, FaChevronUp } from 'react-icons/fa'
 import cn from 'classnames'
-
 
 const ITEMS_PER_PAGE = 8
 
