@@ -17,8 +17,9 @@ let lastTokensBalanceRaw = []
 
 const getAmountReceived = (lastToken, newBalanceRaw, decimals) => {
     try {
+        const lastBalanceRaw = lastToken.latest ? lastToken.latest.balanceRaw : lastToken.balanceRaw
         const amountRecieved = lastToken
-            ? (BigNumber.from(newBalanceRaw.toString(10)).sub(BigNumber.from(lastToken.balanceRaw.toString(10))))
+            ? (BigNumber.from(newBalanceRaw.toString(10)).sub(BigNumber.from(lastBalanceRaw.toString(10))))
             : newBalanceRaw
         return formatUnits(amountRecieved, decimals)
     } catch(e) {
@@ -87,19 +88,21 @@ export default function useNotifications (requests, onShow, portfolio, selectedA
             if (!portfolio.isCurrNetworkBalanceLoading && portfolio.balance) {
                 if (!isLastTotalBalanceInit) {
                     isLastTotalBalanceInit = true
-                    lastTokensBalanceRaw = portfolio.tokens.map(({ address, balanceRaw }) => ({ address, balanceRaw }))
+                    lastTokensBalanceRaw = portfolio.tokens.map(({ address, balanceRaw, latest }) => ({ address, balanceRaw, latest }))
                 }
-
-                const changedAmounts = portfolio.tokens.filter(({ address, balanceRaw }) => {
+                const changedAmounts = portfolio.tokens.filter(({ address, balanceRaw, latest }) => {
                     const lastToken = lastTokensBalanceRaw.find(token => token.address === address)
-                    const isSignificantChange = lastToken && ((balanceRaw / lastToken.balanceRaw) > BALANCE_TRESHOLD)
+                    const currentBalance = latest ? latest.balanceRaw : balanceRaw
+                    const lastTokenBalance = lastToken.latest ? lastToken.latest.balanceRaw: lastToken.balanceRaw
+                    
+                    const isSignificantChange = lastToken && ((currentBalance / lastTokenBalance) > BALANCE_TRESHOLD)
                     return !lastToken || isSignificantChange
                 })
 
-                changedAmounts.forEach(({ address, symbol, decimals, balanceRaw }) => {
+                changedAmounts.forEach(({ address, symbol, decimals, balanceRaw, latest }) => {
+                    const newBalance = latest ? latest.balanceRaw : balanceRaw
                     const lastToken = lastTokensBalanceRaw.find(token => token.address === address)
-                    const amountRecieved = getAmountReceived(lastToken, balanceRaw, decimals)
-
+                    const amountRecieved = getAmountReceived(lastToken, newBalance, decimals)
                     showNotification({
                         id: `received_amount_${Date.now()}`,
                         title: `${amountRecieved} ${symbol} Received.`,
@@ -108,8 +111,8 @@ export default function useNotifications (requests, onShow, portfolio, selectedA
 
                     lastToken ? lastTokensBalanceRaw = [
                         ...lastTokensBalanceRaw.filter(token => token.address !== address),
-                        { address, balanceRaw }
-                    ] : lastTokensBalanceRaw.push({ address, balanceRaw })
+                        { address, balanceRaw, latest }
+                    ] : lastTokensBalanceRaw.push({ address, balanceRaw, latest })
                 })
             }
         } catch(e) {
