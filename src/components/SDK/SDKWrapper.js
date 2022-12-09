@@ -4,6 +4,7 @@ import AddAccountSDK from 'components/SDK/AddAccount'
 import OnRampSDK from 'components/SDK/OnRamp'
 import SendTransactionSDK from 'components/SDK/SendTransaction'
 import SignMessageSDK from 'components/SDK/SignMessage'
+import LogoutSDK from 'components/SDK/Logout'
 
 export default function SDKWrapper(props) {
 
@@ -48,6 +49,10 @@ export default function SDKWrapper(props) {
         addRequest={props.addRequest}
         everythingToSign={props.everythingToSign}
       />
+    },
+    {
+      path: '/logout',
+      component: <LogoutSDK/>
     },
   ]
 

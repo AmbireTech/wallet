@@ -1,5 +1,5 @@
 import BaseEmailLogin from 'components/EmailLogin/EmailLogin'
-import { useState, useEffect, useMemo, useCallback, Suspense } from 'react'
+import { useState, useEffect } from 'react'
 import useNetwork from 'ambire-common/src/hooks/useNetwork'
 import { useLocalStorage } from 'hooks'
 import allNetworks from 'consts/networks'
@@ -40,7 +40,7 @@ export default function EmailLogin({ relayerURL, onAddAccount }) {
 
     setAlreadyLogged(true)
 
-  }, [alreadyLogged, matchedDapp, chainId, network.id])
+  }, [alreadyLogged, matchedDapp, chainId, network.id, network.chainId])
 
   const onLoginSuccess = (wallet_address) => {
     if (chainId) setNetwork(chainId)
