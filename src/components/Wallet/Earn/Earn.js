@@ -1,6 +1,5 @@
 import './Earn.scss'
 import AAVECard from './Cards/AAVECard/AAVECard'
-import YearnTesseractCard from './Cards/YearnTesseractCard/YearnTesseractCard'
 import { Loading } from 'components/common'
 import AmbireTokensCard from './Cards/AmbireTokensCard/AmbireTokensCard'
 
