@@ -1,4 +1,5 @@
 import BaseEmailLogin from 'components/EmailLogin/EmailLogin'
+import { useState, useEffect, useMemo, useCallback, Suspense } from 'react'
 import useNetwork from 'ambire-common/src/hooks/useNetwork'
 import { useLocalStorage } from 'hooks'
 import allNetworks from 'consts/networks'
@@ -9,9 +10,39 @@ export default function EmailLogin({ relayerURL, onAddAccount }) {
   const location = useLocation()
   const { network, setNetwork } = useNetwork({ useStorage: useLocalStorage })
 
-  const onLoginSuccess = (wallet_address) => {
-    const chainId = parseInt(new URLSearchParams(location.search).get("chainId"))
+  // login state stuff
+  const [alreadyLogged, setAlreadyLogged] = useState(false)
+  const [stateStorage, setStateStorage] = useLocalStorage({
+    key: 'login_sdk',
+    defaultValue: {connected_dapps: []}
+  })
 
+  const dappOrigin = new URLSearchParams(location.search).get("dappOrigin")
+  const chainId = parseInt(new URLSearchParams(location.search).get("chainId"))
+
+  const matchedDapp = stateStorage.connected_dapps.find(dapp => dapp.origin === dappOrigin)
+
+  // already logged-in logic
+  useEffect(() => {
+    if (alreadyLogged || !matchedDapp || !matchedDapp.wallet_address) return
+
+    const networkId = chainId
+      ? allNetworks.filter(aNetwork => aNetwork.chainId === chainId)[0].id
+      : network.id
+    const provider = getProvider(networkId)
+
+    window.parent.postMessage({
+      address: matchedDapp.wallet_address,
+      chainId: network.chainId,
+      providerUrl: provider.connection.url,
+      type: 'alreadyLoggedIn',
+    }, '*')
+
+    setAlreadyLogged(true)
+
+  }, [alreadyLogged, matchedDapp, chainId, network.id])
+
+  const onLoginSuccess = (wallet_address) => {
     if (chainId) setNetwork(chainId)
 
     const networkId = chainId
@@ -25,6 +56,14 @@ export default function EmailLogin({ relayerURL, onAddAccount }) {
       providerUrl: provider.connection.url,
       type: 'loginSuccess',
     }, '*')
+
+    setStateStorage({connected_dapps: [
+      ...stateStorage.connected_dapps,
+      {
+        origin: dappOrigin,
+        wallet_address: wallet_address,
+      }
+    ]})
   }
 
   return (
