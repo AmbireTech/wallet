@@ -32,7 +32,7 @@ const Transfer = (props) => {
     const selectedAsset = portfolio?.tokens.find(({ address }) => address === asset)
 
     return (
-        <div className={styles.wrapper} style={{ justifyContent: gasTankDetails ? 'center' : '' }}>
+        <div className={styles.wrapper}>
             <Tabs 
                 firstTabLabel='Send'
                 secondTabLabel='Sell Crypto'
