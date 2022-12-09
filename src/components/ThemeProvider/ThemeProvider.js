@@ -8,7 +8,7 @@ const ThemeProvider = ({ children }) => {
 	const [theme, setTheme] = useState('light')
 
 	useEffect(() => {
-		document.documentElement.className = styles[theme]
+		document.documentElement.className = styles[theme || 'dark']
 	}, [theme])
 
 	return (
