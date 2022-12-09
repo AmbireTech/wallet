@@ -7,6 +7,7 @@
 
 .wrapper {
     display: flex;
+    justify-content: center;
     gap: 17px;
     overflow-y: hidden;
     height: 100%;
@@ -22,7 +23,7 @@
 @media screen and (max-width: $mobile-breakpoint-max-width) {
     .wrapper {
         gap: 15px;
-        overflow-y: auto;
+        height: auto;
     }
     .panel {
         padding: 0;
