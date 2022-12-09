@@ -15,12 +15,12 @@ const AssetsMigrationModal = ({ addRequest, selectedAccount, selectedNetwork, ac
   const getModalTitle = () => {
     return (<div>
       <span>Migrate Assets</span>
-      <Stepper steps={modalSteps.steps} currentStep={modalSteps.stepIndex} noLabels={false}/>
     </div>)
   }
 
   return (
     <Modal className={styles.wrapper} title={getModalTitle()} buttons={modalButtons}>
+      <Stepper steps={modalSteps.steps} currentStep={modalSteps.stepIndex} noLabels={false}/>
       <AssetsMigration
         addRequest={addRequest}
         selectedAccount={selectedAccount}

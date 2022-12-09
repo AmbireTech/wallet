@@ -2,7 +2,6 @@
 
 .stepper {
   display: flex;
-  //background: $c-mirage;
   padding: 16px;
   margin-bottom: 16px;
 
@@ -13,9 +12,16 @@
     justify-content: center;
     position: relative;
 
+
+    &:nth-child(2) {
+      .stepStatus {
+        margin-left: auto;
+      }
+      .stepName {
+        text-align: end;
+      }
+    }
     .stepStatus {
-      //font-size: 16px;
-      margin: auto;
       display: block;
       width: 10px;
       height: 10px;
@@ -74,19 +80,18 @@
       top: 4px;
 
       &.stepBarPrev {
-        width: 50%;
+        width: 100%;
         left:0;
       }
 
       &.stepBarNext {
-        width: 50%;
+        width: 100%;
         right:0;
       }
     }
 
     .stepName {
       padding-top: 4px;
-      text-align: center;
       font-weight: normal;
       font-size: 12px;
     }
