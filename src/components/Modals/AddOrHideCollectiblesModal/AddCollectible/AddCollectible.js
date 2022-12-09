@@ -40,7 +40,7 @@ const AddCollectible = ({ network, account, portfolio, handleUri }) => {
   const [loading, setLoading] = useState(false)
   const [tokenDetails, setTokenDetails] = useState(null)
   const [showError, setShowError] = useState(false)
-  const disabled = !tokenDetails || !(tokenDetails.tokenId && tokenDetails.collectionAddress)
+  const disabled = showError || !tokenDetails || !(tokenDetails.tokenId && tokenDetails.collectionAddress)
 
   const onInput = async address => {
     setTokenDetails(null)
@@ -129,10 +129,8 @@ const AddCollectible = ({ network, account, portfolio, handleUri }) => {
         fetchFromVelcroMetaData(collectionAddress, tokenId, balance)
       }
     } catch (e) {
-      console.log({e})
-      // fetchFromVelcroMetaData(collectionAddress, tokenId, 0)
       const contract = new Contract(collectionAddress, ERC721Abi, provider)
-      console.log(contract)
+
       try {
         let [collection, address, maybeUri1, maybeUri2, balance] = await Promise.all([
           contract.name(),
@@ -141,9 +139,9 @@ const AddCollectible = ({ network, account, portfolio, handleUri }) => {
           contract.uri(tokenId).then(uri => ({ uri })).catch(err => ({ err })),
           contract.balanceOf(account)
         ])
+        // debugger
         balance = Number(balance)
-        
-        debugger
+
         if (!balance) {
           addToast(`You don't have balance of this collectible to add in your wallet`)
           setTokenDetails(null)
@@ -167,8 +165,8 @@ const AddCollectible = ({ network, account, portfolio, handleUri }) => {
           network: network.id,
           type: 'nft',
           tokenId,
-          address,
-          balance: 0,
+          owner: address,
+          balance: 1,
           balanceUSD: 0,
           collection,
           name: collection,
@@ -179,7 +177,7 @@ const AddCollectible = ({ network, account, portfolio, handleUri }) => {
 
       } catch (err) {
         console.log({err})
-        addToast(`Error getting collectible data`)
+        addToast(`Error getting collectible data`, { error: true })
         setLoading(false)
       }
     
@@ -189,9 +187,9 @@ const AddCollectible = ({ network, account, portfolio, handleUri }) => {
   const addCollectible = async () => {
     onAddExtraCollectible({
       ...tokenDetails,
-      address: account,
+      account,
       network: network.id,
-      meta: [ { tokenId: tokenDetails.tokenId, data: { name: tokenDetails?.name, image: tokenDetails.image }} ],
+      assets: [ { tokenId: tokenDetails.tokenId, data: { name: tokenDetails?.name, image: tokenDetails.image }} ],
     })
     hideModal()
   }
@@ -200,6 +198,8 @@ const AddCollectible = ({ network, account, portfolio, handleUri }) => {
     onRemoveExtraCollectible(address, tokenId)
     hideModal()
   }
+
+  console.log(extraCollectibles)
 
   return (
     <div className={styles.wrapper}>
@@ -230,8 +230,8 @@ const AddCollectible = ({ network, account, portfolio, handleUri }) => {
         {extraCollectibles.map((collectible) => (collectible.assets || []).map((asset) => (
           <Collectible
             key={collectible.address}
-            name={asset.name}
-            image={handleUri(asset.image)}
+            name={asset.data.name}
+            image={handleUri(asset.data.image)}
             button={<div className={styles.actions}>
               <Button mini clear onClick={() => removeCollectible(collectible.address, asset.tokenId)}>
                 <MdOutlineRemove />
