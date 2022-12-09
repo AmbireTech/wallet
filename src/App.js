@@ -42,7 +42,7 @@ import SendTransaction from './components/SendTransaction/SendTransaction'
 import SignMessage from './components/SignMessage/SignMessage'
 import SDKWrapper from 'components/SDK/SDKWrapper'
 import { onTxnSent } from 'components/SDK/WindowMessages'
-import { getProvider, initRpcProviders } from 'ambire-common/src/services/provider'
+import { initRpcProviders } from 'ambire-common/src/services/provider'
 
 import { rpcProviders } from 'config/providers'
 
@@ -249,23 +249,6 @@ function AppInner() {
       })
   }, [dappUrl, setPluginUrl])
 
-  const onLoginSuccess = (wallet_address, chainId = null) => {
-    chainId = parseInt(chainId)
-    if (chainId) setNetwork(chainId)
-
-    const networkId = chainId
-      ? allNetworks.filter(aNetwork => aNetwork.chainId === chainId)[0].id
-      : network.id
-    const provider = getProvider(networkId)
-
-    window.parent.postMessage({
-      address: wallet_address,
-      chainId: network.chainId,
-      providerUrl: provider.connection.url,
-      type: 'loginSuccess',
-    }, '*')
-  }
-
   return (<>
     <Prompt
       message={(location, action) => {
@@ -320,7 +303,6 @@ function AppInner() {
             onAddAccount={onAddAccount}
             utmTracking={utmTracking}
             pluginData={pluginData}
-            onLoginSuccess={onLoginSuccess}
             selectedAcc={selectedAcc}
             selectedNetwork={network}
             addRequest={addRequest}

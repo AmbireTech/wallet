@@ -1,5 +1,5 @@
 import { Switch, Route } from 'react-router-dom'
-import EmailLogin from 'components/EmailLogin/EmailLogin'
+import EmailLoginSDK from 'components/SDK/EmailLogin'
 import AddAccountSDK from 'components/SDK/AddAccount'
 import OnRampSDK from 'components/SDK/OnRamp'
 import SendTransactionSDK from 'components/SDK/SendTransaction'
@@ -10,10 +10,9 @@ export default function SDKWrapper(props) {
   const routes = [
     {
       path: '/email-login',
-      component: <EmailLogin
+      component: <EmailLoginSDK
         relayerURL={props.relayerURL}
         onAddAccount={props.onAddAccount}
-        onLoginSuccess={props.onLoginSuccess}
       />
     },
     {

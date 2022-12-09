@@ -2,7 +2,6 @@ import { useState } from 'react'
 import Accounts from "./Accounts";
 
 import { useLocalStorage, useAccounts, usePrivateMode } from 'hooks'
-import { useLocation } from 'react-router-dom'
 
 export default function LoginForm({ onAccRequest, inProgress, onLoginSuccess }) {
 
@@ -11,7 +10,6 @@ export default function LoginForm({ onAccRequest, inProgress, onLoginSuccess }) 
   // that should be OK for now
   const { accounts, selectedAcc, onSelectAcc } = useAccounts(useLocalStorage)
   const { hidePrivateValue } = usePrivateMode(useLocalStorage)
-  const location = useLocation();
 
   const [state, setState] = useState({
     email: ''
@@ -30,7 +28,7 @@ export default function LoginForm({ onAccRequest, inProgress, onLoginSuccess }) 
 
     // if there is a selectedAcc, proceed with it
     if (selectedAcc) {
-      onLoginSuccess(selectedAcc, new URLSearchParams(location.search).get("chainId"))
+      onLoginSuccess(selectedAcc)
       return
     }
 
