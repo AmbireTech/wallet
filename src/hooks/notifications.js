@@ -17,7 +17,7 @@ let lastTokensBalanceRaw = []
 
 const getAmountReceived = (lastToken, newBalanceRaw, decimals) => {
     try {
-        const lastBalanceRaw = lastToken.latest ? lastToken.latest.balanceRaw : lastToken.balanceRaw
+        const lastBalanceRaw = lastToken ? lastToken.latest ? lastToken.latest.balanceRaw : lastToken.balanceRaw : ''
         const amountRecieved = lastToken
             ? (BigNumber.from(newBalanceRaw.toString(10)).sub(BigNumber.from(lastBalanceRaw.toString(10))))
             : newBalanceRaw
@@ -88,21 +88,24 @@ export default function useNotifications (requests, onShow, portfolio, selectedA
             if (!portfolio.isCurrNetworkBalanceLoading && portfolio.balance) {
                 if (!isLastTotalBalanceInit) {
                     isLastTotalBalanceInit = true
-                    lastTokensBalanceRaw = portfolio.tokens.map(({ address, balanceRaw, latest }) => ({ address, balanceRaw, latest }))
+                    lastTokensBalanceRaw = portfolio.tokens.filter(t => !t.pending || !t.unconfirmed).map(({ address, balanceRaw, latest, pending, unconfirmed }) => ({ address, balanceRaw, latest, pending, unconfirmed }))
                 }
-                const changedAmounts = portfolio.tokens.filter(({ address, balanceRaw, latest }) => {
+
+                const changedAmounts = portfolio.tokens.filter(({ address, balanceRaw, latest, pending, unconfirmed }) => {
                     const lastToken = lastTokensBalanceRaw.find(token => token.address === address)
                     const currentBalance = latest ? latest.balanceRaw : balanceRaw
-                    const lastTokenBalance = lastToken.latest ? lastToken.latest.balanceRaw: lastToken.balanceRaw
-                    
+
+                    const lastTokenBalance = lastToken && lastToken.latest ? lastToken.latest.balanceRaw : lastToken?.balanceRaw
+
                     const isSignificantChange = lastToken && ((currentBalance / lastTokenBalance) > BALANCE_TRESHOLD)
-                    return !lastToken || isSignificantChange
+                    return (!lastToken && (!pending && !unconfirmed)) || isSignificantChange
                 })
 
-                changedAmounts.forEach(({ address, symbol, decimals, balanceRaw, latest }) => {
+                changedAmounts.forEach(({ address, symbol, decimals, balanceRaw, latest, pending, unconfirmed }) => {
                     const newBalance = latest ? latest.balanceRaw : balanceRaw
                     const lastToken = lastTokensBalanceRaw.find(token => token.address === address)
                     const amountRecieved = getAmountReceived(lastToken, newBalance, decimals)
+
                     showNotification({
                         id: `received_amount_${Date.now()}`,
                         title: `${amountRecieved} ${symbol} Received.`,
@@ -111,8 +114,8 @@ export default function useNotifications (requests, onShow, portfolio, selectedA
 
                     lastToken ? lastTokensBalanceRaw = [
                         ...lastTokensBalanceRaw.filter(token => token.address !== address),
-                        { address, balanceRaw, latest }
-                    ] : lastTokensBalanceRaw.push({ address, balanceRaw, latest })
+                        { address, balanceRaw, latest, pending, unconfirmed }
+                    ] : lastTokensBalanceRaw.push({ address, balanceRaw, latest, pending, unconfirmed })
                 })
             }
         } catch(e) {
