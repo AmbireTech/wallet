@@ -6,17 +6,17 @@
   
   &::-webkit-scrollbar {
     width: 8px;
-    background: $scrollbar-background;
+    background: theme(scrollbar-background);
   }
   
   &::-webkit-scrollbar-track {
-    background: $scrollbar-background;
+    background: theme(scrollbar-background);
     border-radius: 13px;
     border: 1px solid $c-fiord;
   }
   
   &::-webkit-scrollbar-thumb {
-    background-color: $scrollbar-thumb-background;
+    background-color: theme(scrollbar-thumb-background);
     border-radius: 13px;
     max-height: 70px;
   }
@@ -26,7 +26,7 @@
   }
 
   scrollbar-width: thin;
-  scrollbar-color: $scrollbar-thumb-background $scrollbar-background;
+  scrollbar-color: theme(scrollbar-thumb-background) theme(scrollbar-background);
 }
 
 html {
@@ -37,14 +37,13 @@ html {
 body {
   height: 100%;
   margin: 0;
-  // color: $c-titan-white;
   font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
   'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
   sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background: color(background-gradient);
-  color: color(color);
+  background: theme(background-gradient);
+  color: theme(text-primary);
 }
 
 code {
@@ -52,7 +51,7 @@ code {
 }
 
 ::placeholder {
-  color:  #6770B3;
+  color:  theme(text-secondary);
   opacity: 1;
 }
 
@@ -101,7 +100,7 @@ select {
   gap: 25px;
   padding: 30px;
   padding-top: 25px;
-  background-color: $c-ebony-clay;
+  background-color: theme(background-terniary);
   box-sizing: border-box;
 
   .title {
