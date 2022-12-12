@@ -32,8 +32,9 @@
       display: flex;
       align-items: center;
       gap: 12px;
-      background-color: mix($c-ebony-clay, $c-turquoise, 90%);
-      color: $c-turquoise;    
+      // background-color: mix($c-ebony-clay, $c-turquoise, 90%);
+      background-color: red;
+      color: theme(highlight-secondary);    
       padding: 15px;
       font-size: 14px;
       border-radius: 12px;

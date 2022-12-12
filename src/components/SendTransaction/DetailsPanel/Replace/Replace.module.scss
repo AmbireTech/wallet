@@ -8,12 +8,14 @@
   border-radius: 12px;
 
   &.info {
-    background-color: mix($c-ebony-clay, $info-color, 90%);
+    // background-color: mix($c-ebony-clay, $info-color, 90%);
+    background-color: red;
     color: $info-color;
   }
 
   &.warning {
-    background-color: mix($c-ebony-clay, $warning-color, 90%);
+    // background-color: mix($c-ebony-clay, $warning-color, 90%);
+    background-color: red;
     color: $warning-color;
   }
 

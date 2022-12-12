@@ -11,7 +11,8 @@
   font-size: 18px;
   font-weight: 500;
   padding: 10px;
-  background-color: $ambire-purple;
+  // background-color: $ambire-purple;
+  background-color: red;
   justify-content: space-between;
   gap: 15px;
 
@@ -22,7 +23,7 @@
   .swapInfo {
     font-size: 18px;
     .link {
-      color: $c-turquoise;
+      color: theme(highlight-secondary);
     }
   }
 }

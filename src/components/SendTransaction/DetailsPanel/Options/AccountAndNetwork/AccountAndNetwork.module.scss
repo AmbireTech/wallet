@@ -8,7 +8,7 @@
     margin-bottom: 10px;
     font-size: 16px;
     font-weight: 300;
-    color: $c-titan-white;
+    color: theme(text-primary);
   }
 
   .body {
@@ -30,7 +30,7 @@
       }
 
       .address {
-        color: $c-titan-white;
+        color: theme(text-primary);
         font-size: 16px;
         margin: 0;
         word-break: break-all;
@@ -42,7 +42,7 @@
       justify-self: flex-end;
       align-items: center;
       gap: 10px;
-      color: $c-scampi;
+      color: theme(text-secondary);
       font-size: 14px;
       margin: 0;
 
@@ -50,7 +50,7 @@
         border-radius: 12px;
         width: 24px;
         height: 24px;
-        background-color: rgba($c-titan-white, 0.05);
+        background-color: theme(icon-background);
       }
     }
   }

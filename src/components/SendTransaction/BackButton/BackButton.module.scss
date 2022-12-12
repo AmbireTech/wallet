@@ -8,7 +8,7 @@ $titleBar-height: 90px;
   margin-bottom: 30px;
 
   .backIcon {
-    background-color: rgba($c-titan-white, 0.05);
+    background-color: theme(icon-background);
     min-width: 40px;
     min-height: 40px;
     display: flex;
@@ -41,7 +41,7 @@ $titleBar-height: 90px;
     }
 
     &:hover {
-      color: $c-titan-white;
+      opacity: .8;
     }
   }
 }
