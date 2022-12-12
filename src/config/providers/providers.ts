@@ -53,6 +53,14 @@ const setProvider = (_id: NetworkId) => {
 
 // Case specific RPCs:
 
+const getChainId = (id: NetworkId): Number =>  {  
+  const chainId = networks.find(x => x.id === id)?.chainId
+  if(chainId) {
+    return chainId
+  }
+  throw new Error ('Invalid NetworkId')
+}
+
 // @ts-ignore
 rpcProviders['ethereum-ambire-earn'] = new providers.StaticJsonRpcProvider('https://eth-mainnet.alchemyapi.io/v2/Qi7xcrPZH22WtSWDSB5KzF1RIFXVP8Oh', {
   name: 'ethereum-ambire-earn',
@@ -62,25 +70,25 @@ rpcProviders['ethereum-ambire-earn'] = new providers.StaticJsonRpcProvider('http
 // @ts-ignore
 rpcProviders['ethereum-ambire-swap'] = new providers.StaticJsonRpcProvider('https://unufri-ethereum.adex.network/v3/099fc58e0de9451d80b18d7c74caa7c1', {
   name: 'ethereum-ambire-swap',
-  chainId: 1
+  chainId: getChainId(NETWORKS.ethereum)
 })
 
 // @ts-ignore
 rpcProviders['polygon-ambire-swap'] = new providers.StaticJsonRpcProvider('https://unufri-polygon.adex.network/v3/099fc58e0de9451d80b18d7c74caa7c1', {
   name: 'polygon-ambire-swap',
-  chainId: 137
+  chainId: getChainId(NETWORKS.polygon)
 })
 
 // @ts-ignore
 rpcProviders['arbitrum-ambire-swap'] = new providers.StaticJsonRpcProvider('https://unufri-arbitrum.adex.network/v3/099fc58e0de9451d80b18d7c74caa7c1', {
   name: 'arbitrum-ambire-swap',
-  chainId: 137
+  chainId: getChainId(NETWORKS.arbitrum)
 })
 
 // @ts-ignore
 rpcProviders['optimism-ambire-swap'] = new providers.StaticJsonRpcProvider('https://unufri-optimism.adex.network/v3/099fc58e0de9451d80b18d7c74caa7c1', {
   name: 'optimism-ambire-swap',
-  chainId: 137
+  chainId: getChainId(NETWORKS.optimism)
 })
 
 export { rpcProviders }
