@@ -1,11 +1,75 @@
 @import 'variables';
 
+@function GetGradient($start, $end) {
+  @return transparent linear-gradient(90deg, #{$start} 0%, #{$end} 100%);
+}
+
+/* Global */
+@mixin Text($primary, $secondary) {
+  --text-primary: #{$primary};
+  --text-secondary: #{$secondary};
+}
+
+@mixin Icon($color) {
+  --icon-background: #{rgba($color, 0.05)};
+}
+
+@mixin Background($primary, $secondary, $terniary, $fournary, $topbar) {
+  --background-primary: #{$primary};
+  --background-secondary: #{$secondary};
+  --background-terniary: #{$terniary};
+  --background-fournary: #{$fournary};
+  // --background-highlight: #{$highlight};
+  --background-topbar: #{$topbar};
+}
+
+@mixin Border($primary, $secondary, $terniary) {
+  --border-primary: #{$primary};
+  --border-secondary: #{$secondary};
+  --border-terniary: #{$terniary};
+}
+
+@mixin Highlight($primary, $secondary) {
+  --highlight-primary: #{$primary};
+  --highlight-secondary: #{$secondary};
+}
+
+@mixin Gradient($primary, $secondary, $terniary) {
+  --gradient-primary: #{$primary};
+  --gradient-secondary: #{$secondary};
+  --gradient-terniary: #{$terniary};
+}
+
+/* Other */
+@mixin BackgroundGradient($primary, $secondary) {
+  --background-gradient: linear-gradient(180deg, #{$primary} 0%, #{$secondary} 100%);
+}
+
+@mixin Scrollbar($background, $thumb-background) {
+  --scrollbar-background: #{$background};
+  --scrollbar-thumb-background: #{$thumb-background};
+}
+
 .dark {
-  --background: #{$c-mirage};
-  --color: #{$c-titan-white};
+  @include Text($c-titan-white, $c-scampi);
+  @include Icon($c-titan-white);
+  @include Background($c-mirage, $c-martinique, $c-ebony-clay, $c-ebony-clay-light, $c-fiord);
+  @include Border($c-mirage, $c-fiord, $c-scampi);
+  @include Highlight($c-heliotrope, $c-turquoise);
+  @include Gradient(GetGradient($c-turquoise, $c-electric-violet), GetGradient($c-heliotrope, $c-electric-violet), GetGradient($c-turquoise, $c-blue-lagoon));
+  // Other
+  @include BackgroundGradient($c-fiord, $c-ebony-clay);
+  @include Scrollbar($c-mirage, $c-blue-bell);
 }
 
 .light {
-  --background: #{$c-heliotrope};
-  --color: #{$c-mirage};
+  @include Text($c-fiord, rgba($c-fiord, 0.8));
+  @include Icon($c-fiord);
+  @include Background($c-titan-white, red, #f9f9ff, red, red);
+  @include Border(red, $c-titan-white, red);
+  @include Highlight($c-heliotrope, $c-blue-lagoon);
+  @include Gradient(GetGradient($c-blue-lagoon, $c-turquoise), GetGradient(red, red), GetGradient(red, red));
+  // Other
+  @include BackgroundGradient(white, white);
+  @include Scrollbar(rgba($c-blue-bell, 0.3), $c-blue-bell);
 }

@@ -5,7 +5,7 @@ import styles from './ThemeProvider.module.scss'
 const ThemeContext = createContext(null)
 
 const ThemeProvider = ({ children }) => {
-	const [theme, setTheme] = useState('light')
+	const [theme, setTheme] = useState('dark')
 
 	useEffect(() => {
 		document.documentElement.className = styles[theme || 'dark']
@@ -13,7 +13,7 @@ const ThemeProvider = ({ children }) => {
 
 	return (
 		<ThemeContext.Provider value={{ theme, setTheme }}>
-			<div>{children}</div>
+			{children}
 		</ThemeContext.Provider>
 	)
 }
