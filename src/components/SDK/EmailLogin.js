@@ -5,6 +5,7 @@ import { useLocalStorage } from 'hooks'
 import allNetworks from 'consts/networks'
 import { getProvider } from 'ambire-common/src/services/provider'
 import { useLocation } from 'react-router-dom'
+import { Loading } from 'components/common'
 
 export default function EmailLogin({ relayerURL, onAddAccount }) {
   const location = useLocation()
@@ -21,6 +22,7 @@ export default function EmailLogin({ relayerURL, onAddAccount }) {
   const chainId = parseInt(new URLSearchParams(location.search).get("chainId"))
 
   const matchedDapp = stateStorage.connected_dapps.find(dapp => dapp.origin === dappOrigin)
+  const isLoading = !!(matchedDapp && matchedDapp.wallet_address)
 
   // already logged-in logic
   useEffect(() => {
@@ -67,11 +69,13 @@ export default function EmailLogin({ relayerURL, onAddAccount }) {
   }
 
   return (
-    <BaseEmailLogin
-      relayerURL={relayerURL}
-      onAddAccount={onAddAccount}
-      isSDK={true}
-      onLoginSuccess={onLoginSuccess}
-    ></BaseEmailLogin>
+    !isLoading
+    ? <BaseEmailLogin
+        relayerURL={relayerURL}
+        onAddAccount={onAddAccount}
+        isSDK={true}
+        onLoginSuccess={onLoginSuccess}
+      ></BaseEmailLogin>
+    : <Loading></Loading>
   )
 }
