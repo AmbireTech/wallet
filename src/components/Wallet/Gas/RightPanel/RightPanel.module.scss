@@ -1,0 +1,21 @@
+@import 'variables';
+
+@media screen and (max-width: $mobile-breakpoint-max-width) {
+  .headingWrapper {
+    flex-direction: column;
+
+    .totalSave {
+      align-items: center !important;
+    }
+  }
+}
+
+@media only screen and (max-width: 1700px) and (min-width: 1200px) {
+  .innerWrapperLeft {
+    font-size: 22px !important;
+
+    span {
+      font-size: 12px !important;
+    }
+  }
+}
