@@ -77,6 +77,6 @@ $ambire-purple: #AF50FF;
 
 $text-container-color: mix($c-titan-white, $c-ebony-clay, 60%);
 
-@function color($color-name) {
+@function theme($color-name) {
     @return var(--#{$color-name});
 }
