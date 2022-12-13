@@ -123,9 +123,11 @@ const AddToken = ({ network, account, portfolio }) => {
           extraTokens.map(({ address, name, symbol, tokenImageUrl, network }) => (
             <Token
               key={address}
+              address={address}
               icon={tokenImageUrl}
               name={name}
-              symbol={`(${ symbol }) ${network.toUpperCase()}`}
+              network={network.toUpperCase()}
+              symbol={symbol}
               className={styles.token}
             >
               <div className={styles.actions}>
