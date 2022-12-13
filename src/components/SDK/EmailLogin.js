@@ -26,12 +26,9 @@ export default function EmailLogin({ relayerURL, onAddAccount }) {
 
   // already logged-in logic
   useEffect(() => {
-    if (chainId || alreadyLogged || !matchedDapp || !matchedDapp.wallet_address) return
+    if (chainId || alreadyLogged || !dappIsConnected) return
 
-    const networkId = chainId
-      ? allNetworks.filter(aNetwork => aNetwork.chainId === chainId)[0].id
-      : network.id
-    const provider = getProvider(networkId)
+    const provider = getProvider(network.id)
 
     window.parent.postMessage({
       address: matchedDapp.wallet_address,
@@ -42,7 +39,7 @@ export default function EmailLogin({ relayerURL, onAddAccount }) {
 
     setAlreadyLogged(true)
 
-  }, [alreadyLogged, setNetwork, matchedDapp, chainId, network.id, network.chainId])
+  }, [alreadyLogged, dappIsConnected, matchedDapp, chainId, network.id, network.chainId])
 
   const onLoginSuccess = (wallet_address) => {
     if (chainId) setNetwork(chainId)
