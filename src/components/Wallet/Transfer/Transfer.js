@@ -7,6 +7,7 @@ import { isValidAddress } from 'ambire-common/src/services/address'
 
 import Tabs from 'components/common/Tabs/Tabs'
 import Providers from 'components/Wallet/Deposit/Providers/Providers'
+
 import Send from './Send/Send'
 import Addresses from './Addresses/Addresses'
 
@@ -28,8 +29,8 @@ const Transfer = (props) => {
     const selectedAsset = portfolio?.tokens.find(({ address }) => address === asset)
 
     return (
-        <div className={styles.wrapper} style={{ justifyContent: gasTankDetails ? 'center' : '' }}>
-            <Tabs 
+        <div className={styles.wrapper}>
+            {!gasTankDetails ? <Tabs 
                 firstTabLabel='Send'
                 secondTabLabel='Sell Crypto'
                 firstTab={
@@ -57,8 +58,20 @@ const Transfer = (props) => {
                     </div>
                 }
                 panelClassName={styles.panel}
-            />
-           {!gasTankDetails && <Addresses
+            /> : <Panel className={styles.panel}>
+                <Send
+                    title={<h1 className={styles.gasTankSendTitle}>Send</h1>}
+                    {...props}
+                    address={address}
+                    setAddress={setAddress}
+                    gasTankDetails={gasTankDetails}
+                    asset={asset}
+                    setAsset={setAsset}
+                    tokenAddress={tokenAddress}
+                    selectedAsset={selectedAsset}
+                />
+            </Panel>}
+            {!gasTankDetails && <Addresses
                 selectedAsset={selectedAsset}
                 selectedNetwork={selectedNetwork}
                 addresses={addresses}
