@@ -184,14 +184,14 @@ const SwapInner = ({
     if (equivalentToken) setToToken(equivalentToken.value)
   }, [fromTokensItems, toTokenItems, fromToken, setToToken])
     
-  if (disabled) {
-    return <p className={styles.placeholder}>Not supported on this Network</p>
-  } else if (loading || portfolio.isCurrNetworkBalanceLoading || loadingQuotes) {
+  if (loading || portfolio.isCurrNetworkBalanceLoading || loadingQuotes) {
     return <Loading />
-  } else if (!loadingFromTokens && !loadingToTokens && !portfolio.balance.total.full) {
-    return <NoFundsPlaceholder />
-  } else if (!loadingFromTokens && !loadingToTokens && !fromTokensItems.length) {
+  } else if (disabled) {
+    return <p className={styles.placeholder}>Not supported on this Network</p>
+  } else if (!loadingFromTokens && !fromTokensItems.length) {
     return <p className={styles.placeholder}>You don't have any available tokens to swap</p>
+  } else if (!portfolio.balance.total.full) {
+    return <NoFundsPlaceholder />
   }
   
   return quotes ? (
