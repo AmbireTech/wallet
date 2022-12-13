@@ -22,11 +22,11 @@ export default function EmailLogin({ relayerURL, onAddAccount }) {
   const chainId = parseInt(new URLSearchParams(location.search).get("chainId"))
 
   const matchedDapp = stateStorage.connected_dapps.find(dapp => dapp.origin === dappOrigin)
-  const isLoading = !!(matchedDapp && matchedDapp.wallet_address)
+  const dappIsConnected = !!(matchedDapp && matchedDapp.wallet_address)
 
   // already logged-in logic
   useEffect(() => {
-    if (alreadyLogged || !matchedDapp || !matchedDapp.wallet_address) return
+    if (chainId || alreadyLogged || !matchedDapp || !matchedDapp.wallet_address) return
 
     const networkId = chainId
       ? allNetworks.filter(aNetwork => aNetwork.chainId === chainId)[0].id
@@ -42,7 +42,7 @@ export default function EmailLogin({ relayerURL, onAddAccount }) {
 
     setAlreadyLogged(true)
 
-  }, [alreadyLogged, matchedDapp, chainId, network.id, network.chainId])
+  }, [alreadyLogged, setNetwork, matchedDapp, chainId, network.id, network.chainId])
 
   const onLoginSuccess = (wallet_address) => {
     if (chainId) setNetwork(chainId)
@@ -68,14 +68,38 @@ export default function EmailLogin({ relayerURL, onAddAccount }) {
     ]})
   }
 
+  const confirmNetworkSwitch = () => {
+    setNetwork(chainId)
+
+    const networkId = allNetworks.filter(aNetwork => aNetwork.chainId === chainId)[0].id
+    const provider = getProvider(networkId)
+
+    window.parent.postMessage({
+      address: matchedDapp.wallet_address,
+      chainId: network.chainId,
+      providerUrl: provider.connection.url,
+      type: 'loginSuccess',
+    }, '*')
+  }
+
+  const rejectNetworkSwitch = () => {
+    // TODO
+  }
+
   return (
-    !isLoading
+    !dappIsConnected
     ? <BaseEmailLogin
         relayerURL={relayerURL}
         onAddAccount={onAddAccount}
         isSDK={true}
         onLoginSuccess={onLoginSuccess}
       ></BaseEmailLogin>
-    : <Loading></Loading>
+    : chainId
+      ? <div>
+          <h2>Allow site to switch the network?</h2>
+          <button onClick={confirmNetworkSwitch}>Confirm</button>
+          <button onClick={rejectNetworkSwitch}>Reject</button>
+        </div>
+      : <Loading></Loading>
   )
 }
