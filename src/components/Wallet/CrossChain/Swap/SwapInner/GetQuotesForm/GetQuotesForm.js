@@ -29,7 +29,8 @@ const GetQuotesForm = ({
   amount,
   setAmount,
   toTokenItems,
-  chainsItems,
+  toChains,
+  loadingToChains,
   fetchQuotes,
   portfolioTokens,
 }) => {
@@ -108,11 +109,11 @@ const GetQuotesForm = ({
           />
         </FormSection>
         <SwapIcon className={styles.swapIcon} />
-        <FormSection label="To" isLoading={loadingToTokens} isLoadingSmaller>
+        <FormSection label="To" isLoading={loadingToTokens || loadingToChains} isLoadingSmaller>
           <Select
             searchable
             defaultValue={toChain}
-            items={chainsItems}
+            items={toChains}
             onChange={({ value }) => setToChain(value)}
             iconClassName={styles.selectIcon}
             selectInputClassName={styles.selectInput}

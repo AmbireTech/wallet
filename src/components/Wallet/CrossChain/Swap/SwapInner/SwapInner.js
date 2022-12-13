@@ -25,13 +25,14 @@ const SwapInner = ({
   const portfolioTokens = useRef([])
 
   const [disabled, setDisabled] = useState(false)
-  const [loading, setLoading] = useState(true)
+  const [loadingToChains, setLoadingToChains] = useState(true)
   const [loadingFromTokens, setLoadingFromTokens] = useState(true) // We set it to true to avoid empty fromToken on initial load
-  const [loadingToTokens, setLoadingToTokens] = useState(false)
+  const [loadingToTokens, setLoadingToTokens] = useState(true)
   const [loadingQuotes, setLoadingQuotes] = useState(false)
+  const [loading, setLoading] = useState(true)
   const [quotes, setQuotes] = useState(null)
   const [toChain, setToChain] = useState(null)
-  const [chainsItems, setChainsItems] = useState([])
+  const [toChains, setToChains] = useState([])
   const [toTokenItems, setToTokenItems] = useState([])
   const [fromTokensItems, setFromTokenItems] = useState([])
   const [fromToken, setFromToken] = useState(null)
@@ -39,7 +40,6 @@ const SwapInner = ({
   const [amount, setAmount] = useState(0)
 
   const fromChain = network.chainId
-  const hasNoFunds = !portfolio.balance.total.full
 
   const onCancel = () => setQuotes(null)
 
@@ -48,9 +48,57 @@ const SwapInner = ({
     setQuotesConfirmed(updatedQuotesConfirmed)
   }, [quotesConfirmed, setQuotesConfirmed])
 
-  const loadFromTokens = useCallback(async () => {
-    if (!fromChain || !toChain) return
+  // On every network change
+  useEffect(() => {
+    setLoadingFromTokens(true)
+    setLoading(true) // We set loading for everything to true until we determine if the network is supported(happens in loadToChains)
+  }, [fromChain, setLoading, setLoadingFromTokens, setDisabled])
 
+  const loadToChains = useCallback(async () => {
+    setLoadingToChains(true)
+    setDisabled(false) // We set disabled back to false to prevent glitching when switching networks
+
+    try {
+      const chains = await fetchChains()
+      const isSupported = chains.find(({ chainId }) => chainId === fromChain)
+      setLoading(() => {
+        // We make sure that loading is set to false only after we know if the network is supported
+        setDisabled(!isSupported)
+        return false
+      }) 
+      if (!isSupported) return
+
+      const toChains = chains
+        .filter(({ chainId }) => chainId !== fromChain && networks.map(({ chainId }) => chainId).includes(chainId))
+        .map(({ icon, chainId, name }) => ({
+          icon,
+          label: name,
+          value: chainId,
+        }))
+
+        setLoadingToChains(() => {
+          setToChain(toChains[0].value)
+          setToChains(toChains)
+          return false
+      })
+    } catch (e) {
+      console.error(e)
+      addToast(`Error while loading chains: ${e.message || e}`, { error: true })
+      setLoadingToChains(true)
+    }
+  }, [fromChain, fetchChains, addToast, setDisabled])
+
+  useEffect(() => {
+    if (!fromChain || portfolio.isCurrNetworkBalanceLoading) return
+    setQuotes(null)
+    loadToChains()
+
+    return () => {
+      setToChains([])
+    }
+  }, [portfolio.isCurrNetworkBalanceLoading, loadToChains, setQuotes, fromChain])
+  
+  const loadFromTokens = useCallback(async () => {
     try {
       const fromTokens = await fetchFromTokens(fromChain, toChain)
       const filteredFromTokens = fromTokens.filter(({ name }) => name)
@@ -78,6 +126,9 @@ const SwapInner = ({
         }))
       setLoadingFromTokens(() => {
         setFromTokenItems(fromTokensItems)
+        if (fromTokensItems.length > 0) {
+          setFromToken(fromTokensItems[0].value)
+        }
         return false
       })
     } catch (e) {
@@ -87,36 +138,8 @@ const SwapInner = ({
     }
   }, [fromChain, toChain, fetchFromTokens, addToast, setFromTokenItems])
 
-  const loadChains = useCallback(async () => {
-    try {
-      const chains = await fetchChains()
-      const isSupported = chains.find(({ chainId }) => chainId === fromChain)
-      setDisabled(!isSupported)
-      if (!isSupported) return
-
-      const chainsItems = chains
-        .filter(({ chainId }) => chainId !== fromChain && networks.map(({ chainId }) => chainId).includes(chainId))
-        .map(({ icon, chainId, name }) => ({
-          icon,
-          label: name,
-          value: chainId,
-        }))
-
-        setLoading(() => {
-          setToChain(chainsItems[0].value)
-          setChainsItems(chainsItems)
-          return false
-      })
-    } catch (e) {
-      console.error(e)
-      addToast(`Error while loading chains: ${e.message || e}`, { error: true })
-      setLoading(true)
-    }
-  }, [fromChain, fetchChains, addToast, setDisabled])
-
   const loadToTokens = useCallback(async () => {
     setLoadingToTokens(true)
-    if (!fromChain || !toChain) return
 
     try {
       const toTokens = await fetchToTokens(fromChain, toChain)
@@ -144,38 +167,28 @@ const SwapInner = ({
   }, [fromChain, toChain, fetchToTokens, addToast])
 
   useEffect(() => {
-    if (!toChain) return
-    loadToTokens()
-  }, [toChain, loadToTokens, setLoadingToTokens])
-
-  useEffect(() => {
-    if (!toChain) return
-    loadFromTokens()
-  }, [toChain, loadFromTokens, setLoadingFromTokens])
-
-  useEffect(() => {
-    if (!fromChain || portfolio.isCurrNetworkBalanceLoading) return
-    setQuotes(null)
-    loadChains()
-
-    return () => {
-      setChainsItems([])
+    if (!fromChain || !toChain || portfolio.isCurrNetworkBalanceLoading) return
+    // We only load the tokens if the network is supported
+    if (!loading && !disabled) {
+      loadFromTokens()
+      loadToTokens()
     }
-  }, [portfolio.isCurrNetworkBalanceLoading, loadChains, setLoading, setQuotes, fromChain])
+  }, [toChain, loadFromTokens, loadToTokens, portfolio.isCurrNetworkBalanceLoading, setLoadingFromTokens, fromChain, disabled, loading])
 
-  useEffect(() => setAmount(0), [fromToken, setAmount])
+  useEffect(() => setAmount(0), [fromToken, setAmount, fromChain])
+
   useEffect(() => {
     const fromTokenItem = fromTokensItems.find(({ value }) => value === fromToken)
     if (!fromTokenItem) return
     const equivalentToken = toTokenItems.find(({ symbol }) => symbol === fromTokenItem.symbol)
     if (equivalentToken) setToToken(equivalentToken.value)
   }, [fromTokensItems, toTokenItems, fromToken, setToToken])
-
+    
   if (disabled) {
     return <p className={styles.placeholder}>Not supported on this Network</p>
   } else if (loading || portfolio.isCurrNetworkBalanceLoading || loadingQuotes) {
     return <Loading />
-  } else if (hasNoFunds) {
+  } else if (!loadingFromTokens && !loadingToTokens && !portfolio.balance.total.full) {
     return <NoFundsPlaceholder />
   } else if (!loadingFromTokens && !loadingToTokens && !fromTokensItems.length) {
     return <p className={styles.placeholder}>You don't have any available tokens to swap</p>
@@ -209,7 +222,8 @@ const SwapInner = ({
       amount={amount}
       setAmount={setAmount}
       toTokenItems={toTokenItems}
-      chainsItems={chainsItems}
+      toChains={toChains}
+      loadingToChains={loadingToChains}
       setToChain={setToChain}
       fetchQuotes={fetchQuotes}
       portfolioTokens={portfolioTokens}
