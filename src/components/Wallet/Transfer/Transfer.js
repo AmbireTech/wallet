@@ -5,10 +5,10 @@ import { useParams } from 'react-router'
 import accountPresets from 'ambire-common/src/constants/accountPresets'
 import { isValidAddress } from 'ambire-common/src/services/address'
 
-import Send from './Send/Send'
-import Addresses from './Addresses/Addresses'
 import { Panel, Tabs } from 'components/common'
 import Providers from 'components/Wallet/Deposit/Providers/Providers'
+import Send from './Send/Send'
+import Addresses from './Addresses/Addresses'
 
 import styles from './Transfer.module.scss'
 
