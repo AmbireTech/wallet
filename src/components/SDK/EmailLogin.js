@@ -80,7 +80,14 @@ export default function EmailLogin({ relayerURL, onAddAccount }) {
   }
 
   const rejectNetworkSwitch = () => {
-    // TODO
+    const provider = getProvider(network.id)
+
+    window.parent.postMessage({
+      address: matchedDapp.wallet_address,
+      chainId: network.chainId,
+      providerUrl: provider.connection.url,
+      type: 'actionRejected',
+    }, '*')
   }
 
   return (
