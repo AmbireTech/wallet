@@ -20,6 +20,7 @@ export default function EmailLogin({ relayerURL, onAddAccount }) {
 
   const dappOrigin = new URLSearchParams(location.search).get("dappOrigin")
   const chainId = parseInt(new URLSearchParams(location.search).get("chainId"))
+  const isValidChainRequested = !!(chainId && allNetworks.filter(network => network.chainId === chainId).length > 0)
 
   const matchedDapp = stateStorage.connected_dapps.find(dapp => dapp.origin === dappOrigin)
   const dappIsConnected = !!(matchedDapp && matchedDapp.wallet_address)
@@ -91,19 +92,22 @@ export default function EmailLogin({ relayerURL, onAddAccount }) {
   }
 
   return (
-    !dappIsConnected
-    ? <BaseEmailLogin
-        relayerURL={relayerURL}
-        onAddAccount={onAddAccount}
-        isSDK={true}
-        onLoginSuccess={onLoginSuccess}
-      ></BaseEmailLogin>
-    : chainId
-      ? <div>
-          <h2>Allow site to switch the network?</h2>
-          <button onClick={confirmNetworkSwitch}>Confirm</button>
-          <button onClick={rejectNetworkSwitch}>Reject</button>
-        </div>
-      : <Loading></Loading>
+    chainId && !isValidChainRequested
+    ? <div>Unsupported network.</div>
+    : !dappIsConnected
+      ? <BaseEmailLogin
+          relayerURL={relayerURL}
+          onAddAccount={onAddAccount}
+          isSDK={true}
+          onLoginSuccess={onLoginSuccess}
+        ></BaseEmailLogin>
+      : chainId
+        ? <div>
+            <h2>Allow site to switch the network?</h2>
+            <button onClick={confirmNetworkSwitch}>Confirm</button>
+            <button onClick={rejectNetworkSwitch}>Reject</button>
+          </div>
+        : <Loading></Loading>
+
   )
 }
