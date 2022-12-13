@@ -1,0 +1,13 @@
+@import 'variables';
+
+.wrapper {
+  width: 100%;
+  padding: 28.5px 30px;
+  font-size: 16px;
+  color: $c-titan-white;
+  background-color: transparent;
+  font-weight: 400;
+  border-radius: 12px;
+  border: 1px dashed $c-scampi;
+  cursor: pointer;
+}

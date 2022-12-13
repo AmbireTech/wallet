@@ -40,6 +40,12 @@ import AddAccount from './components/AddAccount/AddAccount'
 import Wallet from './components/Wallet/Wallet'
 import SendTransaction from './components/SendTransaction/SendTransaction'
 import SignMessage from './components/SignMessage/SignMessage'
+import { initRpcProviders } from 'ambire-common/src/services/provider'
+
+import { rpcProviders } from 'config/providers'
+
+// Initialize rpc providers for all networks
+initRpcProviders(rpcProviders)
 
 const relayerURL = process.env.REACT_APP_RELAYRLESS === 'true' 
                   ? null 
@@ -286,6 +292,7 @@ function AppInner() {
         totalRequests={everythingToSign.length}
         relayerURL={relayerURL}
         network={network}
+        useStorage={useLocalStorage}
         resolve={outcome => resolveMany([everythingToSign[0].id], outcome)}
       ></SignMessage>)}
 

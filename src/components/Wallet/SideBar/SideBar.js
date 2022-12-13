@@ -1,10 +1,11 @@
-import styles from './SideBar.module.scss'
-
-import { NavLink, useRouteMatch  } from 'react-router-dom'
-import { MdClose } from 'react-icons/md'
-import { Loading, Button } from 'components/common'
 import { useCallback, useEffect, useRef, useState, useMemo } from 'react'
-import GasIndicator from 'components/Wallet/GasIndicator/GasIndicator'
+import { NavLink, useRouteMatch  } from 'react-router-dom'
+import cn from 'classnames'
+
+import { Loading, Button } from 'components/common'
+import GasIndicator from 'components/Wallet/SideBar/GasIndicator/GasIndicator'
+
+import { MdClose } from 'react-icons/md'
 import { ReactComponent as DashboardIcon } from './images/dashboard.svg'
 import { ReactComponent as DepositIcon } from './images/deposit.svg'
 import { ReactComponent as TransferIcon } from './images/transfer.svg'
@@ -17,7 +18,8 @@ import { ReactComponent as SecurityIcon } from './images/security.svg'
 import { ReactComponent as DappsIcon } from './images/dapps.svg'
 import { ReactComponent as HelpIcon } from './images/help.svg'
 import { ReactComponent as SignedMessagesIcon } from './images/signed-messages.svg'
-import cn from 'classnames'
+
+import styles from './SideBar.module.scss'
 
 const helpCenterUrl = 'https://help.ambire.com/hc/en-us/categories/4404980091538-Ambire-Wallet'
 

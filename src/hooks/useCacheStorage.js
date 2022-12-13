@@ -46,10 +46,14 @@ export default function useCacheStorage({ key, data: { accounts} }) {
         request.onerror = async () => {
             setIsInitializing(false)
         };
-        request.onupgradeneeded = async () => {
+        request.onupgradeneeded = async (event) => {
             db.current = request.result;
-            db.current.createObjectStore("assets", { keyPath: "key" });
-            setIsInitializing(false)
+            await db.current.createObjectStore("assets", { keyPath: "key" });
+            const transaction = event.target.transaction
+
+            transaction.oncomplete = () => {
+                setIsInitializing(false)
+            }
         };
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [key])

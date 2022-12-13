@@ -20,7 +20,7 @@ const WalletTokenButton = ({ rewardsData, accountId, network, hidePrivateValue, 
       })
 
     const { currentClaimStatus, pendingTokensTotal, vestingEntry } = claimableWalletToken
-    const showWalletTokenModal = useDynamicModal(WalletTokenModal, { claimableWalletToken, accountId }, { rewards: rewardsData.rewards })
+    const showWalletTokenModal = useDynamicModal(WalletTokenModal, { claimableWalletToken, accountId, network }, { rewards: rewardsData.rewards })
     const renderRewardsButtonText = useCallback(() => {
         // The rewards value depends on both - the currentClaimStatus and the
         // rewards data. Therefore - require both data sets to be loaded.
@@ -42,7 +42,7 @@ const WalletTokenButton = ({ rewardsData, accountId, network, hidePrivateValue, 
         }
         
         if (!vestingEntry) {
-          return `${hidePrivateValue('0.00')} $WALLET`
+          return `${hidePrivateValue(pendingTokensTotal)} $WALLET`
         }
         
         if ((currentClaimStatus.claimed === null)
@@ -65,7 +65,6 @@ const WalletTokenButton = ({ rewardsData, accountId, network, hidePrivateValue, 
                 border
                 onClick={showWalletTokenModal}
                 className={styles.button}
-                style={{ textTransform: 'none'}}
             >
                 { renderRewardsButtonText() }  
             </Button>

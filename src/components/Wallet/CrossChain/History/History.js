@@ -73,6 +73,7 @@ const History = ({ relayerURL, network, account, quotesConfirmed }) => {
                     const status = await checkTxStatus(hash, from.chainId, to.chainId)
                     return {
                         ...status,
+                        sourceTx: status.sourceTransactionHash,
                         from,
                         to: storedQuote ? storedQuote.to || null : to,
                         serviceTimeMinutes,
@@ -127,7 +128,7 @@ const History = ({ relayerURL, network, account, quotesConfirmed }) => {
                     !txStatuses.length ?
                         <div>No pending transfer/swap on this network.</div>
                         :
-                        txStatuses.map(({ sourceTx, fromNetwork, toNetwork, from, to, serviceTimeMinutes, isPending, statusError }) => (
+                        txStatuses.map(({ sourceTx, fromNetwork, toNetwork, toAsset, toAmount, from, to, serviceTimeMinutes, isPending, statusError }) => (
                             <div className="tx-status" key={sourceTx}>
                                 <div className="summary">
                                     <div className="path">
@@ -152,6 +153,7 @@ const History = ({ relayerURL, network, account, quotesConfirmed }) => {
 
                                         <div className="amount">
                                             { to.amount ? formatAmount(to.amount, to.asset) : '' }
+                                            { toAsset && toAmount ? formatAmount(parseFloat(toAmount), toAsset) : '' }
                                             <div className="asset">
                                                 <div className="icon" style={{backgroundImage: `url(${to?.asset?.icon})`}}></div>
                                                 <div className="name">{ to?.asset?.symbol }</div>

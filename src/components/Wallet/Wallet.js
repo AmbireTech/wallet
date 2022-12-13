@@ -190,8 +190,6 @@ export default function Wallet(props) {
         relayerURL={props.relayerURL}
         portfolio={props.portfolio}
         selectedAccount={props.selectedAcc}
-        userSorting={props.userSorting}
-        setUserSorting={props.setUserSorting}
         setGasTankState={props.setGasTankState}
         gasTankState={props.gasTankState}
       />
@@ -231,6 +229,9 @@ export default function Wallet(props) {
 
   // On pathname change (i.e. navigating to different page), always scroll to top
   useEffect(() => {
+    // Removes scroll top when we navigate from Tokens to Collectibles and vice-versa
+    if (pathname === '/wallet/dashboard/collectibles' || pathname === '/wallet/dashboard') return
+
     const scrollTimeout = setTimeout(() => walletContainerInner.current && walletContainerInner.current.scrollTo({ top: 0, behavior: 'smooth' }), 0)
     return () => clearTimeout(scrollTimeout)
   }, [pathname])

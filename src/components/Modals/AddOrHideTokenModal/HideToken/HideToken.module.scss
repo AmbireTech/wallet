@@ -1,0 +1,37 @@
+@import 'variables';
+
+.wrapper {
+  .addressInput {
+    margin-bottom: 20px;
+    label {
+      font-weight: 400;
+      font-size: 14px;
+      margin-left: 20px;
+    }
+  }
+
+  .tokens {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+
+    .token {
+      flex-direction: row;
+      justify-content: space-between;
+      background-color: $c-mirage;
+      height: 50px;
+      padding: 8px 20px;
+      border-radius: 12px;
+      margin-bottom: 0;
+
+      .icon {
+        width: 24px;
+        height: 24px;
+      }
+
+      svg {
+        cursor: pointer;
+      }
+    }
+  }
+}

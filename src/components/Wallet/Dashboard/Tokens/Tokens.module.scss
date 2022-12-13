@@ -1,0 +1,24 @@
+@import 'variables.scss';
+
+.wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    margin: 0 50px;
+    margin-bottom: 20px;
+    border-radius: 12px;
+    overflow: hidden;
+    color: $c-scampi;
+    margin-top: 3px;
+
+    .dragHandle {
+        margin-right: 15px;
+    }
+}
+
+@media screen and (max-width: $mobile-breakpoint-max-width) {
+    .wrapper {
+        gap: 20px;
+        margin: 0;
+    }
+}

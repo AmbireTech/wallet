@@ -1,7 +1,7 @@
 import AddressBook from './AddressBook/AddressBook';
 import AddressWarning from './AddressWarning/AddressWarning';
+import Alert from "components/common/Alert/Alert";
 import Button from './Button/Button';
-import Chart from './Chart/Chart';
 import Checkbox from './Checkbox/Checkbox';
 import DropDown from './DropDown/DropDown';
 import Loading from './Loading/Loading';
@@ -28,12 +28,13 @@ import DAppIncompatibilityWarningMsg from './DAppIncompatibilityWarningMsg/DAppI
 import Pagination from './Pagination/Pagination';
 import Panel from './Panel/Panel';
 import Image from './Image/Image';
+import RemoteLottie from './RemoteLottie/RemoteLottie'
 
 export {
     AddressBook,
     AddressWarning,
+    Alert,
     Button,
-    Chart,
     Checkbox,
     DropDown,
     Loading,
@@ -60,4 +61,5 @@ export {
     Pagination,
     Panel,
     Image,
+    RemoteLottie
 };

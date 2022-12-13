@@ -7,11 +7,12 @@ import YEARN_TESSERACT_VAULT_ABI from 'ambire-common/src/constants/abis/YearnTes
 import useYearn from './useYearn'
 import useTesseract from './useTesseract'
 import { useToasts } from 'hooks/toasts'
-import { getProvider } from 'lib/provider'
+import { getProvider } from 'ambire-common/src/services/provider'
 import AmbireBatcherABI from 'ambire-common/src/constants/abis/AmbireBatcherABI.json'
 import ERC20ABI from 'adex-protocol-eth/abi/ERC20.json'
 import { constants, Contract } from 'ethers'
 import EarnDetailsModal from 'components/Modals/EarnDetailsModal/EarnDetailsModal'
+import { rpcProviders } from 'config/providers'
 
 const BATCHER_ADDRESS = '0x460fad03099f67391d84c9cc0ea7aa2457969cea'
 const BATCHER_INTERFACE = new Interface(AmbireBatcherABI)
@@ -37,7 +38,11 @@ const YearnTesseractCard = ({ networkId, accountId, tokens, addRequest }) => {
     const name = networkId === 'ethereum' ? 'Yearn' : 'Tesseract'
     const networkDetails = networks.find(({ id }) => id === networkId)
     const addRequestTxn = (id, txn, extraGas = 0) => addRequest({ id, dateAdded: new Date().valueOf(), type: 'eth_sendTransaction', chainId: networkDetails.chainId, account: accountId, txn, extraGas })
-    const provider = useMemo(() => getProvider(networkDetails.id), [networkDetails.id])
+    const provider = useMemo(() => {
+        return (networkDetails.id === 'ethereum')
+        ? rpcProviders['ethereum-ambire-earn']
+        : getProvider(networkDetails.id)
+    }, [networkDetails.id])
     const isDepositsDisabled = (networkId === 'polygon') ? true : false
 
     const yearn = useYearn({
@@ -97,7 +102,9 @@ const YearnTesseractCard = ({ networkId, accountId, tokens, addRequest }) => {
                 // Build approve and deposit tx for batcher
                 let batchCallTxn = []
 
-                const provider = getProvider(networkId)
+                const provider = (networkId === 'ethereum')
+                    ? rpcProviders['ethereum-ambire-earn']
+                    : getProvider(networkId)
                 const tokenContract = new Contract(tokenAddress, ERC20_INTERFACE, provider)
                 const allowance = await tokenContract.allowance(BATCHER_ADDRESS, vaultAddress)
 

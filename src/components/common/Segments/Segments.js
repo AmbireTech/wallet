@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
-import './Segments.scss'
+import cn from 'classnames'
+import styles from './Segments.module.scss'
 
 const Segments = ({ small, defaultValue, segments, onChange, hidePrivateValue }) => {
     const [value, setValue] = useState(defaultValue);
@@ -14,13 +15,13 @@ const Segments = ({ small, defaultValue, segments, onChange, hidePrivateValue })
     }, [defaultValue, setSegment])
 
     return (
-        <div className={`segments ${small ? 'small': ''}`}>
+        <div className={cn(styles.segments, {[styles.small]: small})}>
             {
                 segments.map(segment => (
-                    <div className={`segment ${segment.value === value ? 'active' : ''}`} key={segment.value} onClick={() => setSegment(segment.value)}>
+                    <div className={cn(styles.segment, {[styles.active]: segment.value === value})} key={segment.value} onClick={() => setSegment(segment.value)}>
                         {
                             segment.icon ?
-                                <div className="icon">{ segment.icon }</div>
+                                <div className={styles.icon}>{ segment.icon }</div>
                                 :
                                 null
                         }

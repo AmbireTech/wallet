@@ -1,22 +1,25 @@
 import { useState } from 'react'
-import styles from  './Image.module.scss'
 import cn from 'classnames'
-import { FaImage } from 'react-icons/fa'
 
-export default function Image({ src, fallback, size = 64, alt = 'image' }) {
+import { ReactComponent as FallbackIcon } from 'resources/icons/fallback.svg'
+
+import styles from  './Image.module.scss'
+
+export default function Image({ src, fallback, size = 64, alt = 'image', className, imageClassName, failedClassName }) {
 
   const [failed, setFailed] = useState(false)
 
   return (
-    <div className={cn(styles.image)} >
+    <div className={cn(styles.image, className)} >
       {
         failed
-          ? (fallback || <FaImage/>)
+          ? (fallback || <FallbackIcon className={cn(imageClassName, {[failedClassName]: failed && failedClassName})} />)
           : <img src={src}
                  draggable='false'
                  alt={alt}
                  style={{ maxWidth: size, maxHeight: size }}
                  onError={() => setFailed(true)}
+                 className={cn(imageClassName, {[failedClassName]: failed && failedClassName})}
           />
       }
     </div>
