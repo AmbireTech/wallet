@@ -50,9 +50,9 @@ const SwapInner = ({
 
   // On every network change
   useEffect(() => {
-    setLoadingFromTokens(true)
+    setLoadingFromTokens(true) // We set loading for fromTokens only here to avoid loading when changing toChain
     setLoading(true) // We set loading for everything to true until we determine if the network is supported(happens in loadToChains)
-  }, [fromChain, setLoading, setLoadingFromTokens, setDisabled])
+  }, [fromChain])
 
   const loadToChains = useCallback(async () => {
     setLoadingToChains(true)
@@ -76,10 +76,10 @@ const SwapInner = ({
           value: chainId,
         }))
 
-        setLoadingToChains(() => {
-          setToChain(toChains[0].value)
-          setToChains(toChains)
-          return false
+      setLoadingToChains(() => {
+        setToChain(toChains[0].value)
+        setToChains(toChains)
+        return false
       })
     } catch (e) {
       console.error(e)
@@ -126,9 +126,6 @@ const SwapInner = ({
         }))
       setLoadingFromTokens(() => {
         setFromTokenItems(fromTokensItems)
-        if (fromTokensItems.length > 0) {
-          setFromToken(fromTokensItems[0].value)
-        }
         return false
       })
     } catch (e) {
@@ -178,11 +175,13 @@ const SwapInner = ({
   useEffect(() => setAmount(0), [fromToken, setAmount, fromChain])
 
   useEffect(() => {
+    if (loadingToTokens) return
+
     const fromTokenItem = fromTokensItems.find(({ value }) => value === fromToken)
     if (!fromTokenItem) return
     const equivalentToken = toTokenItems.find(({ symbol }) => symbol === fromTokenItem.symbol)
     if (equivalentToken) setToToken(equivalentToken.value)
-  }, [fromTokensItems, toTokenItems, fromToken, setToToken])
+  }, [fromTokensItems, toTokenItems, fromToken, setToToken, loadingToTokens])
     
   if (loading || portfolio.isCurrNetworkBalanceLoading || loadingQuotes) {
     return <Loading />
