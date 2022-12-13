@@ -1,17 +1,17 @@
-name: Build & deploy 🔥 Ambire Wallet 🔥 (swap-alchemy-test 🧪🔬)
+name: Build & deploy 🔥 Ambire Wallet 🔥 (gnosis-portfolio 🧪🔬)
 
 on:
   push:
     branches:
-      - temp-swap-provider
+      - gnosis-portfolio
   pull_request:
     branches:
-      - temp-swap-provider
+      - gnosis-portfolio
 permissions:
   contents: write
 jobs:
   build:
-    name: Build & Deploy - (temp-swap-provider 🧪🔬)
+    name: Build & Deploy - (gnosis-portfolio 🧪🔬)
     runs-on: ubuntu-latest
     concurrency:
       group: ${{ github.workflow }}-${{ github.ref }} 
@@ -29,11 +29,11 @@ jobs:
     - name: Build project 🛠️
       run: npm run build
 
-    - name: Deploy 🚀🌕 (temp-swap-provider 🧪🔬)
-      if: github.ref == 'refs/heads/temp-swap-provider'
+    - name: Deploy 🚀🌕 (gnosis-portfolio🧪🔬)
+      if: github.ref == 'refs/heads/gnosis-portfolio'
       uses: JamesIves/github-pages-deploy-action@v4.4.1
       with:
         branch: gh-pages
         folder: build
-        target-folder: swap-alchemy-test
+        target-folder: swap-gnosis-portfolio
         cname: wallet.ambire.com
