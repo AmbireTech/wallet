@@ -11,6 +11,12 @@
     gap: 17px;
     overflow-y: hidden;
     height: 100%;
+
+    .gasTankSendTitle {
+        margin: 0;
+        font-size: 25px;
+        font-weight: 400;
+    }
 }
 
 @media screen and (max-width: 1400px) {
@@ -25,6 +31,7 @@
         gap: 15px;
         height: auto;
     }
+
     .panel {
         padding: 0;
         flex: 0 1 50%;

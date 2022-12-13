@@ -5,14 +5,15 @@ import { useParams } from 'react-router'
 import accountPresets from 'ambire-common/src/constants/accountPresets'
 import { isValidAddress } from 'ambire-common/src/services/address'
 
+import networks from 'consts/networks'
+
 import Send from './Send/Send'
 import Sell from './Sell/Sell'
 import Addresses from './Addresses/Addresses'
-
-import networks from 'consts/networks'
+import Tabs from 'components/common/Tabs/Tabs'
+import { Panel } from 'components/common'
 
 import styles from './Transfer.module.scss'
-import Tabs from 'components/common/Tabs/Tabs'
 
 const Transfer = (props) => {
     const { portfolio, selectedNetwork, addressBook, selectedAcc, relayerURL } = props
@@ -33,7 +34,7 @@ const Transfer = (props) => {
 
     return (
         <div className={styles.wrapper}>
-            <Tabs 
+            {!gasTankDetails ? <Tabs 
                 firstTabLabel='Send'
                 secondTabLabel='Sell Crypto'
                 firstTab={
@@ -58,8 +59,20 @@ const Transfer = (props) => {
                     />
                 }
                 panelClassName={styles.panel}
-            />
-           {!gasTankDetails && <Addresses
+            /> : <Panel className={styles.panel}>
+                <Send
+                    title={<h1 className={styles.gasTankSendTitle}>Send</h1>}
+                    {...props}
+                    address={address}
+                    setAddress={setAddress}
+                    gasTankDetails={gasTankDetails}
+                    asset={asset}
+                    setAsset={setAsset}
+                    tokenAddress={tokenAddress}
+                    selectedAsset={selectedAsset}
+                />
+            </Panel>}
+            {!gasTankDetails && <Addresses
                 selectedAsset={selectedAsset}
                 selectedNetwork={selectedNetwork}
                 addresses={addresses}

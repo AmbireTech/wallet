@@ -1,0 +1,54 @@
+@import 'variables.scss';
+
+.wrapper {
+  .title {
+    margin: 0;
+    font-size: 16px;
+    text-transform: uppercase;
+    font-weight: 400;
+    color: $c-turquoise;
+    margin-bottom: 28px;
+  }
+
+  .itemsWrapper {
+    background-color: $c-mirage;
+    border-radius: 12px;
+    padding: 17px 0;
+    margin-bottom: 20px;
+
+    .items {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      max-height: 185px;
+      overflow: hidden;
+      overflow-y: auto;
+      padding-right: 20px;
+      margin-right: 11px;
+    }
+  }
+
+  .emptyMessage {
+    text-align: center;
+    color: $warning-color;
+  }
+}
+
+@media screen and (max-width: $mobile-breakpoint-max-width) {
+  .wrapper {
+    .itemsWrapper {
+      .items {
+        max-height: 320px;
+        gap: 12px;
+      }
+    }
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .wrapper {
+    .title {
+      text-align: center;
+    }
+  }
+}
