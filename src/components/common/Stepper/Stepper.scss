@@ -12,8 +12,7 @@
     justify-content: center;
     position: relative;
 
-
-    &:nth-child(2) {
+    &:nth-last-child(1) {
       .stepStatus {
         margin-left: auto;
       }
