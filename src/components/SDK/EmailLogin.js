@@ -20,7 +20,7 @@ export default function EmailLogin({ relayerURL, onAddAccount }) {
 
   const dappOrigin = new URLSearchParams(location.search).get("dappOrigin")
   const chainId = parseInt(new URLSearchParams(location.search).get("chainId"))
-  const isValidChainRequested = !!(chainId && allNetworks.filter(network => network.chainId === chainId).length > 0)
+  const validTargetNetwork = allNetworks.filter(network => network.chainId === chainId)[0]
 
   const matchedDapp = stateStorage.connected_dapps.find(dapp => dapp.origin === dappOrigin)
   const dappIsConnected = !!(matchedDapp && matchedDapp.wallet_address)
@@ -43,16 +43,14 @@ export default function EmailLogin({ relayerURL, onAddAccount }) {
   }, [alreadyLogged, dappIsConnected, matchedDapp, chainId, network.id, network.chainId])
 
   const onLoginSuccess = (wallet_address) => {
-    if (chainId) setNetwork(chainId)
+    if (validTargetNetwork) setNetwork(validTargetNetwork.id)
 
-    const networkId = chainId
-      ? allNetworks.filter(aNetwork => aNetwork.chainId === chainId)[0].id
-      : network.id
-    const provider = getProvider(networkId)
+    const targetNetwork = validTargetNetwork ? validTargetNetwork : network
+    const provider = getProvider(targetNetwork.id)
 
     window.parent.postMessage({
       address: wallet_address,
-      chainId: network.chainId,
+      chainId: targetNetwork.chainId,
       providerUrl: provider.connection.url,
       type: 'loginSuccess',
     }, '*')
@@ -67,14 +65,13 @@ export default function EmailLogin({ relayerURL, onAddAccount }) {
   }
 
   const confirmNetworkSwitch = () => {
-    setNetwork(chainId)
+    setNetwork(validTargetNetwork.id)
 
-    const networkId = allNetworks.filter(aNetwork => aNetwork.chainId === chainId)[0].id
-    const provider = getProvider(networkId)
+    const provider = getProvider(validTargetNetwork.id)
 
     window.parent.postMessage({
       address: matchedDapp.wallet_address,
-      chainId: network.chainId,
+      chainId: validTargetNetwork.chainId,
       providerUrl: provider.connection.url,
       type: 'loginSuccess',
     }, '*')
@@ -92,8 +89,8 @@ export default function EmailLogin({ relayerURL, onAddAccount }) {
   }
 
   return (
-    chainId && !isValidChainRequested
-    ? <div>Unsupported network.</div>
+    chainId && !validTargetNetwork
+    ? <h1>Unsupported network.</h1>
     : !dappIsConnected
       ? <BaseEmailLogin
           relayerURL={relayerURL}
@@ -103,7 +100,8 @@ export default function EmailLogin({ relayerURL, onAddAccount }) {
         ></BaseEmailLogin>
       : chainId
         ? <div>
-            <h2>Allow site to switch the network?</h2>
+            <h1>Allow site to switch the network?</h1>
+            <h2>(from {network.name} to {validTargetNetwork.name})</h2>
             <button onClick={confirmNetworkSwitch}>Confirm</button>
             <button onClick={rejectNetworkSwitch}>Reject</button>
           </div>
