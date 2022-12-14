@@ -10,13 +10,12 @@ $max-width: 650px;
   bottom: 0px;
   z-index: 999;
   overflow-y: auto;
-  background: rgb(61,68,106);
   background: theme(background-gradient);
 
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 32px;
+  gap: 17px;
   padding: 32px;
   box-sizing: border-box;
 
@@ -43,7 +42,7 @@ $max-width: 650px;
       .signMessageTitleSignatureType {
         display: flex;
         align-items: center;
-        background-color: $c-mirage;
+        background-color: theme(background-primary);
         padding: 2px 8px;
         color: $text-container-color;
         font-weight: 300;
@@ -120,6 +119,7 @@ $max-width: 650px;
         display: flex;
         flex-direction: row;
         gap: 8px;
+        color: theme(highlight-primary);
 
         .icon {
           height: 22px;
@@ -127,7 +127,7 @@ $max-width: 650px;
           border-radius: 100%;
           @include flex-center-center;
           background-size: contain;
-          background-color: rgba(0, 0, 0, 0.2);
+          background-color: theme(icon-background);
 
           svg {
             font-size: 12px;
@@ -149,9 +149,9 @@ $max-width: 650px;
   .signMessage {
     width: auto;
     padding: 32px;
-    color: #ccc;
+    color: theme(text-secondary);
     min-height: 300px;
-    background-color: rgba(0,0,0,0.4);
+    background-color: theme(background-primary);
     border: 0px;
     border-radius: 12px;
     resize: none;
@@ -177,14 +177,6 @@ $max-width: 650px;
 
           .loading {
             width: auto;
-          }
-
-          &.reject {
-            color: $c-titan-white;
-
-            svg {
-              color: $c-titan-white;
-            }
           }
         }
 

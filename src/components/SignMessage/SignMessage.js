@@ -1,16 +1,16 @@
-import supportedDApps from "ambire-common/src/constants/supportedDApps"
-
-import styles from "./SignMessage.module.scss"
-
-import { MdBrokenImage, MdCheck, MdClose, MdInfoOutline } from "react-icons/md"
-import { toUtf8String, isHexString } from "ethers/lib/utils"
-import * as blockies from "blockies-ts"
 import { useState, useEffect, useRef } from "react"
-import { Button, Loading, TextInput, ToolTip, DAppIncompatibilityWarningMsg, Panel } from "components/common"
+import * as blockies from "blockies-ts"
+import { toUtf8String, isHexString } from "ethers/lib/utils"
+import supportedDApps from "ambire-common/src/constants/supportedDApps"
 import cn from "classnames"
 
 import { useSignMessage } from "hooks"
+import { Button, Loading, TextInput, ToolTip, DAppIncompatibilityWarningMsg, Panel } from "components/common"
 import AccountAndNetwork from "components/common/AccountAndNetwork/AccountAndNetwork"
+
+import { MdBrokenImage, MdInfoOutline } from "react-icons/md"
+
+import styles from "./SignMessage.module.scss"
 
 const CONF_CODE_LENGTH = 6
 
@@ -245,24 +245,13 @@ export default function SignMessage({ everythingToSign, resolve, account, relaye
               <Button
                 type='button'
                 danger
-                icon={<MdClose />}
-                className={styles.reject}
                 onClick={() => resolve({ message: "signature denied" })}
               >
                 Reject
               </Button>
               {isDeployed !== null && isDeployed && hasPrivileges && (
                 <Button type='submit' disabled={isLoading}>
-                  {isLoading ? (
-                    <>
-                      <Loading />
-                      Signing...
-                    </>
-                  ) : (
-                    <>
-                      <MdCheck /> Sign
-                    </>
-                  )}
+                  {isLoading ? "Signing..." : "Sign"}
                 </Button>
               )}
             </div>
