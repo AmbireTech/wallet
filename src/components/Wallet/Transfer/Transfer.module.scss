@@ -1,0 +1,42 @@
+@import 'variables.scss';
+
+.panel {
+    padding: 0;
+    flex: 0 1 50%;
+}
+
+.wrapper {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    overflow-y: hidden;
+    height: 100%;
+
+    .gasTankSendTitle {
+        margin: 0;
+        font-size: 25px;
+        font-weight: 400;
+    }
+}
+
+@media screen and (max-width: 1400px) {
+    .wrapper {
+        flex-direction: column;
+    }
+}
+
+// Mobile
+@media screen and (max-width: $mobile-breakpoint-max-width) {
+    .wrapper {
+        gap: 15px;
+        height: auto;
+        overflow-y: auto;
+    }
+
+    .panel {
+        padding: 0;
+        flex: 0 1 50%;
+        min-height: unset;
+        max-height: unset;
+    }
+}

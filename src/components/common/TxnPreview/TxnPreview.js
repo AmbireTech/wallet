@@ -1,91 +1,26 @@
-import './TxnPreview.scss'
-
-import { useState, Fragment, useEffect  } from 'react'
-
-import { getName, getTransactionSummary, isKnown } from 'lib/humanReadableTransactions'
-import networks from 'consts/networks'
+import cn from 'classnames'
+import { useState, useEffect  } from 'react'
 import { formatUnits } from 'ethers/lib/utils'
-import { ToolTip } from 'components/common'
-import { HiOutlineExternalLink } from 'react-icons/hi'
-import { MdOutlineClose } from 'react-icons/md'
-import { BsChevronDown, BsChevronUp } from 'react-icons/bs'
-import { getTokenIcon } from 'lib/icons'
-import { formatFloatTokenAmount } from 'lib/formatters'
+
+import networks from 'consts/networks'
 import { setKnownAddressNames } from 'lib/humanReadableTransactions'
+import { getName, getTransactionSummary, isKnown } from 'lib/humanReadableTransactions'
+
 import useConstants from 'hooks/useConstants'
+import { ToolTip } from 'components/common'
+import ExtendedSummaryItem from './ExtendedSummaryItem/ExtendedSummaryItem'
+
+import { ReactComponent as ChevronDownIcon } from 'resources/icons/chevron-down.svg'
+import { ReactComponent as TrashIcon } from 'resources/icons/trash.svg'
+
+import styles from './TxnPreview.module.scss'
 
 function getNetworkSymbol(networkId) {
   const network = networks.find(x => x.id === networkId)
   return network ? network.nativeAssetSymbol : 'UNKNW'
 }
 
-function parseExtendedSummaryItem(item, i, networkDetails) {
-  if (item.length === 1) return item
-
-  if (i === 0) return (<div className={`action ${item.toLowerCase()}`} key={`item-${i}`}>{ item }</div>)
-
-  if (!item.type) return (<div className='word' key={`item-${i}`}>{ item }</div>)
-  if (item.type === 'token') {
-    return (
-    <div className='token' key={`item-${i}`}>
-      { item.amount > 0 && <span>{ formatFloatTokenAmount(item.amount, true, item.decimals) }</span> }
-      { item.decimals !== null && item.symbol ? 
-        <Fragment>
-          {item.address &&
-            <div className='icon' 
-              style={{ backgroundImage: `url(${getTokenIcon(networkDetails.id, item.address)})` }}>
-            </div>}
-          {item.symbol}
-        </Fragment>
-        : (item.amount > 0) ? 'units of unknown token' : null 
-      }
-    </div>
-  )}
-
-  if (item.type === 'address') return (
-    <a
-      className='address'
-      key={`item-${i}`}
-      href={item.address ? `${networkDetails.explorerUrl}/address/${item.address}` : null}
-      target="_blank"
-      rel="noreferrer"
-      onClick={e => e.stopPropagation()}
-    >
-      <ToolTip disabled={!item.address} label={item.address}>
-        { item.name ? item.name : item.address }
-        { item.address ? <HiOutlineExternalLink/> : null }
-      </ToolTip>
-    </a>
-  )
-
-  if (item.type === 'network') return (
-    <div className='network' key={`item-${i}`}>
-      { item.icon ? <div className='icon' style={{ backgroundImage: `url(${item.icon})` }}></div> : null }
-      { item.name }
-    </div>
-  )
-
-  if (item.type === 'erc721') {
-    const canShowLink = item.network && item.address && item.id
-    return (
-      <a
-        className='erc721'
-        key={`item-${i}`}
-        href={canShowLink ? `#/wallet/nft/${item.network}/${item.address}/${item.id}` : null}
-        target="_blank"
-        rel="noreferrer"
-        onClick={e => e.stopPropagation()}
-      >
-        { item.name }
-        { canShowLink ? <HiOutlineExternalLink/> : null }
-      </a>
-    )
-  }
-
-  return <></>
-}
-
-export default function TxnPreview ({ txn, onDismiss, network, account, isFirstFailing, mined, disableExpand, disableDismiss, disableDismissLabel, addressLabel = null }) {
+export default function TxnPreview ({ txn, onDismiss, network, account, isFirstFailing, mined, disableExpand, disableDismiss, disableDismissLabel, addressLabel = null, feeAssets }) {
   const { constants: { tokenList, humanizerInfo } } = useConstants()
   const [isExpanded, setExpanded] = useState(false)
   const contractName = getName(humanizerInfo, txn[0])
@@ -93,36 +28,55 @@ export default function TxnPreview ({ txn, onDismiss, network, account, isFirstF
   const networkDetails = networks.find(({ id }) => id === network)
   const extendedSummary = getTransactionSummary(humanizerInfo, tokenList, txn, network, account, { mined, extended: true })
 
-  const summary = (extendedSummary.map(entry => Array.isArray(entry) ? entry.map((item, i) => parseExtendedSummaryItem(item, i, networkDetails)) : (entry))) // If entry is extended summary parse it
   useEffect(() => !!addressLabel && setKnownAddressNames(addressLabel), [addressLabel])
   
   return (
-    <div className={isFirstFailing ? 'txnPreview firstFailing' : 'txnPreview'}>
-        <div className="heading">
-          <div className="info" onClick={() => !disableExpand && setExpanded(e => !e)}>
-            <div className="summary-container">
-              {!disableExpand && (<div className='expandTxn'>
-                {isExpanded ? (<BsChevronUp/>) : (<BsChevronDown/>)}
+    <div className={cn(styles.wrapper, {[styles.firstFailing]: isFirstFailing})}>
+        <div className={styles.heading}>
+          <div className={styles.info} onClick={() => !disableExpand && setExpanded(e => !e)}>
+            <div className={styles.summaryContainer}>
+              {!disableExpand && (<div className={cn(styles.expandTxn, {[styles.reversedChevron]: isExpanded})}>
+                <ChevronDownIcon className={styles.icon} />
               </div>)}
-              <div className="summary">{ summary }</div>
+              <div className={styles.summary}>
+                {extendedSummary.map(entry => { // If entry is extended summary parse it
+                  if(Array.isArray(entry)) {
+                    return entry.map((item, i) => (
+                      <ExtendedSummaryItem 
+                        key={`item-${i}`}
+                        item={item}
+                        i={i}
+                        networkDetails={networkDetails}
+                        feeAssets={feeAssets}
+                      />
+                    ))
+                  }
+                    else return entry
+                })}
+              </div>
             </div>
-            {isFirstFailing && (<div className='firstFailingLabel'>This is the first failing transaction.</div>)}
-              {!isFirstFailing && !mined && !isKnown(humanizerInfo, txn, account) && (<div className='unknownWarning'>Warning: interacting with an unknown contract or address.</div>)}
+            {isFirstFailing && (<p className={styles.warning}>This is the first failing transaction.</p>)}
+              {!isFirstFailing && !mined && !isKnown(humanizerInfo, txn, account) && (<p className={styles.warning}>Warning: interacting with an unknown contract or address.</p>)}
           </div>
-          <div className='actionIcons'>
+          <div className={styles.actionIcons}>
             {onDismiss ? (
               <ToolTip disabled={!disableDismiss || !disableDismissLabel} label={disableDismissLabel}>
-                <div className={`dismissTxn ${disableDismiss ? 'disabled' : ''}`} onClick={e => { e.stopPropagation(); !disableDismiss && onDismiss.apply(this, e) }}><MdOutlineClose/></div>
+                <div 
+                  className={cn(styles.dismissTxn, {[styles.disabled]: disableDismiss})} 
+                  onClick={e => { e.stopPropagation(); !disableDismiss && onDismiss.apply(this, e) }}
+                >
+                  <TrashIcon className={styles.icon} />
+                </div>
               </ToolTip>
-            ) : (<></>)}
+            ) : null}
           </div>
         </div>
         {
-          isExpanded ? (<div className='advanced'>
-            <div><b>Interacting with (<i>to</i>):</b> {txn[0]}{contractName ? ` (${contractName})` : ''}</div>
-            <div><b>Value to be sent (<i>value</i>):</b> {formatUnits(txn[1] || '0x0', 18)} {getNetworkSymbol(network)}</div>
-            <div><b>Data:</b> {txn[2]}</div>
-          </div>) : (<></>)
+          isExpanded ? (<div className={styles.advanced}>
+            <p>Interacting with (<i>to</i>): {txn[0]}{contractName ? ` (${contractName})` : ''}</p>
+            <p>Value to be sent (<i>value</i>): {formatUnits(txn[1] || '0x0', 18)} {getNetworkSymbol(network)}</p>
+            <p>Data: {txn[2]}</p>
+          </div>) : null
         }
     </div>
   )

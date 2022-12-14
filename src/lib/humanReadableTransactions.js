@@ -50,7 +50,7 @@ export function getTransactionSummary(humanizerInfo, tokenList, txn, networkId, 
 
     if (data !== '0x') {
         callSummary = !opts.extended ? `Unknown interaction with ${name || (tokenInfo ? tokenInfo[0] : to)}` : [
-            'unknown',
+            'Unknown',
             'interaction with',
             {
                 type: 'address',

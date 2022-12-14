@@ -77,7 +77,7 @@ const AddAddressModal = ({ title, inputs, selectedNetwork, onClose }) => {
             {
                 inputsFields.map(({ id, label, placeholder, ref, type }) => (
                     <div key={id + label}>
-                        <TextInput label={label} placeholder={placeholder} onInput={onInput} ref={ref} />
+                        <TextInput label={label} placeholder={placeholder} onInput={onInput} ref={ref} className='address-input' />
                         {(type === 'address') &&
                             <>
                                 <ToolTip label={!uDAddress ? 'You can use Unstoppable domainsⓇ' : 'Valid Unstoppable domainsⓇ domain'}>

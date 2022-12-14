@@ -20,6 +20,7 @@ const Earn = ({ portfolio, selectedNetwork, rewardsData, selectedAcc, addRequest
                             addRequest={addRequest}
                         />
                         <AAVECard networkId={selectedNetwork.id} tokens={portfolio.tokens} account={selectedAcc} addRequest={addRequest}/>
+                        {/* Removed Tesseract because it's no longer available */}
                         <YearnTesseractCard
                             networkId={selectedNetwork.id}
                             accountId={selectedAcc}

@@ -4,8 +4,9 @@
   display: flex;
   flex-direction: row;
   padding: 16px;
-  background: mix($primary-accent-color, $panel-background-color, 5%);
-  border: 1px solid $primary-accent-color;
+  background: $c-ebony-clay;
+  border: 1px solid $c-fiord;
+  border-radius: 12px;
 
   .migration-banner-message {
     display: flex;
@@ -20,7 +21,7 @@
   span.link {
     cursor: pointer;
     display: block;
-    color: $primary-accent-color;
+    color: $c-turquoise;
     text-decoration: underline;
 
     &.link-margin {
