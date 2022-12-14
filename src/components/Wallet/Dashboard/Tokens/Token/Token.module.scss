@@ -74,6 +74,7 @@
         color: $c-heliotrope;
         flex: 1.2;
         font-size: 16px;
+        align-self: baseline;
       }
       .value {
         flex: 1;
@@ -166,6 +167,7 @@
 
         .price {
           font-size: 14px;
+          align-self: auto;
         }
       }
     }
