@@ -26,7 +26,7 @@ export default function SDKWrapper(props) {
       />
     },
     {
-      path: '/on-ramp/:chainID',
+      path: '/on-ramp',
       component: <OnRampSDK
         relayerURL={props.relayerURL}
       />
