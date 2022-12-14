@@ -1,48 +1,49 @@
-@import "variables";
+@import 'variables';
 
 $titleBar-height: 90px;
 
 .wrapper {
-  position: relative;
-  z-index: 99;
-  display: flex;
-  align-items: center;
+	position: relative;
+	z-index: 99;
+	display: flex;
+	align-items: center;
+	width: 100%;
   margin-bottom: 30px;
 
-  .dismiss {
-    @include flex-center-center;
-    gap: 10px;
-    cursor: pointer;
-    line-height: 35px;
-    height: 35px;
-    font-size: 20px;
+	.row {
+		@include flex-center-center;
+		gap: 10px;
 
-    .backIcon {
-      background-color: theme(icon-background);
-      min-width: 40px;
-      min-height: 40px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 12px;
+    &.dismiss {
+      cursor: pointer;
     }
-  
-    .backLabel {
-      margin: 0;
-      font-size: 16px;
-      font-weight: 300;
-      transition: .3s ease-in-out opacity;
-    }
-  
-    .infoIcon {
-      width: 20px;
-      height: 20px;
-    }
+	}
 
-    &:hover {
-      .backLabel {
-        opacity: .8;
-      }
-    }
-  }
+	.backIcon {
+		background-color: theme(icon-background);
+		min-width: 40px;
+		min-height: 40px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		border-radius: 12px;
+	}
+
+	.backLabel {
+		margin: 0;
+		font-size: 16px;
+		font-weight: 300;
+		transition: 0.3s ease-in-out opacity;
+	}
+
+	.infoIcon {
+		width: 20px;
+		height: 20px;
+	}
+
+	&:hover {
+		.backLabel {
+			opacity: 0.8;
+		}
+	}
 }
