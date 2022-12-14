@@ -11,7 +11,7 @@ $max-width: 650px;
   z-index: 999;
   overflow-y: auto;
   background: rgb(61,68,106);
-  background: transparent linear-gradient(180deg, $c-fiord 0%, $c-ebony-clay 100%) 0% 0% no-repeat padding-box;
+  background: theme(background-gradient);
 
   display: flex;
   flex-direction: column;
@@ -58,38 +58,47 @@ $max-width: 650px;
   }
 
 
-  .signingAccountContent {
+  .accountAndNetwork {
     display: flex;
-    flex-direction: row;
-    justify-content: flex-start;
-    font-family: 'Ubuntu Mono';
-    font-size: 15px;
-    font-weight: bold;
     flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px 30px;
 
-    .signingAccountAccount {
+    .account {
       display: flex;
-      gap: 10px;
-      flex-grow: 1;
       align-items: center;
-      overflow-wrap: anywhere;
-    }
+      gap: 20px;
 
-    .signingAccountNetwork {
-      display: flex;
-      gap: 10px;
-      justify-content: right;
-      align-items: center;
+      .avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 12px;
+      }
 
-      .icon {
-        background-size: contain;
+      .address {
+        color: theme(text-primary);
+        font-size: 16px;
+        margin: 0;
+        word-break: break-all;
       }
     }
 
-    .icon {
-      height: 20px;
-      width: 20px;
-      border-radius: 100%;
+    .network {
+      display: flex;
+      justify-self: flex-end;
+      align-items: center;
+      gap: 10px;
+      color: theme(text-secondary);
+      font-size: 14px;
+      margin: 0;
+
+      .icon {
+        border-radius: 12px;
+        width: 24px;
+        height: 24px;
+        background-color: theme(icon-background);
+      }
     }
   }
 

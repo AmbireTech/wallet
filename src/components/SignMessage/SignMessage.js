@@ -7,10 +7,10 @@ import { toUtf8String, isHexString } from "ethers/lib/utils"
 import * as blockies from "blockies-ts"
 import { useState, useEffect, useRef } from "react"
 import { Button, Loading, TextInput, ToolTip, DAppIncompatibilityWarningMsg, Panel } from "components/common"
-import { networkIconsById } from 'consts/networks'
 import cn from "classnames"
 
 import { useSignMessage } from "hooks"
+import AccountAndNetwork from "components/common/AccountAndNetwork/AccountAndNetwork"
 
 const CONF_CODE_LENGTH = 6
 
@@ -104,29 +104,16 @@ export default function SignMessage({ everythingToSign, resolve, account, relaye
     })
   }
 
-  const requestedNetworkIcon = networkIconsById[requestedNetwork.id]
-
   return (
     <div className={styles.wrapper}>
       <Panel title={'Signing with account'} className={styles.panel}>
-        <div className={styles.signingAccountContent}>
-          <div className={styles.signingAccountAccount}>
-            <img
-              className={styles.icon}
-              src={blockies.create({ seed: account.id }).toDataURL()}
-              alt='Account Icon'
-            />
-            {account.id}
-          </div>
-          <div className={styles.signingAccountNetwork}>
-            on
-            <div
-              className={styles.icon}
-              style={{ backgroundImage: `url(${requestedNetworkIcon})` }}
-            />
-            <div className='address'>{requestedNetwork.name}</div>
-          </div>
-        </div>
+        <AccountAndNetwork
+          address={account.id}
+          networkName={requestedNetwork.name}
+          networkId={requestedNetwork.id}
+          avatar={blockies.create({ seed: account.id }).toDataURL()}
+          maxAddressLength={30}
+        />
       </Panel>
       <Panel className={styles.panel}>
         <div className={cn(styles.title, styles.signMessageTitle)}>
