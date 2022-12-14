@@ -90,7 +90,10 @@ export default function EmailLogin({ relayerURL, onAddAccount }) {
 
   return (
     chainId && !validTargetNetwork
-    ? <h1>Unsupported network.</h1>
+    ? <div>
+        <h1>Ambire Wallet doesn't support this network.</h1>
+        <button onClick={rejectNetworkSwitch}>Dismiss</button>
+      </div>
     : !dappIsConnected
       ? <BaseEmailLogin
           relayerURL={relayerURL}
