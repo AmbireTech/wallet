@@ -55,7 +55,9 @@ const Accounts = ({ accounts, selectedAddress, onSelectAcc, onRemoveAccount, hid
         }
     })
 
-    const shortenedAddress = address => address.slice(0, 4) + '...' + address.slice(-3)
+    // On mobile screens we are showing more characters of the address,
+    // because we have more space there (the dropdowns take full width)
+    const shortenedAddress = address => address.slice(0, isMobileScreen ? 8 : 4) + '...' + address.slice(-3)
     const isActive = id => id === selectedAddress ? styles.active : ''
     const toIcon = seed => blockies.create({ seed }).toDataURL()
     const toIconBackgroundImage = seed => ({ backgroundImage: `url(${toIcon(seed)})`})
