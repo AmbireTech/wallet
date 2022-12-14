@@ -55,7 +55,7 @@ const Accounts = ({ accounts, selectedAddress, onSelectAcc, onRemoveAccount, hid
         }
     })
 
-    const shortenedAddress = address => address.slice(0, 8) + '...' + address.slice(-3)
+    const shortenedAddress = address => address.slice(0, 4) + '...' + address.slice(-3)
     const isActive = id => id === selectedAddress ? styles.active : ''
     const toIcon = seed => blockies.create({ seed }).toDataURL()
     const toIconBackgroundImage = seed => ({ backgroundImage: `url(${toIcon(seed)})`})
