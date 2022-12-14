@@ -66,7 +66,8 @@ a {
 }
 
 .error {
-  color: red;
+  color: $danger-color;
+  font-weight: 400;
   text-align: center;
 }
 
