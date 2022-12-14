@@ -101,3 +101,19 @@
     }
   }
 }
+
+@media screen and (max-width: 600px) {
+  .wrapper {
+    .container {
+      padding: 30px 15px;
+      padding-top: 5px;
+      margin-top: 15px;
+
+      .containerBody {
+        .panel {
+          padding: 15px;
+        }
+      }
+    }
+  }
+}
