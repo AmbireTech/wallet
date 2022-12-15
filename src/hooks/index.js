@@ -12,6 +12,7 @@ import useLocalStorage from './useLocalStorage'
 import useDragAndDrop from './dragAndDrop'
 import useCheckMobileScreen from './checkMobileScreen'
 import useUtmTracking from './utmTracking'
+import useSignMessage from './useSignMessage'
 
 export {
     useAccounts,
@@ -28,4 +29,5 @@ export {
     useDragAndDrop,
     useCheckMobileScreen,
     useUtmTracking,
+    useSignMessage
 }

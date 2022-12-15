@@ -1,18 +1,20 @@
-import styles from './DApps.module.scss'
-
-import React, { useState, useCallback } from 'react'
-import { FiHelpCircle } from 'react-icons/fi'
-import { ReactComponent as ConnectIcon } from './images/connect.svg'
-import { MdBrokenImage } from 'react-icons/md'
-import { AiOutlineDisconnect } from 'react-icons/ai'
-import { ReactComponent as WalletConnect } from 'resources/icons/wallet-connect.svg'
-import { DropDown, ToolTip, Button } from "components/common"
-import { checkClipboardPermission } from 'lib/permissions'
-import { MdOutlineWarning } from 'react-icons/md'
-import { canOpenInIframe } from 'lib/dappsUtils'
+import { useState, useCallback } from 'react'
 import { useHistory } from 'react-router-dom'
+
+import { checkClipboardPermission } from 'lib/permissions'
+import { canOpenInIframe } from 'lib/dappsUtils'
+
+import { DropDown, ToolTip, Button } from "components/common"
 import DropDownItem from 'components/common/DropDown/DropDownItem/DropDownItem'
 import DropDownItemSeparator from 'components/common/DropDown/DropDownItem/DropDownItemSeparator'
+
+import { MdOutlineWarning, MdBrokenImage } from 'react-icons/md'
+import { ReactComponent as ConnectIcon } from './images/connect.svg'
+import { FiHelpCircle } from 'react-icons/fi'
+import { AiOutlineDisconnect } from 'react-icons/ai'
+import { ReactComponent as WalletConnect } from 'resources/icons/wallet-connect.svg'
+
+import styles from './DApps.module.scss'
 
 const DApps = ({ connections, connect, disconnect, isWcConnecting }) => {
     const history = useHistory()

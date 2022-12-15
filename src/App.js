@@ -262,6 +262,7 @@ function AppInner() {
         totalRequests={everythingToSign.length}
         relayerURL={relayerURL}
         network={network}
+        useStorage={useLocalStorage}
         resolve={outcome => resolveMany([everythingToSign[0].id], outcome)}
       ></SignMessage>)}
 

@@ -12,7 +12,7 @@ import { useDragAndDrop, useCheckMobileScreen } from 'hooks'
 import { ToolTip } from 'components/common'
 import cn from 'classnames'
 
-import { ReactComponent as LogOut } from './icons/log-out.svg'
+import { ReactComponent as LogOut } from 'resources/icons/log-out.svg'
 import { ReactComponent as Copy } from 'resources/icons/copy.svg'
 
 const Accounts = ({ accounts, selectedAddress, onSelectAcc, onRemoveAccount, hidePrivateValue, userSorting, setUserSorting }) => {
@@ -55,7 +55,7 @@ const Accounts = ({ accounts, selectedAddress, onSelectAcc, onRemoveAccount, hid
         }
     })
 
-    const shortenedAddress = address => address.slice(0, 5) + '...' + address.slice(-3)
+    const shortenedAddress = address => address.slice(0, 8) + '...' + address.slice(-3)
     const isActive = id => id === selectedAddress ? styles.active : ''
     const toIcon = seed => blockies.create({ seed }).toDataURL()
     const toIconBackgroundImage = seed => ({ backgroundImage: `url(${toIcon(seed)})`})
@@ -69,6 +69,11 @@ const Accounts = ({ accounts, selectedAddress, onSelectAcc, onRemoveAccount, hid
         addToast('Copied to clipboard!')
     }
 
+    const copySelectedAddress = (e) => {
+        e.stopPropagation()
+        copyAddress(selectedAddress)
+    }
+
     const onSelectAccount = (id) => {
         onSelectAcc(id)
         setClosed(true)
@@ -78,8 +83,11 @@ const Accounts = ({ accounts, selectedAddress, onSelectAcc, onRemoveAccount, hid
         <DropDown 
             className={styles.wrapper}
             menuClassName={styles.menu}
-            icon={toIcon(selectedAddress)} 
-            title={hidePrivateValue(shortenedAddress(selectedAddress))} 
+            icon={toIcon(selectedAddress)}
+            title={<div className={styles.selectedAddress}>
+                <p>{hidePrivateValue(shortenedAddress(selectedAddress))}</p>
+                <Copy onClick={copySelectedAddress} className={styles.selectedAddressCopyIcon} />
+            </div>} 
             open={closed} 
             onOpen={() => setClosed(false)}
         >
